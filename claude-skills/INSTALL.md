@@ -29,7 +29,7 @@ Copy `SK/end-session`, `SK/session-retro`, `SK/work-summary` and `~/.claude/sett
 `~/.claude/backups/skills-upgrade-<YYYYmmdd-HHMM>/`. Verify the copies are there.
 
 ## 3. New skills - copy as they are
-`U/skill-forge`, `U/skill-scout` and `U/data-keeper` -> `SK/`.
+`U/skill-forge`, `U/skill-scout`, `U/data-keeper` and `U/waiting-for-me` -> `SK/`.
 If any of these folders already exists, stop and show Gilad the difference.
 
 ## 4. end-session and session-retro - merge, never a blind overwrite
@@ -117,8 +117,15 @@ It prints `to-log: N new message(s) written`. Running it twice adds nothing.
   his phone). "Backup skipped: no personal OneDrive" -> tell him; with his OK pick another folder.
 - Memory `new-skills-first-run.md`: add skill-forge, skill-scout, data-keeper and the day
   mode - tell Gilad how each one did on its first real run.
-- Pipeline: add the history entry `## skills-upgrade-2026-10-29 - ✅ נבנה (skill-forge, skill-scout, data-keeper)`.
-- Offer once, and only with a yes: a nightly scheduled task (~23:30) that runs "בדיקת סוף יום".
+- Pipeline: add the history entry `## skills-upgrade-2026-10-29 - ✅ נבנה (skill-forge, skill-scout, data-keeper, waiting-for-me)`.
+- **Nightly end-of-day check - Gilad already said yes (29.10.2026):** create a scheduled task
+  on this PC (load the desktop app's scheduled-task tool with ToolSearch, e.g. "schedule task")
+  at 23:30, Sunday-Thursday and Saturday - **not Friday night (Shabbat)** - in a new session,
+  with the prompt: `בדיקת סוף יום (session-retro במצב יום): עבור על כל השיחות של היום, שמור כל
+  נתון שפוספס, ובנה או רשום כל רעיון לסקיל. בסוף - סיכום של עד 6 שורות בעברית.`
+  No scheduling tool on the PC -> tell Gilad in one line; the day mode still runs on "סיימנו להיום".
+- The morning "מה מחכה לי" message already runs from the cloud (Sunday-Friday 07:41), so it
+  works even when the PC is off - nothing to set up here.
 - Delete `$TEMP/skills-upgrade`. Report in Hebrew, short: what was installed, what was
   carried over, and the "איך משתמשים" table from `README.md`.
 
