@@ -16,119 +16,122 @@
 <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Assistant:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#16130f;        /* שיש שחור-חום */
-    --ink-2:#201b15;
-    --gold:#c9a55c;       /* זהב העורקים בכרטיס */
+    --ink:#16130f;
+    --gold:#c9a55c;
     --gold-soft:#8a7444;
-    --parchment:#efe6d2;  /* טקסט */
+    --parchment:#efe6d2;
     --muted:#a99c82;
-    --olive:#5f5d43;      /* הפס התחתון בכרטיס */
-    --serif:"Frank Ruhl Libre", "David Libre", serif;
-    --sans:"Assistant", system-ui, sans-serif;
+    --olive:#5f5d43;
+    --serif:"Frank Ruhl Libre","David Libre",serif;
+    --sans:"Assistant",system-ui,sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{background:var(--ink)}
+  html{background:var(--ink);scroll-behavior:smooth}
   body{
-    font-family:var(--sans);
-    color:var(--parchment);
+    font-family:var(--sans);color:var(--parchment);
     background:
-      radial-gradient(120% 60% at 85% 0%, rgba(201,165,92,.10), transparent 60%),
-      radial-gradient(90% 50% at 0% 100%, rgba(201,165,92,.06), transparent 60%),
+      radial-gradient(120% 60% at 85% 0%,rgba(201,165,92,.10),transparent 60%),
+      radial-gradient(90% 50% at 0% 100%,rgba(201,165,92,.06),transparent 60%),
       var(--ink);
-    line-height:1.7;
-    font-size:1.125rem;
-    min-height:100vh;
+    line-height:1.7;font-size:1.125rem;min-height:100vh;
   }
   a{color:inherit}
-  a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:4px;border-radius:4px}
+  a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--gold);outline-offset:4px;border-radius:4px}
   .wrap{max-width:38rem;margin:0 auto;padding:0 1.25rem}
 
-  /* ראש העמוד */
-  .hero{padding:3.25rem 0 2.5rem;text-align:center;position:relative}
+  /* ראש */
+  .hero{padding:3.25rem 1.25rem 2.5rem;text-align:center;position:relative;max-width:38rem;margin:0 auto}
   .bsd{position:absolute;top:1rem;right:1.25rem;font-family:var(--serif);color:var(--muted);font-size:.95rem}
   .portrait{
-    width:9.5rem;height:9.5rem;border-radius:50%;
-    object-fit:cover;display:block;margin:0 auto 1.75rem;
-    border:2px solid var(--gold);
-    box-shadow:0 0 0 6px var(--ink),0 0 0 7px var(--gold-soft);
+    width:9.5rem;height:9.5rem;border-radius:50%;object-fit:cover;display:block;margin:0 auto 1.75rem;
+    border:2px solid var(--gold);box-shadow:0 0 0 6px var(--ink),0 0 0 7px var(--gold-soft);
   }
-  h1{
-    font-family:var(--serif);font-weight:700;
-    font-size:clamp(2.4rem,9vw,3.4rem);line-height:1.15;
-    letter-spacing:.01em;color:#fbf5e7;
-  }
-  .slogan{
-    font-family:var(--serif);font-weight:400;
-    color:var(--gold);font-size:clamp(1.25rem,4.6vw,1.55rem);
-    margin-top:.6rem;
-  }
-  .rule{
-    width:0;height:1px;margin:1.75rem auto 0;
-    background:linear-gradient(90deg,transparent,var(--gold),transparent);
-    animation:draw 1.4s .3s ease-out forwards;
-  }
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(2.4rem,9vw,3.4rem);line-height:1.15;color:#fbf5e7}
+  .slogan{font-family:var(--serif);color:var(--gold);font-size:clamp(1.25rem,4.6vw,1.55rem);margin-top:.6rem}
+  .rule{width:0;height:1px;margin:1.75rem auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:draw 1.4s .3s ease-out forwards}
   @keyframes draw{to{width:min(18rem,80%)}}
 
   .actions{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:2rem}
-  .btn{
-    display:inline-flex;align-items:center;gap:.55rem;
-    padding:.85rem 1.4rem;border-radius:999px;
-    font-weight:600;font-size:1.05rem;text-decoration:none;
-    transition:background .2s,color .2s;
-  }
+  .btn{display:inline-flex;align-items:center;gap:.55rem;padding:.85rem 1.4rem;border-radius:999px;font-weight:600;font-size:1.05rem;text-decoration:none;transition:background .2s,color .2s,border-color .2s}
   .btn svg{width:1.2rem;height:1.2rem;flex:none}
   .btn-wa{background:var(--gold);color:var(--ink)}
   .btn-wa:hover{background:#dcbb74}
   .btn-call{border:1px solid var(--gold-soft);color:var(--parchment)}
   .btn-call:hover{border-color:var(--gold);color:#fff}
 
-  /* מקטעים */
-  section{padding:2.5rem 0;border-top:1px solid rgba(201,165,92,.18)}
-  h2{
-    font-family:var(--serif);font-weight:500;color:var(--gold);
-    font-size:1.6rem;margin-bottom:1.1rem;line-height:1.3;
-  }
-  p + p{margin-top:.9rem}
-  .lead{font-family:var(--serif);font-size:1.25rem;line-height:1.8;color:#f5ecda}
+  /* תפריט קפיצה */
+  .jump{display:flex;gap:.5rem;overflow-x:auto;padding:.25rem 1.25rem 1rem;max-width:38rem;margin:0 auto;scrollbar-width:none}
+  .jump::-webkit-scrollbar{display:none}
+  .jump a{flex:none;font-size:.95rem;color:var(--muted);text-decoration:none;padding:.35rem .85rem;border:1px solid rgba(201,165,92,.25);border-radius:999px}
+  .jump a:hover{color:var(--parchment);border-color:var(--gold-soft)}
 
+  section{padding:2.75rem 0;border-top:1px solid rgba(201,165,92,.18)}
+  h2{font-family:var(--serif);font-weight:500;color:var(--gold);font-size:1.65rem;margin-bottom:1.1rem;line-height:1.3}
+  h3{font-family:var(--serif);font-weight:500;color:#fbf5e7;font-size:1.2rem;line-height:1.4}
+  p + p{margin-top:.9rem}
+  .lead{font-family:var(--serif);font-size:1.25rem;line-height:1.85;color:#f5ecda}
+  .note{color:var(--muted);font-size:1rem}
+
+  /* פתיחה – הפסוק */
+  .verse{text-align:center;padding:3rem 0 2.75rem}
+  .verse svg{width:4.5rem;height:4.5rem;margin:0 auto 1.25rem;display:block;color:var(--gold)}
+  .verse blockquote{font-family:var(--serif);font-size:clamp(1.55rem,6vw,2rem);line-height:1.5;color:#fbf5e7}
+  .verse cite{display:block;font-style:normal;color:var(--muted);font-size:.95rem;margin-top:.6rem}
+  .verse p{margin-top:1.5rem;max-width:30rem;margin-inline:auto}
+
+  /* הדרך לברית – רצף אמיתי */
+  .path{list-style:none;counter-reset:step;position:relative}
+  .path li{counter-increment:step;position:relative;padding-inline-start:3.25rem;padding-bottom:1.6rem}
+  .path li::before{
+    content:counter(step);position:absolute;right:0;top:.1rem;width:2.1rem;height:2.1rem;border-radius:50%;
+    border:1px solid var(--gold);color:var(--gold);font-family:var(--serif);display:grid;place-items:center;font-size:1rem;background:var(--ink);z-index:1;
+  }
+  .path li:not(:last-child)::after{content:"";position:absolute;right:1.05rem;top:2.3rem;bottom:.2rem;width:1px;background:rgba(201,165,92,.35)}
+  .path li:last-child{padding-bottom:0}
+  .path p{color:#d9cfbb;font-size:1.05rem;margin-top:.25rem}
+
+  /* שירותים */
   .services{list-style:none;display:grid;gap:1.1rem}
   .services li{display:grid;grid-template-columns:1.6rem 1fr;gap:.6rem;align-items:start}
-  .services li::before{
-    content:"";width:.55rem;height:.55rem;margin-top:.7rem;margin-inline-start:.4rem;
-    background:var(--gold);transform:rotate(45deg);
-  }
+  .services li::before{content:"";width:.55rem;height:.55rem;margin-top:.7rem;margin-inline-start:.4rem;background:var(--gold);transform:rotate(45deg)}
   .services strong{display:block;font-weight:600;color:#fbf5e7}
   .services span{color:var(--muted);font-size:1rem}
 
-  .cert{
-    display:grid;grid-template-columns:auto 1fr;gap:1rem;align-items:center;
-    padding:1.25rem 1.25rem;border:1px solid rgba(201,165,92,.35);border-radius:14px;
-    background:linear-gradient(160deg,rgba(201,165,92,.08),transparent 70%);
-  }
-  .seal{
-    width:3.4rem;height:3.4rem;border-radius:50%;
-    border:1.5px solid var(--gold);display:grid;place-items:center;
-    font-family:var(--serif);color:var(--gold);font-size:1.5rem;
-  }
+  /* הכיבודים */
+  .honors{display:grid;gap:1.4rem}
+  .honor{display:grid;grid-template-columns:3rem 1fr;gap:1rem;align-items:start}
+  .honor svg{width:3rem;height:3rem;color:var(--gold)}
+  .honor p{color:#d9cfbb;font-size:1.05rem;margin-top:.2rem}
+
+  /* הכנה */
+  .checklist{list-style:none;display:grid;gap:.7rem}
+  .checklist li{display:grid;grid-template-columns:1.5rem 1fr;gap:.5rem}
+  .checklist li::before{content:"";width:1rem;height:1rem;margin-top:.45rem;border:1.5px solid var(--gold-soft);border-radius:3px}
+
+  /* שאלות */
+  details{border-bottom:1px solid rgba(201,165,92,.18);padding:1rem 0}
+  details:first-of-type{border-top:1px solid rgba(201,165,92,.18)}
+  summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:1rem;font-weight:600;color:#fbf5e7}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";color:var(--gold);font-family:var(--serif);font-size:1.4rem;line-height:1}
+  details[open] summary::after{content:"−"}
+  details p{color:#d9cfbb;margin-top:.6rem;font-size:1.05rem}
+
+  /* הסמכה */
+  .cert{display:grid;grid-template-columns:auto 1fr;gap:1rem;align-items:center;padding:1.25rem;border:1px solid rgba(201,165,92,.35);border-radius:14px;background:linear-gradient(160deg,rgba(201,165,92,.08),transparent 70%)}
+  .seal{width:3.4rem;height:3.4rem;border-radius:50%;border:1.5px solid var(--gold);display:grid;place-items:center;font-family:var(--serif);color:var(--gold);font-size:1.5rem}
   .cert p{margin:0}
   .cert .sub{color:var(--muted);font-size:1rem}
 
-  /* תחתית */
-  .contact{
-    margin-top:1rem;background:var(--olive);
-    padding:2.25rem 0 2.5rem;text-align:center;
-  }
+  .contact{margin-top:1rem;background:var(--olive);padding:2.5rem 0 2.75rem;text-align:center;border-top:none}
   .contact h2{color:#efe0b4;margin-bottom:.4rem}
-  .phone{
-    font-family:var(--serif);font-size:clamp(2rem,8vw,2.6rem);
-    letter-spacing:.04em;text-decoration:none;color:#fff8e6;direction:ltr;display:inline-block;
-  }
+  .contact p{color:#e9dfc6}
+  .phone{font-family:var(--serif);font-size:clamp(2rem,8vw,2.6rem);letter-spacing:.04em;text-decoration:none;color:#fff8e6;direction:ltr;display:inline-block;margin-top:.5rem}
   .contact .actions{margin-top:1.25rem}
-  .contact .btn-call{border-color:rgba(255,248,230,.5)}
   footer{text-align:center;color:var(--muted);font-size:.9rem;padding:1.5rem 1rem 2rem}
-  footer a{color:var(--muted)}
 
   @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
     .rule{animation:none;width:min(18rem,80%)}
     .btn{transition:none}
   }
@@ -136,7 +139,7 @@
 </head>
 <body>
 
-<header class="hero wrap">
+<header class="hero">
   <span class="bsd">בס"ד</span>
   <img class="portrait" src="gilad.jpg" alt="גילעד רחמים אביעד בחלוק לבן, מחזיק תינוק לפני ברית" width="600" height="600">
   <h1>גִּילְעָד רַחֲמִים הַמּוֹהֵל</h1>
@@ -154,26 +157,122 @@
   </div>
 </header>
 
+<nav class="jump" aria-label="קפיצה לחלקי העמוד">
+  <a href="#story">עליי</a>
+  <a href="#path">הדרך לברית</a>
+  <a href="#services">מה תקבלו</a>
+  <a href="#honors">הכיבודים</a>
+  <a href="#prepare">מה להכין</a>
+  <a href="#faq">שאלות</a>
+  <a href="#contact">יצירת קשר</a>
+</nav>
+
 <main class="wrap">
-  <section aria-labelledby="story">
-    <h2 id="story">על הברית ועליי</h2>
-    <p class="lead">למדתי את מלאכת המילה כדי למול בעצמי את בני הבכור, יצחק. מאז כל ברית היא בשבילי לא רק מצווה, אלא רגע של אמונה, שירה ושמחה גדולה.</p>
-    <p>אני מגיע אל המשפחה לפני הברית, נשאר איתה אחריה, ומלווה עד שהתינוק מחלים לגמרי. הברית עצמה נעשית ביראת שמיים, בקור רוח ובדייקנות, ומלווה בשירים ופיוטים לפי המנהג שלכם.</p>
+
+  <section class="verse" aria-label="פתיחה">
+    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+      <path d="M18 10h28c0 14-4 22-14 24-10-2-14-10-14-24Z"/>
+      <path d="M21 17c4 2 18 2 22 0"/>
+      <path d="M32 34v16"/>
+      <path d="M22 54c2-3 18-3 20 0"/>
+      <path d="M22 54h20"/>
+    </svg>
+    <blockquote>וּבַיּוֹם הַשְּׁמִינִי יִמּוֹל בְּשַׂר עָרְלָתוֹ</blockquote>
+    <cite>ויקרא יב, ג</cite>
+    <p>שמונה ימים של ציפייה, של לילות ערים ושל אושר שקשה לתאר במילים. ואז מגיע הבוקר שבו התינוק שלכם נכנס בבריתו של אברהם אבינו, והמשפחה כולה עומדת סביבו. זה רגע שזוכרים לכל החיים, ומגיע לו שיהיה מדויק, רגוע ושמח.</p>
   </section>
 
-  <section aria-labelledby="services">
-    <h2 id="services">מה תקבלו</h2>
+  <section id="story" aria-labelledby="story-h">
+    <h2 id="story-h">על הברית ועליי</h2>
+    <p class="lead">למדתי את מלאכת המילה כדי למול בעצמי את בני הבכור, יצחק. מאז כל ברית היא בשבילי לא רק מצווה, אלא רגע של אמונה, שירה ושמחה גדולה.</p>
+    <p>אני יודע מבפנים מה עובר על אבא ואמא בימים האלה, כי עמדתי שם בעצמי. לכן אני לא רק מגיע לברית. אני מכיר אתכם לפניה, מסביר כל שלב, ונשאר איתכם אחריה עד שהתינוק מחלים לגמרי.</p>
+    <p>הברית עצמה נעשית ביראת שמיים, בקור רוח ובידיים בטוחות, ומלווה בשירים ובפיוטים לפי המנהג של המשפחה שלכם.</p>
+  </section>
+
+  <section id="path" aria-labelledby="path-h">
+    <h2 id="path-h">הדרך לברית, צעד אחרי צעד</h2>
+    <ol class="path">
+      <li><h3>שיחת היכרות</h3><p>מדברים בטלפון או בווטסאפ, שומעים על המשפחה, על המנהגים ועל המקום, וקובעים יחד את הפרטים.</p></li>
+      <li><h3>ביקור בית לפני הברית</h3><p>אני מגיע אליכם, פוגש את התינוק, מסביר מה יקרה ועונה על כל שאלה, כדי שתגיעו לבוקר הברית רגועים.</p></li>
+      <li><h3>ברית יצחק</h3><p>בערב שלפני הברית, למי שרוצה: לימוד תורה, תהילים ושירה סביב התינוק.</p></li>
+      <li><h3>יום הברית</h3><p>ברית מדויקת ושקטה, עם שירים ופיוטים שמרוממים את הרגע ומכניסים את כל הקהל לשמחה.</p></li>
+      <li><h3>ביקור אחרי הברית</h3><p>חוזר אליכם לבדוק את התינוק ולהוריד את התחבושת.</p></li>
+      <li><h3>ליווי עד ההחלמה</h3><p>זמין לכם לכל שאלה, עד שהכול מאחוריכם.</p></li>
+    </ol>
+  </section>
+
+  <section id="services" aria-labelledby="services-h">
+    <h2 id="services-h">מה תקבלו</h2>
     <ul class="services">
       <li><div><strong>מוהל ירא שמיים, מומחה ומוסמך</strong><span>כולל הכשרה רפואית</span></div></li>
-      <li><div><strong>ביקור בית לפני הברית ואחריה</strong><span>בודקים את התינוק, מסבירים ועונים על כל שאלה</span></div></li>
+      <li><div><strong>ביקור בית לפני הברית ואחריה</strong><span>הכרות, הסבר ובדיקה של התינוק</span></div></li>
       <li><div><strong>ליווי אישי ומקצועי עד ההחלמה</strong><span>זמין לכם לאורך כל התקופה</span></div></li>
-      <li><div><strong>שיעור תורה לברית יצחק</strong><span>בערב שלפני הברית, למי שרוצה</span></div></li>
+      <li><div><strong>שיעור תורה לברית יצחק</strong><span>בערב שלפני הברית</span></div></li>
       <li><div><strong>שירים ופיוטים</strong><span>על פי המנהגים השונים</span></div></li>
     </ul>
   </section>
 
-  <section aria-labelledby="cert">
-    <h2 id="cert">הסמכה</h2>
+  <section id="honors" aria-labelledby="honors-h">
+    <h2 id="honors-h">הכיבודים בברית</h2>
+    <p class="note" style="margin-bottom:1.5rem">בברית יש כמה תפקידים של כבוד. כדאי לחשוב מראש למי לתת אותם. אשמח לעזור לכם לסדר את זה לפי המנהג שלכם.</p>
+    <div class="honors">
+      <div class="honor">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="24" cy="14" r="6"/><path d="M12 42c0-9 5-15 12-15s12 6 12 15"/><path d="M17 33c3 2 11 2 14 0"/></svg>
+        <div><h3>סנדק</h3><p>הכיבוד הגדול ביותר. הסנדק מחזיק את התינוק על ברכיו בזמן המילה. לרוב נותנים אותו לסבא או לרב.</p></div>
+      </div>
+      <div class="honor">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M14 8v16h20V8"/><path d="M14 14h20"/><path d="M12 24h24v6H12z"/><path d="M14 30v12M34 30v12"/></svg>
+        <div><h3>כיסא של אליהו</h3><p>לפי המסורת, אליהו הנביא נוכח בכל ברית. מניחים את התינוק לרגע על כיסא מיוחד שמוקדש לו.</p></div>
+      </div>
+      <div class="honor">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="17" cy="14" r="5"/><circle cx="31" cy="14" r="5"/><path d="M8 40c0-8 4-13 9-13s9 5 9 13"/><path d="M22 40c0-8 4-13 9-13s9 5 9 13"/></svg>
+        <div><h3>קוואטר וקוואטרין</h3><p>בני זוג שמכניסים את התינוק לחדר ומעבירים אותו מיד ליד. בהרבה משפחות זה הכיבוד לזוג שמחכה לילדים.</p></div>
+      </div>
+      <div class="honor">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M15 8h18c0 9-3 14-9 16-6-2-9-7-9-16Z"/><path d="M24 24v12"/><path d="M17 40h14"/></svg>
+        <div><h3>הברכות וקריאת השם</h3><p>אחרי המילה מברכים על כוס יין ומכריזים לראשונה על שם התינוק. כאן נאמר הפסוק "וָאֹמַר לָךְ בְּדָמַיִךְ חֲיִי" (יחזקאל טז, ו).</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="prepare" aria-labelledby="prepare-h">
+    <h2 id="prepare-h">מה כדאי להכין</h2>
+    <ul class="checklist">
+      <li>להחליט על המקום והשעה, ולעדכן אותי מוקדם ככל האפשר</li>
+      <li>רשימת כיבודים: סנדק, קוואטר וקוואטרין, ומי מברך</li>
+      <li>יין או מיץ ענבים וכוס לברכה</li>
+      <li>פינה מוארת ושקטה, עם שולחן קטן לציוד</li>
+      <li>חיתולים ובגדים נוחים לתינוק ליום הברית</li>
+    </ul>
+    <p class="note" style="margin-top:1.25rem">בביקור לפני הברית אעבור איתכם על הכול, ואשאיר לכם הוראות מסודרות להמשך.</p>
+  </section>
+
+  <section id="faq" aria-labelledby="faq-h">
+    <h2 id="faq-h">שאלות שהורים שואלים</h2>
+    <details>
+      <summary>מתי עושים את הברית?</summary>
+      <p>ביום השמיני ללידה. תינוק שנולד ביום שני, למשל, נימול ביום שני של השבוע שאחריו. לידה אחרי השקיעה נחשבת ליום הבא. בשיחה הראשונה נחשב יחד את התאריך המדויק.</p>
+    </details>
+    <details>
+      <summary>ומה אם התינוק לא מוכן ביום השמיני?</summary>
+      <p>הבריאות של התינוק קודמת לכל. בביקור לפני הברית אני בודק אותו, ואם יש צהבת או כל סיבה אחרת, דוחים את הברית עד שהוא מוכן לגמרי.</p>
+    </details>
+    <details>
+      <summary>אפשר לעשות ברית בשבת?</summary>
+      <p>כשהיום השמיני חל בשבת, ברית בזמנה נעשית גם בשבת. יש מקרים שבהם היא נדחית, למשל אחרי לידה בניתוח קיסרי. נבדוק יחד מה נכון אצלכם.</p>
+    </details>
+    <details>
+      <summary>כמה זמן לוקחת ההחלמה?</summary>
+      <p>בדרך כלל כמה ימים. אני חוזר אליכם אחרי הברית, ונשאר זמין לכל שאלה עד שהכול מאחוריכם.</p>
+    </details>
+    <details>
+      <summary>אתם מגיעים גם למקום שלנו?</summary>
+      <p>כן. הברית יכולה להיות בבית, בבית כנסת, באולם או במסעדה. ספרו לי איפה אתם, ונתאם.</p>
+    </details>
+  </section>
+
+  <section id="cert" aria-labelledby="cert-h">
+    <h2 id="cert-h">הסמכה</h2>
     <div class="cert">
       <div class="seal" aria-hidden="true">ב</div>
       <div>
@@ -184,9 +283,10 @@
   </section>
 </main>
 
-<section class="contact" aria-labelledby="contact">
+<section id="contact" class="contact" aria-labelledby="contact-h">
   <div class="wrap">
-    <h2 id="contact">לברית מיוחדת ומלאת שמחה</h2>
+    <h2 id="contact-h">לברית מיוחדת ומלאת שמחה</h2>
+    <p>מזל טוב! כתבו לי עוד היום, ונתחיל להתכונן יחד.</p>
     <a class="phone" href="tel:+972584049049">058-4049049</a>
     <div class="actions">
       <a class="btn btn-wa" href="https://wa.me/972584049049?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%92%D7%99%D7%9C%D7%A2%D7%93%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A4%D7%A8%D7%98%D7%99%D7%9D%20%D7%A2%D7%9C%20%D7%91%D7%A8%D7%99%D7%AA%20%D7%9E%D7%99%D7%9C%D7%94">שליחת הודעה בווטסאפ</a>
