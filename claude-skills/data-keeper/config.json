@@ -1,0 +1,6 @@
+{
+  "log_dir": "",
+  "backup_target": "",
+  "backup_keep": 14,
+  "reinject_chars": 9000
+}

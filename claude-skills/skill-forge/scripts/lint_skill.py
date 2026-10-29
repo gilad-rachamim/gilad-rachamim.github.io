@@ -5,6 +5,7 @@
   python -I lint_skill.py --all                           lint every skill under the root
   python -I lint_skill.py --list                          every skill with its description
   python -I lint_skill.py --similar "<draft text>"        rank skills by overlap with a draft
+  python -I lint_skill.py --budget                        what the skill listing costs per session
 
 Options:
   --root DIR   skills root (default: $CLAUDE_CONFIG_DIR/skills, else ~/.claude/skills)
@@ -155,6 +156,13 @@ def phrases(text):
     return {p.strip().lower() for p in re.findall(r"'([^'\n]{3,60})'", text) if not p.strip().startswith(',')}
 
 
+def est_tokens(text):
+    """Rough token estimate: Hebrew ~2 chars/token, Latin ~4, the rest ~3."""
+    heb = len(HEB.findall(text))
+    latin = len(re.findall(r'[A-Za-z]', text))
+    return int(heb / 2 + latin / 4 + (len(text) - heb - latin) / 3)
+
+
 def overlap(a, b):
     if not a or not b:
         return 0.0
@@ -271,6 +279,7 @@ def main():
     ap.add_argument('--all', action='store_true', help='lint every skill under the root')
     ap.add_argument('--list', action='store_true', help='list skills with descriptions')
     ap.add_argument('--similar', metavar='TEXT', help='rank skills by overlap with a draft')
+    ap.add_argument('--budget', action='store_true', help='token cost of the skill listing')
     ap.add_argument('--out', help='also write the report to this file (UTF-8)')
     args = ap.parse_args()
     try:
@@ -287,6 +296,23 @@ def main():
         for sk in skills:
             d = re.sub(r'\s+', ' ', trigger_text(sk)).strip()
             say('- %s (%d lines): %s' % (sk['folder'], len(sk['text'].splitlines()), d[:160] + ('...' if len(d) > 160 else '')))
+    elif args.budget:
+        rows = []
+        for sk in all_skills(root):
+            fm = sk.get('fm') or {}
+            listed = str(fm.get('disable-model-invocation', '')).strip().lower() != 'true'
+            t = trigger_text(sk)[:1536]
+            rows.append((est_tokens(t) if listed else 0, len(t), sk['folder'], listed))
+        shown = [r for r in rows if r[3]]
+        say('Skill listing: %d skills, %d listed, ~%d chars, ~%d tokens loaded at every session start' % (
+            len(rows), len(shown), sum(r[1] for r in shown), sum(r[0] for r in shown)))
+        say('Biggest descriptions - shorten the rarely used ones first, or set disable-model-invocation: true '
+            'on manual-only skills (they leave the listing):')
+        for tok, n, folder, _ in sorted(shown, reverse=True)[:12]:
+            say('  ~%5d tokens  %5d chars  %s' % (tok, n, folder))
+        hidden = [r[2] for r in rows if not r[3]]
+        if hidden:
+            say('Not in the listing (manual only): ' + ', '.join(hidden))
     elif args.similar:
         draft_t, draft_p = tokens(args.similar), phrases(args.similar)
         rows = []

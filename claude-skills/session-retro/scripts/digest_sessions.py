@@ -5,6 +5,9 @@
         every local Claude Code session (~/.claude/projects/*/*.jsonl) touched today
   python -I digest_sessions.py FILE [FILE ...] --out digest.md
         given transcripts (.jsonl) or saved list_events results (claude-code-remote dumps)
+  python -I digest_sessions.py --days 30 --json      the last 30 days (e.g. for a skill audit)
+  ... --to-log    also copy Gilad's messages into the data-keeper log (~/.claude/user-log),
+                  skipping ones already there - backfills old sessions and phone/cloud ones
 
 A digest keeps what a retro needs: every user message (the gold), corrections, skills used,
 actions repeated by hand, errors, tool counts, and the last assistant words.
@@ -79,7 +82,7 @@ def hhmm(ts):
 
 class Session:
     def __init__(self, label):
-        self.label, self.title, self.cwd = label, '', ''
+        self.label, self.title, self.cwd, self.src = label, '', '', 'transcript'
         self.first = self.last = None
         self.user, self.assistant = [], []
         self.tools, self.sigs, self.errors, self.skills = {}, {}, [], []
@@ -155,6 +158,23 @@ def read_jsonl(path):
     return s
 
 
+def find_sid(node, depth=0):
+    if isinstance(node, dict) and depth < 8:
+        val = node.get('session_id')
+        if isinstance(val, str) and val:
+            return val
+        for v in node.values():
+            found = find_sid(v, depth + 1)
+            if found:
+                return found
+    elif isinstance(node, list) and depth < 8:
+        for v in node[:50]:
+            found = find_sid(v, depth + 1)
+            if found:
+                return found
+    return None
+
+
 def find_events(obj):
     """The list of events inside a list_events result, whatever the wrapper."""
     if isinstance(obj, list):
@@ -201,8 +221,10 @@ def read_dump(path):
             obj = json.loads(text[text.find('{'):text.rfind('}') + 1])
         except ValueError:
             return None
-    s = Session(os.path.basename(path))
-    for ev in sorted(find_events(obj), key=lambda e: str(e.get('created_at', '')) if isinstance(e, dict) else ''):
+    events = find_events(obj)
+    s = Session(find_sid(events) or os.path.splitext(os.path.basename(path))[0])
+    s.src = 'cloud'
+    for ev in sorted(events, key=lambda e: str(e.get('created_at', '')) if isinstance(e, dict) else ''):
         if not isinstance(ev, dict):
             continue
         found = find_message(ev)
@@ -255,12 +277,65 @@ def render(s, idx, max_user, user_chars):
     return '\n'.join(out)
 
 
-def today_files(projects, since):
+def local_time(ts):
+    try:
+        return dt.datetime.fromisoformat(str(ts).replace('Z', '+00:00')).astimezone()
+    except ValueError:
+        return None
+
+
+def log_root(base):
+    try:
+        with open(os.path.join(base, 'skills', 'data-keeper', 'config.json'), encoding='utf-8') as f:
+            custom = json.load(f).get('log_dir')
+    except Exception:
+        custom = None
+    return os.path.expanduser(custom) if custom else os.path.join(base, 'user-log')
+
+
+def to_log(sessions, root):
+    """Append each session's user messages to <root>/<local date>/<session>.jsonl, skipping
+    a message whose text is already there within 2 minutes (the hook may have logged it)."""
+    new = old = 0
+    for s in sessions:
+        safe = re.sub(r'[^A-Za-z0-9_.-]', '_', s.label)[:80]
+        cache = {}
+        for ts, text in s.user:
+            when = local_time(ts)
+            if not when or text == '(context was compacted)':
+                continue
+            path = os.path.join(root, when.strftime('%Y-%m-%d'), safe + '.jsonl')
+            if path not in cache:
+                cache[path] = []
+                if os.path.isfile(path):
+                    with open(path, encoding='utf-8', errors='replace') as f:
+                        for line in f:
+                            try:
+                                rec = json.loads(line)
+                                cache[path].append((rec.get('text'), local_time(rec.get('t'))))
+                            except (ValueError, AttributeError):
+                                continue
+            if any(t == text and w and abs((w - when).total_seconds()) <= 120 for t, w in cache[path]):
+                old += 1
+                continue
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            rec = {'t': when.isoformat(timespec='seconds'), 'sid': s.label, 'cwd': s.cwd,
+                   'title': s.title, 'text': text, 'src': s.src}
+            with open(path, 'a', encoding='utf-8') as f:
+                f.write(json.dumps(rec, ensure_ascii=False) + '\n')
+            cache[path].append((text, when))
+            new += 1
+    return new, old
+
+
+def today_files(projects, since, days=None):
     now = dt.datetime.now()
     start = now.replace(hour=0, minute=0, second=0, microsecond=0)
     if since:
         h, m = (int(x) for x in since.split(':'))
         start = start.replace(hour=h, minute=m)
+    if days:
+        start = start - dt.timedelta(days=days - 1)
     cut = start.timestamp()
     files = [p for p in glob.glob(os.path.join(projects, '*', '*.jsonl')) if os.path.getmtime(p) >= cut]
     return sorted(files, key=os.path.getmtime)
@@ -271,6 +346,8 @@ def main():
     ap.add_argument('files', nargs='*', help='.jsonl transcripts or saved list_events results')
     ap.add_argument('--today', action='store_true', help='all local sessions touched today')
     ap.add_argument('--since', help='with --today: start time HH:MM instead of 00:00')
+    ap.add_argument('--days', type=int, help='all local sessions touched in the last N days')
+    ap.add_argument('--to-log', action='store_true', help="also copy Gilad's messages into the data-keeper log")
     ap.add_argument('--projects', help='Claude projects folder (default ~/.claude/projects)')
     ap.add_argument('--exclude', action='append', default=[], help='session id to skip (repeatable)')
     ap.add_argument('--max-user', type=int, default=60)
@@ -284,8 +361,8 @@ def main():
         pass
     base = os.environ.get('CLAUDE_CONFIG_DIR') or os.path.join(os.path.expanduser('~'), '.claude')
     files = list(args.files)
-    if args.today:
-        files += today_files(args.projects or os.path.join(base, 'projects'), args.since)
+    if args.today or args.days:
+        files += today_files(args.projects or os.path.join(base, 'projects'), args.since, args.days)
     if not files:
         ap.print_usage(sys.stderr)
         return 2
@@ -300,6 +377,9 @@ def main():
             continue
         if s and (s.user or s.tools):
             sessions.append(s)
+    if args.to_log:
+        new, old = to_log(sessions, log_root(base))
+        sys.stderr.write('to-log: %d new message(s) written, %d already in the log\n' % (new, old))
     if args.json:
         text = json.dumps([{
             'id': s.label, 'title': s.title, 'cwd': s.cwd, 'first': s.first, 'last': s.last,

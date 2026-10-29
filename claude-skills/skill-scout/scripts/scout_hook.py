@@ -229,9 +229,9 @@ def main():
     debug = '--debug' in sys.argv
     dry_run = '--dry-run' in sys.argv
     try:
+        raw = sys.stdin.buffer.read().decode('utf-8', 'replace') if not sys.stdin.isatty() else ''
         if os.path.exists(os.path.join(SKILL_DIR, 'OFF')) or os.environ.get('SKILL_SCOUT', '').lower() == 'off':
             return 0
-        raw = sys.stdin.buffer.read().decode('utf-8', 'replace') if not sys.stdin.isatty() else ''
         data = json.loads(raw) if raw.strip() else {}
         if not isinstance(data, dict):
             data = {}

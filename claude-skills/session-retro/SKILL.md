@@ -69,6 +69,7 @@ Score each skill candidate 1-3 on **R**ecurrence, **T**ime/tokens saved per use 
 | Item | Route |
 |---|---|
 | memory / correction | save now |
+| a fact or preference that holds everywhere (any folder, any project) | one line in `~/.claude/CLAUDE.md` too - the project memory loads only in its own folder |
 | upgrade of an existing skill | edit now - skill-forge quick mode (lint after) |
 | new skill, effort S | build now - skill-forge quick mode |
 | new skill, effort M/L - or this session is long / low on context | brief now (`briefs/<slug>.md`, skill-forge template) -> 🔨 -> propose a build session (skill-scout, "When Gilad answers", step 3) |
@@ -103,10 +104,12 @@ one** session today.
    - PC (cheapest and complete):
      `python -I ~/.claude/skills/session-retro/scripts/digest_sessions.py --today --out <scratchpad>/day-digest.md`
      then Read that file. Verify: the header line counts the sessions you expect.
-   - Phone / cloud / Remote Control sessions, when the tools exist:
-     `mcp__claude-code-remote__list_sessions` (mine) -> `list_events` (kinds
-     `["user","assistant"]`, limit 100). A large result is saved to a file -> run
-     `digest_sessions.py <that file>` on it instead of reading the raw JSON.
+   - Phone / cloud sessions, when the tools exist: `mcp__claude-code-remote__list_sessions`
+     (mine) -> `list_events` (kinds `["user","assistant"]`, limit 100). A large result is saved
+     to a file -> run `digest_sessions.py <that file> --to-log` on it instead of reading the raw
+     JSON; `--to-log` also copies his phone messages into the data-keeper log, so recall and
+     the fact sweep cover them. Use `--to-log` only for `anthropic_cloud` sessions - `bridge`
+     (Remote Control) sessions run on the PC and are logged there already.
    - Not reachable (e.g. claude.ai project chats on the phone) -> say so in one line.
 2. **Many sessions (more than 4 digests)** -> fan out: one subagent per 2-3 digests, each
    returns at most 10 findings (bucket, evidence with session + time, suggested route).
@@ -119,8 +122,15 @@ one** session today.
    - 💡 offers from today with no answer -> re-score; still good -> keep 💡 (the backlog note brings them back);
    - skills built or used for the first time today -> did they work (first-run watch)? Fix them.
 4. **Route and save** per §3-§4.
-5. **Stamp** `Last day review: <YYYY-MM-DD HH:MM>` in the header of `skill-seeds.md`.
-6. **Report** (§7), adding the top 1-3 improvements for tomorrow.
+5. **Facts of the day:** `python -I ~/.claude/skills/data-keeper/scripts/fact_sweep.py --today --check <memory folders> <project folders> --out <scratchpad>/facts.md`
+   -> every NOT FOUND fact and decision gets saved in its right place (data-keeper, "Fact sweep").
+6. **Monthly skill audit** (on the 1st of the month, or when Gilad says "בדיקת סקילים"):
+   `lint_skill.py --all --budget` (errors, duplicates, what the listing costs per session) and
+   `digest_sessions.py --days 30 --json` (which skills really ran). Unused for 30 days -> ask
+   whether to retire it (move to `~/.claude/skills-archive/`), merge it, or sharpen its
+   description; the biggest descriptions of rarely used skills get shortened.
+7. **Stamp** `Last day review: <YYYY-MM-DD HH:MM>` in the header of `skill-seeds.md`.
+8. **Report** (§7), adding the top 1-3 improvements for tomorrow.
 
 ## 7. Output (Hebrew, short - Gilad often reads on the phone)
 | # | סוג | מה | למה זה עוזר | מה נעשה |
@@ -140,6 +150,7 @@ At most ~8 rows in chat; the rest goes to the journal and the pipeline.
 - Never a duplicate skill or memory - update beats create.
 - Big builds go to a fresh session with a complete brief - never a rushed build at the end of a long session.
 - Raw transcripts never go into context: digest them first.
+- Every fact Gilad gave lands somewhere real - the data-keeper fact sweep proves it.
 - Talk Hebrew, keep it short.
 
 ## Pitfalls (tested 2026-10-29)
@@ -149,4 +160,5 @@ At most ~8 rows in chat; the rest goes to the journal and the pipeline.
 ## Files
 - `skill-seeds.md` - the pipeline (header = statuses + templates; entries below the marker).
 - `briefs/` - one brief per 🔨 item, read by `/skill-forge <slug>`.
-- `scripts/digest_sessions.py` - session digests (`--today`, files, `--json`, `--out`).
+- `scripts/digest_sessions.py` - session digests (`--today`, `--days N`, files, `--json`,
+  `--out`; `--to-log` copies his messages into the data-keeper log, skipping duplicates).

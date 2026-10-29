@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
-"""Add (or remove) the skill-scout UserPromptSubmit hook in ~/.claude/settings.json - safely.
+"""Add (or remove) the upgrade's hooks in ~/.claude/settings.json - safely.
 
   python -I merge_settings.py --dry-run      show what would change, write nothing
   python -I merge_settings.py                apply (a backup is written first)
-  python -I merge_settings.py --remove       take the hook out again
-  python -I merge_settings.py --shell-form   write a shell command instead of exec form
+  python -I merge_settings.py --remove       take our hooks out again
+  python -I merge_settings.py --only log scout compact   limit to some of them
+  python -I merge_settings.py --shell-form   write shell commands instead of exec form
                                              (only if Claude Code reports a hook error)
 
-Idempotent: a second run adds nothing. Never rewrites a settings file it cannot parse.
-The hook runs with the same Python that runs this script.
+Hooks: log (data-keeper/log_prompt.py, UserPromptSubmit), scout (skill-scout/scout_hook.py,
+UserPromptSubmit), compact (data-keeper/after_compact.py, SessionStart matcher "compact").
+A hook is added only when its skill folder is installed. Idempotent: a second run adds
+nothing. Never rewrites a settings file it cannot parse. The hooks run with the same Python
+that runs this script.
 """
 import argparse
 import json
@@ -17,18 +21,22 @@ import shutil
 import sys
 import time
 
-MARK = 'scout_hook.py'
+HOOKS = [  # name, event, matcher, skill folder, script
+    ('log', 'UserPromptSubmit', None, 'data-keeper', 'log_prompt.py'),
+    ('scout', 'UserPromptSubmit', None, 'skill-scout', 'scout_hook.py'),
+    ('compact', 'SessionStart', 'compact', 'data-keeper', 'after_compact.py'),
+]
 
 
 def config_dir():
     return os.environ.get('CLAUDE_CONFIG_DIR') or os.path.join(os.path.expanduser('~'), '.claude')
 
 
-def is_scout(hook):
+def mentions(hook, script):
     if not isinstance(hook, dict):
         return False
     parts = [str(hook.get('command', ''))] + [str(a) for a in hook.get('args', []) or []]
-    return any(MARK in p for p in parts)
+    return any(script in p for p in parts)
 
 
 def build_entry(python, script, shell_form):
@@ -41,10 +49,11 @@ def build_entry(python, script, shell_form):
 
 
 def main():
-    ap = argparse.ArgumentParser(description='Install the skill-scout hook into settings.json.')
+    ap = argparse.ArgumentParser(description="Install the upgrade's hooks into settings.json.")
     ap.add_argument('--dry-run', action='store_true')
     ap.add_argument('--remove', action='store_true')
     ap.add_argument('--shell-form', action='store_true')
+    ap.add_argument('--only', nargs='+', choices=[h[0] for h in HOOKS])
     args = ap.parse_args()
     try:
         sys.stdout.reconfigure(encoding='utf-8', errors='replace')
@@ -53,14 +62,10 @@ def main():
 
     cdir = config_dir()
     settings_path = os.path.join(cdir, 'settings.json')
-    script = os.path.join(cdir, 'skills', 'skill-scout', 'scripts', MARK)
     python = sys.executable or 'python'
-    if not args.remove and not os.path.isfile(script):
-        print('ERROR: %s not found - copy the skill-scout folder first.' % script)
-        return 1
+    wanted = [h for h in HOOKS if not args.only or h[0] in args.only]
 
     settings = {}
-    raw = ''
     if os.path.isfile(settings_path):
         with open(settings_path, encoding='utf-8-sig') as f:
             raw = f.read()
@@ -73,51 +78,62 @@ def main():
         if not isinstance(settings, dict):
             print('ERROR: %s is not a JSON object. Nothing changed.' % settings_path)
             return 1
-
-    hooks = settings.get('hooks')
-    if hooks is not None and not isinstance(hooks, dict):
+    hooks = settings.get('hooks', {})
+    if not isinstance(hooks, dict):
         print("ERROR: 'hooks' in settings.json is not an object. Nothing changed.")
         return 1
-    groups = (hooks or {}).get('UserPromptSubmit', [])
-    if not isinstance(groups, list):
-        print("ERROR: 'hooks.UserPromptSubmit' is not a list. Nothing changed.")
-        return 1
-    found = any(is_scout(h) for g in groups if isinstance(g, dict) for h in g.get('hooks', []) or [])
+    hooks = json.loads(json.dumps(hooks))  # work on a copy
+    for _, event, _, _, _ in wanted:
+        if not isinstance(hooks.get(event, []), list):
+            print("ERROR: 'hooks.%s' is not a list. Nothing changed." % event)
+            return 1
 
-    if args.remove:
-        if not found:
-            print('Nothing to remove - the skill-scout hook is not in %s.' % settings_path)
-            return 0
-        new_groups = []
-        for g in groups:
-            if isinstance(g, dict) and isinstance(g.get('hooks'), list):
-                kept = [h for h in g['hooks'] if not is_scout(h)]
-                if kept:
-                    new_groups.append(dict(g, hooks=kept))
+    changes = []
+    for name, event, matcher, skill, script in wanted:
+        groups = hooks.get(event, [])
+        present = any(mentions(h, script) for g in groups if isinstance(g, dict) for h in g.get('hooks', []) or [])
+        if args.remove:
+            if not present:
+                continue
+            kept_groups = []
+            for g in groups:
+                if isinstance(g, dict) and isinstance(g.get('hooks'), list):
+                    kept = [h for h in g['hooks'] if not mentions(h, script)]
+                    if kept:
+                        kept_groups.append(dict(g, hooks=kept))
+                else:
+                    kept_groups.append(g)
+            if kept_groups:
+                hooks[event] = kept_groups
             else:
-                new_groups.append(g)
-        action = 'remove the skill-scout hook'
-    else:
-        if found:
-            print('Already installed - the skill-scout hook is in %s. Nothing changed.' % settings_path)
-            return 0
-        new_groups = groups + [{'hooks': [build_entry(python, script, args.shell_form)]}]
-        action = 'add the skill-scout hook'
+                hooks.pop(event, None)
+            changes.append('remove %s (%s)' % (name, script))
+        else:
+            path = os.path.join(cdir, 'skills', skill, 'scripts', script)
+            if present:
+                print('Already installed: %s' % name)
+                continue
+            if not os.path.isfile(path):
+                print('Skipped %s: %s is not installed' % (name, path))
+                continue
+            group = {'hooks': [build_entry(python, path, args.shell_form)]}
+            if matcher:
+                group = dict(matcher=matcher, **group)
+            hooks.setdefault(event, []).append(group)
+            changes.append('add %s -> %s%s' % (name, event, (' (%s)' % matcher) if matcher else ''))
 
+    if not changes:
+        print('Nothing to change in %s.' % settings_path)
+        return 0
     new_settings = dict(settings)
-    new_hooks = dict(hooks or {})
-    if new_groups:
-        new_hooks['UserPromptSubmit'] = new_groups
-    else:
-        new_hooks.pop('UserPromptSubmit', None)
-    if new_hooks:
-        new_settings['hooks'] = new_hooks
+    if hooks:
+        new_settings['hooks'] = hooks
     else:
         new_settings.pop('hooks', None)
-    text = json.dumps(new_settings, indent=2, ensure_ascii=False) + '\n'
-
-    print('Will %s in %s:' % (action, settings_path))
-    print(json.dumps({'hooks': {'UserPromptSubmit': new_groups}}, indent=2, ensure_ascii=False))
+    print('Will change %s:' % settings_path)
+    for c in changes:
+        print('  - ' + c)
+    print(json.dumps({'hooks': hooks}, indent=2, ensure_ascii=False))
     if args.dry_run:
         print('(dry run - nothing written)')
         return 0
@@ -128,8 +144,9 @@ def main():
         print('Backup: %s' % backup)
     tmp = settings_path + '.tmp'
     with open(tmp, 'w', encoding='utf-8', newline='\n') as f:
-        f.write(text)
-    json.loads(open(tmp, encoding='utf-8').read())  # re-read before replacing
+        f.write(json.dumps(new_settings, indent=2, ensure_ascii=False) + '\n')
+    with open(tmp, encoding='utf-8') as f:
+        json.load(f)  # re-read before replacing
     os.replace(tmp, settings_path)
     print('Done.')
     return 0

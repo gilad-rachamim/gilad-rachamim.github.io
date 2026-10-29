@@ -60,6 +60,8 @@ Tune it in `config.json`; switch it off with a file named `OFF` in this folder.
      - No such tool (phone / cloud) -> give him the opener to paste in a new PC session:
        `/skill-forge <slug>`.
      - Verify: the card was created (the tool answers with a proposal id) or the opener was shown.
+     - Usage tight (he said so, or `claude-usage` shows 80%+ of the session or week)? Say the
+       card can wait for the reset time - a fresh build uses a lot of usage.
   4. Go straight back to the current work.
 - **"תבנה עכשיו"** -> skill-forge **quick** mode right here, then use the new skill for the
   remaining items. If it outgrows quick mode -> brief + build session as above.

@@ -1,6 +1,6 @@
 ---
 name: end-session
-description: "End-of-session close-out routine - the agreed command to wrap up a work session correctly and losslessly: external-changes check, primer, journal, changelog, version, verified push, registry, memory, then a retro that turns the session's lessons into professionally built skills (small ones now via skill-forge, big ones as a brief + a proposed build session) and, at the day's close, the end-of-day sweep over all of today's sessions. TRIGGER when the user types /end-session or says: 'סוף סשן', 'סגירת סשן', 'תעשה סגירת סשן', 'תסגור את הסשן', 'סיימנו', 'נסיים פה', 'סיימנו להיום', 'end session', 'wrap up', 'close the session'. Quick, time-boxed mode: '/end-session quick', 'סוף סשן מהיר', or when a battery / usage guard calls it. User-invoked only - never mid-task. NOT a mid-session summary (work-summary, session-journal) and NOT a standalone retro (session-retro)."
+description: "End-of-session close-out routine - the agreed command to wrap up a work session correctly and losslessly: external-changes check, primer, journal, changelog, version, verified push, registry, memory, then a retro that turns the session's lessons into professionally built skills (small ones now via skill-forge, big ones as a brief + a proposed build session) and, at the day's close, the end-of-day sweep over all of today's sessions. TRIGGER when the user types /end-session or says: 'סוף סשן', 'סגירת סשן', 'תעשה סגירת סשן', 'תסגור את הסשן', 'סיימנו', 'נסיים פה', 'סיימנו להיום', 'end session', 'wrap up', 'close the session'. Quick, time-boxed mode: '/end-session quick', 'סוף סשן מהיר', or when a battery / usage guard calls it; '/end-session recover' closes a session that died. User-invoked only - never mid-task. NOT a mid-session summary (work-summary, session-journal) and NOT a standalone retro (session-retro)."
 argument-hint: "[quick] [notes for the close-out]"
 ---
 
@@ -26,8 +26,12 @@ the phone, and a long close-out is hard to read there (29.10.2026).
 - **full** (default) - every step below.
 - **quick** - time-boxed (`/end-session quick`, "סוף סשן מהיר", or called because battery
   or usage is critical). Capture everything, build nothing: run Steps 1, 2, 3 (state +
-  Next Steps only), 6, 8 and 9 in *capture* mode (seeds, 💡 ideas and briefs are saved;
-  builds go to a build session). Skip 4, 5, 7 and 10. Say at the top that it was a quick close.
+  Next Steps only), 6, 6b, 8, 8b and 9 in *capture* mode (seeds, 💡 ideas and briefs are
+  saved; builds go to a build session). Data first: Step 8b is never skipped here. Skip 4, 5, 7 and 10. Say at the top that it was a quick close.
+- **recover** - `/end-session recover`, or the PC/app died mid-session (battery, crash): close
+  THAT session from its records - its transcript digest
+  (`python -I ~/.claude/skills/session-retro/scripts/digest_sessions.py <its .jsonl>`) and its
+  data-keeper log - running every step for it, so the next session continues as if nothing happened.
 
 ---
 
@@ -78,7 +82,9 @@ A **concise snapshot**, not a copy of the journal:
 - **Current focus** (1-2 lines).
 - **This session:** 3-6 bullets - done / state / next / blockers.
 - **Opener for the next session:** the one line Gilad can paste into a new session to
-  continue (e.g. `נמשיך עם אנשי הקשר - קרא את primer.md`).
+  continue (e.g. `נמשיך עם אנשי הקשר - קרא את primer.md`). In the Claude desktop app also
+  propose it as a card (ToolSearch `select:mcp__ccd_session__start_session`, the opener as
+  its prompt) - tomorrow he continues with one click. Nothing runs until he starts it.
 - **Link** to the journal entry from Step 3 instead of repeating its detail.
 
 ### Step 3 - Session journal (full detail)
@@ -92,6 +98,10 @@ Key Decisions (with the WHY), Files Changed, Notes.
 *anything the user mentioned or that was planned but not finished*, and make sure each
 item appears there. This section is tomorrow's todo list - nothing planned may
 silently drop.
+
+**Promise sweep:** every promise Claude made in the session ("אזכיר לך", "אבדוק אם עבד",
+"בפעם הבאה אעדכן") needs a mechanism that will really fire - a scheduled task / reminder, a
+memory, or a Next Steps line. A promise with no mechanism is a dropped promise: add one now.
 
 ### Step 4 - CHANGELOG (user-visible changes)
 File: `<project>/CHANGELOG.md`, under `[Unreleased]`, grouped as Added / Changed /
@@ -153,6 +163,12 @@ project with no remote exists in exactly one physical place.
    runtime code, say plainly whether the deploy ran. A pushed commit is not a
    deployed one.
 
+### Step 6b - Back up ~/.claude (when a backup folder is set)
+Skills, memory and the data-keeper log live outside every project and outside git. If
+`backup_target` is set in `~/.claude/skills/data-keeper/config.json`, run
+`python -I ~/.claude/skills/data-keeper/scripts/backup.py` and check it ends with "Done.".
+Not set: skip - and, once, offer Gilad to pick a folder (e.g. in his personal OneDrive).
+
 ### Step 7 - Projects registry (OPTIONAL)
 Only if the user keeps a central projects registry / work log file (for example a
 `PROJECTS.md` in its own repo). Otherwise skip.
@@ -172,6 +188,14 @@ preference the user stated, a mistake to avoid, a workflow that worked):
   fact per file) and a one-line pointer in its `MEMORY.md` index.
 - Check for an existing file that already covers it - update rather than duplicate.
 - Nothing new behaviorally: skip.
+
+### Step 8b - Fact sweep: every data point Gilad gave is stored
+Gilad: "כל נתון שאני אומר הוא קריטי". Run the data-keeper sweep on this session:
+`python -I ~/.claude/skills/data-keeper/scripts/fact_sweep.py --latest --check <project memory folder> <project folder> --out <scratchpad>/facts.md`
+Read the report; save every NOT FOUND fact and every decision sentence in its right place
+(memory / primer / journal / project file / a reminder for a future date - with his OK);
+never copy listed secrets into files. Skip only for a session with no messages from him.
+Recover mode: `--session <id>` instead of `--latest`.
 
 ### Step 9 - Retro: lessons -> skills, built the professional way
 Run the `session-retro` skill in **final** mode (quick close: **capture** mode) on the
@@ -209,7 +233,9 @@ together in ONE line** - then a 1-2 sentence summary. About 12 lines at most:
 2. Primer ............... עודכן
 3. יומן ................. נכתב: <journal/YYYY-MM-DD.md>
 6. Push ................. commit+push אומת ✓
+6b. גיבוי ............... בוצע ✓ / אין תיקיית גיבוי
 8. זיכרון ............... נשמר: <slug> / אין חדש
+8b. נתונים .............. N נבדקו, M נשמרו עכשיו, 0 חסרים
 9. סקילים ............... נבנו: <names> · בריף + שיחה מוצעת: <names> · זרעים: <n>
 10. סוף יום ............. בוצע: <N> שיחות, <M> שיפורים / הוצע
 לא רלוונטי: <step numbers> (<reason, 3-5 words>)
@@ -240,4 +266,6 @@ goes to the journal.
 - **Skills are built through skill-forge** - never written ad hoc at the end of a session.
 - **No offered idea stays open** - every 💡 from this session ends with a status.
 - **A quick close captures and never builds** - and still loses nothing (briefs + seeds).
+- **Zero missing data** - every fact Gilad gave is stored somewhere real (Step 8b), and every
+  promise Claude made has a mechanism (Step 3).
 - **Short final message** - the details live in the journal, not in the chat.
