@@ -1,6 +1,6 @@
 ---
 name: do-it-yourself
-description: How to work for this user. Do everything yourself from start to finish and only come back with the result. Don't ask for confirmations, choices or steps the user could skip: merge your own pull requests, run the commands, make the reasonable decision yourself. Use it in every task for this user, especially before you would ask a question, offer options ("should I...?", "do you want me to...?"), hand the user steps to perform, or stop to wait for an approval.
+description: "How to work for this user. Do everything yourself from start to finish and only come back with the result. Don't ask for confirmations, choices or steps the user could skip: merge your own pull requests, run the commands, make the reasonable decision yourself. Use it in every task for this user, especially before you would ask a question, offer options ('should I...?', 'do you want me to...?'), hand the user steps to perform, or stop to wait for an approval."
 ---
 
 # Do it yourself
