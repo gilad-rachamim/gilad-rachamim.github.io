@@ -49,13 +49,16 @@ Run at end-session (Step 8b) and in session-retro day mode:
    memory or project files - ask Gilad where they belong.
 5. Report one line: `נתונים: N נבדקו, M נשמרו עכשיו, 0 חסרים`.
 
-## Backup - off until Gilad picks a folder
+## Backup - to Gilad's personal OneDrive
 `python -I ~/.claude/skills/data-keeper/scripts/backup.py [--dry-run]` copies what cannot be
 rebuilt - skills, every memory folder, the user log, plans, CLAUDE.md, settings.json - into
-`<target>/claude-backup/YYYY-MM-DD/` and keeps the newest 14 days. The target is
-`backup_target` in `config.json` (best: a folder in his personal OneDrive, which syncs to the
-cloud). end-session runs it when a target is set. Transcripts are large: `--with-transcripts`
-only if he wants them too. Verify: it prints the item list and "Done.".
+`<target>/Claude-backup/YYYY-MM-DD/` and keeps the newest 14 days. Gilad chose (29.10.2026):
+his **personal** OneDrive, never the college one - `config.json` says `onedrive-personal`,
+which the script resolves on every run (OneDriveConsumer) and refuses any "OneDrive - <org>"
+folder. end-session runs it at every close (Step 6b). Transcripts are large:
+`--with-transcripts` only if he wants them too. Verify: it prints the folder and "Done.";
+"Backup skipped: no personal OneDrive" -> tell him (is OneDrive signed in with his personal
+account?) and, with his OK, set another folder in `backup_target`.
 
 ## Recover a session that died (battery, crash, frozen app)
 1. Find it: `python -I ~/.claude/skills/session-retro/scripts/digest_sessions.py --today --out <scratchpad>/day.md`

@@ -164,10 +164,11 @@ project with no remote exists in exactly one physical place.
    deployed one.
 
 ### Step 6b - Back up ~/.claude (when a backup folder is set)
-Skills, memory and the data-keeper log live outside every project and outside git. If
-`backup_target` is set in `~/.claude/skills/data-keeper/config.json`, run
+Skills, memory and the data-keeper log live outside every project and outside git. Gilad
+chose (29.10.2026) a daily copy to his personal OneDrive (`backup_target: onedrive-personal`
+in `~/.claude/skills/data-keeper/config.json`). Run
 `python -I ~/.claude/skills/data-keeper/scripts/backup.py` and check it ends with "Done.".
-Not set: skip - and, once, offer Gilad to pick a folder (e.g. in his personal OneDrive).
+"Backup skipped" -> say why in the summary line. Target empty -> skip.
 
 ### Step 7 - Projects registry (OPTIONAL)
 Only if the user keeps a central projects registry / work log file (for example a

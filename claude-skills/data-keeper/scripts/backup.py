@@ -4,9 +4,11 @@
   python -I backup.py [--target "<folder>"] [--keep 14] [--with-transcripts] [--dry-run]
 
 The target defaults to `backup_target` in data-keeper/config.json (empty = backup is off).
+`onedrive-personal` means the personal OneDrive folder (OneDriveConsumer), found again on
+every run - never the work/college "OneDrive - <organization>" one.
 Copies skills/, every projects/*/memory/, user-log/, plans/, CLAUDE.md and settings.json into
-<target>/claude-backup/YYYY-MM-DD/ (a second run on the same day refreshes it), then deletes
-dated snapshots beyond the newest --keep. Never touches anything outside <target>/claude-backup.
+<target>/Claude-backup/YYYY-MM-DD/ (a second run on the same day refreshes it), then deletes
+dated snapshots beyond the newest --keep. Never touches anything outside <target>/Claude-backup.
 """
 import argparse
 import datetime as dt
@@ -33,6 +35,21 @@ def config():
         return cfg if isinstance(cfg, dict) else {}
     except Exception:
         return {}
+
+
+def personal_onedrive():
+    """The personal OneDrive folder, or None. Work/school folders are named 'OneDrive - <org>'."""
+    work_env = os.environ.get('OneDriveCommercial')
+    work = os.path.normcase(os.path.abspath(work_env)) if work_env else None
+    for cand in (os.environ.get('OneDriveConsumer'), os.environ.get('OneDrive'),
+                 os.path.join(os.path.expanduser('~'), 'OneDrive')):
+        if not cand or not os.path.isdir(cand):
+            continue
+        path = os.path.abspath(cand)
+        if (work and os.path.normcase(path) == work) or ' - ' in os.path.basename(path):
+            continue
+        return path
+    return None
 
 
 def ignore(_, names):
@@ -74,8 +91,14 @@ def main():
     if not target:
         print('Backup is off - no target. Set backup_target in data-keeper/config.json or pass --target.')
         return 0
+    if target == 'onedrive-personal':
+        target = personal_onedrive()
+        if not target:
+            print('Backup skipped: no personal OneDrive folder on this computer (is OneDrive signed in '
+                  'with the personal account?). The work/college OneDrive is never used.')
+            return 0
     cdir = os.path.abspath(claude_dir())
-    base = os.path.abspath(os.path.join(target, 'claude-backup'))
+    base = os.path.abspath(os.path.join(target, 'Claude-backup'))
     if base == cdir or base.startswith(cdir + os.sep):
         print('ERROR: the backup folder must be outside %s' % cdir)
         return 1

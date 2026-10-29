@@ -109,9 +109,12 @@ It prints `to-log: N new message(s) written`. Running it twice adds nothing.
    A hook error -> `merge_settings.py --remove`, then again with `--shell-form`.
 
 ## 10. Finish
-- Ask Gilad once where backups should go (best: a folder in his personal OneDrive, which syncs
-  to the cloud). With his answer, set `backup_target` in `SK/data-keeper/config.json` and run
-  `python -I SK/data-keeper/scripts/backup.py` -> "Done.".
+- Backup is decided (Gilad, 29.10.2026): his personal OneDrive, never the college one -
+  `SK/data-keeper/config.json` already says `onedrive-personal`. Run
+  `python -I SK/data-keeper/scripts/backup.py --dry-run` and check the folder it shows is his
+  personal OneDrive (not "OneDrive - <organization>"), then run it without `--dry-run` -> "Done.".
+  Tell him the folder `Claude-backup` now appears in his OneDrive (also in the OneDrive app on
+  his phone). "Backup skipped: no personal OneDrive" -> tell him; with his OK pick another folder.
 - Memory `new-skills-first-run.md`: add skill-forge, skill-scout, data-keeper and the day
   mode - tell Gilad how each one did on its first real run.
 - Pipeline: add the history entry `## skills-upgrade-2026-10-29 - ✅ נבנה (skill-forge, skill-scout, data-keeper)`.
