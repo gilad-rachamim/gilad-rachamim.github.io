@@ -28,6 +28,12 @@ that picks it up without redoing or breaking anything.
 Run the guard script as `python3 "${CLAUDE_SKILL_DIR}/scripts/guard.py" <command>`; on Windows use
 `python` (or `py`) instead of `python3`. Commands below are written as `guard.py <command>`.
 
+**Language.** Everything the guard shows is in Hebrew: its pause messages, the status line, its
+command output and the notes it writes (setting `language`, default `he`; `en` switches to
+English). The user who set this up reads Hebrew and wants to follow what is happening, so talk to
+them in Hebrew and write handoffs and lessons in Hebrew, unless they write to you in another
+language.
+
 Arguments given to the skill: `$ARGUMENTS`. Pick the matching section; with no argument, run
 `guard.py status` and explain it.
 
@@ -122,8 +128,9 @@ generic advice like "test more carefully".
 5. When the work is finished, run `guard.py complete <id>`. If another pause comes first, the
    guard asks you to update this same handoff file, so the task keeps one record.
 
-A saved request (title "Saved request: ...") is a prompt the user typed while work was paused. Do
-what it asks; if it refers to earlier context, read the earlier conversation file it names.
+A saved request (title "בקשה שנשמרה: ..." or "Saved request: ...") is a prompt the user typed while
+work was paused. Do what it asks; if it refers to earlier context, read the earlier conversation
+file it names.
 
 **`/session-guard resume` without an id**: run `guard.py list --cwd .`. If one handoff fits what
 the user wants, continue it here as above; if several do, ask which. `guard.py launch <id>` starts

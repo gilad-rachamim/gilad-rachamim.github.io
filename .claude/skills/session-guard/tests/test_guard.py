@@ -109,6 +109,7 @@ class Readings(GuardCase):
 
         srv = http.server.HTTPServer(("127.0.0.1", 0), Fake)
         threading.Thread(target=srv.serve_forever, daemon=True).start()
+        self.addCleanup(srv.server_close)
         self.addCleanup(srv.shutdown)
         for k in ("no_proxy", "NO_PROXY"):
             os.environ[k] = "127.0.0.1,localhost"
@@ -377,6 +378,50 @@ class HookFlow(GuardCase):
         p = subprocess.run([sys.executable, str(guard.SCRIPT), "--home", str(self.home), "hook"],
                            input="garbage", capture_output=True, text=True)
         self.assertEqual((p.returncode, p.stdout), (0, ""))
+
+
+class Hebrew(GuardCase):
+    """Everything the user sees is in Hebrew with the default language."""
+
+    def setUp(self):
+        super().setUp()
+        guard.write_json(guard.CONFIG_FILE, {"resume": {"mode": "dry-run"}})  # language defaults to he
+
+    def test_pause_cycle_in_hebrew(self):
+        self.sim(battery=4)
+        reason = self.pre()["hookSpecificOutput"]["permissionDecisionReason"]
+        self.assertIn("עוצרים עכשיו", reason)
+        self.assertIn("סוללת המחשב 4%", reason)
+        self.assertIn("## הפקת לקחים", reason)
+        path = Path(self.state()["sessions"][SID]["path"])
+        edit = self.pre(tool="Edit", tin={"file_path": str(self.project / "a.html")})
+        self.assertIn("לא לערוך", edit["hookSpecificOutput"]["permissionDecisionReason"])
+        path.write_text("# דף צור קשר\n\n## הצעדים הבאים\n1. כפתור שליחה\n\n## הפקת לקחים\n- הטופס צריך dir=rtl\n")
+        self.hook("Stop", stop_hook_active=False)
+        self.assertIn("הטופס צריך dir=rtl", guard.read_text(guard.LESSONS_FILE))
+        self.assertIn("עצר את השיחה הזאת", self.pre()["stopReason"])
+        blocked = self.hook("UserPromptSubmit", prompt="תוסיף גם תמונה", source="user")
+        self.assertIn("ההודעה נשמרה", blocked["reason"])
+        self.sim(battery=60)
+        with redirect_stdout(io.StringIO()):
+            guard.cmd_tick(None)
+        text = path.read_text()
+        self.assertIn("## נוסף בזמן העצירה", text)
+        self.assertIn("תוסיף גם תמונה", text)
+
+    def test_auto_handoff_and_status_line_in_hebrew(self):
+        self.sim(usage=97)
+        self.hook("Stop", stop_hook_active=False)
+        self.hook("Stop", stop_hook_active=True)
+        rec = next(iter(guard.load_index()["records"].values()))
+        self.assertIn("מסמך העברה אוטומטי", Path(rec["file"]).read_text())
+        seg = guard.status_segment(guard.load_config(), {}, self.t)
+        self.assertTrue(seg.startswith("⏸ מושהה: מכסת 5 השעות 97%"), seg)
+        out = io.StringIO()
+        with redirect_stdout(out):
+            guard.cmd_status(type("A", (), {"json": False})())
+        self.assertIn("מושהה", out.getvalue())
+        self.assertIn("עבודות פתוחות: 1", out.getvalue())
 
 
 class StatusLine(GuardCase):

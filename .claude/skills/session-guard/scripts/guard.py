@@ -269,15 +269,21 @@ def fmt_time(ts: float, lang: str = "en") -> str:
     return time.strftime("%Y-%m-%d %H:%M", lt)
 
 
-def fmt_ago(seconds: float) -> str:
+def lang_of(cfg: dict) -> str:
+    """Language of everything the user sees (and of the notes Claude is asked to write)."""
+    return "en" if cfg.get("language") == "en" else "he"
+
+
+def fmt_ago(seconds: float, lang: str = "en") -> str:
     s = int(max(0, seconds))
+    he = lang == "he"
     if s < 90:
-        return f"{s}s"
+        return f"{s} שנ׳" if he else f"{s}s"
     if s < 5400:
-        return f"{s // 60}m"
+        return f"{s // 60} דק׳" if he else f"{s // 60}m"
     if s < 172800:
-        return f"{s // 3600}h{(s % 3600) // 60:02d}m"
-    return f"{s // 86400}d"
+        return f"{s // 3600} שע׳ {(s % 3600) // 60} דק׳" if he else f"{s // 3600}h{(s % 3600) // 60:02d}m"
+    return f"{s // 86400} ימים" if he else f"{s // 86400}d"
 
 
 def reason_text(key: str, r: dict, cfg: dict, lang: str = "en") -> tuple:
@@ -301,15 +307,16 @@ def reason_text(key: str, r: dict, cfg: dict, lang: str = "en") -> tuple:
         return why, (f"אחרי איפוס המכסה ({at})" if he else f"after the usage resets ({at})")
     if key == "usage_limit":
         at = fmt_time(float(r.get("retry_at") or 0), lang)
-        return (("הגעת למגבלת השימוש", f"בניסיון חוזר ב-{at}") if he else
+        return (("מכסת השימוש נגמרה", f"בניסיון חוזר ב-{at}") if he else
                 ("usage limit reached", f"with a retry at {at}"))
     if key == "manual":
-        return (("עצירה ידנית", "כשתריץ /session-guard resume") if he else
+        return (("עצירה ידנית", "אחרי הרצת /session-guard resume") if he else
                 ("manual pause", "when you run /session-guard resume"))
     return key, ""
 
 
-def summarize(state: dict, cfg: dict, lang: str = "en") -> tuple:
+def summarize(state: dict, cfg: dict, lang: str = "") -> tuple:
+    lang = lang or lang_of(cfg)
     whys, untils = [], []
     for key, r in sorted((state.get("reasons") or {}).items()):
         why, until = reason_text(key, r, cfg, lang)
@@ -623,18 +630,21 @@ def apply_mode(state: dict, t: float) -> bool:
 def checkpoint_keys(cfg: dict, rd: dict, t: float) -> list:
     """Early warnings: (key, label) pairs; each session is asked once per key to save
     a checkpoint handoff, so a hard stop later still leaves notes behind."""
-    out = []
+    out, he = [], lang_of(cfg) == "he"
     bc, b = cfg["battery"], rd.get("battery")
     if (bc.get("enabled") and b and b.get("percent") is not None and not b.get("on_ac")
             and bc["pause_at"] < b["percent"] <= bc.get("checkpoint_at", 0)):
         out.append(("battery@" + time.strftime("%Y%m%d", time.localtime(t)),
+                    f"סוללת המחשב {b['percent']}% (העבודה נעצרת ב-{bc['pause_at']}%)" if he else
                     f"laptop battery {b['percent']}% (Claude work pauses at {bc['pause_at']}%)"))
     uc = cfg["usage"]
     if uc.get("enabled") and uc.get("checkpoint_at"):
         for w, r in sorted((rd.get("usage") or {}).items()):
             if uc["checkpoint_at"] <= r["used"] < uc["pause_at"]:
+                name = ("מכסת 5 השעות" if w == "five_hour" else "המכסה השבועית") if he else f"{WINDOW_LABEL[w]} usage"
                 out.append((f"{w}@{int(r['resets_at'])}",
-                            f"{WINDOW_LABEL[w]} usage {r['used']:.0f}% (Claude work pauses at {uc['pause_at']}%)"))
+                            f"{name} {r['used']:.0f}% (העבודה נעצרת ב-{uc['pause_at']}%)" if he else
+                            f"{name} {r['used']:.0f}% (Claude work pauses at {uc['pause_at']}%)"))
     return out
 
 
@@ -817,34 +827,53 @@ def git_summary(cwd: str) -> str:
     return "\n".join(lines)
 
 
-def write_auto_handoff(path: Path, sess: dict, data: dict, why: str, t: float) -> None:
+def write_auto_handoff(path: Path, sess: dict, data: dict, why: str, t: float, lang: str = "en") -> None:
     """Fallback when a session stopped before writing its own handoff."""
+    he = lang == "he"
     cwd = sess.get("cwd") or data.get("cwd") or ""
     transcript = sess.get("transcript") or data.get("transcript_path") or ""
     user, assistant = transcript_tail(transcript)
     assistant = data.get("last_assistant_message") or assistant
     stamp = time.strftime("%Y-%m-%d %H:%M", time.localtime(t))
+    unknown = "(לא ידוע)" if he else "(unknown)"
     path.parent.mkdir(parents=True, exist_ok=True)
     if path.exists():  # keep the session's own checkpoint and add what happened since
         with open(path, "a", encoding="utf-8") as f:
-            f.write(f"\n\n## Automatic note ({stamp})\nSession Guard stopped this session ({why}) "
-                    f"before it updated this handoff, so it may be behind.\n"
-                    f"- Full conversation: {transcript or '(unknown)'}\n"
-                    f"- Claude's last message:\n\n{assistant or '(not found)'}\n")
+            if he:
+                f.write(f"\n\n## הערה אוטומטית ({stamp})\nSession Guard עצר את השיחה ({why}) לפני "
+                        f"שהמסמך הזה עודכן, אז ייתכן שהוא קצת מאחור.\n"
+                        f"- השיחה המלאה: {transcript or unknown}\n"
+                        f"- ההודעה האחרונה של Claude:\n\n{assistant or '(לא נמצאה)'}\n")
+            else:
+                f.write(f"\n\n## Automatic note ({stamp})\nSession Guard stopped this session ({why}) "
+                        f"before it updated this handoff, so it may be behind.\n"
+                        f"- Full conversation: {transcript or unknown}\n"
+                        f"- Claude's last message:\n\n{assistant or '(not found)'}\n")
         return
     git = git_summary(cwd)
-    path.write_text("\n".join([
-        f"# {project_slug(cwd)}: unfinished work (automatic handoff)",
-        f"> Written by Session Guard on {stamp}: the session stopped ({why}) before writing its own handoff.",
-        f"> Folder: {cwd}",
-        f"> Full conversation: {transcript or '(unknown)'}",
-        "", "## Goal: the user's last request", user or "(not found; read the end of the conversation)",
-        "", "## Where it stopped: Claude's last message", assistant or "(not found)",
-        "", "## Uncommitted changes", f"```\n{git}\n```" if git else "(no git repository, or no changes)",
-        "", "## Next steps",
-        "1. Read the end of the conversation file above to recover the context.",
-        "2. Check the current state of the files, then carry on with the user's request.", ""]),
-        encoding="utf-8")
+    gitblock = f"```\n{git}\n```" if git else ("(אין מאגר git, או שאין שינויים)" if he else
+                                                "(no git repository, or no changes)")
+    if he:
+        lines = [f"# {project_slug(cwd)}: עבודה שלא הסתיימה (מסמך העברה אוטומטי)",
+                 f"> נכתב אוטומטית על ידי Session Guard ב-{stamp}: השיחה נעצרה ({why}) לפני שכתבה מסמך העברה בעצמה.",
+                 f"> תיקייה: {cwd}", f"> השיחה המלאה: {transcript or unknown}",
+                 "", "## מטרה: הבקשה האחרונה", user or "(לא נמצאה; לקרוא את סוף השיחה)",
+                 "", "## איפה זה נעצר: ההודעה האחרונה של Claude", assistant or "(לא נמצאה)",
+                 "", "## שינויים שלא נשמרו ב-git", gitblock,
+                 "", "## הצעדים הבאים",
+                 "1. לקרוא את סוף קובץ השיחה שלמעלה כדי להבין את ההקשר.",
+                 "2. לבדוק את מצב הקבצים, ואז להמשיך בבקשה.", ""]
+    else:
+        lines = [f"# {project_slug(cwd)}: unfinished work (automatic handoff)",
+                 f"> Written by Session Guard on {stamp}: the session stopped ({why}) before writing its own handoff.",
+                 f"> Folder: {cwd}", f"> Full conversation: {transcript or unknown}",
+                 "", "## Goal: the user's last request", user or "(not found; read the end of the conversation)",
+                 "", "## Where it stopped: Claude's last message", assistant or "(not found)",
+                 "", "## Uncommitted changes", gitblock,
+                 "", "## Next steps",
+                 "1. Read the end of the conversation file above to recover the context.",
+                 "2. Check the current state of the files, then carry on with the user's request.", ""]
+    path.write_text("\n".join(lines), encoding="utf-8")
 
 
 def finalize_session(cfg: dict, state: dict, sid: str, sess: dict, data: dict, t: float) -> dict:
@@ -852,7 +881,7 @@ def finalize_session(cfg: dict, state: dict, sid: str, sess: dict, data: dict, t
     path = Path(sess["path"])
     fresh = path.exists() and path.stat().st_mtime >= float(sess.get("asked_at", t)) - 2
     if not fresh:
-        write_auto_handoff(path, sess, data, sess.get("why", "paused"), t)
+        write_auto_handoff(path, sess, data, sess.get("why", "paused"), t, lang_of(cfg))
     rec = register_handoff(path, t, session_id=sid, cwd=sess.get("cwd", ""),
                            transcript=sess.get("transcript", ""), episode=sess.get("episode"),
                            auto=not fresh, why=sess.get("why", ""))
@@ -863,25 +892,39 @@ def finalize_session(cfg: dict, state: dict, sid: str, sess: dict, data: dict, t
 
 
 def save_request(state: dict, sid: str, cwd: str, prompt: str, transcript: str, t: float,
-                 why: str) -> dict:
+                 why: str, lang: str = "en") -> dict:
     """A prompt submitted during a pause, kept as a small handoff so it runs later."""
     HANDOFF_DIR.mkdir(parents=True, exist_ok=True)
     stamp = time.strftime("%Y%m%d-%H%M%S", time.localtime(t))
     path = HANDOFF_DIR / f"{stamp}-{project_slug(cwd)}-request-{sid[:6]}.md"
     first = " ".join(prompt.split())[:60]
-    path.write_text("\n".join([
-        f"# Saved request: {first}",
-        f"> Typed by the user on {time.strftime('%Y-%m-%d %H:%M', time.localtime(t))} while Claude work was paused ({why}).",
-        f"> Folder: {cwd}",
-        f"> Earlier conversation: {transcript or '(unknown)'} (session {sid})",
-        "", "## The user's message", prompt.strip(),
-        "", "## Next steps",
-        "1. If the message refers to earlier context (\"this\", \"the button\", \"continue\"), "
-        "read the end of the earlier conversation file first.",
-        "2. Do what the user asked.", ""]), encoding="utf-8")
-    return register_handoff(path, t, session_id=sid, cwd=cwd, transcript=transcript,
-                            episode=(state.get("episode") or {}).get("id"), kind="request",
-                            status="pending", why=why)
+    when = time.strftime("%Y-%m-%d %H:%M", time.localtime(t))
+    if lang == "he":
+        lines = [f"# בקשה שנשמרה: {first}",
+                 f"> נכתבה ב-{when} בזמן שהעבודה של Claude הייתה מושהית ({why}).",
+                 f"> תיקייה: {cwd}", f"> השיחה הקודמת: {transcript or '(לא ידוע)'} (session {sid})",
+                 "", "## ההודעה", prompt.strip(),
+                 "", "## הצעדים הבאים",
+                 "1. אם ההודעה מתייחסת להקשר קודם (\"זה\", \"הכפתור\", \"תמשיך\"), לקרוא קודם את סוף "
+                 "קובץ השיחה הקודמת.",
+                 "2. לבצע את הבקשה.", ""]
+    else:
+        lines = [f"# Saved request: {first}",
+                 f"> Typed by the user on {when} while Claude work was paused ({why}).",
+                 f"> Folder: {cwd}", f"> Earlier conversation: {transcript or '(unknown)'} (session {sid})",
+                 "", "## The user's message", prompt.strip(),
+                 "", "## Next steps",
+                 "1. If the message refers to earlier context (\"this\", \"the button\", \"continue\"), "
+                 "read the end of the earlier conversation file first.",
+                 "2. Do what the user asked.", ""]
+    path.write_text("\n".join(lines), encoding="utf-8")
+    rec = register_handoff(path, t, session_id=sid, cwd=cwd, transcript=transcript,
+                           episode=(state.get("episode") or {}).get("id"), kind="request",
+                           status="pending", why=why)
+    idx = load_index()
+    idx["records"][rec["id"]]["prompt"] = prompt.strip()[:4000]
+    save_index(idx)
+    return idx["records"][rec["id"]]
 
 
 def find_record(idx: dict, ref: str):
@@ -902,6 +945,26 @@ def pending_for_cwd(cwd: str) -> list:
 
 def pause_instructions(cfg: dict, state: dict, path: Path) -> str:
     why, until = summarize(state, cfg)
+    if lang_of(cfg) == "he":
+        return f"""⏸ Session Guard: עוצרים עכשיו ({why}).
+Session Guard הוגדר לעצור את כל העבודה של Claude בצורה מסודרת כשזה קורה. שיחה חדשה תמשיך אוטומטית ({until}) מתוך מסמך ההעברה שייכתב עכשיו.
+
+לא להמשיך במשימה ולא לנסות שוב את הכלי שנחסם. במקום זה:
+1. לכתוב מסמך העברה ממה שכבר ידוע (בלי פקודות חדשות, אלא אם זה הכרחי), בקובץ:
+   {path}
+   הסעיפים, בעברית:
+     # <כותרת קצרה של המשימה>
+     ## מטרה: הבקשה המקורית, מצוטטת כלשונה
+     ## מה נעשה עד עכשיו
+     ## איפה עצרתי: הנקודה המדויקת, ומה נשאר באמצע
+     ## הצעדים הבאים: ממוספרים וקונקרטיים, כך ששיחה חדשה תוכל להתחיל מצעד 1
+     ## הקשר חשוב: קבצים, פקודות, החלטות ולמה, מלכודות
+     ## שאלות פתוחות
+     ## הפקת לקחים: מה כדאי שהשיחות הבאות בפרויקט הזה ידעו או יעשו אחרת (או "אין")
+   אם לא נשאר שום דבר פתוח, מספיקה שורה אחת: NOTHING PENDING: <מה הושלם>
+2. לא לשנות קוד עכשיו. לרשום במסמך אילו קבצים לא נשמרו ב-git; commit רק אם המשימה כבר כללה commits.
+3. לכתוב למשתמש בעברית משפט או שניים: שהעבודה נעצרה, למה, ושהיא תמשיך לבד. ואז לסיים את התור.
+(פירוט: הסעיף "Pause" בקובץ {SKILL_DIR / 'SKILL.md'})"""
     return f"""⏸ SESSION GUARD: PAUSE NOW ({why}).
 The user set up Session Guard to stop all Claude work in an orderly way when this happens. A fresh session will continue automatically ({until}) from the handoff you write now.
 
@@ -925,24 +988,48 @@ Don't continue the task and don't retry the blocked tool. Instead:
 
 def subagent_instructions(cfg: dict, state: dict) -> str:
     why, _ = summarize(state, cfg)
+    if lang_of(cfg) == "he":
+        return (f"⏸ Session Guard: השיחה נעצרת ({why}). לעצור עכשיו בלי להפעיל עוד כלים, ולהחזיר "
+                "לסוכן הראשי סיכום קצר: מה נעשה ומה נשאר.")
     return (f"⏸ SESSION GUARD: the session is pausing ({why}). Stop now and don't call more tools. "
             "Reply to the main agent with a short summary of what you did and what is left.")
 
 
+def no_edits_message(cfg: dict, state: dict, path: str) -> str:
+    why, _ = summarize(state, cfg)
+    if lang_of(cfg) == "he":
+        return (f"⏸ Session Guard: עצירה ({why}). לא לערוך עכשיו קבצים של הפרויקט. לכתוב את מסמך "
+                f"ההעברה ב-{path} ואז לסיים את התור.")
+    return (f"⏸ Session Guard: paused ({why}). Don't edit project files now. Write the handoff at "
+            f"{path}, then end your turn.")
+
+
 def stop_reason(cfg: dict, state: dict) -> str:
     why, until = summarize(state, cfg)
+    if lang_of(cfg) == "he":
+        return (f"⏸ Session Guard עצר את השיחה הזאת ({why}). העבודה תמשיך לבד {until}. "
+                "כדי להמשיך לעבוד עכשיו בכל זאת: /session-guard override")
     return (f"⏸ Session Guard paused this session ({why}). The work continues automatically {until}. "
             "To keep working now: /session-guard override")
 
 
 def blocked_prompt_message(cfg: dict, state: dict, saved: bool) -> str:
     why, until = summarize(state, cfg)
+    if lang_of(cfg) == "he":
+        note = " ההודעה נשמרה ותורץ אוטומטית אז." if saved else ""
+        return (f"⏸ Session Guard: העבודה של Claude מושהית כרגע ({why}). היא תמשיך לבד {until}.{note} "
+                "כדי לעבוד בכל זאת: /session-guard override")
     note = " Your message was saved and will be run then." if saved else ""
     return (f"⏸ Session Guard: Claude work is paused ({why}). It continues automatically {until}.{note} "
             "To work anyway: /session-guard override")
 
 
-def checkpoint_message(label: str, path: Path) -> str:
+def checkpoint_message(cfg: dict, label: str, path: Path) -> str:
+    if lang_of(cfg) == "he":
+        return (f"[session-guard] לתשומת לב: {label}. לפני הצעד הבא, לשמור מסמך העברה קצר כנקודת "
+                f"ביניים בקובץ {path}: מטרה, מה נעשה, איפה עומדים, הצעדים הבאים והקשר חשוב (באותו "
+                "מבנה של מסמך עצירה, בקצרה ובעברית). אחר כך להמשיך במשימה כרגיל; אם תתחיל עצירה, "
+                "תגיע הודעה. אין צורך לספר על זה למשתמש.")
     return (f"[session-guard] Heads-up: {label}. Before your next step, save a short checkpoint "
             f"handoff at {path}: goal, done so far, where you are, next steps, key context (the "
             "pause handoff format, kept brief). Then continue the task normally; you will be told "
@@ -1042,8 +1129,7 @@ def on_pre_tool(cfg, state, rd, data, sid, cwd, t):
                 finalize_session(cfg, state, sid, sess, data, t)
                 return {"continue": False, "stopReason": stop_reason(cfg, state)}, True
             if tool in ("Edit", "Write", "MultiEdit", "NotebookEdit"):  # no half-done edits now
-                return _deny(f"⏸ Session Guard: paused ({summarize(state, cfg)[0]}). Don't edit project "
-                             f"files now. Write the handoff at {sess['path']}, then end your turn."), True
+                return _deny(no_edits_message(cfg, state, sess["path"])), True
             return None, True
         return {"continue": False, "stopReason": stop_reason(cfg, state)}, False
     if data.get("agent_id"):
@@ -1055,7 +1141,7 @@ def on_pre_tool(cfg, state, rd, data, sid, cwd, t):
         done.append(key)
         path = handoff_path_for(state, sid, cwd, t)
         return {"hookSpecificOutput": {"hookEventName": "PreToolUse",
-                                       "additionalContext": checkpoint_message(label, path)}}, True
+                                       "additionalContext": checkpoint_message(cfg, label, path)}}, True
     return None, False
 
 
@@ -1106,7 +1192,7 @@ def on_prompt(cfg, state, rd, data, sid, cwd, t):
     saved = False
     if data.get("source") in (None, "user") and cfg["resume"].get("include_blocked_prompts", True) and prompt.strip():
         why, _ = summarize(state, cfg)
-        save_request(state, sid, cwd, prompt, data.get("transcript_path") or "", t, why)
+        save_request(state, sid, cwd, prompt, data.get("transcript_path") or "", t, why, lang_of(cfg))
         saved = True
     return {"decision": "block", "reason": blocked_prompt_message(cfg, state, saved)}, False
 
@@ -1146,10 +1232,16 @@ def on_stop_failure(cfg, state, rd, data, sid, cwd, t):
     if claimed:  # a resumed session hit the limit
         rec = claimed[0]
         transcript = data.get("transcript_path") or ""
+        stamp = time.strftime("%Y-%m-%d %H:%M", time.localtime(t))
         with open(rec["file"], "a", encoding="utf-8") as f:
-            f.write(f"\n\n## Automatic note ({time.strftime('%Y-%m-%d %H:%M', time.localtime(t))})\n"
-                    f"A session continuing this handoff hit the usage limit. What it did is in "
-                    f"{transcript or 'its conversation'}; check the files before redoing anything.\n")
+            if lang_of(cfg) == "he":
+                f.write(f"\n\n## הערה אוטומטית ({stamp})\nשיחה שהמשיכה את מסמך ההעברה הזה הגיעה למגבלת "
+                        f"השימוש. מה שהיא הספיקה לעשות נמצא ב-{transcript or 'השיחה שלה'}; לבדוק את "
+                        "הקבצים לפני שעושים משהו מחדש.\n")
+            else:
+                f.write(f"\n\n## Automatic note ({stamp})\nA session continuing this handoff hit the usage "
+                        f"limit. What it did is in {transcript or 'its conversation'}; check the files "
+                        "before redoing anything.\n")
         if not keeps_going:  # nobody else will pick it up: back in the queue
             rec.update({"status": "pending", "episode": (state.get("episode") or {}).get("id")})
         rec["updated_at"] = t
@@ -1171,24 +1263,34 @@ def on_stop_failure(cfg, state, rd, data, sid, cwd, t):
 def on_session_start(cfg, state, rd, data, sid, cwd, t):
     if data.get("source") == "compact" or data.get("agent_id"):
         return None, False
-    parts = []
+    parts, lang = [], lang_of(cfg)
+    he = lang == "he"
     if state.get("mode") == "paused" and not override_active(state, t):
         why, until = summarize(state, cfg)
-        parts.append(f"[session-guard] Claude work is paused right now ({why}); it continues "
+        parts.append(f"[session-guard] העבודה של Claude מושהית עכשיו ({why}); היא תמשיך לבד {until}. "
+                     "הודעות חדשות נחסמות, אלא אם מריצים /session-guard override." if he else
+                     f"[session-guard] Claude work is paused right now ({why}); it continues "
                      f"automatically {until}. New prompts are held back unless the user runs "
                      "/session-guard override.")
     recs = pending_for_cwd(cwd)
     if recs:
-        lines = [f"- \"{r.get('title', r['id'])}\" saved {fmt_time(r.get('created_at', t))}"
+        lines = [f"- \"{r.get('title', r['id'])}\" {'נשמר' if he else 'saved'} {fmt_time(r.get('created_at', t), lang)}"
                  f"{' (' + r['why'] + ')' if r.get('why') else ''} -> /session-guard resume {r['id']}"
                  for r in recs[-5:]]
-        parts.append("[session-guard] Unfinished work saved by earlier sessions in this folder:\n"
-                     + "\n".join(lines) + "\nIf the user wants to continue earlier work, or the "
-                     "request matches one of these, run /session-guard resume <id> first (it loads "
-                     "the handoff). Otherwise ignore this note.")
+        if he:
+            parts.append("[session-guard] עבודה שלא הסתיימה, שנשמרה בשיחות קודמות בתיקייה הזאת:\n"
+                         + "\n".join(lines) + "\nאם רוצים להמשיך עבודה קודמת, או שהבקשה מתאימה לאחת "
+                         "מאלה, קודם להריץ /session-guard resume <id> (זה טוען את מסמך ההעברה). "
+                         "אחרת להתעלם מההערה הזאת.")
+        else:
+            parts.append("[session-guard] Unfinished work saved by earlier sessions in this folder:\n"
+                         + "\n".join(lines) + "\nIf the user wants to continue earlier work, or the "
+                         "request matches one of these, run /session-guard resume <id> first (it loads "
+                         "the handoff). Otherwise ignore this note.")
     lessons = project_lessons(cwd)
     if lessons:
-        parts.append("[session-guard] Lessons learned earlier in this project (apply them where relevant):\n"
+        parts.append(("[session-guard] לקחים מהעבר בפרויקט הזה (ליישם כשרלוונטי):\n" if he else
+                      "[session-guard] Lessons learned earlier in this project (apply them where relevant):\n")
                      + "\n".join(f"- {s}" for s in lessons))
     if not parts:
         return None, False
@@ -1251,13 +1353,16 @@ def run_chain(cmd: str, raw: str) -> str:
 
 def status_segment(cfg: dict, data: dict, t: float) -> str:
     st = read_json(STATE_FILE) or {}
+    lang = lang_of(cfg)
+    he = lang == "he"
     if override_active(st, t):
-        return f"⚠ guard override {fmt_ago(float(st['override']['until']) - t)}"
+        left = fmt_ago(float(st["override"]["until"]) - t, lang)
+        return f"⚠ השמירה כבויה עוד {left}" if he else f"⚠ guard override {left}"
     if st.get("mode") == "paused":
-        return f"⏸ paused: {summarize(st, cfg)[0]}"
+        return f"⏸ {'מושהה' if he else 'paused'}: {summarize(st, cfg)[0]}"
     bits = []
     rl = data.get("rate_limits") or {}
-    for w, lab in (("five_hour", "5h"), ("seven_day", "7d")):
+    for w, lab in (("five_hour", "5 שעות" if he else "5h"), ("seven_day", "שבועי" if he else "7d")):
         r = rl.get(w) if isinstance(rl, dict) else None
         if isinstance(r, dict) and isinstance(r.get("used_percentage"), (int, float)):
             bits.append(f"{lab} {r['used_percentage']:.0f}%")
@@ -1432,7 +1537,7 @@ def notice_text(cfg: dict, kind: str, state: dict, extra: str = "") -> tuple:
     return (("Claude ממשיך ▶", extra) if he else ("Claude resumed ▶", extra))
 
 
-def merge_requests(waiting: list) -> list:
+def merge_requests(waiting: list, lang: str = "en") -> list:
     """A prompt typed during the pause into a session that also left a handoff belongs after
     that handoff's steps, in the same new session (two sessions would trip over each other)."""
     handoffs = {r.get("session_id"): r for r in waiting if r.get("kind") != "request" and r.get("session_id")}
@@ -1442,10 +1547,15 @@ def merge_requests(waiting: list) -> list:
         if not target:
             out.append(r)
             continue
-        prompt = read_text(Path(r["file"])).split("## The user's message", 1)[-1].split("## Next steps", 1)[0].strip()
+        prompt = r.get("prompt") or read_text(Path(r["file"]))
+        quoted = "\n".join("> " + ln for ln in prompt.splitlines())
         with open(target["file"], "a", encoding="utf-8") as f:
-            f.write("\n\n## Added while paused\nThe user sent this in the same conversation while work was "
-                    "paused. Do it after the steps above:\n\n" + "\n".join("> " + ln for ln in prompt.splitlines()) + "\n")
+            if lang == "he":
+                f.write("\n\n## נוסף בזמן העצירה\nההודעה הזאת נשלחה באותה שיחה בזמן שהעבודה הייתה "
+                        "מושהית. לבצע אותה אחרי הצעדים שלמעלה:\n\n" + quoted + "\n")
+            else:
+                f.write("\n\n## Added while paused\nThe user sent this in the same conversation while work was "
+                        "paused. Do it after the steps above:\n\n" + quoted + "\n")
         r["status"], r["merged_into"] = "merged", target["id"]
     return out
 
@@ -1476,7 +1586,7 @@ def cmd_tick(args) -> int:
                 waiting = sorted((r for r in idx["records"].values()
                                   if r.get("status") == "pending" and r.get("episode")),
                                  key=lambda r: r.get("created_at", 0))
-                waiting = merge_requests(waiting)
+                waiting = merge_requests(waiting, lang_of(cfg))
                 to_launch = waiting[:max(0, int(cfg["resume"].get("max_sessions", 5)))]
                 for r in to_launch:
                     r["status"] = "resumed"
@@ -1541,8 +1651,21 @@ def cmd_hook(args) -> int:
     return 0
 
 
+STATUS_HE = {"pending": "ממתין", "in_progress": "בעבודה", "resumed": "הופעל מחדש", "done": "הושלם",
+             "dismissed": "בוטל", "checkpoint": "נקודת ביניים", "nothing": "אין מה להמשיך", "merged": "צורף"}
+
+
+def T(cfg: dict, he: str, en: str) -> str:
+    return he if lang_of(cfg) == "he" else en
+
+
+def status_word(cfg: dict, status: str) -> str:
+    return STATUS_HE.get(status, status) if lang_of(cfg) == "he" else status
+
+
 def cmd_status(args) -> int:
     cfg, t = load_config(), now()
+    lang = lang_of(cfg)
     with Lock():
         state, rd = _locked_state(cfg, t)
         sync_index(state, t)
@@ -1551,54 +1674,74 @@ def cmd_status(args) -> int:
         print(json.dumps({"state": state, "readings": rd, "records": idx["records"]}, ensure_ascii=False, indent=2))
         return 0
     paused = state.get("mode") == "paused"
-    head = "PAUSED" if paused else "running"
+    head = T(cfg, "מושהה" if paused else "פועל", "PAUSED" if paused else "running")
     if override_active(state, t):
-        head += f" (override: guard ignored for {fmt_ago(float(state['override']['until']) - t)})"
-    out = [f"Session Guard {VERSION}: {head}" + ("" if cfg.get("enabled", True) else " [disabled in config]")]
+        left = fmt_ago(float(state["override"]["until"]) - t, lang)
+        head += T(cfg, f" (עקיפה: השמירה לא פעילה עוד {left})", f" (override: guard ignored for {left})")
+    out = [f"Session Guard {VERSION}: {head}" +
+           ("" if cfg.get("enabled", True) else T(cfg, " [כבוי בהגדרות]", " [disabled in config]"))]
     if paused:
         why, until = summarize(state, cfg)
-        out += [f"  reason:    {why}", f"  continues: {until}"]
+        out += [T(cfg, f"  סיבה: {why}", f"  reason:    {why}"), T(cfg, f"  ממשיך: {until}", f"  continues: {until}")]
     b, bc = rd.get("battery"), cfg["battery"]
+    limits = T(cfg, f"  · עצירה ב-{bc['pause_at']}%, המשך ב-{bc['resume_at']}%",
+               f"  · pauses at {bc['pause_at']}%, resumes at {bc['resume_at']}%")
     if not bc.get("enabled"):
-        out.append("  laptop battery: not watched")
+        out.append(T(cfg, "  סוללת המחשב: לא במעקב", "  laptop battery: not watched"))
     elif b and b.get("percent") is not None:
-        out.append(f"  laptop battery: {b['percent']}% ({'plugged in' if b.get('on_ac') else 'on battery'})"
-                   f"  · pauses at {bc['pause_at']}%, resumes at {bc['resume_at']}%"
-                   + ("  [simulated]" if "battery" in load_sim(t) else ""))
+        plug = T(cfg, "בטעינה" if b.get("on_ac") else "על סוללה", "plugged in" if b.get("on_ac") else "on battery")
+        sim = T(cfg, "  [הדמיה]", "  [simulated]") if "battery" in load_sim(t) else ""
+        out.append(T(cfg, f"  סוללת המחשב: {b['percent']}% ({plug})", f"  laptop battery: {b['percent']}% ({plug})") + limits + sim)
     else:
-        out.append("  laptop battery: none found (desktop computer?) or not readable right now")
+        out.append(T(cfg, "  סוללת המחשב: לא נמצאה (מחשב נייח?) או שלא ניתן לקרוא אותה כרגע",
+                     "  laptop battery: none found (desktop computer?) or not readable right now"))
     pc, p = cfg["phone"], rd.get("phone")
     if not pc.get("enabled"):
-        out.append("  phone battery: not set up (see references/phone.md)")
+        out.append(T(cfg, "  סוללת הטלפון: לא הוגדרה (ראו references/phone.md)",
+                     "  phone battery: not set up (see references/phone.md)"))
     else:
         ph = read_json(PHONE_FILE, {}) or {}
-        seen = f"{p['percent']}% (reported {fmt_ago(t - float(p.get('at') or t))} ago)" if p else "no report yet"
-        err = f"  [last poll failed: {ph['poll_error']}]" if ph.get("poll_error") else ""
-        out.append(f"  phone battery: {seen}  · pauses at {pc['pause_at']}%, resumes at {pc['resume_at']}%{err}")
+        ago = fmt_ago(t - float(p.get("at") or t), lang) if p else ""
+        seen = (T(cfg, f"{p['percent']}% (דווח לפני {ago})", f"{p['percent']}% (reported {ago} ago)") if p
+                else T(cfg, "עדיין לא התקבל דיווח", "no report yet"))
+        err = T(cfg, f"  [הבדיקה האחרונה נכשלה: {ph['poll_error']}]",
+                f"  [last poll failed: {ph['poll_error']}]") if ph.get("poll_error") else ""
+        out.append(T(cfg, f"  סוללת הטלפון: {seen}  · עצירה ב-{pc['pause_at']}%, המשך ב-{pc['resume_at']}%{err}",
+                     f"  phone battery: {seen}  · pauses at {pc['pause_at']}%, resumes at {pc['resume_at']}%{err}"))
     uc, usage = cfg["usage"], rd.get("usage") or {}
     if not uc.get("enabled"):
-        out.append("  usage: not watched")
+        out.append(T(cfg, "  שימוש: לא במעקב", "  usage: not watched"))
     elif usage:
         for w, r in usage.items():
-            out.append(f"  {WINDOW_LABEL[w]} usage: {r['used']:.0f}% (resets {fmt_time(r['resets_at'])}, "
-                       f"read {fmt_ago(t - r['captured_at'])} ago)  · checkpoint at {uc['checkpoint_at']}%, "
-                       f"pauses at {uc['pause_at']}%")
+            name = T(cfg, "מכסת 5 השעות" if w == "five_hour" else "המכסה השבועית", f"{WINDOW_LABEL[w]} usage")
+            reset, read = fmt_time(r["resets_at"], lang), fmt_ago(t - r["captured_at"], lang)
+            out.append(T(cfg, f"  {name}: {r['used']:.0f}% (מתאפסת {reset}, נקרא לפני {read})  · "
+                              f"נקודת ביניים ב-{uc['checkpoint_at']}%, עצירה ב-{uc['pause_at']}%",
+                         f"  {name}: {r['used']:.0f}% (resets {reset}, read {read} ago)  · "
+                         f"checkpoint at {uc['checkpoint_at']}%, pauses at {uc['pause_at']}%"))
     else:
-        out.append("  usage: no fresh numbers (they come from the Claude Code status line; they appear "
-                   "after the first reply in a session)")
+        out.append(T(cfg, "  שימוש: אין עדיין מספרים עדכניים (הם מגיעים משורת הסטטוס של Claude Code ומופיעים "
+                          "אחרי התשובה הראשונה בשיחה)",
+                     "  usage: no fresh numbers (they come from the Claude Code status line; they appear "
+                     "after the first reply in a session)"))
     last = float(state.get("last_tick") or 0)
-    out.append(f"  watchdog: last run {fmt_ago(t - last)} ago" if last and t - last < 300 else
-               "  watchdog: not running, so nothing resumes by itself (run scripts/install.py)")
+    if last and t - last < 300:
+        out.append(T(cfg, f"  שומר הרקע: רץ לאחרונה לפני {fmt_ago(t - last, lang)}",
+                     f"  watchdog: last run {fmt_ago(t - last)} ago"))
+    else:
+        out.append(T(cfg, "  שומר הרקע: לא פועל, ולכן שום דבר לא ימשיך לבד (להריץ scripts/install.py)",
+                     "  watchdog: not running, so nothing resumes by itself (run scripts/install.py)"))
     recs = sorted((r for r in idx["records"].values() if r.get("status") in OPEN_STATES),
                   key=lambda r: r.get("created_at", 0))
-    out.append(f"  open handoffs: {len(recs)}")
+    out.append(T(cfg, f"  עבודות פתוחות: {len(recs)}", f"  open handoffs: {len(recs)}"))
     for r in recs[-8:]:
-        out.append(f"    [{r['status']}] {r['id']}: {r.get('title', '')[:70]}")
+        out.append(f"    [{status_word(cfg, r['status'])}] {r['id']}: {r.get('title', '')[:70]}")
     print("\n".join(out))
     return 0
 
 
 def cmd_list(args) -> int:
+    cfg = load_config()
     with Lock():
         sync_index(load_state(), now())
     recs = sorted(load_index()["records"].values(), key=lambda r: r.get("created_at", 0), reverse=True)
@@ -1609,11 +1752,15 @@ def cmd_list(args) -> int:
             continue
         if cwd and os.path.normcase(r.get("cwd", "")) != cwd:
             continue
-        print(f"[{r.get('status')}] {r['id']}\n    {r.get('title', '')}\n    folder: {r.get('cwd') or '?'}"
-              f"  · saved {fmt_time(r.get('created_at', 0))}{'  · ' + r['why'] if r.get('why') else ''}")
+        saved = fmt_time(r.get("created_at", 0), lang_of(cfg))
+        why = "  · " + r["why"] if r.get("why") else ""
+        print(f"[{status_word(cfg, r.get('status', ''))}] {r['id']}\n    {r.get('title', '')}\n"
+              + T(cfg, f"    תיקייה: {r.get('cwd') or '?'}  · נשמר {saved}{why}",
+                  f"    folder: {r.get('cwd') or '?'}  · saved {saved}{why}"))
         shown += 1
     if not shown:
-        print("No open handoffs." + ("" if args.all else " (--all shows finished ones too)"))
+        print(T(cfg, "אין עבודות פתוחות." + ("" if args.all else " (עם --all מוצגות גם עבודות שהסתיימו)"),
+                "No open handoffs." + ("" if args.all else " (--all shows finished ones too)")))
     return 0
 
 
@@ -1631,30 +1778,35 @@ def cmd_show(args) -> int:
                         "claimed_by": os.environ.get("CLAUDE_CODE_SESSION_ID", "")})
             save_index(idx)
     if not rec:
-        print(f"No handoff matches '{args.id}'. Open ones:")
+        print(T(cfg, f"לא נמצא מסמך העברה בשם '{args.id}'. הפתוחים:", f"No handoff matches '{args.id}'. Open ones:"))
         return cmd_list(argparse.Namespace(all=False, cwd=None)) or 1
-    print(f"id: {rec['id']}\nstatus: {rec.get('status')}\nfolder: {rec.get('cwd') or '?'}\n"
-          f"saved: {fmt_time(rec.get('created_at', 0))}{'  (' + rec['why'] + ')' if rec.get('why') else ''}\n"
-          f"earlier conversation: {rec.get('transcript') or '?'}\n" + "-" * 60)
-    print(read_text(Path(rec["file"])) or "(the handoff file is missing)")
+    why = f"  ({rec['why']})" if rec.get("why") else ""
+    saved = fmt_time(rec.get("created_at", 0), lang_of(cfg))
+    print(T(cfg, f"מזהה: {rec['id']}\nמצב: {status_word(cfg, rec.get('status', ''))}\nתיקייה: {rec.get('cwd') or '?'}\n"
+                 f"נשמר: {saved}{why}\nהשיחה הקודמת: {rec.get('transcript') or '?'}\n",
+            f"id: {rec['id']}\nstatus: {rec.get('status')}\nfolder: {rec.get('cwd') or '?'}\n"
+            f"saved: {saved}{why}\nearlier conversation: {rec.get('transcript') or '?'}\n") + "-" * 60)
+    print(read_text(Path(rec["file"])) or T(cfg, "(קובץ מסמך ההעברה חסר)", "(the handoff file is missing)"))
     lessons = project_lessons(rec.get("cwd", ""))
     if lessons:
-        print("-" * 60 + "\nLessons learned earlier in this project:")
+        print("-" * 60 + "\n" + T(cfg, "לקחים מהעבר בפרויקט הזה:", "Lessons learned earlier in this project:"))
         print("\n".join(f"- {s}" for s in lessons))
-    print("-" * 60 + f"\nWhen this work is finished, run: {guard_cmd(cfg, 'complete', rec['id'])}")
+    done = guard_cmd(cfg, "complete", rec["id"])
+    print("-" * 60 + "\n" + T(cfg, f"כשהעבודה הזאת מסתיימת, להריץ: {done}", f"When this work is finished, run: {done}"))
     return 0
 
 
 def _set_status(ref: str, status: str) -> int:
+    cfg = load_config()
     with Lock():
         idx = load_index()
         rec = find_record(idx, ref)
         if not rec:
-            print(f"No handoff matches '{ref}'.")
+            print(T(cfg, f"לא נמצא מסמך העברה בשם '{ref}'.", f"No handoff matches '{ref}'."))
             return 1
         rec.update({"status": status, "updated_at": now()})
         save_index(idx)
-    print(f"{rec['id']}: {status}")
+    print(f"{rec['id']}: {status_word(cfg, status)}")
     return 0
 
 
@@ -1679,13 +1831,13 @@ def cmd_handoff_path(args) -> int:
 
 
 def cmd_handoff_done(args) -> int:
-    t = now()
+    cfg, t = load_config(), now()
     path = Path(args.file).expanduser()
     if args.nothing_pending and not path.exists():
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("NOTHING PENDING\n", encoding="utf-8")
     if not path.exists():
-        print(f"No such file: {path}")
+        print(T(cfg, f"הקובץ לא קיים: {path}", f"No such file: {path}"))
         return 1
     sid = args.session or os.environ.get("CLAUDE_CODE_SESSION_ID", "")
     with Lock():
@@ -1693,13 +1845,16 @@ def cmd_handoff_done(args) -> int:
         sess = (state.get("sessions") or {}).get(sid) or {}
         rec = register_handoff(path, t, session_id=sid, cwd=os.path.abspath(args.cwd or sess.get("cwd") or os.getcwd()),
                                transcript=sess.get("transcript", ""), episode=sess.get("episode"),
-                               status="nothing" if args.nothing_pending else None, why=sess.get("why") or "manual")
+                               status="nothing" if args.nothing_pending else None,
+                               why=sess.get("why") or T(cfg, "עצירה ידנית", "manual"))
         if sess:
             sess.update({"status": "done", "record": rec["id"]})
             save_state(state)
-    print(f"Saved handoff {rec['id']} ({rec['status']}): {rec['title']}")
+    print(T(cfg, f"מסמך ההעברה נשמר: {rec['id']} ({status_word(cfg, rec['status'])}): {rec['title']}",
+            f"Saved handoff {rec['id']} ({rec['status']}): {rec['title']}"))
     if rec["status"] == "pending" and not rec.get("episode"):
-        print("It will be offered when a new session starts in this folder (/session-guard resume).")
+        print(T(cfg, "הוא יוצע כשתיפתח שיחה חדשה בתיקייה הזאת (/session-guard resume).",
+                "It will be offered when a new session starts in this folder (/session-guard resume)."))
     return 0
 
 
@@ -1711,8 +1866,10 @@ def cmd_pause(args) -> int:
         apply_mode(state, t)
         state["override"] = None
         save_state(state)
-    print("Paused all Claude Code sessions on this computer. Each busy session writes a handoff at its "
-          "next step. Run `resume` to end the pause.")
+    print(T(cfg, "כל שיחות Claude Code במחשב הזה הושהו. כל שיחה שבאמצע עבודה תכתוב מסמך העברה בצעד "
+                 "הבא שלה. כדי לסיים את העצירה: resume",
+            "Paused all Claude Code sessions on this computer. Each busy session writes a handoff at its "
+            "next step. Run `resume` to end the pause."))
     return 0
 
 
@@ -1727,10 +1884,12 @@ def cmd_resume(args) -> int:
         save_state(state)
     if state.get("mode") == "paused":
         why, until = summarize(state, cfg)
-        print(f"Still paused: {why}. It continues {until}. To work anyway: override")
+        print(T(cfg, f"עדיין מושהה: {why}. ימשיך {until}. כדי לעבוד בכל זאת: override",
+                f"Still paused: {why}. It continues {until}. To work anyway: override"))
         return 0
-    print("Not paused." + (" Pending handoffs will be started by the watchdog within a minute."
-                           if state.get("resume_pending") else ""))
+    print(T(cfg, "לא מושהה." + (" עבודות שממתינות יופעלו על ידי שומר הרקע תוך דקה." if state.get("resume_pending") else ""),
+            "Not paused." + (" Pending handoffs will be started by the watchdog within a minute."
+                             if state.get("resume_pending") else "")))
     if args.now:
         return cmd_tick(args)
     return 0
@@ -1742,11 +1901,13 @@ def cmd_override(args) -> int:
         state = load_state()
         if args.off:
             state["override"] = None
-            msg = "Override off: the guard is active again."
+            msg = T(cfg, "העקיפה בוטלה: השמירה פעילה שוב.", "Override off: the guard is active again.")
         else:
             minutes = args.minutes or cfg["override_minutes"]
             state["override"] = {"until": t + minutes * 60, "set_at": t}
-            msg = f"Override on for {minutes} minutes: nothing is paused or blocked until {fmt_time(t + minutes * 60)}."
+            until = fmt_time(t + minutes * 60, lang_of(cfg))
+            msg = T(cfg, f"עקיפה ל-{minutes} דקות: שום דבר לא נעצר או נחסם עד {until}.",
+                    f"Override on for {minutes} minutes: nothing is paused or blocked until {until}.")
         save_state(state)
     print(msg)
     return 0
@@ -1758,7 +1919,7 @@ def cmd_launch(args) -> int:
         idx = load_index()
         rec = find_record(idx, args.id)
     if not rec:
-        print(f"No handoff matches '{args.id}'.")
+        print(T(cfg, f"לא נמצא מסמך העברה בשם '{args.id}'.", f"No handoff matches '{args.id}'."))
         return 1
     ok, how = launch(cfg, rec)
     with Lock():
@@ -1768,18 +1929,18 @@ def cmd_launch(args) -> int:
         if ok:
             r["status"] = "resumed"
         save_index(idx)
-    print(("Started: " if ok else "Could not start: ") + how)
+    print((T(cfg, "נפתחה שיחה חדשה: ", "Started: ") if ok else T(cfg, "לא הצלחתי לפתוח: ", "Could not start: ")) + how)
     return 0 if ok else 1
 
 
 def cmd_simulate(args) -> int:
-    t = now()
+    cfg, t = load_config(), now()
     if args.clear:
         try:
             SIM_FILE.unlink()
         except OSError:
             pass
-        print("Simulation cleared; real readings are used again.")
+        print(T(cfg, "ההדמיה בוטלה; חוזרים לקריאות האמיתיות.", "Simulation cleared; real readings are used again."))
     else:
         sim = load_sim(t)
         sim["expires_at"] = t + args.hours * 3600
@@ -1796,21 +1957,23 @@ def cmd_simulate(args) -> int:
                 u["seven_day"] = {"used_percentage": args.usage_7d, "resets_at": resets}
             sim["usage"] = u
         write_json(SIM_FILE, sim)
-        print(f"Simulating {json.dumps({k: v for k, v in sim.items() if k != 'expires_at'})} "
-              f"until {fmt_time(sim['expires_at'])}.")
+        what = json.dumps({k: v for k, v in sim.items() if k != "expires_at"}, ensure_ascii=False)
+        until = fmt_time(sim["expires_at"], lang_of(cfg))
+        print(T(cfg, f"הדמיה פעילה עד {until}: {what}", f"Simulating {what} until {until}."))
     return cmd_status(argparse.Namespace(json=False))
 
 
 def cmd_phone_report(args) -> int:
+    cfg = load_config()
     level = parse_phone_message(args.level)
     if level is None:
-        print("Give a battery level such as 5 or 5%.")
+        print(T(cfg, "צריך לתת אחוז סוללה, למשל 5 או 5%.", "Give a battery level such as 5 or 5%."))
         return 1
     with Lock():
         cur = read_json(PHONE_FILE, {}) or {}
         cur.update({"percent": level, "at": now()})
         write_json(PHONE_FILE, cur)
-    print(f"Phone battery recorded: {level}%")
+    print(T(cfg, f"סוללת הטלפון נרשמה: {level}%", f"Phone battery recorded: {level}%"))
     return 0
 
 
@@ -1825,7 +1988,8 @@ def cmd_config(args) -> int:
     over = read_json(CONFIG_FILE, {}) or {}
     for item in args.set or []:
         if "=" not in item:
-            print(f"Use key=value, e.g. usage.pause_at=90 (got {item!r})")
+            print(T(load_config(), f"צריך מפתח=ערך, למשל usage.pause_at=90 (התקבל {item!r})",
+                    f"Use key=value, e.g. usage.pause_at=90 (got {item!r})"))
             return 1
         key, val = item.split("=", 1)
         node = over

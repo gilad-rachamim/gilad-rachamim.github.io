@@ -47,6 +47,13 @@ UNIT = "claude-session-guard"
 CRON_TAG = "# claude-session-guard"
 
 
+LANG = "he"  # language of this installer's messages and of the guard's notifications
+
+
+def tr(he: str, en: str) -> str:
+    return he if LANG == "he" else en
+
+
 def say(msg: str = "") -> None:
     print(msg, flush=True)
 
@@ -136,7 +143,7 @@ def save_settings(data: dict) -> None:
     if SETTINGS.exists():
         backup = SETTINGS.with_name(f"settings.json.session-guard-backup-{time.strftime('%Y%m%d-%H%M%S')}")
         shutil.copy2(SETTINGS, backup)
-        say(f"  backup of your settings: {backup}")
+        say(tr(f"  גיבוי של ההגדרות שלך: {backup}", f"  backup of your settings: {backup}"))
     SETTINGS.parent.mkdir(parents=True, exist_ok=True)
     tmp = SETTINGS.with_name(".settings.json.tmp")
     tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -204,7 +211,8 @@ def launchd_install(claude: str) -> str:
     r = subprocess.run(["launchctl", "bootstrap", f"gui/{uid}", str(plist_path)], capture_output=True, text=True)
     if r.returncode != 0:
         r = subprocess.run(["launchctl", "load", "-w", str(plist_path)], capture_output=True, text=True)
-    return f"launchd agent {LABEL}" if r.returncode == 0 else f"launchd failed: {(r.stderr or r.stdout).strip()}"
+    return (tr(f"launchd ({LABEL}), רץ כל דקה", f"launchd agent {LABEL}") if r.returncode == 0 else
+            tr("launchd נכשל: ", "launchd failed: ") + (r.stderr or r.stdout).strip())
 
 
 def launchd_remove() -> None:
@@ -264,8 +272,8 @@ def schtasks_install() -> str:
     xml_path.write_text(xml, encoding="utf-16")  # schtasks wants UTF-16 with a BOM
     r = subprocess.run(["schtasks", "/Create", "/TN", TASK, "/XML", str(xml_path), "/F"],
                        capture_output=True, text=True)
-    return f"Task Scheduler task {TASK}" if r.returncode == 0 else \
-        f"Task Scheduler failed: {(r.stderr or r.stdout).strip()}"
+    return (tr(f"מתזמן המשימות של Windows ({TASK}), רץ כל דקה", f"Task Scheduler task {TASK}") if r.returncode == 0 else
+            tr("מתזמן המשימות נכשל: ", "Task Scheduler failed: ") + (r.stderr or r.stdout).strip())
 
 
 def schtasks_remove() -> None:
@@ -293,15 +301,16 @@ def linux_install() -> str:
         subprocess.run(["systemctl", "--user", "daemon-reload"], capture_output=True)
         r = subprocess.run(["systemctl", "--user", "enable", "--now", f"{UNIT}.timer"], capture_output=True, text=True)
         if r.returncode == 0:
-            return f"systemd user timer {UNIT}.timer"
+            return tr(f"טיימר systemd ({UNIT}.timer), רץ כל דקה", f"systemd user timer {UNIT}.timer")
     if shutil.which("crontab"):
         cur = subprocess.run(["crontab", "-l"], capture_output=True, text=True).stdout
         lines = [ln for ln in cur.splitlines() if CRON_TAG not in ln]
         lines.append(f"* * * * * {' '.join(shlex.quote(a) for a in watchdog_args())} >/dev/null 2>&1 {CRON_TAG}")
         r = subprocess.run(["crontab", "-"], input="\n".join(lines) + "\n", capture_output=True, text=True)
         if r.returncode == 0:
-            return "cron job (every minute)"
-    return "no scheduler found (no systemd user session, no crontab): auto-resume needs one"
+            return tr("משימת cron, כל דקה", "cron job (every minute)")
+    return tr("לא נמצא מתזמן (אין systemd למשתמש ואין crontab): ההמשך האוטומטי צריך אחד",
+              "no scheduler found (no systemd user session, no crontab): auto-resume needs one")
 
 
 def linux_remove() -> None:
@@ -353,7 +362,7 @@ def write_config(args, claude: str, chain: dict | None) -> dict:
         try:
             cfg = json.loads(path.read_text(encoding="utf-8"))
         except ValueError:
-            say(f"  note: {path} was not valid JSON; starting it again")
+            say(tr(f"  לתשומת לב: {path} לא היה JSON תקין; הוא נכתב מחדש", f"  note: {path} was not valid JSON; starting it again"))
     cfg["python"], cfg["claude_bin"], cfg["shell"] = fwd(interpreter()), claude, shell_style()
     if args.lang:
         cfg["language"] = args.lang
@@ -376,16 +385,18 @@ def write_config(args, claude: str, chain: dict | None) -> dict:
 
 
 def install(args) -> int:
-    say(f"Session Guard: installing for {CLAUDE_DIR}")
+    say(tr(f"Session Guard: מתקין עבור {CLAUDE_DIR}", f"Session Guard: installing for {CLAUDE_DIR}"))
     copy_skill()
-    say(f"  skill: {DEST}")
+    say(tr(f"  הסקיל: {DEST}", f"  skill: {DEST}"))
     claude = find_claude()
     version = claude_version(claude)
     if not claude:
-        say("  warning: the `claude` command was not found; automatic resume needs it. Install Claude Code, then run this again.")
+        say(tr("  אזהרה: הפקודה claude לא נמצאה, וההמשך האוטומטי צריך אותה. להתקין את Claude Code ולהריץ את ההתקנה שוב.",
+               "  warning: the `claude` command was not found; automatic resume needs it. Install Claude Code, then run this again."))
     settings = load_settings()
     if settings.get("disableAllHooks"):
-        say("  warning: \"disableAllHooks\" is on in your settings, so the guard's hooks won't run until you turn it off")
+        say(tr("  אזהרה: בהגדרות שלך מופעל \"disableAllHooks\", ולכן ה-hooks של השמירה לא ירוצו עד שיכבו אותו",
+               "  warning: \"disableAllHooks\" is on in your settings, so the guard's hooks won't run until you turn it off"))
     old_sl = settings.get("statusLine")
     chain = None
     if args.statusline and isinstance(old_sl, dict) and old_sl.get("command") and not is_ours(old_sl.get("command")):
@@ -399,30 +410,39 @@ def install(args) -> int:
         settings["statusLine"] = sl
     cfg = write_config(args, claude, chain)
     save_settings(settings)
-    say(f"  hooks{' and status line' if args.statusline else ''}: {SETTINGS}")
+    say(tr(f"  hooks{' ושורת סטטוס' if args.statusline else ''}: {SETTINGS}",
+           f"  hooks{' and status line' if args.statusline else ''}: {SETTINGS}"))
     if chain:
-        say(f"  your status line keeps running in front of the guard: {chain.get('command')}")
+        say(tr(f"  שורת הסטטוס הקודמת שלך ממשיכה לפעול לפני השמירה: {chain.get('command')}",
+               f"  your status line keeps running in front of the guard: {chain.get('command')}"))
     if args.statusline is False:
-        say("  note: without the status line the guard cannot see your usage numbers")
-    say(f"  watchdog: {install_watchdog(claude) if args.scheduler else 'skipped (--no-scheduler)'}")
-    say(f"  data: {HOME}")
+        say(tr("  לתשומת לב: בלי שורת הסטטוס השמירה לא רואה את אחוזי השימוש",
+               "  note: without the status line the guard cannot see your usage numbers"))
+    say(tr("  שומר הרקע: ", "  watchdog: ") + (install_watchdog(claude) if args.scheduler else
+                                              tr("דולג (--no-scheduler)", "skipped (--no-scheduler)")))
+    say(tr(f"  נתונים: {HOME}", f"  data: {HOME}"))
     subprocess.run([sys.executable, str(DEST / "scripts" / "guard.py"), "--home", str(HOME), "status"])
     if cfg.get("phone", {}).get("enabled"):
         url = f"{cfg['phone']['ntfy_server'].rstrip('/')}/{cfg['phone']['ntfy_topic']}"
-        say("\nPhone battery: two phone automations (battery drops to 5%, rises to 10%) open this address,")
-        say("with the battery level at the end:")
-        say(f"    {url}/publish?message=<battery level>")
-        say(f"  Step by step: {DEST / 'references' / 'phone.md'}")
+        say(tr("\nסוללת הטלפון: שתי אוטומציות בטלפון (כשהסוללה יורדת ל-5% וכשהיא עולה ל-10%) פותחות את הכתובת הזאת,",
+               "\nPhone battery: two phone automations (battery drops to 5%, rises to 10%) open this address,"))
+        say(tr("עם אחוז הסוללה בסוף:", "with the battery level at the end:"))
+        say(f"    {url}/publish?message=<{tr('אחוז הסוללה', 'battery level')}>")
+        say(tr(f"  צעד אחר צעד: {DEST / 'references' / 'phone.md'}", f"  Step by step: {DEST / 'references' / 'phone.md'}"))
         if cfg.get("notify", {}).get("ntfy_topic"):
-            say(f"  Alerts on the phone: subscribe to the topic {cfg['notify']['ntfy_topic']} in the ntfy app.")
-    say("\nDone. Open a NEW Claude Code session so it loads the hooks.")
-    say("Try it safely:  " + " ".join(shlex.quote(a) for a in (sys.executable, str(DEST / 'scripts' / 'guard.py'), 'simulate', '--battery', '4')))
-    say("then ask Claude for any small task; clear the test with `... simulate --clear`.")
+            say(tr(f"  התראות לטלפון: להירשם לנושא {cfg['notify']['ntfy_topic']} באפליקציית ntfy.",
+                   f"  Alerts on the phone: subscribe to the topic {cfg['notify']['ntfy_topic']} in the ntfy app."))
+    say(tr("\nסיימתי. צריך לפתוח שיחה חדשה של Claude Code כדי שה-hooks ייטענו.",
+           "\nDone. Open a NEW Claude Code session so it loads the hooks."))
+    sim = " ".join(shlex.quote(a) for a in (sys.executable, str(DEST / 'scripts' / 'guard.py'), 'simulate', '--battery', '4'))
+    say(tr("בדיקה בטוחה:  ", "Try it safely:  ") + sim)
+    say(tr("ואז לבקש מ-Claude משימה קטנה כלשהי; לביטול הבדיקה: simulate --clear",
+           "then ask Claude for any small task; clear the test with `... simulate --clear`."))
     return 0
 
 
 def uninstall(args) -> int:
-    say("Session Guard: removing")
+    say(tr("Session Guard: מסיר", "Session Guard: removing"))
     settings = load_settings()
     sl = settings.get("statusLine")
     if isinstance(sl, dict) and is_ours(sl.get("command")):
@@ -437,21 +457,21 @@ def uninstall(args) -> int:
             if "chain_padding" in cfg.get("statusline", {}):
                 restored["padding"] = cfg["statusline"]["chain_padding"]
             settings["statusLine"] = restored
-            say(f"  status line restored: {chain}")
+            say(tr(f"  שורת הסטטוס הקודמת שוחזרה: {chain}", f"  status line restored: {chain}"))
         else:
             settings.pop("statusLine", None)
     strip_hooks(settings)
     save_settings(settings)
     remove_watchdog()
-    say("  hooks, status line and watchdog removed")
+    say(tr("  ה-hooks, שורת הסטטוס ושומר הרקע הוסרו", "  hooks, status line and watchdog removed"))
     if SRC.resolve() != DEST.resolve() and DEST.exists():
         shutil.rmtree(DEST)
-        say(f"  removed {DEST}")
+        say(tr(f"  נמחק: {DEST}", f"  removed {DEST}"))
     if args.purge and HOME.exists():
         shutil.rmtree(HOME)
-        say(f"  deleted {HOME}")
+        say(tr(f"  נמחק: {HOME}", f"  deleted {HOME}"))
     else:
-        say(f"  kept your handoffs and lessons in {HOME}")
+        say(tr(f"  מסמכי ההעברה והלקחים נשארו ב-{HOME}", f"  kept your handoffs and lessons in {HOME}"))
     return 0
 
 
@@ -468,6 +488,8 @@ def main() -> int:
     ap.add_argument("--no-statusline", dest="statusline", action="store_false",
                     help="don't touch the status line (usage numbers then stay unknown)")
     args = ap.parse_args()
+    global LANG
+    LANG = args.lang or "he"
     return uninstall(args) if args.uninstall else install(args)
 
 

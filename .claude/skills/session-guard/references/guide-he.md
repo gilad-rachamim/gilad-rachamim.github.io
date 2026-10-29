@@ -62,6 +62,13 @@ python3 ~/.claude/skills/session-guard/scripts/guard.py config --set usage.pause
 `battery.resume_at` (10), `phone.pause_at` (5), `phone.resume_at` (10),
 `resume.permission_mode` (למשל `acceptEdits`, כדי שהשיחות שנפתחות ברקע לא יחכו לאישורים).
 
+## שפה
+
+כל ההודעות של Session Guard בעברית: מה שמופיע כשהוא עוצר שיחה, שורת הסטטוס, ההתראות ומסמכי
+ההעברה. גם Claude מתבקש לכתוב את מסמכי ההעברה ואת הלקחים בעברית. אם הטרמינל מציג עברית בסדר הפוך
+(קורה בחלק מהטרמינלים בווינדוס), אפשר לעבור לאנגלית: `config --set language=en`. באפליקציה של Claude
+העברית מוצגת כרגיל.
+
 ## לבדוק בלי לחכות לסוללה
 
 ```sh
