@@ -1,0 +1,12 @@
+{
+  "name": "גילעד רחמים המוהל",
+  "short_name": "המוהל",
+  "description": "ברית מכל הלב והנשמה – מוהל מוסמך, ירושלים",
+  "start_url": "/mohel/kartis/",
+  "display": "standalone",
+  "background_color": "#16130f",
+  "theme_color": "#16130f",
+  "dir": "rtl",
+  "lang": "he",
+  "icons": [{"src": "/assets/apple-touch-icon.png", "sizes": "180x180", "type": "image/png"}, {"src": "/assets/icon-512.png", "sizes": "512x512", "type": "image/png"}]
+}

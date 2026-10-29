@@ -1,0 +1,71 @@
+<!--meta {
+  "title": "מחשבון מועד ברית מילה – באיזה יום הברית? | גילעד רחמים המוהל",
+  "description": "מזינים את תאריך הלידה ומקבלים את מועד הברית בעברי ובלועזי, שעת השקיעה בירושלים, והאם זה יוצא בשבת או בחג. כלי חינם מאת גילעד רחמים, מוהל מוסמך.",
+  "og_title": "מחשבון מועד הברית – מתי הברית של הבן שלכם?",
+  "og_image": "og-moed.jpg",
+  "nav": "moed",
+  "priority": "0.9",
+  "crumbs": [["מחשבון מועד הברית", null]],
+  "dock_href": "#moed-form",
+  "dock_label": "לחישוב",
+  "head": "<style>.calc{max-width:38rem;margin:0 auto;padding:0 1.25rem}.res{margin-top:1.25rem;padding:1.5rem 1.35rem;border:1px solid rgba(201,165,92,.5);border-radius:18px;background:linear-gradient(170deg,rgba(201,165,92,.14),rgba(201,165,92,.03) 60%);animation:pop .5s ease-out}@keyframes pop{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}.res-k{color:var(--muted);font-size:1rem}.res-d{font-family:var(--serif);font-weight:700;color:var(--cream);font-size:clamp(1.6rem,6.5vw,2.2rem);line-height:1.3;margin-top:.3rem}.res-g{font-family:var(--serif);color:var(--gold);font-size:1.35rem;direction:ltr;text-align:right}.res-notes{list-style:none;margin-top:1rem;display:grid;gap:.5rem;color:var(--body);font-size:1rem}.res-notes li{padding-inline-start:1rem;border-inline-start:2px solid var(--gold-soft)}.rng{width:100%;border-collapse:collapse;margin-top:.8rem;font-size:1rem}.rng th{text-align:right;color:var(--muted);font-weight:600;padding:.4rem .3rem;border-bottom:1px solid var(--line)}.rng td{padding:.55rem .3rem;border-bottom:1px solid var(--line);vertical-align:top;color:var(--parchment)}.rng td span{color:var(--gold);direction:ltr;display:inline-block}.rng tr.now td{background:rgba(201,165,92,.1)}.rng small{color:var(--muted)}#sunset-note{min-height:1.4rem;color:var(--gold);font-size:.98rem}.days{list-style:none;counter-reset:d;display:grid;gap:.7rem;margin-top:1rem}.days li{counter-increment:d;display:grid;grid-template-columns:2.4rem 1fr;gap:.7rem;align-items:start}.days li::before{content:counter(d);font-family:var(--serif);color:var(--gold);border:1px solid var(--gold-soft);border-radius:50%;width:2rem;height:2rem;display:grid;place-items:center}.days b{color:var(--cream);font-weight:600;display:block}.days span{color:var(--body);font-size:1rem}</style>"
+} -->
+<header class="hero">
+  <svg class="ic" style="width:3.6rem;height:3.6rem;color:var(--gold);margin:0 auto 1rem;stroke-width:1.2"><use href="#eight"/></svg>
+  <h1>מתי הברית?</h1>
+  <p class="sub">הכניסו את תאריך הלידה, ותקבלו את מועד הברית בלועזי ובעברי, עם כל מה שחשוב לדעת על היום הזה.</p>
+</header>
+
+<div class="calc">
+  <form id="moed-form" class="panel lead-form" novalidate>
+    <div class="field">
+      <span class="label">מה המצב אצלכם?</span>
+      <div class="radios">
+        <label><input type="radio" name="mode" value="born" checked> הבן נולד, מזל טוב!</label>
+        <label><input type="radio" name="mode" value="expected"> עוד לא נולד, יש תאריך משוער</label>
+      </div>
+    </div>
+    <div class="field">
+      <label for="m-date">תאריך הלידה</label>
+      <input id="m-date" name="date" type="date" required>
+    </div>
+    <div class="field" id="time-row">
+      <label for="m-time">שעת הלידה <span class="opt">(לא חובה, עוזר לדעת אם לפני השקיעה)</span></label>
+      <input id="m-time" name="time" type="time">
+      <div id="sunset-note" aria-live="polite"></div>
+    </div>
+    <div class="field" id="when-row">
+      <span class="label">הלידה הייתה</span>
+      <div class="radios">
+        <label><input type="radio" name="when" value="before" checked> לפני השקיעה</label>
+        <label><input type="radio" name="when" value="after"> אחרי השקיעה</label>
+      </div>
+    </div>
+    <label class="check"><input type="checkbox" name="cs"> <span>הלידה בניתוח קיסרי</span></label>
+    <button class="btn btn-gold btn-block" type="submit">מתי הברית?</button>
+    <p class="privacy">החישוב נעשה בטלפון שלכם. שום דבר לא נשלח עד שתבחרו לכתוב לי.</p>
+  </form>
+
+  <div id="moed-out" hidden aria-live="polite"></div>
+
+  <section aria-labelledby="eight-h">
+    <h2 id="eight-h">שמונה ימים: מה עושים בכל יום</h2>
+    <ol class="days">
+      <li><div><b>יום הלידה</b><span>מזל טוב. לנשום. לשים לב אם הלידה הייתה לפני השקיעה או אחריה.</span></div></li>
+      <li><div><b>לקבוע מוהל ומקום</b><span>שיחה אחת קצרה. ככל שמוקדם יותר, רגוע יותר.</span></div></li>
+      <li><div><b>בדיקת צהבת</b><span>בבית החולים או בטיפת חלב. לשמור את התוצאה, היום והשעה.</span></div></li>
+      <li><div><b>כיבודים</b><span>סנדק, קוואטר וקוואטרין, מי מברך. לברר במשפחה למי נהוג.</span></div></li>
+      <li><div><b>ביקור הבית שלי</b><span>בודקים את התינוק, עוברים על הכול, עונים על שאלות.</span></div></li>
+      <li><div><b>קניות אחרונות</b><span>לפי <a class="gold" href="/mohel/checklist/">רשימת ההכנה</a>: תחבושות, משחה, בגד משני חלקים.</span></div></li>
+      <li><div><b>ברית יצחק</b><span>בערב: לימוד, תהילים ושירה סביב התינוק.</span></div></li>
+      <li><div><b>יום הברית</b><span>להאכיל כשעה לפני, לבוא במצב רוח טוב, ולהשאיר את העייפות מאחור.</span></div></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="how-h">
+    <h2 id="how-h">איך המחשבון עובד</h2>
+    <p>ברית מילה נעשית ביום השמיני ללידה: שבוע אחרי יום הלידה, באותו יום בשבוע. ביהדות היום מתחיל בשקיעה, ולכן תינוק שנולד אחרי השקיעה נחשב כאילו נולד למחרת, והברית מתאחרת ביום. המחשבון מראה לכם את שעת השקיעה בירושלים ביום הלידה (בערים אחרות ההפרש הוא דקות ספורות), ומחשב את התאריך העברי בעזרת לוח השנה המובנה בדפדפן.</p>
+    <p>ברית בזמנה נעשית גם בשבת וביום טוב. ברית שלא בזמנה, למשל אחרי ניתוח קיסרי או אחרי דחייה בגלל צהבת, לא דוחה שבת, ולכן נדחית ליום חול.</p>
+    <p class="note">המחשבון הוא כלי עזר. ההחלטה הסופית על המועד נעשית יחד, אחרי שאני רואה את התינוק.</p>
+  </section>
+</div>

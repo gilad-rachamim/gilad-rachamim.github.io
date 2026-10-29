@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}}</title>
+<meta name="description" content="{{description}}">
+<link rel="canonical" href="{{url}}">
+{{robots}}
+<meta property="og:type" content="website">
+<meta property="og:locale" content="he_IL">
+<meta property="og:site_name" content="גילעד רחמים המוהל">
+<meta property="og:title" content="{{og_title}}">
+<meta property="og:description" content="{{description}}">
+<meta property="og:image" content="https://gilad-rachamim.github.io/assets/{{og_image}}">
+<meta property="og:url" content="{{url}}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#16130f">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/site.css">
+{{head}}
+</head>
+<body class="{{body_class}}">
+{{sprite}}
+<a class="skip" href="#main">דילוג לתוכן</a>
+<header class="topbar">
+  <div class="in">
+    <a class="brand" href="/mohel/"><img src="/mohel/gilad.jpg" alt="" width="600" height="600"><b>גילעד רחמים המוהל</b></a>
+    <nav class="topnav" aria-label="ניווט ראשי">
+      <a href="/mohel/sipur/"{{cur:sipur}}>הסיפור</a>
+      <a href="/mohel/hachana/"{{cur:hachana}}>הכנה לברית</a>
+      <a href="/mohel/moed/"{{cur:moed}}>מחשבון</a>
+      <a href="/mohel/madrich/"{{cur:madrich}}>מדריך חינם</a>
+      <a href="/mohel/kartis/"{{cur:kartis}}>כרטיס</a>
+      <a class="wa" href="{{wa}}">ווטסאפ</a>
+    </nav>
+  </div>
+</header>
+{{crumbs}}
+<main id="main">
+{{content}}
+</main>
+{{cta}}
+<footer class="site-foot">
+  <div class="cols">
+    <div><b>ברית מילה</b><a href="/mohel/">עמוד המוהל</a><a href="/mohel/sipur/">הסיפור שלי</a><a href="/mohel/kartis/">כרטיס ביקור</a></div>
+    <div><b>הכנה לברית</b><a href="/mohel/hachana/kniyot/">רשימת קניות</a><a href="/mohel/hachana/moed/">מועד הברית וצהבת</a><a href="/mohel/hachana/tekes/">הכנות לטקס</a><a href="/mohel/hachana/yom/">יום הברית</a><a href="/mohel/hachana/mohel/">איך בוחרים מוהל</a></div>
+    <div><b>כלים חינם</b><a href="/mohel/moed/">מחשבון מועד הברית</a><a href="/mohel/checklist/">רשימת ההכנה</a><a href="/mohel/madrich/">המדריך להורים</a></div>
+    <div><b>יצירת קשר</b><a href="tel:+972584049049">058-4049049</a><a href="{{wa}}">ווטסאפ</a><a href="/">גילעד רחמים אביעד</a></div>
+  </div>
+  <div class="end"><span>בס"ד · גילעד רחמים אביעד, מוהל מוסמך · ירושלים</span><span>ברית מכל הלב והנשמה</span></div>
+</footer>
+<div class="dock">
+  <a class="btn btn-gold" href="{{wa}}">ווטסאפ</a>
+  <a class="btn btn-line" href="{{dock_href}}">{{dock_label}}</a>
+</div>
+{{foot}}
+</body>
+</html>
