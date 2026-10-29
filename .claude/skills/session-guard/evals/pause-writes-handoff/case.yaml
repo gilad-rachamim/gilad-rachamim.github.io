@@ -1,0 +1,10 @@
+schema_version: "1.1"
+name: pause-writes-handoff
+expected_outcome: |
+  Claude stops working on contact.html and writes a handoff through the session-guard
+  skill (guard.py handoff-path, then handoff-done). The handoff has the template sections:
+  the goal in the user's words, what is done (the form fields), where it stopped, numbered
+  next steps (Hebrew validation messages, send button), key context naming contact.html,
+  and a lessons-learned section. Claude ends with a short note that the session is paused.
+context:
+  scaffold_script: place-files.sh

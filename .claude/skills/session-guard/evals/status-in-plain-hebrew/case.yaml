@@ -1,0 +1,7 @@
+schema_version: "1.1"
+name: status-in-plain-hebrew
+expected_outcome: |
+  Claude runs the session-guard status command and explains the result in plain Hebrew:
+  whether work is paused, the laptop battery (or that none was found), the 5-hour and weekly
+  usage with reset times or, when there are no numbers yet, that they come from the Claude
+  Code status line and appear after a reply in a terminal session, and whether the watchdog runs.

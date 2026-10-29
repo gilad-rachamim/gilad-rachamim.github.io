@@ -1,0 +1,8 @@
+schema_version: "1.1"
+name: resume-continues-from-handoff
+expected_outcome: |
+  Claude reads the handoff, sees that bees.txt and ants.txt are already done, and does only
+  the remaining steps: writes wasps.txt with three short facts, reads it back, and lists the
+  folder. It does not rewrite bees.txt or ants.txt, and it reports what it continued.
+context:
+  scaffold_script: place-files.sh
