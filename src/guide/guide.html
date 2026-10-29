@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>המדריך המושלם להכנה לקראת הולדת הבן – גילעד רחמים המוהל</title>
+<style>
+@font-face{font-family:"Frank Ruhl Libre";src:url("/assets/fonts/FrankRuhlLibre-wght.woff") format("woff");font-weight:300 900}
+@font-face{font-family:"Assistant";src:url("/assets/fonts/Assistant-wght.woff") format("woff");font-weight:200 800}
+:root{--ink:#16130f;--gold:#c9a55c;--gold-deep:#8a7444;--cream:#fbf5e7;--paper:#f6efe0;--text:#2a241c;--muted:#7a6f5c;--line:rgba(138,116,68,.35)}
+@page{size:A4;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#ddd}
+body{font-family:"Assistant",sans-serif;color:var(--text);font-size:12.5pt;line-height:1.65}
+.page{width:210mm;height:297mm;position:relative;overflow:hidden;background:var(--paper);page-break-after:always;padding:18mm 18mm 20mm;margin:0 auto}
+.page.dark{background:radial-gradient(90% 70% at 85% 0%,rgba(201,165,92,.16),transparent 60%),var(--ink);color:#efe6d2}
+.page.dark::before{content:"";position:absolute;inset:0;background:url(/assets/marble.svg) center/cover;opacity:.6;pointer-events:none}
+.page>*{position:relative}
+h1,h2,h3{font-family:"Frank Ruhl Libre",serif;line-height:1.2}
+h2{font-weight:700;font-size:27pt;color:var(--ink);margin-bottom:3mm}
+h2 .num{font-weight:400;color:var(--gold-deep);font-size:12pt;display:block;margin-bottom:1mm;letter-spacing:.02em}
+h3{font-weight:500;font-size:15.5pt;color:var(--gold-deep);margin:6mm 0 2mm}
+p{margin-bottom:3mm}
+.intro{font-family:"Frank Ruhl Libre",serif;font-size:15pt;line-height:1.7;color:#3a3124;margin-bottom:5mm}
+.rule{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:4mm 0 6mm}
+.foot{position:absolute;bottom:9mm;left:18mm;right:18mm;display:flex;justify-content:space-between;font-size:9pt;color:var(--muted);border-top:1px solid var(--line);padding-top:2.5mm}
+.foot b{font-family:"Frank Ruhl Libre",serif;font-weight:500;color:var(--gold-deep)}
+.ic{width:1.1em;height:1.1em;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.2em}
+ul.ck{list-style:none;display:grid;gap:2.2mm}
+ul.ck li{display:grid;grid-template-columns:5mm 1fr;gap:2.5mm;align-items:start}
+ul.ck li::before{content:"";width:3.6mm;height:3.6mm;border:1.2px solid var(--gold-deep);border-radius:1mm;margin-top:1.6mm}
+ul.ck b{color:var(--ink)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8mm}
+.tip{border-right:2.5px solid var(--gold);background:rgba(201,165,92,.14);padding:3mm 4mm;border-radius:0 2mm 2mm 0;margin:5mm 0}
+.tip b{font-family:"Frank Ruhl Libre",serif;color:var(--gold-deep);font-weight:500;display:block;margin-bottom:.5mm}
+.big{font-family:"Frank Ruhl Libre",serif;font-size:16pt;color:var(--ink);text-align:center;margin:5mm 0}
+.honor{display:grid;grid-template-columns:14mm 1fr;gap:4mm;align-items:start;margin-bottom:5mm}
+.honor .ic{width:12mm;height:12mm;color:var(--gold-deep);stroke-width:1.2}
+.honor h3{margin:0 0 1mm}
+.days{list-style:none;counter-reset:d;display:grid;gap:3mm}
+.days li{counter-increment:d;display:grid;grid-template-columns:9mm 1fr;gap:3mm;align-items:start}
+.days li::before{content:counter(d);font-family:"Frank Ruhl Libre",serif;color:var(--gold-deep);border:1px solid var(--gold);border-radius:50%;width:8mm;height:8mm;display:grid;place-items:center;font-size:12pt}
+.days b{display:block;color:var(--ink)}
+.four{display:grid;grid-template-columns:1fr 1fr;gap:5mm}
+.four div{border:1px solid var(--line);border-radius:3mm;padding:4mm}
+.four h3{margin:0 0 1.5mm}
+.qs{list-style:none;counter-reset:q;display:grid;gap:4mm}
+.qs li{counter-increment:q;display:grid;grid-template-columns:9mm 1fr;gap:3mm}
+.qs li::before{content:counter(q);font-family:"Frank Ruhl Libre",serif;font-size:20pt;color:var(--gold)}
+.qs b{display:block;color:var(--ink)}
+.cols3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6mm;font-size:10.5pt}
+.cols3 h3{margin-top:0;font-size:12pt}
+/* כריכה */
+.cover{display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:30mm}
+.cover .seal{width:26mm;height:26mm;color:var(--gold);stroke-width:1}
+.cover .bsd{position:absolute;top:10mm;right:14mm;font-family:"Frank Ruhl Libre",serif;color:#a99c82;font-size:10pt}
+.cover h1{font-weight:700;font-size:40pt;line-height:1.15;color:#fbf5e7;margin-top:10mm}
+.cover .sub{font-family:"Frank Ruhl Libre",serif;color:var(--gold);font-size:17pt;margin-top:5mm}
+.cover .who{margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:3mm;padding-bottom:6mm}
+.cover .who img{width:36mm;height:36mm;border-radius:50%;object-fit:cover;border:1.5px solid var(--gold);box-shadow:0 0 0 3mm var(--ink),0 0 0 3.4mm var(--gold-deep)}
+.cover .who b{font-family:"Frank Ruhl Libre",serif;font-weight:700;font-size:18pt;color:#fbf5e7}
+.cover .who span{color:var(--gold);font-family:"Frank Ruhl Libre",serif;font-size:12pt}
+.cover .who small{color:#a99c82;font-size:10pt}
+/* סיום */
+.end{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%}
+.end h2{color:#fbf5e7;font-size:28pt}
+.end .phone{font-family:"Frank Ruhl Libre",serif;font-size:30pt;color:var(--gold);direction:ltr;margin:4mm 0}
+.end img{width:40mm;border-radius:3mm;margin-top:6mm}
+.end p{color:#d9cfbb;max-width:120mm}
+.about{display:grid;grid-template-columns:40mm 1fr;gap:8mm;align-items:start}
+.about img{width:40mm;height:40mm;border-radius:50%;object-fit:cover;border:1.5px solid var(--gold)}
+.quote{font-family:"Frank Ruhl Libre",serif;font-size:13pt;color:#3a3124;border-right:2px solid var(--gold);padding-right:4mm;margin:4mm 0}
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="kos" viewBox="0 0 48 48"><path d="M15 6h18c0 11-3 18-9 20-6-2-9-9-9-20Z"/><path d="M17 11c3 1.5 11 1.5 14 0"/><path d="M24 26v12"/><path d="M16 42c2-3 14-3 16 0"/><path d="M16 42h16"/></symbol>
+  <symbol id="kise" viewBox="0 0 48 48"><path d="M14 6v18h20V6"/><path d="M14 12h20"/><path d="M11 24h26v7H11z"/><path d="M14 31v12M34 31v12"/><path d="M17 7c2-2 12-2 14 0"/></symbol>
+  <symbol id="talit" viewBox="0 0 48 48"><path d="M8 10h32v26H8z"/><path d="M8 16h32M8 20h32"/><path d="M12 36v6M18 36v6M30 36v6M36 36v6"/><path d="M14 10v-3M34 10v-3"/></symbol>
+  <symbol id="hadas" viewBox="0 0 48 48"><path d="M24 44V12"/><path d="M24 18c-6-2-10-6-10-12 6 0 10 4 10 12Z"/><path d="M24 18c6-2 10-6 10-12-6 0-10 4-10 12Z"/><path d="M24 28c-6-2-10-6-10-12 6 0 10 4 10 12Z"/><path d="M24 28c6-2 10-6 10-12-6 0-10 4-10 12Z"/><path d="M24 38c-6-2-10-6-10-12 6 0 10 4 10 12Z"/><path d="M24 38c6-2 10-6 10-12-6 0-10 4-10 12Z"/></symbol>
+  <symbol id="karit" viewBox="0 0 48 48"><path d="M8 14c8-3 24-3 32 0 2 6 2 14 0 20-8 3-24 3-32 0-2-6-2-14 0-20Z"/><path d="M8 14c-2-3 0-5 3-4M40 14c2-3 0-5-3-4M8 34c-2 3 0 5 3 4M40 34c2 3 0 5-3 4"/></symbol>
+  <symbol id="baby" viewBox="0 0 48 48"><circle cx="24" cy="15" r="7"/><path d="M12 42c0-9 5-16 12-16s12 7 12 16"/><path d="M14 36c6 3 14 3 20 0"/><path d="M19 14c1-3 9-3 10 0"/></symbol>
+  <symbol id="hands" viewBox="0 0 48 48"><path d="M10 30c-2-6 0-14 4-14l4 6 2-10c3-1 5 1 5 4l1 8 3-6c3-1 5 1 4 4l-2 8 3-4c3 0 4 2 3 5l-4 10c-2 4-6 5-11 5-6 0-10-3-12-9Z"/></symbol>
+  <symbol id="seal" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20"/><circle cx="24" cy="24" r="16" stroke-dasharray="2 3"/><text x="24" y="31" text-anchor="middle" font-family="Frank Ruhl Libre,serif" font-size="20" fill="currentColor" stroke="none">ב</text></symbol>
+</svg>
+
+<!-- 1 כריכה -->
+<section class="page dark cover">
+  <span class="bsd">בס"ד</span>
+  <svg class="ic seal"><use href="#seal"/></svg>
+  <h1>המדריך המושלם<br>להכנה לקראת<br>הולדת הבן</h1>
+  <p class="sub">כל מה שצריך לקנות, לדעת ולהכין, מהריון ועד הברית</p>
+  <div class="who">
+    <img src="/mohel/gilad.jpg" alt="">
+    <b>גילעד רחמים המוהל</b>
+    <span>ברית מכל הלב והנשמה</span>
+    <small>מוהל מוסמך · מכון עלייה · 058-4049049</small>
+  </div>
+</section>
+
+<!-- 2 פתיחה -->
+<section class="page">
+  <h2><span class="num">לפני שמתחילים</span>מזל טוב, ובואו נעשה סדר</h2>
+  <div class="rule"></div>
+  <p class="intro">לקראת סוף ההריון, כשהבטן כבר מתחילה להיות כבדה, אף פעם לא יודעים מתי בדיוק תהיה הלידה. מתחיל רצון חזק בתוכנו לקונן, שיהיה כבר הכול מוכן לקראת הולדת הבן.</p>
+  <p>מומלץ בשלב זה כבר לעשות את הקניות. הדברים לא מתקלקלים, ואחרי הלידה תמיד עמוסים, ותוך שמונה ימים אירוע מרימים. עם זאת, חשוב לא את הכול לקנות. יש דברים שאולי יתקבלו כמתנות. הכנתי עבורכם רשימה מסודרת של הקניות ההכרחיות, ואת כל מה שחשוב לדעת על הברית עצמה.</p>
+  <h3>מה יש במדריך</h3>
+  <ul class="ck">
+    <li><div><b>רשימת קניות</b> לפני הלידה ולברית, עם דגש על מה שאפשר לקנות כבר עכשיו</div></li>
+    <li><div><b>מועד הברית</b> ובדיקת הצהבת: איך מחשבים את היום השמיני ומה קובע אם התינוק כשיר</div></li>
+    <li><div><b>שמונה הימים</b>, יום אחרי יום</div></li>
+    <li><div><b>הכנות לטקס</b>: אולם, שעה, כיסא אליהו, וחלוקת הכיבודים בלי שאף אחד ייפגע</div></li>
+    <li><div><b>מה להביא לברית</b> והכנת הנסיך הקטן</div></li>
+    <li><div><b>איך בוחרים מוהל</b>: ארבע נקודות וארבע שאלות</div></li>
+    <li><div><b>רשימת סימון מרוכזת</b> לתלות על המקרר</div></li>
+  </ul>
+  <div class="tip"><b>אני כאן לכל שאלה</b>בווטסאפ או בטלפון, 058-4049049. אין מה להתבייש, אני עושה את זה בשמחה, בלי שום תנאי.</div>
+  <div class="foot"><span><b>גילעד רחמים המוהל</b> · ברית מכל הלב והנשמה</span><span>2</span></div>
+</section>
+
+<!-- 3 קניות א -->
+<section class="page">
+  <h2><span class="num">פרק 1 · רשימת קניות</span>קניות שכדאי לקנות כבר לפני</h2>
+  <div class="rule"></div>
+  <h3>בית מרקחת, לאחרי הברית</h3>
+  <ul class="ck">
+    <li><div><b>עזרקאין 5%</b> לאלחוש כאבי התינוק לאחר הברית</div></li>
+    <li><div><b>מגבוני אלכוהול, או אלכוהול 70% וצמר גפן</b> לחיטוי הטבור של התינוק</div></li>
+    <li><div><b>נובימול</b> למקרה של כאב אחרי הברית, וגם כי תמיד טוב שיש משכך כאבים לתינוק בבית</div></li>
+    <li><div><b>משחת הנקה</b> להקלה על הכאב</div></li>
+    <li><div><b>שמן טבעי (שקדים או פרפין)</b> למריחה לאחר הברית, למניעת חיכוך שעלול להכאיב לתינוק</div></li>
+  </ul>
+  <h3>מוצרי היגיינה עבור האם והתינוק</h3>
+  <ul class="ck">
+    <li><div>טיטולים בגודל ניובורן, מגבונים</div></li>
+    <li><div><b>משטח החתלה</b> שלא יתלכלכו כל המצעים. לא חייב שידת החתלה, אך כן משטח. יש משטחים נוחים שמתקפלים לתיק במחיר ממש זול</div></li>
+    <li><div><b>שמפו מותאם לתינוקות</b> כדי שלא ישרוף</div></li>
+  </ul>
+  <h3>ביגוד ראשוני</h3>
+  <ul class="ck">
+    <li><div>ביגוד לתינוק לימים הראשונים עד הברית. בברית תראי מה תקבלי, ואז תעשי השלמות</div></li>
+    <li><div><b>חיתולי בד</b> לפליטות ולעטיפת התינוק בעטיפת מוהלים, להרגעת הכאב</div></li>
+  </ul>
+  <div class="tip"><b>טיפ של מוהל</b>את פריטי בית המרקחת קונים לפני הלידה. אחרי הברית לא רוצים לרוץ לבית מרקחת. בביקור שלי לפני הברית נעבור עליהם יחד.</div>
+  <div class="foot"><span><b>גילעד רחמים המוהל</b> · ברית מכל הלב והנשמה</span><span>3</span></div>
+</section>
+
+<!-- 4 קניות ב -->
+<section class="page">
+  <h2><span class="num">פרק 1 · המשך</span>לברית, לשינה ולדרך</h2>
+  <div class="rule"></div>
+  <h3>ביגוד לברית</h3>
+  <ul class="ck">
+    <li><div><b>בגדים חגיגיים לברית לכל המשפחה.</b> ברית זהו אירוע חגיגי ומשמח, זכות גדולה שהגיעו חיים חדשים לעולם, וזהו לא רק אירוע לתינוק אלא אירוע משמעותי לכם, ההורים שהפכתם למשפחה</div></li>
+    <li><div><b>בגד לברית לתינוק.</b> חשוב שהבגד יהיה בנוי ממכנס או גטקס וחולצה נפרדים, כדי שבעת הברית התינוק יישאר עם החולצה ולא יצטרך להיות חשוף כולו</div></li>
+  </ul>
+  <h3>הדרך לשינה ולתנועה בטוחה</h3>
+  <ul class="ck">
+    <li><div><b>סלקל,</b> חובה על מנת שתוכלו לצאת מבית החולים בבטיחות. ניתן לקנות סלקל שמתחבר לגלגלים או לעגלה, וכך אם התינוק ישן לא צריך להעביר אותו, וניתן להמשיך בנשיאה קלה</div></li>
+    <li><div><b>מיטת תינוק.</b> מבחינה בטיחותית לא מומלץ להשאיר את התינוק לשינה בעגלה לזמן ממושך</div></li>
+    <li><div><b>עגלה.</b> אם אתם חושבים שמישהו יציע לקנות לכם, שווה לחכות. אם לא, קדימה לקנות. שימו לב שהעגלה תהיה מותאמת לגובה שלכם</div></li>
+  </ul>
+  <h3>צעצועים לתינוק</h3>
+  <p>לעת עתה ניתן לוותר. בברית תראו מה תקבלו, ולאחר מכן את הדרוש תשלימו.</p>
+  <p class="big">"מתנה שלא חוזרת: להגיע ללידה כשהכול כבר בבית."</p>
+  <div class="foot"><span><b>גילעד רחמים המוהל</b> · ברית מכל הלב והנשמה</span><span>4</span></div>
+</section>
+
+<!-- 5 מועד -->
+<section class="page">
+  <h2><span class="num">פרק 2</span>מועד הברית</h2>
+  <div class="rule"></div>
+  <h3>יום הברית</h3>
+  <p>על פי היהדות יש לערוך ברית מילה ביום השמיני להולדת הבן, וזה גם המועד הכי מומלץ בריאותית. אם הילד נולד לפני השקיעה, מחשיבים את יום הלידה ליום הראשון. אם הוא נולד לאחר השקיעה, היום הראשון לספירה הוא היום שלמחרת. לשם כך צריך שהרך הנולד יהיה במצב כשיר לברית.</p>
+  <h3>בדיקת צהבת</h3>
+  <p>יש לערוך לתינוק בדיקת צהבת, ולומר למוהל את התוצאה ואת היום והשעה שבהם נערכה הבדיקה, כי יש לכך השפעה. במידה והצהבת גבולית או גבוהה, תתבקשו לערוך עוד בדיקות. הכול עוד יכול להשתנות, ורק כאשר הילד כשיר לברית ימולו אותו, שחלילה לא יהיה פיקוח נפשות.</p>
+  <p>מובן שהמוהל ילווה אתכם בתהליך קביעת המועד ויוודא שאכן בנכם כשיר מבחינה בריאותית לביצוע ברית בזמן. ייתכנו מקרים שבהם גם אם הבן בריא, הברית לא תהיה בזמנה, ולכן חייב לדבר לפני עם המוהל.</p>
+  <h3>שבת, חג וניתוח קיסרי</h3>
+  <p>ברית בזמנה, ביום השמיני, נעשית גם בשבת וביום טוב. ברית שלא בזמנה, למשל אחרי ניתוח קיסרי או אחרי דחייה בגלל צהבת, לא דוחה שבת, ולכן נדחית ליום חול.</p>
+  <div class="tip"><b>מחשבון מועד הברית</b>באתר שלי יש מחשבון שמחשב לכם את יום הברית בלועזי ובעברי, מראה את שעת השקיעה ביום הלידה, ומסמן שבת וחג: <b style="display:inline">gilad-rachamim.github.io/mohel/moed</b></div>
+  <div class="foot"><span><b>גילעד רחמים המוהל</b> · ברית מכל הלב והנשמה</span><span>5</span></div>
+</section>
+
+<!-- 6 שמונה ימים -->
+<section class="page">
+  <h2><span class="num">פרק 2 · המשך</span>שמונה ימים, יום אחרי יום</h2>
+  <div class="rule"></div>
+  <ol class="days">
+    <li><div><b>יום הלידה</b>מזל טוב. לנשום. לשים לב אם הלידה הייתה לפני השקיעה או אחריה.</div></li>
+    <li><div><b>לקבוע מוהל ומקום</b>שיחה אחת קצרה. ככל שמוקדם יותר, רגוע יותר.</div></li>
+    <li><div><b>בדיקת צהבת</b>בבית החולים או בטיפת חלב. לשמור את התוצאה, היום והשעה.</div></li>
+    <li><div><b>כיבודים</b>סנדק, קוואטר וקוואטרין, מי מברך. לברר במשפחה למי נהוג.</div></li>
+    <li><div><b>ביקור הבית של המוהל</b>בודקים את התינוק, עוברים על הכול, עונים על שאלות.</div></li>
+    <li><div><b>קניות אחרונות</b>תחבושות, משחה, בגד משני חלקים, יין וכוס.</div></li>
+    <li><div><b>ברית יצחק</b>בערב: לימוד, תהילים ושירה סביב התינוק.</div></li>
+    <li><div><b>יום הברית</b>להאכיל כשעה לפני, לבוא במצב רוח טוב, ולהשאיר את העייפות מאחור.</div></li>
+  </ol>
+  <div class="foot"><span><b>גילעד רחמים המוהל</b> · ברית מכל הלב והנשמה</span><span>6</span></div>
+</section>
+
+<!-- 7 אולם -->
+<section class="page">
+  <h2><span class="num">פרק 3 · הכנות לטקס</span>בחירת אולם</h2>
+  <div class="rule"></div>
+  <ul class="ck">
+    <li><div><b>זמן הברית:</b> בבוקר או בצהריים. בערב לא עורכים ברית, זהו אירוע שצריך לערוך במהלך שעות היום, כשהשמש עוד זורחת</div></li>
+    <li><div><b>כיסא אליהו:</b> לברר אם יש באולם או שצריך להביא מבית הכנסת באזור, ואם כן, לדאוג לכך מראש</div></li>
+    <li><div><b>מיקום</b> שיהיה נוח למוזמנים, והכי חשוב שיהיה נוח לכם ההורים. אתם בעלי האירוע, והאישה אחרי לידה וצריכה שיהיה לה הכי נוח. הרגע ילדה!</div></li>
+    <li><div><b>סגנון אולם:</b> יש לחשוב ולבחון איזה סגנון אולם מתאים לכם. בית כנסת, אולם, מסעדה, או הבית</div></li>
+    <li><div><b>קייטרינג</b> (כלול באולם או מבחוץ)</div></li>
+    <li><div><b>כמה מוזמנים</b></div></li>
+    <li><div><b>הגברה / DJ</b> במידה ואתם רוצים להוסיף</div></li>
+  </ul>
+  <div class="tip"><b>טיפ של מוהל</b>הייתי בבריתות בישיבה, בחדר אוכל ובמסעדה. בכולן זה היה מרגש. מה שקובע את האווירה הוא לא המקום, אלא מי שעומד סביב התינוק ומה שרים.</div>
+  <div class="foot"><span><b>גילעד רחמים המוהל</b> · ברית מכל הלב והנשמה</span><span>7</span></div>
+</section>
+
+<!-- 8 כיבודים -->
+<section class="page">
+  <h2><span class="num">פרק 3 · המשך</span>תכנון הטקס: הכיבודים</h2>
+  <div class="rule"></div>
+  <p>נהוג לתת לאדם קרוב אחד להיות סנדק, ולאדם קרוב אחר להקריא את ברכות הברית ואת שם הרך הנימול. אם רוצים, ניתן גם לבקש מהמוהל שיקריא את הברכות בנעימה מסורתית ויאמר את שם הרך הנימול.</p>
+  <div style="margin-top:6mm">
+    <div class="honor"><svg class="ic"><use href="#baby"/></svg><div><h3>סנדק</h3><p>מי שיושב על כיסא אליהו ומחזיק את התינוק במהלך הברית. הכיבוד הגדול ביותר, לרוב לסבא או לרב.</p></div></div>
+    <div class="honor"><svg class="ic"><use href="#kise"/></svg><div><h3>כיסא של אליהו</h3><p>לפי המסורת אליהו הנביא נוכח בכל ברית, ומניחים את התינוק לרגע על כיסא שמוקדש לו.</p></div></div>
+    <div class="honor"><svg class="ic"><use href="#hands"/></svg><div><h3>קוואטר וקוואטרין</h3><p>בני זוג שמכניסים את התינוק לחדר ומעבירים אותו מיד ליד. במשפחות רבות זה הכיבוד לזוג שמחכה לילדים.</p></div></div>
+    <div class="honor"><svg class="ic"><use href="#kos"/></svg><div><h3>הברכות וקריאת השם</h3><p>אחרי המילה מברכים על כוס יין ומכריזים לראשונה על שם התינוק, ואומרים: "וָאֹמַר לָךְ בְּדָמַיִךְ חֲיִי".</p></div></div>
+  </div>
+  <div class="tip"><b>הערה חשובה</b>חשוב לשים לב שלא פוגעים באף אחד מהקרובים שאולי מצפים לקבל אחד מהכיבודים. לכן חשוב לברר לפני במשפחה למי נהוג לתת את הסנדקאות בבן הראשון, וכן הלאה. וכך כולם יהיו מאושרים.</div>
+  <div class="foot"><span><b>גילעד רחמים המוהל</b> · ברית מכל הלב והנשמה</span><span>8</span></div>
+</section>
+
+<!-- 9 מה נדרש -->
+<section class="page">
+  <h2><span class="num">פרק 4 · יום הברית</span>מה נדרש לברית עצמה</h2>
+  <div class="rule"></div>
+  <div class="two">
+    <div>
+      <div class="honor"><svg class="ic"><use href="#karit"/></svg><div><h3>כרית לברית</h3><p>עליה התינוק ישכב בכל מהלך הברית. ניתן גם להשיג מגמ"חים שונים של ציוד לברית.</p></div></div>
+      <div class="honor"><svg class="ic"><use href="#kos"/></svg><div><h3>כוס קידוש ויין</h3><p>יש לדאוג ליין אדום יבש, ולכוס קידוש עליה יברך מי שברך את הברכות.</p></div></div>
+      <div class="honor"><svg class="ic"><use href="#talit"/></svg><div><h3>2 טליתות</h3><p>אחת לאבא ואחת לסנדק.</p></div></div>
+    </div>
+    <div>
+      <div class="honor"><svg class="ic"><use href="#hadas"/></svg><div><h3>בשמים</h3><p>מנהג הספרדים ועדות המזרח להביא בשמים שיהיה להרחה בזמן הברית. עדיפות להדסים.</p></div></div>
+      <div class="honor"><svg class="ic"><use href="#seal"/></svg><div><h3>סידור</h3><p>עבור סדר הברכות, אלא אם כן המוהל מביא לכם.</p></div></div>
+      <div class="honor"><svg class="ic"><use href="#baby"/></svg><div><h3>חפצים לתינוק</h3><p>ראו בעמוד הבא מה להביא לתינוק לברית.</p></div></div>
+    </div>
+  </div>
+  <div class="tip"><b>בונוס</b>ניתן להביא דפים עם תפילה לסגולה בשעת בכי התינוק ולחלק למוזמנים כמזכרת מהברית, דבר שגורם לקהל להיות שותפים.</div>
+  <p class="big">והכי חשוב: לבוא במצב רוח טוב, ולהשאיר את כל העייפות מאחור!</p>
+  <div class="foot"><span><b>גילעד רחמים המוהל</b> · ברית מכל הלב והנשמה</span><span>9</span></div>
+</section>
+
+<!-- 10 הנסיך הקטן -->
+<section class="page">
+  <h2><span class="num">פרק 4 · המשך</span>הכנת הנסיך הקטן לברית</h2>
+  <div class="rule"></div>
+  <h3>ביגוד לתינוק</h3>
+  <p>בעת הברית יש צורך שאזור הברית והרגליים יהיו מגולים, ולכן הקפידו להלביש את התינוק בבגד שני חלקים, שניתן יהיה להוריד את הגטקס או המכנס ולהשאיר לתינוק גופייה או חולצה, כך שהתינוק לא יהיה חשוף כולו ולא יהיה לו קר.</p>
+  <h3>האכלת התינוק</h3>
+  <p>יש להאכיל את התינוק כשעה לפני הברית.</p>
+  <h3>תיק החתלה</h3>
+  <ul class="ck">
+    <li><div>חיתולי בד</div></li>
+    <li><div>טיטולים ומגבונים</div></li>
+    <li><div>בגד החלפה, למקרה שיפספס</div></li>
+    <li><div>תחליפי חלב, אם אינו יונק</div></li>
+    <li><div>מוצץ</div></li>
+    <li><div>משחת החתלה</div></li>
+  </ul>
+  <h3>אחרי הברית</h3>
+  <p>המוהל ייתן לכם הנחיות מדויקות לטיפול בתינוק, יחזור להוריד את התחבושת, ויישאר זמין עד שהתינוק מחלים לגמרי. ההחלמה בדרך כלל לוקחת ימים ספורים.</p>
+  <div class="foot"><span><b>גילעד רחמים המוהל</b> · ברית מכל הלב והנשמה</span><span>10</span></div>
+</section>
+
+<!-- 11 בחירת מוהל -->
+<section class="page">
+  <h2><span class="num">פרק 5</span>בחירת מוהל: ארבע נקודות</h2>
+  <div class="rule"></div>
+  <p class="intro">ארבעת הדברים שחשוב לדעת כשבוחרים מוהל, במיוחד בשביל הנסיך הקטן שלכם.</p>
+  <div class="four">
+    <div><h3>בריאות התינוק</h3><p>חשוב לדאוג למוהל הבקיא במלאכתו, שלמד את לימודי המילה בצורה מסודרת וידע לתת הנחיות מדויקות לטיפול בתינוק לאחר הברית, לשמירה על תינוק רגוע ונינוח.</p></div>
+    <div><h3>מוהל זמין ונגיש עבורכם</h3><p>מוהל נגיש שיבוא לראות את התינוק ואתכם ההורים לפני ואחרי הברית, ויהיה זמין לכם בכל שלב לשאול ולהתייעץ, במיוחד בתקופת החלמת התינוק.</p></div>
+    <div><h3>האווירה בברית</h3><p>בטקס ברית המילה יש חשיבות רבה למוהל, הרבה מעבר למעשה המילה עצמו. המוהל יכול להוסיף המון לאווירה על ידי שיתוף הקהל במילים משמחות ובשירים מתאימים.</p></div>
+    <div><h3>הנחת שלכם ההורים</h3><p>חשוב לקחת מוהל שילווה אתכם לאורך כל הדרך, מהולדת הבן ועד החלמתו המהירה והשלמה של התינוק, ובכך תעברו ימים אלו בנחת ובשמחה.</p></div>
+  </div>
+  <h3 style="margin-top:8mm">ארבע שאלות לשאול כל מוהל</h3>
+  <ol class="qs">
+    <li><div><b>איפה למדת, ומי הסמיך אותך?</b>תשובה טובה היא שם של מוסד ושל מורה.</div></li>
+    <li><div><b>אתה מגיע לראות את התינוק לפני הברית?</b>ההבדל בין מוהל שמגיע לאירוע למוהל שמלווה משפחה.</div></li>
+    <li><div><b>מה קורה אחרי הברית, ואיך משיגים אותך?</b>מי מוריד את התחבושת, ומה עושים אם יש שאלה בלילה.</div></li>
+    <li><div><b>איך הברית עצמה נראית אצלך?</b>שירים, פיוטים, הסבר לקהל. ברית טובה היא גם רגע יפה.</div></li>
+  </ol>
+  <div class="foot"><span><b>גילעד רחמים המוהל</b> · ברית מכל הלב והנשמה</span><span>11</span></div>
+</section>
+
+<!-- 12 רשימת סימון -->
+<section class="page">
+  <h2><span class="num">לתלות על המקרר</span>רשימת הסימון המרוכזת</h2>
+  <div class="rule"></div>
+  <div class="cols3">
+    <div><h3>בית מרקחת</h3><ul class="ck"><li><div>עזרקאין 5%</div></li><li><div>אלכוהול וצמר גפן</div></li><li><div>נובימול</div></li><li><div>משחת הנקה</div></li><li><div>שמן שקדים / פרפין</div></li></ul>
+      <h3>היגיינה</h3><ul class="ck"><li><div>טיטולים ניובורן</div></li><li><div>מגבונים</div></li><li><div>משטח החתלה</div></li><li><div>שמפו לתינוקות</div></li></ul></div>
+    <div><h3>ביגוד</h3><ul class="ck"><li><div>בגדים לימים הראשונים</div></li><li><div>חיתולי בד</div></li><li><div>בגד לברית משני חלקים</div></li><li><div>בגדים חגיגיים למשפחה</div></li></ul>
+      <h3>שינה ונסיעה</h3><ul class="ck"><li><div>סלקל</div></li><li><div>מיטת תינוק</div></li><li><div>עגלה</div></li></ul>
+      <h3>לטקס</h3><ul class="ck"><li><div>מוהל</div></li><li><div>מועד</div></li><li><div>בדיקת צהבת</div></li><li><div>מקום ושעה</div></li><li><div>כיסא אליהו</div></li></ul></div>
+    <div><h3>כיבודים</h3><ul class="ck"><li><div>סנדק</div></li><li><div>קוואטר וקוואטרין</div></li><li><div>מי מברך ומקריא</div></li><li><div>קייטרינג</div></li></ul>
+      <h3>להביא ביום הברית</h3><ul class="ck"><li><div>כרית לברית</div></li><li><div>כוס קידוש ויין אדום</div></li><li><div>2 טליתות</div></li><li><div>בשמים / הדסים</div></li><li><div>סידור</div></li><li><div>תיק החתלה</div></li><li><div>להאכיל שעה לפני</div></li><li><div>דפי תפילה (בונוס)</div></li></ul></div>
+  </div>
+  <div class="tip" style="margin-top:8mm"><b>גרסה בטלפון</b>באתר יש את אותה רשימה עם משבצות שנשמרות בטלפון שלכם: <b style="display:inline">gilad-rachamim.github.io/mohel/checklist</b></div>
+  <div class="foot"><span><b>גילעד רחמים המוהל</b> · ברית מכל הלב והנשמה</span><span>12</span></div>
+</section>
+
+<!-- 13 על גילעד -->
+<section class="page">
+  <h2><span class="num">מי כתב את המדריך</span>למדתי מילה בשביל ילד אחד</h2>
+  <div class="rule"></div>
+  <div class="about">
+    <img src="/mohel/gilad.jpg" alt="">
+    <div>
+      <p class="intro">עוד לפני שבני הבכור, יצחק, נולד, הרגשתי שאני רוצה לעשות לו את הברית בעצמי. אז הלכתי ללמוד: הכשרה מסודרת במכון עלייה, כולל הכשרה רפואית, ולצידי המוהל שלימד אותי וליווה אותי לברית הראשונה.</p>
+      <p>את הבן השני שלי מלתי תשעה חודשים אחרי שנפצעתי במלחמה, באותו בית חולים שבו שכבתי נולד. אבא שלי הקריא בברית פעמיים "וָאֹמַר לָךְ בְּדָמַיִךְ חֲיִי". מאז, כל ברית היא בשבילי לא רק מצווה, אלא רגע של אמונה, שירה וחיים.</p>
+    </div>
+  </div>
+  <blockquote class="quote">"אני יודע מבפנים מה עובר על אבא ואמא בשמונת הימים האלה. לכן הליווי שלי מתחיל לפני הברית ונגמר רק כשהתינוק מחלים לגמרי."</blockquote>
+  <h3>מה תקבלו ממני</h3>
+  <ul class="ck">
+    <li><div>מוהל ירא שמיים, מומחה ומוסמך, כולל הכשרה רפואית</div></li>
+    <li><div>ביקור בית לפני הברית ואחריה</div></li>
+    <li><div>ליווי אישי ומקצועי לאורך כל תקופת ההחלמה</div></li>
+    <li><div>אפשרות לשיעור תורה לברית יצחק</div></li>
+    <li><div>ליווי הברית בשירים ובפיוטים על פי המנהגים השונים</div></li>
+  </ul>
+  <div class="foot"><span><b>גילעד רחמים המוהל</b> · ברית מכל הלב והנשמה</span><span>13</span></div>
+</section>
+
+<!-- 14 סיום -->
+<section class="page dark">
+  <div class="end">
+    <svg class="ic" style="width:18mm;height:18mm;color:var(--gold);stroke-width:1"><use href="#seal"/></svg>
+    <h2 style="margin-top:6mm">לשיחת ייעוץ והיכרות חינם,<br>ללא התחייבות</h2>
+    <p>גילעד רחמים המוהל, ברית מכל הלב והנשמה.<br>המוהל שילווה אתכם מהרגע הראשון.</p>
+    <div class="phone">058-4049049</div>
+    <p>ווטסאפ או טלפון · gilad4049@gmail.com<br>gilad-rachamim.github.io/mohel</p>
+    <img src="/assets/qr-mohel.svg" alt="">
+    <p style="font-size:9.5pt;color:#a99c82;margin-top:3mm">סרקו לאתר: מחשבון מועד הברית, רשימת ההכנה, והסיפור שלי</p>
+  </div>
+</section>
+</body>
+</html>
