@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /mohel/todah/
+Sitemap: https://gilad-rachamim.github.io/sitemap.xml

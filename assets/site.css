@@ -1,0 +1,85 @@
+/* גילעד רחמים המוהל – עיצוב משותף לכל העמודים */
+:root{
+  --ink:#16130f;          /* שיש שחור-חום */
+  --ink-2:#1f1a14;
+  --gold:#c9a55c;         /* זהב העורקים בכרטיס */
+  --gold-hi:#dcbb74;
+  --gold-soft:#8a7444;
+  --parchment:#efe6d2;
+  --cream:#fbf5e7;
+  --body:#d9cfbb;
+  --muted:#a99c82;
+  --olive:#5f5d43;        /* הפס התחתון בכרטיס */
+  --line:rgba(201,165,92,.18);
+  --serif:"Frank Ruhl Libre","David Libre",serif;
+  --sans:"Assistant",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--ink);scroll-behavior:smooth}
+body{
+  font-family:var(--sans);color:var(--parchment);
+  background:
+    radial-gradient(120% 60% at 85% 0%,rgba(201,165,92,.10),transparent 60%),
+    radial-gradient(90% 50% at 0% 100%,rgba(201,165,92,.06),transparent 60%),
+    var(--ink);
+  line-height:1.7;font-size:1.125rem;min-height:100vh;
+}
+img{max-width:100%;height:auto;display:block}
+a{color:inherit}
+a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible{
+  outline:2px solid var(--gold);outline-offset:3px;border-radius:6px
+}
+.wrap{max-width:38rem;margin:0 auto;padding:0 1.25rem}
+.wrap-wide{max-width:64rem;margin:0 auto;padding:0 1.25rem}
+.skip{position:absolute;inset-inline-start:-999px;top:0;background:var(--gold);color:var(--ink);padding:.5rem 1rem;z-index:10}
+.skip:focus{inset-inline-start:1rem}
+
+h1,h2,h3{font-family:var(--serif);line-height:1.25}
+h2{font-weight:500;color:var(--gold);font-size:1.65rem;margin-bottom:1.1rem}
+h3{font-weight:500;color:var(--cream);font-size:1.2rem;line-height:1.4}
+p + p{margin-top:.9rem}
+.lead{font-family:var(--serif);font-size:1.25rem;line-height:1.85;color:#f5ecda}
+.note{color:var(--muted);font-size:1rem}
+
+/* כפתורים */
+.actions{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.55rem;
+  padding:.85rem 1.4rem;border-radius:999px;border:0;cursor:pointer;
+  font:600 1.05rem/1.2 var(--sans);text-decoration:none;
+  transition:background .2s,color .2s,border-color .2s;
+}
+.btn svg{width:1.2rem;height:1.2rem;flex:none}
+.btn-gold{background:var(--gold);color:var(--ink)}
+.btn-gold:hover{background:var(--gold-hi)}
+.btn-line{border:1px solid var(--gold-soft);color:var(--parchment);background:transparent}
+.btn-line:hover{border-color:var(--gold);color:#fff}
+.btn-block{width:100%}
+
+/* טופס המדריך */
+.lead-form{display:grid;gap:1rem}
+.field{display:grid;gap:.35rem}
+.field label,.field .label{font-weight:600;font-size:1rem;color:var(--cream)}
+.field .opt{font-weight:400;color:var(--muted)}
+.field input,.field select{
+  width:100%;font:400 1.05rem/1.4 var(--sans);color:var(--cream);
+  background:rgba(239,230,210,.06);border:1px solid rgba(201,165,92,.35);border-radius:10px;
+  padding:.8rem .9rem;
+}
+.field input::placeholder{color:#8f846f}
+.field input:focus,.field select:focus{border-color:var(--gold);background:rgba(239,230,210,.09)}
+.field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%23c9a55c' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:left .95rem center;background-size:.8rem;padding-inline-end:2.4rem}
+.field select option{background:var(--ink);color:var(--cream)}
+.check{display:grid;grid-template-columns:auto 1fr;gap:.6rem;align-items:start;font-size:.98rem;color:var(--body)}
+.check input{width:1.15rem;height:1.15rem;margin-top:.3rem;accent-color:var(--gold)}
+.hp{position:absolute;inset-inline-start:-5000px;width:1px;height:1px;overflow:hidden}
+.privacy{font-size:.88rem;color:var(--muted);text-align:center}
+
+/* כותרת תחתונה */
+.site-foot{text-align:center;color:var(--muted);font-size:.9rem;padding:1.5rem 1rem 2rem}
+.site-foot a{color:var(--muted)}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
