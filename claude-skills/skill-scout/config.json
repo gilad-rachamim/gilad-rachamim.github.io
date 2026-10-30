@@ -1,0 +1,9 @@
+{
+  "first_check_at": 4,
+  "every_n_prompts": 8,
+  "signal_min_gap": 3,
+  "max_nudges_per_session": 4,
+  "backlog_reminder_hours": 20,
+  "repeat_threshold": 3,
+  "tool_burst": 30
+}
