@@ -27,7 +27,7 @@ the phone, and a long close-out is hard to read there (29.10.2026).
 - **quick** - time-boxed (`/end-session quick`, "סוף סשן מהיר", or called because battery
   or usage is critical). Capture everything, build nothing: run Steps 1, 2, 3 (state +
   Next Steps only), 6, 6b, 8, 8b and 9 in *capture* mode (seeds, 💡 ideas and briefs are
-  saved; builds go to a build session). Data first: Step 8b is never skipped here. Skip 4, 5, 7 and 10. Say at the top that it was a quick close.
+  saved; builds go to a build session). Data first: Step 8b is never skipped here. (6c too, if fast.) Skip 4, 5, 7 and 10. Say at the top that it was a quick close.
 - **recover** - `/end-session recover`, or the PC/app died mid-session (battery, crash): close
   THAT session from its records - its transcript digest
   (`python -I ~/.claude/skills/session-retro/scripts/digest_sessions.py <its .jsonl>`) and its
@@ -170,6 +170,11 @@ in `~/.claude/skills/data-keeper/config.json`). Run
 `python -I ~/.claude/skills/data-keeper/scripts/backup.py` and check it ends with "Done.".
 "Backup skipped" -> say why in the summary line. Target empty -> skip.
 
+### Step 6c - Sync the skills to the phone (skills-sync)
+If any skill changed this session: `python -I ~/.claude/skills/skills-sync/scripts/sync_skills.py`
+-> "Pushed and verified." / "No changes". A "left out" line -> tell Gilad which skill holds
+personal data. "not set up yet" -> skip silently.
+
 ### Step 7 - Projects registry (OPTIONAL)
 Only if the user keeps a central projects registry / work log file (for example a
 `PROJECTS.md` in its own repo). Otherwise skip.
@@ -235,6 +240,7 @@ together in ONE line** - then a 1-2 sentence summary. About 12 lines at most:
 3. יומן ................. נכתב: <journal/YYYY-MM-DD.md>
 6. Push ................. commit+push אומת ✓
 6b. גיבוי ............... בוצע ✓ / אין תיקיית גיבוי
+6c. סקילים לטלפון ........ סונכרן ✓ / אין שינוי
 8. זיכרון ............... נשמר: <slug> / אין חדש
 8b. נתונים .............. N נבדקו, M נשמרו עכשיו, 0 חסרים
 9. סקילים ............... נבנו: <names> · בריף + שיחה מוצעת: <names> · זרעים: <n>

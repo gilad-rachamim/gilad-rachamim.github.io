@@ -21,6 +21,7 @@ idea - from a retro, from skill-scout or from Gilad - falls through.
 | **mid-project** | work-summary, session-journal, "סיכום שיחה" / "סיכום ביניים" | this session | seeds + memories; new skills only when already proven |
 | **capture** | end-session quick (battery / usage critical) | this session | save ideas, seeds, memories, briefs - build nothing |
 | **day** | "בדיקת סוף יום", end-session step 10, a daily work-summary | ALL of today's sessions | what single sessions missed (§6) |
+| **week** | the weekly scheduled task (Saturday night), "דוח שבועי", "כמה חסכנו" | the last 7 days | the "כמה חסכנו" report (§6b) |
 
 - **Read `skill-seeds.md`** (next to this file) before scanning - it is the pipeline. Statuses:
   🌱 seed · 🌿 ripe · 💡 offered by skill-scout · 🔨 brief written / build session proposed ·
@@ -131,6 +132,17 @@ one** session today.
    description; the biggest descriptions of rarely used skills get shortened.
 7. **Stamp** `Last day review: <YYYY-MM-DD HH:MM>` in the header of `skill-seeds.md`.
 8. **Report** (§7), adding the top 1-3 improvements for tomorrow.
+
+## 6b. Week mode - "כמה חסכנו" (Gilad, 29.10.2026)
+1. `python -I ~/.claude/skills/session-retro/scripts/digest_sessions.py --days 7 --json --out <scratchpad>/week.json`
+   -> how many times each skill ran (`skills`), sessions, repeats, errors.
+2. Built this week: `✅` entries in `skill-seeds.md` dated in the last 7 days.
+3. Time saved: runs x the skill's "חוסך ~N דקות" (written on its ✅ entry by skill-forge);
+   no number -> estimate from the brief and mark it "~". Never inflate - say what is a guess.
+4. Send at most 6 lines:
+   `📊 השבוע: N סקילים רצו M פעמים · נבנו: <names> · נחסכו בערך X שעות`
+   `הכי בזבז זמן: <one line>` · `הבא לשפר: <one line, its 💡/🌿 entry or a new seed>`
+5. Verify: every number comes from the digest or the pipeline, not from memory.
 
 ## 7. Output (Hebrew, short - Gilad often reads on the phone)
 | # | סוג | מה | למה זה עוזר | מה נעשה |

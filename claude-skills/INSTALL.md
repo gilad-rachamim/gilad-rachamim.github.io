@@ -29,7 +29,7 @@ Copy `SK/end-session`, `SK/session-retro`, `SK/work-summary` and `~/.claude/sett
 `~/.claude/backups/skills-upgrade-<YYYYmmdd-HHMM>/`. Verify the copies are there.
 
 ## 3. New skills - copy as they are
-`U/skill-forge`, `U/skill-scout`, `U/data-keeper` and `U/waiting-for-me` -> `SK/`.
+`U/skill-forge`, `U/skill-scout`, `U/data-keeper`, `U/waiting-for-me` and `U/skills-sync` -> `SK/`.
 If any of these folders already exists, stop and show Gilad the difference.
 
 ## 4. end-session and session-retro - merge, never a blind overwrite
@@ -117,13 +117,21 @@ It prints `to-log: N new message(s) written`. Running it twice adds nothing.
   his phone). "Backup skipped: no personal OneDrive" -> tell him; with his OK pick another folder.
 - Memory `new-skills-first-run.md`: add skill-forge, skill-scout, data-keeper and the day
   mode - tell Gilad how each one did on its first real run.
-- Pipeline: add the history entry `## skills-upgrade-2026-10-29 - ✅ נבנה (skill-forge, skill-scout, data-keeper, waiting-for-me)`.
+- Pipeline: add the history entry `## skills-upgrade-2026-10-29 - ✅ נבנה (skill-forge, skill-scout, data-keeper, waiting-for-me, skills-sync)`.
 - **Nightly end-of-day check - Gilad already said yes (29.10.2026):** create a scheduled task
   on this PC (load the desktop app's scheduled-task tool with ToolSearch, e.g. "schedule task")
   at 23:30, Sunday-Thursday and Saturday - **not Friday night (Shabbat)** - in a new session,
   with the prompt: `בדיקת סוף יום (session-retro במצב יום): עבור על כל השיחות של היום, שמור כל
   נתון שפוספס, ובנה או רשום כל רעיון לסקיל. בסוף - סיכום של עד 6 שורות בעברית.`
   No scheduling tool on the PC -> tell Gilad in one line; the day mode still runs on "סיימנו להיום".
+- **Weekly "כמה חסכנו" report - Gilad said yes (31.10.2026):** a scheduled task on this PC,
+  Saturday 21:31 (after Shabbat), prompt: `דוח שבועי - session-retro במצב week (כמה חסכנו), עד 6 שורות בעברית.`
+- **Skills on the phone - Gilad said yes (31.10.2026), skills only, no memory:**
+  `gh auth status` (logged in? if not, ask Gilad to run `gh auth login` once), then
+  `python -I SK/skills-sync/scripts/sync_skills.py --setup` -> "Set up" (creates the PRIVATE repo
+  gilad-rachamim/claude-skills), then `python -I SK/skills-sync/scripts/sync_skills.py` ->
+  "Pushed and verified.". Tell Gilad: give the Claude GitHub app access to the repo
+  (github.com/apps/claude -> Configure -> add claude-skills), then a phone session on that repo has all his skills.
 - The morning "מה מחכה לי" message already runs from the cloud (Sunday-Friday 07:41), so it
   works even when the PC is off - nothing to set up here.
 - Delete `$TEMP/skills-upgrade`. Report in Hebrew, short: what was installed, what was

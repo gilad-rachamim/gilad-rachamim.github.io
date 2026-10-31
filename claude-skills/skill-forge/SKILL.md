@@ -97,7 +97,8 @@ trigger it:
 3. High-traffic skill or a fuzzy trigger -> optionally run skill-creator's description/eval loop.
 
 ## 7. Register and watch
-- Pipeline: set the entry in `skill-seeds.md` to `✅ נבנה (<skill-name>)` and keep it as history.
+- Pipeline: set the entry in `skill-seeds.md` to `✅ נבנה (<skill-name>)`, add a line
+  `- **חוסך ~N דקות להרצה**` (your honest estimate - the weekly report sums these), and keep it as history.
 - First-run watch: add the skill to the memory `new-skills-first-run.md` (create it if
   missing). Its first real run ends with a short Hebrew note - worked / what broke - and a fix.
 - Mention it in the session journal when the session keeps one.
