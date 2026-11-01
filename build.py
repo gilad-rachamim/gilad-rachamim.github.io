@@ -15,7 +15,7 @@ LAYOUT = (ROOT / "src" / "layout.html").read_text(encoding="utf-8")
 SPRITE = (ROOT / "assets" / "icons.svg").read_text(encoding="utf-8")
 BASE = "https://gilad-rachamim.github.io"
 # מזהה Google Analytics 4 (G-XXXXXXXXXX). ריק = בלי מעקב.
-GA_ID = ""
+GA_ID = "G-4QR4583VST"
 # כתובת ה-Web App של צינור הלידים (tools/leads-apps-script.gs, פריסה כ-Web app).
 LEAD_ENDPOINT = "https://script.google.com/macros/s/AKfycbxgWe4xxaclqfzmOD_E0hOg2XDr2genZZyvAcf0hpHw_AHkgvQAqDop-XjdURdARYNx-Q/exec"
 GA = "" if not GA_ID else f"""<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>

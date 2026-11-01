@@ -59,6 +59,7 @@ function doPost(e) {
     row[C['טוקן']] = token; row[C['הערות']] = dup ? 'כבר נרשם/ה בעבר (שורה ' + dup + ')' : '';
     row[C['עמוד']] = clean(p['_page']); row[C['utm']] = utm;
     sh.appendRow(row);
+    sh.getRange(sh.getLastRow(), C['טלפון'] + 1).setNumberFormat('@').setValue(phone); // לשמור את ה-0 המוביל
 
     if (email) sendGuideEmail(name, email, token);
     notifyOwner(name, phone, email, row[C['מועד לידה']], row[C['עיר']], row[C['מקור']], dup);
