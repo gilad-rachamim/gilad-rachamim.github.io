@@ -12,11 +12,16 @@
     else if (/\.vcf($|\?)/.test(h)) ev('save_contact', where);
     else if (/\.pdf($|\?)/.test(h)) ev('guide_download', where);
   }, true);
-  document.addEventListener('submit', function (e) {
-    var f = e.target;
-    if (f.matches && f.matches('form[data-lead]')) {
-      var s = f.querySelector('[name="מקור"]');
-      ev('generate_lead', { page: location.pathname, source: s ? s.value : '', transport_type: 'beacon' });
+  // ליד = הגעה לעמוד התודה עם פרטים ב-hash (אמין יותר מאירוע submit, שנחתך במעבר דף).
+  // נספר פעם אחת לכל ליד, גם אם מרעננים את עמוד התודה.
+  if (location.pathname === '/mohel/todah/' && /(^|[#&])n=/.test(location.hash)) {
+    var key = 'mohel-lead-counted-' + location.hash;
+    var seen = false;
+    try { seen = sessionStorage.getItem(key); sessionStorage.setItem(key, '1'); } catch (err) {}
+    if (!seen) {
+      var src = '';
+      try { src = (JSON.parse(sessionStorage.getItem('mohel-utm') || '{}').utm_source) || ''; } catch (err) {}
+      ev('generate_lead', { page: document.referrer ? new URL(document.referrer).pathname : '', source: src });
     }
-  }, true);
+  }
 })();
