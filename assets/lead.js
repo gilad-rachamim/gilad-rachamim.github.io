@@ -15,6 +15,19 @@
     else utm = JSON.parse(sessionStorage.getItem('mohel-utm') || '{}');
   } catch (err) {}
 
+  // בוחר החודש: 12 החודשים הקרובים, מהחודש הנוכחי
+  var HE = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+  document.querySelectorAll('select[data-months]').forEach(function (sel) {
+    var d = new Date(), ref = sel.options[1];
+    for (var i = 0; i < 10; i++) {
+      var m = new Date(d.getFullYear(), d.getMonth() + i, 1);
+      var o = document.createElement('option');
+      o.value = m.getFullYear() + '-' + ('0' + (m.getMonth() + 1)).slice(-2);
+      o.textContent = HE[m.getMonth()] + ' ' + m.getFullYear();
+      sel.insertBefore(o, ref);
+    }
+  });
+
   document.querySelectorAll('form[data-lead]').forEach(function (form) {
     Object.keys(utm).forEach(function (k) {
       var el = form.querySelector('[name="' + k + '"]');
@@ -33,7 +46,9 @@
       btn.disabled = true;
       btn.textContent = 'שולח…';
 
-      var lead = { n: val(form, 'שם'), p: val(form, 'טלפון'), e: val(form, 'email'), d: val(form, 'מועד הלידה'), c: val(form, 'עיר'), t: Date.now() };
+      var due = form.querySelector('[name="מועד הלידה"]');
+      var dueText = due && due.value ? due.options[due.selectedIndex].textContent : '';
+      var lead = { n: val(form, 'שם'), p: val(form, 'טלפון'), e: val(form, 'email'), d: dueText, c: val(form, 'עיר'), t: Date.now() };
       try { localStorage.setItem('mohel-lead', JSON.stringify(lead)); } catch (err) {}
 
       var next = form.getAttribute('data-next') + '#' + new URLSearchParams({ n: lead.n, p: lead.p, d: lead.d, c: lead.c }).toString();

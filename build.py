@@ -47,14 +47,14 @@ LEADFORM = """<form class="lead-form" data-lead data-next="/mohel/todah/" action
   <input type="hidden" name="utm_source" value=""><input type="hidden" name="utm_medium" value=""><input type="hidden" name="utm_campaign" value=""><input type="hidden" name="ref" value="">
   <div class="hp" aria-hidden="true"><label>אל תמלאו שדה זה <input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></div>
   <div class="field"><label for="{p}-name">שם</label><input id="{p}-name" name="שם" type="text" autocomplete="name" required placeholder="איך קוראים לכם?"></div>
-  <div class="field"><label for="{p}-phone">טלפון</label><input id="{p}-phone" name="טלפון" type="tel" inputmode="tel" autocomplete="tel" required placeholder="050-0000000" pattern="[0-9\\-\\+\\s]{{9,15}}" dir="ltr" style="text-align:right"></div>
-  <div class="field"><label for="{p}-email">מייל</label><input id="{p}-email" name="email" type="email" autocomplete="email" required placeholder="name@gmail.com" dir="ltr" style="text-align:right"></div>
-  <div class="field"><label for="{p}-due">מתי הלידה? <span class="opt">(לא חובה)</span></label>
-    <select id="{p}-due" name="מועד הלידה"><option value="">בחרו</option><option>החודש</option><option>בעוד חודש-חודשיים</option><option>בעוד שלושה חודשים ויותר</option><option>הבן כבר נולד – מזל טוב!</option></select></div>
-  <div class="field"><label for="{p}-city">עיר <span class="opt">(לא חובה)</span></label><input id="{p}-city" name="עיר" type="text" autocomplete="address-level2" placeholder="ירושלים"></div>
-  <label class="check"><input type="checkbox" name="מאשר/ת קבלת עדכונים" value="כן"> <span>אשמח לקבל מגילעד טיפים ועדכונים לקראת הברית</span></label>
-  <button class="btn btn-gold btn-block" type="submit">שלחו לי את המדריך</button>
-  <p class="privacy">הפרטים מגיעים רק אליי ולא מועברים לאף אחד.</p>
+  <div class="field"><label for="{p}-phone">טלפון <span class="opt">(בשביל ווטסאפ, אם תרצו)</span></label><input id="{p}-phone" name="טלפון" type="tel" inputmode="tel" autocomplete="tel" required placeholder="050-0000000" pattern="[0-9\\-\\+\\s]{{9,15}}" dir="ltr" style="text-align:right"></div>
+  <div class="field"><label for="{p}-email">מייל <span class="opt">(לכאן נשלח המדריך)</span></label><input id="{p}-email" name="email" type="email" autocomplete="email" required placeholder="name@gmail.com" dir="ltr" style="text-align:right"></div>
+  <div class="field"><label for="{p}-due">מתי הלידה בערך? <span class="opt">(ככה אשלח לכם את הטיפ הנכון בזמן הנכון)</span></label>
+    <select id="{p}-due" name="מועד הלידה" data-months><option value="">בחרו חודש</option><option value="born">הבן כבר נולד – מזל טוב!</option><option value="unknown">עוד לא יודעים</option></select></div>
+  <div class="field"><label for="{p}-city">עיר <span class="opt">(לא חובה)</span></label><input id="{p}-city" name="עיר" type="text" autocomplete="address-level2" placeholder="ירושלים? בית שמש? מודיעין?"></div>
+  <label class="check"><input type="checkbox" name="מאשר/ת קבלת עדכונים" value="כן"> <span>אשמח לקבל מגילעד 5–6 מיילים קצרים לאורך ההריון – טיפים מהמדריך, בזמן הנכון. אפשר להפסיק בכל רגע.</span></label>
+  <button class="btn btn-gold btn-block" type="submit">שלחו לי את המדריך (חינם)</button>
+  <p class="privacy">נפתח מיד, נשלח למייל, ואם תרצו – גם לווטסאפ.<br>הפרטים נשמרים אצלי בלבד, משמשים רק כדי לשלוח את המדריך ולענות לכם, לא מועברים לאף אחד, ונמחקים אחרי שנה. רוצים שאמחק קודם? כתבו לי.</p>
 </form>"""
 
 def leadforms(html):
