@@ -32,7 +32,7 @@ var CFG = {
 
 // עמודות גיליון "לידים" (הסדר קובע!)
 var COLS = ['תאריך', 'שם', 'טלפון', 'מייל', 'מועד לידה', 'עיר', 'מקור', 'הסכמה לדיוור',
-            'סטטוס', 'שלב בסדרה', 'מייל הבא', 'ווטסאפ הבא', 'טוקן', 'הערות', 'עמוד', 'utm'];
+            'סטטוס', 'שלב בסדרה', 'מייל הבא', 'ווטסאפ אחרון', 'טוקן', 'הערות', 'עמוד', 'utm', 'נשלח לאחרונה'];
 var C = {}; COLS.forEach(function (n, i) { C[n] = i; });
 
 // ---------- קליטת טופס ----------
@@ -53,16 +53,16 @@ function doPost(e) {
     row[C['שם']] = name; row[C['טלפון']] = phone; row[C['מייל']] = email;
     row[C['מועד לידה']] = clean(p['מועד הלידה']); row[C['עיר']] = clean(p['עיר']);
     row[C['מקור']] = clean(p['מקור']) || 'האתר'; row[C['הסכמה לדיוור']] = consent;
-    row[C['סטטוס']] = dup ? 'חוזר' : 'חדש'; row[C['שלב בסדרה']] = 0;
-    row[C['מייל הבא']] = consent === 'כן' ? nextSendDate(new Date(), 2) : '';
-    row[C['ווטסאפ הבא']] = new Date();
+    row[C['סטטוס']] = dup ? 'חוזר' : 'חדש';
+    row[C['ווטסאפ אחרון']] = ''; row[C['שלב בסדרה']] = ''; row[C['נשלח לאחרונה']] = '';
     row[C['טוקן']] = token; row[C['הערות']] = dup ? 'כבר נרשם/ה בעבר (שורה ' + dup + ')' : '';
     row[C['עמוד']] = clean(p['_page']); row[C['utm']] = utm;
     sh.appendRow(row);
     sh.getRange(sh.getLastRow(), C['טלפון'] + 1).setNumberFormat('@').setValue(phone); // לשמור את ה-0 המוביל
 
-    if (email) sendGuideEmail(name, email, token);
-    notifyOwner(name, phone, email, row[C['מועד לידה']], row[C['עיר']], row[C['מקור']], dup);
+    if (consent === 'כן') { var nx = dueStep(row, new Date()).next; sh.getRange(sh.getLastRow(), C['מייל הבא'] + 1).setValue(nx ? nx[1] : ''); }
+    if (email) sendGuideEmail(name, email, token, consent);
+    notifyOwner(row, dup);
     return txt('ok');
   } catch (err) {
     log('doPost error: ' + err + ' | ' + JSON.stringify(p));
@@ -90,87 +90,189 @@ function doGet(e) {
   return page('גילעד רחמים המוהל', 'המדריך להורים: ' + CFG.SITE + '/mohel/madrich/');
 }
 
-// ---------- מייל המדריך להורה ----------
-function sendGuideEmail(name, email, token) {
+// ---------- נוסחים (אושרו ע"י גילעד 2.11.2026) ----------
+// כל מייל: HTML קצר, בלי תמונות. {שם} מוחלף בשם הפרטי. קישורים עם utm_source=email.
+function link(path, label, code) {
+  var url = /^https?:/.test(path) ? path : CFG.SITE + path + (path.indexOf('?') > -1 ? '&' : '?') + 'utm_source=email&utm_medium=nurture&utm_campaign=' + code;
+  return '<a href="' + url + '" style="color:#1a5fb4;font-weight:bold">' + label + '</a>';
+}
+var SIG = 'גילעד רחמים אביעד · מוהל מוסמך · ירושלים, מגיע לכל הארץ<br>ווטסאפ/טלפון: 058-404-9049 · gilad-rachamim.github.io/mohel';
+
+function mailBody(code, variant) {
+  var PDF = CFG.PDF_URL, CALC = '/mohel/moed/', LIST = '/mohel/checklist/', VIDEO = '/mohel/#shira';
+  var B = {
+    'E1': 'שלום {שם},<br><br>רק בודק שהמדריך נפתח אצלכם. אם לא – הנה שוב: ' + link(PDF, 'המדריך (PDF)') + '.<br><br>' +
+      'וטיפ אחד שרוב ההורים לא יודעים: <b>שעת הלידה המדויקת קובעת את יום הברית.</b> תינוק שנולד אחרי השקיעה נחשב, לפי ההלכה, כאילו נולד למחרת – והברית מתאחרת ביום. אז כשהרגע יגיע, מישהו בחדר כותב את השעה. זה הכול.<br><br>' +
+      '(ואם אתם סקרנים כבר עכשיו – ' + link(CALC, 'מחשבון מועד הברית', code) + ' מראה לכם באיזה יום תצא הברית לפי תאריך משוער.)<br><br>כל שאלה, גם "קטנה" – אני כאן.<br><br>גילעד',
+    'E-6w': (variant ? 'לא יודע מתי הלידה אצלכם, אז אני מתחיל מהדבר שתמיד שווה לעשות מוקדם – קניות.' : 'אנחנו בערך שישה שבועות לפני. זה בדיוק הזמן לקניות – הדברים לא מתקלקלים, ואחרי הלידה תמיד עמוסים, ובתוך שמונה ימים מרימים אירוע.') + '<br><br>' +
+      '<b>מה כדאי לקנות כבר עכשיו</b> (מתוך המדריך, עמ\' 4–5):<br>• סלקל – חובה כדי לצאת מבית החולים, עדיף כזה שמתחבר לשלדת העגלה.<br>• טיטולים ניו-בורן, מגבונים, חיתולי בד (גם ל"עטיפת מוהלים" שמרגיעה אחרי הברית).<br>• בית מרקחת: עזרקאין 5%, נובימול, שמן טבעי (שקדים/פרפין), אלכוהול 70% לטבור.<br>• בגד לברית בשני חלקים – חולצה ומכנס נפרדים.<br><br>' +
+      '<b>מה אפשר לחכות איתו:</b> עגלה (אם אולי יקנו לכם), צעצועים, ביגוד מעבר לימים הראשונים – בברית תראו מה קיבלתם ותשלימו.<br><br>' +
+      'באתר יש ' + link(LIST, 'רשימת הכנה שנשמרת בטלפון', code) + ' – מסמנים, והיא זוכרת.<br><br>' +
+      (variant ? 'אם תענו לי באיזה חודש הלידה, אשלח את הטיפים בזמן הנכון.<br><br>' : '') + 'אני כאן לכל שאלה.<br>גילעד',
+    'E-3w': 'בשלב הזה הרבה הורים מתחילים לשאול "איך בוחרים מוהל?". ארבע הנקודות שאני כותב במדריך, כשאלות שאפשר לשאול כל מוהל:<br><br>' +
+      '1. <b>בריאות התינוק</b> – איפה למדת מילה, ואיזה הנחיות אתה נותן לטיפול אחרי הברית?<br>2. <b>זמינות</b> – אפשר לשאול אותך בווטסאפ לפני ואחרי? אתה מגיע הביתה למחרת להוריד את התחבושת?<br>3. <b>האווירה</b> – איך נראית ברית אצלך? שירים? פיוטים לפי המנהג שלנו?<br>4. <b>הנחת שלנו</b> – מה קורה אם יש צהבת? אם הלידה בקיסרי? מי מלווה אותנו עד ההחלמה?<br><br>' +
+      'מוהל טוב ישמח לענות על ארבעתן. וכדאי לדבר עם מוהל כבר עכשיו, בהריון – ככה ביום הלידה רק שולחים הודעה "נולד!".<br><br>' +
+      'רוצים לשמוע איך זה נשמע אצלי? ' + link(VIDEO, 'שתיים וחצי דקות של שירים ופיוטים מברית', code) + '.<br><br>אני כאן לכל שאלה.<br>גילעד',
+    'E-1w': (variant ? 'אולי מוקדם, אולי בדיוק בזמן – ציר שמונה הימים, שיהיה שמור:' : 'מתקרבים. הנה הדבר היחיד שצריך לדעת כרגע – <b>שמונה הימים, יום אחרי יום:</b>') + '<br><br>' +
+      'יום הלידה – מזל טוב, לנשום, לרשום את השעה. ימים 2–3 – בדיקת צהבת ושחרור; לשלוח למוהל צילום של מכתב השחרור. ימים 4–5 – כיבודים (סנדק, קוואטר, מי מברך), אולם ואוכל. ימים 5–7 – בדיקה אחרונה של המוהל, קניות אחרונות. ליל הברית – "ברית יצחק". היום השמיני – ברית, לפני השקיעה.<br><br>' +
+      'במדריך יש <b>כרטיס פרטים למוהל</b> וכפתור ווטסאפ שפותח הודעה עם כל השדות מוכנים – שם, תאריך ושעת לידה, משקל, סוג לידה, צהבת. ממלאים ושולחים. ככה לא שוכחים כלום כשהכול סוער.<br><br>' +
+      link(CALC, 'מחשבון מועד הברית', code) + ' – מכניסים תאריך ושעה, מקבלים את יום הברית.<br><br>שתהיה לידה קלה. אני כאן.<br>גילעד',
+    'E-birth': 'אם הבן כבר נולד – <b>מזל טוב!</b> ואם עוד לא – הוא יגיע בזמן שלו, ואין מה למהר.<br><br>שלושה דברים לשבוע הראשון:<br>' +
+      '<b>צהבת.</b> בבית החולים או בטיפת חלב עושים בדיקת בילירובין. שומרים את התוצאה, היום והשעה – לכך יש השפעה על מועד הברית. צהבת גבולית לא אומרת שהברית נדחית; המוהל עוקב איתכם.<br>' +
+      '<b>שעת הלידה.</b> לפני השקיעה – יום הלידה הוא היום הראשון. אחרי – מתחילים לספור ממחר.<br>' +
+      '<b>המועד.</b> ' + link(CALC, 'מחשבון מועד הברית', code) + ' נותן לכם את התאריך בלועזי ובעברי, ומסמן אם זה יוצא בשבת או בחג (ברית בזמנה נעשית גם בשבת; ברית שנדחתה – לא).<br><br>' +
+      'נולד ויש שאלה? שלחו לי "נולד" ב' + link('https://wa.me/' + CFG.WA_INTL + '?text=' + encodeURIComponent('שלום גילעד, נולד! '), 'ווטסאפ') + ' ואחזור אליכם.<br><br>גילעד',
+    'E-post': 'תודה שזכיתי להיות המוהל של הבן שלכם. היה מרגש.<br><br>' +
+      '<b>לימים הקרובים</b> (במדריך): אמבטיה פעמיים ביום חמישה ימים; משחה סביב מקום הברית פעמיים ביום שלושה ימים; מעט כתמי דם והפרשה לבנה-צהבהבה – טבעי. דימום שלא נעצר, חום, או שתן שלא מגיע שעות ארוכות – מתקשרים אליי מיד, בכל שעה.<br><br>' +
+      'ושתי בקשות, רק אם נוח לכם:<br>1. <b>משפט ב-Google</b> – זה מה שעוזר להורים אחרים למצוא מוהל שמלווה: ' + link(REVIEW_URL() || CFG.SITE + '/mohel/', 'לכתיבת ביקורת') + ' (חצי דקה).<br>' +
+      '2. <b>מכירים מישהי בהריון?</b> המדריך חינם: gilad-rachamim.github.io/mohel/madrich<br><br>תגדלו אותו לתורה, לחופה ולמעשים טובים.<br>גילעד'
+  };
+  var b = B[code];
+  return /^שלום/.test(b) ? b : 'שלום {שם},<br><br>' + b;
+}
+var SUBJECTS = {
+  'E1': 'הצלחתם לפתוח את המדריך?',
+  'E-6w': 'מה כדאי לקנות כבר עכשיו (ומה לחכות שיקבלו במתנה)',
+  'E-3w': 'ארבע שאלות ששווה לשאול כל מוהל',
+  'E-1w': 'שמונה ימים: מה עושים בכל יום, מהלידה ועד הברית',
+  'E-birth': 'מזל טוב? (ואם עוד לא – הכול בסדר)',
+  'E-post': 'פרסומת: תודה – וימי ההחלמה'
+};
+function REVIEW_URL() { return PropertiesService.getScriptProperties().getProperty('REVIEW_URL') || ''; }
+
+function wrapHtml(inner, unsubUrl) {
+  return '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:16px;line-height:1.65;color:#222;max-width:560px">' + inner +
+    '<div style="margin-top:16px;padding-top:10px;border-top:1px solid #eee;font-size:13px;color:#666">' + SIG + '</div>' +
+    (unsubUrl ? '<div style="margin-top:10px;font-size:12px;color:#999">קיבלתם את המייל כי ביקשתם את המדריך באתר וסימנתם שתרצו טיפים. לא רוצים יותר? <a href="' + unsubUrl + '" style="color:#999">להסרה בלחיצה אחת</a> – ואני עדיין כאן לכל שאלה.</div>' : '') +
+    '</div>';
+}
+function toText(html) {
+  return html.replace(/<br\s*\/?>/g, '\n').replace(/<a [^>]*href="([^"]+)"[^>]*>([^<]+)<\/a>/g, '$2: $1').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ');
+}
+
+// ---------- E0: מייל המדריך להורה (לכולם – מענה לבקשה) ----------
+function sendGuideEmail(name, email, token, consent) {
   var first = name.split(' ')[0];
-  var subject = 'המדריך המושלם להכנה לקראת הולדת הבן – מחכה לכם';
-  var body =
-    'שלום ' + first + ', ומזל טוב מראש! 🙂\n\n' +
-    'תודה שביקשתם את המדריך. הנה הוא:\n' + CFG.PDF_URL + '\n\n' +
-    'מה כדאי לעשות עכשיו: לפתוח את רשימת הקניות (עמוד 4) ולסמן מה כבר יש בבית. ' +
-    'את השאר אפשר להשלים בנחת, עוד לפני הלידה.\n\n' +
-    'ועוד שני כלים חינם שיעזרו לכם:\n' +
-    '• מחשבון מועד הברית: ' + CFG.SITE + '/mohel/moed/\n' +
-    '• רשימת ההכנה שנשמרת בטלפון: ' + CFG.SITE + '/mohel/checklist/\n\n' +
-    'יש שאלה? אני כאן בשמחה, בווטסאפ או בטלפון: ' + CFG.OWNER_PHONE + '\n' +
-    'https://wa.me/' + CFG.WA_INTL + '\n\n' +
-    'שלכם,\nגילעד רחמים אביעד\nמוהל מוסמך · ירושלים והסביבה, מגיע לכל הארץ\n' + CFG.SITE + '/mohel/';
-  MailApp.sendEmail({ to: email, subject: subject, body: body, name: CFG.OWNER_NAME, replyTo: CFG.OWNER_EMAIL });
+  var inner = 'שלום ' + first + ', מזל טוב מראש!<br><br>אני גילעד. הנה המדריך המושלם להכנה לקראת הולדת הבן – 16 עמודים שעושים סדר:<br>' + link(CFG.PDF_URL, 'להורדת המדריך (PDF)') + '<br><br>' +
+    'מה יש בפנים: רשימת קניות לפי סדר זמנים, מתי תהיה הברית ומה חשוב בבדיקת הצהבת, תכנון האירוע והכיבודים, מה להביא לברית, איך מכינים את התינוק, הטיפול אחרי, פדיון הבן – ואיך בוחרים מוהל.<br><br>' +
+    'כדאי לשמור את הקובץ בטלפון. יש בו גם כפתור "שליחת פרטי הלידה למוהל" – כשהבן ייוולד, זה חוסך לכם לזכור מה לכתוב.<br><br>' +
+    'ויש עוד שני כלים חינם באתר: ' + link('/mohel/moed/', 'מחשבון מועד הברית', 'E0') + ' (מתי בדיוק הברית, בלועזי ובעברי) ו' + link('/mohel/checklist/', 'רשימת ההכנה', 'E0') + ' שנשמרת בטלפון.<br><br>' +
+    'שאלה? כל שאלה – כתבו לי ב' + link('https://wa.me/' + CFG.WA_INTL + '?text=' + encodeURIComponent('שלום גילעד, קיבלתי את המדריך. יש לי שאלה: '), 'ווטסאפ') + ' או פשוט ענו למייל הזה. אני כאן.<br><br>' +
+    (consent === 'כן' ? 'סימנתם שתרצו טיפים – אשלח לכם כמה מיילים קצרים לאורך ההריון, כל אחד בזמן שהוא רלוונטי. אפשר להפסיק בכל רגע.<br><br>' : '') +
+    'בברכת מזל טוב,<br>גילעד';
+  var unsub = consent === 'כן' ? unsubLink(token) : '';
+  var html = wrapHtml(inner, unsub);
+  MailApp.sendEmail({ to: email, subject: 'המדריך שלכם להכנה לקראת הולדת הבן 🙂', htmlBody: html, body: toText(html), name: CFG.OWNER_NAME, replyTo: CFG.OWNER_EMAIL });
+}
+function unsubLink(token) { return ScriptApp.getService().getUrl() + '?u=' + token; }
+
+// ---------- חודש הלידה ותוכנית השליחה ----------
+var HE_MONTHS = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+function dueLabel(v) {
+  v = String(v || '');
+  var m = v.match(/^(\d{4})-(\d{2})$/);
+  if (m) return HE_MONTHS[Number(m[2]) - 1] + ' ' + m[1];
+  if (v === 'born') return 'הבן כבר נולד';
+  if (v === 'unknown') return 'עוד לא יודעים';
+  return v;
+}
+function addDays(d, n) { return new Date(d.getTime() + n * 864e5); }
+// מחזיר [[קוד, תאריך, וריאנט]] לפי חודש הלידה (עוגן = 15 בחודש)
+function planFor(r) {
+  var signup = r[C['תאריך']] instanceof Date ? r[C['תאריך']] : new Date();
+  var due = String(r[C['מועד לידה']] || ''), status = r[C['סטטוס']];
+  var m = due.match(/^(\d{4})-(\d{2})$/), plan;
+  if (m) {
+    var A = new Date(Number(m[1]), Number(m[2]) - 1, 15, 10);
+    plan = [['E1', addDays(signup, 2)], ['E-6w', addDays(A, -42)], ['E-3w', addDays(A, -21)], ['E-1w', addDays(A, -7)], ['E-birth', addDays(A, 2)]];
+    if (status === 'נקבע' || status === 'נערכה') plan = plan.filter(function (p) { return p[0] !== 'E-3w'; });
+    if (status === 'נערכה') plan.push(['E-post', addDays(A, 24)]);
+  } else if (due === 'born') {
+    plan = [['E-birth', addDays(signup, 1)]];
+    if (status === 'נערכה') plan.push(['E-post', addDays(signup, 20)]);
+  } else {
+    plan = [['E1', addDays(signup, 2)], ['E-6w', addDays(signup, 7), 1], ['E-1w', addDays(signup, 21), 1], ['E-3w', addDays(signup, 45)]];
+  }
+  return plan;
+}
+// השלב הבא שמגיע עכשיו: אחרי השלב האחרון שנשלח, שחלונו כבר הגיע; חלונות שעברו – מדלגים לאחרון שהגיע
+function dueStep(r, today) {
+  var plan = planFor(r), last = String(r[C['שלב בסדרה']] || ''), lastIdx = -1;
+  plan.forEach(function (p, i) { if (p[0] === last) lastIdx = i; });
+  var signup = r[C['תאריך']] instanceof Date ? r[C['תאריך']] : today;
+  var floor = addDays(signup, 2); // שום מייל המשך לפני יומיים מההרשמה (E0 כבר יצא)
+  var rest = plan.slice(lastIdx + 1), ready = rest.filter(function (p) { return p[1] <= today && today >= floor; });
+  var nextFuture = rest.filter(function (p) { return p[1] > today; })[0];
+  return { step: ready.length ? ready[ready.length - 1] : null, next: nextFuture || null };
 }
 
-// ---------- הודעה לגילעד ----------
-function notifyOwner(name, phone, email, due, city, source, dup) {
-  var line = (dup ? 'ליד חוזר: ' : 'ליד חדש: ') + name + (city ? ' · ' + city : '') + (due ? ' · ' + due : '');
-  var body = line + '\nטלפון: ' + phone + '\nמייל: ' + email + '\nמקור: ' + source +
-    (phone ? '\n\nווטסאפ מוכן:\n' + waLink(phone, firstMessage(name)) : '') +
-    '\n\nהגיליון: ' + SpreadsheetApp.getActive().getUrl();
-  MailApp.sendEmail({ to: CFG.OWNER_EMAIL, subject: line, body: body, name: 'האתר – לידים' });
-  push(line, 'טלפון ' + phone + (email ? ' · ' + email : ''));
-}
-
-function firstMessage(name) {
-  return 'שלום ' + name.split(' ')[0] + ', מזל טוב מראש! 🙂 אני גילעד. קיבלתם את המדריך? אשמח לשמוע מתי הלידה צפויה ואיפה אתם, ונדבר על הברית בנחת. אני כאן לכל שאלה.';
-}
-
-// ---------- סדרת מיילים (טריגר יומי) ----------
-// גיליון "סדרת מיילים": שלב | ימים אחרי השלב הקודם | נושא | גוף (אפשר {שם}) | פעיל
-function dailyNurture() {
-  if (isShabbatOrHoliday(new Date())) return;
-  var ss = SpreadsheetApp.getActive();
-  var seq = sheet(ss, CFG.SHEET_SEQ, ['שלב', 'ימים אחרי השלב הקודם', 'נושא', 'גוף', 'פעיל']).getDataRange().getValues().slice(1)
-    .filter(function (r) { return r[0] && String(r[4]).trim() === 'כן'; });
-  if (!seq.length) return;
-  var sh = sheet(ss, CFG.SHEET_LEADS, COLS);
-  var data = sh.getDataRange().getValues();
-  var today = new Date(), sent = 0;
-  var closed = { 'נקבע': 1, 'לא רלוונטי': 1, 'דיברנו': 1 };
-  for (var i = 1; i < data.length && sent < 40; i++) {
+// ---------- סדרת מיילים (טריגר יומי 10:00) ----------
+function dailyNurture(dryRun) {
+  if (!dryRun && isShabbatOrHoliday(new Date())) return;
+  var sh = sheet(SpreadsheetApp.getActive(), CFG.SHEET_LEADS, COLS);
+  var data = sh.getDataRange().getValues(), today = new Date(), sent = [], closed = { 'מוהל אחר': 1, 'לא רלוונטי': 1 };
+  for (var i = 1; i < data.length && sent.length < 40; i++) {
     var r = data[i];
-    if (r[C['הסכמה לדיוור']] !== 'כן' || !r[C['מייל']] || closed[r[C['סטטוס']]]) continue;
-    var next = r[C['מייל הבא']];
-    if (!(next instanceof Date) || next > today) continue;
-    var stage = Number(r[C['שלב בסדרה']] || 0) + 1;
-    var tpl = seq.filter(function (s) { return Number(s[0]) === stage; })[0];
-    if (!tpl) { sh.getRange(i + 1, C['מייל הבא'] + 1).setValue(''); continue; }
+    if (r[C['הסכמה לדיוור']] !== 'כן' || !r[C['מייל']] || closed[r[C['סטטוס']]] || r[C['שלב בסדרה']] === 'done') continue;
+    var lastSent = r[C['נשלח לאחרונה']];
+    var ds = dueStep(r, today);
+    if (!ds.step) { sh.getRange(i + 1, C['מייל הבא'] + 1).setValue(ds.next ? ds.next[1] : ''); continue; }
+    if (ds.step[0] !== 'E1' && lastSent instanceof Date && addDays(lastSent, 5) > today) continue; // מרווח 5 ימים
+    if (ds.step[0] === 'E-post' && !REVIEW_URL()) continue; // מחכה לקישור הביקורת של Google Business
     var first = String(r[C['שם']]).split(' ')[0];
-    var unsub = ScriptApp.getService().getUrl() + '?u=' + r[C['טוקן']];
-    var body = String(tpl[3]).replace(/\{שם\}/g, first) + '\n\n—\nלהסרה מהדיוור: ' + unsub;
+    var html = wrapHtml(mailBody(ds.step[0], ds.step[2]).replace(/\{שם\}/g, first), unsubLink(r[C['טוקן']]));
+    if (dryRun) { sent.push((i + 1) + ':' + ds.step[0]); continue; }
     try {
-      MailApp.sendEmail({ to: r[C['מייל']], subject: String(tpl[2]).replace(/\{שם\}/g, first), body: body, name: CFG.OWNER_NAME, replyTo: CFG.OWNER_EMAIL });
-      sent++;
-      var after = seq.filter(function (s) { return Number(s[0]) === stage + 1; })[0];
-      sh.getRange(i + 1, C['שלב בסדרה'] + 1).setValue(stage);
-      sh.getRange(i + 1, C['מייל הבא'] + 1).setValue(after ? nextSendDate(today, Number(after[1]) || 7) : '');
+      MailApp.sendEmail({ to: r[C['מייל']], subject: SUBJECTS[ds.step[0]], htmlBody: html, body: toText(html), name: CFG.OWNER_NAME, replyTo: CFG.OWNER_EMAIL });
+      sent.push((i + 1) + ':' + ds.step[0]);
+      sh.getRange(i + 1, C['שלב בסדרה'] + 1).setValue(ds.step[0]);
+      sh.getRange(i + 1, C['מייל הבא'] + 1).setValue(ds.next ? ds.next[1] : '');
+      sh.getRange(i + 1, C['נשלח לאחרונה'] + 1).setValue(today);
     } catch (err) { log('nurture row ' + (i + 1) + ': ' + err); }
   }
-  if (sent) log('dailyNurture sent ' + sent);
+  if (sent.length) log((dryRun ? 'dry ' : '') + 'dailyNurture: ' + sent.join(', '));
+  return sent;
 }
 
-// ---------- רשימת ווטסאפ יומית לגילעד ----------
-function dailyWhatsappList() {
-  if (isShabbatOrHoliday(new Date())) return;
+// ---------- רשימת ווטסאפ יומית לגילעד (09:00) ----------
+// WA-1 ליד חדש · WA-2 עשרה ימים לפני (דיברנו/נקבע) · WA-3 שלושה ימים אחרי העוגן (דיברנו/נקבע) · WA-4 אחרי הברית (נערכה)
+function waMessage(code, r) {
+  var first = String(r[C['שם']]).split(' ')[0], due = String(r[C['מועד לידה']] || '');
+  if (code === 'WA-1') return 'שלום ' + first + ', מזל טוב מראש! 🙂 אני גילעד. קיבלתם את המדריך? ' +
+    (/^\d{4}-\d{2}$/.test(due) ? 'ראיתי שהלידה בערך ב' + dueLabel(due) + ' – אשמח לשמוע איפה אתם ומה כבר מוכן' : due === 'born' ? 'ראיתי שהבן כבר נולד – מזל טוב! אשמח לשמוע איפה אתם' : 'אשמח לשמוע מתי הלידה צפויה ואיפה אתם') +
+    ', ונדבר על הברית בנחת. אני כאן לכל שאלה.';
+  if (code === 'WA-2') return 'שלום ' + first + ', מתקרבים 🙂 רק מזכיר: כשהבן ייוולד, כתבו לי "נולד!" עם תאריך ושעת הלידה (לפני/אחרי השקיעה), ואחר כך צילום של מכתב השחרור. מכאן אני איתכם. שתהיה לידה קלה!';
+  if (code === 'WA-3') return 'שלום ' + first + ', מה שלומכם? אם הבן נולד – מזל טוב ענק! 🎉 שלחו לי תאריך, שעה וצילום מכתב השחרור ואגיד לכם מתי הברית. ואם עוד לא – שיהיה בשעה טובה, ואני כאן.';
+  if (code === 'WA-4') return 'שלום ' + first + ', איך הנסיך? אם הכול רגוע – נהדר, ככה זה אמור להיות. אם משהו מטריד – צלמו ושלחו, אני בודק.' +
+    (REVIEW_URL() ? ' ואם בא לכם לכתוב משפט ב-Google, זה עוזר להורים אחרים למצוא מוהל שמלווה: ' + REVIEW_URL() + '.' : '') + ' תודה שזכיתי 🙏';
+}
+function waDue(r, today) {
+  var st = r[C['סטטוס']], done = String(r[C['ווטסאפ אחרון']] || ''), m = String(r[C['מועד לידה']] || '').match(/^(\d{4})-(\d{2})$/);
+  if ((st === 'חדש' || st === 'חוזר') && done === '') return 'WA-1';
+  if (!m) return st === 'נערכה' && done !== 'WA-4' ? 'WA-4' : '';
+  var A = new Date(Number(m[1]), Number(m[2]) - 1, 15, 10);
+  if (st === 'נערכה') return done !== 'WA-4' && today >= addDays(A, 5) ? 'WA-4' : '';
+  if (st !== 'דיברנו' && st !== 'נקבע') return '';
+  if (today >= addDays(A, 3) && today <= addDays(A, 10) && done !== 'WA-3') return 'WA-3';
+  if (today >= addDays(A, -10) && today < addDays(A, 3) && done !== 'WA-2' && done !== 'WA-3') return 'WA-2';
+  return '';
+}
+function dailyWhatsappList(dryRun) {
+  if (!dryRun && isShabbatOrHoliday(new Date())) return;
   var sh = sheet(SpreadsheetApp.getActive(), CFG.SHEET_LEADS, COLS);
   var data = sh.getDataRange().getValues(), today = new Date(), lines = [];
-  var closed = { 'נקבע': 1, 'לא רלוונטי': 1 };
   for (var i = 1; i < data.length; i++) {
-    var r = data[i], next = r[C['ווטסאפ הבא']];
-    if (!r[C['טלפון']] || closed[r[C['סטטוס']]] || !(next instanceof Date) || next > today) continue;
-    lines.push('• ' + r[C['שם']] + (r[C['עיר']] ? ' (' + r[C['עיר']] + ')' : '') + ' – ' + r[C['סטטוס']] + '\n  ' + waLink(r[C['טלפון']], firstMessage(String(r[C['שם']]))));
-    sh.getRange(i + 1, C['ווטסאפ הבא'] + 1).setValue(nextSendDate(today, 14));
+    var r = data[i], code = r[C['טלפון']] ? waDue(r, today) : '';
+    if (!code) continue;
+    lines.push('<li style="margin-bottom:14px"><b>' + r[C['שם']] + '</b>' + (r[C['עיר']] ? ' · ' + r[C['עיר']] : '') + ' · ' + dueLabel(r[C['מועד לידה']]) + ' · ' + r[C['סטטוס']] + ' (' + code + ')<br>' +
+      '<a href="' + waLink(String(r[C['טלפון']]), waMessage(code, r)) + '" style="font-size:17px;font-weight:bold;color:#128c7e">פתיחת ווטסאפ עם ההודעה ←</a></li>');
+    if (!dryRun) sh.getRange(i + 1, C['ווטסאפ אחרון'] + 1).setValue(code);
   }
-  if (!lines.length) return;
-  MailApp.sendEmail({ to: CFG.OWNER_EMAIL, subject: 'ווטסאפ להיום: ' + lines.length + ' הורים', body: 'לחיצה על קישור = ההודעה מוכנה בווטסאפ, רק לשלוח.\n\n' + lines.join('\n\n'), name: 'האתר – לידים' });
+  if (!lines.length || dryRun) return lines.length;
+  var html = '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:16px">לחיצה על קישור פותחת את הצ\'אט עם ההודעה מוכנה – רק לשלוח (ולתקן מילה אם רוצים).<ul>' + lines.join('') + '</ul><a href="' + SpreadsheetApp.getActive().getUrl() + '">הגיליון</a> – אחרי שיחה, לעדכן סטטוס (דיברנו / נקבע / נערכה / מוהל אחר / לא רלוונטי).</div>';
+  MailApp.sendEmail({ to: CFG.OWNER_EMAIL, subject: 'ווטסאפ להיום: ' + lines.length + ' הורים', htmlBody: html, body: toText(html), name: 'האתר – לידים' });
   push('ווטסאפ להיום: ' + lines.length + ' הורים', 'הקישורים במייל');
+  return lines.length;
 }
 
 // ---------- טריגרים ----------
@@ -178,6 +280,27 @@ function setupTriggers() {
   ScriptApp.getProjectTriggers().forEach(function (t) { ScriptApp.deleteTrigger(t); });
   ScriptApp.newTrigger('dailyNurture').timeBased().atHour(10).everyDays(1).inTimezone(CFG.TZ).create();
   ScriptApp.newTrigger('dailyWhatsappList').timeBased().atHour(9).everyDays(1).inTimezone(CFG.TZ).create();
+}
+// בדיקה יבשה מהעורך: מה היה נשלח היום (בלי לשלוח) – נרשם ביומן
+function testDryRun() { return JSON.stringify({ mails: dailyNurture(true), whatsapp: dailyWhatsappList(true) }); }
+// שולח לגילעד את כל 7 המיילים כדוגמה (לבדיקת מראה בתיבה)
+function testSendAllToOwner() {
+  ['E1', 'E-6w', 'E-3w', 'E-1w', 'E-birth', 'E-post'].forEach(function (c) {
+    var h = wrapHtml(mailBody(c).replace(/\{שם\}/g, 'גילעד'), unsubLink('test'));
+    MailApp.sendEmail({ to: CFG.OWNER_EMAIL, subject: '[דוגמה] ' + SUBJECTS[c], htmlBody: h, body: toText(h), name: CFG.OWNER_NAME });
+  });
+  sendGuideEmail('גילעד', CFG.OWNER_EMAIL, 'test', 'כן');
+}
+
+// ---------- הודעה לגילעד ----------
+function notifyOwner(row, dup) {
+  var name = row[C['שם']], phone = row[C['טלפון']], email = row[C['מייל']], due = row[C['מועד לידה']], city = row[C['עיר']], source = row[C['מקור']];
+  var line = (dup ? 'ליד חוזר: ' : 'ליד חדש: ') + name + (city ? ' · ' + city : '') + (due ? ' · ' + dueLabel(due) : '');
+  var body = line + '\nטלפון: ' + phone + '\nמייל: ' + email + '\nמקור: ' + source +
+    (phone ? '\n\nווטסאפ מוכן:\n' + waLink(phone, waMessage('WA-1', row)) : '') +
+    '\n\nהגיליון: ' + SpreadsheetApp.getActive().getUrl();
+  MailApp.sendEmail({ to: CFG.OWNER_EMAIL, subject: line, body: body, name: 'האתר – לידים' });
+  push(line, 'טלפון ' + phone + (email ? ' · ' + email : ''));
 }
 
 // ---------- שבת וחג ----------
