@@ -183,4 +183,12 @@ details p{color:var(--body);margin-top:.6rem;font-size:1.05rem}
   html{scroll-behavior:auto}
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
+/* סרטון יוטיוב: תמונה קודם, ה-iframe נטען רק בלחיצה (מהיר ופרטי) */
+.yt{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000;border:1px solid rgba(201,165,92,.35);box-shadow:0 14px 34px rgba(0,0,0,.45)}
+.yt .yt-play{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;background:#000;cursor:pointer;display:block}
+.yt .yt-play img{width:100%;height:100%;object-fit:cover;display:block;opacity:.85;transition:opacity .2s}
+.yt .yt-play:hover img,.yt .yt-play:focus-visible img{opacity:1}
+.yt .yt-btn{position:absolute;top:50%;left:50%;width:4.5rem;height:4.5rem;margin:-2.25rem 0 0 -2.25rem;border-radius:50%;background:var(--gold);display:grid;place-items:center;box-shadow:0 6px 20px rgba(0,0,0,.5)}
+.yt .yt-btn svg{width:2.2rem;height:2.2rem;fill:var(--ink);margin-inline-start:.2rem}
+.yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 @media print{.topbar,.dock,.contact,.site-foot{display:none}}

@@ -111,7 +111,7 @@ for path in sorted(SRC.rglob("*.html")):
         "cta": "" if meta.get("no_cta") else CTA.format(wa=WA),
         "dock_href": meta.get("dock_href", "/mohel/madrich/"),
         "dock_label": meta.get("dock_label", "מדריך חינם"),
-        "foot": meta.get("foot", "") + ('<script src="/assets/lead.js" defer></script>' if "data-lead" in content else "") + ('<script src="/assets/moed.js" defer></script>' if "moed-form" in content else ""),
+        "foot": meta.get("foot", "") + ('<script src="/assets/lead.js" defer></script>' if "data-lead" in content else "") + ('<script src="/assets/moed.js" defer></script>' if "moed-form" in content else "") + ('<script src="/assets/yt.js" defer></script>' if 'class="yt"' in content else ""),
     }
     for k, v in rep.items():
         html = html.replace("{{" + k + "}}", v)

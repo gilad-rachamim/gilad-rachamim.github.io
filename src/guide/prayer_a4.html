@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>תפילה בשעת בכי התינוק</title>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Assistant:wght@400;600;700&display=block" rel="stylesheet">
+<style>
+@page{size:210mm 297mm;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{-webkit-print-color-adjust:exact;print-color-adjust:exact;font-family:'Assistant',sans-serif;color:#1d3b3a}
+.sheet{width:210mm;height:297mm;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;position:relative}
+.sheet::before,.sheet::after{content:"";position:absolute;background:repeating-linear-gradient(90deg,#bbb 0 2mm,transparent 2mm 4mm)}
+.sheet::before{left:0;right:0;top:50%;height:.3mm}
+.sheet::after{top:0;bottom:0;left:50%;width:.3mm;background:repeating-linear-gradient(180deg,#bbb 0 2mm,transparent 2mm 4mm)}
+.card{padding:7mm;display:flex}
+.in{flex:1;background:#fdfaf4;border:.8px solid #b8914a;border-radius:3mm;position:relative;padding:9mm 8mm 7mm;display:flex;flex-direction:column;align-items:center;text-align:center}
+.in::after{content:"";position:absolute;inset:1.5mm;border:.4px solid #e9d9b4;border-radius:2mm;pointer-events:none}
+.orn{color:#b8914a;font-size:10pt;letter-spacing:3mm}
+h1{font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:19pt;margin:4mm 0 1.5mm;color:#1d3b3a}
+.sub{font-size:8.6pt;color:#2f7d78;font-weight:700;margin-bottom:4mm}
+.txt{font-family:'Frank Ruhl Libre',serif;font-size:13pt;line-height:1.85;font-weight:500}
+.txt b{color:#2f7d78}
+.rule{width:22mm;height:1px;background:#b8914a;margin:4mm auto 3mm}
+.amen{font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:13pt;color:#b8914a}
+.by{margin-top:auto;font-size:7.4pt;color:#5d6f6d;padding-top:3mm}
+.by b{color:#b8914a}
+</style>
+</head>
+<body>
+<div class="sheet">
+<!--CARD-->
+</div>
+<script>
+const card=`<div class="card"><div class="in">
+  <div class="orn">✦ ✦ ✦</div>
+  <h1>תפילה בשעת בכי התינוק</h1>
+  <div class="sub">אומרים בשעה שהתינוק הנימול בוכה – שעת רצון</div>
+  <div class="txt">יְהִי רָצוֹן מִלְּפָנֶיךָ ה' אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ, שֶׁנִּהְיֶה אֲנַחְנוּ וּבְנֵי בֵיתֵנוּ בְּרִיאִים וַחֲזָקִים, בְּפַרְנָסָה וְהַצְלָחָה וְשָׁלוֹם וְכָל טוּב, לְעָבְדְּךָ בֶּאֱמֶת וּבְשִׂמְחָה. וְתִכָּלֵל תְּפִלָּתִי עִם בְּכִיַּת הַיֶּלֶד, וִיקֻיַּם בִּי הַפָּסוּק: <b>"שָׁמַע ה' תְּחִנָּתִי, ה' תְּפִלָּתִי יִקָּח"</b>. וִימַלֵּא ה' יִתְבָּרַךְ כָּל מִשְׁאֲלוֹת לִבֵּנוּ לְטוֹבָה.</div>
+  <div class="rule"></div>
+  <div class="amen">אָמֵן</div>
+  <div class="by">מזכרת מהברית · <b>גילעד רחמים אביעד</b> – המוהל · 058-404-9049</div>
+</div></div>`;
+document.querySelector('.sheet').innerHTML=card.repeat(4);
+</script>
+</body>
+</html>
