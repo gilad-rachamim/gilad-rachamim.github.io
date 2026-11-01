@@ -16,7 +16,7 @@
     var f = e.target;
     if (f.matches && f.matches('form[data-lead]')) {
       var s = f.querySelector('[name="מקור"]');
-      ev('generate_lead', { page: location.pathname, source: s ? s.value : '' });
+      ev('generate_lead', { page: location.pathname, source: s ? s.value : '', transport_type: 'beacon' });
     }
   }, true);
 })();
