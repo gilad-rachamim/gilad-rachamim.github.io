@@ -16,6 +16,8 @@ SPRITE = (ROOT / "assets" / "icons.svg").read_text(encoding="utf-8")
 BASE = "https://gilad-rachamim.github.io"
 # מזהה Google Analytics 4 (G-XXXXXXXXXX). ריק = בלי מעקב.
 GA_ID = ""
+# כתובת ה-Web App של צינור הלידים (tools/leads-apps-script.gs, פריסה כ-Web app).
+LEAD_ENDPOINT = "https://script.google.com/macros/s/AKfycbxgWe4xxaclqfzmOD_E0hOg2XDr2genZZyvAcf0hpHw_AHkgvQAqDop-XjdURdARYNx-Q/exec"
 GA = "" if not GA_ID else f"""<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','{GA_ID}');</script>
 <script src="/assets/track.js" defer></script>
@@ -39,13 +41,10 @@ CTA = """
 """
 
 
-LEADFORM = """<form class="lead-form" data-lead data-next="/mohel/todah/" action="https://formsubmit.co/gilad4049@gmail.com" method="POST">
-  <input type="hidden" name="_subject" value="ליד חדש מהאתר: המדריך לקראת הולדת הבן">
-  <input type="hidden" name="_template" value="table">
-  <input type="hidden" name="_captcha" value="false">
-  <input type="hidden" name="_next" value="https://gilad-rachamim.github.io/mohel/todah/">
-  <input type="hidden" name="_autoresponse" value="שלום ומזל טוב מראש! תודה שביקשתם את המדריך המושלם להכנה לקראת הולדת הבן. אפשר להוריד אותו כאן: https://gilad-rachamim.github.io/mohel/madrich/hamadrich-lekrat-huledet-haben.pdf — יש שאלה? אני כאן בשמחה, בווטסאפ או בטלפון: 058-4049049. שלכם, גילעד רחמים אביעד, מוהל מוסמך.">
+LEADFORM = """<form class="lead-form" data-lead data-next="/mohel/todah/" action="{endpoint}" method="POST">
   <input type="hidden" name="מקור" value="{source}">
+  <input type="hidden" name="_page" value="">
+  <input type="hidden" name="utm_source" value=""><input type="hidden" name="utm_medium" value=""><input type="hidden" name="utm_campaign" value=""><input type="hidden" name="ref" value="">
   <div class="hp" aria-hidden="true"><label>אל תמלאו שדה זה <input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></div>
   <div class="field"><label for="{p}-name">שם</label><input id="{p}-name" name="שם" type="text" autocomplete="name" required placeholder="איך קוראים לכם?"></div>
   <div class="field"><label for="{p}-phone">טלפון</label><input id="{p}-phone" name="טלפון" type="tel" inputmode="tel" autocomplete="tel" required placeholder="050-0000000" pattern="[0-9\\-\\+\\s]{{9,15}}" dir="ltr" style="text-align:right"></div>
@@ -60,7 +59,7 @@ LEADFORM = """<form class="lead-form" data-lead data-next="/mohel/todah/" action
 
 def leadforms(html):
     def rep(m):
-        return LEADFORM.format(source=m.group(1), p=m.group(2))
+        return LEADFORM.format(source=m.group(1), p=m.group(2), endpoint=LEAD_ENDPOINT)
     return re.sub(r"\{\{LEADFORM:([^:]+):([a-z]+)\}\}", rep, html)
 
 def crumbs_html(items):
