@@ -14,6 +14,12 @@ SRC = ROOT / "src" / "pages"
 LAYOUT = (ROOT / "src" / "layout.html").read_text(encoding="utf-8")
 SPRITE = (ROOT / "assets" / "icons.svg").read_text(encoding="utf-8")
 BASE = "https://gilad-rachamim.github.io"
+# מזהה Google Analytics 4 (G-XXXXXXXXXX). ריק = בלי מעקב.
+GA_ID = ""
+GA = "" if not GA_ID else f"""<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','{GA_ID}');</script>
+<script src="/assets/track.js" defer></script>
+"""
 WA_TEXT = "שלום גילעד, אשמח לשמוע פרטים על ברית מילה"
 
 from urllib.parse import quote
@@ -96,7 +102,7 @@ for path in sorted(SRC.rglob("*.html")):
         "og_title": meta.get("og_title", meta["title"]),
         "og_image": meta.get("og_image", "og-mohel.jpg"),
         "robots": '<meta name="robots" content="noindex">' if meta.get("noindex") else "",
-        "head": meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url),
+        "head": GA + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url),
         "body_class": meta.get("body_class", ""),
         "sprite": SPRITE,
         "wa": WA,

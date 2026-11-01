@@ -19,6 +19,9 @@
 2. מריצים `python3 build.py` – מייצר את הדפים בשורש ואת `sitemap.xml`.
 3. commit + push. GitHub Pages מעלה תוך דקה.
 
+## מעקב (Google Analytics 4)
+ב-`build.py` משנים `GA_ID = ""` למזהה `G-...` ומריצים build. נמדדים: `generate_lead`, `whatsapp_click`, `phone_click`, `save_contact`, `guide_download` (`assets/track.js`).
+
 המדריך (PDF): `src/guide/guide.html` → Playwright `page.pdf()` → `mohel/madrich/hamadrich-lekrat-huledet-haben.pdf`.
 
 ## לידים – איך זה עובד
