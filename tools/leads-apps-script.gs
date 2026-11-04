@@ -42,6 +42,8 @@ function doPost(e) {
     if (p._honey) return txt('ok');                       // בוט
     var name = clean(p['שם']), phone = normPhone(p['טלפון']), email = clean(p['email']).toLowerCase();
     if (!name || !(phone || email)) return txt('missing');
+    if (tooMany(email || phone)) return txt('ok');        // אותו אדם שולח שוב ושוב – לא כותבים ולא שולחים
+    var mailOk = underDailyCap();                          // מעל התקרה היומית: השורה נשמרת, בלי מייל להורה
     var ss = SpreadsheetApp.getActive();
     var sh = sheet(ss, CFG.SHEET_LEADS, COLS);
     var consent = p['מאשר/ת קבלת עדכונים'] ? 'כן' : 'לא';
@@ -57,11 +59,11 @@ function doPost(e) {
     row[C['ווטסאפ אחרון']] = ''; row[C['שלב בסדרה']] = ''; row[C['נשלח לאחרונה']] = '';
     row[C['טוקן']] = token; row[C['הערות']] = dup ? 'כבר נרשם/ה בעבר (שורה ' + dup + ')' : '';
     row[C['עמוד']] = clean(p['_page']); row[C['utm']] = utm;
-    sh.appendRow(row);
+    sh.appendRow(row.map(sheetSafe));
     sh.getRange(sh.getLastRow(), C['טלפון'] + 1).setNumberFormat('@').setValue(phone); // לשמור את ה-0 המוביל
 
     if (consent === 'כן') { var nx = dueStep(row, new Date()).next; sh.getRange(sh.getLastRow(), C['מייל הבא'] + 1).setValue(nx ? nx[1] : ''); }
-    if (email) {
+    if (email && mailOk) {
       var src = clean(p['מקור']);
       if (src === 'מחולל הודעה לברית') sendHazmanaEmail(name, email);
       else if (src === 'מחולל הודעה לזבד הבת') sendZevedEmail(name, email);
@@ -69,6 +71,7 @@ function doPost(e) {
       else sendGuideEmail(name, email, token, consent);
     }
     notifyOwner(row, dup);
+    if (!mailOk) log('התקרה היומית (' + DAILY_CAP + ') עברה – לא נשלח מייל להורה: ' + email);
     return txt('ok');
   } catch (err) {
     log('doPost error: ' + err + ' | ' + JSON.stringify(p));
@@ -159,7 +162,7 @@ function toText(html) {
 
 // ---------- E0: מייל המדריך להורה (לכולם – מענה לבקשה) ----------
 function sendGuideEmail(name, email, token, consent) {
-  var first = name.split(' ')[0];
+  var first = firstName(name);
   var inner = 'שלום ' + first + ', מזל טוב מראש!<br><br>אני גילעד. הנה המדריך המושלם להכנה לקראת הולדת הבן – 16 עמודים שעושים סדר:<br>' + link(CFG.PDF_URL, 'להורדת המדריך (PDF)') + '<br><br>' +
     'מה יש בפנים: רשימת קניות לפי סדר זמנים, מתי תהיה הברית ומה חשוב בבדיקת הצהבת, תכנון האירוע והכיבודים, מה להביא לברית, איך מכינים את התינוק, הטיפול אחרי, פדיון הבן – ואיך בוחרים מוהל.<br><br>' +
     'כדאי לשמור את הקובץ בטלפון. יש בו גם כפתור "שליחת פרטי הלידה למוהל" – כשהבן ייוולד, זה חוסך לכם לזכור מה לכתוב.<br><br>' +
@@ -173,7 +176,7 @@ function sendGuideEmail(name, email, token, consent) {
 }
 // מי שנרשם במחולל ההודעה לברית: הבן כבר נולד, אז במקום מייל ההריון – מה שעוזר עד הברית ואחריה
 function sendHazmanaEmail(name, email) {
-  var first = name.split(' ')[0];
+  var first = firstName(name);
   var inner = 'שלום ' + first + ', מזל טוב!<br><br>שמח שההודעה לברית מוכנה. היא שמורה בטלפון שלכם, ואם תרצו לשנות משהו: ' + link('/mohel/hazmana/', 'חזרה להודעה', 'H0') + '.<br><br>' +
     '<b>אישורי הגעה, במתנה.</b> שלחו לאורחים את הקישור הקצר שיצאה ממנו ההודעה, והם מסמנים "מגיעים? כמה?". בלוח המעקב (הכפתור "ללוח המעקב שלי" במחולל) תראו מי אישר, כמה מגיעים ומי עוד לא ענה, ותשלחו תזכורת בלחיצה.<br><br>' +
     'כמה דברים שיעזרו לכם בימים עד הברית:<br>' +
@@ -188,7 +191,7 @@ function sendHazmanaEmail(name, email) {
 }
 // מי שנרשם במחולל לזבד הבת: נולדה בת, אין ברית ואין מדריך – ברכה קצרה, חזרה להודעה, ואיפה מוצאים אותי
 function sendZevedEmail(name, email) {
-  var first = name.split(' ')[0];
+  var first = firstName(name);
   var inner = 'שלום ' + first + ', מזל טוב על הבת!<br><br>שמח שההודעה לזבד הבת מוכנה. היא שמורה בטלפון שלכם, ואם תרצו לשנות משהו: ' + link('/mohel/hazmana/?k=zeved', 'חזרה להודעה', 'Z0') + '.<br><br>' +
     '<b>אישורי הגעה, במתנה.</b> שלחו לאורחים את הקישור הקצר שיצא עם ההודעה, והם מסמנים "מגיעים? כמה?". בלוח המעקב (הכפתור "ללוח המעקב שלי" במחולל) תראו מי אישר, כמה מגיעים ומי עוד לא ענה, ותשלחו תזכורת בלחיצה.<br><br>' +
     'אני גילעד, מוהל בירושלים. אם מישהי מהמשפחה או מהחברות בהריון, או כשבעזרת ה׳ ייוולד בן, המדריך להורים לקראת הולדת הבן חינם באתר: ' + link('/mohel/madrich/', 'המדריך להורים', 'Z0') + '.<br><br>' +
@@ -199,7 +202,7 @@ function sendZevedEmail(name, email) {
 }
 // מי שנרשם במחולל לפדיון הבן: הברית כבר מאחוריהם – ברכה, חזרה להודעה, הפרק על פדיון הבן
 function sendPidyonEmail(name, email) {
-  var first = name.split(' ')[0];
+  var first = firstName(name);
   var inner = 'שלום ' + first + ', מזל טוב!<br><br>שמח שההודעה לפדיון הבן מוכנה. היא שמורה בטלפון שלכם, ואם תרצו לשנות משהו: ' + link('/mohel/hazmana/?k=pidyon', 'חזרה להודעה', 'P0') + '.<br><br>' +
     '<b>אישורי הגעה, במתנה.</b> שלחו לאורחים את הקישור הקצר שיצא עם ההודעה, והם מסמנים "מגיעים? כמה?". בלוח המעקב (הכפתור "ללוח המעקב שלי" במחולל) תראו מי אישר, כמה מגיעים ומי עוד לא ענה, ותשלחו תזכורת בלחיצה.<br><br>' +
     'ולפני הפדיון, בקצרה: מי חייב, מה קורה כשהיום ה-31 חל בשבת, ומה צריך להביא (כהן, חמישה מטבעות כסף, מניין וסעודה): ' + link('/mohel/hachana/pidyon/', 'פדיון הבן – מה צריך לדעת', 'P0') + '.<br>' +
@@ -264,7 +267,7 @@ function dailyNurture(dryRun) {
     if (!ds.step) { sh.getRange(i + 1, C['מייל הבא'] + 1).setValue(ds.next ? ds.next[1] : ''); continue; }
     if (ds.step[0] !== 'E1' && lastSent instanceof Date && addDays(lastSent, 5) > today) continue; // מרווח 5 ימים
     if (ds.step[0] === 'E-post' && !REVIEW_URL()) continue; // מחכה לקישור הביקורת של Google Business
-    var first = String(r[C['שם']]).split(' ')[0];
+    var first = firstName(r[C['שם']]);
     var html = wrapHtml(mailBody(ds.step[0], ds.step[2]).replace(/\{שם\}/g, first), unsubLink(r[C['טוקן']]));
     if (dryRun) { sent.push((i + 1) + ':' + ds.step[0]); continue; }
     try {
@@ -383,6 +386,29 @@ function findLead(sh, phone, email) {
   return 0;
 }
 function clean(v) { return v ? String(v).trim().slice(0, 200) : ''; }
+// טקסט שמתחיל ב-= + - @ הגיליון מפרש כנוסחה (למשל IMAGE ששולחת נתונים החוצה) – גרש בהתחלה שומר אותו כטקסט
+function sheetSafe(v) { return typeof v === 'string' && /^[=+\-@]/.test(v) ? "'" + v : v; }
+// שם שנכנס ל-HTML של מייל: בלי תגיות וקישורים שמישהו הקליד בטופס
+function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function firstName(name) { return esc(String(name).split(' ')[0]); }
+// הגבלת קצב: עד 2 שליחות לאותו מייל/טלפון ב-6 שעות (המקסימום של CacheService)
+function tooMany(who) {
+  var key = 'rl:' + String(who).toLowerCase().slice(0, 100), cache = CacheService.getScriptCache();
+  var n = parseInt(cache.get(key) || '0', 10);
+  cache.put(key, String(n + 1), 21600);
+  return n >= 2;
+}
+// תקרה יומית למיילים להורים, כדי שהצפה של הטופס לא תגמור את מכסת ה-100 של Gmail
+var DAILY_CAP = 40;
+function underDailyCap() {
+  var lock = LockService.getScriptLock(), props = PropertiesService.getScriptProperties();
+  try { lock.waitLock(5000); } catch (e) { return true; }
+  try {
+    var key = 'day:' + Utilities.formatDate(new Date(), CFG.TZ, 'yyyy-MM-dd'), n = parseInt(props.getProperty(key) || '0', 10);
+    props.setProperty(key, String(n + 1));
+    return n < DAILY_CAP;
+  } finally { lock.releaseLock(); }
+}
 function normPhone(v) {
   var p = clean(v).replace(/[^\d+]/g, '');
   if (p.indexOf('+972') === 0) p = '0' + p.slice(4);
