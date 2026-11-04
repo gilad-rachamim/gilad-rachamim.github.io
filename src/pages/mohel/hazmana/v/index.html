@@ -1,0 +1,73 @@
+<!--meta {
+  "title": "ברית מילה – ההודעה, ניווט והוספה ליומן",
+  "description": "ההודעה על ברית המילה: מתי, איפה, ניווט ב-Waze והוספה ליומן.",
+  "og_title": "ברית מילה – ההודעה המלאה",
+  "noindex": true,
+  "no_cta": true,
+  "body_class": "hz-guest-page",
+  "head": "<link rel=\"stylesheet\" href=\"/assets/hazmana.css\">",
+  "foot": "<script src=\"/assets/hazmana.js\" defer></script>"
+} -->
+<div class="hz-guest">
+  <div id="hz-guest" hidden>
+    <div id="hz-after" class="panel hz-after" hidden>
+      <h2>הברית כבר התקיימה. מזל טוב!</h2>
+      <p class="note">שיגדל לתורה, לחופה ולמעשים טובים. ואם גם אצלכם בדרך שמחה:</p>
+      <div class="hz-btns" style="margin-top:.9rem">
+        <a class="btn btn-gold wide" href="/mohel/madrich/?utm_source=guest_after&amp;utm_medium=hazmana">המדריך החינמי להורים לקראת הברית</a>
+        <a class="btn btn-line wide" href="/mohel/hazmana/?utm_source=guest_after&amp;utm_medium=hazmana">הודעה לברית, בחינם, בדקה</a>
+      </div>
+    </div>
+    <canvas id="hz-guest-canvas" width="1080" height="1350" role="img" aria-label="ההודעה על ברית המילה"></canvas>
+    <div class="hz-btns">
+      <div class="hz-btns wide" id="g-nav" style="margin:0">
+        <a class="btn btn-gold" id="g-waze" href="#" target="_blank" rel="noopener">ניווט ב-Waze</a>
+        <a class="btn btn-line" id="g-maps" href="#" target="_blank" rel="noopener">מפות גוגל</a>
+      </div>
+      <a class="btn btn-line" id="g-gcal" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#cal"/></svg> ליומן גוגל</a>
+      <a class="btn btn-line" id="g-ics" href="#" download="brit.ics"><svg class="ic"><use href="#cal"/></svg> ליומן בטלפון</a>
+    </div>
+    <div id="hz-rsvp" class="panel hz-rsvp" hidden>
+      <h2>מגיעים?</h2>
+      <p id="r-hi" class="note"></p>
+      <form id="r-form" class="lead-form" novalidate>
+        <div class="hz-yesno" role="radiogroup" aria-label="מגיעים?">
+          <label class="hz-choice"><input type="radio" name="ok" value="1"> <span>בעזרת ה׳ מגיעים</span></label>
+          <label class="hz-choice"><input type="radio" name="ok" value="0"> <span>לצערנו לא נוכל</span></label>
+        </div>
+        <div class="field"><label for="r-n">שם</label><input id="r-n" name="n" type="text" autocomplete="name" required minlength="2" maxlength="60" placeholder="משפחת כהן"></div>
+        <div class="field" id="r-cwrap"><label for="r-c">כמה אנשים מגיעים?</label>
+          <select id="r-c" name="c"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
+        <div class="field"><label for="r-note">הערה <span class="opt">(לא חובה)</span></label><input id="r-note" name="note" type="text" maxlength="200" placeholder="נגיע רק לסעודה"></div>
+        <div class="field"><label for="r-bl">ברכה לתינוק <span class="opt">(לא חובה, ההורים יראו אותה)</span></label><textarea id="r-bl" name="bl" maxlength="200" rows="2" placeholder="שיגדל לתורה, לחופה ולמעשים טובים"></textarea>
+          <a class="hz-bl-help" href="/mohel/hazmana/brachot/?utm_source=guest&amp;utm_medium=rsvp" target="_blank" rel="noopener">לא יודעים מה לכתוב? 24 ברכות מוכנות</a></div>
+        <div class="hp" aria-hidden="true"><label>אל תמלאו שדה זה <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+        <p id="r-err" class="note hz-err" hidden></p>
+        <button class="btn btn-gold btn-block" type="submit">שליחת התשובה</button>
+        <p class="privacy">השם והתשובה נראים רק למשפחה, ונמחקים מעצמם 30 יום אחרי הברית. <a href="/mohel/hazmana/privacy/">פרטיות</a></p>
+      </form>
+      <div id="r-done" hidden>
+        <p id="r-done-txt" class="note"></p>
+        <button type="button" class="btn btn-line" id="r-edit">לשנות את התשובה</button>
+      </div>
+    </div>
+    <div id="hz-gift" class="panel hz-gift" hidden>
+      <h2>🎁 מתנה להורים</h2>
+      <p class="note" id="gf-txt">רוצים לשמח את ההורים? אפשר לשלוח מתנה ישר מהטלפון.</p>
+      <a class="btn btn-gold btn-block" id="gf-btn" href="#" target="_blank" rel="noopener nofollow">מתנה להורים</a>
+      <p class="note small" id="gf-host"></p>
+      <form id="gb-form" class="lead-form" novalidate hidden>
+        <h3>ברכה לתינוק</h3>
+        <div class="field"><label for="gb-n">שם</label><input id="gb-n" name="n" type="text" autocomplete="name" required minlength="2" maxlength="60" placeholder="משפחת כהן"></div>
+        <div class="field"><label for="gb-bl">הברכה</label><textarea id="gb-bl" name="bl" required minlength="2" maxlength="200" rows="3" placeholder="שיגדל לתורה, לחופה ולמעשים טובים"></textarea>
+          <a class="hz-bl-help" href="/mohel/hazmana/brachot/?utm_source=guest_after&amp;utm_medium=rsvp" target="_blank" rel="noopener">לא יודעים מה לכתוב? 24 ברכות מוכנות</a></div>
+        <div class="hp" aria-hidden="true"><label>אל תמלאו שדה זה <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+        <p id="gb-err" class="note hz-err" hidden></p>
+        <button class="btn btn-line btn-block" type="submit">שליחת הברכה להורים</button>
+      </form>
+      <p id="gb-done" class="note" hidden></p>
+    </div>
+  </div>
+  <p id="hz-missing" class="note" hidden style="text-align:center;margin-top:2rem">הקישור לא שלם. בקשו מהמשפחה לשלוח אותו שוב.</p>
+  <p class="hz-credit">רוצים הודעה כזאת לברית שלכם? <a href="/mohel/hazmana/?utm_source=guest&amp;utm_medium=hazmana">מכינים בחינם, בדקה</a></p>
+</div>

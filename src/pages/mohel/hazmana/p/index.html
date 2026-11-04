@@ -1,0 +1,24 @@
+<!--meta {
+  "title": "ברית מילה – להדפסה עם QR",
+  "description": "ההודעה על הברית עם קוד QR לאישור הגעה ולניווט, ללוח המודעות.",
+  "og_title": "ברית מילה – להדפסה",
+  "noindex": true,
+  "no_cta": true,
+  "body_class": "hz-guest-page",
+  "head": "<link rel=\"stylesheet\" href=\"/assets/hazmana.css\"><script src=\"https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js\" integrity=\"sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==\" crossorigin=\"anonymous\" referrerpolicy=\"no-referrer\"></script>",
+  "foot": "<script src=\"/assets/hazmana.js\" defer></script><script src=\"/assets/rsvp-admin.js\" defer></script>"
+} -->
+<div class="hz-print">
+  <p id="p-err" class="note hz-err" hidden></p>
+  <div class="tools hz-btns" style="margin-bottom:1rem">
+    <button class="btn btn-gold wide" type="button" id="p-print">הדפסה</button>
+  </div>
+  <div class="sheet" id="p-sheet" hidden>
+    <canvas id="p-canvas" width="1080" height="1350" role="img" aria-label="ההודעה על ברית המילה"></canvas>
+    <div class="qr">
+      <div id="p-qr" aria-hidden="true"></div>
+      <p>סורקים, מנווטים, ומסמנים "מגיעים"</p>
+      <small id="p-url"></small>
+    </div>
+  </div>
+</div>

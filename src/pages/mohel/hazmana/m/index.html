@@ -1,0 +1,101 @@
+<!--meta {
+  "title": "לוח המעקב – אישורי הגעה לברית",
+  "description": "מי אישר הגעה, כמה מגיעים ומי עוד לא ענה. תזכורות בלחיצה.",
+  "og_title": "לוח המעקב – אישורי הגעה לברית",
+  "noindex": true,
+  "no_cta": true,
+  "body_class": "hz-guest-page",
+  "head": "<link rel=\"stylesheet\" href=\"/assets/hazmana.css\">",
+  "foot": "<script src=\"/assets/hazmana.js\" defer></script><script src=\"/assets/rsvp-admin.js\" defer></script>"
+} -->
+<header class="hero">
+  <h1>לוח המעקב</h1>
+  <p class="sub" id="m-sub">מי מגיע לברית, ומי עוד לא ענה</p>
+</header>
+
+<div class="hz-admin">
+  <p id="m-err" class="note hz-err" hidden style="text-align:center"></p>
+  <p id="m-loading" class="note" style="text-align:center">טוען…</p>
+
+  <div id="m-main" hidden>
+    <section class="panel">
+      <div class="hz-stats" id="m-stats">
+        <button type="button" class="stat" data-f="yes"><b id="s-yes">0</b><span>מגיעים</span></button>
+        <button type="button" class="stat" data-f="fam"><b id="s-fam">0</b><span>אישרו</span></button>
+        <button type="button" class="stat" data-f="no"><b id="s-no">0</b><span>לא מגיעים</span></button>
+        <button type="button" class="stat" data-f="none"><b id="s-none">0</b><span>לא ענו</span></button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>הקישור לאורחים</h2>
+      <p class="note">הקישור הקצר לקבוצות ולמי שלא ברשימה. מי שפותח אותו רואה את ההודעה, מנווט, ומסמן "מגיעים? כמה?".</p>
+      <p class="hz-short"><span id="m-short" dir="ltr"></span> <button class="btn btn-line" type="button" id="m-short-copy">העתקה</button></p>
+      <div class="hz-btns">
+        <a class="btn btn-gold" id="m-wa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> שליחה בווטסאפ</a>
+        <a class="btn btn-line" id="m-print" href="#" target="_blank" rel="noopener">להדפסה עם QR</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>רשימת המוזמנים</h2>
+      <p class="note">הוסיפו שם וטלפון, וכל מוזמן מקבל קישור אישי. ככה רואים מי עוד לא ענה, ושולחים לו תזכורת בלחיצה.</p>
+      <button class="btn btn-line btn-block" type="button" id="m-pick" hidden>לבחור מאנשי הקשר בטלפון</button>
+      <div class="field" style="margin-top:.6rem">
+        <label for="m-paste">או להדביק רשימה <span class="opt">(שורה לכל מוזמן: שם, טלפון)</span></label>
+        <textarea id="m-paste" placeholder="סבתא רחל, 050-1234567&#10;משפחת לוי 052-7654321&#10;דוד ומרים"></textarea>
+      </div>
+      <button class="btn btn-gold btn-block" type="button" id="m-add">הוספה לרשימה</button>
+
+      <div class="hz-tabs" id="m-tabs" role="group" aria-label="סינון">
+        <button type="button" data-f="all" aria-pressed="true">כולם</button>
+        <button type="button" data-f="none">לא ענו</button>
+        <button type="button" data-f="yes">מגיעים</button>
+        <button type="button" data-f="no">לא מגיעים</button>
+      </div>
+      <ul class="hz-list" id="m-list"></ul>
+      <p class="hz-empty" id="m-empty" hidden>עוד אין כאן אף אחד. הוסיפו מוזמנים, או שלחו את הקישור הכללי.</p>
+    </section>
+
+    <section class="panel">
+      <h2>תזכורות</h2>
+      <p class="note">אין שליחה אוטומטית: אתם לוחצים, ווטסאפ נפתח עם ההודעה מוכנה, ואתם שולחים. ככה זה נשאר אישי.</p>
+      <div class="hz-tabs" id="m-rem" role="group" aria-label="סוג התזכורת">
+        <button type="button" data-r="ask" aria-pressed="true">למי שלא ענה: "מגיעים?"</button>
+        <button type="button" data-r="tomorrow">למי שאישר: "מחר הברית" עם Waze</button>
+      </div>
+      <p class="note small" id="m-rem-hint">הכפתור הירוק ליד כל מוזמן שולח את התזכורת שבחרתם.</p>
+    </section>
+
+    <section class="panel" id="m-gift-sec">
+      <h2>🎁 מתנה להורים <span class="opt">(לא חובה)</span></h2>
+      <p class="note">רוצים שמי שלא יגיע (או מי שכן) יוכל לשלוח מתנה? יוצרים קישור לתשלום באפליקציה שלכם ומדביקים אותו כאן. בדף ההודעה יופיע כפתור "מתנה להורים".</p>
+      <p class="note small">איך יוצרים קישור: בפייבוקס (PayBox) פותחים קבוצה לאיסוף כסף, אפשר עם "כל סכום", ומשתפים את הקישור שלה. בביט (Bit) יוצרים קישור לתשלום או קבוצה, ומשתפים את הקישור. מעתיקים אותו ומדביקים כאן.</p>
+      <div class="field" style="margin-top:.6rem"><label for="m-gift">הקישור לתשלום</label><input id="m-gift" type="url" inputmode="url" dir="ltr" maxlength="300" placeholder="https://..."></div>
+      <div class="hz-btns">
+        <button class="btn btn-gold" type="button" id="m-gift-save">שמירה</button>
+        <button class="btn btn-line" type="button" id="m-gift-del" hidden>הסרת הכפתור</button>
+      </div>
+      <p class="note small" id="m-gift-msg" hidden></p>
+      <p class="note small">אנחנו לא נוגעים בכסף, לא גובים עמלה ולא שומרים פרטי חשבון. רק את הקישור, וגם הוא נמחק עם שאר הנתונים.</p>
+    </section>
+
+    <section class="panel">
+      <h2>ברכות לתינוק</h2>
+      <p class="note">מה שהאורחים כתבו לכם, באישור ההגעה או אחרי הברית.</p>
+      <ul class="hz-bl" id="m-bl"></ul>
+      <p class="hz-empty" id="m-bl-empty">עוד אין ברכות.</p>
+    </section>
+
+    <section class="panel">
+      <h2>פרטיות</h2>
+      <p class="note">הרשימה נראית רק למי שיש לו את הקישור של הלוח הזה. הנתונים נמחקים מעצמם 30 יום אחרי הברית. <a href="/mohel/hazmana/privacy/">מדיניות הפרטיות</a>.</p>
+      <div class="hz-btns" style="margin-top:.6rem">
+        <button class="btn btn-line" type="button" id="m-copy-admin">העתקת קישור הלוח</button>
+        <button class="btn btn-line hz-danger" type="button" id="m-delete">מחיקת כל הנתונים עכשיו</button>
+      </div>
+    </section>
+  </div>
+
+  <p class="hz-credit">אישורי הגעה ומעקב מוזמנים, במתנה מ<a href="/mohel/?utm_source=dashboard&amp;utm_medium=rsvp">גילעד רחמים המוהל</a></p>
+</div>

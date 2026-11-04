@@ -1,0 +1,160 @@
+<!--meta {
+  "title": "הזמנה לברית מילה בחינם – הודעה מעוצבת לוואטסאפ, בדקה | גילעד רחמים המוהל",
+  "description": "מכינים הזמנה לברית בחינם: ממלאים תאריך, שעה ומקום, בוחרים מתוך 5 עיצובים, ומקבלים תמונה לוואטסאפ, טקסט מוכן וקישור לאורחים עם ניווט, יומן ואישורי הגעה. תאריך עברי ולועזי. בלי תשלום.",
+  "og_title": "הזמנה לברית – בחינם, מעוצבת, בדקה",
+  "og_image": "og-hazmana.jpg",
+  "priority": "0.8",
+  "crumbs": [["הודעה לברית", null]],
+  "dock_href": "#hz-form",
+  "dock_label": "להכנת ההודעה",
+  "head": "<link rel=\"stylesheet\" href=\"/assets/hazmana.css\"><script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"WebApplication\",\"name\":\"מחולל הודעה לברית מילה\",\"url\":\"https://gilad-rachamim.github.io/mohel/hazmana/\",\"applicationCategory\":\"DesignApplication\",\"operatingSystem\":\"Web\",\"inLanguage\":\"he\",\"isAccessibleForFree\":true,\"offers\":{\"@type\":\"Offer\",\"price\":\"0\",\"priceCurrency\":\"ILS\"},\"author\":{\"@type\":\"Person\",\"name\":\"גילעד רחמים אביעד\",\"jobTitle\":\"מוהל מוסמך\"},\"featureList\":\"5 עיצובים, תאריך עברי ולועזי, תמונה לוואטסאפ, קישור לאורחים עם ניווט, יומן ואישורי הגעה\"},{\"@type\":\"FAQPage\",\"mainEntity\":[{\"@type\":\"Question\",\"name\":\"זה באמת בחינם?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"כן. בלי תשלום, בלי גרסת פרימיום, בלי הגבלת שימוש. בתחתית התמונה יש שורת קרדיט קטנה לאתר.\"}},{\"@type\":\"Question\",\"name\":\"מה עושים עם ההודעה?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"שולחים את התמונה בוואטסאפ, או מעתיקים את הטקסט. הקישור לאורחים נותן ניווט ב-Waze, הוספה ליומן ואישור הגעה.\"}},{\"@type\":\"Question\",\"name\":\"אפשר לשנות אחרי שסיימתי?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"כן. הפרטים נשמרים בטלפון. חוזרים לדף, משנים, ומורידים שוב.\"}}]}]}</script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js\" integrity=\"sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==\" crossorigin=\"anonymous\" referrerpolicy=\"no-referrer\" defer></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js\" integrity=\"sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==\" crossorigin=\"anonymous\" referrerpolicy=\"no-referrer\" defer></script>",
+  "foot": "<script src=\"/assets/hazmana.js\" defer></script>"
+} -->
+<header class="hero">
+  <svg class="ic" style="width:3.6rem;height:3.6rem;color:var(--gold);margin:0 auto 1rem;stroke-width:1.2"><use href="#baby"/></svg>
+  <h1>הזמנה לברית מילה, בחינם ובדקה</h1>
+  <p class="sub">ממלאים מתי ואיפה, בוחרים עיצוב, ושולחים לכל המשפחה בווטסאפ. בלי תשלום. משאירים פרטים פעם אחת, ומקבלים במתנה גם את המדריך להורים לקראת הברית.</p>
+</header>
+
+<div class="hz">
+  <form id="hz-form" class="panel lead-form" novalidate>
+    <fieldset class="hz-step">
+      <legend>מתי ואיפה</legend>
+      <div class="two">
+        <div class="field"><label for="hz-dt">תאריך הברית</label><input id="hz-dt" name="dt" type="date" required></div>
+        <div class="field"><label for="hz-tm">שעת הברית</label><input id="hz-tm" name="tm" type="time" required></div>
+      </div>
+      <div class="field">
+        <span class="label">תפילה לפני הברית <span class="opt">(לא חובה)</span></span>
+        <div class="two">
+          <select name="shp" aria-label="איזו תפילה"><option value="shacharit">שחרית</option><option value="mincha">מנחה</option></select>
+          <input id="hz-sh" name="sh" type="time" aria-label="שעת התפילה">
+        </div>
+      </div>
+      <div class="field"><label for="hz-pl">המקום</label><input id="hz-pl" name="pl" type="text" required placeholder="בית הכנסת אוהל יצחק / אולם השמחות"></div>
+      <div class="field"><label for="hz-ad">כתובת <span class="opt">(בשביל כפתור הניווט)</span></label><input id="hz-ad" name="ad" type="text" placeholder="רחוב הרב קוק 5, ירושלים"></div>
+      <div class="field">
+        <span class="label">איך לכתוב את התאריך?</span>
+        <div class="radios">
+          <label><input type="radio" name="fm" value="both" checked> עברי ולועזי</label>
+          <label><input type="radio" name="fm" value="heb"> עברי</label>
+          <label><input type="radio" name="fm" value="greg"> לועזי</label>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="hz-step">
+      <legend>מי מבשר <span class="opt" style="font-size:1rem">(לא חובה)</span></legend>
+      <div class="two">
+        <div class="field"><label for="hz-par">שמות ההורים</label><input id="hz-par" name="par" type="text" placeholder="שירה ויוסי"></div>
+        <div class="field"><label for="hz-fam">שם המשפחה</label><input id="hz-fam" name="fam" type="text" placeholder="כהן"></div>
+      </div>
+      <div class="field"><label for="hz-gp">הסבים והסבתות</label><input id="hz-gp" name="gp" type="text" placeholder="משפחות כהן ולוי"></div>
+    </fieldset>
+
+    <fieldset class="hz-step">
+      <legend>תוספות</legend>
+      <div class="field">
+        <label for="hz-vs">פסוק בראש ההודעה</label>
+        <select id="hz-vs" name="vs">
+          <option value="0">בלי פסוק</option>
+          <option value="1">וביום השמיני ימול בשר ערלתו</option>
+          <option value="2">אשרי תבחר ותקרב ישכן חצריך</option>
+          <option value="3">כשם שנכנס לברית כן יכנס לתורה ולחופה ולמעשים טובים</option>
+          <option value="4">המלאך הגואל אותי מכל רע יברך את הנערים</option>
+        </select>
+      </div>
+      <label class="check"><input type="checkbox" name="se"> <span>סעודת מצווה אחרי הברית</span></label>
+      <div class="hz-more" id="hz-se-more" hidden>
+        <div class="field"><label for="hz-sep">איפה הסעודה? <span class="opt">(ריק = באותו מקום)</span></label><input id="hz-sep" name="sep" type="text" placeholder="אולם הגן"></div>
+      </div>
+      <label class="check"><input type="checkbox" name="sz"> <span>שלום זכר בליל שבת שלפני הברית</span></label>
+      <div class="hz-more" id="hz-sz-more" hidden>
+        <div class="two">
+          <div class="field"><label for="hz-szt">שעה</label><input id="hz-szt" name="szt" type="time"></div>
+          <div class="field"><label for="hz-szp">איפה</label><input id="hz-szp" name="szp" type="text" placeholder="בבית המשפחה"></div>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="hz-step">
+      <legend>העיצוב</legend>
+      <div class="hz-styles" role="radiogroup" aria-label="סגנון העיצוב">
+        <label class="hz-mini"><input type="radio" name="st" value="zahav" checked><canvas width="216" height="270" data-st="zahav" aria-hidden="true"></canvas>קלאסי זהב</label>
+        <label class="hz-mini"><input type="radio" name="st" value="modern"><canvas width="216" height="270" data-st="modern" aria-hidden="true"></canvas>מודרני נקי</label>
+        <label class="hz-mini"><input type="radio" name="st" value="yerushalmi"><canvas width="216" height="270" data-st="yerushalmi" aria-hidden="true"></canvas>ירושלמי</label>
+        <label class="hz-mini"><input type="radio" name="st" value="prachim"><canvas width="216" height="270" data-st="prachim" aria-hidden="true"></canvas>פרחוני עדין</label>
+        <label class="hz-mini"><input type="radio" name="st" value="sfaradi"><canvas width="216" height="270" data-st="sfaradi" aria-hidden="true"></canvas>ספרדי</label>
+      </div>
+    </fieldset>
+  </form>
+
+  <div class="hz-preview"><canvas id="hz-canvas" width="1080" height="1350" role="img" aria-label="תצוגה של ההודעה לברית"></canvas></div>
+
+  <div class="hz-actions">
+    <form id="hz-reg" class="panel lead-form" action="https://script.google.com/macros/s/AKfycbxgWe4xxaclqfzmOD_E0hOg2XDr2genZZyvAcf0hpHw_AHkgvQAqDop-XjdURdARYNx-Q/exec" method="POST">
+      <h2>ההודעה מוכנה</h2>
+      <p class="note">השאירו שם וטלפון, ותקבלו את ההודעה: תמונה, טקסט לווטסאפ וקישור לאורחים. במתנה תקבלו גם את המדריך להורים לקראת הברית.</p>
+      <input type="hidden" name="מקור" value="מחולל הודעה לברית">
+      <div class="hp" aria-hidden="true"><label>אל תמלאו שדה זה <input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></div>
+      <div class="field"><label for="r-name">שם</label><input id="r-name" name="שם" type="text" autocomplete="name" required placeholder="איך קוראים לכם?"></div>
+      <div class="field"><label for="r-phone">טלפון</label><input id="r-phone" name="טלפון" type="tel" inputmode="tel" autocomplete="tel" required placeholder="050-0000000" pattern="[0-9\-\+\s]{9,15}" dir="ltr" style="text-align:right"></div>
+      <div class="field"><label for="r-email">מייל <span class="opt">(לא חובה, לשם יישלח המדריך)</span></label><input id="r-email" name="email" type="email" autocomplete="email" placeholder="name@gmail.com" dir="ltr" style="text-align:right"></div>
+      <button class="btn btn-gold btn-block" type="submit">קבלו את ההודעה (חינם)</button>
+      <p class="privacy">פרטי הברית נשארים בטלפון שלכם. השם והטלפון נשמרים אצלי בלבד, לא מועברים לאף אחד, ונמחקים אחרי שנה.</p>
+    </form>
+
+    <div id="hz-acts" class="panel" hidden>
+      <h2>מזל טוב! ההודעה שלכם</h2>
+      <p id="hz-thanks" class="note" tabindex="-1" hidden>תודה! המדריך להורים מחכה לכם למטה.</p>
+      <div class="hz-btns" style="margin-top:1rem">
+        <button class="btn btn-gold wide" type="button" id="a-share"><svg class="ic"><use href="#wa"/></svg> שליחת התמונה בווטסאפ</button>
+        <button class="btn btn-line" type="button" id="a-down"><svg class="ic"><use href="#down"/></svg> הורדת התמונה</button>
+        <button class="btn btn-line wide" type="button" id="a-pdf"><svg class="ic"><use href="#down"/></svg> הורדה כ-PDF, עם קישורים לחיצים</button>
+        <a class="btn btn-line" id="a-wa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> טקסט לווטסאפ</a>
+        <button class="btn btn-line" type="button" id="a-text"><svg class="ic"><use href="#list"/></svg> העתקת הטקסט</button>
+        <button class="btn btn-line" type="button" id="a-link"><svg class="ic"><use href="#share"/></svg> קישור לאורחים</button>
+        <a class="btn btn-line" id="a-gcal" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#cal"/></svg> ליומן גוגל</a>
+        <a class="btn btn-line" id="a-ics" href="#" download="brit.ics"><svg class="ic"><use href="#cal"/></svg> ליומן בטלפון</a>
+        <a class="btn btn-line wide" id="a-view" href="#" target="_blank" rel="noopener">איך האורחים יראו את הקישור?</a>
+      </div>
+      <p class="note" style="margin-top:.8rem">בקישור לאורחים יש את ההודעה, כפתור ניווט ב-Waze והוספה ליומן.</p>
+      <div id="hz-rsvp-panel" class="hz-rsvp-panel" hidden>
+        <h3>אישורי הגעה ומעקב מוזמנים, במתנה</h3>
+        <p class="note">מי שפותח את הקישור מסמן "מגיעים? כמה?". בלוח המעקב תראו מי אישר, כמה מגיעים בסך הכול ומי עוד לא ענה, ותשלחו תזכורת בלחיצה אחת.</p>
+        <p class="hz-short"><span id="a-short" dir="ltr"></span> <button class="btn btn-line" type="button" id="a-short-copy">העתקה</button></p>
+        <a class="btn btn-gold btn-block" id="a-dash" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#list"/></svg> ללוח המעקב שלי</a>
+        <p class="note small">הלוח פרטי: רק מי שיש לו את הקישור שלו רואה את הרשימה. שמרו אותו. הנתונים נמחקים מעצמם 30 יום אחרי הברית.</p>
+      </div>
+      <div class="hz-rsvp-panel">
+        <h3>מודעה לבית הכנסת</h3>
+        <p class="note">דף A4 באותו עיצוב, עם קוד QR: מי שסורק מנווט ומסמן "מגיעים". תולים בלוח המודעות, בבית הכנסת או בעבודה.</p>
+        <div class="hz-poster"><canvas id="hz-poster" width="1080" height="1527" role="img" aria-label="תצוגה של המודעה לבית הכנסת"></canvas></div>
+        <button class="btn btn-gold btn-block" type="button" id="a-poster"><svg class="ic"><use href="#down"/></svg> הורדת המודעה (PDF)</button>
+      </div>
+      <div class="hz-gift">
+        <a class="btn btn-line btn-block" id="a-guide" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#book"/></svg> המדריך להורים לקראת הברית (PDF)</a>
+        <a class="btn btn-line btn-block" id="a-gilad" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לתאם את הברית עם גילעד</a>
+      </div>
+    </div>
+  </div>
+<section aria-labelledby="free-h">
+  <h2 id="free-h">למה בחינם?</h2>
+  <p class="lead">כי אני מוהל, לא חברת הזמנות. ההודעה לברית היא מתנה להורים בשבוע הכי עמוס בחיים. אם תרצו, נדבר גם על הברית עצמה. ואם לא, תיהנו מההודעה.</p>
+  <ul class="list">
+    <li><div><strong>5 עיצובים:</strong><span> קלאסי זהב, מודרני נקי, ירושלמי, פרחוני עדין ונוסח ספרדי.</span></div></li>
+    <li><div><strong>תאריך עברי ולועזי</strong><span> מחושב אוטומטית. לבחירה: עברי, לועזי או שניהם.</span></div></li>
+    <li><div><strong>לוואטסאפ:</strong><span> תמונה, טקסט מוכן להעתקה, וקישור לאורחים עם Waze, הוספה ליומן ואישור הגעה.</span></div></li>
+    <li><div><strong>"מודיעים", לא "מזמינים":</strong><span> הנוסח כתוב לפי המנהג שלא מזמינים במפורש לסעודת ברית. <a class="gold" href="/mohel/hazmana/nusach/">למה, ו-12 נוסחים נוספים</a>.</span></div></li>
+    <li><div><strong>לאורחים:</strong><span> <a class="gold" href="/mohel/hazmana/brachot/">24 ברכות לברית</a>, מוכנות להעתקה.</span></div></li>
+  </ul>
+</section>
+<section aria-labelledby="faq-h">
+  <h2 id="faq-h">שאלות</h2>
+  <details><summary>זה באמת בחינם?</summary><p>כן. בלי תשלום, בלי גרסת פרימיום, בלי הגבלת שימוש. בתחתית התמונה יש שורת קרדיט קטנה לאתר, זה הכול.</p></details>
+  <details><summary>מה עושים עם ההודעה?</summary><p>שולחים את התמונה בוואטסאפ למשפחה ולחברים, או מעתיקים את הטקסט. הקישור לאורחים נותן להם ניווט ב-Waze, הוספה ליומן ואישור הגעה.</p></details>
+  <details><summary>אפשר לשנות אחרי שסיימתי?</summary><p>כן. הפרטים נשמרים בטלפון שלכם. חוזרים לדף, משנים, ומורידים שוב.</p></details>
+  <details><summary>עוד אין לנו תאריך סופי. מה עושים?</summary><p>מחשבים ב<a class="gold" href="/mohel/moed/">מחשבון מועד הברית</a>. ואם יש ספק (צהבת, לידה סמוך לשקיעה), שולחים קודם הודעת לידה, ואת ההודעה על הברית אחרי שסגרתם מוהל ומקום.</p></details>
+  <details><summary>מתאים גם לשלום זכר ולפדיון הבן?</summary><p>בינתיים יש <a class="gold" href="/mohel/hazmana/nusach/">נוסחים מוכנים</a> לשלום זכר, לפדיון הבן ולזבד הבת. מחולל מעוצב לכל אחד מהם בדרך.</p></details>
+</section>
+</div>

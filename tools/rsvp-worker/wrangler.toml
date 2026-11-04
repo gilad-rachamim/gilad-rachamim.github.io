@@ -1,0 +1,16 @@
+# אישורי הגעה לברית – Cloudflare Worker + KV (חינמי).
+# פריסה:        cd tools/rsvp-worker && npx wrangler deploy   (wrangler login פעם אחת, אותו חשבון כמו superal-comments)
+# KV חדש:       npx wrangler kv namespace create RSVP   ← להדביק את ה-id למטה לפני הפריסה הראשונה
+# בדיקה מקומית: npx wrangler dev --local --port 8787      (KV מדומה בזיכרון, בלי חשבון)
+name = "mohel-rsvp"
+main = "rsvp-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[[kv_namespaces]]
+binding = "RSVP"
+id = "REPLACE_WITH_KV_ID"
+
+[vars]
+# מקורות נוספים שמותר להם לקרוא ל-API, מופרדים בפסיק
+EXTRA_ORIGINS = ""

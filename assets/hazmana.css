@@ -1,0 +1,99 @@
+/* מחולל הודעה לברית + דף האורחים */
+.hz{max-width:38rem;margin:0 auto;padding:0 1.25rem}
+.hz fieldset{border:0;display:grid;gap:1rem}
+.hz legend{font-family:var(--serif);color:var(--gold);font-size:1.3rem;margin-bottom:.4rem}
+.hz-step+.hz-step{margin-top:1.6rem;padding-top:1.4rem;border-top:1px solid var(--line)}
+.hz .two{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.hz .field textarea{width:100%;font:400 1.05rem/1.4 var(--sans);color:var(--cream);background:rgba(239,230,210,.06);border:1px solid rgba(201,165,92,.35);border-radius:10px;padding:.8rem .9rem;resize:vertical}
+.hz-more{display:grid;gap:.8rem;padding-inline-start:1.75rem}
+.hz-styles{display:grid;grid-template-columns:repeat(5,1fr);gap:.5rem;margin-top:.4rem}
+@media (max-width:520px){.hz-styles{grid-template-columns:repeat(3,1fr)}}
+.hz-mini{display:grid;gap:.3rem;cursor:pointer;text-align:center;font-size:.9rem;color:var(--muted)}
+.hz-mini input{position:absolute;opacity:0;pointer-events:none}
+.hz-mini canvas{width:100%;height:auto;border-radius:8px;border:2px solid transparent;box-shadow:0 4px 12px rgba(0,0,0,.35)}
+.hz-mini:has(input:checked) canvas{border-color:var(--gold)}
+.hz-mini:has(input:checked){color:var(--cream);font-weight:600}
+.hz-mini:has(input:focus-visible) canvas{outline:2px solid var(--gold);outline-offset:3px}
+.hz-preview{margin:1.4rem auto 0;max-width:26rem}
+.hz-preview canvas,#hz-guest-canvas{width:100%;height:auto;display:block;border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.5)}
+.hz-actions{margin-top:1.6rem}
+.hz-btns{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.hz-btns .wide{grid-column:1/-1}
+.hz-btns .btn{padding:.8rem .7rem;font-size:1rem}
+.hz-gift{margin-top:1.2rem;display:grid;gap:.6rem}
+#hz-thanks{outline:0}
+.hz-guest{max-width:28rem;margin:1.25rem auto 2rem;padding:0 1rem}
+.hz-guest .hz-btns{margin-top:1.2rem}
+.hz-credit{text-align:center;margin-top:2rem;font-size:.95rem;color:var(--muted)}
+.hz-credit a{color:var(--gold)}
+.hz-guest-page .topbar,.hz-guest-page .dock,.hz-guest-page .site-foot .cols{display:none}
+.hz-guest-page{padding-bottom:0}
+.hz-after{margin-bottom:1.2rem;text-align:center}
+.hz-after h2{font-size:1.4rem}
+/* אישורי הגעה */
+.hz-rsvp{margin-top:1.4rem}
+.hz-rsvp h2{font-size:1.5rem;margin-bottom:.3rem}
+.hz-yesno{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:.6rem 0 1rem}
+.hz-choice{display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.9rem .6rem;border:1px solid rgba(201,165,92,.4);border-radius:12px;cursor:pointer;color:var(--cream);text-align:center;font-weight:600}
+.hz-choice input{accent-color:var(--gold)}
+.hz-choice:has(input:checked){background:rgba(201,165,92,.16);border-color:var(--gold)}
+.hz-err{color:#f0a9a0}
+.hz-rsvp-panel{margin-top:1.4rem;padding-top:1.2rem;border-top:1px solid var(--line)}
+.hz-rsvp-panel h3{font-family:var(--serif);color:var(--gold);font-size:1.25rem;margin:0 0 .4rem}
+.hz-short{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin:.6rem 0;font-size:1rem;color:var(--cream);word-break:break-all}
+.hz-short .btn{padding:.45rem .8rem;font-size:.9rem}
+.note.small{font-size:.85rem}
+.hz-poster{margin:.8rem auto;max-width:18rem}
+.hz-poster canvas{width:100%;height:auto;display:block;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+/* לוח המעקב להורים */
+.hz-admin{max-width:38rem;margin:0 auto;padding:0 1.25rem}
+.hz-admin .panel+.panel{margin-top:1.2rem}
+.hz-admin h2{font-size:1.35rem;margin-bottom:.4rem}
+.hz-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;text-align:center}
+.hz-stats .stat{background:rgba(239,230,210,.06);border:1px solid rgba(201,165,92,.25);border-radius:12px;padding:.7rem .3rem}
+.hz-stats b{display:block;font-family:var(--serif);font-size:1.9rem;color:var(--gold);line-height:1.1}
+.hz-stats span{font-size:.85rem;color:var(--muted)}
+.hz-stats .stat.on{border-color:var(--gold);background:rgba(201,165,92,.14)}
+.hz-admin textarea{width:100%;min-height:6.5rem;font:400 1.05rem/1.4 var(--sans);color:var(--cream);background:rgba(239,230,210,.06);border:1px solid rgba(201,165,92,.35);border-radius:10px;padding:.8rem .9rem;resize:vertical}
+.hz-tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin:1rem 0 .6rem}
+.hz-tabs button{background:none;border:1px solid rgba(201,165,92,.35);color:var(--muted);border-radius:999px;padding:.35rem .8rem;font:600 .9rem var(--sans);cursor:pointer}
+.hz-tabs button[aria-pressed=true]{color:var(--ink);background:var(--gold);border-color:var(--gold)}
+.hz-list{list-style:none;margin:0;padding:0;display:grid;gap:.5rem}
+.hz-row{display:grid;grid-template-columns:1fr auto;gap:.3rem .6rem;align-items:center;padding:.7rem .8rem;border:1px solid rgba(201,165,92,.2);border-radius:12px;background:rgba(239,230,210,.04)}
+.hz-row .who{font-weight:600;color:var(--cream)}
+.hz-row .meta{font-size:.85rem;color:var(--muted);grid-column:1/-1}
+.hz-row .acts{display:flex;gap:.35rem;flex-wrap:wrap;grid-column:1/-1;margin-top:.2rem}
+.hz-row .acts .btn{padding:.4rem .7rem;font-size:.85rem}
+.chip{display:inline-block;font-size:.78rem;padding:.15rem .55rem;border-radius:999px;border:1px solid;white-space:nowrap}
+.chip.yes{color:#b8e0b0;border-color:#6f9a66}.chip.no{color:#f0a9a0;border-color:#9a6660}.chip.none{color:var(--muted);border-color:rgba(201,165,92,.35)}
+.hz-empty{color:var(--muted);text-align:center;padding:1rem 0}
+.hz-danger{color:#f0a9a0;border-color:#9a6660}
+/* דף הדפסה עם QR */
+.hz-print{max-width:28rem;margin:1rem auto 2rem;padding:0 1rem;text-align:center}
+.hz-print .sheet{background:#fff;color:#111;border-radius:14px;padding:1.2rem;display:grid;gap:.8rem;justify-items:center}
+.hz-print .sheet canvas{width:100%;height:auto;border-radius:8px}
+.hz-print .qr{display:grid;gap:.3rem;justify-items:center}
+.hz-print .qr canvas,.hz-print .qr img{width:11rem;height:11rem;border-radius:0}
+.hz-print .qr p{margin:0;font:600 1.1rem var(--sans);color:#111}
+.hz-print .qr small{font:400 .85rem var(--sans);color:#555;direction:ltr}
+@media print{
+  .topbar,.dock,.site-foot,.hz-print .tools,.crumbs,.hero{display:none!important}
+  body{background:#fff!important;color:#000!important;padding:0!important}
+  .hz-print{max-width:none;margin:0;padding:0}
+  .hz-print .sheet{border-radius:0;padding:0;min-height:98vh;align-content:center}
+  .hz-print .sheet canvas{max-height:60vh;width:auto}
+  .hz-print .qr canvas,.hz-print .qr img{width:7cm;height:7cm}
+}
+/* מתנה להורים וברכות */
+.hz-gift{margin-top:1.4rem;text-align:center}
+.hz-gift h2{font-size:1.5rem;margin-bottom:.3rem}
+.hz-gift h3{font-family:var(--serif);color:var(--gold);font-size:1.2rem;margin:1.2rem 0 .4rem}
+.hz-gift form{text-align:right;margin-top:.6rem;padding-top:.6rem;border-top:1px solid var(--line)}
+.hz-gift #gf-host{margin-top:.4rem}
+.hz-bl-help{display:inline-block;margin-top:.35rem;font-size:.88rem;color:var(--gold)}
+.hz-guest textarea,.hz-admin input[type=url]{width:100%;font:400 1.05rem/1.4 var(--sans);color:var(--cream);background:rgba(239,230,210,.06);border:1px solid rgba(201,165,92,.35);border-radius:10px;padding:.7rem .9rem;resize:vertical}
+.hz-bl{list-style:none;margin:.4rem 0 0;padding:0;display:grid;gap:.5rem}
+.hz-bl li{padding:.7rem .9rem;border:1px solid rgba(201,165,92,.2);border-radius:12px;background:rgba(239,230,210,.04)}
+.hz-bl q{display:block;font:400 1.08rem/1.6 var(--serif);color:var(--cream);quotes:"„" "”"}
+.hz-bl small{color:var(--muted);font-size:.85rem}
+.hz [hidden],.hz-guest [hidden],.hz-admin [hidden],.hz-print [hidden]{display:none!important}
