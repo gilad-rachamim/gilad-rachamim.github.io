@@ -51,7 +51,7 @@ LEADFORM = """<form class="lead-form" data-lead data-next="/mohel/todah/" action
   <div class="field"><label for="{p}-phone">טלפון <span class="opt">(לא חובה, אם תרצו גם בווטסאפ)</span></label><input id="{p}-phone" name="טלפון" type="tel" inputmode="tel" autocomplete="tel" placeholder="050-0000000" pattern="[0-9\\-\\+\\s]{{9,15}}" dir="ltr" style="text-align:right"></div>
   <label class="check"><input type="checkbox" name="מאשר/ת קבלת עדכונים" value="כן"> <span>אשמח לקבל עוד כמה טיפים קצרים במייל. אפשר להפסיק בכל רגע.</span></label>
   <button class="btn btn-gold btn-block" type="submit">שלחו לי את המדריך (חינם)</button>
-  <p class="privacy">נפתח מיד, נשלח למייל, ואם תרצו – גם לווטסאפ.<br>הפרטים נשמרים אצלי בלבד, משמשים רק כדי לשלוח את המדריך ולענות לכם, לא מועברים לאף אחד, ונמחקים אחרי שנה. רוצים שאמחק קודם? כתבו לי.</p>
+  <p class="privacy">נפתח מיד, נשלח למייל, ואם תרצו – גם לווטסאפ.<br>הפרטים נשמרים אצלי בלבד, משמשים רק כדי לשלוח את המדריך ולענות לכם, לא מועברים לאף אחד. רוצים שאמחק אותם? כתבו לי.</p>
 </form>"""
 
 def leadforms(html):
