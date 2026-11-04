@@ -136,7 +136,7 @@
     if (r.holiday) lines.push('הברית חלה ב' + r.holiday + '. ' + (isYomTov(r.holiday) ? 'ברית בזמנה נעשית גם ביום טוב (חוץ מאחרי ניתוח קיסרי). נתאם את הפרטים.' : 'אפשר לערוך ברית בחול המועד, בשמחה.'));
     if (r.postponed) lines.push('אחרי ניתוח קיסרי הברית לא דוחה שבת ויום טוב, ולכן היא נדחית ל<b>יום ' + DAYS[r.postponed.getDay()] + ', ' + hebrew(r.postponed) + ' (' + fmtG(r.postponed) + ')</b>.');
     if (mode === 'born') lines.push('יום הלידה ההלכתי: יום ' + DAYS[halachic.getDay()] + ', ' + hebrew(halachic) + '. הברית ביום השמיני – שבוע אחרי, באותו יום בשבוע.');
-    lines.push('כל זה בתנאי שהתינוק בריא וכשיר לברית. בדיקת צהבת וביקור שלי לפני הברית יקבעו סופית.');
+    lines.push('כל זה בתנאי שהתינוק בריא וכשיר לברית. בדיקת צהבת והבדיקה שלי לפני הברית יקבעו סופית.');
     html += '<ul class="res-notes">' + lines.map(function (l) { return '<li>' + l + '</li>'; }).join('') + '</ul>';
 
     var wa = 'שלום גילעד 🙂 ' + (mode === 'born' ? 'הבן נולד ב-' + fmtG(born) : 'הלידה צפויה ב-' + fmtG(born)) +
@@ -147,6 +147,7 @@
     html += '<button class="btn btn-line" type="button" id="ics"><svg class="ic"><use href="#cal"/></svg> הוסיפו ליומן</button>';
     html += '</div>';
     html += '<p class="note" style="margin-top:1rem;text-align:center">רוצים שאשמור לכם את התאריך? שלחו לי אותו, ואחזור אליכם עם כל מה שצריך לדעת.</p>';
+    if (mode === 'born') html += '<p class="note" style="margin-top:.6rem;text-align:center">יש תאריך? <a class="gold" href="/mohel/hazmana/">מכינים הודעה מעוצבת לברית, בחינם, בדקה</a></p>';
     html += '</div>';
     out.innerHTML = html;
     out.hidden = false;
