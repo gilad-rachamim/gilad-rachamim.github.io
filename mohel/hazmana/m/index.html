@@ -69,7 +69,7 @@
 <main id="main">
 <header class="hero">
   <h1>לוח המעקב</h1>
-  <p class="sub" id="m-sub">מי מגיע לברית, ומי עוד לא ענה</p>
+  <p class="sub" id="m-sub">מי מגיע לשמחה, ומי עוד לא ענה</p>
 </header>
 
 <div class="hz-admin">
@@ -121,7 +121,7 @@
       <p class="note">אין שליחה אוטומטית: אתם לוחצים, ווטסאפ נפתח עם ההודעה מוכנה, ואתם שולחים. ככה זה נשאר אישי.</p>
       <div class="hz-tabs" id="m-rem" role="group" aria-label="סוג התזכורת">
         <button type="button" data-r="ask" aria-pressed="true">למי שלא ענה: "מגיעים?"</button>
-        <button type="button" data-r="tomorrow">למי שאישר: "מחר הברית" עם Waze</button>
+        <button type="button" data-r="tomorrow" id="m-rem-tomorrow">למי שאישר: "מחר הברית" עם Waze</button>
       </div>
       <p class="note small" id="m-rem-hint">הכפתור הירוק ליד כל מוזמן שולח את התזכורת שבחרתם.</p>
     </section>
@@ -140,15 +140,15 @@
     </section>
 
     <section class="panel">
-      <h2>ברכות לתינוק</h2>
-      <p class="note">מה שהאורחים כתבו לכם, באישור ההגעה או אחרי הברית.</p>
+      <h2 id="m-bl-h">ברכות לתינוק</h2>
+      <p class="note" id="m-bl-note">מה שהאורחים כתבו לכם, באישור ההגעה או אחרי הברית.</p>
       <ul class="hz-bl" id="m-bl"></ul>
       <p class="hz-empty" id="m-bl-empty">עוד אין ברכות.</p>
     </section>
 
     <section class="panel">
       <h2>פרטיות</h2>
-      <p class="note">הרשימה נראית רק למי שיש לו את הקישור של הלוח הזה. הנתונים נמחקים מעצמם 30 יום אחרי הברית. <a href="/mohel/hazmana/privacy/">מדיניות הפרטיות</a>.</p>
+      <p class="note">הרשימה נראית רק למי שיש לו את הקישור של הלוח הזה. הנתונים נמחקים מעצמם 30 יום אחרי השמחה. <a href="/mohel/hazmana/privacy/">מדיניות הפרטיות</a>.</p>
       <div class="hz-btns" style="margin-top:.6rem">
         <button class="btn btn-line" type="button" id="m-copy-admin">העתקת קישור הלוח</button>
         <button class="btn btn-line hz-danger" type="button" id="m-delete">מחיקת כל הנתונים עכשיו</button>

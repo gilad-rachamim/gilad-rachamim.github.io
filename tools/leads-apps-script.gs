@@ -62,7 +62,10 @@ function doPost(e) {
 
     if (consent === 'כן') { var nx = dueStep(row, new Date()).next; sh.getRange(sh.getLastRow(), C['מייל הבא'] + 1).setValue(nx ? nx[1] : ''); }
     if (email) {
-      if (clean(p['מקור']) === 'מחולל הודעה לברית') sendHazmanaEmail(name, email);
+      var src = clean(p['מקור']);
+      if (src === 'מחולל הודעה לברית') sendHazmanaEmail(name, email);
+      else if (src === 'מחולל הודעה לזבד הבת') sendZevedEmail(name, email);
+      else if (src === 'מחולל הודעה לפדיון הבן') sendPidyonEmail(name, email);
       else sendGuideEmail(name, email, token, consent);
     }
     notifyOwner(row, dup);
@@ -182,6 +185,29 @@ function sendHazmanaEmail(name, email) {
     'שתזכו לגדל אותו לתורה, לחופה ולמעשים טובים,<br>גילעד';
   var html = wrapHtml(inner, '');
   MailApp.sendEmail({ to: email, subject: 'מזל טוב! ההודעה לברית מוכנה – וכמה דברים לימים הקרובים', htmlBody: html, body: toText(html), name: CFG.OWNER_NAME, replyTo: CFG.OWNER_EMAIL });
+}
+// מי שנרשם במחולל לזבד הבת: נולדה בת, אין ברית ואין מדריך – ברכה קצרה, חזרה להודעה, ואיפה מוצאים אותי
+function sendZevedEmail(name, email) {
+  var first = name.split(' ')[0];
+  var inner = 'שלום ' + first + ', מזל טוב על הבת!<br><br>שמח שההודעה לזבד הבת מוכנה. היא שמורה בטלפון שלכם, ואם תרצו לשנות משהו: ' + link('/mohel/hazmana/?k=zeved', 'חזרה להודעה', 'Z0') + '.<br><br>' +
+    '<b>אישורי הגעה, במתנה.</b> שלחו לאורחים את הקישור הקצר שיצא עם ההודעה, והם מסמנים "מגיעים? כמה?". בלוח המעקב (הכפתור "ללוח המעקב שלי" במחולל) תראו מי אישר, כמה מגיעים ומי עוד לא ענה, ותשלחו תזכורת בלחיצה.<br><br>' +
+    'אני גילעד, מוהל בירושלים. אם מישהי מהמשפחה או מהחברות בהריון, או כשבעזרת ה׳ ייוולד בן, המדריך להורים לקראת הולדת הבן חינם באתר: ' + link('/mohel/madrich/', 'המדריך להורים', 'Z0') + '.<br><br>' +
+    'שאלה? פשוט ענו למייל הזה, או ב' + link('https://wa.me/' + CFG.WA_INTL + '?text=' + encodeURIComponent('שלום גילעד, הכנתי באתר הודעה לזבד הבת. '), 'ווטסאפ') + '.<br><br>' +
+    'שתזכו לגדל אותה לתורה, לחופה ולמעשים טובים,<br>גילעד';
+  var html = wrapHtml(inner, '');
+  MailApp.sendEmail({ to: email, subject: 'מזל טוב על הבת! ההודעה לזבד הבת מוכנה', htmlBody: html, body: toText(html), name: CFG.OWNER_NAME, replyTo: CFG.OWNER_EMAIL });
+}
+// מי שנרשם במחולל לפדיון הבן: הברית כבר מאחוריהם – ברכה, חזרה להודעה, הפרק על פדיון הבן
+function sendPidyonEmail(name, email) {
+  var first = name.split(' ')[0];
+  var inner = 'שלום ' + first + ', מזל טוב!<br><br>שמח שההודעה לפדיון הבן מוכנה. היא שמורה בטלפון שלכם, ואם תרצו לשנות משהו: ' + link('/mohel/hazmana/?k=pidyon', 'חזרה להודעה', 'P0') + '.<br><br>' +
+    '<b>אישורי הגעה, במתנה.</b> שלחו לאורחים את הקישור הקצר שיצא עם ההודעה, והם מסמנים "מגיעים? כמה?". בלוח המעקב (הכפתור "ללוח המעקב שלי" במחולל) תראו מי אישר, כמה מגיעים ומי עוד לא ענה, ותשלחו תזכורת בלחיצה.<br><br>' +
+    'ולפני הפדיון, בקצרה: מי חייב, מה קורה כשהיום ה-31 חל בשבת, ומה צריך להביא (כהן, חמישה מטבעות כסף, מניין וסעודה): ' + link('/mohel/hachana/pidyon/', 'פדיון הבן – מה צריך לדעת', 'P0') + '.<br>' +
+    'המדריך המלא להורים, עם הפרק על הפדיון: ' + link(CFG.PDF_URL, 'להורדה (PDF)') + '.<br><br>' +
+    'שאלה? פשוט ענו למייל הזה, או ב' + link('https://wa.me/' + CFG.WA_INTL + '?text=' + encodeURIComponent('שלום גילעד, הכנתי באתר הודעה לפדיון הבן. '), 'ווטסאפ') + '.<br><br>' +
+    'שתזכו לגדל אותו לתורה, לחופה ולמעשים טובים,<br>גילעד';
+  var html = wrapHtml(inner, '');
+  MailApp.sendEmail({ to: email, subject: 'מזל טוב! ההודעה לפדיון הבן מוכנה', htmlBody: html, body: toText(html), name: CFG.OWNER_NAME, replyTo: CFG.OWNER_EMAIL });
 }
 function unsubLink(token) { return ScriptApp.getService().getUrl() + '?u=' + token; }
 

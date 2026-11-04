@@ -32,7 +32,8 @@
       $('#p-url').textContent = url.replace(/^https?:\/\//, '');
       if (window.QRCode) new window.QRCode($('#p-qr'), { text: url, width: 512, height: 512, correctLevel: window.QRCode.CorrectLevel.M });
       sheet.hidden = false;
-      document.title = 'ברית מילה – להדפסה';
+      document.title = H.kindOf(j.d).name + ' – להדפסה';
+      $('#p-canvas').setAttribute('aria-label', 'ההודעה על ' + H.kindOf(j.d).full);
     }, function (e) { $('#p-err').textContent = e.message; $('#p-err').hidden = false; });
     $('#p-print').addEventListener('click', function () { ev('rsvp_print'); window.print(); });
     return;
@@ -65,11 +66,11 @@
   function st(r) { return r.a ? (r.a.ok ? 'yes' : 'no') : 'none'; }
 
   function remText(r) {
-    var d = state.d, sign = H.signText(d), first = r.n; // השם כמו שההורים כתבו אותו ("סבתא רחל", "משפחת לוי")
+    var d = state.d, sign = H.signText(d), first = r.n, K = H.kindOf(d); // השם כמו שההורים כתבו אותו ("סבתא רחל", "משפחת לוי")
     if (remind === 'tomorrow') {
-      return 'שלום ' + first + ', מחכים לכם מחר בברית! 🎉\n' + H.timeText(d) + ', ' + H.placeQuery(d) + '.\nניווט: ' + H.wazeUrl(d) + (sign ? '\n\n' + sign : '');
+      return 'שלום ' + first + ', מחכים לכם מחר ב' + K.full.replace(/^ה/, '') + '! 🎉\n' + H.timeText(d) + ', ' + H.placeQuery(d) + '.\nניווט: ' + H.wazeUrl(d) + (sign ? '\n\n' + sign : '');
     }
-    return 'שלום ' + first + '! בעזרת ה׳ ברית המילה ' + H.whenText(d) + ', ' + H.timeText(d) + ', ' + H.placeQuery(d) + '.\nנשמח לדעת אם תגיעו, בלחיצה כאן: ' + (r.personal ? H.shortUrl(eid, r.id) : H.shortUrl(eid)) + ' 🙏' + (sign ? '\n\n' + sign : '');
+    return 'שלום ' + first + '! בעזרת ה׳ ' + K.full + ' ' + H.whenText(d) + ', ' + H.timeText(d) + ', ' + H.placeQuery(d) + '.\nנשמח לדעת אם תגיעו, בלחיצה כאן: ' + (r.personal ? H.shortUrl(eid, r.id) : H.shortUrl(eid)) + ' 🙏' + (sign ? '\n\n' + sign : '');
   }
 
   function render() {
@@ -78,8 +79,12 @@
     $('#s-yes').textContent = yes; $('#s-fam').textContent = fam; $('#s-no').textContent = no; $('#s-none').textContent = none;
     document.querySelectorAll('#m-stats .stat').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-f') === filter); });
     document.querySelectorAll('#m-tabs button').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-f') === filter ? 'true' : 'false'); });
-    var sign = H.signText(state.d);
-    $('#m-sub').textContent = 'ברית המילה ' + H.whenText(state.d) + (sign ? ' · ' + sign : '');
+    var sign = H.signText(state.d), K = H.kindOf(state.d);
+    $('#m-sub').textContent = K.full + ' ' + H.whenText(state.d) + (sign ? ' · ' + sign : '');
+    document.title = 'לוח המעקב – אישורי הגעה ל' + K.name;
+    $('#m-rem-tomorrow').textContent = 'למי שאישר: "מחר ' + K.the + '" עם Waze';
+    $('#m-bl-note').textContent = 'מה שהאורחים כתבו לכם, באישור ההגעה או אחרי ' + K.the + '.';
+    $('#m-bl-h').textContent = 'ברכות ' + K.baby;
     var url = H.shortUrl(eid);
     $('#m-short').textContent = url.replace(/^https?:\/\//, '');
     $('#m-wa').href = 'https://wa.me/?text=' + encodeURIComponent(H.waText(state.d));
@@ -99,7 +104,7 @@
       else if (r.p) meta.push('<span dir="ltr">' + esc(r.p) + '</span>');
       var showRem = remind === 'ask' ? s === 'none' : s === 'yes';
       var acts = '';
-      if (showRem && (r.personal || remind === 'tomorrow')) acts += '<a class="btn btn-gold" data-rem="' + r.id + '" href="' + esc(waLink(r.p, remText(r))) + '" target="_blank" rel="noopener">' + (remind === 'ask' ? 'תזכורת בווטסאפ' : '"מחר הברית" בווטסאפ') + '</a>';
+      if (showRem && (r.personal || remind === 'tomorrow')) acts += '<a class="btn btn-gold" data-rem="' + r.id + '" href="' + esc(waLink(r.p, remText(r))) + '" target="_blank" rel="noopener">' + (remind === 'ask' ? 'תזכורת בווטסאפ' : '"מחר ' + K.the + '" בווטסאפ') + '</a>';
       if (r.personal) acts += '<button class="btn btn-line" type="button" data-link="' + r.id + '">הקישור האישי</button>';
       acts += '<button class="btn btn-line" type="button" data-del="' + r.id + '" aria-label="הסרה">✕</button>';
       li.innerHTML = '<span class="who">' + esc(r.n) + '</span>' + chip + (meta.length ? '<span class="meta">' + meta.join(' · ') + '</span>' : '') + '<span class="acts">' + acts + '</span>';

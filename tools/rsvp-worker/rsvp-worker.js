@@ -16,7 +16,7 @@
 // KV: ev:<id> -> האירוע (JSON) · rl:<ip>:<kind> -> מונה לקצב
 const ORIGINS = ['https://gilad-rachamim.github.io'];
 const LIM = { name: 60, note: 200, place: 120, guests: 400, count: 20, create: 5, rsvp: 20, windowSec: 600 };
-const PUB = ['dt', 'tm', 'sh', 'shp', 'pl', 'ad', 'fm', 'par', 'fam', 'gp', 'vs', 'se', 'sep', 'sz', 'szt', 'szp', 'st'];
+const PUB = ['k', 'dt', 'tm', 'sh', 'shp', 'pl', 'ad', 'fm', 'par', 'fam', 'gp', 'vs', 'se', 'sep', 'sz', 'szt', 'szp', 'st', 'kh']; // k = brit / zeved / pidyon
 const KEEP_DAYS = 30; // כמה ימים אחרי הברית הנתונים נמחקים מעצמם
 
 export default {
@@ -129,7 +129,7 @@ async function createEvent(req, env) {
   if (!b) return json({ error: 'גוף הבקשה לא תקין' }, 400);
   if (b.website) return json({ ok: true, id: shortId(7), tok: shortId(24) }, 201); // honeypot
   const d = pubDetails(b.d);
-  if (!d) return json({ error: 'חסר תאריך הברית' }, 400);
+  if (!d) return json({ error: 'חסר תאריך השמחה' }, 400);
   let id;
   for (let i = 0; i < 5; i++) { id = shortId(7); if (!(await env.RSVP.get(evKey(id)))) break; }
   const tok = shortId(24);
@@ -228,7 +228,7 @@ async function admin(id, action, url, req, env) {
   }
   if (action === 'update') {
     const d = pubDetails(b.d);
-    if (!d) return json({ error: 'חסר תאריך הברית' }, 400);
+    if (!d) return json({ error: 'חסר תאריך השמחה' }, 400);
     ev.d = d;
     await save(env, ev);
     return json({ ok: true });

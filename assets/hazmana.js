@@ -50,23 +50,48 @@
   }
   function hm(t) { return (t || '').replace(/^0(\d)/, '$1'); } // 09:15 → 9:15
 
-  // ---------- הנוסח ----------
-  var VERSES = [
-    '',
-    'וּבַיּוֹם הַשְּׁמִינִי יִמּוֹל בְּשַׂר עָרְלָתוֹ',
-    'אַשְׁרֵי תִּבְחַר וּתְקָרֵב יִשְׁכֹּן חֲצֵרֶיךָ',
-    'כְּשֵׁם שֶׁנִּכְנַס לַבְּרִית כֵּן יִכָּנֵס לְתוֹרָה וּלְחֻפָּה וּלְמַעֲשִׂים טוֹבִים',
-    'הַמַּלְאָךְ הַגֹּאֵל אֹתִי מִכָּל רָע יְבָרֵךְ אֶת הַנְּעָרִים'
-  ];
-  var VERSE_SRC = ['', 'ויקרא יב, ג', 'תהלים סה, ה', 'מנוסח הברכה בברית', 'בראשית מח, טז'];
+  // ---------- איזו שמחה: ברית מילה / זבד הבת / פדיון הבן ----------
+  // k = brit (ברירת מחדל) / zeved / pidyon. כל מה שתלוי בסוג יושב כאן, כדי שהציור, הוואטסאפ, היומן, המודעה ודף האורחים ישתמשו באותו מקור.
+  var KINDS = {
+    brit: {
+      slug: 'brit', full: 'ברית המילה', title: 'ברית המילה', the: 'הברית', name: 'ברית מילה', lead: 'מחולל הודעה לברית', born: 'נולד',
+      open: ['בשבח והודיה לה׳ יתברך', 'אנו שמחים לבשר על הולדת בננו', 'ונשמח לשתף אתכם בשמחת הכנסתו בבריתו של אברהם אבינו'],
+      wa: ['בשבח והודיה לה׳ יתברך, אנו שמחים לבשר על הולדת בננו 🎉', 'ברית המילה תתקיים בעזרת ה׳ '],
+      seudah: 'לאחר הברית תתקיים סעודת מצווה', bless: 'שיגדל לתורה, לחופה ולמעשים טובים', baby: 'לתינוק',
+      verses: ['', 'וּבַיּוֹם הַשְּׁמִינִי יִמּוֹל בְּשַׂר עָרְלָתוֹ', 'אַשְׁרֵי תִּבְחַר וּתְקָרֵב יִשְׁכֹּן חֲצֵרֶיךָ', 'כְּשֵׁם שֶׁנִּכְנַס לַבְּרִית כֵּן יִכָּנֵס לְתוֹרָה וּלְחֻפָּה וּלְמַעֲשִׂים טוֹבִים', 'הַמַּלְאָךְ הַגֹּאֵל אֹתִי מִכָּל רָע יְבָרֵךְ אֶת הַנְּעָרִים'],
+      srcs: ['', 'ויקרא יב, ג', 'תהלים סה, ה', 'מנוסח הברכה בברית', 'בראשית מח, טז']
+    },
+    zeved: {
+      slug: 'zeved', full: 'זבד הבת', title: 'זבד הבת', sub: 'וקריאת השם', the: 'זבד הבת', name: 'זבד הבת', lead: 'מחולל הודעה לזבד הבת', born: 'נולדה',
+      open: ['בשמחה ובהודיה לה׳ יתברך', 'אנו שמחים לבשר על הולדת בתנו', 'ונשמח לשתף אתכם בשמחת'],
+      wa: ['בשמחה ובהודיה לה׳ יתברך, אנו שמחים לבשר על הולדת בתנו 🎀', 'נשמח לשתף אתכם בזבד הבת וקריאת השם, בעזרת ה׳ '],
+      seudah: 'קידוש וסעודה לאחר התפילה', bless: 'שתגדל לתורה, לחופה ולמעשים טובים', baby: 'לתינוקת',
+      verses: ['', 'זְבָדַנִי אֱלֹהִים אֹתִי זֵבֶד טוֹב', 'בְּרוּכָה אַתְּ לַה׳ בִּתִּי', 'כָּל כְּבוּדָּה בַת מֶלֶךְ פְּנִימָה'],
+      srcs: ['', 'בראשית ל, כ', 'רות ג, י', 'תהלים מה, יד']
+    },
+    pidyon: {
+      slug: 'pidyon', full: 'פדיון הבן', title: 'פדיון הבן', the: 'הפדיון', name: 'פדיון הבן', lead: 'מחולל הודעה לפדיון הבן', born: 'נולד',
+      open: ['בשמחה ובהודיה לה׳ יתברך', 'על הולדת בננו בכורנו', 'נשמח לשתף אתכם במצוות'],
+      wa: ['בשמחה ובהודיה לה׳ יתברך על הולדת בננו בכורנו 🎉', 'נשמח לשתף אתכם במצוות פדיון הבן, שתתקיים בעזרת ה׳ '],
+      seudah: 'לאחר הפדיון, סעודת מצווה', bless: 'שיגדל לתורה, לחופה ולמעשים טובים', baby: 'לתינוק',
+      verses: ['', 'קַדֶּשׁ לִי כָל בְּכוֹר', 'וְכֹל בְּכוֹר אָדָם בְּבָנֶיךָ תִּפְדֶּה'],
+      srcs: ['', 'שמות יג, ב', 'שמות יג, יג']
+    }
+  };
+  function kindOf(d) { return KINDS[d && d.k] || KINDS.brit; }
 
+  // ---------- הנוסח ----------
   function whenText(d) {
     var dt = parseDate(d.dt);
-    return dt ? 'ביום ' + DAYS[dt.getDay()] + ', ' + dateText(dt, d.fm) : 'ביום ___';
+    if (!dt) return 'ביום ___';
+    return (dt.getDay() === 6 ? 'בשבת קודש, ' : 'ביום ' + DAYS[dt.getDay()] + ', ') + dateText(dt, d.fm);
   }
+  function prayerName(d) { return d.shp === 'mincha' ? 'מנחה' : d.shp === 'arvit' ? 'ערבית' : 'שחרית'; }
   function timeText(d) {
-    var t = d.tm ? 'בשעה ' + hm(d.tm) : 'בשעה ___';
-    return d.sh ? 'תפילת ' + (d.shp === 'mincha' ? 'מנחה' : 'שחרית') + ' ' + hm(d.sh) + ' · הברית ' + hm(d.tm || '___') : t;
+    var t = d.tm ? 'בשעה ' + hm(d.tm) : 'בשעה ___', K = kindOf(d);
+    if (!d.sh) return t;
+    var pray = 'תפילת ' + prayerName(d) + (d.k === 'zeved' ? ' וקריאת השם' : '') + ' ' + hm(d.sh);
+    return pray + ' · ' + (d.k === 'zeved' ? 'הקידוש' : K.the) + ' ' + hm(d.tm || '___');
   }
   // שלום זכר: ליל השבת שלפני הברית (יום שישי האחרון לפני יום הברית)
   function szText(d) {
@@ -85,26 +110,29 @@
     if (fam) return 'משפחת ' + fam;
     return par;
   }
-  function seudahText(d) { return 'לאחר הברית תתקיים סעודת מצווה' + (d.sep ? ' ב' + stripB(d.sep) : ''); }
+  function seudahText(d) { return kindOf(d).seudah + (d.sep ? ' ב' + stripB(d.sep) : ''); }
+  function kohenText(d) { return d.k === 'pidyon' && d.kh ? 'הכהן: ' + d.kh.trim() : ''; }
 
   // רשימת השורות לציור. size ביחידות של הקנבס המלא (1080).
   function blocks(d, th) {
-    var b = [];
+    var b = [], K = kindOf(d);
     var T = th.titleFont, B = th.bodyFont;
-    var v = +d.vs || 0;
-    if (v) { b.push({ t: VERSES[v], size: 36, w: 400, f: SERIF, c: th.accent, gap: 0 }); b.push({ t: VERSE_SRC[v], size: 24, w: 400, f: SANS, c: th.muted, gap: 6 }); }
-    b.push({ t: 'בשבח והודיה לה׳ יתברך', size: 40, w: 500, f: B, c: th.text, gap: v ? 40 : 0 });
-    b.push({ t: 'אנו שמחים לבשר על הולדת בננו', size: 40, w: 400, f: B, c: th.text, gap: 10 });
-    b.push({ t: 'ונשמח לשתף אתכם בשמחת הכנסתו בבריתו של אברהם אבינו', size: 40, w: 400, f: B, c: th.text, gap: 6 });
-    b.push({ t: 'ברית המילה', size: 120, w: 700, f: T, c: th.title, gap: 36, lh: 1.15 });
+    var v = +d.vs || 0, verse = K.verses[v];
+    if (verse) { b.push({ t: verse, size: 36, w: 400, f: SERIF, c: th.accent, gap: 0 }); b.push({ t: K.srcs[v], size: 24, w: 400, f: SANS, c: th.muted, gap: 6 }); }
+    b.push({ t: K.open[0], size: 40, w: 500, f: B, c: th.text, gap: verse ? 40 : 0 });
+    b.push({ t: K.open[1], size: 40, w: 400, f: B, c: th.text, gap: 10 });
+    b.push({ t: K.open[2], size: 40, w: 400, f: B, c: th.text, gap: 6 });
+    b.push({ t: K.title, size: 120, w: 700, f: T, c: th.title, gap: 36, lh: 1.15 });
+    if (K.sub) b.push({ t: K.sub, size: 52, w: 600, f: T, c: th.title, gap: 0, lh: 1.2 });
     b.push({ sep: true, gap: 10 });
-    b.push({ t: 'תתקיים בעזרת ה׳', size: 38, w: 400, f: B, c: th.text, gap: 18 });
+    b.push({ t: d.k === 'brit' ? 'תתקיים בעזרת ה׳' : 'שתתקיים בעזרת ה׳', size: 38, w: 400, f: B, c: th.text, gap: 18 });
     b.push({ t: whenText(d), size: 50, w: 600, f: B, c: th.strong, gap: 8 });
     b.push({ t: timeText(d), size: 46, w: 600, f: B, c: th.strong, gap: 6 });
     b.push({ t: d.pl ? stripB(d.pl) : 'המקום ___', size: 46, w: 500, f: B, c: th.text, gap: 30 });
     if (d.ad) b.push({ t: d.ad, size: 34, w: 400, f: SANS, c: th.muted, gap: 4 });
+    if (kohenText(d)) b.push({ t: kohenText(d), size: 34, w: 400, f: B, c: th.text, gap: 24 });
     if (d.se) b.push({ t: seudahText(d), size: 34, w: 400, f: B, c: th.text, gap: 28 });
-    if (d.sz) { // בשתי שורות, כדי שהשבירה תיפול במקום טבעי
+    if (d.sz && d.k === 'brit') { // בשתי שורות, כדי שהשבירה תיפול במקום טבעי
       var more = szMore(d).replace(/^, /, '');
       b.push({ t: szText(d).slice(0, szText(d).length - szMore(d).length), size: 34, w: 400, f: B, c: th.text, gap: d.se ? 8 : 28 });
       if (more) b.push({ t: more, size: 34, w: 400, f: B, c: th.text, gap: 0 });
@@ -297,8 +325,8 @@
     for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
     return JSON.parse(new TextDecoder().decode(bytes));
   }
-  var PUB = ['dt', 'tm', 'sh', 'shp', 'pl', 'ad', 'fm', 'par', 'fam', 'gp', 'vs', 'se', 'sep', 'sz', 'szt', 'szp', 'st'];
-  function pubOf(d) { var o = {}; PUB.forEach(function (k) { if (d[k]) o[k] = d[k]; }); return o; }
+  var PUB = ['k', 'dt', 'tm', 'sh', 'shp', 'pl', 'ad', 'fm', 'par', 'fam', 'gp', 'vs', 'se', 'sep', 'sz', 'szt', 'szp', 'st', 'kh'];
+  function pubOf(d) { var o = {}; PUB.forEach(function (k) { if (d[k] && !(k === 'k' && d[k] === 'brit')) o[k] = d[k]; }); return o; }
   // האירוע שנוצר ב-Worker (מזהה קצר + טוקן ניהול), נשמר בטלפון של ההורים
   var evt = null;
   try { evt = JSON.parse(localStorage.getItem(EV_STORE) || 'null'); } catch (e) {}
@@ -323,9 +351,9 @@
     return new Date(guess - (asIl - guess));
   }
   function utcStamp(x) { return x.getUTCFullYear() + pad(x.getUTCMonth() + 1) + pad(x.getUTCDate()) + 'T' + pad(x.getUTCHours()) + pad(x.getUTCMinutes()) + '00Z'; }
-  function calTitle(d) { var s = signText(d); return 'ברית מילה' + (s ? ' – ' + s : ''); }
+  function calTitle(d) { var s = signText(d); return kindOf(d).name + (s ? ' – ' + s : ''); }
   function calTimes(d) { var a = israelToUtc(d.dt, d.sh || d.tm); return [a, new Date(a.getTime() + (d.sh ? 3 : 2) * 3600e3)]; }
-  function calDetails(d) { return timeText(d) + '\n' + guestUrl(d) + '\n\nהודעה כזאת לברית שלכם, בחינם: ' + location.origin + '/mohel/hazmana/?utm_source=calendar&utm_medium=hazmana'; }
+  function calDetails(d) { return timeText(d) + '\n' + guestUrl(d) + '\n\nהודעה כזאת לשמחה שלכם, בחינם: ' + location.origin + '/mohel/hazmana/?utm_source=calendar&utm_medium=hazmana'; }
   function gcalUrl(d) {
     var t = calTimes(d);
     return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(calTitle(d)) +
@@ -342,13 +370,14 @@
     return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics);
   }
   function waText(d) {
-    var dt = parseDate(d.dt), L = [];
+    var dt = parseDate(d.dt), L = [], K = kindOf(d);
     L.push('בס״ד');
-    L.push('בשבח והודיה לה׳ יתברך, אנו שמחים לבשר על הולדת בננו 🎉');
-    L.push('ברית המילה תתקיים בעזרת ה׳ ' + whenText(d) + ', ' + timeText(d) + '.');
+    L.push(K.wa[0]);
+    L.push(K.wa[1] + whenText(d) + ', ' + timeText(d) + '.');
     L.push('📍 ' + placeQuery(d));
+    if (kohenText(d)) L.push(kohenText(d) + '.');
     if (d.se) L.push(seudahText(d) + '.');
-    if (d.sz && dt) L.push(szText(d) + '.');
+    if (d.sz && d.k === 'brit' && dt) L.push(szText(d) + '.');
     L.push('');
     L.push('ניווט: ' + wazeUrl(d));
     L.push('ההודעה המלאה והוספה ליומן: ' + guestUrl(d));
@@ -380,15 +409,17 @@
     var bsd = th.bsd || [W - 100, 118, 'right'];
     ctx.textAlign = bsd[2]; ctx.fillStyle = th.muted; ctx.font = '400 30px ' + SERIF; ctx.fillText('בס״ד', bsd[0], bsd[1]);
     ctx.textAlign = 'center';
-    var B = th.bodyFont, T = th.titleFont, b = [];
-    b.push({ t: 'ברית מילה', size: 170, w: 700, f: T, c: th.title, gap: 0, lh: 1.1 });
+    var B = th.bodyFont, T = th.titleFont, b = [], K = kindOf(d);
+    b.push({ t: K.name, size: 170, w: 700, f: T, c: th.title, gap: 0, lh: 1.1 });
+    if (K.sub) b.push({ t: K.sub, size: 64, w: 600, f: T, c: th.title, gap: 0, lh: 1.2 });
     b.push({ sep: true, gap: 16 });
-    b.push({ t: 'בשבח והודיה לה׳ יתברך, אנו שמחים לבשר על הולדת בננו', size: 36, w: 400, f: B, c: th.text, gap: 24 });
-    b.push({ t: 'ונשמח לשתף אתכם בשמחת הכנסתו בבריתו של אברהם אבינו', size: 36, w: 400, f: B, c: th.text, gap: 6 });
+    b.push({ t: K.open[0] + ', ' + K.open[1], size: 36, w: 400, f: B, c: th.text, gap: 24 });
+    b.push({ t: K.open[2] + (d.k === 'brit' ? '' : ' ' + K.full), size: 36, w: 400, f: B, c: th.text, gap: 6 });
     b.push({ t: whenText(d), size: 62, w: 700, f: B, c: th.strong, gap: 44 });
     b.push({ t: timeText(d), size: 54, w: 600, f: B, c: th.strong, gap: 10 });
     b.push({ t: d.pl ? stripB(d.pl) : 'המקום ___', size: 54, w: 500, f: B, c: th.text, gap: 30 });
     if (d.ad) b.push({ t: d.ad, size: 38, w: 400, f: SANS, c: th.muted, gap: 6 });
+    if (kohenText(d)) b.push({ t: kohenText(d), size: 36, w: 400, f: B, c: th.text, gap: 24 });
     if (d.se) b.push({ t: seudahText(d), size: 36, w: 400, f: B, c: th.text, gap: 28 });
     var sign = signText(d);
     if (sign) b.push({ t: sign, size: 58, w: 600, f: T, c: th.title, gap: 44 });
@@ -477,13 +508,13 @@
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
     function fallback() { var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) {} ta.remove(); done(); }
   }
-  function fileName(d) { return 'brit-' + (d.dt || 'hazmana') + '.png'; }
+  function fileName(d) { return kindOf(d).slug + '-' + (d.dt || 'hazmana') + '.png'; }
   function firstName(n) { return (n || '').trim().split(/\s+/)[0]; }
 
   // משותף לדף הניהול (assets/rsvp-admin.js)
   window.__hz = { hebrew: hebrew, greg: greg, parseDate: parseDate, hm: hm, szText: szText, waText: waText, israelToUtc: israelToUtc,
     guestUrl: guestUrl, shortUrl: shortUrl, hashUrl: hashUrl, dec: dec, draw: draw, drawPoster: drawPoster, fontsReady: fontsReady, api: api, API: API,
-    whenText: whenText, timeText: timeText, signText: signText, placeQuery: placeQuery, wazeUrl: wazeUrl, stripB: stripB, copy: copy, ev: ev, firstName: firstName };
+    whenText: whenText, timeText: timeText, signText: signText, placeQuery: placeQuery, wazeUrl: wazeUrl, stripB: stripB, copy: copy, ev: ev, firstName: firstName, kindOf: kindOf, KINDS: KINDS };
 
   // =========================================================
   // דף האורחים
@@ -503,10 +534,26 @@
   }
   function showGuest(gd, srv) {
     if (!gd || !gd.dt) { $('#hz-missing').hidden = false; return; }
-    var gc = $('#hz-guest-canvas');
+    var gc = $('#hz-guest-canvas'), K = kindOf(gd);
     var bd = parseDate(gd.dt), today = new Date(); today.setHours(0, 0, 0, 0);
     var after = bd && bd < today;
-    if (after) { $('#hz-after').hidden = false; ['#g-nav', '#g-gcal', '#g-ics'].forEach(function (s) { $(s).hidden = true; }); ev('hazmana_guest_after'); }
+    // טקסטים לפי סוג השמחה (ברירת המחדל ב-HTML היא ברית)
+    document.title = K.name + ' – ההודעה, ניווט והוספה ליומן';
+    gc.setAttribute('aria-label', 'ההודעה על ' + K.full);
+    $('#g-ics').setAttribute('download', K.slug + '.ics');
+    if (gd.k && gd.k !== 'brit') {
+      $('#hz-after h2').textContent = K.full + ' כבר התקיים. מזל טוב!';
+      $('#hz-after .note').textContent = K.bless + '. ואם גם אצלכם בדרך שמחה:';
+      $('#hz-after .btn-gold').textContent = 'הודעה מעוצבת לכל שמחה של תינוק, בחינם';
+      $('#hz-after .btn-gold').href = '/mohel/hazmana/kol-simcha/?utm_source=guest_after&utm_medium=hazmana';
+      $('#hz-after .btn-line').hidden = true;
+      $('#r-bl').placeholder = K.bless; $('#gb-bl').placeholder = K.bless;
+      $('label[for=r-bl]').firstChild.textContent = 'ברכה ' + K.baby + ' ';
+      $('#gb-form h3').textContent = 'ברכה ' + K.baby;
+      $('#hz-rsvp .privacy').firstChild.textContent = 'השם והתשובה נראים רק למשפחה, ונמחקים מעצמם 30 יום אחרי השמחה. ';
+      var cr = $('.hz-credit'); if (cr) { cr.firstChild.textContent = 'רוצים הודעה כזאת לשמחה שלכם? '; cr.querySelector('a').href = '/mohel/hazmana/?k=' + K.slug + '&utm_source=guest&utm_medium=hazmana'; }
+    }
+    if (after) { $('#hz-after').hidden = false; ['#g-nav', '#g-gcal', '#g-ics'].forEach(function (s) { $(s).hidden = true; }); ev('hazmana_guest_after', { kind: K.slug }); }
     fontsReady.then(function () { draw(gc, gd); });
     if (gd.pl || gd.ad) { $('#g-waze').href = wazeUrl(gd); $('#g-maps').href = mapsUrl(gd); } else { $('#g-nav').hidden = true; }
     $('#g-gcal').href = gcalUrl(gd);
@@ -537,7 +584,7 @@
       $('#gf-btn').addEventListener('click', function () { ev('rsvp_gift_click', { provider: k.name || k.host, after: after ? 1 : 0 }); });
     } else {
       ['#gf-btn', '#gf-host'].forEach(function (s) { $(s).hidden = true; });
-      $('#hz-gift h2').textContent = 'ברכה לתינוק';
+      $('#hz-gift h2').textContent = 'ברכה ' + kindOf(gd).baby;
       $('#gf-txt').textContent = (sign ? sign + ' ישמחו' : 'ההורים ישמחו') + ' לקרוא ברכה מכם.';
     }
     if (after) { // אחרי הברית אין "מגיעים?", אז הברכה נשלחת כאן
@@ -627,11 +674,61 @@
   }
   function toggles() {
     $('#hz-se-more').hidden = !form.elements.se.checked;
-    $('#hz-sz-more').hidden = !form.elements.sz.checked;
+    $('#hz-sz-more').hidden = !form.elements.sz.checked || data.k !== 'brit';
+  }
+  // ---------- איזו שמחה: כל מה שבדף תלוי בסוג ----------
+  // טקסטים לכל סוג: [תאריך, שעה, תפילה לפני, כותרת H1, הערה בטופס ההרשמה, "תודה" אחרי ההרשמה, כפתור ווטסאפ לגילעד, שם הסעודה]
+  var UI = {
+    brit: ['תאריך הברית', 'שעת הברית', 'תפילה לפני הברית', 'הזמנה לברית מילה, בחינם ובדקה',
+      'השאירו שם וטלפון, ותקבלו את ההודעה: תמונה, טקסט לווטסאפ וקישור לאורחים. במתנה תקבלו גם את המדריך להורים לקראת הברית.',
+      'תודה! המדריך להורים מחכה לכם למטה.', 'לתאם את הברית עם גילעד', 'סעודת מצווה אחרי הברית',
+      'ממלאים מתי ואיפה, בוחרים עיצוב, ושולחים לכל המשפחה בווטסאפ. בלי תשלום. משאירים פרטים פעם אחת, ומקבלים במתנה גם את המדריך להורים לקראת הברית.'],
+    zeved: ['תאריך זבד הבת', 'שעת הקידוש או הסעודה', 'תפילה וקריאת השם לפני', 'הזמנה לזבד הבת, בחינם ובדקה',
+      'השאירו שם וטלפון, ותקבלו את ההודעה: תמונה, טקסט לווטסאפ וקישור לאורחים עם ניווט, יומן ואישורי הגעה.',
+      'תודה! ההודעה שלכם מוכנה.', 'להכיר את גילעד, מוהל בירושלים', 'קידוש וסעודה אחרי התפילה',
+      'ממלאים מתי ואיפה, בוחרים עיצוב, ושולחים לכל המשפחה בווטסאפ. בלי תשלום. משאירים פרטים פעם אחת, ומקבלים את ההודעה, קישור לאורחים ואישורי הגעה.'],
+    pidyon: ['תאריך הפדיון', 'שעת הפדיון', 'תפילה לפני הפדיון', 'הזמנה לפדיון הבן, בחינם ובדקה',
+      'השאירו שם וטלפון, ותקבלו את ההודעה: תמונה, טקסט לווטסאפ וקישור לאורחים. במתנה תקבלו גם את המדריך להורים, עם הפרק על פדיון הבן.',
+      'תודה! המדריך להורים מחכה לכם למטה.', 'שאלה על הפדיון? גילעד בווטסאפ', 'סעודת מצווה אחרי הפדיון',
+      'ממלאים מתי ואיפה, בוחרים עיצוב, ושולחים לכל המשפחה בווטסאפ. בלי תשלום. משאירים פרטים פעם אחת, ומקבלים במתנה גם את המדריך להורים, עם הפרק על פדיון הבן.']
+  };
+  var lastKind = null, wantDefaults = false;
+  function applyKind() {
+    var k = data.k || 'brit', K = KINDS[k], u = UI[k];
+    if (k === lastKind) return;
+    var switched = lastKind !== null, defaults = switched || wantDefaults; lastKind = k; wantDefaults = false;
+    $('label[for=hz-dt]').textContent = u[0];
+    $('label[for=hz-tm]').textContent = u[1];
+    $('#hz-sh-label').firstChild.textContent = u[2] + ' ';
+    $('#hz-sh-arvit').hidden = k === 'brit';
+    if (k === 'brit' && form.elements.shp.value === 'arvit') form.elements.shp.value = 'shacharit';
+    $('#hz-kh-wrap').hidden = k !== 'pidyon';
+    $('#hz-sz-wrap').hidden = k !== 'brit';
+    $('#hz-se-label').textContent = u[7];
+    // הפסוקים של הסוג הזה
+    var vs = form.elements.vs, cur = vs.value;
+    vs.innerHTML = '';
+    K.verses.forEach(function (v, i) { var o = document.createElement('option'); o.value = i; o.textContent = i ? v.replace(/[֑-ׇ]/g, '') : 'בלי פסוק'; vs.appendChild(o); });
+    vs.value = defaults ? (k === 'zeved' ? '1' : '0') : (cur < K.verses.length ? cur : '0');
+    if (defaults && k !== 'brit' && !form.elements.se.checked) form.elements.se.checked = true; // בנוסח המאושר יש סעודה
+    var h1 = $('.hero h1'); if (h1) h1.textContent = u[3];
+    var sub = $('.hero .sub'); if (sub) sub.textContent = u[8];
+    $('#hz-reg .note').textContent = u[4];
+    $('#hz-reg [name="מקור"]').value = K.lead;
+    $('#r-email-opt').textContent = k === 'zeved' ? '(לא חובה)' : '(לא חובה, לשם יישלח המדריך)';
+    $('#hz-thanks').textContent = u[5];
+    $('#a-guide').hidden = k === 'zeved';
+    $('#a-gilad').lastChild.textContent = ' ' + u[6];
+    $('#hz-poster-note').textContent = k === 'brit' ? 'דף A4 באותו עיצוב, עם קוד QR: מי שסורק מנווט ומסמן "מגיעים". תולים בלוח המודעות, בבית הכנסת או בעבודה.' : 'דף A4 באותו עיצוב, עם קוד QR: מי שסורק מנווט ומסמן "מגיעים". תולים בבית הכנסת, בעבודה או בבניין.';
+    $('#hz-rsvp-panel .small').textContent = 'הלוח פרטי: רק מי שיש לו את הקישור שלו רואה את הרשימה. שמרו אותו. הנתונים נמחקים מעצמם 30 יום אחרי ' + (k === 'brit' ? 'הברית' : 'השמחה') + '.';
+    document.title = u[3] + ' | גילעד רחמים המוהל';
+    if (switched) ev('hazmana_kind', { kind: k });
   }
   var timer = null, cached = null;
   function render() {
     data = read();
+    applyKind();
+    data = read(); // הפסוק והסעודה יכולים להתחלף עם הסוג
     toggles();
     try { localStorage.setItem(STORE, JSON.stringify(data)); } catch (e) {}
     clearTimeout(timer);
@@ -648,6 +745,11 @@
     }, 120);
   }
   restore();
+  // ?k=zeved / ?k=pidyon (מהדף "לכל שמחה") קובע את הסוג גם אם נשמר אחר בטלפון
+  try {
+    var qk = new URLSearchParams(location.search).get('k'), rk = qk && KINDS[qk] && form.querySelector('input[name="k"][value="' + qk + '"]');
+    if (rk && !rk.checked) { rk.checked = true; wantDefaults = true; } // סוג אחר ממה שנשמר: גם הפסוק והסעודה של הסוג הזה
+  } catch (e) {}
   form.addEventListener('input', render);
   form.addEventListener('change', render);
   document.querySelectorAll('input[name="st"]').forEach(function (r) {
@@ -679,15 +781,16 @@
     if ($('.hp input', reg).value) return; // בוט
     var btn = $('button[type=submit]', reg);
     btn.disabled = true; btn.textContent = 'רגע…';
-    var fd = new FormData(reg);
+    var fd = new FormData(reg), K = kindOf(data);
     var dt = parseDate(data.dt);
-    fd.set('מועד הלידה', 'נולד – ברית ' + (dt ? greg(dt) + ' ' + hm(data.tm) : ''));
+    fd.set('מקור', K.lead);
+    fd.set('מועד הלידה', K.born + ' – ' + K.name + ' ' + (dt ? greg(dt) + ' ' + hm(data.tm) : ''));
     fd.set('עיר', placeQuery(data));
     fd.set('_page', location.pathname);
     Object.keys(utm).forEach(function (k) { fd.set(k, utm[k]); });
-    var lead = { n: fd.get('שם'), p: fd.get('טלפון'), e: fd.get('email'), d: 'הזמנה לברית', c: placeQuery(data), t: Date.now() };
+    var lead = { n: fd.get('שם'), p: fd.get('טלפון'), e: fd.get('email'), d: 'הזמנה ל' + K.name, c: placeQuery(data), t: Date.now() };
     try { localStorage.setItem('mohel-lead', JSON.stringify(lead)); } catch (err) {}
-    ev('generate_lead', { page: location.pathname, source: 'hazmana' });
+    ev('generate_lead', { page: location.pathname, source: 'hazmana', kind: K.slug });
     var finish = function () { showActs(); $('#hz-thanks').hidden = false; $('#hz-thanks').focus(); };
     var t = setTimeout(finish, 6000);
     fetch(reg.action, { method: 'POST', body: fd, mode: 'no-cors', keepalive: true }).catch(function () {}).then(function () { clearTimeout(t); finish(); });
@@ -699,7 +802,7 @@
   function act(id, fn) { $(id).addEventListener('click', function (e) { if (!detailsOk()) { e.preventDefault(); return; } fn(e); }); }
 
   act('#a-share', function () {
-    ev('hazmana_share', { style: data.st });
+    ev('hazmana_share', { style: data.st, kind: data.k });
     var go = function (b) {
       var file = new File([b], fileName(data), { type: 'image/png' });
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -712,16 +815,16 @@
     // שיתוף חייב לקרות מיד אחרי הלחיצה (בייחוד באייפון), לכן משתמשים בתמונה שכבר מוכנה
     if (cached) go(cached); else blob().then(go);
   });
-  act('#a-down', function () { ev('hazmana_download', { style: data.st }); blob().then(download); });
+  act('#a-down', function () { ev('hazmana_download', { style: data.st, kind: data.k }); blob().then(download); });
   act('#a-pdf', function () {
-    ev('hazmana_pdf', { style: data.st });
+    ev('hazmana_pdf', { style: data.st, kind: data.k });
     var doc = messagePdf(big, data);
-    if (doc) doc.save('brit-' + (data.dt || 'hazmana') + '.pdf'); else alert('ה-PDF לא נטען. בדקו את החיבור לאינטרנט ונסו שוב.');
+    if (doc) doc.save(kindOf(data).slug + '-' + (data.dt || 'hazmana') + '.pdf'); else alert('ה-PDF לא נטען. בדקו את החיבור לאינטרנט ונסו שוב.');
   });
   act('#a-poster', function () {
-    ev('hazmana_print', { style: data.st });
+    ev('hazmana_print', { style: data.st, kind: data.k });
     var doc = posterPdf(data, guestUrl(data));
-    if (doc) doc.save('modaa-brit-' + (data.dt || 'hazmana') + '.pdf'); else alert('ה-PDF לא נטען. בדקו את החיבור לאינטרנט ונסו שוב.');
+    if (doc) doc.save('modaa-' + kindOf(data).slug + '-' + (data.dt || 'hazmana') + '.pdf'); else alert('ה-PDF לא נטען. בדקו את החיבור לאינטרנט ונסו שוב.');
   });
   act('#a-text', function (e) { ev('hazmana_copy_text'); copy(waText(data), e.currentTarget); });
   act('#a-wa', function (e) { ev('hazmana_wa_text'); e.currentTarget.href = 'https://wa.me/?text=' + encodeURIComponent(waText(data)); });
@@ -730,8 +833,11 @@
   act('#a-gcal', function (e) { ev('hazmana_calendar', { kind: 'google' }); e.currentTarget.href = gcalUrl(data); });
   act('#a-ics', function (e) { ev('hazmana_calendar', { kind: 'ics' }); e.currentTarget.href = icsData(data); });
   act('#a-gilad', function (e) {
-    var dt = parseDate(data.dt);
-    var msg = 'שלום גילעד, הכנתי באתר הודעה לברית' + (dt ? ' ב' + whenText(data).replace(/^ב/, '') + ' ' + timeText(data) : '') + (data.pl ? ', ב' + stripB(data.pl) : '') + '. אשמח לתאם איתך את הברית.';
+    var dt = parseDate(data.dt), K = kindOf(data);
+    ev('hazmana_gilad', { kind: K.slug });
+    if (data.k === 'zeved') { e.currentTarget.href = '/mohel/?utm_source=hazmana_zeved&utm_medium=hazmana'; return; }
+    var msg = data.k === 'pidyon' ? 'שלום גילעד, הכנתי באתר הודעה לפדיון הבן. יש לי שאלה: '
+      : 'שלום גילעד, הכנתי באתר הודעה לברית' + (dt ? ' ב' + whenText(data).replace(/^ב/, '') + ' ' + timeText(data) : '') + (data.pl ? ', ב' + stripB(data.pl) : '') + '. אשמח לתאם איתך את הברית.';
     e.currentTarget.href = 'https://wa.me/' + GILAD_WA + '?text=' + encodeURIComponent(msg);
   });
   $('#a-guide').href = GUIDE;
@@ -745,7 +851,7 @@
     if (evt && evt.sig === sig) return;
     var pub = pubOf(data);
     evBusy = (evt ? api('/ev/' + evt.id + '/update?t=' + encodeURIComponent(evt.tok), { d: pub }).then(function () { return evt; })
-                  : api('/ev', { d: pub }).then(function (j) { ev('rsvp_create', { style: data.st }); return { id: j.id, tok: j.tok }; }))
+                  : api('/ev', { d: pub }).then(function (j) { ev('rsvp_create', { style: data.st, kind: data.k }); return { id: j.id, tok: j.tok }; }))
       .then(function (e) {
         evt = { id: e.id, tok: e.tok, sig: sig };
         try { localStorage.setItem(EV_STORE, JSON.stringify(evt)); } catch (err) {}
