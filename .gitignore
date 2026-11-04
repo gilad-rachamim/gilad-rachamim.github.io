@@ -2,3 +2,8 @@
 # Cloudflare wrangler local state
 tools/rsvp-worker/.wrangler/
 tools/rsvp-worker/node_modules/
+
+# קבצים אישיים של Claude – לא למאגר הציבורי
+.claude/handoffs/
+.claude/launch.json
+claude-skills/
