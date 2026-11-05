@@ -2,6 +2,13 @@
 // נטען רק כש-GA_ID מוגדר ב-build.py. בלי gtag – לא עושה כלום.
 (function () {
   function ev(name, params) { if (window.gtag) window.gtag('event', name, params || {}); }
+  // פלייליסט לברית: אירוע נפרד לכל סגנון (playlist_dati וכו'), כדי שבדוח האירועים יופיעו חמש שורות בלי שום הגדרה.
+  // נמדד גם קישור לספוטיפי וגם כפתור הנגן, כי לחיצה בתוך הנגן עצמו לא נספרת.
+  document.addEventListener('click', function (e) {
+    var p = e.target.closest && e.target.closest('[data-playlist]');
+    if (!p) return;
+    ev('playlist_' + p.getAttribute('data-playlist'), { style: p.getAttribute('data-style'), action: p.tagName === 'A' ? 'open_spotify' : 'play_here', page: location.pathname });
+  }, true);
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[href]');
     if (!a) return;
