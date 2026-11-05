@@ -15,6 +15,7 @@ SHEETS = {
     "seder-edot-hamizrach": "סדר ברית מילה - נוסח עדות המזרח",
     "seder-ashkenaz": "סדר ברית מילה - נוסח אשכנז",
     "shiron": "שירון ופיוטים לברית",
+    "shiron-ashkenaz": "שירון לברית - נוסח אשכנז",
     "tefila-sandak": "תפילה לסנדק",
     "seudat-brit": "סעודת ברית מילה",
     "kibudim": "כיבודים בברית",
