@@ -17,7 +17,7 @@
     if (/wa\.me|whatsapp/.test(h)) ev('whatsapp_click', where);
     else if (h.indexOf('tel:') === 0) ev('phone_click', where);
     else if (/\.vcf($|\?)/.test(h)) ev('save_contact', where);
-    else if (/\.pdf($|\?)/.test(h)) ev('guide_download', where);
+    else if (/\.pdf($|\?)/.test(h)) ev('guide_download', { page: location.pathname, file: h.split('?')[0].split('/').pop() });
   }, true);
   // ליד = הגעה לעמוד התודה עם פרטים ב-hash (אמין יותר מאירוע submit, שנחתך במעבר דף).
   // נספר פעם אחת לכל ליד, גם אם מרעננים את עמוד התודה.
