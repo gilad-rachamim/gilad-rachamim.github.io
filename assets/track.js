@@ -18,6 +18,7 @@
     else if (h.indexOf('tel:') === 0) ev('phone_click', where);
     else if (/\.vcf($|\?)/.test(h)) ev('save_contact', where);
     else if (/\.pdf($|\?)/.test(h)) ev('guide_download', { page: location.pathname, file: h.split('?')[0].split('/').pop() });
+    else if (/\/mohel\/shirim\//.test(h)) ev('shirim_click', where);
   }, true);
   // ליד = הגעה לעמוד התודה עם פרטים ב-hash (אמין יותר מאירוע submit, שנחתך במעבר דף).
   // נספר פעם אחת לכל ליד, גם אם מרעננים את עמוד התודה.

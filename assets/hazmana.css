@@ -23,6 +23,11 @@
 .hz-btns .btn{padding:.8rem .7rem;font-size:1rem}
 .hz-gift{margin-top:1.2rem;display:grid;gap:.6rem}
 #hz-thanks{outline:0}
+.hz-songs{margin-top:1.2rem;padding:.8rem .95rem;border:1px solid rgba(201,165,92,.3);border-radius:12px;background:rgba(201,165,92,.05);text-align:center;font-size:1rem;color:var(--body)}
+.hz-songs p{margin:0}
+.hz-songs strong{color:var(--cream)}
+.hz-songs-links{display:flex;flex-wrap:wrap;justify-content:center;gap:.2rem 1.2rem;margin-top:.3rem}
+.hz-songs-links a{display:inline-block;padding:.45rem .2rem;color:var(--gold);font-weight:600;text-decoration:underline;text-underline-offset:3px}
 .hz-guest{max-width:28rem;margin:1.25rem auto 2rem;padding:0 1rem}
 .hz-guest .hz-btns{margin-top:1.2rem}
 .hz-credit{text-align:center;margin-top:2rem;font-size:.95rem;color:var(--muted)}

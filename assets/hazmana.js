@@ -675,6 +675,16 @@
   function toggles() {
     $('#hz-se-more').hidden = !form.elements.se.checked;
     $('#hz-sz-more').hidden = !form.elements.sz.checked || data.k !== 'brit';
+    songs();
+  }
+  // פס השירים בסיום: רק לברית, כי הרשימות נבנו לברית. למחולל אין בחירת נוסח, ולכן הרמז היחיד הוא העיצוב הספרדי.
+  function songs() {
+    var sf = data.st === 'sfaradi';
+    $('#hz-songs').hidden = data.k !== 'brit';
+    $('#hz-songs-all').hidden = sf;
+    $('#hz-songs-sf').hidden = !sf;
+    $('#a-songs-pl').hidden = !sf;
+    $('#a-songs').textContent = sf ? 'לכל הסגנונות' : 'לשירים לברית';
   }
   // ---------- איזו שמחה: כל מה שבדף תלוי בסוג ----------
   // טקסטים לכל סוג: [תאריך, שעה, תפילה לפני, כותרת H1, הערה בטופס ההרשמה, "תודה" אחרי ההרשמה, כפתור ווטסאפ לגילעד, שם הסעודה]
