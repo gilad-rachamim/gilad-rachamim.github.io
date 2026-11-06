@@ -12,6 +12,7 @@ SRC = pathlib.Path.home() / "OneDrive - Michlelet Orot Israel/Documents/12. בר
 OUT = pathlib.Path(__file__).resolve().parent.parent / "mohel" / "dapim"
 
 SHEETS = {
+    "seder-sefaradi": "סדר ברית מילה - נוסח ספרדי",
     "seder-edot-hamizrach": "סדר ברית מילה - נוסח עדות המזרח",
     "seder-ashkenaz": "סדר ברית מילה - נוסח אשכנז",
     "shiron": "שירון ופיוטים לברית",
