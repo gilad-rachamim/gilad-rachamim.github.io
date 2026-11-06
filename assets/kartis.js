@@ -25,7 +25,7 @@
 
   var share = document.getElementById('share');
   if (share) share.addEventListener('click', function () {
-    var data = { title: 'גילעד רחמים המוהל', text: 'גילעד רחמים המוהל – ברית מכל הלב והנשמה · 058-4049049', url: 'https://gilad-rachamim.github.io/mohel/kartis/' };
+    var data = { title: 'גילעד רחמים המוהל', text: 'גילעד רחמים המוהל – ברית מכל הלב והנשמה · 058-404-9049', url: 'https://gilad-rachamim.github.io/mohel/kartis/' };
     if (navigator.share) { navigator.share(data).catch(function () {}); return; }
     location.href = 'https://wa.me/?text=' + encodeURIComponent(data.text + ' ' + data.url);
   });
