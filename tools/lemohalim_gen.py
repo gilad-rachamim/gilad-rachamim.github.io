@@ -60,6 +60,9 @@ ALL_KEYS = [("hazmana", "הזמנה לברית עם אישורי הגעה"), ("m
             ("dapim", "דפי ברית להדפסה"), ("brachot", "ברכות לברית")]
 
 
+CREDIT = "הכלי של גילעד רחמים, מוהל, קולגה שלי וחבר איתי בפורום המוהלים."
+
+
 def tool_url(path, key):
     return f"{BASE}{path}?utm_source=mohel_share&utm_medium=whatsapp&utm_campaign={key}"
 
@@ -75,7 +78,7 @@ def share_link(key, text, label, cls):
 
 paths = {t[0]: t[1] for t in TOOLS}
 all_text = "מזל טוב! כמה כלים חינמיים לקראת הברית:\n\n" + "\n\n".join(
-    f"{label}:\n{tool_url(paths[k], k)}" for k, label in ALL_KEYS)
+    f"{label}:\n{tool_url(paths[k], k)}" for k, label in ALL_KEYS) + "\n\nהכלים של גילעד רחמים, מוהל, קולגה שלי וחבר איתי בפורום המוהלים."
 
 GILAD = "https://wa.me/972584049049?text="
 wa_fix = GILAD + quote("שלום גילעד, ראיתי את דף הכלים למוהלים. רציתי לכתוב לך: ")
@@ -84,7 +87,7 @@ wa_top = GILAD + quote("שלום גילעד, ראיתי את דף הכלים ל�
 
 cards = []
 for key, path, icon, title, line, notice, msg in TOOLS:
-    text = msg.format(url=tool_url(path, key))
+    text = msg.format(url=tool_url(path, key)) + "\n" + CREDIT
     note = f'<p class="tl-note">{notice}</p>' if notice else ""
     cards.append(f"""      <article class="tl">
         <svg class="ic" aria-hidden="true"><use href="#{icon}"/></svg>
@@ -97,7 +100,7 @@ for key, path, icon, title, line, notice, msg in TOOLS:
 
 more = []
 for key, path, title, line, msg in MORE:
-    text = msg.format(url=tool_url(path, key))
+    text = msg.format(url=tool_url(path, key)) + "\n" + CREDIT
     more.append(f"""      <article class="tl tl-s">
         <div>
           <h3>{title}</h3>
@@ -145,7 +148,7 @@ body = f"""<!--meta {json.dumps(meta, ensure_ascii=False, indent=2)} -->
   <div class="rule" aria-hidden="true"></div>
 </header>
 <div class="wrap" id="kelim">
-  <div class="tip"><b>איך זה עובד</b><p>לוחצים "לשלוח להורים בווטסאפ", בוחרים למי, וההודעה כבר כתובה. אפשר לשנות אותה לפני השליחה. הכול יושב באתר שלי, אז הפרטים שלי מופיעים בכל כלי.</p></div>
+  <div class="tip"><b>איך זה עובד</b><p>לוחצים "לשלוח להורים בווטסאפ", בוחרים למי, וההודעה כבר כתובה. בסופה שורה אחת: שהכלי של גילעד רחמים, קולגה שלכם וחבר איתכם בפורום. אפשר לשנות אותה לפני השליחה. הכול יושב באתר שלי, אז הפרטים שלי מופיעים בכל כלי.</p></div>
 
   <section aria-labelledby="tools-h">
     <h2 id="tools-h">הכלים</h2>
@@ -180,11 +183,11 @@ print("page:", PAGE)
 
 if MD.parent.exists():
     lines = ["# הודעות מוכנות למוהלים: מה הכפתורים בדף /mohel/lemohalim/ שולחים להורים", "",
-             "נוצר מ-`tools/lemohalim_gen.py` בריפו. לשון רבים להורים, בלי השם של גילעד בגוף הטקסט, עם קישור לכל כלי.", ""]
+             "נוצר מ-`tools/lemohalim_gen.py` בריפו. לשון רבים להורים, עם קישור לכל כלי, ובסוף שורת קרדיט: גילעד רחמים, קולגה וחבר בפורום (גילעד, 06.11.2026).", ""]
     for key, path, icon, title, line, notice, msg in TOOLS:
         lines += [f"## {title}", "", msg.format(url=tool_url(path, key)), ""]
     for key, path, title, line, msg in MORE:
         lines += [f"## {title}", "", msg.format(url=tool_url(path, key)), ""]
-    lines += ["## הכול בהודעה אחת (בלי המדריך)", "", all_text, ""]
+    lines += ["## הכול בהודעה אחת (בלי המדריך)", "", all_text, "", "כל הודעה מסתיימת בשורה: " + CREDIT, ""]
     MD.write_text("\n".join(lines), encoding="utf-8")
     print("messages:", MD)
