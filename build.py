@@ -111,7 +111,7 @@ for path in sorted(SRC.rglob("*.html")):
     }
     for k, v in rep.items():
         html = html.replace("{{" + k + "}}", v)
-    for key in ["sipur", "hachana", "moed", "madrich", "kartis"]:
+    for key in ["yerushalaim", "sipur", "hachana", "moed", "madrich", "kartis"]:
         html = html.replace("{{cur:" + key + "}}", ' aria-current="page"' if meta.get("nav") == key else "")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
