@@ -165,7 +165,7 @@ body = f"""<!--meta {json.dumps(meta, ensure_ascii=False, indent=2)} -->
 
   <section aria-labelledby="learn-h">
     <h2 id="learn-h">אתם הראשונים שרואים</h2>
-    <div class="tip"><b>אשמח ללמוד מכם</b><p>כל דבר שצריך לתקן או לשפר, או שלא נראה לכם מדויק, אשמח שתכתבו לי. אני ממקום של ענווה, ורוצה ללמוד ולהשתפר מכם.</p></div>
+    <div class="tip"><b>אשמח ללמוד מכם</b><p>כל דבר שצריך לתקן או לשפר, או שלא נראה לכם מדויק, אשמח שתכתבו לי. אני ממקום של ענווה, ורוצה ללמוד ולהשתפר מכם.</p><p>וגם מי שבמקרה עובר על האתר שלי ורואה דברים לתקן או לשפר, זה קריטי לי. אז תודה!</p></div>
     <div class="actions"><a class="btn btn-gold" href="{wa_fix}"><svg class="ic"><use href="#wa"/></svg> לכתוב לי תיקון או הערה</a></div>
     <div class="tip"><b>רוצים שאוסיף כלי?</b><p>כתבו לי מה חסר לכם ולהורים שלכם, ואשתדל להוסיף.</p></div>
     <div class="actions"><a class="btn btn-line" href="{wa_add}"><svg class="ic"><use href="#wa"/></svg> לכתוב לי מה להוסיף</a></div>
