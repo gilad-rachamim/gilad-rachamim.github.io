@@ -544,7 +544,7 @@
     if (gd.k && gd.k !== 'brit') {
       $('#hz-after h2').textContent = K.full + ' כבר התקיים. מזל טוב!';
       $('#hz-after .note').textContent = K.bless + '. ואם גם אצלכם בדרך שמחה:';
-      $('#hz-after .btn-gold').textContent = 'הודעה מעוצבת לכל שמחה של תינוק, בחינם';
+      $('#hz-after .btn-gold').textContent = 'הזמנה מעוצבת לכל שמחה של תינוק, בחינם';
       $('#hz-after .btn-gold').href = '/mohel/hazmana/kol-simcha/?utm_source=guest_after&utm_medium=hazmana';
       $('#hz-after .btn-line').hidden = true;
       $('#r-bl').placeholder = K.bless; $('#gb-bl').placeholder = K.bless;
@@ -847,7 +847,7 @@
     ev('hazmana_gilad', { kind: K.slug });
     if (data.k === 'zeved') { e.currentTarget.href = '/mohel/?utm_source=hazmana_zeved&utm_medium=hazmana'; return; }
     var msg = data.k === 'pidyon' ? 'שלום גילעד, הכנתי באתר הודעה לפדיון הבן. יש לי שאלה: '
-      : 'שלום גילעד, הכנתי באתר הודעה לברית' + (dt ? ' ב' + whenText(data).replace(/^ב/, '') + ' ' + timeText(data) : '') + (data.pl ? ', ב' + stripB(data.pl) : '') + '. אשמח לתאם איתך את הברית.';
+      : 'שלום גילעד, הכנתי באתר הזמנה לברית' + (dt ? ' ב' + whenText(data).replace(/^ב/, '') + ' ' + timeText(data) : '') + (data.pl ? ', ב' + stripB(data.pl) : '') + '. אשמח לתאם איתך את הברית.';
     e.currentTarget.href = 'https://wa.me/' + GILAD_WA + '?text=' + encodeURIComponent(msg);
   });
   $('#a-guide').href = GUIDE;

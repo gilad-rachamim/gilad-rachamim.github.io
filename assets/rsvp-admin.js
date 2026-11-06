@@ -46,7 +46,7 @@
   if (!main) return;
   var state = null, filter = 'all', remind = 'ask';
   function fail(msg) { $('#m-loading').hidden = true; $('#m-err').textContent = msg; $('#m-err').hidden = false; }
-  if (!eid || !tok) { fail('הקישור ללוח לא שלם. פתחו אותו מהכפתור "ללוח המעקב שלי" במחולל ההודעה.'); return; }
+  if (!eid || !tok) { fail('הקישור ללוח לא שלם. פתחו אותו מהכפתור "ללוח המעקב שלי" במחולל ההזמנות.'); return; }
   var adminQ = '?t=' + encodeURIComponent(tok);
   function load() {
     return H.api('/ev/' + encodeURIComponent(eid) + '/admin' + adminQ).then(function (j) {
