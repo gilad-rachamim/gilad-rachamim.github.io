@@ -14,6 +14,8 @@
     if (!a) return;
     var h = a.getAttribute('href');
     var where = { page: location.pathname };
+    // דף המוהלים: שליחה להורים היא לא פנייה אליי, לכן אירוע נפרד לכל כלי (share_parents_hazmana וכו') ולא whatsapp_click.
+    if (a.hasAttribute('data-share')) { ev('share_parents_' + a.getAttribute('data-share'), where); return; }
     if (/wa\.me|whatsapp/.test(h)) ev('whatsapp_click', where);
     else if (h.indexOf('tel:') === 0) ev('phone_click', where);
     else if (/\.vcf($|\?)/.test(h)) ev('save_contact', where);
