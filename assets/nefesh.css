@@ -1,0 +1,170 @@
+/* נפש ויום-יום – מעל site.css ו-kelim.css. שקט, גדול, ניגודיות גבוהה, נוח לאצבע. */
+body.site-nefesh{--ink:#1b1a24;--ink-2:#25232f;--gold:#e2bb72;--gold-hi:#f0cd8a;--gold-soft:#9a8150;--body:#ddd8e6;--muted:#b3acc4;--parchment:#f3eff8;--cream:#fffaf1;--line:rgba(226,187,114,.24);--accent:#8fd1c2;--calm:#8fd1c2;--soft:#a99be0;
+  font-size:1.22rem;line-height:1.75;
+  background:radial-gradient(120% 60% at 85% 0%,rgba(169,155,224,.12),transparent 60%),radial-gradient(90% 50% at 0% 100%,rgba(143,209,194,.08),transparent 60%),var(--ink)}
+html:has(body.site-nefesh){background:#1b1a24}
+.site-nefesh .brand img{border-radius:12px}
+.site-nefesh .k-hero h1{font-size:clamp(2.1rem,9vw,3.1rem)}
+.site-nefesh .k-hero .sub{font-size:1.25rem;color:var(--parchment)}
+.site-nefesh .field label,.site-nefesh .field .label{font-size:1.12rem}
+.site-nefesh .field input,.site-nefesh .field select,.site-nefesh textarea{font-size:1.15rem;padding:.9rem 1rem;border-radius:12px}
+.site-nefesh .btn{min-height:3.2rem;font-size:1.12rem}
+.site-nefesh .btn-sm{min-height:2.6rem;font-size:1rem}
+.site-nefesh .note{font-size:1.02rem;color:var(--muted)}
+
+/* כפתור גדול ורך */
+.big-btn{display:flex;align-items:center;justify-content:center;gap:.6rem;width:100%;min-height:4rem;font:700 1.35rem/1.2 var(--sans);border-radius:18px;border:0;cursor:pointer;text-decoration:none;background:var(--gold);color:var(--ink)}
+.big-btn.soft{background:rgba(255,255,255,.06);color:var(--cream);border:1px solid var(--line)}
+.big-btn.calm{background:var(--calm);color:#10201c}
+.big-btn:active{transform:scale(.99)}
+
+/* פס עזרה קבוע בכל דף */
+.help-strip{max-width:46rem;margin:1.2rem auto 0;padding:0 1.25rem}
+.help-strip .in{display:flex;flex-wrap:wrap;gap:.5rem .9rem;align-items:center;justify-content:center;padding:.8rem 1rem;border-radius:14px;border:1px solid rgba(143,209,194,.35);background:rgba(143,209,194,.07);font-size:1.02rem;color:var(--parchment);text-align:center}
+.help-strip a{color:var(--cream);font-weight:700;text-decoration:none;white-space:nowrap}
+.help-strip a.rega{color:var(--calm)}
+
+/* כרטיסי הכלים בדף הבית */
+.ncards{display:grid;gap:.85rem}
+@media (min-width:700px){.ncards{grid-template-columns:1fr 1fr}}
+.ncards a{display:grid;grid-template-columns:3.2rem 1fr;gap:.2rem .9rem;align-items:start;padding:1.15rem 1.1rem;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.035);text-decoration:none;color:inherit}
+.ncards a:hover,.ncards a:focus-visible{border-color:var(--gold-soft);background:rgba(255,255,255,.06)}
+.ncards .em{grid-row:span 2;font-size:2rem;line-height:1;display:grid;place-items:center;width:3.2rem;height:3.2rem;border-radius:14px;background:rgba(169,155,224,.14)}
+.ncards b{font-family:var(--serif);font-size:1.35rem;color:var(--cream);line-height:1.3}
+.ncards span.d{color:var(--body);font-size:1.05rem;line-height:1.55}
+.ncards a.first{border-color:rgba(143,209,194,.55);background:linear-gradient(160deg,rgba(143,209,194,.16),rgba(143,209,194,.03) 70%)}
+.ncards a.first .em{background:rgba(143,209,194,.2)}
+
+.free-note{border:1px solid var(--line);border-radius:18px;padding:1.2rem 1.2rem;background:rgba(255,255,255,.03)}
+.free-note b{color:var(--cream)}
+
+/* ===== N1 רגע קשה ===== */
+.rega{max-width:34rem;margin:0 auto;padding:0 1.25rem}
+.rega h1{font-family:var(--serif);font-weight:700;font-size:clamp(2rem,9vw,2.8rem);color:var(--cream);text-align:center;margin:1.6rem 0 .3rem}
+.rega .hello{text-align:center;font-size:1.3rem;color:var(--parchment);line-height:1.7}
+.breath{display:grid;place-items:center;margin:1.4rem auto .6rem;width:min(78vw,17rem);aspect-ratio:1;position:relative}
+.breath .ring{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(143,209,194,.35)}
+.breath .ball{width:42%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 40% 35%,#c9f0e6,var(--calm) 55%,#4e9c8c);box-shadow:0 0 50px rgba(143,209,194,.45);transform:scale(1);transition-property:transform;transition-timing-function:ease-in-out}
+.breath .say{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font-weight:800;font-size:1.45rem;color:#0f1f1b;pointer-events:none}
+.breath .say small{display:block;font-weight:700;font-size:2rem}
+.breath-cap{text-align:center;color:var(--parchment);font-size:1.2rem;min-height:2em}
+.rega-sec{margin-top:1.6rem}
+.rega-sec>h2{font-family:var(--serif);font-size:1.45rem;color:var(--cream);margin-bottom:.6rem;text-align:center}
+.mywords{display:grid;gap:.6rem}
+.mywords blockquote{font-family:var(--serif);font-size:1.4rem;line-height:1.6;color:var(--cream);padding:1rem 1.1rem;border-radius:16px;border-inline-start:4px solid var(--gold);background:rgba(226,187,114,.08)}
+.people{display:grid;gap:.6rem}
+.people a{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:1rem 1.1rem;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--cream);text-decoration:none;font-size:1.3rem;font-weight:700}
+.people a .ph{font-size:1.05rem;color:var(--muted);direction:ltr;font-weight:600}
+.lines{display:grid;gap:.55rem}
+.lines a{display:grid;grid-template-columns:auto 1fr;gap:.1rem .9rem;align-items:center;padding:.9rem 1.05rem;border-radius:16px;background:rgba(143,209,194,.09);border:1px solid rgba(143,209,194,.4);color:var(--cream);text-decoration:none}
+.lines a b{grid-row:span 2;font-size:1.55rem;direction:ltr;color:var(--calm);min-width:4.6rem;text-align:center}
+.lines a span{font-weight:700;font-size:1.12rem}
+.lines a small{color:var(--body);font-size:.98rem;line-height:1.4}
+.lines a.urgent{background:rgba(232,110,98,.12);border-color:rgba(232,110,98,.5)}
+.lines a.urgent b{color:#ffb3a8}
+.edit-box{margin-top:1rem;border:1px dashed var(--line);border-radius:16px;padding:1rem}
+.edit-box summary{cursor:pointer;color:var(--gold);font-weight:700;font-size:1.08rem}
+.edit-box[open] summary{margin-bottom:.8rem}
+.rows{display:grid;gap:.6rem}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.site-nefesh textarea{width:100%;min-height:5.5rem;font:inherit;color:var(--cream);background:rgba(255,255,255,.05);border:1px solid rgba(226,187,114,.35);border-radius:12px;resize:vertical}
+.site-nefesh textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
+.saved{color:var(--calm);font-weight:700;font-size:1rem;min-height:1.4em;text-align:center}
+
+/* ===== N2 הדבר החשוב ===== */
+.focus-card{text-align:center;padding:1.6rem 1.2rem;border-radius:22px;border:1px solid var(--gold-soft);background:linear-gradient(170deg,rgba(226,187,114,.17),rgba(226,187,114,.03) 65%)}
+.focus-card .lbl{color:var(--gold);font-weight:700;font-size:1.05rem}
+.focus-card .what{font-family:var(--serif);font-weight:700;font-size:clamp(1.7rem,7.5vw,2.4rem);line-height:1.3;color:var(--cream);margin:.4rem 0 .5rem;word-break:break-word}
+.focus-card .next{color:var(--parchment);font-size:1.15rem}
+.focus-card.done{border-color:rgba(143,209,194,.6);background:linear-gradient(170deg,rgba(143,209,194,.18),rgba(143,209,194,.03) 65%)}
+.week{display:flex;gap:.4rem;justify-content:center;margin-top:1rem;flex-wrap:wrap}
+.week span{display:grid;place-items:center;width:2.6rem;height:3rem;border-radius:10px;border:1px solid var(--line);font-size:.85rem;color:var(--muted);line-height:1.15;text-align:center}
+.week span.y{background:rgba(143,209,194,.2);border-color:rgba(143,209,194,.55);color:var(--cream)}
+.week span.t{outline:2px solid var(--gold)}
+.btn-row{display:grid;gap:.6rem;margin-top:1rem}
+@media (min-width:560px){.btn-row.two{grid-template-columns:1fr 1fr}}
+
+/* ===== N3 יומן קול ===== */
+.rec{display:grid;place-items:center;gap:.7rem;margin:1rem 0}
+.rec-btn{width:10rem;height:10rem;border-radius:50%;border:0;cursor:pointer;background:radial-gradient(circle at 40% 35%,#f6d79a,var(--gold) 60%,#b38c45);color:var(--ink);font:800 1.25rem/1.25 var(--sans);box-shadow:0 0 0 0 rgba(226,187,114,.5)}
+.rec-btn.on{background:radial-gradient(circle at 40% 35%,#ffc9c0,#e8776a 60%,#b14c42);color:#fff;animation:pulse 1.6s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(232,119,106,.55)}70%{box-shadow:0 0 0 22px rgba(232,119,106,0)}100%{box-shadow:0 0 0 0 rgba(232,119,106,0)}}
+.status{text-align:center;color:var(--parchment);font-size:1.1rem;min-height:1.6em}
+.spin{display:inline-block;width:1em;height:1em;border:2px solid var(--gold);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;vertical-align:-.15em}
+@keyframes spin{to{transform:rotate(360deg)}}
+.entries{display:grid;gap:.7rem;margin-top:.6rem}
+.entry{padding:1rem 1.05rem;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.035)}
+.entry .when{color:var(--gold);font-weight:700;font-size:.98rem}
+.entry .txt{color:var(--cream);margin-top:.3rem;white-space:pre-wrap}
+.entry .good{margin-top:.5rem;color:var(--calm);font-weight:600}
+.entry .acts{display:flex;gap:.8rem;margin-top:.4rem}
+.linkish{background:none;border:0;color:var(--muted);font:inherit;font-size:.95rem;cursor:pointer;text-decoration:underline;padding:0}
+
+/* ===== N4 מד כוח ===== */
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:.45rem;margin:.6rem 0}
+.scale button{display:grid;place-items:center;gap:.1rem;min-height:5.2rem;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--cream);font:inherit;cursor:pointer;padding:.4rem .2rem}
+.scale button b{font-size:1.9rem;line-height:1}
+.scale button span{font-size:.82rem;color:var(--body);line-height:1.2;text-align:center}
+.scale button[aria-pressed=true]{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.scale button[aria-pressed=true] span{color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:.45rem}
+.chips label{display:inline-flex;align-items:center;gap:.4rem;padding:.55rem .9rem;border-radius:999px;border:1px solid var(--line);font-size:1.02rem;color:var(--body);cursor:pointer}
+.chips input{accent-color:var(--gold);width:1.1rem;height:1.1rem}
+.chips label:has(input:checked){border-color:var(--gold);color:var(--cream);background:rgba(226,187,114,.12)}
+.chart{display:grid;grid-template-columns:repeat(7,1fr);gap:.4rem;align-items:end;height:12rem;padding:.8rem .6rem .4rem;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+.chart .col{display:grid;grid-template-rows:1fr auto auto;height:100%;align-items:end;text-align:center;gap:.2rem}
+.chart .bar{border-radius:8px 8px 4px 4px;background:linear-gradient(180deg,var(--gold-hi),var(--gold-soft));min-height:4px}
+.chart .bar.none{background:rgba(255,255,255,.08)}
+.chart .v{font-weight:800;color:var(--cream);font-size:1rem}
+.chart .d{font-size:.82rem;color:var(--muted)}
+.shared-view{border:1px solid rgba(169,155,224,.5);background:rgba(169,155,224,.1);border-radius:18px;padding:1.1rem}
+
+/* ===== N5 מכתב ===== */
+.letter{font-family:var(--serif);font-size:1.4rem;line-height:1.8;color:var(--cream);padding:1.4rem 1.2rem;border-radius:20px;background:linear-gradient(170deg,rgba(226,187,114,.14),rgba(226,187,114,.02) 70%);border:1px solid var(--gold-soft);white-space:pre-wrap}
+.letter .from{display:block;margin-top:.8rem;font-size:1.05rem;color:var(--gold);font-family:var(--sans)}
+
+/* ===== N6 מפת תמיכה ===== */
+.map-group{margin-top:1rem}
+.map-group h3{font-family:var(--serif);color:var(--gold);font-size:1.25rem;margin-bottom:.45rem}
+.person{display:grid;gap:.35rem;padding:.95rem 1rem;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.04)}
+.person+.person{margin-top:.5rem}
+.person .nm{font-weight:800;font-size:1.25rem;color:var(--cream)}
+.person .hw{color:var(--body);font-size:1.05rem}
+.person .ac{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.2rem}
+.person .ac a,.person .ac button{flex:1 1 auto}
+
+/* ===== N7 למשפחה ===== */
+.article{max-width:40rem;margin:0 auto;padding:0 1.25rem}
+.article h2{font-family:var(--serif);color:var(--cream);font-size:1.55rem;margin:1.6rem 0 .6rem}
+.article h3{color:var(--gold);font-size:1.22rem;margin:1.1rem 0 .35rem;font-family:var(--serif)}
+.article p,.article li{color:var(--parchment);font-size:1.18rem;line-height:1.85}
+.article ul{padding-inline-start:1.2rem;display:grid;gap:.35rem;margin:.4rem 0}
+.article li::marker{color:var(--gold)}
+.personal{margin:1rem 0;padding:1.1rem 1.15rem;border-radius:18px;border:1px solid rgba(169,155,224,.55);background:rgba(169,155,224,.1)}
+.personal .h{color:var(--soft);font-weight:700;font-size:1rem}
+.personal .m{font-family:var(--serif);font-size:1.35rem;line-height:1.7;color:var(--cream);white-space:pre-wrap;margin-top:.3rem}
+.box-say{display:grid;gap:.6rem;margin:.6rem 0}
+.box-say div{padding:.85rem 1rem;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.035)}
+.box-say .yes{border-color:rgba(143,209,194,.5)}
+.box-say .no{border-color:rgba(232,119,106,.45)}
+.box-say b{display:block;font-size:1rem;margin-bottom:.15rem}
+.box-say .yes b{color:var(--calm)}
+.box-say .no b{color:#f3a399}
+
+/* פרטיות + הזמנה */
+.local-note{display:flex;gap:.6rem;align-items:flex-start;margin-top:1rem;padding:.8rem 1rem;border-radius:14px;background:rgba(255,255,255,.035);color:var(--body);font-size:1rem}
+.local-note .ic2{font-size:1.2rem;line-height:1.4}
+.data-acts{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;justify-content:center;margin-top:.6rem}
+.join{max-width:40rem;margin:2rem auto 0;padding:0 1.25rem}
+.join .in{border-radius:20px;border:1px solid var(--line);padding:1.3rem 1.2rem;background:linear-gradient(170deg,rgba(169,155,224,.1),rgba(255,255,255,.02) 70%)}
+.join h2{font-family:var(--serif);color:var(--cream);font-size:1.45rem}
+.join p{color:var(--body);margin:.3rem 0 .9rem;font-size:1.08rem}
+.join.wait:not(.lit){display:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.join .done{padding:1rem;border-radius:12px;background:rgba(143,209,194,.12);border:1px solid rgba(143,209,194,.45);color:var(--cream)}
+.tool-foot{max-width:40rem;margin:1.6rem auto 0;padding:0 1.25rem;text-align:center}
+.tool-foot .share-row{margin-top:.6rem}
+.site-nefesh .site-foot{margin-top:2.4rem}
+
+@media (prefers-reduced-motion:reduce){.breath .ball{transition:none!important}.rec-btn.on{animation:none}.spin{animation:none}}
+@media print{.topbar,.site-foot,.install-bar,.join,.tool-foot,.help-strip,.crumbs{display:none!important}body.site-nefesh{background:#fff;color:#000}}
