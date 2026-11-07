@@ -9,6 +9,12 @@
     if (!p) return;
     ev('playlist_' + p.getAttribute('data-playlist'), { style: p.getAttribute('data-style'), action: p.tagName === 'A' ? 'open_spotify' : 'play_here', page: location.pathname });
   }, true);
+  // טופס הכיבודים: נספר רק כשיש מה לשלוח. נמדדים מספר המכובדים והנוסח, בלי שמות.
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-kibudim-send]');
+    if (!b || b.getAttribute('data-ready') !== '1') return;
+    ev('kibudim_send', { page: location.pathname, honors: Number(b.getAttribute('data-count')), nusach: b.getAttribute('data-nusach') });
+  }, true);
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[href]');
     if (!a) return;
