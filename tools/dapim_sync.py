@@ -18,6 +18,7 @@ SHEETS = {
     "shiron": "שירון ופיוטים לברית",
     "shiron-ashkenaz": "שירון לברית - נוסח אשכנז",
     "tefila-sandak": "תפילה לסנדק",
+    "tefila-bechi": "תפילה בשעת בכי התינוק",
     "seudat-brit": "סעודת ברית מילה",
     "kibudim": "כיבודים בברית",
     "hachanot": "הכנות ליום הברית",

@@ -56,18 +56,19 @@
     var t = Date.UTC(y, d.getMonth(), d.getDate(), 12);
     return (t >= start.getTime() && t < end.getTime()) ? 3 : 2;
   }
-  function sunset(d) {
+  function sunset(d, lat, lon) {
+    if (lat == null) { lat = LAT; lon = LON; }
     var rad = Math.PI / 180;
     var y = d.getFullYear(), m = d.getMonth() + 1, day = d.getDate();
     var a = Math.floor((14 - m) / 12), yy = y + 4800 - a, mm = m + 12 * a - 3;
     var jd = day + Math.floor((153 * mm + 2) / 5) + 365 * yy + Math.floor(yy / 4) - Math.floor(yy / 100) + Math.floor(yy / 400) - 32045;
-    var n = jd - 2451545 + 0.0008 - LON / 360;
+    var n = jd - 2451545 + 0.0008 - lon / 360;
     var M = (357.5291 + 0.98560028 * n) % 360;
     var C = 1.9148 * Math.sin(M * rad) + 0.02 * Math.sin(2 * M * rad) + 0.0003 * Math.sin(3 * M * rad);
     var L = (M + C + 180 + 102.9372) % 360;
     var Jt = 2451545 + n + 0.0053 * Math.sin(M * rad) - 0.0069 * Math.sin(2 * L * rad);
     var dec = Math.asin(Math.sin(L * rad) * Math.sin(23.4397 * rad));
-    var cosw = (Math.sin(-0.833 * rad) - Math.sin(LAT * rad) * Math.sin(dec)) / (Math.cos(LAT * rad) * Math.cos(dec));
+    var cosw = (Math.sin(-0.833 * rad) - Math.sin(lat * rad) * Math.sin(dec)) / (Math.cos(lat * rad) * Math.cos(dec));
     var w = Math.acos(cosw) / rad;
     var Jset = Jt + w / 360;
     var hoursUTC = ((Jset - Math.floor(Jset)) * 24 + 12) % 24; // שעה UTC
@@ -106,23 +107,31 @@
   var dateIn = form.querySelector('[name=date]');
   var timeIn = form.querySelector('[name=time]');
   var sunsetNote = document.getElementById('sunset-note');
+  var placeIn = form.querySelector('[name=place]');
+  var whenRow = document.getElementById('when-row');
+  var birthInfo = { state: '', sunset: '', city: 'ירושלים' };
 
   function updateSunset() {
+    birthInfo.state = ''; birthInfo.sunset = '';
+    if (form.querySelector('[name=mode]:checked').value === 'born') whenRow.hidden = false;
     if (!dateIn.value) { sunsetNote.textContent = ''; return; }
     var d = parseDate(dateIn.value);
-    var s = sunset(d);
-    var txt = 'השקיעה בירושלים ב-' + fmtG(d) + ': ' + s.text;
+    var pl = placeIn.value.split(','), opt = placeIn.options[placeIn.selectedIndex];
+    var s = sunset(d, +pl[0], +pl[1]);
+    birthInfo.city = opt.getAttribute('data-city'); birthInfo.sunset = s.text;
+    var txt = 'השקיעה ב' + birthInfo.city + ' בתאריך הזה: ' + s.text;
     if (timeIn.value) {
       var t = timeIn.value.split(':'), mins = (+t[0]) * 60 + (+t[1]);
       var sm = s.h * 60 + s.m;
-      if (mins >= sm - 20 && mins <= sm + 25) txt += ' · הלידה סמוכה לשקיעה (בין השמשות) – כדאי שנדבר על זה';
-      else if (mins > sm) { txt += ' · הלידה אחרי השקיעה'; form.querySelector('[name=when][value=after]').checked = true; }
-      else { txt += ' · הלידה לפני השקיעה'; form.querySelector('[name=when][value=before]').checked = true; }
+      if (mins >= sm - 20 && mins <= sm + 25) { birthInfo.state = 'near'; txt += ' · הלידה סמוכה לשקיעה (בין השמשות) – כדאי שנדבר על זה'; }
+      else if (mins > sm) { birthInfo.state = 'after'; txt += ' · הלידה הייתה אחרי השקיעה'; form.querySelector('[name=when][value=after]').checked = true; whenRow.hidden = true; }
+      else { birthInfo.state = 'before'; txt += ' · הלידה הייתה לפני השקיעה'; form.querySelector('[name=when][value=before]').checked = true; whenRow.hidden = true; }
     }
     sunsetNote.textContent = txt;
   }
   dateIn.addEventListener('change', updateSunset);
   timeIn.addEventListener('change', updateSunset);
+  placeIn.addEventListener('change', updateSunset);
 
   function renderResult(born, halachic, r, mode) {
     var lines = [];
@@ -135,6 +144,8 @@
     if (r.shabbat) lines.push('הברית חלה בשבת. ברית בזמנה נעשית גם בשבת (חוץ מאחרי ניתוח קיסרי). יש הכנות מיוחדות – נדבר.');
     if (r.holiday) lines.push('הברית חלה ב' + r.holiday + '. ' + (isYomTov(r.holiday) ? 'ברית בזמנה נעשית גם ביום טוב (חוץ מאחרי ניתוח קיסרי). נתאם את הפרטים.' : 'אפשר לערוך ברית בחול המועד, בשמחה.'));
     if (r.postponed) lines.push('אחרי ניתוח קיסרי הברית לא דוחה שבת ויום טוב, ולכן היא נדחית ל<b>יום ' + DAYS[r.postponed.getDay()] + ', ' + hebrew(r.postponed) + ' (' + fmtG(r.postponed) + ')</b>.');
+    if (mode === 'born' && birthInfo.state === 'near') lines.push('<b>הלידה סמוכה לשקיעה</b> (השקיעה ב' + birthInfo.city + ' באותו יום: ' + birthInfo.sunset + '). המועד תלוי בבדיקה מדויקת, אז כתבו לי ונברר יחד.');
+    else if (mode === 'born' && birthInfo.state) lines.push('<b>הלידה הייתה ' + (birthInfo.state === 'after' ? 'אחרי' : 'לפני') + ' השקיעה</b> (השקיעה ב' + birthInfo.city + ' באותו יום: ' + birthInfo.sunset + ').');
     if (mode === 'born') lines.push('יום הלידה ההלכתי: יום ' + DAYS[halachic.getDay()] + ', ' + hebrew(halachic) + '. הברית ביום השמיני – שבוע אחרי, באותו יום בשבוע.');
     lines.push('כל זה בתנאי שהתינוק בריא וכשיר לברית. בדיקת צהבת והבדיקה שלי לפני הברית יקבעו סופית.');
     html += '<ul class="res-notes">' + lines.map(function (l) { return '<li>' + l + '</li>'; }).join('') + '</ul>';
@@ -147,7 +158,7 @@
     html += '<button class="btn btn-line" type="button" id="ics"><svg class="ic"><use href="#cal"/></svg> הוסיפו ליומן</button>';
     html += '</div>';
     html += '<p class="note" style="margin-top:1rem;text-align:center">רוצים שאשמור לכם את התאריך? שלחו לי אותו, ואחזור אליכם עם כל מה שצריך לדעת.</p>';
-    if (mode === 'born') html += '<p class="note" style="margin-top:.6rem;text-align:center">יש תאריך? <a class="gold" href="/mohel/hazmana/">מכינים הודעה מעוצבת לברית, בחינם, בדקה</a></p>';
+    if (mode === 'born') html += '<p class="note" style="margin-top:.6rem;text-align:center">יש תאריך? <a class="gold" href="/mohel/hazmana/">מכינים הזמנה מעוצבת לברית, עם אישורי הגעה ומעקב מוזמנים, בחינם, תוך דקה</a></p>';
     html += '</div>';
     out.innerHTML = html;
     out.hidden = false;
@@ -159,7 +170,7 @@
         'UID:brit-' + d1 + '@gilad-rachamim.github.io', 'DTSTAMP:' + iso(new Date()).replace(/-/g, '') + 'T090000',
         'DTSTART;VALUE=DATE:' + d1, 'DTEND;VALUE=DATE:' + d2,
         'SUMMARY:ברית מילה בעז"ה – ' + hebrew(main),
-        'DESCRIPTION:חושב במחשבון מועד הברית של גילעד רחמים המוהל. לתיאום: 058-4049049 · https://gilad-rachamim.github.io/mohel/',
+        'DESCRIPTION:חושב במחשבון מועד הברית של גילעד רחמים המוהל. לתיאום: 058-404-9049 · https://gilad-rachamim.github.io/mohel/',
         'BEGIN:VALARM', 'TRIGGER:-P1D', 'ACTION:DISPLAY', 'DESCRIPTION:מחר הברית בעז"ה', 'END:VALARM',
         'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
       var blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
@@ -198,9 +209,10 @@
   form.querySelectorAll('[name=mode]').forEach(function (r) {
     r.addEventListener('change', function () {
       var born = r.value === 'born';
-      document.getElementById('when-row').hidden = !born;
+      whenRow.hidden = !born;
       document.getElementById('time-row').hidden = !born;
       form.querySelector('button[type=submit]').textContent = born ? 'מתי הברית?' : 'הראו לי את התאריכים';
+      if (born) updateSunset();
     });
   });
 

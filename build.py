@@ -32,7 +32,7 @@ CTA = """
   <div class="wrap">
     <h2 id="contact-h">לברית מיוחדת ומלאת שמחה</h2>
     <p>מזל טוב! כתבו לי, ונתחיל להתכונן יחד. שיחת ההיכרות בחינם וללא התחייבות.</p>
-    <a class="phone" href="tel:+972584049049">058-4049049</a>
+    <a class="phone" href="tel:+972584049049">058-404-9049</a>
     <div class="actions">
       <a class="btn btn-gold" href="{wa}"><svg class="ic"><use href="#wa"/></svg> שליחת הודעה בווטסאפ</a>
     </div>
@@ -50,8 +50,8 @@ LEADFORM = """<form class="lead-form" data-lead data-next="/mohel/todah/" action
   <div class="field"><label for="{p}-email">מייל <span class="opt">(לכאן נשלח המדריך)</span></label><input id="{p}-email" name="email" type="email" autocomplete="email" required placeholder="name@gmail.com" dir="ltr" style="text-align:right"></div>
   <div class="field"><label for="{p}-phone">טלפון <span class="opt">(לא חובה, אם תרצו גם בווטסאפ)</span></label><input id="{p}-phone" name="טלפון" type="tel" inputmode="tel" autocomplete="tel" placeholder="050-0000000" pattern="[0-9\\-\\+\\s]{{9,15}}" dir="ltr" style="text-align:right"></div>
   <label class="check"><input type="checkbox" name="מאשר/ת קבלת עדכונים" value="כן"> <span>אשמח לקבל עוד כמה טיפים קצרים במייל. אפשר להפסיק בכל רגע.</span></label>
-  <button class="btn btn-gold btn-block" type="submit">שלחו לי את המדריך (חינם)</button>
-  <p class="privacy">נפתח מיד, נשלח למייל, ואם תרצו – גם לווטסאפ.<br>הפרטים נשמרים אצלי בלבד, משמשים רק כדי לשלוח את המדריך ולענות לכם, לא מועברים לאף אחד. הם נחוצים רק כדי לשלוח לכם את המדריך, ואפשר לבקש לראות, לתקן או למחוק אותם בכל רגע. <a href="/mohel/privacy/">פרטיות</a></p>
+  <button class="btn btn-gold btn-block" type="submit">שלח לי את המדריך (חינם)</button>
+  <p class="privacy">נפתח מיד, נשלח למייל, ואם תרצו – גם לווטסאפ.<br>הפרטים נשמרים אצלי בלבד ולא מועברים לאף אחד. הם משמשים רק כדי לשלוח את המדריך ולענות לכם, ואפשר לבקש לראות, לתקן או למחוק אותם בכל רגע. <a href="/mohel/privacy/">פרטיות</a></p>
 </form>"""
 
 def leadforms(html):
@@ -111,7 +111,7 @@ for path in sorted(SRC.rglob("*.html")):
     }
     for k, v in rep.items():
         html = html.replace("{{" + k + "}}", v)
-    for key in ["sipur", "hachana", "moed", "madrich", "kartis"]:
+    for key in ["yerushalaim", "sipur", "hachana", "moed", "madrich", "kartis"]:
         html = html.replace("{{cur:" + key + "}}", ' aria-current="page"' if meta.get("nav") == key else "")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
