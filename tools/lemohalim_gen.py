@@ -10,7 +10,8 @@ from urllib.parse import quote
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 BASE = "https://gilad-rachamim.github.io"
-PAGE = ROOT / "src" / "pages" / "mohel" / "lemohalim" / "index.html"
+# 07.11.2026: הדף עבר ל"כלי קודש" (/kodesh/mohalim/). הכתובת הישנה /mohel/lemohalim/ נשארת כהפניה.
+PAGE = ROOT / "src" / "pages" / "kodesh" / "mohalim" / "index.html"
 MD = pathlib.Path(os.path.expanduser("~/.claude/skills/mohel-deploy/references/mohel-share-messages.md"))
 
 # key, נתיב, אייקון, כותרת, שורה למוהל, שורת גילוי נאות (או ריק), הודעה להורים ({url} = קישור הכלי)
@@ -128,6 +129,9 @@ FOOT = ("<script>document.querySelectorAll('.topnav a.wa,.dock a[href*=\"wa.me\"
         ".forEach(function(a){a.href=" + json.dumps(wa_top) + "})</script>")
 
 meta = {
+    "site": "kodesh",
+    "nav": "mohalim",
+    "tool": "lemohalim",
     "title": "כלים לברית, בחינם, לכל מוהל ולכל משפחה | גילעד רחמים המוהל",
     "description": "דף למוהלים: כל הכלים החינמיים לברית במקום אחד, ולכל כלי כפתור ששולח אותו להורים בווטסאפ. לשימושכם בשמחה ובאהבה.",
     "og_title": "כלים לברית, בחינם, לכל מוהל ולכל משפחה",

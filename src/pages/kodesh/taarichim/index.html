@@ -1,0 +1,48 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "taarichim",
+  "tool": "taarichim",
+  "title": "מחשבון תאריכים לרב – ברית, פדיון הבן, בר מצווה, שלושים, יארצייט ושקיעה | כלי קודש",
+  "description": "מחשבון חינם בדף אחד: מועד הברית ופדיון הבן, בר ובת מצווה בתאריך העברי, קימה מהשבעה, סיום השלושים, היארצייט לשנים הבאות, ושעת השקיעה לפי מקום. כולל לפני או אחרי השקיעה, ושמירה ביומן.",
+  "og_title": "מחשבון תאריכים לרב – כלי קודש",
+  "priority": "0.8",
+  "crumbs": [["מחשבון תאריכים", null]],
+  "foot": "<script src=\"/assets/taarichim.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מחשבון תאריכים לרב</h1>
+  <p class="sub">ברית, פדיון הבן, בר ובת מצווה, שבעה, שלושים, יארצייט ושקיעה. הכול בדף אחד, בעברי ובלועזי.</p>
+</header>
+<div class="tool" id="taarichim">
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" aria-selected="true" data-for="lida">לידה</button>
+    <button type="button" role="tab" aria-selected="false" data-for="avel">אבלות ויארצייט</button>
+    <button type="button" role="tab" aria-selected="false" data-for="shkia">שקיעה</button>
+  </div>
+  <form class="panel lead-form" data-pane="lida" novalidate>
+    <div class="field"><span class="label">מי נולד?</span><div class="radios"><label><input type="radio" name="sex" value="boy" checked> בן</label><label><input type="radio" name="sex" value="girl"> בת</label></div></div>
+    <div class="field"><label for="l-date">תאריך הלידה (לועזי)</label><input id="l-date" name="date" type="date" required></div>
+    <div class="field"><label for="l-time">באיזו שעה? <span class="opt">(לא חובה, אם יודעים)</span></label><input id="l-time" name="time" type="time"></div>
+    <div class="field"><span class="label">הלידה הייתה לפני השקיעה או אחריה?</span><div class="radios"><label><input type="radio" name="when" value="before" checked> לפני השקיעה (ביום)</label><label><input type="radio" name="when" value="after"> אחרי השקיעה (בלילה)</label></div></div>
+    <div class="field"><label for="l-pl">איפה? <span class="opt">(השקיעה שונה מעט בכל מקום)</span></label><select id="l-pl" data-place><option value="31.778,35.235" data-city="ירושלים">ירושלים</option><option value="32.08,34.78" data-city="תל אביב">תל אביב</option><option value="32.084,34.834" data-city="בני ברק">בני ברק</option><option value="32.79,34.99" data-city="חיפה">חיפה</option><option value="31.25,34.79" data-city="באר שבע">באר שבע</option><option value="31.8,34.65" data-city="אשדוד">אשדוד</option><option value="32.33,34.86" data-city="נתניה">נתניה</option><option value="31.9,35.01" data-city="מודיעין">מודיעין</option><option value="32.965,35.496" data-city="צפת">צפת</option><option value="32.79,35.53" data-city="טבריה">טבריה</option><option value="32.105,35.18" data-city="אריאל">אריאל</option><option value="31.53,35.1" data-city="חברון וקריית ארבע">חברון וקריית ארבע</option><option value="29.557,34.952" data-city="אילת">אילת</option><option value="gps">המיקום שלי (מהטלפון)</option></select></div>
+    <label class="check"><input type="checkbox" name="cs"> <span>נולד בניתוח קיסרי</span></label>
+    <button class="btn btn-gold btn-block" type="submit">לחשב</button>
+  </form>
+  <form class="panel lead-form" data-pane="avel" novalidate hidden>
+    <div class="field"><label for="a-date">תאריך הפטירה (לועזי)</label><input id="a-date" name="date" type="date" required></div>
+    <div class="field"><label for="a-time">באיזו שעה? <span class="opt">(לא חובה, אם יודעים)</span></label><input id="a-time" name="time" type="time"></div>
+    <div class="field"><span class="label">הפטירה הייתה לפני השקיעה או אחריה?</span><div class="radios"><label><input type="radio" name="when" value="before" checked> לפני השקיעה (ביום)</label><label><input type="radio" name="when" value="after"> אחרי השקיעה (בלילה)</label></div></div>
+    <div class="field"><label for="a-pl">איפה? <span class="opt">(השקיעה שונה מעט בכל מקום)</span></label><select id="a-pl" data-place><option value="31.778,35.235" data-city="ירושלים">ירושלים</option><option value="32.08,34.78" data-city="תל אביב">תל אביב</option><option value="32.084,34.834" data-city="בני ברק">בני ברק</option><option value="32.79,34.99" data-city="חיפה">חיפה</option><option value="31.25,34.79" data-city="באר שבע">באר שבע</option><option value="31.8,34.65" data-city="אשדוד">אשדוד</option><option value="32.33,34.86" data-city="נתניה">נתניה</option><option value="31.9,35.01" data-city="מודיעין">מודיעין</option><option value="32.965,35.496" data-city="צפת">צפת</option><option value="32.79,35.53" data-city="טבריה">טבריה</option><option value="32.105,35.18" data-city="אריאל">אריאל</option><option value="31.53,35.1" data-city="חברון וקריית ארבע">חברון וקריית ארבע</option><option value="29.557,34.952" data-city="אילת">אילת</option><option value="gps">המיקום שלי (מהטלפון)</option></select></div>
+    <div class="field"><label for="a-kv">תאריך הקבורה <span class="opt">(לא חובה; בלי זה – כמו יום הפטירה)</span></label><input id="a-kv" name="kvura" type="date"></div>
+    <button class="btn btn-gold btn-block" type="submit">לחשב</button>
+  </form>
+  <form class="panel lead-form" data-pane="shkia" novalidate hidden>
+    <div class="field"><label for="s-date">תאריך</label><input id="s-date" name="date" type="date" required></div>
+    <div class="field"><label for="s-pl">איפה? <span class="opt">(השקיעה שונה מעט בכל מקום)</span></label><select id="s-pl" data-place><option value="31.778,35.235" data-city="ירושלים">ירושלים</option><option value="32.08,34.78" data-city="תל אביב">תל אביב</option><option value="32.084,34.834" data-city="בני ברק">בני ברק</option><option value="32.79,34.99" data-city="חיפה">חיפה</option><option value="31.25,34.79" data-city="באר שבע">באר שבע</option><option value="31.8,34.65" data-city="אשדוד">אשדוד</option><option value="32.33,34.86" data-city="נתניה">נתניה</option><option value="31.9,35.01" data-city="מודיעין">מודיעין</option><option value="32.965,35.496" data-city="צפת">צפת</option><option value="32.79,35.53" data-city="טבריה">טבריה</option><option value="32.105,35.18" data-city="אריאל">אריאל</option><option value="31.53,35.1" data-city="חברון וקריית ארבע">חברון וקריית ארבע</option><option value="29.557,34.952" data-city="אילת">אילת</option><option value="gps">המיקום שלי (מהטלפון)</option></select></div>
+    <button class="btn btn-gold btn-block" type="submit">לחשב</button>
+  </form>
+  <div id="t-out" aria-live="polite" hidden></div>
+  <p class="disclaimer">המחשבון עוזר לחשב ולתכנן. בכל שאלה הלכתית למעשה, ובמקרי קצה (בין השמשות, אדר בשנה מעוברת, חג באמצע האבלות) – שואלים את הרב.</p>
+  <p class="disclaimer">חסר לכם חישוב? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>, ואוסיף.</p>
+</div>
+<script>document.addEventListener('DOMContentLoaded',function(){var t=new Date(),v=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');var s=document.getElementById('s-date');if(s&&!s.value)s.value=v;});</script>

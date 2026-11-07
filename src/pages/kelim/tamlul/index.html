@@ -1,0 +1,64 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tamlul",
+  "tool": "tamlul",
+  "title": "תמלול בעברית מהטלפון, בחינם – הקלטה, הודעה קולית או סרטון לטקסט | הכלים של גילעד רחמים",
+  "description": "מעלים הקלטה, הודעה קולית מהווטסאפ או סרטון, או מקליטים ישר בדף, ומקבלים טקסט בעברית: להעתקה, לוורד, ל-PDF או לווטסאפ. 60 דקות בחודש בחינם. לנכי צה\"ל ללא הגבלה.",
+  "og_title": "תמלול בעברית מהטלפון, בחינם",
+  "priority": "0.9",
+  "crumbs": [["תמלול", null]],
+  "head": "<style>.tl-pick{display:grid;gap:.7rem}.tl-pick label.up{display:block;text-align:center;padding:1.3rem 1rem;border:2px dashed var(--gold-soft);border-radius:16px;cursor:pointer;color:var(--cream);font-size:1.15rem}.tl-pick label.up small{display:block;color:var(--muted);font-size:.95rem;margin-top:.3rem}.tl-pick input[type=file]{position:absolute;width:1px;height:1px;opacity:0}#tl-rec.on{background:#b4443c;border-color:#b4443c;color:#fff}#tl-status{margin-top:1rem;padding:.9rem 1rem;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--cream)}.spin{display:inline-block;width:1rem;height:1rem;border:2px solid var(--gold);border-top-color:transparent;border-radius:50%;animation:sp 1s linear infinite;vertical-align:-2px}@keyframes sp{to{transform:rotate(360deg)}}#tl-text{margin-top:.8rem;max-height:60vh;overflow:auto;padding:1rem;border-radius:12px;background:rgba(0,0,0,.22);border:1px solid var(--line);font-size:1.08rem;line-height:1.8;color:var(--cream)}#tl-text p+p{margin-top:.8rem}.tl-acts{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.9rem}#tl-quota{color:var(--body);font-size:1rem;text-align:center;margin-top:.8rem}#tl-limit{margin-top:1rem}@media print{body *{visibility:hidden}#tl-print,#tl-print *{visibility:visible}#tl-print{position:absolute;inset:0;color:#000}#tl-text{max-height:none;overflow:visible;background:none;border:0;color:#000}.tl-acts,.tl-stamps-row{display:none}}</style>",
+  "foot": "<script src=\"/assets/tamlul.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>תמלול בעברית, מהטלפון</h1>
+  <p class="sub">הקלטה, הודעה קולית מהווטסאפ, שיעור או סרטון. מעלים או מקליטים כאן, ומקבלים טקסט.</p>
+</header>
+<div class="tool" id="tamlul">
+  <div class="panel tl-pick">
+    <label class="up" for="tl-file">📂 לבחור קובץ מהטלפון<small>הקלטה, הודעה קולית או סרטון</small></label>
+    <input id="tl-file" type="file" accept="audio/*,video/*,.opus,.ogg,.m4a,.mp3,.wav,.aac,.amr,.webm,.mp4">
+    <button class="btn btn-line btn-block" id="tl-rec" type="button">🎙 להקליט עכשיו</button>
+    <div class="field"><label for="tl-lang">שפת ההקלטה</label>
+      <select id="tl-lang"><option value="he">עברית</option><option value="en">אנגלית</option><option value="ar">ערבית</option><option value="ru">רוסית</option><option value="fr">צרפתית</option><option value="">לזהות לבד</option></select></div>
+  </div>
+  <p id="tl-quota"></p>
+  <div id="tl-status" role="status" aria-live="polite" hidden></div>
+
+  <div class="res" id="tl-limit" hidden>
+    <h3>נגמרו הדקות החינמיות של החודש</h3>
+    <p class="note">כל אחד מקבל 60 דקות בחודש בחינם. מה שמעבר עולה למיזם כסף אמיתי על שרת התמלול. מי שיכול להיות שותף (18 או 36 ש"ח בחודש) מחזיק את זה גם בשביל אחרים, ומקבל ללא הגבלה.</p>
+    <div class="tl-acts"><a class="btn btn-gold btn-sm" href="/kelim/#litmoch" data-donate="tamlul">להיות שותף</a><a class="btn btn-line btn-sm" href="https://wa.me/972584049049?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%92%D7%99%D7%9C%D7%A2%D7%93%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A2%D7%95%D7%93%2030%20%D7%93%D7%A7%D7%95%D7%AA%20%D7%AA%D7%9E%D7%9C%D7%95%D7%9C">לבקש עוד 30 דקות במתנה</a></div>
+    <p class="note" style="margin-top:.8rem"><a class="gold" href="#" data-unlimited>נכי צה"ל, ומי שצריך את זה בגלל פגיעה: ללא הגבלה, בלי שאלות. לחצו כאן.</a></p>
+  </div>
+
+  <div id="tl-print">
+    <div class="res" id="tl-out" hidden>
+      <h3 id="tl-name">התמלול</h3>
+      <label class="check tl-stamps-row"><input type="checkbox" id="tl-stamps"> <span>להראות זמנים בתחילת כל פסקה</span></label>
+      <div id="tl-text" dir="auto"></div>
+      <div class="tl-acts">
+        <button class="btn btn-gold btn-sm" id="tl-copy" type="button">להעתיק</button>
+        <button class="btn btn-line btn-sm" id="tl-word" type="button">לשמור כוורד</button>
+        <button class="btn btn-line btn-sm" id="tl-pdf" type="button">לשמור כ-PDF</button>
+        <a class="btn btn-line btn-sm" id="tl-wa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח בווטסאפ</a>
+      </div>
+      <p class="note" style="margin-top:.7rem">התמלול אוטומטי, ולפעמים יש בו טעויות קטנות. כדאי לעבור עליו לפני ששולחים.</p>
+    </div>
+  </div>
+
+  <section class="k-sec" style="padding-inline:0">
+    <h2>טוב לדעת</h2>
+    <ul class="list">
+      <li><strong>פרטיות</strong><span>הקובץ עובר לשרת התמלול רק כדי להפוך לטקסט, ולא נשמר אצלנו. הטקסט נשאר רק אצלכם בטלפון.</span></li>
+      <li><strong>כמה זמן זה לוקח</strong><span>הודעה קולית: בדרך כלל פחות מדקה. שיעור של שעה: כמה דקות. בפעם הראשונה ביום השרת מתעורר, וזה לוקח עוד דקה-שתיים.</span></li>
+      <li><strong>הודעה קולית מהווטסאפ</strong><span>בווטסאפ: לחיצה ארוכה על ההודעה ← שיתוף (או "העבר") ← לשמור לקבצים, ואז לבחור אותה כאן.</span></li>
+      <li><strong>למה זה חינם</strong><span>מאז הפציעה אני חי על תמלול: שיחות, שיעורים, פתקים קוליים. רציתי שיהיה נגיש לכל מי שצריך. <a class="gold" href="/kelim/#sipur">הסיפור</a></span></li>
+    </ul>
+    <div class="share-row"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="כלי תמלול בעברית מהטלפון, בחינם: מעלים הקלטה או הודעה קולית ומקבלים טקסט" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר שצריך את זה</a></div>
+    <div data-install-wrap hidden style="text-align:center">
+      <button class="btn btn-line btn-sm" type="button" data-install>להתקין את הכלים בטלפון</button>
+      <p class="ios-tip" id="ios-tip" hidden>באייפון: לוחצים על כפתור השיתוף <b>⬆︎</b> למטה, ואז "הוספה למסך הבית".</p>
+    </div>
+  </section>
+</div>

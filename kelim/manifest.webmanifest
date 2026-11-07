@@ -1,0 +1,26 @@
+{
+ "name": "הכלים של גילעד רחמים",
+ "short_name": "הכלים",
+ "description": "כלים פשוטים, בחינם, לכל מי שצריך הנגשה",
+ "id": "/kelim/",
+ "start_url": "/kelim/?utm_source=pwa",
+ "scope": "/kelim/",
+ "display": "standalone",
+ "background_color": "#0f1d1c",
+ "theme_color": "#0f1d1c",
+ "dir": "rtl",
+ "lang": "he",
+ "icons": [
+  {
+   "src": "/assets/icon-kelim-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "/assets/icon-kelim-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  }
+ ]
+}

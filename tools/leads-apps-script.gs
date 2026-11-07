@@ -55,7 +55,8 @@ function doPost(e) {
     row[C['שם']] = name; row[C['טלפון']] = phone; row[C['מייל']] = email;
     row[C['מועד לידה']] = clean(p['מועד הלידה']); row[C['עיר']] = clean(p['עיר']);
     row[C['מקור']] = clean(p['מקור']) || 'האתר'; row[C['הסכמה לדיוור']] = consent;
-    row[C['סטטוס']] = dup ? 'חוזר' : 'חדש';
+    var kelim = /^כלים:/.test(clean(p['מקור']));               // טופסי "הכלים של גילעד רחמים": בלי מדריך, בלי סדרה ובלי ווטסאפ של ברית
+    row[C['סטטוס']] = kelim ? 'כלים' : dup ? 'חוזר' : 'חדש';
     row[C['ווטסאפ אחרון']] = ''; row[C['שלב בסדרה']] = ''; row[C['נשלח לאחרונה']] = '';
     row[C['טוקן']] = token; row[C['הערות']] = dup ? 'כבר נרשם/ה בעבר (שורה ' + dup + ')' : '';
     row[C['עמוד']] = clean(p['_page']); row[C['utm']] = utm;
@@ -63,7 +64,7 @@ function doPost(e) {
     sh.getRange(sh.getLastRow(), C['טלפון'] + 1).setNumberFormat('@').setValue(phone); // לשמור את ה-0 המוביל
 
     if (consent === 'כן') { var nx = dueStep(row, new Date()).next; sh.getRange(sh.getLastRow(), C['מייל הבא'] + 1).setValue(nx ? nx[1] : ''); }
-    if (email && mailOk) {
+    if (email && mailOk && !kelim) {
       var src = clean(p['מקור']);
       if (src === 'מחולל הודעה לברית') sendHazmanaEmail(name, email);
       else if (src === 'מחולל הודעה לזבד הבת') sendZevedEmail(name, email);
@@ -297,6 +298,7 @@ function waMessage(code, r) {
     (REVIEW_URL() ? ' ואם בא לכם לכתוב משפט ב-Google, זה עוזר להורים אחרים למצוא מוהל שמלווה: ' + REVIEW_URL() + '.' : '') + ' תודה שזכיתי 🙏';
 }
 function waDue(r, today) {
+  if (/^כלים:/.test(String(r[C['מקור']] || ''))) return '';
   var st = r[C['סטטוס']], done = String(r[C['ווטסאפ אחרון']] || ''), m = String(r[C['מועד לידה']] || '').match(/^(\d{4})-(\d{2})$/);
   if ((st === 'חדש' || st === 'חוזר') && done === '') return 'WA-1';
   if (!m) return st === 'נערכה' && done !== 'WA-4' ? 'WA-4' : '';
@@ -347,7 +349,7 @@ function notifyOwner(row, dup) {
   var name = row[C['שם']], phone = row[C['טלפון']], email = row[C['מייל']], due = row[C['מועד לידה']], city = row[C['עיר']], source = row[C['מקור']];
   var line = (dup ? 'ליד חוזר: ' : 'ליד חדש: ') + name + (city ? ' · ' + city : '') + (due ? ' · ' + dueLabel(due) : '');
   var body = line + '\nטלפון: ' + phone + '\nמייל: ' + email + '\nמקור: ' + source +
-    (phone ? '\n\nווטסאפ מוכן:\n' + waLink(phone, waMessage('WA-1', row)) : '') +
+    (phone ? '\n\nווטסאפ מוכן:\n' + waLink(phone, /^כלים:/.test(String(source)) ? 'שלום ' + String(name).split(' ')[0] + ', כאן גילעד מהכלים של גילעד רחמים. תודה שכתבת לי! ' : waMessage('WA-1', row)) : '') +
     '\n\nהגיליון: ' + SpreadsheetApp.getActive().getUrl();
   MailApp.sendEmail({ to: CFG.OWNER_EMAIL, subject: line, body: body, name: 'האתר – לידים' });
   push(line, 'טלפון ' + phone + (email ? ' · ' + email : ''));
