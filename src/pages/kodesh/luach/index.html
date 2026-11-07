@@ -1,0 +1,58 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "luach",
+  "title": "הלוח השבועי לבית הכנסת ביחידה – זמני היום, פרשה, דבר תורה וחיזוק | כלי קודש",
+  "description": "כלי חינם לרב היחידה ולכל בית כנסת: לוח שבועי מעוצב לתלייה, עם זמני היום לפי המיקום, פרשה, הדלקת נרות וצאת השבת, וטורים לבחירה: דבר תורה, חיזוק, מוסר, משנה שבועית, הלכה יומית ועוד. מדפיסים או שולחים כתמונה.",
+  "og_title": "הלוח השבועי לבית הכנסת ביחידה",
+  "priority": "0.8",
+  "crumbs": [["הלוח השבועי", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/luach.css\">",
+  "foot": "<script src=\"https://cdn.jsdelivr.net/npm/@hebcal/core@6.14.7/dist/bundle.min.js\" data-hebcal defer></script><script src=\"https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js\" defer></script><script src=\"/assets/luach.js\" defer></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>הלוח השבועי</h1>
+  <p class="sub">לוח מעוצב לתלייה בבית הכנסת של היחידה, שמתחדש כל שבוע: זמני היום, פרשה, שבת, ומה שתבחרו לכתוב לחיילים. ממלאים פעם אחת, ובשבוע הבא רק מעדכנים.</p>
+</header>
+<div class="tool lv-tool no-print">
+  <form class="k-form lead-form" id="lv-form" novalidate>
+    <details open><summary>פרטים ושבוע</summary>
+      <div class="field"><label for="lv-title">כותרת</label><input id="lv-title" name="title" type="text" maxlength="40"></div>
+      <div class="field"><label for="lv-unit">היחידה או בית הכנסת</label><input id="lv-unit" name="unit" type="text" maxlength="60" placeholder="בית הכנסת של גדוד 51"></div>
+      <div class="field"><label for="lv-week">איזה שבוע?</label><input id="lv-week" name="week" type="date">
+        <div class="lv-row"><button class="btn btn-line btn-sm" type="button" id="lv-this">השבוע</button><button class="btn btn-gold btn-sm" type="button" id="lv-next">לשבוע הבא ←</button></div>
+        <label class="check"><input type="checkbox" id="lv-clear" checked> <span>במעבר לשבוע הבא: לנקות את דבר התורה, החיזוק, המוסר, המשנה וההלכה (זמני התפילות וההודעות נשארים)</span></label></div>
+      <div class="field"><label for="lv-sig">חתימה</label><input id="lv-sig" name="sig" type="text" maxlength="60" placeholder="רב היחידה"></div>
+    </details>
+    <details open><summary>מקום וזמנים</summary>
+      <div class="field"><label for="lv-place">איפה היחידה?</label><select id="lv-place"></select></div>
+      <div class="field" id="lv-coords-row" hidden><label for="lv-coords">קואורדינטות (רוחב,אורך)</label><input id="lv-coords" type="text" dir="ltr" placeholder="31.5,34.6"></div>
+      <div class="field"><span class="label">אילו זמנים בטבלה?</span><div class="lv-checks" id="lv-zm"></div></div>
+      <div class="field"><label for="lv-candle">הדלקת נרות</label><select id="lv-candle" name="candle"><option value="auto">לפי המקום (ירושלים 40, חיפה 30, אחרים 20)</option><option value="20">20 דקות לפני השקיעה</option><option value="30">30 דקות</option><option value="40">40 דקות</option></select></div>
+    </details>
+    <details open><summary>הטורים בלוח</summary>
+      <p class="note">מסמנים מה יופיע, וכותבים. אפשר לשנות לכל טור את הכותרת.</p>
+      <div id="lv-cols"></div>
+      <div class="field"><label for="lv-pasuk">פסוק לחיזוק בתחתית <span class="opt">(ריק = פסוק אחר בכל שבוע, מתוך 12)</span></label><input id="lv-pasuk" name="pasuk" type="text" maxlength="140"></div>
+    </details>
+    <details open><summary>עיצוב</summary>
+      <div class="field"><div class="radios lv-themes">
+        <label><input type="radio" name="theme" value="zayit"> ירוק זית</label>
+        <label><input type="radio" name="theme" value="kachol"> כחול וזהב</label>
+        <label><input type="radio" name="theme" value="klaf"> קלף</label>
+        <label><input type="radio" name="theme" value="lavan"> לבן (חוסך דיו)</label>
+        <label><input type="radio" name="theme" value="layla"> לילה (לתמונה)</label>
+      </div></div>
+    </details>
+  </form>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="lv-print">להדפיס / לשמור PDF</button>
+    <button class="btn btn-line btn-sm" type="button" id="lv-img"><svg class="ic"><use href="#wa"/></svg> לשלוח כתמונה</button>
+  </div>
+  <h2 class="lv-h">כך ייראה הלוח</h2>
+</div>
+<div id="lv-wrap"><div id="lv-board" class="lv-board"></div></div>
+<div class="tool no-print">
+  <p class="disclaimer">הזמנים מחושבים לפי המיקום (שקיעה מישורית, צאת הכוכבים 8.5°). לזמנים מדויקים להלכה במקום מסוים – לוח מקומי. התוכן ההלכתי בלוח הוא של הרב שחותם עליו.</p>
+  <p class="disclaimer">הכול נשמר אצלכם בטלפון, ובשבוע הבא הלוח מחכה. רוצים טור או סגנון נוסף? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>
+</div>
