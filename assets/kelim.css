@@ -1,0 +1,60 @@
+/* הכלים של גילעד רחמים + כלי קודש – מעל site.css. צבעים משלהם, אותו אופי. */
+body.site-kelim{--ink:#0f1d1c;--ink-2:#152826;--gold:#d8b35f;--gold-hi:#e8c87c;--gold-soft:#8f7a45;--body:#d4dcd2;--muted:#9db0a8;--parchment:#eef1e8;--cream:#fbfaf2;--line:rgba(216,179,95,.2);--accent:#5fbfa6}
+body.site-kodesh{--ink:#0e1628;--ink-2:#15203a;--gold:#d4b062;--gold-hi:#e6c57e;--gold-soft:#8a7444;--body:#d3d9e6;--muted:#9aa6bf;--parchment:#eef0f6;--cream:#fbfaf4;--line:rgba(212,176,98,.2);--accent:#7fa7e0}
+body.site-kelim,body.site-kodesh{background:radial-gradient(120% 60% at 85% 0%,rgba(216,179,95,.09),transparent 60%),radial-gradient(90% 50% at 0% 100%,var(--line),transparent 60%),var(--ink)}
+html:has(body.site-kelim){background:#0f1d1c}
+html:has(body.site-kodesh){background:#0e1628}
+.site-kelim .brand img,.site-kodesh .brand img{border-radius:10px}
+[hidden]{display:none!important}
+.k-hero{text-align:center;padding:2.6rem 1.25rem 1.6rem;max-width:44rem;margin:0 auto}
+.k-hero h1{font-family:var(--serif);font-weight:700;color:var(--cream);font-size:clamp(2rem,8vw,3rem);line-height:1.15}
+.k-hero .sub{color:var(--body);font-size:1.15rem;margin-top:.8rem}
+.k-hero .actions{justify-content:center;margin-top:1.3rem}
+.k-sec{max-width:46rem;margin:0 auto;padding:1.6rem 1.25rem}
+.k-sec>h2{font-family:var(--serif);color:var(--cream);font-size:1.6rem;margin-bottom:.4rem}
+.k-sec>p.lead2{color:var(--body);margin-bottom:1rem}
+.story{border:1px solid var(--line);border-radius:18px;padding:1.4rem 1.3rem;background:rgba(255,255,255,.03);font-size:1.13rem;line-height:1.85;color:var(--parchment)}
+.story p+p{margin-top:.8rem}
+.story .sig{display:block;margin-top:1rem;color:var(--gold);font-family:var(--serif);font-size:1.15rem}
+.flag{display:grid;gap:.6rem;padding:1.4rem 1.3rem;border:1px solid var(--gold-soft);border-radius:18px;background:linear-gradient(160deg,rgba(216,179,95,.16),rgba(216,179,95,.03) 65%);text-decoration:none;color:inherit}
+.flag b{font-family:var(--serif);font-size:1.45rem;color:var(--cream)}
+.flag span{color:var(--body)}
+.flag .go{color:var(--gold);font-weight:600}
+.dom{display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:.8rem}
+.dom>*{position:relative;display:block;padding:1.05rem 1rem;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025);color:inherit;text-decoration:none}
+.dom b{display:block;font-family:var(--serif);color:var(--cream);font-size:1.18rem;line-height:1.3;padding-inline-end:4.2rem}
+.dom span{display:block;color:var(--muted);font-size:.98rem;margin-top:.3rem;line-height:1.5}
+.dom a:hover{border-color:var(--gold-soft)}
+.badge{position:absolute;top:.85rem;inset-inline-end:.8rem;font-size:.8rem;font-weight:700;border-radius:99px;padding:.1rem .6rem;background:var(--gold);color:var(--ink)}
+.badge.soon{background:transparent;color:var(--muted);border:1px solid var(--line);font-weight:600}
+.dom .is-soon{opacity:.82}
+.k-form{display:grid;gap:.9rem;padding:1.3rem 1.2rem;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.03)}
+.k-form textarea{width:100%;min-height:6.5rem;font:inherit;font-size:1.05rem;color:var(--cream);background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;padding:.75rem .85rem;resize:vertical}
+.k-form textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
+.k-form .done{padding:1rem;border-radius:12px;background:rgba(95,191,166,.12);border:1px solid rgba(95,191,166,.4);color:var(--cream)}
+.give{display:grid;gap:.8rem}
+.give .num{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem;padding:1rem 1.1rem;border:1px solid var(--gold-soft);border-radius:14px;background:rgba(216,179,95,.08)}
+.give .num b{font-size:1.5rem;letter-spacing:.04em;color:var(--cream);direction:ltr}
+.give ul{list-style:none;display:grid;gap:.45rem;color:var(--body)}
+.give li::before{content:"•";color:var(--gold);margin-inline-end:.5rem}
+.me{display:grid;grid-template-columns:5.5rem 1fr;gap:1rem;align-items:start}
+.me img{width:5.5rem;height:5.5rem;border-radius:50%;object-fit:cover;border:2px solid var(--gold-soft)}
+.me p{color:var(--body);line-height:1.75}
+.install-bar{position:fixed;inset-inline:0;bottom:0;z-index:50;display:flex;align-items:center;gap:.7rem;padding:.75rem 1rem calc(.75rem + env(safe-area-inset-bottom));background:var(--ink-2);border-top:1px solid var(--gold-soft);color:var(--cream);font-size:1rem}
+.install-bar span{flex:1}
+.install-bar .x{background:none;border:0;color:var(--muted);font-size:1.6rem;line-height:1;cursor:pointer;padding:0 .3rem}
+.ios-tip{margin-top:.6rem;padding:.8rem 1rem;border-radius:12px;border:1px dashed var(--gold-soft);color:var(--body);font-size:1rem}
+.share-row{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin:1.2rem 0 .4rem}
+.disclaimer{color:var(--muted);font-size:.92rem;text-align:center;margin:1rem auto 0;max-width:36rem}
+/* כלי: תיבת תוצאה */
+.tool{max-width:40rem;margin:0 auto;padding:0 1.25rem}
+.res{margin-top:1rem;padding:1.2rem 1.15rem;border:1px solid var(--gold-soft);border-radius:16px;background:linear-gradient(170deg,rgba(216,179,95,.13),rgba(216,179,95,.02) 60%)}
+.res h3{font-family:var(--serif);color:var(--cream);font-size:1.25rem}
+.res .big{font-family:var(--serif);font-weight:700;color:var(--cream);font-size:clamp(1.4rem,6vw,1.9rem);line-height:1.3;margin-top:.25rem}
+.res .g{color:var(--gold);font-size:1.15rem}
+.res ul{list-style:none;display:grid;gap:.4rem;margin-top:.7rem;color:var(--body);font-size:1rem}
+.res li{padding-inline-start:.9rem;border-inline-start:2px solid var(--gold-soft)}
+.tabs{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:1rem}
+.tabs button{font:inherit;font-size:1rem;padding:.5rem .9rem;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--body);cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700}
+@media (max-width:640px){body.site-kelim,body.site-kodesh{padding-bottom:0}}

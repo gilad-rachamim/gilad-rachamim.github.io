@@ -1,0 +1,26 @@
+{
+ "name": "כלי קודש",
+ "short_name": "כלי קודש",
+ "description": "כלים דיגיטליים לאנשי קודש, בחינם",
+ "id": "/kodesh/",
+ "start_url": "/kodesh/?utm_source=pwa",
+ "scope": "/kodesh/",
+ "display": "standalone",
+ "background_color": "#0e1628",
+ "theme_color": "#0e1628",
+ "dir": "rtl",
+ "lang": "he",
+ "icons": [
+  {
+   "src": "/assets/icon-kodesh-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "/assets/icon-kodesh-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  }
+ ]
+}
