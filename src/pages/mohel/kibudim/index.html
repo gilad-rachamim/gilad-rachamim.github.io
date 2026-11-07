@@ -1,0 +1,136 @@
+<!--meta {
+  "title": "טופס הכיבודים לברית – ממלאים ושולחים בווטסאפ | גילעד רחמים המוהל",
+  "description": "טופס הכיבודים לברית מילה בטלפון: קוואטר, סנדק, ברכות, שירה וזימון. ממלאים את השמות, ובלחיצה אחת הרשימה המלאה נשלחת למוהל בווטסאפ.",
+  "og_title": "טופס הכיבודים לברית – ממלאים ושולחים בווטסאפ",
+  "og_image": "og-dapim.jpg",
+  "nav": "hachana",
+  "priority": "0.5",
+  "no_cta": true,
+  "crumbs": [["דפי הברית", "/mohel/dapim/"], ["טופס הכיבודים", null]],
+  "head": "<style>.dock{display:none!important}.kb{display:grid;gap:1rem}.kb fieldset{min-width:0;margin:0;padding:1.05rem 1.1rem 1.15rem;border:1px solid rgba(201,165,92,.3);border-radius:16px;background:rgba(201,165,92,.03)}.kb legend{float:right;width:100%;padding:0;font-family:var(--serif);font-size:1.25rem;color:var(--gold)}.kb legend i{font-style:normal;color:var(--muted);margin-inline-end:.4rem}.kb legend+*{clear:both}.kb-sub{clear:both;color:var(--body);font-size:1rem;margin-top:.15rem}.kb-pair{clear:both;display:grid;grid-template-columns:3fr 2fr;gap:.6rem;margin-top:.75rem}.kb-two{display:grid;grid-template-columns:3fr 2fr;gap:.6rem}.kb-stack{clear:both;display:grid;gap:.85rem;margin-top:.75rem}.kb .field input{min-width:0;min-height:3rem}.kb-nusach{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}.kb-nusach label{display:flex;align-items:center;justify-content:center;min-height:2.9rem;margin:0;padding:.4rem;border:1px solid rgba(201,165,92,.35);border-radius:10px;font-weight:400;cursor:pointer}.kb-nusach input{position:absolute;width:1px;height:1px;min-height:0;padding:0;opacity:0}.kb-nusach label:has(input:checked){border-color:var(--gold);background:var(--gold);color:var(--ink);font-weight:600}.kb-nusach label:has(input:focus-visible){outline:2px solid var(--cream);outline-offset:2px}.kb-more{margin-top:.85rem}.kb .tip{margin:0}.kb-hint{color:var(--body);font-size:1rem;text-align:center;margin-top:.6rem}.kb-err{color:#f0b9a0;text-align:center;margin-top:.6rem}.kb-err:empty{display:none}</style>",
+  "foot": "<script src=\"/assets/kibudim.js\" defer></script>"
+} -->
+<header class="hero">
+  <span class="bsd">בס"ד</span>
+  <h1>הכיבודים בברית</h1>
+  <!--לאישור--><p class="sub">ממלאים מראש ושולחים לי בווטסאפ, וכך הכול זורם בשמחה.</p>
+  <div class="rule" aria-hidden="true"></div>
+</header>
+<div class="wrap">
+  <form class="kb" id="kb-form" autocomplete="off">
+    <fieldset>
+      <legend>פרטי הברית</legend>
+      <div class="kb-stack">
+        <div class="field"><label for="kb-parents">שם האב והאם</label><input id="kb-parents" type="text" data-detail="שם האב והאם"></div>
+        <div class="kb-two">
+          <div class="field"><label for="kb-date">תאריך הברית</label><input id="kb-date" type="date" data-detail="תאריך הברית"></div>
+          <div class="field"><label for="kb-time">שעה</label><input id="kb-time" type="time" data-detail="שעה"></div>
+        </div>
+        <div class="field"><label for="kb-place">מקום הברית</label><input id="kb-place" type="text" data-detail="מקום הברית"></div>
+        <div class="field">
+          <span class="label">נוסח הברית</span>
+          <div class="kb-nusach">
+            <label><input type="radio" name="nusach" value="ספרדי">ספרדי</label>
+            <label><input type="radio" name="nusach" value="עדות המזרח">עדות המזרח</label>
+            <label><input type="radio" name="nusach" value="אשכנז">אשכנז</label>
+            <label><input type="radio" name="nusach" value="תימני">תימני</label>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label">ציוד הגברה לאולם או לבית הכנסת</span>
+          <!--לאישור--><p class="kb-sub">לא חובה, אבל זה מוסיף המון.</p>
+          <div class="kb-nusach">
+            <label><input type="radio" name="amp" value="יש">יש הגברה</label>
+            <label><input type="radio" name="amp" value="אין">אין הגברה</label>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset data-honor="קוואטר">
+      <legend><i>1</i>קוואטר</legend>
+      <!--לאישור--><p class="kb-sub">מביא את התינוק מהאם אל הקהל, לפי מנהג המשפחה. אפשר לכבד גם כמה.</p>
+      <div class="kb-pair" data-pair>
+        <div class="field"><label for="kb-1-n">שם המכובד</label><input id="kb-1-n" type="text" data-name></div>
+        <div class="field"><label for="kb-1-r">קרבה</label><input id="kb-1-r" type="text" data-rel></div>
+      </div>
+      <button class="btn btn-line btn-sm kb-more" type="button" id="kb-add">להוסיף עוד קוואטר</button>
+    </fieldset>
+
+    <fieldset data-honor="הנחת התינוק על כסא אליהו">
+      <legend><i>2</i>הנחת התינוק על כסא אליהו</legend>
+      <div class="kb-pair" data-pair>
+        <div class="field"><label for="kb-2-n">שם המכובד</label><input id="kb-2-n" type="text" data-name></div>
+        <div class="field"><label for="kb-2-r">קרבה</label><input id="kb-2-r" type="text" data-rel></div>
+      </div>
+    </fieldset>
+
+    <fieldset data-honor="נטילת התינוק מכסא אליהו ומסירתו לאבי הבן">
+      <legend><i>3</i>נטילת התינוק מכסא אליהו ומסירתו לאבי הבן</legend>
+      <div class="kb-pair" data-pair>
+        <div class="field"><label for="kb-3-n">שם המכובד</label><input id="kb-3-n" type="text" data-name></div>
+        <div class="field"><label for="kb-3-r">קרבה</label><input id="kb-3-r" type="text" data-rel></div>
+      </div>
+    </fieldset>
+
+    <fieldset data-honor="סנדק">
+      <legend><i>4</i>סנדק</legend>
+      <!--לאישור--><p class="kb-sub">יושב על כסא אליהו ומחזיק את התינוק בשעת הברית.</p>
+      <div class="kb-pair" data-pair>
+        <div class="field"><label for="kb-4-n">שם המכובד</label><input id="kb-4-n" type="text" data-name></div>
+        <div class="field"><label for="kb-4-r">קרבה</label><input id="kb-4-r" type="text" data-rel></div>
+      </div>
+    </fieldset>
+
+    <fieldset data-honor="החזקת התינוק בזמן הברכות">
+      <legend><i>5</i>החזקת התינוק בזמן הברכות</legend>
+      <!--לאישור--><p class="kb-sub">אחרי הברית, כשהתינוק כבר עטוף (יש נוהגים).</p>
+      <div class="kb-pair" data-pair>
+        <div class="field"><label for="kb-5-n">שם המכובד</label><input id="kb-5-n" type="text" data-name></div>
+        <div class="field"><label for="kb-5-r">קרבה</label><input id="kb-5-r" type="text" data-rel></div>
+      </div>
+    </fieldset>
+
+    <fieldset data-honor="ברכות על הכוס וקריאת השם">
+      <legend><i>6</i>ברכות על הכוס וקריאת השם</legend>
+      <!--לאישור--><p class="kb-sub">אפשר לבקש מהמוהל לומר את הברכות בנעימה מסורתית.</p>
+      <div class="kb-pair" data-pair>
+        <div class="field"><label for="kb-6-n">שם המכובד</label><input id="kb-6-n" type="text" data-name></div>
+        <div class="field"><label for="kb-6-r">קרבה</label><input id="kb-6-r" type="text" data-rel></div>
+      </div>
+    </fieldset>
+
+    <fieldset data-honor="שירה ופיוטים">
+      <legend><i>7</i>שירה ופיוטים</legend>
+      <!--לאישור--><p class="kb-sub">מי מוביל את השירה. אפשר גם בשיתוף המוהל.</p>
+      <div class="kb-pair" data-pair>
+        <div class="field"><label for="kb-7-n">שם המכובד</label><input id="kb-7-n" type="text" data-name></div>
+        <div class="field"><label for="kb-7-r">קרבה</label><input id="kb-7-r" type="text" data-rel></div>
+      </div>
+    </fieldset>
+
+    <fieldset data-honor="דברי תורה בסעודה">
+      <legend><i>8</i>דברי תורה בסעודה</legend>
+      <div class="kb-pair" data-pair>
+        <div class="field"><label for="kb-8-n">שם המכובד</label><input id="kb-8-n" type="text" data-name></div>
+        <div class="field"><label for="kb-8-r">קרבה</label><input id="kb-8-r" type="text" data-rel></div>
+      </div>
+    </fieldset>
+
+    <fieldset data-honor="זימון בברכת המזון">
+      <legend><i>9</i>זימון בברכת המזון</legend>
+      <div class="kb-pair" data-pair>
+        <div class="field"><label for="kb-9-n">שם המכובד</label><input id="kb-9-n" type="text" data-name></div>
+        <div class="field"><label for="kb-9-r">קרבה</label><input id="kb-9-r" type="text" data-rel></div>
+      </div>
+    </fieldset>
+
+    <!--לאישור--><div class="tip"><b>הערה חשובה</b><p>הקפידו שאף אחד מהקרובים שאולי מצפה לכיבוד לא ייפגע. בררו מראש במשפחה למי נהוג לתת את הסנדקאות בבן הראשון, וכן הלאה, וכך כולם יהיו מאושרים 🙂</p></div>
+
+    <div>
+      <button class="btn btn-gold btn-block" type="button" id="kb-send" data-kibudim-send><svg class="ic"><use href="#wa"/></svg> שליחת הרשימה בווטסאפ</button>
+      <p class="kb-err" id="kb-err" role="alert"></p>
+      <!--לאישור--><p class="kb-hint">ייפתח ווטסאפ עם הרשימה המלאה. נשאר רק ללחוץ שם על שליחה.</p>
+    </div>
+  </form>
+</div>
