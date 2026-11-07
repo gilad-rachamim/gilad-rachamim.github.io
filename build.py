@@ -182,6 +182,9 @@ for path in sorted(SRC.rglob("*.html")):
     }
     if site:
         key = meta["site"]
+        # גרשיים בתוך מאפיין HTML (content="...") שוברים אותו: בתת-האתרים הופכים " ל-״ (שו"ת → שו״ת)
+        for k in ("title", "description", "og_title"):
+            rep[k] = rep[k].replace('"', "״")
         rep.update({
             "site": key, "site_name": site["name"], "site_short": site["short"], "site_home": site["home"],
             "theme": site["theme"], "site_desc": site["desc"],

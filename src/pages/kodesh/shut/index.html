@@ -1,0 +1,41 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "shut",
+  "title": "שו\"ת לפרסום: שאלה ותשובה כתמונה מעוצבת לווטסאפ ולסטטוס | כלי קודש",
+  "description": "מדביקים שאלה ותשובה, ומקבלים תמונה מעוצבת לקבוצת הווטסאפ, לסטטוס או לעלון: ממוספרת, עם חתימה, בשלושה עיצובים. בחינם, בלי הרשמה.",
+  "og_title": "שו\"ת לפרסום – שאלה ותשובה כתמונה מעוצבת",
+  "priority": "0.7",
+  "crumbs": [["שו\"ת לפרסום", null]],
+  "head": "<style>#sh-canvas{display:block;width:100%;height:auto;border-radius:14px;border:1px solid var(--line);margin-top:1rem;background:#000}.sh-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}.k-form textarea{min-height:5.5rem}</style>",
+  "foot": "<script src=\"/assets/shut.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>שו"ת לפרסום</h1>
+  <p class="sub">מדביקים שאלה ותשובה, ומקבלים תמונה מעוצבת לקבוצה, לסטטוס או לעלון. ממוספרת, עם החתימה שלכם.</p>
+</header>
+<div class="tool">
+  <form class="k-form lead-form" id="sh-form" novalidate>
+    <div class="field"><label for="sh-q">השאלה</label><textarea id="sh-q" name="q" required maxlength="700" placeholder="מותר לברך על הנרות אחרי השקיעה?"></textarea></div>
+    <div class="field"><label for="sh-a">התשובה</label><textarea id="sh-a" name="a" required maxlength="1400" placeholder="כותבים כאן את התשובה, במילים שלכם."></textarea></div>
+    <div class="sh-row">
+      <div class="field"><label for="sh-head">כותרת</label><input id="sh-head" name="head" type="text" maxlength="30" placeholder="שאלה ותשובה"></div>
+      <div class="field"><label for="sh-num">מספר <span class="opt">(לא חובה)</span></label><input id="sh-num" name="num" type="text" maxlength="8" placeholder="12"></div>
+    </div>
+    <div class="field"><label for="sh-sig">חתימה <span class="opt">(שם הרב או הקהילה)</span></label><input id="sh-sig" name="sig" type="text" maxlength="50" placeholder="הרב משה כהן · קהילת אהל יצחק"></div>
+    <div class="sh-row">
+      <div class="field"><label for="sh-theme">עיצוב</label><select id="sh-theme" name="theme"><option value="night">כחול וזהב</option><option value="parch">קלף</option><option value="black">שחור וזהב</option></select></div>
+      <div class="field"><label for="sh-size">גודל</label><select id="sh-size" name="size"><option value="square">ריבוע (קבוצה)</option><option value="story">לגובה (סטטוס)</option><option value="wide">לרוחב (עלון)</option></select></div>
+    </div>
+    <div class="field"><label for="sh-foot">שורה קטנה למטה <span class="opt">(לא חובה)</span></label><input id="sh-foot" name="foot" type="text" maxlength="60" placeholder="להצטרפות לקבוצה: 050-0000000"></div>
+  </form>
+  <canvas id="sh-canvas" width="1080" height="1080" role="img" aria-label="תצוגה מקדימה של כרטיס השאלה והתשובה"></canvas>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="sh-share"><svg class="ic"><use href="#wa"/></svg> לשתף את התמונה</button>
+    <button class="btn btn-line btn-sm" type="button" id="sh-dl">לשמור את התמונה</button>
+    <button class="btn btn-line btn-sm" type="button" id="sh-text">להעתיק כטקסט</button>
+  </div>
+  <p class="ios-tip" id="sh-tip" hidden>התמונה נשמרה בטלפון. עכשיו פותחים את הווטסאפ, ומצרפים אותה מהגלריה.</p>
+  <p class="disclaimer">התוכן ההלכתי הוא של מי שחותם עליו. התמונה נוצרת בטלפון שלכם ולא נשמרת אצלנו.</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/">כלי קודש</a>. רוצים עיצוב נוסף? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>
+</div>
