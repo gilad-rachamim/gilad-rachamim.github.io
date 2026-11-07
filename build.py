@@ -115,7 +115,7 @@ def crumbs_ld(items, url, root=("עמוד המוהל", "/mohel/")):
 # ובלי סדרת ההריון), ההרשמה נשמרת בטלפון ונשלחת אוטומטית בביקור הבא אחרי שזה True.
 KELIM_JOIN_READY = False
 
-NEFESH_HELP = """<aside class="help-strip" aria-label="עזרה עכשיו"><div class="in"><span>קשה עכשיו?</span><a class="rega" href="/nefesh/rega/">למסך רגע קשה ←</a><a href="tel:*8944" data-line="8944">נפש אחת *8944</a><a href="tel:1201" data-line="1201">ער"ן 1201</a><a href="tel:*3362" data-line="3362">נט"ל *3362</a></div></aside>"""
+NEFESH_HELP = """<aside class="help-strip" aria-label="עזרה עכשיו"><div class="in"><span>קשה עכשיו?</span><a class="rega" href="/nefesh/rega/">למסך רגע קשה ←</a><a href="tel:*8944" data-line="8944">נפש אחת <span dir="ltr">*8944</span></a><a href="tel:1201" data-line="1201">ער"ן <span dir="ltr">1201</span></a><a href="tel:*3362" data-line="3362">נט"ל <span dir="ltr">*3362</span></a></div></aside>"""
 
 NEFESH_FOOT = """<div class="tool-foot">
   <div class="share-row"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="{text}" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר בווטסאפ</a></div>

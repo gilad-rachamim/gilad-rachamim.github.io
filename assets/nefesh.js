@@ -82,7 +82,7 @@
         ball.style.transform = 'scale(' + p[2] + ')';
         cap.textContent = p[0] + ' (' + p[1] + ')' + '  ·  סבב ' + (cycle + 1) + ' מתוך ' + CYCLES;
       }
-      say.innerHTML = esc(p[0].split(' ')[0]) + '<small>' + left + '</small>';
+      say.innerHTML = '<span>' + esc(p[0].split(' ')[0]) + '<small>' + left + '</small></span>';
       timer = setTimeout(function () {
         if (left > 1) return phase(i, left - 1);
         if (i < 2) return phase(i + 1, PH[i + 1][1]);
@@ -232,8 +232,7 @@
   var yb = $('yoman');
   if (yb) {
     // נקודת הקצה של התמלול: gilad-hub Worker, /tamlul (אותה שמשמשת את /kelim/tamlul/). CORS רק מהאתר.
-    // הערה (07.11.2026): הקוד של /tamlul כתוב ב-telegram-hub/worker/src/tamlul.js אבל עוד לא פרוס (404).
-    // עד הפריסה הדף מציע לכתוב במקום; אחרי `wrangler deploy` זה עובד בלי לשנות כאן כלום.
+    // נבדק 07.11.2026: run → token → status COMPLETED (כ-20 שניות). אם ה-Worker מחזיר 404/503, הדף מציע לכתוב במקום.
     var API = 'https://gilad-hub.gilad4049.workers.dev/tamlul';
     var recBtn = $('y-rec'), st = $('y-status'), txt = $('y-text'), good = $('y-good'), saveBtn = $('y-save');
     var entries = load('yoman', []);
