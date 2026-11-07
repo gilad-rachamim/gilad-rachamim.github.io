@@ -47,6 +47,8 @@ function doPost(e) {
     var ss = SpreadsheetApp.getActive();
     var sh = sheet(ss, CFG.SHEET_LEADS, COLS);
     var consent = p['מאשר/ת קבלת עדכונים'] ? 'כן' : 'לא';
+    // משפחת הכלים (נפש ויום-יום ועוד): הסכמה לדיוור של המיזם, לא לסדרת ההריון – לכן ערך אחר מ'כן' (dailyNurture שולח רק ל'כן')
+    if (/^כלים:/.test(clean(p['מקור'])) && p['הסכמה למשפחת הכלים']) consent = 'כן – משפחת הכלים';
     var dup = findLead(sh, phone, email);
     var token = Utilities.getUuid().replace(/-/g, '').slice(0, 20);
     var utm = ['utm_source', 'utm_medium', 'utm_campaign', 'ref'].map(function (k) { return p[k] ? k + '=' + p[k] : ''; }).filter(String).join('&');
@@ -84,7 +86,7 @@ function doPost(e) {
 // ---------- הסרה / בדיקה ----------
 function doGet(e) {
   var p = (e && e.parameter) || {};
-  if (p.ping) return txt('alive ' + new Date());
+  if (p.ping) return txt('alive ' + new Date() + ' · kelim-join');
   if (p.u) {
     var sh = sheet(SpreadsheetApp.getActive(), CFG.SHEET_LEADS, COLS);
     var data = sh.getDataRange().getValues();
@@ -347,7 +349,7 @@ function testSendAllToOwner() {
 // ---------- הודעה לגילעד ----------
 function notifyOwner(row, dup) {
   var name = row[C['שם']], phone = row[C['טלפון']], email = row[C['מייל']], due = row[C['מועד לידה']], city = row[C['עיר']], source = row[C['מקור']];
-  var line = (dup ? 'ליד חוזר: ' : 'ליד חדש: ') + name + (city ? ' · ' + city : '') + (due ? ' · ' + dueLabel(due) : '');
+  var line = (/^כלים: משפחת הכלים/.test(String(source)) ? 'הצטרפות למשפחת הכלים: ' : dup ? 'ליד חוזר: ' : 'ליד חדש: ') + name + (city ? ' · ' + city : '') + (due ? ' · ' + dueLabel(due) : '');
   var body = line + '\nטלפון: ' + phone + '\nמייל: ' + email + '\nמקור: ' + source +
     (phone ? '\n\nווטסאפ מוכן:\n' + waLink(phone, /^כלים:/.test(String(source)) ? 'שלום ' + String(name).split(' ')[0] + ', כאן גילעד מהכלים של גילעד רחמים. תודה שכתבת לי! ' : waMessage('WA-1', row)) : '') +
     '\n\nהגיליון: ' + SpreadsheetApp.getActive().getUrl();

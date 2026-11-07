@@ -32,6 +32,17 @@ SITES = {
                 ("mohalim", "/kodesh/mohalim/", "למוהלים"), ("tamlul", "/kelim/tamlul/", "תמלול"),
                 ("kelim", "/kelim/", "כל הכלים")],
     },
+    # נפש ויום-יום: כלים להלומי קרב, לחרדה ולימים קשים, ולמשפחה שסביבם. כאן לא מרוויחים, תרומה בלבד.
+    # כל הכלים עובדים גם בלי אינטרנט (sw.js שומר את כל הדפים), והנתונים נשארים בטלפון (localStorage).
+    "nefesh": {
+        "name": "נפש ויום-יום", "short": "נפש ויום-יום", "home": "/nefesh/", "theme": "#1b1a24",
+        "og": "og-nefesh.jpg", "icon": "nefesh",
+        "desc": "כלים שקטים לימים קשים: להלומי קרב, לחרדה, ולמשפחה שסביבם. בחינם.",
+        "css": ["/assets/nefesh.css"], "js": ["/assets/nefesh.js"],
+        "nav": [("rega", "/nefesh/rega/", "רגע קשה"), ("hayom", "/nefesh/hayom/", "הדבר החשוב"),
+                ("koach", "/nefesh/koach/", "מד כוח"), ("yoman", "/nefesh/yoman/", "יומן קול"),
+                ("mishpacha", "/nefesh/mishpacha/", "למשפחה"), ("kelim", "/nefesh/#kelim", "כל הכלים")],
+    },
 }
 SPRITE = (ROOT / "assets" / "icons.svg").read_text(encoding="utf-8")
 BASE = "https://gilad-rachamim.github.io"
@@ -99,6 +110,40 @@ def crumbs_ld(items, url, root=("עמוד המוהל", "/mohel/")):
         els.append({"@type": "ListItem", "position": i, "name": label, "item": BASE + href if href else url})
     return '<script type="application/ld+json">' + json.dumps({"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": els}, ensure_ascii=False) + "</script>"
 
+# ---------- נפש ויום-יום: חלקים קבועים בכל כלי ----------
+# הטופס "משפחת הכלים" שולח מייל לצינור הלידים. עד שגרסת הסקריפט שמזהה "כלים:" פרוסה (בלי מדריך הברית
+# ובלי סדרת ההריון), ההרשמה נשמרת בטלפון ונשלחת אוטומטית בביקור הבא אחרי שזה True. פרוס: גרסה 9, 07.11.2026.
+KELIM_JOIN_READY = True
+
+NEFESH_HELP = """<aside class="help-strip" aria-label="עזרה עכשיו"><div class="in"><span>קשה עכשיו?</span><a class="rega" href="/nefesh/rega/">למסך רגע קשה ←</a><a href="tel:*8944" data-line="8944">נפש אחת <span dir="ltr">*8944</span></a><a href="tel:1201" data-line="1201">ער"ן <span dir="ltr">1201</span></a><a href="tel:*3362" data-line="3362">נט"ל <span dir="ltr">*3362</span></a></div></aside>"""
+
+NEFESH_FOOT = """<div class="tool-foot">
+  <div class="share-row"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="{text}" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר בווטסאפ</a></div>
+  <div data-install-wrap hidden><button class="btn btn-line btn-sm" type="button" data-install>להתקין בטלפון, כמו אפליקציה</button>
+    <p class="ios-tip" id="ios-tip" hidden>באייפון: לוחצים על כפתור השיתוף <b>⬆︎</b> למטה בספארי, ואז "הוספה למסך הבית". מאותו רגע זה נפתח כמו אפליקציה, גם בלי אינטרנט.</p></div>
+  <p class="note" style="margin-top:.8rem"><a class="gold" href="/nefesh/">כל הכלים של נפש ויום-יום</a> · חינם · בלי הרשמה · הנתונים נשארים בטלפון שלך</p>
+</div>"""
+
+NEFESH_JOIN = """<section class="join" id="join" aria-labelledby="join-h"><div class="in">
+  <h2 id="join-h">להישאר בקשר?</h2>
+  <p>אם זה עזר לך, אפשר להצטרף למשפחת הכלים: מייל אחד בשבוע לכל היותר, עם כלי חדש, מילה טובה, ולפעמים הטבה. הכלים תמיד יעבדו גם בלי זה.</p>
+  <form class="lead-form" id="join-form" data-ready="{ready}" action="{endpoint}" method="POST">
+    <div class="hp" aria-hidden="true"><label>אל תמלאו שדה זה <input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></div>
+    <div class="field"><label for="j-name">שם פרטי</label><input id="j-name" name="fname" type="text" autocomplete="given-name" required maxlength="40"></div>
+    <div class="field"><label for="j-mail">מייל</label><input id="j-mail" name="mail" type="email" autocomplete="email" required dir="ltr" style="text-align:right" placeholder="name@gmail.com"></div>
+    <label class="check"><input type="checkbox" required> <span>אני רוצה לקבל מיילים ממשפחת הכלים (כלים חדשים, עדכונים, ולפעמים הטבות). אפשר להסיר בלחיצה בכל רגע.</span></label>
+    <button class="btn btn-gold btn-block" type="submit">להצטרף</button>
+    <p class="privacy">נשמרים רק השם הפרטי והמייל, אצל גילעד בלבד, ולא מועברים לאף אחד. מה שכתבת בכלים עצמם לא נשלח לשום מקום. אפשר לבקש למחוק בכל רגע. <a href="/mohel/privacy/">פרטיות</a></p>
+  </form>
+</div></section>"""
+
+def nefesh_blocks(html):
+    html = html.replace("{{N:help}}", NEFESH_HELP)
+    join = NEFESH_JOIN.format(ready="1" if KELIM_JOIN_READY else "0", endpoint=LEAD_ENDPOINT)
+    html = html.replace("{{N:join:wait}}", join.replace('class="join"', 'class="join wait"', 1))
+    html = html.replace("{{N:join}}", join)
+    return re.sub(r"\{\{N:foot:([^}]+)\}\}", lambda m: NEFESH_FOOT.format(text=m.group(1)), html)
+
 pages = []
 site_pages = {k: [] for k in SITES}
 for path in sorted(SRC.rglob("*.html")):
@@ -108,6 +153,8 @@ for path in sorted(SRC.rglob("*.html")):
         raise SystemExit(f"{path}: חסר בלוק meta")
     meta = json.loads(m.group(1))
     content = leadforms(raw[m.end():])
+    if meta.get("site") == "nefesh":
+        content = nefesh_blocks(content)
     rel = path.relative_to(SRC).as_posix()            # e.g. mohel/moed/index.html
     out = ROOT / rel
     url_path = "/" + rel[:-len("index.html")] if rel.endswith("index.html") else "/" + rel
@@ -135,13 +182,18 @@ for path in sorted(SRC.rglob("*.html")):
     }
     if site:
         key = meta["site"]
+        # גרשיים בתוך מאפיין HTML (content="...") שוברים אותו: בתת-האתרים הופכים " ל-״ (שו"ת → שו״ת)
+        for k in ("title", "description", "og_title"):
+            rep[k] = rep[k].replace('"', "״")
         rep.update({
             "site": key, "site_name": site["name"], "site_short": site["short"], "site_home": site["home"],
             "theme": site["theme"], "site_desc": site["desc"],
             "nav": "".join(f'<a href="{h}"' + (' aria-current="page"' if meta.get("nav") == k else "") + f'>{l}</a>' for k, h, l in site["nav"]),
             "tool": meta.get("tool", ""),
             "lead_endpoint": LEAD_ENDPOINT,
+            "site_css": "".join(f'<link rel="stylesheet" href="{c}">' for c in site.get("css", [])),
         })
+        rep["foot"] += "".join(f'<script src="{j}" defer></script>' for j in site.get("js", []))
         site_pages[key].append(url_path)
     for k, v in rep.items():
         html = html.replace("{{" + k + "}}", v)
@@ -168,7 +220,8 @@ for key, site in SITES.items():
     }
     (d / "manifest.webmanifest").write_text(json.dumps(man, ensure_ascii=False, indent=1), encoding="utf-8")
     pre = site_pages[key] + ["/assets/site.css", "/assets/kelim.css", "/assets/kelim.js", "/assets/track.js",
-                             "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff"]
+                             "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff",
+                             f"/assets/icon-{site['icon']}-192.png"] + site.get("css", []) + site.get("js", [])
     ver = datetime.datetime.now().strftime("%Y%m%d%H%M")
     (d / "sw.js").write_text(SW_SRC.replace("__CACHE__", f"{key}-{ver}").replace("__PRECACHE__", json.dumps(pre)), encoding="utf-8")
     print(f"pwa {key}: {len(site_pages[key])} pages")

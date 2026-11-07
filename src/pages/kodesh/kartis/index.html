@@ -1,0 +1,44 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "kartis_rav",
+  "title": "כרטיס ביקור דיגיטלי לרב ולבית כנסת, בחינם | כלי קודש",
+  "description": "בונים כרטיס ביקור דיגיטלי תוך דקה: טלפון, ווטסאפ, ניווט בוויז, שמירת איש קשר וזמני תפילות, בקישור אחד ששולחים לקהילה. בחינם, בלי הרשמה.",
+  "og_title": "כרטיס ביקור דיגיטלי לרב ולבית כנסת",
+  "priority": "0.7",
+  "crumbs": [["כרטיס ביקור לרב ולבית כנסת", null]],
+  "head": "<style>.kr{margin-top:1rem;padding:1.5rem 1.2rem;border:1px solid var(--gold-soft);border-radius:20px;background:linear-gradient(170deg,rgba(212,176,98,.15),rgba(212,176,98,.03) 60%);text-align:center}.kr h2{font-family:var(--serif);color:var(--cream);font-size:clamp(1.7rem,7vw,2.3rem);line-height:1.2;margin-top:.3rem}.kr-role{color:var(--gold);font-size:1.15rem;margin-top:.2rem}.kr-org{color:var(--body);font-size:1.05rem}.kr-btns{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-top:1.2rem}.kr-btns .btn{justify-content:center;font-size:1rem}.kr-addr{margin-top:1rem;color:var(--body)}.kr-times{margin-top:1.1rem;text-align:right;padding:1rem;border-radius:14px;background:rgba(0,0,0,.2);border:1px solid var(--line)}.kr-times h3{font-family:var(--serif);color:var(--cream);font-size:1.15rem;margin-bottom:.4rem}.kr-times ul{list-style:none;display:grid;gap:.3rem;color:var(--parchment)}.kr-note{margin-top:1rem;color:var(--body)}.kr-credit{margin-top:1.2rem;color:var(--muted);font-size:.85rem}.kr-credit a{color:var(--gold)}.k-form textarea{min-height:5rem}#kr-link{direction:ltr;font-size:.85rem}</style>",
+  "foot": "<script src=\"/assets/kartis-rav.js\" defer></script>"
+} -->
+<div id="kr-build">
+<header class="k-hero">
+  <h1>כרטיס ביקור לרב ולבית כנסת</h1>
+  <p class="sub">ממלאים פעם אחת, ומקבלים קישור: להתקשר, לכתוב בווטסאפ, לנווט, לשמור איש קשר, ולראות את זמני התפילות. שולחים לקהילה, ושמים בסטטוס.</p>
+</header>
+<div class="tool">
+  <form class="k-form lead-form" id="kr-form" novalidate>
+    <div class="field"><label for="kr-name">שם</label><input id="kr-name" name="name" type="text" required maxlength="60" placeholder="למשל: הרב משה כהן"></div>
+    <div class="field"><label for="kr-role">תפקיד <span class="opt">(לא חובה)</span></label><input id="kr-role" name="role" type="text" maxlength="60" placeholder="רב הקהילה · גבאי · מוהל · רב צבאי"></div>
+    <div class="field"><label for="kr-org">בית הכנסת או הקהילה <span class="opt">(לא חובה)</span></label><input id="kr-org" name="org" type="text" maxlength="70" placeholder="בית הכנסת אהל יצחק, רמות"></div>
+    <div class="field"><label for="kr-phone">טלפון (גם לווטסאפ)</label><input id="kr-phone" name="phone" type="tel" inputmode="tel" maxlength="20" placeholder="050-0000000" dir="ltr" style="text-align:right"></div>
+    <div class="field"><label for="kr-addr">כתובת לניווט <span class="opt">(לא חובה)</span></label><input id="kr-addr" name="addr" type="text" maxlength="90" placeholder="רחוב הרב פרדס 5, ירושלים"></div>
+    <div class="field"><label for="kr-times">זמני תפילות ושיעורים <span class="opt">(שורה לכל זמן)</span></label><textarea id="kr-times" name="times" maxlength="500" placeholder="שחרית: 6:30, 8:00&#10;מנחה וערבית: 10 דקות לפני השקיעה&#10;שיעור דף יומי: 20:30"></textarea></div>
+    <div class="field"><label for="kr-email">מייל <span class="opt">(לא חובה)</span></label><input id="kr-email" name="email" type="email" maxlength="80" dir="ltr" style="text-align:right"></div>
+    <div class="field"><label for="kr-site">אתר <span class="opt">(לא חובה)</span></label><input id="kr-site" name="site" type="url" maxlength="120" dir="ltr" style="text-align:right" placeholder="https://"></div>
+    <div class="field"><label for="kr-note">משפט אישי <span class="opt">(לא חובה)</span></label><input id="kr-note" name="note" type="text" maxlength="140" placeholder="דלתנו פתוחה לכל שאלה, בכל שעה"></div>
+    <button class="btn btn-gold btn-block" type="submit">ליצור את הקישור לכרטיס</button>
+    <p class="privacy">הפרטים לא נשמרים אצלנו בשום מקום: הם יושבים בתוך הקישור עצמו, ובטלפון שלכם.</p>
+  </form>
+  <div class="res" id="kr-ready" hidden>
+    <h3>הכרטיס מוכן!</h3>
+    <div class="field"><input id="kr-link" type="text" readonly></div>
+    <div class="share-row"><button class="btn btn-gold btn-sm" type="button" id="kr-copy">להעתיק את הקישור</button><a class="btn btn-line btn-sm" id="kr-wa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח בווטסאפ</a><a class="btn btn-line btn-sm" id="kr-open" href="#">לפתוח את הכרטיס</a></div>
+    <p class="note">טיפ: פותחים את הכרטיס בטלפון ו"מוסיפים למסך הבית", והוא נשאר אצלכם כמו אפליקציה. שינוי בפרטים = קישור חדש.</p>
+  </div>
+  <h2 style="font-family:var(--serif);color:var(--cream);font-size:1.3rem;margin-top:1.6rem">כך זה ייראה</h2>
+</div>
+</div>
+<div class="tool"><div id="kr-card" hidden></div>
+  <p id="kr-mine" class="disclaimer" hidden><a class="gold" href="/kodesh/kartis/">רוצים כרטיס כזה לעצמכם? בונים בחינם ←</a></p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/">כלי קודש</a>. חסר משהו בכרטיס? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>
+</div>

@@ -1,0 +1,43 @@
+<!--meta {
+  "site": "nefesh",
+  "nav": "yoman",
+  "tool": "yoman",
+  "title": "יומן קול – מדברים, ומקבלים טקסט | נפש ויום-יום",
+  "description": "יומן בלי לכתוב: מקליטים חצי דקה בטלפון, והדיבור הופך לטקסט בעברית. ושורה אחת: מה היה טוב היום. היומן נשמר רק בטלפון שלך. חינם.",
+  "og_title": "יומן קול – מדברים, ומקבלים טקסט",
+  "crumbs": [["יומן קול", null]]
+} -->
+<header class="k-hero">
+  <h1>יומן קול</h1>
+  <p class="sub">כשקשה לכתוב, אפשר פשוט לדבר. חצי דקה, מה שעולה. וזה הופך לטקסט, ונשמר ביומן שלך.</p>
+</header>
+
+<div class="tool" id="yoman">
+  <div class="rec">
+    <button class="rec-btn" type="button" id="y-rec">🎙<br>להקליט</button>
+    <p class="status" id="y-status" role="status" aria-live="polite">לוחצים, מדברים, ולוחצים שוב לסיום. עד 3 דקות.</p>
+    <button class="btn btn-line btn-sm" type="button" id="y-retry" hidden>לנסות לתמלל שוב</button>
+  </div>
+
+  <div class="lead-form">
+    <div class="field"><label for="y-text">מה היה היום <span class="opt">(אפשר גם לכתוב, או לתקן מילה)</span></label>
+      <textarea id="y-text" maxlength="4000" placeholder="הטקסט מההקלטה יופיע כאן"></textarea></div>
+    <div class="field"><label for="y-good">🌱 שורה אחת: מה היה טוב היום? <span class="opt">(גם משהו קטן)</span></label>
+      <input id="y-good" type="text" maxlength="140" placeholder="למשל: שתיתי קפה במרפסת בשקט"></div>
+    <button class="big-btn" type="button" id="y-save">לשמור ביומן</button>
+    <p class="saved" id="y-saved" role="status"></p>
+  </div>
+
+  <section style="margin-top:1.4rem">
+    <h2 style="font-family:var(--serif);color:var(--cream);font-size:1.35rem;text-align:center">היומן שלך</h2>
+    <div class="entries" id="y-list"></div>
+  </section>
+
+  <div class="local-note"><span class="ic2">🔒</span><span>היומן נשמר רק בטלפון שלך. ההקלטה נשלחת לתמלול בענן (שרת של המיזם), חוזרת כטקסט, ולא נשמרת שם. בלי אינטרנט אפשר לכתוב, והיומן עצמו עובד.</span></div>
+  <div class="data-acts"><button class="linkish" type="button" data-export="yoman" data-name="יומן קול">לשמור עותק של היומן לקובץ</button><button class="linkish" type="button" data-wipe="yoman">למחוק את היומן מהטלפון</button></div>
+  <p class="note" style="text-align:center;margin-top:.8rem">צריך לתמלל הקלטה ארוכה, שיחה או שיעור? <a class="gold" href="/kelim/tamlul/">כלי התמלול המלא</a></p>
+</div>
+
+{{N:help}}
+{{N:foot:יומן קול: מדברים חצי דקה, ומקבלים טקסט בעברית. יומן שנשמר רק בטלפון. חינם}}
+{{N:join}}
