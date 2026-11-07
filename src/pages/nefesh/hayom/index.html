@@ -1,0 +1,63 @@
+<!--meta {
+  "site": "nefesh",
+  "nav": "hayom",
+  "tool": "hayom",
+  "title": "הדבר החשוב של היום – דבר אחד, בלי רשימות ארוכות | נפש ויום-יום",
+  "description": "כותבים דבר אחד שחשוב היום, וצעד קטן ראשון. הוא נשאר למעלה, עם תזכורת עדינה ביומן אם רוצים. בלי רשימות, בלי אשמה. חינם, נשמר רק בטלפון.",
+  "og_title": "הדבר החשוב של היום",
+  "crumbs": [["הדבר החשוב של היום", null]]
+} -->
+<header class="k-hero">
+  <h1>הדבר החשוב של היום</h1>
+  <p class="sub">דבר אחד. לא עשרה. כשהראש עמוס, מספיק לדעת מה הכי חשוב, ואת הצעד הקטן הראשון.</p>
+</header>
+
+<div class="tool" id="focus">
+  <div class="tip" id="f-yesterday" hidden style="margin-bottom:1rem">
+    <p>אתמול הדבר החשוב היה: <b id="f-yesterday-what"></b>. זה בסדר שזה עוד לא קרה.</p>
+    <button class="btn btn-line btn-sm" type="button" id="f-carry" style="margin-top:.5rem">להמשיך איתו היום</button>
+  </div>
+
+  <form id="focus-form" class="lead-form panel">
+    <div class="field"><label for="f-in">מה הדבר האחד שהכי חשוב היום?</label>
+      <input id="f-in" type="text" maxlength="90" required placeholder="למשל: להתקשר לקופת חולים"></div>
+    <div class="field"><label for="f-step">מה הצעד הכי קטן כדי להתחיל? <span class="opt">(לא חובה)</span></label>
+      <input id="f-step" type="text" maxlength="90" placeholder="למשל: למצוא את המספר ולשים את הטלפון ליד"></div>
+    <button class="big-btn" type="submit">זה הדבר של היום</button>
+    <p class="note">רק דבר אחד. כל השאר יכול לחכות, וזה בסדר.</p>
+  </form>
+
+  <div class="focus-card" id="focus-card" hidden aria-live="polite">
+    <div class="lbl">🎯 הדבר החשוב של היום</div>
+    <div class="what" id="f-what"></div>
+    <div class="next" id="f-next"></div>
+    <div class="btn-row two">
+      <button class="big-btn calm" type="button" id="f-done">עשיתי את זה ✓</button>
+      <button class="big-btn soft" type="button" id="f-change">לשנות</button>
+    </div>
+    <button class="linkish" type="button" id="f-undo" hidden style="margin-top:.8rem">עוד לא, להחזיר</button>
+  </div>
+
+  <div id="f-remind-wrap" class="edit-box" style="margin-top:1rem">
+    <p style="font-weight:700;color:var(--cream)">תזכורת עדינה, פעם אחת</p>
+    <p class="note">בוחרים שעה, וזה נכנס ליומן שלך עם התראה.</p>
+    <div class="field" style="margin-top:.5rem"><label for="f-time">באיזו שעה להזכיר?</label><input id="f-time" type="time" value="18:00"></div>
+    <div class="btn-row two">
+      <a class="btn btn-gold" href="#" id="f-gcal" target="_blank" rel="noopener">ליומן גוגל</a>
+      <button class="btn btn-line" type="button" id="f-ics">ליומן בטלפון (אייפון וכל יומן)</button>
+    </div>
+  </div>
+
+  <section style="margin-top:1.4rem;text-align:center">
+    <h2 style="font-family:var(--serif);color:var(--cream);font-size:1.3rem">השבוע שלך</h2>
+    <p class="note">✓ ביום שבו הדבר החשוב קרה. לא תחרות. רק לראות שגם ימים קשים עוברים.</p>
+    <div class="week" id="f-week"></div>
+  </section>
+
+  <div class="local-note"><span class="ic2">🔒</span><span>נשמר רק בטלפון שלך. אף אחד לא רואה, גם לא אני.</span></div>
+  <div class="data-acts"><button class="linkish" type="button" data-export="focus,focus-log" data-name="הדבר החשוב">לשמור עותק לקובץ</button><button class="linkish" type="button" data-wipe="focus,focus-log">למחוק מהטלפון</button></div>
+</div>
+
+{{N:help}}
+{{N:foot:הדבר החשוב של היום: דבר אחד, בלי רשימות ארוכות, עם צעד קטן ראשון. כלי חינמי}}
+{{N:join}}

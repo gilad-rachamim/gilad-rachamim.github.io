@@ -1,0 +1,72 @@
+<!--meta {
+  "site": "nefesh",
+  "nav": "rega",
+  "tool": "rega",
+  "title": "רגע קשה – נשימה, המילים שלך, אנשים וקווי תמיכה | נפש ויום-יום",
+  "description": "מסך אחד לרגע של הצפה: נשימת 4-7-8 מונפשת, המשפטים שכתבת לעצמך, שלושה אנשים להתקשר, וקווי תמיכה (נפש אחת, ער\"ן, נט\"ל, סה\"ר). חינם, בלי הרשמה, עובד גם בלי אינטרנט.",
+  "og_title": "רגע קשה – מסך אחד לרגע של הצפה",
+  "crumbs": [["רגע קשה", null]]
+} -->
+<div class="rega" id="rega">
+  <h1>אני כאן איתך.</h1>
+  <p class="hello">לא צריך להסביר כלום.<br>בוא ניקח רגע, ביחד.</p>
+
+  <div class="breath" id="breath" aria-hidden="true"><span class="ring"></span><span class="ball"></span><span class="say"></span></div>
+  <p class="breath-cap" id="breath-cap" aria-live="polite">שואפים 4 שניות, מחזיקים 7, נושפים לאט 8.</p>
+  <button class="big-btn calm" type="button" id="breath-go">להתחיל לנשום ביחד</button>
+
+  <section class="rega-sec" aria-labelledby="w-h">
+    <h2 id="w-h">מה שכתבת לעצמך</h2>
+    <div class="mywords" id="mywords"><blockquote>זה רגע. הוא יעבור.</blockquote></div>
+  </section>
+
+  <section class="rega-sec" id="rega-letter" hidden aria-labelledby="l-h">
+    <h2 id="l-h">מכתב ממך, מרגע טוב</h2>
+    <div class="letter"></div>
+  </section>
+
+  <section class="rega-sec" aria-labelledby="p-h">
+    <h2 id="p-h">אפשר להתקשר</h2>
+    <div class="people" id="mypeople"></div>
+  </section>
+
+  <section class="rega-sec" aria-labelledby="h-h">
+    <h2 id="h-h">קווי תמיכה, בכל שעה</h2>
+    <div class="lines">
+      <a href="tel:*8944" data-line="8944"><b>*8944</b><span>נפש אחת</span><small>קו התמיכה לנכי צה"ל, ללוחמים ולהלומי קרב. 24 שעות.</small></a>
+      <a href="tel:1201" data-line="1201"><b>1201</b><span>ער"ן</span><small>עזרה ראשונה נפשית. 24 שעות.</small></a>
+      <a href="https://wa.me/972528451201" data-line="eran-wa"><b>💬</b><span>ער"ן בווטסאפ</span><small>052-845-1201, למי שקשה לדבר עכשיו.</small></a>
+      <a href="tel:*3362" data-line="3362"><b>*3362</b><span>נט"ל</span><small>סיוע נפשי לנפגעי טראומה על רקע לאומי, ולמשפחות.</small></a>
+      <a href="https://sahar.org.il" target="_blank" rel="noopener" data-line="sahar"><b>⌨️</b><span>סה"ר</span><small>שיחה בכתב, בצ'אט באתר, בלי שם.</small></a>
+      <a class="urgent" href="tel:101" data-line="101"><b>101</b><span>מד"א</span><small>אם יש סכנה עכשיו, לך או למישהו אחר.</small></a>
+    </div>
+    <p class="note" style="text-align:center;margin-top:.8rem">אם עולות מחשבות לפגוע בעצמך, אל תישאר עם זה לבד. להתקשר עכשיו, ולבקש ממישהו להיות לידך.</p>
+  </section>
+
+  <details class="edit-box" id="rega-edit-wrap">
+    <summary>להכין את המסך הזה מראש (ברגע טוב)</summary>
+    <form id="rega-edit" class="lead-form">
+      <p class="note">כותבים כשיש כוח, וזה מחכה כאן לרגע שצריך. הכול נשמר רק בטלפון שלך.</p>
+      <div class="field"><span class="label">משפטים שעוזרים לי <span class="opt">(במילים שלך)</span></span>
+        <div class="rows">
+          <input type="text" data-word maxlength="160" placeholder="למשל: הגוף זוכר. מותר לתת לזה להיות.">
+          <input type="text" data-word maxlength="160" placeholder="למשל: עברתי רגעים כאלה, ועברתי אותם.">
+          <input type="text" data-word maxlength="160" placeholder="למשל: לצאת לרגע החוצה. אוויר.">
+        </div></div>
+      <div class="field"><span class="label">שלושה אנשים שאפשר להתקשר אליהם</span>
+        <div class="rows">
+          <div class="row2"><input type="text" data-person="0" data-k="n" placeholder="שם" maxlength="40"><input type="tel" data-person="0" data-k="p" placeholder="טלפון" dir="ltr" style="text-align:right" maxlength="20"></div>
+          <div class="row2"><input type="text" data-person="1" data-k="n" placeholder="שם" maxlength="40"><input type="tel" data-person="1" data-k="p" placeholder="טלפון" dir="ltr" style="text-align:right" maxlength="20"></div>
+          <div class="row2"><input type="text" data-person="2" data-k="n" placeholder="שם" maxlength="40"><input type="tel" data-person="2" data-k="p" placeholder="טלפון" dir="ltr" style="text-align:right" maxlength="20"></div>
+        </div>
+        <button class="linkish" type="button" id="rega-import">להעתיק מ"מפת התמיכה"</button></div>
+      <button class="btn btn-gold btn-block" type="submit">לשמור בטלפון</button>
+      <p class="saved" id="rega-saved" role="status"></p>
+      <p class="note">רוצים גם מכתב שיחכה כאן? <a class="gold" href="/nefesh/michtav/">מכתב לעצמי לרגע הבא</a></p>
+    </form>
+    <div class="data-acts"><button class="linkish" type="button" data-export="words,people" data-name="רגע קשה">לשמור עותק לקובץ</button><button class="linkish" type="button" data-wipe="words,people">למחוק מהטלפון</button></div>
+  </details>
+</div>
+
+{{N:foot:רגע קשה: מסך אחד לרגע של הצפה. נשימה, המילים שלך, אנשים וקווי תמיכה. חינם, עובד גם בלי אינטרנט}}
+{{N:join:wait}}
