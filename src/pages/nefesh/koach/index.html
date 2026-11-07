@@ -1,0 +1,70 @@
+<!--meta {
+  "site": "nefesh",
+  "nav": "koach",
+  "tool": "koach",
+  "title": "מד כוח – כמה כוח יש היום, ומה מותר לדחות | נפש ויום-יום",
+  "description": "מסמנים כמה כוח יש היום, מ-1 עד 5, ובוחרים מה מותר לדחות בלי אשמה. גרף של השבוע, ושיתוף בקישור עם בן או בת הזוג, כדי שידעו בלי לשאול. חינם, נשמר בטלפון.",
+  "og_title": "מד כוח – כמה כוח יש היום",
+  "crumbs": [["מד כוח", null]]
+} -->
+<header class="k-hero">
+  <h1>מד כוח</h1>
+  <p class="sub">יש ימים עם כוח, ויש ימים בלי. כשיודעים כמה יש היום, קל יותר לבחור, ולשחרר.</p>
+</header>
+
+<div class="tool" id="koach">
+  <section class="shared-view" id="k-shared" hidden aria-live="polite" style="margin-bottom:1.4rem">
+    <h2 id="k-shared-h" style="font-family:var(--serif);color:var(--cream);font-size:1.35rem"></h2>
+    <div class="chart" id="k-shared-chart" style="margin-top:.7rem"></div>
+    <p id="k-shared-today" style="margin-top:.7rem;color:var(--parchment)"></p>
+    <p class="note" style="margin-top:.6rem">איך לעזור: בימים של 1-2, פחות שאלות ופחות תוכניות. אפשר להציע דבר אחד מוחשי ("אני אקנה היום", "אני אקח את הילדים"), ולהיות בסביבה. לא צריך לתקן, מספיק להיות שם. <a class="gold" href="/nefesh/mishpacha/#zug">עוד על זה</a></p>
+  </section>
+
+  <div class="panel lead-form">
+    <div class="field"><span class="label">כמה כוח יש לי היום?</span>
+      <div class="scale" id="k-scale" role="group" aria-label="כמה כוח, מ-1 עד 5">
+        <button type="button" data-v="1" aria-pressed="false"><b>1</b><span>כמעט אין</span></button>
+        <button type="button" data-v="2" aria-pressed="false"><b>2</b><span>מעט</span></button>
+        <button type="button" data-v="3" aria-pressed="false"><b>3</b><span>בינוני</span></button>
+        <button type="button" data-v="4" aria-pressed="false"><b>4</b><span>טוב</span></button>
+        <button type="button" data-v="5" aria-pressed="false"><b>5</b><span>הרבה</span></button>
+      </div>
+      <p id="k-advice" style="color:var(--parchment);min-height:1.5em"></p>
+    </div>
+    <div id="k-step2" hidden>
+      <div class="field"><span class="label">מה מותר לי לדחות היום?</span>
+        <div class="chips" id="k-defer">
+          <label><input type="checkbox" value="סידורים"> סידורים</label>
+          <label><input type="checkbox" value="טלפונים"> טלפונים</label>
+          <label><input type="checkbox" value="לענות להודעות"> לענות להודעות</label>
+          <label><input type="checkbox" value="ניקיון"> ניקיון</label>
+          <label><input type="checkbox" value="בישול"> בישול</label>
+          <label><input type="checkbox" value="אירוע או מפגש"> אירוע או מפגש</label>
+          <label><input type="checkbox" value="ניירת"> ניירת</label>
+          <label><input type="checkbox" value="עבודה או לימודים"> עבודה או לימודים</label>
+        </div></div>
+      <div class="field" style="margin-top:.7rem"><label for="k-other">עוד משהו? <span class="opt">(לא חובה)</span></label><input id="k-other" type="text" maxlength="60"></div>
+      <button class="big-btn" type="button" id="k-save" style="margin-top:.9rem">לשמור את היום</button>
+      <p class="saved" id="k-saved" role="status"></p>
+    </div>
+  </div>
+
+  <section style="margin-top:1.4rem">
+    <h2 style="font-family:var(--serif);color:var(--cream);font-size:1.35rem;text-align:center">השבוע שלי</h2>
+    <div class="chart" id="k-chart" style="margin-top:.6rem"></div>
+  </section>
+
+  <section class="edit-box" style="margin-top:1.2rem">
+    <p style="font-weight:700;color:var(--cream)">לשתף עם בן או בת הזוג</p>
+    <p class="note">שולחים קישור בווטסאפ, והם רואים את הגרף של השבוע ומה מותר לדחות היום. בלי חשבון, בלי אפליקציה. כל פעם שרוצים לעדכן, שולחים שוב.</p>
+    <div class="field" style="margin-top:.5rem"><label for="k-name">השם שלך, שיופיע אצלם <span class="opt">(לא חובה)</span></label><input id="k-name" type="text" maxlength="30"></div>
+    <a class="btn btn-gold btn-block" href="#" id="k-share" target="_blank" rel="noopener" style="margin-top:.7rem"><svg class="ic"><use href="#wa"/></svg> לשלוח את השבוע שלי</a>
+  </section>
+
+  <div class="local-note"><span class="ic2">🔒</span><span>נשמר רק בטלפון שלך. בשיתוף, השבוע נכנס לתוך הקישור עצמו, ורק מי שמקבל אותו רואה.</span></div>
+  <div class="data-acts"><button class="linkish" type="button" data-export="koach" data-name="מד כוח">לשמור עותק לקובץ</button><button class="linkish" type="button" data-wipe="koach,koach-name">למחוק מהטלפון</button></div>
+</div>
+
+{{N:help}}
+{{N:foot:מד כוח: כמה כוח יש היום, מה מותר לדחות, ושיתוף עם בן או בת הזוג. כלי חינמי}}
+{{N:join}}

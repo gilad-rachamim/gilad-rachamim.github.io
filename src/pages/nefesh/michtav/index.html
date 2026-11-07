@@ -1,0 +1,54 @@
+<!--meta {
+  "site": "nefesh",
+  "nav": "michtav",
+  "tool": "michtav",
+  "title": "מכתב לעצמי לרגע הבא – כותבים כשטוב, קוראים כשקשה | נפש ויום-יום",
+  "description": "ברגע טוב כותבים מכתב לעצמך. כשלא בסדר, לוחצים על כפתור אחד, והמכתב שלך מחכה. המכתבים נשמרים רק בטלפון, ומופיעים גם במסך רגע קשה. חינם.",
+  "og_title": "מכתב לעצמי לרגע הבא",
+  "crumbs": [["מכתב לעצמי", null]]
+} -->
+<header class="k-hero">
+  <h1>מכתב לעצמי לרגע הבא</h1>
+  <p class="sub">ברגע טוב יודעים דברים שברגע קשה שוכחים. כותבים אותם עכשיו, והם יחכו לך.</p>
+</header>
+
+<div class="tool" id="michtav">
+  <button class="big-btn calm" type="button" id="m-bad">לא בסדר עכשיו. להראות לי מכתב</button>
+  <p class="note" id="m-count" style="text-align:center;margin-top:.5rem"></p>
+
+  <section id="m-show" hidden style="margin-top:1rem" aria-live="polite">
+    <div class="letter"></div>
+    <div class="btn-row two">
+      <button class="btn btn-line" type="button" id="m-more" hidden>מכתב נוסף</button>
+      <a class="btn btn-line" href="/nefesh/rega/">למסך רגע קשה</a>
+    </div>
+  </section>
+
+  <form id="m-form" class="panel lead-form" style="margin-top:1.4rem">
+    <div class="field"><label for="m-text">לכתוב מכתב חדש</label>
+      <textarea id="m-text" maxlength="2000" required style="min-height:10rem" placeholder="היי. אני כותב לך מיום טוב. אני רוצה שתזכור ש..."></textarea></div>
+    <div class="field"><label for="m-to">למתי? <span class="opt">(לא חובה)</span></label>
+      <select id="m-to"><option value="">לכל רגע קשה</option><option>כשאני מוצף/ת</option><option>כשאני מרגיש/ה לבד</option><option>כשאין לי כוח</option><option>כשאני לא ישן/ה</option><option>כשאני כועס/ת על עצמי</option></select></div>
+    <details class="note"><summary style="cursor:pointer;color:var(--gold)">לא יודע/ת מה לכתוב?</summary>
+      <ul style="padding-inline-start:1.2rem;margin-top:.5rem;display:grid;gap:.3rem">
+        <li>מה עזר לך בפעם הקודמת שהיה קשה?</li>
+        <li>מי אוהב אותך, ומה הוא היה אומר לך עכשיו?</li>
+        <li>משהו שעברת, ועברת אותו.</li>
+        <li>דבר אחד קטן שאפשר לעשות כשקשה: מים, אוויר, להתקשר.</li>
+      </ul></details>
+    <button class="big-btn" type="submit">לשמור את המכתב</button>
+    <p class="saved" id="m-saved" role="status"></p>
+  </form>
+
+  <section style="margin-top:1.4rem">
+    <h2 style="font-family:var(--serif);color:var(--cream);font-size:1.3rem;text-align:center">המכתבים שלי</h2>
+    <div class="entries" id="m-list"></div>
+  </section>
+
+  <div class="local-note"><span class="ic2">🔒</span><span>המכתבים נשמרים רק בטלפון שלך. המכתב האחרון מופיע גם ב<a class="gold" href="/nefesh/rega/">מסך רגע קשה</a>.</span></div>
+  <div class="data-acts"><button class="linkish" type="button" data-export="letters" data-name="מכתבים">לשמור עותק לקובץ</button><button class="linkish" type="button" data-wipe="letters">למחוק מהטלפון</button></div>
+</div>
+
+{{N:help}}
+{{N:foot:מכתב לעצמי לרגע הבא: כותבים כשטוב, וקוראים כשקשה. כלי חינמי}}
+{{N:join}}
