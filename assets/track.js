@@ -1,5 +1,7 @@
 // מעקב Google Analytics 4: אירועי המרה (לידים, ווטסאפ, טלפון, איש קשר, PDF).
 // נטען רק כש-GA_ID מוגדר ב-build.py. בלי gtag – לא עושה כלום.
+// הכלים של גילעד רחמים (/kelim/, /kodesh/): האירועים tool_use{site,tool}, tool_install, request_tool, donate_click, share
+// נשלחים מ-assets/kelim.js (window.toolUsed / window.kelimEv), שנטען רק בדפים האלה.
 (function () {
   function ev(name, params) { if (window.gtag) window.gtag('event', name, params || {}); }
   // פלייליסט לברית: אירוע נפרד לכל סגנון (playlist_dati וכו'), כדי שבדוח האירועים יופיעו חמש שורות בלי שום הגדרה.

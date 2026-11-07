@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}}</title>
+<meta name="description" content="{{description}}">
+<link rel="canonical" href="{{url}}">
+{{robots}}
+<meta property="og:type" content="website">
+<meta property="og:locale" content="he_IL">
+<meta property="og:site_name" content="{{site_name}}">
+<meta property="og:title" content="{{og_title}}">
+<meta property="og:description" content="{{description}}">
+<meta property="og:image" content="https://gilad-rachamim.github.io/assets/{{og_image}}">
+<meta property="og:url" content="{{url}}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="{{theme}}">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/icon-{{site}}-192.png">
+<link rel="manifest" href="{{site_home}}manifest.webmanifest">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/kelim.css">
+{{head}}
+</head>
+<body class="site-{{site}} {{body_class}}" data-site="{{site}}" data-tool="{{tool}}" data-home="{{site_home}}">
+{{sprite}}
+<a class="skip" href="#main">דילוג לתוכן</a>
+<header class="topbar">
+  <div class="in">
+    <a class="brand" href="{{site_home}}"><img src="/assets/icon-{{site}}-192.png" alt="" width="192" height="192"><b>{{site_name}}</b></a>
+    <nav class="topnav" aria-label="ניווט ראשי">{{nav}}</nav>
+  </div>
+</header>
+{{crumbs}}
+<main id="main">
+{{content}}
+</main>
+<footer class="site-foot">
+  <div class="cols">
+    <div><b>הכלים של גילעד רחמים</b><a href="/kelim/">דף הבית של המיזם</a><a href="/kelim/#sipur">הסיפור</a><a href="/kelim/#tchumim">כל התחומים</a><a href="/kelim/#mi">מי אני</a></div>
+    <div><b>כלים פתוחים</b><a href="/kelim/tamlul/">תמלול מהטלפון</a><a href="/kodesh/">כלי קודש</a><a href="/kodesh/taarichim/">מחשבון תאריכים</a><a href="/kodesh/mohalim/">כלים למוהלים</a></div>
+    <div><b>להשתתף</b><a href="/kelim/#rotzim">רוצים כלי? ספרו לי</a><a href="/kelim/#litmoch">לתמוך במיזם</a><a href="/kelim/#truma">רוצים לתרום?</a></div>
+    <div><b>יצירת קשר</b><a href="https://wa.me/972584049049">ווטסאפ</a><a href="tel:+972584049049">058-404-9049</a><a href="/mohel/privacy/">פרטיות</a><a href="/mohel/negishut/">הצהרת נגישות</a></div>
+  </div>
+  <div class="end"><span>בס"ד · {{site_name}} · מיזם של גילעד רחמים אביעד</span><span>כלים פשוטים, בחינם, באהבה</span></div>
+</footer>
+<div class="install-bar" id="install-bar" hidden>
+  <span>להתקין את {{site_short}} בטלפון, כמו אפליקציה</span>
+  <button class="btn btn-gold btn-sm" type="button" data-install>להתקין</button>
+  <button class="x" type="button" data-install-close aria-label="סגירה">×</button>
+</div>
+<script src="/assets/kelim.js" defer></script>
+{{foot}}
+</body>
+</html>
