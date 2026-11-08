@@ -108,6 +108,9 @@
     $('tf-ready').hidden = false;
   }
 
+  // קישור לתפריט שנפתח באותו דף (רק ה-# משתנה): טוענים מחדש כדי לעבור לתצוגה
+  window.addEventListener('hashchange', function () { if (/#[zd]=/.test(location.hash)) location.reload(); });
+
   // ---------- מצב תצוגה: הגיעו מקישור ----------
   var m = location.hash.match(/#([zd])=([\w-]+)/);
   if (m) {
