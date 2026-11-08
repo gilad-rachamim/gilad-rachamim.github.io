@@ -1,0 +1,64 @@
+<!--meta {
+  "site": "kesef",
+  "nav": "halvaa",
+  "tool": "halvaa",
+  "title": "מחשבון הלוואה ומשכנתא – החזר חודשי, סך ריבית ומה אם | כלים לכסף",
+  "description": "מכניסים סכום, ריבית ושנים, ורואים החזר חודשי וכמה ריבית משלמים בסך הכול. שפיצר או קרן שווה, ומה קורה אם הריבית עולה, אם מקצרים שנים או מוסיפים כל חודש. חינם.",
+  "og_title": "מחשבון הלוואה ומשכנתא – החזר חודשי ומה אם",
+  "crumbs": [["מחשבון הלוואה", null]]
+} -->
+<header class="k-hero">
+  <h1>מחשבון הלוואה ומשכנתא</h1>
+  <p class="sub">כמה יוצא כל חודש, כמה ריבית משלמים בסך הכול, ומה קורה אם משנים משהו.</p>
+</header>
+
+<div class="tool" id="halvaa">
+  <section class="box">
+    <div class="field"><label for="h-amt">סכום ההלוואה (₪)</label><input id="h-amt" class="num-in" type="text" inputmode="decimal" placeholder="500,000"></div>
+    <div class="grid2" style="margin-top:.7rem">
+      <div class="field"><label for="h-rate">ריבית שנתית (%)</label><input id="h-rate" class="num-in" type="text" inputmode="decimal" placeholder="4.5"></div>
+      <div class="field"><label for="h-years">כמה שנים</label><input id="h-years" class="num-in" type="text" inputmode="decimal" placeholder="25"></div>
+    </div>
+    <div class="field" style="margin-top:.8rem"><span class="label">שיטת החזר</span>
+      <div class="seg" id="h-method" role="group" aria-label="שיטת החזר">
+        <button type="button" data-m="spitzer" aria-pressed="true">שפיצר (החזר קבוע)</button>
+        <button type="button" data-m="keren" aria-pressed="false">קרן שווה</button>
+      </div>
+      <p class="note" id="h-method-note" style="margin-top:.3rem">שפיצר: אותו סכום כל חודש. זו השיטה הנפוצה.</p>
+    </div>
+  </section>
+
+  <section class="sum" aria-live="polite">
+    <div class="lbl" id="h-pay-lbl">החזר חודשי</div>
+    <div class="big" id="h-pay">₪0</div>
+    <div class="sub2" id="h-pay-sub"></div>
+    <div class="bar2" id="h-bar" aria-hidden="true"></div>
+    <div class="stats">
+      <div><b id="h-int">₪0</b><span>סך הריבית</span></div>
+      <div><b id="h-total">₪0</b><span>סך הכול מחזירים</span></div>
+      <div><b id="h-ratio">0</b><span>על כל ₪1 שלוקחים</span></div>
+    </div>
+  </section>
+
+  <section class="box whatif" aria-labelledby="wi-h">
+    <h2 id="wi-h">מה אם?</h2>
+    <p class="note">מזיזים, ורואים מה משתנה לעומת מה שהכנסתם למעלה.</p>
+    <div class="slide"><label for="h-wrate">ריבית <b id="h-wrate-v"></b></label><input id="h-wrate" type="range" min="-3" max="3" step="0.25" value="1"></div>
+    <div class="slide"><label for="h-wyears">שנים <b id="h-wyears-v"></b></label><input id="h-wyears" type="range" min="-15" max="10" step="1" value="-5"></div>
+    <div class="slide"><label for="h-wextra">תוספת כל חודש <b id="h-wextra-v"></b></label><input id="h-wextra" type="range" min="0" max="3000" step="100" value="500"></div>
+    <table>
+      <thead><tr><th></th><th>החזר חודשי</th><th>סך ריבית</th><th>נגמר אחרי</th></tr></thead>
+      <tbody id="h-table"></tbody>
+    </table>
+  </section>
+
+  <details class="years box"><summary>פירוט לפי שנים</summary>
+    <div class="whatif"><table><thead><tr><th>שנה</th><th>שילמנו</th><th>מזה ריבית</th><th>נשאר חוב</th></tr></thead><tbody id="h-years-t"></tbody></table></div>
+  </details>
+
+  <div class="local-note"><span class="ic2">ℹ️</span><span>החשבון בריבית קבועה, בלי הצמדה למדד ובלי עמלות. במשכנתא אמיתית יש כמה מסלולים, וכל מסלול מתנהג אחרת. המספרים כאן עוזרים להבין את הסדר גודל.</span></div>
+  <div class="data-acts"><button class="linkish" type="button" data-wipe="halvaa">לנקות</button></div>
+</div>
+
+<p class="not-advice"><b>זה מחשבון, לא ייעוץ.</b> לפני שלוקחים הלוואה או משכנתא, כדאי לקבל הצעה מסודרת מהבנק ולהתייעץ עם יועץ מוסמך.</p>
+{{K:foot:מחשבון הלוואה ומשכנתא: החזר חודשי, סך ריבית, ומה קורה אם משנים. כלי חינמי}}

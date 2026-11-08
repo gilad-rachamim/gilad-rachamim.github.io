@@ -1,0 +1,63 @@
+<!--meta {
+  "site": "kesef",
+  "nav": "taktziv",
+  "tool": "taktziv",
+  "title": "תקציב משפחתי פשוט – כמה נשאר לנו לשבוע | כלים לכסף",
+  "description": "רושמים הכנסות והוצאות קבועות, ורואים מיד כמה נשאר לחודש, לשבוע וליום. שומרים לקובץ שנפתח באקסל. חינם, בלי הרשמה, נשמר רק בטלפון.",
+  "og_title": "תקציב משפחתי פשוט – כמה נשאר לנו לשבוע",
+  "crumbs": [["תקציב משפחתי", null]]
+} -->
+<header class="k-hero">
+  <h1>תקציב משפחתי פשוט</h1>
+  <p class="sub">מה נכנס, מה יוצא קבוע, וכמה נשאר לנו לשבוע. בלי טבלאות מסובכות.</p>
+</header>
+
+<div class="tool" id="taktziv">
+  <section class="box" aria-labelledby="in-h">
+    <h2 id="in-h">מה נכנס בחודש <small id="t-in-sum">₪0</small></h2>
+    <p class="note">משכורות, קצבאות, שכר דירה שמקבלים. אחרי מס, מה שנכנס לחשבון.</p>
+    <div class="lrows" id="t-in"></div>
+    <button class="add" type="button" data-add="in">+ עוד הכנסה</button>
+  </section>
+
+  <section class="box" aria-labelledby="fix-h">
+    <h2 id="fix-h">מה יוצא קבוע בחודש <small id="t-fix-sum">₪0</small></h2>
+    <p class="note">שכירות או משכנתא, חשבונות, ביטוחים, גן, הלוואות, מנויים. מה שיורד כל חודש.</p>
+    <div class="chips" id="t-fix-chips" aria-label="להוסיף מהר">
+      <button type="button">שכירות / משכנתא</button><button type="button">חשמל</button><button type="button">מים</button><button type="button">ארנונה</button><button type="button">ועד בית</button><button type="button">גז</button><button type="button">טלפון ואינטרנט</button><button type="button">ביטוחים</button><button type="button">גן / צהרון</button><button type="button">חוגים</button><button type="button">דלק ותחבורה</button><button type="button">החזר הלוואה</button><button type="button">חיסכון קבוע</button>
+    </div>
+    <div class="lrows" id="t-fix"></div>
+    <button class="add" type="button" data-add="fix">+ עוד הוצאה קבועה</button>
+  </section>
+
+  <section class="box" aria-labelledby="spent-h">
+    <h2 id="spent-h">מה כבר הוצאנו החודש</h2>
+    <p class="note">אוכל, קניות, בילויים. לא חובה: אם תמלאו, החשבון לשבוע יהיה לפי מה שנשאר עד סוף החודש.</p>
+    <div class="grid2" style="margin-top:.7rem">
+      <div class="field"><label for="t-spent">הוצאנו עד היום</label><input id="t-spent" class="num-in" type="text" inputmode="decimal" placeholder="0"></div>
+      <div class="field"><label for="t-save">רוצים לשים בצד</label><input id="t-save" class="num-in" type="text" inputmode="decimal" placeholder="0"></div>
+    </div>
+  </section>
+
+  <section class="sum" aria-live="polite">
+    <div class="lbl" id="t-week-lbl">נשאר לנו לשבוע</div>
+    <div class="big" id="t-week">₪0</div>
+    <div class="sub2" id="t-week-sub"></div>
+    <div class="bar2" id="t-bar" aria-hidden="true"></div>
+    <div class="stats">
+      <div><b id="t-left">₪0</b><span>נשאר לחודש</span></div>
+      <div><b id="t-day">₪0</b><span>ליום</span></div>
+      <div><b id="t-fixpct">0%</b><span>מההכנסה הולך לקבועות</span></div>
+    </div>
+  </section>
+
+  <button class="big-btn" type="button" id="t-csv">לשמור לקובץ שנפתח באקסל</button>
+  <button class="big-btn soft" type="button" id="t-print">להדפיס</button>
+  <p class="saved" id="t-saved" role="status"></p>
+
+  <div class="local-note"><span class="ic2">🔒</span><span>נשמר אוטומטית רק בטלפון שלך. שום מספר לא נשלח לשום מקום.</span></div>
+  <div class="data-acts"><button class="linkish" type="button" data-wipe="taktziv">למחוק מהטלפון</button></div>
+</div>
+
+<p class="not-advice"><b>זה מחשבון, לא ייעוץ.</b> החשבון לפי המספרים שהכנסתם בלבד.</p>
+{{K:foot:תקציב משפחתי פשוט: הכנסות, הוצאות קבועות, וכמה נשאר לנו לשבוע. כלי חינמי}}
