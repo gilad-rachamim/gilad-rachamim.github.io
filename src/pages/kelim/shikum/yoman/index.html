@@ -1,0 +1,44 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "shikum_yoman",
+  "title": "יומן פניות – מתי פניתי, למי, מה אמרו ומה הצעד הבא | הכלים של גילעד רחמים",
+  "description": "יומן פשוט לכל הפניות לאגף השיקום, לביטוח לאומי, לקופת החולים ולמילואים: תאריך, למי פניתי, עם מי דיברתי, מה נאמר, מספר פנייה והצעד הבא. תזכורת ביומן גוגל, ושליחה בווטסאפ. בחינם, נשמר רק בטלפון.",
+  "og_title": "יומן פניות – לא לאבד אף שיחה",
+  "priority": "0.7",
+  "crumbs": [["זכויות ושיקום", "/kelim/shikum/"], ["יומן פניות", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/shikum.css\">",
+  "foot": "<script src=\"/assets/shikum-yoman.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>יומן פניות</h1>
+  <p class="sub">"עם מי דיברתי שם? מה הוא אמר?" אחרי כל שיחה או מכתב, רושמים כאן שתי שורות. כשמתקשרים שוב, הכול מול העיניים.</p>
+</header>
+<div class="tool">
+  <div class="sk-note" id="yo-demo" hidden><span>זו דוגמה, כדי שיהיה ברור איך זה נראה. כשתוסיפו פנייה ראשונה, הדוגמה תימחק.</span><button class="btn btn-line btn-sm" type="button" id="yo-demo-x">למחוק את הדוגמה</button></div>
+  <form class="k-form" id="yo-form" novalidate>
+    <div class="sk-two">
+      <div class="field"><label for="yo-date">מתי?</label><input id="yo-date" type="date"></div>
+      <div class="field"><label for="yo-how">איך?</label><select id="yo-how"><option>טלפון</option><option>מייל</option><option>פגישה</option><option>מכתב</option><option>באתר או באפליקציה</option><option>ווטסאפ</option></select></div>
+    </div>
+    <div class="field"><label for="yo-to">למי פניתי?</label><input id="yo-to" type="text" maxlength="60" placeholder="אגף השיקום / ביטוח לאומי / קופת חולים…">
+      <div class="sk-chips" id="yo-chips"><button type="button">אגף השיקום</button><button type="button">ביטוח לאומי</button><button type="button">קופת החולים</button><button type="button">הרופא</button><button type="button">עובדת סוציאלית</button><button type="button">המילואים</button></div></div>
+    <div class="field"><label for="yo-who">עם מי דיברתי? <span class="opt">(לא חובה)</span></label><input id="yo-who" type="text" maxlength="60" placeholder="דנה, מוקד טלפוני"></div>
+    <div class="field"><label for="yo-what">מה נאמר?</label><textarea id="yo-what" maxlength="600" placeholder="אמרו שהטופס התקבל ושתהיה תשובה בדואר"></textarea></div>
+    <div class="field"><label for="yo-ref">מספר פנייה <span class="opt">(לא חובה, לא מספר זהות)</span></label><input id="yo-ref" type="text" maxlength="40" placeholder="כתוב במכתב או נאמר בשיחה"></div>
+    <div class="sk-two">
+      <div class="field"><label for="yo-next">הצעד הבא <span class="opt">(לא חובה)</span></label><input id="yo-next" type="text" maxlength="120" placeholder="לבדוק אם הגיע מכתב"></div>
+      <div class="field"><label for="yo-due">עד מתי? <span class="opt">(לא חובה)</span></label><input id="yo-due" type="date"></div>
+    </div>
+    <button class="btn btn-gold" type="submit">לשמור ביומן</button>
+    <p class="res" id="yo-msg" aria-live="polite"></p>
+  </form>
+  <section class="sk-wait" id="yo-wait-s"><h2>מחכה לי</h2><div id="yo-wait"></div></section>
+  <section class="sk-log"><h2>כל הפניות</h2><div id="yo-list"></div></section>
+  <div class="sk-tools">
+    <a class="btn btn-gold btn-sm" href="#" id="yo-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את כל היומן</a>
+    <button class="btn btn-line btn-sm" type="button" id="yo-copy">להעתיק</button>
+  </div>
+  <p class="disclaimer">היומן עוזר לזכור ולהתארגן. מה מגיע ומה הצעד הנכון – שואלים את הגורם המטפל. לא כותבים כאן מספר זהות או סיסמאות. הכול נשמר רק בטלפון הזה.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="יומן פניות: מתי פניתי, למי, מה אמרו ומה הצעד הבא. בחינם, נשמר בטלפון:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
