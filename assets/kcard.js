@@ -12,7 +12,7 @@
     stone: { bg1: '#2a2c30', bg2: '#3d4046', frame: '#b9b4a8', title: '#ece8de', text: '#e2ded4', sub: '#b9b4a8', foot: '#9a968c' },
     paper: { bg1: '#fbfaf7', bg2: '#efede8', frame: '#55524b', title: '#2b2925', text: '#2b2925', sub: '#6b675e', foot: '#77736a' }
   };
-  var SIZES = { square: [1080, 1080], story: [1080, 1920], wide: [1200, 630], a5: [1240, 1754] };
+  var SIZES = { square: [1080, 1080], story: [1080, 1920], wide: [1200, 630], a5: [1240, 1754], a4l: [1754, 1240] };
 
   function init(o) {
     var $ = function (id) { return document.getElementById(id); };
@@ -61,7 +61,9 @@
       ctx.direction = 'rtl';
       if (o.bsd !== false) { ctx.textAlign = 'right'; ctx.fillStyle = th.sub; ctx.font = '600 26px ' + SANS; ctx.fillText('בס"ד', W - M - 20, M + 40); }
       ctx.textAlign = 'center';
+      if (o.decor) o.decor(api, th, W, H, M);
       o.draw(api, th, W, H, M);
+      if (o.foot === false) return;
       ctx.textAlign = 'center'; ctx.fillStyle = th.foot; ctx.font = '400 22px ' + SANS;
       ctx.fillText(val('foot') || 'נוצר בחינם בכלי קודש', W / 2, H - M - (H < 800 ? 18 : 30));
     }
