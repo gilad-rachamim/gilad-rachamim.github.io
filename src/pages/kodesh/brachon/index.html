@@ -1,0 +1,57 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "brachon",
+  "title": "ברכונים להדפסה עם הקדשה: ברכת המזון, קריאת שמע שעל המיטה, מעין שלוש | כלי קודש",
+  "description": "ברכון מעוצב להדפסה עם עמוד הקדשה למזכרת: לבר מצווה, לבת מצווה, לחתונה, לברית ולכל שמחה. ברכת המזון, קריאת שמע שעל המיטה, מעין שלוש ותפילת הדרך, בנוסח אשכנז, ספרד ועדות המזרח. שלושה סגנונות, A5 או A6. בחינם.",
+  "og_title": "ברכונים להדפסה, עם הקדשה לשמחה",
+  "priority": "0.7",
+  "crumbs": [["ברכונים להדפסה", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/brachon.css\">",
+  "foot": "<script src=\"/assets/brachon-data.js\" defer></script><script src=\"/assets/brachon.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>ברכונים להדפסה</h1>
+  <p class="sub">בוחרים ברכון, נוסח וסגנון, כותבים הקדשה לשמחה, ומדפיסים. מזכרת יפה לאורחים בבר מצווה, בחתונה, בברית ובכל אירוע.</p>
+</header>
+<div class="tool">
+  <form class="k-form" id="br-form" onsubmit="return false">
+    <div class="br-row">
+      <div class="field"><label for="br-kind">איזה ברכון?</label><select id="br-kind" name="kind">
+        <option value="mazon">ברכת המזון</option><option value="kol">ברכון לאירוע (ברכת המזון ועוד)</option><option value="shema">קריאת שמע שעל המיטה</option><option value="meein">ברכה מעין שלוש</option><option value="haderech">תפילת הדרך</option></select></div>
+      <div class="field"><label for="br-nus">נוסח</label><select id="br-nus" name="nus"><option value="ash">אשכנז</option><option value="sef">ספרד (חסידי)</option><option value="em">עדות המזרח</option></select></div>
+    </div>
+    <p class="disclaimer" id="br-miss" hidden></p>
+    <label class="check" id="br-brit-wrap" hidden><input type="checkbox" name="brit"> <span>להוסיף "הרחמן" לסעודת ברית מילה</span></label>
+    <fieldset class="br-styles"><legend>סגנון</legend>
+      <label><input type="radio" name="st" value="blue" checked><span class="sw sw-blue"></span>כחול וזהב</label>
+      <label><input type="radio" name="st" value="klaf"><span class="sw sw-klaf"></span>קלף</label>
+      <label><input type="radio" name="st" value="black"><span class="sw sw-black"></span>שחור וזהב</label>
+    </fieldset>
+    <div class="br-row">
+      <div class="field"><label for="br-size">גודל</label><select id="br-size" name="size"><option value="a5" selected>A5 – חצי דף</option><option value="a6">A6 – רבע דף, כיס</option><option value="a4">A4 – דף מלא</option></select></div>
+      <div class="field"><label class="check" style="margin-top:1.9rem"><input type="checkbox" name="big"> <span>אותיות גדולות</span></label></div>
+    </div>
+    <h3 class="br-h">הקדשה <span class="opt">(לא חובה, נכנסת לעמוד הראשון)</span></h3>
+    <div class="br-row">
+      <div class="field"><label for="br-event">לאיזו שמחה?</label><select id="br-event" name="event">
+        <option value="none">בלי שורת אירוע</option><option value="barmitzva">בר מצווה</option><option value="batmitzva">בת מצווה</option><option value="chatuna">חתונה</option><option value="sheva">שבע ברכות</option><option value="brit">ברית מילה</option><option value="bat">הולדת בת</option><option value="bayit">חנוכת בית</option><option value="siyum">סיום מסכת</option><option value="other">משהו אחר (כותבים)</option></select></div>
+      <div class="field" id="br-eventtxt-wrap" hidden><label for="br-eventtxt">שורת האירוע</label><input id="br-eventtxt" name="eventtxt" type="text" maxlength="60" placeholder="לרגל ..."></div>
+    </div>
+    <div class="field"><label for="br-names">שמות</label><input id="br-names" name="names" type="text" maxlength="70" placeholder="יוסף ורחל כהן · או: נתנאל בן יעקב ושרה"></div>
+    <div class="field"><label for="br-date">תאריך</label><input id="br-date" name="date" type="text" maxlength="50" placeholder="ט&quot;ו בשבט תשפ&quot;ז"></div>
+    <div class="field"><label for="br-ded">משפט הקדשה <span class="opt">(לא חובה)</span></label><textarea id="br-ded" name="ded" rows="2" maxlength="200" placeholder="שנזכה לשמוח יחד בעוד הרבה שמחות"></textarea></div>
+    <div class="share-row"><button class="btn btn-gold" type="button" id="br-printbtn">🖨️ להדפיס או לשמור כ-PDF</button></div>
+    <p class="privacy"><span id="br-pages-note"></span>. בחלון ההדפסה: "שמירה כ-PDF" לקובץ, או מדפסת. כדאי לסמן "גרפיקת רקע" כדי שהצבעים של השער יודפסו. לבית דפוס: שומרים כ-PDF ושולחים.</p>
+  </form>
+</div>
+
+<div class="tool" id="br-prev-wrap">
+  <p class="br-prev-h">כך זה ייראה</p>
+  <div class="br-book st-blue sz-a5" id="br-book">
+    <div class="br-cover" id="br-cover"></div>
+    <div class="br-text" id="br-text"></div>
+  </div>
+  <p class="disclaimer">המילים והניקוד מספריא, מילה במילה: אשכנז מסידור "דעת" (מעין שלוש, בורא נפשות ותפילת הדרך) ומסידור "מצודה" (ברכת המזון וקריאת שמע שעל המיטה, ברישיון CC-BY), ספרד מסידור "תורת אמת", ועדות המזרח ממהדורת שלייסבו. השינוי היחיד: שם ה' נכתב ה', כי זה דף מודפס. בדיקה בקוד מוודאת שאף מילה לא השתנתה. בכל ספק הולכים לפי הסידור של הבית ומנהג המקום.</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/">כלי קודש</a>. עוד לשמחה: <a class="gold" href="/kodesh/album/">אלבום תמונות להדפסה</a> · <a class="gold" href="/kodesh/dapei-tefila/">דפי תפילה לאירוע</a> · <a class="gold" href="/kodesh/simcha/">הזמנות לכל שמחה</a>.</p>
+</div>

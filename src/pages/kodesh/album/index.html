@@ -1,0 +1,51 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "album",
+  "title": "אלבום תמונות להדפסה: בר מצווה, בת מצווה, חתונה וברית, PDF בחינם | כלי קודש",
+  "description": "מכינים אלבום תמונות מעוצב לבר מצווה, לבת מצווה, לחתונה או לברית: בוחרים תמונות, סגנון ותבנית עמוד, מוסיפים שמות, תאריך והקדשה, ומקבלים PDF להדפסה. התמונות לא עולות לשום שרת. בחינם.",
+  "og_title": "אלבום תמונות לשמחה, PDF להדפסה",
+  "priority": "0.7",
+  "crumbs": [["אלבום תמונות להדפסה", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/album.css\">",
+  "foot": "<script src=\"/assets/album.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>אלבום תמונות להדפסה</h1>
+  <p class="sub">לבר מצווה, לבת מצווה, לחתונה, לברית ולכל שמחה. בוחרים תמונות וסגנון, כותבים שמות והקדשה, ומקבלים PDF להדפסה בבית או בדפוס.</p>
+</header>
+<div class="tool">
+  <form class="k-form" id="al-form" onsubmit="return false">
+    <label class="al-drop" id="al-drop"><b>📷 לבחור תמונות</b><span>או לגרור לכאן. אפשר כמה ביחד.</span>
+      <input type="file" id="al-files" accept="image/*" multiple></label>
+    <p id="al-status" aria-live="polite"></p>
+    <ul class="al-thumbs" id="al-thumbs"></ul>
+    <div class="share-row" id="al-tools" hidden><span class="opt" style="align-self:center">☆ = תמונת השער · החצים מזיזים</span><button class="btn btn-line btn-sm" type="button" id="al-clear">להסיר את כל התמונות</button></div>
+    <div class="al-row" style="margin-top:1rem">
+      <div class="field"><label for="al-event">השמחה</label><select id="al-event" name="event"><option value="barmitzva">בר מצווה</option><option value="batmitzva">בת מצווה</option><option value="chatuna">חתונה</option><option value="brit">ברית מילה</option><option value="other">משהו אחר</option></select></div>
+      <div class="field"><label for="al-title">כותרת <span class="opt">(אפשר לשנות)</span></label><input id="al-title" name="title" type="text" maxlength="50" placeholder="לפי השמחה"></div>
+    </div>
+    <div class="field"><label for="al-names">שמות</label><input id="al-names" name="names" type="text" maxlength="60" placeholder="נתנאל · או: אליה ושירה"></div>
+    <div class="field"><label for="al-date">תאריך</label><input id="al-date" name="date" type="text" maxlength="50" placeholder="ראש חודש אדר תשפ&quot;ז"></div>
+    <fieldset class="al-styles"><legend>סגנון</legend>
+      <label><input type="radio" name="st" value="lavan" checked><span class="sw sw-lavan"></span>לבן וזהב</label>
+      <label><input type="radio" name="st" value="blue"><span class="sw sw-blue"></span>כחול וזהב</label>
+      <label><input type="radio" name="st" value="black"><span class="sw sw-black"></span>שחור וזהב</label>
+      <label><input type="radio" name="st" value="pastel"><span class="sw sw-pastel"></span>פסטל רך</label>
+    </fieldset>
+    <div class="al-row">
+      <div class="field"><label for="al-layout">תמונות בכל עמוד</label><select id="al-layout" name="layout"><option value="mix" selected>משתנה (1 עד 4)</option><option value="1">תמונה אחת</option><option value="2">שתיים</option><option value="3">שלוש</option><option value="4">ארבע</option></select></div>
+      <div class="field"><label for="al-size">גודל</label><select id="al-size" name="size"><option value="land" selected>A4 לרוחב</option><option value="port">A4 לאורך</option><option value="sq">ריבוע 21 על 21</option></select></div>
+    </div>
+    <label class="check"><input type="checkbox" name="fit"> <span>לא לחתוך את התמונות (כל התמונה נכנסת)</span></label>
+    <div class="field" style="margin-top:.8rem"><label for="al-ded">משפט לעמוד האחרון <span class="opt">(ברכה או הקדשה)</span></label><textarea id="al-ded" name="ded" rows="2" maxlength="220"></textarea></div>
+    <div class="share-row"><button class="btn btn-gold" type="button" id="al-printbtn">🖨️ לשמור כ-PDF או להדפיס</button></div>
+    <p class="privacy">התמונות לא עולות לשום שרת. הן נשארות בדפדפן שלך, ושום דבר לא נשמר אחרי שסוגרים את הדף. בחלון ההדפסה בוחרים "שמירה כ-PDF", ומסמנים "גרפיקת רקע" כדי שהצבעים יודפסו. את ה-PDF אפשר לשלוח לדפוס או לחנות צילום.</p>
+  </form>
+</div>
+
+<div class="tool" id="al-prev-wrap">
+  <p class="al-prev-h">כך זה ייראה <span id="al-count"></span></p>
+  <div class="al-book" id="al-book"></div>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/">כלי קודש</a>. עוד לשמחה: <a class="gold" href="/kodesh/brachon/">ברכונים להדפסה עם הקדשה</a> · <a class="gold" href="/kodesh/simcha/">הזמנות לכל שמחה</a> · <a class="gold" href="/kodesh/brachot/">ברכות לכל אירוע</a>.</p>
+</div>
