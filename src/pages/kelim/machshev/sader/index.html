@@ -42,14 +42,32 @@
     <h2 style="font-family:var(--serif);color:var(--cream);font-size:1.25rem">ככה זה ייראה מסודר</h2>
     <p id="sd-sum"></p>
     <p class="sd-newname">התיקייה החדשה: <b id="sd-newname"></b></p>
-    <p class="disclaimer">פותחים תיקייה כדי לראות מה בתוכה. אפשר להעביר תיקייה שלמה לתיקייה אחרת, או לבחור "לא להעתיק". ב"למיון – להחליט" וב"כפולים – לבדוק" אפשר להחליט על כל קובץ לבד.</p>
+    <div class="sd-opts">
+      <b class="sd-opts-h">איך לסדר</b>
+      <label class="sd-chk"><input type="checkbox" id="sd-o-keep"> <span><b>לשמור שמות של תיקיות</b> – תיקייה כמו "טיול באילת" נשארת שלמה בתוך השנה שלה (שמות כלליים כמו DCIM או "הורדות" לא נשמרים)</span></label>
+      <label class="sd-chk"><input type="checkbox" id="sd-o-ev"> <span><b>אירועים</b> – יום עם הרבה תמונות מקבל תיקייה משלו, ובחג גם את שם החג</span></label>
+      <label class="sd-chk"><input type="checkbox" id="sd-o-sim"> <span><b>תמונות דומות</b> – צילום רצף או תמונה ערוכה עוברים ל"דומים – לבדוק" <small id="sd-o-sim-note"></small></span></label>
+      <label class="sd-chk"><input type="checkbox" id="sd-o-ren"> <span><b>תאריך בתחילת השם</b> – "2023-05-12 – IMG_1234.jpg", כדי שהקבצים יסתדרו לפי הסדר. השם המקורי נשאר בסוף</span></label>
+      <details class="sd-rules-box"><summary><b>הכללים שלי</b> – מילה בשם הקובץ ← תיקייה</summary>
+        <p class="disclaimer">שורה לכל כלל. למשל:<br><code>ועד בית = בית/ועד בית</code><br><code>רכב, טסט, ביטוח רכב = רכב</code><br>הכללים קודמים לכל השאר, ונשמרים בדפדפן הזה לפעם הבאה.</p>
+        <textarea id="sd-rules" rows="4" aria-label="הכללים שלי" placeholder="ועד בית = בית/ועד בית"></textarea>
+        <div class="share-row"><button class="btn btn-line btn-sm" type="button" id="sd-rules-apply">להחיל את הכללים</button> <span class="note" id="sd-rules-n"></span></div>
+      </details>
+    </div>
+    <div id="sd-events" class="sd-events" hidden>
+      <b>אירועים שמצאתי</b> <span class="note">– אפשר לתת לכל אחד שם. התיקייה תיקרא כך.</span>
+      <ul id="sd-ev-list"></ul>
+    </div>
+    <p class="disclaimer">פותחים תיקייה כדי לראות מה בתוכה. אפשר להעביר תיקייה שלמה לתיקייה אחרת, או לבחור "לא להעתיק". ב"למיון", ב"כפולים" וב"דומים" אפשר להחליט על כל קובץ לבד.</p>
     <div id="sd-tree"></div>
+    <details class="sd-big"><summary><b>מה תופס הכי הרבה מקום</b> <span class="note" id="sd-big-sum"></span></summary><ol id="sd-big-list" class="sd-files"></ol></details>
     <div class="share-row">
       <button class="btn btn-gold" type="button" id="sd-to-folder" hidden>📂 להעתיק לתיקייה חדשה במחשב</button>
       <button class="btn btn-gold" type="button" id="sd-to-zip">⬇ להוריד מסודר כ-ZIP</button>
+      <button class="btn btn-line" type="button" id="sd-to-add" hidden>➕ להוסיף לתיקייה מסודרת שכבר יש לי</button>
       <button class="btn btn-line btn-sm" type="button" id="sd-back">לבחור משהו אחר</button>
     </div>
-    <p class="disclaimer">ב"להעתיק לתיקייה" בוחרים איפה ליצור את התיקייה החדשה, למשל "מסמכים" או שולחן העבודה. צריך מספיק מקום פנוי, כי זה עותק.</p>
+    <p class="disclaimer">ב"להעתיק לתיקייה" בוחרים איפה ליצור את התיקייה החדשה, למשל "מסמכים" או שולחן העבודה. צריך מספיק מקום פנוי, כי זה עותק. ב"להוסיף לתיקייה מסודרת" בוחרים תיקייה "… – מסודר" מפעם קודמת: קבצים שכבר נמצאים בה לא מועתקים שוב.</p>
   </section>
 
   <section id="sd-done" hidden>
@@ -70,9 +88,12 @@
   <h2 style="font-family:var(--serif);color:var(--cream);font-size:1.2rem;margin-top:1.6rem">איך הכלי מחליט</h2>
   <ul class="sd-how">
     <li><b>מסמכים אישיים</b> ו<b>קבלות וחשבוניות</b>: לפי מילים בשם הקובץ או התיקייה (תעודה, דרכון, קבלה, חשבונית, תלוש…).</li>
-    <li><b>שיעורים ותורה</b>: הקלטות, מסמכים וסרטונים עם מילים כמו שיעור, פרשת, הלכה, גמרא, דרשה.</li>
-    <li><b>תמונות</b> לפי שנה וחודש: מהתאריך של המצלמה, משם הקובץ, או מתאריך השינוי.</li>
+    <li><b>שיעורים ותורה</b>: הקלטות, מסמכים וסרטונים עם מילים כמו שיעור, הלכה, גמרא, דרשה. כשכתוב בשם פרשה ("פרשת נח") או מסכת ("מסכת ברכות"), כל אחת מקבלת תיקייה משלה, לפי הסדר.</li>
+    <li><b>תמונות וסרטונים</b> לפי שנה וחודש: מהתאריך שהמצלמה כתבה בתוך הקובץ (גם באייפון ובסרטונים), משם הקובץ, או מתאריך השינוי.</li>
+    <li><b>אירועים</b>: יום עם הרבה תמונות מקבל תיקייה משלו. אם זה חג, היא נקראת בשם החג.</li>
     <li><b>כפולים</b>: רק קובץ זהה לגמרי (אותו גודל ואותה "טביעת אצבע" של התוכן). עותק אחד נכנס למקום, והשאר בצד לבדיקה.</li>
+    <li><b>דומים</b>: תמונות שנראות כמעט אותו דבר. הגדולה נשארת במקום, השאר בצד לבדיקה.</li>
+    <li><b>בטלפון</b>: אחרי שמוסיפים את "הכלים" למסך הבית, אפשר לבחור תמונות בגלריה, ללחוץ "שיתוף" ולבחור "הכלים".</li>
     <li><b>למיון – להחליט</b>: קבצים בלי סיומת, סוגים לא מוכרים, וקבצי מערכת זמניים. הכלי לא מנחש בשבילכם.</li>
   </ul>
   <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מסדר תיקיות בחינם: מסדר את כל הקבצים לתיקיות, בלי למחוק כלום ובלי להעלות לשום מקום:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>

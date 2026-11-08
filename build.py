@@ -285,6 +285,9 @@ for key, site in SITES.items():
         "icons": [{"src": f"/assets/icon-{site['icon']}-192.png", "sizes": "192x192", "type": "image/png"},
                   {"src": f"/assets/icon-{site['icon']}-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}],
     }
+    if key == "kelim":  # "שיתוף" מהגלריה בטלפון ישר למסדר התיקיות (src/sw.js מקבל את הקבצים)
+        man["share_target"] = {"action": "/kelim/machshev/sader/?share=1", "method": "POST", "enctype": "multipart/form-data",
+                               "params": {"files": [{"name": "files", "accept": ["*/*"]}]}}
     (d / "manifest.webmanifest").write_text(json.dumps(man, ensure_ascii=False, indent=1), encoding="utf-8")
     pre = site_pages[key] + ["/assets/site.css", "/assets/kelim.css", "/assets/kelim.js", "/assets/track.js",
                              "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff",
