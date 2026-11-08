@@ -1,0 +1,75 @@
+/* מצגת ואלבום לאירוע (/kelim/tochen/matzeget/) */
+.mz-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+@media(max-width:520px){.mz-row{grid-template-columns:1fr}}
+.mz-photos{margin-top:1.4rem}
+.mz-photos h2,.mz-tabs{margin-top:1.2rem}
+.mz-add{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.mz-add label.btn{cursor:pointer}
+.mz-hint{font-size:.9rem;color:var(--muted,#9aa6bf);margin:.5rem 0}
+.mz-list{list-style:none;padding:0;margin:.6rem 0 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.6rem}
+.mz-list li{position:relative;border:1px solid var(--line);border-radius:12px;padding:.35rem;background:rgba(255,255,255,.03);touch-action:manipulation}
+.mz-list li.sortable-ghost{opacity:.35}
+.mz-list li.sortable-chosen{outline:2px solid #d4b062}
+.mz-list img{display:block;width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:grab;-webkit-user-drag:none;user-select:none}
+.mz-list .n{position:absolute;top:.5rem;right:.5rem;background:rgba(0,0,0,.65);color:#fff;font-size:.75rem;border-radius:99px;padding:.05rem .45rem}
+.mz-list .n.cover{background:#d4b062;color:#111}
+.mz-list input{width:100%;margin-top:.35rem;font-size:.85rem;padding:.3rem .4rem;border-radius:7px;border:1px solid var(--line);background:transparent;color:inherit}
+.mz-list .ctl{display:flex;justify-content:space-between;margin-top:.3rem;gap:.2rem}
+.mz-list .ctl button{flex:1;border:1px solid var(--line);background:transparent;color:inherit;border-radius:7px;font-size:.9rem;padding:.15rem 0;cursor:pointer}
+.mz-tabs{display:flex;gap:.4rem;border-bottom:1px solid var(--line)}
+.mz-tabs button{flex:1;background:transparent;border:1px solid var(--line);border-bottom:none;border-radius:12px 12px 0 0;padding:.65rem .4rem;font:inherit;font-weight:700;color:inherit;opacity:.65;cursor:pointer}
+.mz-tabs button[aria-selected=true]{opacity:1;background:rgba(212,176,98,.14);border-color:#d4b062}
+.mz-opts{margin-top:1rem}
+#mz-stage{display:flex;justify-content:center;margin-top:1rem}
+#mz-canvas{display:block;max-width:100%;max-height:70vh;width:auto;height:auto;border-radius:14px;border:1px solid var(--line);background:#000}
+.mz-info{text-align:center;color:var(--muted,#9aa6bf);font-size:.95rem;margin:.6rem 0 0}
+#mz-prog{width:100%;height:8px;margin-top:.6rem;accent-color:#d4b062}
+#mz-result{margin-top:1rem;text-align:center}
+#mz-result video{max-width:100%;max-height:70vh;border-radius:14px;background:#000}
+
+/* ---------- האלבום ---------- */
+.al-book{display:none;flex-direction:column;align-items:center;gap:1rem;padding:1rem 16px 2rem}
+.al-book.on{display:flex}
+.al-page{--al-bg:#fbf8f1;--al-ink:#2a2620;--al-acc:#a8843a;position:relative;width:min(100%,460px);aspect-ratio:210/297;background:var(--al-bg);color:var(--al-ink);container-type:inline-size;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.35);border-radius:4px;direction:rtl;font-family:"Assistant",Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.al-sq .al-page{aspect-ratio:1}
+.al-in{position:absolute;inset:6.5cqw;display:flex;flex-direction:column}
+.al-frame{position:absolute;inset:2.6cqw;border:.25cqw solid var(--al-acc);opacity:.45;pointer-events:none}
+.al-bsd{position:absolute;top:3.2cqw;right:4.2cqw;font-size:2.4cqw;opacity:.7}
+.al-pn{position:absolute;bottom:3cqw;left:0;right:0;text-align:center;font-size:2.2cqw;opacity:.6}
+.al-grid{flex:1;display:grid;gap:3cqw;min-height:0}
+.al-grid.l1{grid-template:1fr/1fr}
+.al-grid.l2{grid-template:1fr 1fr/1fr}
+.al-sq .al-grid.l2{grid-template:1fr/1fr 1fr}
+.al-grid.l3{grid-template:1.35fr 1fr/1fr 1fr}
+.al-grid.l3 figure:first-child{grid-column:1/3}
+.al-grid.l4{grid-template:1fr 1fr/1fr 1fr}
+.al-grid figure{margin:0;display:flex;flex-direction:column;min-height:0;min-width:0}
+.al-grid .ph{flex:1;min-height:0;position:relative;overflow:hidden;border-radius:1.2cqw;background:rgba(0,0,0,.06)}
+.al-grid .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 35%}
+.al-contain .al-grid .ph{background:transparent}
+.al-contain .al-grid .ph img{object-fit:contain;object-position:50% 50%}
+.al-grid figcaption{text-align:center;font-size:2.9cqw;line-height:1.35;padding-top:1.2cqw;min-height:0}
+.al-cover .al-in{justify-content:space-between;align-items:center;text-align:center}
+.al-cover .ph{width:100%;flex:1;min-height:0;position:relative;overflow:hidden;border-radius:50% 50% 1.2cqw 1.2cqw/22% 22% 1.2cqw 1.2cqw;margin-top:2cqw}
+.al-cover .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 35%}
+.al-sq.al-book .al-cover .ph{flex:none;height:52%}
+.al-cover .tx{padding:4cqw 0 1cqw}
+.al-cover .top{font-size:3.6cqw;letter-spacing:.06em;color:var(--al-acc);font-weight:700}
+.al-cover .nm{font-family:"Frank Ruhl Libre","David Libre",David,serif;font-weight:700;font-size:9.5cqw;line-height:1.15;margin:1.4cqw 0}
+.al-cover .dt{font-size:3.4cqw;opacity:.8}
+.al-orn{display:block;width:16cqw;height:.35cqw;background:var(--al-acc);margin:2.4cqw auto;border-radius:1cqw}
+.al-end .al-in{justify-content:center;align-items:center;text-align:center}
+.al-end .ph{width:46%;aspect-ratio:1;position:relative;overflow:hidden;border-radius:50%;margin-bottom:5cqw;border:.6cqw solid var(--al-acc)}
+.al-end .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 35%}
+.al-end .e1{font-family:"Frank Ruhl Libre","David Libre",David,serif;font-weight:700;font-size:6.4cqw;line-height:1.3;color:var(--al-acc);max-width:86%}
+.al-end .e2{font-size:3.6cqw;margin-top:2cqw;opacity:.85;max-width:86%}
+.al-end .cr{position:absolute;bottom:3cqw;left:0;right:0;text-align:center;font-size:2cqw;opacity:.5}
+
+@media print{
+  .topbar,.site-foot,.crumbs,.install-bar,.no-print,.skip{display:none!important}
+  html,body,main{background:#fff!important;margin:0!important;padding:0!important}
+  .al-book{display:block!important;padding:0!important;gap:0}
+  .al-page{width:210mm!important;height:297mm!important;aspect-ratio:auto;box-shadow:none;border-radius:0;break-after:page;page-break-after:always}
+  .al-sq .al-page{height:210mm!important}
+  .al-page:last-child{break-after:auto;page-break-after:auto}
+}
