@@ -223,7 +223,7 @@ for path in sorted(SRC.rglob("*.html")):
         "og_title": meta.get("og_title", meta["title"]),
         "og_image": meta.get("og_image", site["og"] if site else "og-mohel.jpg"),
         "robots": '<meta name="robots" content="noindex">' if meta.get("noindex") else "",
-        "head": GA + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root),
+        "head": meta.get("head_pre", "") + GA + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root),
         "body_class": meta.get("body_class", ""),
         "sprite": SPRITE,
         "wa": WA,
