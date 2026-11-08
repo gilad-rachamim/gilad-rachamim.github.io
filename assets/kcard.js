@@ -113,5 +113,52 @@
     if (ids.wa && $(ids.wa)) $(ids.wa).addEventListener('click', function (e) { e.currentTarget.href = 'https://wa.me/?text=' + encodeURIComponent(o.text(api)); used('wa_text'); });
     return api;
   }
-  window.KCard = { init: init, THEMES: THEMES };
+  // quote: ציור ישיר של "ציטוט גדול" (כמו בפוסט המעוצב) על קנבס, בלי טופס. משמש את "שבוע של תוכן" (/kodesh/shavua/).
+  // o: { theme, size, head, body, sig, foot, tag }
+  function quote(cv, o) {
+    var th = THEMES[o.theme] || THEMES.night, sz = SIZES[o.size] || SIZES.story, W = sz[0], H = sz[1], ctx = cv.getContext('2d');
+    cv.width = W; cv.height = H;
+    var g = ctx.createLinearGradient(0, 0, W, H); g.addColorStop(0, th.bg1); g.addColorStop(1, th.bg2);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    var M = 60;
+    ctx.strokeStyle = th.frame; ctx.lineWidth = 3; ctx.strokeRect(M / 2, M / 2, W - M, H - M);
+    ctx.lineWidth = 1; ctx.strokeRect(M / 2 + 10, M / 2 + 10, W - M - 20, H - M - 20);
+    ctx.direction = 'rtl';
+    ctx.textAlign = 'right'; ctx.fillStyle = th.sub; ctx.font = '600 26px ' + SANS; ctx.fillText('בס"ד', W - M - 20, M + 40);
+    if (o.tag) { ctx.textAlign = 'left'; ctx.font = '600 24px ' + SANS; ctx.fillText(o.tag, M + 20, M + 40); }
+    function wrap(text, font, maxW) {
+      ctx.font = font; var out = [];
+      String(text).split('\n').forEach(function (para) {
+        var words = para.split(/\s+/).filter(Boolean), line = '';
+        words.forEach(function (w) { var t = line ? line + ' ' + w : w; if (ctx.measureText(t).width > maxW && line) { out.push(line); line = w; } else line = t; });
+        if (line) out.push(line);
+      });
+      return out;
+    }
+    var maxW = W - 2 * M - 100, top = M + 90, bottom = H - M - (o.sig ? 150 : 90);
+    var hl = [], hfs = W > H ? 46 : 52;
+    if (o.head) hl = wrap(o.head, '700 ' + hfs + 'px ' + SERIF, maxW).slice(0, 2);
+    var hH = (hl.length ? hl.length * hfs * 1.2 + 50 : 0) + 90, fs, lines, lh, font;
+    for (fs = H > 1500 ? 84 : 70; fs >= 24; fs -= 2) {
+      font = '700 ' + fs + 'px ' + SERIF; lh = Math.round(fs * 1.45); lines = wrap(o.body, font, maxW);
+      if (lines.length * lh + hH <= bottom - top) break;
+    }
+    var maxL = Math.max(1, Math.floor((bottom - top - hH) / lh));
+    if (lines.length > maxL) { lines = lines.slice(0, maxL); lines[maxL - 1] += ' …'; }
+    var y = top + Math.max(0, (bottom - top - hH - lines.length * lh) / 2);
+    ctx.textAlign = 'center';
+    if (hl.length) {
+      ctx.fillStyle = th.sub; ctx.font = '700 ' + hfs + 'px ' + SERIF;
+      hl.forEach(function (l) { y += hfs * 1.2; ctx.fillText(l, W / 2, y); });
+      y += 22; ctx.fillStyle = th.frame; ctx.fillRect(W / 2 - 70, y, 140, 3); y += 28;
+    }
+    ctx.fillStyle = th.sub; ctx.font = '700 ' + Math.round(fs * 1.6) + 'px ' + SERIF; ctx.fillText('”', W / 2, y + fs * 1.3); y += fs * 1.2;
+    ctx.fillStyle = th.title; ctx.font = font;
+    lines.forEach(function (l) { ctx.fillText(l, W / 2, y + fs); y += lh; });
+    if (o.sig) { ctx.fillStyle = th.title; ctx.font = '700 40px ' + SERIF; ctx.fillText(o.sig, W / 2, H - M - 95); }
+    ctx.fillStyle = th.foot; ctx.font = '400 24px ' + SANS;
+    if (o.foot) ctx.fillText(o.foot, W / 2, H - M - 40);
+    return cv;
+  }
+  window.KCard = { init: init, THEMES: THEMES, quote: quote, SIZES: SIZES };
 })();

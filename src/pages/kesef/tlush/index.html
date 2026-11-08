@@ -68,6 +68,23 @@
     <ul id="p-ask-list"></ul>
   </section>
 
+  <section class="box">
+    <h2>תלוש מול תלוש</h2>
+    <p class="note">שומרים את התלוש של כל חודש, ורואים מה השתנה מהחודש הקודם.</p>
+    <div class="grid2" style="margin-top:.6rem;align-items:end">
+      <label class="field"><span>החודש של התלוש</span><input type="month" id="p-month"></label>
+      <button class="big-btn" type="button" id="p-keep" style="margin:0">לשמור את החודש</button>
+    </div>
+    <p class="saved" id="p-kept" role="status"></p>
+    <div id="p-hist-box" hidden>
+      <div class="cancel-box" id="p-diff" style="margin-top:.6rem"></div>
+      <div class="whatif"><table>
+        <thead><tr><th>חודש</th><th>ברוטו</th><th>נטו</th><th></th></tr></thead>
+        <tbody id="p-hist"></tbody>
+      </table></div>
+    </div>
+  </section>
+
   <button class="big-btn soft" type="button" id="p-print">להדפיס או לשמור כ-PDF</button>
 
   <div class="local-note"><span class="ic2">ℹ️</span><span>לפי החוק בישראל, נכון לנובמבר 2026: שכר מינימום 6,443.85 ₪ למשרה מלאה, 35.40 ₪ לשעה (מאפריל 2026). פנסיה חובה: 6% מהעובד, 6.5% תגמולים ועוד 6% פיצויים מהמעסיק. בענף שיש בו הסכם קיבוצי או צו הרחבה, יכול להגיע יותר.</span></div>
