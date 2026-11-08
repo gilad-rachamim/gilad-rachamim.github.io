@@ -1,7 +1,7 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'kelim-202611081618';
+var CACHE = 'kelim-202611081620';
 var PRECACHE = ["/kelim/briut/", "/kelim/briut/madadim/", "/kelim/briut/rofe/", "/kelim/briut/trufot/", "/kelim/", "/kelim/kesharim/hodaot/", "/kelim/kesharim/", "/kelim/kesharim/ishurim/", "/kelim/kesharim/yomulda/", "/kelim/miluim/bait/", "/kelim/miluim/", "/kelim/miluim/tziyud/", "/kelim/miluim/yamim/", "/kelim/mishpacha/", "/kelim/mishpacha/kniyot/", "/kelim/mishpacha/shabbat/", "/kelim/mishpacha/toranut/", "/kelim/tamlul/", "/assets/site.css", "/assets/kelim.css", "/assets/kelim.js", "/assets/track.js", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-kelim-192.png"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
