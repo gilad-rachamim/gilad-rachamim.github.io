@@ -1,7 +1,7 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'limudim-202611081747';
+var CACHE = 'limudim-202611081756';
 var PRECACHE = ["/limudim/", "/limudim/kartisiot/", "/limudim/mivchan/", "/limudim/olami/", "/limudim/timer/", "/limudim/yomi/", "/assets/site.css?v=14c6afff", "/assets/kelim.css?v=162946d4", "/assets/kelim.js?v=f6406678", "/assets/track.js?v=928f9743", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-limudim-192.png", "/assets/limudim.css?v=910f6b41", "/assets/limudim.js?v=63c003af"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
