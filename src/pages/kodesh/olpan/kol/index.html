@@ -1,0 +1,41 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "kol_naki",
+  "title": "קול נקי לשיעור: פחות רעש, עוצמה אחידה, בטלפון | כלי קודש",
+  "description": "מקליטים שיעור או מעלים הקלטה קיימת, ומקבלים קול ברור יותר: פחות רעש רקע וזמזום, קול אחיד בלי קפיצות, ועוצמה מלאה. שומעים לפני ואחרי, ושומרים. בחינם, בלי הרשמה.",
+  "og_title": "קול נקי לשיעור – בחינם",
+  "priority": "0.7",
+  "crumbs": [["אולפן לרב", "/kodesh/olpan/"], ["קול נקי", null]],
+  "head": "<style>.kn-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}#kn-time{font:700 2rem Assistant,Arial,sans-serif;text-align:center;margin:.6rem 0 0;color:var(--gold,#e6c57e)}#kn-out{margin-top:1rem}#kn-out audio{width:100%;margin-top:.3rem}#kn-out h3{margin:.9rem 0 0;font-size:1.05rem}#kn-prog{width:100%;accent-color:#d4b062}@media(max-width:520px){.kn-row{grid-template-columns:1fr}}</style>",
+  "foot": "<script src=\"/assets/olpan-kol.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>קול נקי לשיעור</h1>
+  <p class="sub">מקליטים כאן, או מעלים הקלטה מהטלפון. מקבלים קול ברור יותר: פחות רעש וזמזום, ועוצמה אחידה ומלאה. שומעים לפני ואחרי, ושומרים.</p>
+</header>
+<div class="tool">
+  <form class="k-form lead-form" id="kn-form" novalidate>
+    <div class="kn-row">
+      <div class="field"><label for="kn-file">הקלטה קיימת</label><input id="kn-file" type="file" accept="audio/*,video/*"></div>
+      <div class="field"><label for="kn-strength">כמה לנקות</label><select id="kn-strength" name="strength"><option value="1">עדין</option><option value="2" selected>רגיל</option><option value="3">חזק (חדר רועש)</option></select></div>
+    </div>
+  </form>
+  <div class="share-row">
+    <button class="btn btn-gold" type="button" id="kn-rec">● להקליט כאן</button>
+    <button class="btn btn-line" type="button" id="kn-go" disabled>לנקות את הקול</button>
+  </div>
+  <p id="kn-time" hidden>00:00</p>
+  <progress id="kn-prog" max="1" value="0" hidden></progress>
+  <p class="disclaimer" id="kn-msg" aria-live="polite"></p>
+  <div id="kn-out" hidden>
+    <h3>לפני</h3><audio id="kn-before" controls></audio>
+    <h3>אחרי</h3><audio id="kn-after" controls></audio>
+    <div class="share-row">
+      <button class="btn btn-gold btn-sm" type="button" id="kn-share"><svg class="ic"><use href="#wa"/></svg> לשתף</button>
+      <button class="btn btn-line btn-sm" type="button" id="kn-dl">לשמור (WAV)</button>
+    </div>
+  </div>
+  <p class="disclaimer">מה הכלי עושה: מסנן זמזום נמוך (מזגן, רכב), מנמיך את הרעש בין המשפטים, משווה בין קטעים חזקים וחלשים, ומעלה את העוצמה לרמה מלאה. ההקלטה נשארת בטלפון ולא עולה לשום מקום. הקלטה ארוכה מאוד (מעל שעה) עלולה להיות כבדה לטלפון.</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/olpan/">אולפן לרב</a>. רוצים גם טקסט? <a class="gold" href="/kelim/tamlul/">לתמלול</a>.</p>
+</div>

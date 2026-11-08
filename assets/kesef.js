@@ -1356,10 +1356,10 @@
       $('m-name').textContent = cur[1];
       $('m-mid').textContent = sh(cur[3]); $('m-mid2').textContent = sh(cur[3]);
       $('m-lo').textContent = sh(cur[2]); $('m-hi').textContent = sh(cur[5]);
-      var rows = D.chains.map(function (c, i) { return [c.name, cur[4][i]]; }).filter(function (x) { return x[1] != null; });
+      var rows = D.chains.map(function (c, i) { return [c.name, cur[4][i], c.date]; }).filter(function (x) { return x[1] != null; });
       rows.sort(function (a, b) { return a[1] - b[1]; });
       $('m-chains').innerHTML = rows.map(function (x, i) {
-        return '<tr><td>' + esc(x[0]) + (i === 0 && x[1] < rows[rows.length - 1][1] ? ' <span class="m-tag">הכי זול</span>' : '') + '</td><td class="n">' + sh(x[1]) + '</td></tr>';
+        return '<tr><td>' + esc(x[0]) + (x[2] && x[2] !== D.date ? ' <small class="note">(' + heDate(x[2]) + ')</small>' : '') + (i === 0 && x[1] < rows[rows.length - 1][1] ? ' <span class="m-tag">הכי זול</span>' : '') + '</td><td class="n">' + sh(x[1]) + '</td></tr>';
       }).join('');
       $('m-code').textContent = 'ברקוד ' + cur[0] + '. מחיר אמצע בין כמה סניפים בכל רשת, לפי מחירי הרשתות בתאריך ' + heDate(D.date) + '.';
       verdict();
@@ -1388,7 +1388,7 @@
     $('m-my').addEventListener('input', verdict);
     fetch('/kesef/mechir.json', { cache: 'no-cache' }).then(function (r) { return r.json(); }).then(function (d) {
       D = d; d.items.forEach(function (r) { r._n = norm(r[1]); });
-      $('m-src').textContent = 'לפי מחירי הרשתות בתאריך ' + heDate(d.date) + ': ' + d.chains.map(function (c) { return c.name; }).join(', ') + '. ' + d.items.length + ' מוצרים נפוצים.';
+      $('m-src').textContent = 'לפי מחירי הרשתות בתאריך ' + heDate(d.date) + ': ' + d.chains.filter(function (c) { return c.date !== null; }).map(function (c) { return c.name + (c.date && c.date !== d.date ? ' (' + heDate(c.date) + ')' : ''); }).join(', ') + '. ' + d.items.length + ' מוצרים נפוצים.';
       if ($('m-q').value) search();
     }).catch(function () { $('m-src').textContent = 'לא הצלחנו לטעון את המחירים. בודקים אינטרנט ומרעננים.'; });
   })();

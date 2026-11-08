@@ -1,0 +1,71 @@
+/* כלים לעבודה ולחיפוש עבודה (/kelim/avoda/): קורות חיים, מעקב משרות, הכנה לראיון. */
+.av-note{background:rgba(227,183,101,.1);border:1px solid var(--gold-soft);border-radius:12px;padding:.7rem .9rem;color:var(--parchment);margin:1rem 0;display:flex;gap:.6rem;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.av-two{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+@media (max-width:420px){.av-two{grid-template-columns:1fr}}
+.av-cat{font-family:var(--serif);color:var(--cream);font-size:1.2rem;margin:1.2rem 0 .3rem}
+.av-hint{color:var(--muted);font-size:.92rem;margin:0 0 .4rem}
+.av-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.45rem}
+.av-chips button{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--parchment);border-radius:999px;padding:.35rem .75rem;font:inherit;font-size:.95rem;cursor:pointer}
+.av-chips button.on{background:rgba(227,183,101,.18);border-color:var(--gold);color:var(--cream)}
+.av-tools{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-top:1.4rem}
+.av-empty{color:var(--muted);text-align:center;padding:.8rem 0}
+/* שורות שחוזרות (ניסיון, השכלה) */
+.av-row{border:1px solid var(--line);border-radius:12px;padding:.7rem .8rem;margin-bottom:.6rem;background:rgba(255,255,255,.03)}
+.av-row .x{float:left;background:none;border:0;color:var(--muted);font:inherit;font-size:.9rem;cursor:pointer;text-decoration:underline}
+.av-row .field{margin-bottom:.45rem}
+/* מעקב משרות */
+.av-sum{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:1rem 0 .4rem}
+.av-sum span{border:1px solid var(--line);border-radius:999px;padding:.25rem .7rem;color:var(--parchment);font-size:.92rem}
+.av-sum b{color:var(--gold)}
+.av-sec{margin-top:1.4rem}
+.av-sec h2{font-family:var(--serif);color:var(--cream);font-size:1.3rem;margin-bottom:.5rem}
+.av-item{border:1px solid var(--line);border-radius:14px;padding:.8rem .9rem;margin-bottom:.6rem;background:rgba(255,255,255,.03);color:var(--parchment)}
+.av-item .top{display:flex;justify-content:space-between;gap:.5rem;align-items:baseline;flex-wrap:wrap}
+.av-item .top b{color:var(--cream);font-size:1.08rem}
+.av-item .top span{color:var(--muted);font-size:.9rem}
+.av-item p{margin:.3rem 0 0;white-space:pre-wrap}
+.av-item .lbl{color:var(--gold);font-size:.9rem}
+.av-item .st{display:inline-block;border-radius:999px;padding:.1rem .6rem;font-size:.85rem;border:1px solid var(--gold-soft);color:var(--cream);margin-top:.35rem}
+.av-item .st.win{border-color:#8fb36a;color:#cfe6b4}
+.av-item .st.no{border-color:var(--line);color:var(--muted)}
+.av-item .next{margin-top:.45rem;padding-top:.45rem;border-top:1px dashed var(--line)}
+.av-item .acts{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.55rem;align-items:center}
+.av-item .acts a,.av-item .acts button,.av-item .acts select{font:inherit;font-size:.88rem;padding:.3rem .65rem;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--body);cursor:pointer;text-decoration:none}
+.av-item .acts select{background:var(--ink)}
+.av-item .acts a:hover,.av-item .acts button:hover{border-color:var(--gold-soft);color:var(--cream)}
+.av-item.late{border-color:#c98a5c}
+.av-item .due{color:#e8b48c}
+.av-item.closed{opacity:.7}
+/* הדף להדפסה: קורות חיים והכנה לראיון, שלושה סגנונות */
+.av-card{max-width:34rem;margin:1.2rem auto 0;border-radius:14px;padding:1.3rem 1.2rem;line-height:1.55;border:1px solid #d9cfb4}
+.av-card h3{font-family:var(--serif);font-size:1.6rem;text-align:center;margin:0}
+.av-card .s2{text-align:center;font-size:1rem;margin:.15rem 0 .2rem}
+.av-card .ct{text-align:center;font-size:.92rem;margin-bottom:.5rem}
+.av-card h4{font-family:var(--serif);font-size:1.1rem;margin:.9rem 0 .3rem;padding-bottom:.15rem;border-bottom:1px solid}
+.av-card .nt{white-space:pre-wrap;margin:0}
+.av-card ul,.av-card ol{padding-inline-start:1.3rem;margin:.2rem 0}
+.av-card .job{margin:.35rem 0 .55rem}
+.av-card .job .hd{display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap}
+.av-card .job .yr{font-size:.9rem}
+.av-card .job p{margin:.1rem 0 0;white-space:pre-wrap}
+.av-card .qa{margin:.35rem 0 .6rem}
+.av-card .qa b{display:block}
+.av-card .qa .ans{white-space:pre-wrap;margin:.1rem 0 0}
+.av-card .qa .ans.blank{min-height:2.6em;border-bottom:1px dotted}
+.av-card .ft{text-align:center;font-size:.85rem;margin-top:1rem}
+.av-card.t-lavan{background:#fff;color:#111}
+.av-card.t-lavan h3,.av-card.t-lavan h4{color:#111}.av-card.t-lavan h4{border-color:#999}.av-card.t-lavan .s2,.av-card.t-lavan .ct,.av-card.t-lavan .ft,.av-card.t-lavan .yr{color:#555}
+.av-card.t-zayit{background:#f4f6ec;color:#1f2a16;border-color:#9fae7d}
+.av-card.t-zayit h3,.av-card.t-zayit h4{color:#3d5a1e}.av-card.t-zayit h4{border-color:#9fae7d}.av-card.t-zayit .s2,.av-card.t-zayit .ct,.av-card.t-zayit .ft,.av-card.t-zayit .yr{color:#55603f}
+.av-card.t-klaf{background:#fbf3df;color:#2a2013;border-color:#c9b97d}
+.av-card.t-klaf h3,.av-card.t-klaf h4{color:#6b4a12}.av-card.t-klaf h4{border-color:#c9b97d}.av-card.t-klaf .s2,.av-card.t-klaf .ct,.av-card.t-klaf .ft,.av-card.t-klaf .yr{color:#6d5b3c}
+.av-tips{color:var(--body);margin:.6rem 0 0;padding-inline-start:1.2rem}
+.av-tips li{margin:.25rem 0}
+.av-tips a{color:var(--gold)}
+@media print{
+  @page{size:A4;margin:14mm}
+  html,body{background:#fff!important}
+  .topbar,.site-foot,.crumbs,.install-bar,.no-print{display:none!important}
+  .av-card{max-width:none;margin:0;border:0;font-size:12pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+.k-form .res:empty{display:none}
