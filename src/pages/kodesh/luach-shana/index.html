@@ -1,0 +1,49 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "luach_shana",
+  "title": "לוח השנה של הרב: פרשות, חגים, תעניות וזמני שבת לפי עיר, להדפסה וליומן | כלי קודש",
+  "description": "לוח שנה עברי לרב ולבית הכנסת: פרשות השבוע, חגים, תעניות, ראשי חודשים וזמני כניסת ויציאת שבת לפי העיר. להדפסה, ולהוספה ליומן גוגל או לאייפון בקובץ אחד. בחינם, בלי הרשמה.",
+  "og_title": "לוח השנה של הרב – פרשות, חגים וזמני שבת, להדפסה וליומן",
+  "priority": "0.7",
+  "crumbs": [["לוח השנה של הרב", null]],
+  "head": "<style>.ls-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}.ls-checks{display:grid;grid-template-columns:1fr 1fr;gap:.35rem .8rem}.ls-checks label{display:flex;gap:.4rem;align-items:center}#ls-count{color:var(--gold);margin:.5rem 0 0}.ls-sheet{background:#fdfaf2;color:#1b1b1b;border-radius:14px;padding:1.3rem 1.1rem;margin:1.2rem auto 0;max-width:52rem;box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:.92rem}.ls-head{text-align:center;border-bottom:2px solid #8a6d2b;padding-bottom:.5rem;position:relative}.ls-head .bsd{position:absolute;top:0;right:0;font-size:.8rem;color:#555}.ls-head h2{margin:.1rem 0;color:#1b1b1b;font-family:'Frank Ruhl Libre','David',serif;font-size:1.6rem}.ls-head p{margin:0;color:#444}.ls-m{margin:1rem 0 .3rem;color:#5a4410;font-size:1.08rem;border-bottom:1px solid #d8c99b;padding-bottom:.15rem;break-after:avoid}.ls-m small{color:#7a6a40;font-weight:400}.ls-t{width:100%;border-collapse:collapse;break-inside:auto}.ls-t td{padding:.22rem .35rem;border-bottom:1px solid #eee3c4;vertical-align:top}.ls-t tr{break-inside:avoid}.ls-t tr.sh{background:#f4ecd4}.ls-d{white-space:nowrap;width:4.6rem;font-weight:600}.ls-h{white-space:nowrap;width:5.5rem;color:#555}.ls-tm{white-space:nowrap;color:#3b4a6b;font-size:.85rem;text-align:left}.k-parsha{font-weight:700}.k-chag{font-weight:700;color:#7a1f1f}.k-fast{color:#5a2d82}.k-rc{color:#2e5e3a}.k-modern{color:#1f4d7a}.ls-foot{text-align:center;font-size:.72rem;color:#777;margin:1rem 0 0}@media(max-width:560px){.ls-sheet{padding:1rem .6rem;font-size:.82rem}.ls-tm{display:block;text-align:right}.ls-t td.ls-tm{border-bottom:0}}@media print{@page{size:A4;margin:10mm}html,body{background:#fff!important}body *{visibility:hidden}.topbar,.site-foot,.crumbs,.install-bar,.no-print{display:none!important}#ls-out,#ls-out *{visibility:visible}#ls-out{position:absolute;top:0;right:0;left:0;margin:0;max-width:none;box-shadow:none;border-radius:0;padding:0;background:#fff;font-size:9.5pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style>",
+  "foot": "<script src=\"https://cdn.jsdelivr.net/npm/@hebcal/core@6.14.7/dist/bundle.min.js\" data-hebcal defer></script><script src=\"/assets/luach-shana.js\" defer></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>לוח השנה של הרב</h1>
+  <p class="sub">פרשות, חגים, תעניות, ראשי חודשים וזמני שבת לפי העיר שלכם, לכל השנה. מדפיסים, או מכניסים ליומן בטלפון בלחיצה אחת.</p>
+</header>
+<div class="tool no-print">
+  <form class="k-form" id="ls-form" novalidate>
+    <div class="ls-row">
+      <div class="field"><label for="ls-place">עיר</label><select id="ls-place" name="place"></select></div>
+      <div class="field"><label for="ls-range">לאיזו תקופה?</label><select id="ls-range" name="range">
+        <option value="year">השנה העברית הנוכחית</option><option value="next">השנה העברית הבאה</option>
+        <option value="3">3 החודשים הקרובים</option><option value="6">6 החודשים הקרובים</option><option value="12">12 החודשים הקרובים</option></select></div>
+    </div>
+    <div class="field"><span class="label">מה יופיע בלוח?</span><div class="ls-checks">
+      <label><input type="checkbox" name="parsha"> פרשות ושבתות מיוחדות</label>
+      <label><input type="checkbox" name="chag"> חגים ומועדים</label>
+      <label><input type="checkbox" name="fast"> תעניות</label>
+      <label><input type="checkbox" name="rc"> ראשי חודשים</label>
+      <label><input type="checkbox" name="modern"> ימי זיכרון ועצמאות</label>
+      <label><input type="checkbox" name="times"> הדלקת נרות וצאת שבת</label>
+    </div></div>
+    <div class="ls-row">
+      <div class="field"><label for="ls-candle">הדלקת נרות</label><select id="ls-candle" name="candle"><option value="auto">לפי העיר (ירושלים 40, חיפה 30, אחרים 20)</option><option value="18">18 דקות</option><option value="20">20 דקות</option><option value="30">30 דקות</option><option value="40">40 דקות</option></select></div>
+      <div class="field"><label for="ls-title">כותרת</label><input id="ls-title" name="title" type="text" maxlength="60" placeholder="לוח השנה – קהילת אהל יצחק"></div>
+    </div>
+  </form>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="ls-print">להדפיס / לשמור PDF</button>
+    <button class="btn btn-line btn-sm" type="button" id="ls-ics">להוסיף ליומן (קובץ ics)</button>
+  </div>
+  <p class="ios-tip" id="ls-tip" hidden>הקובץ ירד. פותחים אותו, והיומן (גוגל, אאוטלוק או אייפון) מציע להוסיף את כל הימים. ביומן גוגל במחשב: הגדרות ← ייבוא.</p>
+  <p id="ls-count" role="status"></p>
+</div>
+<div id="ls-out" class="ls-sheet" dir="rtl"><p>מחשב את הלוח…</p></div>
+<div class="tool no-print">
+  <p class="disclaimer">הזמנים מחושבים לפי מרכז העיר (שקיעה מישורית, צאת 8.5°). לזמנים מדויקים להלכה – לוח מקומי. ההגדרות נשמרות אצלכם בטלפון.</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/">כלי קודש</a>. רוצים גם זמני תפילות קבועים בלוח? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>
+</div>
