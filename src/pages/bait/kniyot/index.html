@@ -1,0 +1,72 @@
+<!--meta {
+  "site": "bait",
+  "nav": "kniyot",
+  "tool": "bait_kniyot",
+  "title": "רשימת קניות שבועית – מה שתמיד קונים, סימון בחנות, ומשחק קניות לילדים | כלים למשפחה ולבית",
+  "description": "רשימת קניות לטלפון: מה שתמיד קונים בלחיצה, מסודר לפי מחלקות, מסמנים בחנות ושולחים לבן או לבת הזוג בווטסאפ. ומשחק הקניות לילדים: תקציב, מחירים וכוכבים. בחינם, נשמר רק אצלכם.",
+  "og_title": "רשימת קניות שבועית, עם משחק קניות לילדים",
+  "priority": "0.8",
+  "crumbs": [["רשימת קניות", null]]
+} -->
+<header class="k-hero">
+  <h1>רשימת קניות שבועית</h1>
+  <p class="sub">כותבים בבית, מסמנים בחנות. מה שתמיד קונים נכנס בלחיצה, והרשימה נשמרת בטלפון.</p>
+</header>
+<div class="tool bt">
+  <div class="mv-banner" id="kn-import" hidden>
+    <p id="kn-import-txt"></p>
+    <div class="tools" style="margin-top:.6rem">
+      <button class="btn btn-gold btn-sm" type="button" id="kn-import-add">להוסיף לרשימה שלי</button>
+      <button class="btn btn-line btn-sm" type="button" id="kn-import-rep">להחליף את הרשימה שלי</button>
+      <button class="btn btn-line btn-sm" type="button" id="kn-import-no">לא עכשיו</button>
+    </div>
+  </div>
+
+  <form class="row" id="kn-add" style="margin-top:1rem">
+    <input id="kn-new" type="text" maxlength="80" placeholder="מה לקנות?" aria-label="פריט חדש" autocomplete="off">
+    <input id="kn-qty" type="text" maxlength="15" placeholder="כמה?" aria-label="כמות" style="flex:0 0 5.5rem">
+    <button class="btn btn-gold" type="submit">+</button>
+  </form>
+
+  <div id="kn-home-only">
+    <h2>תמיד קונים <small>לוחצים, וזה נכנס לרשימה</small></h2>
+    <div class="chips" id="kn-always"></div>
+    <div class="tools" style="margin-top:.7rem;justify-content:flex-start"><button class="btn btn-line btn-sm" type="button" id="kn-all">להוסיף את כל הקבועים</button></div>
+    <p class="muted" style="margin-top:.4rem">רוצים להוסיף פריט לקבועים? לוחצים על ☆ לידו ברשימה.</p>
+  </div>
+
+  <div class="seg" id="kn-modes" role="group" aria-label="מצב">
+    <button type="button" data-mode="home" aria-pressed="true">✏️ בבית</button>
+    <button type="button" data-mode="shop" aria-pressed="false">🛒 בחנות</button>
+    <button type="button" data-mode="game" aria-pressed="false">🎲 משחק</button>
+  </div>
+
+  <div class="kn-game" id="kn-game" hidden>
+    <h3>🎲 משחק הקניות</h3>
+    <p class="muted">הילדים מקבלים תקציב. כל מוצר שנכנס לעגלה, כותבים את המחיר שלו מהמדף. מצליחים לקנות הכול בלי לעבור את התקציב? כוכבים!</p>
+    <div class="row" style="margin-top:.7rem">
+      <label class="muted no-flex" for="kn-budget">תקציב ₪</label>
+      <input id="kn-budget" type="number" inputmode="decimal" min="0" step="1" style="flex:0 0 6rem">
+      <input id="kn-kid" type="text" maxlength="20" placeholder="שם הקונה הצעיר/ה" aria-label="שם הילד או הילדה">
+    </div>
+    <p id="kn-ch" style="margin-top:.8rem;color:var(--cream)"></p>
+    <div class="tools" style="justify-content:flex-start;margin-top:.5rem">
+      <button class="btn btn-line btn-sm" type="button" id="kn-ch-next">אתגר אחר</button>
+      <button class="btn btn-line btn-sm" type="button" id="kn-prices-reset">משחק חדש (לנקות מחירים)</button>
+    </div>
+    <div class="kn-stars" id="kn-stars" aria-live="polite"></div>
+  </div>
+
+  <div class="kn-meter"><div class="track"><div class="fill" id="kn-bar"></div></div><p id="kn-txt" aria-live="polite"></p></div>
+  <div id="kn-list"></div>
+
+  <div class="tools">
+    <a class="btn btn-gold btn-sm" href="#" id="kn-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הרשימה בווטסאפ</a>
+    <button class="btn btn-line btn-sm" type="button" id="kn-link">להעתיק קישור לרשימה</button>
+    <button class="btn btn-line btn-sm" type="button" id="kn-clear-done">להוריד את מה שנקנה</button>
+    <button class="btn btn-line btn-sm" type="button" id="kn-clear-all">לנקות הכול</button>
+  </div>
+  <p class="disclaimer">מי שמקבל את ההודעה לוחץ על הקישור, והרשימה נפתחת אצלו בטלפון, מוכנה לסימון בחנות. הרשימה נשמרת רק בטלפון שלכם.</p>
+  <p class="disclaimer">מתכננים שבת עם אורחים? <a class="gold" href="/bait/shabat/">המתכנן של שבת</a> מוסיף לכאן את כל מה שצריך, עם כמויות.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="רשימת קניות לטלפון, עם משחק קניות לילדים. בחינם, בלי הרשמה:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>

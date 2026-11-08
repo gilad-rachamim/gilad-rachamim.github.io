@@ -43,6 +43,17 @@ SITES = {
                 ("koach", "/nefesh/koach/", "מד כוח"), ("yoman", "/nefesh/yoman/", "יומן קול"),
                 ("mishpacha", "/nefesh/mishpacha/", "למשפחה"), ("kelim", "/nefesh/#kelim", "כל הכלים")],
     },
+    # משפחה ובית: קניות, תורנויות, שבת ואורחים, מי מביא מה. בלי שרת: הנתונים בטלפון (localStorage),
+    # ושיתוף עם אחרים דרך ווטסאפ וקישור שמכיל את המצב (#d=...).
+    "bait": {
+        "name": "כלים למשפחה ולבית", "short": "משפחה ובית", "home": "/bait/", "theme": "#1f1915",
+        "og": "og-kelim.jpg", "icon": "bait",
+        "desc": "קניות, תורנויות, שבת ואורחים ומי מביא מה. בחינם, בלי הרשמה.",
+        "css": ["/assets/bait.css"], "js": ["/assets/bait.js"],
+        "nav": [("kniyot", "/bait/kniyot/", "קניות"), ("toranut", "/bait/toranut/", "תורנויות"),
+                ("shabat", "/bait/shabat/", "שבת ואורחים"), ("mevi", "/bait/mevi/", "מי מביא מה"),
+                ("kelim", "/kelim/", "כל הכלים")],
+    },
 }
 SPRITE = (ROOT / "assets" / "icons.svg").read_text(encoding="utf-8")
 BASE = "https://gilad-rachamim.github.io"

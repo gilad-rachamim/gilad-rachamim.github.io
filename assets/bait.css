@@ -1,0 +1,121 @@
+/* כלים למשפחה ולבית – מעל site.css ו-kelim.css. חם, ביתי, נוח לאצבע בחנות. */
+body.site-bait{--ink:#1f1915;--ink-2:#2a221c;--gold:#e3b765;--gold-hi:#f0c97f;--gold-soft:#9a7d48;--body:#e2d9cd;--muted:#b4a796;--parchment:#f4ede2;--cream:#fffaf1;--line:rgba(227,183,101,.22);--accent:#e8936a;--ok:#8fcf9a;
+  background:radial-gradient(120% 60% at 85% 0%,rgba(232,147,106,.10),transparent 60%),radial-gradient(90% 50% at 0% 100%,rgba(227,183,101,.08),transparent 60%),var(--ink)}
+html:has(body.site-bait){background:#1f1915}
+.site-bait .brand img{border-radius:10px}
+@media (max-width:640px){body.site-bait{padding-bottom:0}}
+
+/* כרטיסי הכלים בדף הבית */
+.bcards{display:grid;gap:.85rem}
+@media (min-width:700px){.bcards{grid-template-columns:1fr 1fr}}
+.bcards a{display:grid;grid-template-columns:3.2rem 1fr;gap:.2rem .9rem;align-items:start;padding:1.15rem 1.1rem;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.035);text-decoration:none;color:inherit}
+.bcards a:hover,.bcards a:focus-visible{border-color:var(--gold-soft);background:rgba(255,255,255,.06)}
+.bcards .em{grid-row:span 2;font-size:2rem;line-height:1;display:grid;place-items:center;width:3.2rem;height:3.2rem;border-radius:14px;background:rgba(232,147,106,.14)}
+.bcards b{font-family:var(--serif);font-size:1.25rem;color:var(--cream)}
+.bcards .d{color:var(--body);font-size:1rem;line-height:1.55}
+
+/* שדות כלליים בכלים */
+.bt input[type=text],.bt input[type=number],.bt input[type=date],.bt input:not([type]),.bt select,.bt textarea{width:100%;min-width:0;font:inherit;font-size:1.05rem;color:var(--cream);background:rgba(244,237,226,.06);border:1px solid var(--line);border-radius:12px;padding:.75rem .9rem}
+.bt input:focus,.bt select:focus,.bt textarea:focus{outline:none;border-color:var(--gold)}
+.bt input::placeholder,.bt textarea::placeholder{color:#8f846f}
+.bt select option{background:var(--ink);color:var(--cream)}
+.bt input[type=date]{color-scheme:dark}
+.bt h2{font-family:var(--serif);color:var(--cream);font-size:1.3rem;margin:1.6rem 0 .5rem}
+.bt h2 small{font-family:var(--sans);font-size:.9rem;color:var(--muted);font-weight:400}
+.bt .row{display:flex;gap:.5rem;align-items:center}
+.bt .row > *{flex:1}
+.bt .row > .btn,.bt .row > .no-flex{flex:0 0 auto}
+.bt .tools{display:flex;gap:.55rem;flex-wrap:wrap;justify-content:center;margin-top:1.4rem}
+.bt .box{border:1px solid var(--line);border-radius:16px;padding:1rem;background:rgba(255,255,255,.03);margin-top:1rem}
+.bt .muted{color:var(--muted);font-size:.95rem}
+.bt .x{background:none;border:0;color:var(--muted);font-size:1.4rem;cursor:pointer;line-height:1;padding:.2rem .4rem}
+.bt .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem}
+.bt .chip{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--parchment);border-radius:999px;padding:.4rem .8rem;font:inherit;font-size:.95rem;cursor:pointer}
+.bt .chip.on{background:rgba(227,183,101,.18);border-color:var(--gold);color:var(--cream)}
+.bt .chip.add{border-style:dashed;color:var(--gold)}
+.bt .seg{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:1rem auto 0;max-width:26rem}
+.bt .seg button{flex:1;background:none;border:0;color:var(--parchment);font:inherit;font-size:1rem;padding:.65rem .5rem;cursor:pointer}
+.bt .seg button[aria-pressed=true]{background:var(--gold);color:var(--ink);font-weight:700}
+.bt .toast{position:fixed;bottom:1.2rem;left:50%;transform:translateX(-50%);background:var(--cream);color:var(--ink);padding:.7rem 1.1rem;border-radius:12px;font-weight:600;z-index:50;box-shadow:0 6px 24px rgba(0,0,0,.35);max-width:90vw;text-align:center}
+.bt .empty{color:var(--muted);text-align:center;padding:1.2rem 0}
+
+/* רשימת קניות */
+.kn-list{list-style:none;display:grid;gap:.2rem;margin:0;padding:0}
+.kn-list li{display:grid;grid-template-columns:2rem 1fr auto auto;gap:.55rem;align-items:center;padding:.5rem .35rem;border-radius:10px}
+.kn-list li:hover{background:rgba(227,183,101,.05)}
+.kn-list input[type=checkbox]{width:1.45rem;height:1.45rem;accent-color:var(--gold)}
+.kn-list .nm{color:var(--parchment);font-size:1.08rem;cursor:pointer}
+.kn-list .nm small{color:var(--muted);font-size:.9rem;margin-inline-start:.35rem}
+.kn-list li.done .nm{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(227,183,101,.5)}
+.kn-list .star{background:none;border:0;cursor:pointer;font-size:1.25rem;color:var(--muted);padding:.2rem}
+.kn-list .star.on{color:var(--gold)}
+.kn-list .pr{width:5.2rem!important;padding:.45rem .5rem!important;font-size:1rem!important;text-align:center}
+.kn-cat{font-family:var(--serif);color:var(--gold);font-size:1.05rem;margin:1rem 0 .25rem;display:flex;justify-content:space-between}
+.kn-cat small{font-family:var(--sans);color:var(--muted);font-size:.85rem}
+body.kn-shop .kn-list li{padding:.8rem .4rem;border-bottom:1px solid var(--line)}
+body.kn-shop .kn-list .nm{font-size:1.25rem}
+body.kn-shop .kn-list input[type=checkbox]{width:1.8rem;height:1.8rem}
+body.kn-shop .kn-edit-only{display:none!important}
+.kn-meter{position:sticky;top:3.6rem;z-index:4;background:rgba(31,25,21,.95);backdrop-filter:blur(8px);padding:.75rem 0 .65rem;border-bottom:1px solid var(--line);margin-top:1rem}
+.kn-meter .track{height:.55rem;border-radius:999px;background:rgba(227,183,101,.18);overflow:hidden}
+.kn-meter .fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold-soft),var(--gold));transition:width .4s}
+.kn-meter .fill.over{background:linear-gradient(90deg,#c0533a,#e8936a)}
+.kn-meter p{color:var(--gold);font-family:var(--serif);font-size:1.08rem;margin-top:.4rem;text-align:center}
+.kn-game{border:1px dashed var(--accent);border-radius:16px;padding:1rem;margin-top:1rem;background:rgba(232,147,106,.06)}
+.kn-game h3{font-family:var(--serif);color:var(--cream);font-size:1.2rem}
+.kn-stars{font-size:1.6rem;text-align:center;letter-spacing:.2rem;margin-top:.4rem}
+
+/* כרטיס לבן להדפסה / תמונה */
+.paper{background:#fffdf7;color:#1d1d1d;border-radius:14px;padding:1.2rem 1rem;border:1px solid #d9cfb4;margin-top:1.2rem;overflow-x:auto}
+.paper h3{font-family:var(--serif);font-size:1.45rem;text-align:center;color:#3a2a1c;margin-bottom:.15rem}
+.paper .sub2{text-align:center;color:#666;font-size:.92rem;margin-bottom:.8rem}
+.paper table{width:100%;border-collapse:collapse;font-size:.95rem}
+.paper th,.paper td{border:1px solid #e1d6bd;padding:.38rem .3rem;text-align:center;vertical-align:middle}
+.paper th{background:#f4ead4;color:#3a2a1c;font-weight:700}
+.paper td.ch{text-align:right;font-weight:700;background:#fbf5e7;white-space:nowrap}
+.paper td.today,.paper th.today{outline:2px solid #e8936a;outline-offset:-2px}
+.paper .pn{display:inline-block;border-radius:6px;padding:.08rem .4rem;font-weight:700;white-space:nowrap}
+.paper .ft{text-align:center;color:#777;font-size:.82rem;margin-top:.8rem}
+.paper .legend{display:flex;flex-wrap:wrap;gap:.35rem;justify-content:center;margin-top:.7rem}
+@media print{@page{size:A4 landscape;margin:12mm}html,body{background:#fff!important}body *{visibility:hidden}.topbar,.site-foot,.crumbs,.install-bar,.no-print{display:none!important}.print-me,.print-me *{visibility:visible}.print-me{position:absolute;top:0;right:0;left:0;border:0;font-size:13pt}}
+
+/* תורנויות */
+.tr-today{display:grid;gap:.5rem;margin-top:.6rem}
+.tr-today div{display:flex;justify-content:space-between;gap:.8rem;align-items:center;padding:.75rem .9rem;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);font-size:1.1rem}
+.tr-today b{color:var(--cream)}
+.tr-ed{display:grid;gap:.4rem}
+.tr-ed .row select{flex:0 0 7.5rem}
+
+/* שבת ואורחים */
+.sh-meals{display:grid;gap:.9rem;margin-top:.6rem}
+.sh-meal{border:1px solid var(--line);border-radius:16px;padding:.9rem 1rem;background:rgba(255,255,255,.03)}
+.sh-meal > label{display:flex;gap:.6rem;align-items:center;font-family:var(--serif);font-size:1.2rem;color:var(--cream);cursor:pointer}
+.sh-meal > label input{width:1.35rem;height:1.35rem;accent-color:var(--gold)}
+.sh-meal.off .chips{opacity:.35;pointer-events:none}
+.sh-num{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.sh-num label{display:grid;gap:.3rem;color:var(--cream);font-weight:600}
+.sh-out{list-style:none;padding:0;margin:.3rem 0 0;display:grid;gap:.15rem}
+.sh-out li{display:flex;justify-content:space-between;gap:1rem;padding:.42rem .2rem;border-bottom:1px dotted var(--line);color:var(--parchment)}
+.sh-out li b{color:var(--gold);white-space:nowrap;font-weight:600}
+.sh-time h3{font-family:var(--serif);color:var(--gold);font-size:1.08rem;margin:.9rem 0 .2rem}
+
+/* מי מביא מה */
+.mv-list{list-style:none;padding:0;margin:.5rem 0 0;display:grid;gap:.45rem}
+.mv-list li{display:grid;grid-template-columns:1fr auto;gap:.6rem;align-items:center;padding:.7rem .85rem;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.035)}
+.mv-list li.taken{background:rgba(143,207,154,.08);border-color:rgba(143,207,154,.35)}
+.mv-list li.mine{border-color:var(--gold)}
+.mv-list .nm{color:var(--cream);font-size:1.08rem}
+.mv-list .who{display:block;color:var(--ok);font-size:.95rem}
+.mv-list .free{display:block;color:var(--muted);font-size:.92rem}
+.mv-list .btn{white-space:nowrap}
+.mv-head{text-align:center;margin-top:1rem}
+.mv-head h2{margin:0;font-size:1.55rem}
+.mv-head p{color:var(--muted)}
+.mv-banner{background:rgba(227,183,101,.12);border:1px solid var(--gold-soft);border-radius:14px;padding:.85rem 1rem;margin-top:1rem;color:var(--parchment)}
+.paper h4{font-family:var(--serif);color:#3a2a1c;font-size:1.12rem;border-bottom:1px solid #d8c79c;margin:.9rem 0 .3rem;padding-bottom:.15rem}
+.paper .sh-out li{color:#222;border-color:#e3d8bf}
+.paper .sh-out li b{color:#7a4f1c}
+.paper .sh-time h3{color:#7a4f1c}
+.paper .muted{color:#777}
+@media (max-width:520px){.paper{padding:.9rem .45rem}.paper table{font-size:.76rem}.paper th,.paper td{padding:.3rem .1rem}.paper td.ch{white-space:normal;font-size:.8rem}.paper .pn{padding:.05rem .18rem;border-radius:4px}}
+.paper .sh-out li{padding:.2rem .1rem;font-size:.95rem;line-height:1.45}

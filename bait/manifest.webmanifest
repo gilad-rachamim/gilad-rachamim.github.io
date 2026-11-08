@@ -1,0 +1,26 @@
+{
+ "name": "כלים למשפחה ולבית",
+ "short_name": "משפחה ובית",
+ "description": "קניות, תורנויות, שבת ואורחים ומי מביא מה. בחינם, בלי הרשמה.",
+ "id": "/bait/",
+ "start_url": "/bait/?utm_source=pwa",
+ "scope": "/bait/",
+ "display": "standalone",
+ "background_color": "#1f1915",
+ "theme_color": "#1f1915",
+ "dir": "rtl",
+ "lang": "he",
+ "icons": [
+  {
+   "src": "/assets/icon-bait-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "/assets/icon-bait-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  }
+ ]
+}
