@@ -17,6 +17,12 @@
         return m ? '<tr><td class="dp-t">' + esc(m[1]) + '</td><td>' + esc(m[2]) + '</td></tr>' : '<tr><td colspan="2">' + esc(l) + '</td></tr>';
       }).join('') + '</table>';
     }
+    if (mode === 'pairs') {
+      return '<table class="dp-times dp-pairs">' + lines.map(function (l, i) {
+        var m = l.match(/^(.+?)\s+[–\-]\s+(.+)$/);
+        return '<tr><td class="dp-n">' + (i + 1) + '</td>' + (m ? '<td>' + esc(m[1]) + '</td><td class="dp-who">' + esc(m[2]) + '</td>' : '<td colspan="2">' + esc(l) + '</td>') + '</tr>';
+      }).join('') + '</table>';
+    }
     if (mode === 'list') return '<ol>' + lines.map(function (l) { return '<li>' + esc(l) + '</li>'; }).join('') + '</ol>';
     return lines.map(function (l) { return '<p>' + esc(l) + '</p>'; }).join('');
   }

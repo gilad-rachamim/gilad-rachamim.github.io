@@ -1,0 +1,48 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "kibudim_yechida",
+  "title": "כיבודים וסדר לאירוע ביחידה: סיום מסכת, אזכרה, הכנסת ספר תורה | כלי קודש",
+  "description": "רב היחידה בוחר את סוג האירוע (סיום מסכת, אזכרה, הכנסת ספר תורה, חנוכת בית כנסת), מקבל סדר אירוע ורשימת כיבודים לדוגמה, משבץ שמות, ומדפיס דף מסודר או שולח לקבוצה. בחינם, בלי הרשמה.",
+  "og_title": "כיבודים וסדר לאירוע ביחידה – להדפסה ולווטסאפ",
+  "priority": "0.7",
+  "crumbs": [["כיבודים לאירוע ביחידה", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/daf-print.css\">",
+  "foot": "<script src=\"/assets/kibudim-yechida.js\" defer></script><script src=\"/assets/daf-print.js\" defer></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>כיבודים וסדר לאירוע ביחידה</h1>
+  <p class="sub">בוחרים את סוג האירוע, ומקבלים סדר וכיבודים לדוגמה. משבצים שמות, משנים מה שצריך, ומדפיסים דף מסודר למנחה האירוע, או שולחים לקבוצה.</p>
+</header>
+<div class="tool no-print">
+  <form class="k-form" data-key="kodesh-kibudim-yechida" novalidate>
+    <div class="dp-row">
+      <div class="field"><label for="ky-type">סוג האירוע</label><select id="ky-type" name="type"><option value="siyum">סיום מסכת</option><option value="azkara">אזכרה</option><option value="sefer">הכנסת ספר תורה</option><option value="mezuza">חנוכת בית כנסת ומזוזות</option><option value="other">אירוע אחר</option></select></div>
+      <div class="field"><label for="ky-title">כותרת</label><input id="ky-title" name="title" data-out="title" type="text" maxlength="70"></div>
+    </div>
+    <div class="field"><label for="ky-when">מתי ואיפה</label><input id="ky-when" name="when" data-out="when" type="text" maxlength="90" placeholder="יום שלישי, י״ב בכסלו, 19:30 · בית הכנסת של הגדוד"></div>
+    <div class="field"><label for="ky-for">לכבוד / לעילוי נשמת <span class="opt">(לא חובה)</span></label><input id="ky-for" name="for" data-out="for" type="text" maxlength="90" placeholder="לעילוי נשמת סמ״ר ... הי״ד"></div>
+    <div class="field"><label for="ky-order">סדר האירוע, שורה לכל חלק</label><textarea id="ky-order" name="order" data-out="order" data-lines="list" rows="6"></textarea></div>
+    <div class="field"><label for="ky-kib">הכיבודים, שורה לכל כיבוד <span class="opt">(כיבוד – שם)</span></label><textarea id="ky-kib" name="kib" data-out="kib" data-lines="pairs" rows="6"></textarea>
+      <button class="btn btn-line btn-sm" type="button" id="kb-reset" style="margin-top:.5rem">להחזיר את הדוגמה לאירוע הזה</button></div>
+    <div class="dp-row">
+      <div class="field"><label for="ky-sig">חתימה</label><input id="ky-sig" name="sig" data-out="sig" type="text" maxlength="50" placeholder="רב הגדוד"></div>
+      <div class="field"><label for="ky-theme">עיצוב</label><select id="ky-theme" name="theme"><option value="klaf">קלף וזהב</option><option value="kachol">כחול</option><option value="zayit">ירוק זית</option><option value="lavan">לבן (חוסך דיו)</option></select></div>
+    </div>
+  </form>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="dp-print">להדפיס / לשמור PDF</button>
+    <button class="btn btn-line btn-sm" type="button" id="dp-wa"><svg class="ic"><use href="#wa"/></svg> לשלוח בווטסאפ</button>
+    <button class="btn btn-line btn-sm" type="button" id="dp-copy">להעתיק כטקסט</button>
+  </div>
+</div>
+<div id="dp-sheet" class="dp-sheet" dir="rtl">
+  <div class="dp-head"><span class="bsd">בס"ד</span><h2 data-in="title"></h2><p class="dp-sub" data-in="when"></p><p class="dp-kicker" data-opt><span data-in="for"></span></p></div>
+  <div class="dp-sec"><h3>סדר האירוע</h3><div data-in="order"></div></div>
+  <div class="dp-sec"><h3>הכיבודים</h3><div data-in="kib"></div></div>
+  <p class="dp-sig" data-in="sig"></p>
+</div>
+<div class="tool no-print">
+  <p class="disclaimer">הסדר והכיבודים הם הצעה. כל יחידה ומנהגה. הכול נשמר אצלכם בטלפון.</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/">כלי קודש</a>. נוסחים לסיום מסכת ולאזכרה – ב<a class="gold" href="/kodesh/dapei-tefila/">דפי תפילה לאירוע</a>.</p>
+</div>
