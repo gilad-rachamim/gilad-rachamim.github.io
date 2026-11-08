@@ -168,3 +168,5 @@ label.big-btn{text-align:center}
 .log a.gold{text-decoration:none}
 .whatif td small{font-size:.8rem}
 .why li small{color:var(--muted)}
+
+#f-kind{flex-wrap:wrap}#f-kind button{flex:1 1 30%}

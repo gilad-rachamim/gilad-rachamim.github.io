@@ -37,6 +37,97 @@
       '<button class="del" type="button" data-del aria-label="למחוק את השורה">×</button></div>';
   }
 
+  // שם להשוואה: בלי רווחים כפולים, אותיות קטנות, בלי מספרים בסוף ("נטפליקס 123" = "נטפליקס")
+  function key(n) { return String(n || '').toLowerCase().replace(/\s+[\d*#]+\s*$/, '').replace(/[\s"'׳״.\-]+/g, ' ').trim(); }
+  // חיובים חוזרים מהאשראי [{n, a}] → kesef-minuyim (מחיר בחודש) ו-kesef-shana (כל חודש). מחזיר כמה נוספו בכל אחד.
+  function recsTo(recs) {
+    var mi = load('minuyim', null) || { list: [] }, sh = load('shana', null) || { list: [] };
+    var hm = mi.list.map(function (x) { return key(x.n); }), hs = sh.list.map(function (x) { return key(x.n); }), m = 0, s = 0;
+    var cur = String(new Date().getMonth() + 1);
+    recs.forEach(function (r) {
+      var k = key(r.n), a = String(Math.round(r.a * 100) / 100);
+      if (!k || !(r.a > 0)) return;
+      if (hm.indexOf(k) < 0) { mi.list.push({ n: r.n, p: a, per: 'm', use: '', cut: false }); hm.push(k); m++; }
+      if (hs.indexOf(k) < 0) { sh.list.push({ n: r.n, a: a, f: 'm', mo: cur }); hs.push(k); s++; }
+    });
+    if (m) save('minuyim', mi);
+    if (s) save('shana', sh);
+    return { m: m, s: s };
+  }
+
+  // ---------------------------------------------------------------------
+  // קריאת PDF טקסטואלי בטלפון (pdf.js נטען רק כשבוחרים קובץ). PDF סרוק או צילום – עוד לא (צריך שרת).
+  // מחזיר שורות: כל שורה = מערך תאים מימין לשמאל, כל תא = { t: טקסט, x: מרכז }.
+  // עברית ב-PDF נשמרת לפעמים הפוכה ("וטורב" במקום "ברוטו"): בודקים מילים מוכרות בשני הכיוונים, והופכים אם צריך.
+  // ---------------------------------------------------------------------
+  var PDF_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+  var PDF_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  var HEB = /[֐-׿]/;
+  var KNOWN = ['סכום', 'תאריך', 'שכר', 'נטו', 'ברוטו', 'תשלומים', 'חיוב', 'עסק', 'פנסיה', 'מס', 'ביטוח', 'פיצויים', 'עובד', 'חופשה', 'מחלה', 'פירוט', 'עסקה', 'כרטיס'];
+  function rev(s) { return s.split('').reverse().join('').replace(/[\d.,\/:\-]{2,}/g, function (m) { return m.split('').reverse().join(''); }); }
+  function loadPdf(cb, fail) {
+    if (window.pdfjsLib) return cb(window.pdfjsLib);
+    var s = document.createElement('script'); s.src = PDF_URL;
+    s.onload = function () { window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDF_WORKER; cb(window.pdfjsLib); };
+    s.onerror = fail; document.head.appendChild(s);
+  }
+  function pdfLines(file, done, fail) {
+    var rd = new FileReader();
+    rd.onerror = fail;
+    rd.onload = function () {
+      loadPdf(function (lib) {
+        lib.getDocument({ data: new Uint8Array(rd.result) }).promise.then(function (doc) {
+          var pages = [], n = Math.min(doc.numPages, 12);
+          for (var i = 1; i <= n; i++) pages.push(doc.getPage(i).then(function (p) { return p.getTextContent(); }));
+          return Promise.all(pages);
+        }).then(function (contents) {
+          var all = [];
+          contents.forEach(function (c, pi) {
+            c.items.forEach(function (it) {
+              if (!it.str || !it.str.trim()) return;
+              var h = Math.abs(it.transform[3]) || 10;
+              all.push({ s: it.str, x0: it.transform[4], x1: it.transform[4] + (it.width || 0), y: pi * 1e4 - it.transform[5], h: h });
+            });
+          });
+          var text = all.map(function (i) { return i.s; }).join(' ');
+          var fwd = 0, back = 0;
+          KNOWN.forEach(function (w) { if (text.indexOf(w) > -1) fwd++; if (text.indexOf(rev(w)) > -1) back++; });
+          var flip = back > fwd;
+          if (flip) all.forEach(function (i) { if (HEB.test(i.s)) i.s = rev(i.s); });
+          // שורות: לפי גובה (y), בסבולת של חצי שורה
+          all.sort(function (a, b) { return a.y - b.y || b.x1 - a.x1; });
+          var lines = [];
+          all.forEach(function (i) {
+            var L = lines[lines.length - 1];
+            if (L && Math.abs(L.y - i.y) <= Math.max(2, i.h * 0.45)) L.items.push(i); else lines.push({ y: i.y, items: [i] });
+          });
+          // תאים: פריטים צמודים (רווח קטן מגובה אות) הם תא אחד
+          var out = lines.map(function (L) {
+            var it = L.items.sort(function (a, b) { return b.x1 - a.x1; }), cells = [], cur = null;
+            it.forEach(function (i) {
+              if (cur && cur.x0 - i.x1 < i.h * 1.1) { cur.parts.push(i); cur.x0 = Math.min(cur.x0, i.x0); }
+              else { cur = { x0: i.x0, x1: i.x1, parts: [i] }; cells.push(cur); }
+            });
+            return cells.map(function (c) {
+              var heb = c.parts.some(function (p) { return HEB.test(p.s); });
+              var ps = c.parts.slice().sort(function (a, b) { return heb ? b.x1 - a.x1 : a.x0 - b.x0; });
+              var t = '', prev = null;
+              ps.forEach(function (p) {
+                var gap = prev ? (heb ? prev.x0 - p.x1 : p.x0 - prev.x1) : 0;
+                t += (prev && gap > p.h * 0.18 && !/\s$/.test(t) && !/^\s/.test(p.s) ? ' ' : '') + p.s; prev = p;
+              });
+              return { t: t.replace(/\s+/g, ' ').trim(), x: (c.x0 + c.x1) / 2 };
+            }).filter(function (c) { return c.t; });
+          });
+          done(out, { flip: flip, chars: text.replace(/\s/g, '').length });
+        }).catch(fail);
+      }, fail);
+    };
+    rd.readAsArrayBuffer(file);
+  }
+  // מספר כסף מתוך טקסט: "9,850.00" / "7952.3" / "-412.00"
+  var NUM_RE = /-?\d{1,3}(?:,\d{3})+(?:\.\d+)?|-?\d+(?:\.\d+)?/g;
+
   // מחיקה מהטלפון (בכל כלי)
   document.addEventListener('click', function (e) {
     var wipe = e.target.closest('[data-wipe]');
@@ -489,6 +580,8 @@
       box.innerHTML = st.list.map(rowS).join('') || '<p class="note" style="text-align:center">עוד אין הוצאות. לוחצים על שם למעלה, או על "הוצאה אחרת".</p>';
       var mi = load('minuyim', null);
       $('s-import').hidden = !(mi && mi.list && mi.list.some(function (x) { return num(x.p); }));
+      var as = load('ashrai', null);
+      $('s-import2').hidden = !(as && !as.demo && as.recs && as.recs.length);
     }
     // כמה יורד מהוצאה r בחודש k מהיום (0 = החודש)
     function charge(r, k) {
@@ -546,13 +639,22 @@
     });
     $('s-add').addEventListener('click', function () { add(''); store(); draw(); calc(); focusLast('[data-k=n]'); used('add'); });
     $('s-import').addEventListener('click', function () {
-      var mi = load('minuyim', { list: [] }), have = st.list.map(function (r) { return r.n; }), c = 0;
+      var mi = load('minuyim', { list: [] }), have = st.list.map(function (r) { return key(r.n); }), c = 0;
       mi.list.forEach(function (x) {
-        if (!num(x.p) || have.indexOf(x.n) > -1) return;
+        if (!num(x.p) || have.indexOf(key(x.n)) > -1) return;
+        have.push(key(x.n));
         if (x.per === 'y') add(x.n, 'y', x.p); else if (x.per === 'w') add(x.n, 'm', String(Math.round(num(x.p) * 52 / 12))); else add(x.n, 'm', x.p);
         c++;
       });
       store(); draw(); calc(); flash($('s-saved'), c ? 'נוספו ' + c + ' מנויים' : 'כל המנויים כבר כאן'); used('import');
+    });
+    $('s-import2').addEventListener('click', function () {
+      var as = load('ashrai', { recs: [] }), have = st.list.map(function (r) { return key(r.n); }), c = 0;
+      (as.recs || []).forEach(function (x) {
+        if (!(x.a > 0) || have.indexOf(key(x.n)) > -1) return;
+        add(x.n, 'm', String(Math.round(x.a * 100) / 100)); have.push(key(x.n)); c++;
+      });
+      store(); draw(); calc(); flash($('s-saved'), c ? 'נוספו ' + c + ' חיובים חוזרים מהאשראי' : 'כל החיובים החוזרים כבר כאן'); used('import_ashrai');
     });
     $('s-csv').addEventListener('click', function () {
       var hdr = ['הוצאה', 'סכום (₪)', 'כל כמה'], fq = {};
@@ -708,6 +810,9 @@
   (function () {
     if (!$('tlush')) return;
     var MIN_MONTH = 6443.85, MIN_HOUR = 35.40, FULL_HOURS = 182;   // מאפריל 2026
+    // שכר המינימום מתעדכן כל שנה ב-1 באפריל. כשמעדכנים את המספרים למעלה, מעדכנים גם את MIN_FROM (השנה שממנה הם בתוקף).
+    var MIN_FROM = 2026, NOW = new Date();
+    var MIN_OLD = NOW.getFullYear() > MIN_FROM && NOW.getMonth() >= 3;   // מאפריל של השנה הבאה, המספר כאן אולי לא עדכני
     var IDS = ['pct', 'hours', 'months', 'g', 'n', 'x', 'ee', 'er', 'pz', 'he', 'hr', 'vac', 'sick'];
     var st = load('tlush', null) || { kind: 'full' };
     IDS.forEach(function (k) { if (st[k] != null) $('p-' + k).value = st[k]; });
@@ -735,7 +840,8 @@
       if (min > 0) {
         var okMin = base >= min - 0.5;
         add(okMin, okMin ? 'מעל שכר המינימום' : 'נראה שמתחת לשכר המינימום',
-          'השכר בלי שעות נוספות ונסיעות: ' + ils(base) + '. המינימום: ' + minTxt + '. (לנוער ולחניכים יש מינימום אחר.)',
+          'השכר בלי שעות נוספות ונסיעות: ' + ils(base) + '. המינימום: ' + minTxt + '. (לנוער ולחניכים יש מינימום אחר.)' +
+            (MIN_OLD ? ' שימו לב: המספר הזה מאפריל ' + MIN_FROM + '. שכר המינימום מתעדכן כל אפריל, וייתכן שכבר יש מספר חדש (בכל-זכות).' : ''),
           'למה השכר הבסיסי ' + ils(base) + ', כשהמינימום הוא ' + ils(min) + '?');
       }
       // 2. פנסיה: 6% עובד, 6.5% תגמולי מעסיק, 6% פיצויים
@@ -777,6 +883,63 @@
       $('p-res').hidden = false; $('p-ask').hidden = !ask.length;
       used('check', { issues: bad });
     }
+    // מילוי מ-PDF: מוצאים שורה לפי השם שלה בתלוש, ולוקחים את המספר האחרון בשורה (עמודת הסכום, הכי שמאלית).
+    // לא ממלאים בשקט: מציגים מה נמצא, וממלאים רק מה שמסמנים.
+    var PDF_F = [
+      ['g', 'ברוטו', [/סה"?כ\s*(ה)?תשלומים/, /סך\s*הכו?ל\s*תשלומים/, /שכר\s*ברוטו/, /ברוטו(?!\s*ל)/, /ברוטו/]],
+      ['n', 'נטו', [/נטו\s*לתשלום/, /שכר\s*נטו/, /לתשלום\s*נטו/, /נטו(?!\s*ל?מס)/]],
+      ['er', 'פנסיה, מהמעסיק', [/תגמולי\s*מע[בס]ידי?/, /(פנסיה|גמל).*מע[בס]יד/, /מע[בס]יד.*(פנסיה|תגמול)/]],
+      ['ee', 'פנסיה, ממך', [/תגמולי\s*עובד/, /(פנסיה|גמל).*עובד/, /ניכוי.*פנסיה/, /^(קרן\s*)?פנסיה(?!.*(מע[בס]יד|פיצו))/]],
+      ['pz', 'פיצויים', [/פיצויים(?!.*עובד)/]],
+      ['hr', 'השתלמות, מהמעסיק', [/השתלמות.*מע[בס]יד/]],
+      ['he', 'השתלמות, ממך', [/השתלמות.*עובד/, /השתלמות(?!.*מע[בס]יד)/]],
+      ['vac', 'יתרת חופש', [/יתרת?\s*(ימי\s*)?(חופש|חופשה)/, /חופשה.*יתרה/]],
+      ['sick', 'יתרת מחלה', [/יתרת?\s*(ימי\s*)?מחלה/, /מחלה.*יתרה/]]
+    ];
+    function slipFind(lines) {
+      var texts = lines.map(function (L) { return L.map(function (c) { return c.t; }); }), taken = {}, found = [];
+      PDF_F.forEach(function (f) {
+        for (var r = 0; r < f[2].length; r++) {
+          for (var i = 0; i < texts.length; i++) {
+            if (taken[i]) continue;
+            var cells = texts[i], li = cells.findIndex(function (c) { return f[2][r].test(c.replace(/[\d.,\-]/g, ' ').replace(/\s+/g, ' ').trim()); });
+            if (li < 0) continue;
+            var nums = [];
+            cells.forEach(function (c, k) { if (k === li) return; var m = c.replace(/[^\d.,\-\s]/g, ' ').match(NUM_RE); if (m) nums = nums.concat(m); });
+            if (!nums.length) { var m2 = cells[li].match(NUM_RE); if (m2) nums = m2; }
+            var val = nums.length ? num(nums[nums.length - 1]) : 0;
+            if (!val) continue;
+            taken[i] = 1; found.push({ k: f[0], lbl: f[1], v: val, line: cells.join(' · ') }); return;
+          }
+        }
+      });
+      return found;
+    }
+    $('p-pdf').addEventListener('change', function () {
+      var f = this.files && this.files[0]; this.value = '';
+      if (!f) return;
+      var box = $('p-pdf-out'); box.hidden = false; box.innerHTML = '<p class="note">קורא את ה-PDF…</p>';
+      pdfLines(f, function (lines, info) {
+        if (info.chars < 30) { box.innerHTML = '<p>⚠️ לא מצאנו טקסט בקובץ. נראה שזה PDF סרוק או צילום, ואת זה עוד אי אפשר לקרוא בטלפון. מקלידים את המספרים ידנית.</p>'; used('pdf', { ok: 0 }); return; }
+        var found = slipFind(lines);
+        if (!found.length) { box.innerHTML = '<p>⚠️ קראנו את הקובץ, אבל לא זיהינו את השורות של התלוש. מקלידים את המספרים ידנית.</p>'; used('pdf', { ok: 0 }); return; }
+        var g = (found.filter(function (x) { return x.k === 'g'; })[0] || {}).v, n = (found.filter(function (x) { return x.k === 'n'; })[0] || {}).v;
+        var odd = g && n && n >= g;
+        box.innerHTML = '<p><b>מצאנו בתלוש ' + found.length + ' מספרים.</b> בודקים מול התלוש, מורידים את הסימון ממה שלא נכון, ולוחצים "למלא".' + (info.flip ? ' (העברית בקובץ הייתה שמורה הפוך, והפכנו אותה.)' : '') + (odd ? '<br>⚠️ הנטו יצא גדול מהברוטו. כנראה התבלבלנו בשורה, כדאי לבדוק.' : '') + '</p>' +
+          '<div class="log">' + found.map(function (x, i) {
+            return '<label style="display:flex;gap:.5rem;align-items:flex-start;padding:.35rem 0"><input type="checkbox" data-i="' + i + '"' + (odd && (x.k === 'g' || x.k === 'n') ? '' : ' checked') + '>' +
+              '<span style="flex:1">' + esc(x.lbl) + ': <b>' + (x.k === 'vac' || x.k === 'sick' ? x.v + ' ימים' : ils(x.v, 2)) + '</b><br><small class="note">מהשורה: ' + esc(x.line.slice(0, 70)) + '</small></span></label>';
+          }).join('') + '</div>' +
+          '<button class="big-btn" type="button" id="p-pdf-fill" style="margin-top:.6rem">למלא את מה שסימנתי</button>' +
+          '<p class="note">שעות נוספות ונסיעות לא ממלאים אוטומטית. אם יש, מקלידים את הסכום ביחד.</p>';
+        $('p-pdf-fill').addEventListener('click', function () {
+          var c = 0;
+          $$('input[data-i]', box).forEach(function (cb) { if (!cb.checked) return; var x = found[+cb.getAttribute('data-i')]; $('p-' + x.k).value = String(x.v); c++; });
+          box.innerHTML = '<p>✓ מילאנו ' + c + ' שדות. אפשר לתקן כל שדה ידנית.</p>'; calc(); used('pdf_fill', { n: c });
+        });
+        used('pdf', { ok: found.length });
+      }, function () { box.innerHTML = '<p>⚠️ לא הצלחנו לפתוח את הקובץ. בודקים אינטרנט ומנסים שוב, או מקלידים ידנית.</p>'; });
+    });
     $('p-kind').addEventListener('click', function (e) { var b = e.target.closest('[data-v]'); if (b) { setKind(b.getAttribute('data-v')); calc(); } });
     $('tlush').addEventListener('input', calc);
     $('p-print').addEventListener('click', function () { used('print'); window.print(); });
@@ -882,12 +1045,75 @@
         rd.readAsArrayBuffer(f);
       }
     }
+    // PDF: לא סומכים על מיקום העמודות (כותרת ממורכזת, סכום צמוד לימין). מפרקים כל שורה לפי תוכן:
+    // תאריך, סכומים (מספר עם נקודה עשרונית, או תא שכולו מספר), וטקסט. הטקסט הראשון = שם העסק, השאר = הערות.
+    // אם יש כמה סכומים, לוקחים את זה שבמקום של "סכום חיוב" בכותרת.
+    var MONEY = /^-?(\d{1,3}(,\d{3})+|\d+)\.\d{1,2}$/, INT = /^-?(\d{1,3}(,\d{3})+|\d+)$/, DATE = /\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4}/;
+    function pdfTx(lines) {
+      var out = [], ci = -1;
+      lines.forEach(function (L) {
+        var t = L.map(function (c) { return c.t; }), all = t.join(' | ');
+        if (/בית.?ה?עסק|שם ה?עסק|תיאור|merchant|description/i.test(all) && /סכום/.test(all) && !DATE.test(all)) {
+          var am = all.match(/סכום\s*[^\s|]*/g) || [];
+          ci = am.findIndex(function (x) { return /חיוב/.test(x); }); if (ci < 0) ci = am.length - 1;
+          return;
+        }
+        if (ci < 0) return;
+        var d = '', money = [], texts = [];
+        t.forEach(function (cell) {
+          var tok = cell.split(' '), rest = [];
+          var pureNum = tok.every(function (w) { return MONEY.test(w) || INT.test(w) || w === '₪'; });
+          tok.forEach(function (w) {
+            if (!d && DATE.test(w)) { d = monthOf(w); return; }
+            if (MONEY.test(w) || (pureNum && INT.test(w))) { money.push(num(w)); return; }
+            if (w === '₪') return;
+            rest.push(w);
+          });
+          if (rest.join('').trim()) texts.push(rest.join(' ').trim());
+        });
+        if (!money.length || !texts.length) return;
+        var n = texts[0], extra = texts.slice(1).join(' ');
+        if (/סה"?כ|סך הכל|total|יתרה/i.test(n)) return;
+        var a = money[Math.min(ci, money.length - 1)];
+        if (!a) return;
+        out.push({ d: d, n: n.slice(0, 60), a: Math.round(a * 100) / 100, c: catOf(n, ''), r: /קבע/.test(extra) ? 1 : 0, p: /תשלום|תשלומים/.test(extra) ? 1 : 0 });
+      });
+      return out;
+    }
+    function pdfPreview(list, info, fname) {
+      var box = $('a-pdf-out'); box.hidden = false;
+      if (info.chars < 30) { box.innerHTML = '<p>⚠️ ב-' + esc(fname) + ' אין טקסט. נראה שזה PDF סרוק או צילום, ואת זה עוד אי אפשר לקרוא בטלפון. הכי טוב: קובץ אקסל מהאתר של חברת האשראי.</p>'; return; }
+      if (!list.length) { box.innerHTML = '<p>⚠️ קראנו את ' + esc(fname) + ', אבל לא מצאנו טבלת חיובים (עמודות "שם בית העסק" ו"סכום"). אפשר לנסות קובץ אקסל.</p>'; return; }
+      var tot = list.reduce(function (s, t) { return s + t.a; }, 0), noDate = list.filter(function (t) { return !t.d; }).length;
+      box.innerHTML = '<p><b>מצאנו ב-PDF ' + list.length + ' חיובים, ביחד ' + ils(tot, 2) + '.</b> בודקים שזה נראה נכון מול הדף, ולוחצים "להוסיף".' + (info.flip ? ' (העברית בקובץ הייתה שמורה הפוך, והפכנו אותה.)' : '') + (noDate ? '<br>⚠️ ל-' + noDate + ' חיובים לא מצאנו תאריך.' : '') + '</p>' +
+        '<div class="log">' + list.slice(0, 8).map(function (t) { return '<div><span>' + esc(t.n) + ' <small class="note">· ' + esc(t.d || 'בלי תאריך') + (t.r ? ' · קבע' : '') + (t.p ? ' · תשלומים' : '') + '</small></span><b>' + ils(t.a, 2) + '</b></div>'; }).join('') +
+        (list.length > 8 ? '<div><span class="note">ועוד ' + (list.length - 8) + '…</span></div>' : '') + '</div>' +
+        '<button class="big-btn" type="button" id="a-pdf-ok" style="margin-top:.6rem">נראה נכון – להוסיף</button>' +
+        '<button class="add" type="button" id="a-pdf-no">לא נכון – לבטל</button>';
+      $('a-pdf-ok').addEventListener('click', function () {
+        if (st.demo) { st.tx = []; st.demo = 0; }
+        var got = addTx(list, fname); box.hidden = true; box.innerHTML = '';
+        if (got) { flash($('a-msg'), 'נוספו ' + got + ' חיובים מה-PDF ✓'); used('upload', { rows: got, pdf: 1 }); }
+        draw();
+      });
+      $('a-pdf-no').addEventListener('click', function () { box.hidden = true; box.innerHTML = ''; used('pdf_no'); });
+    }
     $('a-file').addEventListener('change', function () {
-      var files = Array.prototype.slice.call(this.files || []), left = files.length, got = 0;
-      if (!left) return;
+      var files = Array.prototype.slice.call(this.files || []), got = 0;
+      var pdfs = files.filter(function (f) { return /\.pdf$/i.test(f.name) || f.type === 'application/pdf'; });
+      files = files.filter(function (f) { return pdfs.indexOf(f) < 0; });
+      var left = files.length;
+      pdfs.slice(0, 1).forEach(function (f) {
+        $('a-pdf-out').hidden = false; $('a-pdf-out').innerHTML = '<p class="note">קורא את ה-PDF…</p>';
+        pdfLines(f, function (lines, info) { pdfPreview(pdfTx(lines), info, f.name); used('pdf'); },
+          function () { $('a-pdf-out').innerHTML = '<p>⚠️ לא הצלחנו לפתוח את ה-PDF. בודקים אינטרנט ומנסים שוב.</p>'; });
+      });
+      if (pdfs.length > 1) flash($('a-msg'), 'PDF אחד בכל פעם. קוראים את הראשון.');
+      if (!left) { this.value = ''; return; }
       flash($('a-msg'), 'קורא…');
       files.forEach(function (f) {
         readFile(f, function (list) {
+          if (st.demo && list.length) { st.tx = []; st.demo = 0; }
           got += addTx(list, f.name);
           if (--left === 0) { if (got) { flash($('a-msg'), 'נקראו ' + got + ' חיובים ✓'); used('upload', { rows: got }); } draw(); }
         });
@@ -938,6 +1164,8 @@
         if (why && !t.p) { recSeen[t.n] = 1; recs.push([t.n, t.a, why]); }
       });
       var recSum = recs.reduce(function (s, r) { return s + r[1]; }, 0);
+      st.recs = recs.map(function (r) { return { n: r[0], a: r[1] }; }); save('ashrai', st);
+      $('a-send').hidden = !recs.length;
       $('a-recs').innerHTML = recs.length ? recs.map(function (r) { return '<div><span>' + esc(r[0]) + ' <small class="note">· ' + r[2] + '</small></span><b>' + ils(r[1]) + '</b></div>'; }).join('') : '<div><span>לא זיהינו חיובים חוזרים. עם קובץ של חודש נוסף, יהיה קל יותר.</span></div>';
       var pays = cur.filter(function (t) { return t.p; });
       $('a-n').textContent = cur.length; $('a-rec').textContent = ils(recSum); $('a-pay').textContent = pays.length;
@@ -960,6 +1188,13 @@
       if (pays.length) lines.push('<b>' + pays.length + ' חיובים בתשלומים</b> ממשיכים גם בחודשים הבאים.');
       $('a-sum5').innerHTML = '<b>בקצרה</b><ul>' + lines.map(function (l) { return '<li>' + l + '</li>'; }).join('') + '</ul>';
     }
+    // מעבירים את החיובים החוזרים לכלי המנויים ולכלי ההוצאות לאורך השנה, בלי כפילויות (לפי שם)
+    $('a-send').addEventListener('click', function () {
+      if (st.demo) { flash($('a-msg2'), 'זו דוגמה. מעבירים אחרי שמעלים קובץ אמיתי.'); return; }
+      var r = recsTo(st.recs || []);
+      flash($('a-msg2'), r.m + r.s ? 'נוספו ' + r.m + ' ל"כמה זה עולה לי באמת" ו-' + r.s + ' ל"הוצאות קבועות לאורך השנה" ✓' : 'הכול כבר נמצא בשני הכלים ✓');
+      used('send', { n: r.m + r.s });
+    });
     $('a-csv').addEventListener('click', function () {
       var rows = [['חודש', 'עסק', 'סכום', 'קטגוריה', 'הוראת קבע', 'תשלומים']];
       st.tx.forEach(function (t) { rows.push([t.d, t.n, t.a, t.c, t.r ? 'כן' : '', t.p ? 'כן' : '']); });
@@ -973,7 +1208,11 @@
   // =====================================================================
   (function () {
     if (!$('kranot')) return;
-    var KINDS = [['קרנות השתלמות', 'השתלמות'], ['תגמולים ואישית לפיצויים', 'קופת גמל'], ['קופת גמל להשקעה', 'גמל להשקעה'], ['קופת גמל להשקעה - חסכון לילד', 'חיסכון לילד']];
+    var KINDS = [['קרנות השתלמות', 'השתלמות'], ['תגמולים ואישית לפיצויים', 'קופת גמל'], ['קופת גמל להשקעה', 'גמל להשקעה'], ['קופת גמל להשקעה - חסכון לילד', 'חיסכון לילד'],
+      ['קרן פנסיה מקיפה', 'פנסיה'], ['קרן פנסיה כללית (משלימה)', 'פנסיה משלימה']];
+    var YEAR = 365 * 864e5;
+    function isPen(k) { return /פנסיה/.test(k); }
+    function ago(d) { var t = Date.parse(d); return isFinite(t) ? Date.now() - t : 0; }
     var st = load('kranot', null) || { kind: KINDS[0][0], fund: null, mine: [] };
     var D = null, byId = {};
     function pc(v, sign) { return v == null ? '-' : (sign && v > 0 ? '+' : '') + v.toLocaleString('he-IL', { maximumFractionDigits: 2 }) + '%'; }
@@ -1012,8 +1251,12 @@
       $('f-y1').textContent = pc(f.y1 != null ? f.y1 : f.ytd, true);
       $('f-sub').textContent = (f.y1 != null ? 'תשואה ב-12 החודשים האחרונים' : 'תשואה מתחילת השנה') + ', עד ' + per(D.period) + '. אחרי דמי ניהול.';
       $('f-y3').textContent = pc(f.y3); $('f-y5').textContent = pc(f.y5); $('f-fee').textContent = pc(f.f);
-      $('f-grp').textContent = 'השוואה ל-' + grp.length + ' מסלולים מאותו סוג: ' + (f.s + (f.ss && f.ss !== f.s ? ', ' + f.ss : '')) + '. מקום 1 = הכי גבוה בתשואה, או הכי נמוך בדמי ניהול.';
+      $('f-grp').textContent = 'השוואה ל-' + grp.length + ' מסלולים מאותו סוג: ' + (f.s + (f.ss && f.ss !== f.s ? ', ' + f.ss : '')) + '. מקום 1 = הכי גבוה בתשואה, או הכי נמוך בדמי ניהול.' +
+        (isPen(f.k) ? ' בפנסיה ההתמחות נקבעת לפי שם המסלול. דמי הניהול כאן הם הממוצע בקרן, ולכל אחד יש דמי ניהול משלו (בדוח השנתי).' : '');
+      var mine = st.mine.filter(function (m) { return m.i === f.i; })[0];
+      $('f-old').hidden = !(mine && ago(mine.d) >= YEAR);
       var rows = [['12 חודשים', 'y1', false], ['3 שנים, לשנה', 'y3', false], ['5 שנים, לשנה', 'y5', false], ['דמי ניהול מהצבירה', 'f', true]];
+      if (isPen(f.k)) rows.push(['דמי ניהול מההפקדה', 'fd', true]);
       $('f-cmp').innerHTML = rows.map(function (r) {
         var me = f[r[1]], md = median(grp.map(function (g) { return g[r[1]]; }));
         var cls = me == null || md == null ? '' : ((r[2] ? me < md : me > md) ? 'down' : (me === md ? '' : 'up'));
@@ -1034,7 +1277,8 @@
       if (!bal) { $('f-cost').textContent = 'מקלידים כמה יש בקרן, ורואים כמה דמי הניהול לוקחים בשנה.'; return; }
       var y = bal * (fee || 0) / 100, ten = 0, b = bal;
       for (var i = 0; i < 10; i++) { ten += b * (fee || 0) / 100; b *= 1.04; }   // הנחה: 4% תשואה בשנה, בלי הפקדות
-      $('f-cost').innerHTML = 'ב-' + pc(fee) + ' דמי ניהול: בערך <b>' + ils(y) + ' בשנה</b>. ב-10 שנים, אם הקרן גדלה 4% בשנה ובלי הפקדות נוספות: בערך ' + ils(ten) + '. כל 0.1% פחות = בערך ' + ils(bal * 0.001) + ' בשנה.';
+      $('f-cost').innerHTML = 'ב-' + pc(fee) + ' דמי ניהול: בערך <b>' + ils(y) + ' בשנה</b>. ב-10 שנים, אם הקרן גדלה 4% בשנה ובלי הפקדות נוספות: בערך ' + ils(ten) + '. כל 0.1% פחות = בערך ' + ils(bal * 0.001) + ' בשנה.' +
+        (isPen(f.k) ? '<br>בפנסיה יש גם דמי ניהול מכל הפקדה' + (f.fd != null ? ' (הממוצע במסלול הזה: ' + pc(f.fd) + ')' : '') + '. למשל, על הפקדה של 1,000 ₪ בחודש, כל 1% = 120 ₪ בשנה.' : '');
     }
     function liq() {
       st.open = $('f-open').value; save('kranot', st);
@@ -1044,9 +1288,13 @@
     }
     function drawMine() {
       $('f-mine-box').hidden = !st.mine.length;
+      // בדיקה שנתית: קרן שנשמרה לפני שנה ויותר מקבלת תזכורת. שמירה מחדש מאפסת אותה.
+      var old = st.mine.filter(function (m) { return ago(m.d) >= YEAR; }).length;
+      $('f-mine-old').hidden = !old;
+      $('f-mine-old').innerHTML = old ? '⏰ <b>עברה שנה</b> מאז ששמרת ' + (old === 1 ? 'קרן אחת' : old + ' קרנות') + '. כדאי לבדוק שוב: לוחצים על הקרן, מסתכלים, ושומרים שוב.' : '';
       $('f-mine').innerHTML = st.mine.map(function (m) {
-        var f = byId[m.i];
-        return '<div><span><a href="#" class="gold" data-open="' + m.i + '">' + esc(f ? f.c + ' · ' + f.n : 'מסלול ' + m.i) + '</a><br><small class="note">נשמר ' + esc(m.d) + '</small></span><b>' + (f ? pc(f.y1, true) : '-') + '</b></div>';
+        var f = byId[m.i], late = ago(m.d) >= YEAR;
+        return '<div><span><a href="#" class="gold" data-open="' + m.i + '">' + esc(f ? f.c + ' · ' + f.n : 'מסלול ' + m.i) + '</a><br><small class="note">נשמר ' + esc(m.d) + (late ? ' · <b style="color:var(--bad)">עברה שנה, כדאי לבדוק שוב</b>' : '') + '</small></span><b>' + (f ? pc(f.y1, true) : '-') + '</b></div>';
       }).join('');
     }
     $('f-kind').addEventListener('click', function (e) { var b = e.target.closest('[data-k]'); if (!b) return; st.kind = b.getAttribute('data-k'); st.fund = null; drawKinds(); drawCorps(); });
@@ -1056,7 +1304,7 @@
     $('f-keep').addEventListener('click', function () {
       if (!st.fund) return;
       st.mine = st.mine.filter(function (m) { return m.i !== st.fund; }).concat([{ i: st.fund, d: today() }]);
-      save('kranot', st); drawMine(); flash($('f-saved'), 'נשמר. כדאי לחזור פעם בשנה ולבדוק ✓'); used('keep');
+      save('kranot', st); drawMine(); $('f-old').hidden = true; flash($('f-saved'), 'נשמר. בעוד שנה תופיע כאן תזכורת לבדוק שוב ✓'); used('keep');
     });
     $('f-mine').addEventListener('click', function (e) {
       var a = e.target.closest('[data-open]'); if (!a) return; e.preventDefault();
