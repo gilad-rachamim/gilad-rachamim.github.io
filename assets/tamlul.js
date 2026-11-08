@@ -222,4 +222,14 @@
     this.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(t);
     if (window.kelimEv) window.kelimEv('tamlul_export', { how: 'whatsapp' });
   });
+  // המשך בכלי קודש: "שיעור לעלון" או "שבוע של תוכן". הטקסט עובר דרך localStorage (אותו אתר), לא דרך הקישור.
+  ['tl-alon', 'tl-shavua'].forEach(function (id) {
+    var b = $(id); if (!b) return;
+    b.addEventListener('click', function () {
+      var to = b.dataset.to, t = plain();
+      try { localStorage.setItem('kodesh-' + to + '-in', JSON.stringify({ title: '', body: t, from: 'tamlul' })); } catch (e) {}
+      if (window.kelimEv) window.kelimEv('tamlul_export', { how: to });
+      location.href = '/kodesh/' + to + '/';
+    });
+  });
 })();
