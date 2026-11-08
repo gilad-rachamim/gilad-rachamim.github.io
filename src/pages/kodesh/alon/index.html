@@ -1,0 +1,69 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "alon",
+  "title": "שיעור לעלון: עלון A4 בשני טורים, וחוברת שיעורים עם תוכן עניינים | כלי קודש",
+  "description": "מדביקים שיעור או תמלול, מסמנים כותרות וציטוט, ומקבלים עלון A4 מעוצב להדפסה: שני טורים, כותרת, ציטוט בתיבה, חתימה, הקדשה ולוגו. וגם חוברת מכמה שיעורים עם תוכן עניינים. המילים שלכם לא משתנות. בחינם, בלי הרשמה.",
+  "og_title": "שיעור לעלון – עלון A4 מעוצב וחוברת שיעורים",
+  "priority": "0.7",
+  "crumbs": [["שיעור לעלון", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/alon.css\"><style>.al-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}.k-form textarea.al-body{min-height:13rem;line-height:1.6}.al-marks{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin:.2rem 0 .5rem}.al-marks .btn{padding:.35rem .8rem}.al-marks small{opacity:.8;font-size:.82rem}.al-item{border:1px solid var(--line);border-radius:12px;padding:.7rem .8rem;margin:0 0 .7rem}.al-item legend{font-weight:700;padding:0 .3rem}.al-item-acts{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.3rem}.al-item-acts .btn{padding:.25rem .7rem;font-size:.85rem}#al-info{text-align:center;opacity:.85;margin:.8rem 0 0}.al-help{font-size:.9rem;line-height:1.7;border:1px dashed var(--line);border-radius:12px;padding:.6rem .8rem;margin:.2rem 0 .8rem}.al-help code{background:rgba(255,255,255,.08);padding:0 .3rem;border-radius:4px;font-weight:700}.al-logo-row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}.al-logo-row img{max-height:44px;max-width:90px;background:#fff;border-radius:6px;padding:2px}@media(max-width:520px){.al-row{grid-template-columns:1fr}}</style>",
+  "foot": "<script src=\"/assets/alon.js\" defer></script><script src=\"/assets/alon-page.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>שיעור לעלון</h1>
+  <p class="sub">מדביקים שיעור או תמלול, מסמנים כותרות ומשפט לציטוט, ומקבלים עלון A4 מעוצב להדפסה. או חוברת שלמה מכמה שיעורים, עם תוכן עניינים. המילים שלכם נשארות בדיוק כמו שכתבתם.</p>
+</header>
+<div class="tool">
+  <form class="k-form lead-form" id="al-form" novalidate>
+    <div class="al-row">
+      <div class="field"><label for="al-mode">מה מכינים</label><select id="al-mode" name="mode"><option value="alon">עלון משיעור אחד</option><option value="sefer">חוברת מכמה שיעורים</option></select></div>
+      <div class="field"><label for="al-theme">עיצוב</label><select id="al-theme" name="theme"><option value="kachol">כחול וזהב</option><option value="zahav">חום וזהב</option><option value="bordo">בורדו</option><option value="zayit">ירוק זית</option><option value="lavan">שחור לבן (חוסך דיו)</option></select></div>
+    </div>
+    <div class="field" data-for="sefer" hidden><label for="al-btitle">שם החוברת</label><input id="al-btitle" name="btitle" type="text" maxlength="60" placeholder="שיעורים על פרשת השבוע"></div>
+    <div class="al-row">
+      <div class="field"><label for="al-name">שם העלון או הקהילה <span class="opt">(לא חובה)</span></label><input id="al-name" name="name" type="text" maxlength="60" placeholder="עלון שבועי · קהילת אהל יצחק"></div>
+      <div class="field"><label for="al-par">פרשה, מועד או תאריך <span class="opt">(לא חובה)</span></label><input id="al-par" name="par" type="text" maxlength="50" placeholder="פרשת לך לך"></div>
+    </div>
+
+    <div class="al-help">
+      <b>איך מסמנים (בלי שום שינוי במילים):</b><br>
+      שורה שמתחילה ב-<code>#</code> היא כותרת משנה.<br>
+      שורה שמתחילה ב-<code>&gt;</code> היא ציטוט מודגש בתיבה.<br>
+      <code>**מילים**</code> בין שתי כוכביות מודגשות. כל שורה היא פסקה.<br>
+      <a class="gold" href="#" id="al-demo">למלא טקסט לדוגמה</a> · יש לכם הקלטה? <a class="gold" href="/kelim/tamlul/">לתמלל אותה</a>, ושם יש כפתור "לעלון".
+    </div>
+    <div class="al-marks" aria-label="סימון בשורה שבה הסמן עומד">
+      <button class="btn btn-line btn-sm" type="button" data-mark="#"># כותרת</button>
+      <button class="btn btn-line btn-sm" type="button" data-mark=">">&gt; ציטוט</button>
+      <button class="btn btn-line btn-sm" type="button" data-mark="**">הדגשה</button>
+      <small>עומדים על שורה (או מסמנים מילים) ולוחצים.</small>
+    </div>
+    <div id="al-items"></div>
+    <button class="btn btn-line btn-sm" type="button" id="al-add" data-for="sefer" hidden>+ להוסיף שיעור לחוברת</button>
+
+    <div class="al-row" style="margin-top:.6rem">
+      <div class="field"><label for="al-rav">שם הרב או החתימה</label><input id="al-rav" name="rav" type="text" maxlength="60" placeholder="הרב משה כהן"></div>
+      <div class="field" data-for="alon"><label for="al-issue">מספר גיליון <span class="opt">(לא חובה)</span></label><input id="al-issue" name="issue" type="text" maxlength="12" placeholder="12"></div>
+    </div>
+    <div class="field"><label for="al-ded">הקדשה <span class="opt">(לא חובה)</span></label><input id="al-ded" name="ded" type="text" maxlength="120" placeholder="העלון מוקדש לעילוי נשמת... / לרפואת..."></div>
+    <div class="field"><label for="al-foot">שורה בתחתית כל עמוד <span class="opt">(לא חובה)</span></label><input id="al-foot" name="foot" type="text" maxlength="80" placeholder="להצטרפות לקבוצת השיעורים: 050-0000000"></div>
+    <div class="al-row">
+      <div class="field"><label for="al-cols">טורים</label><select id="al-cols" name="cols"><option value="2">שני טורים</option><option value="1">טור אחד</option></select></div>
+      <div class="field"><label for="al-big">גודל אות</label><select id="al-big" name="big"><option value="">רגיל</option><option value="1">גדול (נוח לקריאה)</option></select></div>
+    </div>
+    <div class="field"><label for="al-logo">לוגו <span class="opt">(לא חובה)</span></label>
+      <div class="al-logo-row"><input id="al-logo" type="file" accept="image/*"><img id="al-logo-img" alt="הלוגו שנבחר" hidden><button class="btn btn-line btn-sm" type="button" id="al-logo-x" hidden>להסיר</button></div>
+    </div>
+  </form>
+
+  <p id="al-info" aria-live="polite"></p>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="al-printbtn">להדפיס או לשמור כ-PDF</button>
+    <button class="btn btn-line btn-sm" type="button" id="al-shavua">לשבוע של תוכן מהשיעור הזה</button>
+  </div>
+  <div class="al-view" id="al-view" aria-label="תצוגה של העלון"></div>
+  <p class="disclaimer">בחלון ההדפסה בוחרים "שמירה כ-PDF" כדי לקבל קובץ לשליחה. כדאי לבחור גודל A4 ובלי שוליים נוספים. הטקסט נשאר בטלפון או במחשב שלכם ולא נשלח לשום מקום.</p>
+  <p class="disclaimer">רוצים מאותו שיעור גם תמונות לסטטוס, סרטון והודעות לכל השבוע? <a class="gold" href="/kodesh/shavua/">שיעור אחד, שבוע של תוכן</a>. לדבר תורה קצר כתמונה: <a class="gold" href="/kodesh/dvar-torah/">דבר תורה מעוצב</a>.</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/">כלי קודש</a>. רוצים עיצוב נוסף? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>
+</div>
