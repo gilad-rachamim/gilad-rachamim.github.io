@@ -1,0 +1,49 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "shiur",
+  "title": "פלייר לשיעור ולערב לימוד: תמונה לקבוצה ודף A5 להדפסה | כלי קודש",
+  "description": "מודעה מעוצבת לשיעור, לשיעור קבוע, לערב לימוד או להרצאה: נושא, מוסר השיעור, מתי ואיפה. מקבלים תמונה לקבוצת הווטסאפ, טקסט עם ניווט, ודף A5 להדפסה ולתלייה. בחינם.",
+  "og_title": "פלייר לשיעור ולערב לימוד – בחינם, תוך דקה",
+  "priority": "0.7",
+  "crumbs": [["פלייר לשיעור", null]],
+  "head": "<style>#si-canvas{display:block;width:100%;height:auto;border-radius:14px;border:1px solid var(--line);margin-top:1rem;background:#000}.si-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}#kc-print{display:none}@media print{@page{size:A5;margin:0}body>*:not(#kc-print){display:none!important}#kc-print{display:block}#kc-print img{width:100%;height:auto;display:block}}</style>",
+  "foot": "<script src=\"/assets/kcard.js\" defer></script><script src=\"/assets/shiur.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>פלייר לשיעור</h1>
+  <p class="sub">לשיעור, לשיעור קבוע, לערב לימוד או להרצאה. ממלאים נושא, מי מוסר, מתי ואיפה. מקבלים תמונה לקבוצה ודף A5 לתלייה בבית הכנסת.</p>
+</header>
+<div class="tool">
+  <form class="k-form lead-form" id="si-form" novalidate>
+    <div class="si-row">
+      <div class="field"><label for="si-k">סוג</label><select id="si-k" name="k"><option value="shiur">שיעור</option><option value="kavua">שיעור קבוע</option><option value="erev">ערב לימוד</option><option value="harzaa">הרצאה</option><option value="siyum">סיום וסעודת מצווה</option><option value="limud">לימוד לעילוי נשמת</option><option value="other">אחר</option></select></div>
+      <div class="field" id="si-kother-wrap" hidden><label for="si-kother">מה כתוב למעלה</label><input id="si-kother" name="kother" type="text" maxlength="30" placeholder="כולל ערב"></div>
+    </div>
+    <div class="field"><label for="si-topic">נושא</label><input id="si-topic" name="topic" type="text" maxlength="60" placeholder="הלכות שבת בבית"></div>
+    <div class="field"><label for="si-sub">שורת הסבר <span class="opt">(לא חובה)</span></label><input id="si-sub" name="sub" type="text" maxlength="80" placeholder="מהגמרא ועד ההלכה למעשה, בשפה פשוטה"></div>
+    <div class="field"><label for="si-by">מוסר השיעור</label><input id="si-by" name="by" type="text" maxlength="40" placeholder="הרב משה כהן"></div>
+    <div class="si-row">
+      <div class="field"><label for="si-day">מתי</label><input id="si-day" name="day" type="text" maxlength="50" placeholder="כל יום שלישי"></div>
+      <div class="field"><label for="si-time">שעה</label><input id="si-time" name="time" type="text" maxlength="20" placeholder="20:30"></div>
+    </div>
+    <div class="field"><label for="si-place">איפה</label><input id="si-place" name="place" type="text" maxlength="70" placeholder="בית הכנסת אהל יצחק, רחוב הרצל 10"></div>
+    <div class="field"><label for="si-note">שורה נוספת <span class="opt">(לא חובה)</span></label><input id="si-note" name="note" type="text" maxlength="70" placeholder="כיבוד קל · לגברים ולנשים"></div>
+    <div class="field"><label for="si-contact">לפרטים <span class="opt">(לא חובה)</span></label><input id="si-contact" name="contact" type="text" maxlength="50" placeholder="לפרטים: 050-0000000"></div>
+    <div class="si-row">
+      <div class="field"><label for="si-theme">עיצוב</label><select id="si-theme" name="theme"><option value="night">כחול וזהב</option><option value="parch">קלף</option><option value="black">שחור וזהב</option><option value="white">לבן נקי (חוסך דיו)</option><option value="sky">תכלת</option><option value="olive">ירוק זית</option></select></div>
+      <div class="field"><label for="si-size">גודל</label><select id="si-size" name="size"><option value="square">ריבוע (קבוצה)</option><option value="story">לגובה (סטטוס)</option><option value="a5">דף A5</option></select></div>
+    </div>
+  </form>
+  <canvas id="si-canvas" width="1080" height="1080" role="img" aria-label="תצוגה מקדימה של הפלייר"></canvas>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="si-share"><svg class="ic"><use href="#wa"/></svg> לשתף את התמונה</button>
+    <button class="btn btn-line btn-sm" type="button" id="si-print">להדפיס דף A5</button>
+    <a class="btn btn-line btn-sm" href="https://wa.me/" id="si-wa" target="_blank" rel="noopener">לשלוח כטקסט בווטסאפ</a>
+    <button class="btn btn-line btn-sm" type="button" id="si-dl">לשמור את התמונה</button>
+    <button class="btn btn-line btn-sm" type="button" id="si-text">להעתיק כטקסט</button>
+  </div>
+  <p class="ios-tip" id="si-tip" hidden>התמונה נשמרה בטלפון. עכשיו פותחים את הווטסאפ, ומצרפים אותה מהגלריה.</p>
+  <p class="disclaimer">בהדפסה אפשר לבחור "שמירה כ-PDF" ולשלוח את הקובץ. הפלייר נוצר בטלפון שלכם ולא נשמר אצלנו.</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/">כלי קודש</a>. מקליטים את השיעור? <a class="gold" href="/kelim/tamlul/">תמלול שיעור לטקסט</a>.</p>
+</div>
