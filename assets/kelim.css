@@ -68,6 +68,14 @@ html:has(body.site-kodesh){background:#0e1628}
 .fb-more summary{cursor:pointer;color:var(--gold);font-weight:600;text-align:center;list-style-position:inside}
 .fb-more form{margin-top:.8rem}
 .fb-note{color:var(--muted);font-size:.9rem;margin-top:.8rem}
+.shp-line{text-align:right;margin:0 0 1rem;padding:0 0 .9rem;border-bottom:1px dashed var(--line)}
+.shp-line-h{font-family:var(--serif);color:var(--gold);font-size:1.05rem;text-align:center}
+.shp-line-h .n{color:var(--muted);font-family:inherit;font-size:.85rem}
+.shp-line ul{list-style:none;margin:.5rem 0 0;padding:0;display:grid;gap:.45rem}
+.shp-line li{color:var(--body);font-size:.93rem;line-height:1.6}
+.shp-line time{color:var(--muted);font-size:.82rem;margin-inline-end:.35rem;white-space:nowrap}
+.shp-line .by{color:var(--gold)}
+.fb-nameok{margin-top:.5rem;font-size:.88rem}
 @media print{.fb{display:none!important}}
 body[data-tool="rega"] .fb{display:none}
 /* footer v2 */
