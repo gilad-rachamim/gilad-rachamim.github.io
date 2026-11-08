@@ -217,5 +217,16 @@
     var t = (st.title || 'דף מקורות') + '\n\n' + st.items.map(function (it, i) { return (i + 1) + '. ' + (it.he || it.q) + '\n' + show(it.text || ''); }).join('\n\n');
     (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () { $('mk-status').textContent = 'הועתק. אפשר להדביק בוורד או בווטסאפ.'; }, function () {});
   });
-  draw();
+  // קישור לדף: ?q=מקור|מקור&t=כותרת – מי שפותח מקבל את אותו דף מקורות (לשליחה לתלמידים)
+  $('mk-link').addEventListener('click', function () {
+    var lines = (form.elements.list.value || '').split(/\n/).map(function (l) { return l.trim(); }).filter(Boolean);
+    var u = location.origin + location.pathname + '?q=' + encodeURIComponent(lines.join('|')) + (st.title ? '&t=' + encodeURIComponent(st.title) : '');
+    (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(function () { $('mk-status').textContent = 'הקישור הועתק. מי שפותח אותו מקבל את אותו דף מקורות.'; }, function () { window.prompt('הקישור לדף:', u); });
+  });
+  var qs = null; try { qs = new URLSearchParams(location.search); } catch (e) {}
+  if (qs && qs.get('q')) {
+    form.elements.list.value = st.list = qs.get('q').split('|').join('\n');
+    if (qs.get('t')) form.elements.title.value = st.title = qs.get('t');
+    go();
+  } else draw();
 })();
