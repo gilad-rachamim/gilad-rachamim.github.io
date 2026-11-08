@@ -1,0 +1,45 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "teuda",
+  "title": "תעודת הוקרה: חתן תורה, חתן בראשית, סיום מסכת, הוקרה לגבאי ולתורם | כלי קודש",
+  "description": "תעודה מעוצבת להדפסה ב-A4: חתן תורה, חתן בראשית, סיום מסכת, הוקרה לגבאי, לתורם או לתלמיד מצטיין. ממלאים שם וחתימות, ומדפיסים או שולחים כתמונה. בחינם, בלי הרשמה.",
+  "og_title": "תעודת הוקרה מעוצבת – להדפסה ב-A4",
+  "priority": "0.7",
+  "crumbs": [["תעודת הוקרה", null]],
+  "head": "<style>#te-canvas{display:block;width:100%;height:auto;border-radius:14px;border:1px solid var(--line);margin-top:1rem;background:#000}.te-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}#kc-print{display:none}@media print{@page{size:A4 landscape;margin:0}body>*:not(#kc-print){display:none!important}#kc-print{display:block}#kc-print img{width:100%;height:auto;display:block}}</style>",
+  "foot": "<script src=\"/assets/kcard.js\" defer></script><script src=\"/assets/teuda.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>תעודת הוקרה</h1>
+  <p class="sub">לחתן תורה ולחתן בראשית, לסיום מסכת, לגבאי, לתורם או לתלמיד מצטיין. ממלאים שם וחתימות, ומקבלים תעודה מעוצבת להדפסה ב-A4.</p>
+</header>
+<div class="tool">
+  <form class="k-form lead-form" id="te-form" novalidate>
+    <div class="field"><label for="te-k">לאיזו תעודה?</label><select id="te-k" name="k"><option value="torah">חתן תורה</option><option value="bereshit">חתן בראשית</option><option value="siyum">סיום מסכת</option><option value="gabai">הוקרה לגבאי</option><option value="torem">הוקרה לתורם</option><option value="metzayen">תלמיד מצטיין</option><option value="other">אחר</option></select></div>
+    <div class="field"><label for="te-name">שם המקבל</label><input id="te-name" name="name" type="text" maxlength="40" placeholder="ר' אברהם לוי הי&quot;ו"></div>
+    <div class="field"><label for="te-title">כותרת משנה</label><input id="te-title" name="title" type="text" maxlength="40" placeholder="חתן תורה"></div>
+    <div class="field"><label for="te-why">על מה</label><input id="te-why" name="why" type="text" maxlength="90" placeholder="לכבוד היותו חתן תורה בשמחת תורה"></div>
+    <div class="te-row">
+      <div class="field"><label for="te-date">תאריך <span class="opt">(לא חובה)</span></label><input id="te-date" name="date" type="text" maxlength="40" placeholder="שמחת תורה תשפ&quot;ז"></div>
+      <div class="field"><label for="te-org">בית הכנסת או המוסד</label><input id="te-org" name="org" type="text" maxlength="40" placeholder="בית הכנסת אהל יצחק"></div>
+    </div>
+    <div class="te-row">
+      <div class="field"><label for="te-sig1">חתימה 1</label><input id="te-sig1" name="sig1" type="text" maxlength="30" placeholder="הרב משה כהן, רב הקהילה"></div>
+      <div class="field"><label for="te-sig2">חתימה 2 <span class="opt">(לא חובה)</span></label><input id="te-sig2" name="sig2" type="text" maxlength="30" placeholder="יעקב לוי, הגבאי"></div>
+    </div>
+    <div class="te-row">
+      <div class="field"><label for="te-theme">עיצוב</label><select id="te-theme" name="theme"><option value="parch">קלף</option><option value="paper">לבן נקי (חוסך דיו)</option><option value="night">כחול וזהב</option><option value="black">שחור וזהב</option></select></div>
+      <div class="field"><label for="te-size">גודל</label><select id="te-size" name="size"><option value="a4l">דף A4 לרוחב</option><option value="square">ריבוע (לווטסאפ)</option></select></div>
+    </div>
+  </form>
+  <canvas id="te-canvas" width="1754" height="1240" role="img" aria-label="תצוגה מקדימה של התעודה"></canvas>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="te-print">להדפיס תעודה A4</button>
+    <button class="btn btn-line btn-sm" type="button" id="te-share"><svg class="ic"><use href="#wa"/></svg> לשתף כתמונה</button>
+    <button class="btn btn-line btn-sm" type="button" id="te-dl">לשמור את התמונה</button>
+  </div>
+  <p class="ios-tip" id="te-tip" hidden>התמונה נשמרה בטלפון. עכשיו פותחים את הווטסאפ, ומצרפים אותה מהגלריה.</p>
+  <p class="disclaimer">בהדפסה בוחרים "לרוחב", ואפשר גם "שמירה כ-PDF" ולשלוח לבית דפוס. מומלץ להדפיס על נייר עבה. התעודה נוצרת בטלפון שלכם ולא נשמרת אצלנו.</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/">כלי קודש</a>. רוצים עיצוב נוסף? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>
+</div>
