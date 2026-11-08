@@ -1,0 +1,26 @@
+{
+ "name": "כלים לכסף",
+ "short_name": "כלים לכסף",
+ "description": "מחשבונים פשוטים לכסף של הבית: תקציב, הלוואה, מנויים וחיסכון עם הילדים. בחינם.",
+ "id": "/kesef/",
+ "start_url": "/kesef/?utm_source=pwa",
+ "scope": "/kesef/",
+ "display": "standalone",
+ "background_color": "#11201a",
+ "theme_color": "#11201a",
+ "dir": "rtl",
+ "lang": "he",
+ "icons": [
+  {
+   "src": "/assets/icon-kesef-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "/assets/icon-kesef-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  }
+ ]
+}

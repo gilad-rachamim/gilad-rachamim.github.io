@@ -1,0 +1,52 @@
+<!--meta {
+  "site": "kesef",
+  "nav": "mivtza",
+  "tool": "mivtza",
+  "title": "המבצע המשפחתי – חוסכים יחד עם הילדים למטרה אחת | כלים לכסף",
+  "description": "בוחרים מטרה משפחתית (טיול, מתנה, אופניים), כל אחד מחליט כמה הוא חוסך בשבוע, והילדים ממלאים את הצנצנת בלחיצה. רואים כמה שבועות נשארו. חינם, נשמר בטלפון.",
+  "og_title": "המבצע המשפחתי – חוסכים יחד עם הילדים",
+  "crumbs": [["המבצע המשפחתי", null]]
+} -->
+<header class="k-hero">
+  <h1>המבצע המשפחתי</h1>
+  <p class="sub">מטרה אחת לכל המשפחה. כל אחד שם קצת כל שבוע, והילדים רואים את הצנצנת מתמלאת.</p>
+</header>
+
+<div class="tool" id="mivtza">
+  <section class="box" id="v-setup">
+    <h2>המטרה שלנו</h2>
+    <div class="field" style="margin-top:.6rem"><label for="v-goal">למה חוסכים?</label><input id="v-goal" type="text" maxlength="40" placeholder="טיול משפחתי לצפון"></div>
+    <div class="grid2" style="margin-top:.6rem">
+      <div class="field"><label for="v-target">כמה צריך (₪)</label><input id="v-target" class="num-in" type="text" inputmode="decimal" placeholder="2,000"></div>
+      <div class="field"><label for="v-start">כבר יש לנו (₪)</label><input id="v-start" class="num-in" type="text" inputmode="decimal" placeholder="0"></div>
+    </div>
+    <h2 style="margin-top:1.1rem">מי חוסך, וכמה בשבוע</h2>
+    <div class="lrows" id="v-members"></div>
+    <button class="add" type="button" id="v-add">+ עוד מישהו מהמשפחה</button>
+  </section>
+
+  <section class="box" aria-live="polite">
+    <div class="jar-wrap">
+      <div class="jar" aria-hidden="true"><div class="fill" id="v-fill"></div><div class="pct" id="v-pct">0%</div></div>
+      <div class="goal-txt">
+        <div class="what" id="v-what">המטרה שלנו</div>
+        <div class="nums">יש לנו <b id="v-have">₪0</b> מתוך <b id="v-need">₪0</b></div>
+        <div class="nums" id="v-eta"></div>
+      </div>
+    </div>
+    <div class="kids" id="v-kids"></div>
+    <p class="note" style="margin-top:.6rem;text-align:center">כל לחיצה על "שמתי" מוסיפה את הסכום של השבוע לצנצנת. אפשר לשים גם סכום אחר.</p>
+  </section>
+
+  <details class="years box"><summary>מה שמנו עד עכשיו</summary><div class="log" id="v-log"></div></details>
+
+  <button class="big-btn soft" type="button" id="v-print">להדפיס דף לקיר</button>
+  <p class="saved" id="v-saved" role="status"></p>
+
+  <div class="local-note"><span class="ic2">💡</span><span>רעיון: יום קבוע בשבוע (למשל במוצאי שבת) שבו כולם מגיעים לטלפון ולוחצים "שמתי". כשמגיעים ל-100%, חוגגים יחד.</span></div>
+  <div class="local-note"><span class="ic2">🔒</span><span>נשמר רק בטלפון הזה. הכסף עצמו נשאר אצלכם, בקופה או בחשבון.</span></div>
+  <div class="data-acts"><button class="linkish" type="button" id="v-new">להתחיל מבצע חדש</button><button class="linkish" type="button" data-wipe="mivtza">למחוק מהטלפון</button></div>
+</div>
+
+<p class="not-advice"><b>זה מחשבון, לא ייעוץ.</b> כלי משפחתי לספירה ולעידוד, בלי כסף אמיתי שעובר בו.</p>
+{{K:foot:המבצע המשפחתי: חוסכים יחד עם הילדים למטרה אחת, והם ממלאים את הצנצנת בלחיצה. כלי חינמי}}

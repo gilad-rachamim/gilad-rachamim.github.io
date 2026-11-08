@@ -1,0 +1,119 @@
+/* כלים לכסף – מעל site.css ו-kelim.css. ירוק עמוק וזהב, מספרים גדולים, נוח לאצבע. */
+body.site-kesef{--ink:#11201a;--ink-2:#182b23;--gold:#dcb763;--gold-hi:#ecc97f;--gold-soft:#8f7a45;--body:#d6e0d8;--muted:#a3b5aa;--parchment:#eef3ec;--cream:#fbfaf2;--line:rgba(220,183,99,.22);--accent:#7fcf9f;--good:#7fcf9f;--bad:#f0a08f;
+  font-size:1.12rem;
+  background:radial-gradient(120% 60% at 85% 0%,rgba(220,183,99,.1),transparent 60%),radial-gradient(90% 50% at 0% 100%,rgba(127,207,159,.08),transparent 60%),var(--ink)}
+html:has(body.site-kesef){background:#11201a}
+.site-kesef .brand img{border-radius:10px}
+.site-kesef .field input,.site-kesef .field select{font-size:1.1rem;padding:.8rem .85rem}
+.site-kesef .note{color:var(--muted)}
+.num-in{direction:ltr;text-align:right}
+
+/* כרטיסי הכלים בדף הבית */
+.ncards{display:grid;gap:.85rem}
+@media (min-width:700px){.ncards{grid-template-columns:1fr 1fr}}
+.ncards a{display:grid;grid-template-columns:3.2rem 1fr;gap:.2rem .9rem;align-items:start;padding:1.15rem 1.1rem;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.035);text-decoration:none;color:inherit}
+.ncards a:hover,.ncards a:focus-visible{border-color:var(--gold-soft);background:rgba(255,255,255,.06)}
+.ncards .em{grid-row:span 2;font-size:2rem;line-height:1;display:grid;place-items:center;width:3.2rem;height:3.2rem;border-radius:14px;background:rgba(127,207,159,.14)}
+.ncards b{font-family:var(--serif);font-size:1.32rem;color:var(--cream);line-height:1.3}
+.ncards span.d{color:var(--body);font-size:1.02rem;line-height:1.55}
+
+/* משפט קבוע: מחשבון, לא ייעוץ */
+.not-advice{max-width:40rem;margin:1.2rem auto 0;padding:.75rem 1rem;border-radius:14px;border:1px dashed var(--gold-soft);color:var(--parchment);font-size:1rem;text-align:center}
+.not-advice b{color:var(--gold)}
+
+/* קבוצת שורות (הכנסות, הוצאות, מנויים) */
+.box{margin-top:1.1rem;padding:1.1rem 1rem;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+.box>h2{font-family:var(--serif);color:var(--cream);font-size:1.3rem;display:flex;justify-content:space-between;align-items:baseline;gap:.6rem}
+.box>h2 small{font-family:var(--sans);font-size:1.05rem;color:var(--gold);font-weight:700;direction:ltr}
+.box>p.note{margin-top:.2rem}
+.lrows{display:grid;gap:.5rem;margin-top:.7rem}
+.lrow{display:grid;grid-template-columns:1fr 7.2rem 2.4rem;gap:.4rem;align-items:center}
+.lrow.sub{grid-template-columns:1fr 6.6rem 2.4rem}
+.lrow.sub [data-k=n]{grid-column:1/-1}
+.lrow input,.lrow select{width:100%;font:400 1.05rem/1.3 var(--sans);color:var(--cream);background:rgba(239,230,210,.06);border:1px solid rgba(201,165,92,.35);border-radius:10px;padding:.7rem .6rem;min-width:0}
+.lrow select{padding:.7rem .4rem;font-size:.98rem}
+.lrow input:focus,.lrow select:focus{outline:none;border-color:var(--gold)}
+.lrow .del{width:2.4rem;height:2.6rem;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:1.3rem;cursor:pointer}
+.lrow.off input{opacity:.55;text-decoration:line-through}
+.add{margin-top:.6rem;font:inherit;font-size:1rem;color:var(--gold);background:none;border:1px dashed var(--gold-soft);border-radius:12px;padding:.6rem 1rem;cursor:pointer;width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.7rem}
+.chips button{font:inherit;font-size:.95rem;padding:.4rem .8rem;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--body);cursor:pointer}
+.chips button:active{background:rgba(220,183,99,.15)}
+
+/* תוצאה גדולה */
+.sum{margin-top:1.1rem;padding:1.2rem 1.1rem;border-radius:20px;border:1px solid var(--gold-soft);background:linear-gradient(170deg,rgba(220,183,99,.15),rgba(220,183,99,.02) 65%);text-align:center}
+.sum .lbl{color:var(--gold);font-weight:700}
+.sum .big{font-family:var(--serif);font-weight:700;color:var(--cream);font-size:clamp(2rem,10vw,2.8rem);line-height:1.2;margin:.15rem 0;direction:ltr}
+.sum .big.neg{color:var(--bad)}
+.sum .sub2{color:var(--parchment)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.45rem;margin-top:.9rem}
+.stats div{padding:.7rem .5rem;border-radius:14px;background:rgba(0,0,0,.18);border:1px solid var(--line)}
+.stats b{display:block;font-size:1.08rem;color:var(--cream);direction:ltr}
+.stats span{font-size:.85rem;color:var(--muted);line-height:1.3;display:block}
+.bar2{height:.9rem;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:.8rem;display:flex}
+.bar2 i{display:block;height:100%}
+
+/* מה אם */
+.whatif{margin-top:1.1rem}
+.whatif table{width:100%;border-collapse:collapse;font-size:1rem;margin-top:.6rem}
+.whatif th,.whatif td{padding:.55rem .35rem;border-bottom:1px solid var(--line);text-align:center}
+.whatif th{color:var(--gold);font-weight:700;font-size:.92rem}
+.whatif td:first-child{text-align:right;color:var(--parchment)}
+.whatif td.n{direction:ltr;color:var(--cream)}
+.whatif .up{color:var(--bad)}.whatif .down{color:var(--good)}
+.slide{margin-top:.8rem}
+.slide label{display:flex;justify-content:space-between;color:var(--cream);font-weight:600}
+.slide label b{color:var(--gold);direction:ltr}
+.slide input[type=range]{width:100%;accent-color:var(--gold);height:2rem}
+.seg{display:flex;gap:.4rem;margin-top:.4rem}
+.seg button{flex:1;font:inherit;font-size:1rem;padding:.6rem .4rem;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--body);cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem}
+@media (max-width:380px){.grid3{grid-template-columns:1fr 1fr}}
+details.years{margin-top:1rem}
+details.years summary{cursor:pointer;color:var(--gold);font-weight:700}
+
+/* מנויים: מה לבטל */
+.cancel-box{margin-top:1rem;padding:1rem;border-radius:16px;border:1px solid rgba(127,207,159,.45);background:rgba(127,207,159,.08);color:var(--parchment)}
+.cancel-box b{color:var(--cream)}
+.cancel-box ul{margin:.5rem 0 0;padding-inline-start:1.2rem}
+.use{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.15rem;grid-column:1/-1}
+.use button{font:inherit;font-size:.88rem;white-space:nowrap;padding:.3rem .65rem;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.use button[aria-pressed=true]{border-color:var(--gold);color:var(--ink);background:var(--gold);font-weight:700}
+.sub-item{padding:.6rem;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.12)}
+.sub-item.cut{border-color:rgba(127,207,159,.55);background:rgba(127,207,159,.07)}
+
+/* המבצע המשפחתי */
+.jar-wrap{display:grid;grid-template-columns:7.5rem 1fr;gap:1rem;align-items:center;margin-top:1rem}
+.jar{position:relative;width:7.5rem;height:13rem;border-radius:22px 22px 28px 28px;border:3px solid var(--gold-soft);background:rgba(255,255,255,.04);overflow:hidden}
+.jar::before{content:"";position:absolute;top:-3px;inset-inline:1.2rem;height:.9rem;border-radius:0 0 8px 8px;background:var(--gold-soft)}
+.jar .fill{position:absolute;bottom:0;inset-inline:0;display:flex;flex-direction:column-reverse;transition:height .6s ease}
+.jar .fill i{display:block;width:100%}
+.jar .pct{position:absolute;inset:0;display:grid;place-items:center;font:800 1.5rem/1 var(--sans);color:var(--cream);text-shadow:0 1px 4px rgba(0,0,0,.7)}
+.goal-txt .what{font-family:var(--serif);font-size:clamp(1.5rem,7vw,2rem);color:var(--cream);line-height:1.25;word-break:break-word}
+.goal-txt .nums{color:var(--parchment);margin-top:.3rem}
+.goal-txt .nums b{color:var(--gold);direction:ltr;display:inline-block}
+.kids{display:grid;gap:.6rem;margin-top:1rem}
+.kid{display:grid;grid-template-columns:auto 1fr auto;gap:.3rem .8rem;align-items:center;padding:.8rem .9rem;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.035)}
+.kid .dot{width:2.6rem;height:2.6rem;border-radius:50%;display:grid;place-items:center;font-size:1.4rem}
+.kid .nm{font-weight:700;color:var(--cream);font-size:1.15rem}
+.kid .tt{color:var(--muted);font-size:.95rem}
+.kid .coin{min-width:6.2rem;min-height:3rem;border-radius:14px;border:0;background:var(--gold);color:var(--ink);font:800 1.05rem/1.15 var(--sans);cursor:pointer;padding:.4rem .6rem}
+.kid .coin:active{transform:scale(.96)}
+.kid .weeks{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:.3rem}
+.kid .weeks span{width:1.55rem;height:1.55rem;border-radius:50%;border:1px solid var(--line);font-size:.75rem;display:grid;place-items:center;color:var(--muted)}
+.kid .weeks span.on{color:var(--ink);font-weight:800;border:0}
+.pop{position:fixed;inset-inline:0;top:40%;text-align:center;font-size:3.2rem;pointer-events:none;animation:pop 1.2s ease forwards;z-index:60}
+@keyframes pop{0%{opacity:0;transform:scale(.4)}25%{opacity:1;transform:scale(1.15)}100%{opacity:0;transform:translateY(-3rem) scale(1)}}
+.log{margin-top:.6rem;display:grid;gap:.3rem;font-size:.98rem;color:var(--body)}
+.log div{display:flex;justify-content:space-between;gap:.6rem;border-bottom:1px solid var(--line);padding:.3rem 0}
+
+.big-btn{display:flex;align-items:center;justify-content:center;gap:.6rem;width:100%;min-height:3.6rem;font:700 1.2rem/1.2 var(--sans);border-radius:16px;border:0;cursor:pointer;text-decoration:none;background:var(--gold);color:var(--ink);margin-top:.8rem}
+.big-btn.soft{background:rgba(255,255,255,.06);color:var(--cream);border:1px solid var(--line)}
+.saved{color:var(--good);font-weight:700;font-size:1rem;min-height:1.4em;text-align:center;margin-top:.4rem}
+.linkish{background:none;border:0;color:var(--muted);font:inherit;font-size:.95rem;cursor:pointer;text-decoration:underline;padding:0}
+.local-note{display:flex;gap:.6rem;align-items:flex-start;margin-top:1rem;padding:.8rem 1rem;border-radius:14px;background:rgba(255,255,255,.035);color:var(--body);font-size:1rem}
+.data-acts{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;justify-content:center;margin-top:.6rem}
+.tool-foot{max-width:40rem;margin:1.6rem auto 0;padding:0 1.25rem;text-align:center}
+@media print{.topbar,.site-foot,.install-bar,.tool-foot,.crumbs,.data-acts,.add,.chips,.del{display:none!important}body.site-kesef{background:#fff;color:#000}}

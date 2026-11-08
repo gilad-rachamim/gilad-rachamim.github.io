@@ -43,6 +43,16 @@ SITES = {
                 ("koach", "/nefesh/koach/", "מד כוח"), ("yoman", "/nefesh/yoman/", "יומן קול"),
                 ("mishpacha", "/nefesh/mishpacha/", "למשפחה"), ("kelim", "/nefesh/#kelim", "כל הכלים")],
     },
+<<<<<<< HEAD
+    # כלים לכסף: מחשבונים בלבד, לא ייעוץ. הכול בטלפון (localStorage), בלי שרת.
+    "kesef": {
+        "name": "כלים לכסף", "short": "כלים לכסף", "home": "/kesef/", "theme": "#11201a",
+        "og": "og-kelim.jpg", "icon": "kesef",
+        "desc": "מחשבונים פשוטים לכסף של הבית: תקציב, הלוואה, מנויים וחיסכון עם הילדים. בחינם.",
+        "css": ["/assets/kesef.css"], "js": ["/assets/kesef.js"],
+        "nav": [("taktziv", "/kesef/taktziv/", "תקציב"), ("halvaa", "/kesef/halvaa/", "הלוואה"),
+                ("minuyim", "/kesef/minuyim/", "מנויים"), ("mivtza", "/kesef/mivtza/", "המבצע המשפחתי"),
+=======
     # כלים ללימודים: כרטיסיות חזרה, מתכנן למבחן, טיימר למידה, לימוד יומי לסיום. הכול בטלפון (localStorage), בלי שרת.
     "limudim": {
         "name": "כלים ללימודים", "short": "כלים ללימודים", "home": "/limudim/", "theme": "#141c2b",
@@ -51,6 +61,7 @@ SITES = {
         "css": ["/assets/limudim.css"], "js": ["/assets/limudim.js"],
         "nav": [("kartisiot", "/limudim/kartisiot/", "כרטיסיות"), ("mivchan", "/limudim/mivchan/", "למבחן"),
                 ("timer", "/limudim/timer/", "טיימר"), ("yomi", "/limudim/yomi/", "לימוד יומי"),
+>>>>>>> origin/main
                 ("kelim", "/kelim/", "כל הכלים")],
     },
 }
@@ -155,6 +166,17 @@ def nefesh_blocks(html):
     html = html.replace("{{N:join}}", join)
     return re.sub(r"\{\{N:foot:([^}]+)\}\}", lambda m: NEFESH_FOOT.format(text=m.group(1)), html)
 
+# ---------- כלים לכסף: פוטר קבוע בכל כלי ----------
+KESEF_FOOT = """<div class="tool-foot">
+  <div class="share-row"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="{text}" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר בווטסאפ</a></div>
+  <div data-install-wrap hidden><button class="btn btn-line btn-sm" type="button" data-install>להתקין בטלפון, כמו אפליקציה</button>
+    <p class="ios-tip" id="ios-tip" hidden>באייפון: לוחצים על כפתור השיתוף <b>⬆︎</b> למטה בספארי, ואז "הוספה למסך הבית".</p></div>
+  <p class="note" style="margin-top:.8rem"><a class="gold" href="/kesef/">כל הכלים לכסף</a> · חינם · בלי הרשמה · הנתונים נשארים בטלפון שלך</p>
+</div>"""
+
+def kesef_blocks(html):
+    return re.sub(r"\{\{K:foot:([^}]+)\}\}", lambda m: KESEF_FOOT.format(text=m.group(1)), html)
+
 pages = []
 site_pages = {k: [] for k in SITES}
 for path in sorted(SRC.rglob("*.html")):
@@ -166,6 +188,8 @@ for path in sorted(SRC.rglob("*.html")):
     content = leadforms(raw[m.end():])
     if meta.get("site") == "nefesh":
         content = nefesh_blocks(content)
+    if meta.get("site") == "kesef":
+        content = kesef_blocks(content)
     rel = path.relative_to(SRC).as_posix()            # e.g. mohel/moed/index.html
     out = ROOT / rel
     url_path = "/" + rel[:-len("index.html")] if rel.endswith("index.html") else "/" + rel
