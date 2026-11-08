@@ -1,0 +1,43 @@
+/* פרקי אבות לספירת העומר. ארבעה עיצובים לכרטיסי הקריאה (data-theme על .oa) */
+.oa{--c-bg:#fbf7ec;--c-ink:#2a2112;--c-acc:#7a5c12;--c-head:#7a5c12;--c-headink:#fff;--c-soft:#f3ead3;--c-line:#e4d6b0;--fs:1.25rem}
+.oa[data-theme=night]{--c-bg:#121a30;--c-ink:#e9ecf5;--c-acc:#d4b062;--c-head:#1d2a4d;--c-headink:#f3dca3;--c-soft:#18234a;--c-line:#2a3a66}
+.oa[data-theme=parch]{--c-bg:#efe3c4;--c-ink:#3b2a14;--c-acc:#8a3b12;--c-head:#5b3a1a;--c-headink:#f6e8c4;--c-soft:#e5d3a8;--c-line:#cdb47e}
+.oa[data-theme=clean]{--c-bg:#ffffff;--c-ink:#1a202c;--c-acc:#2b6cb0;--c-head:#2b6cb0;--c-headink:#fff;--c-soft:#edf2f7;--c-line:#e2e8f0}
+.oa-today,.oa-day{background:var(--c-bg);color:var(--c-ink);border:1px solid var(--c-line);border-radius:16px;overflow:hidden;margin:1rem 0}
+.oa-dh{background:var(--c-head);color:var(--c-headink);padding:.7rem 1rem;display:flex;flex-wrap:wrap;gap:.3rem .8rem;align-items:baseline}
+.oa-dh b{font-size:1.15rem}
+.oa-dh span{opacity:.85;font-size:.95rem}
+.oa-body{padding:1rem 1.1rem}
+.oa-count{background:var(--c-soft);border-radius:12px;padding:.8rem 1rem;margin-bottom:1rem;text-align:center}
+.oa-count .lbl{font-size:.85rem;color:var(--c-acc);display:block;margin-bottom:.2rem}
+.oa-count .txt{font-size:1.35rem;font-weight:700;font-family:"Frank Ruhl Libre","David",serif}
+.oa-src{color:var(--c-acc);font-size:.9rem;margin:0 0 .4rem}
+.oa-m{font-family:"Frank Ruhl Libre","Taamey Frank CLM","David",serif;font-size:var(--fs);line-height:1.9;margin:0 0 .7rem}
+.oa-m .n{color:var(--c-acc);font-weight:700;margin-left:.3rem;font-size:.85em}
+.oa-p{background:var(--c-soft);border-radius:12px;padding:.8rem 1rem;font-size:calc(var(--fs)*.78);line-height:1.75;margin-top:.6rem}
+.oa-p b{color:var(--c-acc)}
+.oa.nopr .oa-p{display:none}
+.oa-nav{display:flex;justify-content:space-between;gap:.5rem;padding:0 1.1rem 1rem}
+.oa-nav button,.oa-set button{background:var(--c-soft);color:var(--c-ink);border:1px solid var(--c-line);border-radius:999px;padding:.45rem .9rem;font:inherit;cursor:pointer}
+.oa-nav button[disabled]{opacity:.35;cursor:default}
+.oa-set{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;justify-content:space-between;margin:1rem 0}
+.oa-set button{background:transparent;color:var(--body,#ddd);border-color:var(--line,#444)}
+.oa-themes{display:flex;flex-wrap:wrap;gap:.4rem}
+.oa-themes i{display:inline-block;width:.9rem;height:.9rem;border-radius:50%;margin-left:.35rem;vertical-align:-.1rem;border:1px solid rgba(255,255,255,.4)}
+.oa-themes button[aria-pressed=true]{border-color:var(--gold,#d4b062);color:var(--gold,#d4b062);font-weight:700}
+.oa-tg{display:flex;gap:.4rem;align-items:center}
+.oa-tg label{margin-right:.4rem;cursor:pointer}
+.oa-rem{border:1px solid var(--line,#444);border-radius:16px;padding:1rem 1.1rem;margin:1.2rem 0}
+.oa-rem h2,.oa-about h2,.oa-wk{margin-top:0}
+.oa-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.oa-chk{display:block;margin:.4rem 0 .8rem;cursor:pointer}
+.oa-small{font-size:.88rem;color:var(--muted,#aaa)}
+.oa-wk{font-size:1.2rem;margin:1.6rem 0 .4rem;color:var(--gold,#d4b062)}
+.oa-all details.oa-day>summary{list-style:none;cursor:pointer}
+.oa-all details.oa-day>summary::-webkit-details-marker{display:none}
+.oa-all details.oa-day>summary .oa-dh::after{content:"▾";margin-right:auto;opacity:.7}
+.oa-all details[open].oa-day>summary .oa-dh::after{content:"▴"}
+.oa-day.is-today{box-shadow:0 0 0 3px var(--gold,#d4b062)}
+.oa-pre{font-size:.9rem;color:var(--c-acc);margin:0 0 .6rem}
+@media (max-width:520px){.oa-row{grid-template-columns:1fr}.oa-body{padding:.9rem}}
+@media print{.oa-set,.oa-rem,.oa-nav,.oa-hero .sub{display:none}.oa-day{break-inside:avoid}}
