@@ -1,0 +1,39 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "miluim_bait",
+  "title": "דף לבית לפני מילואים – מי אוסף, למי מתקשרים, מה משלמים | הכלים של גילעד רחמים",
+  "description": "דף אחד למשפחה לפני שיוצאים למילואים: אנשי קשר, מי אוסף את הילדים, תשלומים ותזכורות, ומספרי חירום. ממלאים בטלפון, מדפיסים למקרר או שולחים בווטסאפ. בחינם, נשמר רק אצלכם.",
+  "og_title": "דף לבית לפני מילואים",
+  "priority": "0.7",
+  "crumbs": [["צבא ומילואים", "/kelim/miluim/"], ["דף לבית", null]],
+  "head": "<style>.bt-c{display:grid;grid-template-columns:1fr 1fr auto;gap:.45rem;margin-bottom:.45rem}.bt-c input{min-width:0}.bt-c .x{background:none;border:0;color:var(--muted);font-size:1.4rem;cursor:pointer}.bt-card{max-width:30rem;margin:1rem auto 0;background:#fffdf7;color:#1d1d1d;border-radius:14px;padding:1.3rem 1.2rem;font-size:1rem;line-height:1.55;border:1px solid #d9cfb4}.bt-card h3{font-family:var(--serif);font-size:1.45rem;text-align:center;color:#24331f;margin-bottom:.2rem}.bt-card .sub2{text-align:center;color:#555;font-size:.95rem;margin-bottom:.8rem}.bt-card h4{font-family:var(--serif);font-size:1.08rem;color:#24331f;border-bottom:1px solid #c9b97d;margin:.9rem 0 .35rem;padding-bottom:.15rem}.bt-card table{width:100%;border-collapse:collapse}.bt-card td{padding:.22rem 0;border-bottom:1px dotted #ccc;vertical-align:top}.bt-card td.p{text-align:left;direction:ltr;white-space:nowrap;font-weight:700}.bt-card .nt{white-space:pre-wrap}.bt-card .em{display:flex;flex-wrap:wrap;gap:.35rem .9rem;font-size:.95rem}.bt-card .em b{direction:ltr;display:inline-block}.bt-card .ft{text-align:center;color:#666;font-size:.85rem;margin-top:1rem}@media print{@page{size:A4;margin:14mm}html,body{background:#fff!important}body *{visibility:hidden}.topbar,.site-foot,.crumbs,.install-bar,.no-print{display:none!important}#bt-card,#bt-card *{visibility:visible}#bt-card{position:absolute;top:0;right:0;left:0;max-width:none;border:0;font-size:13pt}}</style>",
+  "foot": "<script src=\"https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js\" defer></script><script src=\"/assets/miluim-bait.js\" defer></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>דף לבית</h1>
+  <p class="sub">לפני שיוצאים: כל מה שהמשפחה צריכה לדעת, בדף אחד. ממלאים פעם אחת, מדפיסים למקרר או שולחים בווטסאפ.</p>
+</header>
+<div class="tool no-print">
+  <form class="k-form" id="bt-form" novalidate>
+    <div class="field"><label for="bt-name">מי יוצא?</label><input id="bt-name" name="name" type="text" maxlength="40" placeholder="אבא / יוסי"></div>
+    <div class="field"><label for="bt-dates">עד מתי בערך? <span class="opt">(לא חובה)</span></label><input id="bt-dates" name="dates" type="text" maxlength="40" placeholder="עד סוף החודש, יעודכן"></div>
+    <div class="field"><span class="label">אנשי קשר</span>
+      <div id="bt-contacts"></div>
+      <button class="btn btn-line btn-sm" type="button" id="bt-addc">+ עוד איש קשר</button>
+    </div>
+    <div class="field"><label for="bt-kids">מי אוסף ומי מסיע <span class="opt">(ילדים, חוגים, הסעות)</span></label><textarea id="bt-kids" name="kids" maxlength="600" placeholder="ראשון ורביעי: סבתא אוספת מהגן&#10;שלישי: חוג כדורגל, אבא של דני מסיע"></textarea></div>
+    <div class="field"><label for="bt-pay">תשלומים ודברים לזכור</label><textarea id="bt-pay" name="pay" maxlength="600" placeholder="ארנונה יורדת ב-10 לחודש&#10;טסט לרכב בשבוע הבא&#10;תור לרופא שיניים ביום שלישי"></textarea></div>
+    <p class="note">בלי סיסמאות וקודים בדף הזה: הוא נתלה על המקרר ונשלח בווטסאפ.</p>
+  </form>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="bt-print">להדפיס למקרר</button>
+    <a class="btn btn-line btn-sm" href="#" id="bt-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח כטקסט</a>
+    <button class="btn btn-line btn-sm" type="button" id="bt-img">לשמור כתמונה</button>
+  </div>
+</div>
+<div id="bt-card" class="bt-card"></div>
+<div class="tool no-print">
+  <p class="disclaimer">מה שממלאים נשמר רק בטלפון הזה, ולא נשלח לשום מקום עד שאתם שולחים.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="דף לבית לפני מילואים: אנשי קשר, מי אוסף, תשלומים ומספרי חירום, בדף אחד. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
