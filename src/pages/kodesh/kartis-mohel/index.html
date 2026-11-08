@@ -1,0 +1,71 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "mohalim",
+  "tool": "kartis_mohel",
+  "title": "כרטיס ביקור דיגיטלי למוהל, בחינם | כלי קודש",
+  "description": "למוהלים: ממלאים שם, טלפון, אזור ונוסחים, ומקבלים כרטיס ביקור דיגיטלי עם שמירת איש קשר, ווטסאפ וחיוג בלחיצה, ותמונה עם QR להדפסה ולסטטוס. בחינם, בלי הרשמה ובלי אתר.",
+  "og_title": "כרטיס ביקור דיגיטלי למוהל – בחינם, תוך דקה",
+  "priority": "0.7",
+  "crumbs": [["כלים למוהלים", "/kodesh/mohalim/"], ["כרטיס ביקור למוהל", null]],
+  "head_pre": "<script>window.dataLayer=window.dataLayer||[];(function(){function g(){dataLayer.push(arguments)}g('set',{page_location:location.origin+location.pathname+location.search})})();</script>",
+  "head": "<style>.km{margin-top:1rem;padding:1.6rem 1.2rem 1.2rem;border:1px solid var(--gold-soft);border-radius:22px;background:linear-gradient(170deg,rgba(212,176,98,.16),rgba(212,176,98,.03) 60%);text-align:center}.km .bsd{display:block;text-align:right;color:var(--gold);font-size:.85rem}.km-ph{width:112px;height:112px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);display:block;margin:.2rem auto .6rem;background:#fff}.km h2{font-family:var(--serif);color:var(--cream);font-size:clamp(1.8rem,7.5vw,2.4rem);line-height:1.2}.km-sm{color:var(--gold);font-size:1.15rem;margin-top:.25rem}.km-area{color:var(--body);margin-top:.35rem}.km-nus{display:flex;flex-wrap:wrap;justify-content:center;gap:.35rem;margin-top:.7rem}.km-nus span{border:1px solid var(--gold-soft);border-radius:99px;padding:.15rem .7rem;font-size:.9rem;color:var(--parchment)}.km-note{margin-top:.9rem;color:var(--parchment);font-family:var(--serif);font-size:1.12rem}.km-btns{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-top:1.2rem}.km-btns .btn{justify-content:center;font-size:1rem}.km-btns .km-wide{grid-column:1/-1}.km-share{display:inline-block;margin-top:.8rem;background:none;border:0;color:var(--gold);font:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer}body.km-view #fb,body.km-view .k-hero{display:none}.km-credit{margin-top:1.3rem;color:var(--muted);font-size:.8rem}.km-credit a{color:var(--muted);text-decoration:underline;text-decoration-color:rgba(212,176,98,.45);text-underline-offset:3px}fieldset.field{border:0;padding:0;margin-inline:0}fieldset.field legend{font-weight:700;color:var(--cream);margin-bottom:.4rem}.km-checks{display:flex;flex-wrap:wrap;gap:.4rem .9rem}.km-checks label{display:flex;align-items:center;gap:.35rem;font-weight:400;color:var(--body)}.km-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}#km-link{direction:ltr;font-size:.85rem}#km-canvas{display:block;width:100%;height:auto;border-radius:14px;border:1px solid var(--line);margin-top:1rem;background:#000}#km-photo-clear{margin-top:.4rem}.km-h{font-family:var(--serif);color:var(--cream);font-size:1.3rem;margin-top:1.8rem}#kc-print{display:none}@media print{@page{size:A5;margin:0}body>*:not(#kc-print){display:none!important}#kc-print{display:block}#kc-print img{width:100%;height:auto;display:block}}</style>",
+  "foot": "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js\" defer></script><script src=\"/assets/kcard.js\" defer></script><script src=\"/assets/kartis-mohel.js\" defer></script>"
+} -->
+<div id="km-build">
+<header class="k-hero">
+  <h1>כרטיס ביקור דיגיטלי למוהל</h1>
+  <p class="sub">ממלאים פעם אחת ומקבלים כרטיס משלכם: ההורים לוחצים ושומרים אתכם באנשי הקשר, כותבים בווטסאפ או מתקשרים. יש גם תמונה עם QR להדפסה ולסטטוס, למי שאין לו אתר.</p>
+</header>
+<div class="tool">
+  <form class="k-form lead-form" id="km-form" novalidate>
+    <div class="field"><label for="km-name">שם</label><input id="km-name" name="name" type="text" required maxlength="50" placeholder="למשל: משה כהן"></div>
+    <div class="field"><label for="km-smicha">הסמכה</label><input id="km-smicha" name="smicha" type="text" maxlength="70" value="מוהל מוסמך" placeholder="מוהל מוסמך"></div>
+    <div class="km-row">
+      <div class="field"><label for="km-phone">טלפון (גם לווטסאפ)</label><input id="km-phone" name="phone" type="tel" inputmode="tel" required maxlength="20" placeholder="050-0000000" dir="ltr" style="text-align:right"></div>
+      <div class="field"><label for="km-area">עיר או אזור</label><input id="km-area" name="area" type="text" maxlength="50" placeholder="ירושלים והסביבה"></div>
+    </div>
+    <fieldset class="field"><legend>נוסחים <span class="opt">(לא חובה)</span></legend>
+      <div class="km-checks">
+        <label><input type="checkbox" name="nusach" value="נוסח ספרדי"> ספרדי</label>
+        <label><input type="checkbox" name="nusach" value="נוסח עדות המזרח"> עדות המזרח</label>
+        <label><input type="checkbox" name="nusach" value="נוסח אשכנזי"> אשכנזי</label>
+        <label><input type="checkbox" name="nusach" value="נוסח תימני"> תימני</label>
+        <label><input type="checkbox" name="nusach" value="נוסח חב״ד"> חב״ד</label>
+      </div>
+    </fieldset>
+    <div class="field"><label for="km-note">שורה אישית <span class="opt">(לא חובה)</span></label><input id="km-note" name="note" type="text" maxlength="90" placeholder="ברית בשמחה, באהבה ובנחת"></div>
+    <div class="field"><label for="km-photo">תמונה או לוגו <span class="opt">(לא חובה)</span></label><input id="km-photo" type="file" accept="image/*"><button class="btn btn-line btn-sm" type="button" id="km-photo-clear" hidden>להוריד את התמונה</button></div>
+    <button class="btn btn-gold btn-block" type="submit">ליצור את הכרטיס שלי</button>
+    <p class="privacy">הפרטים לא נשמרים אצלנו בשום מקום: הם יושבים בתוך הקישור עצמו, ובטלפון שלכם.</p>
+    <div class="res" id="km-ready" hidden>
+      <h3>הכרטיס מוכן!</h3>
+      <div class="field"><input id="km-link" type="text" readonly aria-label="הקישור לכרטיס"></div>
+      <div class="share-row"><button class="btn btn-gold btn-sm" type="button" id="km-copy">להעתיק את הקישור</button><a class="btn btn-line btn-sm" id="km-wa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח בווטסאפ</a><a class="btn btn-line btn-sm" id="km-open" href="#">לפתוח את הכרטיס</a></div>
+      <p class="note">טיפ: שמים את הקישור בפרופיל של הווטסאפ, בחתימה ובסטטוס. שינוי בפרטים = קישור חדש.</p>
+    </div>
+    <h2 class="km-h">כך ייראה הכרטיס בטלפון</h2>
+  </form>
+</div>
+</div>
+<div class="tool"><div id="km-card" hidden></div>
+  <p id="km-mine" class="disclaimer" hidden><a class="gold" href="/kodesh/kartis-mohel/?utm_source=kartis_mohel&amp;utm_medium=card">גם אתם מוהלים? בונים כרטיס כזה בחינם ←</a></p>
+</div>
+<div class="tool" id="km-img">
+  <h2 class="km-h">תמונת כרטיס עם QR, להדפסה ולווטסאפ</h2>
+  <p>למי שאין אתר: שולחים את התמונה בווטסאפ, שמים בסטטוס או מדפיסים. סורקים את הקוד ומגיעים לכרטיס.</p>
+  <form class="k-form" id="km-imgform" novalidate>
+    <div class="km-row">
+      <div class="field"><label for="km-theme">עיצוב</label><select id="km-theme" name="theme"><option value="night">כחול וזהב</option><option value="black">שחור וזהב</option><option value="parch">קלף</option><option value="paper">לבן נקי (חוסך דיו)</option><option value="sky">תכלת</option></select></div>
+      <div class="field"><label for="km-size">גודל</label><select id="km-size" name="size"><option value="story">סטטוס (לאורך)</option><option value="square">ריבוע (לווטסאפ)</option><option value="a5">דף A5 להדפסה</option></select></div>
+    </div>
+  </form>
+  <canvas id="km-canvas" width="1080" height="1080" role="img" aria-label="תצוגה מקדימה של תמונת הכרטיס"></canvas>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="km-share"><svg class="ic"><use href="#wa"/></svg> לשתף כתמונה</button>
+    <button class="btn btn-line btn-sm" type="button" id="km-dl">לשמור את התמונה</button>
+    <button class="btn btn-line btn-sm" type="button" id="km-print">להדפיס</button>
+  </div>
+  <p class="ios-tip" id="km-tip" hidden>התמונה נשמרה בטלפון.</p>
+  <p class="disclaimer">לפני שמדפיסים, סורקים את הקוד בטלפון ומוודאים שהוא פותח את הכרטיס. התמונה שלכם לא נכנסת לקוד, כדי שיהיה קל לסרוק אותו.</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/mohalim/">הכלים למוהלים</a>. חסר משהו בכרטיס? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>
+</div>
