@@ -1,0 +1,125 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "tehillim_siyum",
+  "title": "סיום תהילים בקישור: מחלקים את הספר בין כולם, ומעשי חסד לעילוי נשמה ולרפואה | כלי קודש",
+  "description": "פותחים סיום תהילים לעילוי נשמה, לרפואה או להצלחה, שולחים קישור בווטסאפ, וכל אחד לוקח פרקים עד שכל הספר נגמר. לפי פרקים, ימי החודש או ספרים, וגם כמה סיומים. אפשר לקבל על עצמך מעשה טוב ולראות כמה נלקחו. הטקסט בדף. בחינם, בלי הרשמה.",
+  "og_title": "סיום תהילים בקישור – כל אחד לוקח פרקים, ומעשי חסד",
+  "priority": "0.8",
+  "og_image": "og-tehillim.jpg",
+  "crumbs": [["סיום תהילים", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/tehillim.css\">",
+  "foot": "<script src=\"/assets/tehillim-text.js\" defer></script><script src=\"/assets/tehillim.js\" defer></script>"
+} -->
+<header class="k-hero" id="ts-hero">
+  <h1>סיום תהילים בקישור</h1>
+  <p class="sub">פותחים סיום, שולחים קישור לקבוצה, וכל אחד לוקח פרקים עד שכל הספר נגמר. ובאותו קישור אפשר לקבל על עצמך מעשה טוב.</p>
+</header>
+
+<div class="tool" id="ts-new">
+  <form class="k-form" id="ts-form" novalidate>
+    <div class="field"><label for="ts-p">בשביל מה</label><select id="ts-p" name="p"><option value="niftar">לעילוי נשמת</option><option value="refua">לרפואת</option><option value="hatzlacha">להצלחת</option><option value="zivug">לזיווג הגון ל</option><option value="zchut">לזכות</option><option value="other">ניסוח אחר</option></select></div>
+    <div class="field" id="ts-pt-w" hidden><label for="ts-pt">הניסוח</label><input id="ts-pt" name="pt" type="text" maxlength="40" placeholder="לשלום חיילי צה״ל"></div>
+    <div class="field"><label for="ts-n">השם</label><input id="ts-n" name="n" type="text" maxlength="60" placeholder="יעקב" autocomplete="off"></div>
+    <div class="ts-row">
+      <div class="field"><label for="ts-bb">בן / בת</label><select id="ts-bb" name="bb"><option>בן</option><option>בת</option></select></div>
+      <div class="field"><label for="ts-par" id="ts-par-l">שם ההורה <span class="opt">(לא חובה)</span></label><input id="ts-par" name="par" type="text" maxlength="40" placeholder="שרה" autocomplete="off"></div>
+    </div>
+    <div class="field"><label for="ts-g">עד מתי <span class="opt">(לא חובה)</span></label><input id="ts-g" name="g" type="text" maxlength="60" placeholder="עד השלושים, כ״ה בכסלו"></div>
+    <div class="field"><label>איך מחלקים</label>
+      <div class="ts-seg" role="radiogroup">
+        <label><input type="radio" name="mo" value="perek" checked><span><b>לפי פרקים</b><small>150 פרקים, כל אחד לוקח כמה שרוצה</small></span></label>
+        <label><input type="radio" name="mo" value="yom"><span><b>לפי ימי החודש</b><small>30 חלקים, כמו בסידור</small></span></label>
+        <label><input type="radio" name="mo" value="sefer"><span><b>לפי ספרים</b><small>חמשת ספרי תהילים</small></span></label>
+      </div>
+    </div>
+    <div class="field"><label for="ts-r">כמה סיומים</label><select id="ts-r" name="r"><option value="1">סיום אחד</option><option value="2">2 סיומים</option><option value="3">3 סיומים</option><option value="5">5 סיומים</option><option value="7">7 סיומים</option><option value="10">10 סיומים</option></select></div>
+    <div class="field"><label for="ts-x">מילה מהמשפחה <span class="opt">(לא חובה)</span></label><textarea id="ts-x" name="x" maxlength="200" placeholder="אבא אהב לומר תהילים כל בוקר. נשמח שכל אחד ייקח כמה פרקים."></textarea></div>
+    <div class="field"><label for="ts-cr">מי פותח <span class="opt">(לא חובה)</span></label><input id="ts-cr" name="cr" type="text" maxlength="40" placeholder="משפחת כהן"></div>
+    <label class="check"><input type="checkbox" name="ch" id="ts-ch" checked> <span>להוסיף בקישור גם קבלת מעשים טובים (צדקה, ביקור חולים, שמירת הלשון ועוד)</span></label>
+    <button class="btn btn-gold btn-block" type="submit" id="ts-create">לפתוח את הסיום ולקבל קישור</button>
+    <p class="ts-err" id="ts-err" role="alert" hidden></p>
+  </form>
+  <div class="res" id="ts-mine" hidden><h3>הסיומים שפתחתי בטלפון הזה</h3><ul id="ts-mine-list"></ul></div>
+  <div class="res">
+    <h3>רק לומר לפי שם?</h3>
+    <p style="color:var(--body);margin-top:.4rem"><a class="gold" href="/kodesh/tehillim/shem/">תהילים לפי שם</a>: פסוקי פרק קיט לפי אותיות השם, ולעילוי נשמה גם אותיות "נשמה". בלי הרשמה ובלי קישור משותף.</p>
+  </div>
+  <p class="disclaimer">מה נשמר: פרטי הסיום, השמות שכל אחד בחר לכתוב (לא חובה), ומה נלקח ונקרא. הכול נמחק מעצמו אחרי 4 חודשים, ומי שפתח יכול למחוק בכל רגע. הטקסט מתוך ספריא.</p>
+</div>
+
+<div class="tool" id="ts-view" hidden>
+  <div class="ts-card" id="ts-head"><p class="ts-hint">טוען את הסיום…</p></div>
+  <canvas id="ts-cv" width="1080" height="1080" hidden></canvas>
+  <div class="ts-made" id="ts-made" hidden>
+    <b>הסיום מוכן. עכשיו שולחים את הקישור לקבוצה.</b>
+    <div class="share-row"><a class="btn btn-gold btn-sm" id="ts-made-wa" data-wa href="https://wa.me/" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח בווטסאפ</a><button class="btn btn-line btn-sm" type="button" data-share-img>לשתף כתמונה</button><button class="btn btn-line btn-sm" type="button" data-copy-link>להעתיק קישור</button></div>
+    <p>הקישור לניהול (להוסיף סבב, למחוק) נשמר בטלפון הזה. כדי לנהל גם מטלפון אחר: <button class="ts-link" type="button" id="ts-copy-admin">להעתיק את קישור הניהול</button> ולשמור אותו אצלכם, לא לשלוח לקבוצה.</p>
+  </div>
+  <div class="ts-prog" id="ts-prog"></div>
+
+  <section class="ts-box ts-now" id="ts-now" hidden>
+    <h2>מעשה טוב של דקה, כבר עכשיו</h2>
+    <p class="ts-hint">עוד לפני הפרקים: דבר אחד קטן שעושים עכשיו, <span id="ts-now-for"></span>. ככה כבר יש לך חלק בזכות.</p>
+    <div class="ts-now-g">
+      <button type="button" data-now="mila"><b>💛 לשלוח מילה טובה</b><small>הודעה חמה למישהו שאוהבים, בלחיצה</small></button>
+      <button type="button" data-now="tzedaka"><b>🪙 נתתי עכשיו צדקה</b><small>גם מטבע אחד בקופה</small></button>
+      <button type="button" data-now="lashon"><b>🤐 שעה בלי לשון הרע</b><small>מעכשיו ועד עוד שעה</small></button>
+      <button type="button" data-now="zikui"><b>📲 לזכות עוד חבר</b><small>לשלוח את הסיום למישהו נוסף</small></button>
+    </div>
+    <p class="ts-pl-sum" id="ts-now-ok" role="status" hidden></p>
+  </section>
+
+  <section class="ts-box" id="ts-take-box">
+    <h2>לקחת פרקים</h2>
+    <div class="field"><label for="ts-w">השם שלך <span class="opt">(לא חובה, כדי שיראו מי לקח)</span></label><input id="ts-w" type="text" maxlength="40" placeholder="רחל" autocomplete="given-name"></div>
+    <div class="share-row" id="ts-take-btns"></div>
+    <p class="ts-hint">או לוחצים על פרק פנוי בטבלה למטה.</p>
+    <p class="ts-err" id="ts-take-err" role="alert" hidden></p>
+    <div class="ts-after" id="ts-after" hidden>
+      <b>תודה! רוצים להכפיל את הזכות?</b>
+      <p>שלחו את הסיום לעוד שלושה חברים. כל פרק שהם לוקחים בזכותכם, גם הוא נחשב לכם.</p>
+      <div class="share-row"><a class="btn btn-gold btn-sm" data-wa href="https://wa.me/" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחברים</a><button class="btn btn-line btn-sm" type="button" data-share-img>לשתף כתמונה</button></div>
+    </div>
+  </section>
+
+  <section class="ts-box" id="ts-my-box" hidden>
+    <h2>הפרקים שלי</h2>
+    <ul class="ts-my" id="ts-my"></ul>
+    <div class="ts-reader" id="ts-reader" hidden></div>
+  </section>
+
+  <section class="ts-box">
+    <h2>כל הספר</h2>
+    <p class="ts-legend"><span class="f"></span> פנוי <span class="t"></span> נלקח <span class="d"></span> נקרא <span class="m"></span> שלי</p>
+    <div id="ts-grid"></div>
+  </section>
+
+  <section class="ts-box" id="ts-chesed-box" hidden>
+    <h2>מעשה טוב <span id="ts-ch-for"></span></h2>
+    <p class="ts-hint">בוחרים דבר אחד קטן ומקבלים על עצמך. כולם רואים כמה כבר נלקחו.</p>
+    <div class="ts-chesed" id="ts-chesed"></div>
+    <div class="ts-pledge" id="ts-pledge" hidden>
+      <p id="ts-pl-sel"></p>
+      <div class="field" id="ts-pl-x-w"><label for="ts-pl-x" id="ts-pl-x-l">במילים שלך <span class="opt">(לא חובה)</span></label><input id="ts-pl-x" type="text" maxlength="120" placeholder="למשל: אתקשר כל שבוע לסבתא"></div>
+      <button class="btn btn-gold btn-block" type="button" id="ts-pl-go">אני מקבל/ת על עצמי</button>
+      <p class="ts-err" id="ts-pl-err" role="alert" hidden></p>
+    </div>
+    <p class="ts-pl-sum" id="ts-pl-ok" role="status" hidden></p>
+    <ul class="ts-pl-list" id="ts-pl-list"></ul>
+  </section>
+
+  <div class="share-row">
+    <a class="btn btn-gold btn-sm" id="ts-wa" data-wa href="https://wa.me/" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הקישור בווטסאפ</a>
+    <button class="btn btn-line btn-sm" type="button" data-share-img>לשתף כתמונה + קישור</button>
+    <button class="btn btn-line btn-sm" type="button" data-copy-link>להעתיק קישור</button>
+    <a class="btn btn-line btn-sm" id="ts-shem" href="/kodesh/tehillim/shem/">תהילים לפי שם</a>
+  </div>
+  <section class="ts-box" id="ts-admin" hidden>
+    <h2>ניהול</h2>
+    <div class="share-row"><button class="btn btn-line btn-sm" type="button" id="ts-add-round">להוסיף עוד סיום (סבב)</button><button class="btn btn-line btn-sm" type="button" id="ts-del">למחוק את הסיום</button></div>
+    <p class="ts-hint">פרק שמישהו לקח ולא קרא: לוחצים עליו בטבלה כדי להחזיר אותו לפנויים.</p>
+  </section>
+  <p class="disclaimer" id="ts-az" hidden>לשלושים ולאזכרה: <a class="gold" href="/kodesh/azkara/">מודעת אזכרה</a> · <a class="gold" href="/kodesh/taarichim/">מחשבון תאריכים</a> (שלושים ויום השנה).</p>
+  <p class="disclaimer">הטקסט מתוך ספריא (sefaria.org). <a class="gold" href="/kodesh/tehillim/">לפתוח סיום חדש</a> · חלק מ<a class="gold" href="/kodesh/">כלי קודש</a>.</p>
+</div>

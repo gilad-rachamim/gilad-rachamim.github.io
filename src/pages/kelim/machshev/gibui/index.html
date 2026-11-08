@@ -1,0 +1,37 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "machshev_gibui",
+  "title": "צ'ק-ליסט גיבוי לטלפון – תמונות, אנשי קשר, ווטסאפ ואימות דו-שלבי | הכלים של גילעד רחמים",
+  "description": "רשימה פשוטה לבדוק שהטלפון מגובה: תמונות, אנשי קשר, גיבוי צ'אטים בווטסאפ, אימות דו-שלבי ומה לרשום על דף. מסמנים מה מסודר, נשמר בטלפון, בחינם.",
+  "og_title": "אם הטלפון ייעלם מחר – מה הולך לאיבוד?",
+  "priority": "0.7",
+  "crumbs": [["מחשב וטלפון", "/kelim/machshev/"], ["צ'ק-ליסט גיבוי", null]],
+  "head": "<style>.tz-meter{position:sticky;top:3.6rem;z-index:4;background:var(--ink);padding:.8rem 0 .7rem;border-bottom:1px solid var(--line)}.tz-meter .track{height:.5rem;border-radius:999px;background:var(--line);overflow:hidden}.tz-meter .fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold-soft),var(--gold));transition:width .4s}.tz-meter p{color:var(--gold);font-family:var(--serif);font-size:1.05rem;margin-top:.45rem;text-align:center}.tz-g{margin-top:1.6rem}.tz-g h2{font-family:var(--serif);color:var(--cream);font-size:1.3rem;display:flex;justify-content:space-between;align-items:baseline}.tz-g h2 small{font-family:var(--sans);font-size:.9rem;color:var(--muted)}.tz{list-style:none;display:grid;gap:.25rem;margin-top:.4rem}.tz label{display:grid;grid-template-columns:1.6rem 1fr auto;gap:.7rem;align-items:start;padding:.55rem .5rem;border-radius:10px;cursor:pointer;color:var(--parchment)}.tz input{width:1.3rem;height:1.3rem;margin-top:.25rem;accent-color:var(--gold)}.tz label:has(input:checked) span{color:var(--muted);text-decoration:line-through}.tz small{display:block;color:var(--muted);font-size:.9rem}.tz .x{background:none;border:0;color:var(--muted);font-size:1.3rem;cursor:pointer;line-height:1}.tz-add{display:flex;gap:.5rem;margin-top:1.4rem}.tz-add input{flex:1}.tz-tools{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-top:1.6rem}</style>",
+  "foot": "<script src=\"/assets/tziyud.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>צ'ק-ליסט גיבוי לטלפון</h1>
+  <p class="sub">אם הטלפון נופל, נגנב או מתקלקל מחר – מה הולך לאיבוד? עוברים על הרשימה פעם אחת, מסמנים מה כבר מסודר, והסימונים נשמרים בטלפון.</p>
+</header>
+<div class="tool">
+  <div class="tz-meter"><div class="track"><div class="fill" id="tz-bar"></div></div><p id="tz-txt">0 מתוך 0</p></div>
+  <div id="tz-list" data-key="kelim-machshev-gibui" data-title="צ'ק-ליסט גיבוי לטלפון" data-tool="machshev_gibui" data-unit="מסודרים" data-done="הכול מסודר ✓ הטלפון מגובה" data-mark="לבדוק גם את הטלפון שלך:"></div>
+  <script type="application/json" id="tz-data">[
+    ["תמונות וסרטונים", [["photos-auto", "גיבוי אוטומטי של התמונות פועל", "באנדרואיד: Google Photos. באייפון: תמונות iCloud"], ["photos-check", "בדקתי שהגיבוי באמת רץ", "פותחים את האפליקציה ורואים שכתוב שהגיבוי הושלם, לא \"ממתין\""], ["photos-space", "יש מקום פנוי בענן", "כשהאחסון מלא, הגיבוי פשוט נעצר בשקט"], ["photos-pc", "פעם בכמה חודשים – עותק גם במחשב או בדיסק חיצוני", "שני מקומות עדיפים על אחד"]]],
+    ["אנשי קשר", [["contacts-cloud", "אנשי הקשר שמורים בחשבון, לא רק בטלפון או בכרטיס SIM", "באנדרואיד: חשבון Google. באייפון: iCloud"], ["contacts-check", "בדקתי שהם באמת שם", "באנדרואיד נכנסים ל-contacts.google.com מהמחשב ורואים את הרשימה"]]],
+    ["ווטסאפ", [["wa-backup", "גיבוי הצ'אטים פועל", "בווטסאפ: הגדרות ← צ'אטים ← גיבוי צ'אטים"], ["wa-daily", "הגיבוי מוגדר לפעם ביום", "באותו מסך: תדירות הגיבוי"], ["wa-date", "תאריך הגיבוי האחרון הוא מהיום או מאתמול", "אם כתוב תאריך ישן – הגיבוי תקוע. ללחוץ \"גיבוי\" ולחכות שיסתיים"], ["wa-2fa", "אימות דו-שלבי בווטסאפ", "הגדרות ← חשבון ← אימות דו-שלבי. קוד של 6 ספרות שמונע מאחרים להשתלט על החשבון"]]],
+    ["החשבון הראשי (Google או Apple)", [["acc-pass", "סיסמה חזקה ושונה מכל השאר", "אפשר לבדוק ולייצר בכלי \"בודק סיסמה\" באתר"], ["acc-2fa", "אימות דו-שלבי פועל", "ככה גם מי שגילה את הסיסמה לא נכנס בלי הטלפון שלך"], ["acc-recovery", "מספר טלפון ומייל לשחזור מעודכנים", "בלי זה, אם שוכחים סיסמה – קשה מאוד לחזור לחשבון"], ["acc-codes", "קודי הגיבוי של האימות הדו-שלבי שמורים במקום בטוח", "מדפיסים או כותבים על דף, ושמים עם המסמכים החשובים"], ["acc-know", "הסיסמה של החשבון הראשי ידועה לי בעל-פה, או כתובה במקום בטוח", "בלעדיה אי אפשר לשחזר כלום לטלפון חדש"]]],
+    ["הטלפון עצמו", [["lock", "נעילת מסך עם קוד, טביעת אצבע או פנים"], ["find", "\"מצא את המכשיר שלי\" פועל", "באנדרואיד: Find My Device. באייפון: מצא את (Find My)"], ["update", "עדכוני מערכת מותקנים", "עדכון סוגר פרצות אבטחה"], ["passwords", "סיסמאות שמורות במנהל סיסמאות, לא בפתק בטלפון", "של Google או של Apple, שניהם בחינם ומגובים"]]],
+    ["על דף, ליום שהטלפון לא עובד", [["imei", "מספר IMEI של הטלפון", "מחייגים ‎*#06#‎ והמספר עולה. צריך אותו לדיווח על גניבה"], ["phones", "מספרי טלפון חשובים", "בן או בת זוג, הורים, רופא, עבודה. מי זוכר היום מספרים בעל-פה?"], ["docs", "מסמכים חשובים שמורים גם בענן", "צילום תעודת זהות, רישיון, מרשמים. בתיקייה בענן ולא רק בגלריה"]]],
+    ["תחזוקה", [["monthly", "פעם בחודש – לפתוח את הרשימה הזאת ולבדוק שהכול עדיין מסודר", "בעיקר את תאריך הגיבוי של ווטסאפ והתמונות"]]]
+  ]</script>
+  <form class="tz-add field" id="tz-add"><input id="tz-new" type="text" maxlength="60" placeholder="להוסיף משהו משלי…" aria-label="פריט חדש"><button class="btn btn-gold btn-sm" type="submit">להוסיף</button></form>
+  <div class="tz-tools">
+    <a class="btn btn-gold btn-sm" href="#" id="tz-wa-miss" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לעצמי מה עוד חסר</a>
+    <a class="btn btn-line btn-sm" href="#" id="tz-wa-all" target="_blank" rel="noopener">לשלוח את הרשימה למישהו שאני דואג לו</a>
+    <button class="btn btn-line btn-sm" type="button" id="tz-reset">לנקות סימונים (לבדיקה הבאה)</button>
+  </div>
+  <p class="disclaimer">שמות התפריטים יכולים להשתנות קצת בין דגמים וגרסאות. הסימונים נשמרים רק בטלפון הזה, ולא נשלחים לשום מקום.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="אם הטלפון שלך ייעלם מחר – מה הולך לאיבוד? צ'ק-ליסט גיבוי פשוט, בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
