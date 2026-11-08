@@ -603,20 +603,25 @@
   }
 
   function refresh() { assignAll(); keepOpen(renderPreview); }
+  // מונים אנונימיים: מה אנשים משנים בהצעה של הכלי. בלי שמות קבצים – רק סוג השינוי.
+  // אירוע GA אחד: sader_change, והפרטים בפרמטר tool (כבר רשום כממד ב-GA). כל שינוי נספר פעם אחת לביקור.
+  var sent = {};
+  function track(what) { if (sent[what]) return; sent[what] = 1; if (window.kelimEv) window.kelimEv('sader_change', { tool: what }); }
   function saveOpt() { try { localStorage.setItem('sader-opt', JSON.stringify(S.opt)); } catch (e) {} }
   document.addEventListener('change', function (e) {
     var t = e.target;
     var r = t.closest('[data-remap]');
-    if (r) { var c = r.getAttribute('data-remap'); if (r.value === c) delete S.remap[c]; else S.remap[c] = r.value; keepOpen(renderPreview); return; }
+    if (r) { var c = r.getAttribute('data-remap'); if (r.value === c) delete S.remap[c]; else { S.remap[c] = r.value; track('move:' + c + '>' + r.value); } keepOpen(renderPreview); return; }
     var f = t.closest('[data-file]');
-    if (f) { var id = +f.getAttribute('data-file'), it = S.items[id]; if (f.value === it.cat) delete S.fileCat[id]; else S.fileCat[id] = f.value; keepOpen(renderPreview); return; }
+    if (f) { var id = +f.getAttribute('data-file'), it = S.items[id]; if (f.value === it.cat) delete S.fileCat[id]; else { S.fileCat[id] = f.value; track('file:' + it.cat + '>' + f.value); } keepOpen(renderPreview); return; }
     var map = { 'sd-o-keep': 'keepDirs', 'sd-o-ev': 'events', 'sd-o-ren': 'rename', 'sd-o-sim': 'similar' };
-    if (map[t.id]) { S.opt[map[t.id]] = t.checked; saveOpt(); $('#sd-events').hidden = !Object.keys(S.events).length || !S.opt.events; refresh(); return; }
-    if (t.classList && t.classList.contains('sd-evn')) { S.evNames[t.getAttribute('data-ev')] = t.value.trim(); refresh(); }
+    if (map[t.id]) { S.opt[map[t.id]] = t.checked; saveOpt(); track('option:' + map[t.id] + ':' + (t.checked ? 'on' : 'off')); $('#sd-events').hidden = !Object.keys(S.events).length || !S.opt.events; refresh(); return; }
+    if (t.classList && t.classList.contains('sd-evn')) { S.evNames[t.getAttribute('data-ev')] = t.value.trim(); track('event_name'); refresh(); }
   });
   function applyRules() {
     S.rulesText = $('#sd-rules').value; S.rules = parseRules(S.rulesText);
     try { localStorage.setItem('sader-rules', S.rulesText); } catch (e) {}
+    if (S.rules.length) track('rules:' + Math.min(S.rules.length, 5));
     $('#sd-rules-n').textContent = S.rules.length ? S.rules.length + ' כללים פעילים. הם נשמרים בדפדפן הזה לפעם הבאה.' : 'אין כללים.';
     refresh();
   }
@@ -803,6 +808,8 @@
   function finish(rep, ok, bad, how, outName, links) {
     S.last = { rep: rep, ok: ok, bad: bad.length, how: how, outName: outName };
     if (window.toolUsed) window.toolUsed('sader', { step: how, files: ok, errors: bad.length });
+    var nf = Object.keys(S.fileCat).length, nr = Object.keys(S.remap).length;
+    track('done:' + how + ':' + (nr || nf ? 'changed' : 'as_is')); // השאירו את ההצעה כמו שהיא, או שינו משהו
     $('#sd-done-h').textContent = bad.length ? 'כמעט הכול הועתק' : 'הכול מסודר';
     var msg = how === 'folder' ? 'בתיקייה החדשה <b>"' + esc(outName) + '"</b> יש עכשיו ' + num(ok) + ' קבצים מסודרים. בתוכה גם "דוח הסידור" ו"מה עבר לאן".'
       : how === 'add' ? 'נוספו ' + num(ok) + ' קבצים לתיקייה <b>"' + esc(outName) + '"</b>.' + (rep.already ? ' ' + num(rep.already) + ' קבצים כבר היו שם (עותק זהה), ולא הועתקו שוב.' : '')
