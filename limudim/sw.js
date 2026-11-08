@@ -1,8 +1,8 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'limudim-202611081950';
-var PRECACHE = ["/limudim/ilui/", "/limudim/", "/limudim/kartisiot/", "/limudim/kvutza/", "/limudim/mivchan/", "/limudim/olami/", "/limudim/timer/", "/limudim/yomi/", "/assets/site.css?v=14c6afff", "/assets/kelim.css?v=162946d4", "/assets/kelim.js?v=f6406678", "/assets/track.js?v=928f9743", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-limudim-192.png", "/assets/limudim.css?v=d07d9bab", "/assets/limudim.js?v=63c003af"];
+var CACHE = 'limudim-202611082113';
+var PRECACHE = ["/limudim/ilui/", "/limudim/", "/limudim/kartisiot/", "/limudim/kvutza/", "/limudim/mivchan/", "/limudim/olami/", "/limudim/timer/", "/limudim/yomi/", "/assets/site.css?v=14c6afff", "/assets/kelim.css?v=f9a8ff0e", "/assets/kelim.js?v=bf1510e3", "/assets/track.js?v=928f9743", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-limudim-192.png", "/assets/limudim.css?v=d07d9bab", "/assets/limudim.js?v=63c003af"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
 });
