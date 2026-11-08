@@ -16,6 +16,7 @@
 .dp-times td{padding:.3rem .4rem;border-bottom:1px solid var(--soft);vertical-align:top}
 .dp-times tr:nth-child(odd){background:var(--soft)}
 .dp-t{white-space:nowrap;font-weight:700;width:4.5rem;font-family:system-ui,sans-serif}
+.dp-n{width:1.6rem;color:var(--acc);font-weight:700;font-family:system-ui,sans-serif}.dp-who{font-weight:700;text-align:left}
 .dp-box{border:1.5px solid var(--acc);border-radius:10px;padding:.6rem .8rem;background:var(--soft)}
 .dp-sig{text-align:left;margin-top:1.2rem;font-weight:700}
 .dp-foot{text-align:center;font-size:.72rem;color:#777;margin:1rem 0 0;font-family:system-ui,sans-serif}
