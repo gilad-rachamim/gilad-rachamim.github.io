@@ -1,0 +1,56 @@
+/* ברכות השחר, ברכות התורה והנחת תפילין (כלי קודש) */
+.bk-bar{padding:.6rem .7rem .55rem;background:rgba(14,22,40,.96);border:1px solid var(--line);border-radius:16px}
+.bk-bar>*+*{margin-top:.5rem}
+/* שורה צפה בזמן הקריאה: קפיצה לחלקים וגודל אות (fixed, כדי שהדף לא יקפוץ) */
+.bk-float{position:fixed;top:var(--bk-top,3.6rem);inset-inline:0;z-index:5;display:flex;gap:.4rem;align-items:center;padding:.4rem .6rem;background:rgba(14,22,40,.97);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);transform:translateY(-130%);transition:transform .2s;pointer-events:none}
+.bk-float.on{transform:none;pointer-events:auto}
+.bk-float .bk-nav{flex:1;min-width:0}
+.bk-float .bk-ic{min-width:40px;min-height:38px;font-size:.95rem;padding:.2rem .5rem}
+.bk-seg{display:grid;grid-template-columns:1fr 1fr;gap:.35rem;background:rgba(0,0,0,.25);border-radius:12px;padding:.25rem}
+.bk-seg button{font:inherit;font-size:1rem;padding:.55rem .4rem;border:0;border-radius:9px;background:transparent;color:var(--body);cursor:pointer;min-height:44px}
+.bk-seg button[aria-pressed=true]{background:var(--gold);color:var(--ink);font-weight:700}
+.bk-tools{display:flex;gap:.4rem;flex-wrap:wrap}
+.bk-ic{font:inherit;font-size:1.05rem;min-width:46px;min-height:44px;padding:.3rem .7rem;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--cream);cursor:pointer}
+.bk-ic[aria-pressed=true]{border-color:var(--gold);background:rgba(212,176,98,.16)}
+.bk-wake{flex:1;font-size:.95rem}
+.bk-nav{display:flex;gap:.35rem;overflow-x:auto;scrollbar-width:none;padding-bottom:.1rem}
+.bk-nav::-webkit-scrollbar{display:none}
+.bk-nav a{flex:none;font-size:.92rem;padding:.35rem .7rem;border-radius:99px;border:1px solid var(--line);color:var(--body);text-decoration:none;white-space:nowrap}
+.bk-nav a.on{border-color:var(--gold);color:var(--gold)}
+
+.bk-paper{--fs:1.3rem;margin-top:.2rem;background:#fffdf6;color:#1b1b1b;border-radius:12px;padding:1.4rem 1.1rem 1.2rem;box-shadow:0 8px 30px rgba(0,0,0,.35);font-family:var(--serif);line-height:1.95}
+.bk-paper .bsd{display:block;text-align:left;color:#666;font-size:.85rem}
+.bk-sec{scroll-margin-top:calc(var(--bk-top,3.6rem) + 3.6rem);padding-top:.4rem}
+.bk-sec p.bk-sub{text-align:center;color:#6b5a32;font-family:var(--sans,inherit);font-size:.95rem;line-height:1.5;margin:.1rem 0 .6rem}
+.bk-sec+.bk-sec{margin-top:1.6rem;border-top:2px solid #e8dcbc;padding-top:1.2rem}
+.bk-sec h2{font-size:clamp(1.5rem,6vw,1.9rem);color:#111;text-align:center;line-height:1.25}
+.bk-sec h3{font-size:calc(var(--fs) * .92);color:#7a5a12;margin:1.1rem 0 .2rem;border-bottom:1px solid #e3d6b5;padding-bottom:.1rem}
+.bk-sec h3.bk-step{font-family:var(--sans,inherit);font-size:1.05rem;color:#fff;background:#7a5a12;border:0;border-radius:8px;padding:.3rem .7rem;display:inline-block}
+.bk-src{font-family:var(--sans,inherit);font-size:.8rem;color:#8a7a55;font-weight:400;margin-inline-start:.4rem}
+.bk-sec p{font-size:var(--fs);margin:.35rem 0}
+.bk-sec p.big{font-size:calc(var(--fs) * 1.25);font-weight:700;text-align:center}
+.bk-sec p.ins{font-family:var(--sans,inherit);font-size:max(.95rem,calc(var(--fs) * .72));color:#5e5644;line-height:1.6;background:#f6efdc;border-radius:8px;padding:.4rem .65rem}
+.bk-jump{text-align:center}
+.bk-jump a{font-family:var(--sans,inherit);font-size:1rem;color:#7a5a12;font-weight:700}
+.bk-det{margin:.6rem 0;border:1px dashed #d8c89c;border-radius:10px;padding:.35rem .7rem}
+.bk-det summary{font-family:var(--sans,inherit);font-size:1rem;color:#7a5a12;cursor:pointer;min-height:40px;display:flex;align-items:center}
+.bk-det p{font-size:calc(var(--fs) * .9)}
+.bk-foot{margin-top:1.6rem;text-align:center;font-size:.8rem;color:#777;font-family:var(--sans,inherit);line-height:1.6}
+
+/* נוסח: מסתירים את מה שלא שייך */
+.bk-paper[data-nusach=ash] [data-n=em],.bk-paper[data-nusach=em] [data-n=ash]{display:none}
+
+/* רקע כהה (לחדר חשוך, לפני שהבית התעורר) */
+.bk-paper.dark{background:#141a26;color:#ece6d6;box-shadow:none;border:1px solid var(--line)}
+.bk-paper.dark .bk-sec h2{color:#f3ead2}
+.bk-paper.dark .bk-sec h3{color:#e2c178;border-color:#3a3f4c}
+.bk-paper.dark .bk-sec h3.bk-step{background:#3a3020;color:#f3ead2}
+.bk-paper.dark p.ins{background:#1f2636;color:#c9c1ad}
+.bk-paper.dark .bk-sub,.bk-paper.dark .bk-src,.bk-paper.dark .bk-foot,.bk-paper.dark .bsd{color:#a99d80}
+.bk-paper.dark .bk-sec+.bk-sec{border-color:#2c3242}
+.bk-paper.dark .bk-det{border-color:#3a3f4c}
+.bk-paper.dark .bk-det summary,.bk-paper.dark .bk-jump a{color:#e2c178}
+
+.bk-install p{color:var(--body)}
+.bk-install .share-row{justify-content:flex-start;margin-top:.6rem}
+@media print{.bk-bar,.bk-install,.k-hero{display:none!important}.bk-paper{box-shadow:none;background:#fff!important;color:#000!important}.bk-paper [data-n]{display:revert}.bk-paper[data-nusach=ash] [data-n=em],.bk-paper[data-nusach=em] [data-n=ash]{display:none}}
