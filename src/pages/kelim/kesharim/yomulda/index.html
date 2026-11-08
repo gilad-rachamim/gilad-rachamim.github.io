@@ -1,0 +1,35 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "yomulda",
+  "title": "ימי הולדת ותאריכים חשובים – רשימה, ספירה לאחור ויומן | הכלים של גילעד רחמים",
+  "description": "כל ימי ההולדת, ימי הנישואין והתאריכים החשובים ברשימה אחת: כמה ימים נשארו, בן כמה הוא יהיה, והכנסה של כולם ליומן בטלפון עם תזכורת שנתית. בחינם, נשמר רק אצלכם.",
+  "og_title": "ימי הולדת ותאריכים – לא לשכוח אף אחד",
+  "priority": "0.7",
+  "crumbs": [["חברה וקשרים", "/kelim/kesharim/"], ["ימי הולדת ותאריכים", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/mishpacha.css\"><style>.yd-list{list-style:none;display:grid;gap:.45rem;margin-top:.8rem}.yd-list li{display:grid;grid-template-columns:auto 1fr auto;gap:.75rem;align-items:center;padding:.65rem .8rem;border:1px solid var(--line);border-radius:12px;color:var(--parchment)}.yd-list li.now{border-color:var(--gold);background:rgba(216,179,95,.1)}.yd-list .d{font-family:var(--serif);color:var(--gold);font-size:1.15rem;text-align:center;min-width:3.6rem;line-height:1.15}.yd-list .d small{display:block;font-size:.75rem;color:var(--muted);font-family:var(--sans)}.yd-list small{display:block;color:var(--muted);font-size:.9rem}.yd-list .x{background:none;border:0;color:var(--muted);font-size:1.3rem;cursor:pointer}.yd-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}</style>",
+  "foot": "<script src=\"/assets/yomulda.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>ימי הולדת ותאריכים</h1>
+  <p class="sub">כל מי שחשוב לכם, ברשימה אחת. רואים מי הבא בתור, ומכניסים את כולם ליומן בטלפון בלחיצה.</p>
+</header>
+<div class="tool">
+  <form class="k-form" id="yd-form" novalidate>
+    <div class="field"><label for="yd-name">מי?</label><input id="yd-name" type="text" maxlength="40" placeholder="סבתא רחל"></div>
+    <div class="yd-row">
+      <div class="field"><label for="yd-date">תאריך</label><input id="yd-date" type="date"></div>
+      <div class="field"><label for="yd-kind">מה?</label><select id="yd-kind"><option>יום הולדת</option><option>יום נישואין</option><option>יום זיכרון</option><option>אחר</option></select></div>
+    </div>
+    <label class="check"><input type="checkbox" id="yd-noyear"> <span>לא יודע את השנה (רק יום וחודש)</span></label>
+    <button class="btn btn-gold btn-block" type="submit">להוסיף</button>
+    <p class="note" id="yd-msg" aria-live="polite"></p>
+  </form>
+  <ul class="yd-list" id="yd-list"></ul>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="yd-ics">להכניס את כולם ליומן</button>
+    <a class="btn btn-line btn-sm" href="#" id="yd-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הרשימה</a>
+  </div>
+  <p class="disclaimer">"להכניס ליומן" מוריד קובץ שהטלפון פותח ביומן: כל תאריך חוזר כל שנה, עם תזכורת יום לפני. התאריכים כאן לועזיים. לברכה מוכנה: <a class="gold" href="/kodesh/brachot/">ברכות מכל הלב</a>. הרשימה נשמרת רק בטלפון הזה.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="רשימת ימי הולדת ותאריכים בטלפון, עם ספירה לאחור והכנסה ליומן. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
