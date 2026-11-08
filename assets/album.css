@@ -1,0 +1,91 @@
+/* אלבום תמונות להדפסה (כלי קודש). ארבעה סגנונות: לבן נקי, כחול וזהב, שחור וזהב, פסטל. */
+.al-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+@media (max-width:520px){.al-row{grid-template-columns:1fr}}
+.k-form [hidden],.tool [hidden]{display:none!important}
+.al-drop{display:block;border:2px dashed var(--gold-soft);border-radius:16px;padding:1.4rem 1rem;text-align:center;cursor:pointer;background:rgba(212,176,98,.05);transition:background .2s}
+.al-drop.on,.al-drop:hover{background:rgba(212,176,98,.14)}
+.al-drop b{display:block;font:700 1.15rem var(--serif);color:var(--gold);margin-bottom:.2rem}
+.al-drop input{position:absolute;opacity:0;width:1px;height:1px}
+#al-status{font-size:.9rem;color:var(--muted);margin:.5rem 0 0;min-height:1.2em}
+.al-thumbs{list-style:none;padding:0;margin:.8rem 0 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:.6rem}
+.al-thumbs li{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;padding:.35rem;display:flex;flex-direction:column;gap:.3rem}
+.al-thumbs li.cov{border-color:var(--gold)}
+.al-thumbs img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;display:block}
+.t-btns{display:flex;justify-content:space-between}
+.t-btns button{font:inherit;font-size:.9rem;background:none;border:0;color:var(--body);cursor:pointer;padding:.15rem .3rem;border-radius:6px;min-width:28px;min-height:28px}
+.t-btns button:hover{background:rgba(212,176,98,.15)}
+.al-thumbs input{font:inherit;font-size:.75rem;padding:.25rem .35rem;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--body);width:100%;box-sizing:border-box}
+.al-styles{border:0;padding:0;margin:.9rem 0;display:flex;flex-wrap:wrap;gap:.5rem}
+.al-styles legend{font-size:.95rem;margin-bottom:.4rem;color:var(--body)}
+.al-styles label{display:flex;align-items:center;gap:.45rem;padding:.45rem .8rem .45rem .6rem;border:1px solid var(--line);border-radius:99px;cursor:pointer;font-size:.95rem}
+.al-styles input{position:absolute;opacity:0;pointer-events:none}
+.al-styles label:has(input:checked){border-color:var(--gold);background:rgba(212,176,98,.12);font-weight:700}
+.al-styles input:focus-visible+.sw{outline:2px solid var(--gold);outline-offset:2px}
+.al-styles .sw{width:26px;height:26px;border-radius:50%;flex:none;border:2px solid #c9a24f}
+.sw-lavan{background:#fff}.sw-blue{background:#13234a}.sw-black{background:#111}.sw-pastel{background:#f3e3e0;border-color:#c9a3a0}
+.al-prev-h{display:flex;justify-content:space-between;align-items:baseline;font:700 1rem var(--serif);color:var(--gold);margin:0 0 .6rem}
+.al-prev-h span{font:400 .85rem inherit;color:var(--muted)}
+
+/* העמודים */
+.al-book{--bg:#fff;--fg:#222;--acc:#b48a2c;--frame:#fff;display:flex;flex-direction:column;gap:1rem;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-family:var(--serif)}
+.al-page{aspect-ratio:var(--ar,297/210);background:var(--bg);color:var(--fg);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.35);overflow:hidden;position:relative;container-type:inline-size;box-sizing:border-box}
+.al-g{display:grid;gap:2.2cqw;padding:5cqw}
+.al-g1{grid-template:1fr/1fr}
+.al-g2{grid-template:1fr/1fr 1fr}
+.sz-port .al-g2{grid-template:1fr 1fr/1fr}
+.al-g3{grid-template:1fr 1fr/1.5fr 1fr}.al-g3 .big{grid-row:1/3}
+.sz-port .al-g3{grid-template:1.5fr 1fr/1fr 1fr}.sz-port .al-g3 .big{grid-row:auto;grid-column:1/3}
+.al-g4{grid-template:1fr 1fr/1fr 1fr}
+.al-g figure{margin:0;min-height:0;min-width:0;display:flex;flex-direction:column;gap:1cqw}
+.al-g .ph{flex:1;min-height:0;background:var(--frame);padding:1cqw;box-shadow:0 .4cqw 1.6cqw rgba(0,0,0,.18);display:flex}
+.al-g .ph img{width:100%;height:100%;object-fit:cover;display:block}
+.al-book.fit .al-g .ph img{object-fit:contain}
+.al-g figcaption{text-align:center;font-size:2.3cqw;color:var(--fg);opacity:.85;line-height:1.3}
+.al-g.empty .ph{background:repeating-linear-gradient(45deg,rgba(0,0,0,.04) 0 12px,rgba(0,0,0,.08) 12px 24px)}
+.al-empty-t{position:absolute;inset:auto 0 45%;text-align:center;font-size:3.2cqw;color:var(--fg);opacity:.6;margin:0}
+/* שער */
+.al-cover{display:flex;flex-direction:column}
+.cv-ph{flex:1;min-height:0;margin:5cqw 5cqw 0;background:var(--frame);padding:1.2cqw;box-shadow:0 .5cqw 2cqw rgba(0,0,0,.2)}
+.cv-ph img{width:100%;height:100%;object-fit:cover;display:block}
+.cv-txt{text-align:center;padding:2.6cqw 5cqw 4.2cqw;position:relative}
+.al-cover.nophoto{justify-content:center}
+.al-cover.nophoto .cv-txt{padding:10cqw}
+.cv-txt .bsd{position:absolute;top:1cqw;left:3cqw;font-size:1.8cqw;opacity:.8}
+.al-cover.nophoto .bsd{top:-30cqw}
+.cv-t{margin:0;font-size:3cqw;color:var(--acc);letter-spacing:.05em}
+.cv-txt h2{margin:.2em 0;font-size:6cqw;line-height:1.1;color:var(--fg)}
+.cv-d{margin:0;font-size:2.4cqw;opacity:.85}
+.sz-port .cv-t{font-size:4cqw}.sz-port .cv-txt h2{font-size:8cqw}.sz-port .cv-d{font-size:3.4cqw}
+/* עמוד סיום */
+.al-end{display:flex;align-items:center;justify-content:center;text-align:center}
+.end-in{width:70%}
+.end-in p{font-size:3.6cqw;line-height:1.6;margin:.4em 0}
+.end-in .end-n{font-size:3cqw;color:var(--acc);font-weight:700}
+.orn{height:2cqw;margin:2cqw auto;width:40%;background:radial-gradient(circle,var(--acc) .45cqw,transparent .55cqw) center/2.6cqw 2cqw repeat-x}
+/* סגנונות */
+.st-lavan{--bg:#fff;--fg:#2a2a2a;--acc:#b48a2c}
+.st-lavan .al-page{box-shadow:0 8px 28px rgba(0,0,0,.35),inset 0 0 0 2.4cqw #fff,inset 0 0 0 calc(2.4cqw + 1.5px) #d8c08a}
+.st-blue{--bg:#13234a;--fg:#f4e7c4;--acc:#d9b35f;--frame:#f6efe0}
+.st-blue .cv-txt h2{color:#fff3d2}
+.st-black{--bg:#0e0e0e;--fg:#efe2bd;--acc:#d8b35f;--frame:#1c1c1c}
+.st-black .al-g .ph,.st-black .cv-ph{box-shadow:0 0 0 .25cqw #d8b35f}
+.st-pastel{--bg:#f7ece8;--fg:#5a4440;--acc:#b07f78;--frame:#fff}
+.st-pastel .al-page{background:radial-gradient(ellipse at 20% 0%,#fdf6f3,#f3e1db 80%)}
+
+@media print{
+  html,body{background:#fff!important;margin:0!important;padding:0!important}
+  body>*{display:none!important}
+  body>main{display:block!important;padding:0!important;margin:0!important}
+  main>*{display:none!important}
+  main>#al-prev-wrap{display:block!important;padding:0!important;margin:0!important;border:0!important;background:none!important;box-shadow:none!important}
+  #al-prev-wrap>*{display:none!important}
+  #al-prev-wrap>#al-book{display:block!important}
+  .al-page{aspect-ratio:auto;border-radius:0;box-shadow:none!important;break-after:page;margin:0}
+  .st-lavan .al-page{box-shadow:inset 0 0 0 2.4cqw #fff,inset 0 0 0 calc(2.4cqw + 1.5px) #d8c08a!important}
+  .al-page:last-child{break-after:auto}
+}
+/* שער לרוחב: התמונה מימין והטקסט משמאל */
+.sz-land .al-cover:not(.nophoto){flex-direction:row;align-items:stretch}
+.sz-land .al-cover:not(.nophoto) .cv-ph{flex:0 0 56%;margin:5cqw 5cqw 5cqw 0}
+.sz-land .al-cover:not(.nophoto) .cv-txt{flex:1;display:flex;flex-direction:column;justify-content:center;padding:5cqw 3cqw}
+.sz-land .al-cover:not(.nophoto) .bsd{top:3cqw}
