@@ -35,7 +35,18 @@
 
   <form class="panel no-print" id="ly-form" novalidate>
     <h2>תוכנית חדשה</h2>
-    <div class="field"><label for="ly-what">מה לומדים?</label><select id="ly-what"><option value="tanakh">תנ״ך</option><option value="mishnah">משנה</option><option value="other">ספר אחר</option></select></div>
+    <div class="field"><span class="label">בלחיצה אחת</span>
+      <div class="chips">
+        <button type="button" data-preset="tanakh|all|y1">תנ״ך בשנה</button>
+        <button type="button" data-preset="tanakh|all|y3">תנ״ך ב-3 שנים</button>
+        <button type="button" data-preset="mishnah|all|y3|m">משנה ב-3 שנים</button>
+        <button type="button" data-preset="tanakh|=תהילים|m1">תהילים בחודש</button>
+        <button type="button" data-preset="mishnah|=אבות|m1">פרקי אבות בחודש</button>
+        <button type="button" data-preset="rambam|all|y3">רמב״ם ב-3 שנים</button>
+        <button type="button" data-preset="bavli|=ברכות|m3">מסכת ברכות ב-3 חודשים</button>
+      </div>
+      <span class="note">או לבחור לבד:</span></div>
+    <div class="field"><label for="ly-what">מה לומדים?</label><select id="ly-what"><option value="tanakh">תנ״ך</option><option value="mishnah">משנה</option><option value="rambam">רמב״ם, משנה תורה</option><option value="bavli">גמרא, תלמוד בבלי</option><option value="other">ספר אחר</option></select></div>
     <div class="field" id="ly-part-wrap"><label for="ly-part">איזה חלק?</label><select id="ly-part"></select></div>
     <div class="field" id="ly-unit-wrap" hidden><label for="ly-unit">לפי</label><select id="ly-unit"><option value="c">פרקים (525)</option><option value="m">משניות (4,192)</option></select></div>
     <div id="ly-other" hidden style="display:grid;gap:.9rem">
@@ -59,7 +70,7 @@
     <p class="status" id="ly-st" role="status"></p>
   </form>
 
-  <p class="note no-print" style="margin-top:.8rem">מספרי הפרקים לפי ספריא: 929 פרקים בתנ״ך (39 ספרים), 525 פרקים במשנה (63 מסכתות, כולל פרק ו באבות ופרק ד בביכורים), 4,192 משניות.</p>
+  <p class="note no-print" style="margin-top:.8rem">מספרי הפרקים לפי ספריא: 929 פרקים בתנ״ך (39 ספרים), 525 פרקים במשנה (63 מסכתות, כולל פרק ו באבות ופרק ד בביכורים), 4,192 משניות. רמב״ם משנה תורה: 84 הלכות, 1,006 פרקים (כולל סדר התפילה). תלמוד בבלי: 37 מסכתות, 2,684 דפים. הטקסט של היום נטען מספריא, ברישיון פתוח.</p>
   <div class="local-note no-print"><span>🔒</span><span>התוכנית והסימונים נשמרים רק בטלפון הזה.</span></div>
   <div class="share-row no-print"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="לימוד יומי לסיום התנ״ך או המשנה: כמה פרקים ביום, טבלה לסימון ויומן. בחינם" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר בווטסאפ</a></div>
   <p class="disclaimer no-print"><a class="gold" href="/limudim/">כל הכלים ללימודים</a> · חינם · בלי הרשמה</p>
