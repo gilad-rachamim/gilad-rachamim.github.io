@@ -7,4 +7,4 @@ workers_dev = true
 
 [[kv_namespaces]]
 binding = "KARTIS"
-id = "REPLACE_ME"
+id = "1dd4b9174d274dfc999a17e2e9f2ca35"
