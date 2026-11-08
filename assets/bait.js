@@ -690,7 +690,7 @@
       var all = items.length && n === items.length;
       $('sg-txt').textContent = all ? '⭐ כל הכבוד, ' + kidName() + '! ' + (st.mode === 'boker' ? 'יום טוב!' : 'לילה טוב!') : n + ' מתוך ' + items.length + (kidName() ? ' · ' + kidName() : '');
       $('sg-win').hidden = !all;
-      drawPrint();
+      drawPrint(); drawPrize();
     }
     function drawAll() { draw(); drawEdit(); }
     function drawEdit() {
@@ -723,7 +723,7 @@
       var t = e.target, a, L = st.items[st.mode];
       if ((a = t.getAttribute('data-ie')) != null) L[+a][0] = t.value;
       else if ((a = t.getAttribute('data-it')) != null) L[+a][1] = t.value;
-      else if ((a = t.getAttribute('data-kn')) != null) { var old = st.kids[+a]; st.kids[+a] = t.value; if (st.stars[old] != null) { st.stars[t.value] = st.stars[old]; delete st.stars[old]; } }
+      else if ((a = t.getAttribute('data-kn')) != null) { var old = st.kids[+a]; st.kids[+a] = t.value; ['stars', 'jars', 'goals'].forEach(function (f) { if (st[f] && st[f][old] != null) { st[f][t.value] = st[f][old]; delete st[f][old]; } }); }
       else return;
       persist(); draw();
     });
@@ -736,6 +736,74 @@
       else if (b.id === 'sg-reset') { if (!confirm('לחזור לרשימות המקוריות?')) return; st.items = JSON.parse(JSON.stringify(DEF)); st.done = {}; }
       else return;
       persist(); drawAll();
+    });
+    // ---------- המבצע: כוכבים → מתנה, או כוכבים → כסף בשלוש צנצנות (להוציא, לחסוך, צדקה) ----------
+    st.cfg = st.cfg || { val: 1, mult: 2, tz: 10 };
+    st.goals = st.goals || {};
+    st.jars = st.jars || {};
+    function goal() { var k = kidName(); return st.goals[k] = st.goals[k] || { n: 20, prize: '' }; }
+    function jars() { var k = kidName(); return st.jars[k] = st.jars[k] || { spend: 0, save: 0, tz: 0, given: 0 }; }
+    function stars() { return st.stars[kidName()] || 0; }
+    function nis(v) { return (Math.round(v * 10) / 10) + ' ₪'; }
+    function split() {
+      var n = Math.max(0, Math.min(stars(), Math.floor(num($('pz-n').value, 0)))), base = n * num(st.cfg.val, 1);
+      var tzp = Math.max(num(st.cfg.tz, 0), num($('pz-tz').value, 0)), svp = Math.min(100 - tzp, num($('pz-sv').value, 0));
+      var tz = base * tzp / 100, sv = base * svp / 100, sp = base - tz - sv, bonus = sv * (num(st.cfg.mult, 1) - 1);
+      return { n: n, base: base, tz: tz, sv: sv, sp: sp, bonus: bonus, tzp: tzp, svp: svp };
+    }
+    function drawPreview() {
+      var s = split();
+      $('pz-tz-v').textContent = s.tzp + '%'; $('pz-sv-v').textContent = s.svp + '%';
+      $('pz-prev').innerHTML = s.n ? s.n + ' כוכבים = <b>' + nis(s.base) + '</b><br>🛍️ להוציא: ' + nis(s.sp) + '<br>🐷 לחיסכון: ' + nis(s.sv) +
+        (s.bonus > 0 ? ' <b class="pz-bonus">+ ' + nis(s.bonus) + ' מאבא ואמא = ' + nis(s.sv + s.bonus) + '</b>' : '') + '<br>💝 לצדקה: ' + nis(s.tz) : 'כמה כוכבים להפוך לכסף?';
+    }
+    function drawPrize() {
+      var k = kidName(), g = goal(), j = jars(), s = stars();
+      $('pz-name').textContent = k;
+      $('pz-stars').textContent = '⭐ ' + s;
+      $('pz-goal-bar').style.width = Math.min(100, g.n ? s / g.n * 100 : 0) + '%';
+      $('pz-goal-txt').textContent = g.prize ? (s >= g.n ? '🎉 הגיע/ה ל-' + g.n + ' כוכבים! מגיע: ' + g.prize : s + ' מתוך ' + g.n + ' כוכבים → ' + g.prize + ' (עוד ' + (g.n - s) + ')') : 'עוד לא נבחרה מתנה. בוחרים למטה, ב"להגדיר את המבצע".';
+      $('pz-got').hidden = !(g.prize && s >= g.n);
+      $('pz-j-sp').textContent = nis(j.spend); $('pz-j-sv').textContent = nis(j.save); $('pz-j-tz').textContent = nis(j.tz);
+      $('pz-given').textContent = j.given ? 'נתן/ה צדקה עד היום: ' + nis(j.given) + ' 💝' : '';
+      $('pz-n').max = s; if (num($('pz-n').value, 0) > s) $('pz-n').value = s;
+      $('pz-tz').min = st.cfg.tz; if (num($('pz-tz').value, 0) < num(st.cfg.tz, 0)) $('pz-tz').value = st.cfg.tz;
+      $('pz-g-n').value = g.n; $('pz-g-p').value = g.prize; $('pz-val').value = st.cfg.val; $('pz-mult').value = String(st.cfg.mult); $('pz-mintz').value = st.cfg.tz;
+      $('pz-mult-t').textContent = num(st.cfg.mult, 1) > 1 ? 'כל שקל שנכנס לחיסכון, אבא ואמא מוסיפים עוד ' + (num(st.cfg.mult, 1) === 2 ? 'שקל' : (num(st.cfg.mult, 1) - 1) + ' ₪') + '.' : '';
+      drawPreview();
+    }
+    var pz = $('pz-root');
+    pz.addEventListener('input', function (e) {
+      var id = e.target.id;
+      if (id === 'pz-n' || id === 'pz-tz' || id === 'pz-sv') { drawPreview(); return; }
+      if (id === 'pz-g-n') goal().n = Math.max(1, Math.floor(num(e.target.value, 20)));
+      else if (id === 'pz-g-p') goal().prize = e.target.value.slice(0, 40);
+      else if (id === 'pz-val') st.cfg.val = Math.max(0, num(e.target.value, 1));
+      else if (id === 'pz-mintz') st.cfg.tz = Math.max(0, Math.min(100, num(e.target.value, 10)));
+      else return;
+      persist(); drawPrize(); drawKids();
+    });
+    $('pz-mult').addEventListener('change', function () { st.cfg.mult = num(this.value, 1); persist(); drawPrize(); });
+    pz.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return; var k = kidName(), j = jars(), a;
+      if (b.id === 'pz-plus') { st.stars[k] = stars() + 1; toast('⭐ כוכב בונוס ל' + k); use(T, 'bonus_star'); }
+      else if (b.id === 'pz-minus') { st.stars[k] = Math.max(0, stars() - 1); }
+      else if (b.id === 'pz-got') { if (!confirm('לסמן שקיבל/ה את המתנה? יורדים ' + goal().n + ' כוכבים.')) return; st.stars[k] = stars() - goal().n; use(T, 'prize'); toast('🎁 מזל טוב! מתחילים מבצע חדש'); }
+      else if (b.id === 'pz-go') {
+        var s = split(); if (!s.n) { toast('כמה כוכבים?'); $('pz-n').focus(); return; }
+        st.stars[k] = stars() - s.n; j.spend += s.sp; j.save += s.sv + s.bonus; j.tz += s.tz;
+        $('pz-n').value = ''; use(T, 'redeem');
+        toast(s.bonus > 0 ? '🐷 נכנס לחיסכון, ואבא ואמא הוסיפו ' + nis(s.bonus) + '!' : 'הכסף נכנס לצנצנות');
+      }
+      else if ((a = b.getAttribute('data-jar'))) {
+        if (a === 'tz') { if (!j.tz) { toast('צנצנת הצדקה ריקה'); return; } if (!confirm('לסמן שנתת ' + nis(j.tz) + ' לצדקה?')) return; j.given += j.tz; j.tz = 0; use(T, 'tzedaka'); toast('💝 אשריך! השפע חוזר'); }
+        else {
+          var v = num(prompt(a === 'spend' ? 'כמה הוצאת? (₪)' : 'כמה מוציאים מהחיסכון? (₪)'), 0); if (!(v > 0)) return;
+          var key = a === 'spend' ? 'spend' : 'save'; if (v > j[key]) { toast('אין מספיק בצנצנת'); return; } j[key] -= v;
+        }
+      }
+      else return;
+      persist(); drawKids(); drawPrize();
     });
     $('sg-print').onclick = function () { use(T, 'print'); window.print(); };
     $('sg-again').onclick = function () { st.done[dk()] = {}; persist(); draw(); };

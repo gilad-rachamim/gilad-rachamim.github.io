@@ -157,3 +157,26 @@ body.kn-shop .kn-edit-only{display:none!important}
 .sg-card .v{position:absolute;top:.4rem;inset-inline-start:.55rem;background:var(--ok);color:#1d2a1f;border-radius:50%;width:1.7rem;height:1.7rem;display:grid;place-items:center;font-weight:800}
 .sg-win{text-align:center;font-size:3.2rem;margin-top:.6rem;animation:sgpop .6s ease}
 @keyframes sgpop{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+
+/* המבצע: כוכבים, מתנה ושלוש צנצנות */
+.pz{margin-top:1.4rem;border-color:var(--gold-soft)}
+.pz-top{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem}
+.pz-top h2{margin:0;font-size:1.25rem}
+.pz-stars{font-family:var(--serif);color:var(--gold);font-size:1.5rem;white-space:nowrap}
+.pz-h3{font-family:var(--serif);color:var(--cream);font-size:1.1rem;margin:1.2rem 0 .5rem}
+.pz-jars{display:grid;grid-template-columns:repeat(3,1fr);gap:.45rem}
+.pz-jar{display:grid;justify-items:center;gap:.2rem;padding:.7rem .3rem;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.04);text-align:center}
+.pz-jar .e{font-size:1.9rem;line-height:1}
+.pz-jar b{color:var(--cream);font-size:.95rem}
+.pz-jar .v{color:var(--gold);font-family:var(--serif);font-size:1.25rem}
+.pz-jar .btn{padding:.35rem .55rem;font-size:.82rem;margin-top:.2rem}
+.pz-jar.sv{border-color:rgba(143,207,154,.45)}
+.pz-jar.tz{border-color:rgba(232,147,106,.45)}
+.pz-given{color:var(--accent);text-align:center;margin-top:.5rem;font-weight:600}
+.pz-quote{font-family:var(--serif);color:var(--parchment);text-align:center;font-size:1rem;margin-top:.5rem;padding:.6rem .8rem;border-radius:12px;background:rgba(232,147,106,.08)}
+.pz-form{display:grid;gap:.6rem}
+.pz-form label{display:grid;gap:.25rem;color:var(--cream);font-weight:600}
+.pz-form label b{color:var(--gold);font-weight:600}
+.pz-form input[type=range]{width:100%;accent-color:var(--gold)}
+.pz-prev{color:var(--parchment);line-height:1.7;background:rgba(255,255,255,.04);border-radius:12px;padding:.6rem .8rem}
+.pz-bonus{color:var(--ok)}

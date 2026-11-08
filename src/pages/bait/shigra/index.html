@@ -2,7 +2,7 @@
   "site": "bait",
   "tool": "bait_shigra",
   "title": "שגרת בוקר וערב לילדים – לוח עם ציורים, מסמנים וזוכים בכוכב | כלים למשפחה ולבית",
-  "description": "לוח שגרה לילדים: לסדר את המיטה, להתלבש, לצחצח שיניים, להכין תיק. הילד לוחץ על כל ציור כשסיים, ובסוף מקבל כוכב. בוקר וערב, כמה ילדים, ודף להדפסה למקרר. בחינם, בלי הרשמה.",
+  "description": "לוח שגרה לילדים עם ציורים: הילד מסמן מה עשה וצובר כוכבים. מגיעים למספר כוכבים ומקבלים מתנה, או הופכים כוכבים לכסף בשלוש צנצנות: להוציא, לחסוך (אבא ואמא מכפילים) וצדקה. דף להדפסה למקרר. בחינם.",
   "og_title": "שגרת בוקר וערב לילדים – עם כוכבים",
   "priority": "0.8",
   "crumbs": [["שגרה לילדים", null]]
@@ -18,13 +18,53 @@
       <button type="button" data-sg-mode="boker" aria-pressed="true">☀️ בוקר</button>
       <button type="button" data-sg-mode="erev" aria-pressed="false">🌙 ערב</button>
     </div>
-    <div class="kn-meter"><div class="track"><div class="fill" id="sg-bar"></div></div><p id="sg-txt" aria-live="polite"></p></div>
+    <div class="kn-meter" style="position:static"><div class="track"><div class="fill" id="sg-bar"></div></div><p id="sg-txt" aria-live="polite"></p></div>
     <div class="sg-win" id="sg-win" hidden>⭐</div>
     <div class="sg-grid" id="sg-grid"></div>
     <div class="tools">
       <button class="btn btn-gold btn-sm" type="button" id="sg-print">🖨️ דף למקרר</button>
       <button class="btn btn-line btn-sm" type="button" id="sg-again">להתחיל שוב</button>
     </div>
+    <section class="pz box" id="pz-root" aria-labelledby="pz-h">
+      <div class="pz-top"><h2 id="pz-h">🏆 המבצע של <span id="pz-name"></span></h2><span class="pz-stars" id="pz-stars"></span></div>
+      <div class="kn-meter" style="position:static;background:none;border:0;padding:.3rem 0 0;margin:0"><div class="track"><div class="fill" id="pz-goal-bar"></div></div><p id="pz-goal-txt" style="font-size:1rem"></p></div>
+      <div class="tools" style="margin-top:.5rem">
+        <button class="btn btn-gold btn-sm" type="button" id="pz-got" hidden>🎁 קיבל/ה את המתנה</button>
+        <button class="btn btn-line btn-sm" type="button" id="pz-plus">+⭐ כוכב על מעשה טוב</button>
+        <button class="btn btn-line btn-sm" type="button" id="pz-minus" aria-label="להוריד כוכב">−⭐</button>
+      </div>
+
+      <h3 class="pz-h3">שלוש הצנצנות</h3>
+      <div class="pz-jars">
+        <div class="pz-jar"><span class="e">🛍️</span><b>להוציא</b><span class="v" id="pz-j-sp"></span><button type="button" class="btn btn-line btn-sm" data-jar="spend">קניתי משהו</button></div>
+        <div class="pz-jar sv"><span class="e">🐷</span><b>חיסכון</b><span class="v" id="pz-j-sv"></span><button type="button" class="btn btn-line btn-sm" data-jar="save">פתחנו</button></div>
+        <div class="pz-jar tz"><span class="e">💝</span><b>צדקה</b><span class="v" id="pz-j-tz"></span><button type="button" class="btn btn-line btn-sm" data-jar="tz">נתתי ✓</button></div>
+      </div>
+      <p class="pz-given" id="pz-given"></p>
+      <p class="pz-quote">צדקה היא חלק מהכסף שלנו. וכשהכסף יוצא מאיתנו בשפע, הקב״ה דואג להזרים אלינו בשפע.</p>
+
+      <h3 class="pz-h3">להפוך כוכבים לכסף</h3>
+      <div class="pz-form">
+        <label>כמה כוכבים? <input id="pz-n" type="number" inputmode="numeric" min="0" placeholder="0"></label>
+        <label>💝 לצדקה <b id="pz-tz-v"></b><input id="pz-tz" type="range" min="10" max="50" step="5" value="10"></label>
+        <label>🐷 לחיסכון <b id="pz-sv-v"></b><input id="pz-sv" type="range" min="0" max="90" step="10" value="50"></label>
+        <p class="muted" id="pz-mult-t"></p>
+        <p class="pz-prev" id="pz-prev"></p>
+        <button class="btn btn-gold btn-sm" type="button" id="pz-go">להעביר לצנצנות</button>
+      </div>
+
+      <details style="margin-top:1rem">
+        <summary style="cursor:pointer;color:var(--cream);font-weight:600">⚙️ להגדיר את המבצע</summary>
+        <div class="ms-form" style="margin-top:.6rem">
+          <label>כמה כוכבים עד המתנה? <input id="pz-g-n" type="number" inputmode="numeric" min="1"></label>
+          <label>מה המתנה? <input id="pz-g-p" type="text" maxlength="40" placeholder="🍦 יציאה לגלידה, 🚲 אופניים, ספר חדש"></label>
+          <label>כמה שווה כוכב אחד? <span>(₪)</span> <input id="pz-val" type="number" inputmode="decimal" min="0" step="0.5"></label>
+          <label>אבא ואמא מוסיפים על החיסכון <select id="pz-mult"><option value="1">בלי תוספת</option><option value="1.5">חצי שקל על כל שקל</option><option value="2">שקל על כל שקל (פי 2)</option><option value="3">פי 3</option></select></label>
+          <label>צדקה, לפחות <span>(%)</span> <input id="pz-mintz" type="number" inputmode="numeric" min="0" max="100"></label>
+        </div>
+        <p class="muted" style="margin-top:.4rem">המתנה והצנצנות נפרדות לכל ילד. רוצים לחסוך יחד למטרה משפחתית? <a class="gold" href="/kesef/mivtza/">המבצע המשפחתי</a>.</p>
+      </details>
+    </section>
     <details class="box" id="sg-edit">
       <summary style="cursor:pointer;color:var(--cream);font-weight:600">✏️ לשנות את הרשימה ואת השמות</summary>
       <h2>מה עושים <small>הרשימה שמוצגת עכשיו</small></h2>
