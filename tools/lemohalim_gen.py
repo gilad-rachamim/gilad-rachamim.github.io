@@ -154,8 +154,23 @@ body = f"""<!--meta {json.dumps(meta, ensure_ascii=False, indent=2)} -->
 <div class="wrap" id="kelim">
   <div class="tip"><b>איך זה עובד</b><p>לוחצים "לשלוח להורים בווטסאפ", בוחרים למי, וההודעה כבר כתובה. בסופה שורה אחת: שהכלי של גילעד רחמים, קולגה שלכם וחבר איתכם בפורום. אפשר לשנות אותה לפני השליחה. הכול יושב באתר שלי, אז הפרטים שלי מופיעים בכל כלי.</p></div>
 
+  <section aria-labelledby="mine-h">
+    <h2 id="mine-h">בשבילכם, המוהלים</h2>
+    <div class="tls">
+      <article class="tl">
+        <svg class="ic" aria-hidden="true"><use href="#list"/></svg>
+        <div>
+          <h3>יומן הבריתות שלי</h3>
+          <p>רושמים כל ברית בדקה מהטלפון: הורים, תאריך עברי ולועזי, שעה ומקום. מסמנים שראיתם את התינוק והורדתם תחבושת, ומקבלים "מה נשאר לעשות", תזכורות וקובץ לאקסל ולוורד. הכול נשמר רק אצלכם.</p>
+          <p class="tl-note">בלי אתר? יש גם קובץ וורד למילוי ותבנית לווטסאפ.</p>
+          <div class="tl-go"><a class="btn btn-gold btn-sm" href="/kodesh/britot/?utm_source=lemohalim&amp;utm_medium=site">לפתוח את היומן</a><a class="btn btn-line btn-sm" href="/kodesh/britot/yoman-britot.docx" download data-share="britot_docx">קובץ וורד</a></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
   <section aria-labelledby="tools-h">
-    <h2 id="tools-h">הכלים</h2>
+    <h2 id="tools-h">הכלים להורים</h2>
     <div class="tl-all">{share_link("all", all_text, "לשלוח להורים הכול בהודעה אחת", "btn-gold")}<p>שישה קישורים בהודעה אחת: כל הכלים חוץ מהמדריך.</p></div>
     <div class="tls">
 {chr(10).join(cards)}
