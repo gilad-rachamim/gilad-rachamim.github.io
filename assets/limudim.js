@@ -1,0 +1,674 @@
+// כלים ללימודים – כרטיסיות חזרה, מתכנן למבחן, טיימר למידה, לימוד יומי לסיום.
+// הכול רץ בטלפון. הנתונים נשמרים ב-localStorage בלבד, לא נשלחים לשום מקום.
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  function load(k, def) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch (e) { return def; } }
+  function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function used(tool, extra) { if (window.toolUsed) window.toolUsed(tool, extra); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  // ---------- תאריכים ----------
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function ymd(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function parse(s) { var p = String(s).split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function addDays(d, n) { var x = new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); return x; }
+  function today() { return ymd(new Date()); }
+  var DAYS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'שבת'];
+  var MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
+  function dayLabel(s) { var d = parse(s); var w = d.getDay(); return (w === 6 ? 'שבת' : 'יום ' + DAYS[w]) + ' ' + d.getDate() + '.' + (d.getMonth() + 1); }
+  function longDate(s) { var d = parse(s); return d.getDate() + ' ב' + MONTHS[d.getMonth()] + ' ' + d.getFullYear(); }
+  function daysBetween(a, b) { return Math.round((parse(b) - parse(a)) / 864e5); }
+
+  // ---------- גימטריה למספרי פרקים ----------
+  function gem(n) {
+    var ones = ['', 'א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט'], tens = ['', 'י', 'כ', 'ל', 'מ', 'נ', 'ס', 'ע', 'פ', 'צ'], hund = ['', 'ק', 'ר', 'ש', 'ת'];
+    var s = '';
+    while (n >= 400) { s += 'ת'; n -= 400; }
+    if (n >= 100) { s += hund[Math.floor(n / 100)]; n %= 100; }
+    if (n === 15) return s + 'טו';
+    if (n === 16) return s + 'טז';
+    return s + tens[Math.floor(n / 10)] + ones[n % 10];
+  }
+
+  // ---------- קובץ ליומן (ics) ----------
+  function icsText(s) { return String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n'); }
+  function fold(line) { var out = [], i = 0; while (line.length - i > 34) { out.push((i ? ' ' : '') + line.slice(i, i + 34)); i += 34; } out.push((i ? ' ' : '') + line.slice(i)); return out.join('\r\n'); }
+  function icsDownload(file, calName, events) {
+    var stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
+    var L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//kelim//limudim//HE', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:' + icsText(calName), 'X-WR-TIMEZONE:Asia/Jerusalem'];
+    events.forEach(function (ev, i) {
+      var d = ev.date.replace(/-/g, '');
+      L.push('BEGIN:VEVENT', 'UID:' + d + '-' + i + '-' + Math.random().toString(36).slice(2, 8) + '@limudim', 'DTSTAMP:' + stamp);
+      if (ev.time) {
+        var t = ev.time.split(':'), st = new Date(+d.slice(0, 4), +d.slice(4, 6) - 1, +d.slice(6, 8), +t[0], +t[1]), en = new Date(st.getTime() + (ev.mins || 30) * 6e4);
+        var f = function (x) { return ymd(x).replace(/-/g, '') + 'T' + pad(x.getHours()) + pad(x.getMinutes()) + '00'; };
+        L.push('DTSTART:' + f(st), 'DTEND:' + f(en));
+      } else {
+        L.push('DTSTART;VALUE=DATE:' + d, 'DTEND;VALUE=DATE:' + ymd(addDays(parse(ev.date), 1)).replace(/-/g, ''));
+      }
+      L.push(fold('SUMMARY:' + icsText(ev.title)));
+      if (ev.desc) L.push(fold('DESCRIPTION:' + icsText(ev.desc)));
+      if (ev.time && ev.alarm !== false) L.push('BEGIN:VALARM', 'ACTION:DISPLAY', fold('DESCRIPTION:' + icsText(ev.title)), 'TRIGGER:-PT' + (ev.alarm || 0) + 'M', 'END:VALARM');
+      L.push('END:VEVENT');
+    });
+    L.push('END:VCALENDAR');
+    var blob = new Blob([L.join('\r\n') + '\r\n'], { type: 'text/calendar;charset=utf-8' });
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file; document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+  }
+  function fileDownload(name, text, type) {
+    var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: type || 'application/json' })); a.download = name;
+    document.body.appendChild(a); a.click(); setTimeout(function () { a.remove(); }, 1000);
+  }
+
+  // =====================================================================
+  // 1. כרטיסיות חזרה (חזרה מרווחת בשיטת הקופסאות)
+  // =====================================================================
+  function flashcards() {
+    var KEY = 'limudim-cards';
+    var INT = [0, 1, 3, 7, 14, 30]; // כמה ימים עד החזרה הבאה בכל קופסה
+    var st = load(KEY, null);
+    if (!st || !st.decks) {
+      st = { decks: [{ id: 'd1', name: 'דוגמה: מילים באנגלית', cards: [
+        ['apple', 'תפוח'], ['to borrow', 'לשאול (חפץ), ללוות'], ['although', 'למרות ש...'], ['improve', 'לשפר'], ['knowledge', 'ידע']
+      ].map(function (p) { return { q: p[0], a: p[1], b: 0, due: today() }; }) }], cur: 'd1' };
+    }
+    function persist() { save(KEY, st); }
+    function deck() { var d = st.decks.filter(function (x) { return x.id === st.cur; })[0]; if (!d && st.decks.length) { d = st.decks[0]; st.cur = d.id; } return d; }
+    function dueCards(d) { var t = today(); return d.cards.filter(function (c) { return c.due <= t; }); }
+
+    var sel = $('fc-deck'), play = $('fc-play'), home = $('fc-home');
+    function renderDecks() {
+      sel.innerHTML = st.decks.map(function (d) { return '<option value="' + d.id + '"' + (d.id === st.cur ? ' selected' : '') + '>' + esc(d.name) + ' (' + d.cards.length + ')</option>'; }).join('') || '<option value="">אין עדיין חפיסות</option>';
+      var d = deck();
+      var due = d ? dueCards(d).length : 0, total = d ? d.cards.length : 0, known = d ? d.cards.filter(function (c) { return c.b >= 3; }).length : 0;
+      $('fc-n-due').textContent = due; $('fc-n-all').textContent = total; $('fc-n-known').textContent = known;
+      $('fc-start').textContent = due ? 'להתחיל חזרה (' + due + ' להיום)' : 'אין כרטיסים להיום ✓';
+      $('fc-start').disabled = !due;
+      $('fc-all').disabled = !total;
+      var list = $('fc-list');
+      $('fc-list-n').textContent = total;
+      list.innerHTML = d ? d.cards.map(function (c, i) {
+        return '<li><span>' + esc(c.q) + ' ← ' + esc(c.a) + '</span><small>' + (c.b >= 3 ? 'יודע' : c.due <= today() ? 'להיום' : longDate(c.due).replace(/ \d{4}$/, '')) + '</small><button type="button" data-del="' + i + '" aria-label="למחוק">×</button></li>';
+      }).join('') : '';
+    }
+    sel.addEventListener('change', function () { st.cur = sel.value; persist(); renderDecks(); });
+    $('fc-new').addEventListener('click', function () {
+      var n = prompt('שם החפיסה החדשה (למשל: אנגלית יחידה 3, הלכות שבת)');
+      if (!n || !n.trim()) return;
+      var id = 'd' + Date.now(); st.decks.push({ id: id, name: n.trim().slice(0, 50), cards: [] }); st.cur = id; persist(); renderDecks();
+      $('fc-text').focus();
+    });
+    $('fc-ren').addEventListener('click', function () {
+      var d = deck(); if (!d) return; var n = prompt('שם חדש לחפיסה', d.name); if (!n || !n.trim()) return; d.name = n.trim().slice(0, 50); persist(); renderDecks();
+    });
+    $('fc-delete').addEventListener('click', function () {
+      var d = deck(); if (!d) return;
+      if (!confirm('למחוק את החפיסה "' + d.name + '" עם ' + d.cards.length + ' כרטיסים? אי אפשר לבטל.')) return;
+      st.decks = st.decks.filter(function (x) { return x !== d; }); st.cur = st.decks[0] ? st.decks[0].id : ''; persist(); renderDecks();
+    });
+    $('fc-list').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-del]'); if (!b) return; var d = deck(); d.cards.splice(+b.getAttribute('data-del'), 1); persist(); renderDecks();
+    });
+
+    // הוספת כרטיסים מהדבקה
+    var SEPS = { tab: '\t', dash: ' - ', colon: ':', eq: '=', pipe: '|', semi: ';' };
+    function splitLine(line, how) {
+      if (how === 'auto') {
+        var tries = ['\t', ' - ', ' – ', ' — ', '=', ':', '|', ';', ' -', '- ', '-', ','];
+        for (var i = 0; i < tries.length; i++) { var k = line.indexOf(tries[i]); if (k > 0 && k < line.length - tries[i].length) return [line.slice(0, k), line.slice(k + tries[i].length)]; }
+        return null;
+      }
+      var s = how === 'custom' ? ($('fc-sep-c').value || '') : SEPS[how];
+      if (!s) return null;
+      var j = line.indexOf(s); if (j <= 0) return null; return [line.slice(0, j), line.slice(j + s.length)];
+    }
+    $('fc-sep').addEventListener('change', function () { $('fc-sep-c-wrap').hidden = $('fc-sep').value !== 'custom'; });
+    $('fc-add').addEventListener('click', function () {
+      var lines = $('fc-text').value.split(/\r?\n/).map(function (l) { return l.trim(); }).filter(Boolean);
+      if (!lines.length) { $('fc-add-st').textContent = 'צריך להדביק לפחות שורה אחת: שאלה, מפריד, תשובה.'; return; }
+      var d = deck();
+      if (!d) { d = { id: 'd' + Date.now(), name: 'החפיסה שלי', cards: [] }; st.decks.push(d); st.cur = d.id; }
+      var how = $('fc-sep').value, ok = 0, bad = [];
+      lines.forEach(function (l) {
+        var p = splitLine(l, how);
+        if (!p || !p[0].trim() || !p[1].trim()) { bad.push(l); return; }
+        d.cards.push({ q: p[0].trim().slice(0, 400), a: p[1].trim().slice(0, 600), b: 0, due: today() }); ok++;
+      });
+      persist(); renderDecks();
+      $('fc-add-st').textContent = 'נוספו ' + ok + ' כרטיסים לחפיסה "' + d.name + '".' + (bad.length === 1 ? ' שורה אחת בלי מפריד נשארה בתיבה, לתקן ולהוסיף שוב.' : bad.length ? ' ' + bad.length + ' שורות בלי מפריד נשארו בתיבה, לתקן ולהוסיף שוב.' : '');
+      $('fc-text').value = bad.join('\n');
+      if (ok) used('kartisiot', { action: 'add', n: ok });
+    });
+
+    // תרגול
+    var queue = [], pos = 0, right = 0, wrong = 0, missed = {}, reversed = false, cur = null;
+    function speakable(t) { return 'speechSynthesis' in window && t; }
+    function say(t) {
+      if (!('speechSynthesis' in window)) return;
+      speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(t); u.lang = /[a-z]/i.test(t) && !/[\u0590-\u05FF]/.test(t) ? 'en-US' : 'he-IL'; u.rate = .9; speechSynthesis.speak(u);
+    }
+    function start(all) {
+      var d = deck(); if (!d) return;
+      var cards = all ? d.cards.slice() : dueCards(d);
+      // ערבוב
+      for (var i = cards.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = cards[i]; cards[i] = cards[j]; cards[j] = t; }
+      queue = cards; pos = 0; right = 0; wrong = 0; missed = {}; reversed = $('fc-rev').checked;
+      home.hidden = true; play.hidden = false; $('fc-end').hidden = true; $('fc-cardbox').hidden = false;
+      show(); used('kartisiot', { action: all ? 'practice_all' : 'practice_due', n: cards.length });
+      play.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    function show() {
+      if (pos >= queue.length) return end();
+      cur = queue[pos];
+      $('fc-q').textContent = reversed ? cur.a : cur.q;
+      $('fc-a').textContent = reversed ? cur.q : cur.a;
+      $('fc-a').hidden = true; $('fc-show').hidden = false; $('fc-judge').hidden = true;
+      $('fc-pos').textContent = 'כרטיס ' + (pos + 1) + ' מתוך ' + queue.length;
+      $('fc-say').hidden = !speakable(cur.q);
+    }
+    function reveal() { $('fc-a').hidden = false; $('fc-show').hidden = true; $('fc-judge').hidden = false; $('fc-yes').focus(); }
+    function judge(knew) {
+      if (!cur) return;
+      if (knew) {
+        if (!missed[cur.q]) right++;
+        cur.b = missed[cur.q] ? 1 : Math.min(cur.b + 1, 5);
+        cur.due = ymd(addDays(new Date(), INT[cur.b]));
+      } else {
+        if (!missed[cur.q]) wrong++;
+        missed[cur.q] = 1; cur.b = 0; cur.due = today();
+        queue.push(cur); // חוזר שוב בסוף הסבב
+      }
+      persist(); pos++; show();
+    }
+    function end() {
+      $('fc-cardbox').hidden = true; $('fc-end').hidden = false;
+      var d = deck(), tm = ymd(addDays(new Date(), 1));
+      var next = d.cards.filter(function (c) { return c.due <= tm; }).length;
+      $('fc-end-t').textContent = 'סיימת את הסבב! ' + (right + wrong ? 'ידעת ' + right + ' מתוך ' + (right + wrong) + ' כבר בפעם הראשונה.' : '');
+      $('fc-end-n').textContent = next ? 'מחר מחכים לך ' + next + ' כרטיסים לחזרה.' : 'מחר אין כרטיסים לחזרה. כל הכבוד.';
+      used('kartisiot', { action: 'done', right: right, wrong: wrong });
+      renderDecks();
+    }
+    function back() { play.hidden = true; home.hidden = false; renderDecks(); if ('speechSynthesis' in window) speechSynthesis.cancel(); }
+    $('fc-start').addEventListener('click', function () { start(false); });
+    $('fc-all').addEventListener('click', function () { start(true); });
+    $('fc-show').addEventListener('click', reveal);
+    $('fc-yes').addEventListener('click', function () { judge(true); });
+    $('fc-no').addEventListener('click', function () { judge(false); });
+    $('fc-say').addEventListener('click', function () { say($('fc-a').hidden ? $('fc-q').textContent : $('fc-q').textContent + '. ' + $('fc-a').textContent); });
+    $('fc-stop').addEventListener('click', back);
+    $('fc-back').addEventListener('click', back);
+    $('fc-again').addEventListener('click', function () { start(true); });
+    document.addEventListener('keydown', function (e) {
+      if (play.hidden || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+      if (e.key === ' ' || e.key === 'Enter') { if (!$('fc-show').hidden) { e.preventDefault(); reveal(); } }
+      else if (!$('fc-judge').hidden && (e.key === '1' || e.key === 'ArrowRight')) judge(true);
+      else if (!$('fc-judge').hidden && (e.key === '2' || e.key === 'ArrowLeft')) judge(false);
+    });
+
+    // גיבוי ושיתוף
+    $('fc-export').addEventListener('click', function () { fileDownload('kartisiot.json', JSON.stringify(st, null, 1)); });
+    $('fc-import').addEventListener('change', function () {
+      var f = this.files[0]; if (!f) return; var r = new FileReader();
+      r.onload = function () {
+        try {
+          var x = JSON.parse(r.result); if (!x.decks) throw 0;
+          x.decks.forEach(function (d) { d.id = 'd' + Date.now() + Math.random().toString(36).slice(2, 5); st.decks.push(d); });
+          persist(); renderDecks(); $('fc-add-st').textContent = 'נוספו ' + x.decks.length + ' חפיסות מהקובץ.';
+        } catch (e) { $('fc-add-st').textContent = 'הקובץ לא נראה כמו גיבוי של הכרטיסיות.'; }
+      };
+      r.readAsText(f);
+    });
+    $('fc-copy').addEventListener('click', function () {
+      var d = deck(); if (!d) return; var t = d.cards.map(function (c) { return c.q + ' - ' + c.a; }).join('\n');
+      var btn = this;
+      (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () { btn.textContent = 'הועתק ✓ אפשר להדביק לחבר בווטסאפ'; }).catch(function () { $('fc-text').value = t; btn.textContent = 'הטקסט בתיבה למעלה, להעתיק משם'; });
+    });
+    renderDecks();
+  }
+
+  // =====================================================================
+  // 2. מתכנן למידה למבחן
+  // =====================================================================
+  function examPlanner() {
+    var KEY = 'limudim-mivchan';
+    var st = load(KEY, { plans: [], cur: '' });
+    var form = $('mv-form');
+    $('mv-start').value = today();
+    function cfgFromForm() {
+      return {
+        name: $('mv-name').value.trim() || 'המבחן', exam: $('mv-date').value, start: $('mv-start').value || today(),
+        topics: $('mv-topics').value.split(/\r?\n/).map(function (s) { return s.replace(/^[\s\d.)\-•*]+/, '').trim(); }).filter(Boolean),
+        rev: +$('mv-rev').value, noShabbat: $('mv-shabbat').checked, noFri: $('mv-fri').checked, time: $('mv-time').value || '18:00', mins: +$('mv-mins').value || 60
+      };
+    }
+    function fill(c) {
+      $('mv-name').value = c.name; $('mv-date').value = c.exam; $('mv-start').value = c.start; $('mv-topics').value = c.topics.join('\n');
+      $('mv-rev').value = c.rev; $('mv-shabbat').checked = c.noShabbat; $('mv-fri').checked = !!c.noFri; $('mv-time').value = c.time; $('mv-mins').value = c.mins;
+    }
+    function build(c) {
+      var days = [], d = parse(c.start), ex = parse(c.exam);
+      for (; d < ex; d = addDays(d, 1)) { if (c.noShabbat && d.getDay() === 6) continue; if (c.noFri && d.getDay() === 5) continue; days.push(ymd(d)); }
+      if (!days.length) return null;
+      var R = Math.min(c.rev, Math.max(0, days.length - 1)), learn = days.slice(0, days.length - R), revDays = days.slice(days.length - R);
+      var T = c.topics.length, Ln = learn.length, rows = [];
+      var plan = learn.map(function (x) { return { date: x, items: [], review: [] }; });
+      if (T <= Ln) {
+        c.topics.forEach(function (t, i) {
+          var a = Math.floor(i * Ln / T), b = Math.floor((i + 1) * Ln / T) - 1, parts = b - a + 1;
+          for (var k = a; k <= b; k++) plan[k].items.push(parts > 1 ? t + ' (חלק ' + (k - a + 1) + ' מתוך ' + parts + ')' : t);
+          if (b + 1 < Ln) plan[b + 1].review.push(t);
+        });
+      } else {
+        for (var j = 0; j < Ln; j++) {
+          var s = Math.floor(j * T / Ln), e = Math.floor((j + 1) * T / Ln);
+          plan[j].items = c.topics.slice(s, e);
+          if (j + 1 < Ln) plan[j + 1].review = c.topics.slice(s, e);
+        }
+      }
+      plan.forEach(function (p) {
+        var txt = p.items.length ? p.items.join(' · ') : 'חזרה על מה שנלמד עד עכשיו';
+        rows.push({ date: p.date, kind: 'learn', text: txt, sub: p.review.length ? 'חזרה קצרה (10 דקות) על: ' + p.review.join(', ') : '' });
+      });
+      revDays.forEach(function (x, i) {
+        var last = i === revDays.length - 1;
+        rows.push({ date: x, kind: 'rev', text: last ? 'חזרה קלה, מבחן לדוגמה, ולישון מוקדם' : 'חזרה כללית על כל החומר', sub: last ? '' : 'לעבור על הסיכומים ולפתור שאלות מבחנים קודמים' });
+      });
+      rows.push({ date: c.exam, kind: 'exam', text: (/מבחן|בחינה|בגרות/.test(c.name) ? c.name : 'המבחן: ' + c.name) + ' · בהצלחה!', sub: '' });
+      return rows;
+    }
+    function plan() { return st.plans.filter(function (p) { return p.id === st.cur; })[0]; }
+    function renderList() {
+      $('mv-plans-wrap').hidden = !st.plans.length;
+      $('mv-plans').innerHTML = st.plans.map(function (p) { return '<option value="' + p.id + '"' + (p.id === st.cur ? ' selected' : '') + '>' + esc(p.cfg.name) + ' · ' + dayLabel(p.cfg.exam) + '</option>'; }).join('');
+    }
+    function render() {
+      var p = plan(), out = $('mv-out');
+      renderList();
+      if (!p) { out.hidden = true; return; }
+      var rows = build(p.cfg); if (!rows) { out.hidden = true; return; }
+      var t = today(), left = daysBetween(t, p.cfg.exam), learnRows = rows.filter(function (r) { return r.kind !== 'exam'; });
+      var done = learnRows.filter(function (r) { return p.done[r.date]; }).length;
+      $('mv-sum').innerHTML = '<div class="big-n">' + (left > 0 ? 'עוד ' + left + ' ימים ל' + esc(p.cfg.name) : left === 0 ? 'המבחן היום. בהצלחה!' : 'המבחן עבר') + '</div>' +
+        '<p>' + p.cfg.topics.length + ' נושאים, ' + learnRows.length + ' ימי לימוד, ' + p.cfg.mins + ' דקות ביום. סימנת ' + done + ' מתוך ' + learnRows.length + '.</p><div class="bar" style="margin-top:.6rem"><i style="width:' + Math.round(done * 100 / Math.max(1, learnRows.length)) + '%"></i></div>';
+      $('mv-table').innerHTML = rows.map(function (r) {
+        var cls = [r.kind === 'rev' ? 'rev' : r.kind === 'exam' ? 'exam' : '', r.date === t ? 'today' : '', p.done[r.date] ? 'done' : ''].join(' ');
+        return '<tr class="' + cls + '"><td class="d">' + dayLabel(r.date) + '</td><td>' + esc(r.text) + (r.sub ? '<br><small style="color:var(--muted)">' + esc(r.sub) + '</small>' : '') + '</td><td class="x">' +
+          (r.kind === 'exam' ? '🎯' : '<input type="checkbox" data-d="' + r.date + '"' + (p.done[r.date] ? ' checked' : '') + ' aria-label="למדתי ב' + dayLabel(r.date) + '">') + '</td></tr>';
+      }).join('');
+      out.hidden = false;
+    }
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var c = cfgFromForm(), msg = $('mv-st');
+      if (!c.exam) { msg.textContent = 'צריך לבחור את תאריך המבחן.'; return; }
+      if (!c.topics.length) { msg.textContent = 'צריך לכתוב לפחות נושא אחד, שורה לכל נושא.'; return; }
+      if (c.exam <= c.start) { msg.textContent = 'תאריך המבחן צריך להיות אחרי היום שמתחילים.'; return; }
+      if (!build(c)) { msg.textContent = 'אין ימי לימוד בין ההתחלה למבחן. אולי לבטל את הדילוג על שישי או שבת?'; return; }
+      var p = plan();
+      if (p && p.cfg.name === c.name && p.cfg.exam === c.exam) p.cfg = c;
+      else { p = { id: 'm' + Date.now(), cfg: c, done: {} }; st.plans.push(p); st.cur = p.id; }
+      save(KEY, st); msg.textContent = ''; render();
+      used('mivchan', { topics: c.topics.length, days: daysBetween(c.start, c.exam) });
+      $('mv-out').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    $('mv-table').addEventListener('change', function (e) {
+      var cb = e.target; if (!cb.dataset.d) return; var p = plan(); if (cb.checked) p.done[cb.dataset.d] = 1; else delete p.done[cb.dataset.d]; save(KEY, st); render();
+    });
+    $('mv-plans').addEventListener('change', function () { st.cur = this.value; save(KEY, st); var p = plan(); if (p) fill(p.cfg); render(); });
+    $('mv-newplan').addEventListener('click', function () { st.cur = ''; save(KEY, st); form.reset(); $('mv-start').value = today(); render(); $('mv-name').focus(); });
+    $('mv-del').addEventListener('click', function () {
+      var p = plan(); if (!p || !confirm('למחוק את התוכנית "' + p.cfg.name + '"?')) return;
+      st.plans = st.plans.filter(function (x) { return x !== p; }); st.cur = st.plans[0] ? st.plans[0].id : ''; save(KEY, st); var q = plan(); if (q) fill(q.cfg); else { form.reset(); $('mv-start').value = today(); } render();
+    });
+    $('mv-ics').addEventListener('click', function () {
+      var p = plan(); if (!p) return; var rows = build(p.cfg);
+      icsDownload('mivchan.ics', 'לימוד ל' + p.cfg.name, rows.map(function (r) {
+        return r.kind === 'exam' ? { date: r.date, title: '🎯 ' + r.text } : { date: r.date, time: p.cfg.time, mins: p.cfg.mins, alarm: 5, title: 'לימוד: ' + r.text, desc: (r.sub ? r.sub + '\n' : '') + 'נוצר בכלים ללימודים: https://gilad-rachamim.github.io/limudim/mivchan/' };
+      }));
+      $('mv-tip').hidden = false; used('mivchan', { action: 'ics' });
+    });
+    $('mv-print').addEventListener('click', function () { window.print(); });
+    var p0 = plan(); if (p0) fill(p0.cfg);
+    render();
+  }
+
+  // =====================================================================
+  // 3. טיימר למידה
+  // =====================================================================
+  function studyTimer() {
+    var MODES = { '25': [25, 5, 15], '50': [50, 10, 20], '15': [15, 3, 10] };
+    var RUN = 'limudim-timer', LOG = 'limudim-timer-log';
+    var cfg = load('limudim-timer-cfg', { mode: '25', f: 25, b: 5, l: 15, why: '', wake: true, sound: true, noise: false, auto: true });
+    var run = load(RUN, null); // {phase, endAt, left, round, running}
+    var clock = $('tm-clock'), wakeLock = null, tick = null, audio = null, noiseNode = null;
+    $('tm-why').value = cfg.why || '';
+    $('tm-wake').checked = cfg.wake; $('tm-sound').checked = cfg.sound; $('tm-noise').checked = cfg.noise; $('tm-auto').checked = cfg.auto;
+    $('tm-cf').value = cfg.f; $('tm-cb').value = cfg.b;
+    function saveCfg() { save('limudim-timer-cfg', cfg); }
+    function lens() { return cfg.mode === 'custom' ? [Math.max(1, +cfg.f || 25), Math.max(1, +cfg.b || 5), Math.max(1, +cfg.l || 15)] : MODES[cfg.mode]; }
+    function phaseLen(ph) { var L = lens(); return (ph === 'focus' ? L[0] : ph === 'long' ? L[2] : L[1]) * 60000; }
+    function fresh() { return { phase: 'focus', left: phaseLen('focus'), endAt: 0, round: 0, running: false }; }
+    if (!run) run = fresh();
+    function remaining() { return run.running ? Math.max(0, run.endAt - Date.now()) : run.left; }
+    function fmt(ms) { var s = Math.ceil(ms / 1000), m = Math.floor(s / 60); return pad(m) + ':' + pad(s % 60); }
+    function paint() {
+      var ms = remaining(), brk = run.phase !== 'focus';
+      $('tm-t').textContent = fmt(ms);
+      $('tm-lbl').textContent = brk ? (run.phase === 'long' ? 'הפסקה ארוכה. לקום, לשתות, לזוז' : 'הפסקה. לקום מהכיסא, לנשום') : 'זמן לימוד';
+      $('tm-whyshow').textContent = brk ? '' : (cfg.why ? '"' + cfg.why + '"' : '');
+      clock.classList.toggle('brk', brk);
+      $('tm-ring').style.width = (100 - ms * 100 / phaseLen(run.phase)) + '%';
+      $('tm-go').textContent = run.running ? 'הפסקה רגעית ⏸' : (ms < phaseLen(run.phase) ? 'להמשיך ▶' : brk ? 'להתחיל הפסקה ▶' : 'להתחיל ללמוד ▶');
+      var dots = '', r = run.round % 4; for (var i = 0; i < 4; i++) dots += '<i class="' + (i < r ? 'on' : '') + '"></i>';
+      $('tm-dots').innerHTML = dots;
+      document.title = (run.running ? fmt(ms) + ' · ' : '') + 'טיימר למידה | כלים ללימודים';
+    }
+    function logStats() {
+      var lg = load(LOG, {}), t = today(), tt = lg[t] || { m: 0, n: 0 }, wk = 0;
+      for (var i = 0; i < 7; i++) { var k = ymd(addDays(new Date(), -i)); if (lg[k]) wk += lg[k].m; }
+      $('tm-s-today').textContent = tt.m; $('tm-s-n').textContent = tt.n; $('tm-s-week').textContent = wk;
+    }
+    function chime() {
+      if (!cfg.sound) return;
+      try {
+        audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+        [0, .35, .7].forEach(function (t, i) {
+          var o = audio.createOscillator(), g = audio.createGain(); o.frequency.value = [660, 880, 990][i]; o.type = 'sine';
+          g.gain.setValueAtTime(0.0001, audio.currentTime + t); g.gain.exponentialRampToValueAtTime(0.35, audio.currentTime + t + .03); g.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + t + .6);
+          o.connect(g); g.connect(audio.destination); o.start(audio.currentTime + t); o.stop(audio.currentTime + t + .65);
+        });
+      } catch (e) {}
+    }
+    function notify(text) {
+      if (navigator.vibrate) navigator.vibrate([300, 150, 300, 150, 300]);
+      if (!('Notification' in window) || Notification.permission !== 'granted') return;
+      var opt = { body: text, icon: '/assets/icon-limudim-192.png', tag: 'limudim-timer', renotify: true, vibrate: [300, 150, 300] };
+      if (navigator.serviceWorker && navigator.serviceWorker.getRegistration) navigator.serviceWorker.getRegistration().then(function (r) { if (r) r.showNotification('טיימר למידה', opt); else new Notification('טיימר למידה', opt); }).catch(function () {});
+      else try { new Notification('טיימר למידה', opt); } catch (e) {}
+    }
+    function setWake(on) {
+      if (on && cfg.wake && 'wakeLock' in navigator && document.visibilityState === 'visible') {
+        if (!wakeLock) navigator.wakeLock.request('screen').then(function (w) { wakeLock = w; w.addEventListener('release', function () { wakeLock = null; }); }).catch(function () {});
+      } else if (!on && wakeLock) { wakeLock.release().catch(function () {}); wakeLock = null; }
+    }
+    // רעש רקע חום ושקט: עוזר להתרכז, ומחזיק את הדף ער גם כשהמסך כבוי (באנדרואיד)
+    function setNoise(on) {
+      try {
+        if (on && cfg.noise && !noiseNode) {
+          audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+          var len = audio.sampleRate * 4, buf = audio.createBuffer(1, len, audio.sampleRate), d = buf.getChannelData(0), last = 0;
+          for (var i = 0; i < len; i++) { var w = Math.random() * 2 - 1; last = (last + 0.02 * w) / 1.02; d[i] = last * 3.2; }
+          var src = audio.createBufferSource(), g = audio.createGain(); src.buffer = buf; src.loop = true; g.gain.value = 0.18;
+          src.connect(g); g.connect(audio.destination); src.start(); noiseNode = src;
+          if (audio.state === 'suspended') audio.resume();
+        } else if (!on && noiseNode) { noiseNode.stop(); noiseNode = null; }
+      } catch (e) {}
+    }
+    function persist() { save(RUN, run); }
+    function finishPhase() {
+      var was = run.phase;
+      if (was === 'focus') {
+        run.round++;
+        var lg = load(LOG, {}), t = today(); lg[t] = lg[t] || { m: 0, n: 0 }; lg[t].m += Math.round(phaseLen('focus') / 60000); lg[t].n++; save(LOG, lg);
+        used('timer', { action: 'focus_done', mins: Math.round(phaseLen('focus') / 60000) });
+        run.phase = run.round % 4 === 0 ? 'long' : 'break';
+      } else run.phase = 'focus';
+      run.left = phaseLen(run.phase);
+      chime();
+      notify(was === 'focus' ? 'כל הכבוד! עכשיו הפסקה של ' + Math.round(run.left / 60000) + ' דקות.' : 'ההפסקה נגמרה. חוזרים ללמוד' + (cfg.why ? ': ' + cfg.why : '.'));
+      var autoGo = cfg.auto || was === 'focus';
+      run.running = false;
+      if (autoGo) startRun(); else { setNoise(false); setWake(false); }
+      persist(); logStats(); paint();
+    }
+    function loop() {
+      if (run.running && remaining() <= 0) finishPhase();
+      paint();
+    }
+    function startRun() {
+      run.endAt = Date.now() + run.left; run.running = true; persist();
+      setWake(true); setNoise(run.phase === 'focus');
+      if (!tick) tick = setInterval(loop, 500);
+    }
+    function pause() { run.left = remaining(); run.running = false; persist(); setWake(false); setNoise(false); paint(); }
+    $('tm-go').addEventListener('click', function () {
+      if (audio && audio.state === 'suspended') audio.resume();
+      if (run.running) pause(); else { startRun(); if (!run.round && run.phase === 'focus') used('timer', { action: 'start', mode: cfg.mode }); }
+      paint();
+    });
+    $('tm-reset').addEventListener('click', function () { setNoise(false); setWake(false); run = fresh(); persist(); paint(); });
+    $('tm-skip').addEventListener('click', function () {
+      if (run.phase === 'focus' && !confirm('לדלג להפסקה עכשיו? הסבב לא ייספר.')) return;
+      run.phase = run.phase === 'focus' ? 'break' : 'focus'; run.left = phaseLen(run.phase); var r = run.running; run.running = false; if (r) startRun(); else { setNoise(false); } persist(); paint();
+    });
+    document.querySelectorAll('[data-mode]').forEach(function (b) {
+      b.setAttribute('aria-pressed', b.dataset.mode === cfg.mode);
+      b.addEventListener('click', function () {
+        cfg.mode = b.dataset.mode; saveCfg();
+        document.querySelectorAll('[data-mode]').forEach(function (x) { x.setAttribute('aria-pressed', x === b); });
+        $('tm-custom').hidden = cfg.mode !== 'custom';
+        if (!run.running) { run = fresh(); persist(); }
+        paint();
+      });
+    });
+    $('tm-custom').hidden = cfg.mode !== 'custom';
+    ['tm-cf', 'tm-cb'].forEach(function (id) {
+      $(id).addEventListener('change', function () { cfg.f = +$('tm-cf').value; cfg.b = +$('tm-cb').value; cfg.l = Math.max(cfg.b * 3, 10); saveCfg(); if (!run.running) { run = fresh(); persist(); } paint(); });
+    });
+    $('tm-why').addEventListener('input', function () { cfg.why = this.value.trim().slice(0, 120); saveCfg(); paint(); });
+    $('tm-wake').addEventListener('change', function () { cfg.wake = this.checked; saveCfg(); setWake(run.running); });
+    $('tm-sound').addEventListener('change', function () { cfg.sound = this.checked; saveCfg(); if (this.checked) chime(); });
+    $('tm-auto').addEventListener('change', function () { cfg.auto = this.checked; saveCfg(); });
+    $('tm-noise').addEventListener('change', function () { cfg.noise = this.checked; saveCfg(); setNoise(run.running && run.phase === 'focus'); });
+    $('tm-notif').addEventListener('click', function () {
+      var b = this;
+      if (!('Notification' in window)) { b.textContent = 'הדפדפן הזה לא תומך בהתראות'; return; }
+      Notification.requestPermission().then(function (p) { b.textContent = p === 'granted' ? 'התראות פעילות ✓' : 'ההתראות חסומות. אפשר לאשר בהגדרות הדפדפן'; });
+    });
+    if ('Notification' in window && Notification.permission === 'granted') $('tm-notif').textContent = 'התראות פעילות ✓';
+    $('tm-full').addEventListener('click', function () {
+      document.body.classList.toggle('focus-mode');
+      var on = document.body.classList.contains('focus-mode');
+      this.textContent = on ? 'לצאת ממסך הריכוז' : 'מסך ריכוז (בלי כל השאר)';
+      if (on && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(function () {});
+      else if (!on && document.fullscreenElement) document.exitFullscreen().catch(function () {});
+      window.scrollTo(0, 0);
+    });
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') { if (run.running) setWake(true); loop(); } });
+    if (run.running) {
+      if (remaining() <= 0) finishPhase();
+      else { tick = setInterval(loop, 500); setWake(true); }
+    }
+    logStats(); paint();
+  }
+
+  // =====================================================================
+  // 4. לימוד יומי לסיום (תנ"ך / משנה / ספר אחר)
+  // =====================================================================
+  function dailyLearning() {
+    var B = window.LIMUD_BOOKS, EN = window.LIMUD_EN;
+    if (!B) return;
+    var KEY = 'limudim-yomi';
+    var st = load(KEY, { plans: [], cur: '' });
+    var PARTS = {
+      tanakh: [['all', 'כל התנ״ך (929 פרקים)'], ['torah', 'תורה (187 פרקים)'], ['neviim', 'נביאים (380 פרקים)'], ['ketuvim', 'כתובים (362 פרקים)']],
+      mishnah: [['all', 'כל ששה סדרי משנה (525 פרקים)'], ['zeraim', 'סדר זרעים'], ['moed', 'סדר מועד'], ['nashim', 'סדר נשים'], ['nezikin', 'סדר נזיקין'], ['kodashim', 'סדר קדשים'], ['tahorot', 'סדר טהרות']]
+    };
+    function fillParts() {
+      var w = $('ly-what').value;
+      $('ly-part-wrap').hidden = w === 'other'; $('ly-other').hidden = w !== 'other'; $('ly-unit-wrap').hidden = w !== 'mishnah';
+      if (w === 'other') return;
+      var opts = PARTS[w].map(function (p) { return '<option value="' + p[0] + '">' + p[1] + '</option>'; }).join('');
+      opts += '<optgroup label="' + (w === 'tanakh' ? 'ספר אחד' : 'מסכת אחת') + '">' + B[w].map(function (b, i) { return '<option value="b' + i + '">' + b[0] + ' (' + b[1] + ' פרקים)</option>'; }).join('') + '</optgroup>';
+      $('ly-part').innerHTML = opts;
+    }
+    $('ly-what').addEventListener('change', fillParts);
+    $('ly-len').addEventListener('change', function () { $('ly-end-wrap').hidden = this.value !== 'date'; });
+    $('ly-start').value = today();
+
+    function cfgFromForm() {
+      var w = $('ly-what').value;
+      return { what: w, part: $('ly-part').value, unit: $('ly-unit').value, oname: $('ly-oname').value.trim(), ocount: +$('ly-ocount').value, ofirst: +$('ly-ofirst').value || 1, ounit: $('ly-ounit').value,
+        start: $('ly-start').value || today(), len: $('ly-len').value, end: $('ly-end').value, shabbat: $('ly-shabbat').checked, time: $('ly-time').value || '21:00' };
+    }
+    function fill(c) {
+      $('ly-what').value = c.what; fillParts(); if (c.what !== 'other') $('ly-part').value = c.part;
+      $('ly-unit').value = c.unit; $('ly-oname').value = c.oname; $('ly-ocount').value = c.ocount || ''; $('ly-ofirst').value = c.ofirst; $('ly-ounit').value = c.ounit;
+      $('ly-start').value = c.start; $('ly-len').value = c.len; $('ly-end').value = c.end || ''; $('ly-end-wrap').hidden = c.len !== 'date'; $('ly-shabbat').checked = c.shabbat; $('ly-time').value = c.time;
+    }
+    function title(c) {
+      if (c.what === 'other') return c.oname || 'הספר שלי';
+      var lbl = c.part.charAt(0) === 'b' ? B[c.what][+c.part.slice(1)][0] : PARTS[c.what].filter(function (p) { return p[0] === c.part; })[0][1].replace(/ \(.*/, '');
+      return (c.what === 'mishnah' && c.part.charAt(0) === 'b' ? 'משנה ' : '') + lbl + (c.what === 'mishnah' && c.unit === 'm' ? ' (משנה ליום)' : '');
+    }
+    // כל יחידות הלימוד, לפי הסדר: {b: מספר ספר, c: פרק, m: משנה}
+    function units(c) {
+      var u = [];
+      if (c.what === 'other') { for (var k = 0; k < c.ocount; k++) u.push({ b: -1, c: c.ofirst + k }); return u; }
+      B[c.what].forEach(function (b, i) {
+        var inPart = c.part === 'all' || c.part === b[2] || c.part === 'b' + i;
+        if (!inPart) return;
+        for (var ch = 1; ch <= b[1]; ch++) {
+          if (c.what === 'mishnah' && c.unit === 'm') for (var m = 1; m <= b[3][ch - 1]; m++) u.push({ b: i, c: ch, m: m });
+          else u.push({ b: i, c: ch });
+        }
+      });
+      return u;
+    }
+    function endDate(c) {
+      var s = parse(c.start);
+      var map = { m1: [0, 1], m3: [0, 3], m6: [0, 6], y1: [1, 0], y2: [2, 0], y3: [3, 0] };
+      if (c.len === 'date') return c.end;
+      var p = map[c.len]; return ymd(addDays(new Date(s.getFullYear() + p[0], s.getMonth() + p[1], s.getDate()), -1));
+    }
+    var UNIT_NAMES = { c: ['פרק', 'פרקים'], m: ['משנה', 'משניות'], daf: ['דף', 'דפים'], amud: ['עמוד', 'עמודים'], shiur: ['שיעור', 'שיעורים'], perek: ['פרק', 'פרקים'], siman: ['סימן', 'סימנים'] };
+    function unitName(c) { return c.what === 'other' ? UNIT_NAMES[c.ounit] : c.what === 'mishnah' && c.unit === 'm' ? UNIT_NAMES.m : UNIT_NAMES.c; }
+    function bookName(c, i) { return i < 0 ? (c.oname || '') : B[c.what][i][0]; }
+    function pos(x) { return gem(x.c) + (x.m ? ':' + gem(x.m) : ''); }
+    function rangeText(c, list) {
+      if (!list.length) return '';
+      if (c.what === 'other') { var un = UNIT_NAMES[c.ounit][0]; var a = list[0].c, z = list[list.length - 1].c; return (c.oname ? c.oname + ', ' : '') + un + ' ' + gem(a) + (z !== a ? '–' + gem(z) : ''); }
+      var segs = [], s = list[0], prev = list[0];
+      for (var i = 1; i <= list.length; i++) {
+        var x = list[i];
+        if (!x || x.b !== s.b) { segs.push(bookName(c, s.b) + ' ' + pos(s) + (prev !== s ? '–' + pos(prev) : '')); s = x; }
+        prev = x;
+      }
+      return segs.join(', ');
+    }
+    function sefaria(c, x) {
+      if (c.what === 'other' || !EN) return '';
+      return 'https://www.sefaria.org/' + encodeURIComponent(EN[c.what][x.b].replace(/ /g, '_')) + '.' + x.c + (x.m ? '.' + x.m : '') + '?lang=he';
+    }
+    function schedule(c) {
+      var u = units(c), end = endDate(c), days = [];
+      if (!u.length || !end || end < c.start) return null;
+      for (var d = parse(c.start), e = parse(end); d <= e; d = addDays(d, 1)) { if (!c.shabbat && d.getDay() === 6) continue; days.push(ymd(d)); }
+      if (!days.length) return null;
+      var N = u.length, D = days.length, rows = [];
+      if (N >= D) {
+        for (var i = 0; i < D; i++) rows.push({ date: days[i], u: u.slice(Math.floor(i * N / D), Math.floor((i + 1) * N / D)) });
+      } else {
+        var by = {};
+        u.forEach(function (x, k) { var di = Math.floor(k * D / N); (by[di] = by[di] || []).push(x); });
+        Object.keys(by).forEach(function (di) { rows.push({ date: days[+di], u: by[di] }); });
+      }
+      return { rows: rows, N: N, D: D, end: end };
+    }
+    function plan() { return st.plans.filter(function (p) { return p.id === st.cur; })[0]; }
+    function perDay(s, c) {
+      var un = unitName(c), r = s.N / s.D;
+      if (r >= 1) {
+        var lo = Math.floor(r), hi = Math.ceil(r);
+        return lo === hi ? lo + ' ' + (lo === 1 ? un[0] : un[1]) + ' ביום' : 'בין ' + lo + ' ל-' + hi + ' ' + un[1] + ' ביום, בממוצע ' + (Math.round(r * 10) / 10);
+      }
+      var every = Math.round(1 / r * 10) / 10;
+      return un[0] + ' אחד כל ' + (every === 2 ? 'יומיים' : every + ' ימים') + ' בערך';
+    }
+    function render() {
+      var p = plan(), out = $('ly-out');
+      $('ly-plans-wrap').hidden = !st.plans.length;
+      $('ly-plans').innerHTML = st.plans.map(function (q) { return '<option value="' + q.id + '"' + (q.id === st.cur ? ' selected' : '') + '>' + esc(title(q.cfg)) + ' · עד ' + longDate(endDate(q.cfg)) + '</option>'; }).join('');
+      if (!p) { out.hidden = true; return; }
+      var s = schedule(p.cfg); if (!s) { out.hidden = true; return; }
+      var c = p.cfg, t = today(), done = s.rows.filter(function (r) { return p.done[r.date]; }).length;
+      var shouldBe = s.rows.filter(function (r) { return r.date < t; }).length, behind = s.rows.filter(function (r) { return r.date < t && !p.done[r.date]; }).length;
+      var un = unitName(c);
+      $('ly-sum').innerHTML = '<div class="big-n">' + esc(perDay(s, c)) + '</div><p>' + esc(title(c)) + ': ' + s.N + ' ' + un[1] + ', ' + s.rows.length + ' ימי לימוד, מ-' + longDate(c.start) + ' עד ' + longDate(s.end) + '.</p>' +
+        '<p>למדת ' + done + ' מתוך ' + s.rows.length + ' ימים' + (behind ? ' · ' + behind + ' ימים להשלים, וזה בסדר' : shouldBe ? ' · בדיוק בזמן ✓' : '') + '</p><div class="bar" style="margin-top:.6rem"><i style="width:' + Math.round(done * 100 / s.rows.length) + '%"></i></div>';
+      var tr = s.rows.filter(function (r) { return r.date >= t; })[0];
+      var tb = $('ly-today');
+      if (tr) {
+        var link = sefaria(c, tr.u[0]);
+        tb.innerHTML = '<div style="color:var(--accent);font-weight:700">' + (tr.date === t ? 'היום' : 'הלימוד הבא: ' + dayLabel(tr.date)) + '</div><b>' + esc(rangeText(c, tr.u)) + '</b>' +
+          '<div class="btns" style="margin-top:.7rem"><label class="checks" style="display:flex"><input type="checkbox" data-d="' + tr.date + '"' + (p.done[tr.date] ? ' checked' : '') + '> <span>למדתי ✓</span></label>' + (link ? '<a class="btn btn-line btn-sm" href="' + link + '" target="_blank" rel="noopener">ללמוד בספריא</a>' : '') + '</div>';
+        tb.hidden = false;
+      } else { tb.innerHTML = '<b>סיימת את התוכנית! מזל טוב 🎉</b>'; tb.hidden = false; }
+      // טבלה לפי חודשים
+      var months = {}, order = [];
+      s.rows.forEach(function (r) { var k = r.date.slice(0, 7); if (!months[k]) { months[k] = []; order.push(k); } months[k].push(r); });
+      var curM = t.slice(0, 7);
+      $('ly-table').innerHTML = order.map(function (k, idx) {
+        var rs = months[k], dn = rs.filter(function (r) { return p.done[r.date]; }).length, d0 = parse(k + '-01');
+        var open = k === curM || (idx === 0 && curM < order[0]);
+        return '<details class="month"' + (open ? ' open' : '') + '><summary><span>' + MONTHS[d0.getMonth()] + ' ' + d0.getFullYear() + '</span><span class="pill">' + dn + '/' + rs.length + '</span></summary><table class="plan"><tbody>' +
+          rs.map(function (r) { return '<tr class="' + (r.date === t ? 'today ' : '') + (p.done[r.date] ? 'done' : '') + '"><td class="d">' + dayLabel(r.date) + '</td><td>' + esc(rangeText(c, r.u)) + '</td><td class="x"><input type="checkbox" data-d="' + r.date + '"' + (p.done[r.date] ? ' checked' : '') + ' aria-label="למדתי ב' + dayLabel(r.date) + '"></td></tr>'; }).join('') +
+          '</tbody></table></details>';
+      }).join('');
+      out.hidden = false;
+    }
+    $('ly-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var c = cfgFromForm(), msg = $('ly-st');
+      if (c.what === 'other' && !(c.ocount > 0)) { msg.textContent = 'צריך לכתוב כמה יחידות יש בספר (למשל 150 פרקים).'; return; }
+      if (c.len === 'date' && !c.end) { msg.textContent = 'צריך לבחור עד איזה תאריך לסיים.'; return; }
+      var s = schedule(c); if (!s) { msg.textContent = 'תאריך הסיום צריך להיות אחרי תאריך ההתחלה.'; return; }
+      var p = plan();
+      if (p && title(p.cfg) === title(c) && p.cfg.start === c.start) p.cfg = c;
+      else { p = { id: 'y' + Date.now(), cfg: c, done: {} }; st.plans.push(p); st.cur = p.id; }
+      save(KEY, st); msg.textContent = ''; render();
+      used('yomi', { what: c.what, part: c.part, len: c.len, units: s.N, days: s.rows.length });
+      $('ly-out').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    function onCheck(e) {
+      var cb = e.target; if (!cb.dataset || !cb.dataset.d) return; var p = plan(); if (!p) return;
+      if (cb.checked) p.done[cb.dataset.d] = 1; else delete p.done[cb.dataset.d];
+      save(KEY, st);
+      var open = Array.prototype.map.call(document.querySelectorAll('#ly-table details'), function (d) { return d.open; });
+      render();
+      document.querySelectorAll('#ly-table details').forEach(function (d, i) { d.open = open[i]; });
+      if (cb.checked) used('yomi', { action: 'done' });
+    }
+    $('ly-table').addEventListener('change', onCheck);
+    $('ly-today').addEventListener('change', onCheck);
+    $('ly-plans').addEventListener('change', function () { st.cur = this.value; save(KEY, st); var p = plan(); if (p) fill(p.cfg); render(); });
+    $('ly-newplan').addEventListener('click', function () { st.cur = ''; save(KEY, st); $('ly-form').reset(); $('ly-start').value = today(); fillParts(); render(); window.scrollTo({ top: $('ly-form').offsetTop - 80, behavior: 'smooth' }); });
+    $('ly-del').addEventListener('click', function () {
+      var p = plan(); if (!p || !confirm('למחוק את התוכנית "' + title(p.cfg) + '" ואת הסימונים שלה?')) return;
+      st.plans = st.plans.filter(function (x) { return x !== p; }); st.cur = st.plans[0] ? st.plans[0].id : ''; save(KEY, st); var q = plan(); if (q) fill(q.cfg); render();
+    });
+    $('ly-ics').addEventListener('click', function () {
+      var p = plan(); if (!p) return; var s = schedule(p.cfg), c = p.cfg, t = today();
+      var rows = s.rows.filter(function (r) { return r.date >= t; });
+      if ($('ly-ics-range').value !== 'all') { var lim = ymd(addDays(new Date(), +$('ly-ics-range').value)); rows = rows.filter(function (r) { return r.date <= lim; }); }
+      icsDownload('limud-yomi.ics', 'לימוד יומי: ' + title(c), rows.map(function (r) {
+        var link = sefaria(c, r.u[0]);
+        return { date: r.date, time: c.time, mins: 20, alarm: 0, title: '📖 ' + rangeText(c, r.u), desc: 'לימוד יומי לסיום ' + title(c) + (link ? '\nללמוד בספריא: ' + link : '') + '\nהתוכנית שלך: https://gilad-rachamim.github.io/limudim/yomi/' };
+      }));
+      $('ly-tip').hidden = false; used('yomi', { action: 'ics', n: rows.length });
+    });
+    $('ly-print').addEventListener('click', function () { document.querySelectorAll('#ly-table details').forEach(function (d) { d.open = true; }); window.print(); });
+    fillParts();
+    var p0 = plan(); if (p0) fill(p0.cfg);
+    render();
+  }
+
+  if ($('fc-deck')) flashcards();
+  if ($('mv-form')) examPlanner();
+  if ($('tm-clock')) studyTimer();
+  if ($('ly-form')) dailyLearning();
+})();
