@@ -70,8 +70,8 @@ SITES = {
         "desc": "מחשבונים פשוטים לכסף של הבית: תקציב, הלוואה, מנויים וחיסכון עם הילדים. בחינם.",
         "css": ["/assets/kesef.css"], "js": ["/assets/kesef.js"],
         "nav": [("taktziv", "/kesef/taktziv/", "תקציב"), ("halvaa", "/kesef/halvaa/", "הלוואה"),
-                ("minuyim", "/kesef/minuyim/", "מנויים"), ("mivtza", "/kesef/mivtza/", "המבצע המשפחתי"),
-                ("kelim", "/kelim/", "כל הכלים")],
+                ("hechzer", "/kesef/hechzer/", "החזר מס"), ("yeladim", "/kesef/yeladim/", "חיסכון לילדים"),
+                ("kelim", "/kesef/#kelim", "כל הכלים")],
     },
     # כלים ללימודים: כרטיסיות חזרה, מתכנן למבחן, טיימר למידה, לימוד יומי לסיום. הכול בטלפון (localStorage), בלי שרת.
     "limudim": {
