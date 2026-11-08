@@ -80,7 +80,7 @@ SITES = {
         "desc": "כלים פשוטים ללמידה: כרטיסיות חזרה, תוכנית למבחן, טיימר, ולימוד יומי לסיום התנ״ך והמשנה. בחינם.",
         "css": ["/assets/limudim.css"], "js": ["/assets/limudim.js"],
         "nav": [("kartisiot", "/limudim/kartisiot/", "כרטיסיות"), ("mivchan", "/limudim/mivchan/", "למבחן"),
-                ("timer", "/limudim/timer/", "טיימר"), ("yomi", "/limudim/yomi/", "לימוד יומי"),
+                ("timer", "/limudim/timer/", "טיימר"), ("yomi", "/limudim/yomi/", "לימוד יומי"), ("olami", "/limudim/olami/", "הדף היומי"),
                 ("kelim", "/kelim/", "כל הכלים")],
     },
 }
