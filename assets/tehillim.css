@@ -78,3 +78,13 @@
 #ts-mine-list{list-style:none;display:grid;gap:.4rem;margin-top:.6rem}
 #ts-mine-list a{color:var(--gold)}
 #ts-mine-list small{color:var(--muted)}
+.ts-now{border-color:var(--gold-soft);background:linear-gradient(170deg,rgba(212,176,98,.12),rgba(212,176,98,.02) 70%)}
+.ts-now-g{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.7rem}
+.ts-now-g button{font:inherit;text-align:start;padding:.7rem .7rem;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.18);color:var(--body);cursor:pointer}
+.ts-now-g button b{display:block;color:var(--cream);font-size:1rem;line-height:1.3}
+.ts-now-g button small{display:block;color:var(--muted);font-size:.85rem;margin-top:.2rem;line-height:1.4}
+.ts-now-g button.on{border-color:var(--gold);background:rgba(212,176,98,.16)}
+.ts-now-g button.on b::after{content:" ✓";color:var(--gold)}
+.ts-after{margin-top:.9rem;padding:.9rem 1rem;border-radius:14px;background:rgba(95,191,166,.12);border:1px solid rgba(95,191,166,.4)}
+.ts-after b{color:var(--cream)}
+.ts-after p{color:var(--body);font-size:.95rem;margin-top:.25rem}

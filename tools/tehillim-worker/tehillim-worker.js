@@ -8,6 +8,7 @@
 //   POST /s/:id/done           {t, u:[...], a?}          -> {ok}          סימון "קראתי"
 //   POST /s/:id/free           {t, u:[...], a?}          -> {ok}          החזרת פרק (רק מי שלקח, או המנהל)
 //   POST /s/:id/chesed         {i, w, x}                 -> {ok}          קבלת מעשה טוב
+//   GET  /j/:id                                          -> דף שיתוף: כותרת ותמונה לווטסאפ (og), ומיד מעבר לדף הסיום
 // ניהול:
 //   POST /s/:id/admin          {a, op:'round'|'edit'|'delete', m?}
 //
@@ -29,7 +30,12 @@ export default {
     let res;
     try {
       const m = url.pathname.match(/^\/s(?:\/([a-z0-9]{6,12}))?(?:\/(take|done|free|chesed|admin))?\/?$/);
-      if (url.pathname === '/' || url.pathname === '/ping') res = json({ ok: true, name: 'kodesh-tehillim' });
+      const j = url.pathname.match(/^\/j\/([a-z0-9]{6,12})\/?$/);
+      if (url.pathname === '/' || url.pathname === '/ping') res = json({ ok: true, name: 'kodesh-tehillim', v: 2 });
+      else if (j && req.method === 'GET') {
+        const r = await env.SIYUM.get(env.SIYUM.idFromName('s:' + j[1])).fetch('https://do/og');
+        return new Response(r.body, r);
+      }
       else if (!m) res = json({ error: 'not found' }, 404);
       else if (!m[1] && req.method === 'POST') {
         const ip = req.headers.get('CF-Connecting-IP') || 'x';
@@ -68,8 +74,9 @@ export class Siyum {
     if (req.method === 'POST' && !body) return json({ error: 'בקשה לא תקינה' }, 400);
     if (op === 'create') return this.create(url.searchParams.get('id'), body);
     const st = await this.ctx.storage.get('st');
-    if (!st) return json({ error: 'הסיום לא נמצא. אולי הקישור לא שלם, או שהסיום נמחק.' }, 404);
+    if (!st) return op === 'og' ? sharePage(null) : json({ error: 'הסיום לא נמצא. אולי הקישור לא שלם, או שהסיום נמחק.' }, 404);
     if (op === 'get') return json(view(st, url.searchParams.get('t') || ''));
+    if (op === 'og') return sharePage(st);
     if (op === 'take') return this.take(st, body);
     if (op === 'done' || op === 'free') return this.mark(st, body, op);
     if (op === 'chesed') return this.chesed(st, body);
@@ -179,6 +186,34 @@ function view(st, t) {
   }
   const cl = (st.cl || []).slice(-40).reverse().map(x => [x[0], x[1], x[2], x[3]]);
   return { id: st.id, m: st.m, r: st.r, N, total, s, taken, done, w, mine, c: st.c, cn: (st.cl || []).length, cl, at: st.at };
+}
+
+// דף השיתוף: ווטסאפ קורא ממנו כותרת, תיאור ותמונה. אדם שנכנס מועבר מיד לדף הסיום באתר.
+const SITE = 'https://gilad-rachamim.github.io/kodesh/tehillim/';
+const PHR = { niftar: 'לעילוי נשמת', refua: 'לרפואת', hatzlacha: 'להצלחת', zivug: 'לזיווג הגון ל', zchut: 'לזכות' };
+function sharePage(st) {
+  const h = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  let title = 'סיום תהילים בקישור', desc = 'כל אחד לוקח פרק וקורא אותו ישר בקישור, עד שכל הספר נגמר. ומעשה טוב של דקה, כבר עכשיו.', to = SITE;
+  if (st) {
+    const m = st.m, ph = m.p === 'other' ? (m.pt || '') : PHR[m.p] || '';
+    const who = m.n + (m.par ? ' ' + m.bb + ' ' + m.par : '');
+    title = 'סיום תהילים ' + (ph ? (/(^|\s)ל$/.test(ph) ? ph + who : ph + ' ' + who) : who);
+    const v = view(st, ''), N = MODES[m.mo], u = m.mo === 'perek' ? 'פרקים' : m.mo === 'yom' ? 'ימים' : 'ספרים';
+    const free = v.total - v.taken;
+    desc = (m.g ? m.g + ' · ' : '') + (v.done === v.total ? 'הסיום הושלם! תודה לכל המשתתפים.' : v.taken ? 'נלקחו ' + v.taken + ' מתוך ' + v.total + ' ' + u + ', נשארו ' + free + '. בחרו פרק וקחו חלק בזכות.' : v.total + ' ' + u + ' מחכים לכם. בחרו פרק וקחו חלק בזכות.');
+    to = SITE + '?s=' + st.id;
+  }
+  const html = '<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<title>' + h(title) + '</title><meta name="description" content="' + h(desc) + '">' +
+    '<meta property="og:type" content="website"><meta property="og:locale" content="he_IL"><meta property="og:site_name" content="כלי קודש">' +
+    '<meta property="og:title" content="' + h(title) + '"><meta property="og:description" content="' + h(desc) + '">' +
+    '<meta property="og:image" content="https://gilad-rachamim.github.io/assets/og-tehillim.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">' +
+    '<meta property="og:url" content="' + h(to) + '"><meta name="twitter:card" content="summary_large_image">' +
+    '<link rel="canonical" href="' + h(to) + '"><meta http-equiv="refresh" content="0;url=' + h(to) + '">' +
+    '<script>location.replace(' + JSON.stringify(to) + ' + location.hash)</script>' +
+    '<style>body{font-family:Arial,sans-serif;background:#0e1628;color:#eef0f6;text-align:center;padding:3rem 1rem}a{color:#d4b062}</style></head>' +
+    '<body><p>' + h(title) + '</p><p><a href="' + h(to) + '">לחצו כאן לסיום</a></p></body></html>';
+  return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=60' } });
 }
 
 function cleanMeta(b) {
