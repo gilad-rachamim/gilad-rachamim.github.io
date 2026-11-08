@@ -1,0 +1,57 @@
+<!--meta {
+  "site": "bait",
+  "tool": "bait_mismachim",
+  "title": "המסמכים של הבית – מתי פג הדרכון, הרישיון והביטוח, ותזכורת ליומן | כלים למשפחה ולבית",
+  "description": "רשימה אחת לכל המסמכים של הבית: דרכונים, רישיונות, ביטוחים, טסט ואחריות למוצרים. רואים מה עומד לפוג, ומוסיפים תזכורת ליומן גוגל או לאייפון חודש לפני. בלי מספרי זהות, נשמר רק בטלפון. בחינם.",
+  "og_title": "מתי פג הדרכון? המסמכים של הבית במקום אחד",
+  "priority": "0.8",
+  "crumbs": [["המסמכים של הבית", null]]
+} -->
+<header class="k-hero no-print">
+  <h1>המסמכים של הבית</h1>
+  <p class="sub">דרכונים, רישיונות, ביטוחים ואחריות. רואים מה עומד לפוג, ומקבלים תזכורת חודש לפני, ביומן.</p>
+</header>
+<div class="tool bt">
+  <div class="no-print">
+    <h2>להוסיף מסמך <small>לוחצים, או כותבים שם משלכם</small></h2>
+    <div class="chips" id="ms-presets">
+      <button type="button" class="chip" data-pre="דרכון">🛂 דרכון</button>
+      <button type="button" class="chip" data-pre="רישיון נהיגה">🚗 רישיון נהיגה</button>
+      <button type="button" class="chip" data-pre="רישיון רכב (טסט)">🔧 טסט לרכב</button>
+      <button type="button" class="chip" data-pre="ביטוח רכב">🛡️ ביטוח רכב</button>
+      <button type="button" class="chip" data-pre="ביטוח דירה">🏠 ביטוח דירה</button>
+      <button type="button" class="chip" data-pre="ביטוח בריאות / חיים">❤️ ביטוח בריאות</button>
+      <button type="button" class="chip" data-pre="תעודת זהות">🪪 תעודת זהות</button>
+      <button type="button" class="chip" data-pre="אחריות למוצר">🧾 אחריות למוצר</button>
+      <button type="button" class="chip" data-pre="תו חניה">🅿️ תו חניה</button>
+      <button type="button" class="chip" data-pre="מנוי / חוזה">📄 מנוי או חוזה</button>
+    </div>
+    <form class="ms-form box" id="ms-form">
+      <label>מה המסמך? <input id="ms-n" type="text" maxlength="50" placeholder="למשל: דרכון, אחריות למקרר"></label>
+      <label>של מי? <span>(לא חובה)</span> <input id="ms-who" type="text" maxlength="30" placeholder="אבא, נועה, הרכב הלבן"></label>
+      <label>בתוקף עד <input id="ms-exp" type="date"></label>
+      <label>איפה זה נמצא? <span>(לא חובה)</span> <input id="ms-where" type="text" maxlength="60" placeholder="המגירה בסלון, תיקייה בדרייב"></label>
+      <div class="tools" style="margin-top:.3rem;justify-content:flex-start">
+        <button class="btn btn-gold btn-sm" type="submit" id="ms-save">להוסיף לרשימה</button>
+        <button class="btn btn-line btn-sm" type="button" id="ms-cancel">לנקות</button>
+        <button class="btn btn-line btn-sm" type="button" id="ms-del" hidden>למחוק</button>
+      </div>
+    </form>
+    <p class="muted" style="margin-top:.4rem">לא כותבים כאן מספרי תעודות או פוליסות. רק שם ותאריך, וזה מספיק לתזכורת.</p>
+
+    <h2>הרשימה <small id="ms-sum"></small></h2>
+    <ul class="ms-list" id="ms-list"></ul>
+    <p class="muted" style="margin-top:.4rem">לחיצה על מסמך פותחת אותו לעריכה. התזכורת נקבעת חודש לפני שהמסמך פג.</p>
+    <div class="tools">
+      <a class="btn btn-gold btn-sm" href="#" id="ms-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח מה צריך לחדש</a>
+      <button class="btn btn-line btn-sm" type="button" id="ms-print">🖨️ להדפיס את הרשימה</button>
+    </div>
+  </div>
+  <div class="paper print-me print-only">
+    <h3>📁 המסמכים של הבית</h3>
+    <table><tr><th>מסמך</th><th>של מי</th><th>בתוקף עד</th><th>איפה</th></tr><tbody id="ms-print-list"></tbody></table>
+    <p class="ft">gilad-rachamim.github.io/bait</p>
+  </div>
+  <p class="disclaimer no-print">הרשימה נשמרת רק בטלפון הזה, ולא נשלחת לשום מקום.</p>
+  <div class="share-row no-print"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="כל המסמכים של הבית במקום אחד: מה עומד לפוג, ותזכורת ליומן חודש לפני. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
