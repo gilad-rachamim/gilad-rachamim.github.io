@@ -227,6 +227,55 @@
       var btn = this;
       (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () { btn.textContent = 'הועתק ✓ אפשר להדביק לחבר בווטסאפ'; }).catch(function () { $('fc-text').value = t; btn.textContent = 'הטקסט בתיבה למעלה, להעתיק משם'; });
     });
+    // ---------- שיתוף חפיסה בקישור (הכרטיסים בתוך הקישור עצמו, בלי שרת) ----------
+    function b64u(bytes) { var bin = ''; for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]); return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+    function unb64u(t) { t = t.replace(/-/g, '+').replace(/_/g, '/'); while (t.length % 4) t += '='; var bin = atob(t), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; }
+    function pipe(bytes, stream) { return new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer().then(function (b) { return new Uint8Array(b); }); }
+    function encodeDeck(d) {
+      var raw = new TextEncoder().encode(JSON.stringify({ n: d.name, c: d.cards.map(function (c) { return [c.q, c.a]; }) }));
+      if (window.CompressionStream) return pipe(raw, new CompressionStream('deflate-raw')).then(function (z) { return 'z' + b64u(z); }).catch(function () { return 'j' + b64u(raw); });
+      return Promise.resolve('j' + b64u(raw));
+    }
+    function decodeDeck(t) {
+      var kind = t.charAt(0), bytes = unb64u(t.slice(1));
+      var p = kind === 'z' ? pipe(bytes, new DecompressionStream('deflate-raw')) : Promise.resolve(bytes);
+      return p.then(function (u) { var x = JSON.parse(new TextDecoder().decode(u)); if (!x.n || !Array.isArray(x.c)) throw 0; return x; });
+    }
+    $('fc-share').addEventListener('click', function () {
+      var d = deck(); if (!d || !d.cards.length) { $('fc-add-st').textContent = 'אין עדיין כרטיסים בחפיסה לשתף.'; return; }
+      encodeDeck(d).then(function (code) {
+        var url = location.origin + '/limudim/kartisiot/#d=' + code;
+        var box = $('fc-share-box'); box.hidden = false;
+        $('fc-share-url').value = url;
+        $('fc-share-n').textContent = d.cards.length + ' כרטיסים' + (url.length > 6000 ? '. החפיסה גדולה, ואם הקישור לא נפתח, עדיף לשלוח גיבוי בקובץ' : '');
+        $('fc-share-wa').href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent('חפיסת כרטיסיות לחזרה: ' + d.name + ' (' + d.cards.length + ' כרטיסים). לוחצים על הקישור, והיא נכנסת לטלפון:\n' + url);
+        box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        used('kartisiot', { action: 'share_link', n: d.cards.length });
+      });
+    });
+    $('fc-share-copy').addEventListener('click', function () {
+      var b = this, v = $('fc-share-url').value;
+      (navigator.clipboard ? navigator.clipboard.writeText(v) : Promise.reject()).then(function () { b.textContent = 'הועתק ✓'; }).catch(function () { $('fc-share-url').select(); b.textContent = 'לסמן ולהעתיק'; });
+    });
+    var incoming = null;
+    if (/^#d=/.test(location.hash)) {
+      decodeDeck(location.hash.slice(3)).then(function (x) {
+        incoming = x;
+        $('fc-in-t').textContent = 'קיבלת חפיסה: "' + x.n + '", ' + x.c.length + ' כרטיסים';
+        $('fc-in-ex').textContent = x.c.slice(0, 3).map(function (c) { return c[0] + ' ← ' + c[1]; }).join(' · ');
+        $('fc-incoming').hidden = false;
+      }).catch(function () { $('fc-add-st').textContent = 'הקישור נקטע או לא תקין. אפשר לבקש מהשולח לשלוח שוב.'; });
+    }
+    $('fc-in-add').addEventListener('click', function () {
+      if (!incoming) return;
+      var id = 'd' + Date.now();
+      st.decks.push({ id: id, name: String(incoming.n).slice(0, 50), cards: incoming.c.filter(function (c) { return c && c[0] && c[1]; }).map(function (c) { return { q: String(c[0]).slice(0, 400), a: String(c[1]).slice(0, 600), b: 0, due: today() }; }) });
+      st.cur = id; persist(); renderDecks();
+      $('fc-incoming').hidden = true; history.replaceState(null, '', location.pathname);
+      $('fc-add-st').textContent = 'החפיסה נוספה ✓ אפשר להתחיל חזרה.';
+      used('kartisiot', { action: 'import_link', n: incoming.c.length });
+    });
+    $('fc-in-no').addEventListener('click', function () { $('fc-incoming').hidden = true; history.replaceState(null, '', location.pathname); });
     renderDecks();
   }
 
@@ -496,14 +545,17 @@
     var st = load(KEY, { plans: [], cur: '' });
     var PARTS = {
       tanakh: [['all', 'כל התנ״ך (929 פרקים)'], ['torah', 'תורה (187 פרקים)'], ['neviim', 'נביאים (380 פרקים)'], ['ketuvim', 'כתובים (362 פרקים)']],
-      mishnah: [['all', 'כל ששה סדרי משנה (525 פרקים)'], ['zeraim', 'סדר זרעים'], ['moed', 'סדר מועד'], ['nashim', 'סדר נשים'], ['nezikin', 'סדר נזיקין'], ['kodashim', 'סדר קדשים'], ['tahorot', 'סדר טהרות']]
+      mishnah: [['all', 'כל ששה סדרי משנה (525 פרקים)'], ['zeraim', 'סדר זרעים'], ['moed', 'סדר מועד'], ['nashim', 'סדר נשים'], ['nezikin', 'סדר נזיקין'], ['kodashim', 'סדר קדשים'], ['tahorot', 'סדר טהרות']],
+      rambam: [['all', 'כל משנה תורה (1,006 פרקים)'], ['madda', 'ספר המדע'], ['ahavah', 'ספר אהבה'], ['zemanim', 'ספר זמנים'], ['nashim', 'ספר נשים'], ['kedushah', 'ספר קדושה'], ['haflaah', 'ספר הפלאה'], ['zeraim', 'ספר זרעים'], ['avodah', 'ספר עבודה'], ['korbanot', 'ספר קרבנות'], ['taharah', 'ספר טהרה'], ['nezikim', 'ספר נזיקין'], ['kinyan', 'ספר קנין'], ['mishpatim', 'ספר משפטים'], ['shoftim', 'ספר שופטים']],
+      bavli: [['all', 'כל הש״ס הבבלי (2,684 דפים)'], ['zeraim', 'סדר זרעים (ברכות)'], ['moed', 'סדר מועד'], ['nashim', 'סדר נשים'], ['nezikin', 'סדר נזיקין'], ['kodashim', 'סדר קדשים'], ['tahorot', 'סדר טהרות (נדה)']]
     };
+    var GROUP = { tanakh: 'ספר אחד', mishnah: 'מסכת אחת', rambam: 'הלכות', bavli: 'מסכת אחת' };
     function fillParts() {
       var w = $('ly-what').value;
       $('ly-part-wrap').hidden = w === 'other'; $('ly-other').hidden = w !== 'other'; $('ly-unit-wrap').hidden = w !== 'mishnah';
       if (w === 'other') return;
       var opts = PARTS[w].map(function (p) { return '<option value="' + p[0] + '">' + p[1] + '</option>'; }).join('');
-      opts += '<optgroup label="' + (w === 'tanakh' ? 'ספר אחד' : 'מסכת אחת') + '">' + B[w].map(function (b, i) { return '<option value="b' + i + '">' + b[0] + ' (' + b[1] + ' פרקים)</option>'; }).join('') + '</optgroup>';
+      opts += '<optgroup label="' + GROUP[w] + '">' + B[w].map(function (b, i) { return '<option value="b' + i + '">' + b[0] + ' (' + b[1] + (w === 'bavli' ? ' דפים' : ' פרקים') + ')</option>'; }).join('') + '</optgroup>';
       $('ly-part').innerHTML = opts;
     }
     $('ly-what').addEventListener('change', fillParts);
@@ -523,7 +575,8 @@
     function title(c) {
       if (c.what === 'other') return c.oname || 'הספר שלי';
       var lbl = c.part.charAt(0) === 'b' ? B[c.what][+c.part.slice(1)][0] : PARTS[c.what].filter(function (p) { return p[0] === c.part; })[0][1].replace(/ \(.*/, '');
-      return (c.what === 'mishnah' && c.part.charAt(0) === 'b' ? 'משנה ' : '') + lbl + (c.what === 'mishnah' && c.unit === 'm' ? ' (משנה ליום)' : '');
+      var one = c.part.charAt(0) === 'b';
+      return (one && c.what === 'mishnah' ? 'משנה ' : one && c.what === 'bavli' ? 'מסכת ' : '') + lbl + (c.what === 'mishnah' && c.unit === 'm' ? ' (משנה ליום)' : '');
     }
     // כל יחידות הלימוד, לפי הסדר: {b: מספר ספר, c: פרק, m: משנה}
     function units(c) {
@@ -532,6 +585,7 @@
       B[c.what].forEach(function (b, i) {
         var inPart = c.part === 'all' || c.part === b[2] || c.part === 'b' + i;
         if (!inPart) return;
+        if (c.what === 'bavli') { for (var df = b[3]; df < b[3] + b[1]; df++) u.push({ b: i, c: df }); return; }
         for (var ch = 1; ch <= b[1]; ch++) {
           if (c.what === 'mishnah' && c.unit === 'm') for (var m = 1; m <= b[3][ch - 1]; m++) u.push({ b: i, c: ch, m: m });
           else u.push({ b: i, c: ch });
@@ -546,7 +600,7 @@
       var p = map[c.len]; return ymd(addDays(new Date(s.getFullYear() + p[0], s.getMonth() + p[1], s.getDate()), -1));
     }
     var UNIT_NAMES = { c: ['פרק', 'פרקים'], m: ['משנה', 'משניות'], daf: ['דף', 'דפים'], amud: ['עמוד', 'עמודים'], shiur: ['שיעור', 'שיעורים'], perek: ['פרק', 'פרקים'], siman: ['סימן', 'סימנים'] };
-    function unitName(c) { return c.what === 'other' ? UNIT_NAMES[c.ounit] : c.what === 'mishnah' && c.unit === 'm' ? UNIT_NAMES.m : UNIT_NAMES.c; }
+    function unitName(c) { return c.what === 'other' ? UNIT_NAMES[c.ounit] : c.what === 'mishnah' && c.unit === 'm' ? UNIT_NAMES.m : c.what === 'bavli' ? UNIT_NAMES.daf : UNIT_NAMES.c; }
     function bookName(c, i) { return i < 0 ? (c.oname || '') : B[c.what][i][0]; }
     function pos(x) { return gem(x.c) + (x.m ? ':' + gem(x.m) : ''); }
     function rangeText(c, list) {
@@ -555,19 +609,66 @@
       var segs = [], s = list[0], prev = list[0];
       for (var i = 1; i <= list.length; i++) {
         var x = list[i];
-        if (!x || x.b !== s.b) { segs.push(bookName(c, s.b) + ' ' + pos(s) + (prev !== s ? '–' + pos(prev) : '')); s = x; }
+        if (!x || x.b !== s.b) { segs.push(bookName(c, s.b) + (c.what === 'bavli' ? ' דף ' : ' ') + pos(s) + (prev !== s ? '–' + pos(prev) : '')); s = x; }
         prev = x;
       }
       return segs.join(', ');
     }
     function sefaria(c, x) {
       if (c.what === 'other' || !EN) return '';
-      return 'https://www.sefaria.org/' + encodeURIComponent(EN[c.what][x.b].replace(/ /g, '_')) + '.' + x.c + (x.m ? '.' + x.m : '') + '?lang=he';
+      return 'https://www.sefaria.org/' + encodeURIComponent(EN[c.what][x.b].replace(/ /g, '_')) + '.' + x.c + (c.what === 'bavli' ? 'a' : '') + (x.m ? '.' + x.m : '') + '?lang=he';
     }
+    // ---------- הטקסט של היום, מספריא ----------
+    function refsOf(c, x) {
+      var b = EN[c.what][x.b];
+      if (c.what === 'bavli') return [b + '.' + x.c + 'a', b + '.' + x.c + 'b'];
+      return [b + '.' + x.c + (x.m ? '.' + x.m : '')];
+    }
+    function flat(t) { return Array.isArray(t) ? t.reduce(function (a, x) { return a.concat(flat(x)); }, []) : [t]; }
+    function clean(h) { var d = document.createElement('div'); d.innerHTML = String(h || '').replace(/<sup[^>]*>.*?<\/sup>/g, '').replace(/<i class="footnote"[^>]*>.*?<\/i>/g, ''); return d.textContent.replace(/\{[פס]\}/g, '').replace(/\s+/g, ' ').trim(); }
+    var textCache = {};
+    function getText(ref) {
+      if (textCache[ref]) return Promise.resolve(textCache[ref]);
+      return fetch('https://www.sefaria.org/api/v3/texts/' + encodeURIComponent(ref) + '?version=hebrew').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+        if (!d || !d.versions || !d.versions.length) return null;
+        var v = flat(d.versions[0].text).map(clean).filter(Boolean); textCache[ref] = v; return v;
+      }).catch(function () { return null; });
+    }
+    var txtOpt = load('limudim-yomi-text', { size: 1.25, nikud: true });
+    function showText(c, list) {
+      var box = $('ly-text'); box.hidden = false;
+      box.innerHTML = '<div class="txt-bar"><button type="button" class="say" data-ts="1">א+</button><button type="button" class="say" data-ts="-1">א−</button><label class="checks" style="display:flex"><input type="checkbox" id="ly-nikud"' + (txtOpt.nikud ? ' checked' : '') + '> <span>ניקוד וטעמים</span></label></div><div class="txt-body" id="ly-txt-body" style="font-size:' + txtOpt.size + 'rem"><p class="note">טוען מספריא…</p></div>';
+      var items = list.slice(0, 12), jobs = [];
+      items.forEach(function (x) { refsOf(c, x).forEach(function (ref, k) { jobs.push({ x: x, ref: ref, k: k }); }); });
+      Promise.all(jobs.map(function (j) { return getText(j.ref); })).then(function (res) {
+        var html = '';
+        jobs.forEach(function (j, i) {
+          var head = c.what === 'bavli' ? bookName(c, j.x.b) + ' דף ' + gem(j.x.c) + (j.k ? ' עמוד ב' : ' עמוד א') : bookName(c, j.x.b) + ' ' + pos(j.x);
+          var v = res[i];
+          html += '<h3>' + esc(head) + '</h3>' + (v ? v.map(function (t, n) { return '<p>' + (v.length > 1 && c.what !== 'bavli' ? '<span class="vn">' + gem(n + 1) + '</span> ' : '') + esc(txtOpt.nikud ? t : t.replace(/[֑-ֽֿ-ׇ]/g, '')) + '</p>'; }).join('') : '<p class="note">לא הצלחתי לטעון. אפשר לפתוח בספריא.</p>');
+        });
+        if (list.length > items.length) html += '<p class="note">ועוד ' + (list.length - items.length) + ', בספריא.</p>';
+        html += '<p class="note" style="margin-top:1rem">הטקסט מספריא (sefaria.org), ברישיון פתוח.</p>';
+        $('ly-txt-body').innerHTML = html;
+        used('yomi', { action: 'text', what: c.what });
+      });
+    }
+    function todayRow(c) { var s = schedule(c), t = today(); return s ? s.rows.filter(function (r) { return r.date >= t; })[0] : null; }
+    $('ly-today').addEventListener('click', function (e) {
+      var p = plan(); if (!p) return;
+      if (e.target.closest('#ly-show-text')) { var tr = todayRow(p.cfg); if (tr) showText(p.cfg, tr.u); return; }
+      var ts = e.target.closest('[data-ts]');
+      if (ts) { txtOpt.size = Math.max(.9, Math.min(2.4, txtOpt.size + .15 * +ts.dataset.ts)); save('limudim-yomi-text', txtOpt); $('ly-txt-body').style.fontSize = txtOpt.size + 'rem'; }
+    });
+    $('ly-today').addEventListener('change', function (e) {
+      if (e.target.id !== 'ly-nikud') return; txtOpt.nikud = e.target.checked; save('limudim-yomi-text', txtOpt);
+      var p = plan(), tr = p && todayRow(p.cfg); if (tr) showText(p.cfg, tr.u);
+    });
     function schedule(c) {
-      var u = units(c), end = endDate(c), days = [];
-      if (!u.length || !end || end < c.start) return null;
-      for (var d = parse(c.start), e = parse(end); d <= e; d = addDays(d, 1)) { if (!c.shabbat && d.getDay() === 6) continue; days.push(ymd(d)); }
+      var all = units(c), end = endDate(c), days = [], start = c.restFrom || c.start;
+      var u = c.rest ? c.rest.map(function (i) { return all[i]; }).filter(Boolean) : all;
+      if (!u.length || !end || end < start) return null;
+      for (var d = parse(start), e = parse(end); d <= e; d = addDays(d, 1)) { if (!c.shabbat && d.getDay() === 6) continue; days.push(ymd(d)); }
       if (!days.length) return null;
       var N = u.length, D = days.length, rows = [];
       if (N >= D) {
@@ -598,14 +699,16 @@
       var c = p.cfg, t = today(), done = s.rows.filter(function (r) { return p.done[r.date]; }).length;
       var shouldBe = s.rows.filter(function (r) { return r.date < t; }).length, behind = s.rows.filter(function (r) { return r.date < t && !p.done[r.date]; }).length;
       var un = unitName(c);
-      $('ly-sum').innerHTML = '<div class="big-n">' + esc(perDay(s, c)) + '</div><p>' + esc(title(c)) + ': ' + s.N + ' ' + un[1] + ', ' + s.rows.length + ' ימי לימוד, מ-' + longDate(c.start) + ' עד ' + longDate(s.end) + '.</p>' +
-        '<p>למדת ' + done + ' מתוך ' + s.rows.length + ' ימים' + (behind ? ' · ' + behind + ' ימים להשלים, וזה בסדר' : shouldBe ? ' · בדיוק בזמן ✓' : '') + '</p><div class="bar" style="margin-top:.6rem"><i style="width:' + Math.round(done * 100 / s.rows.length) + '%"></i></div>';
+      $('ly-sum').innerHTML = '<div class="big-n">' + esc(perDay(s, c)) + '</div><p>' + esc(title(c)) + ': ' + s.N + ' ' + un[1] + ', ' + s.rows.length + ' ימי לימוד, מ-' + longDate(c.restFrom || c.start) + ' עד ' + longDate(s.end) + '.</p>' +
+        (c.rest ? '<p>חולק מחדש ב-' + longDate(c.restFrom) + '. לפני כן למדת ' + ((c.prevDone || 0) === 1 ? 'יום אחד' : (c.prevDone || 0) + ' ימים') + ' ✓</p>' : '') +
+        '<p>למדת ' + done + ' מתוך ' + s.rows.length + ' ימים' + (behind ? ' · ' + behind + ' ימים להשלים, וזה בסדר' : shouldBe ? ' · בדיוק בזמן ✓' : '') + '</p>' +
+        (behind ? '<button class="btn btn-line btn-sm no-print" type="button" id="ly-redo" style="margin-top:.6rem">פספסתי? לחלק מחדש את מה שנשאר, מהיום עד הסוף</button>' : '') + '<div class="bar" style="margin-top:.6rem"><i style="width:' + Math.round(done * 100 / s.rows.length) + '%"></i></div>';
       var tr = s.rows.filter(function (r) { return r.date >= t; })[0];
       var tb = $('ly-today');
       if (tr) {
         var link = sefaria(c, tr.u[0]);
         tb.innerHTML = '<div style="color:var(--accent);font-weight:700">' + (tr.date === t ? 'היום' : 'הלימוד הבא: ' + dayLabel(tr.date)) + '</div><b>' + esc(rangeText(c, tr.u)) + '</b>' +
-          '<div class="btns" style="margin-top:.7rem"><label class="checks" style="display:flex"><input type="checkbox" data-d="' + tr.date + '"' + (p.done[tr.date] ? ' checked' : '') + '> <span>למדתי ✓</span></label>' + (link ? '<a class="btn btn-line btn-sm" href="' + link + '" target="_blank" rel="noopener">ללמוד בספריא</a>' : '') + '</div>';
+          '<div class="btns" style="margin-top:.7rem"><label class="checks" style="display:flex"><input type="checkbox" data-d="' + tr.date + '"' + (p.done[tr.date] ? ' checked' : '') + '> <span>למדתי ✓</span></label>' + (link ? '<button class="btn btn-gold btn-sm" type="button" id="ly-show-text">📜 הטקסט כאן</button><a class="btn btn-line btn-sm" href="' + link + '" target="_blank" rel="noopener">בספריא</a>' : '') + '</div><div id="ly-text" class="txt" hidden></div>';
         tb.hidden = false;
       } else { tb.innerHTML = '<b>סיימת את התוכנית! מזל טוב 🎉</b>'; tb.hidden = false; }
       // טבלה לפי חודשים
@@ -644,6 +747,28 @@
       if (cb.checked) used('yomi', { action: 'done' });
     }
     $('ly-table').addEventListener('change', onCheck);
+    $('ly-sum').addEventListener('click', function (e) {
+      if (!e.target.closest('#ly-redo')) return;
+      var p = plan(); if (!p) return; var c = p.cfg, s = schedule(c), t = today();
+      if (endDate(c) <= t) { alert('תאריך הסיום כבר עבר. אפשר לבחור תאריך סיום חדש בטופס ולבנות שוב.'); return; }
+      var all = units(c), key = function (x) { return x.b + ':' + x.c + ':' + (x.m || 0); }, idx = {};
+      all.forEach(function (x, i) { idx[key(x)] = i; });
+      var left = [], doneN = 0;
+      s.rows.forEach(function (r) { if (p.done[r.date]) doneN++; else r.u.forEach(function (x) { left.push(idx[key(x)]); }); });
+      if (!confirm('לחלק מחדש ' + left.length + ' ' + unitName(c)[1] + ' שנשארו, מהיום ועד ' + longDate(endDate(c)) + '?')) return;
+      c.prevDone = (c.prevDone || 0) + doneN; c.rest = left; c.restFrom = t; p.done = {};
+      save(KEY, st); render(); used('yomi', { action: 'redistribute', left: left.length });
+    });
+    // קיצורים מוכנים
+    document.querySelectorAll('[data-preset]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var a = b.dataset.preset.split('|'), w = a[0], part = a[1];
+        $('ly-what').value = w; fillParts();
+        if (part.charAt(0) === '=') { var i = B[w].map(function (x) { return x[0]; }).indexOf(part.slice(1)); part = 'b' + i; }
+        $('ly-part').value = part; $('ly-unit').value = a[3] || 'c'; $('ly-len').value = a[2]; $('ly-end-wrap').hidden = true; $('ly-start').value = today();
+        $('ly-form').requestSubmit();
+      });
+    });
     $('ly-today').addEventListener('change', onCheck);
     $('ly-plans').addEventListener('change', function () { st.cur = this.value; save(KEY, st); var p = plan(); if (p) fill(p.cfg); render(); });
     $('ly-newplan').addEventListener('click', function () { st.cur = ''; save(KEY, st); $('ly-form').reset(); $('ly-start').value = today(); fillParts(); render(); window.scrollTo({ top: $('ly-form').offsetTop - 80, behavior: 'smooth' }); });
