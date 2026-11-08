@@ -25,6 +25,7 @@
     // דף המוהלים: שליחה להורים היא לא פנייה אליי, לכן אירוע נפרד לכל כלי (share_parents_hazmana וכו') ולא whatsapp_click.
     if (a.hasAttribute('data-share')) { ev('share_parents_' + a.getAttribute('data-share'), where); return; }
     if (/wa\.me|whatsapp/.test(h)) ev('whatsapp_click', where);
+    else if (/t\.me\//.test(h)) ev('telegram_click', { page: location.pathname, bot: h.split('t.me/')[1].split('?')[0] });
     else if (h.indexOf('tel:') === 0) ev('phone_click', where);
     else if (/\.vcf($|\?)/.test(h)) ev('save_contact', where);
     else if (/\.pdf($|\?)/.test(h)) ev('guide_download', { page: location.pathname, file: h.split('?')[0].split('/').pop() });
