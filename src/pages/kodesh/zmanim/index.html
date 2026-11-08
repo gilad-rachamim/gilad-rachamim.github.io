@@ -1,0 +1,35 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "zmanim",
+  "title": "זמנים לבסיס – שקיעה, כניסת ויציאת שבת וזמני היום לפי GPS | כלי קודש",
+  "description": "זמני היום לפי המיקום של הטלפון, גם בבסיס או בשטח בלי שם יישוב: עלות השחר, הנץ, סוף זמן קריאת שמע ותפילה, חצות, מנחה, פלג המנחה, שקיעה וצאת הכוכבים, וזמני כניסת השבת ויציאתה. שולחים לקבוצה בווטסאפ. בחינם.",
+  "og_title": "זמנים לבסיס: שקיעה ושבת לפי המיקום שלך",
+  "priority": "0.7",
+  "crumbs": [["זמנים לבסיס", null]],
+  "head": "<style>.zm-loc{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}.zm-st{color:var(--muted);font-size:.95rem}.zm-tbl{width:100%;border-collapse:collapse;margin-top:.6rem;font-size:1.05rem}.zm-tbl td{padding:.5rem .3rem;border-bottom:1px solid var(--line);color:var(--body)}.zm-tbl td.t{text-align:left;font-family:var(--serif);font-size:1.25rem;color:var(--cream);direction:ltr;font-variant-numeric:tabular-nums}.zm-tbl tr.hl td{color:var(--gold)}.zm-tbl tr.hl td.t{color:var(--gold-hi);font-weight:700}.zm-tbl small{display:block;color:var(--muted);font-size:.85rem}.zm-shab{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:.8rem}.zm-shab div{padding:.8rem;border:1px solid var(--gold-soft);border-radius:12px;text-align:center;background:rgba(212,176,98,.07)}.zm-shab b{display:block;font-family:var(--serif);font-size:1.9rem;color:var(--cream);direction:ltr}.zm-shab span{color:var(--body);font-size:.95rem}</style>",
+  "foot": "<script src=\"https://cdn.jsdelivr.net/npm/@hebcal/core@6.14.7/dist/bundle.min.js\" data-hebcal defer></script><script src=\"/assets/zmanim.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>זמנים לבסיס</h1>
+  <p class="sub">שקיעה, שבת וזמני היום לפי המקום שבו אתם עומדים עכשיו. גם בבסיס, במוצב או בשטח, בלי שם יישוב.</p>
+</header>
+<div class="tool">
+  <form class="k-form" id="zm-form" novalidate>
+    <div class="field"><span class="label">איפה?</span>
+      <div class="zm-loc"><button class="btn btn-gold btn-sm" type="button" id="zm-gps">📍 המיקום שלי עכשיו</button><span class="zm-st" id="zm-st"></span></div>
+    </div>
+    <div class="field"><label for="zm-place">או לבחור מקום</label><select id="zm-place"></select></div>
+    <div class="field" id="zm-coords-row" hidden><label for="zm-coords">קואורדינטות (רוחב,אורך) <span class="opt">למשל ממפה צבאית או מגוגל מפות</span></label><input id="zm-coords" type="text" dir="ltr" inputmode="decimal" placeholder="31.35,34.40"></div>
+    <div class="field"><label for="zm-date">תאריך</label><input id="zm-date" type="date"></div>
+    <div class="field"><label for="zm-candle">הדלקת נרות</label><select id="zm-candle"><option value="auto">לפי המקום (ירושלים 40, חיפה 30, אחרים 20)</option><option value="18">18 דקות לפני השקיעה</option><option value="20">20 דקות</option><option value="30">30 דקות</option><option value="40">40 דקות</option></select></div>
+  </form>
+  <div class="res" id="zm-res" aria-live="polite"><p>טוען את לוח השנה…</p></div>
+  <div class="share-row">
+    <a class="btn btn-gold btn-sm" href="#" id="zm-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הזמנים לקבוצה</a>
+    <button class="btn btn-line btn-sm" type="button" id="zm-copy">להעתיק</button>
+  </div>
+  <p class="disclaimer">החישוב לפי גובה פני הים ושקיעה מישורית. צאת הכוכבים וצאת השבת לפי 8.5° (כמו ברוב הלוחות בארץ). סוף זמן קריאת שמע לפי הגר״א, ובסוגריים לפי המג״א. לזמנים להלכה במקום מסוים – שואלים את הרב.</p>
+  <p class="disclaimer">המיקום נשאר בטלפון ולא נשלח לשום מקום. הוא נשמר לפעם הבאה.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="זמני היום ושבת לפי המיקום של הטלפון, גם בבסיס בלי שם יישוב. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
