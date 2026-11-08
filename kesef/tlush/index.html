@@ -21,7 +21,7 @@
 <link rel="manifest" href="/kesef/manifest.webmanifest">
 <link rel="stylesheet" href="/assets/site.css?v=14c6afff">
 <link rel="stylesheet" href="/assets/kelim.css?v=162946d4">
-<link rel="stylesheet" href="/assets/kesef.css?v=8fdd7ce6">
+<link rel="stylesheet" href="/assets/kesef.css?v=b790a201">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4QR4583VST"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4QR4583VST');</script>
 <script src="/assets/track.js?v=928f9743" defer></script>
@@ -96,6 +96,9 @@
   <section class="box">
     <h2>המספרים מהתלוש</h2>
     <p class="note">השמות בתלוש משתנים בין מעסיקים. ליד כל שדה כתוב איך זה נקרא בדרך כלל.</p>
+    <label class="add" for="p-pdf" style="display:block;text-align:center;margin-top:.6rem">📄 יש לי את התלוש כ-PDF – לנסות למלא ממנו</label>
+    <input type="file" id="p-pdf" accept=".pdf,application/pdf" hidden>
+    <div class="cancel-box" id="p-pdf-out" hidden role="status"></div>
     <div class="grid2" style="margin-top:.7rem">
       <label class="field"><span>ברוטו <small class="note">"סך הכל תשלומים"</small></span><input id="p-g" class="num-in" inputmode="decimal" placeholder="₪"></label>
       <label class="field"><span>נטו <small class="note">"שכר נטו לתשלום"</small></span><input id="p-n" class="num-in" inputmode="decimal" placeholder="₪"></label>
@@ -123,6 +126,7 @@
   <button class="big-btn soft" type="button" id="p-print">להדפיס או לשמור כ-PDF</button>
 
   <div class="local-note"><span class="ic2">ℹ️</span><span>לפי החוק בישראל, נכון לנובמבר 2026: שכר מינימום 6,443.85 ₪ למשרה מלאה, 35.40 ₪ לשעה (מאפריל 2026). פנסיה חובה: 6% מהעובד, 6.5% תגמולים ועוד 6% פיצויים מהמעסיק. בענף שיש בו הסכם קיבוצי או צו הרחבה, יכול להגיע יותר.</span></div>
+  <div class="local-note"><span class="ic2">📅</span><span>שכר המינימום מתעדכן כל שנה ב-1 באפריל. בתלוש של אפריל ואחריו, כדאי לבדוק שהמספר כאן עדכני.</span></div>
   <div class="local-note"><span class="ic2">🔒</span><span>נשמר רק בטלפון שלך. התלוש עצמו לא עולה לשום מקום.</span></div>
   <div class="data-acts"><a class="linkish" href="https://www.kolzchut.org.il/he/%D7%AA%D7%9C%D7%95%D7%A9_%D7%A9%D7%9B%D7%A8" target="_blank" rel="noopener">על תלוש שכר בכל-זכות</a><button class="linkish" type="button" data-wipe="tlush">למחוק מהטלפון</button></div>
 </div>
@@ -170,6 +174,6 @@
   <button class="x" type="button" data-install-close aria-label="סגירה">×</button>
 </div>
 <script src="/assets/kelim.js?v=f6406678" defer></script>
-<script src="/assets/kesef.js?v=dcb7f3fa" defer></script>
+<script src="/assets/kesef.js?v=b6b0e82c" defer></script>
 </body>
 </html>
