@@ -168,3 +168,18 @@ label.big-btn{text-align:center}
 .log a.gold{text-decoration:none}
 .whatif td small{font-size:.8rem}
 .why li small{color:var(--muted)}
+
+/* K7 כמה הגיוני לשלם: רשימת תוצאות, פס טווח, תשובה */
+.m-list{display:grid;gap:.4rem;margin-top:.6rem}
+.m-list button{display:flex;justify-content:space-between;align-items:center;gap:.6rem;width:100%;text-align:right;font:inherit;font-size:1.02rem;color:var(--cream);background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:.75rem .8rem;cursor:pointer}
+.m-list button:hover,.m-list button:focus-visible{border-color:var(--gold-soft);background:rgba(255,255,255,.07)}
+.m-list button b{color:var(--gold);font-size:.95rem;white-space:nowrap;direction:ltr}
+.m-bar{position:relative;height:.55rem;margin:1rem .4rem .2rem;border-radius:999px;background:linear-gradient(to right,var(--bad),var(--gold) 50%,var(--good))}
+.m-bar i{position:absolute;top:50%;width:1.1rem;height:1.1rem;margin-inline-start:-.55rem;transform:translateY(-50%);border-radius:50%;background:var(--cream);border:3px solid var(--ink);box-shadow:0 0 0 2px var(--cream)}
+.m-verdict{margin-top:.7rem;padding:.8rem .9rem;border-radius:14px;color:var(--parchment);background:rgba(0,0,0,.18);border:1px solid var(--line);line-height:1.55}
+.m-verdict b{font-family:var(--serif);font-size:1.45rem;margin-inline-end:.35rem}
+.m-verdict.good{border-color:var(--good)}.m-verdict.good b{color:var(--good)}
+.m-verdict.ok{border-color:var(--gold-soft)}.m-verdict.ok b{color:var(--gold)}
+.m-verdict.bad{border-color:var(--bad)}.m-verdict.bad b{color:var(--bad)}
+.m-tag{font-size:.78rem;color:var(--ink);background:var(--good);border-radius:999px;padding:.1rem .5rem;margin-inline-start:.3rem;white-space:nowrap}
+#f-kind{flex-wrap:wrap}#f-kind button{flex:1 1 30%}

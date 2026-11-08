@@ -106,15 +106,17 @@
     }
     return nodes;
   }
-  function music(ac, dest, dur, style) {
-    var t0 = ac.currentTime + 0.05, master = ac.createGain(), lp = ac.createBiquadFilter();
+  function music(ac, dest, dur, style, lead) {
+    var t0 = ac.currentTime + (lead || 0.05), master = ac.createGain(), lp = ac.createBiquadFilter();
     var vol = style === 'kids' ? 1.25 : 0.65; // הצלילים הקצרים של הילדים שקטים יותר בממוצע, ולכן הגברה גדולה יותר
     lp.type = 'lowpass'; lp.frequency.value = style === 'kids' ? 4200 : 1500;
     master.gain.setValueAtTime(0, t0); master.gain.linearRampToValueAtTime(vol, t0 + (style === 'kids' ? 0.6 : 2));
     master.gain.setValueAtTime(vol, t0 + Math.max(2.1, dur - 3)); master.gain.linearRampToValueAtTime(0, t0 + dur);
     lp.connect(master); dest.forEach(function (d) { master.connect(d); });
     var nodes = (style === 'kids' ? kidsMusic : softMusic)(ac, lp, t0, dur);
-    return function stop() { nodes.forEach(function (o) { try { o.stop(); } catch (e) {} }); try { master.disconnect(); } catch (e) {} };
+    var stop = function () { nodes.forEach(function (o) { try { o.stop(); } catch (e) {} }); try { master.disconnect(); } catch (e) {} };
+    stop.t0 = t0;
+    return stop;
   }
   function audioCtx() { var A = window.AudioContext || window.webkitAudioContext; return A ? new A() : null; }
 
@@ -394,16 +396,17 @@
           // צילום ידני של כל פריים (captureStream(0) + requestFrame): כשהחלון לא מוצג, הצילום האוטומטי נעצר
           // והסרטון "נתקע" על שקופית ישנה. כך כל שקופית נכנסת בזמן שלה גם ברקע.
           var probe = cv.captureStream(0), vt = probe.getVideoTracks()[0], manual = !!(vt && vt.requestFrame);
-          var stream = manual ? probe : cv.captureStream(30), a = null, st = null;
+          var stream = manual ? probe : cv.captureStream(30), a = null, st = null, d = null, ready = false;
           if (!manual) probe.getTracks().forEach(function (tr) { tr.stop(); });
           var grab = manual ? function () { vt.requestFrame(); } : function () {};
           grab();
           if (withMusic) {
             a = audioCtx();
-            if (a) { var d = a.createMediaStreamDestination(); st = music(a, [d], total(), opts().music); d.stream.getAudioTracks().forEach(function (tr) { stream.addTrack(tr); }); }
+            // היעד של הצליל מקבל "שקט" כבר מההתחלה (בלי זה הדפדפן קורס כשהמנגינה מתחילה אחרי שההקלטה כבר רצה)
+            if (a) { d = a.createMediaStreamDestination(); try { var keep = a.createConstantSource(); keep.offset.value = 0; keep.connect(d); keep.start(); } catch (e) {} d.stream.getAudioTracks().forEach(function (tr) { stream.addTrack(tr); }); }
           }
           var rec = new MediaRecorder(stream, m ? { mimeType: m, videoBitsPerSecond: 2500000 } : { videoBitsPerSecond: 2500000 }), parts = [];
-          rec.ondataavailable = function (e) { if (e.data && e.data.size) parts.push(e.data); };
+          rec.ondataavailable = function (e) { ready = true; if (e.data && e.data.size) parts.push(e.data); };
           rec.onstop = function () {
             var type = (rec.mimeType || m || 'video/webm').split(';')[0];
             a && a.close();
@@ -432,12 +435,21 @@
           }
           document.addEventListener('visibilitychange', vis);
           playing = { stop: function () { st && st(); } };
-          rec.start(1000); vis();
-          run(function (p) { grab(); onProgress && onProgress(p); }, ctl).then(function () {
-            document.removeEventListener('visibilitychange', vis); ctl.on = false;
-            grab();
-            setTimeout(function () { playing = null; rec.stop(); stream.getTracks().forEach(function (tr) { tr.stop(); }); }, 250);
-          });
+          rec.start(250); vis();
+          // המקליט מתחיל לקבל תמונות רק אחרי רגע (בחלק מהמכשירים כמה שניות), ומה שמצויר לפני כן לא נכנס לסרטון.
+          // לכן מחכים לחלק הראשון שהוא מוסר (dataavailable) עם מסך שחור, ורק אז מתחילים את המנגינה ואת השקופיות.
+          var began = performance.now();
+          (function wait() {
+            if (!playing) return;
+            if (!ready || performance.now() - began < 300) { frame(0); grab(); return setTimeout(wait, 30); }
+            if (d && !st) { st = music(a, [d], total(), opts().music, 0.5); }
+            if (st && a.currentTime < st.t0) { frame(0); grab(); return setTimeout(wait, 20); }
+            run(function (p) { grab(); onProgress && onProgress(p); }, ctl).then(function () {
+              document.removeEventListener('visibilitychange', vis); ctl.on = false;
+              grab();
+              setTimeout(function () { playing = null; rec.stop(); stream.getTracks().forEach(function (tr) { tr.stop(); }); }, 250);
+            });
+          })();
         });
       });
     }

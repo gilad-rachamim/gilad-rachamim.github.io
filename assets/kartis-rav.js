@@ -1,5 +1,6 @@
 // R2 – כרטיס ביקור דיגיטלי לרב ולבית כנסת (כלי קודש).
-// הכול בטלפון: הפרטים נשמרים בקישור עצמו (אחרי #, לא נשלחים לשום שרת), והכרטיס נבנה מהם בדפדפן.
+// הפרטים נארזים לקוד (enc). כדי שהקישור יהיה קצר, הקוד נשמר ב-Worker של Cloudflare (tools/kartis-worker)
+// ומקבלים קישור /k/#a7Xq2b. אם השרת לא עונה - נופלים לקישור הארוך (#d=...), שממשיך לעבוד תמיד.
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
@@ -12,7 +13,21 @@
   function esc(s) { return String(s || '').replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function intl(p) { p = String(p || '').replace(/[^\d+]/g, ''); if (p.indexOf('+') === 0) return p.slice(1); if (p.indexOf('0') === 0) return '972' + p.slice(1); return p; }
   function read() { var o = {}; F.forEach(function (k) { var el = form.querySelector('[name=' + k + ']'); if (el && el.value.trim()) o[k] = el.value.trim(); }); return o; }
-  function link(o) { return location.origin + location.pathname + '#d=' + enc(o); }
+  function link(o) { return location.origin + '/kodesh/kartis/#d=' + enc(o); }
+  var API = 'https://kartis.gilad4049.workers.dev';
+  try { API = localStorage.getItem('kartis-api') || API; } catch (e) {}
+  // קישור קצר: מבקש קוד מהשרת; אם נכשל - מחזיר את הקישור הארוך
+  function shortLink(o) {
+    var long = link(o);
+    if (!window.fetch) return Promise.resolve(long);
+    var ctl = window.AbortController ? new AbortController() : null;
+    var t = setTimeout(function () { if (ctl) ctl.abort(); }, 6000);
+    return fetch(API + '/s', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ d: enc(o) }), signal: ctl ? ctl.signal : undefined })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) { clearTimeout(t); return j && /^[0-9A-Za-z]{6}$/.test(j.k) ? location.origin + '/k/#' + j.k : long; })
+      .catch(function () { clearTimeout(t); return long; });
+  }
+  function cardLink() { return view._url || link(view._o); }
 
   function vcard(o) {
     var v = ['BEGIN:VCARD', 'VERSION:3.0', 'FN;CHARSET=UTF-8:' + o.name + (o.role ? ' – ' + o.role : ''), 'N;CHARSET=UTF-8:;' + o.name + ';;;'];
@@ -22,7 +37,7 @@
     if (o.email) v.push('EMAIL;TYPE=INTERNET:' + o.email);
     if (o.addr) v.push('ADR;CHARSET=UTF-8;TYPE=WORK:;;' + o.addr + ';;;;');
     if (o.site) v.push('URL:' + o.site);
-    v.push('URL:' + link(o));
+    v.push('URL:' + (view._url || link(o)));
     if (o.note) v.push('NOTE;CHARSET=UTF-8:' + o.note.replace(/\n/g, ' '));
     v.push('END:VCARD');
     return v.join('\r\n');
@@ -56,23 +71,36 @@
       document.body.appendChild(a); a.click(); a.remove();
       if (window.kelimEv) window.kelimEv('save_contact', { tool: 'kartis_rav' });
     } else if (k === 'share') {
-      var url = link(o), text = o.name + (o.org ? ' · ' + o.org : '');
+      var url = cardLink(), text = o.name + (o.org ? ' · ' + o.org : '');
       if (navigator.share) navigator.share({ title: o.name, text: text, url: url }).catch(function () {});
       else location.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text + '\n' + url);
     }
   });
 
   // מצב כרטיס: הגיעו מקישור
+  function showCard(o, url) {
+    view._url = url || '';
+    render(o);
+    builder.hidden = true;
+    document.title = o.name + (o.org ? ' · ' + o.org : '') + ' – כרטיס ביקור';
+    $('kr-mine').hidden = false;
+  }
   var m = location.hash.match(/#d=([\w-]+)/);
   if (m) {
-    try {
-      var o = dec(m[1]);
-      render(o);
-      builder.hidden = true;
-      document.title = o.name + (o.org ? ' · ' + o.org : '') + ' – כרטיס ביקור';
-      $('kr-mine').hidden = false;
-      return;
-    } catch (e) { /* קישור פגום – ממשיכים לבנייה */ }
+    try { showCard(dec(m[1])); return; } catch (e) { /* קישור פגום – ממשיכים לבנייה */ }
+  }
+  var mk = location.hash.match(/#k=([0-9A-Za-z]{6})/);
+  if (mk) {
+    builder.hidden = true;
+    view.hidden = false;
+    view.innerHTML = '<p class="kr-note" style="text-align:center;padding:2rem 0">פותחים את הכרטיס…</p>';
+    fetch(API + '/s/' + mk[1]).then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function (j) { showCard(dec(j.d), location.origin + '/k/#' + mk[1]); })
+      .catch(function () {
+        view.innerHTML = '<p class="kr-note" style="text-align:center;padding:2rem 0">לא הצלחנו לפתוח את הכרטיס. בדקו שיש אינטרנט ונסו שוב, או בקשו מבעל הכרטיס קישור חדש.</p>';
+        $('kr-mine').hidden = false;
+      });
+    return;
   }
 
   // מצב בנייה: מה שמקלידים נשמר בטלפון, והתצוגה מתעדכנת
@@ -87,13 +115,18 @@
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     if (!form.reportValidity()) return;
-    var o = read(), url = link(o);
-    $('kr-link').value = url;
-    $('kr-ready').hidden = false;
-    $('kr-open').href = url;
-    $('kr-wa').href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent('הכרטיס שלי: ' + o.name + (o.org ? ' · ' + o.org : '') + '\n' + url);
-    $('kr-ready').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    if (window.toolUsed) window.toolUsed('kartis_rav', { has_times: !!o.times, has_addr: !!o.addr });
+    var o = read(), btn = form.querySelector('[type=submit]'), label = btn.textContent;
+    btn.disabled = true; btn.textContent = 'יוצרים קישור קצר…';
+    shortLink(o).then(function (url) {
+      btn.disabled = false; btn.textContent = label;
+      $('kr-link').value = url;
+      $('kr-ready').hidden = false;
+      $('kr-copy').textContent = 'להעתיק את הקישור';
+      $('kr-open').href = url;
+      $('kr-wa').href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent('הכרטיס שלי: ' + o.name + (o.org ? ' · ' + o.org : '') + '\n' + url);
+      $('kr-ready').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (window.toolUsed) window.toolUsed('kartis_rav', { has_times: !!o.times, has_addr: !!o.addr, short: url.indexOf('/k/#') > -1 });
+    });
   });
   $('kr-copy').addEventListener('click', function () {
     var b = this;
