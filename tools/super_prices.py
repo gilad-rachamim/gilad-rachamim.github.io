@@ -137,6 +137,7 @@ def main():
     per_chain = {}     # chain -> code -> [prices]
     names = {}         # code -> name (שם מהרשת הראשונה שיש בה)
     stores = {}
+    dates = {}
     for key, label, lister in CHAINS:
         files = spread(lister(), PER_CHAIN)
         print(label, "סניפים:", len(files))
@@ -157,6 +158,7 @@ def main():
         stores[key] = n
         if n:
             per_chain[key] = got
+            dates[key] = date.today().isoformat()
         print("  נקראו", n, "סניפים,", len(got), "ברקודים")
 
     keys = [k for k, _, _ in CHAINS]
@@ -167,6 +169,12 @@ def main():
             if k in per_chain or k not in oi:
                 continue
             j = oi.index(k)
+            # רשת שחוסמת את השרתים של GitHub: המחירים הישנים נשמרים עם התאריך שלהם, עד חודש
+            od = old["chains"][j].get("date") or old.get("date")
+            if not od or (date.today() - date.fromisoformat(od)).days > 35:
+                print("  ", k, "ישן מדי, יורד")
+                continue
+            dates[k] = od
             per_chain[k] = {}
             for row in old["items"]:
                 if row[4][j] is not None:
@@ -208,7 +216,7 @@ def main():
     data = {
         "date": date.today().isoformat(),
         "note": "מחיר מדף רגיל, בלי מבצעים. אמצע בין כמה סניפים בכל רשת.",
-        "chains": [{"key": k, "name": lbl, "stores": stores.get(k, 0)} for k, lbl, _ in CHAINS],
+        "chains": [{"key": k, "name": lbl, "stores": stores.get(k, 0), "date": dates.get(k)} for k, lbl, _ in CHAINS],
         # כל שורה: ברקוד, שם, הכי זול, אמצע, [מחיר בכל רשת לפי הסדר של chains], הכי יקר
         "items": items,
     }
