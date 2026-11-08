@@ -1,5 +1,5 @@
 // מי שברך לגבאי (כלי קודש): בוחרים נוסח, מקלידים שמות, ומקבלים נוסח מלא עם השמות בפנים – לקריאה ליד הבימה, להדפסה ולשליחה.
-// הנוסחים: סידור אשכנז, מהדורת "דעת" (נחלת הכלל), דרך ספריא. השמות נכנסים במקום פב"פ, בלי לשנות אף מילה אחרת.
+// הנוסחים: אשכנז ("דעת") וספרד ("תורת אמת") דרך ספריא, עדות המזרח (שלייסבו), ומרוקאי מהסידור ששלח גילעד. השמות נכנסים במקום פב"פ, בלי לשנות אף מילה אחרת.
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
@@ -97,20 +97,55 @@
     },
     note: 'נוסח עדות המזרח, מהדורת שלייסבו. הסימון "ראש השנה ויום כיפור" מוסיף את המשפט של שבת תשובה.'
   };
-  var SRC = { ashkenaz: 'סידור אשכנז, מהדורת "דעת"', sefard: 'סידור ספרד, "תורת אמת"' };
+  // נוסח מרוקאי: מילה במילה מהסידור ששלח גילעד (assets/misheberach-maroko.js, נבנה מ-tools/maroko-misheberach-source.txt).
+  // השם נכנס במקום "(שם ושם משפחה)", והתוספות שבסוגריים (שבת, שבת שובה, יולדת) נכנסות רק כשמסמנים אותן.
+  var MR = window.MB_MAROKO, MRT = window.MB_MAROKO_TPL;
+  function mt(key) { return MRT(MR[key], false, v, function (ph) { return N(v('name'), ph); }); }
+  var MAROKO = {
+    oleh: { label: 'לעולה לתורה', checks: function () { return v('short') ? ['short', 'yt', 'rh'] : ['short', 'rh']; }, name: 'שם העולה ושם המשפחה', build: function () { return mt(v('short') ? 'oleh_short' : 'oleh'); } },
+    choleh: { label: 'לחולה', gender: true, checks: ['sh'], name: 'שם החולה ושם המשפחה', build: function () { return mt(v('gender') === 'f' ? 'choleh_f' : 'choleh_m'); } },
+    isha: { label: 'לאשה וליולדת', checks: ['yol'], name: 'שם האשה ושם המשפחה', build: function () { return mt('isha'); } },
+    chatan: { label: 'לחתן (שבת חתן)', checks: ['rh'], name: 'שם החתן ושם המשפחה', build: function () { return mt('chatan'); }, after: function () { return 'כשהחתן חוזר למקומו, החזן אומר לו: ' + MR.lech_leshalom; } },
+    kallah: { label: 'לכלה', checks: [], name: 'שם הכלה ושם המשפחה', build: function () { return mt('kallah'); } },
+    tzahal: { label: 'לחיילי צה"ל', checks: [], build: function () { return mt('tzahal'); } },
+    shvuyim: { label: 'לנעדרים ולשבויים', checks: [], build: function () { return mt('shvuyim'); } },
+    yizkor: { label: 'יזכור לחללי צה"ל', title: 'יזכור לחללי צה"ל', checks: [], build: function () { return mt('yizkor'); } },
+    hashkava: { label: 'השכבה', title: 'השכבה', gender: true, checks: function () { return v('gender') === 'f' ? ['short'] : []; }, name: 'שם הנפטר/ת ושם המשפחה',
+      build: function () { return mt(v('gender') === 'f' ? (v('short') ? 'hashkava_short_f' : 'hashkava_f') : 'hashkava_short_m'); },
+      note: function () { return v('gender') === 'f' ? '' : 'לאיש מוצג הנוסח הקצר שבסידור. ההשכבה המלאה לאיש תיכנס כשנקבל צילום של העמוד שלה.'; } }
+  };
+  var SRC = { ashkenaz: 'סידור אשכנז, מהדורת "דעת", נחלת הכלל', sefard: 'סידור ספרד, "תורת אמת", נחלת הכלל', maroko: 'סידור כמנהג מרוקו, "שער הגבאי" (עמ\' 1247–1258), מילה במילה' };
   var LABELS = {
     oleh: ['שם העולה', 'יעקב בן אברהם'], barmitzva: ['שם הנער', 'יוסף בן יעקב'],
     choleh: ['שם החולה ושם אמו', 'משה בן שרה'], ben: ['שם היולדת ושם אביה', 'רחל בת יצחק'], bat: ['שם היולדת ושם אביה', 'רחל בת יצחק']
   };
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function isM() { return v('nusach') === 'maroko' && !!MR; }
   function K() {
+    if (isM()) {
+      var m = MAROKO[v('k')] || MAROKO.oleh;
+      return { label: m.label, title: m.title, build: m.build, after: m.after && m.after(), note: m.note && m.note(), m: m };
+    }
     var base = KINDS[v('k')] || KINDS.oleh, sf = v('nusach') === 'sefard' && SEFARD[v('k')];
     if (!sf) return base;
     return { label: base.label, fields: base.fields, build: sf.build, after: sf.after || base.after, note: sf.note };
   }
+  function title(kk) { return kk.title || 'מי שברך ' + kk.label; }
+  var ALL_OPTS = $('mb-k').innerHTML;
+  function setKinds() {
+    var sel = $('mb-k'), mode = isM() ? 'm' : 'a', cur = sel.value;
+    if (sel.getAttribute('data-set') === mode) return;
+    sel.innerHTML = mode === 'm' ? Object.keys(MAROKO).map(function (k) { return '<option value="' + k + '">' + MAROKO[k].label + '</option>'; }).join('') : ALL_OPTS;
+    sel.setAttribute('data-set', mode);
+    sel.value = cur; if (sel.selectedIndex < 0) sel.selectedIndex = 0;
+  }
   function plain() { return K().build().replace(/[\u0001\u0002]/g, ''); }
   function render() {
-    var k = v('k') || 'oleh', kk = K(), f = kk.fields;
+    setKinds();
+    var k = v('k') || 'oleh', kk = K(), f = kk.fields || [];
+    ['short', 'yol'].forEach(function (c) { $('mb-' + c + '-wrap').hidden = true; });
+    $('mb-sh-wrap').hidden = $('mb-yt-wrap').hidden = false;
+    $('mb-rh-l').textContent = 'ראש השנה ויום כיפור'; $('mb-gender-l').textContent = 'החולה';
     $('mb-name-wrap').hidden = f.indexOf('name') < 0;
     if (LABELS[k]) { $('mb-name-l').textContent = LABELS[k][0]; $('mb-name').placeholder = LABELS[k][1]; }
     $('mb-donor-wrap').hidden = f.indexOf('donor') < 0;
@@ -118,26 +153,37 @@
     $('mb-baby-wrap').hidden = f.indexOf('baby') < 0;
     $('mb-occ-wrap').hidden = f.indexOf('occ') < 0 && f.indexOf('occ2') < 0;
     $('mb-rh-wrap').hidden = f.indexOf('occ') < 0;
-    $('mb-title').textContent = 'מי שברך ' + kk.label;
+    if (kk.m) {
+      var m = kk.m, ch = typeof m.checks === 'function' ? m.checks() : m.checks;
+      $('mb-name-wrap').hidden = !m.name; if (m.name) { $('mb-name-l').textContent = m.name; $('mb-name').placeholder = 'משה כהן'; }
+      $('mb-donor-wrap').hidden = $('mb-baby-wrap').hidden = true;
+      $('mb-gender-wrap').hidden = !m.gender; $('mb-gender-l').textContent = k === 'hashkava' ? 'הנפטר/ת' : 'החולה';
+      ['sh', 'yt', 'rh', 'short', 'yol'].forEach(function (c) { $('mb-' + c + '-wrap').hidden = ch.indexOf(c) < 0; });
+      $('mb-occ-wrap').hidden = !ch.length; $('mb-rh-l').textContent = 'שבת שובה';
+    }
+    $('mb-title').textContent = title(kk);
     $('mb-text').innerHTML = esc(kk.build()).replace(/\u0001/g, '<mark>').replace(/\u0002/g, '</mark>').replace(/\n/g, '<br>');
     $('mb-after').hidden = !kk.after; $('mb-after').textContent = kk.after || '';
-    var ns = (k === 'kahal') ? '' : (SRC[v('nusach')] || SRC.ashkenaz);
-    $('mb-note').textContent = (kk.note ? kk.note + ' ' : '') + (ns ? 'הנוסח: ' + ns + ', נחלת הכלל.' : '');
-    $('mb-nusach-wrap').hidden = k === 'kahal' || k === 'tzahal';
+    var ns = (k === 'kahal' && !kk.m) ? '' : (SRC[v('nusach')] || SRC.ashkenaz);
+    $('mb-note').textContent = (kk.note ? kk.note + ' ' : '') + (ns ? 'הנוסח: ' + ns + '.' : '');
     try { localStorage.setItem('kodesh-misheberach', JSON.stringify({ k: k, size: $('mb-size').value, nusach: v('nusach') })); } catch (e) {}
   }
-  try { var s = JSON.parse(localStorage.getItem('kodesh-misheberach') || '{}'); if (s.k) form.querySelector('[name=k]').value = s.k; if (s.size) $('mb-size').value = s.size; if (s.nusach) form.querySelector('[name=nusach]').value = s.nusach; } catch (e) {}
-  var qk = new URLSearchParams(location.search).get('k'); if (qk && KINDS[qk]) form.querySelector('[name=k]').value = qk;
+  var q = new URLSearchParams(location.search), qn = q.get('n'), qk = q.get('k');
+  try { var s = JSON.parse(localStorage.getItem('kodesh-misheberach') || '{}'); if (s.nusach) $('mb-nusach').value = s.nusach; setKinds(); if (s.k) $('mb-k').value = s.k; if (s.size) $('mb-size').value = s.size; } catch (e) {}
+  if (qn && SRC[qn]) $('mb-nusach').value = qn;
+  setKinds();
+  if (qk && (isM() ? MAROKO[qk] : KINDS[qk])) $('mb-k').value = qk;
+  if ($('mb-k').selectedIndex < 0) $('mb-k').selectedIndex = 0;
   function size() { $('mb-box').style.fontSize = $('mb-size').value + 'rem'; }
   form.addEventListener('input', render); form.addEventListener('change', render);
   $('mb-size').addEventListener('change', function () { size(); render(); });
   size(); render();
-  function used(how) { if (window.toolUsed) window.toolUsed('misheberach', { how: how, k: v('k') }); }
+  function used(how) { if (window.toolUsed) window.toolUsed('misheberach', { how: how, k: v('k'), n: v('nusach') }); }
   $('mb-copy').addEventListener('click', function () {
-    var b = this, t = 'מי שברך ' + K().label + '\n\n' + plain() + (K().after ? '\n\n' + K().after : '');
+    var b = this, t = title(K()) + '\n\n' + plain() + (K().after ? '\n\n' + K().after : '');
     (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () { b.textContent = 'הועתק ✓'; used('copy'); setTimeout(function () { b.textContent = 'להעתיק'; }, 1800); });
   });
-  $('mb-wa').addEventListener('click', function (e) { e.currentTarget.href = 'https://wa.me/?text=' + encodeURIComponent('מי שברך ' + K().label + '\n\n' + plain()); used('wa'); });
+  $('mb-wa').addEventListener('click', function (e) { e.currentTarget.href = 'https://wa.me/?text=' + encodeURIComponent(title(K()) + '\n\n' + plain() + (K().after ? '\n\n' + K().after : '')); used('wa'); });
   $('mb-print').addEventListener('click', function () { used('print'); window.print(); });
   $('mb-full').addEventListener('click', function () {
     var b = $('mb-box'); used('fullscreen');
