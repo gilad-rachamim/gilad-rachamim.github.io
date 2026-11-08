@@ -43,6 +43,7 @@ SITES = {
                 ("koach", "/nefesh/koach/", "מד כוח"), ("yoman", "/nefesh/yoman/", "יומן קול"),
                 ("mishpacha", "/nefesh/mishpacha/", "למשפחה"), ("kelim", "/nefesh/#kelim", "כל הכלים")],
     },
+<<<<<<< HEAD
     # כלים לכסף: מחשבונים בלבד, לא ייעוץ. הכול בטלפון (localStorage), בלי שרת.
     "kesef": {
         "name": "כלים לכסף", "short": "כלים לכסף", "home": "/kesef/", "theme": "#11201a",
@@ -51,10 +52,20 @@ SITES = {
         "css": ["/assets/kesef.css"], "js": ["/assets/kesef.js"],
         "nav": [("taktziv", "/kesef/taktziv/", "תקציב"), ("halvaa", "/kesef/halvaa/", "הלוואה"),
                 ("minuyim", "/kesef/minuyim/", "מנויים"), ("mivtza", "/kesef/mivtza/", "המבצע המשפחתי"),
+=======
+    # כלים ללימודים: כרטיסיות חזרה, מתכנן למבחן, טיימר למידה, לימוד יומי לסיום. הכול בטלפון (localStorage), בלי שרת.
+    "limudim": {
+        "name": "כלים ללימודים", "short": "כלים ללימודים", "home": "/limudim/", "theme": "#141c2b",
+        "og": "og-kelim.jpg", "icon": "limudim",
+        "desc": "כלים פשוטים ללמידה: כרטיסיות חזרה, תוכנית למבחן, טיימר, ולימוד יומי לסיום התנ״ך והמשנה. בחינם.",
+        "css": ["/assets/limudim.css"], "js": ["/assets/limudim.js"],
+        "nav": [("kartisiot", "/limudim/kartisiot/", "כרטיסיות"), ("mivchan", "/limudim/mivchan/", "למבחן"),
+                ("timer", "/limudim/timer/", "טיימר"), ("yomi", "/limudim/yomi/", "לימוד יומי"),
+>>>>>>> origin/main
                 ("kelim", "/kelim/", "כל הכלים")],
     },
 }
-SPRITE = (ROOT / "assets" / "icons.svg").read_text(encoding="utf-8")
+SPRITE =(ROOT / "assets" / "icons.svg").read_text(encoding="utf-8")
 BASE = "https://gilad-rachamim.github.io"
 # מזהה Google Analytics 4 (G-XXXXXXXXXX). ריק = בלי מעקב.
 GA_ID = "G-4QR4583VST"

@@ -1,0 +1,40 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "trufot",
+  "title": "התרופות שלי – רשימה וסימון יומי של מה כבר נלקח | הכלים של גילעד רחמים",
+  "description": "רשימת תרופות מסודרת לפי בוקר, צהריים, ערב ולילה, עם סימון יומי של מה כבר נלקח. מדפיסים דף לארנק או למקרר, ושולחים לרופא או לבן משפחה. בחינם, נשמר רק בטלפון.",
+  "og_title": "התרופות שלי – לקחתי כבר היום?",
+  "priority": "0.7",
+  "crumbs": [["בריאות", "/kelim/briut/"], ["התרופות שלי", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/mishpacha.css\"><style>.tf-times{display:flex;flex-wrap:wrap;gap:.4rem 1rem;color:var(--body)}.tf-today h3{font-family:var(--serif);color:var(--cream);font-size:1.25rem;margin-top:1rem}.tf-slot{margin-top:.6rem}.tf-meds .x{background:none;border:0;color:var(--muted);font-size:1.3rem;cursor:pointer}.tf-meds li{display:grid;grid-template-columns:1fr auto;gap:.5rem;align-items:center;padding:.55rem .3rem;border-bottom:1px solid var(--line);color:var(--parchment)}.tf-meds small{display:block;color:var(--muted)}.tf-today li{border:0!important;padding:0!important}</style>",
+  "foot": "<script src=\"/assets/trufot.js\" defer></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>התרופות שלי</h1>
+  <p class="sub">כל התרופות במקום אחד, לפי שעות היום. מסמנים מה כבר לקחתם היום, ובבוקר הסימונים מתאפסים לבד.</p>
+</header>
+<div class="tool no-print">
+  <div class="res tf-today" id="tf-today"></div>
+  <form class="k-form" id="tf-form" novalidate style="margin-top:1.2rem">
+    <h3 style="font-family:var(--serif);color:var(--cream)">להוסיף תרופה</h3>
+    <div class="field"><label for="tf-name">שם התרופה</label><input id="tf-name" type="text" maxlength="40" required placeholder="אומפרדקס"></div>
+    <div class="field"><label for="tf-dose">מינון <span class="opt">(לא חובה)</span></label><input id="tf-dose" type="text" maxlength="30" placeholder="20 מ״ג, כדור אחד"></div>
+    <div class="field"><span class="label">מתי?</span><div class="tf-times" id="tf-times"></div></div>
+    <div class="field"><label for="tf-note">הערה <span class="opt">(לא חובה)</span></label><input id="tf-note" type="text" maxlength="60" placeholder="לפני האוכל / עם מים"></div>
+    <button class="btn btn-gold btn-block" type="submit">להוסיף לרשימה</button>
+    <p class="note" id="tf-msg" aria-live="polite"></p>
+  </form>
+  <h3 style="font-family:var(--serif);color:var(--cream);margin-top:1.4rem">הרשימה</h3>
+  <ul class="tf-meds" id="tf-meds" style="list-style:none"></ul>
+  <div class="field" style="margin-top:1rem"><label for="tf-allerg">אלרגיות</label><input id="tf-allerg" type="text" maxlength="100" placeholder="אין / פניצילין"></div>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="tf-print">להדפיס דף תרופות</button>
+    <a class="btn btn-line btn-sm" href="#" id="tf-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הרשימה</a>
+  </div>
+</div>
+<div id="tf-card" class="mp-card"></div>
+<div class="tool no-print">
+  <p class="disclaimer">הכלי עוזר לזכור, ולא נותן ייעוץ רפואי. שינוי במינון או בתרופה – רק עם הרופא או הרוקח. הכול נשמר רק בטלפון הזה.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="רשימת תרופות בטלפון עם סימון יומי של מה כבר נלקח. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
