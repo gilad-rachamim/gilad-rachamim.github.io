@@ -7,7 +7,7 @@
 
 הרצה:  python3 build.py
 """
-import json, os, re, pathlib, datetime
+import json, os, re, pathlib, datetime, hashlib
 
 ROOT = pathlib.Path(__file__).resolve().parent
 SRC = ROOT / "src" / "pages"
@@ -196,6 +196,18 @@ KESEF_FOOT = """<div class="tool-foot">
 def kesef_blocks(html):
     return re.sub(r"\{\{K:foot:([^}]+)\}\}", lambda m: KESEF_FOOT.format(text=m.group(1)), html)
 
+# מספר גרסה לכל קובץ ב-/assets/ (?v=<טביעה של התוכן>): כשהקובץ משתנה הכתובת משתנה,
+# ולכן ה-service worker והדפדפן לא מגישים את הגרסה הישנה מהשמור (נצפה ב-08.11 בכלי מי שברך).
+_VER = {}
+def vurl(p):
+    f = ROOT / p.lstrip("/")
+    if p not in _VER:
+        _VER[p] = hashlib.md5(f.read_bytes()).hexdigest()[:8] if f.is_file() else ""
+    return p + ("?v=" + _VER[p] if _VER[p] else "")
+
+def version_assets(html):
+    return re.sub(r'((?:src|href)=")(/assets/[^"?#]+\.(?:js|css))"', lambda m: m.group(1) + vurl(m.group(2)) + '"', html)
+
 pages = []
 site_pages = {k: [] for k in SITES}
 for path in sorted(SRC.rglob("*.html")):
@@ -253,6 +265,7 @@ for path in sorted(SRC.rglob("*.html")):
         html = html.replace("{{" + k + "}}", v)
     for key in ["yerushalaim", "sipur", "hachana", "moed", "madrich", "kartis"]:
         html = html.replace("{{cur:" + key + "}}", ' aria-current="page"' if meta.get("nav") == key else "")
+    html = version_assets(html)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
     if not meta.get("noindex"):
@@ -276,6 +289,7 @@ for key, site in SITES.items():
     pre = site_pages[key] + ["/assets/site.css", "/assets/kelim.css", "/assets/kelim.js", "/assets/track.js",
                              "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff",
                              f"/assets/icon-{site['icon']}-192.png"] + site.get("css", []) + site.get("js", [])
+    pre = [vurl(p) if re.search(r"^/assets/.*\.(js|css)$", p) else p for p in pre]
     ver = datetime.datetime.now().strftime("%Y%m%d%H%M")
     (d / "sw.js").write_text(SW_SRC.replace("__CACHE__", f"{key}-{ver}").replace("__PRECACHE__", json.dumps(pre)), encoding="utf-8")
     print(f"pwa {key}: {len(site_pages[key])} pages")
