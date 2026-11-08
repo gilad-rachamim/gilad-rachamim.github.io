@@ -1,0 +1,37 @@
+/* שירון להדפסה (/kelim/tochen/shiron/). על המסך: דפים לבנים אחד מתחת לשני. בהדפסה: שער, תוכן עניינים, שירים. */
+.radios{display:flex;flex-wrap:wrap;gap:.5rem 1rem;color:var(--body)}
+.sh-h{font-family:var(--serif);color:var(--cream);font-size:1.25rem;text-align:center;margin:1.4rem 0 .6rem}
+.sh-song{border:1px solid var(--line);border-radius:14px;padding:.8rem;display:grid;gap:.5rem;margin-bottom:.7rem}
+.sh-song .top{display:flex;gap:.5rem;align-items:center}
+.sh-song .top b{color:var(--gold);font-family:var(--serif);min-width:1.6rem}
+.sh-song .top input{flex:1;min-width:0}
+.sh-song .x{background:none;border:0;color:var(--muted);font-size:1.4rem;cursor:pointer}
+.sh-song textarea{min-height:7rem}
+.sh-book{max-width:44rem;margin:0 auto;padding:0 1rem 1rem;display:grid;gap:1rem}
+.sh-page{background:#fffdf8;color:#1d1d1d;border-radius:8px;padding:2.2rem 2rem;direction:rtl;font-family:var(--serif);line-height:1.55}
+.sh-cover{text-align:center;padding:4.5rem 2rem;border:2px double #b9a46a}
+.sh-cover h1{font-size:2.6rem;font-weight:700;color:#2a3a20;line-height:1.15}
+.sh-cover p{color:#666;font-family:var(--sans);margin-top:.8rem;font-size:1.05rem}
+.sh-cover .orn{color:#b9a46a;font-size:1.6rem;margin:1.2rem 0}
+.sh-toc h2,.sh-sg h2{font-size:1.25rem;color:#2a3a20;border-bottom:1px solid #c9b97d;padding-bottom:.2rem;margin-bottom:.5rem}
+.sh-toc ol{padding-inline-start:1.6rem;columns:2;column-gap:2rem;font-size:1rem}
+.sh-songs{columns:2;column-gap:1.8rem;column-rule:1px solid #e6dcc0}
+.sh-big .sh-songs{columns:1;font-size:1.25rem}
+.sh-big .sh-toc ol{columns:1;font-size:1.15rem}
+.sh-sg{break-inside:avoid;margin-bottom:1.3rem}
+.sh-sg h2 span{color:#b9a46a;margin-inline-end:.35rem}
+.sh-sg p{white-space:pre-wrap;font-size:1em}
+.sh-empty{color:#888;text-align:center;font-family:var(--sans)}
+@media print{
+  @page{size:A4;margin:14mm 13mm}
+  html,body{background:#fff!important}
+  .topbar,.site-foot,.crumbs,.install-bar,.no-print{display:none!important}
+  main{padding:0!important}
+  .sh-book{display:block;max-width:none;padding:0}
+  .sh-page{border-radius:0;padding:0;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .sh-cover{height:265mm;display:flex;flex-direction:column;justify-content:center;border:2px double #b9a46a;box-sizing:border-box;break-after:page}
+  .sh-cover h1{font-size:36pt}
+  .sh-toc{break-after:page}
+  .sh-songs{font-size:11.5pt}
+  .sh-big .sh-songs{font-size:15pt}
+}

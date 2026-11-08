@@ -1,0 +1,36 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "shiron",
+  "title": "שירון להדפסה – חוברת שירים עם תוכן עניינים | הכלים של גילעד רחמים",
+  "description": "בונים שירון בכמה דקות: מוסיפים שירים (שם ומילים), ומקבלים חוברת מסודרת להדפסה עם שער, תוכן עניינים ומספור. לשבת, לטיול, לאירוע או לסוף שנה. בחינם, נשמר בטלפון.",
+  "og_title": "שירון להדפסה – חוברת שירים מסודרת",
+  "priority": "0.7",
+  "crumbs": [["יצירת תוכן", "/kelim/tochen/"], ["שירון", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/shiron.css\">",
+  "foot": "<script src=\"/assets/shiron.js\" defer></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>שירון להדפסה</h1>
+  <p class="sub">מוסיפים שירים, ומקבלים חוברת מסודרת עם שער ותוכן עניינים. לשולחן שבת, לטיול, לחנוכה או לאירוע.</p>
+</header>
+<div class="tool no-print">
+  <form class="k-form" id="sh-form" novalidate>
+    <div class="field"><label for="sh-title">שם השירון</label><input id="sh-title" name="title" type="text" maxlength="40" placeholder="שירי שבת"></div>
+    <div class="field"><label for="sh-sub">שורה מתחת <span class="opt">(לא חובה)</span></label><input id="sh-sub" name="sub" type="text" maxlength="60" placeholder="משפחת כהן · חנוכה תשפ״ז"></div>
+    <div class="field"><span class="label">גודל אותיות</span><div class="radios">
+      <label><input type="radio" name="size" value="r"> רגיל (שני טורים)</label>
+      <label><input type="radio" name="size" value="g"> גדול (טור אחד, נוח לקריאה)</label>
+    </div></div>
+    <div id="sh-songs"></div>
+    <button class="btn btn-line btn-sm" type="button" id="sh-add">+ עוד שיר</button>
+  </form>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="sh-print">להדפיס / לשמור PDF</button>
+    <button class="btn btn-line btn-sm" type="button" id="sh-clear">שירון חדש (לנקות)</button>
+  </div>
+  <p class="disclaimer">מדביקים מילים של שירים שמותר לכם להשתמש בהם (שירי עם, פיוטים, תפילות, או שירים שכתבתם). השירון נשמר בטלפון הזה.</p>
+  <h2 class="sh-h">כך ייראה השירון</h2>
+</div>
+<div id="sh-book" class="sh-book"></div>
+<div class="tool no-print"><div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="בונים שירון להדפסה בכמה דקות, עם שער ותוכן עניינים. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div></div>

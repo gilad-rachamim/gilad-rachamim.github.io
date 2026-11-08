@@ -1,0 +1,41 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "wa_editor",
+  "title": "עורך הודעות לווטסאפ – מודגש, נטוי, רשימות ותצוגה מקדימה | הכלים של גילעד רחמים",
+  "description": "כותבים הודעה לווטסאפ ומעצבים בלחיצה: מודגש, נטוי, קו חוצה, רשימה, מספור, ציטוט ואימוג׳י, עם תצוגה מקדימה כמו בווטסאפ. שולחים או מעתיקים. בחינם.",
+  "og_title": "עורך הודעות לווטסאפ – הודעה מסודרת לקבוצה",
+  "priority": "0.7",
+  "crumbs": [["יצירת תוכן", "/kelim/tochen/"], ["עורך הודעות לווטסאפ", null]],
+  "head": "<style>.we-bar{display:flex;flex-wrap:wrap;gap:.35rem}.we-bar button{font:inherit;font-size:.98rem;min-width:2.6rem;padding:.4rem .65rem;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--cream);cursor:pointer}.we-bar button:hover{border-color:var(--gold-soft)}.we-emo button{font-size:1.2rem;min-width:2.4rem;padding:.25rem .4rem}#we-text{min-height:12rem;font-size:1.08rem;line-height:1.6}.we-chat{margin-top:1rem;padding:1rem;border-radius:16px;background:#0b141a}.we-bub{max-width:92%;margin-inline-start:auto;background:#005c4b;color:#e9edef;padding:.6rem .8rem .4rem;border-radius:10px 0 10px 10px;white-space:pre-wrap;word-wrap:break-word;font-family:Assistant,system-ui,sans-serif;font-size:1.02rem;line-height:1.45}.we-bub code{font-family:ui-monospace,Consolas,monospace;background:rgba(0,0,0,.2);padding:0 .2rem;border-radius:4px}.we-bub blockquote{border-inline-start:3px solid #8bd8c4;padding-inline-start:.5rem;margin:.1rem 0;color:#c8d1d6}.we-bub .tm{display:block;text-align:left;font-size:.75rem;color:#9fb3b0;margin-top:.2rem}.we-cnt{color:var(--muted);font-size:.9rem;text-align:left}</style>",
+  "foot": "<script src=\"/assets/wa-editor.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>עורך הודעות לווטסאפ</h1>
+  <p class="sub">הודעה לקבוצה שנראית מסודר: מסמנים מילים ולוחצים על מודגש, נטוי או רשימה. רואים מיד איך זה ייראה בווטסאפ.</p>
+</header>
+<div class="tool">
+  <div class="k-form">
+    <div class="we-bar" role="toolbar" aria-label="עיצוב">
+      <button type="button" data-w="*" title="מודגש"><b>מודגש</b></button>
+      <button type="button" data-w="_" title="נטוי"><i>נטוי</i></button>
+      <button type="button" data-w="~" title="קו חוצה"><s>חוצה</s></button>
+      <button type="button" data-w="```" title="כתב מכונה">קוד</button>
+      <button type="button" data-l="• " title="רשימה">• רשימה</button>
+      <button type="button" data-l="1" title="מספור">1. מספור</button>
+      <button type="button" data-l="> " title="ציטוט">❝ ציטוט</button>
+    </div>
+    <textarea id="we-text" aria-label="ההודעה" placeholder="כותבים כאן את ההודעה…&#10;&#10;מסמנים מילה ולוחצים על &quot;מודגש&quot; למעלה."></textarea>
+    <div class="we-bar we-emo" id="we-emo" aria-label="אימוג׳י"></div>
+    <p class="we-cnt" id="we-cnt"></p>
+  </div>
+  <h2 style="font-family:var(--serif);color:var(--cream);font-size:1.2rem;margin-top:1.2rem">כך זה ייראה בווטסאפ</h2>
+  <div class="we-chat"><div class="we-bub" id="we-prev"></div></div>
+  <div class="share-row">
+    <a class="btn btn-gold btn-sm" href="#" id="we-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח בווטסאפ</a>
+    <button class="btn btn-line btn-sm" type="button" id="we-copy">להעתיק</button>
+    <button class="btn btn-line btn-sm" type="button" id="we-clear">לנקות</button>
+  </div>
+  <p class="disclaimer">ההודעה נשמרת כטיוטה בטלפון עד שמנקים. בווטסאפ בוחרים למי לשלוח.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="עורך הודעות לווטסאפ עם מודגש, רשימות ותצוגה מקדימה. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
