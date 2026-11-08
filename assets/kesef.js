@@ -1071,4 +1071,77 @@
       drawCorps(); drawMine();
     }).catch(function () { $('f-src').textContent = 'לא הצלחנו לטעון את הנתונים. בודקים אינטרנט ומרעננים.'; });
   })();
+
+  // =====================================================================
+  // K7 כמה הגיוני לשלם על זה? – מחירי סופר מקבצי שקיפות המחירים (/kesef/mechir.json, מתעדכן פעם בשבוע ב-GitHub Action)
+  // =====================================================================
+  (function () {
+    if (!$('mechir')) return;
+    var D = null, cur = null, timer = null;
+    // שורה: [ברקוד, שם, הכי זול, אמצע, [מחיר לכל רשת], הכי יקר]
+    function norm(s) { return String(s || '').replace(/["'״׳`.,\-]/g, '').replace(/\s+/g, ' ').trim(); }
+    function sh(n) { return '₪' + n.toFixed(2).replace(/\.00$/, ''); }
+    function heDate(iso) { var p = String(iso).split('-'); return +p[2] + '.' + +p[1] + '.' + p[0]; }
+    function search() {
+      var q = norm($('m-q').value), box = $('m-list');
+      if (!D || q.length < 2) { box.innerHTML = ''; return; }
+      var hits;
+      if (/^\d{6,}$/.test(q)) {
+        hits = D.items.filter(function (r) { return r[0].indexOf(q.replace(/^0+/, '')) === 0; });
+      } else {
+        var words = q.split(' ');
+        hits = D.items.filter(function (r) { var n = r._n; return words.every(function (w) { return n.indexOf(w) >= 0; }); });
+        hits.sort(function (a, b) { return (a._n.indexOf(words[0]) === 0 ? 0 : 1) - (b._n.indexOf(words[0]) === 0 ? 0 : 1) || a[1].length - b[1].length; });
+      }
+      used('search');
+      if (!hits.length) { box.innerHTML = '<p class="note">לא מצאנו. אפשר לנסות מילה אחת (למשל "קוטג"), או את הברקוד שעל המוצר.</p>'; return; }
+      box.innerHTML = hits.slice(0, 12).map(function (r) {
+        return '<button type="button" role="option" data-c="' + r[0] + '"><span>' + esc(r[1]) + '</span><b>' + sh(r[2]) + '–' + sh(r[5]) + '</b></button>';
+      }).join('') + (hits.length > 12 ? '<p class="note">ועוד ' + (hits.length - 12) + '. כדאי להוסיף מילה (גודל, טעם).</p>' : '');
+    }
+    function pick(code) {
+      cur = null;
+      D.items.some(function (r) { if (r[0] === code) { cur = r; return true; } return false; });
+      if (!cur) return;
+      $('m-list').innerHTML = '';
+      $('m-out').hidden = false;
+      $('m-name').textContent = cur[1];
+      $('m-mid').textContent = sh(cur[3]); $('m-mid2').textContent = sh(cur[3]);
+      $('m-lo').textContent = sh(cur[2]); $('m-hi').textContent = sh(cur[5]);
+      var rows = D.chains.map(function (c, i) { return [c.name, cur[4][i]]; }).filter(function (x) { return x[1] != null; });
+      rows.sort(function (a, b) { return a[1] - b[1]; });
+      $('m-chains').innerHTML = rows.map(function (x, i) {
+        return '<tr><td>' + esc(x[0]) + (i === 0 && x[1] < rows[rows.length - 1][1] ? ' <span class="m-tag">הכי זול</span>' : '') + '</td><td class="n">' + sh(x[1]) + '</td></tr>';
+      }).join('');
+      $('m-code').textContent = 'ברקוד ' + cur[0] + '. מחיר אמצע בין כמה סניפים בכל רשת, לפי מחירי הרשתות בתאריך ' + heDate(D.date) + '.';
+      verdict();
+      used('view');
+      $('m-out').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    function verdict() {
+      var el = $('m-verdict'), dot = $('m-dot');
+      if (!cur) return;
+      var p = num($('m-my').value.replace(',', '.')), lo = cur[2], mid = cur[3], hi = cur[5];
+      if (!p) { el.className = 'm-verdict'; el.textContent = 'מקלידים את המחיר שרואים, ונגיד אם הוא יקר, סביר או מציאה.'; dot.hidden = true; return; }
+      var v, cls;
+      if (p <= lo) { v = 'מציאה'; cls = 'good'; }
+      else if (p > hi * 1.02 || p > mid * 1.12) { v = 'יקר'; cls = 'bad'; }
+      else { v = 'סביר'; cls = 'ok'; }
+      var diff = p - lo;
+      el.className = 'm-verdict ' + cls;
+      el.innerHTML = '<b>' + v + '</b> ' + (v === 'מציאה' ? 'זה המחיר הכי נמוך שראינו, או פחות.' :
+        'יקר ב-' + sh(diff) + ' מהמחיר הכי זול' + (v === 'יקר' ? ', ומעל מה שרוב הרשתות מבקשות.' : '. בטווח הרגיל.'));
+      var span = hi - lo, pos = span > 0 ? (p - lo) / span : (p <= lo ? 0 : 1);
+      dot.hidden = false; dot.style.insetInlineStart = (Math.max(0, Math.min(1, pos)) * 100) + '%';
+      used('price');
+    }
+    $('m-q').addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(search, 150); });
+    $('m-list').addEventListener('click', function (e) { var b = e.target.closest('[data-c]'); if (b) pick(b.getAttribute('data-c')); });
+    $('m-my').addEventListener('input', verdict);
+    fetch('/kesef/mechir.json', { cache: 'no-cache' }).then(function (r) { return r.json(); }).then(function (d) {
+      D = d; d.items.forEach(function (r) { r._n = norm(r[1]); });
+      $('m-src').textContent = 'לפי מחירי הרשתות בתאריך ' + heDate(d.date) + ': ' + d.chains.map(function (c) { return c.name; }).join(', ') + '. ' + d.items.length + ' מוצרים נפוצים.';
+      if ($('m-q').value) search();
+    }).catch(function () { $('m-src').textContent = 'לא הצלחנו לטעון את המחירים. בודקים אינטרנט ומרעננים.'; });
+  })();
 })();

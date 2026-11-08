@@ -1,0 +1,68 @@
+<!--meta {
+  "site": "kesef",
+  "nav": "mechir",
+  "tool": "mechir",
+  "title": "כמה הגיוני לשלם על זה? – מחירי מוצרי סופר בין הרשתות | כלים לכסף",
+  "description": "מקלידים שם של מוצר מהסופר או ברקוד, ורואים כמה הוא עולה בשופרסל, בקרפור ובחצי חינם: הכי זול, האמצע והכי יקר. ואם המחיר שראיתם יקר, סביר או מציאה. לפי קבצי המחירים שהרשתות מפרסמות לפי החוק. חינם.",
+  "og_title": "כמה הגיוני לשלם על זה?",
+  "crumbs": [["כמה הגיוני לשלם על זה?", null]]
+} -->
+<header class="k-hero">
+  <h1>כמה הגיוני לשלם על זה?</h1>
+  <p class="sub">עומדים מול מדף בסופר ולא בטוחים אם המחיר הוגן? מקלידים את שם המוצר או את הברקוד, ורואים כמה הוא עולה ברשתות אחרות.</p>
+</header>
+
+<div class="tool" id="mechir">
+  <section class="box">
+    <h2>איזה מוצר</h2>
+    <label class="field"><span>שם המוצר או ברקוד</span><input id="m-q" type="search" autocomplete="off" placeholder="למשל: קוטג', במבה, האגיס 4"></label>
+    <div class="m-list" id="m-list" role="listbox" aria-label="מוצרים שנמצאו"></div>
+    <p class="note" id="m-src">טוען מחירים…</p>
+  </section>
+
+  <div id="m-out" hidden>
+    <section class="sum" aria-live="polite">
+      <div class="lbl" id="m-name"></div>
+      <div class="big" id="m-mid">-</div>
+      <div class="sub2">האמצע בין הרשתות</div>
+      <div class="stats">
+        <div><b id="m-lo">-</b><span>הכי זול</span></div>
+        <div><b id="m-mid2">-</b><span>אמצע</span></div>
+        <div><b id="m-hi">-</b><span>הכי יקר</span></div>
+      </div>
+      <div class="m-bar" aria-hidden="true"><i id="m-dot" hidden></i></div>
+    </section>
+
+    <section class="box">
+      <h2>ובחנות שלך?</h2>
+      <label class="field"><span>כמה המחיר על המדף</span><input id="m-my" class="num-in" inputmode="decimal" placeholder="₪"></label>
+      <p class="m-verdict" id="m-verdict" aria-live="polite"></p>
+    </section>
+
+    <section class="box">
+      <h2>איפה הכי זול</h2>
+      <div class="whatif"><table>
+        <thead><tr><th>רשת</th><th>מחיר</th></tr></thead>
+        <tbody id="m-chains"></tbody>
+      </table></div>
+      <p class="note" id="m-code"></p>
+    </section>
+  </div>
+
+  <section class="box">
+    <h2>מאיפה המחירים</h2>
+    <ul class="why">
+      <li>לפי <b>חוק המזון (שקיפות מחירים)</b>, כל רשת גדולה חייבת לפרסם כל יום את המחיר של כל מוצר בכל סניף.</li>
+      <li>פעם בשבוע אנחנו לוקחים כמה סניפים מכל רשת, ולכל רשת את מחיר האמצע שלה.</li>
+      <li>זה <b>מחיר המדף הרגיל</b>, בלי מבצעים, בלי "2 ב-" ובלי מועדון. במבצע המחיר יכול להיות נמוך יותר.</li>
+      <li>יש כאן רק מוצרים נפוצים עם ברקוד, שנמכרים ביותר מרשת אחת. פירות, ירקות ובשר במשקל לא כאן.</li>
+      <li>כרגע: שופרסל, קרפור וחצי חינם. רשתות כמו רמי לוי ויוחננוף מפרסמות באתר שדורש כניסה, ולכן עוד לא כאן.</li>
+    </ul>
+  </section>
+
+  <div class="local-note"><span class="ic2">ℹ️</span><span>מחיר בסניף מסוים יכול להיות שונה. צריך אינטרנט כדי לטעון את המחירים.</span></div>
+  <div class="local-note"><span class="ic2">🔒</span><span>מה שמקלידים לא נשלח לשום מקום. החיפוש קורה בטלפון.</span></div>
+</div>
+
+<p class="not-advice"><b>זה מחשבון, לא ייעוץ.</b> הכלי משווה מחירים שהרשתות פרסמו, ולא ממליץ איפה לקנות.</p>
+{{K:foot:כמה הגיוני לשלם על זה? מקלידים מוצר מהסופר ורואים כמה הוא עולה בשופרסל, בקרפור ובחצי חינם. כלי חינמי}}
