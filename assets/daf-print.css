@@ -1,0 +1,24 @@
+/* דף להדפסה מטופס (chag-basis, psak) */
+.dp-sheet{--ink:#1b1b1b;--acc:#8a6d2b;--soft:#f4ecd4;background:#fdfaf2;color:var(--ink);border-radius:14px;padding:1.6rem 1.4rem;margin:1.2rem auto 0;max-width:46rem;box-shadow:0 10px 30px rgba(0,0,0,.35);font-family:'Frank Ruhl Libre','David',serif;line-height:1.65}
+.dp-sheet[data-theme="kachol"]{--acc:#1f3f73;--soft:#e6edf7;background:#fbfcff}
+.dp-sheet[data-theme="zayit"]{--acc:#4d5a24;--soft:#eef0de;background:#fcfcf6}
+.dp-sheet[data-theme="lavan"]{--acc:#333;--soft:#f1f1f1;background:#fff}
+.dp-head{text-align:center;border-bottom:3px double var(--acc);padding-bottom:.6rem;margin-bottom:1rem;position:relative}
+.dp-head .bsd{position:absolute;top:0;right:0;font-size:.8rem;color:#555;font-family:system-ui,sans-serif}
+.dp-kicker{margin:0;color:var(--acc);font-weight:700;letter-spacing:.02em}
+.dp-head h2{margin:.15rem 0;font-size:2rem;color:var(--ink);line-height:1.2}
+.dp-head .dp-sub{margin:0;color:#444}
+.dp-sec{margin:0 0 1rem;break-inside:avoid}
+.dp-sec h3{margin:0 0 .3rem;font-size:1.12rem;color:var(--acc);border-bottom:1px solid var(--soft);padding-bottom:.15rem}
+.dp-sec p{margin:.15rem 0}
+.dp-sec ol{margin:.2rem 0;padding-inline-start:1.4rem}
+.dp-times{width:100%;border-collapse:collapse}
+.dp-times td{padding:.3rem .4rem;border-bottom:1px solid var(--soft);vertical-align:top}
+.dp-times tr:nth-child(odd){background:var(--soft)}
+.dp-t{white-space:nowrap;font-weight:700;width:4.5rem;font-family:system-ui,sans-serif}
+.dp-box{border:1.5px solid var(--acc);border-radius:10px;padding:.6rem .8rem;background:var(--soft)}
+.dp-sig{text-align:left;margin-top:1.2rem;font-weight:700}
+.dp-foot{text-align:center;font-size:.72rem;color:#777;margin:1rem 0 0;font-family:system-ui,sans-serif}
+.dp-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+@media(max-width:560px){.dp-sheet{padding:1.1rem .8rem}.dp-head h2{font-size:1.6rem}}
+@media print{@page{size:A4;margin:12mm}html,body{background:#fff!important}body *{visibility:hidden}.topbar,.site-foot,.crumbs,.install-bar,.no-print{display:none!important}#dp-sheet,#dp-sheet *{visibility:visible}#dp-sheet{position:absolute;top:0;right:0;left:0;margin:0;max-width:none;box-shadow:none;border-radius:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}}

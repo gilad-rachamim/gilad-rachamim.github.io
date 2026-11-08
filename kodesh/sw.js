@@ -1,8 +1,8 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'kodesh-202611081421';
-var PRECACHE = ["/kodesh/beit-knesset/", "/kodesh/brachot/", "/kodesh/chag-basis/", "/kodesh/chayal/", "/kodesh/dapei-tefila/", "/kodesh/dvar-torah/", "/kodesh/hodaot/", "/kodesh/", "/kodesh/kartis/", "/kodesh/luach/", "/kodesh/luach-shana/", "/kodesh/mekorot/", "/kodesh/mohalim/", "/kodesh/post/", "/kodesh/shut/", "/kodesh/simcha/", "/kodesh/taarichim/", "/kodesh/tziyud/", "/kodesh/zmanim/", "/assets/site.css", "/assets/kelim.css", "/assets/kelim.js", "/assets/track.js", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-kodesh-192.png"];
+var CACHE = 'kodesh-202611081423';
+var PRECACHE = ["/kodesh/beit-knesset/", "/kodesh/brachot/", "/kodesh/chag-basis/", "/kodesh/chayal/", "/kodesh/dapei-tefila/", "/kodesh/dvar-torah/", "/kodesh/hodaot/", "/kodesh/", "/kodesh/kartis/", "/kodesh/luach/", "/kodesh/luach-shana/", "/kodesh/mekorot/", "/kodesh/mohalim/", "/kodesh/post/", "/kodesh/psak/", "/kodesh/shut/", "/kodesh/simcha/", "/kodesh/taarichim/", "/kodesh/tziyud/", "/kodesh/zmanim/", "/assets/site.css", "/assets/kelim.css", "/assets/kelim.js", "/assets/track.js", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-kodesh-192.png"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
 });
