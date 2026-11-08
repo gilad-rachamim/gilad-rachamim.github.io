@@ -8,9 +8,11 @@
     parch: { bg1: '#f6efdd', bg2: '#ead9b4', frame: '#8a6a2a', title: '#6b4f1a', text: '#241d14', sub: '#8a6a2a', foot: '#6b5d45' },
     black: { bg1: '#16130f', bg2: '#2a2219', frame: '#c9a55c', title: '#dcbb74', text: '#f5eedf', sub: '#c9a55c', foot: '#a99c82' },
     white: { bg1: '#ffffff', bg2: '#f3f1ec', frame: '#1e3a5f', title: '#1e3a5f', text: '#1b1b1b', sub: '#7a5c1e', foot: '#666666' },
-    sky: { bg1: '#eaf3fb', bg2: '#cfe2f3', frame: '#2a5d8f', title: '#1e4670', text: '#14273b', sub: '#2a5d8f', foot: '#4c6680' }
+    sky: { bg1: '#eaf3fb', bg2: '#cfe2f3', frame: '#2a5d8f', title: '#1e4670', text: '#14273b', sub: '#2a5d8f', foot: '#4c6680' },
+    stone: { bg1: '#2a2c30', bg2: '#3d4046', frame: '#b9b4a8', title: '#ece8de', text: '#e2ded4', sub: '#b9b4a8', foot: '#9a968c' },
+    paper: { bg1: '#fbfaf7', bg2: '#efede8', frame: '#55524b', title: '#2b2925', text: '#2b2925', sub: '#6b675e', foot: '#77736a' }
   };
-  var SIZES = { square: [1080, 1080], story: [1080, 1920], wide: [1200, 630] };
+  var SIZES = { square: [1080, 1080], story: [1080, 1920], wide: [1200, 630], a5: [1240, 1754] };
 
   function init(o) {
     var $ = function (id) { return document.getElementById(id); };
@@ -29,7 +31,25 @@
       });
       return out;
     }
-    var api = { ctx: ctx, val: val, wrap: wrap, SERIF: SERIF, SANS: SANS };
+    // stack: שורות ממורכזות לגובה. כל פריט: [טקסט, משקל, גודל, 'serif'|'sans', צבע, רווח אחרי]. טקסט ארוך נשבר לשורות.
+    function stack(items, W, top, bottom, maxW) {
+      var rows = [];
+      items.forEach(function (it) {
+        if (!it || it[0] === null || it[0] === undefined) return;
+        var font = it[1] + ' ' + it[2] + 'px ' + (it[3] === 'serif' ? SERIF : SANS);
+        if (it[0] === '') { rows.push(['', font, it[2], it[4], it[5]]); return; }
+        var ls = wrap(it[0], font, maxW);
+        ls.forEach(function (l, i) { rows.push([l, font, it[2], it[4], i === ls.length - 1 ? it[5] : it[2] * 0.25]); });
+      });
+      var total = rows.reduce(function (a, r) { return a + (r[0] ? r[2] * 1.15 : 0) + r[4]; }, 0);
+      var k = total > bottom - top ? (bottom - top) / total : 1, y = top + Math.max(0, (bottom - top - total) / 2);
+      ctx.textAlign = 'center';
+      rows.forEach(function (r) {
+        if (r[0]) { var fs = Math.round(r[2] * k); ctx.font = r[1].replace(/\d+px/, fs + 'px'); ctx.fillStyle = r[3]; ctx.fillText(r[0], W / 2, y + fs); y += fs * 1.15; }
+        y += r[4] * k;
+      });
+    }
+    var api = { ctx: ctx, val: val, wrap: wrap, stack: stack, SERIF: SERIF, SANS: SANS };
     function draw() {
       var th = THEMES[val('theme')] || THEMES[o.theme || 'night'], sz = SIZES[val('size')] || SIZES.square, W = sz[0], H = sz[1];
       cv.width = W; cv.height = H;
@@ -76,6 +96,17 @@
     if (ids.text && $(ids.text)) $(ids.text).addEventListener('click', function () {
       var b = this;
       (navigator.clipboard ? navigator.clipboard.writeText(o.text(api)) : Promise.reject()).then(function () { b.textContent = 'הטקסט הועתק ✓'; used('copy_text'); });
+    });
+    // הדפסה: התמונה (בגודל A5) נכנסת ל-#kc-print, וה-CSS של הדף מדפיס רק אותה
+    if (ids.print && $(ids.print)) $(ids.print).addEventListener('click', function () {
+      if (!ok()) return;
+      var sel = form.querySelector('[name=size]'), prev = sel ? sel.value : '';
+      if (sel && o.printSize) { sel.value = o.printSize; draw(); }
+      var box = $('kc-print'); if (!box) { box = document.createElement('div'); box.id = 'kc-print'; document.body.appendChild(box); }
+      box.innerHTML = '<img alt="" src="' + cv.toDataURL('image/png') + '">';
+      if (sel && o.printSize) { sel.value = prev; draw(); }
+      used('print');
+      setTimeout(function () { window.print(); }, 150);
     });
     if (ids.wa && $(ids.wa)) $(ids.wa).addEventListener('click', function (e) { e.currentTarget.href = 'https://wa.me/?text=' + encodeURIComponent(o.text(api)); used('wa_text'); });
     return api;
