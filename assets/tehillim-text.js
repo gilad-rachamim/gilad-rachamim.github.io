@@ -42,5 +42,28 @@
       return out;
     }).catch(function () { return null; });
   }
-  window.TehillimText = { load: load, num: num };
+  // מטרות התפילה – משותף לסיום ולתהילים לפי שם. [מפתח, ניסוח לפני השם, שם ברירת מחדל]
+  // הבסיסיות נשמרות בשרת כ-p; כל השאר נשלחות כ-p:'other' עם הניסוח (pt), כך שאפשר להוסיף בלי לשנות את השרת.
+  var PURPOSES = [
+    ['niftar', 'לעילוי נשמת'], ['refua', 'לרפואת'], ['refua-nefesh', 'לרפואת הנפש של'],
+    ['parnasa', 'לפרנסה טובה ובשפע ל'], ['zivug', 'לזיווג הגון ל'], ['shalom-bait', 'לשלום בית ל'],
+    ['zera', 'לזרע של קיימא ל'], ['leida', 'ללידה קלה ובשעה טובה ל'], ['hatzlacha', 'להצלחת'],
+    ['limudim', 'להצלחה בלימודים ובמבחנים של'], ['yeshua', 'לישועת'], ['shmira', 'לשמירת'],
+    ['chayalim', 'לשמירת', 'חיילי צה״ל וכוחות הביטחון'], ['hodaya', 'להודיה ולזכות'], ['zchut', 'לזכות'], ['other', '']
+  ];
+  var CORE = { niftar: 1, refua: 1, hatzlacha: 1, zivug: 1, zchut: 1, other: 1 };
+  function phrase(k) { for (var i = 0; i < PURPOSES.length; i++) if (PURPOSES[i][0] === k) return PURPOSES[i][1]; return ''; }
+  // "לזיווג הגון ל" + "יעקב" → "לזיווג הגון ליעקב"; אחרת עם רווח
+  function join(h, who) { return h ? (/(^|\s)ל$/.test(h) ? h + who : h + ' ' + who) : who; }
+  // ממלא <select> במטרות. withOther=false מוריד את "ניסוח אחר"
+  function fill(sel, withOther, otherLabel) {
+    var cur = sel.value;
+    sel.innerHTML = PURPOSES.filter(function (p) { return withOther || p[0] !== 'other'; }).map(function (p) {
+      var lab = p[0] === 'other' ? (otherLabel || 'ניסוח אחר') : p[0] === 'chayalim' ? 'לשמירת חיילי צה״ל' : p[1].replace(/ (ל|של)$/, '').replace(/^לזרע של קיימא$/, 'לזרע של קיימא');
+      return '<option value="' + p[0] + '">' + lab + '</option>';
+    }).join('');
+    if (cur && sel.querySelector('option[value="' + cur + '"]')) sel.value = cur;
+  }
+  window.TehillimText = { load: load, num: num, PURPOSES: PURPOSES, CORE: CORE, phrase: phrase, join: join, fill: fill,
+    defName: function (k) { for (var i = 0; i < PURPOSES.length; i++) if (PURPOSES[i][0] === k) return PURPOSES[i][2] || ''; return ''; } };
 })();

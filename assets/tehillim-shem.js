@@ -8,16 +8,17 @@
   var AB = 'אבגדהוזחטיכלמנסעפצקרשת';
   var NAMES = ['אל"ף', 'בי"ת', 'גימ"ל', 'דל"ת', 'ה"א', 'וי"ו', 'זי"ן', 'חי"ת', 'טי"ת', 'יו"ד', 'כ"ף', 'למ"ד', 'מ"ם', 'נו"ן', 'סמ"ך', 'עי"ן', 'פ"א', 'צד"י', 'קו"ף', 'רי"ש', 'שי"ן', 'תי"ו'];
   var FIN = { 'ך': 'כ', 'ם': 'מ', 'ן': 'נ', 'ף': 'פ', 'ץ': 'צ' };
-  var HEAD = { niftar: 'לעילוי נשמת', refua: 'לרפואת', hatzlacha: 'להצלחת', zivug: 'לזיווג הגון ל', other: '' };
+  var T = window.TehillimText;
+  T.fill(form.querySelector('[name=k]'), true, 'בלי כותרת');
   var PRE = [33, 16, 17, 72, 91, 104, 130];
   var val = function (n) { var el = form.querySelector('[name=' + n + ']'); return el.type === 'checkbox' ? el.checked : el.value.trim(); };
   function letters(s) {
     return String(s || '').replace(/[֑-ׇ]/g, '').split('').map(function (c) { return FIN[c] || c; }).filter(function (c) { return AB.indexOf(c) >= 0; });
   }
   function title() {
-    var n = val('n'), p = val('par'), h = HEAD[val('k')] || '';
+    var n = val('n'), p = val('par');
     if (!n) return '';
-    return (h ? h + (val('k') === 'zivug' ? '' : ' ') : '') + n + (p ? ' ' + val('bb') + ' ' + p : '');
+    return T.join(T.phrase(val('k')), n + (p ? ' ' + val('bb') + ' ' + p : ''));
   }
   // רצף: [{l: אות, kind: 'n'|'p'|'s'}] – שם, הורה (אם סומן), נשמה (לנפטר)
   function seq() {
@@ -87,6 +88,7 @@
   ['k', 'n', 'bb', 'par'].forEach(function (k) { if (q.get(k)) form.querySelector('[name=' + k + ']').value = q.get(k); });
   $('th-withpar').checked = q.get('wp') === '1';
   $('th-pre').checked = q.get('pre') === '1';
+  form.querySelector('[name=k]').addEventListener('change', function () { var d = T.defName(val('k')); if (d && !val('n')) { $('th-n').value = d; } });
   form.addEventListener('input', preview);
   form.addEventListener('change', preview);
   form.addEventListener('submit', function (e) { e.preventDefault(); show(); });
