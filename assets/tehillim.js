@@ -15,11 +15,22 @@
   var TOK = ls('kodesh-tehillim-tok');
   if (!TOK) { TOK = Array.from(crypto.getRandomValues(new Uint8Array(12))).map(function (b) { return b.toString(16).padStart(2, '0'); }).join(''); ls('kodesh-tehillim-tok', TOK); }
 
-  var PUR = { niftar: 'לעילוי נשמת', refua: 'לרפואת', hatzlacha: 'להצלחת', zivug: 'לזיווג הגון ל', zchut: 'לזכות' };
+  var T = window.TehillimText;
   function titleOf(m) {
-    var h = m.p === 'other' ? (m.pt || '') : PUR[m.p] || '';
+    var h = m.p === 'other' ? (m.pt || '') : T.phrase(m.p);
     var who = m.n + (m.par ? ' ' + m.bb + ' ' + m.par : '');
-    return { h: h, who: who, full: (h ? h + (m.p === 'zivug' ? '' : ' ') : '') + who };
+    var full = T.join(h, who);
+    // לתצוגה בשתי שורות: "לזיווג הגון" / "ליעקב בן שרה" (ה-ל' עוברת לשם)
+    if (/(^|\s)ל$/.test(h)) { h = h.slice(0, -1).trim(); who = 'ל' + who; }
+    return { h: h, who: who, full: full };
+  }
+  // קישור לשיתוף: דרך השרת, כדי שבווטסאפ תופיע כותרת עם השם ותמונה (הוא מפנה מיד לדף)
+  // רק אם השרת כבר תומך בזה (ping מחזיר v>=2); אחרת קישור רגיל לדף.
+  var SHARE = null;
+  if (!/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) {
+    fetch(API + '/ping').then(function (r) { return r.json(); }).then(function (d) {
+      if (d && d.v >= 2) { SHARE = API + '/j/'; if (S) set(S); }
+    }).catch(function () {});
   }
 
   // ---------- יחידות: פרק / יום בחודש / ספר ----------
@@ -58,10 +69,12 @@
   function initNew() {
     var f = $('ts-form');
     var v = function (n) { var el = f.querySelector('[name=' + n + ']'); return el.type === 'checkbox' ? el.checked : el.value.trim(); };
+    T.fill($('ts-p'), true);
     if (q.get('new')) ['p', 'n', 'bb', 'par'].forEach(function (k) { if (q.get(k)) { var el = f.querySelector('[name=' + k + ']'); el.value = q.get(k); } });
     function onP() {
       $('ts-pt-w').hidden = v('p') !== 'other';
-      $('ts-par-l').innerHTML = (v('p') === 'refua' ? 'שם האם' : 'שם ההורה') + ' <span class="opt">(לא חובה)</span>';
+      $('ts-par-l').innerHTML = (/^refua/.test(v('p')) ? 'שם האם' : 'שם ההורה') + ' <span class="opt">(לא חובה)</span>';
+      var d = T.defName(v('p')); if (d && !v('n')) $('ts-n').value = d;
     }
     f.addEventListener('change', onP); onP();
     var list = ls('kodesh-tehillim-list') || [];
@@ -74,7 +87,8 @@
       err('ts-err', '');
       if (!v('n')) { err('ts-err', 'כתבו את השם.'); $('ts-n').focus(); return; }
       if (v('p') === 'other' && !v('pt')) { err('ts-err', 'כתבו את הניסוח.'); $('ts-pt').focus(); return; }
-      var m = { p: v('p'), pt: v('pt'), n: v('n'), bb: v('bb'), par: v('par'), g: v('g'), x: v('x'), cr: v('cr'), mo: f.querySelector('[name=mo]:checked').value, r: parseInt(v('r'), 10), ch: v('ch') ? 1 : 0 };
+      var key = v('p'), core = T.CORE[key];
+      var m = { p: core ? key : 'other', pt: core ? v('pt') : T.phrase(key), n: v('n'), bb: v('bb'), par: v('par'), g: v('g'), x: v('x'), cr: v('cr'), mo: f.querySelector('[name=mo]:checked').value, r: parseInt(v('r'), 10), ch: v('ch') ? 1 : 0 };
       var b = $('ts-create'); b.disabled = true; b.textContent = 'פותח…';
       api('/s', { m: m }).then(function (d) {
         var ad = ls('kodesh-tehillim-adm') || {}; ad[d.id] = d.a; ls('kodesh-tehillim-adm', ad);
@@ -87,12 +101,14 @@
 
   // ================= הסיום =================
   var S = null, reader = null;
-  function link() { return location.origin + '/kodesh/tehillim/?s=' + SID; }
+  function link() { return SHARE ? SHARE + SID : location.origin + '/kodesh/tehillim/?s=' + SID; }
+  function uw(one) { var mo = S.m.mo; return one ? (mo === 'perek' ? 'פרק אחד' : mo === 'yom' ? 'יום אחד' : 'ספר אחד') : (mo === 'perek' ? 'פרקים' : mo === 'yom' ? 'ימים' : 'ספרים'); }
   function waText() {
-    var t = titleOf(S.m), m = S.m;
-    return '*סיום תהילים ' + t.full + '*' + (m.g ? '\n' + m.g : '') + '\n\n' +
-      (S.r > 1 ? 'אנחנו רוצים לסיים ' + S.r + ' פעמים את ספר התהילים. ' : '') + 'כל אחד לוקח כמה ' + (m.mo === 'perek' ? 'פרקים' : m.mo === 'yom' ? 'ימים' : 'ספרים') + ' שהוא יכול, עד שכל הספר מתחלק. הטקסט בתוך הקישור.' +
-      (m.ch ? '\nאפשר גם לקבל על עצמך מעשה טוב קטן.' : '') + '\n\n' + link();
+    var t = titleOf(S.m), m = S.m, free = S.total - S.taken;
+    var prog = S.done === S.total ? 'ברוך ה׳, הסיום הושלם! תודה לכל מי שהשתתף.' : S.taken ? 'כבר נלקחו ' + S.taken + ' מתוך ' + S.total + ' ' + uw() + (free ? ', נשארו עוד ' + free + '.' : '. הכול נלקח, מחכים לקריאה.') : 'מתחילים עכשיו: ' + S.total + ' ' + uw() + (S.r > 1 ? ' (' + S.r + ' סיומים)' : '') + '.';
+    return '📖 *סיום תהילים ' + t.full + '*' + (m.g ? '\n🗓️ ' + m.g : '') + '\n\n' + prog +
+      (free ? '\n\n🤲 לוקחים ' + uw(1) + ' וקוראים אותו ישר בקישור, כמה דקות. כל פרק הוא זכות גדולה.' : '') +
+      (m.ch ? '\n💛 ואפשר גם מעשה טוב של דקה, כבר עכשיו.' : '') + '\n\n👈 ' + (free ? 'לבחור פרק' : 'לסיום') + ': ' + link();
   }
   function initView() {
     $('ts-new').hidden = true; $('ts-hero').hidden = true; $('ts-view').hidden = false;
@@ -104,9 +120,10 @@
     document.querySelectorAll('[data-copy-link]').forEach(function (b) {
       b.addEventListener('click', function () { copy(link(), b); used({ how: 'copy_link' }); });
     });
-    $('ts-wa').addEventListener('click', function () { used({ how: 'wa' }); });
-    $('ts-made-wa').addEventListener('click', function () { used({ how: 'wa_made' }); });
-    $('ts-copy-admin').addEventListener('click', function () { copy(link() + '#a=' + ADM, this); });
+    document.querySelectorAll('[data-wa]').forEach(function (a) { a.addEventListener('click', function () { used({ how: 'wa', where: a.id || 'after' }); }); });
+    document.querySelectorAll('[data-share-img]').forEach(function (b) { b.addEventListener('click', shareImage); });
+    $('ts-now').addEventListener('click', onNow);
+    $('ts-copy-admin').addEventListener('click', function () { copy(location.origin + '/kodesh/tehillim/?s=' + SID + '#a=' + ADM, this); });
     $('ts-add-round').addEventListener('click', function () {
       if (!confirm('להוסיף עוד סיום שלם (סבב נוסף)?')) return;
       api('/s/' + SID + '/admin', { a: ADM, t: TOK, op: 'round' }).then(function (d) { set(d.s); }).catch(function (x) { alert(x.message); });
@@ -145,17 +162,21 @@
       $('ts-made').hidden = !(q.get('made') && ADM);
       $('ts-admin').hidden = !ADM;
       $('ts-az').hidden = S.m.p !== 'niftar';
-      var sq = new URLSearchParams({ k: S.m.p === 'zchut' || S.m.p === 'other' ? 'other' : S.m.p, n: S.m.n, bb: S.m.bb });
+      var sq = new URLSearchParams({ k: S.m.p, n: S.m.n, bb: S.m.bb });
       if (S.m.par) sq.set('par', S.m.par);
       $('ts-shem').href = '/kodesh/tehillim/shem/?' + sq.toString();
       $('ts-chesed-box').hidden = !S.m.ch;
+      $('ts-now').hidden = !S.m.ch;
+      $('ts-now-for').textContent = t.full;
+      var doneNow = ls('kodesh-tehillim-now-' + SID) || {};
+      Object.keys(doneNow).forEach(function (k) { var b = $('ts-now').querySelector('[data-now="' + k + '"]'); if (b) b.classList.add('on'); });
       $('ts-ch-for').textContent = t.full;
       var B = S.m.mo === 'perek' ? [[1, 'לקחת פרק אחד'], [3, '3 פרקים'], [5, '5 פרקים'], [10, '10 פרקים']] : S.m.mo === 'yom' ? [[1, 'לקחת יום אחד'], [2, 'יומיים'], [3, '3 ימים']] : [[1, 'לקחת ספר אחד']];
       $('ts-take-btns').innerHTML = B.map(function (b, i) { return '<button class="btn ' + (i ? 'btn-line' : 'btn-gold') + ' btn-sm" type="button" data-n="' + b[0] + '">' + b[1] + '</button>'; }).join('');
       $('ts-take-btns').addEventListener('click', function (e) { var b = e.target.closest('[data-n]'); if (b) take({ n: parseInt(b.getAttribute('data-n'), 10) }); });
     }
     var wa = 'https://wa.me/?text=' + encodeURIComponent(waText());
-    $('ts-wa').href = wa; $('ts-made-wa').href = wa;
+    document.querySelectorAll('[data-wa]').forEach(function (a) { a.href = wa; });
     renderProg(); renderGrid(); renderMine(); renderChesed();
   }
   function renderProg() {
@@ -203,6 +224,7 @@
       set(d.s);
       if (!d.got.length) { err('ts-take-err', 'מישהו אחר לקח את זה רגע לפניך. בחרו משהו אחר.'); return; }
       used({ how: 'take', n: d.got.length, mode: S.m.mo });
+      $('ts-after').hidden = false;
       openReader(d.got[0], 0);
     }).catch(function (x) { err('ts-take-err', x.message); });
   }
@@ -228,6 +250,67 @@
       if (op === 'free' && reader && reader.k === k) closeReader();
       if (op === 'done' && reader && reader.k === k) renderReader();
     }).catch(function (x) { alert(x.message); });
+  }
+
+  // ---------- מעשה טוב של דקה, עכשיו ----------
+  var NOW = {
+    mila: ['milatova', 'שלחתי עכשיו מילה טובה למישהו'],
+    tzedaka: ['tzedaka', 'נתתי עכשיו צדקה'],
+    lashon: ['lashon', 'שעה מעכשיו בלי לשון הרע'],
+    zikui: ['other', 'זיכיתי עוד חבר בסיום']
+  };
+  var KIND = ['רציתי רק להגיד: תודה שיש אותך 💛 שיהיה לך יום טוב!', 'חשבתי עליך עכשיו, ורציתי להגיד שטוב שיש אותך 💛', 'בלי סיבה מיוחדת: שמחה גדולה שיש אותך בחיים שלי 💛'];
+  function onNow(e) {
+    var b = e.target.closest('[data-now]'); if (!b) return;
+    var k = b.getAttribute('data-now'), done = ls('kodesh-tehillim-now-' + SID) || {};
+    if (k === 'mila') window.open('https://wa.me/?text=' + encodeURIComponent(KIND[Math.floor(Math.random() * KIND.length)]), '_blank', 'noopener');
+    if (k === 'zikui') window.open('https://wa.me/?text=' + encodeURIComponent(waText()), '_blank', 'noopener');
+    if (done[k]) { $('ts-now-ok').textContent = 'כבר נרשם, תודה!' + (k === 'mila' || k === 'zikui' ? ' אפשר לשלוח עוד, זה רק מוסיף זכויות.' : ''); $('ts-now-ok').hidden = false; return; }
+    api('/s/' + SID + '/chesed', { i: NOW[k][0], w: $('ts-w').value.trim(), x: NOW[k][1], t: TOK }).then(function (d) {
+      done[k] = Date.now(); ls('kodesh-tehillim-now-' + SID, done);
+      b.classList.add('on');
+      $('ts-now-ok').textContent = 'זכית! זה נרשם ' + titleOf(S.m).full + '.';
+      $('ts-now-ok').hidden = false;
+      used({ how: 'now', item: k });
+      set(d.s);
+    }).catch(function (x) { $('ts-now-ok').textContent = x.message; $('ts-now-ok').hidden = false; });
+  }
+
+  // ---------- תמונה לשיתוף: שם, מטרה והתקדמות, עם הקישור בהודעה ----------
+  function shareImage() {
+    var cv = $('ts-cv'), c = cv.getContext('2d'), W = 1080, H = 1080, t = titleOf(S.m);
+    var SERIF = '"Frank Ruhl Libre", serif', SANS = '"Assistant", Arial, sans-serif';
+    var fonts = document.fonts && document.fonts.load ? Promise.all([document.fonts.load('700 60px "Frank Ruhl Libre"'), document.fonts.load('600 40px "Assistant"')]).catch(function () {}) : Promise.resolve();
+    fonts.then(function () {
+      var g = c.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#0e1628'); g.addColorStop(1, '#1b2a4a');
+      c.fillStyle = g; c.fillRect(0, 0, W, H);
+      c.strokeStyle = '#d4b062'; c.lineWidth = 4; c.strokeRect(30, 30, W - 60, H - 60); c.lineWidth = 1; c.strokeRect(44, 44, W - 88, H - 88);
+      c.direction = 'rtl'; c.textAlign = 'right'; c.fillStyle = '#d4b062'; c.font = '600 30px ' + SANS; c.fillText('בס"ד', W - 80, 100);
+      c.textAlign = 'center';
+      function fit(txt, font, size, max) { var s = size; do { c.font = font.replace('#', s); s -= 2; } while (c.measureText(txt).width > max && s > 20); }
+      var y = 230;
+      c.fillStyle = '#e6c57e'; c.font = '700 84px ' + SERIF; c.fillText('סיום תהילים', W / 2, y);
+      if (t.h) { y += 95; c.fillStyle = '#d3d9e6'; fit(t.h, '400 #px ' + SANS, 46, W - 200); c.fillText(t.h, W / 2, y); }
+      y += 105; c.fillStyle = '#fbfaf4'; fit(t.who, '700 #px ' + SERIF, 92, W - 180); c.fillText(t.who, W / 2, y);
+      if (S.m.g) { y += 75; c.fillStyle = '#d4b062'; fit(S.m.g, '600 #px ' + SANS, 40, W - 200); c.fillText(S.m.g, W / 2, y); }
+      y += 95; var x0 = 190, x1 = W - 190, bw = x1 - x0;
+      c.fillStyle = 'rgba(255,255,255,.1)'; c.fillRect(x0, y, bw, 26);
+      c.fillStyle = '#8a7444'; c.fillRect(x1 - bw * S.taken / S.total, y, bw * S.taken / S.total, 26);
+      c.fillStyle = '#d4b062'; c.fillRect(x1 - bw * S.done / S.total, y, bw * S.done / S.total, 26);
+      y += 75; c.fillStyle = '#d3d9e6'; c.font = '600 40px ' + SANS;
+      c.fillText(S.done === S.total ? 'הסיום הושלם, תודה לכולם!' : 'נלקחו ' + S.taken + ' מתוך ' + S.total + ' ' + uw(), W / 2, y);
+      y += 100; c.fillStyle = '#e6c57e'; c.font = '700 54px ' + SERIF;
+      c.fillText(S.taken < S.total ? 'קחו ' + uw(1) + ' – זכות גדולה' : 'תודה לכל המשתתפים', W / 2, y);
+      c.fillStyle = '#9aa6bf'; c.font = '400 30px ' + SANS; c.fillText('הקישור בהודעה · נוצר בחינם בכלי קודש', W / 2, H - 90);
+      cv.toBlob(function (blob) {
+        var file = new File([blob], 'siyum-tehillim.png', { type: 'image/png' }), text = waText();
+        used({ how: 'share_img' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file], text: text }).catch(function () {}); return; }
+        var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'siyum-tehillim.png'; document.body.appendChild(a); a.click(); a.remove();
+        if (navigator.clipboard) navigator.clipboard.writeText(text).catch(function () {});
+        alert('התמונה נשמרה, וההודעה עם הקישור הועתקה. פותחים ווטסאפ, מצרפים את התמונה ומדביקים את ההודעה.');
+      }, 'image/png');
+    });
   }
 
   // ---------- קריאה בדף ----------
