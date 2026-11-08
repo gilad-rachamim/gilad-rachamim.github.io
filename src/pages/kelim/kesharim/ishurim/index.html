@@ -1,0 +1,32 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "ishurim",
+  "title": "אישורי הגעה לאירוע – מי מגיע וכמה נפשות | הכלים של גילעד רחמים",
+  "description": "אישורי הגעה לאירוע קטן: מדביקים את רשימת המוזמנים, מסמנים מי מגיע, מי לא ומי עוד לא ענה, ורואים כמה נפשות. עם הודעת תזכורת מוכנה לווטסאפ. בחינם, נשמר בטלפון.",
+  "og_title": "אישורי הגעה – כמה מגיעים?",
+  "priority": "0.7",
+  "crumbs": [["חברה וקשרים", "/kelim/kesharim/"], ["אישורי הגעה", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/mishpacha.css\"><style>.is-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-top:1rem}.is-sum div{padding:.7rem .4rem;border:1px solid var(--gold-soft);border-radius:12px;text-align:center}.is-sum b{display:block;font-family:var(--serif);font-size:1.8rem;color:var(--cream)}.is-sum span{color:var(--body);font-size:.9rem}.is-list{list-style:none;display:grid;gap:.4rem;margin-top:1rem}.is-list li{display:grid;grid-template-columns:1fr auto;gap:.4rem .6rem;align-items:center;padding:.6rem .7rem;border:1px solid var(--line);border-radius:12px;color:var(--parchment)}.is-list .nm{font-size:1.05rem}.is-list .x{background:none;border:0;color:var(--muted);font-size:1.3rem;cursor:pointer}.is-b{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:.35rem;align-items:center}.is-b button{font:inherit;font-size:.92rem;padding:.3rem .7rem;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--body);cursor:pointer}.is-b button[aria-pressed=true]{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700}.is-b input{width:4.2rem;padding:.3rem .4rem}.is-b label{color:var(--muted);font-size:.9rem}</style>",
+  "foot": "<script src=\"/assets/ishurim.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>אישורי הגעה</h1>
+  <p class="sub">לאירוע קטן – ברית, בר מצווה, ערב חברים או שבת חתן. רשימה אחת: מי מגיע, כמה נפשות, ומי עוד לא ענה.</p>
+</header>
+<div class="tool">
+  <form class="k-form" id="is-form" novalidate>
+    <div class="field"><label for="is-event">איזה אירוע?</label><input id="is-event" name="event" type="text" maxlength="60" placeholder="שבת חתן של יוסי, 21.11"></div>
+    <div class="field"><label for="is-names">להוסיף מוזמנים <span class="opt">(שם בכל שורה, אפשר להדביק רשימה)</span></label><textarea id="is-names" maxlength="3000" placeholder="משפחת כהן&#10;דני ורותי&#10;סבא וסבתא"></textarea></div>
+    <button class="btn btn-gold btn-block" type="submit">להוסיף לרשימה</button>
+  </form>
+  <div class="is-sum"><div><b id="is-yes">0</b><span>נפשות מגיעות</span></div><div><b id="is-no">0</b><span>לא מגיעים</span></div><div><b id="is-wait">0</b><span>עוד לא ענו</span></div></div>
+  <ul class="is-list" id="is-list"></ul>
+  <div class="share-row">
+    <a class="btn btn-gold btn-sm" href="#" id="is-remind" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> הודעת תזכורת למי שלא ענה</a>
+    <a class="btn btn-line btn-sm" href="#" id="is-wa" target="_blank" rel="noopener">לשלוח סיכום</a>
+    <button class="btn btn-line btn-sm" type="button" id="is-clear">אירוע חדש (לנקות)</button>
+  </div>
+  <p class="disclaimer">ההודעה נפתחת בווטסאפ, ושם בוחרים למי לשלוח. הרשימה נשמרת רק בטלפון הזה.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="אישורי הגעה לאירוע קטן בטלפון: מי מגיע, כמה נפשות ומי לא ענה. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
