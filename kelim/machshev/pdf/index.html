@@ -78,6 +78,15 @@
     <p class="note" id="pd-snote"></p>
   </div>
   <div class="field tm-q"><label for="pd-q">איכות</label><input id="pd-q" type="range" min="40" max="90" step="5" value="65"><b id="pd-qv">65</b></div>
+  <div class="field" style="margin-top:1rem"><label>האתר מקבל עד</label>
+    <div class="tabs" id="pd-lim" role="tablist">
+      <button type="button" role="tab" data-l="1">1 מ״ב</button>
+      <button type="button" role="tab" data-l="2">2 מ״ב</button>
+      <button type="button" role="tab" data-l="5">5 מ״ב</button>
+      <button type="button" role="tab" data-l="0">בלי מגבלה</button>
+    </div>
+    <p class="note">בוחרים מגבלה, והכלי מקטין לבד עוד ועוד עד שהקובץ נכנס. לא צריך לשחק עם האיכות.</p>
+  </div>
   <div class="actions"><button class="btn btn-gold" type="button" id="pd-go" disabled>להקטין</button></div>
   <div class="pd-box" id="pd-box" hidden aria-live="polite">
     <span class="nm" id="pd-name"></span>
@@ -130,6 +139,6 @@
   <button class="x" type="button" data-install-close aria-label="סגירה">×</button>
 </div>
 <script src="/assets/kelim.js?v=bf1510e3" defer></script>
-<script src="/assets/machshev-pdf.js?v=e022dd7d" defer></script>
+<script src="/assets/machshev-pdf.js?v=0e724e1e" defer></script>
 </body>
 </html>
