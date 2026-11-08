@@ -1,0 +1,19 @@
+# סיום תהילים בקישור + מעשי חסד – Cloudflare Worker + Durable Object (חינמי). מחובר ל-/kodesh/tehillim/.
+# פריסה:        cd tools/tehillim-worker && npx wrangler deploy   (אותו חשבון כמו mohel-rsvp)
+# בדיקה מקומית: npx wrangler dev --local --port 8788
+# כל סיום = Durable Object אחד: חלוקת הפרקים אטומית, ושני אנשים לא מקבלים אותו פרק.
+name = "kodesh-tehillim"
+main = "tehillim-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[[durable_objects.bindings]]
+name = "SIYUM"
+class_name = "Siyum"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Siyum"]
+
+[vars]
+EXTRA_ORIGINS = ""
