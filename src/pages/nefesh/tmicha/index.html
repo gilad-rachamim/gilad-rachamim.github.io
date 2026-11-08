@@ -1,0 +1,61 @@
+<!--meta {
+  "site": "nefesh",
+  "tool": "tmicha",
+  "title": "מפת תמיכה – מי עוזר לי במה, עם כפתור חיוג | נפש ויום-יום",
+  "description": "מפה אחת של האנשים שעוזרים לך: משפחה, חברים, רופא, מטפל, עובדת סוציאלית, אגף השיקום וקווי תמיכה. ליד כל אחד: במה הוא עוזר, וכפתור חיוג. חינם, נשמר רק בטלפון.",
+  "og_title": "מפת תמיכה – מי עוזר לי במה",
+  "crumbs": [["מפת תמיכה", null]]
+} -->
+<header class="k-hero">
+  <h1>מפת תמיכה</h1>
+  <p class="sub">כשקשה, קשה גם לזכור למי פונים. מפה אחת: מי עוזר לי במה, וכפתור להתקשר.</p>
+</header>
+
+<div class="tool" id="tmicha">
+  <div id="t-list"></div>
+  <p class="saved" id="t-saved" role="status"></p>
+
+  <details class="edit-box" id="t-add" open style="margin-top:1.2rem">
+    <summary>להוסיף אדם למפה</summary>
+    <form id="t-form" class="lead-form">
+      <input type="hidden" id="t-id">
+      <div class="field"><label for="t-n">מי?</label><input id="t-n" type="text" maxlength="40" required placeholder="שם, או תפקיד (למשל: הרופאה שלי)"></div>
+      <div class="field"><label for="t-p">טלפון <span class="opt">(לא חובה)</span></label><input id="t-p" type="tel" maxlength="20" dir="ltr" style="text-align:right" placeholder="050-0000000"></div>
+      <div class="field"><label for="t-g">מאיפה?</label>
+        <select id="t-g"><option>משפחה</option><option>חברים</option><option>רופא/ה ובריאות</option><option>טיפול (מטפל/ת, עו"ס)</option><option>אגף השיקום וזכויות</option><option>קווי תמיכה</option><option>אחר</option></select></div>
+      <div class="field"><span class="label">במה הוא או היא עוזרים לי?</span>
+        <div class="chips" id="t-how">
+          <label><input type="checkbox" value="להקשיב"> להקשיב</label>
+          <label><input type="checkbox" value="להיות איתי"> להיות איתי</label>
+          <label><input type="checkbox" value="להסיע"> להסיע</label>
+          <label><input type="checkbox" value="ניירת ובירוקרטיה"> ניירת ובירוקרטיה</label>
+          <label><input type="checkbox" value="תרופות ובריאות"> תרופות ובריאות</label>
+          <label><input type="checkbox" value="ילדים ובית"> ילדים ובית</label>
+          <label><input type="checkbox" value="לצאת לאוויר"> לצאת לאוויר</label>
+          <label><input type="checkbox" value="לצחוק"> לצחוק</label>
+          <label><input type="checkbox" value="כסף וזכויות"> כסף וזכויות</label>
+        </div></div>
+      <div class="field"><label for="t-how-other">עוד משהו? <span class="opt">(לא חובה)</span></label><input id="t-how-other" type="text" maxlength="60"></div>
+      <button class="big-btn" type="submit">להוסיף למפה</button>
+      <button class="linkish" type="button" id="t-del" hidden>להוריד מהמפה</button>
+    </form>
+  </details>
+
+  <section class="edit-box" style="margin-top:1rem">
+    <p style="font-weight:700;color:var(--cream)">להוסיף בלחיצה</p>
+    <p class="note">מספרים שכדאי שיהיו במפה של כל אחד.</p>
+    <div class="btn-row two">
+      <button class="btn btn-line btn-sm" type="button" data-preset='{"n":"נפש אחת – קו התמיכה לנכי צה\"ל","p":"*8944","g":"קווי תמיכה","h":"להקשיב, בכל שעה"}'>+ נפש אחת <span dir="ltr">*8944</span></button>
+      <button class="btn btn-line btn-sm" type="button" data-preset='{"n":"ער\"ן – עזרה ראשונה נפשית","p":"1201","g":"קווי תמיכה","h":"להקשיב, בכל שעה"}'>+ ער"ן <span dir="ltr">1201</span></button>
+      <button class="btn btn-line btn-sm" type="button" data-preset='{"n":"נט\"ל – סיוע נפשי","p":"*3362","g":"קווי תמיכה","h":"להקשיב, גם למשפחה"}'>+ נט"ל <span dir="ltr">*3362</span></button>
+      <button class="btn btn-line btn-sm" type="button" data-preset='{"n":"מוקד אגף השיקום, משרד הביטחון","p":"*8150","g":"אגף השיקום וזכויות","h":"ניירת ובירוקרטיה, כסף וזכויות"}'>+ אגף השיקום <span dir="ltr">*8150</span></button>
+    </div>
+  </section>
+
+  <div class="local-note"><span class="ic2">🔒</span><span>המפה נשמרת רק בטלפון שלך. שלושת הראשונים אפשר להעתיק בלחיצה ל<a class="gold" href="/nefesh/rega/">מסך רגע קשה</a>.</span></div>
+  <div class="data-acts"><button class="linkish" type="button" data-export="map" data-name="מפת תמיכה">לשמור עותק לקובץ</button><button class="linkish" type="button" data-wipe="map">למחוק מהטלפון</button></div>
+</div>
+
+{{N:help}}
+{{N:foot:מפת תמיכה: מי עוזר לי במה, עם כפתור חיוג ליד כל אחד. כלי חינמי}}
+{{N:join}}

@@ -1,0 +1,63 @@
+/* הלוח השבועי (כלי קודש) – הטופס, והלוח עצמו בגודל A4 בחמישה סגנונות */
+.lv-tool details{border:1px solid var(--line);border-radius:14px;padding:.6rem .9rem;background:rgba(255,255,255,.02)}
+.lv-tool summary{font-family:var(--serif);color:var(--cream);font-size:1.15rem;padding:.3rem 0}
+.lv-tool details[open] summary{margin-bottom:.6rem}
+.lv-row{display:flex;gap:.5rem;margin:.6rem 0}
+.lv-checks{display:grid;grid-template-columns:1fr 1fr;gap:.2rem .8rem}
+.lv-col{border-top:1px solid var(--line);padding:.55rem 0}
+.lv-col-body{display:grid;gap:.4rem;margin-top:.4rem}
+.lv-col-body input,.lv-col-body textarea{width:100%;font:inherit;font-size:1rem;color:var(--cream);background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:10px;padding:.55rem .7rem}
+.lv-col-body textarea{min-height:5rem;resize:vertical}
+.lv-themes{flex-wrap:wrap}
+.lv-h{font-family:var(--serif);color:var(--cream);font-size:1.3rem;margin-top:1.2rem}
+#lv-wrap{max-width:794px;margin:.8rem auto 1rem;padding:0 12px;overflow:hidden;box-sizing:content-box}
+#lv-wrap{width:calc(100% - 24px)}
+
+/* ---------- הלוח ---------- */
+.lv-board{--bg:#f6f3e8;--ink:#1f2416;--soft:#4c5a2c;--acc:#5b6b2e;--line2:#b8b48f;--head:#3f4a22;--headink:#f6f3e8;--box:#fffdf4;
+  width:794px;min-height:1123px;transform-origin:top right;background:var(--bg);color:var(--ink);font-family:"Assistant",Arial,sans-serif;direction:rtl;
+  padding:34px 38px 30px;box-sizing:border-box;display:flex;flex-direction:column;gap:16px;border-radius:4px;box-shadow:0 6px 30px rgba(0,0,0,.35)}
+.lv-board.th-kachol{--bg:#f4f6fb;--ink:#14203a;--soft:#2b3f6b;--acc:#b28a3a;--line2:#c9cfdf;--head:#14203a;--headink:#f1dca6;--box:#ffffff}
+.lv-board.th-klaf{--bg:#f3e8cf;--ink:#2b2114;--soft:#6b4f1a;--acc:#8a6a2a;--line2:#cdb98b;--head:#6b4f1a;--headink:#f8efd9;--box:#faf3e2}
+.lv-board.th-lavan{--bg:#ffffff;--ink:#000;--soft:#222;--acc:#000;--line2:#999;--head:#ffffff;--headink:#000;--box:#fff}
+.lv-board.th-layla{--bg:#0e1628;--ink:#eef0f6;--soft:#d4b062;--acc:#d4b062;--line2:#33415f;--head:#15203a;--headink:#e6c57e;--box:#15203a}
+.b-head{background:var(--head);color:var(--headink);border-radius:14px;padding:18px 22px 14px;text-align:center;position:relative}
+.th-lavan .b-head{border:3px double #000}
+.b-bsd{position:absolute;top:10px;right:16px;font-size:14px;opacity:.85}
+.b-head h2{font-family:"Frank Ruhl Libre",serif;font-weight:900;font-size:46px;line-height:1.1;margin:0}
+.b-unit{font-size:20px;margin-top:4px;opacity:.95}
+.b-week{font-size:17px;margin-top:8px}
+.b-week b{font-family:"Frank Ruhl Libre",serif;font-size:22px}
+.b-zm{width:100%;border-collapse:collapse;font-size:15px;background:var(--box);border-radius:10px;overflow:hidden}
+.b-zm th,.b-zm td{border:1px solid var(--line2);padding:5px 6px;text-align:center;vertical-align:middle}
+.b-zm thead th{background:var(--acc);color:var(--bg);font-weight:700;font-size:14px}
+.th-lavan .b-zm thead th{background:#000;color:#fff}
+.th-layla .b-zm thead th{color:#0e1628}
+.b-zm tbody th{text-align:right;font-weight:700;white-space:nowrap}
+.b-zm tbody th small{display:block;font-weight:400;font-size:12px;opacity:.8}
+.b-zm td{direction:ltr;font-variant-numeric:tabular-nums}
+.b-zm td.n{direction:rtl;font-size:13px;line-height:1.35;text-align:right}
+.b-zm tr.sh{background:rgba(0,0,0,.05)}
+.th-layla .b-zm tr.sh{background:rgba(255,255,255,.06)}
+.b-place{font-size:11.5px;opacity:.7;margin-top:-10px;text-align:center}
+.b-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1;align-content:start}
+.b-col{background:var(--box);border:1px solid var(--line2);border-top:4px solid var(--acc);border-radius:10px;padding:10px 14px 12px}
+.b-col.wide{grid-column:1/-1}
+.b-col h3{font-family:"Frank Ruhl Libre",serif;font-weight:700;color:var(--soft);font-size:21px;margin:0 0 4px}
+.b-col p{font-size:15.5px;line-height:1.55;margin:0;white-space:normal}
+.b-empty{flex:1;display:grid;place-items:center;border:2px dashed var(--line2);border-radius:12px;opacity:.6;font-size:16px;padding:40px}
+.b-foot{text-align:center;border-top:2px solid var(--acc);padding-top:12px}
+.b-pasuk{font-family:"Frank Ruhl Libre",serif;font-weight:700;font-size:22px;color:var(--soft);line-height:1.35}
+.b-pasuk small{display:block;font-family:"Assistant",sans-serif;font-weight:400;font-size:13px;opacity:.75;margin-top:2px}
+.b-sig{font-family:"Frank Ruhl Libre",serif;font-size:19px;margin-top:6px}
+.b-credit{font-size:10.5px;opacity:.55;margin-top:6px;direction:rtl}
+
+@media print{
+  @page{size:A4;margin:0}
+  html,body{background:#fff!important}
+  body *{visibility:hidden}
+  .topbar,.site-foot,.crumbs,.install-bar,.no-print{display:none!important}
+  #lv-wrap,#lv-wrap *{visibility:visible}
+  #lv-wrap{position:absolute;top:0;right:0;margin:0;padding:0;width:210mm!important;height:auto!important;max-width:none}
+  .lv-board{transform:none!important;box-shadow:none;border-radius:0;width:210mm;min-height:296mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
