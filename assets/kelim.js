@@ -87,7 +87,8 @@
         var ct = g('contact'), isMail = ct.indexOf('@') > -1;
         fd.append('טלפון', isMail ? '' : ct); fd.append('email', isMail ? ct : '');
         fd.append('עיר', 'שיפור כלי · ' + site + ' · ' + toolName);
-        fd.append('מקור', 'כלים: שיפור · ' + toolName + ' (' + toolId + ') · ' + g('what'));
+        var nameOk = form.querySelector('[name=name_ok]:checked') && g('name') ? ' · ✔ מותר לפרסם שם פרטי' : '';
+        fd.append('מקור', 'כלים: שיפור · ' + toolName + ' (' + toolId + ') · ' + g('what') + nameOk);
       } else fd.append('טלפון', g('phone'));
       if (kind === 'shipur') {}
       else if (kind === 'tool') {
