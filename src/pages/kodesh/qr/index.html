@@ -1,0 +1,43 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "qr_shelet",
+  "title": "שלט QR לבית הכנסת ולשיעור: קבוצת ווטסאפ, קישור או טלפון | כלי קודש",
+  "description": "שלט עם קוד QR לתלייה בבית הכנסת: הצטרפות לקבוצת הווטסאפ, זמני התפילות, תרומה, הקלטות השיעורים או טלפון של הגבאי. מקלידים קישור, מוסיפים כותרת, ומדפיסים. בחינם.",
+  "og_title": "שלט QR לבית הכנסת – להדפסה בדקה",
+  "priority": "0.7",
+  "crumbs": [["שלט QR לבית הכנסת", null]],
+  "head": "<style>#qr-canvas{display:block;width:100%;height:auto;border-radius:14px;border:1px solid var(--line);margin-top:1rem;background:#000}.qr-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}#kc-print{display:none}@media print{@page{size:A5;margin:0}body>*:not(#kc-print){display:none!important}#kc-print{display:block}#kc-print img{width:100%;height:auto;display:block}}</style>",
+  "foot": "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js\" defer></script><script src=\"/assets/kcard.js\" defer></script><script src=\"/assets/qr-shelet.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>שלט QR לבית הכנסת</h1>
+  <p class="sub">קבוצת ווטסאפ, זמני תפילות, תרומה, הקלטות שיעורים או הטלפון של הגבאי. מקלידים קישור, מוסיפים כותרת, ומדפיסים שלט לתלייה.</p>
+</header>
+<div class="tool">
+  <form class="k-form lead-form" id="qr-form" novalidate>
+    <div class="qr-row">
+      <div class="field"><label for="qr-type">לאן הקוד מוביל?</label><select id="qr-type" name="type"><option value="group">קבוצת ווטסאפ</option><option value="link">קישור לאתר או לדף</option><option value="wa">ווטסאפ אישי</option><option value="phone">שיחת טלפון</option></select></div>
+      <div class="field"><label for="qr-val" id="qr-val-l">קישור ההזמנה לקבוצה</label><input id="qr-val" name="val" type="text" maxlength="300" dir="ltr" style="text-align:right" placeholder="https://chat.whatsapp.com/..."></div>
+    </div>
+    <div class="field"><label for="qr-title">כותרת השלט</label><input id="qr-title" name="title" type="text" maxlength="50" placeholder="הצטרפו לקבוצת בית הכנסת"></div>
+    <div class="field"><label for="qr-sub">שורת הסבר <span class="opt">(לא חובה)</span></label><input id="qr-sub" name="sub" type="text" maxlength="70" placeholder="זמני תפילות, שיעורים והודעות, ישר לטלפון"></div>
+    <div class="qr-row">
+      <div class="field"><label for="qr-cta">מתחת לקוד <span class="opt">(לא חובה)</span></label><input id="qr-cta" name="cta" type="text" maxlength="40" placeholder="סורקים ומצטרפים לקבוצה"></div>
+      <div class="field"><label for="qr-org">בית הכנסת <span class="opt">(לא חובה)</span></label><input id="qr-org" name="org" type="text" maxlength="40" placeholder="בית הכנסת אהל יצחק"></div>
+    </div>
+    <div class="qr-row">
+      <div class="field"><label for="qr-theme">עיצוב</label><select id="qr-theme" name="theme"><option value="night">כחול וזהב</option><option value="paper">לבן נקי (חוסך דיו)</option><option value="parch">קלף</option><option value="black">שחור וזהב</option><option value="sky">תכלת</option></select></div>
+      <div class="field"><label for="qr-size">גודל</label><select id="qr-size" name="size"><option value="a5">דף A5</option><option value="square">ריבוע (לווטסאפ)</option></select></div>
+    </div>
+  </form>
+  <canvas id="qr-canvas" width="1240" height="1754" role="img" aria-label="תצוגה מקדימה של השלט"></canvas>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="qr-print">להדפיס שלט</button>
+    <button class="btn btn-line btn-sm" type="button" id="qr-share"><svg class="ic"><use href="#wa"/></svg> לשתף כתמונה</button>
+    <button class="btn btn-line btn-sm" type="button" id="qr-dl">לשמור את התמונה</button>
+  </div>
+  <p class="ios-tip" id="qr-tip" hidden>התמונה נשמרה בטלפון.</p>
+  <p class="disclaimer">לפני שתולים, סורקים את השלט בטלפון ומוודאים שהוא מוביל למקום הנכון. הקישור נשאר בטלפון שלכם ולא נשמר אצלנו.</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/">כלי קודש</a>. דף שלם לבית הכנסת עם QR: <a class="gold" href="/kodesh/beit-knesset/">דף לבית הכנסת</a>.</p>
+</div>
