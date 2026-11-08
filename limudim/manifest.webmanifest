@@ -1,0 +1,26 @@
+{
+ "name": "כלים ללימודים",
+ "short_name": "כלים ללימודים",
+ "description": "כלים פשוטים ללמידה: כרטיסיות חזרה, תוכנית למבחן, טיימר, ולימוד יומי לסיום התנ״ך והמשנה. בחינם.",
+ "id": "/limudim/",
+ "start_url": "/limudim/?utm_source=pwa",
+ "scope": "/limudim/",
+ "display": "standalone",
+ "background_color": "#141c2b",
+ "theme_color": "#141c2b",
+ "dir": "rtl",
+ "lang": "he",
+ "icons": [
+  {
+   "src": "/assets/icon-limudim-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "/assets/icon-limudim-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  }
+ ]
+}
