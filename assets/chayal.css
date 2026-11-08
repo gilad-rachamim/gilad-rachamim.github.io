@@ -1,0 +1,36 @@
+/* דף כיס לחייל (/kodesh/chayal/). כרטיס = A6 (105×148 מ"מ), ארבעה בדף A4. */
+.ch-h{font-family:var(--serif);color:var(--cream);font-size:1.3rem;text-align:center;margin:1.6rem 0 .6rem}
+.ch-tip{color:var(--muted);font-size:.95rem;text-align:center}
+.radios{display:flex;flex-wrap:wrap;gap:.5rem 1rem;color:var(--body)}
+.ch-preview{display:flex;flex-wrap:wrap;justify-content:center;gap:1rem;padding:0 1rem 1rem;max-width:60rem;margin:0 auto}
+.ch-preview.shot{padding:1rem;background:#fff;max-width:none;width:max-content;flex-wrap:nowrap}
+.ch-empty{color:var(--muted)}
+.card{position:relative;box-sizing:border-box;width:105mm;height:148mm;padding:6mm 6.5mm 5mm;overflow:hidden;direction:rtl;
+  font-family:var(--serif);font-size:9.6pt;line-height:1.42;background:#fff;color:#1b1b1b;border:1px solid #c9c2ad;border-radius:3mm;display:flex;flex-direction:column}
+.card .bsd{position:absolute;top:2.6mm;left:4mm;font-size:7pt;color:#777}
+.card h3{font-size:12.5pt;font-weight:700;text-align:center;margin:0 0 1.2mm;color:#2a3a20;border-bottom:.3mm solid #b9a46a;padding-bottom:1mm}
+.card .cs+.cs{margin-top:3.5mm}
+.card p{margin:0 0 1.4mm;text-align:justify}
+.card p.i{font-size:8pt;color:#555;text-align:center;font-family:var(--sans)}
+.card span.i{font-size:8pt;color:#555;font-family:var(--sans)}
+.card p.big{font-size:11.5pt;font-weight:700;text-align:center;margin-top:1.5mm}
+.card footer{margin-top:auto;padding-top:1.5mm;border-top:.3mm dashed #b9a46a;text-align:center}
+.card .ps{font-size:8.6pt;text-align:center;margin:0}
+.card .ps small{font-size:7pt;color:#666}
+.card .un{font-size:8.4pt;font-weight:700;margin:.8mm 0 0;text-align:center}
+.card.t-zayit{background:#f1f3e6;border-color:#55663a}
+.card.t-zayit h3{color:#3c4d22}
+.card.t-klaf{background:#f6eedb;border-color:#a88a4b}
+.card.t-klaf h3{color:#6b4f1d}
+.ch-print{display:none}
+@media (max-width:460px){.ch-preview .card{zoom:.82}}
+@media print{
+  @page{size:A4;margin:0}
+  html,body{background:#fff!important}
+  body *{visibility:hidden}
+  .topbar,.site-foot,.crumbs,.install-bar,.no-print,.ch-preview{display:none!important}
+  .ch-print,.ch-print *{visibility:visible}
+  .ch-print{display:block;position:absolute;top:0;right:0;width:210mm}
+  .ch-print .sheet{width:210mm;height:296mm;display:grid;grid-template-columns:105mm 105mm;grid-template-rows:148mm 148mm;page-break-after:always;break-after:page}
+  .ch-print .card{border-radius:0;border:0;outline:.2mm dashed #bbb;outline-offset:-.1mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
