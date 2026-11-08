@@ -1,0 +1,101 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "mohalim",
+  "tool": "britot",
+  "title": "יומן הבריתות שלי: מעקב אחרי בריתות למוהל, בחינם | כלי קודש",
+  "description": "למוהלים: רושמים כל ברית בדקה מהטלפון (הורים, תאריך עברי ולועזי, שעה, מקום, סנדק), מסמנים שראיתם את התינוק והורדתם תחבושת, ומקבלים תזכורות וקובץ לאקסל ולוורד. גם קובץ וורד למילוי ותבנית לווטסאפ. הכול נשמר אצלכם בלבד.",
+  "og_title": "יומן הבריתות שלי – מעקב אחרי בריתות למוהל",
+  "priority": "0.6",
+  "crumbs": [["כלים למוהלים", "/kodesh/mohalim/"], ["יומן הבריתות שלי", null]],
+  "head": "<style>.bt-top{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin:.4rem 0 1rem}.bt-stats{display:flex;justify-content:center;gap:1.4rem;color:var(--muted);margin:.2rem 0 1rem}.bt-stats b{display:block;text-align:center;font-family:var(--serif);font-size:1.6rem;color:var(--cream)}.bt-todo{margin:0 0 1.2rem;padding:1rem 1.1rem;border:1px solid var(--gold-soft);border-radius:16px;background:linear-gradient(170deg,rgba(216,179,95,.13),rgba(216,179,95,.02) 60%)}.bt-todo h2{font-family:var(--serif);color:var(--cream);font-size:1.25rem;margin-bottom:.5rem}.bt-todo ul{list-style:none;display:grid;gap:.5rem;color:var(--body)}.bt-todo li{padding-inline-start:.8rem;border-inline-start:2px solid var(--gold)}.bt-todo .due{color:var(--gold)}.mini{font:inherit;font-size:.88rem;margin-inline-start:.3rem;padding:.15rem .6rem;border-radius:99px;border:1px solid var(--gold-soft);background:transparent;color:var(--parchment);cursor:pointer}.bt-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}.bt-heb{color:var(--gold);font-size:.95rem;min-height:1.2em}.bt-checks{display:grid;gap:.55rem;padding:.8rem .9rem;border:1px dashed var(--line);border-radius:12px}.bt-q{width:100%;font:inherit;font-size:1.05rem;color:var(--cream);background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;padding:.65rem .85rem;margin-bottom:.8rem}.bt-list{display:grid;gap:.8rem}.bt-card{padding:1rem 1rem .9rem;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.03)}.bt-card h3{font-family:var(--serif);color:var(--cream);font-size:1.3rem;line-height:1.3}.bt-card h3 small{font-family:inherit;font-size:1rem;color:var(--muted);font-weight:400}.bt-meta{color:var(--body);font-size:.98rem;line-height:1.65;margin-top:.3rem}.bt-chips{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.7rem}.chip{font:inherit;font-size:.95rem;padding:.35rem .8rem;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}.chip.on{background:rgba(95,191,166,.15);border-color:rgba(95,191,166,.55);color:var(--cream)}.bt-acts{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.75rem}.bt-acts .btn{display:inline-flex}.bt-del{opacity:.7}.bt-none,.bt-empty{color:var(--muted);text-align:center;padding:1rem}.bt-more{display:grid;gap:.8rem;margin-top:1rem}.bt-more .tip{margin:0}.bt-wa{white-space:pre-wrap;font-size:1rem;line-height:1.7;padding:.9rem 1rem;border-radius:12px;background:#0b2a22;color:#e9f5ee;border:1px solid rgba(95,191,166,.35);margin-top:.6rem}#bt-printarea{display:none}@media (max-width:520px){.bt-row{grid-template-columns:1fr}}@media print{body *{visibility:hidden}.topbar,.site-foot,.crumbs,.install-bar{display:none!important}#bt-printarea,#bt-printarea *{visibility:visible}#bt-printarea{display:block;position:absolute;top:0;right:0;left:0;background:#fff;color:#000}#bt-printarea table{width:100%}@page{size:A4 landscape;margin:10mm}}</style>",
+  "foot": "<script src=\"/assets/britot.js\" defer></script><script>document.addEventListener('click',function(e){var b=e.target.closest('[data-copy-tpl]');if(!b)return;var t=document.getElementById('bt-tpl').innerText;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent='הועתק ✓ עכשיו להדביק בווטסאפ';}).catch(function(){b.textContent='סמנו את הטקסט והעתיקו';});if(window.kelimEv)window.kelimEv('britot_export',{tool:'britot',how:'wa_template'});});</script>"
+} -->
+<header class="k-hero">
+  <h1>יומן הבריתות שלי</h1>
+  <p class="sub">רושמים כל ברית בדקה מהטלפון, ומקבלים מעקב מסודר: מה עוד נשאר לעשות, תזכורות, וקובץ לאקסל ולוורד. הכול נשמר אצלכם בטלפון בלבד.</p>
+</header>
+<div class="tool">
+  <div class="bt-top">
+    <button class="btn btn-gold" type="button" id="bt-new">+ ברית חדשה</button>
+  </div>
+  <div class="bt-stats" id="bt-stats" hidden></div>
+
+  <section class="bt-todo" id="bt-todo" hidden aria-labelledby="bt-todo-h">
+    <h2 id="bt-todo-h">מה נשאר לעשות</h2>
+    <ul id="bt-todo-list"></ul>
+  </section>
+
+  <section id="bt-formbox" hidden aria-labelledby="bt-form-h">
+    <form class="k-form" id="bt-form" novalidate autocomplete="off">
+      <h2 id="bt-form-h" style="font-family:var(--serif);color:var(--cream);font-size:1.35rem">ברית חדשה</h2>
+      <input type="hidden" name="id_">
+      <div class="field"><label for="bt-parents">שם ההורים</label><input id="bt-parents" name="parents" type="text" maxlength="80" placeholder="למשל: משה ורחל כהן"></div>
+      <div class="bt-row">
+        <div class="field"><label for="bt-date">תאריך הברית</label><input id="bt-date" name="date" type="date" required><span class="bt-heb" id="bt-heb"></span></div>
+        <div class="field"><label for="bt-time">שעת הברית</label><input id="bt-time" name="time" type="time"></div>
+      </div>
+      <div class="field"><label for="bt-place">מקום הברית</label><input id="bt-place" name="place" type="text" maxlength="100" placeholder="בית כנסת, אולם, עיר"></div>
+      <div class="bt-checks">
+        <label class="check"><input type="checkbox" name="saw"> <span>ראיתי את התינוק</span></label>
+        <label class="check"><input type="checkbox" name="bandage"> <span>הורדתי לו את התחבושת למחרת</span></label>
+      </div>
+      <div class="bt-row">
+        <div class="field"><label for="bt-baby">שם התינוק <span class="opt">(לא חובה)</span></label><input id="bt-baby" name="baby" type="text" maxlength="40"></div>
+        <div class="field"><label for="bt-phone">טלפון ההורים <span class="opt">(לא חובה)</span></label><input id="bt-phone" name="phone" type="tel" inputmode="tel" maxlength="20" dir="ltr" style="text-align:right" placeholder="050-0000000"></div>
+      </div>
+      <div class="bt-row">
+        <div class="field"><label for="bt-sandak">סנדק <span class="opt">(לא חובה)</span></label><input id="bt-sandak" name="sandak" type="text" maxlength="60"></div>
+        <div class="field"><label for="bt-birth">תאריך הלידה <span class="opt">(לא חובה)</span></label><input id="bt-birth" name="birth" type="date"></div>
+      </div>
+      <label class="check"><input type="checkbox" name="bechor"> <span>בכור לאמו: להזכיר את מועד פדיון הבן <span class="opt">(היום ה-31 ללידה. בלי תאריך לידה, לפי שבעה ימים לפני הברית)</span></span></label>
+      <div class="field"><label for="bt-notes">הערות <span class="opt">(לא חובה)</span></label><textarea id="bt-notes" name="notes" rows="3" maxlength="500" placeholder="צהבת, משקל, הנחיות שנתתי, מה לבדוק בביקור"></textarea></div>
+      <div class="share-row" style="justify-content:flex-start;margin:0">
+        <button class="btn btn-gold" type="submit">לשמור</button>
+        <button class="btn btn-line" type="button" id="bt-cancel">ביטול</button>
+      </div>
+    </form>
+  </section>
+
+  <p class="bt-empty" id="bt-empty">עדיין אין בריתות ביומן. לוחצים "ברית חדשה" ומתחילים.</p>
+  <input class="bt-q" id="bt-q" type="search" placeholder="חיפוש לפי שם, מקום, סנדק…" aria-label="חיפוש ביומן">
+  <div class="bt-list" id="bt-list"></div>
+
+  <div id="bt-tools" hidden>
+    <div class="share-row">
+      <button class="btn btn-line btn-sm" type="button" id="bt-csv">להוריד לאקסל</button>
+      <button class="btn btn-line btn-sm" type="button" id="bt-doc">להוריד לוורד</button>
+      <button class="btn btn-line btn-sm" type="button" id="bt-print">להדפיס / PDF</button>
+    </div>
+  </div>
+  <div class="share-row">
+    <button class="btn btn-line btn-sm" type="button" id="bt-backup">גיבוי לקובץ</button>
+    <label class="btn btn-line btn-sm" style="cursor:pointer">שחזור מגיבוי<input type="file" id="bt-restore" accept=".json,application/json" hidden></label>
+  </div>
+  <p class="disclaimer" id="bt-bnote" hidden>עבר חודש מהגיבוי האחרון. כדאי ללחוץ "גיבוי לקובץ" ולשמור את הקובץ בדרייב או לשלוח אותו לעצמכם.</p>
+  <p class="disclaimer">היומן נשמר רק בטלפון הזה. שום פרט לא נשלח לאתר או אליי. כדי לא לאבד, מגבים לקובץ מדי פעם.</p>
+
+  <section class="bt-more" aria-labelledby="bt-more-h">
+    <h2 id="bt-more-h" style="font-family:var(--serif);color:var(--cream);font-size:1.4rem;text-align:center;margin-top:1.4rem">בלי אתר: קובץ וורד או תבנית לווטסאפ</h2>
+    <div class="tip"><b>קובץ וורד למילוי</b><p>טבלה מסודרת עם כל הפרטים, למילוי במחשב או בכתב יד אחרי הדפסה.</p>
+      <div class="share-row" style="justify-content:flex-start"><a class="btn btn-gold btn-sm" href="/kodesh/britot/yoman-britot.docx" download data-share="britot_docx">להוריד את קובץ הוורד</a></div></div>
+    <div class="tip"><b>תבנית לווטסאפ</b><p>שומרים אותה בצ'אט עם עצמכם. בכל ברית מעתיקים, ממלאים ושולחים לעצמכם. כשראיתם את התינוק או הורדתם תחבושת, עונים על ההודעה ✅. החיפוש בווטסאפ ימצא כל ברית לפי שם.</p>
+      <div class="bt-wa" id="bt-tpl">*🍼 ברית מילה – יומן*
+━━━━━━━━━━
+👨‍👩‍👦 *שם ההורים:*
+📅 *תאריך הברית:*
+🕰️ *שעה:*
+📍 *מקום:*
+👶 *שם התינוק:*
+📞 *טלפון:*
+🤝 *סנדק:*
+━━━━━━━━━━
+👀 *ראיתי את התינוק:* ⬜
+🩹 *הורדתי תחבושת למחרת:* ⬜
+📝 *הערות:*
+━━━━━━━━━━
+_יומן הבריתות של גילעד רחמים, מוהל מוסמך · 058-404-9049_</div>
+      <div class="share-row" style="justify-content:flex-start"><button class="btn btn-gold btn-sm" type="button" data-copy-tpl>להעתיק את התבנית</button></div></div>
+  </section>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/mohalim/">הכלים למוהלים</a>. נבנה לבקשת מוהל מפורום המוהלים. רוצים שאוסיף משהו? <a class="gold" href="https://wa.me/972584049049?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%92%D7%99%D7%9C%D7%A2%D7%93%2C%20%D7%A8%D7%90%D7%99%D7%AA%D7%99%20%D7%90%D7%AA%20%D7%99%D7%95%D7%9E%D7%9F%20%D7%94%D7%91%D7%A8%D7%99%D7%AA%D7%95%D7%AA.%20">כתבו לי</a>.</p>
+</div>
+<div id="bt-printarea" dir="rtl"></div>

@@ -1,0 +1,45 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "azkara",
+  "title": "מודעת אזכרה ושלושים: שלושים, יום השנה, הקמת מצבה וימי השבעה | כלי קודש",
+  "description": "מודעה מכובדת ושקטה לאזכרה: שלושים, אזכרה שנתית, הקמת מצבה וימי השבעה. ממלאים שם, מתי ואיפה, ומקבלים תמונה וטקסט לווטסאפ עם ניווט, ודף להדפסה. בחינם, בלי הרשמה.",
+  "og_title": "מודעת אזכרה ושלושים – תמונה וטקסט לווטסאפ",
+  "priority": "0.7",
+  "crumbs": [["מודעת אזכרה ושלושים", null]],
+  "head": "<style>#az-canvas{display:block;width:100%;height:auto;border-radius:14px;border:1px solid var(--line);margin-top:1rem;background:#000}.az-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}#kc-print{display:none}@media print{@page{size:A5;margin:0}body>*:not(#kc-print){display:none!important}#kc-print{display:block}#kc-print img{width:100%;height:auto;display:block}}</style>",
+  "foot": "<script src=\"/assets/kcard.js\" defer></script><script src=\"/assets/azkara.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מודעת אזכרה ושלושים</h1>
+  <p class="sub">שלושים, יום השנה, הקמת מצבה וימי השבעה. ממלאים שם, מתי ואיפה, ומקבלים מודעה מכובדת לווטסאפ ולהדפסה.</p>
+</header>
+<div class="tool">
+  <form class="k-form lead-form" id="az-form" novalidate>
+    <div class="field"><label for="az-k">סוג המודעה</label><select id="az-k" name="k"><option value="shloshim">אזכרה במלאות שלושים</option><option value="shana">אזכרה במלאות שנה</option><option value="yahrzeit">אזכרה ביום השנה</option><option value="matzeva">הקמת מצבה</option><option value="shiva">ימי השבעה</option></select></div>
+    <div class="field"><label for="az-name">שם הנפטר או הנפטרת</label><input id="az-name" name="name" type="text" maxlength="50" placeholder="ר' יעקב בן שרה כהן ז&quot;ל"></div>
+    <div class="field"><label for="az-rel">שורה מתחת לשם <span class="opt">(לא חובה)</span></label><input id="az-rel" name="rel" type="text" maxlength="60" placeholder="אבינו, סבנו ובעלה האהוב של רחל"></div>
+    <div class="az-row">
+      <div class="field"><label for="az-date" id="az-date-l">מתי</label><input id="az-date" name="date" type="text" maxlength="50" placeholder="יום שלישי, ט&quot;ו בכסלו"></div>
+      <div class="field"><label for="az-time">שעה</label><input id="az-time" name="time" type="text" maxlength="30" placeholder="16:00"></div>
+    </div>
+    <div class="field"><label for="az-place" id="az-place-l">איפה</label><input id="az-place" name="place" type="text" maxlength="70" placeholder="בית העלמין הר המנוחות, ירושלים"></div>
+    <div class="field"><label for="az-note">שורה נוספת <span class="opt">(לא חובה)</span></label><input id="az-note" name="note" type="text" maxlength="80" placeholder="לאחר מכן שיעור ודברי תורה לעילוי נשמתו בבית הכנסת"></div>
+    <div class="field"><label for="az-family">חתימה</label><input id="az-family" name="family" type="text" maxlength="50" placeholder="המשפחה"></div>
+    <div class="az-row">
+      <div class="field"><label for="az-theme">עיצוב</label><select id="az-theme" name="theme"><option value="stone">אפור שקט</option><option value="paper">לבן נקי</option><option value="night">כחול כהה</option><option value="parch">קלף</option></select></div>
+      <div class="field"><label for="az-size">גודל</label><select id="az-size" name="size"><option value="square">ריבוע (קבוצה)</option><option value="story">לגובה (סטטוס)</option><option value="a5">דף A5</option></select></div>
+    </div>
+  </form>
+  <canvas id="az-canvas" width="1080" height="1080" role="img" aria-label="תצוגה מקדימה של המודעה"></canvas>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="az-share"><svg class="ic"><use href="#wa"/></svg> לשתף את התמונה</button>
+    <a class="btn btn-line btn-sm" href="https://wa.me/" id="az-wa" target="_blank" rel="noopener">לשלוח כטקסט בווטסאפ</a>
+    <button class="btn btn-line btn-sm" type="button" id="az-print">להדפיס</button>
+    <button class="btn btn-line btn-sm" type="button" id="az-dl">לשמור את התמונה</button>
+    <button class="btn btn-line btn-sm" type="button" id="az-text">להעתיק כטקסט</button>
+  </div>
+  <p class="ios-tip" id="az-tip" hidden>התמונה נשמרה בטלפון. עכשיו פותחים את הווטסאפ, ומצרפים אותה מהגלריה.</p>
+  <p class="disclaimer">את התאריך העברי של השלושים ושל יום השנה אפשר לחשב ב<a class="gold" href="/kodesh/taarichim/">מחשבון התאריכים</a>. המודעה נוצרת בטלפון שלכם ולא נשמרת אצלנו.</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/">כלי קודש</a>. נוסחים לניחום אבלים: <a class="gold" href="/kodesh/brachot/#nichum">ברכות לכל אירוע</a>.</p>
+</div>

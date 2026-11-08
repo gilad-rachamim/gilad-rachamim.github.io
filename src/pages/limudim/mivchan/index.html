@@ -1,0 +1,52 @@
+<!--meta {
+  "site": "limudim",
+  "nav": "mivchan",
+  "tool": "mivchan",
+  "title": "מתכנן למידה למבחן – תאריך ונושאים, ומקבלים תוכנית יומית ליומן | כלים ללימודים",
+  "description": "כותבים את תאריך המבחן ואת הנושאים, ומקבלים תוכנית לימוד יום אחרי יום, עם חזרות קצרות וימי חזרה כללית בסוף. מסמנים מה נלמד, ומכניסים ליומן בקובץ אחד. חינם, נשמר בטלפון.",
+  "og_title": "מתכנן למידה למבחן – חינם",
+  "crumbs": [["מתכנן למבחן", null]]
+} -->
+<header class="k-hero no-print">
+  <h1>מתכנן למידה למבחן</h1>
+  <p class="sub">כמה נושאים, כמה ימים, ומה לומדים היום. התוכנית מחלקת את החומר, ומשאירה ימים לחזרה לפני המבחן.</p>
+</header>
+
+<div class="tool">
+  <div class="panel no-print" id="mv-plans-wrap" hidden>
+    <div class="field"><label for="mv-plans">המבחנים שלי</label><select id="mv-plans"></select></div>
+    <div class="btns"><button class="btn btn-line btn-sm" type="button" id="mv-newplan">+ מבחן חדש</button><button class="linkish" type="button" id="mv-del">למחוק את התוכנית</button></div>
+  </div>
+
+  <div id="mv-out" hidden style="margin-top:1.2rem">
+    <div class="sum-box" id="mv-sum"></div>
+    <div class="btns c no-print" style="margin-top:1rem"><button class="btn btn-gold btn-sm" type="button" id="mv-ics">להכניס ליומן (קובץ ics)</button><button class="btn btn-line btn-sm" type="button" id="mv-print">להדפיס / PDF</button></div>
+    <p class="ios-tip no-print" id="mv-tip" hidden>הקובץ ירד. פותחים אותו, והיומן (גוגל, אייפון או אאוטלוק) מציע להוסיף את כל ימי הלימוד, עם תזכורת 5 דקות לפני. ביומן גוגל במחשב: הגדרות ← ייבוא.</p>
+    <table class="plan" style="margin-top:1rem"><tbody id="mv-table"></tbody></table>
+    <p class="note no-print" style="margin-top:.8rem">מסמנים ✓ בכל יום שלמדת. פספסת יום? זה קורה. אפשר לשנות את התאריכים ולבנות שוב, והסימונים נשמרים.</p>
+  </div>
+
+  <form class="panel no-print" id="mv-form" novalidate>
+    <div class="field"><label for="mv-name">איזה מבחן?</label><input id="mv-name" type="text" maxlength="50" placeholder="למשל: בגרות באנגלית, מבחן ברבנות בהלכות שבת"></div>
+    <div class="row2">
+      <div class="field"><label for="mv-date">תאריך המבחן</label><input id="mv-date" type="date" required></div>
+      <div class="field"><label for="mv-start">מתחילים ללמוד ב</label><input id="mv-start" type="date"></div>
+    </div>
+    <div class="field"><label for="mv-topics">הנושאים, שורה לכל נושא <span class="opt">(אפשר להדביק מהסילבוס)</span></label>
+      <textarea id="mv-topics" placeholder="זמנים בעבר&#10;אוצר מילים יחידה 1&#10;הבנת הנקרא&#10;כתיבת חיבור"></textarea></div>
+    <div class="row2">
+      <div class="field"><label for="mv-rev">ימי חזרה כללית לפני המבחן</label><select id="mv-rev"><option value="0">בלי</option><option value="1">יום אחד</option><option value="2" selected>יומיים</option><option value="3">3 ימים</option><option value="4">4 ימים</option><option value="5">5 ימים</option></select></div>
+      <div class="field"><label for="mv-mins">כמה דקות ביום?</label><select id="mv-mins"><option value="30">חצי שעה</option><option value="45">45 דקות</option><option value="60" selected>שעה</option><option value="90">שעה וחצי</option><option value="120">שעתיים</option><option value="180">3 שעות</option></select></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label for="mv-time">באיזו שעה ביומן?</label><input id="mv-time" type="time" value="18:00"></div>
+      <div class="checks" style="align-self:end"><label><input type="checkbox" id="mv-shabbat" checked> בלי לימוד בשבת</label><label><input type="checkbox" id="mv-fri"> גם בלי שישי</label></div>
+    </div>
+    <button class="btn btn-gold btn-block big" type="submit">לבנות לי תוכנית</button>
+    <p class="status" id="mv-st" role="status"></p>
+  </form>
+
+  <div class="local-note no-print"><span>🔒</span><span>התוכנית נשמרת רק בטלפון הזה.</span></div>
+  <div class="share-row no-print"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="מתכנן למידה למבחן בחינם: תאריך ונושאים, ומקבלים תוכנית יומית ליומן" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר בווטסאפ</a></div>
+  <p class="disclaimer no-print">רוצים לזכור את החומר? <a class="gold" href="/limudim/kartisiot/">כרטיסיות חזרה</a> · ללמוד בריכוז? <a class="gold" href="/limudim/timer/">טיימר למידה</a></p>
+</div>
