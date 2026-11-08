@@ -179,6 +179,15 @@ body = f"""<!--meta {json.dumps(meta, ensure_ascii=False, indent=2)} -->
         </div>
       </article>
       <article class="tl">
+        <svg class="ic" aria-hidden="true"><use href="#wa"/></svg>
+        <div>
+          <h3>טופס פרטי הברית</h3>
+          <p>שולחים להורים קישור אישי, והם ממלאים בטלפון את פרטי הלידה, המשקל, הצהבת, מקום ושעת הברית, הנוסח והסנדק. הטופס מחשב את מועד הברית, והכול מגיע אליכם בהודעת ווטסאפ אחת מסודרת. לחיצה אחת בהודעה מכניסה את הברית ליומן.</p>
+          <p class="tl-note">בלי אתר? יש גם תבנית לווטסאפ וקובץ וורד להדפסה.</p>
+          <div class="tl-go"><a class="btn btn-gold btn-sm" href="/kodesh/tofes-brit/?utm_source=lemohalim&amp;utm_medium=site#tb-mk-h">להכין קישור אישי</a><a class="btn btn-line btn-sm" href="/kodesh/tofes-brit/tofes-brit.docx" download data-share="tofes_brit_docx">קובץ וורד</a></div>
+        </div>
+      </article>
+      <article class="tl">
         <svg class="ic" aria-hidden="true"><use href="#tel"/></svg>
         <div>
           <h3>כרטיס ביקור דיגיטלי</h3>
@@ -194,6 +203,15 @@ body = f"""<!--meta {json.dumps(meta, ensure_ascii=False, indent=2)} -->
           <p>הודעת ווטסאפ מוכנה לכל שלב: אחרי שיחת ההיכרות, יום לפני הברית, ערב הברית, ומיום הברית ועד שבוע אחרי, וגם "מתי להתקשר אליי מיד". ממלאים פעם אחת שם וטלפון, ושולחים להורים בלחיצה.</p>
           <p class="tl-note">בלי אתר? יש גם קובץ וורד עם כל ההודעות.</p>
           <div class="tl-go"><a class="btn btn-gold btn-sm" href="/kodesh/hachlama/?utm_source=lemohalim&amp;utm_medium=site">לפתוח את ההודעות</a><a class="btn btn-line btn-sm" href="/kodesh/hachlama/hodaot-hachlama.docx" download data-share="hachlama_docx">קובץ וורד</a></div>
+        </div>
+      </article>
+      <article class="tl">
+        <svg class="ic" aria-hidden="true"><use href="#cal"/></svg>
+        <div>
+          <h3>לוח בריתות מיוחדות לשנה</h3>
+          <p>לכל יום לידה: מתי היום השמיני חל בשבת, ביום טוב, ביום כיפור, בתשעה באב, בחנוכה, בפורים או בצום, וההלכה בקצרה עם מקורות. יש גם מחשבון "נולד ב...", כולל בין השמשות וניתוח קיסרי.</p>
+          <p class="tl-note">בלי אתר? יש PDF מוכן להדפסה של כל השנה.</p>
+          <div class="tl-go"><a class="btn btn-gold btn-sm" href="/kodesh/britot-meyuchadot/?utm_source=lemohalim&amp;utm_medium=site">לפתוח את הלוח</a><a class="btn btn-line btn-sm" href="/kodesh/britot-meyuchadot/britot-meyuchadot-5787.pdf" download data-share="bm_pdf">PDF לתשפ"ז</a></div>
         </div>
       </article>
     </div>
