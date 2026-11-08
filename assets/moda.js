@@ -5,7 +5,8 @@
   var form = $('md-form'), poster = $('mo-poster');
   if (!form || !poster) return;
   var KEY = 'kelim-moda', F = ['tag', 'title', 'sub', 'when', 'where', 'more', 'contact'];
-  var st = { theme: 'layla' };
+  // בכניסה הראשונה: דוגמה מלאה, כדי שיהיה ברור איך זה נראה. מוחקים וכותבים במקום.
+  var st = { theme: 'layla', tag: 'הזמנה לערב מיוחד', title: 'ערב שירה וסיפורים', sub: 'עם חברים, גיטרה ומילים טובות', when: 'יום חמישי, 20:30', where: 'המתנ״ס, רחוב הרימון 5', more: 'כיבוד קל\nהכניסה חופשית\nמתאים לכל המשפחה', contact: 'לפרטים: 050-0000000' };
   try { var sv = JSON.parse(localStorage.getItem(KEY) || 'null'); if (sv) Object.keys(sv).forEach(function (k) { st[k] = sv[k]; }); } catch (e) {}
   function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
   function esc(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -27,7 +28,7 @@
   }
   // גודל הגופן לפי רוחב המודעה, ואם הטקסט ארוך מדי – מקטינים עד שנכנס
   function fit() {
-    var fs = poster.clientWidth / 22; poster.style.fontSize = fs + 'px';
+    var fs = (poster.clientWidth || 400) / 22; poster.style.fontSize = fs + 'px';
     for (var i = 0; i < 12 && poster.scrollHeight > poster.clientHeight + 1; i++) { fs *= 0.93; poster.style.fontSize = fs + 'px'; }
   }
   form.addEventListener('input', function () {
@@ -44,7 +45,7 @@
     var btn = this, label = btn.innerHTML;
     if (!window.htmlToImage) { btn.textContent = 'רגע, עוד נטען… נסו שוב'; setTimeout(function () { btn.innerHTML = label; }, 1500); return; }
     btn.textContent = 'מכין תמונה…';
-    window.htmlToImage.toBlob(poster, { pixelRatio: 1080 / poster.clientWidth }).then(function (b) {
+    window.htmlToImage.toBlob(poster, { pixelRatio: 1080 / (poster.clientWidth || 400) }).then(function (b) {
       var name = (v('title') || 'מודעה') + '.png', f = new File([b], name, { type: 'image/png' });
       if (navigator.canShare && navigator.canShare({ files: [f] })) navigator.share({ files: [f] }).catch(function () {});
       else { var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; document.body.appendChild(a); a.click(); a.remove(); }
