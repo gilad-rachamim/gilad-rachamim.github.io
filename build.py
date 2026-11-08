@@ -56,7 +56,7 @@ SITES = {
     # ושיתוף עם אחרים דרך ווטסאפ וקישור שמכיל את המצב (#d=...).
     "bait": {
         "name": "כלים למשפחה ולבית", "short": "משפחה ובית", "home": "/bait/", "theme": "#1f1915",
-        "og": "og-kelim.jpg", "icon": "bait",
+        "og": "og-bait.jpg", "icon": "bait",
         "desc": "קניות, תורנויות, שבת ואורחים ומי מביא מה. בחינם, בלי הרשמה.",
         "css": ["/assets/bait.css"], "js": ["/assets/bait.js"],
         "nav": [("kniyot", "/bait/kniyot/", "קניות"), ("toranut", "/bait/toranut/", "תורנויות"),
