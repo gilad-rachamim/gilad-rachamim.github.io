@@ -356,14 +356,18 @@
     }
 
     // ---------- ניגון והקלטה ----------
-    function run(onFrame) {
+    // ctl.paused: השעון עומד (הדף מוסתר בזמן הקלטה), וכשממשיכים – ממשיכים בדיוק מאותה שנייה
+    function run(onFrame, ctl) {
       return new Promise(function (res) {
-        var T = total(), st = performance.now(), stopT = null, finished = false;
+        var T = total(), st = performance.now(), stopT = null, finished = false, pauseAt = 0, lost = 0;
         function end(v) { if (finished) return; finished = true; stopT && stopT(); res(v); }
         stopT = ticker(function () {
           if (finished) return;
           if (!playing) return end(false);
-          var t = (performance.now() - st) / 1000;
+          if (ctl && ctl.check) ctl.check();
+          if (ctl && ctl.paused) { if (!pauseAt) pauseAt = performance.now(); return; }
+          if (pauseAt) { lost += performance.now() - pauseAt; pauseAt = 0; }
+          var t = (performance.now() - st - lost) / 1000;
           if (t >= T) { frame(T - 0.001); return end(true); }
           frame(t); onFrame && onFrame(t / T);
         });
@@ -380,7 +384,7 @@
       });
     }
     // מחזיר Promise עם { blob, ext }, או null אם הדפדפן לא יודע להקליט
-    function record(withMusic, onProgress) {
+    function record(withMusic, onProgress, onPause) {
       var m = mime();
       if (m === null || !cv.captureStream) return Promise.resolve(null);
       stop(); size();
@@ -405,9 +409,32 @@
             a && a.close();
             res({ blob: new Blob(parts, { type: type }), ext: type.indexOf('mp4') > -1 ? 'mp4' : 'webm' });
           };
+          // כשהדף מוסתר (עוברים לאפליקציה אחרת, המסך כבה) הדפדפן מפסיק לצלם את הקנבס, והסרטון היה נתקע על שקופית
+          // ואז מאחר. לכן עוצרים הכול (הקלטה, מוזיקה ושעון) וממשיכים מאותה נקודה כשחוזרים לדף.
+          // גם חלון שמוסתר מאחורי חלון אחר נשאר "גלוי", אבל לא מצייר. הסימן: requestAnimationFrame לא רץ יותר מ-0.4 שנ'.
+          var lastPaint = performance.now(), stalled = false;
+          var ctl = { paused: false, on: true, check: function () {
+            if (!stalled && performance.now() - lastPaint > 400) { stalled = true; vis(); }
+          } };
+          var smooth = 0; // ממשיכים רק אחרי כמה ציורים רצופים ומהירים, לא אחרי ציור בודד של חלון מוסתר
+          (function paint() {
+            if (!ctl.on) return;
+            var n = performance.now(); smooth = n - lastPaint < 250 ? smooth + 1 : 0; lastPaint = n;
+            if (stalled && smooth >= 3) { stalled = false; vis(); }
+            requestAnimationFrame(paint);
+          })();
+          function vis() {
+            var hide = document.visibilityState === 'hidden' || stalled;
+            if (hide === ctl.paused || rec.state === 'inactive') return;
+            ctl.paused = hide;
+            try { if (hide) { rec.pause(); a && a.suspend(); } else { a && a.resume(); rec.resume(); grab(); } } catch (e) {}
+            onPause && onPause(hide);
+          }
+          document.addEventListener('visibilitychange', vis);
           playing = { stop: function () { st && st(); } };
-          rec.start(1000);
-          run(function (p) { grab(); onProgress && onProgress(p); }).then(function () {
+          rec.start(1000); vis();
+          run(function (p) { grab(); onProgress && onProgress(p); }, ctl).then(function () {
+            document.removeEventListener('visibilitychange', vis); ctl.on = false;
             grab();
             setTimeout(function () { playing = null; rec.stop(); stream.getTracks().forEach(function (tr) { tr.stop(); }); }, 250);
           });

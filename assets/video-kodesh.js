@@ -57,7 +57,7 @@
     var b = this, pg = $('vd-prog');
     recording = true; b.disabled = true; b.textContent = 'יוצר סרטון…';
     $('vd-result').hidden = true; pg.hidden = false; pg.value = 0;
-    eng.record(val('music') !== 'none', function (p) { pg.value = p; }).then(function (r) {
+    eng.record(val('music') !== 'none', function (p) { pg.value = p; }, function (h) { $('vd-info').textContent = h ? 'ההקלטה עוצרת כשהדף לא על המסך. חוזרים לדף, והיא ממשיכה מאותה נקודה.' : 'ממשיכים ליצור את הסרטון…'; }).then(function (r) {
       recording = false; b.disabled = false; b.textContent = 'ליצור את הסרטון'; pg.hidden = true;
       if (!r) { $('vd-info').textContent = 'הדפדפן הזה לא יודע ליצור סרטון. נסו בכרום, בטלפון אנדרואיד או במחשב.'; return; }
       result = r;
