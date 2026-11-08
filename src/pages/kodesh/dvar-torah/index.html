@@ -1,0 +1,45 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "dvar_torah",
+  "title": "דבר תורה מעוצב: דף A4 להדפסה ותמונה לווטסאפ | כלי קודש",
+  "description": "מדביקים כותרת וטקסט של דבר תורה, מוסיפים את שם הרב ובית הכנסת, בוחרים עיצוב, ומקבלים דף A4 להדפסה ותמונה מעוצבת לווטסאפ ולסטטוס. בחינם, בלי הרשמה.",
+  "og_title": "דבר תורה מעוצב – דף להדפסה ותמונה לווטסאפ",
+  "priority": "0.7",
+  "crumbs": [["דבר תורה מעוצב", null]],
+  "head": "<style>#dt-canvas{display:block;width:100%;height:auto;border-radius:14px;border:1px solid var(--line);margin-top:1rem;background:#000}.dt-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}.k-form textarea#dt-body{min-height:11rem}#dt-print{display:none}@media print{@page{size:A4;margin:16mm}html,body{background:#fff!important;color:#111!important}body *{visibility:hidden}#dt-print,#dt-print *{visibility:visible}#dt-print{display:block;position:absolute;top:0;right:0;left:0}.topbar,.site-foot,.k-hero,.crumbs,#dt-form,#dt-canvas,.share-row,.disclaimer,.ios-tip{display:none!important}#dt-print .pg{direction:rtl;font-family:'Assistant',Arial,sans-serif;color:#111;border:2px solid var(--pf);outline:1px solid var(--pf);outline-offset:-8px;padding:12mm 14mm;min-height:250mm;box-sizing:border-box;position:relative}#dt-print .bsd{font-size:11pt;color:var(--pf)}#dt-print .par{text-align:center;font-size:13pt;color:var(--pf);font-weight:600;margin-top:4mm}#dt-print h1{text-align:center;font-family:'Frank Ruhl Libre',David,serif;font-size:26pt;color:var(--pc);margin:3mm 0 0}#dt-print .rule{width:40mm;height:1.5px;background:var(--pf);margin:5mm auto 7mm}#dt-print p{font-size:13.5pt;line-height:1.75;margin:0 0 4mm;text-align:justify}#dt-print .sig{text-align:center;font-family:'Frank Ruhl Libre',David,serif;font-size:16pt;font-weight:700;color:var(--pc);margin-top:9mm}#dt-print .ft{text-align:center;font-size:9pt;color:#777;margin-top:6mm}}</style>",
+  "foot": "<script src=\"/assets/dvar.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>דבר תורה מעוצב</h1>
+  <p class="sub">מדביקים כותרת וטקסט, מוסיפים את שם הרב ובית הכנסת, בוחרים עיצוב. מקבלים דף A4 להדפסה ותמונה לקבוצה ולסטטוס.</p>
+</header>
+<div class="tool">
+  <form class="k-form lead-form" id="dt-form" novalidate>
+    <div class="dt-row">
+      <div class="field"><label for="dt-par">פרשה או מועד <span class="opt">(לא חובה)</span></label><input id="dt-par" name="par" type="text" maxlength="40" placeholder="פרשת לך לך"></div>
+      <div class="field"><label for="dt-title">כותרת</label><input id="dt-title" name="title" type="text" maxlength="60" placeholder="לך לך – ללכת אל עצמך"></div>
+    </div>
+    <div class="field"><label for="dt-body">דבר התורה</label><textarea id="dt-body" name="body" required maxlength="6000" placeholder="מדביקים כאן את הטקסט. שורה ריקה מתחילה פסקה חדשה. בתמונה הגופן קטן לבד כדי שהכול ייכנס, ובדף להדפסה הטקסט המלא."></textarea></div>
+    <div class="dt-row">
+      <div class="field"><label for="dt-rav">שם הרב</label><input id="dt-rav" name="rav" type="text" maxlength="40" placeholder="הרב משה כהן"></div>
+      <div class="field"><label for="dt-shul">בית הכנסת או הקהילה</label><input id="dt-shul" name="shul" type="text" maxlength="40" placeholder="בית הכנסת אהל יצחק"></div>
+    </div>
+    <div class="dt-row">
+      <div class="field"><label for="dt-theme">עיצוב</label><select id="dt-theme" name="theme"><option value="night">כחול וזהב</option><option value="parch">קלף</option><option value="black">שחור וזהב</option><option value="white">לבן נקי (חוסך דיו)</option></select></div>
+      <div class="field"><label for="dt-size">גודל התמונה</label><select id="dt-size" name="size"><option value="square">ריבוע (קבוצה)</option><option value="story">לגובה (סטטוס)</option></select></div>
+    </div>
+    <div class="field"><label for="dt-foot">שורה קטנה למטה <span class="opt">(לא חובה)</span></label><input id="dt-foot" name="foot" type="text" maxlength="60" placeholder="לעילוי נשמת... / להצטרפות לקבוצה: 050-0000000"></div>
+  </form>
+  <canvas id="dt-canvas" width="1080" height="1080" role="img" aria-label="תצוגה מקדימה של תמונת דבר התורה"></canvas>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="dt-share"><svg class="ic"><use href="#wa"/></svg> לשתף את התמונה</button>
+    <button class="btn btn-line btn-sm" type="button" id="dt-printbtn">להדפיס דף A4</button>
+    <button class="btn btn-line btn-sm" type="button" id="dt-dl">לשמור את התמונה</button>
+    <button class="btn btn-line btn-sm" type="button" id="dt-text">להעתיק כטקסט</button>
+  </div>
+  <p class="ios-tip" id="dt-tip" hidden>התמונה נשמרה בטלפון. עכשיו פותחים את הווטסאפ, ומצרפים אותה מהגלריה.</p>
+  <p class="disclaimer">בהדפסה אפשר לבחור "שמירה כ-PDF" ולשלוח את הקובץ. הטקסט נשאר בטלפון שלכם ולא נשמר אצלנו.</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/">כלי קודש</a>. רוצים עיצוב נוסף? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>
+  <div id="dt-print" aria-hidden="true"></div>
+</div>
