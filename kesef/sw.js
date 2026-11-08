@@ -1,7 +1,7 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'kesef-202611081738';
+var CACHE = 'kesef-202611081742';
 var PRECACHE = ["/kesef/ashrai/", "/kesef/halvaa/", "/kesef/hechzer/", "/kesef/", "/kesef/kranot/", "/kesef/minuyim/", "/kesef/mismachim/", "/kesef/mivtza/", "/kesef/shana/", "/kesef/taktziv/", "/kesef/tlush/", "/kesef/yeladim/", "/assets/site.css", "/assets/kelim.css", "/assets/kelim.js", "/assets/track.js", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-kesef-192.png", "/assets/kesef.css", "/assets/kesef.js"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
