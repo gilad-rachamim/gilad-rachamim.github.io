@@ -29,9 +29,11 @@
   <url><loc>https://gilad-rachamim.github.io/kelim/kesharim/yomulda/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kelim/machshev/gibui/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kelim/machshev/</loc><lastmod>2026-11-08</lastmod><priority>0.8</priority></url>
+  <url><loc>https://gilad-rachamim.github.io/kelim/machshev/pdf/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kelim/machshev/sader/</loc><lastmod>2026-11-08</lastmod><priority>0.8</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kelim/machshev/sisma/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kelim/machshev/tmuna/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>
+  <url><loc>https://gilad-rachamim.github.io/kelim/machshev/video/</loc><lastmod>2026-11-08</lastmod><priority>0.6</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kelim/miluim/bait/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kelim/miluim/</loc><lastmod>2026-11-08</lastmod><priority>0.8</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kelim/miluim/tziyud/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>
@@ -82,6 +84,10 @@
   <url><loc>https://gilad-rachamim.github.io/kodesh/masach/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kodesh/mekorot/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kodesh/misheberach/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>
+  <url><loc>https://gilad-rachamim.github.io/kodesh/olpan/</loc><lastmod>2026-11-08</lastmod><priority>0.8</priority></url>
+  <url><loc>https://gilad-rachamim.github.io/kodesh/olpan/kol/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>
+  <url><loc>https://gilad-rachamim.github.io/kodesh/olpan/mara/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>
+  <url><loc>https://gilad-rachamim.github.io/kodesh/olpan/prompter/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kodesh/omer-avot/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kodesh/post/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kodesh/psak/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>
@@ -90,6 +96,7 @@
   <url><loc>https://gilad-rachamim.github.io/kodesh/shut/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kodesh/simcha/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kodesh/sipur/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>
+  <url><loc>https://gilad-rachamim.github.io/kodesh/sipurim/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kodesh/taarichim/</loc><lastmod>2026-11-08</lastmod><priority>0.8</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kodesh/tehillim/</loc><lastmod>2026-11-08</lastmod><priority>0.8</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kodesh/tehillim/shem/</loc><lastmod>2026-11-08</lastmod><priority>0.7</priority></url>

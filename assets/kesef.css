@@ -182,3 +182,4 @@ label.big-btn{text-align:center}
 .m-verdict.ok{border-color:var(--gold-soft)}.m-verdict.ok b{color:var(--gold)}
 .m-verdict.bad{border-color:var(--bad)}.m-verdict.bad b{color:var(--bad)}
 .m-tag{font-size:.78rem;color:var(--ink);background:var(--good);border-radius:999px;padding:.1rem .5rem;margin-inline-start:.3rem;white-space:nowrap}
+#f-kind{flex-wrap:wrap}#f-kind button{flex:1 1 30%}
