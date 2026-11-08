@@ -82,8 +82,15 @@
       var checks = Array.prototype.map.call(form.querySelectorAll('input[type=checkbox]:checked'), function (c) { return c.value; }).join(', ');
       var fd = new FormData();
       fd.append('שם', g('name'));
-      fd.append('טלפון', g('phone'));
-      if (kind === 'tool') {
+      var toolName = (document.title.split('|')[0].split(' – ')[0] || '').trim(), toolId = body.getAttribute('data-tool') || '';
+      if (kind === 'shipur') {
+        var ct = g('contact'), isMail = ct.indexOf('@') > -1;
+        fd.append('טלפון', isMail ? '' : ct); fd.append('email', isMail ? ct : '');
+        fd.append('עיר', 'שיפור כלי · ' + site + ' · ' + toolName);
+        fd.append('מקור', 'כלים: שיפור · ' + toolName + ' (' + toolId + ') · ' + g('what'));
+      } else fd.append('טלפון', g('phone'));
+      if (kind === 'shipur') {}
+      else if (kind === 'tool') {
         fd.append('עיר', 'בקשת כלי · ' + (g('domain') || 'כללי') + ' · ' + (g('for') || ''));
         fd.append('מקור', 'כלים: בקשת כלי (' + (g('use') || '') + ') · ' + g('what') + (g('contact') ? ' · מייל: ' + g('contact') : ''));
       } else {
@@ -93,13 +100,37 @@
       fd.append('_page', location.pathname);
       var btn = form.querySelector('button[type=submit]');
       btn.disabled = true; btn.textContent = 'שולח…';
-      ev(kind === 'tool' ? 'request_tool' : 'donate_click', kind === 'tool' ? { domain: g('domain'), use: g('use') } : { how: 'form', what: checks });
+      if (kind === 'shipur') ev('tool_suggest', { tool: toolId });
+      else ev(kind === 'tool' ? 'request_tool' : 'donate_click', kind === 'tool' ? { domain: g('domain'), use: g('use') } : { how: 'form', what: checks });
       var finish = function () {
-        form.innerHTML = '<div class="done" role="status">' + (kind === 'tool'
+        form.innerHTML = '<div class="done" role="status">' + (kind === 'shipur' ? 'תודה רבה! 🙏 קיבלתי את ההצעה. אני קורא כל אחת, ואעדכן אותך כשהכלי ישתפר.' : kind === 'tool'
           ? 'תודה רבה! קיבלתי את הרעיון. אני עובר על כל בקשה, ואחזור אליכם בווטסאפ.'
           : 'תודה מכל הלב! קיבלתי, ואחזור אליכם בווטסאפ.') + '</div>';
       };
       fetch(form.getAttribute('action'), { method: 'POST', body: fd, mode: 'no-cors', keepalive: true }).catch(function () {}).then(finish);
     });
   });
+  // "הכלי עזר לך?" + הצעה לשיפור, בתחתית כל כלי. הדירוג נספר ב-GA (tool_rating), פעם אחת לכל כלי בטלפון.
+  (function () {
+    var fb = document.querySelector('[data-fb]'); if (!fb) return;
+    var tool = body.getAttribute('data-tool') || location.pathname, key = 'kelim-rated:' + tool;
+    var title = (document.title.split('|')[0].split(' – ')[0] || '').trim();
+    var wa = fb.querySelector('[data-fb-wa]');
+    if (wa) wa.href = 'https://wa.me/972584049049?text=' + encodeURIComponent('שלום גילעד, יש לי רעיון לשיפור הכלי "' + title + '": ');
+    var rate = fb.querySelector('.fb-rate'), thanks = fb.querySelector('.fb-thanks'), more = fb.querySelector('.fb-more');
+    var done = null; try { done = localStorage.getItem(key); } catch (e) {}
+    function after(r) {
+      rate.hidden = true; thanks.hidden = false;
+      thanks.textContent = r === 'yes' ? 'שמח לשמוע! 🙏 ואם יש משהו שהיה עושה אותו עוד יותר טוב, ספרו לי למטה.' : 'תודה על הכנות. ספרו לי מה חסר, ואשתדל לתקן.';
+    }
+    if (done) after(done);
+    rate.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-rate]'); if (!b) return;
+      var r = b.getAttribute('data-rate');
+      ev('tool_rating', { tool: tool, rating: r });
+      try { localStorage.setItem(key, r); } catch (er) {}
+      after(r); if (r === 'no') more.open = true;
+    });
+    more.addEventListener('toggle', function () { if (more.open) ev('tool_suggest_open', { tool: tool }); });
+  })();
 })();
