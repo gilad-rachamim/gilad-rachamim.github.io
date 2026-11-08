@@ -43,7 +43,6 @@ SITES = {
                 ("koach", "/nefesh/koach/", "מד כוח"), ("yoman", "/nefesh/yoman/", "יומן קול"),
                 ("mishpacha", "/nefesh/mishpacha/", "למשפחה"), ("kelim", "/nefesh/#kelim", "כל הכלים")],
     },
-<<<<<<< HEAD
     # כלים לכסף: מחשבונים בלבד, לא ייעוץ. הכול בטלפון (localStorage), בלי שרת.
     "kesef": {
         "name": "כלים לכסף", "short": "כלים לכסף", "home": "/kesef/", "theme": "#11201a",
@@ -52,7 +51,8 @@ SITES = {
         "css": ["/assets/kesef.css"], "js": ["/assets/kesef.js"],
         "nav": [("taktziv", "/kesef/taktziv/", "תקציב"), ("halvaa", "/kesef/halvaa/", "הלוואה"),
                 ("minuyim", "/kesef/minuyim/", "מנויים"), ("mivtza", "/kesef/mivtza/", "המבצע המשפחתי"),
-=======
+                ("kelim", "/kelim/", "כל הכלים")],
+    },
     # כלים ללימודים: כרטיסיות חזרה, מתכנן למבחן, טיימר למידה, לימוד יומי לסיום. הכול בטלפון (localStorage), בלי שרת.
     "limudim": {
         "name": "כלים ללימודים", "short": "כלים ללימודים", "home": "/limudim/", "theme": "#141c2b",
@@ -61,7 +61,6 @@ SITES = {
         "css": ["/assets/limudim.css"], "js": ["/assets/limudim.js"],
         "nav": [("kartisiot", "/limudim/kartisiot/", "כרטיסיות"), ("mivchan", "/limudim/mivchan/", "למבחן"),
                 ("timer", "/limudim/timer/", "טיימר"), ("yomi", "/limudim/yomi/", "לימוד יומי"),
->>>>>>> origin/main
                 ("kelim", "/kelim/", "כל הכלים")],
     },
 }
