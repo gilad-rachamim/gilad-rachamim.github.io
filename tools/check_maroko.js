@@ -21,10 +21,10 @@ for (const k of Object.keys(src)) {
   if (!MR[k]) { console.log('חסר בכלי:', k); bad++; continue; }
   if (TPL(MR[k], true) !== want) { console.log('לא זהה למקור:', k); bad++; }
   if (/יְיָ|יי/.test(want)) { console.log('נשאר יי ולא ה\':', k); bad++; }
-  const keys = ['sh', 'yt', 'rh', 'yol'];
-  for (let mask = 0; mask < 16; mask++) {
+  const keys = ['sh', 'yt', 'rh', 'yol', 'gadol'];
+  for (let mask = 0; mask < 32; mask++) {
     const opts = {}; keys.forEach((c, i) => { opts[c] = !!(mask & (1 << i)); });
-    const out = TPL(MR[k], false, c => opts[c], () => NAME); runs++;
+    const out = TPL(MR[k], false, c => opts[c], () => NAME).replace(/^\n+/, ''); runs++;
     const sw = words(want), ow = words(out).filter(w => w !== NAME);
     let j = 0;
     for (const w of ow) { while (j < sw.length && sw[j] !== w) j++; if (j >= sw.length) { console.log('מילה שלא במקור:', k, w, opts); bad++; break; } j++; }

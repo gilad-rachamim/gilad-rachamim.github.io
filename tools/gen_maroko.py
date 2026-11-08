@@ -28,6 +28,7 @@ def parse():
 
 def mark(t):
     t = re.sub(r'\((שם [^)]*)\)', r'{N||(\1)|}', t)
+    t = re.sub(r'^\((לאדם גדול[^:]*): ([^)]*)\)$', lambda m: '{gadol|(%s: |%s|)}' % (m.group(1), m.group(2)), t, flags=re.M)
     t = re.sub(r' \((בשבת שובה|ביו"ט|ליולדת|בשבת): ([^)]*)\)(,?)',
                lambda m: '{%s| (%s: |%s|)%s}' % (KEYS[m.group(1)], m.group(1), m.group(2), m.group(3)), t)
     t = t.replace(' (הַיּוֹלֶדֶת)', '{yol| (|הַיּוֹלֶדֶת|)}')
