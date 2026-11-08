@@ -1,0 +1,41 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "post",
+  "title": "פוסט מעוצב: כל טקסט כתמונה לסטטוס, לפייסבוק ולאינסטגרם | כלי קודש",
+  "description": "כותבים משפט, ציטוט, הודעה לקהילה או מחשבה, ומקבלים תמונה מעוצבת לסטטוס, לפייסבוק או לאינסטגרם, עם החתימה שלכם. שישה עיצובים, שלושה גדלים. בחינם, בלי הרשמה.",
+  "og_title": "פוסט מעוצב – כל טקסט כתמונה לרשתות",
+  "priority": "0.7",
+  "crumbs": [["פוסט מעוצב", null]],
+  "head": "<style>#pt-canvas{display:block;width:100%;height:auto;border-radius:14px;border:1px solid var(--line);margin-top:1rem;background:#000}.pt-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}.k-form textarea#pt-body{min-height:8rem}</style>",
+  "foot": "<script src=\"/assets/kcard.js\" defer></script><script src=\"/assets/post.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>פוסט מעוצב</h1>
+  <p class="sub">משפט, ציטוט, הודעה לקהילה או מחשבה לשבת. כותבים, בוחרים עיצוב, ומקבלים תמונה לסטטוס, לפייסבוק או לאינסטגרם.</p>
+</header>
+<div class="tool">
+  <form class="k-form lead-form" id="pt-form" novalidate>
+    <div class="field"><label for="pt-head">כותרת <span class="opt">(לא חובה)</span></label><input id="pt-head" name="head" type="text" maxlength="50" placeholder="מחשבה לשבת"></div>
+    <div class="field"><label for="pt-body">הטקסט</label><textarea id="pt-body" name="body" required maxlength="1500" placeholder="אין דבר העומד בפני הרצון."></textarea></div>
+    <div class="field"><label for="pt-sig">חתימה <span class="opt">(לא חובה)</span></label><input id="pt-sig" name="sig" type="text" maxlength="50" placeholder="הרב משה כהן · קהילת אהל יצחק"></div>
+    <div class="pt-row">
+      <div class="field"><label for="pt-style">סגנון</label><select id="pt-style" name="style"><option value="quote">ציטוט גדול</option><option value="text">טקסט רגיל</option></select></div>
+      <div class="field"><label for="pt-align">יישור</label><select id="pt-align" name="align"><option value="center">למרכז</option><option value="right">לימין</option></select></div>
+    </div>
+    <div class="pt-row">
+      <div class="field"><label for="pt-theme">עיצוב</label><select id="pt-theme" name="theme"><option value="night">כחול וזהב</option><option value="parch">קלף</option><option value="black">שחור וזהב</option><option value="white">לבן נקי</option><option value="sky">תכלת</option><option value="olive">ירוק זית</option></select></div>
+      <div class="field"><label for="pt-size">גודל</label><select id="pt-size" name="size"><option value="square">ריבוע (אינסטגרם, קבוצה)</option><option value="story">לגובה (סטטוס, סטורי)</option><option value="wide">לרוחב (פייסבוק)</option></select></div>
+    </div>
+    <div class="field"><label for="pt-foot">שורה קטנה למטה <span class="opt">(לא חובה)</span></label><input id="pt-foot" name="foot" type="text" maxlength="60" placeholder="להצטרפות לקבוצה: 050-0000000"></div>
+  </form>
+  <canvas id="pt-canvas" width="1080" height="1080" role="img" aria-label="תצוגה מקדימה של הפוסט"></canvas>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="pt-share"><svg class="ic"><use href="#wa"/></svg> לשתף את התמונה</button>
+    <button class="btn btn-line btn-sm" type="button" id="pt-dl">לשמור את התמונה</button>
+    <button class="btn btn-line btn-sm" type="button" id="pt-text">להעתיק כטקסט</button>
+  </div>
+  <p class="ios-tip" id="pt-tip" hidden>התמונה נשמרה בטלפון. עכשיו פותחים את האפליקציה, ומצרפים אותה מהגלריה.</p>
+  <p class="disclaimer">התמונה נוצרת בטלפון שלכם ולא נשמרת אצלנו. לשאלה ותשובה יש כלי משלו: <a class="gold" href="/kodesh/shut/">שו"ת לפרסום</a>.</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/">כלי קודש</a>. רוצים עיצוב נוסף? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>
+</div>
