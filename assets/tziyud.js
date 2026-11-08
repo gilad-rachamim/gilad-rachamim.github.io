@@ -6,6 +6,7 @@
   if (!box) return;
   // דף אחר יכול לתת רשימה משלו: <script type="application/json" id="tz-data">, ו-data-key / data-title / data-tool על #tz-list
   var KEY = box.getAttribute('data-key') || 'kodesh-tziyud', TITLE = box.getAttribute('data-title') || 'רשימת ציוד דת לשטח', TOOL = box.getAttribute('data-tool') || 'tziyud';
+  var UNIT = box.getAttribute('data-unit') || 'ארוזים', DONE = box.getAttribute('data-done') || 'הכול ארוז ✓ צאתכם לשלום';
   var GROUPS = [
     ['תפילה', [
       ['tfilin', 'תפילין', 'בשקית אטומה למים'], ['tzitzit', 'ציצית (טלית קטן) + זוג להחלפה'], ['talit', 'טלית'],
@@ -47,12 +48,12 @@
   function meter() {
     var it = items(), n = it.filter(function (i) { return st.on[i.id]; }).length;
     $('tz-bar').style.width = (it.length ? n / it.length * 100 : 0) + '%';
-    $('tz-txt').textContent = n === it.length && n ? 'הכול ארוז ✓ צאתכם לשלום' : n + ' מתוך ' + it.length + ' ארוזים';
+    $('tz-txt').textContent = n === it.length && n ? DONE : n + ' מתוך ' + it.length + ' ' + UNIT;
     var link = '\n\n' + location.origin + location.pathname;
     var miss = all().map(function (g) { var m = g[1].filter(function (i) { return !st.on[i.id]; }); return m.length ? '*' + g[0] + '*\n' + m.map(function (i) { return '▫️ ' + i.name; }).join('\n') : ''; }).filter(Boolean).join('\n\n');
     var full = all().map(function (g) { return '*' + g[0] + '*\n' + g[1].map(function (i) { return '▫️ ' + i.name; }).join('\n'); }).join('\n\n');
-    $('tz-wa-miss').href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent((miss ? 'מה עוד חסר לי (' + TITLE + '):\n\n' + miss : 'הכול ארוז ✓') + link);
-    $('tz-wa-all').href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(TITLE + ':\n\n' + full + '\n\nלסמן בטלפון מה ארוז:' + link);
+    $('tz-wa-miss').href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent((miss ? 'מה עוד חסר לי (' + TITLE + '):\n\n' + miss : DONE) + link);
+    $('tz-wa-all').href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(TITLE + ':\n\n' + full + '\n\n' + (box.getAttribute('data-mark') || 'לסמן בטלפון מה ארוז:') + link);
   }
   box.addEventListener('change', function (e) {
     var id = e.target.getAttribute('data-id'); if (!id) return;

@@ -41,8 +41,12 @@ function doPost(e) {
   try {
     if (p._honey) return txt('ok');                       // בוט
     var name = clean(p['שם']), phone = normPhone(p['טלפון']), email = clean(p['email']).toLowerCase();
-    if (!name || !(phone || email)) return txt('missing');
-    if (tooMany(email || phone)) return txt('ok');        // אותו אדם שולח שוב ושוב – לא כותבים ולא שולחים
+    // הצעה לשיפור כלי ("כלים: שיפור ·"): מותר גם בלי שם ובלי פרטי קשר
+    var shipur = /^כלים: שיפור/.test(clean(p['מקור']));
+    if (shipur && !name) name = 'אנונימי';
+    if (!name || !(phone || email || shipur)) return txt('missing');
+    if (shipur && !(phone || email)) { if (tooMany('anon-shipur', 20)) return txt('ok'); }  // עד 20 הצעות אנונימיות ב-6 שעות
+    else if (tooMany(email || phone)) return txt('ok');   // אותו אדם שולח שוב ושוב – לא כותבים ולא שולחים
     var mailOk = underDailyCap();                          // מעל התקרה היומית: השורה נשמרת, בלי מייל להורה
     var ss = SpreadsheetApp.getActive();
     var sh = sheet(ss, CFG.SHEET_LEADS, COLS);
@@ -56,7 +60,7 @@ function doPost(e) {
     row[C['תאריך']] = new Date();
     row[C['שם']] = name; row[C['טלפון']] = phone; row[C['מייל']] = email;
     row[C['מועד לידה']] = clean(p['מועד הלידה']); row[C['עיר']] = clean(p['עיר']);
-    row[C['מקור']] = clean(p['מקור']) || 'האתר'; row[C['הסכמה לדיוור']] = consent;
+    row[C['מקור']] = shipur ? String(p['מקור']).trim().slice(0, 600) : (clean(p['מקור']) || 'האתר'); row[C['הסכמה לדיוור']] = consent;
     var kelim = /^כלים:/.test(clean(p['מקור']));               // טופסי "הכלים של גילעד רחמים": בלי מדריך, בלי סדרה ובלי ווטסאפ של ברית
     row[C['סטטוס']] = kelim ? 'כלים' : dup ? 'חוזר' : 'חדש';
     row[C['ווטסאפ אחרון']] = ''; row[C['שלב בסדרה']] = ''; row[C['נשלח לאחרונה']] = '';
@@ -86,7 +90,7 @@ function doPost(e) {
 // ---------- הסרה / בדיקה ----------
 function doGet(e) {
   var p = (e && e.parameter) || {};
-  if (p.ping) return txt('alive ' + new Date() + ' · kelim-join');
+  if (p.ping) return txt('alive ' + new Date() + ' · kelim-join · shipur-anon');
   if (p.u) {
     var sh = sheet(SpreadsheetApp.getActive(), CFG.SHEET_LEADS, COLS);
     var data = sh.getDataRange().getValues();
@@ -349,7 +353,7 @@ function testSendAllToOwner() {
 // ---------- הודעה לגילעד ----------
 function notifyOwner(row, dup) {
   var name = row[C['שם']], phone = row[C['טלפון']], email = row[C['מייל']], due = row[C['מועד לידה']], city = row[C['עיר']], source = row[C['מקור']];
-  var line = (/^כלים: משפחת הכלים/.test(String(source)) ? 'הצטרפות למשפחת הכלים: ' : dup ? 'ליד חוזר: ' : 'ליד חדש: ') + name + (city ? ' · ' + city : '') + (due ? ' · ' + dueLabel(due) : '');
+  var line = (/^כלים: שיפור/.test(String(source)) ? '💡 הצעה לשיפור כלי: ' : /^כלים: משפחת הכלים/.test(String(source)) ? 'הצטרפות למשפחת הכלים: ' : dup ? 'ליד חוזר: ' : 'ליד חדש: ') + name + (city ? ' · ' + city : '') + (due ? ' · ' + dueLabel(due) : '');
   var body = line + '\nטלפון: ' + phone + '\nמייל: ' + email + '\nמקור: ' + source +
     (phone ? '\n\nווטסאפ מוכן:\n' + waLink(phone, /^כלים:/.test(String(source)) ? 'שלום ' + String(name).split(' ')[0] + ', כאן גילעד מהכלים של גילעד רחמים. תודה שכתבת לי! ' : waMessage('WA-1', row)) : '') +
     '\n\nהגיליון: ' + SpreadsheetApp.getActive().getUrl();
@@ -398,11 +402,11 @@ function sheetSafe(v) { return typeof v === 'string' && /^[=+\-@]/.test(v) ? "'"
 function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 function firstName(name) { return esc(String(name).split(' ')[0]); }
 // הגבלת קצב: עד 2 שליחות לאותו מייל/טלפון ב-6 שעות (המקסימום של CacheService)
-function tooMany(who) {
+function tooMany(who, max) {
   var key = 'rl:' + String(who).toLowerCase().slice(0, 100), cache = CacheService.getScriptCache();
   var n = parseInt(cache.get(key) || '0', 10);
   cache.put(key, String(n + 1), 21600);
-  return n >= 2;
+  return n >= (max || 2);
 }
 // תקרה יומית למיילים להורים, כדי שהצפה של הטופס לא תגמור את מכסת ה-100 של Gmail
 var DAILY_CAP = 40;

@@ -19,12 +19,12 @@
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/icon-kelim-192.png">
 <link rel="manifest" href="/kelim/manifest.webmanifest">
-<link rel="stylesheet" href="/assets/site.css">
-<link rel="stylesheet" href="/assets/kelim.css">
+<link rel="stylesheet" href="/assets/site.css?v=14c6afff">
+<link rel="stylesheet" href="/assets/kelim.css?v=162946d4">
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4QR4583VST"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4QR4583VST');</script>
-<script src="/assets/track.js" defer></script>
+<script src="/assets/track.js?v=928f9743" defer></script>
 
 </head>
 <body class="site-kelim " data-site="kelim" data-tool="kelim_home" data-home="/kelim/">
@@ -103,13 +103,13 @@
     <a href="/kodesh/"><span class="badge">פתוח</span><b>כלי קודש</b><span>לרבנים, לרבנות הצבאית ולמוהלים: מחשבון תאריכים, כלים לברית ועוד.</span></a>
     <a href="/nefesh/"><span class="badge">פתוח</span><b>כלים לנפש וליום-יום</b><span>להלומי קרב, לחרדה, לימים קשים, ולמשפחה שסביבם: רגע קשה, הדבר החשוב של היום, מד כוח ועוד.</span></a>
     <a href="/limudim/"><span class="badge">פתוח</span><b>כלים ללימודים</b><span>כרטיסיות חזרה, תוכנית למבחן, טיימר למידה, ולימוד יומי לסיום התנ"ך והמשנה.</span></a>
-    <div class="is-soon"><span class="badge soon">בקרוב</span><b>כלים לזכויות ושיקום</b><span>נכי צה"ל, אגף השיקום, ביטוח לאומי, מילואים.</span></div>
+    <a href="/kelim/shikum/"><span class="badge">פתוח</span><b>כלים לזכויות ושיקום</b><span>תיק מסמכים לפני פנייה או ועדה, יומן פניות עם הצעד הבא, ודף הכנה לוועדה. לאגף השיקום, לביטוח לאומי ולמילואים.</span></a>
     <a href="/kesef/"><span class="badge">פתוח</span><b>כלים לכסף</b><span>תקציב משפחתי, מחשבון הלוואה, מנויים, הוצאות לאורך השנה, חיסכון לילדים, מסמכי הכסף, והאם כדאי לבדוק החזר מס.</span></a>
     <a href="/esek/"><span class="badge">פתוח</span><b>כלים לעסק קטן</b><span>תפריט דיגיטלי ו-QR לשולחן, מודעת מבצע לסטטוס, QR מעוצב לווטסאפ ולוויפיי, וצ'ק-ליסט לפתיחת עסק.</span></a>
     <a href="/kelim/tochen/"><span class="badge">פתוח</span><b>כלים ליצירת תוכן</b><span>עורך הודעות לווטסאפ, מודעה לאירוע, שירון להדפסה, פוסטים, הזמנות וסרטונים.</span></a>
     <a href="/bait/"><span class="badge">פתוח</span><b>כלים למשפחה ולבית</b><span>קניות עם משחק לילדים, תורנויות, שבת ואורחים, מי מביא מה, שגרה לילדים, מסמכי הבית ומתנה קבוצתית.</span></a>
     <a href="/kelim/briut/"><span class="badge">פתוח</span><b>כלים לבריאות</b><span>הכנה לביקור רופא, רשימת תרופות עם סימון יומי, יומן מדדים.</span></a>
-    <div class="is-soon"><span class="badge soon">בקרוב</span><b>כלים למחשב ולטלפון</b><span>סידור קבצים ותמונות, גיבוי, ניקוי, אינטרנט.</span></div>
+    <a href="/kelim/machshev/"><span class="badge">פתוח</span><b>כלים למחשב ולטלפון</b><span>מסדר תיקיות שלא מוחק כלום, בודק סיסמה ומחולל סיסמה חזקה, צ'ק-ליסט גיבוי לטלפון, והקטנת תמונה לפני שליחה.</span></a>
     <a href="/kelim/miluim/"><span class="badge">פתוח</span><b>כלים לצבא ולמילואים</b><span>רשימת ציוד, מונה ימי מילואים, דף לבית למשפחה, זמנים לבסיס ודף כיס לחייל.</span></a>
     <a href="/kelim/kesharim/"><span class="badge">פתוח</span><b>כלים לחברה ולקשרים</b><span>ימי הולדת עם תזכורת ביומן, אישורי הגעה, הודעות מוכנות לכל מצב וברכות.</span></a>
   </div>
@@ -191,10 +191,10 @@
       <form class="k-form lead-form" data-kform="shipur" action="https://script.google.com/macros/s/AKfycbxgWe4xxaclqfzmOD_E0hOg2XDr2genZZyvAcf0hpHw_AHkgvQAqDop-XjdURdARYNx-Q/exec" method="POST">
         <div class="hp" aria-hidden="true"><label>אל תמלאו שדה זה <input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></div>
         <div class="field"><label for="fb-what">מה היה עושה את הכלי טוב יותר?</label><textarea id="fb-what" name="what" required maxlength="400" placeholder="משהו שחסר, משהו שלא עבד, או רעיון חדש. כל מילה עוזרת."></textarea></div>
-        <div class="field"><label for="fb-name">שם</label><input id="fb-name" name="name" type="text" autocomplete="given-name" required maxlength="40"></div>
-        <div class="field"><label for="fb-contact">טלפון או מייל <span class="opt">(כדי שאוכל לעדכן אותך כשזה מוכן)</span></label><input id="fb-contact" name="contact" type="text" required maxlength="60" dir="ltr" style="text-align:right" placeholder="050-0000000 או name@gmail.com"></div>
+        <div class="field"><label for="fb-name">שם <span class="opt">(לא חובה)</span></label><input id="fb-name" name="name" type="text" autocomplete="given-name" maxlength="40"></div>
+        <div class="field"><label for="fb-contact">טלפון או מייל <span class="opt">(לא חובה, רק אם תרצה שאעדכן אותך כשזה מוכן)</span></label><input id="fb-contact" name="contact" type="text" maxlength="60" dir="ltr" style="text-align:right" placeholder="050-0000000 או name@gmail.com"></div>
         <button class="btn btn-gold btn-block" type="submit">לשלוח לגילעד</button>
-        <p class="privacy">או <a class="gold" href="https://wa.me/972584049049" data-fb-wa target="_blank" rel="noopener">לכתוב לי בווטסאפ</a>. הפרטים נשמרים אצלי בלבד, רק כדי לחזור אליך. <a href="/mohel/privacy/">פרטיות</a></p>
+        <p class="privacy">או <a class="gold" href="https://wa.me/972584049049" data-fb-wa target="_blank" rel="noopener">לכתוב לי בווטסאפ</a>. אפשר לשלוח גם בלי שם ובלי פרטים. אם השארת פרטים, הם נשמרים אצלי בלבד, רק כדי לחזור אליך. <a href="/mohel/privacy/">פרטיות</a></p>
       </form>
     </details>
     <p class="fb-note">הכלים כאן משתפרים בזכות מי שמשתמש בהם. אני קורא כל הצעה, בשמחה ובתודה.</p>
@@ -214,7 +214,7 @@
   <button class="btn btn-gold btn-sm" type="button" data-install>להתקין</button>
   <button class="x" type="button" data-install-close aria-label="סגירה">×</button>
 </div>
-<script src="/assets/kelim.js" defer></script>
+<script src="/assets/kelim.js?v=f6406678" defer></script>
 
 </body>
 </html>

@@ -1,0 +1,26 @@
+# פעם בחודש: נתוני גמל-נט חדשים לכלי /kesef/kranot/ (תשואות ודמי ניהול של קרנות השתלמות וקופות גמל).
+# האוצר מפרסם בערך באמצע החודש את נתוני החודש הקודם, לכן רץ ב-20 לחודש. אפשר גם ידנית (Run workflow).
+name: kranot-data
+on:
+  schedule:
+    - cron: "17 6 20 * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python tools/kranot_data.py
+      - name: commit if changed
+        run: |
+          git diff --quiet kesef/kranot.json && { echo "אין שינוי"; exit 0; }
+          git config user.name "kranot-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add kesef/kranot.json
+          git commit -m "נתוני גמל-נט חודשיים לכלי הקרנות"
+          git push
