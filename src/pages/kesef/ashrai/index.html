@@ -1,0 +1,73 @@
+<!--meta {
+  "site": "kesef",
+  "nav": "ashrai",
+  "tool": "ashrai",
+  "title": "סריקת דף פירוט אשראי – לאן הולך הכסף, מנויים וחיובים חוזרים | כלים לכסף",
+  "description": "מעלים את קובץ האקסל של פירוט כרטיס האשראי (מקס, ישראכרט, כאל), ורואים: לפי קטגוריה, לפי עסק, חיובים חוזרים ומנויים, והשוואה לחודש הקודם. הקובץ נקרא בטלפון ולא נשלח לשום מקום.",
+  "og_title": "סריקת דף פירוט אשראי",
+  "crumbs": [["סריקת דף פירוט אשראי", null]]
+} -->
+<header class="k-hero">
+  <h1>סריקת דף פירוט אשראי</h1>
+  <p class="sub">מעלים את קובץ הפירוט של כרטיס האשראי, ורואים לאן הלך הכסף: לפי קטגוריה, לפי עסק, ואילו חיובים חוזרים כל חודש.</p>
+</header>
+
+<div class="tool" id="ashrai">
+  <section class="box">
+    <h2>מעלים את הקובץ</h2>
+    <ol class="steps">
+      <li>נכנסים לאתר או לאפליקציה של חברת האשראי (מקס, ישראכרט, כאל, אמריקן אקספרס).</li>
+      <li>בפירוט החיובים לוחצים על "ייצוא לאקסל" או "הורדה".</li>
+      <li>בוחרים כאן את הקובץ. אפשר כמה חודשים ביחד, ואז רואים גם השוואה.</li>
+    </ol>
+    <label class="big-btn" for="a-file" style="margin-top:1rem">📄 לבחור קובץ (אקסל או CSV)</label>
+    <input type="file" id="a-file" accept=".xlsx,.xls,.csv" multiple hidden>
+    <button class="add" type="button" id="a-demo">לראות קודם דוגמה</button>
+    <p class="saved" id="a-msg" role="status"></p>
+  </section>
+
+  <div id="a-out" hidden>
+    <section class="sum" aria-live="polite">
+      <div class="lbl" id="a-lbl">סך הכל</div>
+      <div class="big" id="a-total">₪0</div>
+      <div class="sub2" id="a-sub"></div>
+      <div class="stats">
+        <div><b id="a-n">0</b><span>חיובים</span></div>
+        <div><b id="a-rec">₪0</b><span>חוזרים בחודש</span></div>
+        <div><b id="a-pay">0</b><span>בתשלומים</span></div>
+      </div>
+    </section>
+
+    <section class="cancel-box" id="a-sum5"></section>
+
+    <section class="box">
+      <h2>לפי קטגוריה</h2>
+      <div class="ykids" id="a-cats"></div>
+    </section>
+
+    <section class="box">
+      <h2>חיובים חוזרים ומנויים</h2>
+      <p class="note">הוראות קבע, מנויים מוכרים, ועסק שחייב באותו סכום ביותר מחודש אחד. שווה לעבור ולשאול: אני עוד משתמש בזה?</p>
+      <div class="log" id="a-recs"></div>
+    </section>
+
+    <section class="box">
+      <h2>העסקים שהכי הרבה כסף הלך אליהם</h2>
+      <div class="log" id="a-top"></div>
+    </section>
+
+    <section class="box" id="a-months-box" hidden>
+      <h2>חודש מול חודש</h2>
+      <div class="log" id="a-months"></div>
+    </section>
+
+    <button class="big-btn" type="button" id="a-csv">לשמור את הסיכום לקובץ שנפתח באקסל</button>
+  </div>
+
+  <div class="local-note"><span class="ic2">🔒</span><span>הקובץ נקרא בתוך הטלפון ולא נשלח לשום מקום. נשמרים בטלפון רק השם, הסכום והחודש של כל חיוב, כדי להשוות לחודש הבא. מספר הכרטיס לא נשמר.</span></div>
+  <div class="local-note"><span class="ic2">💡</span><span>צילום או PDF סרוק של הדף עוד לא נתמכים. הכי טוב: קובץ אקסל מהאתר של חברת האשראי.</span></div>
+  <div class="data-acts"><button class="linkish" type="button" data-wipe="ashrai">למחוק מהטלפון</button></div>
+</div>
+
+<p class="not-advice"><b>זה מחשבון, לא ייעוץ.</b> החלוקה לקטגוריות אוטומטית לפי שם העסק, ויכולה לטעות.</p>
+{{K:foot:סריקת דף פירוט אשראי: לאן הלך הכסף, ומה יורד כל חודש. הקובץ נשאר בטלפון. כלי חינמי}}

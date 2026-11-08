@@ -160,3 +160,11 @@ details.years summary{cursor:pointer;color:var(--gold);font-weight:700}
 .why li{padding-inline-start:.8rem;border-inline-start:3px solid var(--good)}
 .why b{color:var(--cream)}
 .steps{margin:.6rem 0 0;padding-inline-start:1.3rem;display:grid;gap:.4rem;color:var(--body)}
+/* תלוש, אשראי, קרנות */
+.site-kesef label.field>span{font-weight:600;font-size:1rem;color:var(--cream);line-height:1.35}
+.site-kesef label.field small{display:block;font-weight:400;font-size:.85rem}
+.site-kesef label.field{margin-top:.5rem}
+label.big-btn{text-align:center}
+.log a.gold{text-decoration:none}
+.whatif td small{font-size:.8rem}
+.why li small{color:var(--muted)}
