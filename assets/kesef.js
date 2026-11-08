@@ -396,4 +396,679 @@
     $('v-print').addEventListener('click', function () { used('print'); window.print(); });
     drawSetup(); render();
   })();
+
+  // =====================================================================
+  // K2 חיסכון לילדים
+  // =====================================================================
+  (function () {
+    if (!$('yeladim')) return;
+    var st = load('yeladim', null) || { mode: 'each', total: '', rate: '4', age: '18', kids: [{ n: '', a: '', h: '', m: '' }] };
+    var box = $('y-kids');
+    function store() { save('yeladim', st); }
+    function rowK(k) {
+      var split = st.mode === 'split';
+      return '<div class="lrow kid4"><input type="text" data-k="n" maxlength="30" aria-label="שם הילד" placeholder="שם" value="' + esc(k.n) + '">' +
+        '<button class="del" type="button" data-del aria-label="למחוק">×</button>' +
+        '<input type="text" class="num-in" data-k="a" inputmode="decimal" aria-label="גיל היום" placeholder="גיל היום" value="' + esc(k.a) + '">' +
+        '<input type="text" class="num-in" data-k="h" inputmode="decimal" aria-label="כבר נחסך בשקלים" placeholder="כבר יש ₪" value="' + esc(k.h) + '">' +
+        '<input type="text" class="num-in" data-k="m" inputmode="decimal" aria-label="בחודש בשקלים" placeholder="בחודש ₪" value="' + esc(split ? '' : k.m) + '"' + (split ? ' disabled' : '') + '></div>';
+    }
+    function draw() { box.innerHTML = st.kids.map(rowK).join(''); }
+    function fv(have, m, rate, n) {
+      var i = rate / 100 / 12;
+      if (!i) return have + m * n;
+      var g = Math.pow(1 + i, n);
+      return have * g + m * (g - 1) / i;
+    }
+    function calc() {
+      var rate = Math.max(0, num(st.rate)), age = num(st.age) || 18, split = st.mode === 'split';
+      var per = split && st.kids.length ? num(st.total) / st.kids.length : 0;
+      var tot = 0, dep = 0, monthSum = 0, html = '';
+      st.kids.forEach(function (k, i) {
+        var m = split ? per : num(k.m), have = num(k.h), years = Math.max(0, age - num(k.a)), n = Math.round(years * 12);
+        var v = fv(have, m, rate, n), d = have + m * n;
+        tot += v; dep += d; monthSum += m;
+        var name = k.n || 'ילד ' + (i + 1), gp = v ? Math.max(0, (v - d) / v * 100) : 0;
+        html += '<div class="yk"><div class="yk-top"><b>' + esc(name) + '</b><span class="n">' + ils(v) + '</span></div>' +
+          '<div class="note">' + (n ? 'בגיל ' + age + ', בעוד ' + (years % 1 ? years.toFixed(1) : years) + ' שנים · ' + ils(m) + ' בחודש' : 'כבר בגיל ' + age + ' או יותר') + '</div>' +
+          '<div class="bar2" aria-hidden="true"><i style="width:' + (100 - gp).toFixed(1) + '%;background:var(--gold)"></i><i style="width:' + gp.toFixed(1) + '%;background:var(--good)"></i></div>' +
+          '<div class="note">הפקדות ' + ils(d) + ' · תשואה ' + ils(v - d) + '</div></div>';
+      });
+      $('y-lbl').textContent = 'כולם ביחד, כשיגיעו לגיל ' + age;
+      $('y-big').textContent = ils(tot);
+      $('y-sub').textContent = tot ? 'מזה ' + ils(dep) + ' הפקדות, ו-' + ils(tot - dep) + ' מהתשואה (לפי ' + rate + '% בשנה)' : 'ממלאים את הילדים, והחשבון יופיע כאן';
+      $('y-res').innerHTML = tot ? html + '<p class="note" style="margin-top:.5rem">זהב: מה שהפקדתם. ירוק: מה שהתשואה הוסיפה.</p>' : '';
+      $('y-month-sum').textContent = monthSum ? ils(monthSum) + ' בחודש' : '';
+      if (tot) used('calc');
+    }
+    function setMode(m) {
+      st.mode = m; $('y-total-wrap').hidden = m !== 'split';
+      $$('#y-mode button').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-m') === m ? 'true' : 'false'); });
+    }
+    box.addEventListener('input', function (e) {
+      var i = $$('.lrow', box).indexOf(e.target.closest('.lrow')); if (i < 0) return;
+      st.kids[i][e.target.getAttribute('data-k')] = e.target.value; store(); calc();
+    });
+    box.addEventListener('click', function (e) {
+      if (!e.target.closest('[data-del]')) return;
+      st.kids.splice($$('.lrow', box).indexOf(e.target.closest('.lrow')), 1); store(); draw(); calc();
+    });
+    $('y-add').addEventListener('click', function () {
+      st.kids.push({ n: '', a: '', h: '', m: '' }); store(); draw(); calc();
+      var r = $$('.lrow', box); r[r.length - 1].querySelector('[data-k=n]').focus();
+    });
+    $$('#y-mode button').forEach(function (b) { b.addEventListener('click', function () { setMode(b.getAttribute('data-m')); store(); draw(); calc(); used('mode'); }); });
+    $('y-total').value = st.total; $('y-rate').value = st.rate; $('y-age').value = st.age;
+    $('y-total').addEventListener('input', function () { st.total = this.value; store(); calc(); });
+    $('y-rate').addEventListener('input', function () { st.rate = this.value; store(); calc(); });
+    $('y-age').addEventListener('change', function () { st.age = this.value; store(); calc(); });
+    setMode(st.mode); draw(); calc();
+  })();
+
+  // =====================================================================
+  // K6+ הוצאות קבועות לאורך השנה
+  // =====================================================================
+  (function () {
+    if (!$('shana')) return;
+    var MON = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
+    var SH = ['ינו', 'פבר', 'מרץ', 'אפר', 'מאי', 'יוני', 'יולי', 'אוג', 'ספט', 'אוק', 'נוב', 'דצמ'];
+    var FREQ = [['m', 'כל חודש'], ['2', 'כל חודשיים'], ['q', 'כל 3 חודשים'], ['y', 'פעם בשנה'], ['o', 'פעם אחת']];
+    var now = new Date(), cur = now.getMonth() + 1;
+    var st = load('shana', null) || { list: [] };
+    var box = $('s-list');
+    function store() { save('shana', st); }
+    function rowS(r) {
+      return '<div class="sub-item"><div class="lrow yr"><input type="text" data-k="n" maxlength="40" aria-label="שם ההוצאה" placeholder="שם ההוצאה" value="' + esc(r.n) + '">' +
+        '<button class="del" type="button" data-del aria-label="למחוק">×</button>' +
+        '<input type="text" class="num-in" data-k="a" inputmode="decimal" aria-label="סכום בשקלים" placeholder="₪" value="' + esc(r.a) + '">' +
+        '<select data-k="f" aria-label="כל כמה זמן">' + FREQ.map(function (f) { return '<option value="' + f[0] + '"' + (r.f === f[0] ? ' selected' : '') + '>' + f[1] + '</option>'; }).join('') + '</select>' +
+        '<select data-k="mo" aria-label="באיזה חודש"' + (r.f === 'm' ? ' hidden' : '') + '>' + MON.map(function (m, i) { return '<option value="' + (i + 1) + '"' + (+r.mo === i + 1 ? ' selected' : '') + '>' + (r.f === 'm' ? 'כל חודש' : (r.f === 'y' || r.f === 'o' ? 'ב' : 'החל מ') + m) + '</option>'; }).join('') + '</select>' +
+        '</div></div>';
+    }
+    function draw() {
+      box.innerHTML = st.list.map(rowS).join('') || '<p class="note" style="text-align:center">עוד אין הוצאות. לוחצים על שם למעלה, או על "הוצאה אחרת".</p>';
+      var mi = load('minuyim', null);
+      $('s-import').hidden = !(mi && mi.list && mi.list.some(function (x) { return num(x.p); }));
+    }
+    // כמה יורד מהוצאה r בחודש k מהיום (0 = החודש)
+    function charge(r, k) {
+      var a = num(r.a), cm = (cur - 1 + k) % 12 + 1, d = ((cm - (+r.mo || 1)) % 12 + 12) % 12;
+      if (r.f === 'm') return a;
+      if (r.f === '2') return d % 2 === 0 ? a : 0;
+      if (r.f === 'q') return d % 3 === 0 ? a : 0;
+      if (r.f === 'y') return d === 0 ? a : 0;
+      if (r.f === 'o') return d === 0 && k === (((+r.mo || 1) - cur) % 12 + 12) % 12 ? a : 0;
+      return 0;
+    }
+    function months() {
+      var out = [];
+      for (var k = 0; k < 12; k++) out.push(st.list.reduce(function (s, r) { return s + charge(r, k); }, 0));
+      return out;
+    }
+    function calc() {
+      var ms = months(), year = ms.reduce(function (s, v) { return s + v; }, 0), avg = year / 12;
+      var mx = Math.max.apply(null, ms), mk = ms.indexOf(mx);
+      $('s-now').textContent = ils(ms[0]);
+      $('s-lbl').textContent = 'ב' + MON[cur - 1] + ' יורד לך';
+      $('s-sub').textContent = year ? 'ובחודש הבא, ' + MON[cur % 12] + ': ' + ils(ms[1]) : 'מוסיפים הוצאות למטה, והלוח יתמלא';
+      $('s-year').textContent = ils(year); $('s-avg').textContent = ils(avg);
+      $('s-max').textContent = year ? MON[(cur - 1 + mk) % 12] : '-';
+      $('s-chart').innerHTML = ms.map(function (v, k) {
+        var h = mx ? Math.max(3, v / mx * 100) : 3, hi = year && v > avg * 1.25;
+        return '<div class="mcol' + (k === 0 ? ' now' : '') + '" title="' + MON[(cur - 1 + k) % 12] + ': ' + ils(v) + '"><span class="v">' + (v ? Math.round(v / 100) / 10 + 'K' : '') + '</span><i style="height:' + h.toFixed(0) + '%"' + (hi ? ' class="hi"' : '') + '></i><span class="d">' + SH[(cur - 1 + k) % 12] + '</span></div>';
+      }).join('');
+      // חיובים לא חודשיים בחודשיים הקרובים
+      var soon = [];
+      [0, 1].forEach(function (k) {
+        st.list.forEach(function (r) { if (r.f !== 'm' && charge(r, k) && num(r.a) >= 200) soon.push((k ? 'בחודש הבא' : 'החודש') + ' (' + MON[(cur - 1 + k) % 12] + '): <b>' + esc(r.n || 'הוצאה') + '</b> ' + ils(num(r.a))); });
+      });
+      var heavy = year && mx > avg * 1.25 ? '<p style="margin-top:.5rem">החודש הכי כבד: <b>' + MON[(cur - 1 + mk) % 12] + '</b>, ' + ils(mx) + '. זה ' + ils(mx - avg) + ' מעל הממוצע. אם שמים בצד ' + ils(avg) + ' כל חודש, הוא לא יפתיע.</p>' : '';
+      $('s-soon').innerHTML = (soon.length ? '<p><b>⏰ חיובים גדולים שמגיעים:</b></p><ul>' + soon.map(function (s) { return '<li>' + s + '</li>'; }).join('') + '</ul>' : '') + heavy;
+      $('s-soon').hidden = !(soon.length || heavy);
+      if (year) used('calc');
+    }
+    function add(n, f, a) { st.list.push({ n: n || '', a: a || '', f: f || 'm', mo: String(cur) }); }
+    box.addEventListener('input', function (e) {
+      var k = e.target.getAttribute('data-k'); if (!k || e.target.tagName === 'SELECT') return;
+      st.list[$$('.sub-item', box).indexOf(e.target.closest('.sub-item'))][k] = e.target.value; store(); calc();
+    });
+    box.addEventListener('change', function (e) {
+      if (e.target.tagName !== 'SELECT') return;
+      st.list[$$('.sub-item', box).indexOf(e.target.closest('.sub-item'))][e.target.getAttribute('data-k')] = e.target.value; store(); draw(); calc();
+    });
+    box.addEventListener('click', function (e) {
+      if (!e.target.closest('[data-del]')) return;
+      st.list.splice($$('.sub-item', box).indexOf(e.target.closest('.sub-item')), 1); store(); draw(); calc();
+    });
+    function focusLast(sel) { var it = $$('.sub-item', box); it[it.length - 1].querySelector(sel).focus(); }
+    $$('#s-chips button').forEach(function (b) {
+      b.addEventListener('click', function () { add(b.textContent, b.getAttribute('data-f')); store(); draw(); calc(); focusLast('[data-k=a]'); used('add'); });
+    });
+    $('s-add').addEventListener('click', function () { add(''); store(); draw(); calc(); focusLast('[data-k=n]'); used('add'); });
+    $('s-import').addEventListener('click', function () {
+      var mi = load('minuyim', { list: [] }), have = st.list.map(function (r) { return r.n; }), c = 0;
+      mi.list.forEach(function (x) {
+        if (!num(x.p) || have.indexOf(x.n) > -1) return;
+        if (x.per === 'y') add(x.n, 'y', x.p); else if (x.per === 'w') add(x.n, 'm', String(Math.round(num(x.p) * 52 / 12))); else add(x.n, 'm', x.p);
+        c++;
+      });
+      store(); draw(); calc(); flash($('s-saved'), c ? 'נוספו ' + c + ' מנויים' : 'כל המנויים כבר כאן'); used('import');
+    });
+    $('s-csv').addEventListener('click', function () {
+      var hdr = ['הוצאה', 'סכום (₪)', 'כל כמה'], fq = {};
+      FREQ.forEach(function (f) { fq[f[0]] = f[1]; });
+      for (var k = 0; k < 12; k++) hdr.push(MON[(cur - 1 + k) % 12]);
+      var rows = [hdr];
+      st.list.forEach(function (r) { var row = [r.n, num(r.a), fq[r.f] || '']; for (var k = 0; k < 12; k++) row.push(Math.round(charge(r, k))); rows.push(row); });
+      var tot = ['סך הכול', '', '']; months().forEach(function (v) { tot.push(Math.round(v)); }); rows.push([], tot);
+      csvDownload('הוצאות לאורך השנה', rows);
+      flash($('s-saved'), 'נשמר קובץ. אפשר לפתוח אותו באקסל או בגוגל שיטס.'); used('csv');
+    });
+    draw(); calc();
+  })();
+
+  // =====================================================================
+  // K4 מסדר מסמכי הכסף
+  // =====================================================================
+  (function () {
+    if (!$('mismachim')) return;
+    var CATS = [
+      ['הכנסות ומס', '💼', [
+        ['tlush', 'תלושי שכר', 'לפחות 7 שנים, ועדיף עד הפנסיה', 'אם יש טעות בפנסיה או בזכויות, התלוש הוא ההוכחה'],
+        ['106', 'טופס 106 (מכל מעסיק, כל שנה)', '7 שנים', 'צריך אותו להחזר מס, ואפשר לבקש עד 6 שנים אחורה'],
+        ['867', 'טופס 867 מהבנק (ריבית ורווחים)', '7 שנים', ''],
+        ['truma', 'קבלות על תרומות (סעיף 46)', '7 שנים', 'מזכות בזיכוי ממס'],
+        ['shuma', 'מכתבים מרשות המסים ושומות', '7 שנים', '']
+      ]],
+      ['בנק ואשראי', '🏦', [
+        ['bank', 'דפי חשבון בנק', '7 שנים', 'רוב הבנקים שומרים גם אצלם, אבל עדיף עותק'],
+        ['ashrai', 'פירוט כרטיסי אשראי', 'שנתיים, או יותר אם יש בו הוצאה מוכרת', ''],
+        ['halvaa', 'הסכמי הלוואות', 'עד סוף ההחזר', ''],
+        ['silluk', 'אישור סילוק הלוואה או משכנתא', 'לתמיד', 'מוכיח שהחוב נסגר']
+      ]],
+      ['ביטוחים', '🛡️', [
+        ['polisa', 'פוליסות ביטוח (בריאות, חיים, דירה, רכב)', 'כל זמן שהן בתוקף, ועוד 3 שנים', 'אפשר לתבוע גם אחרי שהפוליסה נגמרה'],
+        ['tvia', 'תביעות ותשובות מחברות ביטוח', 'עד שהעניין נסגר, ועוד 3 שנים', '']
+      ]],
+      ['בית', '🏠', [
+        ['schirut', 'חוזה שכירות', 'כל תקופת השכירות, ועוד 7 שנים', ''],
+        ['taboo', 'מסמכי קנייה של דירה (חוזה, נסח טאבו)', 'לתמיד', ''],
+        ['arnona', 'ארנונה, חשמל, מים, גז', 'שנה עד שנתיים', 'הנחה בארנונה? לשמור את האישור עד שמתחדש']
+      ]],
+      ['רכב', '🚗', [
+        ['rishayon', 'רישיון רכב וביטוח חובה', 'כל זמן שהרכב אצלך', ''],
+        ['mechira', 'הסכם קנייה או מכירה של רכב', '7 שנים אחרי המכירה', 'מוכיח ממתי הרכב לא שלך (דוחות, תאונות)']
+      ]],
+      ['פנסיה וחיסכון', '🌱', [
+        ['pensia', 'דוחות שנתיים מהפנסיה, הגמל וההשתלמות', 'עד הפרישה', 'כדי לבדוק שכל ההפקדות נכנסו'],
+        ['yeladim', 'חיסכון לכל ילד ופיקדונות', 'עד שהכסף נמשך', '']
+      ]],
+      ['זכויות', '📜', [
+        ['nechut', 'אישורי נכות (ועדות רפואיות, ביטוח לאומי, משרד הביטחון)', 'לתמיד', 'משמשים להטבות במס, בארנונה ועוד'],
+        ['bituach', 'מכתבים מביטוח לאומי (קצבאות, החלטות)', 'לתמיד', ''],
+        ['shichrur', 'תעודת שחרור משירות', 'לתמיד', 'נקודות זיכוי והטבות לחיילים משוחררים']
+      ]],
+      ['קבלות ואחריות', '🧾', [
+        ['achrayut', 'תעודות אחריות וחשבוניות על מוצרים', 'כל זמן האחריות', ''],
+        ['yakar', 'קבלות על דברים יקרים (מחשב, תכשיטים, ריהוט)', 'כל זמן שהם אצלך', 'לביטוח דירה, אם קורה משהו'],
+        ['refui', 'קבלות רפואיות (תרופות, טיפולים, משקפיים)', '3 שנים', 'להחזרים מהביטוח המשלים או הפרטי']
+      ]]
+    ];
+    var st = load('mismachim', null) || { done: {} };
+    var total = 0;
+    CATS.forEach(function (c) { total += c[2].length; });
+    $('d-list').innerHTML = CATS.map(function (c) {
+      return '<section class="box"><h2>' + c[1] + ' ' + esc(c[0]) + '</h2><div class="checks">' + c[2].map(function (d) {
+        return '<label class="doc"><input type="checkbox" data-id="' + d[0] + '"' + (st.done[d[0]] ? ' checked' : '') + '><span><b>' + esc(d[1]) + '</b><small>לשמור: ' + esc(d[2]) + (d[3] ? ' · ' + esc(d[3]) : '') + '</small></span></label>';
+      }).join('') + '</div></section>';
+    }).join('');
+    var TREE = 'כסף\n' + CATS.map(function (c, i) { return (i === CATS.length - 1 ? '└── ' : '├── ') + c[0]; }).join('\n') + '\n\nבתוך כל תיקייה: תיקייה לכל שנה (2025, 2026...)';
+    $('d-tree').textContent = TREE;
+    function calc() {
+      var n = Object.keys(st.done).filter(function (k) { return st.done[k]; }).length, p = Math.round(n / total * 100);
+      $('d-pct').textContent = p + '%';
+      $('d-bar').style.width = p + '%';
+      $('d-sub').textContent = n === total ? 'הכול מסודר. כל הכבוד!' : n + ' מתוך ' + total + ' סוגי מסמכים. מסמנים מה כבר שמור במקום שלו.';
+    }
+    $('d-list').addEventListener('change', function (e) {
+      var id = e.target.getAttribute('data-id'); if (!id) return;
+      st.done[id] = e.target.checked; save('mismachim', st); calc(); used('check');
+    });
+    $('d-dl').addEventListener('click', function () {
+      var txt = 'מסמכי הכסף שלי – ' + today() + '\n\n' + CATS.map(function (c) {
+        return c[0] + '\n' + c[2].map(function (d) { return (st.done[d[0]] ? '[✓] ' : '[ ] ') + d[1] + ' – לשמור: ' + d[2]; }).join('\n');
+      }).join('\n\n') + '\n\nתבנית תיקיות:\n' + TREE + '\n\nמתוך כלים לכסף: https://gilad-rachamim.github.io/kesef/mismachim/\n';
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob(['﻿' + txt], { type: 'text/plain;charset=utf-8' }));
+      a.download = 'מסמכי הכסף שלי – ' + today() + '.txt';
+      document.body.appendChild(a); a.click(); a.remove();
+      flash($('d-saved'), 'נשמר קובץ עם הרשימה והתבנית.'); used('download');
+    });
+    calc();
+  })();
+
+  // =====================================================================
+  // K3 האם כדאי לבדוק החזר מס
+  // =====================================================================
+  (function () {
+    if (!$('hechzer')) return;
+    var BASE_DOCS = [['106', 'טופס 106 מכל מעסיק, לכל שנה'], ['tz', 'צילום תעודת זהות עם הספח'], ['bank', 'אישור ניהול חשבון בנק (להעברת ההחזר)']];
+    var QS = [
+      ['part', 'עבדתם רק חלק מהשנה? (התחלתם או הפסקתם לעבוד באמצע שנה, חל"ת, לימודים)', 'כשעובדים רק חלק מהשנה, המס מחושב לפעמים כאילו עבדתם כל השנה, ונוצר עודף.', []],
+      ['two', 'עבדתם אצל יותר ממעסיק אחד באותה שנה, בלי תיאום מס?', 'בלי תיאום מס, מעסיק שני מנכה לפעמים מס גבוה מדי.', []],
+      ['donate', 'קיבלתם קבלה לפי סעיף 46 על תרומה לעמותה?', 'על תרומות לעמותות מוכרות יש זיכוי ממס.', [['46', 'קבלות על תרומות (סעיף 46)']]],
+      ['degree', 'סיימתם תואר אקדמי או לימודי מקצוע בשנים האחרונות?', 'אחרי סיום תואר או לימודי מקצוע יש נקודות זיכוי לתקופה מוגבלת.', [['toar', 'אישור זכאות לתואר או תעודת סיום לימודים']]],
+      ['army', 'השתחררתם משירות צבאי או לאומי בשנים האחרונות?', 'חיילים משוחררים מקבלים נקודות זיכוי לתקופה אחרי השחרור.', [['shichrur', 'תעודת שחרור']]],
+      ['nechut', 'יש לכם (או לבן או בת הזוג) נכות רפואית גבוהה, או עיוורון?', 'נכות גבוהה (לרוב 90% ומעלה) יכולה לתת פטור ממס על הכנסה מעבודה, עד תקרה. גם נכי צה"ל כדאי שיבדקו.', [['nechut', 'אישור נכות (ועדה רפואית, ביטוח לאומי או משרד הביטחון)']]],
+      ['family', 'יש לכם ילד עם מוגבלות, או בן משפחה במוסד שאתם משלמים עליו?', 'יש נקודות זיכוי וזיכויים על הוצאות כאלה.', [['family', 'אישורים מביטוח לאומי או קבלות על תשלום למוסד']]],
+      ['withdraw', 'משכתם כסף מקופת גמל, פיצויים או פנסיה, ונוכה לכם מס?', 'לפעמים המס שנוכה במשיכה גבוה מהנדרש.', [['161', 'אישור על המשיכה ועל המס שנוכה (למשל טופס 161)']]],
+      ['private', 'אתם מפקידים לבד (לא דרך המעסיק) לביטוח חיים או לחיסכון פנסיוני?', 'על הפקדות כאלה יש זיכוי ממס, והמעסיק לא יודע עליהן.', [['45', 'אישור שנתי מחברת הביטוח או מקופת הגמל']]],
+      ['yishuv', 'גרתם ביישוב שמקבל הטבות מס?', 'לתושבי יישובים מזכים יש הנחה במס. לפעמים היא לא הוחלה כל השנה.', [['toshav', 'אישור תושבות מהרשות המקומית']]],
+      ['oleh', 'עליתם לארץ, או חזרתם אחרי שנים בחו"ל, בשנים האחרונות?', 'לעולים חדשים ולתושבים חוזרים יש נקודות זיכוי.', [['oleh', 'תעודת עולה או אישור תושב חוזר']]],
+      ['stocks', 'היה לכם הפסד בבורסה, או ריבית בבנק שנוכה ממנה מס?', 'אפשר לקזז הפסדים, ולפעמים לקבל בחזרה מס שנוכה.', [['867', 'טופס 867 מכל בנק ובית השקעות']]]
+    ];
+    var st = load('hechzer', null) || { a: {}, docs: {} };
+    var ANS = [['y', 'כן'], ['n', 'לא'], ['u', 'לא בטוח']];
+    function drawQs() {
+      $('r-qs').innerHTML = QS.map(function (q, i) {
+        return '<div class="q' + (st.a[q[0]] ? ' done' : '') + '"><p><span class="qn">' + (i + 1) + '</span>' + esc(q[1]) + '</p><div class="seg">' +
+          ANS.map(function (a) { return '<button type="button" data-q="' + q[0] + '" data-a="' + a[0] + '" aria-pressed="' + (st.a[q[0]] === a[0]) + '">' + a[1] + '</button>'; }).join('') + '</div></div>';
+      }).join('');
+    }
+    function calc() {
+      var yes = QS.filter(function (q) { return st.a[q[0]] === 'y'; }), maybe = QS.filter(function (q) { return st.a[q[0]] === 'u'; });
+      var answered = QS.filter(function (q) { return st.a[q[0]]; }).length, show = yes.length || maybe.length;
+      var big = $('r-big'), lbl = $('r-lbl'), sub = $('r-sub');
+      if (!answered) { lbl.textContent = 'עונים על השאלות למעלה'; big.textContent = 'עוד לא ענית'; sub.textContent = ''; }
+      else if (yes.length) { lbl.textContent = 'התשובה'; big.textContent = '✅ שווה לבדוק'; sub.textContent = 'מצאנו ' + (yes.length === 1 ? 'סיבה אחת' : yes.length + ' סיבות') + '. אפשר לבקש עד 6 שנים אחורה.'; }
+      else if (maybe.length) { lbl.textContent = 'התשובה'; big.textContent = '🤔 אולי כדאי לבדוק'; sub.textContent = 'יש דברים שלא בטוח. שווה לבדוק אותם, ולענות שוב.'; }
+      else { lbl.textContent = 'התשובה'; big.textContent = 'לא מצאנו סיבה בולטת'; sub.textContent = answered < QS.length ? 'ענית על ' + answered + ' מתוך ' + QS.length + '.' : 'לפי התשובות, אין סיבה בולטת. עדיין אפשר לבדוק באתר רשות המסים.'; }
+      $('r-why').hidden = !show; $('r-docs').hidden = !show; $('r-how').hidden = !answered;
+      $('r-why-list').innerHTML = yes.concat(maybe).map(function (q) { return '<li><b>' + (st.a[q[0]] === 'u' ? 'אולי: ' : '') + esc(q[1].replace(/\?.*$/, '?')) + '</b><br>' + esc(q[2]) + '</li>'; }).join('');
+      var docs = BASE_DOCS.slice(), seen = {};
+      docs.forEach(function (d) { seen[d[0]] = 1; });
+      yes.concat(maybe).forEach(function (q) { q[3].forEach(function (d) { if (!seen[d[0]]) { seen[d[0]] = 1; docs.push(d); } }); });
+      $('r-docs-list').innerHTML = docs.map(function (d) { return '<label class="doc"><input type="checkbox" data-doc="' + d[0] + '"' + (st.docs[d[0]] ? ' checked' : '') + '><span><b>' + esc(d[1]) + '</b></span></label>'; }).join('');
+      if (answered === QS.length) used('done', { yes: yes.length });
+    }
+    $('r-qs').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-q]'); if (!b) return;
+      st.a[b.getAttribute('data-q')] = b.getAttribute('data-a'); save('hechzer', st); drawQs(); calc(); used('answer');
+    });
+    $('r-docs-list').addEventListener('change', function (e) {
+      var id = e.target.getAttribute('data-doc'); if (!id) return;
+      st.docs[id] = e.target.checked; save('hechzer', st);
+    });
+    $('r-go').addEventListener('click', function () { used('gov'); });
+    drawQs(); calc();
+  })();
+  // =====================================================================
+  // K9 בודק תלוש משכורת – הכול בטלפון, לפי חוק שכר מינימום וצו ההרחבה לפנסיה
+  // =====================================================================
+  (function () {
+    if (!$('tlush')) return;
+    var MIN_MONTH = 6443.85, MIN_HOUR = 35.40, FULL_HOURS = 182;   // מאפריל 2026
+    var IDS = ['pct', 'hours', 'months', 'g', 'n', 'x', 'ee', 'er', 'pz', 'he', 'hr', 'vac', 'sick'];
+    var st = load('tlush', null) || { kind: 'full' };
+    IDS.forEach(function (k) { if (st[k] != null) $('p-' + k).value = st[k]; });
+    function v(k) { return num($('p-' + k).value); }
+    function pct(a, b) { return b > 0 ? (a / b * 100) : 0; }
+    function p1(n) { return n.toLocaleString('he-IL', { maximumFractionDigits: 1 }) + '%'; }
+    function setKind(k) {
+      st.kind = k;
+      $$('#p-kind button').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-v') === k); });
+      $('p-pct-w').hidden = k !== 'part'; $('p-hours-w').hidden = k !== 'hour';
+    }
+    function calc() {
+      IDS.forEach(function (k) { st[k] = $('p-' + k).value; });
+      save('tlush', st);
+      var g = v('g'), n = v('n'), x = v('x'), base = Math.max(0, g - x), months = v('months');
+      $('p-gross').textContent = ils(g); $('p-net').textContent = ils(n);
+      $('p-cut').textContent = g > 0 && n > 0 ? p1(pct(g - n, g)) : '-';
+      if (!g) { $('p-big').textContent = 'ממלאים למטה'; $('p-sub').textContent = 'מספיק ברוטו כדי להתחיל.'; $('p-res').hidden = $('p-ask').hidden = true; return; }
+      var items = [], ask = [];
+      function add(ok, title, text, q) { items.push([ok, title, text]); if (!ok && q) ask.push(q); }
+      // 1. שכר מינימום (על השכר בלי שעות נוספות ונסיעות)
+      var min = MIN_MONTH, minTxt = '6,443.85 ₪ למשרה מלאה';
+      if (st.kind === 'part') { var pp = v('pct'); min = MIN_MONTH * (pp > 0 ? pp : 100) / 100; minTxt = ils(min) + ' ל-' + (pp || 100) + '% משרה'; }
+      if (st.kind === 'hour') { var hh = v('hours'); min = MIN_HOUR * hh; minTxt = '35.40 ₪ לשעה' + (hh ? ' × ' + hh + ' שעות = ' + ils(min) : ''); }
+      if (min > 0) {
+        var okMin = base >= min - 0.5;
+        add(okMin, okMin ? 'מעל שכר המינימום' : 'נראה שמתחת לשכר המינימום',
+          'השכר בלי שעות נוספות ונסיעות: ' + ils(base) + '. המינימום: ' + minTxt + '. (לנוער ולחניכים יש מינימום אחר.)',
+          'למה השכר הבסיסי ' + ils(base) + ', כשהמינימום הוא ' + ils(min) + '?');
+      }
+      // 2. פנסיה: 6% עובד, 6.5% תגמולי מעסיק, 6% פיצויים
+      var ee = v('ee'), er = v('er'), pz = v('pz');
+      if (!ee && !er && !pz) {
+        if (months && months < 6) add(true, 'עוד אין הפרשה לפנסיה', 'אצל מעסיק חדש חובה להתחיל אחרי 6 חודשים (או מהיום הראשון, אם כבר הייתה לך קרן פנסיה). אחר כך המעסיק משלים גם אחורה.', null);
+        else add(false, 'לא רואים הפרשה לפנסיה', 'אחרי 6 חודשי עבודה המעסיק חייב להפריש לפנסיה. אם השורה קיימת בתלוש ולא מילאת אותה, אפשר להוסיף.', 'האם מפרישים לי לפנסיה, לאיזו קרן, ומאיזה חודש?');
+      } else {
+        var exp = { ee: base * 0.06, er: base * 0.065, pz: base * 0.06 };
+        var low = [];
+        if (ee < exp.ee - 1) low.push('ממך ' + ils(ee) + ' (לפחות 6% = ' + ils(exp.ee) + ')');
+        if (er < exp.er - 1) low.push('תגמולי מעסיק ' + ils(er) + ' (לפחות 6.5% = ' + ils(exp.er) + ')');
+        if (pz < exp.pz - 1) low.push('פיצויים ' + ils(pz) + ' (לפחות 6% = ' + ils(exp.pz) + ')');
+        add(!low.length, low.length ? 'הפנסיה נראית נמוכה מהחוק' : 'הפנסיה לפי החוק',
+          low.length ? low.join(' · ') + '. החשבון מהשכר בלי שעות נוספות ונסיעות, ולפעמים הבסיס שונה.' :
+            'ממך ' + p1(pct(ee, base)) + ', תגמולי מעסיק ' + p1(pct(er, base)) + ', פיצויים ' + p1(pct(pz, base)) + ' מהשכר.',
+          'מאיזה סכום מחושבת הפנסיה, ולמה ההפרשה נמוכה מ-6% / 6.5% / 6%?');
+      }
+      // 3. קרן השתלמות (לא חובה בחוק לכולם)
+      var he = v('he'), hr = v('hr');
+      if (he || hr) items.push([true, 'יש קרן השתלמות', 'ממך ' + p1(pct(he, base)) + ', מהמעסיק ' + p1(pct(hr, base)) + '. מקובל: 2.5% ממך ו-7.5% מהמעסיק. אפשר לבדוק את המסלול שלה בכלי "מעקב קרנות".']);
+      else { items.push([null, 'אין קרן השתלמות בתלוש', 'זה לא חובה לפי החוק לכל העובדים, אבל בענפים רבים יש הסכם או צו הרחבה שמחייבים. שווה לשאול.']); ask.push('האם מגיעה לי קרן השתלמות לפי ההסכם או הענף?'); }
+      // 4. חופש ומחלה
+      if ($('p-vac').value === '' && $('p-sick').value === '') { items.push([null, 'אין יתרת חופש ומחלה', 'בתלוש חייבת להופיע יתרת ימי חופש ומחלה. אם אין, שווה לבקש.']); ask.push('כמה ימי חופש ומחלה צברתי?'); }
+      else items.push([true, 'יתרת חופש ' + (v('vac') || 0) + ' ימים, מחלה ' + (v('sick') || 0) + ' ימים', 'מחלה: נצברים 1.5 ימים כל חודש, עד 90. חופש: לפי הוותק, ובשנים הראשונות לפחות 12 ימי עבודה בשנה (בשבוע של 5 ימים).']);
+      // 5. הבראה
+      if (months >= 12) items.push([null, 'דמי הבראה', 'אחרי שנה בעבודה מגיעים דמי הבראה, פעם בשנה או כל חודש. לבדוק שמופיע בתלוש של החודש שבו משלמים.']);
+      // 6. נטו
+      if (n > 0) items.push([null, 'מהברוטו ירד ' + ils(g - n), 'זה ' + p1(pct(g - n, g)) + ': מס הכנסה, ביטוח לאומי ומס בריאות, פנסיה ושאר ניכויים. אם ירד הרבה יותר מבחודשים אחרים, שווה לבדוק את נקודות הזיכוי.']);
+
+      var bad = items.filter(function (i) { return i[0] === false; }).length, good = items.filter(function (i) { return i[0] === true; }).length;
+      $('p-big').textContent = bad ? '⚠️ ' + (bad === 1 ? 'דבר אחד' : bad + ' דברים') + ' לבדוק' : '✅ נראה תקין';
+      $('p-sub').textContent = good + ' בדיקות עברו' + (bad ? ', ' + bad + ' לבדוק עם המעסיק.' : '. שווה לשמור את התלוש.');
+      $('p-list').innerHTML = items.map(function (i) {
+        var ic = i[0] === true ? '✅' : i[0] === false ? '⚠️' : 'ℹ️';
+        return '<li style="border-color:' + (i[0] === false ? 'var(--bad)' : i[0] === true ? 'var(--good)' : 'var(--gold-soft)') + '"><b>' + ic + ' ' + esc(i[1]) + '</b><br>' + esc(i[2]) + '</li>';
+      }).join('');
+      $('p-ask-list').innerHTML = ask.map(function (q) { return '<li>' + esc(q) + '</li>'; }).join('');
+      $('p-res').hidden = false; $('p-ask').hidden = !ask.length;
+      used('check', { issues: bad });
+    }
+    $('p-kind').addEventListener('click', function (e) { var b = e.target.closest('[data-v]'); if (b) { setKind(b.getAttribute('data-v')); calc(); } });
+    $('tlush').addEventListener('input', calc);
+    $('p-print').addEventListener('click', function () { used('print'); window.print(); });
+    setKind(st.kind || 'full'); calc();
+  })();
+
+  // =====================================================================
+  // K8 סריקת דף פירוט אשראי – קורא אקסל/CSV בדפדפן (SheetJS נטען רק כשבוחרים קובץ)
+  // =====================================================================
+  (function () {
+    if (!$('ashrai')) return;
+    var XLSX_URL = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    var CATS = [
+      ['סופר ומכולת', /שופרסל|רמי לוי|ויקטורי|יוחננוף|אושר עד|מגה|טיב טעם|יינות ביתן|חצי חינם|קרפור|סופר|מכולת|מינימרקט|AM:PM|פרש מרקט|קשת טעמים|נתיב החסד|ירקות|פירות|מאפ|קצב/i],
+      ['דלק ורכב', /פז|דלק|סונול|דור אלון|אלון|\bטן\b|ten|yellow|ילו|מוסך|חניון|פנגו|סלופארק|cellopark|pango|כביש 6|נתיבי איילון/i],
+      ['תחבורה', /רב.?קו|רכבת|אגד|דן |מטרופולין|אפיקים|גט|gett|יאנגו|yango|מונית|קווים|אקסטרה/i],
+      ['תקשורת ומנויים', /פרטנר|סלקום|הוט|hot|בזק|גולן|012|019|yes|נטפליקס|netflix|spotify|ספוטיפיי|apple|google|youtube|disney|amazon prime|icloud|סלקום tv|wix|microsoft|openai|claude|anthropic|chatgpt/i],
+      ['ביטוח', /ביטוח|הראל|מגדל|הפניקס|מנורה|איילון|aig|ישיר|שלמה|ליברה|ווישור|wesure/i],
+      ['בריאות ופארם', /מכבי|כללית|מאוחדת|לאומית|סופר.?פארם|ניו.?פארם|\bבי\b|be |בית מרקחת|אופטיק|רופא|מרפא|שיניים/i],
+      ['חשבונות הבית', /חברת החשמל|חשמל|תאגיד|מי |מים|ארנונה|עיריי|מועצה|גז|אמישראגז|סופרגז|פזגז|ועד בית/i],
+      ['אוכל בחוץ', /מסעד|קפה|ארומה|קפה קפה|גרג|פיצ|בורגר|מקדונלד|שווארמה|פלאפל|סושי|wolt|וולט|תן ביס|10bis|סיבוס|cibus|מאפה|גלידה/i],
+      ['ביגוד והנעלה', /קסטרו|פוקס|fox|h&m|zara|זארה|טרמינל|terminal|גולף|רנואר|אמריקן איגל|נעלי|shoes|הודיס|גלי|מנגו|קרביץ|נקסט|next/i],
+      ['קניות אונליין', /aliexpress|עלי אקספרס|amazon|אמזון|ebay|shein|temu|טמו|iherb|asos|paypal|פייפאל/i],
+      ['בית וחשמל', /איקאה|ikea|ace|אייס|הום סנטר|ks?p|באג|מחסני חשמל|שקם|ביתילי|טמבור|ריהוט|כלי בית|מקס סטוק|מקס סטוק|max stock/i],
+      ['חינוך וילדים', /גן |צהרון|בית ספר|ביה"ס|חוג|קייטנ|צעצוע|טויס|toys|ספרים|סטימצקי|צומת ספרים|מכללה|אוניברסיט/i]
+    ];
+    var SUBS = /netflix|נטפליקס|spotify|ספוטיפיי|apple\.com|icloud|google|youtube|disney|amazon prime|yes|hot|פרטנר|סלקום|בזק|גולן|012|019|ביטוח|הוראת קבע|מנוי|חדר כושר|הולמס פלייס|openai|claude|chatgpt|microsoft|wix|dropbox|canva/i;
+    var st = load('ashrai', null) || { tx: [] };   // tx: [{d:'2026-10', n, a, c, r(קבע), p(תשלומים)}]
+
+    function loadXlsx(cb) {
+      if (window.XLSX) return cb();
+      var s = document.createElement('script'); s.src = XLSX_URL; s.onload = cb;
+      s.onerror = function () { flash($('a-msg'), 'לא הצלחנו לטעון את קורא האקסל. בודקים אינטרנט ומנסים שוב.'); };
+      document.head.appendChild(s);
+    }
+    function catOf(name, given) {
+      if (given) return String(given).trim();
+      for (var i = 0; i < CATS.length; i++) if (CATS[i][1].test(name)) return CATS[i][0];
+      return 'אחר';
+    }
+    function monthOf(v) {
+      if (typeof v === 'number' && v > 30000 && v < 80000) { var d = new Date(Math.round((v - 25569) * 864e5)); return d.getUTCFullYear() + '-' + ('0' + (d.getUTCMonth() + 1)).slice(-2); }
+      if (v instanceof Date) return v.getFullYear() + '-' + ('0' + (v.getMonth() + 1)).slice(-2);
+      var m = String(v || '').match(/(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})/);
+      if (m) { var y = +m[3]; if (y < 100) y += 2000; return y + '-' + ('0' + m[2]).slice(-2); }
+      m = String(v || '').match(/(\d{4})-(\d{2})/);
+      return m ? m[1] + '-' + m[2] : '';
+    }
+    // מוצאים שורת כותרת (שם עסק + סכום), ואז עמודות: תאריך, שם, סכום חיוב, קטגוריה, סוג עסקה
+    function parseRows(rows) {
+      var out = [], h = null;
+      rows.forEach(function (r) {
+        r = r || [];
+        var cells = r.map(function (c) { return String(c == null ? '' : c).trim(); });
+        var name = cells.findIndex(function (c) { return /בית.?ה?עסק|שם ה?עסק|תיאור|פירוט|merchant|description/i.test(c); });
+        var amtI = cells.findIndex(function (c) { return /סכום/.test(c); });
+        if (name > -1 && amtI > -1) {
+          var charge = cells.findIndex(function (c) { return /סכום.*חיוב|סכום לחיוב|חיוב בש/.test(c); });
+          h = { n: name, a: charge > -1 ? charge : amtI, d: cells.findIndex(function (c) { return /תאריך/.test(c); }),
+            c: cells.findIndex(function (c) { return /^(ענף|קטגוריה)/.test(c); }), t: cells.findIndex(function (c) { return /סוג/.test(c); }),
+            x: cells.findIndex(function (c) { return /הערות|פירוט נוסף/.test(c); }) };
+          return;
+        }
+        if (!h) return;
+        var n = cells[h.n], a = num(r[h.a]);
+        if (!n || !a || /סה"?כ|סך הכל|total/i.test(n)) return;
+        var extra = (h.t > -1 ? cells[h.t] : '') + ' ' + (h.x > -1 ? cells[h.x] : '');
+        out.push({ d: h.d > -1 ? monthOf(r[h.d]) : '', n: n.replace(/\s+/g, ' ').slice(0, 60), a: Math.round(a * 100) / 100,
+          c: catOf(n, h.c > -1 ? cells[h.c] : ''), r: /קבע/.test(extra) ? 1 : 0, p: /תשלום|תשלומים/.test(extra) ? 1 : 0 });
+      });
+      return out;
+    }
+    function addTx(list, label) {
+      if (!list.length) { flash($('a-msg'), 'לא מצאנו חיובים בקובץ ' + label + '. צריך קובץ פירוט עם עמודות "שם בית העסק" ו"סכום".'); return 0; }
+      var months = {}; list.forEach(function (t) { months[t.d] = 1; });
+      st.tx = st.tx.filter(function (t) { return !months[t.d]; }).concat(list);   // חודש שנטען שוב מחליף את הקודם
+      st.tx.sort(function (a, b) { return a.d < b.d ? -1 : 1; });
+      save('ashrai', st); return list.length;
+    }
+    function readFile(f, done) {
+      var rd = new FileReader();
+      if (/\.csv$/i.test(f.name)) {
+        rd.onload = function () {
+          var rows = String(rd.result).split(/\r?\n/).map(function (line) {
+            var res = [], cur = '', q = false;
+            for (var i = 0; i < line.length; i++) { var ch = line[i]; if (ch === '"') { if (q && line[i + 1] === '"') { cur += '"'; i++; } else q = !q; } else if (ch === ',' && !q) { res.push(cur); cur = ''; } else cur += ch; }
+            res.push(cur); return res;
+          });
+          done(parseRows(rows));
+        };
+        rd.readAsText(f, 'utf-8');
+      } else {
+        rd.onload = function () {
+          loadXlsx(function () {
+            try {
+              var wb = window.XLSX.read(new Uint8Array(rd.result), { type: 'array', cellDates: false });
+              var all = [];
+              wb.SheetNames.forEach(function (sn) { all = all.concat(parseRows(window.XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, raw: true, defval: '' }))); });
+              done(all);
+            } catch (e) { done([]); }
+          });
+        };
+        rd.readAsArrayBuffer(f);
+      }
+    }
+    $('a-file').addEventListener('change', function () {
+      var files = Array.prototype.slice.call(this.files || []), left = files.length, got = 0;
+      if (!left) return;
+      flash($('a-msg'), 'קורא…');
+      files.forEach(function (f) {
+        readFile(f, function (list) {
+          got += addTx(list, f.name);
+          if (--left === 0) { if (got) { flash($('a-msg'), 'נקראו ' + got + ' חיובים ✓'); used('upload', { rows: got }); } draw(); }
+        });
+      });
+      this.value = '';
+    });
+    $('a-demo').addEventListener('click', function () {
+      var D = [['שופרסל דיל', 612], ['רמי לוי', 845.4], ['פז ', 320], ['נטפליקס', 54.9], ['ספוטיפיי', 21.9], ['פרטנר תקשורת', 89, 1], ['הראל ביטוח', 212, 1], ['ארומה', 46], ['וולט', 118], ['סופר-פארם', 164.5], ['חברת החשמל', 410, 1], ['עלי אקספרס', 73.2], ['קסטרו', 239, 0, 1], ['רב-קו', 50], ['חדר כושר', 199, 1], ['איקאה', 129, 0, 1]];
+      var list = [];
+      ['2026-09', '2026-10'].forEach(function (m, mi) {
+        D.forEach(function (x) { list.push({ d: m, n: x[0].trim(), a: Math.round(x[1] * (mi || x[2] || SUBS.test(x[0]) ? 1 : 0.9) * 100) / 100, c: catOf(x[0], ''), r: x[2] || 0, p: x[3] || 0 }); });
+      });
+      st.tx = list; st.demo = 1; save('ashrai', st); flash($('a-msg'), 'זו דוגמה. כשתעלו קובץ אמיתי, הוא יחליף אותה.'); used('demo'); draw();
+    });
+    function draw() {
+      if (!st.tx.length) { $('a-out').hidden = true; return; }
+      $('a-out').hidden = false;
+      var months = []; st.tx.forEach(function (t) { if (months.indexOf(t.d) < 0) months.push(t.d); });
+      months.sort();
+      var last = months[months.length - 1], prevM = months.length > 1 ? months[months.length - 2] : null;
+      var cur = st.tx.filter(function (t) { return t.d === last; });
+      var total = cur.reduce(function (s, t) { return s + t.a; }, 0);
+      var mName = function (m) { if (!m) return 'בלי תאריך'; var p = m.split('-'); return ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'][+p[1] - 1] + ' ' + p[0]; };
+      $('a-lbl').textContent = 'סך הכל ' + mName(last);
+      $('a-total').textContent = ils(total);
+      // לפי קטגוריה
+      var cats = {}; cur.forEach(function (t) { cats[t.c] = (cats[t.c] || 0) + t.a; });
+      var catArr = Object.keys(cats).map(function (k) { return [k, cats[k]]; }).sort(function (a, b) { return b[1] - a[1]; });
+      $('a-cats').innerHTML = catArr.map(function (c) {
+        var w = total > 0 ? Math.max(2, c[1] / total * 100) : 0;
+        return '<div class="yk"><div class="yk-top"><b>' + esc(c[0]) + '</b><span class="n">' + ils(c[1]) + '</span></div><div class="bar2"><i style="width:' + w + '%;background:var(--gold)"></i></div><span class="note">' + Math.round(c[1] / total * 100) + '% מהחודש</span></div>';
+      }).join('');
+      // לפי עסק
+      var biz = {}; cur.forEach(function (t) { biz[t.n] = (biz[t.n] || 0) + t.a; });
+      var bizArr = Object.keys(biz).map(function (k) { return [k, biz[k]]; }).sort(function (a, b) { return b[1] - a[1]; });
+      $('a-top').innerHTML = bizArr.slice(0, 10).map(function (b) { return '<div><span>' + esc(b[0]) + '</span><b>' + ils(b[1]) + '</b></div>'; }).join('');
+      // חוזרים: הוראת קבע / מנוי מוכר / אותו עסק ביותר מחודש
+      // אותו עסק בחודש אחר, בסכום כמעט זהה (עד 5% הבדל) = חוזר. סופר ודלק לא נחשבים חוזרים גם אם חוזרים.
+      var inMonths = {};
+      st.tx.forEach(function (t) {
+        if (t.d === last || /סופר|דלק|אוכל/.test(t.c)) return;
+        cur.forEach(function (c) { if (c.n === t.n && Math.abs(c.a - t.a) <= Math.max(1, c.a * 0.05)) inMonths[t.n] = 1; });
+      });
+      var recSeen = {}, recs = [];
+      cur.forEach(function (t) {
+        if (recSeen[t.n]) return;
+        var why = t.r ? 'הוראת קבע' : SUBS.test(t.n) ? 'נראה כמו מנוי' : inMonths[t.n] ? 'חוזר כל חודש' : '';
+        if (why && !t.p) { recSeen[t.n] = 1; recs.push([t.n, t.a, why]); }
+      });
+      var recSum = recs.reduce(function (s, r) { return s + r[1]; }, 0);
+      $('a-recs').innerHTML = recs.length ? recs.map(function (r) { return '<div><span>' + esc(r[0]) + ' <small class="note">· ' + r[2] + '</small></span><b>' + ils(r[1]) + '</b></div>'; }).join('') : '<div><span>לא זיהינו חיובים חוזרים. עם קובץ של חודש נוסף, יהיה קל יותר.</span></div>';
+      var pays = cur.filter(function (t) { return t.p; });
+      $('a-n').textContent = cur.length; $('a-rec').textContent = ils(recSum); $('a-pay').textContent = pays.length;
+      // חודש מול חודש
+      var tot = {}; st.tx.forEach(function (t) { tot[t.d] = (tot[t.d] || 0) + t.a; });
+      $('a-months-box').hidden = months.length < 2;
+      $('a-months').innerHTML = months.slice(-6).map(function (m) { return '<div><span>' + mName(m) + '</span><b>' + ils(tot[m]) + '</b></div>'; }).join('');
+      var diff = prevM ? total - tot[prevM] : null;
+      $('a-sub').textContent = st.demo ? 'דוגמה בלבד' : (diff == null ? '' : (diff > 0 ? 'יותר ב-' + ils(diff) : 'פחות ב-' + ils(-diff)) + ' מ' + mName(prevM));
+      // 5 שורות מסקנה
+      var lines = [];
+      if (catArr[0]) lines.push('הכי הרבה הלך על <b>' + esc(catArr[0][0]) + '</b>: ' + ils(catArr[0][1]) + ' (' + Math.round(catArr[0][1] / total * 100) + '%).');
+      if (bizArr[0]) lines.push('העסק הכי יקר החודש: <b>' + esc(bizArr[0][0]) + '</b>, ' + ils(bizArr[0][1]) + '.');
+      if (recs.length) lines.push('<b>' + recs.length + ' חיובים חוזרים</b> לוקחים ' + ils(recSum) + ' בחודש, ' + ils(recSum * 12) + ' בשנה.');
+      if (prevM) {
+        var pc = {}; st.tx.filter(function (t) { return t.d === prevM; }).forEach(function (t) { pc[t.c] = (pc[t.c] || 0) + t.a; });
+        var up = catArr.map(function (c) { return [c[0], c[1] - (pc[c[0]] || 0)]; }).sort(function (a, b) { return b[1] - a[1]; })[0];
+        lines.push('לעומת ' + mName(prevM) + ': ' + (diff > 0 ? 'יותר' : 'פחות') + ' ב-' + ils(Math.abs(diff)) + '.' + (up && up[1] > 50 ? ' הכי עלה: ' + esc(up[0]) + ' (+' + ils(up[1]) + ').' : ''));
+      }
+      if (pays.length) lines.push('<b>' + pays.length + ' חיובים בתשלומים</b> ממשיכים גם בחודשים הבאים.');
+      $('a-sum5').innerHTML = '<b>בקצרה</b><ul>' + lines.map(function (l) { return '<li>' + l + '</li>'; }).join('') + '</ul>';
+    }
+    $('a-csv').addEventListener('click', function () {
+      var rows = [['חודש', 'עסק', 'סכום', 'קטגוריה', 'הוראת קבע', 'תשלומים']];
+      st.tx.forEach(function (t) { rows.push([t.d, t.n, t.a, t.c, t.r ? 'כן' : '', t.p ? 'כן' : '']); });
+      csvDownload('פירוט אשראי', rows); used('csv');
+    });
+    draw();
+  })();
+
+  // =====================================================================
+  // K10 מעקב קרנות השתלמות וגמל – נתוני גמל נט (/kesef/kranot.json, מתעדכן פעם בחודש ב-GitHub Action)
+  // =====================================================================
+  (function () {
+    if (!$('kranot')) return;
+    var KINDS = [['קרנות השתלמות', 'השתלמות'], ['תגמולים ואישית לפיצויים', 'קופת גמל'], ['קופת גמל להשקעה', 'גמל להשקעה'], ['קופת גמל להשקעה - חסכון לילד', 'חיסכון לילד']];
+    var st = load('kranot', null) || { kind: KINDS[0][0], fund: null, mine: [] };
+    var D = null, byId = {};
+    function pc(v, sign) { return v == null ? '-' : (sign && v > 0 ? '+' : '') + v.toLocaleString('he-IL', { maximumFractionDigits: 2 }) + '%'; }
+    function median(a) { a = a.filter(function (x) { return x != null; }).sort(function (x, y) { return x - y; }); if (!a.length) return null; var m = a.length >> 1; return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2; }
+    function rank(list, key, val, lowBetter) {
+      var a = list.map(function (f) { return f[key]; }).filter(function (x) { return x != null; });
+      if (val == null || !a.length) return '-';
+      var better = a.filter(function (x) { return lowBetter ? x < val : x > val; }).length;
+      return (better + 1) + ' מתוך ' + a.length;
+    }
+    function per(p) { var s = String(p); return ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'][+s.slice(4) - 1] + ' ' + s.slice(0, 4); }
+    function drawKinds() {
+      $('f-kind').innerHTML = KINDS.map(function (k) { return '<button type="button" data-k="' + esc(k[0]) + '" aria-pressed="' + (st.kind === k[0]) + '">' + k[1] + '</button>'; }).join('');
+    }
+    function drawCorps() {
+      var corps = {}; D.funds.forEach(function (f) { if (f.k === st.kind) corps[f.c] = (corps[f.c] || 0) + 1; });
+      var names = Object.keys(corps).sort(function (a, b) { return a.localeCompare(b, 'he'); });
+      var cur = st.fund && byId[st.fund] && byId[st.fund].k === st.kind ? byId[st.fund].c : '';
+      $('f-corp').innerHTML = '<option value="">בוחרים חברה…</option>' + names.map(function (n) { return '<option' + (n === cur ? ' selected' : '') + '>' + esc(n) + '</option>'; }).join('');
+      drawFunds();
+    }
+    function drawFunds() {
+      var c = $('f-corp').value;
+      var list = D.funds.filter(function (f) { return f.k === st.kind && f.c === c; });
+      $('f-fund').innerHTML = '<option value="">' + (c ? 'בוחרים מסלול…' : 'קודם חברה') + '</option>' + list.map(function (f) { return '<option value="' + f.i + '"' + (f.i === st.fund ? ' selected' : '') + '>' + esc(f.n) + '</option>'; }).join('');
+      show();
+    }
+    function show() {
+      var f = byId[$('f-fund').value];
+      $('f-out').hidden = !f;
+      if (!f) return;
+      st.fund = f.i; save('kranot', st);
+      // דומים: אותו סוג, אותה התמחות ותת-התמחות, פתוח לכלל האוכלוסייה (ותמיד כולל את שלך)
+      var grp = D.funds.filter(function (g) { return g.k === f.k && g.s === f.s && g.ss === f.ss && (g.p === 'כלל האוכלוסיה' || g.i === f.i); });
+      $('f-name').textContent = f.c + ' · ' + f.n;
+      $('f-y1').textContent = pc(f.y1 != null ? f.y1 : f.ytd, true);
+      $('f-sub').textContent = (f.y1 != null ? 'תשואה ב-12 החודשים האחרונים' : 'תשואה מתחילת השנה') + ', עד ' + per(D.period) + '. אחרי דמי ניהול.';
+      $('f-y3').textContent = pc(f.y3); $('f-y5').textContent = pc(f.y5); $('f-fee').textContent = pc(f.f);
+      $('f-grp').textContent = 'השוואה ל-' + grp.length + ' מסלולים מאותו סוג: ' + (f.s + (f.ss && f.ss !== f.s ? ', ' + f.ss : '')) + '. מקום 1 = הכי גבוה בתשואה, או הכי נמוך בדמי ניהול.';
+      var rows = [['12 חודשים', 'y1', false], ['3 שנים, לשנה', 'y3', false], ['5 שנים, לשנה', 'y5', false], ['דמי ניהול מהצבירה', 'f', true]];
+      $('f-cmp').innerHTML = rows.map(function (r) {
+        var me = f[r[1]], md = median(grp.map(function (g) { return g[r[1]]; }));
+        var cls = me == null || md == null ? '' : ((r[2] ? me < md : me > md) ? 'down' : (me === md ? '' : 'up'));
+        return '<tr><td>' + r[0] + '</td><td class="n ' + cls + '">' + pc(me) + '</td><td class="n">' + pc(md) + '</td><td>' + rank(grp, r[1], me, r[2]) + '</td></tr>';
+      }).join('');
+      $('f-all').innerHTML = grp.slice().sort(function (a, b) { return (b.y5 == null ? -99 : b.y5) - (a.y5 == null ? -99 : a.y5); }).map(function (g) {
+        return '<tr' + (g.i === f.i ? ' style="background:rgba(220,183,99,.15)"' : '') + '><td>' + esc(g.c) + '<br><small class="note">' + esc(g.n) + '</small></td><td class="n">' + pc(g.y5) + '</td><td class="n">' + pc(g.y1) + '</td><td class="n">' + pc(g.f) + '</td></tr>';
+      }).join('');
+      $('f-liq-box').hidden = f.k !== 'קרנות השתלמות';
+      $('f-myfee').placeholder = f.f != null ? String(f.f) : '';
+      cost(); liq();
+      used('view', { kind: f.k });
+    }
+    function cost() {
+      var f = byId[st.fund]; if (!f) return;
+      st.bal = $('f-bal').value; st.myfee = $('f-myfee').value; save('kranot', st);
+      var bal = num(st.bal), fee = st.myfee !== '' ? num(st.myfee) : f.f;
+      if (!bal) { $('f-cost').textContent = 'מקלידים כמה יש בקרן, ורואים כמה דמי הניהול לוקחים בשנה.'; return; }
+      var y = bal * (fee || 0) / 100, ten = 0, b = bal;
+      for (var i = 0; i < 10; i++) { ten += b * (fee || 0) / 100; b *= 1.04; }   // הנחה: 4% תשואה בשנה, בלי הפקדות
+      $('f-cost').innerHTML = 'ב-' + pc(fee) + ' דמי ניהול: בערך <b>' + ils(y) + ' בשנה</b>. ב-10 שנים, אם הקרן גדלה 4% בשנה ובלי הפקדות נוספות: בערך ' + ils(ten) + '. כל 0.1% פחות = בערך ' + ils(bal * 0.001) + ' בשנה.';
+    }
+    function liq() {
+      st.open = $('f-open').value; save('kranot', st);
+      var y = Math.round(num(st.open)), now = new Date().getFullYear();
+      if (!y || y < 1970 || y > now) { $('f-liq').textContent = 'קרן השתלמות נזילה בדרך כלל 6 שנים אחרי שנפתחה (3 שנים, אם המשיכה ללימודים, או בגיל פרישה).'; return; }
+      $('f-liq').innerHTML = y + 6 <= now ? '✅ הקרן כבר נזילה (נפתחה לפני יותר מ-6 שנים). אפשר למשוך, או להשאיר ולהמשיך לחסוך.' : 'הקרן תהיה נזילה בערך ב-<b>' + (y + 6) + '</b>, ' + (y + 6 - now === 1 ? 'עוד שנה' : 'עוד ' + (y + 6 - now) + ' שנים') + '. (את התאריך המדויק רואים בדוח השנתי.)';
+    }
+    function drawMine() {
+      $('f-mine-box').hidden = !st.mine.length;
+      $('f-mine').innerHTML = st.mine.map(function (m) {
+        var f = byId[m.i];
+        return '<div><span><a href="#" class="gold" data-open="' + m.i + '">' + esc(f ? f.c + ' · ' + f.n : 'מסלול ' + m.i) + '</a><br><small class="note">נשמר ' + esc(m.d) + '</small></span><b>' + (f ? pc(f.y1, true) : '-') + '</b></div>';
+      }).join('');
+    }
+    $('f-kind').addEventListener('click', function (e) { var b = e.target.closest('[data-k]'); if (!b) return; st.kind = b.getAttribute('data-k'); st.fund = null; drawKinds(); drawCorps(); });
+    $('f-corp').addEventListener('change', drawFunds);
+    $('f-fund').addEventListener('change', show);
+    $('f-bal').addEventListener('input', cost); $('f-myfee').addEventListener('input', cost); $('f-open').addEventListener('input', liq);
+    $('f-keep').addEventListener('click', function () {
+      if (!st.fund) return;
+      st.mine = st.mine.filter(function (m) { return m.i !== st.fund; }).concat([{ i: st.fund, d: today() }]);
+      save('kranot', st); drawMine(); flash($('f-saved'), 'נשמר. כדאי לחזור פעם בשנה ולבדוק ✓'); used('keep');
+    });
+    $('f-mine').addEventListener('click', function (e) {
+      var a = e.target.closest('[data-open]'); if (!a) return; e.preventDefault();
+      var f = byId[a.getAttribute('data-open')]; if (!f) return;
+      st.kind = f.k; st.fund = f.i; drawKinds(); drawCorps(); $('f-out').scrollIntoView({ behavior: 'smooth' });
+    });
+    ['bal', 'myfee', 'open'].forEach(function (k) { if (st[k] != null) $('f-' + k).value = st[k]; });
+    drawKinds();
+    fetch('/kesef/kranot.json', { cache: 'no-cache' }).then(function (r) { return r.json(); }).then(function (d) {
+      D = d; d.funds.forEach(function (f) { byId[f.i] = f; });
+      $('f-src').textContent = 'נתוני ' + d.source + ', נכון ל' + per(d.period) + '. ' + d.funds.length + ' מסלולים.';
+      drawCorps(); drawMine();
+    }).catch(function () { $('f-src').textContent = 'לא הצלחנו לטעון את הנתונים. בודקים אינטרנט ומרעננים.'; });
+  })();
 })();

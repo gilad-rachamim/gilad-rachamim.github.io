@@ -1,0 +1,28 @@
+/* מודעה לאירוע (/kelim/tochen/moda/). המודעה ביחס 4:5 (טוב לסטטוס ולפיד), בהדפסה ממלאת A4. */
+.radios{display:flex;flex-wrap:wrap;gap:.5rem 1rem;color:var(--body)}
+.mo-h{font-family:var(--serif);color:var(--cream);font-size:1.25rem;text-align:center;margin:1.4rem 0 .6rem}
+.mo-wrap{display:flex;justify-content:center;padding:0 1rem 1rem}
+.mo-poster{position:relative;width:min(400px,100%);aspect-ratio:4/5;box-sizing:border-box;padding:7% 8%;display:flex;flex-direction:column;align-items:center;text-align:center;direction:rtl;overflow:hidden;border-radius:6px;
+  font-family:var(--sans);--a:#d8b35f;--fg:#f6f1e3;--mu:#c9c2ad;background:radial-gradient(120% 70% at 50% 0%,#24304f,#0d1424 70%);color:var(--fg)}
+.mo-poster::before{content:"";position:absolute;inset:3.2%;border:1.5px solid var(--a);border-radius:4px;pointer-events:none;opacity:.7}
+.mo-poster .tg{font-size:.82em;letter-spacing:.06em;color:var(--a);font-weight:700;margin-top:2%}
+.mo-poster h1{font-family:var(--serif);font-weight:700;font-size:2.35em;line-height:1.08;margin:4% 0 2%;color:var(--fg);text-wrap:balance}
+.mo-poster .sb{font-size:1.05em;color:var(--mu);line-height:1.35;text-wrap:balance}
+.mo-poster .ln{width:28%;height:2px;background:var(--a);margin:6% auto}
+.mo-poster .wh{font-family:var(--serif);font-size:1.22em;font-weight:700;line-height:1.35}
+.mo-poster .wr{font-size:1.02em;color:var(--mu);margin-top:1.5%}
+.mo-poster ul{list-style:none;margin:5% 0 0;padding:0;font-size:.95em;line-height:1.55}
+.mo-poster ul li::before{content:"✦ ";color:var(--a)}
+.mo-poster .ct{margin-top:auto;font-size:.95em;font-weight:700;color:var(--a);padding-top:4%}
+.mo-poster.t-shemesh{--a:#b5541b;--fg:#2d1d0f;--mu:#6a5440;background:radial-gradient(120% 80% at 50% 0%,#ffe7a6,#ffc86b 75%)}
+.mo-poster.t-lavan{--a:#2c5e4f;--fg:#1d1d1d;--mu:#555;background:#fff}
+.mo-poster.t-teal{--a:#ffd27a;--fg:#fff;--mu:#d7efe9;background:linear-gradient(160deg,#0f6b67,#0b3f4a)}
+@media print{
+  @page{size:A4;margin:0}
+  html,body{background:#fff!important}
+  body *{visibility:hidden}
+  .topbar,.site-foot,.crumbs,.install-bar,.no-print{display:none!important}
+  .mo-wrap{padding:0}
+  .mo-poster,.mo-poster *{visibility:visible}
+  .mo-poster{position:absolute;top:0;right:0;width:210mm;height:297mm;aspect-ratio:auto;border-radius:0;font-size:24pt!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}

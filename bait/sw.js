@@ -1,7 +1,7 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'bait-202611081715';
+var CACHE = 'bait-202611081731';
 var PRECACHE = ["/bait/", "/bait/kniyot/", "/bait/matana/", "/bait/mevi/", "/bait/mismachim/", "/bait/shabat/", "/bait/shigra/", "/bait/toranut/", "/assets/site.css", "/assets/kelim.css", "/assets/kelim.js", "/assets/track.js", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-bait-192.png", "/assets/bait.css", "/assets/bait.js"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));

@@ -1,0 +1,76 @@
+<!--meta {
+  "site": "kesef",
+  "nav": "tlush",
+  "tool": "tlush",
+  "title": "בודק תלוש משכורת – שכר מינימום, פנסיה, חופש והבראה | כלים לכסף",
+  "description": "מקלידים כמה מספרים מהתלוש, ורואים בעברית פשוטה: האם השכר מעל המינימום, האם מפרישים לפנסיה לפי החוק, כמה ירד מהברוטו, ומה כדאי לשאול את המעסיק. חינם, נשמר רק בטלפון.",
+  "og_title": "בודק תלוש משכורת",
+  "crumbs": [["בודק תלוש משכורת", null]]
+} -->
+<header class="k-hero">
+  <h1>בודק תלוש משכורת</h1>
+  <p class="sub">מעתיקים כמה מספרים מהתלוש, ורואים אם הדברים החשובים במקום: שכר מינימום, פנסיה, חופש ומחלה. ומה לשאול את המעסיק.</p>
+</header>
+
+<div class="tool" id="tlush">
+  <section class="sum" aria-live="polite">
+    <div class="lbl" id="p-lbl">התוצאה</div>
+    <div class="big" id="p-big">ממלאים למטה</div>
+    <div class="sub2" id="p-sub"></div>
+    <div class="stats">
+      <div><b id="p-gross">₪0</b><span>ברוטו</span></div>
+      <div><b id="p-net">₪0</b><span>נטו</span></div>
+      <div><b id="p-cut">-</b><span>ירד מהברוטו</span></div>
+    </div>
+  </section>
+
+  <section class="box">
+    <h2>המשרה</h2>
+    <div class="seg" id="p-kind" role="group" aria-label="סוג המשרה">
+      <button type="button" data-v="full" aria-pressed="true">משרה מלאה</button>
+      <button type="button" data-v="part" aria-pressed="false">משרה חלקית</button>
+      <button type="button" data-v="hour" aria-pressed="false">לפי שעה</button>
+    </div>
+    <div class="grid2" style="margin-top:.7rem">
+      <label class="field" id="p-pct-w" hidden><span>אחוז משרה</span><input id="p-pct" class="num-in" inputmode="decimal" placeholder="50"></label>
+      <label class="field" id="p-hours-w" hidden><span>שעות בחודש</span><input id="p-hours" class="num-in" inputmode="decimal" placeholder="120"></label>
+      <label class="field"><span>כמה חודשים אתה עובד שם</span><input id="p-months" class="num-in" inputmode="numeric" placeholder="14"></label>
+    </div>
+  </section>
+
+  <section class="box">
+    <h2>המספרים מהתלוש</h2>
+    <p class="note">השמות בתלוש משתנים בין מעסיקים. ליד כל שדה כתוב איך זה נקרא בדרך כלל.</p>
+    <div class="grid2" style="margin-top:.7rem">
+      <label class="field"><span>ברוטו <small class="note">"סך הכל תשלומים"</small></span><input id="p-g" class="num-in" inputmode="decimal" placeholder="₪"></label>
+      <label class="field"><span>נטו <small class="note">"שכר נטו לתשלום"</small></span><input id="p-n" class="num-in" inputmode="decimal" placeholder="₪"></label>
+      <label class="field"><span>שעות נוספות ונסיעות <small class="note">סכום ביחד</small></span><input id="p-x" class="num-in" inputmode="decimal" placeholder="₪"></label>
+      <label class="field"><span>פנסיה, ניכוי ממך <small class="note">"קרן פנסיה / תגמולי עובד"</small></span><input id="p-ee" class="num-in" inputmode="decimal" placeholder="₪"></label>
+      <label class="field"><span>פנסיה, מהמעסיק <small class="note">"תגמולי מעביד"</small></span><input id="p-er" class="num-in" inputmode="decimal" placeholder="₪"></label>
+      <label class="field"><span>פיצויים, מהמעסיק <small class="note">"פיצויים"</small></span><input id="p-pz" class="num-in" inputmode="decimal" placeholder="₪"></label>
+      <label class="field"><span>קרן השתלמות, ממך</span><input id="p-he" class="num-in" inputmode="decimal" placeholder="₪ (אם יש)"></label>
+      <label class="field"><span>קרן השתלמות, מהמעסיק</span><input id="p-hr" class="num-in" inputmode="decimal" placeholder="₪ (אם יש)"></label>
+      <label class="field"><span>יתרת ימי חופש</span><input id="p-vac" class="num-in" inputmode="decimal" placeholder="ימים"></label>
+      <label class="field"><span>יתרת ימי מחלה</span><input id="p-sick" class="num-in" inputmode="decimal" placeholder="ימים"></label>
+    </div>
+  </section>
+
+  <section class="box" id="p-res" hidden>
+    <h2>מה מצאנו</h2>
+    <ul class="why" id="p-list"></ul>
+  </section>
+
+  <section class="cancel-box" id="p-ask" hidden>
+    <b>מה לשאול את המעסיק (או את מי שמכין את התלושים)</b>
+    <ul id="p-ask-list"></ul>
+  </section>
+
+  <button class="big-btn soft" type="button" id="p-print">להדפיס או לשמור כ-PDF</button>
+
+  <div class="local-note"><span class="ic2">ℹ️</span><span>לפי החוק בישראל, נכון לנובמבר 2026: שכר מינימום 6,443.85 ₪ למשרה מלאה, 35.40 ₪ לשעה (מאפריל 2026). פנסיה חובה: 6% מהעובד, 6.5% תגמולים ועוד 6% פיצויים מהמעסיק. בענף שיש בו הסכם קיבוצי או צו הרחבה, יכול להגיע יותר.</span></div>
+  <div class="local-note"><span class="ic2">🔒</span><span>נשמר רק בטלפון שלך. התלוש עצמו לא עולה לשום מקום.</span></div>
+  <div class="data-acts"><a class="linkish" href="https://www.kolzchut.org.il/he/%D7%AA%D7%9C%D7%95%D7%A9_%D7%A9%D7%9B%D7%A8" target="_blank" rel="noopener">על תלוש שכר בכל-זכות</a><button class="linkish" type="button" data-wipe="tlush">למחוק מהטלפון</button></div>
+</div>
+
+<p class="not-advice"><b>זה מחשבון, לא ייעוץ.</b> הבדיקה כללית, לפי מה שהכנסתם. לשאלה על הזכויות שלכם: כל-זכות, ההסתדרות או עורך דין לדיני עבודה.</p>
+{{K:foot:בודק תלוש משכורת: שכר מינימום, פנסיה, חופש ומה לשאול את המעסיק. כלי חינמי}}

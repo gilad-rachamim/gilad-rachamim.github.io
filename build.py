@@ -70,8 +70,8 @@ SITES = {
         "desc": "מחשבונים פשוטים לכסף של הבית: תקציב, הלוואה, מנויים וחיסכון עם הילדים. בחינם.",
         "css": ["/assets/kesef.css"], "js": ["/assets/kesef.js"],
         "nav": [("taktziv", "/kesef/taktziv/", "תקציב"), ("halvaa", "/kesef/halvaa/", "הלוואה"),
-                ("minuyim", "/kesef/minuyim/", "מנויים"), ("mivtza", "/kesef/mivtza/", "המבצע המשפחתי"),
-                ("kelim", "/kelim/", "כל הכלים")],
+                ("hechzer", "/kesef/hechzer/", "החזר מס"), ("yeladim", "/kesef/yeladim/", "חיסכון לילדים"),
+                ("kelim", "/kesef/#kelim", "כל הכלים")],
     },
     # כלים ללימודים: כרטיסיות חזרה, מתכנן למבחן, טיימר למידה, לימוד יומי לסיום. הכול בטלפון (localStorage), בלי שרת.
     "limudim": {
@@ -80,7 +80,7 @@ SITES = {
         "desc": "כלים פשוטים ללמידה: כרטיסיות חזרה, תוכנית למבחן, טיימר, ולימוד יומי לסיום התנ״ך והמשנה. בחינם.",
         "css": ["/assets/limudim.css"], "js": ["/assets/limudim.js"],
         "nav": [("kartisiot", "/limudim/kartisiot/", "כרטיסיות"), ("mivchan", "/limudim/mivchan/", "למבחן"),
-                ("timer", "/limudim/timer/", "טיימר"), ("yomi", "/limudim/yomi/", "לימוד יומי"),
+                ("timer", "/limudim/timer/", "טיימר"), ("yomi", "/limudim/yomi/", "לימוד יומי"), ("olami", "/limudim/olami/", "הדף היומי"),
                 ("kelim", "/kelim/", "כל הכלים")],
     },
 }
@@ -223,7 +223,7 @@ for path in sorted(SRC.rglob("*.html")):
         "og_title": meta.get("og_title", meta["title"]),
         "og_image": meta.get("og_image", site["og"] if site else "og-mohel.jpg"),
         "robots": '<meta name="robots" content="noindex">' if meta.get("noindex") else "",
-        "head": GA + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root),
+        "head": meta.get("head_pre", "") + GA + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root),
         "body_class": meta.get("body_class", ""),
         "sprite": SPRITE,
         "wa": WA,

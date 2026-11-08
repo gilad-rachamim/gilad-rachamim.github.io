@@ -1,0 +1,43 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "moda",
+  "title": "מודעה לאירוע – שיעור, ערב, הופעה או כנס, להדפסה ולסטטוס | הכלים של גילעד רחמים",
+  "description": "מודעה מעוצבת לאירוע בדקה: כותרת, מי מדבר, מתי ואיפה, פרטים והרשמה. בשלושה סגנונות, להדפסה בגודל A4 או כתמונה לסטטוס ולקבוצות. בחינם, בלי הרשמה.",
+  "og_title": "מודעה לאירוע – מעוצבת, להדפסה ולסטטוס",
+  "priority": "0.7",
+  "crumbs": [["יצירת תוכן", "/kelim/tochen/"], ["מודעה לאירוע", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/moda.css\">",
+  "foot": "<script src=\"https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js\" defer></script><script src=\"/assets/moda.js\" defer></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>מודעה לאירוע</h1>
+  <p class="sub">שיעור, ערב, הופעה, כנס או מסיבה: ממלאים כמה שורות, בוחרים סגנון, ומקבלים מודעה להדפסה ולסטטוס.</p>
+</header>
+<div class="tool no-print">
+  <form class="k-form" id="md-form" novalidate>
+    <div class="field"><label for="mo-tag">שורה קטנה למעלה <span class="opt">(לא חובה)</span></label><input id="mo-tag" name="tag" type="text" maxlength="40" placeholder="הזמנה לערב מיוחד"></div>
+    <div class="field"><label for="mo-title">כותרת</label><input id="mo-title" name="title" type="text" maxlength="50" placeholder="ערב שירה וסיפורים"></div>
+    <div class="field"><label for="mo-sub">מי / על מה <span class="opt">(לא חובה)</span></label><input id="mo-sub" name="sub" type="text" maxlength="80" placeholder="עם הזמר יוסי לוי והרב דוד כהן"></div>
+    <div class="field"><label for="mo-when">מתי</label><input id="mo-when" name="when" type="text" maxlength="60" placeholder="יום חמישי, כ״ה בכסלו (4.12), 20:30"></div>
+    <div class="field"><label for="mo-where">איפה</label><input id="mo-where" name="where" type="text" maxlength="60" placeholder="המתנ״ס, רחוב הרימון 5"></div>
+    <div class="field"><label for="mo-more">פרטים <span class="opt">(שורה לכל פרט)</span></label><textarea id="mo-more" name="more" maxlength="300" placeholder="כיבוד קל&#10;הכניסה חופשית&#10;מתאים לכל המשפחה"></textarea></div>
+    <div class="field"><label for="mo-contact">הרשמה / פרטים נוספים <span class="opt">(לא חובה)</span></label><input id="mo-contact" name="contact" type="text" maxlength="60" placeholder="לפרטים: רחל 050-1234567"></div>
+    <div class="field"><span class="label">סגנון</span><div class="radios mo-th">
+      <label><input type="radio" name="theme" value="layla"> לילה וזהב</label>
+      <label><input type="radio" name="theme" value="shemesh"> שמש</label>
+      <label><input type="radio" name="theme" value="lavan"> לבן נקי</label>
+      <label><input type="radio" name="theme" value="teal"> טורקיז</label>
+    </div></div>
+  </form>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="mo-img"><svg class="ic"><use href="#wa"/></svg> לשלוח כתמונה</button>
+    <button class="btn btn-line btn-sm" type="button" id="mo-print">להדפיס A4 / PDF</button>
+  </div>
+  <h2 class="mo-h">כך תיראה המודעה</h2>
+</div>
+<div class="mo-wrap"><div id="mo-poster" class="mo-poster"></div></div>
+<div class="tool no-print">
+  <p class="disclaimer">מה שכתבתם נשמר בטלפון, כדי שאפשר יהיה לתקן ולהמשיך אחר כך.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מודעה מעוצבת לאירוע בדקה, להדפסה ולסטטוס. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>

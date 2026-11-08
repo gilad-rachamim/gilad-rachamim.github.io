@@ -58,3 +58,15 @@ html:has(body.site-kodesh){background:#0e1628}
 .tabs button{font:inherit;font-size:1rem;padding:.5rem .9rem;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--body);cursor:pointer}
 .tabs button[aria-selected=true]{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700}
 @media (max-width:640px){body.site-kelim,body.site-kodesh{padding-bottom:0}}
+/* "הכלי עזר לך?" + הצעה לשיפור, בתחתית כל כלי */
+.fb{margin:2.4rem auto 0;padding:0 1.25rem;max-width:40rem}
+.fb .in{border:1px dashed var(--line);border-radius:18px;padding:1.1rem 1rem;text-align:center;background:rgba(255,255,255,.025)}
+.fb-q{font-family:var(--serif);color:var(--cream);font-size:1.15rem}
+.fb-rate{display:flex;gap:.5rem;justify-content:center;margin-top:.6rem}
+.fb-thanks{color:var(--parchment);margin-top:.4rem}
+.fb-more{margin-top:.8rem;text-align:right}
+.fb-more summary{cursor:pointer;color:var(--gold);font-weight:600;text-align:center;list-style-position:inside}
+.fb-more form{margin-top:.8rem}
+.fb-note{color:var(--muted);font-size:.9rem;margin-top:.8rem}
+@media print{.fb{display:none!important}}
+body[data-tool="rega"] .fb{display:none}

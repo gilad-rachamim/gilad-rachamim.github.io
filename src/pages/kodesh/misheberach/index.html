@@ -2,13 +2,13 @@
   "site": "kodesh",
   "nav": "rabanim",
   "tool": "misheberach",
-  "title": "מי שברך לגבאי: לעולה, לבר מצווה, לחולה, ליולדת ולחיילי צה\"ל, עם השמות בפנים | כלי קודש",
-  "description": "נוסח מי שברך מלא עם השמות כבר בפנים: לעולה לתורה (שבת, חג, ראש השנה), לבר מצווה, לחולה ולחולה, ליולדת בן, ליולדת בת וקריאת השם, ולחיילי צה\"ל. לקריאה בטלפון ליד הבימה, להדפסה או לשליחה. בחינם.",
+  "title": "מי שברך לגבאי: אשכנז, ספרד ומרוקאי, עם השמות בפנים | כלי קודש",
+  "description": "נוסח מי שברך מלא עם השמות כבר בפנים: לעולה לתורה (שבת, חג, ראש השנה), לבר מצווה, לחולה ולחולה, ליולדת בן, ליולדת בת וקריאת השם, ולחיילי צה\"ל, בנוסח אשכנז, ספרד ומרוקאי (כולל השכבה). לקריאה בטלפון ליד הבימה, להדפסה או לשליחה. בחינם.",
   "og_title": "מי שברך לגבאי – עם השמות כבר בפנים",
   "priority": "0.7",
   "crumbs": [["מי שברך לגבאי", null]],
   "head": "<style>.mb-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}.mb-checks{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem}#mb-box{margin-top:1rem;border:1px solid var(--gold-soft);border-radius:16px;padding:1.2rem 1.3rem;background:rgba(216,179,95,.05);font-size:1.4rem;line-height:1.9}#mb-box:fullscreen{background:#0e1628;color:#fbfaf4;padding:4vh 5vw;overflow:auto;font-size:4.2vmin!important}#mb-title{font:700 1.05em var(--serif);color:var(--gold);margin:0 0 .5rem}#mb-text{font-family:var(--serif);color:var(--cream)}#mb-text mark{background:rgba(216,179,95,.28);color:inherit;border-radius:4px;padding:0 .15em;font-weight:700}#mb-after{font-size:.8em;opacity:.85;margin-top:.8rem}@media print{body *{visibility:hidden}#mb-box,#mb-box *{visibility:visible}#mb-box{position:absolute;inset:0;border:0;background:#fff;color:#000;font-size:20pt!important}#mb-text{color:#000}#mb-text mark{background:none;text-decoration:underline}#mb-title{color:#000}}</style>",
-  "foot": "<script src=\"/assets/misheberach.js\" defer></script>"
+  "foot": "<script src=\"/assets/misheberach-maroko.js\" defer></script><script src=\"/assets/misheberach.js\" defer></script>"
 } -->
 <header class="k-hero">
   <h1>מי שברך לגבאי</h1>
@@ -17,15 +17,15 @@
 <div class="tool">
   <form class="k-form lead-form" id="mb-form" novalidate onsubmit="return false">
     <div class="mb-row">
+      <div class="field" id="mb-nusach-wrap"><label for="mb-nusach">נוסח</label><select id="mb-nusach" name="nusach"><option value="ashkenaz">אשכנז</option><option value="sefard">ספרד</option><option value="maroko">מרוקאי</option></select></div>
       <div class="field"><label for="mb-k">איזה מי שברך?</label><select id="mb-k" name="k"><option value="oleh">לעולה לתורה</option><option value="barmitzva">לבר מצווה</option><option value="choleh">לחולה</option><option value="ben">ליולדת בן</option><option value="bat">ליולדת בת וקריאת השם</option><option value="tzahal">לחיילי צה"ל</option><option value="kahal">לקהל (עדות המזרח)</option></select></div>
-      <div class="field" id="mb-nusach-wrap"><label for="mb-nusach">נוסח</label><select id="mb-nusach" name="nusach"><option value="ashkenaz">אשכנז</option><option value="sefard">ספרד</option></select></div>
-      <div class="field" id="mb-gender-wrap" hidden><label for="mb-gender">החולה</label><select id="mb-gender" name="gender"><option value="m">גבר</option><option value="f">אישה</option></select></div>
+      <div class="field" id="mb-gender-wrap" hidden><label for="mb-gender" id="mb-gender-l">החולה</label><select id="mb-gender" name="gender"><option value="m">גבר</option><option value="f">אישה</option></select></div>
     </div>
     <div class="field" id="mb-name-wrap"><label for="mb-name" id="mb-name-l">שם העולה</label><input id="mb-name" name="name" type="text" maxlength="50" placeholder="יעקב בן אברהם"></div>
     <div class="field" id="mb-baby-wrap" hidden><label for="mb-baby">שם התינוקת ושם אביה</label><input id="mb-baby" name="baby" type="text" maxlength="50" placeholder="מרים בת יעקב"></div>
     <div class="field" id="mb-donor-wrap" hidden><label for="mb-donor">מי נודר צדקה</label><input id="mb-donor" name="donor" type="text" maxlength="50" placeholder="אביו / בעלה / שם המתפלל"></div>
     <div class="field" id="mb-occ-wrap"><label>מתי <span class="opt">(מוסיף את המילים המתאימות)</span></label>
-      <div class="mb-checks"><label class="check"><input type="checkbox" name="sh"> <span>שבת</span></label><label class="check"><input type="checkbox" name="yt"> <span>יום טוב</span></label><label class="check" id="mb-rh-wrap"><input type="checkbox" name="rh"> <span>ראש השנה ויום כיפור</span></label></div>
+      <div class="mb-checks"><label class="check" id="mb-sh-wrap"><input type="checkbox" name="sh"> <span>שבת</span></label><label class="check" id="mb-yt-wrap"><input type="checkbox" name="yt"> <span>יום טוב</span></label><label class="check" id="mb-rh-wrap"><input type="checkbox" name="rh"> <span id="mb-rh-l">ראש השנה ויום כיפור</span></label><label class="check" id="mb-short-wrap" hidden><input type="checkbox" name="short"> <span>נוסח קצר</span></label><label class="check" id="mb-yol-wrap" hidden><input type="checkbox" name="yol"> <span>יולדת</span></label><label class="check" id="mb-gadol-wrap" hidden><input type="checkbox" name="gadol"> <span>לאדם גדול בחכמה וביראת שמים</span></label></div>
     </div>
   </form>
   <div class="share-row">
@@ -40,6 +40,6 @@
     <a class="btn btn-line btn-sm" href="https://wa.me/" id="mb-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לווטסאפ</a>
     <button class="btn btn-line btn-sm" type="button" id="mb-print">להדפיס</button>
   </div>
-  <p class="disclaimer">השמות נכנסים במקום "פלוני בן פלוני", ושאר המילים לא משתנות. שם ה' נכתב "ה'", כי הטקסט נשלח ומודפס. נוסח אשכנז: סידור "דעת". נוסח ספרד: סידור "תורת אמת". לעדות המזרח יש כאן בינתיים מי שברך לקהל. בכל ספק הולכים לפי מנהג בית הכנסת והרב.</p>
+  <p class="disclaimer">השמות נכנסים במקום "פלוני בן פלוני", ושאר המילים לא משתנות. שם ה' נכתב "ה'", כי הטקסט נשלח ומודפס. נוסח אשכנז: סידור "דעת". נוסח ספרד: סידור "תורת אמת". נוסח מרוקאי: סידור כמנהג מרוקו, "שער הגבאי", מילה במילה (כולל בר ובת מצווה, השכבה, יזכור לחללי צה"ל ומי שברך לנעדרים ולשבויים). לעדות המזרח יש כאן גם מי שברך לקהל. בכל ספק הולכים לפי מנהג בית הכנסת והרב.</p>
   <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/">כלי קודש</a>. ברכות קצרות לשליחה (בר מצווה, חתונה, לידה): <a class="gold" href="/kodesh/brachot/">ברכות לכל אירוע</a>.</p>
 </div>
