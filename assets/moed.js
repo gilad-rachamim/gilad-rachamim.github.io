@@ -170,7 +170,7 @@
         'UID:brit-' + d1 + '@gilad-rachamim.github.io', 'DTSTAMP:' + iso(new Date()).replace(/-/g, '') + 'T090000',
         'DTSTART;VALUE=DATE:' + d1, 'DTEND;VALUE=DATE:' + d2,
         'SUMMARY:ברית מילה בעז"ה – ' + hebrew(main),
-        'DESCRIPTION:חושב במחשבון מועד הברית של גילעד רחמים המוהל. לתיאום: 058-404-9049 · https://gilad-rachamim.github.io/mohel/',
+        'DESCRIPTION:חושב במחשבון מועד הברית של גילעד רחמים המוהל. לתיאום: 058-404-9049 (ווטסאפ) wa.me/972584049049 · https://gilad-rachamim.github.io/mohel/',
         'BEGIN:VALARM', 'TRIGGER:-P1D', 'ACTION:DISPLAY', 'DESCRIPTION:מחר הברית בעז"ה', 'END:VALARM',
         'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
       var blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });

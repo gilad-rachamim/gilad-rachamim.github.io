@@ -1,0 +1,40 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "rofe",
+  "title": "הכנה לביקור אצל רופא – מה לספר ומה לשאול | הכלים של גילעד רחמים",
+  "description": "דף הכנה לביקור אצל רופא: מה מרגישים, ממתי, מה עוזר ומה מחמיר, שאלות שרוצים לשאול, תרופות ואלרגיות. ממלאים בבית, ובחדר מראים את הדף. בחינם, נשמר רק בטלפון.",
+  "og_title": "הכנה לביקור אצל רופא – לא לשכוח כלום",
+  "priority": "0.7",
+  "crumbs": [["בריאות", "/kelim/briut/"], ["הכנה לביקור רופא", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/mishpacha.css\">",
+  "foot": "<script src=\"/assets/rofe.js\" defer></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>הכנה לביקור אצל רופא</h1>
+  <p class="sub">בחדר של הרופא הכול נשכח. ממלאים כאן בבית, ובביקור פשוט מראים את הדף, או שולחים אותו לפני.</p>
+</header>
+<div class="tool no-print">
+  <form class="k-form" id="rf-form" novalidate>
+    <div class="field"><label for="rf-who">למי הביקור?</label><input id="rf-who" name="who" type="text" maxlength="40" placeholder="אני / אמא / יוסי בן 6"></div>
+    <div class="field"><label for="rf-doc">אצל מי ומתי? <span class="opt">(לא חובה)</span></label><input id="rf-doc" name="doc" type="text" maxlength="60" placeholder="ד״ר לוי, רופאת משפחה, יום שלישי 10:30"></div>
+    <div class="field"><label for="rf-what">מה מרגישים?</label><textarea id="rf-what" name="what" maxlength="600" placeholder="כאב ראש בצד ימין, בעיקר בבוקר"></textarea></div>
+    <div class="field"><label for="rf-since">ממתי, וכמה פעמים?</label><input id="rf-since" name="since" type="text" maxlength="80" placeholder="שבועיים, כמעט כל יום"></div>
+    <div class="field"><label for="rf-better">מה עוזר ומה מחמיר? <span class="opt">(לא חובה)</span></label><input id="rf-better" name="better" type="text" maxlength="120" placeholder="אקמול עוזר קצת, מסך מחמיר"></div>
+    <div class="field"><label for="rf-q">שאלות לרופא <span class="opt">(שאלה בכל שורה)</span></label><textarea id="rf-q" name="q" maxlength="600" placeholder="צריך בדיקת דם?&#10;זה יכול להיות מהתרופה החדשה?&#10;מתי לחזור אם זה לא עובר?"></textarea></div>
+    <div class="field"><label for="rf-meds">תרופות קבועות</label><textarea id="rf-meds" name="meds" maxlength="400" placeholder="אלטרוקסין 50 בבוקר"></textarea></div>
+    <div class="field"><label for="rf-allerg">אלרגיות</label><input id="rf-allerg" name="allerg" type="text" maxlength="100" placeholder="פניצילין / אין"></div>
+    <div class="field"><label for="rf-docs">מה להביא <span class="opt">(לא חובה)</span></label><input id="rf-docs" name="docs" type="text" maxlength="120" placeholder="תוצאות בדיקת דם, מכתב שחרור, הפניה"></div>
+  </form>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="rf-print">להדפיס / לשמור PDF</button>
+    <a class="btn btn-line btn-sm" href="#" id="rf-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח בווטסאפ</a>
+    <button class="btn btn-line btn-sm" type="button" id="rf-new">ביקור חדש (לנקות)</button>
+  </div>
+  <h2 class="lv-h" style="text-align:center;font-family:var(--serif);color:var(--cream);margin-top:1rem">כך ייראה הדף</h2>
+</div>
+<div id="rf-card" class="mp-card"></div>
+<div class="tool no-print">
+  <p class="disclaimer">הכלי עוזר לארגן מה לספר ומה לשאול. הוא לא נותן ייעוץ רפואי. במצב חירום: מד״א <span dir="ltr">101</span>. מה שכתבתם נשמר רק בטלפון הזה.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="דף הכנה לביקור אצל רופא, כדי לא לשכוח כלום בחדר. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>

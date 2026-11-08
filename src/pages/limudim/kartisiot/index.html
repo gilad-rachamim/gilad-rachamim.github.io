@@ -1,0 +1,65 @@
+<!--meta {
+  "site": "limudim",
+  "nav": "kartisiot",
+  "tool": "kartisiot",
+  "title": "כרטיסיות חזרה חכמות – מדביקים שאלות ותשובות ומתרגלים בחזרה מרווחת | כלים ללימודים",
+  "description": "כרטיסיות זיכרון בחינם: מדביקים שאלה ותשובה בכל שורה, ומתרגלים. מה שידעת חוזר בעוד כמה ימים, מה שלא ידעת חוזר מחר. כמה חפיסות, הקראה באנגלית, נשמר רק בטלפון.",
+  "og_title": "כרטיסיות חזרה חכמות – חינם",
+  "crumbs": [["כרטיסיות חזרה", null]]
+} -->
+<header class="k-hero">
+  <h1>כרטיסיות חזרה חכמות</h1>
+  <p class="sub">מדביקים שאלות ותשובות, ומתרגלים כמה דקות ביום. מה שכבר יודעים חוזר לאט, ומה שקשה חוזר מהר.</p>
+</header>
+
+<div class="tool">
+  <div id="fc-home">
+    <div class="panel">
+      <div class="field"><label for="fc-deck">החפיסה</label><select id="fc-deck"></select></div>
+      <div class="btns"><button class="btn btn-line btn-sm" type="button" id="fc-new">+ חפיסה חדשה</button><button class="btn btn-line btn-sm" type="button" id="fc-ren">לשנות שם</button><button class="linkish" type="button" id="fc-delete">למחוק חפיסה</button></div>
+      <div class="stat3"><div><b id="fc-n-due">0</b><span>להיום</span></div><div><b id="fc-n-all">0</b><span>בחפיסה</span></div><div><b id="fc-n-known">0</b><span>כבר יודע</span></div></div>
+      <button class="btn btn-gold btn-block big" type="button" id="fc-start">להתחיל חזרה</button>
+      <div class="btns c"><button class="btn btn-line btn-sm" type="button" id="fc-all">לתרגל את כל החפיסה</button></div>
+      <label class="checks"><span style="display:flex;gap:.5rem;align-items:center"><input type="checkbox" id="fc-rev"> להפוך: להציג את התשובה, ולשאול מה השאלה</span></label>
+    </div>
+
+    <div class="panel">
+      <h2>להוסיף כרטיסים</h2>
+      <div class="field"><label for="fc-text">שורה לכל כרטיס: שאלה, מפריד, תשובה</label>
+        <textarea id="fc-text" placeholder="apple - תפוח&#10;מהי מוקצה? - דבר שאסור לטלטל בשבת&#10;2+2 = 4"></textarea></div>
+      <div class="row2">
+        <div class="field"><label for="fc-sep">המפריד</label><select id="fc-sep">
+          <option value="auto">זיהוי לבד</option><option value="dash">מקף ( - )</option><option value="colon">נקודתיים ( : )</option><option value="eq">שווה ( = )</option><option value="tab">טאב (מאקסל או מגוגל שיטס)</option><option value="pipe">קו ( | )</option><option value="semi">נקודה-פסיק ( ; )</option><option value="custom">אחר…</option></select></div>
+        <div class="field" id="fc-sep-c-wrap" hidden><label for="fc-sep-c">המפריד שלי</label><input id="fc-sep-c" type="text" maxlength="5" placeholder="למשל: >>"></div>
+      </div>
+      <button class="btn btn-gold" type="button" id="fc-add">להוסיף לחפיסה</button>
+      <p class="status" id="fc-add-st" role="status"></p>
+      <details><summary>כל הכרטיסים בחפיסה (<span id="fc-list-n">0</span>)</summary><ul class="clist" id="fc-list" style="margin-top:.6rem"></ul></details>
+    </div>
+
+    <details class="panel"><summary>איך זה עובד?</summary>
+      <p>כל כרטיס נמצא באחת משש "קופסאות". כשיודעים אותו, הוא עולה קופסה, והחזרה הבאה מתרחקת: מחר, בעוד 3 ימים, שבוע, שבועיים, חודש. כשלא יודעים, הוא חוזר להתחלה, ומופיע שוב עוד באותו סבב. ככה מתרגלים בעיקר את מה שקשה, וזוכרים לאורך זמן. השיטה נקראת "חזרה מרווחת".</p>
+      <p>טיפ: באנגלית, כפתור 🔊 מקריא את המילה. במחשב, רווח מראה תשובה, 1 = ידעתי, 2 = לא ידעתי.</p>
+    </details>
+  </div>
+
+  <div id="fc-play" hidden>
+    <div id="fc-cardbox">
+      <div class="fmeta"><span id="fc-pos"></span><button class="say" type="button" id="fc-say" aria-label="להקריא">🔊</button></div>
+      <div class="fcard" style="margin-top:.5rem" aria-live="polite"><div><div class="q" id="fc-q"></div><div class="a" id="fc-a" hidden></div></div></div>
+      <div class="btns" style="margin-top:1rem"><button class="btn btn-gold btn-block big" type="button" id="fc-show">להראות תשובה</button></div>
+      <div class="btns" id="fc-judge" hidden style="margin-top:1rem"><button class="btn btn-ok big" type="button" id="fc-yes">ידעתי ✓</button><button class="btn btn-no big" type="button" id="fc-no">לא ידעתי</button></div>
+      <p style="text-align:center;margin-top:1rem"><button class="linkish" type="button" id="fc-stop">לעצור ולחזור לחפיסות</button></p>
+    </div>
+    <div id="fc-end" class="sum-box" hidden style="text-align:center">
+      <div class="big-n" id="fc-end-t"></div>
+      <p id="fc-end-n"></p>
+      <div class="btns c" style="margin-top:1rem"><button class="btn btn-gold" type="button" id="fc-back">חזרה לחפיסות</button><button class="btn btn-line" type="button" id="fc-again">עוד סבב על הכל</button></div>
+    </div>
+  </div>
+
+  <div class="local-note"><span>🔒</span><span>הכרטיסים נשמרים רק בטלפון הזה. אף אחד לא רואה אותם, גם לא אני.</span></div>
+  <div class="data-acts"><button class="linkish" type="button" id="fc-copy">להעתיק את החפיסה כטקסט (לשלוח לחבר)</button><button class="linkish" type="button" id="fc-export">לשמור גיבוי לקובץ</button><label class="linkish" style="cursor:pointer">לשחזר מקובץ<input type="file" id="fc-import" accept=".json,application/json" hidden></label></div>
+  <div class="share-row"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="כרטיסיות חזרה חכמות בחינם: מדביקים שאלות ותשובות ומתרגלים בחזרה מרווחת" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר בווטסאפ</a></div>
+  <p class="disclaimer"><a class="gold" href="/limudim/">כל הכלים ללימודים</a> · חינם · בלי הרשמה</p>
+</div>

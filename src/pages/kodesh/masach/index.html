@@ -1,0 +1,55 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "masach",
+  "title": "מסך לבית הכנסת: שעון, זמני היום, זמני תפילות והודעות על הטלוויזיה | כלי קודש",
+  "description": "דף שמציגים על מסך או טלוויזיה בבית הכנסת: שעון גדול, תאריך עברי, זמני היום לפי העיר, זמני התפילות, הדלקת נרות וצאת השבת, והודעות מתחלפות. מתעדכן לבד. בחינם, בלי הרשמה.",
+  "og_title": "מסך לבית הכנסת – שעון, זמנים והודעות",
+  "priority": "0.7",
+  "crumbs": [["מסך לבית הכנסת", null]],
+  "head": "<style>.ms-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}.k-form textarea{min-height:7rem;line-height:1.7}#ms-link{direction:ltr;text-align:left;font-size:.85rem}#ms-screen{position:fixed;inset:0;z-index:9999;display:grid;grid-template-rows:auto auto 1fr auto auto;gap:1.2vh;padding:2.5vh 3vw;background:linear-gradient(135deg,#0e1628,#1b2a4a);color:#eef0f6;font-family:var(--sans);direction:rtl;overflow:hidden}#ms-screen[hidden]{display:none}#ms-screen[data-theme=light]{background:linear-gradient(135deg,#fbfaf7,#efe9da);color:#1d1a15}#ms-screen header{display:flex;justify-content:space-between;align-items:baseline;gap:2vw}#ms-shul{font:700 4.6vmin var(--serif);color:#e6c57e}#ms-screen[data-theme=light] #ms-shul,#ms-screen[data-theme=light] h3,#ms-screen[data-theme=light] #ms-shabbat b{color:#6b4f1a}#ms-date{font-size:3.2vmin;opacity:.9}#ms-clock{text-align:center;font:700 13vmin/1 var(--sans);letter-spacing:.02em;font-variant-numeric:tabular-nums}.ms-cols{display:grid;grid-template-columns:1fr 1fr;gap:3vw;min-height:0;overflow:hidden}.ms-cols h3{font:700 3vmin var(--serif);color:#e6c57e;margin:0 0 1vh;border-bottom:2px solid rgba(212,176,98,.5);padding-bottom:.6vh}.ms-list div{display:flex;justify-content:space-between;font-size:2.8vmin;line-height:1.35;padding:.3vh 0;border-bottom:1px solid rgba(255,255,255,.08)}#ms-screen[data-theme=light] .ms-list div{border-color:rgba(0,0,0,.08)}.ms-list b{font-variant-numeric:tabular-nums}#ms-shabbat{display:flex;flex-wrap:wrap;justify-content:center;gap:1vh 4vw;font-size:3.6vmin;padding:1.2vh;border:2px solid rgba(212,176,98,.6);border-radius:1.5vmin}#ms-shabbat b{color:#e6c57e}#ms-ann{text-align:center;font:600 3.8vmin var(--sans);background:rgba(212,176,98,.15);border-radius:1.5vmin;padding:1.2vh 2vw}#ms-foot{text-align:center;font-size:1.8vmin;opacity:.6}#ms-close{position:absolute;top:1vh;left:1vw;background:transparent;border:1px solid currentColor;color:inherit;border-radius:8px;padding:.3rem .7rem;opacity:.35;cursor:pointer}#ms-close:hover{opacity:1}body.ms-on{overflow:hidden}@media (orientation:portrait){.ms-cols{grid-template-columns:1fr}}</style>",
+  "foot": "<script src=\"https://cdn.jsdelivr.net/npm/@hebcal/core@6.14.7/dist/bundle.min.js\" data-hebcal defer></script><script src=\"/assets/masach.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מסך לבית הכנסת</h1>
+  <p class="sub">שעון גדול, תאריך עברי, זמני היום, זמני התפילות, שבת והודעות מתחלפות. פותחים בטלוויזיה או במחשב של בית הכנסת, וזה מתעדכן לבד כל יום.</p>
+</header>
+<div class="tool">
+  <form class="k-form lead-form" id="ms-form" novalidate onsubmit="return false">
+    <div class="ms-row">
+      <div class="field"><label for="ms-shul-in">שם בית הכנסת</label><input id="ms-shul-in" name="shul" type="text" maxlength="40" placeholder="בית הכנסת אהל יצחק"></div>
+      <div class="field"><label for="ms-place">עיר (לזמני היום)</label><select id="ms-place" name="place"></select></div>
+    </div>
+    <div class="field"><label for="ms-tef-in">זמני התפילות: שורה לכל תפילה</label><textarea id="ms-tef-in" name="tef" maxlength="600" placeholder="שחרית 6:30
+מנחה 15 דקות לפני השקיעה
+ערבית בצאת הכוכבים
+שיעור דף יומי 20:30"></textarea></div>
+    <div class="field"><label for="ms-ann-in">הודעות מתחלפות <span class="opt">(שורה לכל הודעה, לא חובה)</span></label><textarea id="ms-ann-in" name="ann" maxlength="800" placeholder="מזל טוב למשפחת כהן להולדת הבת!
+השבוע: שיעור מיוחד במוצאי שבת
+נא לכבות טלפונים בזמן התפילה"></textarea></div>
+    <div class="ms-row">
+      <div class="field"><label for="ms-theme">רקע</label><select id="ms-theme" name="theme"><option value="dark">כהה</option><option value="light">בהיר</option></select></div>
+      <div class="field"><label for="ms-mins">הדלקת נרות, דקות לפני השקיעה</label><select id="ms-mins" name="mins"><option value="">לפי המנהג בעיר</option><option value="18">18</option><option value="20">20</option><option value="30">30</option><option value="40">40</option></select></div>
+    </div>
+  </form>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="ms-full">לפתוח על כל המסך</button>
+    <button class="btn btn-line btn-sm" type="button" id="ms-open">תצוגה מקדימה</button>
+  </div>
+  <div class="field" style="margin-top:1rem"><label for="ms-link">קישור לטלוויזיה של בית הכנסת (נפתח ישר במסך, עם ההגדרות שלכם)</label><input id="ms-link" type="text" readonly></div>
+  <div class="share-row"><button class="btn btn-line btn-sm" type="button" id="ms-copy">להעתיק את הקישור</button></div>
+  <p class="disclaimer">איך מציגים בטלוויזיה: פותחים את הקישור בדפדפן של הטלוויזיה החכמה או של המחשב שמחובר אליה, ולוחצים "לפתוח על כל המסך". כדי לשנות זמנים או הודעות, משנים כאן ושולחים קישור חדש. הזמנים מחושבים לפי העיר, ובשאלה למעשה שואלים את הרב.</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/">כלי קודש</a>. דף לטלפון עם זמני תפילות וניווט: <a class="gold" href="/kodesh/beit-knesset/">דף לבית הכנסת</a>.</p>
+</div>
+<div id="ms-screen" hidden data-theme="dark">
+  <button id="ms-close" type="button">סגירה</button>
+  <header><div id="ms-shul"></div><div id="ms-date"></div></header>
+  <div id="ms-clock">00:00:00</div>
+  <div class="ms-cols">
+    <section><h3>זמני התפילות</h3><div class="ms-list" id="ms-tef"></div></section>
+    <section><h3>זמני היום</h3><div class="ms-list" id="ms-zmanim"></div></section>
+  </div>
+  <div id="ms-shabbat"></div>
+  <div id="ms-ann" hidden></div>
+  <div id="ms-foot"></div>
+</div>

@@ -108,7 +108,7 @@ function link(path, label, code) {
   var url = /^https?:/.test(path) ? path : CFG.SITE + path + (path.indexOf('?') > -1 ? '&' : '?') + 'utm_source=email&utm_medium=nurture&utm_campaign=' + code;
   return '<a href="' + url + '" style="color:#1a5fb4;font-weight:bold">' + label + '</a>';
 }
-var SIG = 'גילעד רחמים אביעד · מוהל מוסמך · ירושלים, מגיע לכל הארץ<br>ווטסאפ/טלפון: 058-404-9049 · gilad-rachamim.github.io/mohel';
+var SIG = 'גילעד רחמים אביעד · מוהל מוסמך · ירושלים, מגיע לכל הארץ<br><a href="https://wa.me/972584049049">058-404-9049 (ווטסאפ)</a> · gilad4049@gmail.com · gilad-rachamim.github.io/mohel';
 
 function mailBody(code, variant) {
   var PDF = CFG.PDF_URL, CALC = '/mohel/moed/', LIST = '/mohel/checklist/', VIDEO = '/mohel/#shira';

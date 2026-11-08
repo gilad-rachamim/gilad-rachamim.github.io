@@ -1,0 +1,66 @@
+<!--meta {
+  "site": "limudim",
+  "nav": "yomi",
+  "tool": "yomi",
+  "title": "לימוד יומי לסיום התנ״ך או המשנה – בשנה, בשלוש שנים או עד תאריך | כלים ללימודים",
+  "description": "בוחרים תנ״ך, משנה או כל ספר אחר, ובכמה זמן לסיים, ומקבלים כמה פרקים ללמוד כל יום, טבלה לפי תאריכים לסימון, קישור ללימוד בספריא, וקובץ ליומן. 929 פרקי תנ״ך, 525 פרקי משנה. חינם.",
+  "og_title": "לימוד יומי לסיום התנ״ך או המשנה",
+  "crumbs": [["לימוד יומי לסיום", null]],
+  "foot": "<script src=\"/assets/limudim-data.js\"></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>לימוד יומי לסיום</h1>
+  <p class="sub">לסיים את כל התנ״ך, את המשנה, או כל ספר אחר. בוחרים בכמה זמן, ומקבלים כמה ללמוד כל יום.</p>
+</header>
+
+<div class="tool">
+  <div class="panel no-print" id="ly-plans-wrap" hidden>
+    <div class="field"><label for="ly-plans">התוכניות שלי</label><select id="ly-plans"></select></div>
+    <div class="btns"><button class="btn btn-line btn-sm" type="button" id="ly-newplan">+ תוכנית חדשה</button><button class="linkish" type="button" id="ly-del">למחוק את התוכנית</button></div>
+  </div>
+
+  <div id="ly-out" hidden>
+    <div class="today-box" id="ly-today" style="margin-top:1rem"></div>
+    <div class="sum-box" id="ly-sum" style="margin-top:1rem"></div>
+    <div class="panel no-print">
+      <div class="row2">
+        <div class="field"><label for="ly-ics-range">מה להכניס ליומן?</label><select id="ly-ics-range"><option value="31">החודש הקרוב</option><option value="92">3 החודשים הקרובים</option><option value="all">את כל התוכנית</option></select></div>
+        <div class="field" style="align-self:end"><button class="btn btn-gold" type="button" id="ly-ics">להכניס ליומן (ics)</button></div>
+      </div>
+      <p class="ios-tip" id="ly-tip" hidden>הקובץ ירד. פותחים אותו, והיומן מציע להוסיף את ימי הלימוד, כל אחד עם הפרקים של אותו יום וקישור לספריא. ביומן גוגל במחשב: הגדרות ← ייבוא.</p>
+      <div class="btns"><button class="btn btn-line btn-sm" type="button" id="ly-print">להדפיס את הטבלה</button></div>
+    </div>
+    <div id="ly-table" style="margin-top:1rem"></div>
+  </div>
+
+  <form class="panel no-print" id="ly-form" novalidate>
+    <h2>תוכנית חדשה</h2>
+    <div class="field"><label for="ly-what">מה לומדים?</label><select id="ly-what"><option value="tanakh">תנ״ך</option><option value="mishnah">משנה</option><option value="other">ספר אחר</option></select></div>
+    <div class="field" id="ly-part-wrap"><label for="ly-part">איזה חלק?</label><select id="ly-part"></select></div>
+    <div class="field" id="ly-unit-wrap" hidden><label for="ly-unit">לפי</label><select id="ly-unit"><option value="c">פרקים (525)</option><option value="m">משניות (4,192)</option></select></div>
+    <div id="ly-other" hidden style="display:grid;gap:.9rem">
+      <div class="field"><label for="ly-oname">שם הספר</label><input id="ly-oname" type="text" maxlength="50" placeholder="למשל: משנה ברורה חלק א, מסכת ברכות"></div>
+      <div class="row2">
+        <div class="field"><label for="ly-ocount">כמה יש בו?</label><input id="ly-ocount" type="number" min="1" max="20000" inputmode="numeric" placeholder="למשל 63"></div>
+        <div class="field"><label for="ly-ounit">של מה?</label><select id="ly-ounit"><option value="perek">פרקים</option><option value="daf">דפים</option><option value="amud">עמודים</option><option value="siman">סימנים</option><option value="shiur">שיעורים</option></select></div>
+      </div>
+      <div class="field"><label for="ly-ofirst">מתחילים ממספר <span class="opt">(בגמרא מתחילים מדף ב)</span></label><input id="ly-ofirst" type="number" min="1" value="1" inputmode="numeric"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label for="ly-len">בכמה זמן לסיים?</label><select id="ly-len"><option value="m1">חודש</option><option value="m3">3 חודשים</option><option value="m6">חצי שנה</option><option value="y1" selected>שנה</option><option value="y2">שנתיים</option><option value="y3">שלוש שנים</option><option value="date">עד תאריך שאבחר</option></select></div>
+      <div class="field"><label for="ly-start">מתחילים ב</label><input id="ly-start" type="date"></div>
+    </div>
+    <div class="field" id="ly-end-wrap" hidden><label for="ly-end">לסיים עד</label><input id="ly-end" type="date"></div>
+    <div class="row2">
+      <div class="field"><label for="ly-time">שעה ביומן</label><input id="ly-time" type="time" value="21:00"></div>
+      <div class="checks" style="align-self:end"><label><input type="checkbox" id="ly-shabbat" checked> ללמוד גם בשבת</label></div>
+    </div>
+    <button class="btn btn-gold btn-block big" type="submit">לחשב כמה ביום</button>
+    <p class="status" id="ly-st" role="status"></p>
+  </form>
+
+  <p class="note no-print" style="margin-top:.8rem">מספרי הפרקים לפי ספריא: 929 פרקים בתנ״ך (39 ספרים), 525 פרקים במשנה (63 מסכתות, כולל פרק ו באבות ופרק ד בביכורים), 4,192 משניות.</p>
+  <div class="local-note no-print"><span>🔒</span><span>התוכנית והסימונים נשמרים רק בטלפון הזה.</span></div>
+  <div class="share-row no-print"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="לימוד יומי לסיום התנ״ך או המשנה: כמה פרקים ביום, טבלה לסימון ויומן. בחינם" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר בווטסאפ</a></div>
+  <p class="disclaimer no-print"><a class="gold" href="/limudim/">כל הכלים ללימודים</a> · חינם · בלי הרשמה</p>
+</div>
