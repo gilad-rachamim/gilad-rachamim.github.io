@@ -1,0 +1,49 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "chag_basis",
+  "title": "דף מידע לחג בבסיס: שעות ומקומות כתמונה לקבוצת הפלוגה | כלי קודש",
+  "description": "לרב היחידה: ממלאים את השעות והמקומות של השבת או החג בבסיס (נרות, תפילות, סעודה), ומקבלים תמונה מעוצבת וטקסט לקבוצות הווטסאפ של הפלוגה. בחינם, בלי הרשמה.",
+  "og_title": "דף מידע לחג בבסיס – תמונה לקבוצת הפלוגה",
+  "priority": "0.7",
+  "crumbs": [["לרבנות הצבאית", "/kodesh/#tzvai"], ["דף מידע לחג בבסיס", null]],
+  "head": "<style>#cg-canvas{display:block;width:100%;height:auto;border-radius:14px;border:1px solid var(--line);margin-top:1rem;background:#000}.cg-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}.k-form textarea#cg-rows{min-height:10rem;line-height:1.7}</style>",
+  "foot": "<script src=\"/assets/kcard.js\" defer></script><script src=\"/assets/chag.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>דף מידע לחג בבסיס</h1>
+  <p class="sub">ממלאים מתי ואיפה: נרות, תפילות, סעודה, שיעור. מקבלים תמונה וטקסט לקבוצות הפלוגה, תוך דקה.</p>
+</header>
+<div class="tool">
+  <form class="k-form lead-form" id="cg-form" novalidate>
+    <div class="cg-row">
+      <div class="field"><label for="cg-chag">לאיזה מועד?</label><select id="cg-chag" name="chag">
+        <option value="shabbat">שבת</option><option value="rosh">ראש השנה</option><option value="kipur">יום הכיפורים</option><option value="sukkot">סוכות</option><option value="simchat">שמחת תורה</option><option value="chanuka">חנוכה</option><option value="purim">פורים</option><option value="pesach">פסח</option><option value="shavuot">שבועות</option><option value="other">אחר</option>
+      </select></div>
+      <div class="field"><label for="cg-date">תאריך <span class="opt">(לא חובה)</span></label><input id="cg-date" name="date" type="text" maxlength="40" placeholder="פרשת וישב, ט&quot;ו בכסלו"></div>
+    </div>
+    <div class="field" id="cg-title-wrap" hidden><label for="cg-title">כותרת</label><input id="cg-title" name="title" type="text" maxlength="40" placeholder="ט&quot;ו בשבט בבסיס"></div>
+    <div class="field"><label for="cg-unit">היחידה או הבסיס <span class="opt">(לא חובה)</span></label><input id="cg-unit" name="unit" type="text" maxlength="40" placeholder="פלוגה ב׳"></div>
+    <div class="field"><label for="cg-rows">הלו"ז: שורה לכל דבר, שעה ואז מה ואיפה</label><textarea id="cg-rows" name="rows" maxlength="700">16:10 הדלקת נרות – חדר האוכל
+16:30 מנחה וקבלת שבת – בית הכנסת
+18:00 סעודת שבת וקידוש – חדר האוכל
+08:30 שחרית וקריאת התורה – בית הכנסת
+20:30 שיעור ועונג שבת – מועדון</textarea></div>
+    <div class="field"><label for="cg-note">שורה נוספת <span class="opt">(לא חובה)</span></label><input id="cg-note" name="note" type="text" maxlength="70" placeholder="מי שצריך סידור, טלית או תפילין – לפנות אליי"></div>
+    <div class="field"><label for="cg-sig">חתימה</label><input id="cg-sig" name="sig" type="text" maxlength="40" placeholder="הרב של היחידה"></div>
+    <div class="cg-row">
+      <div class="field"><label for="cg-theme">עיצוב</label><select id="cg-theme" name="theme"><option value="olive">ירוק זית</option><option value="night">כחול וזהב</option><option value="parch">קלף</option><option value="black">שחור וזהב</option></select></div>
+      <div class="field"><label for="cg-size">גודל</label><select id="cg-size" name="size"><option value="square">ריבוע (קבוצה)</option><option value="story">לגובה (סטטוס)</option></select></div>
+    </div>
+  </form>
+  <canvas id="cg-canvas" width="1080" height="1080" role="img" aria-label="תצוגה מקדימה של דף המידע לחג"></canvas>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="cg-share"><svg class="ic"><use href="#wa"/></svg> לשתף את התמונה</button>
+    <a class="btn btn-line btn-sm" href="https://wa.me/" id="cg-wa" target="_blank" rel="noopener">לשלוח כטקסט בווטסאפ</a>
+    <button class="btn btn-line btn-sm" type="button" id="cg-dl">לשמור את התמונה</button>
+    <button class="btn btn-line btn-sm" type="button" id="cg-text">להעתיק כטקסט</button>
+  </div>
+  <p class="ios-tip" id="cg-tip" hidden>התמונה נשמרה בטלפון. עכשיו פותחים את הווטסאפ, ומצרפים אותה מהגלריה.</p>
+  <p class="disclaimer">כלי כללי לשעות ולמקומות של תפילות ואירועים בלבד. לא כותבים כאן שום פרט מבצעי. הכול נוצר בטלפון שלכם ולא נשמר אצלנו.</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/#tzvai">כלי קודש לרבנות הצבאית</a>. רוצים עוד משהו? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>
+</div>
