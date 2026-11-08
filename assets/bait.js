@@ -511,4 +511,234 @@
     if (fromLink) use(T, 'open_link');
     draw();
   })();
+  // ======================================================================
+  // 5. המסמכים של הבית – מה פג מתי, ותזכורת ליומן
+  // ======================================================================
+  (function mismachim() {
+    var box = $('ms-list'); if (!box) return;
+    var T = 'bait_mismachim', KEY = 'bait-mismachim';
+    var st = load(KEY, { docs: [] });
+    var editId = null;
+    function persist() { save(KEY, st); }
+    function today() { var d = new Date(); return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+    function pd(s) { var p = String(s || '').split('-'); return p.length === 3 ? new Date(+p[0], +p[1] - 1, +p[2]) : null; }
+    function days(s) { var d = pd(s); return d ? Math.round((d - today()) / 864e5) : null; }
+    function he(s) { var d = pd(s); return d ? d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear() : ''; }
+    function ymd(d) { return d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2); }
+    function status(x) {
+      var n = days(x.exp);
+      if (n == null) return ['ok', 'בלי תאריך'];
+      if (n < 0) return ['bad', 'פג לפני ' + (-n) + ' ימים'];
+      if (n === 0) return ['bad', 'פג היום'];
+      if (n <= 30) return ['warn', 'עוד ' + n + ' ימים'];
+      if (n <= 90) return ['soon', 'עוד ' + Math.round(n / 7) + ' שבועות'];
+      return ['ok', n > 365 ? 'עוד ' + (Math.round(n / 36.5) / 10) + ' שנים' : 'עוד ' + Math.round(n / 30) + ' חודשים'];
+    }
+    function remindDate(x) { var d = pd(x.exp); if (!d) return null; d.setDate(d.getDate() - 30); return d < today() ? today() : d; }
+    function gcal(x) {
+      var d = remindDate(x); if (!d) return '#';
+      var e = new Date(d); e.setDate(e.getDate() + 1);
+      return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent('לחדש: ' + x.n + (x.who ? ' (' + x.who + ')' : '')) +
+        '&dates=' + ymd(d) + '/' + ymd(e) + '&details=' + encodeURIComponent('בתוקף עד ' + he(x.exp) + (x.where ? '\nאיפה זה נמצא: ' + x.where : '') + '\n\nמהכלי "המסמכים של הבית": ' + location.origin + location.pathname);
+    }
+    function ics(x) {
+      var d = remindDate(x); if (!d) return;
+      var e = new Date(d); e.setDate(e.getDate() + 1);
+      var body = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//gilad-rachamim//bait//HE', 'BEGIN:VEVENT', 'UID:' + x.id + '@gilad-rachamim.github.io', 'DTSTAMP:' + ymd(new Date()) + 'T000000Z',
+        'DTSTART;VALUE=DATE:' + ymd(d), 'DTEND;VALUE=DATE:' + ymd(e), 'SUMMARY:לחדש: ' + x.n + (x.who ? ' (' + x.who + ')' : ''), 'DESCRIPTION:בתוקף עד ' + he(x.exp),
+        'BEGIN:VALARM', 'TRIGGER:PT9H', 'ACTION:DISPLAY', 'DESCRIPTION:תזכורת', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+      var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([body], { type: 'text/calendar' })); a.download = 'tizkoret.ics'; document.body.appendChild(a); a.click(); a.remove();
+    }
+    function sorted() { return st.docs.slice().sort(function (a, b) { var x = days(a.exp), y = days(b.exp); return (x == null ? 1e9 : x) - (y == null ? 1e9 : y); }); }
+    function draw() {
+      var list = sorted();
+      var soon = list.filter(function (x) { var n = days(x.exp); return n != null && n <= 90; }).length;
+      $('ms-sum').textContent = !list.length ? 'עוד אין מסמכים ברשימה' : list.length + ' מסמכים · ' + (soon ? soon + ' צריכים חידוש ב-3 החודשים הקרובים' : 'אין מה לחדש בקרוב ✓');
+      box.innerHTML = list.map(function (x) {
+        var s = status(x);
+        return '<li class="ms-' + s[0] + '"><div class="nm" data-ed="' + x.id + '"><b>' + esc(x.n) + '</b>' + (x.who ? ' · ' + esc(x.who) : '') +
+          '<span class="meta">' + (x.exp ? 'בתוקף עד ' + he(x.exp) + ' · ' : '') + '<em>' + s[1] + '</em>' + (x.where ? '<br>📁 ' + esc(x.where) : '') + '</span></div>' +
+          (x.exp ? '<div class="acts"><a class="btn btn-line btn-sm" href="' + gcal(x) + '" target="_blank" rel="noopener" data-cal="g">📅 ליומן גוגל</a><button type="button" class="btn btn-line btn-sm" data-ics="' + x.id + '">לאייפון</button></div>' : '') + '</li>';
+      }).join('') || '<li class="empty" style="display:block">לוחצים על מסמך למעלה, או כותבים שם משלכם.</li>';
+      var up = list.filter(function (x) { var n = days(x.exp); return n != null && n <= 90; });
+      $('ms-wa').href = wa('📁 מסמכים של הבית שצריך לחדש בקרוב:\n\n' + (up.length ? up.map(function (x) { return '▫️ ' + x.n + (x.who ? ' (' + x.who + ')' : '') + ' – עד ' + he(x.exp); }).join('\n') : 'אין, הכול בתוקף ✓') + '\n\n' + location.origin + location.pathname);
+      $('ms-print-list').innerHTML = list.map(function (x) { return '<tr><td>' + esc(x.n) + '</td><td>' + esc(x.who || '') + '</td><td>' + he(x.exp) + '</td><td>' + esc(x.where || '') + '</td></tr>'; }).join('');
+    }
+    function fill(x) {
+      editId = x ? x.id : null;
+      $('ms-n').value = x ? x.n : ''; $('ms-who').value = x ? x.who : ''; $('ms-exp').value = x ? x.exp : ''; $('ms-where').value = x ? x.where : '';
+      $('ms-save').textContent = x ? 'לשמור שינויים' : 'להוסיף לרשימה';
+      $('ms-del').hidden = !x;
+    }
+    $('ms-presets').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-pre]'); if (!b) return;
+      fill(null); $('ms-n').value = b.getAttribute('data-pre'); $('ms-exp').focus();
+    });
+    $('ms-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var x = { n: $('ms-n').value.trim().slice(0, 50), who: $('ms-who').value.trim().slice(0, 30), exp: $('ms-exp').value, where: $('ms-where').value.trim().slice(0, 60) };
+      if (!x.n) { toast('מה שם המסמך?'); $('ms-n').focus(); return; }
+      if (editId) { var o = st.docs.filter(function (d) { return d.id === editId; })[0]; if (o) { o.n = x.n; o.who = x.who; o.exp = x.exp; o.where = x.where; } }
+      else { x.id = uid(); st.docs.push(x); }
+      persist(); fill(null); draw(); toast('נשמר'); use(T, 'add');
+    });
+    $('ms-del').onclick = function () { if (!editId || !confirm('למחוק את המסמך מהרשימה?')) return; st.docs = st.docs.filter(function (d) { return d.id !== editId; }); persist(); fill(null); draw(); };
+    $('ms-cancel').onclick = function () { fill(null); };
+    box.addEventListener('click', function (e) {
+      var ed = e.target.closest('[data-ed]'), ic = e.target.closest('[data-ics]'), g = e.target.closest('[data-cal]');
+      if (ic) { ics(st.docs.filter(function (d) { return d.id === ic.getAttribute('data-ics'); })[0]); use(T, 'ics'); }
+      else if (g) use(T, 'gcal');
+      else if (ed) { fill(st.docs.filter(function (d) { return d.id === ed.getAttribute('data-ed'); })[0]); window.scrollTo({ top: $('ms-form').getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' }); }
+    });
+    $('ms-wa').addEventListener('click', function () { use(T, 'wa'); });
+    $('ms-print').onclick = function () { use(T, 'print'); window.print(); };
+    fill(null); draw();
+  })();
+
+  // ======================================================================
+  // 6. מתנה קבוצתית – מי השתתף, כמה נאסף. בלי שרת: הכול בקישור. לא מעביר כסף.
+  // ======================================================================
+  (function matana() {
+    var root = $('mt-root'); if (!root) return;
+    var T = 'bait_matana', ME = 'bait-mevi-me', LAST = 'bait-matana-last';
+    var st = hashData(), fromLink = !!st;
+    if (!st) st = load(LAST, null);
+    var editing = !st || !st.t;
+    if (!st) st = { t: '', g: 0, p: '', d: '', h: 0, l: [] };
+    if (!st.l) st.l = [];
+    var me = load(ME, '');
+    function total() { return st.l.reduce(function (s, x) { return s + num(x[1], 0); }, 0); }
+    function link() { return location.origin + location.pathname + '#d=' + enc(st); }
+    function persist() { save(LAST, st); try { history.replaceState(null, '', location.pathname + '#d=' + enc(st)); } catch (e) {} }
+    function bar(p) { var n = Math.max(0, Math.min(10, Math.round(p / 10))); return '🟩'.repeat(n) + '⬜'.repeat(10 - n); }
+    function msg() {
+      var tt = total(), G = num(st.g, 0), pc = G ? Math.round(tt / G * 100) : 0;
+      return '🎁 *' + st.t + '*' + (st.d ? '\n' + st.d : '') + '\n\n' +
+        (G ? 'נאסף ' + heCount(tt) + ' ₪ מתוך ' + heCount(G) + ' ₪ (' + pc + '%)\n' + bar(pc) : 'נאסף עד עכשיו: ' + heCount(tt) + ' ₪') +
+        '\n\nמי כבר בפנים (' + st.l.length + '):\n' + (st.l.length ? st.l.map(function (x) { return '✅ ' + x[0] + (st.h ? '' : ' – ' + heCount(num(x[1], 0)) + ' ₪'); }).join('\n') : 'עוד אף אחד, תהיו הראשונים 🙂') +
+        (st.p ? '\n\nאיך משלמים: ' + st.p : '') + '\n\nלהצטרף (בלי הרשמה), תמיד מהקישור בהודעה האחרונה:\n' + link();
+    }
+    function draw() {
+      $('mt-edit').hidden = !editing; $('mt-view').hidden = editing;
+      if (editing) { $('mt-t').value = st.t; $('mt-g').value = st.g || ''; $('mt-p').value = st.p; $('mt-d').value = st.d; $('mt-h').checked = !!st.h; return; }
+      var tt = total(), G = num(st.g, 0), pc = G ? Math.min(100, tt / G * 100) : 0;
+      $('mt-title').textContent = '🎁 ' + st.t; $('mt-when').textContent = st.d || '';
+      $('mt-bar').style.width = pc + '%';
+      $('mt-sum').textContent = G ? (tt >= G ? 'הגענו ליעד! ' : '') + 'נאסף ' + heCount(tt) + ' ₪ מתוך ' + heCount(G) + ' ₪' + (tt < G ? ' · חסר ' + heCount(G - tt) + ' ₪' : '') : 'נאסף ' + heCount(tt) + ' ₪';
+      $('mt-pay').hidden = !st.p; $('mt-pay-t').textContent = st.p;
+      $('mt-me').value = me;
+      $('mt-list').innerHTML = st.l.map(function (x, k) {
+        var mine = me && x[0] === me;
+        return '<li class="taken' + (mine ? ' mine' : '') + '"><span class="nm">' + esc(x[0]) + (st.h ? '' : '<span class="who">' + heCount(num(x[1], 0)) + ' ₪</span>') + '</span>' + (mine ? '<button type="button" class="btn btn-line btn-sm" data-out="' + k + '">להסיר</button>' : '') + '</li>';
+      }).join('') || '<li style="display:block" class="muted">עוד אף אחד לא נרשם.</li>';
+      $('mt-wa').href = wa(msg());
+    }
+    $('mt-join').addEventListener('submit', function (e) {
+      e.preventDefault();
+      me = $('mt-me').value.trim().slice(0, 25); var a = num($('mt-amt').value, 0);
+      if (!me) { toast('קודם כותבים את השם'); $('mt-me').focus(); return; }
+      if (!(a > 0)) { toast('כמה ₪?'); $('mt-amt').focus(); return; }
+      save(ME, me);
+      var ex = st.l.filter(function (x) { return x[0] === me; })[0];
+      if (ex) ex[1] = a; else st.l.push([me, a]);
+      $('mt-amt').value = ''; persist(); draw(); $('mt-nudge').hidden = false; toast('נרשמת. עכשיו לשלוח עדכון לקבוצה ↓'); use(T, 'join');
+    });
+    root.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-out]'); if (!b) return;
+      st.l.splice(+b.getAttribute('data-out'), 1); persist(); draw(); $('mt-nudge').hidden = false;
+    });
+    root.addEventListener('click', function (e) { var b = e.target.closest('[data-amt]'); if (b) $('mt-amt').value = b.getAttribute('data-amt'); });
+    $('mt-go').onclick = function () {
+      st.t = $('mt-t').value.trim().slice(0, 60); st.g = num($('mt-g').value, 0); st.p = $('mt-p').value.trim().slice(0, 80); st.d = $('mt-d').value.trim().slice(0, 60); st.h = $('mt-h').checked ? 1 : 0;
+      if (!st.t) { toast('למי המתנה?'); $('mt-t').focus(); return; }
+      editing = false; persist(); draw(); $('mt-nudge').hidden = false; use(T, 'create'); window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    $('mt-wa').addEventListener('click', function () { use(T, 'wa'); $('mt-nudge').hidden = true; });
+    $('mt-copy').onclick = function () { copy(link()); use(T, 'link'); };
+    $('mt-editbtn').onclick = function () { editing = true; draw(); };
+    $('mt-new').onclick = function () { if (!confirm('לפתוח איסוף חדש? (הישן נשאר בקישור שכבר נשלח)')) return; st = { t: '', g: 0, p: '', d: '', h: 0, l: [] }; editing = true; clearHash(); save(LAST, null); draw(); };
+    if (fromLink) use(T, 'open_link');
+    draw();
+  })();
+
+  // ======================================================================
+  // 7. שגרת בוקר וערב לילדים – לוח עם ציורים, הילד מסמן, כוכב בסוף
+  // ======================================================================
+  (function shigra() {
+    var grid = $('sg-grid'); if (!grid) return;
+    var T = 'bait_shigra', KEY = 'bait-shigra';
+    var DEF = {
+      boker: [['🛏️', 'לסדר את המיטה'], ['🚽', 'שירותים ונטילת ידיים'], ['👕', 'להתלבש'], ['🦷', 'לצחצח שיניים'], ['🥣', 'ארוחת בוקר'], ['🎒', 'לקחת תיק'], ['👟', 'לנעול נעליים']],
+      erev: [['🧸', 'לסדר צעצועים'], ['🛁', 'מקלחת'], ['🩳', 'פיג׳מה'], ['🦷', 'לצחצח שיניים'], ['🎒', 'להכין תיק למחר'], ['📖', 'סיפור'], ['🙏', 'קריאת שמע']]
+    };
+    var st = load(KEY, null) || { kids: ['נועה', 'איתי'], kid: 0, mode: new Date().getHours() >= 14 ? 'erev' : 'boker', items: DEF, day: '', done: {}, stars: {} };
+    function persist() { save(KEY, st); }
+    var td = new Date().toDateString();
+    if (st.day !== td) { st.day = td; st.done = {}; persist(); }
+    function kidName() { return st.kids[st.kid] || ''; }
+    function dk() { return st.kid + ':' + st.mode; }
+    function drawKids() {
+      $('sg-kids').innerHTML = st.kids.map(function (k, i) { return '<button type="button" class="chip' + (i === st.kid ? ' on' : '') + '" data-kid="' + i + '">' + esc(k) + ' ⭐' + (st.stars[k] || 0) + '</button>'; }).join('');
+      Array.prototype.forEach.call(document.querySelectorAll('[data-sg-mode]'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-sg-mode') === st.mode ? 'true' : 'false'); });
+    }
+    function draw() {
+      drawKids();
+      var items = st.items[st.mode] || [], d = st.done[dk()] || {};
+      grid.innerHTML = items.map(function (x, i) { return '<button type="button" class="sg-card' + (d[i] ? ' on' : '') + '" data-i="' + i + '" aria-pressed="' + (d[i] ? 'true' : 'false') + '"><span class="e">' + esc(x[0]) + '</span><span class="t">' + esc(x[1]) + '</span>' + (d[i] ? '<span class="v">✓</span>' : '') + '</button>'; }).join('');
+      var n = items.filter(function (x, i) { return d[i]; }).length;
+      $('sg-bar').style.width = (items.length ? n / items.length * 100 : 0) + '%';
+      var all = items.length && n === items.length;
+      $('sg-txt').textContent = all ? '⭐ כל הכבוד, ' + kidName() + '! ' + (st.mode === 'boker' ? 'יום טוב!' : 'לילה טוב!') : n + ' מתוך ' + items.length + (kidName() ? ' · ' + kidName() : '');
+      $('sg-win').hidden = !all;
+      drawPrint();
+    }
+    function drawAll() { draw(); drawEdit(); }
+    function drawEdit() {
+      $('sg-items').innerHTML = (st.items[st.mode] || []).map(function (x, i) {
+        return '<div class="row" style="margin-top:.4rem"><input type="text" maxlength="4" value="' + esc(x[0]) + '" data-ie="' + i + '" aria-label="ציור" style="flex:0 0 3.6rem;text-align:center;font-size:1.3rem"><input type="text" maxlength="30" value="' + esc(x[1]) + '" data-it="' + i + '" aria-label="מה עושים"><button type="button" class="x no-flex" data-idel="' + i + '" aria-label="להסיר">×</button></div>';
+      }).join('');
+      $('sg-kidlist').innerHTML = st.kids.map(function (k, i) { return '<div class="row" style="margin-top:.4rem"><input type="text" maxlength="15" value="' + esc(k) + '" data-kn="' + i + '" aria-label="שם"><button type="button" class="x no-flex" data-kdel="' + i + '" aria-label="להסיר">×</button></div>'; }).join('');
+    }
+    function drawPrint() {
+      var DS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
+      $('sg-paper').innerHTML = '<h3>' + (st.mode === 'boker' ? '☀️ שגרת הבוקר' : '🌙 שגרת הערב') + (kidName() ? ' של ' + esc(kidName()) : '') + '</h3><p class="sub2">כל מה שעשיתי – מסמנים ✓</p>' +
+        '<table><tr><th></th>' + DS.map(function (d) { return '<th>' + d + '</th>'; }).join('') + '</tr>' +
+        (st.items[st.mode] || []).map(function (x) { return '<tr><td class="ch"><span style="font-size:1.4em">' + esc(x[0]) + '</span> ' + esc(x[1]) + '</td>' + DS.map(function () { return '<td style="height:2.2rem"></td>'; }).join('') + '</tr>'; }).join('') +
+        '</table><p class="ft">gilad-rachamim.github.io/bait</p>';
+    }
+    grid.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-i]'); if (!b) return;
+      var k = dk(), i = b.getAttribute('data-i'); st.done[k] = st.done[k] || {};
+      var items = st.items[st.mode] || [], before = items.every(function (x, j) { return st.done[k][j]; });
+      if (st.done[k][i]) delete st.done[k][i]; else st.done[k][i] = 1;
+      var after = items.length && items.every(function (x, j) { return st.done[k][j]; });
+      if (after && !before) { st.stars[kidName()] = (st.stars[kidName()] || 0) + 1; use(T, 'done'); }
+      if (!after && before) st.stars[kidName()] = Math.max(0, (st.stars[kidName()] || 0) - 1);
+      persist(); draw(); use(T, 'tap');
+    });
+    $('sg-kids').addEventListener('click', function (e) { var b = e.target.closest('[data-kid]'); if (!b) return; st.kid = +b.getAttribute('data-kid'); persist(); draw(); });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-sg-mode]'), function (b) { b.addEventListener('click', function () { st.mode = b.getAttribute('data-sg-mode'); persist(); drawAll(); }); });
+    var ed = $('sg-edit');
+    ed.addEventListener('input', function (e) {
+      var t = e.target, a, L = st.items[st.mode];
+      if ((a = t.getAttribute('data-ie')) != null) L[+a][0] = t.value;
+      else if ((a = t.getAttribute('data-it')) != null) L[+a][1] = t.value;
+      else if ((a = t.getAttribute('data-kn')) != null) { var old = st.kids[+a]; st.kids[+a] = t.value; if (st.stars[old] != null) { st.stars[t.value] = st.stars[old]; delete st.stars[old]; } }
+      else return;
+      persist(); draw();
+    });
+    ed.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return; var a;
+      if ((a = b.getAttribute('data-idel')) != null) { st.items[st.mode].splice(+a, 1); st.done = {}; }
+      else if ((a = b.getAttribute('data-kdel')) != null) { if (st.kids.length < 2) return; st.kids.splice(+a, 1); st.kid = 0; st.done = {}; }
+      else if (b.id === 'sg-iadd') st.items[st.mode].push(['⭐', '']);
+      else if (b.id === 'sg-kadd') st.kids.push('');
+      else if (b.id === 'sg-reset') { if (!confirm('לחזור לרשימות המקוריות?')) return; st.items = JSON.parse(JSON.stringify(DEF)); st.done = {}; }
+      else return;
+      persist(); drawAll();
+    });
+    $('sg-print').onclick = function () { use(T, 'print'); window.print(); };
+    $('sg-again').onclick = function () { st.done[dk()] = {}; persist(); draw(); };
+    drawAll();
+  })();
 })();

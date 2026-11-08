@@ -1,0 +1,41 @@
+<!--meta {
+  "site": "bait",
+  "tool": "bait_shigra",
+  "title": "שגרת בוקר וערב לילדים – לוח עם ציורים, מסמנים וזוכים בכוכב | כלים למשפחה ולבית",
+  "description": "לוח שגרה לילדים: לסדר את המיטה, להתלבש, לצחצח שיניים, להכין תיק. הילד לוחץ על כל ציור כשסיים, ובסוף מקבל כוכב. בוקר וערב, כמה ילדים, ודף להדפסה למקרר. בחינם, בלי הרשמה.",
+  "og_title": "שגרת בוקר וערב לילדים – עם כוכבים",
+  "priority": "0.8",
+  "crumbs": [["שגרה לילדים", null]]
+} -->
+<header class="k-hero no-print">
+  <h1>שגרת בוקר וערב</h1>
+  <p class="sub">הילד לוחץ על כל ציור כשהוא מסיים, ובסוף מקבל כוכב. פחות "כמה פעמים אמרתי לך", יותר "תראו מה עשיתי".</p>
+</header>
+<div class="tool bt">
+  <div class="no-print">
+    <div class="chips" id="sg-kids" style="justify-content:center"></div>
+    <div class="seg" role="group" aria-label="בוקר או ערב">
+      <button type="button" data-sg-mode="boker" aria-pressed="true">☀️ בוקר</button>
+      <button type="button" data-sg-mode="erev" aria-pressed="false">🌙 ערב</button>
+    </div>
+    <div class="kn-meter"><div class="track"><div class="fill" id="sg-bar"></div></div><p id="sg-txt" aria-live="polite"></p></div>
+    <div class="sg-win" id="sg-win" hidden>⭐</div>
+    <div class="sg-grid" id="sg-grid"></div>
+    <div class="tools">
+      <button class="btn btn-gold btn-sm" type="button" id="sg-print">🖨️ דף למקרר</button>
+      <button class="btn btn-line btn-sm" type="button" id="sg-again">להתחיל שוב</button>
+    </div>
+    <details class="box" id="sg-edit">
+      <summary style="cursor:pointer;color:var(--cream);font-weight:600">✏️ לשנות את הרשימה ואת השמות</summary>
+      <h2>מה עושים <small>הרשימה שמוצגת עכשיו</small></h2>
+      <div id="sg-items"></div>
+      <div class="tools" style="justify-content:flex-start;margin-top:.5rem"><button class="btn btn-line btn-sm" type="button" id="sg-iadd">+ עוד משימה</button><button class="btn btn-line btn-sm" type="button" id="sg-reset">לחזור לרשימה המקורית</button></div>
+      <h2>הילדים</h2>
+      <div id="sg-kidlist"></div>
+      <div class="tools" style="justify-content:flex-start;margin-top:.5rem"><button class="btn btn-line btn-sm" type="button" id="sg-kadd">+ עוד ילד/ה</button></div>
+    </details>
+    <p class="disclaimer">הסימונים מתאפסים לבד כל יום. הכוכבים נשמרים ומצטברים, רק בטלפון הזה.</p>
+  </div>
+  <div class="paper print-me print-only" id="sg-paper"></div>
+  <div class="share-row no-print"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="לוח שגרת בוקר וערב לילדים, עם ציורים וכוכבים. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>

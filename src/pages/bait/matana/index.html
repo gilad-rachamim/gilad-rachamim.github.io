@@ -1,0 +1,53 @@
+<!--meta {
+  "site": "bait",
+  "tool": "bait_matana",
+  "title": "מתנה קבוצתית – מי השתתף וכמה נאסף, ישר מהווטסאפ | כלים למשפחה ולבית",
+  "description": "מתנה לגננת, למורה, לחבר או לסבתא: פותחים איסוף, שולחים לקבוצה, וכל אחד רושם את השם והסכום. כולם רואים כמה נאסף ועוד כמה חסר. בלי אפליקציה ובלי הרשמה, והכלי לא מעביר כסף.",
+  "og_title": "מתנה קבוצתית – כמה כבר נאסף?",
+  "priority": "0.8",
+  "crumbs": [["מתנה קבוצתית", null]]
+} -->
+<header class="k-hero">
+  <h1>מתנה קבוצתית</h1>
+  <p class="sub">פותחים איסוף, שולחים לקבוצה, וכל אחד רושם כמה הוא נותן. כולם רואים כמה נאסף ועוד כמה חסר.</p>
+</header>
+<div class="tool bt" id="mt-root">
+  <div id="mt-edit" hidden>
+    <h2>האיסוף</h2>
+    <div class="ms-form">
+      <label>למי המתנה? <input id="mt-t" type="text" maxlength="60" placeholder="מתנה לגננת מיכל, סוף שנה"></label>
+      <label>כמה רוצים לאסוף? <span>(₪, לא חובה)</span> <input id="mt-g" type="number" inputmode="numeric" min="0" placeholder="600"></label>
+      <label>איך משלמים? <span>(לא חובה)</span> <input id="mt-p" type="text" maxlength="80" placeholder="ביט או פייבוקס לדני, או מזומן בגן"></label>
+      <label>עד מתי? <span>(לא חובה)</span> <input id="mt-d" type="text" maxlength="60" placeholder="עד יום חמישי"></label>
+      <label style="display:flex;gap:.6rem;align-items:center;font-weight:400"><input id="mt-h" type="checkbox" style="width:1.3rem;height:1.3rem;accent-color:var(--gold)"> להראות רק שמות, בלי הסכום של כל אחד</label>
+    </div>
+    <div class="tools"><button class="btn btn-gold" type="button" id="mt-go">לפתוח את האיסוף ←</button></div>
+  </div>
+
+  <div id="mt-view" hidden>
+    <div class="mv-head"><h2 id="mt-title"></h2><p id="mt-when"></p></div>
+    <div class="mt-meter"><div class="track"><div class="fill" id="mt-bar"></div></div><p id="mt-sum" aria-live="polite"></p></div>
+    <div class="mv-banner" id="mt-pay" hidden><b>איך משלמים:</b> <span id="mt-pay-t"></span></div>
+    <form class="box" id="mt-join">
+      <b style="color:var(--cream)">גם אני בפנים</b>
+      <div class="row" style="margin-top:.5rem"><input id="mt-me" type="text" maxlength="25" placeholder="השם שלי" autocomplete="given-name" aria-label="השם שלי"><input id="mt-amt" type="number" inputmode="decimal" min="1" placeholder="₪" aria-label="סכום" style="flex:0 0 5.5rem"></div>
+      <div class="mt-amts"><button type="button" class="chip" data-amt="20">20 ₪</button><button type="button" class="chip" data-amt="30">30 ₪</button><button type="button" class="chip" data-amt="50">50 ₪</button><button type="button" class="chip" data-amt="100">100 ₪</button></div>
+      <div class="tools" style="justify-content:flex-start;margin-top:.6rem"><button class="btn btn-gold btn-sm" type="submit">לרשום אותי</button></div>
+    </form>
+    <h2>מי כבר בפנים</h2>
+    <ul class="mv-list" id="mt-list"></ul>
+    <div class="mv-banner" id="mt-nudge" hidden>כדי שכולם יראו את העדכון, שולחים את ההודעה לקבוצה.</div>
+    <div class="tools">
+      <a class="btn btn-gold" href="#" id="mt-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח עדכון לקבוצה</a>
+      <button class="btn btn-line btn-sm" type="button" id="mt-copy">להעתיק קישור</button>
+      <button class="btn btn-line btn-sm" type="button" id="mt-editbtn">לערוך</button>
+      <button class="btn btn-line btn-sm" type="button" id="mt-new">איסוף חדש</button>
+    </div>
+  </div>
+
+  <div class="box">
+    <b style="color:var(--cream)">חשוב לדעת</b>
+    <p class="muted" style="margin-top:.3rem">הכלי לא מעביר כסף, הוא רק עוזר לעקוב מי השתתף. התשלום עצמו נעשה בדרך שהמארגן כתב. כל הרשימה נמצאת בתוך הקישור, ולכן פותחים תמיד את הקישור מההודעה <b>האחרונה</b> בקבוצה.</p>
+  </div>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מתנה קבוצתית בלי בלגן: כל אחד רושם כמה הוא נותן, וכולם רואים כמה נאסף. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
