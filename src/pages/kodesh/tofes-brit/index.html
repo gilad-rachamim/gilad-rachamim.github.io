@@ -1,0 +1,108 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "mohalim",
+  "tool": "tofes_brit",
+  "title": "טופס פרטי הברית: ההורים ממלאים, המוהל מקבל הכול בווטסאפ | כלי קודש",
+  "description": "למוהלים: שולחים להורים קישור אישי, והם ממלאים בטלפון את פרטי הלידה, המשקל, הצהבת, מקום ושעת הברית, הנוסח והסנדק. הטופס מחשב את מועד הברית ושולח הכול בהודעת ווטסאפ אחת מסודרת למוהל, עם קישור שמכניס את הברית ליומן הבריתות. בחינם, ושום פרט לא נשמר אצלנו.",
+  "og_title": "טופס פרטי הברית – ההורים ממלאים, המוהל מקבל בווטסאפ",
+  "priority": "0.6",
+  "crumbs": [["כלים למוהלים", "/kodesh/mohalim/"], ["טופס פרטי הברית", null]],
+  "head": "<style>.tb-for{display:inline-block;margin-top:.7rem;padding:.3rem .9rem;border:1px solid var(--gold-soft);border-radius:99px;color:var(--gold);font-size:1rem}.tb-sec{font-family:var(--serif);color:var(--gold);font-size:1.12rem;margin:.4rem 0 -.2rem;padding-top:.6rem;border-top:1px solid var(--line)}.tb-sec:first-of-type{border-top:0;padding-top:0}.tb-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}.tb-moed{padding:1rem 1.1rem;border:1px solid var(--gold-soft);border-radius:14px;background:linear-gradient(170deg,rgba(216,179,95,.14),rgba(216,179,95,.02) 70%);text-align:center}.tb-moed-k{color:var(--muted);font-size:.95rem}.tb-moed-d{font-family:var(--serif);color:var(--cream);font-size:1.45rem;line-height:1.35;margin-top:.2rem}.tb-moed-g{color:var(--gold);font-size:1.05rem}.tb-moed ul{list-style:none;display:grid;gap:.3rem;margin-top:.6rem;color:var(--body);font-size:.93rem;text-align:start}.tb-moed li{padding-inline-start:.7rem;border-inline-start:2px solid var(--gold-soft)}.tb-sent{padding:.9rem 1rem;border-radius:12px;background:rgba(95,191,166,.12);border:1px solid rgba(95,191,166,.4);color:var(--cream);text-align:center}.tb-mk{margin-top:1.6rem;padding:1.1rem;border:1px dashed var(--gold-soft);border-radius:16px}.tb-mk h2{font-family:var(--serif);color:var(--cream);font-size:1.3rem;margin-bottom:.3rem}.tb-mk>p{color:var(--body);margin-bottom:.8rem}.tb-mk form{display:grid;gap:.7rem}.tb-link{direction:ltr;text-align:left;word-break:break-all;font-size:.9rem;padding:.6rem .8rem;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid var(--line);color:var(--parchment);margin-top:.7rem}.tb-wa{white-space:pre-wrap;font-size:1rem;line-height:1.7;padding:.9rem 1rem;border-radius:12px;background:#0b2a22;color:#e9f5ee;border:1px solid rgba(95,191,166,.35);margin-top:.6rem}.tb-more{display:grid;gap:.8rem;margin-top:1rem}.tb-more .tip{margin:0}.tb-has-mohel .tb-mohel-first,.tb-has-mohel .tb-more{display:none}@media (max-width:520px){.tb-row{grid-template-columns:1fr}}</style>",
+  "foot": "<script src=\"/assets/tofes-brit.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>פרטי הברית</h1>
+  <p class="sub">מזל טוב! ממלאים כאן כמה פרטים, וההודעה יוצאת מסודרת ישר לווטסאפ של המוהל. כך הוא יכין הכול לברית.</p>
+  <span class="tb-for" id="tb-for" hidden></span>
+</header>
+<div class="tool">
+  <div class="tip tb-mohel-first"><b>למוהלים</b><p>זה הטופס שההורים רואים. כדי שההודעה תגיע ישר אליכם, מכינים <a class="gold" href="#tb-mk-h">קישור אישי</a> עם המספר שלכם, ושולחים אותו להורים.</p></div>
+
+  <form class="k-form" id="tb-form" novalidate autocomplete="off">
+    <h2 class="tb-sec">ההורים</h2>
+    <div class="field"><label for="tb-parents">שם ההורים</label><input id="tb-parents" name="parents" type="text" maxlength="80" placeholder="למשל: משה ורחל כהן"></div>
+    <div class="field"><label for="tb-phone">טלפון</label><input id="tb-phone" name="phone" type="tel" inputmode="tel" maxlength="20" dir="ltr" style="text-align:right" placeholder="050-0000000"></div>
+
+    <h2 class="tb-sec">הלידה</h2>
+    <div class="tb-row">
+      <div class="field"><label for="tb-birth">תאריך הלידה</label><input id="tb-birth" name="birth" type="date"></div>
+      <div class="field"><label for="tb-btime">שעת הלידה</label><input id="tb-btime" name="btime" type="time"></div>
+    </div>
+    <div class="field"><label for="tb-hosp">בית החולים</label>
+      <select id="tb-hosp" name="hosp"><option value="" data-city="ירושלים">בחרו מהרשימה</option><option value="31.778,35.235" data-city="ירושלים">שערי צדק, ירושלים</option><option value="31.765,35.149" data-city="ירושלים">הדסה עין כרם, ירושלים</option><option value="31.795,35.244" data-city="ירושלים">הדסה הר הצופים, ירושלים</option><option value="32.08,34.83" data-city="בני ברק">מעייני הישועה, בני ברק</option><option value="32.08,34.78" data-city="תל אביב">איכילוב, תל אביב</option><option value="32.05,34.84" data-city="רמת גן">שיבא, תל השומר</option><option value="32.03,34.76" data-city="חולון">וולפסון, חולון</option><option value="32.09,34.87" data-city="פתח תקווה">בילינסון, פתח תקווה</option><option value="32.09,34.87" data-city="פתח תקווה">השרון, פתח תקווה</option><option value="31.96,34.84" data-city="צריפין">שמיר (אסף הרופא)</option><option value="31.87,34.81" data-city="רחובות">קפלן, רחובות</option><option value="32.18,34.9" data-city="כפר סבא">מאיר, כפר סבא</option><option value="32.33,34.86" data-city="נתניה">לניאדו, נתניה</option><option value="32.44,34.91" data-city="חדרה">הלל יפה, חדרה</option><option value="31.8,34.65" data-city="אשדוד">אסותא, אשדוד</option><option value="31.66,34.57" data-city="אשקלון">ברזילי, אשקלון</option><option value="31.26,34.8" data-city="באר שבע">סורוקה, באר שבע</option><option value="32.81,34.99" data-city="חיפה">רמב״ם, חיפה</option><option value="32.81,34.99" data-city="חיפה">בני ציון, חיפה</option><option value="32.81,34.99" data-city="חיפה">כרמל, חיפה</option><option value="33.01,35.1" data-city="נהריה">הגליל, נהריה</option><option value="32.7,35.3" data-city="נצרת">נצרת</option><option value="32.61,35.29" data-city="עפולה">העמק, עפולה</option><option value="32.75,35.53" data-city="טבריה">פוריה, טבריה</option><option value="32.97,35.5" data-city="צפת">זיו, צפת</option><option value="29.55,34.95" data-city="אילת">יוספטל, אילת</option><option value="31.778,35.235" data-city="ירושלים">אחר, או לידה בבית</option></select></div>
+    <div class="field" id="tb-hosp-other" hidden><label for="tb-hosp-o">איפה הייתה הלידה?</label><input id="tb-hosp-o" name="hospOther" type="text" maxlength="60"></div>
+    <div class="tb-row">
+      <div class="field"><label for="tb-weight">משקל <span class="opt">(ק״ג או גרם)</span></label><input id="tb-weight" name="weight" type="text" inputmode="decimal" maxlength="12" placeholder="3.250"></div>
+      <div class="field"><label for="tb-jval">תוצאת הצהבת <span class="opt">(אם נבדקה)</span></label><input id="tb-jval" name="jval" type="text" inputmode="decimal" maxlength="20" placeholder="למשל 9.5"></div>
+    </div>
+    <div class="field"><label for="tb-jwhen">מתי נבדקה הצהבת <span class="opt">(יום ושעה)</span></label><input id="tb-jwhen" name="jwhen" type="datetime-local"></div>
+    <label class="check"><input type="checkbox" name="cs"> <span>הלידה הייתה בניתוח קיסרי</span></label>
+
+    <div class="tb-moed" id="tb-moed" hidden aria-live="polite"></div>
+
+    <h2 class="tb-sec">הברית</h2>
+    <div class="tb-row">
+      <div class="field"><label for="tb-place">מקום הברית</label><input id="tb-place" name="place" type="text" maxlength="100" placeholder="בית כנסת, אולם, עיר"></div>
+      <div class="field"><label for="tb-time">שעת הברית</label><input id="tb-time" name="time" type="time"></div>
+    </div>
+    <div class="tb-row">
+      <div class="field"><label for="tb-nusach">הנוסח</label><select id="tb-nusach" name="nusach"><option value="">בחרו</option><option>נוסח ספרדי (מרוקאי)</option><option>נוסח עדות המזרח</option><option>נוסח אשכנז</option><option>נוסח תימני</option><option>עוד לא יודעים</option></select></div>
+      <div class="field"><label for="tb-sandak">הסנדק</label><input id="tb-sandak" name="sandak" type="text" maxlength="60" placeholder="למשל: סבא יוסף"></div>
+    </div>
+    <div class="field"><label for="tb-notes">משהו נוסף למוהל? <span class="opt">(לא חובה)</span></label><textarea id="tb-notes" name="notes" rows="3" maxlength="500" placeholder="שאלות, בקשות, מה חשוב לכם"></textarea></div>
+
+    <button class="btn btn-gold" type="submit" id="tb-send"><svg class="ic"><use href="#wa"/></svg> לשלוח למוהל בווטסאפ</button>
+    <p class="tb-sent" id="tb-sent" hidden>ההודעה נפתחה בווטסאפ. נשאר רק ללחוץ שם על "שליחה". מזל טוב, ובשעה טובה!</p>
+    <button class="btn btn-line btn-sm" type="button" id="tb-clear" style="justify-self:center">לנקות את הטופס</button>
+  </form>
+  <p class="disclaimer">הפרטים לא נשמרים אצלנו בשום מקום. הם נשארים רק בטלפון שלכם, עד שאתם שולחים אותם בווטסאפ למוהל.</p>
+
+  <section class="tb-mk" aria-labelledby="tb-mk-h">
+    <h2 id="tb-mk-h">למוהלים: הכינו קישור אישי</h2>
+    <p>כותבים פעם אחת את המספר שלכם, ומקבלים קישור. ההורים פותחים אותו, ממלאים, וההודעה מגיעה ישר אליכם, בלי שיקלידו מספר. בסוף ההודעה יש קישור שמכניס את הברית ל<a class="gold" href="/kodesh/britot/">יומן הבריתות שלכם</a> בלחיצה.</p>
+    <form id="tb-mk" novalidate autocomplete="off">
+      <div class="tb-row">
+        <div class="field"><label for="tb-mnum">הווטסאפ שלכם</label><input id="tb-mnum" name="mnum" type="tel" inputmode="tel" maxlength="20" dir="ltr" style="text-align:right" placeholder="050-0000000"></div>
+        <div class="field"><label for="tb-mname">השם שיופיע להורים <span class="opt">(לא חובה)</span></label><input id="tb-mname" name="mname" type="text" maxlength="40" placeholder="למשל: יעקב המוהל"></div>
+      </div>
+    </form>
+    <div id="tb-mk-out" hidden>
+      <div class="tb-link" id="tb-mk-link"></div>
+      <div class="share-row" style="justify-content:flex-start">
+        <a class="btn btn-gold btn-sm" id="tb-mk-wa" target="_blank" rel="noopener" href="#"><svg class="ic"><use href="#wa"/></svg> לשלוח להורים בווטסאפ</a>
+        <button class="btn btn-line btn-sm" type="button" id="tb-mk-copy">להעתיק את הקישור</button>
+        <a class="btn btn-line btn-sm" id="tb-mk-try" target="_blank" rel="noopener" href="#">לנסות בעצמי</a>
+      </div>
+      <p class="disclaimer" style="text-align:start;margin-inline:0">טיפ: שמרו את ההודעה ב"הודעות מהירות" בווטסאפ עסקי, או בצ'אט עם עצמכם, ושלחו אותה לכל משפחה אחרי הלידה.</p>
+    </div>
+
+    <div class="tb-more">
+      <h2 style="font-family:var(--serif);color:var(--cream);font-size:1.2rem;margin-top:.6rem">בלי אתר: תבנית לווטסאפ וקובץ וורד</h2>
+      <div class="tip"><b>תבנית לווטסאפ</b><p>שולחים אותה להורים כמו שהיא. הם ממלאים ליד כל שורה ושולחים לכם בחזרה.</p>
+        <div class="tb-wa" id="tb-tpl">*🍼 פרטי הברית – למילוי*
+מזל טוב! 🎉 כדי שאכין הכול לברית, מלאו בבקשה ליד כל שורה, ושלחו לי בחזרה:
+━━━━━━━━━━
+👨‍👩‍👦 *שם ההורים:*
+📞 *טלפון:*
+━━━━━━━━━━
+👶 *תאריך הלידה:*
+🕰️ *שעת הלידה:*
+🏥 *בית החולים:*
+⚖️ *משקל:*
+🟡 *צהבת (תוצאה, ומתי נבדקה):*
+✂️ *ניתוח קיסרי? (כן / לא):*
+━━━━━━━━━━
+📍 *מקום הברית:*
+🕰️ *שעת הברית:*
+📜 *נוסח (ספרדי / עדות המזרח / אשכנז / תימני):*
+🤝 *סנדק:*
+📝 *משהו נוסף:*
+━━━━━━━━━━
+_טופס פרטי הברית · מתנה באהבה מגילעד רחמים, מוהל מוסמך · 058-404-9049_</div>
+        <div class="share-row" style="justify-content:flex-start"><button class="btn btn-gold btn-sm" type="button" data-copy-tpl>להעתיק את התבנית</button></div></div>
+      <div class="tip"><b>קובץ וורד להדפסה</b><p>אותו טופס בעמוד אחד. ממלאים בכתב יד בביקור, או בזמן שיחת טלפון עם ההורים.</p>
+        <div class="share-row" style="justify-content:flex-start"><a class="btn btn-gold btn-sm" href="/kodesh/tofes-brit/tofes-brit.docx" download data-share="tofes_brit_docx">להוריד את קובץ הוורד</a></div></div>
+    </div>
+  </section>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/mohalim/">הכלים למוהלים</a>. רוצים שאוסיף משהו? <a class="gold" href="https://wa.me/972584049049?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%92%D7%99%D7%9C%D7%A2%D7%93%2C%20%D7%A8%D7%90%D7%99%D7%AA%D7%99%20%D7%90%D7%AA%20%D7%98%D7%95%D7%A4%D7%A1%20%D7%A4%D7%A8%D7%98%D7%99%20%D7%94%D7%91%D7%A8%D7%99%D7%AA.%20">כתבו לי</a>.</p>
+</div>

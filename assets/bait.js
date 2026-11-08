@@ -12,6 +12,21 @@
   function dec(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return JSON.parse(decodeURIComponent(escape(atob(s)))); }
   function hashData() { var m = /[#&]d=([A-Za-z0-9_-]+)/.exec(location.hash); if (!m) return null; try { return dec(m[1]); } catch (e) { return null; } }
   function clearHash() { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
+  // סנכרון בין ההורים: כל ההגדרות בתוך הקישור (#d=), ומי שפותח מקבל שאלה אם לייבא
+  function partnerSync(o) {
+    var inc = hashData();
+    if (inc && inc.sync === o.kind && inc.s) {
+      var b = document.createElement('div'); b.className = 'mv-banner no-print'; b.setAttribute('role', 'status');
+      b.innerHTML = '<p>' + esc(o.ask) + '</p><div class="tools" style="margin-top:.6rem"><button class="btn btn-gold btn-sm" type="button" data-y>לייבא (במקום מה שיש כאן)</button><button class="btn btn-line btn-sm" type="button" data-n>לא עכשיו</button></div>';
+      o.at.parentNode.insertBefore(b, o.at);
+      b.querySelector('[data-y]').onclick = function () { o.set(inc.s); b.parentNode.removeChild(b); clearHash(); toast('עודכן ✓ עכשיו זה אותו דבר בשני הטלפונים'); use(o.T, 'sync_import'); };
+      b.querySelector('[data-n]').onclick = function () { b.parentNode.removeChild(b); clearHash(); };
+    }
+    function link() { return location.origin + location.pathname + '#d=' + enc({ sync: o.kind, s: o.get() }); }
+    var w = $(o.id + '-sync-wa'), c = $(o.id + '-sync-copy');
+    if (w) w.addEventListener('click', function () { w.href = wa(o.msg + '\n' + link()); use(o.T, 'sync_send'); });
+    if (c) c.onclick = function () { copy(link()); use(o.T, 'sync_copy'); };
+  }
   var used = {};
   function use(tool, act) { if (used[tool + act]) return; used[tool + act] = 1; if (window.toolUsed) window.toolUsed(tool, { action: act }); }
   var toastT;
@@ -306,6 +321,11 @@
     $('tr-wa-today').addEventListener('click', function () { use(T, 'wa_today'); });
     $('tr-wa-week').addEventListener('click', function () { use(T, 'wa_week'); });
     $('tr-shift').onclick = function () { var d = fromIso(st.start); d.setDate(d.getDate() - 7); st.start = iso(d); persist(); draw(); toast('הסבב זז באחד'); };
+    partnerSync({ kind: 'toranut', id: 'tr', T: T, at: $('tr-today'),
+      ask: 'קיבלת לוח תורנויות מבן או בת הזוג. לייבא אותו לטלפון הזה? הלוח שיש כאן עכשיו יוחלף בו.',
+      msg: '🧹 זה לוח התורנויות שלנו. פותחים את הקישור ולוחצים "לייבא", ואז יש לשנינו את אותו לוח:',
+      get: function () { return { fam: st.fam, people: st.people, days: st.days, start: st.start, chores: st.chores }; },
+      set: function (s) { if (!s || !s.people || !s.chores) return; st = { fam: s.fam || '', people: s.people, days: s.days && s.days.length ? s.days : [0, 1, 2, 3, 4, 5], start: s.start || st.start, chores: s.chores }; persist(); drawEdit(); draw(); } });
     drawEdit(); draw();
   })();
 
@@ -807,6 +827,55 @@
     });
     $('sg-print').onclick = function () { use(T, 'print'); window.print(); };
     $('sg-again').onclick = function () { st.done[dk()] = {}; persist(); draw(); };
+    partnerSync({ kind: 'shigra', id: 'sg', T: T, at: $('sg-kids'),
+      ask: 'קיבלת את השגרה של הילדים מבן או בת הזוג: הרשימות, הכוכבים, המבצע והצנצנות. לייבא לטלפון הזה? מה שיש כאן עכשיו יוחלף.',
+      msg: '☀️ זו השגרה של הילדים, עם הכוכבים והצנצנות. פותחים את הקישור ולוחצים "לייבא", ואז יש לשנינו את אותו מצב:',
+      get: function () { return { kids: st.kids, items: st.items, stars: st.stars, cfg: st.cfg, goals: st.goals, jars: st.jars }; },
+      set: function (s) {
+        if (!s || !s.kids || !s.items) return;
+        ['kids', 'items', 'stars', 'cfg', 'goals', 'jars'].forEach(function (f) { if (s[f] != null) st[f] = s[f]; });
+        st.kid = 0; st.done = {}; persist(); drawAll();
+      } });
     drawAll();
+  })();
+  // ======================================================================
+  // גיבוי ושחזור של כל הכלים (דף הבית /bait/): כל המפתחות bait-* בקובץ JSON אחד
+  // ======================================================================
+  (function backup() {
+    var sv = $('bk-save'); if (!sv) return;
+    var T = 'bait_home';
+    function keys() { var a = []; try { for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (k && k.indexOf('bait-') === 0) a.push(k); } } catch (e) {} return a.sort(); }
+    var NAMES = { 'bait-kniyot': 'קניות', 'bait-toranut': 'תורנויות', 'bait-shabat': 'שבת ואורחים', 'bait-shigra': 'שגרה לילדים', 'bait-mismachim': 'המסמכים של הבית' };
+    function status() {
+      var k = keys(), n = k.map(function (x) { return NAMES[x]; }).filter(Boolean);
+      $('bk-status').textContent = k.length ? 'שמור כרגע בטלפון: ' + (n.length ? n.join(', ') : k.length + ' פריטים') + '.' : 'עוד לא נשמר כלום בכלים בטלפון הזה.';
+    }
+    sv.onclick = function () {
+      var k = keys(); if (!k.length) { toast('אין עדיין מה לגבות'); return; }
+      var d = { app: 'bait', v: 1, saved: new Date().toISOString(), data: {} };
+      k.forEach(function (x) { d.data[x] = localStorage.getItem(x); });
+      var now = new Date(), name = 'gibui-bait-' + now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2) + '-' + ('0' + now.getDate()).slice(-2) + '.json';
+      var blob = new Blob([JSON.stringify(d, null, 1)], { type: 'application/json' }), f = null;
+      try { f = new File([blob], name, { type: 'application/json' }); } catch (e) {}
+      var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.parentNode.removeChild(a); }, 1500);
+      toast('הגיבוי נשמר: ' + name); use(T, 'backup');
+      if (f && navigator.canShare && navigator.canShare({ files: [f] })) $('bk-share').hidden = false, $('bk-share').onclick = function () { navigator.share({ files: [f], title: 'גיבוי – כלים למשפחה ולבית' }).catch(function () {}); };
+    };
+    $('bk-file').addEventListener('change', function () {
+      var file = this.files && this.files[0], inp = this; if (!file) return;
+      var r = new FileReader();
+      r.onload = function () {
+        var d; try { d = JSON.parse(r.result); } catch (e) { d = null; }
+        if (!d || d.app !== 'bait' || !d.data) { toast('זה לא קובץ גיבוי של כלים למשפחה ולבית'); inp.value = ''; return; }
+        var k = Object.keys(d.data).filter(function (x) { return x.indexOf('bait-') === 0; });
+        var when = d.saved ? new Date(d.saved).toLocaleDateString('he-IL') : '';
+        if (!confirm('לשחזר ' + k.length + ' פריטים מגיבוי' + (when ? ' מ-' + when : '') + '? מה ששמור עכשיו בכלים האלה יוחלף.')) { inp.value = ''; return; }
+        try { k.forEach(function (x) { localStorage.setItem(x, d.data[x]); }); } catch (e) { toast('לא הצלחתי לשמור בטלפון'); return; }
+        inp.value = ''; status(); toast('שוחזר ✓ ' + k.length + ' פריטים'); use(T, 'restore');
+      };
+      r.readAsText(file);
+    });
+    status();
   })();
 })();

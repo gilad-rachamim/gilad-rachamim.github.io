@@ -1,0 +1,121 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "matzeget",
+  "title": "מצגת ואלבום תמונות לאירוע – חתונה, בר מצווה, ברית ויום הולדת | הכלים של גילעד רחמים",
+  "description": "מעלים תמונות מהטלפון ומקבלים סרטון מצגת עם זום, מעברים ומנגינה, ואלבום מעוצב להדפסה או ל-PDF. לחתונה, בר ובת מצווה, ברית, יום הולדת ואזכרה. התמונות נשארות אצלכם. בחינם, בלי הרשמה.",
+  "og_title": "מצגת ואלבום תמונות לאירוע, בחינם",
+  "priority": "0.8",
+  "crumbs": [["יצירת תוכן", "/kelim/tochen/"], ["מצגת ואלבום לאירוע", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/matzeget.css\">",
+  "foot": "<script src=\"https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js\" defer></script><script src=\"/assets/matzeget.js\" defer></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>מצגת ואלבום לאירוע</h1>
+  <p class="sub">חתונה, בר או בת מצווה, ברית, יום הולדת או אזכרה. מעלים תמונות מהטלפון, ומקבלים סרטון מצגת עם מנגינה, ואלבום מעוצב להדפסה. התמונות לא יוצאות מהטלפון שלכם.</p>
+</header>
+<div class="tool no-print" id="mz-tool">
+  <form class="k-form" id="mz-form" novalidate>
+    <div class="mz-row">
+      <div class="field"><label for="mz-ev">האירוע</label><select id="mz-ev" name="ev">
+        <option value="chatuna">חתונה</option>
+        <option value="bar">בר מצווה</option>
+        <option value="bat">בת מצווה</option>
+        <option value="brit">ברית מילה</option>
+        <option value="huledet">יום הולדת</option>
+        <option value="azkara">אזכרה, לזכר אהוב</option>
+        <option value="other">אירוע אחר</option>
+      </select></div>
+      <div class="field" id="mz-gen-f" hidden><label for="mz-gen">לזכר</label><select id="mz-gen" name="gen"><option value="m">איש</option><option value="f">אישה</option></select></div>
+    </div>
+    <div class="mz-row">
+      <div class="field"><label for="mz-names">שמות</label><input id="mz-names" name="names" type="text" maxlength="50" placeholder="נועה ואיתי"></div>
+      <div class="field"><label for="mz-date">תאריך <span class="opt">(לא חובה)</span></label><input id="mz-date" name="date" type="text" maxlength="50" placeholder="י״ח בכסלו תשפ״ז · 1.12.2026"></div>
+    </div>
+    <div class="field"><label for="mz-top">שורה מעל השמות</label><input id="mz-top" name="top" type="text" maxlength="40" data-auto="1"></div>
+    <div class="mz-row">
+      <div class="field"><label for="mz-end">משפט הסיום</label><input id="mz-end" name="end" type="text" maxlength="90" data-auto="1"></div>
+      <div class="field"><label for="mz-endsub">שורה קטנה בסיום <span class="opt">(לא חובה)</span></label><input id="mz-endsub" name="endsub" type="text" maxlength="60" data-auto="1"></div>
+    </div>
+    <label class="check"><input type="checkbox" name="bsd" id="mz-bsd" checked> <span>בס״ד בפינה</span></label>
+  </form>
+
+  <section class="mz-photos" aria-labelledby="mz-ph-h">
+    <h2 id="mz-ph-h">התמונות</h2>
+    <div class="mz-add">
+      <label class="btn btn-gold" for="mz-files">+ להוסיף תמונות</label>
+      <input id="mz-files" type="file" accept="image/*" multiple hidden>
+      <button class="btn btn-line btn-sm" type="button" id="mz-demo">לנסות עם תמונות לדוגמה</button>
+      <button class="btn btn-line btn-sm" type="button" id="mz-clear" hidden>לנקות הכול</button>
+    </div>
+    <p class="mz-hint" id="mz-count">עד 60 תמונות. אפשר לבחור כמה בבת אחת מהגלריה.</p>
+    <ol id="mz-list" class="mz-list" aria-label="סדר התמונות"></ol>
+    <p class="mz-hint" id="mz-drag" hidden>גוררים תמונה כדי לשנות את הסדר (בטלפון: לוחצים רגע ואז גוררים), או בחיצים. התמונה הראשונה היא גם תמונת השער. אפשר לכתוב כיתוב קצר מתחת לכל תמונה.</p>
+  </section>
+
+  <div class="mz-tabs" role="tablist" aria-label="מה להכין">
+    <button type="button" role="tab" id="tab-video" aria-controls="pane-video" aria-selected="true">🎬 סרטון מצגת</button>
+    <button type="button" role="tab" id="tab-album" aria-controls="pane-album" aria-selected="false">📖 אלבום להדפסה</button>
+  </div>
+
+  <section id="pane-video" role="tabpanel" aria-labelledby="tab-video">
+    <div class="k-form mz-opts">
+      <div class="mz-row">
+        <div class="field"><label for="mz-size">צורה</label><select id="mz-size" name="size"><option value="wide">לרוחב (מסך באירוע, יוטיוב)</option><option value="story">לגובה (סטטוס)</option><option value="square">ריבוע (קבוצה)</option></select></div>
+        <div class="field"><label for="mz-pace">זמן לכל תמונה</label><select id="mz-pace" name="pace"><option value="4">4 שניות</option><option value="5.5" selected>5.5 שניות</option><option value="7">7 שניות, רגוע</option><option value="3">3 שניות, מהיר</option></select></div>
+      </div>
+      <div class="mz-row">
+        <div class="field"><label for="mz-music">מנגינה</label><select id="mz-music" name="music"><option value="auto">לפי האירוע</option><option value="joy">שמחה</option><option value="calm">שקטה ורכה</option><option value="none">בלי מנגינה</option></select></div>
+        <div class="field"><label for="mz-move">תנועה</label><select id="mz-move" name="move"><option value="zoom">זום איטי ומעבר רך</option><option value="still">תמונה עומדת ומעבר רך</option></select></div>
+      </div>
+    </div>
+    <div id="mz-stage"><canvas id="mz-canvas" width="1280" height="720" role="img" aria-label="תצוגה של הסרטון"></canvas></div>
+    <p id="mz-info" class="mz-info" aria-live="polite"></p>
+    <div class="share-row">
+      <button class="btn btn-line btn-sm" type="button" id="mz-play">▶ לצפות לפני</button>
+      <button class="btn btn-gold btn-sm" type="button" id="mz-make">ליצור את הסרטון</button>
+    </div>
+    <progress id="mz-prog" max="1" value="0" hidden></progress>
+    <div id="mz-result" hidden>
+      <video id="mz-video" controls playsinline></video>
+      <div class="share-row">
+        <button class="btn btn-gold btn-sm" type="button" id="mz-share"><svg class="ic"><use href="#wa"/></svg> לשתף בווטסאפ</button>
+        <button class="btn btn-line btn-sm" type="button" id="mz-dl">לשמור את הסרטון</button>
+      </div>
+      <p class="ios-tip" id="mz-tip" hidden>הסרטון נשמר. עכשיו פותחים את הווטסאפ, ומצרפים אותו מהגלריה או מהקבצים.</p>
+      <p class="disclaimer" id="mz-fmt"></p>
+    </div>
+    <p class="disclaimer">הסרטון נוצר בטלפון או במחשב שלכם בזמן אמת, ולכן מצגת של שתי דקות לוקחת שתי דקות. כדאי להישאר בדף עד הסוף, עם המסך דולק.</p>
+  </section>
+
+  <section id="pane-album" role="tabpanel" aria-labelledby="tab-album" hidden>
+    <div class="k-form mz-opts">
+      <div class="mz-row">
+        <div class="field"><label for="al-size">גודל</label><select id="al-size" name="asize"><option value="a4">A4 לאורך</option><option value="sq">ריבוע 21×21</option></select></div>
+        <div class="field"><label for="al-per">תמונות בעמוד</label><select id="al-per" name="per"><option value="auto">משתנה (1 עד 4)</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
+      </div>
+      <div class="mz-row">
+        <div class="field"><label for="al-fit">התמונות</label><select id="al-fit" name="fit"><option value="cover">ממלאות את המסגרת</option><option value="contain">שלמות, בלי חיתוך</option></select></div>
+        <div class="field"><label for="al-look">רקע</label><select id="al-look" name="look"><option value="paper">נייר בהיר</option><option value="dark">כהה ואלגנטי</option></select></div>
+      </div>
+    </div>
+    <p id="al-info" class="mz-info" aria-live="polite"></p>
+    <div class="share-row">
+      <button class="btn btn-gold btn-sm" type="button" id="al-print">להדפיס או לשמור PDF</button>
+      <button class="btn btn-line btn-sm" type="button" id="al-phone">אלבום לצפייה בטלפון</button>
+    </div>
+    <p class="ios-tip" id="al-tip" hidden></p>
+    <p class="disclaimer">רוצים רק אלבום, עם עוד סגנונות ועמוד הקדשה? יש גם <a class="gold" href="/kodesh/album/">אלבום תמונות להדפסה</a>.</p>
+    <p class="disclaimer">בחלון ההדפסה בוחרים "שמירה כ-PDF" כדי לקבל קובץ, או מדפסת. כדאי לסמן "גרפיקת רקע" ולבטל כותרות עליונות ותחתונות. "אלבום לצפייה בטלפון" הוא קובץ אחד עם כל התמונות, ששולחים בווטסאפ או במייל, והוא נפתח בדפדפן אצל כל אחד.</p>
+  </section>
+</div>
+
+<div id="al-book" class="al-book" aria-label="תצוגת האלבום"></div>
+
+<div class="tool no-print">
+  <details class="disclaimer"><summary>פרטיות, ומאיפה המנגינה והתמונות לדוגמה</summary>
+    <p>התמונות שלכם נפתחות רק בדפדפן שלכם. הן לא נשלחות לשום שרת ולא נשמרות אצלנו, וכשסוגרים את הדף הן נמחקות ממנו. רק השמות והמשפטים נשמרים בטלפון, כדי שלא תצטרכו להקליד שוב.</p>
+    <p>המנגינה נוצרת בדפדפן עצמו, תווים פשוטים שנכתבו לכלי הזה, בלי הקלטה של אף אחד. התמונות לדוגמה הן נופים מוויקישיתוף ברישיון CC0.</p>
+  </details>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kelim/tochen/">כלים ליצירת תוכן</a>. גם: <a class="gold" href="/kodesh/simcha/">הזמנה לשמחה</a> · <a class="gold" href="/kodesh/brachot/">ברכות לכל אירוע</a> · <a class="gold" href="/kelim/kesharim/ishurim/">אישורי הגעה</a>.</p>
+</div>

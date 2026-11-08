@@ -22,5 +22,20 @@
    "type": "image/png",
    "purpose": "any maskable"
   }
- ]
+ ],
+ "share_target": {
+  "action": "/kelim/machshev/sader/?share=1",
+  "method": "POST",
+  "enctype": "multipart/form-data",
+  "params": {
+   "files": [
+    {
+     "name": "files",
+     "accept": [
+      "*/*"
+     ]
+    }
+   ]
+  }
+ }
 }
