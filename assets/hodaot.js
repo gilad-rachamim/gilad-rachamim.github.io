@@ -11,7 +11,7 @@
   function draw() {
     pres.forEach(function (p) {
       var t = p.dataset.t;
-      t = t.split('[היחידה]').join(st.unit || 'החיילים');
+      t = st.unit ? t.split('[היחידה]').join(st.unit) : t.split('ל[היחידה]').join('לחיילים').split('[היחידה]').join('החיילים');
       t = st.sig ? t.split('[חתימה]').join('\n' + st.sig) : t.replace(/\s*\[חתימה\]/g, '');
       p.textContent = t;
     });
