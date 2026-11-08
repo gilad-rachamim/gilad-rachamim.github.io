@@ -64,9 +64,10 @@ CTA = """
   <div class="wrap">
     <h2 id="contact-h">לברית מיוחדת ומלאת שמחה</h2>
     <p>מזל טוב! כתבו לי, ונתחיל להתכונן יחד. שיחת ההיכרות בחינם וללא התחייבות.</p>
-    <a class="phone" href="tel:+972584049049">058-404-9049</a>
+    <a class="phone" href="{wa}"><small class="wa-tag">(ווטסאפ)</small> 058-404-9049</a>
     <div class="actions">
       <a class="btn btn-gold" href="{wa}"><svg class="ic"><use href="#wa"/></svg> שליחת הודעה בווטסאפ</a>
+      <a class="btn btn-line" href="mailto:gilad4049@gmail.com"><svg class="ic"><use href="#mail"/></svg> או במייל</a>
     </div>
   </div>
 </section>
