@@ -1086,7 +1086,7 @@
       var q = norm($('m-q').value), box = $('m-list');
       if (!D || q.length < 2) { box.innerHTML = ''; return; }
       var hits;
-      if (/^\d{6,}$/.test(q)) {
+      if (/^\d{4,}$/.test(q)) {
         hits = D.items.filter(function (r) { return r[0].indexOf(q.replace(/^0+/, '')) === 0; });
       } else {
         var words = q.split(' ');
