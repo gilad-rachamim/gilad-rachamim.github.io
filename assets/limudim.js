@@ -792,6 +792,177 @@
     render();
   }
 
+  // =====================================================================
+  // 5. לומדים עם כל העולם: דף יומי, רמב"ם יומי, משנה יומית ועוד (חישוב: @hebcal/learning, עותק מקומי ב-assets/vendor/hebcal, טקסט: ספריא)
+  // =====================================================================
+  function olami() {
+    var KEY = 'limudim-olami';
+    var CYC = [
+      { id: 'dafyomi', name: 'הדף היומי', sub: 'תלמוד בבלי, דף ביום', fresh: 'מסכת חדשה', key: function (e) { return e.daf.name; } },
+      { id: 'rambam3', name: 'רמב״ם יומי, 3 פרקים', sub: 'משנה תורה בשנה', fresh: 'ספר חדש', key: function (e) { return sefer(e.readings[e.readings.length - 1].name); }, pre: function (e) { return seferName(e.readings[e.readings.length - 1].name); } },
+      { id: 'rambam1', name: 'רמב״ם יומי, פרק אחד', sub: 'משנה תורה בשלוש שנים', fresh: 'ספר חדש', key: function (e) { return sefer(e.reading.name); }, pre: function (e) { return seferName(e.reading.name); } },
+      { id: 'mishnayomi', name: 'משנה יומית', sub: 'שתי משניות ביום', fresh: 'מסכת חדשה', key: function (e) { return e.mishnaYomi[e.mishnaYomi.length - 1].k; } },
+      { id: 'perekyomi', name: 'פרק משנה ביום', sub: 'פרק אחד ביום', fresh: 'מסכת חדשה', key: function (e) { return e.k; } },
+      { id: '929', name: 'תנ״ך ביחד (929)', sub: 'פרק תנ״ך ביום', fresh: 'ספר חדש', key: function (e) { return e.reading.book; } },
+      { id: 'nachyomi', name: 'נ״ך יומי', sub: 'פרק נביאים וכתובים ביום', fresh: 'ספר חדש', key: function (e) { return e.k; } },
+      { id: 'yerushalmi-vilna', name: 'ירושלמי יומי', sub: 'דף ביום', fresh: 'מסכת חדשה', key: function (e) { return e.daf.name; } },
+      { id: 'psalms', name: 'תהילים לפי ימי החודש', sub: 'כל התהילים בכל חודש', fresh: 'חודש חדש', key: function (e, hd) { return hd.getMonth(); } },
+      { id: 'chofetzchaim', name: 'חפץ חיים יומי', sub: 'הלכות שמירת הלשון', fresh: 'פרק חדש', key: function (e) { return e.reading.k; } }
+    ];
+    // ברמב"ם, "התחלה חדשה" היא ספר חדש (14 ספרים), לא כל הלכות: לפי רשימת ספריא ב-limudim-data.js
+    var SEFER = { madda: 'ספר המדע', ahavah: 'ספר אהבה', zemanim: 'ספר זמנים', nashim: 'ספר נשים', kedushah: 'ספר קדושה', haflaah: 'ספר הפלאה', zeraim: 'ספר זרעים', avodah: 'ספר עבודה', korbanot: 'ספר קרבנות', taharah: 'ספר טהרה', nezikim: 'ספר נזיקין', kinyan: 'ספר קנין', mishpatim: 'ספר משפטים', shoftim: 'ספר שופטים' };
+    var RB = {};
+    if (window.LIMUD_EN && window.LIMUD_EN.rambam) window.LIMUD_EN.rambam.forEach(function (en, i) { RB[en.replace('Mishneh Torah, ', '').toLowerCase()] = window.LIMUD_BOOKS.rambam[i][2]; });
+    function sefer(name) { return RB[String(name).toLowerCase()] || name; }
+    function seferName(name) { if (/Transmission of the Oral Law/i.test(name)) return 'מחזור חדש של הרמב״ם'; var k = RB[String(name).toLowerCase()]; return k ? SEFER[k] : ''; }
+    var st = load(KEY, { sel: ['dafyomi', 'rambam3'], since: {}, done: {}, time: '07:00' });
+    var t = today();
+    st.sel.forEach(function (id) { if (!st.since[id]) st.since[id] = t; });
+    save(KEY, st);
+    var H = null, DL = null;
+    var box = $('ol-app');
+    box.innerHTML = '<p class="note">טוען את לוח הלימוד העולמי…</p>';
+    Promise.all([
+      import('/assets/vendor/hebcal/hebcal_hdate0-23-1.js'),
+      import('/assets/vendor/hebcal/hebcal_learning6-13-1.js')
+    ]).then(function (m) {
+      H = m[0];
+      return import('/assets/vendor/hebcal/hebcal_core6-14-7_dist_esm_DailyLearning.js');
+    }).then(function (m) { DL = m.DailyLearning; render(); }).catch(function () {
+      box.innerHTML = '<p class="status">לא הצלחתי לטעון את הלוח. צריך אינטרנט בפעם הראשונה. לנסות שוב בעוד רגע.</p>';
+    });
+
+    function cyc(id) { return CYC.filter(function (c) { return c.id === id; })[0]; }
+    function hd(dateStr) { return new H.HDate(parse(dateStr)); }
+    function ev(id, dateStr) { try { return DL.lookup(id, hd(dateStr)); } catch (e) { return null; } }
+    function heb(dateStr) { return hd(dateStr).renderGematriya(true).replace(/[֑-ׇ]/g, ''); }
+    function txt(e) {
+      var s = e.render('he').replace(/[֑-ֽֿ-ׇ]/g, '').replace(/^דף יומי:\s*/, '').replace(/\s*\(\d+\)\s*$/, '');
+      return s.replace(/\d+/g, function (n) { return H.gematriya(+n).replace(/[׳״]/g, ''); });
+    }
+    function full(c, e) { var p = c.pre ? c.pre(e) : ''; return (p ? p + ', ' : '') + txt(e); }
+    function isFresh(c, dateStr) {
+      var e = ev(c.id, dateStr), y = ev(c.id, ymd(addDays(parse(dateStr), -1)));
+      if (!e || !y) return false;
+      try { return c.key(e, hd(dateStr)) !== c.key(y, hd(ymd(addDays(parse(dateStr), -1)))); } catch (x) { return false; }
+    }
+    function nextFresh(c, from, max) {
+      var out = [];
+      for (var i = 0; i < 420 && out.length < max; i++) { var d = ymd(addDays(parse(from), i)); if (isFresh(c, d)) out.push(d); }
+      return out;
+    }
+    function behind(id) {
+      var n = 0, since = st.since[id] || t, done = st.done[id] || {};
+      for (var d = parse(since); ymd(d) < t; d = addDays(d, 1)) if (!done[ymd(d)]) n++;
+      return n;
+    }
+    function streak(id) {
+      var done = st.done[id] || {}, n = 0, d = parse(t);
+      if (!done[t]) d = addDays(d, -1);
+      while (done[ymd(d)]) { n++; d = addDays(d, -1); }
+      return n;
+    }
+    function inDays(d) { var k = daysBetween(t, d); return k === 0 ? 'היום' : k === 1 ? 'מחר' : 'בעוד ' + k + ' ימים'; }
+
+    function render() {
+      var chips = CYC.map(function (c) { return '<button type="button" data-cyc="' + c.id + '" aria-pressed="' + (st.sel.indexOf(c.id) >= 0) + '">' + c.name + '</button>'; }).join('');
+      var fresh = [];
+      st.sel.forEach(function (id) {
+        var c = cyc(id);
+        [t, ymd(addDays(parse(t), 1))].forEach(function (d) { if (isFresh(c, d)) { var e = ev(id, d); fresh.push({ c: c, d: d, e: e }); } });
+      });
+      var html = '<div class="today-heb">היום ' + esc(heb(t)) + ' · ' + dayLabel(t) + '</div>';
+      if (fresh.length) html += fresh.map(function (f) {
+        return '<div class="fresh">🌱 <b>' + (f.d === t ? 'היום' : 'מחר') + ' מתחילים ' + f.c.fresh + ' ב' + f.c.name + ': ' + esc(full(f.c, f.e)) + '.</b><br>לא משנה מה היה עד עכשיו. זה הרגע להצטרף מחדש, בכל הכוח.' +
+          (behind(f.c.id) ? '<br><button class="btn btn-gold btn-sm" type="button" data-reset="' + f.c.id + '" data-from="' + f.d + '" style="margin-top:.5rem">להתחיל נקי מ' + (f.d === t ? 'היום' : 'מחר') + '</button>' : '') + '</div>';
+      }).join('');
+      html += st.sel.map(function (id) {
+        var c = cyc(id), e = ev(id, t); if (!e) return '';
+        var done = (st.done[id] || {})[t], b = behind(id), sk = streak(id), nf = nextFresh(c, ymd(addDays(parse(t), 1)), 1)[0], url = e.url ? e.url() : '';
+        var sef = /sefaria\.org/.test(url);
+        return '<div class="ol-card' + (done ? ' is-done' : '') + '"><div class="ol-h"><b>' + c.name + '</b><span class="pill">' + c.sub + '</span></div>' +
+          '<div class="ol-today">' + esc(txt(e)) + '</div>' +
+          '<div class="btns"><label class="checks" style="display:flex"><input type="checkbox" data-done="' + id + '"' + (done ? ' checked' : '') + '> <span>למדתי היום ✓</span></label>' +
+          (sef ? '<button class="btn btn-gold btn-sm" type="button" data-text="' + id + '">📜 הטקסט כאן</button>' : '') + (url ? '<a class="btn btn-line btn-sm" href="' + esc(url.replace('lang=bi', 'lang=he')) + '" target="_blank" rel="noopener">' + (sef ? 'בספריא' : 'לקריאה') + '</a>' : '') + '</div>' +
+          '<div class="ol-meta">' + (sk ? '🔥 רצף: ' + sk + (sk === 1 ? ' יום' : ' ימים') + ' · ' : '') + (nf ? c.fresh + ' ' + inDays(nf) + ' (' + esc(heb(nf).replace(/ ת[^ ]*$/, '')) + '): ' + esc(full(c, ev(id, nf))) : '') + '</div>' +
+          (b ? '<div class="ol-back">יש ' + (b === 1 ? 'יום אחד' : b + ' ימים') + ' שלא סומנו. לא צריך להשלים הכול כדי להמשיך. ' + (nf ? 'כשמתחילים ' + c.fresh + ' (' + inDays(nf) + ') אפשר להצטרף מחדש בלי פיגור, ' : '') + 'או ממש עכשיו:' +
+            '<br><button class="linkish" type="button" data-reset="' + id + '" data-from="' + t + '">להתחיל נקי מהיום, בלי הפיגור</button></div>' : '') +
+          '<div class="ol-text" id="ol-text-' + id + '" hidden></div></div>';
+      }).join('') || '<p class="note">בוחרים למטה מה ללמוד.</p>';
+      html += '<div class="panel"><h3>מה ללמוד?</h3><p class="note">אפשר כמה. כל מחזור מתחיל לספור מהיום שבחרת בו.</p><div class="modes" style="justify-content:flex-start">' + chips + '</div></div>';
+      var up = [];
+      st.sel.forEach(function (id) { var c = cyc(id); nextFresh(c, ymd(addDays(parse(t), 1)), 3).forEach(function (d) { up.push({ d: d, c: c }); }); });
+      up.sort(function (a, b) { return a.d < b.d ? -1 : 1; });
+      if (up.length) html += '<div class="panel"><h3>🌱 מתי מתחילים מחדש</h3><p class="note">כל מסכת חדשה וכל ספר חדש הם הזדמנות להצטרף בלי פיגור.</p><table class="plan"><tbody>' +
+        up.slice(0, 10).map(function (u) { return '<tr><td class="d">' + dayLabel(u.d) + '<br><small>' + esc(heb(u.d).replace(/ ת[^ ]*$/, '')) + '</small></td><td><b>' + u.c.name + '</b><br>' + esc(full(u.c, ev(u.c.id, u.d))) + '</td></tr>'; }).join('') + '</tbody></table></div>';
+      html += '<div class="panel"><h3>תזכורות ביומן</h3><div class="row2"><div class="field"><label for="ol-time">באיזו שעה?</label><input id="ol-time" type="time" value="' + (st.time || '07:00') + '"></div></div>' +
+        '<div class="btns"><button class="btn btn-gold btn-sm" type="button" id="ol-ics-fresh">🌱 התראה לכל התחלה חדשה (שנה קדימה)</button><button class="btn btn-line btn-sm" type="button" id="ol-ics-daily">תזכורת יומית עם מה לומדים (חודש קדימה)</button></div>' +
+        '<p class="note">ההתראה על התחלה חדשה מגיעה גם בערב שלפני, כדי שתהיה מוכן להתחיל בכל הכוח.</p><p class="ios-tip" id="ol-tip" hidden>הקובץ ירד. פותחים אותו, והיומן מציע להוסיף את האירועים. ביומן גוגל במחשב: הגדרות ← ייבוא.</p></div>';
+      box.innerHTML = html;
+    }
+
+    function showText(id) {
+      var e = ev(id, t), el = $('ol-text-' + id); if (!e || !el) return;
+      var m = (e.url() || '').match(/sefaria\.org\/([^?]+)/); if (!m) return;
+      var ref = decodeURIComponent(m[1]).replace(/_/g, ' '), refs = [ref];
+      if (/\d+a$/.test(ref)) refs.push(ref.replace(/a$/, 'b'));
+      el.hidden = false; el.innerHTML = '<p class="note">טוען מספריא…</p>';
+      Promise.all(refs.map(function (r) {
+        return fetch('https://www.sefaria.org/api/v3/texts/' + encodeURIComponent(r) + '?version=hebrew').then(function (x) { return x.ok ? x.json() : null; }).catch(function () { return null; });
+      })).then(function (res) {
+        var flat = function (a) { return Array.isArray(a) ? a.reduce(function (o, x) { return o.concat(flat(x)); }, []) : [a]; };
+        var html = res.map(function (d, i) {
+          if (!d || !d.versions || !d.versions.length) return '<p class="note">לא הצלחתי לטעון. אפשר לפתוח בספריא.</p>';
+          return (refs.length > 1 ? '<h3>' + (i ? 'עמוד ב' : 'עמוד א') + '</h3>' : '') + flat(d.versions[0].text).map(function (h) { var x = document.createElement('div'); x.innerHTML = String(h || '').replace(/<sup[^>]*>.*?<\/sup>/g, '').replace(/<i class="footnote"[^>]*>.*?<\/i>/g, ''); return x.textContent.trim(); }).filter(Boolean).map(function (p) { return '<p>' + esc(p) + '</p>'; }).join('');
+        }).join('');
+        el.innerHTML = '<div class="txt-body">' + html + '<p class="note">הטקסט מספריא (sefaria.org), ברישיון פתוח.</p></div>';
+        used('olami', { action: 'text', cycle: id });
+      });
+    }
+
+    box.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-cyc]');
+      if (b) {
+        var id = b.dataset.cyc, i = st.sel.indexOf(id);
+        if (i >= 0) st.sel.splice(i, 1); else { st.sel.push(id); st.since[id] = t; used('olami', { action: 'add', cycle: id }); }
+        save(KEY, st); render(); return;
+      }
+      var r = e.target.closest('[data-reset]');
+      if (r) { st.since[r.dataset.reset] = r.dataset.from; save(KEY, st); render(); used('olami', { action: 'fresh_start', cycle: r.dataset.reset }); return; }
+      var x = e.target.closest('[data-text]'); if (x) { showText(x.dataset.text); return; }
+      if (e.target.id === 'ol-ics-fresh' || e.target.id === 'ol-ics-daily') {
+        var time = ($('ol-time') && $('ol-time').value) || '07:00'; st.time = time; save(KEY, st);
+        var evs = [];
+        if (e.target.id === 'ol-ics-fresh') {
+          st.sel.forEach(function (id) {
+            var c = cyc(id);
+            nextFresh(c, t, 40).forEach(function (d) {
+              if (daysBetween(t, d) > 366) return;
+              evs.push({ date: d, time: time, mins: 30, alarm: 720, title: '🌱 מתחילים ' + c.fresh + ' ב' + c.name + ': ' + full(c, ev(id, d)), desc: 'לא משנה מה היה עד עכשיו. זה הרגע להצטרף מחדש, בכל הכוח.\nhttps://gilad-rachamim.github.io/limudim/olami/' });
+            });
+          });
+          evs.sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+          icsDownload('matchilim-mechadash.ics', 'מתחילים מחדש', evs);
+        } else {
+          for (var k = 0; k < 31; k++) {
+            var d = ymd(addDays(parse(t), k));
+            var lines = st.sel.map(function (id) { var q = ev(id, d); return q ? cyc(id).name + ': ' + txt(q) : ''; }).filter(Boolean);
+            if (lines.length) evs.push({ date: d, time: time, mins: 20, alarm: 0, title: '📖 ' + lines.join(' · '), desc: lines.join('\n') + '\nhttps://gilad-rachamim.github.io/limudim/olami/' });
+          }
+          icsDownload('limud-olami.ics', 'הלימוד היומי שלי', evs);
+        }
+        $('ol-tip').hidden = false; used('olami', { action: 'ics', kind: e.target.id, n: evs.length });
+      }
+    });
+    box.addEventListener('change', function (e) {
+      var id = e.target.dataset && e.target.dataset.done; if (!id) return;
+      st.done[id] = st.done[id] || {};
+      if (e.target.checked) st.done[id][t] = 1; else delete st.done[id][t];
+      save(KEY, st); render(); if (e.target.checked) used('olami', { action: 'done', cycle: id });
+    });
+  }
+
+  if ($('ol-app')) olami();
   if ($('fc-deck')) flashcards();
   if ($('mv-form')) examPlanner();
   if ($('tm-clock')) studyTimer();
