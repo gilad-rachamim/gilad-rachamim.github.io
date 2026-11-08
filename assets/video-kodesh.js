@@ -41,6 +41,7 @@
     if (!cache[name]) cache[name] = new Promise(function (res) {
       var im = new Image(); im.decoding = 'async';
       im.onload = function () { res(im); }; im.onerror = function () { res(null); };
+      setTimeout(function () { res(im.complete && im.naturalWidth ? im : null); }, 20000); // אינטרנט איטי: לא נתקעים
       im.src = '/assets/video/' + name + '.jpg';
     });
     return cache[name];
@@ -276,7 +277,9 @@
         var t = (performance.now() - st) / 1000;
         if (t >= T) { frame(T - 0.001); return res(true); }
         frame(t); onFrame && onFrame(t / T);
-        if (document.hidden) setTimeout(tick, 33); else requestAnimationFrame(tick);
+        // requestAnimationFrame נעצר כשהחלון מוסתר או ממוזער; לכן גם טיימר גיבוי, ומה שמגיע ראשון מצייר
+        var done = false, go = function () { if (!done) { done = true; tick(); } };
+        requestAnimationFrame(go); setTimeout(go, 40);
       }
       tick();
     });
@@ -322,7 +325,7 @@
         a = ac();
         if (a) { var d = a.createMediaStreamDestination(); st = music(a, [d], total()); d.stream.getAudioTracks().forEach(function (tr) { stream.addTrack(tr); }); }
       }
-      var rec = new MediaRecorder(stream, m ? { mimeType: m, videoBitsPerSecond: 4500000 } : { videoBitsPerSecond: 4500000 }), parts = [];
+      var rec = new MediaRecorder(stream, m ? { mimeType: m, videoBitsPerSecond: 2500000 } : { videoBitsPerSecond: 2500000 }), parts = [];
       rec.ondataavailable = function (e) { if (e.data && e.data.size) parts.push(e.data); };
       rec.onstop = function () {
         var type = (rec.mimeType || m || 'video/webm').split(';')[0];
