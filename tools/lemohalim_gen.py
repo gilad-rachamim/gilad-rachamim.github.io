@@ -61,6 +61,18 @@ ALL_KEYS = [("hazmana", "הזמנה לברית עם אישורי הגעה"), ("m
             ("dapim", "דפי ברית להדפסה"), ("brachot", "ברכות לברית")]
 
 
+# 08.11.2026: גרסת "בלי אתר" (וורד / PDF / תבנית ווטסאפ) בדף /kodesh/mohalim/bli-atar/, מ-tools/bli_atar.py
+BLI = "/kodesh/mohalim/bli-atar/"
+NOWEB = {"moed": "בלי אתר: וורד / PDF", "checklist": "בלי אתר: וורד / PDF", "dapim": "בלי אתר: PDF",
+         "tekes": "בלי אתר: וורד / PDF", "yom": "בלי אתר: PDF / ווטסאפ"}
+
+
+def noweb(key):
+    if key not in NOWEB:
+        return ""
+    return f'<a class="btn btn-line btn-sm" href="{BLI}#{key}" data-share="bli_atar_{key}">{NOWEB[key]}</a>'
+
+
 CREDIT = "הכלי של גילעד רחמים, מוהל, קולגה שלי וחבר איתי בפורום המוהלים."
 
 
@@ -95,7 +107,7 @@ for key, path, icon, title, line, notice, msg in TOOLS:
         <div>
           <h3>{title}</h3>
           <p>{line}</p>{note}
-          <div class="tl-go">{share_link(key, text, "לשלוח להורים בווטסאפ", "btn-gold")}<a class="btn btn-line btn-sm" href="{path}?utm_source=lemohalim&amp;utm_medium=site" target="_blank" rel="noopener">לפתוח</a></div>
+          <div class="tl-go">{share_link(key, text, "לשלוח להורים בווטסאפ", "btn-gold")}<a class="btn btn-line btn-sm" href="{path}?utm_source=lemohalim&amp;utm_medium=site" target="_blank" rel="noopener">לפתוח</a>{noweb(key)}</div>
         </div>
       </article>""")
 
@@ -106,7 +118,7 @@ for key, path, title, line, msg in MORE:
         <div>
           <h3>{title}</h3>
           <p>{line}</p>
-          <div class="tl-go">{share_link(key, text, "לשלוח להורים", "btn-line")}<a class="btn btn-line btn-sm" href="{path}?utm_source=lemohalim&amp;utm_medium=site" target="_blank" rel="noopener">לפתוח</a></div>
+          <div class="tl-go">{share_link(key, text, "לשלוח להורים", "btn-line")}<a class="btn btn-line btn-sm" href="{path}?utm_source=lemohalim&amp;utm_medium=site" target="_blank" rel="noopener">לפתוח</a>{noweb(key)}</div>
         </div>
       </article>""")
 
@@ -163,7 +175,7 @@ body = f"""<!--meta {json.dumps(meta, ensure_ascii=False, indent=2)} -->
           <h3>יומן הבריתות שלי</h3>
           <p>רושמים כל ברית בדקה מהטלפון: הורים, תאריך עברי ולועזי, שעה ומקום. מסמנים שראיתם את התינוק והורדתם תחבושת, ומקבלים "מה נשאר לעשות", תזכורות וקובץ לאקסל ולוורד. הכול נשמר רק אצלכם.</p>
           <p class="tl-note">בלי אתר? יש גם קובץ וורד למילוי ותבנית לווטסאפ.</p>
-          <div class="tl-go"><a class="btn btn-gold btn-sm" href="/kodesh/britot/?utm_source=lemohalim&amp;utm_medium=site">לפתוח את היומן</a><a class="btn btn-line btn-sm" href="/kodesh/britot/yoman-britot.docx" download data-share="britot_docx">קובץ וורד</a></div>
+          <div class="tl-go"><a class="btn btn-gold btn-sm" href="/kodesh/britot/?utm_source=lemohalim&amp;utm_medium=site">לפתוח את היומן</a><a class="btn btn-line btn-sm" href="/kodesh/britot/yoman-britot.docx" download data-share="britot_docx">קובץ וורד</a><a class="btn btn-line btn-sm" href="{BLI}#yoman">תבנית לווטסאפ</a></div>
         </div>
       </article>
     </div>
@@ -172,6 +184,7 @@ body = f"""<!--meta {json.dumps(meta, ensure_ascii=False, indent=2)} -->
   <section aria-labelledby="tools-h">
     <h2 id="tools-h">הכלים להורים</h2>
     <div class="tl-all">{share_link("all", all_text, "לשלוח להורים הכול בהודעה אחת", "btn-gold")}<p>שישה קישורים בהודעה אחת: כל הכלים חוץ מהמדריך.</p></div>
+    <div class="tip"><b>להורים שלא נכנסים לאתרים</b><p>רשימת ההכנה, מועד הברית, הכיבודים, הכנות לטקס, יום הברית ואחרי הברית: כקובץ וורד, PDF להדפסה או תבנית מוכנה לווטסאפ.</p><div class="tl-go"><a class="btn btn-gold btn-sm" href="{BLI}" data-share="bli_atar">כל הכלים בלי אתר</a></div></div>
     <div class="tls">
 {chr(10).join(cards)}
     </div>
