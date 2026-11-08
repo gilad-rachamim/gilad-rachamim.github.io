@@ -239,8 +239,8 @@
   function music(ac, dest, dur) {
     var t0 = ac.currentTime + 0.05, master = ac.createGain(), lp = ac.createBiquadFilter();
     lp.type = 'lowpass'; lp.frequency.value = 1500;
-    master.gain.setValueAtTime(0, t0); master.gain.linearRampToValueAtTime(0.22, t0 + 2);
-    master.gain.setValueAtTime(0.22, t0 + Math.max(2.1, dur - 3)); master.gain.linearRampToValueAtTime(0, t0 + dur);
+    master.gain.setValueAtTime(0, t0); master.gain.linearRampToValueAtTime(0.65, t0 + 2);
+    master.gain.setValueAtTime(0.65, t0 + Math.max(2.1, dur - 3)); master.gain.linearRampToValueAtTime(0, t0 + dur);
     lp.connect(master); dest.forEach(function (d) { master.connect(d); });
     var dl = ac.createDelay(), fb = ac.createGain(); dl.delayTime.value = 0.42; fb.gain.value = 0.35;
     dl.connect(fb); fb.connect(dl); dl.connect(lp);
