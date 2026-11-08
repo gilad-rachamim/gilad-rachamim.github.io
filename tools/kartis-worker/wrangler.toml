@@ -1,0 +1,10 @@
+# קישורים קצרים לכרטיס ביקור לרב (kodesh/kartis).
+# פריסה: CLOUDFLARE_API_TOKEN בסביבה (מה-.env של פרויקט סופר-על), ואז: cd tools/kartis-worker && npx wrangler deploy
+name = "kartis"
+main = "kartis-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[[kv_namespaces]]
+binding = "KARTIS"
+id = "1dd4b9174d274dfc999a17e2e9f2ca35"

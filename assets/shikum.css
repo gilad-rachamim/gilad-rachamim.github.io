@@ -66,3 +66,4 @@
   .sk-card,.sk-card *{visibility:visible}
   .sk-card{position:absolute;top:0;right:0;left:0;max-width:none;border:0;font-size:13pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+.k-form .res:empty{display:none}

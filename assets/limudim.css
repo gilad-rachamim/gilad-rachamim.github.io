@@ -108,3 +108,45 @@ body.focus-mode .topbar,body.focus-mode .site-foot,body.focus-mode .crumbs,body.
 .ol-meta{color:var(--muted);font-size:.95rem}
 .ol-back{color:var(--body);font-size:.95rem;padding:.6rem .8rem;border-radius:12px;background:rgba(220,183,105,.08)}
 .ol-text{border-top:1px dashed var(--line);padding-top:.6rem}
+/* לימוד לעילוי נשמה ולימוד משותף */
+.ded-card{position:relative;text-align:center;padding:2rem 1.3rem 1.6rem;border-radius:20px;border:1px solid var(--gold-soft);background:linear-gradient(175deg,rgba(220,183,105,.16),rgba(220,183,105,.03) 70%);box-shadow:inset 0 0 0 6px rgba(20,28,43,.6),inset 0 0 0 7px rgba(220,183,105,.35)}
+.ded-card .bsd{position:absolute;top:.7rem;inset-inline-start:1rem;color:var(--muted);font-size:.85rem}
+.ded-kind{color:var(--gold);font-size:1.05rem;letter-spacing:.02em}
+.ded-name{font-family:var(--serif);color:var(--cream);font-size:clamp(1.55rem,6.5vw,2.2rem);line-height:1.35;margin-top:.4rem;overflow-wrap:anywhere}
+.ded-sub{color:var(--body);margin-top:.5rem;font-size:1.05rem}
+.ded-x{color:var(--parchment);font-family:var(--serif);font-size:1.15rem;margin-top:.8rem;line-height:1.6}
+.ded-tnzbh{color:var(--gold);font-family:var(--serif);font-size:1.2rem;margin-top:.9rem;letter-spacing:.08em}
+.ded-by{color:var(--muted);margin-top:.6rem}
+.seg2{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.seg2 label{cursor:pointer}
+.seg2 input{position:absolute;opacity:0}
+.seg2 span{display:grid;gap:.15rem;height:100%;padding:.7rem .75rem;border:1px solid var(--line);border-radius:14px;color:var(--body)}
+.seg2 span b{color:var(--cream);font-size:1rem;line-height:1.3}
+.seg2 span small{color:var(--muted);font-size:.85rem}
+.seg2 input:checked+span{border-color:var(--gold);background:rgba(220,183,105,.12)}
+.seg2 input:focus-visible+span{outline:2px solid var(--gold)}
+.ot-list{list-style:none;display:grid;gap:.5rem}
+.ot-list li{display:grid;grid-template-columns:2.6rem 1fr;gap:.7rem;align-items:start;padding:.6rem .7rem;border:1px solid var(--line);border-radius:12px}
+.ot-list li.done{opacity:.7}
+.ot-list .ot{font-family:var(--serif);font-size:1.7rem;color:var(--gold);text-align:center;line-height:1.2;border:1px solid var(--gold-soft);border-radius:10px}
+.ot-list .chk{display:flex;gap:.45rem;align-items:center;color:var(--cream)}
+.ot-list .chk input,.kv-table input[type=checkbox]{width:1.2rem;height:1.2rem;accent-color:var(--ok)}
+.ot-list .btns{margin-top:.4rem;align-items:center}
+.il-txt{grid-column:1/-1;margin-top:.5rem;padding:.7rem .8rem;border-radius:12px;background:rgba(0,0,0,.2)}
+.plan td .il-txt{margin-top:.4rem}
+.il-more{display:grid;gap:.45rem}
+.il-more a{display:block;padding:.65rem .8rem;border:1px solid var(--line);border-radius:12px;color:var(--cream);text-decoration:none}
+.il-more a:hover{border-color:var(--gold-soft)}
+.kv-table td.who{width:7.5rem}
+.kv-table .who-in{width:100%;font:inherit;font-size:.95rem;color:var(--cream);background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:8px;padding:.3rem .45rem}
+.kv-table small.muted,.muted{color:var(--muted)}
+.print-only{display:none}
+details.panel summary{cursor:pointer;color:var(--cream)}
+@media print{
+  .print-only{display:inline}
+  .ded-card{border:2px solid #8a6d2c;box-shadow:none;background:none;color:#111;break-inside:avoid;margin-bottom:8mm}
+  .ded-kind,.ded-tnzbh{color:#6b4f1a!important}.ded-name,.ded-x{color:#111!important}.ded-sub,.ded-by,.ded-card .bsd{color:#444!important}
+  .ot-list li{border-color:#bbb;break-inside:avoid}.ot-list .ot{color:#6b4f1a;border-color:#8a6d2c}.ot-list .chk{color:#111}
+  .il-txt,.panel h3{color:#111}
+  .kv-table td{color:#111!important;border-color:#bbb}
+}
