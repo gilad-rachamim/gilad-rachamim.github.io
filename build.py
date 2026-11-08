@@ -52,6 +52,17 @@ SITES = {
         "nav": [("tafrit", "/esek/tafrit/", "תפריט ו-QR"), ("mivtza", "/esek/mivtza/", "מודעת מבצע"),
                 ("qr", "/esek/qr/", "QR מעוצב"), ("ptiha", "/esek/ptiha/", "פתיחת עסק"), ("kelim", "/kelim/", "כל הכלים")],
     },
+    # משפחה ובית: קניות, תורנויות, שבת ואורחים, מי מביא מה. בלי שרת: הנתונים בטלפון (localStorage),
+    # ושיתוף עם אחרים דרך ווטסאפ וקישור שמכיל את המצב (#d=...).
+    "bait": {
+        "name": "כלים למשפחה ולבית", "short": "משפחה ובית", "home": "/bait/", "theme": "#1f1915",
+        "og": "og-kelim.jpg", "icon": "bait",
+        "desc": "קניות, תורנויות, שבת ואורחים ומי מביא מה. בחינם, בלי הרשמה.",
+        "css": ["/assets/bait.css"], "js": ["/assets/bait.js"],
+        "nav": [("kniyot", "/bait/kniyot/", "קניות"), ("toranut", "/bait/toranut/", "תורנויות"),
+                ("shabat", "/bait/shabat/", "שבת ואורחים"), ("mevi", "/bait/mevi/", "מי מביא מה"),
+                ("kelim", "/kelim/", "כל הכלים")],
+    },
     # כלים לכסף: מחשבונים בלבד, לא ייעוץ. הכול בטלפון (localStorage), בלי שרת.
     "kesef": {
         "name": "כלים לכסף", "short": "כלים לכסף", "home": "/kesef/", "theme": "#11201a",
