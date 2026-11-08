@@ -100,9 +100,11 @@
   // נוסח מרוקאי: מילה במילה מהסידור ששלח גילעד (assets/misheberach-maroko.js, נבנה מ-tools/maroko-misheberach-source.txt).
   // השם נכנס במקום "(שם ושם משפחה)", והתוספות שבסוגריים (שבת, שבת שובה, יולדת) נכנסות רק כשמסמנים אותן.
   var MR = window.MB_MAROKO, MRT = window.MB_MAROKO_TPL;
-  function mt(key) { return MRT(MR[key], false, v, function (ph) { return N(v('name'), ph); }); }
+  function mt(key) { return MRT(MR[key], false, v, function (ph) { return N(v('name'), ph); }).replace(/^\n+/, ''); }
   var MAROKO = {
     oleh: { label: 'לעולה לתורה', checks: function () { return v('short') ? ['short', 'yt', 'rh'] : ['short', 'rh']; }, name: 'שם העולה ושם המשפחה', build: function () { return mt(v('short') ? 'oleh_short' : 'oleh'); } },
+    barmitzva: { label: 'לבר מצווה', checks: ['rh'], name: 'שם הנער ושם המשפחה', build: function () { return mt('barmitzva'); } },
+    batmitzva: { label: 'לבת מצווה', checks: [], name: 'שם הנערה ושם המשפחה', build: function () { return mt('batmitzva'); } },
     choleh: { label: 'לחולה', gender: true, checks: ['sh'], name: 'שם החולה ושם המשפחה', build: function () { return mt(v('gender') === 'f' ? 'choleh_f' : 'choleh_m'); } },
     isha: { label: 'לאשה וליולדת', checks: ['yol'], name: 'שם האשה ושם המשפחה', build: function () { return mt('isha'); } },
     chatan: { label: 'לחתן (שבת חתן)', checks: ['rh'], name: 'שם החתן ושם המשפחה', build: function () { return mt('chatan'); }, after: function () { return 'כשהחתן חוזר למקומו, החזן אומר לו: ' + MR.lech_leshalom; } },
@@ -110,9 +112,8 @@
     tzahal: { label: 'לחיילי צה"ל', checks: [], build: function () { return mt('tzahal'); } },
     shvuyim: { label: 'לנעדרים ולשבויים', checks: [], build: function () { return mt('shvuyim'); } },
     yizkor: { label: 'יזכור לחללי צה"ל', title: 'יזכור לחללי צה"ל', checks: [], build: function () { return mt('yizkor'); } },
-    hashkava: { label: 'השכבה', title: 'השכבה', gender: true, checks: function () { return v('gender') === 'f' ? ['short'] : []; }, name: 'שם הנפטר/ת ושם המשפחה',
-      build: function () { return mt(v('gender') === 'f' ? (v('short') ? 'hashkava_short_f' : 'hashkava_f') : 'hashkava_short_m'); },
-      note: function () { return v('gender') === 'f' ? '' : 'לאיש מוצג הנוסח הקצר שבסידור. ההשכבה המלאה לאיש תיכנס כשנקבל צילום של העמוד שלה.'; } }
+    hashkava: { label: 'השכבה', title: 'השכבה', gender: true, checks: function () { return v('gender') === 'f' || v('short') ? ['short'] : ['short', 'gadol']; }, name: 'שם הנפטר/ת ושם המשפחה',
+      build: function () { var f = v('gender') === 'f'; return mt(v('short') ? (f ? 'hashkava_short_f' : 'hashkava_short_m') : (f ? 'hashkava_f' : 'hashkava_m')); } }
   };
   var SRC = { ashkenaz: 'סידור אשכנז, מהדורת "דעת", נחלת הכלל', sefard: 'סידור ספרד, "תורת אמת", נחלת הכלל', maroko: 'סידור כמנהג מרוקו, "שער הגבאי" (עמ\' 1247–1258), מילה במילה' };
   var LABELS = {
@@ -143,7 +144,7 @@
   function render() {
     setKinds();
     var k = v('k') || 'oleh', kk = K(), f = kk.fields || [];
-    ['short', 'yol'].forEach(function (c) { $('mb-' + c + '-wrap').hidden = true; });
+    ['short', 'yol', 'gadol'].forEach(function (c) { $('mb-' + c + '-wrap').hidden = true; });
     $('mb-sh-wrap').hidden = $('mb-yt-wrap').hidden = false;
     $('mb-rh-l').textContent = 'ראש השנה ויום כיפור'; $('mb-gender-l').textContent = 'החולה';
     $('mb-name-wrap').hidden = f.indexOf('name') < 0;
@@ -158,7 +159,7 @@
       $('mb-name-wrap').hidden = !m.name; if (m.name) { $('mb-name-l').textContent = m.name; $('mb-name').placeholder = 'משה כהן'; }
       $('mb-donor-wrap').hidden = $('mb-baby-wrap').hidden = true;
       $('mb-gender-wrap').hidden = !m.gender; $('mb-gender-l').textContent = k === 'hashkava' ? 'הנפטר/ת' : 'החולה';
-      ['sh', 'yt', 'rh', 'short', 'yol'].forEach(function (c) { $('mb-' + c + '-wrap').hidden = ch.indexOf(c) < 0; });
+      ['sh', 'yt', 'rh', 'short', 'yol', 'gadol'].forEach(function (c) { $('mb-' + c + '-wrap').hidden = ch.indexOf(c) < 0; });
       $('mb-occ-wrap').hidden = !ch.length; $('mb-rh-l').textContent = 'שבת שובה';
     }
     $('mb-title').textContent = title(kk);
