@@ -1,0 +1,42 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "tehillim_shem",
+  "title": "תהילים לפי שם: פסוקי פרק קיט לפי אותיות השם, לעילוי נשמה ולרפואה | כלי קודש",
+  "description": "מקלידים שם ושם ההורה, ומקבלים את פסוקי תהילים קיט לפי אותיות השם. לנפטר מתווספות אותיות נשמה. טקסט מלא מספריא, דף להדפסה וקישור לשליחה בווטסאפ. בחינם.",
+  "og_title": "תהילים לפי שם – פסוקי קיט לפי אותיות השם",
+  "priority": "0.7",
+  "crumbs": [["סיום תהילים", "/kodesh/tehillim/"], ["תהילים לפי שם", null]],
+  "head": "<style>.th-row{display:grid;grid-template-columns:5.5rem 1fr;gap:.7rem}.th-letters{display:flex;flex-wrap:wrap;gap:.35rem;justify-content:center;margin:.6rem 0 0}.th-letters span{font-family:var(--serif);font-size:1.5rem;color:var(--cream);min-width:2.3rem;text-align:center;padding:.15rem .4rem;border:1px solid var(--gold-soft);border-radius:10px}.th-letters span.n{border-style:dashed;color:var(--gold)}.th-out{margin-top:1.2rem}.th-head{text-align:center;font-family:var(--serif);color:var(--cream);font-size:1.45rem;line-height:1.4}.th-head small{display:block;color:var(--muted);font-family:var(--sans,inherit);font-size:.95rem;margin-top:.2rem}.th-sec{margin-top:1.2rem;padding:1rem 1.05rem;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.03)}.th-sec h3{font-family:var(--serif);color:var(--gold);font-size:1.35rem;margin-bottom:.5rem}.th-sec h3 small{color:var(--muted);font-size:.9rem;font-weight:400}.th-sec p{font-family:var(--serif);color:var(--parchment);font-size:1.22rem;line-height:1.9}.th-sec p+p{margin-top:.35rem}.th-sec sup{color:var(--gold-soft);font-size:.75rem;margin-inline-end:.25rem;font-family:inherit}.th-wait{text-align:center;color:var(--muted);margin-top:1rem}.k-form .check{display:flex;gap:.55rem;align-items:flex-start;color:var(--body)}@media print{@page{size:A4;margin:14mm}body{background:#fff!important}body>*:not(main),.k-hero,.k-form,.share-row,.disclaimer,.crumbs,.no-print{display:none!important}main,.tool{max-width:none;padding:0}.th-head,.th-sec h3,.th-sec p{color:#111!important}.th-sec{border:0;padding:0;background:none;break-inside:avoid-page}.th-sec h3{color:#6b4f1a!important}.th-letters{display:none}}</style>",
+  "foot": "<script src=\"/assets/tehillim-text.js\" defer></script><script src=\"/assets/tehillim-shem.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>תהילים לפי שם</h1>
+  <p class="sub">מקלידים שם, ומקבלים את פסוקי פרק קיט לפי אותיות השם. לעילוי נשמה מתווספות גם אותיות "נשמה". הטקסט המלא, לקריאה, להדפסה ולשליחה.</p>
+</header>
+<div class="tool">
+  <form class="k-form" id="th-form" novalidate>
+    <div class="field"><label for="th-k">בשביל מה</label><select id="th-k" name="k"><option value="niftar">לעילוי נשמת</option><option value="refua">לרפואת</option><option value="hatzlacha">להצלחת</option><option value="zivug">לזיווג הגון ל</option><option value="other">בלי כותרת</option></select></div>
+    <div class="field"><label for="th-n">השם</label><input id="th-n" name="n" type="text" maxlength="40" placeholder="יעקב" autocomplete="off"></div>
+    <div class="th-row">
+      <div class="field"><label for="th-bb">בן / בת</label><select id="th-bb" name="bb"><option>בן</option><option>בת</option></select></div>
+      <div class="field"><label for="th-par">שם ההורה <span class="opt">(לא חובה)</span></label><input id="th-par" name="par" type="text" maxlength="40" placeholder="שרה" autocomplete="off"></div>
+    </div>
+    <label class="check"><input type="checkbox" name="withpar" id="th-withpar"> <span>לומר גם את הפסוקים של אותיות שם ההורה <span class="opt">(יש שנוהגים)</span></span></label>
+    <label class="check" id="th-pre-w"><input type="checkbox" name="pre" id="th-pre"> <span>להוסיף לפני את הפרקים שנוהגים לומר לעילוי נשמה: לג, טז, יז, עב, צא, קד, קל</span></label>
+    <div class="th-letters" id="th-letters" aria-live="polite"></div>
+  </form>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="th-go">להציג את הפסוקים</button>
+    <a class="btn btn-line btn-sm" href="https://wa.me/" id="th-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח קישור בווטסאפ</a>
+    <button class="btn btn-line btn-sm" type="button" id="th-print">להדפיס</button>
+    <button class="btn btn-line btn-sm" type="button" id="th-copy">להעתיק את הטקסט</button>
+  </div>
+  <div class="th-out" id="th-out"></div>
+  <div class="res no-print" id="th-next" hidden>
+    <h3>רוצים שעוד אנשים יצטרפו?</h3>
+    <p style="color:var(--body);margin-top:.4rem">פותחים <a class="gold" id="th-siyum" href="/kodesh/tehillim/">סיום תהילים בקישור</a>: כל אחד לוקח פרקים עד שכל הספר נגמר, ואפשר גם לקבל על עצמו מעשה טוב.<span id="th-az"> לאזכרה או לשלושים: <a class="gold" href="/kodesh/azkara/">מודעת אזכרה</a>.</span></p>
+  </div>
+  <p class="disclaimer">הטקסט מתוך ספריא (sefaria.org). אותיות סופיות נחשבות כרגילות (ך = כ). השם לא נשמר אצלנו, רק בקישור שאתם שולחים.</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/">כלי קודש</a>.</p>
+</div>
