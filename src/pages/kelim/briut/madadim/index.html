@@ -1,0 +1,34 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "madadim",
+  "title": "יומן מדדים – לחץ דם, סוכר, משקל ודופק בטלפון | הכלים של גילעד רחמים",
+  "description": "יומן מדדים פשוט: רושמים לחץ דם, סוכר, משקל, דופק או חום בשנייה, ושולחים לרופא את כל הרשימה בווטסאפ. נשמר רק בטלפון, בחינם, בלי הרשמה.",
+  "og_title": "יומן מדדים – לשלוח לרופא את כל המדידות",
+  "priority": "0.7",
+  "crumbs": [["בריאות", "/kelim/briut/"], ["יומן מדדים", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/mishpacha.css\"><style>.md-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem}.md-row .field{min-width:0}.md-list{list-style:none;display:grid;gap:.35rem;margin-top:.6rem}.md-list li{display:grid;grid-template-columns:auto 1fr auto;gap:.7rem;align-items:center;padding:.55rem .7rem;border:1px solid var(--line);border-radius:12px;color:var(--parchment)}.md-list .v{font-family:var(--serif);font-size:1.3rem;color:var(--cream);direction:ltr}.md-list small{display:block;color:var(--muted);font-size:.88rem}.md-list .x{background:none;border:0;color:var(--muted);font-size:1.3rem;cursor:pointer}</style>",
+  "foot": "<script src=\"/assets/madadim.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>יומן מדדים</h1>
+  <p class="sub">רושמים מדידה בשנייה, וכשהרופא שואל – שולחים לו את כל הרשימה. הכול נשמר רק בטלפון שלכם.</p>
+</header>
+<div class="tool">
+  <form class="k-form" id="md-form" novalidate>
+    <div class="tabs" id="md-type" role="tablist"></div>
+    <div class="md-row" id="md-vals"></div>
+    <div class="field"><label for="md-when">מתי?</label><input id="md-when" type="datetime-local"></div>
+    <div class="field"><label for="md-note">הערה <span class="opt">(לא חובה)</span></label><input id="md-note" type="text" maxlength="60" placeholder="בצום / אחרי הליכה / לפני הכדור"></div>
+    <button class="btn btn-gold btn-block" type="submit">לרשום</button>
+    <p class="note" id="md-msg" aria-live="polite"></p>
+  </form>
+  <h2 style="font-family:var(--serif);color:var(--cream);font-size:1.3rem;margin-top:1.4rem" id="md-h">המדידות</h2>
+  <ul class="md-list" id="md-list"></ul>
+  <div class="share-row">
+    <a class="btn btn-gold btn-sm" href="#" id="md-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לרופא</a>
+    <button class="btn btn-line btn-sm" type="button" id="md-copy">להעתיק</button>
+  </div>
+  <p class="disclaimer">הכלי רושם בלבד, ולא מפרש את המספרים. מה תקין בשבילכם – שואלים את הרופא. במצב חירום: מד״א <span dir="ltr">101</span>.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="יומן מדדים בטלפון: לחץ דם, סוכר, משקל. שולחים לרופא את כל הרשימה. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
