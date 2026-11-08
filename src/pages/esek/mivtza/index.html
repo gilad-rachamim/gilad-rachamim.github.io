@@ -1,0 +1,48 @@
+<!--meta {
+  "site": "esek",
+  "nav": "mivtza",
+  "tool": "esek_mivtza",
+  "title": "מודעת מבצע לסטטוס ולפייסבוק: מחיר, תוקף ותמונה מוכנה | כלים לעסק קטן",
+  "description": "כותבים מה המבצע, המחיר והתוקף, ומקבלים תמונה מעוצבת לסטטוס בווטסאפ, לפייסבוק ולאינסטגרם, ודף להדפסה לחלון. לפיצריה, למסעדה, לחנות ולכל עסק קטן. בחינם.",
+  "og_title": "מודעת מבצע לסטטוס ולפייסבוק – בחינם, תוך דקה",
+  "priority": "0.8",
+  "crumbs": [["מודעת מבצע", null]],
+  "foot": "<script src=\"/assets/kcard.js\" defer></script><script src=\"/assets/esek-mivtza.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מודעת מבצע</h1>
+  <p class="sub">מה המבצע, כמה זה עולה, ועד מתי. מקבלים תמונה לסטטוס, לפייסבוק ולאינסטגרם, ודף להדפסה לחלון הראווה.</p>
+</header>
+<div class="tool">
+  <form class="k-form lead-form" id="mv-form" novalidate>
+    <div class="field"><label for="mv-biz">שם העסק</label><input id="mv-biz" name="biz" type="text" maxlength="50" placeholder="פיצה של משה"></div>
+    <div class="es-row">
+      <div class="field"><label for="mv-head">כותרת</label><input id="mv-head" name="head" type="text" maxlength="30" value="מבצע!" placeholder="מבצע!"></div>
+      <div class="field"><label for="mv-tag">תגית <span class="opt">(לא חובה)</span></label><input id="mv-tag" name="tag" type="text" maxlength="24" placeholder="רק השבוע"></div>
+    </div>
+    <div class="field"><label for="mv-what">מה במבצע</label><textarea id="mv-what" name="what" required maxlength="200" placeholder="פיצה משפחתית + 2 תוספות + בקבוק שתייה"></textarea></div>
+    <div class="es-row">
+      <div class="field"><label for="mv-price">מחיר במבצע (₪)</label><input id="mv-price" name="price" type="text" inputmode="decimal" maxlength="12" placeholder="59"></div>
+      <div class="field"><label for="mv-old">מחיר רגיל <span class="opt">(לא חובה)</span></label><input id="mv-old" name="old" type="text" inputmode="decimal" maxlength="12" placeholder="78"></div>
+    </div>
+    <div class="field"><label for="mv-until">תוקף</label><input id="mv-until" name="until" type="text" maxlength="50" placeholder="עד יום חמישי 12.11 או עד גמר המלאי"></div>
+    <div class="field"><label for="mv-terms">תנאים בקטן <span class="opt">(לא חובה)</span></label><input id="mv-terms" name="terms" type="text" maxlength="90" placeholder="באיסוף עצמי בלבד · לא כולל משלוח"></div>
+    <div class="field"><label for="mv-contact">טלפון, כתובת או אתר <span class="opt">(שורה למטה)</span></label><input id="mv-contact" name="contact" type="text" maxlength="70" placeholder="להזמנות: 050-0000000 · הרצל 12"></div>
+    <div class="es-row">
+      <div class="field"><label for="mv-theme">עיצוב</label><select id="mv-theme" name="theme"><option value="tomato">אדום פיצה</option><option value="sunny">צהוב שמש</option><option value="fresh">ירוק טרי</option><option value="coffee">בית קפה</option><option value="sweet">ורוד מאפייה</option><option value="black">שחור וזהב</option><option value="white">לבן נקי</option></select></div>
+      <div class="field"><label for="mv-size">גודל</label><select id="mv-size" name="size"><option value="story">לגובה (סטטוס, סטורי)</option><option value="square">ריבוע (אינסטגרם, קבוצה)</option><option value="wide">לרוחב (פייסבוק)</option></select></div>
+    </div>
+    <label class="check"><input type="checkbox" name="bsd" id="mv-bsd" value="1"> <span>להוסיף בס"ד בפינה</span></label>
+    <input type="hidden" name="foot" value="">
+  </form>
+  <canvas id="mv-canvas" class="es-canvas" width="1080" height="1920" role="img" aria-label="תצוגה מקדימה של מודעת המבצע"></canvas>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="mv-share"><svg class="ic"><use href="#wa"/></svg> לשתף את התמונה</button>
+    <button class="btn btn-line btn-sm" type="button" id="mv-dl">לשמור את התמונה</button>
+    <button class="btn btn-line btn-sm" type="button" id="mv-text">להעתיק כטקסט</button>
+    <button class="btn btn-line btn-sm" type="button" id="mv-print">🖨️ להדפיס לחלון</button>
+  </div>
+  <p class="ios-tip" id="mv-tip" hidden>התמונה נשמרה בטלפון. עכשיו פותחים את הסטטוס או את פייסבוק, ומצרפים אותה מהגלריה.</p>
+  <p class="disclaimer">התמונה נוצרת בטלפון שלכם ולא נשמרת אצלנו. מבצע הוא התחייבות: כדאי לכתוב בדיוק מה כלול ועד מתי.</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/esek/">כלים לעסק קטן</a>. רוצים עיצוב נוסף? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>
+</div>

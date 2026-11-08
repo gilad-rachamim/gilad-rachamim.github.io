@@ -1,0 +1,52 @@
+<!--meta {
+  "site": "bait",
+  "nav": "toranut",
+  "tool": "bait_toranut",
+  "title": "לוח תורנויות משפחתי – מי עושה מה ומתי, סבב אוטומטי ודף למקרר | כלים למשפחה ולבית",
+  "description": "לוח תורנויות לבית: כלים, זבל, עריכת שולחן, איסוף מהגן. כותבים מי בבית ומה צריך, והסבב מתחלף לבד כל שבוע. מדפיסים למקרר, שומרים כתמונה או שולחים בווטסאפ מי עושה מה היום. בחינם.",
+  "og_title": "לוח תורנויות משפחתי – הסבב זז לבד",
+  "priority": "0.8",
+  "crumbs": [["לוח תורנויות", null]],
+  "foot": "<script src=\"https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js\" defer></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>לוח תורנויות משפחתי</h1>
+  <p class="sub">מי שוטף כלים, מי מוריד זבל, מי אוסף מהגן. כותבים פעם אחת, והסבב מתחלף לבד כל שבוע, כדי שיהיה הוגן.</p>
+</header>
+<div class="tool bt">
+  <h2 class="no-print">היום</h2>
+  <div class="tr-today no-print" id="tr-today"></div>
+  <div class="tools no-print">
+    <a class="btn btn-gold btn-sm" href="#" id="tr-wa-today" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח מי עושה מה היום</a>
+  </div>
+
+  <div class="row no-print" style="margin-top:1.6rem">
+    <button class="btn btn-line btn-sm" type="button" id="tr-prev" aria-label="שבוע קודם">→</button>
+    <b id="tr-week" style="text-align:center;color:var(--cream);font-family:var(--serif);font-size:1.2rem"></b>
+    <button class="btn btn-line btn-sm" type="button" id="tr-next" aria-label="שבוע הבא">←</button>
+  </div>
+  <div class="paper print-me" id="tr-card"></div>
+  <div class="tools no-print">
+    <button class="btn btn-gold btn-sm" type="button" id="tr-print">🖨️ להדפיס למקרר</button>
+    <button class="btn btn-line btn-sm" type="button" id="tr-img">לשמור כתמונה</button>
+    <a class="btn btn-line btn-sm" href="#" id="tr-wa-week" target="_blank" rel="noopener">לשלוח את כל השבוע</a>
+  </div>
+
+  <div id="tr-edit" class="no-print">
+    <h2>מי בבית</h2>
+    <div class="row"><input id="tr-fam" type="text" maxlength="30" placeholder="שם המשפחה (לכותרת)" aria-label="שם המשפחה"></div>
+    <div class="tr-ed" id="tr-people" style="margin-top:.5rem"></div>
+    <div class="tools" style="justify-content:flex-start;margin-top:.5rem"><button class="btn btn-line btn-sm" type="button" id="tr-padd">+ עוד מישהו</button></div>
+
+    <h2>המטלות <small>כל יום או פעם בשבוע, בסבב או קבוע למישהו</small></h2>
+    <div id="tr-chores"></div>
+    <div class="tools" style="justify-content:flex-start;margin-top:.5rem"><button class="btn btn-line btn-sm" type="button" id="tr-cadd">+ עוד מטלה</button></div>
+
+    <h2>באילו ימים</h2>
+    <div class="chips" id="tr-days"></div>
+    <div class="tools" style="justify-content:flex-start;margin-top:1rem"><button class="btn btn-line btn-sm" type="button" id="tr-shift">להזיז את הסבב באחד</button></div>
+    <p class="muted" style="margin-top:.3rem">מישהו לא היה בבית השבוע? מזיזים את הסבב באחד, וממשיכים משם.</p>
+  </div>
+  <p class="disclaimer no-print">הלוח נשמר רק בטלפון הזה. רוצים אותו גם אצל בן או בת הזוג? שולחים תמונה או מדפיסים.</p>
+  <div class="share-row no-print"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="לוח תורנויות משפחתי: הסבב מתחלף לבד כל שבוע, ויוצא דף למקרר. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>

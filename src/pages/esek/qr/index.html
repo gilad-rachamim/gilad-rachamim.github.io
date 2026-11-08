@@ -1,0 +1,55 @@
+<!--meta {
+  "site": "esek",
+  "nav": "qr",
+  "tool": "esek_qr",
+  "title": "QR מעוצב עם כותרת: לקישור, לטלפון, לווטסאפ ולוויפיי | כלים לעסק קטן",
+  "description": "יוצרים קוד QR עם כותרת ועיצוב, לקישור, לטלפון, לווטסאפ או לרשת הוויפיי של העסק. מקבלים תמונה לשיתוף ודף להדפסה לדלפק, לשולחן או לחלון. בחינם, בלי הרשמה.",
+  "og_title": "QR מעוצב עם כותרת – לקישור, לווטסאפ ולוויפיי",
+  "priority": "0.8",
+  "crumbs": [["QR מעוצב", null]],
+  "head": "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js\" integrity=\"sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==\" crossorigin=\"anonymous\" referrerpolicy=\"no-referrer\" defer></script>",
+  "foot": "<script src=\"/assets/kcard.js\" defer></script><script src=\"/assets/esek-qr.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>QR מעוצב</h1>
+  <p class="sub">קוד לסריקה עם כותרת ועיצוב: לקישור, לטלפון, לווטסאפ או לוויפיי של העסק. תמונה לשיתוף, ודף להדפסה לדלפק.</p>
+</header>
+<div class="tool">
+  <form class="k-form lead-form" id="qr-form" novalidate>
+    <input type="hidden" name="type" id="qr-type" value="link">
+    <div class="es-tabs" role="group" aria-label="סוג הקוד">
+      <button type="button" data-qt="link" aria-pressed="true">🔗 קישור</button>
+      <button type="button" data-qt="wa" aria-pressed="false">💬 ווטסאפ</button>
+      <button type="button" data-qt="tel" aria-pressed="false">📞 טלפון</button>
+      <button type="button" data-qt="wifi" aria-pressed="false">📶 וויפיי</button>
+      <button type="button" data-qt="text" aria-pressed="false">📝 טקסט</button>
+    </div>
+    <div data-qf="link" class="field"><label for="qr-url">הקישור</label><input id="qr-url" name="url" type="url" inputmode="url" maxlength="1200" placeholder="https://..." dir="ltr" style="text-align:right"><p class="es-hint">דף פייסבוק, אינסטגרם, גוגל ביזנס, ביקורות, או <a class="gold" href="/esek/tafrit/">התפריט הדיגיטלי שבניתם</a>.</p></div>
+    <div data-qf="wa tel" class="field" hidden><label for="qr-phone">מספר הטלפון</label><input id="qr-phone" name="phone" type="tel" inputmode="tel" maxlength="20" placeholder="050-0000000" dir="ltr" style="text-align:right"></div>
+    <div data-qf="wa" class="field" hidden><label for="qr-msg">הודעה שתופיע מוכנה <span class="opt">(לא חובה)</span></label><input id="qr-msg" name="msg" type="text" maxlength="120" placeholder="שלום, אשמח להזמין"></div>
+    <div data-qf="wifi" class="field" hidden><label for="qr-ssid">שם הרשת</label><input id="qr-ssid" name="ssid" type="text" maxlength="40" placeholder="Pizza-Moshe" dir="ltr" style="text-align:right"></div>
+    <div data-qf="wifi" class="es-row" hidden>
+      <div class="field"><label for="qr-pass">סיסמה</label><input id="qr-pass" name="pass" type="text" maxlength="63" autocomplete="off" dir="ltr" style="text-align:right"></div>
+      <div class="field"><label for="qr-sec">אבטחה</label><select id="qr-sec" name="sec"><option value="WPA">WPA / WPA2 (רוב הרשתות)</option><option value="WEP">WEP (ישן)</option><option value="nopass">בלי סיסמה</option></select></div>
+    </div>
+    <div data-qf="wifi" hidden><label class="check"><input type="checkbox" id="qr-showpass"> <span>לכתוב את הסיסמה גם במילים מתחת לקוד</span></label></div>
+    <div data-qf="text" class="field" hidden><label for="qr-text">הטקסט</label><textarea id="qr-text" name="text" maxlength="600" placeholder="כל טקסט שיופיע למי שסורק"></textarea></div>
+    <div class="field"><label for="qr-title">כותרת מעל הקוד</label><input id="qr-title" name="title" type="text" maxlength="40" placeholder="התפריט שלנו"></div>
+    <div class="field"><label for="qr-sub">שורה מתחת לקוד <span class="opt">(לא חובה)</span></label><input id="qr-sub" name="sub" type="text" maxlength="70" placeholder="סורקים במצלמה של הטלפון"></div>
+    <div class="es-row">
+      <div class="field"><label for="qr-theme">עיצוב</label><select id="qr-theme" name="theme"><option value="white">לבן נקי</option><option value="black">שחור וזהב</option><option value="tomato">אדום</option><option value="fresh">ירוק</option><option value="coffee">חום קפה</option><option value="sunny">צהוב</option><option value="sky">תכלת</option></select></div>
+      <div class="field"><label for="qr-size">גודל</label><select id="qr-size" name="size"><option value="a5">להדפסה (דף לעמידה)</option><option value="square">ריבוע (לשיתוף)</option><option value="story">לגובה (סטטוס)</option></select></div>
+    </div>
+    <input type="hidden" name="foot" value="">
+  </form>
+  <canvas id="qr-canvas" class="es-canvas" width="1240" height="1754" role="img" aria-label="תצוגה מקדימה של קוד ה-QR"></canvas>
+  <p class="es-hint" id="qr-err" hidden style="color:var(--accent)"></p>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="qr-print">🖨️ להדפיס</button>
+    <button class="btn btn-line btn-sm" type="button" id="qr-share"><svg class="ic"><use href="#wa"/></svg> לשתף את התמונה</button>
+    <button class="btn btn-line btn-sm" type="button" id="qr-dl">לשמור את התמונה</button>
+  </div>
+  <p class="ios-tip" id="qr-tip" hidden>התמונה נשמרה בטלפון, בגלריה.</p>
+  <p class="disclaimer">לפני שמדפיסים הרבה: סורקים פעם אחת מהמסך עם טלפון אחר, ובודקים שזה נפתח נכון. הקוד נוצר בטלפון שלכם, ושום דבר לא נשמר אצלנו (גם לא סיסמת הוויפיי).</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/esek/">כלים לעסק קטן</a>. רוצים סוג קוד נוסף? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>
+</div>

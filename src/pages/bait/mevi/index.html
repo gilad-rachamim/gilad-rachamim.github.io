@@ -1,0 +1,55 @@
+<!--meta {
+  "site": "bait",
+  "nav": "mevi",
+  "tool": "bait_mevi",
+  "title": "מי מביא מה – רשימה לאירוע שכל אחד נרשם אליה מהווטסאפ | כלים למשפחה ולבית",
+  "description": "על האש, מסיבת כיתה, שבת משפחתית או פיקניק: יוצרים רשימה של מה צריך, שולחים לקבוצה, וכל אחד נרשם בטלפון למה שהוא מביא. כל עדכון יוצר הודעת ווטסאפ עם הרשימה המלאה. בלי אפליקציה ובלי הרשמה.",
+  "og_title": "מי מביא מה? רשימה לאירוע, ישר מהווטסאפ",
+  "priority": "0.8",
+  "crumbs": [["מי מביא מה", null]]
+} -->
+<header class="k-hero">
+  <h1>מי מביא מה</h1>
+  <p class="sub">יוצרים רשימה, שולחים לקבוצה, וכל אחד נרשם בטלפון. בלי אפליקציה ובלי הרשמה.</p>
+</header>
+<div class="tool bt" id="mv-root">
+  <div id="mv-edit" hidden>
+    <h2>האירוע</h2>
+    <div style="display:grid;gap:.5rem">
+      <input id="mv-t" type="text" maxlength="60" placeholder="מה האירוע? (למשל: על האש אצל דני)" aria-label="שם האירוע">
+      <input id="mv-w" type="text" maxlength="80" placeholder="מתי ואיפה? (לא חובה)" aria-label="מתי ואיפה">
+    </div>
+    <h2>להתחיל מתבנית <small>או לכתוב לבד</small></h2>
+    <div class="chips" id="mv-tpl"></div>
+    <h2>מה צריך</h2>
+    <ul class="mv-list" id="mv-items"></ul>
+    <form class="row" id="mv-add" style="margin-top:.6rem">
+      <input id="mv-new" type="text" maxlength="200" placeholder="עוד פריט…" aria-label="פריט חדש" autocomplete="off">
+      <button class="btn btn-gold" type="submit">+</button>
+    </form>
+    <div class="tools"><button class="btn btn-gold" type="button" id="mv-go">מוכן, לרשימה ←</button></div>
+  </div>
+
+  <div id="mv-view" hidden>
+    <div class="mv-head"><h2 id="mv-title"></h2><p id="mv-when"></p><p id="mv-count" style="color:var(--gold);font-family:var(--serif);font-size:1.1rem"></p></div>
+    <div class="row" style="margin-top:.8rem"><label class="no-flex" for="mv-me" style="color:var(--cream);font-weight:600">השם שלי</label><input id="mv-me" type="text" maxlength="20" placeholder="איך יופיע ברשימה" autocomplete="given-name"></div>
+    <ul class="mv-list" id="mv-list"></ul>
+    <form class="row" id="mv-mine" style="margin-top:.7rem">
+      <input id="mv-mine-n" type="text" maxlength="50" placeholder="אביא גם משהו שלא ברשימה…" aria-label="פריט שאני מביא/ה" autocomplete="off">
+      <button class="btn btn-line" type="submit">להוסיף</button>
+    </form>
+    <div class="mv-banner" id="mv-nudge" hidden>כדי שכולם יראו את הרשימה המעודכנת, שולחים אותה לקבוצה. אפשר לפתוח את הקבוצה ולהדביק.</div>
+    <div class="tools">
+      <a class="btn btn-gold" href="#" id="mv-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח עדכון לקבוצה</a>
+      <button class="btn btn-line btn-sm" type="button" id="mv-copy">להעתיק קישור</button>
+      <button class="btn btn-line btn-sm" type="button" id="mv-editbtn">לערוך את הרשימה</button>
+      <button class="btn btn-line btn-sm" type="button" id="mv-newev">אירוע חדש</button>
+    </div>
+  </div>
+
+  <div class="box">
+    <b style="color:var(--cream)">איך זה עובד בלי אפליקציה?</b>
+    <p class="muted" style="margin-top:.3rem">כל הרשימה נמצאת בתוך הקישור עצמו. מי שנרשם לוחץ "לשלוח עדכון לקבוצה", ונשלחת הודעה חדשה עם הרשימה המלאה וקישור מעודכן. לכן חשוב לפתוח תמיד את הקישור מההודעה <b>האחרונה</b> בקבוצה. שום דבר לא נשמר אצלנו.</p>
+  </div>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מי מביא מה? רשימה לאירוע שכל אחד נרשם אליה מהווטסאפ. בחינם, בלי הרשמה:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>

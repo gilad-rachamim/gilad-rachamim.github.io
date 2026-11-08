@@ -1,0 +1,46 @@
+<!--meta {
+  "site": "bait",
+  "nav": "shabat",
+  "tool": "bait_shabat",
+  "title": "מתכנן שבת ואורחים – כמה לקנות, אילו מנות, ומה מכינים ומתי | כלים למשפחה ולבית",
+  "description": "מתכנן שבת לטלפון: כמה אורחים (מבוגרים וילדים), אילו מנות בכל סעודה, כמה לקנות מכל דבר, ולוח זמנים מה מכינים בחמישי ומה בשישי. בלחיצה הכול עובר לרשימת הקניות או ל'מי מביא מה'. בחינם.",
+  "og_title": "מתכנן שבת ואורחים – כמה לקנות ומה מכינים מתי",
+  "priority": "0.8",
+  "crumbs": [["מתכנן שבת ואורחים", null]]
+} -->
+<header class="k-hero no-print">
+  <h1>מתכנן שבת ואורחים</h1>
+  <p class="sub">כמה יהיו, מה מגישים, כמה לקנות, ומה מכינים מתי. הכמויות הן הערכה טובה להתחלה, ואתם מכירים את האורחים שלכם הכי טוב.</p>
+</header>
+<div class="tool bt" id="sh-root">
+  <div class="no-print">
+    <h2>כמה יהיו בשולחן?</h2>
+    <div class="sh-num">
+      <label>מבוגרים <input id="sh-a" type="number" inputmode="numeric" min="0" max="200"></label>
+      <label>ילדים <input id="sh-k" type="number" inputmode="numeric" min="0" max="200"></label>
+    </div>
+    <h2>הסעודות והמנות <small>לוחצים כדי לבחור</small></h2>
+    <div class="sh-meals" id="sh-meals"></div>
+  </div>
+
+  <div class="paper print-me" id="sh-plan">
+    <h3>🕯️ תכנון השבת</h3>
+    <p class="sub2" id="sh-sum"></p>
+    <h4>מה לקנות</h4>
+    <ul class="sh-out" id="sh-shop"></ul>
+    <h4>מה מכינים ומתי</h4>
+    <div class="sh-time" id="sh-time"></div>
+    <p class="ft">gilad-rachamim.github.io/bait · שבת שלום</p>
+  </div>
+
+  <div class="mv-banner no-print" id="sh-done" hidden><span id="sh-done-txt"></span> <a class="gold" href="/bait/kniyot/">לרשימת הקניות ←</a></div>
+  <div class="tools no-print">
+    <button class="btn btn-gold btn-sm" type="button" id="sh-to-kn">🛒 להעביר לרשימת הקניות</button>
+    <a class="btn btn-line btn-sm" href="/bait/mevi/" id="sh-mevi">🎉 האורחים מביאים? ל"מי מביא מה"</a>
+    <a class="btn btn-line btn-sm" href="#" id="sh-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את התכנון</a>
+    <button class="btn btn-line btn-sm" type="button" id="sh-print">🖨️ להדפיס</button>
+    <button class="btn btn-line btn-sm" type="button" id="sh-reset">להתחיל מחדש</button>
+  </div>
+  <p class="disclaimer no-print">ילד נספר כ-0.6 מבוגר. התכנון נשמר רק בטלפון הזה.</p>
+  <div class="share-row no-print"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מתכנן שבת ואורחים: כמה לקנות מכל דבר ומה מכינים מתי. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>

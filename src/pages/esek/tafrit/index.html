@@ -1,0 +1,49 @@
+<!--meta {
+  "site": "esek",
+  "nav": "tafrit",
+  "tool": "esek_tafrit",
+  "title": "תפריט דיגיטלי בקישור ו-QR לשולחן, בחינם | כלים לעסק קטן",
+  "description": "מקלידים מנות ומחירים ומקבלים תפריט דיגיטלי בקישור, ו-QR להדפסה לשולחן. למסעדה, פיצריה, בית קפה, דוכן או מספרה. בלי הרשמה, בלי שרת ובלי תשלום.",
+  "og_title": "תפריט דיגיטלי בקישור ו-QR לשולחן, בחינם",
+  "priority": "0.8",
+  "crumbs": [["תפריט דיגיטלי ו-QR", null]],
+  "head": "<style>.k-form textarea#tf-items{min-height:14rem;font-size:1.02rem;line-height:1.6}</style><script src=\"https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js\" integrity=\"sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==\" crossorigin=\"anonymous\" referrerpolicy=\"no-referrer\" defer></script>",
+  "foot": "<script src=\"/assets/esek-tafrit.js\" defer></script>"
+} -->
+<div id="tf-build">
+<header class="k-hero">
+  <h1>תפריט דיגיטלי ו-QR</h1>
+  <p class="sub">מקלידים את המנות והמחירים, ומקבלים תפריט בקישור. שולחים בווטסאפ, ומדפיסים QR לשולחן. כל מי שסורק רואה את התפריט בטלפון.</p>
+</header>
+<div class="tool">
+  <form class="k-form lead-form" id="tf-form" novalidate>
+    <div class="field"><label for="tf-name">שם העסק</label><input id="tf-name" name="name" type="text" required maxlength="60" placeholder="למשל: פיצה של משה"></div>
+    <div class="field"><label for="tf-sub">שורה מתחת לשם <span class="opt">(לא חובה)</span></label><input id="tf-sub" name="sub" type="text" maxlength="80" placeholder="פיצה בעבודת יד · כשר למהדרין"></div>
+    <div class="field"><label for="tf-items">המנות והמחירים</label>
+      <textarea id="tf-items" name="items" required maxlength="4000" placeholder="פיצות:&#10;פיצה משפחתית - 55 | רוטב עגבניות ומוצרלה&#10;פיצה אישית - 32&#10;תוספות:&#10;זיתים - 6&#10;פטריות - 6&#10;שתייה:&#10;פחית - 8"></textarea>
+      <p class="es-hint">שורה שנגמרת בנקודתיים <code>פיצות:</code> היא כותרת. מנה: <code>שם - מחיר</code>. הסבר קטן אחרי קו: <code>| עם רוטב הבית</code>.</p>
+      <button class="btn btn-line btn-sm" type="button" id="tf-sample" style="margin-top:.5rem">למלא דוגמה של פיצריה</button>
+    </div>
+    <div class="field"><label for="tf-phone">טלפון או ווטסאפ להזמנות <span class="opt">(לא חובה)</span></label><input id="tf-phone" name="phone" type="tel" inputmode="tel" maxlength="20" placeholder="050-0000000" dir="ltr" style="text-align:right"></div>
+    <div class="field"><label for="tf-addr">כתובת לניווט <span class="opt">(לא חובה)</span></label><input id="tf-addr" name="addr" type="text" maxlength="90" placeholder="הרצל 12, באר שבע"></div>
+    <div class="field"><label for="tf-hours">שעות פתיחה <span class="opt">(לא חובה)</span></label><input id="tf-hours" name="hours" type="text" maxlength="90" placeholder="א-ה 11:00-23:00 · ו' עד שעתיים לפני שבת"></div>
+    <div class="field"><label for="tf-note">הערה בסוף התפריט <span class="opt">(לא חובה)</span></label><input id="tf-note" name="note" type="text" maxlength="160" placeholder="משלוחים בעיר עד 22:00 · כשרות: רבנות באר שבע"></div>
+    <button class="btn btn-gold btn-block" type="submit">ליצור קישור ו-QR</button>
+    <p class="privacy">התפריט לא נשמר אצלנו בשום מקום: הוא יושב בתוך הקישור עצמו, ובטלפון שלכם.</p>
+  </form>
+  <div class="res" id="tf-ready" hidden>
+    <h3>התפריט מוכן!</h3>
+    <div class="field"><input id="tf-link" type="text" readonly aria-label="הקישור לתפריט"></div>
+    <div class="share-row"><button class="btn btn-gold btn-sm" type="button" id="tf-copy">להעתיק את הקישור</button><a class="btn btn-line btn-sm" id="tf-wa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח בווטסאפ</a><a class="btn btn-line btn-sm" id="tf-open" href="#">לפתוח את התפריט</a><button class="btn btn-line btn-sm" type="button" data-tf="print">🖨️ QR לשולחן</button><a class="btn btn-line btn-sm" id="tf-qrimg" href="/esek/qr/">QR מעוצב כתמונה</a></div>
+    <div style="text-align:center"><div class="tf-qr" id="tf-qr-small"></div></div>
+    <p class="tf-len" id="tf-len"></p>
+    <p class="note">שינוי במחיר או מנה חדשה = מעדכנים כאן ומקבלים קישור חדש (התפריט נשמר לכם בטלפון). את דף ה-QR מדפיסים, חותכים לשניים ומניחים על השולחנות.</p>
+  </div>
+  <h2 style="font-family:var(--serif);color:var(--cream);font-size:1.3rem;margin-top:1.6rem">כך זה ייראה</h2>
+</div>
+</div>
+<div class="tool"><div id="tf-view" hidden></div>
+  <p id="tf-mine" class="disclaimer" hidden><a class="gold" href="/esek/tafrit/">רוצים תפריט כזה לעסק שלכם? בונים בחינם תוך שתי דקות ←</a></p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/esek/">כלים לעסק קטן</a>. חסר משהו בתפריט? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>
+</div>
+<div id="tf-sign" aria-hidden="true"></div>
