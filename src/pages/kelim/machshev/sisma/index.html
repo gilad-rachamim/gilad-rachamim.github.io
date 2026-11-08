@@ -1,0 +1,52 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "machshev_sisma",
+  "title": "בודק חוזק סיסמה ומחולל סיסמה חזקה – רץ רק בטלפון שלכם | הכלים של גילעד רחמים",
+  "description": "כמה זמן ייקח לפרוץ את הסיסמה שלכם, ומה לשפר. ובלחיצה – סיסמה חזקה חדשה. הבדיקה רצה רק בדפדפן: הסיסמה לא נשלחת, לא נשמרת ולא נמדדת. בחינם.",
+  "og_title": "כמה זמן ייקח לפרוץ את הסיסמה שלך?",
+  "priority": "0.7",
+  "crumbs": [["מחשב וטלפון", "/kelim/machshev/"], ["בודק סיסמה", null]],
+  "head": "<style>.ss-in{display:flex;gap:.45rem}.ss-in input{flex:1;min-width:0;font-size:1.15rem;direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace}.ss-meter{height:.6rem;border-radius:999px;background:var(--line);overflow:hidden;margin-top:.9rem}.ss-meter i{display:block;height:100%;width:0;transition:width .3s,background .3s}.ss-verdict{font-family:var(--serif);font-size:1.35rem;color:var(--cream);margin-top:.6rem}.ss-time{color:var(--parchment);margin-top:.2rem}.ss-tips{list-style:none;display:grid;gap:.3rem;margin-top:.7rem;color:var(--parchment)}.ss-tips li::before{content:'• ';color:var(--gold)}.ss-safe{border:1px solid var(--gold-soft);border-radius:12px;padding:.7rem .9rem;color:var(--parchment);margin-bottom:1.1rem;font-size:.98rem}.ss-out{font-family:ui-monospace,Consolas,monospace;direction:ltr;text-align:center;font-size:1.35rem;color:var(--cream);background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:.9rem .6rem;word-break:break-all;margin:.6rem 0;user-select:all}.ss-len{display:flex;align-items:center;gap:.7rem}.ss-len input{flex:1;accent-color:var(--gold)}.ss-len b{font-family:var(--serif);color:var(--cream);min-width:2ch;text-align:center}.ss-h2{font-family:var(--serif);color:var(--cream);font-size:1.3rem;margin-top:1.8rem}</style>",
+  "foot": "<script src=\"/assets/machshev-sisma.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>בודק סיסמה ומחולל סיסמה</h1>
+  <p class="sub">כמה זמן ייקח למחשב של פורץ לנחש את הסיסמה שלכם? ומה עושים כדי שזה ייקח מיליוני שנים?</p>
+</header>
+<div class="tool">
+  <p class="ss-safe">🔒 הבדיקה רצה רק בתוך הטלפון שלכם. הסיסמה לא נשלחת לשום מקום, לא נשמרת ולא נמדדת. אפשר לנתק את האינטרנט ולבדוק – זה עובד אותו דבר.</p>
+  <div class="field">
+    <label for="ss-pw">הסיסמה לבדיקה</label>
+    <div class="ss-in"><input id="ss-pw" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="מקלידים כאן…"><button class="btn btn-line btn-sm" type="button" id="ss-eye" aria-pressed="false">להציג</button></div>
+  </div>
+  <div class="ss-meter" aria-hidden="true"><i id="ss-bar"></i></div>
+  <p class="ss-verdict" id="ss-verdict" aria-live="polite">מחכה לסיסמה</p>
+  <p class="ss-time" id="ss-time"></p>
+  <ul class="ss-tips" id="ss-tips"></ul>
+
+  <h2 class="ss-h2">סיסמה חזקה חדשה</h2>
+  <div class="tabs" id="ss-mode" role="tablist">
+    <button type="button" role="tab" data-mode="strong" aria-selected="true">חזקה מאוד</button>
+    <button type="button" role="tab" data-mode="phone" aria-selected="false">קלה להקליד בטלפון</button>
+    <button type="button" role="tab" data-mode="pin" aria-selected="false">קוד מספרים</button>
+  </div>
+  <div class="field ss-len"><label for="ss-n">אורך</label><input id="ss-n" type="range" min="8" max="32" value="16"><b id="ss-nv">16</b></div>
+  <div class="ss-out" id="ss-out" aria-live="polite"></div>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="ss-copy">להעתיק</button>
+    <button class="btn btn-line btn-sm" type="button" id="ss-new">סיסמה אחרת</button>
+    <button class="btn btn-line btn-sm" type="button" id="ss-test">לבדוק אותה למעלה</button>
+  </div>
+  <p class="note" id="ss-mnote"></p>
+
+  <h2 class="ss-h2">שלושה כללים שמספיקים</h2>
+  <ul class="ss-tips">
+    <li>סיסמה ארוכה עדיפה על סיסמה מסובכת. 16 תווים חזקים יותר מ-8 עם סימנים.</li>
+    <li>סיסמה שונה לכל חשבון חשוב. כשאתר אחד נפרץ, הפורצים מנסים את אותה סיסמה בכל השאר.</li>
+    <li>לא צריך לזכור הכול: מנהל הסיסמאות של Google או של Apple שומר בשבילכם, בחינם. ובחשבון הראשי – להפעיל אימות דו-שלבי.</li>
+  </ul>
+  <p class="disclaimer">הזמן הוא הערכה למחשב חזק שמנסה עשרה מיליארד ניחושים בשנייה. זה לא אומר שסיסמה "חזקה" מגינה מפני הכול: לא מקלידים סיסמה בקישור שהגיע בהודעה, ולא מוסרים אותה בטלפון לאף אחד.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="כמה זמן ייקח לפרוץ את הסיסמה שלך? בודק סיסמה שרץ רק בטלפון, לא שולח כלום. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+  <p class="note"><a href="/kelim/machshev/gibui/">ואחרי הסיסמה: צ'ק-ליסט גיבוי לטלפון ←</a></p>
+</div>
