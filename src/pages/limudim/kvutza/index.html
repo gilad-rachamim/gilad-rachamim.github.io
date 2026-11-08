@@ -1,0 +1,78 @@
+<!--meta {
+  "site": "limudim",
+  "nav": "kvutza",
+  "tool": "kvutza",
+  "title": "לימוד משותף בקבוצה: מחלקים את המשניות או התנ״ך בין המשפחה ובית הכנסת, ומסיימים יחד | כלים ללימודים",
+  "description": "בוחרים מה לומדים, ש״ס משניות, סדר, מסכת או ספר בתנ״ך, כותבים את שמות הלומדים, ומקבלים חלוקה שווה, קישור אחד לקבוצה בווטסאפ, הטקסט מספריא, ודף סיום להדפסה. בלי הרשמה ובלי שרת. חינם.",
+  "og_title": "לימוד משותף בקבוצה – מחלקים ומסיימים יחד",
+  "priority": "0.7",
+  "crumbs": [["לימוד משותף בקבוצה", null]],
+  "foot": "<script src=\"/assets/limudim-data.js\"></script><script src=\"/assets/limudim-ilui.js\"></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>לימוד משותף בקבוצה</h1>
+  <p class="sub">משפחה, חברים או בית כנסת מחלקים ביניהם את המשניות או את התנ״ך, וכל אחד לומד את החלק שלו. מסיימים יחד.</p>
+</header>
+
+<div class="tool">
+  <div id="kv-out" hidden>
+    <div id="kv-view"></div>
+    <div class="panel no-print">
+      <div class="btns">
+        <a class="btn btn-gold" id="kv-wa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לקבוצה</a>
+        <button class="btn btn-line" type="button" id="kv-print">להדפיס דף סיום</button>
+      </div>
+      <div class="btns"><button class="linkish" type="button" id="kv-copy">להעתיק את הקישור</button><button class="linkish" type="button" id="kv-again">חלוקה חדשה</button></div>
+      <p class="status" id="kv-copy-st" aria-live="polite"></p>
+      <p class="note" id="kv-admin-tip" hidden>כל פעם שמשנים שם, שולחים לקבוצה שוב. ההודעה האחרונה בקבוצה היא הרשימה המעודכנת.</p>
+    </div>
+    <details class="panel no-print">
+      <summary><b>למה אין סימון משותף לכולם?</b></summary>
+      <p class="note">סימון שכולם רואים מחייב שרת שישמור את המצב, ואז גם שמות ונתונים של אנשים יושבים אצלנו. כאן בחרנו בדרך הפשוטה והפרטית: כל החלוקה יושבת בתוך הקישור, ומי שסיים מבשר בווטסאפ בלחיצה. המארגן מסמן ✓ אצלו, ושולח לקבוצה עדכון כשרוצה. לסיום תהילים יש כלי עם סימון משותף: <a class="gold" href="/kodesh/tehillim/">סיום תהילים בקישור</a>.</p>
+    </details>
+  </div>
+
+  <form class="panel no-print" id="kv-new" novalidate>
+    <div id="kv-form" style="display:grid;gap:.9rem">
+      <h2>חלוקה חדשה</h2>
+      <div class="row2">
+        <div class="field"><label for="kv-what">מה לומדים</label><select id="kv-what"><option value="mishnah">משנה</option><option value="tanakh">תנ״ך</option><option value="other">ספר אחר</option></select></div>
+        <div class="field" id="kv-part-w"><label for="kv-part">איזה חלק</label><select id="kv-part"></select></div>
+      </div>
+      <div id="kv-other" hidden style="display:grid;gap:.9rem">
+        <div class="field"><label for="kv-oname">שם הספר</label><input id="kv-oname" type="text" maxlength="50" placeholder="למשל: זוהר, פרשת בראשית"></div>
+        <div class="row2">
+          <div class="field"><label for="kv-ocount">כמה יש בו</label><input id="kv-ocount" type="number" min="1" max="5000" inputmode="numeric" placeholder="למשל 40"></div>
+          <div class="field"><label for="kv-ounit">של מה</label><select id="kv-ounit"><option>פרקים</option><option>דפים</option><option>סימנים</option><option>עמודים</option></select></div>
+        </div>
+      </div>
+      <label class="check"><input type="checkbox" id="kv-whole" checked> <span>לא לחתוך מסכת או ספר באמצע <span class="opt">(החלקים פחות שווים)</span></span></label>
+      <div class="field"><label for="kv-how">איך מחלקים</label><select id="kv-how"><option value="names">לפי שמות הלומדים</option><option value="count">למספר חלקים, ושמות אחר כך</option></select></div>
+      <div class="field" id="kv-names-w"><label for="kv-names">השמות, אחד בכל שורה</label><textarea id="kv-names" rows="5" placeholder="אבא&#10;דוד&#10;מיכל&#10;משפחת לוי"></textarea></div>
+      <div class="field" id="kv-count-w" hidden><label for="kv-count">כמה חלקים</label><input id="kv-count" type="number" min="1" max="300" value="30" inputmode="numeric"></div>
+      <div class="field"><label for="kv-title">שם ללימוד <span class="opt">(לא חובה)</span></label><input id="kv-title" type="text" maxlength="60" placeholder="ש״ס משניות של בית הכנסת"></div>
+      <details><summary class="gold">להקדיש את הלימוד <span class="opt">(לא חובה)</span></summary>
+        <div style="display:grid;gap:.9rem;margin-top:.7rem">
+          <div class="field"><label for="kv-k">בשביל מה</label><select id="kv-k"><option value="niftar">לעילוי נשמת</option><option value="refua">לרפואת</option><option value="hatzlacha">להצלחת</option><option value="zchut">לזכות</option></select></div>
+          <div class="field"><label for="kv-n">השם</label><input id="kv-n" type="text" maxlength="50" autocomplete="off"></div>
+          <div class="row2">
+            <div class="field"><label for="kv-bb">בן / בת</label><select id="kv-bb"><option>בן</option><option>בת</option></select></div>
+            <div class="field"><label for="kv-par">שם ההורה</label><input id="kv-par" type="text" maxlength="40" autocomplete="off"></div>
+          </div>
+        </div>
+      </details>
+      <div class="row2">
+        <div class="field"><label for="kv-goal">מסיימים עד <span class="opt">(לא חובה)</span></label><input id="kv-goal" type="date"></div>
+        <div class="field"><label for="kv-by">מי מארגן <span class="opt">(לא חובה)</span></label><input id="kv-by" type="text" maxlength="40" placeholder="משפחת כהן"></div>
+      </div>
+      <p class="status" id="kv-st" aria-live="polite"></p>
+      <button class="btn btn-gold btn-block" type="submit">לחלק ולקבל קישור</button>
+    </div>
+  </form>
+
+  <div class="no-print">
+    <p class="local-note">🔒 בלי הרשמה ובלי שרת. השמות נמצאים רק בקישור שאתם שולחים.</p>
+    <div class="share-row"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="לימוד משותף בקבוצה: מחלקים משניות או תנ״ך בין כולם, ומסיימים יחד" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר בווטסאפ</a></div>
+    <p class="disclaimer"><a class="gold" href="/limudim/">כל הכלים ללימודים</a> · חינם · בלי הרשמה</p>
+  </div>
+</div>
