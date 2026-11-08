@@ -1,0 +1,50 @@
+<!--meta {
+  "site": "kesef",
+  "nav": "shana",
+  "tool": "shana",
+  "title": "הוצאות קבועות לאורך השנה – מה יורד כל חודש | כלים לכסף",
+  "description": "כל ההוצאות הקבועות, החודשיות והשנתיות, בלוח אחד של 12 חודשים: כמה יורד החודש, איזה חודש כבד, ומתי מגיע חיוב גדול כמו ביטוח רכב או ארנונה. חינם, נשמר בטלפון.",
+  "og_title": "הוצאות קבועות לאורך השנה",
+  "crumbs": [["הוצאות לאורך השנה", null]]
+} -->
+<header class="k-hero">
+  <h1>הוצאות קבועות לאורך השנה</h1>
+  <p class="sub">לא רק מה שיורד כל חודש, גם מה שיורד פעם בשנה ומפתיע. רואים את כל השנה מראש.</p>
+</header>
+
+<div class="tool" id="shana">
+  <section class="sum" aria-live="polite">
+    <div class="lbl" id="s-lbl">החודש יורד לך</div>
+    <div class="big" id="s-now">₪0</div>
+    <div class="sub2" id="s-sub"></div>
+    <div class="months" id="s-chart" aria-label="12 החודשים הקרובים"></div>
+    <div class="stats">
+      <div><b id="s-year">₪0</b><span>בשנה</span></div>
+      <div><b id="s-avg">₪0</b><span>ממוצע לחודש</span></div>
+      <div><b id="s-max">-</b><span>החודש הכי כבד</span></div>
+    </div>
+  </section>
+
+  <section class="cancel-box" id="s-soon" hidden></section>
+
+  <section class="box">
+    <h2>ההוצאות הקבועות</h2>
+    <p class="note">לכל הוצאה: כמה, כל כמה זמן, ובאיזה חודש היא יורדת (לחיוב שנתי או רבעוני).</p>
+    <div class="chips" id="s-chips" aria-label="להוסיף מהר">
+      <button type="button" data-f="m">שכירות / משכנתא</button><button type="button" data-f="2">ארנונה</button><button type="button" data-f="2">חשמל</button><button type="button" data-f="2">מים</button><button type="button" data-f="y">ביטוח רכב</button><button type="button" data-f="y">טסט ורישוי רכב</button><button type="button" data-f="m">ביטוח בריאות</button><button type="button" data-f="y">ביטוח דירה</button><button type="button" data-f="m">גן / צהרון</button><button type="button" data-f="y">קייטנה</button><button type="button" data-f="y">ספרי לימוד</button><button type="button" data-f="m">ועד בית</button><button type="button" data-f="y">מתנות לחגים</button>
+    </div>
+    <div class="lrows" id="s-list"></div>
+    <button class="add" type="button" id="s-add">+ הוצאה אחרת</button>
+    <button class="add" type="button" id="s-import" hidden>להביא את המנויים מהכלי "כמה זה עולה לי באמת"</button>
+  </section>
+
+  <button class="big-btn" type="button" id="s-csv">לשמור לקובץ שנפתח באקסל</button>
+  <p class="saved" id="s-saved" role="status"></p>
+
+  <div class="local-note"><span class="ic2">💡</span><span>רעיון: את החודש הכי כבד אפשר לרכך מראש, אם שמים בצד כל חודש את הממוצע.</span></div>
+  <div class="local-note"><span class="ic2">🔒</span><span>נשמר רק בטלפון שלך.</span></div>
+  <div class="data-acts"><button class="linkish" type="button" data-wipe="shana">למחוק מהטלפון</button></div>
+</div>
+
+<p class="not-advice"><b>זה מחשבון, לא ייעוץ.</b> החשבון לפי מה שהכנסתם בלבד.</p>
+{{K:foot:הוצאות קבועות לאורך השנה: כמה יורד כל חודש, ומתי מגיע חיוב גדול. כלי חינמי}}

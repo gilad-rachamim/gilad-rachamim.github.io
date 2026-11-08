@@ -1,0 +1,52 @@
+<!--meta {
+  "site": "kesef",
+  "nav": "yeladim",
+  "tool": "yeladim",
+  "title": "חיסכון לילדים – כמה יהיה לכל ילד בגיל 18 | כלים לכסף",
+  "description": "רושמים את הילדים, כמה שמים כל חודש לכל אחד ובאיזו תשואה, ורואים כמה יהיה לכל ילד בגיל 18 או 21. אפשר לחלק סכום אחד שווה בין כולם. חינם, נשמר בטלפון.",
+  "og_title": "חיסכון לילדים – כמה יהיה בגיל 18",
+  "crumbs": [["חיסכון לילדים", null]]
+} -->
+<header class="k-hero">
+  <h1>חיסכון לילדים</h1>
+  <p class="sub">כמה לשים לכל ילד בחודש, וכמה יחכה לו כשיגדל. סכום קטן לאורך שנים נהיה סכום גדול.</p>
+</header>
+
+<div class="tool" id="yeladim">
+  <section class="box">
+    <h2>כמה שמים</h2>
+    <div class="field" style="margin-top:.6rem"><span class="label">איך מחלקים</span>
+      <div class="seg" id="y-mode" role="group" aria-label="איך מחלקים">
+        <button type="button" data-m="each" aria-pressed="true">סכום לכל ילד</button>
+        <button type="button" data-m="split" aria-pressed="false">סכום אחד, חלוקה שווה</button>
+      </div>
+    </div>
+    <div class="field" id="y-total-wrap" style="margin-top:.7rem" hidden><label for="y-total">כמה שמים בחודש לכולם ביחד (₪)</label><input id="y-total" class="num-in" type="text" inputmode="decimal" placeholder="300"></div>
+    <div class="grid2" style="margin-top:.7rem">
+      <div class="field"><label for="y-rate">תשואה בשנה (%)</label><input id="y-rate" class="num-in" type="text" inputmode="decimal" placeholder="4"></div>
+      <div class="field"><label for="y-age">עד גיל</label><select id="y-age"><option>18</option><option>21</option><option>25</option></select></div>
+    </div>
+    <p class="note" style="margin-top:.4rem">התשואה היא הנחה בלבד. 0% = קופה בבית. אף אחד לא יודע מראש מה תהיה התשואה האמיתית.</p>
+  </section>
+
+  <section class="box">
+    <h2>הילדים <small id="y-month-sum"></small></h2>
+    <p class="note">שם, גיל היום, כמה כבר נחסך לו, וכמה שמים לו בחודש.</p>
+    <div class="lrows" id="y-kids"></div>
+    <button class="add" type="button" id="y-add">+ עוד ילד</button>
+  </section>
+
+  <section class="sum" aria-live="polite">
+    <div class="lbl" id="y-lbl">כולם ביחד, כשיגיעו לגיל 18</div>
+    <div class="big" id="y-big">₪0</div>
+    <div class="sub2" id="y-sub"></div>
+    <div class="ykids" id="y-res"></div>
+  </section>
+
+  <div class="local-note"><span class="ic2">ℹ️</span><span>המדינה מפקידה כל חודש סכום קטן לכל ילד בתוכנית "חיסכון לכל ילד" של ביטוח לאומי, ואפשר להוסיף עליו. את הכסף הזה לא צריך להכניס כאן, אלא אם רוצים לראות את התמונה המלאה.</span></div>
+  <div class="local-note"><span class="ic2">🔒</span><span>נשמר רק בטלפון שלך.</span></div>
+  <div class="data-acts"><button class="linkish" type="button" data-wipe="yeladim">למחוק מהטלפון</button></div>
+</div>
+
+<p class="not-advice"><b>זה מחשבון, לא ייעוץ.</b> איפה לחסוך ובאיזה מסלול, כדאי לבדוק עם הבנק או עם יועץ מוסמך.</p>
+{{K:foot:חיסכון לילדים: כמה לשים לכל ילד בחודש, וכמה יהיה לו בגיל 18. כלי חינמי}}
