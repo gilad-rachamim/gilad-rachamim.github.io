@@ -1,0 +1,80 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "sipur",
+  "title": "סיפור בהמשכים: סרטון לכל פרק, לילדים ולשבת | כלי קודש",
+  "description": "סיפור לילדים לפני השינה או מעשה חכמים לשבת, כסדרת סרטונים קצרים: פרק אחרי פרק, עם תמונות, טקסט גדול ומנגינה. ספרייה של סיפורים מוכנים, או כותבים סיפור משלכם. בחינם, בלי הרשמה.",
+  "og_title": "סיפור בהמשכים – סרטון לכל פרק",
+  "priority": "0.7",
+  "crumbs": [["סיפור בהמשכים", null]],
+  "head": "<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Varela+Round&display=swap\" rel=\"stylesheet\"><style>.vd-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}.k-form textarea#sp-text{min-height:12rem}#vd-stage{display:flex;justify-content:center;margin-top:1rem}#vd-canvas{display:block;max-width:100%;max-height:72vh;width:auto;height:auto;border-radius:14px;border:1px solid var(--line);background:#000}#vd-info{text-align:center;color:var(--muted,#9aa6bf);font-size:.95rem;margin:.6rem 0 0}#vd-prog{width:100%;height:8px;margin-top:.6rem;accent-color:#d4b062}#vd-slides{list-style:none;padding:0;margin:1rem 0 0;display:grid;gap:.5rem}#vd-slides li{display:grid;grid-template-columns:76px 1fr;gap:.7rem;align-items:center;border:1px solid var(--line);border-radius:12px;padding:.4rem}#vd-slides img{width:76px;height:76px;object-fit:cover;border-radius:9px;cursor:pointer}#vd-slides span{font-size:.9rem;line-height:1.45}#vd-slides small{display:block;opacity:.7;font-size:.78rem}#vd-result{margin-top:1rem;text-align:center}#vd-result video{max-width:100%;max-height:70vh;border-radius:14px;background:#000}.vd-credits{font-size:.8rem;line-height:1.6;opacity:.85}.vd-credits li{margin:.1rem 0}.sp-lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.6rem;margin:.4rem 0 1.2rem}.sp-lib button{all:unset;cursor:pointer;display:block;border:1px solid var(--line);border-radius:14px;padding:.75rem .9rem;line-height:1.4}.sp-lib button:hover,.sp-lib button:focus-visible{border-color:#d4b062}.sp-lib button[aria-pressed=true]{border-color:#d4b062;box-shadow:0 0 0 2px rgba(212,176,98,.35)}.sp-lib b{display:block;font-size:1.05rem}.sp-lib small{display:block;opacity:.75;font-size:.82rem}.sp-lib .tag{display:inline-block;font-size:.72rem;border-radius:99px;padding:.05rem .55rem;margin-bottom:.3rem;background:#2a9d8f;color:#fff}.sp-lib .tag.t{background:#8a6d2b}.sp-h{font-size:1.1rem;margin:1.2rem 0 .3rem}.sp-tabs{display:flex;flex-wrap:wrap;gap:.4rem;margin:.2rem 0 .6rem}.sp-tabs button{all:unset;cursor:pointer;border:1px solid var(--line);border-radius:99px;padding:.3rem .85rem;font-size:.92rem}.sp-tabs button[aria-pressed=true]{background:#d4b062;color:#1a1306;border-color:#d4b062;font-weight:700}.sp-tabs .add{border-style:dashed}.sp-note{font-size:.85rem;opacity:.8;margin:.2rem 0 0}.sp-mine{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}.sp-mine select{flex:1;min-width:12rem}@media(max-width:520px){.vd-row{grid-template-columns:1fr}}</style>",
+  "foot": "<script src=\"/assets/sipur-sifria.js\" defer></script><script src=\"/assets/video-engine.js\" defer></script><script src=\"/assets/sipur.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>סיפור בהמשכים</h1>
+  <p class="sub">סיפור לפני השינה, או מעשה חכמים לשולחן השבת, כסדרת סרטונים קצרים: פרק אחרי פרק. בוחרים סיפור מוכן או כותבים סיפור משלכם, ומקבלים סרטון לכל פרק, עם תמונות, טקסט ברור ומנגינה.</p>
+</header>
+<div class="tool">
+  <h2 class="sp-h">סיפורים מוכנים</h2>
+  <div class="sp-lib" id="sp-lib" role="group" aria-label="סיפורים מוכנים"></div>
+
+  <h2 class="sp-h">הסיפורים שלי</h2>
+  <div class="sp-mine">
+    <div class="field" style="flex:1;margin:0;min-width:12rem"><select id="sp-mine" aria-label="הסיפורים שלי" style="width:100%"></select></div>
+    <button class="btn btn-line btn-sm" type="button" id="sp-new">+ סיפור חדש</button>
+    <button class="btn btn-line btn-sm" type="button" id="sp-del">למחוק</button>
+  </div>
+  <p class="sp-note">הסיפורים שאתם כותבים נשמרים בטלפון הזה בלבד, כדי שאפשר יהיה לחזור ולהוסיף פרק בשבוע הבא. שינוי בסיפור מוכן נשמר כעותק שלכם.</p>
+
+  <form class="k-form lead-form" id="vd-form" novalidate>
+    <div class="vd-row">
+      <div class="field"><label for="sp-title">שם הסיפור</label><input id="sp-title" name="title" type="text" maxlength="50" placeholder="הכבשה שחזרה הביתה"></div>
+      <div class="field"><label for="sp-mode">סוג הסיפור</label><select id="sp-mode" name="mode"><option value="kids">לילדים: צבעוני, גופן גדול, מנגינה עליזה</option><option value="torah">תורני: מראה רציני, מנגינה רכה</option></select></div>
+    </div>
+    <div class="field"><span class="label" id="sp-ch-label">הפרקים</span>
+      <div class="sp-tabs" id="sp-tabs" role="group" aria-labelledby="sp-ch-label"></div>
+    </div>
+    <div class="field"><label for="sp-text" id="sp-text-label">הטקסט של פרק 1</label><textarea id="sp-text" name="text" maxlength="3000" placeholder="כותבים כאן את הפרק. כל שורה תהיה שקופית אחת בערך. לילדים: 5–7 משפטים קצרים לפרק, כדי שהסרטון יהיה כדקה."></textarea></div>
+    <div class="vd-row">
+      <div class="field"><label for="sp-planned">כמה פרקים יהיו בסך הכול <span class="opt">(לא חובה)</span></label><input id="sp-planned" name="planned" type="number" min="1" max="30" inputmode="numeric" placeholder="למשל 4"></div>
+      <div class="field"><label for="sp-sign">שורה בסוף כל פרק <span class="opt">(לא חובה)</span></label><input id="sp-sign" name="sign" type="text" maxlength="50" placeholder="לילה טוב, נועה ואורי"></div>
+    </div>
+    <div class="vd-row">
+      <div class="field"><label for="vd-size">צורה</label><select id="vd-size" name="size"><option value="story">לגובה (סטטוס)</option><option value="square">ריבוע (קבוצה)</option></select></div>
+      <div class="field"><label for="vd-pace">קצב</label><select id="vd-pace" name="pace"><option value="1">רגיל</option><option value="1.3">איטי, לילדים קטנים</option><option value="0.8">מהיר</option></select></div>
+    </div>
+    <div class="vd-row">
+      <div class="field"><label for="vd-music">מוזיקה</label><select id="vd-music" name="music"><option value="on">מנגינה לפי סוג הסיפור</option><option value="none">בלי מוזיקה</option></select></div>
+      <div class="field"><label for="vd-look">מראה הטקסט (בסיפור תורני)</label><select id="vd-look" name="look"><option value="gold">לבן עם כותרות זהב</option><option value="white">לבן בלבד</option></select></div>
+    </div>
+  </form>
+
+  <div id="vd-stage"><canvas id="vd-canvas" width="720" height="1280" role="img" aria-label="תצוגה של הסרטון"></canvas></div>
+  <p id="vd-info" aria-live="polite"></p>
+  <div class="share-row">
+    <button class="btn btn-line btn-sm" type="button" id="vd-play">▶ לצפות לפני</button>
+    <button class="btn btn-gold btn-sm" type="button" id="vd-make">ליצור סרטון לפרק הזה</button>
+    <button class="btn btn-line btn-sm" type="button" id="vd-shuffle">תמונות אחרות</button>
+  </div>
+  <progress id="vd-prog" max="1" value="0" hidden></progress>
+
+  <div id="vd-result" hidden>
+    <video id="vd-video" controls playsinline></video>
+    <div class="share-row">
+      <button class="btn btn-gold btn-sm" type="button" id="vd-share"><svg class="ic"><use href="#wa"/></svg> לשתף בווטסאפ</button>
+      <button class="btn btn-line btn-sm" type="button" id="vd-dl">לשמור את הסרטון</button>
+    </div>
+    <p class="ios-tip" id="vd-tip" hidden>הסרטון נשמר. עכשיו פותחים את הווטסאפ, ומצרפים אותו מהגלריה או מהקבצים.</p>
+    <p class="disclaimer" id="vd-fmt"></p>
+  </div>
+
+  <ol id="vd-slides" aria-label="השקופיות"></ol>
+  <p class="disclaimer">לוחצים על תמונה ברשימה כדי להחליף אותה. הסרטון נוצר בטלפון או במחשב שלכם, בזמן אמת, ולכן פרק בן דקה לוקח דקה. כדאי להישאר בדף עד הסוף. שום טקסט לא נשלח אלינו.</p>
+  <details class="disclaimer"><summary>מאיפה הסיפורים, התמונות והמוזיקה</summary>
+    <p>הסיפורים לילדים נכתבו במיוחד לכלי הזה. הסיפורים התורניים מספרים במילים שלנו מעשים מהגמרא (יומא לה, שבת ל–לא) ומהתורה (בראשית לז–מה). אפשר להשתמש בהם בחופשיות, בבית, בגן ובכיתה.</p>
+    <p>כל התמונות מוויקישיתוף (Wikimedia Commons), ברישיון CC0: חופשיות לכל שימוש, גם בלי ציון שם. בכל זאת, תודה לצלמים:</p>
+    <ul class="vd-credits" id="vd-credits"></ul>
+    <p>המנגינות נוצרות בדפדפן עצמו, תווים פשוטים שנכתבו לכלי הזה. אין בהן הקלטה של אף אחד.</p>
+  </details>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/">כלי קודש</a>. יש לכם רעיון לסיפור שחסר בספרייה? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>
+</div>
