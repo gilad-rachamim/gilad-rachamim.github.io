@@ -1,0 +1,26 @@
+{
+ "name": "כלים לעסק קטן",
+ "short_name": "כלים לעסק",
+ "description": "כלים חינמיים לעסק קטן: תפריט בקישור ו-QR, מודעת מבצע, QR מעוצב וצ'ק-ליסט לפתיחת עסק",
+ "id": "/esek/",
+ "start_url": "/esek/?utm_source=pwa",
+ "scope": "/esek/",
+ "display": "standalone",
+ "background_color": "#1c1712",
+ "theme_color": "#1c1712",
+ "dir": "rtl",
+ "lang": "he",
+ "icons": [
+  {
+   "src": "/assets/icon-esek-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "/assets/icon-esek-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  }
+ ]
+}
