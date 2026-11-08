@@ -1,0 +1,34 @@
+/* כלים למשפחה ולבית (/kelim/mishpacha/). */
+.mp-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.4rem}
+.mp-chips button{font:inherit;font-size:.95rem;padding:.35rem .75rem;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--body);cursor:pointer}
+.mp-chips button:hover{border-color:var(--gold-soft);color:var(--cream)}
+.mp-cat{font-family:var(--sans);font-size:.95rem;color:var(--muted);margin:.8rem 0 .3rem}
+.mp-add{display:flex;gap:.5rem}
+.mp-add input{flex:1;min-width:0}
+.mp-list{list-style:none;display:grid;gap:.15rem}
+.mp-list label{display:grid;grid-template-columns:1.6rem 1fr auto;gap:.7rem;align-items:center;padding:.5rem .4rem;border-radius:10px;cursor:pointer;color:var(--parchment);font-size:1.08rem}
+.mp-list input{width:1.3rem;height:1.3rem;accent-color:var(--gold)}
+.mp-list label:has(input:checked) span{color:var(--muted);text-decoration:line-through}
+.mp-list .x{background:none;border:0;color:var(--muted);font-size:1.3rem;cursor:pointer;line-height:1}
+.mp-empty{color:var(--muted);text-align:center;padding:1rem 0}
+.mp-tools{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-top:1.2rem}
+.mp-row{display:grid;grid-template-columns:1fr 1fr auto;gap:.45rem;margin-bottom:.45rem}
+.mp-row input{min-width:0}
+.mp-row .x{background:none;border:0;color:var(--muted);font-size:1.4rem;cursor:pointer}
+.mp-card{max-width:30rem;margin:1.2rem auto 0;background:#fffdf7;color:#1d1d1d;border-radius:14px;padding:1.3rem 1.2rem;line-height:1.6;border:1px solid #d9cfb4}
+.mp-card h3{font-family:var(--serif);font-size:1.45rem;text-align:center;color:#24331f}
+.mp-card .s2{text-align:center;color:#555;font-size:.95rem;margin-bottom:.6rem}
+.mp-card h4{font-family:var(--serif);font-size:1.08rem;color:#24331f;border-bottom:1px solid #c9b97d;margin:.85rem 0 .3rem;padding-bottom:.15rem}
+.mp-card .nt{white-space:pre-wrap}
+.mp-card table{width:100%;border-collapse:collapse;font-size:1.05rem}
+.mp-card td{padding:.35rem .2rem;border-bottom:1px dotted #bbb}
+.mp-card td.who{font-weight:700;text-align:left}
+.mp-card .ft{text-align:center;color:#666;font-size:.85rem;margin-top:1rem}
+@media print{
+  @page{size:A4;margin:14mm}
+  html,body{background:#fff!important}
+  body *{visibility:hidden}
+  .topbar,.site-foot,.crumbs,.install-bar,.no-print{display:none!important}
+  .mp-card,.mp-card *{visibility:visible}
+  .mp-card{position:absolute;top:0;right:0;left:0;max-width:none;border:0;font-size:14pt}
+}
