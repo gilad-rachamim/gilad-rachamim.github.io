@@ -218,6 +218,39 @@
     $('bt-bnote').hidden = !(list.length >= 3 && Date.now() - last > 30 * 864e5);
   }
 
+  // ---------- ברית שהגיעה מ"טופס פרטי הברית" (?add=…) ----------
+  // ההורים ממלאים את הטופס ב-/kodesh/tofes-brit/, ובסוף ההודעה למוהל יש קישור עם הפרטים (JSON ב-base64url).
+  function fromLink() {
+    var m = /[?&]add=([A-Za-z0-9_-]+)/.exec(location.search);
+    if (!m) return;
+    var clean = function () { try { history.replaceState(null, '', location.pathname); } catch (e) {} };
+    var o;
+    try {
+      var s = m[1].replace(/-/g, '+').replace(/_/g, '/');
+      while (s.length % 4) s += '=';
+      o = JSON.parse(decodeURIComponent(escape(atob(s))));
+    } catch (e) { clean(); alert('הקישור לא שלם. אפשר להעתיק את הפרטים מההודעה ולהוסיף ידנית.'); return; }
+    var str = function (v, n) { return String(v == null ? '' : v).trim().slice(0, n); };
+    var isoOk = function (v) { return /^\d{4}-\d{2}-\d{2}$/.test(v || '') ? v : ''; };
+    var b = { parents: str(o.p, 80), phone: str(o.ph, 20), place: str(o.pl, 100), sandak: str(o.s, 60), time: /^\d{2}:\d{2}$/.test(o.t || '') ? o.t : '', birth: isoOk(o.b), date: isoOk(o.d), notes: str(o.n, 500), baby: '' };
+    if (!b.date && b.birth) b.date = iso(add(parse(b.birth), 7));
+    if (!b.date) { clean(); alert('בקישור אין תאריך ברית. אפשר להוסיף את הברית ידנית.'); return; }
+    var same = list.filter(function (x) { return x.date === b.date && (x.parents || '') === b.parents; })[0];
+    clean();
+    if (same) { render(); var el = document.querySelector('[data-id="' + same.id + '"]'); if (el) el.scrollIntoView({ block: 'center' }); alert('הברית הזאת כבר ביומן.'); return; }
+    var d = parse(b.date);
+    var q = 'להוסיף ליומן את הברית הזאת?\n\n' + (b.parents || 'בלי שם') + '\nיום ' + DAYS[d.getDay()] + ', ' + heb(d) + ' · ' + g(d) + (b.time ? ' · ' + b.time : '') + (b.place ? '\n' + b.place : '');
+    if (!confirm(q)) return;
+    b.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    b.created = new Date().toISOString(); b.saw = false; b.bandage = false; b.bechor = false; b.from = 'tofes';
+    list.push(b); save(); render();
+    ev('britot_action', { what: 'add_from_tofes' });
+    if (window.toolUsed) window.toolUsed('britot', { how: 'tofes' });
+    var el2 = document.querySelector('[data-id="' + b.id + '"]');
+    if (el2) el2.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
   load(); render();
   if (/[?&]new\b/.test(location.search)) openForm(null);
+  fromLink();
 })();
