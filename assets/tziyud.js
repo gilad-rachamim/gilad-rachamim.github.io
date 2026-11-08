@@ -4,7 +4,8 @@
   var $ = function (id) { return document.getElementById(id); };
   var box = $('tz-list');
   if (!box) return;
-  var KEY = 'kodesh-tziyud';
+  // דף אחר יכול לתת רשימה משלו: <script type="application/json" id="tz-data">, ו-data-key / data-title / data-tool על #tz-list
+  var KEY = box.getAttribute('data-key') || 'kodesh-tziyud', TITLE = box.getAttribute('data-title') || 'רשימת ציוד דת לשטח', TOOL = box.getAttribute('data-tool') || 'tziyud';
   var GROUPS = [
     ['תפילה', [
       ['tfilin', 'תפילין', 'בשקית אטומה למים'], ['tzitzit', 'ציצית (טלית קטן) + זוג להחלפה'], ['talit', 'טלית'],
@@ -20,6 +21,8 @@
     ['לימוד וחיזוק', [
       ['sefer', 'ספר קטן ללימוד', 'משנה, חומש או ספר הלכה'], ['alon', 'עלוני שבת לחלוקה'], ['tzedaka', 'מטבעות לצדקה']]]
   ];
+  var custom = document.getElementById('tz-data');
+  if (custom) try { GROUPS = JSON.parse(custom.textContent); } catch (e) {}
   var st = { on: {}, mine: [] };
   try { var sv = JSON.parse(localStorage.getItem(KEY) || 'null'); if (sv) { st.on = sv.on || {}; st.mine = sv.mine || []; } } catch (e) {}
   function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
@@ -45,17 +48,17 @@
     var it = items(), n = it.filter(function (i) { return st.on[i.id]; }).length;
     $('tz-bar').style.width = (it.length ? n / it.length * 100 : 0) + '%';
     $('tz-txt').textContent = n === it.length && n ? 'הכול ארוז ✓ צאתכם לשלום' : n + ' מתוך ' + it.length + ' ארוזים';
-    var link = '\n\n' + location.origin + '/kodesh/tziyud/';
+    var link = '\n\n' + location.origin + location.pathname;
     var miss = all().map(function (g) { var m = g[1].filter(function (i) { return !st.on[i.id]; }); return m.length ? '*' + g[0] + '*\n' + m.map(function (i) { return '▫️ ' + i.name; }).join('\n') : ''; }).filter(Boolean).join('\n\n');
     var full = all().map(function (g) { return '*' + g[0] + '*\n' + g[1].map(function (i) { return '▫️ ' + i.name; }).join('\n'); }).join('\n\n');
-    $('tz-wa-miss').href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent((miss ? 'מה עוד חסר לי לשטח:\n\n' + miss : 'הכול ארוז ✓') + link);
-    $('tz-wa-all').href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent('רשימת ציוד דת לשטח:\n\n' + full + '\n\nלסמן בטלפון מה ארוז:' + link);
+    $('tz-wa-miss').href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent((miss ? 'מה עוד חסר לי (' + TITLE + '):\n\n' + miss : 'הכול ארוז ✓') + link);
+    $('tz-wa-all').href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(TITLE + ':\n\n' + full + '\n\nלסמן בטלפון מה ארוז:' + link);
   }
   box.addEventListener('change', function (e) {
     var id = e.target.getAttribute('data-id'); if (!id) return;
     if (e.target.checked) st.on[id] = 1; else delete st.on[id];
     save(); draw();
-    if (window.toolUsed && !used) { used = 1; window.toolUsed('tziyud', { how: 'check' }); }
+    if (window.toolUsed && !used) { used = 1; window.toolUsed(TOOL, { how: 'check' }); }
   });
   var used = 0;
   box.addEventListener('click', function (e) {
@@ -70,6 +73,6 @@
     st.mine.push({ id: 'm' + Date.now(), name: v }); $('tz-new').value = ''; save(); draw();
   });
   $('tz-reset').addEventListener('click', function () { if (confirm('לנקות את כל הסימונים? הפריטים שהוספתם יישארו.')) { st.on = {}; save(); draw(); } });
-  ['tz-wa-miss', 'tz-wa-all'].forEach(function (id) { $(id).addEventListener('click', function () { if (window.toolUsed) window.toolUsed('tziyud', { how: id }); }); });
+  ['tz-wa-miss', 'tz-wa-all'].forEach(function (id) { $(id).addEventListener('click', function () { if (window.toolUsed) window.toolUsed(TOOL, { how: id }); }); });
   draw();
 })();
