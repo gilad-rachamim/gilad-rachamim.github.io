@@ -1,7 +1,7 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'kodesh-202611081703';
+var CACHE = 'kodesh-202611081719';
 var PRECACHE = ["/kodesh/azkara/", "/kodesh/beit-knesset/", "/kodesh/brachot/", "/kodesh/britot/", "/kodesh/chag-basis/", "/kodesh/chayal/", "/kodesh/dapei-tefila/", "/kodesh/dvar-torah/", "/kodesh/hodaot/", "/kodesh/", "/kodesh/kartis/", "/kodesh/kibudim-yechida/", "/kodesh/luach/", "/kodesh/luach-shana/", "/kodesh/masach/", "/kodesh/mekorot/", "/kodesh/misheberach/", "/kodesh/mohalim/bli-atar/", "/kodesh/mohalim/", "/kodesh/post/", "/kodesh/psak/", "/kodesh/qr/", "/kodesh/shiur/", "/kodesh/shut/", "/kodesh/simcha/", "/kodesh/taarichim/", "/kodesh/tehillim/", "/kodesh/tehillim/shem/", "/kodesh/teuda/", "/kodesh/tziyud/", "/kodesh/video/", "/kodesh/zmanim/", "/assets/site.css", "/assets/kelim.css", "/assets/kelim.js", "/assets/track.js", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-kodesh-192.png"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
