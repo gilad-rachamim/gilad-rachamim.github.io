@@ -1,0 +1,36 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "miluim_yamim",
+  "title": "מונה ימי מילואים – כמה ימים עשיתי השנה ובסך הכול | הכלים של גילעד רחמים",
+  "description": "רושמים כל סבב מילואים (מתאריך עד תאריך), ורואים כמה ימים עשיתם בכל שנה ובסך הכול. נשמר בטלפון, אפשר לשלוח סיכום בווטסאפ. בחינם, בלי הרשמה.",
+  "og_title": "מונה ימי מילואים – כמה ימים עשיתי?",
+  "priority": "0.7",
+  "crumbs": [["צבא ומילואים", "/kelim/miluim/"], ["מונה ימים", null]],
+  "head": "<style>.ym-sum{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:1rem}.ym-sum div{padding:.9rem;border:1px solid var(--gold-soft);border-radius:14px;text-align:center;background:rgba(216,179,95,.07)}.ym-sum b{display:block;font-family:var(--serif);font-size:2.2rem;color:var(--cream);line-height:1.1}.ym-sum span{color:var(--body);font-size:.95rem}.ym-years{margin-top:.9rem;display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center}.ym-years span{border:1px solid var(--line);border-radius:99px;padding:.25rem .8rem;color:var(--body);font-size:.95rem}.ym-years b{color:var(--gold)}.ym-list{list-style:none;display:grid;gap:.5rem;margin-top:1rem}.ym-list li{display:grid;grid-template-columns:1fr auto auto;gap:.6rem;align-items:center;padding:.7rem .85rem;border:1px solid var(--line);border-radius:12px;color:var(--parchment)}.ym-list small{display:block;color:var(--muted);font-size:.88rem}.ym-list .d{font-family:var(--serif);color:var(--gold);font-size:1.2rem;white-space:nowrap}.ym-list .x{background:none;border:0;color:var(--muted);font-size:1.4rem;cursor:pointer}.ym-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}</style>",
+  "foot": "<script src=\"/assets/miluim-yamim.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מונה ימי מילואים</h1>
+  <p class="sub">רושמים כל סבב, ורואים כמה ימים עשיתם השנה ובסך הכול. הכול נשמר בטלפון שלכם.</p>
+</header>
+<div class="tool">
+  <form class="k-form" id="ym-form" novalidate>
+    <div class="ym-row">
+      <div class="field"><label for="ym-from">מתאריך</label><input id="ym-from" type="date" required></div>
+      <div class="field"><label for="ym-to">עד תאריך</label><input id="ym-to" type="date" required></div>
+    </div>
+    <div class="field"><label for="ym-note">הערה <span class="opt">(לא חובה)</span></label><input id="ym-note" type="text" maxlength="50" placeholder="למשל: צו 8, תעסוקה בצפון"></div>
+    <button class="btn btn-gold btn-block" type="submit">להוסיף סבב</button>
+    <p class="note" id="ym-msg" aria-live="polite"></p>
+  </form>
+  <div class="ym-sum"><div><b id="ym-year">0</b><span id="ym-year-l">ימים השנה</span></div><div><b id="ym-total">0</b><span>ימים בסך הכול</span></div></div>
+  <div class="ym-years" id="ym-years"></div>
+  <ul class="ym-list" id="ym-list"></ul>
+  <div class="share-row">
+    <a class="btn btn-gold btn-sm" href="#" id="ym-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לעצמי סיכום</a>
+    <button class="btn btn-line btn-sm" type="button" id="ym-copy">להעתיק</button>
+  </div>
+  <p class="disclaimer">הספירה כאן כוללת את יום ההתייצבות ואת יום השחרור. זה מונה אישי לזיכרון בלבד: הספירה הרשמית, והזכויות לפיה, נקבעות לפי אישורי השירות מהצבא (כדאי לשמור אחד מכל סבב).</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מונה ימי מילואים בטלפון: רושמים כל סבב ורואים כמה ימים עשית השנה. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>

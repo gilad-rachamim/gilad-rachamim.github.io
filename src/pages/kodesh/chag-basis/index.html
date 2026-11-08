@@ -1,0 +1,50 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "chag_basis",
+  "title": "דף מידע לחג בבסיס: תפילות, סעודות ופעילויות, להדפסה ולווטסאפ | כלי קודש",
+  "description": "רב היחידה ממלא את זמני התפילות, הסעודות והפעילויות בחג, ומקבל דף מעוצב לתלייה בבסיס, וטקסט מוכן לקבוצת הווטסאפ. לכל חג: ראש השנה, יום כיפור, סוכות, חנוכה, פורים, פסח, שבועות. בחינם.",
+  "og_title": "דף מידע לחג בבסיס – להדפסה ולווטסאפ",
+  "priority": "0.7",
+  "crumbs": [["דף מידע לחג בבסיס", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/daf-print.css\">",
+  "foot": "<script src=\"/assets/daf-print.js\" defer></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>דף מידע לחג בבסיס</h1>
+  <p class="sub">ממלאים את זמני התפילות, הסעודות והפעילויות, ומקבלים דף מעוצב לתלייה בבסיס, וגם טקסט מוכן לקבוצה.</p>
+</header>
+<div class="tool no-print">
+  <form class="k-form" data-key="kodesh-chag-basis" novalidate>
+    <div class="dp-row">
+      <div class="field"><label for="cb-chag">החג</label><input id="cb-chag" name="chag" data-out="chag" type="text" maxlength="30" list="cb-chagim" placeholder="סוכות"></div>
+      <div class="field"><label for="cb-unit">היחידה או הבסיס</label><input id="cb-unit" name="unit" data-out="unit" type="text" maxlength="50" placeholder="בסיס נחשונים"></div>
+    </div>
+    <datalist id="cb-chagim"><option value="ראש השנה"><option value="יום כיפור"><option value="סוכות"><option value="שמחת תורה"><option value="חנוכה"><option value="פורים"><option value="פסח"><option value="שבועות"><option value="ט׳ באב"><option value="יום העצמאות"></datalist>
+    <div class="field"><label for="cb-place">איפה? <span class="opt">(בית כנסת, סוכה, חדר אוכל)</span></label><input id="cb-place" name="place" data-out="place" type="text" maxlength="80" placeholder="בית הכנסת של הבסיס, והסוכה ליד חדר האוכל"></div>
+    <div class="field"><label for="cb-times">לוח הזמנים, שורה לכל דבר <span class="opt">(שעה – מה)</span></label><textarea id="cb-times" name="times" data-out="times" data-lines="times" rows="6" placeholder="17:15 – הדלקת נרות&#10;17:30 – מנחה וערבית בבית הכנסת&#10;18:30 – סעודת החג בסוכה&#10;08:30 – שחרית&#10;12:00 – סעודה שנייה&#10;18:20 – ערבית והבדלה"></textarea></div>
+    <div class="field"><label for="cb-what">מה מחכה לכם <span class="opt">(לא חובה, שורה לכל דבר)</span></label><textarea id="cb-what" name="what" data-out="what" data-lines="list" rows="3" placeholder="ארבעת המינים – אפשר לברך אצל הרב כל הבוקר&#10;שיעור קצר ושירה אחרי הסעודה"></textarea></div>
+    <div class="field"><label for="cb-msg">מילה מהרב <span class="opt">(לא חובה)</span></label><textarea id="cb-msg" name="msg" data-out="msg" rows="2" placeholder="גם רחוק מהבית, נעשה כאן חג אמיתי. ושמחת בחגך – כולם מוזמנים."></textarea></div>
+    <div class="dp-row">
+      <div class="field"><label for="cb-sig">חתימה</label><input id="cb-sig" name="sig" data-out="sig" type="text" maxlength="50" placeholder="רב הבסיס · טלפון 050-0000000"></div>
+      <div class="field"><label for="cb-theme">עיצוב</label><select id="cb-theme" name="theme"><option value="klaf">קלף וזהב</option><option value="kachol">כחול</option><option value="zayit">ירוק זית</option><option value="lavan">לבן (חוסך דיו)</option></select></div>
+    </div>
+  </form>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="dp-print">להדפיס / לשמור PDF</button>
+    <button class="btn btn-line btn-sm" type="button" id="dp-wa"><svg class="ic"><use href="#wa"/></svg> לשלוח בווטסאפ</button>
+    <button class="btn btn-line btn-sm" type="button" id="dp-copy">להעתיק כטקסט</button>
+  </div>
+</div>
+<div id="dp-sheet" class="dp-sheet" dir="rtl">
+  <div class="dp-head"><span class="bsd">בס"ד</span><p class="dp-kicker">חג שמח!</p><h2 data-in="chag"></h2><p class="dp-sub" data-in="unit"></p></div>
+  <div class="dp-sec" data-opt><h3>איפה</h3><p data-in="place"></p></div>
+  <div class="dp-sec"><h3>לוח הזמנים</h3><div data-in="times"></div></div>
+  <div class="dp-sec" data-opt><h3>מה מחכה לכם</h3><div data-in="what"></div></div>
+  <div class="dp-sec dp-box" data-opt><p data-in="msg"></p></div>
+  <p class="dp-sig" data-in="sig"></p>
+</div>
+<div class="tool no-print">
+  <p class="disclaimer">מה שאתם כותבים נשמר אצלכם בטלפון, ובחג הבא רק מעדכנים שעות. זמני הדלקת נרות לפי המיקום – ב<a class="gold" href="/kodesh/zmanim/">זמנים לבסיס</a>.</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kodesh/">כלי קודש</a>. רוצים עוד משהו בדף? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>
+</div>
