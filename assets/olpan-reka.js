@@ -9,6 +9,7 @@
   var BGS = ['jeru-1', 'jeru-2', 'kotel-1', 'kotel-3', 'books-1', 'torah-1', 'torah-2', 'candles-1', 'light-1', 'olive-1', 'wheat-1', 'mount-1', 'sea-1', 'sunset-1', 'garden-1', 'desert-1'];
   var out = $('rk-out'), ctx = out.getContext('2d'), cam = $('rk-cam'), state = $('rk-state');
   var tmp = document.createElement('canvas'), tctx = tmp.getContext('2d');
+  var mask = document.createElement('canvas'), mctx = mask.getContext('2d'), prev = document.createElement('canvas'), pctx = prev.getContext('2d'), hasPrev = false;
   var seg = null, stream = null, running = false, busy = false, mode = 'blur', bgImg = null, bgName = '';
   var mr = null, parts = [], result = null, frames = 0, fpsT = 0, slow = 0, small = false, wake = null;
 
@@ -26,7 +27,7 @@
   function size() {
     var h = $('rk-shape').value === 'h', w = small ? (h ? 640 : 360) : (h ? 960 : 540);
     out.width = w; out.height = Math.round(h ? w * 9 / 16 : w * 4 / 3);
-    tmp.width = out.width; tmp.height = out.height;
+    [tmp, mask, prev].forEach(function (c) { c.width = out.width; c.height = out.height; }); hasPrev = false;
   }
   // ציור "cover": ממלא את כל הפריים בלי עיוות, חותך מה שעודף
   function cover(c, src, sw, sh) {
@@ -39,8 +40,13 @@
     ctx.save(); ctx.clearRect(0, 0, W, H);
     if (mode === 'none') { cover(ctx, res.image, vw, vh); ctx.restore(); return; }
     // 1. האדם בלבד: המסכה, ובתוכה (source-in) הפריים מהמצלמה
-    tctx.save(); tctx.clearRect(0, 0, W, H);
-    tctx.filter = 'blur(' + (small ? 2 : 3) + 'px)'; cover(tctx, res.segmentationMask, vw, vh); tctx.filter = 'none';
+    // החלקה בזמן: המסכה החדשה מעורבבת עם הקודמת (40%), כדי שהשוליים לא ירצדו מפריים לפריים
+    mctx.clearRect(0, 0, W, H);
+    if (hasPrev) { mctx.globalAlpha = 0.4; mctx.drawImage(prev, 0, 0); }
+    mctx.globalAlpha = hasPrev ? 0.6 : 1; mctx.filter = 'blur(' + (small ? 2 : 3) + 'px)';
+    cover(mctx, res.segmentationMask, vw, vh); mctx.filter = 'none'; mctx.globalAlpha = 1;
+    pctx.clearRect(0, 0, W, H); pctx.drawImage(mask, 0, 0); hasPrev = true;
+    tctx.save(); tctx.clearRect(0, 0, W, H); tctx.drawImage(mask, 0, 0);
     tctx.globalCompositeOperation = 'source-in'; cover(tctx, res.image, vw, vh); tctx.restore();
     // 2. הרקע
     if (mode === 'blur') { ctx.filter = 'blur(' + $('rk-blur').value + 'px)'; cover(ctx, res.image, vw, vh); ctx.filter = 'none'; }
