@@ -12,6 +12,8 @@
     ['31.35,34.3', 'עוטף עזה', 20], ['33.2,35.57', 'קריית שמונה', 20]];
   var MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
   var DAYS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'שבת'];
+  // ימים אזרחיים שלא צריכים להופיע בלוח של רב (נשארים: ימי זיכרון, עצמאות, ירושלים, עלייה, רבין, סיגד)
+  var SKIP_MODERN = /School Observance|Ben-Gurion|Hebrew Language|Family Day|Herzl|Jabotinsky/;
   var KEY = 'kodesh-luach-shana';
   var st = { place: CITIES[0][0], range: 'year', candle: 'auto', parsha: 1, chag: 1, fast: 1, rc: 1, modern: 1, times: 1, title: '' };
   try { var sv = JSON.parse(localStorage.getItem(KEY) || 'null'); if (sv) Object.keys(sv).forEach(function (k) { st[k] = sv[k]; }); } catch (e) {}
@@ -55,7 +57,7 @@
       else if (f & F.PARSHA_HASHAVUA) { if (!st.parsha) return; kind = 'parsha'; }
       else if (f & (F.MINOR_FAST | F.MAJOR_FAST)) { if (!st.fast) return; kind = 'fast'; if (e.eventTime) t = hm(e.eventTime); }
       else if (f & F.ROSH_CHODESH) { if (!st.rc) return; kind = 'rc'; }
-      else if (f & F.MODERN_HOLIDAY) { if (!st.modern) return; kind = 'modern'; }
+      else if (f & F.MODERN_HOLIDAY) { if (!st.modern || SKIP_MODERN.test(e.getDesc())) return; kind = 'modern'; }
       else if (f & F.SPECIAL_SHABBAT) { if (!st.parsha) return; kind = 'special'; }
       else if (f & (F.CHAG | F.MINOR_HOLIDAY | F.CHOL_HAMOED | F.EREV)) { if (!st.chag) return; kind = f & F.CHAG ? 'chag' : 'holiday'; }
       else if (f & (F.OMER_COUNT | F.DAF_YOMI | F.MOLAD | F.SHABBAT_MEVARCHIM | F.HEBREW_DATE | F.USER_EVENT | F.MISHNA_YOMI | F.YERUSHALMI_YOMI | F.NACH_YOMI)) return;
