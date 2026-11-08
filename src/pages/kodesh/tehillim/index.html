@@ -6,6 +6,7 @@
   "description": "פותחים סיום תהילים לעילוי נשמה, לרפואה או להצלחה, שולחים קישור בווטסאפ, וכל אחד לוקח פרקים עד שכל הספר נגמר. לפי פרקים, ימי החודש או ספרים, וגם כמה סיומים. אפשר לקבל על עצמך מעשה טוב ולראות כמה נלקחו. הטקסט בדף. בחינם, בלי הרשמה.",
   "og_title": "סיום תהילים בקישור – כל אחד לוקח פרקים, ומעשי חסד",
   "priority": "0.8",
+  "og_image": "og-tehillim.jpg",
   "crumbs": [["סיום תהילים", null]],
   "head": "<link rel=\"stylesheet\" href=\"/assets/tehillim.css\">",
   "foot": "<script src=\"/assets/tehillim-text.js\" defer></script><script src=\"/assets/tehillim.js\" defer></script>"
@@ -49,12 +50,25 @@
 
 <div class="tool" id="ts-view" hidden>
   <div class="ts-card" id="ts-head"><p class="ts-hint">טוען את הסיום…</p></div>
+  <canvas id="ts-cv" width="1080" height="1080" hidden></canvas>
   <div class="ts-made" id="ts-made" hidden>
     <b>הסיום מוכן. עכשיו שולחים את הקישור לקבוצה.</b>
-    <div class="share-row"><a class="btn btn-gold btn-sm" id="ts-made-wa" href="https://wa.me/" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח בווטסאפ</a><button class="btn btn-line btn-sm" type="button" data-copy-link>להעתיק קישור</button></div>
+    <div class="share-row"><a class="btn btn-gold btn-sm" id="ts-made-wa" data-wa href="https://wa.me/" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח בווטסאפ</a><button class="btn btn-line btn-sm" type="button" data-share-img>לשתף כתמונה</button><button class="btn btn-line btn-sm" type="button" data-copy-link>להעתיק קישור</button></div>
     <p>הקישור לניהול (להוסיף סבב, למחוק) נשמר בטלפון הזה. כדי לנהל גם מטלפון אחר: <button class="ts-link" type="button" id="ts-copy-admin">להעתיק את קישור הניהול</button> ולשמור אותו אצלכם, לא לשלוח לקבוצה.</p>
   </div>
   <div class="ts-prog" id="ts-prog"></div>
+
+  <section class="ts-box ts-now" id="ts-now" hidden>
+    <h2>מעשה טוב של דקה, כבר עכשיו</h2>
+    <p class="ts-hint">עוד לפני הפרקים: דבר אחד קטן שעושים עכשיו, <span id="ts-now-for"></span>. ככה כבר יש לך חלק בזכות.</p>
+    <div class="ts-now-g">
+      <button type="button" data-now="mila"><b>💛 לשלוח מילה טובה</b><small>הודעה חמה למישהו שאוהבים, בלחיצה</small></button>
+      <button type="button" data-now="tzedaka"><b>🪙 נתתי עכשיו צדקה</b><small>גם מטבע אחד בקופה</small></button>
+      <button type="button" data-now="lashon"><b>🤐 שעה בלי לשון הרע</b><small>מעכשיו ועד עוד שעה</small></button>
+      <button type="button" data-now="zikui"><b>📲 לזכות עוד חבר</b><small>לשלוח את הסיום למישהו נוסף</small></button>
+    </div>
+    <p class="ts-pl-sum" id="ts-now-ok" role="status" hidden></p>
+  </section>
 
   <section class="ts-box" id="ts-take-box">
     <h2>לקחת פרקים</h2>
@@ -62,6 +76,11 @@
     <div class="share-row" id="ts-take-btns"></div>
     <p class="ts-hint">או לוחצים על פרק פנוי בטבלה למטה.</p>
     <p class="ts-err" id="ts-take-err" role="alert" hidden></p>
+    <div class="ts-after" id="ts-after" hidden>
+      <b>תודה! רוצים להכפיל את הזכות?</b>
+      <p>שלחו את הסיום לעוד שלושה חברים. כל פרק שהם לוקחים בזכותכם, גם הוא נחשב לכם.</p>
+      <div class="share-row"><a class="btn btn-gold btn-sm" data-wa href="https://wa.me/" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחברים</a><button class="btn btn-line btn-sm" type="button" data-share-img>לשתף כתמונה</button></div>
+    </div>
   </section>
 
   <section class="ts-box" id="ts-my-box" hidden>
@@ -91,7 +110,8 @@
   </section>
 
   <div class="share-row">
-    <a class="btn btn-gold btn-sm" id="ts-wa" href="https://wa.me/" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הקישור בווטסאפ</a>
+    <a class="btn btn-gold btn-sm" id="ts-wa" data-wa href="https://wa.me/" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הקישור בווטסאפ</a>
+    <button class="btn btn-line btn-sm" type="button" data-share-img>לשתף כתמונה + קישור</button>
     <button class="btn btn-line btn-sm" type="button" data-copy-link>להעתיק קישור</button>
     <a class="btn btn-line btn-sm" id="ts-shem" href="/kodesh/tehillim/shem/">תהילים לפי שם</a>
   </div>
