@@ -180,3 +180,7 @@ body.kn-shop .kn-edit-only{display:none!important}
 .pz-form input[type=range]{width:100%;accent-color:var(--gold)}
 .pz-prev{color:var(--parchment);line-height:1.7;background:rgba(255,255,255,.04);border-radius:12px;padding:.6rem .8rem}
 .pz-bonus{color:var(--ok)}
+/* סנכרון בין ההורים וגיבוי */
+.bt-sync{border:1px solid var(--line);border-radius:16px;padding:1rem;background:rgba(255,255,255,.03);margin-top:1.4rem}
+.bt-sync h2{margin-top:0}
+.bt-sync .tools{margin-top:.7rem}

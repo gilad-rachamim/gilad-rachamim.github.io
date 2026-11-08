@@ -1,0 +1,69 @@
+/* כלים לזכויות ושיקום (/kelim/shikum/): תיק מסמכים, יומן פניות, הכנה לוועדה. */
+/* תיק מסמכים */
+.sk-meter{position:sticky;top:3.6rem;z-index:4;background:var(--ink);padding:.8rem 0 .7rem;border-bottom:1px solid var(--line)}
+.sk-meter .track{height:.5rem;border-radius:999px;background:var(--line);overflow:hidden}
+.sk-meter .fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold-soft),var(--gold));transition:width .4s}
+.sk-meter p{color:var(--gold);font-family:var(--serif);font-size:1.05rem;margin-top:.45rem;text-align:center}
+.sk-g{margin-top:1.6rem}
+.sk-g h2{font-family:var(--serif);color:var(--cream);font-size:1.3rem;display:flex;justify-content:space-between;align-items:baseline}
+.sk-g h2 small{font-family:var(--sans);font-size:.9rem;color:var(--muted)}
+.sk-list{list-style:none;display:grid;gap:.25rem;margin-top:.4rem}
+.sk-list label{display:grid;grid-template-columns:1.6rem 1fr auto;gap:.7rem;align-items:start;padding:.55rem .5rem;border-radius:10px;cursor:pointer;color:var(--parchment)}
+.sk-list input{width:1.3rem;height:1.3rem;margin-top:.25rem;accent-color:var(--gold)}
+.sk-list label:has(input:checked) span{color:var(--muted);text-decoration:line-through}
+.sk-list small{display:block;color:var(--muted);font-size:.9rem}
+.sk-list small a{color:var(--gold)}
+.sk-list .x{background:none;border:0;color:var(--muted);font-size:1.3rem;cursor:pointer;line-height:1}
+.sk-add{display:flex;gap:.5rem;margin-top:1.4rem}
+.sk-add input{flex:1;min-width:0}
+.sk-tools{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-top:1.6rem}
+.sk-note{background:rgba(227,183,101,.1);border:1px solid var(--gold-soft);border-radius:12px;padding:.7rem .9rem;color:var(--parchment);margin:1rem 0;display:flex;gap:.6rem;align-items:center;justify-content:space-between;flex-wrap:wrap}
+/* צ'יפים */
+.sk-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.45rem}
+.sk-chips button{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--parchment);border-radius:999px;padding:.35rem .75rem;font:inherit;font-size:.95rem;cursor:pointer}
+.sk-chips button.on{background:rgba(227,183,101,.18);border-color:var(--gold);color:var(--cream)}
+/* יומן פניות */
+.sk-two{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+@media (max-width:420px){.sk-two{grid-template-columns:1fr}}
+.sk-wait{margin-top:1.4rem}
+.sk-wait h2,.sk-log h2{font-family:var(--serif);color:var(--cream);font-size:1.3rem;margin-bottom:.5rem}
+.sk-item{border:1px solid var(--line);border-radius:14px;padding:.8rem .9rem;margin-bottom:.6rem;background:rgba(255,255,255,.03);color:var(--parchment)}
+.sk-item .top{display:flex;justify-content:space-between;gap:.5rem;align-items:baseline;flex-wrap:wrap}
+.sk-item .top b{color:var(--cream);font-size:1.08rem}
+.sk-item .top span{color:var(--muted);font-size:.9rem}
+.sk-item p{margin:.3rem 0 0;white-space:pre-wrap}
+.sk-item .lbl{color:var(--gold);font-size:.9rem}
+.sk-item .next{margin-top:.45rem;padding-top:.45rem;border-top:1px dashed var(--line)}
+.sk-item .next.done{opacity:.55;text-decoration:line-through}
+.sk-item .acts{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.55rem}
+.sk-item .acts a,.sk-item .acts button{font:inherit;font-size:.88rem;padding:.3rem .65rem;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--body);cursor:pointer;text-decoration:none}
+.sk-item .acts a:hover,.sk-item .acts button:hover{border-color:var(--gold-soft);color:var(--cream)}
+.sk-item.late{border-color:#c98a5c}
+.sk-item .due{color:#e8b48c}
+.sk-empty{color:var(--muted);text-align:center;padding:.8rem 0}
+/* הכנה לוועדה: הדף להדפסה, שלושה סגנונות */
+.sk-styles{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center;margin:.6rem 0}
+.sk-card{max-width:32rem;margin:1.2rem auto 0;border-radius:14px;padding:1.3rem 1.2rem;line-height:1.6;border:1px solid #d9cfb4}
+.sk-card h3{font-family:var(--serif);font-size:1.45rem;text-align:center}
+.sk-card .s2{text-align:center;font-size:.95rem;margin-bottom:.6rem}
+.sk-card h4{font-family:var(--serif);font-size:1.08rem;margin:.85rem 0 .3rem;padding-bottom:.15rem;border-bottom:1px solid}
+.sk-card .nt{white-space:pre-wrap}
+.sk-card ul,.sk-card ol{padding-inline-start:1.3rem}
+.sk-card .ft{text-align:center;font-size:.85rem;margin-top:1rem}
+.sk-card.t-lavan{background:#fff;color:#111}
+.sk-card.t-lavan h3,.sk-card.t-lavan h4{color:#111}.sk-card.t-lavan h4{border-color:#999}.sk-card.t-lavan .s2,.sk-card.t-lavan .ft{color:#555}
+.sk-card.t-zayit{background:#f4f6ec;color:#1f2a16;border-color:#9fae7d}
+.sk-card.t-zayit h3,.sk-card.t-zayit h4{color:#3d5a1e}.sk-card.t-zayit h4{border-color:#9fae7d}.sk-card.t-zayit .s2,.sk-card.t-zayit .ft{color:#55603f}
+.sk-card.t-klaf{background:#fbf3df;color:#2a2013;border-color:#c9b97d}
+.sk-card.t-klaf h3,.sk-card.t-klaf h4{color:#6b4a12}.sk-card.t-klaf h4{border-color:#c9b97d}.sk-card.t-klaf .s2,.sk-card.t-klaf .ft{color:#6d5b3c}
+.sk-tips{color:var(--body);margin:.6rem 0 0;padding-inline-start:1.2rem}
+.sk-tips li{margin:.25rem 0}
+@media print{
+  @page{size:A4;margin:14mm}
+  html,body{background:#fff!important}
+  body *{visibility:hidden}
+  .topbar,.site-foot,.crumbs,.install-bar,.no-print{display:none!important}
+  .sk-card,.sk-card *{visibility:visible}
+  .sk-card{position:absolute;top:0;right:0;left:0;max-width:none;border:0;font-size:13pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+.k-form .res:empty{display:none}
