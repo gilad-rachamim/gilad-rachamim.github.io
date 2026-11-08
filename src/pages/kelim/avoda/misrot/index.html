@@ -1,0 +1,48 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "avoda_misrot",
+  "title": "מעקב משרות – לאן שלחתי קורות חיים, מתי, מה הסטטוס ומה הצעד הבא | הכלים של גילעד רחמים",
+  "description": "רשימה פשוטה של כל המשרות שפניתי אליהן: איפה, איזה תפקיד, מתי שלחתי, מאיפה שמעתי, הסטטוס (נשלח, חזרו אליי, ראיון, מחכה לתשובה, התקבלתי) והצעד הבא. תזכורת ביומן גוגל ושליחה בווטסאפ. בחינם, נשמר רק בטלפון.",
+  "og_title": "מעקב משרות – לא לאבד אף פנייה",
+  "priority": "0.7",
+  "crumbs": [["עבודה וחיפוש עבודה", "/kelim/avoda/"], ["מעקב משרות", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/avoda.css\">",
+  "foot": "<script src=\"/assets/avoda-misrot.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מעקב משרות</h1>
+  <p class="sub">"שלחתי לשם? מתי? מי דיבר איתי?" כל משרה ששולחים אליה נרשמת כאן בשתי שורות, עם הסטטוס והצעד הבא. כשמתקשרים, הכול מול העיניים.</p>
+</header>
+<div class="tool">
+  <div class="av-note" id="mi-demo" hidden><span>זו דוגמה, כדי שיהיה ברור איך זה נראה. כשתוסיפו משרה ראשונה, הדוגמה תימחק.</span><button class="btn btn-line btn-sm" type="button" id="mi-demo-x">למחוק את הדוגמה</button></div>
+  <form class="k-form" id="mi-form" novalidate>
+    <div class="av-two">
+      <div class="field"><label for="mi-at">איפה? <span class="opt">(החברה או המקום)</span></label><input id="mi-at" type="text" maxlength="60" placeholder="מפעל, חנות, משרד…"></div>
+      <div class="field"><label for="mi-role">איזה תפקיד?</label><input id="mi-role" type="text" maxlength="60" placeholder="מחסנאי"></div>
+    </div>
+    <div class="av-two">
+      <div class="field"><label for="mi-date">מתי שלחתי?</label><input id="mi-date" type="date"></div>
+      <div class="field"><label for="mi-st">מה הסטטוס?</label><select id="mi-st"></select></div>
+    </div>
+    <div class="field"><label for="mi-src">מאיפה שמעתי על המשרה? <span class="opt">(לא חובה)</span></label><input id="mi-src" type="text" maxlength="60">
+      <div class="av-chips" id="mi-chips"><button type="button">אתר דרושים</button><button type="button">חבר המליץ</button><button type="button">קבוצת ווטסאפ</button><button type="button">שירות התעסוקה</button><button type="button">שלט או מודעה</button><button type="button">פניתי ישירות</button></div></div>
+    <div class="field"><label for="mi-who">איש קשר <span class="opt">(לא חובה)</span></label><input id="mi-who" type="text" maxlength="60" placeholder="שרית, משאבי אנוש, 08-0000000"></div>
+    <div class="field"><label for="mi-note">הערות <span class="opt">(לא חובה)</span></label><textarea id="mi-note" maxlength="500" placeholder="ביקשו להביא המלצה מהעבודה הקודמת"></textarea></div>
+    <div class="av-two">
+      <div class="field"><label for="mi-next">הצעד הבא <span class="opt">(לא חובה)</span></label><input id="mi-next" type="text" maxlength="120" placeholder="להתקשר לשאול אם קיבלו"></div>
+      <div class="field"><label for="mi-due">עד מתי? <span class="opt">(לא חובה)</span></label><input id="mi-due" type="date"></div>
+    </div>
+    <button class="btn btn-gold" type="submit">להוסיף לרשימה</button>
+    <p class="res" id="mi-msg" aria-live="polite"></p>
+  </form>
+  <div class="av-sum" id="mi-sum"></div>
+  <section class="av-sec" id="mi-wait-s"><h2>מחכה לי</h2><div id="mi-wait"></div></section>
+  <section class="av-sec"><h2>כל המשרות</h2><div id="mi-list"></div></section>
+  <div class="av-tools">
+    <a class="btn btn-gold btn-sm" href="#" id="mi-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את כל הרשימה</a>
+    <button class="btn btn-line btn-sm" type="button" id="mi-copy">להעתיק</button>
+  </div>
+  <p class="disclaimer">הרשימה עוזרת לזכור ולהתארגן. היא לא נותנת ייעוץ על שכר או על זכויות עובדים. מי שעובר שיקום תעסוקתי – שואלים את הגורם המטפל. הכול נשמר רק בטלפון הזה.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מעקב משרות: לאן שלחתי קורות חיים, מתי, מה הסטטוס ומה הצעד הבא. בחינם, נשמר בטלפון:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
