@@ -18,7 +18,7 @@
  * פריסה: פריסה → פריסה חדשה → אפליקציית אינטרנט → הפעלה בתור: אני, גישה: כל אחד.
  */
 
-var VERSION = 'matkonim-1';
+var VERSION = 'matkonim-2';
 var CFG = {
   OWNER_EMAIL: 'gilad4049@gmail.com',
   PAGE: 'https://gilad-rachamim.github.io/kodesh/chanuka/matkonim/',
@@ -33,7 +33,9 @@ var CFG = {
   MAIL_PER_DAY: 40
 };
 var KINDS = { sufganiyot: 1, levivot: 1, other: 1 };
-var R_COLS = ['מזהה', 'תאריך', 'שם', 'כותרת', 'סוג', 'מצרכים', 'אופן הכנה', 'מילה אישית', 'תמונות', 'קבצים', 'לבבות', 'מצב', 'מכשיר'];
+var KOSHER = { chalavi: 'חלבי', parve: 'פרווה', basari: 'בשרי' };
+var DIET = { gf: 'ללא גלוטן', keto: 'קטוגני', vegan: 'טבעוני', veg: 'צמחוני' };
+var R_COLS = ['מזהה', 'תאריך', 'שם', 'כותרת', 'סוג', 'מצרכים', 'אופן הכנה', 'מילה אישית', 'תמונות', 'קבצים', 'לבבות', 'מצב', 'מכשיר', 'כשרות', 'תזונה'];  // עמודות חדשות רק בסוף
 var C_COLS = ['מזהה', 'מתכון', 'תאריך', 'שם', 'פרגון', 'מצב', 'מכשיר'];
 var PROPS = PropertiesService.getScriptProperties();
 
@@ -69,6 +71,8 @@ function addRecipe(b) {
   var r = b.r || {};
   var tok = cleanTok(b.tok);
   var title = clean(r.t, 70), name = clean(r.n, 40), kind = KINDS[r.k] ? r.k : 'other';
+  var kosher = KOSHER[r.ks] ? r.ks : '';
+  var diet = (r.dt || []).filter(function (d) { return DIET[d]; }).slice(0, 4).join(',');
   var ing = clean(r.ing, 2500, true), steps = clean(r.st, 4000, true), story = clean(r.sto, 600, true);
   if (title.length < 2) fail('כתבו שם למתכון.');
   if (ing.length < 5) fail('כתבו את המצרכים.');
@@ -92,10 +96,10 @@ function addRecipe(b) {
       urls.push('https://lh3.googleusercontent.com/d/' + f.getId() + '=w1200');
     });
   }
-  var row = [id, new Date(), name, title, kind, ing, steps, story, urls.join(' '), ids.join(' '), 0, 'גלוי', tok];
+  var row = [id, new Date(), name, title, kind, ing, steps, story, urls.join(' '), ids.join(' '), 0, 'גלוי', tok, kosher, diet];
   sheetR().appendRow(row.map(safe));
   bustCache();
-  notify('מתכון חדש: ' + title, 'מאת: ' + (name || 'אנונימי') + '\n\n' + title + '\n\nמצרכים:\n' + ing + '\n\nהכנה:\n' + steps +
+  notify('מתכון חדש: ' + title, 'מאת: ' + (name || 'אנונימי') + (kosher ? ' · ' + KOSHER[kosher] : '') + (diet ? ' · ' + diet.split(',').map(function (d) { return DIET[d]; }).join(', ') : '') + '\n\n' + title + '\n\nמצרכים:\n' + ing + '\n\nהכנה:\n' + steps +
     (story ? '\n\nמילה אישית:\n' + story : '') + (urls.length ? '\n\nתמונות:\n' + urls.join('\n') : '') +
     '\n\nלצפייה: ' + CFG.PAGE + '#r-' + id + '\nלהסתרה: ' + CFG.PAGE + '?admin=' + adminKey() + '#r-' + id);
   return { ok: true, id: id };
@@ -151,7 +155,7 @@ function listVisible() {
   });
   var out = rv.filter(function (r) { return r[0] && r[11] === 'גלוי'; }).map(function (r) {
     return { id: String(r[0]), d: day(r[1]), n: unsafe(r[2]), t: unsafe(r[3]), k: r[4], ing: unsafe(r[5]), st: unsafe(r[6]),
-      sto: unsafe(r[7]), ph: String(r[8] || '').split(' ').filter(String), h: +r[10] || 0, c: com[r[0]] || [] };
+      sto: unsafe(r[7]), ph: String(r[8] || '').split(' ').filter(String), h: +r[10] || 0, ks: KOSHER[r[13]] ? r[13] : '', dt: String(r[14] || '').split(',').filter(function (d) { return DIET[d]; }), c: com[r[0]] || [] };
   }).reverse();
   var s = JSON.stringify(out);
   if (s.length < 95000) cache.put('list', s, 120);

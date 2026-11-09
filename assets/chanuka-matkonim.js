@@ -29,7 +29,44 @@
       .then(function (d) { if (!d || !d.ok) throw new Error((d && d.error) || 'משהו השתבש. נסו שוב.'); return d; });
   }
 
-  var LIST = [], FILTER = 'all', HEARTS = {};
+  var LIST = [], FILTER = 'all', SORT = 'new', Q = '', HEARTS = {};
+  var KOSHER = { chalavi: 'חלבי', parve: 'פרווה', basari: 'בשרי' };
+  var DIET = { gf: 'ללא גלוטן', keto: 'קטוגני', vegan: 'טבעוני', veg: 'צמחוני' }, DF = '';
+  function diets(r) { return (r.dt || []).filter(function (d) { return DIET[d]; }); }
+
+  // רק רשימת המתכונים מתעדכנת בזמן חיפוש, כדי שהמקלדת לא תיסגר
+  function drawItems() {
+    var q = Q.trim().toLowerCase();
+    var shown = LIST.filter(function (r) {
+      if (FILTER !== 'all' && r.k !== FILTER) return false;
+      if (DF && diets(r).indexOf(DF) < 0) return false;
+      if (!q) return true;
+      return [r.t, r.n, r.ing, r.st, r.sto, KOSHER[r.ks] || ''].concat(diets(r).map(function (d) { return DIET[d]; })).join(' ').toLowerCase().indexOf(q) >= 0;
+    });
+    if (SORT === 'love') shown = shown.slice().sort(function (a, b) { return (b.h || 0) - (a.h || 0); });
+    $('mt-items').innerHTML = shown.length ? '<div class="mt-list">' + shown.map(card).join('') + '</div>'
+      : '<p class="mt-sm">' + (q ? 'לא מצאנו מתכון כזה. נסו מילה אחרת.' : LIST.length ? 'אין עדיין מתכונים מהסוג הזה. אולי שלכם יהיה הראשון?' : 'עוד אין מתכונים. המתכון שלכם יכול להיות הראשון!') + '</p>';
+    wireItems();
+  }
+
+  // הדפסת מתכון אחד ככרטיס נקי, בחלון נפרד
+  function printRecipe(r) {
+    var w = window.open('', '_blank');
+    if (!w) { alert('הדפדפן חסם חלון חדש. אפשרו חלונות קופצים ונסו שוב.'); return; }
+    var tags = [KIND[r.k] || KIND.other, KOSHER[r.ks]].concat(diets(r).map(function (d) { return DIET[d]; })).filter(Boolean).join(' · ');
+    w.document.write('<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>' + esc(r.t) + '</title><style>' +
+      'body{font-family:Arial,sans-serif;max-width:720px;margin:24px auto;padding:0 18px;color:#111;line-height:1.6}h1{font-size:26px;margin:0 0 4px}' +
+      '.m{color:#555;margin:0 0 14px}h2{font-size:18px;border-bottom:2px solid #c9a55c;padding-bottom:3px;margin:18px 0 6px}p{white-space:pre-line;margin:0}' +
+      'img{max-width:100%;max-height:300px;border-radius:10px;margin:8px 0}.f{margin-top:26px;color:#777;font-size:12px;border-top:1px solid #ddd;padding-top:6px}</style></head><body>' +
+      '<h1>' + esc(r.t) + '</h1><p class="m">' + esc(tags) + (r.n ? ' · מאת ' + esc(r.n) : '') + '</p>' +
+      (r.ph && r.ph[0] ? '<img src="' + esc(r.ph[0]) + '" alt="" referrerpolicy="no-referrer">' : '') +
+      (r.sto ? '<p><i>' + esc(r.sto) + '</i></p>' : '') +
+      '<h2>מצרכים</h2><p>' + esc(r.ing) + '</p><h2>אופן ההכנה</h2><p>' + esc(r.st) + '</p>' +
+      '<p class="f">מתכונים שמשתפים לחנוכה · gilad-rachamim.github.io/kodesh/chanuka/matkonim/</p>' +
+      '<script>window.onload=function(){setTimeout(function(){window.print()},400)}<\/script></body></html>');
+    w.document.close();
+    used('print');
+  }
   try { HEARTS = JSON.parse(store.get('hearts') || '{}'); } catch (e) {}
 
   function load(focus) {
@@ -46,16 +83,20 @@
     var chips = [['all', 'הכול'], ['sufganiyot', 'סופגניות'], ['levivot', 'לביבות'], ['other', 'עוד']].map(function (c) {
       return '<button type="button" class="mt-chip' + (FILTER === c[0] ? ' on' : '') + '" data-f="' + c[0] + '">' + c[1] + ' (' + (counts[c[0]] || 0) + ')</button>';
     }).join('');
-    var shown = LIST.filter(function (r) { return FILTER === 'all' || r.k === FILTER; });
+    var sorts = [['new', 'הכי חדשים'], ['love', 'הכי אהובים ❤']].map(function (c) {
+      return '<button type="button" class="mt-chip' + (SORT === c[0] ? ' on' : '') + '" data-s="' + c[0] + '">' + c[1] + '</button>';
+    }).join('');
     app.innerHTML =
       '<div class="mt-box"><h2>יש לכם מתכון חנוכה משלכם?</h2><p class="mt-sm">מעלים אותו עם תמונה, וכל המשפחות נהנות. בלי הרשמה.</p>' +
       '<div class="actions" style="justify-content:center"><button class="btn btn-gold" type="button" id="mt-open">להעלות מתכון</button></div></div>' +
       '<div id="mt-form-w"></div>' +
       (ADMIN ? '<p class="mt-adm">מצב ניהול פעיל בטלפון הזה: ליד כל מתכון ופרגון יש "להסתיר".</p>' : '') +
       '<div class="mt-chips">' + chips + '</div>' +
-      (shown.length ? '<div class="mt-list">' + shown.map(card).join('') + '</div>'
-        : '<p class="mt-sm">' + (LIST.length ? 'אין עדיין מתכונים מהסוג הזה. אולי שלכם יהיה הראשון?' : 'עוד אין מתכונים. המתכון שלכם יכול להיות הראשון!') + '</p>');
+      '<div class="mt-chips" style="margin-top:0">' + ['', 'gf', 'keto', 'vegan', 'veg'].map(function (d) { var n = d ? LIST.filter(function (r) { return diets(r).indexOf(d) >= 0; }).length : 0; return '<button type="button" class="mt-chip' + (DF === d ? ' on' : '') + '" data-d="' + d + '">' + (d ? DIET[d] + ' (' + n + ')' : 'כל סוגי התזונה') + '</button>'; }).join('') + '</div>' +
+      '<div class="mt-tools"><input id="mt-q" type="search" placeholder="חיפוש: שם, מצרך, מי כתב…" aria-label="חיפוש במתכונים" value="' + esc(Q) + '"><div class="mt-chips" style="margin:0">' + sorts + '</div></div>' +
+      '<div id="mt-items"></div>';
     wire();
+    drawItems();
     var target = focus || (location.hash.indexOf('#r-') === 0 ? location.hash.slice(3) : '');
     if (target && $('r-' + target)) { $('r-' + target).classList.add('hl'); $('r-' + target).scrollIntoView({ block: 'start' }); }
   }
@@ -68,11 +109,14 @@
     var share = 'https://wa.me/?text=' + encodeURIComponent('מתכון לחנוכה: ' + r.t + '\n' + location.origin + location.pathname + '#r-' + r.id);
     return '<article class="mt-r" id="r-' + esc(r.id) + '">' + ph + '<div class="mt-in">' +
       '<h3>' + esc(r.t) + '</h3>' +
-      '<p class="mt-by"><span class="mt-k">' + esc(KIND[r.k] || KIND.other) + '</span>' + (r.n ? 'מאת ' + esc(r.n) + ' · ' : '') + esc(r.d) + '</p>' +
+      '<p class="mt-by"><span class="mt-k">' + esc(KIND[r.k] || KIND.other) + '</span>' +
+      (r.ks && KOSHER[r.ks] ? '<span class="mt-k mt-ks-' + r.ks + '">' + KOSHER[r.ks] + '</span>' : '') +
+      diets(r).map(function (d) { return '<span class="mt-k mt-dt">' + DIET[d] + '</span>'; }).join('') + (r.n ? 'מאת ' + esc(r.n) + ' · ' : '') + esc(r.d) + '</p>' +
       (r.sto ? '<p class="mt-sto">' + esc(r.sto) + '</p>' : '') +
       '<details><summary>למתכון המלא</summary><h4>מצרכים</h4><p class="mt-txt">' + esc(r.ing) + '</p><h4>אופן ההכנה</h4><p class="mt-txt">' + esc(r.st) + '</p></details>' +
       '<div class="mt-bar"><button type="button" class="mt-heart' + (liked ? ' on' : '') + '" data-heart="' + esc(r.id) + '" aria-pressed="' + liked + '">' + (liked ? '❤' : '🤍') + ' <span>' + (r.h || 0) + '</span></button>' +
       '<a class="btn btn-line btn-sm" href="' + share + '" target="_blank" rel="noopener" data-wa="' + esc(r.id) + '">לשלוח בווטסאפ</a>' +
+      '<button type="button" class="btn btn-line btn-sm" data-print="' + esc(r.id) + '">להדפיס</button>' +
       (ADMIN ? '<button type="button" class="mt-hide" data-hide-r="' + esc(r.id) + '">להסתיר מתכון</button>' : '') + '</div>' +
       '<h4>פרגונים' + (r.c.length ? ' (' + r.c.length + ')' : '') + '</h4>' +
       (r.c.length ? '<ul class="mt-cs">' + r.c.map(function (c) {
@@ -89,6 +133,15 @@
   function wire() {
     $('mt-open').onclick = openForm;
     [].forEach.call(app.querySelectorAll('[data-f]'), function (b) { b.onclick = function () { FILTER = b.getAttribute('data-f'); draw(); }; });
+    [].forEach.call(app.querySelectorAll('[data-d]'), function (b) { b.onclick = function () { DF = b.getAttribute('data-d'); draw(); }; });
+    [].forEach.call(app.querySelectorAll('[data-s]'), function (b) { b.onclick = function () { SORT = b.getAttribute('data-s'); draw(); }; });
+    $('mt-q').oninput = function () { Q = this.value; drawItems(); };
+  }
+
+  function wireItems() {
+    [].forEach.call(app.querySelectorAll('[data-print]'), function (b) {
+      b.onclick = function () { var id = b.getAttribute('data-print'); LIST.forEach(function (r) { if (r.id === id) printRecipe(r); }); };
+    });
     [].forEach.call(app.querySelectorAll('[data-heart]'), function (b) {
       b.onclick = function () {
         var id = b.getAttribute('data-heart');
@@ -134,6 +187,8 @@
     w.innerHTML = '<form class="k-form" id="mt-f" novalidate style="margin-top:1rem">' +
       '<div class="field"><label for="mt-t">שם המתכון</label><input id="mt-t" maxlength="70" placeholder="סופגניות במילוי קרם וניל של סבתא"></div>' +
       '<div class="field"><label for="mt-k">סוג</label><select id="mt-k"><option value="sufganiyot">סופגניות</option><option value="levivot">לביבות</option><option value="other">עוד מתכון לחנוכה</option></select></div>' +
+      '<div class="field"><label for="mt-ks">חלבי, פרווה או בשרי?</label><select id="mt-ks"><option value="">לבחור…</option><option value="parve">פרווה</option><option value="chalavi">חלבי</option><option value="basari">בשרי</option></select></div>' +
+      '<fieldset class="mt-dts"><legend>מתאים גם ל… <span class="opt">(לא חובה)</span></legend>' + Object.keys(DIET).map(function (d) { return '<label class="mt-gf"><input type="checkbox" name="mt-dt" value="' + d + '"> ' + DIET[d] + '</label>'; }).join('') + '</fieldset>' +
       '<div class="field"><label for="mt-ing">מצרכים</label><textarea id="mt-ing" maxlength="2500" rows="5" placeholder="שורה לכל מצרך:\n3 כוסות קמח\n2 ביצים"></textarea></div>' +
       '<div class="field"><label for="mt-st">אופן ההכנה</label><textarea id="mt-st" maxlength="4000" rows="6" placeholder="שלב אחרי שלב"></textarea></div>' +
       '<div class="field"><label for="mt-sto">מילה אישית <span class="opt">(לא חובה)</span></label><textarea id="mt-sto" maxlength="600" rows="2" placeholder="את המתכון הזה אמא הכינה לנו בכל חנוכה."></textarea></div>' +
@@ -178,9 +233,10 @@
   function submit(e) {
     e.preventDefault();
     if (busy) return;
-    var r = { t: $('mt-t').value.trim(), k: $('mt-k').value, ing: $('mt-ing').value.trim(), st: $('mt-st').value.trim(), sto: $('mt-sto').value.trim(), n: $('mt-n').value.trim() };
+    var r = { t: $('mt-t').value.trim(), k: $('mt-k').value, ing: $('mt-ing').value.trim(), st: $('mt-st').value.trim(), sto: $('mt-sto').value.trim(), n: $('mt-n').value.trim(), ks: $('mt-ks').value, dt: [].map.call(document.querySelectorAll('input[name=mt-dt]:checked'), function (x) { return x.value; }) };
     var err = $('mt-err');
     if (r.t.length < 2) { err.textContent = 'כתבו שם למתכון.'; return; }
+    if (!r.ks) { err.textContent = 'בחרו אם המתכון חלבי, פרווה או בשרי.'; return; }
     if (r.ing.length < 5) { err.textContent = 'כתבו את המצרכים.'; return; }
     if (r.st.length < 10) { err.textContent = 'כתבו את אופן ההכנה.'; return; }
     busy = true; $('mt-go').disabled = true;
