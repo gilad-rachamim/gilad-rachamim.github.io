@@ -1550,7 +1550,10 @@
     html += '<h3 class="mx-sec">🎓 לבגרות, לפי השאלונים</h3><p class="note">לפי שאלוני קיץ 2025 במאגר של משרד החינוך. לפני הבחינה כדאי לבדוק את המיקוד של השנה. נושא שמופיע בכמה שאלונים מופיע בכל אחד מהם.</p>';
     QN.forEach(function (qn) {
       var ts2 = T.filter(function (t) { return t.q && t.q.indexOf(qn[0]) > -1; });
-      html += '<details class="mx-q"><summary><b>' + qn[1] + '</b><small>' + qn[2] + ' · ' + ts2.length + ' נושאים</small></summary><div class="mx-list">' + ts2.map(card).join('') + '</div></details>';
+      var ex = (st.exams || {})[qn[0]];
+      html += '<details class="mx-q"><summary><b>' + qn[1] + '</b><small>' + qn[2] + ' · ' + ts2.length + ' נושאים</small></summary>' +
+        '<div class="ex-cta"><button type="button" class="btn btn-gold btn-sm" data-exam="' + qn[0] + '">📝 מבחן לדוגמה · ' + ts2.length + ' שאלות</button>' + (ex ? '<small>הציון הכי טוב: ' + ex.best + '</small>' : '<small>שאלה מכל נושא, בלי רמזים, עם שעון</small>') + '</div>' +
+        '<div class="mx-list">' + ts2.map(card).join('') + '</div></details>';
     });
     $('mx-list').innerHTML = html;
   }
@@ -1721,8 +1724,103 @@
     var t = ts(cur.id); t.lv = 1; t.streak = 0; save(KEY, st); newProblem();
   });
 
+  // =====================================================================
+  //  מבחן לדוגמה לפי שאלון: שאלה אחת מכל נושא, בלי רמזים, עם שעון וציון
+  // =====================================================================
+  var EX = null, exTimer = null;
+  var THREE = ['35182', '35381', '35382'];
+  function examTopics(qid) { return T.filter(function (t) { return t.q && t.q.indexOf(qid) > -1; }); }
+  function mmss(ms) { var s = Math.floor(ms / 1000); return Math.floor(s / 60) + ':' + pad2(s % 60); }
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+  function rightAns(s, raw) {
+    var v = parseVal(raw); if (isNaN(v)) return null;
+    var tol = s.tol || 1e-6;
+    if (!s.tol && Math.abs(Math.round(s.a * 1000) / 1000 - s.a) > 1e-9 && /[.,]\d{2,}/.test(raw)) tol = 0.0051;
+    return Math.abs(v - s.a) <= tol;
+  }
+  function startExam(qid) {
+    var qn = QN.filter(function (x) { return x[0] === qid; })[0], lv = THREE.indexOf(qid) > -1 ? 2 : 3;
+    EX = { qid: qid, name: qn[1], lv: lv, i: 0, start: Date.now(), done: false, items: examTopics(qid).sort(function () { return Math.random() - .5; }).map(function (t) { return { t: t, p: t.gen(lv), k: 0, ok: 0, log: [] }; }) };
+    player.stop(); $('mx-home').hidden = true; $('mx-topic').hidden = true; $('mx-exam').hidden = false;
+    $('ex-title').textContent = 'מבחן לדוגמה · ' + qn[1];
+    $('ex-rec').textContent = 'זמן מומלץ: עד ' + EX.items.length * 5 + ' דקות';
+    clearInterval(exTimer); exTimer = setInterval(function () { if (EX && !EX.done) $('ex-time').textContent = '⏱ ' + mmss(Date.now() - EX.start); }, 1000);
+    $('ex-time').textContent = '⏱ 0:00';
+    exRender(); $('mx-exam').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    used({ action: 'exam_start', q: qid });
+  }
+  function exRender() {
+    var it = EX.items[EX.i], s = it.p.steps[it.k];
+    $('ex-prog').innerHTML = EX.items.map(function (x, n) { return '<i class="' + (n < EX.i ? 'd' : n === EX.i ? 'c' : '') + '"></i>'; }).join('');
+    $('ex-head').innerHTML = '<span class="pill">שאלה ' + (EX.i + 1) + ' מתוך ' + EX.items.length + '</span> ' + it.t.em + ' ' + it.t.name;
+    $('ex-ex').innerHTML = '<div dir="ltr">' + it.p.ex + '</div>';
+    $('ex-done').innerHTML = it.log.map(function (l) { return '<li class="' + (l.ok ? '' : 'shown') + '"><div dir="ltr">' + l.show + '</div><span>' + (l.ok ? '✓ ' : '✗ ') + '<bdi dir="ltr">' + esc(l.a) + '</bdi></span></li>'; }).join('');
+    $('ex-cur').innerHTML = '<div dir="ltr">' + s.show + '</div>';
+    $('ex-q').innerHTML = '<span class="pill">סעיף ' + (it.k + 1) + ' מתוך ' + it.p.steps.length + '</span> ' + s.q;
+    $('ex-in').value = ''; $('ex-fb').textContent = '';
+    try { $('ex-in').focus({ preventScroll: true }); } catch (e) {}
+  }
+  function exNext() {
+    var it = EX.items[EX.i];
+    if (it.k < it.p.steps.length) { exRender(); return; }
+    EX.i++;
+    if (EX.i < EX.items.length) { exRender(); window.scrollTo({ top: $('mx-exam').offsetTop - 10, behavior: 'smooth' }); return; }
+    exFinish();
+  }
+  $('ex-form').addEventListener('submit', function (e) {
+    e.preventDefault(); if (!EX || EX.done) return;
+    var it = EX.items[EX.i], s = it.p.steps[it.k], raw = $('ex-in').value;
+    if (!raw.trim()) { $('ex-fb').textContent = 'כותבים תשובה, או לוחצים "לדלג".'; return; }
+    var r = rightAns(s, raw);
+    if (r === null) { $('ex-fb').textContent = 'לא הבנתי את המספר. אפשר למשל 12, ‎-3, 2.5 או 3/4.'; return; }
+    it.log.push({ show: s.show.replace(/<\/?mark>/g, ''), a: fmtAns(s).replace(/^-/, '−'), ok: r });
+    if (r) it.ok++;
+    it.k++; exNext();
+  });
+  $('ex-skip').addEventListener('click', function () {
+    if (!EX || EX.done) return;
+    var it = EX.items[EX.i];
+    while (it.k < it.p.steps.length) { var s = it.p.steps[it.k]; it.log.push({ show: s.show.replace(/<\/?mark>/g, ''), a: fmtAns(s).replace(/^-/, '−'), ok: false }); it.k++; }
+    exNext();
+  });
+  function exFinish() {
+    EX.done = true; clearInterval(exTimer);
+    var per = 100 / EX.items.length, score = 0;
+    EX.items.forEach(function (it) { score += per * it.ok / it.p.steps.length; });
+    score = Math.round(score);
+    var time = Date.now() - EX.start;
+    st.exams = st.exams || {};
+    var prev = st.exams[EX.qid] || {};
+    st.exams[EX.qid] = { best: Math.max(prev.best || 0, score), last: score, n: (prev.n || 0) + 1 };
+    save(KEY, st);
+    var weak = EX.items.filter(function (it) { return it.ok < it.p.steps.length; });
+    var msg = score >= 90 ? 'מצוין! אתם מוכנים לשאלון הזה.' : score >= 70 ? 'יפה מאוד. עוד קצת תרגול בנושאים למטה, ואתם שם.' : score >= 50 ? 'התחלה טובה. כל נושא שתתרגלו עכשיו יעלה את הציון.' : 'זה בדיוק בשביל זה: לדעת מאיפה להתחיל. נתרגל נושא אחרי נושא, ונחזור למבחן.';
+    $('ex-run').hidden = true; $('ex-end').hidden = false;
+    $('ex-end').innerHTML = '<div class="ex-score"><b>' + score + '</b><span>מתוך 100</span></div>' +
+      '<p class="ex-meta">' + EX.name + ' · ' + EX.items.length + ' שאלות · ⏱ ' + mmss(time) + (prev.best != null ? ' · הציון הכי טוב שלך עד עכשיו: ' + st.exams[EX.qid].best : '') + '</p>' +
+      '<p class="ex-msg">' + msg + '</p>' +
+      '<ul class="ex-res">' + EX.items.map(function (it) {
+        var full = it.ok === it.p.steps.length;
+        return '<li><span>' + (full ? '✓' : it.ok ? '◐' : '✗') + ' ' + it.t.name + '</span><small>' + it.ok + '/' + it.p.steps.length + '</small>' + (full ? '' : '<button type="button" class="linkish" data-topic="' + it.t.id + '">לתרגל</button>') + '</li>';
+      }).join('') + '</ul>' +
+      (weak.length ? '<p class="note">לחיצה על "לתרגל" פותחת את השיעור והתרגול של הנושא.</p>' : '') +
+      '<div class="btns c"><button class="btn btn-gold" type="button" id="ex-again">מבחן חדש באותו שאלון</button><button class="btn btn-line" type="button" id="ex-home">לכל הנושאים</button></div>' +
+      '<div class="mx-support"><p>💛 הכלים כאן חינמיים, ונבנים בהרבה שעות עבודה. אם הם עוזרים לכם בהכנה לבגרות, אפשר לעזור להחזיק את המיזם, גם בסכום קטן.</p><a class="btn btn-line btn-sm" href="/kelim/#litmoch" data-support="1">לתמוך במיזם</a></div>';
+    window.scrollTo({ top: $('mx-exam').offsetTop - 10, behavior: 'smooth' });
+    used({ action: 'exam_done', q: EX.qid, score: score, mins: Math.round(time / 60000) });
+  }
+  function exExit() { clearInterval(exTimer); EX = null; $('mx-exam').hidden = true; $('mx-home').hidden = false; $('ex-run').hidden = false; $('ex-end').hidden = true; history.replaceState(null, '', location.pathname); renderList(); }
+  $('mx-exam').addEventListener('click', function (e) {
+    if (e.target.id === 'ex-quit') { if (EX && !EX.done && !confirm('לצאת מהמבחן? ההתקדמות במבחן הזה לא תישמר.')) return; exExit(); return; }
+    if (e.target.id === 'ex-again') { var q = EX.qid; $('ex-run').hidden = false; $('ex-end').hidden = true; startExam(q); return; }
+    if (e.target.id === 'ex-home') { exExit(); return; }
+    if (e.target.closest('[data-support]')) { used({ action: 'support_click', topic: 'exam' }); return; }
+    var b = e.target.closest('[data-topic]'); if (b) { var id = b.dataset.topic; exExit(); open(id, true); }
+  });
+  $('mx-list').addEventListener('click', function (e) { var b = e.target.closest('[data-exam]'); if (b) startExam(b.dataset.exam); });
+
   renderList();
   var h = location.hash.slice(1);
   if (h && T.some(function (t) { return t.id === h; })) open(h, false);
-  window.__mx = { T: T, parseVal: parseVal, step: function () { return prob && prob.steps[k]; } }; // לבדיקות
+  window.__mx = { T: T, parseVal: parseVal, step: function () { return prob && prob.steps[k]; }, exStep: function () { return EX && !EX.done && EX.items[EX.i].p.steps[EX.items[EX.i].k]; } }; // לבדיקות
 })();
