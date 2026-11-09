@@ -7,7 +7,7 @@
   var app = $('mt-app');
   if (!app) return;
   var LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
-  var API = LOCAL ? 'http://127.0.0.1:8796/exec' : '';
+  var API = LOCAL ? 'http://127.0.0.1:8796/exec' : 'https://script.google.com/macros/s/AKfycbwuKYnSS0oo-7vAqKop2F4htfD8-AI5dStDmyk0Idg21wICygcXw1fi7_Ut_xzjZ6dw/exec';
   var KIND = { sufganiyot: 'סופגניות', levivot: 'לביבות', other: 'עוד מתכון' };
   var store = {
     get: function (k) { try { return localStorage.getItem('mt-' + k); } catch (e) { return null; } },
@@ -200,10 +200,13 @@
     app.innerHTML = '<div class="mt-box"><h2>השיתוף נפתח בקרוב</h2><p class="mt-sm">אנחנו מכינים את המקום להעלות מתכונים ולפרגן. בינתיים, מתכוני הבסיס כאן למטה.</p></div>';
   }
   if (!API) return soon();
+  // פנייה אחת בלבד (הרשימה עצמה היא גם בדיקת החיים). השרת של גוגל לפעמים מתעורר לאט.
+  app.innerHTML = '<p class="mt-sm">טוען את המתכונים של כולם…</p>';
   var ctl = window.AbortController ? new AbortController() : null;
-  if (ctl) setTimeout(function () { ctl.abort(); }, 12000);
-  fetch(API + '?ping=1', ctl ? { signal: ctl.signal } : {}).then(function (r) { return r.json(); }).then(function (d) {
+  if (ctl) setTimeout(function () { ctl.abort(); }, 20000);
+  fetch(API + '?list=1', ctl ? { signal: ctl.signal } : {}).then(function (r) { return r.json(); }).then(function (d) {
     if (!d || !d.ok) throw new Error('x');
-    return load();
+    LIST = d.recipes || [];
+    draw();
   }).catch(soon);
 })();
