@@ -14,3 +14,7 @@ class_name = "Stats"
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["Stats"]
+
+[vars]
+# משפט הקדשה או חסות שמוקרא אחרי הברכה (ריק = בלי)
+SPONSOR = ""
