@@ -7,7 +7,7 @@
   var app = $('mt-app');
   if (!app) return;
   var LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
-  var API = LOCAL ? 'http://127.0.0.1:8796/exec' : '';
+  var API = LOCAL ? 'http://127.0.0.1:8796/exec' : 'https://script.google.com/macros/s/AKfycbwuKYnSS0oo-7vAqKop2F4htfD8-AI5dStDmyk0Idg21wICygcXw1fi7_Ut_xzjZ6dw/exec';
   var KIND = { sufganiyot: 'סופגניות', levivot: 'לביבות', other: 'עוד מתכון' };
   var store = {
     get: function (k) { try { return localStorage.getItem('mt-' + k); } catch (e) { return null; } },
