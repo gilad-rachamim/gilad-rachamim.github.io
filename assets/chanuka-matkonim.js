@@ -200,10 +200,13 @@
     app.innerHTML = '<div class="mt-box"><h2>השיתוף נפתח בקרוב</h2><p class="mt-sm">אנחנו מכינים את המקום להעלות מתכונים ולפרגן. בינתיים, מתכוני הבסיס כאן למטה.</p></div>';
   }
   if (!API) return soon();
+  // פנייה אחת בלבד (הרשימה עצמה היא גם בדיקת החיים). השרת של גוגל לפעמים מתעורר לאט.
+  app.innerHTML = '<p class="mt-sm">טוען את המתכונים של כולם…</p>';
   var ctl = window.AbortController ? new AbortController() : null;
-  if (ctl) setTimeout(function () { ctl.abort(); }, 12000);
-  fetch(API + '?ping=1', ctl ? { signal: ctl.signal } : {}).then(function (r) { return r.json(); }).then(function (d) {
+  if (ctl) setTimeout(function () { ctl.abort(); }, 20000);
+  fetch(API + '?list=1', ctl ? { signal: ctl.signal } : {}).then(function (r) { return r.json(); }).then(function (d) {
     if (!d || !d.ok) throw new Error('x');
-    return load();
+    LIST = d.recipes || [];
+    draw();
   }).catch(soon);
 })();
