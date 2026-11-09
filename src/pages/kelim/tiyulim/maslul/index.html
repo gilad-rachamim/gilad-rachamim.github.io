@@ -1,0 +1,39 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tiyulim_maslul",
+  "title": "מסלול יומי לטיול – ימים, תחנות ושעות, מי נוהג ומה לוקחים | הכלים של גילעד רחמים",
+  "description": "כלי חינם לתכנון מסלול טיול: כל יום עם תחנות ושעות, מי נוהג ומה לוקחים. דף אחד להדפסה בשלושה סגנונות (לבן חוסך דיו, ירוק זית, קלף), ושליחה בווטסאפ לכל המשתתפים. נשמר רק בטלפון.",
+  "og_title": "מסלול יומי לטיול – כולם יודעים מה קורה",
+  "priority": "0.7",
+  "crumbs": [["כלים לטיולים ולנסיעות", "/kelim/tiyulim/"], ["מסלול יומי", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/tiyulim.css\">",
+  "foot": "<script src=\"/assets/tiyulim-maslul.js\" defer></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>מסלול יומי</h1>
+  <p class="sub">מתי יוצאים, איפה עוצרים, מי נוהג ומה לוקחים. כשלכולם יש את אותו דף, אף אחד לא שואל כל חצי שעה "מתי זזים?".</p>
+</header>
+<div class="tool no-print">
+  <div class="ty-note" id="ms-demo" hidden><span>זו דוגמה עם שמות בדויים: טיול משפחות של יומיים. משנים לטיול שלכם, או מנקים ומתחילים.</span><button class="btn btn-line btn-sm" type="button" id="ms-demo-x">לנקות ולהתחיל</button></div>
+  <form class="k-form" id="ms-form" novalidate>
+    <div class="field"><label for="ms-title">שם הטיול</label><input id="ms-title" type="text" maxlength="60" placeholder="טיול משפחות לגליל"></div>
+  </form>
+  <section class="ty-sec"><h2>הימים</h2>
+    <p class="ty-hint">לכל יום: מי נוהג, מה לוקחים, ותחנות עם שעה. התחנות מסתדרות לבד לפי השעה.</p>
+    <div id="ms-days"></div>
+    <div class="ty-tools" style="margin-top:.3rem"><button class="btn btn-line btn-sm" type="button" id="ms-dadd">+ להוסיף יום</button></div></section>
+  <div class="field" style="margin-top:1rem"><label>סגנון הדף להדפסה</label>
+    <div class="ty-chips" id="ms-theme"><button type="button" data-t="lavan">לבן (חוסך דיו)</button><button type="button" data-t="zayit">ירוק זית</button><button type="button" data-t="klaf">קלף</button></div></div>
+  <div class="ty-tools">
+    <button class="btn btn-gold btn-sm" type="button" id="ms-print">להדפיס</button>
+    <a class="btn btn-line btn-sm" href="#" id="ms-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח למשתתפים</a>
+    <button class="btn btn-line btn-sm" type="button" id="ms-copy">להעתיק</button>
+  </div>
+</div>
+<div id="ms-card" class="ty-card t-lavan"></div>
+<div class="tool no-print">
+  <p class="disclaimer">לפני מסלול בשטח בודקים מזג אוויר, שעות פתיחה והנחיות. הכול נשמר רק בטלפון הזה, ולא נשלח לשום מקום עד שלוחצים על ווטסאפ.</p>
+  <p class="k-next no-print">עוד לטיול: 🎒 <a class="gold" href="/kelim/tiyulim/tziyud/">רשימת ציוד</a> · 💸 <a class="gold" href="/kelim/tiyulim/hotzaot/">חלוקת הוצאות</a> · 🎶 <a class="gold" href="/kelim/tochen/shiron/">שירון</a></p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מסלול יומי לטיול: תחנות ושעות, מי נוהג ומה לוקחים, דף אחד להדפסה. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>

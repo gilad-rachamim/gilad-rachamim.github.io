@@ -1,0 +1,25 @@
+﻿# קו הכלים בטלפון – Cloudflare Worker שעונה ל"מודול API" של ימות המשיח (שלוחה type=api).
+# פריסה:        cd tools/phone-worker && npm install && npx wrangler deploy   (אותו חשבון כמו kodesh-tehillim)
+# בדיקה במחשב: node test.mjs  (מדמה שיחה שלמה בלי טלפון)
+# מונה כניסות:  https://kelim-phone.gilad4049.workers.dev/stats
+name = "kelim-phone"
+main = "phone-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[[durable_objects.bindings]]
+name = "STATS"
+class_name = "Stats"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Stats"]
+
+# שרת החדשות (kelim-news) – לשלוחה 8. קישור ישיר בין שרתים בלי לצאת לאינטרנט.
+[[services]]
+binding = "NEWS"
+service = "kelim-news"
+
+[vars]
+# משפט הקדשה או חסות שמוקרא אחרי הברכה (ריק = בלי)
+SPONSOR = ""
