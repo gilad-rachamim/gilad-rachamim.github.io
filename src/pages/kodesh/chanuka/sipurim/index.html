@@ -1,0 +1,49 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "chanuka_sipurim",
+  "title": "סיפור לכל לילה של חנוכה – 8 סיפורים לילדים להקראה אחרי ההדלקה | כלי קודש",
+  "description": "שמונה סיפורים קצרים לילדים, אחד לכל נר: מתתיהו, יהודה המכבי, פך השמן ויהודית, ועוד ארבעה על אור, חסד ואומץ. 3 דקות של הקראה אחרי ההדלקה, ושאלה אחת לשולחן. בחינם.",
+  "og_title": "סיפור לכל לילה של חנוכה",
+  "priority": "0.7",
+  "crumbs": [["חנוכה למשפחה", "/kodesh/chanuka/"], ["סיפור לכל לילה", null]],
+  "head": "<style>.cs-top{padding:.9rem 1rem;border:1px solid var(--gold-soft);border-radius:16px;background:rgba(212,176,98,.07);text-align:center}.cs-k{color:var(--gold);font-weight:700;margin:0;font-size:1.1rem}.cs-sm{color:var(--body);margin:.3rem 0 0}#cs-dots{display:flex;justify-content:center;gap:.35rem;flex-wrap:wrap;margin:.8rem 0 0}#cs-dots button{width:2.4rem;height:2.4rem;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--cream);font:inherit;font-weight:700;cursor:pointer}#cs-dots button.tn{border-color:var(--gold)}#cs-dots button.on{background:var(--gold);border-color:var(--gold);color:#1a1408}.cs-men{display:flex;justify-content:center;align-items:flex-end;gap:.4rem;height:3.6rem;margin:.2rem 0 .6rem}.cs-men .c{position:relative;width:.55rem;height:2rem;border-radius:3px;background:rgba(255,255,255,.14)}.cs-men .c.sh{height:2.7rem}.cs-men .c.lit{background:linear-gradient(#f4ecd8,#d4b062)}.cs-men .c.lit:before{content:'';position:absolute;left:50%;top:-.95rem;width:.6rem;height:.85rem;margin-left:-.3rem;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:radial-gradient(circle at 50% 70%,#fff6c8,#ffb23e 60%,rgba(255,140,0,0));box-shadow:0 0 .7rem rgba(255,190,80,.7)}.cs-n{color:var(--gold);margin:0;text-align:center;font-size:.95rem}.cs-t{font-family:var(--serif);color:var(--cream);text-align:center;font-size:2rem;margin:.2rem 0 .8rem}.cs-p p{font-size:1.32rem;line-height:1.95;color:var(--cream);margin:0 0 1rem}.cs-big .cs-p p{font-size:1.65rem}.cs-big .cs-q p{font-size:1.5rem}.cs-q{margin:1.2rem 0 .6rem;padding:1rem 1.1rem;border:1px solid var(--gold);border-radius:14px;background:rgba(212,176,98,.12)}.cs-q b{color:var(--gold);display:block;margin-bottom:.2rem}.cs-q p{margin:0;font-size:1.3rem;line-height:1.7;color:var(--cream)}.cs-src{color:var(--body);font-size:.9rem;margin:.6rem 0 0}.cs-sb{padding:.7rem .9rem;border-inline-start:3px solid var(--gold);background:rgba(212,176,98,.07);border-radius:8px;color:var(--body);margin:0 0 1rem}.cs-bar{position:sticky;bottom:0;z-index:5;display:flex;gap:.5rem;justify-content:space-between;padding:.6rem .2rem;margin-top:1rem;background:var(--ink);border-top:1px solid var(--line)}.cs-bar .btn{flex:1;justify-content:center;font-size:1.05rem}.cs-bar .btn:disabled{opacity:.35}.cs-tools{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.8rem}[hidden]{display:none!important}#cs-all{display:none}@media print{body>*:not(main),main>*:not(#cs-all){display:none!important}#cs-all{display:block!important;color:#000}#cs-all article{break-after:page}#cs-all h2{font-size:20pt;color:#000;margin:0 0 10pt}#cs-all p{font-size:15pt;line-height:1.7;color:#000;margin:0 0 8pt}html,body,main{background:#fff!important}}</style>",
+  "foot": "<script src=\"/assets/vendor/hebcal-bundle/hebcal-core-6.14.7.min.js\" data-hebcal defer></script><script src=\"/assets/chanuka-sipurim.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <span class="bsd">בס"ד</span>
+  <h1>סיפור לכל לילה</h1>
+  <p class="sub">שמונה סיפורים קצרים לילדים, אחד לכל נר. מדליקים, שרים, ואז מקריאים יחד כ-3 דקות. בסוף כל סיפור יש שאלה אחת לשולחן.</p>
+</header>
+
+<section class="k-sec" aria-label="הסיפור של הלילה">
+  <div class="cs-top">
+    <div id="cs-head" aria-live="polite"><p class="cs-sm">טוען את הלילה…</p></div>
+    <div id="cs-dots" aria-label="בחירת לילה"></div>
+  </div>
+  <article id="cs-story" aria-live="polite"><p class="cs-sm">טוען את הסיפור…</p></article>
+  <div class="cs-tools">
+    <button type="button" class="btn btn-gold" id="cs-say" hidden>🔊 להקריא בקול</button>
+    <a class="btn btn-line" href="#" id="cs-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הסיפור</a>
+    <button type="button" class="btn btn-line" id="cs-size">אות גדולה יותר</button>
+    <button type="button" class="btn btn-line" id="cs-print">להדפיס את כל 8 הסיפורים</button>
+  </div>
+  <div class="cs-bar">
+    <button type="button" class="btn btn-line" id="cs-prev">→</button>
+    <button type="button" class="btn btn-line" id="cs-next">←</button>
+  </div>
+</section>
+
+<section class="k-sec no-print" aria-labelledby="cs-about-h">
+  <h2 id="cs-about-h">על הסיפורים</h2>
+  <p class="lead2">ארבעת הלילות הראשונים מספרים את סיפור החנוכה: מתתיהו במודיעין, יהודה המכבי, פך השמן ויהודית. העובדות לקוחות מהמקורות שרשומים בסוף כל סיפור, והדיבורים והתיאורים כתובים במילים שלנו, בעדינות ובלי פחד, לילדים. ארבעת הלילות האחרונים הם סיפורים מקוריים על אור, חסד ואומץ.</p>
+  <p class="lead2">בכל חנוכה יש לפחות ליל שבת אחד (השנה: הנר הראשון והנר השמיני). בשבת לא קוראים מהטלפון, אז כדאי להדפיס מראש את כל שמונת הסיפורים בכפתור "להדפיס".</p>
+  <p class="disclaimer">הסיפורים נכתבו במיוחד לכלי קודש, ואפשר להשתמש בהם בחופשיות: בבית, בגן ובכיתה. עוד סיפורים לילדים, בסרטונים: <a class="gold" href="/kodesh/sipurim/">סיפורים לילדים בהמשכים</a>.</p>
+</section>
+
+<section class="k-sec no-print" aria-labelledby="cs-more-h">
+  <h2 id="cs-more-h">עוד לחנוכה</h2>
+  <div class="actions"><a class="btn btn-line" href="/kodesh/chanuka/nerot/">זמני ההדלקה והברכות</a><a class="btn btn-line" href="/kodesh/chanuka/chesed/">נר של חסד</a><a class="btn btn-line" href="/kodesh/chanuka/">לחבילת החנוכה למשפחה</a></div>
+</section>
+
+<div id="cs-all"></div>
