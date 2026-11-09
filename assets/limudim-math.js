@@ -1567,6 +1567,7 @@
     history.replaceState(null, '', '#' + id);
     $('mx-home').hidden = true; $('mx-topic').hidden = false;
     $('mx-t-name').textContent = cur.name; $('mx-t-grade').textContent = cur.grade;
+    $('mx-calc').hidden = !CALC[id];
     var s = ts(id);
     player.load(cur.lesson);
     if (!s.seen) { $('mx-lesson').hidden = false; $('mx-practice').hidden = true; }
@@ -1575,6 +1576,19 @@
     if (scroll) $('mx-topic').scrollIntoView({ behavior: 'smooth', block: 'start' });
     used({ action: 'open', topic: id });
   }
+  // נושאים שבהם צריך מחשבון מדעי: כפתור שפותח מחשבון קטן בתחתית המסך (/limudim/machshevon/?mini=1)
+  var CALC = { trigo: 1, gdila: 1, stiya: 1, normalit: 1, handasit: 1, sinusim: 1, merchav: 1, logaritm: 1, 'exp-ln': 1, piramida: 1, 'nefach-sivuv': 1, 'trig-nigzeret': 1, pitagoras: 1, shorashim: 1, etz: 1, vektor: 1, merukav: 1 };
+  var calcFrom = null;
+  function calcOpen(from) {
+    var box = $('mx-calcbox'), fr = $('mx-calcif');
+    if (!fr.getAttribute('src')) fr.setAttribute('src', '/limudim/machshevon/?mini=1');
+    calcFrom = from; box.hidden = false; $('mx-calcx').focus();
+    used({ action: 'calc_open', topic: cur ? cur.id : 'exam' });
+  }
+  function calcClose() { $('mx-calcbox').hidden = true; if (calcFrom) calcFrom.focus(); }
+  document.addEventListener('click', function (e) { var b = e.target.closest('[data-calc]'); if (b) calcOpen(b); });
+  $('mx-calcx').addEventListener('click', calcClose);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('mx-calcbox').hidden) calcClose(); });
   function tabs() {
     $('mx-tab-l').classList.toggle('on', !$('mx-lesson').hidden);
     $('mx-tab-p').classList.toggle('on', !$('mx-practice').hidden);
