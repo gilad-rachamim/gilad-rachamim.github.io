@@ -7,7 +7,7 @@
   var startBtn = $('rk-start'); if (!startBtn) return;
   var MP = 'https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1.1675465747/';
   var BGS = ['jeru-1', 'jeru-2', 'kotel-1', 'kotel-3', 'books-1', 'torah-1', 'torah-2', 'candles-1', 'light-1', 'olive-1', 'wheat-1', 'mount-1', 'sea-1', 'sunset-1', 'garden-1', 'desert-1'];
-  var out = $('rk-out'), ctx = out.getContext('2d'), cam = $('rk-cam'), state = $('rk-state');
+  var out = $('rk-out'), ctx = out.getContext('2d'), view = $('rk-view'), vctx = view.getContext('2d'), FONT = getComputedStyle(document.body).fontFamily || 'sans-serif', count = 0, recT = 0, timer = null, cam = $('rk-cam'), state = $('rk-state');
   var tmp = document.createElement('canvas'), tctx = tmp.getContext('2d');
   var mask = document.createElement('canvas'), mctx = mask.getContext('2d'), prev = document.createElement('canvas'), pctx = prev.getContext('2d'), hasPrev = false;
   var seg = null, stream = null, running = false, busy = false, mode = 'blur', bgImg = null, bgName = '';
@@ -27,7 +27,7 @@
   function size() {
     var h = $('rk-shape').value === 'h', w = small ? (h ? 640 : 360) : (h ? 960 : 540);
     out.width = w; out.height = Math.round(h ? w * 9 / 16 : w * 4 / 3);
-    [tmp, mask, prev].forEach(function (c) { c.width = out.width; c.height = out.height; }); hasPrev = false;
+    [tmp, mask, prev, view].forEach(function (c) { c.width = out.width; c.height = out.height; }); hasPrev = false;
   }
   // ציור "cover": ממלא את כל הפריים בלי עיוות, חותך מה שעודף
   function cover(c, src, sw, sh) {
@@ -38,7 +38,7 @@
   function draw(res) {
     var W = out.width, H = out.height, vw = cam.videoWidth, vh = cam.videoHeight;
     ctx.save(); ctx.clearRect(0, 0, W, H);
-    if (mode === 'none') { cover(ctx, res.image, vw, vh); ctx.restore(); return; }
+    if (mode === 'none') { cover(ctx, res.image, vw, vh); ctx.restore(); finish(); return; }
     // 1. האדם בלבד: המסכה, ובתוכה (source-in) הפריים מהמצלמה
     // החלקה בזמן: המסכה החדשה מעורבבת עם הקודמת (40%), כדי שהשוליים לא ירצדו מפריים לפריים
     mctx.clearRect(0, 0, W, H);
@@ -53,7 +53,38 @@
     else if (mode === 'img' && bgImg) cover(ctx, bgImg, bgImg.naturalWidth, bgImg.naturalHeight);
     else { ctx.fillStyle = $('rk-color').value; ctx.fillRect(0, 0, W, H); }
     // 3. האדם מעל הרקע
-    ctx.drawImage(tmp, 0, 0); ctx.restore();
+    ctx.drawImage(tmp, 0, 0); ctx.restore(); finish();
+  }
+  // מה שמוקלט (out) יוצא ישר; מה שרואים על המסך (view) הפוך כמו מראה במצלמה הקדמית, אבל הכיתוב תמיד קריא
+  function finish() {
+    var W = out.width, H = out.height;
+    vctx.setTransform(1, 0, 0, 1, 0, 0); vctx.clearRect(0, 0, W, H);
+    if (mirror()) { vctx.translate(W, 0); vctx.scale(-1, 1); }
+    vctx.drawImage(out, 0, 0); vctx.setTransform(1, 0, 0, 1, 0, 0);
+    title(ctx); title(vctx);
+    if (count) { // ספירה לאחור – רק על המסך, לא בסרטון
+      vctx.fillStyle = 'rgba(0,0,0,.35)'; vctx.fillRect(0, 0, W, H);
+      vctx.fillStyle = '#fff'; vctx.textAlign = 'center'; vctx.textBaseline = 'middle';
+      vctx.font = '700 ' + Math.round(H * 0.28) + 'px ' + FONT; vctx.fillText(String(count), W / 2, H / 2);
+    }
+  }
+  // כיתוב תחתון: שם ושורה שנייה, בפס כהה עם קו זהב, בצד ימין
+  function title(c) {
+    var name = $('rk-name').value.trim(), sub = $('rk-sub').value.trim();
+    if (!name && !sub) return;
+    var W = c.canvas.width, H = c.canvas.height, u = Math.min(W, H) / 20, pad = u * 0.7;
+    c.save(); c.direction = 'rtl'; c.textAlign = 'right'; c.textBaseline = 'alphabetic';
+    var f1 = '700 ' + Math.round(u * 1.15) + 'px ' + FONT, f2 = Math.round(u * 0.8) + 'px ' + FONT;
+    c.font = f1; var w1 = name ? c.measureText(name).width : 0;
+    c.font = f2; var w2 = sub ? c.measureText(sub).width : 0;
+    var bw = Math.min(W - u * 2, Math.max(w1, w2) + pad * 2 + u * 0.25), bh = pad * 1.4 + (name ? u * 1.3 : 0) + (sub ? u * 1.05 : 0);
+    var x = W - u, y = H - u * 2.6 - bh; // מעל הכפתורים שווטסאפ מציג בתחתית
+    c.fillStyle = 'rgba(12,18,32,.78)'; c.fillRect(x - bw, y, bw, bh);
+    c.fillStyle = '#e6c57e'; c.fillRect(x - u * 0.22, y, u * 0.22, bh);
+    var ty = y + pad * 0.7;
+    if (name) { ty += u * 1.15; c.font = f1; c.fillStyle = '#fff'; c.fillText(name, x - pad, ty, bw - pad * 1.5); }
+    if (sub) { ty += u * 1.05; c.font = f2; c.fillStyle = '#e6c57e'; c.fillText(sub, x - pad, ty, bw - pad * 1.5); }
+    c.restore();
   }
   function mirror() { return $('rk-face').value === 'user'; }
 
@@ -98,7 +129,7 @@
       })
       .then(function () {
         size(); running = true; fpsT = performance.now(); frames = 0;
-        $('rk-wrap').hidden = false; $('rk-panel').hidden = false; $('rk-wrap').classList.toggle('mirror', mirror());
+        $('rk-wrap').hidden = false; $('rk-panel').hidden = false; 
         if (!stream.getAudioTracks().length) say('המצלמה פתוחה, אבל בלי מיקרופון: הסרטון ייצא בלי קול.'); else say('');
         if (navigator.wakeLock) navigator.wakeLock.request('screen').then(function (w) { wake = w; }).catch(function () {});
         tick(); used('start', { face: $('rk-face').value, shape: $('rk-shape').value });
@@ -111,7 +142,7 @@
   }
   function stop() {
     if (mr && mr.state === 'recording') mr.stop();
-    running = false; startBtn.disabled = false;
+    running = false; startBtn.disabled = false; count = 0; clearInterval(timer); $('rk-rec').textContent = '● לצלם';
     if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
     $('rk-wrap').hidden = true; $('rk-panel').hidden = true;
     if (wake) { wake.release().catch(function () {}); wake = null; }
@@ -125,7 +156,16 @@
   function toggleRec() {
     var b = $('rk-rec');
     if (mr && mr.state === 'recording') { mr.stop(); return; }
+    if (count) { count = 0; clearInterval(timer); b.textContent = '● לצלם'; return; } // ביטול באמצע הספירה
     if (!running || !window.MediaRecorder) { say('הדפדפן הזה לא יודע להקליט וידאו.'); return; }
+    // ספירה לאחור 3-2-1, כדי שיהיה זמן להתיישב ולהסתכל למצלמה
+    count = 3; b.textContent = '✕ לבטל';
+    timer = setInterval(function () { if (--count <= 0) { clearInterval(timer); count = 0; record(); } }, 1000);
+  }
+  function clock() { var t = Math.floor((Date.now() - recT) / 1000); $('rk-recdot').textContent = '● ' + Math.floor(t / 60) + ':' + ('0' + t % 60).slice(-2); }
+  function record() {
+    var b = $('rk-rec');
+    if (!running) { b.textContent = '● לצלם'; return; }
     var vs = out.captureStream(30), tracks = vs.getVideoTracks().concat(stream.getAudioTracks());
     var m = mime(); parts = [];
     mr = new MediaRecorder(new MediaStream(tracks), m ? { mimeType: m, videoBitsPerSecond: 2500000 } : undefined);
@@ -134,10 +174,12 @@
       var type = (mr.mimeType || 'video/webm').split(';')[0];
       result = { blob: new Blob(parts, { type: type }), ext: type.indexOf('mp4') > -1 ? 'mp4' : 'webm' };
       $('rk-video').src = URL.createObjectURL(result.blob); $('rk-result').hidden = false;
-      b.textContent = '● לצלם'; $('rk-recdot').hidden = true; used('recorded', { bg: bgName || mode });
+      clearInterval(timer); b.textContent = '● לצלם'; $('rk-recdot').hidden = true;
+      used('recorded', { bg: bgName || mode, sec: Math.round((Date.now() - recT) / 1000), title: !!($('rk-name').value.trim() || $('rk-sub').value.trim()) });
       $('rk-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
     mr.start(1000); b.textContent = '■ לעצור צילום'; $('rk-recdot').hidden = false;
+    recT = Date.now(); clock(); timer = setInterval(clock, 500);
   }
 
   function fname(ext) { return 'שיעור-רקע-בכיס.' + ext; }
@@ -179,7 +221,7 @@
     });
     g.appendChild(l);
   }
-  function remember() { try { localStorage.setItem('kodesh-reka', JSON.stringify({ mode: mode, bg: bgName === 'own' ? '' : bgName, blur: $('rk-blur').value, color: $('rk-color').value, face: $('rk-face').value, shape: $('rk-shape').value })); } catch (e) {} }
+  function remember() { try { localStorage.setItem('kodesh-reka', JSON.stringify({ mode: mode, bg: bgName === 'own' ? '' : bgName, blur: $('rk-blur').value, color: $('rk-color').value, name: $('rk-name').value, sub: $('rk-sub').value, face: $('rk-face').value, shape: $('rk-shape').value })); } catch (e) {} }
 
   gallery();
   try {
@@ -188,6 +230,7 @@
       if (s.blur) $('rk-blur').value = s.blur; if (s.color) $('rk-color').value = s.color;
       if (s.face) $('rk-face').value = s.face; if (s.shape) $('rk-shape').value = s.shape;
       if (s.bg && BGS.indexOf(s.bg) > -1) pick(s.bg);
+      if (s.name) $('rk-name').value = s.name; if (s.sub) $('rk-sub').value = s.sub;
       if (s.mode) setMode(s.mode);
     }
   } catch (e) {}
@@ -202,6 +245,7 @@
   $('rk-dl').addEventListener('click', function () { if (result) { save(result.blob, fname(result.ext)); used('download'); } });
   $('rk-share').addEventListener('click', function () { if (result) share(result.blob, fname(result.ext), 'share'); });
   [].forEach.call(document.querySelectorAll('[data-mode]'), function (b) { b.addEventListener('click', function () { setMode(b.dataset.mode); }); });
+  $('rk-name').addEventListener('change', remember); $('rk-sub').addEventListener('change', remember);
   $('rk-blur').addEventListener('change', remember); $('rk-color').addEventListener('change', remember);
   $('rk-shape').addEventListener('change', function () { if (running) size(); remember(); });
   $('rk-face').addEventListener('change', function () { remember(); if (running) { stop(); start(); } });
