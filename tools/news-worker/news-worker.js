@@ -1,0 +1,337 @@
+// החדשות ב-3 דקות – Cloudflare Worker שמסכם חדשות 3 פעמים ביום (07:00, 13:00, 20:00 שעון ישראל).
+// קורא כותרות ותקצירים מ-RSS ← מסנן לקו כשר ← Gemini כותב נקודות קצרות במילים שלו ← בדיקה שנייה מול המקור.
+// אין מפתח Gemini? יוצא "מצב כותרות": הכותרות הנבחרות עם קישור, בלי סיכום.
+// בשבת ובחג לא רץ (מהדלקת נרות בירושלים עד צאת הכוכבים). מוצ"ש בערב: סיכום "מה היה בשבת".
+// חינם לכולם. נקודות הקצה: /latest  /history  /report (POST)  /reports?key=  /run?key=  /stats
+import { HDate, HebrewCalendar, Zmanim, GeoLocation, flags } from '@hebcal/core';
+
+const TZ = 'Asia/Jerusalem';
+const VERSION = 1;
+const RUN_HOURS = [7, 13, 20];
+const LATE_HOURS = [21, 22]; // ריצה מאוחרת רק אם הריצה של 20:00 נפלה על שבת/חג
+const JLM = new GeoLocation('ירושלים', 31.778, 35.235, 754, TZ);
+
+// [מזהה, שם, נושא, כתובת]
+export const SOURCES = [
+  ['ynet', 'ynet', 'כללי', 'https://www.ynet.co.il/Integration/StoryRss1854.xml'],
+  ['walla', 'וואלה', 'כללי', 'https://www.walla.co.il/rss/feed/news/israel'],
+  ['maariv', 'מעריב', 'כללי', 'https://www.maariv.co.il/rss/rsschadashot'],
+  ['inn', 'ערוץ 7', 'כללי', 'https://www.inn.co.il/Rss.aspx'],
+  ['kikar', 'כיכר השבת', 'חרדי', 'https://www.kikar.co.il/feed'],
+  ['bhol', 'בחדרי חרדים', 'חרדי', 'https://www.bhol.co.il/rss'],
+  ['jdn', 'JDN', 'חרדי', 'https://www.jdn.co.il/feed/'],
+  ['globes', 'גלובס', 'כלכלה', 'https://www.globes.co.il/webservice/rss/rssfeeder.asmx/FeederNode?iID=2']
+];
+
+// ---------- סינון לקו כשר ----------
+// ידיעה עם אחת המילים האלה לא נכנסת בכלל (גם לא לבינה)
+const BLOCK_WORDS = ['מינית', 'מיני ', 'אונס', 'נאנס', 'זנות', 'פורנו', 'עירום', 'חשפנ', 'פדופיל', 'מעשה מגונה', 'מעשים מגונים',
+  'בגידה', 'רומן', 'דוגמנ', 'סלב', 'ריאליטי', 'האח הגדול', 'אירוויזיון', 'זמרת', 'שחקנית', 'הומו', 'להט"ב', 'גאווה',
+  'הימורים', 'קזינו', 'סמים', 'קנאביס', 'אלכוהול', 'שיכור', 'התאבד', 'התאבדות'];
+// פשע: רק אם זה לא פיגוע/ביטחון (פיגוע נכנס כמשפט עובדתי אחד)
+const CRIME_WORDS = ['נרצח', 'רצח', 'נדקר', 'דקירה', 'שוד', 'אלימות במשפחה', 'התעללות', 'גופה'];
+const SECURITY_WORDS = ['פיגוע', 'מחבל', 'טרור', 'צה"ל', 'חמאס', 'חיזבאללה'];
+const BLOCK_LINKS = /\/(sport|sports|spo|entertainment|celebs|culture|tarbut|food|fashion|travel|tvreviews|xnet|pnai|leisure|digital\/games)\b/i;
+
+export function kosher(text, link = '') {
+  if (BLOCK_LINKS.test(link)) return false;
+  if (BLOCK_WORDS.some(w => text.includes(w))) return false;
+  if (CRIME_WORDS.some(w => text.includes(w)) && !SECURITY_WORDS.some(w => text.includes(w))) return false;
+  return true;
+}
+
+// ---------- RSS ----------
+function decode(s) {
+  return s.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'")
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(+n)).replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&');
+}
+function strip(s) { return decode(decode(s || '')).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim(); }
+function tag(item, name) { const m = item.match(new RegExp(`<${name}[^>]*>([\\s\\S]*?)</${name}>`)); return m ? m[1] : ''; }
+
+export function parseRss(xml, src) {
+  const items = [];
+  for (const m of xml.matchAll(/<item[\s>][\s\S]*?<\/item>/g)) {
+    const it = m[0];
+    const title = strip(tag(it, 'title'));
+    const link = strip(tag(it, 'link')).replace(/[?#]utm_[^ ]*$/, '').split('?utm_')[0];
+    const desc = strip(tag(it, 'description')).slice(0, 400);
+    const t = Date.parse(strip(tag(it, 'pubDate'))) || 0;
+    if (title && link.startsWith('http')) items.push({ src: src[0], name: src[1], topic: src[2], title, desc, link, t });
+  }
+  return items;
+}
+
+async function fetchAll(sinceMs) {
+  const res = await Promise.allSettled(SOURCES.map(async s => {
+    const r = await fetch(s[3], { headers: { 'user-agent': 'Mozilla/5.0 (kelim-news; gilad-rachamim.github.io)' }, redirect: 'follow', cf: { cacheTtl: 300 } });
+    if (!r.ok) throw new Error(s[0] + ' ' + r.status);
+    return parseRss(await r.text(), s);
+  }));
+  const ok = [], failed = [];
+  res.forEach((r, i) => r.status === 'fulfilled' ? ok.push(...r.value) : failed.push(SOURCES[i][0]));
+  const seen = new Set();
+  const items = ok
+    .filter(x => !x.t || x.t >= sinceMs)
+    .filter(x => kosher(x.title + ' ' + x.desc, x.link))
+    .filter(x => { const k = x.title.slice(0, 40); if (seen.has(k)) return false; seen.add(k); return true; })
+    .sort((a, b) => b.t - a.t);
+  // עד 14 ידיעות מכל מקור, כדי שמקור אחד לא ישתלט
+  const per = {}, out = [];
+  for (const x of items) { per[x.src] = (per[x.src] || 0) + 1; if (per[x.src] <= 14) out.push(x); }
+  out.forEach((x, i) => { x.id = i + 1; });
+  return { items: out, failed };
+}
+
+// ---------- Gemini ----------
+const WRITE_RULES = `אתה עורך של "החדשות ב-3 דקות": סיכום חדשות רגוע לציבור החרדי, למי שרוצה להפסיק לרפרש אתרי חדשות.
+קיבלת רשימת ידיעות ממוספרות (כותרת, תקציר, מקור). כתוב:
+- main: 5 הנקודות הכי חשובות לכלל הציבור. כל נקודה משפט אחד או שניים, עד 30 מילים, במילים שלך.
+- haredi: עד 3 נקודות מהציבור החרדי (רק מידיעות שמקורן כיכר השבת, בחדרי חרדים או JDN, ושלא נכנסו ל-main).
+- economy: עד 2 נקודות כלכלה שנוגעות לכיס של משפחה (מחירים, משכנתא, קצבאות, מיסים). אם אין – ריק.
+חוקים:
+1. רק עובדות שכתובות בידיעות. לא להוסיף שום פרט, מספר, שם או הערכה שלא מופיעים שם.
+2. לא להעתיק משפטים מהמקור. לנסח מחדש, פשוט ורגוע. בלי סימני קריאה, בלי "דרמטי", "סערה", "הלם".
+3. כל נקודה עם ids – מספרי הידיעות שעליהן היא מבוססת (לפחות אחת).
+4. אם רק מקור אחד מדווח על משהו שנוי במחלוקת – לפתוח ב"לפי דיווח ב<שם המקור>".
+5. קו כשר: בלי פשע ופריצות, בלי רכילות, בלי ספורט ובידור, בלי פרטים קשים. פיגוע או אסון – משפט עובדתי אחד, בלי תיאורים.
+6. בלי פוליטיקה צועקת ובלי דעות. מה קרה, ומה זה אומר לאנשים.
+7. אם יש כמה ידיעות על אותו נושא – נקודה אחת עם כל ה-ids.`;
+
+const WRITE_SCHEMA = {
+  type: 'OBJECT',
+  properties: {
+    main: { type: 'ARRAY', items: { type: 'OBJECT', properties: { text: { type: 'STRING' }, ids: { type: 'ARRAY', items: { type: 'INTEGER' } } }, required: ['text', 'ids'] } },
+    haredi: { type: 'ARRAY', items: { type: 'OBJECT', properties: { text: { type: 'STRING' }, ids: { type: 'ARRAY', items: { type: 'INTEGER' } } }, required: ['text', 'ids'] } },
+    economy: { type: 'ARRAY', items: { type: 'OBJECT', properties: { text: { type: 'STRING' }, ids: { type: 'ARRAY', items: { type: 'INTEGER' } } }, required: ['text', 'ids'] } }
+  },
+  required: ['main', 'haredi', 'economy']
+};
+
+const CHECK_RULES = `אתה בודק עובדות. לכל נקודה מצורף טקסט המקורות שלה.
+החזר לכל נקודה ok=true רק אם כל שם, מספר, תאריך, מקום וטענה בנקודה כתובים במפורש במקורות שלה.
+אם יש פרט שלא מופיע, או סתירה – ok=false ו-why קצר בעברית. אל תהיה מקל.`;
+const CHECK_SCHEMA = {
+  type: 'OBJECT',
+  properties: { results: { type: 'ARRAY', items: { type: 'OBJECT', properties: { n: { type: 'INTEGER' }, ok: { type: 'BOOLEAN' }, why: { type: 'STRING' } }, required: ['n', 'ok'] } } },
+  required: ['results']
+};
+
+async function gemini(env, system, user, schema) {
+  const models = (env.GEMINI_MODELS || 'gemini-flash-latest,gemini-2.5-flash').split(',').map(s => s.trim());
+  let last;
+  for (const model of models) {
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-goog-api-key': env.GEMINI_KEY },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: system }] },
+        contents: [{ role: 'user', parts: [{ text: user }] }],
+        generationConfig: { temperature: 0.2, responseMimeType: 'application/json', responseSchema: schema }
+      })
+    });
+    if (r.ok) {
+      const j = await r.json();
+      const txt = j.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '';
+      return { data: JSON.parse(txt), model };
+    }
+    last = `${model} ${r.status} ${(await r.text()).slice(0, 200)}`;
+    if (r.status !== 404 && r.status !== 429 && r.status !== 503) break;
+  }
+  throw new Error(last);
+}
+
+// מספרים בנקודה חייבים להופיע במקור (בדיקה בקוד, בלי בינה)
+export function numbersOk(text, srcText) {
+  const nums = (text.match(/\d[\d,.]*/g) || []).map(n => n.replace(/[,.]$/, ''));
+  const plain = srcText.replace(/,/g, '');
+  return nums.every(n => srcText.includes(n) || plain.includes(n.replace(/,/g, '')));
+}
+
+async function summarize(env, items) {
+  const list = items.map(x => `#${x.id} [${x.name}] ${x.title}${x.desc ? ' – ' + x.desc : ''}`).join('\n');
+  const w = await gemini(env, WRITE_RULES, list, WRITE_SCHEMA);
+  const byId = Object.fromEntries(items.map(x => [x.id, x]));
+  const all = [];
+  for (const sec of ['main', 'haredi', 'economy']) {
+    for (const p of (w.data[sec] || [])) {
+      const ids = (p.ids || []).filter(id => byId[id]);
+      if (!ids.length || !p.text) continue;
+      all.push({ sec, text: p.text.trim(), ids });
+    }
+  }
+  // בדיקה שנייה מול המקור
+  const checkText = all.map((p, i) => `נקודה ${i + 1}: ${p.text}\nמקורות:\n` +
+    p.ids.map(id => `- ${byId[id].title}. ${byId[id].desc}`).join('\n')).join('\n\n');
+  let verdict = {};
+  try {
+    const c = await gemini(env, CHECK_RULES, checkText, CHECK_SCHEMA);
+    for (const r of c.data.results || []) verdict[r.n] = r;
+  } catch (e) { verdict = null; }
+  const dropped = [];
+  const sections = { main: [], haredi: [], economy: [] };
+  all.forEach((p, i) => {
+    const srcText = p.ids.map(id => byId[id].title + ' ' + byId[id].desc).join(' ');
+    const v = verdict ? verdict[i + 1] : null;
+    let why = '';
+    if (!numbersOk(p.text, srcText)) why = 'מספר שלא מופיע במקור';
+    else if (verdict === null) why = 'הבדיקה השנייה לא רצה';
+    else if (!v || !v.ok) why = (v && v.why) || 'לא אומת';
+    else if (!kosher(p.text)) why = 'סינון כשר';
+    if (why) { dropped.push({ text: p.text, why }); return; }
+    sections[p.sec].push({ text: p.text, sources: p.ids.map(id => ({ name: byId[id].name, link: byId[id].link })) });
+  });
+  return { mode: 'summary', model: w.model, sections, dropped };
+}
+
+function titlesOnly(items) {
+  const pick = (topic, n) => {
+    const out = [], used = new Set();
+    for (const x of items) {
+      if (x.topic !== topic || used.has(x.src)) continue;
+      used.add(x.src); out.push({ text: x.title, sources: [{ name: x.name, link: x.link }] });
+      if (out.length >= n) break;
+    }
+    return out;
+  };
+  return { mode: 'titles', sections: { main: pick('כללי', 5), haredi: pick('חרדי', 3), economy: pick('כלכלה', 1) }, dropped: [] };
+}
+
+// ---------- זמן, שבת וחג ----------
+export function israelParts(d = new Date()) {
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false, weekday: 'short' })
+    .formatToParts(d).map(x => [x.type, x.value]));
+  return { y: +p.year, m: +p.month, d: +p.day, hour: +p.hour % 24, min: +p.minute, wd: p.weekday };
+}
+function isHoly(civil) { // civil = Date בצהרי היום בישראל
+  if (civil.getDay() === 6) return true;
+  return HebrewCalendar.getHolidaysOnDate(new HDate(civil), true)?.some(e => e.getFlags() & flags.CHAG) || false;
+}
+// האם עכשיו שבת או חג (מהדלקת נרות – 40 דק' לפני השקיעה בירושלים – עד צאת הכוכבים + מרווח)
+export function holyNow(now = new Date()) {
+  const p = israelParts(now);
+  const today = new Date(p.y, p.m - 1, p.d, 12);
+  const tomorrow = new Date(p.y, p.m - 1, p.d + 1, 12);
+  const z = new Zmanim(JLM, today, false);
+  const candle = new Date(z.sunset().getTime() - 40 * 60000);
+  const havdala = new Date(z.tzeit(8.5).getTime() + 10 * 60000);
+  if (isHoly(today) && now < havdala) return true;
+  if (isHoly(tomorrow) && now >= candle) return true;
+  return false;
+}
+function editionName(hour, afterHoly) {
+  if (afterHoly) return 'מה היה בשבת ובחג';
+  return hour < 11 ? 'בוקר' : hour < 17 ? 'צהריים' : 'ערב';
+}
+
+// ---------- ריצה ----------
+async function store(env) { return env.STORE.get(env.STORE.idFromName('news')); }
+async function call(env, path, body) {
+  const s = await store(env);
+  const r = await s.fetch('https://store' + path, body ? { method: 'POST', body: JSON.stringify(body) } : undefined);
+  return r.json();
+}
+
+export async function runEdition(env, { force = false, now = new Date() } = {}) {
+  const p = israelParts(now);
+  if (!force) {
+    if (holyNow(now)) return { skipped: 'שבת או חג' };
+    const isRun = RUN_HOURS.includes(p.hour);
+    const isLate = LATE_HOURS.includes(p.hour);
+    if (!isRun && !isLate) return { skipped: 'לא שעת ריצה' };
+    const last = await call(env, '/latest');
+    const lastAge = last?.at ? now - Date.parse(last.at) : Infinity;
+    if (lastAge < 90 * 60000) return { skipped: 'כבר יצא סיכום בשעה האחרונה' };
+    if (isLate && lastAge < 10 * 3600000) return { skipped: 'אין צורך בריצה מאוחרת' };
+  }
+  const last = await call(env, '/latest');
+  const afterHoly = !!(last?.at && now - Date.parse(last.at) > 20 * 3600000);
+  const since = afterHoly ? now - 30 * 3600000 : Math.max(now - 9 * 3600000, last?.at ? Date.parse(last.at) - 3600000 : 0);
+  const { items, failed } = await fetchAll(since);
+  let ed;
+  if (env.GEMINI_KEY && items.length) {
+    try { ed = await summarize(env, items); } catch (e) { ed = titlesOnly(items); ed.error = String(e.message || e).slice(0, 300); }
+    if (ed.mode === 'summary' && ed.sections.main.length < 2) { const t = titlesOnly(items); t.error = 'מעט מדי נקודות עברו בדיקה'; t.dropped = ed.dropped; ed = t; }
+  } else ed = titlesOnly(items);
+  const hd = new HDate(new Date(p.y, p.m - 1, p.d, 12));
+  ed.at = now.toISOString();
+  ed.name = editionName(p.hour, afterHoly);
+  ed.date = { he: hd.renderGematriya(true), day: ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'][new Date(p.y, p.m - 1, p.d).getDay()] };
+  ed.time = `${String(p.hour).padStart(2, '0')}:${String(p.min).padStart(2, '0')}`;
+  ed.count = items.length;
+  ed.failed = failed;
+  ed.v = VERSION;
+  await call(env, '/save', ed);
+  return { ok: true, name: ed.name, mode: ed.mode, main: ed.sections.main.length, dropped: ed.dropped.length, failed, error: ed.error };
+}
+
+// ---------- השרת ----------
+const CORS = { 'access-control-allow-origin': '*', 'access-control-allow-methods': 'GET, POST, OPTIONS', 'access-control-allow-headers': 'content-type' };
+const json = (o, status = 200, extra = {}) => new Response(JSON.stringify(o), { status, headers: { 'content-type': 'application/json; charset=utf-8', ...CORS, ...extra } });
+
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    const key = url.searchParams.get('key');
+    const admin = env.ADMIN_KEY && key === env.ADMIN_KEY;
+    if (request.method === 'OPTIONS') return new Response('', { headers: CORS });
+    if (url.pathname === '/ping') return json({ ok: true, v: VERSION, gemini: !!env.GEMINI_KEY });
+    if (url.pathname === '/latest') {
+      const ed = await call(env, '/latest');
+      ctx.waitUntil(call(env, '/hit', { e: url.searchParams.get('from') || 'web' }).catch(() => {}));
+      if (!ed?.at) return json({ empty: true });
+      const { dropped, error, ...pub } = ed;
+      return json(admin ? ed : pub, 200, { 'cache-control': 'public, max-age=120' });
+    }
+    if (url.pathname === '/history') return json(await call(env, '/history'), 200, { 'cache-control': 'public, max-age=300' });
+    if (url.pathname === '/report' && request.method === 'POST') {
+      let b = {}; try { b = await request.json(); } catch (e) {}
+      const text = String(b.text || '').slice(0, 300), note = String(b.note || '').slice(0, 500);
+      if (!text && !note) return json({ ok: false }, 400);
+      await call(env, '/report', { text, note, at: new Date().toISOString() });
+      return json({ ok: true });
+    }
+    if (url.pathname === '/reports') return admin ? json(await call(env, '/reports')) : json({ ok: false }, 403);
+    if (url.pathname === '/stats') return json(await call(env, '/stats'));
+    if (url.pathname === '/run') {
+      if (!admin) return json({ ok: false }, 403);
+      return json(await runEdition(env, { force: url.searchParams.get('force') === '1' }));
+    }
+    return json({ name: 'החדשות ב-3 דקות', page: 'https://gilad-rachamim.github.io/kelim/machshev/chadashot/' });
+  },
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(runEdition(env).then(r => console.log(JSON.stringify(r))).catch(e => console.log('run error', String(e))));
+  }
+};
+
+// אחסון: הסיכום האחרון, 21 הקודמים, דיווחי טעויות ומונה כניסות יומי
+export class Store {
+  constructor(state) { this.s = state.storage; }
+  async fetch(request) {
+    const path = new URL(request.url).pathname;
+    const body = request.method === 'POST' ? await request.json() : null;
+    if (path === '/latest') return Response.json((await this.s.get('latest')) || {});
+    if (path === '/history') return Response.json((await this.s.get('history')) || []);
+    if (path === '/save') {
+      const h = (await this.s.get('history')) || [];
+      h.unshift(body); await this.s.put('history', h.slice(0, 21)); await this.s.put('latest', body);
+      return Response.json({ ok: true });
+    }
+    if (path === '/report') {
+      const r = (await this.s.get('reports')) || [];
+      r.unshift(body); await this.s.put('reports', r.slice(0, 200));
+      return Response.json({ ok: true });
+    }
+    if (path === '/reports') return Response.json((await this.s.get('reports')) || []);
+    if (path === '/hit') {
+      const day = new Date().toISOString().slice(0, 10), st = (await this.s.get('stats')) || {};
+      const k = `${day} ${String(body.e || 'web').slice(0, 12)}`;
+      st[k] = (st[k] || 0) + 1;
+      const keys = Object.keys(st).sort(); while (keys.length > 300) delete st[keys.shift()];
+      await this.s.put('stats', st);
+      return Response.json({ ok: true });
+    }
+    if (path === '/stats') return Response.json((await this.s.get('stats')) || {});
+    return Response.json({}, { status: 404 });
+  }
+}

@@ -1,0 +1,22 @@
+# החדשות ב-3 דקות – Cloudflare Worker שמסכם חדשות 3 פעמים ביום (חינם לכולם).
+# פריסה:        cd tools/news-worker && npm install && npx wrangler deploy   (אותו חשבון כמו kelim-phone)
+# מפתח Gemini:  npx wrangler secret put GEMINI_KEY   (בלי מפתח = מצב כותרות)
+# מפתח ניהול:   ADMIN_KEY (סוד) – /run?key=..&force=1 מריץ עכשיו, /reports?key=.. דיווחי טעויות
+# בדיקה במחשב: node test.mjs
+# הדף: https://gilad-rachamim.github.io/kelim/machshev/chadashot/
+name = "kelim-news"
+main = "news-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+# ריצה בכל שעה מהרשימה (UTC). הקוד בודק שעון ישראל: 07, 13, 20 (+21/22 אם 20:00 נפל על שבת), וקיץ/חורף מסתדרים לבד.
+[triggers]
+crons = ["0 4,5,10,11,17,18,19,20 * * *"]
+
+[[durable_objects.bindings]]
+name = "STORE"
+class_name = "Store"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Store"]
