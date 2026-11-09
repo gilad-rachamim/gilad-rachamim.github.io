@@ -26,7 +26,7 @@ const CITIES = [
 ];
 const CITY_MENU = CITIES.slice(1).map((c, i) => `ל${c[0]} הקישו ${i + 1}`).join(' ');
 
-const MENU = 'לזמני היום הקישו 1. לתאריך העברי ולחגים הקרובים הקישו 2. למחשבון ברית בר מצווה ויארצייט הקישו 3. לזמני שבת הקישו 4. להשארת הודעה ובקשת עזרה הקישו 5. לדף היומי ולמשניות יומיות הקישו 6. לזמני חנוכה הקישו 7. לסיום הקישו 0';
+const MENU = 'לזמני היום הקישו 1. לתאריך העברי ולחגים הקרובים הקישו 2. למחשבון ברית בר מצווה ויארצייט הקישו 3. לזמני שבת הקישו 4. להשארת הודעה ובקשת עזרה הקישו 5. לדף היומי ולמשניות יומיות הקישו 6. לזמני חנוכה הקישו 7. לחדשות בשלוש דקות הקישו 8. לסיום הקישו 0';
 const WELCOME = 'שלום וברוכים הבאים לקו הכלים של גילעד רחמים. כל הכלים בחינם ובלי אינטרנט. אפשר להקיש בכל רגע בלי לחכות לסוף ההודעה';
 const SHARE = 'מכירים מישהו שזה יעזור לו? ספרו לו על הקו';
 const LINE_NUMBER = '0772253345';
@@ -243,14 +243,27 @@ function toolChanukah(city) {
   return out;
 }
 
+// ---------- החדשות ב-3 דקות (משרת kelim-news, tools/news-worker) ----------
+// news = הסיכום האחרון (JSON) או null אם השרת לא ענה
+export function toolNews(ed) {
+  if (!ed || !ed.sections || !ed.sections.main?.length) return ['הסיכום לא זמין כרגע. נסו שוב מאוחר יותר'];
+  const say = t => String(t).replace(/(\d)\.(\d)/g, '$1 נקודה $2').replace(/%/g, ' אחוז');
+  const out = [`החדשות בשלוש דקות. סיכום ${ed.name} מיום ${ed.date?.day || ''}`, `שיצא בשעה ${ed.time || ''}`];
+  ed.sections.main.forEach((p, i) => out.push(`${['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שביעי'][i] || ''}`, say(p.text)));
+  if (ed.sections.haredi?.length) { out.push('ובציבור החרדי'); ed.sections.haredi.forEach(p => out.push(say(p.text))); }
+  if (ed.sections.economy?.length) { out.push('ובכלכלה'); ed.sections.economy.forEach(p => out.push(say(p.text))); }
+  out.push('הסיכום הבא יוצא בשבע בבוקר, באחת בצהריים ובשמונה בערב. בשבת ובחג אין סיכום');
+  return out;
+}
+
 // ---------- המכונה: מה לשאול עכשיו ----------
 function menuRead(round, intro) {
   if (round >= MAX_ROUNDS) return sayAndHangup([...(intro || []), 'תודה שהתקשרתם. להתראות']);
-  return readDigits([...(intro || []), MENU], `m${round}`, { allowed: '0.1.2.3.4.5.6.7' });
+  return readDigits([...(intro || []), MENU], `m${round}`, { allowed: '0.1.2.3.4.5.6.7.8' });
 }
 
 // sponsor: משפט הקדשה/חסות אופציונלי (משתנה SPONSOR ב-Cloudflare), מוקרא אחרי הברכה
-function decide(v, sponsor = '') {
+function decide(v, sponsor = '', news = null) {
   let r = -1;
   for (let i = 0; i < MAX_ROUNDS; i++) if (v[`m${i}`] !== undefined) r = i;
   if (r < 0) return { text: menuRead(0, [WELCOME, sponsor]), event: 'call' };
@@ -267,6 +280,7 @@ function decide(v, sponsor = '') {
     return { text: after(tool === '1' ? toolZmanim(c) : toolShabbat(c)), event: tool === '1' ? 'zmanim' : 'shabbat' };
   }
   if (tool === '6') return { text: after(toolLearning()), event: 'learning' };
+  if (tool === '8') return { text: after(toolNews(news)), event: 'news' };
   if (tool === '2') return { text: after(toolToday()), event: 'today' };
   if (tool === '3') {
     const k = +v[`k${r}`];
@@ -318,7 +332,14 @@ export default {
     const v = await params(request);
     if (v.hangup === 'yes') return new Response('', { headers: { 'content-type': 'text/plain; charset=utf-8' } });
     let out;
-    try { out = decide(v, env.SPONSOR || ''); } catch (e) { out = { text: sayAndHangup(['סליחה, הייתה תקלה. נסו שוב מאוחר יותר']) }; }
+    // אם נבחרה שלוחה 8 (חדשות) – מביאים קודם את הסיכום האחרון משרת החדשות (Service Binding)
+    let news = null;
+    let last;
+    for (let i = 0; i < MAX_ROUNDS; i++) if (v[`m${i}`] !== undefined) last = v[`m${i}`];
+    if (last === '8' && env.NEWS) {
+      try { news = await (await env.NEWS.fetch('https://news/latest?from=phone')).json(); } catch (e) {}
+    }
+    try { out = decide(v, env.SPONSOR || '', news); } catch (e) { out = { text: sayAndHangup(['סליחה, הייתה תקלה. נסו שוב מאוחר יותר']) }; }
     count(env, ctx, out.event);
     return new Response(out.text, { headers: { 'content-type': 'text/plain; charset=utf-8' } });
   }

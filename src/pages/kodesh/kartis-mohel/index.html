@@ -36,11 +36,13 @@
     <div class="field"><label for="km-note">שורה אישית <span class="opt">(לא חובה)</span></label><input id="km-note" name="note" type="text" maxlength="90" placeholder="ברית בשמחה, באהבה ובנחת"></div>
     <div class="field"><label for="km-photo">תמונה או לוגו <span class="opt">(לא חובה)</span></label><input id="km-photo" type="file" accept="image/*"><button class="btn btn-line btn-sm" type="button" id="km-photo-clear" hidden>להוריד את התמונה</button></div>
     <button class="btn btn-gold btn-block" type="submit">ליצור את הכרטיס שלי</button>
-    <p class="privacy">הפרטים לא נשמרים אצלנו בשום מקום: הם יושבים בתוך הקישור עצמו, ובטלפון שלכם.</p>
+    <p class="privacy">מקבלים קישור קצר: הכרטיס נשמר אצלי רק כדי שהקישור יפתח אותו, ואפשר לבקש ממני למחוק בכל עת. מעדיפים בלי שמירה? יש גם קישור ארוך, שהפרטים יושבים בתוכו.</p>
     <div class="res" id="km-ready" hidden>
       <h3>הכרטיס מוכן!</h3>
       <div class="field"><input id="km-link" type="text" readonly aria-label="הקישור לכרטיס"></div>
       <div class="share-row"><button class="btn btn-gold btn-sm" type="button" id="km-copy">להעתיק את הקישור</button><a class="btn btn-line btn-sm" id="km-wa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח בווטסאפ</a><a class="btn btn-line btn-sm" id="km-open" href="#">לפתוח את הכרטיס</a></div>
+      <p class="note" id="km-kind"></p>
+      <button class="km-share" type="button" id="km-long">מעדיפים קישור ארוך, בלי שמירה אצלי?</button>
       <p class="note">טיפ: שמים את הקישור בפרופיל של הווטסאפ, בחתימה ובסטטוס. שינוי בפרטים = קישור חדש.</p>
     </div>
     <h2 class="km-h">כך ייראה הכרטיס בטלפון</h2>
