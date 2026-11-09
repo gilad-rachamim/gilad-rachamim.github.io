@@ -1,0 +1,147 @@
+/* כלים לטיולים ולנסיעות (/kelim/tiyulim/): ציוד לטיול, חלוקת הוצאות, מסלול יומי. נבנה מ-eruim.css. */
+.ty-note{background:rgba(227,183,101,.1);border:1px solid var(--gold-soft);border-radius:12px;padding:.7rem .9rem;color:var(--parchment);margin:1rem 0;display:flex;gap:.6rem;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.ty-two{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+@media (max-width:420px){.ty-two{grid-template-columns:1fr}}
+.ty-hint{color:var(--muted);font-size:.92rem;margin:.2rem 0 .4rem}
+.ty-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.45rem}
+.ty-chips button{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--parchment);border-radius:999px;padding:.35rem .75rem;font:inherit;font-size:.95rem;cursor:pointer}
+.ty-chips button.on{background:rgba(227,183,101,.18);border-color:var(--gold);color:var(--cream)}
+.ty-tools{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-top:1.2rem}
+.ty-empty{color:var(--muted);text-align:center;padding:.8rem 0}
+.ty-sec{margin-top:1.4rem}
+.ty-sec h2{font-family:var(--serif);color:var(--cream);font-size:1.3rem;margin-bottom:.5rem}
+.ty-sum{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:1rem 0 .4rem}
+.ty-sum span{border:1px solid var(--line);border-radius:999px;padding:.25rem .7rem;color:var(--parchment);font-size:.92rem}
+.ty-sum b{color:var(--gold)}
+.ty-item{border:1px solid var(--line);border-radius:14px;padding:.8rem .9rem;margin-bottom:.6rem;background:rgba(255,255,255,.03);color:var(--parchment)}
+.ty-item .top{display:flex;justify-content:space-between;gap:.5rem;align-items:baseline;flex-wrap:wrap}
+.ty-item .top b{color:var(--cream);font-size:1.08rem}
+.ty-item .top span{color:var(--muted);font-size:.9rem}
+.ty-item p{margin:.3rem 0 0;white-space:pre-wrap}
+.ty-item .lbl{color:var(--gold);font-size:.9rem}
+.ty-item .warn{color:#e8b48c;font-size:.92rem}
+.ty-item.soon{border-color:var(--gold-soft);background:rgba(227,183,101,.07)}
+.ty-item.done{opacity:.7}
+.ty-item .acts{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.55rem;align-items:center}
+.ty-item .acts a,.ty-item .acts button{font:inherit;font-size:.88rem;padding:.3rem .65rem;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--body);cursor:pointer;text-decoration:none}
+.ty-item .acts a:hover,.ty-item .acts button:hover{border-color:var(--gold-soft);color:var(--cream)}
+.ty-item .acts input{width:6.5rem;font:inherit;font-size:.9rem;padding:.28rem .5rem;border-radius:10px;border:1px solid var(--line);background:var(--ink);color:var(--cream)}
+.ty-bar{height:.45rem;border-radius:999px;background:rgba(255,255,255,.08);margin-top:.45rem;overflow:hidden}
+.ty-bar i{display:block;height:100%;background:var(--gold)}
+/* לוח עליות: כרטיס לכל שבת */
+.ty-week{border:1px solid var(--line);border-radius:14px;padding:.8rem .9rem;margin-bottom:.7rem;background:rgba(255,255,255,.03)}
+.ty-week h3{font-family:var(--serif);color:var(--cream);font-size:1.12rem;margin:0 0 .5rem;display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap}
+.ty-week h3 span{color:var(--muted);font-size:.9rem;font-family:inherit}
+.ty-week .r{display:grid;grid-template-columns:7.5rem 1fr;gap:.5rem;align-items:center;margin:.3rem 0}
+.ty-week .r label{color:var(--parchment);font-size:.95rem}
+.ty-week select{font:inherit;font-size:.95rem;padding:.3rem .5rem;border-radius:10px;border:1px solid var(--line);background:var(--ink);color:var(--cream);width:100%}
+/* הדף להדפסה, שלושה סגנונות */
+.ty-card{max-width:40rem;margin:1.2rem auto 0;border-radius:14px;padding:1.2rem 1.1rem;line-height:1.5;border:1px solid #d9cfb4;overflow-x:auto}
+.ty-card h3{font-family:var(--serif);font-size:1.5rem;text-align:center;margin:0}
+.ty-card .s2{text-align:center;font-size:.98rem;margin:.15rem 0 .7rem}
+.ty-card table{width:100%;border-collapse:collapse;font-size:.95rem}
+.ty-card th,.ty-card td{border:1px solid;padding:.3rem .4rem;text-align:center;vertical-align:middle}
+.ty-card th{font-weight:700}
+.ty-card td.rl{font-weight:700;text-align:start;white-space:nowrap}
+.ty-card .ft{text-align:center;font-size:.85rem;margin-top:.9rem}
+.ty-card.t-lavan{background:#fff;color:#111}
+.ty-card.t-lavan h3{color:#111}.ty-card.t-lavan th,.ty-card.t-lavan td{border-color:#999}.ty-card.t-lavan th{background:#f1f1f1}.ty-card.t-lavan .s2,.ty-card.t-lavan .ft{color:#555}
+.ty-card.t-zayit{background:#f4f6ec;color:#1f2a16;border-color:#9fae7d}
+.ty-card.t-zayit h3{color:#3d5a1e}.ty-card.t-zayit th,.ty-card.t-zayit td{border-color:#9fae7d}.ty-card.t-zayit th{background:#e3e9d2}.ty-card.t-zayit .s2,.ty-card.t-zayit .ft{color:#55603f}
+.ty-card.t-klaf{background:#fbf3df;color:#2a2013;border-color:#c9b97d}
+.ty-card.t-klaf h3{color:#6b4a12}.ty-card.t-klaf th,.ty-card.t-klaf td{border-color:#c9b97d}.ty-card.t-klaf th{background:#f1e4c0}.ty-card.t-klaf .s2,.ty-card.t-klaf .ft{color:#6d5b3c}
+@media print{
+  @page{size:A4;margin:12mm}
+  html,body{background:#fff!important}
+  .topbar,.site-foot,.crumbs,.install-bar,.no-print{display:none!important}
+  .ty-card{max-width:none;margin:0;border:0;font-size:12pt;overflow:visible;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+.k-form .res:empty{display:none}
+/* תוכנית האירוע: שורה לכל שלב */
+.ty-row{display:grid;grid-template-columns:5.6rem 1fr;gap:.4rem .5rem;border:1px solid var(--line);border-radius:14px;padding:.6rem .7rem;margin-bottom:.5rem;background:rgba(255,255,255,.03)}
+.ty-row input{font:inherit;font-size:.95rem;padding:.32rem .5rem;border-radius:10px;border:1px solid var(--line);background:var(--ink);color:var(--cream);width:100%;min-width:0}
+.ty-row .who{grid-column:2}
+.ty-row .acts{grid-column:1/-1;display:flex;gap:.35rem;justify-content:flex-end}
+.ty-row .acts button,.ty-mini{font:inherit;font-size:.85rem;padding:.25rem .6rem;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--body);cursor:pointer}
+.ty-team{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:.35rem;margin-bottom:.4rem}
+.ty-team input{font:inherit;font-size:.92rem;padding:.3rem .45rem;border-radius:10px;border:1px solid var(--line);background:var(--ink);color:var(--cream);min-width:0}
+@media (max-width:420px){.ty-team{grid-template-columns:1fr 1fr}.ty-team input:nth-child(3){grid-column:1/2}}
+/* סידור הושבה */
+.ty-pick{position:sticky;top:0;z-index:5;background:var(--gold);color:var(--ink);font-weight:700;text-align:center;border-radius:12px;padding:.5rem .7rem;margin:.6rem 0}
+.ty-chips2{display:flex;flex-wrap:wrap;gap:.35rem;min-height:2.2rem;padding:.3rem 0}
+.ty-g{border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--parchment);border-radius:999px;padding:.3rem .7rem;font:inherit;font-size:.93rem;cursor:pointer;user-select:none;-webkit-user-select:none}
+.ty-g small{color:var(--muted);margin-inline-start:.25rem}
+.ty-g.sel{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:700}
+.ty-g.sel small{color:var(--ink)}
+.ty-tables{display:grid;grid-template-columns:repeat(auto-fill,minmax(14rem,1fr));gap:.6rem}
+.ty-t{border:1px solid var(--line);border-radius:14px;padding:.6rem .7rem;background:rgba(255,255,255,.03);cursor:pointer}
+.ty-t.drop{border-color:var(--gold);background:rgba(227,183,101,.12)}
+.ty-t.full{border-color:var(--gold-soft)}
+.ty-t.over{border-color:#e8a07a;background:rgba(232,160,122,.08)}
+.ty-t .hd{display:flex;justify-content:space-between;gap:.4rem;align-items:baseline}
+.ty-t .hd b{color:var(--cream);font-family:var(--serif);font-size:1.08rem}
+.ty-t .hd span{color:var(--muted);font-size:.9rem}
+.ty-t .over-msg{color:#e8b48c;font-size:.88rem}
+.ty-tadd{display:grid;grid-template-columns:1fr 6rem auto;gap:.4rem;align-items:end}
+.ty-card .cols{columns:2;column-gap:1.4rem;font-size:.98rem}
+.ty-card .cols div{break-inside:avoid;display:flex;justify-content:space-between;gap:.5rem;border-bottom:1px dotted;padding:.18rem 0}
+.ty-card .cols div b{white-space:nowrap}
+.ty-card h4{font-family:var(--serif);font-size:1.15rem;margin:1rem 0 .4rem;text-align:center}
+.ty-card .tbls{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;font-size:.9rem}
+.ty-card .tbls div{border:1px solid;border-radius:8px;padding:.35rem .45rem}
+.ty-card .tbls b{display:block;text-align:center}
+@media (max-width:560px){.ty-card .cols{columns:1}.ty-card .tbls{grid-template-columns:1fr 1fr}}
+/* תקציב ומשימות */
+.ty-task{display:flex;gap:.55rem;align-items:flex-start;padding:.45rem .2rem;border-bottom:1px solid var(--line);color:var(--parchment)}
+.ty-task input[type=checkbox]{width:1.2rem;height:1.2rem;margin-top:.2rem;accent-color:var(--gold);flex:none}
+.ty-task .tx{flex:1}
+.ty-task.done .tx{text-decoration:line-through;opacity:.6}
+.ty-task button{background:none;border:0;color:var(--muted);font-size:1.2rem;cursor:pointer;line-height:1}
+.ty-phase{border:1px solid var(--line);border-radius:14px;padding:.7rem .8rem;margin-bottom:.6rem;background:rgba(255,255,255,.03)}
+.ty-phase h3{font-family:var(--serif);color:var(--cream);font-size:1.1rem;margin:0 0 .2rem;display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap}
+.ty-phase h3 span{color:var(--muted);font-size:.88rem;font-family:inherit}
+.ty-phase.now{border-color:var(--gold);background:rgba(227,183,101,.07)}
+@media print{.ty-card .cols{columns:2}.ty-card .tbls{grid-template-columns:repeat(4,1fr)}}
+/* רשימת ציוד לטיול */
+.ty-meter{position:sticky;top:3.6rem;z-index:4;background:var(--ink);padding:.8rem 0 .7rem;border-bottom:1px solid var(--line)}
+.ty-meter .track{height:.5rem;border-radius:999px;background:var(--line);overflow:hidden}
+.ty-meter .fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold-soft),var(--gold));transition:width .4s}
+.ty-meter p{color:var(--gold);font-family:var(--serif);font-size:1.05rem;margin-top:.45rem;text-align:center}
+.ty-grp{margin-top:1.4rem}
+.ty-grp h2{font-family:var(--serif);color:var(--cream);font-size:1.25rem;display:flex;justify-content:space-between;align-items:baseline}
+.ty-grp h2 small{font-family:var(--sans);font-size:.9rem;color:var(--muted)}
+.ty-ck{list-style:none;display:grid;gap:.2rem;margin-top:.4rem;padding:0}
+.ty-ck label{display:grid;grid-template-columns:1.6rem 1fr auto;gap:.7rem;align-items:start;padding:.5rem .5rem;border-radius:10px;cursor:pointer;color:var(--parchment)}
+.ty-ck input{width:1.3rem;height:1.3rem;margin-top:.25rem;accent-color:var(--gold)}
+.ty-ck label:has(input:checked) span{color:var(--muted);text-decoration:line-through}
+.ty-ck small{display:block;color:var(--muted);font-size:.9rem}
+.ty-ck .x{background:none;border:0;color:var(--muted);font-size:1.3rem;cursor:pointer;line-height:1}
+.ty-add{display:flex;gap:.5rem;margin-top:1.2rem}
+.ty-add input{flex:1;min-width:0}
+/* חלוקת הוצאות */
+.ty-pp{display:grid;grid-template-columns:1fr auto;gap:.35rem;margin-bottom:.35rem}
+.ty-ex{display:grid;grid-template-columns:1fr 6rem;gap:.4rem .5rem;border:1px solid var(--line);border-radius:14px;padding:.6rem .7rem;margin-bottom:.5rem;background:rgba(255,255,255,.03)}
+.ty-ex .full{grid-column:1/-1}
+.ty-ex .acts{grid-column:1/-1;display:flex;gap:.35rem;justify-content:flex-end}
+.ty-ex .who{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center;color:var(--muted);font-size:.9rem}
+.ty-ex .who label{display:inline-flex;gap:.25rem;align-items:center;border:1px solid var(--line);border-radius:999px;padding:.15rem .55rem;color:var(--parchment);cursor:pointer}
+.ty-ex .who input{accent-color:var(--gold)}
+.ty-pp input,.ty-ex input[type=text],.ty-ex input[type=number],.ty-ex select{font:inherit;font-size:.95rem;padding:.32rem .5rem;border-radius:10px;border:1px solid var(--line);background:var(--ink);color:var(--cream);width:100%;min-width:0}
+.ty-tr{border:1px solid var(--gold-soft);border-radius:14px;padding:.8rem .9rem;background:rgba(227,183,101,.07);color:var(--parchment)}
+.ty-tr div{display:flex;justify-content:space-between;gap:.5rem;padding:.3rem 0;border-bottom:1px dotted var(--line)}
+.ty-tr div:last-child{border-bottom:0}
+.ty-tr b{color:var(--gold);white-space:nowrap}
+.ty-bal{display:grid;grid-template-columns:repeat(auto-fill,minmax(9rem,1fr));gap:.4rem;margin-top:.5rem}
+.ty-bal span{border:1px solid var(--line);border-radius:10px;padding:.35rem .5rem;font-size:.92rem;color:var(--parchment);display:flex;justify-content:space-between;gap:.3rem}
+.ty-bal .p{color:#9fd39a}.ty-bal .m{color:#e8b48c}
+/* מסלול יומי */
+.ty-day{border:1px solid var(--line);border-radius:16px;padding:.8rem .8rem .5rem;margin-bottom:.9rem;background:rgba(255,255,255,.02)}
+.ty-day .hd{display:grid;grid-template-columns:1fr 9.5rem auto;gap:.4rem;align-items:center;margin-bottom:.5rem}
+.ty-day .hd input,.ty-day .meta input{font:inherit;font-size:.95rem;padding:.32rem .5rem;border-radius:10px;border:1px solid var(--line);background:var(--ink);color:var(--cream);width:100%;min-width:0}
+.ty-day .hd input[data-f=title]{font-family:var(--serif);font-size:1.08rem}
+.ty-day .meta{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:.5rem}
+@media (max-width:420px){.ty-day .hd{grid-template-columns:1fr auto}.ty-day .hd input[type=date]{grid-column:1/2}.ty-day .meta{grid-template-columns:1fr}}
+.ty-card .day{break-inside:avoid;margin-top:.9rem}
+.ty-card .day h4{margin:.2rem 0 .3rem;text-align:start}
+.ty-card .day .mt{font-size:.9rem;margin:0 0 .35rem}
+.ty-card .day td.nt{font-size:.88rem}

@@ -8,6 +8,7 @@
 הרצה:  python3 build.py
 """
 import json, os, re, pathlib, datetime, hashlib
+import html as html_lib
 
 ROOT = pathlib.Path(__file__).resolve().parent
 SRC = ROOT / "src" / "pages"
@@ -208,6 +209,52 @@ def vurl(p):
 def version_assets(html):
     return re.sub(r'((?:src|href)=")(/assets/[^"?#]+\.(?:js|css))"', lambda m: m.group(1) + vurl(m.group(2)) + '"', html)
 
+# "שופר בזכותכם": src/shipurim.json (מפתח = tool של הכלי) מזין את הרשימה בדף /kelim/shipurim/
+# ואת השורה הקטנה מעל תיבת המשוב בכל כלי. כלי בלי שיפורים: לא מוצג כלום.
+SHIPURIM = {k: v for k, v in json.loads((ROOT / "src" / "shipurim.json").read_text(encoding="utf-8")).items() if not k.startswith("_") or k == "_kelali"}
+TOOL_URL = {}
+for _p in SRC.rglob("*.html"):
+    _m = re.match(r"\s*<!--meta\s*(\{.*?\})\s*-->", _p.read_text(encoding="utf-8"), re.S)
+    _t = json.loads(_m.group(1)).get("tool") if _m else None
+    _rel = _p.relative_to(SRC).as_posix()
+    if _t:
+        TOOL_URL.setdefault(_t, "/" + (_rel[:-len("index.html")] if _rel.endswith("index.html") else _rel))
+for _k in SHIPURIM:
+    if _k != "_kelali" and _k not in TOOL_URL:
+        raise SystemExit(f"src/shipurim.json: אין כלי עם tool \"{_k}\"")
+
+def hdate(d):
+    y, mo, da = d.split("-")
+    return f"{da}.{mo}.{y}"
+
+def shp_by(it):
+    by = it.get("by", "").strip()
+    return f' <span class="by">· בזכות {html_lib.escape(by, quote=False)}</span>' if by else ""
+
+def shipurim_line(tool):
+    items = SHIPURIM.get(tool, {}).get("items", [])
+    if not items:
+        return ""
+    lis = "".join(f'<li><time datetime="{it["date"]}">{hdate(it["date"])}</time> {html_lib.escape(it["text"], quote=False)}{shp_by(it)}</li>' for it in items[:3])
+    more = f' <span class="n">({len(items)} שיפורים)</span>' if len(items) > 3 else ""
+    return f'<div class="shp-line" aria-labelledby="shp-line-h"><p class="shp-line-h" id="shp-line-h">✨ שופר בזכותכם{more}</p><ul>{lis}</ul></div>'
+
+def fb_note(tool):
+    if SHIPURIM.get(tool, {}).get("items"):
+        return 'אני קורא כל הצעה, בשמחה ובתודה. מה שנבנה בעקבות הצעה נכנס לרשימה "שופר בזכותכם" שלמעלה. <a class="gold" href="/kelim/shipurim/">כל השיפורים בכל הכלים ←</a>'
+    return 'אני קורא כל הצעה, בשמחה ובתודה. מה שייבנה בעקבות הצעה שלך יופיע כאן, ברשימה "שופר בזכותכם". <a class="gold" href="/kelim/shipurim/">מה כבר שיפרנו בכלים אחרים ←</a>'
+
+def shipurim_list():
+    rows = [(it, k, v) for k, v in SHIPURIM.items() for it in v.get("items", [])]
+    rows.sort(key=lambda r: r[0]["date"], reverse=True)
+    out = []
+    for it, k, v in rows:
+        href = v.get("href") or TOOL_URL.get(k)
+        name = html_lib.escape(v.get("label", k), quote=False)
+        tool = f'<a class="tool" href="{href}">{name}</a>' if href else f'<span class="tool">{name}</span>'
+        out.append(f'<li><div class="top">{tool}<time datetime="{it["date"]}">{hdate(it["date"])}</time></div>\n      <p>{html_lib.escape(it["text"], quote=False)}{shp_by(it)}</p></li>')
+    return '<ol class="shp" reversed>\n    ' + "\n    ".join(out) + "\n  </ol>"
+
 pages = []
 site_pages = {k: [] for k in SITES}
 for path in sorted(SRC.rglob("*.html")):
@@ -216,7 +263,7 @@ for path in sorted(SRC.rglob("*.html")):
     if not m:
         raise SystemExit(f"{path}: חסר בלוק meta")
     meta = json.loads(m.group(1))
-    content = leadforms(raw[m.end():])
+    content = leadforms(raw[m.end():]).replace("{{shipurim_list}}", shipurim_list())
     if meta.get("site") == "nefesh":
         content = nefesh_blocks(content)
     if meta.get("site") == "kesef":
@@ -256,6 +303,8 @@ for path in sorted(SRC.rglob("*.html")):
             "theme": site["theme"], "site_desc": site["desc"],
             "nav": "".join(f'<a href="{h}"' + (' aria-current="page"' if meta.get("nav") == k else "") + f'>{l}</a>' for k, h, l in site["nav"]),
             "tool": meta.get("tool", ""),
+            "shipurim": shipurim_line(meta.get("tool", "")),
+            "fb_note": fb_note(meta.get("tool", "")),
             "lead_endpoint": LEAD_ENDPOINT,
             "site_css": "".join(f'<link rel="stylesheet" href="{c}">' for c in site.get("css", [])),
         })
@@ -285,6 +334,9 @@ for key, site in SITES.items():
         "icons": [{"src": f"/assets/icon-{site['icon']}-192.png", "sizes": "192x192", "type": "image/png"},
                   {"src": f"/assets/icon-{site['icon']}-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}],
     }
+    if key == "kelim":  # לחיצה ארוכה על האייקון: ישר לכלים הכי שימושיים
+        man["shortcuts"] = [{"name": n, "short_name": n, "url": u + "?utm_source=pwa_shortcut", "icons": [{"src": "/assets/icon-kelim-192.png", "sizes": "192x192"}]}
+                            for n, u in [("תמלול", "/kelim/tamlul/"), ("התרופות שלי", "/kelim/briut/trufot/"), ("הכנה לוועדה", "/kelim/shikum/vaada/"), ("הקטנת סרטון", "/kelim/machshev/video/")]]
     if key == "kelim":  # "שיתוף" מהגלריה בטלפון ישר למסדר התיקיות (src/sw.js מקבל את הקבצים)
         man["share_target"] = {"action": "/kelim/machshev/sader/?share=1", "method": "POST", "enctype": "multipart/form-data",
                                "params": {"files": [{"name": "files", "accept": ["*/*"]}]}}

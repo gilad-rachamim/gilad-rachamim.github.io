@@ -23,6 +23,52 @@
    "purpose": "any maskable"
   }
  ],
+ "shortcuts": [
+  {
+   "name": "תמלול",
+   "short_name": "תמלול",
+   "url": "/kelim/tamlul/?utm_source=pwa_shortcut",
+   "icons": [
+    {
+     "src": "/assets/icon-kelim-192.png",
+     "sizes": "192x192"
+    }
+   ]
+  },
+  {
+   "name": "התרופות שלי",
+   "short_name": "התרופות שלי",
+   "url": "/kelim/briut/trufot/?utm_source=pwa_shortcut",
+   "icons": [
+    {
+     "src": "/assets/icon-kelim-192.png",
+     "sizes": "192x192"
+    }
+   ]
+  },
+  {
+   "name": "הכנה לוועדה",
+   "short_name": "הכנה לוועדה",
+   "url": "/kelim/shikum/vaada/?utm_source=pwa_shortcut",
+   "icons": [
+    {
+     "src": "/assets/icon-kelim-192.png",
+     "sizes": "192x192"
+    }
+   ]
+  },
+  {
+   "name": "הקטנת סרטון",
+   "short_name": "הקטנת סרטון",
+   "url": "/kelim/machshev/video/?utm_source=pwa_shortcut",
+   "icons": [
+    {
+     "src": "/assets/icon-kelim-192.png",
+     "sizes": "192x192"
+    }
+   ]
+  }
+ ],
  "share_target": {
   "action": "/kelim/machshev/sader/?share=1",
   "method": "POST",
