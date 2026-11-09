@@ -1597,12 +1597,19 @@
   }
   function near(a, b) { return Math.abs(a - b) <= 1e-7 * (1 + Math.abs(a) + Math.abs(b)); }
   // מקדמים של פולינום עד מעלה 2 במשתנה אחד, או null
+  function snap(v) { var r = Math.round(v); if (Math.abs(v - r) < 1e-8) return r; var f = toFrac(v); if (f && Math.abs(v - f[0] / f[1]) < 1e-8 * (1 + Math.abs(v))) return f[0] / f[1]; return clean(v); }
   function poly2(g) {
-    var c = g(0), p1 = g(1), m1 = g(-1);
-    if (![c, p1, m1].every(isFinite)) return null;
-    var a = (p1 + m1 - 2 * c) / 2, b = (p1 - m1) / 2;
-    var ok = [2, 3, -2.5, 0.7, 7].every(function (t) { var v = g(t); return isFinite(v) && near(v, a * t * t + b * t + c); });
-    return ok ? [clean(a), clean(b), clean(c)] : null;
+    // אינטרפולציה בשלוש נקודות שלא נופלות על מכנה 0, ובדיקה בעוד ארבע
+    var T = [0.37, 1.93, -1.21], Y = T.map(g);
+    if (!Y.every(isFinite)) { T = [0.53, 2.47, -2.71]; Y = T.map(g); if (!Y.every(isFinite)) return null; }
+    var a = 0, b = 0, c = 0;
+    for (var i = 0; i < 3; i++) {
+      var j = (i + 1) % 3, k = (i + 2) % 3, den = (T[i] - T[j]) * (T[i] - T[k]), w = Y[i] / den;
+      a += w; b += -w * (T[j] + T[k]); c += w * T[j] * T[k];
+    }
+    a = snap(a); b = snap(b); c = snap(c);
+    var ok = [2, 3.3, -2.5, 7.1, 0].every(function (t) { var v = g(t); return !isFinite(v) || near(v, a * t * t + b * t + c); }) && [2, 3.3, -2.5].some(function (t) { return isFinite(g(t)); });
+    return ok ? [a, b, c] : null;
   }
   function coef(k, v, first) { // 3x, −x, + 2x
     var s = k < 0 ? (first ? '−' : ' − ') : (first ? '' : ' + '), m = Math.abs(k);
@@ -1688,16 +1695,85 @@
       var more = irr ? '<p>בצורה מדויקת: <b dir="ltr">' + v + ' = (' + fmtN(-b) + ' ± ' + sq + ') ÷ ' + fmtN(2 * a) + '</b></p><p class="note">מעוגל ל-3 ספרות. בבגרות מעגלים לפי מה שמבקשים, ורק בסוף.</p>' : '';
       sheet(lines, finalBox(ansS, more), lk, true); return ansS;
     }
+    // יש x במכנה: מכפילים במכנים (תחום הגדרה: מכנה ≠ 0)
+    var dens = [], seen = {};
+    [Ls2.tree, Rs2.tree].forEach(function walk(n) {
+      if (!n || typeof n !== 'object') return;
+      if (n.t === 'op' && n.op === '/' && JSON.stringify(n.b).indexOf('"t":"var"') >= 0) { var k = show(n.b, st.ang); if (!seen[k]) { seen[k] = 1; dens.push(n.b); } }
+      ['a', 'b'].forEach(function (q) { walk(n[q]); }); (n.args || []).forEach(walk);
+    });
+    if (dens.length) {
+      var dv = function (t) { return dens.reduce(function (m, d) { try { return m * ev(d, { ang: st.ang, ans: ans, x: v === 'y' ? 0 : t, y: v === 'y' ? t : 0 }); } catch (e) { return NaN; } }, 1); };
+      var hc = poly2(function (t) { return g(t) * dv(t); });
+      if (hc && (hc[0] || hc[1])) {
+        // מקדמים שלמים, כמו בבגרות: כופלים גם במכנה המספרי, ומקדם מוביל חיובי
+        var lc = hc.reduce(function (m, q) { var f = toFrac(q); return f ? m / gcdI(m, f[1]) * f[1] : m; }, 1);
+        hc = hc.map(function (q) { return clean(q * lc); });
+        if (hc[0] < 0 || (!hc[0] && hc[1] < 0)) hc = hc.map(function (q) { return -q || 0; });
+        var gg = hc.reduce(function (m, q) { return q === Math.round(q) ? gcdI(m, q) : 1; }, 0);
+        if (gg > 1) hc = hc.map(function (q) { return q / gg; });
+        lines.push('יש ' + v + ' במכנה. תחום ההגדרה: ' + dens.map(function (d) { return L(esc(show(d, st.ang)) + ' ≠ 0'); }).join(', ') + '.');
+        lines.push('מכפילים את שני האגפים ב' + (dens.length > 1 ? 'מכנה המשותף ' : 'מכנה ') + L(dens.map(function (d) { var q = show(d, st.ang); return /^\(.*\)$/.test(q) ? esc(q) : '(' + esc(q) + ')'; }).join('')) + ' ומסדרים: ' + L(polyS(hc[0], hc[1], hc[2], v) + ' = 0'));
+        var A2 = hc[0], B2 = hc[1], C2 = hc[2], cand = [];
+        if (!A2) cand = [clean(-C2 / B2)];
+        else { var DD = clean(B2 * B2 - 4 * A2 * C2); if (DD >= 0) { cand = [clean((-B2 - Math.sqrt(DD)) / (2 * A2)), clean((-B2 + Math.sqrt(DD)) / (2 * A2))].sort(function (p, q) { return p - q; }); if (DD === 0) cand = [cand[0]]; } lines.push(L('Δ = ' + fmtN(DD)) + (DD < 0 ? ', שלילית: אין פתרון.' : ', ולכן ' + L(cand.map(function (c) { return v + ' = ' + fracS(c); }).join(', ')))); }
+        var good = cand.filter(function (c) { return Math.abs(dv(c)) > 1e-9; }), bad = cand.filter(function (c) { return Math.abs(dv(c)) <= 1e-9; });
+        if (bad.length) lines.push('פוסלים את ' + L(bad.map(function (c) { return v + ' = ' + fracS(c); }).join(', ')) + ', כי הוא מאפס מכנה (מחוץ לתחום).');
+        ansS = good.length ? good.map(function (c, i) { return v + (good.length > 1 ? '₁₂'[i] : '') + ' = ' + fracS(c); }).join(',  ') : 'אין פתרון';
+        lines.push(L('<b>' + ansS + '</b>'));
+        sheet(lines, finalBox(ansS, '<p class="note">💡 תמיד בודקים שהפתרון לא מאפס מכנה.</p>'), 'eq', true); return ansS;
+      }
+    }
     // לא קווית ולא ריבועית: פתרון מספרי
     var trig = /sin|cos|tan/.test(Ls + Rs), from = trig && st.ang === 'deg' ? 0 : -100, to = trig && st.ang === 'deg' ? 360 : 100;
     var rs = roots(g, from, to).slice(0, 8);
     lines.push('זו לא משוואה קווית או ריבועית. המחשבון מחפש פתרונות מספריים בין ' + fmtN(from) + ' ל-' + fmtN(to) + (trig ? ' (במעלות, בסיבוב אחד)' : '') + '.');
     if (/\^/.test(Ls + Rs) && !trig) lines.push('<small>במשוואה מעריכית כמו ' + L('aˣ = b') + ', בבגרות כותבים ' + L('x = log(b) ÷ log(a)') + '.</small>');
     if (trig) lines.push('<small>בבגרות כותבים את הפתרון הכללי, למשל ' + L('x = α + 360°k') + ' או ' + L('x = 180° − α + 360°k') + '.</small>');
-    ansS = rs.length ? rs.map(function (r, i) { return v + (rs.length > 1 ? '₁₂₃₄₅₆₇₈'[i] : '') + ' ≈ ' + fmtN(+r.toFixed(4)); }).join(',  ') : 'לא נמצא פתרון בטווח';
+    ansS = rs.length ? rs.map(function (r, i) { var rr = ratRoot(clean(+r.toPrecision(9))), ex = rr && Math.abs(g(rr[0] / rr[1])) < 1e-9; return v + (rs.length > 1 ? '₁₂₃₄₅₆₇₈'[i] : '') + (ex ? ' = ' + fracS(rr[0] / rr[1]) : ' ≈ ' + fmtN(+r.toFixed(4))); }).join(',  ') : 'לא נמצא פתרון בטווח';
     sheet(lines, finalBox(ansS), 'eq', true); return ansS;
   }
+  function linCoef(eq) {
+    var pr = eq.split('='), A = side(pr[0]), B = side(pr[1]), g = function (x, y) { return A.f(x, y) - B.f(x, y); };
+    var c0 = g(0, 0), a = clean(g(1, 0) - c0), b = clean(g(0, 1) - c0);
+    var ok = isFinite(c0) && [[2, 3], [-1.5, 0.5], [4, -2]].every(function (p) { var v = g(p[0], p[1]); return isFinite(v) && near(v, a * p[0] + b * p[1] + c0); });
+    return { ok: ok && (a || b), a: a, b: b, c: clean(-c0), g: g, txt: show(A.tree, st.ang) + ' = ' + show(B.tree, st.ang) };
+  }
+  function linS(m, k, v) { // m·v + k עם שברים
+    var s = m ? (m === 1 ? '' : m === -1 ? '−' : fracS(m)) + v : '';
+    if (k) s += s ? (k < 0 ? ' − ' + fracS(-k) : ' + ' + fracS(k)) : fracS(k);
+    return s || '0';
+  }
+  function solveSubst(L1, Q, iL) {
+    var lines = ['המשוואות: (1) ' + L(esc(iL === 0 ? L1.txt : Q.txt)) + ' &nbsp; (2) ' + L(esc(iL === 0 ? Q.txt : L1.txt))];
+    var byY = L1.b !== 0, m, k, other, h;
+    if (byY) { m = clean(-L1.a / L1.b); k = clean(L1.c / L1.b); lines.push('משוואה (' + (iL + 1) + ') קווית. מבודדים ממנה את y: ' + L('y = ' + linS(m, k, 'x'))); h = function (t) { return Q.g(t, m * t + k); }; }
+    else { k = clean(L1.c / L1.a); lines.push('ממשוואה (' + (iL + 1) + '): ' + L('x = ' + fracS(k))); h = function (t) { return Q.g(k, t); }; }
+    var u = byY ? 'x' : 'y', pc = poly2(h);
+    if (!pc) throw new Err('אחרי ההצבה יוצאת משוואה ממעלה גבוהה מ-2. כאן פותרים מערכת שבה ההצבה נותנת משוואה קווית או ריבועית');
+    lines.push('מציבים במשוואה (' + (2 - iL) + ') ומסדרים. יוצאת משוואה עם נעלם אחד: ' + L(polyS(pc[0], pc[1], pc[2], u) + ' = 0'));
+    var sols = [], A = pc[0], B = pc[1], C = pc[2];
+    if (!A) { if (!B) throw new Err(C ? 'אין פתרון למערכת' : 'יש אינסוף פתרונות'); sols = [clean(-C / B)]; lines.push(L(u + ' = ' + fracS(sols[0]))); }
+    else {
+      var D = clean(B * B - 4 * A * C), fp = factorPoly(A, B, C, u);
+      if (D < 0) { lines.push(L('Δ = ' + fmtN(D)) + ', שלילית: למערכת <b>אין פתרון</b> (הישר לא חותך את העקומה).'); sheet(lines, finalBox('אין פתרון'), 'sys', true); return 'אין פתרון'; }
+      sols = D === 0 ? [clean(-B / (2 * A))] : [clean((-B - Math.sqrt(D)) / (2 * A)), clean((-B + Math.sqrt(D)) / (2 * A))].sort(function (p, q) { return p - q; });
+      lines.push(fp ? 'מפרקים לגורמים: ' + L(fp.s + ' = 0') : 'בנוסחת השורשים: ' + L('Δ = ' + fmtN(D)));
+      lines.push(L(sols.map(function (x, i) { return u + (sols.length > 1 ? '₁₂'[i] : '') + ' = ' + fracS(x); }).join(',  ')));
+    }
+    var pts = sols.map(function (t) { return byY ? [t, clean(m * t + k)] : [k, t]; });
+    lines.push('מציבים כל ' + u + ' במשוואה הקווית כדי למצוא את ' + (byY ? 'y' : 'x') + ': ' + pts.map(function (p) { return L(byY ? 'x = ' + fracS(p[0]) + ' ⇐ y = ' + fracS(p[1]) : 'y = ' + fracS(p[1]) + ' ⇐ x = ' + fracS(p[0])); }).join(' ; '));
+    var bad = pts.filter(function (p) { return Math.abs(Q.g(p[0], p[1])) > 1e-6; });
+    lines.push('בדיקה בשתי המשוואות' + (bad.length ? ': יש נקודה שלא מתאימה, והיא נפסלת.' : ' ✓'));
+    pts = pts.filter(function (p) { return Math.abs(Q.g(p[0], p[1])) <= 1e-6; });
+    var ansS = pts.length ? pts.map(function (p) { return '(' + fracS(p[0]) + ', ' + fracS(p[1]) + ')'; }).join('  ') : 'אין פתרון';
+    sheet(lines, finalBox(ansS, '<p class="note">' + (pts.length > 1 ? 'שתי נקודות החיתוך' : 'נקודת החיתוך') + ' של הישר והעקומה, בצורה (x, y).</p>'), 'sys', true);
+    return ansS;
+  }
   function solveSys(e1, e2) {
+    var c1 = linCoef(e1), c2 = linCoef(e2);
+    if (!c1.ok && !c2.ok) throw new Err('שתי המשוואות לא קוויות. כאן פותרים מערכת שבה לפחות משוואה אחת קווית (כמו ברוב הבגרויות)');
+    if (!c1.ok || !c2.ok) return c1.ok ? solveSubst(c1, c2, 0) : solveSubst(c2, c1, 1);
     function lin(eq, i) {
       var pr = eq.split('=');
       var A = side(pr[0]), B = side(pr[1]), g = function (x, y) { return A.f(x, y) - B.f(x, y); };
