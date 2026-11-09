@@ -25,7 +25,7 @@
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4QR4583VST"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4QR4583VST');</script>
 <script src="/assets/track.js?v=b23b682b" defer></script>
-<style>#rk-wrap{position:relative;margin:1rem auto 0;max-width:520px;border-radius:16px;overflow:hidden;background:#000;border:1px solid var(--line)}#rk-out{display:block;width:100%;height:auto}#rk-wrap.mirror #rk-out{transform:scaleX(-1)}#rk-fps{position:absolute;top:.5rem;inset-inline-start:.5rem;background:rgba(0,0,0,.55);color:#fff;font-size:.8rem;padding:.15rem .5rem;border-radius:8px}#rk-recdot{position:absolute;top:.5rem;inset-inline-end:.5rem;background:#c33;color:#fff;font-size:.85rem;padding:.15rem .55rem;border-radius:8px}.rk-modes{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-top:.8rem}.rk-modes button[aria-pressed=true]{background:var(--gold,#e6c57e);color:#111}#rk-gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:.45rem;margin-top:.8rem}#rk-gal button{padding:0;border:2px solid transparent;border-radius:10px;overflow:hidden;background:none;aspect-ratio:3/4;cursor:pointer}#rk-gal button[aria-pressed=true]{border-color:var(--gold,#e6c57e)}#rk-gal img{width:100%;height:100%;object-fit:cover;display:block}#rk-gal label{display:flex;align-items:center;justify-content:center;border:2px dashed var(--line);border-radius:10px;aspect-ratio:3/4;font-size:.8rem;text-align:center;cursor:pointer;padding:.3rem}.rk-row{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-top:.8rem;align-items:center}#rk-state{text-align:center;margin:.7rem 0 0;min-height:1.4em}#rk-result video{width:100%;max-width:520px;display:block;margin:.8rem auto 0;border-radius:12px}</style><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "כלי קודש", "item": "https://gilad-rachamim.github.io/kodesh/"}, {"@type": "ListItem", "position": 2, "name": "אולפן לרב", "item": "https://gilad-rachamim.github.io/kodesh/olpan/"}, {"@type": "ListItem", "position": 3, "name": "רקע בכיס", "item": "https://gilad-rachamim.github.io/kodesh/olpan/reka/"}]}</script>
+<style>#rk-wrap{position:relative;margin:1rem auto 0;max-width:520px;border-radius:16px;overflow:hidden;background:#000;border:1px solid var(--line)}#rk-view{display:block;width:100%;height:auto}#rk-out{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.rk-title{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.8rem}.rk-title input{width:100%;padding:.55rem .7rem;border-radius:10px;border:1px solid var(--line);background:transparent;color:inherit;font:inherit}#rk-fps{position:absolute;top:.5rem;inset-inline-start:.5rem;background:rgba(0,0,0,.55);color:#fff;font-size:.8rem;padding:.15rem .5rem;border-radius:8px}#rk-recdot{position:absolute;top:.5rem;inset-inline-end:.5rem;background:#c33;color:#fff;font-size:.85rem;padding:.15rem .55rem;border-radius:8px}.rk-modes{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-top:.8rem}.rk-modes button[aria-pressed=true]{background:var(--gold,#e6c57e);color:#111}#rk-gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:.45rem;margin-top:.8rem}#rk-gal button{padding:0;border:2px solid transparent;border-radius:10px;overflow:hidden;background:none;aspect-ratio:3/4;cursor:pointer}#rk-gal button[aria-pressed=true]{border-color:var(--gold,#e6c57e)}#rk-gal img{width:100%;height:100%;object-fit:cover;display:block}#rk-gal label{display:flex;align-items:center;justify-content:center;border:2px dashed var(--line);border-radius:10px;aspect-ratio:3/4;font-size:.8rem;text-align:center;cursor:pointer;padding:.3rem}.rk-row{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-top:.8rem;align-items:center}#rk-state{text-align:center;margin:.7rem 0 0;min-height:1.4em}#rk-result video{width:100%;max-width:520px;display:block;margin:.8rem auto 0;border-radius:12px}</style><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "כלי קודש", "item": "https://gilad-rachamim.github.io/kodesh/"}, {"@type": "ListItem", "position": 2, "name": "אולפן לרב", "item": "https://gilad-rachamim.github.io/kodesh/olpan/"}, {"@type": "ListItem", "position": 3, "name": "רקע בכיס", "item": "https://gilad-rachamim.github.io/kodesh/olpan/reka/"}]}</script>
 </head>
 <body class="site-kodesh " data-site="kodesh" data-tool="reka" data-home="/kodesh/">
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
@@ -71,8 +71,9 @@
     <select id="rk-face" aria-label="איזו מצלמה" class="btn btn-line btn-sm"><option value="user">מצלמה קדמית</option><option value="environment">מצלמה אחורית</option></select>
     <select id="rk-shape" aria-label="צורת הצילום" class="btn btn-line btn-sm"><option value="v">לגובה (סטטוס)</option><option value="h">לרוחב (יוטיוב)</option></select></div>
   <p id="rk-state" aria-live="polite"></p>
-  <div id="rk-wrap" class="mirror" hidden>
-    <canvas id="rk-out" width="540" height="720"></canvas>
+  <div id="rk-wrap" hidden>
+    <canvas id="rk-view" width="540" height="720" aria-label="תצוגה של הצילום"></canvas>
+    <canvas id="rk-out" width="540" height="720" aria-hidden="true"></canvas>
     <span id="rk-fps"></span><span id="rk-recdot" hidden>● מצלם</span>
   </div>
   <video id="rk-cam" playsinline muted hidden></video>
@@ -85,6 +86,7 @@
     </div>
     <div class="rk-row" id="rk-blurrow"><label for="rk-blur">כמה טשטוש</label><input type="range" id="rk-blur" min="4" max="30" value="14"></div>
     <div class="rk-row" id="rk-colorrow" hidden><label for="rk-color">הצבע</label><input type="color" id="rk-color" value="#1d2b45"></div>
+    <div class="rk-title"><input id="rk-name" maxlength="40" placeholder="שם (לא חובה)" aria-label="שם בכיתוב התחתון"><input id="rk-sub" maxlength="50" placeholder="שורה שנייה, למשל: שיעור בפרשת השבוע" aria-label="שורה שנייה בכיתוב"></div>
     <div class="rk-row"><button class="btn btn-gold" type="button" id="rk-rec">● לצלם</button><button class="btn btn-line btn-sm" type="button" id="rk-snap">📷 תמונה</button><button class="btn btn-line btn-sm" type="button" id="rk-stop">לסגור</button></div>
     <div id="rk-gal" hidden></div>
   </div>
@@ -92,7 +94,7 @@
     <video id="rk-video" controls playsinline></video>
     <div class="rk-row"><button class="btn btn-gold" type="button" id="rk-share">לשתף בווטסאפ</button><button class="btn btn-line btn-sm" type="button" id="rk-dl">להוריד</button></div>
   </div>
-  <p class="disclaimer">הכול קורה בטלפון שלכם: הצילום והתמונות לא עולים לשום מקום. בפעם הראשונה נטען מודל של כ-6MB (פעם אחת, אחר כך הוא שמור). הכי טוב: אור מולכם, וקיר לא עמוס מאחור. שיער ותנועות מהירות יכולים להיראות קצת רכים בשוליים.</p>
+  <p class="disclaimer">הכול קורה בטלפון שלכם: הצילום והתמונות לא עולים לשום מקום. בפעם הראשונה נטען מודל של כ-6MB (פעם אחת, אחר כך הוא שמור). הכי טוב: אור מולכם, וקיר לא עמוס מאחור. לפני הצילום יש ספירה של 3 שניות. שיער ותנועות מהירות יכולים להיראות קצת רכים בשוליים.</p>
   <p class="disclaimer">התמונות: ויקישיתוף, ברישיון CC0 (חופשי לכל שימוש). חלק מ<a class="gold" href="/kodesh/olpan/">אולפן לרב</a>. רוצים טקסט מול העיניים? <a class="gold" href="/kodesh/olpan/prompter/">לטלפרומפטר</a>.</p>
 </div>
 
@@ -154,6 +156,6 @@
   <button class="x" type="button" data-install-close aria-label="סגירה">×</button>
 </div>
 <script src="/assets/kelim.js?v=6ab3224b" defer></script>
-<script src="/assets/olpan-reka.js?v=cb2aef14" defer></script>
+<script src="/assets/olpan-reka.js?v=5e6b5454" defer></script>
 </body>
 </html>
