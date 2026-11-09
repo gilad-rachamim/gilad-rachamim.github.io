@@ -67,7 +67,7 @@
             <div class="mx-row"><input id="mx-in" type="text" inputmode="decimal" dir="ltr" enterkeyhint="done" aria-describedby="mx-fb"><button class="btn btn-gold" type="submit">לבדוק</button></div>
             <p class="mx-fb" id="mx-fb" aria-live="polite"></p>
             <p class="mx-hint" id="mx-hint" hidden></p>
-            <div class="btns"><button class="linkish" type="button" id="mx-hintbtn">💡 רמז</button><button class="linkish" type="button" id="mx-show">להראות את הצעד</button></div>
+            <div class="btns"><button class="linkish" type="button" id="mx-hintbtn">💡 רמז</button><button class="linkish" type="button" id="mx-show">להראות את הצעד</button><button class="linkish mx-calcbtn" type="button" id="mx-calc" data-calc hidden>🧮 לפתוח מחשבון</button></div>
           </form>
           <p class="note">אפשר לכתוב מספר שלם, מינוס (‎-3), עשרוני (2.5) או שבר (3/4).</p>
         </div>
@@ -96,12 +96,14 @@
         <label for="ex-in" id="ex-q"></label>
         <div class="mx-row"><input id="ex-in" type="text" inputmode="decimal" dir="ltr" enterkeyhint="done"><button class="btn btn-gold" type="submit">לענות</button></div>
         <p class="mx-fb" id="ex-fb" aria-live="polite"></p>
-        <div class="btns"><button class="linkish" type="button" id="ex-skip">לדלג על השאלה</button></div>
+        <div class="btns"><button class="linkish" type="button" id="ex-skip">לדלג על השאלה</button><button class="linkish mx-calcbtn" type="button" data-calc>🧮 מחשבון מדעי</button></div>
       </form>
       <p class="note">במבחן אין רמזים, ויש ניסיון אחד לכל סעיף, כמו בבגרות. אחרי כל תשובה רואים אם היא נכונה, וממשיכים.</p>
     </div>
     <div id="ex-end" class="panel" hidden></div>
   </section>
+
+  <div class="mx-calcbox" id="mx-calcbox" role="dialog" aria-label="מחשבון" hidden><div class="bar"><span>🧮 מחשבון</span><span><a href="/limudim/machshevon/" target="_blank" rel="noopener">למחשבון המלא</a> &nbsp; <button class="linkish" type="button" id="mx-calcx">סגירה ✕</button></span></div><iframe id="mx-calcif" title="מחשבון מדעי" loading="lazy"></iframe></div>
 
   <p class="local-note">🔒 בלי הרשמה. ההתקדמות נשמרת רק בטלפון הזה.</p>
   <p class="note" style="text-align:center">התרגילים נוצרים מחדש בכל פעם, כך שאפשר להמשיך לתרגל בלי סוף. רוצים נושא נוסף? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>
