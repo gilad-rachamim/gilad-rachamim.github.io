@@ -15,6 +15,11 @@ class_name = "Stats"
 tag = "v1"
 new_sqlite_classes = ["Stats"]
 
+# שרת החדשות (kelim-news) – לשלוחה 8. קישור ישיר בין שרתים בלי לצאת לאינטרנט.
+[[services]]
+binding = "NEWS"
+service = "kelim-news"
+
 [vars]
 # משפט הקדשה או חסות שמוקרא אחרי הברכה (ריק = בלי)
 SPONSOR = ""
