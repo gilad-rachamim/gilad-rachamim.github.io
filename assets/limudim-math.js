@@ -1581,7 +1581,8 @@
   var calcFrom = null;
   function calcOpen(from) {
     var box = $('mx-calcbox'), fr = $('mx-calcif');
-    if (!fr.getAttribute('src')) fr.setAttribute('src', '/limudim/machshevon/?mini=1');
+    var want = '/limudim/machshevon/?mini=1' + (from.closest('#mx-exam') ? '&exam=1' : ''); // במבחן: מחשבון כמו בבחינה
+    if (fr.getAttribute('src') !== want) fr.setAttribute('src', want);
     calcFrom = from; box.hidden = false; $('mx-calcx').focus();
     used({ action: 'calc_open', topic: cur ? cur.id : 'exam' });
   }

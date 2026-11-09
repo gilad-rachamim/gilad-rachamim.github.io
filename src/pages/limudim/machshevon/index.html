@@ -19,9 +19,28 @@
     <b>חשוב לדעת לפני הבחינה:</b> בבגרות במתמטיקה מותר רק מחשבון מדעי <b>לא גרפי</b>, ואסור להשתמש באפשרויות תכנות. טלפון אסור. לכן המחשבון כאן הוא ללימוד ולתרגול בבית, ובבחינה עצמה משתמשים במחשבון המדעי שלכם. בלשונית <b>"במחשבון שלכם"</b> יש לכל פעולה את המקשים במחשבון רגיל. <a class="gold" href="https://meyda.education.gov.il/files/Exams/AllowedMaterialEXTWin2023.pdf" target="_blank" rel="noopener">רשימת חומר העזר של משרד החינוך</a>.
   </div>
 
+  <div class="cx-bar">
+    <div class="cx-lv" role="group" aria-label="כמה יחידות אני לומד">
+      <span>אני לומד:</span><button type="button" data-lv="3">3 יח"ל</button><button type="button" data-lv="4">4 יח"ל</button><button type="button" data-lv="5">5 יח"ל</button>
+    </div>
+    <div class="cx-modes">
+      <button type="button" class="cx-tog" id="cx-exam-on" aria-pressed="false">🎓 כמו בבחינה</button>
+      <button type="button" class="cx-tog" id="cx-big" aria-pressed="false">👁 גדול ונגיש</button>
+    </div>
+  </div>
+  <p class="note cx-lvnote" id="cx-lvnote" hidden></p>
+  <div class="cx-exambar" id="cx-exambar" hidden>
+    <b>🎓 מצב בחינה</b> <span>רק מחשבון מדעי, כמו בבחינה: בלי הסברים, בלי גרף ובלי קול.</span>
+    <span class="cx-clock"><label for="cx-dur">זמן:</label> <select id="cx-dur"><option value="0">בלי שעון</option><option value="105">שעה ו-45 דקות</option><option value="135">שעתיים ורבע</option><option value="180">3 שעות</option><option value="210">3.5 שעות</option></select> <output id="cx-time" aria-live="off">0:00</output></span>
+    <button type="button" class="linkish" id="cx-exam-off">לצאת ממצב בחינה</button>
+  </div>
+
   <div class="mx-tabs cx-tabs" role="tablist" aria-label="חלקי המחשבון">
     <button type="button" role="tab" data-tab="calc" id="cx-t-calc">🧮 מחשבון</button>
     <button type="button" role="tab" data-tab="solve" id="cx-t-solve">⚖️ משוואות</button>
+    <button type="button" role="tab" data-tab="stat" id="cx-t-stat">📊 סטטיסטיקה</button>
+    <button type="button" role="tab" data-tab="tri" id="cx-t-tri">📐 משולשים</button>
+    <button type="button" role="tab" data-tab="cv" id="cx-t-cv" hidden>🌀 מרוכבים ווקטורים</button>
     <button type="button" role="tab" data-tab="graph" id="cx-t-graph">📈 גרף</button>
     <button type="button" role="tab" data-tab="guide" id="cx-t-guide">🔑 במחשבון שלכם</button>
     <button type="button" role="tab" data-tab="err" id="cx-t-err">⚠️ טעויות נפוצות</button>
@@ -98,12 +117,21 @@
         <select id="cx-fix"><option value="-1">בלי עיגול</option><option value="1">ספרה אחת</option><option value="2" selected>2 ספרות אחרי הנקודה</option><option value="3">3 ספרות</option><option value="4">4 ספרות</option></select>
         <button type="button" class="linkish" id="cx-say">🔊 להקריא</button>
         <button type="button" class="linkish" id="cx-kb" aria-pressed="false">⌨ מקלדת הטלפון</button>
+        <button type="button" class="linkish" id="cx-share">🔗 לשתף את התרגיל</button>
+      </div>
+      <div class="cx-mem" role="group" aria-label="זיכרון">
+        <span>זיכרון:</span>
+        <button type="button" data-sto="a" aria-label="לשמור את התוצאה ב-A">→A</button><button type="button" data-k="A" aria-label="להכניס את A">A</button>
+        <button type="button" data-sto="b" aria-label="לשמור את התוצאה ב-B">→B</button><button type="button" data-k="B" aria-label="להכניס את B">B</button>
+        <small id="cx-memv" dir="ltr"></small>
       </div>
     </div>
 
     <div class="panel cx-steps-p" id="cx-steps-p" hidden>
       <h3>איך הגעתי לזה</h3>
       <ol class="cx-steps" id="cx-steps"></ol>
+      <div class="cx-keyseq" id="cx-keyseq"></div>
+      <div id="cx-lesson"></div>
     </div>
 
     <div class="panel cx-hist-p">
@@ -158,6 +186,82 @@
       <p class="note">נוגעים בגרף כדי לראות נקודה. גוררים כדי להזיז.</p>
       <div id="gr-pts" class="cx-gout" aria-live="polite"></div>
       <details class="cx-tbl"><summary>טבלת ערכים</summary><div id="gr-tbl"></div></details>
+    </div>
+  </section>
+
+  <!-- ===== סטטיסטיקה ===== -->
+  <section class="cx-pane" id="cx-p-stat" role="tabpanel" aria-labelledby="cx-t-stat" hidden>
+    <div class="panel">
+      <h3>ממוצע, חציון וסטיית תקן</h3>
+      <div class="field"><label for="st-x">הנתונים <span class="opt">(מספרים עם פסיק או רווח ביניהם)</span></label><input id="st-x" type="text" dir="ltr" inputmode="decimal" value="4, 7, 7, 8, 10, 12" autocomplete="off"></div>
+      <div class="field"><label for="st-f">כמה פעמים כל אחד <span class="opt">(לא חובה, לטבלת שכיחויות)</span></label><input id="st-f" type="text" dir="ltr" inputmode="decimal" placeholder="למשל 2, 5, 3" autocomplete="off"></div>
+      <button type="button" class="btn btn-gold" id="st-go">לחשב עם שלבים</button>
+      <ol class="cx-steps" id="st-out" aria-live="polite"></ol>
+    </div>
+    <div class="panel">
+      <h3>התפלגות נורמלית</h3>
+      <div class="row2">
+        <div class="field"><label for="nm-mu">ממוצע μ</label><input id="nm-mu" type="text" dir="ltr" inputmode="decimal" value="70"></div>
+        <div class="field"><label for="nm-s">סטיית תקן σ</label><input id="nm-s" type="text" dir="ltr" inputmode="decimal" value="10"></div>
+      </div>
+      <div class="field"><label for="nm-t">מה מחפשים?</label><select id="nm-t"><option value="lt">הסיכוי לפחות מ-a</option><option value="gt">הסיכוי ליותר מ-a</option><option value="bt">הסיכוי בין a ל-b</option><option value="inv">איזה ערך מתאים לאחוז מסוים</option></select></div>
+      <div class="row2">
+        <div class="field"><label for="nm-a" id="nm-al">a</label><input id="nm-a" type="text" dir="ltr" inputmode="decimal" value="85"></div>
+        <div class="field" id="nm-bw" hidden><label for="nm-b">b</label><input id="nm-b" type="text" dir="ltr" inputmode="decimal" value="90"></div>
+      </div>
+      <button type="button" class="btn btn-gold" id="nm-go">לחשב עם שלבים</button>
+      <ol class="cx-steps" id="nm-out" aria-live="polite"></ol>
+    </div>
+    <div class="panel">
+      <h3>התפלגות בינומית</h3>
+      <div class="cx-abc">
+        <div class="field"><label for="bn-n">n ניסיונות</label><input id="bn-n" type="text" dir="ltr" inputmode="numeric" value="10"></div>
+        <div class="field"><label for="bn-p">p הצלחה</label><input id="bn-p" type="text" dir="ltr" inputmode="decimal" value="0.3"></div>
+        <div class="field"><label for="bn-k">k הצלחות</label><input id="bn-k" type="text" dir="ltr" inputmode="numeric" value="3"></div>
+      </div>
+      <div class="field"><label for="bn-t">מה מחפשים?</label><select id="bn-t"><option value="eq">בדיוק k הצלחות</option><option value="le">לכל היותר k</option><option value="ge">לפחות k</option></select></div>
+      <button type="button" class="btn btn-gold" id="bn-go">לחשב עם שלבים</button>
+      <ol class="cx-steps" id="bn-out" aria-live="polite"></ol>
+    </div>
+  </section>
+
+  <!-- ===== משולשים ===== -->
+  <section class="cx-pane" id="cx-p-tri" role="tabpanel" aria-labelledby="cx-t-tri" hidden>
+    <div class="panel">
+      <p>ממלאים 3 נתונים שיודעים, ולפחות אחד מהם צלע. המחשבון בוחר בין משפט הסינוסים, משפט הקוסינוסים ופיתגורס, ומראה כל שלב. הזווית α מול הצלע a, β מול b, ו-γ מול c.</p>
+      <div class="cx-tri-in">
+        <div class="field"><label for="tr-a">צלע a</label><input id="tr-a" type="text" dir="ltr" inputmode="decimal" value="7"></div>
+        <div class="field"><label for="tr-b">צלע b</label><input id="tr-b" type="text" dir="ltr" inputmode="decimal" value="5"></div>
+        <div class="field"><label for="tr-c">צלע c</label><input id="tr-c" type="text" dir="ltr" inputmode="decimal" value=""></div>
+        <div class="field"><label for="tr-A">זווית α°</label><input id="tr-A" type="text" dir="ltr" inputmode="decimal" value=""></div>
+        <div class="field"><label for="tr-B">זווית β°</label><input id="tr-B" type="text" dir="ltr" inputmode="decimal" value=""></div>
+        <div class="field"><label for="tr-C">זווית γ°</label><input id="tr-C" type="text" dir="ltr" inputmode="decimal" value="60"></div>
+      </div>
+      <div class="btns"><button type="button" class="btn btn-gold" id="tr-go">לפתור את המשולש</button><button type="button" class="btn btn-line btn-sm" id="tr-clr">לנקות</button></div>
+      <div id="tr-out" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- ===== מרוכבים ווקטורים (5 יח"ל) ===== -->
+  <section class="cx-pane" id="cx-p-cv" role="tabpanel" aria-labelledby="cx-t-cv" hidden>
+    <div class="panel">
+      <h3>מספרים מרוכבים</h3>
+      <div class="row2">
+        <div class="field"><label for="z-1">z₁</label><input id="z-1" type="text" dir="ltr" value="3+4i" autocomplete="off"></div>
+        <div class="field"><label for="z-2">z₂</label><input id="z-2" type="text" dir="ltr" value="1-2i" autocomplete="off"></div>
+      </div>
+      <div class="field"><label for="z-n">חזקה n <span class="opt">(ל-z₁ⁿ לפי דה-מואבר)</span></label><input id="z-n" type="text" dir="ltr" inputmode="numeric" value="3"></div>
+      <button type="button" class="btn btn-gold" id="z-go">לחשב עם שלבים</button>
+      <ol class="cx-steps" id="z-out" aria-live="polite"></ol>
+    </div>
+    <div class="panel">
+      <h3>וקטורים</h3>
+      <div class="row2">
+        <div class="field"><label for="v-1">u</label><input id="v-1" type="text" dir="ltr" value="(1, 2, 2)" autocomplete="off"></div>
+        <div class="field"><label for="v-2">v</label><input id="v-2" type="text" dir="ltr" value="(2, -1, 2)" autocomplete="off"></div>
+      </div>
+      <button type="button" class="btn btn-gold" id="v-go">לחשב עם שלבים</button>
+      <ol class="cx-steps" id="v-out" aria-live="polite"></ol>
     </div>
   </section>
 
