@@ -1,0 +1,46 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tichnut_regex",
+  "title": "בודק Regex בעברית – מסמן התאמות, קבוצות והחלפה | הכלים של גילעד רחמים",
+  "description": "כותבים ביטוי רגולרי ורואים מיד מה הוא תופס בטקסט, עם הקבוצות של כל התאמה והחלפה. תבניות מוכנות: טלפון נייד ישראלי, אימייל, תאריך, מילים בעברית. רץ בדפדפן, בחינם.",
+  "og_title": "בודק Regex עם תבניות מוכנות לישראל",
+  "priority": "0.7",
+  "crumbs": [["כלים למתכנתים", "/kelim/tichnut/"], ["בודק Regex", null]],
+  "head": "<style>.tn-code{width:100%;direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:.95rem;line-height:1.55;padding:.7rem .8rem;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.25);color:var(--parchment);unicode-bidi:plaintext;text-align:start;white-space:pre-wrap;word-break:break-word}textarea.tn-code{min-height:7rem;resize:vertical}.tn-lab{display:block;margin:.8rem 0 .3rem;color:var(--cream);font-weight:600}.rx-flags{display:flex;flex-wrap:wrap;gap:.35rem .9rem;margin-top:.45rem;color:var(--body);font-size:.92rem;direction:ltr;justify-content:flex-end}.rx-flags label{white-space:nowrap}.rx-slash{direction:ltr;text-align:left;color:var(--muted);font-family:ui-monospace,Consolas,monospace;font-size:.85rem;margin-top:.3rem;word-break:break-all}.rx-view mark{background:var(--gold);color:#111;border-radius:3px;padding:0 1px}.rx-list{list-style:none;display:grid;gap:.4rem;margin-top:.6rem}.rx-list li{display:flex;flex-wrap:wrap;gap:.3rem .7rem;align-items:baseline;padding:.5rem .7rem;border:1px solid var(--line);border-radius:10px;color:var(--parchment)}.rx-list b{color:var(--gold)}.rx-list code{direction:ltr;font-size:.95rem}.rx-list small{color:var(--muted)}.rx-list div{flex-basis:100%;display:flex;flex-wrap:wrap;gap:.6rem;direction:ltr;justify-content:flex-end;font-family:ui-monospace,Consolas,monospace;font-size:.85rem;color:var(--body)}.note.ok{color:#9fd39b}.note.bad{color:#f0a39b}.tn-btns{display:flex;flex-wrap:wrap;gap:.45rem;margin:.8rem 0}</style>",
+  "foot": "<script src=\"/assets/tichnut-data.js\" defer></script><script src=\"/assets/tichnut-regex.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>בודק Regex</h1>
+  <p class="sub">כותבים תבנית, ורואים מיד מה היא תופסת בטקסט. עם תבניות מוכנות לטלפון ישראלי, אימייל, תאריך ועברית.</p>
+</header>
+<div class="tool">
+  <div class="field"><label for="rx-ready">תבנית מוכנה</label><select id="rx-ready"><option value="">לבחור תבנית…</option></select></div>
+  <label class="tn-lab" for="rx-p">התבנית</label>
+  <input id="rx-p" class="tn-code" dir="ltr" style="unicode-bidi:normal;text-align:left" type="text" spellcheck="false" autocomplete="off">
+  <div class="rx-flags" id="rx-flags">
+    <label><input type="checkbox" id="rx-fg"> g כל ההתאמות</label>
+    <label><input type="checkbox" id="rx-fi"> i בלי הבדל אותיות</label>
+    <label><input type="checkbox" id="rx-fm"> m כל שורה</label>
+    <label><input type="checkbox" id="rx-fs"> s נקודה תופסת ירידת שורה</label>
+    <label><input type="checkbox" id="rx-fu"> u יוניקוד</label>
+  </div>
+  <p class="rx-slash" id="rx-slash"></p>
+  <label class="tn-lab" for="rx-t">הטקסט לבדיקה</label>
+  <textarea id="rx-t" class="tn-code" spellcheck="false" dir="auto"></textarea>
+  <p class="note" id="rx-msg" aria-live="polite"></p>
+  <div class="tn-code rx-view" id="rx-view" dir="auto"></div>
+  <ul class="rx-list" id="rx-list"></ul>
+  <label class="tn-lab"><input type="checkbox" id="rx-rep"> גם להחליף</label>
+  <div id="rx-rbox" hidden>
+    <input id="rx-r" class="tn-code" type="text" spellcheck="false" aria-label="להחליף ב (אפשר $1, $2 לקבוצות)">
+    <p class="note">אפשר להשתמש ב-$1, $2 לקבוצות שבסוגריים.</p>
+    <div class="tn-code" id="rx-out" dir="auto"></div>
+  </div>
+  <div class="tn-btns">
+    <button class="btn btn-gold btn-sm" type="button" id="rx-copy">להעתיק כקוד JavaScript</button>
+    <button class="btn btn-line btn-sm" type="button" id="rx-reset">לחזור לדוגמה</button>
+  </div>
+  <p class="disclaimer">הבדיקה לפי מנוע ה-Regex של JavaScript. ב-Python וב-C++ רוב התבניות זהות, אבל יש הבדלים קטנים (למשל בקבוצות עם שם).</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="בודק Regex בעברית, עם תבניות מוכנות לטלפון ישראלי, אימייל ותאריך. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
