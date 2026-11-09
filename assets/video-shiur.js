@@ -74,7 +74,7 @@
     load(f);
   });
   function load(f) {
-    file = f; fileName = (f.name || 'סרטון').replace(/\.[^.]+$/, '').slice(0, 40);
+    fastBroken = false; file = f; fileName = (f.name || 'סרטון').replace(/\.[^.]+$/, '').slice(0, 40);
     segs = null; groups = null; out.innerHTML = ''; tamBtns();
     $('kt-edit').hidden = true; $('sh-sents').hidden = true; $('sh-auto').hidden = true; clips = []; drawClips();
     vid.src = URL.createObjectURL(f);
@@ -122,7 +122,7 @@
     ctx.save(); ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
     if (job && job.kind === 'short') drawShort(t, W, H);
     else {
-      try { ctx.drawImage(vid, 0, 0, W, H); } catch (e) {}
+      try { ctx.drawImage(SRC(), 0, 0, W, H); } catch (e) {}
       if (job && job.kind === 'status') badge(job.n + '/' + job.of, W, H);
       if (job && job.kind === 'caps') caps(t, W, H, +$('kt-pos').value);
     }
@@ -189,7 +189,9 @@
 
   // ---------- שורט 9:16 ----------
   var tiny = document.createElement('canvas'); tiny.width = 36; tiny.height = 64;
-  function cover(c, w, h) { var vw = vid.videoWidth || 16, vh = vid.videoHeight || 9, k = Math.max(w / vw, h / vh); c.drawImage(vid, (w - vw * k) / 2, (h - vh * k) / 2, vw * k, vh * k); }
+  // רקע מטושטש בשני שלבים (36×64 ← 144×256 ← מסך): חלק, וזול לציור (איכות 'high' האטה את היצירה פי 4)
+  var mid = document.createElement('canvas'); mid.width = 144; mid.height = 256;
+  function cover(c, w, h) { var vw = vid.videoWidth || 16, vh = vid.videoHeight || 9, k = Math.max(w / vw, h / vh); c.drawImage(SRC(), (w - vw * k) / 2, (h - vh * k) / 2, vw * k, vh * k); }
   function drawShort(t, W, H) {
     var cl = job.clip || {}, mode = cl.bg || $('sh-bg').value, vw = vid.videoWidth || 16, vh = vid.videoHeight || 9;
     var capY = 0.74;
@@ -197,10 +199,10 @@
       if (mode === 'crop') { cover(ctx, W, H); }
       else {
         var tc = tiny.getContext('2d'); cover(tc, 36, 64);
-        ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high'; ctx.drawImage(tiny, 0, 0, W, H);
+        mid.getContext('2d').drawImage(tiny, 0, 0, 144, 256); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'low'; ctx.drawImage(mid, 0, 0, W, H);
         ctx.fillStyle = 'rgba(8,12,24,.45)'; ctx.fillRect(0, 0, W, H);
         var h = W * vh / vw; if (h > H * 0.62) h = H * 0.62; var w = h * vw / vh, y = H * 0.47 - h / 2;
-        ctx.drawImage(vid, (W - w) / 2, y, w, h);
+        ctx.drawImage(SRC(), (W - w) / 2, y, w, h);
         capY = Math.min(0.86, (y + h) / H + 0.1);
       }
     } catch (e) {}
@@ -300,6 +302,290 @@
     return function () { nodes.forEach(function (o) { try { o.stop(); } catch (e) {} }); try { master.disconnect(); } catch (e) {} };
   }
 
+  // ---------- יצירה מהירה: WebCodecs + mp4-muxer (בלי לנגן בזמן אמת) ----------
+  // קוראים את טבלת הדגימות מה-moov של הקובץ (MP4/MOV), מפענחים רק את הקטע הדרוש, מציירים כל תמונה בקנבס
+  // ומקודדים H.264 + AAC. כשמשהו לא נתמך (דפדפן, קודק, סרטון מסובב, WebM, קטע ארוך) – חוזרים למנוע הרגיל בזמן אמת.
+  // FR: התמונה הנוכחית במנוע המהיר. מעתיקים כל תמונה פעם אחת לקנבס (fcv), כי ציור ישיר של VideoFrame כמה פעמים לכל תמונה איטי מאוד
+  var FR = null, fcv = document.createElement('canvas'), fctx = fcv.getContext('2d'), fcFrom = null;
+  function SRC() {
+    if (!FR) return vid;
+    if (fcFrom !== FR) { var s = srcSize(); if (fcv.width !== s[0]) fcv.width = s[0]; if (fcv.height !== s[1]) fcv.height = s[1]; fctx.drawImage(FR, 0, 0, s[0], s[1]); fcFrom = FR; }
+    return fcv;
+  }
+  var MUX = 'https://cdn.jsdelivr.net/npm/mp4-muxer@5.2.1/build/mp4-muxer.min.js', FAST_MAX = 10 * 60;
+  var muxP = null, fastBroken = false, dmx = null;
+  function fastOK(len) {
+    return !fastBroken && window.__vsFast !== false && (!$('vs-fast') || $('vs-fast').checked) && len <= FAST_MAX &&
+      !!(window.VideoEncoder && window.VideoDecoder && window.AudioEncoder && window.AudioDecoder && window.VideoFrame && window.OfflineAudioContext);
+  }
+  function muxLib() {
+    if (window.Mp4Muxer) return Promise.resolve();
+    return muxP || (muxP = new Promise(function (res, rej) {
+      var s = document.createElement('script'); s.src = MUX; s.async = true; s.crossOrigin = 'anonymous';
+      s.onload = res; s.onerror = function () { muxP = null; rej(new Error('lib')); }; document.head.appendChild(s);
+    }));
+  }
+  function readAt(f, off, len) { return f.slice(off, off + len).arrayBuffer(); }
+  // ---- קריאת ה-moov ----
+  function topBoxes(f) {
+    var list = [], off = 0;
+    function next() {
+      if (off + 8 > f.size || list.length > 60) return Promise.resolve(list);
+      return readAt(f, off, 16).then(function (b) {
+        var d = new DataView(b), size = d.getUint32(0), type = String.fromCharCode(d.getUint8(4), d.getUint8(5), d.getUint8(6), d.getUint8(7));
+        if (size === 1) size = d.getUint32(8) * 4294967296 + d.getUint32(12); else if (size === 0) size = f.size - off;
+        if (size < 8) throw new Error('box');
+        list.push({ type: type, off: off, size: size }); off += size; return next();
+      });
+    }
+    return next();
+  }
+  function parseMoov(buf) {
+    var d = new DataView(buf), u8 = new Uint8Array(buf), mvTS = 1000, tracks = [];
+    function str(o) { return String.fromCharCode(u8[o], u8[o + 1], u8[o + 2], u8[o + 3]); }
+    function kids(s, e, cb) {
+      while (s + 8 <= e) {
+        var sz = d.getUint32(s), ty = str(s + 4), h = 8;
+        if (sz === 1) { sz = d.getUint32(s + 8) * 4294967296 + d.getUint32(s + 12); h = 16; } else if (sz === 0) sz = e - s;
+        if (sz < 8 || s + sz > e) break;
+        cb(ty, s + h, s + sz); s += sz;
+      }
+    }
+    function u64(o) { return d.getUint32(o) * 4294967296 + d.getUint32(o + 4); }
+    kids(8, buf.byteLength, function (ty, s, e) {
+      if (ty === 'mvhd') mvTS = d.getUint32(s + (u8[s] === 1 ? 20 : 12));
+      if (ty !== 'trak') return;
+      var T = { edits: [] };
+      (function walk(s, e) {
+        kids(s, e, function (ty, s, e) {
+          if (ty === 'mdia' || ty === 'minf' || ty === 'stbl' || ty === 'edts') return walk(s, e);
+          var v = u8[s];
+          if (ty === 'tkhd') { var m = s + (v === 1 ? 52 : 40); T.mat = [d.getInt32(m), d.getInt32(m + 4), d.getInt32(m + 12), d.getInt32(m + 16)]; }
+          else if (ty === 'mdhd') T.ts = d.getUint32(s + (v === 1 ? 20 : 12));
+          else if (ty === 'hdlr') T.kind = str(s + 8);
+          else if (ty === 'elst') { var n = d.getUint32(s + 4), o = s + 8; for (var i = 0; i < n; i++) { if (v === 1) { T.edits.push([u64(o), d.getInt32(o + 8) * 4294967296 + d.getUint32(o + 12)]); o += 20; } else { T.edits.push([d.getUint32(o), d.getInt32(o + 4)]); o += 12; } } }
+          else if (ty === 'stsd') {
+            var es = s + 8, ee = es + d.getUint32(es); T.fmt = str(es + 4);
+            if (T.fmt === 'avc1' || T.fmt === 'avc3' || T.fmt === 'hvc1' || T.fmt === 'hev1') {
+              T.w = d.getUint16(es + 32); T.h = d.getUint16(es + 34);
+              kids(es + 86, ee, function (ty, s, e) { if (ty === 'avcC' || ty === 'hvcC') { T.cfgType = ty; T.cfg = u8.slice(s, e); } });
+            } else if (T.fmt === 'mp4a') {
+              var ver = d.getUint16(es + 16);
+              T.ch = d.getUint16(es + 24); T.rate = d.getUint32(es + 32) >>> 16;
+              kids(es + 36 + (ver === 1 ? 16 : ver === 2 ? 36 : 0), ee, function (ty, s, e) {
+                if (ty !== 'esds') return;
+                var p = s + 4;
+                function desc() { var tag = u8[p++], len = 0, b; do { b = u8[p++]; len = (len << 7) | (b & 127); } while (b & 128 && p < e); return { tag: tag, len: len }; }
+                while (p < e) {
+                  var x = desc();
+                  if (x.tag === 3) { var fl = u8[p + 2]; p += 3; if (fl & 128) p += 2; if (fl & 64) p += 1 + u8[p]; if (fl & 32) p += 2; }
+                  else if (x.tag === 4) { T.oti = u8[p]; p += 13; }
+                  else if (x.tag === 5) { T.asc = u8.slice(p, p + x.len); break; }
+                  else p += x.len;
+                }
+              });
+            }
+          }
+          else if (ty === 'stts') { T.stts = []; var n2 = d.getUint32(s + 4); for (var k = 0; k < n2; k++) T.stts.push([d.getUint32(s + 8 + k * 8), d.getUint32(s + 12 + k * 8)]); }
+          else if (ty === 'ctts') { T.ctts = []; var n3 = d.getUint32(s + 4); for (var k2 = 0; k2 < n3; k2++) T.ctts.push([d.getUint32(s + 8 + k2 * 8), v === 1 ? d.getInt32(s + 12 + k2 * 8) : d.getUint32(s + 12 + k2 * 8)]); }
+          else if (ty === 'stss') { T.stss = new Set(); var n4 = d.getUint32(s + 4); for (var k3 = 0; k3 < n4; k3++) T.stss.add(d.getUint32(s + 8 + k3 * 4)); }
+          else if (ty === 'stsz') { var one = d.getUint32(s + 4), n5 = d.getUint32(s + 8); T.sizes = new Uint32Array(n5); for (var k4 = 0; k4 < n5; k4++) T.sizes[k4] = one || d.getUint32(s + 12 + k4 * 4); }
+          else if (ty === 'stco' || ty === 'co64') { var n6 = d.getUint32(s + 4); T.chunks = new Float64Array(n6); for (var k5 = 0; k5 < n6; k5++) T.chunks[k5] = ty === 'co64' ? u64(s + 8 + k5 * 8) : d.getUint32(s + 8 + k5 * 4); }
+          else if (ty === 'stsc') { T.stsc = []; var n7 = d.getUint32(s + 4); for (var k6 = 0; k6 < n7; k6++) T.stsc.push([d.getUint32(s + 8 + k6 * 12), d.getUint32(s + 12 + k6 * 12)]); }
+        });
+      })(s, e);
+      if (T.sizes && T.chunks && T.stsc && T.stts && T.ts) tracks.push(T);
+    });
+    tracks.forEach(function (T) { table(T, mvTS); });
+    return tracks;
+  }
+  // טבלת דגימות: מיקום, גודל, זמן הצגה (בשניות, אחרי רשימת העריכה) ותמונת מפתח
+  function table(T, mvTS) {
+    var n = T.sizes.length, off = new Float64Array(n), cts = new Float64Array(n), key = new Uint8Array(n);
+    var si = 0, ci = 0;
+    for (var e = 0; e < T.stsc.length && si < n; e++) {
+      var first = T.stsc[e][0] - 1, last = e + 1 < T.stsc.length ? T.stsc[e + 1][0] - 1 : T.chunks.length, per = T.stsc[e][1];
+      for (ci = first; ci < last && si < n; ci++) { var o = T.chunks[ci]; for (var k = 0; k < per && si < n; k++) { off[si] = o; o += T.sizes[si]; si++; } }
+    }
+    var dts = 0, i = 0;
+    T.stts.forEach(function (x) { for (var k = 0; k < x[0] && i < n; k++) { cts[i++] = dts; dts += x[1]; } });
+    if (T.ctts) { i = 0; T.ctts.forEach(function (x) { for (var k = 0; k < x[0] && i < n; k++) cts[i++] += x[1]; }); }
+    var shift = 0, delay = 0;
+    for (var j = 0; j < T.edits.length; j++) { if (T.edits[j][1] === -1) delay += T.edits[j][0] / mvTS; else { shift = T.edits[j][1] / T.ts; break; } }
+    for (i = 0; i < n; i++) { cts[i] = cts[i] / T.ts - shift + delay; key[i] = !T.stss || T.stss.has(i + 1) ? 1 : 0; }
+    T.n = n; T.off = off; T.cts = cts; T.key = key; T.fps = n > 1 ? n / Math.max(0.1, dts / T.ts) : 30;
+  }
+  function hexb(x) { return ('0' + x.toString(16)).slice(-2); }
+  function vCodec(T) {
+    var b = T.cfg; if (!b) return null;
+    if (T.cfgType === 'avcC') return 'avc1.' + hexb(b[1]) + hexb(b[2]) + hexb(b[3]);
+    var ps = b[1] >> 6, pidc = b[1] & 31, tier = (b[1] >> 5) & 1, c = ((b[2] << 24) | (b[3] << 16) | (b[4] << 8) | b[5]) >>> 0, rev = 0;
+    for (var i = 0; i < 32; i++) { rev = ((rev << 1) | (c & 1)) >>> 0; c >>>= 1; }
+    var cons = [b[6], b[7], b[8], b[9], b[10], b[11]]; while (cons.length && !cons[cons.length - 1]) cons.pop();
+    return T.fmt + '.' + ['', 'A', 'B', 'C'][ps] + pidc + '.' + rev.toString(16).toUpperCase() + '.' + (tier ? 'H' : 'L') + b[12] + (cons.length ? '.' + cons.map(function (x) { return x.toString(16).toUpperCase(); }).join('.') : '');
+  }
+  function demux() {
+    var f = file;
+    if (dmx && dmx.file === f) return dmx.bad ? Promise.reject(new Error(dmx.bad)) : Promise.resolve(dmx);
+    return topBoxes(f).then(function (list) {
+      var mv = list.filter(function (x) { return x.type === 'moov'; })[0];
+      if (!mv || mv.size > 80e6) throw new Error('nomoov');
+      return readAt(f, mv.off, mv.size);
+    }).then(function (buf) {
+      var tr = parseMoov(buf), V = tr.filter(function (t) { return t.kind === 'vide' && t.cfg; })[0], A = tr.filter(function (t) { return t.kind === 'soun' && t.fmt === 'mp4a' && t.asc; })[0];
+      dmx = { file: f, v: V, a: A };
+      if (!V) dmx.bad = 'novideo';
+      else if (V.mat && !(V.mat[0] > 0 && V.mat[1] === 0 && V.mat[2] === 0 && V.mat[3] > 0)) dmx.bad = 'rotated';
+      if (dmx.bad) throw new Error(dmx.bad);
+      return dmx;
+    }, function (e) { dmx = { file: f, bad: e.message || 'demux' }; throw e; });
+  }
+  // קריאת דגימות ברצף: קטעים צמודים בקובץ נקראים בבת אחת
+  function reader(f, T) {
+    return function (i0, i1) {
+      var lo = T.off[i0], hi = T.off[i1 - 1] + T.sizes[i1 - 1];
+      if (hi - lo < 12e6) return readAt(f, lo, hi - lo).then(function (b) { var out = []; for (var i = i0; i < i1; i++) out.push(new Uint8Array(b, T.off[i] - lo, T.sizes[i])); return out; });
+      var out = [], i = i0;
+      return (function one() { if (i >= i1) return Promise.resolve(out); var k = i++; return readAt(f, T.off[k], T.sizes[k]).then(function (b) { out.push(new Uint8Array(b)); return one(); }); })();
+    };
+  }
+  function first(T, t) { var k = 0; for (var i = 0; i < T.n; i++) { if (T.cts[i] > t) break; if (T.key[i]) k = i; } return k; }
+  function tick() { return new Promise(function (r) { setTimeout(r, 0); }); }
+  // ---- קול: מפענחים את הקטע, מוסיפים מוזיקה (OfflineAudioContext) ומקודדים AAC ----
+  function fastAudio(A, a, b, len, rate, muxer) {
+    var withMusic = look.music !== 'none';
+    if (!A && !withMusic) return Promise.resolve(false);
+    // הקול המקורי נשמר בקצב שלו (sr), וה-OfflineAudioContext ממיר לקצב היציאה (rate)
+    var frames = Math.ceil(len * rate), sr = A ? A.rate : rate, sf = Math.ceil(len * sr), L = new Float32Array(sf), R = new Float32Array(sf);
+    var dec = Promise.resolve();
+    if (A) dec = new Promise(function (res, rej) {
+      var ad = new AudioDecoder({
+        output: function (x) {
+          try {
+            var n = x.numberOfFrames, ch = x.numberOfChannels, at = Math.round((x.timestamp / 1e6 - a) * sr), planes = [];
+            for (var c = 0; c < Math.min(2, ch); c++) { var p = new Float32Array(n); x.copyTo(p, { planeIndex: c, format: 'f32-planar' }); planes.push(p); }
+            if (planes.length === 1) planes.push(planes[0]);
+            for (var i = 0; i < n; i++) { var j = at + i; if (j >= 0 && j < sf) { L[j] = planes[0][i]; R[j] = planes[1][i]; } }
+          } catch (e) { rej(e); }
+          x.close();
+        }, error: rej
+      });
+      ad.configure({ codec: 'mp4a.40.' + Math.max(1, A.asc[0] >> 3), sampleRate: A.rate, numberOfChannels: A.ch, description: A.asc });
+      var i0 = Math.max(0, first(A, a) - 2), i1 = i0, read = reader(file, A);
+      while (i1 < A.n && A.cts[i1] < b + 0.2) i1++;
+      (function feed(i) {
+        if (i >= i1) return ad.flush().then(function () { ad.close(); res(); }, rej);
+        var j = Math.min(i1, i + 200);
+        read(i, j).then(function (bufs) { bufs.forEach(function (u, k) { ad.decode(new EncodedAudioChunk({ type: 'key', timestamp: Math.round(A.cts[i + k] * 1e6), data: u })); }); return feed(j); }).catch(rej);
+      })(i0);
+    });
+    return dec.then(function () {
+      var oac = new OfflineAudioContext(2, frames, rate), buf = oac.createBuffer(2, sf, sr);
+      buf.copyToChannel(L, 0); buf.copyToChannel(R, 1);
+      var src = oac.createBufferSource(); src.buffer = buf; src.connect(oac.destination); src.start(0);
+      if (withMusic) music(oac, [oac.destination], len, look.music === 'soft' ? 0.5 : 0.22);
+      return oac.startRendering();
+    }).then(function (ab) {
+      return new Promise(function (res, rej) {
+        var enc = new AudioEncoder({ output: function (c, m) { muxer.addAudioChunk(c, m); }, error: rej });
+        enc.configure({ codec: 'mp4a.40.2', sampleRate: rate, numberOfChannels: 2, bitrate: 128000 });
+        var l = ab.getChannelData(0), r = ab.getChannelData(1);
+        for (var s = 0; s < frames; s += 1024) {
+          var n = Math.min(1024, frames - s), d = new Float32Array(n * 2);
+          d.set(l.subarray(s, s + n), 0); d.set(r.subarray(s, s + n), n);
+          var x = new AudioData({ format: 'f32-planar', sampleRate: rate, numberOfFrames: n, numberOfChannels: 2, timestamp: Math.round(s / rate * 1e6), data: d });
+          enc.encode(x); x.close();
+        }
+        enc.flush().then(function () { enc.close(); res(true); }, rej);
+      });
+    });
+  }
+  function pickV(W, H, fps) {
+    var list = ['avc1.640028', 'avc1.4d0028', 'avc1.42002a', 'avc1.42001f'];
+    return (function one(i) {
+      if (i >= list.length) return Promise.reject(new Error('venc'));
+      var c = { codec: list[i], width: W, height: H, bitrate: 3500000, framerate: fps, avc: { format: 'avc' } };
+      return VideoEncoder.isConfigSupported(c).then(function (s) { return s.supported ? c : one(i + 1); }, function () { return one(i + 1); });
+    })(0);
+  }
+  function fastRec(a, b, onP, opt) {
+    var tail = (opt && opt.tail) || 0, len = b - a + tail, W = cv.width, H = cv.height, D, V, A, rate, fps, muxer, vcfg;
+    return Promise.all([muxLib(), demux()]).then(function (r) {
+      D = r[1]; V = D.v; A = D.a; rate = A && (A.rate === 44100 || A.rate === 48000) ? A.rate : 48000;
+      fps = Math.max(15, Math.min(30, Math.round(V.fps || 30)));
+      var dc = { codec: vCodec(V), codedWidth: V.w, codedHeight: V.h, description: V.cfg };
+      return Promise.all([VideoDecoder.isConfigSupported(dc), pickV(W, H, fps),
+        AudioEncoder.isConfigSupported({ codec: 'mp4a.40.2', sampleRate: rate, numberOfChannels: 2, bitrate: 128000 }),
+        A ? AudioDecoder.isConfigSupported({ codec: 'mp4a.40.' + Math.max(1, A.asc[0] >> 3), sampleRate: A.rate, numberOfChannels: A.ch, description: A.asc }) : { supported: true }]).then(function (s) {
+        if (!s[0].supported) throw new Error('vdec ' + dc.codec);
+        if (!s[2].supported || !s[3].supported) throw new Error('audio');
+        vcfg = s[1]; return dc;
+      });
+    }).then(function (dc) {
+      var hasA = !!A || look.music !== 'none';
+      muxer = new Mp4Muxer.Muxer({ target: new Mp4Muxer.ArrayBufferTarget(), video: { codec: 'avc', width: W, height: H, frameRate: fps },
+        audio: hasA ? { codec: 'aac', numberOfChannels: 2, sampleRate: rate } : undefined, fastStart: 'in-memory', firstTimestampBehavior: 'offset' });
+      if (onP) onP(0.01);
+      return fastAudio(A, a, b, len, rate, muxer).then(function () { return fastVideo(dc, vcfg, a, b, tail, len, fps, muxer, onP); });
+    }).then(function () {
+      muxer.finalize();
+      window.__vsLast = 'fast';
+      return { blob: new Blob([muxer.target.buffer], { type: 'video/mp4' }), ext: 'mp4', fast: true };
+    });
+  }
+  function fastVideo(dc, vcfg, a, b, tail, len, fps, muxer, onP) {
+    var V = dmx.v, read = reader(file, V), q = [], cur = null, err = null, fed = first(V, a), end = fed, done = false, flushed = false;
+    while (end < V.n && V.cts[end] < b + 1) end++;
+    // עוד כמה דגימות אחרי b, כדי שתמונות עם B-frames ייצאו מהמפענח
+    end = Math.min(V.n, end + 8);
+    var dec = new VideoDecoder({ output: function (fr) { q.push(fr); }, error: function (e) { err = e; } });
+    dec.configure(dc);
+    var enc = new VideoEncoder({ output: function (c, m) { muxer.addVideoChunk(c, m); }, error: function (e) { err = e; } });
+    enc.configure(vcfg);
+    var reading = null;
+    function feed() {
+      if (reading || fed >= end) {
+        if (!reading && fed >= end && !flushed) { flushed = true; dec.flush().then(function () { done = true; }, function (e) { err = e; }); }
+        return;
+      }
+      var j = Math.min(end, fed + 12), i0 = fed; fed = j;
+      reading = read(i0, j).then(function (bufs) {
+        bufs.forEach(function (u, k) { var i = i0 + k; dec.decode(new EncodedVideoChunk({ type: V.key[i] ? 'key' : 'delta', timestamp: Math.round(V.cts[i] * 1e6), data: u })); });
+        reading = null;
+      }, function (e) { err = e; });
+    }
+    var n = 0, total = Math.ceil(len * fps), prevJob = job, PF = window.__vsProf = { wf: 0, we: 0, t0: performance.now() };
+    function frameAt(st) {
+      // מקדמים עד התמונה האחרונה שזמנה לא עבר את st
+      while (q.length && q[0].timestamp / 1e6 <= st + 0.5 / fps) { if (cur) cur.close(); cur = q.shift(); }
+      return !!cur && (q.length > 0 || done || cur.timestamp / 1e6 >= st - 0.5 / fps);
+    }
+    return (function step() {
+      if (err) return Promise.reject(err);
+      if (stopFlag || n >= total) return finishV();
+      var ot = n / fps, st = a + ot;
+      if (st <= b + 1e-6) {
+        if (q.length < 8 && dec.decodeQueueSize < 8) feed();
+        if (!frameAt(st)) { PF.wf++; if (done && !q.length && !cur) return Promise.reject(new Error('noframes')); return new Promise(function (r) { setTimeout(r, 4); }).then(step); }
+        FR = cur; job.endK = null; paint(st);
+      } else {
+        FR = cur; job.endK = st - b; paint(b);
+      }
+      if (enc.encodeQueueSize > 6) { PF.we++; FR = null; return new Promise(function (r) { setTimeout(r, 8); }).then(step); }
+      var vf = new VideoFrame(cv, { timestamp: Math.round(ot * 1e6), duration: Math.round(1e6 / fps) });
+      enc.encode(vf, { keyFrame: n % (fps * 2) === 0 }); vf.close();
+      n++; if (onP && n % 5 === 0) onP(Math.min(0.99, n / total));
+      return (n % 3 ? Promise.resolve() : tick()).then(step);
+    })();
+    function finishV() {
+      FR = null; fcFrom = null; if (prevJob) prevJob.endK = null;
+      return enc.flush().then(function () {
+        try { enc.close(); } catch (e) {} try { dec.close(); } catch (e) {}
+        if (cur) cur.close(); q.forEach(function (f) { f.close(); });
+      });
+    }
+  }
+
   // ---------- מנוע הקלטה ----------
   var AC = null, srcNode = null, dest = null, spk = null;
   function audio() {
@@ -321,7 +607,25 @@
   // מנגן את [a,b] לקנבס. rec=true מקליט ומחזיר {blob,ext}; אחרת רק תצוגה עם קול
   var stopFlag = false;
   // opt.tail: שניות של שקופית סיום אחרי b (הסרטון עומד, השקופית נכנסת בעמעום, המוזיקה ממשיכה)
+  // יצירה: קודם המנוע המהיר, ואם הוא לא מצליח – בזמן אמת
   function play(a, b, rec, onP, opt) {
+    var tail = (opt && opt.tail) || 0;
+    if (rec && file && fastOK(b - a + tail)) {
+      var t0 = performance.now();
+      return fastRec(a, b, onP, opt).then(function (r) {
+        used('fast_ok', { secs: Math.round(b - a + tail), x: Math.round((b - a + tail) / Math.max(0.1, (performance.now() - t0) / 1000) * 10) / 10 });
+        return r;
+      }, function (e) {
+        FR = null; if (job) job.endK = null; fastBroken = true;
+        window.__vsFastErr = String(e && e.message || e);
+        used('fast_fail', { err: window.__vsFastErr.slice(0, 80) });
+        return playRT(a, b, rec, onP, opt);
+      });
+    }
+    return playRT(a, b, rec, onP, opt);
+  }
+  function playRT(a, b, rec, onP, opt) {
+    if (rec) window.__vsLast = 'realtime';
     var tail = (opt && opt.tail) || 0, endAt = 0, stopM = null, span = Math.max(0.1, b - a + tail);
     // בלי שנייה קפואה בתחילת כל חלק: המקליט של כרום צריך כשנייה להתעורר, והנגן צריך רגע אחרי קפיצה.
     // לכן מדליקים את המקליט ומיד משהים אותו (הוא מתעורר בלי להקליט), מנגנים משנייה וחצי לפני a (הנגן נתקע לרגע כשנייה אחרי קפיצה),
@@ -927,5 +1231,5 @@
   });
 
   // לבדיקות: טעינת קובץ מכתובת ותמלול מוכן
-  window.__vs = { load: function (blob, name, lm) { return load(new File([blob], name || 'test.mp4', { type: blob.type || 'video/mp4', lastModified: lm || Date.now() })); }, setSegs: function (s) { gotSegs(s, false); }, parts: function () { return parts(); }, rec: function (a, b) { return play(a, b, true).then(function (r) { window.__vsOut = (window.__vsOut || []).concat([{ name: 'rec.' + r.ext, blob: r.blob }]); return r.blob.size; }); }, get groups() { return groups; }, get segs() { return segs; }, clips: function () { return clips; }, setTab: setTab, look: look, endPreview: endPreview, importText: importText, get sugg() { return sugg; } };
+  window.__vs = { load: function (blob, name, lm) { return load(new File([blob], name || 'test.mp4', { type: blob.type || 'video/mp4', lastModified: lm || Date.now() })); }, setSegs: function (s) { gotSegs(s, false); }, parts: function () { return parts(); }, rec: function (a, b) { return play(a, b, true).then(function (r) { window.__vsOut = (window.__vsOut || []).concat([{ name: 'rec.' + r.ext, blob: r.blob }]); return r.blob.size; }); }, get groups() { return groups; }, get segs() { return segs; }, clips: function () { return clips; }, setTab: setTab, look: look, bench: function (n) { still(); var t = performance.now(); for (var i = 0; i < n; i++) paint(vid.currentTime); return (performance.now() - t) / n; }, fastOK: function (l) { return fastOK(l || 1); }, demux: function () { return demux().then(function (d) { return { v: d.v && { n: d.v.n, fps: d.v.fps, codec: vCodec(d.v), w: d.v.w, h: d.v.h, t0: d.v.cts[0] }, a: d.a && { n: d.a.n, rate: d.a.rate, ch: d.a.ch, t0: d.a.cts[0] } }; }); }, endPreview: endPreview, importText: importText, get sugg() { return sugg; } };
 })();
