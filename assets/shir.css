@@ -60,6 +60,9 @@
 .shr-card h4{font-family:var(--serif);font-size:1rem;margin:1rem 0 .2rem;letter-spacing:.02em}
 .shr-card p{margin:0;font-size:1.15rem;white-space:pre-line}
 .shr-card .ch{display:block;font-size:.85rem;font-family:inherit;direction:ltr;letter-spacing:.04em;line-height:1.1;min-height:1em}
+.shr-card p.cl{line-height:2.9}
+.shr-card .cs{position:relative}
+.shr-card .cs .ch{position:absolute;top:-1.25em;right:0;white-space:nowrap;min-height:0}
 .shr-card .ft{font-size:.8rem;margin-top:1.2rem}
 .shr-card.t-lavan{background:#fff;color:#111;border-color:#999}.shr-card.t-lavan h3{color:#111}.shr-card.t-lavan h4,.shr-card.t-lavan .by,.shr-card.t-lavan .ft{color:#555}.shr-card.t-lavan .ch{color:#333}
 .shr-card.t-zayit{background:#f4f6ec;color:#1f2a16;border-color:#9fae7d}.shr-card.t-zayit h3{color:#3d5a1e}.shr-card.t-zayit h4,.shr-card.t-zayit .by,.shr-card.t-zayit .ft{color:#55603f}.shr-card.t-zayit .ch{color:#3d5a1e}
@@ -74,11 +77,12 @@
 .shr-next .btn{font-size:1.1rem;padding:.75rem 1.5rem}
 .shr-num{display:inline-grid!important;place-items:center;width:1.9rem;height:1.9rem;border-radius:50%;background:var(--gold);color:var(--ink)!important;font-weight:700;margin:0 0 .4rem!important;font-size:1rem!important}
 /* לחן */
-.shr-mel{display:flex;gap:2px;align-items:flex-end;height:4.2rem;margin:.35rem 0;direction:rtl;overflow-x:auto;padding-bottom:.2rem}
+.shr-mel{display:flex;gap:2px;align-items:flex-end;height:5rem;margin:.35rem 0;direction:rtl;overflow-x:auto;overflow-y:hidden}
 .shr-mel i{position:relative;flex:1 0 1.7rem;max-width:2.6rem;background:rgba(227,183,101,.16);border-radius:6px 6px 2px 2px;font-style:normal;text-align:center;font-size:.75rem;color:var(--parchment);cursor:pointer;border:1px solid transparent}
 .shr-mel i.sel{border-color:var(--gold)}
 .shr-mel i.now{background:var(--gold);color:var(--ink)}
-.shr-mel i small{position:absolute;bottom:-1.15rem;right:0;left:0;color:var(--muted);font-size:.7rem;white-space:nowrap;overflow:hidden}
+.shr-mel i small{display:block;padding-top:.1rem;color:var(--cream);font-size:.72rem;white-space:nowrap;overflow:hidden}
+.shr-mel i.now small{color:var(--ink)}
 .shr-ml{border-top:1px solid var(--line);padding:.6rem 0 1.4rem}
 .shr-ml .t{color:var(--cream);font-size:1.05rem;display:flex;justify-content:space-between;gap:.4rem;flex-wrap:wrap;align-items:center}
 .shr-ml .chs{direction:ltr;text-align:right;color:var(--gold);font-size:.85rem;letter-spacing:.05em}
