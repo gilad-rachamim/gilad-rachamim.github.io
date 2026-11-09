@@ -223,3 +223,6 @@ details.panel summary{cursor:pointer;color:var(--cream)}
 .mx-cols{display:flex;align-items:flex-end;gap:.8rem;height:7rem;justify-content:center;border-bottom:2px solid var(--muted);padding:0 .6rem}
 .mx-cols i{width:2.2rem;background:linear-gradient(var(--gold),var(--gold-soft));border-radius:6px 6px 0 0;position:relative}
 .mx-cols::after{content:"";position:absolute}
+.mx-sec{font-family:var(--serif);color:var(--gold);font-size:1.2rem;margin:1rem 0 .1rem}
+.mx-support{margin-top:1rem;padding:.9rem 1rem;border-radius:14px;border:1px dashed var(--gold-soft);background:rgba(220,183,105,.06);text-align:center;display:grid;gap:.6rem;justify-items:center}
+.mx-support p{color:var(--body)!important;font-size:1rem!important;line-height:1.6}
