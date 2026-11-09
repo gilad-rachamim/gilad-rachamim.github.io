@@ -13,15 +13,24 @@
   }
   var deferred = null, bar = document.getElementById('install-bar');
   var standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
-  var closed = false;
-  try { closed = localStorage.getItem('kelim-install-closed') === '1'; } catch (e) {}
+  var closed = false, visits = 1;
+  try { closed = Date.now() - (+localStorage.getItem('kelim-install-closed-at') || 0) < 14 * 864e5; } catch (e) {}
+  try { visits = (+localStorage.getItem('kelim-visits') || 0) + 1; localStorage.setItem('kelim-visits', visits); } catch (e) {}
   var ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
   function showInstall() {
     document.querySelectorAll('[data-install-wrap]').forEach(function (w) { w.hidden = false; });
     if (bar && !closed) bar.hidden = false;
   }
   window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; showInstall(); });
-  if (ios && !standalone) document.querySelectorAll('[data-install-wrap]').forEach(function (w) { w.hidden = false; });
+  if (ios && !standalone) {
+    document.querySelectorAll('[data-install-wrap]').forEach(function (w) { w.hidden = false; });
+    if (bar && !closed && visits >= 2) {
+      var it = bar.querySelector('[data-install-text]'), ib = bar.querySelector('[data-install]');
+      if (it) it.innerHTML = '📲 באייפון: לוחצים על כפתור השיתוף <b>⬆︎</b> למטה, ואז "הוספה למסך הבית". מעכשיו הכלים נפתחים בלחיצה, כמו אפליקציה.';
+      if (ib) ib.style.display = 'none';
+      bar.hidden = false; ev('tool_install', { how: 'ios_bar' });
+    }
+  }
   window.addEventListener('appinstalled', function () { ev('tool_install', { how: 'installed' }); if (bar) bar.hidden = true; });
   document.addEventListener('click', function (e) {
     var b = e.target.closest('[data-install]');
@@ -38,7 +47,7 @@
     }
     if (e.target.closest('[data-install-close]')) {
       if (bar) bar.hidden = true;
-      try { localStorage.setItem('kelim-install-closed', '1'); } catch (err) {}
+      try { localStorage.setItem('kelim-install-closed-at', String(Date.now())); } catch (err) {}
       return;
     }
     // תמיכה: העתקת המספר לביט/פייבוקס
@@ -122,6 +131,7 @@
     var done = null; try { done = localStorage.getItem(key); } catch (e) {}
     function after(r) {
       rate.hidden = true; thanks.hidden = false;
+      var sh = fb.querySelector('.fb-share'); if (sh) sh.hidden = r !== 'yes';
       thanks.textContent = r === 'yes' ? 'שמח לשמוע! 🙏 ואם יש משהו שהיה עושה אותו עוד יותר טוב, ספרו לי למטה.' : 'תודה על הכנות. ספרו לי מה חסר, ואשתדל לתקן.';
     }
     if (done) after(done);
