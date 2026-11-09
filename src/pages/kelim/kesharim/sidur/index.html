@@ -1,0 +1,73 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "kesharim_sidur",
+  "title": "סידור אנשי קשר – כפולים, מספרים בלי שם, צורה אחידה | הכלים של גילעד רחמים",
+  "description": "מסדרים את אנשי הקשר בטלפון או בגוגל: מוצאים כפולים וממזגים, מוצאים מספרים בלי שם ומספרים שגויים, מאחדים את כל המספרים לצורה אחת ומוסיפים תגית לכמה אנשים בבת אחת. הכול נשאר בטלפון שלכם. בחינם.",
+  "og_title": "סידור אנשי קשר – בחינם, בלי שום דבר שיוצא מהטלפון",
+  "priority": "0.7",
+  "crumbs": [["חברה וקשרים", "/kelim/kesharim/"], ["סידור אנשי קשר", null]],
+  "head": "<style>.k-form .res:empty{display:none}.sd-in{display:grid;gap:.7rem}.sd-file{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}.sd-file input[type=file]{max-width:100%;color:var(--body)}.sd-sum{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0 .4rem}.sd-chip{padding:.45rem .8rem;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.03);color:var(--body);font:inherit;font-size:.95rem;cursor:pointer}.sd-chip b{color:var(--cream)}.sd-chip.on{border-color:var(--gold);background:rgba(201,162,74,.14)}.sd-chip.warn b{color:#f0b35a}.sd-list{display:grid;gap:.55rem;margin-top:.8rem}.sd-row{display:grid;grid-template-columns:auto 1fr auto;gap:.55rem;align-items:start;padding:.7rem .8rem;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}.sd-row input[type=text]{width:100%;font:inherit;font-size:1rem;color:var(--cream);background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:9px;padding:.45rem .6rem}.sd-row .ph{margin-top:.35rem}.sd-row .bad{color:#f0b35a;font-size:.9rem}.sd-x{border:0;background:none;color:var(--muted);font-size:1.3rem;cursor:pointer;padding:.2rem .4rem}.sd-x:hover{color:var(--cream)}.sd-grp{padding:.85rem .9rem;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.03)}.sd-grp h3{font-size:1rem;color:var(--parchment);margin:0 0 .45rem}.sd-grp ul{margin:0 0 .65rem;padding:0 1.1rem 0 0;color:var(--body);line-height:1.7}.sd-grp .why{color:var(--muted);font-size:.9rem}.sd-grp .actions{display:flex;gap:.5rem;flex-wrap:wrap}.sd-bar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.8rem}.sd-bar input[type=text]{flex:1 1 12rem;font:inherit;font-size:1rem;color:var(--cream);background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:10px;padding:.55rem .7rem}.sd-fmt{display:flex;flex-wrap:wrap;gap:.9rem;color:var(--body)}.sd-empty{color:var(--muted);padding:.6rem 0}.sd-note{color:var(--muted);font-size:.92rem;line-height:1.7}details.sd-how{border:1px solid var(--line);border-radius:12px;padding:.6rem .8rem;color:var(--body);line-height:1.75}details.sd-how summary{cursor:pointer;color:var(--parchment)}details.sd-how ol{margin:.4rem 0;padding-inline-start:1.2rem}</style>",
+  "foot": "<script src=\"/assets/kesharim-sidur.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>סידור אנשי קשר</h1>
+  <p class="sub">מכניסים את אנשי הקשר, והכלי מוצא את מי ששמור פעמיים, מספרים בלי שם ומספרים שגויים, ומסדר את כל המספרים בצורה אחת. בסוף מורידים קובץ נקי.</p>
+</header>
+<div class="tool">
+  <div class="k-form sd-in">
+    <b>1. מכניסים את אנשי הקשר</b>
+    <div class="sd-file">
+      <label class="btn btn-gold btn-sm" for="sd-file" style="cursor:pointer">📂 לבחור קובץ אנשי קשר</label>
+      <input id="sd-file" type="file" accept=".csv,.vcf,.txt,text/csv,text/vcard,text/x-vcard" style="position:absolute;width:1px;height:1px;opacity:0">
+      <span class="sd-note" id="sd-fname"></span>
+      <button class="btn btn-line btn-sm" type="button" id="sd-demo">לנסות עם רשימה לדוגמה</button>
+    </div>
+    <div class="field"><label for="sd-paste">או מדביקים רשימה: שם ומספר בכל שורה</label><textarea id="sd-paste" placeholder="דני כהן 050-1234567&#10;אמא 052-7654321"></textarea></div>
+    <div class="actions"><button class="btn btn-gold btn-sm" type="button" id="sd-go">לסדר את הרשימה</button></div>
+    <details class="sd-how">
+      <summary>איך מוציאים את אנשי הקשר לקובץ?</summary>
+      <p><b>מגוגל (מומלץ):</b></p>
+      <ol><li>נכנסים ל-contacts.google.com</li><li>לוחצים על "ייצוא" (בתפריט בצד, או בשלוש הנקודות למעלה)</li><li>בוחרים "Google CSV" ולוחצים "ייצוא"</li><li>חוזרים לכאן ובוחרים את הקובץ שירד</li></ol>
+      <p><b>מטלפון אנדרואיד:</b> באפליקציית אנשי הקשר: תפריט ← ניהול אנשי קשר ← ייבוא או ייצוא ← ייצוא לקובץ VCF.</p>
+      <p><b>מאייפון:</b> באתר icloud.com ← אנשי קשר ← בוחרים הכול ← ייצוא vCard.</p>
+    </details>
+    <p class="res" id="sd-msg" role="status"></p>
+  </div>
+
+  <section id="sd-work" hidden>
+    <h2 class="sd-h">2. מה מצאתי</h2>
+    <div class="sd-sum" id="sd-sum" role="tablist" aria-label="סינון"></div>
+    <p class="sd-note" id="sd-fixed"></p>
+    <div id="sd-view" aria-live="polite"></div>
+    <div class="sd-bar">
+      <button class="btn btn-line btn-sm" type="button" id="sd-undo" disabled>↶ לבטל את הפעולה האחרונה</button>
+    </div>
+
+    <div class="k-form" style="margin-top:1.3rem">
+      <b>תגית לכמה אנשים בבת אחת</b>
+      <p class="sd-note">מסמנים אנשים ברשימה (בלשונית "כולם" אפשר לחפש ולסמן את כל התוצאות), כותבים תגית, והיא נוספת בסוף השם. למשל "משה כהן" יהיה "משה כהן ישיבת שעלבים". מי שכבר יש לו את התגית לא יקבל אותה פעמיים.</p>
+      <div class="sd-bar" style="margin-top:0"><input type="text" id="sd-tag" maxlength="40" placeholder="ישיבת שעלבים"><button class="btn btn-line btn-sm" type="button" id="sd-tag-go">להוסיף למסומנים</button></div>
+    </div>
+
+    <div class="k-form" style="margin-top:1.3rem">
+      <b>3. מורידים קובץ מסודר</b>
+      <div class="sd-fmt" role="radiogroup" aria-label="צורת המספרים">
+        <label><input type="radio" name="sd-fmt" value="il" checked> 050-1234567</label>
+        <label><input type="radio" name="sd-fmt" value="intl"> ‎+972 50-123-4567 (עובד גם בחו"ל)</label>
+      </div>
+      <div class="actions">
+        <button class="btn btn-gold btn-sm" type="button" id="sd-csv">קובץ לגוגל (CSV)</button>
+        <button class="btn btn-line btn-sm" type="button" id="sd-vcf">קובץ לטלפון (VCF)</button>
+      </div>
+      <details class="sd-how">
+        <summary>איך מחזירים את הקובץ? (חשוב לקרוא)</summary>
+        <p>ייבוא <b>מוסיף</b> אנשי קשר ולא מחליף את הקיימים. כדי שלא יהיה לכם הכול פעמיים:</p>
+        <ol><li>פותחים את הקובץ החדש ובודקים שהוא תקין.</li><li>בגוגל: contacts.google.com ← מסמנים את כולם ← מחיקה. מה שנמחק נשאר באשפה 30 יום, אפשר להחזיר.</li><li>לוחצים "ייבוא" ובוחרים את הקובץ החדש.</li></ol>
+        <p>טלפון שמסונכרן עם גוגל יתעדכן לבד. מיילים, ימי הולדת והערות שהיו בקובץ המקורי נשמרים.</p>
+      </details>
+    </div>
+    <p class="disclaimer">שום איש קשר לא יוצא מהטלפון שלכם: הכול נעשה כאן בדפדפן, ונשמר רק במכשיר הזה כדי שלא תאבדו את העבודה באמצע. <button class="sd-x" style="font-size:.92rem;text-decoration:underline" type="button" id="sd-wipe">למחוק הכול מהמכשיר</button></p>
+  </section>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="כלי חינמי לסידור אנשי קשר: מוצא כפולים, מספרים בלי שם ומספרים שגויים. שום דבר לא יוצא מהטלפון:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
