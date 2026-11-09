@@ -80,6 +80,29 @@
     </div>
   </section>
 
+  <section id="mx-exam" hidden>
+    <div class="mx-head">
+      <button class="linkish" type="button" id="ex-quit">→ לצאת מהמבחן</button>
+      <h2 id="ex-title"></h2>
+      <span class="pill" id="ex-time">⏱ 0:00</span> <small class="muted" id="ex-rec"></small>
+    </div>
+    <div id="ex-run" class="panel">
+      <div class="mx-prog ex-prog" id="ex-prog" aria-hidden="true"></div>
+      <p class="ex-headline" id="ex-head"></p>
+      <div class="mx-ex" id="ex-ex"></div>
+      <ol class="mx-done" id="ex-done"></ol>
+      <div class="mx-cur" id="ex-cur"></div>
+      <form id="ex-form" class="mx-form" novalidate autocomplete="off">
+        <label for="ex-in" id="ex-q"></label>
+        <div class="mx-row"><input id="ex-in" type="text" inputmode="decimal" dir="ltr" enterkeyhint="done"><button class="btn btn-gold" type="submit">לענות</button></div>
+        <p class="mx-fb" id="ex-fb" aria-live="polite"></p>
+        <div class="btns"><button class="linkish" type="button" id="ex-skip">לדלג על השאלה</button></div>
+      </form>
+      <p class="note">במבחן אין רמזים, ויש ניסיון אחד לכל סעיף, כמו בבגרות. אחרי כל תשובה רואים אם היא נכונה, וממשיכים.</p>
+    </div>
+    <div id="ex-end" class="panel" hidden></div>
+  </section>
+
   <p class="local-note">🔒 בלי הרשמה. ההתקדמות נשמרת רק בטלפון הזה.</p>
   <p class="note" style="text-align:center">התרגילים נוצרים מחדש בכל פעם, כך שאפשר להמשיך לתרגל בלי סוף. רוצים נושא נוסף? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>
   <div class="share-row"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="תרגול מתמטיקה צעד אחרי צעד, עם שיעור קצר לכל נושא. חינם" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר בווטסאפ</a></div>

@@ -232,3 +232,15 @@ details.panel summary{cursor:pointer;color:var(--cream)}
 .mx-q summary small{color:var(--muted);font-size:.9rem;line-height:1.5}
 .mx-q[open]{padding-bottom:.8rem}
 .mx-q .mx-list{margin-top:.2rem}
+.ex-cta{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .8rem;margin:.1rem 0 .7rem}
+.ex-cta small{color:var(--muted);font-size:.88rem}
+.ex-headline{color:var(--cream);font-weight:700}
+.ex-prog{margin-bottom:.2rem}
+.ex-score{text-align:center;display:grid;justify-items:center}
+.ex-score b{font-family:var(--serif);font-size:4rem;line-height:1;color:var(--gold-hi)}
+.ex-score span{color:var(--muted)}
+.ex-meta{text-align:center;color:var(--muted);font-size:.95rem}
+.ex-msg{text-align:center;color:var(--cream);font-size:1.12rem;line-height:1.6}
+.ex-res{list-style:none;display:grid;gap:.35rem}
+.ex-res li{display:grid;grid-template-columns:1fr auto auto;gap:.6rem;align-items:center;padding:.45rem .7rem;border:1px solid var(--line);border-radius:10px;color:var(--body)}
+.ex-res small{color:var(--muted)}
