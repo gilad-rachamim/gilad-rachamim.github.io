@@ -1,0 +1,48 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tichnut_mehirut",
+  "title": "כמה טוקנים לשנייה? מחשבון מהירות מודל שפה על כרטיס NVIDIA | הכלים של גילעד רחמים",
+  "description": "בוחרים מודל (Llama, Qwen, Mistral), דיוק וכרטיס NVIDIA, ורואים כמה טוקנים לשנייה הוא יכתוב, כמה זמן עד המילה הראשונה, ואיך זה משתנה עם כמה משתמשים במקביל. השוואה בין כל הכרטיסים. בחינם.",
+  "og_title": "כמה מהר המודל יענה על הכרטיס שלך?",
+  "priority": "0.7",
+  "crumbs": [["כלים למתכנתים", "/kelim/tichnut/"], ["טוקנים לשנייה", null]],
+  "head": "<style>.tn-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}.tn-r3{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}.tn-ltr{direction:ltr;text-align:left}.mh-big{margin-top:1rem;padding:1rem;border:1px solid var(--gold-soft);border-radius:14px;text-align:center;background:rgba(216,179,95,.07)}.mh-big b{display:block;font-family:var(--serif);font-size:2.8rem;color:var(--cream);line-height:1.1}.mh-big span{color:var(--body);font-size:.95rem}.mh-big small{display:block;margin-top:.35rem;color:var(--muted);font-size:.88rem}.mh-two{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.6rem}.mh-two div{padding:.7rem;border:1px solid var(--line);border-radius:12px;text-align:center}.mh-two b{display:block;color:var(--cream);font-size:1.25rem}.mh-two span{color:var(--muted);font-size:.85rem}.mh-note{margin-top:.7rem;color:var(--parchment)}.mh-cmp{list-style:none;display:grid;gap:.35rem;margin-top:.5rem}.mh-cmp li{display:grid;grid-template-columns:1fr auto;gap:.15rem .6rem;color:var(--parchment);font-size:.93rem}.mh-cmp li.me span,.mh-cmp li.me b{color:var(--gold);font-weight:700}.mh-cmp b{font-weight:400}.mh-cmp i{grid-column:1/-1;height:.35rem;border-radius:99px;background:var(--gold-soft)}.mh-cmp li.me i{background:var(--gold)}.tn-h{margin-top:1.3rem;color:var(--cream);font-size:1.15rem}</style>",
+  "foot": "<script src=\"/assets/tichnut-data.js\" defer></script><script src=\"/assets/tichnut-mehirut.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>כמה טוקנים לשנייה?</h1>
+  <p class="sub">כמה מהר מודל שפה יכתוב תשובה על הכרטיס שלכם, כמה זמן עד המילה הראשונה, ומה קורה כשהרבה אנשים שואלים בבת אחת.</p>
+</header>
+<div class="tool">
+  <form class="k-form" id="mh-form" novalidate>
+    <div class="tn-row">
+      <div class="field"><label for="mh-model">המודל</label><select id="mh-model"></select></div>
+      <div class="field"><label for="mh-p">דיוק</label><select id="mh-p"><option value="2">FP16 / BF16</option><option value="1">8 ביט (INT8 / FP8)</option><option value="0.56">4 ביט (Q4, AWQ, GPTQ)</option></select></div>
+    </div>
+    <div class="tn-row">
+      <div class="field"><label for="mh-gpu">הכרטיס</label><select id="mh-gpu"></select></div>
+      <div class="field"><label for="mh-n">כמה כרטיסים</label><input id="mh-n" type="number" min="1" max="16" class="tn-ltr"></div>
+    </div>
+    <div class="tn-r3">
+      <div class="field"><label for="mh-ctx">אורך השאלה וההקשר</label><input id="mh-ctx" type="number" min="1" step="512" class="tn-ltr"></div>
+      <div class="field"><label for="mh-b">משתמשים במקביל</label><input id="mh-b" type="number" min="1" class="tn-ltr"></div>
+      <div class="field"><label for="mh-ans">אורך תשובה</label><input id="mh-ans" type="number" min="1" step="50" class="tn-ltr"></div>
+    </div>
+    <p class="note">כל השדות בטוקנים. טוקן הוא בערך ¾ מילה באנגלית, ובעברית בערך חצי מילה.</p>
+  </form>
+  <div class="mh-big"><b id="mh-tps">—</b><span id="mh-tps-l">טוקנים לשנייה</span><small id="mh-all"></small></div>
+  <div class="mh-two">
+    <div><b id="mh-ttft">—</b><span>עד המילה הראשונה</span></div>
+    <div><b id="mh-total">—</b><span>לכל התשובה</span></div>
+  </div>
+  <p class="mh-note" id="mh-note"></p>
+  <h2 class="tn-h">אותו מודל על כרטיסים אחרים</h2>
+  <ul class="mh-cmp" id="mh-cmp"></ul>
+  <div class="share-row">
+    <a class="btn btn-gold btn-sm" href="#" id="mh-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את התוצאה</a>
+    <button class="btn btn-line btn-sm" type="button" id="mh-reset">לחזור לדוגמה</button>
+  </div>
+  <p class="disclaimer">החישוב: בכל טוקן הכרטיס קורא את כל המשקלות ואת ה-KV cache מהזיכרון, ולכן המהירות ≈ רוחב פס הזיכרון ÷ כמה צריך לקרוא (בהנחה שמנוצלים 70% מרוחב הפס). זו הערכה: בפועל זה תלוי בתוכנה (llama.cpp, vLLM, TensorRT-LLM, Ollama), ותוכנות עם speculative decoding יכולות להיות מהירות יותר.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="כמה טוקנים לשנייה מודל AI יכתוב על כרטיס NVIDIA? מחשבון והשוואה בין כרטיסים. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
