@@ -147,7 +147,7 @@ function sharePage(st) {
   if (st) {
     const n = st.c.filter(x => !x[7]).length;
     t = title(st.m);
-    desc = (n ? 'כבר הודלקו ' + n + ' נרות. ' : '') + 'היכנסו והדליקו גם אתם נר, עם הקדשה או ברכה.';
+    desc = (n === 1 ? 'כבר הודלק נר אחד. ' : n ? 'כבר הודלקו ' + n + ' נרות. ' : '') + 'היכנסו והדליקו גם אתם נר, עם הקדשה או ברכה.';
     to = SITE + '?h=' + st.id;
   }
   const html = '<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
