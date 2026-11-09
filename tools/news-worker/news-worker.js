@@ -189,7 +189,8 @@ function titlesOnly(items) {
     const out = [], used = new Set();
     for (const x of items) {
       if (x.topic !== topic || used.has(x.src)) continue;
-      used.add(x.src); out.push({ text: x.title, sources: [{ name: x.name, link: x.link }] });
+      const text = x.title.replace(/^(צפו|צפו בתיעוד|תיעוד|וידאו|בלעדי|דרמה|מבזק)\s*[:|]\s*/, '').replace(/\s*\|\s*(צפו|תיעוד|וידאו|גלריה)[^|]*$/, '').replace(/!+/g, '');
+      used.add(x.src); out.push({ text, sources: [{ name: x.name, link: x.link }] });
       if (out.length >= n) break;
     }
     return out;
@@ -246,7 +247,7 @@ export async function runEdition(env, { force = false, now = new Date() } = {}) 
   }
   const last = await call(env, '/latest');
   const afterHoly = !!(last?.at && now - Date.parse(last.at) > 20 * 3600000);
-  const since = afterHoly ? now - 30 * 3600000 : Math.max(now - 9 * 3600000, last?.at ? Date.parse(last.at) - 3600000 : 0);
+  const since = afterHoly ? now - 30 * 3600000 : Math.max(now - 9 * 3600000, Math.min(now - 6 * 3600000, last?.at ? Date.parse(last.at) - 3600000 : 0)); // לפחות 6 שעות אחורה
   const { items, failed } = await fetchAll(since);
   let ed;
   if (env.GEMINI_KEY && items.length) {
