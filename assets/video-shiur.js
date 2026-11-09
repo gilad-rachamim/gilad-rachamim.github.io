@@ -76,7 +76,7 @@
   function load(f) {
     file = f; fileName = (f.name || 'סרטון').replace(/\.[^.]+$/, '').slice(0, 40);
     segs = null; groups = null; out.innerHTML = ''; tamBtns();
-    $('kt-edit').hidden = true; $('sh-sents').hidden = true; clips = []; drawClips();
+    $('kt-edit').hidden = true; $('sh-sents').hidden = true; $('sh-auto').hidden = true; clips = []; drawClips();
     vid.src = URL.createObjectURL(f);
     say('טוען את הסרטון…', true);
     return new Promise(function (res) {
@@ -566,9 +566,14 @@
     });
   }
   // תמלול הגיע (מהענן או מהשמירה במכשיר): מעדכנים את כל הלשוניות
-  function gotSegs(all, cached) {
+  function gotSegs(all, cached, how) {
     segs = all; regroup();
     var exact = segs.some(function (s) { return s.words && s.words.length; });
+    if (how) {
+      say('✅ התמלול יובא (' + segs.length + ' שורות)' + (how === 'import_text' ? '. בטקסט לא היו זמנים, אז הזמנים משוערים לפי האורך. כדאי לצפות ולבדוק.' : '. הזמן של כל מילה משוער לפי השורה.'));
+      showCaps(); showSents(); tamBtns(); plan(); still(); keep(file, segs);
+      used('tamlul_import', { how: how, segs: segs.length }); return;
+    }
     say(cached ? '✅ התמלול של הסרטון הזה נשמר אצלכם מהפעם הקודמת, ולא ירד מהדקות. רוצים תמלול חדש? "לתמלל מחדש".'
       : '✅ התמלול מוכן' + (exact ? '' : ' (הזמן של כל מילה משוער לפי המשפט)') + '. עוברים על הטקסט ומתקנים מה שצריך.');
     showCaps(); showSents(); tamBtns(); plan(); still();
@@ -705,8 +710,151 @@
       b.innerHTML = '<small></small><span></span>'; b.querySelector('small').textContent = mmss(s.start); b.querySelector('span').textContent = s.text;
       box.appendChild(b);
     });
-    box.hidden = false; marks();
+    box.hidden = false; marks(); showSugg();
   }
+
+  // ---------- הצעה אוטומטית לשורטים ----------
+  // מועמדים: מתחילת משפט ועד סוף משפט, 30–75 שניות. ניקוד: שאלה בהתחלה ותשובה אחריה, מילים חזקות, אורך קרוב ל-50 שניות.
+  var QW = /^(למה|מדוע|מה|מהו|מהי|מהם|איך|האם|כיצד|מי|מתי|היכן|איפה|כמה|ולמה|ומה|ואיך|ומדוע)[\s,]/;
+  var STRONG = /(הכי|חשוב|העיקר|עיקר|יסוד|הסוד|כלל גדול|לכן|תמיד|אף פעם|אסור|חייב|באמת|דווקא|נפלא|עצום|זה הדבר|תזכרו|שימו לב|בדיוק)/g;
+  var sugg = [];
+  function endsSent(s) { return /[.?!:]["'״”]?\s*$/.test(s.text); }
+  function isQ(s) { var t = s.text.trim(); return /\?["'״”]?\s*$/.test(t) || QW.test(t); }
+  function suggest() {
+    var n = segs.length, cand = [];
+    for (var i = 0; i < n; i++) {
+      if (i > 0 && !endsSent(segs[i - 1]) && !isQ(segs[i])) continue;
+      for (var j = i; j < n; j++) {
+        var len = segs[j].end - segs[i].start;
+        if (len > 75) break;
+        if (len < 30 || !endsSent(segs[j]) && j < n - 1) continue;
+        var q = -1, sc = 0, why;
+        for (var k = i; k <= Math.min(j - 1, i + 2); k++) if (isQ(segs[k])) { q = k; break; }
+        var txt = segs.slice(i, j + 1).map(function (s) { return s.text; }).join(' '), hits = (txt.match(STRONG) || []).length;
+        if (q >= 0) sc += 4 - (q - i);
+        sc += Math.min(3, hits * 0.7) + (/!/.test(txt) ? 0.5 : 0) + 1 - Math.abs(len - 50) / 40;
+        if (/^(אבל|כי|אז|גם|וגם|ולכן|זאת אומרת|כלומר)[\s,]/.test(segs[i].text.trim())) sc -= 1.5;
+        why = q >= 0 ? 'qa' : hits >= 2 ? 'strong' : 'part';
+        cand.push({ i: i, j: j, q: q, a: Math.max(0, segs[i].start - 0.15), b: Math.min(dur, segs[j].end + 0.35), sc: sc, why: why, txt: txt });
+      }
+    }
+    cand.sort(function (x, y) { return y.sc - x.sc; });
+    var max = Math.max(1, Math.min(6, Math.round(dur / 90))), pick = [];
+    cand.forEach(function (c) { if (pick.length < max && !pick.some(function (p) { return c.a < p.b + 2 && c.b > p.a - 2; })) pick.push(c); });
+    pick.sort(function (x, y) { return x.a - y.a; });
+    pick.forEach(function (c) { c.title = titleFor(c); });
+    return pick;
+  }
+  function titleFor(c) {
+    var s = '';
+    if (c.q >= 0) s = segs[c.q].text;
+    else {
+      var best = -1;
+      for (var k = c.i; k <= c.j; k++) { var h = (segs[k].text.match(STRONG) || []).length * 10 - Math.abs(segs[k].text.split(/\s+/).length - 7); if (h > best) { best = h; s = segs[k].text; } }
+    }
+    s = s.trim().replace(/[.,:;]+$/, '');
+    var w = s.split(/\s+/); if (w.length > 10) s = w.slice(0, 10).join(' ') + '…';
+    return s;
+  }
+  function addClip(c, title) {
+    clips.push({ a: c.a, b: c.b, title: title, bg: $('sh-bg').value, caps: $('sh-caps').value === '1' });
+    drawClips(); c.added = true;
+  }
+  function showSugg() {
+    var ul = $('sh-sugg'); ul.innerHTML = '';
+    sugg = segs && segs.length ? suggest() : [];
+    $('sh-auto').hidden = !segs; $('sh-sugg-all').hidden = sugg.length < 2;
+    if (!sugg.length) { ul.innerHTML = '<li class="vs-st">לא מצאתי קטע של 30 עד 75 שניות שמתחיל ונגמר במשפט שלם. אפשר לבחור לבד למטה.</li>'; return; }
+    var WHY = { qa: 'שאלה ותשובה', strong: 'משפט חזק', part: 'רעיון שלם' };
+    sugg.forEach(function (c) {
+      var li = document.createElement('li');
+      li.innerHTML = '<div class="vs-sg-h"><b></b><span class="vs-chip"></span></div><input type="text" maxlength="70" dir="rtl" aria-label="כותרת לשורט"><p class="vs-st"></p><div class="share-row"><button class="btn btn-line btn-sm" type="button" data-see>▶ לצפות</button><button class="btn btn-gold btn-sm" type="button" data-ok>✓ להוסיף לרשימה</button></div>';
+      li.querySelector('b').textContent = mmss(c.a) + '–' + mmss(c.b) + ' · ' + Math.round(c.b - c.a) + ' שניות';
+      li.querySelector('.vs-chip').textContent = WHY[c.why];
+      var inp = li.querySelector('input'); inp.value = c.title;
+      li.querySelector('p').textContent = c.txt.length > 160 ? c.txt.slice(0, 160) + '…' : c.txt;
+      li.querySelector('[data-see]').addEventListener('click', function () {
+        if (busy) return;
+        $('sh-from').value = mmss(c.a); $('sh-to').value = mmss(c.b); $('sh-from').dataset.t = c.a; $('sh-to').dataset.t = c.b;
+        $('sh-title').value = inp.value; pick = [c.i, c.j]; marks(); lenInfo();
+        $('vs-stage').scrollIntoView({ block: 'nearest' }); $('sh-play').click(); used('suggest_see');
+      });
+      var ok = li.querySelector('[data-ok]');
+      ok.addEventListener('click', function () {
+        if (busy || c.added) return;
+        addClip(c, inp.value.trim()); ok.textContent = '✓ נוסף'; ok.disabled = true; used('suggest_ok', { why: c.why });
+      });
+      c.btn = ok; c.inp = inp;
+      ul.appendChild(li);
+    });
+    used('suggest', { n: sugg.length });
+  }
+  $('sh-sugg-all').addEventListener('click', function () {
+    if (busy) return;
+    var n = 0;
+    sugg.forEach(function (c) { if (!c.added) { addClip(c, c.inp.value.trim()); c.btn.textContent = '✓ נוסף'; c.btn.disabled = true; n++; } });
+    if (n) used('suggest_all', { n: n });
+  });
+
+  // ---------- ייבוא תמלול (SRT / VTT / טקסט מתמלול שיעור) ----------
+  function tsec(x) { return String(x).trim().replace(',', '.').split(':').map(Number).reduce(function (a, b) { return a * 60 + b; }, 0); }
+  function parseSubs(txt) {
+    var outp = [];
+    txt.split(/\n\s*\n/).forEach(function (bl) {
+      var L = bl.split('\n'), k = -1;
+      for (var i = 0; i < L.length; i++) if (L[i].indexOf('-->') > -1) { k = i; break; }
+      if (k < 0) return;
+      var m = L[k].split('-->'), t = L.slice(k + 1).join(' ').replace(/<[^>]+>/g, '').replace(/\{[^}]*\}/g, '').replace(/\s+/g, ' ').trim();
+      if (t) outp.push({ start: tsec(m[0]), end: tsec(m[1].trim().split(/\s/)[0]), text: t, words: [] });
+    });
+    return outp;
+  }
+  function parsePlain(txt) {
+    var re = /\[(\d{1,2}(?::\d{2}){1,2})\]/g, parts = [], last = 0, lastT = null, m;
+    while ((m = re.exec(txt))) { var body = txt.slice(last, m.index); if (body.trim()) parts.push({ t: lastT, body: body }); lastT = tsec(m[1]); last = re.lastIndex; }
+    parts.push({ t: lastT, body: txt.slice(last) });
+    parts = parts.filter(function (p) { return p.body.trim(); });
+    if (!parts.length) return [];
+    if (parts[0].t == null) parts[0].t = 0;
+    var outp = [];
+    parts.forEach(function (p, i) {
+      if (p.t == null) return;
+      var body = p.body, z = i + 1;
+      while (z < parts.length && parts[z].t == null) { body += ' ' + parts[z].body; z++; }
+      var a = p.t, b = z < parts.length ? parts[z].t : dur; if (!(b > a)) b = a + 2;
+      var chunks = [];
+      (body.replace(/\s+/g, ' ').match(/[^.?!]+[.?!]*["'״”]?/g) || []).forEach(function (s) {
+        var w = s.trim().split(' ').filter(Boolean);
+        for (var k = 0; k < w.length; k += 14) chunks.push(w.slice(k, k + 14).join(' '));
+      });
+      var tot = chunks.reduce(function (x, s) { return x + s.length + 1; }, 0), t = a;
+      chunks.forEach(function (s) { var d = (b - a) * (s.length + 1) / tot; outp.push({ start: t, end: t + d, text: s, words: [] }); t += d; });
+    });
+    return outp;
+  }
+  function fromDoc(h) {
+    var d = new DOMParser().parseFromString(h, 'text/html');
+    Array.prototype.forEach.call(d.querySelectorAll('h1,style,title,script'), function (e) { e.remove(); });
+    var ps = d.querySelectorAll('p');
+    if (!ps.length) return d.body ? d.body.textContent : '';
+    return Array.prototype.map.call(ps, function (p) { return p.textContent; }).filter(function (t) { return !/תומלל בכלי התמלול/.test(t); }).join('\n\n');
+  }
+  function importText(txt) {
+    if (!file) { say('⚠️ קודם בוחרים את הסרטון, ואחר כך מייבאים את התמלול שלו.'); return false; }
+    if (busy) return false;
+    txt = String(txt || '').replace(/^\ufeff/, '').replace(/\r/g, '');
+    if (/^\s*<(!doctype|html)/i.test(txt) || /<p[\s>]/i.test(txt)) txt = fromDoc(txt);
+    var subs = txt.indexOf('-->') > -1, s = subs ? parseSubs(txt) : parsePlain(txt);
+    s = s.filter(function (x) { return x.text && x.end > x.start && x.start < dur + 1; });
+    if (!s.length) { say('⚠️ לא מצאתי טקסט בקובץ הזה.'); return false; }
+    gotSegs(s, false, subs || /\[\d/.test(txt) ? 'import_timed' : 'import_text');
+    return true;
+  }
+  $('vs-imp-file').addEventListener('change', function () {
+    var f = this.files && this.files[0], inp = this; if (!f) return;
+    f.text().then(function (t) { importText(t); inp.value = ''; });
+  });
+  $('vs-imp-go').addEventListener('click', function () { if (importText($('vs-imp-text').value)) $('vs-imp-text').value = ''; });
   $('sh-sents').addEventListener('click', function (e) {
     var b = e.target.closest('button[data-i]'); if (!b || busy) return;
     var i = +b.dataset.i;
@@ -779,5 +927,5 @@
   });
 
   // לבדיקות: טעינת קובץ מכתובת ותמלול מוכן
-  window.__vs = { load: function (blob, name, lm) { return load(new File([blob], name || 'test.mp4', { type: blob.type || 'video/mp4', lastModified: lm || Date.now() })); }, setSegs: function (s) { gotSegs(s, false); }, parts: function () { return parts(); }, rec: function (a, b) { return play(a, b, true).then(function (r) { window.__vsOut = (window.__vsOut || []).concat([{ name: 'rec.' + r.ext, blob: r.blob }]); return r.blob.size; }); }, get groups() { return groups; }, get segs() { return segs; }, clips: function () { return clips; }, setTab: setTab, look: look, endPreview: endPreview };
+  window.__vs = { load: function (blob, name, lm) { return load(new File([blob], name || 'test.mp4', { type: blob.type || 'video/mp4', lastModified: lm || Date.now() })); }, setSegs: function (s) { gotSegs(s, false); }, parts: function () { return parts(); }, rec: function (a, b) { return play(a, b, true).then(function (r) { window.__vsOut = (window.__vsOut || []).concat([{ name: 'rec.' + r.ext, blob: r.blob }]); return r.blob.size; }); }, get groups() { return groups; }, get segs() { return segs; }, clips: function () { return clips; }, setTab: setTab, look: look, endPreview: endPreview, importText: importText, get sugg() { return sugg; } };
 })();
