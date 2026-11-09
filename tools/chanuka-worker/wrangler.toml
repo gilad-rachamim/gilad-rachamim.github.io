@@ -1,0 +1,19 @@
+# חנוכייה משותפת בקישור – Cloudflare Worker + Durable Object (חינמי). מחובר ל-/kodesh/chanuka/chanukiya/.
+# פריסה:        cd tools/chanuka-worker && npx wrangler deploy   (אותו חשבון כמו kodesh-tehillim)
+# בדיקה מקומית: npx wrangler dev --local --port 8789
+# כל חנוכייה = Durable Object אחד.
+name = "kodesh-chanuka"
+main = "chanuka-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[[durable_objects.bindings]]
+name = "CH"
+class_name = "Chanukiya"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Chanukiya"]
+
+[vars]
+EXTRA_ORIGINS = ""
