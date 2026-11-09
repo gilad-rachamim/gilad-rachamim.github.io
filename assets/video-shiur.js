@@ -17,6 +17,29 @@
   var file = null, fileName = 'סרטון', dur = 0, busy = false, tab = 'status';
   var segs = null, groups = null; // תמלול: segs=[{start,end,text,words:[{w,s,e}]}], groups=שורות כתוביות
   var FONT = 'Assistant, "Segoe UI", Arial, sans-serif';
+  // מראה קבוע (נשמר במכשיר): סגנון כתוביות, מוזיקה ושקופית סיום
+  var LK = 'kelim-vs-look', TAIL = 4;
+  var look = { size: 'm', bar: 'line', lines: '1', color: '#ffd84d', music: 'none', endOn: false, name: '', phone: '', link: '' };
+  try { Object.assign(look, JSON.parse(localStorage.getItem(LK) || '{}')); } catch (e) {}
+  function lsave() { try { localStorage.setItem(LK, JSON.stringify(look)); } catch (e) {} }
+  function endOK() { return !!(look.endOn && (look.name || look.phone || look.link)); }
+  Array.prototype.forEach.call(root.querySelectorAll('[data-look]'), function (el) {
+    var k = el.dataset.look, cb = el.type === 'checkbox';
+    if (cb) el.checked = !!look[k];
+    else if (look[k]) { el.value = look[k]; if (el.value !== look[k]) look[k] = el.value; }
+    else look[k] = el.value;
+    el.addEventListener(cb || el.tagName === 'SELECT' ? 'change' : 'input', function () {
+      look[k] = cb ? el.checked : el.value.trim();
+      var endField = k === 'name' || k === 'phone' || k === 'link';
+      if (endField && look[k] && !look.endTouched && !look.endOn) { look.endOn = true; $('end-on').checked = true; }
+      if (k === 'endOn') look.endTouched = true;
+      lsave();
+      if (k === 'lines') relines();
+      if (endField || k === 'endOn') { if (endOK()) endPreview(); else if (file && !busy) still(); }
+      else if (file && !busy) still();
+      used('look', { k: k });
+    });
+  });
 
   // גופן Assistant לקנבס
   try {
@@ -34,6 +57,7 @@
     tab = t;
     Array.prototype.forEach.call(root.querySelectorAll('[data-tab]'), function (b) { b.setAttribute('aria-selected', b.dataset.tab === t ? 'true' : 'false'); });
     ['status', 'ktuviot', 'shorts'].forEach(function (k) { $('tab-' + k).hidden = k !== t; });
+    $('vs-capstyle').hidden = t === 'status';
     if (history.replaceState) history.replaceState(null, '', '#' + t);
     if (file && !busy) still();
   }
@@ -100,8 +124,10 @@
     else {
       try { ctx.drawImage(vid, 0, 0, W, H); } catch (e) {}
       if (job && job.kind === 'status') badge(job.n + '/' + job.of, W, H);
-      if (job && job.kind === 'caps') caps(t, W, H, +$('kt-pos').value, $('kt-color').value);
+      if (job && job.kind === 'caps') caps(t, W, H, +$('kt-pos').value);
     }
+    if (job && job.banner && job.endK == null && t > job.bAt - 5) banner(W, H, Math.min(1, (t - job.bAt + 5) / 0.6));
+    if (job && job.endK != null) drawEnd(W, H, Math.min(1, job.endK / 0.5));
     ctx.restore();
   }
   function rr(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
@@ -123,17 +149,31 @@
   }
   function caps(t, W, H, yk, color, maxW) {
     var g = groupAt(t); if (!g) return;
-    var fs = Math.round(Math.min(W, H) * (W < H ? 0.07 : 0.072)), lh = fs * 1.25;
+    color = color || look.color;
+    var k = { s: 0.055, m: 0.07, l: 0.088 }[look.size] || 0.07, bar = look.bar === 'bar';
+    var fs = Math.round(Math.min(W, H) * k), lh = fs * 1.25;
     ctx.font = '800 ' + fs + 'px ' + FONT; ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
     var sp = ctx.measureText(' ').width, lim = (maxW || 0.88) * W, lines = [[]], lw = [0];
-    g.words.forEach(function (w) {
-      var ww = ctx.measureText(w.w).width, L = lines.length - 1;
-      if (lines[L].length && lw[L] + sp + ww > lim) { lines.push([]); lw.push(0); L++; }
-      lw[L] += (lines[L].length ? sp : 0) + ww; lines[L].push({ w: w, ww: ww });
+    var items = g.words.map(function (w) { return { w: w, ww: ctx.measureText(w.w).width }; });
+    items.forEach(function (o) {
+      var L = lines.length - 1;
+      if (lines[L].length && lw[L] + sp + o.ww > lim) { lines.push([]); lw.push(0); L++; }
+      lw[L] += (lines[L].length ? sp : 0) + o.ww; lines[L].push(o);
     });
+    // שתי שורות: שורה ארוכה נחצית לשתיים מאוזנות
+    if (look.lines === '2' && lines.length === 1 && items.length >= 4 && lw[0] > lim * 0.55) {
+      var best = 1, bw = 1e9, acc = 0;
+      for (var c = 1; c < items.length; c++) { acc += items[c - 1].ww + (c > 1 ? sp : 0); var m2 = Math.max(acc, lw[0] - acc - sp); if (m2 < bw) { bw = m2; best = c; } }
+      lines = [items.slice(0, best), items.slice(best)];
+      lw = lines.map(function (ln) { return ln.reduce(function (a, o, i) { return a + o.ww + (i ? sp : 0); }, 0); });
+    }
     var y0 = yk * H - (lines.length - 1) * lh / 2;
-    ctx.lineJoin = 'round'; ctx.lineWidth = Math.max(4, fs * 0.16); ctx.strokeStyle = 'rgba(0,0,0,.85)';
-    ctx.shadowColor = 'rgba(0,0,0,.5)'; ctx.shadowBlur = fs * 0.25;
+    if (bar) {
+      var mw = Math.max.apply(null, lw), pd = fs * 0.4;
+      ctx.fillStyle = 'rgba(0,0,0,.62)'; rr(W / 2 - mw / 2 - pd, y0 - lh / 2 - pd * 0.35, mw + pd * 2, lines.length * lh + pd * 0.7, fs * 0.3); ctx.fill();
+    }
+    ctx.lineJoin = 'round'; ctx.lineWidth = bar ? Math.max(2, fs * 0.06) : Math.max(4, fs * 0.16); ctx.strokeStyle = 'rgba(0,0,0,.85)';
+    ctx.shadowColor = 'rgba(0,0,0,.5)'; ctx.shadowBlur = bar ? 0 : fs * 0.25;
     lines.forEach(function (ln, i) {
       var x = W / 2 + lw[i] / 2, y = y0 + i * lh;
       ln.forEach(function (o) {
@@ -177,7 +217,87 @@
       ctx.fillStyle = '#e6c57e';
       lines.forEach(function (l, i) { ctx.fillText(l, W / 2, by + 22 + lh / 2 + i * lh); });
     }
-    if ((cl.caps != null ? cl.caps : $('sh-caps').value === '1') && groups) caps(t, W, H, mode === 'crop' ? 0.78 : capY, '#ffd84d', 0.86);
+    if ((cl.caps != null ? cl.caps : $('sh-caps').value === '1') && groups) caps(t, W, H, mode === 'crop' ? 0.78 : capY, null, 0.86);
+  }
+
+  // ---------- שקופית סיום ופס תחתון ----------
+  function fit(txt, w, fs, wt) { ctx.font = wt + ' ' + fs + 'px ' + FONT; while (fs > 12 && ctx.measureText(txt).width > w) { fs -= 2; ctx.font = wt + ' ' + fs + 'px ' + FONT; } return fs; }
+  function drawEnd(W, H, k) {
+    ctx.save(); ctx.globalAlpha = k;
+    var gr = ctx.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#0a1020'); gr.addColorStop(1, '#1a2542');
+    ctx.fillStyle = gr; ctx.fillRect(0, 0, W, H);
+    var m = Math.min(W, H), pad = m * 0.06;
+    ctx.strokeStyle = 'rgba(230,197,126,.55)'; ctx.lineWidth = Math.max(2, m * 0.006); rr(pad, pad, W - 2 * pad, H - 2 * pad, m * 0.04); ctx.stroke();
+    var rows = [];
+    if (look.name) rows.push({ t: look.name, fs: m * 0.085, wt: 800, c: '#e6c57e', d: 'rtl' });
+    if (look.phone) rows.push({ t: look.phone, fs: m * 0.075, wt: 700, c: '#ffffff', d: 'ltr', gap: 0.3 });
+    if (look.link) {
+      rows.push({ t: 'להצטרפות לקבוצה', fs: m * 0.042, wt: 600, c: 'rgba(255,255,255,.72)', d: 'rtl', gap: 0.6 });
+      rows.push({ t: look.link.replace(/^https?:\/\//, '').replace(/\/$/, ''), fs: m * 0.05, wt: 700, c: '#9fd3ff', d: 'ltr' });
+    }
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    var tot = 0;
+    rows.forEach(function (r) { r.fs = fit(r.t, W - 4 * pad, Math.round(r.fs), r.wt); r.h = r.fs * 1.45 + (r.gap || 0) * r.fs; tot += r.h; });
+    var y = H / 2 - tot / 2 + (1 - k) * m * 0.03;
+    rows.forEach(function (r) {
+      y += (r.gap || 0) * r.fs;
+      ctx.font = r.wt + ' ' + r.fs + 'px ' + FONT; ctx.direction = r.d; ctx.fillStyle = r.c;
+      ctx.fillText(r.t, W / 2, y + r.fs * 0.725); y += r.fs * 1.45;
+    });
+    ctx.restore();
+  }
+  function banner(W, H, k) {
+    var txt = [look.name, look.phone].filter(Boolean).join('  ·  ') || look.link; if (!txt) return;
+    var m = Math.min(W, H), h = m * 0.12, y = H - h - m * 0.035;
+    ctx.save(); ctx.globalAlpha = k;
+    ctx.fillStyle = 'rgba(10,16,32,.86)'; rr(W * 0.04, y, W * 0.92, h, h * 0.3); ctx.fill();
+    ctx.strokeStyle = 'rgba(230,197,126,.8)'; ctx.lineWidth = Math.max(2, m * 0.004); ctx.stroke();
+    var fs = fit(txt, W * 0.84, Math.round(h * 0.44), 800);
+    ctx.direction = 'rtl'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#e6c57e';
+    ctx.fillText(txt, W / 2, y + h / 2 + fs * 0.04);
+    ctx.restore();
+  }
+  function endPreview() {
+    if (busy) return;
+    if (file) still(); else { setCanvas(720, 1280); job = { kind: 'none' }; }
+    job.endK = 1; paint(vid.currentTime || 0);
+  }
+  $('end-see').addEventListener('click', function () {
+    if (!endOK()) { say('⚠️ ממלאים שם, טלפון או קישור, ומסמנים "להוסיף שקופית סיום".'); return; }
+    say(''); endPreview(); $('vs-stage').scrollIntoView({ block: 'nearest' });
+  });
+
+  // ---------- מוזיקה שקטה (WebAudio, נוצרת כאן, כמו ב-/kodesh/video-parasha/) ----------
+  var CH = [[50, 54, 57, 62], [47, 50, 54, 59], [43, 47, 50, 55], [45, 49, 52, 57]];
+  function hz(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+  function music(ac, outs, len, vol) {
+    var t0 = ac.currentTime + 0.05, master = ac.createGain(), lp = ac.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 1500;
+    master.gain.setValueAtTime(0, t0); master.gain.linearRampToValueAtTime(vol, t0 + 2);
+    master.gain.setValueAtTime(vol, t0 + Math.max(2.1, len - 2.5)); master.gain.linearRampToValueAtTime(0, t0 + len);
+    lp.connect(master); outs.forEach(function (d) { master.connect(d); });
+    var dl = ac.createDelay(), fb = ac.createGain(); dl.delayTime.value = 0.42; fb.gain.value = 0.35;
+    dl.connect(fb); fb.connect(dl); dl.connect(lp);
+    var nodes = [];
+    for (var b = 0, t = t0; t < t0 + len; b++, t += 4) {
+      var ch = CH[b % 4];
+      ch.forEach(function (m) {
+        ['sine', 'triangle'].forEach(function (type, j) {
+          var o = ac.createOscillator(), g = ac.createGain();
+          o.type = type; o.frequency.value = hz(m) * (j ? 1.003 : 1);
+          g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(j ? 0.035 : 0.06, t + 1.2); g.gain.linearRampToValueAtTime(0, t + 4.6);
+          o.connect(g); g.connect(lp); o.start(t); o.stop(t + 4.7); nodes.push(o);
+        });
+      });
+      [ch[1] + 12, ch[2] + 12, ch[3] + 12, ch[2] + 12].forEach(function (m, k) {
+        var tt = t + k + 0.5; if (tt > t0 + len - 1) return;
+        var o = ac.createOscillator(), g = ac.createGain();
+        o.type = 'sine'; o.frequency.value = hz(m);
+        g.gain.setValueAtTime(0, tt); g.gain.linearRampToValueAtTime(0.05, tt + 0.03); g.gain.exponentialRampToValueAtTime(0.0008, tt + 1.6);
+        o.connect(g); g.connect(lp); g.connect(dl); o.start(tt); o.stop(tt + 1.7); nodes.push(o);
+      });
+    }
+    return function () { nodes.forEach(function (o) { try { o.stop(); } catch (e) {} }); try { master.disconnect(); } catch (e) {} };
   }
 
   // ---------- מנוע הקלטה ----------
@@ -200,7 +320,9 @@
   }
   // מנגן את [a,b] לקנבס. rec=true מקליט ומחזיר {blob,ext}; אחרת רק תצוגה עם קול
   var stopFlag = false;
-  function play(a, b, rec, onP) {
+  // opt.tail: שניות של שקופית סיום אחרי b (הסרטון עומד, השקופית נכנסת בעמעום, המוזיקה ממשיכה)
+  function play(a, b, rec, onP, opt) {
+    var tail = (opt && opt.tail) || 0, endAt = 0, stopM = null, span = Math.max(0.1, b - a + tail);
     // בלי שנייה קפואה בתחילת כל חלק: המקליט של כרום צריך כשנייה להתעורר, והנגן צריך רגע אחרי קפיצה.
     // לכן מדליקים את המקליט ומיד משהים אותו (הוא מתעורר בלי להקליט), מנגנים משנייה וחצי לפני a (הנגן נתקע לרגע כשנייה אחרי קפיצה),
     // וממשיכים את ההקלטה רק כשהתמונה כבר זזה והגיעה ל-a.
@@ -229,6 +351,7 @@
         function finish() {
           if (ended) return; ended = true; vid.pause();
           if (spk) spk.gain.value = 0;
+          if (stopM) { stopM(); stopM = null; }
           if (!rec) return res(null);
           if (!on) { on = true; try { mr.resume(); } catch (e) {} }
           setTimeout(function () { mr.stop(); }, 200);
@@ -237,11 +360,19 @@
           if (ended) return;
           var t = vid.currentTime;
           // המקליט נדלק כשהגענו ל-a והתמונה באמת זזה (בתחילת הסרטון, אין ממה להתחיל מוקדם: מחכים רק שהתמונה תזוז)
-          if (!on && t >= a - 0.02 && t > t0 + 0.02) { on = true; paint(t); try { mr.resume(); } catch (e) {} }
-          paint(t);
-          if (onP && on) onP(Math.min(1, (t - a) / Math.max(0.1, b - a)));
-          if (stopFlag || (on && t >= b) || vid.ended) return finish();
           var next = function () { if (!fired) { fired = true; loop(); } }, fired = false;
+          if (endAt) {
+            var k = (performance.now() - endAt) / 1000; job.endK = k; paint(b);
+            if (onP) onP(Math.min(1, (b - a + k) / span));
+            if (stopFlag || k >= tail) { finish(); job.endK = null; return; }
+            requestAnimationFrame(next); setTimeout(next, 20); return;
+          }
+          if (!on && t >= a - 0.02 && t > t0 + 0.02) { on = true; paint(t); try { mr.resume(); } catch (e) {} }
+          if (on && !stopM && AC && look.music !== 'none') stopM = music(AC, rec ? [dest] : [AC.destination], Math.max(1, b - t) + tail, look.music === 'soft' ? 0.5 : 0.22);
+          paint(t);
+          if (onP && on) onP(Math.min(1, (t - a) / span));
+          if (on && tail && !stopFlag && (t >= b || vid.ended)) { endAt = performance.now(); vid.pause(); job.endK = 0; paint(b); requestAnimationFrame(next); setTimeout(next, 20); return; }
+          if (stopFlag || (on && t >= b) || vid.ended) return finish();
           requestAnimationFrame(next); setTimeout(next, 20);
         }
         var w0 = performance.now();
@@ -334,9 +465,10 @@
     used('status_start', { parts: p.length, len: +$('st-len').value });
     (function next() {
       if (i >= p.length || stopFlag) { lock(false); say('✅ ' + p.length + ' החלקים מוכנים. שולחים כל אחד לסטטוס לפי הסדר.'); used('status_done', { parts: p.length }); return; }
-      job = { kind: 'status', n: i + 1, of: p.length };
+      var last = i === p.length - 1 && endOK(), fits = last && p[i][1] - p[i][0] + TAIL <= +$('st-len').value - 0.3;
+      job = { kind: 'status', n: i + 1, of: p.length, banner: last && !fits, bAt: p[i][1] };
       say('יוצר חלק ' + (i + 1) + ' מתוך ' + p.length + '…', true);
-      play(p[i][0], p[i][1], true, function (x) { prog.value = (i + x) / p.length; }).then(function (r) {
+      play(p[i][0], p[i][1], true, function (x) { prog.value = (i + x) / p.length; }, { tail: fits ? TAIL : 0 }).then(function (r) {
         addOut(r, 'חלק ' + (i + 1) + '/' + p.length, fileName + ' ' + (i + 1) + ' מתוך ' + p.length);
         i++; next();
       });
@@ -406,10 +538,21 @@
       var ws = s.words && s.words.length ? s.words.filter(function (w) { return w.w; }) : estimate(s);
       ws.forEach(function (w, i) { all.push({ w: w.w, s: w.s, e: w.e, end: i === ws.length - 1 }); });
     });
+    build(all);
+  }
+  // שינוי מספר השורות: בונים מחדש מהמילים שכבר נערכו
+  function relines() {
+    if (!groups) return;
+    var all = [];
+    groups.forEach(function (g) { g.words.forEach(function (w, i) { all.push({ w: w.w, s: w.s, e: w.e, end: !!w.end }); }); });
+    build(all); showCaps();
+  }
+  function build(all) {
+    var two = look.lines === '2', MW = two ? 10 : 5, MC = two ? 46 : 24;
     groups = []; var g = null;
     all.forEach(function (w, i) {
       var prev = all[i - 1];
-      if (!g || g.words.length >= 5 || g.chars + w.w.length > 24 || (prev && (prev.end || w.s - prev.e > 0.7 || /[.?!,:;]$/.test(prev.w)))) { g = { words: [], chars: 0 }; groups.push(g); }
+      if (!g || g.words.length >= MW || g.chars + w.w.length > MC || (prev && (prev.end || w.s - prev.e > 0.7 || /[.?!,:;]$/.test(prev.w)))) { g = { words: [], chars: 0 }; groups.push(g); }
       g.words.push(w); g.chars += w.w.length + 1;
     });
     fixTimes();
@@ -518,7 +661,9 @@
     if (ws.length === g.words.length) ws.forEach(function (w, k) { g.words[k].w = w; });
     else {
       var s = g.words[0].s, e = g.words[g.words.length - 1].e, tot = ws.reduce(function (a, w) { return a + w.length + 1; }, 0), t = s;
+      var wasEnd = !!g.words[g.words.length - 1].end;
       g.words = ws.map(function (w) { var d = (e - s) * (w.length + 1) / tot, o = { w: w, s: t, e: t + d }; t += d; return o; });
+      g.words[g.words.length - 1].end = wasEnd;
     }
     fixTimes(); paint(vid.currentTime); used('caps_edit');
   }
@@ -535,7 +680,7 @@
     if (busy || !groups || !canRec()) return;
     var s = srcSize(); setCanvas(s[0], s[1]); job = { kind: 'caps' }; lock(true); stopFlag = false;
     say('צורב את הכתוביות על הסרטון… זה לוקח ' + mmss(dur) + ' דקות.', true);
-    play(0, dur, true, function (x) { prog.value = x; }).then(function (r) {
+    play(0, dur, true, function (x) { prog.value = x; }, { tail: endOK() ? TAIL : 0 }).then(function (r) {
       lock(false); addOut(r, 'עם כתוביות', fileName + ' – כתוביות'); say('✅ הסרטון עם הכתוביות מוכן.');
       used('caps_done', { secs: Math.round(dur), fmt: r.ext });
     });
@@ -616,7 +761,7 @@
     if (!c) return;
     setCanvas(720, 1280); job = { kind: 'short', clip: r ? {} : c };
     var b = this; lock(true); b.disabled = false; b.dataset.stop = ''; b.textContent = '■ לעצור'; stopFlag = false;
-    play(c.a, c.b, false, function (x) { prog.value = x; }).then(function () { delete b.dataset.stop; b.textContent = '▶ לצפות בקטע'; lock(false); });
+    play(c.a, c.b, false, function (x) { prog.value = x; }, { tail: endOK() ? TAIL : 0 }).then(function () { delete b.dataset.stop; b.textContent = '▶ לצפות בקטע'; lock(false); });
   });
   $('sh-go').addEventListener('click', function () {
     if (busy || !clips.length || !canRec()) return;
@@ -626,7 +771,7 @@
       if (i >= n || stopFlag) { lock(false); say('✅ השורטים מוכנים. אפשר לשתף כל אחד בנפרד.'); used('shorts_done', { n: n }); return; }
       var c = clips[i]; job = { kind: 'short', clip: c };
       say('יוצר שורט ' + (i + 1) + ' מתוך ' + n + '…', true);
-      play(c.a, c.b, true, function (x) { prog.value = (i + x) / n; }).then(function (r) {
+      play(c.a, c.b, true, function (x) { prog.value = (i + x) / n; }, { tail: endOK() ? TAIL : 0 }).then(function (r) {
         addOut(r, 'שורט ' + (i + 1) + (c.title ? ': ' + c.title : ''), (c.title || fileName) + ' – שורט ' + (i + 1));
         i++; next();
       });
@@ -634,5 +779,5 @@
   });
 
   // לבדיקות: טעינת קובץ מכתובת ותמלול מוכן
-  window.__vs = { load: function (blob, name, lm) { return load(new File([blob], name || 'test.mp4', { type: blob.type || 'video/mp4', lastModified: lm || Date.now() })); }, setSegs: function (s) { gotSegs(s, false); }, parts: function () { return parts(); }, rec: function (a, b) { return play(a, b, true).then(function (r) { window.__vsOut = (window.__vsOut || []).concat([{ name: 'rec.' + r.ext, blob: r.blob }]); return r.blob.size; }); }, get groups() { return groups; }, get segs() { return segs; }, clips: function () { return clips; }, setTab: setTab };
+  window.__vs = { load: function (blob, name, lm) { return load(new File([blob], name || 'test.mp4', { type: blob.type || 'video/mp4', lastModified: lm || Date.now() })); }, setSegs: function (s) { gotSegs(s, false); }, parts: function () { return parts(); }, rec: function (a, b) { return play(a, b, true).then(function (r) { window.__vsOut = (window.__vsOut || []).concat([{ name: 'rec.' + r.ext, blob: r.blob }]); return r.blob.size; }); }, get groups() { return groups; }, get segs() { return segs; }, clips: function () { return clips; }, setTab: setTab, look: look, endPreview: endPreview };
 })();
