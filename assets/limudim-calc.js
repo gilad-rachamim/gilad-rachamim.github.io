@@ -644,7 +644,7 @@
   // =====================================================================
   //  לשוניות
   // =====================================================================
-  var TABS = ['calc', 'solve', 'stat', 'tri', 'cv', 'graph', 'guide', 'err'];
+  var TABS = ['calc', 'solve', 'stat', 'tri', 'cv', 'graph', 'bank', 'guide', 'err'];
   function tab(name) {
     TABS.forEach(function (t) {
       var on = t === name;
@@ -1150,7 +1150,7 @@
   function applyFix(t) {
     var key = t.trim();
     if (st.vfix.p[key]) return st.vfix.p[key];
-    return key.split(/\s+/).map(function (w) { return st.vfix.w[w] || w; }).join(' ');
+    return key.split(/\s+/).map(function (w) { return st.vfix.w[w] || (st.gfix && st.gfix[w]) || w; }).join(' ');
   }
   extra.addEventListener('click', function (e) {
     if (!e.target.closest('[data-vfix]') || !lastHeard) return;
@@ -1160,8 +1160,10 @@
     $('cx-vfs').addEventListener('click', function () {
       var nw = f.value.trim(); if (!nw) return;
       var a = lastHeard.trim().split(/\s+/), b = nw.split(/\s+/), learned = [];
-      if (a.length === b.length) a.forEach(function (w, i) { if (w !== b[i]) { st.vfix.w[w] = b[i]; learned.push('"' + w + '" ← "' + b[i] + '"'); } });
+      var pairs = [];
+      if (a.length === b.length) a.forEach(function (w, i) { if (w !== b[i]) { st.vfix.w[w] = b[i]; pairs.push([w, b[i]]); learned.push('"' + w + '" ← "' + b[i] + '"'); } });
       else { st.vfix.p[lastHeard.trim()] = nw; learned.push('"' + lastHeard.trim() + '" ← "' + nw + '"'); }
+      sendFixes(pairs);
       save(); used('voice_fix');
       inp.value = nw; justEval = false; var h = lastHeard; lastHeard = null; commit();
       if (learned.length) extra.insertAdjacentHTML('afterbegin', '<span>✓ זכרתי: ' + esc(learned.join(', ')) + '. בפעם הבאה אבין. (נשמר רק בטלפון הזה)</span>');
@@ -1455,6 +1457,96 @@
       o.innerHTML = out.map(li).join('');
     } catch (e) { if (!(e instanceof Err)) throw e; err('v-out', e); }
   });
+
+
+  // =====================================================================
+  //  מאגר משותף: תרגילים שתלמידים משתפים (שרת limudim-calc). התשובה מחושבת כאן בטלפון.
+  // =====================================================================
+  var API = 'https://limudim-calc.gilad4049.workers.dev';
+  if (/^(localhost|127.0.0.1)$/.test(location.hostname) && /[?&]api=/.test(location.search)) API = decodeURIComponent(location.search.match(/[?&]api=([^&]+)/)[1]); // בדיקה מקומית
+  if (!st.uid) { st.uid = ''; var abc = 'abcdefghijklmnopqrstuvwxyz0123456789'; for (var ui = 0; ui < 20; ui++) st.uid += abc[Math.floor(Math.random() * abc.length)]; save(); }
+  var TOPICS = [['trigo', 'טריגונומטריה'], ['sinusim', 'משפט הסינוסים והקוסינוסים'], ['chezkot', 'חזקות ושורשים'], ['logaritm', 'לוגריתמים'], ['gdila', 'גדילה ודעיכה'], ['histabrut', 'הסתברות'], ['stiya', 'סטטיסטיקה'], ['normalit', 'התפלגות נורמלית'], ['shorashim', 'משוואה ריבועית'], ['seder', 'סדר פעולות'], ['shvarim', 'שברים'], ['other', 'אחר']];
+  var TOPIC_OF = { trig: 'trigo', log: 'logaritm', pow: 'chezkot', prob: 'histabrut', frac: 'shvarim', order: 'seder' };
+  function tName(id) { for (var i = 0; i < TOPICS.length; i++) if (TOPICS[i][0] === id) return TOPICS[i][1]; return 'אחר'; }
+  function api(path, body) {
+    var o = body ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(Object.assign({ uid: st.uid }, body)) } : {};
+    return fetch(API + path, o).then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Err(j.error || 'משהו השתבש'); return j; }); }, function () { throw new Err('אין חיבור למאגר כרגע. אפשר לנסות שוב בעוד רגע.'); });
+  }
+  // תשובה מחושבת מקומית, במצב הזוויות של התרגיל
+  function answerOf(e, ang) {
+    try { var save0 = st.ang; st.ang = ang; var r = compute(e); st.ang = save0; return fmtN(r.v) + (isAngleOut(r.tree) ? '°' : ''); }
+    catch (er) { st.ang = save0; return '?'; }
+  }
+  // ---------- לשלוח למאגר ----------
+  $('cx-tobank').addEventListener('click', function () {
+    var e = inp.value.trim();
+    if (!e || !justEval || lastVal == null) { why.innerHTML = '<b>קודם מחשבים.</b> כותבים תרגיל, לוחצים =, ואז משתפים אותו במאגר.'; return; }
+    if (/Ans|\bA\b|\bB\b/.test(e)) { why.innerHTML = '<b>Ans, A ו-B שמורים רק בטלפון שלכם.</b> כדי לשתף, כותבים את התרגיל עם המספרים עצמם.'; return; }
+    var guess = TOPIC_OF[lessonKey(lastTree)] || 'other';
+    extra.innerHTML = '<div class="cx-vfix"><b>📤 לשתף במאגר של כולם</b>' +
+      '<label for="bk-topic">נושא</label><select id="bk-topic">' + TOPICS.map(function (t) { return '<option value="' + t[0] + '"' + (t[0] === guess ? ' selected' : '') + '>' + t[1] + '</option>'; }).join('') + '</select>' +
+      '<label for="bk-title">כותרת קצרה <span class="opt">(לא חובה, למשל "זווית במשולש")</span></label><input id="bk-title" type="text" maxlength="60" autocomplete="off">' +
+      '<button type="button" class="btn btn-gold btn-sm" id="bk-send">לשתף</button><small>משותף רק התרגיל, בלי שם ובלי פרטים. התשובה מחושבת מחדש אצל כל אחד.</small></div>';
+    $('bk-send').addEventListener('click', function () {
+      var btn = this; btn.disabled = true;
+      api('/add', { e: e, ang: st.ang, topic: $('bk-topic').value, lv: st.lv || 0, title: $('bk-title').value.trim() }).then(function (j) {
+        used('bank_add');
+        extra.innerHTML = '<span>✓ ' + (j.dup ? 'התרגיל הזה כבר במאגר. תודה!' : 'נוסף למאגר. תודה שעזרתם לכולם!') + ' <button type="button" class="linkish" data-gotab="bank">לראות את המאגר</button></span>';
+      }).catch(function (er) { btn.disabled = false; extra.insertAdjacentHTML('beforeend', '<span class="bad">' + esc(er.msg || '') + '</span>'); });
+    });
+  });
+  // ---------- לשונית המאגר ----------
+  var ADMIN = (location.search.match(/[?&]admin=([^&]+)/) || [])[1] || '';
+  $('bk-topic-f').innerHTML = '<option value="">כל הנושאים</option>' + TOPICS.map(function (t) { return '<option value="' + t[0] + '">' + t[1] + '</option>'; }).join('');
+  var bankItems = [];
+  function bankLoad() {
+    var box = $('bk-list'), q = '?topic=' + $('bk-topic-f').value + '&sort=' + $('bk-sort').value + ($('bk-mine').checked && st.lv ? '&lv=' + st.lv : '');
+    box.innerHTML = '<p class="note">טוען…</p>';
+    api('/list' + q).then(function (j) {
+      bankItems = j.items || [];
+      $('bk-count').textContent = j.total ? 'במאגר יש ' + j.total + ' תרגילים' : '';
+      if (!bankItems.length) { box.innerHTML = '<p class="note">עוד אין כאן תרגילים. אפשר להיות הראשונים: מחשבים תרגיל ולוחצים "📤 למאגר".</p>'; return; }
+      box.innerHTML = bankItems.map(function (it, i) {
+        return '<div class="cx-g cx-bk"><div class="cx-bkh"><span class="pill">' + esc(tName(it.topic)) + (it.lv ? ' · ' + it.lv + ' יח"ל' : '') + '</span>' + (it.ang === 'rad' ? '<span class="pill">רדיאנים</span>' : '') + '</div>' +
+          (it.title ? '<b>' + esc(it.title) + '</b>' : '') +
+          '<p dir="ltr" class="cx-bke">' + esc(it.e) + ' = <b>' + esc(answerOf(it.e, it.ang)) + '</b></p>' +
+          '<div class="btns"><button type="button" class="btn btn-line btn-sm" data-bk="open" data-i="' + i + '">🧮 לפתוח עם השלבים</button><button type="button" class="linkish" data-bk="like" data-i="' + i + '" aria-label="אהבתי">👍 ' + (it.likes || 0) + '</button><button type="button" class="linkish" data-bk="report" data-i="' + i + '">🚩 לדווח</button></div></div>';
+      }).join('');
+    }).catch(function (er) { box.innerHTML = '<p class="note">' + esc(er.msg || '') + '</p>'; });
+  }
+  $('bk-list').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-bk]'); if (!b) return;
+    var it = bankItems[+b.dataset.i]; if (!it) return;
+    if (b.dataset.bk === 'open') { tryIt(it.e, it.ang); used('bank_open'); return; }
+    if (b.dataset.bk === 'report' && !confirm('לדווח על התרגיל הזה? אחרי כמה דיווחים הוא יורד מהמאגר.')) return;
+    b.disabled = true;
+    api('/' + b.dataset.bk, { id: it.id }).then(function (j) {
+      if (b.dataset.bk === 'like') { if (!j.again) it.likes = (it.likes || 0) + 1; b.textContent = '👍 ' + it.likes; }
+      else b.textContent = '✓ תודה, דווח';
+    }).catch(function () { b.disabled = false; });
+  });
+  ['bk-topic-f', 'bk-sort', 'bk-mine'].forEach(function (id) { $(id).addEventListener('change', bankLoad); });
+  $('cx-t-bank').addEventListener('click', function () { if (!bankItems.length) bankLoad(); });
+  // ניהול (רק עם המפתח של גילעד בקישור): התרגילים שדווחו
+  if (ADMIN) {
+    $('bk-admin').hidden = false;
+    var adm = function () {
+      fetch(API + '/admin/list?key=' + encodeURIComponent(ADMIN)).then(function (r) { return r.json(); }).then(function (j) {
+        $('bk-admin').innerHTML = '<h3>ניהול: תרגילים שדווחו</h3><p class="note">סה"כ במאגר: ' + (j.total || 0) + '</p>' + ((j.items || []).map(function (it) {
+          return '<div class="cx-g"><p dir="ltr">' + esc(it.e) + '</p><p>' + esc(it.title || '') + ' · ' + it.reports + ' דיווחים' + (it.hidden ? ' · מוסתר' : '') + '</p><div class="btns"><button type="button" class="btn btn-line btn-sm" data-adm="keep" data-id="' + it.id + '">להשאיר</button><button type="button" class="btn btn-no btn-sm" data-adm="delete" data-id="' + it.id + '">למחוק</button></div></div>';
+        }).join('') || '<p>אין דיווחים. 🙂</p>');
+      });
+    };
+    $('bk-admin').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-adm]'); if (!b) return;
+      fetch(API + '/admin/' + b.dataset.adm, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ uid: st.uid, key: ADMIN, id: b.dataset.id }) }).then(adm);
+    });
+    adm();
+  }
+  // ---------- תיקוני דיבור של כולם ----------
+  st.gfix = st.gfix || {};
+  function sendFixes(pairs) { if (pairs.length) api('/fix', { pairs: pairs }).catch(function () {}); }
+  if (SR) fetch(API + '/fixes').then(function (r) { return r.json(); }).then(function (j) { if (j && j.w) { st.gfix = j.w; save(); } }).catch(function () {});
 
   // ---------- התחלה ----------
   setAng(st.ang); hist(); guide(); memShow(); bigSet(!!st.big); lvSet(st.lv || 0);

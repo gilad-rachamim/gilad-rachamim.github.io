@@ -388,3 +388,11 @@ body.cx-bigmode .cx-res{font-size:3rem;color:#ffd76a}
 body.cx-bigmode .cx-why,body.cx-bigmode .cx-extra{font-size:1.2rem;color:#fff}
 body.cx-bigmode .cx-ang span{font-size:1.2rem}
 .cx-mem button{direction:ltr;unicode-bidi:isolate}
+.cx-bklist{display:grid;gap:.6rem}
+.cx-bkh{display:flex;flex-wrap:wrap;gap:.3rem}
+.cx-bke{font-size:1.2rem;color:var(--cream);overflow-wrap:anywhere}
+.cx-bke b{color:var(--gold-hi)}
+.cx-chk{display:flex;gap:.5rem;align-items:center;color:var(--body)}
+.cx-chk input{width:1.15rem;height:1.15rem;accent-color:var(--gold)}
+.cx-vfix select{font:inherit;color:var(--cream);background:#1a2234;border:1px solid var(--line);border-radius:10px;padding:.4rem}
+.cx-vfix small{color:var(--muted)}

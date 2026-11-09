@@ -42,6 +42,7 @@
     <button type="button" role="tab" data-tab="tri" id="cx-t-tri">📐 משולשים</button>
     <button type="button" role="tab" data-tab="cv" id="cx-t-cv" hidden>🌀 מרוכבים ווקטורים</button>
     <button type="button" role="tab" data-tab="graph" id="cx-t-graph">📈 גרף</button>
+    <button type="button" role="tab" data-tab="bank" id="cx-t-bank">👥 מאגר של כולם</button>
     <button type="button" role="tab" data-tab="guide" id="cx-t-guide">🔑 במחשבון שלכם</button>
     <button type="button" role="tab" data-tab="err" id="cx-t-err">⚠️ טעויות נפוצות</button>
   </div>
@@ -118,6 +119,7 @@
         <button type="button" class="linkish" id="cx-say">🔊 להקריא</button>
         <button type="button" class="linkish" id="cx-kb" aria-pressed="false">⌨ מקלדת הטלפון</button>
         <button type="button" class="linkish" id="cx-share">🔗 לשתף את התרגיל</button>
+        <button type="button" class="linkish" id="cx-tobank">📤 למאגר של כולם</button>
       </div>
       <div class="cx-mem" role="group" aria-label="זיכרון">
         <span>זיכרון:</span>
@@ -263,6 +265,21 @@
       <button type="button" class="btn btn-gold" id="v-go">לחשב עם שלבים</button>
       <ol class="cx-steps" id="v-out" aria-live="polite"></ol>
     </div>
+  </section>
+
+  <!-- ===== מאגר של כולם ===== -->
+  <section class="cx-pane" id="cx-p-bank" role="tabpanel" aria-labelledby="cx-t-bank" hidden>
+    <div class="panel">
+      <p>תרגילים שתלמידים שיתפו, לתרגול ולבדיקה. כל אחד יכול להוסיף: מחשבים תרגיל ולוחצים <b>"📤 למאגר של כולם"</b>. משותף רק התרגיל, בלי שם, והתשובה מחושבת מחדש אצלכם, לכן היא תמיד נכונה. משהו לא מתאים? לוחצים 🚩, ואחרי כמה דיווחים הוא יורד.</p>
+      <div class="row2">
+        <div class="field"><label for="bk-topic-f">נושא</label><select id="bk-topic-f"></select></div>
+        <div class="field"><label for="bk-sort">סדר</label><select id="bk-sort"><option value="new">החדשים</option><option value="top">האהובים</option></select></div>
+      </div>
+      <label class="cx-chk"><input type="checkbox" id="bk-mine"> רק ליחידות שלי</label>
+      <p class="note" id="bk-count"></p>
+      <div class="cx-bklist" id="bk-list"></div>
+    </div>
+    <div class="panel" id="bk-admin" hidden></div>
   </section>
 
   <!-- ===== במחשבון שלכם ===== -->
