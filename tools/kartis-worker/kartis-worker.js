@@ -1,10 +1,12 @@
-// קישורים קצרים לכרטיס ביקור לרב – Cloudflare Worker + KV.
+// קישורים קצרים לכרטיס ביקור לרב ולכרטיס ביקור למוהל – Cloudflare Worker + KV.
 //  POST /s     {d: "<הקוד הארוך מאחרי #d=>"}  -> {k: "a7Xq2b"}   (אותו כרטיס = אותו קוד)
+//  POST /s     {d: "...", t: "m"}              -> {k: "a7Xq2bZ"}  כרטיס מוהל: 7 תווים, כדי ש-/k/ ידע לאן להפנות
 //  GET  /s/<k>                                -> {d: "..."}
 // KV:  c:<k> -> d  ·  h:<sha256(d)> -> k  ·  rl:<ip> -> מונה יצירות לשעה
 const ORIGINS = ['https://gilad-rachamim.github.io'];
 const D_RE = /^[\w-]{8,4000}$/;
-const K_RE = /^[0-9A-Za-z]{6}$/;
+const DM_RE = /^[\w-]{8,20000}$/; // כרטיס מוהל יכול לכלול תמונה קטנה
+const K_RE = /^[0-9A-Za-z]{6,7}$/;
 const ABC = '0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'; // בלי I l O o – לא מתבלבלים
 const PER_IP_HOUR = 30;
 
@@ -43,13 +45,14 @@ function json(obj, status = 200, cache = 'no-store') {
   return new Response(JSON.stringify(obj), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': cache } });
 }
 
-// בודק שהקוד הוא באמת כרטיס: base64url של JSON עם שם
-function validCard(d) {
-  if (!D_RE.test(d)) return false;
+// בודק שהקוד הוא באמת כרטיס: base64url של JSON עם שם (name ברב, n במוהל)
+function validCard(d, mohel) {
+  if (!(mohel ? DM_RE : D_RE).test(d)) return false;
   try {
     const b = atob(d.replace(/-/g, '+').replace(/_/g, '/'));
     const o = JSON.parse(new TextDecoder().decode(Uint8Array.from(b, c => c.charCodeAt(0))));
-    return o && typeof o === 'object' && typeof o.name === 'string' && o.name.trim().length > 0;
+    const n = mohel ? o && o.n : o && o.name;
+    return o && typeof o === 'object' && typeof n === 'string' && n.trim().length > 0;
   } catch (e) { return false; }
 }
 
@@ -58,8 +61,8 @@ async function sha(s) {
   return [...new Uint8Array(h)].map(x => x.toString(16).padStart(2, '0')).join('');
 }
 
-function code() {
-  const r = crypto.getRandomValues(new Uint8Array(6));
+function code(len) {
+  const r = crypto.getRandomValues(new Uint8Array(len));
   return [...r].map(x => ABC[x % ABC.length]).join('');
 }
 
@@ -69,9 +72,10 @@ async function create(req, env) {
   let body;
   try { body = await req.json(); } catch (e) { return json({ error: 'bad json' }, 400); }
   const d = body && typeof body.d === 'string' ? body.d : '';
-  if (!validCard(d)) return json({ error: 'bad card' }, 400);
+  const mohel = body.t === 'm';
+  if (!validCard(d, mohel)) return json({ error: 'bad card' }, 400);
 
-  const h = 'h:' + await sha(d);
+  const h = 'h:' + (mohel ? 'm:' : '') + await sha(d);
   const old = await env.KARTIS.get(h);
   if (old) return json({ k: old });
 
@@ -82,7 +86,7 @@ async function create(req, env) {
   await env.KARTIS.put(rk, String(n + 1), { expirationTtl: 3600 });
 
   let k = '';
-  for (let i = 0; i < 5; i++) { const c = code(); if (!(await env.KARTIS.get('c:' + c))) { k = c; break; } }
+  for (let i = 0; i < 5; i++) { const c = code(mohel ? 7 : 6); if (!(await env.KARTIS.get('c:' + c))) { k = c; break; } }
   if (!k) return json({ error: 'busy' }, 503);
   await env.KARTIS.put('c:' + k, d);
   await env.KARTIS.put(h, k);
