@@ -139,13 +139,18 @@
   }
   function prepare() {
     song = S.cur(); tl = M.timeline(song); size(); chips(); drawSongs(); msg('מכין…');
-    return Promise.all([prepareAudio(), dbGet('pics:' + song.id).then(function (p) { myPics = (p && p.list) || []; picInfo(); }).then(prepareImgs), KV.fontsReady ? KV.fontsReady() : null])
+    audio = null;
+    var first = function () { buildSlides(); draw(Math.min(1.2, tl.lines[0] ? tl.lines[0].tb * 0.6 : 0.5)); };
+    // התמונה הראשונה מוצגת מיד, בלי לחכות לפס הקול
+    var pImg = Promise.all([dbGet('pics:' + song.id).then(function (p) { myPics = (p && p.list) || []; picInfo(); }).then(prepareImgs), KV.fontsReady ? KV.fontsReady() : null]).then(first);
+    return Promise.all([prepareAudio(), pImg])
       .then(function () { buildSlides(); draw(Math.min(1.2, tl.lines[0] ? tl.lines[0].tb * 0.6 : 0.5)); msg('הקליפ מוכן לתצוגה. לוחצים "ליצור את הקליפ".'); fillDesc(); });
   }
 
   // ---------- תצוגה מקדימה ----------
   function stopAll() { if (playing) { playing(); playing = null; } $('sc-stop').hidden = true; }
   function preview() {
+    if (!audio) { msg('רגע, מכין את פס הקול…'); return; }
     stopAll(); var c = M.ctx(), src = c.createBufferSource(); src.buffer = audio; src.connect(c.destination);
     var t0 = c.currentTime + 0.1; src.start(t0);
     var stopT = ticker(function () { var t = c.currentTime - t0; draw(Math.max(0, t)); if (t > total()) stopAll(); });
@@ -182,7 +187,7 @@
     });
   }
   function make() {
-    if (busy) return; busy = true; $('sc-result').hidden = true; $('sc-prog').hidden = false; var bar = $('sc-prog').firstChild;
+    if (busy) return; if (!audio) { msg('רגע, מכין את פס הקול…'); return; } busy = true; $('sc-result').hidden = true; $('sc-prog').hidden = false; var bar = $('sc-prog').firstChild;
     msg('יוצר את הקליפ… זה לוקח בדיוק כמו אורך השיר. אפשר להשאיר את הדף פתוח.'); used('make');
     $('sc-make').disabled = true;
     record(function (p) { bar.style.width = Math.round(p * 100) + '%'; }).then(function (r) {
