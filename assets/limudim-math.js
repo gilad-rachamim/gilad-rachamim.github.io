@@ -1387,8 +1387,145 @@
   var EXTRA5 = { sidra: '35581', handasit: '35581', histabrut: '35581', etz: '35581', tnua: '35581', sinusim: '35581', nigzeret: '35581', mashik: '35581', kitzon: '35581', integral: '35581', rationalit: '35581', 'shoresh-f': '35581', 'trig-nigzeret': '35581', merchak: '35582', maagal: '35582', merchav: '35582', gdila: '35582' };
   T.forEach(function (t) { if (EXTRA5[t.id] && t.q && t.q.indexOf(EXTRA5[t.id]) < 0) t.q.push(EXTRA5[t.id]); });
 
+  // ---------- סבב 8: גאומטריה במישור ונושאים שנשארו ----------
+  var CIRC = '<svg viewBox="0 0 200 180" class="mx-svg" aria-hidden="true"><circle cx="100" cy="95" r="70" fill="none" stroke="#86c5e6" stroke-width="2"/><circle cx="100" cy="95" r="3" fill="#eef1f8"/><path d="M45 52 L100 95 L155 52" fill="none" stroke="#dcb769" stroke-width="2.5"/><path d="M45 52 L100 165 L155 52" fill="none" stroke="#7fd1a8" stroke-width="2.5"/><text x="92" y="86" fill="#dcb769" font-size="13">2α</text><text x="94" y="150" fill="#7fd1a8" font-size="13">α</text><text x="104" y="102" fill="#a1abc2" font-size="10">O</text></svg>';
+  T.push({ id: 'dimyon', em: '🪞', name: 'דמיון משולשים', grade: '', bg: 1, q: ['35481', '35581'],
+    lesson: [
+      { m: '△ABC ∼ △DEF', t: 'שני משולשים דומים אם יש להם אותן זוויות. אז הם אותה צורה בגדלים שונים, כמו תמונה מוגדלת.' },
+      { m: F('DE', 'AB') + ' = ' + F('EF', 'BC') + ' = ' + F('DF', 'AC') + ' = ' + M('k'), t: 'במשולשים דומים כל הצלעות המתאימות באותו יחס. היחס הזה נקרא יחס הדמיון, k.' },
+      { m: 'AB = 4, DE = 10 → k = 2.5<br>BC = 6 → EF = 6 · 2.5 = <b class="ok">15</b>', t: 'אם צלע של ארבע הפכה לעשר, היחס הוא שתיים וחצי. אז צלע של שש הופכת לחמש עשרה.' },
+      { m: he('יחס השטחים') + ' = k²', t: 'וזהירות: השטח גדל ביחס הדמיון בריבוע. אם הצלעות גדלו פי שתיים, השטח גדל פי ארבע.' },
+      { m: 'DE ∥ BC → ' + F('AD', 'AB') + ' = ' + F('DE', 'BC'), t: 'מקרה חשוב: קו מקביל לצלע בתוך משולש יוצר משולש קטן שדומה לגדול. זה משפט תאלס המורחב.' }
+    ],
+    gen: function (lv) {
+      if (lv === 1) {
+        var t = pick(TRIPLES), m = R(1, 3), k = pick([2, 3, 1.5, 2.5, 4]), s1 = t[0] * m * 2, s2 = t[1] * m * 2;
+        return { ex: he('△ABC ∼ △DEF. ‏AB = ' + s1 + ', ‏BC = ' + s2 + ', ‏DE = ' + s1 * k + '. מה EF?'), steps: [
+          { show: 'k = ' + F(s1 * k, s1), q: 'יחס הדמיון k = ?', a: k, hint: s1 * k + ' ÷ ' + s1 },
+          { show: 'EF = ' + s2 + ' · ' + k, q: 'EF = ?', a: s2 * k, hint: 'הצלע המתאימה כפול k.' }], fin: 'EF = ' + s2 * k };
+      }
+      if (lv === 2) {
+        var d = R(2, 8), e = R(2, 8), kk = R(1, 4), BC = kk * (d + e), DE = kk * d;
+        return { ex: he('במשולש ABC, ‏DE ∥ BC. ‏AD = ' + d + ', ‏DB = ' + e + ', ‏BC = ' + BC + '. מה DE?'), steps: [
+          { show: 'AB = ' + d + ' + ' + e, q: 'AB = ?', a: d + e, hint: 'AD ועוד DB.' },
+          { show: F('AD', 'AB') + ' = ' + F(d, d + e), q: 'DE = BC × AD ÷ AB = ?', a: DE, hint: BC + ' × ' + d + ' ÷ ' + (d + e) }], fin: 'DE = ' + DE };
+      }
+      var a = R(2, 9), b = a * pick([2, 3, 4]), S = R(3, 20), K = b / a;
+      return { ex: he('שני משולשים דומים. צלע במשולש הקטן ' + a + ', והצלע המתאימה בגדול ' + b + '. שטח הקטן ' + S + '. מה שטח הגדול?'), steps: [
+        { show: 'k = ' + F(b, a), q: 'k = ?', a: K, hint: b + ' ÷ ' + a },
+        { show: 'k² = ' + K + '²', q: 'יחס השטחים k² = ?', a: K * K, hint: 'השטח גדל ביחס הדמיון בריבוע.' },
+        { show: S + ' · ' + K * K, q: 'שטח הגדול = ?', a: S * K * K, hint: 'כפל.' }], fin: S * K * K };
+    } });
+
+  T.push({ id: 'zaviot-maagal', em: '🎯', name: 'זוויות במעגל', grade: '', bg: 1, q: ['35481', '35581'],
+    lesson: [
+      { m: CIRC, t: 'זווית מרכזית, שהקודקוד שלה במרכז המעגל, גדולה פי שתיים מזווית היקפית שנשענת על אותה קשת.' },
+      { m: he('היקפית על קוטר') + ' = <b class="ok">90°</b>', t: 'מקרה מיוחד: זווית היקפית שנשענת על קוטר היא תמיד זווית ישרה, תשעים מעלות. כי הזווית המרכזית שם היא מאה שמונים.' },
+      { m: he('זוויות היקפיות על אותה קשת שוות'), t: 'כל הזוויות ההיקפיות שנשענות על אותה קשת שוות זו לזו.' },
+      { m: he('מרובע חסום:') + ' α + γ = 180°', t: 'במרובע שכל קודקודיו על המעגל, זוויות נגדיות משלימות זו את זו למאה שמונים.' },
+      { m: he('משיק ⊥ רדיוס'), t: 'ומשיק למעגל מאונך לרדיוס בנקודת ההשקה.' }
+    ],
+    gen: function (lv) {
+      if (lv === 1) {
+        var ins = R(15, 85), toCentral = Math.random() < .5;
+        return toCentral ? { ex: he('זווית היקפית של ' + ins + '° נשענת על קשת. מה הזווית המרכזית שנשענת על אותה קשת?'), steps: [
+          { show: '2 · ' + ins + '°', q: 'הזווית המרכזית = ?', a: 2 * ins, hint: 'המרכזית כפולה מההיקפית.' }], fin: 2 * ins + '°' }
+          : { ex: he('זווית מרכזית של ' + 2 * ins + '°. מה זווית היקפית שנשענת על אותה קשת?'), steps: [
+          { show: F(2 * ins + '°', 2), q: 'הזווית ההיקפית = ?', a: ins, hint: 'ההיקפית היא חצי מהמרכזית.' }], fin: ins + '°' };
+      }
+      if (lv === 2) {
+        var al = R(40, 140), be = R(40, 140);
+        return { ex: he('במרובע חסום ABCD: ‏∠A = ' + al + '°, ‏∠B = ' + be + '°. מה ∠C ומה ∠D?'), steps: [
+          { show: '∠C = 180° − ' + al + '°', q: '∠C = ?', a: 180 - al, hint: 'C נגדית ל-A.' },
+          { show: '∠D = 180° − ' + be + '°', q: '∠D = ?', a: 180 - be, hint: 'D נגדית ל-B.' }], fin: '∠C = ' + (180 - al) + '°, ∠D = ' + (180 - be) + '°' };
+      }
+      var x = R(15, 75);
+      return { ex: he('AB קוטר במעגל, ‏C נקודה על המעגל. ‏∠CAB = ' + x + '°. מה ∠ABC, ומה הזווית המרכזית ∠COB?'), steps: [
+        { show: '∠ACB', q: 'כמה מעלות ∠ACB?', a: 90, hint: 'זווית היקפית שנשענת על קוטר.' },
+        { show: '∠ABC = 180° − 90° − ' + x + '°', q: '∠ABC = ?', a: 90 - x, hint: 'סכום הזוויות במשולש 180°.' },
+        { show: '∠COB = 2 · ∠CAB', q: '∠COB = ?', a: 2 * x, hint: '∠CAB היא היקפית על הקשת CB, והמרכזית כפולה ממנה.' }], fin: '∠ABC = ' + (90 - x) + '°, ∠COB = ' + 2 * x + '°' };
+    } });
+
+  T.push({ id: 'parametr', em: '🎛️', name: 'חקירה עם פרמטר', grade: '', bg: 1, q: ['35481', '35581'],
+    lesson: [
+      { m: 'f(x) = x² + ' + M('a') + 'x + 3', t: 'לפעמים בפונקציה יש אות, פרמטר, ולא יודעים כמה היא. נותנים לנו מידע על הגרף, וממנו מוצאים את הפרמטר.' },
+      { m: he('קיצון ב-') + 'x = 2 → f′(2) = 0', t: 'למשל: נתון שיש קיצון כשאיקס שווה שתיים. בנקודת קיצון הנגזרת אפס.' },
+      { m: 'f′(x) = 2x + a → 2·2 + a = 0 → a = <b class="ok">−4</b>', t: 'גוזרים, מציבים שתיים, ומשווים לאפס. ארבע ועוד a שווה אפס, לכן a שווה מינוס ארבע.' },
+      { m: he('שיפוע המשיק ב-') + 'x₀ = m → f′(x₀) = m', t: 'באותה שיטה: אם נתון שיפוע של משיק, משווים את הנגזרת בנקודה לשיפוע הזה.' },
+      { m: he('הנקודה על הגרף') + ' → f(x₀) = y₀', t: 'ואם נתון שנקודה נמצאת על הגרף, מציבים אותה בפונקציה עצמה.' }
+    ],
+    gen: function (lv) {
+      var x0 = nz(-4, 4);
+      if (lv === 1) {
+        var c = R(-9, 9);
+        return { ex: 'f(x) = x² + ax ' + (c < 0 ? '− ' + (-c) : '+ ' + c) + '<br>' + he('לפונקציה קיצון ב-') + 'x = ' + num(x0) + '. a = ?', steps: [
+          { show: "f′(x) = 2x + a → f′(" + num(x0) + ') = ' + M('2·' + p(x0)) + ' + a', q: 'כמה זה 2 × ' + p(x0) + '?', a: 2 * x0, hint: 'כפל.' },
+          { show: num(2 * x0) + ' + a = 0', q: 'a = ?', a: -2 * x0, hint: 'מעבירים אגף.' }], fin: 'a = ' + num(-2 * x0) };
+      }
+      if (lv === 2) {
+        var A = nz(-4, 4), B = -2 * A * x0;
+        return { ex: 'f(x) = ax² ' + (B < 0 ? '− ' : '+ ') + Math.abs(B) + 'x<br>' + he('לפונקציה קיצון ב-') + 'x = ' + num(x0) + '. a = ?', steps: [
+          { show: "f′(x) = 2ax " + (B < 0 ? '− ' : '+ ') + Math.abs(B), q: 'מציבים x = ' + num(x0) + ': f′ = ?·a ' + (B < 0 ? '− ' : '+ ') + Math.abs(B) + '. מה המקדם של a?', a: 2 * x0, hint: '2 × ' + p(x0) },
+          { show: num(2 * x0) + 'a ' + (B < 0 ? '− ' : '+ ') + Math.abs(B) + ' = 0', q: 'a = ?', a: A, hint: num(-B) + ' ÷ ' + p(2 * x0) }], fin: 'a = ' + num(A) };
+      }
+      var cc = R(-9, 9), aa = -3 * x0 * x0;
+      return { ex: 'f(x) = x³ + ax ' + (cc < 0 ? '− ' + (-cc) : '+ ' + cc) + '<br>' + he('לפונקציה קיצון ב-') + 'x = ' + num(x0) + '. מה a, ואיפה נקודת הקיצון השנייה?', steps: [
+        { show: "f′(x) = 3x² + a → 3·" + p(x0) + '² + a = 0', q: '3 × ' + p(x0) + '² = ?', a: 3 * x0 * x0, hint: 'קודם הריבוע: ' + x0 * x0 + '.' },
+        { show: num(3 * x0 * x0) + ' + a = 0', q: 'a = ?', a: aa, hint: 'מעבירים אגף.' },
+        { show: '3x² ' + (aa < 0 ? '− ' + (-aa) : '+ ' + aa) + ' = 0', q: 'מה ה-x של נקודת הקיצון השנייה?', a: -x0, hint: 'x² = ' + x0 * x0 + ', ויש שני פתרונות.' }], fin: 'a = ' + num(aa) + ' · x = ' + num(-x0) };
+    } });
+
+  var IND = [
+    { name: '1 + 3 + 5 + ... + (2n − 1) = n²', term: function (n) { return 2 * n - 1; }, S: function (n) { return n * n; }, Sname: 'n²' },
+    { name: '1 + 2 + 3 + ... + n = ' + F('n(n + 1)', 2), term: function (n) { return n; }, S: function (n) { return n * (n + 1) / 2; }, Sname: 'n(n+1)/2' },
+    { name: '1 + 2 + 4 + ... + 2<sup>n − 1</sup> = 2<sup>n</sup> − 1', term: function (n) { return Math.pow(2, n - 1); }, S: function (n) { return Math.pow(2, n) - 1; }, Sname: '2ⁿ − 1' }];
+  T.push({ id: 'induktzia', em: '🁢', name: 'אינדוקציה', grade: '', bg: 1, q: ['35581'],
+    lesson: [
+      { m: '🁢🁢🁢🁢🁢', t: 'אינדוקציה היא כמו שורת דומינו. אם הראשון נופל, וכל אחד שנופל מפיל את הבא, אז כולם נופלים.' },
+      { m: he('שלב 1: בדיקה ל-') + 'n = 1', t: 'השלב הראשון: בודקים שהטענה נכונה עבור n שווה אחת. זה הדומינו הראשון.' },
+      { m: he('שלב 2: מניחים ל-') + 'n = k ' + he('ומוכיחים ל-') + 'n = k + 1', t: 'השלב השני: מניחים שהטענה נכונה עבור מספר כלשהו k, ומראים שאז היא נכונה גם עבור k ועוד אחת. כל דומינו מפיל את הבא.' },
+      { m: '1 + 3 + ... + (2k − 1) = k²<br>k² + (2k + 1) = (k + 1)² ✓', t: 'למשל, סכום המספרים האי זוגיים. אם עד k הסכום הוא k בריבוע, מוסיפים את האיבר הבא, שתיים k ועוד אחת, ויוצא בדיוק k ועוד אחת בריבוע.' },
+      { m: he('בתרגול: בודקים את הצעד במספרים'), t: 'בתרגול נבדוק את הצעד הזה במספרים אמיתיים, כדי לראות למה הוא עובד.' }
+    ],
+    gen: function (lv) {
+      var f = IND[lv - 1], k = R(3, lv === 3 ? 7 : 9);
+      return { ex: he('הטענה:') + ' ' + f.name + '<br>' + he('בודקים את צעד האינדוקציה עבור k = ' + k), steps: [
+        { show: 'n = 1', q: 'בדיקה ל-n = 1: מה הצד הימני (הנוסחה)?', a: f.S(1), hint: 'מציבים 1 בנוסחה ' + f.Sname + '.' },
+        { show: 'S(' + k + ') = ' + f.Sname.replace(/n/g, k), q: 'מניחים שנכון ל-k = ' + k + '. מה הסכום לפי הנוסחה?', a: f.S(k), hint: 'מציבים ' + k + ' בנוסחה.' },
+        { show: he('האיבר מספר ' + (k + 1)), q: 'מה האיבר הבא, מספר ' + (k + 1) + '?', a: f.term(k + 1), hint: 'מציבים ' + (k + 1) + ' בביטוי של האיבר.' },
+        { show: f.S(k) + ' + ' + f.term(k + 1), q: 'מוסיפים. מה הסכום החדש?', a: f.S(k) + f.term(k + 1), hint: 'חיבור.' },
+        { show: f.Sname.replace(/n/g, k + 1), q: 'ומה נותנת הנוסחה ל-n = ' + (k + 1) + '? (אמור לצאת אותו מספר)', a: f.S(k + 1), hint: 'מציבים ' + (k + 1) + '.' }], fin: f.S(k) + ' + ' + f.term(k + 1) + ' = ' + f.S(k + 1) + ' ✓' };
+    } });
+
+  T.push({ id: 'nefach-sivuv', em: '🏺', name: 'נפח גוף סיבוב', grade: '', bg: 1, q: ['35581'],
+    lesson: [
+      { m: 'V = π ∫<sub>a</sub><sup>b</sup> f(x)² dx', t: 'כשמסובבים שטח מתחת לגרף סביב ציר איקס, נוצר גוף, כמו כד על אובניים. הנפח שלו: פאי כפול האינטגרל של הפונקציה בריבוע.' },
+      { m: he('כל פרוסה היא עיגול:') + ' π·f(x)²', t: 'למה? כל פרוסה דקה של הגוף היא עיגול שהרדיוס שלו f של x. השטח שלו פאי r בריבוע. מחברים את כל הפרוסות, וזה האינטגרל.' },
+      { m: 'f(x) = √x, 0 ≤ x ≤ 4<br>V = π∫<sub>0</sub><sup>4</sup> x dx = π·8 = <b class="ok">8π</b>', t: 'דוגמה: שורש איקס, מאפס עד ארבע. בריבוע זה פשוט איקס. האינטגרל: איקס בריבוע חלקי שתיים, ובארבע יוצא שמונה. הנפח: שמונה פאי.' },
+      { m: he('גליל:') + ' f(x) = r → V = πr²·h', t: 'ובדיקה: פונקציה קבועה יוצרת גליל, והנוסחה נותנת בדיוק את נפח הגליל.' }
+    ],
+    gen: function (lv) {
+      if (lv === 1) {
+        var k = R(1, 6), b = 2 * R(1, 4);
+        return { ex: 'f(x) = √(' + lin(k, 0) + '), 0 ≤ x ≤ ' + b + '<br>' + he('מה הנפח? (כתבו את המספר שלפני π)'), steps: [
+          { show: 'f(x)² = ' + lin(k, 0), q: 'f(x)² = ?·x. מה המקדם?', a: k, hint: 'שורש בריבוע מבטל את השורש.' },
+          { show: '∫<sub>0</sub><sup>' + b + '</sup> ' + lin(k, 0) + ' dx = ' + F(k + 'x²', 2), q: 'האינטגרל מ-0 עד ' + b + ' = ?', a: k * b * b / 2, hint: k + ' × ' + b + '² ÷ 2' }], fin: 'V = ' + k * b * b / 2 + 'π' };
+      }
+      if (lv === 2) {
+        var r = R(1, 6), a0 = R(0, 3), b2 = a0 + R(1, 6);
+        return { ex: 'f(x) = ' + r + ', ' + a0 + ' ≤ x ≤ ' + b2 + '<br>' + he('מה הנפח? (המספר שלפני π)'), steps: [
+          { show: 'f(x)² = ' + r + '²', q: 'f(x)² = ?', a: r * r, hint: r + ' × ' + r },
+          { show: b2 + ' − ' + a0, q: 'אורך התחום (הגובה של הגליל) = ?', a: b2 - a0, hint: 'הגבול העליון פחות התחתון.' },
+          { show: 'π · ' + r * r + ' · ' + (b2 - a0), q: 'המספר שלפני π = ?', a: r * r * (b2 - a0), hint: 'כפל.' }], fin: 'V = ' + r * r * (b2 - a0) + 'π' };
+      }
+      var B = 3 * R(1, 3);
+      return { ex: 'f(x) = x, 0 ≤ x ≤ ' + B + '<br>' + he('מה הנפח? (המספר שלפני π, ואז בערך)'), steps: [
+        { show: '∫<sub>0</sub><sup>' + B + '</sup> x² dx = ' + F('x³', 3), q: 'האינטגרל מ-0 עד ' + B + ' = ?', a: B * B * B / 3, hint: B + '³ ÷ 3' },
+        { show: 'V = ' + B * B * B / 3 + 'π', q: 'V ≈ ? (ספרה אחת, π ≈ 3.14159)', a: r1(Math.PI * B * B * B / 3), tol: 0.11, hint: B * B * B / 3 + ' × 3.14159' }], fin: 'V = ' + B * B * B / 3 + 'π ≈ ' + r1(Math.PI * B * B * B / 3) };
+    } });
+
   // סדר הרשימה לפי כיתות
-  var ORD = ['kefel', 'hiluk', 'seder', 'shetach', 'asroni', 'shvarim', 'kefel-shvarim', 'memutza', 'achuzim', 'yachas', 'histabrut', 'pilug', 'mishvaa', 'chezkot', 'kav', 'pitagoras', 'maarechet', 'shorashim', 'sidra', 'merchak', 'parabola', 'trigo', 'gdila', 'stiya', 'nigzeret', 'mashik', 'kitzon', 'integral', 'maagal', 'normalit', 'handasit', 'sinusim', 'etz', 'tnua', 'rationalit', 'shoresh-f', 'merchav', 'trig-nigzeret', 'piramida', 'vektor', 'merukav', 'logaritm', 'exp-ln'];
+  var ORD = ['kefel', 'hiluk', 'seder', 'shetach', 'asroni', 'shvarim', 'kefel-shvarim', 'memutza', 'achuzim', 'yachas', 'histabrut', 'pilug', 'mishvaa', 'chezkot', 'kav', 'pitagoras', 'maarechet', 'shorashim', 'sidra', 'merchak', 'parabola', 'trigo', 'gdila', 'stiya', 'nigzeret', 'mashik', 'kitzon', 'integral', 'maagal', 'normalit', 'handasit', 'sinusim', 'etz', 'tnua', 'rationalit', 'shoresh-f', 'merchav', 'trig-nigzeret', 'piramida', 'vektor', 'merukav', 'logaritm', 'exp-ln', 'dimyon', 'zaviot-maagal', 'parametr', 'induktzia', 'nefach-sivuv'];
   T.forEach(function (t) { if (t.bg) t.grade = 'שאלון ' + t.q.join(' · '); });
   T.sort(function (a, b) { return ORD.indexOf(a.id) - ORD.indexOf(b.id); });
 
