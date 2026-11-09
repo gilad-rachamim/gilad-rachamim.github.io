@@ -43,6 +43,7 @@
     <p class="fb-q" id="fb-h">הכלי עזר לך?</p>
     <div class="fb-rate"><button class="btn btn-line btn-sm" type="button" data-rate="yes">👍 כן</button><button class="btn btn-line btn-sm" type="button" data-rate="no">👎 לא ממש</button></div>
     <p class="fb-thanks" role="status" hidden></p>
+    <p class="fb-share" hidden>מכירים מישהו שזה יעזור לו? <a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" target="_blank" rel="noopener">💬 לשלוח לו את הכלי בווטסאפ</a></p>
     <details class="fb-more">
       <summary>💡 יש לך רעיון איך לשפר? אשמח מאוד</summary>
       <form class="k-form lead-form" data-kform="shipur" action="{{lead_endpoint}}" method="POST">
@@ -88,7 +89,7 @@
 </footer>
 <script>document.addEventListener('click',function(e){var a=e.target.closest('[data-ft]');if(!a)return;if(a.getAttribute('data-ft')==='up'){e.preventDefault();window.scrollTo({top:0,behavior:'smooth'});}if(window.gtag)gtag('event','footer_click',{link:a.getAttribute('data-ft')});});</script>
 <div class="install-bar" id="install-bar" hidden>
-  <span>להתקין את {{site_short}} בטלפון, כמו אפליקציה</span>
+  <span data-install-text>📲 {{site_short}} במסך הבית, כמו אפליקציה: נכנסים בלחיצה, ורוב הכלים עובדים גם בלי אינטרנט.</span>
   <button class="btn btn-gold btn-sm" type="button" data-install>להתקין</button>
   <button class="x" type="button" data-install-close aria-label="סגירה">×</button>
 </div>
