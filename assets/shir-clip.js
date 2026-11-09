@@ -27,8 +27,9 @@
   var MOOD = { 'שמח': ['flowers', 'rainbow', 'kite', 'garden'], 'שקט': ['sea', 'olive', 'path'], 'געגוע': ['path', 'sunset', 'moon'], 'תודה': ['wheat', 'light', 'flowers'], 'תפילה': ['kotel', 'candles', 'jeru'],
     'כוח': ['mount', 'desert', 'light'], 'אהבה': ['flowers', 'sunset', 'garden'], 'תקווה': ['light', 'rainbow', 'path'], 'לילדים': ['kite', 'butterfly', 'duck', 'teddy'] };
   function pickCats() {
-    var text = [song.topic, song.title].concat(Object.keys(song.answers || {}).map(function (k) { return song.answers[k]; })).join(' '), out = [];
-    KEYS.forEach(function (k) { if (k[0].test(text)) k[1].forEach(function (c) { if (out.indexOf(c) < 0) out.push(c); }); });
+    // קודם הנושא והשם, אחר כך התשובות – כך "בוקר חדש" מקבל אור לפני "לילות בלי שינה"
+    var main = [song.topic, song.title].join(' '), more = Object.keys(song.answers || {}).map(function (k) { return song.answers[k]; }).join(' '), out = [];
+    [main, more].forEach(function (text) { KEYS.forEach(function (k) { if (k[0].test(text)) k[1].forEach(function (c) { if (out.indexOf(c) < 0) out.push(c); }); }); });
     (MOOD[song.mood] || ['light', 'sea', 'path', 'flowers']).forEach(function (c) { if (out.indexOf(c) < 0) out.push(c); });
     return out;
   }
