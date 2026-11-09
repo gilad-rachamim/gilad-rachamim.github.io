@@ -6,6 +6,20 @@
   if (!$('chk-app')) return;
   var LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
   var API = LOCAL ? 'http://127.0.0.1:8789' : 'https://kodesh-chanuka.gilad4049.workers.dev';
+  var VER = 1;   // גרסת השרת: הבקשות מופיעות רק משרת v2 ומעלה
+  // בקשות מתחת לחנוכייה: [עם שם, בלי שם]
+  var KIND = {
+    refua: ['לרפואת', 'לרפואה שלמה'], zivug: ['לזיווג הגון ל', 'לזיווג הגון'], parnasa: ['לפרנסה טובה ל', 'לפרנסה טובה'],
+    banim: ['לזרע של קיימא ל', 'לזרע של קיימא'], shalom: ['לשלום בית ל', 'לשלום בית'], yeshua: ['לישועה ל', 'לישועה'],
+    hatzlacha: ['להצלחת', 'להצלחה'], other: ['בקשה בשביל', 'בקשה']
+  };
+  // שם ה' נכתב ה׳; מילים פוגעניות ופרטי קשר נחסמים (אותה רשימה כמו בשרת)
+  function holyName(s) { return s.replace(/י[\s'"׳״-]*ה[\s'"׳״-]*ו[\s'"׳״-]*ה/g, 'ה׳').replace(/אלוהים/g, 'אלוקים'); }
+  var BAD_SUB = ['שרמוט', 'זונה', 'כוסאמ', 'כוס אמ', 'כוסעמ', 'מניאק', 'קוקסינ', 'בןזונה', 'ימח שמ', 'מוות ל', 'שימות', 'שתמות', 'נאצי', 'fuck', 'shit', 'bitch', 'cunt', 'porn', 'dick', 'whore', 'slut', 'nigg', 'פורנו', 'סקס'];
+  var BAD_WORD = /(^|[^א-ת])[והשלבכמ]?(זין|חרא|זבל|דפוק|מפגר|אידיוט|טמבל|כלב|חזיר|לעזאזל|תמות)([^א-ת]|$)/;
+  function badWords(s) { var t = s.toLowerCase(); return BAD_SUB.some(function (w) { return t.indexOf(w) >= 0; }) || BAD_WORD.test(t); }
+  function contactInfo(s) { return /\d[\d\s-]{6,}\d/.test(s) || /https?:|www\.|\.com|\.co\.il|@/i.test(s); }
+  function reqTitle(k, who) { var a = KIND[k] || KIND.other; return who ? (/(^|\s)ל$/.test(a[0]) ? a[0] + who : a[0] + ' ' + who) : a[1]; }
   var PHR = { niftar: 'לעילוי נשמת', refua: 'לרפואת', hatzlacha: 'להצלחת', zivug: 'לזיווג הגון ל', zchut: 'לזכות' };
   var store = {
     get: function (k) { try { return localStorage.getItem('chk-' + k); } catch (e) { return null; } },
@@ -106,6 +120,7 @@
       purposeFields('lt') +
       '<div class="field"><label for="lt-x">ברכה קצרה <span class="opt">(לא חובה)</span></label><input id="lt-x" maxlength="100" placeholder="שיהיה אור גדול"></div>' +
       '<button class="btn btn-gold" type="submit">🕯️ להדליק נר</button><p class="chk-err" id="lt-err" role="alert"></p></form>' +
+      (VER >= 2 ? bakashot() : '') +
       '<h3 class="chk-h3">הנרות שהודלקו</h3><div class="chk-wall" id="chk-wall">' + wall() + '</div>' +
       (ADMIN ? '<details class="cn-d chk-adm"><summary>ניהול (רק בטלפון הזה)</summary><p class="cn-sm">לחיצה על "להסתיר" ליד נר מורידה אותו מהרשימה. החנוכייה נמחקת לבד אחרי 90 יום.</p><p class="cn-sm">לנהל גם מטלפון אחר: <button type="button" class="chk-hide" id="chk-alink">להעתיק קישור ניהול</button> (לא לשתף אותו!)</p><button class="btn btn-line btn-sm" type="button" id="chk-del">למחוק את החנוכייה עכשיו</button></details>' : '') +
       '<p class="note"><a href="./">לפתוח חנוכייה חדשה</a></p>';
@@ -126,7 +141,11 @@
         if (window.toolUsed) window.toolUsed('chanuka_chanukiya', { how: 'light' });
       }).catch(function (er) { $('lt-err').textContent = er.message; });
     };
+    if (VER >= 2) wireBakashot();
     if (ADMIN) {
+      [].forEach.call(document.querySelectorAll('[data-hide-r]'), function (x) {
+        x.onclick = function () { api('/h/' + H.id + '/admin', { a: ADMIN, op: 'hideR', k: +x.getAttribute('data-hide-r') }).then(function (d) { H = d.s; draw(); }); };
+      });
       [].forEach.call(document.querySelectorAll('[data-hide]'), function (x) {
         x.onclick = function () { api('/h/' + H.id + '/admin', { a: ADMIN, op: 'hide', k: +x.getAttribute('data-hide') }).then(function (d) { H = d.s; draw(); }); };
       });
@@ -139,6 +158,79 @@
         api('/h/' + H.id + '/admin', { a: ADMIN, op: 'delete' }).then(function () { location.href = './'; });
       };
     }
+  }
+  // ---------- בקשות מתחת לחנוכייה ----------
+  function bakashot() {
+    var r = H.r || [];
+    return '<section class="chk-bq" aria-labelledby="bq-h"><h3 class="chk-h3" id="bq-h">בקשות מתחת לחנוכייה</h3>' +
+      '<p class="cn-sm">משאירים בקשה קצרה מתחת לחנוכייה – לרפואה, לזיווג, לפרנסה. כל מי שנכנס יכול לומר עליה אמן.</p>' +
+      '<details class="cn-d" id="bq-d"' + (r.length ? '' : ' open') + '><summary>להשאיר בקשה</summary>' +
+      '<form class="k-form" id="bq" novalidate>' +
+      '<div class="field"><label for="bq-k">על מה הבקשה</label><select id="bq-k">' +
+      '<option value="refua">לרפואה</option><option value="zivug">לזיווג הגון</option><option value="parnasa">לפרנסה טובה</option>' +
+      '<option value="banim">לזרע של קיימא</option><option value="shalom">לשלום בית</option><option value="yeshua">לישועה</option>' +
+      '<option value="hatzlacha">להצלחה</option><option value="other">בקשה אחרת</option></select></div>' +
+      '<div class="chk-row"><div class="field"><label for="bq-n">שם פרטי <span class="opt">(לא חובה)</span></label><input id="bq-n" maxlength="30" autocomplete="off"></div>' +
+      '<div class="field"><label for="bq-bb">בן / בת</label><select id="bq-bb"><option>בן</option><option>בת</option></select></div>' +
+      '<div class="field"><label for="bq-par">שם האם <span class="opt">(לא חובה)</span></label><input id="bq-par" maxlength="30" autocomplete="off"></div></div>' +
+      '<div class="field"><label for="bq-x" id="bq-x-l">במילים שלכם <span class="opt">(לא חובה, עד 80 תווים)</span></label><input id="bq-x" maxlength="80" placeholder="שיחזור הביתה בריא ושלם"></div>' +
+      '<p class="cn-sm chk-priv">בלי שם משפחה, טלפון או כתובת. שם פרטי ושם האם מספיקים.</p>' +
+      '<button class="btn btn-gold" type="submit">להשאיר את הבקשה</button><p class="chk-err" id="bq-err" role="alert"></p></form></details>' +
+      '<div class="chk-wall" id="bq-wall">' + reqWall() + '</div></section>';
+  }
+  function reqWall() {
+    var r = H.r || [];
+    if (!r.length) return '<p class="cn-sm">עוד אין בקשות. אפשר להשאיר את הראשונה.</p>';
+    return (H.nr > r.length ? '<p class="cn-sm">' + H.nr + ' בקשות. מוצגות האחרונות.</p>' : '') + r.map(function (x) {
+      // [k, סוג, שם, טקסט, זמן, אמן]
+      var said = store.get('am-' + H.id + '-' + x[0]);
+      return '<div class="chk-c chk-r"><div><b>' + esc(reqTitle(x[1], x[2])) + '</b>' + (x[3] ? '<span class="bl">' + esc(x[3]) + '</span>' : '') + '</div>' +
+        '<div class="chk-am"><button type="button" class="btn btn-line btn-sm" data-amen="' + x[0] + '"' + (said ? ' disabled' : '') + '>' + (said ? 'אמרתם אמן ✓' : 'אמן') + '</button>' +
+        (x[5] ? '<small>' + x[5] + ' אמרו אמן</small>' : '') +
+        (ADMIN ? '<button type="button" class="chk-hide" data-hide-r="' + x[0] + '">להסתיר</button>' : '') + '</div></div>';
+    }).join('');
+  }
+  function wireBakashot() {
+    function upd() {
+      var o = $('bq-k').value === 'other';
+      $('bq-x-l').innerHTML = o ? 'הבקשה במילים קצרות <span class="opt">(עד 80 תווים)</span>' : 'במילים שלכם <span class="opt">(לא חובה, עד 80 תווים)</span>';
+    }
+    $('bq-k').onchange = upd; upd();
+    $('bq').onsubmit = function (e) {
+      e.preventDefault();
+      var b = { t: tok(), k: $('bq-k').value, n: holyName($('bq-n').value.trim()), bb: $('bq-bb').value, par: holyName($('bq-par').value.trim()), x: holyName($('bq-x').value.trim()) };
+      var all = b.n + ' ' + b.par + ' ' + b.x;
+      if (b.k === 'other' && !b.x) { $('bq-err').textContent = 'כתבו את הבקשה במילים קצרות.'; return; }
+      if (badWords(all)) { $('bq-err').textContent = 'נא לכתוב בלשון נקייה. זו בקשה מתחת לחנוכייה.'; return; }
+      if (contactInfo(all)) { $('bq-err').textContent = 'בלי טלפונים וקישורים – רק שם פרטי ושם האם.'; return; }
+      $('bq-err').textContent = 'שומר…';
+      api('/h/' + H.id + '/ask', b).then(function (d) {
+        H = d.s; draw();
+        var w = $('bq-h'); if (w) w.scrollIntoView({ block: 'start' });
+        if (window.toolUsed) window.toolUsed('chanuka_chanukiya', { how: 'bakasha' });
+      }).catch(function (er) { $('bq-err').textContent = er.message; });
+    };
+    wireAmen();
+  }
+  function wireAmen() {
+    [].forEach.call(document.querySelectorAll('[data-amen]'), function (x) {
+      x.onclick = function () {
+        var k = +x.getAttribute('data-amen');
+        x.disabled = true;
+        api('/h/' + H.id + '/amen', { t: tok(), k: k }).then(function (d) {
+          store.set('am-' + H.id + '-' + k, '1');
+          H = d.s;
+          $('bq-wall').innerHTML = reqWall(); wireAmen(); wireHideR();
+          if (window.toolUsed) window.toolUsed('chanuka_chanukiya', { how: 'amen' });
+        }).catch(function (er) { x.disabled = false; x.textContent = er.message; });
+      };
+    });
+  }
+  function wireHideR() {
+    if (!ADMIN) return;
+    [].forEach.call(document.querySelectorAll('[data-hide-r]'), function (x) {
+      x.onclick = function () { api('/h/' + H.id + '/admin', { a: ADMIN, op: 'hideR', k: +x.getAttribute('data-hide-r') }).then(function (d) { H = d.s; draw(); }); };
+    });
   }
   function wall() {
     if (!H.c.length) return '<p class="cn-sm">עוד לא הודלקו נרות. הדליקו את הראשון!</p>';
@@ -157,6 +249,7 @@
   if (ctl) setTimeout(function () { ctl.abort(); }, 8000);
   fetch(API + '/ping', ctl ? { signal: ctl.signal } : {}).then(function (r) { return r.json(); }).then(function (d) {
     if (!d || !d.ok) throw new Error('x');
+    VER = +d.v || 1;
     if (m) show(m[1]); else newForm();
   }).catch(function () {
     $('chk-app').innerHTML = '<div class="cn-box">' + menorah(1) + '<h2>החנוכייה המשותפת נפתחת בקרוב</h2><p class="cn-sm">אנחנו מכינים אותה לקראת החג. בינתיים אפשר להשתמש בלוח שמונה הנרות.</p></div>';
