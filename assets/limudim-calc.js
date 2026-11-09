@@ -24,7 +24,7 @@
   // =====================================================================
   function Err(msg) { this.msg = msg; }
   var FN = { sin: 1, cos: 1, tan: 1, asin: 1, acos: 1, atan: 1, ln: 1, log: 1, sqrt: 1, cbrt: 1, abs: 1, exp: 1, logb: 2, root: 2, ncr: 2 };
-  var NAMES = ['arcsin', 'arccos', 'arctan', 'asin', 'acos', 'atan', 'sqrt', 'cbrt', 'root', 'logb', 'log', 'ln', 'sin', 'cos', 'tan', 'abs', 'exp', 'ans', 'ncr', 'pi', 'c', 'e', 'x'];
+  var NAMES = ['arcsin', 'arccos', 'arctan', 'asin', 'acos', 'atan', 'sqrt', 'cbrt', 'root', 'logb', 'log', 'ln', 'sin', 'cos', 'tan', 'abs', 'exp', 'ans', 'ncr', 'pi', 'a', 'b', 'c', 'e', 'x'];
   function norm(s) {
     return String(s)
       .replace(/sin⁻¹/g, 'asin').replace(/cos⁻¹/g, 'acos').replace(/tan⁻¹/g, 'atan')
@@ -107,6 +107,7 @@
         if (tk.v === 'e') return { t: 'const', n: 'e', v: Math.E };
         if (tk.v === 'ans') return { t: 'ans' };
         if (tk.v === 'x') return { t: 'var' };
+        if (tk.v === 'a' || tk.v === 'b') return { t: 'mem', n: tk.v };
         var n = FN[tk.v], args = [];
         if (eat('(')) {
           open++;
@@ -141,6 +142,7 @@
       case 'num': return n.v;
       case 'const': return n.v;
       case 'ans': return env.ans || 0;
+      case 'mem': if (!st.mem || st.mem[n.n] == null) throw new Err('עוד לא שמרתם כלום ב-' + n.n.toUpperCase() + '. מחשבים, ואז לוחצים →' + n.n.toUpperCase()); return st.mem[n.n];
       case 'var': if (env.x == null) throw new Err('יש כאן x. כדי לפתור עם x עוברים ללשונית "משוואות" או "גרף"'); return env.x;
       case 'par': return ev(n.a, env);
       case 'neg': return -ev(n.a, env);
@@ -226,6 +228,7 @@
       case 'const': return n.n === 'pi' ? 'π' : 'e';
       case 'ans': return 'Ans';
       case 'var': return 'x';
+      case 'mem': return n.n.toUpperCase();
       case 'par': return '(' + show(n.a, ang) + ')';
       case 'neg': return '−' + show(n.a, ang);
       case 'fact': return show(n.a, ang) + '!';
@@ -460,6 +463,7 @@
     catch (e) { res.textContent = ''; }
   }
   function commit(byVoice) {
+    if (!byVoice) lastHeard = null;
     var src = inp.value.trim();
     if (!src) return;
     res.classList.remove('soft');
@@ -482,6 +486,7 @@
       extra.innerHTML = ex.join('');
       if (byVoice) speak(sayExpr(src) + ' שווה ' + sayNum(r.v) + (deg ? ' מעלות' : ''));
       steps(r);
+      afterCommit(r, byVoice);
       st.hist.unshift({ e: src, r: fmtN(r.v) + deg, a: st.ang });
       st.hist = st.hist.slice(0, 30); save(); hist();
       justEval = true;
@@ -493,6 +498,7 @@
       res.textContent = e.msg || '';
       extra.innerHTML = '';
       $('cx-steps-p').hidden = true;
+      afterError(e.msg);
     }
   }
   function steps(r) {
@@ -598,6 +604,7 @@
   function heard(alts) {
     // עוברים על האפשרויות שהדפדפן שמע, עד אחת שהיא תרגיל תקין
     var firstErr = null;
+    lastHeard = alts[0] || ''; alts = alts.map(applyFix);
     for (var i = 0; i < alts.length; i++) {
       try { compute(alts[i]); inp.value = alts[i]; justEval = false; commit(true); return; }
       catch (e) { if (!(e instanceof Err)) throw e; if (!firstErr) firstErr = e; }
@@ -605,7 +612,7 @@
     inp.value = alts[0] || ''; justEval = false;
     res.classList.remove('soft'); res.classList.add('err');
     res.textContent = (firstErr && firstErr.msg) || 'לא הבנתי. נסו שוב';
-    extra.innerHTML = '<span>🎤 שמעתי: "' + esc(alts[0] || '') + '". אפשר לתקן בכתב וללחוץ =</span>';
+    extra.innerHTML = '<span>🎤 שמעתי: "' + esc(alts[0] || '') + '". אפשר לתקן בכתב וללחוץ =</span><span><button type="button" class="linkish" data-vfix>✏️ לתקן ולזכור לפעם הבאה</button></span>';
   }
   mic.addEventListener('click', function () {
     used('voice');
@@ -637,7 +644,7 @@
   // =====================================================================
   //  לשוניות
   // =====================================================================
-  var TABS = ['calc', 'solve', 'graph', 'guide', 'err'];
+  var TABS = ['calc', 'solve', 'stat', 'tri', 'cv', 'graph', 'guide', 'err'];
   function tab(name) {
     TABS.forEach(function (t) {
       var on = t === name;
@@ -939,10 +946,522 @@
   }).join('');
   $('cx-errs').addEventListener('click', function (e) { var b = e.target.closest('[data-err]'); if (!b) return; var ij = b.dataset.err.split(','), t = ERRS[+ij[0]][2][+ij[1]]; tryIt(t[1], t[2]); });
 
+
+  // =====================================================================
+  //  תוספות: צורה מדויקת, מקשים לפי הסדר, שיעור מתאים, זיכרון, שיתוף,
+  //  מצב בחינה, מצב נגיש, יחידות, תיקוני דיבור, סטטיסטיקה, משולשים, מרוכבים ווקטורים
+  // =====================================================================
+  function gcdI(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { var t = b; b = a % b; a = t; } return a; }
+  function sqrtSimp(n) { var k = 1; for (var i = 2; i * i <= n; i++) while (n % (i * i) === 0) { n /= i * i; k *= i; } return [k, n]; }
+  // צורה מדויקת: √3/2, 2√2, π/3
+  function exact(v) {
+    if (!isFinite(v) || v === Math.round(v) || toFrac(v) || Math.abs(v) > 1e6) return null;
+    var s = v < 0 ? '−' : '', a = Math.abs(v), f = toFrac(a * a);
+    if (f && f[1] <= 200) {
+      var p = f[0], q = f[1], km = sqrtSimp(p * q);
+      if (km[1] > 1) {
+        var k = km[0], g = gcdI(k, q); k /= g; q /= g;
+        return s + (k === 1 ? '' : k) + '√' + km[1] + (q > 1 ? '/' + q : '');
+      }
+    }
+    f = toFrac(a / Math.PI);
+    if (f && f[1] <= 12 && f[0] <= 50) return s + (f[0] === 1 ? '' : f[0]) + 'π' + (f[1] > 1 ? '/' + f[1] : '');
+    return null;
+  }
+
+  // רצף המקשים במחשבון של התלמיד
+  var KS = {
+    es: { pi: 'SHIFT ×10ˣ', e: 'ALPHA ×10ˣ', ans: 'Ans', neg: '(−)', fact: 'SHIFT x⁻¹', sq: 'x²', inv: 'x⁻¹', pow: 'x■', out: '→', sqrt: '√■', root: 'SHIFT x■', logb: 'log■□', ncr: 'SHIFT ÷', exp: 'SHIFT ln', a: 'ALPHA (−)', b: 'ALPHA °′″', eq: '=', inv2: 'SHIFT' },
+    ex: { pi: 'SHIFT ×10ˣ', e: 'ALPHA ×10ˣ', ans: 'Ans', neg: '(−)', fact: 'SHIFT x⁻¹', sq: 'x²', inv: 'x⁻¹', pow: 'x■', out: '→', sqrt: '√■', root: 'SHIFT x■', logb: 'log■□', ncr: 'SHIFT ÷', exp: 'SHIFT ln', a: 'ALPHA (−)', b: 'ALPHA °′″', eq: 'EXE', inv2: 'SHIFT' },
+    ti: { pi: 'π', e: '2nd LN', ans: '2nd (−)', neg: '(−)', fact: 'PRB ← !', sq: 'x²', inv: 'x⁻¹', pow: '^', out: '→', sqrt: '2nd x²', root: '2nd ^', logb: null, ncr: 'PRB ← nCr', exp: '2nd LN', a: 'x yzt abc ← A', b: 'x yzt abc ← B', eq: 'enter', inv2: '2nd' }
+  };
+  function keySeq(n, m) {
+    var K = KS[m], o = [];
+    function go(n) {
+      switch (n.t) {
+        case 'num': o.push(fmtN(n.v).replace('−', '')); if (n.v < 0) o.splice(o.length - 1, 0, K.neg); break;
+        case 'const': if (n.n === 'pi') o.push(K.pi); else if (m === 'ti') { o.push(K.e, '1', ')'); } else o.push(K.e); break;
+        case 'ans': o.push(K.ans); break;
+        case 'mem': o.push(K[n.n]); break;
+        case 'par': o.push('('); go(n.a); o.push(')'); break;
+        case 'neg': o.push(K.neg); go(n.a); break;
+        case 'fact': go(n.a); o.push(K.fact); break;
+        case 'op':
+          if (n.op === '^') {
+            go(n.a);
+            if (n.b.t === 'num' && n.b.v === 2) o.push(K.sq);
+            else if (n.b.t === 'neg' && n.b.a.t === 'num' && n.b.a.v === 1) o.push(K.inv);
+            else { o.push(K.pow); go(n.b); o.push(K.out); }
+            break;
+          }
+          go(n.a); if (!n.imp) o.push({ '+': '+', '-': '−', '*': '×', '/': '÷' }[n.op]); go(n.b); break;
+        case 'fn':
+          var f = n.f, A = n.args;
+          if (/^(sin|cos|tan)$/.test(f)) { o.push(m === 'ti' ? f.toUpperCase() : f); go(A[0]); o.push(')'); }
+          else if (/^a(sin|cos|tan)$/.test(f)) { o.push(K.inv2 + ' ' + (m === 'ti' ? f.slice(1).toUpperCase() : f.slice(1))); go(A[0]); o.push(')'); }
+          else if (f === 'ln' || f === 'log') { o.push(m === 'ti' ? f.toUpperCase() : f); go(A[0]); o.push(')'); }
+          else if (f === 'sqrt') { o.push(K.sqrt); go(A[0]); o.push(m === 'ti' ? ')' : K.out); }
+          else if (f === 'root') { if (m === 'ti') { go(A[0]); o.push(K.root); go(A[1]); } else { o.push(K.root); go(A[0]); o.push(K.out); go(A[1]); o.push(K.out); } }
+          else if (f === 'logb') { if (m === 'ti') { o.push('LOG'); go(A[1]); o.push(')', '÷', 'LOG'); go(A[0]); o.push(')'); } else { o.push(K.logb); go(A[0]); o.push(K.out); go(A[1]); o.push(K.out); } }
+          else if (f === 'ncr') { go(A[0]); o.push(K.ncr); go(A[1]); }
+          else if (f === 'exp') { o.push(K.exp); go(A[0]); o.push(m === 'ti' ? ')' : K.out); }
+          else { o.push(f); go(A[0]); o.push(')'); }
+          break;
+        default: o.push('?');
+      }
+    }
+    go(n); o.push(K.eq);
+    // מספרים צמודים (2 ואז 5) מתאחדים לכרטיס אחד
+    var r = [];
+    o.forEach(function (k) { if (r.length && /^[\d.]+$/.test(k) && /^[\d.]+$/.test(r[r.length - 1]) && false) r[r.length - 1] += k; else r.push(k); });
+    return r;
+  }
+  function usesTrig(n) { return JSON.stringify(n).search(/"f":"a?(sin|cos|tan)"/) >= 0; }
+  function showKeys(tree) {
+    var box = $('cx-keyseq'); if (!box) return;
+    var seq = keySeq(tree, st.model);
+    box.innerHTML = '<p><b>🔑 ' + MODEL_NAME[st.model] + ' מקלידים:</b> <button type="button" class="linkish" data-gotab="guide">להחליף דגם</button></p>' +
+      (usesTrig(tree) ? '<p class="note">קודם בודקים שלמעלה במסך כתוב ' + (st.ang === 'deg' ? 'D (מעלות)' : 'R (רדיאנים)') + '.</p>' : '') +
+      '<div class="cx-kbd" dir="ltr">' + seq.map(function (k) { return '<kbd>' + esc(k) + '</kbd>'; }).join('') + '</div>';
+  }
+
+  // שיעור מתאים בתרגול המתמטיקה
+  var LESSON = { trig: ['trigo', 'טריגונומטריה במשולש ישר זווית'], log: ['logaritm', 'לוגריתמים ומשוואות מעריכיות'], pow: ['chezkot', 'חזקות'], prob: ['histabrut', 'הסתברות'], sq: ['shorashim', 'משוואה ריבועית ונוסחת השורשים'], frac: ['shvarim', 'שברים'], order: ['seder', 'סדר פעולות חשבון'], stat: ['stiya', 'חציון, שכיח וסטיית תקן'], norm: ['normalit', 'התפלגות נורמלית'], sin: ['sinusim', 'משפט הסינוסים והקוסינוסים'], z: ['merukav', 'מספרים מרוכבים'], vec: ['vektor', 'וקטורים'], pit: ['pitagoras', 'משפט פיתגורס'] };
+  function lessonKey(tree) {
+    var j = JSON.stringify(tree);
+    if (/"f":"a?(sin|cos|tan)"/.test(j)) return 'trig';
+    if (/"f":"(ln|log|logb|exp)"/.test(j)) return 'log';
+    if (/"f":"ncr"|"t":"fact"/.test(j)) return 'prob';
+    if (/"op":"\^"|"f":"(sqrt|root)"/.test(j)) return 'pow';
+    if (/"op":"\/"/.test(j)) return 'frac';
+    return 'order';
+  }
+  function lessonLink(key, lead) {
+    var L2 = LESSON[key]; if (!L2) return '';
+    return '<p class="cx-lessn">📚 ' + (lead || 'רוצים לחזור על הבסיס?') + ' <a class="gold" href="/limudim/matematika/#' + L2[0] + '" target="_blank" rel="noopener">שיעור קצר: ' + esc(L2[1]) + '</a></p>';
+  }
+  function errLesson(msg) {
+    if (/tan|sin|cos/.test(msg)) return lessonLink('trig', 'כדאי לחזור על זה:');
+    if (/log|ln|לוג/.test(msg)) return lessonLink('log', 'כדאי לחזור על זה:');
+    if (/שורש|חזקה/.test(msg)) return lessonLink('pow', 'כדאי לחזור על זה:');
+    if (/סוגר|לא גמור|לא במקום/.test(msg)) return lessonLink('order', 'כדאי לחזור על זה:');
+    if (/עצרת|nCr/.test(msg)) return lessonLink('prob', 'כדאי לחזור על זה:');
+    return '';
+  }
+
+  // אחרי כל חישוב: צורה מדויקת, מקשים, שיעור, דיבור במצב נגיש
+  function afterCommit(r, byVoice) {
+    var ex = exact(r.v);
+    if (ex) extra.insertAdjacentHTML('beforeend', '<span>בצורה מדויקת: <b dir="ltr">' + ex + '</b></span>');
+    if (byVoice) extra.insertAdjacentHTML('beforeend', '<span><button type="button" class="linkish" data-vfix>✏️ שמעתי לא נכון? לתקן ולזכור</button></span>');
+    if (/rad/.test(trigHints(r.tree).join())) extra.insertAdjacentHTML('beforeend', lessonLink('trig', 'מבלבל בין מעלות לרדיאנים?'));
+    showKeys(r.tree);
+    $('cx-lesson').innerHTML = lessonLink(lessonKey(r.tree));
+    $('cx-steps-p').hidden = MINI || EXAM;
+    if (st.big && !byVoice) speak('שווה ' + sayNum(r.v) + (isAngleOut(r.tree) ? ' מעלות' : ''));
+  }
+  function afterError(msg) {
+    var l = errLesson(msg || '');
+    if (l) extra.innerHTML = l;
+    if (lastHeard) extra.insertAdjacentHTML('beforeend', '<span><button type="button" class="linkish" data-vfix>✏️ שמעתי לא נכון? לתקן ולזכור</button></span>');
+    if (st.big) speak(msg || '');
+  }
+
+  // ---------- זיכרון A ו-B ----------
+  st.mem = st.mem || {};
+  function memShow() {
+    var s = ['a', 'b'].filter(function (k) { return st.mem[k] != null; }).map(function (k) { return k.toUpperCase() + ' = ' + fmtN(st.mem[k]); });
+    $('cx-memv').textContent = s.join('   ');
+  }
+  document.querySelector('.cx-mem').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-sto]'); if (!b) { var k = e.target.closest('[data-k]'); if (k) press(k.dataset.k); return; }
+    if (!justEval) commit();
+    if (lastVal == null) return;
+    st.mem[b.dataset.sto] = lastVal; save(); memShow();
+    why.innerHTML = '<b>נשמר ב-' + b.dataset.sto.toUpperCase() + '.</b> אפשר להשתמש בו בכל תרגיל. ' + MODEL_NAME[st.model] + ': <kbd>' + (st.model === 'ti' ? 'sto→' : 'SHIFT RCL (STO)') + '</kbd> ואז ' + b.dataset.sto.toUpperCase() + '.';
+    used('mem');
+  });
+
+  // ---------- לשתף תרגיל בקישור ----------
+  $('cx-share').addEventListener('click', function () {
+    var e = inp.value.trim(); if (!e) { why.innerHTML = '<b>אין עדיין תרגיל.</b> כותבים תרגיל, ואז משתפים.'; return; }
+    var url = location.origin + location.pathname + '?e=' + encodeURIComponent(e) + '&a=' + st.ang;
+    var text = 'תרגיל במחשבון לבגרות: ' + e + (lastVal != null && justEval ? ' = ' + fmtN(lastVal) : '');
+    used('share');
+    if (navigator.share) { navigator.share({ title: 'מחשבון לבגרות', text: text, url: url }).catch(function () {}); return; }
+    try { navigator.clipboard.writeText(text + '\n' + url).then(function () { why.innerHTML = '<b>הקישור הועתק.</b> מדביקים בווטסאפ, ומי שפותח רואה את התרגיל עם כל השלבים.'; }); }
+    catch (er) { prompt('הקישור לתרגיל:', url); }
+  });
+
+  // ---------- מצב בחינה ----------
+  var EXAM = false, exT0 = 0, exTimer = null;
+  function examSet(on) {
+    EXAM = on;
+    document.body.classList.toggle('cx-exammode', on);
+    $('cx-exambar').hidden = !on || MINI;
+    $('cx-exam-on').setAttribute('aria-pressed', on ? 'true' : 'false');
+    clearInterval(exTimer);
+    if (on) {
+      tab('calc'); extra.innerHTML = ''; $('cx-steps-p').hidden = true;
+      why.textContent = '';
+      exT0 = Date.now(); exTick(); exTimer = setInterval(exTick, 1000);
+      used('exam_mode');
+    }
+  }
+  function exTick() {
+    var dur = +$('cx-dur').value * 60, s = Math.floor((Date.now() - exT0) / 1000), o = $('cx-time');
+    var show2 = dur ? Math.max(0, dur - s) : s;
+    o.textContent = (show2 >= 3600 ? Math.floor(show2 / 3600) + ':' + ('0' + Math.floor(show2 % 3600 / 60)).slice(-2) : Math.floor(show2 / 60)) + ':' + ('0' + show2 % 60).slice(-2);
+    o.classList.toggle('end', !!dur && s >= dur);
+    if (dur && s === dur) { o.textContent = '⏰ נגמר הזמן'; try { navigator.vibrate && navigator.vibrate([300, 200, 300]); } catch (e) {} }
+  }
+  $('cx-exam-on').addEventListener('click', function () { examSet(!EXAM); });
+  $('cx-exam-off').addEventListener('click', function () { examSet(false); });
+  $('cx-dur').addEventListener('change', function () { exT0 = Date.now(); exTick(); });
+
+  // ---------- מצב גדול ונגיש ----------
+  function bigSet(on) {
+    st.big = on ? 1 : 0; save();
+    document.body.classList.toggle('cx-bigmode', on);
+    $('cx-big').setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+  $('cx-big').addEventListener('click', function () { bigSet(!st.big); if (st.big) speak('מצב גדול ונגיש. כל מקש נקרא בקול'); used('big'); });
+  $('cx-keys').addEventListener('click', function (e) {
+    if (!st.big) return;
+    var b = e.target.closest('[data-k]'); if (!b || b.dataset.k === '=') return;
+    speak(b.getAttribute('aria-label') || b.textContent);
+  });
+
+  // ---------- כמה יחידות ----------
+  var QS = { 3: '35182, 35381, 35382', 4: '35481, 35482', 5: '35581, 35582' };
+  function lvSet(lv) {
+    st.lv = lv; save();
+    document.querySelectorAll('.cx-lv [data-lv]').forEach(function (b) { var on = +b.dataset.lv === lv; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+    $('cx-t-cv').hidden = lv !== 5;
+    if (lv !== 5 && !$('cx-p-cv').hidden) tab('calc');
+    var n = $('cx-lvnote');
+    if (lv) { n.hidden = false; n.innerHTML = 'השאלונים שלך: <b dir="ltr">' + QS[lv] + '</b>. <a class="gold" href="/limudim/matematika/">לתרגול ולמבחן לדוגמה לפי השאלון</a>' + (lv === 5 ? ' · נוספה לשונית מרוכבים ווקטורים' : ''); }
+  }
+  document.querySelector('.cx-lv').addEventListener('click', function (e) { var b = e.target.closest('[data-lv]'); if (b) { lvSet(+b.dataset.lv); used('lv_' + b.dataset.lv); } });
+
+  // ---------- תיקוני דיבור שנשמרים בטלפון ----------
+  st.vfix = st.vfix || { w: {}, p: {} };
+  var lastHeard = null;
+  function applyFix(t) {
+    var key = t.trim();
+    if (st.vfix.p[key]) return st.vfix.p[key];
+    return key.split(/\s+/).map(function (w) { return st.vfix.w[w] || w; }).join(' ');
+  }
+  extra.addEventListener('click', function (e) {
+    if (!e.target.closest('[data-vfix]') || !lastHeard) return;
+    extra.innerHTML = '<div class="cx-vfix"><label for="cx-vfx">מה אמרתם? מתקנים את המילים:</label><input id="cx-vfx" type="text" value="' + esc(lastHeard) + '"><button type="button" class="btn btn-gold btn-sm" id="cx-vfs">לחשב ולזכור</button></div>';
+    var f = $('cx-vfx'); f.focus(); f.select();
+    f.addEventListener('keydown', function (k) { if (k.key === 'Enter') { k.preventDefault(); $('cx-vfs').click(); } });
+    $('cx-vfs').addEventListener('click', function () {
+      var nw = f.value.trim(); if (!nw) return;
+      var a = lastHeard.trim().split(/\s+/), b = nw.split(/\s+/), learned = [];
+      if (a.length === b.length) a.forEach(function (w, i) { if (w !== b[i]) { st.vfix.w[w] = b[i]; learned.push('"' + w + '" ← "' + b[i] + '"'); } });
+      else { st.vfix.p[lastHeard.trim()] = nw; learned.push('"' + lastHeard.trim() + '" ← "' + nw + '"'); }
+      save(); used('voice_fix');
+      inp.value = nw; justEval = false; var h = lastHeard; lastHeard = null; commit();
+      if (learned.length) extra.insertAdjacentHTML('afterbegin', '<span>✓ זכרתי: ' + esc(learned.join(', ')) + '. בפעם הבאה אבין. (נשמר רק בטלפון הזה)</span>');
+      lastHeard = null; void h;
+    });
+  });
+  extra.addEventListener('click', function (e) { var g = e.target.closest('[data-gotab]'); if (g) tab(g.dataset.gotab); });
+  $('cx-keyseq').addEventListener('click', function (e) { var g = e.target.closest('[data-gotab]'); if (g) { tab(g.dataset.gotab); $('cx-app').scrollIntoView({ behavior: 'smooth' }); } });
+
+  // =====================================================================
+  //  סטטיסטיקה
+  // =====================================================================
+  function nums(s) {
+    var p = String(s).replace(/[−–]/g, '-').split(/[\s,;]+/).filter(Boolean), out = [];
+    for (var i = 0; i < p.length; i++) { var v = Number(p[i]); if (!isFinite(v)) throw new Err('"' + p[i] + '" הוא לא מספר'); out.push(v); }
+    return out;
+  }
+  function r4(v) { return fmtN(+v.toFixed(4)); }
+  function err(o, e) { $(o).innerHTML = '<li class="bad">' + esc(e.msg || 'משהו לא תקין') + '</li>'; }
+  $('st-go').addEventListener('click', function () {
+    var o = $('st-out'), out = [];
+    try {
+      var x = nums($('st-x').value), f = $('st-f').value.trim() ? nums($('st-f').value) : null;
+      if (!x.length) throw new Err('צריך לפחות מספר אחד');
+      if (f && f.length !== x.length) throw new Err('צריך מספר שכיחות לכל נתון (' + x.length + ' נתונים, ' + f.length + ' שכיחויות)');
+      if (f && f.some(function (q) { return q < 0 || q !== Math.round(q); })) throw new Err('שכיחות היא מספר שלם וחיובי');
+      used('stat');
+      var pairs = x.map(function (v, i) { return [v, f ? f[i] : 1]; }), N = 0, S = 0;
+      pairs.forEach(function (p) { N += p[1]; S += p[0] * p[1]; });
+      if (!N) throw new Err('סכום השכיחויות הוא 0');
+      var mean = S / N;
+      out.push('מספר הנתונים: <b>' + L('N = ' + N) + '</b>');
+      out.push('ממוצע: מחברים ' + (f ? 'כל ערך כפול השכיחות שלו' : 'את כל הנתונים') + ' ומחלקים במספרם. ' + L('x̄ = ' + fmtN(clean(S)) + ' ÷ ' + N + ' = <b>' + r4(mean) + '</b>'));
+      // חציון
+      var srt = pairs.slice().sort(function (a, b) { return a[0] - b[0]; }), flat = [];
+      if (N <= 400) srt.forEach(function (p) { for (var j = 0; j < p[1]; j++) flat.push(p[0]); });
+      if (flat.length) {
+        var med = N % 2 ? flat[(N - 1) / 2] : (flat[N / 2 - 1] + flat[N / 2]) / 2;
+        out.push('חציון: מסדרים מהקטן לגדול' + (N <= 30 ? ' (' + L(flat.map(fmtN).join(', ')) + ')' : '') + ' ולוקחים את ' + (N % 2 ? 'האמצעי, במקום ה-' + ((N + 1) / 2) : 'הממוצע של שני האמצעיים, במקומות ' + N / 2 + ' ו-' + (N / 2 + 1)) + ': <b>' + L(r4(med)) + '</b>');
+      }
+      // שכיח
+      var cnt = {}; srt.forEach(function (p) { cnt[p[0]] = (cnt[p[0]] || 0) + p[1]; });
+      var mx = Math.max.apply(null, Object.keys(cnt).map(function (k) { return cnt[k]; })), modes = Object.keys(cnt).filter(function (k) { return cnt[k] === mx; });
+      out.push(modes.length === Object.keys(cnt).length && Object.keys(cnt).length > 1 ? 'שכיח: <b>אין</b> (כל ערך מופיע אותו מספר פעמים)' : 'שכיח (הערך שמופיע הכי הרבה, ' + mx + ' פעמים): <b>' + L(modes.map(function (k) { return fmtN(+k); }).join(', ')) + '</b>');
+      out.push('טווח: הגדול פחות הקטן: ' + L(fmtN(srt[srt.length - 1][0]) + ' − ' + P(srt[0][0]) + ' = <b>' + fmtN(clean(srt[srt.length - 1][0] - srt[0][0])) + '</b>'));
+      // סטיית תקן
+      var SS = 0; pairs.forEach(function (p) { SS += p[1] * (p[0] - mean) * (p[0] - mean); });
+      var vr = SS / N, sd = Math.sqrt(vr);
+      var keysU = Object.keys(cnt).map(Number).sort(function (a, b) { return a - b; });
+      if (keysU.length <= 12) {
+        out.push('לכל ערך: כמה הוא רחוק מהממוצע, בריבוע' + (f ? ', כפול השכיחות' : '') + ':<table class="plan cx-tb"><tr><td>x</td>' + (f ? '<td>f</td>' : '') + '<td dir="ltr">x − x̄</td><td dir="ltr">(x − x̄)²</td></tr>' + keysU.map(function (k) {
+          return '<tr><td dir="ltr">' + fmtN(k) + '</td>' + (f ? '<td>' + cnt[k] + '</td>' : '') + '<td dir="ltr">' + r4(k - mean) + '</td><td dir="ltr">' + r4((k - mean) * (k - mean)) + (cnt[k] > 1 && !f ? ' ×' + cnt[k] : '') + '</td></tr>';
+        }).join('') + '</table>');
+      }
+      out.push('שונות: הסכום חלקי N. ' + L('σ² = ' + r4(SS) + ' ÷ ' + N + ' = ' + r4(vr)));
+      out.push('סטיית תקן: שורש השונות. ' + L('σ = √' + r4(vr) + ' = <b>' + r4(sd) + '</b>'));
+      if (N > 1) out.push('<small>אם מבקשים סטיית תקן של מדגם (s), מחלקים ב-N − 1: ' + L('s = ' + r4(Math.sqrt(SS / (N - 1)))) + '. בבגרות בדרך כלל σ.</small>');
+      out.push(lessonLink('stat'));
+      o.innerHTML = out.map(li).join('');
+    } catch (e) { if (!(e instanceof Err)) throw e; err('st-out', e); }
+  });
+  // התפלגות נורמלית: Φ לפי קירוב erf (דיוק של 7 ספרות)
+  function erf(x) { var s = x < 0 ? -1 : 1; x = Math.abs(x); var t = 1 / (1 + 0.3275911 * x), y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return s * y; }
+  function Phi(z) { return 0.5 * (1 + erf(z / Math.SQRT2)); }
+  function PhiInv(p) { var lo = -8, hi = 8; for (var i = 0; i < 80; i++) { var m = (lo + hi) / 2; if (Phi(m) < p) lo = m; else hi = m; } return (lo + hi) / 2; }
+  $('nm-t').addEventListener('change', function () { var t = this.value; $('nm-bw').hidden = t !== 'bt'; $('nm-al').textContent = t === 'inv' ? 'האחוז (למשל 90)' : 'a'; if (t === 'inv' && +$('nm-a').value > 100) $('nm-a').value = '90'; });
+  $('nm-go').addEventListener('click', function () {
+    var o = $('nm-out'), out = [], mu = numIn('nm-mu'), sg = numIn('nm-s'), a = numIn('nm-a'), b = numIn('nm-b'), t = $('nm-t').value;
+    if ([mu, sg, a].some(isNaN) || (t === 'bt' && isNaN(b))) { o.innerHTML = '<li class="bad">צריך מספר בכל תיבה.</li>'; return; }
+    if (sg <= 0) { o.innerHTML = '<li class="bad">סטיית התקן חייבת להיות חיובית.</li>'; return; }
+    used('normal');
+    function z(x) { var v = (x - mu) / sg; out.push('ציון תקן: ' + L('Z = (x − μ) ÷ σ = (' + fmtN(x) + ' − ' + P(mu) + ') ÷ ' + fmtN(sg) + ' = <b>' + r4(v) + '</b>')); return Math.round(v * 100) / 100; }
+    function ph(zz) { var v = Phi(zz); out.push('בטבלה של ההתפלגות הנורמלית: ' + L('Φ(' + zz.toFixed(2) + ') = ' + v.toFixed(4))); return v; }
+    if (t === 'inv') {
+      var p = a > 1 ? a / 100 : a;
+      if (p <= 0 || p >= 1) { o.innerHTML = '<li class="bad">האחוז צריך להיות בין 0 ל-100.</li>'; return; }
+      var zz = PhiInv(p);
+      out.push('מחפשים בטבלה את Z ש-' + L('Φ(Z) = ' + fmtN(+p.toFixed(4))) + ': ' + L('Z ≈ <b>' + zz.toFixed(2) + '</b>'));
+      out.push('חוזרים מ-Z לערך: ' + L('x = μ + Z·σ = ' + fmtN(mu) + ' + ' + P(+zz.toFixed(2)) + '·' + fmtN(sg) + ' = <b>' + r4(mu + +zz.toFixed(2) * sg) + '</b>'));
+      out.push('כלומר ' + fmtN(+(p * 100).toFixed(2)) + '% מהערכים קטנים מ-' + L(r4(mu + +zz.toFixed(2) * sg)) + '.');
+    } else if (t === 'bt') {
+      if (b < a) { var tt = a; a = b; b = tt; }
+      var za = z(a), zb = z(b), pa = ph(za), pb = ph(zb);
+      out.push('הסיכוי בין שני הערכים הוא ההפרש: ' + L(pb.toFixed(4) + ' − ' + pa.toFixed(4) + ' = <b>' + (pb - pa).toFixed(4) + '</b>') + ' (' + fmtN(+((pb - pa) * 100).toFixed(2)) + '%)');
+    } else {
+      var p1 = ph(z(a));
+      if (t === 'lt') out.push('הסיכוי לפחות מ-' + fmtN(a) + ' הוא <b>' + L(p1.toFixed(4)) + '</b> (' + fmtN(+(p1 * 100).toFixed(2)) + '%)');
+      else out.push('ליותר מ-' + fmtN(a) + ' מחסירים מ-1: ' + L('1 − ' + p1.toFixed(4) + ' = <b>' + (1 - p1).toFixed(4) + '</b>') + ' (' + fmtN(+((1 - p1) * 100).toFixed(2)) + '%)');
+    }
+    out.push(lessonLink('norm'));
+    o.innerHTML = out.map(li).join('');
+  });
+  // בינומית
+  function nCr(n, k) { var v = 1; for (var i = 1; i <= k; i++) v = v * (n - k + i) / i; return Math.round(v); }
+  $('bn-go').addEventListener('click', function () {
+    var o = $('bn-out'), out = [], n = numIn('bn-n'), p = numIn('bn-p'), k = numIn('bn-k'), t = $('bn-t').value;
+    if ([n, p, k].some(isNaN)) { o.innerHTML = '<li class="bad">צריך מספר בכל תיבה.</li>'; return; }
+    if (n !== Math.round(n) || k !== Math.round(k) || n < 1 || k < 0 || k > n || n > 200) { o.innerHTML = '<li class="bad">n ו-k הם מספרים שלמים, ו-k בין 0 ל-n.</li>'; return; }
+    if (p < 0 || p > 1) { o.innerHTML = '<li class="bad">p הוא סיכוי, מספר בין 0 ל-1.</li>'; return; }
+    used('binom');
+    var q = clean(1 - p);
+    function term(j, showIt) {
+      var c = nCr(n, j), v = c * Math.pow(p, j) * Math.pow(q, n - j);
+      if (showIt) out.push(L('P(X = ' + j + ') = C(' + n + ', ' + j + ') · ' + fmtN(p) + '^' + j + ' · ' + fmtN(q) + '^' + (n - j) + ' = ' + c + ' · ' + r4(Math.pow(p, j)) + ' · ' + r4(Math.pow(q, n - j)) + ' = <b>' + v.toFixed(4) + '</b>'));
+      return v;
+    }
+    out.push('הנוסחה: ' + L('P(X = k) = C(n, k) · pᵏ · (1 − p)ⁿ⁻ᵏ') + ', ו-' + L('1 − p = ' + fmtN(q)));
+    if (t === 'eq') { term(k, true); }
+    else {
+      var js = []; for (var j = (t === 'le' ? 0 : k); j <= (t === 'le' ? k : n); j++) js.push(j);
+      var useC = js.length > n / 2 + 1 && js.length > 6, total = 0;
+      if (useC) {
+        var cj = []; for (var i2 = (t === 'le' ? k + 1 : 0); i2 <= (t === 'le' ? n : k - 1); i2++) cj.push(i2);
+        out.push('קצר יותר דרך המשלים: ' + L('1 − P(X ' + (t === 'le' ? '> ' : '< ') + k + ')'));
+        var sc = 0; cj.forEach(function (j2) { sc += term(j2, cj.length <= 8); });
+        total = 1 - sc;
+        out.push(L('1 − ' + sc.toFixed(4) + ' = <b>' + total.toFixed(4) + '</b>'));
+      } else {
+        js.forEach(function (j2) { total += term(j2, js.length <= 8); });
+        out.push('מחברים: <b>' + L(total.toFixed(4)) + '</b>');
+      }
+    }
+    out.push(lessonLink('prob'));
+    o.innerHTML = out.map(li).join('');
+  });
+
+  // =====================================================================
+  //  פותר משולשים
+  // =====================================================================
+  var D2R = Math.PI / 180;
+  function triSolve(S, A) {
+    // S = [a,b,c], A = [α,β,γ] במעלות, null = לא ידוע. מחזיר רשימת פתרונות, לכל אחד שלבים
+    var nm = ['a', 'b', 'c'], an = ['α', 'β', 'γ'];
+    var ns = S.filter(function (v) { return v != null; }).length, na = A.filter(function (v) { return v != null; }).length;
+    if (S.some(function (v) { return v != null && v <= 0; })) throw new Err('צלע חייבת להיות חיובית');
+    if (A.some(function (v) { return v != null && (v <= 0 || v >= 180); })) throw new Err('זווית במשולש היא בין 0° ל-180°');
+    if (ns + na < 3) throw new Err('צריך 3 נתונים לפחות');
+    if (!ns) throw new Err('עם זוויות בלבד יש אינסוף משולשים דומים. צריך לפחות צלע אחת');
+    if (ns + na > 3) throw new Err('יש יותר מ-3 נתונים. משאירים רק 3, כדי לא לסתור');
+    var sol = [{ S: S.slice(), A: A.slice(), st: [] }];
+    function third(o) {
+      var k = o.A.indexOf(null), sum = o.A.reduce(function (s, v) { return s + (v || 0); }, 0);
+      if (sum >= 180) throw new Err('סכום הזוויות כבר ' + fmtN(sum) + '°, ובמשולש הסכום הוא 180°');
+      o.A[k] = 180 - sum; o.st.push('סכום הזוויות במשולש 180°: ' + L(an[k] + ' = 180° − ' + o.A.filter(function (v, i) { return i !== k; }).map(r4).join('° − ') + '° = <b>' + r4(o.A[k]) + '°</b>'));
+    }
+    var o = sol[0];
+    if (na === 2) third(o);
+    if (ns === 3) {
+      var a = S[0], b = S[1], c = S[2];
+      if (a + b <= c || a + c <= b || b + c <= a) throw new Err('אין משולש כזה: כל צלע צריכה להיות קטנה מסכום שתי האחרות');
+      [0, 1].forEach(function (k) {
+        var x = S[k], y = S[(k + 1) % 3], z = S[(k + 2) % 3], cs = (y * y + z * z - x * x) / (2 * y * z);
+        o.A[k] = Math.acos(cs) / D2R;
+        o.st.push('משפט הקוסינוסים: ' + L(nm[k] + '² = ' + nm[(k + 1) % 3] + '² + ' + nm[(k + 2) % 3] + '² − 2·' + nm[(k + 1) % 3] + '·' + nm[(k + 2) % 3] + '·cos ' + an[k]) + ', לכן ' + L('cos ' + an[k] + ' = (' + fmtN(y) + '² + ' + fmtN(z) + '² − ' + fmtN(x) + '²) ÷ (2·' + fmtN(y) + '·' + fmtN(z) + ') = ' + r4(cs)) + ', ו-' + L(an[k] + ' = cos⁻¹(' + r4(cs) + ') = <b>' + r4(o.A[k]) + '°</b>'));
+      });
+      o.A[2] = null; third(o);
+    } else if (ns === 2) {
+      var miss = S.indexOf(null);
+      if (o.A[miss] != null) {
+        // שתי צלעות והזווית שביניהן
+        var i1 = (miss + 1) % 3, i2 = (miss + 2) % 3, g = o.A[miss], x2 = S[i1] * S[i1] + S[i2] * S[i2] - 2 * S[i1] * S[i2] * Math.cos(g * D2R);
+        o.S[miss] = Math.sqrt(x2);
+        o.st.push('יש שתי צלעות והזווית שביניהן, לכן משפט הקוסינוסים: ' + L(nm[miss] + '² = ' + fmtN(S[i1]) + '² + ' + fmtN(S[i2]) + '² − 2·' + fmtN(S[i1]) + '·' + fmtN(S[i2]) + '·cos ' + fmtN(g) + '° = ' + r4(x2)) + ', לכן ' + L(nm[miss] + ' = <b>' + r4(o.S[miss]) + '</b>'));
+        if (Math.abs(g - 90) < 1e-9) o.st.push('<small>הזווית ישרה, אז זה בדיוק משפט פיתגורס.</small>');
+        if (na === 1) {
+          var k2 = S[i1] <= S[i2] ? i1 : i2, sn = S[k2] * Math.sin(g * D2R) / o.S[miss];
+          o.A[k2] = Math.asin(Math.min(1, sn)) / D2R;
+          o.st.push('משפט הסינוסים, מול הצלע הקטנה (כך הזווית בטוח חדה): ' + L('sin ' + an[k2] + ' = ' + fmtN(S[k2]) + '·sin ' + fmtN(g) + '° ÷ ' + r4(o.S[miss]) + ' = ' + r4(sn)) + ', ' + L(an[k2] + ' = <b>' + r4(o.A[k2]) + '°</b>'));
+          third(o);
+        }
+      } else {
+        // צלע-צלע-זווית שלא ביניהן: אולי שני משולשים
+        var ka = o.A.findIndex(function (v) { return v != null; });
+        if (o.S[ka] == null) throw new Err('צריך את הצלע שמול הזווית הידועה, או את הזווית שבין שתי הצלעות');
+        var kb = [0, 1, 2].filter(function (i) { return i !== ka && S[i] != null; })[0];
+        var sb = S[kb] * Math.sin(o.A[ka] * D2R) / S[ka];
+        o.st.push('משפט הסינוסים: ' + L(nm[kb] + ' ÷ sin ' + an[kb] + ' = ' + nm[ka] + ' ÷ sin ' + an[ka]) + ', לכן ' + L('sin ' + an[kb] + ' = ' + fmtN(S[kb]) + '·sin ' + fmtN(o.A[ka]) + '° ÷ ' + fmtN(S[ka]) + ' = ' + r4(sb)));
+        if (sb > 1 + 1e-12) throw new Err('יוצא sin ' + an[kb] + ' = ' + r4(sb) + ', יותר מ-1. אין משולש כזה');
+        var b1 = Math.asin(Math.min(1, sb)) / D2R, b2 = 180 - b1, base = JSON.parse(JSON.stringify(o));
+        o.A[kb] = b1; o.st.push(L(an[kb] + ' = sin⁻¹(' + r4(sb) + ') = <b>' + r4(b1) + '°</b>'));
+        if (b2 + o.A[ka] < 180 - 1e-9 && Math.abs(b1 - 90) > 1e-9) {
+          var o2 = base; o2.A[kb] = b2; o2.st.push('גם ' + L(an[kb] + ' = 180° − ' + r4(b1) + '° = <b>' + r4(b2) + '°</b>') + ' מתאים (לסינוס יש שתי זוויות), לכן יש <b>שני משולשים</b>.');
+          sol.push(o2);
+        }
+        sol.forEach(function (q) { third(q); });
+      }
+    } else {
+      // צלע אחת ושתי זוויות (כבר השלמנו את השלישית)
+    }
+    // משלימים צלעות חסרות במשפט הסינוסים
+    sol.forEach(function (q) {
+      var kk = [0, 1, 2].filter(function (i) { return q.S[i] != null && q.A[i] != null; })[0];
+      if (kk == null) return;
+      var ratio = q.S[kk] / Math.sin(q.A[kk] * D2R);
+      [0, 1, 2].forEach(function (i) {
+        if (q.S[i] != null) return;
+        q.S[i] = ratio * Math.sin(q.A[i] * D2R);
+        q.st.push('משפט הסינוסים: ' + L(nm[i] + ' = ' + nm[kk] + '·sin ' + an[i] + ' ÷ sin ' + an[kk] + ' = ' + r4(q.S[kk]) + '·sin ' + r4(q.A[i]) + '° ÷ sin ' + r4(q.A[kk]) + '° = <b>' + r4(q.S[i]) + '</b>'));
+      });
+      var ar = 0.5 * q.S[0] * q.S[1] * Math.sin(q.A[2] * D2R);
+      q.st.push('שטח: ' + L('S = ½·a·b·sin γ = ½·' + r4(q.S[0]) + '·' + r4(q.S[1]) + '·sin ' + r4(q.A[2]) + '° = <b>' + r4(ar) + '</b>'));
+      q.st.push('רדיוס המעגל החוסם: ' + L('R = a ÷ (2 sin α) = <b>' + r4(q.S[0] / (2 * Math.sin(q.A[0] * D2R))) + '</b>'));
+    });
+    return sol;
+  }
+  function triSvg(q) {
+    var a = q.S[0], b = q.S[1], c = q.S[2], al = q.A[0] * D2R;
+    var P1 = [0, 0], P2 = [c, 0], P3 = [b * Math.cos(al), b * Math.sin(al)];
+    var xs = [P1[0], P2[0], P3[0]], ys = [P1[1], P2[1], P3[1]], mnx = Math.min.apply(null, xs), mxx = Math.max.apply(null, xs), mxy = Math.max.apply(null, ys);
+    var sc = Math.min(250 / (mxx - mnx), 150 / mxy), tr = function (p) { return [30 + (p[0] - mnx) * sc, 175 - p[1] * sc]; };
+    var A1 = tr(P1), B1 = tr(P2), C1 = tr(P3);
+    function mid(p, r, dx, dy) { return [(p[0] + r[0]) / 2 + (dx || 0), (p[1] + r[1]) / 2 + (dy || 0)]; }
+    var mc = mid(A1, B1, 0, 16), ma = mid(B1, C1, 10, 0), mb = mid(A1, C1, -14, 0);
+    return '<svg viewBox="0 0 310 200" class="cx-trisvg" role="img" aria-label="שרטוט המשולש"><path d="M' + A1 + 'L' + B1 + 'L' + C1 + 'Z" fill="rgba(134,197,230,.12)" stroke="#86c5e6" stroke-width="2.5"/>' +
+      '<g fill="#eef1f8" font-size="14" text-anchor="middle"><text x="' + (A1[0] - 10) + '" y="' + (A1[1] + 14) + '">A</text><text x="' + (B1[0] + 10) + '" y="' + (B1[1] + 14) + '">B</text><text x="' + C1[0] + '" y="' + (C1[1] - 8) + '">C</text></g>' +
+      '<g fill="#ecca83" font-size="13" text-anchor="middle"><text x="' + mc[0] + '" y="' + mc[1] + '">c=' + r4(c) + '</text><text x="' + ma[0] + '" y="' + ma[1] + '" text-anchor="start">a=' + r4(a) + '</text><text x="' + mb[0] + '" y="' + mb[1] + '" text-anchor="end">b=' + r4(b) + '</text></g>' +
+      '<g fill="#a1abc2" font-size="11" text-anchor="middle"><text x="' + (A1[0] + 22) + '" y="' + (A1[1] - 6) + '">α=' + r4(q.A[0]) + '°</text><text x="' + (B1[0] - 24) + '" y="' + (B1[1] - 6) + '">β=' + r4(q.A[1]) + '°</text><text x="' + C1[0] + '" y="' + (C1[1] + 20) + '">γ=' + r4(q.A[2]) + '°</text></g></svg>';
+  }
+  $('tr-go').addEventListener('click', function () {
+    var o = $('tr-out');
+    function g(id) { var s = $(id).value.trim(); if (!s) return null; var v = numIn(id); if (isNaN(v)) throw new Err('"' + s + '" הוא לא מספר'); return v; }
+    try {
+      var sol = triSolve([g('tr-a'), g('tr-b'), g('tr-c')], [g('tr-A'), g('tr-B'), g('tr-C')]);
+      used('triangle');
+      o.innerHTML = sol.map(function (q, i) {
+        return (sol.length > 1 ? '<h4 class="cx-h4">משולש ' + (i + 1) + '</h4>' : '') + triSvg(q) + '<ol class="cx-steps">' + q.st.map(li).join('') + '</ol>';
+      }).join('') + lessonLink('sin');
+    } catch (e) { if (!(e instanceof Err)) throw e; o.innerHTML = '<p class="bad">' + esc(e.msg) + '</p>'; }
+  });
+  $('tr-clr').addEventListener('click', function () { ['tr-a', 'tr-b', 'tr-c', 'tr-A', 'tr-B', 'tr-C'].forEach(function (id) { $(id).value = ''; }); $('tr-out').innerHTML = ''; $('tr-a').focus(); });
+
+  // =====================================================================
+  //  מספרים מרוכבים ווקטורים (5 יח"ל)
+  // =====================================================================
+  function parseZ(s) {
+    s = String(s).replace(/\s+/g, '').replace(/[−–]/g, '-').replace(/j/g, 'i');
+    if (!s) throw new Err('חסר מספר מרוכב');
+    var re = 0, im = 0, terms = s.match(/[+-]?[^+-]+/g);
+    if (!terms || terms.join('') !== s.replace(/^\+/, '') && terms.join('') !== s) throw new Err('לא הבנתי את "' + s + '". כותבים כמו 3+4i');
+    terms.forEach(function (t) {
+      if (/i$/.test(t)) { var c = t.slice(0, -1).replace(/\*$/, ''); var v = c === '' || c === '+' ? 1 : c === '-' ? -1 : Number(c); if (!isFinite(v)) throw new Err('לא הבנתי את "' + t + '"'); im += v; }
+      else { var w = Number(t); if (!isFinite(w)) throw new Err('לא הבנתי את "' + t + '"'); re += w; }
+    });
+    return [re, im];
+  }
+  function fz(z) { var a = clean(+z[0].toFixed(6)), b = clean(+z[1].toFixed(6)); if (!b) return fmtN(a); return (a ? fmtN(a) + (b < 0 ? ' − ' : ' + ') : (b < 0 ? '−' : '')) + (Math.abs(b) === 1 ? '' : fmtN(Math.abs(b))) + 'i'; }
+  function argD(z) { return Math.atan2(z[1], z[0]) / D2R; }
+  $('z-go').addEventListener('click', function () {
+    var o = $('z-out'), out = [];
+    try {
+      var z1 = parseZ($('z-1').value), z2 = parseZ($('z-2').value), n = numIn('z-n');
+      var a = z1[0], b = z1[1], c = z2[0], d = z2[1];
+      used('complex');
+      out.push('חיבור: ממשי עם ממשי, מדומה עם מדומה. ' + L('z₁ + z₂ = <b>' + fz([a + c, b + d]) + '</b>') + ', &nbsp;' + L('z₁ − z₂ = <b>' + fz([a - c, b - d]) + '</b>'));
+      out.push('כפל: כל איבר בכל איבר, ו-' + L('i² = −1') + ': ' + L('(' + fz(z1) + ')(' + fz(z2) + ') = ' + fmtN(clean(a * c)) + ' + ' + P(clean(a * d)) + 'i + ' + P(clean(b * c)) + 'i + ' + P(clean(b * d)) + 'i² = <b>' + fz([a * c - b * d, a * d + b * c]) + '</b>'));
+      var m2 = c * c + d * d;
+      if (m2) out.push('חילוק: כופלים מונה ומכנה בצמוד של z₂, ' + L('z̄₂ = ' + fz([c, -d])) + ': המכנה ' + L(fmtN(c) + '² + ' + P(d) + '² = ' + fmtN(clean(m2))) + ', לכן ' + L('z₁ ÷ z₂ = <b>' + fz([(a * c + b * d) / m2, (b * c - a * d) / m2]) + '</b>'));
+      var r = Math.sqrt(a * a + b * b), th = argD(z1);
+      out.push('גודל: ' + L('|z₁| = √(' + P(a) + '² + ' + P(b) + '²) = <b>' + r4(r) + '</b>') + (exact(r) ? ' ' + L('= ' + exact(r)) : ''));
+      out.push('זווית: ' + L('θ = ' + r4(th) + '°') + ' <small>(' + (a < 0 ? 'ברביע ' + (b >= 0 ? 'השני' : 'השלישי') + ', לכן לא מספיק tan⁻¹(b/a): מוסיפים או מחסירים 180°' : 'tan⁻¹(b ÷ a)') + ')</small>');
+      out.push('בהצגה קוטבית: ' + L('z₁ = <b>' + r4(r) + ' cis ' + r4(th) + '°</b>'));
+      if (!isNaN(n) && n === Math.round(n) && Math.abs(n) <= 50) {
+        var rn = Math.pow(r, n), tn = th * n, zn = [rn * Math.cos(tn * D2R), rn * Math.sin(tn * D2R)];
+        out.push('דה-מואבר: ' + L('z₁^' + fmtN(n) + ' = ' + r4(r) + '^' + fmtN(n) + ' cis(' + fmtN(n) + '·' + r4(th) + '°) = ' + r4(rn) + ' cis ' + r4(tn) + '° = <b>' + fz(zn) + '</b>'));
+      }
+      out.push(lessonLink('z'));
+      o.innerHTML = out.map(li).join('');
+    } catch (e) { if (!(e instanceof Err)) throw e; err('z-out', e); }
+  });
+  function parseV(s) {
+    var p = String(s).replace(/[()\[\]{}]/g, '').replace(/[−–]/g, '-').split(/[,;\s]+/).filter(Boolean).map(Number);
+    if (p.length < 2 || p.length > 3 || p.some(function (v) { return !isFinite(v); })) throw new Err('כותבים וקטור כמו (1, 2, 2)');
+    return p;
+  }
+  $('v-go').addEventListener('click', function () {
+    var o = $('v-out'), out = [];
+    try {
+      var u = parseV($('v-1').value), v = parseV($('v-2').value);
+      if (u.length !== v.length) throw new Err('לשני הווקטורים צריך אותו מספר רכיבים');
+      used('vector');
+      function vs(x) { return '(' + x.map(function (q) { return fmtN(clean(q)); }).join(', ') + ')'; }
+      function len(x, nm2) { var s2 = x.reduce(function (s, q) { return s + q * q; }, 0), l = Math.sqrt(s2); out.push('אורך: ' + L('|' + nm2 + '| = √(' + x.map(function (q) { return P(q) + '²'; }).join(' + ') + ') = √' + fmtN(clean(s2)) + ' = <b>' + r4(l) + '</b>')); return l; }
+      out.push(L('u + v = <b>' + vs(u.map(function (q, i) { return q + v[i]; })) + '</b>') + ', &nbsp;' + L('u − v = <b>' + vs(u.map(function (q, i) { return q - v[i]; })) + '</b>'));
+      var lu = len(u, 'u'), lv = len(v, 'v'), dot = clean(u.reduce(function (s, q, i) { return s + q * v[i]; }, 0));
+      out.push('מכפלה סקלרית: רכיב כפול רכיב, ומחברים. ' + L('u·v = ' + u.map(function (q, i) { return P(q) + '·' + P(v[i]); }).join(' + ') + ' = <b>' + fmtN(dot) + '</b>'));
+      if (lu && lv) {
+        var cs = dot / (lu * lv), ang = Math.acos(Math.max(-1, Math.min(1, cs))) / D2R;
+        out.push('הזווית ביניהם: ' + L('cos θ = u·v ÷ (|u|·|v|) = ' + fmtN(dot) + ' ÷ (' + r4(lu) + '·' + r4(lv) + ') = ' + r4(cs)) + ', ' + L('θ = <b>' + r4(ang) + '°</b>') + (dot === 0 ? ' — <b>הם מאונכים</b> (המכפלה הסקלרית 0).' : ''));
+      }
+      out.push(lessonLink('vec'));
+      o.innerHTML = out.map(li).join('');
+    } catch (e) { if (!(e instanceof Err)) throw e; err('v-out', e); }
+  });
+
   // ---------- התחלה ----------
-  setAng(st.ang); hist(); guide();
+  setAng(st.ang); hist(); guide(); memShow(); bigSet(!!st.big); lvSet(st.lv || 0);
   var h = location.hash.slice(1);
   tab(TABS.indexOf(h) >= 0 && !MINI ? h : 'calc');
   var q = location.search.match(/[?&]e=([^&]+)/);
-  if (q) { try { inp.value = decodeURIComponent(q[1]); preview(); } catch (e) {} }
+  var qa = location.search.match(/[?&]a=(deg|rad)/); if (qa) setAng(qa[1]);
+  if (q) { try { inp.value = decodeURIComponent(q[1].replace(/\+/g, ' ')); commit(); used('shared_open'); } catch (e) {} }
+  if (/[?&]exam=1/.test(location.search)) examSet(true);
 })();

@@ -343,3 +343,48 @@ body.cx-mini .cx-keys button{min-height:2.8rem}
 .cx-mic:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 @keyframes cxPulse{50%{box-shadow:0 0 0 8px rgba(232,154,138,.25)}}
 @media (prefers-reduced-motion:reduce){.cx-mic.on{animation:none}}
+/* מחשבון לבגרות – גרסה 3 */
+.cx-tabs{display:flex;flex-wrap:wrap;gap:.4rem}
+.cx-tabs button{flex:1 1 auto;min-width:6.5rem}
+.cx-tabs button[hidden]{display:none}
+.cx-bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.5rem .8rem;margin-top:.8rem}
+.cx-lv{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem;color:var(--muted);font-size:.95rem}
+.cx-lv button,.cx-tog{font:inherit;font-size:.95rem;padding:.35rem .75rem;border-radius:99px;border:1px solid var(--line);background:none;color:var(--body);cursor:pointer}
+.cx-lv button.on,.cx-tog[aria-pressed=true]{border-color:var(--gold);background:rgba(220,183,105,.16);color:var(--cream);font-weight:700}
+.cx-modes{display:flex;flex-wrap:wrap;gap:.35rem}
+.cx-lvnote{margin-top:.4rem}
+.cx-exambar{margin-top:.8rem;padding:.7rem .9rem;border-radius:14px;border:2px solid var(--ok);background:rgba(127,209,168,.08);display:flex;flex-wrap:wrap;gap:.3rem .8rem;align-items:center;color:var(--body)}
+.cx-exambar b{color:var(--cream)}
+.cx-clock{display:inline-flex;gap:.35rem;align-items:center}
+.cx-clock select{font:inherit;color:var(--cream);background:#1a2234;border:1px solid var(--line);border-radius:10px;padding:.2rem .4rem}
+#cx-time{font-weight:800;color:var(--cream);font-variant-numeric:tabular-nums;font-size:1.15rem}
+#cx-time.end{color:var(--no)}
+body.cx-exammode .cx-tabs,body.cx-exammode .cx-why,body.cx-exammode #cx-steps-p,body.cx-exammode .cx-mic,body.cx-exammode #cx-say,body.cx-exammode #cx-share,body.cx-exammode .cx-hist-p,body.cx-exammode .cx-extra,body.cx-exammode .cx-exam,body.cx-exammode .cx-bar,body.cx-exammode .cx-lvnote,body.cx-exammode .cx-ang-d,body.cx-exammode .cx-more{display:none!important}
+body.cx-mini .cx-bar,body.cx-mini .cx-exambar,body.cx-mini .cx-lvnote,body.cx-mini .cx-mem small{display:none!important}
+.cx-mem{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin-top:.6rem;color:var(--muted);font-size:.95rem}
+.cx-mem button{font:inherit;font-size:.95rem;min-width:2.8rem;padding:.3rem .55rem;border-radius:10px;border:1px solid var(--line);background:#1a2234;color:#cfe4f2;cursor:pointer}
+.cx-mem small{color:var(--gold-hi)}
+.cx-keyseq{margin-top:.8rem;padding-top:.7rem;border-top:1px dashed var(--line)}
+.cx-keyseq p{color:var(--body)}
+.cx-kbd{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.4rem}
+.cx-kbd kbd{font-size:1rem;padding:.2rem .5rem}
+.cx-lessn{margin-top:.5rem;color:var(--body)}
+.cx-vfix{display:grid;gap:.4rem}
+.cx-vfix input{font:inherit;font-size:1.05rem;color:var(--cream);background:rgba(239,230,210,.06);border:1px solid var(--gold-soft);border-radius:10px;padding:.45rem .6rem}
+.cx-tb{margin-top:.4rem;font-size:.95rem}
+.cx-tb td{text-align:center}
+.cx-tri-in{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
+.cx-tri-in>*{min-width:0}
+.cx-trisvg{display:block;width:100%;max-width:420px;margin:.6rem auto;background:#0f1522;border-radius:14px;border:1px solid var(--line)}
+.cx-h4{color:var(--gold-hi);font-family:var(--serif);font-size:1.15rem;margin-top:.8rem}
+/* גדול ונגיש */
+body.cx-bigmode .cx-keys{gap:.5rem}
+body.cx-bigmode .cx-keys button{min-height:4.2rem;font-size:1.55rem;background:#000;color:#fff;border:2px solid #ffd76a}
+body.cx-bigmode .cx-keys button.eq{background:#ffd76a;color:#000}
+body.cx-bigmode .cx-keys button.d{background:#3a0000;border-color:#ff9a8a}
+body.cx-bigmode .cx-screen{background:#000;border:2px solid #ffd76a}
+body.cx-bigmode .cx-in{font-size:2.2rem;color:#fff}
+body.cx-bigmode .cx-res{font-size:3rem;color:#ffd76a}
+body.cx-bigmode .cx-why,body.cx-bigmode .cx-extra{font-size:1.2rem;color:#fff}
+body.cx-bigmode .cx-ang span{font-size:1.2rem}
+.cx-mem button{direction:ltr;unicode-bidi:isolate}
