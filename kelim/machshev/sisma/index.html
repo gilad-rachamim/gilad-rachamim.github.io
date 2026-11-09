@@ -20,11 +20,11 @@
 <link rel="apple-touch-icon" href="/assets/icon-kelim-192.png">
 <link rel="manifest" href="/kelim/manifest.webmanifest">
 <link rel="stylesheet" href="/assets/site.css?v=14c6afff">
-<link rel="stylesheet" href="/assets/kelim.css?v=162946d4">
+<link rel="stylesheet" href="/assets/kelim.css?v=873b0769">
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4QR4583VST"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4QR4583VST');</script>
-<script src="/assets/track.js?v=928f9743" defer></script>
+<script src="/assets/track.js?v=b23b682b" defer></script>
 <style>.ss-in{display:flex;gap:.45rem}.ss-in input{flex:1;min-width:0;font-size:1.15rem;direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace}.ss-meter{height:.6rem;border-radius:999px;background:var(--line);overflow:hidden;margin-top:.9rem}.ss-meter i{display:block;height:100%;width:0;transition:width .3s,background .3s}.ss-verdict{font-family:var(--serif);font-size:1.35rem;color:var(--cream);margin-top:.6rem}.ss-time{color:var(--parchment);margin-top:.2rem}.ss-tips{list-style:none;display:grid;gap:.3rem;margin-top:.7rem;color:var(--parchment)}.ss-tips li::before{content:'• ';color:var(--gold)}.ss-safe{border:1px solid var(--gold-soft);border-radius:12px;padding:.7rem .9rem;color:var(--parchment);margin-bottom:1.1rem;font-size:.98rem}.ss-out{font-family:ui-monospace,Consolas,monospace;direction:ltr;text-align:center;font-size:1.35rem;color:var(--cream);background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:.9rem .6rem;word-break:break-all;margin:.6rem 0;user-select:all}.ss-len{display:flex;align-items:center;gap:.7rem}.ss-len input{flex:1;accent-color:var(--gold)}.ss-len b{font-family:var(--serif);color:var(--cream);min-width:2ch;text-align:center}.ss-h2{font-family:var(--serif);color:var(--cream);font-size:1.3rem;margin-top:1.8rem}</style><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "הכלים של גילעד רחמים", "item": "https://gilad-rachamim.github.io/kelim/"}, {"@type": "ListItem", "position": 2, "name": "מחשב וטלפון", "item": "https://gilad-rachamim.github.io/kelim/machshev/"}, {"@type": "ListItem", "position": 3, "name": "בודק סיסמה", "item": "https://gilad-rachamim.github.io/kelim/machshev/sisma/"}]}</script>
 </head>
 <body class="site-kelim " data-site="kelim" data-tool="machshev_sisma" data-home="/kelim/">
@@ -106,38 +106,61 @@
 </main>
 <section class="fb no-print" id="fb" aria-labelledby="fb-h" data-fb>
   <div class="in">
+    
     <p class="fb-q" id="fb-h">הכלי עזר לך?</p>
     <div class="fb-rate"><button class="btn btn-line btn-sm" type="button" data-rate="yes">👍 כן</button><button class="btn btn-line btn-sm" type="button" data-rate="no">👎 לא ממש</button></div>
     <p class="fb-thanks" role="status" hidden></p>
+    <p class="fb-share" hidden>מכירים מישהו שזה יעזור לו? <a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" target="_blank" rel="noopener">💬 לשלוח לו את הכלי בווטסאפ</a></p>
     <details class="fb-more">
       <summary>💡 יש לך רעיון איך לשפר? אשמח מאוד</summary>
       <form class="k-form lead-form" data-kform="shipur" action="https://script.google.com/macros/s/AKfycbxgWe4xxaclqfzmOD_E0hOg2XDr2genZZyvAcf0hpHw_AHkgvQAqDop-XjdURdARYNx-Q/exec" method="POST">
         <div class="hp" aria-hidden="true"><label>אל תמלאו שדה זה <input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></div>
         <div class="field"><label for="fb-what">מה היה עושה את הכלי טוב יותר?</label><textarea id="fb-what" name="what" required maxlength="400" placeholder="משהו שחסר, משהו שלא עבד, או רעיון חדש. כל מילה עוזרת."></textarea></div>
-        <div class="field"><label for="fb-name">שם <span class="opt">(לא חובה)</span></label><input id="fb-name" name="name" type="text" autocomplete="given-name" maxlength="40"></div>
+        <div class="field"><label for="fb-name">שם <span class="opt">(לא חובה)</span></label><input id="fb-name" name="name" type="text" autocomplete="given-name" maxlength="40"><label class="check fb-nameok"><input type="checkbox" name="name_ok" value="1"> אפשר לכתוב את השם הפרטי שלי ליד השיפור, כשהוא מוכן</label></div>
         <div class="field"><label for="fb-contact">טלפון או מייל <span class="opt">(לא חובה, רק אם תרצה שאעדכן אותך כשזה מוכן)</span></label><input id="fb-contact" name="contact" type="text" maxlength="60" dir="ltr" style="text-align:right" placeholder="050-0000000 או name@gmail.com"></div>
         <button class="btn btn-gold btn-block" type="submit">לשלוח לגילעד</button>
         <p class="privacy">או <a class="gold" href="https://wa.me/972584049049" data-fb-wa target="_blank" rel="noopener">לכתוב לי בווטסאפ</a>. אפשר לשלוח גם בלי שם ובלי פרטים. אם השארת פרטים, הם נשמרים אצלי בלבד, רק כדי לחזור אליך. <a href="/mohel/privacy/">פרטיות</a></p>
       </form>
     </details>
-    <p class="fb-note">הכלים כאן משתפרים בזכות מי שמשתמש בהם. אני קורא כל הצעה, בשמחה ובתודה. <a class="gold" href="/kelim/shipurim/">מה כבר שיפרנו בזכותכם ←</a></p>
+    <p class="fb-note">אני קורא כל הצעה, בשמחה ובתודה. מה שייבנה בעקבות הצעה שלך יופיע כאן, ברשימה "שופר בזכותכם". <a class="gold" href="/kelim/shipurim/">מה כבר שיפרנו בכלים אחרים ←</a></p>
   </div>
 </section>
-<footer class="site-foot">
-  <div class="cols">
-    <div><b>הכלים של גילעד רחמים</b><a href="/kelim/">דף הבית של המיזם</a><a href="/kelim/#sipur">הסיפור</a><a href="/kelim/#tchumim">כל התחומים</a><a href="/kelim/#mi">מי אני</a></div>
-    <div><b>כלים פתוחים</b><a href="/kelim/tamlul/">תמלול מהטלפון</a><a href="/nefesh/">נפש ויום-יום</a><a href="/nefesh/rega/">רגע קשה</a><a href="/kodesh/">כלי קודש</a><a href="/kodesh/taarichim/">מחשבון תאריכים</a><a href="/kodesh/kartis/">כרטיס ביקור לרב</a><a href="/kodesh/shut/">שו"ת לפרסום</a><a href="/kodesh/luach/">הלוח השבועי</a><a href="/kodesh/mohalim/">כלים למוהלים</a></div>
-    <div><b>להשתתף</b><a href="/kelim/#rotzim">רוצים כלי? ספרו לי</a><a href="/kelim/#litmoch">לתמוך במיזם</a><a href="/kelim/#truma">רוצים לתרום?</a><a href="/kelim/shipurim/">שיפרנו בזכותכם</a></div>
-    <div><b>יצירת קשר</b><a href="https://wa.me/972584049049"><span dir="ltr" style="white-space:nowrap">058-404-9049</span> (ווטסאפ)</a><a href="mailto:gilad4049@gmail.com">gilad4049@gmail.com</a><a href="/mohel/privacy/">פרטיות</a><a href="/mohel/negishut/">הצהרת נגישות</a></div>
+<footer class="site-foot ft">
+  <div class="ft-cta">
+    <div><b class="ft-h">לא מצאתם את הכלי שחיפשתם?</b><p>ספרו לי מה קשה לכם לעשות, במילים שלכם. כלי קטן אני בונה בחינם, לכולם.</p></div>
+    <div class="ft-btns">
+      <a class="btn btn-gold btn-sm" href="/kelim/#rotzim" data-ft="cta_form">לספר לי על כלי</a>
+      <a class="btn btn-line btn-sm" href="https://wa.me/972584049049?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%92%D7%99%D7%9C%D7%A2%D7%93%2C%20%D7%99%D7%A9%20%D7%9C%D7%99%20%D7%A8%D7%A2%D7%99%D7%95%D7%9F%20%D7%9C%D7%9B%D7%9C%D7%99%3A%20" target="_blank" rel="noopener" data-ft="cta_wa">בווטסאפ</a>
+      <a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="הכלים של גילעד רחמים: כלים פשוטים, בחינם, לכל מי שצריך הנגשה" target="_blank" rel="noopener" data-ft="cta_share">לשלוח לחבר</a>
+    </div>
   </div>
-  <div class="end"><span>בס"ד · הכלים של גילעד רחמים · מיזם של גילעד רחמים אביעד</span><span>כלים פשוטים, בחינם, באהבה</span></div>
+  <div class="ft-help" role="note">
+    <span class="ft-help-t">קשה עכשיו? יש עם מי לדבר, בכל שעה:</span>
+    <a href="tel:*8944" data-ft="line_8944"><b dir="ltr">*8944</b> נפש אחת</a>
+    <a href="tel:1201" data-ft="line_1201"><b>1201</b> ער"ן</a>
+    <a href="tel:*3362" data-ft="line_3362"><b dir="ltr">*3362</b> נט"ל</a>
+    <a class="urgent" href="tel:101" data-ft="line_101"><b>101</b> מד"א, בסכנה</a>
+    <a class="go" href="/nefesh/rega/" data-ft="line_rega">לדף "רגע קשה" ←</a>
+  </div>
+  <div class="cols">
+    <div><b>המיזם</b><a href="/kelim/" data-ft="m_home">דף הבית</a><a href="/kelim/#movilim" data-ft="m_movilim">הכלים המובילים</a><a href="/kelim/#tchumim" data-ft="m_tchumim">כל 13 התחומים</a><a href="/kelim/#sipur" data-ft="m_sipur">למה הקמתי את זה</a><a href="/kelim/#mi" data-ft="m_mi">מי אני</a><a href="/kelim/shipurim/" data-ft="m_shipurim">שיפרנו בזכותכם</a></div>
+    <div class="ft-doms"><b>כל התחומים</b><a href="/kodesh/" data-ft="dom_kodesh">כלי קודש</a><a href="/nefesh/" data-ft="dom_nefesh">נפש ויום-יום</a><a href="/limudim/" data-ft="dom_limudim">לימודים</a><a href="/kelim/shikum/" data-ft="dom_kelim_shikum">זכויות ושיקום</a><a href="/kelim/avoda/" data-ft="dom_kelim_avoda">עבודה וחיפוש עבודה</a><a href="/kesef/" data-ft="dom_kesef">כסף</a><a href="/esek/" data-ft="dom_esek">עסק קטן</a><a href="/kelim/tochen/" data-ft="dom_kelim_tochen">יצירת תוכן</a><a href="/bait/" data-ft="dom_bait">משפחה ובית</a><a href="/kelim/briut/" data-ft="dom_kelim_briut">בריאות</a><a href="/kelim/machshev/" data-ft="dom_kelim_machshev">מחשב וטלפון</a><a href="/kelim/miluim/" data-ft="dom_kelim_miluim">צבא ומילואים</a><a href="/kelim/kesharim/" data-ft="dom_kelim_kesharim">חברה וקשרים</a></div>
+    <div><b>הכי שימושיים</b><a href="/kelim/tamlul/" data-ft="top_kelim_tamlul">תמלול מהטלפון</a><a href="https://t.me/GiladKaraokeBot?start=site" target="_blank" rel="noopener" data-ft="top_karaoke">קריוקי לחברים 🎤</a><a href="/nefesh/rega/" data-ft="top_nefesh_rega">רגע קשה</a><a href="/kelim/shikum/vaada/" data-ft="top_kelim_shikum_vaada">הכנה לוועדה</a><a href="/kelim/machshev/video/" data-ft="top_kelim_machshev_video">הקטנת סרטון</a><a href="/kelim/machshev/pdf/" data-ft="top_kelim_machshev_pdf">הקטנת PDF</a><a href="/kelim/avoda/korot/" data-ft="top_kelim_avoda_korot">קורות חיים</a><a href="/kesef/taktziv/" data-ft="top_kesef_taktziv">תקציב משפחתי</a><a href="/kodesh/taarichim/" data-ft="top_kodesh_taarichim">מחשבון תאריכים</a><a href="/limudim/kartisiot/" data-ft="top_limudim_kartisiot">כרטיסיות חזרה</a><a href="/kodesh/mohalim/" data-ft="top_kodesh_mohalim">כלים למוהלים</a></div>
+    <div><b>להשתתף</b><a href="/kelim/#rotzim" data-ft="p_rotzim">רוצים כלי? ספרו לי</a><a href="/kelim/#litmoch" data-ft="p_litmoch">לתמוך במיזם</a><a href="/kelim/#truma" data-ft="p_truma">לעזור בזמן או ברעיון</a><a href="/kelim/#botim" data-ft="p_botim">הבוטים בטלגרם</a><span data-install-wrap hidden><button class="ft-link" type="button" data-install>להתקין כאפליקציה</button></span></div>
+    <div><b>קשר ומידע</b><a href="https://wa.me/972584049049" data-ft="c_wa"><span dir="ltr" style="white-space:nowrap">058-404-9049</span> (ווטסאפ)</a><a href="mailto:gilad4049@gmail.com" data-ft="c_mail">gilad4049@gmail.com</a><a href="/mohel/" data-ft="c_mohel">אתר המוהל</a><a href="/mohel/privacy/" data-ft="c_privacy">פרטיות</a><a href="/mohel/negishut/" data-ft="c_negishut">הצהרת נגישות</a><a href="/kelim/machshev/kasher/" data-ft="c_kasher">גם בטלפון כשר ומסונן</a></div>
+  </div>
+  <ul class="ft-promise">
+    <li>✓ הכול בחינם</li><li>✓ בלי הרשמה ובלי סיסמה</li><li>✓ המידע נשמר רק אצלכם בטלפון</li><li>✓ עובד בטלפון ובמחשב</li>
+  </ul>
+  <div class="end"><span>בס"ד · הכלים של גילעד רחמים · מיזם של גילעד רחמים אביעד, נכה צה"ל</span><span>כלים פשוטים, בחינם, באהבה · <a class="ft-up" href="#" data-ft="up">לראש הדף ↑</a></span></div>
 </footer>
+<script>document.addEventListener('click',function(e){var a=e.target.closest('[data-ft]');if(!a)return;if(a.getAttribute('data-ft')==='up'){e.preventDefault();window.scrollTo({top:0,behavior:'smooth'});}if(window.gtag)gtag('event','footer_click',{link:a.getAttribute('data-ft')});});</script>
 <div class="install-bar" id="install-bar" hidden>
-  <span>להתקין את הכלים בטלפון, כמו אפליקציה</span>
+  <span data-install-text>📲 הכלים במסך הבית, כמו אפליקציה: נכנסים בלחיצה, ורוב הכלים עובדים גם בלי אינטרנט.</span>
   <button class="btn btn-gold btn-sm" type="button" data-install>להתקין</button>
   <button class="x" type="button" data-install-close aria-label="סגירה">×</button>
 </div>
-<script src="/assets/kelim.js?v=f6406678" defer></script>
+<script src="/assets/kelim.js?v=6ab3224b" defer></script>
 <script src="/assets/machshev-sisma.js?v=cab6abe6" defer></script>
 </body>
 </html>

@@ -10,8 +10,8 @@
   var KEY = 'kelim-machshev-pdf';
   var V = '/assets/vendor/';
   var NOTES = { 90: 'הכי קל. טוב לטופס באינטרנט שמגביל גודל (למשל עד 2 מגה).', 130: 'מספיק כמעט לכל מסמך: קריא, ועדיין קל.', 180: 'לאותיות קטנות ולחתימות. שוקל יותר.' };
-  var st = { d: 130, q: 65 };
-  try { var sv = JSON.parse(localStorage.getItem(KEY) || 'null'); if (sv) { if (NOTES[sv.d]) st.d = sv.d; if (sv.q >= 40 && sv.q <= 90) st.q = sv.q; } } catch (e) {}
+  var st = { d: 130, q: 65, l: 0 };
+  try { var sv = JSON.parse(localStorage.getItem(KEY) || 'null'); if (sv) { if (NOTES[sv.d]) st.d = sv.d; if (sv.q >= 40 && sv.q <= 90) st.q = sv.q; if ([0, 1, 2, 5].indexOf(sv.l) > -1) st.l = sv.l; } } catch (e) {}
   function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
   var file = null, result = null, url = null, busy = false, run = 0;
 
@@ -36,6 +36,7 @@
   function drawUI() {
     [].forEach.call($('pd-size').children, function (b) { b.setAttribute('aria-selected', String(+b.getAttribute('data-d') === st.d)); });
     $('pd-snote').textContent = NOTES[st.d];
+    [].forEach.call($('pd-lim').children, function (b) { b.setAttribute('aria-selected', String(+b.getAttribute('data-l') === st.l)); });
     $('pd-q').value = st.q; $('pd-qv').textContent = st.q;
     $('pd-go').disabled = !file || busy;
     $('pd-go').textContent = busy ? 'מקטין…' : (result ? 'להקטין שוב בהגדרות האלה' : 'להקטין');
@@ -46,34 +47,27 @@
     return new Promise(function (ok, bad) { var r = new FileReader(); r.onload = function () { ok(r.result); }; r.onerror = bad; r.readAsArrayBuffer(b); });
   }
 
-  function shrink() {
-    if (!file || busy) return;
-    busy = true; var my = ++run; result = null; $('pd-out').hidden = true;
-    if (url) { URL.revokeObjectURL(url); url = null; }
-    drawUI(); bar(0); msg('טוען…');
-    var src, out, n = 0;
-    loadLibs().then(function () { return readBuf(file); }).then(function (buf) {
-      return window.pdfjsLib.getDocument({ data: new Uint8Array(buf), isEvalSupported: false }).promise;
-    }).then(function (doc) {
-      src = doc; n = doc.numPages;
-      return window.PDFLib.PDFDocument.create();
-    }).then(function (o) {
+  // מדרגות [DPI, איכות] כשיש מגבלת גודל: מתחילים ממה שבחרו ויורדים עד שהקובץ נכנס.
+  var LADDER = [[180, 80], [150, 70], [130, 65], [110, 55], [90, 50], [75, 42], [60, 35], [50, 30]];
+  function build(src, n, d, q, my, tryNo) {
+    var out;
+    return window.PDFLib.PDFDocument.create().then(function (o) {
       out = o;
       var i = 0;
       return (function next() {
         if (my !== run) throw new Error('stop');
         if (++i > n) return;
-        msg('עמוד ' + i + ' מתוך ' + n + '…');
+        msg((tryNo > 1 ? 'מקטין עוד כדי להיכנס במגבלה (ניסיון ' + tryNo + ') – ' : '') + 'עמוד ' + i + ' מתוך ' + n + '…');
         var page;
         return src.getPage(i).then(function (p) {
           page = p;
           var v1 = p.getViewport({ scale: 1 });
-          var k = st.d / 72, lim = 4200 / Math.max(v1.width, v1.height); // תקרה כדי שטלפון לא ייתקע בעמוד ענק
+          var k = d / 72, lim = 4200 / Math.max(v1.width, v1.height); // תקרה כדי שטלפון לא ייתקע בעמוד ענק
           var vp = p.getViewport({ scale: Math.min(k, lim) });
           var c = document.createElement('canvas');
           c.width = Math.round(vp.width); c.height = Math.round(vp.height);
           var x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
-          return p.render({ canvasContext: x, viewport: vp }).promise.then(function () { return toBlob(c, st.q / 100); }).then(function (b) {
+          return p.render({ canvasContext: x, viewport: vp }).promise.then(function () { return toBlob(c, q / 100); }).then(function (b) {
             c.width = c.height = 0; // משחררים זיכרון בטלפון
             return readBuf(b);
           }).then(function (jb) { return out.embedJpg(jb); }).then(function (img) {
@@ -83,9 +77,34 @@
           });
         }).then(next);
       })();
+    }).then(function () { return out.save(); });
+  }
+  function shrink() {
+    if (!file || busy) return;
+    busy = true; var my = ++run; result = null; $('pd-out').hidden = true;
+    if (url) { URL.revokeObjectURL(url); url = null; }
+    drawUI(); bar(0); msg('טוען…');
+    var src, n = 0, bytes, tryNo = 0, used = [st.d, st.q];
+    var limB = st.l ? st.l * 1048576 * 0.97 : 0;
+    var steps = [[st.d, st.q]].concat(LADDER.filter(function (s) { return s[0] <= st.d && (s[0] < st.d || s[1] < st.q); }));
+    loadLibs().then(function () { return readBuf(file); }).then(function (buf) {
+      return window.pdfjsLib.getDocument({ data: new Uint8Array(buf), isEvalSupported: false }).promise;
+    }).then(function (doc) {
+      src = doc; n = doc.numPages;
+      return (function attempt() {
+        var s = steps[tryNo++]; used = s;
+        return build(src, n, s[0], s[1], my, tryNo).then(function (b) {
+          bytes = b;
+          if (limB && b.length > limB && tryNo < steps.length) {
+            // קפיצה חכמה: גודל JPEG בערך יחסי לשטח (DPI בריבוע) ולאיכות. מדלגים ישר למדרגה שאמורה להיכנס.
+            var j = tryNo;
+            while (j < steps.length - 1 && b.length * Math.pow(steps[j][0] / s[0], 2) * (steps[j][1] / s[1]) > limB * 0.9) j++;
+            tryNo = j;
+            return attempt();
+          }
+        });
+      })();
     }).then(function () {
-      return out.save();
-    }).then(function (bytes) {
       src.destroy();
       var name = (file.name || 'mismach').replace(/\.pdf$/i, '') + '-katan.pdf';
       var blob = new Blob([bytes], { type: 'application/pdf' });
@@ -96,9 +115,10 @@
       $('pd-out').hidden = false; bar(-1);
       var a = file.size, b = blob.size;
       $('pd-size-out').innerHTML = '<s>' + mb(a) + '</s> ← ' + mb(b);
-      if (b < a) msg(n + ' עמודים. חיסכון של ' + Math.round((1 - b / a) * 100) + '%.' + (b > 2 * 1048576 && st.d !== 90 ? ' עדיין כבד לטופס? לנסות "קטן".' : ''), 'pd-ok');
-      else msg('הקובץ המקורי כבר היה קל יותר. עדיף לשלוח אותו כמו שהוא, או לנסות "קטן" ואיכות נמוכה יותר.', 'pd-err');
-      if (window.toolUsed) window.toolUsed('machshev_pdf', { how: 'shrink', pages: n, d: st.d, q: st.q, pct: Math.round((1 - b / a) * 100) });
+      if (limB && b > limB) msg('גם בגודל הכי קטן הקובץ יצא ' + mb(b) + '. אפשר לשלוח בשני חלקים, או לבחור מגבלה גדולה יותר.', 'pd-err');
+      else if (b < a) msg(n + ' עמודים. חיסכון של ' + Math.round((1 - b / a) * 100) + '%.' + (limB ? ' נכנס במגבלה של ' + st.l + ' מ״ב.' + (tryNo > 1 ? ' (הכלי הוריד חדות לבד כדי להיכנס.)' : '') : (b > 2 * 1048576 && st.d !== 90 ? ' עדיין כבד לטופס? לבחור למעלה "עד 2 מ״ב".' : '')), 'pd-ok');
+      else msg('הקובץ המקורי כבר היה קל יותר. עדיף לשלוח אותו כמו שהוא.', 'pd-err');
+      if (window.toolUsed) window.toolUsed('machshev_pdf', { how: 'shrink', pages: n, d: used[0], q: used[1], l: st.l, tries: tryNo, pct: Math.round((1 - b / a) * 100) });
     }).catch(function (e) {
       if (my !== run) return;
       bar(-1);
@@ -123,6 +143,7 @@
     shrink();
   });
   $('pd-go').addEventListener('click', shrink);
+  $('pd-lim').addEventListener('click', function (e) { var b = e.target.closest('[data-l]'); if (!b) return; st.l = +b.getAttribute('data-l'); save(); drawUI(); if (file && result) shrink(); });
   $('pd-size').addEventListener('click', function (e) { var b = e.target.closest('[data-d]'); if (!b) return; st.d = +b.getAttribute('data-d'); save(); drawUI(); if (file && result) shrink(); });
   $('pd-q').addEventListener('input', function () { st.q = +this.value; $('pd-qv').textContent = st.q; save(); });
   $('pd-q').addEventListener('change', function () { if (file && result) shrink(); });

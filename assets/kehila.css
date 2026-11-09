@@ -1,0 +1,59 @@
+/* כלים לקהילה ולבית הכנסת (/kelim/kehila/): לוח עליות ותורנויות, נדרים ותרומות, יארצייטים של הקהילה. */
+.kh-note{background:rgba(227,183,101,.1);border:1px solid var(--gold-soft);border-radius:12px;padding:.7rem .9rem;color:var(--parchment);margin:1rem 0;display:flex;gap:.6rem;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.kh-two{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+@media (max-width:420px){.kh-two{grid-template-columns:1fr}}
+.kh-hint{color:var(--muted);font-size:.92rem;margin:.2rem 0 .4rem}
+.kh-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.45rem}
+.kh-chips button{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--parchment);border-radius:999px;padding:.35rem .75rem;font:inherit;font-size:.95rem;cursor:pointer}
+.kh-chips button.on{background:rgba(227,183,101,.18);border-color:var(--gold);color:var(--cream)}
+.kh-tools{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-top:1.2rem}
+.kh-empty{color:var(--muted);text-align:center;padding:.8rem 0}
+.kh-sec{margin-top:1.4rem}
+.kh-sec h2{font-family:var(--serif);color:var(--cream);font-size:1.3rem;margin-bottom:.5rem}
+.kh-sum{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:1rem 0 .4rem}
+.kh-sum span{border:1px solid var(--line);border-radius:999px;padding:.25rem .7rem;color:var(--parchment);font-size:.92rem}
+.kh-sum b{color:var(--gold)}
+.kh-item{border:1px solid var(--line);border-radius:14px;padding:.8rem .9rem;margin-bottom:.6rem;background:rgba(255,255,255,.03);color:var(--parchment)}
+.kh-item .top{display:flex;justify-content:space-between;gap:.5rem;align-items:baseline;flex-wrap:wrap}
+.kh-item .top b{color:var(--cream);font-size:1.08rem}
+.kh-item .top span{color:var(--muted);font-size:.9rem}
+.kh-item p{margin:.3rem 0 0;white-space:pre-wrap}
+.kh-item .lbl{color:var(--gold);font-size:.9rem}
+.kh-item .warn{color:#e8b48c;font-size:.92rem}
+.kh-item.soon{border-color:var(--gold-soft);background:rgba(227,183,101,.07)}
+.kh-item.done{opacity:.7}
+.kh-item .acts{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.55rem;align-items:center}
+.kh-item .acts a,.kh-item .acts button{font:inherit;font-size:.88rem;padding:.3rem .65rem;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--body);cursor:pointer;text-decoration:none}
+.kh-item .acts a:hover,.kh-item .acts button:hover{border-color:var(--gold-soft);color:var(--cream)}
+.kh-item .acts input{width:6.5rem;font:inherit;font-size:.9rem;padding:.28rem .5rem;border-radius:10px;border:1px solid var(--line);background:var(--ink);color:var(--cream)}
+.kh-bar{height:.45rem;border-radius:999px;background:rgba(255,255,255,.08);margin-top:.45rem;overflow:hidden}
+.kh-bar i{display:block;height:100%;background:var(--gold)}
+/* לוח עליות: כרטיס לכל שבת */
+.kh-week{border:1px solid var(--line);border-radius:14px;padding:.8rem .9rem;margin-bottom:.7rem;background:rgba(255,255,255,.03)}
+.kh-week h3{font-family:var(--serif);color:var(--cream);font-size:1.12rem;margin:0 0 .5rem;display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap}
+.kh-week h3 span{color:var(--muted);font-size:.9rem;font-family:inherit}
+.kh-week .r{display:grid;grid-template-columns:7.5rem 1fr;gap:.5rem;align-items:center;margin:.3rem 0}
+.kh-week .r label{color:var(--parchment);font-size:.95rem}
+.kh-week select{font:inherit;font-size:.95rem;padding:.3rem .5rem;border-radius:10px;border:1px solid var(--line);background:var(--ink);color:var(--cream);width:100%}
+/* הדף להדפסה, שלושה סגנונות */
+.kh-card{max-width:40rem;margin:1.2rem auto 0;border-radius:14px;padding:1.2rem 1.1rem;line-height:1.5;border:1px solid #d9cfb4;overflow-x:auto}
+.kh-card h3{font-family:var(--serif);font-size:1.5rem;text-align:center;margin:0}
+.kh-card .s2{text-align:center;font-size:.98rem;margin:.15rem 0 .7rem}
+.kh-card table{width:100%;border-collapse:collapse;font-size:.95rem}
+.kh-card th,.kh-card td{border:1px solid;padding:.3rem .4rem;text-align:center;vertical-align:middle}
+.kh-card th{font-weight:700}
+.kh-card td.rl{font-weight:700;text-align:start;white-space:nowrap}
+.kh-card .ft{text-align:center;font-size:.85rem;margin-top:.9rem}
+.kh-card.t-lavan{background:#fff;color:#111}
+.kh-card.t-lavan h3{color:#111}.kh-card.t-lavan th,.kh-card.t-lavan td{border-color:#999}.kh-card.t-lavan th{background:#f1f1f1}.kh-card.t-lavan .s2,.kh-card.t-lavan .ft{color:#555}
+.kh-card.t-zayit{background:#f4f6ec;color:#1f2a16;border-color:#9fae7d}
+.kh-card.t-zayit h3{color:#3d5a1e}.kh-card.t-zayit th,.kh-card.t-zayit td{border-color:#9fae7d}.kh-card.t-zayit th{background:#e3e9d2}.kh-card.t-zayit .s2,.kh-card.t-zayit .ft{color:#55603f}
+.kh-card.t-klaf{background:#fbf3df;color:#2a2013;border-color:#c9b97d}
+.kh-card.t-klaf h3{color:#6b4a12}.kh-card.t-klaf th,.kh-card.t-klaf td{border-color:#c9b97d}.kh-card.t-klaf th{background:#f1e4c0}.kh-card.t-klaf .s2,.kh-card.t-klaf .ft{color:#6d5b3c}
+@media print{
+  @page{size:A4;margin:12mm}
+  html,body{background:#fff!important}
+  .topbar,.site-foot,.crumbs,.install-bar,.no-print{display:none!important}
+  .kh-card{max-width:none;margin:0;border:0;font-size:12pt;overflow:visible;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+.k-form .res:empty{display:none}
