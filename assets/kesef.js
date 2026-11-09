@@ -60,8 +60,8 @@
   // מחזיר שורות: כל שורה = מערך תאים מימין לשמאל, כל תא = { t: טקסט, x: מרכז }.
   // עברית ב-PDF נשמרת לפעמים הפוכה ("וטורב" במקום "ברוטו"): בודקים מילים מוכרות בשני הכיוונים, והופכים אם צריך.
   // ---------------------------------------------------------------------
-  var PDF_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
-  var PDF_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  var PDF_URL = '/assets/vendor/pdfjs/pdf.min.js';
+  var PDF_WORKER = '/assets/vendor/pdfjs/pdf.worker.min.js';
   var HEB = /[֐-׿]/;
   var KNOWN = ['סכום', 'תאריך', 'שכר', 'נטו', 'ברוטו', 'תשלומים', 'חיוב', 'עסק', 'פנסיה', 'מס', 'ביטוח', 'פיצויים', 'עובד', 'חופשה', 'מחלה', 'פירוט', 'עסקה', 'כרטיס'];
   function rev(s) { return s.split('').reverse().join('').replace(/[\d.,\/:\-]{2,}/g, function (m) { return m.split('').reverse().join(''); }); }
@@ -1079,7 +1079,7 @@
   // =====================================================================
   (function () {
     if (!$('ashrai')) return;
-    var XLSX_URL = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    var XLSX_URL = '/assets/vendor/xlsx/xlsx-0.18.5.full.min.js';
     var CATS = [
       ['סופר ומכולת', /שופרסל|רמי לוי|ויקטורי|יוחננוף|אושר עד|מגה|טיב טעם|יינות ביתן|חצי חינם|קרפור|סופר|מכולת|מינימרקט|AM:PM|פרש מרקט|קשת טעמים|נתיב החסד|ירקות|פירות|מאפ|קצב/i],
       ['דלק ורכב', /פז|דלק|סונול|דור אלון|אלון|\bטן\b|ten|yellow|ילו|מוסך|חניון|פנגו|סלופארק|cellopark|pango|כביש 6|נתיבי איילון/i],
