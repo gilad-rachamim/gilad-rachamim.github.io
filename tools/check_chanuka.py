@@ -17,7 +17,7 @@ def plain(s):
 
 def fix(w):
     cons = "".join(c for c in w if "א" <= c <= "ת")
-    for core in ("יהוה", "יי"):
+    for core in ("יהוה", "יי", "אדני"):
         pre = cons[: -len(core)] if cons.endswith(core) else None
         if pre is not None and len(pre) <= 2 and all(c in "ובלכמש" for c in pre):
             idx = [i for i, c in enumerate(w) if "א" <= c <= "ת"][len(pre)]
@@ -34,7 +34,7 @@ for part, segs in data["parts"].items():
         if want != got:
             bad += 1
             print("DIFF", part, s["i"]); print(" want:", want[:160]); print(" got: ", got[:160])
-        if "יְהֹוָה" in got or re.search(r"[^א-ת]יהוה", got):
+        if "יְהֹוָה" in got or "אדני" in re.sub(r"[^א-ת ]", "", got) or re.search(r"[^א-ת]יהוה", got):
             bad += 1; print("NAME LEFT", part, s["i"])
 print(f"{n} segments, {bad} problems")
 sys.exit(1 if bad else 0)
