@@ -304,12 +304,22 @@
 
   // ---------- יצירה מהירה: WebCodecs + mp4-muxer (בלי לנגן בזמן אמת) ----------
   // קוראים את טבלת הדגימות מה-moov של הקובץ (MP4/MOV), מפענחים רק את הקטע הדרוש, מציירים כל תמונה בקנבס
-  // ומקודדים H.264 + AAC. כשמשהו לא נתמך (דפדפן, קודק, סרטון מסובב, WebM, קטע ארוך) – חוזרים למנוע הרגיל בזמן אמת.
+  // ומקודדים H.264 + AAC. כשמשהו לא נתמך (דפדפן, קודק, WebM, קטע ארוך) – חוזרים למנוע הרגיל בזמן אמת.
   // FR: התמונה הנוכחית במנוע המהיר. מעתיקים כל תמונה פעם אחת לקנבס (fcv), כי ציור ישיר של VideoFrame כמה פעמים לכל תמונה איטי מאוד
   var FR = null, fcv = document.createElement('canvas'), fctx = fcv.getContext('2d'), fcFrom = null;
   function SRC() {
     if (!FR) return vid;
-    if (fcFrom !== FR) { var s = srcSize(); if (fcv.width !== s[0]) fcv.width = s[0]; if (fcv.height !== s[1]) fcv.height = s[1]; fctx.drawImage(FR, 0, 0, s[0], s[1]); fcFrom = FR; }
+    if (fcFrom !== FR) {
+      var s = srcSize(), m = dmx && dmx.rot; if (fcv.width !== s[0]) fcv.width = s[0]; if (fcv.height !== s[1]) fcv.height = s[1];
+      if (!m) fctx.drawImage(FR, 0, 0, s[0], s[1]);
+      else {
+        // סרטון שצולם לאורך: התמונה שמורה לרוחב, ומטריצת הסיבוב (tkhd) אומרת איך להציג אותה
+        var fw = FR.displayWidth, fh = FR.displayHeight, xs = [0, m[0] * fw, m[2] * fh, m[0] * fw + m[2] * fh], ys = [0, m[1] * fw, m[3] * fh, m[1] * fw + m[3] * fh];
+        var x0 = Math.min.apply(0, xs), y0 = Math.min.apply(0, ys), sx = s[0] / (Math.max.apply(0, xs) - x0), sy = s[1] / (Math.max.apply(0, ys) - y0);
+        fctx.setTransform(m[0] * sx, m[1] * sy, m[2] * sx, m[3] * sy, -x0 * sx, -y0 * sy); fctx.drawImage(FR, 0, 0, fw, fh); fctx.setTransform(1, 0, 0, 1, 0, 0);
+      }
+      fcFrom = FR;
+    }
     return fcv;
   }
   var MUX = 'https://cdn.jsdelivr.net/npm/mp4-muxer@5.2.1/build/mp4-muxer.min.js', FAST_MAX = 10 * 60;
@@ -435,7 +445,7 @@
       var tr = parseMoov(buf), V = tr.filter(function (t) { return t.kind === 'vide' && t.cfg; })[0], A = tr.filter(function (t) { return t.kind === 'soun' && t.fmt === 'mp4a' && t.asc; })[0];
       dmx = { file: f, v: V, a: A };
       if (!V) dmx.bad = 'novideo';
-      else if (V.mat && !(V.mat[0] > 0 && V.mat[1] === 0 && V.mat[2] === 0 && V.mat[3] > 0)) dmx.bad = 'rotated';
+      else if (V.mat && !(V.mat[0] > 0 && V.mat[1] === 0 && V.mat[2] === 0 && V.mat[3] > 0)) dmx.rot = V.mat.map(function (x) { return x / 65536; });
       if (dmx.bad) throw new Error(dmx.bad);
       return dmx;
     }, function (e) { dmx = { file: f, bad: e.message || 'demux' }; throw e; });
@@ -486,19 +496,57 @@
       if (withMusic) music(oac, [oac.destination], len, look.music === 'soft' ? 0.5 : 0.22);
       return oac.startRendering();
     }).then(function (ab) {
-      return new Promise(function (res, rej) {
-        var enc = new AudioEncoder({ output: function (c, m) { muxer.addAudioChunk(c, m); }, error: rej });
-        enc.configure({ codec: 'mp4a.40.2', sampleRate: rate, numberOfChannels: 2, bitrate: 128000 });
-        var l = ab.getChannelData(0), r = ab.getChannelData(1);
-        for (var s = 0; s < frames; s += 1024) {
-          var n = Math.min(1024, frames - s), d = new Float32Array(n * 2);
-          d.set(l.subarray(s, s + n), 0); d.set(r.subarray(s, s + n), n);
-          var x = new AudioData({ format: 'f32-planar', sampleRate: rate, numberOfFrames: n, numberOfChannels: 2, timestamp: Math.round(s / rate * 1e6), data: d });
-          enc.encode(x); x.close();
-        }
-        enc.flush().then(function () { enc.close(); res(true); }, rej);
+      return aacDelay(rate).then(function (skip) {
+        return new Promise(function (res, rej) {
+          var enc = new AudioEncoder({ output: function (c, m) { muxer.addAudioChunk(c, m); }, error: rej });
+          enc.configure({ codec: 'mp4a.40.2', sampleRate: rate, numberOfChannels: 2, bitrate: 128000 });
+          var l = ab.getChannelData(0), r = ab.getChannelData(1);
+          // מדלגים על דגימות כמספר דגימות השקט שהמקודד מוסיף בהתחלה, כדי שהקול יישב בדיוק על התמונה
+          for (var s = skip; s < frames; s += 1024) {
+            var n = Math.min(1024, frames - s), d = new Float32Array(n * 2);
+            d.set(l.subarray(s, s + n), 0); d.set(r.subarray(s, s + n), n);
+            var x = new AudioData({ format: 'f32-planar', sampleRate: rate, numberOfFrames: n, numberOfChannels: 2, timestamp: Math.round((s - skip) / rate * 1e6), data: d });
+            enc.encode(x); x.close();
+          }
+          enc.flush().then(function () { enc.close(); res(true); }, rej);
+        });
       });
     });
+  }
+  // מקודד ה-AAC של אנדרואיד מוסיף בתחילת הקול 2048 דגימות שקט (46ms) ולא מסמן אותן, והקול יוצא מאחר.
+  // מודדים פעם אחת: מקודדים צפצוף קצר בנקודה ידועה, מפענחים, ורואים בכמה דגימות הוא זז.
+  var aacDelayP = {};
+  function aacDelay(rate) {
+    if (aacDelayP[rate]) return aacDelayP[rate];
+    var AT = 4096, total = 8192;
+    return aacDelayP[rate] = new Promise(function (res, rej) {
+      var chunks = [], cfg = null;
+      var enc = new AudioEncoder({ output: function (c, m) { chunks.push(c); if (!cfg && m && m.decoderConfig) cfg = m.decoderConfig; }, error: rej });
+      enc.configure({ codec: 'mp4a.40.2', sampleRate: rate, numberOfChannels: 2, bitrate: 128000 });
+      for (var s = 0; s < total; s += 1024) {
+        var d = new Float32Array(2048);
+        for (var k = 0; k < 1024; k++) { var t = s + k; d[k] = d[k + 1024] = t >= AT && t < AT + 256 ? 0.8 * Math.sin(t * 0.3) : 0; }
+        var x = new AudioData({ format: 'f32-planar', sampleRate: rate, numberOfFrames: 1024, numberOfChannels: 2, timestamp: Math.round(s / rate * 1e6), data: d });
+        enc.encode(x); x.close();
+      }
+      enc.flush().then(function () {
+        enc.close();
+        if (!cfg) throw new Error('cfg');
+        var pcm = [], dec = new AudioDecoder({ output: function (o) { var u = new Float32Array(o.numberOfFrames); o.copyTo(u, { planeIndex: 0, format: 'f32-planar' }); pcm.push(u); o.close(); }, error: rej });
+        dec.configure(cfg);
+        chunks.forEach(function (c) { dec.decode(c); });
+        return dec.flush().then(function () {
+          dec.close();
+          var pos = 0, i, j, peak = 0, all = [];
+          pcm.forEach(function (u) { for (i = 0; i < u.length; i++) all.push(u[i]); });
+          for (i = 0; i < all.length; i++) peak = Math.max(peak, Math.abs(all[i]));
+          for (j = 0; j < all.length; j++) if (Math.abs(all[j]) > peak * 0.5) { pos = j; break; }
+          var delay = Math.round((pos - AT) / 64) * 64;
+          window.__vsAacDelay = delay;
+          res(delay > 0 && delay <= 4096 ? delay : 0);
+        });
+      }).catch(rej);
+    }).catch(function (e) { window.__vsAacDelay = 'err ' + (e && e.message || e); return 0; });
   }
   function pickV(W, H, fps) {
     var list = ['avc1.640028', 'avc1.4d0028', 'avc1.42002a', 'avc1.42001f'];
@@ -753,12 +801,14 @@
     }
     return list;
   }
+  // ביצירה המהירה (כרום במחשב ובאנדרואיד) סרטון נוצר פי 4 עד 6 מזמן אמת; אחרת בזמן אמת
+  function eta(t, len) { return mmss(fastOK(len) ? Math.max(5, Math.ceil(t / 4)) : t); }
   function plan() {
     if (!file) return;
     var p = parts(), L = $('st-len').value, sent = !!(segs && segs.length);
-    $('st-plan').textContent = p.length + ' חלקים' + (sent ? ', כל חלק נגמר בסוף משפט' : ' של עד ' + L + ' שניות') + ': ' +
+    $('st-plan').textContent = (p.length === 1 ? 'חלק אחד' : p.length + ' חלקים') + (sent ? (p.length === 1 ? ', שנגמר בסוף משפט' : ', כל חלק נגמר בסוף משפט') : ' של עד ' + L + ' שניות') + ': ' +
       p.slice(0, 8).map(function (x) { return mmss(x[0]) + '–' + mmss(x[1]); }).join(', ') + (p.length > 8 ? ', …' : '') +
-      '. זה ייקח בערך ' + mmss(p[p.length - 1][1] - p[0][0]) + ' דקות.';
+      '. זה ייקח בערך ' + eta(p[p.length - 1][1] - p[0][0], +L) + ' דקות.';
     if (tab === 'status' && !busy) still();
   }
   $('st-len').addEventListener('change', plan); $('st-pos').addEventListener('change', plan);
@@ -988,7 +1038,7 @@
   $('kt-go').addEventListener('click', function () {
     if (busy || !groups || !canRec()) return;
     var s = srcSize(); setCanvas(s[0], s[1]); job = { kind: 'caps' }; lock(true); stopFlag = false;
-    say('צורב את הכתוביות על הסרטון… זה לוקח ' + mmss(dur) + ' דקות.', true);
+    say('צורב את הכתוביות על הסרטון… זה לוקח בערך ' + eta(dur, dur) + ' דקות.', true);
     play(0, dur, true, function (x) { prog.value = x; }, { tail: endOK() ? TAIL : 0 }).then(function (r) {
       lock(false); addOut(r, 'עם כתוביות', fileName + ' – כתוביות'); say('✅ הסרטון עם הכתוביות מוכן.');
       used('caps_done', { secs: Math.round(dur), fmt: r.ext });

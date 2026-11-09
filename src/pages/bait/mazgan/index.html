@@ -1,0 +1,87 @@
+<!--meta {
+  "site": "bait",
+  "tool": "bait_mazgan",
+  "title": "שלט למזגן מהטלפון, וקוד לשלט אוניברסלי בלי לחפש שעות | כלים למשפחה ולבית",
+  "description": "האם הטלפון שלכם יכול להיות שלט למזגן, ומה עושים כשלא (סמסונג, אייפון). ומדריך צעד אחרי צעד למציאת הקוד בשלט אוניברסלי, עם מונה שזוכר איפה עצרתם ורשימת השלטים של הבית. בחינם.",
+  "og_title": "שלט למזגן מהטלפון, ובלי לחפש קוד שעות",
+  "priority": "0.8",
+  "crumbs": [["שלט למזגן", null]],
+  "head": "<style>.mz-res{margin-top:.7rem}.mz-res:empty{display:none}.mz-ok{border-inline-start:4px solid #6f8f3a}.mz-no{border-inline-start:4px solid #b4553a}.mz-ways{display:grid;gap:.6rem;margin-top:.6rem}.mz-ways .box{margin:0}.mz-ways b{display:block;margin-bottom:.2rem}.mz-steps{padding-inline-start:1.2rem;line-height:1.7}.mz-steps li{margin-bottom:.35rem}.mz-count{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin:.6rem 0}.mz-num{font-size:2.4rem;font-weight:700;min-width:4.5ch;text-align:center;font-variant-numeric:tabular-nums}.mz-list{list-style:none;padding:0;margin:.5rem 0}.mz-list li{display:flex;justify-content:space-between;gap:.6rem;align-items:center;padding:.55rem .2rem;border-bottom:1px solid rgba(128,128,128,.25)}.mz-list .k{font-weight:700;font-size:1.15rem;font-variant-numeric:tabular-nums}.mz-form{display:grid;gap:.5rem}.mz-form label{display:grid;gap:.2rem}.mz-ex{font-size:.8rem;opacity:.7}.chip.on{outline:2px solid currentColor}</style>",
+  "foot": "<script src=\"/assets/bait-mazgan.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>שלט למזגן מהטלפון</h1>
+  <p class="sub">האם הטלפון שלכם יכול להדליק את המזגן, ומה עושים כשלא. ואיך מוצאים את הקוד בשלט אוניברסלי בכמה דקות, בלי לחפש שעות.</p>
+  <div class="actions">
+    <a class="btn btn-gold" href="#telefon">איזה טלפון יש לי?</a>
+    <a class="btn btn-line" href="#kod">למצוא קוד לשלט</a>
+  </div>
+</header>
+
+<div class="tool bt">
+  <section id="telefon">
+    <h2>1. הטלפון שלי יכול להיות שלט? <small>לוחצים על סוג הטלפון</small></h2>
+    <div class="chips" id="mz-phones">
+      <button type="button" class="chip" data-ph="samsung">סמסונג גלקסי</button>
+      <button type="button" class="chip" data-ph="iphone">אייפון</button>
+      <button type="button" class="chip" data-ph="xiaomi">שיאומי / רדמי / פוקו</button>
+      <button type="button" class="chip" data-ph="huawei">וואווי / אונור</button>
+      <button type="button" class="chip" data-ph="pixel">גוגל פיקסל</button>
+      <button type="button" class="chip" data-ph="other">טלפון אחר</button>
+    </div>
+    <div class="box mz-res" id="mz-phone-res" aria-live="polite"></div>
+
+    <h3 style="margin-top:1.2rem">כשאין בטלפון משדר: שלוש דרכים שעובדות</h3>
+    <div class="mz-ways">
+      <div class="box"><b>🔌 מתאם קטן לחור הטעינה (הכי זול)</b>מתאם אינפרא-אדום שמתחבר ל-USB-C. מתקינים אפליקציית שלט (למשל ZaZa Remote או irplus), בוחרים את מותג המזגן, וזהו. כדאי לבדוק לפני הקנייה שהמתאם מתאים לחיבור של הטלפון.</div>
+      <div class="box"><b>📶 רכזת אינפרא-אדום בוויפיי</b>קופסה קטנה שעומדת בחדר ומקבלת פקודות מהטלפון דרך הוויפיי, גם כשאתם לא בבית. עובדת עם אנדרואיד ועם אייפון, דרך האפליקציה של היצרן שלה.</div>
+      <div class="box"><b>🏠 מזגן חכם</b>אם למזגן יש ויפיי מובנה (בדרך כלל כתוב על המזגן או בחוברת), לא צריך שום דבר נוסף: מוסיפים אותו באפליקציה של היצרן, ובסמסונג גם ב-SmartThings.</div>
+    </div>
+  </section>
+
+  <section id="kod" style="margin-top:1.8rem">
+    <h2>2. למצוא את הקוד בשלט אוניברסלי</h2>
+    <p class="muted">שלט אוניברסלי למזגן יודע לדבר בהרבה "שפות", אחת לכל מותג. הקוד הוא מספר השפה. במקום לחפש בחוברת, נותנים לשלט לנסות לבד.</p>
+    <label>מה המותג של המזגן? <select id="mz-brand">
+      <option>תדיראן</option><option>אלקטרה</option><option>טורנדו</option><option>מיצובישי</option><option>LG</option><option>סמסונג</option><option>גרי (Gree)</option><option>האייר (Haier)</option><option>מידאה (Midea)</option><option>פוג'יטסו</option><option>דייקין</option><option>שארפ</option><option>טושיבה</option><option>מותג אחר</option>
+    </select></label>
+
+    <h3 style="margin-top:1rem">דרך מהירה: חיפוש אוטומטי</h3>
+    <ol class="mz-steps">
+      <li>שמים סוללות חדשות. סוללות חלשות הן הסיבה הכי נפוצה שזה "לא עובד".</li>
+      <li>עומדים מטר או שניים מהמזגן, ומכוונים אליו את השלט ישר.</li>
+      <li>בחוברת של השלט מחפשים <b>חיפוש אוטומטי</b> (באנגלית <bdi dir="ltr">AUTO SEARCH</bdi>). ברוב השלטים זו לחיצה ארוכה על כפתור ההגדרה (שנקרא <bdi>SET</bdi>, <bdi>SEARCH</bdi> או <bdi>OK</bdi>) עד שהמספר בצג מהבהב.</li>
+      <li>השלט שולח קוד אחרי קוד. ברגע שהמזגן מצפצף או נדלק, לוחצים מיד על הכפתור שהחוברת אומרת כדי לעצור. זה הקוד.</li>
+      <li>בודקים שהכול עובד: חימום וקירור, טמפרטורה למעלה ולמטה, מאוורר. אם רק ההדלקה עובדת, ממשיכים לקוד הבא.</li>
+    </ol>
+
+    <h3 style="margin-top:1rem">דרך ידנית: קוד אחרי קוד, והמונה זוכר איפה עצרתם</h3>
+    <p class="muted">כשאין חיפוש אוטומטי, מכניסים קוד, מנסים להדליק, ועוברים לבא. המונה כאן שומר את המקום, גם אם סגרתם את הדף באמצע.</p>
+    <div class="mz-count">
+      <button class="btn btn-line btn-sm" type="button" id="mz-minus" aria-label="קוד קודם">−</button>
+      <span class="mz-num" id="mz-num" aria-live="polite">001</span>
+      <button class="btn btn-gold btn-sm" type="button" id="mz-next">לא עבד, לקוד הבא</button>
+      <button class="btn btn-gold btn-sm" type="button" id="mz-found">✓ עבד! לשמור את הקוד</button>
+    </div>
+    <p class="muted" id="mz-tried"></p>
+    <button class="btn btn-line btn-sm" type="button" id="mz-reset">להתחיל מ-001</button>
+  </section>
+
+  <section id="shlatim" style="margin-top:1.8rem">
+    <h2>3. השלטים של הבית <small>כדי שבפעם הבאה לא תחפשו שוב</small></h2>
+    <form class="box mz-form" id="mz-form">
+      <label>איפה המזגן? <input id="mz-room" type="text" maxlength="30" placeholder="סלון, חדר ילדים"></label>
+      <label>מותג <input id="mz-fbrand" type="text" maxlength="30"></label>
+      <label>הקוד שעבד <input id="mz-code" type="text" inputmode="numeric" maxlength="8"></label>
+      <label>הערה <span>(לא חובה)</span> <input id="mz-note" type="text" maxlength="60" placeholder="השלט הלבן מהמגירה, צריך לכוון למטה"></label>
+      <div class="tools" style="justify-content:flex-start"><button class="btn btn-gold btn-sm" type="submit">לשמור</button></div>
+    </form>
+    <ul class="mz-list" id="mz-list"></ul>
+    <div class="tools">
+      <a class="btn btn-gold btn-sm" href="#" id="mz-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הקודים למשפחה</a>
+    </div>
+  </section>
+
+  <p class="disclaimer">הרשימה נשמרת רק בטלפון הזה, ולא נשלחת לשום מקום. השמות של אפליקציות ומוצרים הם דוגמאות, לא המלצה מסחרית.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="איך הופכים את הטלפון לשלט למזגן, ואיך מוצאים קוד לשלט אוניברסלי בכמה דקות. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>

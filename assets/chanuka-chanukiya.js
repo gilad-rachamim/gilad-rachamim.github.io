@@ -61,6 +61,7 @@
       '<div class="field"><label for="nw-x">מילה קצרה <span class="opt">(לא חובה)</span></label><textarea id="nw-x" rows="2" maxlength="200" placeholder="אבא אהב את חנוכה. נדליק יחד לזכרו."></textarea></div>' +
       '<div class="field"><label for="nw-cr">מי פותח <span class="opt">(לא חובה)</span></label><input id="nw-cr" maxlength="40" placeholder="משפחת כהן"></div>' +
       '<button class="btn btn-gold" type="submit">לפתוח את החנוכייה</button><p class="chk-err" id="nw-err" role="alert"></p></form>' +
+      '<p class="cn-note">רוצים רק להדליק נר? <a href="?h=kn7cgpdj">להדליק בחנוכייה של כלי קודש, הפתוחה לכולם</a>.</p>' +
       (mine.length ? '<h3 class="chk-h3">החנוכיות שפתחתי בטלפון הזה</h3><ul class="chk-mine">' + mine.map(function (x) { return '<li><a href="?h=' + esc(x[0]) + '">' + esc(x[1]) + '</a></li>'; }).join('') + '</ul>' : '');
     wirePurpose('nw');
     $('nw').onsubmit = function (e) {
@@ -80,6 +81,9 @@
   // ---------- חנוכייה פתוחה ----------
   var H = null, ADMIN = null;
   function show(id) {
+    // קישור ניהול (#a=...) – שומר את המפתח בטלפון הזה ומוחק אותו מהכתובת
+    var ha = /#a=([a-z0-9]{14})$/.exec(location.hash);
+    if (ha) { store.set('a-' + id, ha[1]); try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
     ADMIN = store.get('a-' + id);
     $('chk-app').innerHTML = '<p class="cn-sm">טוען את החנוכייה…</p>';
     api('/h/' + id).then(function (s) { H = s; draw(); }).catch(function (er) {
@@ -103,7 +107,7 @@
       '<div class="field"><label for="lt-x">ברכה קצרה <span class="opt">(לא חובה)</span></label><input id="lt-x" maxlength="100" placeholder="שיהיה אור גדול"></div>' +
       '<button class="btn btn-gold" type="submit">🕯️ להדליק נר</button><p class="chk-err" id="lt-err" role="alert"></p></form>' +
       '<h3 class="chk-h3">הנרות שהודלקו</h3><div class="chk-wall" id="chk-wall">' + wall() + '</div>' +
-      (ADMIN ? '<details class="cn-d chk-adm"><summary>ניהול (רק בטלפון הזה)</summary><p class="cn-sm">לחיצה על "להסתיר" ליד נר מורידה אותו מהרשימה. החנוכייה נמחקת לבד אחרי 90 יום.</p><button class="btn btn-line btn-sm" type="button" id="chk-del">למחוק את החנוכייה עכשיו</button></details>' : '') +
+      (ADMIN ? '<details class="cn-d chk-adm"><summary>ניהול (רק בטלפון הזה)</summary><p class="cn-sm">לחיצה על "להסתיר" ליד נר מורידה אותו מהרשימה. החנוכייה נמחקת לבד אחרי 90 יום.</p><p class="cn-sm">לנהל גם מטלפון אחר: <button type="button" class="chk-hide" id="chk-alink">להעתיק קישור ניהול</button> (לא לשתף אותו!)</p><button class="btn btn-line btn-sm" type="button" id="chk-del">למחוק את החנוכייה עכשיו</button></details>' : '') +
       '<p class="note"><a href="./">לפתוח חנוכייה חדשה</a></p>';
     wirePurpose('lt');
     $('chk-copy').onclick = function () {
@@ -126,6 +130,10 @@
       [].forEach.call(document.querySelectorAll('[data-hide]'), function (x) {
         x.onclick = function () { api('/h/' + H.id + '/admin', { a: ADMIN, op: 'hide', k: +x.getAttribute('data-hide') }).then(function (d) { H = d.s; draw(); }); };
       });
+      $('chk-alink').onclick = function () {
+        var u = location.origin + location.pathname + '?h=' + H.id + '#a=' + ADMIN, b = this;
+        (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(function () { b.textContent = 'הועתק ✓'; }).catch(function () { prompt('קישור ניהול:', u); });
+      };
       $('chk-del').onclick = function () {
         if (!confirm('למחוק את החנוכייה וכל הנרות? אי אפשר לשחזר.')) return;
         api('/h/' + H.id + '/admin', { a: ADMIN, op: 'delete' }).then(function () { location.href = './'; });

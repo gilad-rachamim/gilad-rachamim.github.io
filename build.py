@@ -81,7 +81,7 @@ SITES = {
         "desc": "כלים פשוטים ללמידה: כרטיסיות חזרה, תוכנית למבחן, טיימר, ולימוד יומי לסיום התנ״ך והמשנה. בחינם.",
         "css": ["/assets/limudim.css"], "js": ["/assets/limudim.js"],
         "nav": [("kartisiot", "/limudim/kartisiot/", "כרטיסיות"), ("mivchan", "/limudim/mivchan/", "למבחן"),
-                ("timer", "/limudim/timer/", "טיימר"), ("yomi", "/limudim/yomi/", "לימוד יומי"), ("olami", "/limudim/olami/", "הדף היומי"), ("ilui", "/limudim/ilui/", "לעילוי נשמה"), ("kvutza", "/limudim/kvutza/", "בקבוצה"), ("matematika", "/limudim/matematika/", "מתמטיקה"),
+                ("timer", "/limudim/timer/", "טיימר"), ("yomi", "/limudim/yomi/", "לימוד יומי"), ("olami", "/limudim/olami/", "הדף היומי"), ("ilui", "/limudim/ilui/", "לעילוי נשמה"), ("kvutza", "/limudim/kvutza/", "בקבוצה"), ("matematika", "/limudim/matematika/", "מתמטיקה"), ("kahoot", "/limudim/kahoot/", "חידון Kahoot"),
                 ("kelim", "/kelim/", "כל הכלים")],
     },
 }
