@@ -130,7 +130,7 @@ function cleanTitle(s) {
   if (s.length > 60) s = s.slice(0, 60);
   if (/https?:|www\.|\.(com|co|il|net|org|ly|me)\b|@|t\.me/i.test(s)) return null;
   if (/\d[\d\s-]{6,}\d/.test(s)) return null; // מספר טלפון
-  if (!/^[֐-׿A-Za-z0-9\s.,?!:;()'"״׳\-+=×÷^√π°²]*$/.test(s)) return null;
+  if (!/^[֐-׿A-Za-z0-9\s.,?!:;()'"״׳\-+=×÷^√π°²%/]*$/.test(s)) return null;
   const low = ' ' + s.toLowerCase().replace(/[.,?!:;()'"״׳-]/g, ' ') + ' ';
   if (BAD.some(w => low.includes(' ' + w + ' ') || (w.length > 3 && low.includes(w)))) return null;
   return s;
