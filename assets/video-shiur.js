@@ -4,7 +4,8 @@
 //  2. כתוביות שזזות: תמלול בענן (Worker gilad-hub /tamlul, words:true → זמן לכל מילה), עריכה, צריבה בקנבס ו-SRT.
 //  3. משיעור לשורטים: בוחרים משפטים מהתמלול, וכל קטע יוצא 9:16 עם כותרת וכתוביות.
 // המנוע: <video> → קנבס → captureStream + קול דרך WebAudio → MediaRecorder (MP4 כשאפשר). בזמן אמת.
-// requestAnimationFrame נעצר בחלון מוסתר, ולכן יש גם טיימר גיבוי. המקליט מקבל תמונות רק אחרי רגע: מחכים לחלק הראשון שלו.
+// requestAnimationFrame נעצר בחלון מוסתר, ולכן יש גם טיימר גיבוי. מתחילים לנגן כשהמקליט התחיל (אירוע start), ולא מחכים לחלק הראשון שלו – אחרת כל חלק נפתח בשנייה קפואה.
+// עם תמלול, חלקי הסטטוס נחתכים בסוף משפט. התמלול נשמר במכשיר (IndexedDB) לפי שם, גודל ותאריך של הקובץ.
 (function () {
   'use strict';
   var root = document.getElementById('vshiur');
@@ -50,7 +51,7 @@
   });
   function load(f) {
     file = f; fileName = (f.name || 'סרטון').replace(/\.[^.]+$/, '').slice(0, 40);
-    segs = null; groups = null; out.innerHTML = '';
+    segs = null; groups = null; out.innerHTML = ''; tamBtns();
     $('kt-edit').hidden = true; $('sh-sents').hidden = true; clips = []; drawClips();
     vid.src = URL.createObjectURL(f);
     say('טוען את הסרטון…', true);
@@ -69,6 +70,8 @@
     Array.prototype.forEach.call(root.querySelectorAll('[data-tamlul]'), function (b) { b.disabled = false; });
     plan(); say('');
     seek(Math.min(1, dur / 2)).then(still);
+    var f = file;
+    recall(f).then(function (c) { if (c && c.length && file === f && !segs && !busy) gotSegs(c, true); });
     used('load', { secs: Math.round(dur) });
   }
   function seek(t) {
@@ -198,43 +201,54 @@
   // מנגן את [a,b] לקנבס. rec=true מקליט ומחזיר {blob,ext}; אחרת רק תצוגה עם קול
   var stopFlag = false;
   function play(a, b, rec, onP) {
-    return seek(a).then(function () {
+    // בלי שנייה קפואה בתחילת כל חלק: המקליט של כרום צריך כשנייה להתעורר, והנגן צריך רגע אחרי קפיצה.
+    // לכן מדליקים את המקליט ומיד משהים אותו (הוא מתעורר בלי להקליט), מנגנים משנייה וחצי לפני a (הנגן נתקע לרגע כשנייה אחרי קפיצה),
+    // וממשיכים את ההקלטה רק כשהתמונה כבר זזה והגיעה ל-a.
+    var pre = rec ? Math.max(0, a - 1.5) : a;
+    return seek(pre).then(function () {
       return new Promise(function (res) {
         var m = rec ? mime() : '';
         var hasA = audio();
         if (spk) spk.gain.value = rec ? 0 : 1;
-        var stream = null, mr = null, parts = [], gotData = !rec, began = performance.now();
+        var stream = null, mr = null, parts = [], on = !rec, t0 = vid.currentTime;
         if (rec) {
           stream = cv.captureStream(30);
           if (hasA && dest) dest.stream.getAudioTracks().forEach(function (tr) { stream.addTrack(tr); });
           mr = new MediaRecorder(stream, m ? { mimeType: m, videoBitsPerSecond: 3000000 } : { videoBitsPerSecond: 3000000 });
-          mr.ondataavailable = function (e) { gotData = true; if (e.data && e.data.size) parts.push(e.data); };
+          mr.ondataavailable = function (e) { if (e.data && e.data.size) parts.push(e.data); };
           mr.onstop = function () {
             var type = (mr.mimeType || m || 'video/webm').split(';')[0];
             stream.getVideoTracks().forEach(function (tr) { tr.stop(); });
             res({ blob: new Blob(parts, { type: type }), ext: type.indexOf('mp4') > -1 ? 'mp4' : 'webm' });
           };
-          mr.start(250);
+          var ready = false; mr.onstart = function () { ready = true; };
+          paint(pre); mr.start(250); try { mr.pause(); } catch (e) {}
         }
-        paint(a);
+        paint(pre);
         var ended = false;
         function finish() {
           if (ended) return; ended = true; vid.pause();
           if (spk) spk.gain.value = 0;
-          if (rec) setTimeout(function () { mr.stop(); }, 200); else res(null);
+          if (!rec) return res(null);
+          if (!on) { on = true; try { mr.resume(); } catch (e) {} }
+          setTimeout(function () { mr.stop(); }, 200);
         }
         function loop() {
           if (ended) return;
           var t = vid.currentTime;
+          // המקליט נדלק כשהגענו ל-a והתמונה באמת זזה (בתחילת הסרטון, אין ממה להתחיל מוקדם: מחכים רק שהתמונה תזוז)
+          if (!on && t >= a - 0.02 && t > t0 + 0.02) { on = true; paint(t); try { mr.resume(); } catch (e) {} }
           paint(t);
-          if (onP) onP(Math.min(1, (t - a) / Math.max(0.1, b - a)));
-          if (stopFlag || t >= b || vid.ended) return finish();
+          if (onP && on) onP(Math.min(1, (t - a) / Math.max(0.1, b - a)));
+          if (stopFlag || (on && t >= b) || vid.ended) return finish();
           var next = function () { if (!fired) { fired = true; loop(); } }, fired = false;
-          requestAnimationFrame(next); setTimeout(next, 40);
+          requestAnimationFrame(next); setTimeout(next, 20);
         }
+        var w0 = performance.now();
         (function wait() {
           if (stopFlag) return finish();
-          if (!gotData || performance.now() - began < 300) { paint(a); return setTimeout(wait, 30); }
+          // מחכים שהמקליט יתעורר (אירוע start), לכל היותר 1.5 שניות
+          if (rec && !ready && performance.now() - w0 < 1500) return setTimeout(wait, 20);
           vid.play().then(loop).catch(function () { vid.muted = true; vid.play().then(loop).catch(finish); });
         })();
       });
@@ -269,13 +283,49 @@
 
   // ---------- 1. חלקים לסטטוס ----------
   function parts() {
-    var L = +$('st-len').value, n = Math.max(1, Math.ceil((dur - 0.5) / L)), list = [];
+    var L = +$('st-len').value;
+    if (segs && segs.length) return sentParts(L);
+    var n = Math.max(1, Math.ceil((dur - 0.5) / L)), list = [];
     for (var i = 0; i < n; i++) list.push([i * L, Math.min(dur, (i + 1) * L)]);
     // חלק אחרון קצרצר (פחות מ-5 שניות) מצטרף לקודם
     if (list.length > 1 && list[n - 1][1] - list[n - 1][0] < 5) { list[n - 2][1] = list[n - 1][1]; list.pop(); }
     return list;
   }
-  function plan() { if (!file) return; var p = parts(); $('st-plan').textContent = 'יוצאים ' + p.length + ' חלקים של עד ' + $('st-len').value + ' שניות. זה ייקח בערך ' + mmss(dur) + ' דקות.'; if (tab === 'status' && !busy) still(); }
+  // עם תמלול: כל חלק נגמר בהפסקה שבין משפטים, תמיד לפני הגבול (30/60) ואף פעם לא אחריו.
+  // סדר עדיפויות: סוף משפט (. ? !), אחר כך כל סוף קטע בתמלול, אחר כך רווח בין מילים, ורק בלית ברירה הגבול עצמו.
+  function sentParts(L) {
+    var lim = L - 0.4, cuts = [[], [], []]; // 0.4 שנייה מרווח ביטחון, כי ההקלטה מוסיפה עוד רגע בסוף
+    segs.forEach(function (s, i) {
+      var nx = segs[i + 1]; if (!nx) return;
+      var gap = nx.start - s.end, t = gap > 0 ? s.end + Math.min(0.35, gap / 2) : s.end;
+      cuts[/[.?!:]["'״”]?\s*$/.test(s.text) ? 0 : 1].push(t);
+      var ws = s.words || [];
+      for (var k = 0; k < ws.length - 1; k++) { var g = ws[k + 1].s - ws[k].e; if (g >= 0.2) cuts[2].push(ws[k].e + Math.min(0.15, g / 2)); }
+    });
+    var list = [], a = 0;
+    while (dur - a > lim) {
+      var lo = a + L * 0.5, hi = a + lim, b = 0;
+      for (var tier = 0; tier < 3 && !b; tier++) cuts[tier].forEach(function (t) { if (t > lo && t <= hi && t > b) b = t; });
+      if (!b) b = a + lim;
+      list.push([a, b]); a = b;
+    }
+    list.push([a, dur]);
+    // חלק אחרון קצרצר: מצטרף לקודם אם זה לא עובר את הגבול, ואם אין בו דיבור – נשמט (זה רק שקט בסוף)
+    var n = list.length;
+    if (n > 1 && dur - a < 5) {
+      if (dur - list[n - 2][0] <= lim) { list[n - 2][1] = dur; list.pop(); }
+      else if (!segs.some(function (s) { return s.end > a + 0.1; })) list.pop();
+    }
+    return list;
+  }
+  function plan() {
+    if (!file) return;
+    var p = parts(), L = $('st-len').value, sent = !!(segs && segs.length);
+    $('st-plan').textContent = p.length + ' חלקים' + (sent ? ', כל חלק נגמר בסוף משפט' : ' של עד ' + L + ' שניות') + ': ' +
+      p.slice(0, 8).map(function (x) { return mmss(x[0]) + '–' + mmss(x[1]); }).join(', ') + (p.length > 8 ? ', …' : '') +
+      '. זה ייקח בערך ' + mmss(p[p.length - 1][1] - p[0][0]) + ' דקות.';
+    if (tab === 'status' && !busy) still();
+  }
   $('st-len').addEventListener('change', plan); $('st-pos').addEventListener('change', plan);
   $('st-go').addEventListener('click', function () {
     if (busy || !file || !canRec()) return;
@@ -372,6 +422,51 @@
       g.words.forEach(function (w, k) { w.e2 = k < g.words.length - 1 ? g.words[k + 1].s : g.e; });
     });
   }
+  // תמלול הגיע (מהענן או מהשמירה במכשיר): מעדכנים את כל הלשוניות
+  function gotSegs(all, cached) {
+    segs = all; regroup();
+    var exact = segs.some(function (s) { return s.words && s.words.length; });
+    say(cached ? '✅ התמלול של הסרטון הזה נשמר אצלכם מהפעם הקודמת, ולא ירד מהדקות. רוצים תמלול חדש? "לתמלל מחדש".'
+      : '✅ התמלול מוכן' + (exact ? '' : ' (הזמן של כל מילה משוער לפי המשפט)') + '. עוברים על הטקסט ומתקנים מה שצריך.');
+    showCaps(); showSents(); tamBtns(); plan(); still();
+    if (!cached) { keep(file, segs); used('tamlul_done', { secs: Math.round(dur), segs: segs.length, exact: exact ? 1 : 0 }); }
+    else used('tamlul_cached', { segs: segs.length });
+  }
+  function tamBtns() {
+    Array.prototype.forEach.call(root.querySelectorAll('[data-tamlul]'), function (b) {
+      if (b.dataset.label == null) b.dataset.label = b.textContent;
+      b.textContent = segs ? 'לתמלל מחדש' : b.dataset.label;
+    });
+  }
+  // ---------- שמירת התמלול במכשיר (IndexedDB), לפי טביעה של הקובץ ----------
+  function fp(f) { return [f.name, f.size, f.lastModified].join('|'); }
+  function idb() {
+    return new Promise(function (res, rej) {
+      try {
+        var r = indexedDB.open('kelim-video-shiur', 1);
+        r.onupgradeneeded = function () { r.result.createObjectStore('tamlul'); };
+        r.onsuccess = function () { res(r.result); }; r.onerror = function () { rej(r.error); };
+      } catch (e) { rej(e); }
+    });
+  }
+  function keep(f, s) {
+    if (!f) return Promise.resolve();
+    return idb().then(function (db) {
+      return new Promise(function (res) {
+        try { var tx = db.transaction('tamlul', 'readwrite'); tx.objectStore('tamlul').put({ segs: s, at: Date.now() }, fp(f)); tx.oncomplete = tx.onerror = tx.onabort = function () { db.close(); res(); }; }
+        catch (e) { db.close(); res(); }
+      });
+    }).catch(function () {});
+  }
+  function recall(f) {
+    return idb().then(function (db) {
+      return new Promise(function (res) {
+        try { var g = db.transaction('tamlul').objectStore('tamlul').get(fp(f)); g.onsuccess = function () { db.close(); res(g.result && g.result.segs || null); }; g.onerror = function () { db.close(); res(null); }; }
+        catch (e) { db.close(); res(null); }
+      });
+    }).catch(function () { return null; });
+  }
+
   Array.prototype.forEach.call(root.querySelectorAll('[data-tamlul]'), function (btn) {
     btn.addEventListener('click', function () {
       if (busy || !file) return;
@@ -390,14 +485,10 @@
         var ws = []; for (var i = 0; i < Math.min(PAR, n); i++) ws.push(worker());
         return Promise.all(ws).then(function () { return [].concat.apply([], res); });
       }).then(function (all) {
-        segs = all.filter(function (s) { return s.text; });
-        if (!segs.length) throw new Error('empty');
+        all = all.filter(function (s) { return s.text; });
+        if (!all.length) throw new Error('empty');
         var o2 = q(); o2.used += dur; qsave(o2); quota();
-        var exact = segs.some(function (s) { return s.words && s.words.length; });
-        regroup(); lock(false);
-        say('✅ התמלול מוכן' + (exact ? '' : ' (הזמן של כל מילה משוער לפי המשפט)') + '. עוברים על הטקסט ומתקנים מה שצריך.');
-        showCaps(); showSents(); still();
-        used('tamlul_done', { secs: Math.round(dur), segs: segs.length, exact: exact ? 1 : 0 });
+        lock(false); gotSegs(all, false);
       }).catch(function (e) {
         lock(false);
         if (e && e.message === 'limit') say('⚠️ הגעתם למספר התמלולים המקסימלי להיום. נסו שוב מחר.');
@@ -543,5 +634,5 @@
   });
 
   // לבדיקות: טעינת קובץ מכתובת ותמלול מוכן
-  window.__vs = { load: function (blob, name) { return load(new File([blob], name || 'test.mp4', { type: blob.type || 'video/mp4' })); }, setSegs: function (s) { segs = s; regroup(); showCaps(); showSents(); still(); }, get groups() { return groups; }, get segs() { return segs; }, clips: function () { return clips; }, setTab: setTab };
+  window.__vs = { load: function (blob, name, lm) { return load(new File([blob], name || 'test.mp4', { type: blob.type || 'video/mp4', lastModified: lm || Date.now() })); }, setSegs: function (s) { gotSegs(s, false); }, parts: function () { return parts(); }, rec: function (a, b) { return play(a, b, true).then(function (r) { window.__vsOut = (window.__vsOut || []).concat([{ name: 'rec.' + r.ext, blob: r.blob }]); return r.blob.size; }); }, get groups() { return groups; }, get segs() { return segs; }, clips: function () { return clips; }, setTab: setTab };
 })();
