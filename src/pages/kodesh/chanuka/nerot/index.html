@@ -1,0 +1,62 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "chanuka_nerot",
+  "title": "לוח שמונה נרות – זמני הדלקת נר חנוכה לפי עיר, ברכות ותזכורת | כלי קודש",
+  "description": "זמני הדלקת נרות חנוכה לפי העיר שלכם, כולל ערב שבת ומוצאי שבת, הברכות, הנרות הללו, מזמור שיר חנוכת הבית ומעוז צור, ותזכורת לכל לילה ביומן של הטלפון. בחינם.",
+  "og_title": "לוח שמונה נרות – זמני הדלקה, ברכות ותזכורת",
+  "priority": "0.8",
+  "crumbs": [["חנוכה למשפחה", "/kodesh/chanuka/"], ["לוח שמונה נרות", null]],
+  "head": "<style>.cn-box{padding:1.2rem 1rem;border:1px solid var(--gold-soft);border-radius:16px;background:rgba(212,176,98,.07);text-align:center}.cn-box h2{margin:.1rem 0 .4rem;font-family:var(--serif);color:var(--cream)}.cn-k{color:var(--gold);font-weight:700;margin:0}.cn-time{font-family:var(--serif);font-size:2.4rem;color:var(--cream);margin:.3rem 0 0;direction:ltr}.cn-sm{color:var(--body);margin:.3rem 0 0}.cn-menorah{display:flex;justify-content:center;align-items:flex-end;gap:.45rem;height:4.2rem;margin:.6rem 0}.cn-menorah .c{position:relative;width:.62rem;height:2.4rem;border-radius:3px;background:rgba(255,255,255,.18)}.cn-menorah .c.sh{height:3.3rem}.cn-menorah .c.lit{background:#f4ecd8}.cn-menorah .c.lit::before{content:'';position:absolute;bottom:100%;left:50%;width:.7rem;height:1.05rem;margin-left:-.35rem;margin-bottom:.12rem;border-radius:50% 50% 45% 45%;background:radial-gradient(circle at 50% 70%,#fff6c8,#ffb52e 55%,#e2620f);box-shadow:0 0 .6rem #ffb52e}.cn-loc{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}.cn-loc select{flex:1;min-width:11rem}.cn-st{color:var(--muted);font-size:.92rem}.cn-tbl{width:100%;border-collapse:collapse;margin-top:.6rem;font-size:1.02rem}.cn-tbl td{padding:.55rem .3rem;border-bottom:1px solid var(--line);color:var(--body);vertical-align:top}.cn-tbl td b{color:var(--cream)}.cn-tbl small{display:block;color:var(--muted);font-size:.85rem}.cn-tbl td.t{text-align:left;font-family:var(--serif);font-size:1.15rem;color:var(--cream);direction:ltr;white-space:nowrap}.cn-tbl tr.now td{color:var(--gold)}.cn-tbl tr.now td.t,.cn-tbl tr.now td b{color:var(--gold-hi,#f1d48a)}.cn-txt p{font-family:var(--serif);font-size:1.22rem;line-height:1.9;color:var(--cream);margin:.5rem 0}.cn-txt small{font-family:var(--sans,inherit);font-size:.9rem;color:var(--muted)}.cn-txt b{color:var(--gold)}.cn-note{padding:.7rem .9rem;border-inline-start:3px solid var(--gold);background:rgba(212,176,98,.07);border-radius:8px;color:var(--body);margin:.6rem 0}details.cn-d{border:1px solid var(--line);border-radius:14px;padding:.4rem 1rem;margin-top:.7rem}details.cn-d summary{cursor:pointer;font-weight:700;color:var(--cream);padding:.4rem 0}@media print{.topbar,.site-foot,.crumbs,.no-print,.k-hero .sub{display:none!important}body{background:#fff!important;color:#000!important}.cn-tbl td,.cn-tbl td b,.cn-tbl td.t,.cn-txt p,.cn-box h2,.cn-time{color:#000!important}details.cn-d{border:0}details.cn-d>*{display:block}}</style>",
+  "foot": "<script src=\"/assets/vendor/hebcal-bundle/hebcal-core-6.14.7.min.js\" data-hebcal defer></script><script src=\"/assets/chanuka-nusach.js\" defer></script><script src=\"/assets/chanuka-nerot.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <span class="bsd">בס"ד</span>
+  <h1>לוח שמונה נרות</h1>
+  <p class="sub">זמני ההדלקה לפי העיר שלכם, הברכות והשירים, ותזכורת לכל לילה ביומן של הטלפון.</p>
+</header>
+
+<section class="k-sec" aria-label="הלילה">
+  <div class="cn-box" id="cn-today"><p class="cn-sm">טוען את הזמנים…</p></div>
+</section>
+
+<section class="k-sec" aria-labelledby="cn-luach-h">
+  <h2 id="cn-luach-h">זמני ההדלקה ב<span id="cn-where">ירושלים</span></h2>
+  <div class="cn-loc field no-print">
+    <select id="cn-place" aria-label="העיר"></select>
+    <button class="btn btn-line btn-sm" type="button" id="cn-gps">לפי המיקום שלי</button>
+  </div>
+  <p class="cn-st no-print" id="cn-st"></p>
+  <table class="cn-tbl"><tbody id="cn-rows"></tbody></table>
+  <p class="cn-st">צאת הכוכבים כאן: שלושה כוכבים בינוניים (7.08°). בערב שבת – זמן כניסת השבת של העיר. זמנים מדויקים לעיר שלכם – לפי הלוח של הקהילה.</p>
+  <div class="actions no-print">
+    <button class="btn btn-gold" type="button" id="cn-ics">תזכורת לכל לילה ביומן</button>
+    <a class="btn btn-line" href="#" id="cn-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הזמנים</a>
+    <button class="btn btn-line" type="button" id="cn-print">להדפיס</button>
+  </div>
+  <p class="cn-st no-print" id="cn-ics-note">התזכורת מגיעה בזמן ההדלקה. ביום שישי היא מגיעה חצי שעה לפני כניסת השבת.</p>
+</section>
+
+<section class="k-sec" aria-labelledby="cn-brachot-h">
+  <h2 id="cn-brachot-h">הברכות</h2>
+  <div class="cn-txt" id="cn-brachot"></div>
+  <p class="cn-note">במנהג מרוקו נפוץ יותר לברך "לְהַדְלִיק נֵר <b>שֶׁל</b> חֲנֻכָּה". מי שיש לו מנהג מאבותיו, ממשיך בו. אחרי הברכות עונים "אמן" ארוך בניגון.</p>
+  <details class="cn-d" open>
+    <summary>הנרות הללו</summary>
+    <div class="cn-txt" id="cn-halalu"></div>
+  </details>
+  <details class="cn-d">
+    <summary>מזמור שיר חנוכת הבית</summary>
+    <div class="cn-txt" id="cn-mizmor"></div>
+  </details>
+  <details class="cn-d">
+    <summary>מעוז צור</summary>
+    <div class="cn-txt" id="cn-maoz"></div>
+  </details>
+  <p class="cn-st" id="cn-src"></p>
+</section>
+
+<section class="k-sec no-print" aria-labelledby="cn-more-h">
+  <h2 id="cn-more-h">עוד לחנוכה</h2>
+  <div class="actions"><a class="btn btn-line" href="/kodesh/chanuka/">לחבילת החנוכה למשפחה</a><a class="btn btn-line" href="/kodesh/chanuka/#maroko">מנהגי מרוקו בחנוכה</a></div>
+</section>
