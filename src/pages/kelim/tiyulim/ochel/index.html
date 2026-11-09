@@ -1,0 +1,55 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tiyulim_ochel",
+  "title": "אוכל ונשנושים לטיול – תפריט לכל יום ורשימת קניות עם כמויות | הכלים של גילעד רחמים",
+  "description": "כלי חינם לסידור האוכל בטיול: כמה מבוגרים וילדים, כמה ימים, ואיך מבשלים (בלי בישול, על האש, גזייה בשטח או צימר עם מטבח). מקבלים תפריט לכל יום, ארוחות ונשנושים, ורשימת קניות עם כמויות, מים ופחמים. מסמנים מה נקנה, מדפיסים ושולחים בווטסאפ. נשמר בטלפון.",
+  "og_title": "אוכל ונשנושים לטיול – מה אוכלים וכמה קונים",
+  "priority": "0.7",
+  "crumbs": [["כלים לטיולים ולנסיעות", "/kelim/tiyulim/"], ["אוכל ונשנושים", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/tiyulim.css\">",
+  "foot": "<script src=\"/assets/tiyulim-ochel.js\" defer></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>אוכל ונשנושים לטיול</h1>
+  <p class="sub">כמה אנשים, כמה ימים, ואיך מבשלים. מקבלים תפריט לכל יום, עם ארוחות אמיתיות ונשנושים לדרך, ורשימת קניות עם כמויות. לא חוזרים עם חצי סופר, ולא נשארים רעבים בשטח.</p>
+</header>
+<div class="tool no-print">
+  <div class="ty-note" id="oc-demo" hidden><span>זו דוגמה: 4 מבוגרים ו-3 ילדים, יומיים על האש. משנים לטיול שלכם, או מנקים ומתחילים.</span><button class="btn btn-line btn-sm" type="button" id="oc-demo-x">לנקות ולהתחיל</button></div>
+  <form class="k-form" id="oc-form" novalidate>
+    <div class="field"><label for="oc-title">איזה טיול? <span class="opt">(לא חובה)</span></label><input id="oc-title" type="text" maxlength="60" placeholder="סוף שבוע בצפון"></div>
+    <div class="ty-two">
+      <div class="field"><label for="oc-adults">מבוגרים</label><input id="oc-adults" type="number" inputmode="numeric" min="1" max="60"></div>
+      <div class="field"><label for="oc-kids">ילדים</label><input id="oc-kids" type="number" inputmode="numeric" min="0" max="60"></div>
+    </div>
+    <div class="field"><label for="oc-days">כמה ימים?</label><input id="oc-days" type="number" inputmode="numeric" min="1" max="14"></div>
+    <div class="field"><label>איך מבשלים?</label>
+      <div class="ty-chips" id="oc-style"><button type="button" data-k="bli">בלי בישול</button><button type="button" data-k="esh">על האש</button><button type="button" data-k="gaz">גזייה בשטח</button><button type="button" data-k="tzimer">צימר עם מטבח</button></div></div>
+    <div class="field"><label>אילו ארוחות? <span class="opt">(לוחצים להוסיף או להוריד)</span></label>
+      <div class="ty-chips" id="oc-meals"><button type="button" data-k="boker">בוקר</button><button type="button" data-k="tzohorayim">צהריים</button><button type="button" data-k="erev">ערב</button><button type="button" data-k="nishnush">נשנושים</button></div></div>
+  </form>
+  <section class="ty-sec"><h2>התפריט</h2>
+    <p class="ty-hint">כל יום מקבל ארוחה אחרת, כדי שלא יאכלו אותו דבר פעמיים.</p>
+    <div id="oc-menu"></div></section>
+  <section class="ty-sec"><h2>רשימת קניות</h2>
+    <p class="ty-hint">הכמויות הן הערכה לכל הטיול (ילד נספר כמעט כחצי מבוגר). מה שלא צריך מורידים ב-×, ומה שחסר מוסיפים למטה.</p>
+    <div class="ty-meter"><div class="track"><div class="fill" id="oc-bar"></div></div><p id="oc-txt">0 מתוך 0</p></div>
+    <div id="oc-list"></div>
+    <div id="oc-offbox" hidden><p class="ty-hint" style="margin-top:1rem">הורדתם מהרשימה (לוחצים כדי להחזיר):</p><div class="ty-chips" id="oc-off"></div></div>
+    <form class="ty-add field" id="oc-add"><input id="oc-new" type="text" maxlength="60" placeholder="להוסיף משהו לרשימה…" aria-label="פריט חדש"><button class="btn btn-gold btn-sm" type="submit">להוסיף</button></form>
+  </section>
+  <div class="ty-tools">
+    <a class="btn btn-gold btn-sm" href="#" id="oc-wa-shop" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח רשימת קניות</a>
+    <a class="btn btn-line btn-sm" href="#" id="oc-wa-menu" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את התפריט</a>
+    <button class="btn btn-line btn-sm" type="button" id="oc-reset">לנקות סימונים</button>
+  </div>
+  <div class="field" style="margin-top:1.4rem"><label>סגנון הדף להדפסה</label>
+    <div class="ty-chips" id="oc-theme"><button type="button" data-t="lavan">לבן (חוסך דיו)</button><button type="button" data-t="zayit">ירוק זית</button><button type="button" data-t="klaf">קלף</button></div></div>
+  <div class="ty-tools"><button class="btn btn-gold btn-sm" type="button" id="oc-print">להדפיס תפריט ורשימה</button></div>
+</div>
+<div id="oc-card" class="ty-card t-lavan"></div>
+<div class="tool no-print">
+  <p class="disclaimer">הכמויות הן הערכה כללית. מתאימים לפי המשפחה ולפי מזג האוויר, ובחום לוקחים יותר מים. בשרי וחלבי בארוחות נפרדות, כמו בתפריט. הכול נשמר רק בטלפון הזה.</p>
+  <p class="k-next no-print">עוד לטיול: 🎉 <a class="gold" href="/bait/mevi/">מי מביא מה – לחלק את הקניות</a> · 💸 <a class="gold" href="/kelim/tiyulim/hotzaot/">חלוקת הוצאות</a> · 🎒 <a class="gold" href="/kelim/tiyulim/tziyud/">רשימת ציוד</a></p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="אוכל ונשנושים לטיול: תפריט לכל יום ורשימת קניות עם כמויות, לפי כמה אנשים ואיך מבשלים. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
