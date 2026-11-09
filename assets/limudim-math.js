@@ -4,7 +4,9 @@
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
-  if (!$('mx-app')) return;
+  // בדף מסלול התרגול (/limudim/maslul/) הקובץ נטען רק בשביל הנושאים והמחוללים
+  var DATA_ONLY = !$('mx-app');
+  if (DATA_ONLY && !$('ms-app')) return;
   function load(k, def) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch (e) { return def; } }
   function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   function used(extra) { if (window.toolUsed) window.toolUsed('matematika', extra); }
@@ -1540,6 +1542,8 @@
   var QN = [['35182', '3 יח״ל · שאלון 35182', 'הסתברות, גאומטריה אנליטית וטריגונומטריה'], ['35381', '3 יח״ל · שאלון 35381', 'סטטיסטיקה, התפלגות נורמלית, הסתברות, גדילה ופרבולה'], ['35382', '3 יח״ל · שאלון 35382', 'חשבון דיפרנציאלי ואינטגרלי, ומעגל'],
     ['35481', '4 יח״ל · שאלון 35481', 'הסתברות, גאומטריה אנליטית ומעגל, טריגונומטריה במישור, חשבון דיפרנציאלי ואינטגרלי'], ['35482', '4 יח״ל · שאלון 35482', 'סדרות, גדילה ודעיכה, טריגונומטריה, חשבון דיפרנציאלי ואינטגרלי'],
     ['35581', '5 יח״ל · שאלון 35581', 'אלגברה והסתברות, גאומטריה וטריגונומטריה במישור, חשבון דיפרנציאלי ואינטגרלי (כולל פונקציות טריגונומטריות)'], ['35582', '5 יח״ל · שאלון 35582', 'גאומטריה אנליטית, וקטורים, טריגונומטריה במרחב, מספרים מרוכבים, גדילה ודעיכה, פונקציות מעריכיות ולוגריתמיות']];
+  window.MX = { T: T, QN: QN, parseVal: parseVal, gcd: gcd };
+  if (DATA_ONLY) return;
   function card(t) {
     var s = st.t[t.id], stars = '';
     for (var i = 1; i <= 3; i++) stars += '<i class="' + (s && s.max >= i ? 'on' : '') + '">★</i>';
