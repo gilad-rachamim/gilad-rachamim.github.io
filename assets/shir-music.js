@@ -115,12 +115,13 @@
     }
     addBar(0, 0); t = barSec; // הקדמה: בר אחד
     var li = 0;
+    tl._occ = -1;
     S.sung(song).forEach(function (x) {
-      var p = x.part, prog = progOf(m, p.type);
+      var p = x.part, prog = progOf(m, p.type); tl._occ++;
       partLines(song, p).forEach(function (L) {
         var mel = L.mel, chunks = S.splitSyl(L.text, L.n), pos = mel.start;
         for (var b = 0; b < mel.bars; b++) addBar(prog[(L.barOffset + b) % prog.length], t + b * barSec);
-        var line = { t0: t + mel.start * e, t1: t + mel.bars * barSec, text: L.text, part: p.id, name: x.name, idx: li, syls: [] };
+        var line = { tb: t, t0: t + mel.start * e, t1: t + mel.bars * barSec, text: L.text, part: p.id, name: x.name, idx: li, occ: tl._occ, syls: [] };
         mel.notes.forEach(function (nt, k) {
           var at = t + pos * e, dur = nt.len * e, midi = deg2midi(m, nt.d);
           tl.notes.push({ t: at, dur: dur, midi: midi, line: li, syl: k });
