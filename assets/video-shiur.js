@@ -16,6 +16,12 @@
   var file = null, fileName = 'סרטון', dur = 0, busy = false, tab = 'status';
   var segs = null, groups = null; // תמלול: segs=[{start,end,text,words:[{w,s,e}]}], groups=שורות כתוביות
   var FONT = 'Assistant, "Segoe UI", Arial, sans-serif';
+  // מראה קבוע (נשמר במכשיר): סגנון כתוביות, מוזיקה ושקופית סיום
+  var LK = 'kelim-vs-look', TAIL = 4;
+  var look = { size: 'm', bar: 'line', lines: '1', color: '#ffd84d', music: 'none', endOn: false, name: '', phone: '', link: '' };
+  try { Object.assign(look, JSON.parse(localStorage.getItem(LK) || '{}')); } catch (e) {}
+  function lsave() { try { localStorage.setItem(LK, JSON.stringify(look)); } catch (e) {} }
+  function endOK() { return !!(look.endOn && (look.name || look.phone || look.link)); }
 
   // גופן Assistant לקנבס
   try {
@@ -120,17 +126,31 @@
   }
   function caps(t, W, H, yk, color, maxW) {
     var g = groupAt(t); if (!g) return;
-    var fs = Math.round(Math.min(W, H) * (W < H ? 0.07 : 0.072)), lh = fs * 1.25;
+    color = color || look.color;
+    var k = { s: 0.055, m: 0.07, l: 0.088 }[look.size] || 0.07, bar = look.bar === 'bar';
+    var fs = Math.round(Math.min(W, H) * k), lh = fs * 1.25;
     ctx.font = '800 ' + fs + 'px ' + FONT; ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
     var sp = ctx.measureText(' ').width, lim = (maxW || 0.88) * W, lines = [[]], lw = [0];
-    g.words.forEach(function (w) {
-      var ww = ctx.measureText(w.w).width, L = lines.length - 1;
-      if (lines[L].length && lw[L] + sp + ww > lim) { lines.push([]); lw.push(0); L++; }
-      lw[L] += (lines[L].length ? sp : 0) + ww; lines[L].push({ w: w, ww: ww });
+    var items = g.words.map(function (w) { return { w: w, ww: ctx.measureText(w.w).width }; });
+    items.forEach(function (o) {
+      var L = lines.length - 1;
+      if (lines[L].length && lw[L] + sp + o.ww > lim) { lines.push([]); lw.push(0); L++; }
+      lw[L] += (lines[L].length ? sp : 0) + o.ww; lines[L].push(o);
     });
+    // שתי שורות: שורה ארוכה נחצית לשתיים מאוזנות
+    if (look.lines === '2' && lines.length === 1 && items.length >= 4 && lw[0] > lim * 0.55) {
+      var best = 1, bw = 1e9, acc = 0;
+      for (var c = 1; c < items.length; c++) { acc += items[c - 1].ww + (c > 1 ? sp : 0); var m2 = Math.max(acc, lw[0] - acc - sp); if (m2 < bw) { bw = m2; best = c; } }
+      lines = [items.slice(0, best), items.slice(best)];
+      lw = lines.map(function (ln) { return ln.reduce(function (a, o, i) { return a + o.ww + (i ? sp : 0); }, 0); });
+    }
     var y0 = yk * H - (lines.length - 1) * lh / 2;
-    ctx.lineJoin = 'round'; ctx.lineWidth = Math.max(4, fs * 0.16); ctx.strokeStyle = 'rgba(0,0,0,.85)';
-    ctx.shadowColor = 'rgba(0,0,0,.5)'; ctx.shadowBlur = fs * 0.25;
+    if (bar) {
+      var mw = Math.max.apply(null, lw), pd = fs * 0.4;
+      ctx.fillStyle = 'rgba(0,0,0,.62)'; rr(W / 2 - mw / 2 - pd, y0 - lh / 2 - pd * 0.35, mw + pd * 2, lines.length * lh + pd * 0.7, fs * 0.3); ctx.fill();
+    }
+    ctx.lineJoin = 'round'; ctx.lineWidth = bar ? Math.max(2, fs * 0.06) : Math.max(4, fs * 0.16); ctx.strokeStyle = 'rgba(0,0,0,.85)';
+    ctx.shadowColor = 'rgba(0,0,0,.5)'; ctx.shadowBlur = bar ? 0 : fs * 0.25;
     lines.forEach(function (ln, i) {
       var x = W / 2 + lw[i] / 2, y = y0 + i * lh;
       ln.forEach(function (o) {
