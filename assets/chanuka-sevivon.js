@@ -86,7 +86,7 @@
     try { if (navigator.vibrate) navigator.vibrate(35); } catch (e) {}
     var line = '<b>' + L + '</b> – ' + w;
     if (st.game) line += '<br><span>' + applyRule(res) + '</span>';
-    else line += '<br><span>' + ['נִ: לא קורה כלום', 'גִ: לוקחים את כל הקופה', 'הִ: לוקחים חצי מהקופה', (st.abroad ? 'שִ' : 'פִ') + ': מוסיפים אחד לקופה'][res] + '</span>';
+    else line += '<br><span>' + ['לא קורה כלום', 'לוקחים את כל הקופה', 'לוקחים חצי מהקופה', 'מוסיפים אחד לקופה'][res] + '</span>';
     $('sv-res').innerHTML = line;
     $('sv-res').classList.add('on');
     $('sv-spin').disabled = !!(st.game && st.game.over);
