@@ -38,7 +38,19 @@
   function v(f) { return st[f] || (first ? DEMO[f] || '' : ''); }
   st.scan = st.scan !== false;
   function save() { if (first) return; try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
-  function cur() { for (var i = 0; i < TO.length; i++) if (TO[i].k === st.to) return TO[i]; return TO[0]; }
+  function cur() {
+    if (st.to === 'hit' && st.hit) return hitTarget(st.hit);
+    for (var i = 0; i < TO.length; i++) if (TO[i].k === st.to) return TO[i]; return TO[0];
+  }
+  // יעד שנמצא במאגר הפקסים (assets/machshev-fax-list.json)
+  function hitTarget(h) {
+    if (h.cat === 'btl') { var b = TO[0]; return { k: 'hit', n: h.n, s: '', dest: h.n, url: b.url, go: b.go, how: 'זה פקס של ' + h.n + '. ' + b.how }; }
+    var how = 'זה פקס של ' + h.n + '. ';
+    if (h.email) how += 'במקור הרשמי מופיע גם מייל: ' + h.email + '. הכלי יפתח מייל מוכן אליו.';
+    else if (h.url) how += 'במקור הרשמי אין מייל, אבל יש אתר. שולחים דרכו, או מתקשרים ומבקשים מייל במקום פקס.';
+    else how += 'במקור הרשמי מופיע רק פקס. מתקשרים ושואלים: "לאיזה מייל אפשר לשלוח במקום פקס?" ואם אין ברירה – FaxZero למטה.';
+    return { k: 'hit', n: h.n, s: '', dest: h.n, url: h.url || '', go: 'לאתר הרשמי', how: how };
+  }
 
   var items = [], busy = false, run = 0, url = null, result = null;
   function mb(b) { return b >= 1048576 ? (b / 1048576).toFixed(1) + ' מ״ב' : Math.max(1, Math.round(b / 1024)) + ' ק״ב'; }
@@ -246,8 +258,70 @@
   function drawTo() {
     $('fx-to').innerHTML = TO.map(function (t) { return '<button type="button" data-k="' + t.k + '" aria-pressed="' + (t.k === st.to) + '"><b>' + t.n + '</b><small>' + t.s + '</small></button>'; }).join('');
     var t = cur();
-    $('fx-how').innerHTML = esc(t.how) + (t.url ? ' <a href="' + t.url + '" target="_blank" rel="noopener">' + esc(t.go) + ' ←</a>' : '');
+    $('fx-how').innerHTML = esc(t.how) + (t.url ? ' <a href="' + esc(t.url) + '" target="_blank" rel="noopener">' + esc(t.go) + ' ←</a>' : '') +
+      (st.to === 'hit' && st.hit && st.hit.src ? '<br><span class="fx-src">המקור: <a href="' + esc(st.hit.src) + '" target="_blank" rel="noopener">הדף הרשמי</a> · נבדק ' + esc(st.hit.checked || '') + '</span>' : '');
   }
+
+  // ---------- חיפוש לפי מספר הפקס ----------
+  var DB = null, dbP = null, hits = [], lookSent = '';
+  function loadDB() {
+    if (!dbP) dbP = fetch('/assets/machshev-fax-list.json').then(function (r) { if (!r.ok) throw new Error('db'); return r.json(); })
+      .then(function (d) { DB = d; return d; }).catch(function (e) { dbP = null; throw e; });
+    return dbP;
+  }
+  function onlyDigits(s) { var d = String(s || '').replace(/\D/g, ''); if (d.indexOf('972') === 0) d = '0' + d.slice(3); return d; }
+  function norm(s) { return String(s || '').replace(/["'״׳\-–,.()]/g, ' ').replace(/\s+/g, ' ').trim(); }
+  function search(q) {
+    var d = onlyDigits(q), out = [];
+    if (d.length >= 5) {
+      DB.forEach(function (r) {
+        var best = 0;
+        r.fax.forEach(function (f) { if (f === d) best = 3; else if (best < 2 && f.indexOf(d) === 0) best = 2; else if (best < 1 && f.indexOf(d) > 0) best = 1; });
+        if (best) out.push([best, r]);
+      });
+    } else {
+      var words = norm(q).split(' ').filter(function (w) { return w.length > 1; });
+      if (!words.length) return [];
+      DB.forEach(function (r) { var n = norm(r.n); if (words.every(function (w) { return n.indexOf(w) >= 0; })) out.push([1, r]); });
+    }
+    out.sort(function (a, b) { return b[0] - a[0]; });
+    return out.map(function (x) { return x[1]; });
+  }
+  function drawHits() {
+    var q = $('fx-fax').value, d = onlyDigits(q), box = $('fx-hits');
+    if (!q.trim() || (d.length && d.length < 5 && d.length === q.replace(/[\s\-]/g, '').length)) { box.innerHTML = ''; return; }
+    if (!DB) { box.innerHTML = '<p class="note">מחפש במאגר…</p>'; return; }
+    hits = search(q);
+    var full = d.length >= 9;
+    if (!hits.length) {
+      box.innerHTML = full || d.length < 5 ? '<div class="fx-miss"><b>המספר הזה עוד לא במאגר.</b> מתקשרים למשרד ושואלים: "לאיזה מייל אפשר לשלוח במקום פקס?" רוב המשרדים מקבלים גם מייל או טופס באתר, גם כשרשום רק פקס. את המייל כותבים בשדה למטה, והכלי יפתח מייל מוכן.</div>' : '';
+      if (full) track(d, 0);
+      return;
+    }
+    var more = hits.length > 8 ? '<p class="note">יש עוד ' + (hits.length - 8) + ' – להמשיך להקליד כדי לצמצם.</p>' : '';
+    box.innerHTML = hits.slice(0, 8).map(function (r, i) {
+      var how = r.cat === 'btl' ? 'שליחה בחינם באתר ביטוח לאומי' : r.email ? '✉️ ' + r.email : r.url ? 'יש אתר רשמי' : 'במקור רק פקס';
+      return '<button type="button" class="fx-hit" data-h="' + i + '" aria-pressed="' + (st.to === 'hit' && st.hit && st.hit.n === r.n) + '"><b>' + esc(r.n) + '</b><small dir="auto">' + esc(how) + ' · פקס ' + esc(r.fax.map(pretty).join(', ')) + '</small></button>';
+    }).join('') + more;
+    if (full) track(d, 1);
+  }
+  function pretty(f) { return f.length === 10 ? f.slice(0, 3) + '-' + f.slice(3) : f.slice(0, 2) + '-' + f.slice(2); }
+  function track(d, found) { if (lookSent === d) return; lookSent = d; used('lookup', { found: found }); }
+  $('fx-fax').addEventListener('input', function () {
+    if (!DB) loadDB().then(drawHits, function () { $('fx-hits').innerHTML = '<p class="pd-err">לא הצלחתי לטעון את המאגר. לבדוק שיש אינטרנט ולנסות שוב.</p>'; });
+    drawHits();
+  });
+  $('fx-hits').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-h]'); if (!b) return;
+    var r = hits[+b.getAttribute('data-h')]; if (!r) return;
+    var old = cur();
+    st.to = 'hit'; st.hit = { n: r.n, cat: r.cat, email: r.email, url: r.url, src: r.src, checked: r.checked };
+    if (!st.dest || st.dest === old.dest) { st.dest = r.n; $('fx-dest').value = r.n; }
+    if (r.email) { st.email = r.email; $('fx-email').value = r.email; }
+    first = false; save(); stale(); drawTo(); drawHits(); preview();
+    used('pick', { found: 1, cat: r.cat });
+    $('fx-how').scrollIntoView({ block: 'nearest' });
+  });
   function drawUI() {
     $('fx-go').disabled = busy;
     $('fx-go').textContent = busy ? 'מכין…' : 'להכין קובץ לשליחה (' + pagesCount() + ' עמודים)';
