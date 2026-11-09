@@ -1,0 +1,57 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tichnut_vram",
+  "title": "מחשבון VRAM – כמה זיכרון כרטיס מסך צריך למודל AI | הכלים של גילעד רחמים",
+  "description": "בוחרים מודל שפה (Llama, Qwen, Mistral...), דיוק (FP16, 8-bit, 4-bit) ואורך הקשר, ורואים כמה GB של VRAM צריך להרצה או לאימון LoRA, ואיזה כרטיס NVIDIA מספיק. בחינם, בלי הרשמה.",
+  "og_title": "כמה VRAM צריך כדי להריץ את המודל?",
+  "priority": "0.7",
+  "crumbs": [["כלים למתכנתים", "/kelim/tichnut/"], ["מחשבון VRAM", null]],
+  "head": "<style>.tn-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}.tn-modes{display:flex;flex-wrap:wrap;gap:.4rem;margin:.3rem 0 .8rem}.tn-modes label{position:relative;flex:1;min-width:8rem;border:1px solid var(--line);border-radius:12px;padding:.55rem .6rem;text-align:center;cursor:pointer;color:var(--body)}.tn-modes input{position:absolute;opacity:0;width:1px;height:1px;inset:0}.tn-modes label:has(input:checked){border-color:var(--gold);color:var(--cream);background:rgba(216,179,95,.1)}.tn-big{margin-top:1rem;padding:1rem;border:1px solid var(--gold-soft);border-radius:14px;text-align:center;background:rgba(216,179,95,.07)}.tn-big b{display:block;font-family:var(--serif);font-size:2.6rem;color:var(--cream);line-height:1.1;direction:ltr}.tn-big span{color:var(--body);font-size:.95rem}.tn-bars{list-style:none;display:grid;gap:.45rem;margin-top:.9rem}.tn-bars li{display:grid;grid-template-columns:1fr auto;gap:.3rem .6rem;color:var(--parchment);font-size:.95rem}.tn-bars b{color:var(--gold);direction:ltr}.tn-bars i{grid-column:1/-1;display:block;height:.45rem;border-radius:99px;background:var(--gold)}.tn-fit{list-style:none;display:grid;gap:.4rem;margin-top:.5rem}.tn-fit li{display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;padding:.55rem .8rem;border:1px solid var(--line);border-radius:12px;color:var(--parchment)}.tn-fit span{color:var(--muted);font-size:.9rem}.tn-h{margin-top:1.1rem;color:var(--cream);font-size:1.05rem}.tn-ltr{direction:ltr;text-align:left}</style>",
+  "foot": "<script src=\"/assets/tichnut-data.js\" defer></script><script src=\"/assets/tichnut-vram.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מחשבון VRAM למודלי AI</h1>
+  <p class="sub">כמה זיכרון כרטיס מסך צריך כדי להריץ או לאמן מודל שפה, ואיזה כרטיס NVIDIA מספיק. בוחרים, והתשובה מתעדכנת מיד.</p>
+</header>
+<div class="tool">
+  <form class="k-form" id="vr-form" novalidate>
+    <div class="field"><label for="vr-model">המודל</label><select id="vr-model"></select></div>
+    <div id="vr-custom" hidden>
+      <div class="tn-row">
+        <div class="field"><label for="vr-P">פרמטרים (מיליארדים)</label><input id="vr-P" type="number" min="0.1" step="0.1" class="tn-ltr"></div>
+        <div class="field"><label for="vr-L">מספר שכבות</label><input id="vr-L" type="number" min="1" class="tn-ltr"></div>
+      </div>
+      <div class="tn-row">
+        <div class="field"><label for="vr-kvh">KV heads</label><input id="vr-kvh" type="number" min="1" class="tn-ltr"></div>
+        <div class="field"><label for="vr-hd">head dim</label><input id="vr-hd" type="number" min="1" class="tn-ltr"></div>
+      </div>
+      <div class="field"><label for="vr-hid">hidden size</label><input id="vr-hid" type="number" min="1" class="tn-ltr"></div>
+    </div>
+    <div class="field"><label>מה עושים עם המודל?</label>
+      <div class="tn-modes">
+        <label><input type="radio" name="vr-mode" value="inf">הרצה</label>
+        <label><input type="radio" name="vr-mode" value="lora">אימון LoRA</label>
+        <label><input type="radio" name="vr-mode" value="full">אימון מלא</label>
+      </div>
+    </div>
+    <div class="tn-row">
+      <div class="field"><label for="vr-prec">דיוק המשקלות</label><select id="vr-prec"><option value="4">FP32</option><option value="2">FP16 / BF16</option><option value="1">FP8 / INT8</option><option value="0.5">4 ביט (Q4, GPTQ, AWQ)</option></select></div>
+      <div class="field"><label for="vr-kv">דיוק ה-KV cache</label><select id="vr-kv"><option value="2">FP16</option><option value="1">FP8</option></select></div>
+    </div>
+    <div class="tn-row">
+      <div class="field"><label for="vr-ctx">אורך הקשר (טוקנים)</label><input id="vr-ctx" type="number" min="1" step="1024" class="tn-ltr"></div>
+      <div class="field"><label for="vr-batch">כמה בקשות במקביל</label><input id="vr-batch" type="number" min="1" class="tn-ltr"></div>
+    </div>
+  </form>
+  <div class="tn-big"><b id="vr-total">0 GB</b><span id="vr-what"></span></div>
+  <ul class="tn-bars" id="vr-bars"></ul>
+  <p class="tn-h" id="vr-fit-h"></p>
+  <ul class="tn-fit" id="vr-fit"></ul>
+  <div class="share-row">
+    <a class="btn btn-gold btn-sm" href="#" id="vr-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את התוצאה</a>
+    <button class="btn btn-line btn-sm" type="button" id="vr-reset">לחזור לדוגמה</button>
+  </div>
+  <p class="disclaimer">זו הערכה ולא מדידה. בפועל זה משתנה לפי הספרייה (vLLM, llama.cpp, Transformers), לפי Flash Attention ולפי הגדרות האימון. כדאי להשאיר 10%–20% מרווח. באימון מלא החישוב מניח mixed precision עם Adam.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מחשבון VRAM: כמה זיכרון כרטיס מסך צריך כדי להריץ מודל AI, ואיזה כרטיס מספיק. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
