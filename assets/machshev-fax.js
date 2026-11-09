@@ -293,9 +293,17 @@
     if (!DB) { box.innerHTML = '<p class="note">מחפש במאגר…</p>'; return; }
     hits = search(q);
     var full = d.length >= 9;
+    askLink();
     if (!hits.length) {
-      box.innerHTML = full || d.length < 5 ? '<div class="fx-miss"><b>המספר הזה עוד לא במאגר.</b> מתקשרים למשרד ושואלים: "לאיזה מייל אפשר לשלוח במקום פקס?" רוב המשרדים מקבלים גם מייל או טופס באתר, גם כשרשום רק פקס. את המייל כותבים בשדה למטה, והכלי יפתח מייל מוכן.</div>' : '';
-      if (full) track(d, 0);
+      if (!full) { box.innerHTML = d.length >= 5 ? '' : '<div class="fx-miss"><b>לא מצאתי משרד בשם הזה.</b> נסו לכתוב את מספר הפקס עצמו.</div>'; return; }
+      var g = 'https://www.google.com/search?q=' + encodeURIComponent('"' + pretty(d) + '" מייל OR דוא"ל');
+      box.innerHTML = '<div class="fx-miss"><b>המספר ' + pretty(d) + ' עוד לא במאגר.</b> ככה ממשיכים:<ol>' +
+        '<li><b>מחפשים באינטרנט את המייל.</b><br><a class="btn btn-line" data-s="google" href="' + g + '" target="_blank" rel="noopener">🔎 לחפש בגוגל מייל למספר הזה</a><br>' +
+        '<span class="note">להעתיק מייל רק מהאתר הרשמי של המשרד (למשל gov.il, ‎.muni.il, האתר של הקופה או החברה), לא מאתרי מדריכים.</span>' +
+        '<div class="field"><label for="fx-paste">מצאתם? הדביקו כאן את המייל</label><input id="fx-paste" type="email" dir="ltr" maxlength="80" placeholder="name@example.gov.il"></div></li>' +
+        '<li><b>לא מצאתם?</b> מתקשרים למשרד ושואלים: "לאיזה מייל אפשר לשלוח במקום פקס?"</li>' +
+        '<li><b>אין מייל בכלל?</b> <a href="#fx-back" data-s="tofax">שולחים פקס אמיתי ↓</a></li></ol></div>';
+      track(d, 0);
       return;
     }
     var more = hits.length > 8 ? '<p class="note">יש עוד ' + (hits.length - 8) + ' – להמשיך להקליד כדי לצמצם.</p>' : '';
@@ -306,12 +314,26 @@
     if (full) track(d, 1);
   }
   function pretty(f) { return f.length === 10 ? f.slice(0, 3) + '-' + f.slice(3) : f.slice(0, 2) + '-' + f.slice(2); }
+  // הכפתור "לכתוב לגילעד" בסעיף הפקס האמיתי, עם המספר שהוקלד
+  function askLink() {
+    var d = onlyDigits($('fx-fax').value), a = $('fx-ask'); if (!a) return;
+    var t = 'שלום גילעד, אני צריך לשלוח פקס דחוף ל-' + (d.length >= 9 ? pretty(d) : '____') + ', ולא מצאתי מייל.\nעד מתי זה צריך להגיע: ____';
+    a.href = 'https://wa.me/972584049049?text=' + encodeURIComponent(t);
+  }
   function track(d, found) { if (lookSent === d) return; lookSent = d; used('lookup', { found: found }); }
   $('fx-fax').addEventListener('input', function () {
     if (!DB) loadDB().then(drawHits, function () { $('fx-hits').innerHTML = '<p class="pd-err">לא הצלחתי לטעון את המאגר. לבדוק שיש אינטרנט ולנסות שוב.</p>'; });
     drawHits();
   });
+  $('fx-hits').addEventListener('input', function (e) {
+    if (e.target.id !== 'fx-paste') return;
+    var em = e.target.value.trim();
+    st.email = em; $('fx-email').value = em; first = false; save(); stale();
+    if (/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(em) && st.pasteSent !== em) { st.pasteSent = em; used('paste_email'); }
+  });
+  if ($('fx-ask')) { askLink(); $('fx-ask').addEventListener('click', function () { used('ask_gilad'); }); }
   $('fx-hits').addEventListener('click', function (e) {
+    var s = e.target.closest('[data-s]'); if (s) { used(s.getAttribute('data-s')); return; }
     var b = e.target.closest('[data-h]'); if (!b) return;
     var r = hits[+b.getAttribute('data-h')]; if (!r) return;
     var old = cur();
