@@ -21,7 +21,7 @@
 <link rel="manifest" href="/limudim/manifest.webmanifest">
 <link rel="stylesheet" href="/assets/site.css?v=39e81fea">
 <link rel="stylesheet" href="/assets/kelim.css?v=873b0769">
-<link rel="stylesheet" href="/assets/limudim.css?v=978f31f3">
+<link rel="stylesheet" href="/assets/limudim.css?v=9e0e1cd9">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4QR4583VST"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4QR4583VST');</script>
 <script src="/assets/track.js?v=b23b682b" defer></script>
@@ -114,7 +114,14 @@
         <output class="cx-res" id="cx-res" dir="ltr" aria-live="polite"></output>
         <div class="cx-extra" id="cx-extra" aria-live="polite"></div>
       </div>
-      <div class="cx-why" id="cx-why" aria-live="polite"><b>לוחצים על מקש</b> ורואים כאן מה הוא עושה, ואיפה הוא במחשבון שלכם. אפשר גם ללחוץ 🎤 ולהגיד, למשל: "שורש של 16 ועוד שלוש כפול שתיים".</div>
+      <section class="cx-sheet" id="cx-steps-p" aria-label="דרך הפתרון" hidden>
+        <h3>📝 דרך הפתרון, שלב אחרי שלב</h3>
+        <ol class="cx-steps" id="cx-steps"></ol>
+        <div class="cx-final" id="cx-final" hidden></div>
+        <div class="cx-keyseq" id="cx-keyseq"></div>
+        <div id="cx-lesson"></div>
+      </section>
+      <div class="cx-why" id="cx-why" aria-live="polite"><b>לוחצים על מקש</b> ורואים כאן מה הוא עושה, ואיפה הוא במחשבון שלכם. אפשר גם לכתוב או להגיד משוואה: "2x + 3 = 7", "x² − 5x + 6 = 0", או שתי משוואות עם x ו-y, עם פסיק ביניהן.</div>
 
       <div class="cx-keys" id="cx-keys">
         <button type="button" class="f" data-k="sin(" aria-label="סינוס">sin</button>
@@ -182,12 +189,6 @@
       </div>
     </div>
 
-    <div class="panel cx-steps-p" id="cx-steps-p" hidden>
-      <h3>איך הגעתי לזה</h3>
-      <ol class="cx-steps" id="cx-steps"></ol>
-      <div class="cx-keyseq" id="cx-keyseq"></div>
-      <div id="cx-lesson"></div>
-    </div>
 
     <div class="panel cx-hist-p">
       <div class="cx-hhead"><h3>היסטוריה</h3><button type="button" class="linkish" id="cx-hclear">לנקות</button></div>
@@ -419,6 +420,6 @@
   <button class="x" type="button" data-install-close aria-label="סגירה">×</button>
 </div>
 <script src="/assets/kelim.js?v=6ab3224b" defer></script>
-<script src="/assets/limudim-calc.js?v=65f8aeeb"></script><script src="/assets/limudim.js?v=63c003af" defer></script>
+<script src="/assets/limudim-calc.js?v=4b42a776"></script><script src="/assets/limudim.js?v=63c003af" defer></script>
 </body>
 </html>

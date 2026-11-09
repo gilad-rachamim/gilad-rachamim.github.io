@@ -396,3 +396,22 @@ body.cx-bigmode .cx-ang span{font-size:1.2rem}
 .cx-chk input{width:1.15rem;height:1.15rem;accent-color:var(--gold)}
 .cx-vfix select{font:inherit;color:var(--cream);background:#1a2234;border:1px solid var(--line);border-radius:10px;padding:.4rem}
 .cx-vfix small{color:var(--muted)}
+/* דף פתרון כמו בבגרות */
+.cx-sheet{margin:.8rem 0 .2rem;padding:.9rem 1rem 1rem;border-radius:14px;background:#fbfaf3 repeating-linear-gradient(180deg,transparent 0 1.95rem,rgba(20,28,43,.08) 1.95rem 2rem);color:#1b2538;border:1px solid #d8cfae;box-shadow:inset 3px 0 0 #e0a0a0}
+.cx-sheet h3{font-family:var(--serif);font-size:1.12rem;color:#141c2b;margin-bottom:.4rem}
+.cx-sheet .cx-steps{color:#2a3550;line-height:2}
+.cx-sheet .cx-steps li span[dir=ltr]{color:#141c2b;font-size:1.08rem}
+.cx-sheet .cx-steps b,.cx-sheet .cx-steps li b{color:#7a4a00}
+.cx-sheet small,.cx-sheet .note{color:#5a6377}
+.cx-final{margin-top:.6rem}
+.cx-ans{display:inline-flex;gap:.5rem;align-items:baseline;padding:.4rem .9rem;border:2.5px solid #141c2b;border-radius:6px;background:#fff;font-size:1.15rem;color:#141c2b}
+.cx-ans b{font-size:1.3rem;color:#141c2b}
+.cx-final p{margin-top:.35rem;color:#2a3550}
+.cx-final p b{color:#141c2b}
+.cx-sheet .cx-keyseq{border-top-color:#d8cfae}
+.cx-sheet .cx-keyseq p{color:#2a3550}
+.cx-sheet kbd{background:#fff;color:#141c2b;border-color:#b9ae8a}
+.cx-sheet .linkish,.cx-sheet a.gold{color:#7a4a00}
+.cx-sheet .cx-lessn{color:#2a3550}
+body.cx-bigmode .cx-sheet{font-size:1.15rem}
+.cx-sheet .cx-steps li span[dir=ltr]{display:inline-block;max-width:100%;overflow-wrap:anywhere}
