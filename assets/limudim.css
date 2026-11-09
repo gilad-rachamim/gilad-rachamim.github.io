@@ -215,3 +215,8 @@ details.panel summary{cursor:pointer;color:var(--cream)}
 .mx-endmsg{text-align:center;margin-bottom:.8rem}
 .mx-fin{font-size:clamp(1.4rem,6.5vw,1.9rem);color:var(--ok);margin-bottom:.3rem}
 .mx-endmsg p{color:var(--cream);font-size:1.12rem}
+.mx-dots{display:grid;gap:.45rem;margin:0 auto}
+.mx-dots i{aspect-ratio:1;border-radius:99px;background:var(--gold)}
+.mx-rect{display:grid;gap:2px;margin:0 auto .4rem;max-width:100%}
+.mx-rect i{aspect-ratio:1;background:rgba(134,197,230,.35);border:1px solid rgba(134,197,230,.6)}
+.mx-rect i.cut{background:none;border:1px dashed rgba(255,255,255,.2)}
