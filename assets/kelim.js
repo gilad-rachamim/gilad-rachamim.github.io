@@ -13,15 +13,24 @@
   }
   var deferred = null, bar = document.getElementById('install-bar');
   var standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
-  var closed = false;
-  try { closed = localStorage.getItem('kelim-install-closed') === '1'; } catch (e) {}
+  var closed = false, visits = 1;
+  try { closed = Date.now() - (+localStorage.getItem('kelim-install-closed-at') || 0) < 14 * 864e5; } catch (e) {}
+  try { visits = (+localStorage.getItem('kelim-visits') || 0) + 1; localStorage.setItem('kelim-visits', visits); } catch (e) {}
   var ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
   function showInstall() {
     document.querySelectorAll('[data-install-wrap]').forEach(function (w) { w.hidden = false; });
     if (bar && !closed) bar.hidden = false;
   }
   window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; showInstall(); });
-  if (ios && !standalone) document.querySelectorAll('[data-install-wrap]').forEach(function (w) { w.hidden = false; });
+  if (ios && !standalone) {
+    document.querySelectorAll('[data-install-wrap]').forEach(function (w) { w.hidden = false; });
+    if (bar && !closed && visits >= 2) {
+      var it = bar.querySelector('[data-install-text]'), ib = bar.querySelector('[data-install]');
+      if (it) it.innerHTML = '📲 באייפון: לוחצים על כפתור השיתוף <b>⬆︎</b> למטה, ואז "הוספה למסך הבית". מעכשיו הכלים נפתחים בלחיצה, כמו אפליקציה.';
+      if (ib) ib.style.display = 'none';
+      bar.hidden = false; ev('tool_install', { how: 'ios_bar' });
+    }
+  }
   window.addEventListener('appinstalled', function () { ev('tool_install', { how: 'installed' }); if (bar) bar.hidden = true; });
   document.addEventListener('click', function (e) {
     var b = e.target.closest('[data-install]');
@@ -38,7 +47,7 @@
     }
     if (e.target.closest('[data-install-close]')) {
       if (bar) bar.hidden = true;
-      try { localStorage.setItem('kelim-install-closed', '1'); } catch (err) {}
+      try { localStorage.setItem('kelim-install-closed-at', String(Date.now())); } catch (err) {}
       return;
     }
     // תמיכה: העתקת המספר לביט/פייבוקס
@@ -56,17 +65,69 @@
     // שיתוף
     var s = e.target.closest('[data-share-tool]');
     if (s) {
-      var url = location.origin + location.pathname + '?utm_source=share&utm_medium=friend&utm_campaign=' + (body.getAttribute('data-tool') || site);
+      var how = s.getAttribute('data-share-tool');
+      var url = location.origin + location.pathname + '?utm_source=share&utm_medium=' + (how === 'wa' || how === 'native' ? 'friend' : how) + '&utm_campaign=' + (body.getAttribute('data-tool') || site);
       var text = s.getAttribute('data-text') || document.title;
-      ev('share', { tool: body.getAttribute('data-tool') || '', how: s.getAttribute('data-share-tool') });
-      if (s.getAttribute('data-share-tool') === 'native' && navigator.share) {
+      ev('share', { tool: body.getAttribute('data-tool') || '', how: how });
+      if (how === 'native' && navigator.share) {
         e.preventDefault();
         navigator.share({ title: document.title, text: text, url: url }).catch(function () {});
+      } else if (how === 'copy') {
+        e.preventDefault();
+        copyText(text + '\n' + url, s, 'הקישור הועתק ✓ אפשר להדביק בכל הודעה');
+      } else if (how === 'sms' && s.tagName === 'A') {
+        // אנדרואיד ואייפון מבינים את שתי הצורות; ?&body= עובד בשניהם
+        s.href = 'sms:?&body=' + encodeURIComponent(text + '\n' + url);
       } else if (s.tagName === 'A') {
         s.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text + '\n' + url);
       }
     }
+    // כפתור העתקה כללי: data-copy="הטקסט" או data-copy-from="#id"
+    var cp = e.target.closest('[data-copy],[data-copy-from]');
+    if (cp) {
+      e.preventDefault();
+      var src = cp.getAttribute('data-copy-from'), el = src && document.querySelector(src);
+      copyText(el ? (el.value || el.textContent).trim() : cp.getAttribute('data-copy'), cp, cp.getAttribute('data-copied') || 'הועתק ✓');
+      ev('copy_click', { what: cp.getAttribute('data-copy-what') || src || '' });
+    }
   }, true);
+
+  // העתקה ללוח, גם בדפדפנים ישנים או מסוננים שאין בהם navigator.clipboard
+  function copyText(t, btn, okMsg) {
+    var old = btn.getAttribute('data-old') || btn.innerHTML;
+    btn.setAttribute('data-old', old);
+    function ok() { btn.textContent = okMsg; setTimeout(function () { btn.innerHTML = old; }, 3500); }
+    function legacy() {
+      var ta = document.createElement('textarea');
+      ta.value = t; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.top = '-9999px';
+      document.body.appendChild(ta); ta.select();
+      var done = false; try { done = document.execCommand('copy'); } catch (err) {}
+      document.body.removeChild(ta);
+      if (done) ok(); else window.prompt('להעתיק את זה:', t);
+    }
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(t).then(ok, legacy);
+    else legacy();
+  }
+  window.kelimCopy = copyText;
+
+  // ליד כל כפתור "לשלוח בווטסאפ": גם SMS וגם העתקת קישור.
+  // לא לכולם יש ווטסאפ: בטלפון כשר או מסונן הוא לעיתים חסום.
+  function addShareAlts(root) {
+    (root || document).querySelectorAll('a[data-share-tool="wa"]:not([data-alts])').forEach(function (a) {
+      a.setAttribute('data-alts', '1');
+      if (a.closest('.topbar,.no-alts')) return;
+      var t = a.getAttribute('data-text');
+      var wrap = document.createElement('span');
+      wrap.className = 'share-alts';
+      wrap.innerHTML = '<a class="btn btn-line btn-sm" href="sms:" data-share-tool="sms">📱 ב-SMS</a><button class="btn btn-line btn-sm" type="button" data-share-tool="copy">🔗 להעתיק קישור</button>';
+      if (t) wrap.querySelectorAll('[data-share-tool]').forEach(function (b) { b.setAttribute('data-text', t); });
+      a.insertAdjacentElement('afterend', wrap);
+    });
+  }
+  addShareAlts();
+  if (window.MutationObserver) new MutationObserver(function (m) {
+    for (var i = 0; i < m.length; i++) if (m[i].addedNodes.length) { addShareAlts(); break; }
+  }).observe(document.body, { childList: true, subtree: true });
 
   // ---------- טפסים ("רוצים כלי?", "רוצים לתרום?") → גיליון הלידים הקיים, עם תגית ----------
   // צינור הלידים שולח מייל עם מדריך הברית למי שממלא מייל, לכן כאן אין שדה email:
@@ -87,7 +148,8 @@
         var ct = g('contact'), isMail = ct.indexOf('@') > -1;
         fd.append('טלפון', isMail ? '' : ct); fd.append('email', isMail ? ct : '');
         fd.append('עיר', 'שיפור כלי · ' + site + ' · ' + toolName);
-        fd.append('מקור', 'כלים: שיפור · ' + toolName + ' (' + toolId + ') · ' + g('what'));
+        var nameOk = form.querySelector('[name=name_ok]:checked') && g('name') ? ' · ✔ מותר לפרסם שם פרטי' : '';
+        fd.append('מקור', 'כלים: שיפור · ' + toolName + ' (' + toolId + ') · ' + g('what') + nameOk);
       } else fd.append('טלפון', g('phone'));
       if (kind === 'shipur') {}
       else if (kind === 'tool') {
@@ -121,6 +183,7 @@
     var done = null; try { done = localStorage.getItem(key); } catch (e) {}
     function after(r) {
       rate.hidden = true; thanks.hidden = false;
+      var sh = fb.querySelector('.fb-share'); if (sh) sh.hidden = r !== 'yes';
       thanks.textContent = r === 'yes' ? 'שמח לשמוע! 🙏 ואם יש משהו שהיה עושה אותו עוד יותר טוב, ספרו לי למטה.' : 'תודה על הכנות. ספרו לי מה חסר, ואשתדל לתקן.';
     }
     if (done) after(done);

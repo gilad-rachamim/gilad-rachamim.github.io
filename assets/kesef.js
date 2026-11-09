@@ -60,8 +60,8 @@
   // מחזיר שורות: כל שורה = מערך תאים מימין לשמאל, כל תא = { t: טקסט, x: מרכז }.
   // עברית ב-PDF נשמרת לפעמים הפוכה ("וטורב" במקום "ברוטו"): בודקים מילים מוכרות בשני הכיוונים, והופכים אם צריך.
   // ---------------------------------------------------------------------
-  var PDF_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
-  var PDF_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  var PDF_URL = '/assets/vendor/pdfjs/pdf.min.js';
+  var PDF_WORKER = '/assets/vendor/pdfjs/pdf.worker.min.js';
   var HEB = /[֐-׿]/;
   var KNOWN = ['סכום', 'תאריך', 'שכר', 'נטו', 'ברוטו', 'תשלומים', 'חיוב', 'עסק', 'פנסיה', 'מס', 'ביטוח', 'פיצויים', 'עובד', 'חופשה', 'מחלה', 'פירוט', 'עסקה', 'כרטיס'];
   function rev(s) { return s.split('').reverse().join('').replace(/[\d.,\/:\-]{2,}/g, function (m) { return m.split('').reverse().join(''); }); }
@@ -887,6 +887,17 @@
       $('p-gross').textContent = ils(g); $('p-net').textContent = ils(n);
       $('p-cut').textContent = g > 0 && n > 0 ? p1(pct(g - n, g)) : '-';
       if (!g) { $('p-big').textContent = 'ממלאים למטה'; $('p-sub').textContent = 'מספיק ברוטו כדי להתחיל.'; $('p-res').hidden = $('p-ask').hidden = true; return; }
+      if (st.tag) {
+        // תלוש תגמולים של אגף השיקום: זה לא שכר, אז לא בודקים מינימום ופנסיה. רק מה שולם, מה נוכה ומה נכנס לבנק.
+        $('p-big').textContent = n ? 'נכנס לבנק ' + ils(n) : 'תלוש תגמולים';
+        $('p-sub').textContent = 'תלוש תגמולים של אגף השיקום. שומרים כל חודש ב"תלוש מול תלוש", ורואים מה השתנה.';
+        $('p-list').innerHTML = '<li style="border-color:var(--gold-soft)"><b>ℹ️ זה תלוש תגמולים, לא תלוש משכורת</b><br>שולם ' + ils(g) + (n ? ', נוכה ' + ils(g - n) + ' (ארגון הנכים, ביטוחים, ניכויים), ונכנס לבנק ' + ils(n) : '') + '. הבדיקות של שכר מינימום ופנסיה שייכות לתלוש משכורת, ולכן לא מופיעות כאן. לשאלה על שורה בתלוש: המחוז או *8150.' +
+          '<br><button class="linkish" type="button" id="p-untag">זה בעצם תלוש משכורת רגיל</button></li>';
+        $('p-untag').addEventListener('click', function () { st.tag = 0; calc(); });
+        $('p-res').hidden = false; $('p-ask').hidden = true;
+        used('check', { tagmul: 1 });
+        return;
+      }
       var items = [], ask = [];
       function add(ok, title, text, q) { items.push([ok, title, text]); if (!ok && q) ask.push(q); }
       // 1. שכר מינימום (על השכר בלי שעות נוספות ונסיעות)
@@ -952,9 +963,25 @@
       ['vac', 'יתרת חופש', [/יתרת?\s*(ימי\s*)?(חופש|חופשה)/, /חופשה.*יתרה/]],
       ['sick', 'יתרת מחלה', [/יתרת?\s*(ימי\s*)?מחלה/, /מחלה.*יתרה/]]
     ];
+    // שורת שמות ("תשלומים | ניכויים | העברה לבנק") ומתחתיה שורת מספרים באותו מספר תאים – כמו בתלוש התגמולים של אגף השיקום
+    var HV = [['g', 'ברוטו', /^(סה"?כ\s*)?(ה)?תשלומים$|ברוטו/], ['n', 'נטו', /העברה\s*לבנק|נטו/]];
     function slipFind(lines) {
-      var texts = lines.map(function (L) { return L.map(function (c) { return c.t; }); }), taken = {}, found = [];
+      var texts = lines.map(function (L) { return L.map(function (c) { return c.t; }); }), taken = {}, found = [], have = {};
+      var isNum = function (c) { return /^-?[\d,]+(\.\d+)?$/.test(c.replace(/[₪\s]/g, '')); };
+      for (var i = 0; i + 1 < texts.length; i++) {
+        var hd = texts[i], vl = texts[i + 1];
+        if (hd.length < 2 || hd.length !== vl.length || !hd.every(function (c) { return !/\d/.test(c); }) || !vl.every(isNum)) continue;
+        hd.forEach(function (c, k) {
+          HV.forEach(function (h) {
+            if (have[h[0]] || !h[2].test(c.trim())) return;
+            var val = num(vl[k]); if (!val) return;
+            have[h[0]] = 1; found.push({ k: h[0], lbl: h[1], v: val, line: c + ': ' + vl[k] });
+          });
+        });
+        if (hd.some(function (c) { return HV.some(function (h) { return h[2].test(c.trim()); }); })) { taken[i] = taken[i + 1] = 1; }
+      }
       PDF_F.forEach(function (f) {
+        if (have[f[0]]) return;
         for (var r = 0; r < f[2].length; r++) {
           for (var i = 0; i < texts.length; i++) {
             if (taken[i]) continue;
@@ -981,17 +1008,24 @@
         if (!found.length) { box.innerHTML = '<p>⚠️ קראנו את הקובץ, אבל לא זיהינו את השורות של התלוש. מקלידים את המספרים ידנית.</p>'; used('pdf', { ok: 0 }); return; }
         var g = (found.filter(function (x) { return x.k === 'g'; })[0] || {}).v, n = (found.filter(function (x) { return x.k === 'n'; })[0] || {}).v;
         var odd = g && n && n >= g;
-        box.innerHTML = '<p><b>מצאנו בתלוש ' + found.length + ' מספרים.</b> בודקים מול התלוש, מורידים את הסימון ממה שלא נכון, ולוחצים "למלא".' + (info.flip ? ' (העברית בקובץ הייתה שמורה הפוך, והפכנו אותה.)' : '') + (odd ? '<br>⚠️ הנטו יצא גדול מהברוטו. כנראה התבלבלנו בשורה, כדאי לבדוק.' : '') + '</p>' +
+        var all = lines.map(function (L) { return L.map(function (c) { return c.t; }).join(' '); }).join('\n');
+        var tag = /תלוש\s*תגמולים|אגף\s*ה?שיקום/.test(all);
+        var mm = all.match(/(?:לחודש|חודש)\s*:?\s*(\d{1,2})\s*[\/.\-]\s*(\d{4})/);
+        if (tag) { found = found.filter(function (x) { return x.k === 'g' || x.k === 'n'; }); found.forEach(function (x) { x.lbl = x.k === 'g' ? 'תשלומים (כל מה ששולם)' : 'נכנס לבנק'; }); }
+        box.innerHTML = (tag ? '<p>📄 <b>זה תלוש תגמולים של אגף השיקום.</b> נמלא כמה שולם וכמה נכנס לבנק. בדיקות שכר המינימום והפנסיה לא שייכות לתלוש כזה.</p>' : '') +
+          '<p><b>מצאנו בתלוש ' + found.length + ' מספרים' + (mm ? ', של ' + mm[1] + '/' + mm[2] : '') + '.</b> בודקים מול התלוש, מורידים את הסימון ממה שלא נכון, ולוחצים "למלא".' + (info.flip ? ' (העברית בקובץ הייתה שמורה הפוך, והפכנו אותה.)' : '') + (odd ? '<br>⚠️ הנטו יצא גדול מהברוטו. כנראה התבלבלנו בשורה, כדאי לבדוק.' : '') + '</p>' +
           '<div class="log">' + found.map(function (x, i) {
             return '<label style="display:flex;gap:.5rem;align-items:flex-start;padding:.35rem 0"><input type="checkbox" data-i="' + i + '"' + (odd && (x.k === 'g' || x.k === 'n') ? '' : ' checked') + '>' +
               '<span style="flex:1">' + esc(x.lbl) + ': <b>' + (x.k === 'vac' || x.k === 'sick' ? x.v + ' ימים' : ils(x.v, 2)) + '</b><br><small class="note">מהשורה: ' + esc(x.line.slice(0, 70)) + '</small></span></label>';
           }).join('') + '</div>' +
           '<button class="big-btn" type="button" id="p-pdf-fill" style="margin-top:.6rem">למלא את מה שסימנתי</button>' +
-          '<p class="note">שעות נוספות ונסיעות לא ממלאים אוטומטית. אם יש, מקלידים את הסכום ביחד.</p>';
+          (tag ? '' : '<p class="note">שעות נוספות ונסיעות לא ממלאים אוטומטית. אם יש, מקלידים את הסכום ביחד.</p>');
         $('p-pdf-fill').addEventListener('click', function () {
           var c = 0;
           $$('input[data-i]', box).forEach(function (cb) { if (!cb.checked) return; var x = found[+cb.getAttribute('data-i')]; $('p-' + x.k).value = String(x.v); c++; });
-          box.innerHTML = '<p>✓ מילאנו ' + c + ' שדות. אפשר לתקן כל שדה ידנית.</p>'; calc(); used('pdf_fill', { n: c });
+          st.tag = tag ? 1 : 0;
+          if (mm) $('p-month').value = mm[2] + '-' + ('0' + mm[1]).slice(-2);
+          box.innerHTML = '<p>✓ מילאנו ' + c + ' שדות' + (mm ? ', והחודש ' + mm[1] + '/' + mm[2] + ' כבר בחור ב"תלוש מול תלוש" למטה' : '') + '. אפשר לתקן כל שדה ידנית.</p>'; calc(); used('pdf_fill', { n: c, tagmul: tag ? 1 : 0 });
         });
         used('pdf', { ok: found.length });
       }, function () { box.innerHTML = '<p>⚠️ לא הצלחנו לפתוח את הקובץ. בודקים אינטרנט ומנסים שוב, או מקלידים ידנית.</p>'; });
@@ -1015,10 +1049,12 @@
       var a = h[h.length - 2], b = h[h.length - 1], lines = [];
       HF.forEach(function (f) {
         var d = num(b[f[0]]) - num(a[f[0]]);
-        if (Math.abs(d) >= 1) lines.push('<li>' + f[1] + ' ' + (d > 0 ? 'עלה' : 'ירד') + ' ב-<b>' + ils(Math.abs(d)) + '</b> (מ-' + ils(num(a[f[0]])) + ' ל-' + ils(num(b[f[0]])) + ')</li>');
+        var nm = st.tag && f[0] === 'g' ? 'מה ששולם' : st.tag && f[0] === 'n' ? 'מה שנכנס לבנק' : f[1];
+        if (Math.abs(d) >= 1) lines.push('<li>' + nm + ' ' + (d > 0 ? 'עלה' : 'ירד') + ' ב-<b>' + ils(Math.abs(d)) + '</b> (מ-' + ils(num(a[f[0]])) + ' ל-' + ils(num(b[f[0]])) + ')</li>');
       });
       var dg = num(b.g) - num(a.g), dn = num(b.n) - num(a.n), hint = '';
-      if (dn <= -50 && Math.abs(dg) < 50) hint = '<p style="margin-top:.5rem">הברוטו כמעט לא השתנה, אבל הנטו ירד. שווה לבדוק בתלוש את הניכויים: מס הכנסה (ונקודות הזיכוי), ביטוח לאומי, וניכויים אחרים.</p>';
+      if (dn <= -50 && Math.abs(dg) < 50) hint = '<p style="margin-top:.5rem">' + (st.tag ? 'התשלומים כמעט לא השתנו, אבל לבנק נכנס פחות. שווה לבדוק בתלוש אילו ניכויים נוספו או גדלו.' : 'הברוטו כמעט לא השתנה, אבל הנטו ירד. שווה לבדוק בתלוש את הניכויים: מס הכנסה (ונקודות הזיכוי), ביטוח לאומי, וניכויים אחרים.') + '</p>';
+      else if (st.tag && Math.abs(dg) >= 50) hint = '<p style="margin-top:.5rem">בתלוש תגמולים, חודש גדול בדרך כלל אומר הפרשים או החזר חד-פעמי (תרופות, טיפולים, מענק). השורות עצמן מופיעות בתלוש.</p>';
       $('p-diff').innerHTML = '<p><b>' + mName(b.m) + ' מול ' + mName(a.m) + ':</b></p>' + (lines.length ? '<ul>' + lines.join('') + '</ul>' : '<p>אין שינוי במספרים העיקריים.</p>') + hint;
     }
     $('p-keep').addEventListener('click', function () {
@@ -1043,7 +1079,7 @@
   // =====================================================================
   (function () {
     if (!$('ashrai')) return;
-    var XLSX_URL = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    var XLSX_URL = '/assets/vendor/xlsx/xlsx-0.18.5.full.min.js';
     var CATS = [
       ['סופר ומכולת', /שופרסל|רמי לוי|ויקטורי|יוחננוף|אושר עד|מגה|טיב טעם|יינות ביתן|חצי חינם|קרפור|סופר|מכולת|מינימרקט|AM:PM|פרש מרקט|קשת טעמים|נתיב החסד|ירקות|פירות|מאפ|קצב/i],
       ['דלק ורכב', /פז|דלק|סונול|דור אלון|אלון|\bטן\b|ten|yellow|ילו|מוסך|חניון|פנגו|סלופארק|cellopark|pango|כביש 6|נתיבי איילון/i],

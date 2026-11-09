@@ -1,0 +1,63 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "eruim_hachana",
+  "title": "תקציב ומשימות לאירוע – מה צריך, ממי, כמה עולה ומה שולם, וציר זמן עד השמחה | הכלים של גילעד רחמים",
+  "description": "כלי חינם להכנת חתונה, בר מצווה או ברית: רשימת ספקים והוצאות עם מה שכבר שולם ומה נשאר, ומשימות מסודרות לפי חודש לפני, שבוע לפני, יום לפני וביום עצמו, עם התאריכים לפי יום השמחה. הסכומים הם מה שאתם כותבים. שולחים סיכום בווטסאפ ומדפיסים. נשמר רק בטלפון.",
+  "og_title": "תקציב ומשימות לאירוע",
+  "priority": "0.7",
+  "crumbs": [["כלים לאירועים ולשמחות", "/kelim/eruim/"], ["תקציב ומשימות", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/eruim.css\">",
+  "foot": "<script src=\"/assets/eruim-hachana.js\" defer></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>תקציב ומשימות לאירוע</h1>
+  <p class="sub">מה צריך, ממי, כמה עולה ומה כבר שולם. ומה עושים חודש לפני, שבוע לפני ויום לפני – כדי שביום השמחה לא יהיה צריך לזכור כלום.</p>
+</header>
+<div class="tool no-print">
+  <div class="er-note" id="hc-demo" hidden><span>זו דוגמה עם שמות וסכומים בדויים, כדי שיהיה ברור איך זה נראה. כותבים את שלכם, או מנקים ומתחילים.</span><button class="btn btn-line btn-sm" type="button" id="hc-demo-x">לנקות ולהתחיל</button></div>
+  <div class="k-form">
+    <div class="er-two">
+      <div class="field"><label for="hc-title">איזו שמחה?</label><input id="hc-title" type="text" maxlength="70" placeholder="החתונה של נועה ואביתר"></div>
+      <div class="field"><label for="hc-date">התאריך של השמחה</label><input id="hc-date" type="date"></div>
+    </div>
+    <div class="field"><label for="hc-budget">כמה החלטתם להוציא בסך הכול? <span class="opt">(לא חובה)</span></label><input id="hc-budget" type="number" min="0" step="1" inputmode="numeric" placeholder="למשל 60000"></div>
+  </div>
+  <section class="er-sec"><h2>הוצאות וספקים</h2>
+    <div class="er-sum" id="hc-sum"></div>
+    <form class="k-form" id="hc-form" novalidate>
+      <div class="er-two">
+        <div class="field"><label for="hc-what">מה</label><input id="hc-what" type="text" maxlength="50" placeholder="צלם" list="hc-whats"></div>
+        <div class="field"><label for="hc-who">ממי <span class="opt">(ספק)</span></label><input id="hc-who" type="text" maxlength="50" placeholder="סטודיו אור"></div>
+      </div>
+      <div class="er-two">
+        <div class="field"><label for="hc-cost">כמה עולה</label><input id="hc-cost" type="number" min="0" step="1" inputmode="numeric"></div>
+        <div class="field"><label for="hc-paid">כמה כבר שולם</label><input id="hc-paid" type="number" min="0" step="1" inputmode="numeric" placeholder="0"></div>
+      </div>
+      <datalist id="hc-whats"><option value="אולם וקייטרינג"><option value="צלם"><option value="די-ג'יי ומוזיקה"><option value="הזמנות"><option value="שמלה וחליפה"><option value="איפור ושיער"><option value="פרחים ועיצוב"><option value="טבעות"><option value="הסעות"><option value="מתנות לאורחים"></datalist>
+      <button class="btn btn-gold btn-block" type="submit">להוסיף הוצאה</button>
+      <p class="res" id="hc-msg" aria-live="polite"></p>
+    </form>
+    <div id="hc-list"></div>
+  </section>
+  <section class="er-sec"><h2>מה עושים ומתי</h2>
+    <p class="er-hint" id="hc-when"></p>
+    <div id="hc-phases"></div>
+    <form class="k-form" id="hc-tform" novalidate>
+      <div class="er-two">
+        <div class="field"><label for="hc-task">משימה חדשה</label><input id="hc-task" type="text" maxlength="80" placeholder="לאשר תפריט עם האולם"></div>
+        <div class="field"><label for="hc-phase">מתי</label><select id="hc-phase"><option value="m">חודש לפני</option><option value="w">שבוע לפני</option><option value="d">יום לפני</option><option value="h">ביום עצמו</option></select></div>
+      </div>
+      <button class="btn btn-line btn-block" type="submit">+ להוסיף משימה</button>
+    </form>
+  </section>
+  <div class="er-tools">
+    <a class="btn btn-gold btn-sm" href="#" id="hc-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח סיכום</a>
+    <button class="btn btn-line btn-sm" type="button" id="hc-print">להדפיס</button>
+  </div>
+</div>
+<div id="hc-card" class="er-card t-lavan"></div>
+<div class="tool no-print">
+  <p class="disclaimer">כל הסכומים הם מה שאתם כותבים. הכלי רק סוכם ומזכיר – הוא לא נותן ייעוץ כספי ולא ממליץ על ספקים. הכול נשמר רק בטלפון הזה.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="תקציב ומשימות לאירוע: מה צריך, כמה עולה, מה שולם, ומה עושים חודש, שבוע ויום לפני. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
