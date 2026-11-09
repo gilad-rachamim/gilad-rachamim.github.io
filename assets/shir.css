@@ -116,3 +116,5 @@
 .shr-yt textarea{width:100%;min-height:5rem;font:inherit;font-size:.95rem;background:rgba(0,0,0,.25);color:var(--cream);border:1px solid var(--line);border-radius:10px;padding:.5rem;margin-top:.4rem}
 @media (max-width:460px){.shr-line{grid-template-columns:1fr}.shr-line .tools{justify-content:flex-end}.shr-kar .cur{font-size:1.35rem}}
 @media print{@page{size:A4;margin:14mm}html,body{background:#fff!important}body *{visibility:hidden}.topbar,.site-foot,.crumbs,.install-bar,.no-print,.ft{display:none!important}.shr-card,.shr-card *{visibility:visible}.shr-card{position:absolute;top:0;right:0;left:0;max-width:none;border:0;font-size:13pt}}
+.dom .shr-dev{opacity:1;border-color:var(--gold-soft);background:radial-gradient(120% 140% at 100% 0,rgba(227,183,101,.16),transparent 60%),rgba(255,255,255,.03)}
+.dom .shr-dev .badge{background:var(--gold);color:var(--ink)}
