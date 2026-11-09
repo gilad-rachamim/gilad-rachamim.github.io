@@ -3,7 +3,8 @@
 // השרת לא שומר מצב: ימות שולחת בכל בקשה את כל מה שהוקש בשיחה, ומזה מחליטים מה לשאול.
 // כל סבב בתפריט מקבל שמות משלו (m0, c0, k0... ואז m1, c1...) כדי שאפשר יהיה לחזור לתפריט שוב ושוב.
 // מעקב כניסות: Durable Object אחד שסופר שיחות ושימוש בכל כלי ביום. לא נשמר שום מספר טלפון.
-import { HDate, HebrewCalendar, Zmanim, GeoLocation, Locale, flags } from '@hebcal/core';
+import { HDate, HebrewCalendar, Zmanim, GeoLocation, Locale, flags, DailyLearning } from '@hebcal/core';
+import '@hebcal/learning'; // רושם את הדף היומי, משניות יומיות ונ"ך יומי
 
 const TZ = 'Asia/Jerusalem';
 const VERSION = 1;
@@ -25,7 +26,7 @@ const CITIES = [
 ];
 const CITY_MENU = CITIES.slice(1).map((c, i) => `ל${c[0]} הקישו ${i + 1}`).join(' ');
 
-const MENU = 'לזמני היום הקישו 1. לתאריך העברי ולחגים הקרובים הקישו 2. למחשבון ברית בר מצווה ויארצייט הקישו 3. לזמני שבת הקישו 4. להשארת הודעה ובקשת עזרה הקישו 5. לסיום הקישו 0';
+const MENU = 'לזמני היום הקישו 1. לתאריך העברי ולחגים הקרובים הקישו 2. למחשבון ברית בר מצווה ויארצייט הקישו 3. לזמני שבת הקישו 4. להשארת הודעה ובקשת עזרה הקישו 5. לדף היומי ולמשניות יומיות הקישו 6. לזמני חנוכה הקישו 7. לסיום הקישו 0';
 const WELCOME = 'שלום וברוכים הבאים לקו הכלים של גילעד רחמים. כל הכלים בחינם ובלי אינטרנט. אפשר להקיש בכל רגע בלי לחכות לסוף ההודעה';
 const SHARE = 'מכירים מישהו שזה יעזור לו? ספרו לו על הקו';
 const LINE_NUMBER = '0772253345';
@@ -193,10 +194,59 @@ function toolShabbat(city) {
   ];
 }
 
+function he(name) { return clean(Locale.gettext(name, 'he-x-NoNikud') || name); }
+
+function toolLearning() {
+  const hd = new HDate(israelToday());
+  const out = ['הלימוד היומי להיום'];
+  try {
+    const daf = DailyLearning.lookup('dafYomi', hd, true).daf;
+    out.push(`הדף היומי מסכת ${he(daf.name)} דף ${daf.blatt}`);
+  } catch (e) {}
+  try {
+    const m = DailyLearning.lookup('mishnaYomi', hd, true).mishnaYomi;
+    const parts = m.map(x => { const [p, n] = x.v.split(':'); return { k: he(x.k), p, n }; });
+    const a = parts[0], b = parts[parts.length - 1];
+    out.push(a.k === b.k && a.p === b.p
+      ? `משניות יומיות מסכת ${a.k} פרק ${a.p} משניות ${a.n} ו${b.n}`
+      : `משניות יומיות מסכת ${a.k} פרק ${a.p} משנה ${a.n} עד מסכת ${b.k} פרק ${b.p} משנה ${b.n}`);
+  } catch (e) {}
+  try {
+    const n = DailyLearning.lookup('nachYomi', hd, true);
+    out.push(`נך יומי ${he(n.k)} פרק ${n.v}`);
+  } catch (e) {}
+  return out;
+}
+
+function toolChanukah(city) {
+  const today = israelToday();
+  const gl = geo(city);
+  // הערב הראשון של חנוכה (כ"ד בכסלו) מהיום והלאה, או הערב של היום אם אנחנו באמצע החג
+  const evs = HebrewCalendar.calendar({ start: addDays(today, -8), end: addDays(today, 370), il: true })
+    .filter(e => /^Chanukah: \d Candle/.test(e.getDesc()));
+  const tonight = evs.find(e => +e.getDate().greg() === +today);
+  const first = evs.find(e => e.getDesc().startsWith('Chanukah: 1 Candle') && e.getDate().greg() >= today);
+  const out = [`חנוכה ב${city[0]}`];
+  const day = tonight ? today : first && first.getDate().greg();
+  if (!day) return ['לא מצאתי את התאריך של חנוכה'];
+  if (tonight) {
+    const n = +tonight.getDesc().match(/\d/)[0];
+    out.push(`הערב מדליקים ${n === 1 ? 'נר אחד' : `${words(n)} נרות`}`);
+  } else {
+    const days = Math.round((day - today) / 86400000);
+    out.push(`הדלקת הנר הראשון בעוד ${days} ימים ביום ${DAYS[day.getDay()]} בערב`, hDate(addDays(day, 1)), gDate(day));
+  }
+  const z = new Zmanim(gl, day, false);
+  out.push(`באותו ערב שקיעת החמה ${sayTime(z.sunset())}`, `וצאת הכוכבים ${sayTime(z.tzeit(8.5))}`,
+    'מדליקים לפי המנהג שלכם בשקיעה או בצאת הכוכבים');
+  if (day.getDay() === 5) out.push('ביום שישי מדליקים נרות חנוכה לפני נרות שבת');
+  return out;
+}
+
 // ---------- המכונה: מה לשאול עכשיו ----------
 function menuRead(round, intro) {
   if (round >= MAX_ROUNDS) return sayAndHangup([...(intro || []), 'תודה שהתקשרתם. להתראות']);
-  return readDigits([...(intro || []), MENU], `m${round}`, { allowed: '0.1.2.3.4.5' });
+  return readDigits([...(intro || []), MENU], `m${round}`, { allowed: '0.1.2.3.4.5.6.7' });
 }
 
 // sponsor: משפט הקדשה/חסות אופציונלי (משתנה SPONSOR ב-Cloudflare), מוקרא אחרי הברכה
@@ -210,11 +260,13 @@ function decide(v, sponsor = '') {
   const askCity = () => readDigits(['בחרו עיר', CITY_MENU], `c${r}`, { allowed: '1.2.3.4.5.6.7.8.9' });
 
   if (tool === '0') return { text: sayAndHangup(['תודה שהתקשרתם לקו הכלים של גילעד רחמים', SHARE, 'להתראות']) };
-  if (tool === '1' || tool === '4') {
+  if (tool === '1' || tool === '4' || tool === '7') {
     const c = CITIES[+v[`c${r}`]];
     if (!c) return { text: askCity() };
+    if (tool === '7') return { text: after(toolChanukah(c)), event: 'chanukah' };
     return { text: after(tool === '1' ? toolZmanim(c) : toolShabbat(c)), event: tool === '1' ? 'zmanim' : 'shabbat' };
   }
+  if (tool === '6') return { text: after(toolLearning()), event: 'learning' };
   if (tool === '2') return { text: after(toolToday()), event: 'today' };
   if (tool === '3') {
     const k = +v[`k${r}`];
