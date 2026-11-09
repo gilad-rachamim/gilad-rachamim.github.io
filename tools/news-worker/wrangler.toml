@@ -20,3 +20,7 @@ class_name = "Store"
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["Store"]
+
+[vars]
+# המפתח הציבורי של ההתראות (VAPID). הפרטי נשמר כסוד VAPID_JWK (npx wrangler secret put VAPID_JWK).
+VAPID_PUBLIC = "BPxymKHPzzngtKfi76udfvM1hE6-kUOHtVsS0pZbjd1d9TBLs-o0b4oiIoAPQ8-jHWU99FjEHLL60iC49mrGPyc"

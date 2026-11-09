@@ -73,7 +73,46 @@
     used('report');
   }
 
+  // ---------- התראות (Web Push) – ה-sw.js של הכלים מציג אותן ----------
+  var VAPID = 'BPxymKHPzzngtKfi76udfvM1hE6-kUOHtVsS0pZbjd1d9TBLs-o0b4oiIoAPQ8-jHWU99FjEHLL60iC49mrGPyc';
+  function b64ToBytes(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); var r = atob(s + '==='.slice((s.length + 3) % 4)); var a = new Uint8Array(r.length); for (var i = 0; i < r.length; i++) a[i] = r.charCodeAt(i); return a; }
+  function pushMsg(t) { $('nw-push-msg').textContent = t; }
+  function bellState(on) { $('nw-bell').textContent = on ? '🔕 לבטל את ההתראות' : '🔔 לקבל התראה 3 פעמים ביום'; $('nw-bell').dataset.on = on ? '1' : ''; }
+  function initPush() {
+    if (!('serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window)) {
+      $('nw-bell').disabled = true;
+      pushMsg(/iPhone|iPad/.test(navigator.userAgent)
+        ? 'באייפון: קודם מוסיפים את הדף למסך הבית (שיתוף ← "הוספה למסך הבית"), פותחים משם ולוחצים כאן.'
+        : 'הדפדפן הזה לא תומך בהתראות. אפשר לשמור את הדף במסך הבית ולהיכנס 3 פעמים ביום.');
+      return;
+    }
+    navigator.serviceWorker.ready.then(function (reg) { return reg.pushManager.getSubscription(); }).then(function (sub) { bellState(!!sub); }).catch(function () {});
+    $('nw-bell').addEventListener('click', function () {
+      var btn = this, done = function () { btn.disabled = false; };
+      btn.disabled = true;
+      navigator.serviceWorker.ready.then(function (reg) {
+        return reg.pushManager.getSubscription().then(function (sub) {
+          if (btn.dataset.on && sub) {
+            return fetch(API + '/unsubscribe', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ endpoint: sub.endpoint }) })
+              .catch(function () {}).then(function () { return sub.unsubscribe(); })
+              .then(function () { bellState(false); pushMsg('ההתראות בוטלו. אפשר להפעיל שוב בכל רגע.'); used('push_off'); });
+          }
+          return Notification.requestPermission().then(function (perm) {
+            if (perm !== 'granted') { pushMsg('ההתראות חסומות בדפדפן. אפשר לאשר אותן בהגדרות האתר (המנעול ליד הכתובת) ולנסות שוב.'); return; }
+            return reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToBytes(VAPID) }).then(function (s) {
+              return fetch(API + '/subscribe', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ endpoint: s.endpoint }) });
+            }).then(function (r) {
+              if (!r.ok) throw new Error('subscribe');
+              bellState(true); pushMsg('מעולה! תקבלו התראה כשהסיכום יוצא: 07:00, 13:00, 20:00.'); used('push_on');
+            });
+          });
+        });
+      }).catch(function () { pushMsg('ההרשמה לא הצליחה. נסו שוב בעוד רגע.'); }).then(done, done);
+    });
+  }
+
   function init() {
+    initPush();
     var t = load();
     document.querySelectorAll('#nw-topics input').forEach(function (cb) {
       cb.checked = t[cb.dataset.topic] !== false;

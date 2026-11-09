@@ -49,3 +49,25 @@ self.addEventListener('fetch', function (e) {
     }));
   }
 });
+
+// התראות "החדשות ב-3 דקות" (tools/news-worker): הדחיפה מגיעה בלי תוכן, ומביאים את הסיכום האחרון מהשרת.
+self.addEventListener('push', function (e) {
+  var page = '/kelim/machshev/chadashot/';
+  e.waitUntil(fetch('https://kelim-news.gilad4049.workers.dev/latest?from=push', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (ed) {
+    var first = ed && ed.sections && ed.sections.main && ed.sections.main[0];
+    return self.registration.showNotification('החדשות ב-3 דקות – סיכום ' + ((ed && ed.name) || 'חדש'), {
+      body: first ? first.text : 'הסיכום החדש מחכה לך', icon: '/assets/icon-kelim-192.png', badge: '/assets/icon-kelim-192.png',
+      tag: 'kelim-news', lang: 'he', dir: 'rtl', data: { url: page }
+    });
+  }).catch(function () {
+    return self.registration.showNotification('החדשות ב-3 דקות', { body: 'הסיכום החדש מחכה לך', icon: '/assets/icon-kelim-192.png', tag: 'kelim-news', lang: 'he', dir: 'rtl', data: { url: page } });
+  }));
+});
+self.addEventListener('notificationclick', function (e) {
+  e.notification.close();
+  var url = (e.notification.data && e.notification.data.url) || '/kelim/';
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (list) {
+    for (var i = 0; i < list.length; i++) if (list[i].url.indexOf(url) >= 0 && 'focus' in list[i]) return list[i].focus();
+    return self.clients.openWindow(url);
+  }));
+});
