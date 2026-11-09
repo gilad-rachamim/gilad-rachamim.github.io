@@ -1,0 +1,47 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "chanuka_tzviya",
+  "title": "דפי צביעה לחנוכה – צובעים בטלפון או מדפיסים | כלי קודש",
+  "description": "שישה ציורי חנוכה לצביעה: חנוכייה, סביבון, סופגנייה, פך השמן, מגן המכבים ובית המקדש. נוגעים באזור והוא נצבע, או מדפיסים על A4. בחינם, גם בלי אינטרנט.",
+  "og_title": "דפי צביעה לחנוכה",
+  "priority": "0.7",
+  "crumbs": [["חנוכה למשפחה", "/kodesh/chanuka/"], ["דפי צביעה", null]],
+  "head": "<style>.tz-tabs{display:flex;gap:.5rem;overflow-x:auto;padding:.2rem 0 .6rem;scroll-snap-type:x mandatory}.tz-tab{flex:none;width:5.6rem;scroll-snap-align:start;border:2px solid var(--line);border-radius:12px;background:rgba(255,255,255,.04);color:var(--cream);font:inherit;font-size:.85rem;padding:.3rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.2rem}.tz-tab svg{width:100%;height:auto;border-radius:8px;background:#fff;pointer-events:none}.tz-tab[aria-pressed=true]{border-color:var(--gold);background:rgba(212,176,98,.16)}.tz-board{border:1px solid var(--gold-soft);border-radius:16px;background:rgba(212,176,98,.07);padding:.8rem}.tz-top{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin:0 0 .5rem}.tz-top h2{margin:0;font-family:var(--serif);color:var(--cream);font-size:1.3rem}#tz-stage{background:#fff;border-radius:12px;overflow:hidden;touch-action:manipulation;max-width:34rem;margin:0 auto}#tz-stage svg{display:block;width:100%;height:auto}#tz-stage .r{cursor:pointer}.tz-pal{display:grid;grid-template-columns:repeat(8,1fr);gap:.4rem;margin:.8rem auto 0;max-width:34rem}.tz-c{aspect-ratio:1;border-radius:50%;border:2px solid rgba(255,255,255,.25);cursor:pointer;padding:0;min-width:0}.tz-c.er{background-image:linear-gradient(135deg,transparent 45%,#e53935 45%,#e53935 55%,transparent 55%)!important}.tz-c[aria-pressed=true]{outline:3px solid var(--gold);outline-offset:2px;transform:scale(1.08)}.tz-bar{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.8rem;justify-content:center}.tz-bar .btn{flex:1 1 9rem;justify-content:center}.tz-bar .btn:disabled{opacity:.45}.tz-msg{min-height:1.3rem;text-align:center;color:var(--gold);margin:.4rem 0 0}.tz-sm{color:var(--body);margin:.3rem 0 0;font-size:.95rem}#tz-print{display:none}@media print{@page{size:A4 portrait;margin:12mm}body>*:not(#tz-print){display:none!important}body{background:#fff!important}#tz-print{display:block!important}.tz-page{page-break-after:always;break-after:page;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact}.tz-page:last-child{page-break-after:auto;break-after:auto}.tz-page svg{width:180mm;height:180mm}.tz-ph{font:700 22pt/1.3 Assistant,Arial,sans-serif;color:#000;margin:0 0 6mm}.tz-pf{font:10pt Assistant,Arial,sans-serif;color:#555;margin:6mm 0 0}}</style>",
+  "foot": "<script src=\"/assets/chanuka-tzviya.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <span class="bsd">בס"ד</span>
+  <h1>דפי צביעה לחנוכה</h1>
+  <p class="sub">בוחרים ציור, בוחרים צבע, ונוגעים באזור שרוצים לצבוע. אפשר גם להדפיס ולצבוע בטושים.</p>
+</header>
+
+<section class="k-sec" aria-label="צביעה">
+  <div class="tz-tabs" id="tz-tabs" aria-label="בחירת ציור"></div>
+  <div class="tz-board">
+    <div class="tz-top"><h2 id="tz-name">חנוכייה</h2><button type="button" class="btn btn-line" id="tz-undo" disabled>↶ ביטול</button></div>
+    <div id="tz-stage"></div>
+    <div class="tz-pal" id="tz-pal" aria-label="צבעים"></div>
+    <p class="tz-msg" id="tz-msg" aria-live="polite"></p>
+    <div class="tz-bar">
+      <button type="button" class="btn btn-gold" id="tz-save">לשמור כתמונה</button>
+      <button type="button" class="btn btn-line" id="tz-p2">להדפיס את מה שצבעתי</button>
+      <button type="button" class="btn btn-line" id="tz-p1">להדפיס לצביעה ביד</button>
+      <button type="button" class="btn btn-line" id="tz-clear">לנקות את הציור</button>
+    </div>
+    <p class="tz-sm">הצבעים נשמרים בטלפון, אפשר לחזור ולהמשיך מחר. הלבן עם הקו האדום הוא מחק.</p>
+  </div>
+</section>
+
+<section class="k-sec" aria-labelledby="tz-all-h">
+  <h2 id="tz-all-h">חוברת צביעה להדפסה</h2>
+  <p class="lead2">כל ששת הציורים, כל אחד בעמוד A4 משלו. טוב לנסיעה, לגן או לשולחן אחרי ההדלקה.</p>
+  <div class="actions"><button type="button" class="btn btn-gold" id="tz-pall">להדפיס את כל ששת הדפים</button></div>
+  <p class="tz-sm">כל הציורים צוירו במיוחד לאתר. מותר להדפיס ולחלק בחינם.</p>
+</section>
+
+<section class="k-sec" aria-labelledby="tz-more-h">
+  <h2 id="tz-more-h">עוד לחנוכה</h2>
+  <div class="actions"><a class="btn btn-line" href="/kodesh/chanuka/sevivon/">סביבון דיגיטלי</a><a class="btn btn-line" href="/kodesh/chanuka/chidon/">חידון חנוכה</a><a class="btn btn-line" href="/kodesh/chanuka/">לחבילת החנוכה למשפחה</a></div>
+</section>
+<div id="tz-print" aria-hidden="true"></div>
