@@ -300,8 +300,8 @@
     }
     var more = hits.length > 8 ? '<p class="note">יש עוד ' + (hits.length - 8) + ' – להמשיך להקליד כדי לצמצם.</p>' : '';
     box.innerHTML = hits.slice(0, 8).map(function (r, i) {
-      var how = r.cat === 'btl' ? 'שליחה בחינם באתר ביטוח לאומי' : r.email ? '✉️ ' + r.email : r.url ? 'יש אתר רשמי' : 'במקור רק פקס';
-      return '<button type="button" class="fx-hit" data-h="' + i + '" aria-pressed="' + (st.to === 'hit' && st.hit && st.hit.n === r.n) + '"><b>' + esc(r.n) + '</b><small dir="auto">' + esc(how) + ' · פקס ' + esc(r.fax.map(pretty).join(', ')) + '</small></button>';
+      var how = r.cat === 'btl' ? esc('שליחה בחינם באתר ביטוח לאומי') : r.email ? '✉️ <bdi dir="ltr">' + esc(r.email) + '</bdi>' : r.url ? 'יש אתר רשמי' : 'במקור רק פקס';
+      return '<button type="button" class="fx-hit" data-h="' + i + '" aria-pressed="' + (st.to === 'hit' && st.hit && st.hit.n === r.n) + '"><b>' + esc(r.n) + '</b><small>' + how + ' · פקס <bdi dir="ltr">' + esc(r.fax.map(pretty).join(', ')) + '</bdi></small></button>';
     }).join('') + more;
     if (full) track(d, 1);
   }
