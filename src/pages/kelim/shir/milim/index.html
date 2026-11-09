@@ -1,0 +1,89 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "shir_milim",
+  "title": "כותבים שיר – נושא, בתים, פזמון וחרוזים, ביחד עם הכלי | הכלים של גילעד רחמים",
+  "description": "כותבים שיר משלכם, צעד אחרי צעד: בוחרים נושא ואווירה, עם חרוזים או בלי, עונים על כמה שאלות, וכותבים בתים ופזמון. הכלי מציע שורות וחרוזים, ואתם בוחרים. בחינם, בלי הרשמה, נשמר רק אצלכם.",
+  "og_title": "כותבים שיר משלכם, ביחד עם הכלי",
+  "priority": "0.7",
+  "crumbs": [["השיר שלי", "/kelim/shir/"], ["כותבים את המילים", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/shir.css\">",
+  "foot": "<script src=\"/assets/shir-core.js\" defer></script><script src=\"/assets/shir-milim.js\" defer></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>כותבים את המילים</h1>
+  <p class="sub">שיר משלכם, צעד אחרי צעד. הכלי שואל ומציע, ואתם בוחרים. השיר שלכם.</p>
+</header>
+<div class="tool no-print">
+  <nav class="shr-steps" aria-label="שלבי השיר"><a class="on" href="/kelim/shir/milim/"><b>1</b>מילים</a><a><b>2</b>לחן (בקרוב)</a><a><b>3</b>הקלטה</a><a><b>4</b>קליפ</a></nav>
+  <div class="shr-top">
+    <select id="sm-songs" aria-label="השירים שלי"></select>
+    <span><button class="shr-mini" type="button" id="sm-new">+ שיר חדש</button> <button class="shr-mini" type="button" id="sm-del">למחוק את השיר</button></span>
+  </div>
+  <div class="shr-demo" id="sm-demo" hidden><span>זה שיר לדוגמה, כדי לראות איך זה נראה. אפשר לשנות אותו, או להתחיל שיר משלכם.</span><button class="btn btn-gold btn-sm" type="button" id="sm-start">להתחיל שיר משלי</button></div>
+  <p class="hint" id="sm-where" aria-live="polite"></p>
+
+  <section class="shr-screen k-form" data-s="1">
+    <h2>על מה השיר?</h2>
+    <p class="hint">משפט אחד מספיק. אפשר לשנות אחר כך.</p>
+    <div class="field"><label for="sm-topic">הנושא</label><input id="sm-topic" type="text" maxlength="120" placeholder="למשל: בוקר חדש אחרי תקופה קשה"></div>
+    <div class="field"><label for="sm-for">למי השיר? <span class="opt">(לא חובה)</span></label><input id="sm-for" type="text" maxlength="60" placeholder="לעצמי / לאמא / לחברים מהיחידה"></div>
+    <div class="field"><span class="label">האווירה</span><div class="shr-chips" id="sm-mood"></div></div>
+  </section>
+
+  <section class="shr-screen k-form" data-s="2" hidden>
+    <h2>חרוזים?</h2>
+    <div class="shr-big" id="sm-rhyme">
+      <button type="button" data-v="yes"><b>כן, עם חרוזים</b><span>סוף השורות מתחרז. נשמע כמו שיר "קלאסי".</span></button>
+      <button type="button" data-v="chorus"><b>רק בפזמון</b><span>הבתים חופשיים, הפזמון מתחרז ונזכר.</span></button>
+      <button type="button" data-v="no"><b>בלי חרוזים</b><span>אומרים בדיוק מה שבלב, בלי להתאמץ על חרוז.</span></button>
+    </div>
+    <h2 style="margin-top:1.1rem">המבנה</h2>
+    <p class="hint">בית, פזמון, בית, פזמון. אפשר להוסיף גשר או בית שלישי.</p>
+    <p class="shr-order" id="sm-order2"></p>
+    <div class="shr-add"><button class="shr-mini" type="button" data-add="bridge">+ גשר</button><button class="shr-mini" type="button" data-add="verse">+ בית שלישי</button></div>
+  </section>
+
+  <section class="shr-screen k-form" data-s="3" hidden>
+    <h2>כמה שאלות, לפני שכותבים</h2>
+    <p class="hint">התשובות הן חומר הגלם של השיר. כותבים במילים שלכם, בלי לחשוב על חרוז. מה שלא מתאים – מדלגים.</p>
+    <div id="sm-qs"></div>
+  </section>
+
+  <section class="shr-screen" data-s="4" hidden>
+    <h2>כותבים</h2>
+    <p class="hint">שורה בכל תיבה. ליד כל שורה: כמה הברות יש בה (בערך), ו"הצע לי" – הצעה נכנסת רק כשלוחצים עליה.</p>
+    <details class="shr-raw" id="sm-raw" open><summary>חומר הגלם שלך</summary><ul id="sm-rawl"></ul></details>
+    <p class="shr-order" id="sm-order"></p>
+    <div id="sm-parts"></div>
+    <div class="shr-add"><button class="shr-mini" type="button" data-add="verse">+ עוד בית</button><button class="shr-mini" type="button" data-add="bridge">+ גשר</button><button class="shr-mini gold" type="button" id="sm-chorus-ai">הצע לי פזמון</button></div>
+    <p class="shr-msg" id="sm-msg" aria-live="polite"></p>
+  </section>
+
+  <section class="shr-screen" data-s="5" hidden>
+    <h2>השיר שלך</h2>
+    <div class="k-form">
+      <div class="field"><label for="sm-title">שם השיר</label><input id="sm-title" type="text" maxlength="60" placeholder="בוקר חדש"> <button class="shr-mini gold" type="button" id="sm-title-ai" style="margin-top:.4rem">הצע לי שם</button><div id="sm-title-sug"></div></div>
+      <div class="field"><label for="sm-author">מילים: <span class="opt">(השם שלכם, יופיע בדף ובקליפ)</span></label><input id="sm-author" type="text" maxlength="50" placeholder="השם שלכם"></div>
+    </div>
+  </section>
+
+  <div class="shr-nav"><button class="btn btn-line" type="button" id="sm-prev">→ הקודם</button><button class="btn btn-gold" type="button" id="sm-next">הבא ←</button></div>
+</div>
+
+<div id="sm-final" hidden>
+  <div id="sm-card" class="shr-card t-klaf"></div>
+  <div class="tool no-print">
+    <div class="shr-themes" id="sm-theme"><button type="button" data-t="lavan">לבן, חוסך דיו</button><button type="button" data-t="zayit">ירוק זית</button><button type="button" data-t="klaf">קלף</button><button type="button" data-t="layla">לילה</button></div>
+    <div class="share-row">
+      <a class="btn btn-gold btn-sm" href="#" id="sm-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח בווטסאפ</a>
+      <button class="btn btn-line btn-sm" type="button" id="sm-print">להדפיס</button>
+    </div>
+    <div class="shr-next"><span class="btn btn-line" id="sm-go">השלב הבא, לחן – בקרוב</span></div>
+  </div>
+</div>
+
+<div class="tool no-print">
+  <p class="disclaimer">השיר נשמר רק בטלפון הזה. כשלוחצים "הצע לי", השורות נשלחות לעוזר רק כדי לקבל הצעה, ולא נשמרות שם. החרוזים "בערך" – בלי ניקוד אי אפשר לדעת בוודאות.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="כלי חינמי לכתוב שיר משלכם, עם הצעות לשורות ולחרוזים:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
