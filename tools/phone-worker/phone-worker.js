@@ -1,4 +1,4 @@
-// קו הכלים בטלפון – Cloudflare Worker שעונה ל"מודול API" של ימות המשיח.
+﻿// קו הכלים בטלפון – Cloudflare Worker שעונה ל"מודול API" של ימות המשיח.
 // מתקשרים ממכשיר כשר, מקישים ספרות, והשרת מחזיר טקסט שהמערכת מקריאה בעברית (TTS, חינם).
 // השרת לא שומר מצב: ימות שולחת בכל בקשה את כל מה שהוקש בשיחה, ומזה מחליטים מה לשאול.
 // כל סבב בתפריט מקבל שמות משלו (m0, c0, k0... ואז m1, c1...) כדי שאפשר יהיה לחזור לתפריט שוב ושוב.
@@ -26,7 +26,10 @@ const CITIES = [
 const CITY_MENU = CITIES.slice(1).map((c, i) => `ל${c[0]} הקישו ${i + 1}`).join(' ');
 
 const MENU = 'לזמני היום הקישו 1. לתאריך העברי ולחגים הקרובים הקישו 2. למחשבון ברית בר מצווה ויארצייט הקישו 3. לזמני שבת הקישו 4. להשארת הודעה ובקשת עזרה הקישו 5. לסיום הקישו 0';
-const WELCOME = 'שלום וברוכים הבאים לקו הכלים של גילעד רחמים. כלים חינמיים בטלפון';
+const WELCOME = 'שלום וברוכים הבאים לקו הכלים של גילעד רחמים. כל הכלים בחינם ובלי אינטרנט. אפשר להקיש בכל רגע בלי לחכות לסוף ההודעה';
+const SHARE = 'מכירים מישהו שזה יעזור לו? ספרו לו על הקו';
+const LINE_NUMBER = '0772253345';
+const SAVE = ['טיפ קטן. שמרו את המספר הזה באנשי הקשר בשם קו הכלים ושימו אותו על קיצור חיוג. המספר הוא', { raw: `d-${LINE_NUMBER}` }, SHARE];
 
 const DAYS = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
 
@@ -43,8 +46,8 @@ function readDigits(parts, name, { max = 1, min = 1, allowed = '' } = {}) {
   return `read=${msgs(parts)}=${name},no,${max},${min},7,No,no,no,,${allowed},,,`;
 }
 function readRecord(parts, name, fileName) {
-  // מקליטים לשלוחה 9 במערכת של גילעד; עד 2 דקות.
-  return `read=${msgs(parts)}=${name},no,record,/9,${fileName},,yes,,1,120`;
+  // מקליטים לשלוחה 8 במערכת של גילעד (9 שם היא חדר ועידה); עד 2 דקות. שומעים באתר הניהול.
+  return `read=${msgs(parts)}=${name},no,record,/8,${fileName},,yes,,1,120`;
 }
 function sayAndHangup(parts) {
   return `id_list_message=${msgs(parts)}&go_to_folder=hangup`;
@@ -196,15 +199,17 @@ function menuRead(round, intro) {
   return readDigits([...(intro || []), MENU], `m${round}`, { allowed: '0.1.2.3.4.5' });
 }
 
-function decide(v) {
+// sponsor: משפט הקדשה/חסות אופציונלי (משתנה SPONSOR ב-Cloudflare), מוקרא אחרי הברכה
+function decide(v, sponsor = '') {
   let r = -1;
   for (let i = 0; i < MAX_ROUNDS; i++) if (v[`m${i}`] !== undefined) r = i;
-  if (r < 0) return { text: menuRead(0, [WELCOME]), event: 'call' };
+  if (r < 0) return { text: menuRead(0, [WELCOME, sponsor]), event: 'call' };
   const tool = v[`m${r}`], next = r + 1;
-  const after = res => menuRead(next, [...res, 'לכלי נוסף']);
+  // אחרי הכלי הראשון: לשמור את הקו באנשי הקשר ובקיצור חיוג, ולספר לחבר
+  const after = res => menuRead(next, [...res, ...(r === 0 ? SAVE : []), 'לכלי נוסף']);
   const askCity = () => readDigits(['בחרו עיר', CITY_MENU], `c${r}`, { allowed: '1.2.3.4.5.6.7.8.9' });
 
-  if (tool === '0') return { text: sayAndHangup(['תודה שהתקשרתם לקו הכלים. להתראות']) };
+  if (tool === '0') return { text: sayAndHangup(['תודה שהתקשרתם לקו הכלים של גילעד רחמים', SHARE, 'להתראות']) };
   if (tool === '1' || tool === '4') {
     const c = CITIES[+v[`c${r}`]];
     if (!c) return { text: askCity() };
@@ -261,7 +266,7 @@ export default {
     const v = await params(request);
     if (v.hangup === 'yes') return new Response('', { headers: { 'content-type': 'text/plain; charset=utf-8' } });
     let out;
-    try { out = decide(v); } catch (e) { out = { text: sayAndHangup(['סליחה, הייתה תקלה. נסו שוב מאוחר יותר']) }; }
+    try { out = decide(v, env.SPONSOR || ''); } catch (e) { out = { text: sayAndHangup(['סליחה, הייתה תקלה. נסו שוב מאוחר יותר']) }; }
     count(env, ctx, out.event);
     return new Response(out.text, { headers: { 'content-type': 'text/plain; charset=utf-8' } });
   }
