@@ -367,7 +367,7 @@
     return new Promise(function (res) {
       if (window.hebcal) return res();
       var s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/@hebcal/core@6.14.7/dist/bundle.min.js';
+      s.src = '/assets/vendor/hebcal-bundle/hebcal-core-6.14.7.min.js';
       s.onload = function () { res(); }; s.onerror = function () { res(); };
       setTimeout(res, 6000);
       document.head.appendChild(s);

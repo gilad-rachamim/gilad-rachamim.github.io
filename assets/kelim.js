@@ -65,17 +65,69 @@
     // שיתוף
     var s = e.target.closest('[data-share-tool]');
     if (s) {
-      var url = location.origin + location.pathname + '?utm_source=share&utm_medium=friend&utm_campaign=' + (body.getAttribute('data-tool') || site);
+      var how = s.getAttribute('data-share-tool');
+      var url = location.origin + location.pathname + '?utm_source=share&utm_medium=' + (how === 'wa' || how === 'native' ? 'friend' : how) + '&utm_campaign=' + (body.getAttribute('data-tool') || site);
       var text = s.getAttribute('data-text') || document.title;
-      ev('share', { tool: body.getAttribute('data-tool') || '', how: s.getAttribute('data-share-tool') });
-      if (s.getAttribute('data-share-tool') === 'native' && navigator.share) {
+      ev('share', { tool: body.getAttribute('data-tool') || '', how: how });
+      if (how === 'native' && navigator.share) {
         e.preventDefault();
         navigator.share({ title: document.title, text: text, url: url }).catch(function () {});
+      } else if (how === 'copy') {
+        e.preventDefault();
+        copyText(text + '\n' + url, s, 'הקישור הועתק ✓ אפשר להדביק בכל הודעה');
+      } else if (how === 'sms' && s.tagName === 'A') {
+        // אנדרואיד ואייפון מבינים את שתי הצורות; ?&body= עובד בשניהם
+        s.href = 'sms:?&body=' + encodeURIComponent(text + '\n' + url);
       } else if (s.tagName === 'A') {
         s.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text + '\n' + url);
       }
     }
+    // כפתור העתקה כללי: data-copy="הטקסט" או data-copy-from="#id"
+    var cp = e.target.closest('[data-copy],[data-copy-from]');
+    if (cp) {
+      e.preventDefault();
+      var src = cp.getAttribute('data-copy-from'), el = src && document.querySelector(src);
+      copyText(el ? (el.value || el.textContent).trim() : cp.getAttribute('data-copy'), cp, cp.getAttribute('data-copied') || 'הועתק ✓');
+      ev('copy_click', { what: cp.getAttribute('data-copy-what') || src || '' });
+    }
   }, true);
+
+  // העתקה ללוח, גם בדפדפנים ישנים או מסוננים שאין בהם navigator.clipboard
+  function copyText(t, btn, okMsg) {
+    var old = btn.getAttribute('data-old') || btn.innerHTML;
+    btn.setAttribute('data-old', old);
+    function ok() { btn.textContent = okMsg; setTimeout(function () { btn.innerHTML = old; }, 3500); }
+    function legacy() {
+      var ta = document.createElement('textarea');
+      ta.value = t; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.top = '-9999px';
+      document.body.appendChild(ta); ta.select();
+      var done = false; try { done = document.execCommand('copy'); } catch (err) {}
+      document.body.removeChild(ta);
+      if (done) ok(); else window.prompt('להעתיק את זה:', t);
+    }
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(t).then(ok, legacy);
+    else legacy();
+  }
+  window.kelimCopy = copyText;
+
+  // ליד כל כפתור "לשלוח בווטסאפ": גם SMS וגם העתקת קישור.
+  // לא לכולם יש ווטסאפ: בטלפון כשר או מסונן הוא לעיתים חסום.
+  function addShareAlts(root) {
+    (root || document).querySelectorAll('a[data-share-tool="wa"]:not([data-alts])').forEach(function (a) {
+      a.setAttribute('data-alts', '1');
+      if (a.closest('.topbar,.no-alts')) return;
+      var t = a.getAttribute('data-text');
+      var wrap = document.createElement('span');
+      wrap.className = 'share-alts';
+      wrap.innerHTML = '<a class="btn btn-line btn-sm" href="sms:" data-share-tool="sms">📱 ב-SMS</a><button class="btn btn-line btn-sm" type="button" data-share-tool="copy">🔗 להעתיק קישור</button>';
+      if (t) wrap.querySelectorAll('[data-share-tool]').forEach(function (b) { b.setAttribute('data-text', t); });
+      a.insertAdjacentElement('afterend', wrap);
+    });
+  }
+  addShareAlts();
+  if (window.MutationObserver) new MutationObserver(function (m) {
+    for (var i = 0; i < m.length; i++) if (m[i].addedNodes.length) { addShareAlts(); break; }
+  }).observe(document.body, { childList: true, subtree: true });
 
   // ---------- טפסים ("רוצים כלי?", "רוצים לתרום?") → גיליון הלידים הקיים, עם תגית ----------
   // צינור הלידים שולח מייל עם מדריך הברית למי שממלא מייל, לכן כאן אין שדה email:

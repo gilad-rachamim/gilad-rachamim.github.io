@@ -85,3 +85,9 @@ body[data-tool="rega"] .fb{display:none}
 .k-voice{margin:.4rem 0 .6rem;font-size:.95rem;opacity:.95}
 .fb-share{text-align:center;margin:.6rem 0 0}
 
+/* שיתוף בלי ווטסאפ: SMS והעתקת קישור ליד כל כפתור ווטסאפ (מכשירים כשרים, 09.11.2026) */
+.share-alts{display:inline-flex;flex-wrap:wrap;gap:.4rem;margin:.4rem .4rem 0;vertical-align:middle}
+.share-alts .btn{font-size:.9rem}
+.kasher-msg{white-space:pre-wrap;direction:rtl;background:rgba(201,162,75,.07);border:1px solid var(--line);border-radius:12px;padding:.8rem 1rem;font-size:.97rem;line-height:1.65;width:100%;min-height:12rem;color:inherit;font-family:inherit}
+@media print{.share-alts{display:none}}
+.k-list{margin:.6rem 0 1rem;padding-inline-start:1.2rem;display:grid;gap:.55rem;line-height:1.65}
