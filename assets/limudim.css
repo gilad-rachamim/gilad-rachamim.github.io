@@ -498,3 +498,55 @@ body.cx-bigmode .cx-sheet{font-size:1.15rem}
 .ms-toast{position:fixed;left:50%;bottom:1.2rem;transform:translate(-50%,150%);background:var(--gold);color:var(--ink);font-weight:700;padding:.6rem 1.1rem;border-radius:99px;z-index:60;transition:transform .35s;max-width:92vw;text-align:center}
 .ms-toast.on{transform:translate(-50%,0)}
 @media (prefers-reduced-motion:reduce){.ms-node.here .ms-dot,.ms-mic.on,.ms-chip.pop{animation:none}.ms-bigstars i.on{animation:none;transform:none}.ms-toast{transition:none}}
+/* ===== הפותר (/limudim/poter/) ===== */
+.pt-lbl{font-weight:700;color:var(--cream)}
+#pt-q{min-height:9rem;line-height:1.6}
+.pt-tools{display:flex;flex-wrap:wrap;gap:.5rem}
+.pt-tools .btn{background:rgba(255,255,255,.06);color:var(--cream);border:1px solid var(--line);cursor:pointer}
+.pt-mic[aria-pressed=true]{border-color:var(--no);background:rgba(232,154,138,.16)}
+.pt-img{display:grid;gap:.4rem;justify-items:start}
+.pt-img img{max-width:100%;max-height:260px;border-radius:10px;border:1px solid var(--line);background:#fff}
+.pt-go{font-size:1.15rem;padding:.85rem 1.2rem}
+.pt-go:disabled{opacity:.55;cursor:wait}
+.pt-demo{margin:0}
+.pt-wait{margin-top:1rem;padding:1.1rem;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03);display:grid;gap:.6rem;justify-items:center;text-align:center}
+.pt-wait #pt-stage{color:var(--cream);font-size:1.1rem;font-weight:700}
+.pt-spin{width:2.6rem;height:2.6rem;border-radius:50%;border:4px solid var(--line);border-top-color:var(--gold);animation:ptspin 1s linear infinite}
+@keyframes ptspin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.pt-spin{animation-duration:3s}}
+.pt-stages{list-style:none;padding:0;margin:0;display:grid;gap:.25rem;color:var(--muted);text-align:start}
+.pt-stages li::before{content:"○ ";color:var(--muted)}
+.pt-stages li.now{color:var(--cream);font-weight:700}
+.pt-stages li.now::before{content:"◔ ";color:var(--gold)}
+.pt-stages li.done::before{content:"✓ ";color:var(--ok)}
+.pt-err{margin-top:1rem;padding:.8rem 1rem;border-radius:12px;border:1px solid var(--no);background:rgba(232,154,138,.1);color:var(--cream)}
+.pt-sheet{margin-top:1rem}
+.pt-badge{display:grid;gap:.15rem;padding:.7rem .9rem;border-radius:10px;margin-bottom:.7rem;line-height:1.5}
+.pt-badge b{font-size:1.15rem}
+.pt-badge.ok{background:#e3f4ea;border:2px solid #2f8a5b;color:#16402b}
+.pt-badge.warn{background:#fff3dc;border:2px solid #c98a12;color:#5a3c00}
+.pt-demo-tag{font-size:.9rem;color:#5a6377;margin-bottom:.3rem}
+.pt-topic{font-weight:700;color:#7a4a00;margin-bottom:.3rem}
+.pt-qtext{margin:.3rem 0 .6rem;color:#2a3550}
+.pt-qtext summary{cursor:pointer;color:#5a6377}
+.pt-qtext p{margin-top:.4rem;line-height:1.8;white-space:normal}
+.pt-given{margin:0 1.2rem .5rem 0;line-height:1.9;color:#2a3550}
+.pt-part{padding-top:.6rem;margin-top:.6rem;border-top:1px dashed #d8cfae}
+.pt-part h3{display:flex;gap:.5rem;align-items:center}
+.pt-mk.ok{color:#2f8a5b}
+.pt-ask{color:#2a3550;font-weight:600;margin-bottom:.2rem}
+.pt-math{margin:.15rem 0 .35rem;overflow-x:auto;overflow-y:hidden;color:#141c2b;font-size:1.08rem;padding:.1rem 0;text-align:left}
+.pt-math .katex{font-size:1.08em}
+.pt-ans{margin:.3rem 0 .2rem;flex-wrap:wrap;max-width:100%}
+.pt-ans b{overflow-wrap:anywhere}
+.pt-dis{margin-top:.4rem;padding:.5rem .7rem;border-radius:8px;background:#fff3dc;color:#5a3c00;border-inline-start:4px solid #c98a12}
+.pt-chcap{margin-top:.4rem;font-size:.92rem;color:#5a6377}
+.pt-checks{list-style:none;padding:0;margin:.1rem 0 0;font-size:.92rem;line-height:1.7}
+.pt-checks .ok{color:#2f6f4c}.pt-checks .bad{color:#a3361f;font-weight:700}.pt-checks .skip{color:#7a8296}
+.pt-tip{margin-top:.8rem}
+.pt-act{margin-top:.8rem}
+.pt-how summary{cursor:pointer;color:var(--cream)}
+.pt-priv{margin-top:1rem}
+@media print{.site-limudim header,.site-limudim nav,.site-limudim footer,#pt-in,.cx-exam,.pt-how,.pt-priv,.pt-act,.k-hero,.crumbs{display:none!important}.pt-sheet{box-shadow:none;border:0}}
+body.cx-exammode .pt-link{display:none!important}
+.pt-link{margin-top:.5rem}
