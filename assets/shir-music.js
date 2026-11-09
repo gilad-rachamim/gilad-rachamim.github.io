@@ -27,7 +27,7 @@
   function deg2midi(m, d) { var sc = scale(m), o = Math.floor(d / 7), k = ((d % 7) + 7) % 7; return tonic(m) + 12 * o + sc[k]; }
   function chordTones(r) { return [r, r + 2, r + 4]; }
   function chordName(m, r) {
-    var sc = scale(m), k = ((r % 7) + 7) % 7, root = (TONIC_PC[m.mood] + sc[k]) % 12;
+    var sc = scale(m), k = ((r % 7) + 7) % 7, root = (((tonic(m) % 12) + 12) % 12 + sc[k]) % 12;
     var third = (sc[(k + 2) % 7] - sc[k] + 12) % 12, fifth = (sc[(k + 4) % 7] - sc[k] + 12) % 12;
     return NAMES[root] + (third === 3 ? (fifth === 6 ? 'dim' : 'm') : '');
   }
