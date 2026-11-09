@@ -1,0 +1,40 @@
+/* שירון לחנוכה – /kodesh/chanuka/shiron/ */
+:root{--sh-fs:1.3rem}
+.sh-bar{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:.45rem;align-items:center;justify-content:center;padding:.6rem .5rem;margin:0 -.5rem;background:var(--bg,#0d0b08);border-bottom:1px solid var(--line)}
+.sh-bar .btn{padding:.5rem .85rem;font-size:1rem}
+.sh-bar .sh-az{min-width:3rem;justify-content:center;font-weight:700}
+.sh-bar .btn:disabled{opacity:.45}
+.sh-chips{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:.8rem 0 0}
+.sh-chips a{padding:.35rem .8rem;border:1px solid var(--gold-soft);border-radius:99px;color:var(--cream);text-decoration:none;font-size:.95rem}
+.sh-song{scroll-margin-top:4.5rem}
+.sh-song h2{font-family:var(--serif);color:var(--gold);text-align:center;margin:.2rem 0 .5rem}
+.sh-txt p{font-family:var(--serif);font-size:var(--sh-fs);line-height:1.95;color:var(--cream);margin:.55rem 0;text-align:center}
+.sh-txt p b{color:var(--gold)}
+.sh-txt p small{font-family:inherit;font-size:.7em;color:var(--muted)}
+.sh-txt p.sh-ins{font-family:var(--sans,inherit);font-size:.95rem;color:var(--muted);line-height:1.6}
+.sh-txt p.sh-bayit{padding:.6rem 0;border-bottom:1px solid var(--line);margin:0}
+.sh-txt p.sh-bayit:last-child{border-bottom:0}
+.sh-siman{text-align:center;color:var(--muted);font-size:.92rem;margin:-.2rem 0 .3rem}
+.sh-note{padding:.7rem .9rem;border-inline-start:3px solid var(--gold);background:rgba(212,176,98,.07);border-radius:8px;color:var(--body);margin:.6rem 0;line-height:1.6}
+.sh-st{color:var(--muted);font-size:.9rem;line-height:1.6}
+/* מצב לילה: שחור מלא ואותיות ענבר רכות, בלי כל מה שמסביב – ליד הנרות בחושך */
+body.sh-night{background:#000!important}
+body.sh-night .topbar,body.sh-night .site-foot,body.sh-night .crumbs,body.sh-night .k-hero,body.sh-night .sh-more,body.sh-night .sh-chips{display:none!important}
+body.sh-night .sh-bar{background:#000;border-color:#2a1d08}
+body.sh-night .k-sec{background:transparent;border-color:transparent}
+body.sh-night .sh-txt p,body.sh-night .sh-txt p b,body.sh-night .sh-song h2{color:#f2b65a}
+body.sh-night .sh-txt p.sh-ins,body.sh-night .sh-siman,body.sh-night .sh-st,body.sh-night .sh-note{color:#9a7434;background:transparent}
+body.sh-night .sh-txt p.sh-bayit{border-color:#2a1d08}
+/* הדפסה: חוברת A5 בשחור-לבן */
+@page{size:A5;margin:11mm 10mm}
+@media print{
+  .topbar,.site-foot,.crumbs,.no-print,.k-hero .sub,.sh-bar,.sh-chips,.sh-more{display:none!important}
+  body,body.sh-night{background:#fff!important;color:#000!important}
+  .k-sec{border:0!important;background:none!important;padding:0!important;margin:0 0 4mm!important}
+  .k-hero{padding:0!important;margin:0 0 3mm!important}
+  .k-hero h1,.sh-song h2,.sh-txt p,.sh-txt p b,.sh-siman,.sh-note,.sh-st,.sh-txt p.sh-ins{color:#000!important;background:none!important}
+  .sh-txt p{font-size:12.5pt!important;line-height:1.7;margin:1.5mm 0}
+  .sh-txt p.sh-bayit{break-inside:avoid;border-color:#bbb}
+  .sh-song h2{break-after:avoid}
+  #sh-maoz-sec{break-before:page}
+}
