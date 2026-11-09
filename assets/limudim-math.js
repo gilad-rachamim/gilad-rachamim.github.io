@@ -666,8 +666,181 @@
       return { ex: ex, steps: st, fin: eq };
     } });
 
+  // ---------- סבב 4: נושאי בגרות ----------
+  var BG = 'בגרות · 3–4 יח״ל';
+  function r2(x) { return Math.round(x * 100) / 100; }
+  function r3(x) { return Math.round(x * 1000) / 1000; }
+  var DEG = Math.PI / 180;
+  var TRI2 = '<svg viewBox="0 0 220 160" class="mx-svg" aria-hidden="true"><path d="M20 140 L200 140 L200 30 Z" fill="rgba(134,197,230,.12)" stroke="#86c5e6" stroke-width="3"/><path d="M184 140 v-16 h16" fill="none" stroke="#dcb769" stroke-width="2"/><path d="M52 140 A32 32 0 0 0 48 123" fill="none" stroke="#ecca83" stroke-width="2"/><text x="58" y="134" fill="#ecca83" font-size="15">α</text><text x="205" y="90" fill="#7fd1a8" font-size="13">' + 'נגדי' + '</text><text x="96" y="156" fill="#86c5e6" font-size="13">' + 'ליד' + '</text><text x="88" y="76" fill="#dcb769" font-size="13">' + 'יתר' + '</text></svg>';
+
+  T.push({ id: 'sidra', em: '🪜', name: 'סדרה חשבונית', grade: BG, bg: 1,
+    lesson: [
+      { m: '3, 7, 11, 15, ...', t: 'סדרה חשבונית היא רשימת מספרים שבה מוסיפים כל פעם את אותו מספר. כאן מוסיפים ארבע בכל צעד.' },
+      { m: 'a₁ = 3 &nbsp; d = ' + M('4'), t: 'האיבר הראשון נקרא a אחת. המספר שמוסיפים נקרא d, ההפרש.' },
+      { m: 'a<sub>n</sub> = a₁ + ' + M('(n − 1)') + '·d', t: 'כדי להגיע לאיבר מספר n, מוסיפים את ההפרש n פחות אחת פעמים. כי מהאיבר הראשון לשני יש צעד אחד, לשלישי שני צעדים, וכן הלאה.' },
+      { m: 'a₁₀ = 3 + 9·4 = <b class="ok">39</b>', t: 'האיבר העשירי: שלוש ועוד תשעה צעדים של ארבע, שלושים ותשע.' },
+      { m: '1 + 2 + ... + 100<br>(1 + 100) × 50 = <b class="ok">5050</b>', t: 'סכום: מחברים את הראשון והאחרון, מאה ואחת. יש חמישים זוגות כאלה. לכן הסכום חמשת אלפים חמישים.' },
+      { m: 'S<sub>n</sub> = ' + F('n·(a₁ + a<sub>n</sub>)', '2'), t: 'וזו הנוסחה: מספר האיברים כפול הראשון ועוד האחרון, חלקי שתיים.' }
+    ],
+    gen: function (lv) {
+      var a1 = R(-10, 20), d = nz(-6, 9), n = R(6, 30), an = a1 + (n - 1) * d;
+      if (lv === 1) return { ex: he('סדרה חשבונית:') + ' a₁ = ' + num(a1) + ', d = ' + num(d) + '<br>a<sub>' + n + '</sub> = ?', steps: [
+        { show: 'a<sub>' + n + '</sub> = ' + num(a1) + ' + ' + M('(' + n + ' − 1)') + '·' + p(d), q: 'כמה צעדים מהאיבר הראשון? ' + n + ' − 1 = ?', a: n - 1, hint: 'מספר האיבר פחות אחת.' },
+        { show: 'a<sub>' + n + '</sub> = ' + num(a1) + ' + ' + M((n - 1) + '·' + p(d)), q: (n - 1) + ' × ' + p(d) + ' = ?', a: (n - 1) * d, hint: 'כפל.' },
+        { show: 'a<sub>' + n + '</sub> = ' + M(num(a1) + ' + ' + p((n - 1) * d)), q: 'a' + n + ' = ?', a: an, hint: 'מוסיפים את האיבר הראשון.' }], fin: 'a<sub>' + n + '</sub> = ' + num(an) };
+      if (lv === 2) return { ex: 'a₁ = ' + num(a1) + ', a<sub>' + n + '</sub> = ' + num(an) + '<br>' + he('מה ההפרש d?'), steps: [
+        { show: M(num(an) + ' − ' + p(a1)) + ' = (' + n + ' − 1)·d', q: 'כמה גדלה הסדרה בסך הכול? ' + num(an) + ' − ' + p(a1) + ' = ?', a: an - a1, hint: 'האיבר האחרון פחות הראשון.' },
+        { show: num(an - a1) + ' = ' + M('(' + n + ' − 1)') + '·d', q: 'כמה צעדים? ' + n + ' − 1 = ?', a: n - 1, hint: 'מספר האיבר פחות אחת.' },
+        { show: 'd = ' + F(num(an - a1), n - 1), q: 'd = ?', a: d, hint: 'מחלקים את הגדילה במספר הצעדים.' }], fin: 'd = ' + num(d) };
+      return { ex: 'a₁ = ' + num(a1) + ', d = ' + num(d) + '<br>' + he('מה סכום ' + n + ' האיברים הראשונים?'), steps: [
+        { show: 'a<sub>' + n + '</sub> = ' + num(a1) + ' + ' + (n - 1) + '·' + p(d), q: 'קודם האיבר האחרון: a' + n + ' = ?', a: an, hint: num(a1) + ' + ' + (n - 1) + ' × ' + p(d) },
+        { show: 'S = ' + F(n + '·(' + M(num(a1) + ' + ' + p(an)) + ')', 2), q: 'הראשון ועוד האחרון: ' + num(a1) + ' + ' + p(an) + ' = ?', a: a1 + an, hint: 'חיבור.' },
+        { show: 'S = ' + F(M(n + '·' + p(a1 + an)), 2), q: n + ' × ' + p(a1 + an) + ' = ?', a: n * (a1 + an), hint: 'כפל.' },
+        { show: 'S = ' + F(num(n * (a1 + an)), 2), q: 'חלקי שתיים. S = ?', a: n * (a1 + an) / 2, hint: 'חילוק בשתיים.' }], fin: 'S = ' + num(n * (a1 + an) / 2) };
+    } });
+
+  T.push({ id: 'merchak', em: '📍', name: 'מרחק בין נקודות ואמצע קטע', grade: BG, bg: 1,
+    lesson: [
+      { m: 'A(1, 2) &nbsp; B(7, 10)', t: 'שתי נקודות במערכת צירים. נלמד למצוא את הנקודה שבאמצע ביניהן, ואת המרחק ביניהן.' },
+      { m: he('אמצע:') + ' x = ' + F('1 + 7', 2) + ' = 4 &nbsp; y = ' + F('2 + 10', 2) + ' = 6', t: 'אמצע הקטע הוא הממוצע: מחברים את ה-x וחולקים בשתיים, ומחברים את ה-y וחולקים בשתיים. האמצע הוא ארבע, שש.' },
+      { m: 'Δx = 7 − 1 = 6 &nbsp; Δy = 10 − 2 = 8', t: 'בשביל המרחק, מחשבים כמה זזים ימינה, שש, וכמה עולים, שמונה.' },
+      { m: 'd = √(6² + 8²) = √100 = <b class="ok">10</b>', t: 'אלה שני ניצבים של משולש ישר זווית, והמרחק הוא היתר. לפי פיתגורס: שש בריבוע ועוד שמונה בריבוע, מאה. השורש: עשר.' },
+      { m: 'd = √((x₂ − x₁)² + (y₂ − y₁)²)', t: 'זו נוסחת המרחק. היא בעצם משפט פיתגורס בתחפושת.' }
+    ],
+    gen: function (lv) {
+      var x1 = R(-8, 8), y1 = R(-8, 8);
+      if (lv === 1) {
+        var x2 = x1 + 2 * nz(-6, 6), y2 = y1 + 2 * nz(-6, 6), mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+        return { ex: 'A(' + num(x1) + ', ' + num(y1) + ') &nbsp; B(' + num(x2) + ', ' + num(y2) + ')<br>' + he('מה אמצע הקטע?'), steps: [
+          { show: 'x = ' + F(M(num(x1) + ' + ' + p(x2)), 2), q: 'ה-x של האמצע = ?', a: mx, hint: '(' + num(x1) + ' + ' + p(x2) + ') ÷ 2' },
+          { show: 'y = ' + F(M(num(y1) + ' + ' + p(y2)), 2), q: 'ה-y של האמצע = ?', a: my, hint: '(' + num(y1) + ' + ' + p(y2) + ') ÷ 2' }], fin: 'M(' + num(mx) + ', ' + num(my) + ')' };
+      }
+      var dx, dy;
+      if (lv === 2) { var t = pick(TRIPLES); dx = t[0]; dy = t[1]; if (Math.random() < .5) { dx = t[1]; dy = t[0]; } }
+      else { do { dx = R(1, 9); dy = R(1, 9); } while (Number.isInteger(Math.sqrt(dx * dx + dy * dy))); }
+      if (Math.random() < .5) dx = -dx; if (Math.random() < .5) dy = -dy;
+      var X2 = x1 + dx, Y2 = y1 + dy, D = Math.sqrt(dx * dx + dy * dy);
+      return { ex: 'A(' + num(x1) + ', ' + num(y1) + ') &nbsp; B(' + num(X2) + ', ' + num(Y2) + ')<br>' + he('מה המרחק AB?' + (lv === 3 ? ' (ספרה אחת אחרי הנקודה)' : '')), steps: [
+        { show: 'Δx = ' + M(num(X2) + ' − ' + p(x1)), q: 'Δx = ?', a: dx, hint: 'x של B פחות x של A.' },
+        { show: 'Δy = ' + M(num(Y2) + ' − ' + p(y1)), q: 'Δy = ?', a: dy, hint: 'y של B פחות y של A.' },
+        { show: 'd² = ' + M(p(dx) + '² + ' + p(dy) + '²'), q: p(dx) + '² + ' + p(dy) + '² = ?', a: dx * dx + dy * dy, hint: 'ריבוע של מספר שלילי יוצא חיובי.' },
+        { show: 'd = √' + (dx * dx + dy * dy), q: 'd = ?' + (lv === 3 ? ' (בעיגול)' : ''), a: lv === 3 ? r1(D) : D, tol: lv === 3 ? 0.051 : 1e-6, hint: lv === 3 ? 'במחשבון: √' + (dx * dx + dy * dy) : 'איזה מספר בריבוע נותן ' + (dx * dx + dy * dy) + '?' }], fin: 'AB ' + (lv === 3 ? '≈ ' + r1(D) : '= ' + D) };
+    } });
+
+  T.push({ id: 'parabola', em: '🌈', name: 'פונקציה ריבועית: קודקוד וחיתוך עם הצירים', grade: BG, bg: 1,
+    lesson: [
+      { m: 'y = x² − 4x + 3', t: 'הגרף של פונקציה ריבועית נקרא פרבולה. הנקודה הכי נמוכה, או הכי גבוהה, נקראת קודקוד.' },
+      { m: 'a > 0 → ' + he('מינימום') + ' ∪ &nbsp; a < 0 → ' + he('מקסימום') + ' ∩', t: 'אם a חיובי, הפרבולה מחייכת, והקודקוד הוא נקודת מינימום. אם a שלילי, היא עצובה, והקודקוד הוא מקסימום.' },
+      { m: 'x<sub>v</sub> = ' + F('−b', '2a') + ' = ' + F('4', '2') + ' = ' + M('2'), t: 'ה-x של הקודקוד: מינוס b חלקי שתיים a. כאן b הוא מינוס ארבע, אז מינוס b זה ארבע, חלקי שתיים, שתיים.' },
+      { m: 'y<sub>v</sub> = 2² − 4·2 + 3 = <b class="ok">−1</b>', t: 'ה-y של הקודקוד: מציבים שתיים בפונקציה. ארבע פחות שמונה ועוד שלוש, מינוס אחת. הקודקוד הוא שתיים, מינוס אחת.' },
+      { m: he('חיתוך עם ציר y:') + ' (0, ' + M('3') + ')', t: 'החיתוך עם ציר y הוא כשאיקס שווה אפס. נשאר רק c, שלוש.' },
+      { m: he('חיתוך עם ציר x:') + ' x² − 4x + 3 = 0 → x = 1, 3', t: 'והחיתוך עם ציר x הוא כש-y שווה אפס, כלומר פותרים משוואה ריבועית. אחת ושלוש. שימו לב שהקודקוד, שתיים, נמצא בדיוק באמצע ביניהן.' }
+    ],
+    gen: function (lv) {
+      var a = lv === 1 ? 1 : pick([2, -1, 3, -2]), xv = nz(-5, 5), c = R(-9, 9), b = -2 * a * xv, yv = a * xv * xv + b * xv + c;
+      var eq = 'y = ' + quad(a, b, c).replace(' = 0', '');
+      if (lv < 3) {
+        var st = [
+          { show: 'x<sub>v</sub> = ' + F(M(num(-b)), '2·' + p(a)), q: 'מה זה מינוס b?', a: -b, hint: 'b הוא ' + num(b) + '. הופכים את הסימן.' },
+          { show: 'x<sub>v</sub> = ' + F(num(-b), M(num(2 * a))), q: 'x של הקודקוד = ?', a: xv, hint: num(-b) + ' ÷ ' + p(2 * a) },
+          { show: 'y<sub>v</sub> = ' + num(a) + '·' + p(xv) + '² + ' + p(b) + '·' + p(xv) + ' + ' + p(c), q: 'מציבים. y של הקודקוד = ?', a: yv, hint: 'קודם הריבוע: ' + p(xv) + '² = ' + xv * xv + '.' }];
+        if (lv === 2) st.push({ show: eq + ' , x = 0', q: 'ומה ה-y של נקודת החיתוך עם ציר y?', a: c, hint: 'מציבים x = 0. נשאר רק c.' });
+        return { ex: eq + '<br>' + he('מה הקודקוד?' + (lv === 2 ? ' ואיפה הפרבולה חותכת את ציר y?' : '')), steps: st, fin: '(' + num(xv) + ', ' + num(yv) + ')' + (lv === 2 ? ' · (0, ' + num(c) + ')' : '') };
+      }
+      var r = nz(-7, 7), s; do { s = r + 2 * nz(-4, 4); } while (s === 0 || Math.abs(s) > 9);
+      var B = -(r + s), C = r * s, big = Math.max(r, s), small = Math.min(r, s), mid = (r + s) / 2;
+      return { ex: 'y = ' + quad(1, B, C).replace(' = 0', '') + '<br>' + he('איפה הפרבולה חותכת את ציר x, ומה ה-x של הקודקוד?'), steps: [
+        { show: quad(1, B, C), q: 'פותרים את המשוואה. מה הפתרון הגדול?', a: big, hint: 'נוסחת השורשים, או שני מספרים שסכומם ' + num(-B) + ' ומכפלתם ' + num(C) + '.' },
+        { show: quad(1, B, C), q: 'ומה הפתרון הקטן?', a: small, hint: 'הפתרון השני של אותה משוואה.' },
+        { show: 'x<sub>v</sub> = ' + F(M(num(big) + ' + ' + p(small)), 2), q: 'הקודקוד באמצע בין שתי נקודות החיתוך. x של הקודקוד = ?', a: mid, hint: 'הממוצע של שני הפתרונות.' }], fin: 'x = ' + num(small) + ', ' + num(big) + ' · x<sub>v</sub> = ' + num(mid) };
+    } });
+
+  T.push({ id: 'trigo', em: '📏', name: 'טריגונומטריה במשולש ישר זווית', grade: BG, bg: 1,
+    lesson: [
+      { m: TRI2, t: 'במשולש ישר זווית בוחרים זווית, נקרא לה אלפא. הצלע שמולה נקראת נגדית, הצלע שלידה נקראת ליד, והארוכה היא היתר.' },
+      { m: 'sin α = ' + F(he('נגדי'), he('יתר')) + ' &nbsp; cos α = ' + F(he('ליד'), he('יתר')) + ' &nbsp; tan α = ' + F(he('נגדי'), he('ליד')), t: 'שלושה יחסים: סינוס הוא נגדי חלקי יתר. קוסינוס הוא ליד חלקי יתר. טנגנס הוא נגדי חלקי ליד.' },
+      { m: he('נגדי 3, ליד 4, יתר 5') + '<br>sin α = ' + F(3, 5) + ' = <b class="ok">0.6</b>', t: 'במשולש עם צלעות שלוש, ארבע וחמש, אם שלוש מול הזווית, אז סינוס אלפא הוא שלוש חמישיות, אפס נקודה שש.' },
+      { m: he('יתר 10, זווית 30°, נגדי = ?') + '<br>x = 10 · sin 30° = 10 · 0.5 = <b class="ok">5</b>', t: 'מציאת צלע: אם יודעים זווית ויתר, הנגדי שווה יתר כפול סינוס הזווית. סינוס שלושים מעלות הוא חצי, לכן חמש.' },
+      { m: 'tan α = ' + F(3, 4) + ' = 0.75 → α = tan⁻¹(0.75) ≈ <b class="ok">36.9°</b>', t: 'ומציאת זווית: מחשבים את היחס, ואז במחשבון לוחצים על הפונקציה ההפוכה, שיפט וטנגנס. יוצא בערך שלושים ושש נקודה תשע מעלות.' },
+      { m: he('המחשבון במצב מעלות: DEG'), t: 'חשוב: המחשבון צריך להיות במצב מעלות, DEG. אחרת יוצאות תשובות אחרות.' }
+    ],
+    gen: function (lv) {
+      if (lv === 1) {
+        var t = pick(TRIPLES), o = t[0], ad = t[1], h = t[2]; if (Math.random() < .5) { o = t[1]; ad = t[0]; }
+        var f = pick(['sin', 'cos', 'tan']), nn = f === 'cos' ? ad : o, dd = f === 'tan' ? ad : h;
+        return { ex: he('במשולש ישר זווית: הנגדי לזווית α הוא ' + o + ', הליד ' + ad + ', היתר ' + h + '.') + '<br>' + f + ' α = ?', steps: [
+          { show: f + ' α = ' + F(he(f === 'cos' ? 'ליד' : 'נגדי'), he(f === 'tan' ? 'ליד' : 'יתר')), q: 'מה למעלה בשבר? (אורך הצלע)', a: nn, hint: f === 'cos' ? 'בקוסינוס למעלה הליד.' : 'ב' + (f === 'sin' ? 'סינוס' : 'טנגנס') + ' למעלה הנגדי.' },
+          { show: f + ' α = ' + F(nn, he(f === 'tan' ? 'ליד' : 'יתר')), q: 'ומה למטה?', a: dd, hint: f === 'tan' ? 'בטנגנס למטה הליד.' : 'למטה היתר.' },
+          { show: f + ' α = ' + F(nn, dd), q: f + ' α = ? (שבר או עשרוני)', a: nn / dd, hint: 'מחלקים, או משאירים כשבר.' }], fin: f + ' α = ' + fracVal(nn, dd) };
+      }
+      if (lv === 2) {
+        var ang = R(20, 70), hyp = R(5, 30), kind = pick(['sin', 'cos']), sv = r3(kind === 'sin' ? Math.sin(ang * DEG) : Math.cos(ang * DEG)), side = hyp * (kind === 'sin' ? Math.sin(ang * DEG) : Math.cos(ang * DEG));
+        return { ex: he('יתר ' + hyp + ', זווית α = ' + ang + '°. מה אורך הצלע ה' + (kind === 'sin' ? 'נגדית' : 'סמוכה') + '?') + '<br>' + he('(ספרה אחת אחרי הנקודה)'), steps: [
+          { show: kind + ' ' + ang + '° = ' + F('x', hyp), q: 'במחשבון: ' + kind + ' ' + ang + '° ≈ ? (3 ספרות אחרי הנקודה)', a: sv, tol: 0.0015, hint: 'המחשבון במצב מעלות (DEG). לוחצים ' + kind + ' ואז ' + ang + '.' },
+          { show: 'x = ' + hyp + ' · ' + kind + ' ' + ang + '°', q: 'x = ' + hyp + ' × ' + sv + ' ≈ ?', a: r1(side), tol: 0.11, hint: 'כופלים את היתר בתוצאה, ומעגלים לספרה אחת.' }], fin: 'x ≈ ' + r1(side) };
+      }
+      var op = R(2, 12), adj = R(2, 12), ratio = op / adj, angle = Math.atan(ratio) / DEG;
+      return { ex: he('ניצבים: מול α ' + op + ', ליד α ' + adj + '. מה גודל הזווית α?') + '<br>' + he('(ספרה אחת אחרי הנקודה)'), steps: [
+        { show: 'tan α = ' + F(op, adj), q: 'tan α = ? (עשרוני, 3 ספרות)', a: r3(ratio), tol: 0.0015, hint: op + ' ÷ ' + adj },
+        { show: 'α = tan⁻¹(' + r3(ratio) + ')', q: 'α ≈ ? (מעלות)', a: r1(angle), tol: 0.15, hint: 'במחשבון: Shift ואז tan, ואז המספר.' }], fin: 'α ≈ ' + r1(angle) + '°' };
+    } });
+
+  T.push({ id: 'gdila', em: '💰', name: 'גדילה ודעיכה (ריבית)', grade: BG, bg: 1,
+    lesson: [
+      { m: '1000 ₪, +10% ' + he('בשנה'), t: 'בבנק יש אלף שקלים, והם גדלים בעשרה אחוז כל שנה. כמה יהיו אחרי שלוש שנים?' },
+      { m: '1000 × ' + M('1.1') + ' = 1100', t: 'להוסיף עשרה אחוז זה לכפול באחת נקודה אחת. מאה אחוז שהיו, ועוד עשרה. אחרי שנה: אלף ומאה.' },
+      { m: '1000 × 1.1 × 1.1 × 1.1 = 1000 × 1.1³ = <b class="ok">1331</b>', t: 'ובכל שנה כופלים שוב, כי האחוזים מחושבים על הסכום החדש. אחרי שלוש שנים: אלף כפול אחת נקודה אחת בחזקת שלוש, אלף שלוש מאות שלושים ואחת.' },
+      { m: 'M = M₀ · q<sup>t</sup>', t: 'זו הנוסחה: הכמות בהתחלה, כפול q בחזקת מספר השנים. q הוא המכפיל.' },
+      { m: he('גדילה') + ' p% → q = 1 + ' + F('p', 100) + '<br>' + he('דעיכה') + ' p% → q = 1 − ' + F('p', 100), t: 'בגדילה, q גדול מאחת: אחת ועוד האחוז. בדעיכה, כמו מכונית שמאבדת מערכה, q קטן מאחת: אחת פחות האחוז.' }
+    ],
+    gen: function (lv) {
+      var M0 = pick([100, 200, 500, 1000, 2000, 5000, 10000]), pc = lv === 3 ? pick([10, 15, 20, 25]) : pick([5, 10, 20, 50]), dec = lv === 3, t = lv === 1 ? 1 : R(2, 3);
+      var q = dec ? 1 - pc / 100 : 1 + pc / 100, qt = Math.pow(q, t), res = M0 * qt;
+      var st = [{ show: 'q = 1 ' + (dec ? '−' : '+') + ' ' + F(pc, 100), q: 'מה המכפיל q?', a: r2(q), hint: dec ? 'אחת פחות ' + pc / 100 : 'אחת ועוד ' + pc / 100 }];
+      if (t > 1) st.push({ show: 'q<sup>' + t + '</sup> = ' + r2(q) + '<sup>' + t + '</sup>', q: r2(q) + ' בחזקת ' + t + ' = ?', a: r3(qt), tol: 0.0015, hint: 'כופלים ' + r2(q) + ' בעצמו ' + t + ' פעמים. אפשר במחשבון.' });
+      st.push({ show: 'M = ' + M0 + ' · ' + (t > 1 ? r3(qt) : r2(q)), q: 'כמה יהיה בסוף? (עד 2 ספרות אחרי הנקודה)', a: r2(res), tol: M0 * 0.0006 + 0.011, hint: M0 + ' × ' + (t > 1 ? r3(qt) : r2(q)) });
+      return { ex: he((dec ? 'מכונית ששווה ' + M0 + ' ₪ מאבדת ' + pc + '% מערכה בכל שנה. כמה תהיה שווה' : 'סכום של ' + M0 + ' ₪ גדל ב-' + pc + '% בכל שנה. כמה יהיה') + ' אחרי ' + (t === 1 ? 'שנה' : t + ' שנים') + '?'), steps: st, fin: r2(res) + ' ₪' };
+    } });
+
+  T.push({ id: 'stiya', em: '📉', name: 'חציון, שכיח וסטיית תקן', grade: BG, bg: 1,
+    lesson: [
+      { m: '7, 3, 9, 3, 8', t: 'חמישה ציונים. נלמד שלושה מדדים: חציון, שכיח, וסטיית תקן.' },
+      { m: '3, 3, ' + M('7') + ', 8, 9', t: 'חציון: מסדרים מהקטן לגדול, ולוקחים את מה שבאמצע. כאן שבע. אם יש מספר זוגי של ערכים, לוקחים את הממוצע של שני האמצעיים.' },
+      { m: he('שכיח') + ' = ' + M('3'), t: 'שכיח: הערך שמופיע הכי הרבה פעמים. שלוש מופיע פעמיים, ולכן הוא השכיח.' },
+      { m: he('ממוצע 6') + '<br>(−3)², (−3)², 1², 2², 3² → 9 + 9 + 1 + 4 + 9 = 32', t: 'סטיית תקן מודדת כמה הערכים מפוזרים סביב הממוצע. קודם הממוצע, שש. ואז לכל ערך: כמה הוא רחוק מהממוצע, בריבוע. מחברים: שלושים ושתיים.' },
+      { m: 'σ = √(32 ÷ 5) = √6.4 ≈ <b class="ok">2.53</b>', t: 'מחלקים במספר הערכים, ומוציאים שורש. סטיית התקן בערך שתיים נקודה חמישים ושלוש. מספר קטן אומר שכולם קרובים לממוצע.' }
+    ],
+    gen: function (lv) {
+      var i, arr = [];
+      if (lv < 3) {
+        var n = lv === 1 ? pick([5, 7]) : pick([4, 6]);
+        for (i = 0; i < n; i++) arr.push(R(50, 100));
+        var srt = arr.slice().sort(function (x, y) { return x - y; });
+        if (lv === 1) {
+          var mid = (n + 1) / 2;
+          return { ex: he('ציונים: ' + arr.join(', ') + '. מה החציון?'), steps: [
+            { show: srt.join(', '), q: 'מסדרים מהקטן לגדול. מה הערך הקטן ביותר?', a: srt[0], hint: 'מחפשים את המספר הכי קטן.' },
+            { show: srt.join(', '), q: 'יש ' + n + ' ערכים. באיזה מקום נמצא האמצע?', a: mid, hint: '(' + n + ' + 1) ÷ 2' },
+            { show: srt.map(function (v, k) { return k === mid - 1 ? M(v) : v; }).join(', '), q: 'מה החציון?', a: srt[mid - 1], hint: 'הערך במקום ה-' + mid + ' ברשימה המסודרת.' }], fin: he('חציון ' + srt[mid - 1]) };
+        }
+        var m1 = srt[n / 2 - 1], m2 = srt[n / 2];
+        return { ex: he('ציונים: ' + arr.join(', ') + '. מה החציון?'), steps: [
+          { show: srt.map(function (v, k) { return k === n / 2 - 1 ? M(v) : v; }).join(', '), q: 'מספר הערכים זוגי, אז יש שני ערכים באמצע. מה הראשון מביניהם?', a: m1, hint: 'הערך במקום ה-' + n / 2 + ' ברשימה המסודרת.' },
+          { show: srt.map(function (v, k) { return k === n / 2 ? M(v) : v; }).join(', '), q: 'ומה השני?', a: m2, hint: 'הערך במקום ה-' + (n / 2 + 1) + '.' },
+          { show: F(m1 + ' + ' + m2, 2), q: 'החציון הוא הממוצע שלהם. כמה?', a: (m1 + m2) / 2, hint: 'מחברים וחולקים בשתיים.' }], fin: he('חציון ' + (m1 + m2) / 2) };
+      }
+      var mu = R(5, 15), devs = pick([[-2, 0, 2], [-3, 1, 2], [-1, -1, 2], [-4, 1, 3], [-2, -1, 3], [-3, -1, 1, 3], [-2, -2, 1, 3], [-4, 0, 1, 3], [-1, -1, 1, 1]]);
+      arr = devs.map(function (dv) { return mu + dv; }).sort(function () { return Math.random() - .5; });
+      var ss = devs.reduce(function (s0, dv) { return s0 + dv * dv; }, 0), N = arr.length, sd = Math.sqrt(ss / N);
+      return { ex: he('נתונים: ' + arr.join(', ') + '. מה סטיית התקן? (2 ספרות אחרי הנקודה)'), steps: [
+        { show: F(arr.join(' + '), N), q: 'קודם הממוצע. כמה?', a: mu, hint: 'מחברים הכול ומחלקים ב-' + N + '.' },
+        { show: arr.map(function (v) { return '(' + v + ' − ' + mu + ')²'; }).join(' + '), q: 'מחברים את ריבועי המרחקים מהממוצע. כמה יוצא?', a: ss, hint: arr.map(function (v) { return p(v - mu) + '² = ' + (v - mu) * (v - mu); }).join(', ') },
+        { show: F(ss, N), q: 'מחלקים במספר הערכים (' + N + '). כמה? (זו השונות)', a: r3(ss / N), tol: 0.006, hint: ss + ' ÷ ' + N },
+        { show: 'σ = √' + r3(ss / N), q: 'מוציאים שורש. σ ≈ ?', a: r2(sd), tol: 0.011, hint: 'במחשבון: √' + r3(ss / N) }], fin: 'σ ≈ ' + r2(sd) };
+    } });
+
   // סדר הרשימה לפי כיתות
-  var ORD = ['kefel', 'hiluk', 'seder', 'shetach', 'asroni', 'shvarim', 'kefel-shvarim', 'memutza', 'achuzim', 'yachas', 'histabrut', 'pilug', 'mishvaa', 'chezkot', 'kav', 'pitagoras', 'maarechet', 'shorashim'];
+  var ORD = ['kefel', 'hiluk', 'seder', 'shetach', 'asroni', 'shvarim', 'kefel-shvarim', 'memutza', 'achuzim', 'yachas', 'histabrut', 'pilug', 'mishvaa', 'chezkot', 'kav', 'pitagoras', 'maarechet', 'shorashim', 'sidra', 'merchak', 'parabola', 'trigo', 'gdila', 'stiya'];
   T.sort(function (a, b) { return ORD.indexOf(a.id) - ORD.indexOf(b.id); });
 
   // =====================================================================
@@ -678,10 +851,10 @@
   var cur = null;
 
   function renderList() {
-    $('mx-list').innerHTML = T.map(function (t) {
-      var s = st.t[t.id], stars = '';
+    $('mx-list').innerHTML = T.map(function (t, ti) {
+      var s = st.t[t.id], stars = '', head = t.bg && !(T[ti - 1] || {}).bg ? '<h3 class="mx-sec">🎓 נושאי בגרות</h3>' : '';
       for (var i = 1; i <= 3; i++) stars += '<i class="' + (s && s.max >= i ? 'on' : '') + '">★</i>';
-      return '<button type="button" class="mx-topic" data-topic="' + t.id + '"><span class="em" aria-hidden="true">' + t.em + '</span><span><b>' + t.name + '</b><small>' + t.grade + (s && s.done ? ' · ' + s.done + ' תרגילים' : '') + '</small></span><span class="mx-stars" aria-label="שלבים שהושלמו">' + stars + '</span></button>';
+      return head + '<button type="button" class="mx-topic" data-topic="' + t.id + '"><span class="em" aria-hidden="true">' + t.em + '</span><span><b>' + t.name + '</b><small>' + t.grade + (s && s.done ? ' · ' + s.done + ' תרגילים' : '') + '</small></span><span class="mx-stars" aria-label="שלבים שהושלמו">' + stars + '</span></button>';
     }).join('');
   }
   $('mx-list').addEventListener('click', function (e) {
@@ -795,13 +968,14 @@
     k++;
     if (k < prob.steps.length) { step(); return; }
     // סוף התרגיל
-    var t = ts(cur.id), msg;
+    var t = ts(cur.id), msg, up = false;
     t.done++;
     if (clean) {
       t.streak++;
       if (t.streak >= 3) {
         t.streak = 0;
         if (t.lv > t.max) t.max = t.lv;
+        up = true;
         if (t.lv < 3) { t.lv++; msg = '🎉 עליתם לשלב ' + t.lv + '! התרגילים יהיו קצת יותר מאתגרים.'; }
         else msg = '🏆 השלמתם את השלב הכי גבוה בנושא הזה. כל הכבוד!';
         used({ action: 'level_up', topic: cur.id, lv: t.lv });
@@ -809,7 +983,8 @@
     } else { t.streak = 0; msg = 'סיימתם את התרגיל. בתרגיל הבא ננסה לעשות את כל הצעדים לבד.'; }
     save(KEY, st);
     $('mx-stepbox').hidden = true; $('mx-end').hidden = false;
-    $('mx-end-msg').innerHTML = '<div class="mx-fin" dir="ltr">' + (prob.fin || fmtAns(prob.steps[prob.steps.length - 1])) + '</div><p>' + msg + '</p>';
+    $('mx-end-msg').innerHTML = '<div class="mx-fin" dir="ltr">' + (prob.fin || fmtAns(prob.steps[prob.steps.length - 1])) + '</div><p>' + msg + '</p>' +
+      (up && cur.bg ? '<div class="mx-support"><p>💛 הכלים כאן חינמיים, ונבנים בהרבה שעות עבודה. אם הם עוזרים לכם בהכנה לבגרות, אפשר לעזור להחזיק את המיזם, גם בסכום קטן.</p><a class="btn btn-line btn-sm" href="/kelim/#litmoch" data-support="1">לתמוך במיזם</a></div>' : '');
     try { $('mx-nextp').focus({ preventScroll: true }); } catch (e) {}
     used({ action: 'solved', topic: cur.id, clean: clean ? 1 : 0, lv: t.lv });
   }
@@ -821,7 +996,10 @@
     if (!raw.trim()) { $('mx-fb').textContent = 'כותבים מספר בתיבה ולוחצים "לבדוק".'; return; }
     var v = parseVal(raw);
     if (isNaN(v)) { $('mx-fb').textContent = 'לא הבנתי את המספר. אפשר לכתוב למשל 12, ‎-3, 2.5 או 3/4.'; $('mx-fb').className = 'mx-fb no'; return; }
-    if (Math.abs(v - s.a) <= (s.tol || 1e-6)) {
+    var tol = s.tol || 1e-6;
+    // תשובה שהיא שבר שלא נגמר (כמו 20/21): מקבלים גם עיגול לשתי ספרות אחרי הנקודה
+    if (!s.tol && Math.abs(Math.round(s.a * 1000) / 1000 - s.a) > 1e-9 && /[.,]\d{2,}/.test(raw)) tol = 0.0051;
+    if (Math.abs(v - s.a) <= tol) {
       if (s.fr && raw.indexOf('/') > -1) {
         var q = raw.replace(/\s/g, '').replace(/[−–]/g, '-').split('/');
         if (gcd(+q[0], +q[1]) !== 1) { $('mx-fb').textContent = 'נכון בערך, אבל אפשר לצמצם עוד. מחלקים שוב באותו מספר.'; $('mx-fb').className = 'mx-fb no'; return; }
@@ -837,6 +1015,7 @@
   $('mx-hintbtn').addEventListener('click', function () { clean = false; $('mx-hint').hidden = false; $('mx-hint').textContent = '💡 ' + prob.steps[k].hint; });
   $('mx-show').addEventListener('click', function () { if (busy || k >= prob.steps.length) return; clean = false; finishStep(false); });
   $('mx-nextp').addEventListener('click', newProblem);
+  $('mx-end').addEventListener('click', function (e) { if (e.target.closest('[data-support]')) used({ action: 'support_click', topic: cur.id }); });
   $('mx-lv').addEventListener('click', function (e) {
     var b = e.target.closest('[data-lv]'); if (!b) return;
     var t = ts(cur.id); t.lv = +b.dataset.lv; t.streak = 0; save(KEY, st); newProblem();
