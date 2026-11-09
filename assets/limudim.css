@@ -338,3 +338,8 @@ body.cx-mini .cx-keys button{min-height:2.8rem}
 .mx-calcbox iframe{width:100%;height:min(80vh,40rem);border:0;display:block}
 @media (min-width:700px){.mx-calcbox{inset:auto auto 1rem 1rem;width:26rem;border:2px solid var(--gold);border-radius:18px}}
 .cx-pane{padding:0;border-top:0}
+.cx-mic{margin-inline-start:auto;font:inherit;font-size:1rem;font-weight:700;padding:.45rem .95rem;border-radius:99px;border:2px solid var(--gold);background:rgba(220,183,105,.14);color:var(--cream);cursor:pointer}
+.cx-mic.on{background:var(--no);border-color:var(--no);color:#22110d;animation:cxPulse 1.2s ease-in-out infinite}
+.cx-mic:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+@keyframes cxPulse{50%{box-shadow:0 0 0 8px rgba(232,154,138,.25)}}
+@media (prefers-reduced-motion:reduce){.cx-mic.on{animation:none}}
