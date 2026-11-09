@@ -334,6 +334,9 @@ for key, site in SITES.items():
         "icons": [{"src": f"/assets/icon-{site['icon']}-192.png", "sizes": "192x192", "type": "image/png"},
                   {"src": f"/assets/icon-{site['icon']}-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}],
     }
+    if key == "kelim":  # לחיצה ארוכה על האייקון: ישר לכלים הכי שימושיים
+        man["shortcuts"] = [{"name": n, "short_name": n, "url": u + "?utm_source=pwa_shortcut", "icons": [{"src": "/assets/icon-kelim-192.png", "sizes": "192x192"}]}
+                            for n, u in [("תמלול", "/kelim/tamlul/"), ("התרופות שלי", "/kelim/briut/trufot/"), ("הכנה לוועדה", "/kelim/shikum/vaada/"), ("הקטנת סרטון", "/kelim/machshev/video/")]]
     if key == "kelim":  # "שיתוף" מהגלריה בטלפון ישר למסדר התיקיות (src/sw.js מקבל את הקבצים)
         man["share_target"] = {"action": "/kelim/machshev/sader/?share=1", "method": "POST", "enctype": "multipart/form-data",
                                "params": {"files": [{"name": "files", "accept": ["*/*"]}]}}
