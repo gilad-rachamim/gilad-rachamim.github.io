@@ -231,7 +231,7 @@
       case 'fact': return show(n.a, ang) + '!';
       case 'op':
         if (n.op === '^') return show(n.a, ang) + (n.b.t === 'num' && n.b.v === 2 ? '²' : n.b.t === 'neg' && n.b.a.t === 'num' && n.b.a.v === 1 ? '⁻¹' : '^' + show(n.b, ang));
-        if (n.imp) return show(n.a, ang) + show(n.b, ang);
+        if (n.imp && n.b.t !== 'num') return show(n.a, ang) + show(n.b, ang);
         return show(n.a, ang) + ' ' + { '+': '+', '-': '−', '*': '×', '/': '÷' }[n.op] + ' ' + show(n.b, ang);
       case 'fn':
         var deg = ang === 'deg' && /^(sin|cos|tan)$/.test(n.f) ? '°' : '';
@@ -262,6 +262,89 @@
     return null;
   }
   function evalStr(src, env) { return ev(parse(src), env); }
+
+  // =====================================================================
+  //  תרגיל במילים (מדיבור או מהקלדה): "שורש של 16 ועוד שלוש כפול שתיים" ← sqrt 16 + 3 * 2
+  // =====================================================================
+  var HE_UNIT = { 'אפס': 0, 'אחת': 1, 'אחד': 1, 'שתיים': 2, 'שתים': 2, 'שניים': 2, 'שנים': 2, 'שתי': 2, 'שני': 2, 'שלוש': 3, 'שלושה': 3, 'שלושת': 3, 'שלש': 3,
+    'ארבע': 4, 'ארבעה': 4, 'ארבעת': 4, 'חמש': 5, 'חמישה': 5, 'חמשה': 5, 'חמשת': 5, 'שש': 6, 'שישה': 6, 'ששה': 6, 'ששת': 6, 'שבע': 7, 'שבעה': 7, 'שבעת': 7,
+    'שמונה': 8, 'שמונת': 8, 'תשע': 9, 'תשעה': 9, 'תשעת': 9 };
+  var HE_TENS = { 'עשרים': 20, 'שלושים': 30, 'שלשים': 30, 'ארבעים': 40, 'חמישים': 50, 'שישים': 60, 'ששים': 60, 'שבעים': 70, 'שמונים': 80, 'תשעים': 90 };
+  // צירופים של כמה מילים קודם, ואחר כך מילה בודדת
+  var HE_PHRASE = [
+    [['לוגריתם', 'טבעי'], 'ln'], [['לוג', 'טבעי'], 'ln'],
+    [['סינוס', 'הפוך'], 'asin'], [['קוסינוס', 'הפוך'], 'acos'], [['טנגנס', 'הפוך'], 'atan'],
+    [['ארק', 'סינוס'], 'asin'], [['ארק', 'קוסינוס'], 'acos'], [['ארק', 'טנגנס'], 'atan'],
+    [['סינוס', 'מינוס', 'אחת'], 'asin'], [['קוסינוס', 'מינוס', 'אחת'], 'acos'], [['טנגנס', 'מינוס', 'אחת'], 'atan'],
+    [['סינוס', 'מינוס', '1'], 'asin'], [['קוסינוס', 'מינוס', '1'], 'acos'], [['טנגנס', 'מינוס', '1'], 'atan'],
+    [['פתח', 'סוגריים'], '('], [['פותחים', 'סוגריים'], '('], [['פותח', 'סוגריים'], '('], [['סוגר', 'פותח'], '('],
+    [['סגור', 'סוגריים'], ')'], [['סוגרים', 'סוגריים'], ')'], [['סוגר', 'סוגריים'], ')'], [['סוף', 'סוגריים'], ')'], [['סוגר', 'סוגר'], ')'],
+    [['לחלק', 'ב'], '/'], [['מחולק', 'ב'], '/'], [['חלקי', 'ב'], '/'],
+    [['בחזקה', 'שלישית'], '^ 3'], [['בחזקה', 'שנייה'], '^ 2'], [['שורש', 'שלישי'], 'cbrt'], [['שורש', 'ריבועי'], 'sqrt'],
+    [['אחוז', 'מ'], '/ 100 *'], [['אחוזים', 'מ'], '/ 100 *'], [['אחוז', 'של'], '/ 100 *'], [['אחוזים', 'של'], '/ 100 *']
+  ];
+  var HE_WORD = {
+    'ועוד': '+', 'ו': '+', 'פלוס': '+', 'עוד': '+', 'פחות': '-', 'מינוס': '-', 'כפול': '*', 'כפל': '*', 'פעמים': '*', 'חלקי': '/', 'חלק': '/', 'לחלק': '/',
+    'בחזקת': '^', 'בחזקה': '^', 'חזקה': '^', 'בריבוע': '^ 2', 'ריבוע': '^ 2', 'בשלישית': '^ 3', 'בעוקב': '^ 3',
+    'שורש': 'sqrt', 'סינוס': 'sin', 'סין': 'sin', 'קוסינוס': 'cos', 'קוס': 'cos', 'טנגנס': 'tan', "טנג'נס": 'tan', 'טאנגנס': 'tan', 'טנגנט': 'tan', "טנג'נט": 'tan', 'טאן': 'tan',
+    'לוג': 'log', 'לוגריתם': 'log', 'לן': 'ln', 'פאי': 'pi', 'פיי': 'pi', 'עצרת': '!', 'אחוז': '/ 100', 'אחוזים': '/ 100', 'סוגר': ')', 'התשובה': 'ans', 'אנס': 'ans'
+  };
+  var HE_SKIP = { 'של': 1, 'מעלות': 1, 'מעלה': 1, 'רדיאנים': 1, 'שווה': 1, 'שווים': 1, 'זה': 1, 'כמה': 1, 'את': 1, 'תחשב': 1, 'חשב': 1, 'תחשבי': 1, 'בבקשה': 1, 'ה': 1, 'ב': 1, 'מ': 1, 'יוצא': 1, 'הקודמת': 1, 'מה': 1, 'אז': 1 };
+  function heToExpr(text) {
+    var s = String(text).replace(/[״"׳]/g, function (c) { return c === '׳' ? "'" : ''; }).replace(/[?!,،]+(?=\s|$)/g, ' ').replace(/(\d),(\d{3})/g, '$1$2')
+      .replace(/([א-ת])-(?=\d)/g, '$1 ').replace(/^([ומבלהש])(?=\d)|\s([ומבלהש])(?=\d)/g, ' $1$2 ')
+      .replace(/([+\-*/×÷^()=%])/g, ' $1 ');
+    var w = s.split(/\s+/).filter(Boolean), out = [], i = 0, num = null, total = 0, open = 0;
+    function flush() { if (num !== null) { out.push(String(total + num)); num = null; total = 0; } }
+    function addNum(v) { if (num === null) { num = 0; total = 0; } num += v; }
+    function emit(t) { flush(); out.push(t); }
+    while (i < w.length) {
+      var x = w[i], hit = null;
+      for (var p = 0; p < HE_PHRASE.length && !hit; p++) {
+        var ph = HE_PHRASE[p][0], ok = true;
+        for (var q = 0; q < ph.length; q++) if (w[i + q] !== ph[q]) { ok = false; break; }
+        if (ok) hit = HE_PHRASE[p];
+      }
+      if (hit) { emit(hit[1]); if (hit[1] === '(') open++; if (hit[1] === ')') open--; i += hit[0].length; continue; }
+      if (/^\d+(\.\d+)?$/.test(x)) { flush(); out.push(x); i++; continue; }
+      if (/^[+\-*/×÷^()%]$/.test(x)) { emit(x === '%' ? '/ 100' : x); if (x === '(') open++; if (x === ')') open--; i++; continue; }
+      if (x === '=') { i++; continue; }
+      // "ושלוש", "וחצי": ו בתחילת מילה של מספר
+      var y = x.length > 1 && x[0] === 'ו' && (HE_UNIT[x.slice(1)] != null || HE_TENS[x.slice(1)] != null || /^(חצי|רבע|מאה|מאתיים|אלף|אלפיים|עשר|עשרה)$/.test(x.slice(1))) ? x.slice(1) : x;
+      if (HE_UNIT[y] != null) { addNum(HE_UNIT[y]); i++; continue; }
+      if (HE_TENS[y] != null) { addNum(HE_TENS[y]); i++; continue; }
+      if (y === 'עשר' || y === 'עשרה') { addNum(10); i++; continue; } // "שלוש עשרה" = 3 + 10
+      if (y === 'מאה') { addNum(100); i++; continue; }
+      if (y === 'מאתיים') { addNum(200); i++; continue; }
+      if (y === 'מאות') { if (num === null) num = 1; num *= 100; i++; continue; }
+      if (y === 'אלף' || y === 'אלפים') { if (num === null || num === 0) num = 1; total += num * 1000; num = 0; i++; continue; }
+      if (y === 'אלפיים') { if (num === null) num = 0; total += 2000; i++; continue; }
+      if (y === 'חצי') { if (num === null) { emit('0.5'); } else addNum(0.5); i++; continue; }
+      if (y === 'רבע') { if (num === null) { emit('0.25'); } else addNum(0.25); i++; continue; }
+      if (x === 'נקודה') {
+        // ספרות אחרי הנקודה: "שתיים נקודה חמש" = 2.5
+        var whole = num !== null ? total + num : 0, dec = '';
+        num = null; total = 0; i++;
+        while (i < w.length) {
+          var d = w[i];
+          if (/^\d+$/.test(d)) dec += d; else if (HE_UNIT[d] != null) dec += HE_UNIT[d]; else break;
+          i++;
+        }
+        if (!dec) throw new Err('אחרי "נקודה" צריך ספרות');
+        out.push(whole + '.' + dec); continue;
+      }
+      if (x === 'סוגריים') { if (open > 0 && out.length && !/^[+\-*/^(]$/.test(out[out.length - 1]) && num === null) { emit(')'); open--; } else { emit('('); open++; } i++; continue; }
+      if (HE_WORD[x] != null) { emit(HE_WORD[x]); i++; continue; }
+      if (HE_SKIP[x]) { i++; continue; }
+      if (/^[a-zA-Z]+$/.test(x) || x === 'π' || x === '√') { emit(x); i++; continue; }
+      throw new Err('לא הבנתי את המילה "' + x + '". אפשר לתקן בכתב.');
+    }
+    flush();
+    var e = out.join(' ').trim().replace(/\/ 100 (?=[\d(a-z])/g, '/ 100 * '); // "20 אחוז מ-50"
+    if (!e) throw new Err('לא שמעתי תרגיל. נסו שוב, למשל: "שורש של 16 ועוד 3"');
+    return e;
+  }
+  function hasHe(s) { return /[א-ת]/.test(s); }
 
   // =====================================================================
   //  מסך המחשבון
@@ -344,6 +427,7 @@
   }
   function compute(src) {
     var env = { ang: st.ang, ans: ans, rec: [] };
+    if (hasHe(src)) src = heToExpr(src);
     var tree = parse(src), v = ev(tree, env);
     return { tree: tree, v: v, rec: env.rec };
   }
@@ -375,12 +459,13 @@
     try { var r = compute(src); res.textContent = '= ' + fmtN(r.v) + (isAngleOut(r.tree) ? '°' : ''); }
     catch (e) { res.textContent = ''; }
   }
-  function commit() {
+  function commit(byVoice) {
     var src = inp.value.trim();
     if (!src) return;
     res.classList.remove('soft');
     try {
-      var r = compute(src);
+      var r = compute(src), said = hasHe(src) ? src : null;
+      if (said) { src = show(r.tree, st.ang); inp.value = src; }
       ans = r.v; st.ans = ans; lastTree = r.tree; lastVal = r.v;
       var deg = isAngleOut(r.tree) ? '°' : '';
       res.classList.remove('err');
@@ -393,7 +478,9 @@
           ? '<span class="cx-alert">⚠️ המחשבון במצב <b>רדיאנים</b>. אם התכוונתם למעלות (כמו ברוב הבגרות), התשובה אחרת. <button type="button" class="linkish" data-setang="deg">לעבור למעלות</button></span>'
           : '<span class="cx-alert">⚠️ יש π בתוך זווית, וזה בדרך כלל ברדיאנים. המחשבון במצב <b>מעלות</b>. <button type="button" class="linkish" data-setang="rad">לעבור לרדיאנים</button></span>');
       });
+      if (said) ex.unshift('<span>' + (byVoice ? '🎤 שמעתי' : '✍️ הבנתי') + ': "' + esc(said) + '"</span>');
       extra.innerHTML = ex.join('');
+      if (byVoice) speak(sayExpr(src) + ' שווה ' + sayNum(r.v) + (deg ? ' מעלות' : ''));
       steps(r);
       st.hist.unshift({ e: src, r: fmtN(r.v) + deg, a: st.ang });
       st.hist = st.hist.slice(0, 30); save(); hist();
@@ -491,6 +578,60 @@
     var u = new SpeechSynthesisUtterance(t.replace(/\s+/g, ' ')); u.lang = 'he-IL'; if (voice) u.voice = voice; u.rate = 0.95;
     speechSynthesis.speak(u);
     used('say');
+  });
+
+
+  // ---------- להגיד תרגיל בקול (זיהוי דיבור של הדפדפן, עברית) ----------
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition, recog = null, listening = false, mic = $('cx-mic');
+  function speak(t) {
+    if (!('speechSynthesis' in window)) return;
+    try {
+      speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(t.replace(/\s+/g, ' ')); u.lang = 'he-IL'; if (voice) u.voice = voice; u.rate = 0.95;
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  function micUi(on) {
+    listening = on; mic.classList.toggle('on', on); mic.setAttribute('aria-pressed', on ? 'true' : 'false');
+    mic.textContent = on ? '⏹ מקשיב… לעצור' : '🎤 להגיד בקול';
+  }
+  function heard(alts) {
+    // עוברים על האפשרויות שהדפדפן שמע, עד אחת שהיא תרגיל תקין
+    var firstErr = null;
+    for (var i = 0; i < alts.length; i++) {
+      try { compute(alts[i]); inp.value = alts[i]; justEval = false; commit(true); return; }
+      catch (e) { if (!(e instanceof Err)) throw e; if (!firstErr) firstErr = e; }
+    }
+    inp.value = alts[0] || ''; justEval = false;
+    res.classList.remove('soft'); res.classList.add('err');
+    res.textContent = (firstErr && firstErr.msg) || 'לא הבנתי. נסו שוב';
+    extra.innerHTML = '<span>🎤 שמעתי: "' + esc(alts[0] || '') + '". אפשר לתקן בכתב וללחוץ =</span>';
+  }
+  mic.addEventListener('click', function () {
+    used('voice');
+    if (!SR) {
+      why.innerHTML = '<b>אין כאן זיהוי דיבור.</b> בכרום בטלפון אנדרואיד או במחשב זה עובד. בינתיים אפשר לכתוב את התרגיל במילים, למשל <span dir="rtl">"שורש של 16 ועוד 3"</span>, או ללחוץ "⌨ מקלדת הטלפון" ולהשתמש במיקרופון של המקלדת.';
+      return;
+    }
+    if (listening && recog) { recog.stop(); return; }
+    if ('speechSynthesis' in window) speechSynthesis.cancel();
+    recog = new SR(); recog.lang = 'he-IL'; recog.interimResults = true; recog.maxAlternatives = 4; recog.continuous = false;
+    var got = false;
+    recog.onresult = function (e) {
+      var r = e.results[e.results.length - 1];
+      if (!r.isFinal) { res.classList.remove('err'); res.classList.add('soft'); res.textContent = '🎤 ' + r[0].transcript; return; }
+      got = true;
+      var alts = []; for (var i = 0; i < r.length; i++) alts.push(r[i].transcript.trim());
+      heard(alts);
+    };
+    recog.onerror = function (e) {
+      var m = { 'not-allowed': 'צריך לאשר למחשבון להשתמש במיקרופון (בחלון שנפתח, או בהגדרות האתר).', 'service-not-allowed': 'צריך לאשר למחשבון להשתמש במיקרופון.', 'no-speech': 'לא שמעתי. לוחצים שוב על 🎤 ומדברים.', 'network': 'זיהוי הדיבור צריך אינטרנט.', 'audio-capture': 'לא מצאתי מיקרופון.' }[e.error];
+      if (m) { res.classList.remove('soft'); res.classList.add('err'); res.textContent = m; }
+      got = true;
+    };
+    recog.onend = function () { micUi(false); if (!got && /^🎤/.test(res.textContent)) res.textContent = ''; };
+    try { recog.start(); micUi(true); res.classList.remove('err'); res.classList.add('soft'); res.textContent = '🎤 מקשיב… אמרו את התרגיל'; extra.innerHTML = ''; }
+    catch (e) { micUi(false); }
   });
 
   // =====================================================================

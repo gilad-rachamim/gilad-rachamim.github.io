@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>מחשבון לבגרות במתמטיקה: מחשבון מדעי גדול ונגיש בעברית, עם הסבר לכל מקש | כלים ללימודים</title>
-<meta name="description" content="מחשבון מדעי בעברית ללימוד לבגרות: מקשים גדולים, מצב מעלות או רדיאנים בולט, הסבר במילים לכל פעולה, פירוק החישוב, שבר ועיגול, היסטוריה והקראה. וגם פותר משוואות עם שלבים, גרף ללמידה, טעויות נפוצות במחשבון, ומדריך: איך עושים את זה במחשבון המדעי שלכם. חינם, בלי הרשמה.">
+<meta name="description" content="מחשבון מדעי בעברית ללימוד לבגרות: מקשים גדולים, מצב מעלות או רדיאנים בולט, הסבר במילים לכל פעולה, פירוק החישוב, שבר ועיגול, היסטוריה והקראה, ואפשר להגיד את התרגיל בקול. וגם פותר משוואות עם שלבים, גרף ללמידה, טעויות נפוצות במחשבון, ומדריך: איך עושים את זה במחשבון המדעי שלכם. חינם, בלי הרשמה.">
 <link rel="canonical" href="https://gilad-rachamim.github.io/limudim/machshevon/">
 
 <meta property="og:type" content="website">
 <meta property="og:locale" content="he_IL">
 <meta property="og:site_name" content="כלים ללימודים">
 <meta property="og:title" content="מחשבון לבגרות – גדול, נגיש ומסביר">
-<meta property="og:description" content="מחשבון מדעי בעברית ללימוד לבגרות: מקשים גדולים, מצב מעלות או רדיאנים בולט, הסבר במילים לכל פעולה, פירוק החישוב, שבר ועיגול, היסטוריה והקראה. וגם פותר משוואות עם שלבים, גרף ללמידה, טעויות נפוצות במחשבון, ומדריך: איך עושים את זה במחשבון המדעי שלכם. חינם, בלי הרשמה.">
+<meta property="og:description" content="מחשבון מדעי בעברית ללימוד לבגרות: מקשים גדולים, מצב מעלות או רדיאנים בולט, הסבר במילים לכל פעולה, פירוק החישוב, שבר ועיגול, היסטוריה והקראה, ואפשר להגיד את התרגיל בקול. וגם פותר משוואות עם שלבים, גרף ללמידה, טעויות נפוצות במחשבון, ומדריך: איך עושים את זה במחשבון המדעי שלכם. חינם, בלי הרשמה.">
 <meta property="og:image" content="https://gilad-rachamim.github.io/assets/og-kelim.jpg">
 <meta property="og:url" content="https://gilad-rachamim.github.io/limudim/machshevon/">
 <meta name="twitter:card" content="summary_large_image">
@@ -21,7 +21,7 @@
 <link rel="manifest" href="/limudim/manifest.webmanifest">
 <link rel="stylesheet" href="/assets/site.css?v=39e81fea">
 <link rel="stylesheet" href="/assets/kelim.css?v=873b0769">
-<link rel="stylesheet" href="/assets/limudim.css?v=b22538bd">
+<link rel="stylesheet" href="/assets/limudim.css?v=9534dd66">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4QR4583VST"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4QR4583VST');</script>
 <script src="/assets/track.js?v=b23b682b" defer></script>
@@ -64,7 +64,7 @@
 <main id="main">
 <header class="k-hero">
   <h1>מחשבון לבגרות</h1>
-  <p class="sub">מחשבון מדעי גדול וברור, שמסביר כל מקש ומראה איך עושים את אותו הדבר במחשבון שלכם. כדי להגיע לבחינה רגועים.</p>
+  <p class="sub">מחשבון מדעי גדול וברור, שמסביר כל מקש ומראה איך עושים את אותו הדבר במחשבון שלכם. אפשר גם להגיד את התרגיל בקול ולשמוע את התשובה.</p>
 </header>
 
 <div class="tool" id="cx-app">
@@ -86,6 +86,7 @@
       <div class="cx-top">
         <button type="button" class="cx-ang" id="cx-ang" aria-describedby="cx-ang-d"><span class="on" data-a="deg">מעלות DEG</span><span data-a="rad">רדיאנים RAD</span></button>
         <span class="cx-ang-d" id="cx-ang-d">בבגרות כמעט תמיד מעלות</span>
+        <button type="button" class="cx-mic" id="cx-mic" aria-pressed="false" aria-label="להגיד את התרגיל בקול">🎤 להגיד בקול</button>
       </div>
       <div class="cx-screen">
         <label for="cx-in" class="cx-sr">התרגיל</label>
@@ -93,7 +94,7 @@
         <output class="cx-res" id="cx-res" dir="ltr" aria-live="polite"></output>
         <div class="cx-extra" id="cx-extra" aria-live="polite"></div>
       </div>
-      <div class="cx-why" id="cx-why" aria-live="polite"><b>לוחצים על מקש</b> ורואים כאן מה הוא עושה, ואיפה הוא במחשבון שלכם.</div>
+      <div class="cx-why" id="cx-why" aria-live="polite"><b>לוחצים על מקש</b> ורואים כאן מה הוא עושה, ואיפה הוא במחשבון שלכם. אפשר גם ללחוץ 🎤 ולהגיד, למשל: "שורש של 16 ועוד שלוש כפול שתיים".</div>
 
       <div class="cx-keys" id="cx-keys">
         <button type="button" class="f" data-k="sin(" aria-label="סינוס">sin</button>
@@ -297,6 +298,6 @@
   <button class="x" type="button" data-install-close aria-label="סגירה">×</button>
 </div>
 <script src="/assets/kelim.js?v=6ab3224b" defer></script>
-<script src="/assets/limudim-calc.js?v=b71f0979"></script><script src="/assets/limudim.js?v=63c003af" defer></script>
+<script src="/assets/limudim-calc.js?v=98f651fc"></script><script src="/assets/limudim.js?v=63c003af" defer></script>
 </body>
 </html>
