@@ -118,11 +118,14 @@ const CHECK_SCHEMA = {
 };
 
 async function gemini(env, system, user, schema) {
-  const models = (env.GEMINI_MODELS || 'gemini-flash-latest,gemini-2.5-flash').split(',').map(s => s.trim());
+  const models = (env.GEMINI_MODELS || 'gemini-3.8-flash,gemini-3.7-flash,gemini-3.5-flash,gemini-flash-lite-latest,gemini-3.5-flash-lite').split(',').map(s => s.trim());
   let last;
   for (const model of models) {
-    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+    let r;
+    try {
+    r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
       method: 'POST',
+      signal: AbortSignal.timeout(45000),
       headers: { 'content-type': 'application/json', 'x-goog-api-key': env.GEMINI_KEY },
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: system }] },
@@ -130,13 +133,14 @@ async function gemini(env, system, user, schema) {
         generationConfig: { temperature: 0.2, responseMimeType: 'application/json', responseSchema: schema }
       })
     });
+    } catch (e) { last = `${model} timeout`; continue; } // דגם עמוס – עוברים לבא
     if (r.ok) {
       const j = await r.json();
       const txt = j.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '';
       return { data: JSON.parse(txt), model };
     }
     last = `${model} ${r.status} ${(await r.text()).slice(0, 200)}`;
-    if (r.status !== 404 && r.status !== 429 && r.status !== 503) break;
+    if (![404, 429, 500, 503].includes(r.status)) break; // עמוס או לא קיים – מנסים את הדגם הבא
   }
   throw new Error(last);
 }
@@ -179,7 +183,8 @@ async function summarize(env, items) {
     else if (!v || !v.ok) why = (v && v.why) || 'לא אומת';
     else if (!kosher(p.text)) why = 'סינון כשר';
     if (why) { dropped.push({ text: p.text, why }); return; }
-    sections[p.sec].push({ text: p.text, sources: p.ids.map(id => ({ name: byId[id].name, link: byId[id].link })) });
+    const seen = new Set(); // מקור אחד פעם אחת, גם אם כמה ידיעות שלו
+    sections[p.sec].push({ text: p.text, sources: p.ids.map(id => ({ name: byId[id].name, link: byId[id].link })).filter(x => !seen.has(x.name) && seen.add(x.name)) });
   });
   return { mode: 'summary', model: w.model, sections, dropped };
 }
