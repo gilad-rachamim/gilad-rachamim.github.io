@@ -1,0 +1,291 @@
+// קו הכלים בטלפון – Cloudflare Worker שעונה ל"מודול API" של ימות המשיח.
+// מתקשרים ממכשיר כשר, מקישים ספרות, והשרת מחזיר טקסט שהמערכת מקריאה בעברית (TTS, חינם).
+// השרת לא שומר מצב: ימות שולחת בכל בקשה את כל מה שהוקש בשיחה, ומזה מחליטים מה לשאול.
+// כל סבב בתפריט מקבל שמות משלו (m0, c0, k0... ואז m1, c1...) כדי שאפשר יהיה לחזור לתפריט שוב ושוב.
+// מעקב כניסות: Durable Object אחד שסופר שיחות ושימוש בכל כלי ביום. לא נשמר שום מספר טלפון.
+import { HDate, HebrewCalendar, Zmanim, GeoLocation, Locale, flags } from '@hebcal/core';
+
+const TZ = 'Asia/Jerusalem';
+const VERSION = 1;
+const MAX_ROUNDS = 15;
+const GILAD_PHONE = '0584049049';
+
+// ערים: [שם, קו רוחב, קו אורך, דקות הדלקת נרות לפני השקיעה]
+const CITIES = [
+  null,
+  ['ירושלים', 31.778, 35.235, 40],
+  ['בני ברק', 32.084, 34.834, 20],
+  ['בית שמש', 31.747, 34.988, 20],
+  ['אלעד', 32.052, 34.951, 20],
+  ['מודיעין עילית', 31.932, 35.043, 20],
+  ['ביתר עילית', 31.697, 35.115, 20],
+  ['צפת', 32.965, 35.496, 20],
+  ['חיפה', 32.79, 34.99, 30],
+  ['באר שבע', 31.25, 34.79, 20]
+];
+const CITY_MENU = CITIES.slice(1).map((c, i) => `ל${c[0]} הקישו ${i + 1}`).join(' ');
+
+const MENU = 'לזמני היום הקישו 1. לתאריך העברי ולחגים הקרובים הקישו 2. למחשבון ברית בר מצווה ויארצייט הקישו 3. לזמני שבת הקישו 4. להשארת הודעה ובקשת עזרה הקישו 5. לסיום הקישו 0';
+const WELCOME = 'שלום וברוכים הבאים לקו הכלים של גילעד רחמים. כלים חינמיים בטלפון';
+
+const DAYS = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+
+// ---------- עזרי טקסט לימות ----------
+// התווים . - " ' & | = , שמורים בפרוטוקול של ימות. מנקים אותם מכל טקסט שמוקרא.
+function clean(s) {
+  return String(s).replace(/[״׳"']/g, '').replace(/[.\-&|=,:־–]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+// הודעה = רשימת חלקים: מחרוזת רגילה היא טקסט להקראה, ואובייקט {raw} נשלח כמו שהוא (למשל dateH-09/11/2026).
+function msgs(parts) {
+  return parts.filter(Boolean).map(p => (typeof p === 'object' ? p.raw : 't-' + clean(p))).filter(x => x !== 't-').join('.');
+}
+function readDigits(parts, name, { max = 1, min = 1, allowed = '' } = {}) {
+  return `read=${msgs(parts)}=${name},no,${max},${min},7,No,no,no,,${allowed},,,`;
+}
+function readRecord(parts, name, fileName) {
+  // מקליטים לשלוחה 9 במערכת של גילעד; עד 2 דקות.
+  return `read=${msgs(parts)}=${name},no,record,/9,${fileName},,yes,,1,120`;
+}
+function sayAndHangup(parts) {
+  return `id_list_message=${msgs(parts)}&go_to_folder=hangup`;
+}
+function gDate(d) { return { raw: `date-${dmy(d)}` }; }
+function hDate(d) { return { raw: `dateH-${dmy(d)}` }; }
+function dmy(d) { return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`; }
+
+// מספרים במילים (נקבה, כמו בשעות ובדקות)
+const ONES = ['', 'אחת', 'שתיים', 'שלוש', 'ארבע', 'חמש', 'שש', 'שבע', 'שמונה', 'תשע'];
+const TEENS = ['עשר', 'אחת עשרה', 'שתים עשרה', 'שלוש עשרה', 'ארבע עשרה', 'חמש עשרה', 'שש עשרה', 'שבע עשרה', 'שמונה עשרה', 'תשע עשרה'];
+const TENS = ['', '', 'עשרים', 'שלושים', 'ארבעים', 'חמישים'];
+function words(n) {
+  if (n < 10) return ONES[n];
+  if (n < 20) return TEENS[n - 10];
+  const t = TENS[Math.floor(n / 10)], o = n % 10;
+  return o ? `${t} ו${ONES[o]}` : t;
+}
+function sayTime(date) {
+  if (!date || isNaN(date)) return 'לא ידוע';
+  const p = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(date);
+  const h = +p.find(x => x.type === 'hour').value, m = +p.find(x => x.type === 'minute').value;
+  const h12 = h % 12 || 12;
+  const part = h < 12 ? 'בבוקר' : h < 16 ? 'בצהריים' : h < 18 ? 'אחר הצהריים' : 'בערב';
+  return m === 0 ? `${words(h12)} בדיוק ${part}` : `${words(h12)} ו${words(m)} דקות ${part}`;
+}
+
+// ---------- תאריכים ----------
+// התאריך של היום בישראל, כ-Date בצהריים (השרת רץ ב-UTC).
+function israelToday(now = new Date()) {
+  const p = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(now);
+  const g = t => +p.find(x => x.type === t).value;
+  return new Date(g('year'), g('month') - 1, g('day'), 12);
+}
+function addDays(d, n) { const x = new Date(d); x.setDate(x.getDate() + n); return x; }
+function geo(city) { return new GeoLocation(city[0], city[1], city[2], 0, TZ); }
+function parseDigitsDate(s) {
+  if (!/^\d{8}$/.test(s || '')) return null;
+  const d = +s.slice(0, 2), m = +s.slice(2, 4), y = +s.slice(4);
+  if (y < 1900 || y > 2100 || m < 1 || m > 12 || d < 1 || d > 31) return null;
+  const dt = new Date(y, m - 1, d, 12);
+  return dt.getMonth() === m - 1 ? dt : null;
+}
+function parshaOf(sat) {
+  try {
+    const sd = HebrewCalendar.getSedra(new HDate(sat).getFullYear(), true).lookup(new HDate(sat));
+    if (sd.chag) return '';
+    return 'פרשת ' + sd.parsha.map(p => Locale.gettext(p, 'he-x-NoNikud')).join(' ');
+  } catch (e) { return ''; }
+}
+
+// ---------- הכלים ----------
+function toolZmanim(city) {
+  const today = israelToday();
+  const z = new Zmanim(geo(city), today, false);
+  return [
+    `זמני היום ב${city[0]} ליום ${DAYS[today.getDay()]}`, hDate(today),
+    `הנץ החמה ${sayTime(z.sunrise())}`,
+    `סוף זמן קריאת שמע לפי המגן אברהם ${sayTime(z.sofZmanShmaMGA())}`,
+    `ולפי הגאון מוילנא ${sayTime(z.sofZmanShma())}`,
+    `סוף זמן תפילה לפי הגאון מוילנא ${sayTime(z.sofZmanTfilla())}`,
+    `חצות היום ${sayTime(z.chatzot())}`,
+    `מנחה גדולה ${sayTime(z.minchaGedola())}`,
+    `שקיעת החמה ${sayTime(z.sunset())}`,
+    `צאת הכוכבים ${sayTime(z.tzeit(8.5))}`
+  ];
+}
+
+function toolToday() {
+  const today = israelToday();
+  const out = [`היום יום ${DAYS[today.getDay()]}`, hDate(today), 'ובתאריך הלועזי', gDate(today)];
+  // אחרי השקיעה בירושלים התאריך העברי כבר התחלף
+  const sunset = new Zmanim(geo(CITIES[1]), today, false).sunset();
+  if (new Date() > sunset) out.push('ומהערב כבר', hDate(addDays(today, 1)));
+  const sat = addDays(today, (6 - today.getDay() + 7) % 7);
+  const parsha = parshaOf(sat);
+  if (parsha) out.push(`${parsha} היא פרשת השבוע`);
+  const skip = flags.MODERN_HOLIDAY | flags.DAF_YOMI | flags.YOM_KIPPUR_KATAN | flags.SHABBAT_MEVARCHIM;
+  const seen = new Set(), next = [];
+  for (const e of HebrewCalendar.calendar({ start: today, end: addDays(today, 45), il: true })) {
+    if (e.getFlags() & skip) continue;
+    let name = clean(e.render('he-x-NoNikud').split(':')[0]);
+    if (name === 'חנוכה') name = 'נר ראשון של חנוכה';
+    if (!name || /חג הבנות|ערב/.test(name) || seen.has(name)) continue;
+    seen.add(name);
+    const days = Math.round((e.getDate().greg() - today) / 86400000);
+    next.push(days === 0 ? `${name} היום` : days === 1 ? `${name} מחר` : `${name} בעוד ${days} ימים ביום ${DAYS[e.getDate().greg().getDay()]}`);
+    if (next.length === 3) break;
+  }
+  if (next.length) out.push('בקרוב', ...next);
+  return out;
+}
+
+const CALC_KINDS = { 1: 'ברית', 2: 'בר מצווה', 3: 'בת מצווה', 4: 'יארצייט' };
+
+function toolCalc(kind, date, afterSunset) {
+  // יום עברי מתחיל בשקיעה: אחרי השקיעה זה כבר התאריך העברי של מחר
+  const day = afterSunset ? addDays(date, 1) : date;
+  const hd = new HDate(day);
+  const today = israelToday();
+  const out = [];
+  if (kind === 1) {
+    const brit = addDays(day, 7);
+    out.push('התאריך העברי של הלידה', hDate(day),
+      `הברית ביום השמיני ביום ${DAYS[brit.getDay()]}`, hDate(brit), gDate(brit));
+    if (brit.getDay() === 6) out.push('הברית חלה בשבת. בלידה רגילה מלים בשבת. בלידה בניתוח קיסרי הברית נדחית ליום ראשון. מתייעצים עם המוהל');
+    out.push('אם הלידה הייתה סמוך לשקיעה בין השמשות שואלים את המוהל. ברית נדחית לפי הנחיות המוהל עד שהתינוק מוכן לגמרי');
+    out.push('לשאלות ולתיאום ברית גילעד רחמים מוהל מוסמך בטלפון', { raw: `d-${GILAD_PHONE}` });
+  } else if (kind === 2 || kind === 3) {
+    const years = kind === 2 ? 13 : 12;
+    const bd = HebrewCalendar.getBirthdayOrAnniversary(hd.getFullYear() + years, hd);
+    if (!bd) return ['לא הצלחתי לחשב את התאריך'];
+    const g = bd.greg();
+    out.push('התאריך העברי של הלידה', hDate(day),
+      `ה${CALC_KINDS[kind]} ביום ${DAYS[g.getDay()]}`, hDate(g), gDate(g),
+      'המצוות מתחילות מצאת הכוכבים של הערב שלפני');
+  } else {
+    let hy = new HDate(today).getFullYear();
+    let y = HebrewCalendar.getYahrzeit(hy, hd);
+    if (y && y.greg() < today) y = HebrewCalendar.getYahrzeit(hy + 1, hd);
+    if (!y) return ['לא הצלחתי לחשב את היארצייט. אם הפטירה הייתה בשנה האחרונה היארצייט הראשון עוד לא הגיע'];
+    const g = y.greg();
+    out.push('תאריך הפטירה העברי', hDate(day), `היארצייט הקרוב ביום ${DAYS[g.getDay()]}`, hDate(g), gDate(g),
+      'היארצייט מתחיל בערב שלפני');
+    if (hd.getMonth() >= 12) out.push('בפטירה בחודש אדר יש מנהגים שונים לשנה מעוברת. שואלים רב');
+  }
+  return out;
+}
+
+function toolShabbat(city) {
+  const today = israelToday();
+  const dow = today.getDay();
+  const fri = dow === 6 ? addDays(today, -1) : addDays(today, (5 - dow + 7) % 7);
+  const sat = addDays(fri, 1);
+  const gl = geo(city);
+  const candle = new Date(new Zmanim(gl, fri, false).sunset().getTime() - city[3] * 60000);
+  const havdala = new Zmanim(gl, sat, false).tzeit(8.5);
+  const parsha = parshaOf(sat);
+  return [
+    `זמני שבת ב${city[0]}`, parsha,
+    `הדלקת נרות ביום שישי ${sayTime(candle)}`, `${city[3]} דקות לפני השקיעה`,
+    `צאת השבת ${sayTime(havdala)}`
+  ];
+}
+
+// ---------- המכונה: מה לשאול עכשיו ----------
+function menuRead(round, intro) {
+  if (round >= MAX_ROUNDS) return sayAndHangup([...(intro || []), 'תודה שהתקשרתם. להתראות']);
+  return readDigits([...(intro || []), MENU], `m${round}`, { allowed: '0.1.2.3.4.5' });
+}
+
+function decide(v) {
+  let r = -1;
+  for (let i = 0; i < MAX_ROUNDS; i++) if (v[`m${i}`] !== undefined) r = i;
+  if (r < 0) return { text: menuRead(0, [WELCOME]), event: 'call' };
+  const tool = v[`m${r}`], next = r + 1;
+  const after = res => menuRead(next, [...res, 'לכלי נוסף']);
+  const askCity = () => readDigits(['בחרו עיר', CITY_MENU], `c${r}`, { allowed: '1.2.3.4.5.6.7.8.9' });
+
+  if (tool === '0') return { text: sayAndHangup(['תודה שהתקשרתם לקו הכלים. להתראות']) };
+  if (tool === '1' || tool === '4') {
+    const c = CITIES[+v[`c${r}`]];
+    if (!c) return { text: askCity() };
+    return { text: after(tool === '1' ? toolZmanim(c) : toolShabbat(c)), event: tool === '1' ? 'zmanim' : 'shabbat' };
+  }
+  if (tool === '2') return { text: after(toolToday()), event: 'today' };
+  if (tool === '3') {
+    const k = +v[`k${r}`];
+    if (!CALC_KINDS[k]) return { text: readDigits(['לחישוב ברית הקישו 1. לבר מצווה 2. לבת מצווה 3. ליארצייט 4'], `k${r}`, { allowed: '1.2.3.4' }) };
+    if (v[`d${r}`] === undefined) {
+      const what = k === 4 ? 'הפטירה' : 'הלידה';
+      return { text: readDigits([`הקישו את תאריך ${what} הלועזי בשמונה ספרות. יום חודש ושנה. למשל 0 9 1 1 2 0 2 6`], `d${r}`, { max: 8, min: 8 }) };
+    }
+    const date = parseDigitsDate(v[`d${r}`]);
+    if (!date) return { text: menuRead(next, ['התאריך שהוקש לא תקין. נסו שוב']) };
+    const a = v[`a${r}`];
+    if (a !== '1' && a !== '2') return { text: readDigits(['אם זה היה אחרי השקיעה הקישו 1. לפני השקיעה הקישו 2'], `a${r}`, { allowed: '1.2' }) };
+    return { text: after(toolCalc(k, date, a === '1')), event: 'calc' };
+  }
+  if (tool === '5') {
+    if (v[`r${r}`] === undefined) {
+      return { text: readRecord(['אחרי הצפצוף אמרו את השם ומספר הטלפון ובמה אפשר לעזור. למשל פקס דחוף. בסיום הקישו סולמית'], `r${r}`, `${Date.now()}`) };
+    }
+    return { text: after(['ההודעה נשמרה. תודה. גילעד יחזור אליכם בהקדם']), event: 'message' };
+  }
+  return { text: menuRead(next) };
+}
+
+// ---------- השרת ----------
+async function params(request) {
+  const url = new URL(request.url);
+  const v = Object.fromEntries(url.searchParams);
+  if (request.method === 'POST') {
+    const ct = request.headers.get('content-type') || '';
+    if (ct.includes('form')) for (const [k, val] of (await request.formData()).entries()) v[k] = String(val);
+  }
+  return v;
+}
+
+function count(env, ctx, event) {
+  if (!event || !env.STATS) return;
+  const stub = env.STATS.get(env.STATS.idFromName('all'));
+  ctx.waitUntil(stub.fetch('https://stats/hit?e=' + event).catch(() => {}));
+}
+
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    if (url.pathname === '/ping') return Response.json({ ok: true, v: VERSION });
+    if (url.pathname === '/stats') {
+      if (!env.STATS) return Response.json({});
+      return env.STATS.get(env.STATS.idFromName('all')).fetch('https://stats/get');
+    }
+    const v = await params(request);
+    if (v.hangup === 'yes') return new Response('', { headers: { 'content-type': 'text/plain; charset=utf-8' } });
+    let out;
+    try { out = decide(v); } catch (e) { out = { text: sayAndHangup(['סליחה, הייתה תקלה. נסו שוב מאוחר יותר']) }; }
+    count(env, ctx, out.event);
+    return new Response(out.text, { headers: { 'content-type': 'text/plain; charset=utf-8' } });
+  }
+};
+
+// מונה: שורה לכל יום ולכל אירוע (call, zmanim, today, calc, shabbat, message)
+export class Stats {
+  constructor(state) {
+    this.sql = state.storage.sql;
+    this.sql.exec('CREATE TABLE IF NOT EXISTS hits (day TEXT, ev TEXT, n INTEGER, PRIMARY KEY (day, ev))');
+  }
+  async fetch(request) {
+    const url = new URL(request.url);
+    if (url.pathname === '/hit') {
+      const ev = (url.searchParams.get('e') || '').replace(/[^a-z]/g, '').slice(0, 12);
+      const day = new Intl.DateTimeFormat('en-CA', { timeZone: TZ }).format(new Date());
+      this.sql.exec('INSERT INTO hits VALUES (?, ?, 1) ON CONFLICT(day, ev) DO UPDATE SET n = n + 1', day, ev);
+      return new Response('ok');
+    }
+    const rows = this.sql.exec('SELECT day, ev, n FROM hits ORDER BY day DESC LIMIT 600').toArray();
+    const days = {}, total = {};
+    for (const r of rows) { (days[r.day] ||= {})[r.ev] = r.n; total[r.ev] = (total[r.ev] || 0) + r.n; }
+    return Response.json({ total, days });
+  }
+}
+
+export { decide as _decide };
