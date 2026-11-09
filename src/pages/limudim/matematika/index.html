@@ -1,0 +1,87 @@
+<!--meta {
+  "site": "limudim",
+  "nav": "matematika",
+  "tool": "matematika",
+  "title": "תרגול מתמטיקה צעד אחרי צעד: שיעור קצר ותרגול עם רמזים, מכיתה ב׳ עד י׳ | כלים ללימודים",
+  "description": "לוח הכפל, סדר פעולות, שטח והיקף, שברים, אחוזים, משוואות, חזקות, פיתגורס, מערכת משוואות ונוסחת השורשים. בכל נושא שיעור קצר שמתנגן כמו סרטון עם קריינות, ותרגול שבו פותרים פעולה אחת בכל פעם, עם רמז ובדיקה מיד. שלושה שלבים שעולים לבד. חינם, בלי הרשמה.",
+  "og_title": "תרגול מתמטיקה צעד אחרי צעד",
+  "priority": "0.8",
+  "crumbs": [["תרגול מתמטיקה צעד אחרי צעד", null]],
+  "foot": "<script src=\"/assets/limudim-math.js\"></script>"
+} -->
+<header class="k-hero">
+  <h1>מתמטיקה צעד אחרי צעד</h1>
+  <p class="sub">בכל נושא יש שיעור קצר שמסביר את הבסיס, שלב אחרי שלב. אחר כך פותרים לבד, פעולה אחת בכל פעם, עם רמז כשצריך.</p>
+</header>
+
+<div class="tool" id="mx-app">
+  <div id="mx-home">
+    <div class="mx-list" id="mx-list"></div>
+    <div class="panel">
+      <h3>איך זה עובד</h3>
+      <ol class="mx-how">
+        <li><b>שיעור קצר.</b> לוחצים ▶ והשיעור מתנגן כמו סרטון: כל שלב מופיע בתורו, עם הסבר בקול ובכתב.</li>
+        <li><b>תרגול צעד אחרי צעד.</b> התרגיל מתפרק לפעולות קטנות, ובכל פעם עונים רק על פעולה אחת.</li>
+        <li><b>רמז כשנתקעים.</b> טעות היא חלק מהלימוד. מקבלים רמז, ואם צריך גם את התשובה, וממשיכים הלאה.</li>
+        <li><b>עולים שלב.</b> שלושה תרגילים נכונים ברצף, בלי רמז, מעלים לשלב הבא. כל נושא כולל שלושה שלבים.</li>
+      </ol>
+    </div>
+  </div>
+
+  <section id="mx-topic" hidden>
+    <div class="mx-head">
+      <button class="linkish" type="button" id="mx-back">→ כל הנושאים</button>
+      <h2 id="mx-t-name"></h2>
+      <span class="pill" id="mx-t-grade"></span>
+    </div>
+    <div class="mx-tabs" role="tablist">
+      <button type="button" id="mx-tab-l" role="tab">🎬 השיעור</button>
+      <button type="button" id="mx-tab-p" role="tab">✏️ תרגול</button>
+    </div>
+
+    <div id="mx-lesson" class="panel">
+      <div class="mx-screen">
+        <div class="mx-stage" id="mx-stage" aria-live="polite"></div>
+        <p class="mx-cap" id="mx-cap"></p>
+        <div class="mx-prog" id="mx-prog" aria-hidden="true"></div>
+      </div>
+      <div class="btns c">
+        <button class="btn btn-line btn-sm" type="button" id="mx-prev">‹ הקודם</button>
+        <button class="btn btn-gold" type="button" id="mx-play" aria-pressed="false">▶ לנגן</button>
+        <button class="btn btn-line btn-sm" type="button" id="mx-next">הבא ›</button>
+      </div>
+      <div class="btns c"><button class="linkish" type="button" id="mx-snd">🔊 קריינות</button></div>
+      <p class="note" id="mx-novoice" hidden style="text-align:center">אין בטלפון הזה קול בעברית, לכן השיעור בכתוביות בלבד.</p>
+    </div>
+
+    <div id="mx-practice" hidden>
+      <div class="panel">
+        <div class="mx-lv" id="mx-lv"></div>
+        <div class="mx-streak" id="mx-streak"></div>
+        <div class="mx-ex" id="mx-ex"></div>
+        <ol class="mx-done" id="mx-done"></ol>
+        <div id="mx-stepbox">
+          <div class="mx-cur" id="mx-cur"></div>
+          <form id="mx-form" class="mx-form" novalidate autocomplete="off">
+            <label for="mx-in" id="mx-q"></label>
+            <div class="mx-row"><input id="mx-in" type="text" inputmode="decimal" dir="ltr" enterkeyhint="done" aria-describedby="mx-fb"><button class="btn btn-gold" type="submit">לבדוק</button></div>
+            <p class="mx-fb" id="mx-fb" aria-live="polite"></p>
+            <p class="mx-hint" id="mx-hint" hidden></p>
+            <div class="btns"><button class="linkish" type="button" id="mx-hintbtn">💡 רמז</button><button class="linkish" type="button" id="mx-show">להראות את הצעד</button></div>
+          </form>
+          <p class="note">אפשר לכתוב מספר שלם, מינוס (‎-3), עשרוני (2.5) או שבר (3/4).</p>
+        </div>
+        <div id="mx-end" hidden>
+          <div id="mx-end-msg" class="mx-endmsg"></div>
+          <button class="btn btn-gold btn-block" type="button" id="mx-nextp">לתרגיל הבא ←</button>
+        </div>
+      </div>
+      <div class="btns c"><button class="linkish" type="button" id="mx-reset">לחזור לשלב 1 בנושא הזה</button></div>
+    </div>
+  </section>
+
+  <p class="local-note">🔒 בלי הרשמה. ההתקדמות נשמרת רק בטלפון הזה.</p>
+  <p class="note" style="text-align:center">התרגילים נוצרים מחדש בכל פעם, כך שאפשר להמשיך לתרגל בלי סוף. רוצים נושא נוסף? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>
+  <div class="share-row"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="תרגול מתמטיקה צעד אחרי צעד, עם שיעור קצר לכל נושא. חינם" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר בווטסאפ</a></div>
+  <p class="disclaimer"><a class="gold" href="/limudim/">כל הכלים ללימודים</a> · חינם · בלי הרשמה</p>
+</div>
