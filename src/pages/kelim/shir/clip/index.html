@@ -1,0 +1,63 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "shir_clip",
+  "title": "קליפ לשיר – תמונות וכתוביות שרצות עם השיר, לשתף ביוטיוב | הכלים של גילעד רחמים",
+  "description": "קליפ לשיר שכתבתם והקלטתם, בלחיצה אחת: תמונות שמתאימות לנושא, כתוביות שנצבעות בזמן השירה, שם השיר בפתיחה. לגובה או לרוחב, לשתף בווטסאפ או להעלות ליוטיוב שלכם. בחינם, בדפדפן.",
+  "og_title": "קליפ לשיר שלכם, בלחיצה אחת",
+  "priority": "0.7",
+  "crumbs": [["השיר שלי", "/kelim/shir/"], ["קליפ לשיר", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/shir.css\">",
+  "foot": "<script src=\"/assets/video-engine.js\" defer></script><script src=\"/assets/shir-core.js\" defer></script><script src=\"/assets/shir-music.js\" defer></script><script src=\"/assets/shir-clip.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>קליפ לשיר</h1>
+  <p class="sub">השיר שלכם, עם תמונות שמתאימות לנושא וכתוביות שרצות עם השירה. לוחצים פעם אחת, וזה מוכן.</p>
+</header>
+<div class="tool">
+  <nav class="shr-steps" aria-label="שלבי השיר"><a href="/kelim/shir/milim/"><b>1</b>מילים</a><a href="/kelim/shir/lachan/"><b>2</b>לחן</a><a href="/kelim/shir/haklata/"><b>3</b>הקלטה</a><a class="on" href="/kelim/shir/clip/"><b>4</b>קליפ</a></nav>
+  <div class="shr-top"><select id="sc-songs" aria-label="השירים שלי"></select><a class="shr-mini" href="/kelim/shir/haklata/">להקליט שוב</a></div>
+  <p class="hint" id="sc-src"></p>
+
+  <div class="shr-stage" id="sc-stage"><canvas id="sc-cv" width="720" height="1280" aria-label="תצוגת הקליפ"></canvas></div>
+  <div class="shr-prog" id="sc-prog" hidden><i></i></div>
+  <p class="shr-msg" id="sc-msg" aria-live="polite" style="text-align:center"></p>
+  <div class="shr-next" style="gap:.5rem;flex-wrap:wrap">
+    <button class="btn btn-gold" type="button" id="sc-make">🎬 ליצור את הקליפ</button>
+    <button class="btn btn-line" type="button" id="sc-preview">▶ תצוגה מקדימה</button>
+    <button class="btn btn-line" type="button" id="sc-stop" hidden>■ לעצור</button>
+  </div>
+
+  <div id="sc-result" hidden style="text-align:center">
+    <video id="sc-video" controls playsinline style="max-width:100%;max-height:70vh;border-radius:14px;background:#000"></video>
+    <div class="share-row">
+      <button class="btn btn-gold btn-sm" type="button" id="sc-share">לשתף (יוטיוב, ווטסאפ…)</button>
+      <a class="btn btn-line btn-sm" id="sc-dl" href="#" download>⬇ להוריד</a>
+      <button class="btn btn-line btn-sm" type="button" id="sc-yt">להעלות ליוטיוב שלי</button>
+    </div>
+    <div class="shr-yt" style="text-align:start">
+      <b style="color:var(--cream)">להעלות ליוטיוב שלכם</b>
+      <ol>
+        <li>בטלפון: "לשתף" ובוחרים יוטיוב. במחשב: מורידים, ואז "להעלות ליוטיוב שלי".</li>
+        <li>הכותרת והתיאור כבר מוכנים – מעתיקים ומדביקים.</li>
+        <li>ביוטיוב אפשר לבחור "לא רשום" אם רוצים שרק מי שקיבל קישור יראה.</li>
+      </ol>
+      <textarea id="sc-desc" readonly aria-label="כותרת ותיאור ליוטיוב"></textarea>
+      <button class="shr-mini gold" type="button" id="sc-copy">להעתיק כותרת ותיאור</button>
+    </div>
+  </div>
+
+  <details class="shr-raw" style="margin-top:1.2rem"><summary>לשנות (לא חובה)</summary>
+    <div class="k-form" style="margin-top:.6rem">
+      <div class="field"><span class="label">צורה</span><div class="shr-chips" id="sc-fmt"><button type="button" data-v="v">לגובה – סטטוס ושורטס</button><button type="button" data-v="h">לרוחב – יוטיוב</button></div></div>
+      <div class="field"><span class="label">התמונות</span><div class="shr-chips" id="sc-picsrc"><button type="button" data-v="auto">לפי הנושא</button><button type="button" data-v="mine">התמונות שלי</button></div>
+        <input type="file" id="sc-files" accept="image/*" multiple hidden>
+        <p class="hint" id="sc-picinfo"></p></div>
+      <div class="field"><label for="sc-author">מילים ולחן:</label><input id="sc-author" type="text" maxlength="50" placeholder="השם שלכם"></div>
+      <label class="shr-mini" style="display:inline-flex"><input type="checkbox" id="sc-sign" checked> שקף חתימה קטן בסוף</label>
+    </div>
+  </details>
+  <p class="disclaimer">הקליפ נוצר בטלפון שלכם, והתמונות שלכם לא עולות לשום מקום. התמונות לפי הנושא – בנחלת הכלל (CC0), מוויקישיתוף:</p>
+  <ul class="vd-credits" id="sc-credits" style="font-size:.75rem;opacity:.75;max-height:6rem;overflow:auto"></ul>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="כלי חינמי לכתוב שיר, להלחין, להקליט ולהכין לו קליפ עם כתוביות:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
