@@ -1,0 +1,49 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "eruim_tochnit",
+  "title": "תוכנית האירוע – מה קורה בכל שעה ומי אחראי, לחתונה, בר מצווה וברית | הכלים של גילעד רחמים",
+  "description": "כלי חינם לסדר היום של השמחה: קבלת פנים, חופה, ריקודים, נאומים וקינוח, כל שלב עם שעה ומי אחראי, והטלפונים של הצוות במקום אחד. מתחילים מתבנית לחתונה, בר מצווה או ברית, מדפיסים דף אחד בשלושה סגנונות ושולחים בווטסאפ לצלם, לדי-ג'יי ולמשפחה. נשמר רק בטלפון.",
+  "og_title": "תוכנית האירוע – מה קורה בכל שעה",
+  "priority": "0.7",
+  "crumbs": [["כלים לאירועים ולשמחות", "/kelim/eruim/"], ["תוכנית האירוע", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/eruim.css\">",
+  "foot": "<script src=\"/assets/eruim-tochnit.js\" defer></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>תוכנית האירוע</h1>
+  <p class="sub">מה קורה בכל שעה, ומי אחראי על מה. כשלכולם יש את אותו דף – הצלם יודע מתי החופה, הדי-ג'יי יודע מתי הנאום, וההורים יכולים פשוט לשמוח.</p>
+</header>
+<div class="tool no-print">
+  <div class="er-note" id="tc-demo" hidden><span>זו דוגמה עם שמות בדויים, כדי שיהיה ברור איך זה נראה. משנים לשמחה שלכם, או מנקים ומתחילים.</span><button class="btn btn-line btn-sm" type="button" id="tc-demo-x">לנקות ולהתחיל</button></div>
+  <form class="k-form" id="tc-form" novalidate>
+    <div class="field"><label for="tc-title">איזו שמחה?</label><input id="tc-title" type="text" maxlength="70" placeholder="החתונה של נועה ואביתר"></div>
+    <div class="er-two">
+      <div class="field"><label for="tc-date">תאריך</label><input id="tc-date" type="date"></div>
+      <div class="field"><label for="tc-place">איפה</label><input id="tc-place" type="text" maxlength="60" placeholder="אולמי הגן, נתיבות"></div>
+    </div>
+    <div class="field"><label>להתחיל מתבנית <span class="opt">(מחליף את השלבים שברשימה)</span></label>
+      <div class="er-chips" id="tc-tpl"><button type="button" data-k="chatuna">חתונה</button><button type="button" data-k="bar">בר מצווה</button><button type="button" data-k="brit">ברית</button><button type="button" data-k="erusin">אירוסין</button><button type="button" data-k="erev">ערב משפחתי</button></div></div>
+    <p class="res" id="tc-msg" aria-live="polite"></p>
+  </form>
+  <section class="er-sec"><h2>השלבים</h2>
+    <p class="er-hint">כל שלב: שעה, מה קורה, ומי אחראי. הרשימה מסתדרת לבד לפי השעה.</p>
+    <div id="tc-list"></div>
+    <div class="er-tools" style="margin-top:.5rem"><button class="btn btn-line btn-sm" type="button" id="tc-add">+ להוסיף שלב</button></div></section>
+  <section class="er-sec"><h2>אנשי הצוות</h2>
+    <p class="er-hint">את מי מתקשרים ביום עצמו. תפקיד, שם וטלפון.</p>
+    <div id="tc-team"></div>
+    <div class="er-tools" style="margin-top:.5rem"><button class="btn btn-line btn-sm" type="button" id="tc-tadd">+ להוסיף איש צוות</button></div></section>
+  <div class="field" style="margin-top:1rem"><label>סגנון הדף להדפסה</label>
+    <div class="er-chips" id="tc-theme"><button type="button" data-t="lavan">לבן (חוסך דיו)</button><button type="button" data-t="zayit">ירוק זית</button><button type="button" data-t="klaf">קלף</button></div></div>
+  <div class="er-tools">
+    <button class="btn btn-gold btn-sm" type="button" id="tc-print">להדפיס</button>
+    <a class="btn btn-line btn-sm" href="#" id="tc-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לצוות</a>
+    <button class="btn btn-line btn-sm" type="button" id="tc-copy">להעתיק</button>
+  </div>
+</div>
+<div id="tc-card" class="er-card t-lavan"></div>
+<div class="tool no-print">
+  <p class="disclaimer">הדף עוזר שכולם יידעו מה קורה ומתי. הכול נשמר רק בטלפון הזה, ולא נשלח לשום מקום עד שלוחצים על ווטסאפ.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="תוכנית האירוע: מה קורה בכל שעה ומי אחראי, דף אחד לצוות ולמשפחה. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>

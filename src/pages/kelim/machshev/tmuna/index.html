@@ -7,7 +7,7 @@
   "og_title": "תמונה של 5 מגה? הופכים אותה לחצי מגה, בטלפון",
   "priority": "0.7",
   "crumbs": [["מחשב וטלפון", "/kelim/machshev/"], ["הקטנת תמונה", null]],
-  "head": "<style>.tm-pick{display:block;text-align:center;border:2px dashed var(--gold-soft);border-radius:16px;padding:1.6rem 1rem;cursor:pointer;color:var(--parchment)}.tm-pick b{display:block;font-family:var(--serif);color:var(--cream);font-size:1.35rem;margin-bottom:.3rem}.tm-pick:hover{border-color:var(--gold)}.tm-q{display:flex;align-items:center;gap:.7rem}.tm-q input{flex:1;accent-color:var(--gold)}.tm-q b{font-family:var(--serif);color:var(--cream);min-width:3ch;text-align:center}.tm-list{list-style:none;display:grid;gap:.6rem;margin-top:1rem}.tm-list li{display:grid;grid-template-columns:4.5rem 1fr;gap:.8rem;align-items:center;padding:.6rem;border:1px solid var(--line);border-radius:12px;color:var(--parchment)}.tm-list img{width:4.5rem;height:4.5rem;object-fit:cover;border-radius:8px;background:var(--line)}.tm-list .nm{font-size:.92rem;color:var(--muted);word-break:break-all}.tm-list .sz{font-family:var(--serif);color:var(--cream);font-size:1.12rem}.tm-list .sz s{color:var(--muted);font-size:.95rem}.tm-list .bt{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.35rem}.tm-list .err{color:#e8833a}.tm-sum{text-align:center;color:var(--gold);font-family:var(--serif);font-size:1.1rem;margin-top:.9rem}.tm-safe{border:1px solid var(--gold-soft);border-radius:12px;padding:.7rem .9rem;color:var(--parchment);margin-bottom:1.1rem;font-size:.98rem}</style>",
+  "head": "<style>.tm-pick{display:block;text-align:center;border:2px dashed var(--gold-soft);border-radius:16px;padding:1.6rem 1rem;cursor:pointer;color:var(--parchment)}.tm-pick b{display:block;font-family:var(--serif);color:var(--cream);font-size:1.35rem;margin-bottom:.3rem}.tm-pick:hover{border-color:var(--gold)}.tm-q{display:flex;align-items:center;gap:.7rem}.tm-q input{flex:1;accent-color:var(--gold)}.tm-q b{font-family:var(--serif);color:var(--cream);min-width:3ch;text-align:center}.tm-list{list-style:none;display:grid;gap:.6rem;margin-top:1rem}.tm-list li{display:grid;grid-template-columns:4.5rem 1fr;gap:.8rem;align-items:center;padding:.6rem;border:1px solid var(--line);border-radius:12px;color:var(--parchment)}.tm-list img{width:4.5rem;height:4.5rem;object-fit:cover;border-radius:8px;background:var(--line)}.tm-list .nm{display:block;font-size:.92rem;color:var(--muted);word-break:break-all}.tm-list .sz{font-family:var(--serif);color:var(--cream);font-size:1.12rem}.tm-list .sz s{color:var(--muted);font-size:.95rem}.tm-list .bt{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.35rem}.tm-list .err{color:#e8833a}.tm-sum{text-align:center;color:var(--gold);font-family:var(--serif);font-size:1.1rem;margin-top:.9rem}.tm-safe{border:1px solid var(--gold-soft);border-radius:12px;padding:.7rem .9rem;color:var(--parchment);margin-bottom:1.1rem;font-size:.98rem}</style>",
   "foot": "<script src=\"/assets/machshev-tmuna.js\" defer></script>"
 } -->
 <header class="k-hero">
@@ -25,6 +25,15 @@
       <button type="button" role="tab" data-w="0">גודל מקורי</button>
     </div>
     <p class="note" id="tm-snote"></p>
+  </div>
+  <div class="field"><label>האתר מקבל עד (לכל תמונה)</label>
+    <div class="tabs" id="tm-lim" role="tablist">
+      <button type="button" role="tab" data-l="0.5">½ מ״ב</button>
+      <button type="button" role="tab" data-l="1">1 מ״ב</button>
+      <button type="button" role="tab" data-l="2">2 מ״ב</button>
+      <button type="button" role="tab" data-l="0">בלי מגבלה</button>
+    </div>
+    <p class="note">בוחרים מגבלה, והכלי מקטין לבד כל תמונה עד שהיא נכנסת.</p>
   </div>
   <div class="field tm-q"><label for="tm-q">איכות</label><input id="tm-q" type="range" min="40" max="95" step="5" value="80"><b id="tm-qv">80</b></div>
   <ul class="tm-list" id="tm-list"></ul>

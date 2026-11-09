@@ -1,0 +1,56 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "eruim_hoshava",
+  "title": "סידור הושבה לאירוע – שולחנות, מקומות ומי יושב איפה, עם דף לכניסה | הכלים של גילעד רחמים",
+  "description": "כלי חינם לסידור הושבה בחתונה, בר מצווה או ברית: מוסיפים שולחנות וכמה מקומות בכל אחד, מדביקים את רשימת האורחים עם מספר הנפשות, ומושיבים בלחיצה או בגרירה. רואים מיד איזה שולחן מלא. דף לכניסה לפי א-ב בשלושה סגנונות, ושליחה בווטסאפ. נשמר רק בטלפון.",
+  "og_title": "סידור הושבה – מי יושב איפה",
+  "priority": "0.7",
+  "crumbs": [["כלים לאירועים ולשמחות", "/kelim/eruim/"], ["סידור הושבה", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/eruim.css\">",
+  "foot": "<script src=\"/assets/eruim-hoshava.js\" defer></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>סידור הושבה</h1>
+  <p class="sub">כמה שולחנות, כמה מקומות בכל אחד, ומי יושב איפה. לוחצים על אורח ואז על השולחן שלו (במחשב אפשר גם לגרור). בסוף מדפיסים דף לכניסה, לפי א-ב, כדי שכל אחד ימצא את השולחן שלו בשנייה.</p>
+</header>
+<div class="tool no-print">
+  <div class="er-note" id="hs-demo" hidden><span>זו דוגמה עם שמות בדויים, כדי שיהיה ברור איך זה נראה. מוסיפים את האורחים שלכם, או מנקים ומתחילים.</span><button class="btn btn-line btn-sm" type="button" id="hs-demo-x">לנקות ולהתחיל</button></div>
+  <form class="k-form" id="hs-form" novalidate>
+    <div class="field"><label for="hs-title">איזו שמחה?</label><input id="hs-title" type="text" maxlength="70" placeholder="בר המצווה של אליה"></div>
+    <div class="field"><label for="hs-names">להוסיף אורחים <span class="opt">(שורה לכל משפחה, ובסוף כמה נפשות)</span></label>
+      <p class="er-hint">למשל: <b>משפחת כהן 4</b>. בלי מספר – נפש אחת.</p>
+      <textarea id="hs-names" rows="4" maxlength="4000" placeholder="משפחת כהן 4&#10;דני ורותי 2&#10;סבתא שושנה"></textarea></div>
+    <div class="field"><label>מאיזה צד? <span class="opt">(לא חובה)</span></label>
+      <div class="er-chips" id="hs-side"><button type="button" data-s="">בלי</button><button type="button" data-s="צד החתן">צד החתן</button><button type="button" data-s="צד הכלה">צד הכלה</button><button type="button" data-s="משפחה">משפחה</button><button type="button" data-s="חברים">חברים</button><button type="button" data-s="עבודה">עבודה</button></div></div>
+    <button class="btn btn-gold btn-block" type="submit">להוסיף לרשימה</button>
+    <p class="res" id="hs-msg" aria-live="polite"></p>
+  </form>
+  <section class="er-sec"><h2>שולחנות</h2>
+    <div class="er-tadd">
+      <div class="field" style="margin:0"><label for="hs-tname">שם או מספר</label><input id="hs-tname" type="text" maxlength="30" placeholder="שולחן 5"></div>
+      <div class="field" style="margin:0"><label for="hs-tseats">מקומות</label><input id="hs-tseats" type="number" min="1" max="60" inputmode="numeric" value="10"></div>
+      <button class="btn btn-line btn-sm" type="button" id="hs-tadd">+ שולחן</button>
+    </div>
+    <div class="er-sum" id="hs-sum"></div>
+  </section>
+  <section class="er-sec"><h2>עוד לא הושבו</h2>
+    <div class="er-chips2" id="hs-free"></div>
+    <div class="er-pick" id="hs-pick" hidden></div>
+    <div class="er-tools" style="margin-top:.3rem"><button class="btn btn-line btn-sm" type="button" id="hs-auto">להושיב אוטומטית את מי שנשאר</button></div>
+  </section>
+  <section class="er-sec"><div class="er-tables" id="hs-tables"></div></section>
+  <div class="field" style="margin-top:1rem"><label>מה מדפיסים?</label>
+    <div class="er-chips" id="hs-view"><button type="button" data-v="ab">דף לכניסה (א-ב)</button><button type="button" data-v="tables">לפי שולחנות</button></div></div>
+  <div class="field"><label>סגנון הדף</label>
+    <div class="er-chips" id="hs-theme"><button type="button" data-t="lavan">לבן (חוסך דיו)</button><button type="button" data-t="zayit">ירוק זית</button><button type="button" data-t="klaf">קלף</button></div></div>
+  <div class="er-tools">
+    <button class="btn btn-gold btn-sm" type="button" id="hs-print">להדפיס</button>
+    <a class="btn btn-line btn-sm" href="#" id="hs-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח בווטסאפ</a>
+  </div>
+</div>
+<div id="hs-card" class="er-card t-lavan"></div>
+<div class="tool no-print">
+  <p class="disclaimer">הרשימה נשמרת רק בטלפון הזה. אישורי ההגעה עצמם – בכלי <a href="/kelim/kesharim/ishurim/">אישורי הגעה</a>.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="סידור הושבה לאירוע: שולחנות, מקומות ומי יושב איפה, עם דף לכניסה. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>

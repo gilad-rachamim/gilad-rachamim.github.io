@@ -9,8 +9,11 @@
   if (!inp) return;
   var KEY = 'kelim-machshev-tmuna';
   var NOTES = { 800: 'הצד הארוך 800 נקודות. הכי קל, טוב לטופס שמגביל גודל.', 1280: 'הצד הארוך 1280 נקודות. מספיק כמעט לכל דבר.', 1920: 'הצד הארוך 1920 נקודות. למסמכים ולתמונות שרוצים להדפיס קטן.', 0: 'אותו גודל, רק דחיסה. חוסך פחות.' };
-  var st = { w: 1280, q: 80 };
-  try { var sv = JSON.parse(localStorage.getItem(KEY) || 'null'); if (sv) { if (NOTES[sv.w] !== undefined) st.w = sv.w; if (sv.q >= 40 && sv.q <= 95) st.q = sv.q; } } catch (e) {}
+  var st = { w: 1280, q: 80, l: 0 };
+  var LIMS = [0, 0.5, 1, 2];
+  // מדרגות [הצד הארוך, איכות] כשיש מגבלה: יורדים עד שהתמונה נכנסת.
+  var LADDER = [[1920, 80], [1600, 75], [1280, 70], [1280, 60], [1024, 55], [800, 50], [640, 45], [480, 40]];
+  try { var sv = JSON.parse(localStorage.getItem(KEY) || 'null'); if (sv) { if (NOTES[sv.w] !== undefined) st.w = sv.w; if (sv.q >= 40 && sv.q <= 95) st.q = sv.q; if (LIMS.indexOf(sv.l) > -1) st.l = sv.l; } } catch (e) {}
   function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
   var files = [], out = [], used = 0, run = 0;
 
@@ -28,8 +31,20 @@
     });
   }
   function shrink(f) {
+    var lim = st.l ? st.l * 1048576 * 0.97 : 0;
+    return shrinkAt(f, st.w, st.q).then(function (r) {
+      if (!lim || r.blob.size <= lim) return r;
+      var cur = Math.max(r.w, r.h), steps = LADDER.filter(function (s) { return s[0] <= cur && (s[0] < cur || s[1] < st.q); }), i = 0;
+      return (function next(last) {
+        if (last.blob.size <= lim || i >= steps.length) { last.tries = i + 1; last.over = last.blob.size > lim; return last; }
+        var s = steps[i++];
+        return shrinkAt(f, s[0], s[1]).then(next);
+      })(r);
+    });
+  }
+  function shrinkAt(f, W, Q) {
     return load(f).then(function (im) {
-      var w0 = im.width || im.naturalWidth, h0 = im.height || im.naturalHeight, max = st.w || Math.max(w0, h0);
+      var w0 = im.width || im.naturalWidth, h0 = im.height || im.naturalHeight, max = W || Math.max(w0, h0);
       var k = Math.min(1, max / Math.max(w0, h0)), w = Math.round(w0 * k), h = Math.round(h0 * k);
       var c = document.createElement('canvas'); c.width = w; c.height = h;
       var x = c.getContext('2d');
@@ -38,7 +53,7 @@
       x.drawImage(im, 0, 0, w, h);
       if (im.close) im.close();
       return new Promise(function (ok, bad) {
-        c.toBlob(function (b) { b ? ok({ blob: b, w: w, h: h, w0: w0, h0: h0 }) : bad(new Error('blob')); }, 'image/jpeg', st.q / 100);
+        c.toBlob(function (b) { b ? ok({ blob: b, w: w, h: h, w0: w0, h0: h0 }) : bad(new Error('blob')); }, 'image/jpeg', Q / 100);
       });
     });
   }
@@ -58,11 +73,12 @@
         r.url = URL.createObjectURL(r.blob); r.file = new File([r.blob], name(f), { type: 'image/jpeg' }); r.src = f; out[i] = r;
       }).catch(function () { out[i] = { err: 1, src: f }; }).then(function () { i++; draw(true); next(); });
     })();
-    if (!used && window.toolUsed) { used = 1; window.toolUsed('machshev_tmuna', { how: 'resize', n: files.length, w: st.w, q: st.q }); }
+    if (!used && window.toolUsed) { used = 1; window.toolUsed('machshev_tmuna', { how: 'resize', n: files.length, w: st.w, q: st.q, l: st.l }); }
   }
   function draw(partial) {
     [].forEach.call($('tm-size').children, function (b) { b.setAttribute('aria-selected', String(+b.getAttribute('data-w') === st.w)); });
     $('tm-snote').textContent = NOTES[st.w];
+    [].forEach.call($('tm-lim').children, function (b) { b.setAttribute('aria-selected', String(+b.getAttribute('data-l') === st.l)); });
     $('tm-q').value = st.q; $('tm-qv').textContent = st.q;
     $('tm-list').innerHTML = out.map(function (o, i) {
       if (!o) return '';
@@ -72,6 +88,7 @@
         '<span class="sz"><s>' + mb(o.src.size) + '</s> ← ' + mb(o.blob.size) + '</span>' +
         '<span class="nm" dir="ltr" style="display:block;text-align:right">' + o.w + '×' + o.h + '</span>' +
         (big ? '<span class="err">התמונה כבר הייתה קלה. אפשר לשלוח את המקורית.</span>' : '') +
+        (o.over ? '<span class="err">גם בגודל הכי קטן לא נכנסה ב-' + st.l + ' מ״ב.</span>' : (o.tries > 1 ? '<span class="nm">הוקטנה עוד כדי להיכנס ב-' + (st.l === 0.5 ? '½' : st.l) + ' מ״ב</span>' : '')) +
         '<span class="bt"><a class="btn btn-gold btn-sm" href="' + o.url + '" download="' + esc(o.file.name) + '" data-dl="' + i + '">להוריד</a>' +
         (canShare([o.file]) ? '<button class="btn btn-line btn-sm" type="button" data-share="' + i + '">לשלוח</button>' : '') + '</span></span></li>';
     }).join('');
@@ -90,6 +107,7 @@
   }
   inp.addEventListener('change', function () { files = [].slice.call(inp.files || []).filter(function (f) { return /^image\//.test(f.type) || /\.(heic|heif|jpe?g|png|webp|gif|bmp)$/i.test(f.name); }); process(); });
   $('tm-size').addEventListener('click', function (e) { var b = e.target.closest('[data-w]'); if (!b) return; st.w = +b.getAttribute('data-w'); save(); files.length ? process() : draw(); });
+  $('tm-lim').addEventListener('click', function (e) { var b = e.target.closest('[data-l]'); if (!b) return; st.l = +b.getAttribute('data-l'); save(); files.length ? process() : draw(); });
   var qt;
   $('tm-q').addEventListener('input', function () { st.q = +this.value; $('tm-qv').textContent = st.q; save(); clearTimeout(qt); qt = setTimeout(function () { if (files.length) process(); }, 350); });
   $('tm-list').addEventListener('click', function (e) {
