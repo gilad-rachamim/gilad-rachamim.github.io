@@ -2,7 +2,8 @@
 // קורא כותרות ותקצירים מ-RSS ← מסנן לקו כשר ← Gemini כותב נקודות קצרות במילים שלו ← בדיקה שנייה מול המקור.
 // אין מפתח Gemini? יוצא "מצב כותרות": הכותרות הנבחרות עם קישור, בלי סיכום.
 // בשבת ובחג לא רץ (מהדלקת נרות בירושלים עד צאת הכוכבים). מוצ"ש בערב: סיכום "מה היה בשבת".
-// חינם לכולם. נקודות הקצה: /latest  /history  /report (POST)  /reports?key=  /run?key=  /stats
+// התראות: Web Push בלי תוכן (לא צריך הצפנה) – ה-sw.js של הכלים מקבל את הדחיפה ומביא בעצמו את /latest.
+// חינם לכולם. נקודות הקצה: /latest  /history  /report (POST)  /reports?key=  /run?key=  /stats  /subscribe  /unsubscribe
 import { HDate, HebrewCalendar, Zmanim, GeoLocation, flags } from '@hebcal/core';
 
 const TZ = 'Asia/Jerusalem';
@@ -17,6 +18,7 @@ export const SOURCES = [
   ['walla', 'וואלה', 'כללי', 'https://www.walla.co.il/rss/feed/news/israel'],
   ['maariv', 'מעריב', 'כללי', 'https://www.maariv.co.il/rss/rsschadashot'],
   ['inn', 'ערוץ 7', 'כללי', 'https://www.inn.co.il/Rss.aspx'],
+  ['c14', 'ערוץ 14', 'כללי', 'https://www.c14.co.il/feed/'],
   ['kikar', 'כיכר השבת', 'חרדי', 'https://www.kikar.co.il/feed'],
   ['bhol', 'בחדרי חרדים', 'חרדי', 'https://www.bhol.co.il/rss'],
   ['jdn', 'JDN', 'חרדי', 'https://www.jdn.co.il/feed/'],
@@ -27,7 +29,7 @@ export const SOURCES = [
 // ידיעה עם אחת המילים האלה לא נכנסת בכלל (גם לא לבינה)
 const BLOCK_WORDS = ['מינית', 'מיני ', 'אונס', 'נאנס', 'זנות', 'פורנו', 'עירום', 'חשפנ', 'פדופיל', 'מעשה מגונה', 'מעשים מגונים',
   'בגידה', 'רומן', 'דוגמנ', 'סלב', 'ריאליטי', 'האח הגדול', 'אירוויזיון', 'זמרת', 'שחקנית', 'הומו', 'להט"ב', 'גאווה',
-  'הימורים', 'קזינו', 'סמים', 'קנאביס', 'אלכוהול', 'שיכור', 'התאבד', 'התאבדות'];
+  'הימורים', 'קזינו', 'כדורגל', 'כדורסל', 'ליגת העל', 'הפועל ', 'מכבי תל אביב', 'בית"ר ירושלים', 'מונדיאל', 'אולימפי', 'סמים', 'קנאביס', 'אלכוהול', 'שיכור', 'התאבד', 'התאבדות'];
 // פשע: רק אם זה לא פיגוע/ביטחון (פיגוע נכנס כמשפט עובדתי אחד)
 const CRIME_WORDS = ['נרצח', 'רצח', 'נדקר', 'דקירה', 'שוד', 'אלימות במשפחה', 'התעללות', 'גופה'];
 const SECURITY_WORDS = ['פיגוע', 'מחבל', 'טרור', 'צה"ל', 'חמאס', 'חיזבאללה'];
@@ -238,7 +240,7 @@ async function call(env, path, body) {
   return r.json();
 }
 
-export async function runEdition(env, { force = false, now = new Date() } = {}) {
+export async function runEdition(env, { force = false, now = new Date(), push = !force } = {}) {
   const p = israelParts(now);
   if (!force) {
     if (holyNow(now)) return { skipped: 'שבת או חג' };
@@ -268,6 +270,7 @@ export async function runEdition(env, { force = false, now = new Date() } = {}) 
   ed.failed = failed;
   ed.v = VERSION;
   await call(env, '/save', ed);
+  if (push) await call(env, '/push-start', {});
   return { ok: true, name: ed.name, mode: ed.mode, main: ed.sections.main.length, dropped: ed.dropped.length, failed, error: ed.error };
 }
 
@@ -301,7 +304,18 @@ export default {
     if (url.pathname === '/stats') return json(await call(env, '/stats'));
     if (url.pathname === '/run') {
       if (!admin) return json({ ok: false }, 403);
-      return json(await runEdition(env, { force: url.searchParams.get('force') === '1' }));
+      const force = url.searchParams.get('force') === '1';
+      return json(await runEdition(env, { force, push: !force || url.searchParams.get('push') === '1' }));
+    }
+    if (url.pathname === '/push-test') { // שולח התראה רק למנוי אחד (endpoint) – לבדיקה
+      if (!admin) return json({ ok: false }, 403);
+      return json(await call(env, '/push-one', { endpoint: url.searchParams.get('endpoint') }));
+    }
+    if ((url.pathname === '/subscribe' || url.pathname === '/unsubscribe') && request.method === 'POST') {
+      let b = {}; try { b = await request.json(); } catch (e) {}
+      const ep = String(b.endpoint || '');
+      if (!/^https:\/\/[a-z0-9.-]+\//i.test(ep) || ep.length > 1000) return json({ ok: false }, 400);
+      return json(await call(env, url.pathname, { endpoint: ep }));
     }
     return json({ name: 'החדשות ב-3 דקות', page: 'https://gilad-rachamim.github.io/kelim/machshev/chadashot/' });
   },
@@ -311,8 +325,41 @@ export default {
 };
 
 // אחסון: הסיכום האחרון, 21 הקודמים, דיווחי טעויות ומונה כניסות יומי
+// ---------- Web Push (VAPID, בלי תוכן) ----------
+const b64u = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const b64uStr = str => b64u(new TextEncoder().encode(str));
+async function vapidAuth(env, endpoint) {
+  const jwk = JSON.parse(env.VAPID_JWK);
+  const key = await crypto.subtle.importKey('jwk', jwk, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign']);
+  const head = b64uStr(JSON.stringify({ typ: 'JWT', alg: 'ES256' }));
+  const body = b64uStr(JSON.stringify({ aud: new URL(endpoint).origin, exp: Math.floor(Date.now() / 1000) + 12 * 3600, sub: 'https://gilad-rachamim.github.io/kelim/' }));
+  const sig = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, key, new TextEncoder().encode(head + '.' + body));
+  return `vapid t=${head}.${body}.${b64u(sig)}, k=${env.VAPID_PUBLIC}`;
+}
+export async function sendPush(env, endpoint) {
+  const r = await fetch(endpoint, { method: 'POST', headers: { authorization: await vapidAuth(env, endpoint), ttl: '21600', urgency: 'normal', 'content-length': '0' } });
+  return r.status;
+}
+async function subKey(endpoint) { return 'sub:' + b64u(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(endpoint))).slice(0, 32); }
+
 export class Store {
-  constructor(state) { this.s = state.storage; }
+  constructor(state, env) { this.s = state.storage; this.env = env; }
+  // שליחה בקבוצות של 40 (מגבלת בקשות לכל ריצה); כל קבוצה בריצת alarm נפרדת
+  async alarm() {
+    const job = await this.s.get('push-job');
+    if (!job || !this.env.VAPID_JWK) return;
+    const page = await this.s.list({ prefix: 'sub:', startAfter: job.after || undefined, limit: 40 });
+    let last = null;
+    for (const [k, sub] of page) {
+      last = k;
+      try {
+        const st = await sendPush(this.env, sub.endpoint);
+        if (st === 404 || st === 410) { await this.s.delete(k); job.gone++; } else if (st < 300) job.sent++; else job.fail++;
+      } catch (e) { job.fail++; }
+    }
+    if (page.size === 40) { job.after = last; await this.s.put('push-job', job); await this.s.setAlarm(Date.now() + 1000); }
+    else { job.done = new Date().toISOString(); delete job.after; await this.s.put('push-last', job); await this.s.delete('push-job'); }
+  }
   async fetch(request) {
     const path = new URL(request.url).pathname;
     const body = request.method === 'POST' ? await request.json() : null;
@@ -337,7 +384,17 @@ export class Store {
       await this.s.put('stats', st);
       return Response.json({ ok: true });
     }
-    if (path === '/stats') return Response.json((await this.s.get('stats')) || {});
+    if (path === '/stats') {
+      const subs = (await this.s.list({ prefix: 'sub:' })).size;
+      return Response.json({ subscribers: subs, lastPush: (await this.s.get('push-last')) || null, days: (await this.s.get('stats')) || {} });
+    }
+    if (path === '/subscribe') { await this.s.put(await subKey(body.endpoint), { endpoint: body.endpoint, at: new Date().toISOString() }); return Response.json({ ok: true }); }
+    if (path === '/unsubscribe') { await this.s.delete(await subKey(body.endpoint)); return Response.json({ ok: true }); }
+    if (path === '/push-start') { await this.s.put('push-job', { sent: 0, gone: 0, fail: 0, start: new Date().toISOString() }); await this.s.setAlarm(Date.now() + 500); return Response.json({ ok: true }); }
+    if (path === '/push-one') {
+      if (!body.endpoint) return Response.json({ ok: false });
+      try { return Response.json({ status: await sendPush(this.env, body.endpoint) }); } catch (e) { return Response.json({ error: String(e) }); }
+    }
     return Response.json({}, { status: 404 });
   }
 }
