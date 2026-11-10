@@ -1,0 +1,72 @@
+<!--meta {
+  "site": "limudim",
+  "nav": "machshevon",
+  "tool": "poter",
+  "title": "הפותר: שאלות בגרות במתמטיקה עם דרך פתרון מלאה ובדיקה | כלים ללימודים",
+  "description": "מכניסים שאלת בגרות במתמטיקה (3, 4 או 5 יח\"ל) – בהקלדה, בצילום או בקול – ומקבלים דרך פתרון מלאה כמו במחברת: סעיף אחרי סעיף, נוסחה, הצבה, חישוב ותשובה. כל פתרון נבדק פעמיים: בודק שני פותר מחדש, והמחשבון מציב ובודק את החישובים. ללמידה ולתרגול בבית. חינם, בלי הרשמה.",
+  "og_title": "הפותר – שאלות בגרות במתמטיקה עם דרך מלאה",
+  "priority": "0.8",
+  "crumbs": [["מחשבון לבגרות", "/limudim/machshevon/"], ["הפותר", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/vendor/katex/katex.min.css\">",
+  "foot": "<script src=\"/assets/vendor/katex/katex.min.js\"></script><script src=\"/assets/limudim-poter.js\"></script>"
+} -->
+<header class="k-hero">
+  <h1>הפותר: שאלות בגרות במתמטיקה</h1>
+  <p class="sub">מכניסים שאלה, גם הכי קשה, ומקבלים דרך פתרון מלאה כמו במחברת: סעיף אחרי סעיף, עם נוסחה, הצבה, חישוב ותשובה. כל פתרון נבדק פעמיים לפני שהוא מגיע אליכם.</p>
+</header>
+
+<div class="tool" id="pt-app">
+  <div class="cx-exam" role="note">
+    <b>ללמידה, לא לבחינה.</b> כאן לומדים איך פותרים, ואז פותרים לבד. בבגרות מותר רק מחשבון מדעי <b>לא גרפי</b>, וטלפון אסור.
+    הפותר נעזר בבינה מלאכותית. היא טובה מאוד, אבל לא מושלמת, ולכן כל פתרון עובר בדיקה ומקבל סימן: <b>✓ נבדק</b> או <b>⚠️ כדאי לבדוק עם המורה</b>.
+  </div>
+
+  <div class="panel" id="pt-in">
+    <div class="cx-lv" role="group" aria-label="כמה יחידות אני לומד">
+      <span>אני לומד:</span><button type="button" data-lv="3">3 יח"ל</button><button type="button" data-lv="4">4 יח"ל</button><button type="button" data-lv="5" class="on">5 יח"ל</button>
+    </div>
+    <label for="pt-q" class="pt-lbl">השאלה</label>
+    <textarea id="pt-q" rows="6" placeholder="מקלידים או מדביקים את השאלה, עם כל הסעיפים. למשל: נתונה הפונקציה f(x) = x·ln(2x). א. מצאו את תחום ההגדרה. ב. מצאו את נקודות הקיצון וקבעו את סוגן."></textarea>
+    <div class="pt-tools">
+      <label class="btn pt-photo" for="pt-file">📷 צילום של השאלה</label>
+      <input type="file" id="pt-file" accept="image/*" hidden>
+      <button type="button" class="btn pt-mic" id="pt-mic" aria-pressed="false">🎤 להגיד בקול</button>
+    </div>
+    <div class="pt-img" id="pt-img" hidden>
+      <img id="pt-imgp" alt="הצילום של השאלה">
+      <button type="button" class="linkish" id="pt-imgx">להסיר את הצילום</button>
+    </div>
+    <p class="note" id="pt-mic-note" hidden></p>
+    <button type="button" class="btn btn-gold pt-go" id="pt-go">לפתור עם דרך מלאה</button>
+    <p class="note pt-demo">רוצים לראות איך זה נראה? <button type="button" class="linkish" id="pt-demo">דוגמה: שאלה מבגרות קיץ 2024 (4 יח"ל)</button></p>
+  </div>
+
+  <div class="pt-wait" id="pt-wait" hidden aria-live="polite">
+    <div class="pt-spin" aria-hidden="true"></div>
+    <p id="pt-stage">קורא את השאלה…</p>
+    <ol class="pt-stages" id="pt-stages">
+      <li data-s="0">קוראים את השאלה</li>
+      <li data-s="1">פותרים סעיף אחרי סעיף</li>
+      <li data-s="2">המחשבון מציב ובודק את החישובים</li>
+      <li data-s="3">בודק שני פותר מחדש ומשווה</li>
+    </ol>
+    <p class="note">שאלה ארוכה לוקחת בין דקה לכמה דקות. שווה לחכות, כי ככה הבדיקה יסודית. כדאי להשאיר את המסך דלוק.</p>
+  </div>
+
+  <p class="pt-err" id="pt-err" role="alert" hidden></p>
+
+  <div id="pt-out" aria-live="polite"></div>
+
+  <details class="panel pt-how">
+    <summary><b>איך הפותר בודק את עצמו?</b></summary>
+    <ol class="cx-steps">
+      <li><b>פותר ראשון</b> כותב דרך מלאה, ולכל סעיף גם בדיקות בכתיב של מחשבון: הצבת הפתרון במשוואה, נגזרת, אינטגרל.</li>
+      <li><b>המחשבון</b> מחשב את הבדיקות בעצמו, במספרים, בלי בינה מלאכותית. למשל: מציבים את x שמצאנו ובודקים שיוצא 0, או בודקים את הנגזרת בכמה נקודות.</li>
+      <li><b>בודק שני</b> פותר את השאלה מחדש לבד, ומשווה את התשובה של כל סעיף.</li>
+      <li>אם משהו לא מסתדר, הפותר מקבל את ההערות ובודק שוב. רק כשהכול מסכים מופיע <b>✓ נבדק</b>.</li>
+    </ol>
+    <p class="note">בדקנו את הפותר על 10 שאלות קשות מבחינות הבגרות של קיץ 2024 וקיץ 2025, ב-4 וב-5 יח"ל (חדו"א, פונקציות מעריכיות ולוגריתמיות, טריגונומטריה, וקטורים, מספרים מרוכבים וגאומטריה אנליטית). הפותר קיבל מצילום של השאלה, והגיע לתשובה הנכונה בכל הסעיפים. עדיין, גם "נבדק" זה לא הבטחה. אם יצאה לכם תשובה אחרת, זו הזדמנות טובה לשאול את המורה.</p>
+  </details>
+
+  <p class="note pt-priv">לא נשמר שום פרט על מי ששאל. פתרון שעבר את הבדיקה (✓) נשמר לפי השאלה עצמה, כדי שמי שישאל אותה שוב יקבל אותו מיד. נשמר גם מונה יומי, כדי שהשירות יישאר חינמי לכולם: עד 12 שאלות ביום לכל מכשיר. רוצים לתרגל בלי בינה מלאכותית? <a class="gold" href="/limudim/machshevon/">המחשבון לבגרות</a> פותר משוואות עם שלבים, ו<a class="gold" href="/limudim/maslul/">המסלול שלי</a> מתרגל אתכם שלב אחרי שלב.</p>
+</div>

@@ -7,7 +7,7 @@
   "og_title": "מחשבון לבגרות – גדול, נגיש ומסביר",
   "priority": "0.8",
   "crumbs": [["מחשבון לבגרות", null]],
-  "foot": "<script src=\"/assets/limudim-calc.js\"></script>"
+  "foot": "<script src=\"/assets/limudim-dibur.js\"></script><script src=\"/assets/limudim-calc.js\"></script>"
 } -->
 <header class="k-hero">
   <h1>מחשבון לבגרות</h1>
@@ -18,6 +18,7 @@
   <div class="cx-exam" role="note">
     <b>חשוב לדעת לפני הבחינה:</b> בבגרות במתמטיקה מותר רק מחשבון מדעי <b>לא גרפי</b>, ואסור להשתמש באפשרויות תכנות. טלפון אסור. לכן המחשבון כאן הוא ללימוד ולתרגול בבית, ובבחינה עצמה משתמשים במחשבון המדעי שלכם. בלשונית <b>"במחשבון שלכם"</b> יש לכל פעולה את המקשים במחשבון רגיל. <a class="gold" href="https://meyda.education.gov.il/files/Exams/AllowedMaterialEXTWin2023.pdf" target="_blank" rel="noopener">רשימת חומר העזר של משרד החינוך</a>.
   </div>
+  <p class="note pt-link">🧠 תקועים בשאלה מילולית שלמה? <a class="gold" href="/limudim/poter/">הפותר</a> נותן דרך פתרון מלאה לשאלת בגרות, סעיף אחרי סעיף, ובודק את עצמו.</p>
 
   <div class="cx-bar">
     <div class="cx-lv" role="group" aria-label="כמה יחידות אני לומד">
@@ -61,7 +62,14 @@
         <output class="cx-res" id="cx-res" dir="ltr" aria-live="polite"></output>
         <div class="cx-extra" id="cx-extra" aria-live="polite"></div>
       </div>
-      <div class="cx-why" id="cx-why" aria-live="polite"><b>לוחצים על מקש</b> ורואים כאן מה הוא עושה, ואיפה הוא במחשבון שלכם. אפשר גם ללחוץ 🎤 ולהגיד, למשל: "שורש של 16 ועוד שלוש כפול שתיים".</div>
+      <section class="cx-sheet" id="cx-steps-p" aria-label="דרך הפתרון" hidden>
+        <h3>📝 דרך הפתרון, שלב אחרי שלב</h3>
+        <ol class="cx-steps" id="cx-steps"></ol>
+        <div class="cx-final" id="cx-final" hidden></div>
+        <div class="cx-keyseq" id="cx-keyseq"></div>
+        <div id="cx-lesson"></div>
+      </section>
+      <div class="cx-why" id="cx-why" aria-live="polite"><b>לוחצים על מקש</b> ורואים כאן מה הוא עושה, ואיפה הוא במחשבון שלכם. אפשר גם לכתוב או להגיד משוואה: "2x + 3 = 7", "x² − 5x + 6 = 0", או שתי משוואות עם x ו-y, עם פסיק ביניהן.</div>
 
       <div class="cx-keys" id="cx-keys">
         <button type="button" class="f" data-k="sin(" aria-label="סינוס">sin</button>
@@ -129,12 +137,6 @@
       </div>
     </div>
 
-    <div class="panel cx-steps-p" id="cx-steps-p" hidden>
-      <h3>איך הגעתי לזה</h3>
-      <ol class="cx-steps" id="cx-steps"></ol>
-      <div class="cx-keyseq" id="cx-keyseq"></div>
-      <div id="cx-lesson"></div>
-    </div>
 
     <div class="panel cx-hist-p">
       <div class="cx-hhead"><h3>היסטוריה</h3><button type="button" class="linkish" id="cx-hclear">לנקות</button></div>
