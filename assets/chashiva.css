@@ -170,3 +170,36 @@
 .ch-vs span{color:var(--muted);font-size:.93rem}
 .ch-vs input{font:inherit;padding:.55rem .75rem;border-radius:10px;border:1px solid var(--line);background:var(--ink);color:var(--cream)}
 .ch-vs .actions{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center}
+
+/* ===== משחקי לוח (שחמט, דמקה) ===== */
+.ch-turn{margin-top:.6rem}
+.ch-sep{width:1px;background:var(--line);margin:0 .2rem}
+.bg-board{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);width:min(100%,480px);aspect-ratio:1;margin:.4rem auto;border:4px solid #3b3122;border-radius:8px;overflow:hidden;touch-action:manipulation;user-select:none;-webkit-user-select:none;box-shadow:0 4px 18px rgba(0,0,0,.4)}
+.bg-board button{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;font-size:clamp(1.5rem,8.6vw,2.6rem);line-height:1}
+.bg-board .lt{background:#efe4c8}
+.bg-board .dk{background:#7d9a78}
+.bg-board .sel{box-shadow:inset 0 0 0 4px #d8b35f}
+.bg-board .last{background-image:linear-gradient(rgba(232,200,124,.55),rgba(232,200,124,.55))}
+.bg-board .chk{background:radial-gradient(circle,#ff6b5b 25%,#c0392b 80%)}
+.bg-board .dot::after{content:"";width:28%;height:28%;border-radius:50%;background:rgba(20,33,31,.35)}
+.bg-board .cap::after{content:"";position:absolute;inset:3px;border-radius:50%;border:4px solid rgba(20,33,31,.35)}
+.bg-board i{position:absolute;font-style:normal;font-size:.62rem;font-weight:700;color:rgba(20,33,31,.55);font-family:var(--sans)}
+.bg-board i.rk{top:2px;left:3px}
+.bg-board i.fl{bottom:1px;right:3px}
+.pc{font-family:"Segoe UI Symbol","Noto Sans Symbols 2","DejaVu Sans",serif;display:inline-block}
+.pc.w{color:#fffdf6;text-shadow:0 0 1px #000,0 0 1px #000,1px 1px 0 #2b2b2b,-1px -1px 0 #2b2b2b,1px -1px 0 #2b2b2b,-1px 1px 0 #2b2b2b}
+.pc.b{color:#1b1b1b;text-shadow:0 0 1px #fff8}
+.bg-board.won{filter:saturate(.75)}
+.bg-capt{display:flex;flex-direction:column;align-items:flex-end;gap:0;font-size:1.05rem;line-height:1.1;min-height:2.2em}
+.bg-capt .pcs{font-family:"Segoe UI Symbol","Noto Sans Symbols 2",serif;letter-spacing:-2px}
+.bg-capt .pcs.w{color:#fffdf6;text-shadow:0 0 1px #000}
+.bg-capt .pcs.b{color:#111;text-shadow:0 0 2px #fff}
+.bg-promo{display:flex;gap:.4rem;justify-content:center;align-items:center;flex-wrap:wrap;margin:.5rem 0;border:1px solid var(--gold);border-radius:14px;padding:.5rem;background:rgba(216,179,95,.1);color:var(--cream)}
+.bg-promo button{border:1px solid var(--line);background:#efe4c8;border-radius:10px;font-size:2rem;padding:.2rem .6rem;cursor:pointer;display:flex;flex-direction:column;align-items:center}
+.bg-promo small{font-size:.75rem;color:#333}
+/* דמקה */
+.dm-board .disc{width:78%;height:78%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.55em;box-shadow:inset 0 -3px 0 rgba(0,0,0,.25),0 2px 4px rgba(0,0,0,.35)}
+.dm-board .disc.w{background:radial-gradient(circle at 35% 30%,#fff,#e8dcc0 60%,#c9b58e)}
+.dm-board .disc.b{background:radial-gradient(circle at 35% 30%,#7a4a33,#4a2516 60%,#2c140b);color:#f3d27a}
+.dm-board .disc.w.k{color:#a8771c}
+.dm-board .must{box-shadow:inset 0 0 0 3px #e2574c}
