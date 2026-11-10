@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>סטודיו לעיצוב – עורך גרפי כמו קנבה, בחינם ובעברית, עם עוזר שמעצב במילים | הכלים של גילעד רחמים</title>
-<meta name="description" content="עורך עיצוב חינמי בעברית, חלופה לקנבה: כותבים במילים מה רוצים והעוזר מעצב פוסט, הזמנה, מודעה או סטטוס. מוסיפים תמונות, טקסט, כיתוב וכתוביות, צורות ורקעים, עורכים מסמך PDF, ושומרים כתמונה או PDF. בלי הרשמה.">
+<meta name="description" content="עורך עיצוב חינמי בעברית, חלופה לקנבה: כותבים במילים מה רוצים והעוזר מעצב 3 הצעות לפוסט, הזמנה, מודעה או סטטוס. הסרת רקע מתמונה בלחיצה, חיתוך ומסגרות בצורות, שכבות, QR וסמלים, תבניות לחגים ולשמחות, עריכת PDF ושמירה כתמונה או PDF. בלי הרשמה.">
 <link rel="canonical" href="https://gilad-rachamim.github.io/kelim/tochen/studio/">
 
 <meta property="og:type" content="website">
 <meta property="og:locale" content="he_IL">
 <meta property="og:site_name" content="הכלים של גילעד רחמים">
 <meta property="og:title" content="סטודיו לעיצוב – כמו קנבה, בחינם ובעברית">
-<meta property="og:description" content="עורך עיצוב חינמי בעברית, חלופה לקנבה: כותבים במילים מה רוצים והעוזר מעצב פוסט, הזמנה, מודעה או סטטוס. מוסיפים תמונות, טקסט, כיתוב וכתוביות, צורות ורקעים, עורכים מסמך PDF, ושומרים כתמונה או PDF. בלי הרשמה.">
+<meta property="og:description" content="עורך עיצוב חינמי בעברית, חלופה לקנבה: כותבים במילים מה רוצים והעוזר מעצב 3 הצעות לפוסט, הזמנה, מודעה או סטטוס. הסרת רקע מתמונה בלחיצה, חיתוך ומסגרות בצורות, שכבות, QR וסמלים, תבניות לחגים ולשמחות, עריכת PDF ושמירה כתמונה או PDF. בלי הרשמה.">
 <meta property="og:image" content="https://gilad-rachamim.github.io/assets/og-kelim.jpg">
 <meta property="og:url" content="https://gilad-rachamim.github.io/kelim/tochen/studio/">
 <meta name="twitter:card" content="summary_large_image">
@@ -25,7 +25,7 @@
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4QR4583VST"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4QR4583VST');</script>
 <script src="/assets/track.js?v=b23b682b" defer></script>
-<link rel="stylesheet" href="/assets/studio-fonts.css?v=fe4822cf"><link rel="stylesheet" href="/assets/studio.css?v=92d96887"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "הכלים של גילעד רחמים", "item": "https://gilad-rachamim.github.io/kelim/"}, {"@type": "ListItem", "position": 2, "name": "יצירת תוכן", "item": "https://gilad-rachamim.github.io/kelim/tochen/"}, {"@type": "ListItem", "position": 3, "name": "סטודיו לעיצוב", "item": "https://gilad-rachamim.github.io/kelim/tochen/studio/"}]}</script>
+<link rel="stylesheet" href="/assets/studio-fonts.css?v=fe4822cf"><link rel="stylesheet" href="/assets/studio.css?v=3c21696c"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "הכלים של גילעד רחמים", "item": "https://gilad-rachamim.github.io/kelim/"}, {"@type": "ListItem", "position": 2, "name": "יצירת תוכן", "item": "https://gilad-rachamim.github.io/kelim/tochen/"}, {"@type": "ListItem", "position": 3, "name": "סטודיו לעיצוב", "item": "https://gilad-rachamim.github.io/kelim/tochen/studio/"}]}</script>
 </head>
 <body class="site-kelim " data-site="kelim" data-tool="studio" data-home="/kelim/">
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
@@ -77,6 +77,7 @@
       <button type="button" class="btn btn-line btn-sm" data-ai="edit" id="sd-ai-mode-edit">לשנות את העיצוב שעל המסך</button>
     </div>
     <p id="sd-status" class="sd-status" role="status" aria-live="polite" hidden></p>
+    <div id="sd-choices" class="sd-choices" hidden></div>
   </section>
 
   <div class="sd-top">
@@ -86,6 +87,8 @@
       <button type="button" data-tab="text">טקסט</button>
       <button type="button" data-tab="img">תמונות ו-PDF</button>
       <button type="button" data-tab="shape">צורות</button>
+      <button type="button" data-tab="qr">QR וסמלים</button>
+      <button type="button" data-tab="layers">שכבות</button>
       <button type="button" data-tab="bg">רקע וצבעים</button>
       <button type="button" data-tab="size">גודל ויעד</button>
       <button type="button" data-tab="file">פרויקט</button>
@@ -97,7 +100,7 @@
   </div>
 
   <div class="sd-main">
-    <aside class="sd-side" id="sd-panel" aria-label="אפשרויות"></aside>
+    <aside class="sd-side" id="sd-side" aria-label="אפשרויות"><button type="button" class="sd-grab" id="sd-grab" aria-expanded="true" aria-controls="sd-panel"><span></span>אפשרויות</button><div id="sd-panel"></div></aside>
     <div class="sd-work">
       <div class="sd-viewport" id="sd-viewport">
         <div class="sd-holder" id="sd-holder">
@@ -105,6 +108,7 @@
           <div class="sd-ui" id="sd-ui"></div>
         </div>
       </div>
+      <div class="sd-zoom" id="sd-zoom" role="group" aria-label="זום"><button type="button" data-zm="out" aria-label="להקטין">−</button><span id="sd-zoom-v">100%</span><button type="button" data-zm="in" aria-label="להגדיל">+</button><button type="button" data-zm="fit">להתאים למסך</button></div>
       <div class="sd-pages" id="sd-pages"></div>
       <div class="sd-out">
         <button type="button" class="btn btn-gold btn-sm" data-out-kind="share"><svg class="ic"><use href="#wa"/></svg> לשלוח / לשתף</button>
@@ -123,12 +127,14 @@
 <div class="tool no-print sd-foot">
   <h2>איך עובדים</h2>
   <ol class="sd-how">
-    <li><b>כותבים לעוזר</b> מה רוצים (או בוחרים תבנית). אפשר לצרף קודם תמונות – והוא ישתמש בהן.</li>
+    <li><b>כותבים לעוזר</b> מה רוצים (או בוחרים תבנית). הוא מכין 3 הצעות – בוחרים אחת. אפשר לצרף קודם תמונות: העוזר רואה אותן, בוחר צבעים שמתאימים להן ומשאיר את הפנים נקיות מטקסט.</li>
     <li><b>לוחצים על כל דבר בעיצוב</b> כדי לשנות אותו: גוררים, מגדילים מהפינות, מסובבים מהעיגול שמעל. לחיצה כפולה על טקסט – כותבים ישר עליו.</li>
     <li><b>רוצים שינוי?</b> כותבים לעוזר "תגדיל את הכותרת ותעשה את הרקע כהה יותר", ולוחצים "לשנות את העיצוב שעל המסך".</li>
+    <li><b>תמונות:</b> "להסיר רקע" חותך אדם או חפץ ומשאיר אותו על שקוף. "חיתוך והזזה" בוחר איזה חלק רואים, ו"מסגרת בצורה" הופכת את התמונה לעיגול, לב, קשת, משושה או כוכב.</li>
+    <li><b>בטלפון:</b> צובטים בשתי אצבעות כדי להגדיל, גוררים אצבע על מקום ריק כדי לזוז, ולוח האפשרויות נפתח מלמטה.</li>
     <li><b>שומרים</b> כתמונה לווטסאפ ולסטטוס, או כ-PDF להדפסה. מסמך PDF אפשר לפתוח, לכתוב עליו ולשמור שוב.</li>
   </ol>
-  <p class="disclaimer">העיצוב והתמונות נשמרים רק אצלכם, בדפדפן הזה. לעוזר נשלח רק מה שכתבתם ומבנה העיצוב – התמונות עצמן לא יוצאות מהמכשיר. העוזר חינמי ויש לו מכסה יומית; אם הוא עמוס, אפשר להמשיך לעצב ידנית.</p>
+  <p class="disclaimer">העיצוב והתמונות נשמרים רק אצלכם, בדפדפן הזה. כשמשתמשים בעוזר, נשלחים אליו מה שכתבתם, מבנה העיצוב וגרסה קטנה (512 פיקסלים) של התמונות שבעיצוב – כדי שיראה אותן. הן לא נשמרות אצלנו, ואם לא לוחצים על העוזר, שום דבר לא יוצא מהמכשיר. הסרת הרקע נעשית כולה במכשיר שלכם (בפעם הראשונה יורד כלי של כ-57MB, ואחר כך הוא עובד מיד, גם בלי אינטרנט). העוזר חינמי ויש לו מכסה יומית; אם הוא עמוס, אפשר להמשיך לעצב ידנית.</p>
   <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="סטודיו לעיצוב בעברית, כמו קנבה ובחינם: כותבים במילים מה רוצים והוא מעצב. פוסטים, הזמנות, מודעות וכיתוב על תמונות:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
 </div>
 <div id="sd-print" class="sd-print" aria-hidden="true"></div>
@@ -192,6 +198,6 @@
   <button class="x" type="button" data-install-close aria-label="סגירה">×</button>
 </div>
 <script src="/assets/kelim.js?v=6ab3224b" defer></script>
-<script src="/assets/vendor/html-to-image/html-to-image-1.11.11.js?v=c149e533" defer></script><script src="/assets/studio.js?v=dfd6f3c2" defer></script>
+<script src="/assets/vendor/html-to-image/html-to-image-1.11.11.js?v=c149e533" defer></script><script src="/assets/studio.js?v=bb666707" defer></script>
 </body>
 </html>
