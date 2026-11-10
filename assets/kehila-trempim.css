@@ -50,3 +50,13 @@
 .tp-big small{font-size:1rem;color:var(--muted);font-weight:400}
 .tp-pay{margin-top:.5rem;padding:.6rem .7rem;border-radius:10px;background:rgba(216,179,95,.08);border:1px solid var(--gold-soft)}
 @media (max-width:420px){.tp-row{flex-direction:column}}
+/* הלו"ז הקבוע שלי (/kelim/kehila/trempim/luz/) */
+.lz-item .acts .go{border-color:var(--gold);color:var(--cream);background:rgba(216,179,95,.14)}
+.lz-item .acts .no{color:#e8b48c}
+.lz-item .lz-msg{margin:.4rem 0 0;color:var(--accent);font-size:.92rem}
+.lz-item .lz-msg:empty{display:none}
+#lz-add{margin-top:.2rem}
+#lz-names{margin-top:.4rem}
+#lz-names button{font-size:.88rem;padding:.25rem .65rem}
+.lz-formacts{display:flex;gap:.5rem;flex-wrap:wrap}
+.lz-acc .btn{margin-top:.2rem}
