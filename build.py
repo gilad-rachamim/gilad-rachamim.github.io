@@ -18,7 +18,7 @@ LAYOUT = (ROOT / "src" / "layout.html").read_text(encoding="utf-8")
 LAYOUT_KELIM = (ROOT / "src" / "layout-kelim.html").read_text(encoding="utf-8")
 SITES = {
     "kelim": {
-        "name": "הכלים של גילעד רחמים", "short": "הכלים", "home": "/kelim/", "theme": "#0f1d1c",
+        "name": "הכלים של גילעד רחמים", "brand": "מיזם הכלים של גילעד רחמים", "short": "הכלים", "home": "/kelim/", "theme": "#0f1d1c",
         "og": "og-kelim.jpg", "icon": "kelim",
         "desc": "כלים פשוטים, בחינם, לכל מי שצריך הנגשה",
         "nav": [("tchumim", "/kelim/#tchumim", "התחומים"), ("tamlul", "/kelim/tamlul/", "תמלול"),
@@ -383,7 +383,7 @@ for path in sorted(SRC.rglob("*.html")):
         for k in ("title", "description", "og_title"):
             rep[k] = rep[k].replace('"', "״")
         rep.update({
-            "site": key, "site_name": site["name"], "site_short": site["short"], "site_home": site["home"],
+            "site": key, "site_name": site["name"], "site_brand": site.get("brand", site["name"]), "site_short": site["short"], "site_home": site["home"],
             "theme": site["theme"], "site_desc": site["desc"],
             "nav": "".join(f'<a href="{h}"' + (' aria-current="page"' if meta.get("nav") == k else "") + f'>{l}</a>' for k, h, l in site["nav"]),
             "tool": meta.get("tool", ""),
