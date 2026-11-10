@@ -68,7 +68,7 @@
     var street = a.street ? a.street + (a.housenumber ? ' ' + a.housenumber : '') : '';
     var main = a.name && a.name !== a.street ? a.name : street || a.name || '';
     var sub = [a.name && street && a.name !== a.street ? street : '', a.city || a.town || a.village || a.county || ''].filter(Boolean).join(', ');
-    return { main: main || sub, sub: main ? sub : '', label: [main, a.city || a.town || a.village || ''].filter(Boolean).join(', ') };
+    return { main: main || sub, sub: main ? sub : '', label: [main, a.city || a.town || a.village || ''].filter(function (x, i, arr) { return x && arr.indexOf(x) === i; }).join(', ') };
   }
   // Photon (OpenStreetMap). בישראל אין בו מספרי בתים, אז: מחפשים בלי המספר, מעדיפים את העיר שנכתבה
   // ואת האזור של המשתמש, ומחזירים את המספר לתווית. lang=default = שמות בעברית כמו במפה.
@@ -102,6 +102,8 @@
         var score = i;
         words.forEach(function (w) { if (city && city.indexOf(w) >= 0) score -= 20; });
         if (main && main.indexOf(sp.text.split(',')[0].trim()) === 0) score -= 8;
+        // עיר או שכונה בשם שנכתב קודמת למסעדה או חנות באותה עיר
+        if (a.osm_key === 'place' && main && main.indexOf(sp.text.split(',')[0].trim()) === 0) score -= 60;
         return { label: label, main: main, sub: l.sub || city, lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0], score: score };
       }).filter(function (it) { var k = it.label; if (seen[k]) return false; seen[k] = 1; return true; })
         .sort(function (x, y) { return x.score - y.score; }).slice(0, 7);
@@ -256,6 +258,8 @@
     } else {
       $('tp-profile').hidden = true; $('tp-main').hidden = false;
       loadInbox(); loadMyRides();
+      // הגיעו מתזכורת ביומן: ישר ל"שוב כמו בפעם הקודמת"
+      if (location.hash === '#again') { tab('drive'); setTimeout(function () { $('dr-again').scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300); }
     }
   }
   function renderMe() {
@@ -449,6 +453,7 @@
         'אני נוסע ' + when + ' ב-' + $('dr-time').value + ' מ' + from.label + ' ל' + to.label + ', ויש לי מקום. מי שבדרך מוזמן להצטרף: ' + PAGE;
       msg.innerHTML = 'הנסיעה פורסמה! כל מי שבדרך יראה אותה. <a class="btn btn-line btn-sm" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(share) + '">לספר בקבוצה של השכונה</a>';
       drRoute = null; $('dr-route').innerHTML = '';
+      if (!sent.days) { $('dr-msg').insertAdjacentHTML('beforeend', afterOnce(sent)); wireAfter(sent); }
       rememberRide(sent); loadMyRides(); loadStats();
     }).catch(function (err) {
       msg.textContent = err.message === 'notfound' || err.message === 'empty' ? 'לא מצאתי את הכתובת. כתבו רחוב ועיר ובחרו מהרשימה.' : err.message === 'route' ? 'לא הצלחתי לחשב מסלול בין הנקודות.' : errText(err);
@@ -717,7 +722,198 @@
       var b = e.target.closest('button[data-again]'); if (!b) return;
       var t = $('dr-again')._list[+b.getAttribute('data-again')]; if (t) useAgain(t);
     });
-    renderPlaces(); renderAgain();
+    renderPlaces(); renderAgain(); initSay();
+  }
+
+  /* ---------- נסיעה במשפט אחד (קול או כתיבה) ---------- */
+  // "מחר בשבע וחצי מקריית משה לתל אביב, שלושה מקומות" → { date, time, from, to, seats, days, free, taxi }
+  var HNUM = { 'אחת עשרה': 11, 'אחד עשר': 11, 'שתים עשרה': 12, 'שתיים עשרה': 12, 'שנים עשר': 12, 'אחת': 1, 'אחד': 1, 'שתיים': 2, 'שתים': 2, 'שניים': 2, 'שתי': 2, 'שני': 2, 'שלוש': 3, 'שלושה': 3, 'ארבע': 4, 'ארבעה': 4, 'חמש': 5, 'חמישה': 5, 'שש': 6, 'שישה': 6, 'שבע': 7, 'שבעה': 7, 'שמונה': 8, 'תשע': 9, 'תשעה': 9, 'עשר': 10, 'עשרה': 10 };
+  var HNUM_RE = 'אחת עשרה|אחד עשר|שתים עשרה|שתיים עשרה|שנים עשר|אחת|אחד|שתיים|שתים|שניים|שתי|שני|שלושה|שלוש|ארבעה|ארבע|חמישה|חמש|שישה|שש|שבעה|שבע|שמונה|תשעה|תשע|עשרה|עשר';
+  var MINW = { 'וחצי': 30, 'ורבע': 15, 'ועשרה': 10, 'ועשר': 10, 'וחמישה': 5, 'וחמש': 5, 'ועשרים': 20, 'ועשרים וחמש': 25, 'וארבעים': 40, 'ושלושים': 30 };
+  var DAYW = { 'ראשון': 0, 'שני': 1, 'שלישי': 2, 'רביעי': 3, 'חמישי': 4, 'שישי': 5 };
+  function parseRide(text, now) {
+    now = now || new Date();
+    var t = ' ' + String(text || '').replace(/[״"]/g, '"').replace(/[.?!]/g, ' ').replace(/\s+/g, ' ').trim() + ' ';
+    var out = {};
+    var cut = function (re) { t = t.replace(re, ' '); };
+    var num = function (w) { return /^\d+$/.test(w) ? +w : HNUM[w]; };
+    // מונית / בחינם
+    if (/מונית/.test(t)) { out.taxi = true; cut(/\s(ב|עם\s)?מונית/g); }
+    if (/בחינם|חינם|בלי תשלום|לשם מצווה/.test(t)) { out.free = true; cut(/\s(בחינם|חינם|בלי תשלום|לשם מצווה)/g); }
+    // מקומות פנויים
+    var m = t.match(new RegExp('\\s(?:יש\\s+(?:לי\\s+)?)?(\\d|' + HNUM_RE + ')\\s+(?:מקומות|מקום)(?:\\s+פנויים|\\s+פנוי)?'));
+    if (m) { out.seats = num(m[1]); t = t.replace(m[0], ' '); }
+    else if (/\sמקום\s+(אחד|פנוי)/.test(t)) { out.seats = 1; cut(/\s(?:יש\s+(?:לי\s+)?)?מקום\s+(אחד|פנוי)(\s+פנוי)?/); }
+    // ימים: "כל יום", "כל יום ראשון ושלישי", "בימים א ג"
+    var dm = t.match(/\s(?:כל|בכל)\s+(?:יום|בוקר|ערב)((?:\s+ו?(?:ראשון|שני|שלישי|רביעי|חמישי|שישי))*)/);
+    if (dm) {
+      var ds = (dm[1].match(/ראשון|שני|שלישי|רביעי|חמישי|שישי/g) || []).map(function (w) { return DAYW[w]; });
+      out.days = ds.length ? ds : [0, 1, 2, 3, 4];
+      if (/ערב/.test(dm[0])) out.pm = true;
+      t = t.replace(dm[0], ' ');
+    } else if (/\s(?:קבוע|נסיעה קבועה|כל שבוע)\s/.test(t)) {
+      out.days = [0, 1, 2, 3, 4]; cut(/\s(נסיעה קבועה|קבוע|כל שבוע)/);
+    }
+    // תאריך
+    var day0 = new Date(now); day0.setHours(12, 0, 0, 0);
+    var dateIn = function (n) { var d = new Date(day0); d.setDate(d.getDate() + n); return ymd(d); };
+    if (/\sמחרתיים\s/.test(t)) { out.date = dateIn(2); cut(/\sמחרתיים/); }
+    else if (/\sמחר\s/.test(t)) { out.date = dateIn(1); cut(/\sמחר/); }
+    else if (/\sהיום\s/.test(t)) { out.date = dateIn(0); cut(/\sהיום/); }
+    var wd = !out.days && t.match(/\s(?:ב?יום\s+|ב)(ראשון|שני|שלישי|רביעי|חמישי|שישי)(?=\s)/);
+    if (wd) { var k = (DAYW[wd[1]] - day0.getDay() + 7) % 7; out.date = dateIn(k); t = t.replace(wd[0], ' '); }
+    // שעה
+    var h = null, mi = 0, rel;
+    if ((rel = t.match(/\s(?:עכשיו|מיד)\s/))) { out.now = 0; t = t.replace(rel[0], ' '); }
+    if ((rel = t.match(/\sב?עוד\s+(רבע שעה|חצי שעה|שעה|(\d+|עשר|עשרים|חמש)\s+דקות)/))) {
+      var r = rel[1]; out.now = r === 'רבע שעה' ? 15 : r === 'חצי שעה' ? 30 : r === 'שעה' ? 60 : /^\d+$/.test(rel[2]) ? +rel[2] : { 'עשר': 10, 'עשרים': 20, 'חמש': 5 }[rel[2]];
+      t = t.replace(rel[0], ' ');
+    }
+    var tm = t.match(/\s(?:בשעה\s+|ב-?|בסביבות\s+|ב?בערך\s+)?(\d{1,2})[:.](\d{2})(?=\s)/);
+    if (tm) { h = +tm[1]; mi = +tm[2]; t = t.replace(tm[0], ' '); }
+    if (h == null && (tm = t.match(new RegExp('\\s(?:בשעה\\s+|ב-?)(?:(רבע|עשרה|עשרים)\\s+ל)?(\\d{1,2}|' + HNUM_RE + ')(?:\\s+(ועשרים וחמש|וחצי|ורבע|ועשרה|ועשר|וחמישה|וחמש|ועשרים|וארבעים|ושלושים))?(?=\\s)')))) {
+      h = num(tm[2]); mi = tm[3] ? MINW[tm[3]] : 0;
+      if (tm[1]) { h -= 1; mi = 60 - { 'רבע': 15, 'עשרה': 10, 'עשרים': 20 }[tm[1]]; }
+      t = t.replace(tm[0], ' ');
+    }
+    var part = t.match(/\s(בבוקר|בצהריים|אחרי הצהריים|אחה"צ|בערב|בלילה)(?=\s)/);
+    if (part) { t = t.replace(part[0], ' '); if (part[1] !== 'בבוקר') out.pm = true; else out.am = true; }
+    if (h != null && h >= 0 && h <= 23) {
+      if (h < 12 && (out.pm || (!out.am && h <= 6))) h += 12;
+      if (h === 24) h = 12;
+      out.time = String(h).padStart(2, '0') + ':' + String(mi).padStart(2, '0');
+    }
+    // מקומות: "מ<מוצא> ל<יעד>" / "ל<יעד>"
+    t = t.replace(/\s(אני|אנחנו|נוסע|נוסעת|נוסעים|יוצא|יוצאת|יוצאים|מגיע|נסיעה|טרמפ|לטרמפ|ויש לי|יש לי|רוצה|לפרסם|בדרך)(?=\s)/g, ' ').replace(/\s*,\s*/g, ' ').replace(/\s+/g, ' ').trim();
+    var pm = t.match(/^(?:מ-?|מן\s+)(.+?)\s+(?:ל-?|אל\s+|עד\s+)(\S.*)$/);
+    if (pm) { out.from = pm[1].trim(); out.to = pm[2].trim(); }
+    else if ((pm = t.match(/^(?:ל-?|אל\s+)(\S.*?)(?:\s+מ-?(\S.*))?$/))) { out.to = pm[1].trim(); if (pm[2]) out.from = pm[2].trim(); }
+    else if (t) out.to = t;
+    ['from', 'to'].forEach(function (k) { if (out[k]) out[k] = out[k].replace(/^(?:רחוב|רח')\s+/, ''); });
+    return out;
+  }
+  function applySentence(text) {
+    var p = parseRide(text), msg = $('dr-msg');
+    if (!p.to && !p.from && !p.time && !p.date && !p.days) { msg.textContent = 'לא הבנתי. נסו למשל: "מחר בשבע וחצי מקריית משה לתל אביב".'; return; }
+    setMode(p.taxi ? 'taxi' : 'car');
+    var t;
+    if (p.days) {
+      var rb = document.querySelector('#dr-kind [data-k="regular"]'); if (!rb.classList.contains('on')) rb.click();
+      document.querySelectorAll('#dr-days button').forEach(function (b) { b.classList.toggle('on', p.days.indexOf(+b.getAttribute('data-d')) >= 0); });
+      if (p.time) $('dr-time').value = p.time;
+    } else {
+      var date = p.date || addDays(0), time = p.time;
+      if (!time && p.now != null) { var d = nowPlus(Math.max(p.now, 5)); time = hhmm(d); date = ymd(d); }
+      if (!time && !p.date) { var d2 = nowPlus(10); time = hhmm(d2); date = ymd(d2); }
+      // שעה שכבר עברה היום, בלי שנאמר תאריך: כנראה מחר
+      if (!p.date && p.now == null && date === addDays(0) && time && time < hhmm(new Date())) date = addDays(1);
+      setOnce(date); if (time) $('dr-time').value = time;
+    }
+    if (p.seats) { var s = Math.min(Math.max(p.seats, 1), 4); if (p.taxi) $('dr-tseats').value = String(Math.min(s, 3)); else $('dr-seats').value = String(s); }
+    if (p.free && !p.taxi) $('dr-rate').value = '0';
+    var fill = function (input, q) {
+      input.value = q; input._place = null; drRoute = null; $('dr-route').innerHTML = '';
+      return placeOf(input).catch(function () { return null; });
+    };
+    var jobs = [];
+    if (p.from) jobs.push(fill($('dr-from'), p.from));
+    else if (!$('dr-from')._place) {
+      var home = savedPlaces().filter(function (x) { return x.name === '🏠 בית'; })[0];
+      if (navigator.geolocation) hereInto($('dr-from'), $('dr-here')); else if (home) fillPlace($('dr-from'), home.p);
+    }
+    if (p.to) jobs.push(fill($('dr-to'), p.to));
+    msg.textContent = 'מחפש את המקומות...';
+    Promise.all(jobs).then(function () {
+      var when = p.days ? 'נסיעה קבועה ' + daysShort(p.days) : dayLabel($('dr-date').value);
+      msg.textContent = 'הבנתי: ' + when + ' ב-' + $('dr-time').value + (p.to ? ', אל ' + $('dr-to').value : '') + '. בודקים ולוחצים לפרסם.';
+      $('dr-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    used('fast-say');
+  }
+  var rec = null;
+  function initSay() {
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition, mic = $('dr-mic');
+    $('dr-say-go').addEventListener('click', function () { var v = $('dr-say').value.trim(); if (v) applySentence(v); });
+    $('dr-say').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); $('dr-say-go').click(); } });
+    if (!SR) { mic.hidden = true; return; }
+    mic.addEventListener('click', function () {
+      if (rec) { rec.stop(); return; }
+      rec = new SR(); rec.lang = 'he-IL'; rec.interimResults = true; rec.maxAlternatives = 1; rec.continuous = false;
+      var final = '';
+      mic.classList.add('on'); mic.textContent = '🎙️ מקשיב... (לחיצה לעצור)';
+      $('dr-msg').textContent = 'אומרים למשל: "מחר בשבע וחצי מקריית משה לתל אביב, שלושה מקומות".';
+      rec.onresult = function (e) {
+        var txt = '';
+        for (var i = 0; i < e.results.length; i++) { txt += e.results[i][0].transcript; if (e.results[i].isFinal) final = txt; }
+        $('dr-say').value = txt;
+      };
+      rec.onerror = function (e) {
+        $('dr-msg').textContent = e.error === 'not-allowed' || e.error === 'service-not-allowed' ? 'אין הרשאה למיקרופון. אפשר לאשר בהגדרות הדפדפן, או לכתוב במשפט למטה.' : 'לא שמעתי טוב. נסו שוב, או כתבו במשפט.';
+      };
+      rec.onend = function () {
+        rec = null; mic.classList.remove('on'); mic.textContent = '🎙️ להגיד את הנסיעה';
+        var v = (final || $('dr-say').value).trim();
+        if (v) applySentence(v);
+      };
+      try { rec.start(); } catch (err) { rec = null; mic.classList.remove('on'); mic.textContent = '🎙️ להגיד את הנסיעה'; }
+    });
+  }
+
+  /* ---------- אחרי פרסום חד-פעמי: להפוך לקבועה, או תזכורת ביומן ---------- */
+  function afterOnce(sent) {
+    if (!sent || sent.days) return '';
+    var wd = new Date(sent.date + 'T12:00:00').getDay();
+    var chipsHtml = [0, 1, 2, 3, 4, 5].map(function (d) { return '<button type="button" data-d="' + d + '"' + (d === wd ? ' class="on"' : '') + '>' + LET[d] + "'</button>"; }).join('');
+    return '<div class="tp-after" id="dr-after"><b>נוסע ככה גם בימים אחרים?</b>' +
+      '<div class="kh-chips" id="af-days">' + chipsHtml + '</div>' +
+      '<div class="acts"><button type="button" class="btn btn-gold btn-sm" id="af-reg">לפרסם כנסיעה קבועה</button>' +
+      '<a class="btn btn-line btn-sm" id="af-rem" href="#" target="_blank" rel="noopener">⏰ רק תזכורת ביומן לפני הנסיעה</a></div>' +
+      '<p class="kh-hint">קבועה: מתפרסמת לבד כל שבוע, לשמונה שבועות. תזכורת: רבע שעה לפני, היומן מזכיר לפרסם, ולחיצה על הקישור ממלאת הכול.</p></div>';
+  }
+  function firstOn(days) {
+    var d = new Date(); d.setHours(12, 0, 0, 0);
+    for (var i = 0; i < 7; i++) { if (days.indexOf(d.getDay()) >= 0) return ymd(d); d.setDate(d.getDate() + 1); }
+    return ymd(d);
+  }
+  function wireAfter(sent) {
+    var box = $('dr-after'); if (!box) return;
+    var days = function () { return [].map.call($('af-days').querySelectorAll('button.on'), function (b) { return +b.getAttribute('data-d'); }); };
+    var remLink = function () {
+      var ds = days(); if (!ds.length) return '#';
+      var t = toTime15(sent.time), RR = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+      return calLink('🚗 לפרסם טרמפ: ' + short(sent.from.label) + ' ← ' + short(sent.to.label), firstOn(ds), t, 10, '',
+        'נוסע ב-' + sent.time + '? לחיצה אחת, ובדף הטרמפים הנסיעה כבר מוכנה לפרסום:\n' + PAGE + '#again') +
+        '&recur=' + encodeURIComponent('RRULE:FREQ=WEEKLY;BYDAY=' + ds.map(function (d) { return RR[d]; }).join(','));
+    };
+    var upd = function () { $('af-rem').href = remLink(); };
+    $('af-days').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) { b.classList.toggle('on'); upd(); } });
+    upd();
+    $('af-rem').addEventListener('click', function (e) { if (!days().length) { e.preventDefault(); return; } used('fast-reminder'); });
+    $('af-reg').addEventListener('click', function () {
+      var ds = days(), b = $('af-reg');
+      if (!ds.length) { b.textContent = 'בחרו לפחות יום אחד'; return; }
+      b.disabled = true; b.textContent = 'מפרסם...';
+      var data = Object.assign({}, sent); delete data.date; data.days = ds;
+      api('/rides', data).then(function () {
+        rememberRide(data); addToLuz(data);
+        box.innerHTML = '<b>✓ נסיעה קבועה: ' + daysShort(ds) + ' ב-' + sent.time + '.</b> <span class="kh-hint">נוספה גם ל<a href="/kelim/kehila/trempim/luz/">הלו"ז הקבוע שלי</a>, ומשם אפשר להכניס אותה ליומן ול-Waze.</span>';
+        used('fast-regular'); loadMyRides(); loadStats();
+      }).catch(function (err) { b.disabled = false; b.textContent = 'לפרסם כנסיעה קבועה'; alert(errText(err)); });
+    });
+  }
+  var toTime15 = function (t) { var p = t.split(':'), m = +p[0] * 60 + +p[1] - 15; m = (m + 1440) % 1440; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
+  // נסיעה קבועה נכנסת גם לרשימה של "הלו"ז הקבוע שלי" (שעת הגעה = יציאה + זמן הנסיעה)
+  function addToLuz(d) {
+    if (d.kind === 'taxi') return;
+    var luz = readJson('trempim_luz', null);
+    if (!luz || luz.sample || !Array.isArray(luz.items)) luz = { sample: false, home: d.from, margin: 10, rate: d.rate ? 1 : 0, seats: d.seats || 3, items: [] };
+    if (luz.items.some(function (x) { return samePlace(x.place, d.to); })) return;
+    var p = d.time.split(':'), arr = +p[0] * 60 + +p[1] + Math.round(d.min || 0) + (luz.margin || 0);
+    arr = Math.ceil(arr / 5) * 5 % 1440;
+    luz.items.push({ id: Date.now().toString(36), name: short(d.to.label), place: d.to, days: d.days, arrive: String(Math.floor(arr / 60)).padStart(2, '0') + ':' + String(arr % 60).padStart(2, '0'), back: '' });
+    if (!luz.home) luz.home = d.from;
+    lsSet('trempim_luz', JSON.stringify(luz));
+    renderPlaces();
   }
 
   /* ---------- התחלה ---------- */
