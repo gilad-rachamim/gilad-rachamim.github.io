@@ -95,3 +95,12 @@
 .kt-print-only{display:none}
 body.kt-printing-cert .tool>*:not(#kt-cert-sec),body.kt-printing-cert #kt-cert-sec>*:not(.kt-cert-wrap),body.kt-printing-cert .k-hero{display:none!important}
 body.kt-printing-poster .tool>*:not(#kt-poster-sec),body.kt-printing-poster #kt-poster-sec>*:not(.kt-poster),body.kt-printing-poster .k-hero{display:none!important}
+
+/* יעד כיתתי */
+.kt-goal{padding:.75rem .85rem;border-radius:14px;border:1px solid var(--accent);background:rgba(95,191,166,.08);margin:.2rem 0 .8rem}
+.kt-goal-h{color:var(--cream)}
+.kt-goal-h b{color:var(--gold-hi);font-size:1.15rem}
+.kt-goal-bar{height:14px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin:.45rem 0}
+.kt-goal-bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--gold));transition:width .6s}
+.kt-goal-s{color:var(--body);font-size:.92rem}
+.kt-goal.done{border-color:var(--gold);background:rgba(216,179,95,.12)}
