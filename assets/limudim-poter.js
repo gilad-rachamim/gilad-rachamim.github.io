@@ -26,6 +26,23 @@
   for (var i = 0; i < lvBtns.length; i++) lvBtns[i].addEventListener('click', function () { setLv(+this.getAttribute('data-lv')); });
   setLv(level);
 
+  // ---------- דוגמאות לפי נושא (רק ממלאות את התיבה; שלוש הראשונות כבר נפתרו ונבדקו – מגיעות מהזיכרון מיד) ----------
+  var EX = {
+    rakevet: [3, 'רכבת יצאה מעיר A לעיר B במהירות של 80 קמ"ש. שעה אחר כך יצאה רכבת שנייה מעיר A לעיר B, באותו מסלול, במהירות של 100 קמ"ש.\nא. כעבור כמה שעות מיציאת הרכבת השנייה היא תשיג את הרכבת הראשונה?\nב. באיזה מרחק מעיר A זה יקרה?\nג. המרחק בין העיר A לעיר B הוא 600 ק"מ. איזו רכבת תגיע ראשונה לעיר B, וכמה זמן לפני הרכבת האחרת?'],
+    ahuzim: [3, 'מחיר של מוצר עלה ב-20%, ואחר כך ירד ב-20%. אחרי השינויים המחיר הוא 480 שקלים.\nא. מה היה המחיר המקורי של המוצר?\nב. בכמה אחוזים השתנה המחיר בסך הכול, ובאיזה כיוון?\nג. סכום כסף הופקד בתוכנית חיסכון בריבית דריבית של 3% לשנה. אחרי כמה שנים שלמות הסכום יגדל לראשונה לפחות פי 1.5?'],
+    mashik: [4, 'נתונה הפונקציה f(x) = x^3 - 3x^2 + 4.\nא. מצאו את נקודות הקיצון של הפונקציה וקבעו את סוגן, ואת תחומי העלייה והירידה.\nב. מצאו את נקודת הפיתול של הפונקציה.\nג. מצאו את משוואת המשיק לגרף הפונקציה בנקודת הפיתול.\nד. חשבו את השטח המוגבל על ידי גרף הפונקציה וציר ה-x.'],
+    shetach: [5, 'נתונות הפונקציות f(x) = e^x ו-g(x) = e^(-x).\nא. מצאו את נקודת החיתוך של שני הגרפים.\nב. חשבו את השטח המוגבל על ידי שני הגרפים והישר x = 1.'],
+    sidra: [4, 'בסדרה חשבונית האיבר הראשון הוא 5 וההפרש הוא 3.\nא. מצאו את האיבר ה-20 בסדרה.\nב. מצאו את סכום 20 האיברים הראשונים.\nג. כמה איברים צריך לחבר מתחילת הסדרה כדי שהסכום יהיה 440?'],
+    hastabrut: [3, 'בכד יש 5 כדורים אדומים ו-3 כדורים כחולים. מוציאים שני כדורים בזה אחר זה, בלי החזרה.\nא. מה ההסתברות ששני הכדורים אדומים?\nב. מה ההסתברות שהכדורים בצבעים שונים?\nג. ידוע שהכדור השני כחול. מה ההסתברות שהכדור הראשון אדום?'],
+    trigo: [4, 'במשולש ABC נתון: AB = 8 ס"מ, AC = 5 ס"מ, והזווית BAC שווה ל-60°.\nא. חשבו את אורך הצלע BC.\nב. חשבו את שטח המשולש.\nג. חשבו את גודל הזווית ABC.'],
+    avoda: [3, 'שני פועלים יחד מסיימים עבודה ב-6 שעות. הפועל הראשון לבדו מסיים את העבודה ב-5 שעות פחות מהפועל השני לבדו.\nא. כמה שעות דרושות לכל פועל כדי לסיים את העבודה לבדו?\nב. הפועל הראשון עבד לבדו 3 שעות, ואז הצטרף אליו השני. כמה זמן עבדו יחד עד שסיימו?']
+  };
+  var exBtns = document.querySelectorAll('#pt-app .pt-topics button');
+  for (var e = 0; e < exBtns.length; e++) exBtns[e].addEventListener('click', function () {
+    var x = EX[this.getAttribute('data-ex')]; if (!x) return;
+    setLv(x[0]); $('pt-q').value = x[1]; $('pt-q').focus(); used('example');
+  });
+
   // ---------- צילום ----------
   var image = null; // {mime, data}
   function loadImage(file) {
@@ -96,15 +113,24 @@
     if (listening && rec) rec.stop();
     busy(true); $('pt-out').innerHTML = '';
     used('solve');
-    fetch(API + '/solve', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ text: text, image: image, level: level }) })
-      .then(function (r) { return r.json().then(function (j) { return { s: r.status, j: j }; }, function () { return { s: r.status, j: {} }; }); })
-      .then(function (x) {
-        busy(false);
-        if (x.s === 429) return showErr('הגעתם ל-12 השאלות של היום. מחר אפשר להמשיך. ככה השירות נשאר חינמי לכולם.');
-        if (x.s !== 200) return showErr(x.j && x.j.busy ? 'הפותר עמוס כרגע, או שהמכסה החינמית של היום נגמרה. אפשר לנסות שוב בעוד כמה דקות, ואם זה חוזר – מחר בבוקר.' : 'משהו השתבש. אפשר לנסות שוב בעוד רגע.');
-        render(x.j);
-      })
-      .catch(function () { busy(false); showErr('אין חיבור לשרת. בודקים את האינטרנט ומנסים שוב.'); });
+    var payload = JSON.stringify({ text: text, image: image, level: level });
+    // השרת שולח רווחים בזמן העבודה ("סימן חיים") ואת התשובה בסוף. אם החיבור נקטע – מנסים שוב:
+    // השרת ממשיך לפתור גם בלי הדפדפן, והניסיון הבא מקבל את הפתרון מהזיכרון.
+    function attempt(n) {
+      fetch(API + '/solve', { method: 'POST', headers: { 'content-type': 'application/json' }, body: payload })
+        .then(function (r) { return r.text().then(function (t) { var j = {}; try { j = JSON.parse(t.trim() || '{}'); } catch (_) {} return { s: r.status, j: j }; }); })
+        .then(function (x) {
+          var j = x.j || {};
+          if (x.s === 200 && !j.error && !j.parts && j.readable !== false && n < 3) return retry(n); // תשובה ריקה = נקטע באמצע
+          busy(false);
+          if (x.s === 429 || j.error === 'quota') return showErr('הגעתם ל-12 השאלות של היום. מחר אפשר להמשיך. ככה השירות נשאר חינמי לכולם.');
+          if (x.s !== 200 || j.error) return showErr(j.busy ? 'הפותר עמוס כרגע, או שהמכסה החינמית של היום נגמרה. אפשר לנסות שוב בעוד כמה דקות, ואם זה חוזר – מחר בבוקר.' : 'משהו השתבש. אפשר לנסות שוב בעוד רגע.');
+          render(j);
+        })
+        .catch(function () { if (n < 3) return retry(n); busy(false); showErr('אין חיבור לשרת. בודקים את האינטרנט ומנסים שוב.'); });
+    }
+    function retry(n) { $('pt-stage').textContent = 'החיבור נקטע לרגע – ממשיך לחכות לפתרון…'; setTimeout(function () { attempt(n + 1); }, 4000); }
+    attempt(0);
   });
 
   function demo(scroll) {

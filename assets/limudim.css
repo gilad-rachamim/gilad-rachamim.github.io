@@ -550,3 +550,7 @@ body.cx-bigmode .cx-sheet{font-size:1.15rem}
 @media print{.site-limudim header,.site-limudim nav,.site-limudim footer,#pt-in,.cx-exam,.pt-how,.pt-priv,.pt-act,.k-hero,.crumbs{display:none!important}.pt-sheet{box-shadow:none;border:0}}
 body.cx-exammode .pt-link{display:none!important}
 .pt-link{margin-top:.5rem}
+.pt-topics{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center;color:var(--muted);font-size:.95rem}
+.pt-topics span{width:100%}
+.pt-topics button{font:inherit;font-size:.92rem;padding:.3rem .65rem;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--body);cursor:pointer}
+.pt-topics button:hover,.pt-topics button:focus-visible{border-color:var(--gold-soft);color:var(--cream)}
