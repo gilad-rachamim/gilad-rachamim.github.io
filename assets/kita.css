@@ -109,3 +109,10 @@ body.kt-printing-poster .tool>*:not(#kt-poster-sec),body.kt-printing-poster #kt-
 .kh-stats div{display:grid;gap:.1rem;text-align:center;padding:.7rem .4rem;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
 .kh-stats b{font-size:1.7rem;color:var(--gold-hi)}
 .kh-stats span{color:var(--muted);font-size:.85rem}
+.kq-q{font-size:1.2rem;color:var(--cream);font-weight:600;margin:.6rem 0}
+.kq-opts{display:grid;gap:.45rem}
+.kq-o{font:inherit;font-size:1.05rem;text-align:start;padding:.7rem .9rem;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--cream);cursor:pointer}
+.kq-o:hover:not(:disabled){border-color:var(--gold)}
+.kq-o.ok{border-color:var(--accent);background:rgba(95,191,166,.18)}
+.kq-o.no{border-color:#ff9d8f;background:rgba(255,157,143,.1);opacity:.7}
+.kq-m{unicode-bidi:isolate;direction:ltr;display:inline-block}

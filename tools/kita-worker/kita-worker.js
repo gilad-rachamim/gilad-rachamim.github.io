@@ -98,6 +98,8 @@ export class Kita {
     }
     if (!this.get('created')) return json({ error: 'לא מצאנו כיתה עם הקוד הזה. כדאי לבדוק את הספרות מול המורה.' }, 404);
 
+    // שאלות של המורה: התשובה הנכונה תמיד ראשונה ברשימה (הטלפון מערבב). v = גרסה, כדי שנקודות ייספרו פעם אחת לכל שאלה
+    if (p === '/quiz') { const q = this.get('quiz', ''); return json(q ? Object.assign({ ok: 1 }, JSON.parse(q)) : { ok: 1, none: 1 }); }
     if (p === '/info') return json({ ok: 1, name: this.get('name'), teacher: this.get('teacher'), locked: this.get('locked') === '1', n: this.rows('SELECT COUNT(*) AS n FROM st')[0].n });
 
     if (p === '/join' && req.method === 'POST') {
@@ -191,6 +193,11 @@ export class Kita {
       } else if (a === 'remove') {
         this.sql.exec('DELETE FROM ev WHERE sid = ?', String(b.sid)); this.sql.exec('DELETE FROM st WHERE sid = ?', String(b.sid));
         this.sql.exec('DELETE FROM hwork WHERE sid = ?', String(b.sid)); this.sql.exec('DELETE FROM hmsg WHERE sid = ?', String(b.sid));
+      } else if (a === 'quiz') {
+        const qs = (Array.isArray(b.q) ? b.q : []).slice(0, 20).map(x => ({ q: cleanQ(x.q, 200), a: (Array.isArray(x.a) ? x.a : []).slice(0, 4).map(o => cleanQ(o, 80)) }));
+        if (qs.some(x => !x.q || x.a.length < 2 || x.a.some(o => !o))) return json({ error: 'בכל שאלה צריך שאלה ולפחות 2 תשובות, בלי קישורים, טלפונים או מילים לא יפות.' }, 400);
+        const t = cleanQ(b.title, 60) || 'תרגול מהמורה';
+        this.set('quiz', qs.length ? JSON.stringify({ t, q: qs, v: Date.now() }) : '');
       } else if (a === 'round') {
         this.set('round', Date.now()); this.sql.exec('UPDATE st SET crown = \'\'');
       } else if (a === 'delete') {
@@ -242,7 +249,7 @@ export class Kita {
       const games = {};
       for (const r of this.rows(`SELECT sid, game, SUM(pts) AS p, COUNT(*) AS n FROM ev WHERE ${this.where(per)} GROUP BY sid, game`)) (games[r.sid] = games[r.sid] || {})[r.game] = { p: r.p, n: r.n };
       const rows = this.board(per).map(r => Object.assign(r, { games: games[r.sid] || {} }));
-      return json({ ok: 1, name: this.get('name'), teacher: this.get('teacher'), period: this.get('period'), p: per, since: this.since(per), locked: this.get('locked') === '1', msg: this.get('msg'), gifts: JSON.parse(this.get('gifts', '[]')), created: +this.get('created'), rows });
+      return json({ ok: 1, name: this.get('name'), teacher: this.get('teacher'), period: this.get('period'), p: per, since: this.since(per), locked: this.get('locked') === '1', msg: this.get('msg'), quiz: this.get('quiz', '') ? JSON.parse(this.get('quiz')) : null, gifts: JSON.parse(this.get('gifts', '[]')), created: +this.get('created'), rows });
     }
     return json({ error: 'לא נמצא' }, 404);
   }
@@ -296,6 +303,15 @@ function mathText(s, max) {
   s = String(s == null ? '' : s).replace(/\s+/g, ' ').trim().slice(0, max);
   if (!s) return '';
   if (/https?:|www\.|\.(com|co\.il|net|org|ly|me)\b|@|t\.me|<|>/i.test(s) || bad(s)) return '';
+  return s;
+}
+// טקסט של שאלה: מותרים מספרים וסימני חשבון (בלי מסנן הספרות של הכינוי), אבל לא קישור, מייל, טלפון נייד או תגיות
+function cleanQ(s, max) {
+  s = String(s || '').replace(/\s+/g, ' ').trim();
+  if (!s) return '';
+  s = s.slice(0, max);
+  if (/https?:|www\.|\.(com|co|il|net|org|ly|me)\b|@|t\.me/i.test(s)) return null;
+  if (/(^|\D)05\d-?\d{7}(\D|$)/.test(s) || /[<>{}]/.test(s) || bad(s)) return null;
   return s;
 }
 function cleanNick(s) {
