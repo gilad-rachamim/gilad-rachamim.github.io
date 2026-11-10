@@ -368,6 +368,8 @@
     });
     $('mv-table').addEventListener('change', function (e) {
       var cb = e.target; if (!cb.dataset.d) return; var p = plan(); if (cb.checked) p.done[cb.dataset.d] = 1; else delete p.done[cb.dataset.d]; save(KEY, st); render();
+      // התקדמות יומית: כל יום שמסמנים בו לימוד נספר לרצף (assets/hitkadmut.js)
+      if (cb.checked && window.HK) HK.done('mivchan', { el: $('mv-hk'), title: 'עוד יום של לימוד למבחן ✓', line: 'צעד אחרי צעד. בהצלחה ב' + p.cfg.name + '!', help: 'המתכנן למבחן כאן בחינם ובלי פרסומות', share: 'אני מתכונן ל' + p.cfg.name + ' עם מתכנן הלמידה למבחן: מה ללמוד בכל יום, עד המבחן. בחינם:' });
     });
     $('mv-plans').addEventListener('change', function () { st.cur = this.value; save(KEY, st); var p = plan(); if (p) fill(p.cfg); render(); });
     $('mv-newplan').addEventListener('click', function () { st.cur = ''; save(KEY, st); form.reset(); $('mv-start').value = today(); render(); $('mv-name').focus(); });
@@ -466,6 +468,8 @@
         run.round++;
         var lg = load(LOG, {}), t = today(); lg[t] = lg[t] || { m: 0, n: 0 }; lg[t].m += Math.round(phaseLen('focus') / 60000); lg[t].n++; save(LOG, lg);
         used('timer', { action: 'focus_done', mins: Math.round(phaseLen('focus') / 60000) });
+        // התקדמות יומית: סבב לימוד שהסתיים = יום של לימוד (assets/hitkadmut.js)
+        if (window.HK) HK.done('timer', { el: $('tm-hk'), title: 'עוד סבב לימוד ✓ כל הכבוד!', help: 'טיימר הלימוד כאן בחינם ובלי פרסומות', share: 'למדתי היום עם טיימר הלימוד: 25 דקות ריכוז והפסקה קטנה. בחינם:' });
         run.phase = run.round % 4 === 0 ? 'long' : 'break';
       } else run.phase = 'focus';
       run.left = phaseLen(run.phase);
