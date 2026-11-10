@@ -23,6 +23,10 @@
   <url><loc>https://gilad-rachamim.github.io/kelim/briut/madadim/</loc><lastmod>2026-11-10</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kelim/briut/rofe/</loc><lastmod>2026-11-10</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kelim/briut/trufot/</loc><lastmod>2026-11-10</lastmod><priority>0.7</priority></url>
+  <url><loc>https://gilad-rachamim.github.io/kelim/chashiva/</loc><lastmod>2026-11-10</lastmod><priority>0.8</priority></url>
+  <url><loc>https://gilad-rachamim.github.io/kelim/chashiva/shachor/</loc><lastmod>2026-11-10</lastmod><priority>0.7</priority></url>
+  <url><loc>https://gilad-rachamim.github.io/kelim/chashiva/sudoku/</loc><lastmod>2026-11-10</lastmod><priority>0.7</priority></url>
+  <url><loc>https://gilad-rachamim.github.io/kelim/chashiva/tashchetz/</loc><lastmod>2026-11-10</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kelim/eruim/hachana/</loc><lastmod>2026-11-10</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kelim/eruim/hoshava/</loc><lastmod>2026-11-10</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kelim/eruim/</loc><lastmod>2026-11-10</lastmod><priority>0.8</priority></url>
@@ -83,6 +87,8 @@
   <url><loc>https://gilad-rachamim.github.io/kelim/tichnut/regex/</loc><lastmod>2026-11-10</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kelim/tichnut/shgiot/</loc><lastmod>2026-11-10</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kelim/tichnut/sibuchiyut/</loc><lastmod>2026-11-10</lastmod><priority>0.7</priority></url>
+  <url><loc>https://gilad-rachamim.github.io/kelim/tichnut/simulator/</loc><lastmod>2026-11-10</lastmod><priority>0.8</priority></url>
+  <url><loc>https://gilad-rachamim.github.io/kelim/tichnut/sql/</loc><lastmod>2026-11-10</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kelim/tichnut/vram/</loc><lastmod>2026-11-10</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kelim/tiyulim/hotzaot/</loc><lastmod>2026-11-10</lastmod><priority>0.7</priority></url>
   <url><loc>https://gilad-rachamim.github.io/kelim/tiyulim/</loc><lastmod>2026-11-10</lastmod><priority>0.8</priority></url>
@@ -179,6 +185,7 @@
   <url><loc>https://gilad-rachamim.github.io/limudim/kahoot/</loc><lastmod>2026-11-10</lastmod><priority>0.6</priority></url>
   <url><loc>https://gilad-rachamim.github.io/limudim/kartisiot/</loc><lastmod>2026-11-10</lastmod><priority>0.6</priority></url>
   <url><loc>https://gilad-rachamim.github.io/limudim/kvutza/</loc><lastmod>2026-11-10</lastmod><priority>0.7</priority></url>
+  <url><loc>https://gilad-rachamim.github.io/limudim/machberet/</loc><lastmod>2026-11-10</lastmod><priority>0.8</priority></url>
   <url><loc>https://gilad-rachamim.github.io/limudim/machshevon/</loc><lastmod>2026-11-10</lastmod><priority>0.8</priority></url>
   <url><loc>https://gilad-rachamim.github.io/limudim/maslul/</loc><lastmod>2026-11-10</lastmod><priority>0.8</priority></url>
   <url><loc>https://gilad-rachamim.github.io/limudim/matematika/</loc><lastmod>2026-11-10</lastmod><priority>0.8</priority></url>

@@ -1,0 +1,42 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_tash",
+  "title": "תשחץ בחינם – תשבץ היגיון בעברית עם הסבר לכל הגדרה | הכלים של גילעד רחמים",
+  "description": "תשחצים (תשבץ היגיון) בעברית, בחינם: הגדרות מקוריות עם אנגרמות, הגדרות כפולות, צירופים והיפוכים, ואחרי כל פתרון הסבר איך ההגדרה עובדת. אתגר יומי זהה לכולם, חידות שנפתחות, מקלדת עברית על המסך.",
+  "og_title": "תשחץ יומי בעברית – בחינם",
+  "priority": "0.7",
+  "crumbs": [["משחקי חשיבה", "/kelim/chashiva/"], ["תשחצים", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/chashiva.css\">",
+  "foot": "<script src=\"/assets/chashiva.js\" defer></script><script src=\"/assets/chashiva-tashchetz.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>תשחצים</h1>
+  <p class="sub">תשבץ היגיון: בכל הגדרה מסתתרת חידה קטנה. חלק אחד נותן את המשמעות, וחלק אחר משחק עם האותיות. אחרי שפותרים, מופיע הסבר איך זה עבד.</p>
+</header>
+<div class="tool">
+  <div class="ch-tabs" id="ts-tabs" role="tablist"><button type="button" role="tab" data-m="daily" aria-selected="true">⭐ התשחץ היומי</button><button type="button" role="tab" data-m="level" aria-selected="false">🪜 חידות לפי הסדר</button></div>
+  <div id="ts-lvlbox" hidden><div class="ch-chips" id="ts-levels"></div><p class="ch-hint">כל חידה שפותרים פותחת את הבאה.</p></div>
+  <div class="ch-done-today" id="ts-today" hidden></div>
+  <div class="ch-bar"><span id="ts-label"></span><span>⏱ <b id="ts-time">0:00</b></span></div>
+  <div class="ts-cur" id="ts-cur" aria-live="polite"></div>
+  <div class="ts-grid" id="ts-grid" aria-label="לוח התשחץ"></div>
+  <div class="ts-kb" id="ts-kb" dir="rtl">
+    <div><button type="button" data-l="ק">ק</button><button type="button" data-l="ר">ר</button><button type="button" data-l="א">א</button><button type="button" data-l="ט">ט</button><button type="button" data-l="ו">ו</button><button type="button" data-l="ן">ן</button><button type="button" data-l="ם">ם</button><button type="button" data-l="פ">פ</button></div>
+    <div><button type="button" data-l="ש">ש</button><button type="button" data-l="ד">ד</button><button type="button" data-l="ג">ג</button><button type="button" data-l="כ">כ</button><button type="button" data-l="ע">ע</button><button type="button" data-l="י">י</button><button type="button" data-l="ח">ח</button><button type="button" data-l="ל">ל</button><button type="button" data-l="ך">ך</button><button type="button" data-l="ף">ף</button></div>
+    <div><button type="button" data-l="ז">ז</button><button type="button" data-l="ס">ס</button><button type="button" data-l="ב">ב</button><button type="button" data-l="ה">ה</button><button type="button" data-l="נ">נ</button><button type="button" data-l="מ">מ</button><button type="button" data-l="צ">צ</button><button type="button" data-l="ת">ת</button><button type="button" data-l="ץ">ץ</button><button type="button" class="wide" data-l="del" aria-label="מחיקה">⌫</button></div>
+  </div>
+  <div class="ch-tools"><button type="button" id="ts-hint">💡 אות אחת</button><button type="button" id="ts-reveal">👁 לגלות מילה</button><button type="button" id="ts-check">✓ בדיקה</button></div>
+  <p class="ch-msg" id="ts-msg" aria-live="polite"></p>
+  <div id="ts-win"></div>
+  <div class="ts-clues"><div><h3>מאוזן</h3><ol id="ts-across"></ol></div><div><h3 id="ts-down-h">מאונך</h3><ol id="ts-down"></ol></div></div>
+  <details class="ch-how"><summary>איך פותרים תשחץ?</summary><ul>
+    <li><b>הגדרה כפולה:</b> שני רמזים לאותה מילה, ושניהם נכונים.</li>
+    <li><b>מבולבל:</b> מסדרים מחדש את האותיות של מילה שבהגדרה (אנגרמה).</li>
+    <li><b>חוזר / אחורה:</b> קוראים מילה מהסוף להתחלה.</li>
+    <li><b>צירוף:</b> מחברים חלקים. "כמו" הוא לפעמים רק האות כ.</li>
+    <li><b>עוטף / בתוך:</b> מילה אחת נכנסת לתוך אחרת.</li>
+    <li>המספר בסוגריים = כמה אותיות בתשובה. אותיות סופיות (ם, ן, ך...) נחשבות כמו הרגילות.</li>
+    <li>נוגעים במשבצת או בהגדרה, ומקלידים במקלדת שעל המסך. נגיעה נוספת במשבצת משותפת מחליפה בין מאוזן למאונך.</li>
+  </ul></details>
+</div>
