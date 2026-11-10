@@ -316,7 +316,7 @@
       lastSearch = { from: pp[0], to: pp[1], dates: dates, radius: +chipVal('rd-radius', 'data-r') };
       return api('/search', lastSearch);
     }).then(function (j) {
-      used('search');
+      used('search'); rememberPlace(lastSearch.from); rememberPlace(lastSearch.to);
       lastMatches = j.matches;
       msg.textContent = j.matches.length ? 'נמצאו ' + j.matches.length + ' נסיעות שעוברות לידך:' : '';
       list.innerHTML = j.matches.length ? j.matches.map(matchHtml).join('') :
@@ -429,7 +429,7 @@
     var days = [].map.call($('dr-days').querySelectorAll('button.on'), function (b) { return +b.getAttribute('data-d'); });
     if (reg && !days.length) { msg.textContent = 'בחרו לפחות יום אחד.'; return; }
     msg.textContent = 'מחשב מסלול...';
-    var from, to;
+    var from, to, sent;
     Promise.all([placeOf($('dr-from')), placeOf($('dr-to'))]).then(function (pp) {
       from = pp[0]; to = pp[1];
       return drRoute ? drRoute : routeOf(from, to);
@@ -439,6 +439,7 @@
       var data = { from: from, to: to, time: $('dr-time').value, seats: +$('dr-seats').value, rate: +$('dr-rate').value, km: r.km, min: r.min, route: r.pts, note: $('dr-note').value };
       if (isTaxiMode()) { data.kind = 'taxi'; data.split = chipVal('dr-split', 'data-s'); data.seats = +$('dr-tseats').value; data.rate = 0; }
       if (reg) data.days = days; else data.date = $('dr-date').value;
+      sent = data;
       return api('/rides', data);
     }).then(function () {
       var tx = isTaxiMode();
@@ -448,7 +449,7 @@
         'אני נוסע ' + when + ' ב-' + $('dr-time').value + ' מ' + from.label + ' ל' + to.label + ', ויש לי מקום. מי שבדרך מוזמן להצטרף: ' + PAGE;
       msg.innerHTML = 'הנסיעה פורסמה! כל מי שבדרך יראה אותה. <a class="btn btn-line btn-sm" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(share) + '">לספר בקבוצה של השכונה</a>';
       drRoute = null; $('dr-route').innerHTML = '';
-      loadMyRides(); loadStats();
+      rememberRide(sent); loadMyRides(); loadStats();
     }).catch(function (err) {
       msg.textContent = err.message === 'notfound' || err.message === 'empty' ? 'לא מצאתי את הכתובת. כתבו רחוב ועיר ובחרו מהרשימה.' : err.message === 'route' ? 'לא הצלחתי לחשב מסלול בין הנקודות.' : errText(err);
     });
@@ -605,9 +606,123 @@
     });
   }
 
+  /* ---------- מהיר לנהג: יוצא עכשיו, מקומות שמורים, שוב כמו בפעם הקודמת ---------- */
+  var PLACES_KEY = 'trempim_places', AGAIN_KEY = 'trempim_again';
+  var readJson = function (k, d) { try { var v = JSON.parse(lsGet(k) || 'null'); return v == null ? d : v; } catch (e) { return d; } };
+  var short = function (label) { var t = String(label || '').split(',')[0].trim(); return t.length > 20 ? t.slice(0, 19) + '…' : t; };
+  var samePlace = function (a, b) { return !!(a && b && Math.abs(a.lat - b.lat) < 0.0015 && Math.abs(a.lng - b.lng) < 0.0015); };
+  function rememberPlace(p) {
+    if (!p || !p.lat) return;
+    var list = readJson(PLACES_KEY, []).filter(function (x) { return !samePlace(x, p); });
+    list.unshift({ label: p.label, lat: p.lat, lng: p.lng });
+    lsSet(PLACES_KEY, JSON.stringify(list.slice(0, 8)));
+    renderPlaces();
+  }
+  // הבית והמקומות מ"הלו"ז הקבוע שלי" קודם, אחר כך המקומות האחרונים
+  function savedPlaces() {
+    var out = [], luz = readJson('trempim_luz', null);
+    var add = function (name, p) { if (p && p.lat && !out.some(function (x) { return samePlace(x.p, p); })) out.push({ name: name, p: p }); };
+    if (luz && !luz.sample) {
+      add('🏠 בית', luz.home);
+      (luz.items || []).forEach(function (it) { add('📍 ' + it.name, it.place); });
+    }
+    readJson(PLACES_KEY, []).forEach(function (p) { add(short(p.label), p); });
+    return out.slice(0, 7);
+  }
+  function renderPlaces() {
+    var list = savedPlaces();
+    document.querySelectorAll('.tp-places').forEach(function (box) {
+      box.innerHTML = list.map(function (x, i) { return '<button type="button" data-pl="' + i + '">' + esc(x.name) + '</button>'; }).join('');
+      box.hidden = !list.length;
+      box._list = list;
+    });
+  }
+  function fillPlace(input, p) {
+    input.value = p.label; input._place = { label: p.label, lat: p.lat, lng: p.lng };
+    if (/^dr-/.test(input.id)) { drRoute = null; $('dr-route').innerHTML = ''; }
+  }
+  function nowPlus(mins) {
+    var d = new Date(Date.now() + mins * 60000);
+    d.setMinutes(Math.ceil(d.getMinutes() / 5) * 5, 0, 0);
+    return d;
+  }
+  var hhmm = function (d) { return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
+  var daysShort = function (ds) { return ds.map(function (d) { return LET[d] + "'"; }).join(' '); };
+  function rememberRide(d) {
+    if (!d) return;
+    rememberPlace(d.from); rememberPlace(d.to);
+    var t = { from: d.from, to: d.to, time: d.time, seats: d.seats, rate: d.rate, note: d.note || '', days: d.days || null, kind: d.kind || 'car', split: d.split || null };
+    var list = readJson(AGAIN_KEY, []).filter(function (x) { return !(samePlace(x.from, t.from) && samePlace(x.to, t.to) && x.time === t.time && x.kind === t.kind); });
+    list.unshift(t);
+    lsSet(AGAIN_KEY, JSON.stringify(list.slice(0, 4)));
+    renderAgain();
+  }
+  function renderAgain() {
+    var list = readJson(AGAIN_KEY, []), box = $('dr-again');
+    box.innerHTML = list.length ? '<span class="label">שוב כמו בפעם הקודמת:</span><div class="tp-again">' + list.map(function (t, i) {
+      var when = t.days ? daysShort(t.days) + ' · ' : '';
+      return '<button type="button" data-again="' + i + '"><span>' + (t.kind === 'taxi' ? '🚕 ' : '↻ ') + esc(short(t.from.label)) + ' ← ' + esc(short(t.to.label)) + '</span><small>' + esc(when + t.time) + '</small></button>';
+    }).join('') + '</div>' : '';
+    box._list = list;
+  }
+  function setMode(kind) { var b = document.querySelector('#dr-mode [data-m="' + (kind === 'taxi' ? 'taxi' : 'car') + '"]'); if (b && !b.classList.contains('on')) b.click(); }
+  function setOnce(date) {
+    var b = document.querySelector('#dr-kind [data-k="once"]'); if (!b.classList.contains('on')) b.click();
+    $('dr-date').value = date;
+  }
+  function useAgain(t) {
+    setMode(t.kind);
+    fillPlace($('dr-from'), t.from); fillPlace($('dr-to'), t.to);
+    $('dr-time').value = t.time; $('dr-note').value = t.note || '';
+    if (t.kind === 'taxi') {
+      if (t.seats) $('dr-tseats').value = String(t.seats);
+      var sb = t.split && document.querySelector('#dr-split [data-s="' + t.split + '"]'); if (sb && !sb.classList.contains('on')) sb.click();
+    } else { $('dr-seats').value = String(t.seats || 3); $('dr-rate').value = String(t.rate); }
+    if (t.days) {
+      var rb = document.querySelector('#dr-kind [data-k="regular"]'); if (!rb.classList.contains('on')) rb.click();
+      document.querySelectorAll('#dr-days button').forEach(function (b) { b.classList.toggle('on', t.days.indexOf(+b.getAttribute('data-d')) >= 0); });
+    } else {
+      // היום אם השעה עוד לא עברה, אחרת מחר
+      setOnce(hhmm(new Date()) < t.time ? addDays(0) : addDays(1));
+    }
+    $('dr-msg').textContent = 'מילאתי כמו בפעם הקודמת (' + (t.days ? 'נסיעה קבועה' : dayLabel($('dr-date').value)) + ' ב-' + t.time + '). בודקים ולוחצים לפרסם.';
+    $('dr-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    used('fast-again');
+  }
+  function leaveNow() {
+    var d = nowPlus(10);
+    setOnce(ymd(d)); $('dr-time').value = hhmm(d);
+    $('dr-msg').textContent = 'יוצא ב-' + hhmm(d) + '. בוחרים לאן, ולוחצים לפרסם.';
+    $('dr-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (!$('dr-from')._place) {
+      if (navigator.geolocation) hereInto($('dr-from'), $('dr-here'));
+      else { var home = savedPlaces().filter(function (x) { return x.name === '🏠 בית'; })[0]; if (home) fillPlace($('dr-from'), home.p); }
+    }
+    setTimeout(function () { $('dr-to').focus(); }, 400);
+    used('fast-now');
+  }
+  function initFast() {
+    ['dr-from', 'dr-to', 'rd-from', 'rd-to'].forEach(function (id) {
+      var field = $(id).closest('.field'), box = document.createElement('div');
+      box.className = 'kh-chips tp-places'; box.hidden = true;
+      field.appendChild(box);
+      box.addEventListener('click', function (e) {
+        var b = e.target.closest('button[data-pl]'); if (!b) return;
+        var x = box._list[+b.getAttribute('data-pl')]; if (!x) return;
+        fillPlace($(id), x.p); used('fast-place');
+      });
+    });
+    $('dr-now').addEventListener('click', leaveNow);
+    $('dr-again').addEventListener('click', function (e) {
+      var b = e.target.closest('button[data-again]'); if (!b) return;
+      var t = $('dr-again')._list[+b.getAttribute('data-again')]; if (t) useAgain(t);
+    });
+    renderPlaces(); renderAgain();
+  }
+
   /* ---------- התחלה ---------- */
   function start() {
-    loadStats(); initCalc(); initProfile(); initTabs(); initRider(); initRiderActions(); initDriver(); initCalendarPick(); initInboxActions(); initIdeas();
+    loadStats(); initCalc(); initProfile(); initTabs(); initRider(); initRiderActions(); initDriver(); initFast(); initCalendarPick(); initInboxActions(); initIdeas();
     if (token) {
       api('/me').then(function (j) { me = j.user; showApp(); }).catch(function () { initGoogle(); });
     }
