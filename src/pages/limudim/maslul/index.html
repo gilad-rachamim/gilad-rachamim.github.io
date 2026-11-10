@@ -3,7 +3,7 @@
   "nav": "maslul",
   "tool": "maslul",
   "title": "מסלול אישי במתמטיקה: עולים שלבים, אוספים כוכבים ומתאמנים לבגרות | כלים ללימודים",
-  "description": "מסלול תרגול אישי ומשחקי במתמטיקה, מהיסודות ועד הבגרות לפי השאלון שלכם (35182, 35381, 35382, 35481, 35482, 35581, 35582). כל תשובה נכונה מעלה את הקושי, תשובה קרובה מקבלת חצי כוכב ומשוב, ואפשר גם להגיד את התשובה בקול. כוכבים, רצף ימים, תגים ומפה שמראה איפה אתם. נשמר בטלפון, חינם ובלי הרשמה.",
+  "description": "מסלול תרגול אישי ומשחקי במתמטיקה, עם אימון חיזוק בנושאים החלשים, אתגר יומי, דרגות ומבחן עלייה עד \"מוכנים לבגרות\", מהיסודות ועד הבגרות לפי השאלון שלכם (35182, 35381, 35382, 35481, 35482, 35581, 35582). כל תשובה נכונה מעלה את הקושי, תשובה קרובה מקבלת חצי כוכב ומשוב, ואפשר גם להגיד את התשובה בקול. כוכבים, רצף ימים, תגים ומפה שמראה איפה אתם. נשמר בטלפון, חינם ובלי הרשמה.",
   "og_title": "מסלול אישי במתמטיקה – עולים שלבים עד הבגרות",
   "priority": "0.8",
   "crumbs": [["מסלול אישי במתמטיקה", null]],
@@ -29,6 +29,12 @@
     <div class="ms-pick" role="group" aria-label="מה אני לומד" id="ms-pick"></div>
     <p class="ms-daymsg" id="ms-daymsg"></p>
     <div class="ms-sum" id="ms-sum"></div>
+    <div class="ms-cards" id="ms-cards" hidden>
+      <div class="ms-card ms-rank" id="ms-rank"></div>
+      <div class="ms-card" id="ms-daily"></div>
+      <div class="ms-card" id="ms-train"></div>
+    </div>
+    <h3 class="mx-sec">🗺 המפה של המסלול</h3>
     <div class="ms-map" id="ms-map" role="list" aria-label="מפת המסלול"></div>
 
     <div class="panel">
@@ -52,6 +58,9 @@
         <li><b>שישה שלבים בכל נושא.</b> חימום, מתקדם, אתגר, ובסוף שלב בגרות. כל שלב שעוברים פותח את הבא.</li>
         <li><b>הקושי עולה איתכם.</b> שלוש תשובות נכונות ברצף, והתרגיל הבא כבר גדול יותר.</li>
         <li><b>גם "כמעט" נחשב.</b> סימן הפוך, עיגול קטן או שבר שלא צומצם: מקבלים חצי כוכב, ומתקנים.</li>
+        <li><b>האימון שלי.</b> המסלול זוכר באילו נושאים קשה לכם, מסמן אותם ב-💪, ומציע אימון קצר דווקא בהם. אפשר גם לבחור לבד מה לחזק.</li>
+        <li><b>דרגות ומבחן עלייה.</b> מתחילים, מתאמנים, מתקדמים, מומחים, ועד "מוכנים לבגרות". כשמתקדמים מספיק במסלול נפתח מבחן עלייה, בלי רמזים ועם שעון. עוברים, ועולים דרגה.</li>
+        <li><b>אתגר יומי ויעד שבועי.</b> חמישה תרגילים חדשים כל יום, אותו אתגר לכל מי שלומד את השאלון, ויעד של חמש פעילויות בשבוע.</li>
         <li><b>אפשר לענות בקול.</b> לוחצים 🎤 ואומרים, למשל "מינוס שלוש רבעים". התשובה נכתבת ונבדקת.</li>
       </ol>
       <p class="note">רוצים קודם שיעור קצר על נושא? הוא נמצא ב<a class="gold" href="/limudim/matematika/">מתמטיקה צעד אחרי צעד</a>. ולחישובים, <a class="gold" href="/limudim/machshevon/">המחשבון לבגרות</a>.</p>
@@ -73,6 +82,7 @@
   <section id="ms-play" hidden>
     <div class="ms-top">
       <button type="button" class="linkish" id="ms-quit">→ לשלבים</button>
+      <span class="ms-clock" id="ms-clock" hidden></span>
       <span class="ms-combo" id="ms-combo" aria-live="polite"></span>
       <span class="ms-chip ms-pts" id="ms-pts" title="נקודות בשלב הזה">⭐ <b>0</b></span>
     </div>
@@ -80,6 +90,7 @@
       <b id="ms-play-h"></b>
       <div class="ms-dots" id="ms-dots" aria-label="התקדמות בשלב"></div>
     </div>
+    <p class="ms-ptopic" id="ms-ptopic" hidden></p>
     <div class="mx-ex" id="ms-ex"></div>
     <ul class="mx-done" id="ms-done"></ul>
     <div id="ms-stepbox">
@@ -113,6 +124,7 @@
       <h2 class="ms-h" id="ms-end-h"></h2>
       <p id="ms-end-msg"></p>
       <div class="ms-newbadges" id="ms-newbadges"></div>
+      <div class="ms-extra" id="ms-extra"></div>
       <div class="ms-row2 ms-center">
         <button type="button" class="btn btn-gold" id="ms-go-next">לשלב הבא ←</button>
         <button type="button" class="btn btn-line" id="ms-again">↺ שוב, בשביל עוד כוכבים</button>
