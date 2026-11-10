@@ -37,7 +37,7 @@
     return { streak: streakOf(days), best: s.bestStreak || 0, solved: s.solved || 0, todaySec: days[CH.today()] || 0, doneToday: !!days[CH.today()] };
   };
   // רושם פתרון. daily=true – גם לרצף ולאתגר של היום
-  CH.record = function (game, daily, sec) {
+  CH.record = function (game, daily, sec, hints) {
     var s = CH.load(game);
     s.solved = (s.solved || 0) + 1;
     if (daily) {
@@ -48,11 +48,46 @@
     }
     CH.save(game, s);
     // רצף כללי: יום שבו נפתר לפחות אתגר יומי אחד
-    if (daily) { var all = CH.load('all'); all.days = all.days || {}; all.days[CH.today()] = 1; CH.save('all', all); }
+    if (daily) { var all = CH.load('all'); all.days = all.days || {}; all.days[CH.today()] = 1; CH.save('all', all); logDaily(game, hints); }
     return CH.stats(game);
   };
   CH.days = function (n) { return n === 1 ? 'יום אחד' : n + ' ימים'; };
   CH.allStreak =function () { return streakOf(CH.load('all').days || {}); };
+
+  // ---------- האתגר השבועי: מטרה אחת משותפת לכל המשחקים, מתחלפת כל יום ראשון ----------
+  // כולם מקבלים את אותה מטרה באותו שבוע. מי שמשלים מקבל תג לאוסף.
+  var GOALS = [
+    { id: 'five', icon: '⭐', t: 'לפתור 5 אתגרים יומיים', n: 5, f: function (L) { return L.length; } },
+    { id: 'games3', icon: '🎯', t: 'לפתור את האתגר היומי ב-3 משחקים שונים', n: 3, f: function (L) { return uniq(L, 'g'); } },
+    { id: 'days4', icon: '📅', t: 'לפתור אתגר יומי ב-4 ימים שונים', n: 4, f: function (L) { return uniq(L, 'd'); } },
+    { id: 'clean3', icon: '🧠', t: 'לפתור 3 אתגרים יומיים בלי אף רמז', n: 3, f: function (L) { return L.filter(function (x) { return !x.h; }).length; } },
+    { id: 'all4', icon: '🏆', t: 'לפתור את האתגר היומי בכל ארבעת המשחקים', n: 4, f: function (L) { return uniq(L, 'g'); } }
+  ];
+  function uniq(L, k) { var o = {}; L.forEach(function (x) { o[x[k]] = 1; }); return Object.keys(o).length; }
+  function sunday(d) { d = new Date(d || Date.now()); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - d.getDay()); return d; }
+  CH.week = function () {
+    var s0 = sunday(), wk = CH.dateKey(s0), idx = Math.round((s0 - new Date(2026, 10, 8)) / 6048e5);
+    var goal = GOALS[((idx % GOALS.length) + GOALS.length) % GOALS.length];
+    var all = CH.load('all'), L = (all.log || []).filter(function (x) { return x.d >= wk; });
+    var have = Math.min(goal.n, goal.f(L)), end = new Date(s0); end.setDate(end.getDate() + 6);
+    var left = Math.round((end - new Date(new Date().setHours(0, 0, 0, 0))) / 864e5) + 1;
+    return { key: wk, goal: goal, have: have, done: have >= goal.n, left: left, badges: all.badges || {} };
+  };
+  // נקרא מתוך CH.record: רושם פתרון יומי ביומן ובודק אם המטרה של השבוע הושלמה עכשיו
+  function logDaily(game, hints) {
+    var all = CH.load('all'); all.log = all.log || [];
+    if (!all.log.some(function (x) { return x.d === CH.today() && x.g === game; })) all.log.push({ d: CH.today(), g: game, h: hints ? 1 : 0 });
+    while (all.log.length > 200) all.log.shift();
+    CH.save('all', all);
+    var w = CH.week();
+    if (w.done && !w.badges[w.key]) { all = CH.load('all'); all.badges = all.badges || {}; all.badges[w.key] = w.goal.id; CH.save('all', all); CH.justEarned = w; CH.used('chashiva_week', 'badge', { goal: w.goal.id }); }
+  }
+  CH.badgeIcon = function (id) { var g = GOALS.filter(function (x) { return x.id === id; })[0]; return g ? g.icon : '🏅'; };
+  CH.weekLine = function () {
+    var w = CH.week();
+    if (w.done) return '🏅 האתגר השבועי הושלם! ' + w.goal.icon + ' ' + w.goal.t + '. מטרה חדשה ביום ראשון.';
+    return '🏅 האתגר השבועי: ' + w.goal.t + ' · ' + w.have + ' מתוך ' + w.goal.n + ' · ' + (w.left === 1 ? 'נשאר יום אחד' : 'נשארו ' + w.left + ' ימים');
+  };
 
   // ---------- שעון ----------
   CH.fmt = function (sec) { sec = sec | 0; var m = Math.floor(sec / 60), s = sec % 60; return m + ':' + pad(s); };
@@ -73,6 +108,11 @@
 
   // ---------- חלון "פתרתם!" ----------
   // o: {tool, el, title, line, share, daily, next:[{label, fn}]}
+  function weekBox(o) {
+    var e = CH.justEarned; CH.justEarned = null;
+    if (e) { o.share = (o.share || '') + '\n🏅 השלמתי את האתגר השבועי: ' + e.goal.t; return '<div class="ch-badge-new"><b>' + e.goal.icon + ' השלמתם את האתגר השבועי!</b><span>' + e.goal.t + '. התג נכנס לאוסף שלכם בדף המשחקים.</span></div>'; }
+    return '<p class="ch-weekline">' + CH.weekLine() + '</p>';
+  }
   CH.win = function (o) {
     var el = o.el; if (!el) return;
     var st = o.stats || {};
@@ -81,6 +121,7 @@
       '<div class="ch-win" role="status">' +
         '<h2>' + (o.title || 'פתרתם! 🎉') + '</h2>' +
         '<div class="ch-pills">' + (o.line || '') + streakTxt + '</div>' +
+        (o.daily ? weekBox(o) : '') +
         (o.extra || '') +
         '<div class="ch-next"></div>' +
         '<div class="ch-help">' +
@@ -97,6 +138,7 @@
         '</div>' +
       '</div>';
     el.querySelector('.ch-res').textContent = o.share || '';
+    var wl = document.getElementById('ch-weekline'); if (wl) wl.textContent = CH.weekLine();
     el.querySelector('[data-share-tool]').setAttribute('data-text', o.share || 'משחקי חשיבה בחינם');
     var nx = el.querySelector('.ch-next');
     (o.next || []).forEach(function (n, i) {
@@ -109,10 +151,26 @@
     setTimeout(function () { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 250);
   };
 
+  // ---------- שורת האתגר השבועי בכל משחק ----------
+  var wl0 = document.getElementById('ch-weekline'); if (wl0) wl0.textContent = CH.weekLine();
+
+  // ---------- דף התחום: האתגר השבועי ואוסף התגים ----------
+  var wb = document.getElementById('ch-week');
+  if (wb) {
+    var w = CH.week(), keys = Object.keys(w.badges).sort().reverse();
+    var pct = Math.round(w.have / w.goal.n * 100);
+    var shareTxt = ('השלמתי את האתגר השבועי במשחקי החשיבה: ' + w.goal.t + ' ' + w.goal.icon + ' מצטרפים אליי?').replace(/"/g, '&quot;');
+    wb.innerHTML = '<div class="ch-weekcard' + (w.done ? ' done' : '') + '"><div class="ic">' + w.goal.icon + '</div><div><b>' + w.goal.t + '</b>' +
+      '<div class="ch-meter"><i style="width:' + pct + '%"></i></div>' +
+      '<span>' + (w.done ? '✓ הושלם! התג שלכם באוסף למטה. מטרה חדשה ביום ראשון.' : w.have + ' מתוך ' + w.goal.n + ' · ' + (w.left === 1 ? 'נשאר יום אחד' : 'נשארו ' + w.left + ' ימים')) + '</span></div></div>' +
+      '<div class="ch-badges"><b>אוסף התגים שלכם</b>' + (keys.length ? '<div>' + keys.slice(0, 24).map(function (k) { var d = k.split('-'); return '<span title="השבוע של ' + (+d[2]) + '.' + (+d[1]) + '">' + CH.badgeIcon(w.badges[k]) + '<small>' + (+d[2]) + '.' + (+d[1]) + '</small></span>'; }).join('') + '</div>' : '<p class="ch-hint">עוד אין תגים. משלימים את האתגר השבועי, והתג הראשון נכנס לכאן.</p>') + '</div>' +
+      (w.done ? '<div class="actions"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="' + shareTxt + '" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לספר לחברים</a></div>' : '');
+  }
+
   // ---------- דף התחום: ההתקדמות שלכם ----------
   var box = document.getElementById('ch-progress');
   if (box) {
-    var games = [['nono', 'שחור ופתור', '/kelim/chashiva/shachor/'], ['tash', 'תשחצים', '/kelim/chashiva/tashchetz/'], ['sudoku', 'סודוקו', '/kelim/chashiva/sudoku/']];
+    var games = [['mila', 'מילה ביום', '/kelim/chashiva/mila/'], ['nono', 'שחור ופתור', '/kelim/chashiva/shachor/'], ['tash', 'תשחצים', '/kelim/chashiva/tashchetz/'], ['sudoku', 'סודוקו', '/kelim/chashiva/sudoku/']];
     var any = false;
     box.innerHTML = '<div class="ch-prog">' + games.map(function (g) {
       var s = CH.stats(g[0]); if (s.solved) any = true;

@@ -112,3 +112,49 @@
 .ts-why-list{text-align:right;margin:.5rem 0 1rem;color:var(--parchment)}
 .ts-why-list li{margin:.3rem 0}
 @media print{.topbar,.site-foot,.crumbs,.no-print{display:none!important}}
+
+/* ===== מילה ביום ===== */
+.ml-grid{display:flex;flex-direction:column;gap:6px;align-items:center;margin:.6rem 0}
+.ml-row{display:flex;gap:6px}
+.ml-row span{width:clamp(48px,14vw,62px);height:clamp(48px,14vw,62px);border:2px solid rgba(255,255,255,.18);border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:700;font-size:clamp(1.5rem,7vw,2rem);color:var(--cream);background:rgba(255,255,255,.03)}
+.ml-row span.typed{border-color:var(--gold-soft)}
+.ml-row span.ok{background:#d8b35f;border-color:#d8b35f;color:#14211f}
+.ml-row span.in{background:#5fbfa6;border-color:#5fbfa6;color:#0f1d1c}
+.ml-row span.no{background:#2b3a37;border-color:#2b3a37;color:#9db0a8}
+.ml-row.now span:empty{border-style:dashed}
+.ml-row.shake{animation:mlshake .35s}
+@keyframes mlshake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.ml-kb button.ok{background:#d8b35f;color:#14211f}
+.ml-kb button.in{background:#5fbfa6;color:#0f1d1c}
+.ml-kb button.no{background:#1b2725;color:#5f6f6a}
+.ml-clue{border:1px dashed var(--gold-soft);border-radius:12px;padding:.5rem .8rem;color:var(--gold-hi);text-align:center;margin:.4rem 0}
+.ml-legend{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;color:var(--muted);font-size:.88rem;margin:.2rem 0 .3rem}
+.ml-legend i{display:inline-block;width:.85rem;height:.85rem;border-radius:4px;margin-left:.3rem;vertical-align:-2px}
+.ml-legend i.ok{background:#d8b35f}.ml-legend i.in{background:#5fbfa6}.ml-legend i.no{background:#2b3a37;border:1px solid #9db0a8}
+.ml-dist{text-align:right;margin:.2rem 0 1rem;color:var(--parchment)}
+.ml-dist b{display:block;margin-bottom:.3rem;color:var(--cream)}
+.ml-dist div{display:flex;align-items:center;gap:.4rem;margin:.18rem 0}
+.ml-dist span{width:1.2rem;text-align:center;color:var(--muted)}
+.ml-dist i{font-style:normal;background:#2b3a37;color:var(--cream);border-radius:6px;padding:.05rem .45rem;text-align:left;font-size:.85rem}
+.ml-dist i.me{background:#d8b35f;color:#14211f}
+
+/* ===== האתגר השבועי ===== */
+.ch-weekline{text-align:center;color:var(--gold-hi);font-size:.93rem;margin:.2rem 0 .5rem}
+.ch-weekline:empty{display:none}
+.ch-badge-new{border:2px solid var(--gold);border-radius:14px;padding:.7rem .8rem;margin:.2rem 0 .9rem;background:rgba(216,179,95,.16);display:flex;flex-direction:column;gap:.2rem;animation:chpop .6s ease}
+.ch-badge-new b{color:var(--cream);font-size:1.15rem}
+.ch-badge-new span{color:var(--parchment)}
+@keyframes chpop{0%{transform:scale(.85);opacity:0}70%{transform:scale(1.04)}100%{transform:scale(1);opacity:1}}
+.ch-weekcard{display:flex;gap:.8rem;align-items:center;border:1px solid var(--line);border-radius:16px;padding:.9rem 1rem;background:rgba(255,255,255,.03);color:var(--parchment)}
+.ch-weekcard.done{border-color:var(--gold);background:rgba(216,179,95,.1)}
+.ch-weekcard .ic{font-size:2.2rem;line-height:1}
+.ch-weekcard>div:last-child{flex:1}
+.ch-weekcard b{color:var(--cream);font-size:1.08rem;display:block}
+.ch-weekcard span{color:var(--muted);font-size:.93rem}
+.ch-meter{height:.6rem;border-radius:999px;background:rgba(255,255,255,.08);margin:.45rem 0 .3rem;overflow:hidden}
+.ch-meter i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-hi));border-radius:999px}
+.ch-badges{margin-top:.8rem;color:var(--parchment)}
+.ch-badges>b{display:block;color:var(--cream);margin-bottom:.35rem}
+.ch-badges>div{display:flex;flex-wrap:wrap;gap:.45rem}
+.ch-badges span{display:flex;flex-direction:column;align-items:center;border:1px solid var(--gold-soft);border-radius:12px;padding:.35rem .5rem;font-size:1.5rem;min-width:3.2rem;background:rgba(216,179,95,.07)}
+.ch-badges small{font-size:.72rem;color:var(--muted)}

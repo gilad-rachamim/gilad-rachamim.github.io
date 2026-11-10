@@ -578,7 +578,7 @@
     let size = { w: P.w, h: P.h };
     let dest = destOf();
     if (mode === 'new') { const d = destFromText(t); if (d) { dest = d; P.dest = d.id; size = { w: d.w, h: d.h }; destBar(); } }
-    status(mode === 'new' ? 'מעצב בשבילכם… (בערך 10–30 שניות)' : 'משנה את העיצוב…', true);
+    status(mode === 'new' ? 'מעצב בשבילכם… (לוקח בערך חצי דקה עד דקה)' : 'משנה את העיצוב…', true);
     used('ai', { mode });
     let out = null, err = '';
     try {
