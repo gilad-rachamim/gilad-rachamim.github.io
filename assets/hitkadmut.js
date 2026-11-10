@@ -5,7 +5,7 @@
 // הכול נשמר רק בטלפון (localStorage hitkadmut-<key>).
 //
 // שימוש בדף:  <p class="hk-strip" data-hk="kartisiot" data-goal="5" data-tool="kartisiot" data-what="חזרה"></p>
-//             data-gentle="1" = בלי רצף ובלי יעד, רק "כל יום שחזרת נחשב" (לכלי נפש).
+//             data-gentle="1" = בלי רצף ובלי יעד, רק "כל יום שחזרת נחשב" (לכלי נפש). data-verb / data-pill משנים את המילים.
 // בקוד הכלי:  window.HK && HK.done('kartisiot', { el: winBox, title: 'כל הכבוד!', share: 'טקסט לשיתוף' });
 (function () {
   'use strict';
@@ -72,7 +72,7 @@
     var what = el.getAttribute('data-what') || 'לימוד';
     if (el.getAttribute('data-gentle')) {
       if (!st.total) return '🌱 כל יום שחוזרים לכאן נחשב. בלי לחץ, בקצב שלכם.';
-      return '🌱 חזרתם לכאן ' + HK.days(st.total) + (st.week ? ' · השבוע: ' + HK.days(st.week) : '') + '. כל יום נחשב, וכל חזרה היא התחלה חדשה.';
+      return '🌱 ' + (el.getAttribute('data-verb') || 'חזרתם לכאן') + ' ' + HK.days(st.total) + (st.week ? ' · השבוע: ' + HK.days(st.week) : '') + '. כל יום נחשב, וכל חזרה היא התחלה חדשה.';
     }
     var parts = [];
     if (!st.total) parts.push('🌱 כל יום של ' + what + ' נספר כאן');
@@ -110,7 +110,7 @@
     var s = HK.load(k);
     if (!el || (s.win === HK.today() && !o.force)) return r;
     s.win = HK.today(); HK.save(k, s);
-    var pills = gentle ? '<span>🌱 ' + HK.days(st.total) + ' שחזרתם</span>'
+    var pills = gentle ? '<span>🌱 ' + HK.days(st.total) + ' ' + ((strip && strip.getAttribute('data-pill')) || 'שחזרתם') + '</span>'
       : '<span>🔥 ' + (st.streak === 1 ? (st.total > 1 ? 'יום ראשון ברצף חדש' : 'יום ראשון') : HK.days(st.streak) + ' ברצף') + '</span><span>📅 השבוע ' + st.week + ' מתוך ' + st.goal + '</span>';
     var share = (o.share || document.title) + (gentle ? '' : st.streak >= 2 ? '\n🔥 ' + HK.days(st.streak) + ' ברצף' : '');
     el.innerHTML =
