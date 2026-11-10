@@ -125,7 +125,7 @@
   function finish() {
     $('ml-clue').hidden = false;
     var daily = mode === 'daily', st = CH.stats(G);
-    if (won) { st = CH.record(G, daily, 1); if (daily) data.dist[guesses.length - 1]++; }
+    if (won) { st = CH.record(G, daily, 1, hint ? 1 : 0); if (daily) data.dist[guesses.length - 1]++; }
     else if (daily) data.dist[6]++;
     persist();
     CH.used(TOOL, won ? 'solve' : 'fail', { mode: mode, tries: guesses.length, hint: hint ? 1 : 0 });
