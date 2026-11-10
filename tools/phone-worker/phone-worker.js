@@ -329,8 +329,26 @@ export default {
       if (!env.STATS) return Response.json({});
       return env.STATS.get(env.STATS.idFromName('all')).fetch('https://stats/get');
     }
+    // מצב "קליטת קוד" (עד 20 דקות): כל שיחה שנכנסת מוקלטת לשלוחה 8 בלי תפריט.
+    // בשביל שיחת האימות של ווטסאפ, שמקריאה קוד כשפותחים ווטסאפ ביזנס על מספר הקו.
+    // מפעילים עם המפתח של שרת החדשות (נבדק מולו, בלי סוד נוסף): /capture?key=..&min=15   (min=0 מכבה)
+    if (url.pathname === '/capture') {
+      const ok = env.NEWS && (await env.NEWS.fetch('https://news/config?key=' + encodeURIComponent(url.searchParams.get('key') || ''))).status === 200;
+      if (!ok) return Response.json({ ok: false }, { status: 403 });
+      const min = Math.min(20, Math.max(0, +url.searchParams.get('min') || 0));
+      return env.STATS.get(env.STATS.idFromName('all')).fetch('https://stats/capture-set?until=' + (Date.now() + min * 60000));
+    }
     const v = await params(request);
     if (v.hangup === 'yes') return new Response('', { headers: { 'content-type': 'text/plain; charset=utf-8' } });
+    if (env.STATS && v.m0 === undefined) {
+      const until = +(await (await env.STATS.get(env.STATS.idFromName('all')).fetch('https://stats/capture-get')).text()) || 0;
+      if (Date.now() < until) {
+        const text = v.w0 === undefined
+          ? `read=t-הקלטה=w0,no,record,/8,whatsapp-code-${Date.now()},,yes,,1,120`
+          : sayAndHangup(['תודה']);
+        return new Response(text, { headers: { 'content-type': 'text/plain; charset=utf-8' } });
+      }
+    }
     let out;
     // אם נבחרה שלוחה 8 (חדשות) – מביאים קודם את הסיכום האחרון משרת החדשות (Service Binding)
     let news = null;
@@ -353,6 +371,16 @@ export class Stats {
   }
   async fetch(request) {
     const url = new URL(request.url);
+    if (url.pathname === '/capture-set') {
+      this.sql.exec('CREATE TABLE IF NOT EXISTS cfg (k TEXT PRIMARY KEY, v TEXT)');
+      this.sql.exec('INSERT INTO cfg VALUES (?, ?) ON CONFLICT(k) DO UPDATE SET v = excluded.v', 'capture', url.searchParams.get('until') || '0');
+      return Response.json({ ok: true, until: new Date(+url.searchParams.get('until')).toISOString() });
+    }
+    if (url.pathname === '/capture-get') {
+      this.sql.exec('CREATE TABLE IF NOT EXISTS cfg (k TEXT PRIMARY KEY, v TEXT)');
+      const r = this.sql.exec("SELECT v FROM cfg WHERE k = 'capture'").toArray()[0];
+      return new Response(r ? r.v : '0');
+    }
     if (url.pathname === '/hit') {
       const ev = (url.searchParams.get('e') || '').replace(/[^a-z]/g, '').slice(0, 12);
       const day = new Intl.DateTimeFormat('en-CA', { timeZone: TZ }).format(new Date());
