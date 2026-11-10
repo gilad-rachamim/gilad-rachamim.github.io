@@ -22,5 +22,8 @@ tag = "v1"
 new_sqlite_classes = ["Store"]
 
 [vars]
+# דף הפייסבוק "החדשות ב-3 דקות" (המפתח שלו נשמר כסוד FB_PAGE_TOKEN דרך fb-setup.ps1)
+FB_PAGE_ID = "1431876290011865"
+FB_API_VERSION = "v27.0"
 # המפתח הציבורי של ההתראות (VAPID). הפרטי נשמר כסוד VAPID_JWK (npx wrangler secret put VAPID_JWK).
 VAPID_PUBLIC = "BPxymKHPzzngtKfi76udfvM1hE6-kUOHtVsS0pZbjd1d9TBLs-o0b4oiIoAPQ8-jHWU99FjEHLL60iC49mrGPyc"
