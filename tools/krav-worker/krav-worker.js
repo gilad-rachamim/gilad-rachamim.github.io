@@ -5,7 +5,7 @@
 //
 //   GET  /b/:seed               -> {rows:[[pid, nick, pts, solved, tried]], e}
 //   POST /b/:seed  {pid, nick, pts, solved, tried, e, g}   -> {rows, e}
-const ORIGINS = ['https://gilad-rachamim.github.io'];
+const ORIGINS = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const MAX_ROWS = 60, KEEP_MS = 3 * 864e5, GRACE_S = 15 * 60;
 
 export default {

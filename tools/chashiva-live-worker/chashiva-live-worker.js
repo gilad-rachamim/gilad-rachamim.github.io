@@ -7,7 +7,7 @@
 //     שרת -> לקוח: {t:'hello'|'members', host, members:[{pid,name,on}]}, {t:'msg', from, d}
 //     לקוח -> שרת: {t:'to', to: pid | '*', d}
 // חדר נמחק לבד 24 שעות אחרי שנפתח.
-const ORIGINS = ['https://gilad-rachamim.github.io'];
+const ORIGINS = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const ALPHA = 'abcdefghjkmnpqrstuvwxyz23456789';
 const MAX_MEMBERS = 8, MAX_MSG = 60000, KEEP_MS = 24 * 3600e3;
 

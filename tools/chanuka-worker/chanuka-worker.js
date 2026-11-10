@@ -13,7 +13,7 @@
 //   POST /h/:id/admin       {a, op:'hide'|'hideR'|'edit'|'delete', k?, m?}
 //
 // הנתונים נמחקים מעצמם 90 יום אחרי הפתיחה (alarm).
-const ORIGINS = ['https://gilad-rachamim.github.io'];
+const ORIGINS = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const PURPOSES = ['niftar', 'refua', 'hatzlacha', 'zivug', 'zchut', 'kehila', 'other'];
 const KEEP_DAYS = 90, MAX_CANDLES = 5000, PER_HOUR = 10;
 // בקשות מתחת לחנוכייה

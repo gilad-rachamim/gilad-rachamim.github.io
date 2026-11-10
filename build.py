@@ -87,6 +87,13 @@ SITES = {
 }
 SPRITE =(ROOT / "assets" / "icons.svg").read_text(encoding="utf-8")
 BASE = "https://gilad-rachamim.github.io"
+# מעבר לכתובת משלנו: כשמשנים את BASE לכתובת חדשה (למשל "https://hakelim.com"), כל דף מקבל סקריפט קטן בראש:
+# מי שנכנס לכתובת הישנה מועבר לאותו דף בכתובת החדשה, יחד עם הנתונים שהכלים שמרו אצלו בדפדפן (localStorage),
+# כי נתונים כאלה נשמרים לפי כתובת האתר ולא עוברים לבד. הנתונים עוברים בחלק ה-# של הכתובת (לא נשלח לשום שרת)
+# ונמחקים ממנה מיד. בכתובת החדשה לא דורסים מפתח שכבר קיים. כל עוד BASE היא הכתובת הישנה, אין סקריפט.
+OLD_HOST = "gilad-rachamim.github.io"
+MIGRATE_JS = """<script>(function(){var N="__NEW__",O="__OLD__",L=location;try{if(L.hostname===O){var d={},n=0,ks=[],i,k,v,e;for(i=0;i<localStorage.length;i++)ks.push(localStorage.key(i));ks.sort(function(a,b){return localStorage.getItem(a).length-localStorage.getItem(b).length});for(i=0;i<ks.length;i++){k=ks[i];v=localStorage.getItem(k);e=encodeURIComponent(k).length+encodeURIComponent(v).length+12;if(n+e>1400000)continue;d[k]=v;n+=e}L.replace(N+L.pathname+L.search+(ks.length?"#__mig="+encodeURIComponent(JSON.stringify({d:d,h:L.hash})):L.hash))}else if(L.hash.indexOf("#__mig=")===0){var o=JSON.parse(decodeURIComponent(L.hash.slice(7)));for(k in o.d)if(localStorage.getItem(k)===null)localStorage.setItem(k,o.d[k]);history.replaceState(null,"",L.pathname+L.search+(o.h||""))}}catch(x){if(L.hostname===O)L.replace(N+L.pathname+L.search+L.hash)}})();</script>"""
+MIGRATE = "" if BASE == "https://" + OLD_HOST else MIGRATE_JS.replace("__NEW__", BASE).replace("__OLD__", OLD_HOST)
 # מזהה Google Analytics 4 (G-XXXXXXXXXX). ריק = בלי מעקב.
 GA_ID = "G-4QR4583VST"
 # כתובת ה-Web App של צינור הלידים (tools/leads-apps-script.gs, פריסה כ-Web app).
@@ -351,6 +358,8 @@ for path in sorted(SRC.rglob("*.html")):
         "title": meta["title"],
         "description": meta["description"],
         "url": url,
+        "base": BASE,
+        "migrate": MIGRATE,
         "og_title": meta.get("og_title", meta["title"]),
         "og_image": meta.get("og_image", og_default),
         "robots": '<meta name="robots" content="noindex">' if meta.get("noindex") else "",
@@ -427,4 +436,5 @@ for url, pr in pages:
     sm.append(f"  <url><loc>{url}</loc><lastmod>{today}</lastmod><priority>{pr}</priority></url>")
 sm.append("</urlset>")
 (ROOT / "sitemap.xml").write_text("\n".join(sm) + "\n", encoding="utf-8")
+(ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /mohel/todah/\nSitemap: {BASE}/sitemap.xml\n", encoding="utf-8", newline="\n")
 print("sitemap:", len(pages), "pages")

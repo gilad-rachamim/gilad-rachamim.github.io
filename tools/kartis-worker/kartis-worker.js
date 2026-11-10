@@ -3,7 +3,7 @@
 //  POST /s     {d: "...", t: "m"}              -> {k: "a7Xq2bZ"}  כרטיס מוהל: 7 תווים, כדי ש-/k/ ידע לאן להפנות
 //  GET  /s/<k>                                -> {d: "..."}
 // KV:  c:<k> -> d  ·  h:<sha256(d)> -> k  ·  rl:<ip> -> מונה יצירות לשעה
-const ORIGINS = ['https://gilad-rachamim.github.io'];
+const ORIGINS = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const D_RE = /^[\w-]{8,4000}$/;
 const DM_RE = /^[\w-]{8,20000}$/; // כרטיס מוהל יכול לכלול תמונה קטנה
 const K_RE = /^[0-9A-Za-z]{6,7}$/;

@@ -10,7 +10,7 @@
 // פרטיות: לא שומרים את התמונה ולא את הסרטון. Runpod מחזיק את הסרטון בקישור סודי עד 7 ימים.
 // הוראות התנועה קבועות (אין טקסט חופשי), כדי שלא ישתמשו בכלי לזיופים.
 
-const ALLOWED = ['https://gilad-rachamim.github.io'];
+const ALLOWED = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 const EP = 'p-video';
 const MAX_IMG = 2_500_000; // תווים ב-data URL
