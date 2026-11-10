@@ -593,3 +593,101 @@ body.cx-exammode .pt-link{display:none!important}
 .ms-cert small{color:#8d7647}.ms-cert-em{font-size:2.6rem}.ms-cert h3{font-family:var(--serif);font-size:1.4rem;color:#141c2b}
 .ms-cert p{color:#141c2b!important;font-size:1rem!important}.ms-cert b{font-size:1.3rem}.ms-cert-d{color:#8d7647!important}
 @media print{body.ms-printing *{visibility:hidden}body.ms-printing .ms-cert,body.ms-printing .ms-cert *{visibility:visible}body.ms-printing .ms-cert{position:absolute;left:0;right:0;top:0;margin:auto}}
+/* ===== המחברת (/limudim/machberet/) ===== */
+.mb-tabs{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-top:.4rem}
+.mb-tabs button{font:inherit;font-size:1.08rem;font-weight:700;padding:.7rem .4rem;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--body);cursor:pointer}
+.mb-tabs button[aria-selected=true]{background:var(--gold);color:#1c1608;border-color:var(--gold)}
+.mb-how{margin-top:.8rem}
+.mb-okc{color:var(--ok)}.mb-wc{color:#f0b35c}
+.mb-ex{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center;margin-top:.8rem;color:var(--muted);font-size:.95rem}
+.mb-ex button{font:inherit;font-size:.92rem;padding:.3rem .7rem;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--cream);cursor:pointer}
+.mb-top{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .9rem;margin-top:.8rem}
+.mb-saved{color:var(--muted);font-size:.9rem}
+.mb-sheet{padding:.6rem .7rem .8rem}
+.mb-rows,.mb-prows{list-style:none;margin:0;padding:0;display:grid;gap:.15rem}
+.mb-row{display:grid;grid-template-columns:2.2rem 1fr 1.7rem auto;gap:.1rem .35rem;align-items:start;padding:.35rem .2rem;border-radius:10px;border-inline-start:4px solid transparent}
+.mb-row.mb-q{background:rgba(220,183,105,.13)}
+.mb-row.mb-q .mb-n{font-size:.72rem;color:#7a4a00;font-weight:800}
+.mb-n{color:#8a90a0;font-weight:700;padding-top:.55rem;text-align:center;font-size:.95rem}
+.mb-cell{min-width:0}
+.mb-in,.mb-claim,.mb-pinp,.mb-other{width:100%;font:inherit;font-size:1.12rem;color:#141c2b;background:rgba(255,255,255,.75);border:1px solid #d8cfae;border-radius:10px;padding:.45rem .6rem;font-family:"Cambria Math","STIX Two Math",var(--sans,system-ui),sans-serif}
+.mb-in{text-align:left}
+.mb-in:focus,.mb-claim:focus,.mb-other:focus{outline:2px solid #c99a3b;outline-offset:0;background:#fff}
+.mb-in::placeholder,.mb-claim::placeholder,.mb-other::placeholder{color:#9aa0ae;font-family:var(--sans,system-ui),sans-serif;font-size:.95rem}
+.mb-prev{color:#141c2b;font-size:1.12rem;padding:.15rem .2rem 0;overflow-x:auto;overflow-y:hidden;text-align:left}
+.mb-prev:empty{display:none}
+.mb-prev.mb-txt{text-align:right;font-size:1rem;color:#2a3550}
+.mb-msg{font-size:.92rem;line-height:1.5;color:#5a6377;margin:.15rem .1rem 0}
+.mb-msg:empty{display:none}
+.mb-mk{font-size:1.3rem;font-weight:800;text-align:center;padding-top:.35rem}
+.mb-row.ok,.mb-prow.ok{border-inline-start-color:#2f8a5b}
+.mb-row.ok .mb-mk,.mb-prow.ok .mb-mk{color:#2f8a5b}
+.mb-row.ok .mb-msg,.mb-prow.ok .mb-msg{color:#2f6f4c}
+.mb-row.warn,.mb-prow.warn{border-inline-start-color:#d99a1c;background:rgba(255,214,120,.18)}
+.mb-row.warn .mb-mk,.mb-prow.warn .mb-mk{color:#b07400}
+.mb-row.warn .mb-msg,.mb-prow.warn .mb-msg{color:#6a4700;font-weight:600}
+.mb-row.bad .mb-msg{color:#a3361f}
+.mb-rb{display:flex;gap:.15rem;padding-top:.3rem}
+.mb-rb button{width:2rem;height:2rem;border-radius:8px;border:1px solid #d8cfae;background:#fff;color:#5a6377;cursor:pointer;font-size:.95rem;display:grid;place-items:center;padding:0}
+.mb-rb .mb-mic.on{background:#ffe2dc;border-color:#d9705a;color:#a3361f}
+.mb-chip:empty{display:none}
+.mb-chipb{margin-top:.25rem;font:inherit;font-size:.88rem;padding:.25rem .65rem;border-radius:99px;border:1px dashed #c99a3b;background:#fff8e6;color:#7a4a00;cursor:pointer}
+.mb-add{margin-top:.5rem;font:inherit;font-size:1rem;color:#7a4a00;background:none;border:1px dashed #c9b98a;border-radius:10px;padding:.45rem .9rem;cursor:pointer;width:100%}
+.mb-acts{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.8rem}
+.mb-acts .btn{cursor:pointer}
+.mb-acts .btn:not(.btn-gold){background:rgba(255,255,255,.06);color:var(--cream);border:1px solid var(--line)}
+.mb-hint{margin-top:.8rem;padding:.85rem 1rem;border-radius:14px;border:1px solid var(--gold-soft);background:rgba(220,183,105,.09);display:grid;gap:.6rem}
+.mb-ht{color:var(--cream);line-height:1.65;font-size:1.05rem}
+.mb-hint .btn{cursor:pointer;background:rgba(255,255,255,.06);color:var(--cream);border:1px solid var(--line)}
+.mb-hint .btn:disabled{opacity:.6;cursor:wait}
+.mb-aih{padding:.7rem .85rem;border-radius:12px;background:rgba(134,197,230,.1);border:1px solid rgba(134,197,230,.35);color:var(--body);line-height:1.65;display:grid;gap:.4rem}
+.mb-aih .mb-fm{color:var(--cream)}
+.mb-aierr{color:#f6c98a;line-height:1.5}
+.mb-old ul{list-style:none;padding:0;display:grid;gap:.2rem}
+.mb-old .linkish{text-align:start}
+.mb-kb{position:sticky;bottom:0;z-index:30;margin:.8rem -.4rem 0;padding:.45rem .4rem calc(.45rem + env(safe-area-inset-bottom));background:#101726;border-top:1px solid var(--line);border-radius:14px 14px 0 0;box-shadow:0 -6px 18px rgba(0,0,0,.35)}
+.mb-keys{display:grid;grid-template-columns:repeat(6,1fr);gap:.3rem}
+.mb-keys button{min-height:2.55rem;border-radius:10px;border:1px solid rgba(255,255,255,.1);font:inherit;font-size:1.08rem;cursor:pointer;color:var(--cream);background:#222c42;touch-action:manipulation;font-family:"Cambria Math",var(--sans,system-ui),sans-serif;padding:0 .1rem}
+.mb-keys button.f{background:#1a2234;color:#cfe4f2;font-size:.95rem}
+.mb-keys button.d{background:#4a2a2a;color:#ffd2c8}
+.mb-keys button.o{background:#24425a;color:#bfe3f7}
+.mb-keys button.eq{background:var(--gold);color:#1c1608;font-weight:800}
+.mb-keys button:active{filter:brightness(1.3)}
+.mb-pin{gap:.45rem}
+.mb-pin textarea{min-height:4.5rem}
+.mb-pinp{background:rgba(0,0,0,.25);color:var(--cream);border-color:var(--line)}
+.mb-phead{display:grid;grid-template-columns:2.2rem 1fr 1fr;gap:.35rem;font-weight:800;color:#7a4a00;padding:.1rem .2rem .3rem;border-bottom:2px solid #d8cfae;margin-bottom:.3rem}
+.mb-prow{display:grid;grid-template-columns:2.2rem 1fr 1fr 1.7rem auto;gap:.2rem .35rem;align-items:start;padding:.35rem .2rem;border-radius:10px;border-inline-start:4px solid transparent;border-bottom:1px dashed #e2d9bb}
+.mb-pc{min-width:0}
+.mb-pr{min-width:0;display:grid;gap:.25rem}
+.mb-reason{width:100%;font:inherit;font-size:.95rem;color:#141c2b;background:#fff;border:1px solid #d8cfae;border-radius:10px;padding:.45rem .4rem}
+.mb-prow .mb-msg{grid-column:2/-1}
+@media (max-width:620px){
+  .mb-phead{display:none}
+  .mb-prow{grid-template-columns:2rem 1fr 1.6rem auto}
+  .mb-prow .mb-pr{grid-column:2/3;grid-row:2}
+  .mb-prow .mb-msg{grid-column:2/-1}
+}
+.mb-dlg{border:0;padding:0;border-radius:18px;background:#fbfaf3;color:#1b2538;width:min(680px,94vw);max-height:88vh;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.mb-dlg::backdrop{background:rgba(5,8,15,.7)}
+.mb-dlg-in{padding:1rem 1rem 1.1rem;display:grid;gap:.6rem}
+.mb-dlg-top{display:flex;justify-content:space-between;align-items:center;gap:.5rem}
+.mb-dlg-top h2{font-family:var(--serif);font-size:1.3rem;color:#141c2b}
+.mb-dlg .linkish{color:#7a4a00}
+.mb-ftabs{display:flex;flex-wrap:wrap;gap:.3rem}
+.mb-ftabs button{font:inherit;font-size:.88rem;padding:.25rem .6rem;border-radius:99px;border:1px solid #d8cfae;background:#fff;color:#2a3550;cursor:pointer}
+.mb-ftabs button[aria-selected=true]{background:#141c2b;color:#fbfaf3;border-color:#141c2b}
+.mb-fbody{display:grid;gap:.45rem}
+.mb-f{padding:.45rem .6rem;border-radius:10px;background:#fff;border:1px solid #ece4c8}
+.mb-f b{color:#7a4a00;font-size:.95rem}
+.mb-f p{color:#2a3550;line-height:1.6;font-size:.98rem}
+.mb-f.mb-fg{background:none;border:0;padding:.3rem 0 0}
+.mb-fm{overflow-x:auto;overflow-y:hidden;color:#141c2b;padding:.15rem 0;font-size:1.02rem}
+.mb-fm .katex-display{margin:.2rem 0}
+.mb-dlg .note{color:#5a6377}
+@media print{
+  #mb-app .mb-tabs,#mb-app .mb-ex,#mb-app .mb-top,#mb-app .mb-how,#mb-app .mb-kb,#mb-app .pt-priv,#mb-app .mb-hint,.mb-rb,.mb-chip,.mb-add,.mb-acts,.mb-old{display:none!important}
+  .mb-sheet{background:#fff;border:0;box-shadow:none}
+  .mb-row .mb-in{display:none}
+  .mb-claim,.mb-reason,.mb-other{border:0;background:none}
+}
