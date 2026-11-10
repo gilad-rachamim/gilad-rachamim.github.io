@@ -5,7 +5,22 @@ $ErrorActionPreference = 'Stop'
 $APP = '2368121130670220'
 $PAGE = '1431876290011865'
 $V = 'v27.0'
-$short = (Get-Content "$env:USERPROFILE\.claude\secrets\kelim-news-fb-user-short.txt" -Raw).Trim()
+$shortFile = "$env:USERPROFILE\.claude\secrets\kelim-news-fb-user-short.txt"
+$short = $null
+if (Test-Path $shortFile) { $short = (Get-Content $shortFile -Raw).Trim() }
+if (-not $short) {
+  # בלי קובץ: גילעד לוחץ על כפתור ההעתקה ליד ה-Access Token ב-Graph API Explorer
+  Write-Host ''
+  Write-Host 'שלב 1: מחכה שתעתיקו את ה-Access Token (כפתור ההעתקה ליד המפתח ב-Graph API Explorer)...' -ForegroundColor Yellow
+  Set-Clipboard ' '
+  for ($i = 0; $i -lt 600 -and -not $short; $i++) {
+    $c = (Get-Clipboard -Raw) ; if ($c) { $c = $c.Trim() }
+    if ($c -match '^EAA[A-Za-z0-9]{50,}$') { $short = $c } else { Start-Sleep 1 }
+  }
+  Set-Clipboard ' '
+  if (-not $short) { Write-Host 'לא הועתק מפתח תוך 10 דקות.' -ForegroundColor Red; Read-Host 'Enter לסגירה'; exit 1 }
+  Write-Host 'המפתח התקבל. שלב 2:' -ForegroundColor Green
+}
 
 Write-Host ''
 Write-Host 'מחכה שתעתיקו את ה-App secret (לחיצה כפולה עליו ואז Ctrl+C)...' -ForegroundColor Yellow
