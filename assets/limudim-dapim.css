@@ -177,3 +177,7 @@ body.dp-student .k-hero{display:none}
 }
 #dp-app .mx-form label{display:block}
 #dp-app .mx-form label .pill{margin-inline-end:.3rem}
+.dp-paper bdi,#dp-digital bdi{white-space:nowrap}
+.dp-lm .dp-tbl,.dg-lm .dp-tbl{font-size:.82em}
+.dp-lm .dp-tbl th,.dp-lm .dp-tbl td,.dg-lm .dp-tbl th,.dg-lm .dp-tbl td{min-width:1.9em;padding:0 .25em}
+.dp-lm{overflow:hidden}
