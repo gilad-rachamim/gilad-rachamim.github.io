@@ -50,21 +50,46 @@
     var sub = [a.name && street && a.name !== a.street ? street : '', a.city || a.town || a.village || a.county || ''].filter(Boolean).join(', ');
     return { main: main || sub, sub: main ? sub : '', label: [main, a.city || a.town || a.village || ''].filter(Boolean).join(', ') };
   }
+  // כמו בדף הטרמפים: Photon בלי מספר הבית, עדיפות לעיר שנכתבה ולאזור של המשתמש, והמספר חוזר לתווית
+  var BIAS_KEY = 'trempim_bias';
+  function bias() { try { var b = JSON.parse(lsGet(BIAS_KEY) || 'null'); if (b && b.lat) return b; } catch (e) {} return null; }
+  function setBias(p) { lsSet(BIAS_KEY, JSON.stringify({ lat: +p.lat.toFixed(3), lng: +p.lng.toFixed(3) })); }
+  function splitNum(q) {
+    var m = q.match(/(^|\s)(\d{1,4}[א-ת]?)(?=\s|,|$)/);
+    return m ? { num: m[2], text: (q.slice(0, m.index) + ' ' + q.slice(m.index + m[0].length)).replace(/\s+/g, ' ').replace(/\s*,\s*,/g, ',').trim() } : { num: '', text: q };
+  }
   function geocode(q) {
-    return fetch('https://photon.komoot.io/api/?limit=6&lat=31.77&lon=35.0&bbox=34.2,29.4,35.95,33.4&q=' + encodeURIComponent(q))
-      .then(function (r) { return r.json(); }).then(function (j) {
-        return (j.features || []).map(function (f) {
-          var l = photonLabel(f);
-          return { label: l.label, main: l.main, sub: l.sub, lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0] };
-        });
-      });
+    var sp = splitNum(q.replace(/[״]/g, '"'));
+    if (sp.text.length < 2) return Promise.resolve([]);
+    var b = bias() || { lat: 31.78, lng: 35.05 };
+    var u = 'https://photon.komoot.io/api/?limit=12&lang=default&lat=' + b.lat + '&lon=' + b.lng + '&location_bias_scale=0.4&bbox=34.2,29.4,35.95,33.4&q=' + encodeURIComponent(sp.text);
+    var words = sp.text.split(/[\s,]+/).filter(function (w) { return w.length > 2; });
+    return fetch(u).then(function (r) { return r.json(); }).then(function (j) {
+      var seen = {};
+      return (j.features || []).filter(function (f) {
+        var a = f.properties || {};
+        if (a.countrycode !== 'IL' && a.countrycode !== 'PS') return false;
+        return !(a.osm_value === 'bus_stop' || a.osm_key === 'public_transport' || a.osm_value === 'platform' || /\//.test(a.name || ''));
+      }).map(function (f, i) {
+        var l = photonLabel(f), a = f.properties || {};
+        var city = a.city || a.town || a.village || '';
+        var isStreet = a.type === 'street' || (a.osm_key === 'highway' && !a.housenumber);
+        var main = l.main, label = l.label;
+        if (sp.num && isStreet) { main = (a.name || a.street) + ' ' + sp.num; label = main + (city ? ', ' + city : ''); }
+        var score = i;
+        words.forEach(function (w) { if (city && city.indexOf(w) >= 0) score -= 20; });
+        if (main && main.indexOf(sp.text.split(',')[0].trim()) === 0) score -= 8;
+        return { label: label, main: main, sub: l.sub || city, lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0], score: score };
+      }).filter(function (it) { var k = it.label; if (seen[k]) return false; seen[k] = 1; return true; })
+        .sort(function (x, y) { return x.score - y.score; }).slice(0, 7);
+    });
   }
   function autocomplete(input) {
     var ul = document.createElement('ul'); ul.className = 'tp-sug'; ul.hidden = true;
     input.parentNode.appendChild(ul);
     var timer, items = [], idx = -1;
     function close() { ul.hidden = true; idx = -1; }
-    function pick(it) { input.value = it.label; input._place = { label: it.label, lat: +it.lat.toFixed(5), lng: +it.lng.toFixed(5) }; close(); input.dispatchEvent(new Event('placechange')); }
+    function pick(it) { input.value = it.label; input._place = { label: it.label, lat: +it.lat.toFixed(5), lng: +it.lng.toFixed(5) }; setBias(it); close(); input.dispatchEvent(new Event('placechange')); }
     input.addEventListener('input', function () {
       input._place = null; clearTimeout(timer);
       var q = input.value.trim();
@@ -95,6 +120,7 @@
       if (!l.length) throw new Error('notfound');
       input._place = { label: l[0].label, lat: +l[0].lat.toFixed(5), lng: +l[0].lng.toFixed(5) };
       input.value = l[0].label;
+      setBias(l[0]);
       return input._place;
     });
   }
@@ -393,9 +419,9 @@
       b.disabled = true; b.textContent = 'מאתר...';
       navigator.geolocation.getCurrentPosition(function (pos) {
         var lat = +pos.coords.latitude.toFixed(5), lng = +pos.coords.longitude.toFixed(5);
-        fetch('https://photon.komoot.io/reverse?lat=' + lat + '&lon=' + lng).then(function (r) { return r.json(); })
+        fetch('https://photon.komoot.io/reverse?lang=default&lat=' + lat + '&lon=' + lng).then(function (r) { return r.json(); })
           .then(function (j) { var f = (j.features || [])[0]; return f ? photonLabel(f).label : 'הבית'; }).catch(function () { return 'הבית'; })
-          .then(function (label) { $('lz-home').value = label; $('lz-home')._place = { label: label, lat: lat, lng: lng }; b.disabled = false; b.textContent = 'המיקום שלי'; setHome(); });
+          .then(function (label) { $('lz-home').value = label; $('lz-home')._place = { label: label, lat: lat, lng: lng }; setBias({ lat: lat, lng: lng }); b.disabled = false; b.textContent = 'המיקום שלי'; setHome(); });
       }, function () { b.disabled = false; b.textContent = 'המיקום שלי'; $('lz-home-msg').textContent = 'לא הצלחתי לקבל מיקום. אפשר לכתוב כתובת.'; }, { timeout: 12000, maximumAge: 60000 });
     });
     function setHome() {
