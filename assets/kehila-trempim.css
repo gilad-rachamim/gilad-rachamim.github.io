@@ -49,6 +49,14 @@
 .tp-big{font-size:1.6rem;font-weight:700;color:var(--cream)}
 .tp-big small{font-size:1rem;color:var(--muted);font-weight:400}
 .tp-pay{margin-top:.5rem;padding:.6rem .7rem;border-radius:10px;background:rgba(216,179,95,.08);border:1px solid var(--gold-soft)}
+.tp-mode{display:grid!important;grid-template-columns:1fr 1fr;gap:.4rem}
+.tp-mode button{padding:.65rem .4rem;font-weight:600}
+.tp-kind{display:inline-block;font-size:.82rem;font-weight:700;color:#1a1a1a;background:#f2c94c;border-radius:6px;padding:0 .4rem;margin-inline-end:.15rem}
+.tp-taxi{border-color:rgba(242,201,76,.55)}
+.tp-save{color:var(--cream)}
+.tp-save b{color:var(--accent)}
+.tp-taxi-calc{margin-top:.6rem}
+.tp-taxi-calc small{display:block;color:var(--muted);margin-top:.25rem}
 @media (max-width:420px){.tp-row{flex-direction:column}}
 /* הלו"ז הקבוע שלי (/kelim/kehila/trempim/luz/) */
 .lz-item .acts .go{border-color:var(--gold);color:var(--cream);background:rgba(216,179,95,.14)}
