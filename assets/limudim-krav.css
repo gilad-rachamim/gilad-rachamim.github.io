@@ -26,7 +26,7 @@
 .kv-board .sc{color:var(--muted);font-size:.92rem;white-space:nowrap}
 .kv-board .sc b{color:var(--gold-hi);font-size:1.05rem}
 /* משחק */
-.kv-hud{display:flex;justify-content:space-between;gap:.4rem;margin:.4rem 0 .6rem;position:sticky;top:0;z-index:5;background:var(--ink);padding:.4rem 0}
+.kv-hud{display:flex;justify-content:space-between;gap:.4rem;margin:.4rem 0 .6rem;padding:.2rem 0}
 .kv-hud>span{flex:1;text-align:center;border:1px solid var(--line);border-radius:12px;padding:.35rem .2rem;color:var(--muted);font-size:.85rem;background:rgba(255,255,255,.03)}
 .kv-hud>span b{display:block;color:var(--cream);font-size:1.3rem;font-variant-numeric:tabular-nums}
 .kv-hud>span.low{border-color:#e07a6a}
