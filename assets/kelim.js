@@ -197,3 +197,11 @@
     more.addEventListener('toggle', function () { if (more.open) ev('tool_suggest_open', { tool: tool }); });
   })();
 })();
+
+// כיתות (/kelim/chashiva/kita/): מי שהצטרף לכיתה – טוענים את kita.js, שמוסיף נקודות מהמשחקים ומהתרגול ללוח הכיתה.
+(function () {
+  try {
+    if (!localStorage.getItem('kita-me') || document.querySelector('script[src^="/assets/kita.js"]')) return;
+    var s = document.createElement('script'); s.src = '/assets/kita.js?d=' + new Date().toISOString().slice(0, 10); s.defer = true; document.head.appendChild(s);
+  } catch (e) {}
+})();

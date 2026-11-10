@@ -80,10 +80,12 @@
   function say(t) { $('nn-msg').textContent = t || ''; }
 
   function start(m, arg) {
+    if (m !== 'vs') CH.vsReset();
     mode = m; won = false; undo = []; hints = 0; $('nn-win').innerHTML = ''; say('');
     var seed, n, label;
     if (m === 'daily') { n = 10; seed = 'nono-daily-' + CH.today(); label = 'האתגר היומי · ' + CH.shortDate(); }
     else if (m === 'level') { n = sizeForLevel(arg); seed = 'nono-level-' + arg; label = 'שלב ' + arg; }
+    else if (m === 'vs') { n = +arg.n; seed = arg.s; label = 'אתגר מחבר'; }
     else { n = arg; seed = 'nono-free-' + n + '-' + Date.now(); label = 'לוח חופשי'; }
     P = generate(seed, n); P.key = seed; P.label = label; P.level = arg;
     cur = new Array(n * n).fill(0);
@@ -213,7 +215,9 @@
     CH.win({ tool: TOOL, el: $('nn-win'), daily: daily && !already, stats: st,
       title: hints ? 'פתרתם! 🎉' : 'פתרתם בלי רמזים! 🎉',
       line: '<span>⏱ <b>' + CH.fmt(clock.sec) + '</b></span>' + (hints ? '<span>💡 ' + hints + ' רמזים</span>' : ''),
-      share: share, next: next });
+      share: share, next: next,
+      vs: { g: 'nono', s: P.key, n: P.n }, vsMine: { t: clock.sec, h: hints, q: 'time' }, vsWhat: 'אותו לוח',
+      vsMsg: '⚔️ אתגר בשחור ופתור: פתרתי את הלוח הזה ב-' + CH.fmt(clock.sec) + (hints ? ' (עם ' + hints + ' רמזים)' : '') + '. תצליחו מהר יותר?' });
   }
 
   // ---------- לשוניות ושלבים ----------
@@ -227,6 +231,7 @@
     $('nn-levels').querySelectorAll('button').forEach(function (b) { b.onclick = function () { start('level', +b.getAttribute('data-l')); drawLevels(); }; });
   }
   function tab(m) {
+    CH.vsReset();
     document.querySelectorAll('#nn-tabs button').forEach(function (b) { b.setAttribute('aria-selected', b.getAttribute('data-m') === m); });
     $('nn-lvlbox').hidden = m !== 'level'; $('nn-freebox').hidden = m !== 'free';
     if (m === 'daily') start('daily');
@@ -240,5 +245,8 @@
   var rs; window.addEventListener('resize', function () { clearTimeout(rs); rs = setTimeout(function () { if (P) draw(); if (won) $('nn-board').classList.add('won'); }, 200); });
 
   var first = location.hash === '#shlavim' ? 'level' : data.cur && /^nono-level-/.test(data.cur.key) ? 'level' : 'daily';
-  tab(first);
+  var V = CH.vsIn && CH.vsIn.g === 'nono' && typeof CH.vsIn.s === 'string' && /^nono-/.test(CH.vsIn.s) && [5, 8, 10, 15].indexOf(+CH.vsIn.n) > -1 ? CH.vsIn : null;
+  if (V && V.s === 'nono-daily-' + CH.today()) { tab('daily'); CH.vsStart(TOOL, 'הלוח הזה'); }
+  else if (V) { document.querySelectorAll('#nn-tabs button').forEach(function (b) { b.setAttribute('aria-selected', 'false'); }); start('vs', V); CH.vsStart(TOOL, 'הלוח הזה'); }
+  else tab(first);
 })();
