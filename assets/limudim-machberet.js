@@ -315,7 +315,7 @@
       var key = (I.tex || I.text || '') + '|' + I.kind;
       if (pv.getAttribute('data-k') !== key) {
         pv.setAttribute('data-k', key);
-        if (I.tex) { pv.setAttribute('dir', 'ltr'); tex(pv, I.tex); pv.className = 'mb-prev'; }
+        if (I.tex) { pv.setAttribute('dir', 'ltr'); pv.style.fontSize = ''; tex(pv, I.tex); pv.className = 'mb-prev'; fit(pv); }
         else if (I.kind === 'text') { pv.setAttribute('dir', 'rtl'); pv.textContent = I.text; pv.className = 'mb-prev mb-txt'; }
         else { pv.textContent = ''; pv.className = 'mb-prev'; }
       }
@@ -328,6 +328,15 @@
     });
     var a = document.activeElement; if (a && a.classList.contains('mb-in')) showChip(a.closest('li'));
   }
+  // נוסחה ארוכה: מקטינים עד שנכנסת ברוחב (לא פחות מ-60%), ואם עדיין לא – גוללים לצד
+  function fit(pv) {
+    var w = pv.clientWidth, k = pv.scrollWidth;
+    if (w && k && k > w) pv.style.fontSize = Math.max(0.55, w / k) * parseFloat(getComputedStyle(pv).fontSize) / 16 + 'rem';
+  }
+  function fitAll() { Array.prototype.forEach.call(document.querySelectorAll('#mb-rows .mb-prev'), function (pv) { if (pv.querySelector('.katex')) { pv.style.fontSize = ''; fit(pv); } }); }
+  try { document.fonts.ready.then(fitAll); } catch (_) {}
+  window.addEventListener('load', fitAll);
+  var fitT = null; window.addEventListener('resize', function () { clearTimeout(fitT); fitT = setTimeout(fitAll, 200); });
   // נוסחה שקופצת לפי מה שכותבים בשורה
   function showChip(li) {
     Array.prototype.forEach.call(rowsEl.querySelectorAll('.mb-chip'), function (c) { if (c.parentNode.parentNode !== li) c.innerHTML = ''; });
@@ -404,7 +413,7 @@
       return { t: 'בשורה ' + w + ' יש סימן שאלה. נסו להציב מספר קטן (למשל x=1) בשורה ' + w + ' ובשורה שלפניה, ולראות איפה זה מתפרק. טעויות נפוצות: סימן שהתהפך בהעברת אגף, כפל שלא הגיע לכל האיברים בסוגריים, או חילוק רק של חלק מהאגף.' };
     }
     var r = res[lastI], I = r.info, tp = M.topics(I);
-    if (I.kind === 'bad') return { t: 'המחברת לא הצליחה לקרוא את שורה ' + lastI + ' (' + r.msg + '). בודקים שכל סוגר נסגר, ושיש כפל בין מספר לסוגריים, למשל 2*(x+1) או 2(x+1).' };
+    if (I.kind === 'bad') return { t: 'המחברת לא הצליחה לקרוא את ' + (lastI ? 'שורה ' + lastI : 'שורת התרגיל') + ' (' + r.msg + '). בודקים שכל סוגר נסגר, ושיש כפל בין מספר לסוגריים, למשל 2*(x+1) או 2(x+1).' };
     if (I.kind === 'sol' && r.mark === 'ok') return { t: 'סיימתם! 🎉 בדיקה אחרונה, כמו בבגרות: מציבים את הפתרון בתרגיל המקורי ורואים ששני הצדדים יוצאים שווים.' };
     if (I.kind === 'text') return { t: 'שורה במילים זה מצוין להסבר. את השלב הבא כותבים בנוסחה, כדי שהמחברת תוכל לבדוק אותו.' };
     if (I.kind === 'ineq') return { t: 'פותרים אי-שוויון כמו משוואה. רק לזכור: כשכופלים או מחלקים במספר שלילי, הסימן מתהפך (< הופך ל->).' };
@@ -566,7 +575,7 @@
   function numericProof(rows) { // טענות עם מספרים: מחשבים לפי מה שכבר ידוע
     var known = {}, out = [];
     rows.forEach(function (row) {
-      var r = { mark: '', msg: '' }, c = String(row.c || '').replace(/[△≅∼∥⊥]/g, '#');
+      var r = { mark: '', msg: '' }, c = String(row.c || '').replace(/≈/g, '=').replace(/[△≅∼∥⊥]/g, '#');
       out.push(r);
       if (!c.trim() || /#|[א-ת]/.test(c) || c.indexOf('=') < 0) return;
       var sides;
@@ -583,13 +592,32 @@
       }
       if (names.length === 1 && sides.length === 2) {
         var u = names[0], g = M.eqFn(sides[0], sides[1]);
-        var rs = M.roots(function (x) { var e = {}; for (var q in env) e[q] = env[q]; e[u] = x; try { return M.ev(g, e); } catch (_) { return NaN; } }, false).filter(function (x) { return x > 1e-9; });
+        var rs = posRoots(function (x) { var e = {}; for (var q in env) e[q] = env[q]; e[u] = x; try { return M.ev(g, e); } catch (_) { return NaN; } });
         if (rs.length === 1) { known[u] = rs[0]; if (sides[0].t !== 'v' || M.namesOf(sides[1]).length) r.msg = 'מכאן: ⁦' + varName(u) + ' ≈ ' + M.nice(rs[0]) + '⁩.'; }
         else if (rs.length > 1) r.msg = 'יש כאן יותר מפתרון אחד (' + rs.slice(0, 3).map(M.nice).join(', ') + '). כדאי לבדוק איזה מתאים.';
       }
     });
     return out;
   }
+  // שורשים חיוביים בלבד (אורכים וזוויות), סריקה לוגריתמית מהירה מ-0.001 עד 100000
+  function posRoots(f) {
+    var R = [], px = 0.001, pv = f(px);
+    for (var i = 1; i <= 1600 && R.length < 6; i++) {
+      var x = Math.pow(10, -3 + 8 * i / 1600), v = f(x);
+      if (isFinite(v) && isFinite(pv)) {
+        if (v === 0) R.push(x);
+        else if ((v < 0) !== (pv < 0) && pv !== 0) {
+          var a = px, b = x, fa = pv;
+          for (var it = 0; it < 80; it++) { var m = (a + b) / 2, fm = f(m); if ((fm < 0) === (fa < 0)) { a = m; fa = fm; } else b = m; }
+          var r = (a + b) / 2;
+          if (Math.abs(f(r)) < 1e-6 * Math.max(1, Math.abs(pv), Math.abs(v))) R.push(r);
+        }
+      }
+      px = x; pv = v;
+    }
+    return R;
+  }
+  function plural(n, one, many) { return n === 1 ? one : n + ' ' + many; }
   function angKey(n) { return n.length === 3 ? (n[0] < n[2] ? n : n[2] + n[1] + n[0]) : n; }
   function varName(u) { return /^ang_/.test(u) ? '∠' + u.slice(4) : u; }
   function roundedClose(sides, vals) {
@@ -643,8 +671,8 @@
     pres.hidden = false; pres.innerHTML = '';
     if (!res.rows.length) { pres.appendChild(el('p', 'mb-ht', 'עוד אין שורות בהוכחה. מתחילים מהנתונים: כל נתון בשורה משלו, עם הנימוק "נתון".')); return; }
     var head = res.reached && !res.warn ? '🎉 כל הכבוד! הגעתם למה שצריך להוכיח, ולכל שורה יש נימוק.' :
-      res.reached ? 'הגעתם למה שצריך להוכיח. נשארו ' + res.warn + ' שורות עם סימן שאלה, כדאי לעבור עליהן.' :
-      P.prove.trim() ? 'השורה האחרונה עוד לא מה שצריך להוכיח (' + P.prove.trim() + '). ' + (res.warn ? 'ויש ' + res.warn + ' שורות עם סימן שאלה.' : 'עד כאן נראה מסודר, ממשיכים.') :
+      res.reached ? 'הגעתם למה שצריך להוכיח. ' + (res.warn === 1 ? 'נשארה שורה אחת עם סימן שאלה, כדאי לעבור עליה.' : 'נשארו ' + res.warn + ' שורות עם סימן שאלה, כדאי לעבור עליהן.') :
+      P.prove.trim() ? 'השורה האחרונה עוד לא מה שצריך להוכיח (' + P.prove.trim() + '). ' + (res.warn ? 'ויש ' + plural(res.warn, 'שורה אחת', 'שורות') + ' עם סימן שאלה.' : 'עד כאן נראה מסודר, ממשיכים.') :
       'כותבים למעלה מה צריך להוכיח, כדי שאוכל לבדוק אם הגעתם.';
     pres.appendChild(el('p', 'mb-ht', esc(head)));
     pres.appendChild(el('p', 'note', 'הבדיקה כאן בודקת מבנה, נימוקים וחישובים. היא לא מבינה שרטוט. "בדיקה חכמה" קוראת את כל ההוכחה ובודקת את ההיגיון.'));
