@@ -158,3 +158,15 @@
 .ch-badges>div{display:flex;flex-wrap:wrap;gap:.45rem}
 .ch-badges span{display:flex;flex-direction:column;align-items:center;border:1px solid var(--gold-soft);border-radius:12px;padding:.35rem .5rem;font-size:1.5rem;min-width:3.2rem;background:rgba(216,179,95,.07)}
 .ch-badges small{font-size:.72rem;color:var(--muted)}
+
+/* ===== משחק עם חבר ===== */
+.ch-vsbanner{border:2px solid var(--accent);border-radius:14px;padding:.65rem .85rem;margin:.4rem 0 .6rem;background:rgba(95,191,166,.1);color:var(--parchment);text-align:center}
+.ch-vsbanner b{color:var(--cream)}
+.ch-vsres{border:2px solid var(--accent);border-radius:14px;padding:.6rem .8rem;margin:.2rem 0 .8rem;background:rgba(95,191,166,.12);display:flex;flex-direction:column;gap:.2rem}
+.ch-vsres b{color:var(--cream);font-size:1.2rem}
+.ch-vsres span{color:var(--parchment)}
+.ch-vs{border:1px solid var(--accent);border-radius:14px;padding:.8rem;margin:0 0 1rem;background:rgba(95,191,166,.06);display:flex;flex-direction:column;gap:.45rem;text-align:right}
+.ch-vs b{color:var(--cream);font-size:1.08rem}
+.ch-vs span{color:var(--muted);font-size:.93rem}
+.ch-vs input{font:inherit;padding:.55rem .75rem;border-radius:10px;border:1px solid var(--line);background:var(--ink);color:var(--cream)}
+.ch-vs .actions{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center}
