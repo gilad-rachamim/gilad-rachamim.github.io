@@ -295,8 +295,10 @@ export async function runEdition(env, { force = false, now = new Date(), push = 
   ed.v = VERSION;
   await call(env, '/save', ed);
   if (push) await call(env, '/push-start', {});
-  if (push && env.FB_PAGE_TOKEN && env.FB_PAGE_ID) ed.fb = await postFacebook(env, ed, (await call(env, '/config')).links || {}).catch(e => ({ error: String(e).slice(0, 200) }));
-  return { ok: true, fb: ed.fb, name: ed.name, mode: ed.mode, main: ed.sections.main.length, dropped: ed.dropped.length, failed, error: ed.error };
+  const cfg = await call(env, '/config');
+  if (push && env.FB_PAGE_TOKEN && env.FB_PAGE_ID) ed.fb = await postFacebook(env, ed, cfg.links || {}).catch(e => ({ error: String(e).slice(0, 200) }));
+  if (push && env.WHAPI_TOKEN && cfg.waid) ed.wa = await postWhatsapp(env, ed, cfg.waid).catch(e => ({ error: String(e).slice(0, 200) }));
+  return { ok: true, fb: ed.fb, wa: ed.wa, name: ed.name, mode: ed.mode, main: ed.sections.main.length, dropped: ed.dropped.length, failed, error: ed.error };
 }
 
 // ---------- השרת ----------
@@ -334,6 +336,11 @@ export default {
     if (url.pathname === '/config') {
       if (!admin) return json({ ok: false }, 403);
       const wa = url.searchParams.get('wa');
+      const waid = url.searchParams.get('waid');
+      if (waid !== null) {
+        if (waid && !/^\d{10,25}@newsletter$/.test(waid)) return json({ ok: false, error: 'מזהה ערוץ לא תקין' }, 400);
+        return json(await call(env, '/config-set', { waid }));
+      }
       if (wa === null) return json(await call(env, '/config'));
       if (wa && !/^https:\/\/(www\.)?whatsapp\.com\/channel\/[A-Za-z0-9]+$/.test(wa)) return json({ ok: false, error: 'קישור ערוץ לא תקין' }, 400);
       return json(await call(env, '/config-set', { wa }));
@@ -365,12 +372,23 @@ export default {
 const PAGE_URL = 'https://gilad-rachamim.github.io/kelim/machshev/chadashot/';
 // מאיפה הגיעו (נספר ב-/stats): דף, טלפון, התראה, פייסבוק, ווטסאפ, מודעה (QR), שיתוף, דף הבית
 export const FROM = ['web', 'phone', 'push', 'fb', 'wa', 'qr', 'share', 'home'];
-export function editionText(ed, links = {}) {
+// ערוץ הווטסאפ: דרך Whapi.Cloud (מסלול חינמי), שמחובר למספר של גילעד כ"מכשיר מקושר". אין API רשמי לערוצים.
+// WHAPI_TOKEN = סוד בשרת (tools/news-worker/wa-setup.ps1), מזהה הערוץ ב-/config?waid=
+async function postWhatsapp(env, ed, waid) {
+  const r = await fetch('https://gate.whapi.cloud/messages/text', {
+    method: 'POST',
+    headers: { authorization: 'Bearer ' + env.WHAPI_TOKEN, 'content-type': 'application/json' },
+    body: JSON.stringify({ to: waid, body: editionText(ed, {}, 'wa') })
+  });
+  const j = await r.json().catch(() => ({}));
+  return r.ok ? { id: j.message?.id || true } : { error: (j.error && (j.error.message || j.error)) || String(r.status) };
+}
+export function editionText(ed, links = {}, src = 'fb') {
   const out = [`📰 החדשות ב-3 דקות – ${ed.name}, יום ${ed.date.day} ${ed.date.he}`, ''];
   const names = { haredi: 'ציבור חרדי', economy: 'כלכלה וכיס' };
   ed.sections.main.forEach((p, i) => out.push(`${i + 1}. ${p.text}`));
   for (const k of ['haredi', 'economy']) if (ed.sections[k]?.length) { out.push('', `▪️ ${names[k]}`); ed.sections[k].forEach(p => out.push(`• ${p.text}`)); }
-  out.push('', 'כל נקודה עם קישור למקור, והתראה 3 פעמים ביום:', PAGE_URL + '?utm_source=fb');
+  out.push('', 'כל נקודה עם קישור למקור, והתראה 3 פעמים ביום:', PAGE_URL + '?utm_source=' + src);
   if (links.wa) out.push('', '📲 בערוץ הווטסאפ, 3 פעמים ביום:', links.wa);
   out.push('בטלפון כשר: 077-2253345 שלוחה 8');
   return out.join('\n');
@@ -439,7 +457,8 @@ export class Store {
     if (path === '/config') return Response.json((await this.s.get('config')) || { links: {} });
     if (path === '/config-set') {
       const c = (await this.s.get('config')) || { links: {} };
-      if (body.wa) c.links.wa = body.wa; else delete c.links.wa;
+      if ('wa' in body) { if (body.wa) c.links.wa = body.wa; else delete c.links.wa; }
+      if ('waid' in body) { if (body.waid) c.waid = body.waid; else delete c.waid; } // מזהה הערוץ לפרסום (לא מוצג לציבור)
       await this.s.put('config', c);
       return Response.json({ ok: true, ...c });
     }
