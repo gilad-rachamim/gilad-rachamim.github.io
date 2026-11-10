@@ -56,7 +56,7 @@
     }).join('');
     var good = bars.filter(function (b) { return b[1] === best; }).map(function (b) { return b[0]; });
     $('oc-best').textContent = 'הכי גבוה: ' + Math.round(best * 100) + '% עם ' + good.slice(0, 6).join(', ') + ' threads בבלוק.';
-    T.wa($('oc-wa'), 'CUDA Occupancy · CC ' + st.cc + ' · ' + st.t + ' threads, ' + st.r + ' regs, ' + st.s + ' B shared\n= ' + p + '% (' + o.warps + '/' + o.maxW + ' warps)\nhttps://gilad-rachamim.github.io/kelim/tichnut/occupancy/');
+    T.wa($('oc-wa'), 'CUDA Occupancy · CC ' + st.cc + ' · ' + st.t + ' threads, ' + st.r + ' regs, ' + st.s + ' B shared\n= ' + p + '% (' + o.warps + '/' + o.maxW + ' warps)\nhttps://hakelim.com/kelim/tichnut/occupancy/');
     T.save(KEY, st);
   }
   fill(); render();

@@ -135,7 +135,7 @@
         if (seen[x.part.id]) return '<h4>(' + esc(x.name) + ')</h4>'; seen[x.part.id] = 1;
         return '<h4>' + esc(x.name) + '</h4><p>' + esc(x.lines.join('\n')) + '</p>';
       }).join('') + '<p class="ft">נכתב ב"השיר שלי" – הכלים של גילעד רחמים</p>';
-    $('sm-wa').href = S.wa((song.title ? '🎵 ' + song.title + '\n' : '') + (song.author ? 'מילים: ' + song.author + '\n\n' : '\n') + S.plain(song) + '\n\nכתבתי את השיר ב"השיר שלי", בחינם: https://gilad-rachamim.github.io/kelim/shir/');
+    $('sm-wa').href = S.wa((song.title ? '🎵 ' + song.title + '\n' : '') + (song.author ? 'מילים: ' + song.author + '\n\n' : '\n') + S.plain(song) + '\n\nכתבתי את השיר ב"השיר שלי", בחינם: https://hakelim.com/kelim/shir/');
   }
 
   // ---------- אירועים ----------

@@ -166,11 +166,11 @@
 
     document.getElementById('ics').addEventListener('click', function () {
       var d1 = iso(main).replace(/-/g, ''), d2 = iso(addDays(main, 1)).replace(/-/g, '');
-      var ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//gilad-rachamim.github.io//moed//HE', 'BEGIN:VEVENT',
-        'UID:brit-' + d1 + '@gilad-rachamim.github.io', 'DTSTAMP:' + iso(new Date()).replace(/-/g, '') + 'T090000',
+      var ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//hakelim.com//moed//HE', 'BEGIN:VEVENT',
+        'UID:brit-' + d1 + '@hakelim.com', 'DTSTAMP:' + iso(new Date()).replace(/-/g, '') + 'T090000',
         'DTSTART;VALUE=DATE:' + d1, 'DTEND;VALUE=DATE:' + d2,
         'SUMMARY:ברית מילה בעז"ה – ' + hebrew(main),
-        'DESCRIPTION:חושב במחשבון מועד הברית של גילעד רחמים המוהל. לתיאום: 058-404-9049 (ווטסאפ) wa.me/972584049049 · https://gilad-rachamim.github.io/mohel/',
+        'DESCRIPTION:חושב במחשבון מועד הברית של גילעד רחמים המוהל. לתיאום: 058-404-9049 (ווטסאפ) wa.me/972584049049 · https://hakelim.com/mohel/',
         'BEGIN:VALARM', 'TRIGGER:-P1D', 'ACTION:DISPLAY', 'DESCRIPTION:מחר הברית בעז"ה', 'END:VALARM',
         'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
       var blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });

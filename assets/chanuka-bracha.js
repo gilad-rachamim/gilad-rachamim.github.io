@@ -76,7 +76,7 @@
     var lines = wrapLines(g, st.line, W - 220).slice(0, 3), y = 920;
     lines.forEach(function (l) { g.fillText(l, W / 2, y); y += 66; });
     if (st.sign.trim()) { g.fillStyle = T.acc; g.font = 'bold 56px ' + serif; g.fillText(st.sign.trim(), W / 2, Math.max(y + 60, 1140)); }
-    g.globalAlpha = .6; g.fillStyle = T.ink; g.font = '26px ' + sans; g.fillText('כרטיס משלכם בחינם: gilad-rachamim.github.io/kodesh/chanuka', W / 2, Hh - 70); g.globalAlpha = 1;
+    g.globalAlpha = .6; g.fillStyle = T.ink; g.font = '26px ' + sans; g.fillText('כרטיס משלכם בחינם: hakelim.com/kodesh/chanuka', W / 2, Hh - 70); g.globalAlpha = 1;
   }
   var view = $('br-canvas');
   function render() { draw(view); }

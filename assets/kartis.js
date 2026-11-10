@@ -8,7 +8,7 @@
     'TITLE;CHARSET=UTF-8:מוהל מוסמך',
     'TEL;TYPE=CELL,VOICE:+972584049049',
     'EMAIL;TYPE=INTERNET:gilad4049@gmail.com',
-    'URL:https://gilad-rachamim.github.io/mohel/',
+    'URL:https://hakelim.com/mohel/',
     'ADR;CHARSET=UTF-8;TYPE=WORK:;;;ירושלים;;;ישראל',
     'NOTE;CHARSET=UTF-8:ברית מכל הלב והנשמה. מוהל מוסמך מטעם מכון עלייה. שיחת היכרות לפני הברית, ביקור בית אחריה.',
     'END:VCARD'
@@ -25,14 +25,14 @@
 
   var share = document.getElementById('share');
   if (share) share.addEventListener('click', function () {
-    var data = { title: 'גילעד רחמים המוהל', text: 'גילעד רחמים המוהל – ברית מכל הלב והנשמה · 058-404-9049 (ווטסאפ)', url: 'https://gilad-rachamim.github.io/mohel/kartis/' };
+    var data = { title: 'גילעד רחמים המוהל', text: 'גילעד רחמים המוהל – ברית מכל הלב והנשמה · 058-404-9049 (ווטסאפ)', url: 'https://hakelim.com/mohel/kartis/' };
     if (navigator.share) { navigator.share(data).catch(function () {}); return; }
     location.href = 'https://wa.me/?text=' + encodeURIComponent(data.text + ' ' + data.url);
   });
 
   var copy = document.getElementById('copy');
   if (copy) copy.addEventListener('click', function () {
-    var t = 'https://gilad-rachamim.github.io/mohel/kartis/';
+    var t = 'https://hakelim.com/mohel/kartis/';
     (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () {
       copy.textContent = 'הקישור הועתק';
       setTimeout(function () { copy.textContent = 'העתקת קישור'; }, 2000);

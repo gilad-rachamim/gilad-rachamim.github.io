@@ -375,7 +375,7 @@
     $('kt-cal-g').addEventListener('click', function () { used('chashiva_kita_more', 'cal-google'); });
     $('kt-cal-ics').addEventListener('click', function () {
       var d = nextSunday8(), day = ymd(d), url = SITE + 'more/#c=' + T.code;
-      var ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//kelim//kita//HE', 'BEGIN:VEVENT', 'UID:kita-' + T.code + '@gilad-rachamim.github.io', 'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z',
+      var ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//kelim//kita//HE', 'BEGIN:VEVENT', 'UID:kita-' + T.code + '@hakelim.com', 'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z',
         'DTSTART;TZID=Asia/Jerusalem:' + day + 'T080000', 'DURATION:PT15M', 'RRULE:FREQ=WEEKLY;BYDAY=SU', 'SUMMARY:כיתה משחקת – סיכום השבוע של ' + (data.name || ''), 'DESCRIPTION:מי הובילו השבוע ומה מגיע להן', 'URL:' + url,
         'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:כיתה משחקת', 'TRIGGER:PT0M', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
       var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' })); a.download = 'kita-' + T.code + '.ics'; document.body.appendChild(a); a.click(); a.remove();
@@ -417,7 +417,7 @@
     // ---- מודעה לכיתה ----
     $('kt-t-poster-btn').addEventListener('click', function () {
       $('kt-poster').innerHTML = '<div class="p-h">🏆 ' + esc(data.name) + ': כיתה משחקת</div><div>כל משחק ותרגול מוסיף נקודות ללוח הכיתה</div><div class="p-code">' + T.code + '</div>' +
-        '<ol><li>נכנסים ל: <span class="p-url">gilad-rachamim.github.io/kelim/chashiva/kita</span></li><li>כותבים את הקוד למעלה</li><li>בוחרים כינוי (לא שם מלא)</li><li>משחקים, מתרגלים וצוברים!</li></ol>' +
+        '<ol><li>נכנסים ל: <span class="p-url">hakelim.com/kelim/chashiva/kita</span></li><li>כותבים את הקוד למעלה</li><li>בוחרים כינוי (לא שם מלא)</li><li>משחקים, מתרגלים וצוברים!</li></ol>' +
         (realG(data.gifts).length ? '<div><b>על מה מתחרים:</b> ' + realG(data.gifts).map(function (g) { return esc(g.i + ' ' + g.t); }).join(' · ') + '</div>' : '');
       $('kt-poster-sec').hidden = false; $('kt-poster-sec').scrollIntoView({ behavior: 'smooth' }); used('chashiva_kita_more', 'poster');
     });

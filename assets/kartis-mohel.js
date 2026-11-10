@@ -170,7 +170,7 @@
         qrAt(qx2, (H - qs2) / 2 - 20, qs2, 30);
       }
       ctx.textAlign = 'center'; ctx.fillStyle = th.foot; ctx.font = '400 ' + (tall ? 26 : 21) + 'px ' + api.SANS;
-      ctx.fillText(CREDIT + ' · gilad-rachamim.github.io', W / 2, H - M - 24);
+      ctx.fillText(CREDIT + ' · hakelim.com', W / 2, H - M - 24);
     }
   }) : null;
   function redraw() { var f = $('km-imgform'); if (f) f.dispatchEvent(new Event('input')); }

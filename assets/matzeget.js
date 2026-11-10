@@ -508,7 +508,7 @@
       'footer{padding:50px 16px 60px}footer b{display:block;font-family:"Frank Ruhl Libre",David,serif;font-size:1.7rem;color:var(--acc)}footer p{margin:.6rem 0}footer small{opacity:.55;font-size:.75rem}.bsd{position:absolute;top:10px;right:14px;font-size:.8rem;opacity:.7}</style></head><body>' +
       (I.bsd ? '<span class="bsd">בס"ד</span>' : '') +
       '<header>' + (photos[0] ? '<img src="' + src(photos[0]) + '" alt="">' : '') + (I.top ? '<div class="top">' + esc(I.top) + '</div>' : '') + '<h1>' + esc(I.names) + '</h1><div class="orn"></div>' + (I.date ? '<div class="dt">' + esc(I.date) + '</div>' : '') + '<div class="hint">גוללים למטה ↓</div></header>' +
-      '<main>' + items + '</main><footer><b>' + esc(I.end) + '</b>' + (I.sub ? '<p>' + esc(I.sub) + '</p>' : '') + '<small>נוצר בחינם · הכלים של גילעד רחמים · gilad-rachamim.github.io/kelim/tochen/matzeget/</small></footer></body></html>';
+      '<main>' + items + '</main><footer><b>' + esc(I.end) + '</b>' + (I.sub ? '<p>' + esc(I.sub) + '</p>' : '') + '<small>נוצר בחינם · הכלים של גילעד רחמים · hakelim.com/kelim/tochen/matzeget/</small></footer></body></html>';
   }
   $('al-phone').addEventListener('click', function () {
     if (!need()) { $('al-info').textContent = 'קודם מוסיפים תמונות.'; return; }

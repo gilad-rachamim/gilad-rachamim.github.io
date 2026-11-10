@@ -208,7 +208,7 @@
     var title = $('tl-name').textContent;
     var html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>' + title + '</title><style>body{direction:rtl;font-family:David,Arial;font-size:14pt;line-height:1.6}</style></head><body dir="rtl"><h1>' + title.replace(/</g, '&lt;') + '</h1>' +
       Array.prototype.map.call(textEl.querySelectorAll('p'), function (p) { return '<p>' + p.textContent.replace(/</g, '&lt;') + '</p>'; }).join('') +
-      '<p style="color:#888;font-size:10pt">תומלל בכלי התמלול של הכלים של גילעד רחמים · gilad-rachamim.github.io/kelim/tamlul/</p></body></html>';
+      '<p style="color:#888;font-size:10pt">תומלל בכלי התמלול של הכלים של גילעד רחמים · hakelim.com/kelim/tamlul/</p></body></html>';
     var a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob(['﻿', html], { type: 'application/msword' }));
     a.download = title.replace(/[\\/:*?"<>|]/g, '') + ' - תמלול.doc';

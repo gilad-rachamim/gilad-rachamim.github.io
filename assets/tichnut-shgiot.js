@@ -157,7 +157,7 @@
     });
     box.innerHTML = html;
     var sum = hits.length ? hits.map(function (d) { return d[1] + '\n' + d[3].split('|').map(function (s, i) { return (i + 1) + '. ' + s; }).join('\n'); }).join('\n\n') : '';
-    T.wa($('sh-wa'), (ll ? ll + '\n\n' : '') + sum + '\n\nהסבר בעברית: https://gilad-rachamim.github.io/kelim/tichnut/shgiot/');
+    T.wa($('sh-wa'), (ll ? ll + '\n\n' : '') + sum + '\n\nהסבר בעברית: https://hakelim.com/kelim/tichnut/shgiot/');
     if (track) T.used('tichnut_shgiot', hits.length ? 'add' : 'miss');
   }
   $('sh-go').addEventListener('click', function () { run(true); });

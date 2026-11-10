@@ -4,7 +4,7 @@
   var EX = {
     b64e: 'שלום עולם! Hello GPU 🚀',
     b64d: '16nXnNeV150g16LXldec150hIEhlbGxvIEdQVSDwn5qA',
-    urle: 'https://gilad-rachamim.github.io/kelim/?q=כלים למתכנתים&gpu=RTX 4090',
+    urle: 'https://hakelim.com/kelim/?q=כלים למתכנתים&gpu=RTX 4090',
     urld: 'q%3D%D7%9B%D7%9C%D7%99%D7%9D%20%D7%9C%D7%9E%D7%AA%D7%9B%D7%A0%D7%AA%D7%99%D7%9D',
     jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0IiwibmFtZSI6ImRlbW8iLCJyb2xlIjoiZGV2IiwiaWF0IjoxNzYyNjAwMDAwLCJleHAiOjE4MzAwMDAwMDB9.c2lnbmF0dXJlLWRlbW8'
   };

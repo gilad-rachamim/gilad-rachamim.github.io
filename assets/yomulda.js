@@ -58,7 +58,7 @@
     var lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//gilad-rachamim//yomulda//HE', 'CALSCALE:GREGORIAN'];
     st.forEach(function (e) {
       var y = e.y || 2000, s = y + pad(e.m) + pad(e.d), nd = new Date(y, e.m - 1, e.d + 1);
-      lines.push('BEGIN:VEVENT', 'UID:' + e.id + '@gilad-rachamim.github.io', 'DTSTAMP:' + stamp, 'DTSTART;VALUE=DATE:' + s,
+      lines.push('BEGIN:VEVENT', 'UID:' + e.id + '@hakelim.com', 'DTSTAMP:' + stamp, 'DTSTART;VALUE=DATE:' + s,
         'DTEND;VALUE=DATE:' + nd.getFullYear() + pad(nd.getMonth() + 1) + pad(nd.getDate()), 'RRULE:FREQ=YEARLY',
         'SUMMARY:' + icsEsc((ICON[e.k] || '') + ' ' + e.k + ' – ' + e.n),
         'BEGIN:VALARM', 'TRIGGER:-PT15H', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsEsc('מחר: ' + e.k + ' – ' + e.n), 'END:VALARM', 'END:VEVENT');

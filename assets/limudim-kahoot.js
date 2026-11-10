@@ -226,7 +226,7 @@
   function kahootRows() {
     var rows = [];
     rows[0] = ['', S.title];
-    rows[1] = ['', 'Made with gilad-rachamim.github.io/limudim/kahoot/'];
+    rows[1] = ['', 'Made with hakelim.com/limudim/kahoot/'];
     rows[7] = ['', 'Question - max 120 characters', 'Answer 1 - max 75 characters', 'Answer 2 - max 75 characters', 'Answer 3 - max 75 characters', 'Answer 4 - max 75 characters', 'Time limit (sec) – 5, 10, 20, 30, 60, 90, 120, or 240 secs', 'Correct answer(s) - choose at least one'];
     S.qs.forEach(function (it, i) {
       // תשובות ריקות יורדות לסוף, ומספר התשובה הנכונה מתעדכן
@@ -296,7 +296,7 @@
     var L = 'אבגד';
     var txt = S.title + '\n\n' + S.qs.map(function (it, i) {
       return (i + 1) + '. ' + it.q + '\n' + it.a.map(function (a, k) { return a.trim() ? '   ' + L[k] + '. ' + a + (k === it.c ? ' ✓' : '') : ''; }).filter(Boolean).join('\n');
-    }).join('\n\n') + '\n\nנבנה בחינם ב: https://gilad-rachamim.github.io/limudim/kahoot/';
+    }).join('\n\n') + '\n\nנבנה בחינם ב: https://hakelim.com/limudim/kahoot/';
     var done = function () { $('kh-copy').textContent = 'הועתק ✓'; setTimeout(function () { $('kh-copy').textContent = 'להעתיק כטקסט'; }, 2000); };
     if (navigator.clipboard) navigator.clipboard.writeText(txt).then(done, function () {}); used('copy');
   });

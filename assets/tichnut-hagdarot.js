@@ -74,7 +74,7 @@
       out += block('לפתוח בדפדפן', 'http://localhost:8080', 'ל-llama-server יש ממשק צ\'אט מובנה בכתובת הזאת.');
     }
     $('hg-out').innerHTML = out;
-    T.wa($('hg-wa'), 'הגדרות ל-' + m[0] + ' על ' + st.n + ' × ' + p.g.name + ': ' + p.q[1] + ', הקשר ' + k + '\n\n' + [].map.call(document.querySelectorAll('#hg-out pre'), function (x) { return x.textContent; }).join('\n\n') + '\n\nhttps://gilad-rachamim.github.io/kelim/tichnut/hagdarot/');
+    T.wa($('hg-wa'), 'הגדרות ל-' + m[0] + ' על ' + st.n + ' × ' + p.g.name + ': ' + p.q[1] + ', הקשר ' + k + '\n\n' + [].map.call(document.querySelectorAll('#hg-out pre'), function (x) { return x.textContent; }).join('\n\n') + '\n\nhttps://hakelim.com/kelim/tichnut/hagdarot/');
     T.save(KEY, st);
   }
   function fill() { ms.value = String(st.m); gs.value = st.g; $('hg-n').value = st.n; $('hg-u').value = String(st.u); }

@@ -60,7 +60,7 @@
     $('gt-cmd').textContent = s[2];
     $('gt-e').innerHTML = s[3].map(function (e) { return '<li><code dir="ltr">' + esc(e[0]) + '</code><span>' + esc(e[1]) + '</span></li>'; }).join('');
     $('gt-warn').textContent = s[4] ? '⚠️ ' + s[4] : ''; $('gt-warn').hidden = !s[4];
-    T.wa($('gt-wa'), s[1] + ':\n\n' + s[2] + '\n\nhttps://gilad-rachamim.github.io/kelim/tichnut/git/');
+    T.wa($('gt-wa'), s[1] + ':\n\n' + s[2] + '\n\nhttps://hakelim.com/kelim/tichnut/git/');
     T.save(KEY, st);
   }
   $('gt-list').addEventListener('click', function (e) {

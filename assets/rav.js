@@ -72,7 +72,7 @@
     var esc2 = function (t) { return String(t || '').replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n'); };
     var where = s.p || o.addr || '';
     var l = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//kodesh//rav//HE', 'CALSCALE:GREGORIAN', 'BEGIN:VEVENT',
-      'UID:rav-' + Date.now() + '-' + Math.random().toString(36).slice(2) + '@gilad-rachamim.github.io',
+      'UID:rav-' + Date.now() + '-' + Math.random().toString(36).slice(2) + '@hakelim.com',
       'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z',
       'DTSTART;TZID=Asia/Jerusalem:' + f(st), 'DTEND;TZID=Asia/Jerusalem:' + f(en),
       'RRULE:FREQ=WEEKLY;BYDAY=' + dayList(s.d).map(function (x) { return DAYS_ICS[x]; }).join(','),

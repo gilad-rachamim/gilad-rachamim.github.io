@@ -52,7 +52,7 @@
     $('mh-cmp').innerHTML = rows.map(function (x) {
       return '<li' + (x[2] ? ' class="me"' : '') + '><span>' + x[0] + '</span><b>' + f(x[1]) + ' טוקנים/שנ׳</b><i style="width:' + Math.max(1, x[1] / max * 100).toFixed(1) + '%"></i></li>';
     }).join('') || '<li><span>אף כרטיס לא מספיק לבד. נסו יותר כרטיסים או דיוק נמוך יותר.</span></li>';
-    T.wa($('mh-wa'), M[st.m][0] + ' על ' + st.n + ' × ' + g.name + ': ' + (fits ? 'בערך ' + f(r.per) + ' טוקנים לשנייה' : 'לא נכנס בזיכרון') + '\nhttps://gilad-rachamim.github.io/kelim/tichnut/mehirut/');
+    T.wa($('mh-wa'), M[st.m][0] + ' על ' + st.n + ' × ' + g.name + ': ' + (fits ? 'בערך ' + f(r.per) + ' טוקנים לשנייה' : 'לא נכנס בזיכרון') + '\nhttps://hakelim.com/kelim/tichnut/mehirut/');
     T.save(KEY, st);
   }
   fill(); render();
