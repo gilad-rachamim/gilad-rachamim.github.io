@@ -213,6 +213,17 @@ SHEELOT = [
 SHEELOT_KEY = {"name": "What", "live": "Where", "birthday": "When", "teacher": "Who", "sad": "Why", "old": "How",
                "many": "How", "fine": "How", "color": "What", "bag": "Whose", "time": "What", "cat": "Where"}
 
+# ---------- הרחבה: עוד שאלות לכל נושא (tools/kita_bank_more.py) ----------
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import kita_bank_more as _m  # noqa: E402
+for _n in ("SHEVARIM", "SHEVARIM_MAX", "ACHUZIM", "MISHVAOT", "KEFEL", "SHETACH", "CHEZKOT", "MILIM", "ZMANIM", "HAFACHIM", "SHEELOT"):
+    globals()[_n] = globals()[_n] + getattr(_m, _n)
+for _n in ("MILIM_KEY", "ZMANIM_KEY", "HAFACHIM_KEY", "SHEELOT_KEY"):
+    _dup = set(globals()[_n]) & set(getattr(_m, _n))
+    if _dup:
+        raise SystemExit("KEY USED TWICE: %s" % _dup)
+    globals()[_n] = dict(globals()[_n], **getattr(_m, _n))
+
 # ---------- המסנן של השרת (העתק של cleanQ ו-bad מ-tools/kita-worker/kita-worker.js) ----------
 BAD = ['זונה', 'זין', 'כוס', 'מזדיין', 'לזיין', 'שרמוטה', 'מניאק', 'חרא', 'קקי', 'דביל', 'מפגר', 'אידיוט', 'סתום', 'סתומה',
        'מטומטם', 'מטומטמת', 'שמן', 'שמנה', 'מכוער', 'מכוערת', 'fuck', 'shit', 'bitch', 'sex', 'porn', 'סקס', 'פורנו',
@@ -276,7 +287,10 @@ def build():
             err("MAX CHECK FAILED: %s" % c)
         if max(float(num(x)) for x in [c] + w) != float(num(c)):  # שני: ב-float
             err("MAX SECOND CHECK FAILED: %s" % c)
-        rows.append(line(q, c, w))
+        # השאלה כוללת את השברים, כדי שכל שאלה תיראה אחרת ב"מה קשה לכיתה" (המקום של הנכונה מתחלף)
+        shown = list(reversed(w))
+        shown.insert([1, 2, 0, 3][len(rows) % 4], c)  # המקום של הנכונה מתחלף משאלה לשאלה
+        rows.append(line("איזה שבר הכי גדול: " + ", ".join(shown) + "?", c, w))
     topics.append(("shevarim", "math", "שברים", rows))
 
     rows = []
@@ -377,10 +391,10 @@ def build():
     topics.append(("sheelot", "eng", "מילות שאלה (question words)", rows))
 
     for tid, subj, name, rows in topics:
-        if not 10 <= len(rows) <= 15:
+        if not 10 <= len(rows) <= 30:
             err("TOPIC SIZE %s: %d" % (tid, len(rows)))
-        if len(set(rows)) != len(rows):
-            err("DUPLICATE ROW IN %s" % tid)
+        if len(set(rows)) != len(rows) or len({r.split(" | ")[0] for r in rows}) != len(rows):
+            err("DUPLICATE QUESTION IN %s" % tid)
     return topics
 
 
@@ -389,7 +403,7 @@ def main():
     if errors:
         print("\n".join(errors))
         sys.exit(1)
-    data = {"v": 1, "pick": 10, "topics": [{"id": t, "subj": s, "name": n, "q": r} for t, s, n, r in topics]}
+    data = {"v": 2, "pick": 10, "topics": [{"id": t, "subj": s, "name": n, "q": r} for t, s, n, r in topics]}
     OUT.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
     total = sum(len(r) for *_, r in topics)
     print("OK: %d topics, %d questions, every answer checked twice -> %s" % (len(topics), total, OUT.relative_to(ROOT)))
