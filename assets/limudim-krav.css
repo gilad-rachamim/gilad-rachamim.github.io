@@ -91,3 +91,6 @@
 .pts-by{display:flex;flex-wrap:wrap;gap:.3rem .9rem;margin-top:.4rem;color:var(--muted);font-size:.9rem}
 .pts-by b{color:var(--gold-hi)}
 .pts-hint{color:var(--muted);font-size:.9rem;margin:.4rem 0 0}
+.kv-rank{text-align:center;border:1px solid rgba(95,191,166,.5);border-radius:12px;padding:.4rem .6rem;margin:.2rem 0 .6rem;color:var(--parchment);background:rgba(95,191,166,.08)}
+.kv-rank b{color:var(--gold-hi);font-size:1.15rem}
+.kv-live{color:#7fd1a8;font-size:.8rem;font-weight:400;white-space:nowrap}
