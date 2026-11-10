@@ -21,6 +21,22 @@
   function giftsHtml(list) {
     return (list || []).map(function (g) { return '<li><span class="gi">' + esc(g.i) + '</span><div><b>' + esc(g.t) + '</b> <small>' + esc(who(g.who)) + (g.d ? ' · ' + esc(g.d) : '') + '</small></div></li>'; }).join('');
   }
+  // יעד כיתתי: נשמר כ"מתנה" עם k=goalw/goalm ו-who=pts:N (בלי שינוי בשרת). הפרס בשדה d
+  function isGoal(g) { return /^goal[wm]$/.test(g.k || ''); }
+  function realG(list) { return (list || []).filter(function (g) { return !isGoal(g); }); }
+  function goalOf(list) { return (list || []).filter(isGoal)[0] || null; }
+  function goalHtml(g, sum) {
+    var n = +((/^pts:(\d+)/.exec(g.who) || [0, 0])[1]) || 1, p = Math.min(100, Math.round(sum * 100 / n)), per = g.k === 'goalw' ? 'השבוע' : 'החודש', f = function (x) { return x.toLocaleString('he-IL'); };
+    return '<div class="kt-goal' + (sum >= n ? ' done' : '') + '"><div class="kt-goal-h">🎯 יעד כיתתי ' + per + ': <b>' + f(sum) + '</b> מתוך ' + f(n) + '</div>' +
+      '<div class="kt-goal-bar" role="progressbar" aria-valuenow="' + p + '" aria-valuemin="0" aria-valuemax="100"><span style="width:' + p + '%"></span></div>' +
+      '<div class="kt-goal-s">' + (sum >= n ? '🎉 הגענו! כל הכבוד לכל הכיתה' : 'עוד ' + f(n - sum) + ' נקודות, כולנו ביחד') + (g.d ? ' · הפרס: ' + esc(g.d) : '') + '</div></div>';
+  }
+  function goalBox(el, code, g, rows, per) {
+    if (!el) return; if (!g) { el.hidden = true; return; }
+    var gp = g.k === 'goalw' ? 'week' : 'month';
+    var draw = function (rs) { el.innerHTML = goalHtml(g, rs.reduce(function (a, r) { return a + r.pts; }, 0)); el.hidden = false; };
+    if (per === gp) draw(rows); else call('/c/' + code + '/board?p=' + gp).then(function (d) { if (d.ok) draw(d.rows); });
+  }
   function tabs(box, attr, cur, fn) {
     box.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-selected', b.getAttribute(attr) === cur ? 'true' : 'false'); });
     box.onclick = function (e) { var b = e.target.closest('button[' + attr + ']'); if (b) fn(b.getAttribute(attr)); };
@@ -89,7 +105,8 @@
         $('kt-mine-board').innerHTML = d.rows.map(function (r) {
           return '<li class="' + (me && r.sid === me.sid ? 'me ' : '') + (r.place === 1 ? 'p1' : '') + '"><span class="pl">' + medal(r.place) + '</span><span class="nk">' + esc(r.nick) + (me && r.sid === me.sid ? ' (אני)' : '') + (r.crown ? '<small class="crown">👑 ' + esc(r.crown) + '</small>' : '') + '</span><span class="pt">' + (r.pts || '—') + '</span></li>';
         }).join('') || '<li><span class="pl">·</span><span class="nk">עוד אין אף אחד בכיתה</span><span></span></li>';
-        $('kt-mine-gifts').innerHTML = giftsHtml(d.gifts); $('kt-mine-gifts-h').hidden = !d.gifts.length;
+        $('kt-mine-gifts').innerHTML = giftsHtml(realG(d.gifts)); $('kt-mine-gifts-h').hidden = !realG(d.gifts).length;
+        goalBox($('kt-mine-goal'), me ? me.code : '', goalOf(d.gifts), d.rows, d.period);
         $('kt-mine-magen').hidden = !d.gifts.some(function (g) { return g.k === 'magen'; });
       });
     }
@@ -158,7 +175,7 @@
       $('kt-t-switch').hidden = !others.length;
       $('kt-t-switch').innerHTML = others.length ? '<b>עוד כיתות שלי</b>' + others.map(function (c) { return '<a href="#c=' + c.code + '&k=' + c.key + '" data-sw>' + esc(c.name) + ' ←<span>' + c.code + '</span></a>'; }).join('') : '';
       tabs($('kt-t-per'), 'data-p', tp, function (p) { tp = p; admin('get'); });
-      renderBoard(); renderGifts(); renderSet(); renderCerts(); giladGift(); weekly(); calLinks();
+      renderBoard(); goalBox($('kt-t-goal'), T.code, goalOf(data.gifts), data.rows, tp); renderGifts(); renderSet(); renderCerts(); giladGift(); weekly(); calLinks();
     }
     $('kt-t-switch').addEventListener('click', function (e) { if (e.target.closest('[data-sw]')) setTimeout(function () { location.reload(); }, 30); });
 
@@ -201,7 +218,9 @@
     ];
     var WHO = [['1', 'מקום ראשון'], ['2', 'מקום שני'], ['3', 'מקום שלישי'], ['top3', 'שלושת הראשונים'], ['pts', 'כל מי שמגיע ל…נקודות'], ['all', 'כל מי שצובר נקודות']];
     function renderGifts() {
-      var cur = data.gifts || [];
+      var cur = realG(data.gifts), gl = goalOf(data.gifts);
+      $('kt-goal-on').checked = !!gl; $('kt-goal-n').value = gl ? (/^pts:(\d+)/.exec(gl.who) || [0, 2000])[1] : 2000;
+      $('kt-goal-p').value = gl && gl.k === 'goalw' ? 'goalw' : 'goalm'; $('kt-goal-d').value = gl ? gl.d || '' : '';
       gifts = PRESETS.map(function (p) { var s = cur.filter(function (g) { return g.k === p.k; })[0]; return Object.assign({}, p, s || {}, { on: !!s }); })
         .concat(cur.filter(function (g) { return g.k === 'other'; }).map(function (g) { return Object.assign({}, g, { on: true }); }));
       drawGifts();
@@ -234,9 +253,14 @@
     $('kt-g-save').addEventListener('click', function () {
       $('kt-g-ok').textContent = ''; $('kt-g-err').textContent = '';
       var out = gifts.filter(function (g) { return g.on; }).map(function (g) { return { k: g.k, i: g.i, t: g.t, d: g.d || '', who: g.who }; });
+      var gn = Math.round(+$('kt-goal-n').value.replace(/\D/g, '') || 0);
+      if ($('kt-goal-on').checked) {
+        if (gn < 50 || gn > 99999) { $('kt-g-err').textContent = 'היעד הכיתתי: בין 50 ל-99,999 נקודות.'; return; }
+        out.push({ k: $('kt-goal-p').value, i: '🎯', t: 'יעד כיתתי', d: $('kt-goal-d').value.trim(), who: 'pts:' + gn });
+      }
       call('/c/' + T.code + '/admin', { key: T.key, act: 'gifts', gifts: out, p: tp }).then(function (d) {
         if (!d.ok) { $('kt-g-err').textContent = d.error; return; }
-        data = d; $('kt-g-ok').textContent = '✓ נשמר. התלמידים רואים עכשיו ' + out.length + ' מתנות מעל הלוח.'; used('chashiva_kita_more', 'gifts'); renderCerts();
+        data = d; $('kt-g-ok').textContent = '✓ נשמר. התלמידים רואים עכשיו את המתנות' + ($('kt-goal-on').checked ? ' ואת היעד הכיתתי' : '') + ' מעל הלוח.'; goalBox($('kt-t-goal'), T.code, goalOf(d.gifts), d.rows, tp); used('chashiva_kita_more', 'gifts'); renderCerts();
       });
     });
 
@@ -269,7 +293,7 @@
         var top = d.rows.filter(function (r) { return r.pts > 0 && r.place <= 3; });
         if (!top.length) { box.hidden = true; return; }
         var act = d.rows.filter(function (r) { return r.pts > 0; }).length;
-        var due = (d.gifts || []).map(function (g) {
+        var due = realG(d.gifts).map(function (g) {
           var m = /^pts:(\d+)$/.exec(g.who), win = d.rows.filter(function (r) { return r.pts > 0 && (g.who === 'all' || (m ? r.pts >= +m[1] : g.who === 'top3' ? r.place <= 3 : r.place === +g.who)); });
           return win.length ? g.i + ' ' + g.t + ': ' + win.map(function (r) { return nm(r); }).join(', ') : '';
         }).filter(Boolean);
@@ -304,7 +328,7 @@
       return data.rows.filter(function (r) { return r.pts > 0 && (w === 'all' || (w === '1' ? r.place === 1 : r.place >= 1 && r.place <= 3)); });
     }
     function giftFor(r) {
-      return (data.gifts || []).filter(function (g) {
+      return realG(data.gifts).filter(function (g) {
         if (g.k === 'crown' || g.k === 'cert' || g.k === 'magen') return false;
         var m = /^pts:(\d+)$/.exec(g.who);
         return g.who === 'all' || (m ? r.pts >= +m[1] : g.who === 'top3' ? r.place <= 3 : +g.who === r.place);
@@ -333,7 +357,7 @@
     $('kt-t-poster-btn').addEventListener('click', function () {
       $('kt-poster').innerHTML = '<div class="p-h">🏆 ' + esc(data.name) + ': כיתה משחקת</div><div>כל משחק ותרגול מוסיף נקודות ללוח הכיתה</div><div class="p-code">' + T.code + '</div>' +
         '<ol><li>נכנסים ל: <span class="p-url">gilad-rachamim.github.io/kelim/chashiva/kita</span></li><li>כותבים את הקוד למעלה</li><li>בוחרים כינוי (לא שם מלא)</li><li>משחקים, מתרגלים וצוברים!</li></ol>' +
-        ((data.gifts || []).length ? '<div><b>על מה מתחרים:</b> ' + data.gifts.map(function (g) { return esc(g.i + ' ' + g.t); }).join(' · ') + '</div>' : '');
+        (realG(data.gifts).length ? '<div><b>על מה מתחרים:</b> ' + realG(data.gifts).map(function (g) { return esc(g.i + ' ' + g.t); }).join(' · ') + '</div>' : '');
       $('kt-poster-sec').hidden = false; $('kt-poster-sec').scrollIntoView({ behavior: 'smooth' }); used('chashiva_kita_more', 'poster');
     });
     $('kt-p-print').addEventListener('click', function () { printWith('kt-printing-poster', 'print-poster'); });
