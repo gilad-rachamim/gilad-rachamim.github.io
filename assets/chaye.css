@@ -16,8 +16,8 @@
 .ch-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
 @media(max-width:520px){.ch-row{grid-template-columns:1fr}}
 .ch-chips{display:flex;flex-wrap:wrap;gap:.4rem}
-.ch-chips label{cursor:pointer}
-.ch-chips input{position:absolute;opacity:0;pointer-events:none}
+.ch-chips label{cursor:pointer;position:relative}
+.ch-chips input{position:absolute;top:0;right:0;width:1px;height:1px;margin:0;opacity:0;pointer-events:none}
 .ch-chips span{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:.4rem .85rem;font-size:.95rem}
 .ch-chips input:checked+span{background:rgba(212,176,98,.18);border-color:#d4b062;font-weight:700}
 .ch-chips input:focus-visible+span{outline:2px solid #d4b062;outline-offset:2px}

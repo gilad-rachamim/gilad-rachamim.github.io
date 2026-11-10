@@ -616,6 +616,8 @@ body.cx-exammode .pt-link{display:none!important}
 .mb-in::placeholder,.mb-claim::placeholder,.mb-other::placeholder{color:#9aa0ae;font-family:var(--sans,system-ui),sans-serif;font-size:.95rem}
 .mb-prev{color:#141c2b;font-size:1.12rem;padding:.15rem .2rem 0;overflow-x:auto;overflow-y:hidden;text-align:left}
 .mb-prev:empty{display:none}
+.mb-prev .katex,.mb-prev .katex-html,.mb-fm .katex-html{white-space:nowrap}
+.mb-prev .katex .base{white-space:nowrap}
 .mb-prev.mb-txt{text-align:right;font-size:1rem;color:#2a3550}
 .mb-msg{font-size:.92rem;line-height:1.5;color:#5a6377;margin:.15rem .1rem 0}
 .mb-msg:empty{display:none}

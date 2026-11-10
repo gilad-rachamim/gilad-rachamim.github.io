@@ -212,14 +212,14 @@
   // ---------- התנועות ----------
   function ease(t) { return 0.5 - 0.5 * Math.cos(Math.PI * Math.max(0, Math.min(1, t))); }
   function camera(t) {
-    var P = +val('power') || 1, A = 0.022 * P, e = ease(t), Z0 = 1.02 + 2 * A;
+    var P = +val('power') || 1, A = 0.03 * P, e = ease(t), Z0 = 1.02 + 2 * A;
     var c = { zoom: Z0, dolly: 0, focus: 0.5, ox: 0, oy: 0, px: 0, py: 0 };
     switch (val('move')) {
       case 'side': c.ox = A * (2 * e - 1); c.zoom = Z0 + 0.03; break;
       case 'orbit': var g = 2 * Math.PI * t; c.ox = A * Math.cos(g); c.oy = A * 0.6 * Math.sin(g); c.zoom = Z0 + 0.03; break;
       case 'rise': c.oy = A * (1 - 2 * e); c.zoom = Z0 + 0.02 + 0.05 * e; break;
-      case 'vertigo': c.zoom = Z0 + 0.02; c.focus = 1; c.dolly = -0.16 * P * e; break;
-      default: c.focus = 0; c.zoom = Z0 + 0.10 * e; c.dolly = 0.09 * P * e; // in
+      case 'vertigo': c.zoom = Z0 + 0.02; c.focus = 1; c.dolly = -0.22 * P * e; break;
+      default: c.focus = 0; c.zoom = Z0 + 0.14 * e; c.dolly = 0.13 * P * e; // in
     }
     return c;
   }
@@ -342,7 +342,7 @@
   function ready(c, D, demo) {
     src = c; depth = smooth(D); isDemo = demo; result = null; $('ch-result').hidden = true;
     if (!upload()) { info('הדפדפן הזה לא תומך בתלת-ממד (WebGL). נסו בכרום או בספארי מעודכנים.'); return; }
-    setBusy(false); preview();
+    setBusy(false); preview(); warmEncoder();
     info(demo ? 'זו התמונה לדוגמה – בחרו תמונה משלכם, או נסו תנועה אחרת למטה.' : 'מוכן! בחרו תנועה ואווירה, ואז "ליצור את הסרטון".');
   }
   function loadDemo() {
@@ -409,6 +409,21 @@
   function newAC() { var A = window.AudioContext || window.webkitAudioContext; return A ? new A() : null; }
 
   // ---------- יצירת הסרטון ----------
+  // בפעם הראשונה בדפדפן, מקודד הווידאו נטען כמה שניות, והסרטון היה נפתח בתמונה עומדת.
+  // לכן מחממים אותו מראש: הקלטה קטנה של חצי שנייה ברקע, שנזרקת.
+  var warmed = false;
+  function warmEncoder() {
+    if (warmed) return; warmed = true;
+    try {
+      var m = mime(); if (m === null) return;
+      var c = document.createElement('canvas'); c.width = 64; c.height = 64; var x = c.getContext('2d');
+      if (!c.captureStream) return;
+      var s = c.captureStream(30), r = new MediaRecorder(s, m ? { mimeType: m } : {}), n = 0;
+      var iv = setInterval(function () { x.fillStyle = n++ % 2 ? '#123' : '#321'; x.fillRect(0, 0, 64, 64); }, 40);
+      r.start(100);
+      setTimeout(function () { clearInterval(iv); try { r.stop(); } catch (e) {} s.getTracks().forEach(function (t) { t.stop(); }); }, 700);
+    } catch (e) {}
+  }
   function mime() {
     var list = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4;codecs=avc1,opus', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
     if (!window.MediaRecorder) return null;
@@ -431,7 +446,7 @@
     }
     var bits = cv.width * cv.height > 800000 ? 5000000 : 3500000;
     var rec = new MediaRecorder(stream, m ? { mimeType: m, videoBitsPerSecond: bits } : { videoBitsPerSecond: bits }), parts = [];
-    rec.ondataavailable = function (e) { ok = true; if (e.data && e.data.size) parts.push(e.data); };
+    rec.ondataavailable = function (e) { if (e.data && e.data.size) { ok = true; parts.push(e.data); } };
     rec.onstop = function () {
       var type = (rec.mimeType || m || 'video/webm').split(';')[0];
       result = { blob: new Blob(parts, { type: type }), ext: type.indexOf('mp4') > -1 ? 'mp4' : 'webm' };
