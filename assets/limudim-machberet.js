@@ -174,6 +174,11 @@
     ['f(x)=', 'f(x)=', 'f'], ["f′(x)=", "f'(x)=", 'f'], ['∫', 'int(|,0,1)', 'f'], ['|x|', 'abs(|)', 'f'], ['≤', '≤'], ['≥', '≥'],
     ['·', '*'], ['או', ' או '], ['◀', '{l}', 'o'], ['▶', '{r}', 'o'], ['↵', '{enter}', 'eq'], ['🎤', '{mic}', 'o']
   ];
+  var KEYS_NUM = [
+    ['7', '7', 'n'], ['8', '8', 'n'], ['9', '9', 'n'], ['+', '+'], ['−', '-'], ['⌨', '{kb}', 'o'],
+    ['4', '4', 'n'], ['5', '5', 'n'], ['6', '6', 'n'], ['×', '*'], ['÷', '/'], ['k', 'k'],
+    ['1', '1', 'n'], ['2', '2', 'n'], ['3', '3', 'n'], ['0', '0', 'n'], ['.', '.', 'n'], [',', ',']
+  ];
   var KEYS_PRF = [
     ['∠', '∠'], ['△', '△'], ['≅', '≅'], ['∼', '∼'], ['∥', '∥'], ['⊥', '⊥'],
     ['=', '='], ['°', '°'], ['²', '^2'], ['√', 'sqrt(|)'], ['sin', 'sin(|)', 'f'], ['cos', 'cos(|)', 'f'],
@@ -181,10 +186,18 @@
     ['·', '*'], ['/', '/'], ['◀', '{l}', 'o'], ['▶', '{r}', 'o'], ['↵', '{enter}', 'eq'], ['🎤', '{mic}', 'o']
   ];
   var kb = $('mb-kb'), keysEl = $('mb-keys'), active = null, kbMode = '';
+  var kbOnly = store('mb-kbonly') != null ? store('mb-kbonly') === '1' : !!(window.matchMedia && matchMedia('(pointer:coarse)').matches);
+  function applyKbOnly() {
+    $('mb-kbonly').checked = kbOnly;
+    Array.prototype.forEach.call(document.querySelectorAll('.mb-in'), function (i) { i.setAttribute('inputmode', kbOnly ? 'none' : 'text'); });
+    kbMode = '';
+    if (active && !kb.hidden) buildKeys(active.classList.contains('mb-claim') ? 'p' : 'a');
+  }
   function buildKeys(mode) {
-    if (kbMode === mode) return; kbMode = mode;
+    var key = mode + (kbOnly ? '1' : '0');
+    if (kbMode === key) return; kbMode = key;
     keysEl.innerHTML = '';
-    (mode === 'p' ? KEYS_PRF : KEYS_ALG).forEach(function (k) {
+    (mode === 'p' ? KEYS_PRF : (kbOnly ? KEYS_NUM.concat(KEYS_ALG) : KEYS_ALG)).forEach(function (k) {
       var b = el('button', k[2] || ''); b.type = 'button'; b.textContent = k[0]; b.setAttribute('data-k', k[1]);
       b.setAttribute('aria-label', k[1] === '{bs}' ? 'מחיקה' : k[1] === '{enter}' ? 'שורה חדשה' : k[1] === '{mic}' ? 'להגיד בקול' : k[1] === '{l}' ? 'שמאלה' : k[1] === '{r}' ? 'ימינה' : k[0]);
       keysEl.appendChild(b);
@@ -199,6 +212,7 @@
     if (k === '{bs}') { if (s === en && s > 0) s--; inp.value = inp.value.slice(0, s) + inp.value.slice(en); setCaret(inp, s); }
     else if (k === '{l}' || k === '{r}') { var p = Math.max(0, Math.min(inp.value.length, s + ((k === '{r}') === (inp.getAttribute('dir') !== 'rtl') ? 1 : -1))); setCaret(inp, p); return; }
     else if (k === '{enter}') { inp.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); return; }
+    else if (k === '{kb}') { kbOnly = false; store('mb-kbonly', '0'); applyKbOnly(); inp.blur(); setTimeout(function () { inp.focus(); }, 60); used('kb_native'); return; }
     else if (k === '{mic}') { var mb = inp.closest('li') && inp.closest('li').querySelector('.mb-mic'); if (mb) mb.click(); return; }
     else {
       var sel = inp.value.slice(s, en), ins = k, cur = ins.indexOf('|');
@@ -272,7 +286,7 @@
   function rowEl(v, i) {
     var li = el('li', 'mb-row' + (i === 0 ? ' mb-q' : ''));
     li.innerHTML = '<span class="mb-n">' + (i === 0 ? 'התרגיל' : i) + '</span>' +
-      '<div class="mb-cell"><input class="mb-in" dir="ltr" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="next" inputmode="text">' +
+      '<div class="mb-cell"><input class="mb-in" dir="ltr" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="next" inputmode="' + (kbOnly ? 'none' : 'text') + '">' +
       '<div class="mb-prev" dir="ltr"></div><p class="mb-msg"></p><div class="mb-chip"></div></div>' +
       '<span class="mb-mk" aria-live="polite"></span>' +
       '<span class="mb-rb no-print"><button type="button" class="mb-mic" aria-label="להגיד את השורה בקול">🎤</button><button type="button" class="mb-del" aria-label="למחוק את השורה">✕</button></span>';
@@ -324,7 +338,7 @@
       mk.setAttribute('aria-label', r.mark === 'ok' ? 'נכון' : r.mark === 'warn' ? 'כדאי לבדוק כאן' : '');
       msg.textContent = r.mark === 'bad' ? (I.kind === 'bad' && li.querySelector('.mb-in') !== document.activeElement ? 'לא הצלחתי לקרוא: ' + r.msg : '') : (r.msg || '');
       if (r.mark === 'warn') used('warn');
-      if (r.mark === 'ok' && /🎉/.test(r.msg || '')) used('solved');
+      if (r.mark === 'ok' && /🎉/.test(r.msg || '')) { used('solved'); showSupport(); }
     });
     var a = document.activeElement; if (a && a.classList.contains('mb-in')) showChip(a.closest('li'));
   }
@@ -351,7 +365,10 @@
     c.firstChild.addEventListener('click', function () { openF(tab); used('formula_chip'); });
   }
 
+  function showSupport() { var s = $('mb-support'); if (s.hidden && !shared) { s.hidden = false; used('support_shown'); } }
+  $('mb-support').addEventListener('click', function (e) { if (e.target.closest('[data-support]')) used('support_click'); });
   function save() {
+    if (shared) return;
     clearTimeout(saveT);
     saveT = setTimeout(function () { store('mb-alg', JSON.stringify(A)); $('mb-saved').textContent = '✓ נשמר בטלפון'; }, 400);
   }
@@ -501,7 +518,7 @@
   var P = load('mb-prf', null) || { given: '', prove: '', rows: [{ c: '', r: '', o: '' }] };
   if (!P.rows || !P.rows.length) P.rows = [{ c: '', r: '', o: '' }];
   var prowsEl = $('mb-prows'), pres = $('mb-presult'), psaveT = null;
-  function psave() { clearTimeout(psaveT); psaveT = setTimeout(function () { store('mb-prf', JSON.stringify(P)); }, 400); }
+  function psave() { if (shared) return; clearTimeout(psaveT); psaveT = setTimeout(function () { store('mb-prf', JSON.stringify(P)); }, 400); }
   $('mb-given').value = P.given || ''; $('mb-prove').value = P.prove || '';
   $('mb-given').addEventListener('input', function () { P.given = this.value; psave(); });
   $('mb-prove').addEventListener('input', function () { P.prove = this.value; psave(); });
@@ -670,6 +687,7 @@
     paintProof(res);
     pres.hidden = false; pres.innerHTML = '';
     if (!res.rows.length) { pres.appendChild(el('p', 'mb-ht', 'עוד אין שורות בהוכחה. מתחילים מהנתונים: כל נתון בשורה משלו, עם הנימוק "נתון".')); return; }
+    if (res.reached && !res.warn) showSupport();
     var head = res.reached && !res.warn ? '🎉 כל הכבוד! הגעתם למה שצריך להוכיח, ולכל שורה יש נימוק.' :
       res.reached ? 'הגעתם למה שצריך להוכיח. ' + (res.warn === 1 ? 'נשארה שורה אחת עם סימן שאלה, כדאי לעבור עליה.' : 'נשארו ' + res.warn + ' שורות עם סימן שאלה, כדאי לעבור עליהן.') :
       P.prove.trim() ? 'השורה האחרונה עוד לא מה שצריך להוכיח (' + P.prove.trim() + '). ' + (res.warn ? 'ויש ' + plural(res.warn, 'שורה אחת', 'שורות') + ' עם סימן שאלה.' : 'עד כאן נראה מסודר, ממשיכים.') :
@@ -741,7 +759,48 @@
     P = { given: EXP.kos[0], prove: EXP.kos[1], rows: [{ c: 'AB=8', r: 'נתון' }, { c: 'AC=5', r: 'נתון' }, { c: '∠A=60°', r: 'נתון' }, { c: 'BC^2=AB^2+AC^2-2*AB*AC*cos(∠A)', r: 'משפט הקוסינוסים' }, { c: 'BC^2=49', r: 'חישוב' }, { c: 'BC=7', r: 'חישוב' }] };
     $('mb-given').value = P.given; $('mb-prove').value = P.prove; used('demo');
   }
-  renderRows(); showOld(); prenderRows();
-  if (/[?&]demo=1/.test(location.search)) $('mb-pcheck').click();
-  if (store('mb-tab') === 'p' || /[?&]tab=proof/.test(location.search)) showTab(true);
+  // ---------- שליחה למורה: כל המחברת בתוך הקישור (#s=...), בלי שרת ובלי הרשמה ----------
+  function enc(o) { return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+  function dec(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return JSON.parse(decodeURIComponent(escape(atob(s)))); }
+  var shared = false, sharedTab = null;
+  try {
+    var hs = location.hash.match(/[#&]s=([A-Za-z0-9_-]+)/);
+    if (hs) {
+      var so = dec(hs[1]);
+      if (so.t === 'p' && so.rows) { P = { given: String(so.g || ''), prove: String(so.v || ''), rows: so.rows.map(function (r) { return { c: String(r[0] || ''), r: String(r[1] || ''), o: String(r[2] || '') }; }) }; $('mb-given').value = P.given; $('mb-prove').value = P.prove; sharedTab = 'p'; }
+      else if (so.rows) { A = { rows: so.rows.map(String).slice(0, 80), deg: so.d !== 0 }; setDeg(A.deg); sharedTab = 'a'; }
+      if (sharedTab) { shared = true; $('mb-shared').hidden = false; if (so.n) $('mb-shared-t').textContent = 'שלחו לכם: "⁨' + String(so.n).slice(0, 80) + '⁩". רואים את הפתרון כמו שנכתב, עם הבדיקה של כל שורה. מה שמשנים כאן לא נשמר.'; used('shared_open'); }
+    }
+  } catch (e) { flash('הקישור לא נפתח. אולי הוא נחתך בהעתקה.'); }
+  $('mb-keep').addEventListener('click', function () {
+    shared = false;
+    if (sharedTab === 'p') { store('mb-prf', JSON.stringify(P)); } else { var me = load('mb-alg', null); if (me) { A2 = A; A = me; archive(); A = A2; } store('mb-alg', JSON.stringify(A)); }
+    $('mb-shared').hidden = true; history.replaceState(null, '', location.pathname); flash('✓ נשמר במחברת שלך'); used('shared_keep');
+  });
+  var A2 = null;
+  function shareLink(proof) {
+    var o = proof ? { t: 'p', g: P.given, v: P.prove, rows: P.rows.filter(function (r) { return (r.c || '').trim() || r.r; }).map(function (r) { return [r.c, r.r, r.o || '']; }) }
+      : { t: 'a', d: A.deg ? 1 : 0, rows: A.rows.filter(function (r, i) { return r.trim() || i === 0; }) };
+    if (!(o.rows.length && (proof ? o.rows.length : o.rows[0].trim()))) { flash(proof ? 'עוד אין שורות בהוכחה.' : 'עוד אין תרגיל במחברת.'); return; }
+    var name = proof ? (P.prove ? 'הוכחה: ' + P.prove : 'הוכחה') : 'תרגיל: ' + A.rows[0];
+    o.n = name.slice(0, 80);
+    var url = location.origin + '/limudim/machberet/#s=' + enc(o);
+    var marks = proof ? '' : (function () { var ok = 0, w = 0; lastRes.forEach(function (r) { if (r.mark === 'ok') ok++; else if (r.mark === 'warn') w++; }); return ' (' + ok + ' ✓' + (w ? ', ' + w + ' ?' : '') + ')'; })();
+    var text = 'הפתרון שלי במחברת' + marks + ' – ' + name + '\n' + url;
+    used(proof ? 'share_proof' : 'share');
+    if (navigator.share && window.matchMedia && matchMedia('(pointer:coarse)').matches) { navigator.share({ title: 'המחברת', text: 'הפתרון שלי במחברת' + marks + ' – ' + name, url: url }).catch(function () {}); return; }
+    var done = function () { flash('✓ הקישור הועתק. מדביקים אותו בווטסאפ או במייל למורה.'); };
+    try { navigator.clipboard.writeText(text).then(done, function () { window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank'); }); }
+    catch (e) { window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank'); }
+  }
+  $('mb-share').addEventListener('click', function () { shareLink(false); });
+  $('mb-pshare').addEventListener('click', function () { shareLink(true); });
+  $('mb-kbonly').addEventListener('change', function () { kbOnly = this.checked; store('mb-kbonly', kbOnly ? '1' : '0'); applyKbOnly(); used(kbOnly ? 'kb_only' : 'kb_native'); });
+
+  renderRows(); showOld(); prenderRows(); applyKbOnly();
+  if (sharedTab) { showTab(sharedTab === 'p'); if (sharedTab === 'p') $('mb-pcheck').click(); }
+  else {
+    if (/[?&]demo=1/.test(location.search)) $('mb-pcheck').click();
+    if (store('mb-tab') === 'p' || /[?&]tab=proof/.test(location.search)) showTab(true);
+  }
 })();

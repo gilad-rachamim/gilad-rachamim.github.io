@@ -5,7 +5,7 @@
 //  POST /auth            {credential}                 -> {token, user}
 //  GET  /me                                          -> {user}
 //  POST /me              {name, phone, paybox, agreed} -> {user}
-//  POST /rides           {...}                        -> {ride}
+//  POST /rides           {..., kind: car|taxi, split: equal|km} -> {ride}  (מונית: עד 3 מצטרפים, מתחלקים במונה)
 //  GET  /rides/mine                                  -> {rides}
 //  POST /rides/:id/close                             -> {ok}
 //  POST /search          {from, to, dates[], radius}  -> {matches}
@@ -31,6 +31,12 @@ const TZ = 'Asia/Jerusalem';
 const MIN_PRICE = 5;
 const MAX_RATE = 1.5;
 const SESSION_DAYS = 60;
+
+// מונית: תעריף מונה רשמי של משרד התחבורה, בתוקף מ-01.04.2026 (מתעדכן כל 1 באפריל).
+// מקור: gov.il/he/pages/taxi-rate-2026, כפי שמופיע ב-taxitariff.co.il וב-taxi-il.co.il (נבדק 10.11.2026).
+// מחיר = פתיחת מונה + הזמנה + ק"מ × תעריף + דקות × תעריף + תוספת לכל ק"מ מעל 10.
+// תעריף א' (חול 06:00–21:00) 1.95; ב' (ערב, ושבת ביום) 2.34; ג' (לילה של שישי ושבת) 2.73.
+const TAXI = { start: 12.46, booking: 5.78, a: 1.95, b: 2.34, c: 2.73, over10: 1.84, maxJoin: 3, updated: '2026-04-01' };
 
 export default {
   async fetch(req, env) {
@@ -145,6 +151,26 @@ function priceFor(segKm, rate) {
   if (!rate) return 0;
   return Math.max(MIN_PRICE, Math.round(segKm * rate));
 }
+// תעריף לפי יום ושעה: א' ביום חול, ב' בערב ובשבת ביום, ג' בלילה של שישי ושבת
+function taxiRate(date, time) {
+  const wd = date ? weekday(date) : 1, t = hm2min(time || '12:00');
+  const day = t >= 360 && t <= 1260;
+  if (wd === 6) return t >= 360 && t <= 1140 ? TAXI.b : TAXI.c;
+  if (wd === 5 && !day) return t > 1380 || t < 360 ? TAXI.c : TAXI.b;
+  return day ? TAXI.a : TAXI.b;
+}
+// הערכת מחיר מונית לנסיעה (₪, מעוגל)
+function taxiFare(km, mins, date, time) {
+  const r = taxiRate(date, time);
+  return Math.round(TAXI.start + TAXI.booking + km * r + mins * r + Math.max(0, km - 10) * TAXI.over10);
+}
+// החלק של מצטרף. people = כל מי שבמונית (המזמין + המצטרפים)
+function taxiShare(ride, segKm, people, date) {
+  const fare = taxiFare(ride.km, ride.min, date || ride.date, ride.time);
+  const part = ride.split === 'km' ? fare * Math.min(1, segKm / (ride.km || segKm)) / people : fare / people;
+  return Math.max(MIN_PRICE, Math.round(part));
+}
+const isTaxi = (r) => r && r.kind === 'taxi';
 
 /* ---------- כניסה וסשן ---------- */
 async function hmac(env, data) {
@@ -235,7 +261,7 @@ async function userStats(env, uid) {
   return env.DB.prepare(
     `SELECT
        (SELECT COUNT(*) FROM rides WHERE driver=?1 AND active_bonus=1) active,
-       (SELECT COUNT(*) FROM rides WHERE driver=?1 AND days IS NOT NULL AND active_bonus=0 AND status='open' AND until>=?2) waiting,
+       (SELECT COUNT(*) FROM rides WHERE driver=?1 AND days IS NOT NULL AND COALESCE(kind,'car')<>'taxi' AND active_bonus=0 AND status='open' AND until>=?2) waiting,
        (SELECT COUNT(*) FROM requests q JOIN rides r ON r.id=q.ride WHERE r.driver=?1 AND q.status='approved') approved,
        (SELECT COUNT(*) FROM users x WHERE x.ref_by=?1 AND EXISTS (SELECT 1 FROM rides WHERE driver=x.id)) refs`
   ).bind(uid, todayIL()).first();
@@ -253,7 +279,7 @@ async function syncActive(env, uid) {
   const now = Date.now();
   const { results } = await env.DB.prepare(
     `SELECT r.id, r.driver FROM rides r
-     WHERE r.days IS NOT NULL AND COALESCE(r.active_bonus,0)=0 ${uid ? 'AND r.driver=?3' : ''}
+     WHERE r.days IS NOT NULL AND COALESCE(r.kind,'car')<>'taxi' AND COALESCE(r.active_bonus,0)=0 ${uid ? 'AND r.driver=?3' : ''}
        AND ( (CASE WHEN r.status='open' THEN ?1 ELSE COALESCE(r.closed, r.created) END) - r.created >= ?2
              OR EXISTS (SELECT 1 FROM requests q WHERE q.ride=r.id AND q.status='approved') )
      LIMIT 500`
@@ -349,11 +375,18 @@ async function createRide(req, env, me) {
   const from = place(b.from), to = place(b.to);
   const time = str(b.time, 5);
   if (!TIME_RE.test(time)) bad('time');
+  const kind = b.kind === 'taxi' ? 'taxi' : 'car';
   const seats = Math.round(num(b.seats));
-  if (!(seats >= 1 && seats <= 6)) bad('seats');
-  let rate = num(b.rate);
-  if (!(rate === 0 || (rate >= 1 && rate <= MAX_RATE))) bad('rate');
-  rate = Math.round(rate * 10) / 10;
+  if (!(seats >= 1 && seats <= (kind === 'taxi' ? TAXI.maxJoin : 6))) bad('seats');
+  let rate = 0, split = null;
+  if (kind === 'taxi') {
+    // במונית אין תעריפון לק"מ: מתחלקים במונה
+    split = b.split === 'km' ? 'km' : 'equal';
+  } else {
+    rate = num(b.rate);
+    if (!(rate === 0 || (rate >= 1 && rate <= MAX_RATE))) bad('rate');
+    rate = Math.round(rate * 10) / 10;
+  }
   const km = num(b.km), mins = num(b.min);
   if (!(km > 0.3 && km < 600) || !(mins > 0 && mins < 900)) bad('route');
   let pts = Array.isArray(b.route) ? b.route : [];
@@ -378,32 +411,36 @@ async function createRide(req, env, me) {
 
   const id = newId();
   await env.DB.prepare(
-    `INSERT INTO rides (id,driver,from_label,from_lat,from_lng,to_label,to_lat,to_lng,date,days,start,until,time,seats,rate,km,min,route,note,created)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+    `INSERT INTO rides (id,driver,from_label,from_lat,from_lng,to_label,to_lat,to_lng,date,days,start,until,time,seats,rate,km,min,route,note,created,kind,split)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
   ).bind(id, me.id, from.label, from.lat, from.lng, to.label, to.lat, to.lng, date, days, start, until, time, seats, rate,
-    Math.round(km * 10) / 10, Math.round(mins), JSON.stringify(pts), note, Date.now()).run();
-  // נקודות על עצם ההעלאה: עד 5 בשבוע
-  let points = 0;
-  const wk = await env.DB.prepare('SELECT COUNT(*) n FROM rides WHERE driver=? AND pts_upload>0 AND created>?').bind(me.id, Date.now() - 7 * DAY).first();
-  if (wk.n < UPLOADS_PER_WEEK) {
-    points = days ? UPLOAD_PTS.regular : UPLOAD_PTS.once;
-    await env.DB.prepare('UPDATE rides SET pts_upload=? WHERE id=?').bind(points, id).run();
-    await addPoints(env, me.id, days ? 'upload_regular' : 'upload', points, id);
+    Math.round(km * 10) / 10, Math.round(mins), JSON.stringify(pts), note, Date.now(), kind, split).run();
+  const out = { id, kind, points: 0 };
+  if (kind === 'taxi') out.fare = taxiFare(Math.round(km * 10) / 10, Math.round(mins), date || start, time);
+  // נקודות על עצם ההעלאה (רק רכב פרטי): עד 5 בשבוע
+  if (kind !== 'taxi') {
+    const wk = await env.DB.prepare('SELECT COUNT(*) n FROM rides WHERE driver=? AND pts_upload>0 AND created>?').bind(me.id, Date.now() - 7 * DAY).first();
+    if (wk.n < UPLOADS_PER_WEEK) {
+      out.points = days ? UPLOAD_PTS.regular : UPLOAD_PTS.once;
+      await env.DB.prepare('UPDATE rides SET pts_upload=? WHERE id=?').bind(out.points, id).run();
+      await addPoints(env, me.id, days ? 'upload_regular' : 'upload', out.points, id);
+    }
+    // נהג שהגיע בהזמנה: השגריר מתקדם
+    if (me.ref_by) await refreshLevel(env, me.ref_by);
   }
-  // נהג ראשון שהגיע בהזמנה: השגריר מתקדם
-  if (me.ref_by) await refreshLevel(env, me.ref_by);
-  return json({ ride: { id, points } });
+  return json({ ride: out });
 }
 async function myRides(env, me) {
   await syncActive(env, me.id);
   const today = todayIL();
   const { results } = await env.DB.prepare(
-    `SELECT id,from_label,to_label,date,days,start,until,time,seats,rate,km,min,note,status,created,
+    `SELECT id,from_label,to_label,date,days,start,until,time,seats,rate,km,min,note,status,kind,split,created,
        COALESCE(active_bonus,0) active, COALESCE(pts_upload,0) pts,
        (SELECT COUNT(*) FROM requests q WHERE q.ride=rides.id AND q.status='pending' AND q.date>=?) pending,
        (SELECT COUNT(*) FROM requests q WHERE q.ride=rides.id AND q.status='approved' AND q.date>=?) approved
      FROM rides WHERE driver=? AND status='open' AND (date>=? OR until>=?) ORDER BY COALESCE(date,start), time LIMIT 60`
   ).bind(today, today, me.id, today, today).all();
+  for (const r of results) if (isTaxi(r)) r.fare = taxiFare(r.km, r.min, r.date || r.start, r.time);
   return json({ rides: results });
 }
 async function closeRide(env, me, id) {
@@ -506,10 +543,11 @@ async function search(req, env, me) {
       const left = r.seats - taken.get(key);
       if (left <= 0) continue;
       const mine = await env.DB.prepare(`SELECT id,status FROM requests WHERE ride=? AND date=? AND rider=? AND status IN ('pending','approved')`).bind(r.id, d, me.id).first();
+      const taxi = isTaxi(r) ? taxiInfo(r, m, d, taken.get(key) + (mine && mine.status === 'approved' ? 1 : 2)) : null;
       out.push({
-        ride: r.id, date: d, time: r.time, pass: m.pass, from: r.from_label, to: r.to_label,
-        pickupKm: m.pickupKm, dropKm: m.dropKm, segKm: m.segKm, rate: r.rate, price: priceFor(m.segKm, r.rate),
-        seatsLeft: left, note: r.note || '', regular: !!r.days,
+        ride: r.id, date: d, time: r.time, pass: m.pass, from: r.from_label, to: r.to_label, kind: r.kind || 'car',
+        pickupKm: m.pickupKm, dropKm: m.dropKm, segKm: m.segKm, rate: r.rate, price: taxi ? taxi.share : priceFor(m.segKm, r.rate),
+        seatsLeft: left, note: r.note || '', regular: !!r.days, taxi,
         driver: { name: firstName(r.dname), pic: r.dpic || '', rating: r.rating_n ? +(r.rating_sum / r.rating_n).toFixed(1) : null, ratingN: r.rating_n || 0, points: r.points || 0, level: r.dlevel, amb: !!r.damb },
         mine: mine ? { id: mine.id, status: mine.status } : null,
         _d: r.driver, _min: m.passMin, _rep: repOf(r) + (r.dlevel >= 2 ? 1e5 : 0),
@@ -538,6 +576,14 @@ async function search(req, env, me) {
   }
   return json({ matches: list });
 }
+// כרטיס מונית: המחיר המלא, החלק של המבקש, וכמה הוא חוסך מול מונית לבד
+function taxiInfo(r, m, d, people) {
+  const fare = taxiFare(r.km, r.min, d, r.time);
+  const share = taxiShare(r, m.segKm, people, d);
+  const segMin = r.min * Math.min(1, m.segKm / (r.km || m.segKm));
+  const alone = taxiFare(m.segKm, segMin, d, m.pass);
+  return { fare, share, people, split: r.split || 'equal', alone, save: Math.max(0, alone - share) };
+}
 const firstName = (n) => (n || '').trim().split(/\s+/)[0] || 'נהג/ת';
 
 /* ---------- בקשות ---------- */
@@ -559,7 +605,12 @@ async function createRequest(req, env, me) {
   const cnt = await env.DB.prepare(`SELECT COUNT(*) n FROM requests WHERE rider=? AND created>?`).bind(me.id, Date.now() - 864e5).first();
   if (cnt.n >= 25) bad('too many requests');
   const id = newId();
-  const price = mode === 'free' ? 0 : priceFor(m.segKm, r.rate);
+  let price;
+  if (isTaxi(r)) {
+    const c = await env.DB.prepare(`SELECT COUNT(*) n FROM requests WHERE ride=? AND date=? AND status='approved'`).bind(rideId, date).first();
+    if (c.n >= r.seats) bad('full');
+    price = taxiShare(r, m.segKm, c.n + 2, date);
+  } else price = mode === 'free' ? 0 : priceFor(m.segKm, r.rate);
   await env.DB.prepare(
     `INSERT INTO requests (id,ride,date,rider,pickup_label,pickup_lat,pickup_lng,drop_label,drop_lat,drop_lng,seg_km,price,pass_time,mode,msg,created)
      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
@@ -569,15 +620,16 @@ async function createRequest(req, env, me) {
 async function actRequest(req, env, me, id) {
   const b = await body(req);
   const action = b.action;
-  const q = await env.DB.prepare(`SELECT q.*, r.driver, r.seats FROM requests q JOIN rides r ON r.id=q.ride WHERE q.id=?`).bind(id).first();
+  const q = await env.DB.prepare(`SELECT q.*, r.driver, r.seats, r.kind, r.split, r.km, r.min, r.time, r.date rdate FROM requests q JOIN rides r ON r.id=q.ride WHERE q.id=?`).bind(id).first();
   if (!q) bad('not found', 404);
   const now = Date.now();
   if (action === 'cancel') {
     if (q.rider !== me.id && q.driver !== me.id) bad('not yours', 403);
     if (!['pending', 'approved'].includes(q.status)) bad('state');
     await env.DB.prepare(`UPDATE requests SET status='cancelled', updated=? WHERE id=?`).bind(now, id).run();
-    // נהג שביטל טרמפ שאישר: נקודות האישור חוזרות
-    if (q.status === 'approved' && me.id === q.driver) await addPoints(env, me.id, 'approve_cancel', q.price ? -10 : -15, q.ride);
+    // מי שאישר וביטל: נקודות האישור חוזרות
+    if (q.status === 'approved' && me.id === q.driver) await addPoints(env, me.id, 'approve_cancel', q.price || isTaxi(q) ? -10 : -15, q.ride);
+    if (isTaxi(q) && q.status === 'approved') await retaxi(env, q.ride, q.date);
     return json({ ok: true });
   }
   if (q.driver !== me.id) bad('not yours', 403);
@@ -593,12 +645,25 @@ async function actRequest(req, env, me, id) {
     let price = q.price;
     if (b.free === true) price = 0;
     await env.DB.prepare(`UPDATE requests SET status='approved', price=?, updated=? WHERE id=?`).bind(price, now, id).run();
-    // נקודות חסד: 10 על כל טרמפ שאושר, ועוד 5 כשהוא בחינם
-    await addPoints(env, me.id, price ? 'approve' : 'approve_free', price ? 10 : 15, q.ride);
+    // נקודות חסד: 10 על כל טרמפ שאושר, ועוד 5 כשהוא בחינם. במונית: 10 למי שמשתף, כי כולם חוסכים
+    await addPoints(env, me.id, price || isTaxi(q) ? 'approve' : 'approve_free', price || isTaxi(q) ? 10 : 15, q.ride);
     await refreshLevel(env, me.id);
+    // במונית: מצטרף חדש מקטין את החלק של כל מי שכבר אושר
+    if (isTaxi(q)) await retaxi(env, q.ride, q.date);
     return json({ ok: true });
   }
   bad('action');
+}
+// מחשב מחדש את החלק של כל המאושרים במונית (כשמצטרף עוד אחד או כשמישהו מבטל)
+async function retaxi(env, rideId, date) {
+  const r = await env.DB.prepare('SELECT kind,split,km,min,time,date FROM rides WHERE id=?').bind(rideId).first();
+  if (!isTaxi(r)) return;
+  const { results } = await env.DB.prepare(`SELECT id,seg_km,price FROM requests WHERE ride=? AND date=? AND status='approved'`).bind(rideId, date).all();
+  for (const x of results) {
+    if (x.price === 0) continue; // המזמין ויתר על החלק של המצטרף
+    const p = taxiShare(r, x.seg_km, results.length + 1, date);
+    if (p !== x.price) await env.DB.prepare('UPDATE requests SET price=? WHERE id=?').bind(p, x.id).run();
+  }
 }
 async function inbox(env, me) {
   const since = todayIL(-1), past = todayIL(-14), today = todayIL(), nowMin = hm2min(nowHM());
@@ -606,7 +671,7 @@ async function inbox(env, me) {
   const canRate = (x) => x.status === 'approved' && !x.rated && (x.date < today || (x.date === today && hm2min(x.pass_time || '23:59') <= nowMin));
   const asDriver = (await env.DB.prepare(
     `SELECT q.id,q.ride,q.date,q.status,q.mode,q.price,q.seg_km,q.pass_time,q.msg,q.pickup_label,q.pickup_lat,q.pickup_lng,q.drop_label,q.created,
-       r.from_label,r.to_label,r.time, u.name rname, u.pic rpic, u.phone rphone, u.rating_sum, u.rating_n, u.id rid,
+       r.from_label,r.to_label,r.time,r.kind,r.split,r.km rkm,r.min rmin, u.name rname, u.pic rpic, u.phone rphone, u.rating_sum, u.rating_n, u.id rid,
        (SELECT stars FROM ratings t WHERE t.request=q.id AND t.rater=?1) rated
      FROM requests q JOIN rides r ON r.id=q.ride JOIN users u ON u.id=q.rider
      WHERE r.driver=?1 AND ((q.date>=?2 AND q.status IN ('pending','approved'))
@@ -616,11 +681,12 @@ async function inbox(env, me) {
     id: x.id, ride: x.ride, date: x.date, status: x.status, mode: x.mode, price: x.price, segKm: x.seg_km, pass: x.pass_time, msg: x.msg,
     canRate: canRate(x), rated: x.rated || 0,
     pickup: { label: x.pickup_label, lat: x.pickup_lat, lng: x.pickup_lng }, drop: x.drop_label, from: x.from_label, to: x.to_label, time: x.time,
+    kind: x.kind || 'car', split: x.split, fare: isTaxi(x) ? taxiFare(x.rkm, x.rmin, x.date, x.time) : null,
     rider: { id: x.rid, name: x.rname, pic: x.rpic, rating: x.rating_n ? +(x.rating_sum / x.rating_n).toFixed(1) : null, phone: x.status === 'approved' ? x.rphone : '' },
   }));
   const asRider = (await env.DB.prepare(
     `SELECT q.id,q.ride,q.date,q.status,q.mode,q.price,q.seg_km,q.pass_time,q.pickup_label,q.pickup_lat,q.pickup_lng,q.drop_label,
-       r.from_label,r.to_label,r.time, u.name dname, u.pic dpic, u.phone dphone, u.paybox, u.id did,
+       r.from_label,r.to_label,r.time,r.kind,r.split,r.km rkm,r.min rmin, u.name dname, u.pic dpic, u.phone dphone, u.paybox, u.id did,
        (SELECT stars FROM ratings t WHERE t.request=q.id AND t.rater=?1) rated
      FROM requests q JOIN rides r ON r.id=q.ride JOIN users u ON u.id=r.driver
      WHERE q.rider=?1 AND (q.date>=?2
@@ -630,6 +696,7 @@ async function inbox(env, me) {
     id: x.id, ride: x.ride, date: x.date, status: x.status, mode: x.mode, price: x.price, segKm: x.seg_km, pass: x.pass_time,
     canRate: canRate(x), rated: x.rated || 0,
     pickup: { label: x.pickup_label, lat: x.pickup_lat, lng: x.pickup_lng }, drop: x.drop_label, from: x.from_label, to: x.to_label, time: x.time,
+    kind: x.kind || 'car', split: x.split, fare: isTaxi(x) ? taxiFare(x.rkm, x.rmin, x.date, x.time) : null,
     driver: { id: x.did, name: x.status === 'approved' ? x.dname : firstName(x.dname), pic: x.dpic,
       phone: x.status === 'approved' ? x.dphone : '', paybox: x.status === 'approved' ? (x.paybox || '') : '' },
   }));
@@ -671,7 +738,8 @@ async function stats(env) {
   const r = await env.DB.prepare(`SELECT COUNT(*) n FROM rides WHERE status='open' AND (date>=? OR until>=?)`).bind(today, today).first();
   const u = await env.DB.prepare(`SELECT COUNT(*) n FROM users WHERE agreed=1`).first();
   const j = await env.DB.prepare(`SELECT COUNT(*) n FROM requests WHERE status='approved'`).first();
-  return json({ rides: r.n, users: u.n, joined: j.n });
+  const t = await env.DB.prepare(`SELECT COUNT(*) n FROM rides WHERE kind='taxi' AND status='open' AND (date>=? OR until>=?)`).bind(today, today).first();
+  return json({ rides: r.n, users: u.n, joined: j.n, taxis: t.n });
 }
 
 /* ---------- ניהול (לגילעד): זכאים לתעודה, רעיונות, דיווחים ---------- */
