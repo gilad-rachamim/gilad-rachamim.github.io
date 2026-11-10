@@ -21,6 +21,11 @@
     <button type="button" role="tab" id="mb-t-prf" aria-selected="false" aria-controls="mb-prf">📐 הוכחה</button>
   </div>
 
+  <div class="mb-shared no-print" id="mb-shared" hidden role="status">
+    <b>📤 מחברת ששלחו לכם.</b> <span id="mb-shared-t">רואים את הפתרון כמו שהתלמיד כתב, עם הבדיקה של כל שורה. מה שמשנים כאן לא נשמר.</span>
+    <div class="btns"><button type="button" class="btn btn-sm" id="mb-keep">לשמור אצלי</button><a class="btn btn-sm" href="/limudim/machberet/" id="mb-mine">למחברת שלי</a></div>
+  </div>
+
   <!-- ===================== תרגיל ===================== -->
   <section id="mb-alg" role="tabpanel" aria-labelledby="mb-t-alg">
     <div class="cx-exam mb-how" role="note">
@@ -35,6 +40,7 @@
 
     <div class="mb-top">
       <button type="button" class="cx-ang" id="mb-deg" aria-label="מעלות או רדיאנים"><span class="on">מעלות</span><span>רדיאנים</span></button>
+      <label class="mb-kbonly"><input type="checkbox" id="mb-kbonly"> רק מקלדת הסימנים (בלי מקלדת הטלפון)</label>
       <span class="mb-saved" id="mb-saved" aria-live="polite"></span>
     </div>
 
@@ -49,6 +55,7 @@
       <button type="button" class="btn btn-gold" id="mb-hintb">💡 רמז לצעד הבא</button>
       <button type="button" class="btn" id="mb-formb">📐 נוסחאות</button>
       <button type="button" class="btn" id="mb-print">🖨 להדפיס</button>
+      <button type="button" class="btn" id="mb-share">📤 לשלוח למורה</button>
       <button type="button" class="btn" id="mb-new">דף חדש</button>
     </div>
 
@@ -90,9 +97,12 @@
       <button type="button" class="btn" id="mb-phint">💡 רמז לשורה הבאה</button>
       <button type="button" class="btn" id="mb-pform">📐 משפטים ונוסחאות</button>
       <button type="button" class="btn" id="mb-pprint">🖨 להדפיס</button>
+      <button type="button" class="btn" id="mb-pshare">📤 לשלוח למורה</button>
       <button type="button" class="btn" id="mb-pnew">הוכחה חדשה</button>
     </div>
   </section>
+
+<div class="mx-support no-print" id="mb-support" hidden><p>💛 המחברת חינמית, ונבנתה בהרבה שעות עבודה. אם היא עוזרת לכם, אפשר לעזור להחזיק את המיזם, גם בסכום קטן.</p><a class="btn btn-line btn-sm" href="/kelim/#litmoch" data-support="1">לתמוך במיזם</a></div>
 
   <!-- מקלדת סימנים: נצמדת לתחתית המסך כשכותבים בשורה -->
   <div class="mb-kb no-print" id="mb-kb" hidden>

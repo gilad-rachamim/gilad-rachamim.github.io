@@ -212,6 +212,12 @@
     out.appendChild(act);
     $('pt-again').addEventListener('click', function () { $('pt-q').value = ''; $('pt-imgx').click(); out.innerHTML = ''; $('pt-q').focus(); window.scrollTo({ top: $('pt-in').offsetTop - 20, behavior: 'smooth' }); });
     $('pt-print').addEventListener('click', function () { used('print'); window.print(); });
+    if (!demo) {
+      var sp = document.createElement('div'); sp.className = 'mx-support no-print';
+      sp.innerHTML = '<p>💛 הפותר חינמי, ונבנה בהרבה שעות עבודה. אם הוא עוזר לכם, אפשר לעזור להחזיק את המיזם, גם בסכום קטן.</p><a class="btn btn-line btn-sm" href="/kelim/#litmoch" data-support="1">לתמוך במיזם</a>';
+      sp.querySelector('a').addEventListener('click', function () { used('support_click'); });
+      out.appendChild(sp);
+    }
     if (d.cached) { var cf = document.createElement('p'); cf.className = 'note'; cf.textContent = '⚡ מישהו כבר שאל את השאלה הזאת, אז הפתרון הבדוק הגיע מיד (ולא נספר במכסה שלכם).'; out.appendChild(cf); }
     if (typeof d.left === 'number') { var lf = document.createElement('p'); lf.className = 'note'; lf.textContent = 'נשארו לכם היום ' + d.left + ' שאלות.'; out.appendChild(lf); }
     if (scroll !== false) sheet.scrollIntoView({ behavior: 'smooth', block: 'start' });
