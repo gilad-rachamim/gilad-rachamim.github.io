@@ -135,6 +135,7 @@
   //  בניית הדף
   // =====================================================================
   function fmtAns(s) {
+    if (s.free) return s.txt ? esc(s.txt) : '(תשובה פתוחה)';
     if (s.opts) return s.opts[s.a];
     if (s.fr) return s.fr[1] === 1 ? num(s.fr[0]) : s.fr[0] + '/' + s.fr[1];
     if (Number.isInteger(s.a)) return num(s.a);
@@ -148,7 +149,12 @@
     var t = byId[cfg.t]; if (!t) return null;
     var ts = [t].concat((cfg.x || []).map(function (id) { return byId[id]; }).filter(function (x, j, a) { return x && x !== t && a.indexOf(x) === j; })).slice(0, 3);
     return seeded(cfg.s, function () {
-      var items = [], total = 0, n = 0, i = 0;
+      var own = (cfg.q || []).filter(function (x) { return x.t && x.t.trim(); }).slice(0, 5).map(function (x) {
+        var v = parseVal(x.a || ''), isNum = !isNaN(v) && String(x.a || '').trim() !== '';
+        return { k: 'ex', own: true, guided: false, lv: 1, min: x.m, p: { ex: '<span class="dp-own" dir="rtl">' + esc(x.t.trim()) + '</span>', fin: x.a ? '<bdi>' + esc(x.a) + '</bdi>' : '',
+          steps: [isNum ? { show: '', q: 'התשובה:', a: v, hint: 'זו שאלה מהמורה. קוראים שוב את השאלה, לאט, ובודקים את החישוב.' } : { free: true, show: '', q: 'התשובה שלי:', a: 0, txt: x.a || '', hint: '' }] } };
+      });
+      var items = [], total = own.reduce(function (z, x) { return z + x.min; }, 0), n = 0, i = 0;
       var revs = cfg.r.map(function (id) { return byId[id]; }).filter(function (x) { return x && ts.indexOf(x) < 0; }).slice(0, 3);
       var asked = revs.length;
       function add(it) { if (it.k === 'ex') it.n = ++n; items.push(it); total += it.min || 0; }
@@ -175,6 +181,7 @@
         if (total + e.min > cfg.m + 1 && i >= 1) break;
         add(e); i++; tryRev();
       }
+      own.forEach(function (it) { it.n = ++n; items.push(it); });
       var bonus = t.gen(Math.min(3, cfg.lv + 1));
       return { t: t, ts: ts, name: ts.map(function (x) { return x.name; }).join(' + '), cfg: cfg, items: items, total: total, nq: n, nrev: asked - revs.length, dropped: revs.length, bonus: { k: 'ex', p: bonus, bonus: true, guided: false, min: 0, n: n + 1 } };
     });
@@ -184,7 +191,17 @@
     var q = String(d).split('.'), tt = (q[0] || '').split(','); if (q.length < 6 || !byId[tt[0]]) return null;
     return { t: tt[0], x: tt.slice(1, 3).filter(function (x) { return byId[x]; }), k: q[1] === 'z' ? 'z' : 'h', m: Math.min(120, Math.max(5, +q[2] || 30)), lv: Math.min(3, Math.max(1, +q[3] || 2)), r: q[4] ? q[4].split('~').filter(function (x) { return byId[x]; }) : [], s: +q[5] || 1, a: q[6] === undefined ? 1 : Math.min(2, Math.max(0, +q[6] || 0)) };
   }
-  function linkOf(cfg, title) { return BASE + '?d=' + encodeURIComponent(encode(cfg)) + (title ? '&c=' + encodeURIComponent(title) : ''); }
+  // שאלות שהמורה כתבה: [{t: שאלה, a: תשובה (לא חובה), m: דקות}] – נכנסות לקישור כ-base64 של JSON
+  function ownEnc(q) {
+    if (!q || !q.length) return '';
+    try { var b = new TextEncoder().encode(JSON.stringify(q.map(function (x) { return [x.t, x.a || '', x.m]; }))), bin = ''; b.forEach(function (c) { bin += String.fromCharCode(c); }); return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); } catch (e) { return ''; }
+  }
+  function ownDec(str) {
+    if (!str) return [];
+    try { var bin = atob(String(str).replace(/-/g, '+').replace(/_/g, '/')), b = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) b[i] = bin.charCodeAt(i);
+      return JSON.parse(new TextDecoder().decode(b)).slice(0, 5).map(function (x) { return { t: String(x[0] || '').slice(0, 300), a: String(x[1] || '').slice(0, 60), m: Math.min(20, Math.max(1, +x[2] || 3)) }; }).filter(function (x) { return x.t.trim(); }); } catch (e) { return []; }
+  }
+  function linkOf(cfg, title) { var q = ownEnc(cfg.q); return BASE + '?d=' + encodeURIComponent(encode(cfg)) + (title ? '&c=' + encodeURIComponent(title) : '') + (q ? '&q=' + q : ''); }
   var KIND = { h: 'דף הקנייה', z: 'דף חזרה' };
 
   // ---------- מערכת צירים לפרבולה (להדפסה: ריקה. בדיגיטלי: הנקודות מופיעות כשממלאים את הטבלה) ----------
@@ -225,7 +242,7 @@
   }
   function qHead(it, o) {
     return '<div class="dp-qh"><span class="dp-n">' + (it.bonus ? '⭐' : it.n) + '</span>' +
-      (it.bonus ? '<span class="dp-tag">לזריזים: שאלת אתגר</span>' : it.rev ? '<span class="dp-tag">🔁 זוכרים? ' + it.rev.name + '</span>' : (it.tp ? '<span class="dp-tag">' + it.tp.em + ' ' + it.tp.name + '</span>' : '') + (it.guided ? '<span class="dp-tag">תרגיל מודרך</span>' : '')) +
+      (it.bonus ? '<span class="dp-tag">לזריזים: שאלת אתגר</span>' : it.own ? '<span class="dp-tag">✍️ שאלה מהמורה</span>' : it.rev ? '<span class="dp-tag">🔁 זוכרים? ' + it.rev.name + '</span>' : (it.tp ? '<span class="dp-tag">' + it.tp.em + ' ' + it.tp.name + '</span>' : '') + (it.guided ? '<span class="dp-tag">תרגיל מודרך</span>' : '')) +
       (o.time && it.min ? '<span class="dp-min">⏱ כ-' + it.min + ' דק׳</span>' : '') + '</div>';
   }
   function exPrint(it, o) {
@@ -243,7 +260,7 @@
           (s.opts ? '<span class="so">' + s.opts.map(function (x) { return '◯ ' + x; }).join(' &nbsp; ') + '</span>' : '<span class="sb"></span>') + '</li>';
       }).join('') + '</ol>';
     } else {
-      h += '<div class="dp-work' + (o.grid ? ' grid' : '') + '" style="height:' + Math.min(40, 10 + p.steps.length * 5) + 'mm"></div><div class="dp-ans">תשובה: <span class="sb"></span></div>';
+      h += '<div class="dp-work' + (o.grid ? ' grid' : '') + '" style="height:' + (it.own ? Math.min(60, 12 + it.min * 5) : Math.min(40, 10 + p.steps.length * 5)) + 'mm"></div><div class="dp-ans">תשובה: <span class="sb"></span></div>';
     }
     return h + '</section>';
   }
@@ -260,7 +277,7 @@
     var h = '<article class="dp-paper st-' + o.style + (o.font ? ' big' : '') + '">';
     h += '<header class="dp-ph"><div class="dp-pt"><span class="dp-kind">' + KIND[cfg.k] + ' · מתמטיקה' + (o.grade ? ' · כיתה ' + o.grade : '') + '</span><h2>' + t.em + ' ' + t.name + '</h2>' + (sh.ts.length > 1 ? '<p class="dp-sub"><b>דף משולב</b>, יחד עם: ' + sh.ts.slice(1).map(function (x) { return x.name; }).join(' · ') + '</p>' : '') + (o.title ? '<p class="dp-sub">' + esc(o.title) + '</p>' : '') +
       '<p class="dp-name">שם: <span class="sb w"></span> תאריך: <span class="sb"></span></p></div>' +
-      (o.qr ? '<div class="dp-qrw">' + qrSpot(linkOf(cfg), 84) + '<small>הדף הדיגיטלי:<br>רמזים, בדיקה ומחשבון</small></div>' : '') + '</header>';
+      (o.qr && linkOf(cfg).length < 700 ? '<div class="dp-qrw">' + qrSpot(linkOf(cfg), 84) + '<small>הדף הדיגיטלי:<br>רמזים, בדיקה ומחשבון</small></div>' : '') + '</header>';
     h += '<div class="dp-strip"><span>⏱ כ-' + sh.total + ' דקות</span><span>' + sh.nq + ' שאלות</span>' + (o.stars ? '<span class="dp-stars" aria-label="כוכב לכל שאלה">' + exs.map(function () { return '☆'; }).join('') + '</span><span class="dp-strip-n">צובעים כוכב אחרי כל שאלה</span>' : '') + '</div>';
     sh.items.forEach(function (it) { h += it.k === 'ex' ? exPrint(it, o) : learnHtml(it); });
     if (o.bonus) h += exPrint(sh.bonus, o);
@@ -312,26 +329,43 @@
         s.value = keep && keep[j] !== undefined ? keep[j] : (pre[j] || '');
       });
     }
+    // שאלות משלי
+    var ownQ = (st.own || []).slice(0, 5).map(function (x) { return { t: String(x.t || ''), a: String(x.a || ''), m: +x.m || 3 }; });
+    function drawOwn() {
+      $('dp-own').innerHTML = ownQ.map(function (x, j) {
+        return '<div class="dp-ownq" data-j="' + j + '"><label>שאלה ' + (j + 1) + '<textarea rows="2" maxlength="300" data-f="t" placeholder="למשל: הסבירו במילים שלכם מהו קודקוד של פרבולה">' + esc(x.t) + '</textarea></label><div class="dp-row"><label>תשובה (לא חובה)<input type="text" maxlength="60" data-f="a" value="' + esc(x.a) + '" placeholder="מספר ייבדק לבד בדיגיטלי"></label><label>כמה דקות<select data-f="m">' +
+          [1, 2, 3, 5, 8, 10, 15].map(function (m) { return '<option value="' + m + '"' + (m === x.m ? ' selected' : '') + '>' + m + ' דק׳</option>'; }).join('') + '</select></label></div><button class="linkish" type="button" data-del>להסיר את השאלה ✕</button></div>';
+      }).join('');
+      $('dp-own-add').hidden = ownQ.length >= 5;
+    }
+    $('dp-own').addEventListener('input', function (e) {
+      var w = e.target.closest('[data-j]'), f = e.target.dataset.f; if (!w || !f) return;
+      ownQ[+w.dataset.j][f] = f === 'm' ? +e.target.value : e.target.value; render();
+    });
+    $('dp-own').addEventListener('click', function (e) { var b = e.target.closest('[data-del]'); if (!b) return; ownQ.splice(+b.closest('[data-j]').dataset.j, 1); drawOwn(); render(); });
+    $('dp-own-add').addEventListener('click', function () { ownQ.push({ t: '', a: '', m: 3 }); drawOwn(); var ta = $('dp-own').querySelector('[data-j="' + (ownQ.length - 1) + '"] textarea'); if (ta) ta.focus(); used('own_add'); });
+    drawOwn();
     function readCfg() {
       var r = [1, 2, 3].map(function (k) { return $('dp-r' + k).value; }).filter(function (x, j, a) { return x && a.indexOf(x) === j; });
       var xs = [1, 2].map(function (k) { return $('dp-x' + k).value; }).filter(function (x, j, a) { return x && x !== $('dp-topic').value && a.indexOf(x) === j; });
-      return { t: $('dp-topic').value, x: xs, k: kind, m: +$('dp-min').value, lv: +$('dp-lv').value, r: r, s: seed, a: +$('dp-help').value };
+      return { t: $('dp-topic').value, x: xs, q: ownQ.filter(function (x) { return x.t.trim(); }), k: kind, m: +$('dp-min').value, lv: +$('dp-lv').value, r: r, s: seed, a: +$('dp-help').value };
     }
     function render() {
       var cfg = readCfg(), sh = build(cfg); if (!sh) return; cur = sh;
       var o = { style: $('dp-style').value, font: +$('dp-font').value, title: $('dp-title').value.trim(), grade: GRN[+gs.value], key: $('dp-key').checked };
       ['time', 'stars', 'bonus', 'feel', 'grid', 'qr'].forEach(function (k) { o[k] = $('dp-o-' + k).checked; });
       $('dp-paper').innerHTML = paperHtml(sh, o); runQr($('dp-paper'));
+      var link = linkOf(cfg, o.title);
       var sum = '<b>' + KIND[cfg.k] + (sh.ts.length > 1 ? ' משולב' : '') + ': ' + sh.name + '</b> · כ-' + sh.total + ' דקות · ' + sh.nq + ' שאלות' + (sh.nrev ? ', מהן ' + sh.nrev + ' תזכורות' : '');
       if (sh.dropped) sum += '<br><small>בזמן שבחרתם נכנסו ' + sh.nrev + ' תזכורות מתוך ' + (sh.nrev + sh.dropped) + '. לדף ארוך יותר ייכנסו כולן.</small>';
+      if (cfg.q.length && link.length >= 700 && o.qr) sum += '<br><small>עם השאלות שלכם הקישור ארוך מדי לקוד סריקה, ולכן הקוד לא מודפס. שולחים לכיתה את הקישור בווטסאפ.</small>';
       if (sh.total > cfg.m + 1) sum += '<br><small>הדף הקצר ביותר בנושא הזה לוקח כ-' + sh.total + ' דקות. אפשר לקצר עם "בלי עזרה" או עם "דף חזרה".</small>';
       $('dp-sum').innerHTML = sum;
       $('dp-help-note').textContent = cfg.a === 0 ? 'בלי עזרה: אין הסברים, אין רמזים ואין צעדים מודרכים. מתאים לבוחן קצר או לבדיקת הבנה.' : cfg.a === 2 ? 'הרבה עזרה: כל תרגיל מפורק לצעדים קטנים, וגם בדף הדיגיטלי הרמזים תמיד זמינים.' : '';
-      var link = linkOf(cfg, o.title);
       $('dp-open').href = link;
       $('dp-wa').href = 'https://wa.me/?text=' + encodeURIComponent('דף עבודה במתמטיקה: ' + sh.name + ' (' + KIND[cfg.k] + ', כ-' + sh.total + ' דקות)\nפותרים כאן, עם רמזים ומחשבון:\n' + link);
       $('dp-copy').dataset.link = link;
-      var keep = { g: gs.value, u: $('dp-units').value, k: kind, s: seed, t: cfg.t, x: [$('dp-x1').value, $('dp-x2').value], r: [1, 2, 3].map(function (k) { return $('dp-r' + k).value; }), title: o.title, key: o.key };
+      var keep = { g: gs.value, u: $('dp-units').value, k: kind, s: seed, t: cfg.t, x: [$('dp-x1').value, $('dp-x2').value], own: ownQ, r: [1, 2, 3].map(function (k) { return $('dp-r' + k).value; }), title: o.title, key: o.key };
       ['min', 'lv', 'help', 'style', 'font'].forEach(function (k) { keep[k] = $('dp-' + k).value; });
       ['time', 'stars', 'bonus', 'feel', 'grid', 'qr'].forEach(function (k) { keep['o' + k] = o[k]; });
       save(CKEY, keep);
@@ -341,7 +375,7 @@
     gs.addEventListener('change', function () { fillTopics(); fillRevs(); render(); });
     $('dp-units').addEventListener('change', function () { fillTopics(); fillRevs(); render(); });
     $('dp-topic').addEventListener('change', function () { fillRevs(); render(); used('build', { topic: $('dp-topic').value }); });
-    $('dp-form').addEventListener('change', function (e) { if (['dp-grade', 'dp-units', 'dp-topic'].indexOf(e.target.id) < 0) render(); });
+    $('dp-form').addEventListener('change', function (e) { if (['dp-grade', 'dp-units', 'dp-topic'].indexOf(e.target.id) < 0 && !e.target.closest('#dp-own')) render(); });
     $('dp-title').addEventListener('input', render);
     $('dp-form').addEventListener('submit', function (e) { e.preventDefault(); });
     app.querySelectorAll('[data-kind]').forEach(function (b) { b.addEventListener('click', function () { setKind(b.dataset.kind); render(); }); });
@@ -375,7 +409,8 @@
     $('dp-build').hidden = true; $('dp-paper').hidden = true; $('dp-foot').hidden = true; $('dp-hero').hidden = true;
     var root = $('dp-digital'); root.hidden = false;
     var items = sh.items.concat([sh.bonus]), exs = items.filter(function (x) { return x.k === 'ex'; });
-    var SKEY = 'limudim-dapim-s:' + encode(cfg), S = load(SKEY, null) || { log: {}, t0: Date.now(), hints: 0, name: '' };
+    var SKEY = 'limudim-dapim-s:' + encode(cfg) + (cfg.q && cfg.q.length ? '|' + ownEnc(cfg.q).slice(-16) : ''), S = load(SKEY, null) || { log: {}, t0: Date.now(), hints: 0, name: '', free: {} };
+    S.free = S.free || {};
     var tries = {}, hintOpen = {};
     function logOf(ix) { return S.log[ix] || (S.log[ix] = []); }
     function isDone(it, ix) { var l = logOf(ix); return it.p.steps.every(function (s, j) { return l[j] !== undefined && l[j] !== null; }); }
@@ -397,7 +432,7 @@
 
     function renderQ(ix, focus) {
       var it = items[ix], p = it.p, l = logOf(ix), el = $('dg-q' + ix), done = isDone(it, ix), j = curStep(it, ix);
-      var s = '<div class="dp-qh"><span class="dp-n">' + (it.bonus ? '⭐' : it.n) + '</span>' + (it.bonus ? '<span class="dp-tag">לזריזים: שאלת אתגר (לא חובה)</span>' : it.rev ? '<span class="dp-tag">🔁 זוכרים? ' + it.rev.name + '</span>' : it.tp ? '<span class="dp-tag">' + it.tp.em + ' ' + it.tp.name + '</span>' : '') +
+      var s = '<div class="dp-qh"><span class="dp-n">' + (it.bonus ? '⭐' : it.n) + '</span>' + (it.bonus ? '<span class="dp-tag">לזריזים: שאלת אתגר (לא חובה)</span>' : it.own ? '<span class="dp-tag">✍️ שאלה מהמורה</span>' : it.rev ? '<span class="dp-tag">🔁 זוכרים? ' + it.rev.name + '</span>' : it.tp ? '<span class="dp-tag">' + it.tp.em + ' ' + it.tp.name + '</span>' : '') +
         (it.min ? '<span class="dp-min">⏱ כ-' + it.min + ' דק׳</span>' : '') + (done ? '<span class="dg-ok">✓ סיימתם</span>' : '') + '</div><div class="mx-ex" dir="ltr">' + p.ex + '</div>';
       if (p.table) {
         var tb = p.table, shown = [];
@@ -410,14 +445,15 @@
       }
       s += '<ol class="mx-done">' + p.steps.map(function (st, k) {
         if (st.tbl !== undefined || l[k] === undefined || l[k] === null) return '';
-        return '<li class="' + (l[k] === 1 ? '' : 'shown') + '"><div dir="ltr">' + st.show.replace(/<\/?mark>/g, '') + '</div><span>' + (l[k] === 0 && cfg.a === 0 ? '✗' : fmtAns(st) + ' ' + (l[k] === 0 ? '' : '✓')) + '</span></li>';
+        return '<li class="' + (l[k] === 1 ? '' : 'shown') + '"><div dir="ltr">' + st.show.replace(/<\/?mark>/g, '') + '</div><span>' + (st.free ? esc(S.free[ix] || '') + ' ✓' : l[k] === 0 && cfg.a === 0 ? '✗' : fmtAns(st) + ' ' + (l[k] === 0 ? '' : '✓')) + '</span></li>';
       }).join('') + '</ol>';
       if (j > -1 && (!p.table || tblDone(it, ix))) {
         var st = p.steps[j], key = ix + ':' + j, nSeq = p.steps.filter(function (x) { return x.tbl === undefined; }).length, at = p.steps.slice(0, j + 1).filter(function (x) { return x.tbl === undefined; }).length;
         s += '<div class="mx-cur" dir="ltr">' + st.show + '</div><form class="mx-form" data-step="' + j + '" novalidate autocomplete="off"><label for="dg-in' + ix + '"><span class="pill">צעד ' + at + ' מתוך ' + nSeq + '</span> ' + st.q + '</label>';
-        if (st.opts) s += '<div class="dg-opts">' + st.opts.map(function (o, k) { return '<button class="btn btn-line" type="button" data-opt="' + k + '">' + o + '</button>'; }).join('') + '</div>';
+        if (st.free) s += '<div class="dg-free"><textarea id="dg-in' + ix + '" rows="3" maxlength="400" dir="auto"></textarea><button class="btn btn-gold" type="submit">סיימתי לכתוב</button></div>';
+        else if (st.opts) s += '<div class="dg-opts">' + st.opts.map(function (o, k) { return '<button class="btn btn-line" type="button" data-opt="' + k + '">' + o + '</button>'; }).join('') + '</div>';
         else s += '<div class="mx-row"><input id="dg-in' + ix + '" type="text" inputmode="text" dir="ltr" enterkeyhint="done"><button class="btn btn-gold" type="submit">לבדוק</button></div>';
-        s += '<p class="mx-fb" aria-live="polite"></p>' + (cfg.a ? '<p class="mx-hint"' + (hintOpen[key] ? '' : ' hidden') + '>💡 ' + st.hint + '</p><div class="btns"><button class="linkish" type="button" data-hint>💡 רמז</button>' + (it.rev ? '<a class="linkish" href="' + lessonUrl(it.rev).replace('https://gilad-rachamim.github.io', '') + '" target="_blank" rel="noopener">📺 שיעור קצר בנושא</a>' : '') + '</div>' : '') + '</form>';
+        s += '<p class="mx-fb" aria-live="polite"></p>' + (cfg.a && st.hint ? '<p class="mx-hint"' + (hintOpen[key] ? '' : ' hidden') + '>💡 ' + st.hint + '</p><div class="btns"><button class="linkish" type="button" data-hint>💡 רמז</button>' + (it.rev ? '<a class="linkish" href="' + lessonUrl(it.rev).replace('https://gilad-rachamim.github.io', '') + '" target="_blank" rel="noopener">📺 שיעור קצר בנושא</a>' : '') + '</div>' : '') + '</form>';
       } else if (done && p.fin) s += '<p class="mx-fin" dir="ltr">' + p.fin + '</p>';
       el.innerHTML = s; el.classList.toggle('done', done);
       if (focus) { var inp = el.querySelector('input'); if (inp) try { inp.focus({ preventScroll: true }); } catch (e) {} }
@@ -446,7 +482,8 @@
     }
     root.addEventListener('submit', function (e) {
       var f = e.target.closest('form[data-step]'); if (!f) return; e.preventDefault();
-      var ix = +f.closest('[data-ix]').dataset.ix, j = +f.dataset.step, st = items[ix].p.steps[j], inp = f.querySelector('input'), fb = f.querySelector('.mx-fb');
+      var ix = +f.closest('[data-ix]').dataset.ix, j = +f.dataset.step, st = items[ix].p.steps[j], inp = f.querySelector('input,textarea'), fb = f.querySelector('.mx-fb');
+      if (st.free) { if (!inp.value.trim()) { fb.textContent = 'כותבים תשובה בתיבה, ואז לוחצים "סיימתי לכתוב".'; return; } S.free[ix] = inp.value.trim(); logOf(ix)[j] = 3; save(SKEY, S); renderQ(ix, false); progress(); return; }
       if (!inp.value.trim()) { fb.textContent = 'כותבים מספר בתיבה ולוחצים "לבדוק".'; return; }
       var c = check(st, inp.value);
       if (c === -1) { fb.textContent = 'לא הבנתי את המספר. אפשר לכתוב למשל 12, ‎-3, 2.5 או 3/4.'; fb.className = 'mx-fb no'; return; }
@@ -481,7 +518,7 @@
       items.forEach(function (it, ix) {
         if (it.k !== 'ex' || it.bonus) return;
         var l = logOf(ix), bad = 0; if (isDone(it, ix)) doneQ++;
-        it.p.steps.forEach(function (s, j) { all++; if (l[j] === 1) first++; else if (l[j] === 0 || l[j] === 2) bad++; });
+        it.p.steps.forEach(function (s, j) { if (s.free) return; all++; if (l[j] === 1) first++; else if (l[j] === 0 || l[j] === 2) bad++; });
         if (bad >= 2) hard.push(it.n);
       });
       return { doneQ: doneQ, first: first, all: all, hard: hard, min: Math.max(1, Math.round((Date.now() - S.t0) / 60000)) };
@@ -490,11 +527,11 @@
     function progress() {
       var z = stats(), doneSteps = 0;
       items.forEach(function (it, ix) { if (it.k === 'ex' && !it.bonus) logOf(ix).forEach(function (v) { if (v !== undefined && v !== null) doneSteps++; }); });
-      $('dg-fill').style.width = Math.round(doneSteps / z.all * 100) + '%';
+      $('dg-fill').style.width = Math.round(z.doneQ / must.length * 100) + '%';
       $('dg-cnt').textContent = z.doneQ + ' מתוך ' + must.length + ' שאלות';
       $('dg-time').textContent = '⏱ ' + z.min + ' דק׳ מתוך כ-' + sh.total;
       var allDone = z.doneQ === must.length;
-      var txt = 'דף עבודה: ' + sh.name + ' (' + KIND[cfg.k] + ')\n' + (S.name ? 'שם: ' + S.name + '\n' : '') + 'סיימתי ' + z.doneQ + ' מתוך ' + must.length + ' שאלות\nצעדים נכונים בניסיון ראשון: ' + z.first + ' מתוך ' + z.all + '\n' + (cfg.a ? 'רמזים: ' + S.hints + '\n' : '') + 'זמן: כ-' + z.min + ' דקות' + (z.hard.length ? '\nשאלות שהיו לי קשות: ' + z.hard.join(', ') : '');
+      var txt = 'דף עבודה: ' + sh.name + ' (' + KIND[cfg.k] + ')\n' + (S.name ? 'שם: ' + S.name + '\n' : '') + 'סיימתי ' + z.doneQ + ' מתוך ' + must.length + ' שאלות\nצעדים נכונים בניסיון ראשון: ' + z.first + ' מתוך ' + z.all + '\n' + (cfg.a ? 'רמזים: ' + S.hints + '\n' : '') + 'זמן: כ-' + z.min + ' דקות' + (z.hard.length ? '\nשאלות שהיו לי קשות: ' + z.hard.join(', ') : '') + items.map(function (it, ix) { return it.own && S.free[ix] ? '\nשאלה ' + it.n + ' (מהמורה): ' + S.free[ix] : ''; }).join('');
       $('dg-end').innerHTML = '<h2>' + (allDone ? '🎉 סיימתם את הדף, כל הכבוד!' : 'לסיום') + '</h2><p>' + (allDone ? 'נכון בניסיון ראשון: <b>' + z.first + ' מתוך ' + z.all + '</b> צעדים · זמן: כ-' + z.min + ' דקות.' + (z.hard.length ? ' שווה לחזור על שאלות ' + z.hard.join(', ') + '.' : '') : 'אפשר לשלוח למורה סיכום גם באמצע: עד עכשיו ' + z.doneQ + ' מתוך ' + must.length + ' שאלות.') + '</p>' +
         '<label>השם שלי (נשלח רק בהודעה שלכם למורה)<input type="text" id="dg-name" maxlength="30" value="' + esc(S.name || '') + '"></label>' +
         '<div class="btns"><a class="btn btn-gold" id="dg-wa" href="https://wa.me/?text=' + encodeURIComponent(txt) + '" target="_blank" rel="noopener">📲 לשלוח סיכום למורה בווטסאפ</a><button class="btn btn-line btn-sm" type="button" id="dg-copy">להעתיק סיכום</button></div>';
@@ -558,6 +595,7 @@
 
   // ---------- התחלה ----------
   var qs = new URLSearchParams(location.search), d = qs.get('d'), cfg0 = d ? decode(d) : null;
+  if (cfg0) cfg0.q = ownDec(qs.get('q'));
   if (!(cfg0 && initDigital(cfg0, (qs.get('c') || '').slice(0, 40)))) initBuilder();
-  window.__dp = { T: T, build: build, decode: decode, encode: encode, paperHtml: paperHtml, calcEv: calc.ev, fmtAns: fmtAns, GR: GR, PRE: PRE, fits: fits }; // לבדיקות
+  window.__dp = { ownEnc: ownEnc, ownDec: ownDec, linkOf: linkOf, T: T, build: build, decode: decode, encode: encode, paperHtml: paperHtml, calcEv: calc.ev, fmtAns: fmtAns, GR: GR, PRE: PRE, fits: fits }; // לבדיקות
 })();

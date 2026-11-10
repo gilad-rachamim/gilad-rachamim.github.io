@@ -185,3 +185,9 @@ body.dp-student .k-hero{display:none}
 .dp-idea h3{color:var(--gold-hi);margin:0}
 .dp-idea p{color:var(--body);line-height:1.7;margin:0}
 .dp-idea .sig{justify-self:end}
+.dp-own{display:block;text-align:start;font-size:.74em;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.dg-q .mx-ex .dp-own{font-size:.62em}
+.dp-ownq{display:grid;gap:.5rem;padding:.8rem;margin-bottom:.6rem;border:1px dashed var(--line);border-radius:14px}
+.dp-ownq .linkish{justify-self:start}
+.dg-free{display:grid;gap:.5rem}
+.dg-q .mx-done li>span{white-space:normal;overflow-wrap:anywhere;text-align:end}
