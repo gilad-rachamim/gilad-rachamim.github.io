@@ -372,6 +372,63 @@ export async function aiProof(env, b, opts) {
   for (const r of d.rows || []) if (Number.isInteger(r.index) && r.index >= 1 && r.index <= 40) rows[r.index - 1] = { ok: r.ok !== false, note: plainMath(r.note || '') };
   return { ok: !!d.ok, summary: plainMath(d.summary || ''), missing: plainMath(d.missing || ''), rows: Array.from(rows, x => x || null) };
 }
+// ============ המחברת: להתחיל מצילום (/read) ============
+// מעתיקים תרגיל מצילום של דף או ספר לשורה של המחברת, בכתיב מחשבון. רק העתקה, לא פתרון.
+export const READ_PER = 15, READ_CAP = 250;
+export const READ_RULES = `העתק/העתיקי במדויק את תרגילי המתמטיקה שבתמונה, כדי שתלמיד יפתור אותם בעצמו במחברת. לא לפתור ולא להוסיף כלום.
+כל תרגיל: שורה אחת בכתיב מחשבון פשוט (ASCII), בלי LaTeX ובלי סימני $:
+- חזקה ^ (x^2, e^(2x)), כפל * כשצריך, שבר עם / וסוגריים: (x+1)/(x-2). שורש: sqrt(...), שורש שלישי: cbrt(...).
+- ln(...), log(...) לבסיס 10, log_2(8) לבסיס אחר, sin(x) cos(x) tan(x), מעלות עם ° (sin(30°)), pi, ערך מוחלט abs(...).
+- פונקציה: f(x)=..., נגזרת: f'(x)=..., אינטגרל מסוים: int(f,a,b). אי-שוויון עם < > <= >=.
+- מערכת של שתי משוואות: שתי המשוואות באותה שורה, מופרדות ב-" ; " (למשל: x+y=5 ; x-y=1).
+- בלי מילים בתוך התרגיל. אם יש הוראה במילים (פתרו, פשטו, גזרו) – היא נכנסת ל-ask בעברית קצרה.
+label: המספר או האות של התרגיל כמו בדף (למשל "3" או "ב"), או ריק.
+אם אין בתמונה תרגיל מתמטיקה קריא – readable=false ו-why מסביר בעברית קצרה מה חסר.
+עד 8 תרגילים, לפי הסדר בדף.`;
+export const READ_SCHEMA = {
+  type: 'OBJECT',
+  properties: {
+    readable: { type: 'BOOLEAN' }, why: { type: 'STRING' },
+    items: { type: 'ARRAY', items: { type: 'OBJECT', properties: { line: { type: 'STRING' }, ask: { type: 'STRING' }, label: { type: 'STRING' } }, required: ['line'] } }
+  },
+  required: ['readable', 'items']
+};
+// ניקוי מה שהדגם החזיר: שורה בכתיב מחשבון, בלי LaTeX ובלי מילים מיותרות
+export function cleanReadLine(s) {
+  let t = String(s == null ? '' : s).replace(/^\s*\$+|\$+\s*$/g, '').replace(/\\\(|\\\)|\\\[|\\\]/g, '');
+  for (let i = 0; i < 3; i++) {
+    t = t.replace(/\\[dt]?frac\{([^{}]*)\}\{([^{}]*)\}/g, '($1)/($2)').replace(/\\sqrt\{([^{}]*)\}/g, 'sqrt($1)').replace(/\\sqrt\[3\]\{([^{}]*)\}/g, 'cbrt($1)');
+  }
+  t = t.replace(/\^\{([^{}]*)\}/g, (m, a) => (/^[\w.]+$/.test(a) && a.length === 1 ? '^' + a : '^(' + a + ')'))
+    .replace(/\\cdot|\\times/g, '*').replace(/\\le(q)?\b/g, '<=').replace(/\\ge(q)?\b/g, '>=').replace(/\\circ|\^\\circ/g, '°')
+    .replace(/\\(sin|cos|tan|ln|log|pi)\b/g, '$1').replace(/\\left|\\right/g, '').replace(/[{}]/g, '').replace(/\\[,;! ]/g, ' ')
+    .replace(/\s+/g, ' ').trim();
+  return t.slice(0, 300);
+}
+export function tidyRead(d) {
+  const items = (Array.isArray(d && d.items) ? d.items : []).slice(0, 8)
+    .map(it => ({ line: cleanReadLine(it && it.line), ask: plainMath(String((it && it.ask) || '')).slice(0, 120), label: String((it && it.label) || '').slice(0, 8) }))
+    .filter(it => it.line && /[0-9a-zA-Z]/.test(it.line));
+  return { readable: !!(d && d.readable) && items.length > 0, why: plainMath(String((d && d.why) || '')).slice(0, 200), items };
+}
+// דגם קל ומהיר קודם (flash-lite), ואם עמוס – הדגם הראשי
+export async function aiRead(env, image, opts) {
+  const parts = [{ text: 'התמונה של התרגיל מצורפת. העתק/העתיקי את התרגילים לפי הכללים.' }, { inlineData: { mimeType: image.mime || 'image/jpeg', data: image.data } }];
+  const o = Object.assign({ timeout: 45000 }, opts || {});
+  for (const m of LITE) { try { const d = await geminiAnyKey(env, m, READ_RULES, parts, READ_SCHEMA, o); if (d) return tidyRead(d); } catch (_) {} }
+  return tidyRead((await gemini(env, READ_RULES, parts, READ_SCHEMA, o)).data);
+}
+async function readRoute(request, env, ctx, h) {
+  const raw = await request.text();
+  if (raw.length > MAX_IMG + 2000) return json({ error: 'too_big' }, 413, h);
+  let b; try { b = JSON.parse(raw); } catch (_) { return json({ error: 'bad_json' }, 400, h); }
+  const img = b && b.image;
+  if (!img || !img.data || !/^image\/(jpeg|png|webp)$/.test(img.mime || '') || String(img.data).length > MAX_IMG) return json({ error: 'image' }, 400, h);
+  const q = await takeQuota(env, 'r', request, READ_PER, READ_CAP);
+  if (!q.ok) return json({ error: 'quota' }, 200, h);
+  return streamed(ctx, h, async () => Object.assign(await aiRead(env, img), { left: q.left }));
+}
+
 async function takeQuota(env, inst, request, per, cap) {
   const day = new Date().toISOString().slice(0, 10);
   const ip = request.headers.get('cf-connecting-ip') || 'x';
@@ -414,7 +471,11 @@ export default {
     const origin = request.headers.get('origin');
     const h = cors(origin);
     if (request.method === 'OPTIONS') return h ? new Response('', { headers: h }) : new Response('', { status: 403 });
-    if (url.pathname === '/ping') return json({ ok: true, gemini: geminiKeys(env).length, per: PER_IP, machberet: true }, 200, h || {});
+    if (url.pathname === '/ping') return json({ ok: true, gemini: geminiKeys(env).length, per: PER_IP, machberet: true, read: true }, 200, h || {});
+    if (url.pathname === '/read' && request.method === 'POST') {
+      if (!h) return json({ error: 'origin' }, 403);
+      return readRoute(request, env, ctx, h);
+    }
     if ((url.pathname === '/hint' || url.pathname === '/check-proof') && request.method === 'POST') {
       if (!h) return json({ error: 'origin' }, 403);
       return machberet(request, env, ctx, h, url.pathname);

@@ -515,6 +515,70 @@
     });
   }
 
+  // ---------- להתחיל מצילום: מעתיקים תרגיל מדף או מספר לשורה הראשונה (השרת של הפותר, /read) ----------
+  var camB = $('mb-cam'), camF = $('mb-camf');
+  (function () { // הכפתור מופיע רק כשהשרת כבר יודע לקרוא צילומים
+    var c = null; try { c = sessionStorage.getItem('mb-read'); } catch (_) {}
+    if (c === '1') { camB.hidden = false; return; }
+    if (c === '0') return;
+    fetch(API + '/ping').then(function (r) { return r.json(); }).then(function (j) {
+      try { sessionStorage.setItem('mb-read', j.read ? '1' : '0'); } catch (_) {}
+      if (j.read) camB.hidden = false;
+    }).catch(function () {});
+  })();
+  camB.addEventListener('click', function () { camF.click(); });
+  camF.addEventListener('change', function () { readPhoto(this.files && this.files[0]); this.value = ''; });
+  rowsEl.addEventListener('paste', function (e) { // הדבקת צילום מסך בשורת התרגיל
+    if (camB.hidden || HW || !e.target.classList.contains('mb-in')) return;
+    var items = (e.clipboardData && e.clipboardData.items) || [];
+    for (var j = 0; j < items.length; j++) if (items[j].kind === 'file' && /^image\//.test(items[j].type)) { e.preventDefault(); readPhoto(items[j].getAsFile()); return; }
+  });
+  function readPhoto(file) {
+    if (!file || !/^image\//.test(file.type)) return;
+    var url = URL.createObjectURL(file), img = new Image();
+    img.onload = function () {
+      var max = 1600, w = img.naturalWidth, h = img.naturalHeight, k = Math.min(1, max / Math.max(w, h));
+      var c = document.createElement('canvas'); c.width = Math.round(w * k); c.height = Math.round(h * k);
+      var g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
+      var d = c.toDataURL('image/jpeg', 0.85); URL.revokeObjectURL(url);
+      sendPhoto(d);
+    };
+    img.onerror = function () { URL.revokeObjectURL(url); flash('לא הצלחתי לפתוח את התמונה. אפשר לנסות צילום אחר.'); };
+    img.src = url;
+  }
+  function sendPhoto(dataUrl) {
+    hintEl.hidden = false; hintEl.innerHTML = '';
+    var top = el('div', 'mb-camp'), im = el('img'); im.src = dataUrl; im.alt = 'הצילום'; top.appendChild(im);
+    var st = el('p', 'mb-ht', '⏳ קורא את התרגיל מהצילום…'); top.appendChild(st); hintEl.appendChild(top);
+    hintEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    camB.disabled = true; used('photo');
+    post('/read', { image: { mime: 'image/jpeg', data: dataUrl.split(',')[1] } }).then(function (x) {
+      camB.disabled = false;
+      var j = x.j || {};
+      if (x.s === 429 || j.error === 'quota') { st.textContent = 'הגעתם למכסה היומית של הצילומים. מחר אפשר שוב, ובינתיים מקלידים את התרגיל בשורה הראשונה.'; return; }
+      if (x.s !== 200 || j.error) { st.textContent = j.busy ? 'הקריאה מצילום עמוסה כרגע. אפשר לנסות שוב בעוד כמה דקות, או להקליד את התרגיל.' : 'לא הצלחתי לקרוא את הצילום כרגע. אפשר לנסות שוב, או להקליד את התרגיל.'; return; }
+      var its = j.items || [];
+      if (!j.readable || !its.length) { st.textContent = (j.why ? j.why + ' ' : '') + 'לא מצאתי תרגיל בצילום. מצלמים מקרוב, ישר מעל הדף ועם אור טוב. אפשר גם להקליד.'; return; }
+      if (its.length === 1) { useRead(its[0]); return; }
+      st.textContent = 'מצאתי ' + its.length + ' תרגילים. על איזה עובדים?';
+      var list = el('div', 'mb-pick');
+      its.forEach(function (it) {
+        var b = el('button', ''); b.type = 'button';
+        b.innerHTML = (it.label ? '<small>' + esc(it.label) + '.</small>' : '') + '<bdi dir="ltr">' + esc(it.line) + '</bdi>' + (it.ask ? '<small>' + esc(it.ask) + '</small>' : '');
+        var RI = M.readLine(it.line, { deg: A.deg }); if (RI.tex) tex(b.querySelector('bdi'), RI.tex);
+        b.addEventListener('click', function () { useRead(it); });
+        list.appendChild(b);
+      });
+      hintEl.appendChild(list);
+    }).catch(function () { camB.disabled = false; st.textContent = 'אין חיבור לאינטרנט. אפשר להקליד את התרגיל, והבדיקה של כל שורה עובדת גם בלי.'; });
+  }
+  function useRead(it) {
+    archive(); A.rows = [it.line, '']; renderRows(1); save(); used('photo_used');
+    var bad = M.readLine(it.line, { deg: A.deg }).kind === 'bad';
+    hintEl.hidden = false; hintEl.innerHTML = '';
+    hintEl.appendChild(el('p', 'mb-ht', esc(bad ? '📷 התרגיל הועתק, אבל משהו בו לא נקרא טוב. מתקנים את שורת התרגיל לפי הדף.' : '📷 ✓ התרגיל הועתק מהצילום' + (it.ask ? ' (' + it.ask + ')' : '') + '. בודקים שהוא כמו בדף, ומתחילים לפתור בשורה הבאה.')));
+  }
+
   // =====================================================================
   //  הוכחה: טענה | נימוק
   // =====================================================================
