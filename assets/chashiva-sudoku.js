@@ -82,6 +82,7 @@
     data.cur = s.cur; CH.save(G, s);
   }
   function start(m, level, seedOverride) {
+    if (m !== 'vs') CH.vsReset();
     mode = m; lv = level; won = false; undo = []; hinted = {}; hints = 0; sel = -1; started = false; $('sd-win').innerHTML = ''; say('');
     var seed = seedOverride || (m === 'daily' ? 'sudoku-daily-' + CH.today() : 'sudoku-' + level + '-' + Date.now());
     P = generate(seed, level); P.key = seed; P.lv = level;
@@ -92,7 +93,7 @@
       (sv.h || '').split(',').forEach(function (x) { if (x !== '') hinted[x] = 1; }); hints = sv.hints || 0; clock.set(sv.sec);
     } else clock.set(0);
     clock.on = true;
-    $('sd-label').textContent = (m === 'daily' ? 'האתגר היומי · ' + CH.shortDate() + ' · ' : '') + LEVELS[level].name;
+    $('sd-label').textContent = (m === 'daily' ? 'האתגר היומי · ' + CH.shortDate() + ' · ' : m === 'vs' ? 'אתגר מחבר · ' : '') + LEVELS[level].name;
     $('sd-board').classList.remove('won');
     var st = CH.stats(G);
     $('sd-today').hidden = !(m === 'daily' && st.doneToday);
@@ -199,7 +200,9 @@
     CH.win({ tool: TOOL, el: $('sd-win'), daily: daily && !already, stats: st,
       title: hints ? 'פתרתם! 🎉' : 'פתרתם בלי רמזים! 🎉',
       line: '<span>⏱ <b>' + CH.fmt(clock.sec) + '</b></span>' + (rec && !hints ? '<span>🏆 שיא חדש ב' + LEVELS[lv].name + '</span>' : data.best[lv] ? '<span>השיא שלכם: ' + CH.fmt(data.best[lv]) + '</span>' : '') + (hints ? '<span>💡 ' + hints + '</span>' : ''),
-      share: share, next: next });
+      share: share, next: next,
+      vs: { g: 'sudoku', s: P.key, l: lv }, vsMine: { t: clock.sec, h: hints, q: 'time' }, vsWhat: 'אותו לוח',
+      vsMsg: '⚔️ אתגר בסודוקו (' + LEVELS[lv].name + '): פתרתי את הלוח הזה ב-' + CH.fmt(clock.sec) + (hints ? ' (עם ' + hints + ' רמזים)' : '') + '. תצליחו מהר יותר?' });
   }
 
   // ---------- רמות ולשוניות ----------
@@ -214,6 +217,7 @@
   }
   function pick(l) { if (!unlocked(l)) return; start('level', l); drawLevels(); }
   function tab(m) {
+    CH.vsReset();
     document.querySelectorAll('#sd-tabs button').forEach(function (b) { b.setAttribute('aria-selected', b.getAttribute('data-m') === m); });
     $('sd-lvlbox').hidden = m !== 'levels';
     $('sd-new').hidden = m === 'daily';
@@ -226,5 +230,8 @@
     }
   }
   document.querySelectorAll('#sd-tabs button').forEach(function (b) { b.onclick = function () { tab(b.getAttribute('data-m')); }; });
-  tab(data.cur && /^sudoku-(kal|beinoni|kashe|mumche)-/.test(data.cur.key) ? 'levels' : 'daily');
+  var V = CH.vsIn && CH.vsIn.g === 'sudoku' && typeof CH.vsIn.s === 'string' && /^sudoku-/.test(CH.vsIn.s) && LEVELS[CH.vsIn.l] ? CH.vsIn : null;
+  if (V && V.s === 'sudoku-daily-' + CH.today()) { tab('daily'); CH.vsStart(TOOL, 'הלוח הזה'); }
+  else if (V) { document.querySelectorAll('#sd-tabs button').forEach(function (b) { b.setAttribute('aria-selected', 'false'); }); $('sd-new').hidden = false; start('vs', V.l, V.s); CH.vsStart(TOOL, 'הלוח הזה'); }
+  else tab(data.cur && /^sudoku-(kal|beinoni|kashe|mumche)-/.test(data.cur.key) ? 'levels' : 'daily');
 })();
