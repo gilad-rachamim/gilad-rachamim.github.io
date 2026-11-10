@@ -21,7 +21,7 @@
 <link rel="manifest" href="/limudim/manifest.webmanifest">
 <link rel="stylesheet" href="/assets/site.css?v=39e81fea">
 <link rel="stylesheet" href="/assets/kelim.css?v=873b0769">
-<link rel="stylesheet" href="/assets/limudim.css?v=c325b4b8">
+<link rel="stylesheet" href="/assets/limudim.css?v=d3b50d8b">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4QR4583VST"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4QR4583VST');</script>
 <script src="/assets/track.js?v=b23b682b" defer></script>
@@ -71,6 +71,7 @@
   <div class="mb-tabs" role="tablist" aria-label="סוג העבודה">
     <button type="button" role="tab" id="mb-t-alg" aria-selected="true" aria-controls="mb-alg">✏️ תרגיל</button>
     <button type="button" role="tab" id="mb-t-prf" aria-selected="false" aria-controls="mb-prf">📐 הוכחה</button>
+    <button type="button" role="tab" id="mb-t-hw" aria-selected="false" aria-controls="mb-hw" hidden>📚 שיעורי בית</button>
   </div>
 
   <div class="mb-shared no-print" id="mb-shared" hidden role="status">
@@ -96,6 +97,13 @@
       <span class="mb-saved" id="mb-saved" aria-live="polite"></span>
     </div>
 
+    <div class="mb-hwbar no-print" id="mb-hwbar" hidden>
+      <div class="mb-hwtop"><b id="mb-hwtitle"></b><button type="button" class="linkish" id="mb-hwexit">חזרה למחברת שלי</button></div>
+      <div class="mb-hwex" id="mb-hwex" role="group" aria-label="התרגילים במטלה"></div>
+      <div class="mb-hwmsgs" id="mb-hwmsgs" aria-live="polite"></div>
+      <div class="btns"><button type="button" class="btn btn-sm mb-stuck" id="mb-stuck" aria-pressed="false">🙋 נתקעתי, צריך עזרה</button><span class="mb-saved" id="mb-hwsaved"></span></div>
+    </div>
+
     <article class="cx-sheet mb-sheet" id="mb-sheet" aria-label="המחברת">
       <ol class="mb-rows" id="mb-rows"></ol>
       <button type="button" class="mb-add no-print" id="mb-add">+ שורה חדשה</button>
@@ -115,6 +123,23 @@
       <summary><b>הדפים הקודמים שלי</b></summary>
       <ul id="mb-oldl"></ul>
     </details>
+  </section>
+
+  <!-- ===================== שיעורי בית מהמורה ===================== -->
+  <section id="mb-hw" role="tabpanel" aria-labelledby="mb-t-hw" hidden>
+    <div class="panel" id="mb-hwjoin" hidden>
+      <h2>מצטרפים לכיתה</h2>
+      <p>המורה שלחה לכם קישור לשיעורי בית במחברת. בוחרים כינוי, ומתחילים.</p>
+      <label class="pt-lbl" for="mb-jcode">קוד הכיתה</label><input class="kh-in" id="mb-jcode" inputmode="numeric" maxlength="6" dir="ltr" placeholder="000000">
+      <label class="pt-lbl" for="mb-jnick">הכינוי שלי <small>(עדיף לא שם מלא)</small></label><input class="kh-in" id="mb-jnick" maxlength="16" placeholder="למשל: נועה ב׳">
+      <button type="button" class="btn btn-gold" id="mb-join">להצטרף</button>
+      <p class="pt-err" id="mb-jerr" hidden></p>
+    </div>
+    <div class="panel" id="mb-hwlist" hidden>
+      <div class="kh-row"><h2 id="mb-hwcls"></h2><span class="mb-saved" id="mb-hwme"></span></div>
+      <ul class="kh-list" id="mb-hwul"></ul>
+      <p class="note">כל שורה שאתם כותבים נבדקת לבד, והמורה רואה את ההתקדמות. תרגיל שנפתר נכון מוסיף 20 נקודות ללוח של <a class="gold" href="/kelim/chashiva/kita/">כיתה משחקת</a>.</p>
+    </div>
   </section>
 
   <!-- ===================== הוכחה ===================== -->
@@ -171,7 +196,7 @@
   </dialog>
 
   <p class="note pt-priv">המחברת נשמרת רק בטלפון או במחשב שלכם. הבדיקה של כל שורה נעשית במכשיר עצמו, בלי בינה מלאכותית ובלי לשלוח כלום. רק "רמז חכם" ו"בדיקה חכמה" של הוכחה שולחים את מה שכתבתם (בלי שום פרט עליכם) לבינה מלאכותית, עם מכסה יומית כדי שהשירות יישאר חינמי לכולם.
-  רוצים לראות פתרון מלא? <a class="gold" href="/limudim/poter/">הפותר</a> נותן דרך מלאה לשאלת בגרות. <a class="gold" href="/limudim/machshevon/">המחשבון לבגרות</a> עוזר בחישובים.</p>
+  👩‍🏫 מורים? <a class="gold" href="/limudim/machberet/kita/">שיעורי בית במחברת</a>: נותנים לכיתה תרגילים ורואים בזמן אמת מי פתר ומי נתקע. רוצים לראות פתרון מלא? <a class="gold" href="/limudim/poter/">הפותר</a> נותן דרך מלאה לשאלת בגרות. <a class="gold" href="/limudim/machshevon/">המחשבון לבגרות</a> עוזר בחישובים.</p>
 </div>
 
 </main>
@@ -232,7 +257,7 @@
   <button class="btn btn-gold btn-sm" type="button" data-install>להתקין</button>
   <button class="x" type="button" data-install-close aria-label="סגירה">×</button>
 </div>
-<script src="/assets/kelim.js?v=781de167" defer></script>
-<script src="/assets/vendor/katex/katex.min.js?v=f4e1ebdc"></script><script src="/assets/limudim-dibur.js?v=e1fc518c"></script><script src="/assets/limudim-machberet-math.js?v=47004e35"></script><script src="/assets/limudim-machberet.js?v=dd002d9c"></script><script src="/assets/limudim.js?v=63c003af" defer></script>
+<script src="/assets/kelim.js?v=dccd2958" defer></script>
+<script src="/assets/vendor/katex/katex.min.js?v=f4e1ebdc"></script><script src="/assets/limudim-dibur.js?v=e1fc518c"></script><script src="/assets/limudim-machberet-math.js?v=47004e35"></script><script src="/assets/limudim-machberet.js?v=fd158282"></script><script src="/assets/limudim.js?v=63c003af" defer></script>
 </body>
 </html>
