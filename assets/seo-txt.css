@@ -1,0 +1,8 @@
+/* טקסט הסבר ושאלות ותשובות מתחת לכלי (לגוגל ולמי שרוצה לקרוא) */
+.seo-txt{padding-bottom:.6rem}
+.seo-txt>h2,.seo-faq>h2{color:var(--gold)}
+.seo-txt p{color:var(--body);line-height:1.8;margin:0 0 .9rem;font-size:1.05rem}
+.seo-txt h3{font-family:var(--serif);color:var(--cream);font-size:1.2rem;margin:1.2rem 0 .35rem}
+.seo-faq{padding-top:.4rem}
+.seo-faq summary{text-align:start}
+@media print{.seo-txt,.seo-faq{display:none}}
