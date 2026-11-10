@@ -97,3 +97,5 @@ body[data-tool="rega"] .fb{display:none}
 .rel .rel-all{margin-top:.9rem;text-align:center}
 @media print{.rel{display:none!important}}
 body[data-tool="rega"] .rel{display:none}
+/* "בחינם, בלי הגבלה ובלי פרסומות" – פס בראש כל דף (build.py chesed_band) */
+.chesed{max-width:44rem;margin:.7rem auto 0;padding:0 1.25rem;text-align:center}.chesed-t{display:flex;flex-wrap:wrap;justify-content:center;gap:.35rem .45rem;margin:0}.chesed-t b{display:inline-flex;align-items:center;padding:.22rem .75rem;border-radius:999px;border:1px solid var(--gold-soft);background:rgba(216,179,95,.1);color:var(--gold);font-weight:700;font-size:.92rem;line-height:1.4;white-space:nowrap}.chesed-s{margin:.4rem 0 0;color:var(--muted);font-size:.86rem;line-height:1.5}@media print{.chesed{display:none!important}}
