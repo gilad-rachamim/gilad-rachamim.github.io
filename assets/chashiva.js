@@ -106,6 +106,52 @@
     if (window.toolUsed) window.toolUsed(tool, Object.assign({ how: how }, extra || {}));
   };
 
+  // ---------- משחק עם חבר: קישור שפותח את אותו לוח בדיוק, עם התוצאה של מי ששלח ----------
+  // הקישור נושא רק את מספר הלוח (זרע), את התוצאה ואת השם אם הוקלד. אין שרת: הכול בתוך הקישור.
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  CH.esc = esc;
+  function b64e(s) { return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+  function b64d(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return decodeURIComponent(escape(atob(s))); }
+  CH.vsIn = (function () {
+    try { var q = new URLSearchParams(location.search).get('vs'); if (!q) return null; var o = JSON.parse(b64d(q)); if (!o || !o.g || typeof o.t !== 'number') return null; if (o.m) o.m = String(o.m).slice(0, 20); return o; } catch (e) { return null; }
+  })();
+  CH.vsActive = false;
+  function tries(t) { return t > 6 ? '✕' : t === 1 ? 'ניסיון אחד' : t + ' ניסיונות'; }
+  function vsScore(o) { return o.q === 'tries' ? (o.t > 6 ? 'לא נוחשה' : 'נוחשה ב' + (o.t === 1 ? 'ניסיון אחד' : '-' + o.t + ' ניסיונות')) : 'נפתר ב-' + CH.fmt(o.t); }
+  CH.vsStart = function (tool, what) {
+    var v = CH.vsIn, el = document.getElementById('ch-vsbanner'); CH.vsActive = true;
+    if (el) { el.hidden = false; el.innerHTML = '⚔️ <b>אתגר מאת ' + esc(v.m || 'חבר') + '</b>: ' + what + ' ' + vsScore(v) + (v.h ? ' (עם רמזים)' : '') + '. ' + (v.q === 'tries' ? (v.t > 6 ? 'תצליחו לנחש אותה?' : 'תצליחו בפחות ניסיונות?') : 'תצליחו מהר יותר?'); }
+    CH.used(tool, 'vs_open');
+  };
+  CH.vsReset = function () { CH.vsActive = false; var el = document.getElementById('ch-vsbanner'); if (el) el.hidden = true; };
+  function vsResult(o) {
+    var v = CH.vsIn; if (!o.vsMine || !CH.vsActive || !v) return '';
+    var me = o.vsMine.t, them = v.t, nm = esc(v.m || 'החבר שלכם');
+    var show = function (t) { return o.vsMine.q === 'tries' ? tries(t) : CH.fmt(t); };
+    var head = me < them ? '🏆 ניצחתם את ' + nm + '!' : me === them ? '🤝 תיקו עם ' + nm + '!' : '💪 הפעם הניצחון של ' + nm + '.';
+    CH.used(o.tool, 'vs_done', { win: me < them ? 1 : 0 });
+    return '<div class="ch-vsres"><b>' + head + '</b><span>אתם: ' + show(me) + ' · ' + nm + ': ' + show(them) + '</span></div>';
+  }
+  function vsBox(o) {
+    if (!o.vs) return '';
+    var nm = ''; try { nm = localStorage.getItem('chashiva-name') || ''; } catch (e) {}
+    return '<div class="ch-vs"><b>⚔️ לאתגר חבר על ' + o.vsWhat + ' בדיוק</b><span>החבר יקבל את ' + o.vsWhat + ' ואת התוצאה שלכם, ובסוף יראה מי ניצח.</span>' +
+      '<input type="text" maxlength="20" placeholder="השם שלכם (לא חובה)" value="' + esc(nm) + '" data-vs-name aria-label="השם שלכם">' +
+      '<div class="actions"><a class="btn btn-gold" href="#" target="_blank" rel="noopener" data-vs-wa><svg class="ic"><use href="#wa"/></svg> לשלוח אתגר בווטסאפ</a><button class="btn btn-line" type="button" data-vs-copy>🔗 להעתיק קישור</button></div></div>';
+  }
+  function vsWire(el, o) {
+    var box = el.querySelector('.ch-vs'); if (!box) return;
+    var inp = box.querySelector('[data-vs-name]');
+    function msg() {
+      var name = (inp.value || '').trim().slice(0, 20); try { localStorage.setItem('chashiva-name', name); } catch (e) {}
+      var p = Object.assign({}, o.vs, o.vsMine); if (name) p.m = name;
+      var link = location.origin + location.pathname + '?vs=' + b64e(JSON.stringify(p)) + '&utm_source=share&utm_medium=friend&utm_campaign=vs_' + o.vs.g;
+      return o.vsMsg + '\n' + link;
+    }
+    box.querySelector('[data-vs-wa]').addEventListener('click', function () { this.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(msg()); CH.used(o.tool, 'vs_send', { how: 'wa' }); });
+    box.querySelector('[data-vs-copy]').addEventListener('click', function () { var t = msg(); if (window.kelimCopy) window.kelimCopy(t, this, 'הקישור הועתק ✓ אפשר להדביק לחבר'); CH.used(o.tool, 'vs_send', { how: 'copy' }); });
+  }
+
   // ---------- חלון "פתרתם!" ----------
   // o: {tool, el, title, line, share, daily, next:[{label, fn}]}
   function weekBox(o) {
@@ -119,11 +165,11 @@
     var streakTxt = o.daily && st.streak ? '<span>🔥 רצף <b>' + CH.days(st.streak) + '</b></span>' : '';
     el.innerHTML =
       '<div class="ch-win" role="status">' +
-        '<h2>' + (o.title || 'פתרתם! 🎉') + '</h2>' +
+        '<h2>' + (o.title || 'פתרתם! 🎉') + '</h2>' + vsResult(o) +
         '<div class="ch-pills">' + (o.line || '') + streakTxt + '</div>' +
         (o.daily ? weekBox(o) : '') +
         (o.extra || '') +
-        '<div class="ch-next"></div>' +
+        '<div class="ch-next"></div>' + vsBox(o) +
         '<div class="ch-help">' +
           '<b>רגע אחד, מכל הלב 🙏</b>' +
           '<p>המשחקים כאן בחינם ובלי פרסומות. אני גילעד, נפגעתי בחאן יונס, ואני בונה את האתר הזה לבד ובאהבה. גם לי הוא עולה כסף כל חודש. אם נהניתם, שתי דרכים לעזור:</p>' +
@@ -143,9 +189,10 @@
     var nx = el.querySelector('.ch-next');
     (o.next || []).forEach(function (n, i) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'btn ' + (i ? 'btn-line' : 'btn-gold'); b.textContent = n.label;
-      b.onclick = function () { el.innerHTML = ''; n.fn(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+      b.onclick = function () { el.innerHTML = ''; CH.vsReset(); n.fn(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
       nx.appendChild(b);
     });
+    vsWire(el, o); CH.vsActive = false;
     el.querySelector('[data-ch-give]').onclick = function () { el.querySelector('.ch-give').hidden = false; CH.used(o.tool, 'give_open'); };
     el.querySelector('[data-share-tool]').addEventListener('click', function () { CH.used(o.tool, 'share_result', { daily: o.daily ? 1 : 0 }); });
     setTimeout(function () { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 250);
