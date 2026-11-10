@@ -186,11 +186,14 @@ async function summarize(env, items) {
   // בדיקה שנייה מול המקור
   const checkText = all.map((p, i) => `נקודה ${i + 1}: ${p.text}\nמקורות:\n` +
     p.ids.map(id => `- [${byId[id].name}] ${byId[id].title}. ${byId[id].desc}`).join('\n')).join('\n\n');
-  let verdict = {};
-  try {
-    const c = await gemini(env, CHECK_RULES, checkText, CHECK_SCHEMA);
-    for (const r of c.data.results || []) verdict[r.n] = r;
-  } catch (e) { verdict = null; }
+  let verdict = null, checkError = '';
+  for (let tryN = 0; tryN < 2 && !verdict; tryN++) { // דגמים עמוסים בבוקר – ניסיון שני אחרי הפסקה קצרה
+    try {
+      const c = await gemini(env, CHECK_RULES, checkText, CHECK_SCHEMA);
+      verdict = {};
+      for (const r of c.data.results || []) verdict[r.n] = r;
+    } catch (e) { checkError = String(e.message || e).slice(0, 300); if (!tryN) await new Promise(r => setTimeout(r, 8000)); }
+  }
   const dropped = [], fixed = [];
   const sections = { main: [], haredi: [], economy: [] };
   all.forEach((p, i) => {
@@ -209,7 +212,7 @@ async function summarize(env, items) {
     const seen = new Set(); // מקור אחד פעם אחת, גם אם כמה ידיעות שלו
     sections[p.sec].push({ text: p.text, sources: p.ids.map(id => ({ name: byId[id].name, link: byId[id].link })).filter(x => !seen.has(x.name) && seen.add(x.name)) });
   });
-  return { mode: 'summary', model: w.model, sections, dropped, fixed };
+  return { mode: 'summary', model: w.model, sections, dropped, fixed, checkError };
 }
 
 function titlesOnly(items) {
@@ -280,7 +283,7 @@ export async function runEdition(env, { force = false, now = new Date(), push = 
   let ed;
   if (env.GEMINI_KEY && items.length) {
     try { ed = await summarize(env, items); } catch (e) { ed = titlesOnly(items); ed.error = String(e.message || e).slice(0, 300); }
-    if (ed.mode === 'summary' && ed.sections.main.length < 2) { const t = titlesOnly(items); t.error = 'מעט מדי נקודות עברו בדיקה'; t.dropped = ed.dropped; ed = t; }
+    if (ed.mode === 'summary' && ed.sections.main.length < 2) { const t = titlesOnly(items); t.error = 'מעט מדי נקודות עברו בדיקה' + (ed.checkError ? ' – ' + ed.checkError : ''); t.dropped = ed.dropped; ed = t; }
   } else ed = titlesOnly(items);
   const hd = new HDate(new Date(p.y, p.m - 1, p.d, 12));
   ed.at = now.toISOString();
@@ -292,7 +295,7 @@ export async function runEdition(env, { force = false, now = new Date(), push = 
   ed.v = VERSION;
   await call(env, '/save', ed);
   if (push) await call(env, '/push-start', {});
-  if (push && env.FB_PAGE_TOKEN && env.FB_PAGE_ID) ed.fb = await postFacebook(env, ed).catch(e => ({ error: String(e).slice(0, 200) }));
+  if (push && env.FB_PAGE_TOKEN && env.FB_PAGE_ID) ed.fb = await postFacebook(env, ed, (await call(env, '/config')).links || {}).catch(e => ({ error: String(e).slice(0, 200) }));
   return { ok: true, fb: ed.fb, name: ed.name, mode: ed.mode, main: ed.sections.main.length, dropped: ed.dropped.length, failed, error: ed.error };
 }
 
@@ -309,10 +312,12 @@ export default {
     if (url.pathname === '/ping') return json({ ok: true, v: VERSION, gemini: !!env.GEMINI_KEY });
     if (url.pathname === '/latest') {
       const ed = await call(env, '/latest');
-      ctx.waitUntil(call(env, '/hit', { e: url.searchParams.get('from') || 'web' }).catch(() => {}));
+      const from = url.searchParams.get('from');
+      ctx.waitUntil(call(env, '/hit', { e: FROM.includes(from) ? from : 'web' }).catch(() => {}));
       if (!ed?.at) return json({ empty: true });
-      const { dropped, error, ...pub } = ed;
-      return json(admin ? ed : pub, 200, { 'cache-control': 'public, max-age=120' });
+      const { dropped, error, fixed, checkError, ...pub } = ed;
+      const links = (await call(env, '/config')).links || {};
+      return json({ ...(admin ? ed : pub), links }, 200, { 'cache-control': 'public, max-age=120' });
     }
     if (url.pathname === '/history') return json(await call(env, '/history'), 200, { 'cache-control': 'public, max-age=300' });
     if (url.pathname === '/report' && request.method === 'POST') {
@@ -324,6 +329,15 @@ export default {
     }
     if (url.pathname === '/reports') return admin ? json(await call(env, '/reports')) : json({ ok: false }, 403);
     if (url.pathname === '/stats') return json(await call(env, '/stats'));
+    // קישורים שמופיעים בדף ובפוסטים (ערוץ הווטסאפ) – נקבעים פעם אחת, בלי להעלות את השרת מחדש
+    // /config?key=..&wa=https://whatsapp.com/channel/...   (wa= ריק מוחק)
+    if (url.pathname === '/config') {
+      if (!admin) return json({ ok: false }, 403);
+      const wa = url.searchParams.get('wa');
+      if (wa === null) return json(await call(env, '/config'));
+      if (wa && !/^https:\/\/(www\.)?whatsapp\.com\/channel\/[A-Za-z0-9]+$/.test(wa)) return json({ ok: false, error: 'קישור ערוץ לא תקין' }, 400);
+      return json(await call(env, '/config-set', { wa }));
+    }
     if (url.pathname === '/run') {
       if (!admin) return json({ ok: false }, 403);
       const force = url.searchParams.get('force') === '1';
@@ -349,19 +363,23 @@ export default {
 // אחסון: הסיכום האחרון, 21 הקודמים, דיווחי טעויות ומונה כניסות יומי
 // ---------- פייסבוק: פוסט לדף "החדשות ב-3 דקות" (Graph API, מפתח קבוע של הדף) ----------
 const PAGE_URL = 'https://gilad-rachamim.github.io/kelim/machshev/chadashot/';
-export function editionText(ed) {
+// מאיפה הגיעו (נספר ב-/stats): דף, טלפון, התראה, פייסבוק, ווטסאפ, מודעה (QR), שיתוף, דף הבית
+export const FROM = ['web', 'phone', 'push', 'fb', 'wa', 'qr', 'share', 'home'];
+export function editionText(ed, links = {}) {
   const out = [`📰 החדשות ב-3 דקות – ${ed.name}, יום ${ed.date.day} ${ed.date.he}`, ''];
   const names = { haredi: 'ציבור חרדי', economy: 'כלכלה וכיס' };
   ed.sections.main.forEach((p, i) => out.push(`${i + 1}. ${p.text}`));
   for (const k of ['haredi', 'economy']) if (ed.sections[k]?.length) { out.push('', `▪️ ${names[k]}`); ed.sections[k].forEach(p => out.push(`• ${p.text}`)); }
-  out.push('', 'כל נקודה עם קישור למקור, והתראה 3 פעמים ביום:', PAGE_URL, 'בטלפון כשר: 077-2253345 שלוחה 8');
+  out.push('', 'כל נקודה עם קישור למקור, והתראה 3 פעמים ביום:', PAGE_URL + '?utm_source=fb');
+  if (links.wa) out.push('', '📲 בערוץ הווטסאפ, 3 פעמים ביום:', links.wa);
+  out.push('בטלפון כשר: 077-2253345 שלוחה 8');
   return out.join('\n');
 }
-async function postFacebook(env, ed) {
+async function postFacebook(env, ed, links) {
   const v = env.FB_API_VERSION || 'v23.0';
   const r = await fetch(`https://graph.facebook.com/${v}/${env.FB_PAGE_ID}/feed`, {
     method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ message: editionText(ed), link: PAGE_URL, access_token: env.FB_PAGE_TOKEN })
+    body: new URLSearchParams({ message: editionText(ed, links), link: PAGE_URL + '?utm_source=fb', access_token: env.FB_PAGE_TOKEN })
   });
   const j = await r.json().catch(() => ({}));
   return r.ok ? { id: j.id } : { error: (j.error && j.error.message) || String(r.status) };
@@ -418,6 +436,13 @@ export class Store {
       return Response.json({ ok: true });
     }
     if (path === '/reports') return Response.json((await this.s.get('reports')) || []);
+    if (path === '/config') return Response.json((await this.s.get('config')) || { links: {} });
+    if (path === '/config-set') {
+      const c = (await this.s.get('config')) || { links: {} };
+      if (body.wa) c.links.wa = body.wa; else delete c.links.wa;
+      await this.s.put('config', c);
+      return Response.json({ ok: true, ...c });
+    }
     if (path === '/hit') {
       const day = new Date().toISOString().slice(0, 10), st = (await this.s.get('stats')) || {};
       const k = `${day} ${String(body.e || 'web').slice(0, 12)}`;
