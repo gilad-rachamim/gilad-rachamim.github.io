@@ -22,7 +22,14 @@
       })
       .catch(function () { var L = pend(); body.game = o.game; L.push({ game: o.game, pts: o.pts, ref: body.ref }); pend(L); });
   }
-  function add(o) { if (o && o.game && o.pts > 0) send(o); }
+  // תרגול לבגרות (limudim-nekudot.js, window.PTS): כל תרגיל שנגמר נשלח מ-PTS.add.
+  // דו-קרב שולח גם ל-KITA_Q את אותן נקודות באותו רגע – מדלגים עליו כדי לא לספור פעמיים.
+  var lastPts = null, seq = 0;
+  function add(o) {
+    if (!o || !o.game || !(o.pts > 0)) return;
+    if (!o._pts && lastPts && lastPts.game === o.game && lastPts.pts === Math.round(o.pts) && Date.now() - lastPts.t < 3000) { lastPts = null; return; }
+    send(o);
+  }
   window.KITA = { me: me, api: API, add: add };
   var Q = window.KITA_Q; window.KITA_Q = { push: add };
   if (Q && Q.forEach) Q.forEach(add);
@@ -57,5 +64,21 @@
     CH.record._kita = 1;
     return true;
   }
-  if (!hook()) { var n = 0, t = setInterval(function () { if (hook() || ++n > 60) clearInterval(t); }, 250); }
+  function hookPts() {
+    var P = window.PTS;
+    if (!P || !P.add) return false;
+    if (P.add._kita) return true;
+    var orig = P.add;
+    P.add = function (src, n) {
+      var r = orig.apply(this, arguments);
+      try {
+        n = Math.round(n || 0);
+        if (n > 0) { var g = String(src).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 24) || 'limud'; lastPts = { game: g, pts: n, t: Date.now() }; add({ game: g, pts: n, ref: g + '-' + Date.now() + '-' + (++seq), _pts: 1 }); }
+      } catch (e) {}
+      return r;
+    };
+    P.add._kita = 1;
+    return true;
+  }
+  if (!(hook() & hookPts())) { var n = 0, t = setInterval(function () { var a = hook(), b = hookPts(); if ((a && b) || ++n > 60) clearInterval(t); }, 250); }
 })();

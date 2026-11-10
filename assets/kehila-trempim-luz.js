@@ -48,7 +48,7 @@
     var street = a.street ? a.street + (a.housenumber ? ' ' + a.housenumber : '') : '';
     var main = a.name && a.name !== a.street ? a.name : street || a.name || '';
     var sub = [a.name && street && a.name !== a.street ? street : '', a.city || a.town || a.village || a.county || ''].filter(Boolean).join(', ');
-    return { main: main || sub, sub: main ? sub : '', label: [main, a.city || a.town || a.village || ''].filter(Boolean).join(', ') };
+    return { main: main || sub, sub: main ? sub : '', label: [main, a.city || a.town || a.village || ''].filter(function (x, i, arr) { return x && arr.indexOf(x) === i; }).join(', ') };
   }
   // כמו בדף הטרמפים: Photon בלי מספר הבית, עדיפות לעיר שנכתבה ולאזור של המשתמש, והמספר חוזר לתווית
   var BIAS_KEY = 'trempim_bias';
@@ -79,6 +79,8 @@
         var score = i;
         words.forEach(function (w) { if (city && city.indexOf(w) >= 0) score -= 20; });
         if (main && main.indexOf(sp.text.split(',')[0].trim()) === 0) score -= 8;
+        // עיר או שכונה בשם שנכתב קודמת למסעדה או חנות באותה עיר
+        if (a.osm_key === 'place' && main && main.indexOf(sp.text.split(',')[0].trim()) === 0) score -= 60;
         return { label: label, main: main, sub: l.sub || city, lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0], score: score };
       }).filter(function (it) { var k = it.label; if (seen[k]) return false; seen[k] = 1; return true; })
         .sort(function (x, y) { return x.score - y.score; }).slice(0, 7);

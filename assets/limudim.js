@@ -155,7 +155,7 @@
       var cards = all ? d.cards.slice() : dueCards(d);
       // ערבוב
       for (var i = cards.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = cards[i]; cards[i] = cards[j]; cards[j] = t; }
-      queue = cards; pos = 0; right = 0; wrong = 0; missed = {}; reversed = $('fc-rev').checked;
+      queue = cards; pos = 0; right = 0; wrong = 0; missed = {}; reversed = $('fc-rev').checked; $('fc-hk').innerHTML = ''; $('fc-hk').hidden = true;
       home.hidden = true; play.hidden = false; $('fc-end').hidden = true; $('fc-cardbox').hidden = false;
       show(); used('kartisiot', { action: all ? 'practice_all' : 'practice_due', n: cards.length });
       play.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -190,6 +190,8 @@
       $('fc-end-t').textContent = 'סיימת את הסבב! ' + (right + wrong ? 'ידעת ' + right + ' מתוך ' + (right + wrong) + ' כבר בפעם הראשונה.' : '');
       $('fc-end-n').textContent = next ? 'מחר מחכים לך ' + next + ' כרטיסים לחזרה.' : 'מחר אין כרטיסים לחזרה. כל הכבוד.';
       used('kartisiot', { action: 'done', right: right, wrong: wrong });
+      // התקדמות יומית: סבב שהסתיים = יום של חזרה (assets/hitkadmut.js)
+      if (window.HK && right + wrong) HK.done('kartisiot', { el: $('fc-hk'), title: 'עוד יום של חזרה ✓', help: 'הכרטיסיות כאן בחינם ובלי פרסומות', share: 'סיימתי היום סבב חזרה בכרטיסיות החכמות, בחינם. מתרגלים כמה דקות ביום וזוכרים לאורך זמן:' });
       renderDecks();
     }
     function back() { play.hidden = true; home.hidden = false; renderDecks(); if ('speechSynthesis' in window) speechSynthesis.cancel(); }
@@ -701,8 +703,8 @@
       var un = unitName(c);
       $('ly-sum').innerHTML = '<div class="big-n">' + esc(perDay(s, c)) + '</div><p>' + esc(title(c)) + ': ' + s.N + ' ' + un[1] + ', ' + s.rows.length + ' ימי לימוד, מ-' + longDate(c.restFrom || c.start) + ' עד ' + longDate(s.end) + '.</p>' +
         (c.rest ? '<p>חולק מחדש ב-' + longDate(c.restFrom) + '. לפני כן למדת ' + ((c.prevDone || 0) === 1 ? 'יום אחד' : (c.prevDone || 0) + ' ימים') + ' ✓</p>' : '') +
-        '<p>למדת ' + done + ' מתוך ' + s.rows.length + ' ימים' + (behind ? ' · ' + behind + ' ימים להשלים, וזה בסדר' : shouldBe ? ' · בדיוק בזמן ✓' : '') + '</p>' +
-        (behind ? '<button class="btn btn-line btn-sm no-print" type="button" id="ly-redo" style="margin-top:.6rem">פספסתי? לחלק מחדש את מה שנשאר, מהיום עד הסוף</button>' : '') + '<div class="bar" style="margin-top:.6rem"><i style="width:' + Math.round(done * 100 / s.rows.length) + '%"></i></div>';
+        '<p>למדת ' + done + ' מתוך ' + s.rows.length + ' ימים' + (behind ? ' · אפשר להמשיך מכאן בכל הכוח 💪' : shouldBe ? ' · בדיוק בזמן ✓' : '') + '</p>' +
+        (behind ? '<button class="btn btn-line btn-sm no-print" type="button" id="ly-redo" style="margin-top:.6rem">להתחיל נקי מהיום: לחלק מחדש את מה שנשאר</button>' : '') + '<div class="bar" style="margin-top:.6rem"><i style="width:' + Math.round(done * 100 / s.rows.length) + '%"></i></div>';
       var tr = s.rows.filter(function (r) { return r.date >= t; })[0];
       var tb = $('ly-today');
       if (tr) {
@@ -745,6 +747,8 @@
       render();
       document.querySelectorAll('#ly-table details').forEach(function (d, i) { d.open = open[i]; });
       if (cb.checked) used('yomi', { action: 'done' });
+      // התקדמות יומית: כל יום שמסמנים בו לימוד נספר לרצף (assets/hitkadmut.js)
+      if (cb.checked && window.HK) HK.done('yomi', { el: $('ly-hk'), title: 'למדת היום ✓ כל הכבוד!', help: 'הלימוד היומי כאן בחינם ובלי פרסומות', share: 'למדתי היום בלימוד היומי לסיום ' + title(p.cfg) + '. מצטרפים? כמה דקות ביום, בחינם:' });
     }
     $('ly-table').addEventListener('change', onCheck);
     $('ly-sum').addEventListener('click', function (e) {
