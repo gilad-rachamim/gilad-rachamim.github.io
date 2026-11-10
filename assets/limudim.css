@@ -605,6 +605,8 @@ body.cx-exammode .pt-link{display:none!important}
 .mb-camp{display:flex;gap:.7rem;align-items:center}.mb-camp img{width:84px;height:64px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
 .mb-pick{display:grid;gap:.35rem}.mb-pick button{font:inherit;text-align:start;padding:.5rem .7rem;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--cream);cursor:pointer;display:flex;gap:.5rem;align-items:baseline;flex-wrap:wrap}
 .mb-pick button small{color:var(--muted)}.mb-pick bdi{font-weight:700}
+.mb-ask{margin:0 0 .5rem;padding:.45rem .7rem;border-radius:10px;background:rgba(220,183,105,.16);color:#3b2f12;font-weight:700;line-height:1.5}
+.mb-bagsel{display:flex;flex-wrap:wrap;gap:.45rem}.mb-bagsel select{font:inherit;flex:1 1 12rem;padding:.45rem .55rem;border-radius:10px;border:1px solid var(--line);background:#1b2234;color:var(--cream)}
 .mb-top{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .9rem;margin-top:.8rem}
 .mb-saved{color:var(--muted);font-size:.9rem}
 .mb-hwbar{margin-top:.8rem;padding:.75rem .9rem;border-radius:14px;border:1px solid rgba(134,197,230,.45);background:rgba(134,197,230,.1);display:grid;gap:.5rem}
