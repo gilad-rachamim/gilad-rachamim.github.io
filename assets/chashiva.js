@@ -112,7 +112,7 @@
   // ---------- דף התחום: ההתקדמות שלכם ----------
   var box = document.getElementById('ch-progress');
   if (box) {
-    var games = [['nono', 'שחור ופתור', '/kelim/chashiva/shachor/'], ['tash', 'תשחצים', '/kelim/chashiva/tashchetz/'], ['sudoku', 'סודוקו', '/kelim/chashiva/sudoku/']];
+    var games = [['mila', 'מילה ביום', '/kelim/chashiva/mila/'], ['nono', 'שחור ופתור', '/kelim/chashiva/shachor/'], ['tash', 'תשחצים', '/kelim/chashiva/tashchetz/'], ['sudoku', 'סודוקו', '/kelim/chashiva/sudoku/']];
     var any = false;
     box.innerHTML = '<div class="ch-prog">' + games.map(function (g) {
       var s = CH.stats(g[0]); if (s.solved) any = true;

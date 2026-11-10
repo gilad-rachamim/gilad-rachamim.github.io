@@ -1,0 +1,37 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_mila",
+  "title": "מילה ביום – משחק ניחוש מילה בעברית, חמש אותיות, בחינם | הכלים של גילעד רחמים",
+  "description": "משחק מילים יומי בעברית: מנחשים מילה בת חמש אותיות בשישה ניסיונות. זהב = האות במקום, טורקיז = האות במילה במקום אחר. רמז-הגדרה למי שנתקע, רצף ימים, תרגול בלי הגבלה ותוצאה לווטסאפ בלי לגלות את המילה. בחינם ובלי הרשמה.",
+  "og_title": "מילה ביום – משחק מילים יומי בעברית",
+  "priority": "0.7",
+  "crumbs": [["משחקי חשיבה", "/kelim/chashiva/"], ["מילה ביום", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/chashiva.css\">",
+  "foot": "<script src=\"/assets/chashiva.js\" defer></script><script src=\"/assets/chashiva-mila.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מילה ביום</h1>
+  <p class="sub">מילה אחת בת חמש אותיות, שישה ניסיונות. אחרי כל ניחוש האותיות נצבעות ומראות כמה התקרבתם. מחר מילה חדשה.</p>
+</header>
+<div class="tool">
+  <div class="ch-tabs" id="ml-tabs" role="tablist"><button type="button" role="tab" data-m="daily" aria-selected="true">⭐ המילה של היום</button><button type="button" role="tab" data-m="practice" aria-selected="false">🎲 תרגול</button></div>
+  <div class="ch-bar"><span id="ml-label"></span><button class="btn btn-line btn-sm" type="button" id="ml-hint">💡 רמז: מה המילה אומרת?</button></div>
+  <p class="ml-clue" id="ml-clue" hidden></p>
+  <div class="ml-grid" id="ml-grid" dir="rtl" aria-label="לוח הניחושים" aria-live="polite"></div>
+  <p class="ch-msg" id="ml-msg" aria-live="polite"></p>
+  <div class="ml-legend"><span><i class="ok"></i>במקום</span><span><i class="in"></i>במילה, במקום אחר</span><span><i class="no"></i>לא במילה</span></div>
+  <div class="ts-kb ml-kb" id="ml-kb" dir="rtl">
+    <div><button type="button" data-l="ק">ק</button><button type="button" data-l="ר">ר</button><button type="button" data-l="א">א</button><button type="button" data-l="ט">ט</button><button type="button" data-l="ו">ו</button><button type="button" data-l="ן">ן</button><button type="button" data-l="ם">ם</button><button type="button" data-l="פ">פ</button></div>
+    <div><button type="button" data-l="ש">ש</button><button type="button" data-l="ד">ד</button><button type="button" data-l="ג">ג</button><button type="button" data-l="כ">כ</button><button type="button" data-l="ע">ע</button><button type="button" data-l="י">י</button><button type="button" data-l="ח">ח</button><button type="button" data-l="ל">ל</button><button type="button" data-l="ך">ך</button><button type="button" data-l="ף">ף</button></div>
+    <div><button type="button" class="wide" data-l="enter">לבדוק</button><button type="button" data-l="ז">ז</button><button type="button" data-l="ס">ס</button><button type="button" data-l="ב">ב</button><button type="button" data-l="ה">ה</button><button type="button" data-l="נ">נ</button><button type="button" data-l="מ">מ</button><button type="button" data-l="צ">צ</button><button type="button" data-l="ת">ת</button><button type="button" data-l="ץ">ץ</button><button type="button" class="wide" data-l="del" aria-label="מחיקה">⌫</button></div>
+  </div>
+  <div id="ml-win"></div>
+  <details class="ch-how"><summary>איך משחקים?</summary><ul>
+    <li>מקלידים מילה בת חמש אותיות ולוחצים "לבדוק".</li>
+    <li><b>זהב:</b> האות במילה, ובדיוק במקום הזה. <b>טורקיז:</b> האות במילה, אבל במקום אחר. <b>כהה:</b> האות לא במילה.</li>
+    <li>אותיות סופיות (ם, ן, ך, ף, ץ) נחשבות כמו הרגילות.</li>
+    <li>נתקעתם? "רמז" מראה הגדרה קצרה של המילה. בתוצאה ייכתב שהיה רמז, וזה בסדר גמור.</li>
+    <li>המילה של היום זהה לכולם. בתרגול אפשר לשחק כמה שרוצים.</li>
+  </ul></details>
+</div>
