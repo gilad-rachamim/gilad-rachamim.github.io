@@ -609,6 +609,11 @@
       if (/^דמיון משולשים/.test(rs)) { if (i < 2) msgs.push('לדמיון צריך לפחות שתי זוויות שוות (או יחס צלעות) בשורות שלפני.'); anySim = i; }
       if (/במשולשים חופפים/.test(rs) && anyCong < 0) { n.mark = 'warn'; msgs.push('קודם צריך שורה שמוכיחה שהמשולשים חופפים.'); }
       if (/במשולשים דומים/.test(rs) && anySim < 0) { n.mark = 'warn'; msgs.push('קודם צריך שורה שמוכיחה שהמשולשים דומים.'); }
+      // נימוק שלא מתאים לצורת הנוסחה (סינוסים מול קוסינוסים)
+      var cc = String(row.c || '');
+      if (rs === 'משפט הסינוסים' && /cos/.test(cc) && !/sin/.test(cc)) { n.mark = 'warn'; msgs.push('בטענה יש cos של זווית וריבועי צלעות. זה משפט הקוסינוסים, לא הסינוסים.'); }
+      if (rs === 'משפט הקוסינוסים' && /sin/.test(cc) && !/cos/.test(cc)) { n.mark = 'warn'; msgs.push('בטענה יש יחס של צלע ל-sin. זה משפט הסינוסים, לא הקוסינוסים.'); }
+      if (rs === 'משפט פיתגורס' && /sin|cos/.test(cc)) { n.mark = 'warn'; msgs.push('בפיתגורס אין sin או cos. אולי התכוונתם למשפט הקוסינוסים?'); }
       if (num[i].mark) { if (num[i].mark === 'warn') n.mark = 'warn'; else if (!n.mark) n.mark = 'ok'; }
       if (num[i].msg) msgs.push(num[i].msg);
       if (!n.mark && (row.c || '').trim() && rs) n.mark = 'ok';
