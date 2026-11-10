@@ -6,7 +6,8 @@
   "description": "כלים חינמיים למתכנתים, בדגש על NVIDIA: מחשבון VRAM למודלי AI, מחשבון CUDA Occupancy, השוואת כרטיסים, ומסדר JSON, בודק Regex וממיר Base64/JWT. רץ בדפדפן, בלי הרשמה.",
   "og_title": "כלים למתכנתים בדגש על NVIDIA, בחינם",
   "priority": "0.8",
-  "crumbs": [["כלים למתכנתים", null]]
+  "crumbs": [["כלים למתכנתים", null]],
+  "head": "<style>.tn-ways>div{display:grid;gap:.3rem;padding:1rem 1.05rem;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.03)}.tn-ways>div b{color:var(--cream)}.tn-ways>div span{color:var(--body);font-size:.93rem;line-height:1.6}.tn-give{margin:1rem 0}.tn-give .note{margin:0}</style>"
 } -->
 <header class="k-hero">
   <h1>כלים למתכנתים</h1>
@@ -53,4 +54,31 @@
   <h2 id="tn-want">חסר כלי?</h2>
   <p class="lead2">אני לומד לתכנת בעצמי, ובונה כאן את מה שהייתי רוצה שיהיה לי. איזה כלי היה חוסך לכם זמן? ספרו לי.</p>
   <div class="actions"><a class="btn btn-gold" href="/kelim/#rotzim">לספר לי על כלי</a><a class="btn btn-line" href="#" data-share-tool="wa" data-text="כלים חינמיים למתכנתים עם NVIDIA: מחשבון VRAM למודלי AI, CUDA Occupancy והשוואת כרטיסים:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר מתכנת</a></div>
+</section>
+<section class="k-sec" id="shutafim" aria-labelledby="tn-sh">
+  <h2 id="tn-sh">שותפים לכלים למתכנתים</h2>
+  <p class="lead2">את כל הכלים כאן אני בונה לבד. אני משלם עליהם מהכיס שלי, ועושה את זה באהבה, כדי שכל סטודנט ומתכנת יוכל לתרגל בחינם ובלי פרסומות. כדי שהתחום ימשיך לגדול, אני מחפש שותפים. כל אחד יכול לעזור בדרך שלו:</p>
+  <div class="dom tn-ways">
+    <div><b>🏢 חברה או מכללה</b><span>חסות לתחום: שורה "בחסות" עם השם שלכם, ליד כלים שסטודנטים ומתכנתים משתמשים בהם לתרגול ולראיונות.</span></div>
+    <div><b>👩‍💻 סטודנטים ומתכנתים</b><span>לכתוב תרגיל קוד או שאלת ראיון לסימולטור. אחרי בדיקה הוא עולה לאתר, ואם תרצו, עם השם שלכם.</span></div>
+    <div><b>🎓 מרצים ומתרגלים</b><span>להשתמש בכלים בקורס ולספר לי מה חסר לסטודנטים. אשמח לבנות תרגול לפי החומר של הקורס.</span></div>
+    <div><b>💛 תמיכה קבועה</b><span>בביט או בפייבוקס, בכל סכום, פעם אחת או כל חודש. זה מה שמחזיק את הכלים פתוחים לכולם.</span></div>
+  </div>
+  <div class="give tn-give">
+    <div class="num"><span>בביט או בפייבוקס, למספר</span><b>058-404-9049</b>
+      <button class="btn btn-gold btn-sm" type="button" data-donate="copy" data-num="0584049049">להעתיק את המספר</button></div>
+    <p class="note">אפשר לכתוב בהערה "למתכנתים", כדי שאדע ואודה לכם.</p>
+  </div>
+  <form class="k-form lead-form" data-kform="truma" action="{{lead_endpoint}}" method="POST">
+    <div class="hp" aria-hidden="true"><label>אל תמלאו שדה זה <input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></div>
+    <div class="field"><span class="label">איך תרצו להיות שותפים?</span>
+      <label class="check"><input type="checkbox" value="למתכנתים: חסות של חברה או מכללה"> <span>חסות של חברה או מכללה</span></label>
+      <label class="check"><input type="checkbox" value="למתכנתים: לכתוב תרגילים"> <span>לכתוב תרגילים או שאלות</span></label>
+      <label class="check"><input type="checkbox" value="למתכנתים: שימוש בקורס"> <span>להשתמש בכלים בקורס שלי</span></label>
+      <label class="check"><input type="checkbox" value="למתכנתים: תמיכה חודשית"> <span>תמיכה חודשית</span></label></div>
+    <div class="field"><label for="sh-note">שם החברה, המכללה או הקורס <span class="opt">(לא חובה)</span></label><input id="sh-note" name="note" type="text" maxlength="100"></div>
+    <div class="field"><label for="sh-name">שם</label><input id="sh-name" name="name" type="text" autocomplete="name" required></div>
+    <div class="field"><label for="sh-phone">טלפון</label><input id="sh-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="050-0000000" pattern="[0-9\-\+\s]{9,15}" dir="ltr" style="text-align:right"></div>
+    <button class="btn btn-gold btn-block" type="submit">לשלוח, ואחזור אליכם</button>
+  </form>
 </section>

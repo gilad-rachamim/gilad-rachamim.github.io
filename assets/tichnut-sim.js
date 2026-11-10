@@ -222,6 +222,7 @@
       r.q.map(function (x) { var q = Q[x.i]; if (!q) return ''; return '<li class="' + (x.ok ? 'ok' : 'no') + '">' + (x.ok ? '✓ ' : x.ok === false ? '✗ ' : '– ') + esc(q[1]) + ' <span>(' + esc(q[0]) + (x.ok == null ? ', לא נענתה' : '') + ')</span></li>'; }).join('') + '</ul>' +
       (weak.length ? '<p class="sm-q"><b>נושאים לחזק</b> (לחיצה פותחת תרגול בנושא):</p><div class="sm-btns">' + weak.map(function (w) { return '<button type="button" class="btn btn-line btn-sm" data-wk="' + w[0] + '" data-wt="' + esc(w[1]) + '">' + (w[0] === 'c' ? '💻 ' : '⚡ ') + esc(w[1]) + '</button>'; }).join('') + '</div>' : '<p class="sm-q"><b>אין נושא חלש בסבב הזה.</b> נסו עוד ראיון: התרגילים יהיו אחרים.</p>') +
       '<p class="note">בראיון אמיתי בודקים גם איך מדברים: אומרים את הרעיון בקול לפני הקוד, ואת הסיבוכיות בסוף. הכנה לנושאים: <a class="gold" href="/kelim/tichnut/reayon-tech/">18 נושאים לראיון</a>.</p>' +
+      '<p class="note">💛 הסימולטור חינמי ובלי פרסומות, ואני משלם עליו מהכיס. אם הוא עזר לכם, אפשר <a class="gold" href="/kelim/tichnut/#shutafim">להיות שותפים</a> או לשלוח אותו לחבר שמתכונן לראיון.</p>' +
       '<div class="sm-btns"><button type="button" class="btn btn-gold btn-sm" id="sm-mockagain">🎯 ראיון חדש</button><button type="button" class="btn btn-line btn-sm" id="sm-rclose">לסגור את הדוח</button></div>';
     $('sm-report').hidden = false;
     if (scroll) $('sm-report').scrollIntoView({ behavior: 'smooth' });
