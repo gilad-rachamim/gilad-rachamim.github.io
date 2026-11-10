@@ -1,0 +1,114 @@
+/* משחקי חשיבה (/kelim/chashiva/): שחור ופתור, תשחצים, סודוקו. לוחות בהירים על הרקע הכהה של האתר. */
+.ch-tabs{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center;margin:1rem 0 .6rem}
+.ch-tabs button{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--parchment);border-radius:999px;padding:.45rem .95rem;font:inherit;font-size:1rem;cursor:pointer}
+.ch-tabs button[aria-selected=true]{background:rgba(216,179,95,.2);border-color:var(--gold);color:var(--cream);font-weight:700}
+.ch-chips{display:flex;flex-wrap:wrap;gap:.35rem;justify-content:center;margin:.4rem 0}
+.ch-chips button{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--parchment);border-radius:10px;padding:.35rem .7rem;font:inherit;font-size:.95rem;cursor:pointer;min-width:2.6rem}
+.ch-chips button.on{background:rgba(216,179,95,.2);border-color:var(--gold);color:var(--cream)}
+.ch-chips button.done{border-color:var(--accent);color:var(--accent)}
+.ch-chips button:disabled{opacity:.45;cursor:not-allowed}
+.ch-bar{display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap;margin:.5rem 0;color:var(--muted);font-size:.95rem}
+.ch-bar b{color:var(--cream)}
+.ch-hint{color:var(--muted);font-size:.93rem;text-align:center;margin:.4rem 0}
+.ch-msg{min-height:1.4em;text-align:center;color:var(--gold-hi);margin:.4rem 0;font-weight:600}
+.ch-tools{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center;margin:.6rem 0}
+.ch-tools button{border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--parchment);border-radius:12px;padding:.5rem .8rem;font:inherit;font-size:.98rem;cursor:pointer;min-height:44px}
+.ch-tools button.on{background:rgba(216,179,95,.22);border-color:var(--gold);color:var(--cream);font-weight:700}
+.ch-tools button:active{transform:scale(.97)}
+.ch-done-today{border:1px solid var(--accent);border-radius:12px;padding:.6rem .8rem;color:var(--parchment);text-align:center;margin:.6rem 0;background:rgba(95,191,166,.08)}
+/* חלון הניצחון */
+.ch-win{border:1px solid var(--gold);border-radius:18px;padding:1.1rem 1rem;margin:1.2rem 0;background:linear-gradient(180deg,rgba(216,179,95,.12),rgba(216,179,95,.03));text-align:center}
+.ch-win h2{font-family:var(--serif);color:var(--cream);font-size:1.6rem;margin:0 0 .4rem}
+.ch-pills{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-bottom:.7rem}
+.ch-pills span{border:1px solid var(--line);border-radius:999px;padding:.25rem .7rem;color:var(--parchment);font-size:.95rem}
+.ch-pills b{color:var(--gold)}
+.ch-next{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin:.4rem 0 1rem}
+.ch-help{text-align:right;border-top:1px dashed var(--line);padding-top:.9rem;color:var(--parchment)}
+.ch-help>b{color:var(--gold-hi);font-size:1.08rem}
+.ch-help p{margin:.35rem 0}
+.ch-help ol{margin:.3rem 1.2rem .6rem 0;padding:0}
+.ch-help li{margin:.2rem 0}
+.ch-res{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:10px;padding:.55rem .7rem;color:var(--cream);font:inherit;font-size:.95rem;white-space:pre-wrap;margin:.5rem 0;text-align:right}
+.ch-help .actions{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-top:.4rem}
+.ch-give{margin-top:.7rem;border:1px solid var(--gold-soft);border-radius:12px;padding:.7rem;background:rgba(216,179,95,.07);text-align:center}
+/* דף התחום */
+.ch-prog{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.6rem}
+.ch-prog a{display:flex;flex-direction:column;gap:.2rem;border:1px solid var(--line);border-radius:14px;padding:.75rem .9rem;color:var(--parchment);text-decoration:none;background:rgba(255,255,255,.03)}
+.ch-prog a b{color:var(--cream);font-size:1.08rem}
+.ch-prog a span{font-size:.92rem;color:var(--muted)}
+.ch-prog a:hover{border-color:var(--gold-soft)}
+.ch-how{color:var(--parchment);margin:.8rem 0}
+.ch-how summary{cursor:pointer;color:var(--gold);font-weight:600}
+.ch-how ul{margin:.4rem 1.2rem 0 0;padding:0}
+.ch-how li{margin:.25rem 0}
+
+/* ===== שחור ופתור ===== */
+.nn-wrap{direction:ltr;display:flex;justify-content:center;margin:.4rem 0;user-select:none;-webkit-user-select:none}
+.nn-board{display:grid;touch-action:none;background:#fbfaf2;border-radius:8px;padding:4px;box-shadow:0 4px 18px rgba(0,0,0,.35)}
+.nn-board .cc{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;color:#22312f;font-weight:700;line-height:1.05;padding-bottom:3px}
+.nn-board .rc{display:flex;justify-content:flex-end;align-items:center;gap:.3em;color:#22312f;font-weight:700;padding-right:4px;white-space:nowrap}
+.nn-board .cc.ok,.nn-board .rc.ok{color:#a9b4ae;text-decoration:line-through}
+.nn-board .c{background:#fff;border-right:1px solid #c9cfc6;border-bottom:1px solid #c9cfc6;position:relative;cursor:pointer}
+.nn-board .c.f{background:#14211f}
+.nn-board .c.x::after{content:"✕";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#9aa49f;font-size:.8em}
+.nn-board .c.b5{border-right:2px solid #5d6a66}
+.nn-board .c.d5{border-bottom:2px solid #5d6a66}
+.nn-board .c.l0{border-left:2px solid #5d6a66}
+.nn-board .c.t0{border-top:2px solid #5d6a66}
+.nn-board .c.bad{background:#e2574c!important}
+.nn-board .c.hint{animation:chpulse 1.2s ease 2}
+.nn-board .c.cur{box-shadow:inset 0 0 0 2px #d8b35f}
+.nn-board.won .c.x::after{content:""}
+.nn-board.won .c{border-color:transparent}
+@keyframes chpulse{0%,100%{box-shadow:inset 0 0 0 0 #d8b35f}50%{box-shadow:inset 0 0 0 4px #d8b35f}}
+
+/* ===== סודוקו ===== */
+.sd-board{display:grid;grid-template-columns:repeat(9,1fr);width:min(100%,460px);aspect-ratio:1;margin:.4rem auto;background:#14211f;border:3px solid #14211f;border-radius:8px;gap:1px;touch-action:manipulation;user-select:none;-webkit-user-select:none;overflow:hidden}
+.sd-board button{all:unset;box-sizing:border-box;background:#fbfaf2;display:flex;align-items:center;justify-content:center;font-size:clamp(1.15rem,5.4vw,1.75rem);color:#1d6f5f;font-weight:600;cursor:pointer;position:relative}
+.sd-board button.g{color:#14211f;font-weight:800}
+.sd-board button.c3{margin-left:2px}
+.sd-board button.r3{margin-bottom:2px}
+.sd-board button.peer{background:#ecefe4}
+.sd-board button.same{background:#f3e3b9}
+.sd-board button.sel{background:#e8c87c}
+.sd-board button.err{color:#c0392b}
+.sd-board button.bad{background:#f4b9b2}
+.sd-board button.hinted{color:#8a6a1f}
+.sd-board .nt{position:absolute;inset:1px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);font-size:clamp(.5rem,2.1vw,.72rem);color:#56645f;font-weight:600;line-height:1}
+.sd-board .nt i{font-style:normal;display:flex;align-items:center;justify-content:center}
+.sd-board.won button{background:#e9f4ef}
+.sd-pad{display:grid;grid-template-columns:repeat(9,1fr);gap:.3rem;width:min(100%,460px);margin:.5rem auto}
+.sd-pad button{border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--cream);border-radius:10px;font:inherit;font-size:1.35rem;font-weight:700;padding:.45rem 0;cursor:pointer;min-height:48px;position:relative}
+.sd-pad button small{position:absolute;bottom:1px;left:0;right:0;font-size:.6rem;color:var(--muted);font-weight:400}
+.sd-pad button.gone{visibility:hidden}
+.sd-pad.pencil button{color:var(--gold-hi);font-size:1.05rem}
+
+/* ===== תשחצים ===== */
+.ts-grid{display:grid;margin:.5rem auto;gap:2px;width:max-content;max-width:100%;direction:rtl;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.ts-grid .e{background:transparent}
+.ts-grid button{all:unset;box-sizing:border-box;background:#fbfaf2;border:1px solid #9aa49f;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#14211f;position:relative;cursor:pointer;font-family:var(--serif)}
+.ts-grid button sup{position:absolute;top:1px;right:3px;font-size:.5em;color:#56645f;font-family:system-ui,sans-serif;font-weight:600}
+.ts-grid button.word{background:#f3e3b9}
+.ts-grid button.cur{background:#e8c87c;box-shadow:inset 0 0 0 2px #8f7a45}
+.ts-grid button.ok{background:#d9efe6;color:#1d6f5f}
+.ts-grid button.bad{background:#f4b9b2}
+.ts-grid button.rev{color:#8a6a1f}
+.ts-clues{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:.8rem}
+@media (max-width:560px){.ts-clues{grid-template-columns:1fr}}
+.ts-clues h3{font-family:var(--serif);color:var(--gold);font-size:1.12rem;margin:0 0 .3rem}
+.ts-clues ol{list-style:none;margin:0;padding:0}
+.ts-clues li{border:1px solid var(--line);border-radius:12px;padding:.5rem .7rem;margin-bottom:.4rem;color:var(--parchment);cursor:pointer;background:rgba(255,255,255,.02)}
+.ts-clues li.on{border-color:var(--gold);background:rgba(216,179,95,.12)}
+.ts-clues li.ok{border-color:var(--accent)}
+.ts-clues li b{color:var(--gold-hi)}
+.ts-clues li small{color:var(--muted)}
+.ts-clues li .why{display:block;margin-top:.35rem;color:var(--accent);font-size:.93rem}
+.ts-cur{position:sticky;top:0;z-index:5;background:var(--ink);border:1px solid var(--gold-soft);border-radius:12px;padding:.5rem .7rem;color:var(--cream);margin:.5rem 0;text-align:center;min-height:2.6em}
+.ts-cur small{color:var(--muted)}
+.ts-kb{display:flex;flex-direction:column;gap:.3rem;margin:.6rem auto;max-width:480px}
+.ts-kb div{display:flex;gap:.25rem;justify-content:center}
+.ts-kb button{flex:1;max-width:2.6rem;border:1px solid var(--line);background:rgba(255,255,255,.07);color:var(--cream);border-radius:8px;font:inherit;font-size:1.2rem;font-weight:700;padding:.5rem 0;cursor:pointer;min-height:46px}
+.ts-kb button.wide{max-width:4.4rem;font-size:1rem}
+.ts-why-list{text-align:right;margin:.5rem 0 1rem;color:var(--parchment)}
+.ts-why-list li{margin:.3rem 0}
+@media print{.topbar,.site-foot,.crumbs,.no-print{display:none!important}}
