@@ -334,6 +334,41 @@ def seo_related(p):
     return ('\n<section class="k-sec rel no-print" aria-labelledby="rel-h">\n  <h2 id="rel-h">עוד כלים בחינם שאולי יעזרו</h2>\n  <div class="dom">'
             + "".join(card(c) for c in pick) + f"</div>\n  {more}\n</section>\n")
 
+# ---------- "בחינם, בלי הגבלה ובלי פרסומות": פס קטן בראש כל דף בתתי-האתרים ----------
+# גילעד (11.11.2026): "אצלי זה גם בחינם גם ללא הגבלה וגם בלי פרסומות!! רק מרצון של חסד!!"
+# כלי עם מכסה אמיתית (עולה כסף בענן) לא מקבל "בלי הגבלה" – אסור לכתוב משהו שלא נכון.
+# כלי חדש עם מכסה (לכתובת, ליום, לחודש) = שורה כאן. הגנה מספאם (X פעולות ברצף) היא לא מכסה.
+CHESED_LIMITED = {
+    "/kelim/tamlul/": "60 דקות תמלול בחודש",
+    "/kodesh/video-shiur/": "דקות התמלול של החודש",
+    "/kelim/shir/karaoke/": "5 שירים חדשים ביום",
+    "/kelim/shir/clip/": "מכסה יומית לעוזר",
+    "/kelim/shir/haklata/": "מכסה יומית לעוזר",
+    "/kelim/shir/lachan/": "מכסה יומית לעוזר",
+    "/kelim/shir/milim/": "מכסה יומית לעוזר",
+    "/kelim/tochen/chaye/": "2 החייאות ביום",
+    "/kelim/tochen/studio/": "מכסה יומית לעוזר העיצוב",
+    "/limudim/poter/": "12 פתרונות ביום",
+    "/limudim/machberet/": "מכסה יומית לבדיקה",
+    "/kelim/chashiva/chidon/": "10 שאלות ביום",
+}
+CHESED_SKIP = SEO_SKIP | {"404"}
+CHESED_SUB = "הרבה כלים כאלה ברשת מוגבלים ומלאים בפרסומות. כאן לא, מתוך רצון לעשות חסד."
+
+def chesed_band(p, meta):
+    if meta.get("noindex") or meta.get("no_chesed") or p.rstrip("/").rsplit("/", 1)[-1] in CHESED_SKIP:
+        return ""
+    lim = lambda c: any(c.startswith(l) for l in CHESED_LIMITED)
+    below = [c for c in INDEX if c != p and c.startswith(p)]
+    if lim(p) or (below and 2 * sum(map(lim, below)) >= len(below)):  # כלי עם מכסה, או מרכז שרוב הכלים בו כאלה
+        chips, sub = ["בחינם", "בלי פרסומות", "בלי הרשמה"], "הרבה כלים כאלה ברשת עולים כסף ומלאים בפרסומות. כאן לא, מתוך רצון לעשות חסד."
+    elif any(map(lim, below)):  # דף מרכז שיש מתחתיו כלי עם מכסה
+        chips, sub = ["הכול בחינם", "בלי פרסומות", "רוב הכלים בלי שום הגבלה"], CHESED_SUB
+    else:
+        chips, sub = ["בחינם", "בלי הגבלה", "בלי פרסומות"], CHESED_SUB
+    return ('<div class="chesed no-print" role="note"><p class="chesed-t">' + "".join(f"<b>✓ {c}</b>" for c in chips)
+            + f'</p><p class="chesed-s">{sub}</p></div>')
+
 pages = []
 site_pages = {k: [] for k in SITES}
 for path in sorted(SRC.rglob("*.html")):
@@ -388,6 +423,7 @@ for path in sorted(SRC.rglob("*.html")):
             "nav": "".join(f'<a href="{h}"' + (' aria-current="page"' if meta.get("nav") == k else "") + f'>{l}</a>' for k, h, l in site["nav"]),
             "tool": meta.get("tool", ""),
             "shipurim": shipurim_line(meta.get("tool", "")),
+            "chesed": chesed_band(url_path, meta),
             "fb_note": fb_note(meta.get("tool", "")),
             "lead_endpoint": LEAD_ENDPOINT,
             "site_css": "".join(f'<link rel="stylesheet" href="{c}">' for c in site.get("css", [])),
