@@ -9,3 +9,4 @@ tools/rsvp-worker/node_modules/
 claude-skills/
 tools/shir-worker/.wrangler/
 tools/krav-worker/.wrangler/
+tools/chaye-worker/.wrangler/
