@@ -181,3 +181,13 @@ body.dp-student .k-hero{display:none}
 .dp-lm .dp-tbl,.dg-lm .dp-tbl{font-size:.82em}
 .dp-lm .dp-tbl th,.dp-lm .dp-tbl td,.dg-lm .dp-tbl th,.dg-lm .dp-tbl td{min-width:1.9em;padding:0 .25em}
 .dp-lm{overflow:hidden}
+#dp-app textarea{width:100%;padding:.6rem .7rem;border-radius:12px;border:1px solid var(--line);background:var(--ink-2);color:var(--cream);font:inherit;font-size:1rem;line-height:1.5;resize:vertical}
+.dp-idea h3{color:var(--gold-hi);margin:0}
+.dp-idea p{color:var(--body);line-height:1.7;margin:0}
+.dp-idea .sig{justify-self:end}
+.dp-own{display:block;text-align:start;font-size:.74em;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.dg-q .mx-ex .dp-own{font-size:.62em}
+.dp-ownq{display:grid;gap:.5rem;padding:.8rem;margin-bottom:.6rem;border:1px dashed var(--line);border-radius:14px}
+.dp-ownq .linkish{justify-self:start}
+.dg-free{display:grid;gap:.5rem}
+.dg-q .mx-done li>span{white-space:normal;overflow-wrap:anywhere;text-align:end}
