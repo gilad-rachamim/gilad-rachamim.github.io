@@ -247,7 +247,7 @@
   var box = document.getElementById('ch-progress');
   if (box) {
     var games = [['mila', 'מילה ביום', '/kelim/chashiva/mila/'], ['nono', 'שחור ופתור', '/kelim/chashiva/shachor/'], ['tash', 'תשחצים', '/kelim/chashiva/tashchetz/'], ['sudoku', 'סודוקו', '/kelim/chashiva/sudoku/'],
-      ['shachmat', 'שחמט', '/kelim/chashiva/shachmat/'], ['damka', 'דמקה', '/kelim/chashiva/damka/'], ['shesh', 'שש-בש', '/kelim/chashiva/shesh-besh/']];
+      ['shachmat', 'שחמט', '/kelim/chashiva/shachmat/'], ['damka', 'דמקה', '/kelim/chashiva/damka/'], ['shesh', 'שש-בש', '/kelim/chashiva/shesh-besh/'], ['chidon', 'חידון וטריוויה', '/kelim/chashiva/chidon/']];
     var any = false;
     box.innerHTML = '<div class="ch-prog">' + games.map(function (g) {
       var s = CH.stats(g[0]); if (s.solved) any = true;
