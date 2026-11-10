@@ -505,17 +505,33 @@
       }).catch(function () { bankP = null; $('kt-bank-t').innerHTML = '<option value="">הבנק לא נטען. נסו לפתוח שוב את הלשונית.</option>'; });
       return bankP;
     }
+    // seen = שאלות שהמורה כבר קיבלה בנושא (בטלפון הזה) + מה שמפורסם עכשיו. "עוד 10" בוחר מהשאר, וכשנגמרות מתחילים סבב חדש
+    var bankLast = null, bankText = '';
+    function bankSeen(id) { var s = lsGet('kita-bank-seen', {}); return s[id] || []; }
+    function bankFill(t, more) {
+      var cur = $('kt-q-text').value.trim();
+      if (cur && cur !== bankText && !confirm('להחליף את השאלות שבתיבה ב-10 ' + (more ? 'שאלות אחרות' : 'שאלות') + ' על ' + t.name + '?')) return;
+      var pick = bank.pick || 10, pub = (data && data.quiz ? data.quiz.q : []).map(function (x) { return [x.q].concat(x.a).join(' | '); });
+      var seen = bankSeen(t.id).concat(pub, cur.split('\n'));
+      function mix(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), tmp = a[i]; a[i] = a[j]; a[j] = tmp; } return a; }
+      var fresh = mix(t.q.filter(function (r) { return seen.indexOf(r) < 0; })), round = fresh.length < pick;
+      // נגמרו החדשות: כל מה שנשאר + השלמה מהישנות (לא מהתיבה), והסבב מתחיל מחדש
+      var got = round ? fresh.concat(mix(t.q.filter(function (r) { return fresh.indexOf(r) < 0 && cur.split('\n').indexOf(r) < 0; }))).slice(0, pick) : fresh.slice(0, pick);
+      var all = lsGet('kita-bank-seen', {});
+      all[t.id] = (round ? [] : bankSeen(t.id)).concat(got); lsSet('kita-bank-seen', all);
+      bankText = got.join('\n'); bankLast = t;
+      $('kt-q-text').value = bankText; $('kt-q-name').value = t.name;
+      var left = t.q.filter(function (r) { return all[t.id].indexOf(r) < 0 && pub.indexOf(r) < 0; }).length;
+      $('kt-bank-more').hidden = false; $('kt-bank-more').textContent = '🔄 עוד 10 אחרות על ' + t.name;
+      quizPrev(); $('kt-q-prev').textContent = '✓ נכנסו ' + got.length + ' שאלות על ' + t.name + (round ? ' (התחלנו סבב חדש של הנושא)' : '') + '. נשארו עוד ' + left + ' שלא קיבלתם. אפשר לערוך, ואז "לשמור ולפרסם לכיתה".';
+      $('kt-q-text').focus(); used('chashiva_kita_more', (more ? 'bank-more-' : 'bank-') + t.id);
+    }
     $('kt-bank-go').addEventListener('click', function () {
       var id = $('kt-bank-t').value, t = bank && bank.topics.filter(function (x) { return x.id === id; })[0];
       if (!t) { $('kt-q-err').textContent = 'בוחרים נושא מהרשימה.'; return; }
-      if ($('kt-q-text').value.trim() && !confirm('להחליף את השאלות שבתיבה ב-10 שאלות על ' + t.name + '?')) return;
-      var q = t.q.slice();
-      for (var i = q.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), tmp = q[i]; q[i] = q[j]; q[j] = tmp; }
-      $('kt-q-text').value = q.slice(0, bank.pick || 10).join('\n');
-      $('kt-q-name').value = t.name;
-      quizPrev(); $('kt-q-prev').textContent = '✓ נכנסו ' + Math.min(q.length, bank.pick || 10) + ' שאלות על ' + t.name + '. אפשר לערוך, ואז "לשמור ולפרסם לכיתה".';
-      $('kt-q-text').focus(); used('chashiva_kita_more', 'bank-' + t.id);
+      bankFill(t, false);
     });
+    $('kt-bank-more').addEventListener('click', function () { if (bankLast) bankFill(bankLast, true); });
     function quizSave(q) {
       $('kt-q-err').textContent = '';
       call('/c/' + T.code + '/admin', { key: T.key, act: 'quiz', p: tp, title: $('kt-q-name').value, q: q }).then(function (d) {
