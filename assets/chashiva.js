@@ -64,7 +64,7 @@
     // all4: ארבעת משחקי הפתרון (מילה, שחור ופתור, תשחצים, סודוקו). משחקי הלוח והקלפים נספרים בשאר המטרות
     { id: 'all4', icon: '🏆', t: 'לפתור את האתגר היומי בכל ארבעת משחקי הפתרון (מילה, שחור ופתור, תשחצים, סודוקו)', n: 4, f: function (L) { return uniq(L.filter(function (x) { return PUZ[x.g]; }), 'g'); } }
   ];
-  var PUZ = { mila: 1, nono: 1, tash: 1, sudoku: 1 };
+  var PUZ = { mila: 1, nono: 1, tash: 1, sudoku: 1 }, DAILY = { blackjack: 1 };
   function uniq(L, k) { var o = {}; L.forEach(function (x) { o[x[k]] = 1; }); return Object.keys(o).length; }
   function sunday(d) { d = new Date(d || Date.now()); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - d.getDay()); return d; }
   CH.week = function () {
@@ -247,11 +247,12 @@
   var box = document.getElementById('ch-progress');
   if (box) {
     var games = [['mila', 'מילה ביום', '/kelim/chashiva/mila/'], ['nono', 'שחור ופתור', '/kelim/chashiva/shachor/'], ['tash', 'תשחצים', '/kelim/chashiva/tashchetz/'], ['sudoku', 'סודוקו', '/kelim/chashiva/sudoku/'],
-      ['shachmat', 'שחמט', '/kelim/chashiva/shachmat/'], ['damka', 'דמקה', '/kelim/chashiva/damka/'], ['shesh', 'שש-בש', '/kelim/chashiva/shesh-besh/']];
+      ['shachmat', 'שחמט', '/kelim/chashiva/shachmat/'], ['damka', 'דמקה', '/kelim/chashiva/damka/'], ['shesh', 'שש-בש', '/kelim/chashiva/shesh-besh/'],
+      ['blackjack', 'בלאק ג'ק', '/kelim/chashiva/blackjack/']];
     var any = false;
     box.innerHTML = '<div class="ch-prog">' + games.map(function (g) {
       var s = CH.stats(g[0]); if (s.solved) any = true;
-      var duel = !PUZ[g[0]];
+      var duel = !PUZ[g[0]] && !DAILY[g[0]];
       return '<a href="' + g[2] + (duel ? '' : '#daily') + '"><b>' + g[1] + '</b><span>' + (duel ? (s.doneToday ? '✓ ניצחתם היום' : '⭐ ניצחון היום נספר לאתגר השבועי') : (s.doneToday ? '✓ האתגר של היום נפתר' : '⭐ האתגר של היום מחכה')) + '</span>' +
         '<span>🔥 רצף ' + s.streak + ' · ' + (duel ? 'ניצחונות ' : 'נפתרו ') + s.solved + '</span></a>';
     }).join('') + '</div>' + (any ? '' : '<p class="ch-hint">עוד לא שיחקתם כאן. ההתקדמות נשמרת בטלפון הזה בלבד, בלי הרשמה.</p>');
