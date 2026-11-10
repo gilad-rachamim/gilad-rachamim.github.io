@@ -1,0 +1,145 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "kehila_trempim",
+  "title": "טרמפים – מי נוסע היום דרכך? מיזם טרמפים קהילתי בחינם, עם השתתפות הוגנת בדלק | הכלים של גילעד רחמים",
+  "description": "מיזם חסד: נהגים מפרסמים את הנסיעה שלהם (גם שבוע מראש או נסיעה קבועה), וטרמפיסטים רואים מי עובר לידם ושולחים בקשה – בחינם או בהשתתפות בדלק לפי תעריפון קבוע של שקל לק\"מ. הנהג מחליט. אחרי אישור: ווטסאפ, ביט או פייבוקס, וניווט בוויז.",
+  "og_title": "טרמפים – מי נוסע היום דרכך?",
+  "priority": "0.8",
+  "crumbs": [["כלים לקהילה ולבית הכנסת", "/kelim/kehila/"], ["טרמפים", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/kehila.css\"><link rel=\"stylesheet\" href=\"/assets/kehila-trempim.css\">",
+  "foot": "<script src=\"https://accounts.google.com/gsi/client\" async defer></script><script src=\"/assets/kehila-trempim.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>טרמפים</h1>
+  <p class="sub">אתה נוסע בכל מקרה, ויש לך מקום פנוי באוטו. מישהו מהשכונה צריך בדיוק את הדרך הזאת. מפרסמים את הנסיעה פעם אחת, והאתר מראה למי שבדרך שאתה עובר לידו. חוסכים דלק, מורידים רכבים מהכביש, ועושים חסד.</p>
+  <div class="tp-stats" id="tp-stats" aria-live="polite"></div>
+</header>
+
+<div class="tool">
+  <!-- לפני כניסה -->
+  <section id="tp-guest">
+    <div class="tp-how">
+      <div><b>1</b><span><strong>נהג</strong> מפרסם לאן הוא נוסע ומתי, גם שבוע מראש או "כל בוקר ב-7:30".</span></div>
+      <div><b>2</b><span><strong>טרמפיסט</strong> רואה מי עובר לידו, כמה זה עולה, ושולח בקשה: בחינם או בהשתתפות בדלק.</span></div>
+      <div><b>3</b><span><strong>הנהג מחליט.</strong> אחרי אישור נפתחים ווטסאפ, ביט או פייבוקס, וניווט בוויז לנקודת האיסוף.</span></div>
+    </div>
+    <div class="k-form tp-login">
+      <b class="tp-title">כניסה בלחיצה אחת</b>
+      <p class="kh-hint">נכנסים עם חשבון גוגל, בלי סיסמה. ככה כל אחד מזוהה, והטלפון שלך נחשף רק למי שאישרת.</p>
+      <div id="tp-gbtn" class="tp-gbtn"></div>
+      <p class="res" id="tp-login-msg" aria-live="polite"></p>
+    </div>
+    <div class="tp-demo">
+      <p class="tp-demo-l">כך נראית התאמה (דוגמה):</p>
+      <div class="kh-item tp-match">
+        <div class="top"><b>יוסי · עובר לידך ב-07:42</b><span>עוד 2 מקומות</span></div>
+        <p>מקריית משה ← להר חומה · 300 מ' ממך · 10.2 ק"מ</p>
+        <div class="acts"><span class="tp-price">10 ₪</span><button type="button" disabled>לבקש בהשתתפות בדלק</button><button type="button" disabled>לבקש בחינם</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- מחשבון מחיר: פתוח לכולם -->
+  <details class="k-form tp-calc" id="tp-calc">
+    <summary>כמה עולה טרמפ? מחשבון לפי מרחק</summary>
+    <div class="field tp-ac"><label for="tc-from">מאיפה?</label><input id="tc-from" type="text" autocomplete="off" placeholder="רחוב ומספר, עיר"></div>
+    <div class="field tp-ac"><label for="tc-to">לאן?</label><input id="tc-to" type="text" autocomplete="off" placeholder="רחוב, מקום או עיר"></div>
+    <button class="btn btn-gold btn-sm" type="button" id="tc-go">לחשב</button>
+    <div class="res" id="tc-res" aria-live="polite"></div>
+  </details>
+
+  <!-- אחרי כניסה -->
+  <section id="tp-app" hidden>
+    <div class="tp-me" id="tp-me"></div>
+
+    <form class="k-form" id="tp-profile" novalidate hidden>
+      <b class="tp-title">עוד רגע מתחילים</b>
+      <p class="kh-hint">הטלפון נחשף רק אחרי שאישרת טרמפ (או שאישרו לך), כדי שתוכלו לדבר בווטסאפ.</p>
+      <div class="kh-two">
+        <div class="field"><label for="pf-name">שם</label><input id="pf-name" type="text" maxlength="40" autocomplete="name"></div>
+        <div class="field"><label for="pf-phone">טלפון (ווטסאפ)</label><input id="pf-phone" type="tel" maxlength="14" inputmode="tel" placeholder="050-0000000" autocomplete="tel"></div>
+      </div>
+      <div class="field"><label for="pf-paybox">קישור פייבוקס <span class="opt">(לנהגים, לא חובה. ביט עובד לפי הטלפון)</span></label><input id="pf-paybox" type="text" maxlength="200" placeholder="https://payboxapp.page.link/..." dir="ltr"></div>
+      <details class="tp-rules"><summary>הכללים, בקצרה</summary>
+        <ul>
+          <li>מעל גיל 18 בלבד.</li>
+          <li>התשלום הוא השתתפות בהוצאות הדלק, לפי תעריפון קבוע (שקל לק"מ, עד פי 1.5). זה לא שירות הסעה בתשלום.</li>
+          <li>הנהג מחליט אם לקחת, ואם בחינם או בהשתתפות.</li>
+          <li>שולחים לבן משפחה עם מי נוסעים ומתי. משהו לא הרגיש נכון? לא עולים, ומדווחים.</li>
+          <li>האתר מחבר בין אנשים ולא אחראי לנסיעה עצמה. כל אחד נוהג ונוסע באחריותו.</li>
+        </ul>
+      </details>
+      <label class="tp-check"><input type="checkbox" id="pf-agree"> אני מעל 18 ומסכים לכללים</label>
+      <button class="btn btn-gold" type="submit">לשמור ולהתחיל</button>
+      <p class="res" id="pf-msg" aria-live="polite"></p>
+    </form>
+
+    <div id="tp-main" hidden>
+      <div class="kh-chips tp-tabs" role="tablist">
+        <button type="button" data-tab="ride" class="on">אני צריך טרמפ</button>
+        <button type="button" data-tab="drive">אני נוסע</button>
+        <button type="button" data-tab="inbox">הבקשות <span class="tp-badge" id="tp-badge" hidden></span></button>
+      </div>
+
+      <!-- טרמפיסט -->
+      <section class="tp-pane" data-pane="ride">
+        <form class="k-form" id="rd-form" novalidate>
+          <div class="field tp-ac"><label for="rd-from">מאיפה אוספים אותך?</label>
+            <div class="tp-row"><input id="rd-from" type="text" autocomplete="off" placeholder="רחוב ומספר, עיר"><button class="btn btn-line btn-sm" type="button" id="rd-here">המיקום שלי</button></div></div>
+          <div class="field tp-ac"><label for="rd-to">לאן?</label><input id="rd-to" type="text" autocomplete="off" placeholder="רחוב, מקום או עיר"></div>
+          <div class="field"><span class="label">מתי?</span>
+            <div class="kh-chips" id="rd-when"><button type="button" data-w="today" class="on">היום</button><button type="button" data-w="tomorrow">מחר</button><button type="button" data-w="week">כל השבוע</button></div></div>
+          <div class="field"><span class="label">כמה רחוק מוכן ללכת לנקודת איסוף?</span>
+            <div class="kh-chips" id="rd-radius"><button type="button" data-r="1">עד 1 ק"מ</button><button type="button" data-r="2" class="on">עד 2 ק"מ</button><button type="button" data-r="4">עד 4 ק"מ</button></div></div>
+          <button class="btn btn-gold" type="submit">מי עובר דרכי?</button>
+          <p class="res" id="rd-msg" aria-live="polite"></p>
+        </form>
+        <div id="rd-list" class="kh-sec"></div>
+      </section>
+
+      <!-- נהג -->
+      <section class="tp-pane" data-pane="drive" hidden>
+        <div class="kh-note tp-cal"><span><b>מהיומן ומ-Waze:</b> הנסיעות שלך כבר נמצאות ביומן גוגל, ומשם Waze מתכנן אותן. מייבאים את השבוע הקרוב והופכים כל אירוע לטרמפ בלחיצה.</span><button class="btn btn-line btn-sm" type="button" id="dr-cal">ייבוא מהיומן</button></div>
+        <div id="dr-cal-list"></div>
+        <form class="k-form" id="dr-form" novalidate>
+          <div class="field tp-ac"><label for="dr-from">יוצא מ...</label>
+            <div class="tp-row"><input id="dr-from" type="text" autocomplete="off" placeholder="רחוב ומספר, עיר"><button class="btn btn-line btn-sm" type="button" id="dr-here">המיקום שלי</button></div></div>
+          <div class="field tp-ac"><label for="dr-to">נוסע אל...</label><input id="dr-to" type="text" autocomplete="off" placeholder="רחוב, מקום או עיר"></div>
+          <div class="field"><span class="label">מתי?</span>
+            <div class="kh-chips" id="dr-kind"><button type="button" data-k="once" class="on">פעם אחת</button><button type="button" data-k="regular">נסיעה קבועה</button></div></div>
+          <div class="kh-two">
+            <div class="field" id="dr-date-f"><label for="dr-date">תאריך</label><input id="dr-date" type="date"></div>
+            <div class="field"><label for="dr-time">שעת יציאה</label><input id="dr-time" type="time" value="07:30"></div>
+          </div>
+          <div class="field" id="dr-days-f" hidden><span class="label">באילו ימים?</span>
+            <div class="kh-chips" id="dr-days"><button type="button" data-d="0" class="on">א'</button><button type="button" data-d="1" class="on">ב'</button><button type="button" data-d="2" class="on">ג'</button><button type="button" data-d="3" class="on">ד'</button><button type="button" data-d="4" class="on">ה'</button><button type="button" data-d="5">ו'</button></div></div>
+          <div class="kh-two">
+            <div class="field"><label for="dr-seats">מקומות פנויים</label><select id="dr-seats"><option>1</option><option>2</option><option selected>3</option><option>4</option></select></div>
+            <div class="field"><label for="dr-rate">השתתפות בדלק</label><select id="dr-rate"><option value="0">בחינם, לשם מצווה</option><option value="1" selected>תעריפון: שקל לק"מ</option><option value="1.2">1.2 ₪ לק"מ</option><option value="1.5">1.5 ₪ לק"מ (התקרה)</option></select></div>
+          </div>
+          <div class="field"><label for="dr-note">הערה <span class="opt">(לא חובה)</span></label><input id="dr-note" type="text" maxlength="200" placeholder="אוסף ליד הכניסה לשכונה, בלי עישון"></div>
+          <div class="res" id="dr-route" aria-live="polite"></div>
+          <button class="btn btn-gold" type="submit" id="dr-go">לחשב מסלול ולפרסם</button>
+          <p class="res" id="dr-msg" aria-live="polite"></p>
+        </form>
+        <div class="kh-sec"><h2>הנסיעות שלי</h2><div id="dr-list"></div></div>
+      </section>
+
+      <!-- בקשות -->
+      <section class="tp-pane" data-pane="inbox" hidden>
+        <div class="kh-sec"><h2>מבקשים להצטרף אליי</h2><div id="ib-driver"></div></div>
+        <div class="kh-sec"><h2>הבקשות ששלחתי</h2><div id="ib-rider"></div></div>
+      </section>
+
+      <details class="k-form tp-idea"><summary>יש לך רעיון לשיפור המיזם?</summary>
+        <div class="field"><label for="id-text">מה היה עוזר?</label><textarea id="id-text" maxlength="800" placeholder="למשל: התראה בטלפון כשמישהו מבקש להצטרף"></textarea></div>
+        <button class="btn btn-gold btn-sm" type="button" id="id-send">לשלוח לגילעד</button>
+        <p class="res" id="id-msg" aria-live="polite"></p>
+      </details>
+    </div>
+  </section>
+
+  <p class="disclaimer">המיזם מחבר בין נהגים וטרמפיסטים. התשלום הוא השתתפות בהוצאות הדלק לפי מרחק, לא הסעה בשכר. כל אחד נוהג ונוסע באחריותו. מעל גיל 18 בלבד. הכתובות עוברות לחישוב מסלול במפה הפתוחה (OpenStreetMap), והטלפון נחשף רק אחרי אישור.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מיזם טרמפים קהילתי: נהגים מפרסמים את הנסיעה, טרמפיסטים רואים מי עובר לידם. בחינם או בהשתתפות הוגנת בדלק. ככל שיותר אנשים מצטרפים, ככה זה עובד יותר טוב:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> להפיץ בקבוצה של השכונה</a></div>
+</div>

@@ -61,8 +61,10 @@
     { id: 'games3', icon: '🎯', t: 'לפתור את האתגר היומי ב-3 משחקים שונים', n: 3, f: function (L) { return uniq(L, 'g'); } },
     { id: 'days4', icon: '📅', t: 'לפתור אתגר יומי ב-4 ימים שונים', n: 4, f: function (L) { return uniq(L, 'd'); } },
     { id: 'clean3', icon: '🧠', t: 'לפתור 3 אתגרים יומיים בלי אף רמז', n: 3, f: function (L) { return L.filter(function (x) { return !x.h; }).length; } },
-    { id: 'all4', icon: '🏆', t: 'לפתור את האתגר היומי ב-4 משחקים שונים', n: 4, f: function (L) { return uniq(L, 'g'); } }
+    // all4: ארבעת משחקי הפתרון (מילה, שחור ופתור, תשחצים, סודוקו). משחקי הלוח והקלפים נספרים בשאר המטרות
+    { id: 'all4', icon: '🏆', t: 'לפתור את האתגר היומי בכל ארבעת משחקי הפתרון (מילה, שחור ופתור, תשחצים, סודוקו)', n: 4, f: function (L) { return uniq(L.filter(function (x) { return PUZ[x.g]; }), 'g'); } }
   ];
+  var PUZ = { mila: 1, nono: 1, tash: 1, sudoku: 1 };
   function uniq(L, k) { var o = {}; L.forEach(function (x) { o[x[k]] = 1; }); return Object.keys(o).length; }
   function sunday(d) { d = new Date(d || Date.now()); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - d.getDay()); return d; }
   CH.week = function () {
@@ -113,23 +115,26 @@
   function b64e(s) { return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
   function b64d(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return decodeURIComponent(escape(atob(s))); }
   CH.vsIn = (function () {
-    try { var q = new URLSearchParams(location.search).get('vs'); if (!q) return null; var o = JSON.parse(b64d(q)); if (!o || !o.g || typeof o.t !== 'number') return null; if (o.m) o.m = String(o.m).slice(0, 20); return o; } catch (e) { return null; }
+    try { var q = new URLSearchParams(location.search).get('vs'); if (!q) return null; var o = JSON.parse(b64d(q)); if (!o || !o.g || (typeof o.t !== 'number' && typeof o.z !== 'string')) return null; if (o.m) o.m = String(o.m).slice(0, 20); return o; } catch (e) { return null; }
   })();
   CH.vsActive = false;
   function tries(t) { return t > 6 ? '✕' : t === 1 ? 'ניסיון אחד' : t + ' ניסיונות'; }
-  function vsScore(o) { return o.q === 'tries' ? (o.t > 6 ? 'לא נוחשה' : 'נוחשה ב' + (o.t === 1 ? 'ניסיון אחד' : '-' + o.t + ' ניסיונות')) : 'נפתר ב-' + CH.fmt(o.t); }
+  function vsScore(o) { if (o.q === 'pts') return 'סיים עם ' + o.t + ' נקודות'; return o.q === 'tries' ? (o.t > 6 ? 'לא נוחשה' : 'נוחשה ב' + (o.t === 1 ? 'ניסיון אחד' : '-' + o.t + ' ניסיונות')) : 'נפתר ב-' + CH.fmt(o.t); }
   CH.vsStart = function (tool, what) {
     var v = CH.vsIn, el = document.getElementById('ch-vsbanner'); CH.vsActive = true;
-    if (el) { el.hidden = false; el.innerHTML = '⚔️ <b>אתגר מאת ' + esc(v.m || 'חבר') + '</b>: ' + what + ' ' + vsScore(v) + (v.h ? ' (עם רמזים)' : '') + '. ' + (v.q === 'tries' ? (v.t > 6 ? 'תצליחו לנחש אותה?' : 'תצליחו בפחות ניסיונות?') : 'תצליחו מהר יותר?'); }
+    if (el) { el.hidden = false; el.innerHTML = '⚔️ <b>אתגר מאת ' + esc(v.m || 'חבר') + '</b>: ' + what + ' ' + vsScore(v) + (v.h ? ' (עם רמזים)' : '') + '. ' + (v.q === 'pts' ? 'תצליחו לצבור יותר?' : v.q === 'tries' ? (v.t > 6 ? 'תצליחו לנחש אותה?' : 'תצליחו בפחות ניסיונות?') : 'תצליחו מהר יותר?'); }
     CH.used(tool, 'vs_open');
   };
   CH.vsReset = function () { CH.vsActive = false; var el = document.getElementById('ch-vsbanner'); if (el) el.hidden = true; };
   function vsResult(o) {
     var v = CH.vsIn; if (!o.vsMine || !CH.vsActive || !v) return '';
     var me = o.vsMine.t, them = v.t, nm = esc(v.m || 'החבר שלכם');
-    var show = function (t) { return o.vsMine.q === 'tries' ? tries(t) : CH.fmt(t); };
+    var show = function (t) { return o.vsMine.q === 'tries' ? tries(t) : o.vsMine.q === 'pts' ? t + ' נקודות' : CH.fmt(t); };
+    // בנקודות: יותר = טוב. בזמן ובניסיונות: פחות = טוב
+    if (o.vsMine.q === 'pts') { me = -me; them = -them; }
     var head = me < them ? '🏆 ניצחתם את ' + nm + '!' : me === them ? '🤝 תיקו עם ' + nm + '!' : '💪 הפעם הניצחון של ' + nm + '.';
-    CH.used(o.tool, 'vs_done', { win: me < them ? 1 : 0 });
+    if (o.vsMine.q === 'pts') { me = -me; them = -them; }
+    CH.used(o.tool, 'vs_done', { win: (o.vsMine.q === 'pts' ? me > them : me < them) ? 1 : 0 });
     return '<div class="ch-vsres"><b>' + head + '</b><span>אתם: ' + show(me) + ' · ' + nm + ': ' + show(them) + '</span></div>';
   }
   function vsBox(o) {
@@ -151,6 +156,30 @@
     box.querySelector('[data-vs-wa]').addEventListener('click', function () { this.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(msg()); CH.used(o.tool, 'vs_send', { how: 'wa' }); });
     box.querySelector('[data-vs-copy]').addEventListener('click', function () { var t = msg(); if (window.kelimCopy) window.kelimCopy(t, this, 'הקישור הועתק ✓ אפשר להדביק לחבר'); CH.used(o.tool, 'vs_send', { how: 'copy' }); });
   }
+
+  // ---------- משחק לפי תורות בקישור (שחמט, דמקה, שש-בש) ----------
+  // אותו מנגנון ?vs= כמו האתגר, רק שבמקום תוצאה הקישור נושא את מצב הלוח (z) אחרי המהלך.
+  // החבר פותח, משחק את התור שלו, ושולח קישור בחזרה. אין שרת: הכול בתוך הקישור.
+  CH.vsLink = function (p, tag) { return location.origin + location.pathname + '?vs=' + b64e(JSON.stringify(p)) + '&utm_source=share&utm_medium=friend&utm_campaign=turn_' + (tag || p.g); };
+  CH.myName = function () { try { return localStorage.getItem('chashiva-name') || ''; } catch (e) { return ''; } };
+  // o: {el, tool, p (האובייקט לקישור, בלי שם), msg(name) -> טקסט, title, sub}
+  CH.turnSend = function (o) {
+    var el = o.el; if (!el) return;
+    el.innerHTML = '<div class="ch-vs ch-turn"><b>' + (o.title || '📨 עכשיו התור של החבר') + '</b><span>' + (o.sub || 'שולחים לו את הלוח בווטסאפ. הוא משחק את התור שלו ושולח לכם קישור בחזרה.') + '</span>' +
+      '<input type="text" maxlength="20" placeholder="השם שלכם (לא חובה)" value="' + esc(CH.myName()) + '" data-vs-name aria-label="השם שלכם">' +
+      '<div class="actions"><a class="btn btn-gold" href="#" target="_blank" rel="noopener" data-vs-wa><svg class="ic"><use href="#wa"/></svg> לשלוח את התור בווטסאפ</a><button class="btn btn-line" type="button" data-vs-copy>🔗 להעתיק קישור</button></div></div>';
+    var inp = el.querySelector('[data-vs-name]');
+    function msg() {
+      var name = (inp.value || '').trim().slice(0, 20); try { localStorage.setItem('chashiva-name', name); } catch (e) {}
+      var p = Object.assign({}, o.p); if (name) p.m = name;
+      return o.msg(name) + '\n' + CH.vsLink(p);
+    }
+    CH.turnMsg = msg;
+    el.querySelector('[data-vs-wa]').addEventListener('click', function () { this.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(msg()); CH.used(o.tool, 'turn_send', { how: 'wa' }); });
+    el.querySelector('[data-vs-copy]').addEventListener('click', function () { var t = msg(); if (window.kelimCopy) window.kelimCopy(t, this, 'הקישור הועתק ✓ אפשר להדביק לחבר'); CH.used(o.tool, 'turn_send', { how: 'copy' }); });
+  };
+  // באנר למי שפתח תור מחבר
+  CH.turnBanner = function (html) { var el = document.getElementById('ch-vsbanner'); if (el) { el.hidden = !html; el.innerHTML = html || ''; } };
 
   // ---------- חלון "פתרתם!" ----------
   // o: {tool, el, title, line, share, daily, next:[{label, fn}]}
@@ -217,12 +246,14 @@
   // ---------- דף התחום: ההתקדמות שלכם ----------
   var box = document.getElementById('ch-progress');
   if (box) {
-    var games = [['mila', 'מילה ביום', '/kelim/chashiva/mila/'], ['nono', 'שחור ופתור', '/kelim/chashiva/shachor/'], ['tash', 'תשחצים', '/kelim/chashiva/tashchetz/'], ['sudoku', 'סודוקו', '/kelim/chashiva/sudoku/'], ['chidon', 'חידון וטריוויה', '/kelim/chashiva/chidon/']];
+    var games = [['mila', 'מילה ביום', '/kelim/chashiva/mila/'], ['nono', 'שחור ופתור', '/kelim/chashiva/shachor/'], ['tash', 'תשחצים', '/kelim/chashiva/tashchetz/'], ['sudoku', 'סודוקו', '/kelim/chashiva/sudoku/'],
+      ['shachmat', 'שחמט', '/kelim/chashiva/shachmat/'], ['damka', 'דמקה', '/kelim/chashiva/damka/'], ['shesh', 'שש-בש', '/kelim/chashiva/shesh-besh/'], ['chidon', 'חידון וטריוויה', '/kelim/chashiva/chidon/']];
     var any = false;
     box.innerHTML = '<div class="ch-prog">' + games.map(function (g) {
       var s = CH.stats(g[0]); if (s.solved) any = true;
-      return '<a href="' + g[2] + '#daily"><b>' + g[1] + '</b><span>' + (s.doneToday ? '✓ האתגר של היום נפתר' : '⭐ האתגר של היום מחכה') + '</span>' +
-        '<span>🔥 רצף ' + s.streak + ' · נפתרו ' + s.solved + '</span></a>';
+      var duel = !PUZ[g[0]];
+      return '<a href="' + g[2] + (duel ? '' : '#daily') + '"><b>' + g[1] + '</b><span>' + (duel ? (s.doneToday ? '✓ ניצחתם היום' : '⭐ ניצחון היום נספר לאתגר השבועי') : (s.doneToday ? '✓ האתגר של היום נפתר' : '⭐ האתגר של היום מחכה')) + '</span>' +
+        '<span>🔥 רצף ' + s.streak + ' · ' + (duel ? 'ניצחונות ' : 'נפתרו ') + s.solved + '</span></a>';
     }).join('') + '</div>' + (any ? '' : '<p class="ch-hint">עוד לא שיחקתם כאן. ההתקדמות נשמרת בטלפון הזה בלבד, בלי הרשמה.</p>');
   }
 })();

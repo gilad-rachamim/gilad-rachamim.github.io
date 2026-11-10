@@ -170,3 +170,67 @@
 .ch-vs span{color:var(--muted);font-size:.93rem}
 .ch-vs input{font:inherit;padding:.55rem .75rem;border-radius:10px;border:1px solid var(--line);background:var(--ink);color:var(--cream)}
 .ch-vs .actions{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center}
+
+/* ===== משחקי לוח (שחמט, דמקה) ===== */
+.ch-turn{margin-top:.6rem}
+.ch-sep{width:1px;background:var(--line);margin:0 .2rem}
+.bg-board{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);width:min(100%,480px);aspect-ratio:1;margin:.4rem auto;border:4px solid #3b3122;border-radius:8px;overflow:hidden;touch-action:manipulation;user-select:none;-webkit-user-select:none;box-shadow:0 4px 18px rgba(0,0,0,.4)}
+.bg-board button{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;font-size:clamp(1.5rem,8.6vw,2.6rem);line-height:1}
+.bg-board .lt{background:#efe4c8}
+.bg-board .dk{background:#7d9a78}
+.bg-board .sel{box-shadow:inset 0 0 0 4px #d8b35f}
+.bg-board .last{background-image:linear-gradient(rgba(232,200,124,.55),rgba(232,200,124,.55))}
+.bg-board .chk{background:radial-gradient(circle,#ff6b5b 25%,#c0392b 80%)}
+.bg-board .dot::after{content:"";width:28%;height:28%;border-radius:50%;background:rgba(20,33,31,.35)}
+.bg-board .cap::after{content:"";position:absolute;inset:3px;border-radius:50%;border:4px solid rgba(20,33,31,.35)}
+.bg-board i{position:absolute;font-style:normal;font-size:.62rem;font-weight:700;color:rgba(20,33,31,.55);font-family:var(--sans)}
+.bg-board i.rk{top:2px;left:3px}
+.bg-board i.fl{bottom:1px;right:3px}
+.pc{font-family:"Segoe UI Symbol","Noto Sans Symbols 2","DejaVu Sans",serif;display:inline-block}
+.pc.w{color:#fffdf6;text-shadow:0 0 1px #000,0 0 1px #000,1px 1px 0 #2b2b2b,-1px -1px 0 #2b2b2b,1px -1px 0 #2b2b2b,-1px 1px 0 #2b2b2b}
+.pc.b{color:#1b1b1b;text-shadow:0 0 1px #fff8}
+.bg-board.won{filter:saturate(.75)}
+.bg-capt{display:flex;flex-direction:column;align-items:flex-end;gap:0;font-size:1.05rem;line-height:1.1;min-height:2.2em}
+.bg-capt .pcs{font-family:"Segoe UI Symbol","Noto Sans Symbols 2",serif;letter-spacing:-2px}
+.bg-capt .pcs.w{color:#fffdf6;text-shadow:0 0 1px #000}
+.bg-capt .pcs.b{color:#111;text-shadow:0 0 2px #fff}
+.bg-promo{display:flex;gap:.4rem;justify-content:center;align-items:center;flex-wrap:wrap;margin:.5rem 0;border:1px solid var(--gold);border-radius:14px;padding:.5rem;background:rgba(216,179,95,.1);color:var(--cream)}
+.bg-promo button{border:1px solid var(--line);background:#efe4c8;border-radius:10px;font-size:2rem;padding:.2rem .6rem;cursor:pointer;display:flex;flex-direction:column;align-items:center}
+.bg-promo small{font-size:.75rem;color:#333}
+/* דמקה */
+.dm-board .disc{width:78%;height:78%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.55em;box-shadow:inset 0 -3px 0 rgba(0,0,0,.25),0 2px 4px rgba(0,0,0,.35)}
+.dm-board .disc.w{background:radial-gradient(circle at 35% 30%,#fff,#e8dcc0 60%,#c9b58e)}
+.dm-board .disc.b{background:radial-gradient(circle at 35% 30%,#7a4a33,#4a2516 60%,#2c140b);color:#f3d27a}
+.dm-board .disc.w.k{color:#a8771c}
+.dm-board .must{box-shadow:inset 0 0 0 3px #e2574c}
+/* שש-בש */
+.sb-wrap{width:min(100%,480px);margin:.4rem auto}
+.sb-board{display:grid;grid-template-columns:1fr 2.1rem 1fr;grid-template-rows:auto auto;gap:0;background:#5a3b22;border:6px solid #3b2414;border-radius:10px;padding:4px;direction:ltr;touch-action:manipulation;user-select:none;-webkit-user-select:none;box-shadow:0 4px 18px rgba(0,0,0,.45)}
+.sb-board .sb-half{display:flex;background:#e8d6ae;min-height:clamp(150px,44vw,200px)}
+.sb-board .sb-half:nth-child(1){grid-column:1;grid-row:1}.sb-board .sb-half:nth-child(3){grid-column:3;grid-row:1}
+.sb-board .sb-half:nth-child(4){grid-column:1;grid-row:2;border-top:3px solid #5a3b22}.sb-board .sb-half:nth-child(5){grid-column:3;grid-row:2;border-top:3px solid #5a3b22}
+.sb-bar{all:unset;box-sizing:border-box;grid-column:2;grid-row:1/3;background:#3b2414;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:6px 0;cursor:pointer}
+.sb-bar.can,.sb-bar.sel{box-shadow:inset 0 0 0 3px #d8b35f}
+.sb-board .pt{all:unset;box-sizing:border-box;flex:1;position:relative;display:flex;flex-direction:column;align-items:center;cursor:pointer;min-width:0}
+.sb-board .pt.up{flex-direction:column-reverse}
+.sb-board .tri{position:absolute;left:4%;right:4%;height:82%;top:0;clip-path:polygon(0 0,100% 0,50% 100%)}
+.sb-board .pt.up .tri{top:auto;bottom:0;clip-path:polygon(50% 0,100% 100%,0 100%)}
+.sb-board .pt.e .tri{background:#7d9a78}.sb-board .pt.o .tri{background:#a8553a}
+.sb-board .pt.can .tri{filter:brightness(1.25)}
+.sb-board .pt.sel{background:rgba(216,179,95,.45)}
+.sb-board .pt.to{background:rgba(95,191,166,.45)}
+.sb-board .pt.to::after{content:"";position:absolute;left:30%;right:30%;aspect-ratio:1;border-radius:50%;background:rgba(20,33,31,.35);top:44%}
+.sb-board .pt small{position:absolute;font-size:.55rem;color:rgba(20,33,31,.6);bottom:-1px}
+.sb-board .pt.dn small{bottom:auto;top:-1px;display:none}
+.sb-board .stack{position:relative;z-index:1;display:flex;flex-direction:inherit;align-items:center;padding:2px 0}
+.sb-bar .stack{flex-direction:column}
+.ck{display:flex;align-items:center;justify-content:center;width:clamp(22px,6.6vw,32px);aspect-ratio:1;border-radius:50%;font-style:normal;font-size:.75rem;font-weight:800;margin:-1px 0;box-shadow:inset 0 -2px 0 rgba(0,0,0,.25),0 1px 2px rgba(0,0,0,.5)}
+.ck.w{background:radial-gradient(circle at 35% 30%,#fff,#e8dcc0 60%,#c9b58e);color:#3b2414}
+.ck.b{background:radial-gradient(circle at 35% 30%,#555,#222 60%,#000);color:#f3d27a}
+.sb-side{display:flex;gap:.5rem;align-items:stretch;justify-content:space-between;margin:.5rem 0}
+.sb-offb{border:2px dashed var(--line);background:rgba(255,255,255,.04);color:var(--parchment);border-radius:12px;padding:.35rem .7rem;font:inherit;font-size:.9rem;cursor:pointer;line-height:1.3}
+.sb-offb b{color:var(--cream)}.sb-offb small{display:block;color:var(--muted)}
+.sb-offb.to{border:2px solid var(--accent);background:rgba(95,191,166,.18)}
+.sb-dice{display:flex;gap:.3rem;align-items:center;font-size:2.6rem;line-height:1;color:var(--cream)}
+.sb-dice .die.used{opacity:.3}
+.sb-pips{font-size:.85rem;color:var(--muted);text-align:center}

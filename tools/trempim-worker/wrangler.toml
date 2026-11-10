@@ -1,0 +1,16 @@
+# טרמפים – שרת המיזם (kelim/kehila/trempim). Cloudflare Worker + D1.
+# פריסה: cd tools/trempim-worker && npx wrangler deploy
+# סכמה: npx wrangler d1 execute trempim --remote --file schema.sql
+# סוד: npx wrangler secret put SESSION_SECRET
+name = "trempim"
+main = "trempim-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[vars]
+GOOGLE_CLIENT_ID = "PENDING"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "trempim"
+database_id = "808afa73-9583-4a1c-ae6b-e5e769e59b32"
