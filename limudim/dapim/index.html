@@ -25,7 +25,7 @@
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4QR4583VST"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4QR4583VST');</script>
 <script src="/assets/track.js?v=b23b682b" defer></script>
-<link rel="stylesheet" href="/assets/limudim-dapim.css?v=2902d6bb"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "כלים ללימודים", "item": "https://gilad-rachamim.github.io/limudim/"}, {"@type": "ListItem", "position": 2, "name": "מחולל דפי עבודה", "item": "https://gilad-rachamim.github.io/limudim/dapim/"}]}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "מחולל דפי עבודה", "description": "מחולל דפי עבודה חינמי במתמטיקה: בוחרים כיתה, נושא וכמה דקות יש לכיתה, ומקבלים דף הקנייה עם הסברים או דף חזרה, מעוצב ומוכן להדפסה, עם זמן משוער לכל שאלה, תזכורות לנושאים קודמים עם רמזים, ודף תשובות למורה. לכל דף יש גם גרסה דיגיטלית עם הכוונה צעד אחרי צעד, רמזים ומחשבון פשוט. 50 נושאים, מלוח הכפל ועד הבגרות, כולל פירוק טרינום ופרבולה עם טבלת ערכים, ציר סימטריה וקודקוד. בלי הרשמה.", "url": "https://gilad-rachamim.github.io/limudim/dapim/", "inLanguage": "he", "applicationCategory": "EducationalApplication", "operatingSystem": "Any", "browserRequirements": "דפדפן רגיל בטלפון או במחשב, בלי התקנה.", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "ILS"}, "author": {"@type": "Person", "name": "גילעד רחמים אביעד", "url": "https://gilad-rachamim.github.io/kelim/#mi"}, "publisher": {"@type": "Person", "name": "גילעד רחמים אביעד", "url": "https://gilad-rachamim.github.io/kelim/#mi"}, "isPartOf": {"@type": "WebSite", "name": "כלים ללימודים", "url": "https://gilad-rachamim.github.io/limudim/"}}</script>
+<link rel="stylesheet" href="/assets/limudim-dapim.css?v=862bcd7f"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "כלים ללימודים", "item": "https://gilad-rachamim.github.io/limudim/"}, {"@type": "ListItem", "position": 2, "name": "מחולל דפי עבודה", "item": "https://gilad-rachamim.github.io/limudim/dapim/"}]}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "מחולל דפי עבודה", "description": "מחולל דפי עבודה חינמי במתמטיקה: בוחרים כיתה, נושא וכמה דקות יש לכיתה, ומקבלים דף הקנייה עם הסברים או דף חזרה, מעוצב ומוכן להדפסה, עם זמן משוער לכל שאלה, תזכורות לנושאים קודמים עם רמזים, ודף תשובות למורה. לכל דף יש גם גרסה דיגיטלית עם הכוונה צעד אחרי צעד, רמזים ומחשבון פשוט. 50 נושאים, מלוח הכפל ועד הבגרות, כולל פירוק טרינום ופרבולה עם טבלת ערכים, ציר סימטריה וקודקוד. בלי הרשמה.", "url": "https://gilad-rachamim.github.io/limudim/dapim/", "inLanguage": "he", "applicationCategory": "EducationalApplication", "operatingSystem": "Any", "browserRequirements": "דפדפן רגיל בטלפון או במחשב, בלי התקנה.", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "ILS"}, "author": {"@type": "Person", "name": "גילעד רחמים אביעד", "url": "https://gilad-rachamim.github.io/kelim/#mi"}, "publisher": {"@type": "Person", "name": "גילעד רחמים אביעד", "url": "https://gilad-rachamim.github.io/kelim/#mi"}, "isPartOf": {"@type": "WebSite", "name": "כלים ללימודים", "url": "https://gilad-rachamim.github.io/limudim/"}}</script>
 </head>
 <body class="site-limudim " data-site="limudim" data-tool="dapim" data-home="/limudim/">
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
@@ -93,6 +93,12 @@
         <select id="dp-topic"></select>
       </label>
       <p class="note" id="dp-topic-note">הרשימה מסודרת לפי הכיתה שבחרתם: קודם הנושאים של השנה, ואחריהם נושאים מכיתות קודמות לחזרה.</p>
+
+      <div class="dp-row">
+        <label>לשלב עוד נושא באותו דף (לא חובה)<select id="dp-x1"></select></label>
+        <label>ועוד נושא (לא חובה)<select id="dp-x2"></select></label>
+      </div>
+      <p class="note">דף משולב: השאלות מתחלפות בין הנושאים, וליד כל שאלה כתוב לאיזה נושא היא שייכת. מתאים לחזרה לפני מבחן.</p>
 
       <h2 class="dp-h">2. איזה דף</h2>
       <div class="dp-kinds" role="group" aria-label="סוג הדף">
@@ -182,6 +188,30 @@
         <li><b>דיגיטלי ונגיש.</b> אותו דף בטלפון או במחשב: צעד אחרי צעד, הקראה של ההסברים, ומחשבון עם מקשים גדולים.</li>
       </ol>
     </div>
+    <div class="panel dp-idea">
+      <h3>💡 מורות ומורים: איך לשדרג את הכלי?</h3>
+      <p>אתם מכירים את הכיתה הכי טוב. חסר נושא? רוצים סוג שאלה אחר, מקום לשאלה משלכם, עיצוב נוסף? כל הצעה, קטנה או גדולה, נכנסת לרשימה שלי, ואני בונה לפי מה שאתם מבקשים.</p>
+      <label for="dp-idea">ההצעה שלי</label>
+      <textarea id="dp-idea" rows="3" maxlength="600" placeholder="למשל: שיהיה אפשר להוסיף שאלה משלי בסוף הדף"></textarea>
+      <div class="btns"><a class="btn btn-gold" id="dp-idea-wa" href="https://wa.me/972584049049" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לי את ההצעה (ווטסאפ)</a></div>
+    </div>
+    <div class="panel dp-idea">
+      <h3>🎁 רוצים כלי אישי, רק בשביל הכיתה שלכם?</h3>
+      <p>לוח תורנויות, מחולל קבוצות, דף מעקב, משחק לפתיחת שיעור, משהו שחוסך לכם עשר דקות ביום. <b>גם אם זה נשמע לכם קטן או שטותי, בשבילי זה ענק.</b> כתבו לי מה היה מקל עליכם, ואבנה. בחינם.</p>
+      <label for="dp-ishi">מה הייתי רוצה שיהיה לי</label>
+      <textarea id="dp-ishi" rows="3" maxlength="600" placeholder="למשל: כלי שמגריל תלמידה לענות, בלי לחזור על אותה אחת"></textarea>
+      <div class="btns"><a class="btn btn-gold" id="dp-ishi-wa" href="https://wa.me/972584049049" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לבקש כלי אישי (ווטסאפ)</a></div>
+      <span class="sig">גילעד</span>
+    </div>
+    <section class="k-sec" aria-labelledby="dp-od-h">
+      <h2 id="dp-od-h">🧰 עוד כלים שיעזרו לכם בכיתה</h2>
+      <div class="lcards">
+        <a href="/limudim/machberet/kita/"><span class="em" aria-hidden="true">👩‍🏫</span><b>שיעורי בית במחברת</b><span class="d">נותנים לכיתה כמה תרגילים ורואים בזמן אמת מי פתר ומי נתקע.</span></a>
+        <a href="/kelim/chashiva/kita/"><span class="em" aria-hidden="true">🏆</span><b>כיתה משחקת</b><span class="d">לוח נקודות כיתתי, עם פרסים ותעודות שהמורה בוחרת.</span></a>
+        <a href="/limudim/kahoot/"><span class="em" aria-hidden="true">🎯</span><b>חידונים ל-Kahoot</b><span class="d">חידון מוכן לפי נושא, בקובץ שנכנס ישר ל-Kahoot.</span></a>
+        <a href="/limudim/batei-sefer/"><span class="em" aria-hidden="true">🏫</span><b>כל הכלים למורים</b><span class="d">הדף המלא לבתי ספר ולמורים, עם כל הכלים לכיתה במקום אחד.</span></a>
+      </div>
+    </section>
     <p class="local-note">🔒 בלי הרשמה. שום דבר על התלמידים לא נשמר אצלנו. ההתקדמות נשמרת רק במכשיר שלהם.</p>
     <p class="note" style="text-align:center">חלוקת הנושאים לכיתות היא לפי תוכנית הלימודים המקובלת, ואפשר לבחור כל נושא לכל כיתה. חסר נושא או מקצוע? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>, ואוסיף.</p>
     <div class="share-row"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="מחולל דפי עבודה במתמטיקה בחינם: דף הקנייה או חזרה, להדפסה ודיגיטלי, לפי כיתה ולפי כמה דקות יש" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח למורה בווטסאפ</a></div>
@@ -262,6 +292,6 @@
   <button class="x" type="button" data-install-close aria-label="סגירה">×</button>
 </div>
 <script src="/assets/kelim.js?v=dccd2958" defer></script>
-<script src="/assets/vendor/qrcodejs/qrcode-1.0.0.min.js?v=517b55d3"></script><script src="/assets/limudim-math.js?v=acd3e187"></script><script src="/assets/limudim-dapim.js?v=56c78fa6"></script><script src="/assets/limudim.js?v=20d32c73" defer></script>
+<script src="/assets/vendor/qrcodejs/qrcode-1.0.0.min.js?v=517b55d3"></script><script src="/assets/limudim-math.js?v=acd3e187"></script><script src="/assets/limudim-dapim.js?v=7c4e1c25"></script><script src="/assets/limudim.js?v=20d32c73" defer></script>
 </body>
 </html>

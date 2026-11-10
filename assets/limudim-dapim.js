@@ -146,13 +146,14 @@
   // cfg: {t: נושא, k: 'h' הקנייה | 'z' חזרה, m: דקות, lv: 1-3, r: [נושאי תזכורת], s: זרע, a: עזרה 0-2}
   function build(cfg) {
     var t = byId[cfg.t]; if (!t) return null;
+    var ts = [t].concat((cfg.x || []).map(function (id) { return byId[id]; }).filter(function (x, j, a) { return x && x !== t && a.indexOf(x) === j; })).slice(0, 3);
     return seeded(cfg.s, function () {
       var items = [], total = 0, n = 0, i = 0;
-      var revs = cfg.r.map(function (id) { return byId[id]; }).filter(function (x) { return x && x !== t; }).slice(0, 3);
+      var revs = cfg.r.map(function (id) { return byId[id]; }).filter(function (x) { return x && ts.indexOf(x) < 0; }).slice(0, 3);
       var asked = revs.length;
       function add(it) { if (it.k === 'ex') it.n = ++n; items.push(it); total += it.min || 0; }
       function guidedFor(j) { return cfg.a === 2 || (cfg.a === 1 && cfg.k === 'h' && j < 2); }
-      function mkEx(j) { var lv = Math.min(cfg.lv, 1 + Math.floor(j / 2)), g = guidedFor(j), p = t.gen(lv); return { k: 'ex', p: p, lv: lv, guided: g, min: cost(p, g) }; }
+      function mkEx(j) { var tp = ts[j % ts.length], lv = Math.min(cfg.lv, 1 + Math.floor(j / (2 * ts.length))), g = guidedFor(j), p = tp.gen(lv); return { k: 'ex', p: p, lv: lv, guided: g, min: cost(p, g), tp: ts.length > 1 ? tp : null }; }
       function tryRev() {
         if (!revs.length) return;
         var rt = revs[0], p = rt.gen(1), it = { k: 'ex', p: p, lv: 1, rev: rt, guided: cfg.a === 2, min: cost(p, cfg.a === 2) };
@@ -165,7 +166,8 @@
         add(mkEx(i++)); tryRev();
         add({ k: 'learn', title: '📘 ממשיכים ללמוד', steps: L.slice(half), min: Math.max(1, Math.round((L.length - half) * 0.6)) });
       } else if (cfg.a > 0) {
-        add({ k: 'recap', title: '🧠 תזכורת קצרה: ' + t.name, steps: L.filter(function (s) { return s.m.indexOf('תורכם') < 0; }).slice(0, 6), min: 2 });
+        var rc = []; ts.forEach(function (x) { rc = rc.concat(x.lesson.filter(function (s) { return s.m.indexOf('תורכם') < 0; }).slice(0, ts.length > 1 ? 3 : 6)); });
+        add({ k: 'recap', title: '🧠 תזכורת קצרה' + (ts.length > 1 ? '' : ': ' + t.name), steps: rc, min: 1 + ts.length });
       }
       var guard = 0;
       while (guard++ < 40) {
@@ -174,13 +176,13 @@
         add(e); i++; tryRev();
       }
       var bonus = t.gen(Math.min(3, cfg.lv + 1));
-      return { t: t, cfg: cfg, items: items, total: total, nq: n, nrev: asked - revs.length, dropped: revs.length, bonus: { k: 'ex', p: bonus, bonus: true, guided: false, min: 0, n: n + 1 } };
+      return { t: t, ts: ts, name: ts.map(function (x) { return x.name; }).join(' + '), cfg: cfg, items: items, total: total, nq: n, nrev: asked - revs.length, dropped: revs.length, bonus: { k: 'ex', p: bonus, bonus: true, guided: false, min: 0, n: n + 1 } };
     });
   }
-  function encode(cfg) { return [cfg.t, cfg.k, cfg.m, cfg.lv, cfg.r.join('~'), cfg.s, cfg.a].join('.'); }
+  function encode(cfg) { return [[cfg.t].concat(cfg.x || []).join(','), cfg.k, cfg.m, cfg.lv, cfg.r.join('~'), cfg.s, cfg.a].join('.'); }
   function decode(d) {
-    var q = String(d).split('.'); if (q.length < 6 || !byId[q[0]]) return null;
-    return { t: q[0], k: q[1] === 'z' ? 'z' : 'h', m: Math.min(120, Math.max(5, +q[2] || 30)), lv: Math.min(3, Math.max(1, +q[3] || 2)), r: q[4] ? q[4].split('~').filter(function (x) { return byId[x]; }) : [], s: +q[5] || 1, a: q[6] === undefined ? 1 : Math.min(2, Math.max(0, +q[6] || 0)) };
+    var q = String(d).split('.'), tt = (q[0] || '').split(','); if (q.length < 6 || !byId[tt[0]]) return null;
+    return { t: tt[0], x: tt.slice(1, 3).filter(function (x) { return byId[x]; }), k: q[1] === 'z' ? 'z' : 'h', m: Math.min(120, Math.max(5, +q[2] || 30)), lv: Math.min(3, Math.max(1, +q[3] || 2)), r: q[4] ? q[4].split('~').filter(function (x) { return byId[x]; }) : [], s: +q[5] || 1, a: q[6] === undefined ? 1 : Math.min(2, Math.max(0, +q[6] || 0)) };
   }
   function linkOf(cfg, title) { return BASE + '?d=' + encodeURIComponent(encode(cfg)) + (title ? '&c=' + encodeURIComponent(title) : ''); }
   var KIND = { h: 'דף הקנייה', z: 'דף חזרה' };
@@ -223,7 +225,7 @@
   }
   function qHead(it, o) {
     return '<div class="dp-qh"><span class="dp-n">' + (it.bonus ? '⭐' : it.n) + '</span>' +
-      (it.bonus ? '<span class="dp-tag">לזריזים: שאלת אתגר</span>' : it.rev ? '<span class="dp-tag">🔁 זוכרים? ' + it.rev.name + '</span>' : it.guided ? '<span class="dp-tag">תרגיל מודרך</span>' : '') +
+      (it.bonus ? '<span class="dp-tag">לזריזים: שאלת אתגר</span>' : it.rev ? '<span class="dp-tag">🔁 זוכרים? ' + it.rev.name + '</span>' : (it.tp ? '<span class="dp-tag">' + it.tp.em + ' ' + it.tp.name + '</span>' : '') + (it.guided ? '<span class="dp-tag">תרגיל מודרך</span>' : '')) +
       (o.time && it.min ? '<span class="dp-min">⏱ כ-' + it.min + ' דק׳</span>' : '') + '</div>';
   }
   function exPrint(it, o) {
@@ -256,7 +258,7 @@
     qrJobs = [];
     var cfg = sh.cfg, t = sh.t, exs = sh.items.filter(function (x) { return x.k === 'ex'; }), revsIn = exs.filter(function (x) { return x.rev; });
     var h = '<article class="dp-paper st-' + o.style + (o.font ? ' big' : '') + '">';
-    h += '<header class="dp-ph"><div class="dp-pt"><span class="dp-kind">' + KIND[cfg.k] + ' · מתמטיקה' + (o.grade ? ' · כיתה ' + o.grade : '') + '</span><h2>' + t.em + ' ' + t.name + '</h2>' + (o.title ? '<p class="dp-sub">' + esc(o.title) + '</p>' : '') +
+    h += '<header class="dp-ph"><div class="dp-pt"><span class="dp-kind">' + KIND[cfg.k] + ' · מתמטיקה' + (o.grade ? ' · כיתה ' + o.grade : '') + '</span><h2>' + t.em + ' ' + t.name + '</h2>' + (sh.ts.length > 1 ? '<p class="dp-sub"><b>דף משולב</b>, יחד עם: ' + sh.ts.slice(1).map(function (x) { return x.name; }).join(' · ') + '</p>' : '') + (o.title ? '<p class="dp-sub">' + esc(o.title) + '</p>' : '') +
       '<p class="dp-name">שם: <span class="sb w"></span> תאריך: <span class="sb"></span></p></div>' +
       (o.qr ? '<div class="dp-qrw">' + qrSpot(linkOf(cfg), 84) + '<small>הדף הדיגיטלי:<br>רמזים, בדיקה ומחשבון</small></div>' : '') + '</header>';
     h += '<div class="dp-strip"><span>⏱ כ-' + sh.total + ' דקות</span><span>' + sh.nq + ' שאלות</span>' + (o.stars ? '<span class="dp-stars" aria-label="כוכב לכל שאלה">' + exs.map(function () { return '☆'; }).join('') + '</span><span class="dp-strip-n">צובעים כוכב אחרי כל שאלה</span>' : '') + '</div>';
@@ -271,7 +273,7 @@
     if (o.feel) h += '<section class="dp-feel"><b>איך הרגשתי עם הדף?</b><span>😀 הבנתי הכול</span><span>🙂 הבנתי את הרוב</span><span>🤔 צריך עוד הסבר</span><span class="dp-feel-q">מה עוד לא ברור לי: <span class="sb w"></span></span></section>';
     h += '<footer class="dp-pf">טעות היא חלק מהלימוד. ממשיכים הלאה 💪 &nbsp;·&nbsp; דף מ"הכלים של גילעד רחמים", חינם: <bdi dir="ltr">gilad-rachamim.github.io/limudim/dapim</bdi></footer></div></article>';
     if (o.key) {
-      h += '<article class="dp-paper dp-keyp st-' + o.style + '"><header class="dp-ph"><div class="dp-pt"><span class="dp-kind">דף תשובות למורה</span><h2>' + t.em + ' ' + t.name + '</h2><p class="dp-sub">' + KIND[cfg.k] + ' · כ-' + sh.total + ' דקות · רמה ' + ['', 'בסיס', 'רגילה', 'מאתגרת'][cfg.lv] + (o.title ? ' · ' + esc(o.title) : '') + '</p></div></header><ol class="dp-key">' +
+      h += '<article class="dp-paper dp-keyp st-' + o.style + '"><header class="dp-ph"><div class="dp-pt"><span class="dp-kind">דף תשובות למורה</span><h2>' + t.em + ' ' + sh.name + '</h2><p class="dp-sub">' + KIND[cfg.k] + ' · כ-' + sh.total + ' דקות · רמה ' + ['', 'בסיס', 'רגילה', 'מאתגרת'][cfg.lv] + (o.title ? ' · ' + esc(o.title) : '') + '</p></div></header><ol class="dp-key">' +
         exs.concat(o.bonus ? [sh.bonus] : []).map(keyLine).join('') + '</ol><p class="dp-keyn">בתרגיל מודרך התשובות מופיעות לפי סדר הצעדים, ואחרי החץ התשובה הסופית.</p></article>';
     }
     return h;
@@ -300,9 +302,10 @@
         (later.length ? '<optgroup label="נושאים מתקדמים יותר">' + later.map(opt).join('') + '</optgroup>' : '');
       if (was && byId[was] && (keep || now.indexOf(byId[was]) > -1)) sel.value = was; else sel.value = (now[now.length - 1] || T[0]).id;
     }
-    function fillRevs(keep) {
+    function fillRevs(keep, keepX) {
       var g = +gs.value, tid = $('dp-topic').value, pre = PRE[tid] || [];
       var pool = T.filter(function (t) { return t.id !== tid && grOf(t)[0] <= g; });
+      [1, 2].forEach(function (k, j) { var s = $('dp-x' + k), was = keepX ? keepX[j] : s.value; s.innerHTML = '<option value="">בלי</option>' + pool.map(opt).join(''); s.value = was && was !== tid && byId[was] ? was : ''; });
       [1, 2, 3].forEach(function (k, j) {
         var s = $('dp-r' + k);
         s.innerHTML = '<option value="">בלי</option>' + pool.map(opt).join('');
@@ -311,29 +314,30 @@
     }
     function readCfg() {
       var r = [1, 2, 3].map(function (k) { return $('dp-r' + k).value; }).filter(function (x, j, a) { return x && a.indexOf(x) === j; });
-      return { t: $('dp-topic').value, k: kind, m: +$('dp-min').value, lv: +$('dp-lv').value, r: r, s: seed, a: +$('dp-help').value };
+      var xs = [1, 2].map(function (k) { return $('dp-x' + k).value; }).filter(function (x, j, a) { return x && x !== $('dp-topic').value && a.indexOf(x) === j; });
+      return { t: $('dp-topic').value, x: xs, k: kind, m: +$('dp-min').value, lv: +$('dp-lv').value, r: r, s: seed, a: +$('dp-help').value };
     }
     function render() {
       var cfg = readCfg(), sh = build(cfg); if (!sh) return; cur = sh;
       var o = { style: $('dp-style').value, font: +$('dp-font').value, title: $('dp-title').value.trim(), grade: GRN[+gs.value], key: $('dp-key').checked };
       ['time', 'stars', 'bonus', 'feel', 'grid', 'qr'].forEach(function (k) { o[k] = $('dp-o-' + k).checked; });
       $('dp-paper').innerHTML = paperHtml(sh, o); runQr($('dp-paper'));
-      var sum = '<b>' + KIND[cfg.k] + ': ' + sh.t.name + '</b> · כ-' + sh.total + ' דקות · ' + sh.nq + ' שאלות' + (sh.nrev ? ', מהן ' + sh.nrev + ' תזכורות' : '');
+      var sum = '<b>' + KIND[cfg.k] + (sh.ts.length > 1 ? ' משולב' : '') + ': ' + sh.name + '</b> · כ-' + sh.total + ' דקות · ' + sh.nq + ' שאלות' + (sh.nrev ? ', מהן ' + sh.nrev + ' תזכורות' : '');
       if (sh.dropped) sum += '<br><small>בזמן שבחרתם נכנסו ' + sh.nrev + ' תזכורות מתוך ' + (sh.nrev + sh.dropped) + '. לדף ארוך יותר ייכנסו כולן.</small>';
       if (sh.total > cfg.m + 1) sum += '<br><small>הדף הקצר ביותר בנושא הזה לוקח כ-' + sh.total + ' דקות. אפשר לקצר עם "בלי עזרה" או עם "דף חזרה".</small>';
       $('dp-sum').innerHTML = sum;
       $('dp-help-note').textContent = cfg.a === 0 ? 'בלי עזרה: אין הסברים, אין רמזים ואין צעדים מודרכים. מתאים לבוחן קצר או לבדיקת הבנה.' : cfg.a === 2 ? 'הרבה עזרה: כל תרגיל מפורק לצעדים קטנים, וגם בדף הדיגיטלי הרמזים תמיד זמינים.' : '';
       var link = linkOf(cfg, o.title);
       $('dp-open').href = link;
-      $('dp-wa').href = 'https://wa.me/?text=' + encodeURIComponent('דף עבודה במתמטיקה: ' + sh.t.name + ' (' + KIND[cfg.k] + ', כ-' + sh.total + ' דקות)\nפותרים כאן, עם רמזים ומחשבון:\n' + link);
+      $('dp-wa').href = 'https://wa.me/?text=' + encodeURIComponent('דף עבודה במתמטיקה: ' + sh.name + ' (' + KIND[cfg.k] + ', כ-' + sh.total + ' דקות)\nפותרים כאן, עם רמזים ומחשבון:\n' + link);
       $('dp-copy').dataset.link = link;
-      var keep = { g: gs.value, u: $('dp-units').value, k: kind, s: seed, t: cfg.t, r: [1, 2, 3].map(function (k) { return $('dp-r' + k).value; }), title: o.title, key: o.key };
+      var keep = { g: gs.value, u: $('dp-units').value, k: kind, s: seed, t: cfg.t, x: [$('dp-x1').value, $('dp-x2').value], r: [1, 2, 3].map(function (k) { return $('dp-r' + k).value; }), title: o.title, key: o.key };
       ['min', 'lv', 'help', 'style', 'font'].forEach(function (k) { keep[k] = $('dp-' + k).value; });
       ['time', 'stars', 'bonus', 'feel', 'grid', 'qr'].forEach(function (k) { keep['o' + k] = o[k]; });
       save(CKEY, keep);
     }
     function setKind(k) { kind = k; app.querySelectorAll('[data-kind]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.kind === k ? 'true' : 'false'); }); }
-    fillTopics(st.t || 'parabola-tavla'); fillRevs(st.r); setKind(kind); render();
+    fillTopics(st.t || 'parabola-tavla'); fillRevs(st.r, st.x || ['', '']); setKind(kind); render();
     gs.addEventListener('change', function () { fillTopics(); fillRevs(); render(); });
     $('dp-units').addEventListener('change', function () { fillTopics(); fillRevs(); render(); });
     $('dp-topic').addEventListener('change', function () { fillRevs(); render(); used('build', { topic: $('dp-topic').value }); });
@@ -341,6 +345,15 @@
     $('dp-title').addEventListener('input', render);
     $('dp-form').addEventListener('submit', function (e) { e.preventDefault(); });
     app.querySelectorAll('[data-kind]').forEach(function (b) { b.addEventListener('click', function () { setKind(b.dataset.kind); render(); }); });
+    // הצעת שדרוג ובקשת כלי אישי: נשלחות לגילעד בווטסאפ
+    [['dp-idea', 'הצעה לשדרוג מחולל דפי העבודה'], ['dp-ishi', 'בקשה לכלי אישי למורה']].forEach(function (q) {
+      var b = $(q[0] + '-wa'); if (!b) return;
+      b.addEventListener('click', function () {
+        var txt = $(q[0]).value.trim();
+        b.href = 'https://wa.me/972584049049?text=' + encodeURIComponent('שלום גילעד, ' + q[1] + ':\n' + (txt || '...'));
+        used(q[0] === 'dp-idea' ? 'idea' : 'personal_tool');
+      });
+    });
     $('dp-new').addEventListener('click', function () { seed = R(1000, 99999); render(); used('new'); });
     $('dp-print').addEventListener('click', function () { used('print', { topic: cur.t.id, kind: cur.cfg.k, min: cur.cfg.m }); window.print(); });
     $('dp-wa').addEventListener('click', function () { used('wa', { topic: cur.t.id }); });
@@ -370,7 +383,7 @@
     function curStep(it, ix) { var l = logOf(ix); for (var j = 0; j < it.p.steps.length; j++) if (it.p.steps[j].tbl === undefined && (l[j] === undefined || l[j] === null)) return j; return -1; }
     function mark(l) { return l === 1 ? '<span class="ok1">✓</span>' : l === 2 ? '<span class="ok2">✓</span>' : '<span class="ok0">✗</span>'; }
 
-    var h = '<header class="dg-top"><span class="pill">' + KIND[cfg.k] + ' · כ-' + sh.total + ' דקות</span><h1>' + sh.t.em + ' ' + sh.t.name + '</h1>' + (title ? '<p class="sub">' + esc(title) + '</p>' : '') +
+    var h = '<header class="dg-top"><span class="pill">' + KIND[cfg.k] + ' · כ-' + sh.total + ' דקות</span><h1>' + sh.t.em + ' ' + sh.name + '</h1>' + (title ? '<p class="sub">' + esc(title) + '</p>' : '') +
       '<p class="note">פותרים צעד אחרי צעד. ' + (cfg.a ? 'טעות היא חלק מהלימוד: אחרי טעות מקבלים רמז. ' : '') + 'ההתקדמות נשמרת במכשיר הזה, ואפשר לחזור ולהמשיך.</p></header>' +
       '<div class="dg-bar" id="dg-bar"><div class="dg-prog"><i id="dg-fill"></i></div><span id="dg-cnt"></span><span id="dg-time"></span><button class="btn btn-line btn-sm" type="button" id="dg-calc">🧮 מחשבון</button></div>';
     items.forEach(function (it, ix) {
@@ -384,7 +397,7 @@
 
     function renderQ(ix, focus) {
       var it = items[ix], p = it.p, l = logOf(ix), el = $('dg-q' + ix), done = isDone(it, ix), j = curStep(it, ix);
-      var s = '<div class="dp-qh"><span class="dp-n">' + (it.bonus ? '⭐' : it.n) + '</span>' + (it.bonus ? '<span class="dp-tag">לזריזים: שאלת אתגר (לא חובה)</span>' : it.rev ? '<span class="dp-tag">🔁 זוכרים? ' + it.rev.name + '</span>' : '') +
+      var s = '<div class="dp-qh"><span class="dp-n">' + (it.bonus ? '⭐' : it.n) + '</span>' + (it.bonus ? '<span class="dp-tag">לזריזים: שאלת אתגר (לא חובה)</span>' : it.rev ? '<span class="dp-tag">🔁 זוכרים? ' + it.rev.name + '</span>' : it.tp ? '<span class="dp-tag">' + it.tp.em + ' ' + it.tp.name + '</span>' : '') +
         (it.min ? '<span class="dp-min">⏱ כ-' + it.min + ' דק׳</span>' : '') + (done ? '<span class="dg-ok">✓ סיימתם</span>' : '') + '</div><div class="mx-ex" dir="ltr">' + p.ex + '</div>';
       if (p.table) {
         var tb = p.table, shown = [];
@@ -481,7 +494,7 @@
       $('dg-cnt').textContent = z.doneQ + ' מתוך ' + must.length + ' שאלות';
       $('dg-time').textContent = '⏱ ' + z.min + ' דק׳ מתוך כ-' + sh.total;
       var allDone = z.doneQ === must.length;
-      var txt = 'דף עבודה: ' + sh.t.name + ' (' + KIND[cfg.k] + ')\n' + (S.name ? 'שם: ' + S.name + '\n' : '') + 'סיימתי ' + z.doneQ + ' מתוך ' + must.length + ' שאלות\nצעדים נכונים בניסיון ראשון: ' + z.first + ' מתוך ' + z.all + '\n' + (cfg.a ? 'רמזים: ' + S.hints + '\n' : '') + 'זמן: כ-' + z.min + ' דקות' + (z.hard.length ? '\nשאלות שהיו לי קשות: ' + z.hard.join(', ') : '');
+      var txt = 'דף עבודה: ' + sh.name + ' (' + KIND[cfg.k] + ')\n' + (S.name ? 'שם: ' + S.name + '\n' : '') + 'סיימתי ' + z.doneQ + ' מתוך ' + must.length + ' שאלות\nצעדים נכונים בניסיון ראשון: ' + z.first + ' מתוך ' + z.all + '\n' + (cfg.a ? 'רמזים: ' + S.hints + '\n' : '') + 'זמן: כ-' + z.min + ' דקות' + (z.hard.length ? '\nשאלות שהיו לי קשות: ' + z.hard.join(', ') : '');
       $('dg-end').innerHTML = '<h2>' + (allDone ? '🎉 סיימתם את הדף, כל הכבוד!' : 'לסיום') + '</h2><p>' + (allDone ? 'נכון בניסיון ראשון: <b>' + z.first + ' מתוך ' + z.all + '</b> צעדים · זמן: כ-' + z.min + ' דקות.' + (z.hard.length ? ' שווה לחזור על שאלות ' + z.hard.join(', ') + '.' : '') : 'אפשר לשלוח למורה סיכום גם באמצע: עד עכשיו ' + z.doneQ + ' מתוך ' + must.length + ' שאלות.') + '</p>' +
         '<label>השם שלי (נשלח רק בהודעה שלכם למורה)<input type="text" id="dg-name" maxlength="30" value="' + esc(S.name || '') + '"></label>' +
         '<div class="btns"><a class="btn btn-gold" id="dg-wa" href="https://wa.me/?text=' + encodeURIComponent(txt) + '" target="_blank" rel="noopener">📲 לשלוח סיכום למורה בווטסאפ</a><button class="btn btn-line btn-sm" type="button" id="dg-copy">להעתיק סיכום</button></div>';
