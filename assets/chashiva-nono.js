@@ -201,7 +201,7 @@
     $('nn-board').classList.add('won');
     var daily = mode === 'daily', st;
     var already = daily && CH.stats(G).doneToday;
-    st = CH.record(G, daily && !already, clock.sec);
+    st = CH.record(G, daily && !already, clock.sec, hints);
     if (mode === 'level') { data.done[P.level] = Math.min(data.done[P.level] || 1e9, clock.sec); data.lvl = Math.max(data.lvl, P.level + 1); }
     persist();
     CH.used(TOOL, 'solve', { mode: mode, n: P.n, sec: clock.sec, hints: hints });

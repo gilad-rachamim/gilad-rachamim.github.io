@@ -187,7 +187,7 @@
     if (won) return; won = true; clock.on = false; sel = -1; draw();
     $('sd-board').classList.add('won');
     var daily = mode === 'daily', already = daily && CH.stats(G).doneToday;
-    var st = CH.record(G, daily && !already, clock.sec);
+    var st = CH.record(G, daily && !already, clock.sec, hints);
     data.wins[lv] = (data.wins[lv] || 0) + 1;
     var rec = !data.best[lv] || clock.sec < data.best[lv]; if (rec && !hints) data.best[lv] = clock.sec;
     persist(); drawLevels();
