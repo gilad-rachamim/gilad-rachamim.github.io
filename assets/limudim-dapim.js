@@ -214,6 +214,28 @@
   }
   function linkOf(cfg, title) { var q = ownEnc(cfg.q); return BASE + '?d=' + encodeURIComponent(encode(cfg)) + (title ? '&c=' + encodeURIComponent(title) : '') + (q ? '&q=' + q : ''); }
   var KIND = { h: 'דף הקנייה', z: 'דף חזרה' };
+  // ---------- קישור קצר: /k/#קוד במקום קישור של אלפי תווים (כשיש שאלות של המורה) ----------
+  var SAPI = (function () { try { var o = localStorage.getItem('dapim-api'); if (o) return o; } catch (e) {} return 'https://kartis.gilad4049.workers.dev'; })();
+  var SHORT = BASE.replace(/limudim\/dapim\/$/, '') + 'k/#';
+  function b64u(str) { var b = new TextEncoder().encode(str), bin = ''; b.forEach(function (c) { bin += String.fromCharCode(c); }); return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+  function unb64u(str) { var bin = atob(String(str).replace(/-/g, '+').replace(/_/g, '/')), b = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) b[i] = bin.charCodeAt(i); return new TextDecoder().decode(b); }
+  function sheetPayload(cfg, title) { var o = { d: encode(cfg) }, q = ownEnc(cfg.q); if (title) o.c = title.slice(0, 40); if (q) o.q = q; return b64u(JSON.stringify(o)); }
+  function hkey(str) { var h = 5381; for (var i = 0; i < str.length; i++) h = (h * 33 + str.charCodeAt(i)) >>> 0; return h.toString(36) + '.' + str.length; }
+  var shortMem = load('dapim-short', {}), shortWait = {}, shortFail = {};
+  function shortGet(pl) { return shortMem[hkey(pl)] || ''; }
+  function shortAsk(pl, done) { // אותו דף = אותו קוד (השרת זוכר). נכשל? נשארים עם הקישור הארוך
+    var key = hkey(pl); if (shortWait[key] || shortFail[key]) return;
+    shortWait[key] = 1;
+    fetch(SAPI + '/s', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ d: pl, t: 'w' }) })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+      .then(function (j) {
+        if (!j || !/^[0-9A-Za-z]{8}$/.test(j.k)) throw new Error('k');
+        var ks = Object.keys(shortMem); if (ks.length > 40) delete shortMem[ks[0]];
+        shortMem[key] = j.k; save('dapim-short', shortMem); used('short_link'); done();
+      })
+      .catch(function () { shortFail[key] = 1; done(); })
+      .then(function () { delete shortWait[key]; });
+  }
 
   // ---------- מערכת צירים לפרבולה (להדפסה: ריקה. בדיגיטלי: הנקודות מופיעות כשממלאים את הטבלה) ----------
   function gridSvg(tb, shown, curve, axis) {
@@ -290,7 +312,7 @@
     var h = '<article class="dp-paper st-' + o.style + (o.font ? ' big' : '') + '">';
     h += '<header class="dp-ph"><div class="dp-pt"><span class="dp-kind">' + KIND[cfg.k] + (sh.only ? '' : ' · מתמטיקה') + (o.grade ? ' · כיתה ' + o.grade : '') + '</span><h2>' + sh.em + ' ' + (sh.only ? sh.name : t.name) + '</h2>' + (sh.ts.length > 1 ? '<p class="dp-sub"><b>דף משולב</b>, יחד עם: ' + sh.ts.slice(1).map(function (x) { return x.name; }).join(' · ') + '</p>' : '') + (o.title ? '<p class="dp-sub">' + esc(o.title) + '</p>' : '') +
       '<p class="dp-name">שם: <span class="sb w"></span> תאריך: <span class="sb"></span></p></div>' +
-      (o.qr && linkOf(cfg).length < 700 ? '<div class="dp-qrw">' + qrSpot(linkOf(cfg), 84) + '<small>הדף הדיגיטלי:<br>רמזים, בדיקה ומחשבון</small></div>' : '') + '</header>';
+      (o.qr && (o.short || linkOf(cfg)).length < 700 ? '<div class="dp-qrw">' + qrSpot(o.short || linkOf(cfg), 84) + '<small>הדף הדיגיטלי:<br>רמזים, בדיקה ומחשבון</small></div>' : '') + '</header>';
     h += '<div class="dp-strip"><span>⏱ כ-' + sh.total + ' דקות</span><span>' + sh.nq + ' שאלות</span>' + (o.stars ? '<span class="dp-stars" aria-label="כוכב לכל שאלה">' + exs.map(function () { return '☆'; }).join('') + '</span><span class="dp-strip-n">צובעים כוכב אחרי כל שאלה</span>' : '') + '</div>';
     sh.items.forEach(function (it) { h += it.k === 'ex' ? exPrint(it, o) : learnHtml(it); });
     if (o.bonus && sh.bonus) h += exPrint(sh.bonus, o);
@@ -314,7 +336,7 @@
   // =====================================================================
   var CKEY = 'limudim-dapim-cfg';
   function initBuilder() {
-    var st = load(CKEY, {}), cur = null, kind = st.k === 'z' ? 'z' : 'h', seed = st.s || R(1000, 99999);
+    var shortT = 0, st = load(CKEY, {}), cur = null, kind = st.k === 'z' ? 'z' : 'h', seed = st.s || R(1000, 99999);
     var gs = $('dp-grade');
     gs.innerHTML = Object.keys(GRN).map(function (g) { return '<option value="' + g + '">כיתה ' + GRN[g] + '</option>'; }).join('');
     gs.value = st.g || 9; $('dp-units').value = st.u || 4;
@@ -405,11 +427,19 @@
       var cfg = readCfg(), sh = build(cfg); if (!sh) return; cur = sh;
       var o = { style: $('dp-style').value, font: +$('dp-font').value, title: $('dp-title').value.trim(), grade: GRN[+gs.value], key: $('dp-key').checked };
       ['time', 'stars', 'bonus', 'feel', 'grid', 'qr'].forEach(function (k) { o[k] = $('dp-o-' + k).checked; });
+      var link = linkOf(cfg, o.title), pl = null, pend = false;
+      if (link.length >= 700) {
+        pl = sheetPayload(cfg, o.title);
+        var sk = shortGet(pl);
+        if (sk) { o.short = SHORT + sk; link = o.short; }
+        else { pend = !shortFail[hkey(pl)]; clearTimeout(shortT); shortT = setTimeout(function () { shortAsk(pl, render); }, 900); }
+      }
       $('dp-paper').innerHTML = paperHtml(sh, o); runQr($('dp-paper'));
-      var link = linkOf(cfg, o.title);
       var sum = '<b>' + KIND[cfg.k] + (sh.ts.length > 1 ? ' משולב' : '') + ': ' + sh.name + '</b> · כ-' + sh.total + ' דקות · ' + sh.nq + ' שאלות' + (sh.nrev ? ', מהן ' + sh.nrev + ' תזכורות' : '');
       if (sh.dropped) sum += '<br><small>בזמן שבחרתם נכנסו ' + sh.nrev + ' תזכורות מתוך ' + (sh.nrev + sh.dropped) + '. לדף ארוך יותר ייכנסו כולן.</small>';
-      if (cfg.q.length && link.length >= 700 && o.qr) sum += '<br><small>עם השאלות שלכם הקישור ארוך מדי לקוד סריקה, ולכן הקוד לא מודפס. שולחים לכיתה את הקישור בווטסאפ.</small>';
+      if (o.short) sum += '<br><small>✓ קישור קצר לדף הדיגיטלי: <bdi dir="ltr">' + o.short.replace(/^https:\/\//, '') + '</bdi>' + (o.qr ? ', והקוד לסריקה מודפס בראש הדף.' : '') + '</small>';
+      else if (pend) sum += '<br><small>יוצרים קישור קצר לדף הדיגיטלי…</small>';
+      else if (cfg.q.length && link.length >= 700 && o.qr) sum += '<br><small>לא הצלחנו ליצור קישור קצר, ועם השאלות שלכם הקישור ארוך מדי לקוד סריקה. שולחים לכיתה את הקישור בווטסאפ.</small>';
       if (sh.total > cfg.m + 1) sum += '<br><small>הדף הקצר ביותר בנושא הזה לוקח כ-' + sh.total + ' דקות. אפשר לקצר עם "בלי עזרה" או עם "דף חזרה".</small>';
       $('dp-sum').innerHTML = sum;
       $('dp-help-note').textContent = cfg.a === 0 ? 'בלי עזרה: אין הסברים, אין רמזים ואין צעדים מודרכים. מתאים לבוחן קצר או לבדיקת הבנה.' : cfg.a === 2 ? 'הרבה עזרה: כל תרגיל מפורק לצעדים קטנים, וגם בדף הדיגיטלי הרמזים תמיד זמינים.' : '';
@@ -647,6 +677,18 @@
   // ---------- התחלה ----------
   var qs = new URLSearchParams(location.search), d = qs.get('d'), cfg0 = d ? decode(d) : null;
   if (cfg0) cfg0.q = ownDec(qs.get('q'));
-  if (!(cfg0 && initDigital(cfg0, (qs.get('c') || '').slice(0, 40)))) initBuilder();
-  window.__dp = { ownEnc: ownEnc, ownDec: ownDec, linkOf: linkOf, T: T, build: build, decode: decode, encode: encode, paperHtml: paperHtml, calcEv: calc.ev, fmtAns: fmtAns, GR: GR, PRE: PRE, fits: fits }; // לבדיקות
+  var kq = (qs.get('k') || '').replace(/[^0-9A-Za-z]/g, '');
+  if (!cfg0 && kq.length === 8) {
+    document.body.classList.add('dp-student');
+    $('dp-build').hidden = true; $('dp-paper').hidden = true; $('dp-foot').hidden = true; $('dp-hero').hidden = true;
+    var dg = $('dp-digital'); dg.hidden = false; dg.innerHTML = '<section class="panel"><p>פותחים את דף העבודה…</p></section>';
+    fetch(SAPI + '/s/' + kq).then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); }).then(function (j) {
+      var o = JSON.parse(unb64u(j.d)), c = decode(o.d); if (!c) throw new Error('d');
+      c.q = ownDec(o.q || '');
+      if (!initDigital(c, String(o.c || '').slice(0, 40))) throw new Error('build');
+    }).catch(function () {
+      dg.innerHTML = '<section class="panel"><h2>לא הצלחנו לפתוח את הדף</h2><p>אולי אין כרגע אינטרנט, או שהקישור לא הועתק עד הסוף. נסו שוב בעוד רגע, או בקשו מהמורה לשלוח את הקישור שוב.</p><div class="btns"><a class="btn btn-gold" href="' + location.href.replace(/"/g, '') + '">לנסות שוב</a></div></section>';
+    });
+  } else if (!(cfg0 && initDigital(cfg0, (qs.get('c') || '').slice(0, 40)))) initBuilder();
+  window.__dp = { sheetPayload: sheetPayload, unb64u: unb64u, ownEnc: ownEnc, ownDec: ownDec, linkOf: linkOf, T: T, build: build, decode: decode, encode: encode, paperHtml: paperHtml, calcEv: calc.ev, fmtAns: fmtAns, GR: GR, PRE: PRE, fits: fits }; // לבדיקות
 })();
