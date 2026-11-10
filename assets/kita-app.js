@@ -332,7 +332,47 @@
       tabs($('kt-t-tabs'), 'data-tab', t, tab);
       app.querySelectorAll('[data-panel]').forEach(function (p) { p.hidden = p.getAttribute('data-panel') !== t; });
       if (t === 'cert') renderCerts();
+      if (t === 'school') school();
     }
+
+    // ---- הכיתות זו מול זו: הכיתות שלי (kita-teach) + כיתות שהוספתי לפי קוד (kita-watch). קריאה מהלוח הציבורי בלבד ----
+    var scPer = 'week', scRows = [];
+    function school() {
+      tabs($('kt-sc-per'), 'data-p', scPer, function (p) { scPer = p; school(); });
+      var mine = lsGet('kita-teach', []).map(function (c) { return { code: c.code, mine: 1 }; });
+      var all = mine.concat(lsGet('kita-watch', []).filter(function (c) { return !mine.some(function (m) { return m.code === c; }); }).map(function (c) { return { code: c }; }));
+      $('kt-sc-list').innerHTML = '<li><span class="pl">…</span><span class="nk">טוען ' + all.length + ' כיתות</span><span></span></li>';
+      Promise.all(all.map(function (c) { return call('/c/' + c.code + '/board?p=' + scPer).then(function (d) { return { c: c, d: d }; }); })).then(function (res) {
+        var gone = res.filter(function (x) { return !x.d.ok && x.d._s === 404 && !x.c.mine; }).map(function (x) { return x.c.code; });
+        if (gone.length) lsSet('kita-watch', lsGet('kita-watch', []).filter(function (c) { return gone.indexOf(c) < 0; }));
+        scRows = res.filter(function (x) { return x.d.ok; }).map(function (x) {
+          var rows = x.d.rows, sum = rows.reduce(function (a, r) { return a + r.pts; }, 0), act = rows.filter(function (r) { return r.pts > 0; }).length;
+          return { code: x.c.code, mine: x.c.mine, name: x.d.name, teacher: x.d.teacher, n: rows.length, act: act, sum: sum, avg: rows.length ? Math.round(sum / rows.length) : 0, top: rows[0] && rows[0].pts ? rows[0] : null };
+        }).sort(function (a, b) { return b.avg - a.avg || b.sum - a.sum; });
+        var place = 0, prev = -1;
+        $('kt-sc-list').innerHTML = scRows.map(function (r, i) {
+          if (r.avg !== prev) { place = i + 1; prev = r.avg; }
+          return '<li class="' + (r.code === T.code ? 'me ' : '') + (place === 1 && r.avg ? 'p1' : '') + '"><span class="pl">' + (r.avg ? medal(place) : '·') + '</span><span class="nk">' + esc(r.name) + '<small>' + esc(r.teacher || '') + (r.teacher ? ' · ' : '') + r.n + ' תלמידים, ' + r.act + ' צברו · סה״כ ' + r.sum + (r.top ? ' · מובילה: ' + esc(r.top.nick) : '') + (r.mine ? '' : ' · קוד ' + r.code) + '</small></span><span class="pt">' + r.avg + '<small style="display:block;font-size:.7rem;font-weight:400;color:var(--muted)">לתלמיד</small></span>' +
+            (r.mine ? '' : '<span class="acts no-print"><button type="button" data-rm="' + r.code + '">להוריד מההשוואה</button></span>') + '</li>';
+        }).join('') || '<li><span class="pl">·</span><span class="nk">עוד אין כיתות להשוואה</span><span></span></li>';
+        var lead = scRows[0];
+        $('kt-sc-wa').href = 'https://wa.me/?text=' + encodeURIComponent('🏆 הכיתות ' + PER[scPer] + ' (ממוצע נקודות לתלמיד):\n' + scRows.map(function (r, i) { return (i + 1) + '. ' + r.name + ': ' + r.avg; }).join('\n') + (lead && lead.avg ? '\nכל הכבוד ל' + lead.name + '! 👏' : '') + '\n' + SITE);
+      });
+    }
+    $('kt-sc-list').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-rm]'); if (!b) return;
+      lsSet('kita-watch', lsGet('kita-watch', []).filter(function (c) { return c !== b.getAttribute('data-rm'); })); school();
+    });
+    $('kt-sc-add').addEventListener('click', function () {
+      var c = $('kt-sc-code').value.replace(/\D/g, ''), err = $('kt-sc-err'); err.textContent = '';
+      if (c.length !== 6) { err.textContent = 'קוד כיתה הוא 6 ספרות.'; return; }
+      call('/c/' + c + '/info').then(function (d) {
+        if (!d.ok) { err.textContent = d.error; return; }
+        var W = lsGet('kita-watch', []); if (W.indexOf(c) < 0) W.push(c); lsSet('kita-watch', W.slice(-30));
+        $('kt-sc-code').value = ''; used('chashiva_kita_more', 'school-add'); school();
+      });
+    });
+    $('kt-sc-wa').addEventListener('click', function () { used('chashiva_kita_more', 'school-wa'); });
     tab('board');
     $('kt-t-copy').addEventListener('click', function () {
       var ok = function () { $('kt-t-copied').textContent = '✓ הקישור הועתק. שומרים אותו במקום בטוח.'; };
