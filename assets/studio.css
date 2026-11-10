@@ -6,6 +6,11 @@
 .sd-ai label{display:block;font-weight:700;font-size:1.05rem;color:var(--gold-hi,#dcbb74);margin-bottom:8px}
 .sd-ai textarea{width:100%;box-sizing:border-box;border-radius:12px;border:1px solid var(--sd-line);background:#14110d;color:#fbf5e7;font:inherit;font-size:1rem;padding:10px 12px;resize:vertical;min-height:62px}
 .sd-ai textarea:focus{outline:2px solid var(--sd-acc);outline-offset:1px}
+.sd-dest-l{font-size:.85rem;color:var(--muted,#a99c82);margin:0 0 6px}
+.sd-dest{display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin;padding-bottom:6px;margin-bottom:8px}
+.sd-dest button{flex:0 0 auto;font:inherit;font-size:.85rem;padding:6px 11px;border-radius:999px;border:1px solid var(--sd-line);background:#14110d;color:inherit;cursor:pointer;white-space:nowrap}
+.sd-dest button.on{background:var(--sd-acc);border-color:var(--sd-acc);color:#16130f;font-weight:700}
+.sd-safe{position:absolute;background:repeating-linear-gradient(45deg,rgba(255,0,90,.16) 0 calc(14px * var(--k,1)),rgba(255,0,90,.07) 0 calc(28px * var(--k,1)));color:#fff;font:700 calc(13px * var(--k,1)) Assistant,sans-serif;display:flex;align-items:center;justify-content:center;text-shadow:0 1px 2px #000;pointer-events:none}
 .sd-ai-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .sd-status{margin:10px 0 0;padding:8px 12px;border-radius:10px;background:#14110d;border-inline-start:3px solid var(--sd-acc);font-size:.95rem}
 .sd-status.busy::before{content:"";display:inline-block;width:12px;height:12px;margin-inline-end:8px;border:2px solid var(--sd-acc);border-top-color:transparent;border-radius:50%;animation:sd-spin .8s linear infinite;vertical-align:-1px}

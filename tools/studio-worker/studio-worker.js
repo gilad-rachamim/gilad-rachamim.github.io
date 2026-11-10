@@ -150,6 +150,7 @@ export function buildInput(body) {
   const imgs = (Array.isArray(body.images) ? body.images : []).slice(0, 12).map(i => ({ id: String(i.id).slice(0, 24), w: Math.round(num(i.w, 1, 20000, 1000)), h: Math.round(num(i.h, 1, 20000, 1000)), name: String(i.name || '').slice(0, 40) }));
   let s = `מצב: ${body.mode === 'edit' ? 'edit (לשנות את העיצוב הקיים)' : 'new (עיצוב חדש)'}\n`;
   s += `גודל הקנבס: רוחב ${size.w} גובה ${size.h} פיקסלים.\n`;
+  if (body.dest) s += `לאן העיצוב מיועד: ${String(body.dest).slice(0, 300)}. להתאים את הגודל, את כמות הטקסט ואת המיקום ליעד הזה.\n`;
   s += imgs.length ? `תמונות שהמשתמש העלה (מותר להשתמש רק במזהים האלה): ${JSON.stringify(imgs)}\n` : 'אין תמונות של המשתמש (אל תוסיף/י שכבות תמונה).\n';
   if (body.mode === 'edit' && body.doc) s += `העיצוב הנוכחי:\n${JSON.stringify(body.doc).slice(0, MAX_DOC)}\n`;
   s += `\nהבקשה של המשתמש:\n${String(body.prompt || '').slice(0, MAX_PROMPT)}`;

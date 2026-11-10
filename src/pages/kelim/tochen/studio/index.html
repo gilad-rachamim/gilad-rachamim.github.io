@@ -17,6 +17,8 @@
 <div id="sd-app" class="sd-app no-print">
   <section class="sd-ai" aria-labelledby="sd-ai-h">
     <label id="sd-ai-h" for="sd-ai-text">✨ מה לעצב? כתבו במילים שלכם</label>
+    <div class="sd-dest-l">לאן זה מיועד?</div>
+    <div class="sd-dest" id="sd-dest" role="group" aria-label="לאן זה מיועד"></div>
     <textarea id="sd-ai-text" rows="2" maxlength="1500" dir="rtl" placeholder="למשל: הזמנה לבר מצווה של יוסי, ביום חמישי 18:00 באולם הגן, בצבעי כחול וזהב, עם התמונה שהעליתי ברקע"></textarea>
     <div class="sd-ai-row">
       <button type="button" class="btn btn-gold btn-sm" data-ai="new">✨ תעצב לי</button>
@@ -33,7 +35,7 @@
       <button type="button" data-tab="img">תמונות ו-PDF</button>
       <button type="button" data-tab="shape">צורות</button>
       <button type="button" data-tab="bg">רקע וצבעים</button>
-      <button type="button" data-tab="size">גודל</button>
+      <button type="button" data-tab="size">גודל ויעד</button>
       <button type="button" data-tab="file">פרויקט</button>
     </div>
     <div class="sd-acts">

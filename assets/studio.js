@@ -12,11 +12,26 @@
     'David Libre', 'Bellefair', 'Noto Rashi Hebrew', 'Amatic SC', 'Karantina'];
   const SWATCH = ['#ffffff', '#000000', '#16130f', '#4a4a4a', '#9e9e9e', '#efe6d2', '#c9a55c', '#5f5d43', '#1e3a5f', '#2f6fd6',
     '#14b8a6', '#2e7d32', '#f5c518', '#ff8a00', '#e53935', '#d81b60', '#7b3fbf', '#8d6e63'];
-  const SIZES = [
-    ['post', 'פוסט ריבוע', 1080, 1080], ['tall', 'פוסט לאורך', 1080, 1350], ['story', 'סטטוס / סטורי', 1080, 1920],
-    ['wide', 'רוחב (מצגת, יוטיוב)', 1920, 1080], ['a4', 'דף A4 לאורך', 1240, 1754], ['a4l', 'דף A4 לרוחב', 1754, 1240],
-    ['card', 'כרטיס ביקור', 1050, 600], ['banner', 'באנר לפייסבוק', 1640, 624]
+  // לאן העיצוב מיועד: גודל + "אזור בטוח" (איפה האפליקציה מכסה בכפתורים ובשם) + הסבר לעוזר
+  // safe: חלקים מהקנבס שמכוסים – t למעלה, b למטה, r ימין (כפתורי לייק/שיתוף ברילס), circle = פרופיל עגול
+  const DEST = [
+    { id: 'wa', n: 'סטטוס בווטסאפ', ic: '🟢', w: 1080, h: 1920, safe: { t: 0.1, b: 0.12 }, ai: 'סטטוס בווטסאפ (מסך מלא לאורך; למעלה שם השולח ולמטה שורת התגובה – להשאיר שם רק רקע)' },
+    { id: 'igpost', n: 'פוסט באינסטגרם', ic: '📷', w: 1080, h: 1350, ai: 'פוסט באינסטגרם לאורך 4:5 (הכי בולט בפיד)' },
+    { id: 'square', n: 'פוסט ריבוע', ic: '⬛', w: 1080, h: 1080, ai: 'פוסט ריבוע לאינסטגרם, פייסבוק או קבוצת ווטסאפ' },
+    { id: 'story', n: 'סטורי (אינסטגרם / פייסבוק)', ic: '⭕', w: 1080, h: 1920, safe: { t: 0.14, b: 0.2 }, ai: 'סטורי באינסטגרם/פייסבוק (14% עליונים ו-20% תחתונים מכוסים בשם ובשורת התגובה – בלי טקסט שם)' },
+    { id: 'reels', n: 'רילס / טיקטוק / שורטס', ic: '🎬', w: 1080, h: 1920, safe: { t: 0.12, b: 0.26, r: 0.15 }, ai: 'שער (תמונת פתיחה) לרילס/טיקטוק/שורטס, או שכבת כותרת מעל סרטון. 12% עליונים, 26% תחתונים ו-15% מצד ימין מכוסים בכפתורים ובכיתוב – הכותרת במרכז, גדולה ובולטת' },
+    { id: 'fbpost', n: 'פוסט בפייסבוק', ic: '👍', w: 1080, h: 1350, ai: 'פוסט בפייסבוק לאורך' },
+    { id: 'fblink', n: 'תמונה רחבה לפייסבוק / קישור', ic: '🔗', w: 1200, h: 630, ai: 'תמונה רחבה לפוסט בפייסבוק או לתצוגה של קישור (טקסט קצר וגדול)' },
+    { id: 'cover', n: 'קאבר לפייסבוק', ic: '🖼️', w: 1640, h: 624, safe: { b: 0.28, l: 0.24 }, ai: 'תמונת קאבר לדף פייסבוק (בטלפון החלק התחתון-שמאלי מכוסה בתמונת הפרופיל – לשים את הטקסט במרכז ולמעלה)' },
+    { id: 'profile', n: 'תמונת פרופיל', ic: '👤', w: 1080, h: 1080, safe: { circle: 1 }, ai: 'תמונת פרופיל עגולה (רק העיגול שבמרכז נראה – הכול בתוכו, מעט טקסט או בלי)' },
+    { id: 'yt', n: 'תמונה ממוזערת ליוטיוב', ic: '▶️', w: 1280, h: 720, safe: { b: 0.14, l: 0.2 }, ai: 'תמונה ממוזערת לסרטון ביוטיוב (2-5 מילים ענקיות, ניגודיות חזקה; בפינה התחתונה-שמאלית מופיע משך הסרטון)' },
+    { id: 'slide', n: 'מצגת / מסך רחב', ic: '🖥️', w: 1920, h: 1080, ai: 'שקופית במצגת או מסך רחב' },
+    { id: 'a4', n: 'דף להדפסה A4', ic: '📄', w: 1240, h: 1754, ai: 'דף מודפס בגודל A4 לאורך (מודעה לתלייה, עלון) – שוליים של לפחות 6%' },
+    { id: 'a4l', n: 'A4 לרוחב', ic: '📄', w: 1754, h: 1240, ai: 'דף מודפס A4 לרוחב' },
+    { id: 'card', n: 'כרטיס ביקור', ic: '💳', w: 1050, h: 600, ai: 'כרטיס ביקור להדפסה' }
   ];
+  const SIZES = DEST.map(d => [d.id, d.n, d.w, d.h]);
+  const destOf = () => DEST.find(d => d.id === P.dest) || null;
   const PALETTES = [
     { n: 'לבן חוסך דיו', bg: '#ffffff', grad: null, t: '#16130f', b: '#3d3d3d', a: '#c9a55c' },
     { n: 'ירוק זית', bg: '#5f5d43', grad: '#3f3e2b', t: '#fbf5e7', b: '#efe6d2', a: '#dcbb74' },
@@ -223,7 +238,7 @@
   function drawSel() {
     ui.innerHTML = '';
     const e = sel && elById(sel);
-    if (!e) return;
+    if (!e) { drawSafe(); return; }
     const box = document.createElement('div');
     box.className = 'sd-sel';
     box.style.cssText = 'left:' + e.x + 'px;top:' + e.y + 'px;width:' + e.w + 'px;height:' + e.h + 'px;transform:rotate(' + (e.rot || 0) + 'deg)';
@@ -231,6 +246,7 @@
     hs.forEach(h => { const d = document.createElement('div'); d.className = 'sd-h sd-h-' + h; d.dataset.h = h; box.appendChild(d); });
     const r = document.createElement('div'); r.className = 'sd-rot'; r.dataset.h = 'rot'; r.title = 'סיבוב'; box.appendChild(r);
     ui.appendChild(box);
+    drawSafe();
   }
   function select(id) { sel = id; drawSel(); panel(); }
 
@@ -523,9 +539,30 @@
   }
 
   // ---------- עוזר העיצוב במילים ----------
-  const SIZE_WORDS = [[/סטורי|סטטוס|סטוריז|story/i, 1080, 1920], [/A4|א4|דף להדפסה|דף מודפס|עלון/i, 1240, 1754], [/מצגת|יוטיוב|רוחב|שקופית/i, 1920, 1080],
-    [/כרטיס ביקור/i, 1050, 600], [/באנר|קאבר|cover/i, 1640, 624], [/ריבוע|אינסטגרם|פוסט/i, 1080, 1080]];
-  function sizeFromText(t) { for (const [re, w, h] of SIZE_WORDS) if (re.test(t)) return { w, h }; return null; }
+  const DEST_WORDS = [['reels', /רילס|ריל\b|טיקטוק|טיק טוק|שורטס|reels|tiktok|shorts/i], ['wa', /סטטוס/], ['story', /סטורי|story/i],
+    ['yt', /ממוזערת|thumbnail|תמונה ליוטיוב|יוטיוב/i], ['profile', /פרופיל/], ['cover', /קאבר|cover|באנר/i], ['card', /כרטיס ביקור/],
+    ['a4', /A4|א4|להדפסה|מודפס|עלון|לתלות/i], ['slide', /מצגת|שקופית/], ['fbpost', /פייסבוק/], ['igpost', /אינסטגרם|אינסטה/i], ['square', /ריבוע/]];
+  function destFromText(t) { for (const [id, re] of DEST_WORDS) if (re.test(t)) return DEST.find(d => d.id === id); return null; }
+  function setDest(id) {
+    const d = DEST.find(x => x.id === id); if (!d) return;
+    if (P.w !== d.w || P.h !== d.h) resize(d.w, d.h); else snap();
+    P.dest = d.id; full(); destBar(); used('dest', { d: d.id });
+  }
+  function destBar() {
+    const b = $('sd-dest'); if (!b) return;
+    b.innerHTML = DEST.slice(0, 11).map(d => '<button type="button" data-dest="' + d.id + '"' + (P.dest === d.id ? ' class="on"' : '') + '>' + d.ic + ' ' + d.n + '</button>').join('');
+  }
+  // אזורים שהאפליקציה מכסה – מסומנים על המסך בלבד (לא נכנסים לתמונה שנשמרת)
+  function drawSafe() {
+    ui.querySelectorAll('.sd-safe').forEach(n => n.remove());
+    const d = destOf(); if (!d || !d.safe || d.w !== P.w || d.h !== P.h) return;
+    const s = d.safe, add = (css, txt) => { const n = document.createElement('div'); n.className = 'sd-safe'; n.style.cssText = css; if (txt) n.textContent = txt; ui.prepend(n); };
+    if (s.circle) { add('left:0;top:0;width:100%;height:100%;border-radius:0;background:radial-gradient(circle at center,transparent ' + (P.w / 2 - 2) + 'px,rgba(255,0,90,.28) ' + (P.w / 2) + 'px)', ''); return; }
+    if (s.t) add('left:0;top:0;width:100%;height:' + s.t * 100 + '%', 'כאן האפליקציה מכסה');
+    if (s.b) add('left:0;bottom:0;width:100%;height:' + s.b * 100 + '%', 'כאן האפליקציה מכסה');
+    if (s.r) add('right:0;top:' + (s.t || 0) * 100 + '%;width:' + s.r * 100 + '%;height:' + (100 - ((s.t || 0) + (s.b || 0)) * 100) + '%', '');
+    if (s.l) add('left:0;bottom:0;width:' + s.l * 100 + '%;height:' + ((s.b || 0.3) * 100 + 10) + '%', '');
+  }
   function aiDoc() { return { w: P.w, h: P.h, bg: page().bg, els: page().els.map(e => { const c = clone(e); delete c.f; return c; }) }; }
   function aiImages() {
     const ids = new Set(P.lib.slice(0, 8).map(i => i.id));
@@ -539,14 +576,15 @@
     if (aiBusy) return; aiBusy = true;
     const btns = app.querySelectorAll('[data-ai]'); btns.forEach(b => b.disabled = true);
     let size = { w: P.w, h: P.h };
-    if (mode === 'new') { const s = sizeFromText(t); if (s) size = s; }
+    let dest = destOf();
+    if (mode === 'new') { const d = destFromText(t); if (d) { dest = d; P.dest = d.id; size = { w: d.w, h: d.h }; destBar(); } }
     status(mode === 'new' ? 'מעצב בשבילכם… (בערך 10–30 שניות)' : 'משנה את העיצוב…', true);
     used('ai', { mode });
     let out = null, err = '';
     try {
       const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 90000);
       const r = await fetch(AI_URL, { method: 'POST', headers: { 'content-type': 'application/json' }, signal: ctl.signal,
-        body: JSON.stringify({ prompt: t, mode, size, doc: mode === 'edit' ? aiDoc() : null, images: aiImages() }) });
+        body: JSON.stringify({ prompt: t, mode, size, dest: dest ? dest.ai : '', doc: mode === 'edit' ? aiDoc() : null, images: aiImages() }) });
       clearTimeout(tm);
       const j = await r.json().catch(() => ({}));
       if (r.ok && j.doc) out = j; else err = j.error || '';
@@ -585,7 +623,7 @@
     const q = t.match(/["״“”']([^"״“”']{2,80})["״“”']/);
     let title = q ? q[1] : '';
     const m = t.match(/כותרת[:\s]+([^,.\n]+)/); if (!title && m) title = m[1].trim();
-    const FILL = /(^|\s)(ב?צבעי|בצבעים?|צבעוני|בסגנון|ו?(כחול|תכלת|זהב|זהוב|אדום|צהוב|ירוק|ורוד|סגול|כתום|שחור|כהה|קלף|בז'?|טורקיז|לבן)|פוסט|סטטוס|סטורי|מודעה|מודעת|הזמנה|עיצוב|תעצב|תכין|לי|כותרת|עדין|בולט|יפה|ברכת|ברכה|עם|תמונה|התמונה|רקע)(?=[\s,.:]|$)/g;
+    const FILL = /(^|\s)(ב?צבעי|בצבעים?|צבעוני|בסגנון|ו?(כחול|תכלת|זהב|זהוב|אדום|צהוב|ירוק|ורוד|סגול|כתום|שחור|כהה|קלף|בז'?|טורקיז|לבן)|שער|ל?רילס|ל?טיקטוק|ל?שורטס|ל?יוטיוב|ל?אינסטגרם|ל?פייסבוק|ל?ווטסאפ|ל?פוסט|ל?סטטוס|ל?סטורי|מודעה|מודעת|הזמנה|עיצוב|תעצב|תכין|לי|כותרת|עדין|בולט|יפה|ברכת|ברכה|עם|תמונה|התמונה|רקע)(?=[\s,.:]|$)/g;
     let rest = t.replace(q ? q[0] : '', ' ').replace(FILL, ' ').replace(FILL, ' ').replace(/\s*,\s*(,\s*)+/g, ', ').replace(/\s+/g, ' ').replace(/^[\s,.:-]+|[\s,.:-]+$/g, '').trim();
     if (!title) { const parts = rest.split(/[,.\n]/).map(s => s.trim()).filter(Boolean); title = parts.shift() || 'הכותרת שלכם'; rest = parts.join(' · '); }
     const font = /שבת|חג|קודש|תורה|אזכרה/.test(t) ? 'Frank Ruhl Libre' : /הולדת|ילד/.test(t) ? 'Secular One' : 'Rubik';
@@ -754,8 +792,8 @@
         '<div class="sd-row"><button type="button" class="btn btn-line btn-sm" data-pick="bg">תמונת רקע</button>' + (b.img ? '<button type="button" data-bgx="1">להסיר את תמונת הרקע</button>' : '') + '</div>' +
         (b.img ? range('bg.dim', 'הכהיית התמונה (כדי שהטקסט ייקרא)', b.dim || 0, 0, 0.85, 0.05) : '');
     }
-    if (tab === 'size') return '<h3>גודל העיצוב</h3><p class="sd-tip">עכשיו: ' + P.w + ' × ' + P.h + '. כשמשנים גודל, כל מה שבעיצוב מסתדר מחדש בערך באותו מקום.</p><div class="sd-sizes">' +
-      SIZES.map(s => '<button type="button" data-size="' + s[0] + '"' + (s[2] === P.w && s[3] === P.h ? ' class="on"' : '') + '><i style="aspect-ratio:' + s[2] + '/' + s[3] + '"></i>' + s[1] + '<small>' + s[2] + '×' + s[3] + '</small></button>').join('') + '</div>' +
+    if (tab === 'size') return '<h3>גודל העיצוב</h3><p class="sd-tip">עכשיו: ' + P.w + ' × ' + P.h + '. כשמשנים גודל, כל מה שבעיצוב מסתדר מחדש בערך באותו מקום. בסטטוס, בסטורי וברילס מסומן בוורוד איפה האפליקציה מכסה – לא לשים שם טקסט (הסימון לא נשמר בתמונה).</p><div class="sd-sizes">' +
+      SIZES.map(s => '<button type="button" data-size="' + s[0] + '"' + (P.dest === s[0] ? ' class="on"' : '') + '><i style="aspect-ratio:' + s[2] + '/' + s[3] + '"></i>' + s[1] + '<small>' + s[2] + '×' + s[3] + '</small></button>').join('') + '</div>' +
       '<label class="sd-lb">גודל אחר (פיקסלים)</label><div class="sd-row"><input type="number" id="sd-cw" min="200" max="4000" value="' + P.w + '" aria-label="רוחב"> × <input type="number" id="sd-ch" min="200" max="6000" value="' + P.h + '" aria-label="גובה"><button type="button" data-size="custom">לשנות</button></div>';
     if (tab === 'file') return '<h3>הפרויקט</h3><div class="sd-row"><button type="button" data-file="new">עיצוב חדש</button><button type="button" data-file="save">לשמור כקובץ</button><button type="button" data-file="open">לפתוח קובץ</button></div>' +
       '<p class="sd-tip">העיצוב נשמר לבד בדפדפן הזה. "לשמור כקובץ" – כדי להמשיך במחשב אחר או לשמור גרסה.</p>';
@@ -809,7 +847,7 @@
     if (d.act) { if (d.act === 'round' && e) { snap(); e.radius = Math.round(Math.min(e.w, e.h) / 2); render(); panel(); } else if (d.act === 'caption' && e) { addText(TEXT_PRESETS[3][1], 'כיתוב על תמונה'); const c = elById(sel); c.w = Math.min(c.w, e.w - 20); c.x = Math.round(e.x + e.w / 2 - c.w / 2); c.y = Math.round(e.y + e.h - c.h - e.h * 0.06); render(); } else act(d.act); return; }
     if (d.ex) { $('sd-ai-text').value = d.ex; $('sd-ai-text').focus(); return; }
     if (d.tpl != null) { snap(); const t = TEMPLATES[+d.tpl]; P.w = t.w; P.h = t.h; P.pages[P.cur] = fromTemplate(t); sel = null; full(); used('template', { t: t.n }); return; }
-    if (d.blank) { const s = SIZES.find(x => x[0] === d.blank); snap(); P.w = s[2]; P.h = s[3]; P.pages[P.cur] = { bg: { color: '#ffffff', grad: null, angle: 0, img: null, dim: 0 }, els: [] }; sel = null; full(); return; }
+    if (d.blank) { const s = SIZES.find(x => x[0] === d.blank); snap(); P.w = s[2]; P.h = s[3]; P.dest = s[0]; destBar(); P.pages[P.cur] = { bg: { color: '#ffffff', grad: null, angle: 0, img: null, dim: 0 }, els: [] }; sel = null; full(); return; }
     if (d.tp != null) { const t = TEXT_PRESETS[+d.tp]; addText(t[1], t[0]); return; }
     if (d.sym) { const e2 = T({ text: d.sym, size: Math.round(140 * U()), w: Math.round(200 * U()), weight: 400, color: autoInk(), lh: 1.1 }); e2.h = Math.round(e2.size * 1.1); addEl(center(e2)); return; }
     if (d.pick) { pickers[d.pick].click(); return; }
@@ -833,7 +871,7 @@
     if (d.bgx) { snap(); page().bg.img = null; render(); panel(); return; }
     if (d.size) {
       if (d.size === 'custom') { const w = Math.round(+$('sd-cw').value), h = Math.round(+$('sd-ch').value); if (w >= 200 && w <= 4000 && h >= 200 && h <= 6000) resize(w, h); return; }
-      const s = SIZES.find(x => x[0] === d.size); resize(s[2], s[3]); panel(); return;
+      setDest(d.size); return;
     }
     if (d.file === 'new') { if (!confirm('להתחיל עיצוב חדש? העיצוב הנוכחי יימחק מהדפדפן (אפשר לבטל עם "בטל")')) return; snap(); const lib = P.lib; P = newProject(); P.pages[0] = { bg: { color: '#ffffff', grad: null, angle: 0, img: null, dim: 0 }, els: [] }; P.lib = lib; sel = null; full(); return; }
     if (d.file === 'save') { saveFile(); return; }
@@ -861,6 +899,8 @@
   app.querySelectorAll('[data-ai]').forEach(b => b.addEventListener('click', () => runAI(b.dataset.ai)));
   $('sd-ai-text').addEventListener('keydown', ev => { if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey)) runAI(P.pages[P.cur].els.length && !$('sd-ai-mode-edit').hidden ? 'edit' : 'new'); });
 
+  $('sd-dest').addEventListener('click', ev => { const b = ev.target.closest('[data-dest]'); if (b) setDest(b.dataset.dest); });
+
   // ---------- התחלה ----------
   async function start() {
     try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.pages && s.pages.length) P = s; } catch (e) {}
@@ -868,7 +908,7 @@
     if (!P) P = newProject(TEMPLATES[0]);
     P.lib = P.lib || [];
     P.cur = Math.min(P.cur || 0, P.pages.length - 1);
-    fitScale(); render(); panel(); updUndo();
+    fitScale(); render(); panel(); updUndo(); destBar();
     if (!first) $('sd-ai-mode-edit').hidden = false;
     await loadAllImages(); render(); if (tab === 'img') panel();
     if (document.fonts) { document.fonts.ready.then(() => render()); document.fonts.addEventListener && document.fonts.addEventListener('loadingdone', () => render()); }
