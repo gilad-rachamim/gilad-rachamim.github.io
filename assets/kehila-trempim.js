@@ -6,7 +6,7 @@
   var API = 'https://trempim.gilad4049.workers.dev';
   // בדיקה מקומית בלבד: ?api=http://127.0.0.1:8799
   if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) { var qa = new URLSearchParams(location.search).get('api'); if (qa) API = qa; }
-  var CLIENT_ID = 'PENDING';
+  var CLIENT_ID = '811978831024-vp67lekd6gmffh9sq07jqapvjvmdpudn.apps.googleusercontent.com';
   var CAL_SCOPE = 'https://www.googleapis.com/auth/calendar.events.readonly';
   var TOKEN_KEY = 'trempim_token';
   var $ = function (id) { return document.getElementById(id); };
