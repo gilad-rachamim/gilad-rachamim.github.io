@@ -253,8 +253,7 @@
         btn.hidden = !ok;
         if (ok) {
           var mon = new Date().toLocaleDateString('he-IL', { month: 'long', year: 'numeric' });
-          btn.href = 'https://wa.me/972584049049?text=' + encodeURIComponent('שלום גילעד, אני ' + (d.teacher || 'מורה') + ' מכיתה משחקת "' + d.name + '" (קוד ' + T.code + '). המקום הראשון ב' + mon + ': הכינוי "' + top.nick + '" עם ' + top.pts + ' נקודות, ' + n + ' תלמידים בכיתה. אשמח לשובר המתנה, ואעביר אותו לתלמידה.
-לבדיקה: https://kelim-kita.gilad4049.workers.dev/c/' + T.code + '/board?p=month');
+          btn.href = 'https://wa.me/972584049049?text=' + encodeURIComponent('שלום גילעד, אני ' + (d.teacher || 'מורה') + ' מכיתה משחקת "' + d.name + '" (קוד ' + T.code + '). המקום הראשון ב' + mon + ': הכינוי "' + top.nick + '" עם ' + top.pts + ' נקודות, ' + n + ' תלמידים בכיתה. אשמח לשובר המתנה, ואעביר אותו לתלמידה. לבדיקה: https://kelim-kita.gilad4049.workers.dev/c/' + T.code + '/board?p=month');
           btn.onclick = function () { used('chashiva_kita_more', 'gilad-gift'); };
         }
       });
