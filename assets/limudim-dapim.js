@@ -145,17 +145,28 @@
   }
   function cost(p, guided) { return Math.max(2, Math.round(1 + p.steps.length * (guided ? 0.6 : 0.8)) + (p.table ? 2 : 0)); }
   // cfg: {t: נושא, k: 'h' הקנייה | 'z' חזרה, m: דקות, lv: 1-3, r: [נושאי תזכורת], s: זרע, a: עזרה 0-2}
+  // חשבון בתוך שאלה בעברית: עוטפים כל ביטוי עם סימן פעולה בכיוון שמאל-לימין, אחרת "1/2 + 1/3" מתהפך ל-"1/3 + 1/2"
+  function mw(h) { return h.replace(/[0-9(][0-9\s+\-−×÷*\/=().,^²³√%:]*[0-9)²³%]/g, function (m) { return /[+\-−×÷*\/=^:]/.test(m) ? '<bdi dir="ltr">' + m + '</bdi>' : m; }); }
+  var OWN_MAX = 20; // שאלות משלי: עד 20 (גם מיבוא מכיתה משחקת ומבנק השאלות)
   function build(cfg) {
     var t = byId[cfg.t]; if (!t) return null;
     var ts = [t].concat((cfg.x || []).map(function (id) { return byId[id]; }).filter(function (x, j, a) { return x && x !== t && a.indexOf(x) === j; })).slice(0, 3);
     return seeded(cfg.s, function () {
-      var own = (cfg.q || []).filter(function (x) { return x.t && x.t.trim(); }).slice(0, 5).map(function (x) {
+      var own = (cfg.q || []).filter(function (x) { return x.t && x.t.trim(); }).slice(0, OWN_MAX).map(function (x) {
         var v = parseVal(x.a || ''), isNum = !isNaN(v) && String(x.a || '').trim() !== '';
-        return { k: 'ex', own: true, guided: false, lv: 1, min: x.m, p: { ex: '<span class="dp-own" dir="rtl">' + esc(x.t.trim()) + '</span>', fin: x.a ? '<bdi>' + esc(x.a) + '</bdi>' : '',
+        var wr = (x.o || []).filter(function (z) { return String(z).trim(); });
+        if (wr.length && String(x.a || '').trim()) { // שאלה אמריקאית: התשובה הנכונה + השגויות, בסדר מעורבב (קבוע לפי ה-seed)
+          var op = [String(x.a).trim()].concat(wr.map(function (z) { return String(z).trim(); })), at = 0;
+          for (var oi = op.length - 1; oi > 0; oi--) { var oj = Math.floor(Math.random() * (oi + 1)), ot = op[oi]; op[oi] = op[oj]; op[oj] = ot; if (at === oi) at = oj; else if (at === oj) at = oi; }
+          return { k: 'ex', own: true, mc: true, guided: false, lv: 1, min: x.m, p: { ex: '<span class="dp-own" dir="rtl">' + mw(esc(x.t.trim())) + '</span>', fin: '<bdi>' + esc(op[at]) + '</bdi>',
+            steps: [{ show: '', q: 'בוחרים את התשובה:', opts: op.map(function (z) { return '<bdi>' + esc(z) + '</bdi>'; }), a: at, hint: 'קוראים שוב את השאלה, לאט, ובודקים כל אחת מהתשובות.' }] } };
+        }
+        return { k: 'ex', own: true, guided: false, lv: 1, min: x.m, p: { ex: '<span class="dp-own" dir="rtl">' + mw(esc(x.t.trim())) + '</span>', fin: x.a ? '<bdi>' + esc(x.a) + '</bdi>' : '',
           steps: [isNum ? { show: '', q: 'התשובה:', a: v, hint: 'זו שאלה מהמורה. קוראים שוב את השאלה, לאט, ובודקים את החישוב.' } : { free: true, show: '', q: 'התשובה שלי:', a: 0, txt: x.a || '', hint: '' }] } };
       });
       var items = [], total = own.reduce(function (z, x) { return z + x.min; }, 0), n = 0, i = 0;
-      var revs = cfg.r.map(function (id) { return byId[id]; }).filter(function (x) { return x && ts.indexOf(x) < 0; }).slice(0, 3);
+      var only = !!(cfg.only && own.length);
+      var revs = only ? [] : cfg.r.map(function (id) { return byId[id]; }).filter(function (x) { return x && ts.indexOf(x) < 0; }).slice(0, 3);
       var asked = revs.length;
       function add(it) { if (it.k === 'ex') it.n = ++n; items.push(it); total += it.min || 0; }
       function guidedFor(j) { return cfg.a === 2 || (cfg.a === 1 && cfg.k === 'h' && j < 2); }
@@ -167,7 +178,7 @@
         revs.shift(); add(it);
       }
       var L = t.lesson, half = Math.ceil(L.length / 2);
-      if (cfg.a > 0 && cfg.k === 'h') {
+      if (only) { /* רק השאלות של המורה */ } else if (cfg.a > 0 && cfg.k === 'h') {
         add({ k: 'learn', title: '📘 לומדים: ' + t.name, steps: L.slice(0, half), min: Math.max(2, Math.round(half * 0.6)) });
         add(mkEx(i++)); tryRev();
         add({ k: 'learn', title: '📘 ממשיכים ללמוד', steps: L.slice(half), min: Math.max(1, Math.round((L.length - half) * 0.6)) });
@@ -175,31 +186,31 @@
         var rc = []; ts.forEach(function (x) { rc = rc.concat(x.lesson.filter(function (s) { return s.m.indexOf('תורכם') < 0; }).slice(0, ts.length > 1 ? 3 : 6)); });
         add({ k: 'recap', title: '🧠 תזכורת קצרה' + (ts.length > 1 ? '' : ': ' + t.name), steps: rc, min: 1 + ts.length });
       }
-      var guard = 0;
+      var guard = only ? 40 : 0;
       while (guard++ < 40) {
         var e = mkEx(i);
         if (total + e.min > cfg.m + 1 && i >= 1) break;
         add(e); i++; tryRev();
       }
       own.forEach(function (it) { it.n = ++n; items.push(it); });
-      var bonus = t.gen(Math.min(3, cfg.lv + 1));
-      return { t: t, ts: ts, name: ts.map(function (x) { return x.name; }).join(' + '), cfg: cfg, items: items, total: total, nq: n, nrev: asked - revs.length, dropped: revs.length, bonus: { k: 'ex', p: bonus, bonus: true, guided: false, min: 0, n: n + 1 } };
+      var bonus = only ? null : t.gen(Math.min(3, cfg.lv + 1));
+      return { t: t, ts: only ? [t] : ts, only: only, em: only ? '✍️' : t.em, name: only ? 'שאלות מהמורה' : ts.map(function (x) { return x.name; }).join(' + '), cfg: cfg, items: items, total: total, nq: n, nrev: asked - revs.length, dropped: revs.length, bonus: bonus ? { k: 'ex', p: bonus, bonus: true, guided: false, min: 0, n: n + 1 } : null };
     });
   }
-  function encode(cfg) { return [[cfg.t].concat(cfg.x || []).join(','), cfg.k, cfg.m, cfg.lv, cfg.r.join('~'), cfg.s, cfg.a].join('.'); }
+  function encode(cfg) { return [[cfg.t].concat(cfg.x || []).join(','), cfg.k, cfg.m, cfg.lv, cfg.r.join('~'), cfg.s, cfg.a].concat(cfg.only ? [1] : []).join('.'); }
   function decode(d) {
     var q = String(d).split('.'), tt = (q[0] || '').split(','); if (q.length < 6 || !byId[tt[0]]) return null;
-    return { t: tt[0], x: tt.slice(1, 3).filter(function (x) { return byId[x]; }), k: q[1] === 'z' ? 'z' : 'h', m: Math.min(120, Math.max(5, +q[2] || 30)), lv: Math.min(3, Math.max(1, +q[3] || 2)), r: q[4] ? q[4].split('~').filter(function (x) { return byId[x]; }) : [], s: +q[5] || 1, a: q[6] === undefined ? 1 : Math.min(2, Math.max(0, +q[6] || 0)) };
+    return { t: tt[0], x: tt.slice(1, 3).filter(function (x) { return byId[x]; }), k: q[1] === 'z' ? 'z' : 'h', m: Math.min(120, Math.max(5, +q[2] || 30)), lv: Math.min(3, Math.max(1, +q[3] || 2)), r: q[4] ? q[4].split('~').filter(function (x) { return byId[x]; }) : [], s: +q[5] || 1, a: q[6] === undefined ? 1 : Math.min(2, Math.max(0, +q[6] || 0)), only: q[7] === '1' };
   }
   // שאלות שהמורה כתבה: [{t: שאלה, a: תשובה (לא חובה), m: דקות}] – נכנסות לקישור כ-base64 של JSON
   function ownEnc(q) {
     if (!q || !q.length) return '';
-    try { var b = new TextEncoder().encode(JSON.stringify(q.map(function (x) { return [x.t, x.a || '', x.m]; }))), bin = ''; b.forEach(function (c) { bin += String.fromCharCode(c); }); return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); } catch (e) { return ''; }
+    try { var b = new TextEncoder().encode(JSON.stringify(q.map(function (x) { return x.o && x.o.length ? [x.t, x.a || '', x.m, x.o] : [x.t, x.a || '', x.m]; }))), bin = ''; b.forEach(function (c) { bin += String.fromCharCode(c); }); return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); } catch (e) { return ''; }
   }
   function ownDec(str) {
     if (!str) return [];
     try { var bin = atob(String(str).replace(/-/g, '+').replace(/_/g, '/')), b = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) b[i] = bin.charCodeAt(i);
-      return JSON.parse(new TextDecoder().decode(b)).slice(0, 5).map(function (x) { return { t: String(x[0] || '').slice(0, 300), a: String(x[1] || '').slice(0, 60), m: Math.min(20, Math.max(1, +x[2] || 3)) }; }).filter(function (x) { return x.t.trim(); }); } catch (e) { return []; }
+      return JSON.parse(new TextDecoder().decode(b)).slice(0, OWN_MAX).map(function (x) { return { t: String(x[0] || '').slice(0, 300), a: String(x[1] || '').slice(0, 80), m: Math.min(20, Math.max(1, +x[2] || 3)), o: Array.isArray(x[3]) ? x[3].slice(0, 4).map(function (z) { return String(z).slice(0, 80); }) : [] }; }).filter(function (x) { return x.t.trim(); }); } catch (e) { return []; }
   }
   function linkOf(cfg, title) { var q = ownEnc(cfg.q); return BASE + '?d=' + encodeURIComponent(encode(cfg)) + (title ? '&c=' + encodeURIComponent(title) : '') + (q ? '&q=' + q : ''); }
   var KIND = { h: 'דף הקנייה', z: 'דף חזרה' };
@@ -259,6 +270,8 @@
         return '<li><span class="sh" dir="ltr">' + s.show.replace(/<\/?mark>/g, '') + '</span><span class="sq">' + s.q + '</span>' +
           (s.opts ? '<span class="so">' + s.opts.map(function (x) { return '◯ ' + x; }).join(' &nbsp; ') + '</span>' : '<span class="sb"></span>') + '</li>';
       }).join('') + '</ol>';
+    } else if (it.mc) {
+      h += '<div class="dp-mc">' + p.steps[0].opts.map(function (x) { return '<span>◯ ' + x + '</span>'; }).join('') + '</div>';
     } else {
       h += '<div class="dp-work' + (o.grid ? ' grid' : '') + '" style="height:' + (it.own ? Math.min(60, 12 + it.min * 5) : Math.min(40, 10 + p.steps.length * 5)) + 'mm"></div><div class="dp-ans">תשובה: <span class="sb"></span></div>';
     }
@@ -275,12 +288,12 @@
     qrJobs = [];
     var cfg = sh.cfg, t = sh.t, exs = sh.items.filter(function (x) { return x.k === 'ex'; }), revsIn = exs.filter(function (x) { return x.rev; });
     var h = '<article class="dp-paper st-' + o.style + (o.font ? ' big' : '') + '">';
-    h += '<header class="dp-ph"><div class="dp-pt"><span class="dp-kind">' + KIND[cfg.k] + ' · מתמטיקה' + (o.grade ? ' · כיתה ' + o.grade : '') + '</span><h2>' + t.em + ' ' + t.name + '</h2>' + (sh.ts.length > 1 ? '<p class="dp-sub"><b>דף משולב</b>, יחד עם: ' + sh.ts.slice(1).map(function (x) { return x.name; }).join(' · ') + '</p>' : '') + (o.title ? '<p class="dp-sub">' + esc(o.title) + '</p>' : '') +
+    h += '<header class="dp-ph"><div class="dp-pt"><span class="dp-kind">' + KIND[cfg.k] + (sh.only ? '' : ' · מתמטיקה') + (o.grade ? ' · כיתה ' + o.grade : '') + '</span><h2>' + sh.em + ' ' + (sh.only ? sh.name : t.name) + '</h2>' + (sh.ts.length > 1 ? '<p class="dp-sub"><b>דף משולב</b>, יחד עם: ' + sh.ts.slice(1).map(function (x) { return x.name; }).join(' · ') + '</p>' : '') + (o.title ? '<p class="dp-sub">' + esc(o.title) + '</p>' : '') +
       '<p class="dp-name">שם: <span class="sb w"></span> תאריך: <span class="sb"></span></p></div>' +
       (o.qr && linkOf(cfg).length < 700 ? '<div class="dp-qrw">' + qrSpot(linkOf(cfg), 84) + '<small>הדף הדיגיטלי:<br>רמזים, בדיקה ומחשבון</small></div>' : '') + '</header>';
     h += '<div class="dp-strip"><span>⏱ כ-' + sh.total + ' דקות</span><span>' + sh.nq + ' שאלות</span>' + (o.stars ? '<span class="dp-stars" aria-label="כוכב לכל שאלה">' + exs.map(function () { return '☆'; }).join('') + '</span><span class="dp-strip-n">צובעים כוכב אחרי כל שאלה</span>' : '') + '</div>';
     sh.items.forEach(function (it) { h += it.k === 'ex' ? exPrint(it, o) : learnHtml(it); });
-    if (o.bonus) h += exPrint(sh.bonus, o);
+    if (o.bonus && sh.bonus) h += exPrint(sh.bonus, o);
     h += '<div class="dp-endw">';
     if (cfg.a > 0 && revsIn.length) {
       h += '<section class="dp-hints"><h3>💡 נתקעתם בשאלת "זוכרים?" – מציצים ברמז, או סורקים לשיעור קצר</h3><div class="dp-hl">' + revsIn.map(function (it) {
@@ -290,8 +303,8 @@
     if (o.feel) h += '<section class="dp-feel"><b>איך הרגשתי עם הדף?</b><span>😀 הבנתי הכול</span><span>🙂 הבנתי את הרוב</span><span>🤔 צריך עוד הסבר</span><span class="dp-feel-q">מה עוד לא ברור לי: <span class="sb w"></span></span></section>';
     h += '<footer class="dp-pf">טעות היא חלק מהלימוד. ממשיכים הלאה 💪 &nbsp;·&nbsp; דף מ"הכלים של גילעד רחמים", חינם: <bdi dir="ltr">hakelim.com/limudim/dapim</bdi></footer></div></article>';
     if (o.key) {
-      h += '<article class="dp-paper dp-keyp st-' + o.style + '"><header class="dp-ph"><div class="dp-pt"><span class="dp-kind">דף תשובות למורה</span><h2>' + t.em + ' ' + sh.name + '</h2><p class="dp-sub">' + KIND[cfg.k] + ' · כ-' + sh.total + ' דקות · רמה ' + ['', 'בסיס', 'רגילה', 'מאתגרת'][cfg.lv] + (o.title ? ' · ' + esc(o.title) : '') + '</p></div></header><ol class="dp-key">' +
-        exs.concat(o.bonus ? [sh.bonus] : []).map(keyLine).join('') + '</ol><p class="dp-keyn">בתרגיל מודרך התשובות מופיעות לפי סדר הצעדים, ואחרי החץ התשובה הסופית.</p></article>';
+      h += '<article class="dp-paper dp-keyp st-' + o.style + '"><header class="dp-ph"><div class="dp-pt"><span class="dp-kind">דף תשובות למורה</span><h2>' + sh.em + ' ' + sh.name + '</h2><p class="dp-sub">' + KIND[cfg.k] + ' · כ-' + sh.total + ' דקות · רמה ' + ['', 'בסיס', 'רגילה', 'מאתגרת'][cfg.lv] + (o.title ? ' · ' + esc(o.title) : '') + '</p></div></header><ol class="dp-key">' +
+        exs.concat(o.bonus && sh.bonus ? [sh.bonus] : []).map(keyLine).join('') + '</ol><p class="dp-keyn">בתרגיל מודרך התשובות מופיעות לפי סדר הצעדים, ואחרי החץ התשובה הסופית.</p></article>';
     }
     return h;
   }
@@ -330,25 +343,63 @@
       });
     }
     // שאלות משלי
-    var ownQ = (st.own || []).slice(0, 5).map(function (x) { return { t: String(x.t || ''), a: String(x.a || ''), m: +x.m || 3 }; });
+    var ownQ = (st.own || []).slice(0, OWN_MAX).map(function (x) { return { t: String(x.t || ''), a: String(x.a || ''), m: +x.m || 3, o: Array.isArray(x.o) ? x.o : [] }; });
+    if (st.only) $('dp-only').checked = true;
     function drawOwn() {
       $('dp-own').innerHTML = ownQ.map(function (x, j) {
-        return '<div class="dp-ownq" data-j="' + j + '"><label>שאלה ' + (j + 1) + '<textarea rows="2" maxlength="300" data-f="t" placeholder="למשל: הסבירו במילים שלכם מהו קודקוד של פרבולה">' + esc(x.t) + '</textarea></label><div class="dp-row"><label>תשובה (לא חובה)<input type="text" maxlength="60" data-f="a" value="' + esc(x.a) + '" placeholder="מספר ייבדק לבד בדיגיטלי"></label><label>כמה דקות<select data-f="m">' +
-          [1, 2, 3, 5, 8, 10, 15].map(function (m) { return '<option value="' + m + '"' + (m === x.m ? ' selected' : '') + '>' + m + ' דק׳</option>'; }).join('') + '</select></label></div><button class="linkish" type="button" data-del>להסיר את השאלה ✕</button></div>';
+        return '<div class="dp-ownq" data-j="' + j + '"><label>שאלה ' + (j + 1) + '<textarea rows="2" maxlength="300" data-f="t" placeholder="למשל: הסבירו במילים שלכם מהו קודקוד של פרבולה">' + esc(x.t) + '</textarea></label><div class="dp-row"><label>תשובה (לא חובה)<input type="text" maxlength="80" data-f="a" value="' + esc(x.a) + '" placeholder="מספר ייבדק לבד בדיגיטלי"></label><label>כמה דקות<select data-f="m">' +
+          [1, 2, 3, 5, 8, 10, 15].map(function (m) { return '<option value="' + m + '"' + (m === x.m ? ' selected' : '') + '>' + m + ' דק׳</option>'; }).join('') + '</select></label></div><label>תשובות שגויות לבחירה (לא חובה) <small>כותבים כאן, והשאלה הופכת לאמריקאית. מפרידים ב-|</small><input type="text" maxlength="250" data-f="o" dir="auto" value="' + esc((x.o || []).join(' | ')) + '" placeholder="למשל: 2/5 | 2/6 | 1/6"></label><button class="linkish" type="button" data-del>להסיר את השאלה ✕</button></div>';
       }).join('');
-      $('dp-own-add').hidden = ownQ.length >= 5;
+      $('dp-own-add').hidden = ownQ.length >= OWN_MAX;
+      $('dp-own-n').textContent = ownQ.length ? ownQ.length + ' שאלות משלי' + (ownQ.length >= OWN_MAX ? ' (המקסימום)' : '') : '';
     }
     $('dp-own').addEventListener('input', function (e) {
       var w = e.target.closest('[data-j]'), f = e.target.dataset.f; if (!w || !f) return;
-      ownQ[+w.dataset.j][f] = f === 'm' ? +e.target.value : e.target.value; render();
+      ownQ[+w.dataset.j][f] = f === 'm' ? +e.target.value : f === 'o' ? e.target.value.split('|').map(function (z) { return z.trim(); }).filter(Boolean).slice(0, 4) : e.target.value; render();
     });
     $('dp-own').addEventListener('click', function (e) { var b = e.target.closest('[data-del]'); if (!b) return; ownQ.splice(+b.closest('[data-j]').dataset.j, 1); drawOwn(); render(); });
-    $('dp-own-add').addEventListener('click', function () { ownQ.push({ t: '', a: '', m: 3 }); drawOwn(); var ta = $('dp-own').querySelector('[data-j="' + (ownQ.length - 1) + '"] textarea'); if (ta) ta.focus(); used('own_add'); });
+    $('dp-own-add').addEventListener('click', function () { ownQ.push({ t: '', a: '', m: 3, o: [] }); drawOwn(); var ta = $('dp-own').querySelector('[data-j="' + (ownQ.length - 1) + '"] textarea'); if (ta) ta.focus(); used('own_add'); });
+    // שורה "שאלה | נכונה | שגויה..." -> שאלה אמריקאית של דקה
+    function lineQ(l) { var z = String(l).split('|').map(function (x) { return x.trim(); }).filter(Boolean); return z.length < 2 ? null : { t: z[0], a: z[1], m: 1, o: z.slice(2, 5) }; }
+    function addMany(list, how) {
+      var room = OWN_MAX - ownQ.length, got = list.filter(Boolean).slice(0, Math.max(0, room));
+      ownQ = ownQ.concat(got); drawOwn(); render(); used(how, { n: got.length });
+      return got.length;
+    }
+    // מכיתה משחקת: דף המורה שם את השאלות ב-localStorage ופותח /limudim/dapim/?from=kita
+    if (new URLSearchParams(location.search).get('from') === 'kita') {
+      var imp = load('dapim-import', null);
+      try { localStorage.removeItem('dapim-import'); } catch (e) {}
+      if (imp && imp.q && imp.q.length) {
+        ownQ = []; addMany(imp.q.map(function (x) { return { t: String(x.t || '').slice(0, 300), a: String(x.a || '').slice(0, 80), m: 1, o: (x.o || []).slice(0, 4) }; }), 'import_kita');
+        $('dp-only').checked = true; $('dp-help').value = '1'; setKind('z');
+        if (imp.title) $('dp-title').value = String(imp.title).slice(0, 40);
+        $('dp-imp').hidden = false; $('dp-imp').textContent = '✓ נטענו ' + ownQ.length + ' שאלות מכיתה משחקת' + (imp.title ? ' ("' + imp.title + '")' : '') + '. הדף מוכן להדפסה למטה, עם דף תשובות למורה. אפשר להוסיף תרגילים מהמחולל: מורידים את הסימון "רק השאלות שלי".';
+        history.replaceState(null, '', location.pathname);
+      }
+    }
+    // בנק השאלות המוכן של כיתה משחקת (assets/kita-bank.json), נושאי המתמטיקה. נטען רק בלחיצה
+    var bank = null;
+    $('dp-bank-open').addEventListener('click', function () {
+      var b = this; b.disabled = true;
+      fetch('/assets/kita-bank.json').then(function (r) { if (!r.ok) throw new Error('bank'); return r.json(); }).then(function (j) {
+        bank = j; $('dp-bank').hidden = false; b.hidden = true;
+        $('dp-bank-t').innerHTML = j.topics.filter(function (t) { return t.subj === 'math'; }).map(function (t) { return '<option value="' + t.id + '">' + esc(t.name) + '</option>'; }).join('');
+      }).catch(function () { b.disabled = false; b.textContent = 'הבנק לא נטען. לנסות שוב'; });
+    });
+    $('dp-bank-go').addEventListener('click', function () {
+      var t = bank && bank.topics.filter(function (x) { return x.id === $('dp-bank-t').value; })[0]; if (!t) return;
+      var have = ownQ.map(function (x) { return x.t; }), pool = t.q.map(lineQ).filter(function (x) { return x && have.indexOf(x.t) < 0; });
+      for (var i = pool.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), tmp = pool[i]; pool[i] = pool[j]; pool[j] = tmp; }
+      var n = addMany(pool.slice(0, +$('dp-bank-n').value), 'bank_' + t.id);
+      $('dp-bank-msg').textContent = n ? '✓ נוספו ' + n + ' שאלות על ' + t.name + '. הן בסוף הדף, עם התשובות בדף המורה.' : 'אין מקום לעוד שאלות (עד ' + OWN_MAX + '). מסירים כמה ומנסים שוב.';
+    });
+    $('dp-only').addEventListener('change', render);
     drawOwn();
     function readCfg() {
       var r = [1, 2, 3].map(function (k) { return $('dp-r' + k).value; }).filter(function (x, j, a) { return x && a.indexOf(x) === j; });
       var xs = [1, 2].map(function (k) { return $('dp-x' + k).value; }).filter(function (x, j, a) { return x && x !== $('dp-topic').value && a.indexOf(x) === j; });
-      return { t: $('dp-topic').value, x: xs, q: ownQ.filter(function (x) { return x.t.trim(); }), k: kind, m: +$('dp-min').value, lv: +$('dp-lv').value, r: r, s: seed, a: +$('dp-help').value };
+      return { t: $('dp-topic').value, x: xs, q: ownQ.filter(function (x) { return x.t.trim(); }), only: $('dp-only').checked && ownQ.some(function (x) { return x.t.trim(); }), k: kind, m: +$('dp-min').value, lv: +$('dp-lv').value, r: r, s: seed, a: +$('dp-help').value };
     }
     function render() {
       var cfg = readCfg(), sh = build(cfg); if (!sh) return; cur = sh;
@@ -365,7 +416,7 @@
       $('dp-open').href = link;
       $('dp-wa').href = 'https://wa.me/?text=' + encodeURIComponent('דף עבודה במתמטיקה: ' + sh.name + ' (' + KIND[cfg.k] + ', כ-' + sh.total + ' דקות)\nפותרים כאן, עם רמזים ומחשבון:\n' + link);
       $('dp-copy').dataset.link = link;
-      var keep = { g: gs.value, u: $('dp-units').value, k: kind, s: seed, t: cfg.t, x: [$('dp-x1').value, $('dp-x2').value], own: ownQ, r: [1, 2, 3].map(function (k) { return $('dp-r' + k).value; }), title: o.title, key: o.key };
+      var keep = { g: gs.value, u: $('dp-units').value, k: kind, s: seed, t: cfg.t, x: [$('dp-x1').value, $('dp-x2').value], own: ownQ, only: $('dp-only').checked, r: [1, 2, 3].map(function (k) { return $('dp-r' + k).value; }), title: o.title, key: o.key };
       ['min', 'lv', 'help', 'style', 'font'].forEach(function (k) { keep[k] = $('dp-' + k).value; });
       ['time', 'stars', 'bonus', 'feel', 'grid', 'qr'].forEach(function (k) { keep['o' + k] = o[k]; });
       save(CKEY, keep);
@@ -408,7 +459,7 @@
     document.body.classList.add('dp-student');
     $('dp-build').hidden = true; $('dp-paper').hidden = true; $('dp-foot').hidden = true; $('dp-hero').hidden = true;
     var root = $('dp-digital'); root.hidden = false;
-    var items = sh.items.concat([sh.bonus]), exs = items.filter(function (x) { return x.k === 'ex'; });
+    var items = sh.items.concat(sh.bonus ? [sh.bonus] : []), exs = items.filter(function (x) { return x.k === 'ex'; });
     var SKEY = 'limudim-dapim-s:' + encode(cfg) + (cfg.q && cfg.q.length ? '|' + ownEnc(cfg.q).slice(-16) : ''), S = load(SKEY, null) || { log: {}, t0: Date.now(), hints: 0, name: '', free: {} };
     S.free = S.free || {};
     var tries = {}, hintOpen = {};
@@ -418,7 +469,7 @@
     function curStep(it, ix) { var l = logOf(ix); for (var j = 0; j < it.p.steps.length; j++) if (it.p.steps[j].tbl === undefined && (l[j] === undefined || l[j] === null)) return j; return -1; }
     function mark(l) { return l === 1 ? '<span class="ok1">✓</span>' : l === 2 ? '<span class="ok2">✓</span>' : '<span class="ok0">✗</span>'; }
 
-    var h = '<header class="dg-top"><span class="pill">' + KIND[cfg.k] + ' · כ-' + sh.total + ' דקות</span><h1>' + sh.t.em + ' ' + sh.name + '</h1>' + (title ? '<p class="sub">' + esc(title) + '</p>' : '') +
+    var h = '<header class="dg-top"><span class="pill">' + KIND[cfg.k] + ' · כ-' + sh.total + ' דקות</span><h1>' + sh.em + ' ' + sh.name + '</h1>' + (title ? '<p class="sub">' + esc(title) + '</p>' : '') +
       '<p class="note">פותרים צעד אחרי צעד. ' + (cfg.a ? 'טעות היא חלק מהלימוד: אחרי טעות מקבלים רמז. ' : '') + 'ההתקדמות נשמרת במכשיר הזה, ואפשר לחזור ולהמשיך.</p></header>' +
       '<div class="dg-bar" id="dg-bar"><div class="dg-prog"><i id="dg-fill"></i></div><span id="dg-cnt"></span><span id="dg-time"></span><button class="btn btn-line btn-sm" type="button" id="dg-calc">🧮 מחשבון</button></div>';
     items.forEach(function (it, ix) {

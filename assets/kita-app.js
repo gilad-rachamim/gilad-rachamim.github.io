@@ -546,6 +546,16 @@
       if (r.bad.length) { quizPrev(); return; }
       quizSave(r.q.slice(0, 20));
     });
+    // דף עבודה להדפסה: השאלות עוברות למחולל דפי העבודה (/limudim/dapim/) דרך localStorage, באותו אתר
+    $('kt-q-print').addEventListener('click', function () {
+      var r = quizParse();
+      if (!r.q.length) { $('kt-q-err').textContent = 'קודם בוחרים נושא מהבנק או כותבים שאלות, ואז מדפיסים.'; return; }
+      if (r.bad.length) { quizPrev(); return; }
+      lsSet('dapim-import', { title: $('kt-q-name').value.trim(), q: r.q.slice(0, 20).map(function (x) { return { t: x.q, a: x.a[0], o: x.a.slice(1) }; }) });
+      used('chashiva_kita_more', 'print-dapim');
+      var w = window.open('/limudim/dapim/?from=kita', '_blank');
+      if (!w) location.href = '/limudim/dapim/?from=kita';
+    });
     $('kt-q-clear').addEventListener('click', function () { if (confirm('להוריד את השאלות מדף הכיתה?')) { $('kt-q-text').value = ''; quizSave([]); } });
 
     // ---- הכיתות זו מול זו: הכיתות שלי (kita-teach) + כיתות שהוספתי לפי קוד (kita-watch). קריאה מהלוח הציבורי בלבד ----
