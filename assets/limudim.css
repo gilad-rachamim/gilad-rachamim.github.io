@@ -554,3 +554,42 @@ body.cx-exammode .pt-link{display:none!important}
 .pt-topics span{width:100%}
 .pt-topics button{font:inherit;font-size:.92rem;padding:.3rem .65rem;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--body);cursor:pointer}
 .pt-topics button:hover,.pt-topics button:focus-visible{border-color:var(--gold-soft);color:var(--cream)}
+/* המסלול – גרסה 2: דרגות, אתגר יומי, אימון חיזוק, מבחן עלייה, תעודה */
+.ms-week{color:var(--muted);font-size:.92rem;margin-top:.35rem}.ms-week b{color:var(--gold-hi)}
+.ms-cards{display:grid;gap:.7rem;margin-top:1rem}
+@media (min-width:700px){.ms-cards{grid-template-columns:1fr 1fr}.ms-rank{grid-column:1/-1}}
+.ms-card{padding:1rem;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03);display:grid;gap:.55rem;align-content:start}
+.ms-card h3{color:var(--cream);font-size:1.12rem}
+.ms-card p{color:var(--body);line-height:1.6}
+.ms-rank{background:linear-gradient(160deg,rgba(220,183,105,.14),rgba(220,183,105,.02) 70%);border-color:var(--gold-soft)}
+.ms-rk{display:grid;grid-template-columns:auto 1fr;gap:.2rem .8rem;align-items:center}
+.ms-rk-em{font-size:2.6rem;line-height:1}
+.ms-rk small{display:block;color:var(--muted);font-size:.85rem}.ms-rk b{color:var(--gold-hi);font-size:1.3rem;font-family:var(--serif)}
+.ms-rk-steps{grid-column:1/-1;list-style:none;display:flex;gap:.3rem;padding:0;margin:.3rem 0 0}
+.ms-rk-steps li{flex:1;text-align:center;padding:.25rem 0;border-radius:99px;background:rgba(255,255,255,.06);color:var(--muted);font-size:.95rem}
+.ms-rk-steps li:not(.on){filter:grayscale(1);opacity:.4}
+.ms-rk-steps li.on{background:rgba(220,183,105,.2)}
+.ms-rk-next{display:grid;gap:.45rem}
+.ms-rk-next .btn{justify-self:start}
+.ms-rk-next .btn[disabled]{opacity:.55;cursor:default}
+.ms-rk-top{color:var(--cream)}
+.ms-fchips{display:flex;flex-wrap:wrap;gap:.35rem}
+.ms-fchips button{font:inherit;font-size:.88rem;padding:.3rem .65rem;border-radius:99px;border:1px solid var(--line);background:none;color:var(--body);cursor:pointer;display:inline-flex;align-items:center;gap:.3rem}
+.ms-fchips button.on{border-color:var(--gold);background:rgba(220,183,105,.16);color:var(--cream)}
+.ms-fchips small{color:var(--no);font-size:.75rem}
+.ms-mdot{width:.55rem;height:.55rem;border-radius:99px;background:rgba(255,255,255,.18);display:inline-block}
+.ms-mdot.lo{background:var(--no)}.ms-mdot.mid{background:var(--gold)}.ms-mdot.hi{background:var(--ok)}
+.ms-weak{color:var(--no);font-weight:600}
+.ms-ptopic{color:var(--accent);font-size:.95rem;margin-bottom:.35rem}
+.ms-clock{color:var(--cream);font-variant-numeric:tabular-nums}
+.ms-mrows{list-style:none;padding:0;display:grid;gap:.4rem;margin-top:.7rem;text-align:start;width:min(100%,24rem)}
+.ms-mrows li{display:grid;grid-template-columns:1fr 5rem auto;gap:.5rem;align-items:center;color:var(--cream);font-size:.95rem}
+.ms-mbar{height:.5rem;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}.ms-mbar i{display:block;height:100%;background:var(--ok)}
+.ms-mrows b{color:var(--ok);font-size:.9rem}
+.ms-extra{display:grid;gap:.7rem;justify-items:center;width:100%}
+.ms-examnote{padding:.6rem .9rem;border-radius:12px;border:1px solid var(--gold);color:var(--gold-hi)!important}
+.ms-certname{color:var(--cream)}.ms-certname input{font:inherit;color:var(--ink);background:var(--cream);border:0;border-radius:8px;padding:.3rem .6rem;margin-inline-start:.4rem}
+.ms-cert{width:min(100%,26rem);padding:1.4rem 1.1rem;border-radius:14px;border:3px double var(--gold);background:#fbfaf3;color:#141c2b;text-align:center;display:grid;gap:.4rem}
+.ms-cert small{color:#8d7647}.ms-cert-em{font-size:2.6rem}.ms-cert h3{font-family:var(--serif);font-size:1.4rem;color:#141c2b}
+.ms-cert p{color:#141c2b!important;font-size:1rem!important}.ms-cert b{font-size:1.3rem}.ms-cert-d{color:#8d7647!important}
+@media print{body.ms-printing *{visibility:hidden}body.ms-printing .ms-cert,body.ms-printing .ms-cert *{visibility:visible}body.ms-printing .ms-cert{position:absolute;left:0;right:0;top:0;margin:auto}}

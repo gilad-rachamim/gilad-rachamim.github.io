@@ -80,7 +80,16 @@
     ['stars100', '🌟', '100 כוכבים', 'אספתם 100 כוכבים'],
     ['bagrut', '🎓', 'שלב בגרות', 'עברתם שלב בגרות'],
     ['topic', '🏔', 'נושא שלם', 'כל ששת השלבים בנושא'],
-    ['track', '🏆', 'מסלול שלם', 'כל הנושאים במסלול']
+    ['track', '🏆', 'מסלול שלם', 'כל הנושאים במסלול'],
+    ['train', '💪', 'אימון ראשון', 'סיימתם אימון חיזוק'],
+    ['train10', '🏋', '10 אימונים', 'עשרה אימוני חיזוק'],
+    ['daily', '🎁', 'אתגר יומי', 'סיימתם אתגר יומי'],
+    ['daily7', '📆', '7 אתגרים', 'שבעה אתגרים יומיים'],
+    ['week', '🎯', 'יעד שבועי', 'חמש פעילויות בשבוע אחד'],
+    ['rank1', '🥉', 'מתאמנים', 'עברתם מבחן עלייה ראשון'],
+    ['rank2', '🥈', 'מתקדמים', 'דרגת מתקדמים'],
+    ['rank3', '🥇', 'מומחים', 'דרגת מומחים'],
+    ['rank4', '🏆', 'מוכנים לבגרות', 'הדרגה הגבוהה ביותר']
   ];
   var fresh = [];
   function award(id) {
@@ -142,7 +151,7 @@
   // ---------- לוח עליון ----------
   function hud() {
     $('ms-stars').textContent = totalStars();
-    if (G && $('ms-pts')) $('ms-pts').innerHTML = '⭐ <b>' + (Math.round(G.credit * 100) / 100) + '</b>';
+    if (G && G.credit != null && $('ms-pts')) $('ms-pts').innerHTML = '⭐ <b>' + (Math.round(G.credit * 100) / 100) + '</b>';
     $('ms-days').textContent = dayStreak();
     $('ms-badges-n').textContent = Object.keys(st.b).length;
   }
@@ -200,16 +209,18 @@
       tr.topics.forEach(function (t) { done += stagesDone(t.id); stars += topicStars(t.id); });
       var pct = Math.round(done / all * 100);
       $('ms-sum').innerHTML = '<div class="ms-sumrow"><b>' + (tr.long || 'יסודות · ' + tr.sub) + '</b><span>' + (done ? 'עברתם ' + done + ' שלבים מתוך ' + all + ' · ' + stars + ' ⭐' : tr.topics.length + ' תחנות במסלול, 6 שלבים בכל אחת') + '</span></div>' +
-        '<div class="ms-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + Math.max(pct, done ? 3 : 0) + '%"></i></div>';
+        '<div class="ms-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + Math.max(pct, done ? 3 : 0) + '%"></i></div>' +
+        '<p class="ms-week">🎯 יעד השבוע: <b>' + Math.min(weekCount(), WEEK_GOAL) + '/' + WEEK_GOAL + '</b> פעילויות (שלב, אימון, אתגר או מבחן)' + (weekCount() >= WEEK_GOAL ? ' ✓ הגעתם!' : '') + '</p>';
       var here = hereTopic(tr);
       drawPath($('ms-map'), tr.topics.map(function (t) {
         var n = stagesDone(t.id), full = n === 6, isHere = t.id === here;
         return { cls: (full ? 'done' : n ? 'part' : '') + (isHere ? ' here' : ''),
           html: (isHere ? '<span class="ms-you">אתם כאן</span>' : '') +
             '<button type="button" data-topic="' + t.id + '" class="ms-dot" style="--p:' + (n / 6 * 100) + '%" aria-label="' + esc(t.name) + ': ' + n + ' מתוך 6 שלבים">' + t.em + '</button>' +
-            '<span class="ms-lbl">' + t.name + '</span><span class="ms-st">' + (full ? '🏔 ' : '') + topicStars(t.id) + '/18 ⭐</span>' };
+            '<span class="ms-lbl">' + t.name + '</span><span class="ms-st">' + (full ? '🏔 ' : '') + topicStars(t.id) + '/18 ⭐' + (isWeak(t.id) ? ' · <b class="ms-weak">💪 לחזק</b>' : '') + '</span>' };
       }), '');
     }
+    renderCards(tr);
     $('ms-badges').innerHTML = BADGES.map(function (b) {
       var has = st.b[b[0]];
       return '<div class="ms-badge' + (has ? ' on' : '') + '" title="' + esc(b[3]) + '"><span aria-hidden="true">' + (has ? b[1] : '🔒') + '</span><b>' + b[2] + '</b><small>' + b[3] + '</small></div>';
@@ -250,28 +261,174 @@
   $('ms-back').addEventListener('click', function () { show('ms-home'); renderHome(); });
 
   // =====================================================================
-  //  משחק
+  //  שליטה בנושא (לחיזוק אישי): ממוצע נע של הצעדים האחרונים בכל נושא
   // =====================================================================
-  var G = null, prob = null, k = 0;
-  function startStage(i) {
-    var sg = STAGES[i];
-    G = { stage: i, sg: sg, lv: sg.lv.slice(), pi: 0, credit: 0, steps: 0, combo: 0, bumps: 0 };
+  st.m = st.m || {};
+  function rec(id, c) {
+    var x = st.m[id] || { m: 0, n: 0, d: today() };
+    x.m = x.n ? x.m * 0.75 + c * 0.25 : c; x.n++; x.d = today();
+    st.m[id] = x;
+  }
+  function mastery(id) { var x = st.m[id]; return x && x.n ? x.m : null; }
+  function isWeak(id) { var x = st.m[id]; return !!(x && x.n >= 3 && x.m < 0.7); }
+  function isStale(id) { var x = st.m[id]; return !!(x && x.n >= 3 && x.m >= 0.7 && dayDiff(x.d, today()) >= 10); }
+  // רמת התרגיל המתאימה לנושא: לפי השלבים שעברתם, וקצת יותר קל כשהנושא עוד חלש
+  function levelFor(id) {
+    var n = stagesDone(id), lv = n >= 4 ? 3 : n >= 2 ? 2 : 1, m = mastery(id);
+    if (m != null && m < 0.5 && lv > 1) lv--;
+    return lv;
+  }
+  function weakList(tr) {
+    // הכי חלשים קודם; אחריהם נושאים שלא תרגלו מזמן
+    var ts = (tr ? tr.topics : T).filter(function (t) { return isWeak(t.id) || isStale(t.id); });
+    return ts.sort(function (a, b) { return (isWeak(b.id) - isWeak(a.id)) || (mastery(a.id) - mastery(b.id)); });
+  }
+
+  // ---------- יעד שבועי ----------
+  function weekStart() { var d = new Date(); d.setDate(d.getDate() - d.getDay()); return today(d); }
+  var WEEK_GOAL = 5;
+  function weekCount() { return st.wk && st.wk.w === weekStart() ? st.wk.n : 0; }
+  function weekAdd() {
+    if (!st.wk || st.wk.w !== weekStart()) st.wk = { w: weekStart(), n: 0 };
+    st.wk.n++;
+    if (st.wk.n === WEEK_GOAL) { award('week'); toast('🎯 הגעתם ליעד השבועי!'); }
+  }
+
+  // ---------- דרגות ומבחן עלייה ----------
+  var RANKS = [
+    { name: 'מתחילים', em: '🌱' },
+    { name: 'מתאמנים', em: '🥉', need: 0.15, lv: [1, 2], pass: 0.7 },
+    { name: 'מתקדמים', em: '🥈', need: 0.35, lv: [2, 2], pass: 0.7 },
+    { name: 'מומחים', em: '🥇', need: 0.6, lv: [2, 3], pass: 0.75 },
+    { name: 'מוכנים לבגרות', em: '🏆', need: 0.8, lv: [3, 3], pass: 0.8 }
+  ];
+  st.r = st.r || {};
+  function rank(tr) { return st.r[tr.id] || 0; }
+  function trackFrac(tr) { var done = 0; tr.topics.forEach(function (t) { done += stagesDone(t.id); }); return done / (tr.topics.length * 6); }
+
+  // ---------- אקראיות קבועה לאתגר היומי (אותו אתגר לכולם באותו יום) ----------
+  function seeded(seed, fn) {
+    var orig = Math.random, s = seed >>> 0;
+    Math.random = function () { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; };
+    try { return fn(); } finally { Math.random = orig; }
+  }
+  function hash(str) { var h = 2166136261; for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+
+  // ---------- כרטיסי הבית: דרגה, אתגר יומי, חיזוק ----------
+  st.focus = st.focus || {};
+  function renderCards(tr) {
+    if (!tr) { $('ms-rank').innerHTML = ''; $('ms-daily').innerHTML = ''; $('ms-train').innerHTML = ''; $('ms-cards').hidden = true; return; }
+    $('ms-cards').hidden = false;
+    var r = rank(tr), nx = RANKS[r + 1], fr = trackFrac(tr), html = '';
+    html += '<div class="ms-rk"><span class="ms-rk-em" aria-hidden="true">' + RANKS[r].em + '</span><div><small>הדרגה שלי במסלול</small><b>' + RANKS[r].name + '</b></div>' +
+      '<ol class="ms-rk-steps" aria-label="הדרגות">' + RANKS.map(function (x, i) { return '<li class="' + (i <= r ? 'on' : '') + '" title="' + x.name + '">' + x.em + '</li>'; }).join('') + '</ol></div>';
+    if (nx) {
+      var open = fr >= nx.need, left = Math.ceil(nx.need * tr.topics.length * 6 - fr * tr.topics.length * 6);
+      html += '<div class="ms-rk-next"><p>הדרגה הבאה: <b>' + nx.em + ' ' + nx.name + '</b>. ' + (open ? 'מבחן העלייה פתוח! ' + 'צריך ' + Math.round(nx.pass * 100) + '% כדי לעלות.' : (left === 1 ? 'עוד שלב אחד' : 'עוד ' + left + ' שלבים') + ' במסלול, ומבחן העלייה נפתח.') + '</p>' +
+        '<div class="ms-bar"><i style="width:' + Math.min(100, Math.round(fr / nx.need * 100)) + '%"></i></div>' +
+        '<button type="button" class="btn ' + (open ? 'btn-gold' : 'btn-line') + ' btn-sm" id="ms-exam-go"' + (open ? '' : ' disabled') + '>📝 מבחן עלייה לדרגה "' + nx.name + '"</button></div>';
+    } else html += '<p class="ms-rk-top">הגעתם לדרגה הגבוהה ביותר במסלול. אפשר להמשיך לאסוף כוכבים ולחזק נושאים. <button type="button" class="linkish" id="ms-cert-show">🎓 התעודה שלי</button></p>';
+    $('ms-rank').innerHTML = html;
+
+    // אתגר יומי
+    var dn = st.daily && st.daily.date === today() && st.daily.tr === tr.id;
+    $('ms-daily').innerHTML = '<h3>🎁 האתגר היומי</h3>' + (dn
+      ? '<p>✓ עשיתם את האתגר של היום: <b>' + st.daily.score + '%</b>. מחר מחכה אתגר חדש.</p><button type="button" class="linkish" id="ms-daily-go">לשחק שוב, בשביל הכיף</button>'
+      : '<p>חמישה תרגילים מכל המסלול. אותו אתגר לכל מי שלומד את ' + (tr.id === 'base' ? 'היסודות' : 'שאלון ' + tr.id) + ' היום.</p><button type="button" class="btn btn-gold btn-sm" id="ms-daily-go">לאתגר של היום ←</button>');
+
+    // חיזוק אישי
+    var weak = weakList(tr), f = st.focus[tr.id];
+    if (!f || !f.length) f = weak.slice(0, 3).map(function (t) { return t.id; });
+    f = f.filter(function (id) { return tr.topics.some(function (t) { return t.id === id; }); });
+    st.focus[tr.id] = f;
+    var played = tr.topics.filter(function (t) { return mastery(t.id) != null; });
+    $('ms-train').innerHTML = '<h3>💪 האימון שלי</h3><p>' + (weak.length ? 'מצאתי נושאים שכדאי לחזק. סימנתי אותם, ואפשר לבחור אחרים.' : played.length ? 'הכול נראה חזק 👌 בוחרים נושאים, ומתאמנים דווקא בהם.' : 'בוחרים נושאים שרוצים לחזק. אחרי קצת תרגול, אציע לבד מה כדאי לחזק.') + '</p>' +
+      '<div class="ms-fchips" role="group" aria-label="נושאים לאימון">' + tr.topics.map(function (t) {
+        var m = mastery(t.id), on = f.indexOf(t.id) > -1, lvl = m == null ? '' : m < 0.5 ? 'lo' : m < 0.7 ? 'mid' : 'hi';
+        return '<button type="button" data-focus="' + t.id + '" class="' + (on ? 'on' : '') + '" aria-pressed="' + on + '"><i class="ms-mdot ' + lvl + '" aria-hidden="true"></i>' + t.em + ' ' + esc(t.name) + (isWeak(t.id) ? ' <small>לחזק</small>' : isStale(t.id) ? ' <small>לרענן</small>' : '') + '</button>';
+      }).join('') + '</div>' +
+      '<button type="button" class="btn btn-gold btn-sm" id="ms-train-go"' + (f.length ? '' : ' disabled') + '>אימון חיזוק · 5 תרגילים</button>';
+  }
+  $('ms-cards').addEventListener('click', function (e) {
+    var tr = track(); if (!tr) return;
+    var fb2 = e.target.closest('[data-focus]');
+    if (fb2) {
+      var f = st.focus[tr.id] || [], id = fb2.dataset.focus, i = f.indexOf(id);
+      if (i > -1) f.splice(i, 1); else f.push(id);
+      st.focus[tr.id] = f; save(); renderCards(tr); return;
+    }
+    if (e.target.id === 'ms-train-go') startTrain(tr);
+    if (e.target.id === 'ms-daily-go') startDaily(tr);
+    if (e.target.id === 'ms-exam-go') startExam(tr);
+    if (e.target.id === 'ms-cert-show') showCert(tr);
+  });
+
+  // =====================================================================
+  //  משחק: שלב, אימון חיזוק, אתגר יומי ומבחן עלייה – אותו מנוע
+  // =====================================================================
+  var G = null, prob = null, k = 0, examTimer = null, REVEAL_MS = 1200;
+  function begin(g, title) {
+    G = Object.assign({ pi: 0, credit: 0, steps: 0, combo: 0, bumps: 0, per: {} }, g);
     show('ms-play');
-    $('ms-play-h').textContent = cur.em + ' ' + cur.name + ' · שלב ' + (i + 1) + ': ' + sg.name;
-    $('ms-hintbtn').hidden = !!sg.exam;
+    $('ms-play-h').textContent = title;
+    $('ms-hintbtn').hidden = !!G.sg.exam;
+    $('ms-show').hidden = G.mode === 'exam';
+    $('ms-quit').textContent = G.mode === 'stage' ? '→ לשלבים' : '→ למפה';
+    clearInterval(examTimer); $('ms-clock').hidden = G.mode !== 'exam';
+    if (G.mode === 'exam') { G.t0 = Date.now(); examTimer = setInterval(clock, 1000); clock(); }
     newProblem();
     window.scrollTo({ top: $('ms-app').offsetTop - 10, behavior: reduce ? 'auto' : 'smooth' });
+  }
+  function clock() { var s = Math.floor((Date.now() - G.t0) / 1000); $('ms-clock').textContent = '⏱ ' + Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2); }
+  function startStage(i) {
+    var sg = STAGES[i];
+    begin({ mode: 'stage', stage: i, sg: sg, items: sg.lv.map(function (lv) { return { t: cur, lv: lv, base: lv }; }) }, cur.em + ' ' + cur.name + ' · שלב ' + (i + 1) + ': ' + sg.name);
     used('stage_start', { topic: cur.id, stage: i + 1 });
   }
+  function startTrain(tr) {
+    var ids = st.focus[tr.id] || []; if (!ids.length) return;
+    // הנושא הכי חלש מקבל יותר תרגילים
+    var ts = ids.map(topic).filter(Boolean).sort(function (a, b) { return (mastery(a.id) == null ? 0.6 : mastery(a.id)) - (mastery(b.id) == null ? 0.6 : mastery(b.id)); });
+    // למשל שלושה נושאים: חלש, שני, חלש, שלישי, חלש
+    var order = [];
+    for (var i = 0; i < 5; i++) order.push(ts.length === 1 || i % 2 === 0 ? ts[0] : ts[1 + ((i - 1) / 2 | 0) % (ts.length - 1)]);
+    var before = {}; ts.forEach(function (t) { before[t.id] = mastery(t.id); });
+    begin({ mode: 'train', tr: tr, sg: {}, before: before, items: order.map(function (t) { var lv = levelFor(t.id); return { t: t, lv: lv, base: lv }; }) }, '💪 אימון חיזוק');
+    used('train_start', { track: tr.id, n: ts.length });
+  }
+  function startDaily(tr) {
+    var day = today(), seed = hash(day + '|' + tr.id);
+    var items = seeded(seed, function () {
+      var pool = tr.topics.slice(), out = [];
+      for (var i = 0; i < 5; i++) {
+        var t = pool.splice(Math.floor(Math.random() * pool.length), 1)[0] || tr.topics[i % tr.topics.length];
+        var lv = i < 2 ? 1 : i < 4 ? 2 : 3;
+        out.push({ t: t, lv: lv, base: lv, p: t.gen(lv) });
+      }
+      return out;
+    });
+    begin({ mode: 'daily', tr: tr, sg: {}, items: items, replay: st.daily && st.daily.date === day && st.daily.tr === tr.id }, '🎁 האתגר היומי · ' + day.split('-').reverse().slice(0, 2).join('.'));
+    used('daily_start', { track: tr.id });
+  }
+  function startExam(tr) {
+    var r = rank(tr), nx = RANKS[r + 1]; if (!nx || trackFrac(tr) < nx.need) return;
+    var ts = tr.topics.slice().sort(function () { return Math.random() - 0.5; }), n = Math.min(8, Math.max(5, ts.length)), items = [];
+    for (var i = 0; i < n; i++) { var lv = nx.lv[i % 2]; items.push({ t: ts[i % ts.length], lv: lv, base: lv }); }
+    begin({ mode: 'exam', tr: tr, rank: r + 1, sg: { exam: 1 }, items: items }, '📝 מבחן עלייה · ' + nx.em + ' ' + nx.name);
+    used('exam_start', { track: tr.id, rank: r + 1 });
+  }
   function dots() {
-    $('ms-dots').innerHTML = G.lv.map(function (lv, i) { return '<i class="' + (i < G.pi ? 'd' : i === G.pi ? 'c' : '') + '" title="רמה ' + lv + '"></i>'; }).join('');
+    $('ms-dots').innerHTML = G.items.map(function (it, i) { return '<i class="' + (i < G.pi ? 'd' : i === G.pi ? 'c' : '') + '" title="רמה ' + it.lv + '"></i>'; }).join('');
   }
   function comboUi() {
     $('ms-combo').innerHTML = G.combo >= 2 ? '🔥 <b>' + G.combo + '</b> ברצף' : '';
   }
   function newProblem() {
-    prob = cur.gen(G.lv[G.pi]); k = 0;
+    var it = G.items[G.pi];
+    prob = it.p || it.t.gen(it.lv); k = 0;
     dots(); comboUi();
+    $('ms-ptopic').hidden = G.mode === 'stage';
+    $('ms-ptopic').innerHTML = it.t.em + ' ' + esc(it.t.name) + ' · רמה ' + it.lv;
     $('ms-ex').innerHTML = '<div dir="ltr">' + prob.ex + '</div>';
     $('ms-done').innerHTML = ''; $('ms-next').hidden = true; $('ms-stepbox').hidden = false;
     step();
@@ -352,12 +509,15 @@
   function showHint() { S.hint = true; $('ms-hint').hidden = false; $('ms-hint').textContent = '💡 ' + prob.steps[k].hint; }
   function reveal(c) {
     fb('הנה התשובה. מסתכלים עליה רגע, וממשיכים 👇', 'no');
+    if (!REVEAL_MS) { finishStep(c, false); return; }
     G.busy = true;
-    setTimeout(function () { G.busy = false; finishStep(c, false); }, 1200);
+    setTimeout(function () { G.busy = false; finishStep(c, false); }, REVEAL_MS);
   }
   function finishStep(c, right) {
-    var s = prob.steps[k];
+    var s = prob.steps[k], it = G.items[G.pi];
     G.credit += c; G.steps++;
+    rec(it.t.id, c);
+    var pt = G.per[it.t.id] = G.per[it.t.id] || { c: 0, n: 0 }; pt.c += c; pt.n++;
     var mark = c === 1 ? '★' : c > 0 ? '⯪' : '👀';
     $('ms-done').insertAdjacentHTML('beforeend', '<li class="' + (c === 1 ? '' : c > 0 ? 'half' : 'shown') + '"><div dir="ltr">' + s.show.replace(/<\/?mark>/g, '') + '</div><span>' + mark + ' <bdi dir="ltr">' + esc(fmtAns(s).replace(/^-/, '−')) + '</bdi></span></li>');
     k++; comboUi(); hud();
@@ -366,14 +526,15 @@
     G.pi++;
     var msg = right ? pick(['מצוין! פתרתם את כל התרגיל.', 'כל הכבוד!', 'יפה מאוד, ככה בדיוק.']) : 'סיימנו את התרגיל. ממשיכים, כל תרגיל מחזק.';
     // הקושי עולה: שלוש תשובות מושלמות ברצף מקפיצות את התרגיל הבא ברמה
-    // (עד רמה אחת מעל הבסיס של השלב, כדי שהחימום יישאר חימום)
-    var cap = G.pi < G.lv.length ? Math.min(3, G.sg.lv[G.pi] + 1) : 0;
-    if (G.pi < G.lv.length && G.combo >= 3 && G.lv[G.pi] < cap && G.lv[G.pi] <= G.lv[G.pi - 1]) {
-      G.lv[G.pi] = Math.min(cap, G.lv[G.pi - 1] + 1); G.bumps++;
+    // (עד רמה אחת מעל הבסיס, כדי שהחימום יישאר חימום; במבחן ובאתגר היומי הרמות קבועות)
+    var nxt = G.items[G.pi], prev = G.items[G.pi - 1];
+    if (nxt && !nxt.p && G.mode !== 'exam' && G.combo >= 3 && nxt.lv < Math.min(3, nxt.base + 1) && nxt.lv <= prev.lv) {
+      nxt.lv = Math.min(3, nxt.base + 1, prev.lv + 1); G.bumps++;
       msg += ' 🚀 הולך לכם מעולה, אז התרגיל הבא גדול יותר.';
       tone(SND.up);
     }
-    if (G.pi >= G.lv.length) { endStage(); return; }
+    if (G.pi >= G.items.length) { clearInterval(examTimer); save(); END[G.mode](); return; }
+    save();
     dots();
     $('ms-stepbox').hidden = true; $('ms-next').hidden = false;
     $('ms-next-msg').innerHTML = '<span class="mx-fin" dir="ltr">' + (prob.fin || fmtAns(prob.steps[prob.steps.length - 1])) + '</span><br>' + msg;
@@ -383,50 +544,146 @@
   $('ms-form').addEventListener('submit', function (e) { e.preventDefault(); submit($('ms-in').value, false); });
   $('ms-hintbtn').addEventListener('click', function () { if (prob && k < prob.steps.length) showHint(); });
   $('ms-show').addEventListener('click', function () { if (!prob || k >= prob.steps.length || G.busy) return; G.combo = 0; reveal(S.near ? 0.5 : 0); });
-  $('ms-quit').addEventListener('click', function () { stopMic(); openTopic(cur.id, false); });
+  $('ms-quit').addEventListener('click', function () {
+    stopMic(); clearInterval(examTimer);
+    if (G && G.mode === 'exam' && G.pi < G.items.length && !confirm('לצאת מהמבחן? אפשר לחזור אליו מתי שרוצים.')) { examTimer = setInterval(clock, 1000); return; }
+    if (G && G.mode === 'stage') openTopic(cur.id, false); else goHome();
+  });
+  function goHome() { show('ms-home'); renderHome(); window.scrollTo({ top: $('ms-app').offsetTop - 10 }); }
 
-  function endStage() {
-    var sc = G.steps ? G.credit / G.steps : 0, stars = sc >= 0.85 ? 3 : sc >= 0.6 ? 2 : 1;
-    var a = tstars(cur.id), before = a[G.stage], wasDone = stagesDone(cur.id);
-    if (stars > a[G.stage]) a[G.stage] = stars;
-    markDay();
-    award('stage');
-    if (stars === 3) award('perfect');
-    if (G.sg.exam) award('bagrut');
-    if (stagesDone(cur.id) === 6) award('topic');
-    var tot = totalStars(); if (tot >= 25) award('stars25'); if (tot >= 100) award('stars100');
-    var tr = track(); if (tr && tr.topics.every(function (t) { return stagesDone(t.id) === 6; })) award('track');
-    save();
+  // ---------- מסכי סיום ----------
+  function endScreen(stars, head, msg, btns) {
     show('ms-end');
     var big = $('ms-bigstars').children;
+    $('ms-bigstars').hidden = stars == null;
     for (var i = 0; i < 3; i++) { big[i].className = ''; }
-    setTimeout(function () { for (var i = 0; i < 3; i++) if (i < stars) big[i].className = 'on d' + i; }, 60);
+    if (stars != null) setTimeout(function () { for (var i = 0; i < 3; i++) if (i < stars) big[i].className = 'on d' + i; }, 60);
     tone(SND.end);
-    var heads = { 3: '🎉 שלושה כוכבים!', 2: '👏 שני כוכבים!', 1: '🌟 עברתם את השלב!' };
-    $('ms-end-h').textContent = heads[stars];
-    var m = 'צדקתם ב-' + Math.round(sc * 100) + '% מהצעדים. ';
-    m += stars === 3 ? 'ממש מושלם.' : stars === 2 ? 'עוד קצת, ושלושה כוכבים שלכם. אפשר לחזור לשלב מתי שרוצים.' : 'השלב הבא נפתח. וכל פעם שחוזרים לשלב הזה, הכוכבים רק עולים.';
-    if (before && stars <= before) m += ' (השיא שלכם בשלב: ' + before + ' ⭐)';
-    $('ms-end-msg').textContent = m;
-    var nextI = G.stage + 1;
-    $('ms-go-next').hidden = nextI >= STAGES.length;
-    if (nextI >= STAGES.length) $('ms-to-map').textContent = 'למפה, לנושא הבא';
-    else $('ms-to-map').textContent = 'למפה';
+    $('ms-end-h').textContent = head;
+    $('ms-end-msg').innerHTML = msg;
+    $('ms-go-next').hidden = !btns.next; if (btns.next) $('ms-go-next').textContent = btns.next;
+    $('ms-again').hidden = !btns.again; if (btns.again) $('ms-again').textContent = btns.again;
+    $('ms-to-map').textContent = btns.map || 'למפה';
     $('ms-newbadges').innerHTML = fresh.map(function (id) { var b = BADGES.filter(function (x) { return x[0] === id; })[0]; return '<span class="ms-nb">' + b[1] + ' ' + b[2] + '</span>'; }).join('');
     fresh = [];
-    // בקשת תמיכה עדינה, רק אחרי הישג גדול
-    $('ms-support').innerHTML = (G.sg.exam || (stagesDone(cur.id) === 6 && wasDone < 6)) ? '<div class="mx-support"><p>💛 המסלול חינמי, ונבנה בהרבה שעות עבודה. אם הוא עוזר לכם בהכנה לבגרות, אפשר לעזור להחזיק את המיזם, גם בסכום קטן.</p><a class="btn btn-line btn-sm" href="/kelim/#litmoch" data-support="1">לתמוך במיזם</a></div>' : '';
+    $('ms-extra').innerHTML = btns.extra || '';
+    $('ms-support').innerHTML = btns.support ? '<div class="mx-support"><p>💛 המסלול חינמי, ונבנה בהרבה שעות עבודה. אם הוא עוזר לכם בהכנה לבגרות, אפשר לעזור להחזיק את המיזם, גם בסכום קטן.</p><a class="btn btn-line btn-sm" href="/kelim/#litmoch" data-support="1">לתמוך במיזם</a></div>' : '';
     hud();
     window.scrollTo({ top: $('ms-app').offsetTop - 10, behavior: reduce ? 'auto' : 'smooth' });
-    used('stage_end', { topic: cur.id, stage: G.stage + 1, stars: stars, bumps: G.bumps });
   }
-  $('ms-go-next').addEventListener('click', function () { startStage(G.stage + 1); });
-  $('ms-again').addEventListener('click', function () { startStage(G.stage); });
+  function common() {
+    markDay(); weekAdd();
+    var tot = totalStars(); if (tot >= 25) award('stars25'); if (tot >= 100) award('stars100');
+  }
+  function masteryRows(ids) {
+    return '<ul class="ms-mrows">' + ids.map(function (id) {
+      var t = topic(id), b = G.before ? G.before[id] : null, a = mastery(id), up = b != null && a > b + 0.01;
+      return '<li><span>' + t.em + ' ' + esc(t.name) + '</span><span class="ms-mbar"><i style="width:' + Math.round((a || 0) * 100) + '%"></i></span><b>' + Math.round((a || 0) * 100) + '%' + (up ? ' ⬆' : '') + '</b></li>';
+    }).join('') + '</ul>';
+  }
+  var END = {
+    stage: function () {
+      var sc = G.steps ? G.credit / G.steps : 0, stars = sc >= 0.85 ? 3 : sc >= 0.6 ? 2 : 1;
+      var a = tstars(cur.id), before = a[G.stage], wasDone = stagesDone(cur.id);
+      if (stars > a[G.stage]) a[G.stage] = stars;
+      common(); award('stage');
+      if (stars === 3) award('perfect');
+      if (G.sg.exam) award('bagrut');
+      if (stagesDone(cur.id) === 6) award('topic');
+      var tr = track(); if (tr && tr.topics.every(function (t) { return stagesDone(t.id) === 6; })) award('track');
+      var nx = tr && RANKS[rank(tr) + 1], examOpen = nx && trackFrac(tr) >= nx.need && !st.examNote;
+      save();
+      var m = 'צדקתם ב-' + Math.round(sc * 100) + '% מהצעדים. ';
+      m += stars === 3 ? 'ממש מושלם.' : stars === 2 ? 'עוד קצת, ושלושה כוכבים שלכם. אפשר לחזור לשלב מתי שרוצים.' : 'השלב הבא נפתח. וכל פעם שחוזרים לשלב הזה, הכוכבים רק עולים.';
+      if (before && stars <= before) m += ' (השיא שלכם בשלב: ' + before + ' ⭐)';
+      var last = G.stage + 1 >= STAGES.length;
+      endScreen(stars, { 3: '🎉 שלושה כוכבים!', 2: '👏 שני כוכבים!', 1: '🌟 עברתם את השלב!' }[stars], esc(m), {
+        next: last ? null : 'לשלב הבא ←', again: '↺ שוב, בשביל עוד כוכבים', map: last ? 'למפה, לנושא הבא' : 'לשלבים',
+        extra: examOpen ? '<p class="ms-examnote">📝 נפתח לכם מבחן עלייה לדרגה "' + nx.name + '"! הוא מחכה בדף המסלול.</p>' : '',
+        support: G.sg.exam || (stagesDone(cur.id) === 6 && wasDone < 6) });
+      if (examOpen) { st.examNote = 1; save(); }
+      used('stage_end', { topic: cur.id, stage: G.stage + 1, stars: stars, bumps: G.bumps });
+    },
+    train: function () {
+      var sc = G.steps ? G.credit / G.steps : 0;
+      common(); award('train');
+      st.tn = (st.tn || 0) + 1; if (st.tn >= 10) award('train10');
+      save();
+      var ids = Object.keys(G.before), ups = ids.filter(function (id) { return G.before[id] != null && mastery(id) > G.before[id] + 0.01; });
+      endScreen(null, ups.length ? '💪 התחזקתם!' : '👏 סיימתם אימון', 'צדקתם ב-' + Math.round(sc * 100) + '% מהצעדים. ' + (ups.length ? 'הנושאים שהשתפרו מסומנים בחץ.' : 'כל אימון בונה עוד שכבה. ככה מתחזקים.') + masteryRows(ids),
+        { again: '↺ עוד אימון באותם נושאים', map: 'למפה' });
+      used('train_end', { score: Math.round(sc * 100) });
+    },
+    daily: function () {
+      var sc = G.steps ? Math.round(G.credit / G.steps * 100) : 0, stars = sc >= 85 ? 3 : sc >= 60 ? 2 : 1;
+      if (!G.replay) {
+        common(); award('daily');
+        st.dn = (st.dn || 0) + 1; if (st.dn >= 7) award('daily7');
+        st.daily = { date: today(), tr: G.tr.id, score: sc };
+      }
+      save();
+      endScreen(stars, '🎁 האתגר היומי הושלם!', 'הציון שלכם היום: <b>' + sc + '%</b>. ' + (G.replay ? 'זה היה משחק חוזר, לכיף.' : 'מחר יחכה כאן אתגר חדש. ') + (st.dn ? ' סה״כ אתגרים יומיים: ' + st.dn + '.' : ''), { map: 'למפה' });
+      used('daily_end', { score: sc, replay: G.replay ? 1 : 0 });
+    },
+    exam: function () {
+      var sc = G.steps ? G.credit / G.steps : 0, nx = RANKS[G.rank], ok = sc >= nx.pass, tr = G.tr;
+      var mins = Math.round((Date.now() - G.t0) / 60000);
+      var weakIds = Object.keys(G.per).filter(function (id) { return G.per[id].c / G.per[id].n < 0.7; });
+      common();
+      if (ok) {
+        st.r[tr.id] = G.rank; st.examNote = 0;
+        award('rank' + G.rank);
+        save();
+        tone(SND.up);
+        endScreen(3, nx.em + ' עליתם לדרגה "' + nx.name + '"!', 'הציון שלכם: <b>' + Math.round(sc * 100) + '%</b> (צריך היה ' + Math.round(nx.pass * 100) + '%), תוך ' + mins + ' דקות. ' +
+          (RANKS[G.rank + 1] ? 'הדרגה הבאה: ' + RANKS[G.rank + 1].em + ' ' + RANKS[G.rank + 1].name + '. ממשיכים במסלול, והמבחן הבא ייפתח.' : 'זו הדרגה הגבוהה ביותר. אתם מוכנים לבגרות! 🎓') +
+          (weakIds.length ? '<p class="ms-sub">ובכל זאת, כדאי לחזק עוד קצת: ' + weakIds.map(function (id) { return topic(id).name; }).join(', ') + '.</p>' : ''),
+          { map: 'למפה', extra: RANKS[G.rank + 1] ? '' : '<button type="button" class="btn btn-gold btn-sm" id="ms-cert-show2">🎓 לתעודה שלי</button>', support: true });
+      } else {
+        if (weakIds.length) st.focus[tr.id] = weakIds.slice(0, 4);
+        save();
+        endScreen(null, '💪 כמעט שם!', 'הציון שלכם: <b>' + Math.round(sc * 100) + '%</b>. כדי לעלות צריך ' + Math.round(nx.pass * 100) + '%. זה לא כישלון, זו מפה: עכשיו ברור מה לחזק. ' +
+          (weakIds.length ? 'סימנתי לכם באימון האישי את הנושאים: <b>' + weakIds.map(function (id) { return esc(topic(id).name); }).join(', ') + '</b>.' : '') + ' אפשר לנסות שוב מתי שרוצים.',
+          { next: weakIds.length ? '💪 לאימון בנושאים האלה' : null, again: '↺ לנסות את המבחן שוב', map: 'למפה' });
+      }
+      used('exam_end', { track: tr.id, rank: G.rank, score: Math.round(sc * 100), pass: ok ? 1 : 0 });
+    }
+  };
+  $('ms-go-next').addEventListener('click', function () {
+    if (G.mode === 'stage') startStage(G.stage + 1);
+    else if (G.mode === 'exam') startTrain(G.tr);
+  });
+  $('ms-again').addEventListener('click', function () {
+    if (G.mode === 'stage') startStage(G.stage);
+    else if (G.mode === 'train') startTrain(G.tr);
+    else if (G.mode === 'exam') startExam(G.tr);
+  });
   $('ms-to-map').addEventListener('click', function () {
-    if (G.stage + 1 >= STAGES.length) { show('ms-home'); renderHome(); window.scrollTo({ top: $('ms-map').offsetTop - 40 }); }
-    else openTopic(cur.id, true);
+    if (G.mode === 'stage' && G.stage + 1 < STAGES.length) openTopic(cur.id, true);
+    else goHome();
   });
   $('ms-support').addEventListener('click', function (e) { if (e.target.closest('[data-support]')) used('support_click'); });
+  $('ms-extra').addEventListener('click', function (e) { if (e.target.id === 'ms-cert-show2') showCert(G.tr); });
+
+  // ---------- תעודה לדרגה הגבוהה ----------
+  function showCert(tr) {
+    st.cert = st.cert || {};
+    var d = st.cert[tr.id] || today();
+    st.cert[tr.id] = d; save();
+    show('ms-end');
+    $('ms-bigstars').hidden = true; $('ms-newbadges').innerHTML = ''; $('ms-support').innerHTML = '';
+    $('ms-go-next').hidden = true; $('ms-again').hidden = true; $('ms-to-map').textContent = 'למפה';
+    $('ms-end-h').textContent = '🎓 התעודה שלי';
+    $('ms-end-msg').innerHTML = 'כותבים את השם, ואפשר להדפיס או לשמור כ-PDF.';
+    $('ms-extra').innerHTML = '<label class="ms-certname">השם שלי: <input id="ms-cname" type="text" value="' + esc(st.name || '') + '" maxlength="40"></label>' +
+      '<div class="ms-cert" id="ms-cert"><small>הכלים של גילעד רחמים · כלים ללימודים</small><div class="ms-cert-em">🏆</div><h3>תעודת "מוכנים לבגרות"</h3>' +
+      '<p><b id="ms-cert-n">' + esc(st.name || '______') + '</b></p><p>עבר/ה את כל מבחני העלייה במסלול ' + esc(tr.long || 'היסודות') + ',<br>והגיע/ה לדרגה הגבוהה ביותר.</p><p class="ms-cert-d">' + d.split('-').reverse().join('.') + '</p></div>' +
+      '<button type="button" class="btn btn-gold btn-sm" id="ms-print">🖨 להדפיס או לשמור</button>';
+    $('ms-cname').addEventListener('input', function () { st.name = this.value.trim(); save(); $('ms-cert-n').textContent = st.name || '______'; });
+    $('ms-print').addEventListener('click', function () { document.body.classList.add('ms-printing'); window.print(); setTimeout(function () { document.body.classList.remove('ms-printing'); }, 500); used('cert_print'); });
+    G = G || { mode: 'cert' }; if (G.mode !== 'stage') G.mode = 'cert';
+    window.scrollTo({ top: $('ms-app').offsetTop - 10 });
+  }
 
   // =====================================================================
   //  לענות בקול: זיהוי דיבור בעברית ← ממיר הדיבור המשותף ← מספר
@@ -520,7 +777,7 @@
   // =====================================================================
   function b64e(s) { return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
   function b64d(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return decodeURIComponent(escape(atob(s))); }
-  function packed() { return b64e(JSON.stringify({ s: st.s, b: st.b, d: st.d.slice(-30), tr: st.tr, best: st.best, n: st.n })); }
+  function packed() { return b64e(JSON.stringify({ s: st.s, b: st.b, d: st.d.slice(-30), tr: st.tr, best: st.best, n: st.n, r: st.r, m: st.m, dn: st.dn, tn: st.tn })); }
   $('ms-share').addEventListener('click', function () {
     var url = location.origin + location.pathname + '#p=' + packed(), t = 'ההתקדמות שלי במסלול המתמטיקה: ' + Math.round(totalStars()) + ' ⭐';
     used('share');
@@ -539,6 +796,9 @@
     st.d.sort();
     if (!st.tr && o.tr) st.tr = String(o.tr);
     st.best = Math.max(st.best, +o.best || 0); st.n = Math.max(st.n, +o.n || 0);
+    Object.keys(o.r || {}).forEach(function (id) { if (TRACKS.some(function (x) { return x.id === id; })) st.r[id] = Math.min(4, Math.max(st.r[id] || 0, +o.r[id] || 0)); });
+    Object.keys(o.m || {}).forEach(function (id) { var x = o.m[id]; if (topic(id) && x && (!st.m[id] || +x.n > st.m[id].n)) st.m[id] = { m: Math.max(0, Math.min(1, +x.m || 0)), n: +x.n | 0, d: /^\d{4}-\d\d-\d\d$/.test(x.d) ? x.d : today() }; });
+    st.dn = Math.max(st.dn || 0, +o.dn || 0); st.tn = Math.max(st.tn || 0, +o.tn || 0);
     save();
   }
   (function importLink() {
@@ -565,5 +825,5 @@
   });
   var h = location.hash.slice(1);
   if (h && topic(h)) openTopic(h, false);
-  window.__ms = { st: st, judge: judge, words: words, toAnswer: toAnswer, heard: heard, step: function () { return prob && prob.steps[k]; }, submit: submit, openTopic: openTopic, startStage: startStage, G: function () { return G; } }; // לבדיקות
+  window.__ms = { fast: function () { REVEAL_MS = 0; }, st: st, startTrain: startTrain, startDaily: startDaily, startExam: startExam, track: track, renderHome: renderHome, judge: judge, words: words, toAnswer: toAnswer, heard: heard, step: function () { return prob && prob.steps[k]; }, submit: submit, openTopic: openTopic, startStage: startStage, G: function () { return G; } }; // לבדיקות
 })();

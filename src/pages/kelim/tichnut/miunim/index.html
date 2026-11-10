@@ -1,0 +1,41 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tichnut_miunim",
+  "title": "מיונים בתנועה – Bubble, Insertion, Selection, Merge ו-Quick sort צעד אחרי צעד | הכלים של גילעד רחמים",
+  "description": "רואים כל אלגוריתם מיון עובד צעד אחרי צעד: מה משווים, מה מחליפים, וכמה השוואות והחלפות זה לוקח – על מערך אקראי, הפוך או כמעט ממוין. לקורס מבני נתונים ואלגוריתמים. בחינם.",
+  "og_title": "רואים את המיון קורה: 5 אלגוריתמים בתנועה",
+  "priority": "0.7",
+  "crumbs": [["כלים למתכנתים", "/kelim/tichnut/"], ["מיונים בתנועה", null]],
+  "head": "<style>.tn-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}.mu-bars{display:flex;align-items:flex-end;gap:2px;height:240px;padding:.5rem;border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.2);direction:ltr;margin-top:.8rem}.mu-bars i{flex:1;background:var(--gold-soft);border-radius:3px 3px 0 0;transition:height .05s}.mu-bars i.cm{background:#78b4f0}.mu-bars i.sw{background:#f0a39b}.mu-bars i.dn{background:#9fd39b}.mu-leg{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-top:.4rem;font-size:.85rem;color:var(--muted)}.mu-leg b{display:inline-block;width:.8rem;height:.8rem;border-radius:3px;vertical-align:middle;margin-left:.25rem}.mu-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-top:.8rem}.mu-stats div{padding:.6rem;border:1px solid var(--line);border-radius:12px;text-align:center}.mu-stats b{display:block;font-size:1.4rem;color:var(--cream);direction:ltr}.mu-stats span{color:var(--muted);font-size:.85rem}.mu-btns{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.8rem}.mu-info{margin-top:1rem;padding:.8rem .95rem;border-right:3px solid var(--gold);background:rgba(216,179,95,.06);border-radius:8px}.mu-info h2{color:var(--cream);font-size:1.15rem;direction:ltr;text-align:right}.mu-info p{color:var(--parchment);line-height:1.7;margin-top:.25rem}.mu-info small{color:var(--gold)}input[type=range]{width:100%;accent-color:var(--gold)}</style>",
+  "foot": "<script src=\"/assets/tichnut-data.js\" defer></script><script src=\"/assets/tichnut-miunim.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מיונים בתנועה</h1>
+  <p class="sub">רואים איך כל מיון עובד באמת: מה הוא משווה, מה הוא מחליף, וכמה עבודה זה לוקח. נסו את אותו מערך עם מיונים שונים.</p>
+</header>
+<div class="tool">
+  <div class="tn-row">
+    <div class="field"><label for="mu-alg">המיון</label><select id="mu-alg"><option value="bubble">Bubble sort</option><option value="insertion">Insertion sort</option><option value="selection">Selection sort</option><option value="merge">Merge sort</option><option value="quick">Quick sort</option></select></div>
+    <div class="field"><label for="mu-start">המערך בהתחלה</label><select id="mu-start"><option value="random">אקראי</option><option value="nearly">כמעט ממוין</option><option value="reversed">הפוך</option><option value="sorted">כבר ממוין</option></select></div>
+  </div>
+  <div class="tn-row">
+    <div class="field"><label for="mu-n">כמה איברים (5–60)</label><input id="mu-n" type="number" min="5" max="60" style="direction:ltr;text-align:left"></div>
+    <div class="field"><label for="mu-speed">מהירות</label><input id="mu-speed" type="range" min="0" max="100"></div>
+  </div>
+  <div class="mu-bars" id="mu-bars" aria-hidden="true"></div>
+  <div class="mu-leg"><span><b style="background:#78b4f0"></b>משווים</span><span><b style="background:#f0a39b"></b>מחליפים / כותבים</span><span><b style="background:#9fd39b"></b>במקום הסופי</span></div>
+  <div class="mu-btns">
+    <button class="btn btn-gold btn-sm" type="button" id="mu-play">▶ להתחיל</button>
+    <button class="btn btn-line btn-sm" type="button" id="mu-next">צעד אחד ←</button>
+    <button class="btn btn-line btn-sm" type="button" id="mu-new">מערך חדש</button>
+  </div>
+  <div class="mu-stats">
+    <div><b id="mu-cmp">0</b><span>השוואות</span></div>
+    <div><b id="mu-sw">0</b><span>החלפות / כתיבות</span></div>
+    <div><b id="mu-step">0</b><span>צעד</span></div>
+  </div>
+  <div class="mu-info"><h2 id="mu-name"></h2><p id="mu-desc"></p><small>סיבוכיות: <span id="mu-big" dir="ltr"></span></small></div>
+  <p class="note">נסו: Insertion sort על "כמעט ממוין" מול "הפוך" – אותו אלגוריתם, הבדל עצום. וטבלת כל הסיבוכיות ב<a class="gold" href="/kelim/tichnut/sibuchiyut/">מחשבון ה-Big-O</a>.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="רואים את המיונים קורים: Bubble, Insertion, Merge ו-Quick sort צעד אחרי צעד. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר מהלימודים</a></div>
+</div>

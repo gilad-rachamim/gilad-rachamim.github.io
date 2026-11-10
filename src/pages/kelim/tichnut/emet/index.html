@@ -1,0 +1,32 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tichnut_emet",
+  "title": "טבלת אמת אונליין – טאוטולוגיה, סתירה ו-DNF בעברית | הכלים של גילעד רחמים",
+  "description": "מקלידים ביטוי לוגי (¬, ∧, ∨, ⊕, →, ↔) ומקבלים טבלת אמת מלאה, האם הוא טאוטולוגיה, סתירה או ספיק, וצורת DNF. ללוגיקה, מתמטיקה בדידה ומערכות ספרתיות. בחינם.",
+  "og_title": "טבלת אמת: מקלידים ביטוי, מקבלים תשובה",
+  "priority": "0.7",
+  "crumbs": [["כלים למתכנתים", "/kelim/tichnut/"], ["טבלת אמת", null]],
+  "head": "<style>.em-in{width:100%;direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:1.1rem;padding:.75rem .85rem;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.25);color:var(--cream)}.em-keys{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.5rem;direction:ltr}.em-keys button,.em-ex button{border:1px solid var(--line);border-radius:8px;background:none;color:var(--parchment);font:inherit;cursor:pointer}.em-keys button{min-width:2.6rem;padding:.35rem .5rem;font-family:ui-monospace,Consolas,monospace}.em-ex{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.7rem}.em-ex button{padding:.3rem .7rem;font-size:.85rem;direction:ltr}.em-ex button:hover,.em-keys button:hover{border-color:var(--gold)}.em-kind{margin-top:1rem;padding:.7rem .9rem;border-radius:12px;font-size:1.05rem}.em-kind.tauto{background:rgba(159,211,155,.12);color:#b8e4b4}.em-kind.contra,.em-kind.bad{background:rgba(240,163,155,.1);color:#f0c2bb}.em-kind.sat{background:rgba(216,179,95,.1);color:var(--cream)}.em-tw{overflow-x:auto;margin-top:.7rem}.em-t{border-collapse:collapse;margin:0 auto;font-family:ui-monospace,Consolas,monospace}.em-t th,.em-t td{padding:.3rem .8rem;border:1px solid var(--line);text-align:center;color:var(--body)}.em-t th{color:var(--gold)}.em-t td.r,.em-t th.r{border-left:2px solid var(--gold-soft);font-weight:700}.em-t tr.t td.r{color:#9fd39b}.em-t tr.t{background:rgba(159,211,155,.05)}.em-h{color:var(--cream);margin-top:1rem;font-size:1.05rem}.em-dnf{font-family:ui-monospace,Consolas,monospace;color:var(--parchment);word-break:break-word;margin-top:.3rem;text-align:left}.em-help{margin-top:.6rem;color:var(--muted);font-size:.88rem;line-height:1.7}</style>",
+  "foot": "<script src=\"/assets/tichnut-data.js\" defer></script><script src=\"/assets/tichnut-emet.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>טבלת אמת</h1>
+  <p class="sub">מקלידים ביטוי לוגי ומקבלים את כל הטבלה, האם הוא טאוטולוגיה, ואת ה-DNF. ללוגיקה, למתמטיקה בדידה ולמערכות ספרתיות.</p>
+</header>
+<div class="tool">
+  <label for="em-in" class="tn-lab" style="display:block;margin-bottom:.35rem;color:var(--cream);font-weight:600">הביטוי</label>
+  <input id="em-in" class="em-in" type="text" spellcheck="false" autocomplete="off">
+  <div class="em-ex" id="em-ex">
+    <div class="em-keys" style="width:100%"><button type="button" data-k="¬">¬</button><button type="button" data-k=" ∧ ">∧</button><button type="button" data-k=" ∨ ">∨</button><button type="button" data-k=" ⊕ ">⊕</button><button type="button" data-k=" → ">→</button><button type="button" data-k=" ↔ ">↔</button><button type="button" data-k="(">(</button><button type="button" data-k=")">)</button></div>
+    <span class="note">דוגמאות:</span>
+    <button type="button" data-e="(A -> B) <-> (!B -> !A)">קונטרה-פוזיציה</button>
+    <button type="button" data-e="!(A & B) <-> (!A | !B)">דה מורגן</button>
+    <button type="button" data-e="A & !A">סתירה</button>
+    <button type="button" data-e="(A ^ B) ^ C">XOR של 3</button>
+    <button type="button" data-e="(A & B) | (C & !A)">מולטיפלקסר</button>
+  </div>
+  <p class="em-help">אפשר לכתוב גם במקלדת רגילה: <code>!</code> או NOT, <code>&amp;</code> או AND, <code>|</code> או OR, <code>^</code> XOR, <code>-&gt;</code> גרירה, <code>&lt;-&gt;</code> שקילות, 0 ו-1 כקבועים. סדר העדיפות: ¬ ואז ∧ ואז ⊕ ואז ∨ ואז → ואז ↔.</p>
+  <div id="em-out" aria-live="polite"></div>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="טבלת אמת אונליין בעברית: טאוטולוגיה, סתירה ו-DNF. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר מהלימודים</a></div>
+</div>
