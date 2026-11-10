@@ -249,6 +249,8 @@
       set(d.s); used({ how: op });
       if (op === 'free' && reader && reader.k === k) closeReader();
       if (op === 'done' && reader && reader.k === k) renderReader();
+      // התקדמות אישית: כל יום שקראתם בו תהילים נספר, בכל הסיומים יחד (assets/hitkadmut.js)
+      if (op === 'done' && window.HK) HK.done('tehillim', { el: $('ts-hk'), title: 'תזכו למצוות ✓', line: 'עוד פרקים נקראו לזכות ' + titleOf(S.m).full + '.', help: 'הכלי הזה בחינם ובלי פרסומות', share: 'קראתי היום תהילים בסיום ' + titleOf(S.m).full + '. מצטרפים לקחת פרק?\n' + link() });
     }).catch(function (x) { alert(x.message); });
   }
 
