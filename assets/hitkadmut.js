@@ -106,7 +106,10 @@
     var def = strip ? +strip.getAttribute('data-goal') || 5 : 5, tool = o.tool || (strip && strip.getAttribute('data-tool')) || k;
     var gentle = strip && strip.getAttribute('data-gentle');
     var r = HK.mark(k, def, tool), st = r.st, el = o.el;
-    if (!el || (!r.first && !o.force)) return r;
+    // החלון מופיע פעם אחת ביום לכל כלי (גם אם היום כבר נספר קודם, למשל בכלי נפש: בחירה ואז "עשיתי")
+    var s = HK.load(k);
+    if (!el || (s.win === HK.today() && !o.force)) return r;
+    s.win = HK.today(); HK.save(k, s);
     var pills = gentle ? '<span>🌱 ' + HK.days(st.total) + ' שחזרתם</span>'
       : '<span>🔥 ' + (st.streak === 1 ? (st.total > 1 ? 'יום ראשון ברצף חדש' : 'יום ראשון') : HK.days(st.streak) + ' ברצף') + '</span><span>📅 השבוע ' + st.week + ' מתוך ' + st.goal + '</span>';
     var share = (o.share || document.title) + (gentle ? '' : st.streak >= 2 ? '\n🔥 ' + HK.days(st.streak) + ' ברצף' : '');
