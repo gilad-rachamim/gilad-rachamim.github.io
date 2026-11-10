@@ -1,0 +1,20 @@
+# כיתות ולוח נקודות (/kelim/chashiva/kita/). Cloudflare Worker + Durable Object לכל כיתה (חינמי).
+# פריסה:        cd tools/kita-worker && npx wrangler deploy   (אותו חשבון כמו limudim-calc; כל פריסה רק עם "כן" של גילעד)
+# בדיקה מקומית: npx wrangler dev --local --port 8796
+# מה נשמר: שם כיתה, כינויים (לא שמות מלאים), נקודות לפי משחק. בלי טלפון, מייל או כתובת.
+# כיתה שלא הייתה בה פעילות 180 יום נמחקת לבד (alarm). המורה יכולה למחוק מיד.
+name = "kelim-kita"
+main = "kita-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[[durable_objects.bindings]]
+name = "KITA"
+class_name = "Kita"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Kita"]
+
+[vars]
+EXTRA_ORIGINS = ""
