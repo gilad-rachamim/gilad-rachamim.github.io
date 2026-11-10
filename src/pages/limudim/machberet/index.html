@@ -109,6 +109,20 @@
       <input id="mb-prove" class="mb-pinp" placeholder="למשל: BD=DC">
     </div>
 
+    <details class="panel mb-draw" id="mb-draw">
+      <summary><b>✏️ שרטוט</b> <small>מציירים את המשולש ומסמנים אותיות. נשמר בטלפון ומודפס עם ההוכחה.</small></summary>
+      <div class="mb-dtools no-print" role="toolbar" aria-label="כלי שרטוט">
+        <button type="button" data-tool="line" aria-pressed="true">📏 קו ישר</button>
+        <button type="button" data-tool="pen" aria-pressed="false">✏️ יד חופשית</button>
+        <button type="button" data-tool="txt" aria-pressed="false">🔤 אות <b id="mb-dlet">A</b></button>
+        <button type="button" id="mb-dtri">△ משולש מוכן</button>
+        <button type="button" id="mb-dundo" aria-label="ביטול הפעולה האחרונה">↶ ביטול</button>
+        <button type="button" id="mb-dclr">🗑 ניקוי</button>
+      </div>
+      <canvas class="mb-dcv" id="mb-dcv" aria-label="שרטוט ההוכחה" role="img"></canvas>
+      <p class="note no-print">קו ישר נצמד לנקודות שכבר יש בשרטוט. כדי לסמן אות: בוחרים "אות" ולוחצים במקום שלה (לחיצה נוספת על הכפתור מחליפה אות).</p>
+    </details>
+
     <article class="cx-sheet mb-sheet" aria-label="ההוכחה">
       <div class="mb-ptable">
         <div class="mb-phead" aria-hidden="true"><span>#</span><span>טענה</span><span>נימוק</span></div>

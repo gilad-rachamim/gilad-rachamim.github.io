@@ -21,7 +21,7 @@
 <link rel="manifest" href="/limudim/manifest.webmanifest">
 <link rel="stylesheet" href="/assets/site.css?v=39e81fea">
 <link rel="stylesheet" href="/assets/kelim.css?v=873b0769">
-<link rel="stylesheet" href="/assets/limudim.css?v=98132a50">
+<link rel="stylesheet" href="/assets/limudim.css?v=23ccabc5">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4QR4583VST"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4QR4583VST');</script>
 <script src="/assets/track.js?v=b23b682b" defer></script>
@@ -161,6 +161,20 @@
       <input id="mb-prove" class="mb-pinp" placeholder="למשל: BD=DC">
     </div>
 
+    <details class="panel mb-draw" id="mb-draw">
+      <summary><b>✏️ שרטוט</b> <small>מציירים את המשולש ומסמנים אותיות. נשמר בטלפון ומודפס עם ההוכחה.</small></summary>
+      <div class="mb-dtools no-print" role="toolbar" aria-label="כלי שרטוט">
+        <button type="button" data-tool="line" aria-pressed="true">📏 קו ישר</button>
+        <button type="button" data-tool="pen" aria-pressed="false">✏️ יד חופשית</button>
+        <button type="button" data-tool="txt" aria-pressed="false">🔤 אות <b id="mb-dlet">A</b></button>
+        <button type="button" id="mb-dtri">△ משולש מוכן</button>
+        <button type="button" id="mb-dundo" aria-label="ביטול הפעולה האחרונה">↶ ביטול</button>
+        <button type="button" id="mb-dclr">🗑 ניקוי</button>
+      </div>
+      <canvas class="mb-dcv" id="mb-dcv" aria-label="שרטוט ההוכחה" role="img"></canvas>
+      <p class="note no-print">קו ישר נצמד לנקודות שכבר יש בשרטוט. כדי לסמן אות: בוחרים "אות" ולוחצים במקום שלה (לחיצה נוספת על הכפתור מחליפה אות).</p>
+    </details>
+
     <article class="cx-sheet mb-sheet" aria-label="ההוכחה">
       <div class="mb-ptable">
         <div class="mb-phead" aria-hidden="true"><span>#</span><span>טענה</span><span>נימוק</span></div>
@@ -260,6 +274,6 @@
   <button class="x" type="button" data-install-close aria-label="סגירה">×</button>
 </div>
 <script src="/assets/kelim.js?v=dccd2958" defer></script>
-<script src="/assets/vendor/katex/katex.min.js?v=f4e1ebdc"></script><script src="/assets/limudim-dibur.js?v=e1fc518c"></script><script src="/assets/limudim-machberet-math.js?v=5ff039dc"></script><script src="/assets/limudim-machberet.js?v=361c2aa7"></script><script src="/assets/limudim.js?v=3ecde5d9" defer></script>
+<script src="/assets/vendor/katex/katex.min.js?v=f4e1ebdc"></script><script src="/assets/limudim-dibur.js?v=e1fc518c"></script><script src="/assets/limudim-machberet-math.js?v=5ff039dc"></script><script src="/assets/limudim-machberet.js?v=e02a3754"></script><script src="/assets/limudim.js?v=3ecde5d9" defer></script>
 </body>
 </html>
