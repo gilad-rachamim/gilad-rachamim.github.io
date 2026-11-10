@@ -60,3 +60,39 @@
 .eh-guest-page .topbar,.eh-guest-page .dock,.eh-guest-page .site-foot .cols,.eh-guest-page .install-bar{display:none}
 @media (max-width:380px){.eh-two{grid-template-columns:1fr}}
 .eh-wrap [hidden],.eh-guest [hidden]{display:none!important}
+/* אישורי הגעה ולוח מעקב (שלב 2: שרת eruim-rsvp) */
+.eh-rsvp-panel{margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--line)}
+.eh-rsvp-panel h3{font-family:var(--serif);color:var(--gold);font-size:1.2rem;margin:0 0 .3rem}
+.eh-rsvp-panel .btn-block{margin-top:.6rem}
+.eh-short{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin:.5rem 0;color:var(--cream);word-break:break-all;font-size:.98rem}
+.eh-short .btn{padding:.35rem .8rem;font-size:.9rem}
+.eh-err{color:#f0a9a0;margin:.5rem 0 0}
+.eh-yesno{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:.6rem 0 1rem}
+.eh-choice{position:relative;display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.85rem .5rem;border:1px solid var(--gold-soft);border-radius:12px;cursor:pointer;color:var(--cream);font-weight:600}
+.eh-choice input{accent-color:var(--gold)}
+.eh-choice:has(input:checked){background:rgba(227,183,101,.16);border-color:var(--gold)}
+#g-form{display:grid;gap:.8rem}
+#g-form .field input{width:100%;box-sizing:border-box}
+.eh-done{color:var(--cream);font-size:1.1rem;margin:.4rem 0 .8rem}
+.eh-dash-h{text-align:center;margin-bottom:1rem}
+.eh-dash-h h1{font-family:var(--serif);color:var(--cream);font-size:1.7rem;line-height:1.25;margin:.2rem 0}
+.eh-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.45rem;text-align:center}
+.eh-stats .stat{border:1px solid var(--line);border-radius:12px;padding:.6rem .2rem;background:rgba(255,255,255,.03)}
+.eh-stats .stat.on{border-color:var(--gold);background:rgba(227,183,101,.12)}
+.eh-stats b{display:block;font-family:var(--serif);font-size:1.7rem;color:var(--gold);line-height:1.1}
+.eh-stats span{font-size:.8rem;color:var(--muted)}
+.eh-tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin:1rem 0 .6rem}
+.eh-tabs button{background:none;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:.35rem .8rem;font:600 .9rem var(--sans);cursor:pointer}
+.eh-tabs button[aria-pressed=true]{color:var(--ink);background:var(--gold);border-color:var(--gold)}
+.eh-list{list-style:none;margin:0;padding:0;display:grid;gap:.45rem}
+.eh-row{display:grid;grid-template-columns:1fr auto;gap:.2rem .6rem;align-items:center;padding:.65rem .8rem;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}
+.eh-row .who{font-weight:600;color:var(--cream);min-width:0;overflow-wrap:anywhere}
+.eh-row .meta{grid-column:1/-1;font-size:.85rem;color:var(--muted);overflow-wrap:anywhere}
+.chip{display:inline-block;font-size:.78rem;padding:.15rem .55rem;border-radius:999px;border:1px solid;white-space:nowrap}
+.chip.yes{color:#b8e0b0;border-color:#6f9a66}.chip.no{color:#f0a9a0;border-color:#9a6660}
+.eh-empty{color:var(--muted);text-align:center;padding:1rem 0}
+.eh-dash-acts{margin-top:1.2rem}
+.eh-dash-acts h2{font-family:var(--serif);color:var(--cream);font-size:1.2rem}
+.eh-danger{margin-top:1rem;color:#f0a9a0;border-color:#9a6660;width:100%}
+.eh-dash [hidden]{display:none!important}
+@media (max-width:380px){.eh-stats{grid-template-columns:repeat(2,1fr)}}
