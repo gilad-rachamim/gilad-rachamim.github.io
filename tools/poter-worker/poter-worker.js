@@ -96,14 +96,23 @@ const PRIMARY = 'gemini-3.5-flash';
 const LITE = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite'];
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-async function geminiOnce(env, model, system, parts, schema, opts) {
+// כמה מפתחות (כל אחד מפרויקט AI Studio נפרד = מכסה יומית נפרדת). הסוד GEMINI_KEYS: מפתחות מופרדים בפסיק.
+export function geminiKeys(env) {
+  return String(env.GEMINI_KEYS || env.GEMINI_KEY || '').split(/[,\s]+/).filter(Boolean);
+}
+// מפתח+דגם שהמכסה שלהם נגמרה היום – מדלגים עליהם (זיכרון של המופע, מתאפס לבד ביום הבא)
+const spent = new Map();
+const today = () => new Date(Date.now() - 8 * 3600e3).toISOString().slice(0, 10); // Gemini מתאפס בחצות של קליפורניה
+const isQuota = e => e && e.status === 429 && /quota|exceed|limit/i.test(e.message);
+
+async function geminiOnce(env, model, system, parts, schema, opts, key) {
   const fetcher = (opts && opts.fetch) || fetch;
   const gen = { temperature: 0.2, maxOutputTokens: 30000 };
   if (schema) { gen.responseMimeType = 'application/json'; gen.responseSchema = schema; }
   const r = await fetcher(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
     method: 'POST',
     signal: AbortSignal.timeout((opts && opts.timeout) || 150000),
-    headers: { 'content-type': 'application/json', 'x-goog-api-key': env.GEMINI_KEY },
+    headers: { 'content-type': 'application/json', 'x-goog-api-key': key || geminiKeys(env)[0] },
     body: JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents: [{ role: 'user', parts }], generationConfig: gen })
   });
   if (!r.ok) { const e = new Error(`${model} ${r.status} ${(await r.text()).slice(0, 160)}`); e.status = r.status; throw e; }
@@ -112,21 +121,30 @@ async function geminiOnce(env, model, system, parts, schema, opts) {
   return schema ? JSON.parse(txt) : txt;
 }
 
-// דגם אחד, עם עד 3 ניסיונות כשעמוס
+// דגם אחד על כל המפתחות: מתחילים ממפתח אקראי (לפזר עומס), עמוס (503) – מנסים שוב, מכסה (429) – למפתח הבא
 export async function gemini(env, system, parts, schema, opts, model) {
   model = model || (env.GEMINI_MODEL || PRIMARY);
+  const keys = geminiKeys(env);
+  if (!keys.length) throw new Error('no key');
+  const start = Math.floor(Math.random() * keys.length);
   let last;
-  for (let i = 0; i < 3; i++) {
-    try { return { data: await geminiOnce(env, model, system, parts, schema, opts), model }; }
-    catch (e) {
-      last = e;
-      if (e.status && ![429, 500, 502, 503, 504].includes(e.status)) break;
-      if (e.name === 'TimeoutError' || e.name === 'AbortError') break;
-      await sleep(i === 0 ? 2500 : 7000);
+  for (let k = 0; k < keys.length; k++) {
+    const key = keys[(start + k) % keys.length], tag = key.slice(-6) + '|' + model;
+    if (spent.get(tag) === today()) { last = last || Object.assign(new Error(model + ' 429 quota (cached)'), { status: 429 }); continue; }
+    for (let i = 0; i < 3; i++) {
+      try { return { data: await geminiOnce(env, model, system, parts, schema, opts, key), model }; }
+      catch (e) {
+        last = e;
+        if (isQuota(e)) { spent.set(tag, today()); break; }
+        if (e.status && ![429, 500, 502, 503, 504].includes(e.status)) break;
+        if (e.name === 'TimeoutError' || e.name === 'AbortError') break;
+        await sleep(i === 0 ? 2500 : 7000);
+      }
     }
   }
   throw last;
 }
+async function geminiAnyKey(env, model, system, parts, schema, opts) { return (await gemini(env, system, parts, schema, opts, model)).data; }
 
 // Workers AI – gpt-oss-120b (טקסט בלבד, בלי מפתח, בתוך המכסה החינמית של החשבון)
 export function parseJsonText(raw) {
@@ -151,7 +169,7 @@ const asText = parts => parts.map(p => p.text || '').join('\n');
 // העתקת שאלה מתמונה לטקסט (כשהדגם הראשי עמוס)
 async function transcribe(env, parts, opts) {
   const sys = 'העתק/העתיקי במדויק את שאלת המתמטיקה שבתמונה, כולל כל הסעיפים והנתונים. נוסחאות בכתיב פשוט (x^2, sqrt(), ln(), e^x, שברים עם / וסוגריים). אם יש סרטוט – תאר/י אותו בקצרה. החזר/י רק את השאלה.';
-  for (const m of LITE) { try { return await geminiOnce(env, m, sys, parts, null, opts); } catch (_) {} }
+  for (const m of LITE) { try { return await geminiAnyKey(env, m, sys, parts, null, opts); } catch (_) {} }
   throw new Error('transcribe failed');
 }
 
@@ -165,7 +183,7 @@ async function solver(env, system, parts, schema, opts) {
     catch (e2) {
       for (const m of LITE) {
         try {
-          const d = await geminiOnce(env, m, system, tparts, schema, opts);
+          const d = await geminiAnyKey(env, m, system, tparts, schema, opts);
           if (schema !== SOLVE_SCHEMA || (d.readable && (d.parts || []).length)) return { data: d, model: m }; // דגם חלש ש"לא הבין" – לא סומכים עליו
         } catch (_) {}
       }
@@ -307,7 +325,7 @@ export default {
     const origin = request.headers.get('origin');
     const h = cors(origin);
     if (request.method === 'OPTIONS') return h ? new Response('', { headers: h }) : new Response('', { status: 403 });
-    if (url.pathname === '/ping') return json({ ok: true, gemini: !!env.GEMINI_KEY, per: PER_IP }, 200, h || {});
+    if (url.pathname === '/ping') return json({ ok: true, gemini: geminiKeys(env).length, per: PER_IP }, 200, h || {});
     if (url.pathname !== '/solve' || request.method !== 'POST') return json({ name: 'הפותר – שאלות בגרות במתמטיקה', page: 'https://gilad-rachamim.github.io/limudim/poter/' }, 200);
     if (!h) return json({ error: 'origin' }, 403);
     const raw = await request.text();
@@ -315,6 +333,14 @@ export default {
     let body; try { body = JSON.parse(raw); } catch (_) { return json({ error: 'bad_json' }, 400, h); }
     if (!String(body.text || '').trim() && !(body.image && body.image.data)) return json({ error: 'empty' }, 400, h);
     if (body.image && (!/^image\/(jpeg|png|webp)$/.test(body.image.mime || '') || String(body.image.data).length > MAX_IMG)) return json({ error: 'image' }, 400, h);
+
+    // זיכרון: שאלה שכבר נפתרה ונבדקה (✓) חוזרת מיד, בלי לגעת במכסה
+    const ck = await cacheKey(body);
+    const cache = env.QUOTA.get(env.QUOTA.idFromName('cache'));
+    try {
+      const hit = await (await cache.fetch('https://q/cget', { method: 'POST', body: JSON.stringify({ k: ck }) })).json();
+      if (hit && hit.v) { const out = JSON.parse(hit.v); out.cached = true; return json(out, 200, h); }
+    } catch (_) {}
 
     const day = new Date().toISOString().slice(0, 10);
     const ip = request.headers.get('cf-connecting-ip') || 'x';
@@ -324,19 +350,45 @@ export default {
 
     try {
       const out = await solve(env, body);
+      if (out.readable && out.verdict && out.verdict.ok) {
+        const v = JSON.stringify(out);
+        if (v.length < 120000) await cache.fetch('https://q/cput', { method: 'POST', body: JSON.stringify({ k: ck, v }) }).catch(() => {});
+      }
       out.left = q.left;
       return json(out, 200, h);
     } catch (e) {
-      return json({ error: 'ai', busy: /429|503|timeout|limit|quota/i.test(String(e && e.message)) }, 503, h);
+      return json({ error: 'ai', busy: /429|503|timeout|limit|quota|neuron/i.test(String(e && e.message)) }, 503, h);
     }
   }
 };
 
+// מפתח הזיכרון: טביעת אצבע של השאלה (רמה + טקסט מנורמל, או הצילום עצמו). בלי שום פרט על מי ששאל.
+export async function cacheKey(body) {
+  const text = String(body.text || '').replace(/\s+/g, ' ').replace(/[−–—]/g, '-').trim().toLowerCase();
+  const src = 'v1|' + (body.level || '') + '|' + text + '|' + (body.image && body.image.data ? body.image.data : '');
+  const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(src));
+  return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
+}
+
 // מונה יומי בלבד: {day, all, who:{hash:count}}
+// מופע 'q': מונה יומי בלבד {day, all, who:{hash:count}}.
+// מופע 'cache': פתרונות שנבדקו (✓), לפי טביעת אצבע של השאלה, נשמרים 90 יום.
+const CACHE_DAYS = 90;
 export class Quota {
   constructor(state) { this.s = state.storage; }
   async fetch(request) {
+    const path = new URL(request.url).pathname;
     const b = await request.json();
+    if (path === '/cget') {
+      const e = await this.s.get('c:' + b.k);
+      if (!e || e.t < Date.now() - CACHE_DAYS * 864e5) return Response.json({});
+      return Response.json({ v: e.v });
+    }
+    if (path === '/cput') {
+      await this.s.put('c:' + b.k, { t: Date.now(), v: b.v });
+      if (!(await this.s.getAlarm())) await this.s.setAlarm(Date.now() + 864e5);
+      return Response.json({ ok: true });
+    }
     let d = (await this.s.get('d')) || {};
     if (d.day !== b.day) d = { day: b.day, all: 0, who: {} };
     const n = d.who[b.who] || 0;
@@ -344,5 +396,12 @@ export class Quota {
     d.who[b.who] = n + 1; d.all++;
     await this.s.put('d', d);
     return Response.json({ ok: true, left: b.per - n - 1 });
+  }
+  // ניקוי פעם ביום: מוחקים פתרונות ישנים
+  async alarm() {
+    const old = Date.now() - CACHE_DAYS * 864e5, del = [];
+    for (const [k, e] of await this.s.list({ prefix: 'c:' })) if (!e || e.t < old) del.push(k);
+    for (let i = 0; i < del.length; i += 128) await this.s.delete(del.slice(i, i + 128));
+    if ((await this.s.list({ prefix: 'c:', limit: 1 })).size) await this.s.setAlarm(Date.now() + 864e5);
   }
 }
