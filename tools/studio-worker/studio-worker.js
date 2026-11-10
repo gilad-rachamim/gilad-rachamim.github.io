@@ -1,8 +1,9 @@
 // "סטודיו" – עוזר עיצוב במילים לעורך הגרפי באתר הכלים (/kelim/tochen/studio/).
-// נתיב אחד: POST /design {prompt, mode:'new'|'edit', doc, size:{w,h}, images:[{id,w,h}]}
-// מחזיר {doc, note}: עיצוב שלם (רקע + שכבות טקסט/צורה/תמונה) שהעורך טוען ואפשר להמשיך לערוך ידנית.
+// נתיב אחד: POST /design {prompt, mode:'new'|'edit', doc, size:{w,h}, images:[{id,w,h,data?}], variants:1|3}
+// מחזיר {doc, note, options:[{doc,note}...]}: עד 3 עיצובים שלמים (רקע + שכבות טקסט/צורה/תמונה/סמל) שהעורך טוען ואפשר להמשיך לערוך ידנית.
 // דגם: Gemini (אם הוגדר GEMINI_KEYS, חינם) ואחר כך Workers AI (gpt-oss-120b, בתוך המכסה החינמית).
-// פרטיות: לא שומרים את מה שכתבו ולא תמונות (התמונות עצמן לא נשלחות בכלל – רק המידות שלהן).
+// פרטיות: לא שומרים את מה שכתבו ולא תמונות. מהדפדפן מגיעה גרסה קטנה (עד 512px) של התמונות שבעיצוב, כדי ש-Gemini יראה אותן;
+// היא עוברת רק לבקשה הזו ולא נשמרת בשום מקום.
 
 const ALLOWED = ['https://gilad-rachamim.github.io'];
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
@@ -15,6 +16,8 @@ const GEMINI_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.1-
 
 export const FONTS = ['Assistant', 'Heebo', 'Rubik', 'Varela Round', 'Secular One', 'Suez One', 'Frank Ruhl Libre',
   'David Libre', 'Bellefair', 'Noto Rashi Hebrew', 'Amatic SC', 'Karantina'];
+
+export const ICONS = ['phone', 'pin', 'clock', 'calendar', 'heart', 'magen', 'candles', 'book', 'gift', 'cup', 'star', 'flower', 'sun', 'crown', 'balloon', 'music', 'home', 'mail', 'chat', 'user', 'check', 'arrow', 'pomegranate'];
 
 export const RULES = `את/ה מעצב/ת גרפי/ת מקצועי/ת בסגנון Canva, שמעצב/ת לקהל ישראלי בעברית.
 המשתמש כותב במילים מה הוא רוצה (פוסט, הזמנה, מודעה, ברכה, סטטוס, דף מסמך, כיתוב על תמונה וכו').
@@ -30,6 +33,8 @@ bg: {"color":"#rrggbb", "grad":"#rrggbb" או null (צבע שני למעבר צ�
 - מלבן: {"type":"rect","fill":"#.." או null,"stroke":"#.." או null,"sw":עובי,"radius":עיגול פינות}
 - עיגול/אליפסה: {"type":"ellipse","fill":"#.." או null,"stroke":"#.." או null,"sw":עובי}
 - קו: {"type":"line","stroke":"#..","sw":עובי} (קו אופקי ברוחב w; לקו אנכי rot=90)
+- סמל (אייקון קטן בצבע אחד): {"type":"icon","icon":שם,"fill":"#.."} – w ו-h שווים. שמות מותרים בלבד: ${ICONS.join(', ')}.
+  (magen = מגן דוד, candles = נרות שבת/חנוכה, cup = כוס קידוש, pin = מיקום, pomegranate = רימון). טוב ליד פרטים: שעון ליד שעה, מיקום ליד כתובת, טלפון ליד מספר. בלי להגזים.
 
 גופנים מותרים בלבד: ${FONTS.join(', ')}.
 התאמה: Secular One / Suez One / Rubik 800 לכותרות חזקות; Frank Ruhl Libre / David Libre / Bellefair לסגנון קלאסי, תורני, חגיגי; Amatic SC / Karantina לכתב יד שמח ולילדים; Assistant / Heebo / Varela Round לטקסט רגיל.
@@ -40,8 +45,10 @@ bg: {"color":"#rrggbb", "grad":"#rrggbb" או null (צבע שני למעבר צ�
 - ניגודיות חזקה בין טקסט לרקע. פלטה של 2-4 צבעים שמתאימים זה לזה ולאווירה (חגים, שבת, ילדים, עסק, אבל – צבעים מאופקים).
 - אפשר להוסיף צורות עדינות לקישוט: פס, מסגרת, עיגולים שקופים למחצה, קו מפריד. לא להעמיס.
 - כשיש תמונה של המשתמש – להשתמש בה (כרקע עם dim, או כשכבת תמונה בולטת), אלא אם ביקש אחרת. אסור להמציא מזהה תמונה שלא ברשימה.
+- כשמצורפת התמונה עצמה – להסתכל עליה: לבחור צבעים שמתאימים לצבעים שבתמונה (צבע מודגש מתוך התמונה, ניגודיות טובה), ולשים טקסט רק במקום פנוי ושקט בתמונה – אף פעם לא על פנים של אנשים ולא על הנושא המרכזי. אם אין מקום פנוי – פס צבע או מלבן חצי שקוף מאחורי הטקסט, או dim גבוה יותר.
 - כתיבה בעברית תקנית ונעימה. להשתמש בדיוק במילים שהמשתמש ביקש; אם לא נתן מילים – לנסח בעצמך קצר וטוב. בלי אימוג'י, אלא אם ביקש. שם ה' בקיצור: ה׳.
 - לא להמציא פרטים עובדתיים (שעה, כתובת, טלפון, שמות) שלא נכתבו – במקומם להשאיר מקום עם טקסט כמו "שעה · מקום" רק אם צריך.
+כשמבקשים כמה הצעות (variants) – להחזיר {"options":[{"note":"...","doc":{...}}, ...]} עם הצעות שונות באמת זו מזו: פלטת צבעים אחרת, פריסה אחרת (למשל ממורכז / כותרת למעלה עם פס / מסגרת), וגופנים אחרים. כל הצעה שלמה ועומדת בכל הכללים.
 במצב "edit" מקבלים את העיצוב הנוכחי: לשנות רק את מה שהתבקש, לשמור את שאר השכבות (כולל ה-id שלהן) כמו שהן, ולהחזיר את כל העיצוב המעודכן.
 החזר/י JSON תקין בלבד, בלי טקסט לפניו או אחריו.`;
 
@@ -94,6 +101,10 @@ export function cleanDoc(d, size, imageIds) {
       const fill = colN(e.fill), stroke = colN(e.stroke);
       if (!fill && !stroke) continue;
       els.push(Object.assign(base, { fill, stroke, sw: num(e.sw, 0, 80, stroke ? 4 : 0), radius: t === 'rect' ? Math.round(num(e.radius, 0, 2000, 0)) : 0 }));
+    } else if (t === 'icon') {
+      if (!ICONS.includes(e.icon)) continue;
+      const s = Math.round(Math.min(base.w, base.h));
+      els.push(Object.assign(base, { w: s, h: s, icon: e.icon, fill: col(e.fill, '#c9a55c') }));
     } else if (t === 'line') {
       els.push(Object.assign(base, { h: Math.max(2, Math.round(num(e.sw, 1, 60, 4))), stroke: col(e.stroke, '#111111'), sw: num(e.sw, 1, 60, 4) }));
     }
@@ -103,7 +114,7 @@ export function cleanDoc(d, size, imageIds) {
 
 // ---------- דגמים ----------
 function geminiKeys(env) { return String(env.GEMINI_KEYS || env.GEMINI_KEY || '').split(/[,\s]+/).filter(Boolean); }
-async function gemini(env, text) {
+async function gemini(env, text, imgs, many) {
   const keys = geminiKeys(env);
   if (!keys.length) throw new Error('no key');
   let last;
@@ -112,10 +123,10 @@ async function gemini(env, text) {
     for (let i = 0; i < 2; i++) {
       try {
         const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-          method: 'POST', signal: AbortSignal.timeout(60000),
+          method: 'POST', signal: AbortSignal.timeout(many ? 95000 : 60000),
           headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
-          body: JSON.stringify({ systemInstruction: { parts: [{ text: RULES }] }, contents: [{ role: 'user', parts: [{ text }] }],
-            generationConfig: { temperature: 0.7, maxOutputTokens: 12000, responseMimeType: 'application/json' } })
+          body: JSON.stringify({ systemInstruction: { parts: [{ text: RULES }] }, contents: [{ role: 'user', parts: imageParts(text, imgs) }],
+            generationConfig: { temperature: many ? 0.9 : 0.7, maxOutputTokens: many ? 32000 : 12000, responseMimeType: 'application/json' } })
         });
         if (!r.ok) { const e = new Error(model + ' ' + r.status); e.status = r.status; throw e; }
         const j = await r.json();
@@ -129,6 +140,12 @@ async function gemini(env, text) {
     }
   }
   throw last;
+}
+// הטקסט + התמונות הקטנות (inlineData) – Gemini רואה אותן ויודע לאיזה מזהה כל אחת שייכת
+export function imageParts(text, imgs) {
+  const parts = [{ text }];
+  for (const i of (imgs || [])) if (i.data) { parts.push({ text: `התמונה שהמזהה שלה ${i.id}:` }); parts.push({ inlineData: { mimeType: 'image/jpeg', data: i.data } }); }
+  return parts;
 }
 export function parseJsonText(raw) {
   let t = '';
@@ -147,14 +164,22 @@ async function workersAI(env, text) {
 
 export function buildInput(body) {
   const size = body.size || {};
-  const imgs = (Array.isArray(body.images) ? body.images : []).slice(0, 12).map(i => ({ id: String(i.id).slice(0, 24), w: Math.round(num(i.w, 1, 20000, 1000)), h: Math.round(num(i.h, 1, 20000, 1000)), name: String(i.name || '').slice(0, 40) }));
+  let withData = 0;
+  const imgs = (Array.isArray(body.images) ? body.images : []).slice(0, 12).map(i => {
+    const o = { id: String(i.id).slice(0, 24), w: Math.round(num(i.w, 1, 20000, 1000)), h: Math.round(num(i.h, 1, 20000, 1000)), name: String(i.name || '').slice(0, 40) };
+    if (typeof i.data === 'string' && i.data.length < 700000 && /^[A-Za-z0-9+/=]+$/.test(i.data) && withData < 3) { o.data = i.data; withData++; }
+    return o;
+  });
+  const many = body.mode !== 'edit' && Number(body.variants) > 1;
   let s = `מצב: ${body.mode === 'edit' ? 'edit (לשנות את העיצוב הקיים)' : 'new (עיצוב חדש)'}\n`;
   s += `גודל הקנבס: רוחב ${size.w} גובה ${size.h} פיקסלים.\n`;
   if (body.dest) s += `לאן העיצוב מיועד: ${String(body.dest).slice(0, 300)}. להתאים את הגודל, את כמות הטקסט ואת המיקום ליעד הזה.\n`;
-  s += imgs.length ? `תמונות שהמשתמש העלה (מותר להשתמש רק במזהים האלה): ${JSON.stringify(imgs)}\n` : 'אין תמונות של המשתמש (אל תוסיף/י שכבות תמונה).\n';
+  s += imgs.length ? `תמונות שהמשתמש העלה (מותר להשתמש רק במזהים האלה): ${JSON.stringify(imgs.map(({ data, ...r }) => r))}\n` : 'אין תמונות של המשתמש (אל תוסיף/י שכבות תמונה).\n';
+  if (withData) s += `מצורפות ${withData} מהתמונות עצמן (בגרסה קטנה) – הסתכל/י עליהן לפני שמעצבים: צבעים מתוך התמונה, וטקסט רק במקום פנוי, לא על פנים.\n`;
+  if (many) s += 'הכן/י 3 הצעות שונות זו מזו, והחזר/י {"options":[{"note":...,"doc":...},{...},{...}]}.\n';
   if (body.mode === 'edit' && body.doc) s += `העיצוב הנוכחי:\n${JSON.stringify(body.doc).slice(0, MAX_DOC)}\n`;
   s += `\nהבקשה של המשתמש:\n${String(body.prompt || '').slice(0, MAX_PROMPT)}`;
-  return { text: s, imgs };
+  return { text: s, imgs, many };
 }
 
 async function allow(env, ip) {
@@ -177,17 +202,22 @@ export default {
     if (!String(body.prompt || '').trim()) return json({ error: 'כתבו מה לעצב' }, 400, h);
     const q = await allow(env, req.headers.get('cf-connecting-ip') || '0');
     if (!q.ok) return json({ error: 'הגעתם למכסה של היום לעוזר העיצוב. אפשר להמשיך לעצב ידנית, והעוזר חוזר מחר.' }, 429, h);
-    const { text, imgs } = buildInput(body);
+    const { text, imgs, many } = buildInput(body);
     const size = { w: num(body.size && body.size.w, 200, 4000, 1080), h: num(body.size && body.size.h, 200, 6000, 1080) };
     let out, err;
+    const ids = imgs.map(i => i.id);
+    let options = [];
     for (const f of [gemini, workersAI, workersAI]) {
-      try { out = await f(env, text); if (out && out.data && out.data.doc) break; out = null; }
-      catch (e) { err = e; }
+      try {
+        out = await f(env, text, imgs, many);
+        const raw = out && out.data ? (Array.isArray(out.data.options) ? out.data.options : (out.data.doc ? [out.data] : [])) : [];
+        options = raw.slice(0, 3).map(o => o && o.doc ? { doc: cleanDoc(o.doc, size, ids), note: String(o.note || '').slice(0, 300) } : null).filter(o => o && o.doc.els.length);
+        if (options.length) break;
+        out = null;
+      } catch (e) { err = e; out = null; }
     }
-    if (!out) return json({ error: 'העוזר עמוס כרגע. נסו שוב בעוד דקה.', detail: String(err && err.message || '').slice(0, 120) }, 503, h);
-    const doc = cleanDoc(out.data.doc, size, imgs.map(i => i.id));
-    if (!doc.els.length) return json({ error: 'לא יצא עיצוב. נסו לנסח קצת אחרת.' }, 502, h);
-    return json({ doc, note: String(out.data.note || '').slice(0, 300), left: q.left, model: out.model }, 200, h);
+    if (!out || !options.length) return json({ error: 'העוזר עמוס כרגע. נסו שוב בעוד דקה.', detail: String(err && err.message || '').slice(0, 120) }, 503, h);
+    return json({ doc: options[0].doc, note: options[0].note, options, left: q.left, model: out.model }, 200, h);
   }
 };
 
