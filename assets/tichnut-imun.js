@@ -66,7 +66,7 @@
     $('im-cmp').innerHTML = rows.map(function (x) {
       return '<li' + (x[2] ? ' class="me"' : '') + '><span>' + x[0] + '</span><b>' + dur(x[1]) + '</b><i style="width:' + Math.max(1, x[1] / max * 100).toFixed(1) + '%"></i></li>';
     }).join('');
-    T.wa($('im-wa'), 'הערכת אימון: מודל ' + st.P + 'B, ' + (st.mode === 'full' ? 'אימון מלא' : 'LoRA') + ', ' + (tk / 1e6).toFixed(1) + ' מיליון טוקנים\nעל ' + st.n + ' × ' + g[0] + ': ' + dur(r.h) + (st.price > 0 ? ', בערך ' + money(cost) : '') + '\nhttps://gilad-rachamim.github.io/kelim/tichnut/imun/');
+    T.wa($('im-wa'), 'הערכת אימון: מודל ' + st.P + 'B, ' + (st.mode === 'full' ? 'אימון מלא' : 'LoRA') + ', ' + (tk / 1e6).toFixed(1) + ' מיליון טוקנים\nעל ' + st.n + ' × ' + g[0] + ': ' + dur(r.h) + (st.price > 0 ? ', בערך ' + money(cost) : '') + '\nhttps://hakelim.com/kelim/tichnut/imun/');
     T.save(KEY, st);
   }
   fill(); read(); render();

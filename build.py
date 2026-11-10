@@ -86,15 +86,16 @@ SITES = {
     },
 }
 SPRITE =(ROOT / "assets" / "icons.svg").read_text(encoding="utf-8")
-BASE = "https://gilad-rachamim.github.io"
+BASE = "https://hakelim.com"
 # מעבר לכתובת משלנו: כשמשנים את BASE לכתובת חדשה (למשל "https://hakelim.com"), כל דף מקבל סקריפט קטן בראש:
 # מי שנכנס לכתובת הישנה מועבר לאותו דף בכתובת החדשה, יחד עם הנתונים שהכלים שמרו אצלו בדפדפן (localStorage),
 # כי נתונים כאלה נשמרים לפי כתובת האתר ולא עוברים לבד. הנתונים עוברים בחלק ה-# של הכתובת (לא נשלח לשום שרת)
 # ונמחקים ממנה מיד. בכתובת החדשה לא דורסים מפתח שכבר קיים. כל עוד BASE היא הכתובת הישנה, אין סקריפט.
+# (התמונה assets/mig-ready.png קיימת רק מהגרסה שיודעת לקלוט את הנתונים, כך שלא מעבירים לעותק ישן.)
 # לפני ההעברה הדף הישן טוען תמונה קטנה מהכתובת החדשה: אם היא לא נטענת (סינון אינטרנט שעוד לא מכיר את הכתובת,
 # או תעודת אבטחה שעוד לא מוכנה), הגולש נשאר בכתובת הישנה והכול ממשיך לעבוד לו שם.
 OLD_HOST = "gilad-rachamim.github.io"
-MIGRATE_JS = """<script>(function(){var N="__NEW__",O="__OLD__",L=location,k;function go(){try{var d={},n=0,ks=[],i,v,e;for(i=0;i<localStorage.length;i++)ks.push(localStorage.key(i));ks.sort(function(a,b){return localStorage.getItem(a).length-localStorage.getItem(b).length});for(i=0;i<ks.length;i++){k=ks[i];v=localStorage.getItem(k);e=encodeURIComponent(k).length+encodeURIComponent(v).length+12;if(n+e>1400000)continue;d[k]=v;n+=e}L.replace(N+L.pathname+L.search+(ks.length?"#__mig="+encodeURIComponent(JSON.stringify({d:d,h:L.hash})):L.hash))}catch(x){L.replace(N+L.pathname+L.search+L.hash)}}try{if(L.hostname===O){var im=new Image(),t=setTimeout(function(){im.onload=null},5000);im.onload=function(){clearTimeout(t);go()};im.src=N+"/assets/icon-kelim-192.png?p="+Date.now()}else if(L.hash.indexOf("#__mig=")===0){var o=JSON.parse(decodeURIComponent(L.hash.slice(7)));for(k in o.d)if(localStorage.getItem(k)===null)localStorage.setItem(k,o.d[k]);history.replaceState(null,"",L.pathname+L.search+(o.h||""))}}catch(x){}})();</script>"""
+MIGRATE_JS = """<script>(function(){var N="__NEW__",O="__OLD__",L=location,k;function go(){try{var d={},n=0,ks=[],i,v,e;for(i=0;i<localStorage.length;i++)ks.push(localStorage.key(i));ks.sort(function(a,b){return localStorage.getItem(a).length-localStorage.getItem(b).length});for(i=0;i<ks.length;i++){k=ks[i];v=localStorage.getItem(k);e=encodeURIComponent(k).length+encodeURIComponent(v).length+12;if(n+e>1400000)continue;d[k]=v;n+=e}L.replace(N+L.pathname+L.search+(ks.length?"#__mig="+encodeURIComponent(JSON.stringify({d:d,h:L.hash})):L.hash))}catch(x){L.replace(N+L.pathname+L.search+L.hash)}}try{if(L.hostname===O){var im=new Image(),t=setTimeout(function(){im.onload=null},5000);im.onload=function(){clearTimeout(t);go()};im.src=N+"/assets/mig-ready.png?p="+Date.now()}else if(L.hash.indexOf("#__mig=")===0){var o=JSON.parse(decodeURIComponent(L.hash.slice(7)));for(k in o.d)if(localStorage.getItem(k)===null)localStorage.setItem(k,o.d[k]);history.replaceState(null,"",L.pathname+L.search+(o.h||""))}}catch(x){}})();</script>"""
 MIGRATE = "" if BASE == "https://" + OLD_HOST else MIGRATE_JS.replace("__NEW__", BASE).replace("__OLD__", OLD_HOST)
 # מזהה Google Analytics 4 (G-XXXXXXXXXX). ריק = בלי מעקב.
 GA_ID = "G-4QR4583VST"

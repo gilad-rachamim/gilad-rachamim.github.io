@@ -201,7 +201,7 @@
   function fileName() { return (song.title || 'השיר שלי').replace(/[\\/:*?"<>|]/g, '') + ' - קליפ.' + (lastBlob ? lastBlob.ext : 'mp4'); }
   function fillDesc() {
     var by = st().author || song.author;
-    $('sc-desc').value = (song.title || 'השיר שלי') + (by ? ' – ' + by : '') + '\n\n' + (by ? 'מילים ולחן: ' + by + '\n\n' : '') + S.plain(song).replace(/\[|\]/g, '') + '\n\nנוצר בחינם ב"השיר שלי" – הכלים של גילעד רחמים: https://gilad-rachamim.github.io/kelim/shir/';
+    $('sc-desc').value = (song.title || 'השיר שלי') + (by ? ' – ' + by : '') + '\n\n' + (by ? 'מילים ולחן: ' + by + '\n\n' : '') + S.plain(song).replace(/\[|\]/g, '') + '\n\nנוצר בחינם ב"השיר שלי" – הכלים של גילעד רחמים: https://hakelim.com/kelim/shir/';
   }
   function copyDesc() { var t = $('sc-desc'); t.select(); try { navigator.clipboard.writeText(t.value); } catch (e) { try { document.execCommand('copy'); } catch (x) {} } }
 

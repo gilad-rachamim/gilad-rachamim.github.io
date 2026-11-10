@@ -11,7 +11,7 @@
     $('rt-bar').style.width = (n / all.length * 100) + '%';
     $('rt-cnt').textContent = n + ' מתוך ' + all.length + ' נושאים' + (n === all.length ? ' – אתם מוכנים! 💪' : '');
     $('rt-left').checked = st.left;
-    T.wa($('rt-wa'), 'מתכונן לראיון טכני: סימנתי ' + n + ' מתוך ' + all.length + ' נושאים.\nhttps://gilad-rachamim.github.io/kelim/tichnut/reayon-tech/');
+    T.wa($('rt-wa'), 'מתכונן לראיון טכני: סימנתי ' + n + ' מתוך ' + all.length + ' נושאים.\nhttps://hakelim.com/kelim/tichnut/reayon-tech/');
     T.save(KEY, st);
   }
   document.addEventListener('change', function (e) {

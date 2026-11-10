@@ -89,7 +89,7 @@
   function sign(o, url) {
     var one = '<div class="half"><p class="small">סורקים במצלמה של הטלפון</p><h2>' + esc(o.n) + '</h2>' + (o.s ? '<p>' + esc(o.s) + '</p>' : '') +
       '<p><b>התפריט שלנו בטלפון</b></p><div class="qrbig"></div>' + (o.p ? '<p>להזמנות: <span dir="ltr">' + esc(o.p) + '</span></p>' : '') +
-      '<p class="small">נבנה בחינם בכלים לעסק קטן · gilad-rachamim.github.io/esek</p></div>';
+      '<p class="small">נבנה בחינם בכלים לעסק קטן · hakelim.com/esek</p></div>';
     var s = $('tf-sign'); if (s.parentNode !== document.body) document.body.appendChild(s); s.innerHTML = one + one;
     [].forEach.call(s.querySelectorAll('.qrbig'), function (el) { qr(el, url, 600); });
   }

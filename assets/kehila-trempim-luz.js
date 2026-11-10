@@ -8,7 +8,7 @@
   if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) { var qa = new URLSearchParams(location.search).get('api'); if (qa) API = qa; }
   var CLIENT_ID = '811978831024-vp67lekd6gmffh9sq07jqapvjvmdpudn.apps.googleusercontent.com';
   var TOKEN_KEY = 'trempim_token', KEY = 'trempim_luz';
-  var PAGE = 'https://gilad-rachamim.github.io/kelim/kehila/trempim/luz/';
+  var PAGE = 'https://hakelim.com/kelim/kehila/trempim/luz/';
   var $ = function (id) { return document.getElementById(id); };
   var used = function (how) { try { window.toolUsed && window.toolUsed('trempim', { how: 'luz-' + how }); } catch (e) {} };
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
@@ -211,10 +211,10 @@
     'END:VTIMEZONE'];
   function buildIcs() {
     var now = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
-    var L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//gilad-rachamim.github.io//luz//HE', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:הלו"ז הקבוע שלי'].concat(TZ);
+    var L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//hakelim.com//luz//HE', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:הלו"ז הקבוע שלי'].concat(TZ);
     S.items.forEach(function (it) {
       var t = span(it), lead = leadMin(it) || 30;
-      L.push('BEGIN:VEVENT', 'UID:luz-' + it.id + '@gilad-rachamim.github.io', 'DTSTAMP:' + now,
+      L.push('BEGIN:VEVENT', 'UID:luz-' + it.id + '@hakelim.com', 'DTSTAMP:' + now,
         'DTSTART;TZID=Asia/Jerusalem:' + t.s, 'DTEND;TZID=Asia/Jerusalem:' + t.e, 'RRULE:' + rrule(it),
         'SUMMARY:' + icsEsc(it.name), 'LOCATION:' + icsEsc(it.place.label), 'GEO:' + it.place.lat + ';' + it.place.lng,
         'DESCRIPTION:' + icsEsc(details(it)),

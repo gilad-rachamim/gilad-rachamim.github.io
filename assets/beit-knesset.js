@@ -100,7 +100,7 @@
     s.innerHTML = '<p class="small">בס"ד</p><h2>' + esc(o.name) + '</h2>' + (o.nusach ? '<p>' + esc(o.nusach) + '</p>' : '') +
       '<p>זמני תפילות, שיעורים וקשר עם הגבאי</p><div class="qrbig" id="bk-qr-big"></div><p><b>סורקים במצלמה של הטלפון</b></p>' +
       (o.gphone ? '<p>גבאי' + (o.gname ? ': ' + esc(o.gname) : '') + ' · <span dir="ltr">' + esc(o.gphone) + '</span></p>' : '') +
-      '<p class="small">נבנה בחינם בכלי קודש · gilad-rachamim.github.io/kodesh</p>';
+      '<p class="small">נבנה בחינם בכלי קודש · hakelim.com/kodesh</p>';
     qr($('bk-qr-big'), url, 300);
   }
   function printSign(o) {

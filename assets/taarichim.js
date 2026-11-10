@@ -209,10 +209,10 @@
     var b = e.target.closest('[data-ics]');
     if (!b) return;
     var d1 = b.getAttribute('data-ics'), p = d1.match(/(\d{4})(\d{2})(\d{2})/), d2 = iso(addDays(new Date(+p[1], +p[2] - 1, +p[3]), 1));
-    var ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//gilad-rachamim.github.io//kodesh//HE', 'BEGIN:VEVENT',
-      'UID:' + d1 + '-' + Math.random().toString(36).slice(2) + '@gilad-rachamim.github.io', 'DTSTAMP:' + iso(new Date()) + 'T090000',
+    var ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//hakelim.com//kodesh//HE', 'BEGIN:VEVENT',
+      'UID:' + d1 + '-' + Math.random().toString(36).slice(2) + '@hakelim.com', 'DTSTAMP:' + iso(new Date()) + 'T090000',
       'DTSTART;VALUE=DATE:' + d1, 'DTEND;VALUE=DATE:' + d2, 'SUMMARY:' + b.getAttribute('data-title'),
-      'DESCRIPTION:מחשבון התאריכים של כלי קודש · https://gilad-rachamim.github.io/kodesh/taarichim/', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+      'DESCRIPTION:מחשבון התאריכים של כלי קודש · https://hakelim.com/kodesh/taarichim/', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
     var a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }));
     a.download = 'taarich.ics'; document.body.appendChild(a); a.click(); a.remove();

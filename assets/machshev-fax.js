@@ -105,7 +105,7 @@
       wrap(x, v('note'), R - L - 20 * s).slice(0, 8).forEach(function (l) { x.fillText(l, R, y); y += 34 * s; });
     }
     x.fillStyle = '#777'; x.font = 15 * s + 'px ' + F; x.textAlign = 'center';
-    x.fillText('הוכן בחינם ב"הכלים של גילעד רחמים" · gilad-rachamim.github.io/kelim', W / 2, H - 34 * s);
+    x.fillText('הוכן בחינם ב"הכלים של גילעד רחמים" · hakelim.com/kelim', W / 2, H - 34 * s);
     return c;
   }
   function idv() { return ($('fx-id').value || '').replace(/[^\d]/g, '').slice(0, 9); }

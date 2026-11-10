@@ -299,7 +299,7 @@
     }
     // שורת קרדיט עדינה בתחתית: כל העברה של התמונה מביאה עוד הורים
     ctx.font = '400 22px ' + SANS; ctx.fillStyle = th.muted; ctx.globalAlpha = 0.75;
-    ctx.fillText('הודעה כזאת בחינם: gilad-rachamim.github.io/mohel/hazmana', W / 2, th.creditY || H - 92);
+    ctx.fillText('הודעה כזאת בחינם: hakelim.com/mohel/hazmana', W / 2, th.creditY || H - 92);
     ctx.globalAlpha = 1;
     var y0 = top + (availH - total) / 2;
     laid.forEach(function (l) {
@@ -363,7 +363,7 @@
   function icsData(d) {
     var t = calTimes(d), esc = function (s) { return s.replace(/[,;\\]/g, '\\$&').replace(/\n/g, '\\n'); };
     var ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//gilad-rachamim//hazmana//HE', 'BEGIN:VEVENT',
-      'UID:' + Date.now() + '@gilad-rachamim.github.io', 'DTSTAMP:' + utcStamp(new Date()),
+      'UID:' + Date.now() + '@hakelim.com', 'DTSTAMP:' + utcStamp(new Date()),
       'DTSTART:' + utcStamp(t[0]), 'DTEND:' + utcStamp(t[1]),
       'SUMMARY:' + esc(calTitle(d)), 'LOCATION:' + esc(placeQuery(d)), 'DESCRIPTION:' + esc(calDetails(d)),
       'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
@@ -453,13 +453,13 @@
     if (qc) ctx.drawImage(qc, qx, qy, qs, qs);
     ctx.font = '600 34px ' + SANS; ctx.fillStyle = th.strong; ctx.fillText('סורקים: ניווט ואישור הגעה', W / 2, qy + qs + 66);
     ctx.font = '400 22px ' + SANS; ctx.fillStyle = th.muted; ctx.globalAlpha = 0.75;
-    ctx.fillText('מודעה כזאת בחינם: gilad-rachamim.github.io/mohel/hazmana', W / 2, PH - (th.creditY ? H - th.creditY : 92)); // אותו מרחק מהמסגרת כמו בתמונה
+    ctx.fillText('מודעה כזאת בחינם: hakelim.com/mohel/hazmana', W / 2, PH - (th.creditY ? H - th.creditY : 92)); // אותו מרחק מהמסגרת כמו בתמונה
     ctx.globalAlpha = 1;
     return { x: qx - 16, y: qy - 16, w: qs + 32, h: qs + 32 };
   }
 
   // ---------- PDF (jsPDF מ-cdnjs; הטקסט העברי נשאר תמונה, הקישורים הם annotations) ----------
-  var CREDIT_URL = 'https://gilad-rachamim.github.io/mohel/hazmana/?utm_source=pdf&utm_medium=hazmana';
+  var CREDIT_URL = 'https://hakelim.com/mohel/hazmana/?utm_source=pdf&utm_medium=hazmana';
   function jsPdf() { return window.jspdf && window.jspdf.jsPDF ? new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true }) : null; }
   // שורת כפתורים מצוירת (עברית על קנבס), עם המלבן של כל כפתור כדי לשים עליו קישור
   function linkStrip(th, bgColor, items) {

@@ -39,7 +39,7 @@
         }).join('') + '</tbody></table>';
     }
     T.wa($('gp-wa'), 'השוואת כרטיסי NVIDIA:\n' + pk.map(function (g) { return '• ' + g.name + ' – ' + g.vram + ' GB, ' + g.bw + ' GB/s, CC ' + g.cc + ', ' + g.w + ' W'; }).join('\n') +
-      '\nhttps://gilad-rachamim.github.io/kelim/tichnut/gpu/');
+      '\nhttps://hakelim.com/kelim/tichnut/gpu/');
     T.save(KEY, st);
   }
   fill(); render();

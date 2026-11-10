@@ -211,7 +211,7 @@
     $('f-gcal').addEventListener('click', function () {
       var d = remindAt(), e2 = new Date(d.getTime() + 15 * 60000);
       this.href = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent('🎯 ' + F.what) +
-        '&details=' + encodeURIComponent((F.next ? 'הצעד הקטן: ' + F.next + '\n' : '') + 'רק תזכורת עדינה. גם צעד קטן נחשב.\nhttps://gilad-rachamim.github.io/nefesh/hayom/') +
+        '&details=' + encodeURIComponent((F.next ? 'הצעד הקטן: ' + F.next + '\n' : '') + 'רק תזכורת עדינה. גם צעד קטן נחשב.\nhttps://hakelim.com/nefesh/hayom/') +
         '&dates=' + stamp(d) + '/' + stamp(e2) + '&ctz=Asia/Jerusalem';
       used('remind', { how: 'google' });
     });
