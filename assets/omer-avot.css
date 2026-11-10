@@ -41,3 +41,4 @@
 .oa-pre{font-size:.9rem;color:var(--c-acc);margin:0 0 .6rem}
 @media (max-width:520px){.oa-row{grid-template-columns:1fr}.oa-body{padding:.9rem}}
 @media print{.oa-set,.oa-rem,.oa-nav,.oa-hero .sub{display:none}.oa-day{break-inside:avoid}}
+.oa-did{text-align:center;margin:1rem 0 .2rem}.oa-did .btn-line{background:var(--c-soft);color:var(--c-ink);border-color:var(--c-line)}.oa-ok{color:var(--c-acc,var(--c-ink))}.oa-ok{display:inline-block;margin-top:.3rem;font-size:.85rem;color:var(--gold,#d8b35f)}
