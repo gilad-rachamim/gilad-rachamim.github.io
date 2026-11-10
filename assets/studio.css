@@ -195,7 +195,7 @@
 
 /* טלפון: לוח האפשרויות נפתח מלמטה, והעיצוב נשאר גלוי מעליו */
 @media (max-width:860px){
-  .sd-app.sd-sheet-on .sd-side{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:40;max-height:46vh;border-radius:18px 18px 0 0;padding:0 12px 14px;box-shadow:0 -10px 30px rgba(0,0,0,.5);overflow:auto;overscroll-behavior:contain}
+  .sd-app.sd-sheet-on .sd-side{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:60;max-height:46vh;border-radius:18px 18px 0 0;padding:0 12px 14px;box-shadow:0 -10px 30px rgba(0,0,0,.5);overflow:auto;overscroll-behavior:contain}
   .sd-app.sd-sheet-on .sd-side.closed{max-height:none;overflow:hidden}
   .sd-app.sd-sheet-on .sd-side.closed #sd-panel{display:none}
   .sd-app.sd-sheet-on .sd-grab{display:flex;flex-direction:column;align-items:center;gap:4px;position:sticky;top:0;width:calc(100% + 24px);margin:0 -12px 6px;padding:8px 0 8px;background:var(--sd-card);border:0;border-bottom:1px solid var(--sd-line);color:var(--muted,#a99c82);font:inherit;font-size:.85rem;cursor:pointer;z-index:1}
