@@ -13,7 +13,8 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 SRC = json.loads((ROOT / "tools" / "chanuka-source.json").read_text(encoding="utf-8"))
 
 # הקטעים שנכנסים לדף, לפי מספר הקטע במקור (0 = הכותרת "חנוכה")
-PICK = {"brachot": [3, 4, 5, 6], "halalu": [7, 8], "mizmor": [9], "maoz": [13, 14, 15, 16, 17, 18, 19, 20]}
+PICK = {"brachot": [3, 4, 5, 6], "halalu": [7, 8], "mizmor": [9], "maoz": [13, 14, 15, 16, 17, 18, 19, 20],
+        "segula": [10, 11, 12]}
 
 MARKS = "֑-ֽֿ-ׇ"
 WORD = re.compile(r"[א-ת" + MARKS + r"‑]+")
@@ -23,7 +24,7 @@ PREFIX = set("ובלכמש")
 def name_fix(word):
     letters = [(i, ch) for i, ch in enumerate(word) if "א" <= ch <= "ת"]
     cons = "".join(ch for _, ch in letters)
-    for core in ("יהוה", "יי"):
+    for core in ("יהוה", "יי", "אדני"):
         if cons.endswith(core):
             pre = cons[: -len(core)]
             if len(pre) <= 2 and all(c in PREFIX for c in pre):

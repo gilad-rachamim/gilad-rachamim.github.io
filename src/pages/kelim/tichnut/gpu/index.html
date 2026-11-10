@@ -1,0 +1,40 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tichnut_gpu",
+  "title": "השוואת כרטיסי NVIDIA – VRAM, רוחב פס ו-Compute Capability | הכלים של גילעד רחמים",
+  "description": "30 כרטיסי NVIDIA במקום אחד: GeForce, תחנות עבודה ושרתים (RTX 3060 עד RTX 5090, A100, H100, H200, B200). מסננים לפי VRAM ו-Compute Capability ומשווים עד שלושה צד לצד. בחינם.",
+  "og_title": "איזה כרטיס NVIDIA מתאים לי? השוואה צד לצד",
+  "priority": "0.7",
+  "crumbs": [["כלים למתכנתים", "/kelim/tichnut/"], ["השוואת כרטיסים", null]],
+  "head": "<style>.tn-h{margin-top:1.3rem;color:var(--cream);font-size:1.2rem}.tn-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}.gp-cmp{margin-top:1rem;overflow-x:auto}.gp-cmp table{width:100%;border-collapse:collapse;font-size:.92rem}.gp-cmp th,.gp-cmp td{padding:.5rem .45rem;border-bottom:1px solid var(--line);text-align:center;color:var(--parchment)}.gp-cmp thead th{color:var(--cream);font-family:var(--serif)}.gp-cmp tbody th{text-align:right;color:var(--muted);font-weight:400}.gp-cmp td{direction:ltr}.gp-cmp td.best{color:var(--gold);font-weight:700}.gp-top{display:flex;justify-content:space-between;align-items:center;margin-top:1.2rem;color:var(--muted)}.gp-list{list-style:none;display:grid;gap:.5rem;margin-top:.5rem}.gp-list li{display:grid;grid-template-columns:auto 1fr;gap:.2rem .6rem;padding:.7rem .8rem;border:1px solid var(--line);border-radius:12px}.gp-list li.on{border-color:var(--gold)}.gp-list li.empty{display:block;color:var(--muted)}.gp-list button{grid-row:span 2;background:none;border:0;color:var(--gold);font-size:1.5rem;cursor:pointer;align-self:start}.gp-list b{color:var(--cream)}.gp-list small{display:block;color:var(--muted);font-size:.85rem}.gp-list i{display:block;height:.3rem;border-radius:99px;background:var(--gold-soft);margin-top:.35rem}.gp-list dl{grid-column:2;display:grid;grid-template-columns:repeat(4,auto);gap:0 .7rem;font-size:.88rem}.gp-list dt{color:var(--muted);grid-row:1}.gp-list dd{color:var(--parchment);grid-row:2;direction:ltr;text-align:right}@media print{.topbar,.site-foot,.crumbs,.no-print,.k-form,.gp-list,.gp-top{display:none!important}body{background:#fff}.gp-cmp th,.gp-cmp td{color:#000;border-color:#999}}</style>",
+  "foot": "<script src=\"/assets/tichnut-data.js\" defer></script><script src=\"/assets/tichnut-gpu.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>השוואת כרטיסי NVIDIA</h1>
+  <p class="sub">מהכרטיס בבית ועד השרת בענן. מסננים לפי מה שצריך, מסמנים ★ ומשווים צד לצד.</p>
+</header>
+<div class="tool">
+  <form class="k-form no-print" id="gp-form" novalidate>
+    <div class="tn-row">
+      <div class="field"><label for="gp-fam">סוג</label><select id="gp-fam"><option value="all">הכול</option><option value="geforce">GeForce (בית/גיימינג)</option><option value="pro">תחנת עבודה</option><option value="dc">שרת / ענן</option><option value="edge">Jetson (קצה)</option></select></div>
+      <div class="field"><label for="gp-min">VRAM לפחות</label><select id="gp-min"><option value="0">לא משנה</option><option value="12">12 GB</option><option value="16">16 GB</option><option value="24">24 GB</option><option value="48">48 GB</option><option value="80">80 GB</option></select></div>
+    </div>
+    <div class="tn-row">
+      <div class="field"><label for="gp-cc">Compute Capability לפחות</label><select id="gp-cc"><option value="0">לא משנה</option><option value="7.5">7.5 (Turing)</option><option value="8">8.0 (Ampere, BF16)</option><option value="8.9">8.9 (Ada, FP8)</option><option value="9">9.0 (Hopper)</option><option value="10">10.0+ (Blackwell)</option></select></div>
+      <div class="field"><label for="gp-sort">מיון</label><select id="gp-sort"><option value="vram">הכי הרבה VRAM</option><option value="bw">הכי מהיר בזיכרון</option><option value="gbw">הכי הרבה VRAM לוואט</option><option value="year">הכי חדש</option></select></div>
+    </div>
+    <div class="field"><label for="gp-q">חיפוש</label><input id="gp-q" type="search" placeholder="למשל 4090, H100, Ada"></div>
+  </form>
+  <h2 class="tn-h">ההשוואה</h2>
+  <div class="gp-cmp" id="gp-cmp"></div>
+  <div class="share-row no-print">
+    <a class="btn btn-gold btn-sm" href="#" id="gp-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את ההשוואה</a>
+    <button class="btn btn-line btn-sm" type="button" id="gp-print">להדפיס</button>
+    <button class="btn btn-line btn-sm" type="button" id="gp-reset">לחזור לדוגמה</button>
+  </div>
+  <div class="gp-top"><span>כל הכרטיסים</span><span id="gp-count"></span></div>
+  <ul class="gp-list" id="gp-list"></ul>
+  <p class="disclaimer">הנתונים מהמפרטים הרשמיים של NVIDIA, לגרסה הנפוצה של כל כרטיס (יש דגמים עם זיכרון אחר). לפני קנייה כדאי לבדוק את הדגם המדויק. Compute Capability 8.0 ומעלה תומך ב-BF16, ו-8.9 ומעלה ב-FP8.</p>
+  <div class="share-row no-print"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="השוואת כרטיסי NVIDIA צד לצד: VRAM, רוחב פס ו-Compute Capability. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>

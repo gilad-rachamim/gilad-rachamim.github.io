@@ -1,0 +1,62 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "chanuka_sevivon",
+  "title": "סביבון דיגיטלי – מסובבים בטלפון ומשחקים במשפחה | כלי קודש",
+  "description": "סביבון בטלפון: לוחצים, הוא מסתובב ונופל על נ, ג, ה או פ. ויש גם משחק משפחתי עם קופה של מטבעות או סוכריות, לפי החוקים האמיתיים. בחינם, גם בלי אינטרנט.",
+  "og_title": "סביבון דיגיטלי",
+  "priority": "0.7",
+  "crumbs": [["חנוכה למשפחה", "/kodesh/chanuka/"], ["סביבון דיגיטלי", null]],
+  "head": "<style>.sv-box{padding:1rem;border:1px solid var(--gold-soft);border-radius:16px;background:radial-gradient(circle at 50% 40%,rgba(212,176,98,.16),rgba(212,176,98,.04) 70%);text-align:center}#sv-top{max-width:20rem;margin:0 auto;cursor:pointer;touch-action:manipulation}#sv-top svg{display:block;width:100%;height:auto;transform-origin:50% 92%}.sv-spin{font-size:1.25rem;padding:.85rem 1.6rem;min-width:12rem;justify-content:center}.sv-spin:disabled{opacity:.55}.sv-res{min-height:3.6rem;margin:.7rem 0 .2rem;font-size:1.1rem;color:var(--body);line-height:1.6}.sv-res b{font-family:var(--serif);font-size:2rem;color:var(--gold)}.sv-res span{color:var(--cream)}.sv-res.on{animation:svp .35s ease-out}@keyframes svp{from{transform:scale(.85);opacity:.2}to{transform:none;opacity:1}}.sv-ab{display:inline-flex;gap:.4rem;align-items:center;color:var(--body);font-size:.95rem;margin-top:.6rem;cursor:pointer}.sv-pot{font-size:1.15rem;color:var(--cream);margin:.8rem 0 .4rem}.sv-pot b{color:var(--gold);font-size:1.5rem}.sv-pl{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(8.5rem,1fr));gap:.4rem}.sv-pl li{display:flex;justify-content:space-between;gap:.4rem;padding:.5rem .7rem;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.04);color:var(--cream)}.sv-pl li b{color:var(--gold)}.sv-pl li.now{border-color:var(--gold);background:rgba(212,176,98,.16)}.sv-pl li.out{opacity:.45;text-decoration:line-through}.sv-form{display:grid;gap:.5rem;text-align:start}.sv-form input,.sv-form select{width:100%;font:inherit;font-size:1rem;color:var(--cream);background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:10px;padding:.55rem .7rem}#sv-names{display:grid;grid-template-columns:1fr 1fr;gap:.4rem}.sv-row{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}.sv-row label{color:var(--body);font-size:.92rem}.sv-err{color:var(--gold);min-height:1.2rem;margin:0}.sv-lt{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem}.sv-l{padding:.8rem;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.03)}.sv-l b{display:block;font-family:var(--serif);font-size:2.2rem;color:var(--gold);line-height:1}.sv-l i{font-style:normal;color:var(--cream);font-weight:700}.sv-l small{display:block;color:var(--body);margin-top:.2rem}.sv-note{padding:.7rem .9rem;border-inline-start:3px solid var(--gold);background:rgba(212,176,98,.07);border-radius:8px;color:var(--body);margin:.8rem 0 0}.k-form [hidden],[hidden]{display:none!important}</style>",
+  "foot": "<script src=\"/assets/chanuka-sevivon.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <span class="bsd">בס"ד</span>
+  <h1>סביבון דיגיטלי</h1>
+  <p class="sub">לוחצים, הסביבון מסתובב ונופל על אות. אפשר סתם לסובב, ואפשר לשחק בכל המשפחה עם קופה.</p>
+</header>
+
+<section class="k-sec" aria-label="הסביבון">
+  <div class="sv-box">
+    <div id="sv-top" role="button" aria-label="לסובב את הסביבון"></div>
+    <button type="button" class="btn btn-gold sv-spin" id="sv-spin">לסובב!</button>
+    <p class="sv-res" id="sv-res" aria-live="polite">&nbsp;</p>
+    <div id="sv-board" hidden>
+      <div class="sv-g"></div>
+      <div class="actions" style="justify-content:center;margin-top:.7rem"><button type="button" class="btn btn-line" id="sv-end">משחק חדש</button></div>
+    </div>
+    <label class="sv-ab"><input type="checkbox" id="sv-ab"> אנחנו בחוץ לארץ (ש במקום פ)</label>
+  </div>
+</section>
+
+<section class="k-sec" id="sv-setup" aria-labelledby="sv-g-h">
+  <h2 id="sv-g-h">משחק משפחתי עם קופה</h2>
+  <p class="lead2">כל אחד מקבל מטבעות או סוכריות, שם אחד בקופה, ומסובבים לפי התור. הסביבון סופר בשבילכם.</p>
+  <div class="sv-form">
+    <div id="sv-names"></div>
+    <div class="actions"><button type="button" class="btn btn-line" id="sv-add">+ עוד שחקן</button></div>
+    <div class="sv-row">
+      <label>כמה לכל אחד בהתחלה<input type="number" id="sv-coins" min="2" max="100" value="10" inputmode="numeric"></label>
+      <label>במה משחקים<select id="sv-unit"><option>מטבעות</option><option>סוכריות</option><option>אגוזים</option><option>שוקולדים</option></select></label>
+    </div>
+    <p class="sv-err" id="sv-err" aria-live="polite"></p>
+    <button type="button" class="btn btn-gold" id="sv-start">להתחיל משחק</button>
+  </div>
+</section>
+
+<section class="k-sec" aria-labelledby="sv-l-h">
+  <h2 id="sv-l-h">מה אומרות האותיות</h2>
+  <p class="lead2">ארבע האותיות הן ראשי תיבות: <b>נֵס גָּדוֹל הָיָה <span class="sv-pw">פה</span></b>. ובמשחק, כל אות אומרת מה עושים:</p>
+  <div class="sv-lt">
+    <div class="sv-l"><b>נ</b><i>נֵס</i><small>לא קורה כלום, התור עובר.</small></div>
+    <div class="sv-l"><b>ג</b><i>גָּדוֹל</i><small>לוקחים את כל הקופה!</small></div>
+    <div class="sv-l"><b>ה</b><i>הָיָה</i><small>לוקחים חצי מהקופה (כשהמספר אי-זוגי, מעגלים למעלה).</small></div>
+    <div class="sv-l"><b class="sv-p">פ</b><i class="sv-pw">פה</i><small>מוסיפים אחד לקופה.</small></div>
+  </div>
+  <p class="sv-note">בארץ ישראל כתוב על הסביבון <b>פ</b>, כי הנס היה כאן, פה. בחוץ לארץ כתוב <b>ש</b>: נס גדול היה שם. כשהקופה מתרוקנת, כל אחד שם בה אחד. מי שצריך לשלם ואין לו, יוצא, ומי שנשאר אחרון מנצח.</p>
+</section>
+
+<section class="k-sec" aria-labelledby="sv-more-h">
+  <h2 id="sv-more-h">עוד לחנוכה</h2>
+  <div class="actions"><a class="btn btn-line" href="/kodesh/chanuka/tzviya/">דפי צביעה</a><a class="btn btn-line" href="/kodesh/chanuka/chidon/">חידון חנוכה</a><a class="btn btn-line" href="/kodesh/chanuka/">לחבילת החנוכה למשפחה</a></div>
+</section>

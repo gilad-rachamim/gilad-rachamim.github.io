@@ -1,0 +1,120 @@
+/* "השיר שלי" (/kelim/shir/): כותבים, מלחינים, מקליטים ועושים קליפ. קידומת shr- */
+.shr-steps{display:flex;gap:.35rem;justify-content:center;flex-wrap:wrap;margin:.2rem 0 1rem}
+.shr-steps a{display:inline-flex;align-items:center;gap:.35rem;padding:.35rem .8rem;border-radius:999px;border:1px solid var(--line);color:var(--muted);text-decoration:none;font-size:.95rem}
+.shr-steps a b{display:inline-grid;place-items:center;width:1.45rem;height:1.45rem;border-radius:50%;background:rgba(255,255,255,.07);color:var(--parchment);font-size:.85rem}
+.shr-steps a.on{border-color:var(--gold);color:var(--cream)}
+.shr-steps a.on b{background:var(--gold);color:var(--ink)}
+.shr-top{display:flex;gap:.5rem;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:.8rem}
+.shr-top select{font:inherit;font-size:1rem;padding:.4rem .6rem;border-radius:10px;border:1px solid var(--line);background:var(--ink);color:var(--cream);max-width:60%}
+.shr-screen[hidden]{display:none!important}
+.shr-screen h2{font-family:var(--serif);color:var(--cream);font-size:1.35rem;margin:0 0 .3rem}
+.shr-screen .hint{color:var(--muted);font-size:.95rem;margin:.1rem 0 .6rem}
+.shr-chips{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.4rem}
+.shr-chips button{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--parchment);border-radius:999px;padding:.5rem .95rem;font:inherit;font-size:1rem;cursor:pointer;min-height:2.6rem}
+.shr-chips button.on{background:rgba(227,183,101,.2);border-color:var(--gold);color:var(--cream)}
+.shr-big{display:grid;gap:.55rem}
+.shr-big button{display:block;text-align:start;width:100%;padding:.85rem 1rem;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--parchment);font:inherit;font-size:1.05rem;cursor:pointer}
+.shr-big button b{display:block;color:var(--cream);font-size:1.12rem}
+.shr-big button span{color:var(--muted);font-size:.93rem}
+.shr-big button.on{border-color:var(--gold);background:rgba(227,183,101,.12)}
+.shr-nav{display:flex;gap:.6rem;justify-content:space-between;margin-top:1.1rem;flex-wrap:wrap}
+.shr-nav .btn{min-width:7.5rem;justify-content:center}
+.shr-q{margin-bottom:.8rem}
+.shr-q label{display:block;color:var(--cream);font-weight:600;margin-bottom:.25rem}
+.shr-q textarea{min-height:3.6rem!important}
+/* עורך */
+.shr-raw{border:1px dashed var(--gold-soft);border-radius:14px;padding:.6rem .85rem;margin-bottom:.9rem;color:var(--parchment);background:rgba(227,183,101,.05)}
+.shr-raw summary{cursor:pointer;color:var(--gold);font-weight:600}
+.shr-raw ul{margin:.4rem 0 0;padding-inline-start:1.1rem}
+.shr-raw li{margin:.15rem 0}
+.shr-part{border:1px solid var(--line);border-radius:16px;padding:.75rem .8rem;margin-bottom:.8rem;background:rgba(255,255,255,.025)}
+.shr-part.chorus{border-color:var(--gold-soft);background:rgba(227,183,101,.05)}
+.shr-part .ph{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.45rem}
+.shr-part .ph b{font-family:var(--serif);color:var(--cream);font-size:1.12rem}
+.shr-part .ph button{background:none;border:0;color:var(--muted);cursor:pointer;font:inherit;font-size:.9rem}
+.shr-line{display:grid;grid-template-columns:1fr auto;gap:.35rem;align-items:center;margin-bottom:.5rem}
+.shr-line input{width:100%;min-width:0;font:inherit;font-size:1.08rem;padding:.6rem .7rem;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--cream)}
+.shr-line .tools{display:flex;gap:.25rem;align-items:center}
+.shr-syl{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;overflow:hidden;font-size:.85rem;color:var(--parchment)}
+.shr-syl button{background:none;border:0;color:var(--muted);padding:.25rem .45rem;cursor:pointer;font:inherit}
+.shr-syl span{min-width:2.6rem;text-align:center}
+.shr-syl.man span{color:var(--gold)}
+.shr-mini{border:1px solid var(--line);background:transparent;color:var(--body);border-radius:999px;padding:.32rem .65rem;font:inherit;font-size:.88rem;cursor:pointer;white-space:nowrap}
+.shr-mini:hover{border-color:var(--gold-soft);color:var(--cream)}
+.shr-mini.gold{border-color:var(--gold-soft);color:var(--gold)}
+.shr-ask{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:.35rem}
+.shr-sug{grid-column:1/-1;border:1px solid var(--gold-soft);border-radius:12px;padding:.5rem .6rem;background:rgba(227,183,101,.07)}
+.shr-sug p{margin:0 0 .35rem;color:var(--muted);font-size:.9rem}
+.shr-sug .opts{display:flex;flex-wrap:wrap;gap:.35rem}
+.shr-sug .opts button{border:1px solid var(--line);background:var(--ink-2);color:var(--cream);border-radius:12px;padding:.4rem .7rem;font:inherit;font-size:.98rem;cursor:pointer;text-align:start}
+.shr-sug .opts button:hover{border-color:var(--gold)}
+.shr-sug .x{float:left;background:none;border:0;color:var(--muted);cursor:pointer;font-size:1.1rem}
+.shr-order{color:var(--muted);font-size:.92rem;margin:.2rem 0 .8rem}
+.shr-order b{color:var(--parchment);font-weight:600}
+.shr-add{display:flex;gap:.45rem;flex-wrap:wrap;margin:.3rem 0 1rem}
+.shr-msg{color:var(--gold);font-size:.95rem;min-height:1.2em;margin:.3rem 0}
+/* דף השיר להדפסה – שלושה סגנונות */
+.shr-card{max-width:34rem;margin:1.2rem auto 0;border-radius:14px;padding:1.4rem 1.2rem;line-height:1.7;border:1px solid #d9cfb4;text-align:center}
+.shr-card h3{font-family:var(--serif);font-size:1.7rem;margin:0}
+.shr-card .by{font-size:.95rem;margin:.1rem 0 1rem}
+.shr-card h4{font-family:var(--serif);font-size:1rem;margin:1rem 0 .2rem;letter-spacing:.02em}
+.shr-card p{margin:0;font-size:1.15rem;white-space:pre-line}
+.shr-card .ch{display:block;font-size:.85rem;font-family:inherit;direction:ltr;letter-spacing:.04em;line-height:1.1;min-height:1em}
+.shr-card p.cl{line-height:2.9}
+.shr-card .cs{position:relative}
+.shr-card .cs .ch{position:absolute;top:-1.25em;right:0;white-space:nowrap;min-height:0}
+.shr-card .ft{font-size:.8rem;margin-top:1.2rem}
+.shr-card.t-lavan{background:#fff;color:#111;border-color:#999}.shr-card.t-lavan h3{color:#111}.shr-card.t-lavan h4,.shr-card.t-lavan .by,.shr-card.t-lavan .ft{color:#555}.shr-card.t-lavan .ch{color:#333}
+.shr-card.t-zayit{background:#f4f6ec;color:#1f2a16;border-color:#9fae7d}.shr-card.t-zayit h3{color:#3d5a1e}.shr-card.t-zayit h4,.shr-card.t-zayit .by,.shr-card.t-zayit .ft{color:#55603f}.shr-card.t-zayit .ch{color:#3d5a1e}
+.shr-card.t-klaf{background:#fbf3df;color:#2a2013;border-color:#c9b97d}.shr-card.t-klaf h3{color:#6b4a12}.shr-card.t-klaf h4,.shr-card.t-klaf .by,.shr-card.t-klaf .ft{color:#6d5b3c}.shr-card.t-klaf .ch{color:#8a5a12}
+.shr-card.t-layla{background:#141a2b;color:#e9e4d6;border-color:#3a4566}.shr-card.t-layla h3{color:#f1d58f}.shr-card.t-layla h4,.shr-card.t-layla .by,.shr-card.t-layla .ft{color:#a8b0c8}.shr-card.t-layla .ch{color:#f1d58f}
+.shr-themes{display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;margin-top:1rem}
+.shr-themes button{border:1px solid var(--line);background:transparent;color:var(--parchment);border-radius:999px;padding:.35rem .8rem;font:inherit;font-size:.92rem;cursor:pointer}
+.shr-themes button.on{border-color:var(--gold);color:var(--cream);background:rgba(227,183,101,.15)}
+.shr-demo{background:rgba(227,183,101,.1);border:1px solid var(--gold-soft);border-radius:12px;padding:.6rem .85rem;color:var(--parchment);margin:0 0 1rem;display:flex;gap:.6rem;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.shr-demo[hidden]{display:none}
+.shr-next{display:flex;justify-content:center;margin:1.4rem 0 .4rem}
+.shr-next .btn{font-size:1.1rem;padding:.75rem 1.5rem}
+.shr-num{display:inline-grid!important;place-items:center;width:1.9rem;height:1.9rem;border-radius:50%;background:var(--gold);color:var(--ink)!important;font-weight:700;margin:0 0 .4rem!important;font-size:1rem!important}
+/* לחן */
+.shr-mel{display:flex;gap:2px;align-items:flex-end;height:5rem;margin:.35rem 0;direction:rtl;overflow-x:auto;overflow-y:hidden}
+.shr-mel i{position:relative;flex:1 0 1.7rem;max-width:2.6rem;background:rgba(227,183,101,.16);border-radius:6px 6px 2px 2px;font-style:normal;text-align:center;font-size:.75rem;color:var(--parchment);cursor:pointer;border:1px solid transparent}
+.shr-mel i.sel{border-color:var(--gold)}
+.shr-mel i.now{background:var(--gold);color:var(--ink)}
+.shr-mel i small{display:block;padding-top:.1rem;color:var(--cream);font-size:.72rem;white-space:nowrap;overflow:hidden}
+.shr-mel i.now small{color:var(--ink)}
+.shr-ml{border-top:1px solid var(--line);padding:.6rem 0 1.4rem}
+.shr-ml .t{color:var(--cream);font-size:1.05rem;display:flex;justify-content:space-between;gap:.4rem;flex-wrap:wrap;align-items:center}
+.shr-ml .chs{direction:ltr;text-align:right;color:var(--gold);font-size:.85rem;letter-spacing:.05em}
+.shr-ml .acts{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:1.3rem}
+.shr-nudge{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.35rem}
+.shr-nudge[hidden]{display:none}
+.shr-play{position:sticky;bottom:.6rem;z-index:5;display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;padding:.55rem;border-radius:16px;background:var(--ink-2);border:1px solid var(--gold-soft);margin-top:1rem;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+/* קריוקי */
+.shr-kar{border-radius:18px;background:#0e1322;border:1px solid var(--line);padding:1.4rem 1rem;text-align:center;min-height:11rem;display:grid;place-items:center;position:relative}
+.shr-kar .cur{font-size:1.6rem;line-height:1.5;color:#fff;font-family:var(--serif)}
+.shr-kar .cur .on{color:var(--gold)}
+.shr-kar .nx{font-size:1.05rem;color:#8a92a8;margin-top:.4rem}
+.shr-kar .cnt{position:absolute;inset:0;display:grid;place-items:center;font-size:4rem;color:var(--gold);background:rgba(14,19,34,.85);border-radius:18px}
+.shr-kar .cnt[hidden]{display:none}
+.shr-parts{display:grid;gap:.5rem;margin:1rem 0}
+.shr-parts .pr{display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap;border:1px solid var(--line);border-radius:14px;padding:.6rem .8rem}
+.shr-parts .pr b{color:var(--cream)}
+.shr-parts .pr .ok{color:#7fd1b0;font-size:.9rem}
+.shr-meter{height:.5rem;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin:.5rem 0}
+.shr-meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,#7fd1b0,var(--gold),#e8846b)}
+.shr-range{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin:.6rem 0}
+.shr-range input[type=range]{flex:1;min-width:10rem;accent-color:var(--gold)}
+/* קליפ */
+.shr-stage{position:relative;margin:0 auto;max-width:22rem;border-radius:16px;overflow:hidden;background:#000;border:1px solid var(--line)}
+.shr-stage.wide{max-width:40rem}
+.shr-stage canvas{display:block;width:100%;height:auto}
+.shr-prog{height:.45rem;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin:.7rem 0}
+.shr-prog i{display:block;height:100%;width:0;background:var(--gold)}
+.shr-yt{border:1px solid var(--line);border-radius:14px;padding:.8rem .9rem;margin-top:1rem;color:var(--parchment)}
+.shr-yt ol{margin:.3rem 0 0;padding-inline-start:1.2rem}
+.shr-yt textarea{width:100%;min-height:5rem;font:inherit;font-size:.95rem;background:rgba(0,0,0,.25);color:var(--cream);border:1px solid var(--line);border-radius:10px;padding:.5rem;margin-top:.4rem}
+@media (max-width:460px){.shr-line{grid-template-columns:1fr}.shr-line .tools{justify-content:flex-end}.shr-kar .cur{font-size:1.35rem}}
+@media print{@page{size:A4;margin:14mm}html,body{background:#fff!important}body *{visibility:hidden}.topbar,.site-foot,.crumbs,.install-bar,.no-print,.ft{display:none!important}.shr-card,.shr-card *{visibility:visible}.shr-card{position:absolute;top:0;right:0;left:0;max-width:none;border:0;font-size:13pt}}
+.dom .shr-dev{opacity:1;border-color:var(--gold-soft);background:radial-gradient(120% 140% at 100% 0,rgba(227,183,101,.16),transparent 60%),rgba(255,255,255,.03)}
+.dom .shr-dev .badge{background:var(--gold);color:var(--ink)}

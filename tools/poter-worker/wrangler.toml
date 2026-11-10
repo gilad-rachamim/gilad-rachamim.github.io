@@ -1,0 +1,22 @@
+# "הפותר" – שאלות בגרות במתמטיקה עם דרך מלאה ובדיקה (Cloudflare Worker, חינם).
+# פריסה:        cd tools/poter-worker && npx wrangler deploy   (אותו חשבון כמו kelim-shir)
+# מפתחות Gemini: npx wrangler secret put GEMINI_KEYS   (כמה מפתחות מופרדים בפסיק, כל אחד מפרויקט AI Studio נפרד = מכסה נפרדת; חינם, בלי כרטיס אשראי)
+# בדיקה במחשב: node test.mjs          (בלי רשת – בודק את בודק החישובים)
+#               node bagrut.mjs        (שאלות בגרות אמיתיות מול Gemini, צריך מפתח)
+# הדף: https://hakelim.com/limudim/poter/
+name = "limudim-poter"
+main = "poter-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+# גיבוי לטקסט כש-Gemini עמוס
+[ai]
+binding = "AI"
+
+[[durable_objects.bindings]]
+name = "QUOTA"
+class_name = "Quota"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Quota"]

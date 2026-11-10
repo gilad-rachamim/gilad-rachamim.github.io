@@ -1,0 +1,56 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "chanuka_kniyot",
+  "title": "מחשבון קניות לחנוכה – כמה שמן, פתילות ונרות צריך | כלי קודש",
+  "description": "כמה שמן זית, פתילות או נרות צריך לחנוכה? בוחרים כמה חנוכיות יש בבית ומקבלים רשימת קניות, לשליחה בווטסאפ או להדפסה. בחינם.",
+  "og_title": "מחשבון קניות לחנוכה",
+  "priority": "0.7",
+  "crumbs": [["חנוכה למשפחה", "/kodesh/chanuka/"], ["מחשבון קניות", null]],
+  "head": "<style>.kn-f{display:grid;gap:.9rem}.kn-num{display:flex;align-items:center;gap:.5rem}.kn-num input{width:5rem;text-align:center;font-size:1.4rem;font-weight:700}.kn-num button{width:3rem;height:3rem;border-radius:50%;border:1px solid var(--gold-soft);background:none;color:var(--gold);font-size:1.5rem;cursor:pointer}.kn-lab{font-weight:700;color:var(--cream);margin:0 0 .35rem}.kn-ch{display:flex;flex-wrap:wrap;gap:.45rem}.kn-ch label{position:relative}.kn-ch input{position:absolute;opacity:0;inset:0}.kn-ch span{display:inline-block;padding:.5rem 1rem;border:1px solid var(--line);border-radius:99px;color:var(--body);cursor:pointer}.kn-ch input:checked+span{border-color:var(--gold);color:var(--gold);background:rgba(212,176,98,.1);font-weight:700}.kn-ch input:focus-visible+span{outline:2px solid var(--gold)}.kn-row{display:grid;gap:.3rem;color:var(--body)}.kn-row input,.kn-row select{max-width:14rem}.kn-tbl{width:100%;border-collapse:collapse;margin-top:.4rem;font-size:1.05rem}.kn-tbl td{padding:.65rem .3rem;border-bottom:1px solid var(--line);color:var(--body);vertical-align:top}.kn-tbl td b{color:var(--cream)}.kn-tbl small{display:block;color:var(--muted);font-size:.86rem;margin-top:.15rem;line-height:1.5}.kn-tbl td.t{text-align:left;font-family:var(--serif);font-size:1.25rem;color:var(--gold);white-space:nowrap}.kn-sum{color:var(--cream);font-weight:700}.kn-st{color:var(--muted);font-size:.9rem;line-height:1.6}@media print{.topbar,.site-foot,.crumbs,.no-print,.k-hero .sub{display:none!important}body{background:#fff!important}.kn-tbl td,.kn-tbl td b,.kn-tbl td.t,.kn-sum,h1,h2{color:#000!important}}</style>",
+  "foot": "<script src=\"/assets/chanuka-kniyot.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <span class="bsd">בס"ד</span>
+  <h1>מחשבון קניות לחנוכה</h1>
+  <p class="sub">כמה שמן, פתילות או נרות צריך לכל שמונת הלילות? בוחרים, ומקבלים רשימה מוכנה.</p>
+</header>
+
+<section class="k-sec no-print" aria-label="הבית שלכם">
+  <div class="kn-f">
+    <div>
+      <p class="kn-lab" id="kn-n-l">כמה חנוכיות מדליקים בבית?</p>
+      <div class="kn-num"><button type="button" data-step="-1" aria-label="פחות">−</button><input type="number" id="kn-n" min="1" max="30" inputmode="numeric" aria-labelledby="kn-n-l"><button type="button" data-step="1" aria-label="יותר">+</button></div>
+    </div>
+    <div>
+      <p class="kn-lab">במה מדליקים?</p>
+      <div class="kn-ch">
+        <label><input type="radio" name="kn-kind" value="oil"><span>שמן זית ופתילות</span></label>
+        <label><input type="radio" name="kn-kind" value="candles"><span>נרות</span></label>
+      </div>
+    </div>
+    <label class="kn-row">השמש
+      <select id="kn-shamash"><option value="candle">נר</option><option value="oil">כוס שמן</option></select>
+    </label>
+    <label class="kn-row" id="kn-ml-row">כמה שמן בכל כוס (מ"ל)
+      <input type="number" id="kn-ml" min="5" max="200" step="5" inputmode="numeric">
+      <span class="kn-st">צריך שהנר ידלק לפחות חצי שעה. בודקים כמה הכוס שלכם מחזיקה.</span>
+    </label>
+  </div>
+</section>
+
+<section class="k-sec" aria-labelledby="kn-res-h">
+  <h2 id="kn-res-h">רשימת הקניות</h2>
+  <p class="kn-sum" id="kn-sum"></p>
+  <table class="kn-tbl"><tbody id="kn-rows"></tbody></table>
+  <p class="kn-st">החשבון הוא בערך. כדאי לקנות קצת יותר, כדי שלא ייגמר באמצע החג.</p>
+  <div class="actions no-print">
+    <a class="btn btn-gold" href="#" id="kn-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הרשימה</a>
+    <button class="btn btn-line" type="button" id="kn-print">להדפיס</button>
+  </div>
+</section>
+
+<section class="k-sec no-print" aria-labelledby="kn-more-h">
+  <h2 id="kn-more-h">עוד לחנוכה</h2>
+  <div class="actions"><a class="btn btn-line" href="/kodesh/chanuka/nerot/">לוח שמונה הנרות</a><a class="btn btn-line" href="/kodesh/chanuka/matkonim/">מתכונים לסופגניות ולביבות</a><a class="btn btn-line" href="/kodesh/chanuka/">לחבילת החנוכה למשפחה</a></div>
+</section>

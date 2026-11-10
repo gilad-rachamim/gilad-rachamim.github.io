@@ -1,0 +1,134 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tichnut_maslul",
+  "title": "מאיפה מתחילים? מסלול לימוד GPU ו-CUDA בעברית – למתחילים ולסטודנטים להנדסת מחשבים | הכלים של גילעד רחמים",
+  "description": "שני מסלולים בעברית: למתחילים שרוצים להריץ AI על כרטיס NVIDIA, ולסטודנטים להנדסת מחשבים – תכנות מקבילי ב-CUDA, היררכיית זיכרון, occupancy, דיבאג ופרופיילינג. בכל שלב מושג, תרגיל קטן וכלי. בחינם.",
+  "og_title": "מאיפה מתחילים עם GPU ו-CUDA? מסלול בעברית",
+  "priority": "0.8",
+  "crumbs": [["כלים למתכנתים", "/kelim/tichnut/"], ["מאיפה מתחילים", null]],
+  "head": "<style>.ms-tabs{display:flex;gap:.4rem;margin-bottom:1rem}.ms-tabs button{flex:1;padding:.7rem .5rem;border:1px solid var(--line);border-radius:14px;background:none;color:var(--body);font:inherit;cursor:pointer;line-height:1.35}.ms-tabs button b{display:block;font-size:1.05rem;color:var(--parchment)}.ms-tabs button small{color:var(--muted);font-size:.82rem}.ms-tabs button[aria-pressed=true]{border-color:var(--gold);background:rgba(216,179,95,.1)}.ms-tabs button[aria-pressed=true] b{color:var(--cream)}.ms-prog{display:flex;align-items:center;gap:.6rem;margin:.2rem 0 1rem;color:var(--muted);font-size:.9rem}.ms-prog div{flex:1;height:.5rem;border-radius:99px;background:var(--line);overflow:hidden}.ms-prog i{display:block;height:100%;width:0;background:var(--gold);transition:width .3s}.ms-intro{color:var(--parchment);line-height:1.7;margin-bottom:.8rem}.ms-step{position:relative;padding:1rem 1rem 1rem 1rem;border:1px solid var(--line);border-radius:14px;margin-bottom:.8rem;counter-increment:st}.ms-step.done{border-color:var(--gold-soft);background:rgba(216,179,95,.05)}.ms-step h3{color:var(--cream);font-size:1.15rem;margin-bottom:.35rem;padding-left:5.5rem}.ms-step h3::before{content:counter(st) '. ';color:var(--gold)}.ms-step p,.ms-step li{color:var(--parchment);line-height:1.7}.ms-step ul{padding-right:1.2rem;margin:.3rem 0}.ms-con{margin:.6rem 0;padding:.55rem .75rem;border-right:3px solid var(--gold);background:rgba(216,179,95,.07);border-radius:6px}.ms-con b{color:var(--gold)}.ms-ex{margin-top:.6rem}.ms-ex>b{color:var(--cream)}.ms-ex pre{margin-top:.35rem;direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:.85rem;line-height:1.5;padding:.7rem;border-radius:10px;background:rgba(0,0,0,.35);color:#e9f5e1;white-space:pre;overflow-x:auto}.ms-ex button{margin-top:.35rem}.ms-links{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.7rem}.ms-done{position:absolute;top:.9rem;left:.9rem;display:flex;align-items:center;gap:.3rem;color:var(--muted);font-size:.88rem;cursor:pointer}.ms-done input{accent-color:var(--gold);width:1.1rem;height:1.1rem}.ms-track{counter-reset:st}.ms-ans{margin-top:.4rem;color:var(--body)}.ms-ans summary{cursor:pointer;color:var(--gold)}@media print{.topbar,.site-foot,.crumbs,.no-print,.ms-tabs,.ms-done{display:none!important}.ms-track{display:block!important}body{background:#fff}.ms-step,.ms-step p,.ms-step li,.ms-step h3{color:#000;border-color:#999}.ms-ex pre{background:#f3f3f3;color:#000}}.tn-shut{margin:1.2rem 0 .6rem;padding:.75rem .9rem;border-inline-start:3px solid var(--gold-soft);border-radius:10px;background:rgba(216,179,95,.05);color:var(--parchment);font-size:.92rem;line-height:1.65}</style>",
+  "foot": "<script src=\"/assets/tichnut-data.js\" defer></script><script src=\"/assets/tichnut-maslul.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מאיפה מתחילים?</h1>
+  <p class="sub">שני מסלולים קצרים בעברית: אחד למי שרוצה להריץ AI על כרטיס NVIDIA, ואחד לסטודנטים להנדסת מחשבים שלומדים תכנות מקבילי וארכיטקטורה. בכל שלב – מושג אחד, תרגיל קטן, והכלי שעוזר.</p>
+</header>
+<div class="tool">
+  <div class="ms-tabs" role="group" aria-label="בחירת מסלול">
+    <button type="button" data-t="ai" aria-pressed="true"><b>🤖 מתחילים עם AI</b><small>להריץ ולאמן מודלים</small></button>
+    <button type="button" data-t="eng" aria-pressed="false"><b>🎓 הנדסת מחשבים</b><small>CUDA, זיכרון וביצועים</small></button>
+  </div>
+
+  <section class="ms-track" id="ms-ai">
+    <div class="ms-prog"><div><i id="ms-bar-ai"></i></div><span id="ms-cnt-ai"></span></div>
+    <p class="ms-intro">לא צריך ידע קודם ב-GPU. צריך מחשב עם כרטיס NVIDIA (או חשבון בענן), ו-Python בסיסי.</p>
+
+    <div class="ms-step"><label class="ms-done"><input type="checkbox" data-step="ai1"> סיימתי</label>
+      <h3>להכיר את הכרטיס שלכם</h3>
+      <p>לפני הכול: איזה כרטיס יש, כמה זיכרון, ואיזה דרייבר.</p>
+      <p class="ms-con"><b>VRAM</b> – הזיכרון שעל הכרטיס עצמו. הוא קובע איזה מודל בכלל נכנס. <b>Compute Capability</b> – הדור של הכרטיס (למשל 8.9 = RTX 40).</p>
+      <div class="ms-ex"><b>תרגיל:</b> הריצו ורשמו את שם הכרטיס, כמה GB יש, ואת "CUDA Version".<pre>nvidia-smi</pre><button type="button" class="btn btn-line btn-sm" data-copy>להעתיק</button></div>
+      <div class="ms-links"><a class="btn btn-line btn-sm" href="/kelim/tichnut/pkudot/">מחולל פקודות ←</a><a class="btn btn-line btn-sm" href="/kelim/tichnut/gpu/">השוואת כרטיסים ←</a></div>
+    </div>
+
+    <div class="ms-step"><label class="ms-done"><input type="checkbox" data-step="ai2"> סיימתי</label>
+      <h3>להתקין PyTorch שרואה את הכרטיס</h3>
+      <p>הטעות הכי נפוצה: מתקינים PyTorch בלי CUDA, והכול רץ לאט על המעבד בלי שמרגישים.</p>
+      <p class="ms-con"><b>CUDA</b> – השפה והספריות של NVIDIA שמאפשרות לתוכנות להריץ חישובים על הכרטיס.</p>
+      <div class="ms-ex"><b>תרגיל:</b> צריך לראות <code>True</code> ואת שם הכרטיס.<pre>python -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0))"</pre><button type="button" class="btn btn-line btn-sm" data-copy>להעתיק</button></div>
+      <div class="ms-links"><a class="btn btn-line btn-sm" href="/kelim/tichnut/pkudot/">פקודת ההתקנה הנכונה ←</a><a class="btn btn-line btn-sm" href="/kelim/tichnut/shgiot/">יצאה שגיאה? ←</a></div>
+    </div>
+
+    <div class="ms-step"><label class="ms-done"><input type="checkbox" data-step="ai3"> סיימתי</label>
+      <h3>להריץ מודל שפה ראשון</h3>
+      <p>הדרך הכי קלה היא Ollama: פקודה אחת, והמודל רץ אצלכם, בלי אינטרנט ובלי לשלם.</p>
+      <p class="ms-con"><b>קוונטיזציה</b> – לשמור כל מספר במודל בפחות ביטים (8 או 4 במקום 16). המודל קטן פי 2–4 ונכנס לכרטיס קטן יותר.</p>
+      <div class="ms-ex"><b>תרגיל:</b> בדקו במחשבון כמה VRAM צריך, ואז קבלו את ההגדרות המדויקות לכרטיס שלכם.</div>
+      <div class="ms-links"><a class="btn btn-line btn-sm" href="/kelim/tichnut/vram/">מחשבון VRAM ←</a><a class="btn btn-line btn-sm" href="/kelim/tichnut/hagdarot/">הגדרות להרצה ←</a></div>
+    </div>
+
+    <div class="ms-step"><label class="ms-done"><input type="checkbox" data-step="ai4"> סיימתי</label>
+      <h3>להבין למה זה מהיר (או איטי)</h3>
+      <p>כדי לכתוב כל מילה, הכרטיס קורא את כל המודל מהזיכרון. לכן מהירות הזיכרון חשובה יותר מכוח החישוב.</p>
+      <p class="ms-con"><b>טוקן</b> – חתיכת מילה (בערך ¾ מילה באנגלית). <b>רוחב פס</b> – כמה GB הכרטיס קורא בשנייה.</p>
+      <div class="ms-ex"><b>תרגיל:</b> השוו במחשבון את אותו מודל ב-FP16 וב-4 ביט. פי כמה זה מהר יותר, ולמה?</div>
+      <div class="ms-links"><a class="btn btn-line btn-sm" href="/kelim/tichnut/mehirut/">כמה טוקנים לשנייה ←</a></div>
+    </div>
+
+    <div class="ms-step"><label class="ms-done"><input type="checkbox" data-step="ai5"> סיימתי</label>
+      <h3>לאמן משהו קטן משלכם (LoRA)</h3>
+      <p>לא מאמנים מודל מאפס. לוקחים מודל קיים ומלמדים אותו משהו קטן – סגנון, נושא, פורמט – עם LoRA.</p>
+      <p class="ms-con"><b>LoRA</b> – במקום לשנות את כל המודל, מוסיפים לו "מתאמים" קטנים ומאמנים רק אותם. חוסך הרבה זיכרון וזמן.</p>
+      <div class="ms-ex"><b>תרגיל:</b> חשבו כמה זמן ייקח לאמן מודל 3B על 2,000 דוגמאות בכרטיס שלכם.</div>
+      <div class="ms-links"><a class="btn btn-line btn-sm" href="/kelim/tichnut/imun/">זמן ועלות אימון ←</a><a class="btn btn-line btn-sm" href="/kelim/tichnut/json/">לסדר את קובץ הנתונים (JSON) ←</a></div>
+    </div>
+  </section>
+
+  <section class="ms-track" id="ms-eng" hidden>
+    <div class="ms-prog"><div><i id="ms-bar-eng"></i></div><span id="ms-cnt-eng"></span></div>
+    <p class="ms-intro">מתאים לקורסים כמו תכנות מקבילי, ארכיטקטורת מחשבים ומערכות מחשוב. צריך C בסיסי, כרטיס NVIDIA ו-CUDA Toolkit (או Google Colab עם GPU).</p>
+
+    <div class="ms-step"><label class="ms-done"><input type="checkbox" data-step="en1"> סיימתי</label>
+      <h3>מודל התכנות: grid, block, thread</h3>
+      <p>קרנל (kernel) הוא פונקציה שרצה אלפי פעמים במקביל. כל הרצה היא thread, ה-threads מקובצים לבלוקים, והבלוקים ל-grid.</p>
+      <p class="ms-con"><b>warp</b> – קבוצה של 32 threads שמבצעים את אותה פקודה באותו רגע (SIMT). אם יש if שמפצל אותם – הם מחכים זה לזה (divergence).</p>
+      <div class="ms-ex"><b>תרגיל:</b> חיבור וקטורים. שימו לב לבדיקה <code>i &lt; n</code> – בלעדיה יש גישה מחוץ למערך.<pre>__global__ void add(const float* a, const float* b, float* c, int n) {
+  int i = blockIdx.x * blockDim.x + threadIdx.x;
+  if (i &lt; n) c[i] = a[i] + b[i];
+}
+// launch: add&lt;&lt;&lt;(n + 255) / 256, 256&gt;&gt;&gt;(a, b, c, n);</pre><button type="button" class="btn btn-line btn-sm" data-copy>להעתיק</button></div>
+      <div class="ms-links"><a class="btn btn-line btn-sm" href="/kelim/tichnut/pkudot/">איך מקמפלים עם nvcc ←</a></div>
+    </div>
+
+    <div class="ms-step"><label class="ms-done"><input type="checkbox" data-step="en2"> סיימתי</label>
+      <h3>היררכיית הזיכרון</h3>
+      <p>רגיסטרים (הכי מהיר, פרטי לכל thread) ← shared memory (משותף לבלוק, על השבב) ← global memory (ה-VRAM, גדול ואיטי יחסית).</p>
+      <p class="ms-con"><b>coalescing</b> – כש-32 threads של warp קוראים כתובות רצופות, הכרטיס מאחד אותן לקריאה אחת. קריאה "מפוזרת" יכולה להיות איטית פי כמה.</p>
+      <div class="ms-ex"><b>שאלה למחשבה:</b> בכפל מטריצות, למה טוענים "אריח" (tile) ל-shared memory לפני החישוב?
+        <details class="ms-ans"><summary>תשובה</summary>כי כל ערך נקרא שוב ושוב על ידי threads שונים. טוענים אותו פעם אחת מה-global memory האיטי לזיכרון המשותף המהיר, וכולם קוראים משם. זה מוריד את מספר הגישות לזיכרון הגלובלי פי גודל האריח.</details></div>
+      <div class="ms-links"><a class="btn btn-line btn-sm" href="/kelim/tichnut/gpu/">רוחב פס לכל כרטיס ←</a></div>
+    </div>
+
+    <div class="ms-step"><label class="ms-done"><input type="checkbox" data-step="en3"> סיימתי</label>
+      <h3>Occupancy והסתרת השהיה</h3>
+      <p>גישה לזיכרון לוקחת מאות מחזורי שעון. בזמן שwarp אחד מחכה, ה-SM עובר ל-warp אחר. כמה שיותר warps פעילים – יותר קל להסתיר את ההמתנה.</p>
+      <p class="ms-con"><b>occupancy</b> – כמה warps פעילים על SM מתוך המקסימום. מוגבל על ידי רגיסטרים, shared memory וגודל הבלוק.</p>
+      <div class="ms-ex"><b>תרגיל:</b> במחשבון, הגדירו CC 8.9, בלוק של 256, 64 רגיסטרים ו-0 shared memory. מה מגביל? מה קורה ב-32 רגיסטרים?
+        <details class="ms-ans"><summary>תשובה</summary>ב-64 רגיסטרים: הרגיסטרים מגבילים ל-4 בלוקים = 32 מתוך 48 warps (67%). ב-32 רגיסטרים: 6 בלוקים = 48 warps (100%).</details></div>
+      <div class="ms-links"><a class="btn btn-line btn-sm" href="/kelim/tichnut/occupancy/">מחשבון Occupancy ←</a></div>
+    </div>
+
+    <div class="ms-step"><label class="ms-done"><input type="checkbox" data-step="en4"> סיימתי</label>
+      <h3>דיבאג על הכרטיס</h3>
+      <p>שגיאה בקרנל לא תמיד קופצת במקום שבו היא קרתה – הקריאות לכרטיס אסינכרוניות. לכן בודקים שגיאה אחרי כל קריאה, ומריצים כלי שבודק כל גישה לזיכרון.</p>
+      <p class="ms-con"><b>אסינכרוני</b> – המעבד שולח עבודה לכרטיס וממשיך הלאה בלי לחכות. השגיאה מתגלה רק בסנכרון הבא.</p>
+      <div class="ms-ex"><b>תרגיל:</b> הסירו את <code>if (i &lt; n)</code> מהתרגיל הראשון, הריצו עם n שלא מתחלק ב-256, ואז:<pre>compute-sanitizer ./add</pre><button type="button" class="btn btn-line btn-sm" data-copy>להעתיק</button></div>
+      <div class="ms-links"><a class="btn btn-line btn-sm" href="/kelim/tichnut/shgiot/">מסביר שגיאות CUDA ←</a></div>
+    </div>
+
+    <div class="ms-step"><label class="ms-done"><input type="checkbox" data-step="en5"> סיימתי</label>
+      <h3>Roofline: חסום-זיכרון או חסום-חישוב?</h3>
+      <p>לכל קרנל יש <b>עוצמה אריתמטית</b> – כמה פעולות חישוב לכל בייט שנקרא. אם היא נמוכה, הקרנל מוגבל ברוחב הפס, ואין טעם לשפר את החישוב.</p>
+      <p class="ms-con"><b>Roofline</b> – גרף שמראה את התקרה של הכרטיס: מהירות מקסימלית = min(כוח חישוב, רוחב פס × עוצמה אריתמטית).</p>
+      <div class="ms-ex"><b>תרגיל:</b> מה העוצמה האריתמטית של חיבור הווקטורים (float)?
+        <details class="ms-ans"><summary>תשובה</summary>פעולה אחת (חיבור) על כל 12 בייט (קוראים 2 × 4 וכותבים 4) ≈ 0.08 FLOP/byte. רחוק מאוד מהנקודה שבה הכרטיס חסום-חישוב, ולכן זה קרנל חסום-זיכרון. אותו עיקרון מסביר למה מודלי שפה כותבים בקצב של רוחב הפס.</details></div>
+      <div class="ms-links"><a class="btn btn-line btn-sm" href="/kelim/tichnut/mehirut/">הדגמה: מהירות מודל שפה ←</a><a class="btn btn-line btn-sm" href="/kelim/tichnut/pkudot/">ncu ו-nsys למדידה ←</a></div>
+    </div>
+
+    <div class="ms-step"><label class="ms-done"><input type="checkbox" data-step="en6"> סיימתי</label>
+      <h3>הדורות: מ-Volta עד Blackwell</h3>
+      <p>כל דור הוסיף משהו: Volta – Tensor Cores ראשונים; Ampere – BF16 ו-TF32; Ada ו-Hopper – FP8; Hopper – Thread Block Clusters ו-TMA; Blackwell – FP4.</p>
+      <p class="ms-con"><b>Tensor Core</b> – יחידה שמבצעת כפל מטריצות קטנות בפקודה אחת. מכאן רוב הכוח של הכרטיסים ל-AI.</p>
+      <div class="ms-ex"><b>תרגיל:</b> השוו בכלי בין V100, A100 ו-H100: פי כמה גדל רוחב הפס, ופי כמה הזיכרון?</div>
+      <div class="ms-links"><a class="btn btn-line btn-sm" href="/kelim/tichnut/gpu/">השוואת כרטיסים ←</a></div>
+    </div>
+  </section>
+
+  <p class="tn-shut">💛 הכלי הזה חינמי ובלי פרסומות. אני בונה אותו לבד ומשלם עליו מהכיס, באהבה. אם הוא עוזר לכם, <a class="gold" href="/kelim/tichnut/#shutafim">אפשר להיות שותפים</a>: חסות, תרגיל שתכתבו, או תמיכה קטנה.</p>
+  <div class="share-row no-print">
+    <button class="btn btn-line btn-sm" type="button" id="ms-print">להדפיס את שני המסלולים</button>
+    <a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מסלול לימוד GPU ו-CUDA בעברית – למתחילים ולסטודנטים להנדסת מחשבים, עם תרגילים וכלים. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר מהלימודים</a>
+  </div>
+  <p class="disclaimer">הסימונים "סיימתי" נשמרים רק בטלפון שלכם. המסלול הוא הקדמה – הוא לא מחליף קורס או את CUDA Programming Guide של NVIDIA.</p>
+</div>

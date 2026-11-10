@@ -14,7 +14,7 @@
 //
 // יחידה = פרק (150 בסבב), יום בחודש (30) או ספר (5). יחידה גלובלית = סבב * N + מספר.
 // הנתונים נמחקים מעצמם 120 יום אחרי היצירה (alarm).
-const ORIGINS = ['https://gilad-rachamim.github.io'];
+const ORIGINS = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const MODES = { perek: 150, yom: 30, sefer: 5 };
 const MAXR = { perek: 10, yom: 30, sefer: 60 };
 const PURPOSES = ['niftar', 'refua', 'hatzlacha', 'zivug', 'zchut', 'other'];
@@ -189,7 +189,7 @@ function view(st, t) {
 }
 
 // דף השיתוף: ווטסאפ קורא ממנו כותרת, תיאור ותמונה. אדם שנכנס מועבר מיד לדף הסיום באתר.
-const SITE = 'https://gilad-rachamim.github.io/kodesh/tehillim/';
+const SITE = 'https://hakelim.com/kodesh/tehillim/';
 const PHR = { niftar: 'לעילוי נשמת', refua: 'לרפואת', hatzlacha: 'להצלחת', zivug: 'לזיווג הגון ל', zchut: 'לזכות' };
 function sharePage(st) {
   const h = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -207,7 +207,7 @@ function sharePage(st) {
     '<title>' + h(title) + '</title><meta name="description" content="' + h(desc) + '">' +
     '<meta property="og:type" content="website"><meta property="og:locale" content="he_IL"><meta property="og:site_name" content="כלי קודש">' +
     '<meta property="og:title" content="' + h(title) + '"><meta property="og:description" content="' + h(desc) + '">' +
-    '<meta property="og:image" content="https://gilad-rachamim.github.io/assets/og-tehillim.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">' +
+    '<meta property="og:image" content="https://hakelim.com/assets/og-tehillim.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">' +
     '<meta property="og:url" content="' + h(to) + '"><meta name="twitter:card" content="summary_large_image">' +
     '<link rel="canonical" href="' + h(to) + '"><meta http-equiv="refresh" content="0;url=' + h(to) + '">' +
     '<script>location.replace(' + JSON.stringify(to) + ' + location.hash)</script>' +

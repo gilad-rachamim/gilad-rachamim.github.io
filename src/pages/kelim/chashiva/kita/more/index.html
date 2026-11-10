@@ -1,0 +1,144 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_kita_more",
+  "title": "דף המורה – ניהול הכיתה, מתנות ותעודות הצטיינות | הכלים של גילעד רחמים",
+  "description": "דף הניהול של המורה בכיתה משחקת: לוח הנקודות עם פירוט לפי משחק, מתנות שהמורה בוחרת (כתר בלוח, תעודה, צ׳ופר, תוספת במגן לפי החלטתה), תעודות הצטיינות להדפסה, מודעה עם הקוד לכיתה, וסבב חדש.",
+  "og_title": "דף המורה – כיתה משחקת",
+  "priority": "0.5",
+  "crumbs": [["משחקי חשיבה", "/kelim/chashiva/"], ["כיתה משחקת", "/kelim/chashiva/kita/"], ["דף המורה", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/kita.css\"><meta name=\"robots\" content=\"noindex\">",
+  "foot": "<script src=\"/assets/kita-app.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>דף המורה</h1>
+  <p class="sub">כאן מנהלים את הכיתה: רואים מי צוברת, בוחרים מתנות, נותנים כתר ומדפיסים תעודות.</p>
+</header>
+<div class="tool" id="kt-app" data-page="teacher">
+
+  <section class="kt-card" id="kt-nokey" hidden>
+    <h2>לא מצאנו כיתה בטלפון הזה</h2>
+    <p>פותחים את קישור הניהול ששמרתם כשפתחתם את הכיתה. אין קישור? אפשר לפתוח כיתה חדשה בדקה.</p>
+    <div class="kt-btns"><a class="btn btn-gold" href="/kelim/chashiva/kita/#kt-teach-sec">לפתוח כיתה</a></div>
+  </section>
+
+  <div id="kt-t" hidden>
+    <section class="kt-card no-print">
+      <div class="kt-who"><div><span class="kt-pill" id="kt-t-teacher"></span><br><b id="kt-t-name"></b></div><span class="kt-pill" id="kt-t-count"></span></div>
+      <p style="margin-top:.6rem">הקוד שהתלמידים מקלידים:</p>
+      <div class="kt-code" id="kt-t-code"></div>
+      <div class="kt-btns"><a class="btn btn-gold" id="kt-t-wa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לקבוצת הכיתה</a><button class="btn btn-line" type="button" id="kt-t-poster-btn">🖨️ מודעה עם הקוד לכיתה</button></div>
+      <p class="kt-ok" id="kt-t-copied" aria-live="polite"></p>
+      <div class="kt-warn" id="kt-t-save"><b>חשוב: לשמור את קישור הניהול.</b> הוא המפתח שלכם לכיתה, ואין לו שחזור במייל. מי שיש לו את הקישור יכול לנהל את הכיתה, אז שולחים אותו רק לעצמכם.
+        <div class="kt-btns"><a class="btn btn-line btn-sm" id="kt-t-self" href="#" target="_blank" rel="noopener">לשלוח לעצמי בווטסאפ</a><button class="btn btn-line btn-sm" type="button" id="kt-t-copy">להעתיק את הקישור</button></div>
+      </div>
+      <div class="kt-mine" id="kt-t-switch" hidden></div>
+    </section>
+
+    <div class="kt-tabs no-print" id="kt-t-tabs" role="tablist"><button type="button" data-tab="board" aria-selected="true">🏆 לוח</button><button type="button" data-tab="gifts" aria-selected="false">🎁 מתנות</button><button type="button" data-tab="cert" aria-selected="false">📜 תעודות</button><button type="button" data-tab="quiz" aria-selected="false">📝 שאלות</button><button type="button" data-tab="school" aria-selected="false">🏫 כיתות</button><button type="button" data-tab="set" aria-selected="false">⚙️ הגדרות</button></div>
+
+    <section class="kt-card" data-panel="quiz" hidden>
+      <h2>שאלות משלכם</h2>
+      <p>כותבים שאלות על החומר של השבוע, והתלמידות מתרגלות אותן מדף הכיתה. כל תשובה נכונה בניסיון הראשון נותנת 3 נקודות ללוח.</p>
+      <div class="kt-bank" id="kt-bank">
+        <label for="kt-bank-t">📚 בנק שאלות מוכן <small>בוחרים נושא, ובלחיצה אחת נכנסות 10 שאלות שאפשר לערוך לפני הפרסום. בכל נושא יש כ-25 שאלות, אז אפשר לתת עוד תרגול באותו שבוע בלי שאלות חוזרות. התשובות השגויות הן הטעויות הנפוצות, כדי שתראו מה באמת קשה.</small></label>
+        <div class="kt-bank-row"><select id="kt-bank-t" aria-label="נושא"><option value="">טוען נושאים…</option></select><button class="btn btn-line btn-sm" type="button" id="kt-bank-go" disabled>למלא 10 שאלות</button><button class="btn btn-line btn-sm" type="button" id="kt-bank-more" hidden>🔄 עוד 10 אחרות</button></div>
+      </div>
+      <div class="kt-f">
+        <label>שם התרגול<input id="kt-q-name" maxlength="60" placeholder="למשל: שברים – לקראת המבחן"></label>
+        <label>השאלות <small>שורה לכל שאלה: השאלה | התשובה הנכונה | תשובה שגויה | עוד שגויה. עד 20 שאלות. הטלפון מערבב את התשובות לבד.</small>
+          <textarea id="kt-q-text" rows="8" dir="auto" placeholder="כמה זה 3/4 + 1/4? | 1 | 4/8 | 3/16 | 2&#10;מה המילה באנגלית ל'ספר'? | book | look | cook | boot"></textarea></label>
+      </div>
+      <p class="kt-ok" id="kt-q-prev" aria-live="polite"></p>
+      <p class="kt-err" id="kt-q-err" aria-live="polite"></p>
+      <div class="kt-btns"><button class="btn btn-gold" type="button" id="kt-q-save">לשמור ולפרסם לכיתה</button><button class="btn btn-line btn-sm" type="button" id="kt-q-print">📄 להדפיס כדף עבודה</button><button class="btn btn-line btn-sm" type="button" id="kt-q-clear">להוריד את השאלות</button></div>
+      <p class="kt-note">"להדפיס כדף עבודה" פותח את השאלות שבתיבה ב<a href="/limudim/dapim/">מחולל דפי העבודה</a>: דף מעוצב להדפסה עם עיגולים לסימון, דף תשובות למורה, וקישור לגרסה דיגיטלית. טוב לתלמידות בלי טלפון ולשיעור בלי מחשבים.</p>
+      <div id="kt-q-stats"></div>
+      <p class="kt-note">שמירה מחדש פותחת סבב חדש של השאלות ומאפסת את הסיכום. מי שכבר ענתה תוכל לענות שוב ולצבור שוב.</p>
+    </section>
+
+    <section class="kt-card" data-panel="school" hidden>
+      <h2>הכיתות זו מול זו</h2>
+      <p>כל הכיתות שפתחתם בטלפון הזה, וגם כיתות של מורים אחרים שהוספתם לפי הקוד. כך מתחרים גם שכבה או בית ספר שלם. הדירוג לפי ממוצע לתלמיד, כדי שגם כיתה קטנה תוכל לנצח.</p>
+      <div class="kt-tabs" id="kt-sc-per" role="tablist"><button type="button" data-p="week" aria-selected="true">השבוע</button><button type="button" data-p="month" aria-selected="false">החודש</button><button type="button" data-p="all" aria-selected="false">מההתחלה</button></div>
+      <ol class="kt-board" id="kt-sc-list" aria-live="polite"></ol>
+      <h3>להוסיף כיתה של מורה אחר</h3>
+      <div class="kt-f"><input class="kt-in kt-code-in" id="kt-sc-code" inputmode="numeric" maxlength="6" placeholder="000000" aria-label="קוד הכיתה"><button class="btn btn-line btn-sm" type="button" id="kt-sc-add">+ להוסיף להשוואה</button></div>
+      <p class="kt-err" id="kt-sc-err" aria-live="polite"></p>
+      <p class="kt-note">רואים רק את הלוח של הכיתה (כינויים ונקודות), בדיוק כמו התלמידים שלה. אי אפשר לנהל אותה מכאן.</p>
+      <div class="kt-btns"><a class="btn btn-gold" id="kt-sc-wa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הדירוג</a><a class="btn btn-line" href="/kelim/chashiva/kita/#kt-teach-sec">+ לפתוח עוד כיתה</a></div>
+    </section>
+
+    <section class="kt-card" data-panel="board">
+      <div class="kt-msg" id="kt-wk" hidden></div>
+      <div class="kt-tabs" id="kt-t-per" role="tablist"><button type="button" data-p="week">השבוע</button><button type="button" data-p="month">החודש</button><button type="button" data-p="round">מהסבב</button><button type="button" data-p="all">מההתחלה</button></div>
+      <div id="kt-t-goal" hidden></div>
+      <ol class="kt-board" id="kt-t-board"></ol>
+      <p class="kt-err" id="kt-t-err" aria-live="polite"></p>
+      <p class="kt-note">"שם אמיתי" נשמר רק בטלפון שלכם, לתעודות. הוא לא נשלח לשרת ולא נראה לתלמידים.</p>
+      <div class="kt-btns"><button class="kt-mini" type="button" id="kt-t-refresh">↻ לרענן</button></div>
+      <h3>📅 תזכורת כל יום ראשון</h3>
+      <p>ביום ראשון בבוקר היומן מזכיר לכם להיכנס לכאן. בראש הלוח מחכה סיכום של השבוע שעבר: מי הובילו, מה מגיע להן, והודעה מוכנה לכיתה. התזכורת נשמרת ביומן שלכם, ואנחנו לא מקבלים מייל או טלפון.</p>
+      <div class="kt-btns"><a class="btn btn-line btn-sm" id="kt-cal-g" href="#" target="_blank" rel="noopener">ליומן גוגל</a><button class="btn btn-line btn-sm" type="button" id="kt-cal-ics">ליומן אחר (אייפון)</button></div>
+    </section>
+
+    <section class="kt-card" data-panel="gifts" hidden>
+      <h2>מה אפשר לזכות</h2>
+      <p>מסמנים מה מתאים לכם, ובוחרים למי. התלמידים רואים את הרשימה מעל הלוח, וזה מה שגורם להם לרצות עוד תרגיל.</p>
+      <div id="kt-g-list"></div>
+      <h3>🎯 יעד כיתתי</h3>
+      <p>כל הכיתה עובדת יחד על מספר אחד, וכל תלמידה רואה פס שמתמלא. ככה גם מי שלא מגיעה למקום הראשון היא חלק מהניצחון.</p>
+      <div class="kt-preset"><input type="checkbox" id="kt-goal-on" aria-label="יעד כיתתי"><div><b>להפעיל יעד כיתתי</b></div>
+        <div class="pd"><input type="text" id="kt-goal-n" inputmode="numeric" maxlength="5" value="2000" aria-label="כמה נקודות">
+        <select id="kt-goal-p" aria-label="עד מתי"><option value="goalm">עד סוף החודש</option><option value="goalw">עד סוף השבוע</option></select>
+        <input type="text" id="kt-goal-d" maxlength="160" placeholder="הפרס לכל הכיתה, למשל: שיעור בחוץ"></div></div>
+      <h3>מתנה משלכם</h3>
+      <div class="kt-f"><input class="kt-in" id="kt-g-new-t" maxlength="50" placeholder="למשל: יושבת ליד החלון שבוע"><button class="btn btn-line btn-sm" type="button" id="kt-g-add">+ להוסיף</button></div>
+      <p class="kt-warn">⭐ <b>תוספת במגן</b> היא החלטה שלכם ושל בית הספר בלבד. הכלי לא נותן ציונים, לא מבטיח שום תוספת, ולא מחליף את שיקול הדעת שלכם. הנקודות נספרות מהטלפון של התלמידים, ולכן הן עידוד, לא מבחן.</p>
+      <p class="kt-ok" id="kt-g-ok" aria-live="polite"></p><p class="kt-err" id="kt-g-err" aria-live="polite"></p>
+      <button class="btn btn-gold" type="button" id="kt-g-save">לשמור ולהציג לכיתה</button>
+      <div class="kt-warn" id="kt-gilad" style="margin-top:1.2rem">
+        <b>🎁 מתנה מגילעד</b>
+        <p>בכל חודש אני שולח 6 שוברים דיגיטליים של 50 ₪ (300 ₪ בסך הכול), לפי סדר הבקשות. הם מיועדים למקום הראשון בכיתה פעילה: לפחות 5 תלמידים, ולמקום הראשון יש לפחות 300 נקודות בחודש. השובר נשלח אליכם, ואתם מעבירים אותו לתלמידה. בלי כתובת ובלי פרטים של הילד.</p>
+        <p id="kt-gilad-st"></p>
+        <div class="kt-btns"><a class="btn btn-gold" id="kt-gilad-btn" href="#" target="_blank" rel="noopener" hidden><svg class="ic"><use href="#wa"/></svg> לבקש את השובר מגילעד</a></div>
+      </div>
+    </section>
+
+    <section class="kt-card" data-panel="cert" id="kt-cert-sec" hidden>
+      <h2>תעודות הצטיינות</h2>
+      <p>בוחרים מי מקבלת תעודה. אם רשמתם שם אמיתי בלוח, הוא מופיע בתעודה. אחרת הכינוי.</p>
+      <div class="kt-f no-print">
+        <label>למי<select id="kt-c-who"><option value="top3">שלושת הראשונים בלוח</option><option value="1">המקום הראשון</option><option value="all">כל מי שצבר נקודות</option><option value="persist">מי שהתמידה (5 ימים בשבוע)</option></select></label>
+        <label>על מה <small>אפשר לשנות</small><input id="kt-c-what" maxlength="80" value="על השקעה, התמדה ואהבת לימוד"></label>
+        <label>סגנון<select id="kt-c-style"><option value="">זהב</option><option value="s-white">לבן, חוסך דיו</option><option value="s-olive">ירוק זית</option><option value="s-parch">קלף</option></select></label>
+      </div>
+      <div class="kt-btns no-print"><button class="btn btn-gold" type="button" id="kt-c-print">🖨️ להדפיס את התעודות</button></div>
+      <div class="kt-cert-wrap" id="kt-c-out"></div>
+    </section>
+
+    <section class="kt-card" data-panel="set" hidden>
+      <h2>הגדרות הכיתה</h2>
+      <form class="kt-f" id="kt-s-form" novalidate>
+        <label>שם הכיתה<input id="kt-s-name" maxlength="40"></label>
+        <label>חתימה בלוח<input id="kt-s-teacher" maxlength="30"></label>
+        <label>הלוח הראשי<select id="kt-s-period"><option value="week">שבועי (מתאפס ביום ראשון)</option><option value="month">חודשי</option><option value="round">מהסבב שלי</option></select></label>
+        <label>הודעה לכיתה <small>מופיעה מעל הלוח. עד 140 תווים.</small><textarea id="kt-s-msg" maxlength="140" rows="2" placeholder="למשל: מי שמגיעה ל-300 השבוע – מקבלת הפתעה ביום חמישי!"></textarea></label>
+        <label style="display:flex;gap:.5rem;align-items:center;font-weight:400"><input type="checkbox" id="kt-s-lock" style="width:auto"> לסגור הצטרפות של תלמידים חדשים</label>
+        <p class="kt-ok" id="kt-s-ok" aria-live="polite"></p><p class="kt-err" id="kt-s-err" aria-live="polite"></p>
+        <button class="btn btn-gold" type="submit">לשמור</button>
+      </form>
+      <h3>סבב חדש</h3>
+      <p>מאפס את לוח "מהסבב" ומוריד את הכתרים. התלמידים והנקודות הקודמות נשארים.</p>
+      <button class="btn btn-line" type="button" id="kt-s-round">להתחיל סבב חדש</button>
+      <h3>מחיקת הכיתה</h3>
+      <p>מוחק מהשרת את הכיתה, הכינויים והנקודות. אי אפשר לשחזר. כיתה בלי פעילות חצי שנה נמחקת לבד.</p>
+      <button class="kt-mini" type="button" id="kt-s-delete">למחוק את הכיתה לגמרי</button>
+    </section>
+
+    <section class="kt-card" id="kt-poster-sec" hidden>
+      <div class="kt-poster" id="kt-poster"></div>
+      <div class="kt-btns no-print"><button class="btn btn-gold" type="button" id="kt-p-print">🖨️ להדפיס</button><button class="btn btn-line" type="button" id="kt-p-close">סגירה</button></div>
+    </section>
+  </div>
+</div>

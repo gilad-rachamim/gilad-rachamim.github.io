@@ -7,6 +7,19 @@
   var NAMES = { main: 'העיקר', haredi: 'ציבור חרדי', economy: 'כלכלה וכיס' };
   var $ = function (id) { return document.getElementById(id); };
   var ed = null;
+  var PAGE = 'https://hakelim.com/kelim/machshev/chadashot/';
+  var PHONE = 'בטלפון כשר: 077-2253345 שלוחה 8';
+  // מאיפה הגיעו (utm_source בקישור) – נספר בשרת וב-Google Analytics
+  var FROM = (function () {
+    var s = '';
+    try { s = (new URLSearchParams(location.search).get('utm_source') || '').toLowerCase(); } catch (e) {}
+    if (s === 'facebook') s = 'fb';
+    return ['fb', 'wa', 'qr', 'share', 'home'].indexOf(s) > -1 ? s : 'web';
+  })();
+  function friendText() {
+    return 'מצאתי משהו טוב: סיכום חדשות רגוע 3 פעמים ביום. 5 נקודות קצרות, בלי לרפרש כל רבע שעה. קו כשר, בחינם ובלי פרסומות.\n' +
+      PAGE + '?utm_source=share\n' + PHONE;
+  }
 
   function used(how) { if (window.toolUsed) window.toolUsed(TOOL, { how: how }); }
   function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
@@ -40,6 +53,8 @@
     });
     $('nw-body').innerHTML = html || '<p class="nw-wait">אין נקודות בסיכום הזה.</p>';
     $('nw-wa').href = 'https://wa.me/?text=' + encodeURIComponent(asText());
+    var wa = ed.links && ed.links.wa;
+    if (wa && /^https:\/\/(www\.)?whatsapp\.com\/channel\//.test(wa)) { $('nw-chan-a').href = wa; $('nw-chan').hidden = false; }
   }
 
   function asText() {
@@ -51,7 +66,7 @@
       if (sec !== 'main') out.push('', '*' + NAMES[sec] + '*');
       pts.forEach(function (p, i) { out.push((i + 1) + '. ' + p.text); });
     });
-    out.push('', 'כל הנקודות עם קישור למקור:', location.origin + '/kelim/machshev/chadashot/', 'בטלפון כשר: 077-2253345 שלוחה 8');
+    out.push('', 'כל הנקודות עם קישור למקור:', PAGE + '?utm_source=wa', PHONE);
     return out.join('\n');
   }
 
@@ -73,7 +88,46 @@
     used('report');
   }
 
+  // ---------- התראות (Web Push) – ה-sw.js של הכלים מציג אותן ----------
+  var VAPID = 'BPxymKHPzzngtKfi76udfvM1hE6-kUOHtVsS0pZbjd1d9TBLs-o0b4oiIoAPQ8-jHWU99FjEHLL60iC49mrGPyc';
+  function b64ToBytes(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); var r = atob(s + '==='.slice((s.length + 3) % 4)); var a = new Uint8Array(r.length); for (var i = 0; i < r.length; i++) a[i] = r.charCodeAt(i); return a; }
+  function pushMsg(t) { $('nw-push-msg').textContent = t; }
+  function bellState(on) { $('nw-bell').textContent = on ? '🔕 לבטל את ההתראות' : '🔔 לקבל התראה 3 פעמים ביום'; $('nw-bell').dataset.on = on ? '1' : ''; }
+  function initPush() {
+    if (!('serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window)) {
+      $('nw-bell').disabled = true;
+      pushMsg(/iPhone|iPad/.test(navigator.userAgent)
+        ? 'באייפון: קודם מוסיפים את הדף למסך הבית (שיתוף ← "הוספה למסך הבית"), פותחים משם ולוחצים כאן.'
+        : 'הדפדפן הזה לא תומך בהתראות. אפשר לשמור את הדף במסך הבית ולהיכנס 3 פעמים ביום.');
+      return;
+    }
+    navigator.serviceWorker.ready.then(function (reg) { return reg.pushManager.getSubscription(); }).then(function (sub) { bellState(!!sub); }).catch(function () {});
+    $('nw-bell').addEventListener('click', function () {
+      var btn = this, done = function () { btn.disabled = false; };
+      btn.disabled = true;
+      navigator.serviceWorker.ready.then(function (reg) {
+        return reg.pushManager.getSubscription().then(function (sub) {
+          if (btn.dataset.on && sub) {
+            return fetch(API + '/unsubscribe', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ endpoint: sub.endpoint }) })
+              .catch(function () {}).then(function () { return sub.unsubscribe(); })
+              .then(function () { bellState(false); pushMsg('ההתראות בוטלו. אפשר להפעיל שוב בכל רגע.'); used('push_off'); });
+          }
+          return Notification.requestPermission().then(function (perm) {
+            if (perm !== 'granted') { pushMsg('ההתראות חסומות בדפדפן. אפשר לאשר אותן בהגדרות האתר (המנעול ליד הכתובת) ולנסות שוב.'); return; }
+            return reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToBytes(VAPID) }).then(function (s) {
+              return fetch(API + '/subscribe', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ endpoint: s.endpoint }) });
+            }).then(function (r) {
+              if (!r.ok) throw new Error('subscribe');
+              bellState(true); pushMsg('מעולה! תקבלו התראה כשהסיכום יוצא: 07:00, 13:00, 20:00.'); used('push_on');
+            });
+          });
+        });
+      }).catch(function () { pushMsg('ההרשמה לא הצליחה. נסו שוב בעוד רגע.'); }).then(done, done);
+    });
+  }
+
   function init() {
+    initPush();
     var t = load();
     document.querySelectorAll('#nw-topics input').forEach(function (cb) {
       cb.checked = t[cb.dataset.topic] !== false;
@@ -88,8 +142,12 @@
       used('copy');
     });
     $('nw-wa').addEventListener('click', function () { used('wa'); });
+    $('nw-friend').href = 'https://wa.me/?text=' + encodeURIComponent(friendText());
+    $('nw-friend').addEventListener('click', function () { used('friend'); });
+    $('nw-chan-a').addEventListener('click', function () { used('channel'); });
+    $('nw-fb').addEventListener('click', function () { used('facebook'); });
 
-    fetch(API + '/latest', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+    fetch(API + '/latest?from=' + FROM, { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
       if (!j || j.empty) {
         $('nw-ed').textContent = 'הסיכום הראשון יוצא בקרוב';
         $('nw-body').innerHTML = '<p class="nw-wait">הסיכום הבא: ' + nextRun() + '.</p>';

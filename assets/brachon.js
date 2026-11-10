@@ -71,7 +71,7 @@
       html += '</section>';
     });
     var srcs = []; b.secs.forEach(function (s) { if (srcs.indexOf(s.src) < 0) srcs.push(s.src); });
-    html += '<p class="br-credit">הנוסח: ' + esc(srcs.join(' · ')) + '. שם ה\' נכתב ה\'.<br>כלי קודש · gilad-rachamim.github.io/kodesh</p>';
+    html += '<p class="br-credit">הנוסח: ' + esc(srcs.join(' · ')) + '. שם ה\' נכתב ה\'.<br>כלי קודש · hakelim.com/kodesh</p>';
     $('br-cover').innerHTML = cover;
     $('br-text').innerHTML = html;
     // <small> במקור משמש גם להוראות וגם לתוספות שאומרים רק לפעמים: הוראה = בלי ניקוד, תוספת = עם ניקוד

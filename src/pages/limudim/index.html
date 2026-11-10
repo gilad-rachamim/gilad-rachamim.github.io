@@ -4,7 +4,9 @@
   "title": "כלים ללימודים – כרטיסיות חזרה, תוכנית למבחן, טיימר ולימוד יומי לסיום התנ״ך | הכלים של גילעד רחמים",
   "description": "כלים חינמיים ללמידה, בלי הרשמה: כרטיסיות חזרה חכמות, מתכנן למידה למבחן עם יומן, טיימר 25/5, ולימוד יומי לסיום התנ״ך או המשנה בשנה או בשלוש שנים. הכול נשמר רק בטלפון.",
   "og_title": "כלים ללימודים – חינם, בלי הרשמה",
-  "priority": "0.8"
+  "priority": "0.8",
+  "head": "<link rel=\"stylesheet\" href=\"/assets/limudim-krav.css\">",
+  "foot": "<script src=\"/assets/limudim-nekudot.js\" defer></script>"
 } -->
 <header class="k-hero">
   <span class="bsd">בס"ד</span>
@@ -13,6 +15,8 @@
   <div class="actions">
     <a class="btn btn-gold" href="/limudim/kartisiot/">לכרטיסיות החזרה</a>
     <a class="btn btn-line" href="#kelim">לכל הכלים</a>
+    <a class="btn btn-line" href="/limudim/batei-sefer/">👩‍🏫 לבתי ספר ולמורים</a>
+    <a class="btn btn-line" href="/kelim/hitkadmut/">🌱 ההתקדמות שלי</a>
   </div>
   <div data-install-wrap hidden style="margin-top:1rem">
     <button class="btn btn-line btn-sm" type="button" data-install>להתקין בטלפון, כמו אפליקציה</button>
@@ -20,8 +24,19 @@
   </div>
 </header>
 
+<section class="k-sec" id="krav" aria-labelledby="krav-h">
+  <h2 id="krav-h">⚔️ לומדים ומתחרים עם חבר</h2>
+  <p class="lead2">מזמינים חבר, או את כל הכיתה, ומקבלים את אותן שאלות בדיוק. מי צובר יותר נקודות בשעה הקרובה? הנקודות מכל השלושה נאספות יחד ב"הנקודות שלי".</p>
+  <div class="lcards">
+    <a href="/limudim/krav/"><span class="em" aria-hidden="true">➗</span><b>דו-קרב מתמטיקה לבגרות</b><span class="d">3, 4 ו-5 יחידות. פותרים צעד אחרי צעד, כל צעד נכון שווה נקודות, ובונוס על פתרון נקי ומהיר. בסוף כל תרגיל רואים את דרך הפתרון.</span></a>
+    <a href="/limudim/krav-anglit/"><span class="em" aria-hidden="true">🇬🇧</span><b>דו-קרב אנגלית לבגרות</b><span class="d">אוצר מילים, השלמת משפטים וקטעי קריאה קצרים, עם הסבר לכל תשובה. אותו מרוץ, אותו לוח.</span></a>
+    <a href="/kelim/chashiva/chidon/"><span class="em" aria-hidden="true">❓</span><b>חידון וטריוויה עם חבר</b><span class="d">עשר שאלות ביום על מדע, ארצות, חגים ותנ״ך וידע כללי. שולחים לחבר את אותו חידון ורואים מי ניצח.</span></a>
+  </div>
+  <div data-pts></div>
+</section>
+
 <section class="k-sec" id="kelim" aria-labelledby="kelim-h">
-  <h2 id="kelim-h">תשעה כלים</h2>
+  <h2 id="kelim-h">ארבעה עשר כלים</h2>
   <p class="lead2">כל כלי עומד בפני עצמו. בלי הרשמה, בלי פרסומות, ומה שכותבים נשאר רק בטלפון שלך.</p>
   <div class="lcards">
     <a href="/limudim/kartisiot/"><span class="em" aria-hidden="true">🃏</span><b>כרטיסיות חזרה חכמות</b><span class="d">מדביקים שאלות ותשובות, שורה לכל אחת, ומתרגלים. מה שידעת חוזר רק בעוד כמה ימים, ומה שלא ידעת חוזר מחר. לאנגלית, למושגים ולסיכומים.</span></a>
@@ -29,9 +44,14 @@
     <a href="/limudim/timer/"><span class="em" aria-hidden="true">⏱</span><b>טיימר למידה</b><span class="d">25 דקות לימוד ו-5 דקות הפסקה. עם המשפט שלך "למה אני לומד" מול העיניים, צלצול, ורעש רקע שקט לריכוז.</span></a>
     <a href="/limudim/yomi/"><span class="em" aria-hidden="true">📖</span><b>לימוד יומי לסיום</b><span class="d">לסיים את התנ״ך, את המשנה או כל ספר אחר, בשנה, בשלוש שנים או עד תאריך שבוחרים. כמה ללמוד כל יום, טבלה לסימון, ויומן.</span></a>
     <a href="/limudim/olami/"><span class="em" aria-hidden="true">🌍</span><b>לומדים עם כל העולם</b><span class="d">הדף היומי, הרמב״ם היומי, המשנה היומית ו-929. מה לומדים היום, הטקסט בתוך הדף, ותזכורת בכל התחלה חדשה, כדי לחזור בלי פיגור.</span></a>
-    <a href="/limudim/matematika/"><span class="em" aria-hidden="true">➗</span><b>מתמטיקה צעד אחרי צעד</b><span class="d">24 נושאים, מלוח הכפל ועד הבגרות: שברים, אחוזים, משוואות, גרפים, טריגונומטריה, סדרות, סטטיסטיקה ועוד. שיעור קצר שמתנגן כמו סרטון, ותרגול פעולה אחרי פעולה עם רמזים.</span></a>
+    <a href="/limudim/matematika/"><span class="em" aria-hidden="true">➗</span><b>מתמטיקה צעד אחרי צעד</b><span class="d">48 נושאים, מלוח הכפל ועד הבגרות לפי השאלונים: שברים, משוואות, גרפים, נגזרות ואינטגרלים, טריגונומטריה, סטטיסטיקה ועוד. שיעור קצר שמתנגן כמו סרטון, ותרגול פעולה אחרי פעולה עם רמזים.</span></a>
+    <a href="/limudim/maslul/"><span class="em" aria-hidden="true">🗺</span><b>המסלול שלי במתמטיקה</b><span class="d">מסלול אישי ומשחקי, מהיסודות ועד הבגרות לפי השאלון שלכם. כל תשובה נכונה מעלה את הקושי, תשובה קרובה שווה חצי כוכב, ואפשר לענות בקול. כוכבים, רצף ימים, תגים ומפה שמראה איפה אתם.</span></a>
+    <a href="/limudim/machshevon/"><span class="em" aria-hidden="true">🧮</span><b>מחשבון לבגרות</b><span class="d">מחשבון מדעי גדול וברור בעברית, שמסביר כל מקש ומראה איך עושים את אותו הדבר במחשבון שלכם. מעלות או רדיאנים בולט, פותר משוואות עם שלבים, גרף ללמידה, והטעויות הנפוצות בבחינה.</span></a>
+    <a href="/limudim/machberet/"><span class="em" aria-hidden="true">📓</span><b>המחברת: פותרים לבד</b><span class="d">כותבים את הפתרון שורה אחרי שורה, בהקלדה, במקלדת סימנים או בקול, וכל שורה נבדקת מיד. רמז לצעד הבא, נוסחאות שקופצות לפי הנושא, והוכחות בגאומטריה במבנה טענה ונימוק.</span></a>
+    <a href="/limudim/poter/"><span class="em" aria-hidden="true">🧠</span><b>הפותר: שאלות בגרות</b><span class="d">מכניסים שאלת בגרות במתמטיקה, גם הכי קשה – בהקלדה, בצילום או בקול – ומקבלים דרך פתרון מלאה כמו במחברת. כל פתרון נבדק פעמיים: בודק שני והמחשבון.</span></a>
     <a href="/limudim/ilui/"><span class="em" aria-hidden="true">🕯</span><b>לימוד לעילוי נשמה ולזכות</b><span class="d">משניות לפי אותיות השם, או תוכנית לשבעה, לשלושים או לשנה. דף הקדשה מעוצב להדפסה, וקישור לשתף את המשפחה.</span></a>
     <a href="/limudim/kvutza/"><span class="em" aria-hidden="true">👥</span><b>לימוד משותף בקבוצה</b><span class="d">משפחה או בית כנסת מחלקים ביניהם את המשניות או את התנ״ך. קישור אחד לקבוצה, כל אחד רואה את החלק שלו, ודף סיום להדפסה.</span></a>
+    <a href="/limudim/dapim/"><span class="em" aria-hidden="true">📝</span><b>מחולל דפי עבודה</b><span class="d">למורות ולמורים: בוחרים כיתה, נושא וכמה דקות יש, ומקבלים דף הקנייה או דף חזרה, מעוצב להדפסה, עם זמן לכל שאלה ותזכורות לנושאים קודמים. לכל דף יש גם גרסה דיגיטלית עם רמזים ומחשבון פשוט.</span></a>
     <a href="/limudim/kahoot/"><span class="em" aria-hidden="true">🎯</span><b>מחולל חידונים ל-Kahoot</b><span class="d">למורים ולמדריכים: בוחרים נושא מהחגים, מהתנ״ך או מארץ ישראל, ומקבלים חידון מוכן. מורידים קובץ שנכנס ישר ל-Kahoot, או מציגים בכיתה.</span></a>
   </div>
 </section>
@@ -47,5 +67,5 @@
 
 <div class="tool">
   <div class="share-row"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="כלים ללימודים בחינם: כרטיסיות חזרה, תוכנית למבחן, טיימר ולימוד יומי לסיום התנ״ך" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר בווטסאפ</a></div>
-  <p class="disclaimer">חלק מ<a class="gold" href="/kelim/">הכלים של גילעד רחמים</a> · חינם · הנתונים נשארים בטלפון שלך</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kelim/">מיזם הכלים של גילעד רחמים</a> · חינם · הנתונים נשארים בטלפון שלך</p>
 </div>

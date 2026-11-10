@@ -25,7 +25,7 @@ OUT = ROOT / "kodesh" / "mohalim" / "bli-atar"
 PAGE = ROOT / "src" / "pages" / "kodesh" / "mohalim" / "bli-atar" / "index.html"
 URL = "/kodesh/mohalim/bli-atar/"
 
-CREDIT = "מתנה באהבה מגילעד רחמים, מוהל מוסמך, חבר בפורום המוהלים · 058-404-9049 (ווטסאפ) · עוד כלים חינמיים: gilad-rachamim.github.io/kodesh/mohalim"
+CREDIT = "מתנה באהבה מגילעד רחמים, מוהל מוסמך, חבר בפורום המוהלים · 058-404-9049 (ווטסאפ) · עוד כלים חינמיים: hakelim.com/kodesh/mohalim"
 WA_CREDIT = "_מתוך הכלים החינמיים של גילעד רחמים, מוהל מוסמך וחבר בפורום המוהלים_"
 LINE = "━━━━━━━━━━"
 SOFT = RGBColor(0x8A, 0x8F, 0x99)
@@ -321,7 +321,7 @@ def doc_checklist(path):
         c.add_paragraph().paragraph_format.space_after = Pt(1)
     p = doc.add_paragraph(); rtl(p); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p.paragraph_format.space_before = Pt(8)
-    run(p, "דפי סדר הברית והשירון להורדה בחינם: gilad-rachamim.github.io/mohel/dapim", 9.5, color=GREY)
+    run(p, "דפי סדר הברית והשירון להורדה בחינם: hakelim.com/mohel/dapim", 9.5, color=GREY)
     doc.save(path)
 
 
@@ -385,7 +385,7 @@ def doc_tekes(path):
     doc.add_paragraph().paragraph_format.space_after = Pt(4)
     tip(doc, "הערה חשובה", TEKES_NOTE)
     p = doc.add_paragraph(); rtl(p); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run(p, "סדר הברית, השירון וטופס הכיבודים להורדה בחינם: gilad-rachamim.github.io/mohel/dapim", 9.5, color=GREY)
+    run(p, "סדר הברית, השירון וטופס הכיבודים להורדה בחינם: hakelim.com/mohel/dapim", 9.5, color=GREY)
     doc.save(path)
 
 

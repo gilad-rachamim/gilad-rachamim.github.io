@@ -1,0 +1,35 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tichnut_json",
+  "title": "מסדר JSON – סידור, כיווץ ומציאת שגיאות | הכלים של גילעד רחמים",
+  "description": "מדביקים JSON ומקבלים אותו מסודר ויפה, מכווץ לשורה אחת, או עם מפתחות ממוינים. כשיש שגיאה – רואים בדיוק באיזו שורה ועמודה ולמה. רץ רק בדפדפן, שום דבר לא נשלח. בחינם.",
+  "og_title": "מסדר JSON שמראה איפה השגיאה",
+  "priority": "0.7",
+  "crumbs": [["כלים למתכנתים", "/kelim/tichnut/"], ["מסדר JSON", null]],
+  "head": "<style>.tn-code{width:100%;min-height:11rem;direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:.92rem;line-height:1.5;padding:.8rem;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.25);color:var(--parchment);resize:vertical;white-space:pre;overflow:auto;tab-size:2}pre.tn-code{min-height:4rem;max-height:28rem;margin-top:.6rem}.tn-btns{display:flex;flex-wrap:wrap;gap:.45rem;margin:.7rem 0}.tn-opts{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;color:var(--body);font-size:.95rem}.tn-opts select{width:auto}.note.ok{color:#9fd39b}.note.bad{color:#f0a39b}</style>",
+  "foot": "<script src=\"/assets/tichnut-data.js\" defer></script><script src=\"/assets/tichnut-json.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מסדר JSON</h1>
+  <p class="sub">מדביקים, לוחצים, ומקבלים JSON מסודר. וכשמשהו שבור – רואים בדיוק איפה ולמה.</p>
+</header>
+<div class="tool">
+  <label for="js-in" class="tn-opts">ה-JSON שלכם</label>
+  <textarea id="js-in" class="tn-code" spellcheck="false" autocomplete="off" aria-describedby="js-msg"></textarea>
+  <div class="tn-opts">
+    <label><input type="checkbox" id="js-sort"> למיין מפתחות לפי א-ב</label>
+    <label>הזחה <select id="js-ind"><option value="2">2 רווחים</option><option value="4">4 רווחים</option><option value="tab">טאב</option></select></label>
+  </div>
+  <div class="tn-btns">
+    <button class="btn btn-gold btn-sm" type="button" id="js-pretty">לסדר</button>
+    <button class="btn btn-line btn-sm" type="button" id="js-min">לכווץ לשורה אחת</button>
+    <button class="btn btn-line btn-sm" type="button" id="js-copy">להעתיק את התוצאה</button>
+    <button class="btn btn-line btn-sm" type="button" id="js-ex">דוגמה</button>
+    <button class="btn btn-line btn-sm" type="button" id="js-clear">לנקות</button>
+  </div>
+  <p class="note" id="js-msg" aria-live="polite"></p>
+  <pre class="tn-code" id="js-out"></pre>
+  <p class="disclaimer">ה-JSON לא יוצא מהדפדפן שלכם ולא נשמר בשום מקום, כך שאפשר להדביק גם נתונים פנימיים. בכל זאת, מפתחות API וסיסמאות עדיף לא להדביק בשום אתר.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מסדר JSON בעברית שמראה בדיוק באיזו שורה השגיאה. רץ רק בדפדפן, בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>

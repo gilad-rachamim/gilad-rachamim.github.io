@@ -82,7 +82,7 @@
       '<h1>' + esc(val('title') || 'דבר תורה') + '</h1><div class="rule"></div>' +
       paras.map(function (s) { return '<p>' + esc(s) + '</p>'; }).join('') +
       (sigLine() ? '<div class="sig">' + esc(sigLine()) + '</div>' : '') +
-      '<div class="ft">' + esc(val('foot') || 'נוצר בחינם בכלי קודש · gilad-rachamim.github.io/kodesh') + '</div></div>';
+      '<div class="ft">' + esc(val('foot') || 'נוצר בחינם בכלי קודש · hakelim.com/kodesh') + '</div></div>';
   }
 
   var fontsReady = (document.fonts && document.fonts.load) ? Promise.all([document.fonts.load('700 40px "Frank Ruhl Libre"'), document.fonts.load('400 40px "Assistant"'), document.fonts.load('600 40px "Assistant"')]).catch(function () {}) : Promise.resolve();

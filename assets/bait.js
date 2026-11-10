@@ -261,7 +261,7 @@
       }).join('');
       card.innerHTML = '<h3>' + esc(st.fam ? 'התורנויות של ' + st.fam : 'לוח התורנויות שלנו') + '</h3><p class="sub2">שבוע ' + dm(sun) + '–' + dm(end) + '</p>' +
         (chores.length && rot().length ? '<table>' + head + rows + '</table>' : '<p class="sub2">מוסיפים בני משפחה ומטלות למטה, והלוח נבנה לבד.</p>') +
-        '<div class="legend">' + rot().map(pn).join('') + '</div><p class="ft">כל שבוע הסבב זז באחד, כדי שיהיה הוגן<br><span dir="ltr">gilad-rachamim.github.io/bait</span></p>';
+        '<div class="legend">' + rot().map(pn).join('') + '</div><p class="ft">כל שבוע הסבב זז באחד, כדי שיהיה הוגן<br><span dir="ltr">hakelim.com/bait</span></p>';
       // היום
       var td = $('tr-today');
       if (view === 0 && tdi > -1 && chores.length) {
@@ -564,7 +564,7 @@
     function ics(x) {
       var d = remindDate(x); if (!d) return;
       var e = new Date(d); e.setDate(e.getDate() + 1);
-      var body = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//gilad-rachamim//bait//HE', 'BEGIN:VEVENT', 'UID:' + x.id + '@gilad-rachamim.github.io', 'DTSTAMP:' + ymd(new Date()) + 'T000000Z',
+      var body = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//gilad-rachamim//bait//HE', 'BEGIN:VEVENT', 'UID:' + x.id + '@hakelim.com', 'DTSTAMP:' + ymd(new Date()) + 'T000000Z',
         'DTSTART;VALUE=DATE:' + ymd(d), 'DTEND;VALUE=DATE:' + ymd(e), 'SUMMARY:לחדש: ' + x.n + (x.who ? ' (' + x.who + ')' : ''), 'DESCRIPTION:בתוקף עד ' + he(x.exp),
         'BEGIN:VALARM', 'TRIGGER:PT9H', 'ACTION:DISPLAY', 'DESCRIPTION:תזכורת', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
       var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([body], { type: 'text/calendar' })); a.download = 'tizkoret.ics'; document.body.appendChild(a); a.click(); a.remove();
@@ -724,7 +724,7 @@
       $('sg-paper').innerHTML = '<h3>' + (st.mode === 'boker' ? '☀️ שגרת הבוקר' : '🌙 שגרת הערב') + (kidName() ? ' של ' + esc(kidName()) : '') + '</h3><p class="sub2">כל מה שעשיתי – מסמנים ✓</p>' +
         '<table><tr><th></th>' + DS.map(function (d) { return '<th>' + d + '</th>'; }).join('') + '</tr>' +
         (st.items[st.mode] || []).map(function (x) { return '<tr><td class="ch"><span style="font-size:1.4em">' + esc(x[0]) + '</span> ' + esc(x[1]) + '</td>' + DS.map(function () { return '<td style="height:2.2rem"></td>'; }).join('') + '</tr>'; }).join('') +
-        '</table><p class="ft">gilad-rachamim.github.io/bait</p>';
+        '</table><p class="ft">hakelim.com/bait</p>';
     }
     grid.addEventListener('click', function (e) {
       var b = e.target.closest('[data-i]'); if (!b) return;

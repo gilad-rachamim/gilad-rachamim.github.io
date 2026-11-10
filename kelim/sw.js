@@ -1,8 +1,8 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'kelim-202611091204';
-var PRECACHE = ["/kelim/avoda/", "/kelim/avoda/korot/", "/kelim/avoda/misrot/", "/kelim/avoda/reayon/", "/kelim/briut/", "/kelim/briut/madadim/", "/kelim/briut/rofe/", "/kelim/briut/trufot/", "/kelim/eruim/hachana/", "/kelim/eruim/hoshava/", "/kelim/eruim/", "/kelim/eruim/tochnit/", "/kelim/", "/kelim/kehila/aliyot/", "/kelim/kehila/azkarot/", "/kelim/kehila/", "/kelim/kehila/trumot/", "/kelim/kesharim/hodaot/", "/kelim/kesharim/", "/kelim/kesharim/ishurim/", "/kelim/kesharim/sidur/", "/kelim/kesharim/yomulda/", "/kelim/machshev/chadashot/", "/kelim/machshev/fax/", "/kelim/machshev/gibui/", "/kelim/machshev/", "/kelim/machshev/kasher/", "/kelim/machshev/kav/", "/kelim/machshev/pdf/", "/kelim/machshev/sader/", "/kelim/machshev/sisma/", "/kelim/machshev/tmuna/", "/kelim/machshev/tzilumim/", "/kelim/machshev/video/", "/kelim/miluim/bait/", "/kelim/miluim/", "/kelim/miluim/tziyud/", "/kelim/miluim/yamim/", "/kelim/mishpacha/", "/kelim/mishpacha/kniyot/", "/kelim/mishpacha/shabbat/", "/kelim/mishpacha/toranut/", "/kelim/shikum/", "/kelim/shikum/tik/", "/kelim/shikum/vaada/", "/kelim/shikum/yoman/", "/kelim/shipurim/", "/kelim/tamlul/", "/kelim/tiyulim/hotzaot/", "/kelim/tiyulim/", "/kelim/tiyulim/maslul/", "/kelim/tiyulim/ochel/", "/kelim/tiyulim/tziyud/", "/kelim/tochen/gdalim/", "/kelim/tochen/", "/kelim/tochen/matzeget/", "/kelim/tochen/moda/", "/kelim/tochen/shiron/", "/kelim/tochen/wa/", "/assets/site.css?v=39e81fea", "/assets/kelim.css?v=873b0769", "/assets/kelim.js?v=6ab3224b", "/assets/track.js?v=b23b682b", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-kelim-192.png"];
+var CACHE = 'kelim-202611102007';
+var PRECACHE = ["/kelim/avoda/", "/kelim/avoda/korot/", "/kelim/avoda/misrot/", "/kelim/avoda/reayon/", "/kelim/briut/", "/kelim/briut/madadim/", "/kelim/briut/rofe/", "/kelim/briut/trufot/", "/kelim/chashiva/avanim/", "/kelim/chashiva/blackjack/", "/kelim/chashiva/chidon/", "/kelim/chashiva/damka/", "/kelim/chashiva/", "/kelim/chashiva/kita/beit-sefer/", "/kelim/chashiva/kita/horim/", "/kelim/chashiva/kita/", "/kelim/chashiva/kita/more/", "/kelim/chashiva/mila/", "/kelim/chashiva/poker/", "/kelim/chashiva/reviiot/", "/kelim/chashiva/shachmat/", "/kelim/chashiva/shachor/", "/kelim/chashiva/shesh-besh/", "/kelim/chashiva/sudoku/", "/kelim/chashiva/tashchetz/", "/kelim/chashiva/yaniv/", "/kelim/eruim/hachana/", "/kelim/eruim/hazmana/bar-mitzva/", "/kelim/eruim/hazmana/bat-mitzva/", "/kelim/eruim/hazmana/chalake/", "/kelim/eruim/hazmana/chanukat-bayit/", "/kelim/eruim/hazmana/chatuna/", "/kelim/eruim/hazmana/china/", "/kelim/eruim/hazmana/erusin/", "/kelim/eruim/hazmana/", "/kelim/eruim/hazmana/m/", "/kelim/eruim/hazmana/sefer-torah/", "/kelim/eruim/hazmana/sheva-brachot/", "/kelim/eruim/hazmana/v/", "/kelim/eruim/hazmana/yom-huledet/", "/kelim/eruim/hoshava/", "/kelim/eruim/", "/kelim/eruim/tochnit/", "/kelim/hitkadmut/", "/kelim/", "/kelim/kehila/aliyot/", "/kelim/kehila/azkarot/", "/kelim/kehila/", "/kelim/kehila/trempim/", "/kelim/kehila/trempim/luz/", "/kelim/kehila/trempim/pratiut/", "/kelim/kehila/trumot/", "/kelim/kesharim/hodaot/", "/kelim/kesharim/", "/kelim/kesharim/ishurim/", "/kelim/kesharim/sidur/", "/kelim/kesharim/yomulda/", "/kelim/machshev/chadashot/", "/kelim/machshev/chadashot/moda/", "/kelim/machshev/fax/", "/kelim/machshev/gibui/", "/kelim/machshev/", "/kelim/machshev/kasher/", "/kelim/machshev/kav/", "/kelim/machshev/pdf/", "/kelim/machshev/sader/", "/kelim/machshev/sisma/", "/kelim/machshev/tmuna/", "/kelim/machshev/tzilumim/", "/kelim/machshev/video/", "/kelim/miluim/bait/", "/kelim/miluim/", "/kelim/miluim/tziyud/", "/kelim/miluim/yamim/", "/kelim/mishpacha/", "/kelim/mishpacha/kniyot/", "/kelim/mishpacha/shabbat/", "/kelim/mishpacha/toranut/", "/kelim/pratiut/", "/kelim/shikum/", "/kelim/shikum/tik/", "/kelim/shikum/vaada/", "/kelim/shikum/yoman/", "/kelim/shipurim/", "/kelim/shir/clip/", "/kelim/shir/haklata/", "/kelim/shir/", "/kelim/shir/lachan/", "/kelim/shir/milim/", "/kelim/tamlul/", "/kelim/tichnut/base64/", "/kelim/tichnut/bits/", "/kelim/tichnut/emet/", "/kelim/tichnut/git/", "/kelim/tichnut/gpu/", "/kelim/tichnut/hagdarot/", "/kelim/tichnut/imun/", "/kelim/tichnut/", "/kelim/tichnut/json/", "/kelim/tichnut/maslul/", "/kelim/tichnut/mehirut/", "/kelim/tichnut/miunim/", "/kelim/tichnut/occupancy/", "/kelim/tichnut/pkudot/", "/kelim/tichnut/reayon-tech/", "/kelim/tichnut/regex/", "/kelim/tichnut/shgiot/", "/kelim/tichnut/sibuchiyut/", "/kelim/tichnut/simulator/", "/kelim/tichnut/sql/", "/kelim/tichnut/tzaad/", "/kelim/tichnut/vram/", "/kelim/tiyulim/hotzaot/", "/kelim/tiyulim/", "/kelim/tiyulim/maslul/", "/kelim/tiyulim/ochel/", "/kelim/tiyulim/tziyud/", "/kelim/tochen/chaye/", "/kelim/tochen/gdalim/", "/kelim/tochen/", "/kelim/tochen/matzeget/", "/kelim/tochen/moda/", "/kelim/tochen/shiron/", "/kelim/tochen/studio/", "/kelim/tochen/wa/", "/assets/site.css?v=39e81fea", "/assets/kelim.css?v=355574bb", "/assets/kelim.js?v=dccd2958", "/assets/track.js?v=b23b682b", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-kelim-192.png"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
 });
@@ -39,6 +39,8 @@ self.addEventListener('fetch', function (e) {
     }));
     return;
   }
+  // קבצים גדולים (מודל הסרת הרקע של הסטודיו, 46MB): הכלי שומר אותם בעצמו, בלי הורדה חוזרת ברקע בכל שימוש
+  if (/^\/assets\/vendor\/(isnet|onnxruntime-web|pyodide)\//.test(url.pathname)) return;
   if (/^\/assets\//.test(url.pathname)) {
     e.respondWith(caches.match(req).then(function (hit) {
       var net = fetch(req).then(function (r) {
@@ -48,4 +50,26 @@ self.addEventListener('fetch', function (e) {
       return hit || net;
     }));
   }
+});
+
+// התראות "החדשות ב-3 דקות" (tools/news-worker): הדחיפה מגיעה בלי תוכן, ומביאים את הסיכום האחרון מהשרת.
+self.addEventListener('push', function (e) {
+  var page = '/kelim/machshev/chadashot/';
+  e.waitUntil(fetch('https://kelim-news.gilad4049.workers.dev/latest?from=push', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (ed) {
+    var first = ed && ed.sections && ed.sections.main && ed.sections.main[0];
+    return self.registration.showNotification('החדשות ב-3 דקות – סיכום ' + ((ed && ed.name) || 'חדש'), {
+      body: first ? first.text : 'הסיכום החדש מחכה לך', icon: '/assets/icon-kelim-192.png', badge: '/assets/icon-kelim-192.png',
+      tag: 'kelim-news', lang: 'he', dir: 'rtl', data: { url: page }
+    });
+  }).catch(function () {
+    return self.registration.showNotification('החדשות ב-3 דקות', { body: 'הסיכום החדש מחכה לך', icon: '/assets/icon-kelim-192.png', tag: 'kelim-news', lang: 'he', dir: 'rtl', data: { url: page } });
+  }));
+});
+self.addEventListener('notificationclick', function (e) {
+  e.notification.close();
+  var url = (e.notification.data && e.notification.data.url) || '/kelim/';
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (list) {
+    for (var i = 0; i < list.length; i++) if (list[i].url.indexOf(url) >= 0 && 'focus' in list[i]) return list[i].focus();
+    return self.clients.openWindow(url);
+  }));
 });

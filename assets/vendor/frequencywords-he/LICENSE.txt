@@ -1,0 +1,4 @@
+he-20k.txt – 20,000 המילים העבריות השכיחות ביותר (מסונן), לחיפוש חרוזים ב"השיר שלי".
+מקור: FrequencyWords מאת Hermit Dave – https://github.com/hermitdave/FrequencyWords (content/2018/he/he_50k.txt)
+רישיון התוכן: CC BY-SA 4.0 – https://creativecommons.org/licenses/by-sa/4.0/
+שינויים: הוסרו המספרים, מילים לא עבריות ומילים גסות; נשארו 20,000 הראשונות לפי שכיחות.

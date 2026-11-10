@@ -1,0 +1,168 @@
+<!--meta {
+  "site": "limudim",
+  "nav": "machshevon",
+  "tool": "machberet",
+  "title": "המחברת: פותרים לבד שלב אחרי שלב, עם בדיקה צמודה ורמזים | כלים ללימודים",
+  "description": "מחברת לפתירת תרגילים במתמטיקה במחשב ובטלפון: כותבים נוסחאות בקלות או אומרים אותן בקול, וכל שלב נבדק מיד מול השלב הקודם. רמז לצעד הבא, נוסחאות שקופצות לפי הנושא, והוכחות בגאומטריה ובטריגונומטריה במבנה טענה ונימוק, כמו בבגרות. חינם, בלי הרשמה.",
+  "og_title": "המחברת – פותרים לבד, עם בדיקה צמודה",
+  "priority": "0.8",
+  "crumbs": [["מחשבון לבגרות", "/limudim/machshevon/"], ["המחברת", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/vendor/katex/katex.min.css\">",
+  "foot": "<script src=\"/assets/vendor/katex/katex.min.js\"></script><script src=\"/assets/limudim-dibur.js\"></script><script src=\"/assets/limudim-machberet-math.js\"></script><script src=\"/assets/limudim-machberet.js\"></script>"
+} -->
+<header class="k-hero">
+  <h1>המחברת: פותרים לבד, עם בדיקה צמודה</h1>
+  <p class="sub">כותבים את הפתרון שורה אחרי שורה, כמו במחברת. כל שורה נבדקת מיד מול השורה שלפניה. נתקעתם? יש רמז לצעד הבא, ונוסחאות שקופצות לפי הנושא.</p>
+</header>
+
+<div class="tool" id="mb-app">
+  <div class="mb-tabs" role="tablist" aria-label="סוג העבודה">
+    <button type="button" role="tab" id="mb-t-alg" aria-selected="true" aria-controls="mb-alg">✏️ תרגיל</button>
+    <button type="button" role="tab" id="mb-t-prf" aria-selected="false" aria-controls="mb-prf">📐 הוכחה</button>
+    <button type="button" role="tab" id="mb-t-hw" aria-selected="false" aria-controls="mb-hw" hidden>📚 שיעורי בית</button>
+  </div>
+
+  <div class="mb-shared no-print" id="mb-shared" hidden role="status">
+    <b>📤 מחברת ששלחו לכם.</b> <span id="mb-shared-t">רואים את הפתרון כמו שהתלמיד כתב, עם הבדיקה של כל שורה. מה שמשנים כאן לא נשמר.</span>
+    <div class="btns"><button type="button" class="btn btn-sm" id="mb-keep">לשמור אצלי</button><a class="btn btn-sm" href="/limudim/machberet/" id="mb-mine">למחברת שלי</a></div>
+  </div>
+
+  <!-- ===================== תרגיל ===================== -->
+  <section id="mb-alg" role="tabpanel" aria-labelledby="mb-t-alg">
+    <div class="cx-exam mb-how" role="note">
+      <b>איך זה עובד:</b> בשורה הראשונה כותבים את התרגיל, ובכל שורה אחריה שלב אחד. מקלידים כמו במחשבון (<bdi dir="ltr">2x^2-3</bdi>, <bdi dir="ltr">sqrt(x)</bdi>), לוחצים על המקשים למטה, או אומרים בקול.
+      אי-שוויון כותבים עם <bdi dir="ltr">&lt;</bdi> או <bdi dir="ltr">≤</bdi>, ומערכת של שתי משוואות באותה שורה עם <bdi dir="ltr">;</bdi> ביניהן.
+      שורה נכונה מקבלת <b class="mb-okc">✓</b>, ושורה שלא מסתדרת עם הקודמת מקבלת סימון עדין <b class="mb-wc">כדאי לבדוק כאן</b>.
+    </div>
+
+    <div class="mb-ex" role="group" aria-label="תרגילים לדוגמה">
+      <button type="button" class="mb-cam" id="mb-cam" hidden>📷 מצלמים תרגיל מהדף</button><input type="file" id="mb-camf" accept="image/*" hidden>
+      <button type="button" class="mb-cam" id="mb-bag">🎓 תרגיל מהבגרות</button><a hidden id="mb-mxsrc" href="/assets/limudim-math.js"></a>
+      <span>לנסות על:</span>
+      <button type="button" data-ex="lin">משוואה</button><button type="button" data-ex="quad">ריבועית</button><button type="button" data-ex="simp">פישוט</button><button type="button" data-ex="der">נגזרת</button><button type="button" data-ex="trig">טריגו</button><button type="button" data-ex="sqrt">שורש</button><button type="button" data-ex="exp">מעריכית</button><button type="button" data-ex="ineq">אי-שוויון</button><button type="button" data-ex="sys">מערכת משוואות</button>
+    </div>
+
+    <div class="mb-top">
+      <button type="button" class="cx-ang" id="mb-deg" aria-label="מעלות או רדיאנים"><span class="on">מעלות</span><span>רדיאנים</span></button>
+      <label class="mb-kbonly"><input type="checkbox" id="mb-kbonly"> רק מקלדת הסימנים (בלי מקלדת הטלפון)</label>
+      <span class="mb-saved" id="mb-saved" aria-live="polite"></span>
+    </div>
+
+    <div class="mb-hwbar no-print" id="mb-hwbar" hidden>
+      <div class="mb-hwtop"><b id="mb-hwtitle"></b><button type="button" class="linkish" id="mb-hwexit">חזרה למחברת שלי</button></div>
+      <div class="mb-hwex" id="mb-hwex" role="group" aria-label="התרגילים במטלה"></div>
+      <div class="mb-hwmsgs" id="mb-hwmsgs" aria-live="polite"></div>
+      <div class="btns"><button type="button" class="btn btn-sm mb-stuck" id="mb-stuck" aria-pressed="false">🙋 נתקעתי, צריך עזרה</button><span class="mb-saved" id="mb-hwsaved"></span></div>
+    </div>
+
+    <article class="cx-sheet mb-sheet" id="mb-sheet" aria-label="המחברת">
+      <p class="mb-ask" id="mb-ask" hidden></p>
+      <ol class="mb-rows" id="mb-rows"></ol>
+      <button type="button" class="mb-add no-print" id="mb-add">+ שורה חדשה</button>
+    </article>
+
+    <div class="mb-hint" id="mb-hint" hidden aria-live="polite"></div>
+
+    <div class="mb-acts no-print">
+      <button type="button" class="btn btn-gold" id="mb-hintb">💡 רמז לצעד הבא</button>
+      <button type="button" class="btn" id="mb-formb">📐 נוסחאות</button>
+      <button type="button" class="btn" id="mb-print">🖨 להדפיס</button>
+      <button type="button" class="btn" id="mb-share">📤 לשלוח למורה</button>
+      <button type="button" class="btn" id="mb-new">דף חדש</button>
+    </div>
+
+    <details class="panel mb-old no-print" id="mb-old" hidden>
+      <summary><b>הדפים הקודמים שלי</b></summary>
+      <ul id="mb-oldl"></ul>
+    </details>
+  </section>
+
+  <!-- ===================== שיעורי בית מהמורה ===================== -->
+  <section id="mb-hw" role="tabpanel" aria-labelledby="mb-t-hw" hidden>
+    <div class="panel" id="mb-hwjoin" hidden>
+      <h2>מצטרפים לכיתה</h2>
+      <p>המורה שלחה לכם קישור לשיעורי בית במחברת. בוחרים כינוי, ומתחילים.</p>
+      <label class="pt-lbl" for="mb-jcode">קוד הכיתה</label><input class="kh-in" id="mb-jcode" inputmode="numeric" maxlength="6" dir="ltr" placeholder="000000">
+      <label class="pt-lbl" for="mb-jnick">הכינוי שלי <small>(עדיף לא שם מלא)</small></label><input class="kh-in" id="mb-jnick" maxlength="16" placeholder="למשל: נועה ב׳">
+      <button type="button" class="btn btn-gold" id="mb-join">להצטרף</button>
+      <p class="pt-err" id="mb-jerr" hidden></p>
+    </div>
+    <div class="panel" id="mb-hwlist" hidden>
+      <div class="kh-row"><h2 id="mb-hwcls"></h2><span class="mb-saved" id="mb-hwme"></span></div>
+      <ul class="kh-list" id="mb-hwul"></ul>
+      <p class="note">כל שורה שאתם כותבים נבדקת לבד, והמורה רואה את ההתקדמות. תרגיל שנפתר נכון מוסיף 20 נקודות ללוח של <a class="gold" href="/kelim/chashiva/kita/">כיתה משחקת</a>.</p>
+    </div>
+  </section>
+
+  <!-- ===================== הוכחה ===================== -->
+  <section id="mb-prf" role="tabpanel" aria-labelledby="mb-t-prf" hidden>
+    <div class="cx-exam mb-how" role="note">
+      <b>הוכחה כמו בבגרות:</b> בכל שורה <b>טענה</b>, ולידה <b>נימוק</b>: נתון, משפט או מסקנה משורות קודמות. בוחרים את הנימוק מהרשימה, ובסוף לוחצים "בדיקת ההוכחה".
+      טענה עם מספרים (למשל <bdi dir="ltr">BC^2=8^2+5^2-2*8*5*cos(60°)</bdi>) נבדקת גם בחישוב.
+    </div>
+    <div class="mb-ex" role="group" aria-label="הוכחות לדוגמה">
+      <span>לנסות על:</span>
+      <button type="button" data-px="shok">משולש שווה שוקיים</button><button type="button" data-px="kos">משפט הקוסינוסים</button><button type="button" data-px="makbilit">מקבילית</button><button type="button" data-px="maagal">מעגל</button>
+    </div>
+    <div class="panel mb-pin">
+      <label for="mb-given" class="pt-lbl">נתון</label>
+      <textarea id="mb-given" rows="3" placeholder="למשל: במשולש ABC נתון AB=AC. AD חוצה את הזווית BAC."></textarea>
+      <label for="mb-prove" class="pt-lbl">צריך להוכיח</label>
+      <input id="mb-prove" class="mb-pinp" placeholder="למשל: BD=DC">
+    </div>
+
+    <details class="panel mb-draw" id="mb-draw">
+      <summary><b>✏️ שרטוט</b> <small>מציירים את המשולש ומסמנים אותיות. נשמר בטלפון ומודפס עם ההוכחה.</small></summary>
+      <div class="mb-dtools no-print" role="toolbar" aria-label="כלי שרטוט">
+        <button type="button" data-tool="line" aria-pressed="true">📏 קו ישר</button>
+        <button type="button" data-tool="pen" aria-pressed="false">✏️ יד חופשית</button>
+        <button type="button" data-tool="txt" aria-pressed="false">🔤 אות <b id="mb-dlet">A</b></button>
+        <button type="button" id="mb-dtri">△ משולש מוכן</button>
+        <button type="button" id="mb-dundo" aria-label="ביטול הפעולה האחרונה">↶ ביטול</button>
+        <button type="button" id="mb-dclr">🗑 ניקוי</button>
+      </div>
+      <canvas class="mb-dcv" id="mb-dcv" aria-label="שרטוט ההוכחה" role="img"></canvas>
+      <p class="note no-print">קו ישר נצמד לנקודות שכבר יש בשרטוט. כדי לסמן אות: בוחרים "אות" ולוחצים במקום שלה (לחיצה נוספת על הכפתור מחליפה אות).</p>
+    </details>
+
+    <article class="cx-sheet mb-sheet" aria-label="ההוכחה">
+      <div class="mb-ptable">
+        <div class="mb-phead" aria-hidden="true"><span>#</span><span>טענה</span><span>נימוק</span></div>
+        <ol class="mb-prows" id="mb-prows"></ol>
+      </div>
+      <button type="button" class="mb-add no-print" id="mb-padd">+ שורה בהוכחה</button>
+    </article>
+
+    <div class="mb-hint" id="mb-presult" hidden aria-live="polite"></div>
+
+    <div class="mb-acts no-print">
+      <button type="button" class="btn btn-gold" id="mb-pcheck">✔ בדיקת ההוכחה</button>
+      <button type="button" class="btn" id="mb-phint">💡 רמז לשורה הבאה</button>
+      <button type="button" class="btn" id="mb-pform">📐 משפטים ונוסחאות</button>
+      <button type="button" class="btn" id="mb-pprint">🖨 להדפיס</button>
+      <button type="button" class="btn" id="mb-pshare">📤 לשלוח למורה</button>
+      <button type="button" class="btn" id="mb-pnew">הוכחה חדשה</button>
+    </div>
+  </section>
+
+<div class="mx-support no-print" id="mb-support" hidden><p>💛 המחברת חינמית, ונבנתה בהרבה שעות עבודה. אם היא עוזרת לכם, אפשר לעזור להחזיק את המיזם, גם בסכום קטן.</p><a class="btn btn-line btn-sm" href="/kelim/#litmoch" data-support="1">לתמוך במיזם</a></div>
+
+  <div id="mx-data" hidden></div><!-- המחוללים של "המסלול שלי" נטענים רק כשלוחצים "תרגיל מהבגרות" -->
+
+  <!-- מקלדת סימנים: נצמדת לתחתית המסך כשכותבים בשורה -->
+  <div class="mb-kb no-print" id="mb-kb" hidden>
+    <div class="mb-keys" id="mb-keys" dir="ltr"></div>
+  </div>
+
+  <dialog class="mb-dlg" id="mb-dlg" aria-labelledby="mb-dlg-h">
+    <div class="mb-dlg-in">
+      <div class="mb-dlg-top"><h2 id="mb-dlg-h">נוסחאות ומשפטים</h2><button type="button" class="linkish" id="mb-dlg-x" aria-label="סגירה">✕ סגירה</button></div>
+      <div class="mb-ftabs" id="mb-ftabs" role="tablist"></div>
+      <div class="mb-fbody" id="mb-fbody"></div>
+      <p class="note">הנוסחאות כאן הן מה שמופיע בדף הנוסחאות של הבגרות ועוד כמה שימושיות. בבחינה עצמה מקבלים את הדף הרשמי.</p>
+    </div>
+  </dialog>
+
+  <p class="note pt-priv">המחברת נשמרת רק בטלפון או במחשב שלכם. הבדיקה של כל שורה נעשית במכשיר עצמו, בלי בינה מלאכותית ובלי לשלוח כלום. צילום של תרגיל נשלח לבינה מלאכותית רק כדי להעתיק אותו לשורה, ולא נשמר. "רמז חכם" ו"בדיקה חכמה" של הוכחה שולחים את מה שכתבתם (בלי שום פרט עליכם) לבינה מלאכותית, עם מכסה יומית כדי שהשירות יישאר חינמי לכולם.
+  👩‍🏫 מורים? <a class="gold" href="/limudim/machberet/kita/">שיעורי בית במחברת</a>: נותנים לכיתה תרגילים ורואים בזמן אמת מי פתר ומי נתקע. רוצים לראות פתרון מלא? <a class="gold" href="/limudim/poter/">הפותר</a> נותן דרך מלאה לשאלת בגרות. <a class="gold" href="/limudim/machshevon/">המחשבון לבגרות</a> עוזר בחישובים.</p>
+</div>

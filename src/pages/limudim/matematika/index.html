@@ -3,11 +3,11 @@
   "nav": "matematika",
   "tool": "matematika",
   "title": "תרגול מתמטיקה צעד אחרי צעד: שיעור קצר ותרגול עם רמזים, מכיתה ב׳ ועד הבגרות | כלים ללימודים",
-  "description": "לוח הכפל, חילוק ארוך, עשרוניים, שברים, ממוצע, אחוזים, יחס, הסתברות, משוואות, חזקות, גרף של קו, פיתגורס ונוסחת השורשים, ונושאי בגרות: סדרות, טריגונומטריה, גדילה ודעיכה, סטטיסטיקה ועוד. 24 נושאים. בכל נושא שיעור קצר שמתנגן כמו סרטון עם קריינות, ותרגול שבו פותרים פעולה אחת בכל פעם, עם רמז ובדיקה מיד. שלושה שלבים שעולים לבד. חינם, בלי הרשמה.",
+  "description": "לוח הכפל, חילוק ארוך, עשרוניים, שברים, ממוצע, אחוזים, יחס, הסתברות, משוואות, חזקות, גרף של קו, פיתגורס ונוסחת השורשים, ולבגרות לפי השאלונים של 3, 4 ו-5 יחידות: נגזרת, משיק, קיצון, אינטגרל, מעגל, התפלגות נורמלית, הסתברות מותנית, בעיות תנועה, פונקציה רציונלית, תיבה ופירמידה, וקטורים, מספרים מרוכבים, לוגריתמים, דמיון משולשים, זוויות במעגל, אינדוקציה, נפח גוף סיבוב, סדרות וטריגונומטריה. 48 נושאים. בכל נושא שיעור קצר שמתנגן כמו סרטון עם קריינות, ותרגול שבו פותרים פעולה אחת בכל פעם, עם רמז ובדיקה מיד. שלושה שלבים שעולים לבד. חינם, בלי הרשמה.",
   "og_title": "תרגול מתמטיקה צעד אחרי צעד",
   "priority": "0.8",
   "crumbs": [["תרגול מתמטיקה צעד אחרי צעד", null]],
-  "foot": "<script src=\"/assets/limudim-math.js\"></script>"
+  "foot": "<script src=\"/assets/limudim-math.js\"></script><script src=\"/assets/hitkadmut.js\" defer></script>"
 } -->
 <header class="k-hero">
   <h1>מתמטיקה צעד אחרי צעד</h1>
@@ -16,6 +16,7 @@
 
 <div class="tool" id="mx-app">
   <div id="mx-home">
+    <p class="hk-strip" data-hk="matematika" data-goal="5" data-tool="matematika" data-what="תרגול" hidden></p>
     <div class="mx-list" id="mx-list"></div>
     <div class="panel">
       <h3>איך זה עובד</h3>
@@ -67,18 +68,44 @@
             <div class="mx-row"><input id="mx-in" type="text" inputmode="decimal" dir="ltr" enterkeyhint="done" aria-describedby="mx-fb"><button class="btn btn-gold" type="submit">לבדוק</button></div>
             <p class="mx-fb" id="mx-fb" aria-live="polite"></p>
             <p class="mx-hint" id="mx-hint" hidden></p>
-            <div class="btns"><button class="linkish" type="button" id="mx-hintbtn">💡 רמז</button><button class="linkish" type="button" id="mx-show">להראות את הצעד</button></div>
+            <div class="btns"><button class="linkish" type="button" id="mx-hintbtn">💡 רמז</button><button class="linkish" type="button" id="mx-show">להראות את הצעד</button><button class="linkish mx-calcbtn" type="button" id="mx-calc" data-calc hidden>🧮 לפתוח מחשבון</button></div>
           </form>
           <p class="note">אפשר לכתוב מספר שלם, מינוס (‎-3), עשרוני (2.5) או שבר (3/4).</p>
         </div>
         <div id="mx-end" hidden>
           <div id="mx-end-msg" class="mx-endmsg"></div>
+          <div id="mx-hk" hidden></div>
           <button class="btn btn-gold btn-block" type="button" id="mx-nextp">לתרגיל הבא ←</button>
         </div>
       </div>
       <div class="btns c"><button class="linkish" type="button" id="mx-reset">לחזור לשלב 1 בנושא הזה</button></div>
     </div>
   </section>
+
+  <section id="mx-exam" hidden>
+    <div class="mx-head">
+      <button class="linkish" type="button" id="ex-quit">→ לצאת מהמבחן</button>
+      <h2 id="ex-title"></h2>
+      <span class="pill" id="ex-time">⏱ 0:00</span> <small class="muted" id="ex-rec"></small>
+    </div>
+    <div id="ex-run" class="panel">
+      <div class="mx-prog ex-prog" id="ex-prog" aria-hidden="true"></div>
+      <p class="ex-headline" id="ex-head"></p>
+      <div class="mx-ex" id="ex-ex"></div>
+      <ol class="mx-done" id="ex-done"></ol>
+      <div class="mx-cur" id="ex-cur"></div>
+      <form id="ex-form" class="mx-form" novalidate autocomplete="off">
+        <label for="ex-in" id="ex-q"></label>
+        <div class="mx-row"><input id="ex-in" type="text" inputmode="decimal" dir="ltr" enterkeyhint="done"><button class="btn btn-gold" type="submit">לענות</button></div>
+        <p class="mx-fb" id="ex-fb" aria-live="polite"></p>
+        <div class="btns"><button class="linkish" type="button" id="ex-skip">לדלג על השאלה</button><button class="linkish mx-calcbtn" type="button" data-calc>🧮 מחשבון מדעי</button></div>
+      </form>
+      <p class="note">במבחן אין רמזים, ויש ניסיון אחד לכל סעיף, כמו בבגרות. אחרי כל תשובה רואים אם היא נכונה, וממשיכים.</p>
+    </div>
+    <div id="ex-end" class="panel" hidden></div>
+  </section>
+
+  <div class="mx-calcbox" id="mx-calcbox" role="dialog" aria-label="מחשבון" hidden><div class="bar"><span>🧮 מחשבון</span><span><a href="/limudim/machshevon/" target="_blank" rel="noopener">למחשבון המלא</a> &nbsp; <button class="linkish" type="button" id="mx-calcx">סגירה ✕</button></span></div><iframe id="mx-calcif" title="מחשבון מדעי" loading="lazy"></iframe></div>
 
   <p class="local-note">🔒 בלי הרשמה. ההתקדמות נשמרת רק בטלפון הזה.</p>
   <p class="note" style="text-align:center">התרגילים נוצרים מחדש בכל פעם, כך שאפשר להמשיך לתרגל בלי סוף. רוצים נושא נוסף? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>

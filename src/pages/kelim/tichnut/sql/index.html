@@ -1,0 +1,41 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tichnut_sql",
+  "title": "תרגול SQL בדפדפן – 12 תרגילים מ-SELECT עד JOIN ותת-שאילתות | הכלים של גילעד רחמים",
+  "description": "מסד נתונים אמיתי (SQLite) רץ בדפדפן עם סטודנטים, קורסים וציונים. כותבים שאילתה, רואים תוצאה, ובודקים אוטומטית 12 תרגילים מדורגים – SELECT, WHERE, GROUP BY, JOIN, HAVING ושאלות ראיון. בלי התקנה, בחינם.",
+  "og_title": "תרגול SQL בדפדפן, עם בדיקה אוטומטית",
+  "priority": "0.7",
+  "crumbs": [["כלים למתכנתים", "/kelim/tichnut/"], ["תרגול SQL", null]],
+  "head": "<style>.sq-status{color:var(--muted);font-size:.88rem;margin-bottom:.6rem}.sq-schema{display:grid;grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));gap:.45rem;direction:ltr;margin-bottom:.9rem}.sq-schema div{padding:.5rem .6rem;border:1px solid var(--line);border-radius:10px;font-family:ui-monospace,Consolas,monospace;font-size:.82rem;color:var(--body);line-height:1.5}.sq-schema b{color:var(--gold);display:block}.sq-ex{display:flex;flex-wrap:wrap;gap:.3rem;margin:.4rem 0 .8rem}.sq-ex button{padding:.3rem .65rem;border:1px solid var(--line);border-radius:99px;background:none;color:var(--body);font:inherit;font-size:.85rem;cursor:pointer}.sq-ex button[aria-current]{border-color:var(--gold);color:var(--cream);background:rgba(216,179,95,.1)}.sq-ex button.ok{color:#9fd39b}.sq-task{padding:.7rem .85rem;border-right:3px solid var(--gold);background:rgba(216,179,95,.07);border-radius:8px;color:var(--parchment);line-height:1.6}.sq-task b{color:var(--cream)}.sq-in{width:100%;min-height:7.5rem;margin-top:.7rem;direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:.95rem;line-height:1.5;padding:.75rem;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.3);color:#e9f5e1;resize:vertical;unicode-bidi:plaintext}.sq-btns{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0}.sq-hint,.sq-sol{padding:.55rem .75rem;border-radius:10px;background:rgba(255,255,255,.03);color:var(--parchment);margin-top:.4rem}.sq-sol{direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:.85rem;white-space:pre-wrap;unicode-bidi:plaintext}.sq-ok{color:#9fd39b;font-weight:600;margin:.5rem 0}.sq-no{color:#f0a39b;margin:.5rem 0}.sq-tw{overflow-x:auto;margin-top:.4rem;max-height:24rem;overflow-y:auto}.sq-t{border-collapse:collapse;width:100%;font-size:.9rem}.sq-t th,.sq-t td{padding:.35rem .55rem;border-bottom:1px solid var(--line);color:var(--parchment);text-align:start;white-space:nowrap}.sq-t th{color:var(--gold);position:sticky;top:0;background:var(--bg,#0f1d1c)}.sq-t i{color:var(--muted)}.sq-prog{color:var(--muted);font-size:.88rem}.tn-shut{margin:1.2rem 0 .6rem;padding:.75rem .9rem;border-inline-start:3px solid var(--gold-soft);border-radius:10px;background:rgba(216,179,95,.05);color:var(--parchment);font-size:.92rem;line-height:1.65}</style>",
+  "foot": "<script src=\"/assets/tichnut-data.js\" defer></script><script src=\"/assets/vendor/sqljs/sql-wasm-1.10.3.js\" defer></script><script src=\"/assets/tichnut-sql.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>תרגול SQL בדפדפן</h1>
+  <p class="sub">מסד נתונים אמיתי רץ אצלכם בדפדפן. כותבים שאילתה, רואים תוצאה, ובודקים את עצמכם ב-12 תרגילים – מ-SELECT ועד שאלות ראיון.</p>
+</header>
+<div class="tool">
+  <p class="sq-status" id="sq-status"></p>
+  <div class="sq-schema" aria-label="הטבלאות">
+    <div><b>students</b>id, name, city, year</div>
+    <div><b>courses</b>id, title, credits, dept</div>
+    <div><b>grades</b>student_id, course_id, grade</div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:baseline"><b style="color:var(--cream)">התרגילים</b><span class="sq-prog" id="sq-prog"></span></div>
+  <div class="sq-ex" id="sq-ex"></div>
+  <p class="sq-task" id="sq-task"></p>
+  <textarea id="sq-in" class="sq-in" spellcheck="false" autocomplete="off" aria-label="השאילתה" placeholder="SELECT ..."></textarea>
+  <div class="sq-btns">
+    <button class="btn btn-gold btn-sm" type="button" id="sq-check">לבדוק (Ctrl+Enter)</button>
+    <button class="btn btn-line btn-sm" type="button" id="sq-run">רק להריץ</button>
+    <button class="btn btn-line btn-sm" type="button" id="sq-hint-b">רמז</button>
+    <button class="btn btn-line btn-sm" type="button" id="sq-sol-b">פתרון</button>
+    <button class="btn btn-line btn-sm" type="button" id="sq-reset">לאפס את המסד</button>
+  </div>
+  <p class="sq-hint" id="sq-hint" hidden></p>
+  <p class="sq-sol" id="sq-sol" hidden></p>
+  <div id="sq-out" aria-live="polite"></div>
+  <p class="tn-shut">💛 הכלי הזה חינמי ובלי פרסומות. אני בונה אותו לבד ומשלם עליו מהכיס, באהבה. אם הוא עוזר לכם, <a class="gold" href="/kelim/tichnut/#shutafim">אפשר להיות שותפים</a>: חסות, תרגיל שתכתבו, או תמיכה קטנה.</p>
+  <p class="disclaimer">המסד הוא SQLite שרץ בדפדפן שלכם (sql.js) – אפשר גם INSERT, UPDATE ו-CREATE בלי לשבור כלום, ו"לאפס את המסד" מחזיר הכול. רוב מה שכתוב כאן עובד גם ב-MySQL ו-PostgreSQL. התשובה נבדקת לפי התוצאה, לא לפי איך כתבתם.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="תרגול SQL בדפדפן עם בדיקה אוטומטית – 12 תרגילים מ-SELECT ועד JOIN. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר מהלימודים</a></div>
+</div>

@@ -1,0 +1,37 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "chanuka_tashbetz",
+  "title": "תשבץ ותפזורת לחנוכה – פותרים בטלפון או מדפיסים | כלי קודש",
+  "description": "תשבץ חנוכה עם הגדרות לילדים ותפזורת מילים של חנוכה, בשלוש רמות. כל פעם לוח חדש. פותרים בטלפון או מדפיסים. בחינם.",
+  "og_title": "תשבץ ותפזורת לחנוכה",
+  "priority": "0.7",
+  "crumbs": [["חנוכה למשפחה", "/kodesh/chanuka/"], ["תשבץ ותפזורת", null]],
+  "head": "<style>#tb-tabs{display:flex;gap:.4rem;justify-content:center;margin-bottom:.7rem}#tb-tabs button{padding:.5rem 1.1rem;border:1px solid var(--line);border-radius:99px;background:none;color:var(--body);cursor:pointer;font-size:1.02rem}#tb-tabs button[aria-selected=true]{border-color:var(--gold);color:var(--gold);background:rgba(212,176,98,.1);font-weight:700}.tb-bar{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center;align-items:center;margin-bottom:.8rem}.tb-bar select{width:auto}.tb-grid{display:grid;gap:3px;max-width:30rem;margin:0 auto;direction:rtl}.tb-grid.cw .x{aspect-ratio:1}.tb-grid.cw .c{position:relative;aspect-ratio:1;background:#fbf6ea;border-radius:4px}.tb-grid.cw .c i{position:absolute;top:1px;right:3px;font-style:normal;font-size:.62rem;color:#7a5c1e;line-height:1}.tb-grid.cw input{width:100%;height:100%;border:0;background:transparent;text-align:center;font:700 clamp(.95rem,4.5vw,1.35rem) var(--serif);color:#1d2a4a;padding:0;border-radius:4px}.tb-grid.cw .c.ok{background:#dff3df}.tb-grid.cw .c.bad{background:#f7d4d4}.tb-grid.ws button{aspect-ratio:1;border:1px solid var(--line);border-radius:6px;background:rgba(255,255,255,.03);color:var(--cream);font:700 clamp(.9rem,4.2vw,1.3rem) var(--serif);cursor:pointer;padding:0}.tb-grid.ws button.sel{background:var(--gold);color:#111}.tb-grid.ws button.f{background:rgba(212,176,98,.3);color:var(--gold-hi,#f1d48a)}.tb-side{margin-top:1rem}.tb-side h3{font-family:var(--serif);color:var(--gold);margin:.6rem 0 .3rem;font-size:1.1rem}.tb-side ol{margin:0;padding-inline-start:0;list-style:none;display:grid;gap:.3rem;color:var(--body);line-height:1.55}.tb-side small{color:var(--muted)}.ws-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.35rem}.ws-list li{padding:.25rem .7rem;border:1px solid var(--line);border-radius:99px;color:var(--cream)}.ws-list li.f{text-decoration:line-through;color:var(--muted)}.tb-msg{text-align:center;color:var(--gold);min-height:1.5rem;margin:.6rem 0 0}.tb-ph{display:none}@media print{.topbar,.site-foot,.crumbs,.no-print,.k-hero{display:none!important}body{background:#fff!important}.tb-ph{display:block;text-align:center;font-size:20pt;margin:0 0 4mm;color:#000}.tb-grid{max-width:150mm}.tb-grid.cw .c{background:#fff;border:1px solid #000}.tb-grid.cw .x{background:none}.tb-grid.cw input{color:transparent!important}.tb-grid.cw .c i{color:#000}.tb-grid.ws button{background:#fff!important;color:#000!important;border:1px solid #999}.tb-side h3,.tb-side ol,.ws-list li{color:#000!important;text-decoration:none!important}.tb-msg{display:none}}</style>",
+  "foot": "<script src=\"/assets/chanuka-tashbetz.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <span class="bsd">בס"ד</span>
+  <h1>תשבץ ותפזורת לחנוכה</h1>
+  <p class="sub">פותרים בטלפון או מדפיסים. כל לחיצה על "לוח חדש" נותנת לוח אחר.</p>
+</header>
+
+<section class="k-sec" aria-label="המשחק">
+  <div id="tb-tabs" class="no-print" role="tablist"><button type="button" role="tab" data-m="tashbetz">תשבץ</button><button type="button" role="tab" data-m="tapzoret">תפזורת</button></div>
+  <div class="tb-bar no-print">
+    <select id="tb-level" aria-label="רמה"><option value="kal">קל</option><option value="beinoni" selected>בינוני</option><option value="kashe">קשה</option></select>
+    <button class="btn btn-line btn-sm" type="button" id="tb-new">🔄 לוח חדש</button>
+    <button class="btn btn-line btn-sm" type="button" id="tb-check">לבדוק</button>
+    <button class="btn btn-line btn-sm" type="button" id="tb-show">לגלות תשובות</button>
+    <button class="btn btn-line btn-sm" type="button" id="tb-print">🖨️ להדפיס</button>
+  </div>
+  <h2 class="tb-ph" id="tb-ph"></h2>
+  <div class="tb-grid" id="tb-grid"></div>
+  <p class="tb-msg no-print" id="tb-msg" aria-live="polite"></p>
+  <div class="tb-side" id="tb-side"></div>
+</section>
+
+<section class="k-sec no-print" aria-labelledby="tb-more-h">
+  <h2 id="tb-more-h">לשתף ולהמשיך</h2>
+  <div class="actions"><a class="btn btn-gold" href="#" data-share-tool="wa" data-text="תשבץ ותפזורת לחנוכה, בחינם – פותרים בטלפון או מדפיסים:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח בווטסאפ</a><a class="btn btn-line" href="/kodesh/chanuka/chidon/">חידון חנוכה</a><a class="btn btn-line" href="/kodesh/chanuka/">לחבילת החנוכה למשפחה</a></div>
+</section>

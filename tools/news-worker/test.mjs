@@ -1,6 +1,6 @@
 // בדיקה במחשב: node test.mjs  (מקורות RSS אמיתיים, שבת/חג, סינון כשר, בדיקת מספרים, ריצה במצב כותרות)
 import assert from 'node:assert';
-import worker, { SOURCES, parseRss, kosher, numbersOk, holyNow, runEdition } from './news-worker.js';
+import worker, { SOURCES, parseRss, kosher, numbersOk, holyNow, runEdition, gershayim, tidy, FOREIGN, fixOk } from './news-worker.js';
 
 // שבת/חג (זמן UTC; ישראל +2 בחורף)
 assert.equal(holyNow(new Date('2026-11-13T10:00:00Z')), false, 'שישי בבוקר – לא שבת');
@@ -21,6 +21,17 @@ assert.equal(numbersOk('המחיר עלה ב-5%', 'מחיר הלחם עלה ב-5
 assert.equal(numbersOk('המחיר עלה ב-7%', 'מחיר הלחם עלה ב-5% מחר'), false);
 assert.equal(numbersOk('1,200 שקל', 'סכום של 1200 שקל'), true);
 console.log('✓ סינון ומספרים');
+
+// גרשיים (זצ"ל נקטע ל"זצ" לפני התיקון), שפה זרה, ותיקון של הבודק
+assert.equal(gershayim('הגאון זצ"ל בחב"ד'), 'הגאון זצ״ל בחב״ד');
+assert.equal(gershayim('אמר "שלום" לכולם'), 'אמר "שלום" לכולם');
+assert.equal(tidy('לפי דיווח בבחדרי חרדים, נפתח'), 'לפי דיווח באתר בחדרי חרדים, נפתח');
+assert.equal(FOREIGN.test('ועל פי דיווחים זденти פגיעות'), true);
+assert.equal(FOREIGN.test('צה״ל, 5% ו-ynet'), false);
+assert.equal(fixOk('הכנסת ה-26 נפתחת בטקס שבו 120 חברי הכנסת מצהירים אמונים.', 'הכנסת ה-26 נפתחת 120 חברי הכנסת'), true);
+assert.equal(fixOk('הכנסת ה-27 נפתחת בטקס חגיגי ומרשים מאוד.', 'הכנסת ה-26'), false);
+assert.equal(fixOk('אבל בקהילת חב', 'x'), false);
+console.log('✓ גרשיים, שפה זרה ותיקונים');
 
 // מקורות אמיתיים
 let total = 0;

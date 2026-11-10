@@ -1,0 +1,81 @@
+<!--meta {
+  "site": "limudim",
+  "nav": "machshevon",
+  "tool": "machberet_kita",
+  "title": "שיעורי בית במחברת – המורה רואה כל תלמיד/ה בזמן אמת ושולחת רמז | כלים ללימודים",
+  "description": "למורים: נותנים לכיתה 3–4 תרגילים במחברת, ורואים בזמן אמת מי פתר, מי בדרך ומי נתקע. כל שורה של התלמידים נבדקת לבד. מי שנתקע לוחץ 'נתקעתי', והמורה שולחת לו רמז או משחררת תשובה. חינם, בלי הרשמה, בלי שמות מלאים.",
+  "og_title": "שיעורי בית במחברת – למורים",
+  "priority": "0.7",
+  "crumbs": [["המחברת", "/limudim/machberet/"], ["שיעורי בית – למורה", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/vendor/katex/katex.min.css\"><meta name=\"robots\" content=\"noindex\">",
+  "foot": "<script src=\"/assets/vendor/katex/katex.min.js\"></script><script src=\"/assets/limudim-machberet-math.js\"></script><script src=\"/assets/limudim-kita-hw.js\"></script>"
+} -->
+<header class="k-hero">
+  <h1>שיעורי בית במחברת: דף המורה</h1>
+  <p class="sub">נותנים לכיתה כמה תרגילים, ורואים בזמן אמת מי פתר, מי בדרך ומי נתקע. מי שנתקע לוחץ "נתקעתי", ואתם שולחים לו רמז או משחררים תשובה.</p>
+</header>
+
+<div class="tool" id="kh-app">
+  <!-- אין כיתה עדיין -->
+  <section class="panel" id="kh-new-class" hidden>
+    <h2>פותחים כיתה (פעם אחת)</h2>
+    <p>הכיתה משותפת ל<a class="gold" href="/kelim/chashiva/kita/">כיתה משחקת</a>: אותו קוד, אותם תלמידים, ותרגיל שנפתר במחברת מוסיף נקודות ללוח הכיתה.</p>
+    <label class="pt-lbl" for="kh-cname">שם הכיתה</label><input class="kh-in" id="kh-cname" maxlength="40" placeholder="למשל: ח׳2 מתמטיקה">
+    <label class="pt-lbl" for="kh-cteacher">איך לחתום <small>(לא חובה)</small></label><input class="kh-in" id="kh-cteacher" maxlength="30" placeholder="למשל: המורה רחל">
+    <button type="button" class="btn btn-gold" id="kh-create">לפתוח כיתה</button>
+    <p class="pt-err" id="kh-cerr" hidden></p>
+  </section>
+
+  <section id="kh-main" hidden>
+    <div class="panel kh-class">
+      <div class="kh-row"><b id="kh-cls-name"></b><select id="kh-cls" aria-label="הכיתה" hidden></select></div>
+      <p>קוד הכיתה: <b class="kh-code" id="kh-code" dir="ltr"></b> · <span id="kh-nst"></span></p>
+      <p>הקישור לתלמידים (פעם אחת לכל הכיתה):</p>
+      <div class="kh-link"><input class="kh-in" id="kh-slink" readonly dir="ltr"><button type="button" class="btn btn-sm" id="kh-copy">להעתיק</button><a class="btn btn-sm" id="kh-wa" target="_blank" rel="noopener">ווטסאפ לכיתה</a></div>
+      <p class="note">⚠️ שמרו את הדף הזה (סימנייה). הקישור שלו הוא המפתח שלכם לכיתה: <a class="gold" id="kh-mylink" href="#">הקישור למורה</a>.</p>
+    </div>
+
+    <details class="panel kh-newhw" id="kh-newhw" open>
+      <summary><b>➕ מטלה חדשה</b></summary>
+      <label class="pt-lbl" for="kh-title">שם המטלה</label><input class="kh-in" id="kh-title" maxlength="60" placeholder="למשל: משוואות ריבועיות – שיעורי בית">
+      <label class="pt-lbl" for="kh-ex">התרגילים – כל תרגיל בשורה משלו</label>
+      <textarea class="kh-in" id="kh-ex" rows="4" dir="ltr" placeholder="x^2-5x+6=0&#10;2(x-3)=x+4&#10;f(x)=x^3-3x"></textarea>
+      <details class="kh-more"><summary>רמזים ותשובות מוכנים (לא חובה, התלמידים לא רואים עד שתשחררו)</summary>
+        <label class="pt-lbl" for="kh-hints">רמז לכל תרגיל, באותו סדר</label><textarea class="kh-in" id="kh-hints" rows="3" placeholder="פירוק לגורמים: שני מספרים שמכפלתם 6 וסכומם 5"></textarea>
+        <label class="pt-lbl" for="kh-ans">תשובה לכל תרגיל, באותו סדר</label><textarea class="kh-in" id="kh-ans" rows="3" dir="ltr" placeholder="x=2 או x=3"></textarea>
+      </details>
+      <div class="kh-prev" id="kh-exprev"></div>
+      <button type="button" class="btn btn-gold" id="kh-send">לתת לכיתה</button>
+      <p class="pt-err" id="kh-err" hidden></p>
+    </details>
+
+    <section class="panel">
+      <h2>המטלות</h2>
+      <ul class="kh-list" id="kh-list"><li class="note">עוד אין מטלות.</li></ul>
+    </section>
+
+    <section class="panel kh-live" id="kh-live" hidden>
+      <div class="kh-row"><h2 id="kh-live-t"></h2><span class="kh-upd" id="kh-upd" aria-live="polite"></span></div>
+      <p class="note">✓ פתר · ✏️ בדרך (וכמה שורות עם "?") · 🙋 נתקע · · עוד לא התחיל. לוחצים על משבצת כדי לראות את הפתרון ולשלוח רמז.</p>
+      <div class="kh-gridwrap"><table class="kh-grid" id="kh-grid"></table></div>
+      <div class="kh-detail" id="kh-detail" hidden></div>
+      <div class="btns kh-hwacts">
+        <button type="button" class="btn btn-sm" id="kh-all">💬 רמז לכל הכיתה</button>
+        <button type="button" class="btn btn-sm" id="kh-close">לסגור את המטלה</button>
+        <button type="button" class="btn btn-sm" id="kh-del">למחוק את המטלה</button>
+      </div>
+    </section>
+  </section>
+
+  <section class="panel kh-how">
+    <h2>איך זה עובד</h2>
+    <ol class="cx-steps">
+      <li>שולחים לכיתה את הקישור לתלמידים. כל תלמיד/ה בוחר/ת כינוי, בלי שם מלא ובלי הרשמה.</li>
+      <li>נותנים מטלה: 3–4 תרגילים. היא מופיעה לתלמידים במחברת, בלשונית "שיעורי בית".</li>
+      <li>כל שורה שהתלמידים כותבים נבדקת לבד מול השורה הקודמת, ואתם רואים כאן את ההתקדמות בזמן אמת.</li>
+      <li>מי שנתקע לוחץ "נתקעתי". אתם רואים 🙋, ושולחים לו רמז או משחררים לו את התשובה.</li>
+      <li>תרגיל שנפתר נכון מוסיף 20 נקודות ללוח של <a class="gold" href="/kelim/chashiva/kita/">כיתה משחקת</a>.</li>
+    </ol>
+    <p class="note">🔒 נשמרים רק שם הכיתה, כינויים והשורות במחברת. בלי שמות מלאים, טלפונים או מיילים. כיתה בלי פעילות חצי שנה נמחקת לבד, ואפשר למחוק מטלה בלחיצה. <a class="gold" href="/limudim/batei-sefer/">דף לבית הספר ולהורים</a></p>
+  </section>
+</div>

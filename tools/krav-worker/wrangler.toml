@@ -1,0 +1,19 @@
+# לוח תוצאות חי לדו-קרב לבגרות (/limudim/krav/, /limudim/krav-anglit/). Cloudflare Worker + Durable Object למרוץ (חינמי).
+# מחובר ל-assets/limudim-krav.js. נשמרים רק מזהה מכשיר אקראי, כינוי ונקודות. מרוץ נמחק לבד אחרי 3 ימים.
+# פריסה (רק אחרי "כן" של גילעד): cd tools/krav-worker && npx wrangler deploy
+# בדיקה מקומית:                  npx wrangler dev --local --port 8797
+name = "limudim-krav"
+main = "krav-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[[durable_objects.bindings]]
+name = "BOARD"
+class_name = "Board"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Board"]
+
+[vars]
+EXTRA_ORIGINS = ""

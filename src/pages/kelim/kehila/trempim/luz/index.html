@@ -1,0 +1,90 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "kehila_trempim_luz",
+  "title": "הלו\"ז הקבוע שלי – פעם אחת, ומשם ליומן, ל-Waze ולטרמפים | הכלים של גילעד רחמים",
+  "description": "מזינים פעם אחת את הנסיעות הקבועות של השבוע (עבודה, כולל, גן, שיעור), והכלי מכניס אותן ליומן כאירועים חוזרים עם כתובת. ככה Waze מתכנן את הנסיעה ומזכיר מתי לצאת. בלחיצה אחת הן גם מתפרסמות כנסיעה קבועה במיזם הטרמפים. בחינם.",
+  "og_title": "הלו\"ז הקבוע שלי – ליומן, ל-Waze ולטרמפים",
+  "priority": "0.6",
+  "crumbs": [["כלים לקהילה ולבית הכנסת", "/kelim/kehila/"], ["טרמפים", "/kelim/kehila/trempim/"], ["הלו\"ז הקבוע שלי", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/kehila.css\"><link rel=\"stylesheet\" href=\"/assets/kehila-trempim.css\">",
+  "foot": "<script src=\"https://accounts.google.com/gsi/client\" async defer></script><script src=\"/assets/kehila-trempim-luz.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>הלו"ז הקבוע שלי</h1>
+  <p class="sub">היומן לא מסודר? לא צריך. כותבים פעם אחת לאן נוסעים כל שבוע, והכלי מכניס את זה ליומן עם כתובת. מאותו רגע Waze מתכנן את הנסיעה ומזכיר מתי לצאת, ובלחיצה אחת זה גם נסיעה קבועה בטרמפים.</p>
+</header>
+
+<div class="tool">
+  <div class="tp-how">
+    <div><b>1</b><span><strong>כותבים את השבוע</strong> פעם אחת: לאן, באילו ימים, ומתי צריך להגיע.</span></div>
+    <div><b>2</b><span><strong>ליומן, ומשם ל-Waze.</strong> כל נסיעה נכנסת כאירוע חוזר עם כתובת, ו-Waze אומר מתי לצאת.</span></div>
+    <div><b>3</b><span><strong>לטרמפים.</strong> מי שבדרך יכול להצטרף אליך, בחינם או בהשתתפות בדלק.</span></div>
+  </div>
+
+  <!-- נקודת מוצא -->
+  <div class="k-form">
+    <div class="field tp-ac"><label for="lz-home">מאיפה יוצאים? <span class="opt">(הבית)</span></label>
+      <div class="tp-row"><input id="lz-home" type="text" autocomplete="off" placeholder="רחוב ומספר, עיר"><button class="btn btn-line btn-sm" type="button" id="lz-here">המיקום שלי</button></div></div>
+    <div class="field"><span class="label">כמה זמן מרווח לפני שמגיעים?</span>
+      <div class="kh-chips" id="lz-margin"><button type="button" data-m="5">5 דק'</button><button type="button" data-m="10">10 דק'</button><button type="button" data-m="15">15 דק'</button><button type="button" data-m="20">20 דק'</button></div></div>
+    <p class="res" id="lz-home-msg" aria-live="polite"></p>
+  </div>
+
+  <!-- הרשימה -->
+  <div class="kh-sec">
+    <h2>הנסיעות הקבועות שלי</h2>
+    <p class="kh-note lz-sample" id="lz-sample" hidden><span>זו דוגמה, כדי לראות איך זה נראה. אפשר לערוך, למחוק או להוסיף משלכם.</span><button class="btn btn-line btn-sm" type="button" id="lz-clear">למחוק את הדוגמה</button></p>
+    <div id="lz-list"></div>
+    <button class="btn btn-gold" type="button" id="lz-add">＋ להוסיף נסיעה קבועה</button>
+  </div>
+
+  <!-- הוספה / עריכה -->
+  <form class="k-form" id="lz-form" novalidate hidden>
+    <b class="tp-title" id="lz-form-t">נסיעה קבועה חדשה</b>
+    <div class="field"><label for="lz-name">מה זה?</label>
+      <input id="lz-name" type="text" maxlength="40" placeholder="עבודה, כולל, גן, שיעור...">
+      <div class="kh-chips" id="lz-names"><button type="button">עבודה</button><button type="button">כולל</button><button type="button">גן</button><button type="button">בית ספר</button><button type="button">שיעור</button><button type="button">לימודים</button></div></div>
+    <div class="field tp-ac"><label for="lz-place">כתובת</label><input id="lz-place" type="text" autocomplete="off" placeholder="רחוב ומספר, עיר או שם המקום"></div>
+    <div class="field"><span class="label">באילו ימים?</span>
+      <div class="kh-chips" id="lz-days"><button type="button" data-d="0">א'</button><button type="button" data-d="1">ב'</button><button type="button" data-d="2">ג'</button><button type="button" data-d="3">ד'</button><button type="button" data-d="4">ה'</button><button type="button" data-d="5">ו'</button></div></div>
+    <div class="kh-two">
+      <div class="field"><label for="lz-arrive">צריך להגיע ב-</label><input id="lz-arrive" type="time" value="08:00"></div>
+      <div class="field"><label for="lz-back">חוזרים ב- <span class="opt">(לא חובה)</span></label><input id="lz-back" type="time"></div>
+    </div>
+    <div class="lz-formacts"><button class="btn btn-gold" type="submit">לשמור</button><button class="btn btn-line" type="button" id="lz-cancel">ביטול</button></div>
+    <p class="res" id="lz-form-msg" aria-live="polite"></p>
+  </form>
+
+  <!-- הכול ליומן -->
+  <div class="k-form">
+    <b class="tp-title">הכול ליומן בבת אחת</b>
+    <p class="kh-hint">קובץ אחד עם כל הנסיעות כאירועים חוזרים, עם תזכורת בשעת היציאה. עובד באייפון, באנדרואיד, ביומן גוגל ובאאוטלוק: פותחים את הקובץ ומאשרים "להוסיף".</p>
+    <button class="btn btn-gold" type="button" id="lz-ics">📅 הכול ליומן</button>
+    <p class="res" id="lz-ics-msg" aria-live="polite"></p>
+    <details class="tp-rules"><summary>איך זה מגיע ל-Waze?</summary>
+      <ul>
+        <li>ב-Waze מחברים פעם אחת את היומן (בהגדרות, תחת "יומן" או "נסיעות מתוכננות"). מאז Waze רואה כל אירוע שיש לו כתובת.</li>
+        <li>לפני כל אירוע Waze בודק את הפקקים ושולח התראה מתי לצאת.</li>
+        <li>הכפתור "ליומן" ליד כל נסיעה פותח את יומן גוגל עם אירוע חוזר מוכן. לוחצים "שמירה" וזהו.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- לטרמפים -->
+  <div class="k-form">
+    <b class="tp-title">לפרסם בטרמפים</b>
+    <p class="kh-hint">כל נסיעה מתפרסמת כנסיעה קבועה לשמונה שבועות: הלוך מהבית, ואם כתבתם שעת חזרה, גם חזור. מי שבדרך שולח בקשה, ואתם מחליטים.</p>
+    <div class="kh-two">
+      <div class="field"><span class="label">השתתפות בדלק</span>
+        <div class="kh-chips" id="lz-rate"><button type="button" data-r="1">שקל לק"מ</button><button type="button" data-r="0">בחינם, לשם מצווה</button></div></div>
+      <div class="field"><label for="lz-seats">מקומות פנויים</label><select id="lz-seats"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+    </div>
+    <div id="lz-acc" class="lz-acc"></div>
+    <div id="lz-gbtn" class="tp-gbtn" hidden></div>
+    <p class="res" id="lz-acc-msg" aria-live="polite"></p>
+  </div>
+
+  <p class="disclaimer">הרשימה נשמרת רק בדפדפן שלכם, במכשיר הזה. הכתובות עוברות לחישוב זמן נסיעה במפה הפתוחה (OpenStreetMap). זמן הנסיעה מחושב בלי פקקים, ולכן יש מרווח, ו-Waze מעדכן לפי המצב בכביש. <a href="/kelim/kehila/trempim/pratiut/">פרטיות וכללי השימוש</a></p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="/kelim/kehila/trempim/">← לדף הטרמפים</a><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="כלי חינמי: כותבים פעם אחת את הנסיעות הקבועות של השבוע, והוא מכניס אותן ליומן כך ש-Waze מזכיר מתי לצאת. ובלחיצה אחת גם מציע טרמפ למי שבדרך:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר</a></div>
+</div>
