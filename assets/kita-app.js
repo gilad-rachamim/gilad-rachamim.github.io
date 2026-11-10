@@ -14,7 +14,7 @@
       .then(function (r) { return r.json().then(function (d) { d._s = r.status; return d; }); })
       .catch(function () { return { _s: 0, error: 'אין חיבור לשרת כרגע. בודקים את האינטרנט ומנסים שוב.' }; });
   }
-  var GAMES = { sudoku: 'סודוקו', mila: 'מילה ביום', tashchetz: 'תשחצים', shachor: 'שחור ופתור', 'bagrut-math': 'מתמטיקה לבגרות', 'bagrut-english': 'אנגלית לבגרות', math: 'מתמטיקה', english: 'אנגלית', trivia: 'טריוויה', quiz: 'חידון' };
+  var GAMES = { 'krav-math': 'מתמטיקה', 'krav-eng': 'אנגלית', chidon: 'חידון וטריוויה', tash: 'תשחצים', nono: 'שחור ופתור', shesh: 'שש-בש', damka: 'דמקה', shachmat: 'שחמט', blackjack: '21', sudoku: 'סודוקו', mila: 'מילה ביום', tashchetz: 'תשחצים', shachor: 'שחור ופתור', 'bagrut-math': 'מתמטיקה לבגרות', 'bagrut-english': 'אנגלית לבגרות', math: 'מתמטיקה', english: 'אנגלית', trivia: 'טריוויה', quiz: 'חידון' };
   var PER = { week: 'השבוע', month: 'החודש', round: 'בסבב הזה', all: 'מההתחלה' };
   function who(w) { if (w === '1') return 'למקום הראשון'; if (w === '2') return 'למקום השני'; if (w === '3') return 'למקום השלישי'; if (w === 'top3') return 'לשלושת הראשונים'; if (w === 'all') return 'לכל מי שצובר נקודות'; var m = /^pts:(\d+)$/.exec(w || ''); return m ? 'לכל מי שמגיע ל-' + m[1] + ' נקודות' : ''; }
   function medal(p) { return p === 1 ? '🥇' : p === 2 ? '🥈' : p === 3 ? '🥉' : p ? String(p) : '·'; }
