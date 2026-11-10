@@ -824,7 +824,9 @@
       const id = 'q' + uid(); await imgPut(id, out.toDataURL('image/png'));
       const item = { id, w: out.width, h: out.height, name: 'QR ' + ({ link: 'קישור', tel: 'טלפון', wa: 'ווטסאפ' })[type], qr: 1 };
       P.lib.unshift(item);
-      const e = placeImage(item, true, 0.32); e.fit = 'contain'; e.name = item.name; render(); panel();
+      // QR נכנס קטן לפינה השמאלית התחתונה, כדי לא לכסות את הטקסט
+      const e = placeImage(item, true, 0.22); e.fit = 'contain'; e.name = item.name;
+      e.x = Math.round(P.w * 0.07); e.y = Math.round(P.h - e.h - P.h * 0.06); render(); panel();
       used('qr', { t: type });
     } catch (err) { status('לא הצלחתי ליצור את הקוד. בדקו שהקישור קצר יחסית.'); }
     tmp.remove();
@@ -1235,7 +1237,7 @@
     if (tab === 'size') return '<h3>גודל העיצוב</h3><p class="sd-tip">עכשיו: ' + P.w + ' × ' + P.h + '. כשמשנים גודל, כל מה שבעיצוב מסתדר מחדש בערך באותו מקום. בסטטוס, בסטורי וברילס מסומן בוורוד איפה האפליקציה מכסה – לא לשים שם טקסט (הסימון לא נשמר בתמונה).</p><div class="sd-sizes">' +
       SIZES.map(s => '<button type="button" data-size="' + s[0] + '"' + (P.dest === s[0] ? ' class="on"' : '') + '><i style="aspect-ratio:' + s[2] + '/' + s[3] + '"></i>' + s[1] + '<small>' + s[2] + '×' + s[3] + '</small></button>').join('') + '</div>' +
       '<label class="sd-lb">גודל אחר (פיקסלים)</label><div class="sd-row"><input type="number" id="sd-cw" min="200" max="4000" value="' + P.w + '" aria-label="רוחב"> × <input type="number" id="sd-ch" min="200" max="6000" value="' + P.h + '" aria-label="גובה"><button type="button" data-size="custom">לשנות</button></div>';
-    if (tab === 'layers') return '<h3>שכבות</h3><p class="sd-tip">העליונה ברשימה = הכי קדימה בעיצוב. גוררים בידית ⋮⋮ כדי לשנות סדר. 🔒 נעילה – השכבה לא זזה ולא נבחרת בלחיצה על העיצוב. 👁 הסתרה – לא מופיעה וגם לא נשמרת בתמונה.</p><ul class="sd-layers" id="sd-layers"></ul>';
+    if (tab === 'layers') return '<h3>שכבות</h3><p class="sd-tip">למעלה = הכי קדימה. גוררים ב-⋮⋮ לשינוי סדר. 🔒 נועל במקום, 👁 מסתיר.</p><ul class="sd-layers" id="sd-layers"></ul>';
     if (tab === 'qr') {
       const ph = { link: 'למשל: gilad-rachamim.github.io', tel: 'למשל: 050-1234567', wa: 'מספר הווטסאפ, למשל 050-1234567' }[qrType];
       return '<h3>קוד QR</h3><p class="sd-tip">מצלמים את הקוד בטלפון – והוא פותח קישור, מחייג או פותח צ׳אט בווטסאפ.</p>' +
@@ -1340,7 +1342,7 @@
     const d = b.dataset, e = sel && elById(sel);
     if (d.back) { cropId = null; select(null); return; }
     if (d.rmbg && e) { removeBg(e); return; }
-    if (d.mask != null && e) { snap(); e.mask = d.mask; if (d.mask) { e.radius = 0; if (d.mask === 'circle' || d.mask === 'heart' || d.mask === 'star' || d.mask === 'hex' || d.mask === 'diamond' || d.mask === 'blob') { const s = Math.min(e.w, e.h); if (Math.abs(e.w - e.h) > 2 && d.mask !== 'circle') { const cx = e.x + e.w / 2, cy = e.y + e.h / 2; e.w = e.h = s; e.x = Math.round(cx - s / 2); e.y = Math.round(cy - s / 2); e.fit = 'cover'; } } } render(); panel(); used('mask', { m: d.mask }); return; }
+    if (d.mask != null && e) { snap(); e.mask = d.mask; if (d.mask) { e.radius = 0; if (d.mask === 'circle' || d.mask === 'heart' || d.mask === 'star' || d.mask === 'hex' || d.mask === 'diamond' || d.mask === 'blob') { const s = Math.min(e.w, e.h); if (Math.abs(e.w - e.h) > 2) { const cx = e.x + e.w / 2, cy = e.y + e.h / 2; e.w = e.h = s; e.x = Math.round(cx - s / 2); e.y = Math.round(cy - s / 2); e.fit = 'cover'; } } } render(); panel(); used('mask', { m: d.mask }); return; }
     if (d.swapicon && e) { snap(); e.icon = d.swapicon; delete e.name; render(); panel(); return; }
     if (d.icon) { addIcon(d.icon); return; }
     if (d.icc != null) { iconColor = d.icc || null; panel(); return; }
@@ -1429,7 +1431,7 @@
     const on = narrow.matches && appVisible;
     if (on === sheetMode()) return;
     app.classList.toggle('sd-sheet-on', on);
-    if (on) sideBox.classList.add('closed');
+    if (on) sideBox.classList.toggle('closed', !sel);
     fitScale(); drawSel();
   }
   if ('IntersectionObserver' in window) new IntersectionObserver(es => { es.forEach(x => { appVisible = x.isIntersecting; }); updSheet(); }, { rootMargin: '-10% 0px -30% 0px' }).observe($('sd-viewport'));

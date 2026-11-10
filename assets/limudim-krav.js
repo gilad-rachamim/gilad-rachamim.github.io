@@ -178,7 +178,7 @@
     if (!run) return;
     $('kv-pts').textContent = run.pts; $('kv-solved').textContent = run.solved;
     if (CFG.race) { var L = Math.max(0, leftSec()); $('kv-clock').textContent = CH.fmt(L); $('kv-clock').parentNode.classList.toggle('low', L < 120); }
-    else $('kv-clock').textContent = (Math.min(run.i + 1, CFG.n)) + '/' + CFG.n;
+    else $('kv-clock').textContent = Math.max(1, Math.min(run.i + (cur ? 1 : 0), CFG.n)) + '/' + CFG.n;
   }
   function tick() {
     hud();
