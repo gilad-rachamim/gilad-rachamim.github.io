@@ -28,8 +28,13 @@ CREATE TABLE IF NOT EXISTS rides (
   route TEXT,                     -- JSON [[lat,lng],...]
   note TEXT,
   status TEXT DEFAULT 'open',
-  created INTEGER NOT NULL
+  created INTEGER NOT NULL,
+  kind TEXT DEFAULT 'car',        -- car | taxi (מונית משותפת: מתחלקים במונה)
+  split TEXT                      -- במונית: equal (שווה בשווה) | km (לפי הק"מ של כל אחד)
 );
+-- הוספה לטבלה קיימת (10.11.2026):
+-- ALTER TABLE rides ADD COLUMN kind TEXT DEFAULT 'car';
+-- ALTER TABLE rides ADD COLUMN split TEXT;
 CREATE INDEX IF NOT EXISTS rides_date ON rides(date);
 CREATE INDEX IF NOT EXISTS rides_driver ON rides(driver);
 CREATE TABLE IF NOT EXISTS requests (
