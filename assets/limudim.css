@@ -601,6 +601,12 @@ body.cx-exammode .pt-link{display:none!important}
 .mb-okc{color:var(--ok)}.mb-wc{color:#f0b35c}
 .mb-ex{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center;margin-top:.8rem;color:var(--muted);font-size:.95rem}
 .mb-ex button{font:inherit;font-size:.92rem;padding:.3rem .7rem;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--cream);cursor:pointer}
+.mb-ex .mb-cam{font-weight:700;background:rgba(220,183,105,.14);border-color:var(--gold-soft);color:var(--cream);margin-inline-end:.4rem}
+.mb-camp{display:flex;gap:.7rem;align-items:center}.mb-camp img{width:84px;height:64px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.mb-pick{display:grid;gap:.35rem}.mb-pick button{font:inherit;text-align:start;padding:.5rem .7rem;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--cream);cursor:pointer;display:flex;gap:.5rem;align-items:baseline;flex-wrap:wrap}
+.mb-pick button small{color:var(--muted)}.mb-pick bdi{font-weight:700}
+.mb-ask{margin:0 0 .5rem;padding:.45rem .7rem;border-radius:10px;background:rgba(220,183,105,.16);color:#3b2f12;font-weight:700;line-height:1.5}
+.mb-bagsel{display:flex;flex-wrap:wrap;gap:.45rem}.mb-bagsel select{font:inherit;flex:1 1 12rem;padding:.45rem .55rem;border-radius:10px;border:1px solid var(--line);background:#1b2234;color:var(--cream)}
 .mb-top{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .9rem;margin-top:.8rem}
 .mb-saved{color:var(--muted);font-size:.9rem}
 .mb-hwbar{margin-top:.8rem;padding:.75rem .9rem;border-radius:14px;border:1px solid rgba(134,197,230,.45);background:rgba(134,197,230,.1);display:grid;gap:.5rem}
@@ -695,6 +701,9 @@ body.cx-exammode .pt-link{display:none!important}
 .mb-ht{color:var(--cream);line-height:1.65;font-size:1.05rem}
 .mb-hint .btn{cursor:pointer;background:rgba(255,255,255,.06);color:var(--cream);border:1px solid var(--line)}
 .mb-hint .btn:disabled{opacity:.6;cursor:wait}
+.mb-next{padding:.7rem .85rem;border-radius:12px;background:rgba(124,214,170,.09);border:1px solid rgba(124,214,170,.35);display:grid;gap:.45rem;justify-items:start}
+.mb-next .mb-fm{color:var(--cream);justify-self:stretch;overflow-x:auto}
+.mb-hint .mb-nextb{border-color:rgba(124,214,170,.5)}
 .mb-aih{padding:.7rem .85rem;border-radius:12px;background:rgba(134,197,230,.1);border:1px solid rgba(134,197,230,.35);color:var(--body);line-height:1.65;display:grid;gap:.4rem}
 .mb-aih .mb-fm{color:var(--cream)}
 .mb-aierr{color:#f6c98a;line-height:1.5}
@@ -740,7 +749,18 @@ body.cx-exammode .pt-link{display:none!important}
 .mb-fm{overflow-x:auto;overflow-y:hidden;color:#141c2b;padding:.15rem 0;font-size:1.02rem}
 .mb-fm .katex-display{margin:.2rem 0}
 .mb-dlg .note{color:#5a6377}
+.mb-draw{margin-top:.8rem;gap:.6rem}
+.mb-draw summary{cursor:pointer;display:flex;flex-wrap:wrap;gap:.2rem .6rem;align-items:baseline}.mb-draw summary small{color:var(--muted)}
+.mb-dtools{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.6rem}
+.mb-dtools button{font:inherit;font-size:.92rem;padding:.35rem .65rem;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--cream);cursor:pointer;touch-action:manipulation}
+.mb-dtools button[aria-pressed=true]{background:var(--gold);color:#1c1608;border-color:var(--gold)}
+.mb-dcv{display:block;width:100%;aspect-ratio:5/3;margin-top:.6rem;border-radius:12px;background:#fdfbf3;border:1px solid #d8cfae;touch-action:none;cursor:crosshair}
 @media print{
+  .mb-draw:not(.has){display:none!important}
+  .mb-draw{border:0;background:none;padding:0}.mb-draw summary{display:none}
+  .mb-dcv{max-width:12cm;border:1px solid #bbb;break-inside:avoid}
+  .mb-pin{background:none;border:0;padding:0}.mb-pin .pt-lbl{color:#000}
+  .mb-pin textarea,.mb-pin .mb-pinp{background:none;color:#000;border:1px solid #bbb;resize:none}
   #mb-app .mb-tabs,#mb-app .mb-ex,#mb-app .mb-top,#mb-app .mb-how,#mb-app .mb-kb,#mb-app .pt-priv,#mb-app .mb-hint,.mb-rb,.mb-chip,.mb-add,.mb-acts,.mb-old{display:none!important}
   .mb-sheet{background:#fff;border:0;box-shadow:none}
   .mb-row .mb-in{display:none}

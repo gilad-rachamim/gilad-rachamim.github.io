@@ -31,12 +31,15 @@
   <section id="mb-alg" role="tabpanel" aria-labelledby="mb-t-alg">
     <div class="cx-exam mb-how" role="note">
       <b>איך זה עובד:</b> בשורה הראשונה כותבים את התרגיל, ובכל שורה אחריה שלב אחד. מקלידים כמו במחשבון (<bdi dir="ltr">2x^2-3</bdi>, <bdi dir="ltr">sqrt(x)</bdi>), לוחצים על המקשים למטה, או אומרים בקול.
+      אי-שוויון כותבים עם <bdi dir="ltr">&lt;</bdi> או <bdi dir="ltr">≤</bdi>, ומערכת של שתי משוואות באותה שורה עם <bdi dir="ltr">;</bdi> ביניהן.
       שורה נכונה מקבלת <b class="mb-okc">✓</b>, ושורה שלא מסתדרת עם הקודמת מקבלת סימון עדין <b class="mb-wc">כדאי לבדוק כאן</b>.
     </div>
 
     <div class="mb-ex" role="group" aria-label="תרגילים לדוגמה">
+      <button type="button" class="mb-cam" id="mb-cam" hidden>📷 מצלמים תרגיל מהדף</button><input type="file" id="mb-camf" accept="image/*" hidden>
+      <button type="button" class="mb-cam" id="mb-bag">🎓 תרגיל מהבגרות</button><a hidden id="mb-mxsrc" href="/assets/limudim-math.js"></a>
       <span>לנסות על:</span>
-      <button type="button" data-ex="lin">משוואה</button><button type="button" data-ex="quad">ריבועית</button><button type="button" data-ex="simp">פישוט</button><button type="button" data-ex="der">נגזרת</button><button type="button" data-ex="trig">טריגו</button><button type="button" data-ex="sqrt">שורש</button><button type="button" data-ex="exp">מעריכית</button>
+      <button type="button" data-ex="lin">משוואה</button><button type="button" data-ex="quad">ריבועית</button><button type="button" data-ex="simp">פישוט</button><button type="button" data-ex="der">נגזרת</button><button type="button" data-ex="trig">טריגו</button><button type="button" data-ex="sqrt">שורש</button><button type="button" data-ex="exp">מעריכית</button><button type="button" data-ex="ineq">אי-שוויון</button><button type="button" data-ex="sys">מערכת משוואות</button>
     </div>
 
     <div class="mb-top">
@@ -53,6 +56,7 @@
     </div>
 
     <article class="cx-sheet mb-sheet" id="mb-sheet" aria-label="המחברת">
+      <p class="mb-ask" id="mb-ask" hidden></p>
       <ol class="mb-rows" id="mb-rows"></ol>
       <button type="button" class="mb-add no-print" id="mb-add">+ שורה חדשה</button>
     </article>
@@ -107,6 +111,20 @@
       <input id="mb-prove" class="mb-pinp" placeholder="למשל: BD=DC">
     </div>
 
+    <details class="panel mb-draw" id="mb-draw">
+      <summary><b>✏️ שרטוט</b> <small>מציירים את המשולש ומסמנים אותיות. נשמר בטלפון ומודפס עם ההוכחה.</small></summary>
+      <div class="mb-dtools no-print" role="toolbar" aria-label="כלי שרטוט">
+        <button type="button" data-tool="line" aria-pressed="true">📏 קו ישר</button>
+        <button type="button" data-tool="pen" aria-pressed="false">✏️ יד חופשית</button>
+        <button type="button" data-tool="txt" aria-pressed="false">🔤 אות <b id="mb-dlet">A</b></button>
+        <button type="button" id="mb-dtri">△ משולש מוכן</button>
+        <button type="button" id="mb-dundo" aria-label="ביטול הפעולה האחרונה">↶ ביטול</button>
+        <button type="button" id="mb-dclr">🗑 ניקוי</button>
+      </div>
+      <canvas class="mb-dcv" id="mb-dcv" aria-label="שרטוט ההוכחה" role="img"></canvas>
+      <p class="note no-print">קו ישר נצמד לנקודות שכבר יש בשרטוט. כדי לסמן אות: בוחרים "אות" ולוחצים במקום שלה (לחיצה נוספת על הכפתור מחליפה אות).</p>
+    </details>
+
     <article class="cx-sheet mb-sheet" aria-label="ההוכחה">
       <div class="mb-ptable">
         <div class="mb-phead" aria-hidden="true"><span>#</span><span>טענה</span><span>נימוק</span></div>
@@ -129,6 +147,8 @@
 
 <div class="mx-support no-print" id="mb-support" hidden><p>💛 המחברת חינמית, ונבנתה בהרבה שעות עבודה. אם היא עוזרת לכם, אפשר לעזור להחזיק את המיזם, גם בסכום קטן.</p><a class="btn btn-line btn-sm" href="/kelim/#litmoch" data-support="1">לתמוך במיזם</a></div>
 
+  <div id="mx-data" hidden></div><!-- המחוללים של "המסלול שלי" נטענים רק כשלוחצים "תרגיל מהבגרות" -->
+
   <!-- מקלדת סימנים: נצמדת לתחתית המסך כשכותבים בשורה -->
   <div class="mb-kb no-print" id="mb-kb" hidden>
     <div class="mb-keys" id="mb-keys" dir="ltr"></div>
@@ -143,6 +163,6 @@
     </div>
   </dialog>
 
-  <p class="note pt-priv">המחברת נשמרת רק בטלפון או במחשב שלכם. הבדיקה של כל שורה נעשית במכשיר עצמו, בלי בינה מלאכותית ובלי לשלוח כלום. רק "רמז חכם" ו"בדיקה חכמה" של הוכחה שולחים את מה שכתבתם (בלי שום פרט עליכם) לבינה מלאכותית, עם מכסה יומית כדי שהשירות יישאר חינמי לכולם.
+  <p class="note pt-priv">המחברת נשמרת רק בטלפון או במחשב שלכם. הבדיקה של כל שורה נעשית במכשיר עצמו, בלי בינה מלאכותית ובלי לשלוח כלום. צילום של תרגיל נשלח לבינה מלאכותית רק כדי להעתיק אותו לשורה, ולא נשמר. "רמז חכם" ו"בדיקה חכמה" של הוכחה שולחים את מה שכתבתם (בלי שום פרט עליכם) לבינה מלאכותית, עם מכסה יומית כדי שהשירות יישאר חינמי לכולם.
   👩‍🏫 מורים? <a class="gold" href="/limudim/machberet/kita/">שיעורי בית במחברת</a>: נותנים לכיתה תרגילים ורואים בזמן אמת מי פתר ומי נתקע. רוצים לראות פתרון מלא? <a class="gold" href="/limudim/poter/">הפותר</a> נותן דרך מלאה לשאלת בגרות. <a class="gold" href="/limudim/machshevon/">המחשבון לבגרות</a> עוזר בחישובים.</p>
 </div>

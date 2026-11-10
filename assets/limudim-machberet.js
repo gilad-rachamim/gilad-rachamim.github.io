@@ -30,7 +30,7 @@
     $('mb-t-hw').setAttribute('aria-selected', 'false'); $('mb-hw').hidden = true;
     $('mb-alg').hidden = !!p; $('mb-prf').hidden = !p; store('mb-tab', p ? 'p' : 'a');
     $('mb-kb').hidden = true;
-    if (p) used('proof_tab');
+    if (p) { used('proof_tab'); dDraw(); }
   }
   tabA.addEventListener('click', function () { showTab(false); });
   tabP.addEventListener('click', function () { showTab(true); });
@@ -173,7 +173,8 @@
     ['x²', '^2'], ['xⁿ', '^'], ['a/b', '(|)/()'], ['√', 'sqrt(|)'], ['π', 'pi'], ['°', '°'],
     ['sin', 'sin(|)', 'f'], ['cos', 'cos(|)', 'f'], ['tan', 'tan(|)', 'f'], ['ln', 'ln(|)', 'f'], ['log', 'log(|)', 'f'], ['eˣ', 'e^(|)', 'f'],
     ['f(x)=', 'f(x)=', 'f'], ["f′(x)=", "f'(x)=", 'f'], ['∫', 'int(|,0,1)', 'f'], ['|x|', 'abs(|)', 'f'], ['≤', '≤'], ['≥', '≥'],
-    ['·', '*'], ['או', ' או '], ['◀', '{l}', 'o'], ['▶', '{r}', 'o'], ['↵', '{enter}', 'eq'], ['🎤', '{mic}', 'o']
+    ['·', '*'], ['או', ' או '], ['◀', '{l}', 'o'], ['▶', '{r}', 'o'], ['↵', '{enter}', 'eq'], ['🎤', '{mic}', 'o'],
+    ['<', '<'], ['>', '>'], ['≠', '≠'], [';', ' ; '], ['±', '±'], ['וגם', ' וגם ']
   ];
   var KEYS_NUM = [
     ['7', '7', 'n'], ['8', '8', 'n'], ['9', '9', 'n'], ['+', '+'], ['−', '-'], ['⌨', '{kb}', 'o'],
@@ -279,6 +280,7 @@
   setDeg(A.deg !== false);
 
   function renderRows(focusI) {
+    var ak = $('mb-ask'); ak.hidden = !A.ask; ak.textContent = A.ask ? '📝 ' + A.ask : '';
     rowsEl.innerHTML = '';
     A.rows.forEach(function (v, i) { rowsEl.appendChild(rowEl(v, i)); });
     recheck(true);
@@ -379,12 +381,12 @@
   // דוגמאות
   var EXA = {
     lin: ['3(x-2)+4=2x+5', ''], quad: ['x^2-5x+6=0', ''], simp: ['(x+3)^2-(x-3)^2', ''], der: ['f(x)=x^3-3x^2+4', ''],
-    trig: ['2sin(x)-1=0', ''], sqrt: ['sqrt(x+2)=x', ''], exp: ['e^(2x)=5', '']
+    trig: ['2sin(x)-1=0', ''], sqrt: ['sqrt(x+2)=x', ''], exp: ['e^(2x)=5', ''], ineq: ['x^2-5x+6<0', ''], sys: ['x+y=5 ; x-y=1', '']
   };
   Array.prototype.forEach.call(document.querySelectorAll('#mb-alg [data-ex]'), function (b) {
     b.addEventListener('click', function () {
       var x = EXA[b.getAttribute('data-ex')]; if (!x) return;
-      archive(); A.rows = x.slice(); if (b.getAttribute('data-ex') === 'trig') setDeg(true);
+      archive(); A.rows = x.slice(); A.ask = ''; if (b.getAttribute('data-ex') === 'trig') setDeg(true);
       renderRows(1); save(); hideHint(); used('example');
     });
   });
@@ -393,7 +395,7 @@
   function archive() {
     if (!A.rows.some(function (r) { return r.trim(); })) return;
     var old = load('mb-old', []);
-    old.unshift({ t: Date.now(), rows: A.rows.slice(), deg: A.deg });
+    old.unshift({ t: Date.now(), rows: A.rows.slice(), deg: A.deg, ask: A.ask || '' });
     store('mb-old', JSON.stringify(old.slice(0, 30)));
     showOld();
   }
@@ -407,13 +409,13 @@
       b.addEventListener('click', function () {
         var all = load('mb-old', []), it = all.splice(k, 1)[0];
         store('mb-old', JSON.stringify(all)); archive();
-        A.rows = it.rows; setDeg(it.deg !== false); renderRows(); save(); showOld(); hideHint();
+        A.rows = it.rows; A.ask = it.ask || ''; setDeg(it.deg !== false); renderRows(); save(); showOld(); hideHint();
         window.scrollTo({ top: $('mb-sheet').offsetTop - 60, behavior: 'smooth' });
       });
       li.appendChild(b); ul.appendChild(li);
     });
   }
-  $('mb-new').addEventListener('click', function () { archive(); A.rows = ['', '']; renderRows(0); save(); hideHint(); used('new'); });
+  $('mb-new').addEventListener('click', function () { archive(); A.rows = ['', '']; A.ask = ''; renderRows(0); save(); hideHint(); used('new'); });
   $('mb-print').addEventListener('click', function () { used('print'); window.print(); });
   $('mb-formb').addEventListener('click', function () {
     var last = null; for (var i = lastRes.length - 1; i >= 0 && !last; i--) if (lastRes[i] && lastRes[i].info.kind !== 'empty') last = lastRes[i];
@@ -425,51 +427,113 @@
   // =====================================================================
   var hintEl = $('mb-hint');
   function hideHint() { hintEl.hidden = true; hintEl.innerHTML = ''; }
+  // שלושה שלבים: רמז קטן (t), רמז גדול יותר (t2), ורק בסוף "הראו לי את הצעד הבא" (M.nextStep)
   function localHint() {
     var res = lastRes, rows = A.rows, lastI = -1;
     for (var i = rows.length - 1; i >= 0; i--) if (rows[i].trim()) { lastI = i; break; }
-    if (lastI < 0) return { t: 'כותבים את התרגיל בשורה הראשונה. אפשר גם ללחוץ על אחת הדוגמאות למעלה.' };
+    if (lastI < 0) return { t: 'כותבים את התרגיל בשורה הראשונה. אפשר גם ללחוץ על אחת הדוגמאות למעלה, או לצלם תרגיל מהדף.', end: true };
     for (var w = 1; w < res.length; w++) if (res[w].mark === 'warn' && !/פתרון זר/.test(res[w].msg)) {
-      return { t: 'בשורה ' + w + ' יש סימן שאלה. נסו להציב מספר קטן (למשל x=1) בשורה ' + w + ' ובשורה שלפניה, ולראות איפה זה מתפרק. טעויות נפוצות: סימן שהתהפך בהעברת אגף, כפל שלא הגיע לכל האיברים בסוגריים, או חילוק רק של חלק מהאגף.' };
+      return { t: 'בשורה ' + w + ' יש סימן שאלה: משהו השתנה במעבר מהשורה שלפניה. מה עשיתם שם?', t2: 'נסו להציב מספר קטן (למשל x=1) בשורה ' + w + ' ובשורה שלפניה, ולראות איפה זה מתפרק. טעויות נפוצות: סימן שהתהפך בהעברת אגף, כפל שלא הגיע לכל האיברים בסוגריים, או חילוק רק של חלק מהאגף.', fix: w };
     }
     var r = res[lastI], I = r.info, tp = M.topics(I);
-    if (I.kind === 'bad') return { t: 'המחברת לא הצליחה לקרוא את ' + (lastI ? 'שורה ' + lastI : 'שורת התרגיל') + ' (' + r.msg + '). בודקים שכל סוגר נסגר, ושיש כפל בין מספר לסוגריים, למשל 2*(x+1) או 2(x+1).' };
-    if (I.kind === 'sol' && r.mark === 'ok') return { t: 'סיימתם! 🎉 בדיקה אחרונה, כמו בבגרות: מציבים את הפתרון בתרגיל המקורי ורואים ששני הצדדים יוצאים שווים.' };
-    if (I.kind === 'text') return { t: 'שורה במילים זה מצוין להסבר. את השלב הבא כותבים בנוסחה, כדי שהמחברת תוכל לבדוק אותו.' };
-    if (I.kind === 'ineq') return { t: 'פותרים אי-שוויון כמו משוואה. רק לזכור: כשכופלים או מחלקים במספר שלילי, הסימן מתהפך (< הופך ל->).' };
-    if (I.kind === 'def') return { t: 'רוצים לחקור את הפונקציה? מתחילים בתחום ההגדרה, ואז גוזרים: כותבים בשורה הבאה f\'(x)= והנגזרת.', f: 'deriv' };
-    if (I.kind === 'deriv') return { t: 'כדי למצוא נקודות קיצון משווים את הנגזרת ל-0: כותבים בשורה הבאה את הנגזרת ואחריה =0, ופותרים.', f: 'deriv' };
+    if (I.kind === 'bad') return { t: 'המחברת לא הצליחה לקרוא את ' + (lastI ? 'שורה ' + lastI : 'שורת התרגיל') + ' (' + r.msg + '). בודקים שכל סוגר נסגר, ושיש כפל בין מספר לסוגריים, למשל 2*(x+1) או 2(x+1).', end: true };
+    if (I.kind === 'sol' && r.mark === 'ok' && /🎉/.test(r.msg || '')) return { t: 'סיימתם! 🎉 בדיקה אחרונה, כמו בבגרות: מציבים את הפתרון בתרגיל המקורי ורואים ששני הצדדים יוצאים שווים.', end: true };
+    if (I.kind === 'text') return { t: 'שורה במילים זה מצוין להסבר. את השלב הבא כותבים בנוסחה, כדי שהמחברת תוכל לבדוק אותו.', end: true };
+    if (I.kind === 'ineq') {
+      var quadI = I.groups && I.groups.length === 1 && I.groups[0].length === 1 && (function (a) { var g = M.eqFn(a.L, a.R), nm = M.namesOf(g); return nm.length === 1 && M.polyDeg(g, nm[0]) === 2; })(I.groups[0][0]);
+      if (quadI) return { t: 'אי-שוויון ריבועי. איפה הביטוי מתאפס?', t2: 'כותבים משוואת עזר: מחליפים את הסימן ב-= ופותרים. אחר כך מציירים פרבולה (או טבלת סימנים) ובודקים באיזה תחום הביטוי חיובי ובאיזה שלילי.', f: 'alg' };
+      return { t: 'פותרים אי-שוויון כמו משוואה: אותם צעדים בדיוק.', t2: 'רק לזכור: כשכופלים או מחלקים במספר שלילי, הסימן מתהפך (< הופך ל->). בסוף כותבים את התשובה כמו x<3 או -1<x≤4.' };
+    }
+    if (I.kind === 'sys') return { t: 'מערכת של שתי משוואות. איך נפטרים מאחד הנעלמים?', t2: 'שתי דרכים: מבודדים נעלם באחת המשוואות (למשל y=…) ומציבים בשנייה, או מחברים/מחסירים את המשוואות כך שנעלם אחד ייעלם. אחר כך מציבים חזרה ומוצאים את הנעלם השני.' };
+    if (I.kind === 'def') return { t: 'רוצים לחקור את הפונקציה? מה עושים קודם?', t2: 'מתחילים בתחום ההגדרה, ואז גוזרים: כותבים בשורה הבאה f\'(x)= ואחריו הנגזרת. גוזרים כל איבר לבד: (xⁿ)′=n·xⁿ⁻¹.', f: 'deriv' };
+    if (I.kind === 'deriv') return { t: 'יש נגזרת. מה עושים איתה כדי למצוא נקודות קיצון?', t2: 'משווים אותה ל-0: כותבים בשורה הבאה את הנגזרת ואחריה =0, ופותרים.', f: 'deriv' };
     if (I.kind === 'expr' || I.kind === 'chain') {
-      if (tp.frac) return { t: 'כדי לחבר שברים מביאים למכנה משותף: כופלים כל שבר במה שחסר לו במכנה.', f: 'alg' };
-      if (tp.trig) return { t: 'בביטוי עם sin ו-cos כדאי לחפש זהות: sin²x+cos²x=1, או זווית כפולה.', f: 'trig' };
-      return { t: 'פותחים סוגריים (בעזרת כפל מקוצר אם צריך) וכונסים איברים דומים. מתחילים את השורה הבאה ב-= ואחריו הביטוי החדש.', f: 'alg' };
+      if (tp.frac) return { t: 'יש כאן שברים. מה צריך כדי לחבר אותם?', t2: 'מביאים למכנה משותף: כופלים כל שבר במה שחסר לו במכנה.', f: 'alg' };
+      if (tp.trig) return { t: 'חפשו זהות טריגונומטרית שמתאימה לביטוי.', t2: 'בביטוי עם sin ו-cos כדאי לחפש: sin²x+cos²x=1, או זווית כפולה.', f: 'trig' };
+      return { t: 'אפשר לפתוח סוגריים או לכנס איברים?', t2: 'פותחים סוגריים (בעזרת כפל מקוצר אם צריך) וכונסים איברים דומים. מתחילים את השורה הבאה ב-= ואחריו הביטוי החדש.', f: 'alg' };
     }
     if (I.kind === 'eq' || I.kind === 'sol') {
       var g = I.kind === 'eq' ? M.eqFn(I.L, I.R) : null, names = g ? M.namesOf(g) : [];
-      if (names.length > 1) return { t: 'יש כאן יותר מנעלם אחד. מבודדים נעלם אחד (למשל y) באגף אחד, ומציבים אותו במשוואה השנייה.' };
+      if (names.length > 1) return { t: 'יש כאן יותר מנעלם אחד. איזה מהם הכי קל לבודד?', t2: 'מבודדים נעלם אחד (למשל y) באגף אחד, ומציבים אותו במשוואה השנייה.' };
       var v = names[0] || 'x';
-      if (tp.trig) return { t: 'מבודדים את sin (או cos) באגף אחד: sin(x)=מספר. אחר כך משתמשים בפתרון הכללי, ולא שוכחים את הפתרון השני (180° פחות הזווית).', f: 'trig' };
-      if (tp.log) return { t: 'לוגריתם הופכים לחזקה: log_a(b)=c זה כמו a^c=b. ולפני הכול: מה שבתוך הלוגריתם חייב להיות חיובי.', f: 'log' };
-      if (tp.exp) return { t: 'כשה-x במעריך: מביאים את שני האגפים לאותו בסיס, או לוקחים ln לשני האגפים.', f: 'log' };
-      if (tp.root) return { t: 'מבודדים את השורש באגף אחד, ואז מעלים את שני האגפים בריבוע. בסוף חייבים לבדוק בהצבה, כי העלאה בריבוע יכולה להוסיף פתרון זר.', f: 'alg' };
-      if (tp.frac) return { t: 'כופלים את שני האגפים במכנה המשותף. אבל קודם רושמים מתי המכנה מתאפס, כי הערך הזה לא יכול להיות פתרון.', f: 'alg' };
-      var d = M.polyDeg(g, v), hasParen = M.has(I.L, function (n) { return n.t === '*' && (n.b.t === '()' || n.a.t === '()'); }) || M.has(I.R, function (n) { return n.t === '*' && (n.b.t === '()' || n.a.t === '()'); });
-      var lv = M.namesOf(I.L).length, rv = M.namesOf(I.R).length;
-      if (hasParen) return { t: 'מתחילים בפתיחת הסוגריים: כופלים את מה שבחוץ בכל איבר שבפנים. שימו לב לסימנים.' };
+      if (tp.trig) return { t: 'מה צריך להיות לבד באגף אחד?', t2: 'מבודדים את sin (או cos) באגף אחד: sin(x)=מספר. אחר כך משתמשים בפתרון הכללי, ולא שוכחים את הפתרון השני (180° פחות הזווית).', f: 'trig' };
+      if (tp.log) return { t: 'איך נפטרים מהלוגריתם?', t2: 'לוגריתם הופכים לחזקה: log_a(b)=c זה כמו a^c=b. ולפני הכול: מה שבתוך הלוגריתם חייב להיות חיובי.', f: 'log' };
+      if (tp.exp) return { t: 'ה-' + v + ' נמצא במעריך. איך מורידים אותו משם?', t2: 'מביאים את שני האגפים לאותו בסיס, או לוקחים ln לשני האגפים.', f: 'log' };
+      if (tp.root) return { t: 'איך נפטרים מהשורש?', t2: 'מבודדים את השורש באגף אחד, ואז מעלים את שני האגפים בריבוע. בסוף חייבים לבדוק בהצבה, כי העלאה בריבוע יכולה להוסיף פתרון זר.', f: 'alg' };
+      if (tp.frac) return { t: 'יש ' + v + ' במכנה. איך נפטרים מהשבר?', t2: 'כופלים את שני האגפים במכנה המשותף. אבל קודם רושמים מתי המכנה מתאפס, כי הערך הזה לא יכול להיות פתרון.', f: 'alg' };
+      var d = g ? M.polyDeg(g, v) : -1, hasParen = g && (M.has(I.L, function (n) { return n.t === '*' && (n.b.t === '()' || n.a.t === '()'); }) || M.has(I.R, function (n) { return n.t === '*' && (n.b.t === '()' || n.a.t === '()'); }));
+      var lv = g ? M.namesOf(I.L).length : 0, rv = g ? M.namesOf(I.R).length : 0;
+      if (hasParen && d === 1) return { t: 'מה הצעד הראשון כשיש סוגריים?', t2: 'פותחים את הסוגריים: כופלים את מה שבחוץ בכל איבר שבפנים. שימו לב לסימנים.' };
       if (d === 1) {
-        if (lv && rv) return { t: 'מעבירים את כל האיברים עם ' + v + ' לאגף אחד ואת המספרים לאגף השני. מי שעובר אגף, הסימן שלו מתהפך.' };
-        return { t: 'נשאר רק לחלק את שני האגפים במקדם של ' + v + ' (המספר שצמוד אליו).' };
+        if (lv && rv) return { t: 'איפה צריכים להיות כל האיברים עם ' + v + '?', t2: 'מעבירים את כל האיברים עם ' + v + ' לאגף אחד ואת המספרים לאגף השני. מי שעובר אגף, הסימן שלו מתהפך.' };
+        return { t: 'כמעט שם! נשאר צעד אחד.', t2: 'מחלקים את שני האגפים במקדם של ' + v + ' (המספר שצמוד אליו).' };
       }
       if (d === 2) {
         var R0 = I.R.t === 'n' && I.R.v === 0, L0 = I.L.t === 'n' && I.L.v === 0;
-        if (!R0 && !L0) return { t: 'משוואה ריבועית: קודם מעבירים הכול לאגף אחד, כך שבאגף השני יישאר 0.', f: 'alg' };
+        if (!R0 && !L0) return { t: 'זו משוואה ריבועית. מה עושים קודם במשוואה כזאת?', t2: 'מעבירים הכול לאגף אחד, כך שבאגף השני יישאר 0. מסדרים מהחזקה הגבוהה לנמוכה.', f: 'alg' };
+        if (I.L.t === '*' || I.L.t === '^') return { t: 'מכפלה שווה 0. מה זה אומר על הגורמים?', t2: 'מכפלה שווה 0 כשאחד הגורמים שווה 0. משווים כל סוגריים ל-0, וכותבים את הפתרונות עם "או" ביניהם.', f: 'alg' };
         var z = {}; z[v] = 0; var c0 = NaN; try { z.$deg = false; c0 = M.ev(g, z); } catch (_) {}
-        if (Math.abs(c0) < 1e-12) return { t: 'אין כאן מספר חופשי, אז מוציאים ' + v + ' כגורם משותף: ' + v + '(…)=0. ומכפלה שווה 0 כשאחד הגורמים שווה 0.', f: 'alg' };
-        return { t: 'מזהים את a, b ו-c ומציבים בנוסחת השורשים. אפשר גם לנסות פירוק לגורמים: שני מספרים שהמכפלה שלהם c והסכום שלהם b (כש-a=1).', f: 'alg' };
+        if (Math.abs(c0) < 1e-12) return { t: 'שימו לב: אין כאן מספר חופשי. מה משותף לכל האיברים?', t2: 'מוציאים ' + v + ' כגורם משותף: ' + v + '(…)=0. ומכפלה שווה 0 כשאחד הגורמים שווה 0.', f: 'alg' };
+        return { t: 'משוואה ריבועית שאגף אחד שלה 0. איזו דרך פתרון מתאימה?', t2: 'מזהים את a, b ו-c ומציבים בנוסחת השורשים. אפשר גם לנסות פירוק לגורמים: שני מספרים שהמכפלה שלהם c והסכום שלהם b (כש-a=1).', f: 'alg' };
       }
-      if (d >= 3) return { t: 'משוואה ממעלה ' + d + ': מנסים להוציא גורם משותף, או לנחש פתרון שלם קטן (1, −1, 2) ולהציב.' };
+      if (d >= 3) return { t: 'משוואה ממעלה ' + d + '. אפשר להוציא משהו משותף?', t2: 'מנסים להוציא גורם משותף, או לנחש פתרון שלם קטן (1, −1, 2) ולהציב. משוואה דו-ריבועית (x⁴ ו-x²): מציבים t=x².' };
     }
-    return { t: 'מה הצעד הקטן הבא שאפשר לעשות? פתיחת סוגריים, העברת אגף, או הצבה. כותבים אותו בשורה חדשה, והמחברת תבדוק.' };
+    return { t: 'מה הצעד הקטן הבא שאפשר לעשות?', t2: 'פתיחת סוגריים, העברת אגף, או הצבה. כותבים אותו בשורה חדשה, והמחברת תבדוק.' };
+  }
+  function hintBtn(bt, cls, label, fn) { var b = el('button', 'btn btn-sm ' + cls, label); b.type = 'button'; b.addEventListener('click', fn); bt.appendChild(b); return b; }
+  // רמז לתרגיל בשלבים
+  function showAlgHint() {
+    var h = localHint(), box = hintEl;
+    box.hidden = false; box.innerHTML = '';
+    box.appendChild(el('p', 'mb-ht', '💡 ' + esc(h.t)));
+    var bt = el('div', 'btns'); box.appendChild(bt);
+    var nb = null, ab = null;
+    function addF() { if (h.f && !bt.querySelector('.mb-fb')) { var fb = hintBtn(bt, 'mb-fb', '📐 ' + esc(F[h.f][0]), function () { openF(h.f); }); bt.insertBefore(fb, bt.firstChild); } }
+    function step3() {
+      used('hint_next');
+      var s = null; try { s = M.nextStep(A.rows, { deg: A.deg }); } catch (_) {}
+      nb.remove();
+      if (s && s.fix) { box.insertBefore(el('p', 'mb-ht', '👀 קודם מתקנים את שורה ' + s.fix + ' (עם סימן השאלה). אחרי התיקון אפשר לבקש שוב את הצעד הבא.'), bt); return; }
+      if (s && s.done) { box.insertBefore(el('p', 'mb-ht', s.simp ? '👀 הביטוי כבר מפושט עד הסוף. כל הכבוד!' : '👀 אין צעד נוסף: הגעתם לסוף. 🎉'), bt); return; }
+      if (s && s.line) { showStep(s.line, s.why, !!s.text); return; }
+      // אין צעד מקומי – העזרה החכמה כותבת את השורה הבאה
+      var wait = el('p', 'mb-ht', '⏳ מחפש את הצעד הבא…'); box.insertBefore(wait, bt);
+      var lines = [], marks = [];
+      A.rows.forEach(function (r, i) { if (r.trim()) { lines.push(r); marks.push((lastRes[i] && lastRes[i].mark) || ''); } });
+      post('/hint', { mode: 'alg', level: 'next', question: lines[0] + (A.ask ? '  (' + A.ask + ')' : ''), lines: lines.slice(1), marks: marks.slice(1) }).then(function (x) {
+        wait.remove(); var j = x.j || {};
+        if (x.s !== 200 || j.error) { box.insertBefore(el('p', 'mb-aierr', esc(aiErr(x))), bt); return; }
+        if (j.step) showStep(j.step, j.hint, false, true);
+        else if (j.hint) box.insertBefore(el('div', 'mb-aih', '<p>🤖 ' + esc(j.hint) + '</p>'), bt);
+      }).catch(function () { wait.remove(); box.insertBefore(el('p', 'mb-aierr', 'אין חיבור לאינטרנט. הבדיקה של כל שורה עובדת גם בלי.'), bt); });
+    }
+    function showStep(line, why, isText, ai) {
+      var d = el('div', 'mb-next');
+      d.appendChild(el('p', 'mb-ht', (ai ? '🤖 ' : '👀 ') + 'הצעד הבא' + (why ? ': ' + esc(why) : ':')));
+      var m = el('div', 'mb-fm');
+      if (isText) { m.textContent = line; }
+      else { m.setAttribute('dir', 'ltr'); var RI = M.readLine(line, { deg: A.deg }); if (RI.tex) tex(m, RI.tex, true); else m.textContent = line; }
+      d.appendChild(m);
+      if (!isText) {
+        var ins = el('button', 'btn btn-sm', '✏️ לכתוב את זה בשורה הבאה'); ins.type = 'button';
+        ins.addEventListener('click', function () {
+          var k = A.rows.length; while (k > 1 && !A.rows[k - 1].trim()) k--;
+          A.rows.splice(k, 0, line); if (A.rows[A.rows.length - 1].trim()) A.rows.push('');
+          renderRows(k + 1); save(); hideHint(); used('hint_insert');
+        });
+        d.appendChild(ins);
+      }
+      box.insertBefore(d, bt);
+    }
+    if (h.end) { addF(); return; }
+    var mb = hintBtn(bt, 'mb-more', '💡 עוד רמז', function () {
+      used('hint2'); mb.remove(); addF();
+      box.insertBefore(el('p', 'mb-ht', '💡💡 ' + esc(h.t2 || h.t)), bt);
+      nb = hintBtn(bt, 'mb-nextb', '👀 הראו לי את הצעד הבא', step3);
+      ab = hintBtn(bt, 'mb-ai', '🤖 רמז חכם יותר', function () { aiHintAlg(box, ab); });
+    });
+    if (!h.t2) mb.click();
+    box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
   function showHint(h, box, aiFn) {
     box.hidden = false; box.innerHTML = '';
@@ -480,7 +544,7 @@
     box.appendChild(bt);
     box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
-  $('mb-hintb').addEventListener('click', function () { used('hint'); showHint(localHint(), hintEl, aiHintAlg); });
+  $('mb-hintb').addEventListener('click', function () { used('hint'); showAlgHint(); });
 
   // ---------- בינה מלאכותית (השרת של הפותר) ----------
   function post(path, body) {
@@ -506,7 +570,7 @@
     var lines = [], marks = [];
     A.rows.forEach(function (r, i) { if (r.trim()) { lines.push(r); marks.push((lastRes[i] && lastRes[i].mark) || ''); } });
     if (!lines.length) return;
-    aiBox(box, btn, '/hint', { mode: 'alg', question: lines[0], lines: lines.slice(1), marks: marks.slice(1) }, function (j) {
+    aiBox(box, btn, '/hint', { mode: 'alg', question: lines[0] + (A.ask ? '  (' + A.ask + ')' : ''), lines: lines.slice(1), marks: marks.slice(1) }, function (j) {
       if (!j.hint) return false;
       var d = el('div', 'mb-aih');
       d.appendChild(el('p', '', '🤖 ' + esc(j.hint)));
@@ -514,6 +578,132 @@
       box.appendChild(d); return true;
     });
   }
+
+  // ---------- להתחיל מצילום: מעתיקים תרגיל מדף או מספר לשורה הראשונה (השרת של הפותר, /read) ----------
+  var camB = $('mb-cam'), camF = $('mb-camf');
+  (function () { // הכפתור מופיע רק כשהשרת כבר יודע לקרוא צילומים
+    var c = null; try { c = sessionStorage.getItem('mb-read'); } catch (_) {}
+    if (c === '1') { camB.hidden = false; return; }
+    if (c === '0') return;
+    fetch(API + '/ping').then(function (r) { return r.json(); }).then(function (j) {
+      try { sessionStorage.setItem('mb-read', j.read ? '1' : '0'); } catch (_) {}
+      if (j.read) camB.hidden = false;
+    }).catch(function () {});
+  })();
+  camB.addEventListener('click', function () { camF.click(); });
+  camF.addEventListener('change', function () { readPhoto(this.files && this.files[0]); this.value = ''; });
+  rowsEl.addEventListener('paste', function (e) { // הדבקת צילום מסך בשורת התרגיל
+    if (camB.hidden || HW || !e.target.classList.contains('mb-in')) return;
+    var items = (e.clipboardData && e.clipboardData.items) || [];
+    for (var j = 0; j < items.length; j++) if (items[j].kind === 'file' && /^image\//.test(items[j].type)) { e.preventDefault(); readPhoto(items[j].getAsFile()); return; }
+  });
+  function readPhoto(file) {
+    if (!file || !/^image\//.test(file.type)) return;
+    var url = URL.createObjectURL(file), img = new Image();
+    img.onload = function () {
+      var max = 1600, w = img.naturalWidth, h = img.naturalHeight, k = Math.min(1, max / Math.max(w, h));
+      var c = document.createElement('canvas'); c.width = Math.round(w * k); c.height = Math.round(h * k);
+      var g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
+      var d = c.toDataURL('image/jpeg', 0.85); URL.revokeObjectURL(url);
+      sendPhoto(d);
+    };
+    img.onerror = function () { URL.revokeObjectURL(url); flash('לא הצלחתי לפתוח את התמונה. אפשר לנסות צילום אחר.'); };
+    img.src = url;
+  }
+  function sendPhoto(dataUrl) {
+    hintEl.hidden = false; hintEl.innerHTML = '';
+    var top = el('div', 'mb-camp'), im = el('img'); im.src = dataUrl; im.alt = 'הצילום'; top.appendChild(im);
+    var st = el('p', 'mb-ht', '⏳ קורא את התרגיל מהצילום…'); top.appendChild(st); hintEl.appendChild(top);
+    hintEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    camB.disabled = true; used('photo');
+    post('/read', { image: { mime: 'image/jpeg', data: dataUrl.split(',')[1] } }).then(function (x) {
+      camB.disabled = false;
+      var j = x.j || {};
+      if (x.s === 429 || j.error === 'quota') { st.textContent = 'הגעתם למכסה היומית של הצילומים. מחר אפשר שוב, ובינתיים מקלידים את התרגיל בשורה הראשונה.'; return; }
+      if (x.s !== 200 || j.error) { st.textContent = j.busy ? 'הקריאה מצילום עמוסה כרגע. אפשר לנסות שוב בעוד כמה דקות, או להקליד את התרגיל.' : 'לא הצלחתי לקרוא את הצילום כרגע. אפשר לנסות שוב, או להקליד את התרגיל.'; return; }
+      var its = j.items || [];
+      if (!j.readable || !its.length) { st.textContent = (j.why ? j.why + ' ' : '') + 'לא מצאתי תרגיל בצילום. מצלמים מקרוב, ישר מעל הדף ועם אור טוב. אפשר גם להקליד.'; return; }
+      if (its.length === 1) { useRead(its[0]); return; }
+      st.textContent = 'מצאתי ' + its.length + ' תרגילים. על איזה עובדים?';
+      var list = el('div', 'mb-pick');
+      its.forEach(function (it) {
+        var b = el('button', ''); b.type = 'button';
+        b.innerHTML = (it.label ? '<small>' + esc(it.label) + '.</small>' : '') + '<bdi dir="ltr">' + esc(it.line) + '</bdi>' + (it.ask ? '<small>' + esc(it.ask) + '</small>' : '');
+        var RI = M.readLine(it.line, { deg: A.deg }); if (RI.tex) tex(b.querySelector('bdi'), RI.tex);
+        b.addEventListener('click', function () { useRead(it); });
+        list.appendChild(b);
+      });
+      hintEl.appendChild(list);
+    }).catch(function () { camB.disabled = false; st.textContent = 'אין חיבור לאינטרנט. אפשר להקליד את התרגיל, והבדיקה של כל שורה עובדת גם בלי.'; });
+  }
+  function useRead(it) {
+    archive(); A.rows = [it.line, '']; A.ask = it.ask || ''; renderRows(1); save(); used('photo_used');
+    var bad = M.readLine(it.line, { deg: A.deg }).kind === 'bad';
+    hintEl.hidden = false; hintEl.innerHTML = '';
+    hintEl.appendChild(el('p', 'mb-ht', esc(bad ? '📷 התרגיל הועתק, אבל משהו בו לא נקרא טוב. מתקנים את שורת התרגיל לפי הדף.' : '📷 ✓ התרגיל הועתק מהצילום' + (it.ask ? ' (' + it.ask + ')' : '') + '. בודקים שהוא כמו בדף, ומתחילים לפתור בשורה הבאה.')));
+  }
+
+  // ---------- תרגיל מהבגרות בלחיצה: המחוללים של "המסלול שלי" (window.MX מ-limudim-math.js, נטען רק כשצריך) ----------
+  // רק נושאים שאפשר לפתור בהם שורה אחרי שורה, ורק השלבים שהמחברת יודעת לקרוא (נבדק ב-test-tricky.js)
+  var BAG = { mishvaa: [2, 3], pilug: [2, 3], shorashim: [1, 2, 3], maarechet: [1, 2, 3], chezkot: [2, 3], nigzeret: [1, 2, 3], mashik: [1, 2, 3], kitzon: [1, 2, 3],
+    integral: [2, 3], logaritm: [1, 2, 3], parabola: [1, 2, 3], maagal: [1, 3], parametr: [1, 2, 3], 'exp-ln': [1, 2, 3], 'trig-nigzeret': [1, 2, 3], 'shoresh-f': [2, 3], rationalit: [1, 2, 3] };
+  var mxWait = null;
+  function loadMx() {
+    if (window.MX) return Promise.resolve(window.MX);
+    if (mxWait) return mxWait;
+    mxWait = new Promise(function (ok, no) {
+      var sc = document.createElement('script'); sc.src = $('mb-mxsrc').getAttribute('href');
+      sc.onload = function () { window.MX ? ok(window.MX) : no(); }; sc.onerror = function () { mxWait = null; no(); };
+      document.head.appendChild(sc);
+    });
+    return mxWait;
+  }
+  function bagTopics(MX, q) {
+    return MX.T.filter(function (t) { return BAG[t.id] && (q === '*' || (q === 'base' ? !t.bg : (t.q || []).indexOf(q) >= 0)); });
+  }
+  function bagPanel() {
+    used('bagrut_open');
+    hintEl.hidden = false; hintEl.innerHTML = '<p class="mb-ht">⏳ טוען את מאגר התרגילים…</p>';
+    hintEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    loadMx().then(function (MX) {
+      var qs = MX.QN.filter(function (q) { return bagTopics(MX, q[0]).length; });
+      var cur = store('mb-bq') || '*';
+      hintEl.innerHTML = '';
+      hintEl.appendChild(el('p', 'mb-ht', '🎓 תרגיל מהבגרות: בוחרים שאלון ונושא, והתרגיל נכנס לשורה הראשונה.'));
+      var row = el('div', 'mb-bagsel');
+      var sq = el('select'); sq.setAttribute('aria-label', 'שאלון');
+      sq.innerHTML = '<option value="*">כל השאלונים</option><option value="base">יסודות: משוואות, סוגריים ומערכות</option>' + qs.map(function (q) { return '<option value="' + q[0] + '">' + esc(q[1]) + '</option>'; }).join('');
+      sq.value = cur; if (sq.value !== cur) sq.value = '*';
+      var stp = el('select'); stp.setAttribute('aria-label', 'נושא');
+      function fillT() { stp.innerHTML = '<option value="*">כל הנושאים</option>' + bagTopics(MX, sq.value).map(function (t) { return '<option value="' + t.id + '">' + esc(t.em + ' ' + t.name) + '</option>'; }).join(''); var lt = store('mb-bt'); if (lt) { stp.value = lt; if (stp.value !== lt) stp.value = '*'; } }
+      fillT();
+      sq.addEventListener('change', function () { store('mb-bq', sq.value); fillT(); });
+      stp.addEventListener('change', function () { store('mb-bt', stp.value); });
+      row.appendChild(sq); row.appendChild(stp); hintEl.appendChild(row);
+      var bt = el('div', 'btns'); hintEl.appendChild(bt);
+      hintBtn(bt, 'btn-gold', '✏️ לתרגיל', function () { bagGo(MX, sq.value, stp.value); });
+    }).catch(function () { hintEl.innerHTML = '<p class="mb-aierr">לא הצלחתי לטעון את מאגר התרגילים. בודקים את החיבור לאינטרנט ומנסים שוב.</p>'; });
+  }
+  function bagGo(MX, q, tid) {
+    var pool = bagTopics(MX, q).filter(function (t) { return tid === '*' || t.id === tid; });
+    if (!pool.length) pool = bagTopics(MX, '*');
+    for (var k = 0; k < 12; k++) {
+      var t = pool[Math.floor(Math.random() * pool.length)], lvs = BAG[t.id], lv = lvs[Math.floor(Math.random() * lvs.length)], g;
+      try { g = t.gen(lv); } catch (_) { continue; }
+      var c = M.fromMx(g.ex), I = M.readLine(c.line, { deg: A.deg });
+      if (!c.line || I.kind === 'bad' || I.kind === 'text') continue;
+      archive(); A.rows = [c.line, '']; A.ask = (t.em + ' ' + t.name) + (c.ask ? ' · ' + c.ask : ''); renderRows(1); save();
+      hintEl.hidden = false; hintEl.innerHTML = '';
+      hintEl.appendChild(el('p', 'mb-ht', '🎓 ' + esc(t.name) + (c.ask ? ': ' + esc(c.ask) : '. פותרים שורה אחרי שורה.')));
+      var bt = el('div', 'btns'); hintEl.appendChild(bt);
+      hintBtn(bt, '', '🎲 תרגיל אחר', function () { bagGo(MX, q, tid); });
+      hintBtn(bt, '', '⚙️ שאלון ונושא', bagPanel);
+      used('bagrut_ex');
+      return;
+    }
+    flash('לא מצאתי תרגיל מתאים. נסו נושא אחר.');
+  }
+  $('mb-bag').addEventListener('click', bagPanel);
 
   // =====================================================================
   //  הוכחה: טענה | נימוק
@@ -569,6 +759,95 @@
     if (I.tex) tex(pv, I.tex);
   }
   $('mb-padd').addEventListener('click', function () { P.rows.push({ c: '', r: '', o: '' }); prenderRows(P.rows.length - 1); psave(); });
+
+  // ---------- שרטוט להוכחה: קווים, יד חופשית ואותיות. נשמר עם ההוכחה (P.draw), במידות 1000×600 ----------
+  var DW = 1000, DH = 600, LETTERS = 'ABCDEFGHKMNOP';
+  var dcv = $('mb-dcv'), dctx = dcv.getContext('2d'), dTool = 'line', dLet = 'A', dCur = null, dBox = $('mb-draw');
+  function dItems() { if (!P.draw || !Array.isArray(P.draw.i)) P.draw = { i: [] }; return P.draw.i; }
+  function dSize() {
+    var w = dcv.clientWidth; if (!w) return false;
+    var r = window.devicePixelRatio || 1, h = Math.round(w * DH / DW);
+    if (dcv.width !== Math.round(w * r)) { dcv.width = Math.round(w * r); dcv.height = Math.round(h * r); }
+    return true;
+  }
+  function dDraw() {
+    if (!dSize()) return;
+    var k = dcv.width / DW, g = dctx;
+    g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, dcv.width, dcv.height); g.setTransform(k, 0, 0, k, 0, 0);
+    g.lineCap = 'round'; g.lineJoin = 'round'; g.strokeStyle = '#1d2738'; g.fillStyle = '#1d2738';
+    var all = dItems().concat(dCur ? [dCur] : []);
+    all.forEach(function (it) {
+      if (it.t === 'a') { g.font = 'bold 40px "Segoe UI", Arial, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(it.c, it.p[0], it.p[1]); return; }
+      g.lineWidth = it.t === 'l' ? 4 : 3.5; g.beginPath();
+      it.p.forEach(function (q, j) { if (j) g.lineTo(q[0], q[1]); else g.moveTo(q[0], q[1]); });
+      g.stroke();
+      if (it.t === 'l') it.p.forEach(function (q) { g.beginPath(); g.arc(q[0], q[1], 5, 0, 7); g.fill(); });
+    });
+    dBox.classList.toggle('has', !!dItems().length);
+  }
+  function dPt(e) { var b = dcv.getBoundingClientRect(); return [Math.round((e.clientX - b.left) * DW / b.width), Math.round((e.clientY - b.top) * DH / b.height)]; }
+  function dSnap(q) { // נצמדים לקצה של קו קיים
+    var best = null, bd = 30;
+    dItems().forEach(function (it) { if (it.t === 'l') it.p.forEach(function (z) { var d = Math.hypot(z[0] - q[0], z[1] - q[1]); if (d < bd) { bd = d; best = z; } }); });
+    return best ? best.slice() : q;
+  }
+  function dSave() { psave(); dDraw(); used('proof_draw'); }
+  dcv.addEventListener('pointerdown', function (e) {
+    if (shared) return;
+    e.preventDefault(); try { dcv.setPointerCapture(e.pointerId); } catch (_) {}
+    var q = dPt(e);
+    if (dTool === 'txt') {
+      dItems().push({ t: 'a', c: dLet, p: q });
+      var used2 = dItems().filter(function (it) { return it.t === 'a'; }).map(function (it) { return it.c; });
+      var nx = LETTERS.split('').filter(function (c) { return used2.indexOf(c) < 0; })[0]; if (nx) setLet(nx);
+      dSave(); return;
+    }
+    dCur = dTool === 'line' ? { t: 'l', p: [dSnap(q), q] } : { t: 'f', p: [q] };
+    dDraw();
+  });
+  dcv.addEventListener('pointermove', function (e) {
+    if (!dCur) return;
+    var q = dPt(e);
+    if (dCur.t === 'l') dCur.p[1] = q;
+    else { var l = dCur.p[dCur.p.length - 1]; if (Math.hypot(l[0] - q[0], l[1] - q[1]) >= 4) dCur.p.push(q); }
+    dDraw();
+  });
+  function dEnd() {
+    if (!dCur) return;
+    var it = dCur; dCur = null;
+    if (it.t === 'l') { it.p[1] = dSnap(it.p[1]); if (Math.hypot(it.p[0][0] - it.p[1][0], it.p[0][1] - it.p[1][1]) < 12) { dDraw(); return; } }
+    else if (it.p.length < 2) { dDraw(); return; }
+    dItems().push(it); dSave();
+  }
+  dcv.addEventListener('pointerup', dEnd); dcv.addEventListener('pointercancel', dEnd);
+  function setLet(c) { dLet = c; $('mb-dlet').textContent = c; }
+  function setTool(t) { dTool = t; Array.prototype.forEach.call(document.querySelectorAll('.mb-dtools [data-tool]'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-tool') === t ? 'true' : 'false'); }); }
+  Array.prototype.forEach.call(document.querySelectorAll('.mb-dtools [data-tool]'), function (b) {
+    b.addEventListener('click', function () {
+      var t = b.getAttribute('data-tool');
+      if (t === 'txt' && dTool === 'txt') setLet(LETTERS[(LETTERS.indexOf(dLet) + 1) % LETTERS.length]); // לחיצה נוספת – האות הבאה
+      setTool(t);
+    });
+  });
+  $('mb-dtri').addEventListener('click', function () {
+    if (shared) return;
+    var A1 = [500, 70], B1 = [140, 520], C1 = [860, 520];
+    dItems().push({ t: 'l', p: [A1, B1] }, { t: 'l', p: [B1, C1] }, { t: 'l', p: [C1, A1] },
+      { t: 'a', c: 'A', p: [500, 32] }, { t: 'a', c: 'B', p: [100, 555] }, { t: 'a', c: 'C', p: [900, 555] });
+    setLet('D'); setTool('line'); dSave();
+  });
+  $('mb-dundo').addEventListener('click', function () { if (dItems().length) { dItems().pop(); dSave(); } });
+  $('mb-dclr').addEventListener('click', function () { if (dItems().length && confirm('למחוק את כל השרטוט?')) { P.draw = { i: [] }; setLet('A'); dSave(); } });
+  dBox.addEventListener('toggle', function () { if (dBox.open) { dDraw(); used('proof_draw_open'); } });
+  window.addEventListener('beforeprint', function () { if (dItems().length) { dBox.open = true; dDraw(); } });
+  var dResT = null; window.addEventListener('resize', function () { clearTimeout(dResT); dResT = setTimeout(dDraw, 150); });
+  function dLoad() { // אחרי שהוכחה נטענת או מתחלפת
+    var has = !!(P.draw && P.draw.i && P.draw.i.length);
+    if (has) dBox.open = true;
+    var ls = dItems().filter(function (it) { return it.t === 'a'; }).map(function (it) { return it.c; });
+    setLet(LETTERS.split('').filter(function (c) { return ls.indexOf(c) < 0; })[0] || 'A');
+    dDraw();
+  }
 
   // ---------- בדיקה מקומית ----------
   function normSeg(s) {
@@ -738,7 +1017,7 @@
   $('mb-phint').addEventListener('click', function () { used('proof_hint'); showHint(localProofHint(), pres, aiHintProof); });
   $('mb-pform').addEventListener('click', function () { openF(/sin|cos|[0-9]/.test(P.given + P.prove) ? 'tri' : 'geo'); });
   $('mb-pprint').addEventListener('click', function () { used('print'); window.print(); });
-  $('mb-pnew').addEventListener('click', function () { P = { given: '', prove: '', rows: [{ c: '', r: '', o: '' }] }; $('mb-given').value = ''; $('mb-prove').value = ''; prenderRows(); psave(); pres.hidden = true; });
+  $('mb-pnew').addEventListener('click', function () { P = { given: '', prove: '', rows: [{ c: '', r: '', o: '' }], draw: { i: [] } }; $('mb-given').value = ''; $('mb-prove').value = ''; prenderRows(); psave(); pres.hidden = true; dLoad(); });
   var EXP = {
     shok: ['במשולש ABC נתון AB=AC. AD חוצה את הזווית BAC, והנקודה D על הצלע BC.', 'BD=DC'],
     kos: ['במשולש ABC נתון: AB=8, AC=5, ∠A=60°.', 'BC=7'],
@@ -748,8 +1027,8 @@
   Array.prototype.forEach.call(document.querySelectorAll('[data-px]'), function (b) {
     b.addEventListener('click', function () {
       var x = EXP[b.getAttribute('data-px')]; if (!x) return;
-      P = { given: x[0], prove: x[1], rows: [{ c: '', r: '', o: '' }] };
-      $('mb-given').value = x[0]; $('mb-prove').value = x[1]; prenderRows(0); psave(); pres.hidden = true; used('proof_example');
+      P = { given: x[0], prove: x[1], rows: [{ c: '', r: '', o: '' }], draw: { i: [] } };
+      $('mb-given').value = x[0]; $('mb-prove').value = x[1]; prenderRows(0); psave(); pres.hidden = true; dLoad(); used('proof_example');
     });
   });
 
@@ -880,8 +1159,8 @@
     var hs = location.hash.match(/[#&]s=([A-Za-z0-9_-]+)/);
     if (hs) {
       var so = dec(hs[1]);
-      if (so.t === 'p' && so.rows) { P = { given: String(so.g || ''), prove: String(so.v || ''), rows: so.rows.map(function (r) { return { c: String(r[0] || ''), r: String(r[1] || ''), o: String(r[2] || '') }; }) }; $('mb-given').value = P.given; $('mb-prove').value = P.prove; sharedTab = 'p'; }
-      else if (so.rows) { A = { rows: so.rows.map(String).slice(0, 80), deg: so.d !== 0 }; setDeg(A.deg); sharedTab = 'a'; }
+      if (so.t === 'p' && so.rows) { P = { given: String(so.g || ''), prove: String(so.v || ''), rows: so.rows.map(function (r) { return { c: String(r[0] || ''), r: String(r[1] || ''), o: String(r[2] || '') }; }), draw: { i: Array.isArray(so.dr) ? so.dr.slice(0, 200) : [] } }; $('mb-given').value = P.given; $('mb-prove').value = P.prove; sharedTab = 'p'; }
+      else if (so.rows) { A = { rows: so.rows.map(String).slice(0, 80), deg: so.d !== 0, ask: String(so.q || '').slice(0, 200) }; setDeg(A.deg); sharedTab = 'a'; }
       if (sharedTab) { shared = true; $('mb-shared').hidden = false; if (so.n) $('mb-shared-t').textContent = 'שלחו לכם: "⁨' + String(so.n).slice(0, 80) + '⁩". רואים את הפתרון כמו שנכתב, עם הבדיקה של כל שורה. מה שמשנים כאן לא נשמר.'; used('shared_open'); }
     }
   } catch (e) { flash('הקישור לא נפתח. אולי הוא נחתך בהעתקה.'); }
@@ -892,8 +1171,8 @@
   });
   var A2 = null;
   function shareLink(proof) {
-    var o = proof ? { t: 'p', g: P.given, v: P.prove, rows: P.rows.filter(function (r) { return (r.c || '').trim() || r.r; }).map(function (r) { return [r.c, r.r, r.o || '']; }) }
-      : { t: 'a', d: A.deg ? 1 : 0, rows: A.rows.filter(function (r, i) { return r.trim() || i === 0; }) };
+    var o = proof ? { t: 'p', g: P.given, v: P.prove, rows: P.rows.filter(function (r) { return (r.c || '').trim() || r.r; }).map(function (r) { return [r.c, r.r, r.o || '']; }), dr: shareDraw() }
+      : { t: 'a', d: A.deg ? 1 : 0, rows: A.rows.filter(function (r, i) { return r.trim() || i === 0; }), q: A.ask || undefined };
     if (!(o.rows.length && (proof ? o.rows.length : o.rows[0].trim()))) { flash(proof ? 'עוד אין שורות בהוכחה.' : 'עוד אין תרגיל במחברת.'); return; }
     var name = proof ? (P.prove ? 'הוכחה: ' + P.prove : 'הוכחה') : 'תרגיל: ' + A.rows[0];
     o.n = name.slice(0, 80);
@@ -906,11 +1185,16 @@
     try { navigator.clipboard.writeText(text).then(done, function () { window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank'); }); }
     catch (e) { window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank'); }
   }
+  function shareDraw() { // השרטוט נכנס לקישור; יד חופשית ארוכה מדוללת כדי שהקישור לא יתארך מדי
+    var it = dItems(), step = 1, out;
+    do { out = it.map(function (x) { return x.t === 'f' ? { t: 'f', p: x.p.filter(function (q, j) { return j % step === 0 || j === x.p.length - 1; }) } : x; }); step++; } while (JSON.stringify(out).length > 3000 && step < 8);
+    return out.length ? out : undefined;
+  }
   $('mb-share').addEventListener('click', function () { shareLink(false); });
   $('mb-pshare').addEventListener('click', function () { shareLink(true); });
   $('mb-kbonly').addEventListener('change', function () { kbOnly = this.checked; store('mb-kbonly', kbOnly ? '1' : '0'); applyKbOnly(); used(kbOnly ? 'kb_only' : 'kb_native'); });
 
-  renderRows(); showOld(); prenderRows(); applyKbOnly();
+  renderRows(); showOld(); prenderRows(); applyKbOnly(); dLoad();
   if (sharedTab) { showTab(sharedTab === 'p'); if (sharedTab === 'p') $('mb-pcheck').click(); }
   else if (kq) showHwTab();
   else {

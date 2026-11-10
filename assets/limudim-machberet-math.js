@@ -22,7 +22,7 @@
       .replace(/[‎‏‪-‮]/g, '')
       .replace(/\\left|\\right|\\,|\\;|\\!/g, '')
       .replace(/\\cdot|\\times|·|×|∙|⋅/g, '*').replace(/÷|:(?=\s*[\d(a-z])/g, '/').replace(/[−–—]/g, '-').replace(/≈/g, '=').replace(/\+-|\+\/-/g, '±')
-      .replace(/\\pi|π/g, 'pi').replace(/∛/g, 'cbrt').replace(/√/g, 'sqrt').replace(/²/g, '^2').replace(/³/g, '^3')
+      .replace(/\\pi|π/g, 'pi').replace(/∛/g, 'cbrt').replace(/√/g, 'sqrt').replace(/²/g, '^2').replace(/³/g, '^3').replace(/[₀-₉]/g, function (c) { return String(c.charCodeAt(0) - 0x2080); })
       .replace(/∠\s*([A-Z]{1,3})/g, 'ang_$1').replace(/∞/g, 'inf')
       .replace(/\\sqrt\{([^{}]*)\}/g, 'sqrt($1)').replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, '(($1)/($2))')
       .replace(/\\(sin|cos|tan|ln|log|exp|arcsin|arccos|arctan)/g, '$1')
@@ -276,11 +276,9 @@
         });
         return { kind: 'eq', L: prod, R: { t: 'n', v: 0, s: '0' }, deg: deg, tex: txs.join('\\quad\\text{או}\\quad ') };
       }
-      if (REL.test(s)) {
-        var bits = s.split(/(≤|≥|<=|>=|<|>|≠|!=)/), tx = '';
-        for (var b = 0; b < bits.length; b++) tx += b % 2 ? relTex(bits[b]) : tex(parse(bits[b]));
-        return { kind: 'ineq', tex: tx };
-      }
+      if (REL.test(s)) return readIneq(s, deg);
+      var sy = readSys(s, deg);
+      if (sy) return sy;
       var m;
       if ((m = s.match(/^([a-zA-Z])\s*('+)\s*\(\s*([a-z])\s*\)\s*=(.+)$/)) || (m = s.match(/^(y)\s*('+)()\s*=(.+)$/))) {
         var d = parse(m[4]);
@@ -300,6 +298,56 @@
     } catch (e) {
       return { kind: 'bad', msg: e && e.message ? e.message : 'לא הצלחתי לקרוא את השורה' };
     }
+  }
+
+  // פיצול ברמה העליונה בלבד (לא בתוך סוגריים): log(2,8) נשאר שלם
+  function splitTop(s, re) {
+    var out = [], depth = 0, cur = '', i = 0;
+    while (i < s.length) {
+      var ch = s[i];
+      if (ch === '(' || ch === '[') depth++; else if (ch === ')' || ch === ']') depth--;
+      if (depth === 0) { var m = s.slice(i).match(re); if (m && m.index === 0 && m[0].length) { out.push(cur); cur = ''; i += m[0].length; continue; } }
+      cur += ch; i++;
+    }
+    out.push(cur);
+    return out;
+  }
+  // אי-שוויון: "או" בין קבוצות, "וגם"/פסיק בתוך קבוצה, ושרשרת כמו -1<x<3. כל אטום {L, op, R}
+  var OPN = { '<=': '≤', '>=': '≥', '!=': '≠' };
+  function readIneq(s, deg) {
+    var groups = [], txo = [];
+    s.split(/\s+או\s+|\s*∨\s*/).forEach(function (o) {
+      var atoms = [], txa = [];
+      splitTop(o, /^(\s+וגם\s+|\s*∧\s*|\s*[,;]\s*)/).forEach(function (a) {
+        var bits = a.split(/(≤|≥|<=|>=|<|>|≠|!=|=)/);
+        if (bits.length < 3) throw new Err('חסר סימן השוואה');
+        var asts = [], tx = '';
+        for (var b = 0; b < bits.length; b += 2) { if (!bits[b].trim()) throw new Err('חסר צד באי-השוויון'); asts.push(parse(bits[b])); }
+        for (var k = 0; k < bits.length; k++) tx += k % 2 ? relTex(bits[k]) : tex(asts[k / 2]);
+        for (var j = 1; j < bits.length; j += 2) atoms.push({ L: asts[(j - 1) / 2], op: OPN[bits[j]] || bits[j], R: asts[(j + 1) / 2] });
+        txa.push(tx);
+      });
+      groups.push(atoms); txo.push(txa.join(',\\; '));
+    });
+    return { kind: 'ineq', groups: groups, deg: deg, tex: txo.join('\\quad\\text{או}\\quad ') };
+  }
+  // מערכת משוואות באותה שורה: x+y=5 ; x-y=1  (גם פסיק או "וגם" ביניהן)
+  function readSys(s, deg) {
+    var parts = splitTop(s, /^(\s*;\s*|\s*,\s*|\s+וגם\s+)/);
+    if (parts.length < 2 || parts.length > 3) return null;
+    var eqs = [], all = {};
+    for (var i = 0; i < parts.length; i++) {
+      var lr = parts[i].split('=');
+      if (lr.length !== 2 || !lr[0].trim() || !lr[1].trim()) return null;
+      var L = parse(lr[0]), R = parse(lr[1]);
+      vars(L, all); vars(R, all);
+      eqs.push({ L: L, R: R });
+    }
+    var names = Object.keys(all).filter(function (n) { return n !== 'k'; });
+    if (names.length < 2) return null;
+    var solved = eqs.every(function (e) { return e.L.t === 'v' && !namesOf(e.R).length; }) && eqs.map(function (e) { return e.L.n; }).filter(function (n, j, a) { return a.indexOf(n) === j; }).length === eqs.length;
+    return { kind: 'sys', eqs: eqs, names: names.sort(), solved: solved, deg: deg,
+      tex: solved ? eqs.map(function (e) { return tex(e.L) + '=' + tex(e.R); }).join(',\\quad ') : '\\begin{cases}' + eqs.map(function (e) { return tex(e.L) + '=' + tex(e.R); }).join('\\\\') + '\\end{cases}' };
   }
 
   function readSol(s) {
@@ -558,10 +606,106 @@
     return o;
   }
 
+  // ---------------- אי-שוויונות: משווים את קבוצת הפתרונות במספרים ----------------
+  function ineqNames(I) { var all = {}; I.groups.forEach(function (g) { g.forEach(function (a) { vars(a.L, all); vars(a.R, all); }); }); return Object.keys(all).sort(); }
+  // true / false, או null כשהשורה לא מוגדרת בנקודה (למשל ln של מספר שלילי)
+  function ineqTruth(I, v, x, deg) {
+    var undef = false, anyTrue = false;
+    I.groups.forEach(function (atoms) {
+      var all = true;
+      atoms.forEach(function (a) {
+        var o = { $deg: deg }; o[v] = x;
+        var l = safe(function () { return ev(a.L, o); }), r = safe(function () { return ev(a.R, o); });
+        if (!isFinite(l) || !isFinite(r)) { undef = true; all = false; return; }
+        var d = l - r, tol = 1e-9 * Math.max(1, Math.abs(l), Math.abs(r)), t;
+        switch (a.op) { case '<': t = d < -tol; break; case '≤': t = d <= tol; break; case '>': t = d > tol; break; case '≥': t = d >= -tol; break; case '≠': t = Math.abs(d) > tol; break; default: t = Math.abs(d) <= tol; }
+        if (!t) all = false;
+      });
+      if (all) anyTrue = true;
+    });
+    return anyTrue ? true : undef ? null : false;
+  }
+  function ineqPts(Is, v, deg, per) {
+    var C = [];
+    Is.forEach(function (I) { I.groups.forEach(function (atoms) { atoms.forEach(function (a) {
+      var g = eqFn(a.L, a.R);
+      roots(function (x) { var o = { $deg: deg }; o[v] = x; return safe(function () { return ev(g, o); }); }, deg).forEach(function (x) {
+        if (Math.abs(x - Math.round(x)) < 1e-7) x = Math.round(x); // 0 ולא -1e-10, כדי ש-sqrt(x) יהיה מוגדר בגבול
+        if (!inSet(x, C)) C.push(x);
+      });
+    }); }); });
+    C = within(C, deg).sort(function (a, b) { return a - b; });
+    var P = C.slice(), sc = deg ? 17 : 1;
+    for (var i = 0; i + 1 < C.length; i++) P.push((C[i] + C[i + 1]) / 2);
+    if (C.length) P.push(C[0] - 0.5 * sc, C[0] - 7 * sc, C[C.length - 1] + 0.5 * sc, C[C.length - 1] + 7 * sc);
+    [-37.3, -12.7, -3.3, -0.77, 0, 0.41, 1.9, 4.6, 11.2, 29.1].forEach(function (x) { P.push(deg ? x * 17 + 7 : x); });
+    if (per) { // טריגונומטריה: בודקים רק בסיבוב אחד, כמו בבגרות (0° עד 360°)
+      var top = deg ? 360 : 2 * Math.PI, inR = function (x) { return x >= -1e-9 && x < top - 1e-9; };
+      C = C.filter(inR); P = P.filter(inR); for (var q = 1; q < 24; q++) P.push(top * q / 24);
+    }
+    return { C: C, P: P };
+  }
+  // A מול B: אותה קבוצת פתרונות? strict – מחוץ לתחום ההגדרה זה "לא פתרון"
+  function ineqCmp0(A, B, v, deg) {
+    var per = [A, B].some(function (I) { return I.groups.some(function (g) { return g.some(function (a) { return has(a.L, isTrig) || has(a.R, isTrig); }); }); });
+    var pts = ineqPts([A, B], v, deg, per), bad = null, dom = null, flip = 0, tot = 0;
+    pts.P.forEach(function (x) {
+      var a = ineqTruth(A, v, x, deg), b = ineqTruth(B, v, x, deg);
+      if (a !== null && b !== null && !inSet(x, pts.C)) { tot++; if (a !== b) flip++; }
+      if ((a === true) === (b === true)) return;
+      if (a === null && b === true) { if (!dom) dom = x; return; } // הרחבה מחוץ לתחום ההגדרה – כמו פתרון זר
+      if (!bad || Math.abs(x) < Math.abs(bad.x)) bad = { x: x, a: a === true, b: b === true };
+    });
+    if (bad) return { ok: false, v: v, at: bad.x, a: bad.a, b: bad.b, flip: tot >= 3 && flip === tot };
+    return { ok: true, dom: dom };
+  }
+  var ineqCmp = function (A, B, v, deg) { return memo('i', function (a, b, vv, d) { return ineqCmp0(A, B, vv, d); })(A.tex, B.tex, v, deg); };
+  function ineqSolved(I, v) { // x<3, -1<x≤2, x<-1 או x>2: הנעלם לבד, ובצד השני מספרים
+    return I.groups.every(function (atoms) { return atoms.every(function (a) { return (a.L.t === 'v' && a.L.n === v && !namesOf(a.R).length) || (a.R.t === 'v' && a.R.n === v && !namesOf(a.L).length); }); });
+  }
+
+  // ---------------- מערכת משוואות: פותרים במספרים (ניוטון מכמה נקודות התחלה) ----------------
+  function solveSys0(gs, names, deg) {
+    if (names.length !== 2 || gs.length !== 2) return null;
+    var f = function (x, y) { var o = { $deg: deg }; o[names[0]] = x; o[names[1]] = y; return [safe(function () { return ev(gs[0], o); }), safe(function () { return ev(gs[1], o); })]; };
+    var S = [], starts = [-8.3, -3.7, -1.2, -0.3, 0.6, 2.1, 4.4, 9.1], sing = 0, tries = 0;
+    for (var i = 0; i < starts.length; i++) for (var j = 0; j < starts.length; j++) {
+      var x = starts[i], y = starts[(j + i) % starts.length] * 0.97, F, it, singHere = false;
+      tries++;
+      for (it = 0; it < 40; it++) {
+        F = f(x, y); if (!isFinite(F[0]) || !isFinite(F[1])) break;
+        if (Math.abs(F[0]) < 1e-12 && Math.abs(F[1]) < 1e-12) break;
+        var h = 1e-6 * Math.max(1, Math.abs(x), Math.abs(y)), Fx = f(x + h, y), Fy = f(x, y + h);
+        var a = (Fx[0] - F[0]) / h, b = (Fy[0] - F[0]) / h, c = (Fx[1] - F[1]) / h, d = (Fy[1] - F[1]) / h, det = a * d - b * c;
+        if (!isFinite(det) || Math.abs(det) < 1e-10 * Math.max(1, Math.abs(a * d), Math.abs(b * c))) { singHere = true; break; }
+        x -= (F[0] * d - F[1] * b) / det; y -= (a * F[1] - c * F[0]) / det;
+        if (Math.abs(x) > 1e6 || Math.abs(y) > 1e6) break;
+      }
+      if (singHere && it === 0) sing++;
+      F = f(x, y);
+      if (isFinite(F[0]) && isFinite(F[1]) && Math.abs(F[0]) < 1e-8 && Math.abs(F[1]) < 1e-8) {
+        if (!S.some(function (p) { return Math.abs(p[0] - x) < 1e-5 * Math.max(1, Math.abs(x)) && Math.abs(p[1] - y) < 1e-5 * Math.max(1, Math.abs(y)); })) S.push([x, y]);
+      }
+    }
+    if (sing === tries) return null; // מערכת תלויה או סותרת (ישרים מקבילים) – לא בודקים
+    if (S.length > 12) return null;   // אינסוף פתרונות
+    return S.map(function (p) { var o = {}; o[names[0]] = p[0]; o[names[1]] = p[1]; return o; });
+  }
+  var solveSys = function (I, deg) { return memo('y', function () { return solveSys0(I.eqs.map(function (e) { return eqFn(e.L, e.R); }), I.names, deg); })(I.tex, deg); };
+  function sameSols(A, B, names) {
+    var eq = function (p, q) { return names.every(function (n) { return Math.abs(p[n] - q[n]) <= 1e-5 * Math.max(1, Math.abs(p[n])); }); };
+    var lost = A.filter(function (p) { return !B.some(function (q) { return eq(p, q); }); }), added = B.filter(function (q) { return !A.some(function (p) { return eq(p, q); }); });
+    return { ok: !lost.length && !added.length, lost: lost, added: added };
+  }
+  function solsText(S, names) { return S.slice(0, 3).map(function (p) { return '(' + names.map(function (n) { return n + '=' + nice(p[n]); }).join(', ') + ')'; }).join(' '); }
+
   function checkAll(lines, opt) {
     opt = opt || {};
     var deg0 = !!opt.deg && !(lines.some(function (l) { return /pi|π/.test(l); }) && !lines.some(function (l) { return /°/.test(l); })), infos = lines.map(function (l) { return readLine(l, { deg: deg0 }); });
     var res = [], prev = null, firstEq = null, defs = {};
+    var first = infos.filter(function (k) { return k.kind !== 'empty' && k.kind !== 'text'; })[0];
+    var ineqMode = !!first && first.kind === 'ineq', sysMode = !!first && first.kind === 'sys';
+    var lastIneq = null, firstIneq = null, firstSols = null, lastSols = null, known = {};
     for (var i = 0; i < infos.length; i++) {
       var I = infos[i], deg = deg0 || !!I.deg, r = { info: I, mark: '', msg: '' };
       try {
@@ -578,7 +722,52 @@
         if (I.kind === 'eq' && I.L.t === 'v' && I.L.n === 'y' && !vars(I.R).y && vars(I.R).x) defs.y = { ast: I.R, v: 'x', name: 'y' };
         if (I.kind === 'empty' || I.kind === 'text') { res.push(r); continue; }
         if (I.kind === 'bad') { r.mark = 'bad'; r.msg = I.msg; res.push(r); continue; }
-        if (I.kind === 'ineq') { r.msg = 'אי-שוויון או תחום הגדרה: נשמר כהערה, והבדיקה ממשיכה מהשורה שלפניו.'; res.push(r); continue; } // תחום הגדרה באמצע – לא שובר את הרצף
+        if (I.kind === 'ineq' && !ineqMode) { r.msg = 'אי-שוויון או תחום הגדרה: נשמר כהערה, והבדיקה ממשיכה מהשורה שלפניו.'; res.push(r); continue; } // תחום הגדרה באמצע – לא שובר את הרצף
+        if (I.kind === 'ineq') {
+          var inm = ineqNames(I), iv = inm.filter(function (n) { return n !== 'k'; });
+          var idg = deg && I.groups.some(function (g) { return g.some(function (a) { return has(a.L, isTrig) || has(a.R, isTrig); }); });
+          if (iv.length !== 1 || inm.length !== 1) { r.msg = 'אי-שוויון עם יותר מנעלם אחד: המחברת עוד לא בודקת אותו.'; res.push(r); prev = I; continue; }
+          var vI = iv[0];
+          if (!lastIneq) { lastIneq = firstIneq = I; res.push(r); prev = I; continue; }
+          var ci = ineqCmp(lastIneq, I, vI, idg);
+          if (ci.ok) {
+            r.mark = 'ok'; r.msg = 'שקול לשורה הקודמת: אותה קבוצת פתרונות.';
+            if (ci.dom != null) r.msg = 'נכון. רק שימו לב לתחום ההגדרה: ⁦' + vI + '=' + nice(ci.dom) + '⁩ מקיים את השורה הזאת, אבל לא מוגדר בשורה שלפניה. בסוף מצמצמים לתחום ההגדרה.';
+          } else {
+            r.mark = 'warn';
+            r.msg = ci.flip ? 'כדאי לבדוק כאן: יצא בדיוק ההפך. אולי הסימן היה צריך להתהפך (כפל או חילוק במספר שלילי), או שבחרתם את התחומים ההפוכים – בודקים איפה הביטוי חיובי ואיפה שלילי.'
+              : 'כדאי לבדוק כאן: כש-⁦' + vI + '=' + nice(ci.at) + '⁩ השורה ' + (prev === lastIneq ? 'הקודמת' : 'של אי-השוויון שלמעלה') + ' ' + (ci.a ? 'מתקיימת' : 'לא מתקיימת') + ', ועכשיו ' + (ci.b ? 'כן' : 'לא') + '.';
+          }
+          if (ineqSolved(I, vI)) {
+            var fi = ineqCmp(firstIneq, I, vI, idg);
+            if (fi.ok && fi.dom == null) { r.mark = 'ok'; r.msg = 'הגעתם לפתרון, והוא מתאים לתרגיל. 🎉'; }
+            else if (fi.ok) { r.mark = 'warn'; r.msg = 'כמעט! ⁦' + vI + '=' + nice(fi.dom) + '⁩ לא בתחום ההגדרה של התרגיל, ולכן הוא לא פתרון. מצמצמים את התשובה לתחום ההגדרה.'; }
+            else if (r.mark === 'ok') { r.mark = 'warn'; r.msg = 'השורה מתאימה לקודמת, אבל לא לתרגיל המקורי. הטעות קרתה באחת השורות שלמעלה, כדאי לחפש את הסימן הצהוב.'; }
+          }
+          lastIneq = I; res.push(r); prev = I; continue;
+        }
+        if (I.kind === 'sys') {
+          var sdg = deg && I.eqs.some(function (e) { return has(e.L, isTrig) || has(e.R, isTrig); });
+          var S = solveSys(I, sdg);
+          if (!sysMode) { r.msg = 'מערכת משוואות: כותבים אותה בשורה הראשונה, כדי שהמחברת תבדוק את השלבים.'; res.push(r); continue; }
+          if (!firstSols && !lastSols) {
+            firstSols = lastSols = S; known = {};
+            if (!S) r.msg = 'למערכת הזאת אין פתרון יחיד (ישרים מקבילים או אותו ישר), ולכן המחברת לא בודקת אותה.';
+            res.push(r); prev = I; continue;
+          }
+          if (S && lastSols && I.names.join() === Object.keys(lastSols[0] || {}).sort().join()) {
+            var cs = sameSols(lastSols, S, I.names);
+            if (cs.ok) { r.mark = 'ok'; r.msg = 'שקול לשורה הקודמת: אותם פתרונות.'; }
+            else { r.mark = 'warn'; r.msg = 'כדאי לבדוק כאן: ' + (cs.lost.length ? 'הפתרון ⁦' + solsText(cs.lost, I.names) + '⁩ של השורה הקודמת לא מקיים את השורה הזאת.' : 'יש כאן פתרון חדש ⁦' + solsText(cs.added, I.names) + '⁩ שלא היה קודם.'); }
+            if (I.solved && firstSols) {
+              var fs = sameSols(firstSols, S, I.names);
+              if (fs.ok) { r.mark = 'ok'; r.msg = 'הגעתם לפתרון של המערכת, והוא מתאים לתרגיל. 🎉'; }
+              else if (r.mark === 'ok') { r.mark = 'warn'; r.msg = 'השורה מתאימה לקודמת, אבל לא למערכת המקורית. הטעות קרתה באחת השורות שלמעלה.'; }
+            }
+          }
+          if (S) lastSols = S;
+          res.push(r); prev = I; continue;
+        }
         if (I.kind === 'def') {
           firstEq = null;
           var pd = defs[I.name];
@@ -643,6 +832,30 @@
             else { r.mark = 'warn'; r.msg = 'כדאי לבדוק כאן: השמאל יוצא ' + nice(lv) + ' והימין ' + nice(rv) + '.'; }
             res.push(r); continue;
           }
+          // אי-שוויון: משוואת עזר (מחליפים את הסימן ב-=) כדי למצוא את נקודות החיתוך
+          if (ineqMode && lastIneq && prev && prev.kind === 'ineq') {
+            var aux = [].concat.apply([], lastIneq.groups).some(function (a) { return sameEq(eqFn(a.L, a.R), g, deg).ok; });
+            if (aux) { r.mark = 'ok'; r.msg = 'משוואת עזר: מוצאים איפה שני האגפים שווים. נכון.'; }
+            else { r.mark = 'warn'; r.msg = 'כדאי לבדוק כאן: זו לא המשוואה של אי-השוויון שלמעלה (כשמחליפים את הסימן ב-=).'; }
+            firstEq = g; res.push(r); prev = I; continue;
+          }
+          // מערכת: משוואה אחרי הצבה או בידוד – בודקים מול הפתרונות של המערכת
+          if (sysMode && lastSols && !(prev && prev.kind === 'eq' && namesOf(eqOf(prev)).join() === names.join())) {
+            var cons = lastSols.filter(function (p) { return Object.keys(known).every(function (k) { return !(k in p) || Math.abs(p[k] - known[k]) < 1e-5 * Math.max(1, Math.abs(p[k])); }); });
+            if (names.length === 1 && Object.keys(lastSols[0] || {}).indexOf(names[0]) >= 0) {
+              var u = names[0], Pv = [], f1 = function (x) { var o = { $deg: deg }; o[u] = x; return safe(function () { return ev(g, o); }); };
+              cons.forEach(function (p) { if (!inSet(p[u], Pv)) Pv.push(p[u]); });
+              var Rv = within(roots(f1, deg), deg);
+              var lostV = Pv.filter(function (x) { return !(Math.abs(f1(x)) < 1e-7) && !inSet(x, Rv); });
+              if (!lostV.length) { r.mark = 'ok'; r.msg = 'נכון: נשארה משוואה עם נעלם אחד (' + u + ').'; }
+              else { r.mark = 'warn'; r.msg = 'כדאי לבדוק כאן: לפי המערכת, ⁦' + u + '=' + nice(lostV[0]) + '⁩ צריך לקיים את המשוואה הזאת, והוא לא מקיים. אולי טעות בהצבה?'; }
+            } else if (cons.length) {
+              var badP = cons.filter(function (p) { var o = { $deg: deg }; for (var k in p) o[k] = p[k]; for (var k2 in known) o[k2] = known[k2]; var z = safe(function () { return ev(g, o); }); return isFinite(z) && Math.abs(z) > 1e-6; });
+              if (!badP.length) { r.mark = 'ok'; r.msg = 'נכון: המשוואה נובעת מהמערכת.'; }
+              else { r.mark = 'warn'; r.msg = 'כדאי לבדוק כאן: הפתרון של המערכת ⁦' + solsText(badP, Object.keys(badP[0]).sort()) + '⁩ לא מקיים את השורה הזאת.'; }
+            }
+            if (r.mark) { firstEq = g; res.push(r); prev = I; continue; }
+          }
           var pq = prev && prev.kind === 'sol' ? null : eqOf(prev);
           if (pq) eqMark(r, sameEq(pq, g, deg));
           else if (prev && prev.kind === 'deriv' && I.R.t === 'n' && I.R.v === 0) {
@@ -652,6 +865,21 @@
           }
           if (!pq && !(r.mark)) firstEq = g; // תחילת תרגיל חדש
           else if (!firstEq) firstEq = g;
+          res.push(r); prev = I; continue;
+        }
+        if (I.kind === 'sol' && sysMode && lastSols && !I.param && Object.keys(lastSols[0] || {}).indexOf(I.v) >= 0) {
+          var cons2 = lastSols.filter(function (p) { return Object.keys(known).every(function (k) { return k === I.v || Math.abs(p[k] - known[k]) < 1e-5 * Math.max(1, Math.abs(p[k])); }); });
+          var want = [], got = [];
+          cons2.forEach(function (p) { if (!inSet(p[I.v], want)) want.push(p[I.v]); });
+          I.vals.forEach(function (a) { got.push([safe(function () { return ev(a, { $deg: deg }); }), Math.max(tolOf(a), 1e-6)]); });
+          var miss = want.filter(function (x) { return !got.some(function (q) { return Math.abs(q[0] - x) <= q[1] * Math.max(1, Math.abs(x)) + 1e-9; }); });
+          var extra = got.filter(function (q) { return !want.some(function (x) { return Math.abs(q[0] - x) <= q[1] * Math.max(1, Math.abs(x)) + 1e-9; }); });
+          if (!miss.length && !extra.length) {
+            r.mark = 'ok';
+            if (got.length === 1) known[I.v] = got[0][0];
+            var left = Object.keys(lastSols[0]).filter(function (k) { return k !== I.v && !(k in known); });
+            r.msg = left.length ? 'נכון. עכשיו מציבים את ' + I.v + ' באחת המשוואות ומוצאים את ' + left.join(' ו-') + '.' : 'מצאתם את כל הנעלמים, והפתרון מתאים למערכת. 🎉';
+          } else { r.mark = 'warn'; r.msg = 'כדאי לבדוק כאן: ⁦' + I.v + '=' + nice(extra.length ? extra[0][0] : got[0] ? got[0][0] : NaN) + '⁩ לא מתאים למערכת. מציבים אותו בשתי המשוואות ובודקים.'; }
           res.push(r); prev = I; continue;
         }
         if (I.kind === 'sol') {
@@ -667,6 +895,7 @@
               else r.msg = 'השורה מתאימה לקודמת, אבל הפתרון לא מתאים לתרגיל המקורי. הטעות קרתה באחת השורות שלמעלה, כדאי לחפש את הסימן הצהוב.';
             }
           } else if (r.mark === 'ok') r.msg = 'הגעתם לפתרון, והוא מתאים לתרגיל. 🎉';
+          if (ineqMode && r.mark === 'ok') r.msg = 'נכון. אלה הנקודות שבהן שני האגפים שווים. עכשיו בודקים את הסימן בכל תחום, וכותבים את התשובה כאי-שוויון.';
           res.push(r); prev = I; continue;
         }
       } catch (e) {
@@ -714,6 +943,8 @@
     var out = {};
     if (!info) return out;
     var nodes = [info.ast, info.L, info.R].concat(info.parts || [], info.vals || []).filter(Boolean);
+    (info.eqs || []).forEach(function (e) { nodes.push(e.L, e.R); });
+    (info.groups || []).forEach(function (g) { g.forEach(function (a) { nodes.push(a.L, a.R); }); });
     function any(pred) { return nodes.some(function (n) { return has(n, pred); }); }
     if (any(function (n) { return n.t === 'f' && /^(sin|cos|tan|tg|cot|asin|acos|atan|arc)/.test(n.n); }) || any(function (n) { return n.t === 'deg'; })) out.trig = 1;
     if (any(function (n) { return n.t === 'f' && /^(ln|log|logb|lg)$/.test(n.n); })) out.log = 1;
@@ -738,8 +969,139 @@
     return -1;
   }
 
+  // ---------------- "הראו לי את הצעד הבא" (פולינומים במשתנה אחד) ----------------
+  // מקדמים של פולינום עד מעלה 4: מציבים 0..d ופותרים מערכת ליניארית, ובודקים בנקודה נוספת. אחרת null.
+  function polyCoef(g, v) {
+    var d = polyDeg(g, v); if (d < 0 || d > 4) return null;
+    var X = [], Y = [];
+    for (var i = 0; i <= d; i++) { var o = { $deg: false }; o[v] = i; var y = safe(function () { return ev(g, o); }); if (!isFinite(y)) return null; X.push(i); Y.push(y); }
+    var n = d + 1, Mx = X.map(function (x, r) { var row = []; for (var c = 0; c < n; c++) row.push(Math.pow(x, c)); row.push(Y[r]); return row; });
+    for (var c = 0; c < n; c++) {
+      var p = c; for (var r = c + 1; r < n; r++) if (Math.abs(Mx[r][c]) > Math.abs(Mx[p][c])) p = r;
+      var tmp = Mx[c]; Mx[c] = Mx[p]; Mx[p] = tmp;
+      for (var r2 = 0; r2 < n; r2++) if (r2 !== c) { var k = Mx[r2][c] / Mx[c][c]; for (var c2 = c; c2 <= n; c2++) Mx[r2][c2] -= k * Mx[c][c2]; }
+    }
+    var co = Mx.map(function (row, c) { var x = row[n] / row[c]; return Math.abs(x - Math.round(x)) < 1e-9 ? Math.round(x) : x; });
+    var o2 = { $deg: false }; o2[v] = -1.37; var want = safe(function () { return ev(g, o2); }), got = 0;
+    co.forEach(function (a, j) { got += a * Math.pow(-1.37, j); });
+    return close(want, got, 1e-7) ? co : null;
+  }
+  // מספר יפה לכתיבה: שלם, שבר קטן (3/4), או עשרוני
+  function numStr(x) {
+    if (Math.abs(x - Math.round(x)) < 1e-9) return String(Math.round(x));
+    for (var q = 2; q <= 12; q++) { var p = x * q; if (Math.abs(p - Math.round(p)) < 1e-9) return (Math.round(p) < 0 ? '-' : '') + Math.abs(Math.round(p)) + '/' + q; }
+    return String(Math.round(x * 1000) / 1000);
+  }
+  function polyStr(co, v) { // [c0,c1,c2] -> "2x^2-5x+6"
+    var s = '';
+    for (var j = co.length - 1; j >= 0; j--) {
+      var a = co[j]; if (Math.abs(a) < 1e-12) continue;
+      var neg = a < 0, m = numStr(Math.abs(a)), frac = m.indexOf('/') > 0;
+      var body = j === 0 ? m : (m === '1' ? '' : frac ? '(' + m + ')' : m) + v + (j > 1 ? '^' + j : '');
+      s += neg ? '-' + body : (s ? '+' : '') + body;
+    }
+    return s || '0';
+  }
+  function isParen(n) { return n.t === '()'; }
+  function squash(s) { return String(s).replace(/\s+/g, '').replace(/\*/g, ''); }
+  // מחזיר {line, why} או null (אז "רמז חכם" יכול לעזור)
+  function nextStep(lines, opt) {
+    opt = opt || {};
+    var res = checkAll(lines, opt), lastI = -1;
+    for (var i = lines.length - 1; i >= 0; i--) if (String(lines[i] || '').trim()) { lastI = i; break; }
+    if (lastI < 0) return null;
+    for (var w = 1; w <= lastI; w++) if (res[w].mark === 'warn' && !/פתרון זר/.test(res[w].msg)) return { fix: w };
+    var r = res[lastI], I = r.info, raw = squash(clean(lines[lastI]));
+    var num0 = function (a) { return a.t === 'n' || (a.t === 'neg' && a.a.t === 'n'); }, plain = function (a) { return num0(a) || (a.t === 'neg' && plain(a.a)) || (a.t === '/' && num0(a.a) && num0(a.b)); };
+    if (I.kind === 'sol' && !I.param && !I.vals.every(plain)) {
+      var vv = I.vals.map(function (a) { return safe(function () { return ev(a, { $deg: !!opt.deg }); }); });
+      if (vv.every(isFinite)) return { line: vv.map(function (x) { return I.v + '=' + numStr(x); }).join(' או '), why: 'מחשבים את המספרים.' };
+    }
+    if (I.kind === 'sol' && r.mark === 'ok') return { done: true };
+    if (I.kind === 'def') {
+      var fc = polyCoef(I.ast, I.v); if (!fc) return null;
+      var dc = fc.slice(1).map(function (a, j) { return a * (j + 1); });
+      return { line: I.name + "'(" + I.v + ')=' + polyStr(dc, I.v), why: 'גוזרים כל איבר: (xⁿ)′=n·xⁿ⁻¹, ומספר לבד נעלם.' };
+    }
+    if (I.kind === 'deriv') {
+      var dc2 = polyCoef(I.ast, I.v); if (!dc2) return null;
+      return { line: polyStr(dc2, I.v) + '=0', why: 'כדי למצוא נקודות חשודות לקיצון, משווים את הנגזרת ל-0.' };
+    }
+    if (I.kind === 'expr' || I.kind === 'chain') {
+      var E = lastExpr(I), nv = namesOf(E); if (nv.length !== 1) return null;
+      var ec = polyCoef(E, nv[0]); if (!ec) return null;
+      var ps = polyStr(ec, nv[0]);
+      if (squash(raw.replace(/^.*=/, '')) === squash(ps)) return { done: true, simp: true };
+      return { line: '=' + ps, why: 'פותחים סוגריים וכונסים איברים דומים.' };
+    }
+    if (I.kind === 'eq') {
+      var g = eqFn(I.L, I.R), names = namesOf(g); if (names.length !== 1) return null;
+      var v = names[0], co = polyCoef(g, v); if (!co) return null;
+      while (co.length > 1 && Math.abs(co[co.length - 1]) < 1e-12) co.pop();
+      var R0 = I.R.t === 'n' && I.R.v === 0, Lc = polyCoef(I.L, v);
+      if (co.length === 2) {
+        var Rc = polyCoef(I.R, v) || (namesOf(I.R).length ? null : [safe(function () { return ev(I.R, { $deg: false }); })]);
+        if (Lc && Rc) {
+          var den = 1, all = Lc.concat(Rc);
+          for (var q = 1; q <= 12; q++) if (all.every(function (z) { return Math.abs(z * q - Math.round(z * q)) < 1e-9; })) { den = q; break; }
+          if (den > 1) {
+            var sc = function (c) { return c.map(function (z) { return Math.round(z * den); }); };
+            return { line: polyStr(sc(Lc), v) + '=' + polyStr(sc(Rc), v), why: 'כופלים את שני האגפים ב-' + den + ' כדי להיפטר מהשברים.' };
+          }
+          var ex = polyStr(Lc, v) + '=' + polyStr(Rc, v);
+          if (squash(ex) !== raw && (has(I.L, isParen) || has(I.R, isParen))) return { line: ex, why: 'פותחים סוגריים: כופלים את מה שבחוץ בכל איבר שבפנים, וכונסים איברים דומים.' };
+        }
+        var a = co[1], b = -co[0], onlyX = Lc && Lc.length >= 2 && Math.abs(Lc[0]) < 1e-12 && Lc.slice(2).every(function (z) { return Math.abs(z) < 1e-12; }) && !namesOf(I.R).length;
+        if (onlyX || Math.abs(a - 1) < 1e-12) return { line: v + '=' + numStr(b / a), why: Math.abs(a - 1) < 1e-12 ? 'מבודדים את ' + v + '.' : 'מחלקים את שני האגפים ב-' + numStr(a) + '.' };
+        return { line: polyStr([0, a], v) + '=' + numStr(b), why: 'מעבירים את האיברים עם ' + v + ' לאגף אחד ואת המספרים לאגף השני (מי שעובר אגף – הסימן מתהפך), וכונסים.' };
+      }
+      if (co.length === 3) {
+        var A2 = co[2], B2 = co[1], C2 = co[0];
+        var factored = R0 && (I.L.t === '*' || I.L.t === '^'), std = R0 && Lc && squash(polyStr(Lc, v)) === squash(clean(lines[lastI]).split('=')[0]);
+        if (!factored && !std) return { line: polyStr(co, v) + '=0', why: 'משוואה ריבועית: מעבירים הכול לאגף אחד, ומסדרים מהחזקה הגבוהה לנמוכה.' };
+        var D = B2 * B2 - 4 * A2 * C2;
+        if (D < -1e-12) return { line: 'אין פתרון: הדיסקרימיננטה ' + numStr(D) + ' שלילית', why: 'b²−4ac=' + numStr(D) + '. כשהיא שלילית, אין שורש ממשי.', text: true };
+        var r1 = (-B2 + Math.sqrt(Math.max(0, D))) / (2 * A2), r2 = (-B2 - Math.sqrt(Math.max(0, D))) / (2 * A2), nice2 = function (x) { return Math.abs(x * 12 - Math.round(x * 12)) < 1e-9; };
+        if (factored || (nice2(r1) && nice2(r2) && Math.abs(C2) < 1e-12)) {
+          return Math.abs(D) < 1e-12 ? { line: v + '=' + numStr(r1), why: 'מכפלה שווה 0 כשאחד הגורמים שווה 0.' } : { line: v + '=' + numStr(Math.min(r1, r2)) + ' או ' + v + '=' + numStr(Math.max(r1, r2)), why: 'מכפלה שווה 0 כשאחד הגורמים שווה 0.' };
+        }
+        if (Math.abs(A2 - 1) < 1e-12 && nice2(r1) && nice2(r2) && Math.abs(r1 - Math.round(r1)) < 1e-9 && Math.abs(r2 - Math.round(r2)) < 1e-9) {
+          var fac = function (x) { return x === 0 ? v : '(' + v + (x > 0 ? '-' : '+') + Math.abs(x) + ')'; };
+          var a1 = Math.round(Math.min(r1, r2)), a2 = Math.round(Math.max(r1, r2));
+          return { line: (a1 === a2 ? fac(a1) + '^2' : fac(a1) + fac(a2)) + '=0', why: 'פירוק לגורמים: שני מספרים שהמכפלה שלהם ' + numStr(C2) + ' והסכום שלהם ' + numStr(-B2) + '.' };
+        }
+        var sq = Math.sqrt(D), sqS = Math.abs(sq - Math.round(sq)) < 1e-9 ? String(Math.round(sq)) : 'sqrt(' + numStr(D) + ')';
+        return { line: v + '=(' + numStr(-B2) + '±' + sqS + ')/' + numStr(2 * A2), why: 'מציבים בנוסחת השורשים: a=' + numStr(A2) + ', b=' + numStr(B2) + ', c=' + numStr(C2) + '.' };
+      }
+      return null;
+    }
+    return null;
+  }
+
+  // ---------------- תרגיל מ"המסלול שלי" (window.MX, HTML) -> שורה של המחברת + מה שואלים ----------------
+  function fromMx(html) {
+    var s = String(html || '')
+      .replace(/∫\s*<sub>([^<]*)<\/sub>\s*<sup>([^<]*)<\/sup>\s*(.*?)\s*dx/g, 'int($3,$1,$2)')
+      .replace(/<span class="fr"><span>([^<]*)<\/span><span>([^<]*)<\/span><\/span>/g, '($1)/($2)')
+      .replace(/<sup>([^<]*)<\/sup>/g, '^($1)').replace(/<sub>([^<]*)<\/sub>/g, '_$1').replace(/&nbsp;/g, ' ');
+    var line = '', ask = [], maths = [];
+    s.split(/<br\s*\/?>/).forEach(function (part) {
+      var heTxt = [], math = part.replace(/<span class="he"[^>]*>([^<]*)<\/span>/g, function (m, t) { heTxt.push(t.trim()); return ' '; }).replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+      var whole = part.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+      if (math && !/\?/.test(math) && !heTxt.length && /=|[a-z]/i.test(math)) maths.push(math);
+      else if (math && !/\?/.test(math) && heTxt.length && !line && !maths.length && /=/.test(math) && heTxt.join('').length < 20) { ask.push(heTxt.join(' ')); maths.push(math); }
+      else ask.push(whole);
+    });
+    if (maths.length === 2 && maths.every(function (q) { return q.split('=').length === 2; }) && !/^f\(/.test(maths[0])) line = maths.join(' ; '); // מערכת
+    else { line = maths[0] || ''; ask = maths.slice(1).concat(ask); }
+    if (!line && ask.length === 1 && /^[^א-ת]*=\s*\?\s*$/.test(ask[0])) { line = ask[0].replace(/=\s*\?\s*$/, '').trim(); ask = ['חשבו']; } // log_10 100000 = ?
+    if (!line && maths.length === 0 && ask.length && !/[א-ת]/.test(s.replace(/<[^>]+>/g, '')) && !/\?/.test(s)) { line = ask.join(' '); ask = []; } // 4(x − 2)
+    line = line.replace(/−/g, '-').replace(/(sin|cos|tan)\s+(\d*\.?\d*[a-z])/g, '$1($2)').replace(/log_(\d+)\s+([\d.]+)/g, 'log_$1($2)').replace(/÷/g, '/').replace(/\s+/g, ' ').trim();
+    return { line: line, ask: ask.join(' ').replace(/−/g, '−').trim() };
+  }
+
   var sameExpr = memo('x', sameExpr0), sameEq = memo('e', sameEq0), solCheck = memo('s', solCheck0);
   var API = { readLine: readLine, checkAll: checkAll, parse: parse, tex: tex, ev: ev, vars: vars, namesOf: namesOf, has: has, sameExpr: sameExpr, sameEq: sameEq,
-    roots: roots, eqFn: eqFn, topics: topics, polyDeg: polyDeg, nice: nice, clean: clean, Err: Err };
+    roots: roots, eqFn: eqFn, topics: topics, polyDeg: polyDeg, nice: nice, clean: clean, Err: Err, polyCoef: polyCoef, polyStr: polyStr, nextStep: nextStep, fromMx: fromMx };
   if (typeof module !== 'undefined' && module.exports) module.exports = API; else root.MbMath = API;
 })(typeof window !== 'undefined' ? window : this);
