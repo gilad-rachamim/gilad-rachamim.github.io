@@ -261,7 +261,7 @@ export function plainMath(s) {
   }
   t = t.replace(/\^\\circ|\^\{\\circ\}/g, '°');
   t = t.replace(/\\([a-zA-Z]+)/g, (m, w) => (w in SYM ? SYM[w] : w)).replace(/\\[;,:! ]/g, ' ').replace(/\\\{/g, '{').replace(/\\\}/g, '}');
-  t = t.replace(/\^\{([^{}]*)\}|\^(-?\w)/g, (m, a, b) => { const x = a != null ? a : b; return (x.length === 1 || /^-?\d+$/.test(x)) && [...x].every(c => c in SUP) ? [...x].map(c => SUP[c]).join('') : `^(${x})`; });
+  t = t.replace(/\^\{([^{}]*)\}|\^(-?\d+(?:\.\d+)?|-?\w)/g, (m, a, b) => { const x = a != null ? a : b; return (x.length === 1 || /^-?\d+$/.test(x)) && [...x].every(c => c in SUP) ? [...x].map(c => SUP[c]).join('') : `^(${x})`; });
   t = t.replace(/_\{([^{}]*)\}|_(\w)/g, (m, a, b) => { const x = a != null ? a : b; return [...x].every(c => c in SUB) ? [...x].map(c => SUB[c]).join('') : x; });
   return t.replace(/[{}]/g, '').replace(/[ \t]{2,}/g, ' ').trim();
 }
@@ -320,7 +320,7 @@ async function ipHash(ip, day) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const origin = request.headers.get('origin');
     const h = cors(origin);
@@ -334,31 +334,50 @@ export default {
     if (!String(body.text || '').trim() && !(body.image && body.image.data)) return json({ error: 'empty' }, 400, h);
     if (body.image && (!/^image\/(jpeg|png|webp)$/.test(body.image.mime || '') || String(body.image.data).length > MAX_IMG)) return json({ error: 'image' }, 400, h);
 
-    // זיכרון: שאלה שכבר נפתרה ונבדקה (✓) חוזרת מיד, בלי לגעת במכסה
+    // זיכרון: שאלה שכבר נפתרה חוזרת מיד, בלי לגעת במכסה (✓ – 90 יום; ⚠️ – שעתיים, למי שהחיבור שלו נקטע ומנסה שוב)
     const ck = await cacheKey(body);
     const cache = env.QUOTA.get(env.QUOTA.idFromName('cache'));
-    try {
-      const hit = await (await cache.fetch('https://q/cget', { method: 'POST', body: JSON.stringify({ k: ck }) })).json();
-      if (hit && hit.v) { const out = JSON.parse(hit.v); out.cached = true; return json(out, 200, h); }
-    } catch (_) {}
+    const call = async (path, o) => { try { return await (await cache.fetch('https://q/' + path, { method: 'POST', body: JSON.stringify(Object.assign({ k: ck }, o || {})) })).json(); } catch (_) { return {}; } };
+    const hit = await call('cget');
+    if (hit.v) { const out = JSON.parse(hit.v); out.cached = true; return json(out, 200, h); }
 
-    const day = new Date().toISOString().slice(0, 10);
-    const ip = request.headers.get('cf-connecting-ip') || 'x';
-    const stub = env.QUOTA.get(env.QUOTA.idFromName('q'));
-    const q = await (await stub.fetch('https://q/take', { method: 'POST', body: JSON.stringify({ day, who: await ipHash(ip, day), per: PER_IP, cap: DAY_CAP }) })).json();
-    if (!q.ok) return json({ error: 'quota' }, 429, h);
-
-    try {
-      const out = await solve(env, body);
-      if (out.readable && out.verdict && out.verdict.ok) {
-        const v = JSON.stringify(out);
-        if (v.length < 120000) await cache.fetch('https://q/cput', { method: 'POST', body: JSON.stringify({ k: ck, v }) }).catch(() => {});
-      }
-      out.left = q.left;
-      return json(out, 200, h);
-    } catch (e) {
-      return json({ error: 'ai', busy: /429|503|timeout|limit|quota|neuron/i.test(String(e && e.message)) }, 503, h);
-    }
+    // תשובה זורמת: רווח כל 8 שניות ("סימן חיים") כדי שרשתות וסינונים לא ינתקו חיבור שקט של דקה-שתיים.
+    // הפתרון ממשיך גם אם הדפדפן התנתק (waitUntil), ונשמר – הניסיון הבא מקבל אותו מהזיכרון.
+    const { readable, writable } = new TransformStream();
+    const w = writable.getWriter(), enc = new TextEncoder();
+    const beat = setInterval(() => { w.write(enc.encode(' ')).catch(() => {}); }, 8000);
+    const work = (async () => {
+      let out = null;
+      try {
+        if (hit.pending) { // אותה שאלה כבר נפתרת עכשיו (למשל ניסיון חוזר אחרי ניתוק) – מחכים לה
+          for (let i = 0; i < 60 && !out; i++) { await sleep(5000); const r = await call('cget'); if (r.v) { out = JSON.parse(r.v); out.cached = true; } else if (!r.pending) break; }
+        }
+        if (!out) {
+          const day = new Date().toISOString().slice(0, 10);
+          const ip = request.headers.get('cf-connecting-ip') || 'x';
+          const stub = env.QUOTA.get(env.QUOTA.idFromName('q'));
+          const q = await (await stub.fetch('https://q/take', { method: 'POST', body: JSON.stringify({ day, who: await ipHash(ip, day), per: PER_IP, cap: DAY_CAP }) })).json();
+          if (!q.ok) out = { error: 'quota' };
+          else {
+            await call('cpending');
+            try {
+              out = await solve(env, body);
+              const v = JSON.stringify(out);
+              if (out.readable && v.length < 120000) await call('cput', { v, ok: !!(out.verdict && out.verdict.ok) });
+              else await call('cdrop');
+              out.left = q.left;
+            } catch (e) {
+              await call('cdrop');
+              out = { error: 'ai', busy: /429|503|timeout|limit|quota|neuron/i.test(String(e && e.message)) };
+            }
+          }
+        }
+      } catch (e) { out = { error: 'ai' }; }
+      clearInterval(beat);
+      try { await w.write(enc.encode(JSON.stringify(out))); await w.close(); } catch (_) {}
+    })();
+    if (ctx && ctx.waitUntil) ctx.waitUntil(work);
+    return new Response(readable, { status: 200, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...h } });
   }
 };
 
@@ -381,11 +400,15 @@ export class Quota {
     const b = await request.json();
     if (path === '/cget') {
       const e = await this.s.get('c:' + b.k);
-      if (!e || e.t < Date.now() - CACHE_DAYS * 864e5) return Response.json({});
-      return Response.json({ v: e.v });
+      if (e && e.t > Date.now() - (e.ok === false ? 2 * 3600e3 : CACHE_DAYS * 864e5)) return Response.json({ v: e.v });
+      const p = await this.s.get('p:' + b.k);
+      return Response.json(p && p > Date.now() - 5 * 60e3 ? { pending: true } : {});
     }
+    if (path === '/cpending') { await this.s.put('p:' + b.k, Date.now()); return Response.json({ ok: true }); }
+    if (path === '/cdrop') { await this.s.delete('p:' + b.k); return Response.json({ ok: true }); }
     if (path === '/cput') {
-      await this.s.put('c:' + b.k, { t: Date.now(), v: b.v });
+      await this.s.put('c:' + b.k, { t: Date.now(), v: b.v, ok: b.ok !== false });
+      await this.s.delete('p:' + b.k);
       if (!(await this.s.getAlarm())) await this.s.setAlarm(Date.now() + 864e5);
       return Response.json({ ok: true });
     }
@@ -400,7 +423,8 @@ export class Quota {
   // ניקוי פעם ביום: מוחקים פתרונות ישנים
   async alarm() {
     const old = Date.now() - CACHE_DAYS * 864e5, del = [];
-    for (const [k, e] of await this.s.list({ prefix: 'c:' })) if (!e || e.t < old) del.push(k);
+    for (const [k, e] of await this.s.list({ prefix: 'c:' })) if (!e || e.t < (e.ok === false ? Date.now() - 2 * 3600e3 : old)) del.push(k);
+    for (const [k, t] of await this.s.list({ prefix: 'p:' })) if (t < Date.now() - 3600e3) del.push(k);
     for (let i = 0; i < del.length; i += 128) await this.s.delete(del.slice(i, i + 128));
     if ((await this.s.list({ prefix: 'c:', limit: 1 })).size) await this.s.setAlarm(Date.now() + 864e5);
   }
