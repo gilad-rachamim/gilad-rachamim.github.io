@@ -4,9 +4,9 @@
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
-  // בדף מסלול התרגול (/limudim/maslul/) הקובץ נטען רק בשביל הנושאים והמחוללים
+  // בדף מסלול התרגול (/limudim/maslul/) ובדף הדו-קרב הקובץ נטען רק בשביל הנושאים והמחוללים
   var DATA_ONLY = !$('mx-app');
-  if (DATA_ONLY && !$('ms-app')) return;
+  if (DATA_ONLY && !$('ms-app') && !$('mx-data')) return; // mx-data: דף הדו-קרב (/limudim/krav/) צריך רק את המחוללים
   function load(k, def) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch (e) { return def; } }
   function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   function used(extra) { if (window.toolUsed) window.toolUsed('matematika', extra); }
