@@ -1,4 +1,4 @@
-// כיתות ולוח נקודות למשחקים ולתרגול (/kelim/chashiva/kita/).
+// כיתות ולוח נקודות למשחקים ולתרגול (/kelim/chashiva/kita/), ושיעורי בית במחברת (/limudim/machberet/kita/).
 // Durable Object אחד (SQLite) לכל כיתה, לפי הקוד שלה (6 ספרות). עוד אחד, '_meta', רק להגבלות קצב.
 // פרטיות: נשמרים רק שם הכיתה, שם המורה כפי שהיא כותבת אותו, כינויים של תלמידים, ונקודות לפי משחק.
 //  - בלי טלפון, מייל, כתובת או שם מלא. מסנן חוסם בכינוי מספרים ארוכים, קישורים ומיילים.
@@ -63,6 +63,10 @@ export class Kita {
     this.sql.exec('CREATE TABLE IF NOT EXISTS st (sid TEXT PRIMARY KEY, nick TEXT, th TEXT, t INTEGER, last INTEGER, crown TEXT DEFAULT \'\')');
     this.sql.exec('CREATE TABLE IF NOT EXISTS ev (sid TEXT, ref TEXT, game TEXT, pts INTEGER, day TEXT, t INTEGER, PRIMARY KEY (sid, ref))');
     this.sql.exec('CREATE TABLE IF NOT EXISTS rate (k TEXT PRIMARY KEY, day TEXT, n INTEGER)');
+    // שיעורי בית במחברת (/limudim/machberet/): מטלה, העבודה של כל תלמיד/ה בכל תרגיל, והודעות מהמורה (רמז / תשובה)
+    this.sql.exec('CREATE TABLE IF NOT EXISTS hw (id TEXT PRIMARY KEY, title TEXT, ex TEXT, t INTEGER, open INTEGER DEFAULT 1)');
+    this.sql.exec('CREATE TABLE IF NOT EXISTS hwork (hw TEXT, sid TEXT, ex INTEGER, rows TEXT, ok INTEGER, warn INTEGER, done INTEGER, stuck INTEGER, t INTEGER, PRIMARY KEY (hw, sid, ex))');
+    this.sql.exec('CREATE TABLE IF NOT EXISTS hmsg (id INTEGER PRIMARY KEY AUTOINCREMENT, hw TEXT, sid TEXT, ex INTEGER, kind TEXT, text TEXT, t INTEGER)');
   }
   rows(q, ...a) { return this.sql.exec(q, ...a).toArray(); }
   get(k, d) { const r = this.rows('SELECT v FROM info WHERE k = ?', k)[0]; return r ? r.v : d; }
@@ -128,9 +132,43 @@ export class Kita {
       return json({ ok: 1, name: this.get('name'), teacher: this.get('teacher'), period: per, def: this.get('period'), since: this.since(per), msg: this.get('msg'), gifts: JSON.parse(this.get('gifts', '[]')), rows: this.board(per) });
     }
 
+    if (p === '/hw' && req.method === 'POST') { // התלמיד/ה: המטלות הפתוחות, העבודה שלי וההודעות אליי
+      const s = await this.student(b); if (!s) return json({ error: 'לא מצאנו אתכם בכיתה. אפשר להצטרף שוב עם הקוד מהמורה.', gone: 1 }, 403);
+      const list = this.rows('SELECT id, title, ex, t FROM hw WHERE open = 1 ORDER BY t DESC LIMIT 20').map(h => ({ id: h.id, title: h.title, t: h.t, ex: JSON.parse(h.ex).map(e => ({ q: e.q })) }));
+      const work = this.rows('SELECT hw, ex, rows, ok, warn, done, stuck, t FROM hwork WHERE sid = ?', s.sid).map(w => Object.assign(w, { rows: JSON.parse(w.rows || '[]') }));
+      const msgs = this.rows('SELECT id, hw, ex, kind, text, t FROM hmsg WHERE sid = ? OR sid = \'*\' ORDER BY id', s.sid);
+      return json({ ok: 1, name: this.get('name'), teacher: this.get('teacher'), hw: list, work, msgs });
+    }
+    if (p === '/hwsave' && req.method === 'POST') {
+      const s = await this.student(b); if (!s) return json({ error: 'לא מצאנו אתכם בכיתה.', gone: 1 }, 403);
+      const h = this.rows('SELECT ex, open FROM hw WHERE id = ?', String(b.hw || ''))[0];
+      if (!h) return json({ error: 'המטלה לא נמצאה. אולי המורה מחקה אותה.' }, 404);
+      if (!h.open) return json({ error: 'המורה סגרה את המטלה הזאת.', closed: 1 }, 403);
+      const ex = Math.floor(+b.ex), n = JSON.parse(h.ex).length;
+      if (!(ex >= 0 && ex < n)) return json({ error: 'בקשה לא תקינה' }, 400);
+      const rows = (Array.isArray(b.rows) ? b.rows : []).slice(0, 60).map(r => String(r == null ? '' : r).slice(0, 160));
+      if (rows.some(r => /https?:|www\.|@|<|>/i.test(r))) return json({ error: 'בשורות של המחברת אסור קישור או מייל.' }, 400);
+      const prev = this.rows('SELECT done FROM hwork WHERE hw = ? AND sid = ? AND ex = ?', String(b.hw), s.sid, ex)[0];
+      const done = b.done ? 1 : 0;
+      this.sql.exec('INSERT OR REPLACE INTO hwork (hw, sid, ex, rows, ok, warn, done, stuck, t) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        String(b.hw), s.sid, ex, JSON.stringify(rows), Math.max(0, Math.min(99, +b.ok || 0)), Math.max(0, Math.min(99, +b.warn || 0)), done, b.stuck ? 1 : 0, Date.now());
+      this.sql.exec('UPDATE st SET last = ? WHERE sid = ?', Date.now(), s.sid);
+      let pts = 0;
+      if (done && !(prev && prev.done)) { // תרגיל שנפתר נכון – 20 נקודות ללוח הכיתה, פעם אחת
+        const ref = 'hw:' + b.hw + ':' + ex, day = ilDay(Date.now());
+        if (!this.rows('SELECT 1 FROM ev WHERE sid = ? AND ref = ?', s.sid, ref).length) {
+          pts = Math.min(20, Math.max(0, MAX_DAY - this.today(s.sid, day)));
+          if (pts) this.sql.exec('INSERT INTO ev (sid, ref, game, pts, day, t) VALUES (?, ?, ?, ?, ?, ?)', s.sid, ref, 'machberet', pts, day, Date.now());
+        }
+      }
+      this.touch();
+      return json({ ok: 1, pts });
+    }
+
     if (p === '/leave' && req.method === 'POST') {
       const s = await this.student(b); if (!s) return json({ ok: 1 });
       this.sql.exec('DELETE FROM ev WHERE sid = ?', s.sid); this.sql.exec('DELETE FROM st WHERE sid = ?', s.sid);
+      this.sql.exec('DELETE FROM hwork WHERE sid = ?', s.sid); this.sql.exec('DELETE FROM hmsg WHERE sid = ?', s.sid);
       return json({ ok: 1 });
     }
 
@@ -151,10 +189,52 @@ export class Kita {
         this.sql.exec('UPDATE st SET crown = ? WHERE sid = ?', cleanText(b.label, 30) || '', String(b.sid));
       } else if (a === 'remove') {
         this.sql.exec('DELETE FROM ev WHERE sid = ?', String(b.sid)); this.sql.exec('DELETE FROM st WHERE sid = ?', String(b.sid));
+        this.sql.exec('DELETE FROM hwork WHERE sid = ?', String(b.sid)); this.sql.exec('DELETE FROM hmsg WHERE sid = ?', String(b.sid));
       } else if (a === 'round') {
         this.set('round', Date.now()); this.sql.exec('UPDATE st SET crown = \'\'');
       } else if (a === 'delete') {
         await this.ctx.storage.deleteAll(); this.tables(); return json({ ok: 1, deleted: 1 });
+      } else if (a === 'hw_new') {
+        const title = cleanText(b.title, 60);
+        if (!title) return json({ error: 'שם המטלה: עד 60 תווים, בלי קישורים או טלפונים. למשל: משוואות ריבועיות – שיעורי בית.' }, 400);
+        const ex = (Array.isArray(b.ex) ? b.ex : []).slice(0, 10).map(e => ({ q: mathText(e && e.q, 200), a: mathText(e && e.a, 300) || '', h: mathText(e && e.h, 300) || '' })).filter(e => e.q);
+        if (!ex.length) return json({ error: 'צריך לפחות תרגיל אחד. כל תרגיל בשורה משלו, למשל: x^2-5x+6=0' }, 400);
+        if (this.rows('SELECT COUNT(*) AS n FROM hw')[0].n >= 60) return json({ error: 'יש כבר 60 מטלות בכיתה. אפשר למחוק ישנות.' }, 403);
+        const id = rid(8);
+        this.sql.exec('INSERT INTO hw (id, title, ex, t, open) VALUES (?, ?, ?, ?, 1)', id, title, JSON.stringify(ex), Date.now());
+        this.touch();
+        return json({ ok: 1, id });
+      } else if (a === 'hw_list') {
+        const st = this.rows('SELECT COUNT(*) AS n FROM st')[0].n;
+        const hw = this.rows('SELECT id, title, ex, t, open FROM hw ORDER BY t DESC').map(h => {
+          const w = this.rows('SELECT COUNT(DISTINCT sid) AS who, SUM(done) AS done, SUM(stuck) AS stuck FROM hwork WHERE hw = ?', h.id)[0];
+          return { id: h.id, title: h.title, n: JSON.parse(h.ex).length, t: h.t, open: !!h.open, who: w.who || 0, done: w.done || 0, stuck: w.stuck || 0 };
+        });
+        return json({ ok: 1, name: this.get('name'), students: st, hw });
+      } else if (a === 'hw_view') {
+        const h = this.rows('SELECT id, title, ex, t, open FROM hw WHERE id = ?', String(b.hw || ''))[0];
+        if (!h) return json({ error: 'המטלה לא נמצאה.' }, 404);
+        const work = this.rows('SELECT sid, ex, rows, ok, warn, done, stuck, t FROM hwork WHERE hw = ?', h.id).map(w => Object.assign(w, { rows: JSON.parse(w.rows || '[]') }));
+        const msgs = this.rows('SELECT id, sid, ex, kind, text, t FROM hmsg WHERE hw = ? ORDER BY id', h.id);
+        return json({ ok: 1, name: this.get('name'), hw: { id: h.id, title: h.title, t: h.t, open: !!h.open, ex: JSON.parse(h.ex) }, students: this.rows('SELECT sid, nick, last FROM st ORDER BY nick'), work, msgs });
+      } else if (a === 'hw_msg') {
+        const h = this.rows('SELECT ex FROM hw WHERE id = ?', String(b.hw || ''))[0];
+        if (!h) return json({ error: 'המטלה לא נמצאה.' }, 404);
+        const ex = Math.floor(+b.ex), kind = b.kind === 'answer' ? 'answer' : 'hint', text = mathText(b.text, 400);
+        if (!(ex >= 0 && ex < JSON.parse(h.ex).length) || !text) return json({ error: 'כותבים רמז או תשובה קצרים, בלי קישורים או מייל.' }, 400);
+        const sid = b.sid === '*' ? '*' : String(b.sid || '');
+        if (sid !== '*' && !this.rows('SELECT 1 FROM st WHERE sid = ?', sid).length) return json({ error: 'התלמיד/ה לא בכיתה.' }, 404);
+        this.sql.exec('INSERT INTO hmsg (hw, sid, ex, kind, text, t) VALUES (?, ?, ?, ?, ?, ?)', String(b.hw), sid, ex, kind, text, Date.now());
+        if (sid !== '*') this.sql.exec('UPDATE hwork SET stuck = 0 WHERE hw = ? AND sid = ? AND ex = ?', String(b.hw), sid, ex);
+        this.touch();
+        return json({ ok: 1 });
+      } else if (a === 'hw_open') {
+        this.sql.exec('UPDATE hw SET open = ? WHERE id = ?', b.open ? 1 : 0, String(b.hw || ''));
+        return json({ ok: 1 });
+      } else if (a === 'hw_del') {
+        const id = String(b.hw || '');
+        this.sql.exec('DELETE FROM hw WHERE id = ?', id); this.sql.exec('DELETE FROM hwork WHERE hw = ?', id); this.sql.exec('DELETE FROM hmsg WHERE hw = ?', id);
+        return json({ ok: 1 });
       } else if (a !== 'get') return json({ error: 'פעולה לא מוכרת' }, 400);
       this.touch();
       const per = ['week', 'month', 'round', 'all'].includes(b.p) ? b.p : this.get('period');
@@ -207,6 +287,13 @@ function cleanText(s, max) {
   if (/https?:|www\.|\.(com|co|il|net|org|ly|me)\b|@|t\.me/i.test(s)) return null;
   if (/\d[\d\s-]{6,}\d/.test(s)) return null;
   if (/[<>{}]/.test(s) || bad(s)) return null;
+  return s;
+}
+// טקסט מתמטי של המורה (תרגיל, רמז, תשובה): מספרים ארוכים מותרים, קישורים, מיילים ותגיות לא
+function mathText(s, max) {
+  s = String(s == null ? '' : s).replace(/\s+/g, ' ').trim().slice(0, max);
+  if (!s) return '';
+  if (/https?:|www\.|\.(com|co\.il|net|org|ly|me)\b|@|t\.me|<|>/i.test(s) || bad(s)) return '';
   return s;
 }
 function cleanNick(s) {
