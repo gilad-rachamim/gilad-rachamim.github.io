@@ -35,7 +35,19 @@
       <div class="kt-mine" id="kt-t-switch" hidden></div>
     </section>
 
-    <div class="kt-tabs no-print" id="kt-t-tabs" role="tablist"><button type="button" data-tab="board" aria-selected="true">🏆 לוח</button><button type="button" data-tab="gifts" aria-selected="false">🎁 מתנות</button><button type="button" data-tab="cert" aria-selected="false">📜 תעודות</button><button type="button" data-tab="set" aria-selected="false">⚙️ הגדרות</button></div>
+    <div class="kt-tabs no-print" id="kt-t-tabs" role="tablist"><button type="button" data-tab="board" aria-selected="true">🏆 לוח</button><button type="button" data-tab="gifts" aria-selected="false">🎁 מתנות</button><button type="button" data-tab="cert" aria-selected="false">📜 תעודות</button><button type="button" data-tab="school" aria-selected="false">🏫 כיתות</button><button type="button" data-tab="set" aria-selected="false">⚙️ הגדרות</button></div>
+
+    <section class="kt-card" data-panel="school" hidden>
+      <h2>הכיתות זו מול זו</h2>
+      <p>כל הכיתות שפתחתם בטלפון הזה, וגם כיתות של מורים אחרים שהוספתם לפי הקוד. כך מתחרים גם שכבה או בית ספר שלם. הדירוג לפי ממוצע לתלמיד, כדי שגם כיתה קטנה תוכל לנצח.</p>
+      <div class="kt-tabs" id="kt-sc-per" role="tablist"><button type="button" data-p="week" aria-selected="true">השבוע</button><button type="button" data-p="month" aria-selected="false">החודש</button><button type="button" data-p="all" aria-selected="false">מההתחלה</button></div>
+      <ol class="kt-board" id="kt-sc-list" aria-live="polite"></ol>
+      <h3>להוסיף כיתה של מורה אחר</h3>
+      <div class="kt-f"><input class="kt-in kt-code-in" id="kt-sc-code" inputmode="numeric" maxlength="6" placeholder="000000" aria-label="קוד הכיתה"><button class="btn btn-line btn-sm" type="button" id="kt-sc-add">+ להוסיף להשוואה</button></div>
+      <p class="kt-err" id="kt-sc-err" aria-live="polite"></p>
+      <p class="kt-note">רואים רק את הלוח של הכיתה (כינויים ונקודות), בדיוק כמו התלמידים שלה. אי אפשר לנהל אותה מכאן.</p>
+      <div class="kt-btns"><a class="btn btn-gold" id="kt-sc-wa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הדירוג</a><a class="btn btn-line" href="/kelim/chashiva/kita/#kt-teach-sec">+ לפתוח עוד כיתה</a></div>
+    </section>
 
     <section class="kt-card" data-panel="board">
       <div class="kt-tabs" id="kt-t-per" role="tablist"><button type="button" data-p="week">השבוע</button><button type="button" data-p="month">החודש</button><button type="button" data-p="round">מהסבב</button><button type="button" data-p="all">מההתחלה</button></div>
