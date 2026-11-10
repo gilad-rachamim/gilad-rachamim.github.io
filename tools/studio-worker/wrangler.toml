@@ -1,0 +1,19 @@
+# "סטודיו" – עוזר העיצוב במילים לעורך /kelim/tochen/studio/ (Cloudflare Worker, חינם).
+# פריסה:   cd tools/studio-worker && npx wrangler deploy
+# רשות:    npx wrangler secret put GEMINI_KEYS   (מפתחות AI Studio חינמיים מופרדים בפסיק; בלעדיהם עובד על Workers AI)
+# בדיקה:   node test.mjs   (בלי רשת – בודק את ניקוי ה-JSON)
+name = "kelim-studio"
+main = "studio-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[ai]
+binding = "AI"
+
+[[durable_objects.bindings]]
+name = "QUOTA"
+class_name = "Quota"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Quota"]
