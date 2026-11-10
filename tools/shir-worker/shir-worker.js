@@ -11,7 +11,7 @@ export const MODEL = '@cf/openai/gpt-oss-120b';
 // gemma-4-26b ו-qwen3.8-27b: מודלי "חשיבה" – כל המכסה הלכה על חשיבה והתשובה חזרה ריקה.
 // glm-5.3 ו-deepseek-v4: לא זמינים בתוכנית החינמית.
 
-const ALLOWED = ['https://gilad-rachamim.github.io'];
+const ALLOWED = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 const PER_IP = 40;
 const DAY_CAP = 300; // כ-21 נוירונים לבקשה (נמדד); 10,000 נוירונים חינם ביום. החשבון בתוכנית החינמית – אין חיוב גם מעבר

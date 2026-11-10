@@ -6,7 +6,7 @@
 //  - 3 דיווחים מאנשים שונים מסתירים תרגיל. גילעד רואה רק את המדווחים (/admin)
 //  - הגבלה: 15 תרגילים ו-30 תיקונים ליום לכל טלפון ולכל כתובת
 //  - תיקון דיבור נכנס לכולם רק אחרי 3 אנשים שונים ששלחו אותו
-const ORIGINS = ['https://gilad-rachamim.github.io'];
+const ORIGINS = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const HIDE_AT = 3, FIX_AT = 3, ADD_DAY = 15, FIX_DAY = 30;
 
 export default {

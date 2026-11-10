@@ -14,7 +14,7 @@
 //
 // יחידה = פרק (150 בסבב), יום בחודש (30) או ספר (5). יחידה גלובלית = סבב * N + מספר.
 // הנתונים נמחקים מעצמם 120 יום אחרי היצירה (alarm).
-const ORIGINS = ['https://gilad-rachamim.github.io'];
+const ORIGINS = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const MODES = { perek: 150, yom: 30, sefer: 5 };
 const MAXR = { perek: 10, yom: 30, sefer: 60 };
 const PURPOSES = ['niftar', 'refua', 'hatzlacha', 'zivug', 'zchut', 'other'];

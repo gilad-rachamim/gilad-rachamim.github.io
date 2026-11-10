@@ -5,7 +5,7 @@
 // פרטיות: לא שומרים את מה שכתבו ולא תמונות. מהדפדפן מגיעה גרסה קטנה (עד 512px) של התמונות שבעיצוב, כדי ש-Gemini יראה אותן;
 // היא עוברת רק לבקשה הזו ולא נשמרת בשום מקום.
 
-const ALLOWED = ['https://gilad-rachamim.github.io'];
+const ALLOWED = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 export const PER_IP = 40;   // בקשות לכתובת ביום
 export const DAY_CAP = 600; // לכל האתר ביום

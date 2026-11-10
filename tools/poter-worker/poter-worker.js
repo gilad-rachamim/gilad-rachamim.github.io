@@ -9,7 +9,7 @@
 
 import { runChecks } from './check.js';
 
-const ALLOWED = ['https://gilad-rachamim.github.io'];
+const ALLOWED = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 export const PER_IP = 12;   // פתרונות לכתובת ביום
 export const DAY_CAP = 80;  // לכל האתר ביום – המכסות החינמיות (Gemini + Workers AI) קטנות; כשנגמרות – "נסו מחר"

@@ -26,7 +26,7 @@
 //
 // סודות (wrangler secret put): SESSION_SECRET, ADMIN_KEY. משתנים: GOOGLE_CLIENT_ID.
 
-const ORIGINS = ['https://gilad-rachamim.github.io'];
+const ORIGINS = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const TZ = 'Asia/Jerusalem';
 const MIN_PRICE = 5;
 const MAX_RATE = 1.5;

@@ -6,7 +6,7 @@
 //  - כיתה בלי פעילות 180 יום נמחקת לבד. המורה יכולה למחוק הכול מיד.
 // הגבלות לרשת אחת ביום: 80 כיתות חדשות, 600 הצטרפויות (בית ספר שלם על אותו Wi-Fi).
 // נקודות: 1–30 לאירוע, עד 400 ביום לתלמיד/ה, ref כפול נספר פעם אחת.
-const ORIGINS = ['https://gilad-rachamim.github.io'];
+const ORIGINS = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const MAX_EV = 30, MAX_DAY = 400, MAX_ST = 80, KEEP_MS = 180 * 864e5;
 
 export default {

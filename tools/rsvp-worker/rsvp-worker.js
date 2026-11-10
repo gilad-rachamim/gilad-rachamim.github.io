@@ -14,7 +14,7 @@
 //   POST /ev/:id/delete                                       -> {ok}       מחיקה מיידית
 //
 // KV: ev:<id> -> האירוע (JSON) · rl:<ip>:<kind> -> מונה לקצב
-const ORIGINS = ['https://gilad-rachamim.github.io'];
+const ORIGINS = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const LIM = { name: 60, note: 200, place: 120, guests: 400, count: 20, create: 5, rsvp: 20, windowSec: 600 };
 const PUB = ['k', 'dt', 'tm', 'sh', 'shp', 'pl', 'ad', 'fm', 'par', 'fam', 'gp', 'vs', 'se', 'sep', 'sz', 'szt', 'szp', 'st', 'kh']; // k = brit / zeved / pidyon
 const KEEP_DAYS = 30; // כמה ימים אחרי הברית הנתונים נמחקים מעצמם
