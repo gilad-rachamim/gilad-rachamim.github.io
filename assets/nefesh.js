@@ -332,6 +332,8 @@
       txt.value = ''; good.value = ''; st.textContent = ''; lastBlob = null; $('y-retry').hidden = true;
       renderEntries(); flash($('y-saved'), 'נשמר ביומן שלך ✓');
       used('save', { good: g ? 1 : 0 });
+      // כל יום שכותבים ביומן נחשב – בלי רצף ובלי יעד (assets/hitkadmut.js, גרסה עדינה)
+      if (window.HK) HK.done('yoman', { el: $('y-hk'), title: 'נשמר ביומן שלך 💛', line: g ? 'וגם מצאתם משהו טוב היום. זה לא מובן מאליו.' : 'כל מילה שיוצאת החוצה מקלה קצת.', help: 'הכלים לנפש כאן בחינם ובלי פרסומות', share: 'כלי קטן שעוזר לי: יומן שמדברים אליו חצי דקה, והוא הופך לטקסט. נשמר רק בטלפון, בחינם:' });
     });
     renderEntries();
   }
