@@ -1706,6 +1706,8 @@
       (up && cur.bg ? '<div class="mx-support"><p>💛 הכלים כאן חינמיים, ונבנים בהרבה שעות עבודה. אם הם עוזרים לכם בהכנה לבגרות, אפשר לעזור להחזיק את המיזם, גם בסכום קטן.</p><a class="btn btn-line btn-sm" href="/kelim/#litmoch" data-support="1">לתמוך במיזם</a></div>' : '');
     try { $('mx-nextp').focus({ preventScroll: true }); } catch (e) {}
     used({ action: 'solved', topic: cur.id, clean: clean ? 1 : 0, lv: t.lv });
+    // התקדמות יומית: תרגיל שנפתר = יום של תרגול (assets/hitkadmut.js). כשכבר מוצגת בקשת התמיכה של עליית שלב – רק סופרים
+    if (window.HK) { if (up && cur.bg) HK.mark('matematika', 5, 'matematika'); else HK.done('matematika', { el: $('mx-hk'), title: 'עוד יום של תרגול ✓', help: 'התרגול כאן בחינם ובלי פרסומות', share: 'תרגלתי היום מתמטיקה צעד אחרי צעד, עם שיעור קצר ורמזים. בחינם:' }); }
   }
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   $('mx-form').addEventListener('submit', function (e) {
