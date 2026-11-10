@@ -747,7 +747,18 @@ body.cx-exammode .pt-link{display:none!important}
 .mb-fm{overflow-x:auto;overflow-y:hidden;color:#141c2b;padding:.15rem 0;font-size:1.02rem}
 .mb-fm .katex-display{margin:.2rem 0}
 .mb-dlg .note{color:#5a6377}
+.mb-draw{margin-top:.8rem;gap:.6rem}
+.mb-draw summary{cursor:pointer;display:flex;flex-wrap:wrap;gap:.2rem .6rem;align-items:baseline}.mb-draw summary small{color:var(--muted)}
+.mb-dtools{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.6rem}
+.mb-dtools button{font:inherit;font-size:.92rem;padding:.35rem .65rem;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--cream);cursor:pointer;touch-action:manipulation}
+.mb-dtools button[aria-pressed=true]{background:var(--gold);color:#1c1608;border-color:var(--gold)}
+.mb-dcv{display:block;width:100%;aspect-ratio:5/3;margin-top:.6rem;border-radius:12px;background:#fdfbf3;border:1px solid #d8cfae;touch-action:none;cursor:crosshair}
 @media print{
+  .mb-draw:not(.has){display:none!important}
+  .mb-draw{border:0;background:none;padding:0}.mb-draw summary{display:none}
+  .mb-dcv{max-width:12cm;border:1px solid #bbb;break-inside:avoid}
+  .mb-pin{background:none;border:0;padding:0}.mb-pin .pt-lbl{color:#000}
+  .mb-pin textarea,.mb-pin .mb-pinp{background:none;color:#000;border:1px solid #bbb;resize:none}
   #mb-app .mb-tabs,#mb-app .mb-ex,#mb-app .mb-top,#mb-app .mb-how,#mb-app .mb-kb,#mb-app .pt-priv,#mb-app .mb-hint,.mb-rb,.mb-chip,.mb-add,.mb-acts,.mb-old{display:none!important}
   .mb-sheet{background:#fff;border:0;box-shadow:none}
   .mb-row .mb-in{display:none}

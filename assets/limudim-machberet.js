@@ -30,7 +30,7 @@
     $('mb-t-hw').setAttribute('aria-selected', 'false'); $('mb-hw').hidden = true;
     $('mb-alg').hidden = !!p; $('mb-prf').hidden = !p; store('mb-tab', p ? 'p' : 'a');
     $('mb-kb').hidden = true;
-    if (p) used('proof_tab');
+    if (p) { used('proof_tab'); dDraw(); }
   }
   tabA.addEventListener('click', function () { showTab(false); });
   tabP.addEventListener('click', function () { showTab(true); });
@@ -697,6 +697,95 @@
   }
   $('mb-padd').addEventListener('click', function () { P.rows.push({ c: '', r: '', o: '' }); prenderRows(P.rows.length - 1); psave(); });
 
+  // ---------- שרטוט להוכחה: קווים, יד חופשית ואותיות. נשמר עם ההוכחה (P.draw), במידות 1000×600 ----------
+  var DW = 1000, DH = 600, LETTERS = 'ABCDEFGHKMNOP';
+  var dcv = $('mb-dcv'), dctx = dcv.getContext('2d'), dTool = 'line', dLet = 'A', dCur = null, dBox = $('mb-draw');
+  function dItems() { if (!P.draw || !Array.isArray(P.draw.i)) P.draw = { i: [] }; return P.draw.i; }
+  function dSize() {
+    var w = dcv.clientWidth; if (!w) return false;
+    var r = window.devicePixelRatio || 1, h = Math.round(w * DH / DW);
+    if (dcv.width !== Math.round(w * r)) { dcv.width = Math.round(w * r); dcv.height = Math.round(h * r); }
+    return true;
+  }
+  function dDraw() {
+    if (!dSize()) return;
+    var k = dcv.width / DW, g = dctx;
+    g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, dcv.width, dcv.height); g.setTransform(k, 0, 0, k, 0, 0);
+    g.lineCap = 'round'; g.lineJoin = 'round'; g.strokeStyle = '#1d2738'; g.fillStyle = '#1d2738';
+    var all = dItems().concat(dCur ? [dCur] : []);
+    all.forEach(function (it) {
+      if (it.t === 'a') { g.font = 'bold 40px "Segoe UI", Arial, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(it.c, it.p[0], it.p[1]); return; }
+      g.lineWidth = it.t === 'l' ? 4 : 3.5; g.beginPath();
+      it.p.forEach(function (q, j) { if (j) g.lineTo(q[0], q[1]); else g.moveTo(q[0], q[1]); });
+      g.stroke();
+      if (it.t === 'l') it.p.forEach(function (q) { g.beginPath(); g.arc(q[0], q[1], 5, 0, 7); g.fill(); });
+    });
+    dBox.classList.toggle('has', !!dItems().length);
+  }
+  function dPt(e) { var b = dcv.getBoundingClientRect(); return [Math.round((e.clientX - b.left) * DW / b.width), Math.round((e.clientY - b.top) * DH / b.height)]; }
+  function dSnap(q) { // נצמדים לקצה של קו קיים
+    var best = null, bd = 30;
+    dItems().forEach(function (it) { if (it.t === 'l') it.p.forEach(function (z) { var d = Math.hypot(z[0] - q[0], z[1] - q[1]); if (d < bd) { bd = d; best = z; } }); });
+    return best ? best.slice() : q;
+  }
+  function dSave() { psave(); dDraw(); used('proof_draw'); }
+  dcv.addEventListener('pointerdown', function (e) {
+    if (shared) return;
+    e.preventDefault(); try { dcv.setPointerCapture(e.pointerId); } catch (_) {}
+    var q = dPt(e);
+    if (dTool === 'txt') {
+      dItems().push({ t: 'a', c: dLet, p: q });
+      var used2 = dItems().filter(function (it) { return it.t === 'a'; }).map(function (it) { return it.c; });
+      var nx = LETTERS.split('').filter(function (c) { return used2.indexOf(c) < 0; })[0]; if (nx) setLet(nx);
+      dSave(); return;
+    }
+    dCur = dTool === 'line' ? { t: 'l', p: [dSnap(q), q] } : { t: 'f', p: [q] };
+    dDraw();
+  });
+  dcv.addEventListener('pointermove', function (e) {
+    if (!dCur) return;
+    var q = dPt(e);
+    if (dCur.t === 'l') dCur.p[1] = q;
+    else { var l = dCur.p[dCur.p.length - 1]; if (Math.hypot(l[0] - q[0], l[1] - q[1]) >= 4) dCur.p.push(q); }
+    dDraw();
+  });
+  function dEnd() {
+    if (!dCur) return;
+    var it = dCur; dCur = null;
+    if (it.t === 'l') { it.p[1] = dSnap(it.p[1]); if (Math.hypot(it.p[0][0] - it.p[1][0], it.p[0][1] - it.p[1][1]) < 12) { dDraw(); return; } }
+    else if (it.p.length < 2) { dDraw(); return; }
+    dItems().push(it); dSave();
+  }
+  dcv.addEventListener('pointerup', dEnd); dcv.addEventListener('pointercancel', dEnd);
+  function setLet(c) { dLet = c; $('mb-dlet').textContent = c; }
+  function setTool(t) { dTool = t; Array.prototype.forEach.call(document.querySelectorAll('.mb-dtools [data-tool]'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-tool') === t ? 'true' : 'false'); }); }
+  Array.prototype.forEach.call(document.querySelectorAll('.mb-dtools [data-tool]'), function (b) {
+    b.addEventListener('click', function () {
+      var t = b.getAttribute('data-tool');
+      if (t === 'txt' && dTool === 'txt') setLet(LETTERS[(LETTERS.indexOf(dLet) + 1) % LETTERS.length]); // לחיצה נוספת – האות הבאה
+      setTool(t);
+    });
+  });
+  $('mb-dtri').addEventListener('click', function () {
+    if (shared) return;
+    var A1 = [500, 70], B1 = [140, 520], C1 = [860, 520];
+    dItems().push({ t: 'l', p: [A1, B1] }, { t: 'l', p: [B1, C1] }, { t: 'l', p: [C1, A1] },
+      { t: 'a', c: 'A', p: [500, 32] }, { t: 'a', c: 'B', p: [100, 555] }, { t: 'a', c: 'C', p: [900, 555] });
+    setLet('D'); setTool('line'); dSave();
+  });
+  $('mb-dundo').addEventListener('click', function () { if (dItems().length) { dItems().pop(); dSave(); } });
+  $('mb-dclr').addEventListener('click', function () { if (dItems().length && confirm('למחוק את כל השרטוט?')) { P.draw = { i: [] }; setLet('A'); dSave(); } });
+  dBox.addEventListener('toggle', function () { if (dBox.open) { dDraw(); used('proof_draw_open'); } });
+  window.addEventListener('beforeprint', function () { if (dItems().length) { dBox.open = true; dDraw(); } });
+  var dResT = null; window.addEventListener('resize', function () { clearTimeout(dResT); dResT = setTimeout(dDraw, 150); });
+  function dLoad() { // אחרי שהוכחה נטענת או מתחלפת
+    var has = !!(P.draw && P.draw.i && P.draw.i.length);
+    if (has) dBox.open = true;
+    var ls = dItems().filter(function (it) { return it.t === 'a'; }).map(function (it) { return it.c; });
+    setLet(LETTERS.split('').filter(function (c) { return ls.indexOf(c) < 0; })[0] || 'A');
+    dDraw();
+  }
+
   // ---------- בדיקה מקומית ----------
   function normSeg(s) {
     return String(s || '').replace(/\s+/g, '').replace(/[״"׳']/g, '')
@@ -865,7 +954,7 @@
   $('mb-phint').addEventListener('click', function () { used('proof_hint'); showHint(localProofHint(), pres, aiHintProof); });
   $('mb-pform').addEventListener('click', function () { openF(/sin|cos|[0-9]/.test(P.given + P.prove) ? 'tri' : 'geo'); });
   $('mb-pprint').addEventListener('click', function () { used('print'); window.print(); });
-  $('mb-pnew').addEventListener('click', function () { P = { given: '', prove: '', rows: [{ c: '', r: '', o: '' }] }; $('mb-given').value = ''; $('mb-prove').value = ''; prenderRows(); psave(); pres.hidden = true; });
+  $('mb-pnew').addEventListener('click', function () { P = { given: '', prove: '', rows: [{ c: '', r: '', o: '' }], draw: { i: [] } }; $('mb-given').value = ''; $('mb-prove').value = ''; prenderRows(); psave(); pres.hidden = true; dLoad(); });
   var EXP = {
     shok: ['במשולש ABC נתון AB=AC. AD חוצה את הזווית BAC, והנקודה D על הצלע BC.', 'BD=DC'],
     kos: ['במשולש ABC נתון: AB=8, AC=5, ∠A=60°.', 'BC=7'],
@@ -875,8 +964,8 @@
   Array.prototype.forEach.call(document.querySelectorAll('[data-px]'), function (b) {
     b.addEventListener('click', function () {
       var x = EXP[b.getAttribute('data-px')]; if (!x) return;
-      P = { given: x[0], prove: x[1], rows: [{ c: '', r: '', o: '' }] };
-      $('mb-given').value = x[0]; $('mb-prove').value = x[1]; prenderRows(0); psave(); pres.hidden = true; used('proof_example');
+      P = { given: x[0], prove: x[1], rows: [{ c: '', r: '', o: '' }], draw: { i: [] } };
+      $('mb-given').value = x[0]; $('mb-prove').value = x[1]; prenderRows(0); psave(); pres.hidden = true; dLoad(); used('proof_example');
     });
   });
 
@@ -1007,7 +1096,7 @@
     var hs = location.hash.match(/[#&]s=([A-Za-z0-9_-]+)/);
     if (hs) {
       var so = dec(hs[1]);
-      if (so.t === 'p' && so.rows) { P = { given: String(so.g || ''), prove: String(so.v || ''), rows: so.rows.map(function (r) { return { c: String(r[0] || ''), r: String(r[1] || ''), o: String(r[2] || '') }; }) }; $('mb-given').value = P.given; $('mb-prove').value = P.prove; sharedTab = 'p'; }
+      if (so.t === 'p' && so.rows) { P = { given: String(so.g || ''), prove: String(so.v || ''), rows: so.rows.map(function (r) { return { c: String(r[0] || ''), r: String(r[1] || ''), o: String(r[2] || '') }; }), draw: { i: Array.isArray(so.dr) ? so.dr.slice(0, 200) : [] } }; $('mb-given').value = P.given; $('mb-prove').value = P.prove; sharedTab = 'p'; }
       else if (so.rows) { A = { rows: so.rows.map(String).slice(0, 80), deg: so.d !== 0 }; setDeg(A.deg); sharedTab = 'a'; }
       if (sharedTab) { shared = true; $('mb-shared').hidden = false; if (so.n) $('mb-shared-t').textContent = 'שלחו לכם: "⁨' + String(so.n).slice(0, 80) + '⁩". רואים את הפתרון כמו שנכתב, עם הבדיקה של כל שורה. מה שמשנים כאן לא נשמר.'; used('shared_open'); }
     }
@@ -1019,7 +1108,7 @@
   });
   var A2 = null;
   function shareLink(proof) {
-    var o = proof ? { t: 'p', g: P.given, v: P.prove, rows: P.rows.filter(function (r) { return (r.c || '').trim() || r.r; }).map(function (r) { return [r.c, r.r, r.o || '']; }) }
+    var o = proof ? { t: 'p', g: P.given, v: P.prove, rows: P.rows.filter(function (r) { return (r.c || '').trim() || r.r; }).map(function (r) { return [r.c, r.r, r.o || '']; }), dr: shareDraw() }
       : { t: 'a', d: A.deg ? 1 : 0, rows: A.rows.filter(function (r, i) { return r.trim() || i === 0; }) };
     if (!(o.rows.length && (proof ? o.rows.length : o.rows[0].trim()))) { flash(proof ? 'עוד אין שורות בהוכחה.' : 'עוד אין תרגיל במחברת.'); return; }
     var name = proof ? (P.prove ? 'הוכחה: ' + P.prove : 'הוכחה') : 'תרגיל: ' + A.rows[0];
@@ -1033,11 +1122,16 @@
     try { navigator.clipboard.writeText(text).then(done, function () { window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank'); }); }
     catch (e) { window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank'); }
   }
+  function shareDraw() { // השרטוט נכנס לקישור; יד חופשית ארוכה מדוללת כדי שהקישור לא יתארך מדי
+    var it = dItems(), step = 1, out;
+    do { out = it.map(function (x) { return x.t === 'f' ? { t: 'f', p: x.p.filter(function (q, j) { return j % step === 0 || j === x.p.length - 1; }) } : x; }); step++; } while (JSON.stringify(out).length > 3000 && step < 8);
+    return out.length ? out : undefined;
+  }
   $('mb-share').addEventListener('click', function () { shareLink(false); });
   $('mb-pshare').addEventListener('click', function () { shareLink(true); });
   $('mb-kbonly').addEventListener('change', function () { kbOnly = this.checked; store('mb-kbonly', kbOnly ? '1' : '0'); applyKbOnly(); used(kbOnly ? 'kb_only' : 'kb_native'); });
 
-  renderRows(); showOld(); prenderRows(); applyKbOnly();
+  renderRows(); showOld(); prenderRows(); applyKbOnly(); dLoad();
   if (sharedTab) { showTab(sharedTab === 'p'); if (sharedTab === 'p') $('mb-pcheck').click(); }
   else if (kq) showHwTab();
   else {
