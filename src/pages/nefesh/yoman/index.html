@@ -5,7 +5,8 @@
   "title": "יומן קול – מדברים, ומקבלים טקסט | נפש ויום-יום",
   "description": "יומן בלי לכתוב: מקליטים חצי דקה בטלפון, והדיבור הופך לטקסט בעברית. ושורה אחת: מה היה טוב היום. היומן נשמר רק בטלפון שלך. חינם.",
   "og_title": "יומן קול – מדברים, ומקבלים טקסט",
-  "crumbs": [["יומן קול", null]]
+  "crumbs": [["יומן קול", null]],
+  "foot": "<script src=\"/assets/hitkadmut.js\" defer></script>"
 } -->
 <header class="k-hero">
   <h1>יומן קול</h1>
@@ -13,6 +14,7 @@
 </header>
 
 <div class="tool" id="yoman">
+  <p class="hk-strip" data-hk="yoman" data-gentle="1" data-verb="כתבתם ביומן" data-pill="ביומן" data-tool="yoman" hidden></p>
   <div class="rec">
     <button class="rec-btn" type="button" id="y-rec">🎙<br>להקליט</button>
     <p class="status" id="y-status" role="status" aria-live="polite">לוחצים, מדברים, ולוחצים שוב לסיום. עד 3 דקות.</p>
@@ -27,6 +29,7 @@
     <button class="big-btn" type="button" id="y-save">לשמור ביומן</button>
     <p class="saved" id="y-saved" role="status"></p>
   </div>
+  <div id="y-hk" hidden></div>
 
   <section style="margin-top:1.4rem">
     <h2 style="font-family:var(--serif);color:var(--cream);font-size:1.35rem;text-align:center">היומן שלך</h2>
