@@ -494,7 +494,11 @@
   // ---------- החייאה בענן (tools/chaye-worker → Runpod) ----------
   var AI = 'https://kelim-chaye.gilad4049.workers.dev';
   if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && window.__chAI) AI = window.__chAI; // בדיקות
-  var aiBusy = false, aiBlob = null;
+  var aiBusy = false, aiBlob = null, CODE_KEY = 'chaye-code';
+  // קוד שותף (20 ₪ לשירות הענן = בלי הגבלה) נשמר בטלפון
+  try { var sc = localStorage.getItem(CODE_KEY); if (sc) { $('ch-code').value = sc; $('ch-partner').open = true; } } catch (e) {}
+  $('ch-code').addEventListener('input', function () { try { localStorage.setItem(CODE_KEY, this.value.trim()); } catch (e) {} });
+  function code() { return $('ch-code').value.replace(/\s/g, ''); }
   function aiInfo(t) { $('ch-ai-info').textContent = t || ''; }
   function aiStyle() { var r = document.querySelector('input[name=aist]:checked'); return r ? r.value : 'smile'; }
   function photoData() {
@@ -513,11 +517,11 @@
     pg.hidden = false; pg.value = 0.03; aiInfo('שולח את התמונה לענן…');
     var tick = setInterval(function () { var s = (Date.now() - t0) / 1000; pg.value = Math.min(0.95, 0.03 + s / 80); }, 500);
     function end(msg) { clearInterval(tick); aiBusy = false; b.disabled = false; pg.hidden = true; if (msg) aiInfo(msg); }
-    fetch(AI + '/animate', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ image: photoData(), style: st }) })
-      .then(function (r) { return r.json().then(function (j) { if (!r.ok || !j.id) throw new Error(j.error || 'שירות הענן לא זמין כרגע. נסו שוב בעוד כמה דקות.'); return j; }); })
+    fetch(AI + '/animate', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ image: photoData(), style: st, code: code() || undefined }) })
+      .then(function (r) { return r.json().then(function (j) { if (j.badCode) { $('ch-partner').open = true; $('ch-code').focus(); } if (!r.ok || !j.id) throw new Error(j.error || 'שירות הענן לא זמין כרגע. נסו שוב בעוד כמה דקות.'); return j; }); })
       .then(function (j) {
         aiInfo('הענן יוצר את הסרטון… בערך דקה. אפשר להישאר בדף.');
-        used('ai_start', { style: st });
+        used('ai_start', { style: st, partner: j.partner ? 1 : 0 });
         return (function poll(n) {
           if (n > 120) throw new Error('זה לוקח יותר מהרגיל. נסו שוב בעוד כמה דקות.');
           return sleepMs(n ? 4000 : 6000).then(function () { return fetch(AI + '/status/' + j.id); }).then(function (r) { return r.json(); }).then(function (s) {
@@ -532,7 +536,7 @@
             aiBlob = bl.type ? bl : new Blob([bl], { type: 'video/mp4' });
             window.__chAIResult = aiBlob; // לבדיקות
             $('ch-ai-video').src = URL.createObjectURL(aiBlob); $('ch-ai-result').hidden = false;
-            end('הסרטון מוכן! ' + (j.left > 0 ? 'אפשר עוד ' + j.left + ' היום.' : 'זה היה האחרון להיום.'));
+            end('הסרטון מוכן! ' + (j.partner ? 'תודה שאתם שותפים ❤ – בלי הגבלה.' : j.left > 0 ? 'אפשר עוד ' + j.left + ' היום.' : 'זה היה האחרון להיום. שותפים – בלי הגבלה.'));
             $('ch-ai-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
             used('ai_done', { style: st, secs: Math.round((Date.now() - t0) / 1000) });
           });
