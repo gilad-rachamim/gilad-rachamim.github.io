@@ -1,0 +1,80 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "studio",
+  "title": "סטודיו לעיצוב – עורך גרפי כמו קנבה, בחינם ובעברית, עם עוזר שמעצב במילים | הכלים של גילעד רחמים",
+  "description": "עורך עיצוב חינמי בעברית, חלופה לקנבה: כותבים במילים מה רוצים והעוזר מעצב פוסט, הזמנה, מודעה או סטטוס. מוסיפים תמונות, טקסט, כיתוב וכתוביות, צורות ורקעים, עורכים מסמך PDF, ושומרים כתמונה או PDF. בלי הרשמה.",
+  "og_title": "סטודיו לעיצוב – כמו קנבה, בחינם ובעברית",
+  "priority": "0.8",
+  "crumbs": [["יצירת תוכן", "/kelim/tochen/"], ["סטודיו לעיצוב", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/studio-fonts.css\"><link rel=\"stylesheet\" href=\"/assets/studio.css\">",
+  "foot": "<script src=\"/assets/vendor/html-to-image/html-to-image-1.11.11.js\" defer></script><script src=\"/assets/studio.js\" defer></script>"
+} -->
+<header class="k-hero no-print sd-hero">
+  <h1>סטודיו לעיצוב</h1>
+  <p class="sub">כמו קנבה, בחינם ובעברית. כותבים במילים מה רוצים – והעוזר מעצב. אחר כך משנים הכול בעצמכם: גוררים, מוסיפים תמונות, כיתוב וכתוביות, ושומרים כתמונה או PDF.</p>
+</header>
+<div id="sd-app" class="sd-app no-print">
+  <section class="sd-ai" aria-labelledby="sd-ai-h">
+    <label id="sd-ai-h" for="sd-ai-text">✨ מה לעצב? כתבו במילים שלכם</label>
+    <textarea id="sd-ai-text" rows="2" maxlength="1500" dir="rtl" placeholder="למשל: הזמנה לבר מצווה של יוסי, ביום חמישי 18:00 באולם הגן, בצבעי כחול וזהב, עם התמונה שהעליתי ברקע"></textarea>
+    <div class="sd-ai-row">
+      <button type="button" class="btn btn-gold btn-sm" data-ai="new">✨ תעצב לי</button>
+      <button type="button" class="btn btn-line btn-sm" data-ai="edit" id="sd-ai-mode-edit">לשנות את העיצוב שעל המסך</button>
+    </div>
+    <p id="sd-status" class="sd-status" role="status" aria-live="polite" hidden></p>
+  </section>
+
+  <div class="sd-top">
+    <div class="sd-tabs" role="tablist" aria-label="כלים">
+      <button type="button" data-tab="ai">✨ עוזר</button>
+      <button type="button" data-tab="tpl">תבניות</button>
+      <button type="button" data-tab="text">טקסט</button>
+      <button type="button" data-tab="img">תמונות ו-PDF</button>
+      <button type="button" data-tab="shape">צורות</button>
+      <button type="button" data-tab="bg">רקע וצבעים</button>
+      <button type="button" data-tab="size">גודל</button>
+      <button type="button" data-tab="file">פרויקט</button>
+    </div>
+    <div class="sd-acts">
+      <button type="button" id="sd-undo" title="ביטול (Ctrl+Z)" aria-label="ביטול">↶ בטל</button>
+      <button type="button" id="sd-redo" title="חזרה (Ctrl+Y)" aria-label="חזרה">↷ חזור</button>
+    </div>
+  </div>
+
+  <div class="sd-main">
+    <aside class="sd-side" id="sd-panel" aria-label="אפשרויות"></aside>
+    <div class="sd-work">
+      <div class="sd-viewport" id="sd-viewport">
+        <div class="sd-holder" id="sd-holder">
+          <div class="sd-page" id="sd-page"></div>
+          <div class="sd-ui" id="sd-ui"></div>
+        </div>
+      </div>
+      <div class="sd-pages" id="sd-pages"></div>
+      <div class="sd-out">
+        <button type="button" class="btn btn-gold btn-sm" data-out-kind="share"><svg class="ic"><use href="#wa"/></svg> לשלוח / לשתף</button>
+        <button type="button" class="btn btn-line btn-sm" data-out-kind="png">לשמור תמונה (PNG)</button>
+        <button type="button" class="btn btn-line btn-sm" data-out-kind="jpg">JPG</button>
+        <button type="button" class="btn btn-line btn-sm" data-out-kind="pdf">PDF</button>
+        <button type="button" class="btn btn-line btn-sm" data-out-kind="print">להדפיס</button>
+      </div>
+    </div>
+  </div>
+  <input type="file" id="sd-file-img" accept="image/*" multiple hidden>
+  <input type="file" id="sd-file-bg" accept="image/*" hidden>
+  <input type="file" id="sd-file-pdf" accept="application/pdf,.pdf" hidden>
+  <input type="file" id="sd-file-open" accept=".json,application/json" hidden>
+</div>
+<div class="tool no-print sd-foot">
+  <h2>איך עובדים</h2>
+  <ol class="sd-how">
+    <li><b>כותבים לעוזר</b> מה רוצים (או בוחרים תבנית). אפשר לצרף קודם תמונות – והוא ישתמש בהן.</li>
+    <li><b>לוחצים על כל דבר בעיצוב</b> כדי לשנות אותו: גוררים, מגדילים מהפינות, מסובבים מהעיגול שמעל. לחיצה כפולה על טקסט – כותבים ישר עליו.</li>
+    <li><b>רוצים שינוי?</b> כותבים לעוזר "תגדיל את הכותרת ותעשה את הרקע כהה יותר", ולוחצים "לשנות את העיצוב שעל המסך".</li>
+    <li><b>שומרים</b> כתמונה לווטסאפ ולסטטוס, או כ-PDF להדפסה. מסמך PDF אפשר לפתוח, לכתוב עליו ולשמור שוב.</li>
+  </ol>
+  <p class="disclaimer">העיצוב והתמונות נשמרים רק אצלכם, בדפדפן הזה. לעוזר נשלח רק מה שכתבתם ומבנה העיצוב – התמונות עצמן לא יוצאות מהמכשיר. העוזר חינמי ויש לו מכסה יומית; אם הוא עמוס, אפשר להמשיך לעצב ידנית.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="סטודיו לעיצוב בעברית, כמו קנבה ובחינם: כותבים במילים מה רוצים והוא מעצב. פוסטים, הזמנות, מודעות וכיתוב על תמונות:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
+<div id="sd-print" class="sd-print" aria-hidden="true"></div>
