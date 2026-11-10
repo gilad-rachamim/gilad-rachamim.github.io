@@ -1,0 +1,43 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "eruim_hazmana_guest",
+  "title": "ההזמנה – ניווט, הוספה ליומן ואישור הגעה",
+  "description": "ההזמנה לשמחה: מתי, איפה, ניווט ב-Waze, הוספה ליומן ואישור הגעה בווטסאפ.",
+  "og_title": "הוזמנתם לשמחה – ההזמנה המלאה",
+  "noindex": true,
+  "body_class": "eh-guest-page",
+  "head": "<link rel=\"stylesheet\" href=\"/assets/eruim-hazmana.css\">",
+  "foot": "<script src=\"/assets/eruim-hazmana.js\" defer></script>"
+} -->
+<div class="eh-guest">
+  <div id="eh-guest" hidden>
+    <div id="eh-after" class="panel eh-after" hidden>
+      <h2>השמחה כבר התקיימה. מזל טוב!</h2>
+      <p class="note">שנזכה לבשר רק בשורות טובות.</p>
+    </div>
+    <canvas id="eh-guest-canvas" width="1080" height="1350" role="img" aria-label="ההזמנה"></canvas>
+    <div id="g-rsvp" class="panel eh-rsvp" hidden>
+      <h2>מגיעים?</h2>
+      <div class="eh-btns">
+        <a class="btn btn-gold" id="g-yes" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> מגיעים 🎉</a>
+        <a class="btn btn-line" id="g-no" href="#" target="_blank" rel="noopener">לא נוכל להגיע</a>
+      </div>
+      <p class="eh-hint">הכפתור פותח הודעת ווטסאפ מוכנה לבעלי השמחה.</p>
+    </div>
+    <div class="eh-btns">
+      <div class="eh-btns wide" id="g-nav" style="margin:0">
+        <a class="btn btn-gold" id="g-waze" href="#" target="_blank" rel="noopener">ניווט ב-Waze</a>
+        <a class="btn btn-line" id="g-maps" href="#" target="_blank" rel="noopener">מפות גוגל</a>
+      </div>
+      <a class="btn btn-line" id="g-gcal" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#cal"/></svg> ליומן גוגל</a>
+      <a class="btn btn-line" id="g-ics" href="#" download="hazmana.ics"><svg class="ic"><use href="#cal"/></svg> ליומן בטלפון</a>
+    </div>
+    <p class="eh-credit">רוצים הזמנה כזאת לשמחה שלכם? בחינם, בלי הרשמה: <a id="g-credit" href="/kelim/eruim/hazmana/">למחולל ההזמנות ←</a></p>
+  </div>
+  <div id="eh-missing" class="panel" hidden>
+    <h2>הקישור לא שלם</h2>
+    <p class="note">נראה שהקישור נחתך בדרך. בקשו מבעלי השמחה לשלוח אותו שוב, או העתיקו את כולו מההודעה.</p>
+    <p><a class="btn btn-line" href="/kelim/eruim/hazmana/">למחולל ההזמנות, בחינם</a></p>
+  </div>
+</div>

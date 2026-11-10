@@ -1,0 +1,62 @@
+/* מחולל הזמנות לכל אירוע (/kelim/eruim/hazmana/) + דף האורחים. הצבעים מ-site.css. */
+.eh-wrap{max-width:40rem;margin:0 auto;padding:0 1.1rem}
+.eh-free{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:1rem}
+.eh-free span{border:1px solid var(--gold-soft);border-radius:999px;padding:.25rem .75rem;color:var(--parchment);font-size:.95rem}
+.eh-me{color:var(--body);font-size:1rem;margin-top:.8rem;font-style:italic}
+.eh-form fieldset{border:0;display:grid;gap:.9rem;margin:0;padding:0;min-width:0}
+.eh-form legend{font-family:var(--serif);color:var(--gold);font-size:1.25rem;margin-bottom:.4rem}
+.eh-step+.eh-step{margin-top:1.4rem;padding-top:1.2rem;border-top:1px solid var(--line)}
+.eh-two{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.eh-two>.field{min-width:0}
+.eh-form .field input,.eh-form .field select{width:100%;min-width:0;box-sizing:border-box}
+.eh-hint{color:var(--muted);font-size:.9rem;margin:.3rem 0 0}
+.eh-kinds{display:flex;flex-wrap:wrap;gap:.45rem}
+.eh-kinds label{position:relative;cursor:pointer}
+.eh-kinds input{position:absolute;top:0;right:0;width:1px;height:1px;opacity:0;pointer-events:none}
+.eh-kinds span{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:.4rem .85rem;color:var(--parchment);background:rgba(255,255,255,.03)}
+.eh-kinds label:has(input:checked) span{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700}
+.eh-kinds label:has(input:focus-visible) span{outline:2px solid var(--gold);outline-offset:2px}
+.eh-kind-out{align-self:center;color:var(--gold);font-size:.92rem;padding:.4rem .2rem}
+.eh-styles{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem}
+.eh-mini{position:relative;display:grid;gap:.3rem;cursor:pointer;text-align:center;font-size:.85rem;color:var(--muted);min-width:0}
+.eh-mini input{position:absolute;top:0;right:0;width:1px;height:1px;opacity:0;pointer-events:none}
+.eh-mini canvas{width:100%;height:auto;border-radius:8px;border:2px solid transparent;box-shadow:0 4px 12px rgba(0,0,0,.35)}
+.eh-mini:has(input:checked) canvas{border-color:var(--gold)}
+.eh-mini:has(input:checked){color:var(--cream);font-weight:600}
+.eh-mini:has(input:focus-visible) canvas{outline:2px solid var(--gold);outline-offset:3px}
+.eh-preview{margin:1.3rem auto 0;max-width:26rem}
+.eh-preview canvas,#eh-guest-canvas{width:100%;height:auto;display:block;border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.5)}
+.eh-acts{margin-top:1.4rem}
+.eh-acts h2{font-family:var(--serif);color:var(--cream);font-size:1.3rem}
+.eh-btns{display:grid;grid-template-columns:1fr 1fr;gap:.55rem}
+.eh-btns .wide{grid-column:1/-1}
+.eh-btns .btn{padding:.75rem .5rem;font-size:.98rem;min-width:0}
+.eh-poster-box{margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--line)}
+.eh-poster-box h3{font-family:var(--serif);color:var(--gold);font-size:1.2rem;margin:0 0 .3rem}
+.eh-poster{margin:.8rem auto;max-width:15rem}
+.eh-poster canvas{width:100%;height:auto;display:block;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+.eh-soft{margin-top:1.2rem;padding:.9rem 1rem;border:1px solid var(--gold-soft);border-radius:12px;background:rgba(227,183,101,.07);text-align:center;color:var(--body)}
+.eh-soft p{margin:0 0 .6rem}
+.eh-soft strong{color:var(--cream)}
+/* תוכן הדף: נוסחים, הסבר, שאלות */
+.eh-text p{color:var(--body);margin:.5rem 0}
+.eh-text h3{font-family:var(--serif);color:var(--cream);font-size:1.2rem;margin:1rem 0 .3rem}
+.eh-text ul{color:var(--body);padding-inline-start:1.2rem;margin:.4rem 0}
+.eh-text li{margin:.25rem 0}
+.eh-nusachim{display:grid;gap:.7rem;margin-top:.6rem}
+.eh-nusach{border:1px solid var(--line);border-radius:14px;padding:.9rem 1rem;background:rgba(255,255,255,.03)}
+.eh-nusach h3{font-family:var(--serif);color:var(--gold);font-size:1.1rem;margin:0 0 .4rem}
+.eh-ntext{font-family:var(--serif);color:var(--cream);font-size:1.08rem;line-height:1.7;white-space:pre-line;margin:0}
+.eh-nusach .btn{margin-top:.6rem;padding:.4rem .9rem;font-size:.92rem}
+.eh-faq details{margin-top:.5rem}
+/* דף האורחים */
+.eh-guest{max-width:28rem;margin:1.2rem auto 2rem;padding:0 1rem}
+.eh-guest .eh-btns{margin-top:1.1rem}
+.eh-rsvp{margin-top:1.2rem;text-align:center}
+.eh-rsvp h2{font-family:var(--serif);color:var(--cream);font-size:1.35rem;margin-bottom:.6rem}
+.eh-credit{text-align:center;margin-top:1.8rem;font-size:.95rem;color:var(--muted)}
+.eh-credit a{color:var(--gold)}
+.eh-after{text-align:center;margin-bottom:1rem}
+.eh-guest-page .topbar,.eh-guest-page .dock,.eh-guest-page .site-foot .cols,.eh-guest-page .install-bar{display:none}
+@media (max-width:380px){.eh-two{grid-template-columns:1fr}}
+.eh-wrap [hidden],.eh-guest [hidden]{display:none!important}
