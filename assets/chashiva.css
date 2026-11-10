@@ -137,3 +137,24 @@
 .ml-dist span{width:1.2rem;text-align:center;color:var(--muted)}
 .ml-dist i{font-style:normal;background:#2b3a37;color:var(--cream);border-radius:6px;padding:.05rem .45rem;text-align:left;font-size:.85rem}
 .ml-dist i.me{background:#d8b35f;color:#14211f}
+
+/* ===== האתגר השבועי ===== */
+.ch-weekline{text-align:center;color:var(--gold-hi);font-size:.93rem;margin:.2rem 0 .5rem}
+.ch-weekline:empty{display:none}
+.ch-badge-new{border:2px solid var(--gold);border-radius:14px;padding:.7rem .8rem;margin:.2rem 0 .9rem;background:rgba(216,179,95,.16);display:flex;flex-direction:column;gap:.2rem;animation:chpop .6s ease}
+.ch-badge-new b{color:var(--cream);font-size:1.15rem}
+.ch-badge-new span{color:var(--parchment)}
+@keyframes chpop{0%{transform:scale(.85);opacity:0}70%{transform:scale(1.04)}100%{transform:scale(1);opacity:1}}
+.ch-weekcard{display:flex;gap:.8rem;align-items:center;border:1px solid var(--line);border-radius:16px;padding:.9rem 1rem;background:rgba(255,255,255,.03);color:var(--parchment)}
+.ch-weekcard.done{border-color:var(--gold);background:rgba(216,179,95,.1)}
+.ch-weekcard .ic{font-size:2.2rem;line-height:1}
+.ch-weekcard>div:last-child{flex:1}
+.ch-weekcard b{color:var(--cream);font-size:1.08rem;display:block}
+.ch-weekcard span{color:var(--muted);font-size:.93rem}
+.ch-meter{height:.6rem;border-radius:999px;background:rgba(255,255,255,.08);margin:.45rem 0 .3rem;overflow:hidden}
+.ch-meter i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-hi));border-radius:999px}
+.ch-badges{margin-top:.8rem;color:var(--parchment)}
+.ch-badges>b{display:block;color:var(--cream);margin-bottom:.35rem}
+.ch-badges>div{display:flex;flex-wrap:wrap;gap:.45rem}
+.ch-badges span{display:flex;flex-direction:column;align-items:center;border:1px solid var(--gold-soft);border-radius:12px;padding:.35rem .5rem;font-size:1.5rem;min-width:3.2rem;background:rgba(216,179,95,.07)}
+.ch-badges small{font-size:.72rem;color:var(--muted)}

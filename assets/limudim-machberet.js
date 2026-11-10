@@ -654,7 +654,9 @@
         if (!j.rows && !j.summary) return false;
         paintProof(res, j.rows || []);
         var d = el('div', 'mb-aih');
-        d.appendChild(el('p', '', (j.ok ? '🤖 ✓ ' : '🤖 ') + esc(j.summary || '')));
+        var localWarn = res.notes.some(function (n) { return n.mark === 'warn'; });
+        if (j.ok && localWarn) d.appendChild(el('p', '', '🤖 ההיגיון של ההוכחה נראה טוב. אבל בדף נשארו שורות עם סימן שאלה (למשל נימוק שלא מתאים לנוסחה). כדאי לתקן אותן, כי בבגרות נותנים ניקוד גם על הנימוק.'));
+        else d.appendChild(el('p', '', (j.ok ? '🤖 ✓ ' : '🤖 ') + esc(j.summary || '')));
         if (j.missing) d.appendChild(el('p', 'note', 'מה חסר: ' + esc(j.missing)));
         pres.appendChild(d); return true;
       });

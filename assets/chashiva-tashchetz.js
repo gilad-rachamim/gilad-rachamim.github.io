@@ -276,7 +276,7 @@
   function finish() {
     if (won) return; won = true; clock.on = false; cur = null; draw();
     var daily = mode === 'daily', already = daily && CH.stats(G).doneToday;
-    var st = CH.record(G, daily && !already, clock.sec);
+    var st = CH.record(G, daily && !already, clock.sec, hints);
     if (mode === 'level') { data.done[level] = 1; data.lvl = Math.max(data.lvl, level + 1); }
     persist(); drawLevels();
     CH.used(TOOL, 'solve', { mode: mode, level: level, sec: clock.sec, hints: hints });
