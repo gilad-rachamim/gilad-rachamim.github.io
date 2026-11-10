@@ -3,7 +3,7 @@
   "nav": "tchumim",
   "tool": "tichnut_tzaad",
   "title": "מריץ צעד אחר צעד – רואים מה הקוד עושה: משתנים, מערכים ורקורסיה | הכלים של גילעד רחמים",
-  "description": "מדביקים קוד JavaScript ומריצים אותו שורה אחרי שורה: השורה הנוכחית מסומנת, רואים כל משתנה ומה השתנה, מערכים עם חיצים על האינדקסים, ומחסנית קריאות ברקורסיה. גם הפתרונות של סימולטור הראיון. בחינם, רץ בדפדפן.",
+  "description": "מדביקים קוד JavaScript או Python ומריצים אותו שורה אחרי שורה: השורה הנוכחית מסומנת, רואים כל משתנה ומה השתנה, מערכים עם חיצים על האינדקסים, ומחסנית קריאות ברקורסיה. גם הפתרונות של סימולטור הראיון. בחינם, רץ בדפדפן.",
   "og_title": "מריץ צעד אחר צעד: רואים מה הקוד עושה",
   "priority": "0.8",
   "crumbs": [["כלים למתכנתים", "/kelim/tichnut/"], ["צעד אחר צעד", null]],
@@ -12,16 +12,18 @@
 } -->
 <header class="k-hero">
   <h1>מריץ צעד אחר צעד</h1>
-  <p class="sub">מה הקוד באמת עושה? כאן רואים את זה: השורה שרצה עכשיו, כל משתנה ומה השתנה, מערכים עם חיצים על האינדקסים, ומחסנית הקריאות ברקורסיה. ללמידה, לדיבוג ולהכנה לראיון.</p>
+  <p class="sub">מה הקוד באמת עושה? ב-JavaScript או ב-Python, כאן רואים את זה: השורה שרצה עכשיו, כל משתנה ומה השתנה, מערכים עם חיצים על האינדקסים, ומחסנית הקריאות ברקורסיה. ללמידה, לדיבוג ולהכנה לראיון.</p>
 </header>
 <div class="tool">
   <div id="tz-edit" hidden>
     <div class="tz-top">
+      <div class="field" style="flex:0 1 9rem"><label for="tz-lang">שפה</label><select id="tz-lang"><option value="js">JavaScript</option><option value="py">Python</option></select></div>
       <div class="field"><label for="tz-ex">דוגמה או תרגיל</label><select id="tz-ex"></select></div>
     </div>
     <textarea id="tz-in" class="tz-in" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="הקוד"></textarea>
     <div class="tz-btns"><button class="btn btn-gold btn-sm" type="button" id="tz-run">▶ להריץ צעד אחר צעד (Ctrl+Enter)</button></div>
-    <p class="note">כתבו פונקציה, ובסוף קריאה אליה, למשל <code dir="ltr">sum([1, 2, 3]);</code>. אפשר גם <code dir="ltr">console.log</code>.</p>
+    <p class="note" id="tz-note-js">כתבו פונקציה, ובסוף קריאה אליה, למשל <code dir="ltr">sum([1, 2, 3]);</code>. אפשר גם <code dir="ltr">console.log</code>.</p>
+    <p class="note" id="tz-note-py" hidden>כתבו פונקציה עם <code dir="ltr">def</code>, ובסוף קריאה אליה, למשל <code dir="ltr">my_sum([1, 2, 3])</code>. אפשר גם <code dir="ltr">print</code>. ההזחה (רווחים בתחילת השורה) חשובה ב-Python.</p>
   </div>
   <div id="tz-msg" aria-live="polite"></div>
 
@@ -58,6 +60,6 @@
   </div>
 
   <p class="tn-shut">💛 הכלי הזה חינמי ובלי פרסומות. אני בונה אותו לבד ומשלם עליו מהכיס, באהבה. אם הוא עוזר לכם, <a class="gold" href="/kelim/tichnut/#shutafim">אפשר להיות שותפים</a>: חסות, תרגיל שתכתבו, או תמיכה קטנה.</p>
-  <p class="disclaimer">הקוד רץ רק בדפדפן שלכם, בסביבה מבודדת (Web Worker), ושום דבר לא נשלח. כרגע JavaScript, עם עד 2,000 צעדים לריצה. קוד אסינכרוני (setTimeout, Promise) לא מוצג צעד אחר צעד. לתרגול: <a class="gold" href="/kelim/tichnut/simulator/">סימולטור הראיון</a> · <a class="gold" href="/kelim/tichnut/miunim/">מיונים בתנועה</a>.</p>
+  <p class="disclaimer">הקוד רץ רק בדפדפן שלכם, בסביבה מבודדת (Web Worker), ושום דבר לא נשלח. JavaScript או Python, עם עד 2,000 צעדים לריצה. Python רץ בדפדפן עם Pyodide: בפעם הראשונה נטענים כ-14MB, ואחר כך הם נשמרים. ב-Python אין input() ואין חבילות חיצוניות. קוד אסינכרוני (setTimeout, Promise, async) לא מוצג צעד אחר צעד. לתרגול: <a class="gold" href="/kelim/tichnut/simulator/">סימולטור הראיון</a> · <a class="gold" href="/kelim/tichnut/miunim/">מיונים בתנועה</a>.</p>
   <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="כלי שמריץ קוד צעד אחר צעד ומראה את המשתנים, המערכים והרקורסיה. מעולה ללמוד תכנות ולהבין אלגוריתמים, בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר שלומד תכנות</a></div>
 </div>

@@ -1,8 +1,8 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'nefesh-202611101507';
-var PRECACHE = ["/nefesh/hayom/", "/nefesh/", "/nefesh/koach/", "/nefesh/michtav/", "/nefesh/mishpacha/", "/nefesh/rega/", "/nefesh/tmicha/", "/nefesh/yoman/", "/assets/site.css?v=39e81fea", "/assets/kelim.css?v=873b0769", "/assets/kelim.js?v=781de167", "/assets/track.js?v=b23b682b", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-nefesh-192.png", "/assets/nefesh.css?v=21cf25b4", "/assets/nefesh.js?v=22d1a3c2"];
+var CACHE = 'nefesh-202611101516';
+var PRECACHE = ["/nefesh/hayom/", "/nefesh/", "/nefesh/koach/", "/nefesh/michtav/", "/nefesh/mishpacha/", "/nefesh/rega/", "/nefesh/tmicha/", "/nefesh/yoman/", "/assets/site.css?v=39e81fea", "/assets/kelim.css?v=873b0769", "/assets/kelim.js?v=dccd2958", "/assets/track.js?v=b23b682b", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-nefesh-192.png", "/assets/nefesh.css?v=21cf25b4", "/assets/nefesh.js?v=22d1a3c2"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
 });
@@ -40,7 +40,7 @@ self.addEventListener('fetch', function (e) {
     return;
   }
   // קבצים גדולים (מודל הסרת הרקע של הסטודיו, 46MB): הכלי שומר אותם בעצמו, בלי הורדה חוזרת ברקע בכל שימוש
-  if (/^\/assets\/vendor\/(isnet|onnxruntime-web)\//.test(url.pathname)) return;
+  if (/^\/assets\/vendor\/(isnet|onnxruntime-web|pyodide)\//.test(url.pathname)) return;
   if (/^\/assets\//.test(url.pathname)) {
     e.respondWith(caches.match(req).then(function (hit) {
       var net = fetch(req).then(function (r) {

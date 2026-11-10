@@ -40,7 +40,7 @@ self.addEventListener('fetch', function (e) {
     return;
   }
   // קבצים גדולים (מודל הסרת הרקע של הסטודיו, 46MB): הכלי שומר אותם בעצמו, בלי הורדה חוזרת ברקע בכל שימוש
-  if (/^\/assets\/vendor\/(isnet|onnxruntime-web)\//.test(url.pathname)) return;
+  if (/^\/assets\/vendor\/(isnet|onnxruntime-web|pyodide)\//.test(url.pathname)) return;
   if (/^\/assets\//.test(url.pathname)) {
     e.respondWith(caches.match(req).then(function (hit) {
       var net = fetch(req).then(function (r) {

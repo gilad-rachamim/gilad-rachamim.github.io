@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>מריץ צעד אחר צעד – רואים מה הקוד עושה: משתנים, מערכים ורקורסיה | הכלים של גילעד רחמים</title>
-<meta name="description" content="מדביקים קוד JavaScript ומריצים אותו שורה אחרי שורה: השורה הנוכחית מסומנת, רואים כל משתנה ומה השתנה, מערכים עם חיצים על האינדקסים, ומחסנית קריאות ברקורסיה. גם הפתרונות של סימולטור הראיון. בחינם, רץ בדפדפן.">
+<meta name="description" content="מדביקים קוד JavaScript או Python ומריצים אותו שורה אחרי שורה: השורה הנוכחית מסומנת, רואים כל משתנה ומה השתנה, מערכים עם חיצים על האינדקסים, ומחסנית קריאות ברקורסיה. גם הפתרונות של סימולטור הראיון. בחינם, רץ בדפדפן.">
 <link rel="canonical" href="https://gilad-rachamim.github.io/kelim/tichnut/tzaad/">
 
 <meta property="og:type" content="website">
 <meta property="og:locale" content="he_IL">
 <meta property="og:site_name" content="הכלים של גילעד רחמים">
 <meta property="og:title" content="מריץ צעד אחר צעד: רואים מה הקוד עושה">
-<meta property="og:description" content="מדביקים קוד JavaScript ומריצים אותו שורה אחרי שורה: השורה הנוכחית מסומנת, רואים כל משתנה ומה השתנה, מערכים עם חיצים על האינדקסים, ומחסנית קריאות ברקורסיה. גם הפתרונות של סימולטור הראיון. בחינם, רץ בדפדפן.">
+<meta property="og:description" content="מדביקים קוד JavaScript או Python ומריצים אותו שורה אחרי שורה: השורה הנוכחית מסומנת, רואים כל משתנה ומה השתנה, מערכים עם חיצים על האינדקסים, ומחסנית קריאות ברקורסיה. גם הפתרונות של סימולטור הראיון. בחינם, רץ בדפדפן.">
 <meta property="og:image" content="https://gilad-rachamim.github.io/assets/og-kelim.jpg">
 <meta property="og:url" content="https://gilad-rachamim.github.io/kelim/tichnut/tzaad/">
 <meta name="twitter:card" content="summary_large_image">
@@ -64,16 +64,18 @@
 <main id="main">
 <header class="k-hero">
   <h1>מריץ צעד אחר צעד</h1>
-  <p class="sub">מה הקוד באמת עושה? כאן רואים את זה: השורה שרצה עכשיו, כל משתנה ומה השתנה, מערכים עם חיצים על האינדקסים, ומחסנית הקריאות ברקורסיה. ללמידה, לדיבוג ולהכנה לראיון.</p>
+  <p class="sub">מה הקוד באמת עושה? ב-JavaScript או ב-Python, כאן רואים את זה: השורה שרצה עכשיו, כל משתנה ומה השתנה, מערכים עם חיצים על האינדקסים, ומחסנית הקריאות ברקורסיה. ללמידה, לדיבוג ולהכנה לראיון.</p>
 </header>
 <div class="tool">
   <div id="tz-edit" hidden>
     <div class="tz-top">
+      <div class="field" style="flex:0 1 9rem"><label for="tz-lang">שפה</label><select id="tz-lang"><option value="js">JavaScript</option><option value="py">Python</option></select></div>
       <div class="field"><label for="tz-ex">דוגמה או תרגיל</label><select id="tz-ex"></select></div>
     </div>
     <textarea id="tz-in" class="tz-in" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="הקוד"></textarea>
     <div class="tz-btns"><button class="btn btn-gold btn-sm" type="button" id="tz-run">▶ להריץ צעד אחר צעד (Ctrl+Enter)</button></div>
-    <p class="note">כתבו פונקציה, ובסוף קריאה אליה, למשל <code dir="ltr">sum([1, 2, 3]);</code>. אפשר גם <code dir="ltr">console.log</code>.</p>
+    <p class="note" id="tz-note-js">כתבו פונקציה, ובסוף קריאה אליה, למשל <code dir="ltr">sum([1, 2, 3]);</code>. אפשר גם <code dir="ltr">console.log</code>.</p>
+    <p class="note" id="tz-note-py" hidden>כתבו פונקציה עם <code dir="ltr">def</code>, ובסוף קריאה אליה, למשל <code dir="ltr">my_sum([1, 2, 3])</code>. אפשר גם <code dir="ltr">print</code>. ההזחה (רווחים בתחילת השורה) חשובה ב-Python.</p>
   </div>
   <div id="tz-msg" aria-live="polite"></div>
 
@@ -110,7 +112,7 @@
   </div>
 
   <p class="tn-shut">💛 הכלי הזה חינמי ובלי פרסומות. אני בונה אותו לבד ומשלם עליו מהכיס, באהבה. אם הוא עוזר לכם, <a class="gold" href="/kelim/tichnut/#shutafim">אפשר להיות שותפים</a>: חסות, תרגיל שתכתבו, או תמיכה קטנה.</p>
-  <p class="disclaimer">הקוד רץ רק בדפדפן שלכם, בסביבה מבודדת (Web Worker), ושום דבר לא נשלח. כרגע JavaScript, עם עד 2,000 צעדים לריצה. קוד אסינכרוני (setTimeout, Promise) לא מוצג צעד אחר צעד. לתרגול: <a class="gold" href="/kelim/tichnut/simulator/">סימולטור הראיון</a> · <a class="gold" href="/kelim/tichnut/miunim/">מיונים בתנועה</a>.</p>
+  <p class="disclaimer">הקוד רץ רק בדפדפן שלכם, בסביבה מבודדת (Web Worker), ושום דבר לא נשלח. JavaScript או Python, עם עד 2,000 צעדים לריצה. Python רץ בדפדפן עם Pyodide: בפעם הראשונה נטענים כ-14MB, ואחר כך הם נשמרים. ב-Python אין input() ואין חבילות חיצוניות. קוד אסינכרוני (setTimeout, Promise, async) לא מוצג צעד אחר צעד. לתרגול: <a class="gold" href="/kelim/tichnut/simulator/">סימולטור הראיון</a> · <a class="gold" href="/kelim/tichnut/miunim/">מיונים בתנועה</a>.</p>
   <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="כלי שמריץ קוד צעד אחר צעד ומראה את המשתנים, המערכים והרקורסיה. מעולה ללמוד תכנות ולהבין אלגוריתמים, בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר שלומד תכנות</a></div>
 </div>
 
@@ -172,7 +174,7 @@
   <button class="btn btn-gold btn-sm" type="button" data-install>להתקין</button>
   <button class="x" type="button" data-install-close aria-label="סגירה">×</button>
 </div>
-<script src="/assets/kelim.js?v=781de167" defer></script>
-<script src="/assets/tichnut-data.js?v=c718af4e" defer></script><script src="/assets/vendor/acorn/acorn.js?v=3ec96607" defer></script><script src="/assets/tichnut-sim-data.js?v=71ac42f0" defer></script><script src="/assets/tichnut-tzaad.js?v=e9907936" defer></script>
+<script src="/assets/kelim.js?v=dccd2958" defer></script>
+<script src="/assets/tichnut-data.js?v=c718af4e" defer></script><script src="/assets/vendor/acorn/acorn.js?v=3ec96607" defer></script><script src="/assets/tichnut-sim-data.js?v=71ac42f0" defer></script><script src="/assets/tichnut-tzaad.js?v=af37a903" defer></script>
 </body>
 </html>
