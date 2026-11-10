@@ -184,12 +184,16 @@ function toolShabbat(city) {
   const fri = dow === 6 ? addDays(today, -1) : addDays(today, (5 - dow + 7) % 7);
   const sat = addDays(fri, 1);
   const gl = geo(city);
-  const candle = new Date(new Zmanim(gl, fri, false).sunset().getTime() - city[3] * 60000);
-  const havdala = new Zmanim(gl, sat, false).tzeit(8.5);
+  const sunsetFri = new Zmanim(gl, fri, false).sunset();
+  const candle = new Date(sunsetFri.getTime() - city[3] * 60000);
+  const zSat = new Zmanim(gl, sat, false);
+  const havdala = zSat.tzeit(8.5);
   const parsha = parshaOf(sat);
   return [
     `זמני שבת ב${city[0]}`, parsha,
     `הדלקת נרות ביום שישי ${sayTime(candle)}`, `${city[3]} דקות לפני השקיעה`,
+    `שקיעת החמה ביום שישי ${sayTime(sunsetFri)}`,
+    `שקיעת החמה בשבת ${sayTime(zSat.sunset())}`,
     `צאת השבת ${sayTime(havdala)}`
   ];
 }
