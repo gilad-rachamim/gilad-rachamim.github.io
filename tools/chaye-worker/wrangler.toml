@@ -1,0 +1,20 @@
+# "תמונה שמתעוררת" – החייאה בענן ל-/kelim/tochen/chaye/ (Cloudflare Worker → Runpod Public Endpoint p-video).
+# פריסה:  cd tools/chaye-worker && npx wrangler deploy
+# מפתח:   npx wrangler secret put RUNPOD_KEY   (המפתח של Runpod)
+# עלות:   0.10$ לסרטון. התקרה היומית לכל האתר: DAY_CAP (20 = עד 2$ ביום).
+name = "kelim-chaye"
+main = "chaye-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[vars]
+PER_IP = "2"
+DAY_CAP = "20"
+
+[[durable_objects.bindings]]
+name = "QUOTA"
+class_name = "Quota"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Quota"]

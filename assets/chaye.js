@@ -491,6 +491,65 @@
     } else { saveBlob(result.blob, f.name); $('ch-tip').hidden = false; used('download_fallback'); }
   });
 
+  // ---------- החייאה בענן (tools/chaye-worker → Runpod) ----------
+  var AI = 'https://kelim-chaye.gilad4049.workers.dev';
+  if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && window.__chAI) AI = window.__chAI; // בדיקות
+  var aiBusy = false, aiBlob = null;
+  function aiInfo(t) { $('ch-ai-info').textContent = t || ''; }
+  function aiStyle() { var r = document.querySelector('input[name=aist]:checked'); return r ? r.value : 'smile'; }
+  function photoData() {
+    var k = Math.min(1, 1024 / Math.max(src.width, src.height)), c = document.createElement('canvas');
+    c.width = Math.round(src.width * k); c.height = Math.round(src.height * k);
+    var x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(src, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', 0.88);
+  }
+  function sleepMs(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  $('ch-ai-go').addEventListener('click', function () {
+    if (aiBusy) return;
+    if (!src) { aiInfo('קודם בוחרים תמונה למעלה.'); return; }
+    if (!$('ch-ok').checked) { aiInfo('צריך לסמן שיש לכם רשות להשתמש בתמונה.'); $('ch-ok').focus(); return; }
+    var b = this, pg = $('ch-ai-prog'), st = aiStyle(), t0 = Date.now();
+    aiBusy = true; b.disabled = true; aiBlob = null; $('ch-ai-result').hidden = true;
+    pg.hidden = false; pg.value = 0.03; aiInfo('שולח את התמונה לענן…');
+    var tick = setInterval(function () { var s = (Date.now() - t0) / 1000; pg.value = Math.min(0.95, 0.03 + s / 80); }, 500);
+    function end(msg) { clearInterval(tick); aiBusy = false; b.disabled = false; pg.hidden = true; if (msg) aiInfo(msg); }
+    fetch(AI + '/animate', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ image: photoData(), style: st }) })
+      .then(function (r) { return r.json().then(function (j) { if (!r.ok || !j.id) throw new Error(j.error || 'שירות הענן לא זמין כרגע. נסו שוב בעוד כמה דקות.'); return j; }); })
+      .then(function (j) {
+        aiInfo('הענן יוצר את הסרטון… בערך דקה. אפשר להישאר בדף.');
+        used('ai_start', { style: st });
+        return (function poll(n) {
+          if (n > 120) throw new Error('זה לוקח יותר מהרגיל. נסו שוב בעוד כמה דקות.');
+          return sleepMs(n ? 4000 : 6000).then(function () { return fetch(AI + '/status/' + j.id); }).then(function (r) { return r.json(); }).then(function (s) {
+            if (s.status === 'done') return j.id;
+            if (s.status === 'fail') throw new Error(s.error || 'יצירת הסרטון נכשלה. אפשר לנסות שוב.');
+            if (s.queue) aiInfo('ממתינים בתור בענן… עוד רגע מתחילים.'); else aiInfo('הענן יוצר את הסרטון…');
+            return poll(n + 1);
+          });
+        })(0).then(function (id) {
+          aiInfo('מוריד את הסרטון…');
+          return fetch(AI + '/video/' + id).then(function (r) { if (!r.ok) throw new Error('לא הצלחתי להוריד את הסרטון. נסו שוב.'); return r.blob(); }).then(function (bl) {
+            aiBlob = bl.type ? bl : new Blob([bl], { type: 'video/mp4' });
+            window.__chAIResult = aiBlob; // לבדיקות
+            $('ch-ai-video').src = URL.createObjectURL(aiBlob); $('ch-ai-result').hidden = false;
+            end('הסרטון מוכן! ' + (j.left > 0 ? 'אפשר עוד ' + j.left + ' היום.' : 'זה היה האחרון להיום.'));
+            $('ch-ai-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            used('ai_done', { style: st, secs: Math.round((Date.now() - t0) / 1000) });
+          });
+        });
+      })
+      .catch(function (e) { end(e && e.message && /[֐-׿]/.test(e.message) ? e.message : 'אין חיבור לשירות הענן כרגע. בדקו את האינטרנט ונסו שוב.'); });
+  });
+  function aiName() { return (val('title').trim() || 'תמונה שמתעוררת').replace(/[\\/:*?"<>|]/g, '').slice(0, 50) + ' - החייאה.mp4'; }
+  $('ch-ai-dl').addEventListener('click', function () { if (aiBlob) { saveBlob(aiBlob, aiName()); used('ai_download'); } });
+  $('ch-ai-share').addEventListener('click', function () {
+    if (!aiBlob) return;
+    var f = new File([aiBlob], aiName(), { type: 'video/mp4' });
+    if (navigator.canShare && navigator.canShare({ files: [f] })) {
+      navigator.share({ files: [f], text: 'התמונה שלנו התעוררה 😊 – בחינם: https://gilad-rachamim.github.io/kelim/tochen/chaye/' }).then(function () { used('ai_share'); }).catch(function () {});
+    } else { saveBlob(aiBlob, f.name); aiInfo('הסרטון נשמר. עכשיו פותחים את הווטסאפ, ומצרפים אותו מהגלריה או מהקבצים.'); used('ai_download_fallback'); }
+  });
+
   form.addEventListener('change', save);
   form.addEventListener('input', save);
   form.addEventListener('change', function (e) { if (e.target.name === 'move' || e.target.name === 'secs') pStart = performance.now(); });
