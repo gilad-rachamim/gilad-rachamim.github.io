@@ -127,7 +127,7 @@
       T = { code: hp.get('c'), key: hp.get('k'), name: '' };
       var old = list.filter(function (c) { return c.code === T.code; })[0]; if (old) T.name = old.name;
       list = [T].concat(list.filter(function (c) { return c.code !== T.code; })); lsSet('kita-teach', list);
-    } else if (list.length) { T = list[0]; history.replaceState(null, '', '#c=' + T.code + '&k=' + T.key); }
+    } else if (list.length) { T = list.filter(function (c) { return c.code === hp.get('c'); })[0] || list[0]; history.replaceState(null, '', '#c=' + T.code + '&k=' + T.key); }
     if (!T) { $('kt-nokey').hidden = false; return; }
     var adminUrl = SITE + 'more/#c=' + T.code + '&k=' + T.key;
     var names = lsGet('kita-names-' + T.code, {});
@@ -158,7 +158,7 @@
       $('kt-t-switch').hidden = !others.length;
       $('kt-t-switch').innerHTML = others.length ? '<b>עוד כיתות שלי</b>' + others.map(function (c) { return '<a href="#c=' + c.code + '&k=' + c.key + '" data-sw>' + esc(c.name) + ' ←<span>' + c.code + '</span></a>'; }).join('') : '';
       tabs($('kt-t-per'), 'data-p', tp, function (p) { tp = p; admin('get'); });
-      renderBoard(); renderGifts(); renderSet(); renderCerts(); giladGift();
+      renderBoard(); renderGifts(); renderSet(); renderCerts(); giladGift(); weekly(); calLinks();
     }
     $('kt-t-switch').addEventListener('click', function (e) { if (e.target.closest('[data-sw]')) setTimeout(function () { location.reload(); }, 30); });
 
@@ -258,6 +258,45 @@
         }
       });
     }
+
+    // ---- סיכום השבוע שעבר (בראש הלוח) + תזכורת ביומן כל יום ראשון ----
+    var wkDone = '';
+    function weekly() {
+      if (wkDone === T.code) return; wkDone = T.code;
+      call('/c/' + T.code + '/admin', { key: T.key, act: 'get', p: 'prevweek' }).then(function (d) {
+        var box = $('kt-wk');
+        if (!d.ok || d.p !== 'prevweek') { box.hidden = true; return; } // שרת ישן בלי "השבוע שעבר"
+        var top = d.rows.filter(function (r) { return r.pts > 0 && r.place <= 3; });
+        if (!top.length) { box.hidden = true; return; }
+        var act = d.rows.filter(function (r) { return r.pts > 0; }).length;
+        var due = (d.gifts || []).map(function (g) {
+          var m = /^pts:(\d+)$/.exec(g.who), win = d.rows.filter(function (r) { return r.pts > 0 && (g.who === 'all' || (m ? r.pts >= +m[1] : g.who === 'top3' ? r.place <= 3 : r.place === +g.who)); });
+          return win.length ? g.i + ' ' + g.t + ': ' + win.map(function (r) { return nm(r); }).join(', ') : '';
+        }).filter(Boolean);
+        box.innerHTML = '<b>📅 סיכום השבוע שעבר</b> · ' + act + ' מתוך ' + d.rows.length + ' צברו נקודות<ol class="kt-list">' + top.map(function (r) { return '<li>' + medal(r.place) + ' ' + esc(nm(r)) + ' · ' + r.pts + '</li>'; }).join('') + '</ol>' +
+          (due.length ? '<b>מה מגיע:</b><ul class="kt-list">' + due.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : '') +
+          '<div class="kt-btns"><a class="btn btn-gold btn-sm" id="kt-wk-wa" target="_blank" rel="noopener" href="#"><svg class="ic"><use href="#wa"/></svg> לברך את הכיתה</a></div>';
+        var msg = '🏆 סיכום השבוע ב' + d.name + ':\n' + top.map(function (r) { return medal(r.place) + ' ' + r.nick + ' – ' + r.pts + ' נקודות'; }).join('\n') + '\nכל הכבוד! ' + act + ' מתוך ' + d.rows.length + ' צברו השבוע. שבוע חדש התחיל, כולם מתחילים מאפס 💪\n' + SITE;
+        box.querySelector('#kt-wk-wa').href = 'https://wa.me/?text=' + encodeURIComponent(msg);
+        box.querySelector('#kt-wk-wa').onclick = function () { used('chashiva_kita_more', 'weekly-wa'); };
+        box.hidden = false;
+      });
+    }
+    function nextSunday8() { var d = new Date(); d.setHours(8, 0, 0, 0); d.setDate(d.getDate() + ((7 - d.getDay()) % 7 || 7)); return d; }
+    function ymd(d) { return d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0'); }
+    function calLinks() {
+      var d = nextSunday8(), day = ymd(d), url = SITE + 'more/#c=' + T.code, title = 'כיתה משחקת – סיכום השבוע של ' + (data.name || ''), det = 'מי הובילו השבוע ומה מגיע להן: ' + url;
+      $('kt-cal-g').href = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(title) + '&details=' + encodeURIComponent(det) + '&dates=' + day + 'T080000/' + day + 'T081500&ctz=Asia/Jerusalem&recur=' + encodeURIComponent('RRULE:FREQ=WEEKLY;BYDAY=SU');
+    }
+    $('kt-cal-g').addEventListener('click', function () { used('chashiva_kita_more', 'cal-google'); });
+    $('kt-cal-ics').addEventListener('click', function () {
+      var d = nextSunday8(), day = ymd(d), url = SITE + 'more/#c=' + T.code;
+      var ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//kelim//kita//HE', 'BEGIN:VEVENT', 'UID:kita-' + T.code + '@gilad-rachamim.github.io', 'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z',
+        'DTSTART;TZID=Asia/Jerusalem:' + day + 'T080000', 'DURATION:PT15M', 'RRULE:FREQ=WEEKLY;BYDAY=SU', 'SUMMARY:כיתה משחקת – סיכום השבוע של ' + (data.name || ''), 'DESCRIPTION:מי הובילו השבוע ומה מגיע להן', 'URL:' + url,
+        'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:כיתה משחקת', 'TRIGGER:PT0M', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+      var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' })); a.download = 'kita-' + T.code + '.ics'; document.body.appendChild(a); a.click(); a.remove();
+      used('chashiva_kita_more', 'cal-ics');
+    });
 
     // ---- תעודות ----
     function certRows() {

@@ -128,7 +128,7 @@ export class Kita {
     }
 
     if (p === '/board') {
-      const per = ['week', 'month', 'round', 'all'].includes(url.searchParams.get('p')) ? url.searchParams.get('p') : this.get('period');
+      const per = ['week', 'prevweek', 'month', 'round', 'all'].includes(url.searchParams.get('p')) ? url.searchParams.get('p') : this.get('period');
       return json({ ok: 1, name: this.get('name'), teacher: this.get('teacher'), period: per, def: this.get('period'), since: this.since(per), msg: this.get('msg'), gifts: JSON.parse(this.get('gifts', '[]')), rows: this.board(per) });
     }
 
@@ -237,7 +237,7 @@ export class Kita {
         return json({ ok: 1 });
       } else if (a !== 'get') return json({ error: 'פעולה לא מוכרת' }, 400);
       this.touch();
-      const per = ['week', 'month', 'round', 'all'].includes(b.p) ? b.p : this.get('period');
+      const per = ['week', 'prevweek', 'month', 'round', 'all'].includes(b.p) ? b.p : this.get('period');
       const games = {};
       for (const r of this.rows(`SELECT sid, game, SUM(pts) AS p, COUNT(*) AS n FROM ev WHERE ${this.where(per)} GROUP BY sid, game`)) (games[r.sid] = games[r.sid] || {})[r.game] = { p: r.p, n: r.n };
       const rows = this.board(per).map(r => Object.assign(r, { games: games[r.sid] || {} }));
@@ -254,7 +254,7 @@ export class Kita {
   today(sid, day) { return this.rows('SELECT COALESCE(SUM(pts), 0) AS n FROM ev WHERE sid = ? AND day = ?', sid, day)[0].n; }
   since(per) {
     const now = Date.now(), d = ilDay(now);
-    if (per === 'week') { const x = new Date(d + 'T12:00:00Z'); x.setUTCDate(x.getUTCDate() - x.getUTCDay()); return x.toISOString().slice(0, 10); }
+    if (per === 'week' || per === 'prevweek') { const x = new Date(d + 'T12:00:00Z'); x.setUTCDate(x.getUTCDate() - x.getUTCDay() - (per === 'prevweek' ? 7 : 0)); return x.toISOString().slice(0, 10); }
     if (per === 'month') return d.slice(0, 8) + '01';
     if (per === 'round') return ilDay(+this.get('round'));
     return '';
@@ -262,6 +262,7 @@ export class Kita {
   where(per) {
     if (per === 'round') return 't >= ' + (+this.get('round') || 0);
     if (per === 'all') return '1 = 1';
+    if (per === 'prevweek') return "day >= '" + this.since('prevweek') + "' AND day < '" + this.since('week') + "'";
     return "day >= '" + this.since(per) + "'";
   }
   board(per) {
