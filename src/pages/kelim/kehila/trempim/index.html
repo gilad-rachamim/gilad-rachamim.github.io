@@ -109,6 +109,14 @@
           <button class="btn btn-gold" type="button" id="dr-now">🚗 יוצא עכשיו</button>
           <div class="tp-say field">
             <button class="btn btn-line" type="button" id="dr-mic">🎙️ להגיד את הנסיעה</button>
+            <ul class="tp-say-list" id="dr-say-list" hidden aria-live="polite">
+              <li data-k="when"><b>מתי?</b> היום, מחר, ביום חמישי, או "כל יום"</li>
+              <li data-k="time"><b>באיזו שעה?</b> "בשבע וחצי", "ב-17:30", או "עכשיו"</li>
+              <li data-k="from"><b>מאיפה?</b> "מקריית משה" <span>(אם לא אומרים: מהמיקום שלך)</span></li>
+              <li data-k="to"><b>לאן?</b> "לתל אביב", "לרחוב יפו 20 בירושלים"</li>
+              <li data-k="seats" class="opt"><b>כמה מקומות?</b> "שני מקומות" <span>(לא חובה)</span></li>
+              <li data-k="free" class="opt"><b>בחינם?</b> "בחינם" או "במונית" <span>(לא חובה)</span></li>
+            </ul>
             <div class="tp-row"><input id="dr-say" type="text" maxlength="200" placeholder="או לכתוב: מחר ב-7:30 מקריית משה לתל אביב"><button class="btn btn-line btn-sm" type="button" id="dr-say-go">למלא</button></div>
           </div>
           <div id="dr-again"></div>

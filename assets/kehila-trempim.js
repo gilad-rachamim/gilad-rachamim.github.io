@@ -825,13 +825,34 @@
     msg.textContent = 'מחפש את המקומות...';
     Promise.all(jobs).then(function () {
       var when = p.days ? 'נסיעה קבועה ' + daysShort(p.days) : dayLabel($('dr-date').value);
-      msg.textContent = 'הבנתי: ' + when + ' ב-' + $('dr-time').value + (p.to ? ', אל ' + $('dr-to').value : '') + '. בודקים ולוחצים לפרסם.';
+      var miss = sayMissing(sayCheck(text));
+      msg.textContent = 'הבנתי: ' + when + ' ב-' + $('dr-time').value + (p.to ? ', אל ' + $('dr-to').value : '') + '. ' +
+        (miss.length ? 'חסר: ' + miss.join(', ') + '. אפשר להשלים בטופס או להקליט שוב.' : 'בודקים ולוחצים לפרסם.');
       $('dr-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
     used('fast-say');
   }
+  // מה לומר בהקלטה: כל פרט מקבל ✓ ברגע שהבנתי אותו
+  function sayCheck(text) {
+    var p = parseRide(text || ''), has = {
+      when: !!(p.date || p.days || p.now != null), time: !!(p.time || p.now != null), from: !!p.from, to: !!p.to,
+      seats: !!p.seats, free: !!(p.free || p.taxi),
+    };
+    $('dr-say-list').querySelectorAll('li').forEach(function (li) { li.classList.toggle('ok', has[li.getAttribute('data-k')]); });
+    return has;
+  }
+  function sayMissing(has) {
+    var need = [];
+    if (!has.to) need.push('לאן');
+    if (!has.time) need.push('באיזו שעה');
+    if (!has.when) need.push('מתי (היום, מחר, או כל יום)');
+    return need;
+  }
   var rec = null;
   function initSay() {
+    var list = $('dr-say-list');
+    $('dr-say').addEventListener('focus', function () { list.hidden = false; });
+    $('dr-say').addEventListener('input', function () { list.hidden = false; sayCheck($('dr-say').value); });
     var SR = window.SpeechRecognition || window.webkitSpeechRecognition, mic = $('dr-mic');
     $('dr-say-go').addEventListener('click', function () { var v = $('dr-say').value.trim(); if (v) applySentence(v); });
     $('dr-say').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); $('dr-say-go').click(); } });
@@ -840,12 +861,12 @@
       if (rec) { rec.stop(); return; }
       rec = new SR(); rec.lang = 'he-IL'; rec.interimResults = true; rec.maxAlternatives = 1; rec.continuous = false;
       var final = '';
-      mic.classList.add('on'); mic.textContent = '🎙️ מקשיב... (לחיצה לעצור)';
+      mic.classList.add('on'); mic.textContent = '🎙️ מקשיב... (לחיצה לעצור)'; list.hidden = false; sayCheck('');
       $('dr-msg').textContent = 'אומרים למשל: "מחר בשבע וחצי מקריית משה לתל אביב, שלושה מקומות".';
       rec.onresult = function (e) {
         var txt = '';
         for (var i = 0; i < e.results.length; i++) { txt += e.results[i][0].transcript; if (e.results[i].isFinal) final = txt; }
-        $('dr-say').value = txt;
+        $('dr-say').value = txt; sayCheck(txt);
       };
       rec.onerror = function (e) {
         $('dr-msg').textContent = e.error === 'not-allowed' || e.error === 'service-not-allowed' ? 'אין הרשאה למיקרופון. אפשר לאשר בהגדרות הדפדפן, או לכתוב במשפט למטה.' : 'לא שמעתי טוב. נסו שוב, או כתבו במשפט.';

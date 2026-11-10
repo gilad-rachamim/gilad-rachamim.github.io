@@ -86,3 +86,12 @@
 .tp-after .acts{display:flex;gap:.45rem;flex-wrap:wrap}
 .tp-after .kh-hint{margin:0}
 .tp-say.field{margin:0}
+/* מה לומר בהקלטה */
+.tp-say-list{list-style:none;margin:0;padding:.55rem .7rem;border:1px dashed var(--gold-soft);border-radius:12px;display:grid;gap:.3rem;color:var(--body);font-size:.92rem}
+.tp-say-list li{padding-inline-start:1.6rem;position:relative;line-height:1.4}
+.tp-say-list li::before{content:"○";position:absolute;inset-inline-start:0;color:var(--muted);font-size:1rem}
+.tp-say-list li.ok::before{content:"✓";color:var(--accent);font-weight:700}
+.tp-say-list li.ok{color:var(--cream)}
+.tp-say-list li b{color:var(--cream)}
+.tp-say-list li span{color:var(--muted);font-size:.85rem}
+.tp-say-list li.opt:not(.ok){opacity:.75}
