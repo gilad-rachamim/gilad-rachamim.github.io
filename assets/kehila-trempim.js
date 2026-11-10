@@ -35,7 +35,7 @@
     'not on route': 'הנקודות שלך כבר לא על המסלול של הנהג.', 'full': 'אין יותר מקום בנסיעה הזאת.', 'ride gone': 'הנסיעה בוטלה.',
     'date': 'התאריך לא תקין (עד 30 יום קדימה).', 'time': 'חסרה שעה.', 'route': 'לא הצלחתי לחשב מסלול.', 'phone': 'מספר הטלפון לא נראה תקין.',
     'name': 'חסר שם.', 'agree': 'צריך לסמן שאתה מעל 18 ומסכים לכללים.', 'paybox': 'קישור הפייבוקס לא נראה תקין.', 'profile': 'צריך להשלים פרופיל.',
-    'too many rides': 'יש לך כבר הרבה נסיעות פתוחות.', 'too many requests': 'שלחת הרבה בקשות היום. נסה שוב מחר.', 'place out of range': 'הכתובת מחוץ לישראל.',
+    'seats': 'במונית אפשר עד 3 מצטרפים.', 'too many rides': 'יש לך כבר הרבה נסיעות פתוחות.', 'too many requests': 'שלחת הרבה בקשות היום. נסה שוב מחר.', 'place out of range': 'הכתובת מחוץ לישראל.',
   };
   var errText = function (e) { return ERR[e && e.code] || 'משהו השתבש. נסה שוב בעוד רגע.'; };
 
@@ -51,6 +51,16 @@
     return 'יום ' + DAYS[d.getDay()] + ' ' + d.getDate() + '.' + (d.getMonth() + 1);
   }
   function price(km, rate) { return rate ? Math.max(5, Math.round(km * rate)) : 0; }
+  // מונית: אותו תעריף מונה כמו בשרת (משרד התחבורה, בתוקף מ-01.04.2026). א' ביום חול, ב' בערב ובשבת, ג' בלילה של שישי ושבת.
+  var TAXI = { start: 12.46, booking: 5.78, a: 1.95, b: 2.34, c: 2.73, over10: 1.84 };
+  function taxiRate(date, time) {
+    var wd = new Date((date || addDays(0)) + 'T12:00:00').getDay(), t = +(time || '12:00').slice(0, 2) * 60 + +(time || '12:00').slice(3, 5);
+    var day = t >= 360 && t <= 1260;
+    if (wd === 6) return day && t <= 1140 ? TAXI.b : TAXI.c;
+    if (wd === 5 && !day) return t > 1380 || t < 360 ? TAXI.c : TAXI.b;
+    return day ? TAXI.a : TAXI.b;
+  }
+  function taxiFare(km, min, date, time) { var r = taxiRate(date, time); return Math.round(TAXI.start + TAXI.booking + km * r + min * r + Math.max(0, km - 10) * TAXI.over10); }
 
   /* ---------- כתובות: השלמה אוטומטית ---------- */
   function photonLabel(p) {
@@ -186,7 +196,8 @@
   function loadStats() {
     fetch(API + '/stats').then(function (r) { return r.json(); }).then(function (s) {
       if (!s || s.rides == null) return;
-      $('tp-stats').innerHTML = '<span><b>' + s.rides + '</b> נסיעות פתוחות</span><span><b>' + s.users + '</b> חברים במיזם</span><span><b>' + s.joined + '</b> טרמפים שאושרו</span>';
+      $('tp-stats').innerHTML = '<span><b>' + s.rides + '</b> נסיעות פתוחות</span><span><b>' + s.users + '</b> חברים במיזם</span><span><b>' + s.joined + '</b> טרמפים שאושרו</span>' +
+        (s.taxis ? '<span><b>' + s.taxis + '</b> מוניות משותפות</span>' : '');
     }).catch(function () {});
   }
 
@@ -199,10 +210,17 @@
       Promise.all([placeOf($('tc-from')), placeOf($('tc-to'))]).then(function (pp) { return routeOf(pp[0], pp[1]); }).then(function (r) {
         var km = Math.round(r.km * 10) / 10;
         res.innerHTML = '<div class="tp-big">' + price(km, 1) + ' ₪ <small>לנוסע, לפי שקל לק"מ</small></div>' +
-          '<p>' + km + ' ק"מ · כ-' + Math.round(r.min) + ' דקות נסיעה בלי פקקים. עלות הדלק לנהג: כ-' + Math.round(km * 0.75) + ' ₪. התקרה במיזם (פי 1.5): ' + price(km, 1.5) + ' ₪.</p>';
+          '<p>' + km + ' ק"מ · כ-' + Math.round(r.min) + ' דקות נסיעה בלי פקקים. עלות הדלק לנהג: כ-' + Math.round(km * 0.75) + ' ₪. התקרה במיזם (פי 1.5): ' + price(km, 1.5) + ' ₪.</p>' +
+          taxiSplitText(taxiFare(km, r.min));
         used('calc');
       }).catch(function () { res.textContent = 'לא מצאתי את אחת הכתובות. נסו לכתוב רחוב ועיר.'; });
     });
+  }
+
+  // כמה כל אחד משלם במונית כשמתחלקים
+  function taxiSplitText(fare) {
+    return '<div class="tp-pay tp-taxi-calc">🚕 <b>במונית לבד: כ-' + fare + ' ₪.</b> שניים מתחלקים: ' + Math.round(fare / 2) + ' ₪ לכל אחד · שלושה: ' + Math.round(fare / 3) +
+      ' ₪ · ארבעה: ' + Math.round(fare / 4) + ' ₪. <small>הערכה לפי תעריף המונה של משרד התחבורה, עם הזמנה, בלי פקקים. המונה קובע.</small></div>';
   }
 
   /* ---------- כניסה ---------- */
@@ -312,6 +330,7 @@
     var stars = d.rating ? ' · ★ ' + d.rating + ' (' + d.ratingN + ')' : '';
     var near = m.pickupKm < 0.1 ? 'ממש לידך' : m.pickupKm < 1 ? Math.round(m.pickupKm * 1000 / 50) * 50 + ' מ\' ממך' : m.pickupKm + ' ק"מ ממך';
     var act;
+    if (m.taxi) return taxiMatchHtml(m, i, near, stars);
     if (m.mine) act = '<span class="tp-st ' + m.mine.status + '">' + (m.mine.status === 'approved' ? 'אושר! ראו בלשונית הבקשות' : 'הבקשה נשלחה, ממתין לנהג') + '</span>';
     else act = (m.price ? '<span class="tp-price">' + m.price + ' ₪</span><button type="button" class="go" data-req="' + i + '" data-mode="paid">לבקש בהשתתפות בדלק</button>' : '<span class="tp-price tp-free">בחינם</span>') +
       '<button type="button" data-req="' + i + '" data-mode="free">' + (m.price ? 'לבקש בחינם' : 'לבקש להצטרף') + '</button>';
@@ -322,6 +341,20 @@
       (m.note ? '<p>' + esc(m.note) + '</p>' : '') +
       '<div class="acts">' + act + '</div></div>';
   }
+  // כרטיס מונית: החלק המשוער של המבקש, וכמה הוא חוסך מול מונית לבד
+  function taxiMatchHtml(m, i, near, stars) {
+    var t = m.taxi, d = m.driver;
+    var act = m.mine ? '<span class="tp-st ' + m.mine.status + '">' + (m.mine.status === 'approved' ? 'אושר! ראו בלשונית הבקשות' : 'הבקשה נשלחה, ממתין לאישור') + '</span>' :
+      '<span class="tp-price">כ-' + m.price + ' ₪</span><button type="button" class="go" data-req="' + i + '" data-mode="paid">לבקש להצטרף למונית</button>';
+    return '<div class="kh-item tp-match tp-taxi" data-i="' + i + '">' +
+      '<div class="top"><b><span class="tp-kind">🚕 מונית</span> ' + esc(d.name) + ' · עובר לידך ב-' + esc(m.pass) + '</b><span>' + esc(dayLabel(m.date)) + ' · ' + (m.seatsLeft === 1 ? 'מקום אחד' : 'עוד ' + m.seatsLeft + ' מקומות') + '</span></div>' +
+      '<p>' + esc(m.from) + ' ← ' + esc(m.to) + (m.regular ? '<span class="tp-reg">נסיעה קבועה</span>' : '') + '</p>' +
+      '<p class="lbl">' + near + ' · הדרך שלך ' + m.segKm + ' ק"מ' + stars + '</p>' +
+      '<p class="tp-save">המונית כולה כ-' + t.fare + ' ₪. ' + (t.split === 'km' ? 'מתחלקים לפי הק"מ: ' : 'מתחלקים שווה בשווה, ' + t.people + ' נוסעים: ') +
+      'החלק שלך כ-<b>' + m.price + ' ₪</b>' + (t.save ? ' במקום כ-' + t.alone + ' ₪ במונית לבד. <b>חוסך כ-' + t.save + ' ₪.</b>' : '.') + '</p>' +
+      (m.note ? '<p>' + esc(m.note) + '</p>' : '') +
+      '<div class="acts">' + act + '</div></div>';
+  }
   var lastMatches = [];
   function initRiderActions() {
     $('rd-list').addEventListener('click', function (e) {
@@ -329,13 +362,13 @@
       var card = b.closest('.tp-match');
       var m = lastMatches[+b.getAttribute('data-req')];
       if (!m) return;
-      var note = prompt('רוצה להוסיף משהו לנהג? (לא חובה)', '');
+      var note = prompt(m.taxi ? 'רוצה להוסיף משהו למי שמזמין את המונית? (לא חובה)' : 'רוצה להוסיף משהו לנהג? (לא חובה)', '');
       if (note === null) return;
       b.disabled = true;
       api('/requests', { ride: m.ride, date: m.date, pickup: lastSearch.from, drop: lastSearch.to, mode: b.getAttribute('data-mode'), msg: note })
       .then(function () {
         used('request');
-        card.querySelector('.acts').innerHTML = '<span class="tp-st pending">הבקשה נשלחה. הנהג יקבל אותה כשייכנס לאתר, ותראה כאן בלשונית הבקשות כשיאשר.</span>';
+        card.querySelector('.acts').innerHTML = '<span class="tp-st pending">הבקשה נשלחה. ' + (m.taxi ? 'מי שמזמין את המונית' : 'הנהג') + ' יקבל אותה כשייכנס לאתר, ותראה כאן בלשונית הבקשות כשיאשר.</span>';
       }).catch(function (err) { b.disabled = false; alert(errText(err)); });
     });
   }
@@ -344,7 +377,19 @@
   var drRoute = null;
   function initDriver() {
     autocomplete($('dr-from')); autocomplete($('dr-to'));
-    chips('dr-kind'); chips('dr-days', true);
+    chips('dr-kind'); chips('dr-days', true); chips('dr-mode'); chips('dr-split');
+    $('dr-mode').addEventListener('change', function () {
+      var tx = isTaxiMode();
+      $('dr-car-f').hidden = tx; $('dr-taxi-f').hidden = !tx; $('dr-taxi-hint').hidden = !tx;
+      $('dr-go').textContent = tx ? 'לחשב מחיר מונית ולפרסם' : 'לחשב מסלול ולפרסם';
+      $('dr-note').placeholder = tx ? 'מזמין דרך גט, אפשר לחכות 5 דקות' : 'אוסף ליד הכניסה לשכונה, בלי עישון';
+      showRoute();
+    });
+    $('dr-split').addEventListener('change', function () {
+      $('dr-split-hint').textContent = chipVal('dr-split', 'data-s') === 'km' ? 'כל מצטרף משלם לפי החלק שלו מהדרך: מי שנוסע חצי דרך משלם פחות.' : 'כל מי שבמונית משלם אותו סכום.';
+      showRoute();
+    });
+    $('dr-tseats').addEventListener('change', showRoute);
     $('dr-date').value = addDays(0); $('dr-date').min = addDays(0); $('dr-date').max = addDays(30);
     $('dr-here').addEventListener('click', function () { hereInto($('dr-from'), $('dr-here')); });
     $('dr-kind').addEventListener('change', function () {
@@ -361,9 +406,20 @@
     });
     $('dr-cal').addEventListener('click', importCalendar);
   }
+  var isTaxiMode = function () { return chipVal('dr-mode', 'data-m') === 'taxi'; };
   function showRoute() {
     if (!drRoute) return;
     var rate = +$('dr-rate').value, km = Math.round(drRoute.km * 10) / 10;
+    if (isTaxiMode()) {
+      var reg = chipVal('dr-kind', 'data-k') === 'regular';
+      var fare = taxiFare(km, drRoute.min, reg ? addDays(0) : $('dr-date').value, $('dr-time').value);
+      var n = +$('dr-tseats').value + 1;
+      $('dr-route').innerHTML = '<b>' + km + ' ק"מ · כ-' + Math.round(drRoute.min) + ' דקות · המונית כ-' + fare + ' ₪.</b> ' +
+        (chipVal('dr-split', 'data-s') === 'km' ? 'כל מצטרף משלם לפי הק"מ שלו, ואת השאר משלמים יחד.' :
+          'אם יצטרפו ' + (n - 1) + ', כל אחד משלם כ-' + Math.round(fare / n) + ' ₪, ואתה חוסך כ-' + (fare - Math.round(fare / n)) + ' ₪.') +
+        ' תקבל 10 נקודות חסד על כל מי שמצטרף.';
+      return;
+    }
     $('dr-route').innerHTML = '<b>' + km + ' ק"מ · כ-' + Math.round(drRoute.min) + ' דקות.</b> ' +
       (rate ? 'נוסע לכל הדרך משתתף ב-' + price(km, rate) + ' ₪; מי שמצטרף לחלק מהדרך משלם לפי הק"מ שלו (מינימום 5 ₪).' : 'בחינם. תזכה לנקודות חסד על כל טרמפ.');
   }
@@ -381,12 +437,15 @@
       drRoute = r; showRoute();
       msg.textContent = 'מפרסם...';
       var data = { from: from, to: to, time: $('dr-time').value, seats: +$('dr-seats').value, rate: +$('dr-rate').value, km: r.km, min: r.min, route: r.pts, note: $('dr-note').value };
+      if (isTaxiMode()) { data.kind = 'taxi'; data.split = chipVal('dr-split', 'data-s'); data.seats = +$('dr-tseats').value; data.rate = 0; }
       if (reg) data.days = days; else data.date = $('dr-date').value;
       return api('/rides', data);
     }).then(function () {
-      used('publish');
+      var tx = isTaxiMode();
+      used(tx ? 'publish-taxi' : 'publish');
       var when = reg ? 'בימים ' + days.map(function (d) { return LET[d] + "'"; }).join(' ') : dayLabel($('dr-date').value);
-      var share = 'אני נוסע ' + when + ' ב-' + $('dr-time').value + ' מ' + from.label + ' ל' + to.label + ', ויש לי מקום. מי שבדרך מוזמן להצטרף: ' + PAGE;
+      var share = tx ? 'אני לוקח מונית ' + when + ' ב-' + $('dr-time').value + ' מ' + from.label + ' ל' + to.label + '. מי שבדרך מוזמן להצטרף, ומתחלקים במונה: ' + PAGE :
+        'אני נוסע ' + when + ' ב-' + $('dr-time').value + ' מ' + from.label + ' ל' + to.label + ', ויש לי מקום. מי שבדרך מוזמן להצטרף: ' + PAGE;
       msg.innerHTML = 'הנסיעה פורסמה! כל מי שבדרך יראה אותה. <a class="btn btn-line btn-sm" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(share) + '">לספר בקבוצה של השכונה</a>';
       drRoute = null; $('dr-route').innerHTML = '';
       loadMyRides(); loadStats();
@@ -399,7 +458,9 @@
     api('/rides/mine').then(function (j) {
       $('dr-list').innerHTML = j.rides.length ? j.rides.map(function (r) {
         var when = r.days ? 'קבוע: ' + r.days.split(',').map(function (d) { return LET[+d] + "'"; }).join(' ') : dayLabel(r.date);
-        return '<div class="kh-item"><div class="top"><b>' + esc(when) + ' · ' + esc(r.time) + '</b><span>' + r.seats + ' מקומות · ' + (r.rate ? r.rate + ' ₪ לק"מ' : 'בחינם') + '</span></div>' +
+        var tx = r.kind === 'taxi';
+        return '<div class="kh-item' + (tx ? ' tp-taxi' : '') + '"><div class="top"><b>' + (tx ? '<span class="tp-kind">🚕 מונית</span> ' : '') + esc(when) + ' · ' + esc(r.time) + '</b><span>' + r.seats + ' מקומות · ' +
+          (tx ? 'כ-' + r.fare + ' ₪, ' + (r.split === 'km' ? 'לפי ק"מ' : 'שווה בשווה') : r.rate ? r.rate + ' ₪ לק"מ' : 'בחינם') + '</span></div>' +
           '<p>' + esc(r.from_label) + ' ← ' + esc(r.to_label) + ' · ' + r.km + ' ק"מ</p>' +
           (r.pending ? '<p class="lbl">' + r.pending + ' מבקשים להצטרף – ראו בלשונית הבקשות</p>' : '') +
           (r.approved ? '<p class="lbl">אושרו: ' + r.approved + '</p>' : '') +
@@ -472,9 +533,16 @@
     var r = x.rider;
     var acts = '';
     if (x.status === 'pending') {
-      acts = '<button type="button" class="ok" data-act="approve" data-id="' + x.id + '">לאשר' + (x.mode === 'paid' && x.price ? ' (' + x.price + ' ₪)' : '') + '</button>' +
-        (x.mode === 'paid' && x.price ? '<button type="button" data-act="approve-free" data-id="' + x.id + '">לאשר בחינם</button>' : '') +
+      acts = '<button type="button" class="ok" data-act="approve" data-id="' + x.id + '">' + (x.kind === 'taxi' ? 'לאשר שיצטרף למונית' : 'לאשר' + (x.mode === 'paid' && x.price ? ' (' + x.price + ' ₪)' : '')) + '</button>' +
+        (x.mode === 'paid' && x.price && x.kind !== 'taxi' ? '<button type="button" data-act="approve-free" data-id="' + x.id + '">לאשר בחינם</button>' : '') +
         '<button type="button" class="no" data-act="decline" data-id="' + x.id + '">לא הפעם</button>';
+    } else if (x.status === 'approved' && x.kind === 'taxi') {
+      var tt = 'היי ' + r.name.split(' ')[0] + ', זה ' + me.name.split(' ')[0] + ' מהטרמפים. נפגשים ' + dayLabel(x.date) + ' בסביבות ' + x.pass + ' ב' + x.pickup.label +
+        ', ואני עם המונית. החלק שלך במונה כ-' + x.price + ' ₪, בביט אחרי הנסיעה.';
+      acts = '<a href="' + waPhone(r.phone, tt) + '" target="_blank" rel="noopener">ווטסאפ ל' + esc(r.name.split(' ')[0]) + '</a>' +
+        '<a href="' + waze(x.pickup) + '" target="_blank" rel="noopener">נפגשים ב' + esc(x.pickup.label) + ' (Waze)</a>' +
+        '<a href="' + calLink('מונית משותפת עם ' + r.name, x.date, x.pass, 20, x.pickup.label, 'טלפון: ' + r.phone + '\n' + PAGE) + '" target="_blank" rel="noopener">ליומן</a>' +
+        '<button type="button" data-act="cancel" data-id="' + x.id + '">לבטל</button>';
     } else if (x.status === 'approved') {
       var t = 'היי ' + r.name.split(' ')[0] + ', זה ' + me.name.split(' ')[0] + ' מהטרמפים. אוסף אותך ' + dayLabel(x.date) + ' בסביבות ' + x.pass + ' ב' + x.pickup.label + '.';
       acts = '<a href="' + waPhone(r.phone, t) + '" target="_blank" rel="noopener">ווטסאפ ל' + esc(r.name.split(' ')[0]) + '</a>' +
@@ -482,14 +550,25 @@
         '<a href="' + calLink('טרמפ: לאסוף את ' + r.name, x.date, x.pass, 20, x.pickup.label, 'טלפון: ' + r.phone + '\n' + PAGE) + '" target="_blank" rel="noopener">ליומן (ול-Waze)</a>' +
         '<button type="button" data-act="cancel" data-id="' + x.id + '">לבטל</button>';
     }
-    return '<div class="kh-item tp-match"><div class="top"><b>' + esc(r.name) + (r.rating ? ' · ★ ' + r.rating : '') + '</b><span class="tp-st ' + x.status + '">' + ST[x.status] + '</span></div>' +
-      '<p>' + esc(dayLabel(x.date)) + ' · נסיעה של ' + esc(x.time) + ' · ' + esc(x.from) + ' ← ' + esc(x.to) + '</p>' +
-      '<p class="lbl">איסוף ב' + esc(x.pickup.label) + ' בערך ב-' + esc(x.pass) + ' · עד ' + esc(x.drop) + ' · ' + x.segKm + ' ק"מ · ' + (x.mode === 'free' ? 'מבקש בחינם' : money(x)) + '</p>' +
+    var tx = x.kind === 'taxi';
+    return '<div class="kh-item tp-match' + (tx ? ' tp-taxi' : '') + '"><div class="top"><b>' + (tx ? '<span class="tp-kind">🚕 מונית</span> ' : '') + esc(r.name) + (r.rating ? ' · ★ ' + r.rating : '') + '</b><span class="tp-st ' + x.status + '">' + ST[x.status] + '</span></div>' +
+      '<p>' + esc(dayLabel(x.date)) + ' · ' + (tx ? 'מונית של ' : 'נסיעה של ') + esc(x.time) + ' · ' + esc(x.from) + ' ← ' + esc(x.to) + '</p>' +
+      '<p class="lbl">' + (tx ? 'נפגשים ב' : 'איסוף ב') + esc(x.pickup.label) + ' בערך ב-' + esc(x.pass) + ' · עד ' + esc(x.drop) + ' · ' + x.segKm + ' ק"מ · ' +
+        (tx ? 'משתתף במונה בכ-' + x.price + ' ₪ (המונית כולה כ-' + x.fare + ' ₪)' : x.mode === 'free' ? 'מבקש בחינם' : money(x)) + '</p>' +
       (x.msg ? '<p>"' + esc(x.msg) + '"</p>' : '') + '<div class="acts">' + acts + '</div></div>';
   }
   function riderReqHtml(x) {
-    var d = x.driver, acts = '', pay = '';
-    if (x.status === 'approved') {
+    var d = x.driver, acts = '', pay = '', tx = x.kind === 'taxi';
+    if (x.status === 'approved' && tx) {
+      var tt = 'היי ' + d.name.split(' ')[0] + ', זה ' + me.name.split(' ')[0] + ' מהטרמפים. תודה שצירפת אותי למונית! נפגשים ב' + x.pickup.label + ' בסביבות ' + x.pass + '.';
+      acts = '<a href="' + waPhone(d.phone, tt) + '" target="_blank" rel="noopener">ווטסאפ ל' + esc(d.name.split(' ')[0]) + '</a>' +
+        '<a href="' + waze(x.pickup) + '" target="_blank" rel="noopener">נפגשים ב' + esc(x.pickup.label) + ' (Waze)</a>' +
+        '<a href="' + calLink('מונית משותפת עם ' + d.name, x.date, x.pass, 30, x.pickup.label, 'טלפון: ' + d.phone + '\n' + PAGE) + '" target="_blank" rel="noopener">ליומן</a>' +
+        '<button type="button" data-act="cancel" data-id="' + x.id + '">לבטל</button>';
+      pay = '<div class="tp-pay">החלק שלך במונה: <b>כ-' + x.price + ' ₪</b> (המונית כולה כ-' + x.fare + ' ₪, ' + (x.split === 'km' ? 'לפי הק"מ שלך' : 'שווה בשווה') + '). ' +
+        'המספר המדויק לפי המונה בסוף. משלמים ל' + esc(d.name.split(' ')[0]) + ' בביט לטלפון <b dir="ltr">' + esc(d.phone) + '</b> <button type="button" class="btn btn-line btn-sm" data-copy="' + esc(d.phone) + '">להעתיק</button>' +
+        (d.paybox ? ' או <a href="' + esc(/^https:/.test(d.paybox) ? d.paybox : '#') + '" target="_blank" rel="noopener">בפייבוקס</a>' : '') + '.</div>';
+    } else if (x.status === 'approved') {
       var t = 'היי ' + d.name.split(' ')[0] + ', זה ' + me.name.split(' ')[0] + ' מהטרמפים. תודה שאישרת! אחכה ב' + x.pickup.label + ' בסביבות ' + x.pass + '.';
       acts = '<a href="' + waPhone(d.phone, t) + '" target="_blank" rel="noopener">ווטסאפ ל' + esc(d.name.split(' ')[0]) + '</a>' +
         '<a href="' + waze(x.pickup) + '" target="_blank" rel="noopener">Waze לנקודת האיסוף</a>' +
@@ -500,8 +579,8 @@
     } else if (x.status === 'pending') {
       acts = '<button type="button" data-act="cancel" data-id="' + x.id + '">לבטל את הבקשה</button>';
     }
-    return '<div class="kh-item tp-match"><div class="top"><b>' + esc(d.name) + ' · ' + esc(dayLabel(x.date)) + ' ב-' + esc(x.pass) + '</b><span class="tp-st ' + x.status + '">' + ST[x.status] + '</span></div>' +
-      '<p>איסוף ב' + esc(x.pickup.label) + ' · עד ' + esc(x.drop) + ' · ' + money(x) + '</p>' + pay + '<div class="acts">' + acts + '</div></div>';
+    return '<div class="kh-item tp-match' + (tx ? ' tp-taxi' : '') + '"><div class="top"><b>' + (tx ? '<span class="tp-kind">🚕 מונית</span> ' : '') + esc(d.name) + ' · ' + esc(dayLabel(x.date)) + ' ב-' + esc(x.pass) + '</b><span class="tp-st ' + x.status + '">' + ST[x.status] + '</span></div>' +
+      '<p>' + (tx ? 'נפגשים ב' : 'איסוף ב') + esc(x.pickup.label) + ' · עד ' + esc(x.drop) + ' · ' + (tx ? 'החלק שלך במונה כ-' + x.price + ' ₪' : money(x)) + '</p>' + pay + '<div class="acts">' + acts + '</div></div>';
   }
   function initInboxActions() {
     $('tp-main').addEventListener('click', function (e) {
