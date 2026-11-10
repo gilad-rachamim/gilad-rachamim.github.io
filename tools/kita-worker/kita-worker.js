@@ -4,6 +4,7 @@
 //  - בלי טלפון, מייל, כתובת או שם מלא. מסנן חוסם בכינוי מספרים ארוכים, קישורים ומיילים.
 //  - מפתח המורה ואסימוני התלמידים נשמרים רק כ-hash.
 //  - כיתה בלי פעילות 180 יום נמחקת לבד. המורה יכולה למחוק הכול מיד.
+// הגבלות לרשת אחת ביום: 80 כיתות חדשות, 600 הצטרפויות (בית ספר שלם על אותו Wi-Fi).
 // נקודות: 1–30 לאירוע, עד 400 ביום לתלמיד/ה, ref כפול נספר פעם אחת.
 const ORIGINS = ['https://gilad-rachamim.github.io'];
 const MAX_EV = 30, MAX_DAY = 400, MAX_ST = 80, KEEP_MS = 180 * 864e5;
@@ -23,7 +24,7 @@ export default {
         const m = p.match(/^\/c\/(\d{6})(\/[a-z]+)$/);
         if (!m) res = json({ error: 'לא נמצא' }, 404);
         else {
-          if (m[2] === '/join' && req.method === 'POST' && !(await rl(env, 'j:' + ip, 40))) res = json({ error: 'יותר מדי ניסיונות מהרשת הזאת היום. נסו שוב מחר.' }, 429);
+          if (m[2] === '/join' && req.method === 'POST' && !(await rl(env, 'j:' + ip, 600))) res = json({ error: 'יותר מדי ניסיונות מהרשת הזאת היום. נסו שוב מחר.' }, 429);
           else res = await env.KITA.get(env.KITA.idFromName('k' + m[1])).fetch(new Request('https://do' + m[2] + url.search, { method: req.method, headers: { 'content-type': 'application/json', 'x-ip': ip }, body: req.method === 'POST' ? await req.text() : undefined }));
         }
       }
@@ -44,7 +45,7 @@ async function create(req, env, ip) {
   const name = cleanText(b.name, 40), teacher = cleanText(b.teacher, 30);
   if (!name) return json({ error: 'שם הכיתה: עד 40 תווים, בלי קישורים, טלפונים או מיילים. למשל: ח׳2 מתמטיקה.' }, 400);
   if (teacher === null) return json({ error: 'בשם המורה אסור קישור, טלפון או מייל.' }, 400);
-  if (!(await rl(env, 'c:' + ip, 10))) return json({ error: 'נפתחו הרבה כיתות מהרשת הזאת היום. אפשר להמשיך מחר.' }, 429);
+  if (!(await rl(env, 'c:' + ip, 80))) return json({ error: 'נפתחו הרבה כיתות מהרשת הזאת היום. אפשר להמשיך מחר.' }, 429);
   const key = rid(24);
   for (let i = 0; i < 6; i++) {
     const code = String(100000 + (crypto.getRandomValues(new Uint32Array(1))[0] % 900000));

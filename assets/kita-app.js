@@ -113,6 +113,7 @@
         goalBox($('kt-mine-goal'), me ? me.code : '', goalOf(d.gifts), d.rows, d.period);
         $('kt-mine-magen').hidden = !d.gifts.some(function (g) { return g.k === 'magen'; });
         var mine = me && d.rows.filter(function (r) { return r.sid === me.sid; })[0], fb = $('kt-mine-fire');
+        if (me) $('kt-parents').href = 'https://wa.me/?text=' + encodeURIComponent('אמא, אבא, ככה אפשר לראות איך אני מתקדמת בכיתה משחקת 🏆\n' + SITE + 'horim/#c=' + me.code + '&s=' + me.sid);
         if (mine && per === 'week' && mine.dd !== undefined) {
           fb.textContent = mine.dd >= 5 ? '🔥 יש לך תג התמדה השבוע: תרגלת ב-' + mine.dd + ' ימים. כל הכבוד!' : '🔥 תרגלת השבוע ב-' + mine.dd + ' ' + (mine.dd === 1 ? 'יום' : 'ימים') + '. עוד ' + (5 - mine.dd) + ' לתג ההתמדה. גם כמה דקות ביום נחשבות.';
           fb.hidden = false;
@@ -454,5 +455,33 @@
     $('kt-t-wa').addEventListener('click', function () { used('chashiva_kita_more', 'wa'); });
     if (hp.get('new')) { $('kt-t-save').scrollIntoView(); history.replaceState(null, '', '#c=' + T.code + '&k=' + T.key); }
     admin('get');
+  }
+
+  // ================= דף להורים: קורא את הלוח הציבורי לפי קוד הכיתה ומזהה התלמיד/ה (sid, לא האסימון) =================
+  if (page === 'parent') {
+    var ph = new URLSearchParams(location.hash.slice(1)), pc = ph.get('c') || '', ps = ph.get('s') || '';
+    if (!/^\d{6}$/.test(pc) || !/^[a-z0-9]{6,20}$/.test(ps)) { $('kh-none').hidden = false; return; }
+    Promise.all([call('/c/' + pc + '/board?p=week'), call('/c/' + pc + '/board?p=month')]).then(function (res) {
+      var w = res[0], m = res[1];
+      if (!w.ok) { $('kh-none').hidden = false; $('kh-none').querySelector('p').textContent = w.error; return; }
+      var r = w.rows.filter(function (x) { return x.sid === ps; })[0], rm = m.ok ? m.rows.filter(function (x) { return x.sid === ps; })[0] : null;
+      if (!r) { $('kh-none').hidden = false; $('kh-none').querySelector('h2').textContent = 'הכינוי כבר לא בכיתה'; $('kh-none').querySelector('p').textContent = 'אולי יצאו מהכיתה או שהמורה הסירה אותו. אפשר להצטרף שוב עם הקוד מהמורה.'; return; }
+      $('kh-main').hidden = false;
+      $('kh-title').textContent = 'ההתקדמות של ' + r.nick;
+      $('kh-sub').textContent = 'בכיתה ' + w.name + '. כל משחק ותרגול באתר מוסיף נקודות ללוח של הכיתה.';
+      $('kh-class').textContent = w.name; $('kh-teacher').textContent = w.teacher || 'הכיתה'; $('kh-nick').textContent = 'הכינוי: ' + r.nick;
+      $('kh-week').textContent = r.pts; $('kh-days').textContent = r.dd !== undefined ? r.dd : '—'; $('kh-month').textContent = rm ? rm.pts : '—';
+      $('kh-place').textContent = r.place ? medal(r.place) : '—';
+      $('kh-place-l').textContent = r.place ? 'מקום בכיתה, מתוך ' + w.rows.length : 'עוד לא צברו השבוע';
+      var b = [];
+      if (r.crown) b.push('👑 ' + r.crown);
+      if (isPersist(r, 'week')) b.push('🔥 תג התמדה השבוע: תרגלו ב-' + r.dd + ' ימים');
+      else if (r.dd !== undefined) b.push('🔥 עוד ' + (5 - r.dd) + ' ימי תרגול השבוע לתג ההתמדה');
+      if (rm && isPersist(rm, 'month')) b.push('🔥 מתמידים גם החודש: ' + rm.dd + ' ימים');
+      $('kh-badges').textContent = b.join(' · '); $('kh-badges').hidden = !b.length;
+      goalBox($('kh-goal'), pc, goalOf(w.gifts), w.rows, 'week');
+      if (w.msg) { $('kh-msg').textContent = '📣 מהמורה: ' + w.msg; $('kh-msg').hidden = false; }
+      used('chashiva_kita_horim', 'view');
+    });
   }
 })();

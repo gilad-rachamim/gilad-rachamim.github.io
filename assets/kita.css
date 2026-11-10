@@ -105,3 +105,7 @@ body.kt-printing-poster .tool>*:not(#kt-poster-sec),body.kt-printing-poster #kt-
 .kt-goal-s{color:var(--body);font-size:.92rem}
 .kt-goal.done{border-color:var(--gold);background:rgba(216,179,95,.12)}
 .kt-board .kt-fire{display:block;color:#ffb36b;font-size:.82rem;font-weight:600}
+.kh-stats{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.8rem 0}
+.kh-stats div{display:grid;gap:.1rem;text-align:center;padding:.7rem .4rem;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+.kh-stats b{font-size:1.7rem;color:var(--gold-hi)}
+.kh-stats span{color:var(--muted);font-size:.85rem}
