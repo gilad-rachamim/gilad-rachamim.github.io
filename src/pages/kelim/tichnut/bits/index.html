@@ -1,0 +1,32 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tichnut_bits",
+  "title": "ממיר בסיסים וביטים – בינארי, הקסה, משלים ל-2 ו-IEEE-754 | הכלים של גילעד רחמים",
+  "description": "ממירים מספר בין עשרוני, בינארי, הקסה ואוקטלי, רואים את הביטים כמשלים ל-2 ב-8/16/32/64 ביט עם אזהרת גלישה, ומפרקים float לפי IEEE-754 (סימן, מעריך, שבר). לסטודנטים למדעי המחשב. בחינם.",
+  "og_title": "בינארי, הקסה, משלים ל-2 ו-float – רואים את הביטים",
+  "priority": "0.7",
+  "crumbs": [["כלים למתכנתים", "/kelim/tichnut/"], ["בסיסים וביטים", null]],
+  "head": "<style>.tn-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem}.tn-ltr{direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace}.bt-bits{display:flex;flex-wrap:wrap;gap:2px;margin-top:.9rem;justify-content:center}.bt-bits i{font-style:normal;width:1.35rem;height:1.8rem;display:grid;place-items:center;border:1px solid var(--line);border-radius:4px;font-family:ui-monospace,Consolas,monospace;color:var(--muted);font-size:.9rem}.bt-bits i.on{background:rgba(216,179,95,.18);color:var(--cream);border-color:var(--gold-soft)}.bt-bits i.sg{border-color:#f0a39b}.bt-bits i:nth-child(8n){margin-left:.35rem}.bt-bits.fl i:nth-child(8n){margin-left:0}.bt-bits.fl i.s{background:rgba(240,163,155,.25);color:#f8d4cf}.bt-bits.fl i.e{background:rgba(120,180,240,.18);color:#cfe3fa}.bt-bits.fl i.m{background:rgba(160,210,150,.14);color:#d6efd1}.bt-leg{text-align:center;margin-top:.4rem;font-size:.85rem}.bt-leg span{padding:.1rem .45rem;border-radius:4px;margin:0 .2rem}.bt-leg .s{background:rgba(240,163,155,.25)}.bt-leg .e{background:rgba(120,180,240,.18)}.bt-leg .m{background:rgba(160,210,150,.14)}.bt-row{display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;padding:.5rem .1rem;border-bottom:1px solid var(--line);color:var(--body)}.bt-row code{color:var(--cream);word-break:break-all}.bt-warn{margin-top:.6rem;padding:.55rem .75rem;border-radius:10px;background:rgba(240,163,155,.1);color:#f0c2bb}.note.bad{color:#f0a39b}.tn-h{margin-top:1.6rem;color:var(--cream);font-size:1.2rem}</style>",
+  "foot": "<script src=\"/assets/tichnut-data.js\" defer></script><script src=\"/assets/tichnut-bits.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>בסיסים וביטים</h1>
+  <p class="sub">רואים איך מספר באמת נשמר בזיכרון: בינארי, הקסה, משלים ל-2, גלישה, ו-float לפי IEEE-754. בשביל קורס מבנה מחשבים, ובשביל הבאג שלא מובן למה הוא קורה.</p>
+</header>
+<div class="tool">
+  <form class="k-form" id="bt-form" novalidate>
+    <h2 class="tn-h" style="margin-top:0">מספר שלם</h2>
+    <div class="field"><label for="bt-v">המספר</label><input id="bt-v" type="text" class="tn-ltr" spellcheck="false" autocomplete="off"></div>
+    <div class="tn-row">
+      <div class="field"><label for="bt-base">בבסיס</label><select id="bt-base"><option value="10">עשרוני</option><option value="2">בינארי</option><option value="16">הקסה</option><option value="8">אוקטלי</option></select></div>
+      <div class="field" style="grid-column:span 2"><label for="bt-w">רוחב</label><select id="bt-w"><option value="8">8 ביט (char)</option><option value="16">16 ביט (short)</option><option value="32">32 ביט (int)</option><option value="64">64 ביט (long)</option></select></div>
+    </div>
+    <div id="bt-out" aria-live="polite"></div>
+    <h2 class="tn-h">מספר עשרוני (float, IEEE-754)</h2>
+    <div class="field"><label for="bt-f">המספר</label><input id="bt-f" type="text" class="tn-ltr" spellcheck="false" autocomplete="off"></div>
+    <div id="bt-fout" aria-live="polite"></div>
+  </form>
+  <p class="disclaimer">ה-float מוצג ב-32 ביט (single precision). double עובד באותה שיטה, עם 11 ביטים למעריך ו-52 לשבר.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="ממיר בסיסים וביטים: בינארי, הקסה, משלים ל-2 ו-float, רואים כל ביט. לסטודנטים, בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר מהלימודים</a></div>
+</div>
