@@ -7,6 +7,19 @@
   var NAMES = { main: 'העיקר', haredi: 'ציבור חרדי', economy: 'כלכלה וכיס' };
   var $ = function (id) { return document.getElementById(id); };
   var ed = null;
+  var PAGE = 'https://gilad-rachamim.github.io/kelim/machshev/chadashot/';
+  var PHONE = 'בטלפון כשר: 077-2253345 שלוחה 8';
+  // מאיפה הגיעו (utm_source בקישור) – נספר בשרת וב-Google Analytics
+  var FROM = (function () {
+    var s = '';
+    try { s = (new URLSearchParams(location.search).get('utm_source') || '').toLowerCase(); } catch (e) {}
+    if (s === 'facebook') s = 'fb';
+    return ['fb', 'wa', 'qr', 'share', 'home'].indexOf(s) > -1 ? s : 'web';
+  })();
+  function friendText() {
+    return 'מצאתי משהו טוב: סיכום חדשות רגוע 3 פעמים ביום. 5 נקודות קצרות, בלי לרפרש כל רבע שעה. קו כשר, בחינם ובלי פרסומות.\n' +
+      PAGE + '?utm_source=share\n' + PHONE;
+  }
 
   function used(how) { if (window.toolUsed) window.toolUsed(TOOL, { how: how }); }
   function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
@@ -40,6 +53,8 @@
     });
     $('nw-body').innerHTML = html || '<p class="nw-wait">אין נקודות בסיכום הזה.</p>';
     $('nw-wa').href = 'https://wa.me/?text=' + encodeURIComponent(asText());
+    var wa = ed.links && ed.links.wa;
+    if (wa && /^https:\/\/(www\.)?whatsapp\.com\/channel\//.test(wa)) { $('nw-chan-a').href = wa; $('nw-chan').hidden = false; }
   }
 
   function asText() {
@@ -51,7 +66,7 @@
       if (sec !== 'main') out.push('', '*' + NAMES[sec] + '*');
       pts.forEach(function (p, i) { out.push((i + 1) + '. ' + p.text); });
     });
-    out.push('', 'כל הנקודות עם קישור למקור:', location.origin + '/kelim/machshev/chadashot/', 'בטלפון כשר: 077-2253345 שלוחה 8');
+    out.push('', 'כל הנקודות עם קישור למקור:', PAGE + '?utm_source=wa', PHONE);
     return out.join('\n');
   }
 
@@ -127,8 +142,11 @@
       used('copy');
     });
     $('nw-wa').addEventListener('click', function () { used('wa'); });
+    $('nw-friend').href = 'https://wa.me/?text=' + encodeURIComponent(friendText());
+    $('nw-friend').addEventListener('click', function () { used('friend'); });
+    $('nw-chan-a').addEventListener('click', function () { used('channel'); });
 
-    fetch(API + '/latest', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+    fetch(API + '/latest?from=' + FROM, { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
       if (!j || j.empty) {
         $('nw-ed').textContent = 'הסיכום הראשון יוצא בקרוב';
         $('nw-body').innerHTML = '<p class="nw-wait">הסיכום הבא: ' + nextRun() + '.</p>';
