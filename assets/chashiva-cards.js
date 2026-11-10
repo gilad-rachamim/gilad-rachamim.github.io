@@ -97,7 +97,7 @@
       if (!T.st) return;
       var ov = cfg.over(T.st); if (ov) return finish(ov);
       var t = cfg.turn(T.st);
-      if (T.seats[t] && T.seats[t].kind === 'bot' && (T.mode !== 'live' || (live && live.isHost))) botTimer = setTimeout(function () { var a = cfg.bot(T.st, t); if (a) apply(t, a); }, window.CHTEST ? 20 : cfg.botDelay || 900);
+      if (T.seats[t] && T.seats[t].kind === 'bot' && (T.mode !== 'live' || (live && live.isHost))) botTimer = setTimeout(function () { var a = cfg.bot(T.st, t); if (a) apply(t, a); }, window.CHTEST ? 20 : (cfg.botDelayFor && cfg.botDelayFor(T.st)) || cfg.botDelay || 900);
     }
     function finish(ov) {
       if (finished) return; finished = true;
