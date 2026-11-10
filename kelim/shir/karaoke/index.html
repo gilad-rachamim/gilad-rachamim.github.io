@@ -27,17 +27,7 @@
 <script src="/assets/track.js?v=b23b682b" defer></script>
 <style>
 .ko-hero .btn{font-size:1.2rem;padding:1rem 1.6rem}
-.ko-chat{max-width:22rem;margin:1.2rem auto 0;background:#17212b;border-radius:1.2rem;padding:1rem .9rem;display:flex;flex-direction:column;gap:.55rem;box-shadow:0 8px 30px rgba(0,0,0,.35)}
-.ko-chat .ko-top{color:#fff;font-weight:700;font-size:.95rem;border-bottom:1px solid #2b3a48;padding-bottom:.5rem;margin-bottom:.2rem}
-.ko-chat .ko-top small{display:block;color:#7f91a4;font-weight:400}
-.ko-b{max-width:85%;padding:.55rem .75rem;border-radius:.9rem;font-size:.95rem;line-height:1.45;color:#fff}
-.ko-me{align-self:flex-start;background:#2b5278;border-bottom-right-radius:.2rem}
-.ko-bot{align-self:flex-end;background:#182533;border:1px solid #2b3a48;border-bottom-left-radius:.2rem}
-.ko-vid{align-self:flex-end;width:85%;aspect-ratio:16/9;border-radius:.7rem;background:linear-gradient(135deg,#3a2a12,#121212);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.35rem;color:#f5e6c8}
-.ko-vid i{font-style:normal;font-size:.8rem;background:rgba(255,255,255,.12);border-radius:.3rem;padding:.1rem .5rem}
-.ko-vid b{font-size:1rem;color:#e7c27d}
-.ko-btns{align-self:flex-end;width:85%;display:grid;grid-template-columns:1fr 1fr;gap:.3rem}
-.ko-btns span{background:#22303e;color:#8cc4ff;text-align:center;font-size:.78rem;border-radius:.5rem;padding:.35rem .2rem}
+.ko-video{display:block;width:100%;height:auto;max-width:20rem;aspect-ratio:9/16;margin:1.2rem auto 0;border-radius:1.2rem;background:#0e1621;box-shadow:0 8px 30px rgba(0,0,0,.35)}
 .ko-cap{text-align:center;color:var(--muted);font-size:.85rem;margin-top:.5rem}
 .ko-steps{list-style:none;padding:0;counter-reset:s;display:grid;gap:.7rem}
 .ko-steps li{counter-increment:s;display:flex;gap:.8rem;align-items:flex-start;color:var(--body);font-size:1.05rem}
@@ -85,14 +75,8 @@
   <h1>קריוקי בעברית בחינם, בטלגרם</h1>
   <p class="sub">שולחים שם של שיר, ומקבלים סרטון קריוקי: המוזיקה בלי הקול של הזמר, והמילים רצות על המסך. שרים בבית, עם החברים או לבד.</p>
   <div class="actions"><a class="btn btn-gold" href="https://t.me/GiladKaraokeBot?start=site_karaoke" target="_blank" rel="noopener" data-mv="karaoke_landing">🎤 לפתוח את הבוט בטלגרם</a></div>
-  <div class="ko-chat" role="img" aria-label="איור: שיחה עם בוט הקריוקי – שולחים שם של שיר וחוזר סרטון עם מילים">
-    <div class="ko-top">🎤 בוט הקריוקי<small>@GiladKaraokeBot</small></div>
-    <div class="ko-b ko-me">שם של שיר שאתם אוהבים</div>
-    <div class="ko-b ko-bot">קיבלתי! 🎤 מכין את השיר. זה לוקח כמה דקות, אשלח כשהוא מוכן.</div>
-    <div class="ko-vid" aria-hidden="true"><i>▶ סרטון קריוקי</i><b>המילים כאן, על המסך</b><i>המוזיקה בלי הזמר</i></div>
-    <div class="ko-btns" aria-hidden="true"><span>📝 תיקון מילים</span><span>🎙 גרסה עם קול הזמר</span></div>
-  </div>
-  <p class="ko-cap">איור של שיחה עם הבוט</p>
+  <video class="ko-video" controls playsinline preload="none" poster="/assets/karaoke-demo.jpg" width="720" height="1280" aria-label="סרטון הדגמה: שולחים לבוט שם של שיר, הבוט עונה, וחוזר סרטון קריוקי עם מילים שנצבעות בזמן השירה" onplay="window.gtag&&gtag('event','karaoke_demo_play')"><source src="/assets/karaoke-demo.mp4" type="video/mp4"></video>
+  <p class="ko-cap">ככה זה נראה בבוט, ב-16 שניות. השיר "בוקר חדש" נכתב לכלי "השיר שלי" באתר.</p>
 </header>
 <section class="k-sec ko-sec" aria-labelledby="ko-what">
   <h2 id="ko-what">מה הבוט עושה</h2>
