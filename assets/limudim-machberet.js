@@ -27,6 +27,7 @@
   var tabA = $('mb-t-alg'), tabP = $('mb-t-prf');
   function showTab(p) {
     tabA.setAttribute('aria-selected', p ? 'false' : 'true'); tabP.setAttribute('aria-selected', p ? 'true' : 'false');
+    $('mb-t-hw').setAttribute('aria-selected', 'false'); $('mb-hw').hidden = true;
     $('mb-alg').hidden = !!p; $('mb-prf').hidden = !p; store('mb-tab', p ? 'p' : 'a');
     $('mb-kb').hidden = true;
     if (p) used('proof_tab');
@@ -292,6 +293,7 @@
       '<span class="mb-rb no-print"><button type="button" class="mb-mic" aria-label="להגיד את השורה בקול">🎤</button><button type="button" class="mb-del" aria-label="למחוק את השורה">✕</button></span>';
     var inp = li.querySelector('.mb-in');
     inp.value = v;
+    if (i === 0 && HW) { inp.readOnly = true; inp.title = 'התרגיל מהמורה'; }
     inp.placeholder = i === 0 ? 'התרגיל, למשל: 2(x+3)=x+10' : i === 1 ? 'השלב הראשון, למשל: 2x+6=x+10' : 'השלב הבא';
     inp.setAttribute('aria-label', i === 0 ? 'התרגיל' : 'שלב ' + i);
     var done = function (line, failed) { if (failed) flash('לא הבנתי הכול. אפשר לתקן בכתב.'); };
@@ -369,6 +371,7 @@
   $('mb-support').addEventListener('click', function (e) { if (e.target.closest('[data-support]')) used('support_click'); });
   function save() {
     if (shared) return;
+    if (HW) { hwSave(); return; }
     clearTimeout(saveT);
     saveT = setTimeout(function () { store('mb-alg', JSON.stringify(A)); $('mb-saved').textContent = '✓ נשמר בטלפון'; }, 400);
   }
@@ -759,6 +762,116 @@
     P = { given: EXP.kos[0], prove: EXP.kos[1], rows: [{ c: 'AB=8', r: 'נתון' }, { c: 'AC=5', r: 'נתון' }, { c: '∠A=60°', r: 'נתון' }, { c: 'BC^2=AB^2+AC^2-2*AB*AC*cos(∠A)', r: 'משפט הקוסינוסים' }, { c: 'BC^2=49', r: 'חישוב' }, { c: 'BC=7', r: 'חישוב' }] };
     $('mb-given').value = P.given; $('mb-prove').value = P.prove; used('demo');
   }
+  // ---------- שיעורי בית מהמורה (השרת של "כיתה משחקת": kelim-kita) ----------
+  var KAPI = (function () { try { var o = localStorage.getItem('kita-api'); if (o) return o; } catch (e) {} return /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://127.0.0.1:8796' : 'https://kelim-kita.gilad4049.workers.dev'; })();
+  function kcall(path, body) {
+    return fetch(KAPI + path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
+      .then(function (r) { return r.json().then(function (d) { d._s = r.status; if (r.status === 404 && d.error === 'לא נמצא') d.error = 'שיעורי הבית במחברת יופעלו ממש בקרוב.'; return d; }); })
+      .catch(function () { return { _s: 0, error: 'אין חיבור לאינטרנט. מה שכתבתם נשמר בטלפון, ויישלח למורה כשיחזור החיבור.' }; });
+  }
+  var HW = null, KME = load('kita-me', null), HWD = null, hwSaveT = null, hwPoll = null, ownA = null, seenMsg = {};
+  var kq = (location.search.match(/[?&]kita=(\d{6})/) || [])[1];
+  var tabH = $('mb-t-hw');
+  function showHwTab() {
+    tabA.setAttribute('aria-selected', 'false'); tabP.setAttribute('aria-selected', 'false'); tabH.setAttribute('aria-selected', 'true');
+    $('mb-alg').hidden = true; $('mb-prf').hidden = true; $('mb-hw').hidden = false; $('mb-kb').hidden = true;
+    if (KME && (!kq || kq === KME.code)) { $('mb-hwjoin').hidden = true; hwLoad(); }
+    else { $('mb-hwjoin').hidden = false; $('mb-hwlist').hidden = true; if (kq) $('mb-jcode').value = kq; }
+    used('hw_tab');
+  }
+  tabH.addEventListener('click', showHwTab);
+  $('mb-join').addEventListener('click', function () {
+    var code = $('mb-jcode').value.trim(), b = this, e = $('mb-jerr');
+    if (!/^\d{6}$/.test(code)) { e.hidden = false; e.textContent = 'קוד הכיתה הוא 6 ספרות, כמו שהמורה שלחה.'; return; }
+    b.disabled = true;
+    kcall('/c/' + code + '/join', { nick: $('mb-jnick').value }).then(function (d) {
+      b.disabled = false;
+      if (!d.ok) { e.hidden = false; e.textContent = d.error; return; }
+      e.hidden = true;
+      KME = { code: code, sid: d.sid, token: d.token, nick: d.nick, name: d.name, teacher: d.teacher };
+      store('kita-me', JSON.stringify(KME)); used('hw_join'); kq = code; showHwTab();
+    });
+  });
+  function hwLoad(cb) {
+    kcall('/c/' + KME.code + '/hw', { sid: KME.sid, token: KME.token }).then(function (d) {
+      if (!d.ok) {
+        if (d.gone) { try { localStorage.removeItem('kita-me'); } catch (e) {} KME = null; showHwTab(); return; }
+        $('mb-hwlist').hidden = false; $('mb-hwul').innerHTML = '<li class="pt-err">' + esc(d.error) + '</li>'; return;
+      }
+      HWD = d;
+      $('mb-hwlist').hidden = false; $('mb-hwcls').textContent = '📚 ' + d.name + (d.teacher ? ' · ' + d.teacher : '');
+      $('mb-hwme').textContent = 'הכינוי שלי: ' + KME.nick;
+      $('mb-hwul').innerHTML = d.hw.length ? d.hw.map(function (h) {
+        var mine = d.work.filter(function (w) { return w.hw === h.id; }), done = mine.filter(function (w) { return w.done; }).length;
+        return '<li><button type="button" class="kh-hw" data-hw="' + h.id + '"><b>' + esc(h.title) + '</b><span>' + h.ex.length + ' תרגילים · ' + (done === h.ex.length ? 'הכול נפתר ✓' : done + ' ✓') + '</span></button></li>';
+      }).join('') : '<li class="note">עוד אין מטלות מהמורה. כשתהיה, היא תופיע כאן.</li>';
+      if (cb) cb(d);
+    });
+  }
+  $('mb-hwul').addEventListener('click', function (e) { var b = e.target.closest('[data-hw]'); if (b) hwOpen(b.getAttribute('data-hw'), 0); });
+  function hwLocal() { return load('mb-hw-' + KME.code, {}); }
+  function hwOpen(id, ex) {
+    var h = HWD && HWD.hw.filter(function (x) { return x.id === id; })[0]; if (!h) return;
+    if (!HW) ownA = A;
+    var loc = hwLocal(), key = id + ':' + ex, srv = HWD.work.filter(function (w) { return w.hw === id && w.ex === ex; })[0];
+    var rows = (loc[key] && loc[key].rows) || (srv && srv.rows && srv.rows.length ? srv.rows : null) || [h.ex[ex].q, ''];
+    rows[0] = h.ex[ex].q;
+    HW = { id: id, ex: ex, h: h, stuck: !!(srv && srv.stuck), done: !!(srv && srv.done) };
+    A = { rows: rows.slice(), deg: ownA ? ownA.deg : true };
+    showTab(false);
+    $('mb-hwbar').hidden = false; $('mb-ex') && ($('mb-ex').hidden = true);
+    document.querySelector('#mb-alg .mb-ex').hidden = true; $('mb-new').hidden = true; $('mb-share').hidden = true;
+    $('mb-hwtitle').textContent = '📚 ' + h.title + ' · תרגיל ' + (ex + 1) + ' מתוך ' + h.ex.length;
+    $('mb-hwex').innerHTML = h.ex.map(function (q, i) {
+      var w = HWD.work.filter(function (x) { return x.hw === id && x.ex === i; })[0];
+      return '<button type="button" data-ex="' + i + '"' + (i === ex ? ' aria-current="true" class="on"' : '') + '>' + (i + 1) + (w && w.done ? ' ✓' : '') + '</button>';
+    }).join('');
+    setStuck(HW.stuck);
+    renderRows(1); hwMsgs(); $('mb-hwsaved').textContent = '';
+    clearInterval(hwPoll); hwPoll = setInterval(function () { if (!document.hidden && HW) hwLoad(function () { hwMsgs(); }); }, 15000);
+    window.scrollTo({ top: $('mb-hwbar').offsetTop - 70, behavior: 'smooth' });
+    used('hw_open');
+  }
+  $('mb-hwex').addEventListener('click', function (e) { var b = e.target.closest('[data-ex]'); if (b && HW) { hwFlush(); hwOpen(HW.id, +b.getAttribute('data-ex')); } });
+  function hwMsgs() {
+    if (!HW || !HWD) return;
+    var ms = HWD.msgs.filter(function (m) { return m.hw === HW.id && m.ex === HW.ex; }), box = $('mb-hwmsgs');
+    box.innerHTML = ms.map(function (m) { return '<p class="mb-hwm ' + m.kind + '">' + (m.kind === 'answer' ? '🔓 התשובה מהמורה: ' : '💬 המורה' + (m.sid === '*' ? ' (לכל הכיתה)' : '') + ': ') + '<span dir="auto">' + esc(m.text) + '</span></p>'; }).join('');
+    var fresh = ms.filter(function (m) { return !seenMsg[m.id]; });
+    fresh.forEach(function (m) { seenMsg[m.id] = 1; });
+    if (fresh.length && hwPoll) { flash(fresh[fresh.length - 1].kind === 'answer' ? '🔓 המורה שחררה תשובה' : '💬 המורה שלחה רמז'); setStuck(false); }
+  }
+  function setStuck(on) { if (!HW) return; HW.stuck = on; var b = $('mb-stuck'); b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.textContent = on ? '🙋 המורה יודעת שנתקעתי (לבטל)' : '🙋 נתקעתי, צריך עזרה'; }
+  $('mb-stuck').addEventListener('click', function () { setStuck(!HW.stuck); used('hw_stuck'); hwSave(true); });
+  function hwState() {
+    var ok = 0, w = 0, done = false;
+    lastRes.forEach(function (r) { if (r.mark === 'ok') ok++; else if (r.mark === 'warn') w++; if (r.mark === 'ok' && /🎉/.test(r.msg || '')) done = true; });
+    return { ok: ok, warn: w, done: done };
+  }
+  function hwSave(now) {
+    if (!HW || !KME) return;
+    var loc = hwLocal(); loc[HW.id + ':' + HW.ex] = { rows: A.rows.slice(), t: Date.now() }; store('mb-hw-' + KME.code, JSON.stringify(loc));
+    $('mb-hwsaved').textContent = '✓ נשמר בטלפון';
+    clearTimeout(hwSaveT); hwSaveT = setTimeout(hwFlush, now ? 50 : 2500);
+  }
+  function hwFlush() {
+    clearTimeout(hwSaveT); if (!HW || !KME) return;
+    var s = hwState(), cur = HW;
+    kcall('/c/' + KME.code + '/hwsave', { sid: KME.sid, token: KME.token, hw: cur.id, ex: cur.ex, rows: A.rows, ok: s.ok, warn: s.warn, done: s.done, stuck: cur.stuck }).then(function (d) {
+      if (!d.ok) { $('mb-hwsaved').textContent = d.error; return; }
+      $('mb-hwsaved').textContent = '✓ המורה רואה את העבודה';
+      if (d.pts) flash('⭐ +' + d.pts + ' נקודות לכיתה! כל הכבוד');
+      if (s.done && !cur.done) { cur.done = true; showSupport(); used('hw_done'); }
+    });
+  }
+  $('mb-hwexit').addEventListener('click', function () {
+    hwFlush(); HW = null; clearInterval(hwPoll); hwPoll = null;
+    A = ownA || load('mb-alg', null) || { rows: ['', ''], deg: true }; ownA = null;
+    $('mb-hwbar').hidden = true; document.querySelector('#mb-alg .mb-ex').hidden = false; $('mb-new').hidden = false; $('mb-share').hidden = false;
+    renderRows(); showHwTab();
+  });
+  if (KME || kq) tabH.hidden = false;
+
   // ---------- שליחה למורה: כל המחברת בתוך הקישור (#s=...), בלי שרת ובלי הרשמה ----------
   function enc(o) { return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
   function dec(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return JSON.parse(decodeURIComponent(escape(atob(s)))); }
@@ -799,6 +912,7 @@
 
   renderRows(); showOld(); prenderRows(); applyKbOnly();
   if (sharedTab) { showTab(sharedTab === 'p'); if (sharedTab === 'p') $('mb-pcheck').click(); }
+  else if (kq) showHwTab();
   else {
     if (/[?&]demo=1/.test(location.search)) $('mb-pcheck').click();
     if (store('mb-tab') === 'p' || /[?&]tab=proof/.test(location.search)) showTab(true);

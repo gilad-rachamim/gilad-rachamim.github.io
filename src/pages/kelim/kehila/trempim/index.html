@@ -50,11 +50,32 @@
     <div class="res" id="tc-res" aria-live="polite"></div>
   </details>
 
+  <!-- לוח כבוד: פתוח לכולם -->
+  <section class="kh-sec tp-board" id="tp-board" hidden>
+    <h2>🏅 לוח הכבוד של החודש</h2>
+    <p class="kh-hint">הנהגים שנתנו הכי הרבה החודש: נסיעות קבועות, טרמפים שאושרו ותגובות חמות. שם פרטי בלבד.</p>
+    <ol id="tp-board-list"></ol>
+    <details class="tp-ladder"><summary>איך עולים בסולם?</summary>
+      <ul>
+        <li><b>🥉 נהג חסד</b> – 3 נסיעות קבועות פעילות. תג ליד השם בחיפוש, ותעודת הוקרה דיגיטלית.</li>
+        <li><b>🥈 נהג קבוע</b> – 6 נסיעות פעילות, או 10 טרמפים שאושרו. מופיעים ראשונים בתוצאות החיפוש.</li>
+        <li><b>🥇 עמוד התווך</b> – 10 נסיעות פעילות, או 30 טרמפים. תעודה מודפסת שנשלחת הביתה.</li>
+        <li><b>💎 שגריר השכונה</b> – הבאת 5 נהגים שפרסמו נסיעה, בקישור ההזמנה האישי שלך.</li>
+      </ul>
+      <p class="kh-hint">נסיעה קבועה נחשבת <b>פעילה</b> אחרי שבועיים שהיא פתוחה, או כשמישהו הצטרף אליה. נקודות: פרסום נסיעה 2 (קבועה 5), נסיעה פעילה 15, טרמפ שאושר 10 (בחינם 15), תגובה חמה של 5 כוכבים 5.</p>
+    </details>
+  </section>
+
   <p class="kh-hint tp-luz-link">נוסעים כל שבוע לאותם מקומות? <a href="/kelim/kehila/trempim/luz/">הלו"ז הקבוע שלי</a>: פעם אחת, ומשם ליומן, ל-Waze ולטרמפים.</p>
 
   <!-- אחרי כניסה -->
   <section id="tp-app" hidden>
     <div class="tp-me" id="tp-me"></div>
+    <div class="tp-rank" id="tp-rank" hidden></div>
+    <div class="tp-cert" id="tp-cert" hidden>
+      <canvas id="tp-cert-canvas" width="1200" height="1500" aria-label="תעודת הוקרה"></canvas>
+      <div class="acts"><button class="btn btn-gold btn-sm" type="button" id="tp-cert-share">לשתף בווטסאפ</button><button class="btn btn-line btn-sm" type="button" id="tp-cert-dl">להוריד תמונה</button><button class="btn btn-line btn-sm" type="button" id="tp-cert-x">לסגור</button></div>
+    </div>
 
     <form class="k-form" id="tp-profile" novalidate hidden>
       <b class="tp-title">עוד רגע מתחילים</b>
@@ -75,6 +96,7 @@
         </ul>
         <p><a href="/kelim/kehila/trempim/pratiut/" target="_blank">פרטיות וכללי השימוש המלאים</a></p>
       </details>
+      <label class="tp-check"><input type="checkbox" id="pf-board" checked> להציג את השם הפרטי שלי בלוח הכבוד</label>
       <label class="tp-check"><input type="checkbox" id="pf-agree"> אני מעל 18 ומסכים לכללים</label>
       <button class="btn btn-gold" type="submit">לשמור ולהתחיל</button>
       <p class="res" id="pf-msg" aria-live="polite"></p>
@@ -107,6 +129,18 @@
       <section class="tp-pane" data-pane="drive" hidden>
         <div class="tp-fast">
           <button class="btn btn-gold" type="button" id="dr-now">🚗 יוצא עכשיו</button>
+          <div class="tp-say field">
+            <button class="btn btn-line" type="button" id="dr-mic">🎙️ להגיד את הנסיעה</button>
+            <ul class="tp-say-list" id="dr-say-list" hidden aria-live="polite">
+              <li data-k="when"><b>מתי?</b> היום, מחר, ביום חמישי, או "כל יום"</li>
+              <li data-k="time"><b>באיזו שעה?</b> "בשבע וחצי", "ב-17:30", או "עכשיו"</li>
+              <li data-k="from"><b>מאיפה?</b> "מקריית משה" <span>(אם לא אומרים: מהמיקום שלך)</span></li>
+              <li data-k="to"><b>לאן?</b> "לתל אביב", "לרחוב יפו 20 בירושלים"</li>
+              <li data-k="seats" class="opt"><b>כמה מקומות?</b> "שני מקומות" <span>(לא חובה)</span></li>
+              <li data-k="free" class="opt"><b>בחינם?</b> "בחינם" או "במונית" <span>(לא חובה)</span></li>
+            </ul>
+            <div class="tp-row"><input id="dr-say" type="text" maxlength="200" placeholder="או לכתוב: מחר ב-7:30 מקריית משה לתל אביב"><button class="btn btn-line btn-sm" type="button" id="dr-say-go">למלא</button></div>
+          </div>
           <div id="dr-again"></div>
         </div>
         <div class="kh-note tp-cal"><span><b>מהיומן ומ-Waze:</b> הנסיעות שלך כבר נמצאות ביומן גוגל, ומשם Waze מתכנן אותן. מייבאים את השבוע הקרוב והופכים כל אירוע לטרמפ בלחיצה.</span><button class="btn btn-line btn-sm" type="button" id="dr-cal">ייבוא מהיומן</button></div>
