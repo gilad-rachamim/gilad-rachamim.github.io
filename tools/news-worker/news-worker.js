@@ -68,7 +68,7 @@ export function parseRss(xml, src) {
 
 async function fetchAll(sinceMs) {
   const res = await Promise.allSettled(SOURCES.map(async s => {
-    const r = await fetch(s[3], { headers: { 'user-agent': 'Mozilla/5.0 (kelim-news; gilad-rachamim.github.io)' }, redirect: 'follow', cf: { cacheTtl: 300 } });
+    const r = await fetch(s[3], { headers: { 'user-agent': 'Mozilla/5.0 (kelim-news; hakelim.com)' }, redirect: 'follow', cf: { cacheTtl: 300 } });
     if (!r.ok) throw new Error(s[0] + ' ' + r.status);
     return parseRss(await r.text(), s);
   }));
@@ -360,7 +360,7 @@ export default {
       if (!/^https:\/\/[a-z0-9.-]+\//i.test(ep) || ep.length > 1000) return json({ ok: false }, 400);
       return json(await call(env, url.pathname, { endpoint: ep }));
     }
-    return json({ name: 'החדשות ב-3 דקות', page: 'https://gilad-rachamim.github.io/kelim/machshev/chadashot/' });
+    return json({ name: 'החדשות ב-3 דקות', page: 'https://hakelim.com/kelim/machshev/chadashot/' });
   },
   async scheduled(event, env, ctx) {
     ctx.waitUntil(runEdition(env).then(r => console.log(JSON.stringify(r))).catch(e => console.log('run error', String(e))));
@@ -369,7 +369,7 @@ export default {
 
 // אחסון: הסיכום האחרון, 21 הקודמים, דיווחי טעויות ומונה כניסות יומי
 // ---------- פייסבוק: פוסט לדף "החדשות ב-3 דקות" (Graph API, מפתח קבוע של הדף) ----------
-const PAGE_URL = 'https://gilad-rachamim.github.io/kelim/machshev/chadashot/';
+const PAGE_URL = 'https://hakelim.com/kelim/machshev/chadashot/';
 // מאיפה הגיעו (נספר ב-/stats): דף, טלפון, התראה, פייסבוק, ווטסאפ, מודעה (QR), שיתוף, דף הבית
 export const FROM = ['web', 'phone', 'push', 'fb', 'wa', 'qr', 'share', 'home'];
 // ערוץ הווטסאפ: דרך Whapi.Cloud (מסלול חינמי), שמחובר למספר של גילעד כ"מכשיר מקושר". אין API רשמי לערוצים.
@@ -410,7 +410,7 @@ async function vapidAuth(env, endpoint) {
   const jwk = JSON.parse(env.VAPID_JWK);
   const key = await crypto.subtle.importKey('jwk', jwk, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign']);
   const head = b64uStr(JSON.stringify({ typ: 'JWT', alg: 'ES256' }));
-  const body = b64uStr(JSON.stringify({ aud: new URL(endpoint).origin, exp: Math.floor(Date.now() / 1000) + 12 * 3600, sub: 'https://gilad-rachamim.github.io/kelim/' }));
+  const body = b64uStr(JSON.stringify({ aud: new URL(endpoint).origin, exp: Math.floor(Date.now() / 1000) + 12 * 3600, sub: 'https://hakelim.com/kelim/' }));
   const sig = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, key, new TextEncoder().encode(head + '.' + body));
   return `vapid t=${head}.${body}.${b64u(sig)}, k=${env.VAPID_PUBLIC}`;
 }

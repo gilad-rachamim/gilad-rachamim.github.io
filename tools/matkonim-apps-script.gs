@@ -21,7 +21,7 @@
 var VERSION = 'matkonim-2';
 var CFG = {
   OWNER_EMAIL: 'gilad4049@gmail.com',
-  PAGE: 'https://gilad-rachamim.github.io/kodesh/chanuka/matkonim/',
+  PAGE: 'https://hakelim.com/kodesh/chanuka/matkonim/',
   SHEET_NAME: 'מתכונים שמשתפים – חנוכה',
   FOLDER_NAME: 'מתכונים שמשתפים – תמונות',
   MAX_PHOTOS: 3,

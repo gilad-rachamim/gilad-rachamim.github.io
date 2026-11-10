@@ -1,7 +1,7 @@
 # "השיר שלי" – עוזר המילים (Cloudflare Worker + Workers AI, חינם, בלי מפתח).
 # פריסה:  cd tools/shir-worker && npx wrangler deploy   (אותו חשבון כמו kelim-news)
 # בדיקה:  node test.mjs
-# הדף:    https://gilad-rachamim.github.io/kelim/shir/milim/
+# הדף:    https://hakelim.com/kelim/shir/milim/
 name = "kelim-shir"
 main = "shir-worker.js"
 compatibility_date = "2026-09-01"

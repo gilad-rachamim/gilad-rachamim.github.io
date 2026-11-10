@@ -24,8 +24,8 @@ var CFG = {
   OWNER_NAME: 'גילעד רחמים אביעד – מוהל מוסמך',
   OWNER_PHONE: '058-404-9049',
   WA_INTL: '972584049049',
-  PDF_URL: 'https://gilad-rachamim.github.io/mohel/madrich/hamadrich-lekrat-huledet-haben.pdf',
-  SITE: 'https://gilad-rachamim.github.io',
+  PDF_URL: 'https://hakelim.com/mohel/madrich/hamadrich-lekrat-huledet-haben.pdf',
+  SITE: 'https://hakelim.com',
   NTFY_TOPIC: PropertiesService.getScriptProperties().getProperty('NTFY_TOPIC') || '',
   TZ: 'Asia/Jerusalem'
 };
@@ -112,7 +112,7 @@ function link(path, label, code) {
   var url = /^https?:/.test(path) ? path : CFG.SITE + path + (path.indexOf('?') > -1 ? '&' : '?') + 'utm_source=email&utm_medium=nurture&utm_campaign=' + code;
   return '<a href="' + url + '" style="color:#1a5fb4;font-weight:bold">' + label + '</a>';
 }
-var SIG = 'גילעד רחמים אביעד · מוהל מוסמך · ירושלים, מגיע לכל הארץ<br><a href="https://wa.me/972584049049">058-404-9049 (ווטסאפ)</a> · gilad4049@gmail.com · gilad-rachamim.github.io/mohel';
+var SIG = 'גילעד רחמים אביעד · מוהל מוסמך · ירושלים, מגיע לכל הארץ<br><a href="https://wa.me/972584049049">058-404-9049 (ווטסאפ)</a> · gilad4049@gmail.com · hakelim.com/mohel';
 
 function mailBody(code, variant) {
   var PDF = CFG.PDF_URL, CALC = '/mohel/moed/', LIST = '/mohel/checklist/', VIDEO = '/mohel/#shira';
@@ -143,7 +143,7 @@ function mailBody(code, variant) {
     'E-post': 'תודה שזכיתי להיות המוהל של הבן שלכם. היה מרגש.<br><br>' +
       '<b>לימים הקרובים</b> (במדריך): אמבטיה פעמיים ביום חמישה ימים; משחה סביב מקום הברית פעמיים ביום שלושה ימים; מעט כתמי דם והפרשה לבנה-צהבהבה – טבעי. דימום שלא נעצר, חום, או שתן שלא מגיע שעות ארוכות – מתקשרים אליי מיד, בכל שעה.<br><br>' +
       'ושתי בקשות, רק אם נוח לכם:<br>1. <b>משפט ב-Google</b> – זה מה שעוזר להורים אחרים למצוא מוהל שמלווה: ' + link(REVIEW_URL() || CFG.SITE + '/mohel/', 'לכתיבת ביקורת') + ' (חצי דקה).<br>' +
-      '2. <b>מכירים מישהי בהריון?</b> המדריך חינם: gilad-rachamim.github.io/mohel/madrich<br><br>תגדלו אותו לתורה, לחופה ולמעשים טובים.<br>גילעד'
+      '2. <b>מכירים מישהי בהריון?</b> המדריך חינם: hakelim.com/mohel/madrich<br><br>תגדלו אותו לתורה, לחופה ולמעשים טובים.<br>גילעד'
   };
   var b = B[code];
   return /^שלום/.test(b) ? b : 'שלום {שם},<br><br>' + b;

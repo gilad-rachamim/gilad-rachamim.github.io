@@ -9,7 +9,7 @@ import html, json, os, pathlib
 from urllib.parse import quote
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-BASE = "https://gilad-rachamim.github.io"
+BASE = "https://hakelim.com"
 # 07.11.2026: הדף עבר ל"כלי קודש" (/kodesh/mohalim/). הכתובת הישנה /mohel/lemohalim/ נשארת כהפניה.
 PAGE = ROOT / "src" / "pages" / "kodesh" / "mohalim" / "index.html"
 MD = pathlib.Path(os.path.expanduser("~/.claude/skills/mohel-deploy/references/mohel-share-messages.md"))

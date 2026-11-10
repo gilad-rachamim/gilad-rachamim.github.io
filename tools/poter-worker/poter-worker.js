@@ -485,7 +485,7 @@ export default {
       if (!h) return json({ error: 'origin' }, 403);
       return machberet(request, env, ctx, h, url.pathname);
     }
-    if (url.pathname !== '/solve' || request.method !== 'POST') return json({ name: 'הפותר – שאלות בגרות במתמטיקה', page: 'https://gilad-rachamim.github.io/limudim/poter/' }, 200);
+    if (url.pathname !== '/solve' || request.method !== 'POST') return json({ name: 'הפותר – שאלות בגרות במתמטיקה', page: 'https://hakelim.com/limudim/poter/' }, 200);
     if (!h) return json({ error: 'origin' }, 403);
     const raw = await request.text();
     if (raw.length > MAX_IMG + MAX_TEXT + 2000) return json({ error: 'too_big' }, 413, h);

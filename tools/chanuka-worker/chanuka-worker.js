@@ -190,7 +190,7 @@ const BAD_WORD = /(^|[^א-ת])[והשלבכמ]?(זין|חרא|זבל|דפוק|מ
 function badWords(s) { const t = s.toLowerCase(); return BAD_SUB.some(w => t.includes(w)) || BAD_WORD.test(t); }
 function contactInfo(s) { return /\d[\d\s-]{6,}\d/.test(s) || /https?:|www\.|\.com|\.co\.il|@/i.test(s); }
 
-const SITE = 'https://gilad-rachamim.github.io/kodesh/chanuka/chanukiya/';
+const SITE = 'https://hakelim.com/kodesh/chanuka/chanukiya/';
 const PHR = { niftar: 'לעילוי נשמת', refua: 'לרפואת', hatzlacha: 'להצלחת', zivug: 'לזיווג הגון ל', zchut: 'לזכות' };
 function title(m) {
   if (m.p === 'kehila') return m.n;
@@ -211,7 +211,7 @@ function sharePage(st) {
     '<title>' + h(t) + '</title><meta name="description" content="' + h(desc) + '">' +
     '<meta property="og:type" content="website"><meta property="og:locale" content="he_IL"><meta property="og:site_name" content="כלי קודש">' +
     '<meta property="og:title" content="' + h(t) + '"><meta property="og:description" content="' + h(desc) + '">' +
-    '<meta property="og:image" content="https://gilad-rachamim.github.io/assets/og-kodesh.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">' +
+    '<meta property="og:image" content="https://hakelim.com/assets/og-kodesh.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">' +
     '<meta property="og:url" content="' + h(to) + '"><meta name="twitter:card" content="summary_large_image">' +
     '<link rel="canonical" href="' + h(to) + '"><meta http-equiv="refresh" content="0;url=' + h(to) + '">' +
     '<script>location.replace(' + JSON.stringify(to) + ' + location.hash)</script>' +
