@@ -1,0 +1,41 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_blackjack",
+  "title": "בלאק ג'ק (21) על נקודות – בלי כסף, עם אתגר יומי וחבר | הכלים של גילעד רחמים",
+  "description": "בלאק ג'ק (21) בעברית, על נקודות בלבד – בלי כסף אמיתי ובלי הימורים. אתגר יומי: אותה חפיסה לכולם, 20 ידיים. אפשר לאתגר חבר על אותה חפיסה בדיוק. רמז לפי האסטרטגיה הבסיסית.",
+  "og_title": "בלאק ג'ק על נקודות – מי מסיים עם יותר?",
+  "priority": "0.6",
+  "crumbs": [["משחקי חשיבה", "/kelim/chashiva/"], ["בלאק ג'ק", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/chashiva.css\">",
+  "foot": "<script src=\"/assets/chashiva.js\" defer></script><script src=\"/assets/chashiva-blackjack.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>בלאק ג'ק (21)</h1>
+  <p class="sub">מגיעים הכי קרוב ל-21 בלי לעבור. משחק חשיבה וחישוב סיכונים, על נקודות בלבד.</p>
+</header>
+<div class="tool">
+  <p class="ch-note">🪙 <b>על נקודות בלבד.</b> אין כאן כסף אמיתי, אין הימורים, ואין קישורים לאתרי הימורים. הנקודות לא שוות כלום מחוץ למשחק.</p>
+  <div class="ch-tabs" id="bj-tabs" role="tablist"><button type="button" role="tab" data-m="daily" aria-selected="true">⭐ אתגר יומי</button><button type="button" role="tab" data-m="free" aria-selected="false">🃏 משחק חופשי</button></div>
+  <p class="ch-weekline" id="ch-weekline"></p>
+  <div class="ch-vsbanner" id="ch-vsbanner" hidden></div>
+  <div class="ch-bar"><span id="bj-hand"></span><span>🪙 <b id="bj-pts">1,000</b> נקודות</span></div>
+  <div class="ch-felt" id="bj-table">
+    <h3>הדילר <span class="bj-tot" id="bj-dtot"></span></h3>
+    <div class="bj-cards" id="bj-dealer"></div>
+    <h3 style="margin-top:.8rem">אתם</h3>
+    <div id="bj-hands"></div>
+  </div>
+  <div id="bj-betbox"><p class="ch-hint">כמה נקודות לשים על היד הזאת?</p><div class="ch-chips" id="bj-bets"></div></div>
+  <div class="ch-tools"><button type="button" id="bj-deal" class="on">🃏 לחלק</button><button type="button" id="bj-hit" hidden>➕ קלף</button><button type="button" id="bj-stand" hidden>✋ עוצר</button><button type="button" id="bj-dbl" hidden>✖️2 להכפיל</button><button type="button" id="bj-split" hidden>✂️ לפצל</button><button type="button" id="bj-hint" hidden>💡 מה כדאי?</button></div>
+  <p class="ch-msg" id="bj-msg" aria-live="polite"></p>
+  <div id="bj-win"></div>
+  <details class="ch-how"><summary>איך משחקים?</summary><ul>
+    <li>מקבלים שני קלפים. מוסיפים קלפים ("קלף") או עוצרים. מי שעובר 21 – הפסיד את היד.</li>
+    <li>קלפי תמונה שווים 10, אס שווה 11 או 1 (מה שעדיף לכם).</li>
+    <li>הדילר מוסיף קלפים עד שיש לו 17 לפחות. מי שקרוב יותר ל-21 – מנצח.</li>
+    <li>בלאק ג'ק (אס + 10 בשני הקלפים הראשונים) משלם פי 1.5. "להכפיל" = מכפילים את ההימור ומקבלים קלף אחד בדיוק. "לפצל" = זוג הופך לשתי ידיים.</li>
+    <li><b>אתגר יומי:</b> אותה חפיסה לכולם היום, 20 ידיים, מתחילים מ-1,000. בסוף אפשר לאתגר חבר על אותה חפיסה בדיוק.</li>
+    <li>"💡 מה כדאי?" מראה מה האסטרטגיה הבסיסית אומרת – ככה לומדים לחשב סיכונים.</li>
+  </ul></details>
+</div>
