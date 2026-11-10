@@ -37,6 +37,7 @@
 
     <div class="mb-ex" role="group" aria-label="תרגילים לדוגמה">
       <button type="button" class="mb-cam" id="mb-cam" hidden>📷 מצלמים תרגיל מהדף</button><input type="file" id="mb-camf" accept="image/*" hidden>
+      <button type="button" class="mb-cam" id="mb-bag">🎓 תרגיל מהבגרות</button><a hidden id="mb-mxsrc" href="/assets/limudim-math.js"></a>
       <span>לנסות על:</span>
       <button type="button" data-ex="lin">משוואה</button><button type="button" data-ex="quad">ריבועית</button><button type="button" data-ex="simp">פישוט</button><button type="button" data-ex="der">נגזרת</button><button type="button" data-ex="trig">טריגו</button><button type="button" data-ex="sqrt">שורש</button><button type="button" data-ex="exp">מעריכית</button><button type="button" data-ex="ineq">אי-שוויון</button><button type="button" data-ex="sys">מערכת משוואות</button>
     </div>
@@ -55,6 +56,7 @@
     </div>
 
     <article class="cx-sheet mb-sheet" id="mb-sheet" aria-label="המחברת">
+      <p class="mb-ask" id="mb-ask" hidden></p>
       <ol class="mb-rows" id="mb-rows"></ol>
       <button type="button" class="mb-add no-print" id="mb-add">+ שורה חדשה</button>
     </article>
@@ -144,6 +146,8 @@
   </section>
 
 <div class="mx-support no-print" id="mb-support" hidden><p>💛 המחברת חינמית, ונבנתה בהרבה שעות עבודה. אם היא עוזרת לכם, אפשר לעזור להחזיק את המיזם, גם בסכום קטן.</p><a class="btn btn-line btn-sm" href="/kelim/#litmoch" data-support="1">לתמוך במיזם</a></div>
+
+  <div id="mx-data" hidden></div><!-- המחוללים של "המסלול שלי" נטענים רק כשלוחצים "תרגיל מהבגרות" -->
 
   <!-- מקלדת סימנים: נצמדת לתחתית המסך כשכותבים בשורה -->
   <div class="mb-kb no-print" id="mb-kb" hidden>

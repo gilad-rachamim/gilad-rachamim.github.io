@@ -280,6 +280,7 @@
   setDeg(A.deg !== false);
 
   function renderRows(focusI) {
+    var ak = $('mb-ask'); ak.hidden = !A.ask; ak.textContent = A.ask ? '📝 ' + A.ask : '';
     rowsEl.innerHTML = '';
     A.rows.forEach(function (v, i) { rowsEl.appendChild(rowEl(v, i)); });
     recheck(true);
@@ -385,7 +386,7 @@
   Array.prototype.forEach.call(document.querySelectorAll('#mb-alg [data-ex]'), function (b) {
     b.addEventListener('click', function () {
       var x = EXA[b.getAttribute('data-ex')]; if (!x) return;
-      archive(); A.rows = x.slice(); if (b.getAttribute('data-ex') === 'trig') setDeg(true);
+      archive(); A.rows = x.slice(); A.ask = ''; if (b.getAttribute('data-ex') === 'trig') setDeg(true);
       renderRows(1); save(); hideHint(); used('example');
     });
   });
@@ -394,7 +395,7 @@
   function archive() {
     if (!A.rows.some(function (r) { return r.trim(); })) return;
     var old = load('mb-old', []);
-    old.unshift({ t: Date.now(), rows: A.rows.slice(), deg: A.deg });
+    old.unshift({ t: Date.now(), rows: A.rows.slice(), deg: A.deg, ask: A.ask || '' });
     store('mb-old', JSON.stringify(old.slice(0, 30)));
     showOld();
   }
@@ -408,13 +409,13 @@
       b.addEventListener('click', function () {
         var all = load('mb-old', []), it = all.splice(k, 1)[0];
         store('mb-old', JSON.stringify(all)); archive();
-        A.rows = it.rows; setDeg(it.deg !== false); renderRows(); save(); showOld(); hideHint();
+        A.rows = it.rows; A.ask = it.ask || ''; setDeg(it.deg !== false); renderRows(); save(); showOld(); hideHint();
         window.scrollTo({ top: $('mb-sheet').offsetTop - 60, behavior: 'smooth' });
       });
       li.appendChild(b); ul.appendChild(li);
     });
   }
-  $('mb-new').addEventListener('click', function () { archive(); A.rows = ['', '']; renderRows(0); save(); hideHint(); used('new'); });
+  $('mb-new').addEventListener('click', function () { archive(); A.rows = ['', '']; A.ask = ''; renderRows(0); save(); hideHint(); used('new'); });
   $('mb-print').addEventListener('click', function () { used('print'); window.print(); });
   $('mb-formb').addEventListener('click', function () {
     var last = null; for (var i = lastRes.length - 1; i >= 0 && !last; i--) if (lastRes[i] && lastRes[i].info.kind !== 'empty') last = lastRes[i];
@@ -499,7 +500,7 @@
       var wait = el('p', 'mb-ht', '⏳ מחפש את הצעד הבא…'); box.insertBefore(wait, bt);
       var lines = [], marks = [];
       A.rows.forEach(function (r, i) { if (r.trim()) { lines.push(r); marks.push((lastRes[i] && lastRes[i].mark) || ''); } });
-      post('/hint', { mode: 'alg', level: 'next', question: lines[0], lines: lines.slice(1), marks: marks.slice(1) }).then(function (x) {
+      post('/hint', { mode: 'alg', level: 'next', question: lines[0] + (A.ask ? '  (' + A.ask + ')' : ''), lines: lines.slice(1), marks: marks.slice(1) }).then(function (x) {
         wait.remove(); var j = x.j || {};
         if (x.s !== 200 || j.error) { box.insertBefore(el('p', 'mb-aierr', esc(aiErr(x))), bt); return; }
         if (j.step) showStep(j.step, j.hint, false, true);
@@ -569,7 +570,7 @@
     var lines = [], marks = [];
     A.rows.forEach(function (r, i) { if (r.trim()) { lines.push(r); marks.push((lastRes[i] && lastRes[i].mark) || ''); } });
     if (!lines.length) return;
-    aiBox(box, btn, '/hint', { mode: 'alg', question: lines[0], lines: lines.slice(1), marks: marks.slice(1) }, function (j) {
+    aiBox(box, btn, '/hint', { mode: 'alg', question: lines[0] + (A.ask ? '  (' + A.ask + ')' : ''), lines: lines.slice(1), marks: marks.slice(1) }, function (j) {
       if (!j.hint) return false;
       var d = el('div', 'mb-aih');
       d.appendChild(el('p', '', '🤖 ' + esc(j.hint)));
@@ -636,11 +637,73 @@
     }).catch(function () { camB.disabled = false; st.textContent = 'אין חיבור לאינטרנט. אפשר להקליד את התרגיל, והבדיקה של כל שורה עובדת גם בלי.'; });
   }
   function useRead(it) {
-    archive(); A.rows = [it.line, '']; renderRows(1); save(); used('photo_used');
+    archive(); A.rows = [it.line, '']; A.ask = it.ask || ''; renderRows(1); save(); used('photo_used');
     var bad = M.readLine(it.line, { deg: A.deg }).kind === 'bad';
     hintEl.hidden = false; hintEl.innerHTML = '';
     hintEl.appendChild(el('p', 'mb-ht', esc(bad ? '📷 התרגיל הועתק, אבל משהו בו לא נקרא טוב. מתקנים את שורת התרגיל לפי הדף.' : '📷 ✓ התרגיל הועתק מהצילום' + (it.ask ? ' (' + it.ask + ')' : '') + '. בודקים שהוא כמו בדף, ומתחילים לפתור בשורה הבאה.')));
   }
+
+  // ---------- תרגיל מהבגרות בלחיצה: המחוללים של "המסלול שלי" (window.MX מ-limudim-math.js, נטען רק כשצריך) ----------
+  // רק נושאים שאפשר לפתור בהם שורה אחרי שורה, ורק השלבים שהמחברת יודעת לקרוא (נבדק ב-test-tricky.js)
+  var BAG = { mishvaa: [2, 3], pilug: [2, 3], shorashim: [1, 2, 3], maarechet: [1, 2, 3], chezkot: [2, 3], nigzeret: [1, 2, 3], mashik: [1, 2, 3], kitzon: [1, 2, 3],
+    integral: [2, 3], logaritm: [1, 2, 3], parabola: [1, 2, 3], maagal: [1, 3], parametr: [1, 2, 3], 'exp-ln': [1, 2, 3], 'trig-nigzeret': [1, 2, 3], 'shoresh-f': [2, 3], rationalit: [1, 2, 3] };
+  var mxWait = null;
+  function loadMx() {
+    if (window.MX) return Promise.resolve(window.MX);
+    if (mxWait) return mxWait;
+    mxWait = new Promise(function (ok, no) {
+      var sc = document.createElement('script'); sc.src = $('mb-mxsrc').getAttribute('href');
+      sc.onload = function () { window.MX ? ok(window.MX) : no(); }; sc.onerror = function () { mxWait = null; no(); };
+      document.head.appendChild(sc);
+    });
+    return mxWait;
+  }
+  function bagTopics(MX, q) {
+    return MX.T.filter(function (t) { return BAG[t.id] && (q === '*' || (q === 'base' ? !t.bg : (t.q || []).indexOf(q) >= 0)); });
+  }
+  function bagPanel() {
+    used('bagrut_open');
+    hintEl.hidden = false; hintEl.innerHTML = '<p class="mb-ht">⏳ טוען את מאגר התרגילים…</p>';
+    hintEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    loadMx().then(function (MX) {
+      var qs = MX.QN.filter(function (q) { return bagTopics(MX, q[0]).length; });
+      var cur = store('mb-bq') || '*';
+      hintEl.innerHTML = '';
+      hintEl.appendChild(el('p', 'mb-ht', '🎓 תרגיל מהבגרות: בוחרים שאלון ונושא, והתרגיל נכנס לשורה הראשונה.'));
+      var row = el('div', 'mb-bagsel');
+      var sq = el('select'); sq.setAttribute('aria-label', 'שאלון');
+      sq.innerHTML = '<option value="*">כל השאלונים</option><option value="base">יסודות: משוואות, סוגריים ומערכות</option>' + qs.map(function (q) { return '<option value="' + q[0] + '">' + esc(q[1]) + '</option>'; }).join('');
+      sq.value = cur; if (sq.value !== cur) sq.value = '*';
+      var stp = el('select'); stp.setAttribute('aria-label', 'נושא');
+      function fillT() { stp.innerHTML = '<option value="*">כל הנושאים</option>' + bagTopics(MX, sq.value).map(function (t) { return '<option value="' + t.id + '">' + esc(t.em + ' ' + t.name) + '</option>'; }).join(''); var lt = store('mb-bt'); if (lt) { stp.value = lt; if (stp.value !== lt) stp.value = '*'; } }
+      fillT();
+      sq.addEventListener('change', function () { store('mb-bq', sq.value); fillT(); });
+      stp.addEventListener('change', function () { store('mb-bt', stp.value); });
+      row.appendChild(sq); row.appendChild(stp); hintEl.appendChild(row);
+      var bt = el('div', 'btns'); hintEl.appendChild(bt);
+      hintBtn(bt, 'btn-gold', '✏️ לתרגיל', function () { bagGo(MX, sq.value, stp.value); });
+    }).catch(function () { hintEl.innerHTML = '<p class="mb-aierr">לא הצלחתי לטעון את מאגר התרגילים. בודקים את החיבור לאינטרנט ומנסים שוב.</p>'; });
+  }
+  function bagGo(MX, q, tid) {
+    var pool = bagTopics(MX, q).filter(function (t) { return tid === '*' || t.id === tid; });
+    if (!pool.length) pool = bagTopics(MX, '*');
+    for (var k = 0; k < 12; k++) {
+      var t = pool[Math.floor(Math.random() * pool.length)], lvs = BAG[t.id], lv = lvs[Math.floor(Math.random() * lvs.length)], g;
+      try { g = t.gen(lv); } catch (_) { continue; }
+      var c = M.fromMx(g.ex), I = M.readLine(c.line, { deg: A.deg });
+      if (!c.line || I.kind === 'bad' || I.kind === 'text') continue;
+      archive(); A.rows = [c.line, '']; A.ask = (t.em + ' ' + t.name) + (c.ask ? ' · ' + c.ask : ''); renderRows(1); save();
+      hintEl.hidden = false; hintEl.innerHTML = '';
+      hintEl.appendChild(el('p', 'mb-ht', '🎓 ' + esc(t.name) + (c.ask ? ': ' + esc(c.ask) : '. פותרים שורה אחרי שורה.')));
+      var bt = el('div', 'btns'); hintEl.appendChild(bt);
+      hintBtn(bt, '', '🎲 תרגיל אחר', function () { bagGo(MX, q, tid); });
+      hintBtn(bt, '', '⚙️ שאלון ונושא', bagPanel);
+      used('bagrut_ex');
+      return;
+    }
+    flash('לא מצאתי תרגיל מתאים. נסו נושא אחר.');
+  }
+  $('mb-bag').addEventListener('click', bagPanel);
 
   // =====================================================================
   //  הוכחה: טענה | נימוק
@@ -1097,7 +1160,7 @@
     if (hs) {
       var so = dec(hs[1]);
       if (so.t === 'p' && so.rows) { P = { given: String(so.g || ''), prove: String(so.v || ''), rows: so.rows.map(function (r) { return { c: String(r[0] || ''), r: String(r[1] || ''), o: String(r[2] || '') }; }), draw: { i: Array.isArray(so.dr) ? so.dr.slice(0, 200) : [] } }; $('mb-given').value = P.given; $('mb-prove').value = P.prove; sharedTab = 'p'; }
-      else if (so.rows) { A = { rows: so.rows.map(String).slice(0, 80), deg: so.d !== 0 }; setDeg(A.deg); sharedTab = 'a'; }
+      else if (so.rows) { A = { rows: so.rows.map(String).slice(0, 80), deg: so.d !== 0, ask: String(so.q || '').slice(0, 200) }; setDeg(A.deg); sharedTab = 'a'; }
       if (sharedTab) { shared = true; $('mb-shared').hidden = false; if (so.n) $('mb-shared-t').textContent = 'שלחו לכם: "⁨' + String(so.n).slice(0, 80) + '⁩". רואים את הפתרון כמו שנכתב, עם הבדיקה של כל שורה. מה שמשנים כאן לא נשמר.'; used('shared_open'); }
     }
   } catch (e) { flash('הקישור לא נפתח. אולי הוא נחתך בהעתקה.'); }
@@ -1109,7 +1172,7 @@
   var A2 = null;
   function shareLink(proof) {
     var o = proof ? { t: 'p', g: P.given, v: P.prove, rows: P.rows.filter(function (r) { return (r.c || '').trim() || r.r; }).map(function (r) { return [r.c, r.r, r.o || '']; }), dr: shareDraw() }
-      : { t: 'a', d: A.deg ? 1 : 0, rows: A.rows.filter(function (r, i) { return r.trim() || i === 0; }) };
+      : { t: 'a', d: A.deg ? 1 : 0, rows: A.rows.filter(function (r, i) { return r.trim() || i === 0; }), q: A.ask || undefined };
     if (!(o.rows.length && (proof ? o.rows.length : o.rows[0].trim()))) { flash(proof ? 'עוד אין שורות בהוכחה.' : 'עוד אין תרגיל במחברת.'); return; }
     var name = proof ? (P.prove ? 'הוכחה: ' + P.prove : 'הוכחה') : 'תרגיל: ' + A.rows[0];
     o.n = name.slice(0, 80);

@@ -22,7 +22,7 @@
       .replace(/[‎‏‪-‮]/g, '')
       .replace(/\\left|\\right|\\,|\\;|\\!/g, '')
       .replace(/\\cdot|\\times|·|×|∙|⋅/g, '*').replace(/÷|:(?=\s*[\d(a-z])/g, '/').replace(/[−–—]/g, '-').replace(/≈/g, '=').replace(/\+-|\+\/-/g, '±')
-      .replace(/\\pi|π/g, 'pi').replace(/∛/g, 'cbrt').replace(/√/g, 'sqrt').replace(/²/g, '^2').replace(/³/g, '^3')
+      .replace(/\\pi|π/g, 'pi').replace(/∛/g, 'cbrt').replace(/√/g, 'sqrt').replace(/²/g, '^2').replace(/³/g, '^3').replace(/[₀-₉]/g, function (c) { return String(c.charCodeAt(0) - 0x2080); })
       .replace(/∠\s*([A-Z]{1,3})/g, 'ang_$1').replace(/∞/g, 'inf')
       .replace(/\\sqrt\{([^{}]*)\}/g, 'sqrt($1)').replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, '(($1)/($2))')
       .replace(/\\(sin|cos|tan|ln|log|exp|arcsin|arccos|arctan)/g, '$1')
@@ -1078,8 +1078,30 @@
     return null;
   }
 
+  // ---------------- תרגיל מ"המסלול שלי" (window.MX, HTML) -> שורה של המחברת + מה שואלים ----------------
+  function fromMx(html) {
+    var s = String(html || '')
+      .replace(/∫\s*<sub>([^<]*)<\/sub>\s*<sup>([^<]*)<\/sup>\s*(.*?)\s*dx/g, 'int($3,$1,$2)')
+      .replace(/<span class="fr"><span>([^<]*)<\/span><span>([^<]*)<\/span><\/span>/g, '($1)/($2)')
+      .replace(/<sup>([^<]*)<\/sup>/g, '^($1)').replace(/<sub>([^<]*)<\/sub>/g, '_$1').replace(/&nbsp;/g, ' ');
+    var line = '', ask = [], maths = [];
+    s.split(/<br\s*\/?>/).forEach(function (part) {
+      var heTxt = [], math = part.replace(/<span class="he"[^>]*>([^<]*)<\/span>/g, function (m, t) { heTxt.push(t.trim()); return ' '; }).replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+      var whole = part.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+      if (math && !/\?/.test(math) && !heTxt.length && /=|[a-z]/i.test(math)) maths.push(math);
+      else if (math && !/\?/.test(math) && heTxt.length && !line && !maths.length && /=/.test(math) && heTxt.join('').length < 20) { ask.push(heTxt.join(' ')); maths.push(math); }
+      else ask.push(whole);
+    });
+    if (maths.length === 2 && maths.every(function (q) { return q.split('=').length === 2; }) && !/^f\(/.test(maths[0])) line = maths.join(' ; '); // מערכת
+    else { line = maths[0] || ''; ask = maths.slice(1).concat(ask); }
+    if (!line && ask.length === 1 && /^[^א-ת]*=\s*\?\s*$/.test(ask[0])) { line = ask[0].replace(/=\s*\?\s*$/, '').trim(); ask = ['חשבו']; } // log_10 100000 = ?
+    if (!line && maths.length === 0 && ask.length && !/[א-ת]/.test(s.replace(/<[^>]+>/g, '')) && !/\?/.test(s)) { line = ask.join(' '); ask = []; } // 4(x − 2)
+    line = line.replace(/−/g, '-').replace(/(sin|cos|tan)\s+(\d*\.?\d*[a-z])/g, '$1($2)').replace(/log_(\d+)\s+([\d.]+)/g, 'log_$1($2)').replace(/÷/g, '/').replace(/\s+/g, ' ').trim();
+    return { line: line, ask: ask.join(' ').replace(/−/g, '−').trim() };
+  }
+
   var sameExpr = memo('x', sameExpr0), sameEq = memo('e', sameEq0), solCheck = memo('s', solCheck0);
   var API = { readLine: readLine, checkAll: checkAll, parse: parse, tex: tex, ev: ev, vars: vars, namesOf: namesOf, has: has, sameExpr: sameExpr, sameEq: sameEq,
-    roots: roots, eqFn: eqFn, topics: topics, polyDeg: polyDeg, nice: nice, clean: clean, Err: Err, polyCoef: polyCoef, polyStr: polyStr, nextStep: nextStep };
+    roots: roots, eqFn: eqFn, topics: topics, polyDeg: polyDeg, nice: nice, clean: clean, Err: Err, polyCoef: polyCoef, polyStr: polyStr, nextStep: nextStep, fromMx: fromMx };
   if (typeof module !== 'undefined' && module.exports) module.exports = API; else root.MbMath = API;
 })(typeof window !== 'undefined' ? window : this);

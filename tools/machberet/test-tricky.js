@@ -91,5 +91,27 @@ n++; { const s = M.nextStep(['x^2+x+1=0'], D); if (!(s && s.text)) { bad++; cons
 n++; { const s = M.nextStep(['2x+3=7', '2x=10'], D); if (!(s && s.fix === 1)) { bad++; console.log('✗ קודם מתקנים: ' + JSON.stringify(s)); } }
 n++; if (M.nextStep(['sin(x)=0.5'], D) !== null) { bad++; console.log('✗ טריגו: אין צעד מקומי'); }
 
+// "תרגיל מהבגרות": כל תרגיל שהמחוללים של "המסלול שלי" מייצרים בנושאים שבמחברת נקרא כשורה תקינה
+{
+  const W = global.window, Dd = global.document, Ls = global.localStorage;
+  global.window = {}; global.document = { getElementById: id => id === 'mx-data' ? {} : null }; global.localStorage = { getItem: () => null, setItem: () => {} };
+  require('../../assets/limudim-math.js');
+  const MX = global.window.MX;
+  global.window = W; global.document = Dd; global.localStorage = Ls;
+  const src = require('fs').readFileSync(require('path').join(__dirname, '../../assets/limudim-machberet.js'), 'utf8');
+  const BAG = eval('(' + src.match(/var BAG = (\{[\s\S]*?\});/)[1] + ')');
+  for (const t of MX.T) {
+    if (!BAG[t.id]) continue;
+    for (const lv of BAG[t.id]) for (let i = 0; i < 25; i++) {
+      n++;
+      const g = t.gen(lv), c = M.fromMx(g.ex), I = M.readLine(c.line, D);
+      if (!c.line || I.kind === 'bad' || I.kind === 'text') { bad++; console.log('✗ בגרות ' + t.id + ' ' + lv + ': ' + JSON.stringify(g.ex) + ' → ' + c.line + ' [' + I.kind + '] ' + (I.msg || '')); break; }
+    }
+  }
+  const c1 = M.fromMx('x + y = 13<br>x − y = −1'); n++; if (c1.line !== 'x + y = 13 ; x - y = -1') { bad++; console.log('✗ מערכת מהמסלול: ' + c1.line); }
+  const c2 = M.fromMx('∫<sub>2</sub><sup>5</sup> (3x² − 2) dx'); n++; if (Math.abs(M.ev(M.parse(c2.line), {}) - 111) > 1e-6) { bad++; console.log('✗ אינטגרל מהמסלול: ' + c2.line); }
+  const c3 = M.fromMx('f(x) = −4sin 5x<br>f′(x) = ?·cos 5x'); n++; if (c3.line !== 'f(x) = -4sin(5x)' || !/f′/.test(c3.ask)) { bad++; console.log('✗ טריגו מהמסלול: ' + JSON.stringify(c3)); }
+}
+
 console.log(`\n${n - bad}/${n} עברו`);
 process.exit(bad ? 1 : 0);
