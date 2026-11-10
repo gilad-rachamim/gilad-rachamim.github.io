@@ -41,6 +41,7 @@
   function norm(s) { return s.replace(/[ךםןףץ]/g, function (c) { return FIN[c]; }); }
   function show(ch, pos) { return pos === 4 && TOFIN[ch] ? TOFIN[ch] : ch; }
   var ORDER = CH.shuffle(WORDS, CH.rng('mila-order-v1'));
+  function todayIdx() { var i = (CH.dayNum() - 1) % ORDER.length; return i < 0 ? i + ORDER.length : i; }
 
   // ---------- מצב ----------
   var data = CH.load(G); data.dist = data.dist || [0, 0, 0, 0, 0, 0, 0];
@@ -51,15 +52,18 @@
     s.cur = { key: W.key, g: guesses, h: hint, done: won || lost };
     data.cur = s.cur; CH.save(G, s);
   }
-  function start(m) {
+  function start(m, vi) {
+    if (m !== 'vs') CH.vsReset();
     mode = m; guesses = []; cur = ''; won = false; lost = false; hint = false; keys = {}; $('ml-win').innerHTML = ''; say('');
-    var key, w;
-    if (m === 'daily') { var i = (CH.dayNum() - 1) % ORDER.length; if (i < 0) i += ORDER.length; w = ORDER[i]; key = 'mila-daily-' + CH.today(); }
-    else { w = WORDS[Math.floor(Math.random() * WORDS.length)]; key = 'mila-practice-' + Date.now(); }
-    W = { word: norm(w[0]), raw: w[0], clue: w[1], key: key };
+    var key, w, i;
+    if (m === 'daily') { i = todayIdx(); key = 'mila-daily-' + CH.today(); }
+    else if (m === 'vs') { i = vi; key = 'mila-vs-' + vi + '-' + Date.now(); }
+    else { i = Math.floor(Math.random() * ORDER.length); key = 'mila-practice-' + Date.now(); }
+    w = ORDER[i];
+    W = { word: norm(w[0]), raw: w[0], clue: w[1], key: key, i: i };
     var sv = data.cur;
     if (m === 'daily' && sv && sv.key === key) { guesses = sv.g || []; hint = !!sv.h; guesses.forEach(function (g) { score(g).forEach(function (s, k) { mark(g[k], s); }); }); won = guesses.indexOf(W.word) > -1; lost = !won && guesses.length >= 6; }
-    $('ml-label').textContent = m === 'daily' ? 'המילה של היום · #' + CH.dayNum() : 'תרגול · מילה אקראית';
+    $('ml-label').textContent = m === 'daily' ? 'המילה של היום · #' + CH.dayNum() : m === 'vs' ? 'אתגר מחבר' : 'תרגול · מילה אקראית';
     $('ml-clue').hidden = !hint; $('ml-clue').textContent = '💡 ' + W.clue;
     draw();
     if (won || lost) { say(won ? 'פתרתם את המילה של היום ✓ מחר מחכה מילה חדשה.' : 'המילה של היום הייתה: ' + W.raw + '. מחר מחכה מילה חדשה.'); $('ml-clue').hidden = false; }
@@ -130,7 +134,7 @@
     persist();
     CH.used(TOOL, won ? 'solve' : 'fail', { mode: mode, tries: guesses.length, hint: hint ? 1 : 0 });
     var dots = guesses.map(function (g) { return score(g).map(function (s) { return ['⚫', '🔵', '🟡'][s]; }).join(''); }).join('\n');
-    var share = '🔤 מילה ביום' + (daily ? ' #' + CH.dayNum() : ' · תרגול') + '\n' + (won ? 'הצלחתי ב-' + guesses.length + ' מתוך 6' : 'הפעם לא הצלחתי') + (hint ? ' (עם רמז)' : '') + '\n' + dots + (daily && won && st.streak ? '\n🔥 רצף ' + CH.days(st.streak) : '') + '\nמה איתכם? 😉';
+    var share = '🔤 מילה ביום' + (daily ? ' #' + CH.dayNum() : mode === 'vs' ? ' · אתגר מחבר' : ' · תרגול') + '\n' + (won ? 'הצלחתי ב-' + guesses.length + ' מתוך 6' : 'הפעם לא הצלחתי') + (hint ? ' (עם רמז)' : '') + '\n' + dots + (daily && won && st.streak ? '\n🔥 רצף ' + CH.days(st.streak) : '') + '\nמה איתכם? 😉';
     var max = Math.max.apply(0, data.dist) || 1;
     var bars = '<div class="ml-dist"><b>הניחושים שלכם במילה היומית</b>' + data.dist.map(function (n, i) {
       return '<div><span>' + (i < 6 ? i + 1 : '✕') + '</span><i style="width:' + Math.max(6, Math.round(n / max * 100)) + '%"' + (won && daily && i === guesses.length - 1 ? ' class="me"' : '') + '>' + n + '</i></div>';
@@ -139,14 +143,20 @@
     CH.win({ tool: TOOL, el: $('ml-win'), daily: daily && won, stats: st,
       title: won ? (guesses.length <= 2 ? 'מדהים! 🎉' : guesses.length <= 4 ? 'יפה מאוד! 🎉' : 'הצלחתם! 🎉') : 'כמעט! המילה הייתה ' + W.raw,
       line: '<span>המילה: <b>' + W.raw + '</b></span><span>' + W.clue + '</span>',
-      extra: daily ? bars : '', share: share, next: next });
+      extra: daily ? bars : '', share: share, next: next,
+      vs: { g: 'mila', i: W.i }, vsMine: { t: won ? guesses.length : 7, h: hint ? 1 : 0, q: 'tries' }, vsWhat: 'אותה מילה',
+      vsMsg: won ? '⚔️ אתגר במילה ביום: ניחשתי את המילה הזאת ב-' + guesses.length + ' ניסיונות' + (hint ? ' (עם רמז)' : '') + '. תצליחו בפחות?' : '⚔️ אתגר במילה ביום: המילה הזאת ניצחה אותי. תצליחו אתם?' });
   }
 
   // ---------- לשוניות ----------
   function tab(m) {
+    CH.vsReset();
     document.querySelectorAll('#ml-tabs button').forEach(function (b) { b.setAttribute('aria-selected', b.getAttribute('data-m') === m); });
     start(m);
   }
   document.querySelectorAll('#ml-tabs button').forEach(function (b) { b.onclick = function () { tab(b.getAttribute('data-m')); }; });
-  tab('daily');
+  var V = CH.vsIn && CH.vsIn.g === 'mila' && ORDER[CH.vsIn.i] ? CH.vsIn : null;
+  if (V && V.i === todayIdx()) { tab('daily'); CH.vsStart(TOOL, 'המילה הזאת'); }
+  else if (V) { document.querySelectorAll('#ml-tabs button').forEach(function (b) { b.setAttribute('aria-selected', 'false'); }); start('vs', V.i); CH.vsStart(TOOL, 'המילה הזאת'); }
+  else tab('daily');
 })();

@@ -157,9 +157,11 @@
   }
 
   function start(m, lv) {
+    if (m !== 'vs') CH.vsReset();
     mode = m; level = lv || 1; won = false; hints = 0; started = false; vals = {}; rev = {}; cur = null; $('ts-win').innerHTML = ''; say('');
     var seed;
     if (m === 'daily') { seed = 'tash-daily-' + CH.today(); P = build(CH.shuffle(POOL, CH.rng(seed)), 6, CH.rng(seed + '-grid')); }
+    else if (m === 'vs') { if (lv.k === 'l') { level = +lv.l; seed = 'tash-level-' + level; P = LEVELS[level - 1]; } else { level = 1; seed = 'tash-daily-' + lv.d; P = build(CH.shuffle(POOL, CH.rng(seed)), 6, CH.rng(seed + '-grid')); } }
     else { seed = 'tash-level-' + level; P = LEVELS[level - 1]; }
     P.key = seed;
     cells = {};
@@ -167,7 +169,7 @@
     var sv = data.cur;
     if (sv && sv.key === seed) { vals = sv.v || {}; (sv.rv || []).forEach(function (k) { rev[k] = 1; }); hints = sv.hints || 0; clock.set(sv.sec); } else clock.set(0);
     clock.on = true;
-    $('ts-label').textContent = m === 'daily' ? 'האתגר היומי · ' + CH.shortDate() : 'חידה ' + level + ' מתוך ' + LEVELS.length;
+    $('ts-label').textContent = m === 'vs' ? 'אתגר מחבר' : m === 'daily' ? 'האתגר היומי · ' + CH.shortDate() : 'חידה ' + level + ' מתוך ' + LEVELS.length;
     var st = CH.stats(G);
     $('ts-today').hidden = !(m === 'daily' && st.doneToday);
     if (m === 'daily' && st.doneToday) $('ts-today').textContent = 'כבר פתרתם את התשחץ של היום ב-' + CH.fmt(st.todaySec) + ' ✓ רצף: ' + st.streak + '. מחר מחכות הגדרות חדשות.';
@@ -280,7 +282,7 @@
     if (mode === 'level') { data.done[level] = 1; data.lvl = Math.max(data.lvl, level + 1); }
     persist(); drawLevels();
     CH.used(TOOL, 'solve', { mode: mode, level: level, sec: clock.sec, hints: hints });
-    var share = '🧩 תשחץ · ' + (daily ? 'אתגר יומי #' + CH.dayNum() : 'חידה ' + level) + '\n' + P.placed.map(function () { return '🟩'; }).join('') + '\n⏱ ' + CH.fmt(clock.sec) + (hints ? ' · 💡 ' + hints + ' רמזים' : ' · בלי רמזים') + (daily && st.streak ? '\n🔥 רצף ' + CH.days(st.streak) : '') + '\nשש הגדרות, ראש אחד. תנסו? 😉';
+    var share = '🧩 תשחץ · ' + (daily ? 'אתגר יומי #' + CH.dayNum() : mode === 'vs' ? 'אתגר מחבר' : 'חידה ' + level) + '\n' + P.placed.map(function () { return '🟩'; }).join('') + '\n⏱ ' + CH.fmt(clock.sec) + (hints ? ' · 💡 ' + hints + ' רמזים' : ' · בלי רמזים') + (daily && st.streak ? '\n🔥 רצף ' + CH.days(st.streak) : '') + '\nשש הגדרות, ראש אחד. תנסו? 😉';
     var why = '<ol class="ts-why-list">' + P.placed.slice().sort(function (a, b) { return a.n - b.n; }).map(function (p) { return '<li><b>' + p.x[0] + '</b> · ' + p.x[2] + ': ' + p.x[3] + '</li>'; }).join('') + '</ol>';
     var next = [];
     if (mode === 'level' && level < LEVELS.length) next.push({ label: 'לחידה ' + (level + 1) + ' ←', fn: function () { start('level', level + 1); drawLevels(); } });
@@ -289,7 +291,9 @@
       title: hints ? 'פתרתם! 🎉' : 'פתרתם בלי רמזים! 🎉',
       line: '<span>⏱ <b>' + CH.fmt(clock.sec) + '</b></span>' + (hints ? '<span>💡 ' + hints + '</span>' : ''),
       extra: (mode === 'level' && level >= LEVELS.length ? '<p class="ch-hint">פתרתם את כל החידות שיש כרגע. התשחץ היומי ממשיך כל יום.</p>' : '') + '<details class="ch-how" open><summary>איך כל הגדרה עובדת</summary>' + why + '</details>',
-      share: share, next: next });
+      share: share, next: next,
+      vs: /^tash-level-/.test(P.key) ? { g: 'tash', k: 'l', l: level } : { g: 'tash', k: 'd', d: P.key.slice(11) }, vsMine: { t: clock.sec, h: hints, q: 'time' }, vsWhat: 'אותו תשחץ',
+      vsMsg: '⚔️ אתגר בתשחץ: פתרתי את התשחץ הזה ב-' + CH.fmt(clock.sec) + (hints ? ' (עם ' + hints + ' רמזים)' : '') + '. תצליחו מהר יותר?' });
   }
 
   // ---------- לשוניות ----------
@@ -300,6 +304,7 @@
     $('ts-levels').querySelectorAll('button').forEach(function (b) { b.onclick = function () { start('level', +b.getAttribute('data-l')); drawLevels(); }; });
   }
   function tab(m) {
+    CH.vsReset();
     document.querySelectorAll('#ts-tabs button').forEach(function (b) { b.setAttribute('aria-selected', b.getAttribute('data-m') === m); });
     $('ts-lvlbox').hidden = m !== 'level';
     if (m === 'daily') start('daily');
@@ -307,5 +312,8 @@
   }
   document.querySelectorAll('#ts-tabs button').forEach(function (b) { b.onclick = function () { tab(b.getAttribute('data-m')); }; });
   var rs; window.addEventListener('resize', function () { clearTimeout(rs); rs = setTimeout(function () { if (P) draw(); }, 200); });
-  tab(data.cur && /^tash-level-/.test(data.cur.key) ? 'level' : 'daily');
+  var V = CH.vsIn && CH.vsIn.g === 'tash' && ((CH.vsIn.k === 'l' && LEVELS[CH.vsIn.l - 1]) || (CH.vsIn.k === 'd' && /^\d{4}-\d\d-\d\d$/.test(CH.vsIn.d))) ? CH.vsIn : null;
+  if (V && V.k === 'd' && V.d === CH.today()) { tab('daily'); CH.vsStart(TOOL, 'התשחץ הזה'); }
+  else if (V) { document.querySelectorAll('#ts-tabs button').forEach(function (b) { b.setAttribute('aria-selected', 'false'); }); start('vs', V); CH.vsStart(TOOL, 'התשחץ הזה'); }
+  else tab(data.cur && /^tash-level-/.test(data.cur.key) ? 'level' : 'daily');
 })();
