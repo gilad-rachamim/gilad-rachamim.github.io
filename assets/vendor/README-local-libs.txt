@@ -7,3 +7,4 @@ so a tool that needs a CDN would silently break. Files are unmodified; SHA-512 m
 - jspdf/jspdf-2.5.1.umd.min.js             MIT https://github.com/parallax/jsPDF
 - qrcodejs/qrcode-1.0.0.min.js             MIT https://github.com/davidshimjs/qrcodejs
 - xlsx/xlsx-0.18.5.full.min.js             Apache-2.0 https://github.com/SheetJS/sheetjs
+- sqljs/sql-wasm-1.10.3.js + .wasm         MIT https://github.com/sql-js/sql.js (SQLite in WebAssembly, for /kelim/tichnut/sql/)
