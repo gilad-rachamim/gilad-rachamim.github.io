@@ -699,6 +699,9 @@ body.cx-exammode .pt-link{display:none!important}
 .mb-ht{color:var(--cream);line-height:1.65;font-size:1.05rem}
 .mb-hint .btn{cursor:pointer;background:rgba(255,255,255,.06);color:var(--cream);border:1px solid var(--line)}
 .mb-hint .btn:disabled{opacity:.6;cursor:wait}
+.mb-next{padding:.7rem .85rem;border-radius:12px;background:rgba(124,214,170,.09);border:1px solid rgba(124,214,170,.35);display:grid;gap:.45rem;justify-items:start}
+.mb-next .mb-fm{color:var(--cream);justify-self:stretch;overflow-x:auto}
+.mb-hint .mb-nextb{border-color:rgba(124,214,170,.5)}
 .mb-aih{padding:.7rem .85rem;border-radius:12px;background:rgba(134,197,230,.1);border:1px solid rgba(134,197,230,.35);color:var(--body);line-height:1.65;display:grid;gap:.4rem}
 .mb-aih .mb-fm{color:var(--cream)}
 .mb-aierr{color:#f6c98a;line-height:1.5}

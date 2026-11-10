@@ -71,5 +71,25 @@ T('רווחים', ['2 x + 6 = 10', '2 x = 4', 'x = 2'], ['-', 'ok', 'ok'], D);
 T('כוכבית וחזקה', ['x**2=4', 'x=±2'], ['-', 'ok'], D);
 T('יוניקוד', ['2x²−8=0', 'x²=4', 'x=±2'], ['-', 'ok', 'ok'], D);
 T('נקודתיים', ['x:2=4', 'x=8'], ['-', 'ok'], D);
+// "הראו לי את הצעד הבא": כל צעד שהמחברת מציעה חייב לקבל ✓, והשרשרת מגיעה לסוף
+function NEXT(ex, maxSteps, opt) {
+  n++;
+  const lines = [ex];
+  for (let k = 0; k < (maxSteps || 8); k++) {
+    const s = M.nextStep(lines, opt || D);
+    if (s && s.done) return;
+    if (!s || s.fix || s.text || !s.line) { bad++; console.log('✗ צעד הבא נעצר: ' + lines.join(' → ') + ' → ' + JSON.stringify(s)); return; }
+    lines.push(s.line);
+    const r = M.checkAll(lines, opt || D), m = r[r.length - 1].mark;
+    if (m !== 'ok') { bad++; console.log('✗ צעד הבא לא ✓: ' + lines.join(' → ') + '  [' + m + '] ' + r[r.length - 1].msg); return; }
+  }
+  bad++; console.log('✗ צעד הבא לא נגמר: ' + lines.join(' → '));
+}
+['3(x-2)+4=2x+5', 'x^2-5x+6=0', '2x^2+3x-5=0', 'x^2=3x', '(x+3)^2-(x-3)^2', 'f(x)=x^3-3x^2+4', '2(x+3)=x+10', 'x/2+x/3=5', 'x^2-4x+4=0', '5x=30',
+ '6-5x+x^2=0', '0.5x+1.2=2.7', 'x^2-2x-1=0', 'x(x+2)=8', '(2x-1)(x+3)', '4-3(x-1)=2x', 'x^2-9=0', '3x^2=12', 'f(x)=2x^2-8x+1'].forEach(e => NEXT(e));
+n++; { const s = M.nextStep(['x^2+x+1=0'], D); if (!(s && s.text)) { bad++; console.log('✗ אין פתרון ממשי: ' + JSON.stringify(s)); } }
+n++; { const s = M.nextStep(['2x+3=7', '2x=10'], D); if (!(s && s.fix === 1)) { bad++; console.log('✗ קודם מתקנים: ' + JSON.stringify(s)); } }
+n++; if (M.nextStep(['sin(x)=0.5'], D) !== null) { bad++; console.log('✗ טריגו: אין צעד מקומי'); }
+
 console.log(`\n${n - bad}/${n} עברו`);
 process.exit(bad ? 1 : 0);

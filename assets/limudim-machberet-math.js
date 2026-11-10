@@ -738,8 +738,117 @@
     return -1;
   }
 
+  // ---------------- "הראו לי את הצעד הבא" (פולינומים במשתנה אחד) ----------------
+  // מקדמים של פולינום עד מעלה 4: מציבים 0..d ופותרים מערכת ליניארית, ובודקים בנקודה נוספת. אחרת null.
+  function polyCoef(g, v) {
+    var d = polyDeg(g, v); if (d < 0 || d > 4) return null;
+    var X = [], Y = [];
+    for (var i = 0; i <= d; i++) { var o = { $deg: false }; o[v] = i; var y = safe(function () { return ev(g, o); }); if (!isFinite(y)) return null; X.push(i); Y.push(y); }
+    var n = d + 1, Mx = X.map(function (x, r) { var row = []; for (var c = 0; c < n; c++) row.push(Math.pow(x, c)); row.push(Y[r]); return row; });
+    for (var c = 0; c < n; c++) {
+      var p = c; for (var r = c + 1; r < n; r++) if (Math.abs(Mx[r][c]) > Math.abs(Mx[p][c])) p = r;
+      var tmp = Mx[c]; Mx[c] = Mx[p]; Mx[p] = tmp;
+      for (var r2 = 0; r2 < n; r2++) if (r2 !== c) { var k = Mx[r2][c] / Mx[c][c]; for (var c2 = c; c2 <= n; c2++) Mx[r2][c2] -= k * Mx[c][c2]; }
+    }
+    var co = Mx.map(function (row, c) { var x = row[n] / row[c]; return Math.abs(x - Math.round(x)) < 1e-9 ? Math.round(x) : x; });
+    var o2 = { $deg: false }; o2[v] = -1.37; var want = safe(function () { return ev(g, o2); }), got = 0;
+    co.forEach(function (a, j) { got += a * Math.pow(-1.37, j); });
+    return close(want, got, 1e-7) ? co : null;
+  }
+  // מספר יפה לכתיבה: שלם, שבר קטן (3/4), או עשרוני
+  function numStr(x) {
+    if (Math.abs(x - Math.round(x)) < 1e-9) return String(Math.round(x));
+    for (var q = 2; q <= 12; q++) { var p = x * q; if (Math.abs(p - Math.round(p)) < 1e-9) return (Math.round(p) < 0 ? '-' : '') + Math.abs(Math.round(p)) + '/' + q; }
+    return String(Math.round(x * 1000) / 1000);
+  }
+  function polyStr(co, v) { // [c0,c1,c2] -> "2x^2-5x+6"
+    var s = '';
+    for (var j = co.length - 1; j >= 0; j--) {
+      var a = co[j]; if (Math.abs(a) < 1e-12) continue;
+      var neg = a < 0, m = numStr(Math.abs(a)), frac = m.indexOf('/') > 0;
+      var body = j === 0 ? m : (m === '1' ? '' : frac ? '(' + m + ')' : m) + v + (j > 1 ? '^' + j : '');
+      s += neg ? '-' + body : (s ? '+' : '') + body;
+    }
+    return s || '0';
+  }
+  function isParen(n) { return n.t === '()'; }
+  function squash(s) { return String(s).replace(/\s+/g, '').replace(/\*/g, ''); }
+  // מחזיר {line, why} או null (אז "רמז חכם" יכול לעזור)
+  function nextStep(lines, opt) {
+    opt = opt || {};
+    var res = checkAll(lines, opt), lastI = -1;
+    for (var i = lines.length - 1; i >= 0; i--) if (String(lines[i] || '').trim()) { lastI = i; break; }
+    if (lastI < 0) return null;
+    for (var w = 1; w <= lastI; w++) if (res[w].mark === 'warn' && !/פתרון זר/.test(res[w].msg)) return { fix: w };
+    var r = res[lastI], I = r.info, raw = squash(clean(lines[lastI]));
+    var num0 = function (a) { return a.t === 'n' || (a.t === 'neg' && a.a.t === 'n'); }, plain = function (a) { return num0(a) || (a.t === 'neg' && plain(a.a)) || (a.t === '/' && num0(a.a) && num0(a.b)); };
+    if (I.kind === 'sol' && !I.param && !I.vals.every(plain)) {
+      var vv = I.vals.map(function (a) { return safe(function () { return ev(a, { $deg: !!opt.deg }); }); });
+      if (vv.every(isFinite)) return { line: vv.map(function (x) { return I.v + '=' + numStr(x); }).join(' או '), why: 'מחשבים את המספרים.' };
+    }
+    if (I.kind === 'sol' && r.mark === 'ok') return { done: true };
+    if (I.kind === 'def') {
+      var fc = polyCoef(I.ast, I.v); if (!fc) return null;
+      var dc = fc.slice(1).map(function (a, j) { return a * (j + 1); });
+      return { line: I.name + "'(" + I.v + ')=' + polyStr(dc, I.v), why: 'גוזרים כל איבר: (xⁿ)′=n·xⁿ⁻¹, ומספר לבד נעלם.' };
+    }
+    if (I.kind === 'deriv') {
+      var dc2 = polyCoef(I.ast, I.v); if (!dc2) return null;
+      return { line: polyStr(dc2, I.v) + '=0', why: 'כדי למצוא נקודות חשודות לקיצון, משווים את הנגזרת ל-0.' };
+    }
+    if (I.kind === 'expr' || I.kind === 'chain') {
+      var E = lastExpr(I), nv = namesOf(E); if (nv.length !== 1) return null;
+      var ec = polyCoef(E, nv[0]); if (!ec) return null;
+      var ps = polyStr(ec, nv[0]);
+      if (squash(raw.replace(/^.*=/, '')) === squash(ps)) return { done: true, simp: true };
+      return { line: '=' + ps, why: 'פותחים סוגריים וכונסים איברים דומים.' };
+    }
+    if (I.kind === 'eq') {
+      var g = eqFn(I.L, I.R), names = namesOf(g); if (names.length !== 1) return null;
+      var v = names[0], co = polyCoef(g, v); if (!co) return null;
+      while (co.length > 1 && Math.abs(co[co.length - 1]) < 1e-12) co.pop();
+      var R0 = I.R.t === 'n' && I.R.v === 0, Lc = polyCoef(I.L, v);
+      if (co.length === 2) {
+        var Rc = polyCoef(I.R, v) || (namesOf(I.R).length ? null : [safe(function () { return ev(I.R, { $deg: false }); })]);
+        if (Lc && Rc) {
+          var den = 1, all = Lc.concat(Rc);
+          for (var q = 1; q <= 12; q++) if (all.every(function (z) { return Math.abs(z * q - Math.round(z * q)) < 1e-9; })) { den = q; break; }
+          if (den > 1) {
+            var sc = function (c) { return c.map(function (z) { return Math.round(z * den); }); };
+            return { line: polyStr(sc(Lc), v) + '=' + polyStr(sc(Rc), v), why: 'כופלים את שני האגפים ב-' + den + ' כדי להיפטר מהשברים.' };
+          }
+          var ex = polyStr(Lc, v) + '=' + polyStr(Rc, v);
+          if (squash(ex) !== raw && (has(I.L, isParen) || has(I.R, isParen))) return { line: ex, why: 'פותחים סוגריים: כופלים את מה שבחוץ בכל איבר שבפנים, וכונסים איברים דומים.' };
+        }
+        var a = co[1], b = -co[0], onlyX = Lc && Lc.length >= 2 && Math.abs(Lc[0]) < 1e-12 && Lc.slice(2).every(function (z) { return Math.abs(z) < 1e-12; }) && !namesOf(I.R).length;
+        if (onlyX || Math.abs(a - 1) < 1e-12) return { line: v + '=' + numStr(b / a), why: Math.abs(a - 1) < 1e-12 ? 'מבודדים את ' + v + '.' : 'מחלקים את שני האגפים ב-' + numStr(a) + '.' };
+        return { line: polyStr([0, a], v) + '=' + numStr(b), why: 'מעבירים את האיברים עם ' + v + ' לאגף אחד ואת המספרים לאגף השני (מי שעובר אגף – הסימן מתהפך), וכונסים.' };
+      }
+      if (co.length === 3) {
+        var A2 = co[2], B2 = co[1], C2 = co[0];
+        var factored = R0 && (I.L.t === '*' || I.L.t === '^'), std = R0 && Lc && squash(polyStr(Lc, v)) === squash(clean(lines[lastI]).split('=')[0]);
+        if (!factored && !std) return { line: polyStr(co, v) + '=0', why: 'משוואה ריבועית: מעבירים הכול לאגף אחד, ומסדרים מהחזקה הגבוהה לנמוכה.' };
+        var D = B2 * B2 - 4 * A2 * C2;
+        if (D < -1e-12) return { line: 'אין פתרון: הדיסקרימיננטה ' + numStr(D) + ' שלילית', why: 'b²−4ac=' + numStr(D) + '. כשהיא שלילית, אין שורש ממשי.', text: true };
+        var r1 = (-B2 + Math.sqrt(Math.max(0, D))) / (2 * A2), r2 = (-B2 - Math.sqrt(Math.max(0, D))) / (2 * A2), nice2 = function (x) { return Math.abs(x * 12 - Math.round(x * 12)) < 1e-9; };
+        if (factored || (nice2(r1) && nice2(r2) && Math.abs(C2) < 1e-12)) {
+          return Math.abs(D) < 1e-12 ? { line: v + '=' + numStr(r1), why: 'מכפלה שווה 0 כשאחד הגורמים שווה 0.' } : { line: v + '=' + numStr(Math.min(r1, r2)) + ' או ' + v + '=' + numStr(Math.max(r1, r2)), why: 'מכפלה שווה 0 כשאחד הגורמים שווה 0.' };
+        }
+        if (Math.abs(A2 - 1) < 1e-12 && nice2(r1) && nice2(r2) && Math.abs(r1 - Math.round(r1)) < 1e-9 && Math.abs(r2 - Math.round(r2)) < 1e-9) {
+          var fac = function (x) { return x === 0 ? v : '(' + v + (x > 0 ? '-' : '+') + Math.abs(x) + ')'; };
+          var a1 = Math.round(Math.min(r1, r2)), a2 = Math.round(Math.max(r1, r2));
+          return { line: (a1 === a2 ? fac(a1) + '^2' : fac(a1) + fac(a2)) + '=0', why: 'פירוק לגורמים: שני מספרים שהמכפלה שלהם ' + numStr(C2) + ' והסכום שלהם ' + numStr(-B2) + '.' };
+        }
+        var sq = Math.sqrt(D), sqS = Math.abs(sq - Math.round(sq)) < 1e-9 ? String(Math.round(sq)) : 'sqrt(' + numStr(D) + ')';
+        return { line: v + '=(' + numStr(-B2) + '±' + sqS + ')/' + numStr(2 * A2), why: 'מציבים בנוסחת השורשים: a=' + numStr(A2) + ', b=' + numStr(B2) + ', c=' + numStr(C2) + '.' };
+      }
+      return null;
+    }
+    return null;
+  }
+
   var sameExpr = memo('x', sameExpr0), sameEq = memo('e', sameEq0), solCheck = memo('s', solCheck0);
   var API = { readLine: readLine, checkAll: checkAll, parse: parse, tex: tex, ev: ev, vars: vars, namesOf: namesOf, has: has, sameExpr: sameExpr, sameEq: sameEq,
-    roots: roots, eqFn: eqFn, topics: topics, polyDeg: polyDeg, nice: nice, clean: clean, Err: Err };
+    roots: roots, eqFn: eqFn, topics: topics, polyDeg: polyDeg, nice: nice, clean: clean, Err: Err, polyCoef: polyCoef, polyStr: polyStr, nextStep: nextStep };
   if (typeof module !== 'undefined' && module.exports) module.exports = API; else root.MbMath = API;
 })(typeof window !== 'undefined' ? window : this);

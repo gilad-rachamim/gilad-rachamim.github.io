@@ -425,51 +425,108 @@
   // =====================================================================
   var hintEl = $('mb-hint');
   function hideHint() { hintEl.hidden = true; hintEl.innerHTML = ''; }
+  // שלושה שלבים: רמז קטן (t), רמז גדול יותר (t2), ורק בסוף "הראו לי את הצעד הבא" (M.nextStep)
   function localHint() {
     var res = lastRes, rows = A.rows, lastI = -1;
     for (var i = rows.length - 1; i >= 0; i--) if (rows[i].trim()) { lastI = i; break; }
-    if (lastI < 0) return { t: 'כותבים את התרגיל בשורה הראשונה. אפשר גם ללחוץ על אחת הדוגמאות למעלה.' };
+    if (lastI < 0) return { t: 'כותבים את התרגיל בשורה הראשונה. אפשר גם ללחוץ על אחת הדוגמאות למעלה, או לצלם תרגיל מהדף.', end: true };
     for (var w = 1; w < res.length; w++) if (res[w].mark === 'warn' && !/פתרון זר/.test(res[w].msg)) {
-      return { t: 'בשורה ' + w + ' יש סימן שאלה. נסו להציב מספר קטן (למשל x=1) בשורה ' + w + ' ובשורה שלפניה, ולראות איפה זה מתפרק. טעויות נפוצות: סימן שהתהפך בהעברת אגף, כפל שלא הגיע לכל האיברים בסוגריים, או חילוק רק של חלק מהאגף.' };
+      return { t: 'בשורה ' + w + ' יש סימן שאלה: משהו השתנה במעבר מהשורה שלפניה. מה עשיתם שם?', t2: 'נסו להציב מספר קטן (למשל x=1) בשורה ' + w + ' ובשורה שלפניה, ולראות איפה זה מתפרק. טעויות נפוצות: סימן שהתהפך בהעברת אגף, כפל שלא הגיע לכל האיברים בסוגריים, או חילוק רק של חלק מהאגף.', fix: w };
     }
     var r = res[lastI], I = r.info, tp = M.topics(I);
-    if (I.kind === 'bad') return { t: 'המחברת לא הצליחה לקרוא את ' + (lastI ? 'שורה ' + lastI : 'שורת התרגיל') + ' (' + r.msg + '). בודקים שכל סוגר נסגר, ושיש כפל בין מספר לסוגריים, למשל 2*(x+1) או 2(x+1).' };
-    if (I.kind === 'sol' && r.mark === 'ok') return { t: 'סיימתם! 🎉 בדיקה אחרונה, כמו בבגרות: מציבים את הפתרון בתרגיל המקורי ורואים ששני הצדדים יוצאים שווים.' };
-    if (I.kind === 'text') return { t: 'שורה במילים זה מצוין להסבר. את השלב הבא כותבים בנוסחה, כדי שהמחברת תוכל לבדוק אותו.' };
-    if (I.kind === 'ineq') return { t: 'פותרים אי-שוויון כמו משוואה. רק לזכור: כשכופלים או מחלקים במספר שלילי, הסימן מתהפך (< הופך ל->).' };
-    if (I.kind === 'def') return { t: 'רוצים לחקור את הפונקציה? מתחילים בתחום ההגדרה, ואז גוזרים: כותבים בשורה הבאה f\'(x)= והנגזרת.', f: 'deriv' };
-    if (I.kind === 'deriv') return { t: 'כדי למצוא נקודות קיצון משווים את הנגזרת ל-0: כותבים בשורה הבאה את הנגזרת ואחריה =0, ופותרים.', f: 'deriv' };
+    if (I.kind === 'bad') return { t: 'המחברת לא הצליחה לקרוא את ' + (lastI ? 'שורה ' + lastI : 'שורת התרגיל') + ' (' + r.msg + '). בודקים שכל סוגר נסגר, ושיש כפל בין מספר לסוגריים, למשל 2*(x+1) או 2(x+1).', end: true };
+    if (I.kind === 'sol' && r.mark === 'ok' && /🎉/.test(r.msg || '')) return { t: 'סיימתם! 🎉 בדיקה אחרונה, כמו בבגרות: מציבים את הפתרון בתרגיל המקורי ורואים ששני הצדדים יוצאים שווים.', end: true };
+    if (I.kind === 'text') return { t: 'שורה במילים זה מצוין להסבר. את השלב הבא כותבים בנוסחה, כדי שהמחברת תוכל לבדוק אותו.', end: true };
+    if (I.kind === 'ineq') return { t: 'פותרים אי-שוויון כמו משוואה: אותם צעדים בדיוק.', t2: 'רק לזכור: כשכופלים או מחלקים במספר שלילי, הסימן מתהפך (< הופך ל->). ובאי-שוויון ריבועי מוצאים קודם את השורשים, ואז בודקים איפה הביטוי חיובי.' };
+    if (I.kind === 'def') return { t: 'רוצים לחקור את הפונקציה? מה עושים קודם?', t2: 'מתחילים בתחום ההגדרה, ואז גוזרים: כותבים בשורה הבאה f\'(x)= ואחריו הנגזרת. גוזרים כל איבר לבד: (xⁿ)′=n·xⁿ⁻¹.', f: 'deriv' };
+    if (I.kind === 'deriv') return { t: 'יש נגזרת. מה עושים איתה כדי למצוא נקודות קיצון?', t2: 'משווים אותה ל-0: כותבים בשורה הבאה את הנגזרת ואחריה =0, ופותרים.', f: 'deriv' };
     if (I.kind === 'expr' || I.kind === 'chain') {
-      if (tp.frac) return { t: 'כדי לחבר שברים מביאים למכנה משותף: כופלים כל שבר במה שחסר לו במכנה.', f: 'alg' };
-      if (tp.trig) return { t: 'בביטוי עם sin ו-cos כדאי לחפש זהות: sin²x+cos²x=1, או זווית כפולה.', f: 'trig' };
-      return { t: 'פותחים סוגריים (בעזרת כפל מקוצר אם צריך) וכונסים איברים דומים. מתחילים את השורה הבאה ב-= ואחריו הביטוי החדש.', f: 'alg' };
+      if (tp.frac) return { t: 'יש כאן שברים. מה צריך כדי לחבר אותם?', t2: 'מביאים למכנה משותף: כופלים כל שבר במה שחסר לו במכנה.', f: 'alg' };
+      if (tp.trig) return { t: 'חפשו זהות טריגונומטרית שמתאימה לביטוי.', t2: 'בביטוי עם sin ו-cos כדאי לחפש: sin²x+cos²x=1, או זווית כפולה.', f: 'trig' };
+      return { t: 'אפשר לפתוח סוגריים או לכנס איברים?', t2: 'פותחים סוגריים (בעזרת כפל מקוצר אם צריך) וכונסים איברים דומים. מתחילים את השורה הבאה ב-= ואחריו הביטוי החדש.', f: 'alg' };
     }
     if (I.kind === 'eq' || I.kind === 'sol') {
       var g = I.kind === 'eq' ? M.eqFn(I.L, I.R) : null, names = g ? M.namesOf(g) : [];
-      if (names.length > 1) return { t: 'יש כאן יותר מנעלם אחד. מבודדים נעלם אחד (למשל y) באגף אחד, ומציבים אותו במשוואה השנייה.' };
+      if (names.length > 1) return { t: 'יש כאן יותר מנעלם אחד. איזה מהם הכי קל לבודד?', t2: 'מבודדים נעלם אחד (למשל y) באגף אחד, ומציבים אותו במשוואה השנייה.' };
       var v = names[0] || 'x';
-      if (tp.trig) return { t: 'מבודדים את sin (או cos) באגף אחד: sin(x)=מספר. אחר כך משתמשים בפתרון הכללי, ולא שוכחים את הפתרון השני (180° פחות הזווית).', f: 'trig' };
-      if (tp.log) return { t: 'לוגריתם הופכים לחזקה: log_a(b)=c זה כמו a^c=b. ולפני הכול: מה שבתוך הלוגריתם חייב להיות חיובי.', f: 'log' };
-      if (tp.exp) return { t: 'כשה-x במעריך: מביאים את שני האגפים לאותו בסיס, או לוקחים ln לשני האגפים.', f: 'log' };
-      if (tp.root) return { t: 'מבודדים את השורש באגף אחד, ואז מעלים את שני האגפים בריבוע. בסוף חייבים לבדוק בהצבה, כי העלאה בריבוע יכולה להוסיף פתרון זר.', f: 'alg' };
-      if (tp.frac) return { t: 'כופלים את שני האגפים במכנה המשותף. אבל קודם רושמים מתי המכנה מתאפס, כי הערך הזה לא יכול להיות פתרון.', f: 'alg' };
-      var d = M.polyDeg(g, v), hasParen = M.has(I.L, function (n) { return n.t === '*' && (n.b.t === '()' || n.a.t === '()'); }) || M.has(I.R, function (n) { return n.t === '*' && (n.b.t === '()' || n.a.t === '()'); });
-      var lv = M.namesOf(I.L).length, rv = M.namesOf(I.R).length;
-      if (hasParen) return { t: 'מתחילים בפתיחת הסוגריים: כופלים את מה שבחוץ בכל איבר שבפנים. שימו לב לסימנים.' };
+      if (tp.trig) return { t: 'מה צריך להיות לבד באגף אחד?', t2: 'מבודדים את sin (או cos) באגף אחד: sin(x)=מספר. אחר כך משתמשים בפתרון הכללי, ולא שוכחים את הפתרון השני (180° פחות הזווית).', f: 'trig' };
+      if (tp.log) return { t: 'איך נפטרים מהלוגריתם?', t2: 'לוגריתם הופכים לחזקה: log_a(b)=c זה כמו a^c=b. ולפני הכול: מה שבתוך הלוגריתם חייב להיות חיובי.', f: 'log' };
+      if (tp.exp) return { t: 'ה-' + v + ' נמצא במעריך. איך מורידים אותו משם?', t2: 'מביאים את שני האגפים לאותו בסיס, או לוקחים ln לשני האגפים.', f: 'log' };
+      if (tp.root) return { t: 'איך נפטרים מהשורש?', t2: 'מבודדים את השורש באגף אחד, ואז מעלים את שני האגפים בריבוע. בסוף חייבים לבדוק בהצבה, כי העלאה בריבוע יכולה להוסיף פתרון זר.', f: 'alg' };
+      if (tp.frac) return { t: 'יש ' + v + ' במכנה. איך נפטרים מהשבר?', t2: 'כופלים את שני האגפים במכנה המשותף. אבל קודם רושמים מתי המכנה מתאפס, כי הערך הזה לא יכול להיות פתרון.', f: 'alg' };
+      var d = g ? M.polyDeg(g, v) : -1, hasParen = g && (M.has(I.L, function (n) { return n.t === '*' && (n.b.t === '()' || n.a.t === '()'); }) || M.has(I.R, function (n) { return n.t === '*' && (n.b.t === '()' || n.a.t === '()'); }));
+      var lv = g ? M.namesOf(I.L).length : 0, rv = g ? M.namesOf(I.R).length : 0;
+      if (hasParen && d === 1) return { t: 'מה הצעד הראשון כשיש סוגריים?', t2: 'פותחים את הסוגריים: כופלים את מה שבחוץ בכל איבר שבפנים. שימו לב לסימנים.' };
       if (d === 1) {
-        if (lv && rv) return { t: 'מעבירים את כל האיברים עם ' + v + ' לאגף אחד ואת המספרים לאגף השני. מי שעובר אגף, הסימן שלו מתהפך.' };
-        return { t: 'נשאר רק לחלק את שני האגפים במקדם של ' + v + ' (המספר שצמוד אליו).' };
+        if (lv && rv) return { t: 'איפה צריכים להיות כל האיברים עם ' + v + '?', t2: 'מעבירים את כל האיברים עם ' + v + ' לאגף אחד ואת המספרים לאגף השני. מי שעובר אגף, הסימן שלו מתהפך.' };
+        return { t: 'כמעט שם! נשאר צעד אחד.', t2: 'מחלקים את שני האגפים במקדם של ' + v + ' (המספר שצמוד אליו).' };
       }
       if (d === 2) {
         var R0 = I.R.t === 'n' && I.R.v === 0, L0 = I.L.t === 'n' && I.L.v === 0;
-        if (!R0 && !L0) return { t: 'משוואה ריבועית: קודם מעבירים הכול לאגף אחד, כך שבאגף השני יישאר 0.', f: 'alg' };
+        if (!R0 && !L0) return { t: 'זו משוואה ריבועית. מה עושים קודם במשוואה כזאת?', t2: 'מעבירים הכול לאגף אחד, כך שבאגף השני יישאר 0. מסדרים מהחזקה הגבוהה לנמוכה.', f: 'alg' };
+        if (I.L.t === '*' || I.L.t === '^') return { t: 'מכפלה שווה 0. מה זה אומר על הגורמים?', t2: 'מכפלה שווה 0 כשאחד הגורמים שווה 0. משווים כל סוגריים ל-0, וכותבים את הפתרונות עם "או" ביניהם.', f: 'alg' };
         var z = {}; z[v] = 0; var c0 = NaN; try { z.$deg = false; c0 = M.ev(g, z); } catch (_) {}
-        if (Math.abs(c0) < 1e-12) return { t: 'אין כאן מספר חופשי, אז מוציאים ' + v + ' כגורם משותף: ' + v + '(…)=0. ומכפלה שווה 0 כשאחד הגורמים שווה 0.', f: 'alg' };
-        return { t: 'מזהים את a, b ו-c ומציבים בנוסחת השורשים. אפשר גם לנסות פירוק לגורמים: שני מספרים שהמכפלה שלהם c והסכום שלהם b (כש-a=1).', f: 'alg' };
+        if (Math.abs(c0) < 1e-12) return { t: 'שימו לב: אין כאן מספר חופשי. מה משותף לכל האיברים?', t2: 'מוציאים ' + v + ' כגורם משותף: ' + v + '(…)=0. ומכפלה שווה 0 כשאחד הגורמים שווה 0.', f: 'alg' };
+        return { t: 'משוואה ריבועית שאגף אחד שלה 0. איזו דרך פתרון מתאימה?', t2: 'מזהים את a, b ו-c ומציבים בנוסחת השורשים. אפשר גם לנסות פירוק לגורמים: שני מספרים שהמכפלה שלהם c והסכום שלהם b (כש-a=1).', f: 'alg' };
       }
-      if (d >= 3) return { t: 'משוואה ממעלה ' + d + ': מנסים להוציא גורם משותף, או לנחש פתרון שלם קטן (1, −1, 2) ולהציב.' };
+      if (d >= 3) return { t: 'משוואה ממעלה ' + d + '. אפשר להוציא משהו משותף?', t2: 'מנסים להוציא גורם משותף, או לנחש פתרון שלם קטן (1, −1, 2) ולהציב. משוואה דו-ריבועית (x⁴ ו-x²): מציבים t=x².' };
     }
-    return { t: 'מה הצעד הקטן הבא שאפשר לעשות? פתיחת סוגריים, העברת אגף, או הצבה. כותבים אותו בשורה חדשה, והמחברת תבדוק.' };
+    return { t: 'מה הצעד הקטן הבא שאפשר לעשות?', t2: 'פתיחת סוגריים, העברת אגף, או הצבה. כותבים אותו בשורה חדשה, והמחברת תבדוק.' };
+  }
+  function hintBtn(bt, cls, label, fn) { var b = el('button', 'btn btn-sm ' + cls, label); b.type = 'button'; b.addEventListener('click', fn); bt.appendChild(b); return b; }
+  // רמז לתרגיל בשלבים
+  function showAlgHint() {
+    var h = localHint(), box = hintEl;
+    box.hidden = false; box.innerHTML = '';
+    box.appendChild(el('p', 'mb-ht', '💡 ' + esc(h.t)));
+    var bt = el('div', 'btns'); box.appendChild(bt);
+    var nb = null, ab = null;
+    function addF() { if (h.f && !bt.querySelector('.mb-fb')) { var fb = hintBtn(bt, 'mb-fb', '📐 ' + esc(F[h.f][0]), function () { openF(h.f); }); bt.insertBefore(fb, bt.firstChild); } }
+    function step3() {
+      used('hint_next');
+      var s = null; try { s = M.nextStep(A.rows, { deg: A.deg }); } catch (_) {}
+      nb.remove();
+      if (s && s.fix) { box.insertBefore(el('p', 'mb-ht', '👀 קודם מתקנים את שורה ' + s.fix + ' (עם סימן השאלה). אחרי התיקון אפשר לבקש שוב את הצעד הבא.'), bt); return; }
+      if (s && s.done) { box.insertBefore(el('p', 'mb-ht', s.simp ? '👀 הביטוי כבר מפושט עד הסוף. כל הכבוד!' : '👀 אין צעד נוסף: הגעתם לסוף. 🎉'), bt); return; }
+      if (s && s.line) { showStep(s.line, s.why, !!s.text); return; }
+      // אין צעד מקומי – העזרה החכמה כותבת את השורה הבאה
+      var wait = el('p', 'mb-ht', '⏳ מחפש את הצעד הבא…'); box.insertBefore(wait, bt);
+      var lines = [], marks = [];
+      A.rows.forEach(function (r, i) { if (r.trim()) { lines.push(r); marks.push((lastRes[i] && lastRes[i].mark) || ''); } });
+      post('/hint', { mode: 'alg', level: 'next', question: lines[0], lines: lines.slice(1), marks: marks.slice(1) }).then(function (x) {
+        wait.remove(); var j = x.j || {};
+        if (x.s !== 200 || j.error) { box.insertBefore(el('p', 'mb-aierr', esc(aiErr(x))), bt); return; }
+        if (j.step) showStep(j.step, j.hint, false, true);
+        else if (j.hint) box.insertBefore(el('div', 'mb-aih', '<p>🤖 ' + esc(j.hint) + '</p>'), bt);
+      }).catch(function () { wait.remove(); box.insertBefore(el('p', 'mb-aierr', 'אין חיבור לאינטרנט. הבדיקה של כל שורה עובדת גם בלי.'), bt); });
+    }
+    function showStep(line, why, isText, ai) {
+      var d = el('div', 'mb-next');
+      d.appendChild(el('p', 'mb-ht', (ai ? '🤖 ' : '👀 ') + 'הצעד הבא' + (why ? ': ' + esc(why) : ':')));
+      var m = el('div', 'mb-fm');
+      if (isText) { m.textContent = line; }
+      else { m.setAttribute('dir', 'ltr'); var RI = M.readLine(line, { deg: A.deg }); if (RI.tex) tex(m, RI.tex, true); else m.textContent = line; }
+      d.appendChild(m);
+      if (!isText) {
+        var ins = el('button', 'btn btn-sm', '✏️ לכתוב את זה בשורה הבאה'); ins.type = 'button';
+        ins.addEventListener('click', function () {
+          var k = A.rows.length; while (k > 1 && !A.rows[k - 1].trim()) k--;
+          A.rows.splice(k, 0, line); if (A.rows[A.rows.length - 1].trim()) A.rows.push('');
+          renderRows(k + 1); save(); hideHint(); used('hint_insert');
+        });
+        d.appendChild(ins);
+      }
+      box.insertBefore(d, bt);
+    }
+    if (h.end) { addF(); return; }
+    var mb = hintBtn(bt, 'mb-more', '💡 עוד רמז', function () {
+      used('hint2'); mb.remove(); addF();
+      box.insertBefore(el('p', 'mb-ht', '💡💡 ' + esc(h.t2 || h.t)), bt);
+      nb = hintBtn(bt, 'mb-nextb', '👀 הראו לי את הצעד הבא', step3);
+      ab = hintBtn(bt, 'mb-ai', '🤖 רמז חכם יותר', function () { aiHintAlg(box, ab); });
+    });
+    if (!h.t2) mb.click();
+    box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
   function showHint(h, box, aiFn) {
     box.hidden = false; box.innerHTML = '';
@@ -480,7 +537,7 @@
     box.appendChild(bt);
     box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
-  $('mb-hintb').addEventListener('click', function () { used('hint'); showHint(localHint(), hintEl, aiHintAlg); });
+  $('mb-hintb').addEventListener('click', function () { used('hint'); showAlgHint(); });
 
   // ---------- בינה מלאכותית (השרת של הפותר) ----------
   function post(path, body) {
