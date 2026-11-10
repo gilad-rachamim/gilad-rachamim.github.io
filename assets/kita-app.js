@@ -17,6 +17,7 @@
   var GAMES = { 'kita-quiz': 'שאלות המורה', 'krav-math': 'מתמטיקה', 'krav-eng': 'אנגלית', chidon: 'חידון וטריוויה', tash: 'תשחצים', nono: 'שחור ופתור', shesh: 'שש-בש', damka: 'דמקה', shachmat: 'שחמט', blackjack: '21', sudoku: 'סודוקו', mila: 'מילה ביום', tashchetz: 'תשחצים', shachor: 'שחור ופתור', 'bagrut-math': 'מתמטיקה לבגרות', 'bagrut-english': 'אנגלית לבגרות', math: 'מתמטיקה', english: 'אנגלית', trivia: 'טריוויה', quiz: 'חידון' };
   var PER = { week: 'השבוע', month: 'החודש', round: 'בסבב הזה', all: 'מההתחלה' };
   function who(w) { if (w === '1') return 'למקום הראשון'; if (w === '2') return 'למקום השני'; if (w === '3') return 'למקום השלישי'; if (w === 'top3') return 'לשלושת הראשונים'; if (w === 'all') return 'לכל מי שצובר נקודות'; var m = /^pts:(\d+)$/.exec(w || ''); return m ? 'לכל מי שמגיע ל-' + m[1] + ' נקודות' : ''; }
+  function math(t) { return esc(t).replace(/[0-9][0-9\s+\-−×÷*\/=().,^²³√%:]*[0-9)²³%]/g, function (m) { return /[+\-−×÷*\/=^:]/.test(m) ? '<span dir="ltr" class="kq-m">' + m + '</span>' : m; }); }
   function medal(p) { return p === 1 ? '🥇' : p === 2 ? '🥈' : p === 3 ? '🥉' : p ? String(p) : '·'; }
   // התמדה: 5 ימי תרגול בשבוע (15 בחודש). dd מגיע מהשרת (ימים שונים עם נקודות)
   function needDays(per) { return per === 'month' ? 15 : per === 'week' || per === 'prevweek' ? 5 : 0; }
@@ -125,7 +126,6 @@
     var QZ = null, qi = 0, qOk = 0, qTries = 0, qDone = {};
     function qKey() { return 'kita-quiz-' + me.code + '-' + QZ.v; }
     // תרגיל חשבון בתוך משפט בעברית: עוטפים אותו בכיוון שמאל-לימין, אחרת "3/4 + 1/4" מוצג הפוך
-    function math(t) { return esc(t).replace(/[0-9][0-9\s+\-−×÷*\/=().,^²³√%:]*[0-9)²³%]/g, function (m) { return /[+\-−×÷*\/=^:]/.test(m) ? '<span dir="ltr" class="kq-m">' + m + '</span>' : m; }); }
     function rnd(seed) { var x = seed % 2147483647 || 7; return function () { x = x * 16807 % 2147483647; return (x - 1) / 2147483646; }; }
     function loadQuiz() {
       if (!me) return;
@@ -141,11 +141,11 @@
     }
     function showQ() {
       var x = QZ.q[qi]; if (!x) return endQ();
-      var r = rnd(QZ.v + qi * 97), opts = x.a.map(function (t, i) { return { t: t, ok: i === 0 }; });
+      var r = rnd(QZ.v + qi * 97), opts = x.a.map(function (t, i) { return { t: t, ok: i === 0, i: i }; });
       for (var i = opts.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)), tmp = opts[i]; opts[i] = opts[j]; opts[j] = tmp; }
       qTries = 0;
       $('kt-q-box').innerHTML = '<p class="kt-pill">שאלה ' + (qi + 1) + ' מתוך ' + QZ.q.length + '</p><p class="kq-q" dir="auto">' + math(x.q) + '</p><div class="kq-opts">' +
-        opts.map(function (o) { return '<button type="button" class="kq-o" dir="auto" data-ok="' + (o.ok ? 1 : 0) + '">' + math(o.t) + '</button>'; }).join('') + '</div><p class="kt-ok" id="kq-fb"></p>';
+        opts.map(function (o) { return '<button type="button" class="kq-o" dir="auto" data-ok="' + (o.ok ? 1 : 0) + '" data-i="' + o.i + '">' + math(o.t) + '</button>'; }).join('') + '</div><p class="kt-ok" id="kq-fb"></p>';
     }
     function endQ() {
       $('kt-q-box').innerHTML = '<p class="kt-msg">🎉 סיימת! ' + qOk + ' תשובות נכונות בניסיון הראשון' + (qOk ? ', ' + qOk * 3 + ' נקודות לכיתה' : '') + '.</p>';
@@ -158,6 +158,7 @@
     $('kt-q-box').addEventListener('click', function (e) {
       var b = e.target.closest('.kq-o'); if (!b || b.disabled) return;
       qTries++;
+      if (qTries === 1 && me) call('/c/' + me.code + '/ans', { sid: me.sid, token: me.token, v: QZ.v, qi: qi, pick: +b.getAttribute('data-i') });
       if (b.getAttribute('data-ok') === '1') {
         b.classList.add('ok'); $('kt-q-box').querySelectorAll('.kq-o').forEach(function (o) { o.disabled = true; });
         var first = qTries === 1, fresh = !qDone[qi];
@@ -456,7 +457,7 @@
       app.querySelectorAll('[data-panel]').forEach(function (p) { p.hidden = p.getAttribute('data-panel') !== t; });
       if (t === 'cert') renderCerts();
       if (t === 'school') school();
-      if (t === 'quiz') quizFill();
+      if (t === 'quiz') { quizFill(); quizStats(); }
     }
 
     // ---- שאלות של המורה: שורה = שאלה | נכונה | שגויה...
@@ -472,6 +473,18 @@
       var z = data && data.quiz;
       if (z && !$('kt-q-text').value) { $('kt-q-name').value = z.t; $('kt-q-text').value = z.q.map(function (x) { return [x.q].concat(x.a).join(' | '); }).join('\n'); }
       quizPrev();
+    }
+    function quizStats() {
+      var z = data && data.quiz, st = (data && data.qstats) || [], box = $('kt-q-stats');
+      if (!z || !st.some(function (x) { return x.n; })) { box.innerHTML = z ? '<p class="kt-note">עוד אף תלמידה לא ענתה. כאן יופיע כמה צדקו בכל שאלה.</p>' : ''; return; }
+      var hard = [];
+      box.innerHTML = '<h3>📊 מה קשה לכיתה</h3>' + z.q.map(function (q, i) {
+        var x = st[i] || { n: 0, ok: 0, picks: {} }, pc = x.n ? Math.round(x.ok * 100 / x.n) : 0, top = null;
+        Object.keys(x.picks).forEach(function (k) { if (!top || x.picks[k] > x.picks[top]) top = k; });
+        if (x.n && pc < 60) hard.push(i + 1);
+        return '<div class="kq-st' + (x.n && pc < 60 ? ' hard' : '') + '"><div dir="auto"><b>' + (i + 1) + '.</b> ' + math(q.q) + '</div>' +
+          (x.n ? '<div class="kt-goal-bar"><span style="width:' + pc + '%"></span></div><small>' + x.ok + ' מתוך ' + x.n + ' צדקו בניסיון הראשון (' + pc + '%)' + (top ? ' · הטעות הנפוצה: <span dir="auto">' + math(q.a[top]) + '</span> (' + x.picks[top] + ')' : '') + '</small>' : '<small>עוד לא ענו</small>') + '</div>';
+      }).join('') + (hard.length ? '<p class="kt-warn">כדאי להסביר שוב: שאלה ' + hard.join(', ') + '. פחות מ-60% צדקו בה בניסיון הראשון.</p>' : '<p class="kt-ok">✓ רוב הכיתה צדקה בכל השאלות.</p>');
     }
     function quizPrev() {
       var r = quizParse();

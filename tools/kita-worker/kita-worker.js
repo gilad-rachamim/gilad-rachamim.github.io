@@ -64,6 +64,8 @@ export class Kita {
     this.sql.exec('CREATE TABLE IF NOT EXISTS st (sid TEXT PRIMARY KEY, nick TEXT, th TEXT, t INTEGER, last INTEGER, crown TEXT DEFAULT \'\')');
     this.sql.exec('CREATE TABLE IF NOT EXISTS ev (sid TEXT, ref TEXT, game TEXT, pts INTEGER, day TEXT, t INTEGER, PRIMARY KEY (sid, ref))');
     this.sql.exec('CREATE TABLE IF NOT EXISTS rate (k TEXT PRIMARY KEY, day TEXT, n INTEGER)');
+    // שאלות המורה: התשובה הראשונה של כל תלמיד/ה לכל שאלה (pick 0 = נכונה). המורה רואה רק סיכום
+    this.sql.exec('CREATE TABLE IF NOT EXISTS qa (v INTEGER, qi INTEGER, sid TEXT, pick INTEGER, PRIMARY KEY (v, qi, sid))');
     // שיעורי בית במחברת (/limudim/machberet/): מטלה, העבודה של כל תלמיד/ה בכל תרגיל, והודעות מהמורה (רמז / תשובה)
     this.sql.exec('CREATE TABLE IF NOT EXISTS hw (id TEXT PRIMARY KEY, title TEXT, ex TEXT, t INTEGER, open INTEGER DEFAULT 1)');
     this.sql.exec('CREATE TABLE IF NOT EXISTS hwork (hw TEXT, sid TEXT, ex INTEGER, rows TEXT, ok INTEGER, warn INTEGER, done INTEGER, stuck INTEGER, t INTEGER, PRIMARY KEY (hw, sid, ex))');
@@ -168,9 +170,17 @@ export class Kita {
       return json({ ok: 1, pts });
     }
 
+    if (p === '/ans' && req.method === 'POST') {
+      const s = await this.student(b); if (!s) return json({ error: 'לא מצאנו אתכם בכיתה.', gone: 1 }, 403);
+      const qz = this.get('quiz', ''); if (!qz) return json({ ok: 1 });
+      const z = JSON.parse(qz), qi = +b.qi, pick = +b.pick;
+      if (+b.v !== z.v || !(qi >= 0 && qi < z.q.length) || !(pick >= 0 && pick < z.q[qi].a.length)) return json({ ok: 1, old: 1 });
+      this.sql.exec('INSERT OR IGNORE INTO qa (v, qi, sid, pick) VALUES (?, ?, ?, ?)', z.v, qi, s.sid, pick);
+      return json({ ok: 1 });
+    }
     if (p === '/leave' && req.method === 'POST') {
       const s = await this.student(b); if (!s) return json({ ok: 1 });
-      this.sql.exec('DELETE FROM ev WHERE sid = ?', s.sid); this.sql.exec('DELETE FROM st WHERE sid = ?', s.sid);
+      this.sql.exec('DELETE FROM ev WHERE sid = ?', s.sid); this.sql.exec('DELETE FROM st WHERE sid = ?', s.sid); this.sql.exec('DELETE FROM qa WHERE sid = ?', s.sid);
       this.sql.exec('DELETE FROM hwork WHERE sid = ?', s.sid); this.sql.exec('DELETE FROM hmsg WHERE sid = ?', s.sid);
       return json({ ok: 1 });
     }
@@ -191,13 +201,13 @@ export class Kita {
       } else if (a === 'crown') {
         this.sql.exec('UPDATE st SET crown = ? WHERE sid = ?', cleanText(b.label, 30) || '', String(b.sid));
       } else if (a === 'remove') {
-        this.sql.exec('DELETE FROM ev WHERE sid = ?', String(b.sid)); this.sql.exec('DELETE FROM st WHERE sid = ?', String(b.sid));
+        this.sql.exec('DELETE FROM ev WHERE sid = ?', String(b.sid)); this.sql.exec('DELETE FROM st WHERE sid = ?', String(b.sid)); this.sql.exec('DELETE FROM qa WHERE sid = ?', String(b.sid));
         this.sql.exec('DELETE FROM hwork WHERE sid = ?', String(b.sid)); this.sql.exec('DELETE FROM hmsg WHERE sid = ?', String(b.sid));
       } else if (a === 'quiz') {
         const qs = (Array.isArray(b.q) ? b.q : []).slice(0, 20).map(x => ({ q: cleanQ(x.q, 200), a: (Array.isArray(x.a) ? x.a : []).slice(0, 4).map(o => cleanQ(o, 80)) }));
         if (qs.some(x => !x.q || x.a.length < 2 || x.a.some(o => !o))) return json({ error: 'בכל שאלה צריך שאלה ולפחות 2 תשובות, בלי קישורים, טלפונים או מילים לא יפות.' }, 400);
         const t = cleanQ(b.title, 60) || 'תרגול מהמורה';
-        this.set('quiz', qs.length ? JSON.stringify({ t, q: qs, v: Date.now() }) : '');
+        this.set('quiz', qs.length ? JSON.stringify({ t, q: qs, v: Date.now() }) : ''); this.sql.exec('DELETE FROM qa');
       } else if (a === 'round') {
         this.set('round', Date.now()); this.sql.exec('UPDATE st SET crown = \'\'');
       } else if (a === 'delete') {
@@ -249,11 +259,20 @@ export class Kita {
       const games = {};
       for (const r of this.rows(`SELECT sid, game, SUM(pts) AS p, COUNT(*) AS n FROM ev WHERE ${this.where(per)} GROUP BY sid, game`)) (games[r.sid] = games[r.sid] || {})[r.game] = { p: r.p, n: r.n };
       const rows = this.board(per).map(r => Object.assign(r, { games: games[r.sid] || {} }));
-      return json({ ok: 1, name: this.get('name'), teacher: this.get('teacher'), period: this.get('period'), p: per, since: this.since(per), locked: this.get('locked') === '1', msg: this.get('msg'), quiz: this.get('quiz', '') ? JSON.parse(this.get('quiz')) : null, gifts: JSON.parse(this.get('gifts', '[]')), created: +this.get('created'), rows });
+      return json({ ok: 1, name: this.get('name'), teacher: this.get('teacher'), period: this.get('period'), p: per, since: this.since(per), locked: this.get('locked') === '1', msg: this.get('msg'), quiz: this.get('quiz', '') ? JSON.parse(this.get('quiz')) : null, qstats: this.qstats(), gifts: JSON.parse(this.get('gifts', '[]')), created: +this.get('created'), rows });
     }
     return json({ error: 'לא נמצא' }, 404);
   }
 
+  qstats() {
+    const qz = this.get('quiz', ''); if (!qz) return [];
+    const z = JSON.parse(qz), out = z.q.map(() => ({ n: 0, ok: 0, picks: {} }));
+    for (const r of this.rows('SELECT qi, pick, COUNT(*) AS n FROM qa WHERE v = ? GROUP BY qi, pick', z.v)) {
+      const o = out[r.qi]; if (!o) continue;
+      o.n += r.n; if (r.pick === 0) o.ok += r.n; else o.picks[r.pick] = r.n;
+    }
+    return out;
+  }
   async student(b) {
     const s = this.rows('SELECT sid, th FROM st WHERE sid = ?', String(b.sid || ''))[0];
     if (!s || (await hash('tok:' + String(b.token || ''))) !== s.th) return null;
