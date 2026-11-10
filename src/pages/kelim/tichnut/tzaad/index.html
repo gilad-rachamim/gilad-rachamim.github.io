@@ -1,0 +1,63 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tichnut_tzaad",
+  "title": "מריץ צעד אחר צעד – רואים מה הקוד עושה: משתנים, מערכים ורקורסיה | הכלים של גילעד רחמים",
+  "description": "מדביקים קוד JavaScript ומריצים אותו שורה אחרי שורה: השורה הנוכחית מסומנת, רואים כל משתנה ומה השתנה, מערכים עם חיצים על האינדקסים, ומחסנית קריאות ברקורסיה. גם הפתרונות של סימולטור הראיון. בחינם, רץ בדפדפן.",
+  "og_title": "מריץ צעד אחר צעד: רואים מה הקוד עושה",
+  "priority": "0.8",
+  "crumbs": [["כלים למתכנתים", "/kelim/tichnut/"], ["צעד אחר צעד", null]],
+  "head": "<style>.tz-top{display:flex;flex-wrap:wrap;gap:.5rem;align-items:end;margin-bottom:.6rem}.tz-top .field{flex:1 1 14rem;margin:0}.tz-in{width:100%;min-height:16rem;direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:.92rem;line-height:1.5;padding:.75rem;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.35);color:#e9f5e1;resize:vertical;tab-size:2;unicode-bidi:plaintext}.tz-btns{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0}.tz-grid2{display:grid;gap:.9rem}@media(min-width:900px){.tz-grid2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}.tz-code{direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:.86rem;line-height:1.55;max-height:24rem;overflow:auto;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.35);color:#cfe3c8;padding:.4rem 0;position:relative}.tz-ln{white-space:pre;padding:0 .7rem 0 0;border-left:3px solid transparent}.tz-ln span{display:inline-block;width:2.4em;text-align:right;margin-right:.8em;color:#6f7d6a;user-select:none}.tz-ln.cur{background:rgba(216,179,95,.2);border-left-color:var(--gold);color:#fff}.tz-ln.was{background:rgba(255,255,255,.04)}.tz-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin:.6rem 0 .3rem}.tz-ctl button{min-width:2.6rem}.tz-ctl select{width:auto;padding:.35rem .5rem}.tz-range{width:100%;accent-color:var(--gold)}.tz-count{color:var(--muted);font-size:.85rem}.tz-ev{padding:.6rem .8rem;border-radius:12px;background:rgba(216,179,95,.08);border:1px solid var(--gold-soft);color:var(--parchment);line-height:1.7;margin-bottom:.6rem}.tz-frame{border:1px solid var(--line);border-radius:12px;padding:.55rem .7rem;margin-bottom:.5rem;opacity:.7}.tz-frame.top{opacity:1;border-color:var(--gold)}.tz-frame h3{font-family:ui-monospace,Consolas,monospace;font-size:.95rem;color:var(--cream);text-align:left}.tz-frame h3 small{font-family:var(--sans,inherit);color:var(--muted);font-weight:400}.tz-frame dl{display:grid;gap:.3rem;margin-top:.35rem}.tz-var{display:grid;grid-template-columns:minmax(3.2rem,auto) 1fr;gap:.6rem;align-items:baseline;direction:ltr;padding:.15rem .35rem;border-radius:8px}.tz-var.chg{background:rgba(159,211,155,.13);box-shadow:inset 3px 0 0 #9fd39b}.tz-var dt{font-family:ui-monospace,Consolas,monospace;color:var(--gold);font-weight:600;font-size:.9rem;margin:0}.tz-var dd{margin:0;min-width:0}.tz-grid2>div{min-width:0}.tz-var dd{font-family:ui-monospace,Consolas,monospace;color:#e9f5e1;font-size:.88rem;overflow-x:auto;text-align:left}.tz-n{color:#9fd3f0}.tz-s{color:#f0d29b}.tz-k{color:#b9a8e6}.tz-p{color:#cfe3c8}.tz-arr{display:inline-flex;flex-wrap:wrap;gap:2px;padding-bottom:.2rem}.tz-cell{display:inline-grid;justify-items:center;min-width:2.2rem}.tz-cell b{display:block;min-width:2.2rem;text-align:center;padding:.25rem .3rem;border:1px solid var(--line);border-radius:6px;background:rgba(255,255,255,.04);font-weight:400}.tz-cell.on b{border-color:var(--gold);background:rgba(216,179,95,.22)}.tz-cell i{font-style:normal;font-size:.7rem;color:#6f7d6a}.tz-cell em{font-style:normal;font-size:.72rem;color:var(--gold);font-weight:700}.tz-grid{border-collapse:collapse}.tz-grid td{border:1px solid var(--line);padding:.2rem .45rem;text-align:center}.tz-grid td.half{background:rgba(216,179,95,.07)}.tz-grid td.on{background:rgba(216,179,95,.3)}.tz-out{margin-top:.5rem}.tz-out b{color:var(--cream);font-size:.9rem}.tz-out pre{margin-top:.3rem;font-family:ui-monospace,Consolas,monospace;font-size:.85rem;padding:.6rem;border-radius:10px;background:rgba(0,0,0,.35);color:#e9f5e1;white-space:pre-wrap;text-align:left}.tz-tips{display:grid;gap:.3rem;color:var(--body);font-size:.9rem;line-height:1.6;margin-top:.4rem}.tn-shut{margin:1.2rem 0 .6rem;padding:.75rem .9rem;border-inline-start:3px solid var(--gold-soft);border-radius:10px;background:rgba(216,179,95,.05);color:var(--parchment);font-size:.92rem;line-height:1.65}</style>",
+  "foot": "<script src=\"/assets/tichnut-data.js\" defer></script><script src=\"/assets/vendor/acorn/acorn.js\" defer></script><script src=\"/assets/tichnut-sim-data.js\" defer></script><script src=\"/assets/tichnut-tzaad.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מריץ צעד אחר צעד</h1>
+  <p class="sub">מה הקוד באמת עושה? כאן רואים את זה: השורה שרצה עכשיו, כל משתנה ומה השתנה, מערכים עם חיצים על האינדקסים, ומחסנית הקריאות ברקורסיה. ללמידה, לדיבוג ולהכנה לראיון.</p>
+</header>
+<div class="tool">
+  <div id="tz-edit" hidden>
+    <div class="tz-top">
+      <div class="field"><label for="tz-ex">דוגמה או תרגיל</label><select id="tz-ex"></select></div>
+    </div>
+    <textarea id="tz-in" class="tz-in" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="הקוד"></textarea>
+    <div class="tz-btns"><button class="btn btn-gold btn-sm" type="button" id="tz-run">▶ להריץ צעד אחר צעד (Ctrl+Enter)</button></div>
+    <p class="note">כתבו פונקציה, ובסוף קריאה אליה, למשל <code dir="ltr">sum([1, 2, 3]);</code>. אפשר גם <code dir="ltr">console.log</code>.</p>
+  </div>
+  <div id="tz-msg" aria-live="polite"></div>
+
+  <div id="tz-view" hidden>
+    <div class="tz-grid2">
+      <div>
+        <div class="tz-code" id="tz-code"></div>
+        <div class="tz-ctl">
+          <button class="btn btn-line btn-sm" type="button" id="tz-first" title="להתחלה">⏮</button>
+          <button class="btn btn-line btn-sm" type="button" id="tz-prev">→ הקודם</button>
+          <button class="btn btn-gold btn-sm" type="button" id="tz-next">הבא ←</button>
+          <button class="btn btn-line btn-sm" type="button" id="tz-last" title="לסוף">⏭</button>
+          <button class="btn btn-line btn-sm" type="button" id="tz-play">▶ ניגון</button>
+          <select id="tz-speed" aria-label="מהירות"><option value="1200">לאט</option><option value="600" selected>רגיל</option><option value="250">מהר</option></select>
+        </div>
+        <input class="tz-range" type="range" id="tz-range" min="0" max="0" value="0" aria-label="צעד">
+        <p class="tz-count" id="tz-count"></p>
+        <button class="btn btn-line btn-sm" type="button" id="tz-editbtn">✏️ לערוך את הקוד או לבחור דוגמה</button>
+      </div>
+      <div aria-live="polite">
+        <div class="tz-ev" id="tz-ev"></div>
+        <div id="tz-frames"></div>
+        <div id="tz-outbox"></div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="tn-h" style="margin-top:1.4rem;color:var(--cream);font-size:1.1rem">איך משתמשים בזה טוב</h2>
+  <div class="tz-tips">
+    <p>✦ <b>לפני שלוחצים "הבא", נחשו</b> מה ישתנה. כשהניחוש לא מתאים למה שקורה, שם בדיוק נמצא הבאג או החלק שעוד לא הבנתם.</p>
+    <p>✦ <b>בירוק</b> מסומן משתנה שהשתנה בצעד האחרון. <b>בזהב</b> מסומנים התאים במערך שהמשתנים i, j, lo, hi, mid, left, right מצביעים עליהם.</p>
+    <p>✦ <b>ברקורסיה</b> כל קריאה מקבלת קופסה משלה במחסנית, עם משתנים משלה. הקופסה העליונה, במסגרת זהב, היא זו שרצה עכשיו. מתחתיה הקריאות שמחכות לה.</p>
+    <p>✦ במקלדת: חץ שמאלה לצעד הבא, חץ ימינה לקודם.</p>
+  </div>
+
+  <p class="tn-shut">💛 הכלי הזה חינמי ובלי פרסומות. אני בונה אותו לבד ומשלם עליו מהכיס, באהבה. אם הוא עוזר לכם, <a class="gold" href="/kelim/tichnut/#shutafim">אפשר להיות שותפים</a>: חסות, תרגיל שתכתבו, או תמיכה קטנה.</p>
+  <p class="disclaimer">הקוד רץ רק בדפדפן שלכם, בסביבה מבודדת (Web Worker), ושום דבר לא נשלח. כרגע JavaScript, עם עד 2,000 צעדים לריצה. קוד אסינכרוני (setTimeout, Promise) לא מוצג צעד אחר צעד. לתרגול: <a class="gold" href="/kelim/tichnut/simulator/">סימולטור הראיון</a> · <a class="gold" href="/kelim/tichnut/miunim/">מיונים בתנועה</a>.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="כלי שמריץ קוד צעד אחר צעד ומראה את המשתנים, המערכים והרקורסיה. מעולה ללמוד תכנות ולהבין אלגוריתמים, בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר שלומד תכנות</a></div>
+</div>
