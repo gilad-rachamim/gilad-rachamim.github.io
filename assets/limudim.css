@@ -601,6 +601,10 @@ body.cx-exammode .pt-link{display:none!important}
 .mb-okc{color:var(--ok)}.mb-wc{color:#f0b35c}
 .mb-ex{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center;margin-top:.8rem;color:var(--muted);font-size:.95rem}
 .mb-ex button{font:inherit;font-size:.92rem;padding:.3rem .7rem;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--cream);cursor:pointer}
+.mb-ex .mb-cam{font-weight:700;background:rgba(220,183,105,.14);border-color:var(--gold-soft);color:var(--cream);margin-inline-end:.4rem}
+.mb-camp{display:flex;gap:.7rem;align-items:center}.mb-camp img{width:84px;height:64px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.mb-pick{display:grid;gap:.35rem}.mb-pick button{font:inherit;text-align:start;padding:.5rem .7rem;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--cream);cursor:pointer;display:flex;gap:.5rem;align-items:baseline;flex-wrap:wrap}
+.mb-pick button small{color:var(--muted)}.mb-pick bdi{font-weight:700}
 .mb-top{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .9rem;margin-top:.8rem}
 .mb-saved{color:var(--muted);font-size:.9rem}
 .mb-hwbar{margin-top:.8rem;padding:.75rem .9rem;border-radius:14px;border:1px solid rgba(134,197,230,.45);background:rgba(134,197,230,.1);display:grid;gap:.5rem}
