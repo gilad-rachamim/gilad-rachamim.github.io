@@ -12,7 +12,7 @@ import { runChecks } from './check.js';
 const ALLOWED = ['https://gilad-rachamim.github.io'];
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 export const PER_IP = 12;   // פתרונות לכתובת ביום
-export const DAY_CAP = 150; // לכל האתר ביום – כל פתרון 2-4 קריאות, בתוך המכסה החינמית
+export const DAY_CAP = 80;  // לכל האתר ביום – המכסות החינמיות (Gemini + Workers AI) קטנות; כשנגמרות – "נסו מחר"
 const MAX_TEXT = 6000;
 const MAX_IMG = 3_500_000; // base64
 const AI_MODEL = '@cf/openai/gpt-oss-120b';
