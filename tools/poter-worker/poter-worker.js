@@ -314,6 +314,94 @@ export async function solve(env, body, opts) {
 }
 function fmt(n) { return typeof n === 'number' && isFinite(n) ? +n.toPrecision(8) : String(n); }
 
+// ============ המחברת (/limudim/machberet/): רמז לצעד הבא ובדיקת הוכחה ============
+// התלמיד פותר בעצמו. הבינה לא פותרת בשבילו: רמז אחד, או הערה לכל שורה בהוכחה.
+export const HINT_PER = 30, HINT_CAP = 400, PROOF_PER = 12, PROOF_CAP = 150;
+export const HINT_RULES = `את/ה מורה פרטי/ת סבלני/ת למתמטיקה בישראל (בגרות 3–5 יח"ל). תלמיד פותר בעצמו במחברת, שורה אחרי שורה, ונתקע.
+תן/תני רמז אחד בלבד לצעד הבא:
+- לא לגלות את התשובה הסופית ולא לכתוב את הפתרון המלא. רמז שמכוון, או שאלה מנחה.
+- אם יש טעות באחת השורות – להצביע עליה בעדינות (באיזו שורה ומה לבדוק), בלי לתקן במקומו.
+- שורה שסומנה "?" – המחשבון מצא שהיא לא שקולה לשורה שלפניה.
+- עברית פשוטה ומעודדת, בלשון רבים (נסו, בדקו). עד שני משפטים קצרים.
+- formula: נוסחה או משפט אחד שיעזור (LaTeX בלי $), או ריק. לא את התשובה.
+- בהוכחה בגאומטריה: הצעה למשפט או לזוג משולשים לבדוק, בלי לכתוב את ההוכחה.`;
+export const HINT_SCHEMA = { type: 'OBJECT', properties: { hint: { type: 'STRING' }, formula: { type: 'STRING' } }, required: ['hint'] };
+export const PROOF_RULES = `את/ה בודק/ת בגרות במתמטיקה, קפדני/ת והוגן/ת. תלמיד כתב הוכחה בגאומטריה או בטריגונומטריה במבנה "טענה | נימוק".
+לכל שורה (לפי הסדר, index כמו המספר של השורה, מ-1): ok=true אם הטענה נובעת נכון מהנתון ומהשורות שלפניה, והנימוק מתאים לה. ok=false אם הטענה לא נכונה, לא נובעת, או שהנימוק לא מתאים.
+note: משפט קצר בעברית פשוטה רק כשיש מה לתקן (מה חסר או למה הנימוק לא מתאים), אחרת ריק. לא לכתוב את ההוכחה במקומו.
+ok הכללי: true רק אם ההוכחה שלמה ומגיעה למה שצריך להוכיח.
+summary: משפט מעודד אחד שמסכם. missing: אם חסר שלב – מה בערך חסר (בלי לכתוב אותו במלואו), אחרת ריק.
+אין שרטוט – מניחים את המקובל לפי הנתון. בדיקה עניינית, לא סגנון.`;
+export const PROOF_SCHEMA = {
+  type: 'OBJECT',
+  properties: {
+    ok: { type: 'BOOLEAN' }, summary: { type: 'STRING' }, missing: { type: 'STRING' },
+    rows: { type: 'ARRAY', items: { type: 'OBJECT', properties: { index: { type: 'INTEGER' }, ok: { type: 'BOOLEAN' }, note: { type: 'STRING' } }, required: ['index', 'ok'] } }
+  },
+  required: ['ok', 'summary', 'rows']
+};
+const cut = (s, n) => String(s == null ? '' : s).slice(0, n);
+export function hintPrompt(b) {
+  if (b.mode === 'proof') {
+    const rows = (Array.isArray(b.rows) ? b.rows : []).slice(0, 40).map((r, i) => `${i + 1}. ${cut(r.claim, 200)} | ${cut(r.reason, 200)}`).join('\n');
+    return `${cut(b.question, 1500)}\n\nההוכחה עד עכשיו (טענה | נימוק):\n${rows || '(עוד אין שורות)'}\n\nמה הרמז לשורה הבאה?`;
+  }
+  const lines = (Array.isArray(b.lines) ? b.lines : []).slice(0, 40), marks = Array.isArray(b.marks) ? b.marks : [];
+  return `התרגיל: ${cut(b.question, 1000)}\n\nהשורות של התלמיד:\n${lines.map((l, i) => `${i + 1}. ${cut(l, 300)}${marks[i] === 'warn' ? '  (?)' : marks[i] === 'ok' ? '  (✓)' : ''}`).join('\n') || '(עוד אין שורות)'}\n\nמה הרמז לצעד הבא?`;
+}
+export function proofPrompt(b) {
+  const rows = (Array.isArray(b.rows) ? b.rows : []).slice(0, 40).map((r, i) => `${i + 1}. ${cut(r.claim, 200)} | ${cut(r.reason, 200)}`).join('\n');
+  return `נתון: ${cut(b.given, 1500)}\nצריך להוכיח: ${cut(b.prove, 300)}\n\nההוכחה (index. טענה | נימוק):\n${rows}`;
+}
+// רמז: דגם קל ומהיר קודם (מכסה נפרדת מהפותר), ואז gpt-oss, ואז הדגם הראשי
+export async function aiHint(env, b, opts) {
+  const parts = [{ text: hintPrompt(b) }], o = Object.assign({ timeout: 40000 }, opts || {});
+  for (const m of LITE) { try { const d = await geminiAnyKey(env, m, HINT_RULES, parts, HINT_SCHEMA, o); if (d && d.hint) return clean2(d); } catch (_) {} }
+  try { return clean2(await workersAI(env, HINT_RULES, parts[0].text, HINT_SCHEMA)); } catch (_) {}
+  return clean2((await gemini(env, HINT_RULES, parts, HINT_SCHEMA, o)).data);
+}
+function clean2(d) { return { hint: plainMath(d.hint || ''), formula: String(d.formula || '').replace(/^\s*\$+|\$+\s*$/g, '').slice(0, 300) }; }
+// בדיקת הוכחה: צריך היגיון – הדגם הראשי, ואם עמוס gpt-oss
+export async function aiProof(env, b, opts) {
+  const parts = [{ text: proofPrompt(b) }], o = Object.assign({ timeout: 90000 }, opts || {});
+  let d;
+  try { d = (await gemini(env, PROOF_RULES, parts, PROOF_SCHEMA, o)).data; }
+  catch (e) { d = await workersAI(env, PROOF_RULES, parts[0].text, PROOF_SCHEMA); }
+  const rows = [];
+  for (const r of d.rows || []) if (Number.isInteger(r.index) && r.index >= 1 && r.index <= 40) rows[r.index - 1] = { ok: r.ok !== false, note: plainMath(r.note || '') };
+  return { ok: !!d.ok, summary: plainMath(d.summary || ''), missing: plainMath(d.missing || ''), rows: Array.from(rows, x => x || null) };
+}
+async function takeQuota(env, inst, request, per, cap) {
+  const day = new Date().toISOString().slice(0, 10);
+  const ip = request.headers.get('cf-connecting-ip') || 'x';
+  const stub = env.QUOTA.get(env.QUOTA.idFromName(inst));
+  return (await stub.fetch('https://q/take', { method: 'POST', body: JSON.stringify({ day, who: await ipHash(ip, day), per, cap }) })).json();
+}
+// תשובה זורמת עם "סימן חיים" (כמו /solve), כדי שבדיקה של חצי דקה לא תתנתק
+function streamed(ctx, h, job) {
+  const { readable, writable } = new TransformStream();
+  const w = writable.getWriter(), enc = new TextEncoder();
+  const beat = setInterval(() => { w.write(enc.encode(' ')).catch(() => {}); }, 8000);
+  const work = (async () => {
+    let out;
+    try { out = await job(); } catch (e) { out = { error: 'ai', busy: /429|503|timeout|limit|quota|neuron/i.test(String(e && e.message)) }; }
+    clearInterval(beat);
+    try { await w.write(enc.encode(JSON.stringify(out))); await w.close(); } catch (_) {}
+  })();
+  if (ctx && ctx.waitUntil) ctx.waitUntil(work);
+  return new Response(readable, { status: 200, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...h } });
+}
+async function machberet(request, env, ctx, h, path) {
+  const raw = await request.text();
+  if (raw.length > 30000) return json({ error: 'too_big' }, 413, h);
+  let b; try { b = JSON.parse(raw); } catch (_) { return json({ error: 'bad_json' }, 400, h); }
+  const proof = path === '/check-proof';
+  if (proof ? !(Array.isArray(b.rows) && b.rows.length) : !String(b.question || '').trim()) return json({ error: 'empty' }, 400, h);
+  const q = proof ? await takeQuota(env, 'pr', request, PROOF_PER, PROOF_CAP) : await takeQuota(env, 'h', request, HINT_PER, HINT_CAP);
+  if (!q.ok) return json({ error: 'quota' }, 200, h);
+  return streamed(ctx, h, async () => Object.assign(proof ? await aiProof(env, b) : await aiHint(env, b), { left: q.left }));
+}
+
 async function ipHash(ip, day) {
   const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(day + '|' + ip + '|poter'));
   return [...new Uint8Array(b)].slice(0, 8).map(x => x.toString(16).padStart(2, '0')).join('');
@@ -325,7 +413,11 @@ export default {
     const origin = request.headers.get('origin');
     const h = cors(origin);
     if (request.method === 'OPTIONS') return h ? new Response('', { headers: h }) : new Response('', { status: 403 });
-    if (url.pathname === '/ping') return json({ ok: true, gemini: geminiKeys(env).length, per: PER_IP }, 200, h || {});
+    if (url.pathname === '/ping') return json({ ok: true, gemini: geminiKeys(env).length, per: PER_IP, machberet: true }, 200, h || {});
+    if ((url.pathname === '/hint' || url.pathname === '/check-proof') && request.method === 'POST') {
+      if (!h) return json({ error: 'origin' }, 403);
+      return machberet(request, env, ctx, h, url.pathname);
+    }
     if (url.pathname !== '/solve' || request.method !== 'POST') return json({ name: 'הפותר – שאלות בגרות במתמטיקה', page: 'https://gilad-rachamim.github.io/limudim/poter/' }, 200);
     if (!h) return json({ error: 'origin' }, 403);
     const raw = await request.text();
