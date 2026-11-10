@@ -91,3 +91,9 @@ body[data-tool="rega"] .fb{display:none}
 .kasher-msg{white-space:pre-wrap;direction:rtl;background:rgba(201,162,75,.07);border:1px solid var(--line);border-radius:12px;padding:.8rem 1rem;font-size:.97rem;line-height:1.65;width:100%;min-height:12rem;color:inherit;font-family:inherit}
 @media print{.share-alts{display:none}}
 .k-list{margin:.6rem 0 1rem;padding-inline-start:1.2rem;display:grid;gap:.55rem;line-height:1.65}
+/* "עוד כלים בחינם" בתחתית כל כלי (build.py: seo_related) */
+.rel{margin-top:2.2rem;border-top:1px solid var(--line)}
+.rel .dom b{padding-inline-end:0;font-size:1.08rem}
+.rel .rel-all{margin-top:.9rem;text-align:center}
+@media print{.rel{display:none!important}}
+body[data-tool="rega"] .rel{display:none}

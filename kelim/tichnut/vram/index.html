@@ -12,7 +12,7 @@
 <meta property="og:site_name" content="הכלים של גילעד רחמים">
 <meta property="og:title" content="כמה VRAM צריך כדי להריץ את המודל?">
 <meta property="og:description" content="בוחרים מודל שפה (Llama, Qwen, Mistral...), דיוק (FP16, 8-bit, 4-bit) ואורך הקשר, ורואים כמה GB של VRAM צריך להרצה או לאימון LoRA, ואיזה כרטיס NVIDIA מספיק. בחינם, בלי הרשמה.">
-<meta property="og:image" content="https://gilad-rachamim.github.io/assets/og-kelim.jpg">
+<meta property="og:image" content="https://gilad-rachamim.github.io/assets/og/kelim-tichnut-vram.jpg">
 <meta property="og:url" content="https://gilad-rachamim.github.io/kelim/tichnut/vram/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0f1d1c">
@@ -20,12 +20,12 @@
 <link rel="apple-touch-icon" href="/assets/icon-kelim-192.png">
 <link rel="manifest" href="/kelim/manifest.webmanifest">
 <link rel="stylesheet" href="/assets/site.css?v=39e81fea">
-<link rel="stylesheet" href="/assets/kelim.css?v=873b0769">
+<link rel="stylesheet" href="/assets/kelim.css?v=b4007d85">
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4QR4583VST"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4QR4583VST');</script>
 <script src="/assets/track.js?v=b23b682b" defer></script>
-<style>.tn-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}.tn-modes{display:flex;flex-wrap:wrap;gap:.4rem;margin:.3rem 0 .8rem}.tn-modes label{position:relative;flex:1;min-width:8rem;border:1px solid var(--line);border-radius:12px;padding:.55rem .6rem;text-align:center;cursor:pointer;color:var(--body)}.tn-modes input{position:absolute;opacity:0;width:1px;height:1px;inset:0}.tn-modes label:has(input:checked){border-color:var(--gold);color:var(--cream);background:rgba(216,179,95,.1)}.tn-big{margin-top:1rem;padding:1rem;border:1px solid var(--gold-soft);border-radius:14px;text-align:center;background:rgba(216,179,95,.07)}.tn-big b{display:block;font-family:var(--serif);font-size:2.6rem;color:var(--cream);line-height:1.1;direction:ltr}.tn-big span{color:var(--body);font-size:.95rem}.tn-bars{list-style:none;display:grid;gap:.45rem;margin-top:.9rem}.tn-bars li{display:grid;grid-template-columns:1fr auto;gap:.3rem .6rem;color:var(--parchment);font-size:.95rem}.tn-bars b{color:var(--gold);direction:ltr}.tn-bars i{grid-column:1/-1;display:block;height:.45rem;border-radius:99px;background:var(--gold)}.tn-fit{list-style:none;display:grid;gap:.4rem;margin-top:.5rem}.tn-fit li{display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;padding:.55rem .8rem;border:1px solid var(--line);border-radius:12px;color:var(--parchment)}.tn-fit span{color:var(--muted);font-size:.9rem}.tn-h{margin-top:1.1rem;color:var(--cream);font-size:1.05rem}.tn-ltr{direction:ltr;text-align:left}</style><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "הכלים של גילעד רחמים", "item": "https://gilad-rachamim.github.io/kelim/"}, {"@type": "ListItem", "position": 2, "name": "כלים למתכנתים", "item": "https://gilad-rachamim.github.io/kelim/tichnut/"}, {"@type": "ListItem", "position": 3, "name": "מחשבון VRAM", "item": "https://gilad-rachamim.github.io/kelim/tichnut/vram/"}]}</script>
+<style>.tn-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}.tn-modes{display:flex;flex-wrap:wrap;gap:.4rem;margin:.3rem 0 .8rem}.tn-modes label{position:relative;flex:1;min-width:8rem;border:1px solid var(--line);border-radius:12px;padding:.55rem .6rem;text-align:center;cursor:pointer;color:var(--body)}.tn-modes input{position:absolute;opacity:0;width:1px;height:1px;inset:0}.tn-modes label:has(input:checked){border-color:var(--gold);color:var(--cream);background:rgba(216,179,95,.1)}.tn-big{margin-top:1rem;padding:1rem;border:1px solid var(--gold-soft);border-radius:14px;text-align:center;background:rgba(216,179,95,.07)}.tn-big b{display:block;font-family:var(--serif);font-size:2.6rem;color:var(--cream);line-height:1.1;direction:ltr}.tn-big span{color:var(--body);font-size:.95rem}.tn-bars{list-style:none;display:grid;gap:.45rem;margin-top:.9rem}.tn-bars li{display:grid;grid-template-columns:1fr auto;gap:.3rem .6rem;color:var(--parchment);font-size:.95rem}.tn-bars b{color:var(--gold);direction:ltr}.tn-bars i{grid-column:1/-1;display:block;height:.45rem;border-radius:99px;background:var(--gold)}.tn-fit{list-style:none;display:grid;gap:.4rem;margin-top:.5rem}.tn-fit li{display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;padding:.55rem .8rem;border:1px solid var(--line);border-radius:12px;color:var(--parchment)}.tn-fit span{color:var(--muted);font-size:.9rem}.tn-h{margin-top:1.1rem;color:var(--cream);font-size:1.05rem}.tn-ltr{direction:ltr;text-align:left}</style><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "הכלים של גילעד רחמים", "item": "https://gilad-rachamim.github.io/kelim/"}, {"@type": "ListItem", "position": 2, "name": "כלים למתכנתים", "item": "https://gilad-rachamim.github.io/kelim/tichnut/"}, {"@type": "ListItem", "position": 3, "name": "מחשבון VRAM", "item": "https://gilad-rachamim.github.io/kelim/tichnut/vram/"}]}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "מחשבון VRAM למודלי AI", "description": "בוחרים מודל שפה (Llama, Qwen, Mistral...), דיוק (FP16, 8-bit, 4-bit) ואורך הקשר, ורואים כמה GB של VRAM צריך להרצה או לאימון LoRA, ואיזה כרטיס NVIDIA מספיק. בחינם, בלי הרשמה.", "url": "https://gilad-rachamim.github.io/kelim/tichnut/vram/", "inLanguage": "he", "applicationCategory": "EducationalApplication", "operatingSystem": "Any", "browserRequirements": "דפדפן רגיל בטלפון או במחשב, בלי התקנה.", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "ILS"}, "author": {"@type": "Person", "name": "גילעד רחמים אביעד", "url": "https://gilad-rachamim.github.io/kelim/#mi"}, "publisher": {"@type": "Person", "name": "גילעד רחמים אביעד", "url": "https://gilad-rachamim.github.io/kelim/#mi"}, "isPartOf": {"@type": "WebSite", "name": "הכלים של גילעד רחמים", "url": "https://gilad-rachamim.github.io/kelim/"}}</script>
 </head>
 <body class="site-kelim " data-site="kelim" data-tool="tichnut_vram" data-home="/kelim/">
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
@@ -108,6 +108,12 @@
   <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מחשבון VRAM: כמה זיכרון כרטיס מסך צריך כדי להריץ מודל AI, ואיזה כרטיס מספיק. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
 </div>
 
+<section class="k-sec rel no-print" aria-labelledby="rel-h">
+  <h2 id="rel-h">עוד כלים בחינם שאולי יעזרו</h2>
+  <div class="dom"><a href="/kelim/tichnut/base64/"><b>Base64, URL ו-JWT</b><span>קידוד ופענוח Base64 ו-URL שעובדים גם עם עברית ואימוג'י, ופענוח JWT עם תאריך התפוגה בעברית. רץ…</span></a><a href="/kelim/tichnut/bits/"><b>בסיסים וביטים</b><span>ממירים מספר בין עשרוני, בינארי, הקסה ואוקטלי, רואים את הביטים כמשלים ל-2 ב-8/16/32/64 ביט עם…</span></a><a href="/kelim/tichnut/emet/"><b>טבלת אמת</b><span>מקלידים ביטוי לוגי (¬, ∧, ∨, ⊕, →, ↔) ומקבלים טבלת אמת מלאה, האם הוא טאוטולוגיה, סתירה או…</span></a><a href="/kelim/tichnut/git/"><b>מה לעשות ב-Git?</b><span>שכחתי קובץ ב-commit, קונפליקט במיזוג, לבטל commit, לעבוד בענף, Pull Request, .gitignore…</span></a></div>
+  <p class="rel-all"><a class="gold" href="/kelim/tichnut/">לכל הכלים של ״כלים למתכנתים״ ←</a></p>
+</section>
+
 </main>
 <section class="fb no-print" id="fb" aria-labelledby="fb-h" data-fb>
   <div class="in">
@@ -166,7 +172,7 @@
   <button class="btn btn-gold btn-sm" type="button" data-install>להתקין</button>
   <button class="x" type="button" data-install-close aria-label="סגירה">×</button>
 </div>
-<script src="/assets/kelim.js?v=781de167" defer></script>
+<script src="/assets/kelim.js?v=dccd2958" defer></script>
 <script src="/assets/tichnut-data.js?v=c718af4e" defer></script><script src="/assets/tichnut-vram.js?v=dd747017" defer></script>
 </body>
 </html>
