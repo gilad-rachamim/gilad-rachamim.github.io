@@ -64,7 +64,12 @@
   };
 
   // ---------- מדידה ----------
-  CH.used = function (tool, how, extra) { if (window.toolUsed) window.toolUsed(tool, Object.assign({ how: how }, extra || {})); };
+  // רמז / בדיקה / גילוי: לכל היותר אירוע אחד בחצי דקה, כדי לא להציף את הנתונים
+  var lastEv = {};
+  CH.used = function (tool, how, extra) {
+    if (/^(hint|check|reveal)$/.test(how)) { var k = tool + how, t = Date.now(); if (lastEv[k] && t - lastEv[k] < 30000) return; lastEv[k] = t; }
+    if (window.toolUsed) window.toolUsed(tool, Object.assign({ how: how }, extra || {}));
+  };
 
   // ---------- חלון "פתרתם!" ----------
   // o: {tool, el, title, line, share, daily, next:[{label, fn}]}
