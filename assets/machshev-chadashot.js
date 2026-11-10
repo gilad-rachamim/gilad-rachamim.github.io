@@ -145,6 +145,7 @@
     $('nw-friend').href = 'https://wa.me/?text=' + encodeURIComponent(friendText());
     $('nw-friend').addEventListener('click', function () { used('friend'); });
     $('nw-chan-a').addEventListener('click', function () { used('channel'); });
+    $('nw-fb').addEventListener('click', function () { used('facebook'); });
 
     fetch(API + '/latest?from=' + FROM, { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
       if (!j || j.empty) {
