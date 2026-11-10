@@ -67,12 +67,13 @@
   function used(tool, how, extra) { if (window.toolUsed) window.toolUsed(tool, Object.assign({ how: how }, extra || {})); }
 
   // ---------- השורה הקטנה בראש הכלי ----------
+  var ALL_LINK = ' <a class="hk-all" href="/kelim/hitkadmut/">כל ההתקדמות שלי ›</a>';
   function lineHTML(el) {
     var k = el.getAttribute('data-hk'), def = +el.getAttribute('data-goal') || 5, st = HK.stats(k, def);
     var what = el.getAttribute('data-what') || 'לימוד';
     if (el.getAttribute('data-gentle')) {
       if (!st.total) return '🌱 כל יום שחוזרים לכאן נחשב. בלי לחץ, בקצב שלכם.';
-      return '🌱 ' + (el.getAttribute('data-verb') || 'חזרתם לכאן') + ' ' + HK.days(st.total) + (st.week ? ' · השבוע: ' + HK.days(st.week) : '') + '. כל יום נחשב, וכל חזרה היא התחלה חדשה.';
+      return '🌱 ' + (el.getAttribute('data-verb') || 'חזרתם לכאן') + ' ' + HK.days(st.total) + (st.week ? ' · השבוע: ' + HK.days(st.week) : '') + '. כל יום נחשב, וכל חזרה היא התחלה חדשה.' + ALL_LINK;
     }
     var parts = [];
     if (!st.total) parts.push('🌱 כל יום של ' + what + ' נספר כאן');
@@ -85,8 +86,49 @@
     var html = esc(parts.join(' · '));
     html += ' <button type="button" class="hk-goal" data-hk-goal="' + esc(k) + '" title="לשנות את היעד השבועי">יעד ' + st.goal + ' ✎</button>';
     if (st.badges) html += ' <span class="hk-badges" title="שבועות שבהם השלמתם את היעד">🏅×' + st.badges + '</span>';
-    return html;
+    return html + (st.total ? ALL_LINK : '');
   }
+
+  // ---------- כל הכלים שמשתמשים במנגנון (לדף "ההתקדמות שלי", /kelim/hitkadmut/) ----------
+  // כלי חדש עם data-hk = שורה חדשה כאן. g = גרסה עדינה (בלי רצף ובלי יעד).
+  HK.TOOLS = [
+    { k: 'kartisiot', n: 'כרטיסיות חזרה', u: '/limudim/kartisiot/', i: '📇', w: 'חזרה' },
+    { k: 'yomi', n: 'לימוד יומי לסיום', u: '/limudim/yomi/', i: '📖', w: 'לימוד' },
+    { k: 'matematika', n: 'תרגול מתמטיקה', u: '/limudim/matematika/', i: '➗', w: 'תרגול' },
+    { k: 'timer', n: 'טיימר הלימוד', u: '/limudim/timer/', i: '⏱️', w: 'לימוד' },
+    { k: 'mivchan', n: 'מתכנן למבחן', u: '/limudim/mivchan/', i: '🎯', w: 'לימוד' },
+    { k: 'tehillim', n: 'סיום תהילים', u: '/kodesh/tehillim/', i: '📜', w: 'תהילים', goal: 3 },
+    { k: 'omer', n: 'פרקי אבות לספירת העומר', u: '/kodesh/omer-avot/', i: '🌾', w: 'לימוד' },
+    { k: 'hayom', n: 'הדבר החשוב של היום', u: '/nefesh/hayom/', i: '🌱', g: 1, verb: 'חזרתם' },
+    { k: 'yoman', n: 'יומן קול', u: '/nefesh/yoman/', i: '🎙️', g: 1, verb: 'כתבתם' }
+  ];
+  function renderAll(box) {
+    var all = {}, wk = key(sunday()), used0 = [], fresh = [], badges = [];
+    HK.TOOLS.forEach(function (t) {
+      var s = HK.load(t.k), st = HK.stats(t.k, t.goal);
+      Object.keys(s.days || {}).forEach(function (d) { all[d] = 1; });
+      Object.keys(s.badges || {}).forEach(function (b) { badges.push({ d: b, t: t }); });
+      (st.total ? used0 : fresh).push({ t: t, st: st });
+    });
+    used0.sort(function (a, b) { return (b.st.today - a.st.today) || (b.st.total - a.st.total); });
+    var days = Object.keys(all), week = days.filter(function (d) { return d >= wk; }).length, today = !!all[key()];
+    var head = !days.length ? '<b>🌱 עוד לא התחלתם</b><span>בוחרים כלי אחד מלמטה. כל יום שחוזרים אליו נספר כאן, בטלפון שלכם בלבד.</span>'
+      : '<b>' + (today ? '✓ היום כבר הייתם כאן' : '🌱 היום עוד מחכה לכם') + '</b><span>השבוע: ' + HK.days(week) + ' של לימוד ועשייה · בסך הכול ' + HK.days(days.length) + '</span>';
+    function card(x) {
+      var t = x.t, st = x.st, line;
+      if (!st.total) line = '<span class="hk-c-l">עוד לא התחלתם · להתחיל ›</span>';
+      else if (t.g) line = '<span class="hk-c-l">🌱 ' + t.verb + ' ' + HK.days(st.total) + (st.week ? ' · השבוע ' + HK.days(st.week) : '') + '</span><span class="hk-c-s">כל יום נחשב</span>';
+      else line = '<span class="hk-c-l">' + (st.streak >= 2 ? '🔥 ' + HK.days(st.streak) + ' ברצף' : st.today ? '✓ היום' : '💪 היום אפשר להמשיך') + '</span>' +
+        '<span class="hk-c-s">' + (st.weekDone ? '🏅 היעד השבועי הושלם' : st.week ? 'השבוע ' + st.week + ' מתוך ' + st.goal : 'היעד השבועי: ' + HK.days(st.goal)) + (st.badges ? ' · 🏅×' + st.badges : '') + '</span>';
+      return '<a class="hk-c' + (st.today ? ' on' : '') + '" href="' + t.u + '"><span class="hk-c-i">' + t.i + '</span><span class="hk-c-b"><b>' + esc(t.n) + '</b>' + line + '</span></a>';
+    }
+    badges.sort(function (a, b) { return a.d < b.d ? 1 : -1; });
+    box.innerHTML = '<div class="hk-sum">' + head + '</div>' +
+      (used0.length ? '<h2 class="hk-h">הכלים שלכם</h2><div class="hk-grid">' + used0.map(card).join('') + '</div>' : '') +
+      (badges.length ? '<h2 class="hk-h">התגים שלכם</h2><div class="hk-bdg">' + badges.slice(0, 40).map(function (b) { var p = b.d.split('-'); return '<span title="' + esc(b.t.n) + '">🏅<small>' + b.t.i + ' ' + (+p[2]) + '.' + (+p[1]) + '</small></span>'; }).join('') + '</div>' : '') +
+      (fresh.length ? '<h2 class="hk-h">' + (used0.length ? 'עוד כלים שאפשר להתחיל' : 'הכלים') + '</h2><div class="hk-grid">' + fresh.map(card).join('') + '</div>' : '');
+  }
+  HK.renderAll = function () { var b = document.getElementById('hk-all'); if (b) renderAll(b); };
   HK.render = function () {
     document.querySelectorAll('[data-hk]').forEach(function (el) { el.innerHTML = lineHTML(el); el.hidden = false; });
   };
@@ -148,8 +190,15 @@
     '.hk-badge-new{border:1px dashed var(--gold,#d8b35f);border-radius:12px;padding:.5rem;margin:.4rem 0 .6rem}.hk-badge-new b{display:block;color:var(--gold-hi,#f0cf7f)}.hk-badge-new span{color:var(--parchment,#e9dfc7)}' +
     '.hk-help{text-align:right;border-top:1px dashed var(--line,#555);padding-top:.8rem;color:var(--parchment,#e9dfc7)}.hk-help>b{color:var(--gold-hi,#f0cf7f)}.hk-help p{margin:.3rem 0}.hk-help ol{margin:.3rem 1.2rem .5rem 0;padding:0}' +
     '.hk-acts{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-top:.4rem}.hk-give{margin-top:.6rem;text-align:center}' +
+    '.hk-all{color:var(--gold,#d8b35f);font-size:.85rem;white-space:nowrap;margin-inline-start:.3rem}' +
+    '.hk-sum{border:1px solid var(--gold,#d8b35f);border-radius:16px;padding:.9rem 1rem;text-align:center;background:rgba(216,179,95,.08)}.hk-sum b{display:block;color:var(--cream,#fff6e0);font-size:1.2rem}.hk-sum span{color:var(--parchment,#e9dfc7)}' +
+    '.hk-h{font-family:var(--serif,inherit);color:var(--cream,#fff6e0);font-size:1.2rem;margin:1.3rem 0 .6rem}' +
+    '.hk-grid{display:grid;gap:.55rem}.hk-c{display:flex;gap:.7rem;align-items:center;border:1px solid var(--line,#444);border-radius:14px;padding:.7rem .85rem;text-decoration:none;color:inherit;background:rgba(255,255,255,.02)}.hk-c.on{border-color:var(--gold,#d8b35f)}' +
+    '.hk-c-i{font-size:1.6rem;flex:none}.hk-c-b{display:grid;gap:.1rem;min-width:0}.hk-c-b b{color:var(--cream,#fff6e0)}.hk-c-l{color:var(--parchment,#e9dfc7)}.hk-c-s{color:var(--muted,#aaa);font-size:.88rem}' +
+    '.hk-bdg{display:flex;flex-wrap:wrap;gap:.5rem}.hk-bdg span{display:grid;justify-items:center;font-size:1.5rem;border:1px solid var(--line,#444);border-radius:12px;padding:.3rem .5rem}.hk-bdg small{font-size:.75rem;color:var(--muted,#aaa)}' +
     '@media print{.hk-strip,.hk-win{display:none!important}}';
   var tag = document.createElement('style'); tag.textContent = css; document.head.appendChild(tag);
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', HK.render); else HK.render();
+  function boot() { HK.render(); HK.renderAll(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })();
