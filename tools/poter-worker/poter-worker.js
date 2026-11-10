@@ -324,8 +324,9 @@ export const HINT_RULES = `את/ה מורה פרטי/ת סבלני/ת למתמט
 - שורה שסומנה "?" – המחשבון מצא שהיא לא שקולה לשורה שלפניה.
 - עברית פשוטה ומעודדת, בלשון רבים (נסו, בדקו). עד שני משפטים קצרים.
 - formula: נוסחה או משפט אחד שיעזור (LaTeX בלי $), או ריק. לא את התשובה.
-- בהוכחה בגאומטריה: הצעה למשפט או לזוג משולשים לבדוק, בלי לכתוב את ההוכחה.`;
-export const HINT_SCHEMA = { type: 'OBJECT', properties: { hint: { type: 'STRING' }, formula: { type: 'STRING' } }, required: ['hint'] };
+- בהוכחה בגאומטריה: הצעה למשפט או לזוג משולשים לבדוק, בלי לכתוב את ההוכחה.
+- רק כשכתוב "התלמיד ביקש לראות את הצעד הבא": step = השורה הבאה בלבד (צעד אחד קטן, לא הפתרון כולו), בכתיב מחשבון פשוט: x^2, sqrt(), ln(), sin(30°), שבר עם / וסוגריים, כמה פתרונות עם " או ". ו-hint = משפט קצר מה עושים בצעד הזה. בכל מקרה אחר step ריק.`;
+export const HINT_SCHEMA = { type: 'OBJECT', properties: { hint: { type: 'STRING' }, formula: { type: 'STRING' }, step: { type: 'STRING' } }, required: ['hint'] };
 export const PROOF_RULES = `את/ה בודק/ת בגרות במתמטיקה, קפדני/ת והוגן/ת. תלמיד כתב הוכחה בגאומטריה או בטריגונומטריה במבנה "טענה | נימוק".
 לכל שורה (לפי הסדר, index כמו המספר של השורה, מ-1): ok=true אם הטענה נובעת נכון מהנתון ומהשורות שלפניה, והנימוק מתאים לה. ok=false אם הטענה לא נכונה, לא נובעת, או שהנימוק לא מתאים.
 note: משפט קצר בעברית פשוטה רק כשיש מה לתקן (מה חסר או למה הנימוק לא מתאים), אחרת ריק. לא לכתוב את ההוכחה במקומו.
@@ -348,7 +349,7 @@ export function hintPrompt(b) {
     return `${cut(b.question, 1500)}\n\nההוכחה עד עכשיו (טענה | נימוק):\n${rows || '(עוד אין שורות)'}\n\nמה הרמז לשורה הבאה?`;
   }
   const lines = (Array.isArray(b.lines) ? b.lines : []).slice(0, 40), marks = Array.isArray(b.marks) ? b.marks : [];
-  return `התרגיל: ${cut(b.question, 1000)}\n\nהשורות של התלמיד:\n${lines.map((l, i) => `${i + 1}. ${cut(l, 300)}${marks[i] === 'warn' ? '  (?)' : marks[i] === 'ok' ? '  (✓)' : ''}`).join('\n') || '(עוד אין שורות)'}\n\nמה הרמז לצעד הבא?`;
+  return `התרגיל: ${cut(b.question, 1000)}\n\nהשורות של התלמיד:\n${lines.map((l, i) => `${i + 1}. ${cut(l, 300)}${marks[i] === 'warn' ? '  (?)' : marks[i] === 'ok' ? '  (✓)' : ''}`).join('\n') || '(עוד אין שורות)'}\n\n${b.level === 'next' ? 'התלמיד ביקש לראות את הצעד הבא: מה השורה הבאה?' : 'מה הרמז לצעד הבא?'}`;
 }
 export function proofPrompt(b) {
   const rows = (Array.isArray(b.rows) ? b.rows : []).slice(0, 40).map((r, i) => `${i + 1}. ${cut(r.claim, 200)} | ${cut(r.reason, 200)}`).join('\n');
@@ -361,7 +362,11 @@ export async function aiHint(env, b, opts) {
   try { return clean2(await workersAI(env, HINT_RULES, parts[0].text, HINT_SCHEMA)); } catch (_) {}
   return clean2((await gemini(env, HINT_RULES, parts, HINT_SCHEMA, o)).data);
 }
-function clean2(d) { return { hint: plainMath(d.hint || ''), formula: String(d.formula || '').replace(/^\s*\$+|\$+\s*$/g, '').slice(0, 300) }; }
+function clean2(d) {
+  const o = { hint: plainMath(d.hint || ''), formula: String(d.formula || '').replace(/^\s*\$+|\$+\s*$/g, '').slice(0, 300) };
+  if (d.step) o.step = cleanReadLine(d.step);
+  return o;
+}
 // בדיקת הוכחה: צריך היגיון – הדגם הראשי, ואם עמוס gpt-oss
 export async function aiProof(env, b, opts) {
   const parts = [{ text: proofPrompt(b) }], o = Object.assign({ timeout: 90000 }, opts || {});
