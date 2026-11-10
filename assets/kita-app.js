@@ -14,7 +14,7 @@
       .then(function (r) { return r.json().then(function (d) { d._s = r.status; return d; }); })
       .catch(function () { return { _s: 0, error: 'אין חיבור לשרת כרגע. בודקים את האינטרנט ומנסים שוב.' }; });
   }
-  var GAMES = { 'krav-math': 'מתמטיקה', 'krav-eng': 'אנגלית', chidon: 'חידון וטריוויה', tash: 'תשחצים', nono: 'שחור ופתור', shesh: 'שש-בש', damka: 'דמקה', shachmat: 'שחמט', blackjack: '21', sudoku: 'סודוקו', mila: 'מילה ביום', tashchetz: 'תשחצים', shachor: 'שחור ופתור', 'bagrut-math': 'מתמטיקה לבגרות', 'bagrut-english': 'אנגלית לבגרות', math: 'מתמטיקה', english: 'אנגלית', trivia: 'טריוויה', quiz: 'חידון' };
+  var GAMES = { 'kita-quiz': 'שאלות המורה', 'krav-math': 'מתמטיקה', 'krav-eng': 'אנגלית', chidon: 'חידון וטריוויה', tash: 'תשחצים', nono: 'שחור ופתור', shesh: 'שש-בש', damka: 'דמקה', shachmat: 'שחמט', blackjack: '21', sudoku: 'סודוקו', mila: 'מילה ביום', tashchetz: 'תשחצים', shachor: 'שחור ופתור', 'bagrut-math': 'מתמטיקה לבגרות', 'bagrut-english': 'אנגלית לבגרות', math: 'מתמטיקה', english: 'אנגלית', trivia: 'טריוויה', quiz: 'חידון' };
   var PER = { week: 'השבוע', month: 'החודש', round: 'בסבב הזה', all: 'מההתחלה' };
   function who(w) { if (w === '1') return 'למקום הראשון'; if (w === '2') return 'למקום השני'; if (w === '3') return 'למקום השלישי'; if (w === 'top3') return 'לשלושת הראשונים'; if (w === 'all') return 'לכל מי שצובר נקודות'; var m = /^pts:(\d+)$/.exec(w || ''); return m ? 'לכל מי שמגיע ל-' + m[1] + ' נקודות' : ''; }
   function medal(p) { return p === 1 ? '🥇' : p === 2 ? '🥈' : p === 3 ? '🥉' : p ? String(p) : '·'; }
@@ -89,7 +89,8 @@
     });
     function showMine(scroll) {
       $('kt-mine').hidden = !me; $('kt-join-sec').hidden = !!me;
-      if (!me) return;
+      if (!me) { $('kt-quiz').hidden = true; return; }
+      loadQuiz();
       $('kt-mine-name').textContent = me.name || ''; $('kt-mine-nick').textContent = me.nick;
       $('kt-mine-teacher').textContent = me.teacher || 'הכיתה שלי';
       loadBoard();
@@ -120,6 +121,54 @@
         } else fb.hidden = true;
       });
     }
+    // ---- תרגול מהמורה ----
+    var QZ = null, qi = 0, qOk = 0, qTries = 0, qDone = {};
+    function qKey() { return 'kita-quiz-' + me.code + '-' + QZ.v; }
+    // תרגיל חשבון בתוך משפט בעברית: עוטפים אותו בכיוון שמאל-לימין, אחרת "3/4 + 1/4" מוצג הפוך
+    function math(t) { return esc(t).replace(/[0-9][0-9\s+\-−×÷*\/=().,^²³√%:]*[0-9)²³%]/g, function (m) { return /[+\-−×÷*\/=^:]/.test(m) ? '<span dir="ltr" class="kq-m">' + m + '</span>' : m; }); }
+    function rnd(seed) { var x = seed % 2147483647 || 7; return function () { x = x * 16807 % 2147483647; return (x - 1) / 2147483646; }; }
+    function loadQuiz() {
+      if (!me) return;
+      call('/c/' + me.code + '/quiz').then(function (d) {
+        if (!d.ok || d.none || !d.q || !d.q.length) { $('kt-quiz').hidden = true; return; }
+        QZ = d; qDone = lsGet(qKey(), {});
+        var left = d.q.filter(function (x, i) { return !qDone[i]; }).length;
+        $('kt-q-title').textContent = '📝 ' + d.t;
+        $('kt-q-sub').textContent = d.q.length + ' שאלות מהמורה. 3 נקודות לכל תשובה נכונה בניסיון הראשון.' + (left < d.q.length ? ' ענית כבר על ' + (d.q.length - left) + '.' : '');
+        $('kt-q-start').textContent = left ? (left < d.q.length ? 'להמשיך' : 'להתחיל') : 'לתרגל שוב (בלי נקודות)';
+        $('kt-q-box').innerHTML = ''; $('kt-quiz').hidden = false; $('kt-q-start').hidden = false;
+      });
+    }
+    function showQ() {
+      var x = QZ.q[qi]; if (!x) return endQ();
+      var r = rnd(QZ.v + qi * 97), opts = x.a.map(function (t, i) { return { t: t, ok: i === 0 }; });
+      for (var i = opts.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)), tmp = opts[i]; opts[i] = opts[j]; opts[j] = tmp; }
+      qTries = 0;
+      $('kt-q-box').innerHTML = '<p class="kt-pill">שאלה ' + (qi + 1) + ' מתוך ' + QZ.q.length + '</p><p class="kq-q" dir="auto">' + math(x.q) + '</p><div class="kq-opts">' +
+        opts.map(function (o) { return '<button type="button" class="kq-o" dir="auto" data-ok="' + (o.ok ? 1 : 0) + '">' + math(o.t) + '</button>'; }).join('') + '</div><p class="kt-ok" id="kq-fb"></p>';
+    }
+    function endQ() {
+      $('kt-q-box').innerHTML = '<p class="kt-msg">🎉 סיימת! ' + qOk + ' תשובות נכונות בניסיון הראשון' + (qOk ? ', ' + qOk * 3 + ' נקודות לכיתה' : '') + '.</p>';
+      $('kt-q-start').hidden = false; $('kt-q-start').textContent = 'לתרגל שוב (בלי נקודות)'; loadBoard();
+    }
+    $('kt-q-start').addEventListener('click', function () {
+      if (!QZ) return;
+      qi = 0; qOk = 0; $('kt-q-start').hidden = true; used('chashiva_kita', 'quiz'); showQ();
+    });
+    $('kt-q-box').addEventListener('click', function (e) {
+      var b = e.target.closest('.kq-o'); if (!b || b.disabled) return;
+      qTries++;
+      if (b.getAttribute('data-ok') === '1') {
+        b.classList.add('ok'); $('kt-q-box').querySelectorAll('.kq-o').forEach(function (o) { o.disabled = true; });
+        var first = qTries === 1, fresh = !qDone[qi];
+        if (first) qOk++;
+        if (first && fresh) (window.KITA_Q = window.KITA_Q || []).push({ game: 'kita-quiz', pts: 3, ref: 'q-' + QZ.v + '-' + qi });
+        qDone[qi] = 1; lsSet(qKey(), qDone);
+        $('kq-fb').textContent = first ? (fresh ? '✓ נכון! +3 נקודות' : '✓ נכון!') : '✓ נכון, בניסיון ' + qTries + '.';
+        setTimeout(function () { qi++; showQ(); }, 1100);
+      } else { b.classList.add('no'); b.disabled = true; $('kq-fb').textContent = 'לא בדיוק. נסו תשובה אחרת.'; }
+    });
+
     $('kt-leave').addEventListener('click', function () {
       if (!me || !confirm('לצאת מהכיתה ' + (me.name || '') + '? הכינוי והנקודות שלכם יימחקו מהלוח.')) return;
       call('/c/' + me.code + '/leave', { sid: me.sid, token: me.token }).then(function () { lsSet('kita-me', null); me = null; used('chashiva_kita', 'leave'); showMine(); });
@@ -407,7 +456,44 @@
       app.querySelectorAll('[data-panel]').forEach(function (p) { p.hidden = p.getAttribute('data-panel') !== t; });
       if (t === 'cert') renderCerts();
       if (t === 'school') school();
+      if (t === 'quiz') quizFill();
     }
+
+    // ---- שאלות של המורה: שורה = שאלה | נכונה | שגויה...
+    function quizParse() {
+      var bad = [], out = $('kt-q-text').value.split(/\n/).map(function (l) { return l.trim(); }).filter(Boolean).map(function (l, i) {
+        var p = l.split('|').map(function (x) { return x.trim(); }).filter(Boolean);
+        if (p.length < 3) bad.push(i + 1);
+        return { q: p[0], a: p.slice(1, 5) };
+      });
+      return { q: out, bad: bad };
+    }
+    function quizFill() {
+      var z = data && data.quiz;
+      if (z && !$('kt-q-text').value) { $('kt-q-name').value = z.t; $('kt-q-text').value = z.q.map(function (x) { return [x.q].concat(x.a).join(' | '); }).join('\n'); }
+      quizPrev();
+    }
+    function quizPrev() {
+      var r = quizParse();
+      $('kt-q-prev').textContent = r.q.length ? r.q.length + ' שאלות' + (r.q.length > 20 ? ' (נשמרות רק 20 הראשונות)' : '') + (data && data.quiz ? ' · כרגע מפורסמות ' + data.quiz.q.length : '') : (data && data.quiz ? 'כרגע מפורסמות ' + data.quiz.q.length + ' שאלות' : '');
+      $('kt-q-err').textContent = r.bad.length ? 'בשורה ' + r.bad.join(', ') + ' חסר: צריך שאלה, תשובה נכונה ולפחות תשובה שגויה אחת, מופרדות ב-|' : '';
+    }
+    $('kt-q-text').addEventListener('input', quizPrev);
+    function quizSave(q) {
+      $('kt-q-err').textContent = '';
+      call('/c/' + T.code + '/admin', { key: T.key, act: 'quiz', p: tp, title: $('kt-q-name').value, q: q }).then(function (d) {
+        if (!d.ok) { $('kt-q-err').textContent = d.error; return; }
+        data = d; $('kt-q-prev').textContent = q.length ? '✓ פורסם. התלמידות רואות עכשיו ' + q.length + ' שאלות בדף הכיתה.' : '✓ השאלות הורדו.';
+        used('chashiva_kita_more', q.length ? 'quiz-save' : 'quiz-clear');
+      });
+    }
+    $('kt-q-save').addEventListener('click', function () {
+      var r = quizParse();
+      if (!r.q.length) { $('kt-q-err').textContent = 'כותבים לפחות שאלה אחת.'; return; }
+      if (r.bad.length) { quizPrev(); return; }
+      quizSave(r.q.slice(0, 20));
+    });
+    $('kt-q-clear').addEventListener('click', function () { if (confirm('להוריד את השאלות מדף הכיתה?')) { $('kt-q-text').value = ''; quizSave([]); } });
 
     // ---- הכיתות זו מול זו: הכיתות שלי (kita-teach) + כיתות שהוספתי לפי קוד (kita-watch). קריאה מהלוח הציבורי בלבד ----
     var scPer = 'week', scRows = [];
