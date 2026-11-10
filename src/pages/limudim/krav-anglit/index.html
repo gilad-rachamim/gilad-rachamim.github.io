@@ -1,0 +1,72 @@
+<!--meta {
+  "site": "limudim",
+  "nav": "kartisiot",
+  "tool": "krav_eng",
+  "title": "דו-קרב אנגלית לבגרות: אוצר מילים, השלמת משפטים והבנת הנקרא מול חבר | כלים ללימודים",
+  "description": "מזמינים חבר או את הכיתה ומקבלים את אותן שאלות באנגלית לבגרות: מילים, דקדוק בהשלמת משפטים וקטעי קריאה קצרים. מי צובר יותר נקודות עד סוף השעה? 3, 4 ו-5 יחידות, עם הסבר לכל תשובה. חינם ובלי הרשמה.",
+  "og_title": "דו-קרב אנגלית לבגרות – מי עונה יותר נכון?",
+  "priority": "0.8",
+  "crumbs": [["דו-קרב אנגלית לבגרות", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/chashiva.css\"><link rel=\"stylesheet\" href=\"/assets/limudim-krav.css\">",
+  "foot": "<script src=\"/assets/limudim-krav-anglit.js\"></script><script src=\"/assets/chashiva.js\" defer></script><script src=\"/assets/limudim-nekudot.js\" defer></script><script src=\"/assets/limudim-krav.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>⚔️ דו-קרב אנגלית לבגרות</h1>
+  <p class="sub">אוצר מילים, השלמת משפטים והבנת הנקרא. מזמינים חבר, מקבלים את אותן שאלות בדיוק, ורואים מי צובר יותר נקודות עד סוף השעה.</p>
+</header>
+
+<div class="tool" id="kv-app" data-subject="eng">
+  <div id="kv-home">
+    <div class="kv-banner" id="kv-banner" hidden></div>
+    <div class="kv-resume" id="kv-resume" hidden></div>
+    <div class="kv-card">
+      <h2>מרוץ חדש</h2>
+      <span class="kv-lbl">כמה יחידות?</span>
+      <div class="kv-chips" id="kv-levels"></div>
+      <span class="kv-lbl">כמה זמן?</span>
+      <div class="kv-chips" id="kv-durs"></div>
+      <span class="kv-lbl">הכינוי שלכם בלוח (לא חובה)</span>
+      <input class="kv-nick" id="kv-nick" type="text" maxlength="20" placeholder="כינוי בלבד, בלי שם מלא" aria-label="כינוי">
+      <button class="btn btn-gold kv-go" type="button" data-start>⚔️ להתחיל מרוץ</button>
+      <p class="kv-note">אחרי שמתחילים, שולחים לחבר קישור, והוא מקבל את אותן שאלות עד אותה שעת סיום.</p>
+    </div>
+    <div data-pts></div>
+    <div id="kv-recent"></div>
+    <details class="kv-card">
+      <summary><b>איך צוברים נקודות?</b></summary>
+      <ul class="kv-how">
+        <li>בכל שאלה ארבע תשובות, ואחת נכונה. יש ניסיון אחד.</li>
+        <li><b>תשובה נכונה: 3 נקודות.</b> מהר, בתוך 15 שניות (בקטע קריאה: 40 שניות): עוד נקודה.</li>
+        <li>אחרי כל שאלה מופיעה התשובה הנכונה, ולפעמים גם הסבר קצר.</li>
+        <li>סוגי השאלות מתחלפים: מה פירוש המילה, איך אומרים באנגלית, השלמת משפט, וקטע קריאה קצר.</li>
+        <li>הנקודות נצברות ב"הנקודות שלי", יחד עם הנקודות מדו-קרב המתמטיקה ומהחידון.</li>
+      </ul>
+      <p class="kv-small">כל המשפטים וקטעי הקריאה נכתבו במיוחד לאתר הזה. הם לא מועתקים ממבחנים או מספרים.</p>
+    </details>
+  </div>
+
+  <div id="kv-play" hidden>
+    <div class="kv-hud"><span>⏱ נשאר<b id="kv-clock">0:00</b></span><span>⭐ נקודות<b id="kv-pts">0</b></span><span>✓ נכונות<b id="kv-solved">0</b></span></div>
+    <div class="kv-tools"><button class="btn btn-line btn-sm" type="button" data-invite>📨 להזמין חבר למרוץ</button><button class="btn btn-line btn-sm" type="button" id="kv-stop">🏁 לסיים ולראות את הלוח</button></div>
+    <div id="kv-invite" hidden></div>
+    <div class="kv-q" id="kv-q" aria-live="polite"></div>
+    <div class="kv-after" id="kv-after" hidden><p class="kv-gain" id="kv-gain"></p><button class="btn btn-gold" type="button" id="kv-next">לשאלה הבאה ←</button></div>
+    <p style="text-align:center"><button class="btn btn-line btn-sm" type="button" id="kv-skip">לדלג על השאלה</button></p>
+  </div>
+
+  <div id="kv-end" hidden></div>
+</div>
+
+<section class="k-sec">
+  <h2>עוד לתרגול</h2>
+  <div class="lcards">
+    <a href="/limudim/krav/"><span class="em" aria-hidden="true">➗</span><b>דו-קרב מתמטיקה לבגרות</b><span class="d">אותו מרוץ, עם תרגילים צעד אחרי צעד ל-3, 4 ו-5 יחידות.</span></a>
+    <a href="/kelim/chashiva/chidon/"><span class="em" aria-hidden="true">❓</span><b>חידון וטריוויה עם חבר</b><span class="d">עשר שאלות ביום, ואתגר לחבר על אותו חידון.</span></a>
+    <a href="/limudim/kartisiot/"><span class="em" aria-hidden="true">🃏</span><b>כרטיסיות חזרה חכמות</b><span class="d">מדביקים רשימת מילים ומתרגלים, מה שלא ידעתם חוזר מחר.</span></a>
+  </div>
+</section>
+
+<div class="tool">
+  <div class="share-row"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="דו-קרב אנגלית לבגרות: מי עונה יותר נכון בשעה הקרובה? חינם ובלי הרשמה" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר בווטסאפ</a></div>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kelim/">הכלים של גילעד רחמים</a> · חינם · בלי הרשמה · רק כינוי, בלי שם מלא ובלי טלפון · הנקודות נשמרות בטלפון שלכם</p>
+</div>
