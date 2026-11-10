@@ -12,10 +12,13 @@
   function norm(raw) {
     var s = String(raw || '').trim();
     var short = s.replace(/[\s\-]/g, '');
-    if (/^\*\d{2,5}$/.test(short) || /^\d{3,5}$/.test(short)) return { raw: s, key: short, ok: true, kind: 'short' };
+    if (/^[*#]\d{2,5}#?$/.test(short) || /^\d{3,5}$/.test(short)) return { raw: s, key: short, ok: true, kind: 'short' };
+    // שולח הודעות SMS בשם (Cal, SHIKUM) – לא מספר, אבל גם לא טעות
+    if (/[A-Za-z]/.test(s) && /^[A-Za-z][A-Za-z0-9 .\-]{1,15}$/.test(s)) return { raw: s, key: 'S:' + s.toLowerCase(), ok: true, kind: 'short' };
     var d = s.replace(/[^\d+]/g, '');
     if (d.indexOf('+') > 0) d = d.replace(/\+/g, '');
-    if (/^\+972/.test(d)) d = '0' + d.slice(4);
+    if (/^\+9721[5-9]/.test(d)) d = d.slice(4);
+    else if (/^\+972/.test(d)) d = '0' + d.slice(4);
     else if (/^00972/.test(d)) d = '0' + d.slice(5);
     else if (/^972\d{8,9}$/.test(d)) d = '0' + d.slice(3);
     else if (/^5\d{8}$/.test(d)) d = '0' + d;
@@ -24,15 +27,15 @@
     if (/^05\d{8}$/.test(d)) kind = 'mob';
     else if (/^07\d{8}$/.test(d)) kind = 'mob';
     else if (/^0[23489]\d{7}$/.test(d)) kind = 'land';
-    else if (/^1[5-9]\d{2}\d{5,6}$/.test(d)) kind = 'biz';
+    else if (/^1[5-9]\d{2}\d{5,6}$/.test(d) || /^153\d{8}$/.test(d)) kind = 'biz';
     else if (/^\+\d{8,15}$/.test(d)) kind = 'abroad';
     return { raw: s, key: d.replace(/^\+/, ''), ok: !!kind, kind: kind, d: d };
   }
   function fmt(p, mode) {
     if (!p.ok) return p.raw;
     var d = p.d || p.key;
-    if (p.kind === 'short' || p.kind === 'abroad') return p.kind === 'short' ? p.key : d;
-    if (p.kind === 'biz') return d.slice(0, 1) + '-' + d.slice(1, 4) + '-' + d.slice(4, 7) + '-' + d.slice(7);
+    if (p.kind === 'short' || p.kind === 'abroad') return p.kind === 'short' ? (p.key.indexOf('S:') === 0 ? p.raw : p.key) : d;
+    if (p.kind === 'biz') return d.length === 11 ? d.slice(0, 3) + '-' + d.slice(3, 4) + '-' + d.slice(4) : d.slice(0, 1) + '-' + d.slice(1, 4) + '-' + d.slice(4, 7) + '-' + d.slice(7);
     if (mode === 'intl') {
       var r = d.slice(1);
       return p.kind === 'mob' ? '+972 ' + r.slice(0, 2) + '-' + r.slice(2, 5) + '-' + r.slice(5) : '+972 ' + r.slice(0, 1) + '-' + r.slice(1, 4) + '-' + r.slice(4);
@@ -215,7 +218,7 @@
     Object.keys(g).forEach(function (k) {
       if (g[k].length < 2) return;
       var sig = g[k].map(function (c) { return c.id; }).sort().join(',');
-      if (S.ignore.indexOf(sig) < 0) dup.push({ sig: sig, items: g[k], why: 'phone' });
+      if (S.ignore.indexOf(sig) < 0) dup.push({ sig: sig, items: g[k], why: sameName(g[k]) ? 'same' : 'phone' });
     });
     var byName = {};
     list.forEach(function (c) { if (c.name) (byName[c.name] = byName[c.name] || []).push(c); });
@@ -229,11 +232,20 @@
     });
     return { dup: dup, same: same };
   }
+  // "בטוח" = כל המילים של השם הקצר נמצאות בשם הארוך (אמא של יאיר זכריה / אמא יאיר זכריה), או שאין שם.
+  function words(n) { return n.replace(/[()'"״׳\-–,.]/g, ' ').split(/\s+/).filter(Boolean); }
+  function sameName(items) {
+    var named = items.filter(function (c) { return c.name; });
+    if (named.length < 2) return true;
+    var big = words(longest(named));
+    return named.every(function (c) { return words(c.name).every(function (w) { return big.indexOf(w) >= 0; }); });
+  }
   function cats() {
     var G = groups();
+    var safe = G.dup.filter(function (g) { return g.why === 'same'; });
     return {
-      dup: G.dup.concat(G.same),
-      dupPhone: G.dup.length,
+      dup: safe.concat(G.dup.filter(function (g) { return g.why === 'phone'; }), G.same),
+      dupPhone: safe.length,
       noname: S.contacts.filter(function (c) { return !c.name; }),
       nophone: S.contacts.filter(function (c) { return !c.ph.length; }),
       bad: S.contacts.filter(function (c) { return c.ph.some(function (p) { return !p.ok; }); }),
@@ -268,9 +280,9 @@
     }
     return null;
   }
-  function merge(items) {
+  function merge(items, name) {
     var keep = items[0];
-    keep.name = longest(items);
+    keep.name = name || longest(items);
     keep.ph = uniqPhones([].concat.apply([], items.map(function (c) { return c.ph; })));
     keep.ex = mergeEx(items);
     var drop = items.slice(1).map(function (c) { return c.id; });
@@ -296,12 +308,20 @@
     if (view === 'dup') {
       if (!C.dup.length) h = '<p class="sd-empty">אין כפולים. 👌</p>';
       else {
-        if (C.dupPhone > 1) h += '<div class="sd-bar" style="margin-top:0"><button class="btn btn-gold btn-sm" type="button" data-a="mergeall">למזג את כל ' + C.dupPhone + ' הכפולים לפי מספר</button></div>';
+        if (C.dupPhone > 1) h += '<div class="sd-bar" style="margin-top:0"><button class="btn btn-gold btn-sm" type="button" data-a="mergeall">למזג בבת אחת ' + C.dupPhone + ' כפולים בטוחים (אותו מספר ואותו שם)</button></div>' +
+          '<p class="sd-note">כפולים עם אותו מספר אבל שם אחר (למשל בני זוג עם טלפון משותף) לא מתמזגים לבד. בהם בוחרים איזה שם להשאיר.</p>';
+        var TITLE = { same: 'כנראה אותו אדם, שמור ' + '{n}' + ' פעמים', phone: 'אותו מספר, שמות שונים', name: 'אותו שם, מספרים שונים' };
         h += '<div class="sd-list">' + C.dup.slice(0, shown).map(function (g) {
-          return '<div class="sd-grp"><h3>' + (g.why === 'phone' ? 'אותו מספר, שמור ' + g.items.length + ' פעמים' : 'אותו שם, מספרים שונים') + '</h3><ul>' +
+          var names = [];
+          g.items.forEach(function (c) { if (c.name && names.indexOf(c.name) < 0) names.push(c.name); });
+          var btns = g.why === 'same' || names.length < 2
+            ? '<button class="btn btn-gold btn-sm" type="button" data-a="merge" data-s="' + g.sig + '">למזג לאחד: ' + esc(longest(g.items)) + '</button>'
+            : names.slice(0, 4).map(function (n, i) { return '<button class="btn btn-' + (i ? 'line' : 'gold') + ' btn-sm" type="button" data-a="merge" data-s="' + g.sig + '" data-n="' + esc(n) + '">למזג בשם: ' + esc(n) + '</button>'; }).join('');
+          return '<div class="sd-grp"><h3>' + TITLE[g.why].replace('{n}', g.items.length) + '</h3><ul>' +
             g.items.map(function (c) { return '<li>' + (c.name ? esc(c.name) : '<i>(בלי שם)</i>') + ' – ' + (esc(phText(c)) || 'בלי מספר') + '</li>'; }).join('') + '</ul>' +
             (g.why === 'name' ? '<p class="why">אולי זה אותו אדם עם שני מספרים, ואולי שני אנשים שונים. אתם מחליטים.</p>' : '') +
-            '<div class="actions"><button class="btn btn-gold btn-sm" type="button" data-a="merge" data-s="' + g.sig + '">למזג לאחד: ' + esc(longest(g.items)) + '</button><button class="btn btn-line btn-sm" type="button" data-a="ignore" data-s="' + g.sig + '">' + (g.why === 'name' ? 'אלה אנשים שונים' : 'להשאיר כך') + '</button></div></div>';
+            (g.why === 'phone' ? '<p class="why">אולי אותו אדם שנשמר פעמיים בשמות שונים, ואולי שני אנשים עם טלפון משותף.</p>' : '') +
+            '<div class="actions">' + btns + '<button class="btn btn-line btn-sm" type="button" data-a="ignore" data-s="' + g.sig + '">' + (g.why === 'same' ? 'להשאיר כך' : 'אלה אנשים שונים') + '</button></div></div>';
         }).join('') + '</div>';
         if (C.dup.length > shown) h += more();
       }
@@ -440,11 +460,11 @@
     if (a === 'merge' || a === 'ignore') {
       g = C.dup.filter(function (x) { return x.sig === b.getAttribute('data-s'); })[0];
       if (!g) return;
-      if (a === 'merge') { merge(g.items); if (window.toolUsed) window.toolUsed('sidur', { how: 'merge' }); }
+      if (a === 'merge') { merge(g.items, b.getAttribute('data-n')); if (window.toolUsed) window.toolUsed('sidur', { how: 'merge' }); }
       else S.ignore.push(g.sig);
     } else if (a === 'mergeall') {
       var n = 0;
-      C.dup.filter(function (x) { return x.why === 'phone'; }).forEach(function (x) { merge(x.items); n++; });
+      C.dup.filter(function (x) { return x.why === 'same'; }).forEach(function (x) { merge(x.items); n++; });
       say('מוזגו ' + n + ' כפולים.');
       if (window.toolUsed) window.toolUsed('sidur', { how: 'mergeall', n: n });
     } else if (a === 'del' && c) {
