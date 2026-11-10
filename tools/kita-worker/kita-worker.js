@@ -267,8 +267,8 @@ export class Kita {
   }
   board(per) {
     const pts = {};
-    for (const r of this.rows(`SELECT sid, SUM(pts) AS p, COUNT(DISTINCT game) AS g FROM ev WHERE ${this.where(per)} GROUP BY sid`)) pts[r.sid] = r;
-    const rows = this.rows('SELECT sid, nick, crown, last FROM st').map(s => ({ sid: s.sid, nick: s.nick, crown: s.crown, last: s.last, pts: pts[s.sid] ? pts[s.sid].p : 0, g: pts[s.sid] ? pts[s.sid].g : 0 }));
+    for (const r of this.rows(`SELECT sid, SUM(pts) AS p, COUNT(DISTINCT game) AS g, COUNT(DISTINCT day) AS dd FROM ev WHERE ${this.where(per)} GROUP BY sid`)) pts[r.sid] = r;
+    const rows = this.rows('SELECT sid, nick, crown, last FROM st').map(s => ({ sid: s.sid, nick: s.nick, crown: s.crown, last: s.last, pts: pts[s.sid] ? pts[s.sid].p : 0, g: pts[s.sid] ? pts[s.sid].g : 0, dd: pts[s.sid] ? pts[s.sid].dd : 0 }));
     rows.sort((a, b) => b.pts - a.pts || a.nick.localeCompare(b.nick, 'he'));
     let place = 0, prev = -1;
     rows.forEach((r, i) => { if (r.pts !== prev) { place = i + 1; prev = r.pts; } r.place = r.pts > 0 ? place : 0; });

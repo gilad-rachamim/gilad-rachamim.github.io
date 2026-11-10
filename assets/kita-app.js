@@ -18,6 +18,10 @@
   var PER = { week: 'השבוע', month: 'החודש', round: 'בסבב הזה', all: 'מההתחלה' };
   function who(w) { if (w === '1') return 'למקום הראשון'; if (w === '2') return 'למקום השני'; if (w === '3') return 'למקום השלישי'; if (w === 'top3') return 'לשלושת הראשונים'; if (w === 'all') return 'לכל מי שצובר נקודות'; var m = /^pts:(\d+)$/.exec(w || ''); return m ? 'לכל מי שמגיע ל-' + m[1] + ' נקודות' : ''; }
   function medal(p) { return p === 1 ? '🥇' : p === 2 ? '🥈' : p === 3 ? '🥉' : p ? String(p) : '·'; }
+  // התמדה: 5 ימי תרגול בשבוע (15 בחודש). dd מגיע מהשרת (ימים שונים עם נקודות)
+  function needDays(per) { return per === 'month' ? 15 : per === 'week' || per === 'prevweek' ? 5 : 0; }
+  function isPersist(r, per) { var n = needDays(per); return !!(n && r.dd >= n); }
+  function fire(r, per) { return isPersist(r, per) ? '<small class="kt-fire">🔥 מתמידה · ' + r.dd + ' ימים</small>' : ''; }
   function giftsHtml(list) {
     return (list || []).map(function (g) { return '<li><span class="gi">' + esc(g.i) + '</span><div><b>' + esc(g.t) + '</b> <small>' + esc(who(g.who)) + (g.d ? ' · ' + esc(g.d) : '') + '</small></div></li>'; }).join('');
   }
@@ -103,11 +107,16 @@
         var found = d.rows.some(function (r) { return r.sid === me.sid; });
         if (!found) { err.textContent = 'הכינוי שלכם כבר לא בכיתה (אולי המורה הסירה). אפשר להצטרף שוב.'; lsSet('kita-me', null); me = null; $('kt-join-sec').hidden = false; }
         $('kt-mine-board').innerHTML = d.rows.map(function (r) {
-          return '<li class="' + (me && r.sid === me.sid ? 'me ' : '') + (r.place === 1 ? 'p1' : '') + '"><span class="pl">' + medal(r.place) + '</span><span class="nk">' + esc(r.nick) + (me && r.sid === me.sid ? ' (אני)' : '') + (r.crown ? '<small class="crown">👑 ' + esc(r.crown) + '</small>' : '') + '</span><span class="pt">' + (r.pts || '—') + '</span></li>';
+          return '<li class="' + (me && r.sid === me.sid ? 'me ' : '') + (r.place === 1 ? 'p1' : '') + '"><span class="pl">' + medal(r.place) + '</span><span class="nk">' + esc(r.nick) + (me && r.sid === me.sid ? ' (אני)' : '') + (r.crown ? '<small class="crown">👑 ' + esc(r.crown) + '</small>' : '') + fire(r, per) + '</span><span class="pt">' + (r.pts || '—') + '</span></li>';
         }).join('') || '<li><span class="pl">·</span><span class="nk">עוד אין אף אחד בכיתה</span><span></span></li>';
         $('kt-mine-gifts').innerHTML = giftsHtml(realG(d.gifts)); $('kt-mine-gifts-h').hidden = !realG(d.gifts).length;
         goalBox($('kt-mine-goal'), me ? me.code : '', goalOf(d.gifts), d.rows, d.period);
         $('kt-mine-magen').hidden = !d.gifts.some(function (g) { return g.k === 'magen'; });
+        var mine = me && d.rows.filter(function (r) { return r.sid === me.sid; })[0], fb = $('kt-mine-fire');
+        if (mine && per === 'week' && mine.dd !== undefined) {
+          fb.textContent = mine.dd >= 5 ? '🔥 יש לך תג התמדה השבוע: תרגלת ב-' + mine.dd + ' ימים. כל הכבוד!' : '🔥 תרגלת השבוע ב-' + mine.dd + ' ' + (mine.dd === 1 ? 'יום' : 'ימים') + '. עוד ' + (5 - mine.dd) + ' לתג ההתמדה. גם כמה דקות ביום נחשבות.';
+          fb.hidden = false;
+        } else fb.hidden = true;
       });
     }
     $('kt-leave').addEventListener('click', function () {
@@ -182,8 +191,8 @@
     function renderBoard() {
       $('kt-t-board').innerHTML = data.rows.map(function (r) {
         var g = Object.keys(r.games || {}).map(function (k) { return (GAMES[k] || k) + ' ' + r.games[k].p; }).join(' · ');
-        return '<li class="' + (r.place === 1 ? 'p1' : '') + '" data-sid="' + esc(r.sid) + '"><span class="pl">' + medal(r.place) + '</span><span class="nk">' + esc(nm(r)) + (names[r.sid] ? '<small>כינוי: ' + esc(r.nick) + '</small>' : '') + (r.crown ? '<small class="crown">👑 ' + esc(r.crown) + '</small>' : '') + '</span><span class="pt">' + (r.pts || '—') + '</span>' +
-          (g ? '<span class="kt-games">' + esc(g) + '</span>' : '') +
+        return '<li class="' + (r.place === 1 ? 'p1' : '') + '" data-sid="' + esc(r.sid) + '"><span class="pl">' + medal(r.place) + '</span><span class="nk">' + esc(nm(r)) + (names[r.sid] ? '<small>כינוי: ' + esc(r.nick) + '</small>' : '') + (r.crown ? '<small class="crown">👑 ' + esc(r.crown) + '</small>' : '') + fire(r, tp) + '</span><span class="pt">' + (r.pts || '—') + '</span>' +
+          (g ? '<span class="kt-games">' + esc(g) + (r.dd ? ' · ימי תרגול: ' + r.dd : '') + '</span>' : '') +
           '<span class="acts no-print"><button type="button" data-a="crown">👑 ' + (r.crown ? 'להוריד כתר' : 'כתר') + '</button><button type="button" data-a="real">✏️ שם אמיתי</button><button type="button" data-a="remove">הסרה</button></span></li>';
       }).join('') || '<li><span class="pl">·</span><span class="nk">עוד אין תלמידים. שולחים לקבוצת הכיתה את הקוד.</span><span></span></li>';
     }
@@ -292,15 +301,15 @@
         if (!d.ok || d.p !== 'prevweek') { box.hidden = true; return; } // שרת ישן בלי "השבוע שעבר"
         var top = d.rows.filter(function (r) { return r.pts > 0 && r.place <= 3; });
         if (!top.length) { box.hidden = true; return; }
-        var act = d.rows.filter(function (r) { return r.pts > 0; }).length;
+        var act = d.rows.filter(function (r) { return r.pts > 0; }).length, pers = d.rows.filter(function (r) { return isPersist(r, 'prevweek'); });
         var due = realG(d.gifts).map(function (g) {
           var m = /^pts:(\d+)$/.exec(g.who), win = d.rows.filter(function (r) { return r.pts > 0 && (g.who === 'all' || (m ? r.pts >= +m[1] : g.who === 'top3' ? r.place <= 3 : r.place === +g.who)); });
           return win.length ? g.i + ' ' + g.t + ': ' + win.map(function (r) { return nm(r); }).join(', ') : '';
         }).filter(Boolean);
-        box.innerHTML = '<b>📅 סיכום השבוע שעבר</b> · ' + act + ' מתוך ' + d.rows.length + ' צברו נקודות<ol class="kt-list">' + top.map(function (r) { return '<li>' + medal(r.place) + ' ' + esc(nm(r)) + ' · ' + r.pts + '</li>'; }).join('') + '</ol>' +
+        box.innerHTML = '<b>📅 סיכום השבוע שעבר</b> · ' + act + ' מתוך ' + d.rows.length + ' צברו נקודות<ol class="kt-list">' + top.map(function (r) { return '<li>' + medal(r.place) + ' ' + esc(nm(r)) + ' · ' + r.pts + '</li>'; }).join('') + '</ol>' + (pers.length ? '<b>🔥 התמידו (5 ימים ומעלה):</b> ' + pers.map(function (r) { return esc(nm(r)); }).join(', ') + '<br>' : '') +
           (due.length ? '<b>מה מגיע:</b><ul class="kt-list">' + due.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : '') +
           '<div class="kt-btns"><a class="btn btn-gold btn-sm" id="kt-wk-wa" target="_blank" rel="noopener" href="#"><svg class="ic"><use href="#wa"/></svg> לברך את הכיתה</a></div>';
-        var msg = '🏆 סיכום השבוע ב' + d.name + ':\n' + top.map(function (r) { return medal(r.place) + ' ' + r.nick + ' – ' + r.pts + ' נקודות'; }).join('\n') + '\nכל הכבוד! ' + act + ' מתוך ' + d.rows.length + ' צברו השבוע. שבוע חדש התחיל, כולם מתחילים מאפס 💪\n' + SITE;
+        var msg = '🏆 סיכום השבוע ב' + d.name + ':\n' + top.map(function (r) { return medal(r.place) + ' ' + r.nick + ' – ' + r.pts + ' נקודות'; }).join('\n') + (pers.length ? '\n🔥 התמידו כל השבוע: ' + pers.map(function (r) { return r.nick; }).join(', ') : '') + '\nכל הכבוד! ' + act + ' מתוך ' + d.rows.length + ' צברו השבוע. שבוע חדש התחיל, כולם מתחילים מאפס 💪\n' + SITE;
         box.querySelector('#kt-wk-wa').href = 'https://wa.me/?text=' + encodeURIComponent(msg);
         box.querySelector('#kt-wk-wa').onclick = function () { used('chashiva_kita_more', 'weekly-wa'); };
         box.hidden = false;
@@ -325,6 +334,7 @@
     // ---- תעודות ----
     function certRows() {
       var w = $('kt-c-who').value;
+      if (w === 'persist') return data.rows.filter(function (r) { return r.pts > 0 && isPersist(r, tp); });
       return data.rows.filter(function (r) { return r.pts > 0 && (w === 'all' || (w === '1' ? r.place === 1 : r.place >= 1 && r.place <= 3)); });
     }
     function giftFor(r) {
@@ -340,7 +350,7 @@
       $('kt-c-out').innerHTML = rows.map(function (r) {
         var g = giftFor(r);
         return '<div class="kt-cert ' + st + '"><span class="c-bsd">בס״ד</span><div class="c-t">תעודת הצטיינות</div><div class="c-to">מוענקת בהוקרה ל</div><div class="c-n">' + esc(nm(r)) + '</div>' +
-          '<div class="c-w">' + esc(what) + '<br>' + (r.place <= 3 ? 'במקום ה' + ['', 'ראשון', 'שני', 'שלישי'][r.place] : 'במקום ה-' + r.place) + ' בכיתה ' + esc(data.name) + ', ' + PER[tp] + ': ' + r.pts + ' נקודות</div>' +
+          '<div class="c-w">' + esc(what) + '<br>' + ($('kt-c-who').value === 'persist' ? 'תרגלה ב-' + r.dd + ' ימים ' + PER[tp] + ' בכיתה ' + esc(data.name) + '</div>' : (r.place <= 3 ? 'במקום ה' + ['', 'ראשון', 'שני', 'שלישי'][r.place] : 'במקום ה-' + r.place) + ' בכיתה ' + esc(data.name) + ', ' + PER[tp] + ': ' + r.pts + ' נקודות</div>') +
           (g ? '<div class="c-g">' + esc(g) + '</div>' : '') +
           '<div class="c-sig"><span>' + esc(data.teacher || 'המורה') + '</span><span>' + dt + '</span></div></div>';
       }).join('') || '<p class="kt-note">עוד אין נקודות בלוח ' + PER[tp] + '. אפשר להחליף בלשונית הלוח ל"החודש" או "מההתחלה".</p>';
