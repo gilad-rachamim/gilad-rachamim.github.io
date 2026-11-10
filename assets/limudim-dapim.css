@@ -191,3 +191,7 @@ body.dp-student .k-hero{display:none}
 .dp-ownq .linkish{justify-self:start}
 .dg-free{display:grid;gap:.5rem}
 .dg-q .mx-done li>span{white-space:normal;overflow-wrap:anywhere;text-align:end}
+.dp-mc{display:flex;flex-wrap:wrap;gap:.35rem 1.4rem;margin:.5rem 0 .2rem;font-size:.95em;direction:rtl}
+.dp-mc span{white-space:nowrap}
+.dp-imp{margin:.4rem 0;padding:.6rem .8rem;border-radius:12px;background:rgba(80,160,120,.15);border:1px solid rgba(80,160,120,.45)}
+.dp-bank{display:grid;gap:.4rem;margin:.4rem 0;padding:.8rem;border:1px dashed var(--line);border-radius:14px}
