@@ -1,0 +1,77 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tichnut_reayon",
+  "title": "הכנה לראיון טכני ראשון – 18 נושאים, שאלות לתרגול וטיפים לג'וניורים | הכלים של גילעד רחמים",
+  "description": "לסטודנטים ולמחפשי עבודה ראשונה בהייטק: 18 הנושאים שבודקים בראיון טכני לג'וניור – מבני נתונים, אלגוריתמים, SQL, Git, OOP ושאלות אישיות – עם שאלה קלאסית לתרגול, טיפ, וסימון התקדמות. בחינם.",
+  "og_title": "ראיון טכני ראשון? 18 נושאים להתכונן אליהם",
+  "priority": "0.7",
+  "crumbs": [["כלים למתכנתים", "/kelim/tichnut/"], ["הכנה לראיון טכני", null]],
+  "head": "<style>.rt-prog{display:flex;align-items:center;gap:.6rem;color:var(--muted);font-size:.9rem}.rt-prog div{flex:1;height:.55rem;border-radius:99px;background:var(--line);overflow:hidden}.rt-prog i{display:block;height:100%;width:0;background:var(--gold);transition:width .3s}.rt-f{display:flex;align-items:center;gap:.4rem;margin:.6rem 0;color:var(--body);font-size:.92rem}.rt-g{color:var(--gold);font-size:1.15rem;margin:1.2rem 0 .5rem}.rt-card{position:relative;padding:.9rem 1rem;border:1px solid var(--line);border-radius:14px;margin-bottom:.6rem}.rt-card.done{border-color:var(--gold-soft);background:rgba(216,179,95,.05)}.rt-card h3{color:var(--cream);font-size:1.08rem;padding-left:4.5rem}.rt-card p{color:var(--parchment);line-height:1.65;margin-top:.25rem}.rt-q b{color:var(--cream)}.rt-q span{color:var(--gold)}.rt-tip{color:var(--body)!important;font-size:.93rem}.rt-card .btn{margin-top:.5rem}.rt-ok{position:absolute;top:.85rem;left:.9rem;display:flex;align-items:center;gap:.3rem;color:var(--muted);font-size:.88rem;cursor:pointer}.rt-ok input,.rt-f input{accent-color:var(--gold);width:1.1rem;height:1.1rem}.rt-day{margin-top:1.4rem;padding:1rem;border:1px solid var(--gold-soft);border-radius:14px;background:rgba(216,179,95,.06)}.rt-day h2{color:var(--cream);font-size:1.15rem}.rt-day ul{margin-top:.4rem;padding-right:1.2rem;display:grid;gap:.3rem;color:var(--parchment);line-height:1.6}@media print{.topbar,.site-foot,.crumbs,.no-print,.rt-ok{display:none!important}.rt-card{display:block!important}body{background:#fff}.rt-card,.rt-card p,.rt-card h3,.rt-g{color:#000;border-color:#999}}</style>",
+  "foot": "<script src=\"/assets/tichnut-data.js\" defer></script><script src=\"/assets/tichnut-reayon.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>הכנה לראיון טכני ראשון</h1>
+  <p class="sub">18 הנושאים שבודקים בראיון לג'וניור, עם שאלה קלאסית לתרגול וטיפ לכל אחד. מסמנים "מוכן" ורואים כמה נשאר.</p>
+</header>
+<div class="tool">
+  <div class="rt-prog"><div><i id="rt-bar"></i></div><span id="rt-cnt"></span></div>
+  <label class="rt-f no-print"><input type="checkbox" id="rt-left"> להציג רק מה שעוד לא מוכן</label>
+  <h2 class="rt-g">יסודות</h2>
+  <div class="rt-card"><label class="rt-ok"><input type="checkbox" data-k="bigo"> מוכן</label>
+    <h3>סיבוכיות (Big-O)</h3><p>כמעט בכל שאלה ישאלו &quot;מה הסיבוכיות?&quot; – זמן וגם זיכרון.</p><p class="rt-q"><b>לתרגל:</b> <span>לנתח שני פתרונות לאותה בעיה ולהסביר למה אחד עדיף.</span></p><p class="rt-tip">💡 אומרים את הסיבוכיות בקול גם בלי שישאלו.</p><a class="btn btn-line btn-sm" href="/kelim/tichnut/sibuchiyut/">לכלי המתאים ←</a></div>
+  <div class="rt-card"><label class="rt-ok"><input type="checkbox" data-k="arr"> מוכן</label>
+    <h3>מערכים ומחרוזות</h3><p>מעבר, אינדקסים, היפוך, תתי-מחרוזות.</p><p class="rt-q"><b>לתרגל:</b> <span dir="ltr">Valid Palindrome · Reverse String</span></p><p class="rt-tip">💡 בודקים מקרי קצה: ריק, איבר אחד, רווחים.</p></div>
+  <div class="rt-card"><label class="rt-ok"><input type="checkbox" data-k="hash"> מוכן</label>
+    <h3>טבלת hash (dict / map)</h3><p>ספירה, חיפוש מהיר, זיהוי כפילויות.</p><p class="rt-q"><b>לתרגל:</b> <span dir="ltr">Two Sum · Group Anagrams</span></p><p class="rt-tip">💡 כשהפתרון הנאיבי הוא O(n²) – שואלים &quot;אולי hash יוריד ל-O(n)?&quot;</p></div>
+  <div class="rt-card"><label class="rt-ok"><input type="checkbox" data-k="two"> מוכן</label>
+    <h3>שני מצביעים וחלון זז</h3><p>מערך ממוין, תת-מערך רציף, מחרוזת.</p><p class="rt-q"><b>לתרגל:</b> <span dir="ltr">Container With Most Water · Longest Substring Without Repeating Characters</span></p><p class="rt-tip">💡 שני מצביעים מהקצוות = מערך ממוין. חלון זז = &quot;רציף&quot;.</p></div>
+  <div class="rt-card"><label class="rt-ok"><input type="checkbox" data-k="stack"> מוכן</label>
+    <h3>מחסנית ותור</h3><p>סוגריים, &quot;האחרון שנכנס&quot;, BFS.</p><p class="rt-q"><b>לתרגל:</b> <span dir="ltr">Valid Parentheses · Min Stack</span></p><p class="rt-tip">💡 מחסנית = LIFO, תור = FIFO. אומרים איזה ולמה.</p></div>
+  <div class="rt-card"><label class="rt-ok"><input type="checkbox" data-k="list"> מוכן</label>
+    <h3>רשימה מקושרת</h3><p>היפוך, מחזור, מיזוג.</p><p class="rt-q"><b>לתרגל:</b> <span dir="ltr">Reverse Linked List · Linked List Cycle</span></p><p class="rt-tip">💡 מציירים על הלוח לפני שכותבים. מצביע &quot;dummy&quot; חוסך מקרי קצה.</p></div>
+  <h2 class="rt-g">אלגוריתמים</h2>
+  <div class="rt-card"><label class="rt-ok"><input type="checkbox" data-k="bs"> מוכן</label>
+    <h3>חיפוש בינארי</h3><p>מערך ממוין, או &quot;המספר הקטן ביותר ש...&quot;.</p><p class="rt-q"><b>לתרגל:</b> <span dir="ltr">Binary Search · Search in Rotated Sorted Array</span></p><p class="rt-tip">💡 שימו לב ל-lo &lt;= hi ול-mid = lo + (hi - lo) / 2.</p></div>
+  <div class="rt-card"><label class="rt-ok"><input type="checkbox" data-k="sort"> מוכן</label>
+    <h3>מיונים</h3><p>לא לכתוב מאפס – לדעת מה כל מיון עושה ומתי.</p><p class="rt-q"><b>לתרגל:</b> <span dir="ltr">Merge Intervals · Sort Colors</span></p><p class="rt-tip">💡 &quot;מיון קודם&quot; הופך הרבה בעיות ל-O(n log n).</p><a class="btn btn-line btn-sm" href="/kelim/tichnut/miunim/">לכלי המתאים ←</a></div>
+  <div class="rt-card"><label class="rt-ok"><input type="checkbox" data-k="tree"> מוכן</label>
+    <h3>עצים, BFS ו-DFS</h3><p>מעבר על עץ, עומק, עץ חיפוש.</p><p class="rt-q"><b>לתרגל:</b> <span dir="ltr">Maximum Depth of Binary Tree · Validate BST · Level Order Traversal</span></p><p class="rt-tip">💡 רקורסיה לעומק (DFS), תור לרוחב (BFS).</p></div>
+  <div class="rt-card"><label class="rt-ok"><input type="checkbox" data-k="graph"> מוכן</label>
+    <h3>גרפים</h3><p>קשירות, מסלול קצר, איים.</p><p class="rt-q"><b>לתרגל:</b> <span dir="ltr">Number of Islands · Course Schedule</span></p><p class="rt-tip">💡 מטריצה של תאים היא גרף. לא לשכוח &quot;visited&quot;.</p></div>
+  <div class="rt-card"><label class="rt-ok"><input type="checkbox" data-k="rec"> מוכן</label>
+    <h3>רקורסיה ו-Backtracking</h3><p>כל האפשרויות: תת-קבוצות, פרמוטציות.</p><p class="rt-q"><b>לתרגל:</b> <span dir="ltr">Subsets · Permutations</span></p><p class="rt-tip">💡 מגדירים קודם: מה תנאי העצירה, ומה הצעד.</p></div>
+  <div class="rt-card"><label class="rt-ok"><input type="checkbox" data-k="dp"> מוכן</label>
+    <h3>תכנות דינמי (בסיסי)</h3><p>לג&#x27;וניור – בעיות קלאסיות קצרות.</p><p class="rt-q"><b>לתרגל:</b> <span dir="ltr">Climbing Stairs · House Robber · Coin Change</span></p><p class="rt-tip">💡 מתחילים מרקורסיה, ומוסיפים זיכרון (memo).</p></div>
+  <h2 class="rt-g">מעבר לאלגוריתמים</h2>
+  <div class="rt-card"><label class="rt-ok"><input type="checkbox" data-k="oop"> מוכן</label>
+    <h3>תכנות מונחה עצמים</h3><p>מחלקה, ירושה, ממשק, פולימורפיזם, encapsulation.</p><p class="rt-q"><b>לתרגל:</b> <span>לתכנן מחלקות לחניון / ספרייה / משחק.</span></p><p class="rt-tip">💡 דוגמה קטנה מהחיים עדיפה על הגדרה מהספר.</p></div>
+  <div class="rt-card"><label class="rt-ok"><input type="checkbox" data-k="sql"> מוכן</label>
+    <h3>SQL בסיסי</h3><p>SELECT, WHERE, JOIN, GROUP BY.</p><p class="rt-q"><b>לתרגל:</b> <span>למצוא את המשכורת השנייה בגובהה · לקוחות בלי הזמנות</span></p><p class="rt-tip">💡 INNER מול LEFT JOIN – שאלה כמעט קבועה.</p></div>
+  <div class="rt-card"><label class="rt-ok"><input type="checkbox" data-k="git"> מוכן</label>
+    <h3>Git ועבודה בצוות</h3><p>branch, merge, pull request, קונפליקט.</p><p class="rt-q"><b>לתרגל:</b> <span>&quot;איך פותרים קונפליקט?&quot; · &quot;מה ההבדל בין merge ל-rebase?&quot;</span></p><p class="rt-tip">💡 לספר על פרויקט אמיתי שעבדתם בו בצוות.</p><a class="btn btn-line btn-sm" href="/kelim/tichnut/git/">לכלי המתאים ←</a></div>
+  <div class="rt-card"><label class="rt-ok"><input type="checkbox" data-k="web"> מוכן</label>
+    <h3>איך האינטרנט עובד</h3><p>HTTP, REST, מה קורה כשמקלידים כתובת בדפדפן.</p><p class="rt-q"><b>לתרגל:</b> <span>&quot;מה ההבדל בין GET ל-POST?&quot; · &quot;מה זה 404 ו-500?&quot;</span></p><p class="rt-tip">💡 מספיק ברמה כללית – אבל מסודר מההתחלה לסוף.</p></div>
+  <div class="rt-card"><label class="rt-ok"><input type="checkbox" data-k="proj"> מוכן</label>
+    <h3>הפרויקט שלכם</h3><p>יבקשו להסביר פרויקט מקורות החיים – לעומק.</p><p class="rt-q"><b>לתרגל:</b> <span>&quot;מה היה הכי קשה?&quot; · &quot;מה היית עושה אחרת?&quot;</span></p><p class="rt-tip">💡 מכינים 2 דקות על כל פרויקט: מה, למה, איך, מה למדתי.</p></div>
+  <div class="rt-card"><label class="rt-ok"><input type="checkbox" data-k="star"> מוכן</label>
+    <h3>שאלות אישיות (STAR)</h3><p>עבודה בצוות, כישלון, לחץ, קונפליקט.</p><p class="rt-q"><b>לתרגל:</b> <span>&quot;ספר על פעם שטעית&quot; · &quot;למה אצלנו?&quot;</span></p><p class="rt-tip">💡 מצב → משימה → מה עשיתי → תוצאה. דוגמה אמיתית, קצרה.</p><a class="btn btn-line btn-sm" href="/kelim/avoda/reayon/">לכלי המתאים ←</a></div>
+  <div class="rt-day">
+    <h2>יום לפני ובבוקר הראיון</h2>
+    <ul>
+      <li>לקרוא שוב על החברה ועל המוצר – ולהכין שאלה אחת אמיתית אליהם.</li>
+      <li>לעבור על קורות החיים: כל שורה שכתבתם – אפשר שישאלו עליה.</li>
+      <li>בשאלת קוד: לחזור על השאלה במילים שלכם, לשאול על מקרי קצה, ולחשוב בקול.</li>
+      <li>קודם פתרון שעובד (גם איטי), ורק אז לשפר – ולהגיד את הסיבוכיות.</li>
+      <li>לא יודעים? להגיד "אני לא בטוח, אבל הייתי מתחיל כך..." – זה עדיף על שתיקה.</li>
+      <li>בראיון בזום: לבדוק מצלמה, מיקרופון ושיתוף מסך חצי שעה לפני.</li>
+    </ul>
+  </div>
+  <div class="share-row no-print">
+    <a class="btn btn-gold btn-sm" href="#" id="rt-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לעצמי את ההתקדמות</a>
+    <button class="btn btn-line btn-sm" type="button" id="rt-print">להדפיס</button>
+    <button class="btn btn-line btn-sm" type="button" id="rt-reset">לאפס סימונים</button>
+  </div>
+  <p class="disclaimer">שמות השאלות הם של שאלות מוכרות באתרי תרגול כמו LeetCode – מחפשים את השם ומתרגלים שם. ובאתר גם <a class="gold" href="/kelim/avoda/korot/">קורות חיים</a>, <a class="gold" href="/kelim/avoda/misrot/">מעקב משרות</a> ו<a class="gold" href="/kelim/avoda/reayon/">דף הכנה לראיון</a>.</p>
+  <div class="share-row no-print"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מתכוננים לראיון טכני ראשון? 18 נושאים, שאלות לתרגול וטיפים, בעברית. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר שמחפש עבודה</a></div>
+</div>
