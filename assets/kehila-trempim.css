@@ -95,3 +95,39 @@
 .tp-say-list li b{color:var(--cream)}
 .tp-say-list li span{color:var(--muted);font-size:.85rem}
 .tp-say-list li.opt:not(.ok){opacity:.75}
+/* תגמולים: תגים, סולם, דירוג, לוח כבוד, תעודה */
+.tp-lv{display:inline-block;font-size:.78rem;font-weight:600;border-radius:99px;padding:0 .45rem;border:1px solid var(--gold-soft);color:var(--gold);vertical-align:middle;white-space:nowrap}
+.tp-lv.lv2{background:rgba(216,179,95,.1)}
+.tp-lv.lv3{background:rgba(216,179,95,.22);color:var(--cream);border-color:var(--gold)}
+.tp-lv.amb{border-color:rgba(120,180,230,.5);margin-inline-start:.2rem}
+.tp-rank{border:1px solid var(--gold-soft);border-radius:16px;padding:.9rem 1rem;margin-bottom:1rem;background:rgba(216,179,95,.06)}
+.tp-rank-top{display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap;color:var(--body)}
+.tp-rank-pts{font-size:1.7rem;font-weight:700;color:var(--gold)}
+.tp-bar{height:.7rem;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin:.6rem 0 .4rem}
+.tp-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#f3d48a);border-radius:99px}
+.tp-next{color:var(--cream);font-weight:600;margin:.2rem 0}
+.tp-rank .acts,.tp-cert .acts{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.5rem}
+.tp-log{list-style:none;margin:.6rem 0 0;padding:0;display:grid;gap:.3rem;color:var(--body)}
+.tp-log b{color:var(--accent);display:inline-block;min-width:2.4rem}
+.tp-log b.neg{color:#e8b48c}
+.tp-log small{color:var(--muted)}
+.tp-cert{margin-bottom:1rem}
+.tp-cert canvas{display:block;width:100%;max-width:480px;height:auto;margin:0 auto;border-radius:12px;border:1px solid var(--line)}
+.tp-cert .acts{justify-content:center}
+.tp-said{margin:.35rem 0;padding:.35rem .6rem;border-inline-start:3px solid var(--gold-soft);color:var(--body);font-size:.92rem;background:rgba(255,255,255,.02);border-radius:6px}
+.tp-said small{color:var(--muted)}
+.tp-stars{color:var(--gold);letter-spacing:.05em}
+.tp-stars .off{color:rgba(255,255,255,.18)}
+.tp-flag{background:none;border:0;color:var(--muted);font:inherit;font-size:.78rem;text-decoration:underline;cursor:pointer;padding:0}
+.tp-active{color:var(--accent);font-weight:600}
+.tp-rate{margin-top:.6rem;padding-top:.6rem;border-top:1px dashed var(--line)}
+.tp-rate textarea{width:100%;min-height:4.2rem;margin:.4rem 0;font:inherit;color:var(--cream);background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;padding:.5rem .7rem;box-sizing:border-box}
+.tp-starpick{display:flex;gap:.2rem;direction:ltr;justify-content:flex-end}
+.tp-starpick button{font-size:2rem;line-height:1;background:none;border:0;color:rgba(255,255,255,.2);cursor:pointer;padding:.1rem}
+.tp-starpick button.on{color:var(--gold)}
+.tp-board{margin:1rem 0}
+.tp-board ol{margin:.4rem 0;padding-inline-start:1.4rem;display:grid;gap:.45rem;color:var(--body)}
+.tp-board li b{color:var(--cream)}
+.tp-board .meta{display:block;color:var(--muted);font-size:.88rem}
+.tp-ladder summary{cursor:pointer;color:var(--cream);font-weight:600}
+.tp-ladder ul{margin:.5rem 0;padding-inline-start:1.1rem;display:grid;gap:.3rem;color:var(--body)}

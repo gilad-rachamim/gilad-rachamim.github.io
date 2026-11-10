@@ -15,8 +15,16 @@
 //  POST /report          {about, ride, text}          -> {ok}
 //  POST /ideas           {text}                       -> {ok}
 //  GET  /stats                                       -> {rides, users, joined}
+//  GET  /leaders                                     -> {month, leaders}  (לוח כבוד ציבורי: שם פרטי בלבד)
+//  GET  /me/points                                   -> {log}             (פירוט נקודות החסד)
+//  POST /ratings         {request, stars, text}       -> {ok}
+//  GET  /admin  (דף)  ·  POST /admin/data {key}  ·  POST /admin/act {key, action, id}
 //
-// סודות (wrangler secret put): SESSION_SECRET. משתנים: GOOGLE_CLIENT_ID.
+// תגמולים: נקודות על העלאה (2 / קבועה 5, עד 5 בשבוע), בונוס 15 על נסיעה קבועה "פעילה"
+// (פתוחה שבועיים או שמישהו הצטרף), 10/15 על טרמפ שאושר, 5 על דירוג חם. כל תנועה ב-points_log.
+// דרגות: 1 נהג חסד, 2 נהג קבוע, 3 עמוד התווך; amb = שגריר השכונה. דרגה לא יורדת.
+//
+// סודות (wrangler secret put): SESSION_SECRET, ADMIN_KEY. משתנים: GOOGLE_CLIENT_ID.
 
 const ORIGINS = ['https://gilad-rachamim.github.io'];
 const TZ = 'Asia/Jerusalem';
@@ -46,6 +54,10 @@ export default {
     for (const [k, v] of Object.entries(cors)) res.headers.set(k, v);
     return res;
   },
+  // פעם ביום: בונוס "פעילה" ודרגות לכולם (גם למי שלא נכנס)
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(syncActive(env, null));
+  },
 };
 
 class HttpError extends Error { constructor(status, msg) { super(msg); this.status = status; } }
@@ -55,6 +67,9 @@ async function route(req, env, url) {
   const p = url.pathname.replace(/\/+$/, '') || '/';
   const m = req.method;
   if (p === '/stats' && m === 'GET') return stats(env);
+  if (p === '/leaders' && m === 'GET') return leaders(env);
+  if (p === '/admin' && m === 'GET') return adminPage();
+  if (p.startsWith('/admin/') && m === 'POST') return admin(req, env, p);
   if (m === 'POST') {
     const origin = req.headers.get('Origin') || '';
     if (!corsHeaders(origin)['Access-Control-Allow-Origin']) bad('origin', 403);
@@ -62,8 +77,9 @@ async function route(req, env, url) {
   if (p === '/auth' && m === 'POST') return auth(req, env);
 
   const me = await session(req, env);
-  if (p === '/me' && m === 'GET') return json({ user: pubMe(me) });
+  if (p === '/me' && m === 'GET') { await syncActive(env, me.id); return json({ user: await meOut(env, me.id) }); }
   if (p === '/me' && m === 'POST') return saveMe(req, env, me);
+  if (p === '/me/points' && m === 'GET') return pointsLog(env, me);
   if (p === '/ideas' && m === 'POST') return idea(req, env, me);
   if (!me.phone || !me.agreed) bad('profile');
   if (me.blocked) bad('blocked', 403);
@@ -76,6 +92,7 @@ async function route(req, env, url) {
   if ((mm = p.match(/^\/requests\/([\w-]{6,40})$/)) && m === 'POST') return actRequest(req, env, me, mm[1]);
   if (p === '/inbox' && m === 'GET') return inbox(env, me);
   if (p === '/report' && m === 'POST') return report(req, env, me);
+  if (p === '/ratings' && m === 'POST') return rate(req, env, me);
   bad('not found', 404);
 }
 
@@ -190,20 +207,154 @@ async function auth(req, env) {
   if (g.email_verified !== 'true' && g.email_verified !== true) bad('email', 401);
   const id = 'g' + g.sub;
   const now = Date.now();
+  // קישור הזמנה (?ref=): רק למשתמש חדש, ולא לעצמו
+  const existed = await env.DB.prepare('SELECT id FROM users WHERE id=?').bind(id).first();
+  let refBy = null;
+  const ref = str(b.ref, 12);
+  if (!existed && /^[a-z0-9]{6,12}$/.test(ref)) {
+    const rr = await env.DB.prepare('SELECT id FROM users WHERE ref_code=?').bind(ref).first();
+    if (rr && rr.id !== id) refBy = rr.id;
+  }
   await env.DB.prepare(
-    `INSERT INTO users (id,email,name,pic,created) VALUES (?,?,?,?,?)
+    `INSERT INTO users (id,email,name,pic,created,ref_by) VALUES (?,?,?,?,?,?)
      ON CONFLICT(id) DO UPDATE SET email=excluded.email, pic=excluded.pic`
-  ).bind(id, g.email || '', str(g.name, 60) || 'נהג/ת', str(g.picture, 300), now).run();
-  const u = await env.DB.prepare('SELECT * FROM users WHERE id=?').bind(id).first();
-  return json({ token: await makeToken(env, id), user: pubMe(u) });
+  ).bind(id, g.email || '', str(g.name, 60) || 'נהג/ת', str(g.picture, 300), now, refBy).run();
+  await env.DB.prepare('UPDATE users SET ref_code=? WHERE id=? AND ref_code IS NULL').bind(newId().slice(0, 8), id).run();
+  return json({ token: await makeToken(env, id), user: await meOut(env, id) });
 }
 function pubMe(u) {
   return {
     id: u.id, name: u.name, pic: u.pic, phone: u.phone || '', paybox: u.paybox || '', agreed: !!u.agreed,
     points: u.points || 0, rating: u.rating_n ? +(u.rating_sum / u.rating_n).toFixed(1) : null, ratingN: u.rating_n || 0,
-    ready: !!(u.phone && u.agreed),
+    ready: !!(u.phone && u.agreed), board: u.board !== 0,
   };
 }
+// הפרופיל המלא: פרטים + דרגה + מה חסר לשלב הבא
+async function meOut(env, uid) {
+  const s = await refreshLevel(env, uid);
+  const u = await env.DB.prepare('SELECT * FROM users WHERE id=?').bind(uid).first();
+  if (!u.ref_code) {
+    const code = newId().slice(0, 8);
+    await env.DB.prepare('UPDATE users SET ref_code=? WHERE id=? AND ref_code IS NULL').bind(code, uid).run();
+    u.ref_code = code;
+  }
+  return Object.assign(pubMe(u), {
+    level: u.level || 0, amb: !!u.amb, refCode: u.ref_code,
+    stats: { active: s.active, waiting: s.waiting, approved: s.approved, refs: s.refs },
+  });
+}
+
+/* ---------- נקודות, דרגות ומוניטין ---------- */
+const DAY = 864e5;
+const ACTIVE_DAYS = 14;        // נסיעה קבועה פתוחה שבועיים = פעילה
+const UPLOAD_PTS = { once: 2, regular: 5 };
+const UPLOADS_PER_WEEK = 5;
+const CANCEL_DAYS = 3;         // ביטול תוך 3 ימים מחזיר את נקודות ההעלאה
+async function addPoints(env, uid, reason, pts, ride = null) {
+  if (!pts) return;
+  await env.DB.batch([
+    env.DB.prepare('INSERT INTO points_log (id,user_id,reason,points,ride,created) VALUES (?,?,?,?,?,?)').bind(newId(), uid, reason, pts, ride, Date.now()),
+    env.DB.prepare('UPDATE users SET points=MAX(0,points+?) WHERE id=?').bind(pts, uid),
+  ]);
+}
+async function userStats(env, uid) {
+  return env.DB.prepare(
+    `SELECT
+       (SELECT COUNT(*) FROM rides WHERE driver=?1 AND active_bonus=1) active,
+       (SELECT COUNT(*) FROM rides WHERE driver=?1 AND days IS NOT NULL AND COALESCE(kind,'car')<>'taxi' AND active_bonus=0 AND status='open' AND until>=?2) waiting,
+       (SELECT COUNT(*) FROM requests q JOIN rides r ON r.id=q.ride WHERE r.driver=?1 AND q.status='approved') approved,
+       (SELECT COUNT(*) FROM users x WHERE x.ref_by=?1 AND EXISTS (SELECT 1 FROM rides WHERE driver=x.id)) refs`
+  ).bind(uid, todayIL()).first();
+}
+const levelOf = (s) => (s.active >= 10 || s.approved >= 30) ? 3 : (s.active >= 6 || s.approved >= 10) ? 2 : s.active >= 3 ? 1 : 0;
+// דרגה שהושגה נשארת (גם אם טרמפ בוטל אחר כך)
+async function refreshLevel(env, uid) {
+  const s = await userStats(env, uid);
+  const lv = levelOf(s), amb = s.refs >= 5 ? 1 : 0;
+  await env.DB.prepare('UPDATE users SET level=MAX(COALESCE(level,0),?), amb=MAX(COALESCE(amb,0),?) WHERE id=?').bind(lv, amb, uid).run();
+  return s;
+}
+// בונוס "פעילה": נסיעה קבועה שהייתה פתוחה שבועיים, או שמישהו הצטרף אליה. פעם אחת לכל נסיעה.
+async function syncActive(env, uid) {
+  const now = Date.now();
+  const { results } = await env.DB.prepare(
+    `SELECT r.id, r.driver FROM rides r
+     WHERE r.days IS NOT NULL AND COALESCE(r.kind,'car')<>'taxi' AND COALESCE(r.active_bonus,0)=0 ${uid ? 'AND r.driver=?3' : ''}
+       AND ( (CASE WHEN r.status='open' THEN ?1 ELSE COALESCE(r.closed, r.created) END) - r.created >= ?2
+             OR EXISTS (SELECT 1 FROM requests q WHERE q.ride=r.id AND q.status='approved') )
+     LIMIT 500`
+  ).bind(...(uid ? [now, ACTIVE_DAYS * DAY, uid] : [now, ACTIVE_DAYS * DAY])).all();
+  const drivers = new Set();
+  for (const r of results) {
+    const u = await env.DB.prepare('UPDATE rides SET active_bonus=1 WHERE id=? AND COALESCE(active_bonus,0)=0').bind(r.id).run();
+    if (u.meta.changes) { await addPoints(env, r.driver, 'active', 15, r.id); drivers.add(r.driver); }
+  }
+  if (!uid) {
+    // פעם ביום: דרגות לכל הנהגים (גם שגרירים שהנהגים שלהם התחילו לנסוע)
+    const all = await env.DB.prepare('SELECT DISTINCT driver FROM rides LIMIT 2000').all();
+    for (const x of all.results) drivers.add(x.driver);
+    const refs = await env.DB.prepare('SELECT DISTINCT ref_by FROM users WHERE ref_by IS NOT NULL LIMIT 2000').all();
+    for (const x of refs.results) drivers.add(x.ref_by);
+  }
+  for (const d of drivers) await refreshLevel(env, d);
+  return drivers.size;
+}
+const avgOf = (sum, n) => (n ? +(sum / n).toFixed(1) : null);
+// ציון מוניטין למיון: נקודות, ודירוג מעל/מתחת ל-3 משפיע לפי מספר הדירוגים
+function repOf(u) {
+  const avg = u.rating_n ? u.rating_sum / u.rating_n : 3;
+  return (u.points || 0) + (avg - 3) * 10 * Math.min(u.rating_n || 0, 10);
+}
+function monthStart() {
+  const t = todayIL();
+  // חצות בירושלים, בקירוב (שעון חורף +2, קיץ +3)
+  return Date.parse(t.slice(0, 8) + '01T00:00:00+03:00');
+}
+async function pointsLog(env, me) {
+  const { results } = await env.DB.prepare(
+    `SELECT l.reason, l.points, l.created, r.from_label, r.to_label FROM points_log l LEFT JOIN rides r ON r.id=l.ride
+     WHERE l.user_id=? ORDER BY l.created DESC LIMIT 40`
+  ).bind(me.id).all();
+  return json({ log: results });
+}
+async function leaders(env) {
+  const { results } = await env.DB.prepare(
+    `SELECT u.id, u.name, u.level, u.amb, u.rating_sum, u.rating_n, SUM(l.points) pts
+     FROM points_log l JOIN users u ON u.id=l.user_id
+     WHERE l.created>=? AND u.blocked=0 AND COALESCE(u.board,1)=1 AND EXISTS (SELECT 1 FROM rides WHERE driver=u.id)
+     GROUP BY u.id HAVING pts>0 ORDER BY pts DESC, u.points DESC LIMIT 10`
+  ).bind(monthStart()).all();
+  return json({
+    month: todayIL().slice(0, 7),
+    leaders: results.map(x => ({ name: firstName(x.name), level: x.level || 0, amb: !!x.amb, rating: avgOf(x.rating_sum, x.rating_n), ratingN: x.rating_n || 0, points: x.pts, cert: (x.level || 0) >= 1 })),
+  });
+}
+
+/* ---------- דירוגים ---------- */
+async function rate(req, env, me) {
+  const b = await body(req);
+  const id = str(b.request, 40);
+  const stars = Math.round(num(b.stars));
+  if (!(stars >= 1 && stars <= 5)) bad('stars');
+  const text = str(b.text, 200);
+  const q = await env.DB.prepare(`SELECT q.id,q.ride,q.date,q.pass_time,q.rider,q.status,r.driver FROM requests q JOIN rides r ON r.id=q.ride WHERE q.id=?`).bind(id).first();
+  if (!q) bad('not found', 404);
+  if (q.status !== 'approved') bad('state');
+  const today = todayIL();
+  if (q.date > today || (q.date === today && hm2min(q.pass_time || '23:59') > hm2min(nowHM()))) bad('too early');
+  let ratee, role;
+  if (me.id === q.rider) { ratee = q.driver; role = 'driver'; }
+  else if (me.id === q.driver) { ratee = q.rider; role = 'rider'; }
+  else bad('not yours', 403);
+  const ins = await env.DB.prepare(
+    'INSERT OR IGNORE INTO ratings (id,request,rater,ratee,role,stars,text,created) VALUES (?,?,?,?,?,?,?,?)'
+  ).bind(newId(), q.id, me.id, ratee, role, stars, text, Date.now()).run();
+  if (!ins.meta.changes) bad('already rated');
+  await env.DB.prepare('UPDATE users SET rating_sum=rating_sum+?, rating_n=rating_n+1 WHERE id=?').bind(stars, ratee).run();
+  if (stars === 5 && text.length >= 2) await addPoints(env, ratee, 'warm', 5, q.ride);
+  return json({ ok: true });
+}
+
 async function saveMe(req, env, me) {
   const b = await body(req);
   const name = str(b.name, 40);
@@ -213,9 +364,9 @@ async function saveMe(req, env, me) {
   if (!phoneOk(phone)) bad('phone');
   if (paybox && !/^https:\/\/[\w.-]*(payboxapp|paybox)\.[\w./?=&%-]+$/i.test(paybox) && !phoneOk(paybox)) bad('paybox');
   if (b.agreed !== true) bad('agree');
-  await env.DB.prepare('UPDATE users SET name=?, phone=?, paybox=?, agreed=1 WHERE id=?').bind(name, phone, paybox, me.id).run();
-  const u = await env.DB.prepare('SELECT * FROM users WHERE id=?').bind(me.id).first();
-  return json({ user: pubMe(u) });
+  const board = b.board === false ? 0 : 1;
+  await env.DB.prepare('UPDATE users SET name=?, phone=?, paybox=?, agreed=1, board=? WHERE id=?').bind(name, phone, paybox, board, me.id).run();
+  return json({ user: await meOut(env, me.id) });
 }
 
 /* ---------- נסיעות ---------- */
@@ -264,14 +415,27 @@ async function createRide(req, env, me) {
      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
   ).bind(id, me.id, from.label, from.lat, from.lng, to.label, to.lat, to.lng, date, days, start, until, time, seats, rate,
     Math.round(km * 10) / 10, Math.round(mins), JSON.stringify(pts), note, Date.now(), kind, split).run();
-  const out = { id, kind };
+  const out = { id, kind, points: 0 };
   if (kind === 'taxi') out.fare = taxiFare(Math.round(km * 10) / 10, Math.round(mins), date || start, time);
+  // נקודות על עצם ההעלאה (רק רכב פרטי): עד 5 בשבוע
+  if (kind !== 'taxi') {
+    const wk = await env.DB.prepare('SELECT COUNT(*) n FROM rides WHERE driver=? AND pts_upload>0 AND created>?').bind(me.id, Date.now() - 7 * DAY).first();
+    if (wk.n < UPLOADS_PER_WEEK) {
+      out.points = days ? UPLOAD_PTS.regular : UPLOAD_PTS.once;
+      await env.DB.prepare('UPDATE rides SET pts_upload=? WHERE id=?').bind(out.points, id).run();
+      await addPoints(env, me.id, days ? 'upload_regular' : 'upload', out.points, id);
+    }
+    // נהג שהגיע בהזמנה: השגריר מתקדם
+    if (me.ref_by) await refreshLevel(env, me.ref_by);
+  }
   return json({ ride: out });
 }
 async function myRides(env, me) {
+  await syncActive(env, me.id);
   const today = todayIL();
   const { results } = await env.DB.prepare(
-    `SELECT id,from_label,to_label,date,days,start,until,time,seats,rate,km,min,note,status,kind,split,
+    `SELECT id,from_label,to_label,date,days,start,until,time,seats,rate,km,min,note,status,kind,split,created,
+       COALESCE(active_bonus,0) active, COALESCE(pts_upload,0) pts,
        (SELECT COUNT(*) FROM requests q WHERE q.ride=rides.id AND q.status='pending' AND q.date>=?) pending,
        (SELECT COUNT(*) FROM requests q WHERE q.ride=rides.id AND q.status='approved' AND q.date>=?) approved
      FROM rides WHERE driver=? AND status='open' AND (date>=? OR until>=?) ORDER BY COALESCE(date,start), time LIMIT 60`
@@ -280,8 +444,15 @@ async function myRides(env, me) {
   return json({ rides: results });
 }
 async function closeRide(env, me, id) {
-  const r = await env.DB.prepare('UPDATE rides SET status=? WHERE id=? AND driver=?').bind('closed', id, me.id).run();
-  if (!r.meta.changes) bad('not found', 404);
+  const ride = await env.DB.prepare(`SELECT id,created,COALESCE(pts_upload,0) pts FROM rides WHERE id=? AND driver=? AND status='open'`).bind(id, me.id).first();
+  if (!ride) bad('not found', 404);
+  const now = Date.now();
+  await env.DB.prepare(`UPDATE rides SET status='closed', closed=? WHERE id=?`).bind(now, id).run();
+  // ביטול מהר (תוך 3 ימים) מחזיר את נקודות ההעלאה
+  if (ride.pts > 0 && now - ride.created < CANCEL_DAYS * DAY) {
+    await env.DB.prepare('UPDATE rides SET pts_upload=0 WHERE id=?').bind(id).run();
+    await addPoints(env, me.id, 'upload_cancel', -ride.pts, id);
+  }
   await env.DB.prepare(`UPDATE requests SET status='cancelled', updated=? WHERE ride=? AND status IN ('pending','approved') AND date>=?`)
     .bind(Date.now(), id, todayIL()).run();
   return json({ ok: true });
@@ -349,7 +520,7 @@ async function search(req, env, me) {
   if (!dates.length) dates = [today];
   const first = dates[0], last = dates[dates.length - 1];
   const { results } = await env.DB.prepare(
-    `SELECT r.*, u.name dname, u.pic dpic, u.rating_sum, u.rating_n, u.points
+    `SELECT r.*, u.name dname, u.pic dpic, u.rating_sum, u.rating_n, u.points, COALESCE(u.level,0) dlevel, COALESCE(u.amb,0) damb
      FROM rides r JOIN users u ON u.id=r.driver
      WHERE r.status='open' AND u.blocked=0 AND r.driver<>?
        AND ((r.date BETWEEN ? AND ?) OR (r.days IS NOT NULL AND r.start<=? AND r.until>=?))
@@ -377,13 +548,33 @@ async function search(req, env, me) {
         ride: r.id, date: d, time: r.time, pass: m.pass, from: r.from_label, to: r.to_label, kind: r.kind || 'car',
         pickupKm: m.pickupKm, dropKm: m.dropKm, segKm: m.segKm, rate: r.rate, price: taxi ? taxi.share : priceFor(m.segKm, r.rate),
         seatsLeft: left, note: r.note || '', regular: !!r.days, taxi,
-        driver: { name: firstName(r.dname), pic: r.dpic || '', rating: r.rating_n ? +(r.rating_sum / r.rating_n).toFixed(1) : null, ratingN: r.rating_n || 0, points: r.points || 0 },
+        driver: { name: firstName(r.dname), pic: r.dpic || '', rating: r.rating_n ? +(r.rating_sum / r.rating_n).toFixed(1) : null, ratingN: r.rating_n || 0, points: r.points || 0, level: r.dlevel, amb: !!r.damb },
         mine: mine ? { id: mine.id, status: mine.status } : null,
+        _d: r.driver, _min: m.passMin, _rep: repOf(r) + (r.dlevel >= 2 ? 1e5 : 0),
       });
     }
   }
-  out.sort((x, y) => (x.date + x.pass).localeCompare(y.date + y.pass) || x.pickupKm - y.pickupKm);
-  return json({ matches: out.slice(0, 80) });
+  // קודם התאמה: יום, חצי שעה, איסוף עד ק"מ. בתוך תוצאות קרובות – קודם נהגים מובילים (דרגה 2+, ואז נקודות ודירוג).
+  const tier = (x) => [x.date, Math.floor(x._min / 30), x.pickupKm <= 1 ? 0 : 1];
+  out.sort((x, y) => {
+    const a = tier(x), b = tier(y);
+    return a[0].localeCompare(b[0]) || a[1] - b[1] || a[2] - b[2] || y._rep - x._rep || x.pickupKm - y.pickupKm || x._min - y._min;
+  });
+  const list = out.slice(0, 80);
+  // שתי התגובות האחרונות על כל נהג (כנהג), בלי מוסתרות
+  const said = new Map();
+  for (const x of list) {
+    if (!said.has(x._d)) {
+      const { results: rs } = await env.DB.prepare(
+        `SELECT t.id, t.stars, t.text, u.name FROM ratings t JOIN users u ON u.id=t.rater
+         WHERE t.ratee=? AND t.role='driver' AND t.text<>'' AND COALESCE(t.hidden,0)=0 ORDER BY t.created DESC LIMIT 2`
+      ).bind(x._d).all();
+      said.set(x._d, rs.map(c => ({ id: c.id, stars: c.stars, text: c.text, by: firstName(c.name) })));
+    }
+    x.driver.said = said.get(x._d);
+    delete x._d; delete x._min; delete x._rep;
+  }
+  return json({ matches: list });
 }
 // כרטיס מונית: המחיר המלא, החלק של המבקש, וכמה הוא חוסך מול מונית לבד
 function taxiInfo(r, m, d, people) {
@@ -436,6 +627,8 @@ async function actRequest(req, env, me, id) {
     if (q.rider !== me.id && q.driver !== me.id) bad('not yours', 403);
     if (!['pending', 'approved'].includes(q.status)) bad('state');
     await env.DB.prepare(`UPDATE requests SET status='cancelled', updated=? WHERE id=?`).bind(now, id).run();
+    // מי שאישר וביטל: נקודות האישור חוזרות
+    if (q.status === 'approved' && me.id === q.driver) await addPoints(env, me.id, 'approve_cancel', q.price || isTaxi(q) ? -10 : -15, q.ride);
     if (isTaxi(q) && q.status === 'approved') await retaxi(env, q.ride, q.date);
     return json({ ok: true });
   }
@@ -453,7 +646,8 @@ async function actRequest(req, env, me, id) {
     if (b.free === true) price = 0;
     await env.DB.prepare(`UPDATE requests SET status='approved', price=?, updated=? WHERE id=?`).bind(price, now, id).run();
     // נקודות חסד: 10 על כל טרמפ שאושר, ועוד 5 כשהוא בחינם. במונית: 10 למי שמשתף, כי כולם חוסכים
-    await env.DB.prepare('UPDATE users SET points=points+? WHERE id=?').bind(price || isTaxi(q) ? 10 : 15, me.id).run();
+    await addPoints(env, me.id, price || isTaxi(q) ? 'approve' : 'approve_free', price || isTaxi(q) ? 10 : 15, q.ride);
+    await refreshLevel(env, me.id);
     // במונית: מצטרף חדש מקטין את החלק של כל מי שכבר אושר
     if (isTaxi(q)) await retaxi(env, q.ride, q.date);
     return json({ ok: true });
@@ -472,25 +666,35 @@ async function retaxi(env, rideId, date) {
   }
 }
 async function inbox(env, me) {
-  const since = todayIL(-1);
+  const since = todayIL(-1), past = todayIL(-14), today = todayIL(), nowMin = hm2min(nowHM());
+  // אפשר לדרג אחרי שעבר מועד האיסוף; טרמפים שעברו ועוד לא דורגו נשארים כאן שבועיים
+  const canRate = (x) => x.status === 'approved' && !x.rated && (x.date < today || (x.date === today && hm2min(x.pass_time || '23:59') <= nowMin));
   const asDriver = (await env.DB.prepare(
     `SELECT q.id,q.ride,q.date,q.status,q.mode,q.price,q.seg_km,q.pass_time,q.msg,q.pickup_label,q.pickup_lat,q.pickup_lng,q.drop_label,q.created,
-       r.from_label,r.to_label,r.time,r.kind,r.split,r.km rkm,r.min rmin, u.name rname, u.pic rpic, u.phone rphone, u.rating_sum, u.rating_n, u.id rid
+       r.from_label,r.to_label,r.time,r.kind,r.split,r.km rkm,r.min rmin, u.name rname, u.pic rpic, u.phone rphone, u.rating_sum, u.rating_n, u.id rid,
+       (SELECT stars FROM ratings t WHERE t.request=q.id AND t.rater=?1) rated
      FROM requests q JOIN rides r ON r.id=q.ride JOIN users u ON u.id=q.rider
-     WHERE r.driver=? AND q.date>=? AND q.status IN ('pending','approved') ORDER BY q.date, q.pass_time LIMIT 100`
-  ).bind(me.id, since).all()).results.map(x => ({
+     WHERE r.driver=?1 AND ((q.date>=?2 AND q.status IN ('pending','approved'))
+       OR (q.status='approved' AND q.date>=?3 AND NOT EXISTS (SELECT 1 FROM ratings t WHERE t.request=q.id AND t.rater=?1)))
+     ORDER BY q.date, q.pass_time LIMIT 100`
+  ).bind(me.id, since, past).all()).results.map(x => ({
     id: x.id, ride: x.ride, date: x.date, status: x.status, mode: x.mode, price: x.price, segKm: x.seg_km, pass: x.pass_time, msg: x.msg,
+    canRate: canRate(x), rated: x.rated || 0,
     pickup: { label: x.pickup_label, lat: x.pickup_lat, lng: x.pickup_lng }, drop: x.drop_label, from: x.from_label, to: x.to_label, time: x.time,
     kind: x.kind || 'car', split: x.split, fare: isTaxi(x) ? taxiFare(x.rkm, x.rmin, x.date, x.time) : null,
     rider: { id: x.rid, name: x.rname, pic: x.rpic, rating: x.rating_n ? +(x.rating_sum / x.rating_n).toFixed(1) : null, phone: x.status === 'approved' ? x.rphone : '' },
   }));
   const asRider = (await env.DB.prepare(
     `SELECT q.id,q.ride,q.date,q.status,q.mode,q.price,q.seg_km,q.pass_time,q.pickup_label,q.pickup_lat,q.pickup_lng,q.drop_label,
-       r.from_label,r.to_label,r.time,r.kind,r.split,r.km rkm,r.min rmin, u.name dname, u.pic dpic, u.phone dphone, u.paybox, u.id did
+       r.from_label,r.to_label,r.time,r.kind,r.split,r.km rkm,r.min rmin, u.name dname, u.pic dpic, u.phone dphone, u.paybox, u.id did,
+       (SELECT stars FROM ratings t WHERE t.request=q.id AND t.rater=?1) rated
      FROM requests q JOIN rides r ON r.id=q.ride JOIN users u ON u.id=r.driver
-     WHERE q.rider=? AND q.date>=? ORDER BY q.date, q.pass_time LIMIT 100`
-  ).bind(me.id, since).all()).results.map(x => ({
+     WHERE q.rider=?1 AND (q.date>=?2
+       OR (q.status='approved' AND q.date>=?3 AND NOT EXISTS (SELECT 1 FROM ratings t WHERE t.request=q.id AND t.rater=?1)))
+     ORDER BY q.date, q.pass_time LIMIT 100`
+  ).bind(me.id, since, past).all()).results.map(x => ({
     id: x.id, ride: x.ride, date: x.date, status: x.status, mode: x.mode, price: x.price, segKm: x.seg_km, pass: x.pass_time,
+    canRate: canRate(x), rated: x.rated || 0,
     pickup: { label: x.pickup_label, lat: x.pickup_lat, lng: x.pickup_lng }, drop: x.drop_label, from: x.from_label, to: x.to_label, time: x.time,
     kind: x.kind || 'car', split: x.split, fare: isTaxi(x) ? taxiFare(x.rkm, x.rmin, x.date, x.time) : null,
     driver: { id: x.did, name: x.status === 'approved' ? x.dname : firstName(x.dname), pic: x.dpic,
@@ -504,8 +708,22 @@ async function report(req, env, me) {
   const b = await body(req);
   const text = str(b.text, 600);
   if (text.length < 3) bad('text');
-  await env.DB.prepare('INSERT INTO reports (id,by_user,about_user,ride,text,created) VALUES (?,?,?,?,?,?)')
-    .bind(newId(), me.id, str(b.about, 40), str(b.ride, 40), text, Date.now()).run();
+  // דיווח על תגובה: מסתירים אותה אחרי שני מדווחים שונים, וגילעד רואה בדף הניהול
+  const ratingId = str(b.rating, 40);
+  let about = str(b.about, 40);
+  if (ratingId) {
+    const t = await env.DB.prepare('SELECT ratee FROM ratings WHERE id=?').bind(ratingId).first();
+    if (!t) bad('not found', 404);
+    about = t.ratee;
+    const dup = await env.DB.prepare('SELECT id FROM reports WHERE rating=? AND by_user=?').bind(ratingId, me.id).first();
+    if (dup) return json({ ok: true });
+  }
+  await env.DB.prepare('INSERT INTO reports (id,by_user,about_user,ride,text,created,rating) VALUES (?,?,?,?,?,?,?)')
+    .bind(newId(), me.id, about, str(b.ride, 40), text, Date.now(), ratingId || null).run();
+  if (ratingId) {
+    const n = await env.DB.prepare('SELECT COUNT(DISTINCT by_user) n FROM reports WHERE rating=?').bind(ratingId).first();
+    if (n.n >= 2) await env.DB.prepare('UPDATE ratings SET hidden=1 WHERE id=?').bind(ratingId).run();
+  }
   return json({ ok: true });
 }
 async function idea(req, env, me) {
@@ -522,4 +740,93 @@ async function stats(env) {
   const j = await env.DB.prepare(`SELECT COUNT(*) n FROM requests WHERE status='approved'`).first();
   const t = await env.DB.prepare(`SELECT COUNT(*) n FROM rides WHERE kind='taxi' AND status='open' AND (date>=? OR until>=?)`).bind(today, today).first();
   return json({ rides: r.n, users: u.n, joined: j.n, taxis: t.n });
+}
+
+/* ---------- ניהול (לגילעד): זכאים לתעודה, רעיונות, דיווחים ---------- */
+async function adminKeyOk(env, key) {
+  if (!env.ADMIN_KEY || typeof key !== 'string' || key.length < 16) return false;
+  // השוואה בזמן קבוע
+  const a = new TextEncoder().encode(key), b = new TextEncoder().encode(env.ADMIN_KEY);
+  if (a.length !== b.length) return false;
+  let d = 0; for (let i = 0; i < a.length; i++) d |= a[i] ^ b[i];
+  return d === 0;
+}
+async function admin(req, env, p) {
+  const b = await body(req);
+  if (!(await adminKeyOk(env, b.key))) bad('key', 403);
+  if (p === '/admin/data') {
+    await syncActive(env, null);
+    const people = (await env.DB.prepare(
+      `SELECT id,name,email,phone,points,level,amb,cert_sent,rating_sum,rating_n,created FROM users
+       WHERE COALESCE(level,0)>=1 OR COALESCE(amb,0)=1 ORDER BY level DESC, points DESC LIMIT 300`
+    ).all()).results;
+    for (const u of people) Object.assign(u, await userStats(env, u.id));
+    const ideas = (await env.DB.prepare(
+      `SELECT i.text,i.created,u.name,u.email FROM ideas i LEFT JOIN users u ON u.id=i.by_user ORDER BY i.created DESC LIMIT 100`
+    ).all()).results;
+    const reports = (await env.DB.prepare(
+      `SELECT r.id,r.text,r.created,r.rating,b.name by_name,a.name about_name,a.email about_email,t.text rtext,t.stars,COALESCE(t.hidden,0) hidden
+       FROM reports r LEFT JOIN users b ON b.id=r.by_user LEFT JOIN users a ON a.id=r.about_user LEFT JOIN ratings t ON t.id=r.rating
+       ORDER BY r.created DESC LIMIT 100`
+    ).all()).results;
+    const totals = await env.DB.prepare(
+      `SELECT (SELECT COUNT(*) FROM users WHERE agreed=1) users, (SELECT COUNT(*) FROM rides) rides,
+         (SELECT COUNT(*) FROM requests WHERE status='approved') approved, (SELECT COUNT(*) FROM ratings) ratings`
+    ).first();
+    return json({ people, ideas, reports, totals });
+  }
+  if (p === '/admin/act') {
+    const id = str(b.id, 60);
+    if (b.action === 'cert') await env.DB.prepare('UPDATE users SET cert_sent=? WHERE id=?').bind(b.on === false ? 0 : Date.now(), id).run();
+    else if (b.action === 'hide' || b.action === 'unhide') await env.DB.prepare('UPDATE ratings SET hidden=? WHERE id=?').bind(b.action === 'hide' ? 1 : 0, id).run();
+    else bad('action');
+    return json({ ok: true });
+  }
+  bad('not found', 404);
+}
+const ADMIN_JS = String.raw`
+var key = (location.hash.match(/key=([^&]+)/) || [])[1] || localStorage.getItem('trempim_admin') || '';
+if (location.hash) history.replaceState(null, '', location.pathname);
+var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+var LV = ['', '🥉 נהג חסד', '🥈 נהג קבוע', '🥇 עמוד התווך'];
+var d8 = function (t) { return t ? new Date(t).toLocaleDateString('he-IL') : ''; };
+function post(path, data) { data.key = key; return fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(function (r) { if (r.status === 403) throw new Error('key'); return r.json(); }); }
+function load() {
+  document.getElementById('out').textContent = 'טוען...';
+  post('/admin/data', {}).then(function (j) {
+    localStorage.setItem('trempim_admin', key); document.getElementById('login').hidden = true;
+    var t = j.totals, h = '<p class="muted">' + t.users + ' חברים · ' + t.rides + ' נסיעות · ' + t.approved + ' טרמפים שאושרו · ' + t.ratings + ' דירוגים</p>';
+    h += '<h2>זכאים לתעודה מודפסת (עמוד התווך)</h2><div class="box"><table><tr><th>שם</th><th>טלפון</th><th>מייל</th><th>פעילות</th><th>טרמפים</th><th>נקודות</th><th>תעודה</th></tr>';
+    var gold = j.people.filter(function (u) { return u.level >= 3; });
+    h += gold.length ? gold.map(function (u) { return '<tr><td class="lv3">' + esc(u.name) + '</td><td dir="ltr">' + esc(u.phone) + '</td><td dir="ltr">' + esc(u.email) + '</td><td>' + u.active + '</td><td>' + u.approved + '</td><td>' + u.points + '</td><td>' +
+      (u.cert_sent ? 'נשלחה ' + d8(u.cert_sent) + ' <button data-cert="' + u.id + '" data-on="0">ביטול</button>' : '<button data-cert="' + u.id + '" data-on="1">סמן שנשלחה</button>') + '</td></tr>'; }).join('') : '<tr><td colspan="7" class="muted">עוד אין. מגיעים אחרי 10 נסיעות קבועות פעילות או 30 טרמפים.</td></tr>';
+    h += '</table></div><h2>כל בעלי התגים</h2><div class="box"><table><tr><th>שם</th><th>תג</th><th>שגריר</th><th>פעילות</th><th>טרמפים</th><th>הביא נהגים</th><th>דירוג</th><th>נקודות</th></tr>' +
+      (j.people.map(function (u) { return '<tr><td>' + esc(u.name) + '</td><td>' + (LV[u.level] || '') + '</td><td>' + (u.amb ? '💎' : '') + '</td><td>' + u.active + '</td><td>' + u.approved + '</td><td>' + u.refs + '</td><td>' + (u.rating_n ? (u.rating_sum / u.rating_n).toFixed(1) + ' (' + u.rating_n + ')' : '') + '</td><td>' + u.points + '</td></tr>'; }).join('') || '<tr><td colspan="8" class="muted">עוד אין.</td></tr>') + '</table></div>';
+    h += '<h2>דיווחים</h2><div class="box"><table><tr><th>מתי</th><th>מי דיווח</th><th>על מי</th><th>מה</th><th>תגובה</th></tr>' +
+      (j.reports.map(function (r) { return '<tr><td>' + d8(r.created) + '</td><td>' + esc(r.by_name) + '</td><td>' + esc(r.about_name) + '<div class="muted" dir="ltr">' + esc(r.about_email) + '</div></td><td>' + esc(r.text) + '</td><td>' +
+        (r.rating ? '★' + r.stars + ' "' + esc(r.rtext) + '" <button data-hide="' + r.rating + '" data-act="' + (r.hidden ? 'unhide' : 'hide') + '">' + (r.hidden ? 'להחזיר' : 'להסתיר') + '</button>' : '') + '</td></tr>'; }).join('') || '<tr><td colspan="5" class="muted">אין דיווחים.</td></tr>') + '</table></div>';
+    h += '<h2>רעיונות</h2><div class="box"><table><tr><th>מתי</th><th>מי</th><th>רעיון</th></tr>' +
+      (j.ideas.map(function (i) { return '<tr><td>' + d8(i.created) + '</td><td>' + esc(i.name) + '</td><td>' + esc(i.text) + '</td></tr>'; }).join('') || '<tr><td colspan="3" class="muted">אין עדיין.</td></tr>') + '</table></div>';
+    document.getElementById('out').innerHTML = h;
+  }).catch(function (e) { document.getElementById('login').hidden = false; document.getElementById('out').textContent = e.message === 'key' ? 'המפתח לא נכון.' : 'שגיאה בטעינה.'; if (e.message === 'key') localStorage.removeItem('trempim_admin'); });
+}
+document.getElementById('go').onclick = function () { key = document.getElementById('k').value.trim(); load(); };
+document.getElementById('out').onclick = function (e) {
+  var c = e.target.closest('[data-cert]'), hd = e.target.closest('[data-hide]');
+  if (c) post('/admin/act', { action: 'cert', id: c.getAttribute('data-cert'), on: c.getAttribute('data-on') === '1' }).then(load);
+  if (hd) post('/admin/act', { action: hd.getAttribute('data-act'), id: hd.getAttribute('data-hide') }).then(load);
+};
+if (key) load();
+`;
+function adminPage() {
+  const html = '<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<meta name="robots" content="noindex"><title>טרמפים – ניהול</title><style>' +
+    'body{font-family:Assistant,Arial,sans-serif;background:#14110c;color:#eee4cf;margin:0;padding:16px;line-height:1.5}' +
+    'h1,h2{color:#d8b35f;margin:.6em 0 .3em}table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid #3a3226;padding:6px;text-align:right;vertical-align:top}' +
+    'th{color:#d8b35f}button{font:inherit;background:#2a2318;color:#eee4cf;border:1px solid #d8b35f;border-radius:8px;padding:3px 10px;cursor:pointer}' +
+    '.box{overflow-x:auto}.muted{color:#a89c84}.lv3{color:#ffd76a;font-weight:700}input{font:inherit;padding:6px;border-radius:8px;border:1px solid #555;background:#000;color:#fff;width:100%;max-width:420px}' +
+    '</style></head><body><h1>טרמפים – ניהול</h1><div id="login"><p>המפתח נשמר בדפדפן הזה בלבד.</p><input id="k" type="password" placeholder="מפתח ניהול"> <button id="go">כניסה</button></div><div id="out"></div>' +
+    '<script>' + ADMIN_JS + '</script></body></html>';
+  return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex',
+    'Content-Security-Policy': "default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'" } });
 }

@@ -17,6 +17,17 @@
 
   var token = lsGet(TOKEN_KEY);
   var me = null;
+  // קישור הזמנה אישי (?ref=): נשמר עד הכניסה הראשונה
+  var REF_KEY = 'trempim_ref';
+  (function () { var r = new URLSearchParams(location.search).get('ref'); if (r && /^[a-z0-9]{6,12}$/.test(r)) lsSet(REF_KEY, r); })();
+
+  /* ---------- דרגות ---------- */
+  var LV = [null, { ic: '🥉', name: 'נהג חסד' }, { ic: '🥈', name: 'נהג קבוע' }, { ic: '🥇', name: 'עמוד התווך' }];
+  function badge(level, amb) {
+    var l = LV[level];
+    return (l ? '<span class="tp-lv lv' + level + '" title="' + l.name + '">' + l.ic + ' ' + l.name + '</span>' : '') + (amb ? '<span class="tp-lv amb" title="שגריר השכונה">💎</span>' : '');
+  }
+  function starsOf(n) { return '★★★★★'.slice(0, n) + '<span class="off">' + '★★★★★'.slice(n) + '</span>'; }
 
   /* ---------- שרת ---------- */
   function api(path, data) {
@@ -36,6 +47,7 @@
     'date': 'התאריך לא תקין (עד 30 יום קדימה).', 'time': 'חסרה שעה.', 'route': 'לא הצלחתי לחשב מסלול.', 'phone': 'מספר הטלפון לא נראה תקין.',
     'name': 'חסר שם.', 'agree': 'צריך לסמן שאתה מעל 18 ומסכים לכללים.', 'paybox': 'קישור הפייבוקס לא נראה תקין.', 'profile': 'צריך להשלים פרופיל.',
     'seats': 'במונית אפשר עד 3 מצטרפים.', 'too many rides': 'יש לך כבר הרבה נסיעות פתוחות.', 'too many requests': 'שלחת הרבה בקשות היום. נסה שוב מחר.', 'place out of range': 'הכתובת מחוץ לישראל.',
+    'already rated': 'כבר דירגת את הטרמפ הזה.', 'too early': 'אפשר לדרג אחרי הטרמפ.', 'stars': 'בחרו כמה כוכבים.',
   };
   var errText = function (e) { return ERR[e && e.code] || 'משהו השתבש. נסה שוב בעוד רגע.'; };
 
@@ -239,8 +251,8 @@
   }
   function onCredential(resp) {
     $('tp-login-msg').textContent = 'נכנס...';
-    api('/auth', { credential: resp.credential }).then(function (j) {
-      token = j.token; lsSet(TOKEN_KEY, token); me = j.user; used('login'); showApp();
+    api('/auth', { credential: resp.credential, ref: lsGet(REF_KEY) || '' }).then(function (j) {
+      token = j.token; lsSet(TOKEN_KEY, token); lsSet(REF_KEY, null); me = j.user; used('login'); showApp();
     }).catch(function () { $('tp-login-msg').textContent = 'הכניסה לא הצליחה. נסו שוב.'; });
   }
   function logout(silent) {
@@ -255,6 +267,7 @@
     if (!me.ready) {
       $('tp-profile').hidden = false; $('tp-main').hidden = true;
       $('pf-name').value = me.name || ''; $('pf-phone').value = me.phone || ''; $('pf-paybox').value = me.paybox || '';
+      $('pf-board').checked = me.board !== false;
     } else {
       $('tp-profile').hidden = true; $('tp-main').hidden = false;
       loadInbox(); loadMyRides();
@@ -263,18 +276,151 @@
     }
   }
   function renderMe() {
-    var stars = me.rating ? ' · ★ ' + me.rating : '';
+    var stars = me.rating ? ' · ★ ' + me.rating + ' (' + me.ratingN + ')' : '';
     $('tp-me').innerHTML = '<div class="who">' + (me.pic ? '<img src="' + esc(me.pic) + '" alt="" referrerpolicy="no-referrer">' : '') +
-      '<div><b>' + esc(me.name) + '</b><div class="pts">' + (me.points || 0) + ' נקודות חסד' + stars + '</div></div></div>' +
+      '<div><b>' + esc(me.name) + '</b> ' + badge(me.level, me.amb) + '<div class="pts">' + (me.points || 0) + ' נקודות חסד' + stars + '</div></div></div>' +
       '<div><button type="button" id="tp-edit">עריכת פרופיל</button> · <button type="button" id="tp-out">יציאה</button></div>';
     $('tp-out').onclick = function () { logout(false); };
     $('tp-edit').onclick = function () { me.ready = false; showApp(); };
+    renderRank();
+  }
+
+  /* ---------- סולם המעמד: איפה אני ומה חסר ---------- */
+  function nextStep() {
+    var s = me.stats || { active: 0, waiting: 0, approved: 0, refs: 0 }, lv = me.level || 0;
+    var one = function (n, a, b) { return n === 1 ? a : 'עוד ' + n + ' ' + b; };
+    if (lv === 0) {
+      var n = Math.max(1, 3 - s.active);
+      return { pct: s.active / 3, to: LV[1], text: one(n, 'עוד נסיעה קבועה פעילה אחת', 'נסיעות קבועות פעילות') + ' ל' + LV[1].ic + ' נהג חסד!' };
+    }
+    if (lv < 3) {
+      var A = lv === 1 ? 6 : 10, B = lv === 1 ? 10 : 30;
+      var pa = s.active / A, pb = s.approved / B;
+      var t = pa >= pb ? one(A - s.active, 'עוד נסיעה קבועה פעילה אחת', 'נסיעות קבועות פעילות') : one(B - s.approved, 'עוד טרמפ אחד שתאשר', 'טרמפים שתאשר');
+      return { pct: Math.max(pa, pb), to: LV[lv + 1], text: t + ' ל' + LV[lv + 1].ic + ' ' + LV[lv + 1].name + '!' };
+    }
+    return { pct: 1, to: null, text: 'הגעת לפסגה: עמוד התווך של המיזם. תודה!' };
+  }
+  function cnt(n, one, many) { return n === 1 ? one : n + ' ' + many; }
+  function renderRank() {
+    var box = $('tp-rank');
+    if (!me.ready) { box.hidden = true; return; }
+    var s = me.stats || { active: 0, waiting: 0, approved: 0, refs: 0 }, st = nextStep();
+    var invite = PAGE + '?ref=' + encodeURIComponent(me.refCode || '');
+    var h = '<div class="tp-rank-top"><div><span class="tp-rank-pts">' + (me.points || 0) + '</span> נקודות חסד</div>' +
+      (me.level ? '<div>' + badge(me.level, me.amb) + '</div>' : '<div class="kh-hint">עוד אין תג</div>') + '</div>' +
+      '<div class="tp-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(st.pct * 100) + '"><i style="width:' + Math.round(Math.min(1, st.pct) * 100) + '%"></i></div>' +
+      '<p class="tp-next">' + st.text + '</p>' +
+      '<p class="kh-hint">' + cnt(s.active, 'נסיעה קבועה פעילה אחת', 'נסיעות קבועות פעילות') + ' · ' + cnt(s.approved, 'טרמפ אחד שאישרת', 'טרמפים שאישרת') +
+      (s.waiting ? ' · ' + (s.waiting === 1 ? 'נסיעה קבועה אחת בדרך' : s.waiting + ' נסיעות קבועות בדרך') + ' להיות פעילות (שבועיים, או כשמישהו מצטרף)' : '') + '</p>' +
+      '<div class="acts">' +
+      (me.level ? '<button class="btn btn-gold btn-sm" type="button" id="tp-cert-open">🎖️ תעודת ההוקרה שלי</button>' : '') +
+      '<button class="btn btn-line btn-sm" type="button" id="tp-pts-open">פירוט הנקודות</button>' +
+      '<a class="btn btn-line btn-sm" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent('הצטרפו למיזם הטרמפים של השכונה: מי שנוסע מפרסם, ומי שבדרך מצטרף. בחינם או בהשתתפות הוגנת בדלק: ' + invite) + '">💎 להזמין נהגים (' + s.refs + '/5)</a>' +
+      '</div><div id="tp-pts" hidden></div>';
+    box.innerHTML = h; box.hidden = false;
+    if ($('tp-cert-open')) $('tp-cert-open').onclick = openCert;
+    $('tp-pts-open').onclick = loadPoints;
+  }
+  var REASON = { upload: 'פרסום נסיעה', upload_regular: 'פרסום נסיעה קבועה', upload_cancel: 'נסיעה שבוטלה מהר', active: 'נסיעה קבועה פעילה 🎉', approve: 'טרמפ שאושר', approve_free: 'טרמפ בחינם שאושר', approve_cancel: 'טרמפ מאושר שבוטל', warm: 'תגובה חמה של 5 כוכבים', before: 'נקודות מלפני הפירוט' };
+  function loadPoints() {
+    var box = $('tp-pts');
+    if (!box.hidden) { box.hidden = true; return; }
+    box.hidden = false; box.innerHTML = '<p class="kh-hint">טוען...</p>';
+    api('/me/points').then(function (j) {
+      box.innerHTML = j.log.length ? '<ul class="tp-log">' + j.log.map(function (x) {
+        var d = new Date(x.created);
+        return '<li><b class="' + (x.points < 0 ? 'neg' : '') + '">' + (x.points > 0 ? '+' : '') + x.points + '</b> ' + esc(REASON[x.reason] || x.reason) +
+          (x.from_label ? ' <small>' + esc(x.from_label) + ' ← ' + esc(x.to_label) + '</small>' : '') + ' <small>' + d.getDate() + '.' + (d.getMonth() + 1) + '</small></li>';
+      }).join('') + '</ul>' : '<p class="kh-hint">עוד אין נקודות. פרסום נסיעה קבועה נותן 5 נקודות מיד.</p>';
+    }).catch(function () { box.innerHTML = '<p class="kh-hint">לא הצלחתי לטעון.</p>'; });
+  }
+
+  /* ---------- תעודת הוקרה דיגיטלית ---------- */
+  var SERIF = '"Frank Ruhl Libre", "David Libre", David, serif', SANS = '"Assistant", Arial, sans-serif';
+  var CERT_WHY = {
+    1: 'על נסיעות קבועות שפתחו את הדרך לשכנים',
+    2: 'על נסיעות קבועות וטרמפים רבים, בלב טוב ובנאמנות',
+    3: 'על שנעשה לעמוד התווך של מיזם הטרמפים, ועל חסד שאינו פוסק',
+  };
+  function drawCert() {
+    var c = $('tp-cert-canvas'), ctx = c.getContext('2d'), W = c.width, H = c.height, M = 46;
+    var g = ctx.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#f6efdd'); g.addColorStop(1, '#ead9b4');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = '#8a6a2a'; ctx.lineWidth = 6; ctx.strokeRect(M, M, W - 2 * M, H - 2 * M);
+    ctx.lineWidth = 2; ctx.strokeRect(M + 16, M + 16, W - 2 * M - 32, H - 2 * M - 32);
+    [[M + 36, M + 36, 1, 1], [W - M - 36, M + 36, -1, 1], [M + 36, H - M - 36, 1, -1], [W - M - 36, H - M - 36, -1, -1]].forEach(function (p) {
+      ctx.beginPath(); ctx.moveTo(p[0], p[1] + 70 * p[3]); ctx.lineTo(p[0], p[1]); ctx.lineTo(p[0] + 70 * p[2], p[1]); ctx.stroke();
+      ctx.beginPath(); ctx.arc(p[0] + 18 * p[2], p[1] + 18 * p[3], 5, 0, Math.PI * 2); ctx.fillStyle = '#8a6a2a'; ctx.fill();
+    });
+    ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.fillStyle = '#8a6a2a'; ctx.font = '600 30px ' + SANS; ctx.fillText('בס"ד', W - M - 70, M + 90);
+    ctx.textAlign = 'center';
+    var lv = Math.min(3, me.level || 1), L = LV[lv], y = 300;
+    function line(t, font, color, dy) { ctx.font = font; ctx.fillStyle = color; ctx.fillText(t, W / 2, y); y += dy; }
+    function wrap(t, font, color, maxW, lh) {
+      ctx.font = font; var words = t.split(' '), cur = '', out = [];
+      words.forEach(function (w) { var test = cur ? cur + ' ' + w : w; if (ctx.measureText(test).width > maxW && cur) { out.push(cur); cur = w; } else cur = test; });
+      if (cur) out.push(cur);
+      out.forEach(function (l) { line(l, font, color, lh); });
+    }
+    line('תעודת הוקרה', '700 112px ' + SERIF, '#6b4f1a', 90);
+    line('—  ✦  —', '400 34px ' + SANS, '#8a6a2a', 120);
+    line(L.ic, '400 150px ' + SANS, '#6b4f1a', 90);
+    line(L.name, '700 72px ' + SERIF, '#6b4f1a', 110);
+    line('מוענקת ל', '400 42px ' + SANS, '#241d14', 110);
+    wrap(me.name || '', '700 104px ' + SERIF, '#241d14', W - 300, 120);
+    y += 10;
+    wrap(CERT_WHY[lv], '400 44px ' + SANS, '#241d14', W - 320, 62);
+    var s = me.stats || {};
+    y += 10;
+    line(cnt(s.active, 'נסיעה קבועה פעילה אחת', 'נסיעות קבועות פעילות') + ' · ' + cnt(s.approved, 'טרמפ אחד', 'טרמפים'), '600 36px ' + SANS, '#8a6a2a', 70);
+    var heb = '';
+    try { heb = new Intl.DateTimeFormat('he-u-ca-hebrew', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date()); } catch (e) {}
+    line(heb || new Date().toLocaleDateString('he-IL'), '400 34px ' + SANS, '#8a6a2a', 0);
+    // חתימה
+    var sy = H - M - 170;
+    ctx.strokeStyle = '#8a6a2a'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(W / 2 - 200, sy); ctx.lineTo(W / 2 + 200, sy); ctx.stroke();
+    ctx.font = '700 40px ' + SERIF; ctx.fillStyle = '#6b4f1a'; ctx.fillText('גילעד רחמים', W / 2, sy + 50);
+    ctx.font = '400 28px ' + SANS; ctx.fillStyle = '#6b5d45'; ctx.fillText('מיזם הטרמפים הקהילתי · הכלים של גילעד רחמים', W / 2, sy + 95);
+  }
+  function openCert() {
+    var box = $('tp-cert'); box.hidden = false;
+    var go = function () { drawCert(); box.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+    if (document.fonts && document.fonts.load) Promise.all([document.fonts.load('700 40px "Frank Ruhl Libre"'), document.fonts.load('400 30px "Assistant"')]).then(go, go); else go();
+    used('cert');
+  }
+  function certBlob(cb) { $('tp-cert-canvas').toBlob(cb, 'image/png'); }
+  function initCert() {
+    $('tp-cert-x').onclick = function () { $('tp-cert').hidden = true; };
+    $('tp-cert-dl').onclick = function () {
+      certBlob(function (b) { var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'תעודת-הוקרה-טרמפים.png'; document.body.appendChild(a); a.click(); a.remove(); used('cert_dl'); });
+    };
+    $('tp-cert-share').onclick = function () {
+      var text = 'קיבלתי תעודת הוקרה ממיזם הטרמפים הקהילתי! מי שנוסע מפרסם, ומי שבדרך מצטרף: ' + PAGE + (me.refCode ? '?ref=' + me.refCode : '');
+      certBlob(function (b) {
+        var f = new File([b], 'teuda-trempim.png', { type: 'image/png' });
+        if (navigator.canShare && navigator.canShare({ files: [f] })) navigator.share({ files: [f], text: text }).then(function () { used('cert_share'); }).catch(function () {});
+        else { window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener'); used('cert_share'); }
+      });
+    };
+  }
+
+  /* ---------- לוח הכבוד ---------- */
+  function loadBoard() {
+    fetch(API + '/leaders').then(function (r) { return r.json(); }).then(function (j) {
+      if (!j || !j.leaders) return;
+      $('tp-board').hidden = false;
+      $('tp-board-list').innerHTML = j.leaders.length ? j.leaders.map(function (x) {
+        return '<li><b>' + esc(x.name) + '</b> ' + badge(x.level, x.amb) +
+          '<span class="meta">' + x.points + ' נקודות החודש' + (x.rating ? ' · ★ ' + x.rating + ' (' + x.ratingN + ')' : '') + (x.cert ? ' · 🎖️ קיבל תעודת הוקרה' : '') + '</span></li>';
+      }).join('') : '<li class="kh-empty">החודש רק התחיל. מי שיפרסם נסיעה קבועה ראשון, יופיע כאן ראשון.</li>';
+    }).catch(function () {});
   }
   function initProfile() {
     $('tp-profile').addEventListener('submit', function (e) {
       e.preventDefault();
       var msg = $('pf-msg'); msg.textContent = 'שומר...';
-      api('/me', { name: $('pf-name').value, phone: $('pf-phone').value, paybox: $('pf-paybox').value.trim(), agreed: $('pf-agree').checked })
+      api('/me', { name: $('pf-name').value, phone: $('pf-phone').value, paybox: $('pf-paybox').value.trim(), agreed: $('pf-agree').checked, board: $('pf-board').checked })
         .then(function (j) { me = j.user; msg.textContent = ''; showApp(); })
         .catch(function (err) { msg.textContent = errText(err); });
     });
@@ -338,11 +484,15 @@
     if (m.mine) act = '<span class="tp-st ' + m.mine.status + '">' + (m.mine.status === 'approved' ? 'אושר! ראו בלשונית הבקשות' : 'הבקשה נשלחה, ממתין לנהג') + '</span>';
     else act = (m.price ? '<span class="tp-price">' + m.price + ' ₪</span><button type="button" class="go" data-req="' + i + '" data-mode="paid">לבקש בהשתתפות בדלק</button>' : '<span class="tp-price tp-free">בחינם</span>') +
       '<button type="button" data-req="' + i + '" data-mode="free">' + (m.price ? 'לבקש בחינם' : 'לבקש להצטרף') + '</button>';
+    var said = (d.said || []).map(function (c) {
+      return '<blockquote class="tp-said"><span class="tp-stars">' + starsOf(c.stars) + '</span> "' + esc(c.text) + '" <small>– ' + esc(c.by) + '</small>' +
+        ' <button type="button" class="tp-flag" data-flag="' + esc(c.id) + '" title="דיווח על תגובה פוגענית">דיווח</button></blockquote>';
+    }).join('');
     return '<div class="kh-item tp-match" data-i="' + i + '">' +
-      '<div class="top"><b>' + esc(d.name) + ' · עובר לידך ב-' + esc(m.pass) + '</b><span>' + esc(dayLabel(m.date)) + ' · ' + (m.seatsLeft === 1 ? 'מקום אחד פנוי' : 'עוד ' + m.seatsLeft + ' מקומות') + '</span></div>' +
+      '<div class="top"><b>' + esc(d.name) + ' ' + badge(d.level, d.amb) + ' · עובר לידך ב-' + esc(m.pass) + '</b><span>' + esc(dayLabel(m.date)) + ' · ' + (m.seatsLeft === 1 ? 'מקום אחד פנוי' : 'עוד ' + m.seatsLeft + ' מקומות') + '</span></div>' +
       '<p>' + esc(m.from) + ' ← ' + esc(m.to) + (m.regular ? '<span class="tp-reg">נסיעה קבועה</span>' : '') + '</p>' +
       '<p class="lbl">' + near + ' · הדרך שלך ' + m.segKm + ' ק"מ' + stars + '</p>' +
-      (m.note ? '<p>' + esc(m.note) + '</p>' : '') +
+      (m.note ? '<p>' + esc(m.note) + '</p>' : '') + said +
       '<div class="acts">' + act + '</div></div>';
   }
   // כרטיס מונית: החלק המשוער של המבקש, וכמה הוא חוסך מול מונית לבד
@@ -362,6 +512,15 @@
   var lastMatches = [];
   function initRiderActions() {
     $('rd-list').addEventListener('click', function (e) {
+      var f = e.target.closest('button[data-flag]');
+      if (f) {
+        var why = prompt('מה פוגע בתגובה הזאת? (גילעד יבדוק)', 'תגובה פוגענית');
+        if (why === null) return;
+        f.disabled = true;
+        api('/report', { rating: f.getAttribute('data-flag'), text: (why || 'תגובה פוגענית').slice(0, 600) })
+          .then(function () { f.textContent = 'דווח, תודה'; used('report'); }).catch(function () { f.disabled = false; alert('הדיווח לא נשלח. נסו שוב.'); });
+        return;
+      }
       var b = e.target.closest('button[data-req]'); if (!b) return;
       var card = b.closest('.tp-match');
       var m = lastMatches[+b.getAttribute('data-req')];
@@ -445,16 +604,17 @@
       if (reg) data.days = days; else data.date = $('dr-date').value;
       sent = data;
       return api('/rides', data);
-    }).then(function () {
+    }).then(function (j) {
       var tx = isTaxiMode();
       used(tx ? 'publish-taxi' : 'publish');
+      var got = j && j.ride && j.ride.points;
       var when = reg ? 'בימים ' + days.map(function (d) { return LET[d] + "'"; }).join(' ') : dayLabel($('dr-date').value);
       var share = tx ? 'אני לוקח מונית ' + when + ' ב-' + $('dr-time').value + ' מ' + from.label + ' ל' + to.label + '. מי שבדרך מוזמן להצטרף, ומתחלקים במונה: ' + PAGE :
         'אני נוסע ' + when + ' ב-' + $('dr-time').value + ' מ' + from.label + ' ל' + to.label + ', ויש לי מקום. מי שבדרך מוזמן להצטרף: ' + PAGE;
-      msg.innerHTML = 'הנסיעה פורסמה! כל מי שבדרך יראה אותה. <a class="btn btn-line btn-sm" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(share) + '">לספר בקבוצה של השכונה</a>';
+      msg.innerHTML = 'הנסיעה פורסמה! כל מי שבדרך יראה אותה.' + (got ? ' <b>+' + got + ' נקודות חסד</b>' + (reg ? ', ועוד 15 כשהיא תהיה פעילה.' : '.') : '') + ' <a class="btn btn-line btn-sm" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(share) + '">לספר בקבוצה של השכונה</a>';
       drRoute = null; $('dr-route').innerHTML = '';
       if (!sent.days) { $('dr-msg').insertAdjacentHTML('beforeend', afterOnce(sent)); wireAfter(sent); }
-      rememberRide(sent); loadMyRides(); loadStats();
+      rememberRide(sent); loadMyRides(); loadStats(); refreshMe();
     }).catch(function (err) {
       msg.textContent = err.message === 'notfound' || err.message === 'empty' ? 'לא מצאתי את הכתובת. כתבו רחוב ועיר ובחרו מהרשימה.' : err.message === 'route' ? 'לא הצלחתי לחשב מסלול בין הנקודות.' : errText(err);
     });
@@ -470,6 +630,8 @@
           '<p>' + esc(r.from_label) + ' ← ' + esc(r.to_label) + ' · ' + r.km + ' ק"מ</p>' +
           (r.pending ? '<p class="lbl">' + r.pending + ' מבקשים להצטרף – ראו בלשונית הבקשות</p>' : '') +
           (r.approved ? '<p class="lbl">אושרו: ' + r.approved + '</p>' : '') +
+          (r.days ? (r.active ? '<p class="tp-active">✓ נסיעה פעילה · קיבלת 15 נקודות</p>' :
+            '<p class="lbl">תהיה פעילה (+15) בעוד ' + Math.max(1, 14 - Math.floor((Date.now() - r.created) / 864e5)) + ' ימים, או כשמישהו יצטרף</p>') : '') +
           '<div class="acts"><button type="button" data-close="' + esc(r.id) + '">לבטל את הנסיעה</button></div></div>';
       }).join('') : '<p class="kh-empty">עוד לא פרסמת נסיעה.</p>';
     }).catch(function () {});
@@ -534,6 +696,32 @@
     }).catch(function () {});
   }
   var ST = { pending: 'ממתין', approved: 'אושר', declined: 'לא הפעם', cancelled: 'בוטל' };
+  function rateBtn(x, who) {
+    return x.canRate ? '<button type="button" class="go" data-rate="' + x.id + '" data-who="' + esc(who) + '">⭐ לדרג</button>' : '';
+  }
+  // טופס דירוג קטן בתוך הכרטיס
+  function rateForm(b) {
+    var card = b.closest('.tp-match'), id = b.getAttribute('data-rate');
+    if (card.querySelector('.tp-rate')) return;
+    var f = document.createElement('div'); f.className = 'tp-rate';
+    f.innerHTML = '<p>איך היה עם ' + esc(b.getAttribute('data-who')) + '?</p><div class="tp-starpick" role="radiogroup">' +
+      [1, 2, 3, 4, 5].map(function (n) { return '<button type="button" data-s="' + n + '" aria-label="' + n + ' כוכבים">★</button>'; }).join('') + '</div>' +
+      '<textarea maxlength="200" placeholder="מילה טובה (לא חובה, עד 200 תווים). תגובה חמה של 5 כוכבים נותנת לו 5 נקודות חסד"></textarea>' +
+      '<div class="acts"><button type="button" class="ok" data-send>לשלוח דירוג</button></div><p class="res" aria-live="polite"></p>';
+    card.appendChild(f);
+    var stars = 0;
+    f.addEventListener('click', function (e) {
+      var s = e.target.closest('[data-s]');
+      if (s) { stars = +s.getAttribute('data-s'); [].forEach.call(f.querySelectorAll('[data-s]'), function (x) { x.classList.toggle('on', +x.getAttribute('data-s') <= stars); }); return; }
+      if (!e.target.closest('[data-send]')) return;
+      var res = f.querySelector('.res');
+      if (!stars) { res.textContent = 'בחרו כמה כוכבים.'; return; }
+      e.target.disabled = true;
+      api('/ratings', { request: id, stars: stars, text: f.querySelector('textarea').value })
+        .then(function () { used('rate'); f.innerHTML = '<p class="tp-active">תודה! הדירוג נשמר.</p>'; b.remove(); })
+        .catch(function (err) { e.target.disabled = false; res.textContent = errText(err); });
+    });
+  }
   function money(x) { return x.price ? x.price + ' ₪ השתתפות בדלק' : 'בחינם'; }
   function driverReqHtml(x) {
     var r = x.rider;
@@ -542,6 +730,8 @@
       acts = '<button type="button" class="ok" data-act="approve" data-id="' + x.id + '">' + (x.kind === 'taxi' ? 'לאשר שיצטרף למונית' : 'לאשר' + (x.mode === 'paid' && x.price ? ' (' + x.price + ' ₪)' : '')) + '</button>' +
         (x.mode === 'paid' && x.price && x.kind !== 'taxi' ? '<button type="button" data-act="approve-free" data-id="' + x.id + '">לאשר בחינם</button>' : '') +
         '<button type="button" class="no" data-act="decline" data-id="' + x.id + '">לא הפעם</button>';
+    } else if (x.canRate) {
+      acts = rateBtn(x, r.name.split(' ')[0]);
     } else if (x.status === 'approved' && x.kind === 'taxi') {
       var tt = 'היי ' + r.name.split(' ')[0] + ', זה ' + me.name.split(' ')[0] + ' מהטרמפים. נפגשים ' + dayLabel(x.date) + ' בסביבות ' + x.pass + ' ב' + x.pickup.label +
         ', ואני עם המונית. החלק שלך במונה כ-' + x.price + ' ₪, בביט אחרי הנסיעה.';
@@ -557,7 +747,7 @@
         '<button type="button" data-act="cancel" data-id="' + x.id + '">לבטל</button>';
     }
     var tx = x.kind === 'taxi';
-    return '<div class="kh-item tp-match' + (tx ? ' tp-taxi' : '') + '"><div class="top"><b>' + (tx ? '<span class="tp-kind">🚕 מונית</span> ' : '') + esc(r.name) + (r.rating ? ' · ★ ' + r.rating : '') + '</b><span class="tp-st ' + x.status + '">' + ST[x.status] + '</span></div>' +
+    return '<div class="kh-item tp-match' + (tx ? ' tp-taxi' : '') + '"><div class="top"><b>' + (tx ? '<span class="tp-kind">🚕 מונית</span> ' : '') + esc(r.name) + (r.rating ? ' · ★ ' + r.rating : '') + '</b><span class="tp-st ' + x.status + '">' + (x.canRate ? 'הטרמפ עבר' : ST[x.status]) + '</span></div>' +
       '<p>' + esc(dayLabel(x.date)) + ' · ' + (tx ? 'מונית של ' : 'נסיעה של ') + esc(x.time) + ' · ' + esc(x.from) + ' ← ' + esc(x.to) + '</p>' +
       '<p class="lbl">' + (tx ? 'נפגשים ב' : 'איסוף ב') + esc(x.pickup.label) + ' בערך ב-' + esc(x.pass) + ' · עד ' + esc(x.drop) + ' · ' + x.segKm + ' ק"מ · ' +
         (tx ? 'משתתף במונה בכ-' + x.price + ' ₪ (המונית כולה כ-' + x.fare + ' ₪)' : x.mode === 'free' ? 'מבקש בחינם' : money(x)) + '</p>' +
@@ -565,7 +755,9 @@
   }
   function riderReqHtml(x) {
     var d = x.driver, acts = '', pay = '', tx = x.kind === 'taxi';
-    if (x.status === 'approved' && tx) {
+    if (x.canRate) {
+      acts = rateBtn(x, d.name.split(' ')[0]);
+    } else if (x.status === 'approved' && tx) {
       var tt = 'היי ' + d.name.split(' ')[0] + ', זה ' + me.name.split(' ')[0] + ' מהטרמפים. תודה שצירפת אותי למונית! נפגשים ב' + x.pickup.label + ' בסביבות ' + x.pass + '.';
       acts = '<a href="' + waPhone(d.phone, tt) + '" target="_blank" rel="noopener">ווטסאפ ל' + esc(d.name.split(' ')[0]) + '</a>' +
         '<a href="' + waze(x.pickup) + '" target="_blank" rel="noopener">נפגשים ב' + esc(x.pickup.label) + ' (Waze)</a>' +
@@ -585,21 +777,29 @@
     } else if (x.status === 'pending') {
       acts = '<button type="button" data-act="cancel" data-id="' + x.id + '">לבטל את הבקשה</button>';
     }
-    return '<div class="kh-item tp-match' + (tx ? ' tp-taxi' : '') + '"><div class="top"><b>' + (tx ? '<span class="tp-kind">🚕 מונית</span> ' : '') + esc(d.name) + ' · ' + esc(dayLabel(x.date)) + ' ב-' + esc(x.pass) + '</b><span class="tp-st ' + x.status + '">' + ST[x.status] + '</span></div>' +
+    return '<div class="kh-item tp-match' + (tx ? ' tp-taxi' : '') + '"><div class="top"><b>' + (tx ? '<span class="tp-kind">🚕 מונית</span> ' : '') + esc(d.name) + ' · ' + esc(dayLabel(x.date)) + ' ב-' + esc(x.pass) + '</b><span class="tp-st ' + x.status + '">' + (x.canRate ? 'הטרמפ עבר' : ST[x.status]) + '</span></div>' +
       '<p>' + (tx ? 'נפגשים ב' : 'איסוף ב') + esc(x.pickup.label) + ' · עד ' + esc(x.drop) + ' · ' + (tx ? 'החלק שלך במונה כ-' + x.price + ' ₪' : money(x)) + '</p>' + pay + '<div class="acts">' + acts + '</div></div>';
   }
   function initInboxActions() {
     $('tp-main').addEventListener('click', function (e) {
       var c = e.target.closest('button[data-copy]');
       if (c) { (window.kelimCopy ? window.kelimCopy(c.getAttribute('data-copy')) : navigator.clipboard.writeText(c.getAttribute('data-copy'))); c.textContent = 'הועתק'; return; }
+      var rb = e.target.closest('button[data-rate]');
+      if (rb) { rateForm(rb); return; }
       var b = e.target.closest('button[data-act]'); if (!b) return;
       var act = b.getAttribute('data-act');
       if (act === 'cancel' && !confirm('לבטל?')) return;
       var data = act === 'approve-free' ? { action: 'approve', free: true } : { action: act };
       b.disabled = true;
-      api('/requests/' + b.getAttribute('data-id'), data).then(function () { used(act === 'cancel' ? 'cancel' : act === 'decline' ? 'decline' : 'approve'); loadInbox(); loadMyRides(); loadStats(); })
+      api('/requests/' + b.getAttribute('data-id'), data).then(function () { used(act === 'cancel' ? 'cancel' : act === 'decline' ? 'decline' : 'approve'); loadInbox(); loadMyRides(); loadStats(); refreshMe(); })
         .catch(function (err) { b.disabled = false; alert(errText(err)); });
     });
+  }
+
+  // רענון הנקודות והדרגה אחרי פעולה
+  function refreshMe() {
+    if (!token) return;
+    api('/me').then(function (j) { var ready = me && me.ready; me = j.user; if (ready) renderMe(); }).catch(function () {});
   }
 
   /* ---------- רעיונות ---------- */
@@ -939,7 +1139,7 @@
 
   /* ---------- התחלה ---------- */
   function start() {
-    loadStats(); initCalc(); initProfile(); initTabs(); initRider(); initRiderActions(); initDriver(); initFast(); initCalendarPick(); initInboxActions(); initIdeas();
+    loadStats(); loadBoard(); initCert(); initCalc(); initProfile(); initTabs(); initRider(); initRiderActions(); initDriver(); initFast(); initCalendarPick(); initInboxActions(); initIdeas();
     if (token) {
       api('/me').then(function (j) { me = j.user; showApp(); }).catch(function () { initGoogle(); });
     }
