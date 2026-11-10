@@ -344,7 +344,8 @@ export default {
       const until = +(await (await env.STATS.get(env.STATS.idFromName('all')).fetch('https://stats/capture-get')).text()) || 0;
       if (Date.now() < until) {
         const text = v.w0 === undefined
-          ? `read=t-הקלטה=w0,no,record,/8,whatsapp-code-${Date.now()},,yes,,1,120`
+          // ווטסאפ מבקש "הקישו 8" לפני הקוד – dtmf8.wav (בשלוחה הראשית) משמיע 3 פעמים צליל של 8, ואז מקליטים
+          ? `read=f-dtmf8=w0,no,record,/8,whatsapp-code-${Date.now()},,yes,,1,120`
           : sayAndHangup(['תודה']);
         return new Response(text, { headers: { 'content-type': 'text/plain; charset=utf-8' } });
       }
