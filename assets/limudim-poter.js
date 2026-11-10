@@ -186,6 +186,7 @@
     out.appendChild(act);
     $('pt-again').addEventListener('click', function () { $('pt-q').value = ''; $('pt-imgx').click(); out.innerHTML = ''; $('pt-q').focus(); window.scrollTo({ top: $('pt-in').offsetTop - 20, behavior: 'smooth' }); });
     $('pt-print').addEventListener('click', function () { used('print'); window.print(); });
+    if (d.cached) { var cf = document.createElement('p'); cf.className = 'note'; cf.textContent = '⚡ מישהו כבר שאל את השאלה הזאת, אז הפתרון הבדוק הגיע מיד (ולא נספר במכסה שלכם).'; out.appendChild(cf); }
     if (typeof d.left === 'number') { var lf = document.createElement('p'); lf.className = 'note'; lf.textContent = 'נשארו לכם היום ' + d.left + ' שאלות.'; out.appendChild(lf); }
     if (scroll !== false) sheet.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }

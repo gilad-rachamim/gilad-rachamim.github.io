@@ -36,6 +36,13 @@ assert.equal(runCheck({ kind: 'identity', expr: 'x^2-1', expr2: '(x-1)(x+1)' }).
 assert.ok(runCheck({ kind: 'equal', expr: 'foo(3)', expr2: '1' }).skip);
 assert.ok(runCheck({ kind: 'equal', expr: 'x+', expr2: '1' }).skip);
 
+// זיכרון: אותה שאלה עם רווחים שונים = אותו מפתח; רמה אחרת = מפתח אחר
+const { cacheKey, geminiKeys } = await import('./poter-worker.js');
+assert.equal(await cacheKey({ text: 'פתור  x^2=4 ', level: 4 }), await cacheKey({ text: 'פתור x^2=4', level: 4 }));
+assert.notEqual(await cacheKey({ text: 'פתור x^2=4', level: 4 }), await cacheKey({ text: 'פתור x^2=4', level: 5 }));
+assert.deepEqual(geminiKeys({ GEMINI_KEYS: 'a1, b2,c3' }), ['a1', 'b2', 'c3']);
+assert.deepEqual(geminiKeys({ GEMINI_KEY: 'k' }), ['k']);
+
 // אבטחה: מקור זר נחסם
 const r = await worker.fetch(new Request('https://x/solve', { method: 'POST', headers: { origin: 'https://evil.example' }, body: '{}' }), {});
 assert.equal(r.status, 403);
