@@ -104,3 +104,4 @@ body.kt-printing-poster .tool>*:not(#kt-poster-sec),body.kt-printing-poster #kt-
 .kt-goal-bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--gold));transition:width .6s}
 .kt-goal-s{color:var(--body);font-size:.92rem}
 .kt-goal.done{border-color:var(--gold);background:rgba(216,179,95,.12)}
+.kt-board .kt-fire{display:block;color:#ffb36b;font-size:.82rem;font-weight:600}
