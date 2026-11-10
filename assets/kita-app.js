@@ -457,7 +457,7 @@
       app.querySelectorAll('[data-panel]').forEach(function (p) { p.hidden = p.getAttribute('data-panel') !== t; });
       if (t === 'cert') renderCerts();
       if (t === 'school') school();
-      if (t === 'quiz') { quizFill(); quizStats(); }
+      if (t === 'quiz') { quizFill(); quizStats(); bankLoad(); }
     }
 
     // ---- שאלות של המורה: שורה = שאלה | נכונה | שגויה...
@@ -492,6 +492,30 @@
       $('kt-q-err').textContent = r.bad.length ? 'בשורה ' + r.bad.join(', ') + ' חסר: צריך שאלה, תשובה נכונה ולפחות תשובה שגויה אחת, מופרדות ב-|' : '';
     }
     $('kt-q-text').addEventListener('input', quizPrev);
+    // ---- בנק שאלות מוכן (assets/kita-bank.json, נוצר ב-tools/gen_kita_bank.py). נטען רק כשפותחים את לשונית השאלות ----
+    var bank = null, bankP = null;
+    function bankLoad() {
+      if (bankP) return bankP;
+      bankP = fetch('/assets/kita-bank.json').then(function (r) { if (!r.ok) throw new Error('bank'); return r.json(); }).then(function (j) {
+        bank = j; var sel = $('kt-bank-t'), g = { math: 'מתמטיקה', eng: 'אנגלית' };
+        sel.innerHTML = '<option value="">בוחרים נושא…</option>' + Object.keys(g).map(function (s) {
+          return '<optgroup label="' + g[s] + '">' + j.topics.filter(function (t) { return t.subj === s; }).map(function (t) { return '<option value="' + esc(t.id) + '">' + esc(t.name) + '</option>'; }).join('') + '</optgroup>';
+        }).join('');
+        $('kt-bank-go').disabled = false;
+      }).catch(function () { bankP = null; $('kt-bank-t').innerHTML = '<option value="">הבנק לא נטען. נסו לפתוח שוב את הלשונית.</option>'; });
+      return bankP;
+    }
+    $('kt-bank-go').addEventListener('click', function () {
+      var id = $('kt-bank-t').value, t = bank && bank.topics.filter(function (x) { return x.id === id; })[0];
+      if (!t) { $('kt-q-err').textContent = 'בוחרים נושא מהרשימה.'; return; }
+      if ($('kt-q-text').value.trim() && !confirm('להחליף את השאלות שבתיבה ב-10 שאלות על ' + t.name + '?')) return;
+      var q = t.q.slice();
+      for (var i = q.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), tmp = q[i]; q[i] = q[j]; q[j] = tmp; }
+      $('kt-q-text').value = q.slice(0, bank.pick || 10).join('\n');
+      $('kt-q-name').value = t.name;
+      quizPrev(); $('kt-q-prev').textContent = '✓ נכנסו ' + Math.min(q.length, bank.pick || 10) + ' שאלות על ' + t.name + '. אפשר לערוך, ואז "לשמור ולפרסם לכיתה".';
+      $('kt-q-text').focus(); used('chashiva_kita_more', 'bank-' + t.id);
+    });
     function quizSave(q) {
       $('kt-q-err').textContent = '';
       call('/c/' + T.code + '/admin', { key: T.key, act: 'quiz', p: tp, title: $('kt-q-name').value, q: q }).then(function (d) {
