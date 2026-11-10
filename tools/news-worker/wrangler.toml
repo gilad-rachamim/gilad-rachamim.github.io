@@ -3,7 +3,7 @@
 # מפתח Gemini:  npx wrangler secret put GEMINI_KEY   (בלי מפתח = מצב כותרות)
 # מפתח ניהול:   ADMIN_KEY (סוד) – /run?key=..&force=1 מריץ עכשיו, /reports?key=.. דיווחי טעויות
 # בדיקה במחשב: node test.mjs
-# הדף: https://gilad-rachamim.github.io/kelim/machshev/chadashot/
+# הדף: https://hakelim.com/kelim/machshev/chadashot/
 name = "kelim-news"
 main = "news-worker.js"
 compatibility_date = "2026-09-01"

@@ -94,7 +94,7 @@ export default {
     const h = cors(origin);
     if (request.method === 'OPTIONS') return h ? new Response('', { headers: h }) : new Response('', { status: 403 });
     if (url.pathname === '/ping') return json({ ok: true, model: MODEL }, 200, h || {});
-    if (url.pathname !== '/help' || request.method !== 'POST') return json({ name: 'השיר שלי – עוזר המילים', page: 'https://gilad-rachamim.github.io/kelim/shir/milim/' }, 200);
+    if (url.pathname !== '/help' || request.method !== 'POST') return json({ name: 'השיר שלי – עוזר המילים', page: 'https://hakelim.com/kelim/shir/milim/' }, 200);
     if (!h) return json({ error: 'origin' }, 403);
     const text = await request.text();
     if (text.length > MAX_IN) return json({ error: 'too_long' }, 413, h);
