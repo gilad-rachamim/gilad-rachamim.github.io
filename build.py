@@ -255,6 +255,75 @@ def shipurim_list():
         out.append(f'<li><div class="top">{tool}<time datetime="{it["date"]}">{hdate(it["date"])}</time></div>\n      <p>{html_lib.escape(it["text"], quote=False)}{shp_by(it)}</p></li>')
     return '<ol class="shp" reversed>\n    ' + "\n    ".join(out) + "\n  </ol>"
 
+# ---------- קידום בגוגל: לכל כלי "תעודת זהות" (schema), בלוק "עוד כלים בחינם", ותמונת שיתוף משלו ----------
+# INDEX = כל דפי תתי-האתרים שפתוחים לגוגל. דף "מרכז" (hub) = בית של תת-אתר או דף שיש מתחתיו 3 דפים ומעלה.
+# דף שלא רוצים בו את הבלוק: "no_rel": true ב-meta. תמונות השיתוף נוצרות ב-tools/og_images.py אל assets/og/.
+SEO_SKIP = {"pratiut", "privacy", "shipurim", "hitkadmut", "negishut"}
+SEO_AUTHOR = {"@type": "Person", "name": "גילעד רחמים אביעד", "url": BASE + "/kelim/#mi"}
+INDEX = {}
+for _p in sorted(SRC.rglob("index.html")):
+    _raw = _p.read_text(encoding="utf-8")
+    _m = re.match(r"\s*<!--meta\s*(\{.*?\})\s*-->", _raw, re.S)
+    if not _m:
+        continue
+    _meta = json.loads(_m.group(1))
+    if _meta.get("site") in SITES and not _meta.get("noindex"):
+        _h1 = re.search(r"<h1[^>]*>(.*?)</h1>", _raw, re.S)
+        _name = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", _h1.group(1))).strip() if _h1 else ""
+        _meta["_name"] = _name or re.split(r"\s[–—|-]\s|:\s", _meta["title"])[0].strip()
+        INDEX["/" + _p.relative_to(SRC).as_posix()[:-len("index.html")]] = _meta
+
+def seo_parent(p):
+    return p.rstrip("/").rsplit("/", 1)[0] + "/"
+
+def seo_children(p):
+    return [c for c in INDEX if c != p and seo_parent(c) == p and c.rstrip("/").rsplit("/", 1)[1] not in SEO_SKIP]
+
+def seo_is_hub(p):
+    return any(s["home"] == p for s in SITES.values()) or len(seo_children(p)) >= 3
+
+def seo_ld(p, url):
+    meta = INDEX.get(p)
+    if not meta or p.rstrip("/").rsplit("/", 1)[1] in SEO_SKIP:
+        return ""
+    site = SITES[meta["site"]]
+    desc = meta["description"].replace('"', "״")
+    if seo_is_hub(p):
+        d = {"@context": "https://schema.org", "@type": "CollectionPage", "name": meta["_name"], "description": desc,
+             "url": url, "inLanguage": "he", "isAccessibleForFree": True, "author": SEO_AUTHOR,
+             "mainEntity": {"@type": "ItemList", "itemListElement": [
+                 {"@type": "ListItem", "position": i, "name": INDEX[c]["_name"], "url": BASE + c}
+                 for i, c in enumerate(seo_children(p), start=1)]}}
+    else:
+        cat = ("GameApplication" if "/chashiva/" in p and "/kita/" not in p
+               else "EducationalApplication" if meta["site"] == "limudim" or "/tichnut/" in p
+               else "UtilitiesApplication")
+        d = {"@context": "https://schema.org", "@type": "WebApplication", "name": meta["_name"], "description": desc,
+             "url": url, "inLanguage": "he", "applicationCategory": cat, "operatingSystem": "Any",
+             "browserRequirements": "דפדפן רגיל בטלפון או במחשב, בלי התקנה.",
+             "isAccessibleForFree": True, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "ILS"},
+             "author": SEO_AUTHOR, "publisher": SEO_AUTHOR,
+             "isPartOf": {"@type": "WebSite", "name": site["name"], "url": BASE + site["home"]}}
+    return '<script type="application/ld+json">' + json.dumps(d, ensure_ascii=False) + "</script>"
+
+def seo_related(p):
+    meta = INDEX.get(p)
+    if not meta or meta.get("no_rel") or seo_is_hub(p) or p.rstrip("/").rsplit("/", 1)[1] in SEO_SKIP:
+        return ""
+    par = seo_parent(p)
+    sibs = sorted(set(seo_children(par)) | {p})
+    if len(sibs) < 2:
+        return ""
+    i = sibs.index(p)
+    pick = [sibs[(i + k) % len(sibs)] for k in range(1, min(4, len(sibs) - 1) + 1)]
+    def card(c):
+        d = INDEX[c]["description"]
+        d = d if len(d) <= 95 else d[:95].rsplit(" ", 1)[0].rstrip(" ,.:;–-(") + "…"
+        return f'<a href="{c}"><b>{html_lib.escape(INDEX[c]["_name"], quote=False)}</b><span>{html_lib.escape(d, quote=False)}</span></a>'
+    more = f'<p class="rel-all"><a class="gold" href="{par}">לכל הכלים של ״{html_lib.escape(INDEX[par]["_name"], quote=False)}״ ←</a></p>' if par in INDEX else ""
+    return ('\n<section class="k-sec rel no-print" aria-labelledby="rel-h">\n  <h2 id="rel-h">עוד כלים בחינם שאולי יעזרו</h2>\n  <div class="dom">'
+            + "".join(card(c) for c in pick) + f"</div>\n  {more}\n</section>\n")
+
 pages = []
 site_pages = {k: [] for k in SITES}
 for path in sorted(SRC.rglob("*.html")):
@@ -275,14 +344,17 @@ for path in sorted(SRC.rglob("*.html")):
     site = SITES.get(meta.get("site", ""))
     root = (site["name"], site["home"]) if site else ("עמוד המוהל", "/mohel/")
     html = LAYOUT_KELIM if site else LAYOUT
+    content += seo_related(url_path)
+    og_own = "og/" + url_path.strip("/").replace("/", "-") + ".jpg"
+    og_default = og_own if (site and (ROOT / "assets" / og_own).exists()) else (site["og"] if site else "og-mohel.jpg")
     rep = {
         "title": meta["title"],
         "description": meta["description"],
         "url": url,
         "og_title": meta.get("og_title", meta["title"]),
-        "og_image": meta.get("og_image", site["og"] if site else "og-mohel.jpg"),
+        "og_image": meta.get("og_image", og_default),
         "robots": '<meta name="robots" content="noindex">' if meta.get("noindex") else "",
-        "head": meta.get("head_pre", "") + GA + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root),
+        "head": meta.get("head_pre", "") + GA + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url),
         "body_class": meta.get("body_class", ""),
         "sprite": SPRITE,
         "wa": WA,
