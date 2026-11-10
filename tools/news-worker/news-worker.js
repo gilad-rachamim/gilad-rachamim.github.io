@@ -48,7 +48,9 @@ function decode(s) {
     .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'")
     .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(+n)).replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&');
 }
-function strip(s) { return decode(decode(s || '')).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim(); }
+// גרשיים בתוך מילה (זצ"ל, חב"ד) הופכים ל-״, אחרת הבינה סוגרת את המחרוזת באמצע המילה והנקודה נקטעת
+export const gershayim = s => s.replace(/([א-ת])["“”]([א-ת])/g, '$1״$2');
+function strip(s) { return gershayim(decode(decode(s || '')).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()); }
 function tag(item, name) { const m = item.match(new RegExp(`<${name}[^>]*>([\\s\\S]*?)</${name}>`)); return m ? m[1] : ''; }
 
 export function parseRss(xml, src) {
@@ -98,7 +100,9 @@ const WRITE_RULES = `אתה עורך של "החדשות ב-3 דקות": סיכו
 4. אם רק מקור אחד מדווח על משהו שנוי במחלוקת – לפתוח ב"לפי דיווח ב<שם המקור>".
 5. קו כשר: בלי פשע ופריצות, בלי רכילות, בלי ספורט ובידור, בלי פרטים קשים. פיגוע או אסון – משפט עובדתי אחד, בלי תיאורים.
 6. בלי פוליטיקה צועקת ובלי דעות. מה קרה, ומה זה אומר לאנשים.
-7. אם יש כמה ידיעות על אותו נושא – נקודה אחת עם כל ה-ids.`;
+7. אם יש כמה ידיעות על אותו נושא – נקודה אחת עם כל ה-ids.
+8. ביטחון, פשע ואסונות: ניסוח שקט ועניני. מה קרה, איפה, ומה המצב עכשיו. בלי פעלים קשים ("נטבח", "נשחט", "מרחץ דמים"), בלי פרטי פציעות, בלי ציטוטים מפחידים. אם יש הנחיה לציבור (פיקוד העורף, משטרה) – לכתוב אותה.
+9. ראשי תיבות כותבים עם ״ (גרשיים עבריים), לא עם מירכאות: זצ״ל, חב״ד, צה״ל.`;
 
 const WRITE_SCHEMA = {
   type: 'OBJECT',
@@ -110,12 +114,14 @@ const WRITE_SCHEMA = {
   required: ['main', 'haredi', 'economy']
 };
 
-const CHECK_RULES = `אתה בודק עובדות. לכל נקודה מצורף טקסט המקורות שלה.
-החזר לכל נקודה ok=true רק אם כל שם, מספר, תאריך, מקום וטענה בנקודה כתובים במפורש במקורות שלה.
-אם יש פרט שלא מופיע, או סתירה – ok=false ו-why קצר בעברית. אל תהיה מקל.`;
+const CHECK_RULES = `אתה בודק עובדות. לכל נקודה מצורפים המקורות שלה (שם האתר, כותרת ותקציר).
+ok=false רק אם יש בנקודה עובדה ממשית שלא כתובה במקורות או סותרת אותם: שם, מספר, תאריך, מקום, תפקיד, ציטוט, או טענה מה קרה.
+מותר, ולא סיבה לפסול: ניסוח אחר במילים פשוטות; סיכום של כמה מקורות יחד; "לפי דיווח ב<שם האתר>" כששם האתר מופיע במקורות; "היום", "אתמול", "הלילה" כשהמקורות מדברים על אירוע עכשווי; תואר מוכר (נשיא, ראש הממשלה, ח״כ) של אדם ששמו במקור.
+ok=false גם אם הנקודה קטועה או לא מובנת.
+כש-ok=false: why קצר בעברית, ו-fix – הנקודה מתוקנת במשפט אחד או שניים שכל פרט בהם כתוב במקורות (בלי הפרט הבעייתי), או ריק אם אי אפשר.`;
 const CHECK_SCHEMA = {
   type: 'OBJECT',
-  properties: { results: { type: 'ARRAY', items: { type: 'OBJECT', properties: { n: { type: 'INTEGER' }, ok: { type: 'BOOLEAN' }, why: { type: 'STRING' } }, required: ['n', 'ok'] } } },
+  properties: { results: { type: 'ARRAY', items: { type: 'OBJECT', properties: { n: { type: 'INTEGER' }, ok: { type: 'BOOLEAN' }, why: { type: 'STRING' }, fix: { type: 'STRING' } }, required: ['n', 'ok'] } } },
   required: ['results']
 };
 
@@ -154,6 +160,17 @@ export function numbersOk(text, srcText) {
   return nums.every(n => srcText.includes(n) || plain.includes(n.replace(/,/g, '')));
 }
 
+// הדגמים הקלים מכניסים לפעמים מילה ברוסית/ערבית/סינית באמצע משפט – נקודה כזו לא יוצאת
+export const FOREIGN = /[Ѐ-ӿ؀-ۿ぀-鿿가-힯]/;
+// ניקוי אחרון: גרשיים, ו"דיווח בבחדרי חרדים" (ב' כפולה) ← "דיווח באתר בחדרי חרדים"
+export const tidy = s => gershayim(String(s).trim()).replace(/(דיווח|פורסם|נמסר)\s+בבחדרי/g, '$1 באתר בחדרי');
+
+// תיקון של הבודק מתקבל רק אם הוא משפט שלם וקצר, המספרים בו מהמקור, והוא עובר סינון כשר
+export function fixOk(fix, srcText) {
+  const t = (fix || '').trim();
+  return t.length >= 25 && t.length <= 260 && /[.)א-ת\d]$/.test(t) && !FOREIGN.test(t) && numbersOk(t, srcText) && kosher(t);
+}
+
 async function summarize(env, items) {
   const list = items.map(x => `#${x.id} [${x.name}] ${x.title}${x.desc ? ' – ' + x.desc : ''}`).join('\n');
   const w = await gemini(env, WRITE_RULES, list, WRITE_SCHEMA);
@@ -163,32 +180,36 @@ async function summarize(env, items) {
     for (const p of (w.data[sec] || [])) {
       const ids = (p.ids || []).filter(id => byId[id]);
       if (!ids.length || !p.text) continue;
-      all.push({ sec, text: p.text.trim(), ids });
+      all.push({ sec, text: tidy(p.text), ids });
     }
   }
   // בדיקה שנייה מול המקור
   const checkText = all.map((p, i) => `נקודה ${i + 1}: ${p.text}\nמקורות:\n` +
-    p.ids.map(id => `- ${byId[id].title}. ${byId[id].desc}`).join('\n')).join('\n\n');
+    p.ids.map(id => `- [${byId[id].name}] ${byId[id].title}. ${byId[id].desc}`).join('\n')).join('\n\n');
   let verdict = {};
   try {
     const c = await gemini(env, CHECK_RULES, checkText, CHECK_SCHEMA);
     for (const r of c.data.results || []) verdict[r.n] = r;
   } catch (e) { verdict = null; }
-  const dropped = [];
+  const dropped = [], fixed = [];
   const sections = { main: [], haredi: [], economy: [] };
   all.forEach((p, i) => {
-    const srcText = p.ids.map(id => byId[id].title + ' ' + byId[id].desc).join(' ');
+    const srcText = p.ids.map(id => byId[id].name + ' ' + byId[id].title + ' ' + byId[id].desc).join(' ');
     const v = verdict ? verdict[i + 1] : null;
-    let why = '';
-    if (!numbersOk(p.text, srcText)) why = 'מספר שלא מופיע במקור';
+    let why = '', fixedFrom = '';
+    // הבודק פסל ונתן תיקון שנשען רק על המקור – לוקחים את התיקון
+    if (v && !v.ok && fixOk(v.fix, srcText)) { fixedFrom = p.text; p.text = tidy(v.fix); v.ok = true; }
+    if (FOREIGN.test(p.text)) why = 'אותיות בשפה זרה באמצע הנקודה';
+    else if (!numbersOk(p.text, srcText)) why = 'מספר שלא מופיע במקור';
     else if (verdict === null) why = 'הבדיקה השנייה לא רצה';
     else if (!v || !v.ok) why = (v && v.why) || 'לא אומת';
     else if (!kosher(p.text)) why = 'סינון כשר';
     if (why) { dropped.push({ text: p.text, why }); return; }
+    if (fixedFrom) fixed.push({ from: fixedFrom, to: p.text, why: v.why || '' });
     const seen = new Set(); // מקור אחד פעם אחת, גם אם כמה ידיעות שלו
     sections[p.sec].push({ text: p.text, sources: p.ids.map(id => ({ name: byId[id].name, link: byId[id].link })).filter(x => !seen.has(x.name) && seen.add(x.name)) });
   });
-  return { mode: 'summary', model: w.model, sections, dropped };
+  return { mode: 'summary', model: w.model, sections, dropped, fixed };
 }
 
 function titlesOnly(items) {
