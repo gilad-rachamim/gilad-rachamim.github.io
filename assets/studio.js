@@ -1239,7 +1239,7 @@
       '<label class="sd-lb">גודל אחר (פיקסלים)</label><div class="sd-row"><input type="number" id="sd-cw" min="200" max="4000" value="' + P.w + '" aria-label="רוחב"> × <input type="number" id="sd-ch" min="200" max="6000" value="' + P.h + '" aria-label="גובה"><button type="button" data-size="custom">לשנות</button></div>';
     if (tab === 'layers') return '<h3>שכבות</h3><p class="sd-tip">למעלה = הכי קדימה. גוררים ב-⋮⋮ לשינוי סדר. 🔒 נועל במקום, 👁 מסתיר.</p><ul class="sd-layers" id="sd-layers"></ul>';
     if (tab === 'qr') {
-      const ph = { link: 'למשל: gilad-rachamim.github.io', tel: 'למשל: 050-1234567', wa: 'מספר הווטסאפ, למשל 050-1234567' }[qrType];
+      const ph = { link: 'למשל: hakelim.com', tel: 'למשל: 050-1234567', wa: 'מספר הווטסאפ, למשל 050-1234567' }[qrType];
       return '<h3>קוד QR</h3><p class="sd-tip">מצלמים את הקוד בטלפון – והוא פותח קישור, מחייג או פותח צ׳אט בווטסאפ.</p>' +
         '<div class="sd-row">' + [['link', 'קישור'], ['tel', 'טלפון'], ['wa', 'ווטסאפ']].map(q => '<button type="button" data-qrt="' + q[0] + '"' + (qrType === q[0] ? ' class="on"' : '') + '>' + q[1] + '</button>').join('') + '</div>' +
         '<input type="' + (qrType === 'link' ? 'url' : 'tel') + '" id="sd-qr-v" class="sd-in" dir="ltr" placeholder="' + ph + '" aria-label="' + ph + '">' +

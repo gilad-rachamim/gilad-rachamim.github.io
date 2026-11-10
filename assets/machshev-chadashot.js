@@ -7,7 +7,7 @@
   var NAMES = { main: 'העיקר', haredi: 'ציבור חרדי', economy: 'כלכלה וכיס' };
   var $ = function (id) { return document.getElementById(id); };
   var ed = null;
-  var PAGE = 'https://gilad-rachamim.github.io/kelim/machshev/chadashot/';
+  var PAGE = 'https://hakelim.com/kelim/machshev/chadashot/';
   var PHONE = 'בטלפון כשר: 077-2253345 שלוחה 8';
   // מאיפה הגיעו (utm_source בקישור) – נספר בשרת וב-Google Analytics
   var FROM = (function () {

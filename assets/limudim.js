@@ -380,7 +380,7 @@
     $('mv-ics').addEventListener('click', function () {
       var p = plan(); if (!p) return; var rows = build(p.cfg);
       icsDownload('mivchan.ics', 'לימוד ל' + p.cfg.name, rows.map(function (r) {
-        return r.kind === 'exam' ? { date: r.date, title: '🎯 ' + r.text } : { date: r.date, time: p.cfg.time, mins: p.cfg.mins, alarm: 5, title: 'לימוד: ' + r.text, desc: (r.sub ? r.sub + '\n' : '') + 'נוצר בכלים ללימודים: https://gilad-rachamim.github.io/limudim/mivchan/' };
+        return r.kind === 'exam' ? { date: r.date, title: '🎯 ' + r.text } : { date: r.date, time: p.cfg.time, mins: p.cfg.mins, alarm: 5, title: 'לימוד: ' + r.text, desc: (r.sub ? r.sub + '\n' : '') + 'נוצר בכלים ללימודים: https://hakelim.com/limudim/mivchan/' };
       }));
       $('mv-tip').hidden = false; used('mivchan', { action: 'ics' });
     });
@@ -790,7 +790,7 @@
       if ($('ly-ics-range').value !== 'all') { var lim = ymd(addDays(new Date(), +$('ly-ics-range').value)); rows = rows.filter(function (r) { return r.date <= lim; }); }
       icsDownload('limud-yomi.ics', 'לימוד יומי: ' + title(c), rows.map(function (r) {
         var link = sefaria(c, r.u[0]);
-        return { date: r.date, time: c.time, mins: 20, alarm: 0, title: '📖 ' + rangeText(c, r.u), desc: 'לימוד יומי לסיום ' + title(c) + (link ? '\nללמוד בספריא: ' + link : '') + '\nהתוכנית שלך: https://gilad-rachamim.github.io/limudim/yomi/' };
+        return { date: r.date, time: c.time, mins: 20, alarm: 0, title: '📖 ' + rangeText(c, r.u), desc: 'לימוד יומי לסיום ' + title(c) + (link ? '\nללמוד בספריא: ' + link : '') + '\nהתוכנית שלך: https://hakelim.com/limudim/yomi/' };
       }));
       $('ly-tip').hidden = false; used('yomi', { action: 'ics', n: rows.length });
     });
@@ -946,7 +946,7 @@
             var c = cyc(id);
             nextFresh(c, t, 40).forEach(function (d) {
               if (daysBetween(t, d) > 366) return;
-              evs.push({ date: d, time: time, mins: 30, alarm: 720, title: '🌱 מתחילים ' + c.fresh + ' ב' + c.name + ': ' + full(c, ev(id, d)), desc: 'לא משנה מה היה עד עכשיו. זה הרגע להצטרף מחדש, בכל הכוח.\nhttps://gilad-rachamim.github.io/limudim/olami/' });
+              evs.push({ date: d, time: time, mins: 30, alarm: 720, title: '🌱 מתחילים ' + c.fresh + ' ב' + c.name + ': ' + full(c, ev(id, d)), desc: 'לא משנה מה היה עד עכשיו. זה הרגע להצטרף מחדש, בכל הכוח.\nhttps://hakelim.com/limudim/olami/' });
             });
           });
           evs.sort(function (a, b) { return a.date < b.date ? -1 : 1; });
@@ -955,7 +955,7 @@
           for (var k = 0; k < 31; k++) {
             var d = ymd(addDays(parse(t), k));
             var lines = st.sel.map(function (id) { var q = ev(id, d); return q ? cyc(id).name + ': ' + txt(q) : ''; }).filter(Boolean);
-            if (lines.length) evs.push({ date: d, time: time, mins: 20, alarm: 0, title: '📖 ' + lines.join(' · '), desc: lines.join('\n') + '\nhttps://gilad-rachamim.github.io/limudim/olami/' });
+            if (lines.length) evs.push({ date: d, time: time, mins: 20, alarm: 0, title: '📖 ' + lines.join(' · '), desc: lines.join('\n') + '\nhttps://hakelim.com/limudim/olami/' });
           }
           icsDownload('limud-olami.ics', 'הלימוד היומי שלי', evs);
         }

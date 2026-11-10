@@ -172,7 +172,7 @@
       var pg = document.createElement('div'); pg.className = 'tz-page';
       var h = document.createElement('p'); h.className = 'tz-ph'; h.textContent = DRAW[list[k]].name + ' · חנוכה שמח!';
       pg.appendChild(h); pg.appendChild(build(list[k], mode === 'mine'));
-      var ft = document.createElement('p'); ft.className = 'tz-pf'; ft.textContent = 'דפי צביעה לחנוכה בחינם · gilad-rachamim.github.io/kodesh/chanuka/tzviya';
+      var ft = document.createElement('p'); ft.className = 'tz-pf'; ft.textContent = 'דפי צביעה לחנוכה בחינם · hakelim.com/kodesh/chanuka/tzviya';
       pg.appendChild(ft); box.appendChild(pg);
     }
     used(mode === 'all' ? 'print_all' : mode === 'mine' ? 'print_mine' : 'print');

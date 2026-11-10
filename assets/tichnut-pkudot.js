@@ -94,7 +94,7 @@
     $('pk-cmd').textContent = cmd;
     $('pk-e').innerHTML = r.e.map(function (e) { return '<li><code dir="ltr">' + esc(e[0]) + '</code><span>' + esc(e[1]) + '</span></li>'; }).join('');
     $('pk-warn').textContent = r.warn ? '⚠️ ' + r.warn : ''; $('pk-warn').hidden = !r.warn;
-    T.wa($('pk-wa'), r.t + ':\n\n' + cmd + '\n\nהסבר על כל חלק: https://gilad-rachamim.github.io/kelim/tichnut/pkudot/');
+    T.wa($('pk-wa'), r.t + ':\n\n' + cmd + '\n\nהסבר על כל חלק: https://hakelim.com/kelim/tichnut/pkudot/');
     T.save(KEY, st);
   }
   function pick(i) { st.i = i; fields(); list(); render(); }

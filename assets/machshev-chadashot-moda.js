@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   var TOOL = 'chadashot_moda';
-  var PAGE = 'https://gilad-rachamim.github.io/kelim/machshev/chadashot/';
+  var PAGE = 'https://hakelim.com/kelim/machshev/chadashot/';
   var $ = function (id) { return document.getElementById(id); };
   function used(how) { if (window.toolUsed) window.toolUsed(TOOL, { how: how }); }
   var TEXT = '📰 החדשות ב-3 דקות\n' +

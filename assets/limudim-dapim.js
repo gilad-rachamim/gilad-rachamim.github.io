@@ -7,7 +7,7 @@
   var MX = window.MX, app = document.getElementById('dp-app');
   if (!MX || !app) return;
   var $ = function (id) { return document.getElementById(id); };
-  var BASE = 'https://gilad-rachamim.github.io/limudim/dapim/';
+  var BASE = 'https://hakelim.com/limudim/dapim/';
   var parseVal = MX.parseVal, gcd = MX.gcd;
   function load(k, def) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch (e) { return def; } }
   function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
@@ -129,7 +129,7 @@
   // נושאים קודמים שכדאי להזכיר בכל נושא (עד שלושה, מהקרוב לרחוק)
   var PRE = { hiluk: ['kefel'], seder: ['kefel', 'hiluk'], shetach: ['kefel', 'seder'], asroni: ['hiluk', 'seder', 'kefel'], shvarim: ['kefel', 'hiluk', 'seder'], 'kefel-shvarim': ['shvarim', 'kefel', 'hiluk'], memutza: ['hiluk', 'asroni', 'seder'], achuzim: ['asroni', 'kefel-shvarim', 'shvarim'], yachas: ['kefel-shvarim', 'shvarim', 'achuzim'], histabrut: ['shvarim', 'achuzim', 'yachas'], pilug: ['seder', 'kefel', 'shetach'], mishvaa: ['pilug', 'seder', 'shvarim'], chezkot: ['seder', 'kefel', 'pilug'], kav: ['mishvaa', 'pilug', 'yachas'], pitagoras: ['chezkot', 'shetach', 'mishvaa'], maarechet: ['mishvaa', 'pilug', 'kav'], trinom: ['pilug', 'chezkot', 'mishvaa'], shorashim: ['trinom', 'chezkot', 'mishvaa'], 'parabola-tavla': ['chezkot', 'kav', 'mishvaa'], parabola: ['parabola-tavla', 'shorashim', 'kav'], sidra: ['mishvaa', 'pilug', 'memutza'], merchak: ['pitagoras', 'kav', 'memutza'], trigo: ['pitagoras', 'yachas', 'mishvaa'], gdila: ['achuzim', 'chezkot', 'asroni'], stiya: ['memutza', 'chezkot', 'achuzim'], nigzeret: ['chezkot', 'kav', 'pilug'], mashik: ['nigzeret', 'kav', 'mishvaa'], kitzon: ['nigzeret', 'shorashim', 'parabola'], integral: ['nigzeret', 'chezkot', 'shetach'], maagal: ['merchak', 'pitagoras', 'shorashim'], normalit: ['stiya', 'achuzim', 'memutza'], handasit: ['sidra', 'chezkot', 'yachas'], sinusim: ['trigo', 'pitagoras', 'shetach'], etz: ['histabrut', 'kefel-shvarim', 'shvarim'], tnua: ['mishvaa', 'maarechet', 'shorashim'], rationalit: ['nigzeret', 'shorashim', 'kitzon'], 'shoresh-f': ['nigzeret', 'chezkot', 'kitzon'], merchav: ['trigo', 'pitagoras', 'sinusim'], 'trig-nigzeret': ['nigzeret', 'trigo', 'kitzon'], piramida: ['merchav', 'trigo', 'pitagoras'], vektor: ['merchak', 'pitagoras', 'trigo'], merukav: ['shorashim', 'pilug', 'chezkot'], logaritm: ['chezkot', 'gdila', 'mishvaa'], 'exp-ln': ['nigzeret', 'logaritm', 'kitzon'], dimyon: ['yachas', 'pitagoras', 'mishvaa'], 'zaviot-maagal': ['dimyon', 'maagal', 'mishvaa'], parametr: ['shorashim', 'nigzeret', 'kitzon'], induktzia: ['sidra', 'pilug', 'chezkot'], 'nefach-sivuv': ['integral', 'chezkot', 'shetach'] };
   // נושאים שהשיעור שלהם נמצא בדף "מתמטיקה צעד אחרי צעד" (לקישור מהתזכורות)
-  function lessonUrl(t) { return MX.T.indexOf(t) > -1 ? 'https://gilad-rachamim.github.io/limudim/matematika/#' + t.id : BASE + '?d=' + [t.id, 'h', 15, 1, '', 7, 1].join('.'); }
+  function lessonUrl(t) { return MX.T.indexOf(t) > -1 ? 'https://hakelim.com/limudim/matematika/#' + t.id : BASE + '?d=' + [t.id, 'h', 15, 1, '', 7, 1].join('.'); }
 
   // =====================================================================
   //  בניית הדף
@@ -301,7 +301,7 @@
       }).join('') + '</div></section>';
     }
     if (o.feel) h += '<section class="dp-feel"><b>איך הרגשתי עם הדף?</b><span>😀 הבנתי הכול</span><span>🙂 הבנתי את הרוב</span><span>🤔 צריך עוד הסבר</span><span class="dp-feel-q">מה עוד לא ברור לי: <span class="sb w"></span></span></section>';
-    h += '<footer class="dp-pf">טעות היא חלק מהלימוד. ממשיכים הלאה 💪 &nbsp;·&nbsp; דף מ"הכלים של גילעד רחמים", חינם: <bdi dir="ltr">gilad-rachamim.github.io/limudim/dapim</bdi></footer></div></article>';
+    h += '<footer class="dp-pf">טעות היא חלק מהלימוד. ממשיכים הלאה 💪 &nbsp;·&nbsp; דף מ"הכלים של גילעד רחמים", חינם: <bdi dir="ltr">hakelim.com/limudim/dapim</bdi></footer></div></article>';
     if (o.key) {
       h += '<article class="dp-paper dp-keyp st-' + o.style + '"><header class="dp-ph"><div class="dp-pt"><span class="dp-kind">דף תשובות למורה</span><h2>' + sh.em + ' ' + sh.name + '</h2><p class="dp-sub">' + KIND[cfg.k] + ' · כ-' + sh.total + ' דקות · רמה ' + ['', 'בסיס', 'רגילה', 'מאתגרת'][cfg.lv] + (o.title ? ' · ' + esc(o.title) : '') + '</p></div></header><ol class="dp-key">' +
         exs.concat(o.bonus && sh.bonus ? [sh.bonus] : []).map(keyLine).join('') + '</ol><p class="dp-keyn">בתרגיל מודרך התשובות מופיעות לפי סדר הצעדים, ואחרי החץ התשובה הסופית.</p></article>';
@@ -504,7 +504,7 @@
         if (st.free) s += '<div class="dg-free"><textarea id="dg-in' + ix + '" rows="3" maxlength="400" dir="auto"></textarea><button class="btn btn-gold" type="submit">סיימתי לכתוב</button></div>';
         else if (st.opts) s += '<div class="dg-opts">' + st.opts.map(function (o, k) { return '<button class="btn btn-line" type="button" data-opt="' + k + '">' + o + '</button>'; }).join('') + '</div>';
         else s += '<div class="mx-row"><input id="dg-in' + ix + '" type="text" inputmode="text" dir="ltr" enterkeyhint="done"><button class="btn btn-gold" type="submit">לבדוק</button></div>';
-        s += '<p class="mx-fb" aria-live="polite"></p>' + (cfg.a && st.hint ? '<p class="mx-hint"' + (hintOpen[key] ? '' : ' hidden') + '>💡 ' + st.hint + '</p><div class="btns"><button class="linkish" type="button" data-hint>💡 רמז</button>' + (it.rev ? '<a class="linkish" href="' + lessonUrl(it.rev).replace('https://gilad-rachamim.github.io', '') + '" target="_blank" rel="noopener">📺 שיעור קצר בנושא</a>' : '') + '</div>' : '') + '</form>';
+        s += '<p class="mx-fb" aria-live="polite"></p>' + (cfg.a && st.hint ? '<p class="mx-hint"' + (hintOpen[key] ? '' : ' hidden') + '>💡 ' + st.hint + '</p><div class="btns"><button class="linkish" type="button" data-hint>💡 רמז</button>' + (it.rev ? '<a class="linkish" href="' + lessonUrl(it.rev).replace('https://hakelim.com', '') + '" target="_blank" rel="noopener">📺 שיעור קצר בנושא</a>' : '') + '</div>' : '') + '</form>';
       } else if (done && p.fin) s += '<p class="mx-fin" dir="ltr">' + p.fin + '</p>';
       el.innerHTML = s; el.classList.toggle('done', done);
       if (focus) { var inp = el.querySelector('input'); if (inp) try { inp.focus({ preventScroll: true }); } catch (e) {} }

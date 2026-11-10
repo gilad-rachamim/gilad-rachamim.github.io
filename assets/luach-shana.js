@@ -91,7 +91,7 @@
         esc(hd.renderGematriya(true).replace(/\s[^\s]+$/, '')) + '</td><td>' + parts.join(' · ') + '</td><td class="ls-tm">' + esc(times.join(' · ')) + '</td></tr>';
     });
     if (month !== -1) h += '</tbody></table>';
-    h += '<p class="ls-foot">נוצר בכלי קודש · gilad-rachamim.github.io/kodesh/luach-shana · לזמנים מדויקים להלכה – לוח מקומי</p>';
+    h += '<p class="ls-foot">נוצר בכלי קודש · hakelim.com/kodesh/luach-shana · לזמנים מדויקים להלכה – לוח מקומי</p>';
     out.innerHTML = h;
     $('ls-count').textContent = rows.length + ' ימים בלוח';
   }

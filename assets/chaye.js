@@ -487,7 +487,7 @@
     if (!result) return;
     var f = new File([result.blob], baseName() + '.' + result.ext, { type: result.blob.type });
     if (navigator.canShare && navigator.canShare({ files: [f] })) {
-      navigator.share({ files: [f], text: 'יצרתי סרטון תלת-ממד מתמונה, בחינם: https://gilad-rachamim.github.io/kelim/tochen/chaye/' }).then(function () { used('share'); }).catch(function () {});
+      navigator.share({ files: [f], text: 'יצרתי סרטון תלת-ממד מתמונה, בחינם: https://hakelim.com/kelim/tochen/chaye/' }).then(function () { used('share'); }).catch(function () {});
     } else { saveBlob(result.blob, f.name); $('ch-tip').hidden = false; used('download_fallback'); }
   });
 
@@ -550,7 +550,7 @@
     if (!aiBlob) return;
     var f = new File([aiBlob], aiName(), { type: 'video/mp4' });
     if (navigator.canShare && navigator.canShare({ files: [f] })) {
-      navigator.share({ files: [f], text: 'התמונה שלנו התעוררה 😊 – בחינם: https://gilad-rachamim.github.io/kelim/tochen/chaye/' }).then(function () { used('ai_share'); }).catch(function () {});
+      navigator.share({ files: [f], text: 'התמונה שלנו התעוררה 😊 – בחינם: https://hakelim.com/kelim/tochen/chaye/' }).then(function () { used('ai_share'); }).catch(function () {});
     } else { saveBlob(aiBlob, f.name); aiInfo('הסרטון נשמר. עכשיו פותחים את הווטסאפ, ומצרפים אותו מהגלריה או מהקבצים.'); used('ai_download_fallback'); }
   });
 

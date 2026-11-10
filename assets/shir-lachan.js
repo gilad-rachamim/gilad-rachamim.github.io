@@ -72,7 +72,7 @@
       }).join('');
     }).join('');
     $('sl-card').innerHTML = '<h3>' + esc(song.title || 'השיר שלי') + '</h3><p class="by">' + (song.author ? 'מילים ולחן: ' + esc(song.author) + ' · ' : '') + ({ major: 'מז\'ור', minor: 'מינור', hijaz: 'חיג\'אז' }[mm.mood]) + ' · ' + M.BPM[mm.tempo] + ' פעמות לדקה · ' + mm.meter + '/4</p>' + body + '<p class="ft">"השיר שלי" – הכלים של גילעד רחמים</p>';
-    $('sl-wa').href = S.wa((song.title ? '🎵 ' + song.title + '\n\n' : '') + txt.join('\n') + '\n\nהלחנתי ב"השיר שלי", בחינם: https://gilad-rachamim.github.io/kelim/shir/');
+    $('sl-wa').href = S.wa((song.title ? '🎵 ' + song.title + '\n\n' : '') + txt.join('\n') + '\n\nהלחנתי ב"השיר שלי", בחינם: https://hakelim.com/kelim/shir/');
   }
 
   // ---------- נגינה ----------

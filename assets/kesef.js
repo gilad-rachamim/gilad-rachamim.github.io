@@ -795,7 +795,7 @@
     $('d-dl').addEventListener('click', function () {
       var txt = 'מסמכי הכסף שלי – ' + today() + '\n\n' + CATS.map(function (c) {
         return c[0] + '\n' + c[2].map(function (d) { return (st.done[d[0]] ? '[✓] ' : '[ ] ') + d[1] + ' – לשמור: ' + d[2]; }).join('\n');
-      }).join('\n\n') + '\n\nתבנית תיקיות:\n' + TREE + '\n\nמתוך כלים לכסף: https://gilad-rachamim.github.io/kesef/mismachim/\n';
+      }).join('\n\n') + '\n\nתבנית תיקיות:\n' + TREE + '\n\nמתוך כלים לכסף: https://hakelim.com/kesef/mismachim/\n';
       var a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob(['﻿' + txt], { type: 'text/plain;charset=utf-8' }));
       a.download = 'מסמכי הכסף שלי – ' + today() + '.txt';

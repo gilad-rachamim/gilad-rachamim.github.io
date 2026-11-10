@@ -83,7 +83,7 @@
     $('vr-fit').innerHTML = html;
     T.wa($('vr-wa'), 'מחשבון VRAM: ' + name + ', ' + mode + ' – צריך בערך ' + f(r.tot) + ' GB זיכרון בכרטיס מסך.\n' +
       (fit.length ? 'מספיק למשל: ' + fit.slice(0, 3).map(function (g) { return g.name; }).join(', ') + '\n' : '') +
-      'חישבתי כאן: https://gilad-rachamim.github.io/kelim/tichnut/vram/');
+      'חישבתי כאן: https://hakelim.com/kelim/tichnut/vram/');
     T.save(KEY, st);
   }
 

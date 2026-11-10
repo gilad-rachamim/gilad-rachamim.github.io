@@ -62,7 +62,7 @@
       (r.ph && r.ph[0] ? '<img src="' + esc(r.ph[0]) + '" alt="" referrerpolicy="no-referrer">' : '') +
       (r.sto ? '<p><i>' + esc(r.sto) + '</i></p>' : '') +
       '<h2>מצרכים</h2><p>' + esc(r.ing) + '</p><h2>אופן ההכנה</h2><p>' + esc(r.st) + '</p>' +
-      '<p class="f">מתכונים שמשתפים לחנוכה · gilad-rachamim.github.io/kodesh/chanuka/matkonim/</p>' +
+      '<p class="f">מתכונים שמשתפים לחנוכה · hakelim.com/kodesh/chanuka/matkonim/</p>' +
       '<script>window.onload=function(){setTimeout(function(){window.print()},400)}<\/script></body></html>');
     w.document.close();
     used('print');

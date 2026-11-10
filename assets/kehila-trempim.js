@@ -204,7 +204,7 @@
     return 'https://calendar.google.com/calendar/render?action=TEMPLATE&ctz=Asia/Jerusalem&text=' + encodeURIComponent(title) + '&dates=' + s + '/' + e +
       '&location=' + encodeURIComponent(where || '') + '&details=' + encodeURIComponent(details || '');
   }
-  var PAGE = 'https://gilad-rachamim.github.io/kelim/kehila/trempim/';
+  var PAGE = 'https://hakelim.com/kelim/kehila/trempim/';
 
   /* ---------- מונים ---------- */
   function loadStats() {

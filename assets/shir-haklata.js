@@ -183,7 +183,7 @@
     var canShare = file && navigator.canShare && navigator.canShare({ files: [file] });
     $('sh-file').innerHTML = '<audio controls src="' + url + '" style="width:100%;margin-top:.6rem"></audio><div class="share-row" style="justify-content:flex-start">' +
       '<a class="btn btn-gold btn-sm" href="' + url + '" download="' + esc(name) + '" id="sh-dl">⬇ להוריד MP3</a>' +
-      (canShare ? '<button class="btn btn-line btn-sm" type="button" id="sh-share">לשתף</button>' : '<a class="btn btn-line btn-sm" target="_blank" rel="noopener" href="' + S.wa('הקלטתי שיר משלי – "' + (song.title || 'השיר שלי') + '". את הקובץ אני שולח בנפרד 🎵\nאפשר לכתוב שיר משלכם בחינם: https://gilad-rachamim.github.io/kelim/shir/') + '"><svg class="ic"><use href="#wa"/></svg> ווטסאפ</a>') + '</div>';
+      (canShare ? '<button class="btn btn-line btn-sm" type="button" id="sh-share">לשתף</button>' : '<a class="btn btn-line btn-sm" target="_blank" rel="noopener" href="' + S.wa('הקלטתי שיר משלי – "' + (song.title || 'השיר שלי') + '". את הקובץ אני שולח בנפרד 🎵\nאפשר לכתוב שיר משלכם בחינם: https://hakelim.com/kelim/shir/') + '"><svg class="ic"><use href="#wa"/></svg> ווטסאפ</a>') + '</div>';
     $('sh-dl').onclick = function () { used('download'); };
     if (canShare) $('sh-share').onclick = function () { used('share'); navigator.share({ files: [file], title: song.title || 'השיר שלי' }).catch(function () {}); };
   }

@@ -794,7 +794,7 @@
     var list = plan.map(function (it) { return '<tr><td>' + esc(it.path) + '</td><td>' + (it.already ? 'כבר היה: ' + esc(it.already) : esc(it.dest)) + '</td><td>' + esc(it.why) + (badSet[it.id] ? ' · <b>שגיאה: ' + esc(badSet[it.id]) + '</b>' : '') + '</td></tr>'; }).join('');
     var html = '<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>דוח הסידור</title>' +
       '<style>body{font-family:Assistant,Arial,sans-serif;max-width:960px;margin:1.5rem auto;padding:0 1rem;color:#1d1a15;line-height:1.5}h1{font-size:1.5rem}table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:.92rem}td,th{border:1px solid #d9cfb8;padding:.35rem .5rem;text-align:right;vertical-align:top;word-break:break-word}th{background:#f4ecd8}.ok{background:#eef7ee;border:1px solid #9cc79c;padding:.7rem 1rem;border-radius:10px}</style></head><body>' +
-      '<h1>דוח הסידור – ' + esc(outName) + '</h1><p>' + esc(when) + ' · <a href="https://gilad-rachamim.github.io/kelim/machshev/sader/">מסדר התיקיות</a> של הכלים של גילעד רחמים</p>' +
+      '<h1>דוח הסידור – ' + esc(outName) + '</h1><p>' + esc(when) + ' · <a href="https://hakelim.com/kelim/machshev/sader/">מסדר התיקיות</a> של הכלים של גילעד רחמים</p>' +
       '<p class="ok"><b>שום קובץ לא נמחק ולא הוזז.</b> התיקייה המקורית נשארה בדיוק כמו שהייתה. הועתקו ' + num(copied.length) + ' קבצים.' +
       (already.length ? ' ' + num(already.length) + ' קבצים לא הועתקו כי עותק זהה כבר היה בתיקייה.' : '') +
       (skipped.length ? ' ' + num(skipped.length) + ' קבצים לא הועתקו לפי הבחירה שלכם, והם עדיין במקור.' : '') + '</p>' +
