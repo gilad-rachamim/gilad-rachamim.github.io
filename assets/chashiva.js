@@ -61,7 +61,7 @@
     { id: 'games3', icon: '🎯', t: 'לפתור את האתגר היומי ב-3 משחקים שונים', n: 3, f: function (L) { return uniq(L, 'g'); } },
     { id: 'days4', icon: '📅', t: 'לפתור אתגר יומי ב-4 ימים שונים', n: 4, f: function (L) { return uniq(L, 'd'); } },
     { id: 'clean3', icon: '🧠', t: 'לפתור 3 אתגרים יומיים בלי אף רמז', n: 3, f: function (L) { return L.filter(function (x) { return !x.h; }).length; } },
-    { id: 'all4', icon: '🏆', t: 'לפתור את האתגר היומי בכל ארבעת המשחקים', n: 4, f: function (L) { return uniq(L, 'g'); } }
+    { id: 'all4', icon: '🏆', t: 'לפתור את האתגר היומי ב-4 משחקים שונים', n: 4, f: function (L) { return uniq(L, 'g'); } }
   ];
   function uniq(L, k) { var o = {}; L.forEach(function (x) { o[x[k]] = 1; }); return Object.keys(o).length; }
   function sunday(d) { d = new Date(d || Date.now()); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - d.getDay()); return d; }
@@ -217,7 +217,7 @@
   // ---------- דף התחום: ההתקדמות שלכם ----------
   var box = document.getElementById('ch-progress');
   if (box) {
-    var games = [['mila', 'מילה ביום', '/kelim/chashiva/mila/'], ['nono', 'שחור ופתור', '/kelim/chashiva/shachor/'], ['tash', 'תשחצים', '/kelim/chashiva/tashchetz/'], ['sudoku', 'סודוקו', '/kelim/chashiva/sudoku/']];
+    var games = [['mila', 'מילה ביום', '/kelim/chashiva/mila/'], ['nono', 'שחור ופתור', '/kelim/chashiva/shachor/'], ['tash', 'תשחצים', '/kelim/chashiva/tashchetz/'], ['sudoku', 'סודוקו', '/kelim/chashiva/sudoku/'], ['chidon', 'חידון וטריוויה', '/kelim/chashiva/chidon/']];
     var any = false;
     box.innerHTML = '<div class="ch-prog">' + games.map(function (g) {
       var s = CH.stats(g[0]); if (s.solved) any = true;
