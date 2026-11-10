@@ -271,7 +271,8 @@ export async function runEdition(env, { force = false, now = new Date(), push = 
   ed.v = VERSION;
   await call(env, '/save', ed);
   if (push) await call(env, '/push-start', {});
-  return { ok: true, name: ed.name, mode: ed.mode, main: ed.sections.main.length, dropped: ed.dropped.length, failed, error: ed.error };
+  if (push && env.FB_PAGE_TOKEN && env.FB_PAGE_ID) ed.fb = await postFacebook(env, ed).catch(e => ({ error: String(e).slice(0, 200) }));
+  return { ok: true, fb: ed.fb, name: ed.name, mode: ed.mode, main: ed.sections.main.length, dropped: ed.dropped.length, failed, error: ed.error };
 }
 
 // ---------- השרת ----------
@@ -325,6 +326,26 @@ export default {
 };
 
 // אחסון: הסיכום האחרון, 21 הקודמים, דיווחי טעויות ומונה כניסות יומי
+// ---------- פייסבוק: פוסט לדף "החדשות ב-3 דקות" (Graph API, מפתח קבוע של הדף) ----------
+const PAGE_URL = 'https://gilad-rachamim.github.io/kelim/machshev/chadashot/';
+export function editionText(ed) {
+  const out = [`📰 החדשות ב-3 דקות – ${ed.name}, יום ${ed.date.day} ${ed.date.he}`, ''];
+  const names = { haredi: 'ציבור חרדי', economy: 'כלכלה וכיס' };
+  ed.sections.main.forEach((p, i) => out.push(`${i + 1}. ${p.text}`));
+  for (const k of ['haredi', 'economy']) if (ed.sections[k]?.length) { out.push('', `▪️ ${names[k]}`); ed.sections[k].forEach(p => out.push(`• ${p.text}`)); }
+  out.push('', 'כל נקודה עם קישור למקור, והתראה 3 פעמים ביום:', PAGE_URL, 'בטלפון כשר: 077-2253345 שלוחה 8');
+  return out.join('\n');
+}
+async function postFacebook(env, ed) {
+  const v = env.FB_API_VERSION || 'v23.0';
+  const r = await fetch(`https://graph.facebook.com/${v}/${env.FB_PAGE_ID}/feed`, {
+    method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ message: editionText(ed), link: PAGE_URL, access_token: env.FB_PAGE_TOKEN })
+  });
+  const j = await r.json().catch(() => ({}));
+  return r.ok ? { id: j.id } : { error: (j.error && j.error.message) || String(r.status) };
+}
+
 // ---------- Web Push (VAPID, בלי תוכן) ----------
 const b64u = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 const b64uStr = str => b64u(new TextEncoder().encode(str));
