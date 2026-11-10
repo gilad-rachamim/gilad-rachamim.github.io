@@ -187,10 +187,48 @@
   function startRun(r) {
     run = r; cur = null; MATH = ENG = TRIV = null;
     show('kv-play'); hud(); clearInterval(timer); timer = setInterval(tick, 1000);
+    if (CFG.race && !$('kv-rank')) { var rk = document.createElement('p'); rk.id = 'kv-rank'; rk.className = 'kv-rank'; rk.hidden = true; $('kv-q').parentNode.insertBefore(rk, $('kv-q')); }
+    if ($('kv-rank')) $('kv-rank').hidden = true;
     next();
+    livePush(true); livePoll(run.seed);
     CH.used(CFG.tool, run.joined ? 'join' : 'start', { u: run.u || 0 });
   }
   function persist() { if (run) putRun(run.seed, run); }
+  // ---------- לוח חי (Worker limudim-krav, tools/krav-worker) – רק במרוצי מתמטיקה ואנגלית ----------
+  // בלי חיבור הכול ממשיך לעבוד כמו קודם, עם הלוח שבתוך הקישור.
+  var API = (function () { try { var o = localStorage.getItem('krav-api'); if (o) return o; } catch (e) {} return /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://127.0.0.1:8797' : 'https://limudim-krav.gilad4049.workers.dev'; })();
+  var LIVE = {}, pushT = 0, pushWait = null, pollT = null;
+  function liveOk(seed) { return CFG.race && /^(math|eng)-[a-z0-9]{4,12}$/.test(seed || ''); }
+  function liveRows(seed) { return LIVE[seed] || []; }
+  function gotRows(seed, d) {
+    if (!d || !Array.isArray(d.rows)) return;
+    LIVE[seed] = d.rows.filter(function (x) { return Array.isArray(x) && x.length >= 5; }).map(function (x) { return [String(x[0]).slice(0, 8), PTS.clean(x[1]) || 'שחקן/ית', x[2] | 0, x[3] | 0, x[4] | 0]; });
+    liveUi(seed);
+  }
+  function livePush(force) {
+    if (!run || !liveOk(run.seed)) return;
+    var now = Date.now();
+    if (!force && now - pushT < 4000) { clearTimeout(pushWait); pushWait = setTimeout(function () { livePush(true); }, 4000 - (now - pushT)); return; }
+    clearTimeout(pushWait); pushT = now; var seed = run.seed;
+    fetch(API + '/b/' + seed, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ pid: mePid, nick: PTS.nick(), pts: run.pts, solved: run.solved, tried: run.tried, e: run.e, g: SUBJ }) })
+      .then(function (r) { return r.json(); }).then(function (d) { gotRows(seed, d); }).catch(function () {});
+  }
+  function livePull(seed) {
+    if (!liveOk(seed) || document.hidden) return;
+    fetch(API + '/b/' + seed).then(function (r) { return r.json(); }).then(function (d) { gotRows(seed, d); }).catch(function () {});
+  }
+  function livePoll(seed) { clearInterval(pollT); if (!liveOk(seed)) return; livePull(seed); pollT = setInterval(function () { livePull(seed); }, 15000); }
+  function liveUi(seed) {
+    if (run && run.seed === seed) {
+      var b = mergeBoard(run.board || [], liveRows(seed).concat([myRow()])), rk = $('kv-rank');
+      if (rk) {
+        var i = b.map(function (x) { return x[0]; }).indexOf(mePid); rk.hidden = b.length < 2;
+        rk.innerHTML = '🏆 מקום <b>' + (i + 1) + '</b> מתוך ' + b.length + (b[0][0] !== mePid ? ' · מוביל/ה: ' + esc(b[0][1]) + ' (' + b[0][2] + ')' : ' · אתם מובילים!') + ' <span class="kv-live">● חי</span>';
+      }
+      var lb = $('kv-live-board'); if (lb) lb.innerHTML = boardHtml(b, mePid, '🏆 לוח התוצאות <span class="kv-live">● מתעדכן</span>');
+    }
+    if (IN && IN.s === seed && $('kv-banner') && !$('kv-banner').hidden) renderInvite();
+  }
   // אחרי רענון חוזרים לאותה שאלה בדיוק (אותו זרע + אותו מספר)
   function next() {
     if (!run || run.done) return;
@@ -259,6 +297,9 @@
     run.pts += pts; run.tried++; if (!q.fail) run.solved++; run.i++;
     cur = null; persist();
     PTS.add(CFG.src, pts, { c: q.fail ? 0 : 1, q: 1, u: run.u || 0 });
+    livePush();
+    // לוח הכיתה של "כיתה משחקת" (assets/kita.js): נשלח רק אצל מי שהצטרף לכיתה
+    if (CFG.race && pts) (window.KITA_Q = window.KITA_Q || []).push({ game: CFG.src, pts: pts, ref: run.seed + ':' + (run.i - 1) });
     if (q.type === 'steps' && q.k < q.steps.length) q.k = q.steps.length;
     // דרך הפתרון / ההסבר
     var box = $('kv-q');
@@ -284,14 +325,14 @@
   function finish(timeUp) {
     if (!run || run.done) return;
     clearInterval(timer); run.done = 1; run.sec = Math.round((Date.now() - run.start) / 1000); run.board = mergeBoard(run.board || [], [myRow()]); persist();
-    var st = {};
+    var st = {}; livePush(true);
     if (SUBJ === 'trivia') st = CH.record('chidon', !!run.daily, run.sec, run.tried - run.solved);
     CH.used(CFG.tool, 'finish', { pts: run.pts, solved: run.solved, u: run.u || 0, time_up: timeUp ? 1 : 0 });
     showEnd(timeUp, st);
   }
   // מסך התוצאות (גם כשחוזרים לזרע ששיחקנו בו כבר: רק מציגים, בלי לרשום שוב)
   function showEnd(timeUp, st) {
-    clearInterval(timer); run.board = mergeBoard(run.board || [], [myRow()]); persist();
+    clearInterval(timer); run.board = mergeBoard(run.board || [], liveRows(run.seed).concat([myRow()])); persist();
     if (!st) st = SUBJ === 'trivia' ? CH.stats('chidon') : {};
     var sec = run.sec || 0;
     show('kv-end');
@@ -300,11 +341,12 @@
     var share = '⚔️ ' + CFG.name + (lvName ? ' (' + lvName + ')' : '') + (run.daily ? ' · ' + CH.shortDate() : '') + '\n✓ ' + run.solved + ' מתוך ' + run.tried + ' · ⭐ ' + run.pts + ' נקודות\nמצטרפים? ' + location.origin + location.pathname;
     CH.win({ tool: CFG.tool, el: $('kv-end'), daily: run.daily, stats: st, title: head,
       line: '<span>✓ <b>' + run.solved + '</b> מתוך ' + run.tried + '</span><span>⭐ <b>' + run.pts + '</b> נקודות</span>' + (SUBJ === 'trivia' ? '<span>⏱ ' + CH.fmt(sec) + '</span>' : ''),
-      extra: boardHtml(run.board, mePid) + sendBox() + '<div data-pts></div>',
+      extra: '<div id="kv-live-board">' + boardHtml(run.board, mePid) + '</div>' + sendBox() + '<div data-pts></div>',
       share: share,
       next: [{ label: SUBJ === 'trivia' ? '🎲 עוד חידון' : '⚔️ מרוץ חדש', fn: function () { resetUrl(); if (SUBJ === 'trivia') { tabSet('practice'); newRun({}); } else home(); } }, { label: 'לעמוד הבית של הדו-קרב', fn: function () { resetUrl(); home(); } }] });
     wireSend($('kv-end'));
     PTS.render();
+    if (liveOk(run.seed) && run.e * 60 + 900 > Date.now() / 1000) livePoll(run.seed); else clearInterval(pollT);
   }
   function levelName(u) { var l = CFG.levels.filter(function (x) { return x[0] === u; })[0]; return l && u ? l[1] : ''; }
   function payload() {
@@ -325,7 +367,7 @@
     var inp = box.querySelector('[data-kv-name]');
     function msg() {
       var nm = PTS.setNick(inp.value);
-      if (run.done) { run.board = mergeBoard(run.board || [], [myRow()]); persist(); }
+      if (run.done) { run.board = mergeBoard(run.board || [], liveRows(run.seed).concat([myRow()])); persist(); }
       var p = payload(); if (nm) p.m = nm;
       var t = invite ? '⚔️ ' + (nm || 'חבר') + ' מזמין/ה אותך ל' + CFG.name + (levelName(run.u) ? ' (' + levelName(run.u) + ')' : '') + '!\nמי פותר יותר ' + CFG.what + ' עד ' + endClock() + '? כל תשובה נכונה שווה נקודות.'
         : '⚔️ ' + CFG.name + (levelName(run.u) ? ' (' + levelName(run.u) + ')' : '') + ': צברתי ' + run.pts + ' נקודות (' + run.solved + ' נכונות). ' + (CFG.race && leftSec() > 0 ? 'יש לך עד ' + endClock() + ' לעקוף אותי!' : 'תצליח/י יותר?');
@@ -352,7 +394,7 @@
   // ---------- דף הבית של הדו-קרב ----------
   var picked = { u: 0, dur: 60 };
   function home() {
-    show('kv-home'); clearInterval(timer); run = null;
+    show('kv-home'); clearInterval(timer); clearInterval(pollT); run = null;
     var o = load(); picked.u = picked.u || (o.lv || {})[SUBJ] || CFG.levels[0][0];
     if ($('kv-levels')) $('kv-levels').innerHTML = CFG.levels.map(function (l) { return '<button type="button" data-u="' + l[0] + '" aria-pressed="' + (l[0] === picked.u) + '">' + l[1] + '</button>'; }).join('');
     if ($('kv-durs')) $('kv-durs').innerHTML = DURS.map(function (d) { return '<button type="button" data-d="' + d[0] + '" aria-pressed="' + (d[0] === picked.dur) + '">' + d[1] + '</button>'; }).join('');
@@ -372,14 +414,14 @@
     var bn = $('kv-banner'); if (!bn) return;
     if (!IN) { bn.hidden = true; return; }
     var mine = getRun(IN.s), left = IN.e ? IN.e * 60 - Date.now() / 1000 : 1, who = esc(IN.m || 'חבר');
-    var board = mergeBoard(IN.r, mine && mine.board ? mine.board : []);
+    var board = mergeBoard(IN.r.concat(liveRows(IN.s)), mine && mine.board ? mine.board : []);
     bn.hidden = false;
     var lv = levelName(IN.u);
     if (mine && mine.done) { bn.innerHTML = '<p>⚔️ כבר שיחקתם במרוץ הזה. הנה הלוח המעודכן:</p>' + boardHtml(board, mePid) + '<button class="btn btn-gold" type="button" data-open-res>לראות ולשלוח את הלוח</button>'; return; }
     if (left <= 0) { bn.innerHTML = '<p>⏰ המרוץ של ' + who + ' כבר נגמר. התוצאות:</p>' + boardHtml(board, mePid) + '<p class="kv-small">אפשר לפתוח מרוץ חדש למטה, ולהזמין את ' + who + ' לסיבוב נוסף.</p>'; return; }
     bn.innerHTML = '<p>⚔️ <b>' + who + ' מזמין/ה אתכם ל' + CFG.name + '</b>' + (lv ? ' · ' + lv : '') + (IN.e ? ' · נשארו ' + Math.ceil(left / 60) + ' דקות' : '') + '</p>' +
       boardHtml(board, mePid, 'מי כבר שיחק') +
-      '<div class="kv-joinrow"><input type="text" id="kv-join-nick" maxlength="20" placeholder="כינוי (בלי שם מלא)" value="' + esc(PTS.nick()) + '" aria-label="כינוי"><button class="btn btn-gold" type="button" data-join>' + (mine ? 'להמשיך במרוץ' : 'להצטרף ולהתחיל') + ' ⚔️</button></div>';
+      '<div class="kv-joinrow"><input type="text" id="kv-join-nick" maxlength="20" placeholder="כינוי (בלי שם מלא)" value="' + esc($('kv-join-nick') ? $('kv-join-nick').value : PTS.nick()) + '" aria-label="כינוי"><button class="btn btn-gold" type="button" data-join>' + (mine ? 'להמשיך במרוץ' : 'להצטרף ולהתחיל') + ' ⚔️</button></div>';
   }
   app.addEventListener('click', function (e) {
     var t = e.target;
@@ -416,6 +458,7 @@
     else if (location.hash !== '#practice') triviaDaily(); else { tabSet('practice'); newRun({ cat: 'all' }); }
   } else {
     home();
+    if (IN && liveOk(IN.s)) livePoll(IN.s);
     // מרוץ שהיה באמצע (רענון / מעבר אפליקציה) – חוזרים אליו
     if (!IN) { var o0 = load(), live = Object.keys(o0.runs || {}).map(function (k) { return o0.runs[k]; }).filter(function (r) { return r.seed.split('-')[0] === SUBJ && !r.done && r.e * 60 > Date.now() / 1000 && r.tried > 0; }).sort(function (a, b) { return b.at - a.at; })[0]; if (live) { $('kv-resume').hidden = false; $('kv-resume').innerHTML = '🟢 יש לכם מרוץ פתוח (⭐ ' + live.pts + '). <button class="btn btn-gold btn-sm" type="button" data-resume="' + esc(live.seed) + '">להמשיך</button>'; } }
   }

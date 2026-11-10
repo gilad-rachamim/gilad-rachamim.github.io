@@ -158,7 +158,7 @@
       $('kt-t-switch').hidden = !others.length;
       $('kt-t-switch').innerHTML = others.length ? '<b>עוד כיתות שלי</b>' + others.map(function (c) { return '<a href="#c=' + c.code + '&k=' + c.key + '" data-sw>' + esc(c.name) + ' ←<span>' + c.code + '</span></a>'; }).join('') : '';
       tabs($('kt-t-per'), 'data-p', tp, function (p) { tp = p; admin('get'); });
-      renderBoard(); renderGifts(); renderSet(); renderCerts();
+      renderBoard(); renderGifts(); renderSet(); renderCerts(); giladGift();
     }
     $('kt-t-switch').addEventListener('click', function (e) { if (e.target.closest('[data-sw]')) setTimeout(function () { location.reload(); }, 30); });
 
@@ -239,6 +239,25 @@
         data = d; $('kt-g-ok').textContent = '✓ נשמר. התלמידים רואים עכשיו ' + out.length + ' מתנות מעל הלוח.'; used('chashiva_kita_more', 'gifts'); renderCerts();
       });
     });
+
+    // ---- מתנה מגילעד: שובר 50 ₪ למקום הראשון בחודש בכיתה פעילה (6 בחודש). הבקשה בווטסאפ, רק קוד וכינוי ----
+    var giftChecked = '';
+    function giladGift() {
+      if (giftChecked === T.code) return; giftChecked = T.code;
+      call('/c/' + T.code + '/admin', { key: T.key, act: 'get', p: 'month' }).then(function (d) {
+        if (!d.ok) return;
+        var top = d.rows[0], n = d.rows.length, st = $('kt-gilad-st'), btn = $('kt-gilad-btn');
+        var ok = n >= 5 && top && top.pts >= 300;
+        st.textContent = ok ? '✓ הכיתה עומדת בתנאים החודש. המקום הראשון: "' + top.nick + '" עם ' + top.pts + ' נקודות.'
+          : 'החודש: ' + n + ' תלמידים, למקום הראשון ' + (top ? top.pts : 0) + ' נקודות. צריך 5 תלמידים ו-300 נקודות.';
+        btn.hidden = !ok;
+        if (ok) {
+          var mon = new Date().toLocaleDateString('he-IL', { month: 'long', year: 'numeric' });
+          btn.href = 'https://wa.me/972584049049?text=' + encodeURIComponent('שלום גילעד, אני ' + (d.teacher || 'מורה') + ' מכיתה משחקת "' + d.name + '" (קוד ' + T.code + '). המקום הראשון ב' + mon + ': הכינוי "' + top.nick + '" עם ' + top.pts + ' נקודות, ' + n + ' תלמידים בכיתה. אשמח לשובר המתנה, ואעביר אותו לתלמידה. לבדיקה: https://kelim-kita.gilad4049.workers.dev/c/' + T.code + '/board?p=month');
+          btn.onclick = function () { used('chashiva_kita_more', 'gilad-gift'); };
+        }
+      });
+    }
 
     // ---- תעודות ----
     function certRows() {
