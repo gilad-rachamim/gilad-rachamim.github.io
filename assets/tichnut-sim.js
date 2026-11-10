@@ -44,6 +44,7 @@
   function showSol(p, solved) {
     $('sm-sol').hidden = false;
     $('sm-sol').innerHTML = '<h3>' + (solved ? '✓ פתרתם! ככה נראה פתרון מקובל:' : 'הפתרון:') + '</h3><pre dir="ltr">' + esc(p.sol) + '</pre><p><b>סיבוכיות:</b> <span dir="ltr">' + esc(p.big) + '</span></p><p>' + esc(p.why) + '</p>' +
+      '<p><a class="btn btn-line btn-sm" href="/kelim/tichnut/tzaad/#sim=' + p.id + '">▶ לראות את הפתרון רץ צעד אחר צעד</a></p>' +
       '<p class="note">בראיון אמיתי: הסבירו בקול את הרעיון לפני שכותבים, ואמרו את הסיבוכיות בסוף.</p>';
   }
   function runTests() {
