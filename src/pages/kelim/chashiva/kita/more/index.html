@@ -52,6 +52,7 @@
     <section class="kt-card" data-panel="board">
       <div class="kt-msg" id="kt-wk" hidden></div>
       <div class="kt-tabs" id="kt-t-per" role="tablist"><button type="button" data-p="week">השבוע</button><button type="button" data-p="month">החודש</button><button type="button" data-p="round">מהסבב</button><button type="button" data-p="all">מההתחלה</button></div>
+      <div id="kt-t-goal" hidden></div>
       <ol class="kt-board" id="kt-t-board"></ol>
       <p class="kt-err" id="kt-t-err" aria-live="polite"></p>
       <p class="kt-note">"שם אמיתי" נשמר רק בטלפון שלכם, לתעודות. הוא לא נשלח לשרת ולא נראה לתלמידים.</p>
@@ -65,6 +66,12 @@
       <h2>מה אפשר לזכות</h2>
       <p>מסמנים מה מתאים לכם, ובוחרים למי. התלמידים רואים את הרשימה מעל הלוח, וזה מה שגורם להם לרצות עוד תרגיל.</p>
       <div id="kt-g-list"></div>
+      <h3>🎯 יעד כיתתי</h3>
+      <p>כל הכיתה עובדת יחד על מספר אחד, וכל תלמידה רואה פס שמתמלא. ככה גם מי שלא מגיעה למקום הראשון היא חלק מהניצחון.</p>
+      <div class="kt-preset"><input type="checkbox" id="kt-goal-on" aria-label="יעד כיתתי"><div><b>להפעיל יעד כיתתי</b></div>
+        <div class="pd"><input type="text" id="kt-goal-n" inputmode="numeric" maxlength="5" value="2000" aria-label="כמה נקודות">
+        <select id="kt-goal-p" aria-label="עד מתי"><option value="goalm">עד סוף החודש</option><option value="goalw">עד סוף השבוע</option></select>
+        <input type="text" id="kt-goal-d" maxlength="160" placeholder="הפרס לכל הכיתה, למשל: שיעור בחוץ"></div></div>
       <h3>מתנה משלכם</h3>
       <div class="kt-f"><input class="kt-in" id="kt-g-new-t" maxlength="50" placeholder="למשל: יושבת ליד החלון שבוע"><button class="btn btn-line btn-sm" type="button" id="kt-g-add">+ להוסיף</button></div>
       <p class="kt-warn">⭐ <b>תוספת במגן</b> היא החלטה שלכם ושל בית הספר בלבד. הכלי לא נותן ציונים, לא מבטיח שום תוספת, ולא מחליף את שיקול הדעת שלכם. הנקודות נספרות מהטלפון של התלמידים, ולכן הן עידוד, לא מבחן.</p>
