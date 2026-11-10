@@ -14,6 +14,16 @@
     ['ספירת תווים', "function countChars(s) {\n  const count = {};\n  for (const ch of s) {\n    count[ch] = (count[ch] || 0) + 1;\n  }\n  return count;\n}\n\nconsole.log(countChars('banana'));\n"]
   ];
 
+
+  var PYEX = [
+    ['חיפוש בינארי', "def binary_search(arr, target):\n    lo, hi = 0, len(arr) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if arr[mid] == target:\n            return mid\n        if arr[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1\n\nbinary_search([2, 5, 8, 12, 16, 23, 38, 56, 72, 91], 23)\n"],
+    ['מיון בועות', "def bubble_sort(arr):\n    for i in range(len(arr) - 1):\n        for j in range(len(arr) - 1 - i):\n            if arr[j] > arr[j + 1]:\n                arr[j], arr[j + 1] = arr[j + 1], arr[j]\n    return arr\n\nbubble_sort([5, 1, 4, 2, 8])\n"],
+    ['עצרת ברקורסיה', "def factorial(n):\n    if n <= 1:\n        return 1\n    return n * factorial(n - 1)\n\nprint(factorial(5))\n"],
+    ['פיבונאצ׳י עם זיכרון', "def fib(n, memo=None):\n    if memo is None:\n        memo = {}\n    if n <= 1:\n        return n\n    if n in memo:\n        return memo[n]\n    value = fib(n - 1, memo) + fib(n - 2, memo)\n    memo[n] = value\n    return value\n\nfib(6)\n"],
+    ['היפוך בשני מצביעים', "def reverse(arr):\n    left, right = 0, len(arr) - 1\n    while left < right:\n        arr[left], arr[right] = arr[right], arr[left]\n        left += 1\n        right -= 1\n    return arr\n\nreverse(['a', 'b', 'c', 'd', 'e'])\n"],
+    ['ספירת תווים', "def count_chars(s):\n    count = {}\n    for ch in s:\n        count[ch] = count.get(ch, 0) + 1\n    return count\n\nprint(count_chars('banana'))\n"]
+  ];
+
   // ---------- הכנסת "צילומים" לקוד ----------
   function isFn(n) { return n.type === 'FunctionDeclaration' || n.type === 'FunctionExpression' || n.type === 'ArrowFunctionExpression'; }
   function eachChild(n, f) {
@@ -171,8 +181,11 @@
   // ---------- ריצה ----------
   var R = null, cur = 0, worker = null, play = null, src = '';
   var st = T.load(KEY, { code: EX[0][1], ex: '0' });
+  if (st.lang !== 'py') st.lang = 'js';
+  var PY = function () { return st.lang === 'py'; };
 
   function run(code) {
+    if (PY()) return runPy(code);
     stop(); src = code; st.code = code; save();
     var inst;
     try { inst = instrument(code); }
@@ -193,13 +206,55 @@
     worker.onmessage = function (e) {
       clearTimeout(killer); worker.terminate(); worker = null;
       if (!e.data.steps.length) { R = null; fail('<p class="sm-bad">לא היה מה להריץ. הוסיפו בסוף קריאה לפונקציה, למשל <code dir="ltr">myFunc(5);</code></p>'); return; }
-      R = e.data;
-      $('tz-edit').hidden = true; $('tz-view').hidden = false; $('tz-msg').innerHTML = '';
-      $('tz-range').max = R.steps.length - 1;
-      go(0);
-      T.used('tichnut_tzaad', 'run');
+      show(e.data);
     };
     worker.postMessage(null);
+  }
+  function show(data) {
+    R = data; R.py = PY();
+    $('tz-edit').hidden = true; $('tz-view').hidden = false; $('tz-msg').innerHTML = '';
+    $('tz-range').max = R.steps.length - 1;
+    go(0);
+    T.used('tichnut_tzaad', R.py ? 'run_py' : 'run');
+  }
+
+  // ---------- Python: Pyodide ב-Worker נפרד (assets/tichnut-tzaad-py.js) ----------
+  var pyW = null, pyReady = false, pyId = 0, pyKill = null, pyPending = 0, PYTIMEOUT = 6000;
+  function pyWorker() {
+    if (pyW) return pyW;
+    pyReady = false;
+    try { pyW = new Worker('/assets/tichnut-tzaad-py.js?v=3', { type: 'module' }); } catch (x) { pyW = null; return null; }
+    pyW.onmessage = function (e) {
+      var d = e.data || {};
+      if (d.ready) { pyReady = true; if (pyPending) { showMsg('<p class="note">מריץ…</p>'); arm(pyPending); } return; }
+      if (d.id !== pyId) return;
+      clearTimeout(pyKill); pyPending = 0;
+      if (d.fatal) { pyW.terminate(); pyW = null; fail('<p class="sm-bad">לא הצלחתי לטעון את Python: ' + esc(d.fatal) + '</p><p class="note">בדקו את החיבור לאינטרנט ונסו שוב.</p>'); return; }
+      if (d.syntax) { fail('<p class="sm-bad">שגיאת תחביר' + (d.syntax.line ? ' בשורה ' + d.syntax.line : '') + ': <span dir="ltr">' + esc(d.syntax.msg) + '</span></p><p class="note">בדקו נקודתיים בסוף שורת def / if / for, הזחה (רווחים בתחילת השורה), סוגריים ומרכאות.</p>'); return; }
+      if (!d.steps.length) { R = null; fail('<p class="sm-bad">לא היה מה להריץ. הוסיפו בסוף קריאה לפונקציה, למשל <code dir="ltr">my_func(5)</code></p>'); return; }
+      show(d);
+    };
+    pyW.onerror = function (e) { e.preventDefault(); clearTimeout(pyKill); pyPending = 0; if (pyW) pyW.terminate(); pyW = null; fail('<p class="sm-bad">שגיאה בטעינת Python: ' + esc(e.message || '') + '</p>'); };
+    pyW.postMessage({});
+    return pyW;
+  }
+  function arm(id) {
+    clearTimeout(pyKill);
+    pyKill = setTimeout(function () {
+      if (id !== pyId) return;
+      pyPending = 0; if (pyW) pyW.terminate(); pyW = null;
+      fail('<p class="sm-bad">⏱ הקוד רץ יותר מ-6 שניות בלי להתקדם בשורות. כנראה חישוב כבד מאוד בשורה אחת (למשל sum(range(10**10))) או לולאה אינסופית. נסו קלט קטן יותר.</p>');
+    }, PYTIMEOUT);
+  }
+  function runPy(code) {
+    stop(); src = code; st.pycode = code; save();
+    if (worker) { worker.terminate(); worker = null; }
+    var w = pyWorker();
+    if (!w) { fail('<p class="sm-bad">הדפדפן הזה לא מאפשר להריץ Python כאן.</p>'); return; }
+    var id = ++pyId; pyPending = id;
+    w.postMessage({ id: id, code: code, cap: CAP });
+    if (pyReady) { showMsg('<p class="note">מריץ…</p>'); arm(id); }
+    else showMsg('<p class="note">⏳ טוען את Python… בפעם הראשונה זה לוקח כמה שניות (בערך 14MB). אחר כך הוא נשמר בדפדפן ונפתח מהר.</p>');
   }
   function showMsg(h) { $('tz-msg').innerHTML = h; }
   function fail(h) { showMsg(h); $('tz-edit').hidden = false; $('tz-view').hidden = true; }
@@ -208,10 +263,13 @@
   // ---------- תצוגה ----------
   var PTR = /^(i|j|k|l|r|lo|hi|mid|left|right|start|end|low|high|p|q|slow|fast|idx|index|pos|top|front|back)$/;
   function isInt(x) { return typeof x === 'number' && Math.floor(x) === x; }
+  function pyStr(t) { return t.indexOf("'") >= 0 && t.indexOf('"') < 0 ? '"' + t + '"' : "'" + t.replace(/'/g, "\\'") + "'"; }
   function val(x, ctx) {
-    if (x === null) return '<span class="tz-k">null</span>';
+    var py = R && R.py;
+    if (x === null) return '<span class="tz-k">' + (py ? 'None' : 'null') + '</span>';
+    if (typeof x === 'boolean' && py) return '<span class="tz-n">' + (x ? 'True' : 'False') + '</span>';
     if (typeof x === 'number' || typeof x === 'boolean') return '<span class="tz-n">' + x + '</span>';
-    if (x.s !== undefined) return '<span class="tz-s">"' + esc(x.s) + '"</span>';
+    if (x.s !== undefined) return py ? '<span class="tz-s">' + esc(pyStr(x.s)) + '</span>' : '<span class="tz-s">"' + esc(x.s) + '"</span>';
     if (x.u) return '<span class="tz-k">undefined</span>';
     if (x.n !== undefined) return '<span class="tz-n">' + esc(x.n) + '</span>';
     if (x.f !== undefined) return '<span class="tz-k">ƒ ' + esc(x.f) + '</span>';
@@ -222,6 +280,7 @@
       return '[' + x.a.map(function (c) { return val(c); }).join(', ') + (x.len > x.a.length ? ', …' : '') + ']';
     }
     if (x.m) return '<span class="tz-k">Map</span> {' + x.m.map(function (kv) { return val(kv[0]) + ' → ' + val(kv[1]); }).join(', ') + (x.len > x.m.length ? ', …' : '') + '}';
+    if (x.set && py) return x.set.length ? '{' + x.set.map(function (c) { return val(c); }).join(', ') + (x.len > x.set.length ? ', …' : '') + '}' : '<span class="tz-k">set()</span>';
     if (x.set) return '<span class="tz-k">Set</span> {' + x.set.map(function (c) { return val(c); }).join(', ') + (x.len > x.set.length ? ', …' : '') + '}';
     if (x.ob) { var ks = Object.keys(x.ob); return '{' + ks.map(function (k) { return '<span class="tz-p">' + esc(k) + '</span>: ' + val(x.ob[k]); }).join(', ') + (x.len > ks.length ? ', …' : '') + '}'; }
     return esc(JSON.stringify(x));
@@ -242,7 +301,7 @@
   function plain(v) { var o = {}; Object.keys(v).forEach(function (k) { o[k] = v[k]; }); return o; }
   function outHtml(n) {
     var lines = R ? R.out.slice(0, n) : [];
-    return lines.length ? '<div class="tz-out"><b>פלט (console.log)</b><pre dir="ltr">' + lines.map(esc).join('\n') + '</pre></div>' : '';
+    return lines.length ? '<div class="tz-out"><b>פלט (' + (R.py ? 'print' : 'console.log') + ')</b><pre dir="ltr">' + lines.map(esc).join('\n') + '</pre></div>' : '';
   }
   function go(i) {
     if (!R || !R.steps.length) return;
@@ -261,7 +320,7 @@
     // מה קורה
     var ev = s.call ? '📞 נכנסים לפונקציה <b dir="ltr">' + esc(s.call) + '</b>' :
       s.ret !== undefined ? '↩ <b dir="ltr">' + esc(s.fn) + '</b> מחזירה <span dir="ltr">' + val(s.ret) + '</span>' : 'עומדים להריץ את שורה ' + s.l;
-    if (end) ev += R.err ? '<br><span class="sm-bad">✗ נזרקה שגיאה: <span dir="ltr">' + esc(R.err) + '</span></span>' :
+    if (end) ev += R.err ? '<br><span class="sm-bad">✗ נזרקה שגיאה' + (R.errLine ? ' בשורה ' + R.errLine : '') + ': <span dir="ltr">' + esc(R.err) + '</span></span>' :
       R.cap ? '<br><span class="sm-bad">עצרנו אחרי ' + CAP + ' צעדים, כדי לא להיתקע. נסו קלט קטן יותר.</span>' : '<br><span class="sm-ok">✓ סוף הריצה</span>';
     $('tz-ev').innerHTML = ev;
     // מחסנית
@@ -319,26 +378,42 @@
     });
     return p.sol + '\n\n' + p.fn + '(' + best[0].map(function (a) { return JSON.stringify(a); }).join(', ') + ');\n';
   }
-  $('tz-ex').innerHTML = '<optgroup label="דוגמאות">' + EX.map(function (x, i) { return '<option value="' + i + '">' + x[0] + '</option>'; }).join('') + '</optgroup>' +
-    (P.length ? '<optgroup label="פתרונות מסימולטור הראיון">' + P.map(function (p) { return '<option value="sim:' + p.id + '">' + esc(p.t) + '</option>'; }).join('') + '</optgroup>' : '') +
-    '<option value="mine">הקוד שלי</option>';
+  function fillEx() {
+    var ex = PY() ? PYEX : EX;
+    $('tz-ex').innerHTML = '<optgroup label="דוגמאות">' + ex.map(function (x, i) { return '<option value="' + i + '">' + x[0] + '</option>'; }).join('') + '</optgroup>' +
+      (P.length && !PY() ? '<optgroup label="פתרונות מסימולטור הראיון">' + P.map(function (p) { return '<option value="sim:' + p.id + '">' + esc(p.t) + '</option>'; }).join('') + '</optgroup>' : '') +
+      '<option value="mine">הקוד שלי</option>';
+    $('tz-lang').value = st.lang;
+    $('tz-note-js').hidden = PY(); $('tz-note-py').hidden = !PY();
+  }
   function loadEx(v, go) {
-    var code = null;
-    if (/^sim:/.test(v)) { var id = v.slice(4); P.forEach(function (p) { if (p.id === id) code = simCode(p); }); }
-    else if (EX[+v]) code = EX[+v][1];
+    var code = null, ex = PY() ? PYEX : EX;
+    if (/^sim:/.test(v)) { if (PY()) return false; var id = v.slice(4); P.forEach(function (p) { if (p.id === id) code = simCode(p); }); }
+    else if (ex[+v]) code = ex[+v][1];
     if (code === null) return false;
-    st.ex = v; $('tz-ex').value = v; $('tz-in').value = code;
+    if (PY()) st.pyex = v; else st.ex = v;
+    $('tz-ex').value = v; $('tz-in').value = code;
     if (go) run(code);
     return true;
   }
-  $('tz-ex').addEventListener('change', function () { if (this.value === 'mine') { $('tz-in').value = st.code || ''; $('tz-in').focus(); return; } loadEx(this.value, true); });
-
-  // התחלה: מהסימולטור (#sim=id), או מהקוד האחרון, או דוגמה – ומריצים מיד כדי שיהיה מה לראות
-  var h = location.hash.match(/sim=([\w-]+)/);
-  if (!(h && loadEx('sim:' + h[1], true))) {
-    $('tz-ex').value = st.ex || '0';
-    $('tz-in').value = st.code || EX[0][1];
-    run($('tz-in').value);
+  $('tz-ex').addEventListener('change', function () { if (this.value === 'mine') { $('tz-in').value = (PY() ? st.pycode : st.code) || ''; $('tz-in').focus(); return; } loadEx(this.value, true); });
+  function setLang(l, go) {
+    st.lang = l === 'py' ? 'py' : 'js'; save(); fillEx();
+    var ex = PY() ? PYEX : EX, v = PY() ? (st.pyex || '0') : (st.ex || '0');
+    $('tz-ex').value = v;
+    $('tz-in').value = (PY() ? st.pycode : st.code) || ex[0][1];
+    if (PY()) pyWorker(); // מתחילים לטעון ברקע
+    if (go) run($('tz-in').value);
   }
-  window.TICHNUT.tzaad = { instrument: instrument, run: run, go: go, simCode: simCode, EX: EX, state: function () { return { R: R, cur: cur }; } };
+  $('tz-lang').addEventListener('change', function () { setLang(this.value, true); T.used('tichnut_tzaad', 'lang_' + st.lang); });
+
+  // התחלה: מהסימולטור (#sim=id), או #py, או מהקוד האחרון, או דוגמה – ומריצים מיד כדי שיהיה מה לראות
+  var h = location.hash.match(/sim=([\w-]+)/);
+  if (h) { st.lang = 'js'; fillEx(); }
+  if (!(h && loadEx('sim:' + h[1], true))) {
+    if (/(^|[#&])(py|lang=py)\b/.test(location.hash)) st.lang = 'py';
+    else if (/(^|[#&])(js|lang=js)\b/.test(location.hash)) st.lang = 'js';
+    setLang(st.lang, true);
+  }
+  window.TICHNUT.tzaad = { instrument: instrument, run: run, go: go, simCode: simCode, EX: EX, PYEX: PYEX, setLang: setLang, state: function () { return { R: R, cur: cur }; } };
 })();
