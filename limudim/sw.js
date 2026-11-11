@@ -1,8 +1,8 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'limudim-202611111240';
-var PRECACHE = ["/limudim/batei-sefer/", "/limudim/dapim/", "/limudim/ilui/", "/limudim/", "/limudim/kahoot/", "/limudim/kartisiot/", "/limudim/krav/", "/limudim/krav-anglit/", "/limudim/kvutza/", "/limudim/machberet/", "/limudim/machberet/kita/", "/limudim/machshevon/", "/limudim/maslul/", "/limudim/matematika/", "/limudim/mivchan/", "/limudim/olami/", "/limudim/poter/", "/limudim/timer/", "/limudim/yomi/", "/assets/site.css?v=39e81fea", "/assets/kelim.css?v=95dad8f3", "/assets/kelim.js?v=c681b967", "/assets/track.js?v=b23b682b", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-limudim-192.png", "/assets/limudim.css?v=b9223dd1", "/assets/limudim.js?v=b71ff230"];
+var CACHE = 'limudim-202611111312';
+var PRECACHE = ["/limudim/batei-sefer/", "/limudim/dapim/", "/limudim/ilui/", "/limudim/", "/limudim/kahoot/", "/limudim/kartisiot/", "/limudim/krav/", "/limudim/krav-anglit/", "/limudim/kvutza/", "/limudim/machberet/", "/limudim/machberet/kita/", "/limudim/machshevon/", "/limudim/maslul/", "/limudim/matematika/", "/limudim/mivchan/", "/limudim/olami/", "/limudim/poter/", "/limudim/timer/", "/limudim/yomi/", "/assets/site.css?v=39e81fea", "/assets/kelim.css?v=95dad8f3", "/assets/kelim.js?v=c681b967", "/assets/track.js?v=e5484aab", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-limudim-192.png", "/assets/limudim.css?v=b9223dd1", "/assets/limudim.js?v=b71ff230"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
 });
