@@ -44,3 +44,27 @@
     }
   }
 })();
+
+// דקות פעילות (נקבע 11.11.2026): גוגל סופר זמן בעיקר בדיווח אחד ביציאה מהדף, ובטלפון הוא נאבד
+// הרבה (סוגרים אפליקציה, נועלים מסך). אחי של גילעד שיחק רבע שעה בשחור ופתור ובדוח יצא 0 שניות.
+// לכן כל דקה שהדף גלוי ובפוקוס נשלח active_minute. כל אירוע כזה נושא איתו גם את הזמן שנצבר (_et),
+// כך שגם מדד "משך ההתעניינות" של גוגל מתעדכן, ומה שנאבד ביציאה הוא לכל היותר דקה.
+// בדוח: אירועים ← active_minute לפי נתיב הדף = כמה דקות אנשים היו בכל דף.
+(function () {
+  if (!window.gtag) return;
+  var STEP = 5000, MIN = 60000, CAP = 240;
+  var acc = 0, n = 0, last = Date.now();
+  function active() { return document.visibilityState === 'visible' && (!document.hasFocus || document.hasFocus()); }
+  function tick() {
+    var now = Date.now(), d = now - last;
+    last = now;
+    if (!active() || d > STEP * 3) return; // מחשב שנרדם או לשונית ברקע – לא נספר
+    acc += d;
+    if (acc >= MIN && n < CAP) {
+      acc -= MIN; n++;
+      window.gtag('event', 'active_minute', { page: location.pathname, minute: n });
+    }
+  }
+  setInterval(tick, STEP);
+  document.addEventListener('visibilitychange', function () { last = Date.now(); });
+})();
