@@ -504,10 +504,33 @@ function stageBack(v, mode) {
   return { L: r.L, R: r.R, sr: r.sr, notes: r.info.notes };
 }
 function refSlice(start, n) { var y = new Float32Array(n), x = REF.x; for (var i = 0; i < n; i++) { var p = start + i; y[i] = p >= 0 && p < x.length ? x[p] : 0; } return y; }
+// רוחב הפס של המיקרופון, מתוך ההקלטה עצמה. מיקרופון של אוזניות בלוטות' מקליט כמו שיחת טלפון: אין בו כלום מעל 4kHz (או 8kHz).
+// מחזיר {band: 0 = מלא / 4 / 8 (kHz), mid, hi: העוצמה ב-4.5–7.5kHz וב-9–14kHz מול החלק החזק של הקול, ב-dB}, או null כשאין מספיק קול.
+function micBand(x, sr) {
+  var N = 1024, K = N >> 1, BW = 500, nb = Math.floor(Math.min(16000, sr / 2) / BW), T = Math.floor(x.length / N), i, k, t;
+  if (sr < 15000) return { band: 4, mid: -99, hi: -99 };
+  if (T < 40) return null;
+  var re = new Float32Array(N), im = new Float32Array(N), w = new Float32Array(N), P = new Float32Array(T * nb), tot = new Float32Array(T), mx = 0;
+  for (i = 0; i < N; i++) w[i] = 0.5 - 0.5 * Math.cos(2 * Math.PI * i / N);
+  for (t = 0; t < T; t++) {
+    for (i = 0; i < N; i++) { re[i] = x[t * N + i] * w[i]; im[i] = 0; }
+    fft(re, im);
+    for (k = 2; k < K; k++) { var b = Math.floor(k * sr / N / BW); if (b >= nb) break; var p = re[k] * re[k] + im[k] * im[k]; P[t * nb + b] += p; tot[t] += p; }
+    if (tot[t] > mx) mx = tot[t];
+  }
+  var m = new Float64Array(nb), cnt = 0; // רק מסגרות שיש בהן קול (עד 30dB מתחת לחזקה ביותר)
+  for (t = 0; t < T; t++) if (tot[t] > mx * 0.001) { cnt++; for (k = 0; k < nb; k++) m[k] += P[t * nb + k]; }
+  if (cnt < 30 || mx < 1e-7) return null;
+  function db(a, b2) { var s = 0; for (var q = a; q < b2; q++) s += m[q]; return 10 * Math.log10(s / (b2 - a) / cnt + 1e-30); }
+  var ref = -999; for (k = 0; k < 7; k++) ref = Math.max(ref, db(k, k + 1));
+  var mid = db(9, 15) - ref, hi = nb >= 28 ? db(18, 28) - ref : -99;
+  return { band: mid < -55 ? 4 : hi < -62 ? 8 : 0, mid: +mid.toFixed(1), hi: +hi.toFixed(1) };
+}
 // שלב א': סנכרון + ניקוי. rec מתחיל (לפני תיקון האיחור) בנקודה start במוזיקה.
-// o: {lagGuess (דגימות), lagFixed (המשתמש קבע ידנית), loSec, hiSec, noise, bleed}
+// o: {lagGuess (דגימות), lagFixed (המשתמש קבע ידנית), loSec, hiSec, noise, bleed, melMin, melLo, melHi (אוזניות בלוטות' שלא נמדדו: הניחוש באמצע הטווח, אז מחפשים לשני הצדדים וסומכים על המנגינה כבר מ-20 אלפיות שנייה)}
 function stageClean(id, rec, start, o, prog) {
   var sr = REF.sr, n = rec.length, ref = refSlice(start, n), lg = null, lag, mode;
+  var mb = micBand(rec, sr);
   if (o.lagFixed != null) { lag = o.lagFixed; mode = 'manual'; lg = { z: 0, drift: 0 }; }
   else {
     lg = findLag(rec, ref, sr, o.loSec == null ? -0.06 : o.loSec, o.hiSec == null ? 0.9 : o.hiSec);
@@ -522,14 +545,14 @@ function stageClean(id, rec, start, o, prog) {
   var a = new Float32Array(r.y), sync = ''; // עותק (subarray של מאגר גדול יותר)
   if (mode === 'guess' && !o.trust) { // עם אוזניות אין מוזיקה בהקלטה: מכוונים לפי הקצב, בטווח קטן סביב הניחוש
     var ev = onsetEnv(a, sr), t0 = Math.round(start / (sr * 0.01)), best = 0, bv = -1, R = 6, d, s, sm, t, m, v;
-    var ms = !o.nomel && REF.mel ? melSync(ev, envFrom(REF.mel.env, t0), -42, 10) : null;
-    if (ms && Math.abs(ms.d) >= 5) { best = ms.d; sync = 'mel'; } // שיר מהאתר: לפי המקום הידוע של ההברות, גם כשהאיחור גדול (אוזניות בלוטות')
+    var ms = !o.nomel && REF.mel ? melSync(ev, envFrom(REF.mel.env, t0), o.melLo || -42, o.melHi || 10) : null;
+    if (ms && Math.abs(ms.d) >= (o.melMin || 5)) { best = ms.d; sync = 'mel'; } // שיר מהאתר: לפי המקום הידוע של ההברות, גם כשהאיחור גדול (אוזניות בלוטות')
     else for (d = -R; d <= R; d++) { s = 0; sm = 0; for (t = 0; t < ev.length; t++) { m = REF.env[t0 + t + d] || 0; s += ev[t] * m; sm += m * m; } v = s / Math.sqrt(sm + 1e-12) * Math.exp(-d * d / 32); if (v > bv) { bv = v; best = d; } }
     if (best) { var shs = Math.round(best * 0.01 * sr), a2 = new Float32Array(n); for (var i = 0; i < n; i++) { var q = i - shs; a2[i] = q >= 0 && q < n ? a[q] : 0; } a = a2; lag -= shs; }
   }
   if (!o.nogate) a = gate(a, sr, GATE[Math.max(0, Math.min(3, o.noise == null ? 2 : o.noise))], o.gateR === 0 ? null : r.act, o.gateR);
   TAKES[id] = { a: a, start: start, sr: sr };
-  return { lag: lag, lagMs: Math.round(lag / sr * 1000), z: +lg.z.toFixed(1), drift: lg.drift, mode: mode, sync: sync, bleedDb: +r.bleedDb.toFixed(1), cancelDb: +r.cancelDb.toFixed(1), level: rms(a) };
+  return { lag: lag, lagMs: Math.round(lag / sr * 1000), z: +lg.z.toFixed(1), drift: lg.drift, mode: mode, sync: sync, bleedDb: +r.bleedDb.toFixed(1), cancelDb: +r.cancelDb.toFixed(1), level: rms(a), band: mb ? mb.band : 0, bandMid: mb ? mb.mid : null, bandHi: mb ? mb.hi : null };
 }
 // שלב ב': קצב + זיופים, מהקול הנקי השמור. o: {tight 0..1, tune 0..1, chromatic}
 function stageFinish(id, o) {
@@ -558,4 +581,4 @@ if (typeof self !== 'undefined' && typeof module === 'undefined') {
     } catch (err) { self.postMessage({ id: d.id, error: String(err && err.message || err) }); }
   };
 }
-if (typeof module !== 'undefined') module.exports = { fft: fft, decim: decim, gcc: gcc, findLag: findLag, shiftRec: shiftRec, clean: clean, onsetEnv: onsetEnv, phrases: phrases, gate: gate, GATE: GATE, tighten: tighten, pitchTrack: pitchTrack, detectKey: detectKey, chromaFrames: chromaFrames, notesOf: notesOf, scaleNote: scaleNote, f2m: f2m, tune: tune, psola: psola, harmShift: harmShift, backing: backing, melOf: melOf, melSync: melSync, envFrom: envFrom, onsetEnv2: onsetEnv, setRef: setRef, stageClean: stageClean, stageFinish: stageFinish, stageBack: stageBack, ref: function () { return REF; }, rms: rms };
+if (typeof module !== 'undefined') module.exports = { fft: fft, decim: decim, gcc: gcc, findLag: findLag, shiftRec: shiftRec, clean: clean, onsetEnv: onsetEnv, phrases: phrases, gate: gate, GATE: GATE, tighten: tighten, pitchTrack: pitchTrack, detectKey: detectKey, chromaFrames: chromaFrames, notesOf: notesOf, scaleNote: scaleNote, f2m: f2m, tune: tune, psola: psola, harmShift: harmShift, backing: backing, melOf: melOf, melSync: melSync, micBand: micBand, envFrom: envFrom, onsetEnv2: onsetEnv, setRef: setRef, stageClean: stageClean, stageFinish: stageFinish, stageBack: stageBack, ref: function () { return REF; }, rms: rms };
