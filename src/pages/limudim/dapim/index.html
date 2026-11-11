@@ -120,10 +120,19 @@
     <div class="panel dp-out">
       <p class="dp-sum" id="dp-sum" aria-live="polite"></p>
       <div class="btns">
-        <button class="btn btn-gold" type="button" id="dp-print">🖨 להדפיס או לשמור PDF</button>
+        <button class="btn btn-gold" type="button" id="dp-print">🖨 להדפיס</button>
+        <button class="btn btn-gold" type="button" id="dp-pdf">📄 PDF לקבוצת ווטסאפ</button>
         <a class="btn btn-line" id="dp-open" href="#" target="_blank" rel="noopener">👁 לפתוח את הדף הדיגיטלי</a>
       </div>
+      <div class="dp-pdfbox" id="dp-pdfbox" hidden>
+        <p id="dp-pdfmsg" aria-live="polite"></p>
+        <div class="btns">
+          <button class="btn btn-gold" type="button" id="dp-pdf-share" hidden>📤 לשלוח את ה-PDF (ווטסאפ, קבוצה, מייל)</button>
+          <a class="btn btn-line" id="dp-pdf-dl" href="#" download>⬇️ להוריד את ה-PDF</a>
+        </div>
+      </div>
       <div class="btns">
+        <button class="btn btn-line btn-sm" type="button" id="dp-share" hidden>📤 לשתף קישור</button>
         <a class="btn btn-line btn-sm" id="dp-wa" href="#" target="_blank" rel="noopener">📲 לשלוח לכיתה בווטסאפ</a>
         <button class="btn btn-line btn-sm" type="button" id="dp-copy">🔗 להעתיק קישור</button>
         <button class="btn btn-line btn-sm" type="button" id="dp-new">🎲 תרגילים אחרים</button>

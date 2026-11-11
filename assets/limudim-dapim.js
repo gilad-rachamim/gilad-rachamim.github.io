@@ -418,6 +418,7 @@
     });
     $('dp-only').addEventListener('change', render);
     drawOwn();
+    var curMsg = '', curLink = '';
     function readCfg() {
       var r = [1, 2, 3].map(function (k) { return $('dp-r' + k).value; }).filter(function (x, j, a) { return x && a.indexOf(x) === j; });
       var xs = [1, 2].map(function (k) { return $('dp-x' + k).value; }).filter(function (x, j, a) { return x && x !== $('dp-topic').value && a.indexOf(x) === j; });
@@ -428,7 +429,7 @@
       var o = { style: $('dp-style').value, font: +$('dp-font').value, title: $('dp-title').value.trim(), grade: GRN[+gs.value], key: $('dp-key').checked };
       ['time', 'stars', 'bonus', 'feel', 'grid', 'qr'].forEach(function (k) { o[k] = $('dp-o-' + k).checked; });
       var link = linkOf(cfg, o.title), pl = null, pend = false;
-      if (link.length >= 700) {
+      if (true) { // תמיד קישור קצר: hakelim.com/k/#קוד (נעים בווטסאפ, וקוד הסריקה פשוט)
         pl = sheetPayload(cfg, o.title);
         var sk = shortGet(pl);
         if (sk) { o.short = SHORT + sk; link = o.short; }
@@ -444,7 +445,9 @@
       $('dp-sum').innerHTML = sum;
       $('dp-help-note').textContent = cfg.a === 0 ? 'בלי עזרה: אין הסברים, אין רמזים ואין צעדים מודרכים. מתאים לבוחן קצר או לבדיקת הבנה.' : cfg.a === 2 ? 'הרבה עזרה: כל תרגיל מפורק לצעדים קטנים, וגם בדף הדיגיטלי הרמזים תמיד זמינים.' : '';
       $('dp-open').href = link;
-      $('dp-wa').href = 'https://wa.me/?text=' + encodeURIComponent('דף עבודה במתמטיקה: ' + sh.name + ' (' + KIND[cfg.k] + ', כ-' + sh.total + ' דקות)\nפותרים כאן, עם רמזים ומחשבון:\n' + link);
+      curMsg = 'דף עבודה במתמטיקה: ' + sh.name + ' (' + KIND[cfg.k] + ', כ-' + sh.total + ' דקות)\nפותרים כאן, עם רמזים ומחשבון:\n' + link; curLink = link;
+      $('dp-wa').href = 'https://wa.me/?text=' + encodeURIComponent(curMsg);
+      pdfReset();
       $('dp-copy').dataset.link = link;
       var keep = { g: gs.value, u: $('dp-units').value, k: kind, s: seed, t: cfg.t, x: [$('dp-x1').value, $('dp-x2').value], own: ownQ, only: $('dp-only').checked, r: [1, 2, 3].map(function (k) { return $('dp-r' + k).value; }), title: o.title, key: o.key };
       ['min', 'lv', 'help', 'style', 'font'].forEach(function (k) { keep[k] = $('dp-' + k).value; });
@@ -473,12 +476,99 @@
     $('dp-print').addEventListener('click', function () { used('print', { topic: cur.t.id, kind: cur.cfg.k, min: cur.cfg.m }); window.print(); });
     $('dp-wa').addEventListener('click', function () { used('wa', { topic: cur.t.id }); });
     $('dp-open').addEventListener('click', function () { used('open_digital', { topic: cur.t.id }); });
+    // ---------- PDF לקבוצת ווטסאפ / שיתוף מהטלפון ----------
+    // שני שלבים: "להכין" (כמה שניות) ואז "לשלוח" – הדפדפן מרשה לפתוח שיתוף רק מיד אחרי לחיצה.
+    var pdfFile = null, pdfUrl = '';
+    function pdfReset() { pdfFile = null; if (pdfUrl) { URL.revokeObjectURL(pdfUrl); pdfUrl = ''; } $('dp-pdfbox').hidden = true; $('dp-pdf').disabled = false; $('dp-pdf').textContent = '📄 PDF לקבוצת ווטסאפ'; }
+    if (navigator.share) $('dp-share').hidden = false;
+    $('dp-share').addEventListener('click', function () {
+      used('share_link', { topic: cur.t.id });
+      navigator.share({ title: 'דף עבודה: ' + cur.name, text: curMsg }).catch(function () {});
+    });
+    $('dp-pdf').addEventListener('click', function () {
+      var b = this; if (b.disabled) return;
+      b.disabled = true; b.textContent = 'מכינים את ה-PDF…';
+      makePdf(cur).then(function (blob) {
+        var name = ('דף עבודה - ' + (cur.only ? cur.name : cur.t.name)).replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, ' ').trim().slice(0, 60) + '.pdf';
+        pdfFile = new File([blob], name, { type: 'application/pdf' });
+        pdfUrl = URL.createObjectURL(blob);
+        var dl = $('dp-pdf-dl'); dl.href = pdfUrl; dl.setAttribute('download', name);
+        var can = false; try { can = !!(navigator.canShare && navigator.canShare({ files: [pdfFile] })); } catch (e) {}
+        $('dp-pdf-share').hidden = !can; dl.hidden = false;
+        $('dp-pdfmsg').innerHTML = '✓ ה-PDF מוכן (' + Math.max(1, Math.round(blob.size / 1024)) + ' KB). ' + (can ? 'לוחצים "לשלוח", בוחרים ווטסאפ ואת הקבוצה. הקישור הקצר לדף הדיגיטלי נשלח איתו.' : 'מורידים אותו, ובווטסאפ במחשב גוררים את הקובץ לקבוצה (או 📎 ← מסמך).');
+        $('dp-pdfbox').hidden = false; b.textContent = '✓ ה-PDF מוכן';
+        used('pdf_make', { topic: cur.t.id, kb: Math.round(blob.size / 1024) });
+      }).catch(function () {
+        b.disabled = false; b.textContent = '📄 PDF לקבוצת ווטסאפ';
+        $('dp-pdf-share').hidden = true; $('dp-pdf-dl').hidden = true;
+        $('dp-pdfmsg').textContent = 'לא הצלחנו להכין PDF בדפדפן הזה. אפשר ללחוץ "להדפיס" ולבחור "שמירה כ-PDF".';
+        $('dp-pdfbox').hidden = false;
+      });
+    });
+    $('dp-pdf-share').addEventListener('click', function () {
+      if (!pdfFile) return;
+      used('pdf_share', { topic: cur.t.id });
+      navigator.share({ files: [pdfFile], text: curMsg }).catch(function (e) {
+        if (e && e.name === 'AbortError') return;
+        navigator.share({ files: [pdfFile] }).catch(function () {}); // יש אפליקציות שלא מקבלות טקסט יחד עם קובץ
+      });
+    });
+    $('dp-pdf-dl').addEventListener('click', function () { used('pdf_download', { topic: cur.t.id }); });
     $('dp-copy').addEventListener('click', function () {
       var b = this, l = b.dataset.link, done = function () { b.textContent = '✓ הקישור הועתק'; setTimeout(function () { b.textContent = '🔗 להעתיק קישור'; }, 2000); };
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(l).then(done, function () { window.prompt('הקישור לדף:', l); });
       else window.prompt('הקישור לדף:', l);
       used('copy');
     });
+  }
+
+  // ---------- יצירת PDF בדפדפן: עותק של הדף ברוחב A4, תמונה, וחיתוך לעמודים בין שאלות ----------
+  function loadJs(src) { return new Promise(function (ok, no) { var x = document.createElement('script'); x.src = src; x.onload = ok; x.onerror = no; document.head.appendChild(x); }); }
+  function makePdf(sh) {
+    var src = $('dp-paper').querySelector('.dp-paper'); if (!src) return Promise.reject(new Error('paper'));
+    var W = 711, PH = 1039, MM = 188 / W; // תוכן העמוד: 188x275 מ"מ (שוליים 11 מ"מ, כמו בהדפסה)
+    var host = document.createElement('div'); host.className = 'dp-pdfhost'; host.setAttribute('aria-hidden', 'true');
+    var pap = src.cloneNode(true); host.appendChild(pap); document.body.appendChild(host);
+    // קוד הסריקה: קנבס לא מועתק עם התוכן שלו – מחליפים בתמונה
+    var srcC = src.querySelectorAll('canvas'), dstC = pap.querySelectorAll('canvas');
+    for (var ci = 0; ci < dstC.length; ci++) { try { var im = new Image(); im.src = srcC[ci].toDataURL(); im.style.cssText = srcC[ci].style.cssText; dstC[ci].parentNode.replaceChild(im, dstC[ci]); } catch (e) {} }
+    var libs = [window.htmlToImage ? 0 : loadJs('/assets/vendor/html-to-image/html-to-image-1.11.11.js'), window.jspdf ? 0 : loadJs('/assets/vendor/jspdf/jspdf-2.5.1.umd.min.js')];
+    return Promise.all(libs).then(function () { return document.fonts ? document.fonts.ready : 0; }).then(function () {
+      var top0 = pap.getBoundingClientRect().top, H = Math.ceil(pap.scrollHeight);
+      var cand = [], force = [];
+      pap.querySelectorAll(':scope > *, .dp-q, .dp-learn, .dp-ls, .dp-key li, .dp-keyp > *, .dp-endw > *').forEach(function (el) {
+        var y = Math.round(el.getBoundingClientRect().top - top0); if (y > 0) cand.push(y);
+        if (el.classList.contains('dp-keyp')) force.push(y);
+      });
+      // לא חותכים מיד מתחת לכותרת של תיבה (כותרת לבד בתחתית העמוד)
+      var heads = []; pap.querySelectorAll('.dp-learn, .dp-q, .dp-keyp').forEach(function (el) { heads.push(Math.round(el.getBoundingClientRect().top - top0)); });
+      cand = cand.filter(function (y) { return !heads.some(function (h) { return y - h > 0 && y - h < 110; }); });
+      cand.sort(function (a, b) { return a - b; });
+      var cuts = [0], at = 0;
+      while (true) {
+        var lim = at + PH, f = force.filter(function (y) { return y > at + 40 && y <= lim && y < H; })[0];
+        if (!f && H - at <= PH) break;
+        var c = f || cand.filter(function (y) { return y > at + PH * 0.35 && y <= lim; }).pop() || lim;
+        cuts.push(c); at = c;
+      }
+      cuts.push(H);
+      var r = Math.min(2, Math.sqrt(14e6 / (W * H)));
+      return window.htmlToImage.getFontEmbedCSS(pap).catch(function () { return ''; }).then(function (fc) {
+        return window.htmlToImage.toCanvas(pap, { width: W, height: H, pixelRatio: r, backgroundColor: '#ffffff', fontEmbedCSS: fc || undefined, cacheBust: false });
+      }).then(function (cv) {
+        var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4', compress: true }), pages = 0;
+        for (var i = 0; i + 1 < cuts.length; i++) {
+          var h = cuts[i + 1] - cuts[i]; if (h < 4) continue;
+          var pc = document.createElement('canvas'); pc.width = Math.round(W * r); pc.height = Math.round(h * r);
+          var g = pc.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, pc.width, pc.height);
+          g.drawImage(cv, 0, Math.round(cuts[i] * r), pc.width, pc.height, 0, 0, pc.width, pc.height);
+          if (pages++) doc.addPage('a4', 'p');
+          doc.addImage(pc.toDataURL('image/jpeg', 0.9), 'JPEG', 11, 11, 188, h * MM);
+        }
+        window.__dpPdfCuts = cuts;
+        return doc.output('blob');
+      });
+    }).then(function (b) { host.parentNode.removeChild(host); return b; }, function (e) { if (host.parentNode) host.parentNode.removeChild(host); throw e; });
   }
 
   // =====================================================================

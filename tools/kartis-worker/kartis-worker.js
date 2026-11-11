@@ -3,6 +3,8 @@
 //  POST /s     {d: "...", t: "m"}              -> {k: "a7Xq2bZ"}  כרטיס מוהל: 7 תווים, כדי ש-/k/ ידע לאן להפנות
 //  POST /s     {d: "...", t: "w"}              -> {k: "a7Xq2bZ9"} דף עבודה (/limudim/dapim/): 8 תווים
 //  GET  /s/<k>                                -> {d: "..."}
+//  POST /s     {d: "/kelim/..?..#..", t: "u"}  -> {k: "a7Xq2b"}  כל קישור באתר (hakelim.com/s/#קוד), בשיתוף מכל כלי
+//  GET  /u/<k>                                -> {d: "/kelim/..."}
 // KV:  c:<k> -> d  ·  h:<sha256(d)> -> k  ·  rl:<ip> -> מונה יצירות לשעה
 const ORIGINS = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const D_RE = /^[\w-]{8,4000}$/;
@@ -11,6 +13,8 @@ const DW_RE = /^[\w-]{8,24000}$/; // דף עבודה: הגדרות הדף + עד
 const K_RE = /^[0-9A-Za-z]{6,8}$/;
 const ABC = '0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'; // בלי I l O o – לא מתבלבלים
 const PER_IP_HOUR = 30;
+const U_PER_IP_HOUR = 120; // קישור רגיל: מורה ששולחת כמה דפים ברצף
+const DU_RE = /^\/(?!\/)[^\s<>"'\\]{1,12000}$/; // נתיב באתר בלבד (לא כתובת של אתר אחר)
 
 export default {
   async fetch(req, env) {
@@ -20,8 +24,10 @@ export default {
     let res;
     try {
       const m = url.pathname.match(/^\/s\/([^\/]+)$/);
+      const mu = url.pathname.match(/^\/u\/([^\/]+)$/);
       if (url.pathname === '/s' && req.method === 'POST') res = await create(req, env);
       else if (m && req.method === 'GET') res = await get(m[1], env);
+      else if (mu && req.method === 'GET') res = await getU(mu[1], env);
       else res = json({ error: 'not found' }, 404);
     } catch (e) {
       res = json({ error: 'internal' }, 500);
@@ -85,6 +91,7 @@ async function create(req, env) {
   let body;
   try { body = await req.json(); } catch (e) { return json({ error: 'bad json' }, 400); }
   const d = body && typeof body.d === 'string' ? body.d : '';
+  if (body.t === 'u') return createU(req, env, d);
   const mohel = body.t === 'm', sheet = body.t === 'w';
   if (sheet ? !validSheet(d) : !validCard(d, mohel)) return json({ error: 'bad card' }, 400);
 
@@ -109,6 +116,32 @@ async function create(req, env) {
 async function get(k, env) {
   if (!K_RE.test(k)) return json({ error: 'not found' }, 404);
   const d = await env.KARTIS.get('c:' + k, { cacheTtl: 3600 });
+  if (!d) return json({ error: 'not found' }, 404);
+  return json({ d }, 200, 'public, max-age=86400');
+}
+
+// ---------- קישור קצר לכל דף באתר ----------
+async function createU(req, env, d) {
+  if (!DU_RE.test(d)) return json({ error: 'bad link' }, 400);
+  const h = 'h:u:' + await sha(d);
+  const old = await env.KARTIS.get(h);
+  if (old) return json({ k: old });
+  const ip = req.headers.get('CF-Connecting-IP') || 'x';
+  const rk = 'rlu:' + ip;
+  const n = parseInt(await env.KARTIS.get(rk) || '0', 10);
+  if (n >= U_PER_IP_HOUR) return json({ error: 'rate' }, 429);
+  await env.KARTIS.put(rk, String(n + 1), { expirationTtl: 3600 });
+  let k = '';
+  for (let i = 0; i < 5; i++) { const c = code(6); if (!(await env.KARTIS.get('u:' + c))) { k = c; break; } }
+  if (!k) return json({ error: 'busy' }, 503);
+  await env.KARTIS.put('u:' + k, d);
+  await env.KARTIS.put(h, k);
+  return json({ k });
+}
+
+async function getU(k, env) {
+  if (!/^[0-9A-Za-z]{6}$/.test(k)) return json({ error: 'not found' }, 404);
+  const d = await env.KARTIS.get('u:' + k, { cacheTtl: 3600 });
   if (!d) return json({ error: 'not found' }, 404);
   return json({ d }, 200, 'public, max-age=86400');
 }

@@ -1,0 +1,13 @@
+<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>הכלים של גילעד רחמים</title>
+<meta name="description" content="כלים חינמיים בעברית: לבית, ללימודים, לקהילה ולעבודה. בלי הרשמה.">
+<meta property="og:type" content="website"><meta property="og:locale" content="he_IL"><meta property="og:site_name" content="הכלים של גילעד רחמים">
+<meta property="og:title" content="הכלים של גילעד רחמים"><meta property="og:description" content="כלים חינמיים בעברית: לבית, ללימודים, לקהילה ולעבודה. בלי הרשמה.">
+<meta property="og:image" content="https://hakelim.com/assets/og-kelim.jpg">
+<!-- קישור קצר: hakelim.com/s/#קוד -> השרת (tools/kartis-worker, GET /u/<קוד>) מחזיר את הנתיב באתר -> מעבירים. assets/kishur.js יוצר את הקודים. -->
+<script>(function(){var k=location.hash.slice(1).replace(/[^0-9A-Za-z]/g,""),A="https://kartis.gilad4049.workers.dev";try{A=localStorage.getItem("kishur-api")||A}catch(e){}
+function fail(){var p=document.getElementById("m");if(p)p.innerHTML='לא מצאנו את הקישור הזה. <a href="/kelim/">לכל הכלים</a>'}
+if(!/^[0-9A-Za-z]{6}$/.test(k)){location.replace("/kelim/");return}
+var t=setTimeout(fail,9000);
+fetch(A+"/u/"+k).then(function(r){return r.ok?r.json():Promise.reject(r.status)}).then(function(j){var d=j&&j.d;if(typeof d!=="string"||d.charAt(0)!=="/"||d.charAt(1)==="/")throw 0;clearTimeout(t);location.replace(d)}).catch(function(){clearTimeout(t);fail()})})()</script>
+</head><body style="margin:0;background:#14110c;color:#e8dcc0;font-family:Assistant,Arial,sans-serif;text-align:center;padding:3rem 1rem;font-size:1.15rem"><p id="m">פותחים…</p><p><a style="color:#d4b062" href="/kelim/">הכלים של גילעד רחמים</a></p></body></html>
