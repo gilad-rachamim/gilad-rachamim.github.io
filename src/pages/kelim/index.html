@@ -97,7 +97,7 @@
   <div class="story">
     <p>אני גילעד רחמים אביעד. בדצמבר 2023 נפצעתי בחאן יונס. מאז אני חי עם הלם קרב, ולמדתי מבפנים כמה קשה לפעמים לעשות דברים שפעם היו פשוטים: לסדר מסמך, לזכור תור, לכתוב הודעה.</p>
     <p>בניתי לעצמי כלים כדי להתמודד, ואז הבנתי שהרבה אנשים צריכים בדיוק את זה. האתר הזה הוא השליחות שלי: כלים פשוטים, חינם, בכל תחום שאפשר, לכל מי שצריך הנגשה.</p>
-    <p>יש לכם רעיון לכלי? <a class="gold" href="#rotzim">ספרו לי</a>, ונבנה.</p>
+    <p>יש לכם רעיון לכלי? <a class="gold" href="/kelim/bakasha/">ספרו לי</a>, ונבנה.</p>
     <span class="sig">גילעד</span>
   </div>
 </section>
@@ -131,19 +131,7 @@
 <section class="k-sec" id="rotzim" aria-labelledby="rotzim-h">
   <h2 id="rotzim-h">רוצים כלי?</h2>
   <p class="lead2">יש משהו שקשה לכם לעשות, ונראה לכם שכלי פשוט היה עוזר? ספרו לי במילים שלכם. כלי קטן אני בונה בחינם, לכולם.</p>
-  <form class="k-form lead-form" data-kform="tool" action="{{lead_endpoint}}" method="POST">
-    <div class="hp" aria-hidden="true"><label>אל תמלאו שדה זה <input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></div>
-    <div class="field"><label for="t-what">מה הכלי צריך לעשות?</label><textarea id="t-what" name="what" required maxlength="160" placeholder="למשל: שיזכיר לי לקחת תרופות, ושאפשר לסמן שלקחתי"></textarea></div>
-    <div class="field"><label for="t-domain">באיזה תחום?</label>
-      <select id="t-domain" name="domain"><option value="">לא בטוח/ה</option><option>כלי קודש</option><option>נפש ויום-יום</option><option>לימודים</option><option>זכויות ושיקום</option><option>כסף</option><option>עסק קטן</option><option>יצירת תוכן</option><option>משפחה ובית</option><option>בריאות</option><option>מחשב וטלפון</option><option>צבא ומילואים</option><option>חברה וקשרים</option><option>טיולים ונסיעות</option><option>תמלול</option><option>מתכנתים</option><option>משחקי חשיבה</option><option>אחר</option></select></div>
-    <div class="field"><label for="t-for">למי זה יעזור? <span class="opt">(לא חובה)</span></label><input id="t-for" name="for" type="text" maxlength="60" placeholder="לי, להורים שלי, לחיילים..."></div>
-    <div class="field"><span class="label">זה בשביל</span>
-      <div class="radios"><label><input type="radio" name="use" value="יום-יום" checked> היום-יום</label><label><input type="radio" name="use" value="עסק"> עסק</label></div></div>
-    <div class="field"><label for="t-name">שם</label><input id="t-name" name="name" type="text" autocomplete="name" required placeholder="איך קוראים לכם?"></div>
-    <div class="field"><label for="t-phone">טלפון <span class="opt">(אחזור אליכם בווטסאפ)</span></label><input id="t-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="050-0000000" pattern="[0-9\-\+\s]{9,15}" dir="ltr" style="text-align:right"></div>
-    <button class="btn btn-gold btn-block" type="submit">לשלוח את הרעיון</button>
-    <p class="privacy">הפרטים נשמרים אצלי בלבד ולא מועברים לאף אחד. אפשר לבקש למחוק אותם בכל רגע. <a href="/mohel/privacy/">פרטיות</a></p>
-  </form>
+  <div class="actions"><a class="btn btn-gold" href="/kelim/bakasha/">לבקש כלי</a><a class="btn btn-line" href="/kelim/bakasha/#luach">מה כבר ביקשו ומה נבנה</a></div>
 </section>
 
 <section class="k-sec" id="litmoch" aria-labelledby="litmoch-h">
@@ -181,7 +169,7 @@
 <section class="k-sec" id="botim" aria-labelledby="botim-h">
   <h2 id="botim-h">הבוטים בטלגרם</h2>
   <a class="mv-star" href="/kelim/shir/karaoke/" data-mv="karaoke_botim" style="margin-bottom:1rem"><span class="ic" aria-hidden="true">🎤</span><span><span class="tag">פעיל עכשיו</span><b>בוט הקריוקי לחברים</b><p>שולחים שם של שיר או קישור מיוטיוב, ומקבלים סרטון קריוקי עם המילים על המסך. בחינם.</p><span class="mv-go">לפתוח את הבוט ←</span></span></a>
-  <p class="lead2">לכל תחום יהיו שני בוטים: אחד שנותן (שאלות, תרגול, תזכורות) ואחד חכם יותר. הבוט הכללי של המיזם, "רוצים כלי? ספרו לי", בדרך. עד שיעלה, הדרך הכי מהירה היא <a class="gold" href="#rotzim">הטופס</a> או <a class="gold" href="https://wa.me/972584049049?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%92%D7%99%D7%9C%D7%A2%D7%93%2C%20%D7%99%D7%A9%20%D7%9C%D7%99%20%D7%A8%D7%A2%D7%99%D7%95%D7%9F%20%D7%9C%D7%9B%D7%9C%D7%99%3A%20">ווטסאפ</a>.</p>
+  <p class="lead2">לכל תחום יהיו שני בוטים: אחד שנותן (שאלות, תרגול, תזכורות) ואחד חכם יותר. הבוט הכללי של המיזם, "רוצים כלי? ספרו לי", בדרך. עד שיעלה, הדרך הכי מהירה היא <a class="gold" href="/kelim/bakasha/">דף בקשת הכלי</a>.</p>
 </section>
 
 <section class="k-sec" id="mi" aria-labelledby="mi-h">

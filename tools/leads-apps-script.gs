@@ -40,6 +40,7 @@ function doPost(e) {
   var p = (e && e.parameter) || {};
   try {
     if (p._honey) return txt('ok');                       // בוט
+    if (p._bk) return txt(bakashaMail(p));                // בקשות כלים: מייל אישור / "הכלי מוכן"
     var name = clean(p['שם']), phone = normPhone(p['טלפון']), email = clean(p['email']).toLowerCase();
     // הצעה לשיפור כלי ("כלים: שיפור ·"): מותר גם בלי שם ובלי פרטי קשר
     var shipur = /^כלים: שיפור/.test(clean(p['מקור']));
@@ -87,10 +88,43 @@ function doPost(e) {
   }
 }
 
+// ---------- בקשות כלים (/kelim/bakasha/) ----------
+// ה-Worker kelim-bakasha מבקש מייל (no, kind, to). לפני השליחה חוזרים אליו ל-/mailcheck: הוא מאשר רק אם זו הכתובת
+// שנשמרה לבקשה הזאת והמייל עוד לא נשלח. כך אי אפשר לשלוח דרכנו מייל לכתובת אחרת, ואין צורך בסוד משותף.
+// הנוסחים אושרו ע"י גילעד 11.11.2026 (חבילת אישור א, כרטיסים 6-7).
+var BK_API = 'https://kelim-bakasha.gilad4049.workers.dev';
+function bakashaMail(p) {
+  var to = clean(p.to).toLowerCase(), no = String(parseInt(p.no, 10) || ''), kind = p.kind === 'done' ? 'done' : 'new';
+  if (!to || !no) return 'missing';
+  if (!underDailyCap()) return 'cap';
+  var h = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, to, Utilities.Charset.UTF_8)
+    .map(function (b) { return ('0' + (b & 255).toString(16)).slice(-2); }).join('');
+  var r = UrlFetchApp.fetch(BK_API + '/mailcheck?no=' + no + '&kind=' + kind + '&h=' + h, { muteHttpExceptions: true });
+  var j; try { j = JSON.parse(r.getContentText()); } catch (e) { return 'no'; }
+  if (!j || !j.ok) return 'no';
+  var what = '<i>"' + esc(j.what) + '"</i>', board = 'hakelim.com/kelim/bakasha', subject, inner;
+  if (kind === 'new') {
+    subject = 'הבקשה שלכם נרשמה (מספר ' + no + ')';
+    inner = 'שלום,<br><br>קיבלתי את הבקשה שלכם לכלי:<br>' + what + '<br><br><b>מספר הבקשה: ' + no + '</b><br><br>' +
+      'אפשר לראות בכל רגע מה קורה איתה, בלוח הבקשות:<br><a href="https://' + board + '/#luach" style="color:#1a5fb4;font-weight:bold">' + board + '</a><br><br>' +
+      'כשהכלי יהיה מוכן תקבלו ממני עוד מייל אחד, וזה הכול. לא אשלח דיוור.<br><br>תודה שכתבתם. כל בקשה כזאת עוזרת לי לדעת מה באמת חסר.';
+  } else {
+    var url = /^https:\/\/hakelim\.com\//.test(String(j.url)) ? String(j.url) : 'https://' + board + '/';
+    subject = 'הכלי שביקשתם מוכן 🎉';
+    inner = 'שלום,<br><br>ביקשתם כלי (בקשה ' + no + '):<br>' + what + '<br><br>הוא מוכן, בחינם:<br><a href="' + esc(url) + '" style="color:#1a5fb4;font-weight:bold">' + esc(url.replace(/^https:\/\//, '').replace(/\/$/, '')) + '</a><br><br>' +
+      'משהו חסר בו? בתחתית הכלי יש "יש לך רעיון איך לשפר?", ואני קורא כל הצעה.<br>ואם הוא עזר לכם, שלחו אותו למי שעוד צריך.';
+  }
+  var html = '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:16px;line-height:1.65;color:#222;max-width:560px">' + inner +
+    '<div style="margin-top:16px;padding-top:10px;border-top:1px solid #eee;font-size:13px;color:#666">גילעד רחמים<br>מיזם הכלים · <a href="https://hakelim.com/kelim/" style="color:#666">hakelim.com/kelim</a></div></div>';
+  MailApp.sendEmail({ to: to, subject: subject, htmlBody: html, body: toText(html), name: 'גילעד רחמים – מיזם הכלים', replyTo: CFG.OWNER_EMAIL });
+  log('בקשת כלי ' + no + ' (' + kind + '): נשלח מייל');
+  return 'sent';
+}
+
 // ---------- הסרה / בדיקה ----------
 function doGet(e) {
   var p = (e && e.parameter) || {};
-  if (p.ping) return txt('alive ' + new Date() + ' · kelim-join · shipur-anon');
+  if (p.ping) return txt('alive ' + new Date() + ' · kelim-join · shipur-anon · bakasha');
   if (p.u) {
     var sh = sheet(SpreadsheetApp.getActive(), CFG.SHEET_LEADS, COLS);
     var data = sh.getDataRange().getValues();

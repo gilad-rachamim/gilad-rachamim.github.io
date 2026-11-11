@@ -1,0 +1,29 @@
+# בקשות כלים (/kelim/bakasha/) – Cloudflare Worker + Durable Object אחד (חינמי).
+# פריסה:        cd tools/bakasha-worker && npx wrangler deploy   (אותו חשבון כמו kartis ו-kodesh-tehillim)
+# בדיקה מקומית: npx wrangler dev --local --port 8797   (בלי HUB: הסיכום מחזיר את הטקסט ולא שולח)
+# סודות (wrangler secret put): ADMIN_KEY (מפתח הלוח של גילעד), HUB_SECRET (כמו ב-gilad-hub, לשליחת הסיכום לבוט הפרטי).
+name = "kelim-bakasha"
+main = "bakasha-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[[durable_objects.bindings]]
+name = "BOARD"
+class_name = "Board"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Board"]
+
+# הסיכום השבועי יוצא דרך ה-Worker הקיים gilad-hub (POST /pc/send), בלי שינוי בקוד שלו.
+[[services]]
+binding = "HUB"
+service = "gilad-hub"
+
+[triggers]
+crons = ["0 7 * * *"]
+
+[vars]
+EXTRA_ORIGINS = ""
+# סקריפט הלידים (Apps Script) ששולח את המיילים למבקשים. אותה כתובת כמו LEAD_ENDPOINT ב-build.py.
+MAIL_URL = "https://script.google.com/macros/s/AKfycbxgWe4xxaclqfzmOD_E0hOg2XDr2genZZyvAcf0hpHw_AHkgvQAqDop-XjdURdARYNx-Q/exec"
