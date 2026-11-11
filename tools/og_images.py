@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """תמונת שיתוף (1200x630) לכל כלי בתתי-האתרים: assets/og/<נתיב-עם-מקפים>.jpg
 
-כשמשתפים כלי בפייסבוק או בווטסאפ רואים את השם שלו ו"בחינם · בלי הרשמה", ולא תמונה אחת לכל האתר.
+כשמשתפים כלי בפייסבוק או בווטסאפ רואים את השם שלו ו"בחינם · בלי הגבלה · בלי הרשמה", ולא תמונה אחת לכל האתר.
+כלי עם מכסה (CHESED_PARTNER ב-build.py, למשל התמלול: 60 דקות בחודש) לא מקבל "בלי הגבלה" בתמונה.
 build.py משתמש בתמונה אוטומטית אם הקובץ קיים ואין "og_image" ב-meta של הדף.
 
 הרצה:  python tools/og_images.py            (רק תמונות שחסרות או שהשם השתנה)
@@ -21,6 +22,9 @@ SITES = {  # שם התת-אתר וצבע הרקע שלו (כמו theme ב-build.
     "bait": ("כלים למשפחה ולבית", "#1f1915"), "kesef": ("כלים לכסף", "#11201a"),
     "limudim": ("כלים ללימודים", "#141c2b"),
 }
+# כלים עם מכסה בחינם: נקראים מ-CHESED_PARTNER ב-build.py, כדי שלא נכתוב עליהם "בלי הגבלה"
+_bp = (ROOT / "build.py").read_text(encoding="utf-8")
+LIMITED = re.findall(r'^\s*"(/[^"]+/)":', _bp.split("CHESED_PARTNER = {", 1)[1].split("}", 1)[0], re.M)
 GOLD, CREAM, MUTED = "#d8b25a", "#f6f1e4", "#b9b3a2"
 FONT_BOLD = [r"C:\Windows\Fonts\arialbd.ttf", "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"]
 FONT_REG = [r"C:\Windows\Fonts\arial.ttf", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"]
@@ -74,7 +78,9 @@ def pages():
         key = p.parent.relative_to(SRC).as_posix().replace("/", "-")
         if key in SITES:   # דף הבית של תת-אתר נשאר עם התמונה המעוצבת שלו
             continue
-        yield key, name, meta["site"], ("gsi/client" in raw or "accounts.google.com" in raw)
+        url = "/" + p.parent.relative_to(SRC).as_posix() + "/"
+        limited = any(url.startswith(l) for l in LIMITED)
+        yield key, name, meta["site"], ("gsi/client" in raw or "accounts.google.com" in raw), limited
 
 
 DOMAIN = "hakelim.com"
@@ -100,7 +106,7 @@ def frame(d, W, H):
     d.rectangle([24, 24, W - 25, H - 25], outline=GOLD, width=3)
 
 
-def domain_bar(d, W, H, path=""):
+def domain_bar(d, W, H, path="", right="בחינם לכולם · בלי הרשמה"):
     """פס זהב בתחתית: הכתובת גדולה ובולטת משמאל, המיזם מימין."""
     top, bot = 520, H - 25
     d.rectangle([25, top, W - 26, bot], fill=GOLD)
@@ -109,7 +115,7 @@ def domain_bar(d, W, H, path=""):
     if path:
         x = 70 + d.textlength(DOMAIN, font=df)
         d.text((x, (top + bot) / 2 + 4), "/" + path, font=font(FONT_REG, 34), fill="#3a2f15", anchor="lm")
-    d.text((W - 70, (top + bot) / 2), visual("בחינם לכולם · בלי הרשמה"), font=font(FONT_BOLD, 34), fill=DARK, anchor="rm")
+    d.text((W - 70, (top + bot) / 2), visual(right), font=font(FONT_BOLD, 34), fill=DARK, anchor="rm")
 
 
 def pill(d, cx, y, text, fnt, fill=None, outline=GOLD, color=GOLD, pad=26, h=60):
@@ -119,7 +125,7 @@ def pill(d, cx, y, text, fnt, fill=None, outline=GOLD, color=GOLD, pad=26, h=60)
     return tw + 2 * pad
 
 
-def draw_one(key, name, site, login=False):
+def draw_one(key, name, site, login=False, limited=False):
     site_name, bg = SITES[site]
     W, H = 1200, 630
     im = Image.new("RGB", (W, H), bg)
@@ -137,9 +143,11 @@ def draw_one(key, name, site, login=False):
     for ln in lines:
         d.text((W / 2, y), visual(ln), font=f, fill=CREAM, anchor="ma")
         y += lh
-    tag = "בחינם  ·  בלי פרסומות  ·  עובד בטלפון" if login else "בחינם  ·  בלי הרשמה  ·  עובד בטלפון"
-    pill(d, W / 2, 410, tag, font(FONT_BOLD, 36), h=66)
-    domain_bar(d, W, H)
+    # גילעד (11.11.2026): "בתצוגה המקדימה של האתר יכנס גם בלי הגבלה ובלי הרשמה ובחינם"
+    words = ["בחינם"] + ([] if limited else ["בלי הגבלה"]) + ([] if login else ["בלי הרשמה"])
+    words += ["בלי פרסומות", "עובד בטלפון"][: 3 - len(words)]
+    pill(d, W / 2, 410, "  ·  ".join(words), font(FONT_BOLD, 36), h=66)
+    domain_bar(d, W, H, right="בחינם לכולם" if login else "בחינם לכולם · בלי הרשמה")
     im.save(OUT / f"{key}.jpg", quality=84, optimize=True)
 
 
@@ -170,8 +178,8 @@ def draw_home(site):
     for c, w in zip(chips, widths):
         pill(d, x - w / 2, 330, c, cf, outline="#6d5d36", color=CREAM, pad=22, h=54)
         x -= w + gap
-    d.text((W / 2, 452), visual("בחינם · בלי הרשמה · בלי פרסומות · עובד בטלפון"), font=font(FONT_REG, 32), fill=MUTED, anchor="mm")
-    domain_bar(d, W, H, path)
+    pill(d, W / 2, 418, "בחינם  ·  בלי הגבלה  ·  בלי הרשמה", font(FONT_BOLD, 38), fill=GOLD, color=DARK, h=68)
+    domain_bar(d, W, H, path, right="בלי פרסומות · עובד בטלפון")
     im.save(ROOT / "assets" / f"og-{site}.jpg", quality=86, optimize=True)
 
 
@@ -185,12 +193,12 @@ def main():
     done = json.loads(stamp.read_text(encoding="utf-8")) if stamp.exists() and "--all" not in sys.argv else {}
     n = 0
     seen = {}
-    for key, name, site, login in pages():
-        sig = hashlib.md5((name + site + str(login)).encode("utf-8")).hexdigest()[:10]
+    for key, name, site, login, limited in pages():
+        sig = hashlib.md5((name + site + str(login) + str(limited) + "v4").encode("utf-8")).hexdigest()[:10]
         seen[key] = sig
         if done.get(key) == sig and (OUT / f"{key}.jpg").exists():
             continue
-        draw_one(key, name, site, login)
+        draw_one(key, name, site, login, limited)
         n += 1
     stamp.write_text(json.dumps(seen, ensure_ascii=False, indent=0, sort_keys=True), encoding="utf-8")
     print("og images:", n, "new,", len(seen), "total")
