@@ -12,7 +12,7 @@
   function blankWeek() { var w = []; for (var i = 0; i < 7; i++) w.push({ on: 0, a: '08:00', b: '14:00' }); return w; }
   function demoState() {
     var w = blankWeek(); for (var i = 0; i < 5; i++) w[i].on = 1; w[5] = { on: 1, a: '08:00', b: '12:00' };
-    var s = { demo: 1, d: { emp: 'משה כהן', empId: '', wrk: 'מריה סנטוס', wrkId: '', to: 'אגף השיקום', mail: '' }, week: w, month: defMonth(), m: {} };
+    var s = { demo: 1, d: { emp: 'משה כהן', empId: '', empAddr: 'הרצל 12, רחובות', empTel: '050-0000000', wrk: 'מריה סנטוס', wrkId: '', wrkAddr: 'הרצל 12, רחובות', wrkTel: '052-0000000', to: 'אגף השיקום', mail: '' }, week: w, month: defMonth(), m: {} };
     s.m[s.month] = fillFrom(w, s.month); var k = Object.keys(s.m[s.month]);
     if (k[3]) s.m[s.month][k[3]] = { a: '', b: '', n: 'חופש' };
     var lng = k.filter(function (d) { return +d > 6 && s.m[s.month][d].a; })[0];
@@ -38,7 +38,7 @@
   function cur() { if (!st.m[st.month]) st.m[st.month] = fillFrom(st.week, st.month); return st.m[st.month]; }
 
   // ---------- פרטים ----------
-  var F = { emp: 'sh-emp', empId: 'sh-emp-id', wrk: 'sh-wrk', wrkId: 'sh-wrk-id', to: 'sh-to', mail: 'sh-mail' };
+  var F = { emp: 'sh-emp', empId: 'sh-emp-id', empAddr: 'sh-emp-addr', empTel: 'sh-emp-tel', wrk: 'sh-wrk', wrkId: 'sh-wrk-id', wrkAddr: 'sh-wrk-addr', wrkTel: 'sh-wrk-tel', to: 'sh-to', mail: 'sh-mail' };
   function showDemo() { $('sh-demo').hidden = !st.demo; }
   function fillFields() { Object.keys(F).forEach(function (k) { $(F[k]).value = st.d[k] || ''; }); $('sh-month').value = st.month; }
   function endDemo(keep) {
@@ -61,7 +61,7 @@
   // ---------- סידור קבוע ----------
   function renderWeek() {
     $('sh-week').innerHTML = st.week.map(function (x, i) {
-      return '<div class="ts-wd' + (x.on ? '' : ' off') + '" data-i="' + i + '"><label><input type="checkbox"' + (x.on ? ' checked' : '') + '> ' + DN[i] + '</label>' +
+      return '<div class="ts-wd' + (x.on ? '' : ' off') + '" data-i="' + i + '" role="group" aria-label="יום ' + DN[i] + '"><label><input type="checkbox"' + (x.on ? ' checked' : '') + ' aria-label="עובד/ת ביום ' + DN[i] + '"> ' + DN[i] + '</label>' +
         '<input type="time" value="' + x.a + '" aria-label="' + DN[i] + ' משעה" data-k="a"><input type="time" value="' + x.b + '" aria-label="' + DN[i] + ' עד שעה" data-k="b"></div>';
     }).join('');
   }
@@ -82,24 +82,27 @@
     var c = cur(), n = days(st.month), h = '';
     for (var d = 1; d <= n; d++) {
       var r = c[d] || (c[d] = { a: '', b: '', n: '' }), w = wd(st.month, d), m = dur(r);
-      h += '<div class="ts-day' + (m ? ' work' : '') + (w === 6 ? ' sat' : '') + '" data-d="' + d + '"><div class="d"><b>' + d + '.' + +st.month.split('-')[1] + '</b><small>יום ' + DS[w] + '</small></div>' +
-        '<input type="time" value="' + (r.a || '') + '" data-k="a" aria-label="' + d + ' משעה"><input type="time" value="' + (r.b || '') + '" data-k="b" aria-label="' + d + ' עד שעה">' +
-        '<span class="h">' + (m ? hm(m) : '–') + '</span>' +
-        '<div class="nt">' + NOTES.map(function (t) { return '<button type="button" data-n="' + t + '"' + (r.n === t ? ' class="on"' : '') + '>' + t + '</button>'; }).join('') + '</div></div>';
+      var dl = 'יום ' + DN[w] + ' ' + d + '.' + +st.month.split('-')[1];
+      h += '<div class="ts-day' + (m ? ' work' : '') + (w === 6 ? ' sat' : '') + '" data-d="' + d + '" role="group" aria-label="' + dl + '"><div class="d" aria-hidden="true"><b>' + d + '.' + +st.month.split('-')[1] + '</b><small>יום ' + DS[w] + '</small></div>' +
+        '<input type="time" value="' + (r.a || '') + '" data-k="a" aria-label="' + dl + ', משעה"><input type="time" value="' + (r.b || '') + '" data-k="b" aria-label="' + dl + ', עד שעה">' +
+        '<span class="h"><span class="vh">שעות: </span>' + (m ? hm(m) : '–') + '</span>' +
+        '<div class="nt">' + NOTES.map(function (t) { return '<button type="button" data-n="' + t + '" aria-pressed="' + (r.n === t) + '" aria-label="' + t + ' ב' + dl + '"' + (r.n === t ? ' class="on"' : '') + '>' + t + '</button>'; }).join('') + '</div></div>';
     }
     $('sh-days').innerHTML = h; summary(); renderPaper();
   }
   $('sh-days').addEventListener('change', function (e) {
     var row = e.target.closest('.ts-day'); if (!row || e.target.type !== 'time') return;
     var r = cur()[+row.dataset.d]; r[e.target.dataset.k] = e.target.value; if (r.a && r.b) r.n = '';
-    var m = dur(r); row.querySelector('.h').textContent = m ? hm(m) : '–'; row.classList.toggle('work', !!m);
-    row.querySelectorAll('.nt button').forEach(function (b) { b.classList.toggle('on', b.dataset.n === r.n); });
+    var m = dur(r); row.querySelector('.h').innerHTML = '<span class="vh">שעות: </span>' + (m ? hm(m) : '–'); row.classList.toggle('work', !!m);
+    row.querySelectorAll('.nt button').forEach(function (b) { b.classList.toggle('on', b.dataset.n === r.n); b.setAttribute('aria-pressed', String(b.dataset.n === r.n)); });
     save(); summary(); renderPaper();
   });
   $('sh-days').addEventListener('click', function (e) {
     var b = e.target.closest('.nt button'); if (!b) return; var row = b.closest('.ts-day'), r = cur()[+row.dataset.d];
     if (r.n === b.dataset.n) r.n = ''; else { r.n = b.dataset.n; r.a = ''; r.b = ''; }
+    var d = row.dataset.d, n = b.dataset.n;
     save(); renderDays();
+    var nb = document.querySelector('.ts-day[data-d="' + d + '"] .nt button[data-n="' + n + '"]'); if (nb) nb.focus(); // הפוקוס נשאר על הכפתור אחרי שהרשימה נבנית מחדש
   });
   function totals() { var c = cur(), t = 0, dd = 0; Object.keys(c).forEach(function (k) { var m = dur(c[k]); if (m) { t += m; dd++; } }); return { m: t, d: dd }; }
   function summary() { var t = totals(); $('sh-sum').innerHTML = '<div><b>' + hm(t.m) + '</b><span>שעות בחודש</span></div><div><b>' + t.d + '</b><span>ימי עבודה</span></div>'; }
@@ -113,13 +116,26 @@
     function pt(e) { var r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * cv.width / r.width, y: (e.clientY - r.top) * cv.height / r.height }; }
     cv.addEventListener('pointerdown', function (e) { down = true; last = pt(e); try { cv.setPointerCapture(e.pointerId); } catch (x) {} g.beginPath(); g.arc(last.x, last.y, 1.5, 0, 7); g.fillStyle = g.strokeStyle; g.fill(); e.preventDefault(); });
     cv.addEventListener('pointermove', function (e) { if (!down) return; var p = pt(e); g.beginPath(); g.moveTo(last.x, last.y); g.lineTo(p.x, p.y); g.stroke(); last = p; e.preventDefault(); });
-    function up() { if (!down) return; down = false; if (!sig[id]) used('sign'); sig[id] = true; cv.classList.add('signed'); renderPaper(); }
+    function up() { if (!down) return; down = false; if (!sig[id]) used('sign'); sig[id] = true; cv.classList.add('signed'); sigState(id, 'נחתם.'); renderPaper(); }
     cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up); cv.addEventListener('pointerleave', up);
   });
+  function sigState(id, t) { $(id + '-st').textContent = t; }
   document.querySelectorAll('[data-clear]').forEach(function (b) {
-    b.addEventListener('click', function () { var cv = $(b.dataset.clear); cv.getContext('2d').clearRect(0, 0, cv.width, cv.height); sig[cv.id] = false; cv.classList.remove('signed'); renderPaper(); });
+    b.addEventListener('click', function () { var cv = $(b.dataset.clear); cv.getContext('2d').clearRect(0, 0, cv.width, cv.height); sig[cv.id] = false; cv.classList.remove('signed'); sigState(cv.id, 'החתימה נמחקה.'); renderPaper(); });
   });
-  function sigImg(id) { return sig[id] ? '<img alt="" src="' + $(id).toDataURL('image/png') + '">' : '<div class="empty"></div>'; }
+  // חלופה לציור (WCAG 2.5.7): מקלידים את השם, והוא נכתב על משטח החתימה
+  document.querySelectorAll('[data-type]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var id = b.dataset.type, cv = $(id), inp = $(id + '-t'), t = inp.value.trim();
+      if (!t) { sigState(id, 'כתבו קודם את השם בשדה.'); inp.focus(); return; }
+      var g = cv.getContext('2d'); g.clearRect(0, 0, cv.width, cv.height);
+      var fs = 78; g.font = 'italic ' + fs + 'px Arial'; while (g.measureText(t).width > cv.width - 50 && fs > 30) { fs -= 4; g.font = 'italic ' + fs + 'px Arial'; }
+      g.fillStyle = '#0b2a6b'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.direction = 'rtl'; g.fillText(t, cv.width / 2, cv.height / 2);
+      g.strokeStyle = '#0b2a6b'; g.lineWidth = 2; g.beginPath(); g.moveTo(40, cv.height / 2 + fs * 0.62); g.lineTo(cv.width - 40, cv.height / 2 + fs * 0.62); g.stroke(); g.lineWidth = 4;
+      if (!sig[id]) used('sign_typed'); sig[id] = true; cv.classList.add('signed'); sigState(id, 'נחתם בהקלדה: ' + t); renderPaper();
+    });
+  });
+  function sigImg(id, who) { return sig[id] ? '<img alt="' + who + '" src="' + $(id).toDataURL('image/png') + '">' : '<div class="empty"></div>'; }
 
   // ---------- הדף ----------
   function today() { var d = new Date(); return d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear(); }
@@ -130,13 +146,17 @@
       rows += '<tr' + (w === 6 ? ' class="sat"' : '') + '><td>' + d + '.' + mo + '</td><td>' + DN[w] + '</td><td>' + (m ? r.a : '') + '</td><td>' + (m ? r.b : '') + '</td><td>' + (m ? hm(m) : '') + '</td><td class="nt">' + esc(r.n || '') + '</td></tr>';
     }
     var D = st.d;
-    $('sh-paper').innerHTML = '<h3>דוח שעות עבודה חודשי – עובד/ת סיעודי/ת</h3><p class="sub">חודש ' + esc(monthName(st.month)) + (D.to ? ' · אל: ' + esc(D.to) : '') + '</p>' +
-      '<div class="info"><div><b>המעסיק:</b> ' + esc(D.emp) + '</div><div><b>ת"ז:</b> ' + esc(D.empId) + '</div><div><b>העובד/ת:</b> ' + esc(D.wrk) + '</div><div><b>ת"ז / דרכון:</b> ' + esc(D.wrkId) + '</div>' +
-      '<div><b>ימי עבודה:</b> ' + t.d + '</div><div><b>סה"כ שעות:</b> ' + hm(t.m) + ' (' + hdec(t.m) + ')</div></div>' +
-      '<table><thead><tr><th>תאריך</th><th>יום</th><th>משעה</th><th>עד שעה</th><th>שעות</th><th>הערה</th></tr></thead><tbody>' + rows + '</tbody>' +
+    function who(title, n, id, addr, tel, idl) {
+      return '<div class="pp"><h4>' + title + '</h4><div><b>שם:</b> ' + esc(n) + '</div>' + (id ? '<div><b>' + idl + ':</b> ' + esc(id) + '</div>' : '') +
+        '<div><b>כתובת:</b> ' + esc(addr) + '</div><div><b>טלפון:</b> <span dir="ltr">' + esc(tel) + '</span></div></div>';
+    }
+    $('sh-paper').innerHTML = '<h3>דוח שעות עבודה חודשי – עובד/ת סיעודי/ת</h3><p class="mon">חודש הדיווח: ' + esc(monthName(st.month)) + '</p>' + (D.to ? '<p class="sub">אל: ' + esc(D.to) + '</p>' : '') +
+      '<div class="info">' + who('פרטי המעסיק', D.emp, D.empId, D.empAddr, D.empTel, 'ת"ז') + who('פרטי העובד/ת', D.wrk, D.wrkId, D.wrkAddr, D.wrkTel, 'ת"ז / דרכון') +
+      '<div class="tot"><b>ימי עבודה:</b> ' + t.d + ' &nbsp;·&nbsp; <b>סה"כ שעות:</b> ' + hm(t.m) + ' (' + hdec(t.m) + ')</div></div>' +
+      '<table><thead><tr><th scope="col">תאריך</th><th scope="col">יום</th><th scope="col">משעה</th><th scope="col">עד שעה</th><th scope="col">שעות</th><th scope="col">הערה</th></tr></thead><tbody>' + rows + '</tbody>' +
       '<tfoot><tr><td colspan="4">סה"כ בחודש</td><td>' + hm(t.m) + '</td><td class="nt">' + t.d + ' ימי עבודה</td></tr></tfoot></table>' +
       '<p class="decl">אנו מאשרים שהשעות בדוח הן השעות שבהן העובד/ת עבד/ה בפועל בחודש זה.</p>' +
-      '<div class="sigs"><div>' + sigImg('sh-sig1') + '<div class="ln">חתימת המעסיק' + (D.emp ? ': ' + esc(D.emp) : '') + '</div></div><div>' + sigImg('sh-sig2') + '<div class="ln">חתימת העובד/ת' + (D.wrk ? ': ' + esc(D.wrk) : '') + '</div></div></div>' +
+      '<div class="sigs"><div>' + sigImg('sh-sig1', 'חתימת המעסיק') + '<div class="ln">חתימת המעסיק' + (D.emp ? ': ' + esc(D.emp) : '') + '</div></div><div>' + sigImg('sh-sig2', 'חתימת העובד/ת') + '<div class="ln">חתימת העובד/ת' + (D.wrk ? ': ' + esc(D.wrk) : '') + '</div></div></div>' +
       '<p class="sub" style="margin-top:6px">תאריך: ' + today() + '</p><p class="ft">הופק בכלי "דוח שעות חודשי למטפל" · hakelim.com</p>';
     pdfReset();
   }
@@ -164,7 +184,8 @@
   $('sh-pdf').addEventListener('click', function () {
     var b = this; if (b.disabled) return;
     var miss = [];
-    if (!st.d.emp) miss.push('שם המעסיק'); if (!st.d.wrk) miss.push('שם העובד/ת'); if (!totals().m) miss.push('שעות');
+    if (!st.d.emp) miss.push('שם המעסיק'); if (!st.d.wrk) miss.push('שם העובד/ת');
+    if (!st.d.empAddr || !st.d.empTel) miss.push('כתובת וטלפון של המעסיק'); if (!st.d.wrkAddr || !st.d.wrkTel) miss.push('כתובת וטלפון של העובד/ת'); if (!totals().m) miss.push('שעות');
     if (!sig['sh-sig1'] || !sig['sh-sig2']) miss.push('שתי החתימות');
     if (st.demo) miss.unshift('הדוגמה עדיין כאן: כתבו את השמות שלכם');
     if (miss.length && !confirm('חסר: ' + miss.join(', ') + '.\nלהכין PDF בכל זאת?')) return;
