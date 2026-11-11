@@ -301,16 +301,25 @@ function f2m(f) { return 69 + 12 * Math.log(f / 440) / Math.LN2; }
 // הסולם של השיר מתוך המוזיקה (Krumhansl-Schmuckler). מחזיר {pcs:[0..11], name, conf}
 var KS_MAJ = [6.35, 2.23, 3.48, 2.33, 4.38, 4.09, 2.52, 5.19, 2.39, 3.66, 2.29, 2.88], KS_MIN = [6.33, 2.68, 3.52, 5.38, 2.60, 3.53, 2.54, 4.75, 3.98, 2.69, 3.34, 3.17];
 var PC_HE = ['דו', 'דו דיאז', 'רה', 'מי במול', 'מי', 'פה', 'פה דיאז', 'סול', 'לה במול', 'לה', 'סי במול', 'סי'];
-function detectKey(x, sr) {
-  var D = Math.max(1, Math.round(sr / 11025)), y = decim(x, D), srd = sr / D, N = 4096, step = Math.round(srd * 0.37), re = new Float32Array(N), im = new Float32Array(N), ch = new Float64Array(12), w = new Float32Array(N), i, k;
+// אילו מ-12 הצלילים נשמעים במוזיקה, כל ~0.19 שניות. מזה יוצא הסולם, ולפי זה גם נבחר התו של הקול השני (שיתאים לאקורד).
+function chromaFrames(x, sr) {
+  var D = Math.max(1, Math.round(sr / 11025)), y = decim(x, D), srd = sr / D, N = 4096, step = Math.round(srd * 0.37), re = new Float32Array(N), im = new Float32Array(N), w = new Float32Array(N), i, k;
   for (i = 0; i < N; i++) w[i] = 0.5 - 0.5 * Math.cos(2 * Math.PI * i / N);
   var k0 = Math.ceil(80 * N / srd), k1 = Math.floor(2000 * N / srd), pcOf = new Int8Array(k1 + 1);
   for (k = k0; k <= k1; k++) pcOf[k] = ((Math.round(f2m(k * srd / N)) % 12) + 12) % 12;
-  for (var b = 0; b + N <= y.length; b += step) {
+  var nfr = y.length >= N ? Math.floor((y.length - N) * 2 / step) + 1 : 0, c = new Float64Array(nfr * 12);
+  for (var j = 0; j < nfr; j++) {
+    var b = Math.floor(j * step / 2);
     for (i = 0; i < N; i++) { re[i] = y[b + i] * w[i]; im[i] = 0; } fft(re, im);
     var fr = new Float64Array(12), tot = 0; for (k = k0; k <= k1; k++) { var m = Math.sqrt(re[k] * re[k] + im[k] * im[k]) / Math.sqrt(k); fr[pcOf[k]] += m; tot += m; }
-    if (tot > 1e-6) for (i = 0; i < 12; i++) ch[i] += fr[i] / tot;
+    if (tot > 1e-6) for (i = 0; i < 12; i++) c[j * 12 + i] = fr[i] / tot;
   }
+  return { c: c, n: nfr, hop: step / 2 / srd, win: N / srd };
+}
+function detectKey(x, sr, cf) {
+  cf = cf || chromaFrames(x, sr);
+  var ch = new Float64Array(12), i;
+  for (var j = 0; j < cf.n; j += 2) for (i = 0; i < 12; i++) ch[i] += cf.c[j * 12 + i];
   function corr(p, rot) { var mx = 0, my = 0, i; for (i = 0; i < 12; i++) { mx += ch[i]; my += p[i]; } mx /= 12; my /= 12; var a = 0, bb = 0, c = 0; for (i = 0; i < 12; i++) { var u = ch[(i + rot) % 12] - mx, v = p[i] - my; a += u * v; bb += u * u; c += v * v; } return a / Math.sqrt(bb * c + 1e-20); }
   var best = { c: -2 }, second = -2;
   for (var r = 0; r < 12; r++) [[KS_MAJ, 0], [KS_MIN, 1]].forEach(function (pm) { var c = corr(pm[0], r); if (c > best.c) { second = best.c; best = { c: c, pc: r, minor: pm[1] }; } else if (c > second) second = c; });
@@ -318,23 +327,28 @@ function detectKey(x, sr) {
   var steps = best.minor ? [0, 2, 3, 5, 7, 8, 10] : [0, 2, 4, 5, 7, 9, 11];
   return { pcs: steps.map(function (s) { return (best.pc + s) % 12; }), name: PC_HE[best.pc] + (best.minor ? ' מינור' : ' מז\'ור'), conf: best.c, margin: best.c - second };
 }
-// מתקן כל תו כיחידה אחת: מזיז את כולו לתו הקרוב בסולם, והרטט והגלישות נשארים טבעיים
-function tune(x, sr, pcs, strength) {
-  var f = pitchTrack(x, sr), n = f.length, sh = new Float32Array(n), has = new Uint8Array(n), k, i, notes = 0, sumAbs = 0;
-  if (!strength) return { y: x, f: f, notes: 0, cents: 0 };
-  function target(m) { if (!pcs) return Math.round(m); var best = null; for (var o = Math.floor(m / 12) - 1; o <= Math.floor(m / 12) + 1; o++) for (var q = 0; q < pcs.length; q++) { var c = o * 12 + pcs[q]; if (best == null || Math.abs(c - m) < Math.abs(best - m)) best = c; } return best; }
-  k = 0;
+// התו הקרוב בסולם (pcs = null: חצי הטון הקרוב)
+function scaleNote(m, pcs) { if (!pcs) return Math.round(m); var best = null; for (var o = Math.floor(m / 12) - 1; o <= Math.floor(m / 12) + 1; o++) for (var q = 0; q < pcs.length; q++) { var c = o * 12 + pcs[q]; if (best == null || Math.abs(c - m) < Math.abs(best - m)) best = c; } return best; }
+// התווים היציבים בשירה (70 אלפיות שנייה ומעלה): [{st, end, med}] במסגרות של 10 אלפיות שנייה. med = הגובה החציוני (MIDI)
+function notesOf(f) {
+  var n = f.length, k = 0, out = [], i;
   while (k < n) {
     if (!f[k]) { k++; continue; }
     var st = k, sum = 0, cnt = 0, gap = 0, end = k;
     while (k < n) { if (!f[k]) { if (++gap > 2) break; k++; continue; } var m = f2m(f[k]); if (cnt >= 3 && Math.abs(m - sum / cnt) > 0.8) break; gap = 0; sum += m; cnt++; end = k; k++; }
-    if (cnt >= 7) { // תו יציב (70 אלפיות שנייה ומעלה)
-      var ms = []; for (i = st; i <= end; i++) if (f[i]) ms.push(f2m(f[i])); ms.sort(function (a, b) { return a - b; });
-      var med = ms[ms.length >> 1], d = target(med) - med; if (Math.abs(d) < 0.06) d = 0;
-      for (i = st; i <= end; i++) { sh[i] = d * strength; has[i] = 1; } notes++; sumAbs += Math.abs(d) * 100;
-    }
+    if (cnt >= 7) { var ms = []; for (i = st; i <= end; i++) if (f[i]) ms.push(f2m(f[i])); ms.sort(function (a, b) { return a - b; }); out.push({ st: st, end: end, med: ms[ms.length >> 1] }); }
     if (k === st) k++;
   }
+  return out;
+}
+// מתקן כל תו כיחידה אחת: מזיז את כולו לתו הקרוב בסולם, והרטט והגלישות נשארים טבעיים
+function tune(x, sr, pcs, strength) {
+  var f = pitchTrack(x, sr), n = f.length, sh = new Float32Array(n), has = new Uint8Array(n), k, i, notes = 0, sumAbs = 0;
+  if (!strength) return { y: x, f: f, notes: 0, cents: 0 };
+  notesOf(f).forEach(function (nt) {
+    var d = scaleNote(nt.med, pcs) - nt.med; if (Math.abs(d) < 0.06) d = 0;
+    for (i = nt.st; i <= nt.end; i++) { sh[i] = d * strength; has[i] = 1; } notes++; sumAbs += Math.abs(d) * 100;
+  });
   // בין תווים: מעבר הדרגתי. ואז החלקה של 50 אלפיות שנייה
   var lastI = -1;
   for (i = 0; i < n; i++) { if (!has[i]) continue; if (lastI >= 0 && i - lastI > 1 && i - lastI < 30) for (k = lastI + 1; k < i; k++) sh[k] = sh[lastI] + (sh[i] - sh[lastI]) * (k - lastI) / (i - lastI); lastI = i; }
@@ -359,6 +373,71 @@ function psola(x, sr, f, ratio) {
   return y;
 }
 
+// ---------- 4ב. קולות ליווי: הכפלה וקול שני ----------
+// בכמה חצאי טונים להזיז כל מסגרת כדי לקבל קול שני (dir = 1 מעל הקול, 1- מתחתיו). לכל תו יציב נבחר תו אחד:
+// טרצה או קוורטה בסולם, זה שהכי מתאים למה שהמוזיקה מנגנת באותו רגע (cf = chromaFrames). הרטט של הקול נשאר.
+function harmShift(f, notes, dir, pcs, cf, rnd) {
+  var n = f.length, sh = new Float32Array(n), has = new Uint8Array(n), w = new Float64Array(12), i, k, picked = [];
+  notes.forEach(function (nt) {
+    var L = scaleNote(nt.med, pcs), t0 = nt.st * 0.01, t1 = nt.end * 0.01 + 0.04, mx = 0, j;
+    for (i = 0; i < 12; i++) w[i] = 0;
+    if (cf && cf.n) {
+      var j0 = Math.max(0, Math.ceil((t0 - 0.15 - cf.win / 2) / cf.hop)), j1 = Math.min(cf.n - 1, Math.floor((t1 + 0.15 - cf.win / 2) / cf.hop));
+      if (j1 < j0) j0 = j1 = Math.max(0, Math.min(cf.n - 1, Math.round(((t0 + t1) / 2 - cf.win / 2) / cf.hop)));
+      for (j = j0; j <= j1; j++) for (i = 0; i < 12; i++) w[i] += cf.c[j * 12 + i];
+      for (i = 0; i < 12; i++) if (w[i] > mx) mx = w[i];
+    }
+    var best = null, bs = -1e9;
+    for (var s = 3; s <= 5; s++) {
+      var T = L + dir * s, pc = ((T % 12) + 12) % 12; if (pcs && pcs.indexOf(pc) < 0) continue;
+      var sc = (s < 5 ? 0.2 : 0) + (mx ? (w[pc] - 0.35 * Math.max(w[(pc + 1) % 12], w[(pc + 11) % 12])) / mx : 0);
+      if (sc > bs) { bs = sc; best = T; }
+    }
+    if (best == null) best = L + dir * 4;
+    var d = best - nt.med; d = dir > 0 ? Math.max(2.3, Math.min(5.7, d)) : Math.min(-2.3, Math.max(-5.7, d));
+    d += rnd() * 0.05; // כמה סנטים לכאן או לכאן, כמו זמר אחר
+    for (i = nt.st; i <= nt.end; i++) { sh[i] = d; has[i] = 1; }
+    picked.push({ st: nt.st, end: nt.end, lead: L, note: best });
+  });
+  // בין תו לתו: מעבר הדרגתי כשהרווח קצר, אחרת כל חצי נצמד לתו הקרוב אליו
+  var last = -1;
+  for (i = 0; i < n; i++) {
+    if (!has[i]) continue;
+    if (last < 0) for (k = 0; k < i; k++) sh[k] = sh[i];
+    else if (i - last > 1) { var g = i - last; for (k = last + 1; k < i; k++) sh[k] = g < 30 ? sh[last] + (sh[i] - sh[last]) * (k - last) / g : (k - last <= g / 2 ? sh[last] : sh[i]); }
+    last = i;
+  }
+  if (last < 0) for (k = 0; k < n; k++) sh[k] = dir * 4; else for (k = last + 1; k < n; k++) sh[k] = sh[last];
+  var ratio = new Float32Array(n);
+  for (i = 0; i < n; i++) { var a = 0, c = 0; for (k = -2; k <= 2; k++) if (i + k >= 0 && i + k < n) { a += sh[i + k]; c++; } ratio[i] = f[i] ? Math.pow(2, a / c / 12) : 1; }
+  return { ratio: ratio, picked: picked };
+}
+// v: הקול המוכן לאורך כל השיר. מחזיר ערוץ ליווי בסטריאו, בחצי קצב דגימה (הליווי ממילא רך ובלי גבוהים):
+//   double – שתי הכפלות של הקול, אחת בכל צד, כמה סנטים מעל ומתחת ובאיחור קטן (כמו שמקליטים פעמיים באולפן)
+//   second – קול שני מעל הקול            choir – שתי ההכפלות + קול שני מעל + קול שני מתחת
+// o: {mode, pcs, cf, parts (לבדיקות: מחזיר גם כל קול בנפרד)}
+function backing(v, sr, o) {
+  o = o || {};
+  var D = sr >= 32000 ? 2 : 1, srd = sr / D, x = decim(v, D), n = x.length, f = pitchTrack(v, sr), nf = f.length, mode = o.mode || 'double';
+  var L = new Float32Array(n), R = new Float32Array(n), seed = 20261112, hop = srd * 0.01, off = 0.02 * srd, k, parts = o.parts ? {} : null, info = { sr: srd, notes: 0 };
+  function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 2147483648 - 1; }
+  var vg = new Float32Array(nf + 2); // 1 = שרים תו, 0 = עיצור או שקט (מוחלק)
+  for (k = 0; k < nf; k++) vg[k] = ((k && f[k - 1] ? 1 : 0) + (f[k] ? 1 : 0) + (k + 1 < nf && f[k + 1] ? 1 : 0)) / 3;
+  // מוסיף קול לערוץ: באיחור delay שניות, כשהעיצורים מונמכים ל-uv (שלא יישמעו כפול)
+  function add(name, y, delay, uv, gl, gr) {
+    var dl = Math.round(delay * srd);
+    for (var i = dl; i < n; i++) { var p = i - dl, q = (p - off) / hop, kk = q < 0 ? 0 : q >= nf ? nf - 1 : Math.floor(q), fr = q - kk; if (fr < 0) fr = 0; else if (fr > 1) fr = 1; var g = vg[kk] + (vg[kk + 1] - vg[kk]) * fr, s = y[p] * (uv + (1 - uv) * g); L[i] += s * gl; R[i] += s * gr; }
+    if (parts) parts[name] = y;
+  }
+  function dbl(cents, phase) { var r = new Float32Array(nf); for (var k = 0; k < nf; k++) r[k] = f[k] ? Math.pow(2, (cents + 3 * Math.sin(2 * Math.PI * 0.31 * k * 0.01 + phase)) / 1200) : 1; return psola(x, srd, f, r); }
+  function harm(dir) { var h = harmShift(f, notes, dir, o.pcs || null, o.cf || null, rnd); info[dir > 0 ? 'up' : 'down'] = h.picked; return psola(x, srd, f, h.ratio); }
+  var notes = mode === 'double' ? [] : notesOf(f); info.notes = notes.length;
+  if (mode === 'double') { add('d1', dbl(8, 0), 0.016, 0.5, 0.5, 0.06); add('d2', dbl(-8, 2), 0.026, 0.5, 0.06, 0.5); }
+  else if (mode === 'second') add('up', harm(1), 0.014, 0.35, 0.67, 0.48);
+  else { add('d1', dbl(8, 0), 0.016, 0.5, 0.44, 0.055); add('d2', dbl(-8, 2), 0.026, 0.5, 0.055, 0.44); add('up', harm(1), 0.014, 0.35, 0.5, 0.3); add('down', harm(-1), 0.021, 0.35, 0.27, 0.47); }
+  return { L: L, R: R, sr: srd, info: info, f: f, parts: parts };
+}
+
 // ---------- 5. MP3 ----------
 var lameLoaded = false;
 function toMp3(chans, sr, kbps, prog) {
@@ -378,7 +457,12 @@ function toMp3(chans, sr, kbps, prog) {
 // ---------- העבודה כולה ----------
 var REF = null;   // {x: המוזיקה במונו, sr, env: מעטפת התחלות, key}
 var TAKES = {};   // id -> {a: קול נקי ומיושר, start, lag, z, ...}
-function setRef(x, sr, pcs) { REF = { x: x, sr: sr, env: onsetEnv(x, sr), key: pcs && pcs.length ? { pcs: pcs, name: '', conf: 1, margin: 1 } : detectKey(x, sr) }; TAKES = {}; return { key: REF.key, dur: x.length / sr }; }
+function setRef(x, sr, pcs) { var cf = chromaFrames(x, sr); REF = { x: x, sr: sr, env: onsetEnv(x, sr), cf: cf, key: pcs && pcs.length ? { pcs: pcs, name: '', conf: 1, margin: 1 } : detectKey(x, sr, cf) }; TAKES = {}; return { key: REF.key, dur: x.length / sr }; }
+// קולות הליווי של השיר כולו (v = ערוץ הקול המוכן, על ציר הזמן של המוזיקה)
+function stageBack(v, mode) {
+  var key = REF.key, pcs = !key.pcs || key.conf < 0.45 ? null : key.pcs, r = backing(v, REF.sr, { mode: mode, pcs: pcs, cf: REF.cf });
+  return { L: r.L, R: r.R, sr: r.sr, notes: r.info.notes };
+}
 function refSlice(start, n) { var y = new Float32Array(n), x = REF.x; for (var i = 0; i < n; i++) { var p = start + i; y[i] = p >= 0 && p < x.length ? x[p] : 0; } return y; }
 // שלב א': סנכרון + ניקוי. rec מתחיל (לפני תיקון האיחור) בנקודה start במוזיקה.
 // o: {lagGuess (דגימות), lagFixed (המשתמש קבע ידנית), loSec, hiSec, noise, bleed}
@@ -424,6 +508,7 @@ if (typeof self !== 'undefined' && typeof module === 'undefined') {
       if (d.cmd === 'ref') { r = setRef(d.x, d.sr, d.pcs); r.id = d.id; self.postMessage(r); }
       else if (d.cmd === 'clean') { r = stageClean(d.take, d.rec, d.start, d.o || {}, prog); r.id = d.id; self.postMessage(r); }
       else if (d.cmd === 'finish') { r = stageFinish(d.take, d.o || {}); r.id = d.id; self.postMessage(r, [r.y.buffer]); }
+      else if (d.cmd === 'back') { r = stageBack(d.v, d.mode); r.id = d.id; self.postMessage(r, [r.L.buffer, r.R.buffer]); }
       else if (d.cmd === 'raw') { var T = TAKES[d.take]; self.postMessage({ id: d.id, y: T ? new Float32Array(T.a) : null }); }
       else if (d.cmd === 'drop') { delete TAKES[d.take]; self.postMessage({ id: d.id }); }
       else if (d.cmd === 'lag') { r = findLag(d.rec, d.ref, d.sr, d.lo, d.hi); r.id = d.id; self.postMessage(r); }
@@ -431,4 +516,4 @@ if (typeof self !== 'undefined' && typeof module === 'undefined') {
     } catch (err) { self.postMessage({ id: d.id, error: String(err && err.message || err) }); }
   };
 }
-if (typeof module !== 'undefined') module.exports = { fft: fft, decim: decim, gcc: gcc, findLag: findLag, shiftRec: shiftRec, clean: clean, onsetEnv: onsetEnv, phrases: phrases, gate: gate, GATE: GATE, tighten: tighten, pitchTrack: pitchTrack, detectKey: detectKey, tune: tune, psola: psola, setRef: setRef, stageClean: stageClean, stageFinish: stageFinish, rms: rms };
+if (typeof module !== 'undefined') module.exports = { fft: fft, decim: decim, gcc: gcc, findLag: findLag, shiftRec: shiftRec, clean: clean, onsetEnv: onsetEnv, phrases: phrases, gate: gate, GATE: GATE, tighten: tighten, pitchTrack: pitchTrack, detectKey: detectKey, chromaFrames: chromaFrames, notesOf: notesOf, scaleNote: scaleNote, f2m: f2m, tune: tune, psola: psola, harmShift: harmShift, backing: backing, setRef: setRef, stageClean: stageClean, stageFinish: stageFinish, stageBack: stageBack, ref: function () { return REF; }, rms: rms };

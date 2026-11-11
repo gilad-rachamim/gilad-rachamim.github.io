@@ -5,7 +5,7 @@
   var S = window.Shir, M = S.M, TOOL = 'shir_ulpan', LS = 'ulpan:v1';
   var $ = function (id) { return document.getElementById(id); };
   var esc = S.esc;
-  var st = { set: { phones: 1, noise: 2, tight: 0.5, tune: 0.7, style: 'ulpan', bal: 0, off: 0, mic: '' }, cal: {}, words: '', src: null, takes: [] };
+  var st = { set: { phones: 1, noise: 2, tight: 0.5, tune: 0.7, style: 'ulpan', voice2: 'off', bal: 0, off: 0, mic: '' }, cal: {}, words: '', src: null, takes: [] };
   var music = null;      // {buf, name, dur, kind, songId, rms, peaks, key}
   var takes = [];        // {id, startS, n, pcm:Int16Array, mode, lag, lagMs, on, y:Float32Array, ph:[{a,b,ms}], notes, cents, moved, a, b}
   var actx = null, sr = 48000, W = null, wcb = {}, wid = 0, busy = false, rec = null, player = null, head = 0, comp = {}, lastUsed = {};
@@ -158,14 +158,44 @@
         var sh = c.createBiquadFilter(); sh.type = 'highpass'; sh.frequency.value = 300;
         var cv = c.createConvolver(); cv.buffer = ir(c, sty.secs); var wet = c.createGain(); wet.gain.value = sty.wet * 1.6;
         post.connect(sh); sh.connect(cv); cv.connect(wet); wet.connect(lim);
+        var bk = comp.back && comp.back.buf && comp.back.mode === st.set.voice2 ? comp.back.buf : null;
+        if (bk) { // קולות הליווי (הכפלה / קול שני): מתחת לקול, בלי הנמוכים ובלי הגבוהים, ועם אותו הד
+          var bs = c.createBufferSource(); bs.buffer = bk; nodes.push(bs);
+          var bg = c.createGain(); bg.gain.value = pre.gain.value;
+          var bh = c.createBiquadFilter(); bh.type = 'highpass'; bh.frequency.value = 170; bh.Q.value = 0.7;
+          var bl = c.createBiquadFilter(); bl.type = 'lowpass'; bl.frequency.value = 6500; bl.Q.value = 0.6;
+          var bc = c.createDynamicsCompressor(); bc.threshold.value = -24; bc.knee.value = 8; bc.ratio.value = sty.ratio; bc.attack.value = 0.006; bc.release.value = 0.16;
+          var bm = c.createGain(); bm.gain.value = mk.gain.value * 0.5; // הליווי יושב כ-8dB מתחת לקול
+          bs.connect(bg); bg.connect(bh); bh.connect(bl); bl.connect(bc); bc.connect(bm); bm.connect(post); bs.start(t0, from);
+        }
       }
       vs.start(t0, from);
     }
     return { stop: function () { nodes.forEach(function (n) { try { n.stop(); } catch (e) {} }); try { lim.disconnect(); } catch (e) {} } };
   }
   function stopAll() { if (player) { player.stop(); player = null; } $('ul-play').textContent = '▶'; var l = $('ul-listen'); if (l) l.textContent = '▶ לשמוע את השיר'; }
+  // קולות הליווי נבנים פעם אחת לכל השיר, רק כשבאמת צריך אותם (לפני שמיעה או הכנת הקובץ)
+  var BACK_MSG = { double: 'מכפיל את הקול…', second: 'מוסיף קול שני…', choir: 'מוסיף מקהלה…' };
+  function backNeeded() { var m = st.set.voice2; return !!m && m !== 'off' && !!music && takes.length > 0 && !(comp.back && comp.back.mode === m); }
+  function prepBack() {
+    if (!backNeeded()) return Promise.resolve();
+    var m = st.set.voice2, cp = composite('final'), c0 = comp;
+    if (!cp.rms) { c0.back = { mode: m, buf: null }; return Promise.resolve(); }
+    var v = new Float32Array(cp.v);
+    return work({ cmd: 'back', v: v, mode: m }, [v.buffer]).then(function (r) {
+      if (comp !== c0) return; // ההקלטות השתנו בינתיים
+      var b = ctx().createBuffer(2, r.L.length, r.sr); b.getChannelData(0).set(r.L); b.getChannelData(1).set(r.R);
+      c0.back = { mode: m, buf: b, notes: r.notes };
+    }, function () { if (comp === c0) c0.back = { mode: m, buf: null }; });
+  }
   function play(mode) {
-    if (!music || rec) return; stopAll(); var c = wake();
+    if (!music || rec) return;
+    if (mode === 'final' && backNeeded()) {
+      if (busy) return; stopAll(); busy = true; var bm0 = BACK_MSG[st.set.voice2] || 'מעדכן…'; msg(bm0);
+      prepBack().then(function () { busy = false; if ($('ul-msg').textContent === bm0) msg(''); if (!backNeeded()) play(mode); });
+      return;
+    }
+    stopAll(); var c = wake();
     if (head >= music.dur - 0.3) head = 0;
     var t0 = c.currentTime + 0.08, from = head, h = graph(c, c.destination, t0, from, mode), done = false, raf, tm;
     function tick() { if (done) return; head = Math.min(music.dur, from + Math.max(0, c.currentTime - t0)); draw(); if (head >= music.dur - 0.02) { stop(); head = 0; draw(); stopAll(); return; } raf = requestAnimationFrame(tick); clearTimeout(tm); tm = setTimeout(tick, 60); }
@@ -331,8 +361,10 @@
 
   // ---------- 4. השיר המוכן ----------
   function render(mode) {
-    var len = Math.ceil((music.dur + 1.2) * sr), oc = new OfflineAudioContext(2, len, sr); graph(oc, oc.destination, 0, 0, mode);
-    return oc.startRendering().then(function (ab) {
+    return (mode === 'final' ? prepBack() : Promise.resolve()).then(function () {
+      var len = Math.ceil((music.dur + 1.2) * sr), oc = new OfflineAudioContext(2, len, sr); graph(oc, oc.destination, 0, 0, mode);
+      return oc.startRendering();
+    }).then(function (ab) {
       var pk = 0, c, i, d; for (c = 0; c < 2; c++) { d = ab.getChannelData(c); for (i = 0; i < d.length; i += 2) { var v = Math.abs(d[i]); if (v > pk) pk = v; } }
       var g = pk > 0 ? Math.min(3, 0.95 / pk) : 1; for (c = 0; c < 2; c++) { d = ab.getChannelData(c); for (i = 0; i < d.length; i++) d[i] *= g; }
       return ab;
@@ -366,7 +398,7 @@
   // ---------- כפתורים ----------
   function chips() {
     var s = st.set;
-    [['ul-phones', s.phones], ['ul-noise', s.noise], ['ul-tight', s.tight], ['ul-tune', s.tune], ['ul-style', s.style]].forEach(function (p) { [].forEach.call($(p[0]).children, function (b) { b.classList.toggle('on', b.getAttribute('data-v') === String(p[1])); }); });
+    [['ul-phones', s.phones], ['ul-noise', s.noise], ['ul-tight', s.tight], ['ul-tune', s.tune], ['ul-style', s.style], ['ul-voice2', s.voice2]].forEach(function (p) { [].forEach.call($(p[0]).children, function (b) { b.classList.toggle('on', b.getAttribute('data-v') === String(p[1])); }); });
     $('ul-offv').textContent = (s.off > 0 ? 'מקדימים את הקול ב-' + s.off : s.off < 0 ? 'מאחרים את הקול ב-' + (-s.off) : '0') + ' אלפיות שנייה';
     $('ul-ph-hint').textContent = s.phones ? 'הכי נקי. אוזניות עם חוט עדיפות על בלוטות\'.' : 'אפשר גם בלי: האולפן מוריד מההקלטה את המוזיקה שנכנסה למיקרופון. מנגנים בעוצמה בינונית.';
     $('ul-calw').hidden = !s.phones; $('ul-calnote').hidden = !s.phones || st.cal.phones != null;
@@ -380,6 +412,11 @@
     chipGroup('ul-tight', 'tight', 1, function () { refinish('מיישר לקצב…'); });
     chipGroup('ul-tune', 'tune', 1, function () { refinish('מכוון את הקול…'); });
     chipGroup('ul-style', 'style', 0, function () { if (player && player.mode !== 'none') play(player.mode); });
+    chipGroup('ul-voice2', 'voice2', 0, function () { // שומעים מיד את ההבדל
+      if (!takes.length) return; var on = player && player.mode !== 'none';
+      if (!on) { stopAll(); var t = takes[takes.length - 1]; head = Math.max(0, t.startS / sr + (t.a || 0) - 0.5); }
+      play('final');
+    });
     $('ul-src').onclick = function (e) {
       var b = e.target.closest('[data-v]'); if (!b || busy || rec) return;
       if (b.getAttribute('data-v') === 'file') $('ul-file').click(); else if (!music || music.kind !== 'song') { if (okToReplace()) { used('music_song'); loadSong(); } } else $('ul-songs').hidden = false;
@@ -429,6 +466,6 @@
       }, Promise.resolve()).then(function () { msg(''); });
     });
   }
-  window.__ulpan = { ctx: ctx, st: st, takes: function () { return takes; }, music: function () { return music; }, addTake: addTake, render: render, composite: composite, sr: function () { return sr; }, busy: function () { return busy; } };
+  window.__ulpan = { ctx: ctx, st: st, takes: function () { return takes; }, music: function () { return music; }, addTake: addTake, render: render, graph: graph, composite: composite, prepBack: prepBack, back: function () { return comp.back || null; }, sr: function () { return sr; }, busy: function () { return busy; } };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
