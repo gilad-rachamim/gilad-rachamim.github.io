@@ -236,20 +236,82 @@
       };
     });
   }
+  // ---------- אוזניות בלוטות': מזהים לבד, ומקליטים מהמיקרופון של הטלפון ----------
+  // המיקרופון של אוזניות בלוטות' מקליט כמו שיחת טלפון (עד 4 או 8 kHz), והן גם משמיעות את המוזיקה באיחור גדול.
+  // כשהן מחוברות ולא בחרו מיקרופון ביד, פותחים לבד את המיקרופון של הטלפון. בלי בלוטות' הכול נשאר כמו שהיה.
+  var BT_RE = /bluetooth|hands[- ]?free|\bhfp\b|\bsco\b|air ?pods|buds|\bbeats\b|\bjbl\b|\bbose\b|jabra|soundcore|\btws\b|\bw[hf]-\w*\d|\bbt\b|\dbt\b|בלוטות|אלחוטי/i;
+  function micKind(l) { l = l || ''; return BT_RE.test(l) ? 'bt' : /wired|usb|חוט/i.test(l) ? 'wired' : /earpiece|אפרכסת/i.test(l) ? 'ear' : /speakerphone|built[- ]?in|internal|iphone|ipad|\bphone\b|array|מובנה|טלפון/i.test(l) ? 'phone' : 'other'; }
+  var bt = { on: false, auto: '', only: false, manual: false, avoid: [] }, micNow = null; // avoid = מיקרופונים שכבר הקליטו צר // micNow = המיקרופון שנפתח: {id, group, label, kind, rate, auto}
+  function scanMics() { // מי מחובר: {ins, hasBt, target (המיקרופון של הטלפון), need (צריך לעבור אליו לבד)}
+    var md = navigator.mediaDevices; if (!md || !md.enumerateDevices) return Promise.resolve(null);
+    return md.enumerateDevices().then(function (ds) {
+      var ins = [], hasBt = false, btIn = false, wired = false, defBt = null, rank = { phone: 0, other: 1, wired: 2, ear: 3 };
+      ds.forEach(function (d) {
+        if (!d.label) return; var k = micKind(d.label);
+        if (k === 'bt') hasBt = true; // גם אוזניות שרק מנגנות: האיחור שלהן גדול
+        if (d.kind !== 'audioinput') return;
+        if (d.deviceId === 'default' || d.deviceId === 'communications') { if (d.deviceId === 'default' && /\s-\s/.test(d.label)) defBt = k === 'bt'; return; }
+        if (k === 'bt') btIn = true; if (k === 'wired') wired = true;
+        ins.push({ id: d.deviceId, group: d.groupId || '', label: d.label, kind: k });
+      });
+      var cands = ins.filter(function (d) { return d.kind !== 'bt' && !bt.avoid.some(function (av) { return d.id === av.id || (av.group && d.group === av.group) || (av.label && av.label.indexOf(d.label) >= 0); }); }).sort(function (a, b) { return rank[a.kind] - rank[b.kind]; });
+      return { ins: ins, hasBt: hasBt, btIn: btIn, target: cands[0] || null, need: !!cands.length && (bt.avoid.length > 0 || (btIn && (defBt === true || (defBt == null && !wired)))) };
+    });
+  }
+  function showMics(s) {
+    if (!s) return s;
+    var man = st.set.mic ? s.ins.filter(function (d) { return d.id === st.set.mic; })[0] : null;
+    bt.on = s.hasBt || bt.avoid.length > 0; bt.manual = !!man && man.kind === 'bt'; bt.auto = !man && s.need ? s.target.label : ''; bt.only = s.btIn && !s.target;
+    if (s.ins.length >= 2) { $('ul-micw').hidden = false; $('ul-mic').innerHTML = '<option value="">האולפן בוחר לבד (מומלץ)</option>' + s.ins.map(function (d) { return '<option value="' + esc(d.id) + '"' + (d.id === st.set.mic ? ' selected' : '') + '>' + esc(d.label) + '</option>'; }).join(''); }
+    chips(); return s;
+  }
+  function refreshMics() { return scanMics().then(showMics, function () { return null; }); }
+  function openMic(id) {
+    var a = { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 }; if (id) a.deviceId = { exact: id };
+    return navigator.mediaDevices.getUserMedia({ audio: a });
+  }
   function getMic() {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return Promise.reject(new Error('nomic'));
-    var a = { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 };
-    if (st.set.mic) a.deviceId = { exact: st.set.mic };
-    return navigator.mediaDevices.getUserMedia({ audio: a }).catch(function (e) { if (st.set.mic) { st.set.mic = ''; delete a.deviceId; return navigator.mediaDevices.getUserMedia({ audio: a }); } throw e; }).then(function (s) { listMics(); return s; });
+    var bad = '';
+    function want(s) { var w = st.set.mic || (s && s.need ? s.target.id : ''); return w === bad ? '' : w; }
+    function scan() { return scanMics().catch(function () { return null; }); }
+    function done(stream, s, id) {
+      var tr = stream.getAudioTracks()[0], g = tr && tr.getSettings ? tr.getSettings() : {};
+      micNow = { id: id || g.deviceId || '', group: g.groupId || '', label: tr && tr.label || '', rate: g.sampleRate || 0, auto: !!id && !st.set.mic };
+      micNow.kind = micKind(micNow.label); showMics(s); return stream;
+    }
+    return scan().then(function (s0) {
+      var id = want(s0);
+      return openMic(id).catch(function (e) { if (!id) throw e; bad = id; if (st.set.mic) st.set.mic = ''; id = ''; return openMic(''); }).then(function (stream) {
+        return scan().then(function (s) { // אחרי אישור המיקרופון יש למכשירים שמות, גם בפעם הראשונה
+          var id2 = want(s); if (!id2 || id2 === id) return done(stream, s, id);
+          stream.getTracks().forEach(function (t) { t.stop(); });
+          return openMic(id2).then(function (s2) { return done(s2, s, id2); }, function () { bad = id2; return openMic('').then(function (s3) { return done(s3, s, ''); }); });
+        });
+      });
+    });
   }
-  function listMics() {
-    if (!navigator.mediaDevices.enumerateDevices) return;
-    navigator.mediaDevices.enumerateDevices().then(function (ds) {
-      var ins = ds.filter(function (d) { return d.kind === 'audioinput' && d.label; }); if (ins.length < 2) return;
-      $('ul-micw').hidden = false; $('ul-mic').innerHTML = '<option value="">ברירת המחדל של הטלפון</option>' + ins.map(function (d) { return '<option value="' + esc(d.deviceId) + '"' + (d.deviceId === st.set.mic ? ' selected' : '') + '>' + esc(d.label) + '</option>'; }).join('');
-    }).catch(function () {});
+  // האיחור של הנגינה נמדד בנפרד לכל דרך שמיעה: רמקול / אוזניות / אוזניות בלוטות'
+  function calKey() { return !st.set.phones ? 'speaker' : bt.on ? 'bt' : 'phones'; }
+  function calMs() { var k = calKey(); return k === 'bt' && st.cal.bt == null && st.cal.phones >= 110 ? st.cal.phones : st.cal[k]; } // מדידה ישנה של בלוטות' נשמרה בשם "אוזניות"
+  function guessLat() {
+    var c = ctx(), m = calMs(); if (m != null) return m / 1000;
+    if (calKey() === 'bt') return Math.max(0.2, (c.outputLatency || 0) + 0.035); // בלוטות' שעוד לא נמדד: בערך 200 אלפיות שנייה
+    if (st.cal.speaker != null) return st.cal.speaker / 1000; return (c.outputLatency || c.baseLatency || 0.02) + 0.035;
   }
-  function guessLat() { var k = st.set.phones ? 'phones' : 'speaker', c = ctx(); if (st.cal[k] != null) return st.cal[k] / 1000; if (st.cal.speaker != null) return st.cal.speaker / 1000; return (c.outputLatency || c.baseLatency || 0.02) + 0.035; }
+  function isNarrow(t) { var b = t.stat && t.stat.band, mc = t.mic || {}; return t.a != null && (b === 4 || (b === 8 && (mc.kind === 'bt' || (mc.rate > 0 && mc.rate <= 16000)))); }
+  function offerCal() { return !!st.set.phones && bt.on && calMs() == null && takes.some(function (t) { return t.mode === 'guess' && t.a != null && !isNarrow(t) && !(t.stat && t.stat.sync === 'mel'); }); }
+  // אחרי הקלטה: מה להגיד על המיקרופון ועל האוזניות (משפט אחד), ואם צריך – לעבור לבד למיקרופון אחר בהקלטה הבאה
+  function micNote(t) {
+    var mc = t.mic || {};
+    if (!isNarrow(t)) return Promise.resolve(mc.auto && st.set.phones && t.mode === 'bleed' && t.stat.bleedDb > -12 ? ' המוזיקה התנגנה מהטלפון ולא מהאוזניות, והאולפן הוריד אותה מההקלטה.' : '');
+    if (st.set.mic) return Promise.resolve(' ההקלטה נשמעת כמו שיחת טלפון, כי בחרתם במיקרופון של האוזניות. לקול מלא: ב"סנכרון ומיקרופון" בוחרים "האולפן בוחר לבד", ומקליטים שוב.');
+    bt.avoid.push({ id: mc.id || '-', group: mc.group, label: mc.label });
+    return refreshMics().then(function (s) {
+      return s && s.need ? ' ההקלטה נשמעת כמו שיחת טלפון: הקליט המיקרופון של אוזניות הבלוטות\'. מקליטים שוב, והפעם אקליט מהמיקרופון של הטלפון.'
+        : ' ההקלטה נשמעת כמו שיחת טלפון: כנראה הקליט מיקרופון של אוזניות בלוטות\'. לקול מלא מקליטים שוב בלי האוזניות, או עם אוזניות חוט.';
+    });
+  }
   function showWords() { var w = (st.words || '').trim(); $('ul-lyrv').textContent = w || 'שרים עם המוזיקה. כשמסיימים – לוחצים "לסיים".'; }
   function record() {
     if (busy || rec) return; if (!music) { msg('קודם בוחרים מוזיקה.'); return; }
@@ -259,7 +321,7 @@
       var pos = head > 0.5 ? head : 0, pre = pos ? Math.min(3, pos) : 0, startPos = pos - pre, lead = pos ? 0.35 : 2.4, t0 = c.currentTime + lead;
       var ms = c.createBufferSource(); ms.buffer = music.buf; var mg = c.createGain(); mg.gain.value = st.set.phones ? 0.9 : 0.7; ms.connect(mg); mg.connect(c.destination); ms.start(t0, startPos);
       var lock = null; try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(function (l) { lock = l; }, function () {}); } catch (e) {}
-      rec = { cap: cap, t0: t0, startPos: startPos, ms: ms, done: false };
+      rec = { cap: cap, t0: t0, startPos: startPos, ms: ms, done: false, mic: micNow };
       document.body.classList.add('ul-recording'); $('ul-rec').hidden = true; $('ul-stop').hidden = false; $('ul-stage').hidden = false; showWords();
       var cnt = $('ul-cnt'), raf, tm, clip = 0;
       function tick() {
@@ -278,10 +340,10 @@
         setTimeout(function () { // עוד רגע של הקלטה, כדי לא לחתוך את סוף המילה (וגם את האיחור של המכשיר)
           cap.stop().then(function (r) {
             document.body.classList.remove('ul-recording'); $('ul-rec').hidden = false; $('ul-stop').hidden = true; $('ul-stage').hidden = true; cnt.hidden = true; $('ul-lvl').style.width = '0';
-            var i0 = Math.round(t0 * sr) - r.first, startPosNow = rec.startPos; rec = null;
+            var i0 = Math.round(t0 * sr) - r.first, startPosNow = rec.startPos, mic = rec.mic; rec = null;
             if (sungFor < 1.5 || r.data.length - i0 < sr) { msg('ההקלטה קצרה מדי. מנסים שוב.'); draw(); return; }
             var data = i0 >= 0 ? r.data.subarray(i0) : (function () { var y = new Float32Array(r.data.length - i0); y.set(r.data, -i0); return y; })();
-            addTake(data, Math.round(startPosNow * sr), clip > 8);
+            addTake(data, Math.round(startPosNow * sr), clip > 8, mic);
           });
         }, 450);
       }
@@ -292,26 +354,27 @@
     });
   }
   function toPcm(x) { var p = new Int16Array(x.length); for (var i = 0; i < x.length; i++) { var s = x[i]; s = s > 1 ? 1 : s < -1 ? -1 : s; p[i] = s < 0 ? s * 0x8000 : s * 0x7fff; } return p; }
-  function addTake(data, startS, clipped) {
-    var t = { id: S.uid(), startS: startS, n: data.length, on: true }; pcmOf[t.id] = toPcm(data); takes.push(t);
+  function addTake(data, startS, clipped, mic) {
+    var t = { id: S.uid(), startS: startS, n: data.length, on: true, mic: mic || null }; pcmOf[t.id] = toPcm(data); takes.push(t);
     dbPut('take:' + t.id, { pcm: pcmOf[t.id] }); head = startS / sr; drawTakes();
     processTake(t, data).then(function () {
       used('rec_done');
-      var m = t.a == null ? 'לא שמעתי שירה בהקלטה. בודקים שהמיקרופון פתוח, ומנסים שוב.' : t.mode === 'bleed' ? 'מוכן! הקול סונכרן לבד למוזיקה ונוקה. לוחצים "לשמוע את השיר".' : t.stat && t.stat.sync === 'mel' ? 'מוכן! הקול סונכרן לבד לפי המנגינה של השיר. לוחצים "לשמוע את השיר".' : 'מוכן! לוחצים "לשמוע את השיר". אם הקול לא יושב בדיוק על המוזיקה – מזיזים ב"סנכרון" למטה.';
+      var m = t.a == null ? 'לא שמעתי שירה בהקלטה. בודקים שהמיקרופון פתוח, ומנסים שוב.' : t.mode === 'bleed' ? 'מוכן! הקול סונכרן לבד למוזיקה ונוקה. לוחצים "לשמוע את השיר".' : t.stat && t.stat.sync === 'mel' ? 'מוכן! הקול סונכרן לבד לפי המנגינה של השיר. לוחצים "לשמוע את השיר".' : offerCal() ? 'מוכן! לוחצים "לשמוע את השיר". אוזניות בלוטות\' מאחרות אחרי המוזיקה: כדי שהקול יישב בדיוק, לוחצים "למדוד עכשיו" (בדיקה של 5 שניות).' : 'מוכן! לוחצים "לשמוע את השיר". אם הקול לא יושב בדיוק על המוזיקה – מזיזים ב"סנכרון" למטה.';
       if (clipped) m += st.set.phones ? ' ההקלטה יצאה חזקה מדי – בפעם הבאה מרחיקים קצת את הטלפון מהפה.' : ' ההקלטה יצאה חזקה מדי – מנמיכים את עוצמת הטלפון ומקליטים שוב.';
       else if (t.mode === 'bleed' && t.stat && t.stat.bleedDb > -2.5 && t.a != null) m += ' המוזיקה נכנסה חזק למיקרופון. לקול נקי יותר: מנמיכים קצת את העוצמה, או שרים עם אוזניות.';
       if (!st.set.phones && t.mode !== 'bleed') m += ' לא שמעתי את המוזיקה בהקלטה – אם שרתם עם אוזניות, מסמנים "עם אוזניות".';
-      msg(m);
+      return micNote(t).then(function (x) { msg(isNarrow(t) ? x.trim() : m + x); chips(); drawTakes(); });
     });
   }
   // סנכרון + ניקוי (שלב א'), ואז קצב + זיופים (שלב ב')
   function processTake(t, data) {
     busy = true; msg('מסנכרן את הקול למוזיקה ומנקה…'); prog(0);
-    var o = { noise: st.set.noise, bleed: 2, lagGuess: Math.round(guessLat() * sr), trust: st.cal[st.set.phones ? 'phones' : 'speaker'] != null };
+    var o = { noise: st.set.noise, bleed: 2, lagGuess: Math.round(guessLat() * sr), trust: calMs() != null };
+    if (calKey() === 'bt' && calMs() == null) { o.melMin = 2; o.melLo = -22; o.melHi = 14; } // בלוטות' שלא נמדד: הניחוש (200) באמצע הטווח, אז בשיר מהאתר מחפשים לפי המנגינה לשני הצדדים
     if (t.lag != null) { o.lagFixed = t.lag; o.speaker = t.mode === 'bleed'; }
     data = data || f32(pcmOf[t.id], 0, t.n);
     return work({ cmd: 'clean', take: t.id, rec: data, start: t.startS, o: o }, [data.buffer], function (p) { prog(p * 0.8); }).then(function (r) {
-      if (t.lag == null) { t.mode = r.mode; t.lag = r.lag; t.lagMs = r.lagMs; if (r.mode === 'bleed' && r.lagMs > 0 && r.lagMs < 900) { st.cal[st.set.phones ? 'phones' : 'speaker'] = r.lagMs; } }
+      if (t.lag == null) { t.mode = r.mode; t.lag = r.lag; t.lagMs = r.lagMs; if (r.mode === 'bleed' && r.lagMs > 0 && r.lagMs < 900 && calKey() !== 'bt') { st.cal[calKey()] = r.lagMs; } }
       t.stat = r; return finishTake(t);
     }).then(function () { busy = false; prog(null); save(); }, function (e) { busy = false; prog(null); msg('משהו נכשל בעיבוד. מנסים שוב. (' + (e && e.message || '') + ')'); });
   }
@@ -334,7 +397,7 @@
     var box = $('ul-takes'); $('ul-s3').hidden = $('ul-s4').hidden = !takes.length;
     if (!takes.length) { box.innerHTML = ''; return; }
     box.innerHTML = takes.map(function (t, i) {
-      var a = t.startS / sr + (t.a || 0), b = t.startS / sr + (t.b || t.n / sr), info = t.y ? (t.a == null ? 'בלי שירה' : (t.mode === 'bleed' ? '✓ סונכרן לבד' : '✓ מוכן') + (t.notes && st.set.tune ? ' · ' + (t.notes === 1 ? 'תו אחד כוון' : t.notes + ' תווים כוונו') + (t.mel ? (t.mel === 1 ? ', אחד מהם הוחזר למנגינה' : ', ' + t.mel + ' מהם הוחזרו למנגינה') : '') : '') + (t.moved ? ' · ' + (t.moved === 1 ? 'משפט אחד יושר לקצב' : t.moved + ' משפטים יושרו לקצב') : '')) : 'מעבד…';
+      var a = t.startS / sr + (t.a || 0), b = t.startS / sr + (t.b || t.n / sr), info = t.y ? (t.a == null ? 'בלי שירה' : (t.mode === 'bleed' ? '✓ סונכרן לבד' : '✓ מוכן') + (t.notes && st.set.tune ? ' · ' + (t.notes === 1 ? 'תו אחד כוון' : t.notes + ' תווים כוונו') + (t.mel ? (t.mel === 1 ? ', אחד מהם הוחזר למנגינה' : ', ' + t.mel + ' מהם הוחזרו למנגינה') : '') : '') + (t.moved ? ' · ' + (t.moved === 1 ? 'משפט אחד יושר לקצב' : t.moved + ' משפטים יושרו לקצב') : '') + (isNarrow(t) ? ' · ⚠ נשמע כמו שיחת טלפון' : '')) : 'מעבד…';
       return '<div class="pr' + (t.on ? '' : ' off') + '" data-id="' + esc(t.id) + '"><div><b>הקלטה ' + (i + 1) + '</b> <span class="ul-tt" dir="ltr">' + fmt(a) + '–' + fmt(b) + '</span><br><span class="ok">' + info + '</span></div><div class="ul-tb"><button class="shr-mini" type="button" data-act="play">▶ לשמוע</button><button class="shr-mini" type="button" data-act="del" aria-label="למחוק את ההקלטה">🗑</button></div></div>';
     }).join('');
   }
@@ -353,7 +416,7 @@
         }).then(function (g) {
           busy = false; var ms = Math.round(g.lag / sr * 1000);
           if (g.z < 8 || ms < 0) { msg('לא שמעתי את הצליל. מקרבים את האוזנייה ממש למיקרופון (בתחתית הטלפון), מגבירים, ומנסים שוב.'); return; }
-          st.cal.phones = ms; st.set.off = 0; $('ul-off').value = 0; chips(); save(); used('calibrate');
+          st.cal[st.set.phones ? calKey() : 'phones'] = ms; st.set.off = 0; $('ul-off').value = 0; chips(); save(); used('calibrate');
           var gs = takes.filter(function (t) { return t.mode !== 'bleed'; }); gs.forEach(function (t) { t.lag = Math.round(ms / 1000 * sr); t.lagMs = ms; });
           msg('נמדד: האוזניות מאחרות ב-' + ms + ' אלפיות שנייה. מעכשיו הקול יסונכרן לפי זה.');
           if (gs.length) gs.reduce(function (p, t) { return p.then(function () { return processTake(t); }); }, Promise.resolve());
@@ -403,9 +466,19 @@
     var s = st.set;
     [['ul-phones', s.phones], ['ul-noise', s.noise], ['ul-tight', s.tight], ['ul-tune', s.tune], ['ul-style', s.style], ['ul-voice2', s.voice2]].forEach(function (p) { [].forEach.call($(p[0]).children, function (b) { b.classList.toggle('on', b.getAttribute('data-v') === String(p[1])); }); });
     $('ul-offv').textContent = (s.off > 0 ? 'מקדימים את הקול ב-' + s.off : s.off < 0 ? 'מאחרים את הקול ב-' + (-s.off) : '0') + ' אלפיות שנייה';
-    $('ul-ph-hint').textContent = s.phones ? 'הכי נקי. אוזניות עם חוט עדיפות על בלוטות\'.' : 'אפשר גם בלי: האולפן מוריד מההקלטה את המוזיקה שנכנסה למיקרופון. מנגנים בעוצמה בינונית.';
+    $('ul-ph-hint').textContent = !s.phones ? 'אפשר גם בלי: האולפן מוריד מההקלטה את המוזיקה שנכנסה למיקרופון. מנגנים בעוצמה בינונית.'
+      : bt.manual ? 'בחרתם במיקרופון של אוזניות הבלוטות\': הקול יישמע כמו בשיחת טלפון. לקול מלא בוחרים ב"סנכרון ומיקרופון" את "האולפן בוחר לבד".'
+      : bt.auto ? '🎧 זיהיתי אוזניות בלוטות\'. מקליט מהמיקרופון של הטלפון, כי המיקרופון של האוזניות נשמע כמו שיחת טלפון.'
+      : bt.only ? '🎧 זיהיתי אוזניות בלוטות\', ואין מיקרופון אחר: הקול יישמע כמו בשיחת טלפון. לקול מלא שרים עם אוזניות חוט או בלי אוזניות.'
+      : bt.on ? '🎧 זיהיתי אוזניות בלוטות\'. מקליט מהמיקרופון של הטלפון.'
+      : 'הכי נקי. אוזניות עם חוט עדיפות על בלוטות\'.';
     var th = $('ul-tune-hint'); if (th) th.hidden = !(music && music.mel);
-    $('ul-calw').hidden = !s.phones; $('ul-calnote').hidden = !s.phones || st.cal.phones != null;
+    var last = takes[takes.length - 1], btc = !!s.phones && bt.on;
+    $('ul-calw').hidden = !s.phones; $('ul-calnote').hidden = !s.phones || calMs() != null || (btc && !!last && last.mode === 'bleed');
+    $('ul-calt').textContent = btc ? 'אוזניות בלוטות\': בדיקת סנכרון של 5 שניות' : 'פעם אחת, 5 שניות: בדיקת סנכרון';
+    $('ul-cald').textContent = (btc ? 'אוזניות בלוטות\' משמיעות את המוזיקה באיחור.' : 'אוזניות משמיעות את המוזיקה באיחור קטן.') + ' מקרבים אוזנייה אחת ממש למיקרופון שבתחתית הטלפון ולוחצים. יישמע רעש קצר, ומעכשיו הקול יישב בדיוק על המוזיקה.';
+    $('ul-btcal').hidden = !offerCal();
+    $('ul-mic-hint').textContent = bt.auto ? 'מחוברות אוזניות בלוטות\', אז האולפן מקליט מ: ' + bt.auto + '.' : 'כשמחוברות אוזניות בלוטות\', האולפן עובר לבד למיקרופון של הטלפון.';
   }
   function chipGroup(id, key, num, after) { $(id).onclick = function (e) { var b = e.target.closest('[data-v]'); if (!b || busy) return; var v = b.getAttribute('data-v'); st.set[key] = num ? +v : v; chips(); save(); used(key); if (after) after(); }; }
   function init() {
@@ -447,12 +520,14 @@
     $('ul-bal').onchange = function () { used('bal'); if (player && player.mode !== 'none') play(player.mode); };
     $('ul-off').oninput = function () { st.set.off = +this.value; chips(); };
     $('ul-off').onchange = function () { save(); used('off'); refinish('מזיז את הקול…').then(function () { if (!player && takes.length) { var t = takes[takes.length - 1]; head = Math.max(0, t.startS / sr + (t.a || 0) - 0.5); play('final'); } }); };
-    $('ul-cal').onclick = calibrate; $('ul-cal2').onclick = calibrate;
-    $('ul-mic').onchange = function () { st.set.mic = this.value; save(); };
+    $('ul-cal').onclick = calibrate; $('ul-cal2').onclick = calibrate; $('ul-cal3').onclick = calibrate;
+    $('ul-mic').onchange = function () { st.set.mic = this.value; bt.avoid = []; save(); refreshMics(); };
     $('ul-mp3').onclick = makeMp3;
     $('ul-wav').onclick = function () { if (!takes.length || busy) return; used('wav'); dl(wav(composite('final').v), fileName('הקול בלבד', 'wav')); };
     $('ul-rawdl').onclick = function () { if (!takes.length || busy) return; used('raw'); dl(wav(composite('raw').v), fileName('ההקלטה המקורית', 'wav')); };
     window.addEventListener('resize', draw);
+    refreshMics(); // אם כבר אישרו מיקרופון בעבר, יודעים מיד אילו אוזניות מחוברות
+    try { navigator.mediaDevices.addEventListener('devicechange', function () { if (!rec) refreshMics(); }); } catch (e) {}
     restore();
   }
   // פותחים מאיפה שהפסקנו: המוזיקה וההקלטות נשמרות בטלפון
@@ -470,6 +545,6 @@
       }, Promise.resolve()).then(function () { msg(''); });
     });
   }
-  window.__ulpan = { ctx: ctx, st: st, takes: function () { return takes; }, music: function () { return music; }, addTake: addTake, render: render, graph: graph, composite: composite, prepBack: prepBack, back: function () { return comp.back || null; }, sr: function () { return sr; }, busy: function () { return busy; } };
+  window.__ulpan = { ctx: ctx, st: st, takes: function () { return takes; }, music: function () { return music; }, addTake: addTake, render: render, graph: graph, composite: composite, prepBack: prepBack, back: function () { return comp.back || null; }, sr: function () { return sr; }, busy: function () { return busy; }, bt: function () { return bt; }, mic: function () { return micNow; }, scanMics: scanMics, micKind: micKind };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

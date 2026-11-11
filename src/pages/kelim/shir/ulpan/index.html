@@ -14,7 +14,7 @@
   <h1>אולפן הקלטות</h1>
   <p class="sub">שומעים את המוזיקה ושרים עליה מהטלפון. האולפן מסנכרן, מנקה, מיישר לקצב ומתקן זיופים, ומחזיר שיר מוכן. לא צריך לשיר מושלם.</p>
 </header>
-<div class="tool" id="ul-root" data-dsp="/assets/ulpan-dsp.js?v=4">
+<div class="tool" id="ul-root" data-dsp="/assets/ulpan-dsp.js?v=5">
   <nav class="shr-steps" aria-label="שלבי השיר"><a href="/kelim/shir/milim/"><b>1</b>מילים</a><a href="/kelim/shir/lachan/"><b>2</b>לחן</a><a class="on" href="/kelim/shir/ulpan/"><b>3</b>אולפן</a><a href="/kelim/shir/clip/"><b>4</b>קליפ</a></nav>
 
   <section class="ul-box">
@@ -32,7 +32,7 @@
     <h2><span class="ul-n">2</span> שרים</h2>
     <div class="shr-chips" id="ul-phones"><button type="button" data-v="1">🎧 עם אוזניות (מומלץ)</button><button type="button" data-v="0">🔈 בלי אוזניות</button></div>
     <p class="hint" id="ul-ph-hint"></p>
-    <div class="ul-note" id="ul-calnote" hidden><b>פעם אחת, 5 שניות: בדיקת סנכרון</b><span>אוזניות משמיעות את המוזיקה באיחור קטן. מקרבים אוזנייה אחת ממש למיקרופון שבתחתית הטלפון ולוחצים. יישמע רעש קצר, ומעכשיו הקול יישב בדיוק על המוזיקה.</span><button class="btn btn-line btn-sm" type="button" id="ul-cal2">למדוד עכשיו</button></div>
+    <div class="ul-note" id="ul-calnote" hidden><b id="ul-calt">פעם אחת, 5 שניות: בדיקת סנכרון</b><span id="ul-cald">אוזניות משמיעות את המוזיקה באיחור קטן. מקרבים אוזנייה אחת ממש למיקרופון שבתחתית הטלפון ולוחצים. יישמע רעש קצר, ומעכשיו הקול יישב בדיוק על המוזיקה.</span><button class="btn btn-line btn-sm" type="button" id="ul-cal2">למדוד עכשיו</button></div>
     <details class="ul-det"><summary>📝 המילים מול העיניים (לא חובה)</summary><textarea id="ul-words" rows="6" placeholder="כותבים או מדביקים כאן את המילים. הן יופיעו גדולות בזמן ההקלטה."></textarea></details>
     <div class="ul-stage" id="ul-stage" hidden aria-live="polite"><div class="ul-lyrv" id="ul-lyrv"></div><div class="ul-cnt" id="ul-cnt" hidden>3</div></div>
     <div class="shr-meter" aria-hidden="true"><i id="ul-lvl"></i></div>
@@ -47,6 +47,7 @@
       <button class="btn btn-gold" type="button" id="ul-listen">▶ לשמוע את השיר</button>
       <button class="btn btn-line btn-sm" type="button" id="ul-ab">לפני / אחרי</button>
     </div>
+    <div class="ul-note" id="ul-btcal" hidden><b>🎧 אוזניות בלוטות' מאחרות אחרי המוזיקה</b><span>בדיקה של 5 שניות, והקול יישב בדיוק במקום: מקרבים אוזנייה אחת ממש למיקרופון שבתחתית הטלפון ולוחצים. ההקלטה שכבר שרתם תתוקן לבד.</span><button class="btn btn-line btn-sm" type="button" id="ul-cal3">למדוד עכשיו</button></div>
     <div class="k-form ul-set">
       <div class="field"><span class="label">ניקוי רעשים</span><div class="shr-chips" id="ul-noise"><button type="button" data-v="0">בלי</button><button type="button" data-v="1">עדין</button><button type="button" data-v="2">רגיל</button><button type="button" data-v="3">חזק</button></div></div>
       <div class="field"><span class="label">יישור לקצב</span><div class="shr-chips" id="ul-tight"><button type="button" data-v="0">בלי</button><button type="button" data-v="0.5">עדין</button><button type="button" data-v="1">חזק</button></div></div>
@@ -57,7 +58,7 @@
       <details class="ul-det"><summary>⚙️ סנכרון ומיקרופון (אם הקול לא יושב על המוזיקה)</summary>
         <div class="field"><span class="label">הקול מקדים או מאחר?</span><div class="shr-range"><span>מקדים</span><input type="range" id="ul-off" min="-300" max="300" step="10" value="0" aria-label="תזמון הקול"><span>מאחר</span></div><p class="hint" id="ul-offv"></p></div>
         <div class="field" id="ul-calw"><span class="label">בדיקת סנכרון לאוזניות (פעם אחת)</span><p class="hint">מקרבים אוזנייה אחת ממש למיקרופון שבתחתית הטלפון ולוחצים. נשמע רעש קצר, והאולפן מודד בכמה האוזניות מאחרות.</p><button class="btn btn-line btn-sm" type="button" id="ul-cal">למדוד עכשיו</button></div>
-        <div class="field" id="ul-micw" hidden><label class="label" for="ul-mic">מיקרופון</label><select id="ul-mic"></select><p class="hint">באוזניות בלוטות' עדיף לבחור את המיקרופון של הטלפון עצמו.</p></div>
+        <div class="field" id="ul-micw" hidden><label class="label" for="ul-mic">מיקרופון</label><select id="ul-mic"></select><p class="hint" id="ul-mic-hint">כשמחוברות אוזניות בלוטות', האולפן עובר לבד למיקרופון של הטלפון.</p></div>
       </details>
     </div>
   </section>
@@ -88,6 +89,7 @@
   <h2 style="margin-top:1.6rem">שאלות נפוצות</h2>
   <details class="ul-det"><summary>זה באמת בחינם? יש הגבלה?</summary><p>כן, בחינם וללא הגבלה, בלי פרסומות ובלי הרשמה. הכול רץ בטלפון שלכם, ולכן זה לא עולה כסף לאף אחד.</p></details>
   <details class="ul-det"><summary>חייבים אוזניות?</summary><p>לא. עם אוזניות ההקלטה הכי נקייה. בלי אוזניות האולפן מזהה את המוזיקה שנכנסה למיקרופון ומוריד אותה. מנגנים בעוצמה בינונית ושרים קרוב לטלפון.</p></details>
+  <details class="ul-det"><summary>אפשר לשיר עם אוזניות בלוטות'?</summary><p>כן. האולפן מזהה אותן לבד ומקליט מהמיקרופון של הטלפון, כי המיקרופון של האוזניות נשמע כמו שיחת טלפון. אוזניות בלוטות' גם משמיעות את המוזיקה באיחור קטן: בשיר שהלחנתם כאן האולפן בדרך כלל מתקן אותו לבד, ובקובץ מהטלפון יש בדיקה של 5 שניות. אוזניות עם חוט עדיין הכי פשוטות.</p></details>
   <details class="ul-det"><summary>איזו מוזיקה אפשר להביא?</summary><p>את השיר שכתבתם והלחנתם כאן באתר, או כל קובץ מהטלפון (MP3, M4A, WAV) עד עשר דקות. הכי טוב פלייבק, כלומר מוזיקה בלי זמר.</p></details>
   <details class="ul-det"><summary>ההקלטה שלי נשלחת לאן שהוא?</summary><p>לא. שום קול ושום קובץ לא יוצאים מהטלפון. את השיר המוכן רק אתם מורידים ומשתפים.</p></details>
 </section>
