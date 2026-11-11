@@ -7,7 +7,7 @@
   "og_title": "מחשבון CUDA Occupancy בדפדפן",
   "priority": "0.7",
   "crumbs": [["כלים למתכנתים", "/kelim/tichnut/"], ["CUDA Occupancy", null]],
-  "head": "<style>.tn-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}.tn-ltr{direction:ltr;text-align:left}.tn-big{margin-top:1rem;padding:1rem;border:1px solid var(--gold-soft);border-radius:14px;text-align:center;background:rgba(216,179,95,.07)}.tn-big b{display:block;font-family:var(--serif);font-size:2.8rem;color:var(--cream);line-height:1.1}.tn-big span{color:var(--body);font-size:.95rem}.oc-lims{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:.45rem;margin-top:.9rem}.oc-lims li{padding:.55rem .7rem;border:1px solid var(--line);border-radius:12px;color:var(--body);font-size:.92rem}.oc-lims li b{display:block;color:var(--parchment)}.oc-lims li.on{border-color:var(--gold);background:rgba(216,179,95,.1)}.oc-lims li.on b{color:var(--gold)}.oc-tip{margin-top:.8rem;color:var(--parchment)}.oc-chart{display:flex;align-items:flex-end;gap:2px;height:120px;margin-top:1rem;padding:.4rem;border:1px solid var(--line);border-radius:12px;direction:ltr}.oc-chart i{flex:1;background:var(--gold-soft);border-radius:2px 2px 0 0}.oc-chart i.me{background:var(--gold)}.oc-ax{display:flex;justify-content:space-between;direction:ltr;color:var(--muted);font-size:.8rem;margin-top:.2rem}</style>",
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><style>.tn-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}.tn-ltr{direction:ltr;text-align:left}.tn-big{margin-top:1rem;padding:1rem;border:1px solid var(--gold-soft);border-radius:14px;text-align:center;background:rgba(216,179,95,.07)}.tn-big b{display:block;font-family:var(--serif);font-size:2.8rem;color:var(--cream);line-height:1.1}.tn-big span{color:var(--body);font-size:.95rem}.oc-lims{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:.45rem;margin-top:.9rem}.oc-lims li{padding:.55rem .7rem;border:1px solid var(--line);border-radius:12px;color:var(--body);font-size:.92rem}.oc-lims li b{display:block;color:var(--parchment)}.oc-lims li.on{border-color:var(--gold);background:rgba(216,179,95,.1)}.oc-lims li.on b{color:var(--gold)}.oc-tip{margin-top:.8rem;color:var(--parchment)}.oc-chart{display:flex;align-items:flex-end;gap:2px;height:120px;margin-top:1rem;padding:.4rem;border:1px solid var(--line);border-radius:12px;direction:ltr}.oc-chart i{flex:1;background:var(--gold-soft);border-radius:2px 2px 0 0}.oc-chart i.me{background:var(--gold)}.oc-ax{display:flex;justify-content:space-between;direction:ltr;color:var(--muted);font-size:.8rem;margin-top:.2rem}</style><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"מה זה occupancy ב-CUDA?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"היחס בין ה-warps שפעילים על ה-SM לבין המקסימום שהוא יכול להחזיק. יותר warps עוזרים להסתיר המתנה לזיכרון.\"}}, {\"@type\": \"Question\", \"name\": \"מה מגביל את ה-occupancy?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"אחד משלושה: מספר ה-threads בבלוק, הרגיסטרים לכל thread, או ה-shared memory לבלוק. המחשבון מראה מי מהם עוצר.\"}}, {\"@type\": \"Question\", \"name\": \"איזה גודל בלוק כדאי?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"המחשבון מציג גרף של כל הגדלים ומסמן את הטוב ביותר לנתונים שהזנתם. כדאי גם למדוד, כי זו לא תמיד הבחירה המהירה.\"}}, {\"@type\": \"Question\", \"name\": \"זה עובד בטלפון?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. הכול בדפדפן, בחינם ובלי הרשמה.\"}}]}</script>",
   "foot": "<script src=\"/assets/tichnut-data.js\" defer></script><script src=\"/assets/tichnut-occ.js\" defer></script>"
 } -->
 <header class="k-hero">
@@ -37,3 +37,19 @@
   <p class="disclaimer">occupancy גבוה לא תמיד אומר קרנל מהיר יותר. לפעמים 50% עם יותר רגיסטרים מנצח. המחשבון לפי הטבלאות של CUDA Programming Guide; למדידה אמיתית – Nsight Compute.</p>
   <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מחשבון CUDA Occupancy בדפדפן, בלי האקסל של NVIDIA. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
 </div>
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">מחשבון Occupancy ל-CUDA, בלי אקסל</h2>
+  <p>בוחרים את ה-Compute Capability של הכרטיס, כמה threads יש בבלוק, כמה רגיסטרים לכל thread וכמה shared memory לבלוק. המחשבון מראה כמה מה-SM הקרנל ממלא, מה מגביל אותו, ואיזה גודל בלוק נותן הכי הרבה.</p>
+  <h3>מאיפה לוקחים את המספרים</h3>
+  <p>את הרגיסטרים וה-shared memory מוצאים בפלט של nvcc --resource-usage או ב-Nsight Compute. החישוב לפי הטבלאות של CUDA Programming Guide, ומחליף את גיליון האקסל הישן של NVIDIA.</p>
+  <p>occupancy גבוה לא תמיד אומר קרנל מהיר יותר, ולפעמים 50% עם יותר רגיסטרים מנצח. למדידה אמיתית: Nsight Compute. ללמוד מההתחלה: <a class="gold" href="/kelim/tichnut/maslul/">מסלול לימוד GPU ו-CUDA</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>מה זה occupancy ב-CUDA?</summary><p>היחס בין ה-warps שפעילים על ה-SM לבין המקסימום שהוא יכול להחזיק. יותר warps עוזרים להסתיר המתנה לזיכרון.</p></details>
+  <details><summary>מה מגביל את ה-occupancy?</summary><p>אחד משלושה: מספר ה-threads בבלוק, הרגיסטרים לכל thread, או ה-shared memory לבלוק. המחשבון מראה מי מהם עוצר.</p></details>
+  <details><summary>איזה גודל בלוק כדאי?</summary><p>המחשבון מציג גרף של כל הגדלים ומסמן את הטוב ביותר לנתונים שהזנתם. כדאי גם למדוד, כי זו לא תמיד הבחירה המהירה.</p></details>
+  <details><summary>זה עובד בטלפון?</summary><p>כן. הכול בדפדפן, בחינם ובלי הרשמה.</p></details>
+</section>
+<!--/seo-txt-->
