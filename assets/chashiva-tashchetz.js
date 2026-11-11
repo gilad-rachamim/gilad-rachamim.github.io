@@ -193,7 +193,7 @@
       var k = r + ',' + c;
       if (!cells[k]) { h += '<div class="e"></div>'; continue; }
       var cls = (okKeys[k] ? 'ok ' : '') + (rev[k] ? 'rev ' : '') + (curKeys.indexOf(k) > -1 ? 'word ' : '') + (cur && curKeys[cur.i] === k ? 'cur' : '');
-      h += '<button type="button" data-k="' + k + '" class="' + cls + '">' + (P.starts[k] ? '<sup>' + P.starts[k] + '</sup>' : '') + shown(k) + '</button>';
+      h += '<button type="button" data-k="' + k + '" class="' + cls + '" aria-label="' + 'שורה ' + (r + 1) + ' טור ' + (c + 1) + (P.starts[k] ? ', מספר ' + P.starts[k] : '') + ': ' + (shown(k) || 'ריק') + '">' + (P.starts[k] ? '<sup>' + P.starts[k] + '</sup>' : '') + shown(k) + '</button>';
     }
     g.innerHTML = h;
     function li(p) {

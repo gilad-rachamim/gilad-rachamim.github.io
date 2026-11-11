@@ -45,12 +45,12 @@
 .b-col.wide{grid-column:1/-1}
 .b-col h3{font-family:"Frank Ruhl Libre",serif;font-weight:700;color:var(--soft);font-size:21px;margin:0 0 4px}
 .b-col p{font-size:15.5px;line-height:1.55;margin:0;white-space:normal}
-.b-empty{flex:1;display:grid;place-items:center;border:2px dashed var(--line2);border-radius:12px;opacity:.6;font-size:16px;padding:40px}
+.b-empty{flex:1;display:grid;place-items:center;border:2px dashed var(--line2);border-radius:12px;opacity:.9;font-size:16px;padding:40px}
 .b-foot{text-align:center;border-top:2px solid var(--acc);padding-top:12px}
 .b-pasuk{font-family:"Frank Ruhl Libre",serif;font-weight:700;font-size:22px;color:var(--soft);line-height:1.35}
-.b-pasuk small{display:block;font-family:"Assistant",sans-serif;font-weight:400;font-size:13px;opacity:.75;margin-top:2px}
+.b-pasuk small{display:block;font-family:"Assistant",sans-serif;font-weight:400;font-size:13px;opacity:.95;margin-top:2px}
 .b-sig{font-family:"Frank Ruhl Libre",serif;font-size:19px;margin-top:6px}
-.b-credit{font-size:10.5px;opacity:.55;margin-top:6px;direction:rtl}
+.b-credit{font-size:10.5px;opacity:.85;margin-top:6px;direction:rtl}
 
 @media print{
   @page{size:A4;margin:0}

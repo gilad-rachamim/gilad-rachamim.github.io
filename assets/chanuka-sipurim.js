@@ -191,7 +191,7 @@ window.CHANUKA_SIPURIM = [
 
   function nightDate(n) { return add(first, n - 1); }
   function lights(n) {
-    var h = '<div class="cs-men" aria-label="' + n + ' נרות ושמש">';
+    var h = '<div class="cs-men" role="img" aria-label="' + n + ' נרות ושמש">';
     for (var i = 1; i <= 8; i++) h += '<span class="c' + (i <= n ? ' lit' : '') + '"></span>' + (i === 4 ? '<span class="c sh lit"></span>' : '');
     return h + '</div>';
   }

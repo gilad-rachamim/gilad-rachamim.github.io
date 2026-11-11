@@ -23,7 +23,7 @@
 .mp-card table{width:100%;border-collapse:collapse;font-size:1.05rem}
 .mp-card td{padding:.35rem .2rem;border-bottom:1px dotted #bbb}
 .mp-card td.who{font-weight:700;text-align:left}
-.mp-card .ft{text-align:center;color:#666;font-size:.85rem;margin-top:1rem}
+.mp-card .ft{text-align:center;color:#555;font-size:.85rem;margin-top:1rem}
 @media print{
   @page{size:A4;margin:14mm}
   html,body{background:#fff!important}
