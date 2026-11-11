@@ -73,7 +73,7 @@
     } else if (k === 'share') {
       var url = cardLink(), text = o.name + (o.org ? ' · ' + o.org : '');
       if (navigator.share) navigator.share({ title: o.name, text: text, url: url }).catch(function () {});
-      else location.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text + '\n' + url);
+      else (window.kelimShort ? window.kelimShort.go('https://api.whatsapp.com/send?text=' + encodeURIComponent(text + '\n' + url)) : (location.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text + '\n' + url)));
     }
   });
 
