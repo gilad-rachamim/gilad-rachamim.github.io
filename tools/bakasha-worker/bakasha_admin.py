@@ -13,7 +13,7 @@
 
 המפתח: ~/.claude/secrets/kelim-bakasha.json (נוצר בפריסה הראשונה). לא מודפס לעולם.
 """
-import json, os, re, secrets as pysecrets, subprocess, sys, urllib.request, urllib.error
+import json, os, re, secrets as pysecrets, subprocess, sys, time, urllib.request, urllib.error
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 URL = os.environ.get("BAKASHA_API", "https://kelim-bakasha.gilad4049.workers.dev")
@@ -42,11 +42,16 @@ def call(path, body=None):
     data = json.dumps(body, ensure_ascii=False).encode("utf-8") if body is not None else None
     req = urllib.request.Request(URL + path, data=data, method="POST" if data else "GET",
                                  headers={"User-Agent": UA, "X-Admin-Key": key(), "Content-Type": "application/json"})
-    try:
-        with urllib.request.urlopen(req, timeout=40) as r:
-            return json.loads(r.read().decode("utf-8"))
-    except urllib.error.HTTPError as e:
-        return {"error": e.code, "body": e.read().decode("utf-8", "replace")[:300]}
+    for i in range(4):
+        try:
+            with urllib.request.urlopen(req, timeout=40) as r:
+                return json.loads(r.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            return {"error": e.code, "body": e.read().decode("utf-8", "replace")[:300]}
+        except urllib.error.URLError as e:          # החיבור לא נפתח (רשת סלולרית): הבקשה לא יצאה, אפשר לנסות שוב
+            if i == 3 or not isinstance(e.reason, (TimeoutError, ConnectionError, OSError)):
+                raise
+            time.sleep(5)
 
 
 def cf_env():
