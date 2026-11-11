@@ -79,10 +79,83 @@
   BANK = BANK.filter(function (w) { if (!w || seen[w]) return false; seen[w] = 1; return true; })
     .map(function (w) { return w.replace(/_/g, ' '); });
   function bankVal(w, m) { return w.split(' ').reduce(function (t, x) { return t + wordVal(x, m); }, 0); }
+
+  // ---------- התנ"ך: כל המילים והרצפים שיש להם אותו ערך ----------
+  // assets/kodesh-tanach.txt: כל התנ"ך בלי ניקוד (ספריא, Tanach with Text Only, נחלת הכלל), נטען ברקע אחרי שהדף עולה.
+  // '#ספר', '@' לפרק חדש, ושורה לכל פסוק. רצף = מילים צמודות באותו פרק (גם מעבר לסוף פסוק), 2 עד MAXW מילים.
+  // שמות הקודש (יהוה, אלהים וכו') לא מוצגים: מילה כזו לא נכנסת לרשימה, ורצף לא עובר דרכה.
+  var TANACH_URL = '/assets/kodesh-tanach.txt?v=1';
+  var MAXW = 120, PAGE = 100, CAP = 8000;
+  var BAN_RE = /יהוה|אלהי|אלוה/, BAN_X = { 'יה': 1, 'אדני': 1, 'שדי': 1, 'אל': 1 };
+  var T = null, tState = 'idle'; // idle / loading / ready / fail
+  function loadTanach() {
+    if (tState !== 'idle') return;
+    tState = 'loading';
+    fetch(TANACH_URL).then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.text(); }).then(function (txt) {
+      var tok = [], tv = [], books = [], vb = [], vc = [], vn = [], chap = [], book = -1, ch = 0, vs = 0;
+      var lines = txt.split('\n');
+      for (var i = 0; i < lines.length; i++) {
+        var l = lines[i];
+        if (!l) continue;
+        if (l.charAt(0) === '#') { books.push(l.slice(1)); book++; ch = 0; continue; }
+        if (l === '@') { ch++; vs = 0; chap.push(tok.length); continue; }
+        vs++; var vi = vb.length; vb.push(book); vc.push(ch); vn.push(vs);
+        var ws = l.split(' ');
+        for (var k = 0; k < ws.length; k++) { tok.push(ws[k]); tv.push(vi); }
+      }
+      chap.push(tok.length);
+      var ban = new Uint8Array(tok.length), freq = new Map();
+      for (var j = 0; j < tok.length; j++) {
+        var w = tok[j];
+        if (BAN_RE.test(w) || BAN_X[w]) { ban[j] = 1; continue; }
+        freq.set(w, (freq.get(w) || 0) + 1);
+      }
+      var uw = Array.from(freq.keys()).sort(function (a, c) { return freq.get(c) - freq.get(a); }); // הנפוצות קודם
+      T = { tok: tok, tv: tv, books: books, vb: vb, vc: vc, vn: vn, chap: chap, ban: ban, uw: uw, vals: {}, uvals: {} };
+      tState = 'ready'; cache = {}; calc(); byNum();
+    }).catch(function () { tState = 'fail'; calc(); byNum(); });
+  }
+  function tVals(m) {
+    if (!T.vals[m]) {
+      var a = new Int32Array(T.tok.length);
+      for (var i = 0; i < a.length; i++) a[i] = T.ban[i] ? -1 : wordVal(T.tok[i], m);
+      var u = new Int32Array(T.uw.length);
+      for (var j = 0; j < u.length; j++) u[j] = wordVal(T.uw[j], m);
+      T.vals[m] = a; T.uvals[m] = u;
+    }
+    return T.vals[m];
+  }
+  function plain(n) { return hebNum(n).replace(/[׳״]/g, ''); }
+  function ref(vi) { return T.books[T.vb[vi]] + ' ' + plain(T.vc[vi]) + ', ' + plain(T.vn[vi]); }
+  // כל המילים והרצפים בערך n: קודם מהרשימה המוכרת, אחר כך מילים מהתנ"ך (הנפוצות קודם), ואז רצפים (הקצרים קודם).
+  // כל הערכים חיוביים, ולכן חלון זז (two pointers) מוצא בכל פרק את כל הרצפים בסכום n במעבר אחד.
+  var cache = {}, cacheN = 0;
   function matches(n, m, not) {
-    var out = [];
-    for (var i = 0; i < BANK.length; i++) if (BANK[i] !== not && bankVal(BANK[i], m) === n) out.push(BANK[i]);
-    return out;
+    var key = m + ':' + n, out = cache[key];
+    if (!out) {
+      out = [];
+      var seenT = {};
+      var add = function (t, r) { if (seenT[t]) return; seenT[t] = 1; out.push({ t: t, r: r || '' }); };
+      for (var i = 0; i < BANK.length; i++) if (bankVal(BANK[i], m) === n) add(BANK[i]);
+      if (T) {
+        var vals = tVals(m), u = T.uvals[m], ph = [];
+        for (var j = 0; j < u.length; j++) if (u[j] === n) add(T.uw[j]);
+        for (var c = 0; c + 1 < T.chap.length && ph.length < CAP; c++) {
+          var e = T.chap[c + 1], lo = T.chap[c], s = 0;
+          for (var r = lo; r < e; r++) {
+            if (vals[r] < 0) { lo = r + 1; s = 0; continue; }
+            s += vals[r];
+            while (s > n && lo <= r) s -= vals[lo++];
+            if (s === n && r > lo && r - lo < MAXW) ph.push([lo, r]);
+          }
+        }
+        ph.sort(function (x, y) { return (x[1] - x[0]) - (y[1] - y[0]) || x[0] - y[0]; });
+        for (var p = 0; p < ph.length; p++) add(T.tok.slice(ph[p][0], ph[p][1] + 1).join(' '), ref(T.tv[ph[p][0]]));
+      }
+      if (++cacheN > 60) { cache = {}; cacheN = 0; }
+      cache[key] = out;
+    }
+    return not ? out.filter(function (x) { return x.t !== not; }) : out;
   }
 
   function load() { try { var v = localStorage.getItem(KEY); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
@@ -101,8 +174,27 @@
     $('gm-wa').href = 'https://wa.me/?text=' + encodeURIComponent((text ? text + '\n\n' : '') + 'מחשבון גימטריה בחינם, בלי הרשמה:\n' + LINK);
     $('gm-copy').disabled = !text;
   }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function chips(list) {
-    return list.map(function (w) { return '<button type="button" data-w="' + w + '">' + w + '</button>'; }).join('');
+    return list.map(function (x) {
+      return '<button type="button" data-w="' + esc(x.t) + '">' + esc(x.t) + (x.r ? '<small>' + esc(x.r) + '</small>' : '') + '</button>';
+    }).join('');
+  }
+  // רשימת ההתאמות: 100 בכל פעם, וכפתור "עוד 100"
+  var shown = { main: PAGE, num: PAGE }, lastKey = { main: '', num: '' };
+  function list(where, n, m, not) {
+    var all = matches(n, m, not), key = m + ':' + n;
+    if (lastKey[where] !== key) { lastKey[where] = key; shown[where] = PAGE; }
+    var cnt = all.length, k = Math.min(shown[where], cnt);
+    var head = cnt
+      ? 'נמצאו ' + b(fmt(cnt)) + ' מילים ורצפי מילים בגימטריה ' + b(fmt(n)) + (cnt > k ? '. מוצגים ' + b(fmt(k)) + ', מהקצרים לארוכים:' : ':')
+      : 'לא מצאנו מילה או רצף בגימטריה ' + b(fmt(n)) + '.';
+    var note = '';
+    if (tState === 'loading' || tState === 'idle') note = '<p class="gm-load">טוען עוד מילים ורצפים מכל התנ״ך…</p>';
+    else if (tState === 'fail') note = '<p class="gm-load">לא הצלחנו לטעון את התנ״ך (אולי אין אינטרנט), ולכן מוצגות רק מילים מהרשימה הקצרה.</p>';
+    else if (cnt < PAGE) note = '<p class="gm-load">בערך קטן כמו ' + b(fmt(n)) + ' יש בתנ״ך מעט מילים ורצפים, ולכן הרשימה קצרה.</p>';
+    return '<p class="gm-sh">' + head + '</p>' + (cnt ? '<div class="gm-chips">' + chips(all.slice(0, k)) + '</div>' : '') +
+      (cnt > k ? '<button type="button" class="gm-morebtn" data-more="' + where + '">להציג עוד ' + b(fmt(Math.min(PAGE, cnt - k))) + '</button>' : '') + note;
   }
 
   function calc() {
@@ -140,16 +232,12 @@
     if (words.length > MAX_ROWS) rows.push('<li class="gm-more">ועוד ' + b(fmt(words.length - MAX_ROWS)) + ' מילים. הסכום למעלה כולל את כולן.</li>');
     $('gm-words').innerHTML = rows.join('');
 
-    // מילים מוכרות עם אותו ערך
-    var same = matches(n, m, words.join(' '));
-    $('gm-same').hidden = !same.length;
-    if (same.length) {
-      $('gm-sl').innerHTML = 'גם הן בגימטריה ' + b(fmt(n)) + ':';
-      $('gm-sc').innerHTML = chips(same.slice(0, 16));
-    }
+    // מילים ורצפים עם אותו ערך
+    $('gm-same').hidden = false;
+    $('gm-same').innerHTML = list('main', n, m, words.join(' '));
 
-    var shown = words.join(' ');
-    text = shown + '\nגימטריה (' + NAMES[m] + '): ' + fmt(n) + (hebNum(n) ? ' (' + hebNum(n) + ')' : '') +
+    var joined = words.join(' ');
+    text = joined + '\nגימטריה (' + NAMES[m] + '): ' + fmt(n) + (hebNum(n) ? ' (' + hebNum(n) + ')' : '') +
       (m !== 'reg' ? '\nמספר הכרחי: ' + fmt(tot.reg) : '') +
       (words.length > 1 && words.length <= 12 ? '\n' + words.map(function (w) { return w + ' = ' + fmt(wordVal(w, m)); }).join('\n') : '');
     setWa();
@@ -162,11 +250,8 @@
     if (raw === '') { box.innerHTML = ''; return; }
     var n = /^\d+$/.test(raw) ? Number(raw) : NaN;
     if (!(n > 0)) { box.innerHTML = '<p class="gm-none">מקלידים מספר שלם, למשל 26.</p>'; return; }
-    var list = matches(n, st.m);
     var h = hebNum(n);
-    box.innerHTML = (h ? '<p class="gm-none">' + b(fmt(n)) + ' בכתיב עברי: <b class="gm-hn">' + h + '</b></p>' : '') +
-      (list.length ? '<div class="gm-chips">' + chips(list) + '</div>'
-        : '<p class="gm-none">אין ברשימה שלנו מילה בגימטריה ' + b(fmt(n)) + ' (' + NAMES[st.m] + '). אפשר לבדוק כל מילה בשדה למעלה.</p>');
+    box.innerHTML = (h ? '<p class="gm-none">' + b(fmt(n)) + ' בכתיב עברי: <b class="gm-hn">' + h + '</b></p>' : '') + list('num', n, st.m);
   }
 
   function fill() { inT.value = st.t; inN.value = st.n || ''; }
@@ -176,7 +261,13 @@
   Array.prototype.forEach.call(segBtns, function (x) {
     x.addEventListener('click', function () { st.m = x.getAttribute('data-v'); store(); used('method'); calc(); byNum(); });
   });
-  // לחיצה על מילה מוכרת ← היא נכנסת לשדה
+  // "להציג עוד": עוד 100 ברשימה
+  root.addEventListener('click', function (ev) {
+    var mb = ev.target.closest('button[data-more]'); if (!mb) return;
+    var w = mb.getAttribute('data-more'); shown[w] += PAGE; used('more');
+    if (w === 'main') calc(); else byNum();
+  });
+  // לחיצה על מילה או רצף ← הם נכנסים לשדה
   root.addEventListener('click', function (ev) {
     var c = ev.target.closest('button[data-w]'); if (!c) return;
     st.t = c.getAttribute('data-w'); inT.value = st.t; store(); used('pick'); calc();
@@ -198,6 +289,11 @@
     location.reload();
   });
   // לבדיקות: window.__gm.calc('שלום', 'reg')
-  window.__gm = { calc: function (t, m) { return parse(t).words.reduce(function (s, w) { return s + wordVal(w, m || 'reg'); }, 0); }, heb: hebNum, parse: parse };
+  window.__gm = {
+    calc: function (t, m) { return parse(t).words.reduce(function (s, w) { return s + wordVal(w, m || 'reg'); }, 0); }, heb: hebNum, parse: parse,
+    matches: function (n, m) { return matches(n, m || 'reg'); }, state: function () { return tState; }
+  };
   calc(); byNum();
+  // התנ"ך נטען ברקע, אחרי שהדף כבר מוצג
+  if (window.requestIdleCallback) requestIdleCallback(loadTanach, { timeout: 1500 }); else setTimeout(loadTanach, 600);
 })();
