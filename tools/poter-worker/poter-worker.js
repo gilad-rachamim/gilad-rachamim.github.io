@@ -11,8 +11,8 @@ import { runChecks } from './check.js';
 
 const ALLOWED = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
-export const PER_IP = 12;   // פתרונות לכתובת ביום
-export const DAY_CAP = 80;  // לכל האתר ביום – המכסות החינמיות (Gemini + Workers AI) קטנות; כשנגמרות – "נסו מחר"
+const PER_IP = 12;   // פתרונות לכתובת ביום
+const DAY_CAP = 80;  // לכל האתר ביום – המכסות החינמיות (Gemini + Workers AI) קטנות; כשנגמרות – "נסו מחר"
 const MAX_TEXT = 6000;
 const MAX_IMG = 3_500_000; // base64
 const AI_MODEL = '@cf/openai/gpt-oss-120b';
@@ -20,13 +20,13 @@ const AI_MODEL = '@cf/openai/gpt-oss-120b';
 function cors(origin) {
   const ok = ALLOWED.includes(origin) || LOCAL.test(origin || '');
   return ok ? { 'access-control-allow-origin': origin, 'access-control-allow-methods': 'POST, OPTIONS',
-    'access-control-allow-headers': 'content-type', vary: 'origin' } : null;
+    'access-control-allow-headers': 'content-type, x-kelim-partner', vary: 'origin' } : null;
 }
 const json = (o, status, h) => new Response(JSON.stringify(o), { status, headers: { 'content-type': 'application/json; charset=utf-8', ...(h || {}) } });
 
 const LEVELS = { 3: '3 יחידות לימוד (שאלונים 35182, 35381, 35382)', 4: '4 יחידות לימוד (שאלונים 35481, 35482)', 5: '5 יחידות לימוד (שאלונים 35581, 35582)' };
 
-export const SOLVE_RULES = `את/ה מורה מומחה/ית למתמטיקה בישראל, ופותר/ת שאלות בגרות במתמטיקה (3–5 יח"ל) בדיוק מלא.
+const SOLVE_RULES = `את/ה מורה מומחה/ית למתמטיקה בישראל, ופותר/ת שאלות בגרות במתמטיקה (3–5 יח"ל) בדיוק מלא.
 פתור/פתרי את כל הסעיפים של השאלה, לפי הסדר, בדרך שמורה בבגרות היה נותן עליה ציון מלא.
 
 כללי הפתרון:
@@ -47,7 +47,7 @@ export const SOLVE_RULES = `את/ה מורה מומחה/ית למתמטיקה ב
 - vars: "x=2; y=-1/3" (אפשר ביטויים). what: משפט קצר בעברית מה נבדק. part: האות של הסעיף.
 כתוב/כתבי לפחות בדיקה אחת לכל סעיף שיש בו תוצאה מספרית או אלגברית – עדיף 2-3. בדיקה טובה בודקת את התשובה מכיוון אחר (הצבה חזרה, נגזרת שמתאפסת בנקודת הקיצון, שטח שמחושב גם באינטגרל).`;
 
-export const SOLVE_SCHEMA = {
+const SOLVE_SCHEMA = {
   type: 'OBJECT',
   properties: {
     readable: { type: 'BOOLEAN' },
@@ -70,13 +70,13 @@ export const SOLVE_SCHEMA = {
   required: ['readable', 'question_text', 'parts', 'checks']
 };
 
-export const VERIFY_RULES = `את/ה בודק/ת בגרות במתמטיקה, קפדני/ת מאוד. מקבלים שאלה ופתרון מוצע.
+const VERIFY_RULES = `את/ה בודק/ת בגרות במתמטיקה, קפדני/ת מאוד. מקבלים שאלה ופתרון מוצע.
 1. קודם פתור/פתרי כל סעיף בעצמך, בלי להסתמך על הפתרון המוצע.
 2. אחר כך השווה/השווי לתשובה המוצעת לכל סעיף. agree=true רק אם התשובה הסופית נכונה ושלמה (כל הנקודות, הסוג, התחום). הבדל בצורת כתיבה בלבד (שבר מול עשרוני מעוגל, צורה שקולה) – זה agree=true.
 3. אם לא מסכימים – my_answer: התשובה שלך, ו-why: משפט קצר בעברית איפה הטעות.
 4. לא לחפש טעויות סגנון. רק נכונות.`;
 
-export const VERIFY_SCHEMA = {
+const VERIFY_SCHEMA = {
   type: 'OBJECT',
   properties: {
     parts: { type: 'ARRAY', items: { type: 'OBJECT', properties: {
@@ -316,8 +316,8 @@ function fmt(n) { return typeof n === 'number' && isFinite(n) ? +n.toPrecision(8
 
 // ============ המחברת (/limudim/machberet/): רמז לצעד הבא ובדיקת הוכחה ============
 // התלמיד פותר בעצמו. הבינה לא פותרת בשבילו: רמז אחד, או הערה לכל שורה בהוכחה.
-export const HINT_PER = 30, HINT_CAP = 400, PROOF_PER = 12, PROOF_CAP = 150;
-export const HINT_RULES = `את/ה מורה פרטי/ת סבלני/ת למתמטיקה בישראל (בגרות 3–5 יח"ל). תלמיד פותר בעצמו במחברת, שורה אחרי שורה, ונתקע.
+const HINT_PER = 30, HINT_CAP = 400, PROOF_PER = 12, PROOF_CAP = 150;
+const HINT_RULES = `את/ה מורה פרטי/ת סבלני/ת למתמטיקה בישראל (בגרות 3–5 יח"ל). תלמיד פותר בעצמו במחברת, שורה אחרי שורה, ונתקע.
 תן/תני רמז אחד בלבד לצעד הבא:
 - לא לגלות את התשובה הסופית ולא לכתוב את הפתרון המלא. רמז שמכוון, או שאלה מנחה.
 - אם יש טעות באחת השורות – להצביע עליה בעדינות (באיזו שורה ומה לבדוק), בלי לתקן במקומו.
@@ -326,15 +326,15 @@ export const HINT_RULES = `את/ה מורה פרטי/ת סבלני/ת למתמט
 - formula: נוסחה או משפט אחד שיעזור (LaTeX בלי $), או ריק. לא את התשובה.
 - בהוכחה בגאומטריה: הצעה למשפט או לזוג משולשים לבדוק, בלי לכתוב את ההוכחה.
 - רק כשכתוב "התלמיד ביקש לראות את הצעד הבא": step = השורה הבאה בלבד (צעד אחד קטן, לא הפתרון כולו), בכתיב מחשבון פשוט: x^2, sqrt(), ln(), sin(30°), שבר עם / וסוגריים, כמה פתרונות עם " או ". ו-hint = משפט קצר מה עושים בצעד הזה. בכל מקרה אחר step ריק.`;
-export const HINT_SCHEMA = { type: 'OBJECT', properties: { hint: { type: 'STRING' }, formula: { type: 'STRING' }, step: { type: 'STRING' } }, required: ['hint'] };
-export const PROOF_RULES = `את/ה בודק/ת בגרות במתמטיקה, קפדני/ת והוגן/ת. תלמיד כתב הוכחה בגאומטריה או בטריגונומטריה במבנה "טענה | נימוק".
+const HINT_SCHEMA = { type: 'OBJECT', properties: { hint: { type: 'STRING' }, formula: { type: 'STRING' }, step: { type: 'STRING' } }, required: ['hint'] };
+const PROOF_RULES = `את/ה בודק/ת בגרות במתמטיקה, קפדני/ת והוגן/ת. תלמיד כתב הוכחה בגאומטריה או בטריגונומטריה במבנה "טענה | נימוק".
 לכל שורה (לפי הסדר, index כמו המספר של השורה, מ-1): ok=true אם הטענה נובעת נכון מהנתון ומהשורות שלפניה, והנימוק מתאים לה. ok=false אם הטענה לא נכונה, לא נובעת, או שהנימוק לא מתאים.
 note: משפט קצר בעברית פשוטה רק כשיש מה לתקן (מה חסר או למה הנימוק לא מתאים), אחרת ריק. לא לכתוב את ההוכחה במקומו.
 ok הכללי: true רק אם ההוכחה שלמה ומגיעה למה שצריך להוכיח.
 summary: משפט מעודד אחד שמסכם. missing: אם חסר שלב – מה בערך חסר (בלי לכתוב אותו במלואו), אחרת ריק.
 אין שרטוט – מניחים את המקובל לפי הנתון. בדיקה עניינית, לא סגנון.
 חשוב: לבדוק שהנימוק הוא בדיוק המשפט שהטענה משתמשת בו. טענה נכונה עם נימוק של משפט אחר (למשל "משפט הסינוסים" לנוסחה של משפט הקוסינוסים, או צ.צ.צ כשהנתונים הם צ.ז.צ) – ok=false, וב-note מה הנימוק הנכון.`;
-export const PROOF_SCHEMA = {
+const PROOF_SCHEMA = {
   type: 'OBJECT',
   properties: {
     ok: { type: 'BOOLEAN' }, summary: { type: 'STRING' }, missing: { type: 'STRING' },
@@ -379,8 +379,8 @@ export async function aiProof(env, b, opts) {
 }
 // ============ המחברת: להתחיל מצילום (/read) ============
 // מעתיקים תרגיל מצילום של דף או ספר לשורה של המחברת, בכתיב מחשבון. רק העתקה, לא פתרון.
-export const READ_PER = 15, READ_CAP = 250;
-export const READ_RULES = `העתק/העתיקי במדויק את תרגילי המתמטיקה שבתמונה, כדי שתלמיד יפתור אותם בעצמו במחברת. לא לפתור ולא להוסיף כלום.
+const READ_PER = 15, READ_CAP = 250;
+const READ_RULES = `העתק/העתיקי במדויק את תרגילי המתמטיקה שבתמונה, כדי שתלמיד יפתור אותם בעצמו במחברת. לא לפתור ולא להוסיף כלום.
 כל תרגיל: שורה אחת בכתיב מחשבון פשוט (ASCII), בלי LaTeX ובלי סימני $:
 - חזקה ^ (x^2, e^(2x)), כפל * כשצריך, שבר עם / וסוגריים: (x+1)/(x-2). שורש: sqrt(...), שורש שלישי: cbrt(...).
 - ln(...), log(...) לבסיס 10, log_2(8) לבסיס אחר, sin(x) cos(x) tan(x), מעלות עם ° (sin(30°)), pi, ערך מוחלט abs(...).
@@ -390,7 +390,7 @@ export const READ_RULES = `העתק/העתיקי במדויק את תרגילי 
 label: המספר או האות של התרגיל כמו בדף (למשל "3" או "ב"), או ריק.
 אם אין בתמונה תרגיל מתמטיקה קריא – readable=false ו-why מסביר בעברית קצרה מה חסר.
 עד 8 תרגילים, לפי הסדר בדף.`;
-export const READ_SCHEMA = {
+const READ_SCHEMA = {
   type: 'OBJECT',
   properties: {
     readable: { type: 'BOOLEAN' }, why: { type: 'STRING' },
@@ -434,7 +434,20 @@ async function readRoute(request, env, ctx, h) {
   return streamed(ctx, h, async () => Object.assign(await aiRead(env, img), { left: q.left }));
 }
 
+// שותפים במיזם: קוד אישי 'NNN-DDDDD' (אותו קוד של ההחייאה, tools/chaye-worker/partner_codes.py, הסוד PARTNER_SECRET)
+// נשלח בכותרת x-kelim-partner. קוד תקין = בלי מכסה אישית (התקרה היומית לכל האתר נשארת). ביטול: REVOKED ב-[vars].
+const PCODE = /^(\d{3})-?(\d{5})$/;
+async function partnerOk(env, code) {
+  const m = String(code || '').replace(/\s/g, '').match(PCODE);
+  if (!m || !env.PARTNER_SECRET) return false;
+  if (String(env.REVOKED || '').split(',').map(x => x.trim()).filter(Boolean).map(Number).includes(+m[1])) return false;
+  const k = await crypto.subtle.importKey('raw', new TextEncoder().encode(env.PARTNER_SECRET), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = new Uint8Array(await crypto.subtle.sign('HMAC', k, new TextEncoder().encode('chaye-partner:' + (+m[1]))));
+  return ((sig[0] << 24 | sig[1] << 16 | sig[2] << 8 | sig[3]) >>> 0) % 100000 === +m[2];
+}
+const perFor = async (env, req, per) => (await partnerOk(env, req.headers.get('x-kelim-partner'))) ? 1e9 : per;
 async function takeQuota(env, inst, request, per, cap) {
+  per = await perFor(env, request, per);
   const day = new Date().toISOString().slice(0, 10);
   const ip = request.headers.get('cf-connecting-ip') || 'x';
   const stub = env.QUOTA.get(env.QUOTA.idFromName(inst));
@@ -515,7 +528,7 @@ export default {
           const day = new Date().toISOString().slice(0, 10);
           const ip = request.headers.get('cf-connecting-ip') || 'x';
           const stub = env.QUOTA.get(env.QUOTA.idFromName('q'));
-          const q = await (await stub.fetch('https://q/take', { method: 'POST', body: JSON.stringify({ day, who: await ipHash(ip, day), per: PER_IP, cap: DAY_CAP }) })).json();
+          const q = await (await stub.fetch('https://q/take', { method: 'POST', body: JSON.stringify({ day, who: await ipHash(ip, day), per: await perFor(env, request, PER_IP), cap: DAY_CAP }) })).json();
           if (!q.ok) out = { error: 'quota' };
           else {
             await call('cpending');

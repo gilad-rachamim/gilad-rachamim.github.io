@@ -7,19 +7,19 @@
 
 const ALLOWED = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
-export const PER_IP = 40;   // בקשות לכתובת ביום
-export const DAY_CAP = 600; // לכל האתר ביום
+const PER_IP = 40;   // בקשות לכתובת ביום
+const DAY_CAP = 600; // לכל האתר ביום
 const MAX_PROMPT = 1500;
 const MAX_DOC = 24000;
 const AI_MODEL = '@cf/openai/gpt-oss-120b';
 const GEMINI_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite'];
 
-export const FONTS = ['Assistant', 'Heebo', 'Rubik', 'Varela Round', 'Secular One', 'Suez One', 'Frank Ruhl Libre',
+const FONTS = ['Assistant', 'Heebo', 'Rubik', 'Varela Round', 'Secular One', 'Suez One', 'Frank Ruhl Libre',
   'David Libre', 'Bellefair', 'Noto Rashi Hebrew', 'Amatic SC', 'Karantina'];
 
-export const ICONS = ['phone', 'pin', 'clock', 'calendar', 'heart', 'magen', 'candles', 'book', 'gift', 'cup', 'star', 'flower', 'sun', 'crown', 'balloon', 'music', 'home', 'mail', 'chat', 'user', 'check', 'arrow', 'pomegranate'];
+const ICONS = ['phone', 'pin', 'clock', 'calendar', 'heart', 'magen', 'candles', 'book', 'gift', 'cup', 'star', 'flower', 'sun', 'crown', 'balloon', 'music', 'home', 'mail', 'chat', 'user', 'check', 'arrow', 'pomegranate'];
 
-export const RULES = `את/ה מעצב/ת גרפי/ת מקצועי/ת בסגנון Canva, שמעצב/ת לקהל ישראלי בעברית.
+const RULES = `את/ה מעצב/ת גרפי/ת מקצועי/ת בסגנון Canva, שמעצב/ת לקהל ישראלי בעברית.
 המשתמש כותב במילים מה הוא רוצה (פוסט, הזמנה, מודעה, ברכה, סטטוס, דף מסמך, כיתוב על תמונה וכו').
 את/ה מחזיר/ה עיצוב שלם כ-JSON בלבד, לפי המבנה:
 {"note": "משפט קצר בעברית: מה עשית", "doc": {"w": רוחב, "h": גובה, "bg": {...}, "els": [ ... ]}}
@@ -55,7 +55,7 @@ bg: {"color":"#rrggbb", "grad":"#rrggbb" או null (צבע שני למעבר צ�
 function cors(origin) {
   const ok = ALLOWED.includes(origin) || LOCAL.test(origin || '');
   return ok ? { 'access-control-allow-origin': origin, 'access-control-allow-methods': 'POST, OPTIONS',
-    'access-control-allow-headers': 'content-type', vary: 'origin' } : null;
+    'access-control-allow-headers': 'content-type, x-kelim-partner', vary: 'origin' } : null;
 }
 const json = (o, status, h) => new Response(JSON.stringify(o), { status: status || 200, headers: { 'content-type': 'application/json; charset=utf-8', ...(h || {}) } });
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -182,10 +182,22 @@ export function buildInput(body) {
   return { text: s, imgs, many };
 }
 
-async function allow(env, ip) {
+// שותפים במיזם: קוד אישי 'NNN-DDDDD' (אותו קוד של ההחייאה, tools/chaye-worker/partner_codes.py, הסוד PARTNER_SECRET)
+// נשלח בכותרת x-kelim-partner. קוד תקין = בלי מכסה אישית (התקרה היומית לכל האתר נשארת). ביטול: REVOKED ב-[vars].
+const PCODE = /^(\d{3})-?(\d{5})$/;
+async function partnerOk(env, code) {
+  const m = String(code || '').replace(/\s/g, '').match(PCODE);
+  if (!m || !env.PARTNER_SECRET) return false;
+  if (String(env.REVOKED || '').split(',').map(x => x.trim()).filter(Boolean).map(Number).includes(+m[1])) return false;
+  const k = await crypto.subtle.importKey('raw', new TextEncoder().encode(env.PARTNER_SECRET), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = new Uint8Array(await crypto.subtle.sign('HMAC', k, new TextEncoder().encode('chaye-partner:' + (+m[1]))));
+  return ((sig[0] << 24 | sig[1] << 16 | sig[2] << 8 | sig[3]) >>> 0) % 100000 === +m[2];
+}
+const perFor = async (env, req, per) => (await partnerOk(env, req.headers.get('x-kelim-partner'))) ? 1e9 : per;
+async function allow(env, ip, per) {
   if (!env.QUOTA) return { ok: true };
   const who = [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(ip + day())))].slice(0, 8).map(b => b.toString(16).padStart(2, '0')).join('');
-  const r = await env.QUOTA.get(env.QUOTA.idFromName('q')).fetch('https://q/', { method: 'POST', body: JSON.stringify({ day: day(), who, per: PER_IP, cap: DAY_CAP }) });
+  const r = await env.QUOTA.get(env.QUOTA.idFromName('q')).fetch('https://q/', { method: 'POST', body: JSON.stringify({ day: day(), who, per: per || PER_IP, cap: DAY_CAP }) });
   return r.json();
 }
 
@@ -200,7 +212,7 @@ export default {
     let body;
     try { body = await req.json(); } catch (_) { return json({ error: 'בקשה לא תקינה' }, 400, h); }
     if (!String(body.prompt || '').trim()) return json({ error: 'כתבו מה לעצב' }, 400, h);
-    const q = await allow(env, req.headers.get('cf-connecting-ip') || '0');
+    const q = await allow(env, req.headers.get('cf-connecting-ip') || '0', await perFor(env, req, PER_IP));
     if (!q.ok) return json({ error: 'הגעתם למכסה של היום לעוזר העיצוב. אפשר להמשיך לעצב ידנית, והעוזר חוזר מחר.' }, 429, h);
     const { text, imgs, many } = buildInput(body);
     const size = { w: num(body.size && body.size.w, 200, 4000, 1080), h: num(body.size && body.size.h, 200, 6000, 1080) };

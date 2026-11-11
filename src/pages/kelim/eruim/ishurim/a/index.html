@@ -1,0 +1,63 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "eruim_ishurim_guest",
+  "title": "אישור הגעה – מגיעים לשמחה?",
+  "description": "אישור הגעה בלחיצה: מגיעים, אולי או לא, וכמה תהיו. עם ניווט והוספה ליומן.",
+  "og_title": "מגיעים? אישור הגעה בלחיצה",
+  "noindex": true,
+  "no_rel": true,
+  "body_class": "eh-guest-page",
+  "head": "<link rel=\"stylesheet\" href=\"/assets/eruim-hazmana.css\"><link rel=\"stylesheet\" href=\"/assets/eruim-ishurim.css\">",
+  "foot": "<script src=\"/assets/eruim-ishurim.js\" defer></script>"
+} -->
+<div class="eh-guest ish-guest">
+  <div id="ga" hidden>
+    <header class="eh-dash-h">
+      <p class="eh-hint">הוזמנתם</p>
+      <h1 id="ga-title"></h1>
+      <p id="ga-when" class="note"></p>
+      <p id="ga-place" class="note"></p>
+    </header>
+    <div id="ga-after" class="panel" hidden>
+      <h2>השמחה כבר התקיימה. מזל טוב!</h2>
+      <p class="note">שנזכה לבשר רק בשורות טובות.</p>
+    </div>
+    <div id="ga-box" class="panel eh-rsvp" hidden>
+      <h2>מגיעים?</h2>
+      <p class="note" id="ga-hi">בעלי השמחה ישמחו לדעת אם תגיעו.</p>
+      <form id="ga-form" novalidate>
+        <div class="eh-yesno ish-yesno" role="radiogroup" aria-label="מגיעים?">
+          <label class="eh-choice"><input type="radio" name="ok" value="1"> מגיעים 🎉</label>
+          <label class="eh-choice" id="ga-maybe-l"><input type="radio" name="ok" value="2"> אולי</label>
+          <label class="eh-choice"><input type="radio" name="ok" value="0"> לא נוכל</label>
+        </div>
+        <div class="field"><label for="ga-n">השם שלכם</label><input id="ga-n" name="n" type="text" required minlength="2" maxlength="60" autocomplete="name" placeholder="משפחת לוי"></div>
+        <div class="field" id="ga-cwrap" hidden><label for="ga-c">כמה תהיו?</label><input id="ga-c" name="c" type="number" min="1" max="30" value="1" inputmode="numeric"></div>
+        <div class="field"><label for="ga-note">הערה <span class="opt">(לא חובה)</span></label><input id="ga-note" name="note" type="text" maxlength="200" placeholder="למשל: מנה צמחונית, נגיע מאוחר"></div>
+        <div class="hp" aria-hidden="true"><label>אל תמלאו <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+        <p class="eh-err" id="ga-err" hidden></p>
+        <button class="btn btn-gold btn-block" type="submit">שליחת התשובה</button>
+        <p class="eh-hint">השם והתשובה נראים רק לבעלי השמחה, ונמחקים מעצמם 30 יום אחרי האירוע.</p>
+      </form>
+      <div id="ga-done" hidden><p class="eh-done" id="ga-done-txt"></p><button class="btn btn-line" type="button" id="ga-edit">לשנות את התשובה</button></div>
+    </div>
+    <div class="eh-btns" id="ga-links">
+      <div class="eh-btns wide" id="ga-nav" style="margin:0">
+        <a class="btn btn-gold" id="ga-waze" href="#" target="_blank" rel="noopener">ניווט ב-Waze</a>
+        <a class="btn btn-line" id="ga-maps" href="#" target="_blank" rel="noopener">מפות גוגל</a>
+      </div>
+      <a class="btn btn-line wide" id="ga-gcal" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#cal"/></svg> להוסיף ליומן גוגל</a>
+    </div>
+    <p class="eh-credit">מארגנים שמחה? אישורי הגעה כאלה בחינם, בלי הרשמה: <a href="/kelim/eruim/ishurim/?utm_source=guest&amp;utm_medium=eruim_ishurim">לכלי ←</a></p>
+  </div>
+  <div id="ga-missing" class="panel" hidden>
+    <h2>הקישור לא נמצא</h2>
+    <p class="note">נראה שהקישור נחתך בדרך, או שהאירוע כבר נמחק. בקשו מבעלי השמחה לשלוח אותו שוב.</p>
+  </div>
+  <div id="ga-down" class="panel" hidden>
+    <h2>לא הצלחנו להתחבר</h2>
+    <p class="note">בדקו את האינטרנט ונסו שוב בעוד רגע.</p>
+    <button class="btn btn-line" type="button" onclick="location.reload()">לנסות שוב</button>
+  </div>
+</div>

@@ -10,3 +10,4 @@ claude-skills/
 tools/shir-worker/.wrangler/
 tools/krav-worker/.wrangler/
 tools/chaye-worker/.wrangler/
+tools/*/.wrangler/

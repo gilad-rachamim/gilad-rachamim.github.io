@@ -548,7 +548,7 @@
 
   // ---------- בינה מלאכותית (השרת של הפותר) ----------
   function post(path, body) {
-    return fetch(API + path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
+    return fetch(API + path, { method: 'POST', headers: (function (h) { try { var c = localStorage.getItem('kelim-partner'); if (c) h['x-kelim-partner'] = c; } catch (e) {} return h; })({ 'content-type': 'application/json' }), body: JSON.stringify(body) })
       .then(function (r) { return r.text().then(function (t) { var j = {}; try { j = JSON.parse(t.trim() || '{}'); } catch (_) {} return { s: r.status, j: j }; }); });
   }
   function aiErr(x) {

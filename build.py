@@ -19,7 +19,7 @@ LAYOUT_KELIM = (ROOT / "src" / "layout-kelim.html").read_text(encoding="utf-8")
 SITES = {
     "kelim": {
         "name": "הכלים של גילעד רחמים", "brand": "מיזם הכלים של גילעד רחמים", "short": "הכלים", "home": "/kelim/", "theme": "#0f1d1c",
-        "og": "og-kelim.jpg", "icon": "kelim",
+        "og": "og-kelim.jpg?v=3", "icon": "kelim",
         "desc": "כלים פשוטים, בחינם, לכל מי שצריך הנגשה",
         "nav": [("tchumim", "/kelim/#tchumim", "התחומים"), ("tamlul", "/kelim/tamlul/", "תמלול"),
                 ("kodesh", "/kodesh/", "כלי קודש"), ("rotzim", "/kelim/#rotzim", "רוצים כלי?"),
@@ -27,7 +27,7 @@ SITES = {
     },
     "kodesh": {
         "name": "כלי קודש", "short": "כלי קודש", "home": "/kodesh/", "theme": "#0e1628",
-        "og": "og-kodesh.jpg", "icon": "kodesh",
+        "og": "og-kodesh.jpg?v=3", "icon": "kodesh",
         "desc": "כלים דיגיטליים לאנשי קודש, בחינם",
         "nav": [("rabanim", "/kodesh/#rabanim", "לרבנים"), ("taarichim", "/kodesh/taarichim/", "מחשבון תאריכים"),
                 ("mohalim", "/kodesh/mohalim/", "למוהלים"), ("tamlul", "/kelim/tamlul/", "תמלול"),
@@ -47,7 +47,7 @@ SITES = {
     # כלים לעסק קטן: תפריט דיגיטלי עם QR, מודעת מבצע, QR מעוצב וצ'ק-ליסט לפתיחת עסק. הכול בטלפון, בלי שרת.
     "esek": {
         "name": "כלים לעסק קטן", "short": "כלים לעסק", "home": "/esek/", "theme": "#1c1712",
-        "og": "og-kelim.jpg", "icon": "esek",
+        "og": "og-esek.jpg?v=3", "icon": "esek",
         "desc": "כלים חינמיים לעסק קטן: תפריט בקישור ו-QR, מודעת מבצע, QR מעוצב וצ'ק-ליסט לפתיחת עסק",
         "css": ["/assets/esek.css"],
         "nav": [("tafrit", "/esek/tafrit/", "תפריט ו-QR"), ("mivtza", "/esek/mivtza/", "מודעת מבצע"),
@@ -57,7 +57,7 @@ SITES = {
     # ושיתוף עם אחרים דרך ווטסאפ וקישור שמכיל את המצב (#d=...).
     "bait": {
         "name": "כלים למשפחה ולבית", "short": "משפחה ובית", "home": "/bait/", "theme": "#1f1915",
-        "og": "og-bait.jpg", "icon": "bait",
+        "og": "og-bait.jpg?v=3", "icon": "bait",
         "desc": "קניות, תורנויות, שבת ואורחים ומי מביא מה. בחינם, בלי הרשמה.",
         "css": ["/assets/bait.css"], "js": ["/assets/bait.js"],
         "nav": [("kniyot", "/bait/kniyot/", "קניות"), ("toranut", "/bait/toranut/", "תורנויות"),
@@ -67,7 +67,7 @@ SITES = {
     # כלים לכסף: מחשבונים בלבד, לא ייעוץ. הכול בטלפון (localStorage), בלי שרת.
     "kesef": {
         "name": "כלים לכסף", "short": "כלים לכסף", "home": "/kesef/", "theme": "#11201a",
-        "og": "og-kelim.jpg", "icon": "kesef",
+        "og": "og-kesef.jpg?v=3", "icon": "kesef",
         "desc": "מחשבונים פשוטים לכסף של הבית: תקציב, הלוואה, מנויים וחיסכון עם הילדים. בחינם.",
         "css": ["/assets/kesef.css"], "js": ["/assets/kesef.js"],
         "nav": [("taktziv", "/kesef/taktziv/", "תקציב"), ("halvaa", "/kesef/halvaa/", "הלוואה"),
@@ -77,7 +77,7 @@ SITES = {
     # כלים ללימודים: כרטיסיות חזרה, מתכנן למבחן, טיימר למידה, לימוד יומי לסיום. הכול בטלפון (localStorage), בלי שרת.
     "limudim": {
         "name": "כלים ללימודים", "short": "כלים ללימודים", "home": "/limudim/", "theme": "#141c2b",
-        "og": "og-kelim.jpg", "icon": "limudim",
+        "og": "og-limudim.jpg?v=3", "icon": "limudim",
         "desc": "כלים פשוטים ללמידה: כרטיסיות חזרה, תוכנית למבחן, טיימר, ולימוד יומי לסיום התנ״ך והמשנה. בחינם.",
         "css": ["/assets/limudim.css"], "js": ["/assets/limudim.js"],
         "nav": [("kartisiot", "/limudim/kartisiot/", "כרטיסיות"), ("mivchan", "/limudim/mivchan/", "למבחן"),
@@ -336,6 +336,51 @@ def seo_related(p):
     return ('\n<section class="k-sec rel no-print" aria-labelledby="rel-h">\n  <h2 id="rel-h">עוד כלים בחינם שאולי יעזרו</h2>\n  <div class="dom">'
             + "".join(card(c) for c in pick) + f"</div>\n  {more}\n</section>\n")
 
+# ---------- "בחינם, ללא הגבלה ובלי פרסומות": פס קטן בראש כל דף בתתי-האתרים ----------
+# גילעד (11.11.2026): "אצלי זה גם בחינם גם ללא הגבלה וגם בלי פרסומות!! רק מרצון של חסד!!"
+# ועל כלים עם מכסה: "מי שיהיה טיפה שותף זה יהיה לו ללא הגבלה אז כן זה נכון שאני כותב ללא הגבלה!!"
+# CHESED_PARTNER = כלי עם מכסה שיש בו מסלול שותפות שפותח אותה -> "ללא הגבלה" + שורה על שותפים.
+# CHESED_NO_PATH = כלי עם מכסה בלי מסלול שותפות (עדיין) -> בלי "ללא הגבלה". כשמוסיפים לו קוד שותף ב-Worker: להעביר ל-CHESED_PARTNER.
+# הגנה מספאם (X פעולות ברצף) או משחק יומי היא לא מכסה.
+CHESED_PARTNER = {
+    "/kelim/tamlul/": "60 דקות בחודש; שותף 18/36 ש״ח = ללא הגבלה",
+    "/kodesh/video-shiur/": "אותן דקות של התמלול",
+    "/kelim/shir/karaoke/": "5 שירים חדשים ביום; שותפות בבוט = ללא הגבלה",
+    "/kelim/tochen/chaye/": "2 החייאות ביום; קוד שותף (partner_codes.py) = ללא הגבלה",
+    "/kelim/shir/clip/": "kelim-shir PER_IP 40; x-kelim-partner = ללא הגבלה",
+    "/kelim/shir/haklata/": "kelim-shir",
+    "/kelim/shir/lachan/": "kelim-shir",
+    "/kelim/shir/milim/": "kelim-shir",
+    "/kelim/tochen/studio/": "kelim-studio PER_IP 40; x-kelim-partner",
+    "/limudim/poter/": "limudim-poter PER_IP 12; x-kelim-partner",
+    "/limudim/machberet/": "limudim-poter; x-kelim-partner",
+}
+CHESED_NO_PATH = {}  # כרגע ריק: לכל הכלים עם מכסה יש קוד שותף (11.11.2026)
+CHESED_SKIP = SEO_SKIP | {"404"}
+# קוד שותף אחד לכל הכלים עם מכסה: נשמר ב-localStorage 'kelim-partner' (kelim.js), הכלים שולחים אותו בכותרת x-kelim-partner
+CHESED_CODE = ('<details class="chesed-p"><summary>🤝 יש לי קוד שותף</summary><label>קוד השותף שקיבלתי '
+               '<input type="text" inputmode="numeric" dir="ltr" maxlength="12" autocomplete="off" placeholder="123-45678" data-partner-code></label>'
+               '<span class="chesed-ok" data-partner-ok hidden>✓ נשמר. תודה שאתם שותפים ❤ ללא הגבלה בכל הכלים.</span>'
+               '<span>הקוד נשמר רק בטלפון הזה. <a class="gold" href="/kelim/#litmoch">איך נהיים שותפים?</a></span></details>')
+CHESED_SUB = "הרבה כלים כאלה ברשת מוגבלים ומלאים בפרסומות. כאן לא, מתוך רצון לעשות חסד."
+
+def chesed_band(p, meta):
+    if meta.get("noindex") or meta.get("no_chesed") or p.rstrip("/").rsplit("/", 1)[-1] in CHESED_SKIP:
+        return ""
+    nop = lambda c: any(c.startswith(l) for l in CHESED_NO_PATH)
+    below = [c for c in INDEX if c != p and c.startswith(p)]
+    if nop(p) or (below and 2 * sum(map(nop, below)) >= len(below)):  # מכסה בלי מסלול שותפות, או מרכז שרוב הכלים בו כאלה
+        chips, sub = ["בחינם", "בלי פרסומות", "בלי הרשמה"], "הרבה כלים כאלה ברשת עולים כסף ומלאים בפרסומות. כאן לא, מתוך רצון לעשות חסד."
+    elif any(p.startswith(l) for l in CHESED_PARTNER):
+        chips, sub = ["בחינם", "ללא הגבלה", "בלי פרסומות"], "לכולם מכסה בחינם, ולשותפים במיזם ללא הגבלה. בלי פרסומות, מתוך רצון לעשות חסד."
+    elif any(map(nop, below)):  # דף מרכז שיש מתחתיו כלי כזה
+        chips, sub = ["הכול בחינם", "בלי פרסומות", "רוב הכלים ללא שום הגבלה"], CHESED_SUB
+    else:
+        chips, sub = ["בחינם", "ללא הגבלה", "בלי פרסומות"], CHESED_SUB
+    box = CHESED_CODE if any(p.startswith(l) for l in CHESED_PARTNER) and not p.startswith("/kelim/shir/karaoke/") else ""  # בקריוקי השותפות בתוך הבוט
+    return ('<div class="chesed no-print" role="note"><p class="chesed-t">' + "".join(f"<b>✓ {c}</b>" for c in chips)
+            + f'</p><p class="chesed-s">{sub}</p>{box}</div>')
+
 pages = []
 site_pages = {k: [] for k in SITES}
 for path in sorted(SRC.rglob("*.html")):
@@ -358,7 +403,7 @@ for path in sorted(SRC.rglob("*.html")):
     html = LAYOUT_KELIM if site else LAYOUT
     content += seo_related(url_path)
     og_own = "og/" + url_path.strip("/").replace("/", "-") + ".jpg"
-    og_default = og_own if (site and (ROOT / "assets" / og_own).exists()) else (site["og"] if site else "og-mohel.jpg")
+    og_default = og_own + "?v=3" if (site and (ROOT / "assets" / og_own).exists()) else (site["og"] if site else "og-mohel.jpg")
     rep = {
         "title": meta["title"],
         "description": meta["description"],
@@ -390,6 +435,7 @@ for path in sorted(SRC.rglob("*.html")):
             "nav": "".join(f'<a href="{h}"' + (' aria-current="page"' if meta.get("nav") == k else "") + f'>{l}</a>' for k, h, l in site["nav"]),
             "tool": meta.get("tool", ""),
             "shipurim": shipurim_line(meta.get("tool", "")),
+            "chesed": chesed_band(url_path, meta),
             "fb_note": fb_note(meta.get("tool", "")),
             "lead_endpoint": LEAD_ENDPOINT,
             "site_css": "".join(f'<link rel="stylesheet" href="{c}">' for c in site.get("css", [])),

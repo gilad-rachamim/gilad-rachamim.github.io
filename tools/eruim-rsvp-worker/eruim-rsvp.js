@@ -5,7 +5,8 @@
 // ציבורי:
 //   POST /ev                    {d}                      -> {id, tok}   יצירת אירוע (tok = טוקן ניהול, נשמר רק כ-hash)
 //   GET  /ev/:id                                         -> {d}         פרטי האירוע לדף האורחים
-//   POST /ev/:id/rsvp           {n, c, ok, note, aid?}   -> {aid}       אישור הגעה (aid נשמר בטלפון של האורח כדי לעדכן)
+//   POST /ev/:id/rsvp           {n, c, ok, note, aid?, g?} -> {aid}     אישור הגעה (aid נשמר בטלפון של האורח כדי לעדכן)
+//                               ok: 1 מגיעים, 0 לא, 2 אולי (מגרסה 2). g: קוד המוזמן מהקישור האישי של כלי אישורי ההגעה
 // ניהול (?t=<tok>):
 //   GET  /ev/:id/admin                                   -> האירוע עם כל התשובות
 //   POST /ev/:id/update         {d}                      -> {ok}
@@ -118,7 +119,7 @@ async function createEvent(req, env) {
 async function getEvent(id, env) {
   const ev = await load(env, id);
   if (!ev) return json({ error: 'האירוע לא נמצא, או שהנתונים כבר נמחקו' }, 404);
-  return json({ d: ev.d, exp: KEEP_DAYS });
+  return json({ d: ev.d, exp: KEEP_DAYS, v: 2 }); // v: 2 = יודע "אולי" וקוד מוזמן
 }
 
 async function rsvp(id, req, env) {
@@ -129,7 +130,8 @@ async function rsvp(id, req, env) {
   if (b.website) return json({ ok: true, aid: 'a' + shortId(6) }, 201); // honeypot
   const ev = await load(env, id);
   if (!ev) return json({ error: 'האירוע לא נמצא' }, 404);
-  const ok = b.ok ? 1 : 0, n = clean(b.n, LIM.name), note = clean(b.note, LIM.note);
+  const ok = +b.ok === 2 ? 2 : b.ok ? 1 : 0, n = clean(b.n, LIM.name), note = clean(b.note, LIM.note);
+  const g = /^[a-z0-9]{3,10}$/.test(b.g || '') ? b.g : '';
   let c = parseInt(b.c, 10);
   if (!ok) c = 0; else if (!(c >= 1)) c = 1; else if (c > LIM.count) c = LIM.count;
   if (n.length < 2) return json({ error: 'כתבו שם (לפחות 2 אותיות)' }, 400);
@@ -137,6 +139,7 @@ async function rsvp(id, req, env) {
   if (!/^a[a-z0-9]{5,}$/.test(aid) || !ev.answers[aid]) aid = 'a' + shortId(6);
   if (Object.keys(ev.answers).length >= LIM.answers && !ev.answers[aid]) return json({ error: 'הרשימה מלאה' }, 400);
   ev.answers[aid] = { n, c, ok, note, ts: new Date().toISOString() };
+  if (g) ev.answers[aid].g = g;
   await save(env, ev);
   return json({ ok: true, aid }, 201);
 }
