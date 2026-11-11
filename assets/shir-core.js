@@ -134,7 +134,7 @@
     if (body.length > 1990) { var s = songForHelp(song); s.sections = s.sections.slice(-2); s.answers = s.answers.slice(0, 3); body = JSON.stringify({ task: task, song: s, line: line || {} }); }
     var ctl = window.AbortController ? new AbortController() : null;
     var to = setTimeout(function () { if (ctl) ctl.abort(); }, 25000);
-    return fetch(HELP_URL, { method: 'POST', headers: { 'content-type': 'application/json' }, body: body, signal: ctl && ctl.signal })
+    return fetch(HELP_URL, { method: 'POST', headers: (function (h) { try { var c = localStorage.getItem('kelim-partner'); if (c) h['x-kelim-partner'] = c; } catch (e) {} return h; })({ 'content-type': 'application/json' }), body: body, signal: ctl && ctl.signal })
       .then(function (r) { clearTimeout(to); return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok || !j.options || !j.options.length) throw { msg: REST, code: r.status }; return j.options; }); },
         function () { clearTimeout(to); throw { msg: REST }; });
   }
