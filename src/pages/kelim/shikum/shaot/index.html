@@ -1,0 +1,99 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "shikum_shaot",
+  "title": "דוח שעות חודשי למטפל – ממלאים בטלפון, חותמים באצבע, שולחים PDF | הכלים של גילעד רחמים",
+  "description": "דוח שעות עבודה חודשי לעובד סיעודי או למטפל, בלי להדפיס ובלי לסרוק: ממלאים שעות לפי ימים (או בלחיצה לפי הסידור הקבוע), המעסיק והעובד חותמים באצבע על המסך, ויוצא PDF מסודר לשליחה במייל או בווטסאפ. בחינם, הנתונים נשארים בטלפון.",
+  "og_title": "דוח שעות למטפל – בלי הדפסה ובלי סורק",
+  "priority": "0.8",
+  "crumbs": [["זכויות ושיקום", "/kelim/shikum/"], ["דוח שעות למטפל", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/shikum.css\"><link rel=\"stylesheet\" href=\"/assets/shikum-shaot.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך שולחים דוח שעות של מטפל בלי סורק?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"ממלאים את השעות בטלפון, שניכם חותמים באצבע, ולוחצים להכין PDF. את הקובץ שולחים במייל או בווטסאפ.\"}}, {\"@type\": \"Question\", \"name\": \"חתימה באצבע מתקבלת?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"ברוב המקומות שמקבלים דוח סרוק – כן, כי זו אותה חתימה על דף. כדאי לשאול פעם אחת את הפקיד שמקבל את הדוח.\"}}, {\"@type\": \"Question\", \"name\": \"הנתונים נשלחים לאנשהו?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. הכול נשאר בטלפון, עד שאתם שולחים את ה-PDF.\"}}, {\"@type\": \"Question\", \"name\": \"צריך למלא הכול מחדש כל חודש?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. הפרטים והסידור הקבוע נשמרים, וממלאים את כל החודש בלחיצה. רק מתקנים את הימים שהיו שונים.\"}}]}</script>",
+  "foot": "<script src=\"/assets/shikum-shaot.js\" defer></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>דוח שעות חודשי למטפל</h1>
+  <p class="sub">כל חודש להדפיס, למלא ביד, לחתום, לסרוק ולשלוח? כאן ממלאים בטלפון, שניכם חותמים באצבע, ויוצא PDF מסודר למייל.</p>
+</header>
+<div class="tool no-print">
+  <div class="sk-note" id="sh-demo" hidden><span>זו דוגמה, כדי שיהיה ברור איך זה נראה. כשתכתבו את השמות שלכם, הדוגמה תימחק.</span><button class="btn btn-line btn-sm" type="button" id="sh-demo-x">להתחיל דוח ריק</button></div>
+
+  <section class="ts-step">
+    <h2><span class="n">1</span> הפרטים <small>נשמרים לחודש הבא</small></h2>
+    <div class="k-form">
+      <div class="sk-two">
+        <div class="field"><label for="sh-emp">שם המעסיק (מקבל הטיפול)</label><input id="sh-emp" type="text" maxlength="60" autocomplete="off"></div>
+        <div class="field"><label for="sh-emp-id">ת"ז המעסיק <span class="opt">(אם הטופס דורש)</span></label><input id="sh-emp-id" type="text" inputmode="numeric" maxlength="12" autocomplete="off"></div>
+      </div>
+      <div class="sk-two">
+        <div class="field"><label for="sh-wrk">שם העובד/ת</label><input id="sh-wrk" type="text" maxlength="60" autocomplete="off"></div>
+        <div class="field"><label for="sh-wrk-id">ת"ז / דרכון העובד/ת <span class="opt">(אם הטופס דורש)</span></label><input id="sh-wrk-id" type="text" maxlength="14" autocomplete="off"></div>
+      </div>
+      <div class="sk-two">
+        <div class="field"><label for="sh-to">לאיזה גוף? <span class="opt">(לא חובה)</span></label><input id="sh-to" type="text" maxlength="60" placeholder="אגף השיקום / ביטוח לאומי / חברת הסיעוד"></div>
+        <div class="field"><label for="sh-mail">כתובת מייל לשליחה <span class="opt">(לא חובה)</span></label><input id="sh-mail" type="email" maxlength="80" dir="ltr" autocomplete="off"></div>
+      </div>
+      <div class="field"><label for="sh-month">איזה חודש?</label><input id="sh-month" type="month"></div>
+    </div>
+  </section>
+
+  <section class="ts-step">
+    <h2><span class="n">2</span> הסידור הקבוע <small>ממלא את כל החודש בלחיצה</small></h2>
+    <div class="ts-week" id="sh-week"></div>
+    <div class="sk-tools"><button class="btn btn-gold btn-sm" type="button" id="sh-fill">למלא את החודש לפי הסידור</button></div>
+  </section>
+
+  <section class="ts-step">
+    <h2><span class="n">3</span> השעות בפועל <small>מתקנים רק ימים שהיו שונים</small></h2>
+    <div class="ts-sum" id="sh-sum"></div>
+    <div class="ts-days" id="sh-days"></div>
+  </section>
+
+  <section class="ts-step">
+    <h2><span class="n">4</span> חתימות <small>באצבע, על המסך</small></h2>
+    <p class="ts-decl">אנו מאשרים שהשעות בדוח הן השעות שבהן העובד/ת עבד/ה בפועל בחודש הזה.</p>
+    <div class="ts-sigs">
+      <div class="ts-sig"><label>חתימת המעסיק <span id="sh-emp-n"></span></label><canvas id="sh-sig1" width="600" height="220" aria-label="משטח חתימה של המעסיק"></canvas><button class="linkish" type="button" data-clear="sh-sig1">לנקות</button></div>
+      <div class="ts-sig"><label>חתימת העובד/ת <span id="sh-wrk-n"></span></label><canvas id="sh-sig2" width="600" height="220" aria-label="משטח חתימה של העובד"></canvas><button class="linkish" type="button" data-clear="sh-sig2">לנקות</button></div>
+    </div>
+    <p class="ts-hint">החתימות לא נשמרות. חותמים מחדש כל חודש, כמו על דף.</p>
+  </section>
+
+  <section class="ts-step">
+    <h2><span class="n">5</span> שולחים</h2>
+    <div class="sk-tools">
+      <button class="btn btn-gold" type="button" id="sh-pdf">📄 להכין PDF</button>
+      <button class="btn btn-line btn-sm" type="button" id="sh-print">🖨️ להדפיס</button>
+    </div>
+    <div class="ts-out" id="sh-out" hidden>
+      <p class="res" id="sh-msg" aria-live="polite"></p>
+      <div class="sk-tools">
+        <button class="btn btn-gold" type="button" id="sh-share" hidden>📤 לשלוח (מייל / ווטסאפ)</button>
+        <a class="btn btn-line btn-sm" id="sh-dl" href="#" download hidden>⬇️ להוריד את ה-PDF</a>
+        <a class="btn btn-line btn-sm" id="sh-mailto" href="#" hidden>✉️ לפתוח מייל עם הנוסח</a>
+      </div>
+    </div>
+  </section>
+
+  <p class="disclaimer">הכלי עוזר למלא ולשלוח. הוא לא קובע זכאות, תשלום או כמה שעות מאושרות. פעם אחת כדאי לשאול את הגורם שמקבל את הדוח אם PDF עם חתימה מהמסך מתקבל אצלם. הכול נשמר רק בטלפון הזה.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="דוח שעות חודשי למטפל: ממלאים בטלפון, חותמים באצבע ושולחים PDF. בלי הדפסה ובלי סורק, בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a><a class="btn btn-line btn-sm" href="/kelim/bakasha/">הטופס שלכם שונה? ספרו לי</a></div>
+</div>
+
+<h2 class="ts-prevh no-print">כך ייראה הדוח</h2>
+<div class="ts-paperwrap"><div class="ts-paper" id="sh-paper"></div></div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt no-print" aria-labelledby="seo-h">
+  <h2 id="seo-h">דוח שעות לעובד סיעודי, בלי הדפסה ובלי סורק</h2>
+  <p>מי שמעסיק מטפל או עובד סיעודי צריך לדווח כל חודש על שעות העבודה: למלא טופס, לחתום, לסרוק ולשלוח במייל. בשביל אדם עם מוגבלות או קשיש, מדפסת וסורק הם מכשול של ממש.</p>
+  <h3>איך זה עובד</h3>
+  <p>כותבים פעם אחת את השמות ואת הסידור הקבוע (באילו ימים ומאיזו שעה עד איזו שעה). כל חודש לוחצים "למלא את החודש", מתקנים את הימים שהיו שונים, המעסיק והעובד חותמים באצבע, ויוצא PDF מסודר עם טבלת ימים, סך השעות והחתימות. שולחים אותו במייל או בווטסאפ ישר מהטלפון.</p>
+  <p>הכלי לא קובע זכאות ולא כמה שעות מאושרות. את זה שואלים את הגורם המטפל. עוד כלים: <a class="gold" href="/kelim/shikum/yoman/">יומן פניות</a> ו<a class="gold" href="/kelim/shikum/tik/">תיק מסמכים</a>.</p>
+</section>
+<section class="k-sec seo-faq no-print" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך שולחים דוח שעות של מטפל בלי סורק?</summary><p>ממלאים את השעות בטלפון, שניכם חותמים באצבע, ולוחצים להכין PDF. את הקובץ שולחים במייל או בווטסאפ.</p></details>
+  <details><summary>חתימה באצבע מתקבלת?</summary><p>ברוב המקומות שמקבלים דוח סרוק – כן, כי זו אותה חתימה על דף. כדאי לשאול פעם אחת את הפקיד שמקבל את הדוח.</p></details>
+  <details><summary>הנתונים נשלחים לאנשהו?</summary><p>לא. הכול נשאר בטלפון, עד שאתם שולחים את ה-PDF.</p></details>
+  <details><summary>צריך למלא הכול מחדש כל חודש?</summary><p>לא. הפרטים והסידור הקבוע נשמרים, וממלאים את כל החודש בלחיצה. רק מתקנים את הימים שהיו שונים.</p></details>
+</section>
+<!--/seo-txt-->

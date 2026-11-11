@@ -1,0 +1,72 @@
+/* דוח שעות חודשי למטפל (/kelim/shikum/shaot/) */
+.ts-step{margin-top:1.6rem}
+.ts-step h2{font-family:var(--serif);color:var(--cream);font-size:1.3rem;display:flex;gap:.55rem;align-items:baseline;flex-wrap:wrap;margin-bottom:.6rem}
+.ts-step h2 small{font-family:var(--sans);font-size:.9rem;color:var(--muted)}
+.ts-step h2 .n{display:inline-grid;place-items:center;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--gold);color:#1a1408;font-family:var(--sans);font-size:1rem;font-weight:700;flex:none}
+/* הסידור הקבוע */
+.ts-week{display:grid;gap:.35rem}
+.ts-wd{display:grid;grid-template-columns:5.2rem 1fr 1fr;gap:.45rem;align-items:center;padding:.35rem .5rem;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}
+.ts-wd label{display:flex;gap:.4rem;align-items:center;color:var(--parchment);cursor:pointer;position:relative}
+.ts-wd input[type=checkbox]{width:1.2rem;height:1.2rem;accent-color:var(--gold)}
+.ts-wd input[type=time]{min-width:0;width:100%}
+.ts-wd.off input[type=time]{opacity:.35}
+/* הימים */
+.ts-sum{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-bottom:.7rem}
+.ts-sum div{border:1px solid var(--gold-soft);border-radius:12px;padding:.45rem .9rem;text-align:center;background:rgba(227,183,101,.08);min-width:6.5rem}
+.ts-sum b{display:block;font-family:var(--serif);font-size:1.5rem;color:var(--gold);line-height:1.2}
+.ts-sum span{color:var(--muted);font-size:.88rem}
+.ts-days{display:grid;gap:.3rem}
+.ts-day{display:grid;grid-template-columns:3.6rem 1fr 1fr 3.2rem;gap:.4rem;align-items:center;padding:.3rem .45rem;border-radius:10px;border:1px solid transparent}
+.ts-day.work{border-color:var(--line);background:rgba(255,255,255,.035)}
+.ts-day.sat .d b{color:#e8b48c}
+.ts-day .d{line-height:1.15;color:var(--parchment)}
+.ts-day .d b{display:block;font-size:1.02rem}
+.ts-day .d small{color:var(--muted);font-size:.8rem}
+.ts-day input[type=time]{min-width:0;width:100%;padding:.35rem .3rem}
+.ts-day .h{text-align:center;color:var(--gold);font-weight:700}
+.ts-day .nt{grid-column:1/-1;display:flex;gap:.35rem;flex-wrap:wrap;padding-inline-start:4rem}
+.ts-day .nt button{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:.12rem .55rem;font:inherit;font-size:.8rem;cursor:pointer}
+.ts-day .nt button.on{border-color:var(--gold);color:var(--cream);background:rgba(227,183,101,.15)}
+/* חתימות */
+.ts-decl{color:var(--parchment);margin-bottom:.6rem}
+.ts-sigs{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+@media (max-width:560px){.ts-sigs{grid-template-columns:1fr}}
+.ts-sig label{display:block;color:var(--cream);margin-bottom:.3rem}
+.ts-sig label span{color:var(--muted);font-size:.9rem}
+.ts-sig canvas{display:block;width:100%;aspect-ratio:600/220;background:#fff;border-radius:12px;border:2px dashed var(--gold-soft);touch-action:none;cursor:crosshair}
+.ts-sig canvas.signed{border-style:solid;border-color:var(--gold)}
+.ts-sig .linkish{margin-top:.25rem}
+.ts-hint{color:var(--muted);font-size:.9rem;margin-top:.5rem}
+.ts-out{margin-top:.8rem;border:1px solid var(--gold-soft);border-radius:14px;padding:.8rem;background:rgba(227,183,101,.07)}
+.ts-out .res{color:var(--parchment);text-align:center}
+.k-form .res:empty{display:none}
+/* הדף עצמו (תצוגה, PDF והדפסה) */
+.ts-prevh{font-family:var(--serif);color:var(--cream);font-size:1.3rem;text-align:center;margin:2rem 0 .6rem}
+.ts-paperwrap{overflow-x:auto;padding:0 0 1rem}
+.ts-paper{width:711px;margin:0 auto;background:#fff;color:#111;padding:26px 28px;font-family:Arial,"Noto Sans Hebrew",sans-serif;font-size:12.5px;line-height:1.35;direction:rtl;border-radius:6px;box-shadow:0 2px 14px rgba(0,0,0,.35)}
+.ts-paper h3{font-size:19px;text-align:center;margin:0 0 4px;color:#111;font-family:inherit}
+.ts-paper .sub{text-align:center;color:#444;margin:0 0 10px}
+.ts-paper .info{display:grid;grid-template-columns:1fr 1fr;gap:3px 18px;border:1px solid #999;padding:7px 10px;margin-bottom:10px}
+.ts-paper .info b{font-weight:700}
+.ts-paper table{width:100%;border-collapse:collapse}
+.ts-paper th,.ts-paper td{border:1px solid #999;padding:2px 5px;text-align:center;height:17px}
+.ts-paper th{background:#eee;font-weight:700}
+.ts-paper tr.sat td{background:#f6f6f6}
+.ts-paper td.nt{text-align:right;color:#333}
+.ts-paper tfoot td{font-weight:700;background:#f2f2f2}
+.ts-paper .decl{margin:10px 0 6px}
+.ts-paper .sigs{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:6px}
+.ts-paper .sigs div{text-align:center}
+.ts-paper .sigs img{display:block;height:62px;margin:0 auto;max-width:100%}
+.ts-paper .sigs .ln{border-top:1px solid #333;padding-top:3px}
+.ts-paper .sigs .empty{height:62px}
+.ts-paper .ft{text-align:center;color:#777;font-size:10px;margin-top:12px}
+.ts-pdfhost{position:fixed;left:-12000px;top:0;width:711px;z-index:-1;pointer-events:none}
+.ts-pdfhost .ts-paper{box-shadow:none;border-radius:0;margin:0}
+@media print{
+  .topbar,.site-foot,.crumbs,.no-print,.skip{display:none!important}
+  body{background:#fff!important}
+  .ts-paperwrap{overflow:visible;padding:0}
+  .ts-paper{box-shadow:none;margin:0 auto;padding:0;width:100%}
+  @page{size:A4;margin:11mm}
+}
