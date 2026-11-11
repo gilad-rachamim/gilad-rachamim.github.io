@@ -301,7 +301,7 @@
     if (!takes.length) { box.innerHTML = ''; return; }
     box.innerHTML = takes.map(function (t, i) {
       var a = t.startS / sr + (t.a || 0), b = t.startS / sr + (t.b || t.n / sr), info = t.y ? (t.a == null ? 'בלי שירה' : (t.mode === 'bleed' ? '✓ סונכרן לבד' : '✓ מוכן') + (t.notes && st.set.tune ? ' · ' + (t.notes === 1 ? 'תו אחד כוון' : t.notes + ' תווים כוונו') : '') + (t.moved ? ' · ' + (t.moved === 1 ? 'משפט אחד יושר לקצב' : t.moved + ' משפטים יושרו לקצב') : '')) : 'מעבד…';
-      return '<div class="pr' + (t.on ? '' : ' off') + '" data-id="' + esc(t.id) + '"><div><b>הקלטה ' + (i + 1) + '</b> <span class="ul-tt">' + fmt(a) + '–' + fmt(b) + '</span><br><span class="ok">' + info + '</span></div><div class="ul-tb"><button class="shr-mini" type="button" data-act="play">▶ לשמוע</button><button class="shr-mini" type="button" data-act="del" aria-label="למחוק את ההקלטה">🗑</button></div></div>';
+      return '<div class="pr' + (t.on ? '' : ' off') + '" data-id="' + esc(t.id) + '"><div><b>הקלטה ' + (i + 1) + '</b> <span class="ul-tt" dir="ltr">' + fmt(a) + '–' + fmt(b) + '</span><br><span class="ok">' + info + '</span></div><div class="ul-tb"><button class="shr-mini" type="button" data-act="play">▶ לשמוע</button><button class="shr-mini" type="button" data-act="del" aria-label="למחוק את ההקלטה">🗑</button></div></div>';
     }).join('');
   }
 
