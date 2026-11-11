@@ -16,7 +16,7 @@ SRC = ROOT / "src" / "pages"
 OUT = ROOT / "assets" / "og"
 SKIP = {"pratiut", "privacy", "shipurim", "hitkadmut", "negishut"}
 SITES = {  # שם התת-אתר וצבע הרקע שלו (כמו theme ב-build.py)
-    "kelim": ("הכלים של גילעד רחמים", "#0f1d1c"), "kodesh": ("כלי קודש", "#0e1628"),
+    "kelim": ("מיזם הכלים של גילעד רחמים", "#0f1d1c"), "kodesh": ("כלי קודש", "#0e1628"),
     "nefesh": ("נפש ויום-יום", "#1b1a24"), "esek": ("כלים לעסק קטן", "#1c1712"),
     "bait": ("כלים למשפחה ולבית", "#1f1915"), "kesef": ("כלים לכסף", "#11201a"),
     "limudim": ("כלים ללימודים", "#141c2b"),
@@ -77,34 +77,110 @@ def pages():
         yield key, name, meta["site"], ("gsi/client" in raw or "accounts.google.com" in raw)
 
 
+DOMAIN = "hakelim.com"
+DARK = "#14110a"
+# תמונות של דפי הבית של התחומים: assets/og-<תחום>.jpg (python tools/og_images.py --homes)
+HOMES = {
+    "kelim": ("מיזם הכלים של גילעד רחמים", "כלים דיגיטליים פשוטים לכל מי שצריך הנגשה",
+              ["תמלול", "כלי קודש", "בית ומשפחה", "לימודים", "כסף", "עסק קטן"], "kelim/"),
+    "kodesh": ("כלי קודש", "כלים דיגיטליים לרבנים, למוהלים ולאנשי קודש",
+               ["לוח בריתות", "מחשבון תאריכים", "תמלול שיעורים", "תהילים"], "kodesh/"),
+    "bait": ("כלים למשפחה ולבית", "סדר ושקט בבית, בכמה לחיצות",
+             ["קניות", "תורנויות", "שבת ואורחים", "מי מביא מה"], "bait/"),
+    "esek": ("כלים לעסק קטן", "כל מה שעסק קטן צריך, בלי לשלם על תוכנה",
+             ["תפריט ו-QR", "מודעת מבצע", "QR מעוצב", "פתיחת עסק"], "esek/"),
+    "kesef": ("כלים לכסף", "מחשבונים פשוטים לכסף של הבית",
+              ["תקציב", "הלוואה", "החזר מס", "חיסכון לילדים"], "kesef/"),
+    "limudim": ("כלים ללימודים", "ללמוד חכם יותר, להצליח במבחן",
+                ["כרטיסיות", "תוכנית למבחן", "טיימר", "לימוד יומי"], "limudim/"),
+}
+
+
+def frame(d, W, H):
+    d.rectangle([24, 24, W - 25, H - 25], outline=GOLD, width=3)
+
+
+def domain_bar(d, W, H, path=""):
+    """פס זהב בתחתית: הכתובת גדולה ובולטת משמאל, המיזם מימין."""
+    top, bot = 520, H - 25
+    d.rectangle([25, top, W - 26, bot], fill=GOLD)
+    df = font(FONT_BOLD, 56)
+    d.text((70, (top + bot) / 2), DOMAIN, font=df, fill=DARK, anchor="lm")
+    if path:
+        x = 70 + d.textlength(DOMAIN, font=df)
+        d.text((x, (top + bot) / 2 + 4), "/" + path, font=font(FONT_REG, 34), fill="#3a2f15", anchor="lm")
+    d.text((W - 70, (top + bot) / 2), visual("בחינם לכולם · בלי הרשמה"), font=font(FONT_BOLD, 34), fill=DARK, anchor="rm")
+
+
+def pill(d, cx, y, text, fnt, fill=None, outline=GOLD, color=GOLD, pad=26, h=60):
+    tw = d.textlength(text, font=fnt)
+    d.rounded_rectangle([cx - tw / 2 - pad, y, cx + tw / 2 + pad, y + h], radius=h // 2, fill=fill, outline=outline, width=3)
+    d.text((cx, y + h / 2), visual(text), font=fnt, fill=color, anchor="mm")
+    return tw + 2 * pad
+
+
 def draw_one(key, name, site, login=False):
     site_name, bg = SITES[site]
     W, H = 1200, 630
     im = Image.new("RGB", (W, H), bg)
     d = ImageDraw.Draw(im)
-    d.rectangle([24, 24, W - 25, H - 25], outline=GOLD, width=3)
-    d.text((W - 80, 70), visual(site_name), font=font(FONT_REG, 34), fill=GOLD, anchor="ra")
-    d.text((80, 70), 'בס"ד'[::-1], font=font(FONT_REG, 26), fill=MUTED, anchor="la")
-    for size in (96, 84, 72, 62, 54):
+    frame(d, W, H)
+    d.text((W - 70, 62), visual(site_name), font=font(FONT_REG, 32), fill=GOLD, anchor="ra")
+    d.text((70, 62), 'בס"ד'[::-1], font=font(FONT_REG, 26), fill=MUTED, anchor="la")
+    for size in (92, 80, 70, 60, 52):
         f = font(FONT_BOLD, size)
         lines = wrap(d, name, f, W - 180)
-        if len(lines) <= 3:
+        if len(lines) <= 2 or size == 52:
             break
-    lh = int(size * 1.22)
-    y = 300 - (len(lines) * lh) // 2
+    lh = int(size * 1.2)
+    y = 255 - (len(lines) * lh) // 2
     for ln in lines:
         d.text((W / 2, y), visual(ln), font=f, fill=CREAM, anchor="ma")
         y += lh
     tag = "בחינם  ·  בלי פרסומות  ·  עובד בטלפון" if login else "בחינם  ·  בלי הרשמה  ·  עובד בטלפון"
-    tf = font(FONT_BOLD, 40)
-    tw = d.textlength(tag, font=tf)
-    d.rounded_rectangle([W / 2 - tw / 2 - 36, 468, W / 2 + tw / 2 + 36, 544], radius=38, fill=GOLD)
-    d.text((W / 2, 484), visual(tag), font=tf, fill="#14110a", anchor="ma")
-    im.save(OUT / f"{key}.jpg", quality=82, optimize=True)
+    pill(d, W / 2, 410, tag, font(FONT_BOLD, 36), h=66)
+    domain_bar(d, W, H)
+    im.save(OUT / f"{key}.jpg", quality=84, optimize=True)
+
+
+def draw_home(site):
+    title, sub, chips, path = HOMES[site]
+    bg = SITES[site][1]
+    W, H = 1200, 630
+    im = Image.new("RGB", (W, H), bg)
+    d = ImageDraw.Draw(im)
+    frame(d, W, H)
+    d.text((70, 62), 'בס"ד'[::-1], font=font(FONT_REG, 26), fill=MUTED, anchor="la")
+    if site != "kelim":
+        d.text((W - 70, 62), visual(SITES["kelim"][0]), font=font(FONT_REG, 30), fill=GOLD, anchor="ra")
+    for size in (96, 84, 74, 64):
+        f = font(FONT_BOLD, size)
+        if d.textlength(title, font=f) <= W - 160:
+            break
+    d.text((W / 2, 175), visual(title), font=f, fill=CREAM, anchor="mm")
+    d.text((W / 2, 268), visual(sub), font=font(FONT_BOLD, 40), fill=GOLD, anchor="mm")
+    # שורת דוגמאות לכלים, מימין לשמאל
+    cf = font(FONT_BOLD, 30)
+    widths = [d.textlength(c, font=cf) + 44 for c in chips]
+    gap = 16
+    while sum(widths) + gap * (len(widths) - 1) > W - 140:
+        chips, widths = chips[:-1], widths[:-1]
+    total = sum(widths) + gap * (len(widths) - 1)
+    x = W / 2 + total / 2
+    for c, w in zip(chips, widths):
+        pill(d, x - w / 2, 330, c, cf, outline="#6d5d36", color=CREAM, pad=22, h=54)
+        x -= w + gap
+    d.text((W / 2, 452), visual("בחינם · בלי הרשמה · בלי פרסומות · עובד בטלפון"), font=font(FONT_REG, 32), fill=MUTED, anchor="mm")
+    domain_bar(d, W, H, path)
+    im.save(ROOT / "assets" / f"og-{site}.jpg", quality=86, optimize=True)
 
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
+    if "--homes" in sys.argv:
+        for site in HOMES:
+            draw_home(site)
+        print("home images:", len(HOMES))
     stamp = OUT / "names.json"   # שם שכבר צויר לכל קובץ: מציירים שוב רק כשהשם השתנה
     done = json.loads(stamp.read_text(encoding="utf-8")) if stamp.exists() and "--all" not in sys.argv else {}
     n = 0
