@@ -52,16 +52,21 @@
 
   <section class="ts-step">
     <h2><span class="n">3</span> השעות בפועל <small>מתקנים רק ימים שהיו שונים</small></h2>
-    <div class="ts-sum" id="sh-sum"></div>
+    <div class="ts-sum" id="sh-sum" aria-live="polite" aria-atomic="true"></div>
     <div class="ts-days" id="sh-days"></div>
   </section>
 
   <section class="ts-step">
     <h2><span class="n">4</span> חתימות <small>באצבע, על המסך</small></h2>
     <p class="ts-decl">אנו מאשרים שהשעות בדוח הן השעות שבהן העובד/ת עבד/ה בפועל בחודש הזה.</p>
+    <p class="ts-hint" id="sh-sig-help">חותמים באצבע או בעכבר בתוך המסגרת הלבנה. קשה לצייר? כותבים את השם בשדה שמתחת ולוחצים "לחתום בהקלדה".</p>
     <div class="ts-sigs">
-      <div class="ts-sig"><label>חתימת המעסיק <span id="sh-emp-n"></span></label><canvas id="sh-sig1" width="600" height="220" aria-label="משטח חתימה של המעסיק"></canvas><button class="linkish" type="button" data-clear="sh-sig1">לנקות</button></div>
-      <div class="ts-sig"><label>חתימת העובד/ת <span id="sh-wrk-n"></span></label><canvas id="sh-sig2" width="600" height="220" aria-label="משטח חתימה של העובד"></canvas><button class="linkish" type="button" data-clear="sh-sig2">לנקות</button></div>
+      <div class="ts-sig" role="group" aria-labelledby="sh-sig1-l"><p class="lb" id="sh-sig1-l">חתימת המעסיק <span id="sh-emp-n"></span></p><canvas id="sh-sig1" width="600" height="220" role="img" aria-label="משטח חתימה של המעסיק" aria-describedby="sh-sig-help"></canvas>
+        <div class="ts-type"><label class="vh" for="sh-sig1-t">השם לחתימה בהקלדה – מעסיק</label><input id="sh-sig1-t" type="text" maxlength="40" placeholder="או להקליד את השם" autocomplete="off"><button class="linkish" type="button" data-type="sh-sig1">לחתום בהקלדה</button></div>
+        <button class="linkish" type="button" data-clear="sh-sig1" aria-label="לנקות את חתימת המעסיק">לנקות</button><p class="ts-st" id="sh-sig1-st" aria-live="polite"></p></div>
+      <div class="ts-sig" role="group" aria-labelledby="sh-sig2-l"><p class="lb" id="sh-sig2-l">חתימת העובד/ת <span id="sh-wrk-n"></span></p><canvas id="sh-sig2" width="600" height="220" role="img" aria-label="משטח חתימה של העובד/ת" aria-describedby="sh-sig-help"></canvas>
+        <div class="ts-type"><label class="vh" for="sh-sig2-t">השם לחתימה בהקלדה – עובד/ת</label><input id="sh-sig2-t" type="text" maxlength="40" placeholder="או להקליד את השם" autocomplete="off"><button class="linkish" type="button" data-type="sh-sig2">לחתום בהקלדה</button></div>
+        <button class="linkish" type="button" data-clear="sh-sig2" aria-label="לנקות את חתימת העובד/ת">לנקות</button><p class="ts-st" id="sh-sig2-st" aria-live="polite"></p></div>
     </div>
     <p class="ts-hint">החתימות לא נשמרות. חותמים מחדש כל חודש, כמו על דף.</p>
   </section>
