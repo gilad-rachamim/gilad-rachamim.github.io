@@ -252,15 +252,17 @@ function gate(x, sr, floor, act, ratio) {
 }
 var GATE = [1, 0.4, 0.12, 0.03]; // לפי רמת "ניקוי רעשים": בלי / עדין / רגיל / חזק
 // x: קול נקי, מיושר למוזיקה. envM: מעטפת ההתחלות של המוזיקה באותו קטע. strength 0..1, maxMs.
-function tighten(x, sr, envM, strength, maxMs) {
+// envS (שיר מהאתר): איפה כל הברה אמורה להתחיל לפי המנגינה. משפט שיש בו 3 הברות ומעלה מיושר לפיהן, ובטווח רחב יותר (maxS).
+function tighten(x, sr, envM, strength, maxMs, envS, maxS) {
   var ph = phrases(x, sr), info = [], n = x.length, H = sr * 0.01;
   if (!strength || !ph.length) return { y: x, phrases: ph.map(function (p) { return { a: p.a / sr, b: p.b / sr, ms: 0 }; }) };
-  var envV = onsetEnv(x, sr), R = Math.round((maxMs || 70) / 10), y = new Float32Array(n), F = Math.round(sr * 0.012);
+  var envV = onsetEnv(x, sr), R0 = Math.round((maxMs || 70) / 10), RS = envS ? Math.round((maxS || 140) / 10) : 0, y = new Float32Array(n), F = Math.round(sr * 0.012);
   for (var p = 0; p < ph.length; p++) {
     var a = ph[p].a, b = ph[p].b, lo = p ? Math.floor((ph[p - 1].b + a) / 2) : 0, hi = p + 1 < ph.length ? Math.floor((b + ph[p + 1].a) / 2) : n;
-    var ta = Math.max(0, Math.floor(a / H) - 2), tb = Math.min(envV.length, Math.ceil(b / H)), c = [], best = 0, bv = -1, d, t, sv = 0;
+    var ta = Math.max(0, Math.floor(a / H) - 2), tb = Math.min(envV.length, Math.ceil(b / H)), c = [], best = 0, bv = -1, d, t, sv = 0, R = R0, env = envM, byS = false;
     for (t = ta; t < tb; t++) sv += envV[t] * envV[t];
-    for (d = -R; d <= R; d++) { var s = 0, sm = 0; for (t = ta; t < tb; t++) { var m = envM[t + d] || 0; s += envV[t] * m; sm += m * m; } var v = s / Math.sqrt(sv * sm + 1e-12); c.push(v); if (v > bv) { bv = v; best = d; } }
+    if (envS) { var on = 0; for (t = ta; t < tb; t++) on += envS[t] || 0; if (on >= 9) { env = envS; R = RS; byS = true; } } // כל הברה = שטח 3
+    for (d = -R; d <= R; d++) { var s = 0, sm = 0; for (t = ta; t < tb; t++) { var m = env[t + d] || 0; s += envV[t] * m; sm += m * m; } var v = s / Math.sqrt(sv * sm + 1e-12); c.push(v); if (v > bv) { bv = v; best = d; } }
     var c0 = c[R], ms = 0;
     if (best && bv > 0.12 && bv > c0 * 1.12 && best > -R && best < R) {
       var y0 = c[best + R - 1], y2 = c[best + R + 1], den = y0 + y2 - 2 * bv, frac = den ? 0.5 * (y0 - y2) / den : 0;
@@ -268,7 +270,7 @@ function tighten(x, sr, envM, strength, maxMs) {
     }
     var sh = Math.round(ms * sr / 1000); // חיובי = המשפט זז מאוחר יותר
     for (var i = lo; i < hi; i++) { var q = i + sh; if (q < 0 || q >= n) continue; var g = 1; if (i - lo < F) g = (i - lo) / F; if (hi - i < F) g = Math.min(g, (hi - i) / F); y[q] += x[i] * g; }
-    info.push({ a: a / sr, b: b / sr, ms: Math.round(ms) });
+    info.push({ a: a / sr, b: b / sr, ms: Math.round(ms), s: byS ? 1 : 0 });
   }
   return { y: y, phrases: info };
 }
@@ -342,19 +344,35 @@ function notesOf(f) {
   return out;
 }
 // מתקן כל תו כיחידה אחת: מזיז את כולו לתו הקרוב בסולם, והרטט והגלישות נשארים טבעיים
-function tune(x, sr, pcs, strength) {
-  var f = pitchTrack(x, sr), n = f.length, sh = new Float32Array(n), has = new Uint8Array(n), k, i, notes = 0, sumAbs = 0;
-  if (!strength) return { y: x, f: f, notes: 0, cents: 0 };
-  notesOf(f).forEach(function (nt) {
-    var d = scaleNote(nt.med, pcs) - nt.med; if (Math.abs(d) < 0.06) d = 0;
-    for (i = nt.st; i <= nt.end; i++) { sh[i] = d * strength; has[i] = 1; } notes++; sumAbs += Math.abs(d) * 100;
+// mel (שיר מהאתר, מתיקון "בינוני" ומעלה): {M: המנגינה הידועה, t0: הזמן בשיר של תחילת x}. שורה שבה באמת שרים את המנגינה
+// (70% מהזמן בטווח טון וחצי ממנה) מתוקנת לתו של המנגינה עצמה, גם כשהזמר נחת על התו השכן. שורה ששרים אחרת: לפי הסולם, כרגיל.
+function tune(x, sr, pcs, strength, mel) {
+  var f = pitchTrack(x, sr), n = f.length, sh = new Float32Array(n), has = new Uint8Array(n), k, i, notes = 0, sumAbs = 0, melN = 0;
+  if (!strength) return { y: x, f: f, notes: 0, cents: 0, mel: 0 };
+  var nts = notesOf(f);
+  if (mel && mel.M && strength >= 0.7) {
+    var M = mel.M, lines = {};
+    nts.forEach(function (nt) {
+      var a = mel.t0 + nt.st * 0.01 + 0.02, b = mel.t0 + nt.end * 0.01 + 0.03, lo = 0, hi = M.n, bo = 0, bi = -1, j;
+      while (lo < hi) { var md = (lo + hi) >> 1; if (M.e[md] <= a) lo = md + 1; else hi = md; }
+      for (j = lo; j < M.n && M.t[j] < b; j++) { var ov = Math.min(b, M.e[j]) - Math.max(a, M.t[j]); if (ov > bo) { bo = ov; bi = j; } }
+      if (bi < 0) return;
+      nt.mel = M.midi[bi] + 12 * Math.round((nt.med - M.midi[bi]) / 12); nt.dev = nt.med - nt.mel; nt.line = M.line[bi];
+      var L = lines[nt.line] = lines[nt.line] || { tot: 0, ok: 0, n: 0 }, len = nt.end - nt.st + 1; L.tot += len; L.n++; if (Math.abs(nt.dev) <= 1.5) L.ok += len;
+    });
+    nts.forEach(function (nt) { var L = nt.mel != null ? lines[nt.line] : null; nt.follow = !!L && L.n >= 3 && L.ok >= (mel.thr || 0.7) * L.tot && Math.abs(nt.dev) <= 2.6; });
+  }
+  nts.forEach(function (nt) {
+    var sc = scaleNote(nt.med, pcs), d = sc - nt.med; if (Math.abs(d) < 0.06) d = 0; d *= strength;
+    if (nt.follow && nt.mel !== sc) { d += nt.mel - sc; melN++; } // התו הנכון במנגינה הוא לא התו הקרוב בסולם: קופצים אליו
+    for (i = nt.st; i <= nt.end; i++) { sh[i] = d; has[i] = 1; } notes++; sumAbs += Math.abs(d) * 100;
   });
   // בין תווים: מעבר הדרגתי. ואז החלקה של 50 אלפיות שנייה
   var lastI = -1;
   for (i = 0; i < n; i++) { if (!has[i]) continue; if (lastI >= 0 && i - lastI > 1 && i - lastI < 30) for (k = lastI + 1; k < i; k++) sh[k] = sh[lastI] + (sh[i] - sh[lastI]) * (k - lastI) / (i - lastI); lastI = i; }
   var ratio = new Float32Array(n);
   for (i = 0; i < n; i++) { var s = 0, c = 0; for (k = -2; k <= 2; k++) if (i + k >= 0 && i + k < n) { s += sh[i + k]; c++; } ratio[i] = f[i] ? Math.pow(2, s / c / 12) : 1; }
-  return { y: psola(x, sr, f, ratio), f: f, notes: notes, cents: notes ? Math.round(sumAbs / notes) : 0 };
+  return { y: psola(x, sr, f, ratio), f: f, notes: notes, cents: notes ? Math.round(sumAbs / notes) : 0, mel: melN };
 }
 // TD-PSOLA: מקטעים של שתי תקופות, מונחים מחדש במרווח תקופה/יחס. האורך והצבע של הקול נשמרים.
 function psola(x, sr, f, ratio) {
@@ -457,7 +475,29 @@ function toMp3(chans, sr, kbps, prog) {
 // ---------- העבודה כולה ----------
 var REF = null;   // {x: המוזיקה במונו, sr, env: מעטפת התחלות, key}
 var TAKES = {};   // id -> {a: קול נקי ומיושר, start, lag, z, ...}
-function setRef(x, sr, pcs) { var cf = chromaFrames(x, sr); REF = { x: x, sr: sr, env: onsetEnv(x, sr), cf: cf, key: pcs && pcs.length ? { pcs: pcs, name: '', conf: 1, margin: 1 } : detectKey(x, sr, cf) }; TAKES = {}; return { key: REF.key, dur: x.length / sr }; }
+// המנגינה הידועה של שיר מהאתר. a = [זמן התחלה, אורך, תו (MIDI), מספר שורה] לכל הברה, לפי הסדר.
+// env: איפה כל הברה מתחילה, באותו ציר ובאותו היסט של onsetEnv (פסגה כ-15 אלפיות שנייה לפני ההתחלה עצמה).
+function melOf(a) {
+  var n = Math.floor(a.length / 4), M = { n: n, t: new Float64Array(n), e: new Float64Array(n), midi: new Float32Array(n), line: new Int32Array(n), range: 140, env: null }, i, k, step = 1e9, end = 0;
+  for (i = 0; i < n; i++) { M.t[i] = a[i * 4]; M.e[i] = a[i * 4] + a[i * 4 + 1]; M.midi[i] = a[i * 4 + 2]; M.line[i] = a[i * 4 + 3]; if (a[i * 4 + 1] > 0.02 && a[i * 4 + 1] < step) step = a[i * 4 + 1]; if (M.e[i] > end) end = M.e[i]; }
+  M.range = Math.round(Math.max(70, Math.min(160, step * 450))); // פחות מחצי הברה, כדי לא להיצמד להברה השכנה
+  var env = M.env = new Float32Array(Math.ceil(end * 100) + 100);
+  for (i = 0; i < n; i++) { var c = M.t[i] * 100 - 1.5; for (k = Math.floor(c) - 3; k <= Math.ceil(c) + 3; k++) { var w = 1 - Math.abs(k - c) / 3; if (k >= 0 && k < env.length && w > env[k]) env[k] = w; } }
+  return M;
+}
+// כל ההקלטה מול המקום הידוע של ההברות: בכמה מסגרות (10 אלפיות שנייה) להזיז את הקול. מחזיר null כשאין פסגה אחת ברורה
+// (פחות מ-8 הברות, או שהזזה בהברה שלמה מתאימה כמעט באותה מידה).
+function melSync(ev, envS, lo, hi) {
+  var n = Math.min(ev.length, envS.length), sv = 0, on = 0, t, d, sc = [], best = lo, bv = -1, second = -1;
+  for (t = 0; t < n; t++) { sv += ev[t] * ev[t]; on += envS[t]; }
+  if (on < 24 || !sv) return null;
+  for (d = lo; d <= hi; d++) { var s = 0, sm = 0; for (t = 0; t < ev.length; t++) { var m = envS[t + d] || 0; s += ev[t] * m; sm += m * m; } var v = s / Math.sqrt(sv * sm + 1e-12); sc.push(v); if (v > bv) { bv = v; best = d; } }
+  for (d = lo; d <= hi; d++) if (Math.abs(d - best) > 5 && sc[d - lo] > second) second = sc[d - lo];
+  return bv > 0.1 && bv > second * 1.25 && best > lo && best < hi ? { d: best, v: bv, second: second } : null;
+}
+// מעטפת שמתחילה במסגרת t0 (גם כשהיא שלילית)
+function envFrom(env, t0) { if (t0 >= 0) return env.subarray(Math.min(t0, env.length)); var y = new Float32Array(env.length - t0); y.set(env, -t0); return y; }
+function setRef(x, sr, pcs, mel) { var cf = chromaFrames(x, sr); REF = { x: x, sr: sr, env: onsetEnv(x, sr), cf: cf, mel: mel && mel.length >= 12 ? melOf(mel) : null, key: pcs && pcs.length ? { pcs: pcs, name: '', conf: 1, margin: 1 } : detectKey(x, sr, cf) }; TAKES = {}; return { key: REF.key, dur: x.length / sr }; }
 // קולות הליווי של השיר כולו (v = ערוץ הקול המוכן, על ציר הזמן של המוזיקה)
 function stageBack(v, mode) {
   var key = REF.key, pcs = !key.pcs || key.conf < 0.45 ? null : key.pcs, r = backing(v, REF.sr, { mode: mode, pcs: pcs, cf: REF.cf });
@@ -479,25 +519,27 @@ function stageClean(id, rec, start, o, prog) {
   // יש מוזיקה בהקלטה? מנקים אותה רק אם היא באמת שם (סנכרון בטוח), או אם המשתמש אמר "בלי אוזניות"
   var bleed = mode === 'bleed' || (mode === 'manual' && o.speaker);
   var r = clean(al, bleed ? ref : null, sr, { noise: o.noise, bleed: o.bleed }, function (p) { if (prog) prog(0.12 + 0.88 * p); });
-  var a = new Float32Array(r.y); // עותק (subarray של מאגר גדול יותר)
+  var a = new Float32Array(r.y), sync = ''; // עותק (subarray של מאגר גדול יותר)
   if (mode === 'guess' && !o.trust) { // עם אוזניות אין מוזיקה בהקלטה: מכוונים לפי הקצב, בטווח קטן סביב הניחוש
-    var ev = onsetEnv(a, sr), t0 = Math.round(start / (sr * 0.01)), best = 0, bv = -1, R = 6;
-    for (var d = -R; d <= R; d++) { var s = 0, sm = 0; for (var t = 0; t < ev.length; t++) { var m = REF.env[t0 + t + d] || 0; s += ev[t] * m; sm += m * m; } var v = s / Math.sqrt(sm + 1e-12) * Math.exp(-d * d / 32); if (v > bv) { bv = v; best = d; } }
+    var ev = onsetEnv(a, sr), t0 = Math.round(start / (sr * 0.01)), best = 0, bv = -1, R = 6, d, s, sm, t, m, v;
+    var ms = !o.nomel && REF.mel ? melSync(ev, envFrom(REF.mel.env, t0), -42, 10) : null;
+    if (ms && Math.abs(ms.d) >= 5) { best = ms.d; sync = 'mel'; } // שיר מהאתר: לפי המקום הידוע של ההברות, גם כשהאיחור גדול (אוזניות בלוטות')
+    else for (d = -R; d <= R; d++) { s = 0; sm = 0; for (t = 0; t < ev.length; t++) { m = REF.env[t0 + t + d] || 0; s += ev[t] * m; sm += m * m; } v = s / Math.sqrt(sm + 1e-12) * Math.exp(-d * d / 32); if (v > bv) { bv = v; best = d; } }
     if (best) { var shs = Math.round(best * 0.01 * sr), a2 = new Float32Array(n); for (var i = 0; i < n; i++) { var q = i - shs; a2[i] = q >= 0 && q < n ? a[q] : 0; } a = a2; lag -= shs; }
   }
   if (!o.nogate) a = gate(a, sr, GATE[Math.max(0, Math.min(3, o.noise == null ? 2 : o.noise))], o.gateR === 0 ? null : r.act, o.gateR);
   TAKES[id] = { a: a, start: start, sr: sr };
-  return { lag: lag, lagMs: Math.round(lag / sr * 1000), z: +lg.z.toFixed(1), drift: lg.drift, mode: mode, bleedDb: +r.bleedDb.toFixed(1), cancelDb: +r.cancelDb.toFixed(1), level: rms(a) };
+  return { lag: lag, lagMs: Math.round(lag / sr * 1000), z: +lg.z.toFixed(1), drift: lg.drift, mode: mode, sync: sync, bleedDb: +r.bleedDb.toFixed(1), cancelDb: +r.cancelDb.toFixed(1), level: rms(a) };
 }
 // שלב ב': קצב + זיופים, מהקול הנקי השמור. o: {tight 0..1, tune 0..1, chromatic}
 function stageFinish(id, o) {
   var T = TAKES[id]; if (!T) throw new Error('no take');
-  var sr = T.sr, t0 = Math.round((T.start - (o.shiftS || 0)) / (sr * 0.01)), envM = REF.env.subarray(Math.max(0, t0));
-  var tg = tighten(T.a, sr, envM, o.tight || 0, 70);
+  var sr = T.sr, t0 = Math.round((T.start - (o.shiftS || 0)) / (sr * 0.01)), envM = envFrom(REF.env, t0), M = o.nomel ? null : REF.mel;
+  var tg = tighten(T.a, sr, envM, o.tight || 0, 70, M ? envFrom(M.env, t0) : null, M ? M.range : 0);
   var key = REF.key, pcs = o.chromatic || !key.pcs || key.conf < 0.45 ? null : key.pcs;
-  var tn = tune(tg.y, sr, pcs, o.tune || 0);
+  var tn = tune(tg.y, sr, pcs, o.tune || 0, M ? { M: M, t0: (T.start - (o.shiftS || 0)) / sr, thr: o.melThr } : null);
   var y = tn.y === T.a ? new Float32Array(tn.y) : tn.y;
-  return { y: y, phrases: tg.phrases, notes: tn.notes, cents: tn.cents, moved: tg.phrases.filter(function (p) { return p.ms; }).length };
+  return { y: y, phrases: tg.phrases, notes: tn.notes, cents: tn.cents, mel: tn.mel, moved: tg.phrases.filter(function (p) { return p.ms; }).length };
 }
 
 if (typeof self !== 'undefined' && typeof module === 'undefined') {
@@ -505,7 +547,7 @@ if (typeof self !== 'undefined' && typeof module === 'undefined') {
     var d = e.data, r;
     function prog(p) { self.postMessage({ id: d.id, progress: p }); }
     try {
-      if (d.cmd === 'ref') { r = setRef(d.x, d.sr, d.pcs); r.id = d.id; self.postMessage(r); }
+      if (d.cmd === 'ref') { r = setRef(d.x, d.sr, d.pcs, d.mel); r.id = d.id; self.postMessage(r); }
       else if (d.cmd === 'clean') { r = stageClean(d.take, d.rec, d.start, d.o || {}, prog); r.id = d.id; self.postMessage(r); }
       else if (d.cmd === 'finish') { r = stageFinish(d.take, d.o || {}); r.id = d.id; self.postMessage(r, [r.y.buffer]); }
       else if (d.cmd === 'back') { r = stageBack(d.v, d.mode); r.id = d.id; self.postMessage(r, [r.L.buffer, r.R.buffer]); }
@@ -516,4 +558,4 @@ if (typeof self !== 'undefined' && typeof module === 'undefined') {
     } catch (err) { self.postMessage({ id: d.id, error: String(err && err.message || err) }); }
   };
 }
-if (typeof module !== 'undefined') module.exports = { fft: fft, decim: decim, gcc: gcc, findLag: findLag, shiftRec: shiftRec, clean: clean, onsetEnv: onsetEnv, phrases: phrases, gate: gate, GATE: GATE, tighten: tighten, pitchTrack: pitchTrack, detectKey: detectKey, chromaFrames: chromaFrames, notesOf: notesOf, scaleNote: scaleNote, f2m: f2m, tune: tune, psola: psola, harmShift: harmShift, backing: backing, setRef: setRef, stageClean: stageClean, stageFinish: stageFinish, stageBack: stageBack, ref: function () { return REF; }, rms: rms };
+if (typeof module !== 'undefined') module.exports = { fft: fft, decim: decim, gcc: gcc, findLag: findLag, shiftRec: shiftRec, clean: clean, onsetEnv: onsetEnv, phrases: phrases, gate: gate, GATE: GATE, tighten: tighten, pitchTrack: pitchTrack, detectKey: detectKey, chromaFrames: chromaFrames, notesOf: notesOf, scaleNote: scaleNote, f2m: f2m, tune: tune, psola: psola, harmShift: harmShift, backing: backing, melOf: melOf, melSync: melSync, envFrom: envFrom, onsetEnv2: onsetEnv, setRef: setRef, stageClean: stageClean, stageFinish: stageFinish, stageBack: stageBack, ref: function () { return REF; }, rms: rms };
