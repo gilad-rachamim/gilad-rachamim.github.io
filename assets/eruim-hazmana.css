@@ -96,3 +96,4 @@
 .eh-danger{margin-top:1rem;color:#f0a9a0;border-color:#9a6660;width:100%}
 .eh-dash [hidden]{display:none!important}
 @media (max-width:380px){.eh-stats{grid-template-columns:repeat(2,1fr)}}
+.chip.maybe{color:#f3d58e;border-color:#9a8550}

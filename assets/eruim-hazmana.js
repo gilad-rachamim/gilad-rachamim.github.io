@@ -753,7 +753,8 @@
   }
   // "מגיעים? כמה?" – כשההזמנה נפתחה מהקישור הקצר (יש אירוע בשרת)
   function rsvpForm(gd, eid) {
-    var box = $('#g-form-box'), f = $('#g-form'), done = $('#g-done'), KEY = 'eruim-rsvp-' + eid, mine = null;
+    var gq = new URLSearchParams(location.search), gcode = /^[a-z0-9]{3,10}$/.test(gq.get('g') || '') ? gq.get('g') : '';
+    var box = $('#g-form-box'), f = $('#g-form'), done = $('#g-done'), KEY = 'eruim-rsvp-' + eid + (gcode ? '-' + gcode : ''), mine = null;
     try { mine = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
     var sg = signLines(gd).join(' ו');
     $('#g-hi').textContent = (sg ? sg + ' ישמחו' : 'בעלי השמחה ישמחו') + ' לדעת אם תגיעו.';
@@ -761,7 +762,7 @@
     function fill(a) { f.elements.n.value = a.n || ''; f.elements.note.value = a.note || ''; f.elements.c.value = a.c || 1; var r = f.querySelector('input[name=ok][value="' + (a.ok ? 1 : 0) + '"]'); if (r) r.checked = true; }
     function showDone(a) { f.hidden = true; done.hidden = false; $('#g-done-txt').textContent = a.ok ? 'תודה! נרשם: ' + (a.c > 1 ? a.c + ' מגיעים' : 'מגיעים') + '. נתראה בשמחה 🎉' : 'תודה שעדכנתם. נתראה בשמחות!'; }
     f.addEventListener('change', toggle);
-    if (mine) { fill(mine); showDone(mine); } else toggle();
+    if (mine) { fill(mine); showDone(mine); } else { if (gq.get('n')) f.elements.n.value = gq.get('n').slice(0, 60); toggle(); }
     $('#g-edit').addEventListener('click', function () { done.hidden = true; f.hidden = false; toggle(); f.elements.n.focus(); });
     f.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -770,6 +771,7 @@
       if (!f.reportValidity()) return;
       var btn = f.querySelector('button[type=submit]'); btn.disabled = true; btn.textContent = 'שולח…'; err.hidden = true;
       var body = { aid: mine && mine.aid, n: f.elements.n.value.trim(), c: f.elements.c.value, ok: ok.value === '1' ? 1 : 0, note: f.elements.note.value.trim(), website: f.elements.website.value };
+      if (gcode) body.g = gcode;
       api('/ev/' + eid + '/rsvp', body).then(function (j) {
         mine = { aid: j.aid, n: body.n, c: +body.c, ok: body.ok, note: body.note };
         try { localStorage.setItem(KEY, JSON.stringify(mine)); } catch (x) {}
@@ -794,7 +796,7 @@
     }
     function rows() { return Object.keys(ev.answers).map(function (k) { return Object.assign({ id: k }, ev.answers[k]); }).sort(function (a, b) { return a.ts < b.ts ? 1 : -1; }); }
     function show() {
-      var d = ev.d, K = kindOf(d), all2 = rows(), yes = all2.filter(function (a) { return a.ok; }), no = all2.filter(function (a) { return !a.ok; });
+      var d = ev.d, K = kindOf(d), all2 = rows(), yes = all2.filter(function (a) { return a.ok === 1 || a.ok === true; }), no = all2.filter(function (a) { return !a.ok; });
       var people = yes.reduce(function (s, a) { return s + (+a.c || 1); }, 0);
       document.title = 'לוח המעקב – ' + titleOf(d);
       $('#ad-title').textContent = titleOf(d);
@@ -803,9 +805,10 @@
       var list = filter === 'yes' ? yes : filter === 'no' ? no : all2, ul = $('#ad-list');
       ul.innerHTML = list.length ? list.map(function (a) {
         var t = new Date(a.ts);
-        return '<li class="eh-row"><span class="who">' + esc(a.n) + '</span><span class="chip ' + (a.ok ? 'yes' : 'no') + '">' + (a.ok ? 'מגיעים' + (a.c > 1 ? ' · ' + a.c : '') : 'לא מגיעים') + '</span>' +
+        return '<li class="eh-row"><span class="who">' + esc(a.n) + '</span><span class="chip ' + (a.ok === 2 ? 'maybe' : a.ok ? 'yes' : 'no') + '">' + (a.ok === 2 ? 'אולי' : a.ok ? 'מגיעים' + (a.c > 1 ? ' · ' + a.c : '') : 'לא מגיעים') + '</span>' +
           (a.note ? '<span class="meta">💬 ' + esc(a.note) + '</span>' : '') + '<span class="meta">' + t.getDate() + '.' + (t.getMonth() + 1) + ' ' + pad(t.getHours()) + ':' + pad(t.getMinutes()) + '</span></li>';
       }).join('') : '<li class="eh-empty">' + (all2.length ? 'אין תשובות בסינון הזה.' : 'עוד אין תשובות. שלחו את הקישור לאורחים, והתשובות יופיעו כאן.') + '</li>';
+      $('#ad-ishurim').href = '/kelim/eruim/ishurim/?e=' + id + '&t=' + encodeURIComponent(tok) + '&src=h&ttl=' + encodeURIComponent(titleOf(d));
       $('#ad-guest').href = shortUrl(id); $('#ad-short').textContent = shortUrl(id).replace(/^https?:\/\//, '');
       $('#ad-remind').href = 'https://wa.me/?text=' + encodeURIComponent('תזכורת ' + K.of + ' ' + K.big(d) + ', ' + whenText(d) + ' 🎉\nעוד לא עניתם? כאן מאשרים הגעה בלחיצה: ' + shortUrl(id));
       adm.hidden = false;
@@ -817,13 +820,13 @@
     $('#ad-copy-link').addEventListener('click', function (e) { copy(shortUrl(id), e.currentTarget); });
     $('#ad-copy').addEventListener('click', function (e) {
       if (!ev) return;
-      var L = rows().map(function (a) { return a.n + ' – ' + (a.ok ? 'מגיעים' + (a.c > 1 ? ' (' + a.c + ')' : '') : 'לא מגיעים') + (a.note ? ' – ' + a.note : ''); });
+      var L = rows().map(function (a) { return a.n + ' – ' + (a.ok === 2 ? 'אולי' : a.ok ? 'מגיעים' + (a.c > 1 ? ' (' + a.c + ')' : '') : 'לא מגיעים') + (a.note ? ' – ' + a.note : ''); });
       copy(titleOf(ev.d) + '\n' + L.join('\n'), e.currentTarget);
     });
     $('#ad-csv').addEventListener('click', function () {
       if (!ev) return;
       var q2 = function (v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; };
-      var csv = '\ufeff' + ['שם,מגיעים,כמה,הערה,מתי'].concat(rows().map(function (a) { return [a.n, a.ok ? 'כן' : 'לא', a.c, a.note, a.ts].map(q2).join(','); })).join('\r\n');
+      var csv = '\ufeff' + ['שם,מגיעים,כמה,הערה,מתי'].concat(rows().map(function (a) { return [a.n, a.ok === 2 ? 'אולי' : a.ok ? 'כן' : 'לא', a.c, a.note, a.ts].map(q2).join(','); })).join('\r\n');
       var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = 'ishurim-' + id + '.csv'; document.body.appendChild(a); a.click(); setTimeout(function () { a.remove(); }, 1000);
     });
     $('#ad-del').addEventListener('click', function () {
@@ -939,6 +942,7 @@
     '<button class="btn btn-gold btn-block" type="button" id="r-on">להפעיל אישורי הגעה</button>' +
     '<div id="r-live" hidden><p class="eh-short">הקישור לאורחים: <bdi dir="ltr" id="r-short"></bdi> <button class="btn btn-line" type="button" id="r-copy">העתקה</button></p>' +
     '<a class="btn btn-gold btn-block" id="r-dash" href="#" target="_blank" rel="noopener">ללוח המעקב שלי</a>' +
+    '<a class="btn btn-line btn-block" id="r-ishurim" href="#" target="_blank" rel="noopener">ניהול אישורי הגעה ורשימת מוזמנים</a>' +
     '<p class="eh-hint">הלוח פרטי: רק מי שיש לו את הקישור הזה רואה את התשובות. הוא שמור בטלפון הזה, ושווה לשמור אותו גם בצד (למשל לשלוח לעצמכם בווטסאפ). <a class="gold" href="#" id="r-self" target="_blank" rel="noopener">לשלוח לעצמי</a></p></div>' +
     '<p class="eh-err" id="r-err" hidden></p></div>' +
     '<div class="eh-poster-box"><h3>מודעה A4 עם קוד QR</h3><p class="eh-hint">לתלות בבית הכנסת, בעבודה או בבניין. מי שסורק מקבל את ההזמנה, ניווט והוספה ליומן.</p>' +
@@ -1041,6 +1045,7 @@
     if (on2) {
       $('#r-short').textContent = shortUrl(e.id).replace(/^https?:\/\//, '');
       $('#r-dash').href = adminUrl(e);
+      $('#r-ishurim').href = '/kelim/eruim/ishurim/?e=' + e.id + '&t=' + encodeURIComponent(e.tok) + '&src=h&ttl=' + encodeURIComponent(titleOf(data));
       $('#r-self').href = 'https://wa.me/?text=' + encodeURIComponent('לוח אישורי ההגעה ' + kindOf(data).of + ' (לשמור, לא להעביר): ' + adminUrl(e));
     }
   }
