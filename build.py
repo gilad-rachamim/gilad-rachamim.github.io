@@ -19,7 +19,7 @@ LAYOUT_KELIM = (ROOT / "src" / "layout-kelim.html").read_text(encoding="utf-8")
 SITES = {
     "kelim": {
         "name": "הכלים של גילעד רחמים", "brand": "מיזם הכלים של גילעד רחמים", "short": "הכלים", "home": "/kelim/", "theme": "#0f1d1c",
-        "og": "og-kelim.jpg?v=3", "icon": "kelim",
+        "og": "og-kelim.jpg?v=4", "icon": "kelim",
         "desc": "כלים פשוטים, בחינם, לכל מי שצריך הנגשה",
         "nav": [("tchumim", "/kelim/#tchumim", "התחומים"), ("tamlul", "/kelim/tamlul/", "תמלול"),
                 ("kodesh", "/kodesh/", "כלי קודש"), ("rotzim", "/kelim/bakasha/", "רוצים כלי?"),
@@ -27,7 +27,7 @@ SITES = {
     },
     "kodesh": {
         "name": "כלי קודש", "short": "כלי קודש", "home": "/kodesh/", "theme": "#0e1628",
-        "og": "og-kodesh.jpg?v=3", "icon": "kodesh",
+        "og": "og-kodesh.jpg?v=4", "icon": "kodesh",
         "desc": "כלים דיגיטליים לאנשי קודש, בחינם",
         "nav": [("rabanim", "/kodesh/#rabanim", "לרבנים"), ("taarichim", "/kodesh/taarichim/", "מחשבון תאריכים"),
                 ("mohalim", "/kodesh/mohalim/", "למוהלים"), ("tamlul", "/kelim/tamlul/", "תמלול"),
@@ -47,7 +47,7 @@ SITES = {
     # כלים לעסק קטן: תפריט דיגיטלי עם QR, מודעת מבצע, QR מעוצב וצ'ק-ליסט לפתיחת עסק. הכול בטלפון, בלי שרת.
     "esek": {
         "name": "כלים לעסק קטן", "short": "כלים לעסק", "home": "/esek/", "theme": "#1c1712",
-        "og": "og-esek.jpg?v=3", "icon": "esek",
+        "og": "og-esek.jpg?v=4", "icon": "esek",
         "desc": "כלים חינמיים לעסק קטן: תפריט בקישור ו-QR, מודעת מבצע, QR מעוצב וצ'ק-ליסט לפתיחת עסק",
         "css": ["/assets/esek.css"],
         "nav": [("tafrit", "/esek/tafrit/", "תפריט ו-QR"), ("mivtza", "/esek/mivtza/", "מודעת מבצע"),
@@ -57,7 +57,7 @@ SITES = {
     # ושיתוף עם אחרים דרך ווטסאפ וקישור שמכיל את המצב (#d=...).
     "bait": {
         "name": "כלים למשפחה ולבית", "short": "משפחה ובית", "home": "/bait/", "theme": "#1f1915",
-        "og": "og-bait.jpg?v=3", "icon": "bait",
+        "og": "og-bait.jpg?v=4", "icon": "bait",
         "desc": "קניות, תורנויות, שבת ואורחים ומי מביא מה. בחינם, בלי הרשמה.",
         "css": ["/assets/bait.css"], "js": ["/assets/bait.js"],
         "nav": [("kniyot", "/bait/kniyot/", "קניות"), ("toranut", "/bait/toranut/", "תורנויות"),
@@ -67,7 +67,7 @@ SITES = {
     # כלים לכסף: מחשבונים בלבד, לא ייעוץ. הכול בטלפון (localStorage), בלי שרת.
     "kesef": {
         "name": "כלים לכסף", "short": "כלים לכסף", "home": "/kesef/", "theme": "#11201a",
-        "og": "og-kesef.jpg?v=3", "icon": "kesef",
+        "og": "og-kesef.jpg?v=4", "icon": "kesef",
         "desc": "מחשבונים פשוטים לכסף של הבית: תקציב, הלוואה, מנויים וחיסכון עם הילדים. בחינם.",
         "css": ["/assets/kesef.css"], "js": ["/assets/kesef.js"],
         "nav": [("taktziv", "/kesef/taktziv/", "תקציב"), ("halvaa", "/kesef/halvaa/", "הלוואה"),
@@ -77,7 +77,7 @@ SITES = {
     # כלים ללימודים: כרטיסיות חזרה, מתכנן למבחן, טיימר למידה, לימוד יומי לסיום. הכול בטלפון (localStorage), בלי שרת.
     "limudim": {
         "name": "כלים ללימודים", "short": "כלים ללימודים", "home": "/limudim/", "theme": "#141c2b",
-        "og": "og-limudim.jpg?v=3", "icon": "limudim",
+        "og": "og-limudim.jpg?v=4", "icon": "limudim",
         "desc": "כלים פשוטים ללמידה: כרטיסיות חזרה, תוכנית למבחן, טיימר, ולימוד יומי לסיום התנ״ך והמשנה. בחינם.",
         "css": ["/assets/limudim.css"], "js": ["/assets/limudim.js"],
         "nav": [("kartisiot", "/limudim/kartisiot/", "כרטיסיות"), ("mivchan", "/limudim/mivchan/", "למבחן"),
@@ -403,9 +403,19 @@ for path in sorted(SRC.rglob("*.html")):
     html = LAYOUT_KELIM if site else LAYOUT
     content += seo_related(url_path)
     og_own = "og/" + url_path.strip("/").replace("/", "-") + ".jpg"
-    og_default = og_own + "?v=3" if (site and (ROOT / "assets" / og_own).exists()) else (site["og"] if site else "og-mohel.jpg")
+    og_default = og_own + "?v=4" if (site and (ROOT / "assets" / og_own).exists()) else (site["og"] if site else "og-mohel.jpg")
+    # תיאור השיתוף (og:description) פותח ב"בחינם, בלי הגבלה ובלי הרשמה" - גילעד 11.11.2026.
+    # כלי עם מכסה (CHESED_PARTNER) לא מקבל "בלי הגבלה"; כלי עם כניסת גוגל לא מקבל "בלי הרשמה". נפש נשאר בטון הרך שלו.
+    og_desc = meta["description"]
+    if site and meta.get("site") != "nefesh" and not meta.get("noindex"):
+        limited = any(url_path.startswith(l) for l in CHESED_PARTNER)
+        login = "gsi/client" in raw or "accounts.google.com" in raw
+        free = [w for w, ok in (("בלי הגבלה", not limited), ("בלי הרשמה", not login)) if ok]
+        lead = ("בחינם, " + free[0] + " ו" + free[1] if len(free) == 2 else "בחינם ו" + free[0] if free else "בחינם") + ". "
+        og_desc = lead + re.sub(r"^בחינם[,.]?\s*", "", og_desc)
     rep = {
         "title": meta["title"],
+        "og_description": og_desc,
         "description": meta["description"],
         "url": url,
         "base": BASE,
@@ -427,7 +437,7 @@ for path in sorted(SRC.rglob("*.html")):
     if site:
         key = meta["site"]
         # גרשיים בתוך מאפיין HTML (content="...") שוברים אותו: בתת-האתרים הופכים " ל-״ (שו"ת → שו״ת)
-        for k in ("title", "description", "og_title"):
+        for k in ("title", "description", "og_title", "og_description"):
             rep[k] = rep[k].replace('"', "״")
         rep.update({
             "site": key, "site_name": site["name"], "site_brand": site.get("brand", site["name"]), "site_short": site["short"], "site_home": site["home"],
