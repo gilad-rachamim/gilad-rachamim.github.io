@@ -28,7 +28,7 @@
   if (share) share.addEventListener('click', function () {
     var data = { title: 'רשימת ההכנה לברית', text: 'רשימת ההכנה לברית של גילעד רחמים המוהל', url: location.href.split('#')[0] };
     if (navigator.share) navigator.share(data).catch(function () {});
-    else location.href = 'https://wa.me/?text=' + encodeURIComponent(data.text + ' ' + data.url);
+    else (window.kelimShort ? window.kelimShort.go('https://wa.me/?text=' + encodeURIComponent(data.text + ' ' + data.url)) : (location.href = 'https://wa.me/?text=' + encodeURIComponent(data.text + ' ' + data.url)));
   });
   var reset = document.getElementById('ck-reset');
   if (reset) reset.addEventListener('click', function () { boxes.forEach(function (b) { b.checked = false; }); update(); });

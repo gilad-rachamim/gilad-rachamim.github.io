@@ -118,7 +118,7 @@
     else if (k === 'share') {
       var url = link(o);
       if (navigator.share) navigator.share({ title: o.name, text: o.name, url: url }).catch(function () {});
-      else location.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(o.name + ' – זמני תפילות ושיעורים\n' + url);
+      else (window.kelimShort ? window.kelimShort.go('https://api.whatsapp.com/send?text=' + encodeURIComponent(o.name + ' – זמני תפילות ושיעורים\n' + url)) : (location.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(o.name + ' – זמני תפילות ושיעורים\n' + url)));
     }
   });
 

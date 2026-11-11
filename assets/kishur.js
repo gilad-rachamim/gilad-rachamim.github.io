@@ -5,6 +5,7 @@
 //     (שרת kartis, tools/kartis-worker, POST /s {t:'u'}). אותו קישור = אותו קוד. נכשל? נשאר הקישור הנקי.
 // מתחבר לבד ל: <a href="https://wa.me/...">, api.whatsapp.com, sms:, mailto:, t.me, facebook sharer,
 // window.open, navigator.share ו-navigator.clipboard.writeText. כלי לא צריך לעשות כלום.
+// מעבר ישיר (location.href = 'https://wa.me/...') אי אפשר לתפוס – שם כותבים window.kelimShort.go(קישור).
 // לכלים: window.kelimShort.url(u) / .text(t) -> Promise, .now(u) -> מחרוזת או null (אם צריך שרת ועוד אין קוד).
 (function () {
   'use strict';
@@ -153,5 +154,11 @@
     };
   });
 
-  window.kelimShort = { url: url, text: text, now: now, textNow: textNow, clean: clean, warm: warm };
+  // מעבר ישיר לקישור שיתוף (location.href = 'https://wa.me/?text=...') – כלים קוראים לזה במקום להשמה
+  function go(h) {
+    if (!isShare(h)) { location.href = h; return; }
+    var n = hrefNow(h); if (n != null) { location.href = n; return; }
+    hrefP(h, 2500).then(function (v) { location.href = v; });
+  }
+  window.kelimShort = { url: url, text: text, now: now, textNow: textNow, clean: clean, warm: warm, go: go };
 })();

@@ -106,7 +106,7 @@
     } else if (k === 'share') {
       var url = view._url || best(o), text = o.n + (o.s ? ' · ' + o.s : '') + (o.a ? ' · ' + o.a : '');
       if (navigator.share) navigator.share({ title: o.n, text: text, url: url }).catch(function () {});
-      else location.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text + '\n' + url);
+      else (window.kelimShort ? window.kelimShort.go('https://api.whatsapp.com/send?text=' + encodeURIComponent(text + '\n' + url)) : (location.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text + '\n' + url)));
     }
   });
 

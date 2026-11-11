@@ -552,7 +552,7 @@
         cuts.push(c); at = c;
       }
       cuts.push(H);
-      var r = Math.min(2, Math.sqrt(14e6 / (W * H)));
+      var r = Math.min(1.5, Math.sqrt(14e6 / (W * H))); // 1.5 = כ-145 נקודות לאינץ' על A4: חד בהדפסה, קובץ קל לווטסאפ
       return window.htmlToImage.getFontEmbedCSS(pap).catch(function () { return ''; }).then(function (fc) {
         return window.htmlToImage.toCanvas(pap, { width: W, height: H, pixelRatio: r, backgroundColor: '#ffffff', fontEmbedCSS: fc || undefined, cacheBust: false });
       }).then(function (cv) {
@@ -563,7 +563,7 @@
           var g = pc.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, pc.width, pc.height);
           g.drawImage(cv, 0, Math.round(cuts[i] * r), pc.width, pc.height, 0, 0, pc.width, pc.height);
           if (pages++) doc.addPage('a4', 'p');
-          doc.addImage(pc.toDataURL('image/jpeg', 0.9), 'JPEG', 11, 11, 188, h * MM);
+          doc.addImage(pc.toDataURL('image/jpeg', 0.72), 'JPEG', 11, 11, 188, h * MM);
         }
         window.__dpPdfCuts = cuts;
         return doc.output('blob');
