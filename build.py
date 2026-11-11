@@ -105,6 +105,8 @@ GA = "" if not GA_ID else f"""<script async src="https://www.googletagmanager.co
 <script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','{GA_ID}');</script>
 <script src="/assets/track.js" defer></script>
 """
+# קישור קצר בכל שיתוף מהאתר (assets/kishur.js): ווטסאפ, SMS, שיתוף בטלפון, העתקה
+KISHUR = '<script src="/assets/kishur.js" defer></script>\n'
 WA_TEXT = "שלום גילעד, אשמח לשמוע פרטים על ברית מילה"
 
 from urllib.parse import quote
@@ -411,7 +413,7 @@ for path in sorted(SRC.rglob("*.html")):
         "og_title": meta.get("og_title", meta["title"]),
         "og_image": meta.get("og_image", og_default),
         "robots": '<meta name="robots" content="noindex">' if meta.get("noindex") else "",
-        "head": meta.get("head_pre", "") + GA + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url),
+        "head": meta.get("head_pre", "") + GA + KISHUR + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url),
         "body_class": meta.get("body_class", ""),
         "sprite": SPRITE,
         "wa": WA,

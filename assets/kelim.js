@@ -66,7 +66,7 @@
     var s = e.target.closest('[data-share-tool]');
     if (s) {
       var how = s.getAttribute('data-share-tool');
-      var url = location.origin + location.pathname + '?utm_source=share&utm_medium=' + (how === 'wa' || how === 'native' ? 'friend' : how) + '&utm_campaign=' + (body.getAttribute('data-tool') || site);
+      var url = 'https://hakelim.com' + location.pathname; // קישור נקי וקצר (בלי utm), כמו בכל שיתוף באתר – assets/kishur.js
       var text = s.getAttribute('data-text') || document.title;
       ev('share', { tool: body.getAttribute('data-tool') || '', how: how });
       if (how === 'native' && navigator.share) {
