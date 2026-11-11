@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8"><script>(function(){var N="https://hakelim.com",O="gilad-rachamim.github.io",L=location,k;function go(){try{var d={},n=0,ks=[],i,v,e;for(i=0;i<localStorage.length;i++)ks.push(localStorage.key(i));ks.sort(function(a,b){return localStorage.getItem(a).length-localStorage.getItem(b).length});for(i=0;i<ks.length;i++){k=ks[i];v=localStorage.getItem(k);e=encodeURIComponent(k).length+encodeURIComponent(v).length+12;if(n+e>1400000)continue;d[k]=v;n+=e}L.replace(N+L.pathname+L.search+(ks.length?"#__mig="+encodeURIComponent(JSON.stringify({d:d,h:L.hash})):L.hash))}catch(x){L.replace(N+L.pathname+L.search+L.hash)}}try{if(L.hostname===O){var im=new Image(),t=setTimeout(function(){im.onload=null},5000);im.onload=function(){clearTimeout(t);go()};im.src=N+"/assets/mig-ready.png?p="+Date.now()}else if(L.hash.indexOf("#__mig=")===0){var o=JSON.parse(decodeURIComponent(L.hash.slice(7)));for(k in o.d)if(localStorage.getItem(k)===null)localStorage.setItem(k,o.d[k]);history.replaceState(null,"",L.pathname+L.search+(o.h||""))}}catch(x){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מחשבון גימטריה אונליין: גימטריה של מילה, שם או פסוק, עם פירוט לכל אות | כלי קודש</title>
+<meta name="description" content="מחשבון גימטריה בחינם, בלי הגבלה, בלי פרסומות ובלי הרשמה: מקלידים מילה, שם או משפט ומקבלים את הגימטריה תוך כדי הקלדה. מספר הכרחי, סופיות גדולות (ך=500) ומספר קטן, פירוט לכל אות, התעלמות מניקוד, ומילים מוכרות עם אותו ערך.">
+<link rel="canonical" href="https://hakelim.com/kodesh/gimatria/">
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="he_IL">
+<meta property="og:site_name" content="כלי קודש">
+<meta property="og:title" content="מחשבון גימטריה – מילה, שם או פסוק">
+<meta property="og:description" content="מחשבון גימטריה בחינם, בלי הגבלה, בלי פרסומות ובלי הרשמה: מקלידים מילה, שם או משפט ומקבלים את הגימטריה תוך כדי הקלדה. מספר הכרחי, סופיות גדולות (ך=500) ומספר קטן, פירוט לכל אות, התעלמות מניקוד, ומילים מוכרות עם אותו ערך.">
+<meta property="og:image" content="https://hakelim.com/assets/og/kodesh-gimatria.jpg?v=3">
+<meta property="og:url" content="https://hakelim.com/kodesh/gimatria/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0e1628">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/icon-kodesh-192.png">
+<link rel="manifest" href="/kodesh/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/site.css?v=39e81fea">
+<link rel="stylesheet" href="/assets/kelim.css?v=95dad8f3">
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4QR4583VST"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4QR4583VST');</script>
+<script src="/assets/track.js?v=963b507e" defer></script>
+<link rel="stylesheet" href="/assets/seo-txt.css?v=821664ee"><style>#gimatria [hidden]{display:none!important} .gm-lbl{display:block;color:var(--cream);font-weight:700;font-size:1.05rem;margin-top:.2rem} #gm-t{display:block;width:100%;box-sizing:border-box;min-height:5.2rem;margin-top:.4rem;font:inherit;font-family:var(--serif);font-size:1.6rem;line-height:1.45;color:var(--cream);background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:14px;padding:.6rem .8rem;resize:vertical} #gm-t:focus,#gm-n:focus{outline:2px solid var(--gold);outline-offset:1px} .gm-tacts{display:flex;justify-content:flex-start;margin-top:.3rem} .gm-tacts button{background:none;border:0;color:var(--muted);font:inherit;font-size:.95rem;cursor:pointer;text-decoration:underline;padding:.2rem 0} .gm-seg{display:flex;gap:.35rem;margin-top:.8rem} .gm-seg button{flex:1;min-width:0;font:inherit;font-size:.95rem;line-height:1.25;padding:.55rem .3rem;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--body);cursor:pointer} .gm-seg button small{display:block;font-size:.78rem;color:var(--muted)} .gm-seg button[aria-pressed=true]{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700} .gm-seg button[aria-pressed=true] small{color:var(--ink)} .gm-res{margin-top:.95rem;padding:.85rem .9rem;border-radius:16px;border:1px solid var(--gold-soft);background:linear-gradient(170deg,rgba(220,183,99,.14),rgba(220,183,99,.02) 70%);text-align:center} .gm-res .lbl{color:var(--gold);font-weight:700;font-size:.95rem} .gm-res .big{font-family:var(--serif);font-weight:700;color:var(--cream);font-size:clamp(2.2rem,12vw,3rem);line-height:1.15;overflow-wrap:anywhere} .gm-res .heb{font-family:var(--serif);color:var(--gold);font-size:1.25rem;min-height:1.2em} .gm-res.empty .big{color:var(--muted);font-size:1.15rem;font-family:var(--sans);font-weight:500;padding:.6rem 0} .gm-res.empty .lbl,.gm-res.empty .gm-rows,.gm-res.empty .heb{display:none} .gm-rows{margin:.6rem 0 0;padding:0;display:grid;gap:.15rem} .gm-rows>div{display:flex;justify-content:space-between;gap:.75rem;padding:.3rem .2rem;border-top:1px solid var(--line)} .gm-rows dt{color:var(--parchment);text-align:start}.gm-rows dd{margin:0;color:var(--cream);font-weight:700;text-align:end} .gm-skip{margin-top:.5rem;color:var(--muted);font-size:.92rem} .gm-acts{display:flex;gap:.5rem;margin-top:.7rem} .gm-acts>*{flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;min-height:2.9rem;padding:.4rem .6rem;border-radius:14px;font:700 1rem/1.2 var(--sans);text-decoration:none;cursor:pointer;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--cream)} .gm-acts a{background:var(--gold);color:var(--ink);border-color:var(--gold)} .gm-acts button:disabled{opacity:.5;cursor:default} .gm-words{list-style:none;margin:.9rem 0 0;padding:0;display:grid;gap:.5rem} .gm-words li{padding:.55rem .65rem;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03)} .gm-wt{display:flex;justify-content:space-between;align-items:baseline;gap:.6rem} .gm-w{font-family:var(--serif);font-size:1.3rem;color:var(--cream);overflow-wrap:anywhere;min-width:0} .gm-wv{color:var(--gold);font-weight:700;font-size:1.15rem} .gm-chs{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.35rem} .gm-ch{display:inline-flex;flex-direction:column;align-items:center;min-width:2.3rem;padding:.15rem .3rem;border-radius:9px;background:rgba(220,183,99,.1);font-size:.85rem;color:var(--body);line-height:1.2} .gm-ch b{font-family:var(--serif);font-size:1.2rem;color:var(--cream)} .gm-words .gm-more{color:var(--muted);font-size:.95rem;text-align:center} .gm-same{margin-top:.9rem}.gm-same p,.gm-none{margin:0;color:var(--parchment);font-size:1rem} .gm-chips,#gm-sc{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.45rem} .gm-chips button,#gm-sc button{font:inherit;font-family:var(--serif);font-size:1.1rem;padding:.3rem .75rem;border-radius:99px;border:1px solid var(--gold-soft);background:transparent;color:var(--cream);cursor:pointer} .gm-nin{display:flex;align-items:center;gap:.5rem;margin-top:.4rem} #gm-n{flex:1;min-width:0;max-width:11rem;font:inherit;font-size:1.4rem;padding:.55rem .7rem;color:var(--cream);background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;direction:ltr;text-align:right} #gm-nr{margin-top:.55rem}.gm-hn{font-family:var(--serif);color:var(--gold);font-size:1.2rem} .gm-note{display:flex;gap:.6rem;align-items:flex-start;margin-top:1rem;padding:.8rem 1rem;border-radius:14px;background:rgba(255,255,255,.035);color:var(--body);font-size:1rem} .gm-data{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;justify-content:center;margin-top:.6rem} .gm-data button{font:inherit;background:none;border:0;color:var(--gold);text-decoration:underline;cursor:pointer;padding:.3rem} .gm-tbl{width:100%;border-collapse:collapse;margin:.2rem 0 1rem;font-size:1.05rem} .gm-tbl caption{color:var(--muted);font-size:.92rem;text-align:start;margin-bottom:.3rem;caption-side:bottom;padding-top:.3rem} .gm-tbl th,.gm-tbl td{padding:.4rem .3rem;border-bottom:1px solid var(--line);text-align:center} .gm-tbl th{color:var(--gold);font-weight:700}.gm-tbl td{color:var(--body)}.gm-tbl td b{font-family:var(--serif);color:var(--cream);font-size:1.2rem;margin-inline-end:.3rem} .gm-tool-foot{max-width:40rem;margin:1.6rem auto 0;padding:0 1.25rem;text-align:center}</style><script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "מה זה גימטריה?", "acceptedAnswer": {"@type": "Answer", "text": "גימטריה היא חישוב של ערך מספרי למילה. לכל אות בעברית יש ערך: א=1 עד ט=9, י=10 עד צ=90, ק=100 עד ת=400. הגימטריה של מילה היא סכום הערכים של האותיות שלה. למשל שלום: ש300 + ל30 + ו6 + ם40 = 376."}}, {"@type": "Question", "name": "איך מחשבים גימטריה של שם?", "acceptedAnswer": {"@type": "Answer", "text": "מחברים את הערך של כל אות בשם. דוד: ד4 + ו6 + ד4 = 14. משה: מ40 + ש300 + ה5 = 345. במחשבון מקלידים את השם ורואים את הסכום ואת הערך של כל אות."}}, {"@type": "Question", "name": "כמה שוות האותיות הסופיות ך ם ן ף ץ?", "acceptedAnswer": {"@type": "Answer", "text": "בשיטה הרגילה (מספר הכרחי) אות סופית שווה כמו האות הרגילה: ך=20, ם=40, ן=50, ף=80, ץ=90. בשיטת הסופיות הגדולות ממשיכים אחרי ת=400: ך=500, ם=600, ן=700, ף=800, ץ=900. המחשבון מראה את שתיהן."}}, {"@type": "Question", "name": "מה זה מספר קטן בגימטריה?", "acceptedAnswer": {"@type": "Answer", "text": "במספר קטן מורידים את האפסים מערך האות: י=1, כ=2, ל=3, ק=1, ר=2, ש=3, ת=4. כך שלום במספר קטן הוא ש3 + ל3 + ו6 + ם4 = 16."}}, {"@type": "Question", "name": "למה נותנים צדקה ומתנות בכפולות של 18?", "acceptedAnswer": {"@type": "Answer", "text": "כי חי בגימטריה הוא 18: ח8 + י10. מי שנותן 18, 36 או 180 שקלים מאחל בזה חיים."}}, {"@type": "Question", "name": "המחשבון מתחשב בניקוד ובמרכאות?", "acceptedAnswer": {"@type": "Answer", "text": "לא. ניקוד, טעמי המקרא, גרש, גרשיים ומרכאות לא נספרים, ולכן ת״ו נספר כמו תו. רווח, מקף או סימן פיסוק מפרידים בין מילים, ואותיות לועזיות וספרות לא נספרות בכלל."}}]}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "כלי קודש", "item": "https://hakelim.com/kodesh/"}, {"@type": "ListItem", "position": 2, "name": "מחשבון גימטריה", "item": "https://hakelim.com/kodesh/gimatria/"}]}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "מחשבון גימטריה", "description": "מחשבון גימטריה בחינם, בלי הגבלה, בלי פרסומות ובלי הרשמה: מקלידים מילה, שם או משפט ומקבלים את הגימטריה תוך כדי הקלדה. מספר הכרחי, סופיות גדולות (ך=500) ומספר קטן, פירוט לכל אות, התעלמות מניקוד, ומילים מוכרות עם אותו ערך.", "url": "https://hakelim.com/kodesh/gimatria/", "inLanguage": "he", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "browserRequirements": "דפדפן רגיל בטלפון או במחשב, בלי התקנה.", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "ILS"}, "author": {"@type": "Person", "name": "גילעד רחמים אביעד", "url": "https://hakelim.com/kelim/#mi"}, "publisher": {"@type": "Person", "name": "גילעד רחמים אביעד", "url": "https://hakelim.com/kelim/#mi"}, "isPartOf": {"@type": "WebSite", "name": "כלי קודש", "url": "https://hakelim.com/kodesh/"}}</script>
+</head>
+<body class="site-kodesh " data-site="kodesh" data-tool="gimatria" data-home="/kodesh/">
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <!-- איורי קו בזהב – מצוירים לאתר של גילעד רחמים המוהל. שימוש: <svg class="ic"><use href="/assets/icons.svg#kos"/></svg> -->
+  <symbol id="kos" viewBox="0 0 48 48"><path d="M15 6h18c0 11-3 18-9 20-6-2-9-9-9-20Z"/><path d="M17 11c3 1.5 11 1.5 14 0"/><path d="M24 26v12"/><path d="M16 42c2-3 14-3 16 0"/><path d="M16 42h16"/></symbol>
+  <symbol id="kise" viewBox="0 0 48 48"><path d="M14 6v18h20V6"/><path d="M14 12h20"/><path d="M11 24h26v7H11z"/><path d="M14 31v12M34 31v12"/><path d="M17 7c2-2 12-2 14 0"/></symbol>
+  <symbol id="talit" viewBox="0 0 48 48"><path d="M8 10h32v26H8z"/><path d="M8 16h32M8 20h32"/><path d="M12 36v6M18 36v6M30 36v6M36 36v6"/><path d="M14 10v-3M34 10v-3"/></symbol>
+  <symbol id="hadas" viewBox="0 0 48 48"><path d="M24 44V12"/><path d="M24 18c-6-2-10-6-10-12 6 0 10 4 10 12Z"/><path d="M24 18c6-2 10-6 10-12-6 0-10 4-10 12Z"/><path d="M24 28c-6-2-10-6-10-12 6 0 10 4 10 12Z"/><path d="M24 28c6-2 10-6 10-12-6 0-10 4-10 12Z"/><path d="M24 38c-6-2-10-6-10-12 6 0 10 4 10 12Z"/><path d="M24 38c6-2 10-6 10-12-6 0-10 4-10 12Z"/></symbol>
+  <symbol id="karit" viewBox="0 0 48 48"><path d="M8 14c8-3 24-3 32 0 2 6 2 14 0 20-8 3-24 3-32 0-2-6-2-14 0-20Z"/><path d="M8 14c-2-3 0-5 3-4M40 14c2-3 0-5-3-4M8 34c-2 3 0 5 3 4M40 34c2 3 0 5-3 4"/></symbol>
+  <symbol id="baby" viewBox="0 0 48 48"><circle cx="24" cy="15" r="7"/><path d="M12 42c0-9 5-16 12-16s12 7 12 16"/><path d="M14 36c6 3 14 3 20 0"/><path d="M19 14c1-3 9-3 10 0"/></symbol>
+  <symbol id="eight" viewBox="0 0 48 48"><rect x="7" y="9" width="34" height="32" rx="3"/><path d="M7 17h34"/><path d="M15 6v6M33 6v6"/><path d="M24 23c-3 0-5 2-5 4s2 3 5 3 5 1 5 3-2 4-5 4-5-2-5-4"/><path d="M24 23c3 0 5 2 5 4s-2 3-5 3"/></symbol>
+  <symbol id="sun" viewBox="0 0 48 48"><path d="M8 34h32"/><path d="M14 34a10 10 0 0 1 20 0"/><path d="M24 12v4M10 20l3 2M38 20l-3 2M5 40h38"/></symbol>
+  <symbol id="hands" viewBox="0 0 48 48"><path d="M10 30c-2-6 0-14 4-14l4 6 2-10c3-1 5 1 5 4l1 8 3-6c3-1 5 1 4 4l-2 8 3-4c3 0 4 2 3 5l-4 10c-2 4-6 5-11 5-6 0-10-3-12-9Z"/></symbol>
+  <symbol id="mail" viewBox="0 0 48 48"><rect x="6" y="12" width="36" height="24" rx="3"/><path d="M6 15l18 12 18-12"/></symbol>
+  <symbol id="wa" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.7 11.7 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></symbol>
+  <symbol id="tel" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></symbol>
+  <symbol id="down" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+  <symbol id="save" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/><path d="M19 3v6M16 6h6"/></symbol>
+  <symbol id="share" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.2 10.8l7.6-3.6M8.2 13.2l7.6 3.6"/></symbol>
+  <symbol id="cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+  <symbol id="list" viewBox="0 0 24 24"><rect x="4" y="5" width="4" height="4" rx="1"/><rect x="4" y="15" width="4" height="4" rx="1"/><path d="M11 7h9M11 17h9"/></symbol>
+  <symbol id="book" viewBox="0 0 24 24"><path d="M4 5h6a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H4Z"/><path d="M20 5h-6a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h7Z"/></symbol>
+  <symbol id="seal" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20"/><circle cx="24" cy="24" r="16" stroke-dasharray="2 3"/><text x="24" y="31" text-anchor="middle" font-family="Frank Ruhl Libre,serif" font-size="20" fill="currentColor" stroke="none">ב</text></symbol>
+  <symbol id="qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM19 14h2M14 19h2M19 19h2v2"/></symbol>
+  <symbol id="heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10Z"/></symbol>
+</svg>
+
+<a class="skip" href="#main">דילוג לתוכן</a>
+<header class="topbar">
+  <div class="in">
+    <a class="brand" href="/kodesh/"><img src="/assets/icon-kodesh-192.png" alt="" width="192" height="192"><b>כלי קודש</b></a>
+    <nav class="topnav" aria-label="ניווט ראשי"><a href="/kodesh/#rabanim" aria-current="page">לרבנים</a><a href="/kodesh/taarichim/">מחשבון תאריכים</a><a href="/kodesh/mohalim/">למוהלים</a><a href="/kelim/tamlul/">תמלול</a><a href="/kelim/">כל הכלים</a></nav>
+  </div>
+</header>
+<nav class="crumbs" aria-label="פירורי לחם"><a href="/kodesh/">כלי קודש</a><span>מחשבון גימטריה</span></nav>
+<div class="chesed no-print" role="note"><p class="chesed-t"><b>✓ בחינם</b><b>✓ ללא הגבלה</b><b>✓ בלי פרסומות</b></p><p class="chesed-s">הרבה כלים כאלה ברשת מוגבלים ומלאים בפרסומות. כאן לא, מתוך רצון לעשות חסד.</p></div>
+<main id="main">
+<header class="k-hero">
+  <h1>מחשבון גימטריה</h1>
+  <p class="sub">מקלידים מילה, שם או פסוק, ורואים את הגימטריה תוך כדי הקלדה, עם הערך של כל אות. מספר הכרחי, סופיות גדולות ומספר קטן.</p>
+</header>
+
+<div class="tool" id="gimatria">
+  <section class="k-sec" aria-labelledby="gm-q" style="margin-top:.6rem">
+    <label class="gm-lbl" for="gm-t" id="gm-q">מה לחשב?</label>
+    <textarea id="gm-t" dir="rtl" lang="he" rows="2" placeholder="שלום עליכם" autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
+    <div class="gm-tacts"><button type="button" id="gm-clear">לנקות את השדה</button></div>
+    <div class="gm-seg" id="gm-m" role="group" aria-label="שיטת החישוב">
+      <button type="button" data-v="reg" aria-pressed="true">מספר הכרחי<small>רגיל · ך=20</small></button>
+      <button type="button" data-v="big" aria-pressed="false">סופיות גדולות<small>ך=500 · ץ=900</small></button>
+      <button type="button" data-v="small" aria-pressed="false">מספר קטן<small>בלי אפסים · י=1</small></button>
+    </div>
+
+    <div class="gm-res" aria-live="polite">
+      <div class="lbl" id="gm-l"></div>
+      <div class="big" id="gm-b"></div>
+      <div class="heb" id="gm-h"></div>
+      <dl class="gm-rows">
+        <div><dt>מספר הכרחי</dt><dd id="gm-reg"></dd></div>
+        <div><dt>סופיות גדולות</dt><dd id="gm-big"></dd></div>
+        <div><dt>מספר קטן</dt><dd id="gm-small"></dd></div>
+        <div><dt>אורך</dt><dd id="gm-cnt"></dd></div>
+      </dl>
+    </div>
+    <p class="gm-skip" id="gm-skip" hidden></p>
+    <div class="gm-acts no-print">
+      <button type="button" id="gm-copy">📋 להעתיק</button>
+      <a href="#" id="gm-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> בווטסאפ</a>
+    </div>
+    <div class="gm-same" id="gm-same" hidden><p id="gm-sl"></p><div id="gm-sc"></div></div>
+    <ul class="gm-words" id="gm-words" aria-label="פירוט לכל מילה ולכל אות"></ul>
+  </section>
+
+  <section class="k-sec" aria-labelledby="gm-nh">
+    <label class="gm-lbl" for="gm-n" id="gm-nh">יש לכם מספר? אילו מילים שוות לו</label>
+    <div class="gm-nin"><input id="gm-n" type="text" inputmode="numeric" placeholder="26" autocomplete="off"></div>
+    <div id="gm-nr" aria-live="polite"></div>
+  </section>
+
+  <div class="gm-note"><span>ℹ️</span><span>הכול מחושב בטלפון שלכם, ושום טקסט לא נשלח לשום מקום. ניקוד, טעמים, גרש ומרכאות לא נספרים, ורווח או מקף מפרידים בין מילים. המילים המוכרות באות מרשימה קטנה של מילים, שמות וביטויים.</span></div>
+  <div class="gm-data"><button type="button" id="gm-reset">לחזור לדוגמה</button><button type="button" data-wipe="gimatria">לנקות מהטלפון</button></div>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">מה זה גימטריה ואיך מחשבים אותה</h2>
+  <p>גימטריה היא ערך מספרי של מילה. לכל אחת מ-22 האותיות יש מספר: מא׳ עד ט׳ האחדות, מי׳ עד צ׳ העשרות, ומק׳ עד ת׳ המאות. הגימטריה של מילה היא סכום האותיות שלה, ושל משפט היא סכום כל המילים. בספרות התורנית משתמשים בגימטריה כדי לחבר בין מילים שיש להן אותו ערך.</p>
+  <table class="gm-tbl">
+    <caption>* בשיטת הסופיות הגדולות. במספר הכרחי, השיטה הרגילה, האותיות הסופיות שוות כמו הרגילות: ך=20, ם=40, ן=50, ף=80, ץ=90.</caption>
+    <thead><tr><th>אחדות</th><th>עשרות</th><th>מאות</th></tr></thead>
+    <tbody>
+      <tr><td><b>א</b>1</td><td><b>י</b>10</td><td><b>ק</b>100</td></tr>
+      <tr><td><b>ב</b>2</td><td><b>כ</b>20</td><td><b>ר</b>200</td></tr>
+      <tr><td><b>ג</b>3</td><td><b>ל</b>30</td><td><b>ש</b>300</td></tr>
+      <tr><td><b>ד</b>4</td><td><b>מ</b>40</td><td><b>ת</b>400</td></tr>
+      <tr><td><b>ה</b>5</td><td><b>נ</b>50</td><td><b>ך</b>500*</td></tr>
+      <tr><td><b>ו</b>6</td><td><b>ס</b>60</td><td><b>ם</b>600*</td></tr>
+      <tr><td><b>ז</b>7</td><td><b>ע</b>70</td><td><b>ן</b>700*</td></tr>
+      <tr><td><b>ח</b>8</td><td><b>פ</b>80</td><td><b>ף</b>800*</td></tr>
+      <tr><td><b>ט</b>9</td><td><b>צ</b>90</td><td><b>ץ</b>900*</td></tr>
+    </tbody>
+  </table>
+  <h3>שלוש שיטות במחשבון</h3>
+  <p><b>מספר הכרחי</b> הוא החישוב הרגיל, וכך מחשבים כמעט תמיד: שלום = ש300 + ל30 + ו6 + ם40 = 376. <b>סופיות גדולות</b> נותנות לאותיות הסופיות ערך משלהן אחרי ת׳: ך=500, ם=600, ן=700, ף=800, ץ=900, ולכן שלום בשיטה הזו הוא 936. <b>מספר קטן</b> מוריד את האפסים מכל אות (י=1, ק=1, ש=3), ושלום יוצא 16. המחשבון מראה את שלושתן יחד.</p>
+  <h3>גימטריות מוכרות</h3>
+  <p>יין וסוד שווים שניהם 70, ומכאן המשפט ״נכנס יין יצא סוד״ (עירובין סה ע״א). אהבה ואחד שווים 13. חי הוא 18, ולכן נוהגים לתת צדקה ומתנות בכפולות של 18. משיח ונחש שווים שניהם 358. אחרי כל חישוב המחשבון מציע מילים מוכרות עם אותו ערך, ואפשר גם להקליד מספר ולראות אילו מילים שוות לו.</p>
+  <h3>גימטריה של שם ושל פסוק</h3>
+  <p>מקלידים את השם כמו שהוא נכתב, עם אותיות סופיות, ורואים את הערך של כל אות. דוד הוא 14 ומשה 345. אפשר להדביק גם פסוק שלם מנוקד, עם טעמים: המחשבון מוחק את הניקוד ואת הטעמים ומחשב רק את האותיות. רוצים לומר פסוקי תהילים לפי אותיות השם? יש <a class="gold" href="/kodesh/tehillim/shem/">תהילים לפי שם</a>.</p>
+  <p>המחשבון בחינם, בלי הגבלה, בלי פרסומות ובלי הרשמה. אפשר להעתיק את התוצאה או לשלוח אותה בווטסאפ, ומה שכתבתם נשמר רק בטלפון שלכם.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>מה זה גימטריה?</summary><p>גימטריה היא חישוב של ערך מספרי למילה. לכל אות בעברית יש ערך: א=1 עד ט=9, י=10 עד צ=90, ק=100 עד ת=400. הגימטריה של מילה היא סכום הערכים של האותיות שלה. למשל שלום: ש300 + ל30 + ו6 + ם40 = 376.</p></details>
+  <details><summary>איך מחשבים גימטריה של שם?</summary><p>מחברים את הערך של כל אות בשם. דוד: ד4 + ו6 + ד4 = 14. משה: מ40 + ש300 + ה5 = 345. במחשבון מקלידים את השם ורואים את הסכום ואת הערך של כל אות.</p></details>
+  <details><summary>כמה שוות האותיות הסופיות ך ם ן ף ץ?</summary><p>בשיטה הרגילה (מספר הכרחי) אות סופית שווה כמו האות הרגילה: ך=20, ם=40, ן=50, ף=80, ץ=90. בשיטת הסופיות הגדולות ממשיכים אחרי ת=400: ך=500, ם=600, ן=700, ף=800, ץ=900. המחשבון מראה את שתיהן.</p></details>
+  <details><summary>מה זה מספר קטן בגימטריה?</summary><p>במספר קטן מורידים את האפסים מערך האות: י=1, כ=2, ל=3, ק=1, ר=2, ש=3, ת=4. כך שלום במספר קטן הוא ש3 + ל3 + ו6 + ם4 = 16.</p></details>
+  <details><summary>למה נותנים צדקה ומתנות בכפולות של 18?</summary><p>כי חי בגימטריה הוא 18: ח8 + י10. מי שנותן 18, 36 או 180 שקלים מאחל בזה חיים.</p></details>
+  <details><summary>המחשבון מתחשב בניקוד ובמרכאות?</summary><p>לא. ניקוד, טעמי המקרא, גרש, גרשיים ומרכאות לא נספרים, ולכן ת״ו נספר כמו תו. רווח, מקף או סימן פיסוק מפרידים בין מילים, ואותיות לועזיות וספרות לא נספרות בכלל.</p></details>
+</section>
+<!--/seo-txt-->
+<div class="tool-foot gm-tool-foot">
+  <div class="share-row"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="מחשבון גימטריה בחינם: מילה, שם או פסוק, עם פירוט לכל אות. בלי הרשמה" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר בווטסאפ</a></div>
+  <p class="note" style="margin-top:.8rem"><a class="gold" href="/kodesh/">כל כלי הקודש</a> · חינם · בלי הרשמה · מה שכתבתם נשאר בטלפון שלכם</p>
+</div>
+
+<section class="k-sec rel no-print" aria-labelledby="rel-h">
+  <h2 id="rel-h">עוד כלים בחינם שאולי יעזרו</h2>
+  <div class="dom"><a href="/kodesh/hachlama/"><b>הודעות החלמה להורים</b><span>למוהלים: הודעות ווטסאפ מוכנות להורים, כל אחת בזמן שלה. מהשיחה הראשונה, יום לפני הברית וערב…</span></a><a href="/kodesh/hodaot/"><b>הודעות מוכנות לחיילים</b><span>הודעות קצרות וחמות של רב היחידה לחיילים: לפני שבת וחג, לפני יציאה לשטח, יציאה הביתה, תזכורת…</span></a><a href="/kodesh/kartis-mohel/"><b>כרטיס ביקור דיגיטלי למוהל</b><span>למוהלים: ממלאים שם, טלפון, אזור ונוסחים, ומקבלים כרטיס ביקור דיגיטלי עם שמירת איש קשר, ווטסאפ…</span></a><a href="/kodesh/kartis/"><b>כרטיס ביקור לרב ולבית כנסת</b><span>בונים כרטיס ביקור דיגיטלי תוך דקה: טלפון, ווטסאפ, ניווט בוויז, שמירת איש קשר וזמני תפילות…</span></a></div>
+  <p class="rel-all"><a class="gold" href="/kodesh/">לכל הכלים של ״כלי קודש״ ←</a></p>
+</section>
+
+</main>
+<section class="fb no-print" id="fb" aria-labelledby="fb-h" data-fb>
+  <div class="in">
+    
+    <p class="fb-q" id="fb-h">הכלי עזר לך?</p>
+    <div class="fb-rate"><button class="btn btn-line btn-sm" type="button" data-rate="yes">👍 כן</button><button class="btn btn-line btn-sm" type="button" data-rate="no">👎 לא ממש</button></div>
+    <p class="fb-thanks" role="status" hidden></p>
+    <p class="fb-share" hidden>מכירים מישהו שזה יעזור לו? <a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" target="_blank" rel="noopener">💬 לשלוח לו את הכלי בווטסאפ</a></p>
+    <details class="fb-more">
+      <summary>💡 יש לך רעיון איך לשפר? אשמח מאוד</summary>
+      <form class="k-form lead-form" data-kform="shipur" action="https://script.google.com/macros/s/AKfycbxgWe4xxaclqfzmOD_E0hOg2XDr2genZZyvAcf0hpHw_AHkgvQAqDop-XjdURdARYNx-Q/exec" method="POST">
+        <div class="hp" aria-hidden="true"><label>אל תמלאו שדה זה <input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></div>
+        <div class="field"><label for="fb-what">מה היה עושה את הכלי טוב יותר?</label><textarea id="fb-what" name="what" required maxlength="400" placeholder="משהו שחסר, משהו שלא עבד, או רעיון חדש. כל מילה עוזרת."></textarea></div>
+        <div class="field"><label for="fb-name">שם <span class="opt">(לא חובה)</span></label><input id="fb-name" name="name" type="text" autocomplete="given-name" maxlength="40"><label class="check fb-nameok"><input type="checkbox" name="name_ok" value="1"> אפשר לכתוב את השם הפרטי שלי ליד השיפור, כשהוא מוכן</label></div>
+        <div class="field"><label for="fb-contact">טלפון או מייל <span class="opt">(לא חובה, רק אם תרצה שאעדכן אותך כשזה מוכן)</span></label><input id="fb-contact" name="contact" type="text" maxlength="60" dir="ltr" style="text-align:right" placeholder="050-0000000 או name@gmail.com"></div>
+        <button class="btn btn-gold btn-block" type="submit">לשלוח לגילעד</button>
+        <p class="privacy">או <a class="gold" href="https://wa.me/972584049049" data-fb-wa target="_blank" rel="noopener">לכתוב לי בווטסאפ</a>. אפשר לשלוח גם בלי שם ובלי פרטים. אם השארת פרטים, הם נשמרים אצלי בלבד, רק כדי לחזור אליך. <a href="/mohel/privacy/">פרטיות</a></p>
+      </form>
+    </details>
+    <p class="fb-note">אני קורא כל הצעה, בשמחה ובתודה. מה שייבנה בעקבות הצעה שלך יופיע כאן, ברשימה "שופר בזכותכם". <a class="gold" href="/kelim/shipurim/">מה כבר שיפרנו בכלים אחרים ←</a></p>
+  </div>
+</section>
+<footer class="site-foot ft">
+  <div class="ft-cta">
+    <div><b class="ft-h">לא מצאתם את הכלי שחיפשתם?</b><p>ספרו לי מה קשה לכם לעשות, במילים שלכם. כלי קטן אני בונה בחינם, לכולם.</p></div>
+    <div class="ft-btns">
+      <a class="btn btn-gold btn-sm" href="/kelim/#rotzim" data-ft="cta_form">לספר לי על כלי</a>
+      <a class="btn btn-line btn-sm" href="https://wa.me/972584049049?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%92%D7%99%D7%9C%D7%A2%D7%93%2C%20%D7%99%D7%A9%20%D7%9C%D7%99%20%D7%A8%D7%A2%D7%99%D7%95%D7%9F%20%D7%9C%D7%9B%D7%9C%D7%99%3A%20" target="_blank" rel="noopener" data-ft="cta_wa">בווטסאפ</a>
+      <a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מיזם הכלים של גילעד רחמים: כלים פשוטים, בחינם, לכל מי שצריך הנגשה" target="_blank" rel="noopener" data-ft="cta_share">לשלוח לחבר</a>
+    </div>
+  </div>
+  <div class="ft-help" role="note">
+    <span class="ft-help-t">קשה עכשיו? יש עם מי לדבר, בכל שעה:</span>
+    <a href="tel:*8944" data-ft="line_8944"><b dir="ltr">*8944</b> נפש אחת</a>
+    <a href="tel:1201" data-ft="line_1201"><b>1201</b> ער"ן</a>
+    <a href="tel:*3362" data-ft="line_3362"><b dir="ltr">*3362</b> נט"ל</a>
+    <a class="urgent" href="tel:101" data-ft="line_101"><b>101</b> מד"א, בסכנה</a>
+    <a class="go" href="/nefesh/rega/" data-ft="line_rega">לדף "רגע קשה" ←</a>
+  </div>
+  <div class="cols">
+    <div><b>המיזם</b><a href="/kelim/" data-ft="m_home">דף הבית</a><a href="/kelim/#movilim" data-ft="m_movilim">הכלים המובילים</a><a href="/kelim/#tchumim" data-ft="m_tchumim">כל 13 התחומים</a><a href="/kelim/#sipur" data-ft="m_sipur">למה הקמתי את זה</a><a href="/kelim/#mi" data-ft="m_mi">מי אני</a><a href="/kelim/shipurim/" data-ft="m_shipurim">שיפרנו בזכותכם</a></div>
+    <div class="ft-doms"><b>כל התחומים</b><a href="/kodesh/" data-ft="dom_kodesh">כלי קודש</a><a href="/nefesh/" data-ft="dom_nefesh">נפש ויום-יום</a><a href="/limudim/" data-ft="dom_limudim">לימודים</a><a href="/kelim/shikum/" data-ft="dom_kelim_shikum">זכויות ושיקום</a><a href="/kelim/avoda/" data-ft="dom_kelim_avoda">עבודה וחיפוש עבודה</a><a href="/kesef/" data-ft="dom_kesef">כסף</a><a href="/esek/" data-ft="dom_esek">עסק קטן</a><a href="/kelim/tochen/" data-ft="dom_kelim_tochen">יצירת תוכן</a><a href="/bait/" data-ft="dom_bait">משפחה ובית</a><a href="/kelim/briut/" data-ft="dom_kelim_briut">בריאות</a><a href="/kelim/machshev/" data-ft="dom_kelim_machshev">מחשב וטלפון</a><a href="/kelim/miluim/" data-ft="dom_kelim_miluim">צבא ומילואים</a><a href="/kelim/kesharim/" data-ft="dom_kelim_kesharim">חברה וקשרים</a></div>
+    <div><b>הכי שימושיים</b><a href="/kelim/tamlul/" data-ft="top_kelim_tamlul">תמלול מהטלפון</a><a href="/kelim/shir/karaoke/" data-ft="top_karaoke">קריוקי לחברים 🎤</a><a href="/nefesh/rega/" data-ft="top_nefesh_rega">רגע קשה</a><a href="/kelim/shikum/vaada/" data-ft="top_kelim_shikum_vaada">הכנה לוועדה</a><a href="/kelim/machshev/video/" data-ft="top_kelim_machshev_video">הקטנת סרטון</a><a href="/kelim/machshev/pdf/" data-ft="top_kelim_machshev_pdf">הקטנת PDF</a><a href="/kelim/avoda/korot/" data-ft="top_kelim_avoda_korot">קורות חיים</a><a href="/kesef/taktziv/" data-ft="top_kesef_taktziv">תקציב משפחתי</a><a href="/kodesh/taarichim/" data-ft="top_kodesh_taarichim">מחשבון תאריכים</a><a href="/limudim/kartisiot/" data-ft="top_limudim_kartisiot">כרטיסיות חזרה</a><a href="/kodesh/mohalim/" data-ft="top_kodesh_mohalim">כלים למוהלים</a></div>
+    <div><b>להשתתף</b><a href="/kelim/#rotzim" data-ft="p_rotzim">רוצים כלי? ספרו לי</a><a href="/kelim/#litmoch" data-ft="p_litmoch">לתמוך במיזם</a><a href="/kelim/#truma" data-ft="p_truma">לעזור בזמן או ברעיון</a><a href="/kelim/#botim" data-ft="p_botim">הבוטים בטלגרם</a><span data-install-wrap hidden><button class="ft-link" type="button" data-install>להתקין כאפליקציה</button></span></div>
+    <div><b>קשר ומידע</b><a href="https://wa.me/972584049049" data-ft="c_wa"><span dir="ltr" style="white-space:nowrap">058-404-9049</span> (ווטסאפ)</a><a href="mailto:gilad4049@gmail.com" data-ft="c_mail">gilad4049@gmail.com</a><a href="/mohel/" data-ft="c_mohel">אתר המוהל</a><a href="/kelim/pratiut/" data-ft="c_privacy">פרטיות ותנאי שימוש</a><a href="/mohel/negishut/" data-ft="c_negishut">הצהרת נגישות</a><a href="/kelim/machshev/kasher/" data-ft="c_kasher">גם בטלפון כשר ומסונן</a></div>
+  </div>
+  <ul class="ft-promise">
+    <li>✓ הכול בחינם ובלי פרסומות</li><li>✓ בלי הרשמה ובלי סיסמה</li><li>✓ המידע נשמר רק אצלכם בטלפון</li><li>✓ עובד בטלפון ובמחשב</li>
+  </ul>
+  <div class="end"><span>בס"ד · כלי קודש · מיזם של גילעד רחמים אביעד, נכה צה"ל</span><span>כלים פשוטים, בחינם, באהבה · <a class="ft-up" href="#" data-ft="up">לראש הדף ↑</a></span></div>
+  <p class="copy">© 2026 גילעד רחמים אביעד · כל הזכויות שמורות. אין להעתיק, לשכפל או לפרסם תוכן, עיצוב או קוד מהאתר בלי אישור בכתב. מותר ומומלץ לשתף קישור לכלים. · <a href="/kelim/pratiut/" data-ft="copy_pratiut">פרטיות ותנאי שימוש</a></p>
+</footer>
+<script>document.addEventListener('click',function(e){var a=e.target.closest('[data-ft]');if(!a)return;if(a.getAttribute('data-ft')==='up'){e.preventDefault();window.scrollTo({top:0,behavior:'smooth'});}if(window.gtag)gtag('event','footer_click',{link:a.getAttribute('data-ft')});});</script>
+<div class="install-bar" id="install-bar" hidden>
+  <span data-install-text>📲 כלי קודש במסך הבית, כמו אפליקציה: נכנסים בלחיצה, ורוב הכלים עובדים גם בלי אינטרנט.</span>
+  <button class="btn btn-gold btn-sm" type="button" data-install>להתקין</button>
+  <button class="x" type="button" data-install-close aria-label="סגירה">×</button>
+</div>
+<script src="/assets/kelim.js?v=c681b967" defer></script>
+<script src="/assets/kodesh-gimatria.js?v=4b2189d5" defer></script>
+</body>
+</html>
