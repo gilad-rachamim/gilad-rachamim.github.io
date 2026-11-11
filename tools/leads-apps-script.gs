@@ -112,7 +112,9 @@ function bakashaMail(p) {
     var url = /^https:\/\/hakelim\.com\//.test(String(j.url)) ? String(j.url) : 'https://' + board + '/';
     subject = 'הכלי שביקשתם מוכן 🎉';
     inner = 'שלום,<br><br>ביקשתם כלי (בקשה ' + no + '):<br>' + what + '<br><br>הוא מוכן, בחינם:<br><a href="' + esc(url) + '" style="color:#1a5fb4;font-weight:bold">' + esc(url.replace(/^https:\/\//, '').replace(/\/$/, '')) + '</a><br><br>' +
-      'משהו חסר בו? בתחתית הכלי יש "יש לך רעיון איך לשפר?", ואני קורא כל הצעה.<br>ואם הוא עזר לכם, שלחו אותו למי שעוד צריך.';
+      'משהו חסר בו? בתחתית הכלי יש "יש לך רעיון איך לשפר?", ואני קורא כל הצעה.<br>ואם הוא עזר לכם, שלחו אותו למי שעוד צריך.<br><br>' +
+      'רוצים לפרגן? מילה חמה משמחת אותי מאוד: פשוט ענו למייל הזה. ומי שרוצה להשתתף במיזם, כל אחד לפי מה שמתאים לו:<br>' +
+      '<a href="https://hakelim.com/kelim/#litmoch" style="color:#1a5fb4;font-weight:bold">hakelim.com/kelim/#litmoch</a>';
   }
   var html = '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:16px;line-height:1.65;color:#222;max-width:560px">' + inner +
     '<div style="margin-top:16px;padding-top:10px;border-top:1px solid #eee;font-size:13px;color:#666">גילעד רחמים<br>מיזם הכלים · <a href="https://hakelim.com/kelim/" style="color:#666">hakelim.com/kelim</a></div></div>';
