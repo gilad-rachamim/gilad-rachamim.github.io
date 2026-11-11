@@ -334,23 +334,26 @@ def seo_related(p):
     return ('\n<section class="k-sec rel no-print" aria-labelledby="rel-h">\n  <h2 id="rel-h">עוד כלים בחינם שאולי יעזרו</h2>\n  <div class="dom">'
             + "".join(card(c) for c in pick) + f"</div>\n  {more}\n</section>\n")
 
-# ---------- "בחינם, בלי הגבלה ובלי פרסומות": פס קטן בראש כל דף בתתי-האתרים ----------
+# ---------- "בחינם, ללא הגבלה ובלי פרסומות": פס קטן בראש כל דף בתתי-האתרים ----------
 # גילעד (11.11.2026): "אצלי זה גם בחינם גם ללא הגבלה וגם בלי פרסומות!! רק מרצון של חסד!!"
-# כלי עם מכסה אמיתית (עולה כסף בענן) לא מקבל "בלי הגבלה" – אסור לכתוב משהו שלא נכון.
-# כלי חדש עם מכסה (לכתובת, ליום, לחודש) = שורה כאן. הגנה מספאם (X פעולות ברצף) היא לא מכסה.
-CHESED_LIMITED = {
-    "/kelim/tamlul/": "60 דקות תמלול בחודש",
-    "/kodesh/video-shiur/": "דקות התמלול של החודש",
-    "/kelim/shir/karaoke/": "5 שירים חדשים ביום",
-    "/kelim/shir/clip/": "מכסה יומית לעוזר",
-    "/kelim/shir/haklata/": "מכסה יומית לעוזר",
-    "/kelim/shir/lachan/": "מכסה יומית לעוזר",
-    "/kelim/shir/milim/": "מכסה יומית לעוזר",
-    "/kelim/tochen/chaye/": "2 החייאות ביום",
-    "/kelim/tochen/studio/": "מכסה יומית לעוזר העיצוב",
-    "/limudim/poter/": "12 פתרונות ביום",
-    "/limudim/machberet/": "מכסה יומית לבדיקה",
-    "/kelim/chashiva/chidon/": "10 שאלות ביום",
+# ועל כלים עם מכסה: "מי שיהיה טיפה שותף זה יהיה לו ללא הגבלה אז כן זה נכון שאני כותב ללא הגבלה!!"
+# CHESED_PARTNER = כלי עם מכסה שיש בו מסלול שותפות שפותח אותה -> "ללא הגבלה" + שורה על שותפים.
+# CHESED_NO_PATH = כלי עם מכסה בלי מסלול שותפות (עדיין) -> בלי "ללא הגבלה". כשמוסיפים לו קוד שותף ב-Worker: להעביר ל-CHESED_PARTNER.
+# הגנה מספאם (X פעולות ברצף) או משחק יומי היא לא מכסה.
+CHESED_PARTNER = {
+    "/kelim/tamlul/": "60 דקות בחודש; שותף 18/36 ש״ח = ללא הגבלה",
+    "/kodesh/video-shiur/": "אותן דקות של התמלול",
+    "/kelim/shir/karaoke/": "5 שירים חדשים ביום; שותפות בבוט = ללא הגבלה",
+    "/kelim/tochen/chaye/": "2 החייאות ביום; קוד שותף (partner_codes.py) = ללא הגבלה",
+}
+CHESED_NO_PATH = {
+    "/kelim/shir/clip/": "shir-worker PER_IP 40",
+    "/kelim/shir/haklata/": "shir-worker PER_IP 40",
+    "/kelim/shir/lachan/": "shir-worker PER_IP 40",
+    "/kelim/shir/milim/": "shir-worker PER_IP 40",
+    "/kelim/tochen/studio/": "studio-worker PER_IP 40",
+    "/limudim/poter/": "poter-worker PER_IP 12",
+    "/limudim/machberet/": "poter-worker PER_IP 12",
 }
 CHESED_SKIP = SEO_SKIP | {"404"}
 CHESED_SUB = "הרבה כלים כאלה ברשת מוגבלים ומלאים בפרסומות. כאן לא, מתוך רצון לעשות חסד."
@@ -358,14 +361,16 @@ CHESED_SUB = "הרבה כלים כאלה ברשת מוגבלים ומלאים ב
 def chesed_band(p, meta):
     if meta.get("noindex") or meta.get("no_chesed") or p.rstrip("/").rsplit("/", 1)[-1] in CHESED_SKIP:
         return ""
-    lim = lambda c: any(c.startswith(l) for l in CHESED_LIMITED)
+    nop = lambda c: any(c.startswith(l) for l in CHESED_NO_PATH)
     below = [c for c in INDEX if c != p and c.startswith(p)]
-    if lim(p) or (below and 2 * sum(map(lim, below)) >= len(below)):  # כלי עם מכסה, או מרכז שרוב הכלים בו כאלה
+    if nop(p) or (below and 2 * sum(map(nop, below)) >= len(below)):  # מכסה בלי מסלול שותפות, או מרכז שרוב הכלים בו כאלה
         chips, sub = ["בחינם", "בלי פרסומות", "בלי הרשמה"], "הרבה כלים כאלה ברשת עולים כסף ומלאים בפרסומות. כאן לא, מתוך רצון לעשות חסד."
-    elif any(map(lim, below)):  # דף מרכז שיש מתחתיו כלי עם מכסה
-        chips, sub = ["הכול בחינם", "בלי פרסומות", "רוב הכלים בלי שום הגבלה"], CHESED_SUB
+    elif any(p.startswith(l) for l in CHESED_PARTNER):
+        chips, sub = ["בחינם", "ללא הגבלה", "בלי פרסומות"], "לכולם מכסה בחינם, ולשותפים במיזם ללא הגבלה. בלי פרסומות, מתוך רצון לעשות חסד."
+    elif any(map(nop, below)):  # דף מרכז שיש מתחתיו כלי כזה
+        chips, sub = ["הכול בחינם", "בלי פרסומות", "רוב הכלים ללא שום הגבלה"], CHESED_SUB
     else:
-        chips, sub = ["בחינם", "בלי הגבלה", "בלי פרסומות"], CHESED_SUB
+        chips, sub = ["בחינם", "ללא הגבלה", "בלי פרסומות"], CHESED_SUB
     return ('<div class="chesed no-print" role="note"><p class="chesed-t">' + "".join(f"<b>✓ {c}</b>" for c in chips)
             + f'</p><p class="chesed-s">{sub}</p></div>')
 
