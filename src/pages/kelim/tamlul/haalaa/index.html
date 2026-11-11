@@ -1,0 +1,38 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tamlul",
+  "tool": "tamlul_haalaa",
+  "title": "העלאת הקלטה ארוכה לבוט התמלול | הכלים של גילעד רחמים",
+  "description": "דף העלאה אישי לבוט התמלול בטלגרם: בוחרים הקלטה ארוכה מהטלפון או מהמחשב, והתמלול מגיע לטלגרם.",
+  "og_title": "העלאת הקלטה לבוט התמלול",
+  "noindex": true,
+  "no_rel": true,
+  "no_chesed": true,
+  "crumbs": [["תמלול", "/kelim/tamlul/"], ["העלאה לבוט", null]],
+  "head": "<style>.ha-pick label.up{display:block;text-align:center;padding:1.4rem 1rem;border:2px dashed var(--gold-soft);border-radius:16px;cursor:pointer;color:var(--cream);font-size:1.15rem}.ha-pick label.up small{display:block;color:var(--muted);font-size:.95rem;margin-top:.3rem}.ha-pick input[type=file]{position:absolute;width:1px;height:1px;opacity:0}#ha-file-info{margin:.8rem 0 0;color:var(--cream);text-align:center;word-break:break-word}#ha-go{margin-top:.9rem}#ha-status{margin-top:1rem;padding:.9rem 1rem;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--cream);line-height:1.7}.ha-bar{height:12px;border-radius:8px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:.7rem}.ha-bar i{display:block;height:100%;width:0;background:var(--gold);transition:width .3s}.ha-ok{font-size:1.15rem}.ha-err{color:#f0b3ad}#ha-done .btn{margin-top:.8rem}</style>",
+  "foot": "<script src=\"/assets/tamlul-haalaa.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>העלאת הקלטה לבוט התמלול</h1>
+  <p class="sub">הקלטה ארוכה, גם של כמה שעות. בוחרים את הקובץ, והתמלול מגיע אליכם בטלגרם.</p>
+</header>
+<div class="tool" id="haalaa">
+  <div class="panel ha-pick" id="ha-pick" hidden>
+    <label class="up" for="ha-file">📂 לבחור את ההקלטה<small>קובץ שמע או וידאו מהטלפון או מהמחשב</small></label>
+    <input id="ha-file" type="file" accept="audio/*,video/*,.opus,.ogg,.oga,.m4a,.mp3,.wav,.aac,.amr,.flac,.webm,.mp4,.mov,.mkv,.3gp">
+    <p id="ha-file-info" hidden></p>
+    <button class="btn btn-gold btn-block" id="ha-go" type="button" hidden>📤 להעלות ולתמלל</button>
+  </div>
+  <div id="ha-status" role="status" aria-live="polite">⏳ בודק את הקישור…</div>
+  <div id="ha-done" hidden></div>
+
+  <section class="k-sec" style="padding-inline:0">
+    <h2>טוב לדעת</h2>
+    <ul class="list">
+      <li><strong>איפה הקובץ בטלפון</strong><span>הקלטה שקיבלתם בטלגרם נשמרת בדרך כלל בתיקייה Telegram, בתוך "הורדות". הקלטה מהמקליט של הטלפון: בתיקייה "הקלטות".</span></li>
+      <li><strong>כמה זמן זה לוקח</strong><span>ההעלאה תלויה באינטרנט שלכם. אחרי שהיא נגמרת, שעה של הקלטה מתומללת בכמה דקות, והתמלול מגיע לטלגרם. אפשר לסגור את הדף.</span></li>
+      <li><strong>פרטיות</strong><span>הקובץ נשמר בשרת רק עד שהתמלול מוכן, ואז נמחק.</span></li>
+      <li><strong>אין לכם קישור?</strong><span>שלחו לבוט התמלול בטלגרם את ההקלטה, או כתבו לו /upload, והוא ישלח לכם קישור אישי.</span></li>
+    </ul>
+  </section>
+</div>
