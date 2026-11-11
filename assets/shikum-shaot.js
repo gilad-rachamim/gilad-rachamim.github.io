@@ -12,7 +12,7 @@
   function blankWeek() { var w = []; for (var i = 0; i < 7; i++) w.push({ on: 0, a: '08:00', b: '14:00' }); return w; }
   function demoState() {
     var w = blankWeek(); for (var i = 0; i < 5; i++) w[i].on = 1; w[5] = { on: 1, a: '08:00', b: '12:00' };
-    var s = { demo: 1, d: { emp: 'משה כהן', empId: '', wrk: 'מריה סנטוס', wrkId: '', to: 'אגף השיקום', mail: '' }, week: w, month: defMonth(), m: {} };
+    var s = { demo: 1, d: { emp: 'משה כהן', empId: '', empAddr: 'הרצל 12, רחובות', empTel: '050-0000000', wrk: 'מריה סנטוס', wrkId: '', wrkAddr: 'הרצל 12, רחובות', wrkTel: '052-0000000', to: 'אגף השיקום', mail: '' }, week: w, month: defMonth(), m: {} };
     s.m[s.month] = fillFrom(w, s.month); var k = Object.keys(s.m[s.month]);
     if (k[3]) s.m[s.month][k[3]] = { a: '', b: '', n: 'חופש' };
     var lng = k.filter(function (d) { return +d > 6 && s.m[s.month][d].a; })[0];
@@ -38,7 +38,7 @@
   function cur() { if (!st.m[st.month]) st.m[st.month] = fillFrom(st.week, st.month); return st.m[st.month]; }
 
   // ---------- פרטים ----------
-  var F = { emp: 'sh-emp', empId: 'sh-emp-id', wrk: 'sh-wrk', wrkId: 'sh-wrk-id', to: 'sh-to', mail: 'sh-mail' };
+  var F = { emp: 'sh-emp', empId: 'sh-emp-id', empAddr: 'sh-emp-addr', empTel: 'sh-emp-tel', wrk: 'sh-wrk', wrkId: 'sh-wrk-id', wrkAddr: 'sh-wrk-addr', wrkTel: 'sh-wrk-tel', to: 'sh-to', mail: 'sh-mail' };
   function showDemo() { $('sh-demo').hidden = !st.demo; }
   function fillFields() { Object.keys(F).forEach(function (k) { $(F[k]).value = st.d[k] || ''; }); $('sh-month').value = st.month; }
   function endDemo(keep) {
@@ -130,9 +130,13 @@
       rows += '<tr' + (w === 6 ? ' class="sat"' : '') + '><td>' + d + '.' + mo + '</td><td>' + DN[w] + '</td><td>' + (m ? r.a : '') + '</td><td>' + (m ? r.b : '') + '</td><td>' + (m ? hm(m) : '') + '</td><td class="nt">' + esc(r.n || '') + '</td></tr>';
     }
     var D = st.d;
-    $('sh-paper').innerHTML = '<h3>דוח שעות עבודה חודשי – עובד/ת סיעודי/ת</h3><p class="sub">חודש ' + esc(monthName(st.month)) + (D.to ? ' · אל: ' + esc(D.to) : '') + '</p>' +
-      '<div class="info"><div><b>המעסיק:</b> ' + esc(D.emp) + '</div><div><b>ת"ז:</b> ' + esc(D.empId) + '</div><div><b>העובד/ת:</b> ' + esc(D.wrk) + '</div><div><b>ת"ז / דרכון:</b> ' + esc(D.wrkId) + '</div>' +
-      '<div><b>ימי עבודה:</b> ' + t.d + '</div><div><b>סה"כ שעות:</b> ' + hm(t.m) + ' (' + hdec(t.m) + ')</div></div>' +
+    function who(title, n, id, addr, tel, idl) {
+      return '<div class="pp"><h4>' + title + '</h4><div><b>שם:</b> ' + esc(n) + '</div>' + (id ? '<div><b>' + idl + ':</b> ' + esc(id) + '</div>' : '') +
+        '<div><b>כתובת:</b> ' + esc(addr) + '</div><div><b>טלפון:</b> <span dir="ltr">' + esc(tel) + '</span></div></div>';
+    }
+    $('sh-paper').innerHTML = '<h3>דוח שעות עבודה חודשי – עובד/ת סיעודי/ת</h3><p class="mon">חודש הדיווח: ' + esc(monthName(st.month)) + '</p>' + (D.to ? '<p class="sub">אל: ' + esc(D.to) + '</p>' : '') +
+      '<div class="info">' + who('פרטי המעסיק', D.emp, D.empId, D.empAddr, D.empTel, 'ת"ז') + who('פרטי העובד/ת', D.wrk, D.wrkId, D.wrkAddr, D.wrkTel, 'ת"ז / דרכון') +
+      '<div class="tot"><b>ימי עבודה:</b> ' + t.d + ' &nbsp;·&nbsp; <b>סה"כ שעות:</b> ' + hm(t.m) + ' (' + hdec(t.m) + ')</div></div>' +
       '<table><thead><tr><th>תאריך</th><th>יום</th><th>משעה</th><th>עד שעה</th><th>שעות</th><th>הערה</th></tr></thead><tbody>' + rows + '</tbody>' +
       '<tfoot><tr><td colspan="4">סה"כ בחודש</td><td>' + hm(t.m) + '</td><td class="nt">' + t.d + ' ימי עבודה</td></tr></tfoot></table>' +
       '<p class="decl">אנו מאשרים שהשעות בדוח הן השעות שבהן העובד/ת עבד/ה בפועל בחודש זה.</p>' +
@@ -164,7 +168,8 @@
   $('sh-pdf').addEventListener('click', function () {
     var b = this; if (b.disabled) return;
     var miss = [];
-    if (!st.d.emp) miss.push('שם המעסיק'); if (!st.d.wrk) miss.push('שם העובד/ת'); if (!totals().m) miss.push('שעות');
+    if (!st.d.emp) miss.push('שם המעסיק'); if (!st.d.wrk) miss.push('שם העובד/ת');
+    if (!st.d.empAddr || !st.d.empTel) miss.push('כתובת וטלפון של המעסיק'); if (!st.d.wrkAddr || !st.d.wrkTel) miss.push('כתובת וטלפון של העובד/ת'); if (!totals().m) miss.push('שעות');
     if (!sig['sh-sig1'] || !sig['sh-sig2']) miss.push('שתי החתימות');
     if (st.demo) miss.unshift('הדוגמה עדיין כאן: כתבו את השמות שלכם');
     if (miss.length && !confirm('חסר: ' + miss.join(', ') + '.\nלהכין PDF בכל זאת?')) return;

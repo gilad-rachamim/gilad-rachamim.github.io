@@ -1,4 +1,14 @@
 /* דוח שעות חודשי למטפל (/kelim/shikum/shaot/) */
+/* נגישות (12.11.2026, בקשה של יובל): פונט Arial בכל הדף, וניגודיות גבוהה בין הטקסט לרקע.
+   הקובץ נטען רק בדף הזה, ולכן ההגדרות לא משנות דפים אחרים. */
+:root{--serif:Arial,"Noto Sans Hebrew",sans-serif;--sans:Arial,"Noto Sans Hebrew",sans-serif;--muted:#dfe5e2;--body:#f3f6f4;--parchment:#f7f3e8;--cream:#ffffff}
+body,body button,body input,body select,body textarea,body h1,body h2,body h3,body h4,body p,body a,body span,body label,body small,body b{font-family:Arial,"Noto Sans Hebrew",sans-serif!important}
+body .tool input,body .tool select,body .tool textarea{color:#fff;border-color:#a7b2ad;background:rgba(255,255,255,.07)}
+body .tool input::placeholder{color:#c3ccc8;opacity:1}
+body .tool input:focus,body .tool button:focus-visible,body .tool a:focus-visible,body .tool canvas:focus-visible{outline:3px solid #ffd479;outline-offset:2px}
+body .disclaimer,body .k-hero .sub,body .opt{color:#e9eeeb!important}
+.ts-day .d small,.ts-step h2 small,.ts-hint,.ts-sum span{color:#e2e8e5}
+.ts-day .nt button{color:#e9eeeb;border-color:#8e9a95}
 .ts-step{margin-top:1.6rem}
 .ts-step h2{font-family:var(--serif);color:var(--cream);font-size:1.3rem;display:flex;gap:.55rem;align-items:baseline;flex-wrap:wrap;margin-bottom:.6rem}
 .ts-step h2 small{font-family:var(--sans);font-size:.9rem;color:var(--muted)}
@@ -35,7 +45,7 @@
 .ts-sig label span{color:var(--muted);font-size:.9rem}
 .ts-sig canvas{display:block;width:100%;aspect-ratio:600/220;background:#fff;border-radius:12px;border:2px dashed var(--gold-soft);touch-action:none;cursor:crosshair}
 .ts-sig canvas.signed{border-style:solid;border-color:var(--gold)}
-.ts-sig .linkish{margin-top:.25rem}
+.ts-sig .linkish{margin-top:.35rem;background:transparent;border:1px solid #a7b2ad;color:#fff;border-radius:999px;padding:.3rem .9rem;font:inherit;font-size:.95rem;cursor:pointer}
 .ts-hint{color:var(--muted);font-size:.9rem;margin-top:.5rem}
 .ts-out{margin-top:.8rem;border:1px solid var(--gold-soft);border-radius:14px;padding:.8rem;background:rgba(227,183,101,.07)}
 .ts-out .res{color:var(--parchment);text-align:center}
@@ -44,9 +54,13 @@
 .ts-prevh{font-family:var(--serif);color:var(--cream);font-size:1.3rem;text-align:center;margin:2rem 0 .6rem}
 .ts-paperwrap{overflow-x:auto;padding:0 0 1rem}
 .ts-paper{width:711px;margin:0 auto;background:#fff;color:#111;padding:26px 28px;font-family:Arial,"Noto Sans Hebrew",sans-serif;font-size:12.5px;line-height:1.35;direction:rtl;border-radius:6px;box-shadow:0 2px 14px rgba(0,0,0,.35)}
-.ts-paper h3{font-size:19px;text-align:center;margin:0 0 4px;color:#111;font-family:inherit}
+.ts-paper h3{font-weight:700;font-size:19px;text-align:center;margin:0 0 4px;color:#111;font-family:inherit}
 .ts-paper .sub{text-align:center;color:#444;margin:0 0 10px}
+.ts-gap{margin-top:.9rem;padding-top:.9rem;border-top:1px dashed var(--line)}
+.ts-paper .mon{text-align:center;font-size:16px;font-weight:700;margin:2px 0 4px;color:#111}
 .ts-paper .info{display:grid;grid-template-columns:1fr 1fr;gap:3px 18px;border:1px solid #999;padding:7px 10px;margin-bottom:10px}
+.ts-paper .info h4{font-size:13px;margin:0 0 2px;border-bottom:1px solid #bbb;font-family:inherit;color:#111}
+.ts-paper .info .tot{grid-column:1/-1;border-top:1px solid #bbb;padding-top:4px;margin-top:3px;text-align:center}
 .ts-paper .info b{font-weight:700}
 .ts-paper table{width:100%;border-collapse:collapse}
 .ts-paper th,.ts-paper td{border:1px solid #999;padding:2px 5px;text-align:center;height:17px}
