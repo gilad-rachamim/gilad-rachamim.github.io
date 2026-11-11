@@ -166,7 +166,7 @@
       else ev(kind === 'tool' ? 'request_tool' : 'donate_click', kind === 'tool' ? { domain: g('domain'), use: g('use') } : { how: 'form', what: checks });
       var finish = function () {
         form.innerHTML = '<div class="done" role="status">' + (kind === 'shipur' ? 'תודה רבה! 🙏 קיבלתי את ההצעה. אני קורא כל אחת, ואעדכן אותך כשהכלי ישתפר.' : kind === 'tool'
-          ? 'תודה רבה! קיבלתי את הרעיון. אני עובר על כל בקשה, ואחזור אליכם בווטסאפ.'
+          ? 'תודה רבה! קיבלתי את הרעיון, והוא נשמר. את כל הבקשות ומה נבנה רואים בדף בקשת הכלי.'
           : 'תודה מכל הלב! קיבלתי, ואחזור אליכם בווטסאפ.') + '</div>';
       };
       fetch(form.getAttribute('action'), { method: 'POST', body: fd, mode: 'no-cors', keepalive: true }).catch(function () {}).then(finish);

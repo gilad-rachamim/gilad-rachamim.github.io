@@ -22,7 +22,7 @@ SITES = {
         "og": "og-kelim.jpg?v=3", "icon": "kelim",
         "desc": "כלים פשוטים, בחינם, לכל מי שצריך הנגשה",
         "nav": [("tchumim", "/kelim/#tchumim", "התחומים"), ("tamlul", "/kelim/tamlul/", "תמלול"),
-                ("kodesh", "/kodesh/", "כלי קודש"), ("rotzim", "/kelim/#rotzim", "רוצים כלי?"),
+                ("kodesh", "/kodesh/", "כלי קודש"), ("rotzim", "/kelim/bakasha/", "רוצים כלי?"),
                 ("litmoch", "/kelim/#litmoch", "לתמוך"), ("mi", "/kelim/#mi", "מי אני")],
     },
     "kodesh": {

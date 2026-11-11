@@ -1,0 +1,34 @@
+/* בקשת כלי – /kelim/bakasha/ והלוח של גילעד */
+.bk-list{display:grid;gap:.7rem;margin-top:.4rem}
+.bk-row{border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025);padding:.9rem 1rem}
+.bk-row.is-mine{border-color:var(--gold-soft)}
+.bk-row.is-hid{opacity:.55}
+.bk-top{display:flex;gap:.3rem .6rem;align-items:center;flex-wrap:wrap;font-size:.92rem;color:var(--muted)}
+.bk-no{font-weight:700;color:var(--gold-hi)}
+.bk-st{border-radius:99px;padding:.08rem .65rem;font-weight:700;font-size:.85rem;border:1px solid var(--line);color:var(--body)}
+.bk-st.s-build{background:rgba(201,165,92,.16);border-color:var(--gold-soft);color:var(--gold-hi)}
+.bk-st.s-done{background:rgba(95,191,166,.16);border-color:rgba(95,191,166,.5);color:#9fe0cc}
+.bk-st.s-later{opacity:.75}
+.bk-mine{border-radius:99px;padding:.08rem .6rem;font-size:.82rem;font-weight:700;background:var(--gold);color:var(--ink)}
+.bk-row p{color:var(--cream);font-size:1.08rem;line-height:1.5;margin:.45rem 0 .6rem;overflow-wrap:anywhere}
+.bk-row p.bk-who{color:var(--muted);font-size:.95rem;margin-top:-.3rem}
+.bk-act{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.bk-me{font:inherit;font-size:.95rem;font-weight:700;border-radius:99px;padding:.3rem .9rem;border:1px solid var(--gold-soft);background:transparent;color:var(--gold-hi);cursor:pointer}
+.bk-me:disabled{opacity:.7;cursor:default;border-color:var(--line);color:var(--body)}
+.bk-cnt{color:var(--muted);font-size:.92rem}
+.bk-empty{color:var(--muted);text-align:center;padding:1rem 0}
+.bk-done{padding:1.1rem;border-radius:14px;background:rgba(95,191,166,.12);border:1px solid rgba(95,191,166,.4);color:var(--cream);line-height:1.6;outline:0}
+.bk-done b.num{display:block;font-family:var(--serif);font-size:2.3rem;color:var(--gold-hi);line-height:1.2;margin:.2rem 0}
+.bk-hint{color:var(--muted);font-size:.92rem;margin-top:.25rem}
+.k-form input[type=email],.k-form input[type=text],.k-form select,.bk-url input{width:100%;font:inherit;font-size:1.05rem;color:var(--cream);background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;padding:.7rem .85rem}
+.k-form select option{color:#16130f}
+.k-form .res{color:#f0b8a8;margin:0}
+.k-form .res:empty{display:none}
+.bk-adm{display:grid;grid-template-columns:1fr 1fr;gap:.45rem;margin-top:.2rem}
+.bk-adm button{font:inherit;font-weight:700;font-size:.98rem;padding:.6rem .4rem;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--cream);cursor:pointer}
+.bk-adm button.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.bk-url{display:grid;gap:.45rem;margin-top:.7rem;padding-top:.7rem;border-top:1px solid var(--line)}
+.bk-url label{color:var(--body);font-size:.95rem}
+.bk-sum{display:flex;gap:.5rem;flex-wrap:wrap;margin:.3rem 0 1rem}
+.bk-sum span{border:1px solid var(--line);border-radius:12px;padding:.45rem .8rem;color:var(--body)}
+.bk-sum b{color:var(--gold-hi);font-size:1.15rem}

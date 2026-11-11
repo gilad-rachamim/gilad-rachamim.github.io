@@ -1,0 +1,38 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "rotzim",
+  "tool": "kelim_bakasha",
+  "title": "חסר לכם כלי? בקשת כלי חינמי, ולוח מה ביקשו ומה נבנה | הכלים של גילעד רחמים",
+  "description": "חסר לכם כלי פשוט שיעזור ביום-יום? כותבים בקשה במשפט אחד, מקבלים מספר בקשה, ורואים בלוח מה כבר ביקשו, מה בבנייה ומה נבנה. בחינם, בלי הרשמה.",
+  "og_title": "חסר לכם כלי? ספרו לי",
+  "priority": "0.8",
+  "crumbs": [["בקשת כלי", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/bakasha.css\">",
+  "foot": "<script src=\"/assets/bakasha.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>חסר לכם כלי? ספרו לי</h1>
+  <p class="sub">יש משהו שקשה לכם לעשות, ונראה לכם שכלי פשוט היה עוזר? כתבו במילים שלכם. גם רעיון קטן, גם אם הוא נשמע לכם שטותי. כלי קטן אני בונה בחינם, לכולם.</p>
+</header>
+
+<section class="k-sec" id="tofes" aria-labelledby="bk-h">
+  <h2 id="bk-h">הבקשה שלכם</h2>
+  <form class="k-form" data-bk-form>
+    <div class="hp" aria-hidden="true"><label>אל תמלאו שדה זה <input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></div>
+    <div class="field"><label for="b-what">מה הכלי צריך לעשות?</label><textarea id="b-what" name="what" required minlength="4" maxlength="160" placeholder="למשל: שיזכיר לי לקחת תרופות, ושאפשר לסמן שלקחתי"></textarea></div>
+    <div class="field"><label for="b-who">למי זה יעזור? <span class="opt">(לא חובה)</span></label><input id="b-who" name="who" type="text" maxlength="60" placeholder="לי, להורים שלי, לחיילים..."></div>
+    <div class="field"><label for="b-dom">באיזה תחום? <span class="opt">(לא חובה)</span></label>
+      <select id="b-dom" name="dom"><option value="">לא בטוח/ה</option><option>כלי קודש</option><option>נפש ויום-יום</option><option>לימודים</option><option>זכויות ושיקום</option><option>כסף</option><option>עסק קטן</option><option>יצירת תוכן</option><option>משפחה ובית</option><option>בריאות</option><option>מחשב וטלפון</option><option>צבא ומילואים</option><option>חברה וקשרים</option><option>טיולים ונסיעות</option><option>אירועים</option><option>קהילה</option><option>עבודה</option><option>תמלול</option><option>מתכנתים</option><option>משחקי חשיבה</option><option>אחר</option></select></div>
+    <div class="field"><label for="b-mail">מייל לעדכון <span class="opt">(לא חובה)</span></label><input id="b-mail" name="email" type="email" inputmode="email" autocomplete="email" maxlength="120" dir="ltr" style="text-align:right" placeholder="name@example.com">
+      <p class="bk-hint">אם תשאירו מייל, תקבלו הודעה כשהכלי מוכן. גם בלי מייל אפשר לעקוב בלוח למטה, לפי מספר הבקשה.</p></div>
+    <p class="res" role="alert"></p>
+    <button class="btn btn-gold btn-block" type="submit">לשלוח את הבקשה</button>
+    <p class="privacy">הבקשה עצמה מופיעה בלוח למטה, בלי שם ובלי פרטים מזהים. המייל נשמר אצלי בלבד, רק כדי לעדכן אתכם. <a href="/kelim/pratiut/">פרטיות</a></p>
+  </form>
+</section>
+
+<section class="k-sec" id="luach" aria-labelledby="lu-h">
+  <h2 id="lu-h">מה ביקשו ומה נבנה</h2>
+  <p class="lead2">כל הבקשות, מהחדשה לישנה. רואים בקשה שגם אתם צריכים? לחצו "גם אני רוצה", וכך אדע מה הכי חסר.</p>
+  <div class="bk-list" data-bk-board aria-live="polite"><p class="bk-empty">טוען את הלוח…</p></div>
+</section>
