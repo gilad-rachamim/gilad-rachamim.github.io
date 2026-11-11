@@ -117,7 +117,7 @@ function clean(rec, ref, sr, o, prog) {
   var CR = new Float32Array(K * OV), CI = new Float32Array(K * OV), NZ = new Float32Array(K), nzInit = false;
   var fr = new Float32Array(N), fi = new Float32Array(N), out = new Float32Array(n + N), tmp = new Float32Array(SEG);
   var Ar = new Float64Array(TAPS * TAPS), Ai = new Float64Array(TAPS * TAPS), br = new Float64Array(TAPS), bi = new Float64Array(TAPS), rcr = new Float64Array(TAPS), rci = new Float64Array(TAPS);
-  var kLo = Math.ceil(70 * N / sr), sumY = 0, sumR = 0, sumE = 0;
+  var kLo = Math.ceil(70 * N / sr), sumY = 0, sumR = 0, sumE = 0, fo = new Float32Array(T + 1), fe = new Float32Array(T + 1);
   function frame(x, t, dR, dI, stride, row) { // STFT של מסגרת t לתוך מערך "תדר קודם" (k*stride + row)
     var base = (t - 1) * H, any = false;
     for (var a = 0; a < N; a++) { var p = base + a, v = p >= 0 && p < n ? x[p] : 0; if (v) any = true; fr[a] = v * win[a]; fi[a] = 0; }
@@ -178,6 +178,7 @@ function clean(rec, ref, sr, o, prog) {
           G = xi / (1 + xi); if (G < gmin) G = gmin; Gp = G; gamp = gam;
         }
         RR[yo + j] = rr * G; RI[yo + j] = ri * G;
+        if (last || j < HOPS) { fo[f0 + j] += (rr * rr + ri * ri) * G * G; if (EP) fe[f0 + j] += EP[yo + j]; }
       }
     }
     // --- חזרה לזמן, עם מעבר חלק בין מקטעים ---
@@ -196,7 +197,7 @@ function clean(rec, ref, sr, o, prog) {
     }
     if (prog) prog((s + 1) / nseg);
   }
-  return { y: out.subarray(0, n), bleedDb: sumY ? 10 * Math.log10((sumE + 1e-20) / sumY) : -99, cancelDb: sumR ? 10 * Math.log10(sumY / sumR) : 0 };
+  return { y: out.subarray(0, n), act: useRef ? { fo: fo, fe: fe, hop: H } : null, bleedDb: sumY ? 10 * Math.log10((sumE + 1e-20) / sumY) : -99, cancelDb: sumR ? 10 * Math.log10(sumY / sumR) : 0 };
 }
 
 // ---------- 3. קצב ----------
@@ -217,17 +218,39 @@ function onsetEnv(x, sr) {
   return out; // 100 ערכים בשנייה
 }
 // משפטים: קטעים שבהם שרים, מופרדים בשתיקה של 0.22 שניות לפחות. מחזיר [{a,b}] בדגימות
-function phrases(x, sr) {
+function phrases(x, sr, ok) {
   var H = Math.round(sr * 0.01), n = Math.floor(x.length / H), e = new Float32Array(n), i, t, mx = 0;
   for (t = 0; t < n; t++) { var s = 0, b = t * H; for (i = 0; i < H; i++) s += x[b + i] * x[b + i]; e[t] = Math.sqrt(s / H); if (e[t] > mx) mx = e[t]; }
   var srt = e.slice().sort(), fl = srt[Math.floor(n * 0.15)] || 0, thr = Math.max(fl * 3, mx * 0.04, 1e-4), out = [], st = -1, gap = 0;
   for (t = 0; t < n; t++) {
-    if (e[t] > thr) { if (st < 0) st = t; gap = 0; }
+    if (e[t] > thr && (!ok || ok[t])) { if (st < 0) st = t; gap = 0; }
     else if (st >= 0 && ++gap >= 22) { if (t - gap - st >= 12) out.push({ a: st * H, b: (t - gap + 1) * H }); st = -1; gap = 0; }
   }
   if (st >= 0 && n - gap - st >= 12) out.push({ a: st * H, b: (n - gap) * H });
   return out;
 }
+// בלי אוזניות: איפה באמת שרים, ואיפה נשארו רק שאריות של המוזיקה? בכל 10 אלפיות שנייה משווים את מה שנשאר אחרי הניקוי
+// למוזיקה שנכנסה למיקרופון (על פני 0.15 שניות). שאריות הן בערך מאית ממנה; קול הוא הרבה יותר.
+function voiced(act, n, sr, ratio) {
+  var H = Math.round(sr * 0.01), m = Math.floor(n / H), ok = new Uint8Array(m), fo = act.fo, fe = act.fe, T = fo.length, r = ratio || 0.04;
+  for (var t = 0; t < m; t++) { var c = Math.round(t * H / act.hop), so = 0, se = 0; for (var q = c - 3; q <= c + 3; q++) if (q >= 0 && q < T) { so += fo[q]; se += fe[q]; } ok[t] = so > r * se ? 1 : 0; }
+  return ok;
+}
+// שקט בין המשפטים: מה שנשאר בין משפט למשפט (רעש, שאריות מוזיקה) מונמך בעדינות עד floor (0..1). בקול עצמו לא נוגעים:
+// השער נפתח 90 אלפיות שנייה לפני כל משפט (נשימה, עיצור ראשון) ונסגר לאט, 0.28 שניות אחרי שהוא נגמר.
+function gate(x, sr, floor, act, ratio) {
+  var ph = phrases(x, sr, act ? voiced(act, x.length, sr, ratio) : null), n = x.length;
+  if (!(floor < 1) || !ph.length) return x;
+  var H = Math.round(sr * 0.005), m = Math.ceil(n / H) + 2, g = new Float32Array(m), pre = 0.09 * sr, post = 0.28 * sr, up = 0.06 * sr, down = 0.3 * sr, p, k;
+  for (p = 0; p < ph.length; p++) {
+    var a = ph[p].a - pre, b = ph[p].b + post, k0 = Math.max(0, Math.floor((a - up) / H)), k1 = Math.min(m - 1, Math.ceil((b + down) / H));
+    for (k = k0; k <= k1; k++) { var t = k * H, u = t < a ? 1 - (a - t) / up : t > b ? 1 - (t - b) / down : 1; if (u <= 0) continue; u = u >= 1 ? 1 : 0.5 - 0.5 * Math.cos(Math.PI * u); if (u > g[k]) g[k] = u; }
+  }
+  var y = new Float32Array(n);
+  for (var i = 0; i < n; i++) { var q = i / H, j = q | 0, f = q - j, w = g[j] * (1 - f) + g[j + 1] * f; y[i] = x[i] * (floor + (1 - floor) * w); }
+  return y;
+}
+var GATE = [1, 0.4, 0.12, 0.03]; // לפי רמת "ניקוי רעשים": בלי / עדין / רגיל / חזק
 // x: קול נקי, מיושר למוזיקה. envM: מעטפת ההתחלות של המוזיקה באותו קטע. strength 0..1, maxMs.
 function tighten(x, sr, envM, strength, maxMs) {
   var ph = phrases(x, sr), info = [], n = x.length, H = sr * 0.01;
@@ -378,6 +401,7 @@ function stageClean(id, rec, start, o, prog) {
     for (var d = -R; d <= R; d++) { var s = 0, sm = 0; for (var t = 0; t < ev.length; t++) { var m = REF.env[t0 + t + d] || 0; s += ev[t] * m; sm += m * m; } var v = s / Math.sqrt(sm + 1e-12) * Math.exp(-d * d / 32); if (v > bv) { bv = v; best = d; } }
     if (best) { var shs = Math.round(best * 0.01 * sr), a2 = new Float32Array(n); for (var i = 0; i < n; i++) { var q = i - shs; a2[i] = q >= 0 && q < n ? a[q] : 0; } a = a2; lag -= shs; }
   }
+  if (!o.nogate) a = gate(a, sr, GATE[Math.max(0, Math.min(3, o.noise == null ? 2 : o.noise))], o.gateR === 0 ? null : r.act, o.gateR);
   TAKES[id] = { a: a, start: start, sr: sr };
   return { lag: lag, lagMs: Math.round(lag / sr * 1000), z: +lg.z.toFixed(1), drift: lg.drift, mode: mode, bleedDb: +r.bleedDb.toFixed(1), cancelDb: +r.cancelDb.toFixed(1), level: rms(a) };
 }
@@ -407,4 +431,4 @@ if (typeof self !== 'undefined' && typeof module === 'undefined') {
     } catch (err) { self.postMessage({ id: d.id, error: String(err && err.message || err) }); }
   };
 }
-if (typeof module !== 'undefined') module.exports = { fft: fft, decim: decim, gcc: gcc, findLag: findLag, shiftRec: shiftRec, clean: clean, onsetEnv: onsetEnv, phrases: phrases, tighten: tighten, pitchTrack: pitchTrack, detectKey: detectKey, tune: tune, psola: psola, setRef: setRef, stageClean: stageClean, stageFinish: stageFinish, rms: rms };
+if (typeof module !== 'undefined') module.exports = { fft: fft, decim: decim, gcc: gcc, findLag: findLag, shiftRec: shiftRec, clean: clean, onsetEnv: onsetEnv, phrases: phrases, gate: gate, GATE: GATE, tighten: tighten, pitchTrack: pitchTrack, detectKey: detectKey, tune: tune, psola: psola, setRef: setRef, stageClean: stageClean, stageFinish: stageFinish, rms: rms };
