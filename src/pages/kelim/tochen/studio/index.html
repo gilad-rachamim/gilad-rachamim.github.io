@@ -1,0 +1,108 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "studio",
+  "title": "עורך עיצוב בחינם בעברית: חלופה לקנבה, עם הסרת רקע ועוזר שמעצב במילים | הכלים של גילעד רחמים",
+  "description": "עורך עיצוב חינמי בעברית, חלופה לקנבה: כותבים במילים מה רוצים והעוזר מעצב 3 הצעות לפוסט, הזמנה, מודעה או סטטוס. הסרת רקע מתמונה בלחיצה, חיתוך ומסגרות בצורות, שכבות, QR וסמלים, תבניות, עריכת PDF ושמירה כתמונה או PDF. בלי הרשמה.",
+  "og_title": "סטודיו לעיצוב – כמו קנבה, בחינם ובעברית",
+  "priority": "0.8",
+  "crumbs": [["יצירת תוכן", "/kelim/tochen/"], ["סטודיו לעיצוב", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/studio-fonts.css\"><link rel=\"stylesheet\" href=\"/assets/studio.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"הסטודיו באמת בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בלי הרשמה ובלי תשלום. לעוזר שמעצב במילים יש מכסה יומית חינמית, ועיצוב ידני אפשר תמיד.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר להסיר רקע מתמונה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. \\\"להסיר רקע\\\" חותך אדם או חפץ ומשאיר אותו על שקוף. זה נעשה במכשיר שלכם, והתמונה לא נשלחת לשום מקום.\"}}, {\"@type\": \"Question\", \"name\": \"באיזה פורמט שומרים את העיצוב?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כתמונה (PNG או JPG) או כ-PDF, ואפשר גם להדפיס או לשתף ישר.\"}}, {\"@type\": \"Question\", \"name\": \"העיצובים שלי נשמרים אצלכם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. הם נשמרים רק בדפדפן שלכם. כשמשתמשים בעוזר נשלחת אליו גרסה קטנה של התמונות כדי שיראה אותן, והיא לא נשמרת.\"}}]}</script>",
+  "foot": "<script src=\"/assets/vendor/html-to-image/html-to-image-1.11.11.js\" defer></script><script src=\"/assets/studio.js\" defer></script>"
+} -->
+<header class="k-hero no-print sd-hero">
+  <h1>סטודיו לעיצוב</h1>
+  <p class="sub">כמו קנבה, בחינם ובעברית. כותבים במילים מה רוצים – והעוזר מעצב. אחר כך משנים הכול בעצמכם: גוררים, מוסיפים תמונות, כיתוב וכתוביות, ושומרים כתמונה או PDF.</p>
+</header>
+<div id="sd-app" class="sd-app no-print">
+  <section class="sd-ai" aria-labelledby="sd-ai-h">
+    <label id="sd-ai-h" for="sd-ai-text">✨ מה לעצב? כתבו במילים שלכם</label>
+    <div class="sd-dest-l">לאן זה מיועד?</div>
+    <div class="sd-dest" id="sd-dest" role="group" aria-label="לאן זה מיועד"></div>
+    <textarea id="sd-ai-text" rows="2" maxlength="1500" dir="rtl" placeholder="למשל: הזמנה לבר מצווה של יוסי, ביום חמישי 18:00 באולם הגן, בצבעי כחול וזהב, עם התמונה שהעליתי ברקע"></textarea>
+    <div class="sd-ai-row">
+      <button type="button" class="btn btn-gold btn-sm" data-ai="new">✨ תעצב לי</button>
+      <button type="button" class="btn btn-line btn-sm" data-ai="edit" id="sd-ai-mode-edit">לשנות את העיצוב שעל המסך</button>
+    </div>
+    <p id="sd-status" class="sd-status" role="status" aria-live="polite" hidden></p>
+    <div id="sd-choices" class="sd-choices" hidden></div>
+  </section>
+
+  <div class="sd-top">
+    <div class="sd-tabs" role="tablist" aria-label="כלים">
+      <button type="button" data-tab="ai">✨ עוזר</button>
+      <button type="button" data-tab="tpl">תבניות</button>
+      <button type="button" data-tab="text">טקסט</button>
+      <button type="button" data-tab="img">תמונות ו-PDF</button>
+      <button type="button" data-tab="shape">צורות</button>
+      <button type="button" data-tab="qr">QR וסמלים</button>
+      <button type="button" data-tab="layers">שכבות</button>
+      <button type="button" data-tab="bg">רקע וצבעים</button>
+      <button type="button" data-tab="size">גודל ויעד</button>
+      <button type="button" data-tab="file">פרויקט</button>
+    </div>
+    <div class="sd-acts">
+      <button type="button" id="sd-undo" title="ביטול (Ctrl+Z)" aria-label="ביטול">↶ בטל</button>
+      <button type="button" id="sd-redo" title="חזרה (Ctrl+Y)" aria-label="חזרה">↷ חזור</button>
+    </div>
+  </div>
+
+  <div class="sd-main">
+    <aside class="sd-side" id="sd-side" aria-label="אפשרויות"><button type="button" class="sd-grab" id="sd-grab" aria-expanded="true" aria-controls="sd-panel"><span></span>אפשרויות</button><div id="sd-panel"></div></aside>
+    <div class="sd-work">
+      <div class="sd-viewport" id="sd-viewport">
+        <div class="sd-holder" id="sd-holder">
+          <div class="sd-page" id="sd-page"></div>
+          <div class="sd-ui" id="sd-ui"></div>
+        </div>
+      </div>
+      <div class="sd-zoom" id="sd-zoom" role="group" aria-label="זום"><button type="button" data-zm="out" aria-label="להקטין">−</button><span id="sd-zoom-v">100%</span><button type="button" data-zm="in" aria-label="להגדיל">+</button><button type="button" data-zm="fit">להתאים למסך</button></div>
+      <div class="sd-pages" id="sd-pages"></div>
+      <div class="sd-out">
+        <button type="button" class="btn btn-gold btn-sm" data-out-kind="share"><svg class="ic"><use href="#wa"/></svg> לשלוח / לשתף</button>
+        <button type="button" class="btn btn-line btn-sm" data-out-kind="png">לשמור תמונה (PNG)</button>
+        <button type="button" class="btn btn-line btn-sm" data-out-kind="jpg">JPG</button>
+        <button type="button" class="btn btn-line btn-sm" data-out-kind="pdf">PDF</button>
+        <button type="button" class="btn btn-line btn-sm" data-out-kind="print">להדפיס</button>
+      </div>
+    </div>
+  </div>
+  <input type="file" id="sd-file-img" accept="image/*" multiple hidden>
+  <input type="file" id="sd-file-bg" accept="image/*" hidden>
+  <input type="file" id="sd-file-pdf" accept="application/pdf,.pdf" hidden>
+  <input type="file" id="sd-file-open" accept=".json,application/json" hidden>
+</div>
+<div class="tool no-print sd-foot">
+  <h2>איך עובדים</h2>
+  <ol class="sd-how">
+    <li><b>כותבים לעוזר</b> מה רוצים (או בוחרים תבנית). הוא מכין 3 הצעות – בוחרים אחת. אפשר לצרף קודם תמונות: העוזר רואה אותן, בוחר צבעים שמתאימים להן ומשאיר את הפנים נקיות מטקסט.</li>
+    <li><b>לוחצים על כל דבר בעיצוב</b> כדי לשנות אותו: גוררים, מגדילים מהפינות, מסובבים מהעיגול שמעל. לחיצה כפולה על טקסט – כותבים ישר עליו.</li>
+    <li><b>רוצים שינוי?</b> כותבים לעוזר "תגדיל את הכותרת ותעשה את הרקע כהה יותר", ולוחצים "לשנות את העיצוב שעל המסך".</li>
+    <li><b>תמונות:</b> "להסיר רקע" חותך אדם או חפץ ומשאיר אותו על שקוף. "חיתוך והזזה" בוחר איזה חלק רואים, ו"מסגרת בצורה" הופכת את התמונה לעיגול, לב, קשת, משושה או כוכב.</li>
+    <li><b>בטלפון:</b> צובטים בשתי אצבעות כדי להגדיל, גוררים אצבע על מקום ריק כדי לזוז, ולוח האפשרויות נפתח מלמטה.</li>
+    <li><b>שומרים</b> כתמונה לווטסאפ ולסטטוס, או כ-PDF להדפסה. מסמך PDF אפשר לפתוח, לכתוב עליו ולשמור שוב.</li>
+  </ol>
+  <p class="disclaimer">העיצוב והתמונות נשמרים רק אצלכם, בדפדפן הזה. כשמשתמשים בעוזר, נשלחים אליו מה שכתבתם, מבנה העיצוב וגרסה קטנה (512 פיקסלים) של התמונות שבעיצוב – כדי שיראה אותן. הן לא נשמרות אצלנו, ואם לא לוחצים על העוזר, שום דבר לא יוצא מהמכשיר. הסרת הרקע נעשית כולה במכשיר שלכם (בפעם הראשונה יורד כלי של כ-57MB, ואחר כך הוא עובד מיד, גם בלי אינטרנט). העוזר חינמי ויש לו מכסה יומית; אם הוא עמוס, אפשר להמשיך לעצב ידנית.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="סטודיו לעיצוב בעברית, כמו קנבה ובחינם: כותבים במילים מה רוצים והוא מעצב. פוסטים, הזמנות, מודעות וכיתוב על תמונות:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
+<div id="sd-print" class="sd-print" aria-hidden="true"></div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">עיצוב פוסטים, מודעות והזמנות בחינם</h2>
+  <p>הסטודיו מתאים למי שצריך עיצוב יפה ואין לו ניסיון בעיצוב: בעלי עסקים קטנים שמכינים פוסט או מודעה, גבאים ומארגני אירועים, מורים, ומי שרוצה הזמנה או סטטוס לווטסאפ. הכול בעברית, מימין לשמאל, עם גופנים עבריים.</p>
+  <h3>איך מעצבים</h3>
+  <p>כותבים לעוזר במילים מה רוצים, ובוחרים לאן העיצוב מיועד. העוזר מכין שלוש הצעות, ובוחרים אחת. אפשר גם להתחיל מתבנית מוכנה. אחר כך משנים הכול בעצמכם: לוחצים על כל דבר כדי לגרור, להגדיל או לסובב, ולחיצה כפולה על טקסט מאפשרת לכתוב ישר עליו. רוצים שינוי? כותבים לעוזר, למשל "תגדיל את הכותרת", והוא משנה את העיצוב שעל המסך.</p>
+  <h3>תמונות, הסרת רקע ושמירה</h3>
+  <p>"להסיר רקע" חותך אדם או חפץ ומשאיר אותו על רקע שקוף. אפשר לחתוך תמונה, ולשים אותה במסגרת בצורת עיגול, לב, קשת, משושה או כוכב. יש גם שכבות, קודי QR וסמלים. בסוף שומרים כתמונה לווטסאפ ולסטטוס, או כ-PDF להדפסה. קובץ PDF קיים אפשר לפתוח, לכתוב עליו ולשמור שוב.</p>
+  <h3>פרטיות ומגבלות</h3>
+  <p>העיצוב והתמונות נשמרים רק אצלכם בדפדפן. הסרת הרקע נעשית כולה במכשיר שלכם, ובפעם הראשונה יורד בשבילה כלי של כ-57MB. לעוזר יש מכסה יומית חינמית, וכשהוא עמוס אפשר להמשיך לעצב ידנית. בלי הרשמה ובלי תשלום.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>הסטודיו באמת בחינם?</summary><p>כן. בלי הרשמה ובלי תשלום. לעוזר שמעצב במילים יש מכסה יומית חינמית, ועיצוב ידני אפשר תמיד.</p></details>
+  <details><summary>אפשר להסיר רקע מתמונה?</summary><p>כן. "להסיר רקע" חותך אדם או חפץ ומשאיר אותו על שקוף. זה נעשה במכשיר שלכם, והתמונה לא נשלחת לשום מקום.</p></details>
+  <details><summary>באיזה פורמט שומרים את העיצוב?</summary><p>כתמונה (PNG או JPG) או כ-PDF, ואפשר גם להדפיס או לשתף ישר.</p></details>
+  <details><summary>העיצובים שלי נשמרים אצלכם?</summary><p>לא. הם נשמרים רק בדפדפן שלכם. כשמשתמשים בעוזר נשלחת אליו גרסה קטנה של התמונות כדי שיראה אותן, והיא לא נשמרת.</p></details>
+</section>
+<!--/seo-txt-->

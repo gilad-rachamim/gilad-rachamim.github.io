@@ -71,7 +71,7 @@
         tx.push('\n*' + x.l + '*\n' + vs.map(function (v) { return v.t; }).join('\n'));
         lastK = x.k;
       });
-      h += '<p class="disclaimer">מתוך ספר תהילים, נוסח המסורה (ספריא). נוצר בכלי קודש: gilad-rachamim.github.io/kodesh/tehillim/shem</p>';
+      h += '<p class="disclaimer">מתוך ספר תהילים, נוסח המסורה (ספריא). נוצר בכלי קודש: hakelim.com/kodesh/tehillim/shem</p>';
       out.innerHTML = h;
       plain = tx.join('\n') + '\n\n' + link();
       $('th-next').hidden = false;

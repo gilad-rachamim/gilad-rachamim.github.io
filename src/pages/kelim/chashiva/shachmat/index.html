@@ -1,0 +1,59 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_shachmat",
+  "title": "שחמט אונליין בחינם בעברית: נגד המחשב או עם חבר בווטסאפ | הכלים של גילעד רחמים",
+  "description": "שחמט אונליין בעברית, בחינם ובלי פרסומות: נגד המחשב בשלוש רמות, עם חבר בקישור (כל מהלך נשלח בווטסאפ), או שניים על טלפון אחד. כל החוקים: הצרחה, הכאה דרך הילוכו, הכתרה, שח-מט ופט. בלי הרשמה.",
+  "og_title": "שחמט – לשחק עם חבר בווטסאפ, בחינם",
+  "priority": "0.7",
+  "crumbs": [["משחקי חשיבה", "/kelim/chashiva/"], ["שחמט", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/chashiva.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"אפשר לשחק שחמט נגד המחשב?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן, בשלוש רמות. אפשר לבטל מהלך ולנסות שוב.\"}}, {\"@type\": \"Question\", \"name\": \"איך משחקים עם חבר שלא נמצא לידי?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בוחרים \\\"עם חבר בווטסאפ\\\", עושים מהלך ושולחים את הקישור. החבר עונה במהלך שלו בקישור חדש, מתי שנוח לו.\"}}, {\"@type\": \"Question\", \"name\": \"איך עושים הצרחה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"נוגעים במלך, ואז במשבצת שנמצאת שתי משבצות הצידה.\"}}, {\"@type\": \"Question\", \"name\": \"צריך להירשם או להוריד אפליקציה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. משחקים בדפדפן, בחינם, והמשחק נשמר בטלפון.\"}}, {\"@type\": \"Question\", \"name\": \"יש שחמט למתחילים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. ברמה הקלה המחשב משחק בנחת, וכל מהלך חוקי מסומן על הלוח. מתאים לילדים ולמי שרק לומד את החוקים.\"}}]}</script>",
+  "foot": "<script src=\"/assets/chashiva.js\" defer></script><script src=\"/assets/chashiva-shachmat.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>שחמט אונליין</h1>
+  <p class="sub">מול המחשב, מול חבר בווטסאפ (כל אחד משחק מתי שנוח לו), או שניים על טלפון אחד. בחינם ובלי הרשמה.</p>
+</header>
+<div class="tool">
+  <div class="ch-tabs" id="sm-tabs" role="tablist"><button type="button" role="tab" data-m="bot" aria-selected="true">🤖 מול המחשב</button><button type="button" role="tab" data-m="friend" aria-selected="false">📨 עם חבר בווטסאפ</button><button type="button" role="tab" data-m="phone" aria-selected="false">📱 שניים בטלפון אחד</button></div>
+  <p class="ch-weekline" id="ch-weekline"></p>
+  <div class="ch-vsbanner" id="ch-vsbanner" hidden></div>
+  <div id="sm-botopts"><div class="ch-chips" id="sm-levels"></div></div>
+  <div id="sm-fropts" hidden><p class="ch-hint">כל מהלך נשלח לחבר בקישור. הוא עונה מתי שנוח לו, והקישור שלו מחזיר לכם את הלוח.</p><div class="ch-chips"><button type="button" id="sm-fr-me">♔ אני מתחיל (לבן)</button><button type="button" id="sm-fr-them">♚ שהחבר יתחיל</button></div></div>
+  <div class="ch-bar"><span id="sm-status"></span><span id="sm-capt" class="bg-capt"></span></div>
+  <div class="bg-board sm-board" id="sm-board" dir="ltr" aria-label="לוח שחמט"></div>
+  <div class="bg-promo" id="sm-promo" hidden></div>
+  <div class="ch-tools"><button type="button" id="sm-undo">↶ ביטול מהלך</button><button type="button" id="sm-flip" hidden>🔄 להפוך את הלוח בכל תור</button><button type="button" id="sm-new">🎲 משחק חדש</button><button type="button" id="sm-resign">🏳️ לסיים</button></div>
+  <p class="ch-msg" id="sm-msg" aria-live="polite"></p>
+  <div id="sm-send"></div>
+  <div id="sm-win"></div>
+  <details class="ch-how"><summary>איך משחקים?</summary><ul>
+    <li>נוגעים בכלי, ואז במשבצת שאליה הוא הולך. הנקודות מראות לאן מותר.</li>
+    <li>כל החוקים הרגילים: הצרחה (נוגעים במלך ואז שתי משבצות הצידה), הכאה דרך הילוכו, והכתרה של רגלי שמגיע לסוף הלוח.</li>
+    <li><b>עם חבר בווטסאפ:</b> עושים מהלך, שולחים את הקישור, והחבר עונה במהלך שלו בקישור חדש. כל אחד משחק מתי שנוח לו, גם במשך כמה ימים.</li>
+    <li><b>מול המחשב:</b> שלוש רמות. אפשר לבטל מהלך ולנסות שוב.</li>
+    <li>ניצחון אחד ביום נספר לרצף ולאתגר השבועי של משחקי החשיבה.</li>
+    <li>המשחק נשמר בטלפון. אפשר לסגור ולחזור אליו מתי שרוצים.</li>
+  </ul></details>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">שחמט בחינם, לילדים ולמבוגרים</h2>
+  <p>השחמט כאן מתאים למי שלומד עכשיו לשחק ורוצה להתאמן נגד המחשב ברמה קלה, להורה וילד שמשחקים יחד על טלפון אחד, ולחברים שרוצים משחק ארוך בווטסאפ, מהלך אחד בכל פעם. בלי הרשמה ובלי אפליקציה.</p>
+  <h3>חוקי השחמט בקצרה</h3>
+  <p>לכל שחקן 16 כלים: מלך, מלכה, שני צריחים, שני רצים, שני פרשים ושמונה רגלים. הלבן מתחיל. הצריח הולך בקו ישר, הרץ באלכסון, והמלכה בשתי הדרכים. הפרש הולך שתי משבצות ישר ואחת הצידה, ויכול לקפוץ מעל כלים. המלך הולך משבצת אחת לכל כיוון. הרגלי הולך קדימה ואוכל באלכסון. כשהמלך מאוים זה שח, וחייבים להציל אותו. שח שאין ממנו מוצא הוא שח-מט, והוא מסיים את המשחק. אם לשחקן אין מהלך חוקי והמלך שלו לא מאוים, זה פט, ונגמר בתיקו.</p>
+  <h3>איך משחקים כאן</h3>
+  <p>נוגעים בכלי, והנקודות מראות לאן מותר ללכת. הצרחה עושים בנגיעה במלך ואז שתי משבצות הצידה. רגלי שמגיע לסוף הלוח מוכתר. נגד המחשב בוחרים אחת משלוש רמות, ואפשר לבטל מהלך ולנסות שוב. עם חבר בווטסאפ עושים מהלך, שולחים את הקישור, והחבר עונה בקישור חדש, גם במשך כמה ימים. ניצחון אחד ביום נספר לרצף ולאתגר השבועי של משחקי החשיבה.</p>
+  <h3>לשחק עם הילדים</h3>
+  <p>שחמט הוא דרך טובה ללמד ילדים לחשוב לפני שפועלים. כדאי להתחיל ברמה הקלה נגד המחשב, לבטל מהלך כשטועים ולנסות להבין למה. על טלפון אחד אפשר להפוך את הלוח בכל תור, כך ששני השחקנים רואים את הלוח מהצד שלהם.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>אפשר לשחק שחמט נגד המחשב?</summary><p>כן, בשלוש רמות. אפשר לבטל מהלך ולנסות שוב.</p></details>
+  <details><summary>איך משחקים עם חבר שלא נמצא לידי?</summary><p>בוחרים "עם חבר בווטסאפ", עושים מהלך ושולחים את הקישור. החבר עונה במהלך שלו בקישור חדש, מתי שנוח לו.</p></details>
+  <details><summary>איך עושים הצרחה?</summary><p>נוגעים במלך, ואז במשבצת שנמצאת שתי משבצות הצידה.</p></details>
+  <details><summary>צריך להירשם או להוריד אפליקציה?</summary><p>לא. משחקים בדפדפן, בחינם, והמשחק נשמר בטלפון.</p></details>
+  <details><summary>יש שחמט למתחילים?</summary><p>כן. ברמה הקלה המחשב משחק בנחת, וכל מהלך חוקי מסומן על הלוח. מתאים לילדים ולמי שרק לומד את החוקים.</p></details>
+</section>
+<!--/seo-txt-->

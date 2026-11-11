@@ -1,0 +1,58 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_sudoku",
+  "title": "סודוקו אונליין בחינם בעברית: ארבע רמות, אתגר יומי והערות בעיפרון | הכלים של גילעד רחמים",
+  "description": "סודוקו אונליין בחינם, בעברית ובלי פרסומות: ארבע רמות מקל ועד מומחה, ולכל לוח פתרון אחד בלבד. הערות בעיפרון, ביטול, רמז ובדיקה. אתגר יומי זהה לכולם ורצף ימים. בלי הרשמה, נשמר בטלפון.",
+  "og_title": "סודוקו – אתגר יומי בחינם",
+  "priority": "0.7",
+  "crumbs": [["משחקי חשיבה", "/kelim/chashiva/"], ["סודוקו", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/chashiva.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"מה החוקים של סודוקו?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"ממלאים את הלוח כך שבכל שורה, בכל עמודה ובכל ריבוע 3×3 יופיעו הספרות 1 עד 9, כל אחת פעם אחת בדיוק.\"}}, {\"@type\": \"Question\", \"name\": \"מה ההבדל בין הרמות?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בקל ובבינוני יש יותר ספרות בהתחלה, והלוח נפתר בלי לנחש. בקשה ובמומחה יש פחות ספרות, וצריך לחשוב כמה צעדים קדימה.\"}}, {\"@type\": \"Question\", \"name\": \"מה זה האתגר היומי?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לוח חדש בכל יום, זהה לכל מי שמשחק. פותרים אותו, שומרים על רצף ימים ומשווים עם חברים.\"}}, {\"@type\": \"Question\", \"name\": \"הלוח נשמר אם סוגרים את הדף?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. הלוח נשמר בטלפון, ואפשר לחזור אליו מתי שרוצים.\"}}]}</script>",
+  "foot": "<script src=\"/assets/chashiva.js\" defer></script><script src=\"/assets/chashiva-sudoku.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>סודוקו</h1>
+  <p class="sub">בכל שורה, בכל עמודה ובכל ריבוע 3×3: הספרות 1 עד 9, כל אחת פעם אחת. לכל לוח כאן יש פתרון אחד בלבד.</p>
+</header>
+<div class="tool">
+  <div class="ch-tabs" id="sd-tabs" role="tablist"><button type="button" role="tab" data-m="daily" aria-selected="true">⭐ אתגר יומי</button><button type="button" role="tab" data-m="levels" aria-selected="false">🪜 ארבע רמות</button></div>
+  <p class="ch-weekline" id="ch-weekline"></p>
+  <div class="ch-vsbanner" id="ch-vsbanner" hidden></div>
+  <div id="sd-lvlbox" hidden><div class="ch-chips" id="sd-levels"></div><p class="ch-hint" id="sd-lockmsg"></p></div>
+  <div class="ch-done-today" id="sd-today" hidden></div>
+  <div class="ch-bar"><span id="sd-label"></span><span>⏱ <b id="sd-time">0:00</b></span></div>
+  <div class="sd-board" id="sd-board" dir="ltr" aria-label="לוח סודוקו"></div>
+  <div class="sd-pad" id="sd-pad" dir="ltr"><button type="button" data-d="1">1<small></small></button><button type="button" data-d="2">2<small></small></button><button type="button" data-d="3">3<small></small></button><button type="button" data-d="4">4<small></small></button><button type="button" data-d="5">5<small></small></button><button type="button" data-d="6">6<small></small></button><button type="button" data-d="7">7<small></small></button><button type="button" data-d="8">8<small></small></button><button type="button" data-d="9">9<small></small></button></div>
+  <div class="ch-tools"><button type="button" id="sd-pencil" aria-pressed="false">✏️ עיפרון</button><button type="button" id="sd-erase">⌫ מחיקה</button><button type="button" id="sd-undo">↶ ביטול</button><button type="button" id="sd-hint">💡 רמז</button><button type="button" id="sd-check">✓ בדיקה</button><button type="button" id="sd-new" hidden>🎲 לוח חדש</button></div>
+  <p class="ch-msg" id="sd-msg" aria-live="polite"></p>
+  <div id="sd-win"></div>
+  <details class="ch-how"><summary>איך משחקים?</summary><ul>
+    <li>נוגעים במשבצת ריקה, ואז בספרה למטה. המספר הקטן מתחת לכל ספרה אומר כמה עוד חסרות ממנה.</li>
+    <li>"עיפרון": רושמים בקטן כמה אפשרויות למשבצת. כשממלאים ספרה, היא נמחקת לבד מההערות של השכנים.</li>
+    <li>ספרה שחוזרת פעמיים באותה שורה, עמודה או ריבוע נצבעת באדום.</li>
+    <li>קל ובינוני נפתרים בלי לנחש. בקשה ובמומחה יש פחות ספרות, וצריך לחשוב כמה צעדים קדימה.</li>
+    <li>הלוח נשמר בטלפון. אפשר לסגור ולחזור אליו מתי שרוצים.</li>
+  </ul></details>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">סודוקו בחינם: החוקים, הרמות וכמה טיפים</h2>
+  <p>סודוקו מתאים לכל גיל: לילדים שלומדים לחשוב בהיגיון, ולמבוגרים שרוצים כמה דקות של שקט וריכוז. הלוח גדול ונוח גם בטלפון, ואין הרשמה.</p>
+  <h3>חוקי המשחק</h3>
+  <p>הלוח בנוי מ-9 שורות, 9 עמודות ו-9 ריבועים של 3×3. צריך למלא את המשבצות הריקות כך שבכל שורה, בכל עמודה ובכל ריבוע יופיעו הספרות 1 עד 9, כל ספרה פעם אחת בדיוק. חלק מהספרות כתובות כבר בהתחלה, והן הרמזים. לכל לוח כאן יש פתרון אחד בלבד.</p>
+  <h3>איך משחקים כאן</h3>
+  <p>נוגעים במשבצת ריקה ואז בספרה. במצב עיפרון רושמים בקטן כמה אפשרויות, והן נמחקות לבד כשממלאים ספרה באותה שורה, עמודה או ריבוע. ספרה שחוזרת פעמיים נצבעת באדום. אפשר לבטל, לבקש רמז ולבדוק. בוחרים בין האתגר היומי, שזהה לכל מי שמשחק, לבין ארבע רמות: קל, בינוני, קשה ומומחה.</p>
+  <h3>טיפים למתחילים</h3>
+  <p>התחילו בשורה, בעמודה או בריבוע שחסרות בהם הכי מעט ספרות. חפשו ספרה שיש לה רק מקום אפשרי אחד בריבוע. ברמות קל ובינוני אין צורך לנחש בכלל, ובקשה ובמומחה כדאי להיעזר בעיפרון ולחשוב כמה צעדים קדימה.</p>
+  <h3>למה סודוקו טוב לראש</h3>
+  <p>סודוקו לא דורש חשבון, רק היגיון וסבלנות. הוא מאמן ריכוז ותכנון, ומתאים גם לפעילות פתיחה בכיתה. מתחילים? בחרו ברמה הקלה, ועלו רמה כשהלוח כבר מרגיש פשוט. אתגר יומי אחד ביום מספיק כדי לבנות הרגל.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>מה החוקים של סודוקו?</summary><p>ממלאים את הלוח כך שבכל שורה, בכל עמודה ובכל ריבוע 3×3 יופיעו הספרות 1 עד 9, כל אחת פעם אחת בדיוק.</p></details>
+  <details><summary>מה ההבדל בין הרמות?</summary><p>בקל ובבינוני יש יותר ספרות בהתחלה, והלוח נפתר בלי לנחש. בקשה ובמומחה יש פחות ספרות, וצריך לחשוב כמה צעדים קדימה.</p></details>
+  <details><summary>מה זה האתגר היומי?</summary><p>לוח חדש בכל יום, זהה לכל מי שמשחק. פותרים אותו, שומרים על רצף ימים ומשווים עם חברים.</p></details>
+  <details><summary>הלוח נשמר אם סוגרים את הדף?</summary><p>כן. הלוח נשמר בטלפון, ואפשר לחזור אליו מתי שרוצים.</p></details>
+</section>
+<!--/seo-txt-->

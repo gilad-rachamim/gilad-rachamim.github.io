@@ -1,0 +1,37 @@
+/* תמונה שמתעוררת (/kelim/tochen/chaye/) */
+.ch-add{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;justify-content:center}
+.ch-add label.btn{cursor:pointer}
+.ch-hint{font-size:.9rem;color:var(--muted,#9aa6bf);margin:.5rem 0;text-align:center}
+.ch-stage{position:relative;display:flex;justify-content:center;margin-top:1rem}
+#ch-canvas{display:block;max-width:100%;max-height:68vh;width:auto;height:auto;border-radius:14px;border:1px solid var(--line);background:#000}
+.ch-busy{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;background:rgba(8,10,16,.72);border-radius:14px;color:#fff;text-align:center;padding:1rem}
+.ch-busy[hidden]{display:none}
+.ch-busy p{margin:0;font-weight:600}
+.ch-busy progress{width:min(80%,320px);height:8px;accent-color:#d4b062}
+.ch-spin{width:38px;height:38px;border-radius:50%;border:4px solid rgba(255,255,255,.2);border-top-color:#d4b062;animation:chspin 1s linear infinite}
+@keyframes chspin{to{transform:rotate(360deg)}}
+.ch-info{text-align:center;color:var(--muted,#9aa6bf);font-size:.95rem;margin:.6rem 0 0;min-height:1.2em}
+.ch-opts{margin-top:1rem}
+.ch-opts .lbl{display:block;font-weight:700;margin-bottom:.4rem}
+.ch-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+@media(max-width:520px){.ch-row{grid-template-columns:1fr}}
+.ch-chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.ch-chips label{cursor:pointer;position:relative}
+.ch-chips input{position:absolute;top:0;right:0;width:1px;height:1px;margin:0;opacity:0;pointer-events:none}
+.ch-chips span{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:.4rem .85rem;font-size:.95rem}
+.ch-chips input:checked+span{background:rgba(212,176,98,.18);border-color:#d4b062;font-weight:700}
+.ch-chips input:focus-visible+span{outline:2px solid #d4b062;outline-offset:2px}
+#ch-prog{width:100%;height:8px;margin-top:.6rem;accent-color:#d4b062}
+#ch-result{margin-top:1rem;text-align:center}
+#ch-result video{max-width:100%;max-height:70vh;border-radius:14px;background:#000}
+.ch-ai{margin-top:1.6rem;padding:1rem;border:1px solid #d4b062;border-radius:16px;background:rgba(212,176,98,.07)}
+.ch-ai h2{margin:0 0 .4rem}
+.ch-ai-sub{margin:0 0 .8rem}
+.ch-ok{display:flex;gap:.5rem;align-items:flex-start;margin:.8rem 0 .2rem}
+#ch-ai-prog{width:100%;height:8px;margin-top:.6rem;accent-color:#d4b062}
+#ch-ai-result{margin-top:1rem;text-align:center}
+#ch-ai-result video{max-width:100%;max-height:70vh;border-radius:14px;background:#000}
+.ch-partner{margin-top:.8rem;border:1px solid var(--line);border-radius:12px;padding:.6rem .8rem}
+.ch-partner summary{cursor:pointer;font-weight:700}
+.ch-partner .actions{display:flex;flex-wrap:wrap;gap:.5rem;margin:.6rem 0}
+.ch-partner input{max-width:14rem;text-align:left}

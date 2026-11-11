@@ -1,0 +1,15 @@
+# אישורי הגעה ולוח מעקב למחולל ההזמנות לכל אירוע (/kelim/eruim/hazmana/) – Cloudflare Worker + KV (חינמי).
+# נפרד משרת הברית של המוהל (tools/rsvp-worker). כל פריסה רק אחרי "כן" של גילעד.
+# פריסה:        cd tools/eruim-rsvp-worker && npx wrangler deploy
+# בדיקה מקומית: npx wrangler dev --local --port 8788      (KV מדומה, בלי לגעת בנתונים אמיתיים)
+name = "eruim-rsvp"
+main = "eruim-rsvp.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[[kv_namespaces]]
+binding = "ERSVP"
+id = "836f9929e3324c268c4e8cf221cadf0b"
+
+[vars]
+EXTRA_ORIGINS = ""

@@ -22,7 +22,7 @@ PAGE = ROOT / "src" / "pages" / "kodesh" / "hachlama" / "index.html"
 DOCX = ROOT / "kodesh" / "hachlama" / "hodaot-hachlama.docx"
 
 CREDIT_MSG = "ההודעות באדיבות גילעד רחמים, מוהל מוסמך, קולגה שלי וחבר איתי בפורום המוהלים."
-CREDIT_DOC = "מתנה באהבה מגילעד רחמים, מוהל מוסמך · 058-404-9049 (ווטסאפ) · עוד כלים חינמיים למוהלים: gilad-rachamim.github.io/kodesh/mohalim"
+CREDIT_DOC = "מתנה באהבה מגילעד רחמים, מוהל מוסמך · 058-404-9049 (ווטסאפ) · עוד כלים חינמיים למוהלים: hakelim.com/kodesh/mohalim"
 
 # key, מתי (ימים מהברית; None = אין תאריך), כותרת, מתי שולחים, מקור (לחבילת האישור), נוסח
 MSGS = [

@@ -250,7 +250,7 @@
     if (!rows.length) h += '<p>לא נבחר שום סוג. סמנו למעלה מה להציג.</p>';
     h += '<div class="bm-rules"><h3 class="bm-m">ההלכות בקצרה</h3>' + halBlock(['shabbat', 'yt', 'yk', 'tb', 'tbNidche', 'fast', 'chanuka', 'purim', 'bh', 'cs', 'sick']) +
       '<p class="bm-ask">זה תקציר לעיון ולהכנה. בכל מקרה לשאול את הרב.</p></div>';
-    h += '<p class="bm-foot">מתנה באהבה מגילעד רחמים, מוהל מוסמך · 058-404-9049 · gilad-rachamim.github.io/kodesh/britot-meyuchadot</p>';
+    h += '<p class="bm-foot">מתנה באהבה מגילעד רחמים, מוהל מוסמך · 058-404-9049 · hakelim.com/kodesh/britot-meyuchadot</p>';
     out.innerHTML = h;
     var parts = [];
     if (cnt.shabbat) parts.push(cnt.shabbat + ' בשבת');

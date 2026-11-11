@@ -1,0 +1,29 @@
+# החדשות ב-3 דקות – Cloudflare Worker שמסכם חדשות 3 פעמים ביום (חינם לכולם).
+# פריסה:        cd tools/news-worker && npm install && npx wrangler deploy   (אותו חשבון כמו kelim-phone)
+# מפתח Gemini:  npx wrangler secret put GEMINI_KEY   (בלי מפתח = מצב כותרות)
+# מפתח ניהול:   ADMIN_KEY (סוד) – /run?key=..&force=1 מריץ עכשיו, /reports?key=.. דיווחי טעויות
+# בדיקה במחשב: node test.mjs
+# הדף: https://hakelim.com/kelim/machshev/chadashot/
+name = "kelim-news"
+main = "news-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+# ריצה בכל שעה מהרשימה (UTC). הקוד בודק שעון ישראל: 07, 13, 20 (+21/22 אם 20:00 נפל על שבת), וקיץ/חורף מסתדרים לבד.
+[triggers]
+crons = ["0 4,5,10,11,17,18,19,20 * * *"]
+
+[[durable_objects.bindings]]
+name = "STORE"
+class_name = "Store"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Store"]
+
+[vars]
+# דף הפייסבוק "החדשות ב-3 דקות" (המפתח שלו נשמר כסוד FB_PAGE_TOKEN דרך fb-setup.ps1)
+FB_PAGE_ID = "1431876290011865"
+FB_API_VERSION = "v27.0"
+# המפתח הציבורי של ההתראות (VAPID). הפרטי נשמר כסוד VAPID_JWK (npx wrangler secret put VAPID_JWK).
+VAPID_PUBLIC = "BPxymKHPzzngtKfi76udfvM1hE6-kUOHtVsS0pZbjd1d9TBLs-o0b4oiIoAPQ8-jHWU99FjEHLL60iC49mrGPyc"

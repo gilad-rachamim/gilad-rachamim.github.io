@@ -151,7 +151,7 @@
       '<p class="b-place">זמני היום ל' + esc(st.placeName || 'ירושלים') + ' · הדלקת נרות ' + mins + ' דקות לפני השקיעה · צאת הכוכבים 8.5°</p>' +
       (cols ? '<div class="b-cols">' + cols + '</div>' : '<p class="b-empty">כאן יופיעו הטורים שתכתבו: דבר תורה, חיזוק, הלכה יומית ועוד.</p>') +
       '<footer class="b-foot"><p class="b-pasuk">״' + esc(ps[0]) + '״' + (ps[1] ? '<small>' + ps[1] + '</small>' : '') + '</p>' +
-      (st.sig ? '<p class="b-sig">' + esc(st.sig) + '</p>' : '') + '<p class="b-credit">נוצר בחינם בכלי קודש · gilad-rachamim.github.io/kodesh</p></footer>';
+      (st.sig ? '<p class="b-sig">' + esc(st.sig) + '</p>' : '') + '<p class="b-credit">נוצר בחינם בכלי קודש · hakelim.com/kodesh</p></footer>';
     fit();
   }
   // הלוח בגודל A4 (794 פיקסלים), מוקטן להתאים למסך

@@ -189,7 +189,7 @@
     var L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//kelim//brachot//HE', 'CALSCALE:GREGORIAN'];
     function vev(start, rrule, h, i) {
       var end = new Date(start); end.setDate(end.getDate() + 1);
-      L.push('BEGIN:VEVENT', 'UID:' + ymd(start) + '-' + (h ? 'h' : 'g') + i + '-' + Math.random().toString(36).slice(2) + '@gilad-rachamim.github.io', 'DTSTAMP:' + stamp,
+      L.push('BEGIN:VEVENT', 'UID:' + ymd(start) + '-' + (h ? 'h' : 'g') + i + '-' + Math.random().toString(36).slice(2) + '@hakelim.com', 'DTSTAMP:' + stamp,
         'DTSTART;VALUE=DATE:' + ymd(start), 'DTEND;VALUE=DATE:' + ymd(end));
       if (rrule) L.push('RRULE:FREQ=YEARLY');
       L.push('SUMMARY:' + title(h), 'DESCRIPTION:ברכה מוכנה\\, בלחיצה: ' + link, 'URL:' + link,

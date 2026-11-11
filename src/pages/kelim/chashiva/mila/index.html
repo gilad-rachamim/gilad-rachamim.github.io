@@ -1,0 +1,60 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_mila",
+  "title": "וורדל בעברית בחינם: מילה ביום, משחק ניחוש מילה בחמש אותיות | הכלים של גילעד רחמים",
+  "description": "משחק מילים יומי בעברית, בחינם: מנחשים מילה בת חמש אותיות בשישה ניסיונות. זהב = האות במקום, טורקיז = האות במילה במקום אחר. רמז-הגדרה למי שנתקע, רצף ימים, תרגול בלי הגבלה ותוצאה לווטסאפ בלי לגלות את המילה. בלי הרשמה.",
+  "og_title": "מילה ביום – משחק מילים יומי בעברית",
+  "priority": "0.7",
+  "crumbs": [["משחקי חשיבה", "/kelim/chashiva/"], ["מילה ביום", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/chashiva.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"מה אומרים הצבעים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"זהב: האות במילה ובמקום הנכון. טורקיז: האות במילה אבל במקום אחר. כהה: האות לא במילה.\"}}, {\"@type\": \"Question\", \"name\": \"כמה פעמים אפשר לשחק ביום?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"המילה של היום היא אחת, זהה לכולם. בתרגול אפשר לשחק בלי הגבלה.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לקבל רמז?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. \\\"רמז\\\" מראה הגדרה קצרה של המילה, ובתוצאה ייכתב שהיה רמז.\"}}, {\"@type\": \"Question\", \"name\": \"המשחק בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בחינם, בלי פרסומות ובלי הרשמה.\"}}, {\"@type\": \"Question\", \"name\": \"זה כמו וורדל?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן, זה משחק בסגנון וורדל בעברית: מילה בת חמש אותיות, שישה ניסיונות, והאותיות נצבעות אחרי כל ניחוש. כולם מקבלים אותה מילה ביום.\"}}]}</script>",
+  "foot": "<script src=\"/assets/chashiva.js\" defer></script><script src=\"/assets/chashiva-mila.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מילה ביום</h1>
+  <p class="sub">מילה אחת בת חמש אותיות, שישה ניסיונות. אחרי כל ניחוש האותיות נצבעות ומראות כמה התקרבתם. מחר מילה חדשה.</p>
+</header>
+<div class="tool">
+  <div class="ch-tabs" id="ml-tabs" role="tablist"><button type="button" role="tab" data-m="daily" aria-selected="true">⭐ המילה של היום</button><button type="button" role="tab" data-m="practice" aria-selected="false">🎲 תרגול</button></div>
+  <p class="ch-weekline" id="ch-weekline"></p>
+  <div class="ch-vsbanner" id="ch-vsbanner" hidden></div>
+  <div class="ch-bar"><span id="ml-label"></span><button class="btn btn-line btn-sm" type="button" id="ml-hint">💡 רמז: מה המילה אומרת?</button></div>
+  <p class="ml-clue" id="ml-clue" hidden></p>
+  <div class="ml-grid" id="ml-grid" dir="rtl" aria-label="לוח הניחושים" aria-live="polite"></div>
+  <p class="ch-msg" id="ml-msg" aria-live="polite"></p>
+  <div class="ml-legend"><span><i class="ok"></i>במקום</span><span><i class="in"></i>במילה, במקום אחר</span><span><i class="no"></i>לא במילה</span></div>
+  <div class="ts-kb ml-kb" id="ml-kb" dir="rtl">
+    <div><button type="button" data-l="ק">ק</button><button type="button" data-l="ר">ר</button><button type="button" data-l="א">א</button><button type="button" data-l="ט">ט</button><button type="button" data-l="ו">ו</button><button type="button" data-l="ן">ן</button><button type="button" data-l="ם">ם</button><button type="button" data-l="פ">פ</button></div>
+    <div><button type="button" data-l="ש">ש</button><button type="button" data-l="ד">ד</button><button type="button" data-l="ג">ג</button><button type="button" data-l="כ">כ</button><button type="button" data-l="ע">ע</button><button type="button" data-l="י">י</button><button type="button" data-l="ח">ח</button><button type="button" data-l="ל">ל</button><button type="button" data-l="ך">ך</button><button type="button" data-l="ף">ף</button></div>
+    <div><button type="button" class="wide" data-l="enter">לבדוק</button><button type="button" data-l="ז">ז</button><button type="button" data-l="ס">ס</button><button type="button" data-l="ב">ב</button><button type="button" data-l="ה">ה</button><button type="button" data-l="נ">נ</button><button type="button" data-l="מ">מ</button><button type="button" data-l="צ">צ</button><button type="button" data-l="ת">ת</button><button type="button" data-l="ץ">ץ</button><button type="button" class="wide" data-l="del" aria-label="מחיקה">⌫</button></div>
+  </div>
+  <div id="ml-win"></div>
+  <details class="ch-how"><summary>איך משחקים?</summary><ul>
+    <li>מקלידים מילה בת חמש אותיות ולוחצים "לבדוק".</li>
+    <li><b>זהב:</b> האות במילה, ובדיוק במקום הזה. <b>טורקיז:</b> האות במילה, אבל במקום אחר. <b>כהה:</b> האות לא במילה.</li>
+    <li>אותיות סופיות (ם, ן, ך, ף, ץ) נחשבות כמו הרגילות.</li>
+    <li>נתקעתם? "רמז" מראה הגדרה קצרה של המילה. בתוצאה ייכתב שהיה רמז, וזה בסדר גמור.</li>
+    <li>המילה של היום זהה לכולם. בתרגול אפשר לשחק כמה שרוצים.</li>
+  </ul></details>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">מילה ביום: משחק מילים בעברית לכל המשפחה</h2>
+  <p>מילה ביום הוא משחק ניחוש מילים קצר, שמתאים לכל מי שאוהב עברית: לילדים שמרחיבים אוצר מילים, למבוגרים שרוצים חידה קטנה עם הקפה, ולמשפחות שמשוות תוצאות בווטסאפ. המילה של היום זהה לכולם, ומחר יש מילה חדשה.</p>
+  <h3>חוקי המשחק</h3>
+  <p>צריך לנחש מילה בעברית בת חמש אותיות, ויש שישה ניסיונות. מקלידים מילה ולוחצים "לבדוק". אחרי כל ניחוש האותיות נצבעות: זהב אומר שהאות במילה ובדיוק במקום הזה, טורקיז אומר שהאות במילה אבל במקום אחר, וכהה אומר שהאות לא במילה בכלל. אותיות סופיות נחשבות כמו הרגילות. כל ניחוש מקרב אתכם לתשובה.</p>
+  <h3>טיפים ותרגול</h3>
+  <p>כדאי לפתוח במילה עם אותיות נפוצות ושונות זו מזו, ולהמשיך לפי הצבעים. נתקעתם? "רמז" מראה הגדרה קצרה של המילה. בתוצאה ייכתב שהיה רמז, וזה בסדר גמור. מי שרוצה עוד יכול לעבור לתרגול ולשחק כמה שרוצה. את התוצאה אפשר לשלוח בווטסאפ בלי לגלות את המילה, ורצף הימים נשמר בטלפון.</p>
+  <h3>למה לשחק כל יום</h3>
+  <p>משחק מילים קצר ביום מרחיב אוצר מילים ומחדד את החשיבה, וזה לוקח רק כמה דקות. כשהמשפחה או החברים משחקים באותה מילה, נוצרת שיחה קטנה סביב התוצאות. הורים יכולים לשחק יחד עם הילדים ולהסביר מילים שהם לא מכירים, ומורים יכולים לפתוח איתו שיעור עברית. המשחק בחינם, בלי פרסומות ובלי הרשמה, ועובד בטלפון ובמחשב, בלי להוריד אפליקציה.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>מה אומרים הצבעים?</summary><p>זהב: האות במילה ובמקום הנכון. טורקיז: האות במילה אבל במקום אחר. כהה: האות לא במילה.</p></details>
+  <details><summary>כמה פעמים אפשר לשחק ביום?</summary><p>המילה של היום היא אחת, זהה לכולם. בתרגול אפשר לשחק בלי הגבלה.</p></details>
+  <details><summary>אפשר לקבל רמז?</summary><p>כן. "רמז" מראה הגדרה קצרה של המילה, ובתוצאה ייכתב שהיה רמז.</p></details>
+  <details><summary>המשחק בחינם?</summary><p>כן. בחינם, בלי פרסומות ובלי הרשמה.</p></details>
+  <details><summary>זה כמו וורדל?</summary><p>כן, זה משחק בסגנון וורדל בעברית: מילה בת חמש אותיות, שישה ניסיונות, והאותיות נצבעות אחרי כל ניחוש. כולם מקבלים אותה מילה ביום.</p></details>
+</section>
+<!--/seo-txt-->

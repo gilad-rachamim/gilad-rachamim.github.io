@@ -155,7 +155,7 @@
       var cards = all ? d.cards.slice() : dueCards(d);
       // ערבוב
       for (var i = cards.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = cards[i]; cards[i] = cards[j]; cards[j] = t; }
-      queue = cards; pos = 0; right = 0; wrong = 0; missed = {}; reversed = $('fc-rev').checked;
+      queue = cards; pos = 0; right = 0; wrong = 0; missed = {}; reversed = $('fc-rev').checked; $('fc-hk').innerHTML = ''; $('fc-hk').hidden = true;
       home.hidden = true; play.hidden = false; $('fc-end').hidden = true; $('fc-cardbox').hidden = false;
       show(); used('kartisiot', { action: all ? 'practice_all' : 'practice_due', n: cards.length });
       play.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -190,6 +190,8 @@
       $('fc-end-t').textContent = 'סיימת את הסבב! ' + (right + wrong ? 'ידעת ' + right + ' מתוך ' + (right + wrong) + ' כבר בפעם הראשונה.' : '');
       $('fc-end-n').textContent = next ? 'מחר מחכים לך ' + next + ' כרטיסים לחזרה.' : 'מחר אין כרטיסים לחזרה. כל הכבוד.';
       used('kartisiot', { action: 'done', right: right, wrong: wrong });
+      // התקדמות יומית: סבב שהסתיים = יום של חזרה (assets/hitkadmut.js)
+      if (window.HK && right + wrong) HK.done('kartisiot', { el: $('fc-hk'), title: 'עוד יום של חזרה ✓', help: 'הכרטיסיות כאן בחינם ובלי פרסומות', share: 'סיימתי היום סבב חזרה בכרטיסיות החכמות, בחינם. מתרגלים כמה דקות ביום וזוכרים לאורך זמן:' });
       renderDecks();
     }
     function back() { play.hidden = true; home.hidden = false; renderDecks(); if ('speechSynthesis' in window) speechSynthesis.cancel(); }
@@ -366,6 +368,8 @@
     });
     $('mv-table').addEventListener('change', function (e) {
       var cb = e.target; if (!cb.dataset.d) return; var p = plan(); if (cb.checked) p.done[cb.dataset.d] = 1; else delete p.done[cb.dataset.d]; save(KEY, st); render();
+      // התקדמות יומית: כל יום שמסמנים בו לימוד נספר לרצף (assets/hitkadmut.js)
+      if (cb.checked && window.HK) HK.done('mivchan', { el: $('mv-hk'), title: 'עוד יום של לימוד למבחן ✓', line: 'צעד אחרי צעד. בהצלחה ב' + p.cfg.name + '!', help: 'המתכנן למבחן כאן בחינם ובלי פרסומות', share: 'אני מתכונן ל' + p.cfg.name + ' עם מתכנן הלמידה למבחן: מה ללמוד בכל יום, עד המבחן. בחינם:' });
     });
     $('mv-plans').addEventListener('change', function () { st.cur = this.value; save(KEY, st); var p = plan(); if (p) fill(p.cfg); render(); });
     $('mv-newplan').addEventListener('click', function () { st.cur = ''; save(KEY, st); form.reset(); $('mv-start').value = today(); render(); $('mv-name').focus(); });
@@ -376,7 +380,7 @@
     $('mv-ics').addEventListener('click', function () {
       var p = plan(); if (!p) return; var rows = build(p.cfg);
       icsDownload('mivchan.ics', 'לימוד ל' + p.cfg.name, rows.map(function (r) {
-        return r.kind === 'exam' ? { date: r.date, title: '🎯 ' + r.text } : { date: r.date, time: p.cfg.time, mins: p.cfg.mins, alarm: 5, title: 'לימוד: ' + r.text, desc: (r.sub ? r.sub + '\n' : '') + 'נוצר בכלים ללימודים: https://gilad-rachamim.github.io/limudim/mivchan/' };
+        return r.kind === 'exam' ? { date: r.date, title: '🎯 ' + r.text } : { date: r.date, time: p.cfg.time, mins: p.cfg.mins, alarm: 5, title: 'לימוד: ' + r.text, desc: (r.sub ? r.sub + '\n' : '') + 'נוצר בכלים ללימודים: https://hakelim.com/limudim/mivchan/' };
       }));
       $('mv-tip').hidden = false; used('mivchan', { action: 'ics' });
     });
@@ -464,6 +468,8 @@
         run.round++;
         var lg = load(LOG, {}), t = today(); lg[t] = lg[t] || { m: 0, n: 0 }; lg[t].m += Math.round(phaseLen('focus') / 60000); lg[t].n++; save(LOG, lg);
         used('timer', { action: 'focus_done', mins: Math.round(phaseLen('focus') / 60000) });
+        // התקדמות יומית: סבב לימוד שהסתיים = יום של לימוד (assets/hitkadmut.js)
+        if (window.HK) HK.done('timer', { el: $('tm-hk'), title: 'עוד סבב לימוד ✓ כל הכבוד!', help: 'טיימר הלימוד כאן בחינם ובלי פרסומות', share: 'למדתי היום עם טיימר הלימוד: 25 דקות ריכוז והפסקה קטנה. בחינם:' });
         run.phase = run.round % 4 === 0 ? 'long' : 'break';
       } else run.phase = 'focus';
       run.left = phaseLen(run.phase);
@@ -701,8 +707,8 @@
       var un = unitName(c);
       $('ly-sum').innerHTML = '<div class="big-n">' + esc(perDay(s, c)) + '</div><p>' + esc(title(c)) + ': ' + s.N + ' ' + un[1] + ', ' + s.rows.length + ' ימי לימוד, מ-' + longDate(c.restFrom || c.start) + ' עד ' + longDate(s.end) + '.</p>' +
         (c.rest ? '<p>חולק מחדש ב-' + longDate(c.restFrom) + '. לפני כן למדת ' + ((c.prevDone || 0) === 1 ? 'יום אחד' : (c.prevDone || 0) + ' ימים') + ' ✓</p>' : '') +
-        '<p>למדת ' + done + ' מתוך ' + s.rows.length + ' ימים' + (behind ? ' · ' + behind + ' ימים להשלים, וזה בסדר' : shouldBe ? ' · בדיוק בזמן ✓' : '') + '</p>' +
-        (behind ? '<button class="btn btn-line btn-sm no-print" type="button" id="ly-redo" style="margin-top:.6rem">פספסתי? לחלק מחדש את מה שנשאר, מהיום עד הסוף</button>' : '') + '<div class="bar" style="margin-top:.6rem"><i style="width:' + Math.round(done * 100 / s.rows.length) + '%"></i></div>';
+        '<p>למדת ' + done + ' מתוך ' + s.rows.length + ' ימים' + (behind ? ' · אפשר להמשיך מכאן בכל הכוח 💪' : shouldBe ? ' · בדיוק בזמן ✓' : '') + '</p>' +
+        (behind ? '<button class="btn btn-line btn-sm no-print" type="button" id="ly-redo" style="margin-top:.6rem">להתחיל נקי מהיום: לחלק מחדש את מה שנשאר</button>' : '') + '<div class="bar" style="margin-top:.6rem"><i style="width:' + Math.round(done * 100 / s.rows.length) + '%"></i></div>';
       var tr = s.rows.filter(function (r) { return r.date >= t; })[0];
       var tb = $('ly-today');
       if (tr) {
@@ -745,6 +751,8 @@
       render();
       document.querySelectorAll('#ly-table details').forEach(function (d, i) { d.open = open[i]; });
       if (cb.checked) used('yomi', { action: 'done' });
+      // התקדמות יומית: כל יום שמסמנים בו לימוד נספר לרצף (assets/hitkadmut.js)
+      if (cb.checked && window.HK) HK.done('yomi', { el: $('ly-hk'), title: 'למדת היום ✓ כל הכבוד!', help: 'הלימוד היומי כאן בחינם ובלי פרסומות', share: 'למדתי היום בלימוד היומי לסיום ' + title(p.cfg) + '. מצטרפים? כמה דקות ביום, בחינם:' });
     }
     $('ly-table').addEventListener('change', onCheck);
     $('ly-sum').addEventListener('click', function (e) {
@@ -782,7 +790,7 @@
       if ($('ly-ics-range').value !== 'all') { var lim = ymd(addDays(new Date(), +$('ly-ics-range').value)); rows = rows.filter(function (r) { return r.date <= lim; }); }
       icsDownload('limud-yomi.ics', 'לימוד יומי: ' + title(c), rows.map(function (r) {
         var link = sefaria(c, r.u[0]);
-        return { date: r.date, time: c.time, mins: 20, alarm: 0, title: '📖 ' + rangeText(c, r.u), desc: 'לימוד יומי לסיום ' + title(c) + (link ? '\nללמוד בספריא: ' + link : '') + '\nהתוכנית שלך: https://gilad-rachamim.github.io/limudim/yomi/' };
+        return { date: r.date, time: c.time, mins: 20, alarm: 0, title: '📖 ' + rangeText(c, r.u), desc: 'לימוד יומי לסיום ' + title(c) + (link ? '\nללמוד בספריא: ' + link : '') + '\nהתוכנית שלך: https://hakelim.com/limudim/yomi/' };
       }));
       $('ly-tip').hidden = false; used('yomi', { action: 'ics', n: rows.length });
     });
@@ -938,7 +946,7 @@
             var c = cyc(id);
             nextFresh(c, t, 40).forEach(function (d) {
               if (daysBetween(t, d) > 366) return;
-              evs.push({ date: d, time: time, mins: 30, alarm: 720, title: '🌱 מתחילים ' + c.fresh + ' ב' + c.name + ': ' + full(c, ev(id, d)), desc: 'לא משנה מה היה עד עכשיו. זה הרגע להצטרף מחדש, בכל הכוח.\nhttps://gilad-rachamim.github.io/limudim/olami/' });
+              evs.push({ date: d, time: time, mins: 30, alarm: 720, title: '🌱 מתחילים ' + c.fresh + ' ב' + c.name + ': ' + full(c, ev(id, d)), desc: 'לא משנה מה היה עד עכשיו. זה הרגע להצטרף מחדש, בכל הכוח.\nhttps://hakelim.com/limudim/olami/' });
             });
           });
           evs.sort(function (a, b) { return a.date < b.date ? -1 : 1; });
@@ -947,7 +955,7 @@
           for (var k = 0; k < 31; k++) {
             var d = ymd(addDays(parse(t), k));
             var lines = st.sel.map(function (id) { var q = ev(id, d); return q ? cyc(id).name + ': ' + txt(q) : ''; }).filter(Boolean);
-            if (lines.length) evs.push({ date: d, time: time, mins: 20, alarm: 0, title: '📖 ' + lines.join(' · '), desc: lines.join('\n') + '\nhttps://gilad-rachamim.github.io/limudim/olami/' });
+            if (lines.length) evs.push({ date: d, time: time, mins: 20, alarm: 0, title: '📖 ' + lines.join(' · '), desc: lines.join('\n') + '\nhttps://hakelim.com/limudim/olami/' });
           }
           icsDownload('limud-olami.ics', 'הלימוד היומי שלי', evs);
         }

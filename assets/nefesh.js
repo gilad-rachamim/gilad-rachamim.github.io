@@ -187,15 +187,18 @@
       var what = $('f-in').value.trim(); if (!what) return;
       F = { what: what, next: $('f-step').value.trim(), date: today(), done: false, t: Date.now() };
       save('focus', F); renderFocus(); used('set');
+      if (window.HK) HK.mark('hayom', 5, 'hayom'); // כל יום שחוזרים לכאן נחשב (assets/hitkadmut.js, גרסה עדינה)
     });
     $('f-carry') && $('f-carry').addEventListener('click', function () {
       F = { what: F.what, next: F.next, date: today(), done: false, t: Date.now() };
       save('focus', F); $('f-yesterday').hidden = true; renderFocus(); used('carry');
+      if (window.HK) HK.mark('hayom', 5, 'hayom');
     });
     $('f-done').addEventListener('click', function () {
       F.done = true; save('focus', F); log[today()] = 1; save('focus-log', log); renderFocus(); used('done');
+      if (window.HK) HK.done('hayom', { el: $('f-hk'), title: 'עשית את זה. זה הרבה 💛', line: 'גם צעד קטן נחשב. מחר אפשר לבחור שוב דבר אחד.', help: 'הכלים לנפש כאן בחינם ובלי פרסומות', share: 'כלי קטן שעוזר לי: בוחרים כל יום דבר אחד חשוב וצעד קטן ראשון. בלי רשימות ובלי אשמה, בחינם:' });
     });
-    $('f-undo').addEventListener('click', function () { F.done = false; save('focus', F); delete log[today()]; save('focus-log', log); renderFocus(); });
+    $('f-undo').addEventListener('click', function () { F.done = false; save('focus', F); delete log[today()]; save('focus-log', log); renderFocus(); if ($('f-hk')) { $('f-hk').innerHTML = ''; $('f-hk').hidden = true; } });
     $('f-change').addEventListener('click', function () { $('f-in').value = F ? F.what : ''; $('f-step').value = F ? F.next : ''; card.hidden = true; form.hidden = false; $('f-in').focus(); });
     // תזכורת עדינה: ליומן (גוגל או קובץ לכל יומן בטלפון)
     function remindAt() {
@@ -208,7 +211,7 @@
     $('f-gcal').addEventListener('click', function () {
       var d = remindAt(), e2 = new Date(d.getTime() + 15 * 60000);
       this.href = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent('🎯 ' + F.what) +
-        '&details=' + encodeURIComponent((F.next ? 'הצעד הקטן: ' + F.next + '\n' : '') + 'רק תזכורת עדינה. גם צעד קטן נחשב.\nhttps://gilad-rachamim.github.io/nefesh/hayom/') +
+        '&details=' + encodeURIComponent((F.next ? 'הצעד הקטן: ' + F.next + '\n' : '') + 'רק תזכורת עדינה. גם צעד קטן נחשב.\nhttps://hakelim.com/nefesh/hayom/') +
         '&dates=' + stamp(d) + '/' + stamp(e2) + '&ctz=Asia/Jerusalem';
       used('remind', { how: 'google' });
     });
@@ -329,6 +332,8 @@
       txt.value = ''; good.value = ''; st.textContent = ''; lastBlob = null; $('y-retry').hidden = true;
       renderEntries(); flash($('y-saved'), 'נשמר ביומן שלך ✓');
       used('save', { good: g ? 1 : 0 });
+      // כל יום שכותבים ביומן נחשב – בלי רצף ובלי יעד (assets/hitkadmut.js, גרסה עדינה)
+      if (window.HK) HK.done('yoman', { el: $('y-hk'), title: 'נשמר ביומן שלך 💛', line: g ? 'וגם מצאתם משהו טוב היום. זה לא מובן מאליו.' : 'כל מילה שיוצאת החוצה מקלה קצת.', help: 'הכלים לנפש כאן בחינם ובלי פרסומות', share: 'כלי קטן שעוזר לי: יומן שמדברים אליו חצי דקה, והוא הופך לטקסט. נשמר רק בטלפון, בחינם:' });
     });
     renderEntries();
   }

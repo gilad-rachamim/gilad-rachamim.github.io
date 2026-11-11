@@ -1,0 +1,209 @@
+<!--meta {
+  "site": "limudim",
+  "tool": "dapim",
+  "title": "דפי עבודה במתמטיקה להדפסה בחינם: מחולל לפי כיתה ונושא, עם דף תשובות למורה | כלים ללימודים",
+  "description": "מחולל דפי עבודה במתמטיקה, בחינם ובלי הרשמה: בוחרים כיתה, נושא וכמה דקות יש לכיתה, ומקבלים דף הקנייה או דף חזרה מעוצב להדפסה, עם זמן משוער לכל שאלה ודף תשובות למורה. לכל דף יש גם גרסה דיגיטלית עם רמזים. 50 נושאים, מלוח הכפל ועד הבגרות.",
+  "og_title": "מחולל דפי עבודה במתמטיקה – להדפסה ודיגיטלי",
+  "priority": "0.8",
+  "crumbs": [["מחולל דפי עבודה", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/limudim-dapim.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"דפי העבודה בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בחינם, בלי הרשמה, ואפשר להדפיס כמה דפים שרוצים.\"}}, {\"@type\": \"Question\", \"name\": \"לאילו כיתות יש דפים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"יש 50 נושאים, מלוח הכפל ביסודי ועד נושאי הבגרות ב-3, 4 ו-5 יחידות.\"}}, {\"@type\": \"Question\", \"name\": \"יש דף תשובות?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. אפשר לצרף דף תשובות למורה בעמוד נפרד.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לשלוח את הדף לתלמידים בלי להדפיס?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. לכל דף יש גרסה דיגיטלית עם רמזים ומחשבון פשוט, ושולחים אותה לכיתה בקישור.\"}}]}</script>",
+  "foot": "<script src=\"/assets/vendor/qrcodejs/qrcode-1.0.0.min.js\"></script><script src=\"/assets/limudim-math.js\"></script><script src=\"/assets/limudim-dapim.js\"></script>"
+} -->
+<header class="k-hero no-print" id="dp-hero">
+  <h1>מחולל דפי עבודה</h1>
+  <p class="sub">למורות ולמורים שצריכים להשאיר דף עבודה לכיתה. בוחרים כיתה, נושא וכמה דקות יש, ומקבלים דף מעוצב להדפסה, וגם קישור לדף דיגיטלי עם הכוונה, רמזים ומחשבון פשוט.</p>
+</header>
+
+<div id="mx-data" hidden></div>
+
+<div class="tool" id="dp-app">
+  <!-- המסך של המורה -->
+  <div id="dp-build" class="no-print">
+    <form class="panel dp-form" id="dp-form" autocomplete="off">
+      <h2 class="dp-h">1. מה מלמדים</h2>
+      <div class="dp-row">
+        <label>מקצוע
+          <select id="dp-subj">
+            <option value="math">מתמטיקה</option>
+            <option value="" disabled>אנגלית (בקרוב)</option>
+            <option value="" disabled>לשון (בקרוב)</option>
+          </select>
+        </label>
+        <label>כיתה
+          <select id="dp-grade"></select>
+        </label>
+        <label id="dp-units-w" hidden>יחידות לימוד
+          <select id="dp-units"><option value="3">3 יח״ל</option><option value="4">4 יח״ל</option><option value="5">5 יח״ל</option></select>
+        </label>
+      </div>
+      <label>נושא
+        <select id="dp-topic"></select>
+      </label>
+      <p class="note" id="dp-topic-note">הרשימה מסודרת לפי הכיתה שבחרתם: קודם הנושאים של השנה, ואחריהם נושאים מכיתות קודמות לחזרה.</p>
+
+      <div class="dp-row">
+        <label>לשלב עוד נושא באותו דף (לא חובה)<select id="dp-x1"></select></label>
+        <label>ועוד נושא (לא חובה)<select id="dp-x2"></select></label>
+      </div>
+      <p class="note">דף משולב: השאלות מתחלפות בין הנושאים, וליד כל שאלה כתוב לאיזה נושא היא שייכת. מתאים לחזרה לפני מבחן.</p>
+
+      <h2 class="dp-h">2. איזה דף</h2>
+      <div class="dp-kinds" role="group" aria-label="סוג הדף">
+        <button type="button" data-kind="h" aria-pressed="true"><b>📘 דף הקנייה</b><span>נושא חדש. הסברים קצרים לאורך הדף, תרגיל מודרך צעד אחרי צעד, ואחריו תרגול.</span></button>
+        <button type="button" data-kind="z" aria-pressed="false"><b>🔁 דף חזרה</b><span>נושא שכבר נלמד. תזכורת קצרה בראש הדף, ותרגול שעולה בהדרגה.</span></button>
+      </div>
+      <div class="dp-row">
+        <label>כמה דקות יש לכיתה
+          <select id="dp-min">
+            <option value="10">10 דקות</option><option value="15">15 דקות</option><option value="20">20 דקות</option>
+            <option value="30" selected>30 דקות</option><option value="45">45 דקות (שיעור)</option><option value="60">60 דקות</option><option value="90">90 דקות (שיעור כפול)</option>
+          </select>
+        </label>
+        <label>רמה
+          <select id="dp-lv"><option value="1">בסיס</option><option value="2" selected>רגילה</option><option value="3">מאתגרת</option></select>
+        </label>
+        <label>כמה עזרה יש בדף
+          <select id="dp-help">
+            <option value="2">הרבה עזרה: כל תרגיל מודרך צעד אחרי צעד</option>
+            <option value="1" selected>עזרה רגילה: הדרכה בהתחלה, ואחר כך לבד</option>
+            <option value="0">בלי עזרה: רק שאלות, כמו בוחן</option>
+          </select>
+        </label>
+      </div>
+      <p class="note" id="dp-help-note"></p>
+
+      <h2 class="dp-h">3. תזכורות לנושאים קודמים</h2>
+      <p class="note">עד שלוש שאלות קצרות מנושאים שכבר נלמדו משתלבות בין השאלות של הדף. כך חוזרים על החומר בלי להרגיש. לכל תזכורת יש רמז, וקישור לשיעור קצר בנושא.</p>
+      <div class="dp-row" id="dp-revs">
+        <label>תזכורת 1<select id="dp-r1"></select></label>
+        <label>תזכורת 2<select id="dp-r2"></select></label>
+        <label>תזכורת 3<select id="dp-r3"></select></label>
+      </div>
+
+      <h2 class="dp-h">4. שאלות משלי (לא חובה)</h2>
+      <p class="note">רוצים להוסיף שאלה שכתבתם בעצמכם? שאלה מילולית, שאלת חשיבה, או תרגיל מהספר. היא תופיע בסוף הדף, והזמן שלה נכנס לחשבון. אם כותבים גם תשובות שגויות, השאלה הופכת לאמריקאית. עד 20 שאלות.</p>
+      <p class="dp-imp" id="dp-imp" hidden></p>
+      <div id="dp-own"></div>
+      <p class="note" id="dp-own-n"></p>
+      <div class="btns"><button class="btn btn-line btn-sm" type="button" id="dp-own-add">＋ להוסיף שאלה משלי</button><button class="btn btn-line btn-sm" type="button" id="dp-bank-open">📚 שאלות מוכנות מהבנק</button></div>
+      <div class="dp-bank" id="dp-bank" hidden>
+        <p class="note">שאלות אמריקאיות שנבדקו פעמיים. התשובות השגויות הן הטעויות הנפוצות. אותו בנק נמצא גם ב<a class="gold" href="/kelim/chashiva/kita/">כיתה משחקת</a>.</p>
+        <div class="dp-row"><label>נושא<select id="dp-bank-t"></select></label><label>כמה<select id="dp-bank-n"><option value="5">5 שאלות</option><option value="10" selected>10 שאלות</option></select></label></div>
+        <div class="btns"><button class="btn btn-line btn-sm" type="button" id="dp-bank-go">＋ להוסיף לדף</button></div>
+        <p class="note" id="dp-bank-msg" aria-live="polite"></p>
+      </div>
+      <label class="dp-chk"><input type="checkbox" id="dp-only"> רק השאלות שלי, בלי תרגילים מהמחולל (למשל כשמביאים שאלות מכיתה משחקת)</label>
+
+      <h2 class="dp-h">5. עיצוב</h2>
+      <div class="dp-row">
+        <label>כותרת קטנה (לא חובה)
+          <input type="text" id="dp-title" maxlength="40" placeholder="למשל: ט׳2 · המורה רחל">
+        </label>
+        <label>סגנון הדף
+          <select id="dp-style"><option value="lavan">לבן, חוסך דיו</option><option value="zayit">ירוק זית</option><option value="klaf">קלף</option><option value="tzivoni">צבעוני ושמח</option></select>
+        </label>
+        <label>גודל הכתב
+          <select id="dp-font"><option value="0">רגיל</option><option value="1">גדול (נגיש)</option></select>
+        </label>
+      </div>
+      <fieldset class="dp-opts"><legend>מה יופיע בדף</legend>
+        <label class="dp-chk"><input type="checkbox" id="dp-o-time" checked> זמן משוער ליד כל שאלה</label>
+        <label class="dp-chk"><input type="checkbox" id="dp-o-stars" checked> כוכבים לצביעה</label>
+        <label class="dp-chk"><input type="checkbox" id="dp-o-bonus" checked> שאלת אתגר לזריזים</label>
+        <label class="dp-chk"><input type="checkbox" id="dp-o-feel" checked> "איך הרגשתי" בסוף</label>
+        <label class="dp-chk"><input type="checkbox" id="dp-o-grid" checked> מקום משובץ לחישובים</label>
+        <label class="dp-chk"><input type="checkbox" id="dp-o-qr" checked> קוד לסריקה לדף הדיגיטלי</label>
+        <label class="dp-chk"><input type="checkbox" id="dp-key" checked> דף תשובות למורה (עמוד נפרד)</label>
+      </fieldset>
+    </form>
+
+    <div class="panel dp-out">
+      <p class="dp-sum" id="dp-sum" aria-live="polite"></p>
+      <div class="btns">
+        <button class="btn btn-gold" type="button" id="dp-print">🖨 להדפיס או לשמור PDF</button>
+        <a class="btn btn-line" id="dp-open" href="#" target="_blank" rel="noopener">👁 לפתוח את הדף הדיגיטלי</a>
+      </div>
+      <div class="btns">
+        <a class="btn btn-line btn-sm" id="dp-wa" href="#" target="_blank" rel="noopener">📲 לשלוח לכיתה בווטסאפ</a>
+        <button class="btn btn-line btn-sm" type="button" id="dp-copy">🔗 להעתיק קישור</button>
+        <button class="btn btn-line btn-sm" type="button" id="dp-new">🎲 תרגילים אחרים</button>
+      </div>
+      <p class="note">הקישור פותח לתלמידים את אותו דף בדיוק, עם אותם מספרים, בגרסה דיגיטלית: בדיקה מיד, רמזים, ומחשבון פשוט שעוזר בחשבון ולא פותר במקומם. בסוף הם שולחים לכם סיכום בווטסאפ.</p>
+    </div>
+    <h2 class="dp-h dp-prevh">כך ייראה הדף המודפס</h2>
+  </div>
+
+  <div id="dp-paper"></div>
+
+  <!-- המסך של התלמידים -->
+  <div id="dp-digital" hidden></div>
+
+  <div class="no-print" id="dp-foot">
+    <div class="panel">
+      <h3>מה מקבלים בכל דף</h3>
+      <ol class="mx-how">
+        <li><b>אורך לפי הזמן.</b> הדף מתמלא בשאלות עד מספר הדקות שבחרתם, וליד כל שאלה כתוב כמה זמן בערך היא לוקחת.</li>
+        <li><b>הקנייה או חזרה.</b> בדף הקנייה ההסברים משולבים בין השאלות, והתרגילים הראשונים מודרכים. בדף חזרה יש תזכורת קצרה ויותר תרגול.</li>
+        <li><b>חזרה בלי להרגיש.</b> שאלות קצרות מנושאים קודמים, עם רמז הפוך בתחתית הדף וקוד לסריקה שמוביל לשיעור קצר.</li>
+        <li><b>דף שמעודד.</b> כוכבים לצביעה, שאלת אתגר לזריזים, ושאלה קצרה "איך הרגשתי" בסוף.</li>
+        <li><b>דיגיטלי ונגיש.</b> אותו דף בטלפון או במחשב: צעד אחרי צעד, הקראה של ההסברים, ומחשבון עם מקשים גדולים.</li>
+      </ol>
+    </div>
+    <div class="panel dp-idea">
+      <h3>💡 מורות ומורים: איך לשדרג את הכלי?</h3>
+      <p>אתם מכירים את הכיתה הכי טוב. חסר נושא? רוצים סוג שאלה אחר, מקום לשאלה משלכם, עיצוב נוסף? כל הצעה, קטנה או גדולה, נכנסת לרשימה שלי, ואני בונה לפי מה שאתם מבקשים.</p>
+      <label for="dp-idea">ההצעה שלי</label>
+      <textarea id="dp-idea" rows="3" maxlength="600" placeholder="למשל: שיהיה אפשר להוסיף שאלה משלי בסוף הדף"></textarea>
+      <div class="btns"><a class="btn btn-gold" id="dp-idea-wa" href="https://wa.me/972584049049" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לי את ההצעה (ווטסאפ)</a></div>
+    </div>
+    <div class="panel dp-idea">
+      <h3>🎁 רוצים כלי אישי, רק בשביל הכיתה שלכם?</h3>
+      <p>לוח תורנויות, מחולל קבוצות, דף מעקב, משחק לפתיחת שיעור, משהו שחוסך לכם עשר דקות ביום. <b>גם אם זה נשמע לכם קטן או שטותי, בשבילי זה ענק.</b> כתבו לי מה היה מקל עליכם, ואבנה. בחינם.</p>
+      <label for="dp-ishi">מה הייתי רוצה שיהיה לי</label>
+      <textarea id="dp-ishi" rows="3" maxlength="600" placeholder="למשל: כלי שמגריל תלמידה לענות, בלי לחזור על אותה אחת"></textarea>
+      <div class="btns"><a class="btn btn-gold" id="dp-ishi-wa" href="https://wa.me/972584049049" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לבקש כלי אישי (ווטסאפ)</a></div>
+      <span class="sig">גילעד</span>
+    </div>
+    <section class="k-sec" aria-labelledby="dp-od-h">
+      <h2 id="dp-od-h">🧰 עוד כלים שיעזרו לכם בכיתה</h2>
+      <div class="lcards">
+        <a href="/limudim/machberet/kita/"><span class="em" aria-hidden="true">👩‍🏫</span><b>שיעורי בית במחברת</b><span class="d">נותנים לכיתה כמה תרגילים ורואים בזמן אמת מי פתר ומי נתקע.</span></a>
+        <a href="/kelim/chashiva/kita/"><span class="em" aria-hidden="true">🏆</span><b>כיתה משחקת</b><span class="d">לוח נקודות כיתתי, עם פרסים ותעודות שהמורה בוחרת.</span></a>
+        <a href="/limudim/kahoot/"><span class="em" aria-hidden="true">🎯</span><b>חידונים ל-Kahoot</b><span class="d">חידון מוכן לפי נושא, בקובץ שנכנס ישר ל-Kahoot.</span></a>
+        <a href="/limudim/batei-sefer/"><span class="em" aria-hidden="true">🏫</span><b>כל הכלים למורים</b><span class="d">הדף המלא לבתי ספר ולמורים, עם כל הכלים לכיתה במקום אחד.</span></a>
+      </div>
+    </section>
+    <p class="local-note">🔒 בלי הרשמה. שום דבר על התלמידים לא נשמר אצלנו. ההתקדמות נשמרת רק במכשיר שלהם.</p>
+    <p class="note" style="text-align:center">חלוקת הנושאים לכיתות היא לפי תוכנית הלימודים המקובלת, ואפשר לבחור כל נושא לכל כיתה. חסר נושא או מקצוע? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>, ואוסיף.</p>
+    <div class="share-row"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="מחולל דפי עבודה במתמטיקה בחינם: דף הקנייה או חזרה, להדפסה ודיגיטלי, לפי כיתה ולפי כמה דקות יש" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח למורה בווטסאפ</a></div>
+    <p class="disclaimer"><a class="gold" href="/limudim/batei-sefer/">לבתי ספר ולמורים</a> · <a class="gold" href="/limudim/">כל הכלים ללימודים</a> · חינם · בלי הרשמה</p>
+  </div>
+
+  <!-- מחשבון פשוט -->
+  <div class="dc-box no-print" id="dc-box" role="dialog" aria-label="מחשבון פשוט" hidden>
+    <div class="dc-bar"><b>🧮 מחשבון פשוט</b><button class="linkish" type="button" id="dc-x">סגירה ✕</button></div>
+    <div class="dc-disp" dir="ltr"><div id="dc-expr" aria-label="התרגיל"></div><output id="dc-res" aria-live="polite"></output></div>
+    <div class="dc-keys" id="dc-keys" dir="ltr"></div>
+    <p class="note">המחשבון עוזר בחשבון בלבד: חיבור, חיסור, כפל, חילוק, ריבוע ושורש. את הדרך פותרים לבד 💪</p>
+  </div>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">דפי עבודה במתמטיקה למורים ולהורים</h2>
+  <p>המחולל נבנה למורות ולמורים שצריכים להשאיר דף עבודה לכיתה, למחליפים שנכנסים לשיעור בלי הכנה, ולהורים שרוצים דף תרגול לילד בבית. במקום לחפש דף מוכן שלא בדיוק מתאים, בונים דף לפי הכיתה, הנושא והזמן שיש.</p>
+  <h3>איך בונים דף</h3>
+  <p>בוחרים כיתה ונושא, ובתיכון גם את מספר היחידות. אפשר לשלב עוד נושא או שניים באותו דף, לחזרה לפני מבחן. בוחרים את סוג הדף: דף הקנייה לנושא חדש, עם הסברים קצרים ותרגיל מודרך, או דף חזרה לנושא שכבר נלמד. בוחרים כמה דקות יש לכיתה, מעשר דקות ועד שיעור כפול, את הרמה, וכמה עזרה תהיה בדף. אפשר להוסיף תזכורות קצרות מנושאים קודמים, ושאלות שכתבתם בעצמכם.</p>
+  <h3>הדפסה, דף דיגיטלי ודף תשובות</h3>
+  <p>הדף מעוצב ומוכן להדפסה או לשמירה כ-PDF, בכמה סגנונות ובכתב רגיל או גדול. אפשר להוסיף זמן משוער ליד כל שאלה, שאלת אתגר לזריזים, מקום משובץ לחישובים, ודף תשובות למורה בעמוד נפרד. לכל דף יש גם גרסה דיגיטלית עם הכוונה צעד אחרי צעד, רמזים ומחשבון פשוט, ואפשר לשלוח אותה לכיתה בווטסאפ.</p>
+  <h3>להורים</h3>
+  <p>הורים יכולים להדפיס דף חזרה קצר של עשר או חמש עשרה דקות בנושא שהילד לומד עכשיו, ולבדוק אותו עם דף התשובות. התרגילים נוצרים מחדש בכל פעם, כך שאפשר להדפיס דף אחר בכל יום. הכול בחינם ובלי הרשמה.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>דפי העבודה בחינם?</summary><p>כן. בחינם, בלי הרשמה, ואפשר להדפיס כמה דפים שרוצים.</p></details>
+  <details><summary>לאילו כיתות יש דפים?</summary><p>יש 50 נושאים, מלוח הכפל ביסודי ועד נושאי הבגרות ב-3, 4 ו-5 יחידות.</p></details>
+  <details><summary>יש דף תשובות?</summary><p>כן. אפשר לצרף דף תשובות למורה בעמוד נפרד.</p></details>
+  <details><summary>אפשר לשלוח את הדף לתלמידים בלי להדפיס?</summary><p>כן. לכל דף יש גרסה דיגיטלית עם רמזים ומחשבון פשוט, ושולחים אותה לכיתה בקישור.</p></details>
+</section>
+<!--/seo-txt-->

@@ -1,0 +1,57 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_nono",
+  "title": "שחור ופתור (נונוגרם) אונליין בחינם: אתגר יומי ושלבים בעברית | הכלים של גילעד רחמים",
+  "description": "שחור ופתור (נונוגרם) אונליין בחינם: צובעים משבצות לפי המספרים ומגלים ציור. אתגר יומי זהה לכולם, שלבים מ-5×5 ועד 15×15, לוח חופשי, רמז, בדיקה וביטול. לכל לוח פתרון אחד שמגיעים אליו בהיגיון. בלי הרשמה.",
+  "og_title": "שחור ופתור – אתגר יומי בחינם",
+  "priority": "0.7",
+  "crumbs": [["משחקי חשיבה", "/kelim/chashiva/"], ["שחור ופתור", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/chashiva.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"מה זה נונוגרם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"זה השם הבינלאומי של שחור ופתור: חידה שבה צובעים משבצות לפי מספרים בצד הלוח, ובסוף מתגלה ציור.\"}}, {\"@type\": \"Question\", \"name\": \"מה אומרים המספרים ליד השורה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כמה משבצות צבועות יש ברצף, ובאיזה סדר. בין רצף לרצף יש לפחות משבצת ריקה אחת.\"}}, {\"@type\": \"Question\", \"name\": \"מאיזה גודל מתחילים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"השלבים מתחילים בלוח 5×5, וממשיכים ל-8×8, 10×10 ועד 15×15. כל שלב שפותרים פותח את הבא.\"}}, {\"@type\": \"Question\", \"name\": \"צריך לנחש?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. לכל לוח כאן פתרון אחד, ומגיעים אליו בהיגיון, בלי לנחש.\"}}]}</script>",
+  "foot": "<script src=\"/assets/chashiva.js\" defer></script><script src=\"/assets/chashiva-nono.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>שחור ופתור</h1>
+  <p class="sub">המספרים בצד אומרים כמה משבצות ברצף צובעים בכל שורה ועמודה. צובעים, מסמנים ✕ איפה שבטוח ריק, ולאט לאט מתגלה הציור.</p>
+</header>
+<div class="tool">
+  <div class="ch-tabs" id="nn-tabs" role="tablist"><button type="button" role="tab" data-m="daily" aria-selected="true">⭐ אתגר יומי</button><button type="button" role="tab" data-m="level" aria-selected="false">🪜 שלבים</button><button type="button" role="tab" data-m="free" aria-selected="false">🎲 לוח חופשי</button></div>
+  <p class="ch-weekline" id="ch-weekline"></p>
+  <div class="ch-vsbanner" id="ch-vsbanner" hidden></div>
+  <div id="nn-lvlbox" hidden><div class="ch-chips" id="nn-levels"></div><p class="ch-hint">שלבים 1–5: לוח 5×5. אחר כך 8×8, 10×10, ומשלב 31: 15×15. כל שלב שפותרים פותח את הבא.</p></div>
+  <div id="nn-freebox" hidden><div class="ch-chips" id="nn-sizes"><button type="button" data-n="5">5×5</button><button type="button" data-n="8" class="on">8×8</button><button type="button" data-n="10">10×10</button><button type="button" data-n="15">15×15</button></div></div>
+  <div class="ch-done-today" id="nn-today" hidden></div>
+  <div class="ch-bar"><span id="nn-label"></span><span>⏱ <b id="nn-time">0:00</b></span></div>
+  <div class="nn-wrap"><div class="nn-board" id="nn-board" aria-label="לוח שחור ופתור"></div></div>
+  <div class="ch-tools" id="nn-tool"><button type="button" data-t="f" class="on">■ צובעים</button><button type="button" data-t="x">✕ מסמנים ריק</button></div>
+  <div class="ch-tools"><button type="button" id="nn-undo">↶ ביטול</button><button type="button" id="nn-hint">💡 רמז</button><button type="button" id="nn-check">✓ בדיקה</button><button type="button" id="nn-clear">🧹 לנקות</button></div>
+  <p class="ch-msg" id="nn-msg" aria-live="polite"></p>
+  <div id="nn-win"></div>
+  <details class="ch-how"><summary>איך משחקים?</summary><ul>
+    <li>"3 1" ליד שורה = שלוש משבצות צבועות ברצף, אחר כך לפחות משבצת ריקה אחת, ואז עוד אחת צבועה. בסדר הזה, משמאל לימין.</li>
+    <li>מספר גדול הוא נקודת התחלה טובה: בשורה של 10 עם "8", שש המשבצות האמצעיות צבועות בטוח.</li>
+    <li>אפשר לגרור את האצבע על כמה משבצות ברצף. נגיעה שנייה באותה משבצת מוחקת.</li>
+    <li>כשמספר מסתדר, הוא נמחק בקו. הלוח נשמר בטלפון, אפשר לסגור ולחזור.</li>
+    <li>לכל לוח כאן פתרון אחד, ומגיעים אליו בהיגיון, בלי לנחש.</li>
+  </ul></details>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">שחור ופתור: חוקי הנונוגרם וטיפים</h2>
+  <p>שחור ופתור, שנקרא גם נונוגרם, הוא חידת היגיון שבסופה מתגלה ציור. הוא מתאים לילדים שאוהבים לצבוע ולגלות, ולמבוגרים שאוהבים סודוקו ומחפשים משהו אחר. אין צורך לנחש: לכל לוח כאן פתרון אחד, ומגיעים אליו בהיגיון.</p>
+  <h3>חוקי המשחק</h3>
+  <p>ליד כל שורה ומעל כל עמודה יש מספרים. הם אומרים כמה משבצות ברצף צובעים. למשל, "3 1" ליד שורה אומר: שלוש משבצות צבועות ברצף, אחר כך לפחות משבצת ריקה אחת, ואז עוד משבצת צבועה אחת, בסדר הזה. צובעים משבצות שבטוח צריכות להיות צבועות, ומסמנים ✕ במשבצות שבטוח ריקות. לאט לאט כל השורות והעמודות מסתדרות, והציור מתגלה.</p>
+  <h3>איך משחקים כאן וכמה טיפים</h3>
+  <p>יש אתגר יומי, זהה לכולם, שלבים שנפתחים אחד אחרי השני, מ-5×5 למתחילים ועד 15×15, ולוח חופשי בגודל שבוחרים. אפשר לגרור את האצבע על כמה משבצות ברצף, ומספר שהסתדר נמחק בקו. טיפ: התחילו במספרים הגדולים. בשורה של 10 עם "8", שש המשבצות האמצעיות צבועות בטוח. יש גם רמז, בדיקה וביטול, והלוח נשמר בטלפון.</p>
+  <h3>למי זה מתאים</h3>
+  <p>שחור ופתור מתאים לכל מי שאוהב חידות היגיון ושקט. ילדים יכולים להתחיל בלוחות 5×5, שנפתרים בכמה דקות, ומבוגרים יכולים להתקדם ללוחות 15×15 שלוקחים יותר זמן. אין צורך בידע מוקדם או בחשבון, רק במחשבה מסודרת ובקצת סבלנות וריכוז. הכול בחינם, בלי פרסומות ובלי הרשמה.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>מה זה נונוגרם?</summary><p>זה השם הבינלאומי של שחור ופתור: חידה שבה צובעים משבצות לפי מספרים בצד הלוח, ובסוף מתגלה ציור.</p></details>
+  <details><summary>מה אומרים המספרים ליד השורה?</summary><p>כמה משבצות צבועות יש ברצף, ובאיזה סדר. בין רצף לרצף יש לפחות משבצת ריקה אחת.</p></details>
+  <details><summary>מאיזה גודל מתחילים?</summary><p>השלבים מתחילים בלוח 5×5, וממשיכים ל-8×8, 10×10 ועד 15×15. כל שלב שפותרים פותח את הבא.</p></details>
+  <details><summary>צריך לנחש?</summary><p>לא. לכל לוח כאן פתרון אחד, ומגיעים אליו בהיגיון, בלי לנחש.</p></details>
+</section>
+<!--/seo-txt-->

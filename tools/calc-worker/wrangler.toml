@@ -1,0 +1,19 @@
+# מאגר תרגילים משותף + תיקוני דיבור למחשבון לבגרות (/limudim/machshevon/). Cloudflare Worker + Durable Object (חינמי).
+# פריסה:        cd tools/calc-worker && npx wrangler deploy   (אותו חשבון כמו kodesh-tehillim)
+# מפתח ניהול:    npx wrangler secret put ADMIN_KEY   (עותק ב-~/.claude/secrets/limudim-calc.txt)
+# בדיקה מקומית: npx wrangler dev --local --port 8789
+name = "limudim-calc"
+main = "calc-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[[durable_objects.bindings]]
+name = "BANK"
+class_name = "Bank"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Bank"]
+
+[vars]
+EXTRA_ORIGINS = ""

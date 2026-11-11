@@ -77,19 +77,29 @@
     return '<div class="oa-dh"><b>יום ' + n + ' לעומר</b><span>' + esc(hebLabel(n)) + (d ? ' · ' + esc(fG.format(d)) : '') + '</span><span>' + esc(sefira(n)) + '</span></div>';
   }
   var shown = 1;
+  // מה כבר נלמד (לפי יום העומר), נשמר בטלפון. הרצף והיעד השבועי: assets/hitkadmut.js
+  function doneSet() { try { return JSON.parse(store.get('done') || '{}') || {}; } catch (e) { return {}; } }
+  function didBtn(n) { var ok = doneSet()[n]; return '<div class="oa-did"><button type="button" class="btn ' + (ok ? 'btn-line' : 'btn-gold') + ' btn-sm" id="oa-did">' + (ok ? '✓ למדתם את יום ' + n : 'למדתי את יום ' + n + ' ✓') + '</button></div>'; }
   function renderToday(n, label, intro) {
     shown = n;
-    var h = (intro ? '<div class="oa-body" style="padding-bottom:0"><p class="oa-pre">' + intro + '</p></div>' : '') + headHtml(n) + '<div class="oa-body">' + bodyHtml(n, label) + '</div>' +
+    var h = (intro ? '<div class="oa-body" style="padding-bottom:0"><p class="oa-pre">' + intro + '</p></div>' : '') + headHtml(n) + '<div class="oa-body">' + bodyHtml(n, label) + didBtn(n) + '</div>' +
       '<div class="oa-nav"><button type="button" id="oa-prev"' + (n <= 1 ? ' style="visibility:hidden"' : '') + '>→ יום ' + (n - 1) + '</button><button type="button" id="oa-next"' + (n >= 49 ? ' style="visibility:hidden"' : '') + '>יום ' + (n + 1) + ' ←</button></div>';
     $('oa-today').innerHTML = h;
     $('oa-prev').onclick = function () { if (shown > 1) renderToday(shown - 1); };
     $('oa-next').onclick = function () { if (shown < 49) renderToday(shown + 1); };
+    $('oa-did').onclick = function () {
+      var d = doneSet(); if (d[n]) return;
+      d[n] = 1; store.set('done', JSON.stringify(d)); renderToday(n, label, intro);
+      if (window.toolUsed) window.toolUsed('omer-avot', { how: 'did', day: n });
+      var s = $('day-' + n); if (s) { var sm = s.querySelector('summary'); if (sm && !sm.querySelector('.oa-ok')) sm.insertAdjacentHTML('beforeend', '<span class="oa-ok">✓ נלמד</span>'); }
+      if (window.HK) HK.done('omer', { el: $('oa-hk'), title: 'למדתם את יום ' + n + ' ✓', help: 'הכלי הזה בחינם ובלי פרסומות', share: 'למדתי היום פרקי אבות לספירת העומר: קטע קצר בכל יום, עם פירוש קליל. מצטרפים? בחינם:' });
+    };
   }
   function renderAll(todayN) {
     var h = '';
     for (var n = 1; n <= 49; n++) {
       if ((n - 1) % 7 === 0) h += '<h2 class="oa-wk">שבוע ' + WK[(n - 1) / 7] + "' · " + CH[(n - 1) / 7] + '</h2>';
-      h += '<details class="oa-day' + (n === todayN ? ' is-today' : '') + '" id="day-' + n + '"><summary>' + headHtml(n) + '</summary><div class="oa-body">' + bodyHtml(n) + '</div></details>';
+      h += '<details class="oa-day' + (n === todayN ? ' is-today' : '') + '" id="day-' + n + '"><summary>' + headHtml(n) + (doneSet()[n] ? '<span class="oa-ok">✓ נלמד</span>' : '') + '</summary><div class="oa-body">' + bodyHtml(n) + '</div></details>';
     }
     $('oa-all').innerHTML = h;
   }

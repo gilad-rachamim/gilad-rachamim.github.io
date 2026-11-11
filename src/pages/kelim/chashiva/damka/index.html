@@ -1,0 +1,57 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_damka",
+  "title": "דמקה אונליין בחינם בעברית: נגד המחשב או עם חבר בווטסאפ | הכלים של גילעד רחמים",
+  "description": "דמקה אונליין בעברית, בחינם ובלי פרסומות, לפי החוקים הנפוצים בארץ: נגד המחשב בשלוש רמות, עם חבר בקישור (כל מהלך נשלח בווטסאפ), או שניים על טלפון אחד. אכילה חובה, אכילה בשרשרת ומלך שעף. בלי הרשמה.",
+  "og_title": "דמקה – לשחק עם חבר בווטסאפ, בחינם",
+  "priority": "0.7",
+  "crumbs": [["משחקי חשיבה", "/kelim/chashiva/"], ["דמקה", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/chashiva.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"האכילה בדמקה היא חובה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. אם אפשר לאכול, חייבים. הכלי שחייב לאכול מסומן באדום.\"}}, {\"@type\": \"Question\", \"name\": \"מה עושה מלך בדמקה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"חייל שמגיע לצד השני נהיה מלך. המלך \\\"עף\\\": זז ואוכל באלכסון לכל מרחק, קדימה ואחורה.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לשחק דמקה נגד המחשב?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן, בשלוש רמות: קל, בינוני וקשה.\"}}, {\"@type\": \"Question\", \"name\": \"צריך להירשם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. משחקים בחינם, בלי הרשמה, והמשחק נשמר בטלפון.\"}}]}</script>",
+  "foot": "<script src=\"/assets/chashiva.js\" defer></script><script src=\"/assets/chashiva-damka.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>דמקה</h1>
+  <p class="sub">המשחק שכולם מכירים מהילדות. מול המחשב, מול חבר בווטסאפ (כל אחד משחק מתי שנוח לו), או שניים על טלפון אחד.</p>
+</header>
+<div class="tool">
+  <div class="ch-tabs" id="dm-tabs" role="tablist"><button type="button" role="tab" data-m="bot" aria-selected="true">🤖 מול המחשב</button><button type="button" role="tab" data-m="friend" aria-selected="false">📨 עם חבר בווטסאפ</button><button type="button" role="tab" data-m="phone" aria-selected="false">📱 שניים בטלפון אחד</button></div>
+  <p class="ch-weekline" id="ch-weekline"></p>
+  <div class="ch-vsbanner" id="ch-vsbanner" hidden></div>
+  <div id="dm-botopts"><div class="ch-chips" id="dm-levels"></div></div>
+  <div id="dm-fropts" hidden><p class="ch-hint">כל מהלך נשלח לחבר בקישור. הוא עונה מתי שנוח לו, והקישור שלו מחזיר לכם את הלוח.</p><div class="ch-chips"><button type="button" id="dm-fr-me">⚪ אני מתחיל (לבן)</button><button type="button" id="dm-fr-them">⚫ שהחבר יתחיל</button></div></div>
+  <div class="ch-bar"><span id="dm-status"></span><span id="dm-capt"></span></div>
+  <div class="bg-board dm-board" id="dm-board" dir="ltr" aria-label="לוח דמקה"></div>
+  <div class="ch-tools"><button type="button" id="dm-undo">↶ ביטול מהלך</button><button type="button" id="dm-flip" hidden>🔄 להפוך את הלוח בכל תור</button><button type="button" id="dm-new">🎲 משחק חדש</button></div>
+  <p class="ch-msg" id="dm-msg" aria-live="polite"></p>
+  <div id="dm-send"></div>
+  <div id="dm-win"></div>
+  <details class="ch-how"><summary>איך משחקים?</summary><ul>
+    <li>נוגעים בכלי, ואז במשבצת שאליה הוא הולך. הנקודות מראות לאן מותר.</li>
+    <li>חייל זז צעד אחד באלכסון קדימה. הוא אוכל בקפיצה מעל כלי של היריב, קדימה וגם אחורה.</li>
+    <li><b>אכילה היא חובה.</b> כלי שחייב לאכול מסומן באדום. אחרי אכילה, אם אפשר לאכול שוב – ממשיכים באותו תור (נוגעים בכל קפיצה).</li>
+    <li>חייל שמגיע לצד השני נהיה מלך 👑. מלך "עף": זז ואוכל באלכסון לכל מרחק.</li>
+    <li>מנצח מי שאוכל את כל הכלים של היריב, או משאיר אותו בלי מהלך.</li>
+    <li><b>עם חבר בווטסאפ:</b> עושים מהלך, שולחים את הקישור, והחבר עונה בקישור חדש. ניצחון אחד ביום נספר לרצף ולאתגר השבועי.</li>
+  </ul></details>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">דמקה בחינם, לפי החוקים שמכירים בארץ</h2>
+  <p>דמקה היא משחק שכולם מכירים מהילדות, ועדיין יש בו הרבה מחשבה. היא מתאימה לילדים שלומדים לתכנן קדימה, להורים שרוצים לשחק איתם, ולחברים שמשחקים מרחוק בווטסאפ.</p>
+  <h3>חוקי הדמקה בקצרה</h3>
+  <p>משחקים על לוח 8×8, לכל שחקן 12 כלים, והלבן מתחיל. חייל זז צעד אחד באלכסון קדימה. הוא אוכל בקפיצה מעל כלי של היריב, קדימה וגם אחורה. אכילה היא חובה. אחרי אכילה, אם אפשר לאכול שוב, ממשיכים באותו תור, וזו אכילה בשרשרת. חייל שמגיע לצד השני של הלוח נהיה מלך. המלך "עף": הוא זז ואוכל באלכסון לכל מרחק. מנצח מי שאוכל את כל הכלים של היריב, או משאיר אותו בלי מהלך.</p>
+  <h3>איך משחקים כאן</h3>
+  <p>נוגעים בכלי, והנקודות מראות לאן מותר ללכת. כלי שחייב לאכול מסומן באדום, כדי שלא תפספסו. באכילה בשרשרת נוגעים בכל קפיצה בתורה. נגד המחשב יש שלוש רמות, קל, בינוני וקשה, ואפשר לבטל מהלך. עם חבר בווטסאפ עושים מהלך, שולחים את הקישור, והחבר עונה בקישור חדש מתי שנוח לו.</p>
+  <h3>כמה טיפים</h3>
+  <p>שמרו את השורה האחורית מלאה כמה שאפשר, כך שליריב יהיה קשה להגיע להכתרה. לפני כל מהלך בדקו אם אתם משאירים כלי שאפשר לאכול. כיוון שאכילה היא חובה, לפעמים אפשר להכריח את היריב לאכול ולהכין לו מלכודת. על טלפון אחד אפשר להפוך את הלוח בכל תור. הכול בחינם ובלי הרשמה.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>האכילה בדמקה היא חובה?</summary><p>כן. אם אפשר לאכול, חייבים. הכלי שחייב לאכול מסומן באדום.</p></details>
+  <details><summary>מה עושה מלך בדמקה?</summary><p>חייל שמגיע לצד השני נהיה מלך. המלך "עף": זז ואוכל באלכסון לכל מרחק, קדימה ואחורה.</p></details>
+  <details><summary>אפשר לשחק דמקה נגד המחשב?</summary><p>כן, בשלוש רמות: קל, בינוני וקשה.</p></details>
+  <details><summary>צריך להירשם?</summary><p>לא. משחקים בחינם, בלי הרשמה, והמשחק נשמר בטלפון.</p></details>
+</section>
+<!--/seo-txt-->

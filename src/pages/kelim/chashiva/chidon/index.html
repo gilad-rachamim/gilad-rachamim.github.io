@@ -1,0 +1,81 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_chidon",
+  "title": "טריוויה אונליין בחינם: חידון טריוויה יומי בעברית, עשר שאלות ואתגר לחבר | הכלים של גילעד רחמים",
+  "description": "חידון טריוויה יומי בעברית, בחינם: עשר שאלות במדע, גוף האדם, ארצות, חגים ותנ״ך, ידע כללי וחשבון בראש. כולם מקבלים את אותו חידון, שולחים לחבר או לקבוצה ורואים מי צבר יותר נקודות. רצף ימים וחידון חופשי לפי נושא. בלי הרשמה.",
+  "og_title": "חידון וטריוויה יומי – מי יודע יותר?",
+  "priority": "0.7",
+  "crumbs": [["משחקי חשיבה", "/kelim/chashiva/"], ["חידון וטריוויה", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/chashiva.css\"><link rel=\"stylesheet\" href=\"/assets/limudim-krav.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"כמה שאלות יש בחידון היומי?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"עשר שאלות ביום, זהות לכל מי שמשחק. מחר יש חידון חדש.\"}}, {\"@type\": \"Question\", \"name\": \"איך צוברים נקודות?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"תשובה נכונה שווה 3 נקודות, ועוד נקודה למי שעונה נכון בתוך 12 שניות. יש ניסיון אחד לכל שאלה.\"}}, {\"@type\": \"Question\", \"name\": \"איך מתחרים בחבר?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לוחצים \\\"לאתגר חבר\\\" ושולחים את הקישור. החבר מקבל את אותו חידון, וכל מי שמשחק נכנס ללוח שבקישור.\"}}, {\"@type\": \"Question\", \"name\": \"החידון בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בחינם, בלי הרשמה, ורק עם כינוי.\"}}, {\"@type\": \"Question\", \"name\": \"יש תשובות לשאלות הטריוויה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. אחרי כל שאלה רואים מיד את התשובה הנכונה, ובסוף החידון את כל השאלות עם התשובות.\"}}, {\"@type\": \"Question\", \"name\": \"על מה שואלים בטריוויה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"ידע כללי, מדע, גוף האדם, ארצות, חגים ותנ״ך וחשבון בראש. אפשר גם לבחור חידון חופשי לפי נושא.\"}}]}</script>",
+  "foot": "<script src=\"/assets/limudim-kahoot-data.js\"></script><script src=\"/assets/chashiva-chidon-data.js\"></script><script src=\"/assets/chashiva.js\" defer></script><script src=\"/assets/limudim-nekudot.js\" defer></script><script src=\"/assets/limudim-krav.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>❓ טריוויה: חידון יומי</h1>
+  <p class="sub">עשר שאלות ביום, לכולם אותן שאלות. עונים, צוברים נקודות, ושולחים לחבר לראות מי יודע יותר. מחר חידון חדש.</p>
+</header>
+<div class="tool" id="kv-app" data-subject="trivia">
+  <div class="ch-tabs" id="kv-tabs" role="tablist"><button type="button" role="tab" data-m="daily" aria-selected="true">⭐ החידון של היום</button><button type="button" role="tab" data-m="practice" aria-selected="false">🎲 חידון חופשי</button></div>
+  <p class="ch-weekline" id="ch-weekline"></p>
+  <p style="text-align:center"><label class="kv-small" for="kv-cat">נושא לחידון החופשי: </label><select class="kv-cat" id="kv-cat"></select></p>
+  <div id="kv-home" hidden>
+    <div class="kv-banner" id="kv-banner" hidden></div>
+  </div>
+
+  <div id="kv-play" hidden>
+    <div class="kv-hud"><span>❓ שאלה<b id="kv-clock">1/10</b></span><span>⭐ נקודות<b id="kv-pts">0</b></span><span>✓ נכונות<b id="kv-solved">0</b></span></div>
+    <div class="kv-q" id="kv-q" aria-live="polite"></div>
+    <div class="kv-after" id="kv-after" hidden><p class="kv-gain" id="kv-gain"></p><button class="btn btn-gold" type="button" id="kv-next">לשאלה הבאה ←</button></div>
+    <p style="text-align:center"><button class="btn btn-line btn-sm" type="button" id="kv-skip">לדלג על השאלה</button> <button class="btn btn-line btn-sm" type="button" id="kv-stop" hidden>לסיים</button></p>
+  </div>
+
+  <div id="kv-end" hidden></div>
+  <div data-pts></div>
+  <details class="kv-card">
+    <summary><b>איך צוברים נקודות?</b></summary>
+    <ul class="kv-how">
+      <li>בכל שאלה ארבע תשובות, ואחת נכונה. יש ניסיון אחד.</li>
+      <li><b>תשובה נכונה: 3 נקודות</b>, ועוד נקודה למי שעונה נכון בתוך 12 שניות.</li>
+      <li>החידון של היום נכנס לרצף הימים ולאתגר השבועי של משחקי החשיבה.</li>
+      <li>"לאתגר חבר" שולח את אותו חידון בדיוק. כל מי שמשחק מוסיף את עצמו ללוח שבקישור, כך שאפשר לשלוח גם לקבוצה.</li>
+      <li>הנקודות נצברות ב"הנקודות שלי", יחד עם הנקודות מדו-קרב המתמטיקה והאנגלית לבגרות.</li>
+    </ul>
+    <p class="kv-small">השאלות נכתבו ונבדקו במיוחד לאתר. בכל שאלה מופיעה רק עובדה מוסכמת. מצאתם טעות? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>
+  </details>
+</div>
+
+<section class="k-sec">
+  <h2>עוד משחקים ותחרויות</h2>
+  <div class="lcards dom">
+    <a href="/limudim/krav/"><span class="badge">חדש</span><b>⚔️ דו-קרב מתמטיקה לבגרות</b><span>מי פותר יותר תרגילים בשעה הקרובה? 3, 4 ו-5 יחידות.</span></a>
+    <a href="/limudim/krav-anglit/"><span class="badge">חדש</span><b>⚔️ דו-קרב אנגלית לבגרות</b><span>מילים, משפטים והבנת הנקרא, מול חבר או הכיתה.</span></a>
+    <a href="/kelim/chashiva/"><span class="badge">פתוח</span><b>🧩 כל משחקי החשיבה</b><span>מילה ביום, סודוקו, תשחצים ושחור ופתור.</span></a>
+  </div>
+</section>
+
+<div class="tool">
+  <div class="share-row"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="חידון טריוויה יומי בחינם: עשר שאלות, ותראו אם תצברו יותר נקודות ממני" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר בווטסאפ</a></div>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kelim/">מיזם הכלים של גילעד רחמים</a> · חינם · בלי הרשמה · רק כינוי, בלי שם מלא · הנקודות נשמרות בטלפון שלכם</p>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">חידון טריוויה יומי לכל המשפחה</h2>
+  <p>החידון מתאים לילדים, לנוער ולמבוגרים שאוהבים ידע כללי. עשר שאלות לוקחות כמה דקות, וזה מספיק כדי ללמוד משהו חדש בכל יום. הוא טוב גם לשולחן שבת, לקבוצת המשפחה בווטסאפ, ולפתיחה של שיעור בכיתה.</p>
+  <h3>איך משחקים</h3>
+  <p>בכל יום יש חידון חדש של עשר שאלות, זהה לכל מי שמשחק. בכל שאלה ארבע תשובות ואחת נכונה, ויש ניסיון אחד. תשובה נכונה שווה 3 נקודות, ומי שעונה נכון בתוך 12 שניות מקבל עוד נקודה. השאלות עוסקות במדע, בגוף האדם, בארצות, בחגים ובתנ״ך, בידע כללי ובחשבון בראש. מי שרוצה עוד יכול לעבור לחידון החופשי ולבחור נושא.</p>
+  <h3>אתגר לחבר</h3>
+  <p>"לאתגר חבר" שולח את אותו חידון בדיוק. כל מי שמשחק נכנס ללוח שבקישור, כך שאפשר לשלוח גם לקבוצה ולראות מי יודע יותר. החידון של היום נכנס לרצף הימים ולאתגר השבועי של משחקי החשיבה, והנקודות נצברות ב"הנקודות שלי". השאלות נכתבו ונבדקו במיוחד לאתר, ובכל שאלה מופיעה רק עובדה מוסכמת. מצאתם טעות? אפשר לכתוב לי מהדף.</p>
+  <h3>בכיתה ובבית</h3>
+  <p>מורים יכולים לשלוח את החידון היומי לקבוצת הכיתה ולראות בלוח מי השתתף, והנקודות נכנסות גם ללוח של כיתה משחקת. הורים יכולים לשחק עם הילדים בארוחת הערב, ולדבר יחד על התשובה הנכונה אחרי כל שאלה. בחינם, בלי פרסומות ובלי הרשמה, רק עם כינוי, ובלי שם מלא או טלפון.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>כמה שאלות יש בחידון היומי?</summary><p>עשר שאלות ביום, זהות לכל מי שמשחק. מחר יש חידון חדש.</p></details>
+  <details><summary>איך צוברים נקודות?</summary><p>תשובה נכונה שווה 3 נקודות, ועוד נקודה למי שעונה נכון בתוך 12 שניות. יש ניסיון אחד לכל שאלה.</p></details>
+  <details><summary>איך מתחרים בחבר?</summary><p>לוחצים "לאתגר חבר" ושולחים את הקישור. החבר מקבל את אותו חידון, וכל מי שמשחק נכנס ללוח שבקישור.</p></details>
+  <details><summary>החידון בחינם?</summary><p>כן. בחינם, בלי הרשמה, ורק עם כינוי.</p></details>
+  <details><summary>יש תשובות לשאלות הטריוויה?</summary><p>כן. אחרי כל שאלה רואים מיד את התשובה הנכונה, ובסוף החידון את כל השאלות עם התשובות.</p></details>
+  <details><summary>על מה שואלים בטריוויה?</summary><p>ידע כללי, מדע, גוף האדם, ארצות, חגים ותנ״ך וחשבון בראש. אפשר גם לבחור חידון חופשי לפי נושא.</p></details>
+</section>
+<!--/seo-txt-->

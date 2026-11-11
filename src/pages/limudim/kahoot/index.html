@@ -1,0 +1,95 @@
+<!--meta {
+  "site": "limudim",
+  "nav": "kahoot",
+  "tool": "kahoot",
+  "title": "מחולל חידונים ל-Kahoot בחינם: שאלות מוכנות על חגים, תנ״ך וארץ ישראל | כלים ללימודים",
+  "description": "למורים ולמדריכים, בחינם: בוחרים נושא (ראש השנה, חנוכה, פסח, תנ״ך, ירושלים ועוד), רמה ומספר שאלות, ומקבלים חידון שאלות אמריקאיות מוכן. עורכים, מורידים קובץ שנכנס ישר ל-Kahoot, או מציגים בכיתה ומדפיסים בלי Kahoot.",
+  "og_title": "מחולל חידונים ל-Kahoot על החגים והתנ״ך – חינם",
+  "crumbs": [["מחולל חידונים ל-Kahoot", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/limudim-kahoot.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך מכניסים את החידון ל-Kahoot?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מורידים את הקובץ. ב-Kahoot לוחצים Create ואז Kahoot, ובצד השאלות Add question ואז Import spreadsheet. בוחרים את הקובץ שירד ולוחצים Add questions.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר להשתמש בחידון בלי Kahoot?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. \\\"להציג בכיתה בלי Kahoot\\\" מציג את השאלות על המסך, אחת אחרי השנייה, עם כפתור לחשיפת התשובה. אפשר גם להדפיס דף שאלות.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר להוסיף שאלות משלי?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. אפשר לערוך כל שאלה שהתקבלה, ולהוסיף שאלות בכפתור \\\"להוסיף שאלה משלי\\\".\"}}, {\"@type\": \"Question\", \"name\": \"המחולל עולה כסף?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. המחולל בחינם ובלי הרשמה. Kahoot עצמו הוא שירות נפרד, עם תנאים משלו.\"}}]}</script>",
+  "foot": "<script src=\"/assets/limudim-kahoot-data.js\" defer></script><script src=\"/assets/limudim-kahoot.js\" defer></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>מחולל חידונים ל-Kahoot</h1>
+  <p class="sub">למורים ולמדריכים. בוחרים נושא מהחגים, מהתנ״ך או מארץ ישראל, ומקבלים חידון מוכן. עורכים מה שרוצים, ומורידים קובץ שנכנס ישר ל-Kahoot.</p>
+</header>
+
+<div class="tool" id="kh-app">
+  <form class="panel no-print" id="kh-form" novalidate>
+    <h2>1. על מה החידון?</h2>
+    <div class="btns"><button class="btn btn-line btn-sm" type="button" id="kh-season">החג הקרוב</button><button class="linkish" type="button" id="kh-all">כל הנושאים</button></div>
+    <div id="kh-topics" style="display:grid;gap:.8rem"></div>
+    <p class="kh-hint" id="kh-avail" aria-live="polite"></p>
+    <div class="kh-row">
+      <div><label for="kh-n">כמה שאלות</label><select id="kh-n"><option>5</option><option selected>10</option><option>15</option><option>20</option><option>30</option></select></div>
+      <div><label for="kh-lvl">רמה</label><select id="kh-lvl"><option value="easy">קל (גן ויסודי)</option><option value="mid">בינוני</option><option value="mix" selected>מעורב</option><option value="hard">מאתגר</option></select></div>
+      <div><label for="kh-time">זמן לשאלה</label><select id="kh-time"><option value="10">10 שניות</option><option value="20" selected>20 שניות</option><option value="30">30 שניות</option><option value="60">דקה</option></select></div>
+    </div>
+    <div><label class="kh-lbl" for="kh-title">שם החידון (לא חובה)</label><input class="kh-title" id="kh-title" type="text" maxlength="80" placeholder="למשל: חידון חנוכה לכיתה ה׳"></div>
+    <button class="btn btn-gold" type="submit">להרכיב חידון</button>
+  </form>
+
+  <section id="kh-out" hidden style="margin-top:1.4rem">
+    <div class="sum-box">
+      <p class="kh-hint" id="kh-example" hidden>זו דוגמה על החג הקרוב. אפשר לערוך אותה, או לבחור נושא למעלה ולהרכיב חדש.</p>
+      <label class="kh-lbl" for="kh-qtitle" style="margin-top:.3rem">שם החידון</label>
+      <input class="kh-title" id="kh-qtitle" type="text" maxlength="80">
+      <p class="big-n" id="kh-count" style="margin-top:.5rem"></p>
+      <p class="kh-hint" id="kh-short"></p>
+      <div class="btns no-print" style="margin-top:.8rem">
+        <button class="btn btn-gold" type="button" id="kh-xlsx">להוריד קובץ ל-Kahoot</button>
+        <button class="btn btn-line btn-sm" type="button" id="kh-present">להציג בכיתה בלי Kahoot</button>
+        <button class="btn btn-line btn-sm" type="button" id="kh-print-btn">להדפיס דף שאלות</button>
+        <button class="btn btn-line btn-sm" type="button" id="kh-copy">להעתיק כטקסט</button>
+      </div>
+      <p class="kh-hint" id="kh-msg" aria-live="polite" style="color:var(--no)"></p>
+    </div>
+
+    <div class="kh-how no-print" id="kh-done" hidden style="margin-top:1rem">
+      <b>הקובץ ירד. ככה מכניסים אותו ל-Kahoot:</b>
+      <ol>
+        <li>נכנסים ל-kahoot.com, ולוחצים <b>Create</b> ← <b>Kahoot</b>.</li>
+        <li>בצד של השאלות לוחצים <b>Add question</b> ← <b>Import spreadsheet</b> (ייבוא מגיליון).</li>
+        <li>בוחרים את הקובץ שירד, ולוחצים <b>Add questions</b>. השאלות נכנסות עם התשובות והזמן.</li>
+      </ol>
+      <p class="kh-hint" style="margin-top:.4rem">בעברית ב-Kahoot כדאי לבדוק שהשאלה הראשונה נראית טוב לפני שמתחילים לשחק בכיתה.</p>
+    </div>
+
+    <div class="kh-list" id="kh-list"></div>
+    <div class="btns no-print" style="margin-top:1rem">
+      <button class="btn btn-line btn-sm" type="button" id="kh-add">+ להוסיף שאלה משלי</button>
+      <button class="linkish" type="button" id="kh-reset">להתחיל חידון חדש</button>
+    </div>
+  </section>
+
+  <div id="kh-print"></div>
+
+  <div class="kh-show" id="kh-show" hidden role="dialog" aria-label="הצגת החידון בכיתה">
+    <div class="bar"><span id="kh-s-pos"></span><span class="clock" id="kh-s-clock"></span><button class="x" type="button" id="kh-s-x">יציאה ✕</button></div>
+    <div class="mid"><h2 id="kh-s-q"></h2><div class="tiles" id="kh-s-tiles"></div></div>
+    <div class="nav"><button class="sec" type="button" id="kh-s-prev">→ הקודמת</button><button type="button" id="kh-s-rev">לחשוף את התשובה</button><button type="button" id="kh-s-next">לשאלה הבאה ←</button></div>
+  </div>
+
+  <div class="share-row no-print" style="margin-top:1.6rem"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="מחולל חידונים ל-Kahoot על החגים, התנ״ך וארץ ישראל. בוחרים נושא ומקבלים חידון מוכן, בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח למורה או למדריך בווטסאפ</a></div>
+  <p class="disclaimer no-print">יותר מ-200 שאלות במאגר, ונוספות עוד. מצאתם טעות בשאלה, או רוצים נושא חדש? <a class="gold" href="/kelim/#rotzim">כתבו לי</a>. הכלי לא קשור לחברת Kahoot. חלק מ<a class="gold" href="/kelim/">מיזם הכלים של גילעד רחמים</a> · חינם · נשמר רק אצלך.</p>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">חידון מוכן לכיתה בתוך דקה</h2>
+  <p>המחולל נבנה למורים, לגננות, למדריכים בתנועות נוער ולהורים שמכינים חידון לשולחן החג. במקום לכתוב עשרים שאלות לבד, בוחרים נושא ומקבלים חידון שאלות אמריקאיות מוכן, עם ארבע תשובות לכל שאלה.</p>
+  <h3>איך מכינים חידון</h3>
+  <p>בוחרים על מה החידון: החג הקרוב, או נושא מהחגים, מהתנ״ך ומארץ ישראל. בוחרים כמה שאלות, מ-5 ועד 30, רמה מגן ויסודי ועד מאתגר, וזמן לכל שאלה. אחרי שהחידון מוכן אפשר לערוך כל שאלה ולהוסיף שאלות משלכם. אחר כך יש ארבע דרכים להשתמש בו: להוריד קובץ אקסל ולייבא אותו ל-Kahoot, להציג אותו בכיתה ישר מהדף בלי Kahoot, להדפיס דף שאלות, או להעתיק אותו כטקסט ולשלוח.</p>
+  <h3>טוב לדעת</h3>
+  <p>במאגר יש יותר מ-200 שאלות, ונוספות עוד. הכלי לא קשור לחברת Kahoot. הוא רק מכין קובץ בפורמט ש-Kahoot יודע לקלוט. בעברית כדאי לבדוק ב-Kahoot שהשאלה הראשונה נראית טוב לפני שמתחילים לשחק בכיתה. מצאתם טעות בשאלה, או רוצים נושא חדש? אפשר לכתוב לי מהדף.</p>
+  <h3>רעיונות לשימוש</h3>
+  <p>חידון קצר על החג הקרוב בפתיחת שיעור, חזרה על פרשה או ספר בתנ״ך לפני מבחן, ערב משפחתי סביב שולחן החג, או פעולה בתנועת הנוער. ברמה הקלה השאלות מתאימות לגן ולכיתות הנמוכות, וברמה המאתגרת גם למבוגרים. כשאין מקרן, אפשר להדפיס דף שאלות ולחלק לקבוצות, או להעתיק את החידון כטקסט ולשלוח בקבוצת הווטסאפ של הכיתה. הכול בחינם, והחידונים שלכם נשמרים רק אצלכם.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך מכניסים את החידון ל-Kahoot?</summary><p>מורידים את הקובץ. ב-Kahoot לוחצים Create ואז Kahoot, ובצד השאלות Add question ואז Import spreadsheet. בוחרים את הקובץ שירד ולוחצים Add questions.</p></details>
+  <details><summary>אפשר להשתמש בחידון בלי Kahoot?</summary><p>כן. "להציג בכיתה בלי Kahoot" מציג את השאלות על המסך, אחת אחרי השנייה, עם כפתור לחשיפת התשובה. אפשר גם להדפיס דף שאלות.</p></details>
+  <details><summary>אפשר להוסיף שאלות משלי?</summary><p>כן. אפשר לערוך כל שאלה שהתקבלה, ולהוסיף שאלות בכפתור "להוסיף שאלה משלי".</p></details>
+  <details><summary>המחולל עולה כסף?</summary><p>לא. המחולל בחינם ובלי הרשמה. Kahoot עצמו הוא שירות נפרד, עם תנאים משלו.</p></details>
+</section>
+<!--/seo-txt-->

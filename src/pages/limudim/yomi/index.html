@@ -6,7 +6,7 @@
   "description": "בוחרים תנ״ך, משנה או כל ספר אחר, ובכמה זמן לסיים, ומקבלים כמה פרקים ללמוד כל יום, טבלה לפי תאריכים לסימון, קישור ללימוד בספריא, וקובץ ליומן. 929 פרקי תנ״ך, 525 פרקי משנה. חינם.",
   "og_title": "לימוד יומי לסיום התנ״ך או המשנה",
   "crumbs": [["לימוד יומי לסיום", null]],
-  "foot": "<script src=\"/assets/limudim-data.js\"></script>"
+  "foot": "<script src=\"/assets/limudim-data.js\"></script><script src=\"/assets/hitkadmut.js\" defer></script>"
 } -->
 <header class="k-hero no-print">
   <h1>לימוד יומי לסיום</h1>
@@ -20,7 +20,9 @@
   </div>
 
   <div id="ly-out" hidden>
+    <p class="hk-strip no-print" data-hk="yomi" data-goal="5" data-tool="yomi" data-what="לימוד" hidden style="margin-top:1rem"></p>
     <div class="today-box" id="ly-today" style="margin-top:1rem"></div>
+    <div id="ly-hk" class="no-print" hidden></div>
     <div class="sum-box" id="ly-sum" style="margin-top:1rem"></div>
     <div class="panel no-print">
       <div class="row2">

@@ -1,0 +1,134 @@
+<!--meta {
+  "site": "limudim",
+  "nav": "matematika",
+  "tool": "matematika",
+  "title": "תרגול מתמטיקה אונליין בחינם: שיעור קצר ותרגול צעד אחרי צעד, מכיתה ב׳ ועד הבגרות | כלים ללימודים",
+  "description": "תרגול מתמטיקה בחינם ובלי הרשמה: 48 נושאים מכיתה ב׳ ועד הבגרות ב-3, 4 ו-5 יחידות. בכל נושא שיעור קצר עם קריינות, ותרגול צעד אחרי צעד עם רמז ובדיקה מיד. לוח הכפל, שברים, אחוזים, משוואות, נגזרות, הסתברות ועוד. מתאים גם להורים ולמורים.",
+  "og_title": "תרגול מתמטיקה צעד אחרי צעד",
+  "priority": "0.8",
+  "crumbs": [["תרגול מתמטיקה צעד אחרי צעד", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"התרגול באמת בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בלי תשלום, בלי הרשמה ובלי פרסומות. פותחים את הדף ומתחילים לתרגל.\"}}, {\"@type\": \"Question\", \"name\": \"לאילו כיתות זה מתאים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מכיתה ב׳ ועד י״ב. ליד כל נושא כתוב לאיזו כיתה הוא מתאים, ויש נושאים לבגרות לפי השאלונים של 3, 4 ו-5 יחידות.\"}}, {\"@type\": \"Question\", \"name\": \"מה עושים כשנתקעים בתרגיל?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לוחצים על \\\"רמז\\\". אם עדיין קשה, \\\"להראות את הצעד\\\" מציג את הפעולה, וממשיכים לפעולה הבאה. אפשר גם לחזור לשיעור הקצר של הנושא.\"}}, {\"@type\": \"Question\", \"name\": \"איפה נשמרת ההתקדמות?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"רק בטלפון או במחשב שבו מתרגלים. אין צורך בחשבון, וההתקדמות לא נשלחת לשום מקום.\"}}]}</script>",
+  "foot": "<script src=\"/assets/limudim-math.js\"></script><script src=\"/assets/hitkadmut.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מתמטיקה צעד אחרי צעד</h1>
+  <p class="sub">בכל נושא יש שיעור קצר שמסביר את הבסיס, שלב אחרי שלב. אחר כך פותרים לבד, פעולה אחת בכל פעם, עם רמז כשצריך.</p>
+</header>
+
+<div class="tool" id="mx-app">
+  <div id="mx-home">
+    <p class="hk-strip" data-hk="matematika" data-goal="5" data-tool="matematika" data-what="תרגול" hidden></p>
+    <div class="mx-list" id="mx-list"></div>
+    <div class="panel">
+      <h3>איך זה עובד</h3>
+      <ol class="mx-how">
+        <li><b>שיעור קצר.</b> לוחצים ▶ והשיעור מתנגן כמו סרטון: כל שלב מופיע בתורו, עם הסבר בקול ובכתב.</li>
+        <li><b>תרגול צעד אחרי צעד.</b> התרגיל מתפרק לפעולות קטנות, ובכל פעם עונים רק על פעולה אחת.</li>
+        <li><b>רמז כשנתקעים.</b> טעות היא חלק מהלימוד. מקבלים רמז, ואם צריך גם את התשובה, וממשיכים הלאה.</li>
+        <li><b>עולים שלב.</b> שלושה תרגילים נכונים ברצף, בלי רמז, מעלים לשלב הבא. כל נושא כולל שלושה שלבים.</li>
+      </ol>
+    </div>
+  </div>
+
+  <section id="mx-topic" hidden>
+    <div class="mx-head">
+      <button class="linkish" type="button" id="mx-back">→ כל הנושאים</button>
+      <h2 id="mx-t-name"></h2>
+      <span class="pill" id="mx-t-grade"></span>
+    </div>
+    <div class="mx-tabs" role="tablist">
+      <button type="button" id="mx-tab-l" role="tab">🎬 השיעור</button>
+      <button type="button" id="mx-tab-p" role="tab">✏️ תרגול</button>
+    </div>
+
+    <div id="mx-lesson" class="panel">
+      <div class="mx-screen">
+        <div class="mx-stage" id="mx-stage" aria-live="polite"></div>
+        <p class="mx-cap" id="mx-cap"></p>
+        <div class="mx-prog" id="mx-prog" aria-hidden="true"></div>
+      </div>
+      <div class="btns c">
+        <button class="btn btn-line btn-sm" type="button" id="mx-prev">‹ הקודם</button>
+        <button class="btn btn-gold" type="button" id="mx-play" aria-pressed="false">▶ לנגן</button>
+        <button class="btn btn-line btn-sm" type="button" id="mx-next">הבא ›</button>
+      </div>
+      <div class="btns c"><button class="linkish" type="button" id="mx-snd">🔊 קריינות</button></div>
+      <p class="note" id="mx-novoice" hidden style="text-align:center">אין בטלפון הזה קול בעברית, לכן השיעור בכתוביות בלבד.</p>
+    </div>
+
+    <div id="mx-practice" hidden>
+      <div class="panel">
+        <div class="mx-lv" id="mx-lv"></div>
+        <div class="mx-streak" id="mx-streak"></div>
+        <div class="mx-ex" id="mx-ex"></div>
+        <ol class="mx-done" id="mx-done"></ol>
+        <div id="mx-stepbox">
+          <div class="mx-cur" id="mx-cur"></div>
+          <form id="mx-form" class="mx-form" novalidate autocomplete="off">
+            <label for="mx-in" id="mx-q"></label>
+            <div class="mx-row"><input id="mx-in" type="text" inputmode="decimal" dir="ltr" enterkeyhint="done" aria-describedby="mx-fb"><button class="btn btn-gold" type="submit">לבדוק</button></div>
+            <p class="mx-fb" id="mx-fb" aria-live="polite"></p>
+            <p class="mx-hint" id="mx-hint" hidden></p>
+            <div class="btns"><button class="linkish" type="button" id="mx-hintbtn">💡 רמז</button><button class="linkish" type="button" id="mx-show">להראות את הצעד</button><button class="linkish mx-calcbtn" type="button" id="mx-calc" data-calc hidden>🧮 לפתוח מחשבון</button></div>
+          </form>
+          <p class="note">אפשר לכתוב מספר שלם, מינוס (‎-3), עשרוני (2.5) או שבר (3/4).</p>
+        </div>
+        <div id="mx-end" hidden>
+          <div id="mx-end-msg" class="mx-endmsg"></div>
+          <div id="mx-hk" hidden></div>
+          <button class="btn btn-gold btn-block" type="button" id="mx-nextp">לתרגיל הבא ←</button>
+        </div>
+      </div>
+      <div class="btns c"><button class="linkish" type="button" id="mx-reset">לחזור לשלב 1 בנושא הזה</button></div>
+    </div>
+  </section>
+
+  <section id="mx-exam" hidden>
+    <div class="mx-head">
+      <button class="linkish" type="button" id="ex-quit">→ לצאת מהמבחן</button>
+      <h2 id="ex-title"></h2>
+      <span class="pill" id="ex-time">⏱ 0:00</span> <small class="muted" id="ex-rec"></small>
+    </div>
+    <div id="ex-run" class="panel">
+      <div class="mx-prog ex-prog" id="ex-prog" aria-hidden="true"></div>
+      <p class="ex-headline" id="ex-head"></p>
+      <div class="mx-ex" id="ex-ex"></div>
+      <ol class="mx-done" id="ex-done"></ol>
+      <div class="mx-cur" id="ex-cur"></div>
+      <form id="ex-form" class="mx-form" novalidate autocomplete="off">
+        <label for="ex-in" id="ex-q"></label>
+        <div class="mx-row"><input id="ex-in" type="text" inputmode="decimal" dir="ltr" enterkeyhint="done"><button class="btn btn-gold" type="submit">לענות</button></div>
+        <p class="mx-fb" id="ex-fb" aria-live="polite"></p>
+        <div class="btns"><button class="linkish" type="button" id="ex-skip">לדלג על השאלה</button><button class="linkish mx-calcbtn" type="button" data-calc>🧮 מחשבון מדעי</button></div>
+      </form>
+      <p class="note">במבחן אין רמזים, ויש ניסיון אחד לכל סעיף, כמו בבגרות. אחרי כל תשובה רואים אם היא נכונה, וממשיכים.</p>
+    </div>
+    <div id="ex-end" class="panel" hidden></div>
+  </section>
+
+  <div class="mx-calcbox" id="mx-calcbox" role="dialog" aria-label="מחשבון" hidden><div class="bar"><span>🧮 מחשבון</span><span><a href="/limudim/machshevon/" target="_blank" rel="noopener">למחשבון המלא</a> &nbsp; <button class="linkish" type="button" id="mx-calcx">סגירה ✕</button></span></div><iframe id="mx-calcif" title="מחשבון מדעי" loading="lazy"></iframe></div>
+
+  <p class="local-note">🔒 בלי הרשמה. ההתקדמות נשמרת רק בטלפון הזה.</p>
+  <p class="note" style="text-align:center">התרגילים נוצרים מחדש בכל פעם, כך שאפשר להמשיך לתרגל בלי סוף. רוצים נושא נוסף? <a class="gold" href="/kelim/#rotzim">ספרו לי</a>.</p>
+  <div class="share-row"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="תרגול מתמטיקה צעד אחרי צעד, עם שיעור קצר לכל נושא. חינם" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר בווטסאפ</a></div>
+  <p class="disclaimer"><a class="gold" href="/limudim/">כל הכלים ללימודים</a> · חינם · בלי הרשמה</p>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">תרגול מתמטיקה בחינם, מכיתה ב׳ ועד הבגרות</h2>
+  <p>הכלי הזה נבנה לכל מי שרוצה להבין מתמטיקה, ולא רק לשנן. תלמידים ביסודי שמתחילים את לוח הכפל וחילוק ארוך, תלמידי חטיבת ביניים שנתקעו בשברים, באחוזים או במשוואות, ותלמידי תיכון שמתכוננים לבגרות ב-3, 4 או 5 יחידות. יש כאן 48 נושאים, וליד כל נושא כתוב לאיזו כיתה הוא מתאים.</p>
+  <h3>איך לומדים כאן</h3>
+  <p>בוחרים נושא מהרשימה. קודם צופים בשיעור הקצר: הוא מתנגן כמו סרטון, שלב אחרי שלב, עם הסבר בכתב ובקול. בטלפון שאין בו קול בעברית, השיעור מופיע בכתוביות. אחר כך עוברים ללשונית התרגול. כל תרגיל מתפרק לפעולות קטנות, ובכל פעם עונים רק על פעולה אחת. טעיתם? מקבלים רמז, ואם צריך גם את הצעד עצמו, וממשיכים. שלושה תרגילים נכונים ברצף, בלי רמז, מעלים לשלב הבא, ובכל נושא שלושה שלבים. התרגילים נוצרים מחדש בכל פעם, כך שאפשר להמשיך לתרגל בלי סוף.</p>
+  <h3>להורים ולמורים</h3>
+  <p>הורים יכולים לשבת עם הילד עשר דקות בערב: לבחור יחד נושא שלומדים עכשיו בכיתה, לצפות בשיעור הקצר, ולתת לו לפתור לבד. לא צריך לזכור בעצמכם איך פותרים, כי הכלי מסביר כל צעד. מורים יכולים לשלוח את הקישור לכיתה כשיעורי בית או כחזרה לפני מבחן, או להקרין שיעור קצר על הלוח בכיתה. אין הרשמה ואין שמות, וההתקדמות נשמרת רק בטלפון של התלמיד.</p>
+  <p>למי שרוצה מסלול שלם לבגרות, עם כוכבים, דרגות ואתגר יומי, יש את המסלול שלי במתמטיקה. הכול בחינם ובלי פרסומות, כחלק ממיזם הכלים של גילעד רחמים.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>התרגול באמת בחינם?</summary><p>כן. בלי תשלום, בלי הרשמה ובלי פרסומות. פותחים את הדף ומתחילים לתרגל.</p></details>
+  <details><summary>לאילו כיתות זה מתאים?</summary><p>מכיתה ב׳ ועד י״ב. ליד כל נושא כתוב לאיזו כיתה הוא מתאים, ויש נושאים לבגרות לפי השאלונים של 3, 4 ו-5 יחידות.</p></details>
+  <details><summary>מה עושים כשנתקעים בתרגיל?</summary><p>לוחצים על "רמז". אם עדיין קשה, "להראות את הצעד" מציג את הפעולה, וממשיכים לפעולה הבאה. אפשר גם לחזור לשיעור הקצר של הנושא.</p></details>
+  <details><summary>איפה נשמרת ההתקדמות?</summary><p>רק בטלפון או במחשב שבו מתרגלים. אין צורך בחשבון, וההתקדמות לא נשלחת לשום מקום.</p></details>
+</section>
+<!--/seo-txt-->

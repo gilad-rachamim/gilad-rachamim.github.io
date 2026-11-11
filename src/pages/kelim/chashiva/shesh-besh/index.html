@@ -1,0 +1,61 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_shesh",
+  "title": "שש בש אונליין בחינם בעברית: נגד המחשב או עם חבר בווטסאפ | הכלים של גילעד רחמים",
+  "description": "שש בש (שש-בש) אונליין בעברית, בחינם ובלי פרסומות: נגד המחשב בשלוש רמות, עם חבר בקישור (כל תור נשלח בווטסאפ), או שניים על טלפון אחד. כל החוקים: הכאה, בר, דאבל, הוצאה הביתה ומרס. בלי הרשמה.",
+  "og_title": "שש-בש – לשחק עם חבר בווטסאפ, בחינם",
+  "priority": "0.7",
+  "crumbs": [["משחקי חשיבה", "/kelim/chashiva/"], ["שש-בש", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/chashiva.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"מה זה מרס בשש-בש?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כשמישהו מוציא את כל הכלים שלו, וליריב עוד לא יצא אף כלי. זה ניצחון כפול.\"}}, {\"@type\": \"Question\", \"name\": \"מה קורה כשמכים כלי?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"הכלי עולה לבר. השחקן חייב להחזיר אותו ללוח לפני שהוא מזיז כלי אחר.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לשחק שש-בש עם חבר בווטסאפ?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. משחקים תור, שולחים את הקישור, והחבר עונה בתור שלו. הקוביות נקבעות מראש, כך שאי אפשר להטיל שוב.\"}}, {\"@type\": \"Question\", \"name\": \"זה בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בחינם, בלי פרסומות ובלי הרשמה.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לשחק שש בש נגד המחשב?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן, בשלוש רמות. בחינם, בלי פרסומות, בלי הגבלה על מספר המשחקים ובלי הרשמה.\"}}]}</script>",
+  "foot": "<script src=\"/assets/chashiva.js\" defer></script><script src=\"/assets/chashiva-shesh.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>שש בש אונליין</h1>
+  <p class="sub">כמו על השולחן בבית: מול המחשב, מול חבר בווטסאפ (כל אחד משחק כשנוח לו), או שניים על טלפון אחד.</p>
+</header>
+<div class="tool">
+  <div class="ch-tabs" id="sb-tabs" role="tablist"><button type="button" role="tab" data-m="bot" aria-selected="true">🤖 מול המחשב</button><button type="button" role="tab" data-m="friend" aria-selected="false">📨 עם חבר בווטסאפ</button><button type="button" role="tab" data-m="phone" aria-selected="false">📱 שניים בטלפון אחד</button></div>
+  <p class="ch-weekline" id="ch-weekline"></p>
+  <div class="ch-vsbanner" id="ch-vsbanner" hidden></div>
+  <div id="sb-botopts"><div class="ch-chips" id="sb-levels"></div></div>
+  <div id="sb-fropts" hidden><p class="ch-hint">כל תור נשלח לחבר בקישור. הקוביות נקבעות מראש לכל תור, כך שאף אחד לא יכול "להטיל שוב".</p><div class="ch-chips"><button type="button" id="sb-fr-me">⚪ אני מתחיל (לבן)</button><button type="button" id="sb-fr-them">⚫ שהחבר יתחיל</button></div></div>
+  <div class="ch-bar"><span id="sb-status"></span></div>
+  <div class="sb-wrap">
+    <div class="sb-board" id="sb-board" aria-label="לוח שש-בש"></div>
+    <div class="sb-side"><div id="sb-off"></div><div class="sb-dice" id="sb-dice" dir="ltr" aria-live="polite"></div></div>
+    <p class="sb-pips" id="sb-pips"></p>
+  </div>
+  <div class="ch-tools"><button type="button" id="sb-roll" class="on">🎲 להטיל קוביות</button><button type="button" id="sb-end" hidden>✓ סיום התור</button><button type="button" id="sb-reset" hidden>↶ להתחיל את התור מחדש</button><button type="button" id="sb-flip" hidden>🔄 להפוך את הלוח בכל תור</button><button type="button" id="sb-new">🎲 משחק חדש</button></div>
+  <p class="ch-msg" id="sb-msg" aria-live="polite"></p>
+  <div id="sb-send"></div>
+  <div id="sb-win"></div>
+  <details class="ch-how"><summary>איך משחקים?</summary><ul>
+    <li>מטילים קוביות, נוגעים בנקודה שיש בה כלי שלכם, ואז בנקודה הירוקה שאליה הוא הולך. הבית שלכם – למטה מימין.</li>
+    <li>כלי לבד בנקודה ("פתוח") אפשר להכות, והוא עולה לבר. מי שיש לו כלי בבר – קודם מעלה אותו.</li>
+    <li>חובה לנצל כמה שיותר מהקוביות. אם אפשר רק אחת – משחקים את הגבוהה. דאבל = ארבעה צעדים.</li>
+    <li>כשכל 15 הכלים בבית, מוציאים אותם (נוגעים ב"🏠 הוצאה"). מי שמוציא ראשון – ניצח. אם ליריב לא יצא אף כלי – זה מרס, ניצחון כפול.</li>
+    <li>טעיתם באמצע התור? "להתחיל את התור מחדש" מחזיר את הכלים, עם אותן קוביות.</li>
+    <li><b>עם חבר בווטסאפ:</b> משחקים תור, שולחים קישור, והחבר עונה בתור שלו. ניצחון אחד ביום נספר לרצף ולאתגר השבועי.</li>
+  </ul></details>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">שש-בש בחינם, כמו על השולחן בבית</h2>
+  <p>שש-בש הוא משחק של מזל ושל הרבה מחשבה. הוא מתאים לסבא ולנכד על טלפון אחד, לחברים שמשחקים בווטסאפ תור אחרי תור, ולמי שרוצה משחק מהיר נגד המחשב בהפסקה.</p>
+  <h3>חוקי שש-בש בקצרה</h3>
+  <p>לכל שחקן 15 כלים. המטרה היא להביא את כולם הביתה, ואז להוציא אותם מהלוח לפני היריב. בכל תור מטילים שתי קוביות ומזיזים כלים לפי המספרים. דאבל, שתי קוביות זהות, נותן ארבעה צעדים. כלי שעומד לבד בנקודה אפשר להכות, והוא עולה לבר, ומי שיש לו כלי בבר חייב קודם להחזיר אותו למשחק. חובה לנצל כמה שיותר מהקוביות, ואם אפשר לשחק רק אחת, משחקים את הגבוהה. מי שמוציא את כל הכלים ראשון מנצח. אם ליריב לא יצא אף כלי, זה מרס, ניצחון כפול.</p>
+  <h3>איך משחקים כאן</h3>
+  <p>מטילים קוביות, נוגעים בנקודה שיש בה כלי שלכם, ואז בנקודה הירוקה שאליה הוא הולך. הבית שלכם למטה מימין. טעיתם באמצע התור? "להתחיל את התור מחדש" מחזיר את הכלים, עם אותן קוביות. נגד המחשב יש שלוש רמות. עם חבר בווטסאפ הקוביות נקבעות מראש לכל תור, כך שאף אחד לא יכול להטיל שוב.</p>
+  <p>טיפ למתחילים: כדאי לא להשאיר כלים לבד בנקודות שהיריב יכול להגיע אליהן, ולבנות נקודות של שני כלים ומעלה, שאי אפשר להכות. על טלפון אחד אפשר להפוך את הלוח בכל תור. המשחק בחינם, בלי פרסומות ובלי הרשמה, והוא נשמר בטלפון.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>מה זה מרס בשש-בש?</summary><p>כשמישהו מוציא את כל הכלים שלו, וליריב עוד לא יצא אף כלי. זה ניצחון כפול.</p></details>
+  <details><summary>מה קורה כשמכים כלי?</summary><p>הכלי עולה לבר. השחקן חייב להחזיר אותו ללוח לפני שהוא מזיז כלי אחר.</p></details>
+  <details><summary>אפשר לשחק שש-בש עם חבר בווטסאפ?</summary><p>כן. משחקים תור, שולחים את הקישור, והחבר עונה בתור שלו. הקוביות נקבעות מראש, כך שאי אפשר להטיל שוב.</p></details>
+  <details><summary>זה בחינם?</summary><p>כן. בחינם, בלי פרסומות ובלי הרשמה.</p></details>
+  <details><summary>אפשר לשחק שש בש נגד המחשב?</summary><p>כן, בשלוש רמות. בחינם, בלי פרסומות, בלי הגבלה על מספר המשחקים ובלי הרשמה.</p></details>
+</section>
+<!--/seo-txt-->

@@ -1,5 +1,7 @@
 // כרטיס ביקור דיגיטלי למוהל (כלי קודש, למוהלים).
-// הפרטים יושבים בקישור עצמו (אחרי #, לא נשלחים לשום שרת), והכרטיס נבנה מהם בדפדפן – כמו כרטיס הרב (kartis-rav.js).
+// הפרטים יושבים בקישור עצמו (אחרי #d=), והכרטיס נבנה מהם בדפדפן – כמו כרטיס הרב (kartis-rav.js).
+// קישור קצר: /k/#a7Xq2bZ (7 תווים) – הכרטיס נשמר בשרת kartis (tools/kartis-worker), ו-/k/ מפנה ל-#k= כאן.
+// אם השרת לא עונה – נשארים עם הקישור הארוך, שתמיד עובד.
 // תמונת הכרטיס עם QR: kcard.js. הקוד מוביל לכרטיס בלי התמונה, כדי שיהיה קטן וקל לסריקה.
 // מדידה: tool_use{tool:kartis_mohel} כשנוצר כרטיס או תמונה; kartis_mohel_open כשמישהו פותח כרטיס – בלי הפרטים עצמם.
 (function () {
@@ -34,6 +36,29 @@
     var c = {}; for (var k in o) if (!(noPhoto && k === 'i')) c[k] = o[k];
     return location.origin + location.pathname + '#d=' + enc(c);
   }
+  // ---------- קישור קצר ----------
+  var API = 'https://kartis.gilad4049.workers.dev';
+  try { API = localStorage.getItem('kartis-api') || API; } catch (e) {}
+  var short = { key: '', url: '' }, useLong = false;
+  function shortFor(o) { return !useLong && short.url && short.key === enc(o) ? short.url : ''; }
+  // הקישור ששולחים: הקצר אם כבר יש לכרטיס הזה, אחרת הארוך (ל-QR ולאנשי קשר – הארוך בלי התמונה)
+  function best(o, noPhoto) { return shortFor(o) || link(o, noPhoto); }
+  function getShort(o, ms) {
+    var key = enc(o);
+    if (short.key === key && short.url) return Promise.resolve(short.url);
+    if (!window.fetch) return Promise.resolve('');
+    var ctl = window.AbortController ? new AbortController() : null;
+    var t = setTimeout(function () { if (ctl) ctl.abort(); }, ms || 6000);
+    return fetch(API + '/s', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ d: key, t: 'm' }), signal: ctl ? ctl.signal : undefined })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) {
+        clearTimeout(t);
+        if (!j || !/^[0-9A-Za-z]{7}$/.test(j.k)) return '';
+        short = { key: key, url: location.origin + '/k/#' + j.k };
+        return short.url;
+      })
+      .catch(function () { clearTimeout(t); return ''; });
+  }
   function waText(o) { return 'שלום' + (o.n ? ' ' + o.n : '') + ', הגעתי מהכרטיס שלך ואשמח לשאול על ברית מילה.'; }
 
   function vcard(o) {
@@ -41,7 +66,7 @@
     if (o.s) v.push('TITLE;CHARSET=UTF-8:' + o.s);
     if (o.p) v.push('TEL;TYPE=CELL,VOICE:+' + intl(o.p));
     if (o.a) v.push('ADR;CHARSET=UTF-8;TYPE=WORK:;;;' + o.a + ';;;ישראל');
-    v.push('URL:' + link(o, true));
+    v.push('URL:' + best(o, true));
     var note = [o.s, o.u ? o.u.join(', ') : '', o.t].filter(Boolean).join(' · ');
     if (note) v.push('NOTE;CHARSET=UTF-8:' + note);
     if (o.i && o.i.indexOf('data:image/jpeg;base64,') === 0) v.push('PHOTO;ENCODING=b;TYPE=JPEG:' + o.i.slice(23));
@@ -65,6 +90,7 @@
     view.innerHTML = h;
     view.hidden = false;
     view._o = o;
+    view._url = '';
   }
 
   view.addEventListener('click', function (e) {
@@ -78,7 +104,7 @@
       a.download = (o.n || 'mohel').replace(/[\\/:*?"<>|]/g, '') + ' - מוהל.vcf';
       document.body.appendChild(a); a.click(); a.remove();
     } else if (k === 'share') {
-      var url = link(o), text = o.n + (o.s ? ' · ' + o.s : '') + (o.a ? ' · ' + o.a : '');
+      var url = view._url || best(o), text = o.n + (o.s ? ' · ' + o.s : '') + (o.a ? ' · ' + o.a : '');
       if (navigator.share) navigator.share({ title: o.n, text: text, url: url }).catch(function () {});
       else location.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text + '\n' + url);
     }
@@ -102,7 +128,7 @@
     ids: { share: 'km-share', dl: 'km-dl', tip: 'km-tip', print: 'km-print' },
     valid: function () { if (current.n && current.p) return true; form.reportValidity(); form.scrollIntoView({ behavior: 'smooth' }); return false; },
     fname: function () { return 'כרטיס-' + (current.n || 'מוהל'); },
-    text: function () { return current.n ? current.n + ' · ' + (current.s || 'מוהל') + '\n' + link(current, true) : ''; },
+    text: function () { return current.n ? current.n + ' · ' + (current.s || 'מוהל') + '\n' + best(current, true) : ''; },
     draw: function (api, th, W, H, M) {
       var ctx = api.ctx, o = current, tall = H > W * 1.2, pad = 18;
       function photoAt(cx, cy, r) {
@@ -114,7 +140,7 @@
       function qrAt(qx, qy, qs, cap) {
         ctx.fillStyle = '#ffffff'; ctx.fillRect(qx - pad, qy - pad, qs + 2 * pad, qs + 2 * pad);
         ctx.strokeStyle = th.frame; ctx.lineWidth = 3; ctx.strokeRect(qx - pad, qy - pad, qs + 2 * pad, qs + 2 * pad);
-        var img = o.n ? qrImage(link(o, true)) : null;
+        var img = o.n ? qrImage(best(o, true)) : null;
         if (img) { ctx.imageSmoothingEnabled = false; ctx.drawImage(img, qx, qy, qs, qs); }
         else { ctx.fillStyle = '#888'; ctx.font = '400 26px ' + api.SANS; ctx.textAlign = 'center'; ctx.fillText('כאן יופיע הקוד', qx + qs / 2, qy + qs / 2); }
         ctx.textAlign = 'center'; ctx.fillStyle = th.sub; ctx.font = '600 ' + cap + 'px ' + api.SANS;
@@ -144,26 +170,41 @@
         qrAt(qx2, (H - qs2) / 2 - 20, qs2, 30);
       }
       ctx.textAlign = 'center'; ctx.fillStyle = th.foot; ctx.font = '400 ' + (tall ? 26 : 21) + 'px ' + api.SANS;
-      ctx.fillText(CREDIT + ' · gilad-rachamim.github.io', W / 2, H - M - 24);
+      ctx.fillText(CREDIT + ' · hakelim.com', W / 2, H - M - 24);
     }
   }) : null;
   function redraw() { var f = $('km-imgform'); if (f) f.dispatchEvent(new Event('input')); }
 
   // ---------- מצב כרטיס: הגיעו מקישור ----------
+  function showCard(o, url, how) {
+    if (!o || !o.n) throw new Error('empty');
+    render(o);
+    if (url) view._url = url;
+    builder.hidden = true;
+    $('km-img').hidden = true;
+    $('km-mine').hidden = false;
+    document.body.classList.add('km-view');
+    document.title = o.n + ' · ' + (o.s || 'מוהל') + ' – כרטיס ביקור';
+    ev('kartis_mohel_open', { has_photo: !!o.i, link: how });
+  }
   var m = location.hash.match(/#d=([\w-]+)/);
   if (m) {
-    try {
-      var o = dec(m[1]);
-      if (!o.n) throw new Error('empty');
-      render(o);
-      builder.hidden = true;
-      $('km-img').hidden = true;
-      $('km-mine').hidden = false;
-      document.body.classList.add('km-view');
-      document.title = o.n + ' · ' + (o.s || 'מוהל') + ' – כרטיס ביקור';
-      ev('kartis_mohel_open', { has_photo: !!o.i });
-      return;
-    } catch (e) { /* קישור פגום – ממשיכים לבנייה */ }
+    try { showCard(dec(m[1]), '', 'long'); return; } catch (e) { /* קישור פגום – ממשיכים לבנייה */ }
+  }
+  var mk = location.hash.match(/#k=([0-9A-Za-z]{7})/);
+  if (mk) {
+    builder.hidden = true;
+    $('km-img').hidden = true;
+    document.body.classList.add('km-view');
+    view.hidden = false;
+    view.innerHTML = '<p class="km-note" style="text-align:center;padding:2rem 0">פותחים את הכרטיס…</p>';
+    fetch(API + '/s/' + mk[1]).then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function (j) { showCard(dec(j.d), location.origin + '/k/#' + mk[1], 'short'); })
+      .catch(function () {
+        view.innerHTML = '<p class="km-note" style="text-align:center;padding:2rem 0">לא הצלחנו לפתוח את הכרטיס. בדקו שיש אינטרנט ונסו שוב, או בקשו מהמוהל קישור חדש.</p>';
+        $('km-mine').hidden = false;
+      });
+    return;
   }
 
   // ---------- מצב בנייה: מה שמקלידים נשמר בטלפון, והתצוגה מתעדכנת ----------
@@ -211,13 +252,39 @@
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     if (!form.reportValidity()) return;
-    var o = read(), url = link(o);
+    var o = read(), btn = form.querySelector('[type=submit]');
+    btn.disabled = true;
+    (useLong ? Promise.resolve('') : getShort(o)).then(function (s) {
+      btn.disabled = false;
+      showLink(o, s);
+      $('km-ready').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (window.toolUsed) window.toolUsed('kartis_mohel', { how: 'link', has_photo: !!o.i, nusach: (o.u || []).length, short: !!s });
+    });
+  });
+  function showLink(o, s) {
+    var url = s || link(o);
     $('km-link').value = url;
     $('km-ready').hidden = false;
     $('km-open').href = url;
     $('km-wa').href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent('הכרטיס שלי: ' + o.n + ' · ' + (o.s || 'מוהל') + '\n' + url);
-    $('km-ready').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    if (window.toolUsed) window.toolUsed('kartis_mohel', { how: 'link', has_photo: !!o.i, nusach: (o.u || []).length });
+    $('km-kind').textContent = s ? 'זה הקישור הקצר. הכרטיס נשמר אצלי רק כדי שהקישור יפתח אותו, ואפשר לבקש ממני למחוק בכל עת.' : (useLong ? 'זה הקישור הארוך: הפרטים יושבים בתוך הקישור, ולא נשמרים אצלי.' : 'הפעם יצא קישור ארוך (לא הייתה תשובה מהשרת). הוא עובד בדיוק אותו דבר.');
+    $('km-long').textContent = useLong ? 'לחזור לקישור הקצר' : 'מעדיפים קישור ארוך, בלי שמירה אצלי?';
+    redraw();
+  }
+  $('km-long').addEventListener('click', function () {
+    useLong = !useLong;
+    form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit', { cancelable: true }));
+  });
+  // לפני הורדה, שיתוף או הדפסה של התמונה: דואגים שה-QR יוביל לקישור הקצר (עד 3.5 שניות, אחרת הארוך)
+  ['km-share', 'km-dl', 'km-print'].forEach(function (id) {
+    var b = $(id);
+    if (!b) return;
+    b.addEventListener('click', function (e) {
+      if (useLong || !current.n || !current.p || shortFor(current) || b._again) { b._again = false; return; }
+      e.preventDefault(); e.stopImmediatePropagation();
+      b.disabled = true;
+      getShort(current, 3500).then(function () { b.disabled = false; redraw(); b._again = true; b.click(); });
+    }, true);
   });
   $('km-copy').addEventListener('click', function () {
     var b = this;

@@ -173,6 +173,7 @@ details p{color:var(--body);margin-top:.6rem;font-size:1.05rem}
 .site-foot a{color:var(--muted);text-decoration:none;display:block;padding:.15rem 0}
 .site-foot a:hover{color:var(--parchment)}
 .site-foot .end{margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.site-foot .copy{margin-top:.8rem;font-size:.82rem;color:var(--muted);text-align:center;line-height:1.6}
 .dock{display:none}
 @media (max-width:640px){
   body{padding-bottom:var(--dock-h)}

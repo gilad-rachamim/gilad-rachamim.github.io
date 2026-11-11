@@ -1,0 +1,39 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tichnut_occupancy",
+  "title": "מחשבון CUDA Occupancy – כמה מה-GPU הקרנל שלכם מנצל | הכלים של גילעד רחמים",
+  "description": "מזינים Compute Capability, threads בבלוק, רגיסטרים ו-shared memory, ורואים את ה-occupancy, מה מגביל אותו, ואיזה גודל בלוק הכי טוב. מחליף את גיליון האקסל הישן של NVIDIA. בחינם, בדפדפן.",
+  "og_title": "מחשבון CUDA Occupancy בדפדפן",
+  "priority": "0.7",
+  "crumbs": [["כלים למתכנתים", "/kelim/tichnut/"], ["CUDA Occupancy", null]],
+  "head": "<style>.tn-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}.tn-ltr{direction:ltr;text-align:left}.tn-big{margin-top:1rem;padding:1rem;border:1px solid var(--gold-soft);border-radius:14px;text-align:center;background:rgba(216,179,95,.07)}.tn-big b{display:block;font-family:var(--serif);font-size:2.8rem;color:var(--cream);line-height:1.1}.tn-big span{color:var(--body);font-size:.95rem}.oc-lims{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:.45rem;margin-top:.9rem}.oc-lims li{padding:.55rem .7rem;border:1px solid var(--line);border-radius:12px;color:var(--body);font-size:.92rem}.oc-lims li b{display:block;color:var(--parchment)}.oc-lims li.on{border-color:var(--gold);background:rgba(216,179,95,.1)}.oc-lims li.on b{color:var(--gold)}.oc-tip{margin-top:.8rem;color:var(--parchment)}.oc-chart{display:flex;align-items:flex-end;gap:2px;height:120px;margin-top:1rem;padding:.4rem;border:1px solid var(--line);border-radius:12px;direction:ltr}.oc-chart i{flex:1;background:var(--gold-soft);border-radius:2px 2px 0 0}.oc-chart i.me{background:var(--gold)}.oc-ax{display:flex;justify-content:space-between;direction:ltr;color:var(--muted);font-size:.8rem;margin-top:.2rem}</style>",
+  "foot": "<script src=\"/assets/tichnut-data.js\" defer></script><script src=\"/assets/tichnut-occ.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מחשבון CUDA Occupancy</h1>
+  <p class="sub">כמה מה-SM הקרנל שלכם באמת ממלא, מה עוצר אותו, ואיזה גודל בלוק כדאי. בלי אקסל, ישר מהטלפון.</p>
+</header>
+<div class="tool">
+  <form class="k-form" id="oc-form" novalidate>
+    <div class="field"><label for="oc-cc">Compute Capability (הדור של הכרטיס)</label><select id="oc-cc"></select></div>
+    <div class="tn-row">
+      <div class="field"><label for="oc-t">threads בבלוק</label><input id="oc-t" type="number" min="1" max="1024" step="32" class="tn-ltr"></div>
+      <div class="field"><label for="oc-r">רגיסטרים ל-thread</label><input id="oc-r" type="number" min="0" max="255" class="tn-ltr"></div>
+    </div>
+    <div class="field"><label for="oc-s">shared memory לבלוק (bytes)</label><input id="oc-s" type="number" min="0" step="1024" class="tn-ltr"></div>
+    <p class="note">את הרגיסטרים וה-shared memory מוצאים בפלט של <code>nvcc --resource-usage</code> או ב-Nsight Compute.</p>
+  </form>
+  <div class="tn-big"><b id="oc-pct">0%</b><span id="oc-sub"></span></div>
+  <ul class="oc-lims" id="oc-lims"></ul>
+  <p class="oc-tip" id="oc-tip"></p>
+  <div class="oc-chart" id="oc-chart" aria-hidden="true"></div>
+  <div class="oc-ax" aria-hidden="true"><span>32</span><span>threads בבלוק</span><span>1024</span></div>
+  <p class="note" id="oc-best"></p>
+  <div class="share-row">
+    <a class="btn btn-gold btn-sm" href="#" id="oc-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את התוצאה</a>
+    <button class="btn btn-line btn-sm" type="button" id="oc-reset">לחזור לדוגמה</button>
+  </div>
+  <p class="disclaimer">occupancy גבוה לא תמיד אומר קרנל מהיר יותר. לפעמים 50% עם יותר רגיסטרים מנצח. המחשבון לפי הטבלאות של CUDA Programming Guide; למדידה אמיתית – Nsight Compute.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מחשבון CUDA Occupancy בדפדפן, בלי האקסל של NVIDIA. בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>

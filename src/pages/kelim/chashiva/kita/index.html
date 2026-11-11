@@ -1,0 +1,100 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_kita",
+  "title": "כיתה משחקת בחינם: לוח נקודות כיתתי למשחקי חשיבה ותרגול, למורים | הכלים של גילעד רחמים",
+  "description": "למורים ולתלמידים, בחינם ובלי הרשמה: המורה פותחת כיתה ומקבלת קוד, התלמידים מצטרפים עם כינוי בלבד, וכל משחק חשיבה ותרגול לבגרות מוסיף נקודות ללוח הכיתה. לוח שבועי או חודשי, תג התמדה, מתנות שהמורה בוחרת ותעודות הצטיינות להדפסה.",
+  "og_title": "כיתה משחקת – לוח נקודות לכל הכיתה, בחינם",
+  "priority": "0.8",
+  "crumbs": [["משחקי חשיבה", "/kelim/chashiva/"], ["כיתה משחקת", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/kita.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך פותחים כיתה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כותבים שם לכיתה ולוחצים \\\"לפתוח כיתה\\\". מקבלים קוד של 6 ספרות לתלמידים וקישור ניהול אישי, בלי מייל ובלי הרשמה.\"}}, {\"@type\": \"Question\", \"name\": \"אילו פרטים התלמידים צריכים למסור?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"רק כינוי, ועדיף לא שם מלא. אין טלפון, מייל או כתובת, ואפשר לצאת ולמחוק הכול בלחיצה.\"}}, {\"@type\": \"Question\", \"name\": \"איך התלמידים צוברים נקודות?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כל משחק חשיבה שנפתר: 10 נקודות, אתגר יומי: עוד 10, בלי רמז: עוד 5. בתרגול לבגרות ובחידון נוספות הנקודות שנצברו בו. עד 400 נקודות ביום.\"}}, {\"@type\": \"Question\", \"name\": \"זה עולה כסף?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. בחינם, בלי פרסומות ובלי הרשמה.\"}}]}</script>",
+  "foot": "<script src=\"/assets/kita-app.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>כיתה משחקת</h1>
+  <p class="sub">המורה פותחת כיתה ומקבלת קוד. התלמידים מצטרפים עם כינוי, וכל משחק ותרגול באתר מוסיף נקודות ללוח של הכיתה. מי שצוברת הכי הרבה, זוכה במה שהמורה בחרה.</p>
+</header>
+<div class="tool" id="kt-app" data-page="student">
+
+  <section class="kt-card" id="kt-mine" hidden>
+    <div class="kt-who"><div><span class="kt-pill" id="kt-mine-teacher"></span><br><b id="kt-mine-name"></b></div><span class="kt-pill">הכינוי שלי: <span id="kt-mine-nick"></span></span></div>
+    <p class="kt-msg" id="kt-mine-msg"></p>
+    <div class="kt-tabs" id="kt-per" role="tablist"><button type="button" data-p="week" aria-selected="true">השבוע</button><button type="button" data-p="month" aria-selected="false">החודש</button><button type="button" data-p="round" aria-selected="false">מהסבב</button><button type="button" data-p="all" aria-selected="false">מההתחלה</button></div>
+    <div id="kt-mine-goal" hidden></div>
+    <ol class="kt-board" id="kt-mine-board" aria-live="polite"></ol>
+    <p class="kt-msg" id="kt-mine-fire" hidden></p>
+    <p class="kt-err" id="kt-mine-err"></p>
+    <h3 id="kt-mine-gifts-h" hidden>🎁 על מה מתחרים</h3>
+    <ul class="kt-gifts" id="kt-mine-gifts"></ul>
+    <p class="kt-note">🎁 ויש גם מתנה מגילעד: בכל חודש, המקום הראשון בכיתה פעילה יכול לקבל שובר דיגיטלי של 50 ₪, דרך המורה. 6 שוברים בחודש, לפי סדר הבקשות של המורים.</p>
+    <p class="kt-note" id="kt-mine-magen" hidden>תוספת במגן היא החלטה של המורה ושל בית הספר בלבד. האתר לא נותן ציונים ולא מבטיח שום תוספת.</p>
+    <div class="kt-btns"><a class="btn btn-gold" href="/kelim/chashiva/">🧩 לשחק ולצבור נקודות</a><a class="btn btn-line" href="/limudim/">📚 תרגול ללימודים</a><a class="btn btn-line" id="kt-parents" href="#" target="_blank" rel="noopener">📨 לשלוח להורים</a></div>
+    <details class="kt-note"><summary>איך צוברים נקודות?</summary><ul class="kt-list">
+      <li>כל משחק חשיבה שפותרים: 10 נקודות. אתגר יומי: עוד 10. בלי רמז: עוד 5.</li>
+      <li>תרגול לבגרות במתמטיקה ובאנגלית (דו-קרב ותרגול לבד) והחידון: כל תרגיל שנגמר מוסיף בדיוק את הנקודות שקיבלתם בו.</li>
+      <li>🔥 תג התמדה: מי שמתרגלת ב-5 ימים שונים בשבוע מקבלת תג ליד הכינוי, גם אם צברה מעט נקודות. ההרגל חשוב יותר מהכמות.</li>
+      <li>עד 400 נקודות ביום, כדי שכולם יוכלו להשיג. הנקודות נשלחות לבד, צריך רק להיות מחוברים לכיתה בטלפון הזה.</li>
+    </ul></details>
+    <div class="kt-btns"><button class="kt-mini" type="button" id="kt-leave">לצאת מהכיתה ולמחוק את הנקודות שלי</button></div>
+  </section>
+
+  <section class="kt-card" id="kt-quiz" hidden>
+    <h2 id="kt-q-title">📝 תרגול מהמורה</h2>
+    <p id="kt-q-sub"></p>
+    <div id="kt-q-box"></div>
+    <div class="kt-btns"><button class="btn btn-gold" type="button" id="kt-q-start">להתחיל</button></div>
+  </section>
+
+  <section class="kt-card" id="kt-join-sec">
+    <h2>תלמידים: מצטרפים לכיתה</h2>
+    <p>מקבלים מהמורה קוד של 6 ספרות. כותבים אותו, בוחרים כינוי, וזהו.</p>
+    <form class="kt-f" id="kt-join" novalidate>
+      <label>קוד הכיתה<input class="kt-code-in" id="kt-code" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" placeholder="000000"></label>
+      <p class="kt-ok" id="kt-code-name" aria-live="polite"></p>
+      <label>הכינוי שלי בלוח <small>עדיף לא שם מלא. בלי טלפון ובלי מילים לא יפות.</small><input id="kt-nick" maxlength="16" autocomplete="off" placeholder="למשל: נועה מ. 🌸"></label>
+      <p class="kt-err" id="kt-join-err" aria-live="polite"></p>
+      <button class="btn btn-gold" type="submit">להצטרף לכיתה</button>
+    </form>
+    <p class="kt-note">נשמר רק הכינוי והנקודות. אין כאן שם, טלפון, מייל או כתובת. אפשר לצאת ולמחוק הכול בלחיצה.</p>
+  </section>
+
+  <section class="kt-card" id="kt-teach-sec">
+    <h2>מורים: פותחים כיתה בדקה</h2>
+    <p>בלי הרשמה ובלי מייל. מקבלים קוד לכיתה וקישור ניהול אישי. בדף הניהול בוחרים מתנות, נותנים כתר, ומדפיסים תעודות הצטיינות.</p>
+    <div class="kt-mine" id="kt-my-classes" hidden></div>
+    <form class="kt-f" id="kt-new" novalidate>
+      <label>שם הכיתה<input id="kt-new-name" maxlength="40" placeholder="למשל: ח׳2 מתמטיקה"></label>
+      <label>איך לחתום בלוח <small>לא חובה</small><input id="kt-new-teacher" maxlength="30" placeholder="למשל: המורה רחל"></label>
+      <label>הלוח הראשי מתאפס<select id="kt-new-period"><option value="week">כל שבוע (ביום ראשון)</option><option value="month">כל חודש</option><option value="round">רק כשאני מתחילה סבב חדש</option></select></label>
+      <p class="kt-err" id="kt-new-err" aria-live="polite"></p>
+      <button class="btn btn-gold" type="submit">לפתוח כיתה</button>
+    </form>
+    <div class="kt-btns"><a class="btn btn-line" href="/kelim/chashiva/kita/beit-sefer/">📄 דף הסבר לבית הספר ולהורים</a></div>
+  </section>
+
+  <section class="k-sec no-print" aria-labelledby="kt-share-h">
+    <h2 id="kt-share-h">מכירים מורה?</h2>
+    <p class="lead2">אני גילעד, נפגעתי בחאן יונס, ואני בונה את האתר הזה לבד ובאהבה, בלי פרסומות. הלוח הזה נבנה כדי שילדים ישקיעו עוד קצת במתמטיקה ובאנגלית, בכיף. הכי עוזר: לשלוח למורה.</p>
+    <div class="actions"><a class="btn btn-gold" href="#" data-share-tool="wa" data-text="למורים: לוח נקודות כיתתי בחינם. פותחים כיתה, התלמידים מצטרפים עם כינוי, וכל משחק ותרגול מוסיף נקודות. יש מתנות שהמורה בוחרת ותעודות להדפסה:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח למורה</a></div>
+  </section>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">לוח נקודות לכיתה, שמעודד לתרגל בכל יום</h2>
+  <p>כיתה משחקת נבנתה למורים ולמורות, למחנכות ולמדריכים שרוצים לעודד את התלמידים לחשוב ולתרגל גם מחוץ לשיעור. במקום עוד דף עבודה, הכיתה מתחרה יחד: כל משחק חשיבה שנפתר וכל תרגול לבגרות מוסיפים נקודות ללוח של הכיתה.</p>
+  <h3>למורים: פותחים כיתה בדקה</h3>
+  <p>פותחים כיתה בלי מייל ובלי הרשמה, ומקבלים קוד של 6 ספרות וקישור ניהול אישי. בוחרים אם הלוח מתאפס כל שבוע, כל חודש, או רק כשמתחילים סבב חדש. בדף הניהול בוחרים על מה מתחרים, נותנים כתר ומדפיסים תעודות הצטיינות. יש גם דף הסבר לבית הספר והודעה מוכנה להורים.</p>
+  <h3>לתלמידים: מצטרפים וצוברים נקודות</h3>
+  <p>נכנסים עם הקוד, בוחרים כינוי, וזהו. משחק חשיבה שנפתר שווה 10 נקודות, אתגר יומי עוד 10, ופתרון בלי רמז עוד 5. בתרגול לבגרות במתמטיקה ובאנגלית ובחידון נוספות הנקודות שנצברו בו. מי שמתרגלת בחמישה ימים שונים בשבוע מקבלת תג התמדה, כי ההרגל חשוב יותר מהכמות. יש תקרה של 400 נקודות ביום, כדי שלכולם יהיה סיכוי.</p>
+  <h3>פרטיות</h3>
+  <p>נשמרים רק הכינוי והנקודות. אין שם, טלפון, מייל או כתובת, וכל תלמיד יכול לצאת ולמחוק הכול בלחיצה. האתר לא נותן ציונים, וכל מתנה או תוספת היא החלטה של המורה ושל בית הספר. הכול בחינם, בלי פרסומות, כחלק ממיזם הכלים של גילעד רחמים, שנבנה כדי לעזור לתלמידים ולמורים בכל הארץ.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך פותחים כיתה?</summary><p>כותבים שם לכיתה ולוחצים "לפתוח כיתה". מקבלים קוד של 6 ספרות לתלמידים וקישור ניהול אישי, בלי מייל ובלי הרשמה.</p></details>
+  <details><summary>אילו פרטים התלמידים צריכים למסור?</summary><p>רק כינוי, ועדיף לא שם מלא. אין טלפון, מייל או כתובת, ואפשר לצאת ולמחוק הכול בלחיצה.</p></details>
+  <details><summary>איך התלמידים צוברים נקודות?</summary><p>כל משחק חשיבה שנפתר: 10 נקודות, אתגר יומי: עוד 10, בלי רמז: עוד 5. בתרגול לבגרות ובחידון נוספות הנקודות שנצברו בו. עד 400 נקודות ביום.</p></details>
+  <details><summary>זה עולה כסף?</summary><p>לא. בחינם, בלי פרסומות ובלי הרשמה.</p></details>
+</section>
+<!--/seo-txt-->

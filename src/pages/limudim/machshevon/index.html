@@ -1,0 +1,335 @@
+<!--meta {
+  "site": "limudim",
+  "nav": "machshevon",
+  "tool": "machshevon",
+  "title": "מחשבון מדעי אונליין בעברית בחינם: מחשבון לבגרות עם הסבר לכל מקש | כלים ללימודים",
+  "description": "מחשבון מדעי בעברית, בחינם ובלי הרשמה, ללימוד לבגרות במתמטיקה: מקשים גדולים, מעלות או רדיאנים, הסבר לכל פעולה ופירוק החישוב. פותר משוואות עם שלבים, סטטיסטיקה, משולשים, מרוכבים ווקטורים, גרף, ומדריך איך עושים את זה במחשבון המדעי שלכם.",
+  "og_title": "מחשבון לבגרות – גדול, נגיש ומסביר",
+  "priority": "0.8",
+  "crumbs": [["מחשבון לבגרות", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"מותר להשתמש במחשבון הזה בבגרות?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. בבחינה מותר רק מחשבון מדעי שאינו גרפי, וטלפון אסור. המחשבון כאן נועד ללימוד בבית, והוא מראה איך עושים כל פעולה במחשבון שלכם.\"}}, {\"@type\": \"Question\", \"name\": \"המחשבון פותר משוואות?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. כותבים או אומרים משוואה, למשל x² − 5x + 6 = 0, או שתי משוואות עם x ו-y, ומקבלים את הפתרון עם השלבים.\"}}, {\"@type\": \"Question\", \"name\": \"מה ההבדל בין מעלות לרדיאנים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"אלה שתי דרכים למדוד זווית. בבגרות כמעט תמיד עובדים במעלות. כאן המצב מופיע בגדול על המסך, כדי שלא תטעו.\"}}, {\"@type\": \"Question\", \"name\": \"המחשבון בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בחינם, בלי הרשמה ובלי פרסומות.\"}}, {\"@type\": \"Question\", \"name\": \"זה כמו מחשבון מדעי של קסיו?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"המקשים והפעולות דומים למחשבונים המדעיים שלומדים איתם לבגרות, כמו קסיו fx-82 ו-fx-991. ליד כל פעולה יש הסבר איך עושים אותה במחשבון שלכם.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר להשתמש בו גם כמחשבון רגיל?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. חיבור, חיסור, כפל, חילוק ואחוזים עובדים כמו במחשבון רגיל, עם מקשים גדולים וברורים, גם בטלפון.\"}}]}</script>",
+  "foot": "<script src=\"/assets/limudim-dibur.js\"></script><script src=\"/assets/limudim-calc.js\"></script>"
+} -->
+<header class="k-hero">
+  <h1>מחשבון מדעי אונליין</h1>
+  <p class="sub">מחשבון מדעי גדול וברור, שמסביר כל מקש ומראה איך עושים את אותו הדבר במחשבון שלכם. אפשר גם להגיד את התרגיל בקול ולשמוע את התשובה.</p>
+</header>
+
+<div class="tool" id="cx-app">
+  <div class="cx-exam" role="note">
+    <b>חשוב לדעת לפני הבחינה:</b> בבגרות במתמטיקה מותר רק מחשבון מדעי <b>לא גרפי</b>, ואסור להשתמש באפשרויות תכנות. טלפון אסור. לכן המחשבון כאן הוא ללימוד ולתרגול בבית, ובבחינה עצמה משתמשים במחשבון המדעי שלכם. בלשונית <b>"במחשבון שלכם"</b> יש לכל פעולה את המקשים במחשבון רגיל. <a class="gold" href="https://meyda.education.gov.il/files/Exams/AllowedMaterialEXTWin2023.pdf" target="_blank" rel="noopener">רשימת חומר העזר של משרד החינוך</a>.
+  </div>
+  <p class="note pt-link">📓 רוצים לפתור לבד, עם בדיקה של כל שלב? <a class="gold" href="/limudim/machberet/">המחברת</a> בודקת כל שורה מול הקודמת, נותנת רמז ומזכירה נוסחאות.</p>
+  <p class="note pt-link">🧠 תקועים בשאלה מילולית שלמה? <a class="gold" href="/limudim/poter/">הפותר</a> נותן דרך פתרון מלאה לשאלת בגרות, סעיף אחרי סעיף, ובודק את עצמו.</p>
+
+  <div class="cx-bar">
+    <div class="cx-lv" role="group" aria-label="כמה יחידות אני לומד">
+      <span>אני לומד:</span><button type="button" data-lv="3">3 יח"ל</button><button type="button" data-lv="4">4 יח"ל</button><button type="button" data-lv="5">5 יח"ל</button>
+    </div>
+    <div class="cx-modes">
+      <button type="button" class="cx-tog" id="cx-exam-on" aria-pressed="false">🎓 כמו בבחינה</button>
+      <button type="button" class="cx-tog" id="cx-big" aria-pressed="false">👁 גדול ונגיש</button>
+    </div>
+  </div>
+  <p class="note cx-lvnote" id="cx-lvnote" hidden></p>
+  <div class="cx-exambar" id="cx-exambar" hidden>
+    <b>🎓 מצב בחינה</b> <span>רק מחשבון מדעי, כמו בבחינה: בלי הסברים, בלי גרף ובלי קול.</span>
+    <span class="cx-clock"><label for="cx-dur">זמן:</label> <select id="cx-dur"><option value="0">בלי שעון</option><option value="105">שעה ו-45 דקות</option><option value="135">שעתיים ורבע</option><option value="180">3 שעות</option><option value="210">3.5 שעות</option></select> <output id="cx-time" aria-live="off">0:00</output></span>
+    <button type="button" class="linkish" id="cx-exam-off">לצאת ממצב בחינה</button>
+  </div>
+
+  <div class="mx-tabs cx-tabs" role="tablist" aria-label="חלקי המחשבון">
+    <button type="button" role="tab" data-tab="calc" id="cx-t-calc">🧮 מחשבון</button>
+    <button type="button" role="tab" data-tab="solve" id="cx-t-solve">⚖️ משוואות</button>
+    <button type="button" role="tab" data-tab="stat" id="cx-t-stat">📊 סטטיסטיקה</button>
+    <button type="button" role="tab" data-tab="tri" id="cx-t-tri">📐 משולשים</button>
+    <button type="button" role="tab" data-tab="cv" id="cx-t-cv" hidden>🌀 מרוכבים ווקטורים</button>
+    <button type="button" role="tab" data-tab="graph" id="cx-t-graph">📈 גרף</button>
+    <button type="button" role="tab" data-tab="bank" id="cx-t-bank">👥 מאגר של כולם</button>
+    <button type="button" role="tab" data-tab="guide" id="cx-t-guide">🔑 במחשבון שלכם</button>
+    <button type="button" role="tab" data-tab="err" id="cx-t-err">⚠️ טעויות נפוצות</button>
+  </div>
+
+  <!-- ===== מחשבון ===== -->
+  <section class="cx-pane" id="cx-p-calc" role="tabpanel" aria-labelledby="cx-t-calc">
+    <div class="cx-body">
+      <div class="cx-top">
+        <button type="button" class="cx-ang" id="cx-ang" aria-describedby="cx-ang-d"><span class="on" data-a="deg">מעלות DEG</span><span data-a="rad">רדיאנים RAD</span></button>
+        <span class="cx-ang-d" id="cx-ang-d">בבגרות כמעט תמיד מעלות</span>
+        <button type="button" class="cx-mic" id="cx-mic" aria-pressed="false" aria-label="להגיד את התרגיל בקול">🎤 להגיד בקול</button>
+      </div>
+      <div class="cx-screen">
+        <label for="cx-in" class="cx-sr">התרגיל</label>
+        <input id="cx-in" class="cx-in" type="text" dir="ltr" inputmode="none" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="0" aria-describedby="cx-res">
+        <output class="cx-res" id="cx-res" dir="ltr" aria-live="polite"></output>
+        <div class="cx-extra" id="cx-extra" aria-live="polite"></div>
+      </div>
+      <section class="cx-sheet" id="cx-steps-p" aria-label="דרך הפתרון" hidden>
+        <h3>📝 דרך הפתרון, שלב אחרי שלב</h3>
+        <ol class="cx-steps" id="cx-steps"></ol>
+        <div class="cx-final" id="cx-final" hidden></div>
+        <div class="cx-keyseq" id="cx-keyseq"></div>
+        <div id="cx-lesson"></div>
+      </section>
+      <div class="cx-why" id="cx-why" aria-live="polite"><b>לוחצים על מקש</b> ורואים כאן מה הוא עושה, ואיפה הוא במחשבון שלכם. אפשר גם לכתוב או להגיד משוואה: "2x + 3 = 7", "x² − 5x + 6 = 0", או שתי משוואות עם x ו-y, עם פסיק ביניהן.</div>
+
+      <div class="cx-keys" id="cx-keys">
+        <button type="button" class="f" data-k="sin(" aria-label="סינוס">sin</button>
+        <button type="button" class="f" data-k="cos(" aria-label="קוסינוס">cos</button>
+        <button type="button" class="f" data-k="tan(" aria-label="טנגנס">tan</button>
+        <button type="button" class="f" data-k="ln(" aria-label="לוגריתם טבעי">ln</button>
+        <button type="button" class="f" data-k="log(" aria-label="לוגריתם בבסיס 10">log</button>
+
+        <button type="button" class="f" data-k="sin⁻¹(" aria-label="ארק סינוס, הזווית לפי הסינוס">sin⁻¹</button>
+        <button type="button" class="f" data-k="cos⁻¹(" aria-label="ארק קוסינוס">cos⁻¹</button>
+        <button type="button" class="f" data-k="tan⁻¹(" aria-label="ארק טנגנס">tan⁻¹</button>
+        <button type="button" class="f" data-k="e^(" aria-label="e בחזקת">eˣ</button>
+        <button type="button" class="f" data-k="logb(" aria-label="לוגריתם בכל בסיס">log<sub>a</sub>b</button>
+
+        <button type="button" class="f" data-k="√(" aria-label="שורש ריבועי">√</button>
+        <button type="button" class="f" data-k="²" aria-label="בריבוע">x²</button>
+        <button type="button" class="f" data-k="^" aria-label="בחזקת">xʸ</button>
+        <button type="button" class="f" data-k="root(" aria-label="שורש מסדר n">ⁿ√</button>
+        <button type="button" class="f" data-k="⁻¹" aria-label="אחד חלקי">x⁻¹</button>
+
+        <button type="button" class="f" data-k="(" aria-label="סוגר פותח">(</button>
+        <button type="button" class="f" data-k=")" aria-label="סוגר סוגר">)</button>
+        <button type="button" class="f" data-k="π" aria-label="פאי">π</button>
+        <button type="button" class="f" data-k="e" aria-label="המספר e">e</button>
+        <button type="button" class="f" data-k="C(" aria-label="מספר צירופים, n מעל k">nCr</button>
+
+        <button type="button" class="n" data-k="7">7</button>
+        <button type="button" class="n" data-k="8">8</button>
+        <button type="button" class="n" data-k="9">9</button>
+        <button type="button" class="d" data-k="del" aria-label="למחוק תו">⌫</button>
+        <button type="button" class="d" data-k="ac" aria-label="לנקות הכול">AC</button>
+
+        <button type="button" class="n" data-k="4">4</button>
+        <button type="button" class="n" data-k="5">5</button>
+        <button type="button" class="n" data-k="6">6</button>
+        <button type="button" class="o" data-k="×" aria-label="כפול">×</button>
+        <button type="button" class="o" data-k="÷" aria-label="חלקי">÷</button>
+
+        <button type="button" class="n" data-k="1">1</button>
+        <button type="button" class="n" data-k="2">2</button>
+        <button type="button" class="n" data-k="3">3</button>
+        <button type="button" class="o" data-k="+" aria-label="ועוד">+</button>
+        <button type="button" class="o" data-k="−" aria-label="פחות">−</button>
+
+        <button type="button" class="n" data-k="0">0</button>
+        <button type="button" class="n" data-k="." aria-label="נקודה עשרונית">.</button>
+        <button type="button" class="f" data-k="Ans" aria-label="התוצאה הקודמת">Ans</button>
+        <button type="button" class="f" data-k="!" aria-label="עצרת">x!</button>
+        <button type="button" class="eq" data-k="=" aria-label="שווה, לחשב">=</button>
+      </div>
+
+      <div class="cx-tools">
+        <label for="cx-fix">עיגול:</label>
+        <select id="cx-fix"><option value="-1">בלי עיגול</option><option value="1">ספרה אחת</option><option value="2" selected>2 ספרות אחרי הנקודה</option><option value="3">3 ספרות</option><option value="4">4 ספרות</option></select>
+        <button type="button" class="linkish" id="cx-say">🔊 להקריא</button>
+        <button type="button" class="linkish" id="cx-kb" aria-pressed="false">⌨ מקלדת הטלפון</button>
+        <button type="button" class="linkish" id="cx-share">🔗 לשתף את התרגיל</button>
+        <button type="button" class="linkish" id="cx-tobank">📤 למאגר של כולם</button>
+      </div>
+      <div class="cx-mem" role="group" aria-label="זיכרון">
+        <span>זיכרון:</span>
+        <button type="button" data-sto="a" aria-label="לשמור את התוצאה ב-A">→A</button><button type="button" data-k="A" aria-label="להכניס את A">A</button>
+        <button type="button" data-sto="b" aria-label="לשמור את התוצאה ב-B">→B</button><button type="button" data-k="B" aria-label="להכניס את B">B</button>
+        <small id="cx-memv" dir="ltr"></small>
+      </div>
+    </div>
+
+
+    <div class="panel cx-hist-p">
+      <div class="cx-hhead"><h3>היסטוריה</h3><button type="button" class="linkish" id="cx-hclear">לנקות</button></div>
+      <ol class="cx-hist" id="cx-hist"></ol>
+      <p class="note" id="cx-hempty">כאן יופיעו החישובים שלכם. לוחצים על חישוב כדי להחזיר אותו.</p>
+    </div>
+  </section>
+
+  <!-- ===== משוואות ===== -->
+  <section class="cx-pane" id="cx-p-solve" role="tabpanel" aria-labelledby="cx-t-solve" hidden>
+    <div class="panel">
+      <h3>משוואה ריבועית <span dir="ltr">ax² + bx + c = 0</span></h3>
+      <div class="cx-abc">
+        <div class="field"><label for="sq-a">a</label><input id="sq-a" type="text" inputmode="decimal" dir="ltr" value="1"></div>
+        <div class="field"><label for="sq-b">b</label><input id="sq-b" type="text" inputmode="decimal" dir="ltr" value="-5"></div>
+        <div class="field"><label for="sq-c">c</label><input id="sq-c" type="text" inputmode="decimal" dir="ltr" value="6"></div>
+      </div>
+      <button type="button" class="btn btn-gold" id="sq-go">לפתור עם שלבים</button>
+      <ol class="cx-steps" id="sq-out" aria-live="polite"></ol>
+    </div>
+    <div class="panel">
+      <h3>מערכת של שתי משוואות</h3>
+      <div class="cx-sys">
+        <div dir="ltr" class="cx-sysrow"><input id="s-a1" aria-label="מקדם x במשוואה הראשונה" value="2" inputmode="decimal">x + <input id="s-b1" aria-label="מקדם y במשוואה הראשונה" value="3" inputmode="decimal">y = <input id="s-c1" aria-label="תוצאת המשוואה הראשונה" value="12" inputmode="decimal"></div>
+        <div dir="ltr" class="cx-sysrow"><input id="s-a2" aria-label="מקדם x במשוואה השנייה" value="1" inputmode="decimal">x + <input id="s-b2" aria-label="מקדם y במשוואה השנייה" value="-1" inputmode="decimal">y = <input id="s-c2" aria-label="תוצאת המשוואה השנייה" value="1" inputmode="decimal"></div>
+      </div>
+      <button type="button" class="btn btn-gold" id="sys-go">לפתור עם שלבים</button>
+      <ol class="cx-steps" id="sys-out" aria-live="polite"></ol>
+    </div>
+    <div class="panel">
+      <h3>כל משוואה אחרת</h3>
+      <p class="note">כותבים משוואה עם x, למשל <span dir="ltr">2^x = 10</span> או <span dir="ltr">sin(x) = 0.5</span>, והמחשבון מחפש את הפתרונות בטווח שבוחרים. טוב לבדיקה של פתרון שמצאתם בדרך.</p>
+      <div class="field"><label for="g-eq">המשוואה</label><input id="g-eq" type="text" dir="ltr" value="2^x = 10" autocomplete="off" spellcheck="false"></div>
+      <div class="row2">
+        <div class="field"><label for="g-from">מ-x =</label><input id="g-from" type="text" inputmode="decimal" dir="ltr" value="-10"></div>
+        <div class="field"><label for="g-to">עד x =</label><input id="g-to" type="text" inputmode="decimal" dir="ltr" value="10"></div>
+      </div>
+      <button type="button" class="btn btn-gold" id="g-go">למצוא פתרונות</button>
+      <div id="g-out" class="cx-gout" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- ===== גרף ===== -->
+  <section class="cx-pane" id="cx-p-graph" role="tabpanel" aria-labelledby="cx-t-graph" hidden>
+    <div class="panel">
+      <p class="cx-warn">📈 גרף ללמידה בלבד. בבחינה אין מחשבון גרפי, לכן כדאי לשרטט קודם ביד, ורק אז לבדוק כאן.</p>
+      <div class="field"><label for="gr-f">y =</label><input id="gr-f" type="text" dir="ltr" value="x^2 - 4x + 3" autocomplete="off" spellcheck="false"></div>
+      <div class="field"><label for="gr-g">ועוד פונקציה להשוואה <span class="opt">(לא חובה)</span></label><input id="gr-g" type="text" dir="ltr" value="" placeholder="למשל 2x - 3" autocomplete="off" spellcheck="false"></div>
+      <div class="btns"><button type="button" class="btn btn-gold btn-sm" id="gr-go">לשרטט</button><button type="button" class="btn btn-line btn-sm" id="gr-in" aria-label="להתקרב">＋</button><button type="button" class="btn btn-line btn-sm" id="gr-out" aria-label="להתרחק">－</button><button type="button" class="btn btn-line btn-sm" id="gr-home">מרכז</button></div>
+      <div class="cx-cv"><canvas id="gr-cv" width="800" height="600" role="img" aria-label="גרף הפונקציה"></canvas><div class="cx-tip" id="gr-tip" hidden></div></div>
+      <p class="note">נוגעים בגרף כדי לראות נקודה. גוררים כדי להזיז.</p>
+      <div id="gr-pts" class="cx-gout" aria-live="polite"></div>
+      <details class="cx-tbl"><summary>טבלת ערכים</summary><div id="gr-tbl"></div></details>
+    </div>
+  </section>
+
+  <!-- ===== סטטיסטיקה ===== -->
+  <section class="cx-pane" id="cx-p-stat" role="tabpanel" aria-labelledby="cx-t-stat" hidden>
+    <div class="panel">
+      <h3>ממוצע, חציון וסטיית תקן</h3>
+      <div class="field"><label for="st-x">הנתונים <span class="opt">(מספרים עם פסיק או רווח ביניהם)</span></label><input id="st-x" type="text" dir="ltr" inputmode="decimal" value="4, 7, 7, 8, 10, 12" autocomplete="off"></div>
+      <div class="field"><label for="st-f">כמה פעמים כל אחד <span class="opt">(לא חובה, לטבלת שכיחויות)</span></label><input id="st-f" type="text" dir="ltr" inputmode="decimal" placeholder="למשל 2, 5, 3" autocomplete="off"></div>
+      <button type="button" class="btn btn-gold" id="st-go">לחשב עם שלבים</button>
+      <ol class="cx-steps" id="st-out" aria-live="polite"></ol>
+    </div>
+    <div class="panel">
+      <h3>התפלגות נורמלית</h3>
+      <div class="row2">
+        <div class="field"><label for="nm-mu">ממוצע μ</label><input id="nm-mu" type="text" dir="ltr" inputmode="decimal" value="70"></div>
+        <div class="field"><label for="nm-s">סטיית תקן σ</label><input id="nm-s" type="text" dir="ltr" inputmode="decimal" value="10"></div>
+      </div>
+      <div class="field"><label for="nm-t">מה מחפשים?</label><select id="nm-t"><option value="lt">הסיכוי לפחות מ-a</option><option value="gt">הסיכוי ליותר מ-a</option><option value="bt">הסיכוי בין a ל-b</option><option value="inv">איזה ערך מתאים לאחוז מסוים</option></select></div>
+      <div class="row2">
+        <div class="field"><label for="nm-a" id="nm-al">a</label><input id="nm-a" type="text" dir="ltr" inputmode="decimal" value="85"></div>
+        <div class="field" id="nm-bw" hidden><label for="nm-b">b</label><input id="nm-b" type="text" dir="ltr" inputmode="decimal" value="90"></div>
+      </div>
+      <button type="button" class="btn btn-gold" id="nm-go">לחשב עם שלבים</button>
+      <ol class="cx-steps" id="nm-out" aria-live="polite"></ol>
+    </div>
+    <div class="panel">
+      <h3>התפלגות בינומית</h3>
+      <div class="cx-abc">
+        <div class="field"><label for="bn-n">n ניסיונות</label><input id="bn-n" type="text" dir="ltr" inputmode="numeric" value="10"></div>
+        <div class="field"><label for="bn-p">p הצלחה</label><input id="bn-p" type="text" dir="ltr" inputmode="decimal" value="0.3"></div>
+        <div class="field"><label for="bn-k">k הצלחות</label><input id="bn-k" type="text" dir="ltr" inputmode="numeric" value="3"></div>
+      </div>
+      <div class="field"><label for="bn-t">מה מחפשים?</label><select id="bn-t"><option value="eq">בדיוק k הצלחות</option><option value="le">לכל היותר k</option><option value="ge">לפחות k</option></select></div>
+      <button type="button" class="btn btn-gold" id="bn-go">לחשב עם שלבים</button>
+      <ol class="cx-steps" id="bn-out" aria-live="polite"></ol>
+    </div>
+  </section>
+
+  <!-- ===== משולשים ===== -->
+  <section class="cx-pane" id="cx-p-tri" role="tabpanel" aria-labelledby="cx-t-tri" hidden>
+    <div class="panel">
+      <p>ממלאים 3 נתונים שיודעים, ולפחות אחד מהם צלע. המחשבון בוחר בין משפט הסינוסים, משפט הקוסינוסים ופיתגורס, ומראה כל שלב. הזווית α מול הצלע a, β מול b, ו-γ מול c.</p>
+      <div class="cx-tri-in">
+        <div class="field"><label for="tr-a">צלע a</label><input id="tr-a" type="text" dir="ltr" inputmode="decimal" value="7"></div>
+        <div class="field"><label for="tr-b">צלע b</label><input id="tr-b" type="text" dir="ltr" inputmode="decimal" value="5"></div>
+        <div class="field"><label for="tr-c">צלע c</label><input id="tr-c" type="text" dir="ltr" inputmode="decimal" value=""></div>
+        <div class="field"><label for="tr-A">זווית α°</label><input id="tr-A" type="text" dir="ltr" inputmode="decimal" value=""></div>
+        <div class="field"><label for="tr-B">זווית β°</label><input id="tr-B" type="text" dir="ltr" inputmode="decimal" value=""></div>
+        <div class="field"><label for="tr-C">זווית γ°</label><input id="tr-C" type="text" dir="ltr" inputmode="decimal" value="60"></div>
+      </div>
+      <div class="btns"><button type="button" class="btn btn-gold" id="tr-go">לפתור את המשולש</button><button type="button" class="btn btn-line btn-sm" id="tr-clr">לנקות</button></div>
+      <div id="tr-out" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- ===== מרוכבים ווקטורים (5 יח"ל) ===== -->
+  <section class="cx-pane" id="cx-p-cv" role="tabpanel" aria-labelledby="cx-t-cv" hidden>
+    <div class="panel">
+      <h3>מספרים מרוכבים</h3>
+      <div class="row2">
+        <div class="field"><label for="z-1">z₁</label><input id="z-1" type="text" dir="ltr" value="3+4i" autocomplete="off"></div>
+        <div class="field"><label for="z-2">z₂</label><input id="z-2" type="text" dir="ltr" value="1-2i" autocomplete="off"></div>
+      </div>
+      <div class="field"><label for="z-n">חזקה n <span class="opt">(ל-z₁ⁿ לפי דה-מואבר)</span></label><input id="z-n" type="text" dir="ltr" inputmode="numeric" value="3"></div>
+      <button type="button" class="btn btn-gold" id="z-go">לחשב עם שלבים</button>
+      <ol class="cx-steps" id="z-out" aria-live="polite"></ol>
+    </div>
+    <div class="panel">
+      <h3>וקטורים</h3>
+      <div class="row2">
+        <div class="field"><label for="v-1">u</label><input id="v-1" type="text" dir="ltr" value="(1, 2, 2)" autocomplete="off"></div>
+        <div class="field"><label for="v-2">v</label><input id="v-2" type="text" dir="ltr" value="(2, -1, 2)" autocomplete="off"></div>
+      </div>
+      <button type="button" class="btn btn-gold" id="v-go">לחשב עם שלבים</button>
+      <ol class="cx-steps" id="v-out" aria-live="polite"></ol>
+    </div>
+  </section>
+
+  <!-- ===== מאגר של כולם ===== -->
+  <section class="cx-pane" id="cx-p-bank" role="tabpanel" aria-labelledby="cx-t-bank" hidden>
+    <div class="panel">
+      <p>תרגילים שתלמידים שיתפו, לתרגול ולבדיקה. כל אחד יכול להוסיף: מחשבים תרגיל ולוחצים <b>"📤 למאגר של כולם"</b>. משותף רק התרגיל, בלי שם, והתשובה מחושבת מחדש אצלכם, לכן היא תמיד נכונה. משהו לא מתאים? לוחצים 🚩, ואחרי כמה דיווחים הוא יורד.</p>
+      <div class="row2">
+        <div class="field"><label for="bk-topic-f">נושא</label><select id="bk-topic-f"></select></div>
+        <div class="field"><label for="bk-sort">סדר</label><select id="bk-sort"><option value="new">החדשים</option><option value="top">האהובים</option></select></div>
+      </div>
+      <label class="cx-chk"><input type="checkbox" id="bk-mine"> רק ליחידות שלי</label>
+      <p class="note" id="bk-count"></p>
+      <div class="cx-bklist" id="bk-list"></div>
+    </div>
+    <div class="panel" id="bk-admin" hidden></div>
+  </section>
+
+  <!-- ===== במחשבון שלכם ===== -->
+  <section class="cx-pane" id="cx-p-guide" role="tabpanel" aria-labelledby="cx-t-guide" hidden>
+    <div class="panel">
+      <p>כך עושים את הפעולות השכיחות בבגרות במחשבון מדעי. רוב התלמידים משתמשים בקסיו (Casio fx-82 / fx-991), ויש גם Texas Instruments. המקשים יכולים להשתנות מעט בין דגמים, אז כדאי לנסות פעם אחת בבית, לפני הבחינה.</p>
+      <div class="cx-model" role="group" aria-label="סוג המחשבון">
+        <button type="button" data-m="es" class="on">קסיו ES / fx-82MS</button><button type="button" data-m="ex">קסיו ClassWiz</button><button type="button" data-m="ti">Texas TI-30</button>
+      </div>
+      <div class="cx-guide" id="cx-guide"></div>
+    </div>
+  </section>
+
+  <!-- ===== טעויות נפוצות ===== -->
+  <section class="cx-pane" id="cx-p-err" role="tabpanel" aria-labelledby="cx-t-err" hidden>
+    <div class="panel">
+      <p>הטעויות האלה מורידות נקודות גם לתלמידים שיודעים את החומר. לכל אחת יש כפתור "לנסות", שמכניס את התרגיל למחשבון כדי לראות את ההבדל בעיניים.</p>
+      <div class="cx-errs" id="cx-errs"></div>
+    </div>
+  </section>
+
+  <p class="local-note">🔒 בלי הרשמה. ההיסטוריה נשמרת רק בטלפון הזה.</p>
+  <div class="mx-support"><p>💛 המחשבון והכלים ללימודים חינמיים, ונבנים בהרבה שעות עבודה. אם הם עוזרים לכם, אפשר לעזור להחזיק את המיזם, גם בסכום קטן.</p><a class="btn btn-line btn-sm" href="/kelim/#litmoch" data-support="1" onclick="window.toolUsed&&window.toolUsed('machshevon',{action:'support_click'})">לתמוך במיזם</a></div>
+  <div class="btns c cx-more"><a class="btn btn-line btn-sm" href="/limudim/matematika/">➗ לתרגול מתמטיקה צעד אחרי צעד</a></div>
+  <div class="share-row"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="מחשבון לבגרות בעברית: גדול, נגיש, ומסביר כל מקש. חינם" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר בווטסאפ</a></div>
+  <p class="disclaimer"><a class="gold" href="/limudim/">כל הכלים ללימודים</a> · חינם · בלי הרשמה</p>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">מחשבון מדעי שמלמד, לא רק מחשב</h2>
+  <p>המחשבון מתאים למי שלומד לבגרות במתמטיקה, ולכל מי שצריך מחשבון מדעי גדול וברור בטלפון. כל מקש שלוחצים מקבל הסבר במילים: מה הוא עושה, ואיפה הוא נמצא במחשבון המדעי הרגיל. החישוב מתפרק לשלבים, ואפשר גם להגיד את התרגיל בקול ולשמוע את התשובה.</p>
+  <h3>מה יש בו</h3>
+  <p>מחשבון עם מצב מעלות או רדיאנים שמופיע בגדול, עיגול לפי מספר ספרות, זיכרון והיסטוריה. בלשונית המשוואות כותבים משוואה, או שתי משוואות עם x ו-y, ומקבלים פתרון עם שלבים. יש גם לשוניות לסטטיסטיקה, למשולשים, למספרים מרוכבים ולווקטורים, וגרף ללמידה. בלשונית "טעויות נפוצות" מוסבר מה הכי קל לפספס במחשבון, ומצב בחינה משאיר רק מחשבון מדעי ושעון, כמו ביום הבחינה.</p>
+  <p>חשוב לזכור: בבחינת הבגרות משתמשים במחשבון המדעי שלכם, וטלפון אסור. לכן המחשבון כאן נועד ללימוד ולתרגול בבית. בלשונית "במחשבון שלכם" רואים לכל פעולה את המקשים במחשבון רגיל, כדי שביום הבחינה הידיים כבר יידעו מה לעשות.</p>
+  <h3>להורים ולמורים</h3>
+  <p>הורה שלא זוכר איך מחשבים סינוס או ממוצע יכול לעבור עם הילד על ההסבר של כל מקש. מורים יכולים להקרין את המחשבון בכיתה, לשתף תרגיל בקישור, ולעבור עם התלמידים על הטעויות הנפוצות לפני מבחן. ובלשונית "מאגר של כולם" אפשר לראות תרגילים ששיתפו תלמידים אחרים ולנסות אותם בעצמכם.</p>
+  <p>רוצים לפתור לבד עם בדיקה של כל שלב? יש מחברת שבודקת כל שורה. נתקעתם בשאלה מילולית שלמה? הפותר נותן דרך פתרון מלאה. הכול בחינם ובלי הרשמה.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>מותר להשתמש במחשבון הזה בבגרות?</summary><p>לא. בבחינה מותר רק מחשבון מדעי שאינו גרפי, וטלפון אסור. המחשבון כאן נועד ללימוד בבית, והוא מראה איך עושים כל פעולה במחשבון שלכם.</p></details>
+  <details><summary>המחשבון פותר משוואות?</summary><p>כן. כותבים או אומרים משוואה, למשל x² − 5x + 6 = 0, או שתי משוואות עם x ו-y, ומקבלים את הפתרון עם השלבים.</p></details>
+  <details><summary>מה ההבדל בין מעלות לרדיאנים?</summary><p>אלה שתי דרכים למדוד זווית. בבגרות כמעט תמיד עובדים במעלות. כאן המצב מופיע בגדול על המסך, כדי שלא תטעו.</p></details>
+  <details><summary>המחשבון בחינם?</summary><p>כן. בחינם, בלי הרשמה ובלי פרסומות.</p></details>
+  <details><summary>זה כמו מחשבון מדעי של קסיו?</summary><p>המקשים והפעולות דומים למחשבונים המדעיים שלומדים איתם לבגרות, כמו קסיו fx-82 ו-fx-991. ליד כל פעולה יש הסבר איך עושים אותה במחשבון שלכם.</p></details>
+  <details><summary>אפשר להשתמש בו גם כמחשבון רגיל?</summary><p>כן. חיבור, חיסור, כפל, חילוק ואחוזים עובדים כמו במחשבון רגיל, עם מקשים גדולים וברורים, גם בטלפון.</p></details>
+</section>
+<!--/seo-txt-->

@@ -1,0 +1,95 @@
+<!--meta {
+  "site": "limudim",
+  "nav": "matematika",
+  "tool": "krav_math",
+  "title": "דו-קרב מתמטיקה לבגרות בחינם: תחרות תרגילים מול חבר או הכיתה | כלים ללימודים",
+  "description": "תחרות תרגול לבגרות במתמטיקה, בחינם ובלי הרשמה: מזמינים חבר או את כל הכיתה, כולם מקבלים את אותם תרגילים, פותרים צעד אחרי צעד וצוברים נקודות על דיוק ומהירות. 3, 4 ו-5 יחידות, עם לוח תוצאות.",
+  "og_title": "דו-קרב מתמטיקה לבגרות – מי פותר יותר בשעה הקרובה?",
+  "priority": "0.8",
+  "crumbs": [["דו-קרב מתמטיקה לבגרות", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/chashiva.css\"><link rel=\"stylesheet\" href=\"/assets/limudim-krav.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"כמה אפשר להזמין למרוץ?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"אפשר חבר אחד או את כל הכיתה. כל מי שנכנס בקישור מקבל את אותם תרגילים עד אותה שעת סיום.\"}}, {\"@type\": \"Question\", \"name\": \"איך צוברים נקודות?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"צעד נכון בניסיון הראשון: 2 נקודות, בניסיון השני: נקודה. תרגיל בלי טעות: עוד 3 נקודות. פתרון מהיר: עוד 2. דילוג לא מוריד נקודות.\"}}, {\"@type\": \"Question\", \"name\": \"צריך להירשם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. רק כינוי בלוח, וגם הוא לא חובה. הנקודות נשמרות בטלפון.\"}}, {\"@type\": \"Question\", \"name\": \"יש גם דו-קרב באנגלית?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בדו-קרב אנגלית לבגרות מתחרים באוצר מילים, בהשלמת משפטים ובהבנת הנקרא, באותה שיטה.\"}}]}</script>",
+  "foot": "<script src=\"/assets/limudim-math.js\"></script><script src=\"/assets/chashiva.js\" defer></script><script src=\"/assets/limudim-nekudot.js\" defer></script><script src=\"/assets/limudim-krav.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>⚔️ דו-קרב מתמטיקה לבגרות</h1>
+  <p class="sub">מזמינים חבר, או את כל הכיתה, ומקבלים את אותם תרגילים בדיוק. מי פותר יותר נכון עד סוף השעה? כל צעד נכון שווה נקודות.</p>
+</header>
+
+<div class="tool" id="kv-app" data-subject="math">
+  <div id="mx-data" hidden></div>
+  <div id="kv-home">
+    <div class="kv-banner" id="kv-banner" hidden></div>
+    <div class="kv-resume" id="kv-resume" hidden></div>
+    <div class="kv-card">
+      <h2>מרוץ חדש</h2>
+      <span class="kv-lbl">כמה יחידות?</span>
+      <div class="kv-chips" id="kv-levels"></div>
+      <span class="kv-lbl">כמה זמן?</span>
+      <div class="kv-chips" id="kv-durs"></div>
+      <span class="kv-lbl">הכינוי שלכם בלוח (לא חובה)</span>
+      <input class="kv-nick" id="kv-nick" type="text" maxlength="20" placeholder="כינוי בלבד, בלי שם מלא" aria-label="כינוי">
+      <button class="btn btn-gold kv-go" type="button" data-start>⚔️ להתחיל מרוץ</button>
+      <p class="kv-note">אחרי שמתחילים, שולחים לחבר קישור, והוא מקבל את אותם תרגילים עד אותה שעת סיום.</p>
+    </div>
+    <div data-pts></div>
+    <div id="kv-recent"></div>
+    <details class="kv-card">
+      <summary><b>איך צוברים נקודות?</b></summary>
+      <ul class="kv-how">
+        <li>כל תרגיל נפתר צעד אחרי צעד, כמו במחברת.</li>
+        <li><b>צעד נכון בניסיון הראשון: 2 נקודות.</b> בניסיון השני: נקודה אחת. אחרי שתי טעויות רואים את התשובה וממשיכים.</li>
+        <li><b>תרגיל נקי</b>, בלי אף טעות: עוד 3 נקודות.</li>
+        <li><b>מהירות</b>: תרגיל שנפתר נכון בתוך דקה (3 יח״ל), דקה וחצי (4 יח״ל) או שתי דקות (5 יח״ל): עוד 2 נקודות.</li>
+        <li>מותר לדלג על תרגיל. דילוג לא מוריד נקודות, אבל גם לא מוסיף.</li>
+        <li>הנקודות נצברות ב"הנקודות שלי" ונשמרות בטלפון הזה, יחד עם הנקודות מדו-קרב האנגלית ומהחידון.</li>
+      </ul>
+      <p class="kv-small">התרגילים נוצרים במחשב לפי הנושאים בשאלוני הבגרות (קיץ 2025), והתשובה של כל צעד מחושבת בקוד. לפני הבחינה כדאי לבדוק את המיקוד של השנה.</p>
+    </details>
+  </div>
+
+  <div id="kv-play" hidden>
+    <div class="kv-hud"><span>⏱ נשאר<b id="kv-clock">0:00</b></span><span>⭐ נקודות<b id="kv-pts">0</b></span><span>✓ נפתרו<b id="kv-solved">0</b></span></div>
+    <div class="kv-tools"><button class="btn btn-line btn-sm" type="button" data-invite>📨 להזמין חבר למרוץ</button><button class="btn btn-line btn-sm" type="button" id="kv-stop">🏁 לסיים ולראות את הלוח</button></div>
+    <div id="kv-invite" hidden></div>
+    <div class="kv-q" id="kv-q" aria-live="polite"></div>
+    <div class="kv-after" id="kv-after" hidden><p class="kv-gain" id="kv-gain"></p><button class="btn btn-gold" type="button" id="kv-next">לתרגיל הבא ←</button></div>
+    <p style="text-align:center"><button class="btn btn-line btn-sm" type="button" id="kv-skip">לדלג על התרגיל</button></p>
+  </div>
+
+  <div id="kv-end" hidden></div>
+</div>
+
+<section class="k-sec">
+  <h2>עוד לתרגול</h2>
+  <div class="lcards">
+    <a href="/limudim/krav-anglit/"><span class="em" aria-hidden="true">🇬🇧</span><b>דו-קרב אנגלית לבגרות</b><span class="d">אוצר מילים, השלמת משפטים והבנת הנקרא, באותו מרוץ עם חבר.</span></a>
+    <a href="/kelim/chashiva/chidon/"><span class="em" aria-hidden="true">❓</span><b>חידון וטריוויה עם חבר</b><span class="d">עשר שאלות ביום, ואתגר לחבר על אותו חידון.</span></a>
+    <a href="/limudim/maslul/"><span class="em" aria-hidden="true">🗺</span><b>המסלול שלי במתמטיקה</b><span class="d">תרגול אישי לפי השאלון, עם כוכבים ושלבים.</span></a>
+    <a href="/limudim/poter/"><span class="em" aria-hidden="true">🧠</span><b>הפותר: שאלות בגרות</b><span class="d">שאלה קשה? מקבלים דרך פתרון מלאה.</span></a>
+  </div>
+</section>
+
+<div class="tool">
+  <div class="share-row"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="דו-קרב מתמטיקה לבגרות: מי פותר יותר תרגילים בשעה הקרובה? חינם ובלי הרשמה" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר בווטסאפ</a></div>
+  <p class="disclaimer">חלק מ<a class="gold" href="/kelim/">מיזם הכלים של גילעד רחמים</a> · חינם · בלי הרשמה · רק כינוי, בלי שם מלא ובלי טלפון · הנקודות נשמרות בטלפון שלכם</p>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">תחרות במתמטיקה שעוזרת להתכונן לבגרות</h2>
+  <p>לבד קשה לשבת ולתרגל. מול חבר זה כבר משחק. הדו-קרב מתאים לתלמידי תיכון ב-3, 4 או 5 יחידות, לזוג חברים שמתכוננים יחד למבחן, ולמורים שרוצים להפוך שיעור חזרה לתחרות כיתתית.</p>
+  <h3>איך משחקים</h3>
+  <p>בוחרים כמה יחידות וכמה זמן, כותבים כינוי אם רוצים, ומתחילים מרוץ. שולחים לחבר את הקישור, והוא מקבל בדיוק את אותם תרגילים עד אותה שעת סיום. כל תרגיל נפתר צעד אחרי צעד, כמו במחברת. צעד נכון בניסיון הראשון שווה 2 נקודות, ובניסיון השני נקודה אחת. תרגיל בלי אף טעות מוסיף 3 נקודות, ופתרון מהיר מוסיף עוד 2. אחרי שתי טעויות רואים את התשובה וממשיכים, כך שלומדים גם מהטעויות. בסוף רואים בלוח מי ניצח.</p>
+  <h3>להורים ולמורים</h3>
+  <p>מורה יכולה לפתוח מרוץ קצר בסוף שיעור ולשלוח את הקישור בקבוצת הכיתה. התלמידים נכנסים עם כינוי בלבד, בלי שם מלא ובלי טלפון. התרגילים נוצרים לפי הנושאים בשאלוני הבגרות, והתשובה לכל צעד מחושבת בקוד. כדאי לבדוק מול המיקוד של השנה מה נכלל בבחינה.</p>
+  <h3>למה ללמוד דרך תחרות</h3>
+  <p>כשיש שעון וחבר שמתחרה, קל יותר לפתוח את הראש ולהתחיל. הצעדים הקטנים עוזרים לראות בדיוק איפה הטעות, וכדי לצבור נקודות צריך גם לדייק וגם להתאמן במהירות, בדיוק כמו בבחינה. מותר לדלג על תרגיל קשה, ודילוג לא מוריד נקודות. הנקודות מהדו-קרב נצברות ב"הנקודות שלי", יחד עם הנקודות מדו-קרב האנגלית ומהחידון. הכול בחינם ובלי הרשמה.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>כמה אפשר להזמין למרוץ?</summary><p>אפשר חבר אחד או את כל הכיתה. כל מי שנכנס בקישור מקבל את אותם תרגילים עד אותה שעת סיום.</p></details>
+  <details><summary>איך צוברים נקודות?</summary><p>צעד נכון בניסיון הראשון: 2 נקודות, בניסיון השני: נקודה. תרגיל בלי טעות: עוד 3 נקודות. פתרון מהיר: עוד 2. דילוג לא מוריד נקודות.</p></details>
+  <details><summary>צריך להירשם?</summary><p>לא. רק כינוי בלוח, וגם הוא לא חובה. הנקודות נשמרות בטלפון.</p></details>
+  <details><summary>יש גם דו-קרב באנגלית?</summary><p>כן. בדו-קרב אנגלית לבגרות מתחרים באוצר מילים, בהשלמת משפטים ובהבנת הנקרא, באותה שיטה.</p></details>
+</section>
+<!--/seo-txt-->

@@ -7,3 +7,7 @@ tools/rsvp-worker/node_modules/
 .claude/handoffs/
 .claude/launch.json
 claude-skills/
+tools/shir-worker/.wrangler/
+tools/krav-worker/.wrangler/
+tools/chaye-worker/.wrangler/
+tools/*/.wrangler/

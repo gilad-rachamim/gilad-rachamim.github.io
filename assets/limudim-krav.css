@@ -1,0 +1,96 @@
+/* דו-קרב עם חבר: מתמטיקה, אנגלית וחידון (assets/limudim-krav.js). נטען יחד עם chashiva.css. */
+.kv-card{border:1px solid var(--line);border-radius:18px;padding:1rem;margin:.8rem 0;background:rgba(255,255,255,.03)}
+.kv-card h2{font-family:var(--serif);color:var(--cream);font-size:1.3rem;margin:0 0 .5rem}
+.kv-lbl{display:block;color:var(--muted);font-size:.95rem;margin:.7rem 0 .35rem}
+.kv-chips{display:flex;gap:.4rem;flex-wrap:wrap}
+.kv-chips button{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--parchment);border-radius:999px;padding:.5rem 1rem;font:inherit;font-size:1rem;cursor:pointer;min-height:44px}
+.kv-chips button[aria-pressed=true]{background:rgba(216,179,95,.2);border-color:var(--gold);color:var(--cream);font-weight:700}
+.kv-nick{width:100%;font:inherit;padding:.6rem .8rem;border-radius:10px;border:1px solid var(--line);background:var(--ink);color:var(--cream);margin-top:.2rem}
+.kv-go{margin-top:1rem;width:100%;font-size:1.15rem;padding:.8rem}
+.kv-small,.kv-note{color:var(--muted);font-size:.9rem;margin:.5rem 0 0}
+.kv-msg{text-align:center;color:var(--gold-hi)}
+.kv-banner{border:2px solid var(--accent);border-radius:16px;padding:.8rem;margin:.6rem 0 1rem;background:rgba(95,191,166,.1);color:var(--parchment)}
+.kv-banner p{margin:.2rem 0 .5rem}
+.kv-banner b{color:var(--cream)}
+.kv-joinrow{display:flex;gap:.5rem;flex-wrap:wrap}
+.kv-joinrow input{flex:1 1 10rem;font:inherit;padding:.6rem .8rem;border-radius:10px;border:1px solid var(--line);background:var(--ink);color:var(--cream)}
+.kv-resume{border:1px solid var(--gold);border-radius:14px;padding:.6rem .8rem;margin:.6rem 0;color:var(--parchment);display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+/* לוח תוצאות */
+.kv-board{border:1px solid var(--line);border-radius:14px;padding:.7rem .8rem;margin:.6rem 0;background:rgba(0,0,0,.15);text-align:right}
+.kv-board>b{color:var(--cream);font-size:1.05rem}
+.kv-board ol{list-style:none;margin:.4rem 0 0;padding:0;display:flex;flex-direction:column;gap:.3rem}
+.kv-board li{display:flex;align-items:center;gap:.5rem;padding:.35rem .5rem;border-radius:10px;background:rgba(255,255,255,.04)}
+.kv-board li.me{background:rgba(216,179,95,.16);border:1px solid rgba(216,179,95,.5)}
+.kv-board .pl{width:2rem;text-align:center;font-size:1.1rem}
+.kv-board .nm{flex:1;color:var(--cream);overflow-wrap:anywhere}
+.kv-board .sc{color:var(--muted);font-size:.92rem;white-space:nowrap}
+.kv-board .sc b{color:var(--gold-hi);font-size:1.05rem}
+/* משחק */
+.kv-hud{display:flex;justify-content:space-between;gap:.4rem;margin:.4rem 0 .6rem;padding:.2rem 0}
+.kv-hud>span{flex:1;text-align:center;border:1px solid var(--line);border-radius:12px;padding:.35rem .2rem;color:var(--muted);font-size:.85rem;background:rgba(255,255,255,.03)}
+.kv-hud>span b{display:block;color:var(--cream);font-size:1.3rem;font-variant-numeric:tabular-nums}
+.kv-hud>span.low{border-color:#e07a6a}
+.kv-hud>span.low b{color:#f0a090}
+.kv-tools{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:space-between;margin:.2rem 0 .6rem}
+.kv-qnum{color:var(--muted);font-size:.9rem;margin:.2rem 0 .4rem}
+.kv-topic{color:var(--gold-hi);margin:.2rem 0;font-weight:700}
+.kv-q .mx-ex{margin-bottom:.6rem}
+.kv-done{list-style:none;padding:0;margin:.3rem 0;display:flex;flex-direction:column;gap:.25rem}
+.kv-done li{display:flex;justify-content:space-between;gap:.5rem;align-items:center;font-size:.95rem;padding:.25rem .5rem;border-radius:8px;background:rgba(255,255,255,.03)}
+.kv-done b.ok,.kv-sol b.ok{color:#7fd1a8}
+.kv-done b.no,.kv-sol b.no{color:#f0a090}
+.kv-step{border:1px solid rgba(220,183,105,.4);border-radius:14px;padding:.7rem;margin:.5rem 0;background:rgba(220,183,105,.05)}
+.kv-step .mx-math{font-size:1.25rem;text-align:center;margin:.2rem 0 .4rem;overflow-wrap:anywhere}
+.kv-sq{color:var(--cream);margin:.2rem 0 .5rem;font-weight:600}
+.kv-form{display:flex;gap:.5rem}
+.kv-form input{flex:1;min-width:0;font:inherit;font-size:1.25rem;padding:.6rem .8rem;border-radius:10px;border:1px solid var(--line);background:var(--ink);color:var(--cream);text-align:center}
+.kv-stepn{color:var(--muted);font-size:.82rem;margin:.4rem 0 0}
+.kv-fb{min-height:1.3em;margin:.5rem 0 0;font-weight:600;text-align:center}
+.kv-fb.ok{color:#7fd1a8}
+.kv-fb.no{color:#f0a090}
+.kv-fb small{font-weight:400;color:var(--parchment)}
+.kv-mcq .kv-q-he{color:var(--cream);font-size:1.12rem;margin:.2rem 0 .5rem}
+.kv-mcq .kv-q-he.big{font-size:1.25rem;font-weight:600}
+.kv-en{font-size:1.15rem;color:var(--cream);margin:.3rem 0;text-align:left}
+.kv-en.big{font-size:1.8rem;text-align:center;font-weight:700;letter-spacing:.02em}
+.kv-ex{color:var(--muted);text-align:left;font-style:italic;margin:.2rem 0 .5rem}
+.kv-blank{color:var(--gold-hi);font-weight:700}
+.kv-read{text-align:left;line-height:1.65;border-inline-start:3px solid var(--accent);padding:.5rem .8rem;background:rgba(95,191,166,.06);border-radius:10px;color:var(--parchment);margin:.4rem 0}
+.kv-ch{display:grid;grid-template-columns:1fr;gap:.5rem;margin:.6rem 0}
+@media (min-width:560px){.kv-ch{grid-template-columns:1fr 1fr}}
+.kv-ch button{font:inherit;font-size:1.08rem;padding:.75rem .8rem;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--cream);cursor:pointer;min-height:52px;text-align:center}
+.kv-ch.ltr button{direction:ltr}
+.kv-ch button:hover:not(:disabled){border-color:var(--gold)}
+.kv-ch button.ok{background:rgba(127,209,168,.22);border-color:#7fd1a8}
+.kv-ch button.no{background:rgba(224,122,106,.2);border-color:#e07a6a}
+.kv-ch button:disabled{cursor:default}
+.kv-after{border:1px solid var(--gold);border-radius:14px;padding:.7rem;margin:.6rem 0;text-align:center;background:rgba(216,179,95,.07)}
+.kv-gain{color:var(--gold-hi);font-weight:700;font-size:1.15rem;margin:0 0 .5rem}
+.kv-gain small{color:var(--muted);font-weight:400;font-size:.85rem}
+.kv-sol{border:1px solid rgba(127,209,168,.4);border-radius:14px;padding:.6rem .8rem;margin:.5rem 0;background:rgba(127,209,168,.05)}
+.kv-sol>b{color:var(--cream)}
+.kv-sol ol{margin:.3rem 0;padding-inline-start:1.3rem;display:flex;flex-direction:column;gap:.25rem}
+.kv-fin{text-align:center;font-size:1.15rem;color:#7fd1a8;margin:.3rem 0 0}
+.kv-recent{list-style:none;padding:0;margin:.4rem 0;display:flex;flex-direction:column;gap:.35rem}
+.kv-recent li{display:flex;justify-content:space-between;align-items:center;gap:.5rem;padding:.45rem .6rem;border:1px solid var(--line);border-radius:10px;color:var(--parchment);font-size:.95rem}
+.kv-how{color:var(--parchment);line-height:1.7}
+.kv-how li{margin:.2rem 0}
+.kv-cat{font:inherit;padding:.5rem .7rem;border-radius:10px;border:1px solid var(--line);background:var(--ink);color:var(--cream);max-width:100%}
+/* שליחת קישור (בלי .ch-vs: את המחלקה הזאת המנוע מחווט לבד) */
+.kv-vs{border:1px solid var(--accent);border-radius:14px;padding:.8rem;margin:0 0 1rem;background:rgba(95,191,166,.06);display:flex;flex-direction:column;gap:.45rem;text-align:right}
+.kv-vs b{color:var(--cream);font-size:1.08rem}
+.kv-vs span{color:var(--muted);font-size:.93rem}
+.kv-vs input{font:inherit;padding:.55rem .75rem;border-radius:10px;border:1px solid var(--line);background:var(--ink);color:var(--cream)}
+.kv-vs .actions{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center}
+/* הנקודות שלי */
+.pts-box{border:1px solid var(--gold);border-radius:16px;padding:.7rem .9rem;margin:.8rem 0;background:linear-gradient(180deg,rgba(216,179,95,.12),rgba(216,179,95,.03));text-align:right}
+.pts-top{display:flex;align-items:center;gap:.7rem}
+.pts-star{font-size:2rem}
+.pts-top b{display:block;color:var(--cream);font-size:1.3rem}
+.pts-top small{color:var(--muted)}
+.pts-by{display:flex;flex-wrap:wrap;gap:.3rem .9rem;margin-top:.4rem;color:var(--muted);font-size:.9rem}
+.pts-by b{color:var(--gold-hi)}
+.pts-hint{color:var(--muted);font-size:.9rem;margin:.4rem 0 0}
+.kv-rank{text-align:center;border:1px solid rgba(95,191,166,.5);border-radius:12px;padding:.4rem .6rem;margin:.2rem 0 .6rem;color:var(--parchment);background:rgba(95,191,166,.08)}
+.kv-rank b{color:var(--gold-hi);font-size:1.15rem}
+.kv-live{color:#7fd1a8;font-size:.8rem;font-weight:400;white-space:nowrap}

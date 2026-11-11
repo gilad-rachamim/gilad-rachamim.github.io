@@ -6,7 +6,7 @@
 (function () {
   'use strict';
   var DAYS = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
-  var SITE = 'https://gilad-rachamim.github.io';
+  var SITE = 'https://hakelim.com';
   var DKEY = 'kodesh-tofes-brit', MKEY = 'kodesh-tofes-brit-mohel';
   var $ = function (id) { return document.getElementById(id); };
   function ev(n, p) { if (window.kelimEv) window.kelimEv(n, Object.assign({ tool: 'tofes_brit' }, p || {})); }
@@ -196,7 +196,7 @@
     L.push(line);
     L.push('➕ להכניס ליומן הבריתות:');
     L.push(SITE + '/kodesh/britot/?add=' + b64(payload(r)));
-    L.push('_נשלח מטופס פרטי הברית · gilad-rachamim.github.io/kodesh/tofes-brit_');
+    L.push('_נשלח מטופס פרטי הברית · hakelim.com/kodesh/tofes-brit_');
     return L.join('\n');
   }
   // רשומה ליומן הבריתות, במפתחות קצרים כדי שהקישור יהיה קצר

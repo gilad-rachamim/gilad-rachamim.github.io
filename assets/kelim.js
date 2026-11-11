@@ -197,3 +197,27 @@
     more.addEventListener('toggle', function () { if (more.open) ev('tool_suggest_open', { tool: tool }); });
   })();
 })();
+
+// כיתות (/kelim/chashiva/kita/): מי שהצטרף לכיתה – טוענים את kita.js, שמוסיף נקודות מהמשחקים ומהתרגול ללוח הכיתה.
+(function () {
+  try {
+    if (!localStorage.getItem('kita-me') || document.querySelector('script[src^="/assets/kita.js"]')) return;
+    var s = document.createElement('script'); s.src = '/assets/kita.js?d=' + new Date().toISOString().slice(0, 10); s.defer = true; document.head.appendChild(s);
+  } catch (e) {}
+})();
+
+// קוד שותף (פס "בחינם, ללא הגבלה" בכלים עם מכסה): נשמר ב-'kelim-partner' וגם ב-'chaye-code' (ההחייאה קוראת משם)
+(function () {
+  var inp = document.querySelector('[data-partner-code]'); if (!inp) return;
+  var ok = document.querySelector('[data-partner-ok]'), box = inp.closest('details');
+  var get = function (k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
+  var cur = get('kelim-partner') || get('chaye-code');
+  if (cur) { inp.value = cur; if (ok) ok.hidden = false; }
+  inp.addEventListener('input', function () {
+    var v = inp.value.replace(/\s/g, ''), good = /^\d{3}-?\d{5}$/.test(v);
+    try { if (good) { localStorage.setItem('kelim-partner', v); localStorage.setItem('chaye-code', v); var tq = JSON.parse(localStorage.getItem('kelim-tamlul') || '{}'); tq.free = true; localStorage.setItem('kelim-tamlul', JSON.stringify(tq)); } else if (!v) { localStorage.removeItem('kelim-partner'); } } catch (e) {}
+    if (ok) ok.hidden = !good;
+    if (good && window.gtag) gtag('event', 'partner_code_saved', { tool: document.body.getAttribute('data-tool') || '' });
+  });
+  if (box) box.addEventListener('toggle', function () { if (box.open) inp.focus(); });
+})();
