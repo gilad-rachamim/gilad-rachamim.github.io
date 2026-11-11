@@ -19,7 +19,7 @@ LAYOUT_KELIM = (ROOT / "src" / "layout-kelim.html").read_text(encoding="utf-8")
 SITES = {
     "kelim": {
         "name": "הכלים של גילעד רחמים", "brand": "מיזם הכלים של גילעד רחמים", "short": "הכלים", "home": "/kelim/", "theme": "#0f1d1c",
-        "og": "og-kelim.jpg", "icon": "kelim",
+        "og": "og-kelim.jpg?v=2", "icon": "kelim",
         "desc": "כלים פשוטים, בחינם, לכל מי שצריך הנגשה",
         "nav": [("tchumim", "/kelim/#tchumim", "התחומים"), ("tamlul", "/kelim/tamlul/", "תמלול"),
                 ("kodesh", "/kodesh/", "כלי קודש"), ("rotzim", "/kelim/#rotzim", "רוצים כלי?"),
@@ -27,7 +27,7 @@ SITES = {
     },
     "kodesh": {
         "name": "כלי קודש", "short": "כלי קודש", "home": "/kodesh/", "theme": "#0e1628",
-        "og": "og-kodesh.jpg", "icon": "kodesh",
+        "og": "og-kodesh.jpg?v=2", "icon": "kodesh",
         "desc": "כלים דיגיטליים לאנשי קודש, בחינם",
         "nav": [("rabanim", "/kodesh/#rabanim", "לרבנים"), ("taarichim", "/kodesh/taarichim/", "מחשבון תאריכים"),
                 ("mohalim", "/kodesh/mohalim/", "למוהלים"), ("tamlul", "/kelim/tamlul/", "תמלול"),
@@ -47,7 +47,7 @@ SITES = {
     # כלים לעסק קטן: תפריט דיגיטלי עם QR, מודעת מבצע, QR מעוצב וצ'ק-ליסט לפתיחת עסק. הכול בטלפון, בלי שרת.
     "esek": {
         "name": "כלים לעסק קטן", "short": "כלים לעסק", "home": "/esek/", "theme": "#1c1712",
-        "og": "og-kelim.jpg", "icon": "esek",
+        "og": "og-kelim.jpg?v=2", "icon": "esek",
         "desc": "כלים חינמיים לעסק קטן: תפריט בקישור ו-QR, מודעת מבצע, QR מעוצב וצ'ק-ליסט לפתיחת עסק",
         "css": ["/assets/esek.css"],
         "nav": [("tafrit", "/esek/tafrit/", "תפריט ו-QR"), ("mivtza", "/esek/mivtza/", "מודעת מבצע"),
@@ -57,7 +57,7 @@ SITES = {
     # ושיתוף עם אחרים דרך ווטסאפ וקישור שמכיל את המצב (#d=...).
     "bait": {
         "name": "כלים למשפחה ולבית", "short": "משפחה ובית", "home": "/bait/", "theme": "#1f1915",
-        "og": "og-bait.jpg", "icon": "bait",
+        "og": "og-bait.jpg?v=2", "icon": "bait",
         "desc": "קניות, תורנויות, שבת ואורחים ומי מביא מה. בחינם, בלי הרשמה.",
         "css": ["/assets/bait.css"], "js": ["/assets/bait.js"],
         "nav": [("kniyot", "/bait/kniyot/", "קניות"), ("toranut", "/bait/toranut/", "תורנויות"),
@@ -67,7 +67,7 @@ SITES = {
     # כלים לכסף: מחשבונים בלבד, לא ייעוץ. הכול בטלפון (localStorage), בלי שרת.
     "kesef": {
         "name": "כלים לכסף", "short": "כלים לכסף", "home": "/kesef/", "theme": "#11201a",
-        "og": "og-kelim.jpg", "icon": "kesef",
+        "og": "og-kelim.jpg?v=2", "icon": "kesef",
         "desc": "מחשבונים פשוטים לכסף של הבית: תקציב, הלוואה, מנויים וחיסכון עם הילדים. בחינם.",
         "css": ["/assets/kesef.css"], "js": ["/assets/kesef.js"],
         "nav": [("taktziv", "/kesef/taktziv/", "תקציב"), ("halvaa", "/kesef/halvaa/", "הלוואה"),
@@ -77,7 +77,7 @@ SITES = {
     # כלים ללימודים: כרטיסיות חזרה, מתכנן למבחן, טיימר למידה, לימוד יומי לסיום. הכול בטלפון (localStorage), בלי שרת.
     "limudim": {
         "name": "כלים ללימודים", "short": "כלים ללימודים", "home": "/limudim/", "theme": "#141c2b",
-        "og": "og-kelim.jpg", "icon": "limudim",
+        "og": "og-kelim.jpg?v=2", "icon": "limudim",
         "desc": "כלים פשוטים ללמידה: כרטיסיות חזרה, תוכנית למבחן, טיימר, ולימוד יומי לסיום התנ״ך והמשנה. בחינם.",
         "css": ["/assets/limudim.css"], "js": ["/assets/limudim.js"],
         "nav": [("kartisiot", "/limudim/kartisiot/", "כרטיסיות"), ("mivchan", "/limudim/mivchan/", "למבחן"),
