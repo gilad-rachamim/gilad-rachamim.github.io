@@ -1,0 +1,91 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "shir_ulpan",
+  "title": "אולפן הקלטות בטלפון – שרים על מוזיקה ומקבלים שיר מוכן | הכלים של גילעד רחמים",
+  "description": "אולפן הקלטות חינמי בטלפון: בוחרים מוזיקה, שרים עליה, והאולפן מסנכרן את הקול, מנקה רעשים, מיישר לקצב, מתקן זיופים ומערבב. יוצא שיר מוכן ב-MP3. בלי הרשמה, ההקלטה לא יוצאת מהטלפון.",
+  "og_title": "אולפן הקלטות בטלפון, בחינם",
+  "priority": "0.8",
+  "crumbs": [["השיר שלי", "/kelim/shir/"], ["אולפן הקלטות", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/shir.css\"><link rel=\"stylesheet\" href=\"/assets/ulpan.css\">",
+  "foot": "<script src=\"/assets/shir-core.js\" defer></script><script src=\"/assets/shir-music.js\" defer></script><script src=\"/assets/ulpan.js\" defer></script>"
+} -->
+<header class="k-hero no-print">
+  <h1>אולפן הקלטות</h1>
+  <p class="sub">שומעים את המוזיקה ושרים עליה מהטלפון. האולפן מסנכרן, מנקה, מיישר לקצב ומתקן זיופים, ומחזיר שיר מוכן. לא צריך לשיר מושלם.</p>
+</header>
+<div class="tool" id="ul-root" data-dsp="/assets/ulpan-dsp.js">
+  <nav class="shr-steps" aria-label="שלבי השיר"><a href="/kelim/shir/milim/"><b>1</b>מילים</a><a href="/kelim/shir/lachan/"><b>2</b>לחן</a><a class="on" href="/kelim/shir/ulpan/"><b>3</b>אולפן</a><a href="/kelim/shir/clip/"><b>4</b>קליפ</a></nav>
+
+  <section class="ul-box">
+    <h2><span class="ul-n">1</span> המוזיקה</h2>
+    <div class="shr-chips" id="ul-src"><button type="button" data-v="song">🎵 השיר שלי מהאתר</button><button type="button" data-v="file">📁 קובץ מהטלפון</button></div>
+    <select id="ul-songs" aria-label="השירים שלי" hidden></select>
+    <input type="file" id="ul-file" accept="audio/*,video/mp4,.mp3,.m4a,.wav,.ogg,.aac" hidden>
+    <p class="hint" id="ul-mname">טוען את המוזיקה…</p>
+    <div class="ul-wave"><canvas id="ul-cv" aria-label="ציר הזמן של השיר. נוגעים כדי לקפוץ למקום אחר"></canvas></div>
+    <div class="ul-tr"><button class="ul-round" type="button" id="ul-play" aria-label="לנגן או לעצור">▶</button><span id="ul-time">0:00 / 0:00</span><button class="shr-mini" type="button" id="ul-rw">להתחלה ⏮</button></div>
+    <p class="hint">נוגעים בגל כדי לקפוץ לכל מקום בשיר. קובץ מהטלפון: הכי טוב מוזיקה בלי זמר (פלייבק).</p>
+  </section>
+
+  <section class="ul-box">
+    <h2><span class="ul-n">2</span> שרים</h2>
+    <div class="shr-chips" id="ul-phones"><button type="button" data-v="1">🎧 עם אוזניות (מומלץ)</button><button type="button" data-v="0">🔈 בלי אוזניות</button></div>
+    <p class="hint" id="ul-ph-hint"></p>
+    <div class="ul-note" id="ul-calnote" hidden><b>פעם אחת, 5 שניות: בדיקת סנכרון</b><span>אוזניות משמיעות את המוזיקה באיחור קטן. מקרבים אוזנייה אחת ממש למיקרופון שבתחתית הטלפון ולוחצים. יישמע רעש קצר, ומעכשיו הקול יישב בדיוק על המוזיקה.</span><button class="btn btn-line btn-sm" type="button" id="ul-cal2">למדוד עכשיו</button></div>
+    <details class="ul-det"><summary>📝 המילים מול העיניים (לא חובה)</summary><textarea id="ul-words" rows="6" placeholder="כותבים או מדביקים כאן את המילים. הן יופיעו גדולות בזמן ההקלטה."></textarea></details>
+    <div class="ul-stage" id="ul-stage" hidden aria-live="polite"><div class="ul-lyrv" id="ul-lyrv"></div><div class="ul-cnt" id="ul-cnt" hidden>3</div></div>
+    <div class="shr-meter" aria-hidden="true"><i id="ul-lvl"></i></div>
+    <div class="ul-recrow"><button class="ul-recbtn" type="button" id="ul-rec">⏺ להקליט</button><button class="ul-recbtn stop" type="button" id="ul-stop" hidden>■ לסיים</button></div>
+    <p class="hint">לא יצא טוב? מקליטים שוב. כדי לתקן רק קטע: נוגעים בגל במקום שלו ומקליטים משם. ההקלטה החדשה מחליפה רק את מה ששרתם.</p>
+    <div class="shr-parts" id="ul-takes"></div>
+  </section>
+
+  <section class="ul-box" id="ul-s3" hidden>
+    <h2><span class="ul-n">3</span> האולפן מסדר</h2>
+    <div class="share-row" style="justify-content:flex-start;margin-top:.2rem">
+      <button class="btn btn-gold" type="button" id="ul-listen">▶ לשמוע את השיר</button>
+      <button class="btn btn-line btn-sm" type="button" id="ul-ab">לפני / אחרי</button>
+    </div>
+    <div class="k-form ul-set">
+      <div class="field"><span class="label">ניקוי רעשים</span><div class="shr-chips" id="ul-noise"><button type="button" data-v="0">בלי</button><button type="button" data-v="1">עדין</button><button type="button" data-v="2">רגיל</button><button type="button" data-v="3">חזק</button></div></div>
+      <div class="field"><span class="label">יישור לקצב</span><div class="shr-chips" id="ul-tight"><button type="button" data-v="0">בלי</button><button type="button" data-v="0.5">עדין</button><button type="button" data-v="1">חזק</button></div></div>
+      <div class="field"><span class="label">תיקון זיופים</span><div class="shr-chips" id="ul-tune"><button type="button" data-v="0">בלי</button><button type="button" data-v="0.4">עדין</button><button type="button" data-v="0.7">בינוני</button><button type="button" data-v="1">חזק</button></div></div>
+      <div class="field"><span class="label">צליל הקול</span><div class="shr-chips" id="ul-style"><button type="button" data-v="tivi">טבעי</button><button type="button" data-v="ulpan">אולפן</button><button type="button" data-v="ulam">אולם גדול</button></div></div>
+      <div class="field"><span class="label">מה חזק יותר?</span><div class="shr-range"><span>המוזיקה</span><input type="range" id="ul-bal" min="-8" max="8" step="1" value="0" aria-label="היחס בין הקול למוזיקה"><span>הקול</span></div></div>
+      <details class="ul-det"><summary>⚙️ סנכרון ומיקרופון (אם הקול לא יושב על המוזיקה)</summary>
+        <div class="field"><span class="label">הקול מקדים או מאחר?</span><div class="shr-range"><span>מקדים</span><input type="range" id="ul-off" min="-300" max="300" step="10" value="0" aria-label="תזמון הקול"><span>מאחר</span></div><p class="hint" id="ul-offv"></p></div>
+        <div class="field" id="ul-calw"><span class="label">בדיקת סנכרון לאוזניות (פעם אחת)</span><p class="hint">מקרבים אוזנייה אחת ממש למיקרופון שבתחתית הטלפון ולוחצים. נשמע רעש קצר, והאולפן מודד בכמה האוזניות מאחרות.</p><button class="btn btn-line btn-sm" type="button" id="ul-cal">למדוד עכשיו</button></div>
+        <div class="field" id="ul-micw" hidden><label class="label" for="ul-mic">מיקרופון</label><select id="ul-mic"></select><p class="hint">באוזניות בלוטות' עדיף לבחור את המיקרופון של הטלפון עצמו.</p></div>
+      </details>
+    </div>
+  </section>
+
+  <section class="ul-box" id="ul-s4" hidden>
+    <h2><span class="ul-n">4</span> השיר המוכן</h2>
+    <div class="share-row" style="justify-content:flex-start"><button class="btn btn-gold" type="button" id="ul-mp3">🎶 להכין את השיר (MP3)</button></div>
+    <div id="ul-file-out"></div>
+    <div class="shr-next" id="ul-clip" hidden><a class="btn btn-gold" href="/kelim/shir/clip/">לשלב הבא: קליפ ←</a></div>
+    <details class="ul-det"><summary>עוד קבצים</summary><div class="share-row" style="justify-content:flex-start"><button class="btn btn-line btn-sm" type="button" id="ul-wav">הקול בלבד, אחרי האולפן (WAV)</button><button class="btn btn-line btn-sm" type="button" id="ul-rawdl">ההקלטה המקורית (WAV)</button></div></details>
+  </section>
+
+  <div class="ul-status"><div class="shr-prog" id="ul-prog" hidden><i></i></div><p class="shr-msg" id="ul-msg" aria-live="polite"></p></div>
+  <p class="disclaimer">הכול קורה בטלפון שלכם: ההקלטה והמוזיקה לא עולות לשום שרת, ונשמרות רק כאן כדי שתוכלו להמשיך מאיפה שהפסקתם. המיקרופון פועל רק כשלוחצים "להקליט". קובץ מוזיקה מעלים רק אם מותר לכם להשתמש בו.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="אולפן הקלטות חינמי בטלפון: שרים על מוזיקה, והוא מנקה, מתקן זיופים ומחזיר שיר מוכן:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את האולפן לחבר</a></div>
+</div>
+
+<section class="k-sec no-print" aria-labelledby="ul-how">
+  <h2 id="ul-how">מה האולפן עושה לקול</h2>
+  <div class="ul-how">
+    <div><b>מסנכרן</b><span>כל טלפון מקליט באיחור קטן. האולפן מודד אותו לבד ומחזיר את הקול בדיוק למקום.</span></div>
+    <div><b>מנקה</b><span>מוריד רעש רקע, וגם את המוזיקה שנכנסה למיקרופון אם שרתם בלי אוזניות.</span></div>
+    <div><b>מיישר לקצב</b><span>משפט שנכנס קצת מוקדם או מאוחר זז בעדינות למקום שבו הוא יושב על המוזיקה.</span></div>
+    <div><b>מתקן זיופים</b><span>כל תו זז לתו הקרוב בסולם של השיר. הרטט הטבעי של הקול נשאר, כך שזה עדיין אתם.</span></div>
+    <div><b>מערבב</b><span>מאזן בין הקול למוזיקה ומוסיף הד עדין וברק, כמו באולפן.</span></div>
+  </div>
+  <h2 style="margin-top:1.6rem">שאלות נפוצות</h2>
+  <details class="ul-det"><summary>זה באמת בחינם? יש הגבלה?</summary><p>כן, בחינם וללא הגבלה, בלי פרסומות ובלי הרשמה. הכול רץ בטלפון שלכם, ולכן זה לא עולה כסף לאף אחד.</p></details>
+  <details class="ul-det"><summary>חייבים אוזניות?</summary><p>לא. עם אוזניות ההקלטה הכי נקייה. בלי אוזניות האולפן מזהה את המוזיקה שנכנסה למיקרופון ומוריד אותה. מנגנים בעוצמה בינונית ושרים קרוב לטלפון.</p></details>
+  <details class="ul-det"><summary>איזו מוזיקה אפשר להביא?</summary><p>את השיר שכתבתם והלחנתם כאן באתר, או כל קובץ מהטלפון (MP3, M4A, WAV) עד עשר דקות. הכי טוב פלייבק, כלומר מוזיקה בלי זמר.</p></details>
+  <details class="ul-det"><summary>ההקלטה שלי נשלחת לאן שהוא?</summary><p>לא. שום קול ושום קובץ לא יוצאים מהטלפון. את השיר המוכן רק אתם מורידים ומשתפים.</p></details>
+</section>

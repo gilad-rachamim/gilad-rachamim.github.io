@@ -1,0 +1,45 @@
+/* אולפן ההקלטות (/kelim/shir/ulpan/). קידומת ul- */
+.ul-box{border:1px solid var(--line);border-radius:18px;padding:1rem .95rem;margin:0 0 1rem;background:rgba(255,255,255,.025)}
+.ul-box[hidden]{display:none}
+.ul-box h2{font-family:var(--serif);color:var(--cream);font-size:1.3rem;margin:0 0 .6rem;display:flex;align-items:center;gap:.5rem}
+.ul-n{display:inline-grid;place-items:center;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--gold);color:var(--ink);font-size:1rem;font-family:inherit;font-weight:700;flex:none}
+.ul-box .hint{color:var(--muted);font-size:.93rem;margin:.45rem 0 0}
+.ul-box select{font:inherit;font-size:1rem;padding:.45rem .6rem;border-radius:10px;border:1px solid var(--line);background:var(--ink);color:var(--cream);max-width:100%;margin-top:.5rem}
+.ul-wave{margin-top:.7rem;border-radius:12px;background:#0e1322;border:1px solid var(--line);overflow:hidden;touch-action:manipulation;cursor:pointer}
+.ul-wave canvas{display:block;width:100%;height:72px}
+.ul-tr{display:flex;align-items:center;gap:.7rem;margin-top:.55rem;color:var(--parchment);font-variant-numeric:tabular-nums}
+.ul-tr span{flex:1}
+.ul-round{width:2.9rem;height:2.9rem;border-radius:50%;border:1px solid var(--gold);background:rgba(227,183,101,.15);color:var(--cream);font-size:1.15rem;cursor:pointer;flex:none}
+.ul-recrow{display:flex;justify-content:center;margin:.8rem 0 .2rem}
+.ul-recbtn{font:inherit;font-size:1.25rem;font-weight:700;padding:.95rem 2.2rem;border-radius:999px;border:0;background:#d8493a;color:#fff;cursor:pointer;box-shadow:0 4px 18px rgba(216,73,58,.35);min-width:14rem}
+.ul-recbtn.stop{background:var(--cream);color:#1b1b1b;box-shadow:none}
+.ul-recbtn[hidden]{display:none}
+.ul-stage{position:relative;border-radius:18px;background:#0e1322;border:1px solid #d8493a;padding:1.1rem .9rem;margin-top:.8rem;min-height:9rem;max-height:46vh;overflow:auto}
+.ul-stage[hidden]{display:none}
+.ul-lyrv{white-space:pre-wrap;font-family:var(--serif);font-size:1.4rem;line-height:1.7;color:#fff;text-align:center}
+.ul-cnt{position:sticky;bottom:0;inset-inline:0;display:grid;place-items:center;font-size:2.2rem;color:var(--gold);background:rgba(14,19,34,.9);border-radius:14px;padding:.6rem;margin-top:.5rem}
+.ul-cnt[hidden]{display:none}
+.ul-det{border:1px solid var(--line);border-radius:12px;padding:.55rem .8rem;margin-top:.7rem;color:var(--parchment)}
+.ul-det summary{cursor:pointer;color:var(--cream);font-weight:600}
+.ul-det p{margin:.5rem 0 .2rem;color:var(--parchment)}
+.ul-det textarea{width:100%;font:inherit;font-size:1.05rem;background:rgba(0,0,0,.25);color:var(--cream);border:1px solid var(--line);border-radius:10px;padding:.55rem;margin-top:.5rem;box-sizing:border-box}
+.ul-set{margin-top:.9rem}
+.ul-set .field{margin-bottom:.85rem}
+.ul-tt{color:var(--muted);font-size:.9rem;font-variant-numeric:tabular-nums}
+.ul-tb{display:flex;gap:.35rem;align-items:center}
+#ul-takes .pr.off{opacity:.55}
+#ul-takes:empty{display:none}
+.ul-status{position:sticky;bottom:.6rem;z-index:6;margin:.2rem 0 .6rem}
+.ul-status .shr-msg{background:#0e1322;border:1px solid var(--gold);border-radius:12px;padding:.55rem .8rem;margin:0;box-shadow:0 6px 20px rgba(0,0,0,.45);font-size:1rem}
+.ul-status .shr-msg:empty{display:none}
+.ul-status .shr-prog{margin:.3rem 0;background:#0e1322;border:1px solid var(--line);height:.6rem}
+.ul-how{display:grid;gap:.6rem;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));margin-top:.8rem}
+.ul-how div{border:1px solid var(--line);border-radius:14px;padding:.75rem .9rem;background:rgba(255,255,255,.025)}
+.ul-how b{display:block;color:var(--gold);font-size:1.08rem;margin-bottom:.15rem}
+.ul-how span{color:var(--parchment);font-size:.97rem}
+body.ul-recording .ul-wave{border-color:#d8493a}
+@media (max-width:460px){.ul-lyrv{font-size:1.2rem}.ul-recbtn{width:100%}}
+.ul-note{border:1px dashed var(--gold-soft);border-radius:12px;padding:.6rem .8rem;margin-top:.6rem;background:rgba(227,183,101,.07);display:grid;gap:.4rem;justify-items:start}
+.ul-note[hidden]{display:none}
+.ul-note b{color:var(--gold)}
+.ul-note span{color:var(--parchment);font-size:.95rem}
