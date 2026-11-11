@@ -1,0 +1,40 @@
+/* אישורי הגעה ורשימת מוזמנים (/kelim/eruim/ishurim/). בנוי על eruim-hazmana.css (לוח, כרטיסים, טופס האורח). */
+.ish [hidden],.ish-guest [hidden]{display:none!important}
+.ish{padding-bottom:1rem}
+.ish .panel{margin-top:1rem}
+.ish .er-note{background:rgba(227,183,101,.1);border:1px solid var(--gold-soft);border-radius:12px;padding:.7rem .9rem;color:var(--parchment);margin:1rem 0}
+.ish-form{display:grid;gap:.8rem}
+.ish-form .field input,.ish-guests textarea{width:100%;box-sizing:border-box}
+.ish-form h2,.ish-mine h2{font-family:var(--serif);color:var(--cream);font-size:1.3rem;margin:0}
+.ish-evs{list-style:none;margin:.6rem 0;padding:0;display:grid;gap:.45rem}
+.ish-evs a{display:grid;gap:.1rem;padding:.7rem .85rem;border:1px solid var(--line);border-radius:12px;color:var(--cream);text-decoration:none;background:rgba(255,255,255,.03)}
+.ish-evs a[aria-current=true]{border-color:var(--gold)}
+.ish-evs small{color:var(--muted)}
+.ish-title{font-family:var(--serif);color:var(--cream);font-size:1.6rem;line-height:1.25;margin:.2rem 0}
+.ish-link{background:none;border:0;color:var(--gold);font:600 .92rem var(--sans);cursor:pointer;text-decoration:underline;padding:.2rem}
+.ish h3,.ish-h3{font-family:var(--serif);color:var(--gold);font-size:1.15rem;margin:0 0 .4rem}
+.ish-h3{margin:1.4rem 0 .6rem}
+.ish-stats{grid-template-columns:repeat(4,1fr)}
+.ish-stats:has(#st-wait-box:not([hidden])){grid-template-columns:repeat(5,1fr)}
+.ish-stats span{font-size:.76rem}
+.chip.maybe{color:#f3d58e;border-color:#9a8550}
+.chip.wait{color:var(--muted);border-color:var(--line)}
+.ish-guests textarea{margin:.6rem 0;min-height:5.5rem;font:inherit;padding:.6rem .7rem;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.2);color:var(--cream);resize:vertical}
+.ish-guests .btn-block{margin-bottom:.8rem}
+.ish-glist{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
+.ish-glist li{display:grid;grid-template-columns:1fr auto auto;gap:.3rem .5rem;align-items:center;padding:.55rem .7rem;border:1px solid var(--line);border-radius:12px}
+.ish-glist li.ans{opacity:.75}
+.ish-glist .nm{color:var(--cream);font-weight:600;min-width:0;overflow-wrap:anywhere}
+.ish-glist .ph{grid-column:1/-1;font-size:.82rem;color:var(--muted);direction:ltr;text-align:right}
+.ish-glist .go{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;background:var(--gold);color:var(--ink);font:700 .85rem var(--sans);text-decoration:none;border:0;cursor:pointer;white-space:nowrap}
+.ish-glist .go.line{background:none;border:1px solid var(--gold-soft);color:var(--cream)}
+.ish-glist .go .ic{width:1em;height:1em}
+.ish-glist .x{background:none;border:0;color:var(--muted);font-size:1.25rem;cursor:pointer;padding:0 .2rem;line-height:1}
+.ish-more{margin-top:1.2rem}
+.ish-more .btn{grid-column:1/-1}
+.ish-yesno{grid-template-columns:repeat(3,1fr)}
+.ish-yesno .eh-choice{padding:.8rem .3rem;font-size:.95rem}
+.ish-guest #ga-form{display:grid;gap:.8rem}
+.ish-guest #ga-form .field input{width:100%;box-sizing:border-box}
+.ish-guest .eh-dash-h h1{font-size:1.8rem}
+@media (max-width:420px){.ish-stats,.ish-stats:has(#st-wait-box:not([hidden])){grid-template-columns:repeat(3,1fr)}.ish-yesno{grid-template-columns:1fr 1fr 1fr}}

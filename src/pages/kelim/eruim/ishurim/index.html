@@ -1,0 +1,123 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "eruim_ishurim",
+  "title": "אישורי הגעה לאירוע בחינם – קישור לווטסאפ, לוח מעקב ורשימת מוזמנים | הכלים של גילעד רחמים",
+  "description": "אישורי הגעה לחתונה, לבר מצווה ולכל אירוע, בחינם ובלי פרסומות: יוצרים אירוע, שולחים קישור בווטסאפ, והאורחים עונים מגיעים, אולי או לא וכמה יהיו. לוח מעקב, רשימת מוזמנים עם קישור אישי למי שלא ענה, וייצוא לאקסל.",
+  "og_title": "אישורי הגעה לאירוע, בחינם",
+  "priority": "0.8",
+  "crumbs": [["כלים לאירועים ולשמחות", "/kelim/eruim/"], ["אישורי הגעה", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/eruim-hazmana.css\"><link rel=\"stylesheet\" href=\"/assets/eruim-ishurim.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך עושים אישורי הגעה לאירוע בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"יוצרים אירוע עם שם, תאריך ומקום, ומקבלים קישור. שולחים אותו בווטסאפ, האורחים לוחצים ועונים מגיעים, אולי או לא וכמה יהיו, והתשובות מופיעות בלוח המעקב. בלי תשלום, בלי פרסומות ובלי הרשמה.\"}}, {\"@type\": \"Question\", \"name\": \"איך יודעים מי עוד לא ענה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מדביקים את רשימת המוזמנים, שם וטלפון בכל שורה. לכל מוזמן נוצר קישור אישי, וכשהוא עונה הוא מסומן ברשימה. ליד כל מי שלא ענה יש כפתור שפותח הודעת ווטסאפ אישית אליו.\"}}, {\"@type\": \"Question\", \"name\": \"הכלי שולח הודעות לבד?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. כל הודעה נפתחת בווטסאפ שלכם, ואתם לוחצים שלח. אין הודעות אוטומטיות ואין שיחות טלפון.\"}}, {\"@type\": \"Question\", \"name\": \"מה נשמר אצלכם ולכמה זמן?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בשרת נשמרים פרטי האירוע ותשובות האורחים: שם, כמה מגיעים והערה. הכול נמחק לבד 30 יום אחרי האירוע, או מיד בלחיצה. רשימת המוזמנים והטלפונים נשארת רק בטלפון שלכם.\"}}]}</script>",
+  "foot": "<script src=\"/assets/eruim-ishurim.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>אישורי הגעה לאירוע, בחינם</h1>
+  <p class="sub">שולחים קישור אחד בווטסאפ, והאורחים עונים בלחיצה: מגיעים, אולי או לא, וכמה יהיו. אתם רואים הכול בלוח אחד, ויודעים בדיוק למי עוד לשלוח תזכורת. בלי תשלום, בלי פרסומות ובלי הרשמה.</p>
+</header>
+<div class="eh-wrap ish" id="ish">
+  <div class="er-note" id="ish-off" hidden><span>השרת של אישורי ההגעה לא זמין כרגע מהרשת הזאת. אפשר לנסות שוב בעוד כמה דקות, ובינתיים לסמן ידנית ב<a class="gold" href="/kelim/kesharim/ishurim/">רשימת אישורי הגעה פשוטה</a>, שנשמרת בטלפון.</span></div>
+
+  <section class="panel ish-mine" id="ish-mine" hidden>
+    <h2>האירועים שלי</h2>
+    <ul class="ish-evs" id="ish-evs"></ul>
+    <button class="btn btn-line btn-block" type="button" id="ish-new">אירוע חדש +</button>
+  </section>
+
+  <form class="panel ish-form" id="ish-form" novalidate hidden>
+    <h2 id="ish-form-h">אירוע חדש</h2>
+    <div class="field"><label for="f-ttl">שם האירוע</label><input id="f-ttl" name="host" type="text" maxlength="90" required placeholder="החתונה של דניאל ומיכל"></div>
+    <div class="eh-two">
+      <div class="field"><label for="f-dt">תאריך</label><input id="f-dt" name="dt" type="date" required></div>
+      <div class="field"><label for="f-tm">שעה <span class="opt">(לא חובה)</span></label><input id="f-tm" name="tm" type="time"></div>
+    </div>
+    <div class="field"><label for="f-pl">מקום <span class="opt">(לא חובה)</span></label><input id="f-pl" name="pl" type="text" maxlength="90" placeholder="אולם הגן, מודיעין"></div>
+    <div class="field"><label for="f-ad">כתובת לניווט <span class="opt">(לא חובה)</span></label><input id="f-ad" name="ad" type="text" maxlength="90" placeholder="רחוב הנחל 5, מודיעין"></div>
+    <div class="hp" aria-hidden="true"><label>אל תמלאו <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+    <p class="eh-err" id="f-err" hidden></p>
+    <button class="btn btn-gold btn-block" type="submit" id="f-go">ליצור קישור לאישורי הגעה</button>
+    <button class="btn btn-line btn-block" type="button" id="f-cancel" hidden>ביטול</button>
+    <p class="eh-hint">יש לכם כבר הזמנה מ<a class="gold" href="/kelim/eruim/hazmana/">מחולל ההזמנות</a> עם אישורי הגעה? בלוח המעקב שם יש כפתור שמביא אותה לכאן, עם רשימת המוזמנים.</p>
+  </form>
+
+  <section id="ish-ev" hidden>
+    <header class="eh-dash-h">
+      <p class="eh-hint">לוח אישורי ההגעה</p>
+      <h2 id="ev-title" class="ish-title"></h2>
+      <p id="ev-when" class="note"></p>
+      <button class="ish-link" type="button" id="ev-edit">עריכת הפרטים</button>
+    </header>
+
+    <div class="panel ish-send">
+      <h3>1. שולחים את הקישור לאורחים</h3>
+      <p class="eh-short"><bdi dir="ltr" id="ev-short"></bdi> <button class="btn btn-line" type="button" id="ev-copy">העתקה</button></p>
+      <div class="eh-btns">
+        <a class="btn btn-gold wide" id="ev-wa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח בווטסאפ</a>
+        <a class="btn btn-line wide" id="ev-view" href="#" target="_blank" rel="noopener">איך האורחים רואים?</a>
+      </div>
+      <p class="eh-hint">את אותו קישור אפשר לשלוח לקבוצה או לכל אחד בנפרד. רוצים לדעת בדיוק מי לא ענה? מדביקים למטה את רשימת המוזמנים.</p>
+    </div>
+
+    <h3 class="ish-h3">2. מי עונה</h3>
+    <div class="eh-stats ish-stats">
+      <div class="stat on"><b id="st-people">0</b><span>אנשים מגיעים</span></div>
+      <div class="stat"><b id="st-yes">0</b><span>אישרו</span></div>
+      <div class="stat"><b id="st-maybe">0</b><span>אולי</span></div>
+      <div class="stat"><b id="st-no">0</b><span>לא יגיעו</span></div>
+      <div class="stat" id="st-wait-box" hidden><b id="st-wait">0</b><span>לא ענו</span></div>
+    </div>
+    <div class="eh-tabs" id="ev-tabs" role="group" aria-label="סינון">
+      <button type="button" data-f="all" aria-pressed="true">כולם</button>
+      <button type="button" data-f="yes" aria-pressed="false">מגיעים</button>
+      <button type="button" data-f="maybe" aria-pressed="false">אולי</button>
+      <button type="button" data-f="no" aria-pressed="false">לא</button>
+      <button type="button" data-f="wait" aria-pressed="false" id="tab-wait" hidden>לא ענו</button>
+      <button type="button" id="ev-refresh">רענון ↻</button>
+    </div>
+    <ul class="eh-list" id="ev-list"></ul>
+    <p class="eh-err" id="ev-err" hidden></p>
+
+    <div class="panel ish-guests">
+      <h3>3. רשימת המוזמנים <span class="opt">(לא חובה)</span></h3>
+      <p class="eh-hint">שם וטלפון בכל שורה. אפשר להדביק מאקסל או מאנשי הקשר. כל מוזמן מקבל קישור אישי, וכך רואים מי עוד לא ענה. הרשימה והטלפונים נשמרים רק בטלפון הזה.</p>
+      <textarea id="g-paste" rows="4" maxlength="20000" placeholder="משפחת כהן 050-1234567&#10;דוד לוי, 052-7654321&#10;סבא וסבתא"></textarea>
+      <button class="btn btn-gold btn-block" type="button" id="g-add">להוסיף לרשימה</button>
+      <ul class="ish-glist" id="g-list"></ul>
+      <p class="eh-hint" id="g-sum" hidden></p>
+    </div>
+
+    <div class="panel eh-dash-acts">
+      <h3>4. סיכום ושמירה</h3>
+      <div class="eh-btns">
+        <a class="btn btn-line wide" id="ev-remind" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> תזכורת כללית לקבוצה</a>
+        <button class="btn btn-line" type="button" id="ev-copylist">העתקת הרשימה</button>
+        <button class="btn btn-line" type="button" id="ev-csv">הורדה לאקסל</button>
+        <a class="btn btn-line wide" id="ev-self" href="#" target="_blank" rel="noopener">לשמור את הלוח אצלי בווטסאפ</a>
+      </div>
+      <p class="eh-hint">הלוח פרטי: רק מי שיש לו את הקישור לניהול רואה את התשובות. אל תעבירו אותו לאורחים. הכול נמחק מעצמו 30 יום אחרי האירוע.</p>
+      <button class="btn btn-line eh-danger" type="button" id="ev-del">למחוק עכשיו את האירוע ואת כל התשובות</button>
+    </div>
+    <div class="eh-btns ish-more">
+      <a class="btn btn-line" href="/kelim/eruim/hoshava/">כשיודעים מי מגיע: סידור הושבה ←</a>
+      <a class="btn btn-line" href="#" data-share-tool="wa" data-text="אישורי הגעה לאירוע בחינם: קישור לווטסאפ, לוח מעקב ורשימת מוזמנים, בלי פרסומות ובלי הרשמה:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי למי שמארגן שמחה</a>
+    </div>
+  </section>
+</div>
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">אישורי הגעה לאירוע, בלי מוקד ובלי תשלום</h2>
+  <p>לפני חתונה, בר מצווה או כל שמחה גדולה צריך לדעת כמה יגיעו: בשביל האולם, הקייטרינג וסידור ההושבה. חברות של אישורי הגעה גובות על זה כסף ומתקשרות לאורחים. כאן עושים את זה בעצמכם, בחינם, עם הווטסאפ שכבר יש לכם.</p>
+  <h3>קישור אחד, והאורחים עונים בלחיצה</h3>
+  <p>יוצרים אירוע: שם, תאריך, שעה ומקום. מקבלים קישור קצר ושולחים אותו בווטסאפ. האורח פותח, בוחר מגיעים, אולי או לא, כותב כמה יהיו והערה אם צריך, כמו מנה צמחונית. התשובה מופיעה מיד בלוח המעקב, והספירה מתעדכנת לבד.</p>
+  <h3>רשימת מוזמנים: יודעים בדיוק מי לא ענה</h3>
+  <p>מדביקים את רשימת המוזמנים, שם וטלפון בכל שורה. לכל מוזמן נוצר קישור אישי, וכשהוא עונה הוא מסומן ברשימה. ליד מי שעוד לא ענה יש כפתור ווטסאפ עם הודעה אישית מוכנה, ואתם לוחצים שלח. בסוף מורידים הכול לאקסל ושולחים לאולם.</p>
+  <h3>פרטיות</h3>
+  <p>רשימת המוזמנים והטלפונים נשארת רק בטלפון שלכם. בשרת נשמרים פרטי האירוע ותשובות האורחים, ונמחקים לבד 30 יום אחרי האירוע. רוצים גם הזמנה מעוצבת? היא ב<a class="gold" href="/kelim/eruim/hazmana/">מחולל ההזמנות</a>, ואחרי האישורים עוברים ל<a class="gold" href="/kelim/eruim/hoshava/">סידור הושבה</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך עושים אישורי הגעה לאירוע בחינם?</summary><p>יוצרים אירוע עם שם, תאריך ומקום, ומקבלים קישור. שולחים אותו בווטסאפ, האורחים לוחצים ועונים מגיעים, אולי או לא וכמה יהיו, והתשובות מופיעות בלוח המעקב. בלי תשלום, בלי פרסומות ובלי הרשמה.</p></details>
+  <details><summary>איך יודעים מי עוד לא ענה?</summary><p>מדביקים את רשימת המוזמנים, שם וטלפון בכל שורה. לכל מוזמן נוצר קישור אישי, וכשהוא עונה הוא מסומן ברשימה. ליד כל מי שלא ענה יש כפתור שפותח הודעת ווטסאפ אישית אליו.</p></details>
+  <details><summary>הכלי שולח הודעות לבד?</summary><p>לא. כל הודעה נפתחת בווטסאפ שלכם, ואתם לוחצים שלח. אין הודעות אוטומטיות ואין שיחות טלפון.</p></details>
+  <details><summary>מה נשמר אצלכם ולכמה זמן?</summary><p>בשרת נשמרים פרטי האירוע ותשובות האורחים: שם, כמה מגיעים והערה. הכול נמחק לבד 30 יום אחרי האירוע, או מיד בלחיצה. רשימת המוזמנים והטלפונים נשארת רק בטלפון שלכם.</p></details>
+</section>
+<!--/seo-txt-->
