@@ -1,0 +1,104 @@
+<!--meta {
+  "site": "kodesh",
+  "nav": "rabanim",
+  "tool": "gimatria",
+  "title": "מחשבון גימטריה אונליין: גימטריה של מילה, שם או פסוק, עם פירוט לכל אות | כלי קודש",
+  "description": "מחשבון גימטריה בחינם, בלי הגבלה, בלי פרסומות ובלי הרשמה: מקלידים מילה, שם או משפט ומקבלים את הגימטריה תוך כדי הקלדה. מספר הכרחי, סופיות גדולות (ך=500) ומספר קטן, פירוט לכל אות, התעלמות מניקוד, ומילים מוכרות עם אותו ערך.",
+  "og_title": "מחשבון גימטריה – מילה, שם או פסוק",
+  "priority": "0.7",
+  "crumbs": [
+    [
+      "מחשבון גימטריה",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><style>#gimatria [hidden]{display:none!important} .gm-lbl{display:block;color:var(--cream);font-weight:700;font-size:1.05rem;margin-top:.2rem} #gm-t{display:block;width:100%;box-sizing:border-box;min-height:5.2rem;margin-top:.4rem;font:inherit;font-family:var(--serif);font-size:1.6rem;line-height:1.45;color:var(--cream);background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:14px;padding:.6rem .8rem;resize:vertical} #gm-t:focus,#gm-n:focus{outline:2px solid var(--gold);outline-offset:1px} .gm-tacts{display:flex;justify-content:flex-start;margin-top:.3rem} .gm-tacts button{background:none;border:0;color:var(--muted);font:inherit;font-size:.95rem;cursor:pointer;text-decoration:underline;padding:.2rem 0} .gm-seg{display:flex;gap:.35rem;margin-top:.8rem} .gm-seg button{flex:1;min-width:0;font:inherit;font-size:.95rem;line-height:1.25;padding:.55rem .3rem;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--body);cursor:pointer} .gm-seg button small{display:block;font-size:.78rem;color:var(--muted)} .gm-seg button[aria-pressed=true]{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700} .gm-seg button[aria-pressed=true] small{color:var(--ink)} .gm-res{margin-top:.95rem;padding:.85rem .9rem;border-radius:16px;border:1px solid var(--gold-soft);background:linear-gradient(170deg,rgba(220,183,99,.14),rgba(220,183,99,.02) 70%);text-align:center} .gm-res .lbl{color:var(--gold);font-weight:700;font-size:.95rem} .gm-res .big{font-family:var(--serif);font-weight:700;color:var(--cream);font-size:clamp(2.2rem,12vw,3rem);line-height:1.15;overflow-wrap:anywhere} .gm-res .heb{font-family:var(--serif);color:var(--gold);font-size:1.25rem;min-height:1.2em} .gm-res.empty .big{color:var(--muted);font-size:1.15rem;font-family:var(--sans);font-weight:500;padding:.6rem 0} .gm-res.empty .lbl,.gm-res.empty .gm-rows,.gm-res.empty .heb{display:none} .gm-rows{margin:.6rem 0 0;padding:0;display:grid;gap:.15rem} .gm-rows>div{display:flex;justify-content:space-between;gap:.75rem;padding:.3rem .2rem;border-top:1px solid var(--line)} .gm-rows dt{color:var(--parchment);text-align:start}.gm-rows dd{margin:0;color:var(--cream);font-weight:700;text-align:end} .gm-skip{margin-top:.5rem;color:var(--muted);font-size:.92rem} .gm-acts{display:flex;gap:.5rem;margin-top:.7rem} .gm-acts>*{flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;min-height:2.9rem;padding:.4rem .6rem;border-radius:14px;font:700 1rem/1.2 var(--sans);text-decoration:none;cursor:pointer;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--cream)} .gm-acts a{background:var(--gold);color:var(--ink);border-color:var(--gold)} .gm-acts button:disabled{opacity:.5;cursor:default} .gm-words{list-style:none;margin:.9rem 0 0;padding:0;display:grid;gap:.5rem} .gm-words li{padding:.55rem .65rem;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03)} .gm-wt{display:flex;justify-content:space-between;align-items:baseline;gap:.6rem} .gm-w{font-family:var(--serif);font-size:1.3rem;color:var(--cream);overflow-wrap:anywhere;min-width:0} .gm-wv{color:var(--gold);font-weight:700;font-size:1.15rem} .gm-chs{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.35rem} .gm-ch{display:inline-flex;flex-direction:column;align-items:center;min-width:2.3rem;padding:.15rem .3rem;border-radius:9px;background:rgba(220,183,99,.1);font-size:.85rem;color:var(--body);line-height:1.2} .gm-ch b{font-family:var(--serif);font-size:1.2rem;color:var(--cream)} .gm-words .gm-more{color:var(--muted);font-size:.95rem;text-align:center} .gm-same{margin-top:.9rem}.gm-same p,.gm-none{margin:0;color:var(--parchment);font-size:1rem} .gm-chips,#gm-sc{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.45rem} .gm-chips button,#gm-sc button{font:inherit;font-family:var(--serif);font-size:1.1rem;padding:.3rem .75rem;border-radius:99px;border:1px solid var(--gold-soft);background:transparent;color:var(--cream);cursor:pointer} .gm-nin{display:flex;align-items:center;gap:.5rem;margin-top:.4rem} #gm-n{flex:1;min-width:0;max-width:11rem;font:inherit;font-size:1.4rem;padding:.55rem .7rem;color:var(--cream);background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;direction:ltr;text-align:right} #gm-nr{margin-top:.55rem}.gm-hn{font-family:var(--serif);color:var(--gold);font-size:1.2rem} .gm-note{display:flex;gap:.6rem;align-items:flex-start;margin-top:1rem;padding:.8rem 1rem;border-radius:14px;background:rgba(255,255,255,.035);color:var(--body);font-size:1rem} .gm-data{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;justify-content:center;margin-top:.6rem} .gm-data button{font:inherit;background:none;border:0;color:var(--gold);text-decoration:underline;cursor:pointer;padding:.3rem} .gm-tbl{width:100%;border-collapse:collapse;margin:.2rem 0 1rem;font-size:1.05rem} .gm-tbl caption{color:var(--muted);font-size:.92rem;text-align:start;margin-bottom:.3rem;caption-side:bottom;padding-top:.3rem} .gm-tbl th,.gm-tbl td{padding:.4rem .3rem;border-bottom:1px solid var(--line);text-align:center} .gm-tbl th{color:var(--gold);font-weight:700}.gm-tbl td{color:var(--body)}.gm-tbl td b{font-family:var(--serif);color:var(--cream);font-size:1.2rem;margin-inline-end:.3rem} .gm-tool-foot{max-width:40rem;margin:1.6rem auto 0;padding:0 1.25rem;text-align:center}</style><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"מה זה גימטריה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"גימטריה היא חישוב של ערך מספרי למילה. לכל אות בעברית יש ערך: א=1 עד ט=9, י=10 עד צ=90, ק=100 עד ת=400. הגימטריה של מילה היא סכום הערכים של האותיות שלה. למשל שלום: ש300 + ל30 + ו6 + ם40 = 376.\"}}, {\"@type\": \"Question\", \"name\": \"איך מחשבים גימטריה של שם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מחברים את הערך של כל אות בשם. דוד: ד4 + ו6 + ד4 = 14. משה: מ40 + ש300 + ה5 = 345. במחשבון מקלידים את השם ורואים את הסכום ואת הערך של כל אות.\"}}, {\"@type\": \"Question\", \"name\": \"כמה שוות האותיות הסופיות ך ם ן ף ץ?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בשיטה הרגילה (מספר הכרחי) אות סופית שווה כמו האות הרגילה: ך=20, ם=40, ן=50, ף=80, ץ=90. בשיטת הסופיות הגדולות ממשיכים אחרי ת=400: ך=500, ם=600, ן=700, ף=800, ץ=900. המחשבון מראה את שתיהן.\"}}, {\"@type\": \"Question\", \"name\": \"מה זה מספר קטן בגימטריה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"במספר קטן מורידים את האפסים מערך האות: י=1, כ=2, ל=3, ק=1, ר=2, ש=3, ת=4. כך שלום במספר קטן הוא ש3 + ל3 + ו6 + ם4 = 16.\"}}, {\"@type\": \"Question\", \"name\": \"למה נותנים צדקה ומתנות בכפולות של 18?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כי חי בגימטריה הוא 18: ח8 + י10. מי שנותן 18, 36 או 180 שקלים מאחל בזה חיים.\"}}, {\"@type\": \"Question\", \"name\": \"המחשבון מתחשב בניקוד ובמרכאות?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. ניקוד, טעמי המקרא, גרש, גרשיים ומרכאות לא נספרים, ולכן ת״ו נספר כמו תו. רווח, מקף או סימן פיסוק מפרידים בין מילים, ואותיות לועזיות וספרות לא נספרות בכלל.\"}}]}</script>",
+  "foot": "<script src=\"/assets/kodesh-gimatria.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מחשבון גימטריה</h1>
+  <p class="sub">מקלידים מילה, שם או פסוק, ורואים את הגימטריה תוך כדי הקלדה, עם הערך של כל אות. מספר הכרחי, סופיות גדולות ומספר קטן.</p>
+</header>
+
+<div class="tool" id="gimatria">
+  <section class="k-sec" aria-labelledby="gm-q" style="margin-top:.6rem">
+    <label class="gm-lbl" for="gm-t" id="gm-q">מה לחשב?</label>
+    <textarea id="gm-t" dir="rtl" lang="he" rows="2" placeholder="שלום עליכם" autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
+    <div class="gm-tacts"><button type="button" id="gm-clear">לנקות את השדה</button></div>
+    <div class="gm-seg" id="gm-m" role="group" aria-label="שיטת החישוב">
+      <button type="button" data-v="reg" aria-pressed="true">מספר הכרחי<small>רגיל · ך=20</small></button>
+      <button type="button" data-v="big" aria-pressed="false">סופיות גדולות<small>ך=500 · ץ=900</small></button>
+      <button type="button" data-v="small" aria-pressed="false">מספר קטן<small>בלי אפסים · י=1</small></button>
+    </div>
+
+    <div class="gm-res" aria-live="polite">
+      <div class="lbl" id="gm-l"></div>
+      <div class="big" id="gm-b"></div>
+      <div class="heb" id="gm-h"></div>
+      <dl class="gm-rows">
+        <div><dt>מספר הכרחי</dt><dd id="gm-reg"></dd></div>
+        <div><dt>סופיות גדולות</dt><dd id="gm-big"></dd></div>
+        <div><dt>מספר קטן</dt><dd id="gm-small"></dd></div>
+        <div><dt>אורך</dt><dd id="gm-cnt"></dd></div>
+      </dl>
+    </div>
+    <p class="gm-skip" id="gm-skip" hidden></p>
+    <div class="gm-acts no-print">
+      <button type="button" id="gm-copy">📋 להעתיק</button>
+      <a href="#" id="gm-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> בווטסאפ</a>
+    </div>
+    <div class="gm-same" id="gm-same" hidden><p id="gm-sl"></p><div id="gm-sc"></div></div>
+    <ul class="gm-words" id="gm-words" aria-label="פירוט לכל מילה ולכל אות"></ul>
+  </section>
+
+  <section class="k-sec" aria-labelledby="gm-nh">
+    <label class="gm-lbl" for="gm-n" id="gm-nh">יש לכם מספר? אילו מילים שוות לו</label>
+    <div class="gm-nin"><input id="gm-n" type="text" inputmode="numeric" placeholder="26" autocomplete="off"></div>
+    <div id="gm-nr" aria-live="polite"></div>
+  </section>
+
+  <div class="gm-note"><span>ℹ️</span><span>הכול מחושב בטלפון שלכם, ושום טקסט לא נשלח לשום מקום. ניקוד, טעמים, גרש ומרכאות לא נספרים, ורווח או מקף מפרידים בין מילים. המילים המוכרות באות מרשימה קטנה של מילים, שמות וביטויים.</span></div>
+  <div class="gm-data"><button type="button" id="gm-reset">לחזור לדוגמה</button><button type="button" data-wipe="gimatria">לנקות מהטלפון</button></div>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">מה זה גימטריה ואיך מחשבים אותה</h2>
+  <p>גימטריה היא ערך מספרי של מילה. לכל אחת מ-22 האותיות יש מספר: מא׳ עד ט׳ האחדות, מי׳ עד צ׳ העשרות, ומק׳ עד ת׳ המאות. הגימטריה של מילה היא סכום האותיות שלה, ושל משפט היא סכום כל המילים. בספרות התורנית משתמשים בגימטריה כדי לחבר בין מילים שיש להן אותו ערך.</p>
+  <table class="gm-tbl">
+    <caption>* בשיטת הסופיות הגדולות. במספר הכרחי, השיטה הרגילה, האותיות הסופיות שוות כמו הרגילות: ך=20, ם=40, ן=50, ף=80, ץ=90.</caption>
+    <thead><tr><th>אחדות</th><th>עשרות</th><th>מאות</th></tr></thead>
+    <tbody>
+      <tr><td><b>א</b>1</td><td><b>י</b>10</td><td><b>ק</b>100</td></tr>
+      <tr><td><b>ב</b>2</td><td><b>כ</b>20</td><td><b>ר</b>200</td></tr>
+      <tr><td><b>ג</b>3</td><td><b>ל</b>30</td><td><b>ש</b>300</td></tr>
+      <tr><td><b>ד</b>4</td><td><b>מ</b>40</td><td><b>ת</b>400</td></tr>
+      <tr><td><b>ה</b>5</td><td><b>נ</b>50</td><td><b>ך</b>500*</td></tr>
+      <tr><td><b>ו</b>6</td><td><b>ס</b>60</td><td><b>ם</b>600*</td></tr>
+      <tr><td><b>ז</b>7</td><td><b>ע</b>70</td><td><b>ן</b>700*</td></tr>
+      <tr><td><b>ח</b>8</td><td><b>פ</b>80</td><td><b>ף</b>800*</td></tr>
+      <tr><td><b>ט</b>9</td><td><b>צ</b>90</td><td><b>ץ</b>900*</td></tr>
+    </tbody>
+  </table>
+  <h3>שלוש שיטות במחשבון</h3>
+  <p><b>מספר הכרחי</b> הוא החישוב הרגיל, וכך מחשבים כמעט תמיד: שלום = ש300 + ל30 + ו6 + ם40 = 376. <b>סופיות גדולות</b> נותנות לאותיות הסופיות ערך משלהן אחרי ת׳: ך=500, ם=600, ן=700, ף=800, ץ=900, ולכן שלום בשיטה הזו הוא 936. <b>מספר קטן</b> מוריד את האפסים מכל אות (י=1, ק=1, ש=3), ושלום יוצא 16. המחשבון מראה את שלושתן יחד.</p>
+  <h3>גימטריות מוכרות</h3>
+  <p>יין וסוד שווים שניהם 70, ומכאן המשפט ״נכנס יין יצא סוד״ (עירובין סה ע״א). אהבה ואחד שווים 13. חי הוא 18, ולכן נוהגים לתת צדקה ומתנות בכפולות של 18. משיח ונחש שווים שניהם 358. אחרי כל חישוב המחשבון מציע מילים מוכרות עם אותו ערך, ואפשר גם להקליד מספר ולראות אילו מילים שוות לו.</p>
+  <h3>גימטריה של שם ושל פסוק</h3>
+  <p>מקלידים את השם כמו שהוא נכתב, עם אותיות סופיות, ורואים את הערך של כל אות. דוד הוא 14 ומשה 345. אפשר להדביק גם פסוק שלם מנוקד, עם טעמים: המחשבון מוחק את הניקוד ואת הטעמים ומחשב רק את האותיות. רוצים לומר פסוקי תהילים לפי אותיות השם? יש <a class="gold" href="/kodesh/tehillim/shem/">תהילים לפי שם</a>.</p>
+  <p>המחשבון בחינם, בלי הגבלה, בלי פרסומות ובלי הרשמה. אפשר להעתיק את התוצאה או לשלוח אותה בווטסאפ, ומה שכתבתם נשמר רק בטלפון שלכם.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>מה זה גימטריה?</summary><p>גימטריה היא חישוב של ערך מספרי למילה. לכל אות בעברית יש ערך: א=1 עד ט=9, י=10 עד צ=90, ק=100 עד ת=400. הגימטריה של מילה היא סכום הערכים של האותיות שלה. למשל שלום: ש300 + ל30 + ו6 + ם40 = 376.</p></details>
+  <details><summary>איך מחשבים גימטריה של שם?</summary><p>מחברים את הערך של כל אות בשם. דוד: ד4 + ו6 + ד4 = 14. משה: מ40 + ש300 + ה5 = 345. במחשבון מקלידים את השם ורואים את הסכום ואת הערך של כל אות.</p></details>
+  <details><summary>כמה שוות האותיות הסופיות ך ם ן ף ץ?</summary><p>בשיטה הרגילה (מספר הכרחי) אות סופית שווה כמו האות הרגילה: ך=20, ם=40, ן=50, ף=80, ץ=90. בשיטת הסופיות הגדולות ממשיכים אחרי ת=400: ך=500, ם=600, ן=700, ף=800, ץ=900. המחשבון מראה את שתיהן.</p></details>
+  <details><summary>מה זה מספר קטן בגימטריה?</summary><p>במספר קטן מורידים את האפסים מערך האות: י=1, כ=2, ל=3, ק=1, ר=2, ש=3, ת=4. כך שלום במספר קטן הוא ש3 + ל3 + ו6 + ם4 = 16.</p></details>
+  <details><summary>למה נותנים צדקה ומתנות בכפולות של 18?</summary><p>כי חי בגימטריה הוא 18: ח8 + י10. מי שנותן 18, 36 או 180 שקלים מאחל בזה חיים.</p></details>
+  <details><summary>המחשבון מתחשב בניקוד ובמרכאות?</summary><p>לא. ניקוד, טעמי המקרא, גרש, גרשיים ומרכאות לא נספרים, ולכן ת״ו נספר כמו תו. רווח, מקף או סימן פיסוק מפרידים בין מילים, ואותיות לועזיות וספרות לא נספרות בכלל.</p></details>
+</section>
+<!--/seo-txt-->
+<div class="tool-foot gm-tool-foot">
+  <div class="share-row"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="מחשבון גימטריה בחינם: מילה, שם או פסוק, עם פירוט לכל אות. בלי הרשמה" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר בווטסאפ</a></div>
+  <p class="note" style="margin-top:.8rem"><a class="gold" href="/kodesh/">כל כלי הקודש</a> · חינם · בלי הרשמה · מה שכתבתם נשאר בטלפון שלכם</p>
+</div>
