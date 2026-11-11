@@ -117,13 +117,13 @@
     // השרת שולח רווחים בזמן העבודה ("סימן חיים") ואת התשובה בסוף. אם החיבור נקטע – מנסים שוב:
     // השרת ממשיך לפתור גם בלי הדפדפן, והניסיון הבא מקבל את הפתרון מהזיכרון.
     function attempt(n) {
-      fetch(API + '/solve', { method: 'POST', headers: { 'content-type': 'application/json' }, body: payload })
+      fetch(API + '/solve', { method: 'POST', headers: (function (h) { try { var c = localStorage.getItem('kelim-partner'); if (c) h['x-kelim-partner'] = c; } catch (e) {} return h; })({ 'content-type': 'application/json' }), body: payload })
         .then(function (r) { return r.text().then(function (t) { var j = {}; try { j = JSON.parse(t.trim() || '{}'); } catch (_) {} return { s: r.status, j: j }; }); })
         .then(function (x) {
           var j = x.j || {};
           if (x.s === 200 && !j.error && !j.parts && j.readable !== false && n < 3) return retry(n); // תשובה ריקה = נקטע באמצע
           busy(false);
-          if (x.s === 429 || j.error === 'quota') return showErr('הגעתם ל-12 השאלות של היום. מחר אפשר להמשיך. ככה השירות נשאר חינמי לכולם.');
+          if (x.s === 429 || j.error === 'quota') return showErr('הגעתם ל-12 השאלות של היום. מחר אפשר להמשיך. ככה השירות נשאר חינמי לכולם. שותפים במיזם: ללא הגבלה, עם קוד השותף שלמעלה.');
           if (x.s !== 200 || j.error) return showErr(j.busy ? 'הפותר עמוס כרגע, או שהמכסה החינמית של היום נגמרה. אפשר לנסות שוב בעוד כמה דקות, ואם זה חוזר – מחר בבוקר.' : 'משהו השתבש. אפשר לנסות שוב בעוד רגע.');
           render(j);
         })

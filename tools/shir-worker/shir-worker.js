@@ -5,7 +5,7 @@
 // מכסות: 40 בקשות ביום לכל כתובת, ו-DAY_CAP לכל האתר כדי להישאר בתוך המכסה החינמית של Workers AI.
 
 // בחירת המודל (נבדק 09.11.2026 על בית + פזמון על "בוקר חדש", עם חרוז ובלי):
-export const MODEL = '@cf/openai/gpt-oss-120b';
+const MODEL = '@cf/openai/gpt-oss-120b';
 // gpt-oss-120b: עברית תקינה וטבעית, שומר על התמונות של האדם, ~21 נוירונים לבקשה, 3-8 שניות.
 // llama-3.3-70b: עברית קבילה אבל עם שגיאות דקדוק ("קם והתחל"), איטי יותר.
 // gemma-4-26b ו-qwen3.8-27b: מודלי "חשיבה" – כל המכסה הלכה על חשיבה והתשובה חזרה ריקה.
@@ -16,12 +16,24 @@ const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 const PER_IP = 40;
 const DAY_CAP = 300; // כ-21 נוירונים לבקשה (נמדד); 10,000 נוירונים חינם ביום. החשבון בתוכנית החינמית – אין חיוב גם מעבר
 const MAX_IN = 2000;
+// שותפים במיזם: קוד אישי 'NNN-DDDDD' (אותו קוד של ההחייאה, tools/chaye-worker/partner_codes.py, הסוד PARTNER_SECRET)
+// נשלח בכותרת x-kelim-partner. קוד תקין = בלי מכסה אישית (התקרה היומית לכל האתר נשארת). ביטול: REVOKED ב-[vars].
+const PCODE = /^(\d{3})-?(\d{5})$/;
+async function partnerOk(env, code) {
+  const m = String(code || '').replace(/\s/g, '').match(PCODE);
+  if (!m || !env.PARTNER_SECRET) return false;
+  if (String(env.REVOKED || '').split(',').map(x => x.trim()).filter(Boolean).map(Number).includes(+m[1])) return false;
+  const k = await crypto.subtle.importKey('raw', new TextEncoder().encode(env.PARTNER_SECRET), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = new Uint8Array(await crypto.subtle.sign('HMAC', k, new TextEncoder().encode('chaye-partner:' + (+m[1]))));
+  return ((sig[0] << 24 | sig[1] << 16 | sig[2] << 8 | sig[3]) >>> 0) % 100000 === +m[2];
+}
+const perFor = async (env, req, per) => (await partnerOk(env, req.headers.get('x-kelim-partner'))) ? 1e9 : per;
 const TASKS = ['next_line', 'rephrase', 'chorus', 'rhymes', 'title'];
 
 function cors(origin) {
   const ok = ALLOWED.includes(origin) || LOCAL.test(origin || '');
   return ok ? { 'access-control-allow-origin': origin, 'access-control-allow-methods': 'POST, OPTIONS',
-    'access-control-allow-headers': 'content-type', vary: 'origin' } : null;
+    'access-control-allow-headers': 'content-type, x-kelim-partner', vary: 'origin' } : null;
 }
 const json = (o, status, h) => new Response(JSON.stringify(o), { status, headers: { 'content-type': 'application/json; charset=utf-8', ...(h || {}) } });
 
@@ -105,7 +117,7 @@ export default {
     const day = new Date().toISOString().slice(0, 10);
     const ip = request.headers.get('cf-connecting-ip') || 'x';
     const stub = env.QUOTA.get(env.QUOTA.idFromName('q'));
-    const q = await (await stub.fetch('https://q/take', { method: 'POST', body: JSON.stringify({ day, who: await ipHash(ip, day), per: PER_IP, cap: DAY_CAP }) })).json();
+    const q = await (await stub.fetch('https://q/take', { method: 'POST', body: JSON.stringify({ day, who: await ipHash(ip, day), per: await perFor(env, request, PER_IP), cap: DAY_CAP }) })).json();
     if (!q.ok) return json({ error: 'quota', rest: true }, 429, h);
 
     try {

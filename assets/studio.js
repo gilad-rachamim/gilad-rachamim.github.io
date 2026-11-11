@@ -984,7 +984,7 @@
     try {
       const images = await aiImagesWithData();
       const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 120000);
-      const r = await fetch(AI_URL, { method: 'POST', headers: { 'content-type': 'application/json' }, signal: ctl.signal,
+      const r = await fetch(AI_URL, { method: 'POST', headers: (function (h) { try { var c = localStorage.getItem('kelim-partner'); if (c) h['x-kelim-partner'] = c; } catch (e) {} return h; })({ 'content-type': 'application/json' }), signal: ctl.signal,
         body: JSON.stringify({ prompt: t, mode, size, dest: dest ? dest.ai : '', doc: mode === 'edit' ? aiDoc() : null, images, variants: mode === 'new' ? 3 : 1 }) });
       clearTimeout(tm);
       const j = await r.json().catch(() => ({}));

@@ -345,17 +345,21 @@ CHESED_PARTNER = {
     "/kodesh/video-shiur/": "אותן דקות של התמלול",
     "/kelim/shir/karaoke/": "5 שירים חדשים ביום; שותפות בבוט = ללא הגבלה",
     "/kelim/tochen/chaye/": "2 החייאות ביום; קוד שותף (partner_codes.py) = ללא הגבלה",
+    "/kelim/shir/clip/": "kelim-shir PER_IP 40; x-kelim-partner = ללא הגבלה",
+    "/kelim/shir/haklata/": "kelim-shir",
+    "/kelim/shir/lachan/": "kelim-shir",
+    "/kelim/shir/milim/": "kelim-shir",
+    "/kelim/tochen/studio/": "kelim-studio PER_IP 40; x-kelim-partner",
+    "/limudim/poter/": "limudim-poter PER_IP 12; x-kelim-partner",
+    "/limudim/machberet/": "limudim-poter; x-kelim-partner",
 }
-CHESED_NO_PATH = {
-    "/kelim/shir/clip/": "shir-worker PER_IP 40",
-    "/kelim/shir/haklata/": "shir-worker PER_IP 40",
-    "/kelim/shir/lachan/": "shir-worker PER_IP 40",
-    "/kelim/shir/milim/": "shir-worker PER_IP 40",
-    "/kelim/tochen/studio/": "studio-worker PER_IP 40",
-    "/limudim/poter/": "poter-worker PER_IP 12",
-    "/limudim/machberet/": "poter-worker PER_IP 12",
-}
+CHESED_NO_PATH = {}  # כרגע ריק: לכל הכלים עם מכסה יש קוד שותף (11.11.2026)
 CHESED_SKIP = SEO_SKIP | {"404"}
+# קוד שותף אחד לכל הכלים עם מכסה: נשמר ב-localStorage 'kelim-partner' (kelim.js), הכלים שולחים אותו בכותרת x-kelim-partner
+CHESED_CODE = ('<details class="chesed-p"><summary>🤝 יש לי קוד שותף</summary><label>קוד השותף שקיבלתי '
+               '<input type="text" inputmode="numeric" dir="ltr" maxlength="12" autocomplete="off" placeholder="123-45678" data-partner-code></label>'
+               '<span class="chesed-ok" data-partner-ok hidden>✓ נשמר. תודה שאתם שותפים ❤ ללא הגבלה בכל הכלים.</span>'
+               '<span>הקוד נשמר רק בטלפון הזה. <a class="gold" href="/kelim/#litmoch">איך נהיים שותפים?</a></span></details>')
 CHESED_SUB = "הרבה כלים כאלה ברשת מוגבלים ומלאים בפרסומות. כאן לא, מתוך רצון לעשות חסד."
 
 def chesed_band(p, meta):
@@ -371,8 +375,9 @@ def chesed_band(p, meta):
         chips, sub = ["הכול בחינם", "בלי פרסומות", "רוב הכלים ללא שום הגבלה"], CHESED_SUB
     else:
         chips, sub = ["בחינם", "ללא הגבלה", "בלי פרסומות"], CHESED_SUB
+    box = CHESED_CODE if any(p.startswith(l) for l in CHESED_PARTNER) and not p.startswith("/kelim/shir/karaoke/") else ""  # בקריוקי השותפות בתוך הבוט
     return ('<div class="chesed no-print" role="note"><p class="chesed-t">' + "".join(f"<b>✓ {c}</b>" for c in chips)
-            + f'</p><p class="chesed-s">{sub}</p></div>')
+            + f'</p><p class="chesed-s">{sub}</p>{box}</div>')
 
 pages = []
 site_pages = {k: [] for k in SITES}
