@@ -833,7 +833,7 @@
   function month() { var d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1); }
   function q() { var o = {}; try { o = JSON.parse(localStorage.getItem('kelim-tamlul') || '{}'); } catch (e) {} if (o.m !== month()) o = { m: month(), used: 0, free: o.free }; return o; }
   function qsave(o) { try { localStorage.setItem('kelim-tamlul', JSON.stringify(o)); } catch (e) {} }
-  function quota() { var o = q(); $('vs-quota').textContent = o.free ? '' : 'דקות תמלול שנשארו לכם החודש: ' + Math.max(0, Math.round((FREE_SEC - o.used) / 60)) + ' מתוך 60.'; }
+  function quota() { var o = q(); $('vs-quota').textContent = o.free ? '' : 'תמלול בחינם ובלי הגבלה.'; }
   quota();
   function b64(blob) { return new Promise(function (res, rej) { var r = new FileReader(); r.onload = function () { res(String(r.result).split(',')[1] || ''); }; r.onerror = rej; r.readAsDataURL(blob); }); }
   function wav(pcm) {

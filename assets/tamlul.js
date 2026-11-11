@@ -1,7 +1,7 @@
 // תמלול מהטלפון (T-1) – הכלים של גילעד רחמים.
 // הקובץ נשלח ל-Worker (gilad-hub), שמעביר לענן (RunPod, מודל עברית של ivrit.ai) ומחזיר טקסט. המפתח לא בדפדפן.
 // קובץ קטן נשלח כמו שהוא; קובץ גדול נחתך בטלפון לחלקים של 2.5 דקות (WAV 16kHz) שרצים במקביל.
-// מכסה: 60 דקות בחודש בטלפון (localStorage). נכי צה"ל ומי שצריך בגלל פגיעה: ללא הגבלה.
+// בלי הגבלה (גילעד 11.11.2026). אחרי 60 דקות בחודש: קופסה עם "להמשיך לתמלל" בלחיצה אחת + ווטסאפ באהבה.
 (function () {
   'use strict';
   var API = 'https://gilad-hub.gilad4049.workers.dev/tamlul';
@@ -17,7 +17,7 @@
   function save(o) { try { localStorage.setItem('kelim-tamlul', JSON.stringify(o)); } catch (e) {} }
   function showQuota() {
     var o = q();
-    quotaEl.innerHTML = o.free ? 'ללא הגבלה. בהצלחה 💛' : 'נשארו לכם החודש <b>' + Math.max(0, Math.round((FREE_SEC - o.used) / 60)) + '</b> דקות תמלול בחינם, מתוך 60.';
+    quotaEl.innerHTML = o.free ? 'ללא הגבלה. בהצלחה 💛' : 'תמלול בחינם ובלי הגבלה 💛';
   }
   root.addEventListener('click', function (e) {
     if (e.target.closest('[data-unlimited]')) {
@@ -25,6 +25,7 @@
       var o = q(); o.free = true; save(o); showQuota();
       $('tl-limit').hidden = true;
       if (window.kelimEv) window.kelimEv('tamlul_unlimited', {});
+      if (pending) { var pb = pending; pending = null; go(pb[0], pb[1]); }   // ממשיכים מיד את ההקלטה שנעצרה
     }
   });
   showQuota();
@@ -127,6 +128,7 @@
   function plain() { return Array.prototype.map.call(textEl.querySelectorAll('p'), function (p) { return p.textContent; }).join('\n\n'); }
   $('tl-stamps').addEventListener('change', render);
 
+  var pending = null;
   function go(blob, name) {
     var lang = $('tl-lang').value;
     fileIn.disabled = true; recBtn.disabled = true; outBox.hidden = true;
@@ -135,8 +137,9 @@
       var o = q();
       var need = isFinite(sec) ? sec : blob.size / 16000;
       if (!o.free && o.used + need > FREE_SEC) {
+        pending = [blob, name];
         $('tl-limit').hidden = false; $('tl-limit').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return fail('ההקלטה ארוכה מהדקות שנשארו לכם החודש.');
+        return fail('עברתם 60 דקות החודש. לחצו "להמשיך לתמלל" והתמלול ימשיך.');
       }
       var small = blob.size <= RAW_MAX && (!isFinite(sec) || sec <= 40 * 60);
       var prep = small ? Promise.resolve([{ off: 0, blob: blob }]) : (say('מכין את ההקלטה (קובץ גדול נחתך לחלקים)…', true), pieces(blob));
