@@ -1,0 +1,73 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_galgal_shemot",
+  "title": "גלגל שמות אונליין בחינם: מי עולה בגורל? לכיתה, לקבוצה ולמשפחה | הכלים של גילעד רחמים",
+  "description": "גלגל שמות אונליין בחינם: מדביקים את רשימת השמות של הכיתה או הקבוצה, מסובבים, ורואים מי עלה בגורל. מי שעלה יוצא מהגלגל, כך שכל אחד עולה פעם אחת. עם רשימת התוצאות ומסך מלא למקרן. בלי הרשמה.",
+  "og_title": "גלגל שמות: מי עולה בגורל?",
+  "priority": "0.7",
+  "crumbs": [
+    [
+      "משחקי חשיבה",
+      "/kelim/chashiva/"
+    ],
+    [
+      "גלגל שמות",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/chashiva-goral.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך מכניסים את השמות של הכיתה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מדביקים את הרשימה בתיבה, שם בכל שורה. אפשר להעתיק אותה מוורד, מאקסל או מקבוצת הווטסאפ.\"}}, {\"@type\": \"Question\", \"name\": \"איך דואגים שכל תלמיד יעלה רק פעם אחת?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"משאירים מסומן ״להוציא מהגלגל את מי שעלה בגורל״. אחרי כל סיבוב השם יוצא, עד שכולם עלו.\"}}, {\"@type\": \"Question\", \"name\": \"השמות נשמרים אצלכם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. הרשימה נשמרת רק במכשיר שלכם, ולא נשלחת לשום מקום.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר להציג את הגלגל על מקרן?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. ״מסך מלא״ מציג רק את הגלגל ואת מי שעלה בגורל, בגדול.\"}}, {\"@type\": \"Question\", \"name\": \"הבחירה הוגנת?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. לכל שם יש אותו סיכוי בכל סיבוב, והבחירה אקראית לגמרי.\"}}, {\"@type\": \"Question\", \"name\": \"זה בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בחינם, בלי הרשמה ובלי פרסומות.\"}}]}</script>",
+  "foot": "<script src=\"/assets/chashiva-goral.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>גלגל שמות</h1>
+  <p class="sub">מדביקים את רשימת השמות, מסובבים, ורואים מי עלה בגורל. מי שעלה יוצא מהגלגל, וכך כולם מקבלים תור.</p>
+</header>
+
+<div class="tool" id="gr" data-mode="names">
+  <p class="gr-head" id="gr-head"></p>
+  <div class="gr-wheel"><span class="gr-pointer" aria-hidden="true"></span><canvas id="gr-canvas" width="640" height="640" role="img" aria-label="גלגל"></canvas><button class="gr-hub" type="button" id="gr-spin">לסובב</button></div>
+  <p class="gr-count" id="gr-count"></p>
+  <div class="gr-res" id="gr-res" role="status" hidden></div>
+  <div class="gr-main"><button class="btn btn-gold btn-block gr-big" type="button" id="gr-spin2">🎡 לסובב את הגלגל</button></div>
+  <p class="gr-note gr-hide" id="gr-note" hidden></p>
+  <form class="k-form gr-form gr-hide" id="gr-form" novalidate>
+    <div class="field"><label for="gr-text">מה בגלגל? <span class="opt">(שורה לכל שם או אפשרות)</span></label><textarea id="gr-text" rows="7" dir="auto"></textarea></div>
+    <div class="gr-btns s"><button class="btn btn-line btn-sm" type="button" id="gr-shuffle">🔀 לערבב</button><button class="btn btn-line btn-sm" type="button" id="gr-clear">לרוקן</button></div>
+    <div class="field"><label for="gr-title">שם הגלגל <span class="opt">(לא חובה)</span></label><input id="gr-title" type="text" maxlength="60" autocomplete="off"></div>
+    <div class="field"><span class="label" id="gr-pre-l">גלגלים מוכנים</span><div class="gr-chips" role="group" aria-labelledby="gr-pre-l"><button type="button" data-preset="names">שמות לדוגמה</button><button type="button" data-preset="nums">מספרים 1–10</button><button type="button" data-preset="yesno">כן או לא</button><button type="button" data-preset="chores">מטלות בבית</button></div></div>
+    <div class="gr-checks"><label><input type="checkbox" id="gr-remove"> להוציא מהגלגל את מי שעלה בגורל</label><label><input type="checkbox" id="gr-sound"> צלילים</label></div>
+  </form>
+  <div class="gr-sec gr-hide" id="gr-hist-sec" hidden>
+    <h2>מי עלה בגורל</h2>
+    <ol class="gr-hist" id="gr-hist"></ol>
+    <div class="share-row"><a class="btn btn-gold btn-sm" href="#" id="gr-hist-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את התוצאות</a><button class="btn btn-line btn-sm" type="button" id="gr-hist-copy">להעתיק</button><button class="btn btn-line btn-sm" type="button" id="gr-hist-clear">למחוק</button></div>
+  </div>
+  <div class="share-row gr-hide"><a class="btn btn-gold btn-sm" href="#" id="gr-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הגלגל</a><button class="btn btn-line btn-sm" type="button" id="gr-copy">🔗 להעתיק קישור לגלגל</button></div>
+  <div class="share-row"><button class="btn btn-line btn-sm" type="button" id="gr-full">מסך מלא</button></div>
+  <p class="gr-fair gr-hide">הבחירה אקראית לגמרי ונעשית במכשיר שלכם. שום דבר לא נשלח לשום מקום, ואין לנו דרך להשפיע על התוצאה.</p>
+  <nav class="gr-links gr-hide" aria-label="עוד דרכים להגריל"><a href="/kelim/chashiva/galgal/">🎡 גלגל המזל</a><a href="/kelim/chashiva/galgal-shemot/" aria-current="page">👥 גלגל שמות</a><a href="/kelim/chashiva/hagrala/">🎟 הגרלה</a><a href="/kelim/chashiva/kubiya/">🎲 הטלת קוביה</a><a href="/kelim/chashiva/matbea/">🌳 הטלת מטבע</a></nav>
+  <div class="share-row gr-hide"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="גלגל שמות בחינם: מדביקים רשימה, מסובבים, ורואים מי עלה בגורל:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">גלגל שמות לכיתה, לקבוצה ולמשפחה</h2>
+  <p>גלגל שמות בוחר מישהו מהרשימה, באקראי ובלי ויכוחים. מורה משתמשת בו כדי לבחור מי עונה, מי קורא ומי תורן. מדריך בוחר מי מתחיל במשחק. במשפחה מגרילים מי בוחר את הסרט, ובעבודה מי מביא עוגה ביום שישי.</p>
+  <h3>איך משתמשים</h3>
+  <p>מדביקים את רשימת השמות, שם בכל שורה, ולוחצים "לסובב". השם שעלה בגורל מוצג בגדול. כברירת מחדל הוא יוצא מהגלגל, כך שבסיבוב הבא עולה מישהו אחר, עד שכולם עלו. "להחזיר את כולם" מחזיר את הרשימה המלאה. רוצים שהשמות יישארו? מבטלים את הסימון "להוציא מהגלגל את מי שעלה בגורל".</p>
+  <h3>רשימת התוצאות</h3>
+  <p>מתחת לגלגל נשמר הסדר: מי עלה ראשון, שני ושלישי. כך אפשר לקבוע סדר הצגות, סדר תורות או סדר ישיבה, ולשלוח את הרשימה בווטסאפ. הרשימה נשמרת במכשיר גם אם סוגרים את הדף, ולכן אפשר להמשיך באותה כיתה גם מחר.</p>
+  <h3>למקרן ולכיתה</h3>
+  <p>"מסך מלא" מציג רק את הגלגל, בגדול. אפשר לשלוח את הגלגל בקישור למורה אחרת או להורים, והם יקבלו את אותה רשימה. השמות נשארים במכשיר ולא נשלחים לשום מקום. צריכים כמה זוכים בבת אחת? יש <a href="/kelim/chashiva/hagrala/">הגרלת שמות</a>. רוצים גלגל עם אפשרויות אחרות? יש <a href="/kelim/chashiva/galgal/">גלגל המזל</a>. ולמורים יש גם <a href="/kelim/chashiva/kita/">כיתה משחקת</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך מכניסים את השמות של הכיתה?</summary><p>מדביקים את הרשימה בתיבה, שם בכל שורה. אפשר להעתיק אותה מוורד, מאקסל או מקבוצת הווטסאפ.</p></details>
+  <details><summary>איך דואגים שכל תלמיד יעלה רק פעם אחת?</summary><p>משאירים מסומן "להוציא מהגלגל את מי שעלה בגורל". אחרי כל סיבוב השם יוצא, עד שכולם עלו.</p></details>
+  <details><summary>השמות נשמרים אצלכם?</summary><p>לא. הרשימה נשמרת רק במכשיר שלכם, ולא נשלחת לשום מקום.</p></details>
+  <details><summary>אפשר להציג את הגלגל על מקרן?</summary><p>כן. "מסך מלא" מציג רק את הגלגל ואת מי שעלה בגורל, בגדול.</p></details>
+  <details><summary>הבחירה הוגנת?</summary><p>כן. לכל שם יש אותו סיכוי בכל סיבוב, והבחירה אקראית לגמרי.</p></details>
+  <details><summary>זה בחינם?</summary><p>כן. בחינם, בלי הרשמה ובלי פרסומות.</p></details>
+</section>
+<!--/seo-txt-->
