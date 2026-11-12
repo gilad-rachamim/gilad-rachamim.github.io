@@ -75,7 +75,7 @@ body.kn-shop .kn-edit-only{display:none!important}
 .paper td.ch{text-align:right;font-weight:700;background:#fbf5e7;white-space:nowrap}
 .paper td.today,.paper th.today{outline:2px solid #e8936a;outline-offset:-2px}
 .paper .pn{display:inline-block;border-radius:6px;padding:.08rem .4rem;font-weight:700;white-space:nowrap}
-.paper .ft{text-align:center;color:#777;font-size:.82rem;margin-top:.8rem}
+.paper .ft{text-align:center;color:#5c5c5c;font-size:.82rem;margin-top:.8rem}
 .paper .legend{display:flex;flex-wrap:wrap;gap:.35rem;justify-content:center;margin-top:.7rem}
 @media print{@page{size:A4 landscape;margin:12mm}html,body{background:#fff!important}body *{visibility:hidden}.topbar,.site-foot,.crumbs,.install-bar,.no-print{display:none!important}.print-me,.print-me *{visibility:visible}.print-me{position:absolute;top:0;right:0;left:0;border:0;font-size:13pt}}
 

@@ -26,7 +26,7 @@
 .bk-sec h2{font-size:clamp(1.5rem,6vw,1.9rem);color:#111;text-align:center;line-height:1.25}
 .bk-sec h3{font-size:calc(var(--fs) * .92);color:#7a5a12;margin:1.1rem 0 .2rem;border-bottom:1px solid #e3d6b5;padding-bottom:.1rem}
 .bk-sec h3.bk-step{font-family:var(--sans,inherit);font-size:1.05rem;color:#fff;background:#7a5a12;border:0;border-radius:8px;padding:.3rem .7rem;display:inline-block}
-.bk-src{font-family:var(--sans,inherit);font-size:.8rem;color:#8a7a55;font-weight:400;margin-inline-start:.4rem}
+.bk-src{font-family:var(--sans,inherit);font-size:.8rem;color:#6e6040;font-weight:400;margin-inline-start:.4rem}
 .bk-sec p{font-size:var(--fs);margin:.35rem 0}
 .bk-sec p.big{font-size:calc(var(--fs) * 1.25);font-weight:700;text-align:center}
 .bk-sec p.ins{font-family:var(--sans,inherit);font-size:max(.95rem,calc(var(--fs) * .72));color:#5e5644;line-height:1.6;background:#f6efdc;border-radius:8px;padding:.4rem .65rem}
@@ -35,7 +35,7 @@
 .bk-det{margin:.6rem 0;border:1px dashed #d8c89c;border-radius:10px;padding:.35rem .7rem}
 .bk-det summary{font-family:var(--sans,inherit);font-size:1rem;color:#7a5a12;cursor:pointer;min-height:40px;display:flex;align-items:center}
 .bk-det p{font-size:calc(var(--fs) * .9)}
-.bk-foot{margin-top:1.6rem;text-align:center;font-size:.8rem;color:#777;font-family:var(--sans,inherit);line-height:1.6}
+.bk-foot{margin-top:1.6rem;text-align:center;font-size:.8rem;color:#5c5c5c;font-family:var(--sans,inherit);line-height:1.6}
 
 /* נוסח: מסתירים את מה שלא שייך */
 .bk-paper[data-nusach=ash] [data-n=em],.bk-paper[data-nusach=em] [data-n=ash]{display:none}

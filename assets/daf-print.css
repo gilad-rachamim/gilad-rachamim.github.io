@@ -1,5 +1,5 @@
 /* דף להדפסה מטופס (chag-basis, psak) */
-.dp-sheet{--ink:#1b1b1b;--acc:#8a6d2b;--soft:#f4ecd4;background:#fdfaf2;color:var(--ink);border-radius:14px;padding:1.6rem 1.4rem;margin:1.2rem auto 0;max-width:46rem;box-shadow:0 10px 30px rgba(0,0,0,.35);font-family:'Frank Ruhl Libre','David',serif;line-height:1.65}
+.dp-sheet{--ink:#1b1b1b;--acc:#77591c;--soft:#f4ecd4;background:#fdfaf2;color:var(--ink);border-radius:14px;padding:1.6rem 1.4rem;margin:1.2rem auto 0;max-width:46rem;box-shadow:0 10px 30px rgba(0,0,0,.35);font-family:'Frank Ruhl Libre','David',serif;line-height:1.65}
 .dp-sheet[data-theme="kachol"]{--acc:#1f3f73;--soft:#e6edf7;background:#fbfcff}
 .dp-sheet[data-theme="zayit"]{--acc:#4d5a24;--soft:#eef0de;background:#fcfcf6}
 .dp-sheet[data-theme="lavan"]{--acc:#333;--soft:#f1f1f1;background:#fff}

@@ -39,7 +39,7 @@
 .br-text small.opt{font-size:.92em;color:#3d3d3d}
 .br-text small small{font-size:1em}
 .br-text big{font-size:1.25em}
-.br-credit{margin-top:1.6em!important;padding-top:.6em;border-top:1px solid #ddd;font-size:.68em;color:#888;text-align:center;line-height:1.5;font-family:var(--sans,system-ui,sans-serif)}
+.br-credit{margin-top:1.6em!important;padding-top:.6em;border-top:1px solid #ddd;font-size:.68em;color:#5c5c5c;text-align:center;line-height:1.5;font-family:var(--sans,system-ui,sans-serif)}
 
 /* כחול וזהב */
 .st-blue .br-cover{background:radial-gradient(ellipse at 50% 35%,#1d3266,#0f1c3f 70%);color:#e9cf8d}

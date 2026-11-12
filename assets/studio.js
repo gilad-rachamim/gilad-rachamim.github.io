@@ -1255,7 +1255,7 @@
   }
   function panel() {
     const e = sel && elById(sel);
-    app.querySelectorAll('.sd-tabs [data-tab]').forEach(b => b.classList.toggle('on', !e && b.dataset.tab === tab));
+    app.querySelectorAll('.sd-tabs [data-tab]').forEach(b => { const on = !e && b.dataset.tab === tab; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
     side.innerHTML = e ? '<button type="button" class="sd-back" data-back="1">→ חזרה</button>' + panelFor(e) : panelTab();
     if (!e && tab === 'tpl') side.querySelectorAll('[data-tt]').forEach(n => { const t = TEMPLATES[+n.dataset.tt]; n.replaceWith(thumb({ w: t.w, h: t.h, bg: t.bg, els: t.els() }, 92, 112)); });
     if (!e && tab === 'layers') layersList();
