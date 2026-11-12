@@ -112,11 +112,12 @@
       g.beginPath(); g.arc(0, 0, R, 0, 2 * Math.PI); g.strokeStyle = '#d8b25a'; g.lineWidth = Math.max(3, W / 110); g.stroke();
     }
     function under() { var n = list.length, seg = 2 * Math.PI / n, a = ((-Math.PI / 2 - angle) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI); return Math.floor(a / seg) % n; }
-    function refresh() {
-      list = items(st.text);
+    function refresh(keepWheel) {
+      var live = items(st.text);
+      if (!keepWheel) list = live;
       cv.setAttribute('aria-label', 'גלגל עם ' + list.length + ' אפשרויות: ' + list.slice(0, 12).join(', ') + (list.length > 12 ? ' ועוד' : ''));
-      $('gr-count').textContent = list.length === 1 ? 'אפשרות אחת בגלגל. צריך לפחות שתיים.' : list.length ? list.length + ' אפשרויות בגלגל' : 'הגלגל ריק. כותבים אפשרות בכל שורה.';
-      $('gr-spin').disabled = $('gr-spin2').disabled = list.length < 2 || spinning;
+      $('gr-count').textContent = live.length === 1 ? 'אפשרות אחת בגלגל. צריך לפחות שתיים.' : live.length ? live.length + ' אפשרויות בגלגל' : 'הגלגל ריק. כותבים אפשרות בכל שורה.';
+      $('gr-spin').disabled = $('gr-spin2').disabled = live.length < 2 || spinning;
       $('gr-head').textContent = st.title || '';
       draw(); hist();
     }
@@ -140,10 +141,11 @@
         (!removed && list.length > 2 ? '<button class="btn btn-line btn-sm" type="button" data-act="out">להוציא מהגלגל</button>' : '') +
         (st.orig && st.orig !== st.text ? '<button class="btn btn-line btn-sm" type="button" data-act="back">להחזיר את כולם</button>' : '') + '</div>';
       $('gr-res').hidden = false; $('gr-res').setAttribute('data-w', name);
-      refresh();
+      refresh(true);
+      try { $('gr-res').scrollIntoView({ block: 'nearest', behavior: calm ? 'auto' : 'smooth' }); } catch (e) {}
     }
     function spin() {
-      if (spinning || list.length < 2) return;
+      if (spinning || items(st.text).length < 2) return;
       ctx(); spinning = true; $('gr-res').hidden = true; refresh();
       var n = list.length, seg = 2 * Math.PI / n, w = rnd(n), f = (10 + rnd(81)) / 100;
       var target = -Math.PI / 2 - (w + f) * seg, a0 = angle;
@@ -164,7 +166,7 @@
     $('gr-res').addEventListener('click', function (e) {
       var b = e.target.closest('[data-act]'); if (!b) return; var act = b.getAttribute('data-act');
       if (act === 'again') spin();
-      if (act === 'out') { var nm = $('gr-res').getAttribute('data-w'), arr = items(st.text), i = arr.indexOf(nm); if (i >= 0) { if (!st.orig) st.orig = st.text; arr.splice(i, 1); st.text = arr.join('\n'); $('gr-text').value = st.text; save(st); b.remove(); refresh(); } }
+      if (act === 'out') { var nm = $('gr-res').getAttribute('data-w'), arr = items(st.text), i = arr.indexOf(nm); if (i >= 0) { if (!st.orig) st.orig = st.text; arr.splice(i, 1); st.text = arr.join('\n'); $('gr-text').value = st.text; save(st); b.remove(); refresh(true); } }
       if (act === 'back') { st.text = st.orig; st.orig = ''; $('gr-text').value = st.text; save(st); $('gr-res').hidden = true; refresh(); }
     });
     $('gr-text').value = st.text; $('gr-title').value = st.title;
@@ -232,11 +234,12 @@
       var k = Math.max(1, Math.min(+st.count || 1, p.length)), win = shuffle(p).slice(0, k), box = $('gr-res'), n = 0, total = calm ? 1 : 16;
       box.hidden = false; $('gr-share').hidden = true;
       box.setAttribute('aria-busy', 'true');
+      try { box.scrollIntoView({ block: 'nearest', behavior: calm ? 'auto' : 'smooth' }); } catch (e) {}
       var iv = setInterval(function () {
         n++;
         if (n >= total) {
           clearInterval(iv); busy = false; box.setAttribute('aria-busy', 'false');
-          st.last = { w: win, at: now(), of: p.length }; save(st); show(st.last); fanfare(); info();
+          st.last = { w: win, at: now(), of: p.length }; save(st); show(st.last); fanfare(); info(); try { box.scrollIntoView({ block: 'nearest', behavior: calm ? 'auto' : 'smooth' }); } catch (e) {}
           return;
         }
         box.innerHTML = '<p class="gr-res-l">מגרילים…</p><p class="gr-res-n gr-roll">' + esc(p[rnd(p.length)]) + '</p>'; tick();
@@ -321,7 +324,7 @@
     var el = $('gr-coin');
     function labels() {
       $('gr-fa').textContent = st.a || 'עץ'; $('gr-fb').textContent = st.b || 'פלי';
-      $('gr-stats').innerHTML = '<span><b>' + st.ca + '</b> ' + esc(st.a || 'עץ') + '</span><span><b>' + st.cb + '</b> ' + esc(st.b || 'פלי') + '</span><span><b>' + (st.ca + st.cb) + '</b> הטלות</span>';
+      $('gr-stats').innerHTML = '<span><b>' + st.ca + '</b> ' + esc(st.a || 'עץ') + '</span><span><b>' + st.cb + '</b> ' + esc(st.b || 'פלי') + '</span><span>' + (st.ca + st.cb === 1 ? 'הטלה <b>אחת</b>' : '<b>' + (st.ca + st.cb) + '</b> הטלות') + '</span>';
       $('gr-reset').hidden = !(st.ca + st.cb);
     }
     function flip() {
