@@ -474,7 +474,7 @@
       : 'הכי נקי. אוזניות עם חוט עדיפות על בלוטות\'.';
     var th = $('ul-tune-hint'); if (th) th.hidden = !(music && music.mel);
     var last = takes[takes.length - 1], btc = !!s.phones && bt.on;
-    $('ul-calw').hidden = !s.phones; $('ul-calnote').hidden = !s.phones || calMs() != null || (btc && !!last && last.mode === 'bleed');
+    $('ul-calw').hidden = !s.phones; $('ul-calnote').hidden = !s.phones || calMs() != null || (btc && !!last && (last.mode === 'bleed' || !!(last.stat && last.stat.sync === 'mel'))); // כבר סונכרן לבד
     $('ul-calt').textContent = btc ? 'אוזניות בלוטות\': בדיקת סנכרון של 5 שניות' : 'פעם אחת, 5 שניות: בדיקת סנכרון';
     $('ul-cald').textContent = (btc ? 'אוזניות בלוטות\' משמיעות את המוזיקה באיחור.' : 'אוזניות משמיעות את המוזיקה באיחור קטן.') + ' מקרבים אוזנייה אחת ממש למיקרופון שבתחתית הטלפון ולוחצים. יישמע רעש קצר, ומעכשיו הקול יישב בדיוק על המוזיקה.';
     $('ul-btcal').hidden = !offerCal();
