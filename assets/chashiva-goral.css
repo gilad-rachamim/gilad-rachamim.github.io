@@ -1,0 +1,66 @@
+/* גלגל המזל, גלגל שמות, הגרלה, קוביות ומטבע (/kelim/chashiva/galgal/ ...) */
+.gr-head{text-align:center;font-family:var(--serif);color:var(--gold-hi);font-size:clamp(1.3rem,5.5vw,1.8rem);min-height:1.3em;margin:0 0 .6rem;overflow-wrap:anywhere}
+.gr-wheel{position:relative;width:min(100%,26rem);margin:0 auto;aspect-ratio:1}
+.gr-wheel canvas{width:100%;height:100%;display:block;cursor:pointer;border-radius:50%;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+.gr-pointer{position:absolute;top:-.5rem;left:50%;transform:translateX(-50%);width:0;height:0;border-left:.95rem solid transparent;border-right:.95rem solid transparent;border-top:1.9rem solid #f6f1e4;filter:drop-shadow(0 2px 2px rgba(0,0,0,.6));z-index:2}
+.gr-hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:27%;aspect-ratio:1;border-radius:50%;border:3px solid var(--gold);background:#14110a;color:#f3d98e;font:inherit;font-weight:700;font-size:clamp(.95rem,4.2vw,1.25rem);cursor:pointer;z-index:2;padding:0}
+.gr-hub:disabled,.gr-big:disabled{opacity:.55;cursor:default}
+.gr-count{text-align:center;color:var(--muted);font-size:.95rem;margin:.6rem 0 0}
+.gr-res{margin:1rem 0 0;padding:1rem .8rem;border:1px solid var(--gold);border-radius:16px;text-align:center;background:rgba(216,178,90,.1)}
+.gr-res-l{color:var(--gold);font-weight:700;margin:0}
+.gr-res-n{font-family:var(--serif);font-size:clamp(2rem,10vw,3.4rem);color:var(--cream);line-height:1.2;margin:.2rem 0;overflow-wrap:anywhere}
+.gr-res-s{color:var(--body);font-size:.95rem;margin:.3rem 0 0}
+.gr-roll{opacity:.7}
+.gr-win{list-style-position:inside;padding:0;margin:.4rem 0 0;font-family:var(--serif);font-size:clamp(1.3rem,6vw,1.9rem);color:var(--cream);line-height:1.5}
+.gr-btns{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.8rem}
+.gr-btns.s{justify-content:flex-start;margin-top:0}
+.gr-main{margin-top:1rem}
+.gr-big{font-size:1.2rem;padding:1rem 1.2rem}
+.gr-form{margin-top:1.2rem}
+.gr-two{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.gr-chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.gr-chips button{font:inherit;font-size:.98rem;padding:.45rem .85rem;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--body);cursor:pointer}
+.gr-chips button[aria-pressed=true]{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700}
+.gr-chips button:hover{border-color:var(--gold-soft)}
+.gr-checks{display:grid;gap:.45rem}
+.gr-checks label{display:flex;gap:.5rem;align-items:center;color:var(--body)}
+.gr-checks input{width:1.15rem;height:1.15rem;accent-color:var(--gold);flex:none}
+.gr-note{margin:.9rem 0 0;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;justify-content:center;color:var(--parchment);background:rgba(227,183,101,.1);border:1px solid var(--gold-soft);border-radius:12px;padding:.6rem .8rem;text-align:center}
+.gr-sec{margin-top:1.4rem}
+.gr-sec h2{font-family:var(--serif);color:var(--cream);font-size:1.3rem;margin:0 0 .4rem}
+.gr-hist{margin:0;padding-inline-start:1.4rem;color:var(--body);font-size:1.08rem;line-height:1.7;columns:2;column-gap:1.5rem}
+.gr-hist.one{columns:1}
+.gr-fair{color:var(--muted);font-size:.93rem;text-align:center;margin:1rem auto 0;max-width:34rem}
+/* קוביות */
+.gr-dice{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;align-items:center;padding:1rem 0;cursor:pointer;min-height:7.4rem}
+.gr-die{width:5.2rem;height:5.2rem;border-radius:1rem;background:#f6f1e4;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:.75rem;box-shadow:inset 0 -5px 0 rgba(0,0,0,.14),0 5px 12px rgba(0,0,0,.4)}
+.gr-die i{width:72%;aspect-ratio:1;border-radius:50%;place-self:center}
+.gr-die i.on{background:#14110a}
+.gr-die.num{display:flex;align-items:center;justify-content:center;padding:0}
+.gr-die.num b{font-family:var(--serif);font-size:2.4rem;color:#14110a}
+.gr-dice.roll .gr-die{animation:gr-shake .16s infinite}
+.gr-dice.roll .gr-die:nth-child(even){animation-direction:reverse}
+@keyframes gr-shake{0%{transform:rotate(-9deg) translateY(-4px)}50%{transform:rotate(9deg) translateY(4px)}100%{transform:rotate(-9deg) translateY(-4px)}}
+/* מטבע */
+.gr-coin-wrap{perspective:900px;display:flex;justify-content:center;padding:1.2rem 0 .4rem}
+.gr-coin{width:11rem;height:11rem;position:relative;transform-style:preserve-3d;cursor:pointer;border:0;background:none;padding:0;font:inherit;border-radius:50%}
+.gr-coin span{position:absolute;inset:0;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.1rem;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:radial-gradient(circle at 35% 30%,#f7e2a3,#cfa037 72%);border:.42rem solid #a87d1f;color:#3a2a05;box-shadow:0 8px 18px rgba(0,0,0,.45);padding:.6rem;text-align:center}
+.gr-coin span.b{transform:rotateY(180deg);background:radial-gradient(circle at 35% 30%,#f1f1ee,#b9b9b2 72%);border-color:#8d8d86;color:#22221f}
+.gr-coin em{font-style:normal;font-size:2.7rem;line-height:1;font-family:var(--serif);font-weight:700}
+.gr-coin b{font-family:var(--serif);font-size:1.7rem;line-height:1.1;overflow-wrap:anywhere}
+.gr-stats{display:flex;gap:.45rem;justify-content:center;flex-wrap:wrap;margin-top:1rem}
+.gr-stats span{border:1px solid var(--line);border-radius:99px;padding:.3rem .8rem;color:var(--body);font-size:.98rem}
+.gr-stats b{color:var(--gold)}
+/* קישורים בין חמשת הדפים */
+.gr-links{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center;margin-top:1.4rem}
+.gr-links a{padding:.5rem .85rem;border:1px solid var(--line);border-radius:99px;color:var(--body);text-decoration:none;font-size:1rem}
+.gr-links a[aria-current]{border-color:var(--gold);color:var(--gold-hi)}
+.gr-links a:hover{border-color:var(--gold-soft);color:var(--cream)}
+/* מסך מלא (לכיתה, למקרן) */
+body.gr-fullscreen .topbar,body.gr-fullscreen .site-foot,body.gr-fullscreen .crumbs,body.gr-fullscreen .k-hero,body.gr-fullscreen .chesed,body.gr-fullscreen .fb,body.gr-fullscreen .k-sec,body.gr-fullscreen .gr-hide{display:none!important}
+body.gr-fullscreen .tool{max-width:60rem;padding-top:3vh}
+body.gr-fullscreen .gr-wheel{width:min(92vw,74vh)}
+body.gr-fullscreen .gr-die{width:min(22vw,9rem);height:min(22vw,9rem)}
+body.gr-fullscreen .gr-coin{width:min(60vw,18rem);height:min(60vw,18rem)}
+@media (prefers-reduced-motion:reduce){.gr-dice.roll .gr-die{animation:none}}
+@media print{.gr-hide,.gr-main,.share-row,.gr-links{display:none}}

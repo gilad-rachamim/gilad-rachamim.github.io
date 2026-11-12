@@ -1,0 +1,69 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_hagrala",
+  "title": "הגרלה אונליין בחינם: הגרלת שמות ומספרים, זוכה אחד או כמה | הכלים של גילעד רחמים",
+  "description": "הגרלה אונליין בחינם: מדביקים רשימת שמות או בוחרים טווח מספרים, קובעים כמה זוכים, ולוחצים להגריל. התוצאה מוצגת עם התאריך, השעה ומספר המשתתפים, ואפשר לשלוח אותה בווטסאפ. הגרלה הוגנת, בלי הרשמה.",
+  "og_title": "הגרלה אונליין: שמות או מספרים, בלחיצה",
+  "priority": "0.7",
+  "crumbs": [
+    [
+      "משחקי חשיבה",
+      "/kelim/chashiva/"
+    ],
+    [
+      "הגרלה",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/chashiva-goral.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך עושים הגרלת שמות?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מדביקים את רשימת השמות, שם בכל שורה, קובעים כמה זוכים, ולוחצים ״להגריל״.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר להגריל כמה זוכים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. כותבים כמה זוכים רוצים, והם מוצגים לפי הסדר. אותו שם לא זוכה פעמיים באותה הגרלה.\"}}, {\"@type\": \"Question\", \"name\": \"איך מגרילים מספר?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בלשונית ״מספרים״ כותבים מספר התחלה ומספר סוף, ולוחצים ״להגריל״.\"}}, {\"@type\": \"Question\", \"name\": \"ההגרלה הוגנת?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. לכל משתתף יש אותו סיכוי. ההגרלה נעשית במכשיר שלכם, ואין לנו דרך להשפיע עליה או לראות אותה.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר להראות לכולם את התוצאה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. ליד התוצאה מופיעים התאריך, השעה ומספר המשתתפים, ואפשר לשלוח אותה בווטסאפ או להעתיק.\"}}, {\"@type\": \"Question\", \"name\": \"זה בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בחינם, בלי הרשמה ובלי פרסומות.\"}}]}</script>",
+  "foot": "<script src=\"/assets/chashiva-goral.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>הגרלה אונליין</h1>
+  <p class="sub">מדביקים שמות או בוחרים טווח מספרים, קובעים כמה זוכים, ומגרילים. הוגן, מהיר ובחינם.</p>
+</header>
+
+<div class="tool" id="gr" data-mode="raffle">
+  <form class="k-form" id="gr-form" novalidate>
+    <div class="gr-chips" role="group" aria-label="ממה מגרילים"><button type="button" data-src="names" aria-pressed="true">שמות</button><button type="button" data-src="nums" aria-pressed="false">מספרים</button></div>
+    <div id="gr-names">
+      <div class="field"><label for="gr-text">המשתתפים <span class="opt">(שם בכל שורה)</span></label><textarea id="gr-text" rows="8" dir="auto"></textarea></div>
+      <div class="gr-btns s" style="margin-top:.6rem"><button class="btn btn-line btn-sm" type="button" id="gr-shuffle">🔀 לערבב</button><button class="btn btn-line btn-sm" type="button" id="gr-clear">למחוק הכול</button></div>
+    </div>
+    <div id="gr-nums" hidden>
+      <div class="gr-two"><div class="field"><label for="gr-from">ממספר</label><input id="gr-from" type="number" inputmode="numeric"></div><div class="field"><label for="gr-to">עד מספר</label><input id="gr-to" type="number" inputmode="numeric"></div></div>
+    </div>
+    <div class="field"><label for="gr-n">כמה זוכים?</label><input id="gr-n" type="number" min="1" value="1" inputmode="numeric"></div>
+    <p class="gr-count" id="gr-count"></p>
+    <div class="gr-checks"><label><input type="checkbox" id="gr-sound"> צלילים</label></div>
+  </form>
+  <div class="gr-main"><button class="btn btn-gold btn-block gr-big" type="button" id="gr-go">🎟 להגריל</button></div>
+  <div class="gr-res" id="gr-res" role="status" hidden></div>
+  <div class="share-row" id="gr-share" hidden><a class="btn btn-gold btn-sm" href="#" id="gr-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את התוצאות</a><button class="btn btn-line btn-sm" type="button" id="gr-copy">להעתיק</button></div>
+  <p class="gr-fair gr-hide">הבחירה אקראית לגמרי ונעשית במכשיר שלכם. שום דבר לא נשלח לשום מקום, ואין לנו דרך להשפיע על התוצאה.</p>
+  <nav class="gr-links gr-hide" aria-label="עוד דרכים להגריל"><a href="/kelim/chashiva/galgal/">🎡 גלגל המזל</a><a href="/kelim/chashiva/galgal-shemot/">👥 גלגל שמות</a><a href="/kelim/chashiva/hagrala/" aria-current="page">🎟 הגרלה</a><a href="/kelim/chashiva/kubiya/">🎲 הטלת קוביה</a><a href="/kelim/chashiva/matbea/">🌳 הטלת מטבע</a></nav>
+  <div class="share-row gr-hide"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="הגרלה אונליין בחינם: הגרלת שמות ומספרים, זוכה אחד או כמה:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">הגרלת שמות ומספרים, הוגנת ובלחיצה אחת</h2>
+  <p>צריכים להגריל זוכה? כאן עושים הגרלה בכמה שניות: הגרלת שמות מתוך רשימה, או הגרלת מספרים מתוך טווח. ההגרלה מתאימה לכיתה, לוועד הבית, לקבוצת ווטסאפ, לערב גיבוש, למבצע של עסק קטן, להגרלה בבית הכנסת ולכל מקום שצריך לבחור באקראי ובהגינות.</p>
+  <h3>הגרלת שמות</h3>
+  <p>מדביקים את רשימת המשתתפים, שם בכל שורה, וקובעים כמה זוכים רוצים. לוחצים "להגריל", והזוכים מוצגים לפי הסדר: ראשון, שני, שלישי. אותו שם לא יכול לזכות פעמיים באותה הגרלה. אם שם מופיע ברשימה פעמיים, יש לו שני כרטיסים. "להוציא את הזוכים ולהגריל עוד" ממשיך להגרלה הבאה בלי מי שכבר זכה.</p>
+  <h3>הגרלת מספרים</h3>
+  <p>בלשונית "מספרים" כותבים מספר התחלה ומספר סוף, למשל מ-1 עד 100, וקובעים כמה מספרים להגריל. זה מתאים להגרלה לפי מספרי כרטיסים, מספרי בתים או מספרים ברשימה.</p>
+  <h3>הגרלה הוגנת ושקופה</h3>
+  <p>ההגרלה נעשית במכשיר שלכם, עם מחולל המספרים האקראיים של הדפדפן, ולכל משתתף יש אותו סיכוי. ליד התוצאה מופיעים התאריך, השעה ומספר המשתתפים, ואפשר לשלוח אותה בווטסאפ לכל הקבוצה. רוצים שכולם יראו את ההגרלה מסתובבת? נסו את <a href="/kelim/chashiva/galgal/">גלגל המזל</a> או את <a href="/kelim/chashiva/galgal-shemot/">גלגל השמות</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך עושים הגרלת שמות?</summary><p>מדביקים את רשימת השמות, שם בכל שורה, קובעים כמה זוכים, ולוחצים "להגריל".</p></details>
+  <details><summary>אפשר להגריל כמה זוכים?</summary><p>כן. כותבים כמה זוכים רוצים, והם מוצגים לפי הסדר. אותו שם לא זוכה פעמיים באותה הגרלה.</p></details>
+  <details><summary>איך מגרילים מספר?</summary><p>בלשונית "מספרים" כותבים מספר התחלה ומספר סוף, ולוחצים "להגריל".</p></details>
+  <details><summary>ההגרלה הוגנת?</summary><p>כן. לכל משתתף יש אותו סיכוי. ההגרלה נעשית במכשיר שלכם, ואין לנו דרך להשפיע עליה או לראות אותה.</p></details>
+  <details><summary>אפשר להראות לכולם את התוצאה?</summary><p>כן. ליד התוצאה מופיעים התאריך, השעה ומספר המשתתפים, ואפשר לשלוח אותה בווטסאפ או להעתיק.</p></details>
+  <details><summary>זה בחינם?</summary><p>כן. בחינם, בלי הרשמה ובלי פרסומות.</p></details>
+</section>
+<!--/seo-txt-->
