@@ -98,3 +98,21 @@ html{scroll-padding-top:5rem;scroll-padding-bottom:7rem} /* 2.4.11: מה שבפ�
 .ts-day .nt button{font-size:.9rem;padding:.25rem .7rem}
 .ts-wd input[type=checkbox]{width:1.5rem;height:1.5rem}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+/* סוג הדוח + כניסות נוספות ונסיעות (12.11.2026, לפי טופס הליווי של יובל) */
+.ts-kind{border:1px solid var(--gold-soft);border-radius:14px;padding:.6rem .8rem .8rem;margin:0 0 1rem;display:grid;gap:.5rem}
+.ts-kind legend{color:#fff;font-weight:700;padding:0 .4rem}
+.ts-kind label{display:flex;gap:.6rem;align-items:flex-start;cursor:pointer;padding:.5rem .6rem;border-radius:10px;border:1px solid #6f7c77;position:relative}
+.ts-kind label:has(input:checked){border-color:#ffd479;background:rgba(227,183,101,.12)}
+.ts-kind input{width:1.3rem;height:1.3rem;margin-top:.15rem;accent-color:var(--gold);flex:none}
+.ts-kind b{display:block;color:#fff}
+.ts-kind small{display:block;color:#e2e8e5;font-size:.9rem}
+.ts-x,.ts-trip{grid-column:1/-1;display:grid;grid-template-columns:3.6rem 1fr 1fr 3.2rem;gap:.4rem;align-items:center}
+.ts-x .xl,.ts-trip .xl{text-align:center;color:#ffd479;font-weight:700}
+.ts-trip .tg{grid-column:2/-1;min-width:0;min-height:2.4rem;padding:.35rem .55rem;border-radius:10px;border:1px solid #a7b2ad;background:rgba(255,255,255,.07);color:#fff;font:inherit}
+.ts-day .rm{min-width:2.4rem;min-height:2.4rem;border-radius:50%;border:1px solid #a7b2ad;background:transparent;color:#fff;font:inherit;cursor:pointer}
+.ts-day .nt button.add{border-style:dashed;border-color:#ffd479;color:#ffe2a3}
+.ts-tips{border:1px solid var(--gold-soft);border-radius:12px;padding:.7rem .8rem;margin-bottom:.8rem;background:rgba(227,183,101,.08);color:#f3f6f4}
+.ts-tips .sk-tools{margin-top:.6rem}
+.ts-paper.wide{font-size:11px}
+.ts-paper.wide th,.ts-paper.wide td{padding:1px 3px;height:16px}
+.ts-paper .sigs .sl{font-size:11.5px;margin:0 0 2px;color:#222}
