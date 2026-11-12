@@ -1,18 +1,26 @@
 {
   "manifest_version": 3,
-  "name": "למלא ולחתום על PDF – הכלים של גילעד רחמים",
-  "short_name": "חתימה על PDF",
-  "version": "1.0.1",
-  "description": "כפתור 'למלא ולחתום' ליד קובצי PDF בג׳ימייל ובלחיצה ימנית על קישור. ממלאים וחותמים בחינם, בלי שהקובץ עולה לשרת.",
-  "homepage_url": "https://hakelim.com/kelim/machshev/chatima/",
+  "name": "הכלים של גילעד רחמים",
+  "short_name": "הכלים",
+  "version": "2.0.0",
+  "description": "חתימה על PDF מג׳ימייל, הקטנת תמונה, כיווץ PDF, פקס, קוד QR וסיסמה חזקה. בחינם, והקבצים לא עולים לשום שרת.",
+  "homepage_url": "https://hakelim.com/kelim/machshev/chatima/tosaf/",
   "icons": { "16": "icon16.png", "32": "icon32.png", "48": "icon48.png", "128": "icon128.png" },
-  "action": { "default_title": "למלא ולחתום על ה-PDF הפתוח", "default_icon": { "16": "icon16.png", "32": "icon32.png" } },
+  "action": { "default_title": "הכלים של גילעד רחמים", "default_popup": "popup.html", "default_icon": { "16": "icon16.png", "32": "icon32.png" } },
   "background": { "service_worker": "background.js" },
-  "permissions": ["contextMenus", "storage", "unlimitedStorage", "activeTab"],
+  "permissions": ["contextMenus", "storage", "unlimitedStorage", "activeTab", "scripting"],
   "host_permissions": ["https://mail.google.com/*", "https://*.googleusercontent.com/*"],
   "optional_host_permissions": ["<all_urls>"],
   "content_scripts": [
     { "matches": ["https://mail.google.com/*"], "js": ["gmail.js"], "css": ["gmail.css"] },
-    { "matches": ["https://hakelim.com/kelim/machshev/chatima/*", "https://gilad-rachamim.github.io/kelim/machshev/chatima/*"], "js": ["bridge.js"], "run_at": "document_idle" }
+    {
+      "matches": [
+        "https://hakelim.com/kelim/machshev/chatima/*", "https://gilad-rachamim.github.io/kelim/machshev/chatima/*",
+        "https://hakelim.com/kelim/machshev/tmuna/*", "https://gilad-rachamim.github.io/kelim/machshev/tmuna/*",
+        "https://hakelim.com/kelim/machshev/pdf/*", "https://gilad-rachamim.github.io/kelim/machshev/pdf/*",
+        "https://hakelim.com/kelim/machshev/fax/*", "https://gilad-rachamim.github.io/kelim/machshev/fax/*"
+      ],
+      "js": ["bridge.js"], "run_at": "document_idle"
+    }
   ]
 }
