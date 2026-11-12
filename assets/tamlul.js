@@ -178,6 +178,22 @@
 
   fileIn.addEventListener('change', function () { var f = fileIn.files[0]; if (f) go(f, f.name.replace(/\.[^.]+$/, '')); });
 
+  // ---------- קובץ ששותף מאפליקציה אחרת, למשל הודעה קולית מווטסאפ (share_target – ה-service worker שומר אותו רגע ב-Cache) ----------
+  if (/[?&]share=1/.test(location.search) && window.caches) {
+    caches.open('tamlul-share').then(function (c) {
+      return c.keys().then(function (keys) {
+        if (!keys.length) return null;
+        return c.match(keys[0]).then(function (r) { return r.blob().then(function (b) { return { blob: b, name: decodeURIComponent(r.headers.get('x-name') || '') }; }); });
+      });
+    }).then(function (x) {
+      caches.delete('tamlul-share');
+      history.replaceState(null, '', location.pathname);
+      if (!x || !x.blob.size) return;
+      if (window.kelimEv) window.kelimEv('tamlul_share_in', { type: x.blob.type || '' });
+      go(new File([x.blob], x.name || 'הקלטה', { type: x.blob.type }), x.name.replace(/\.[^.]+$/, ''));
+    }).catch(function () {});
+  }
+
   // ---------- הקלטה בדף ----------
   var rec = null, chunks = [], t0 = 0, timer = null;
   recBtn.addEventListener('click', function () {
