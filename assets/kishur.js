@@ -162,3 +162,24 @@
   }
   window.kelimShort = { url: url, text: text, now: now, textNow: textNow, clean: clean, warm: warm, go: go };
 })();
+
+// נגישות לקוד QR (ספריית qrcodejs): תמונת הקוד מקבלת טקסט חלופי.
+// לא נוגעים בקובץ הספרייה עצמו – יש עליו חתימת integrity, ושינוי בו חוסם אותו בדפדפן.
+(function () {
+  if (!window.MutationObserver) return;
+  var ALT = 'קוד QR לסריקה';
+  function fix(root) {
+    var imgs = root.querySelectorAll ? root.querySelectorAll('img:not([alt])') : [];
+    for (var i = 0; i < imgs.length; i++) {
+      var p = imgs[i].previousElementSibling;
+      if (p && p.tagName === 'CANVAS') imgs[i].alt = ALT;
+    }
+  }
+  new MutationObserver(function (ms) {
+    for (var i = 0; i < ms.length; i++) for (var j = 0; j < ms[i].addedNodes.length; j++) {
+      var n = ms[i].addedNodes[j];
+      if (n.nodeType === 1) fix(n.tagName === 'IMG' ? n.parentNode || n : n);
+    }
+  }).observe(document.documentElement, { childList: true, subtree: true });
+  fix(document);
+})();
