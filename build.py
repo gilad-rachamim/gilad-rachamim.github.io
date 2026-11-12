@@ -292,6 +292,8 @@ def seo_children(p):
     return [c for c in INDEX if c != p and seo_parent(c) == p and c.rstrip("/").rsplit("/", 1)[1] not in SEO_SKIP]
 
 def seo_is_hub(p):
+    if INDEX.get(p, {}).get("no_hub"):  # כלי שיש מתחתיו דפי נחיתה (תמלול): נשאר כלי, לא דף מרכז
+        return False
     return any(s["home"] == p for s in SITES.values()) or len(seo_children(p)) >= 3
 
 def seo_ld(p, url):
