@@ -3,7 +3,8 @@
 //   src/pages/kodesh/taarich-ivri/index.html – "תאריך עברי היום והמרת תאריך לועזי לעברי" (+ מחשבון בר/בת מצווה)
 // הלוח, הטבלאות והתוצאות שבתוך הדף (לגוגל ולמי שאין לו JavaScript) מחושבים כאן מאותו קוד שרץ בדפדפן:
 // assets/kodesh-ivri.js + hebcal 6.14.7. בדפדפן הדף מחשב מחדש בכל כניסה, אז הוא תמיד מעודכן.
-// הרצה (פעם בחודש, כדי שהלוח הסטטי יראה את החודש הנוכחי):  node tools/ivri_pages.js   ואז  python build.py
+// רץ לבד כל יום ראשון בלילה: .github/workflows/ivri.yml (שומר רק את ארבעת הקבצים של שני הדפים).
+// הרצה ידנית:  node tools/ivri_pages.js   ואז  python build.py
 // מילות החיפוש: ~/.claude/state/kelim-seo/ (לוח שנה עברי, תאריך עברי, המרת תאריך לועזי לעברי, מחשבון בר מצווה).
 'use strict';
 process.env.TZ = 'Asia/Jerusalem';

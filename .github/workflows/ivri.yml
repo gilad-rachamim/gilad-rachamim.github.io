@@ -1,0 +1,44 @@
+# רענון אוטומטי של התוכן שכתוב בתוך שני הדפים (לגוגל ולמי שאין לו JavaScript):
+#   /kodesh/luach-ivri/   – הלוח של החודש הנוכחי, "היום" וחגי ישראל של השנה
+#   /kodesh/taarich-ivri/ – התאריך העברי של היום, הדוגמאות ו-14 הימים הקרובים
+# בדפדפן הדפים מחשבים לבד בכל כניסה; כאן רק דואגים שגם הגרסה הכתובה תהיה עדכנית.
+# רץ כל יום ראשון ב-1 בלילה (שעון ישראל), וכך גם מתחילת כל חודש הלוח מתחלף תוך כמה ימים לכל היותר. אפשר גם ידנית (Run workflow).
+# שומר רק את ארבעת הקבצים של שני הדפים, כדי לא לגעת בדפים של כלים אחרים.
+name: ivri-pages
+on:
+  schedule:
+    - cron: "7 23 * * 6"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: ivri-pages
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: node tools/ivri_pages.js
+      - run: python build.py
+      - name: commit only the two pages
+        run: |
+          FILES="src/pages/kodesh/luach-ivri/index.html src/pages/kodesh/taarich-ivri/index.html kodesh/luach-ivri/index.html kodesh/taarich-ivri/index.html"
+          git add $FILES
+          git checkout -- .
+          git clean -fdq
+          git diff --cached --quiet && { echo "אין שינוי"; exit 0; }
+          git config user.name "ivri-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "רענון אוטומטי: לוח שנה עברי ותאריך עברי"
+          for i in 1 2 3 4 5; do
+            git pull --rebase -X theirs origin main && git push && exit 0
+            sleep 20
+          done
+          exit 1
