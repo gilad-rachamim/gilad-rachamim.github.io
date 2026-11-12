@@ -1,0 +1,36 @@
+<!doctype html>
+<!-- מקור הטופס לדוגמה של הכלי "עריכת PDF וחתימה" (/kelim/machshev/chatima/).
+     יוצר את assets/machshev-chatima-dugma.pdf:
+     msedge --headless=new --no-pdf-header-footer --print-to-pdf=assets/machshev-chatima-dugma.pdf tools/chatima-dugma.html -->
+<html lang="he" dir="rtl"><head><meta charset="utf-8"><title>טופס לדוגמה</title>
+<style>
+@page{size:A4;margin:0}
+body{margin:0;font-family:Arial,"Segoe UI",sans-serif;color:#111}
+.p{width:210mm;height:296mm;box-sizing:border-box;padding:22mm 20mm}
+h1{font-size:22pt;margin:0 0 2mm}
+.sub{color:#555;font-size:11pt;margin:0 0 10mm}
+.row{display:flex;gap:8mm;margin:0 0 9mm;align-items:flex-end;font-size:12.5pt}
+.row label{white-space:nowrap}
+.ln{flex:1;border-bottom:1.2px solid #222;height:8mm}
+h2{font-size:14pt;margin:12mm 0 5mm;border-bottom:2px solid #222;padding-bottom:2mm}
+.cb{display:flex;gap:4mm;align-items:center;margin:0 0 5mm;font-size:12.5pt}
+.cb i{display:inline-block;width:5mm;height:5mm;border:1.2px solid #222}
+.us{font-size:12.5pt;margin:0 0 9mm}
+.sig{display:flex;gap:14mm;margin-top:16mm;font-size:12.5pt}
+.sig div{flex:1}
+.sig .ln{height:14mm;margin-top:2mm}
+.foot{margin-top:18mm;color:#777;font-size:9.5pt}
+</style></head><body><div class="p">
+<h1>טופס בקשה – לדוגמה</h1>
+<p class="sub">זה טופס לדוגמה כדי לנסות את הכלי. בחרו את הקובץ שלכם למעלה.</p>
+<div class="row"><label>שם מלא:</label><div class="ln"></div><label>מספר זהות:</label><div class="ln"></div></div>
+<div class="row"><label>טלפון:</label><div class="ln"></div><label>דוא״ל:</label><div class="ln"></div></div>
+<div class="row"><label>כתובת:</label><div class="ln"></div></div>
+<h2>פרטי הבקשה</h2>
+<p class="us">מהות הבקשה: ____________________________________________</p>
+<p class="us">הערות: _________________________________________________</p>
+<div class="cb"><i></i> אני מאשר/ת שהפרטים נכונים</div>
+<div class="cb"><i></i> מבקש/ת לקבל תשובה במייל</div>
+<div class="sig"><div>תאריך:<div class="ln"></div></div><div>חתימה:<div class="ln"></div></div></div>
+<p class="foot">הכלים של גילעד רחמים · hakelim.com/kelim · טופס לדוגמה בלבד</p>
+</div></body></html>

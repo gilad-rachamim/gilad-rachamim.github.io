@@ -96,5 +96,15 @@
     }
    ]
   }
- }
+ },
+ "file_handlers": [
+  {
+   "action": "/kelim/machshev/chatima/",
+   "accept": {
+    "application/pdf": [
+     ".pdf"
+    ]
+   }
+  }
+ ]
 }

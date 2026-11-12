@@ -15,7 +15,7 @@ self.addEventListener('activate', function (e) {
 self.addEventListener('fetch', function (e) {
   var req = e.request;
   // קבצים ששותפו מאפליקציה אחרת (share_target ב-manifest של הכלים): שומרים רגע ב-Cache ופותחים את הכלי המתאים.
-  // קובץ אחד של שמע או וידאו (הודעה קולית מווטסאפ) – כלי התמלול. כל השאר (תמונות, כמה קבצים) – מסדר התיקיות, כמו תמיד.
+  // קובץ אחד של שמע או וידאו (הודעה קולית מווטסאפ) – כלי התמלול. PDF אחד – מילוי וחתימה. כל השאר (תמונות, כמה קבצים) – מסדר התיקיות, כמו תמיד.
   if (req.method === 'POST' && /\/machshev\/sader\/$/.test(new URL(req.url).pathname)) {
     e.respondWith(req.formData().then(function (fd) {
       var files = fd.getAll('files').filter(function (f) { return f && typeof f !== 'string'; });
@@ -23,6 +23,11 @@ self.addEventListener('fetch', function (e) {
       var ext = files.length === 1 ? (/\.([a-z0-9]+)$/i.exec(files[0].name || '') || [])[1] : '';
       var byExt = ext ? AVX[ext.toLowerCase()] : '';
       var av = files.length === 1 && (/^(audio|video)\//.test(files[0].type || '') || !!byExt);
+      // קובץ PDF בודד – הכלי למילוי וחתימה על PDF
+      var pdf = files.length === 1 && (/pdf$/i.test(files[0].type || '') || /\.pdf$/i.test(files[0].name || ''));
+      if (pdf) return caches.delete('chatima-share').then(function () { return caches.open('chatima-share'); }).then(function (c) {
+        return c.put('/chatima-share/0', new Response(files[0], { headers: { 'content-type': 'application/pdf', 'x-name': encodeURIComponent(files[0].name || 'מסמך.pdf') } }));
+      }).then(function () { return Response.redirect('/kelim/machshev/chatima/?share=1', 303); });
       var box = av ? 'tamlul-share' : 'sader-share';
       return caches.delete(box).then(function () { return caches.open(box); }).then(function (c) {
         return Promise.all(files.map(function (f, i) {

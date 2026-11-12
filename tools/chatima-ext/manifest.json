@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "למלא ולחתום על PDF – הכלים של גילעד רחמים",
+  "short_name": "חתימה על PDF",
+  "version": "1.0.0",
+  "description": "כפתור 'למלא ולחתום' ליד קובצי PDF בג׳ימייל ובלחיצה ימנית על קישור ל-PDF. נפתח בכלי החינמי hakelim.com, בלי לעלות לשום שרת.",
+  "icons": { "48": "icon.png", "128": "icon.png" },
+  "action": { "default_title": "למלא ולחתום על ה-PDF הפתוח", "default_icon": "icon.png" },
+  "background": { "service_worker": "background.js" },
+  "permissions": ["contextMenus", "storage", "unlimitedStorage", "activeTab"],
+  "host_permissions": ["https://mail.google.com/*", "https://*.googleusercontent.com/*"],
+  "optional_host_permissions": ["<all_urls>"],
+  "content_scripts": [
+    { "matches": ["https://mail.google.com/*"], "js": ["gmail.js"], "css": ["gmail.css"] },
+    { "matches": ["https://hakelim.com/kelim/machshev/chatima/*", "https://gilad-rachamim.github.io/kelim/machshev/chatima/*"], "js": ["bridge.js"], "run_at": "document_idle" }
+  ]
+}
