@@ -1,7 +1,7 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'nefesh-202611121424';
+var CACHE = 'nefesh-202611121425';
 var PRECACHE = ["/nefesh/hayom/", "/nefesh/", "/nefesh/koach/", "/nefesh/michtav/", "/nefesh/mishpacha/", "/nefesh/rega/", "/nefesh/tmicha/", "/nefesh/yoman/", "/assets/site.css?v=b4546dc2", "/assets/kelim.css?v=56115877", "/assets/kelim.js?v=5c4b7217", "/assets/track.js?v=963b507e", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-nefesh-192.png", "/assets/nefesh.css?v=21cf25b4", "/assets/nefesh.js?v=bb3ac2d0"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
@@ -14,16 +14,23 @@ self.addEventListener('activate', function (e) {
 });
 self.addEventListener('fetch', function (e) {
   var req = e.request;
-  // קבצים ששותפו מהגלריה (share_target ב-manifest של הכלים): שומרים רגע ב-Cache ופותחים את מסדר התיקיות
+  // קבצים ששותפו מאפליקציה אחרת (share_target ב-manifest של הכלים): שומרים רגע ב-Cache ופותחים את הכלי המתאים.
+  // קובץ אחד של שמע או וידאו (הודעה קולית מווטסאפ) – כלי התמלול. כל השאר (תמונות, כמה קבצים) – מסדר התיקיות, כמו תמיד.
   if (req.method === 'POST' && /\/machshev\/sader\/$/.test(new URL(req.url).pathname)) {
     e.respondWith(req.formData().then(function (fd) {
-      var files = fd.getAll('files');
-      return caches.delete('sader-share').then(function () { return caches.open('sader-share'); }).then(function (c) {
+      var files = fd.getAll('files').filter(function (f) { return f && typeof f !== 'string'; });
+      var AVX = { opus: 'audio/ogg', ogg: 'audio/ogg', oga: 'audio/ogg', m4a: 'audio/mp4', mp3: 'audio/mpeg', aac: 'audio/aac', amr: 'audio/amr', wav: 'audio/wav', flac: 'audio/flac', mp4: 'video/mp4', '3gp': 'video/3gpp', webm: 'video/webm', mov: 'video/quicktime' };
+      var ext = files.length === 1 ? (/\.([a-z0-9]+)$/i.exec(files[0].name || '') || [])[1] : '';
+      var byExt = ext ? AVX[ext.toLowerCase()] : '';
+      var av = files.length === 1 && (/^(audio|video)\//.test(files[0].type || '') || !!byExt);
+      var box = av ? 'tamlul-share' : 'sader-share';
+      return caches.delete(box).then(function () { return caches.open(box); }).then(function (c) {
         return Promise.all(files.map(function (f, i) {
-          return c.put('/sader-share/' + i, new Response(f, { headers: { 'content-type': f.type || 'application/octet-stream', 'x-name': encodeURIComponent(f.name), 'x-mod': String(f.lastModified || '') } }));
+          var type = f.type && (!av || /^(audio|video)\//.test(f.type)) ? f.type : (av && byExt) || 'application/octet-stream';
+          return c.put('/' + box + '/' + i, new Response(f, { headers: { 'content-type': type, 'x-name': encodeURIComponent(f.name), 'x-mod': String(f.lastModified || '') } }));
         }));
-      });
-    }).then(function () { return Response.redirect('/kelim/machshev/sader/?share=1', 303); }));
+      }).then(function () { return Response.redirect(av ? '/kelim/tamlul/?share=1' : '/kelim/machshev/sader/?share=1', 303); });
+    }));
     return;
   }
   if (req.method !== 'GET') return;

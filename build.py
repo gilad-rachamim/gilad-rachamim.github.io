@@ -480,9 +480,9 @@ for key, site in SITES.items():
     if key == "kelim":  # לחיצה ארוכה על האייקון: ישר לכלים הכי שימושיים
         man["shortcuts"] = [{"name": n, "short_name": n, "url": u + "?utm_source=pwa_shortcut", "icons": [{"src": "/assets/icon-kelim-192.png", "sizes": "192x192"}]}
                             for n, u in [("תמלול", "/kelim/tamlul/"), ("התרופות שלי", "/kelim/briut/trufot/"), ("הכנה לוועדה", "/kelim/shikum/vaada/"), ("הקטנת סרטון", "/kelim/machshev/video/")]]
-    if key == "kelim":  # "שיתוף" מהגלריה בטלפון ישר למסדר התיקיות (src/sw.js מקבל את הקבצים)
+    if key == "kelim":  # "שיתוף" מאפליקציה אחרת בטלפון: src/sw.js מקבל את הקבצים ומנתב – שמע/וידאו בודד לתמלול, השאר למסדר התיקיות
         man["share_target"] = {"action": "/kelim/machshev/sader/?share=1", "method": "POST", "enctype": "multipart/form-data",
-                               "params": {"files": [{"name": "files", "accept": ["*/*"]}]}}
+                               "params": {"files": [{"name": "files", "accept": ["*/*", "audio/*", "video/*", "image/*", "audio/ogg", "audio/opus", "audio/mpeg", "audio/mp4", "audio/aac", "audio/amr", "audio/wav", "video/mp4", "video/3gpp", "video/webm"]}]}}
     (d / "manifest.webmanifest").write_text(json.dumps(man, ensure_ascii=False, indent=1), encoding="utf-8")
     pre = site_pages[key] + ["/assets/site.css", "/assets/kelim.css", "/assets/kelim.js", "/assets/track.js",
                              "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff",
