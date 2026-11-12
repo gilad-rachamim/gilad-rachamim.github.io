@@ -81,7 +81,7 @@ const strip = s => s.replace(/<[^>]+>/g, '');
   <div class="res iv-day no-print" id="li-day" aria-live="polite" hidden></div>
   <div class="share-row no-print">
     <button class="btn btn-gold btn-sm" type="button" data-iv-print="m">להדפיס את החודש</button>
-    <button class="btn btn-line btn-sm" type="button" data-iv-print="y">להדפיס את כל השנה (<span data-iv-yr>${CIV.getFullYear()}</span>)</button>
+    <button class="btn btn-line btn-sm" type="button" data-iv-print="y">להדפיס את כל שנת <bdi data-iv-yr>${CIV.getFullYear()}</bdi></button>
     <a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="לוח שנה עברי לועזי, עם חגים, ראשי חודשים ופרשות. בחינם ובלי פרסומות:" target="_blank" rel="noopener">${WA} לשלוח לחבר</a>
   </div>
 </div>
