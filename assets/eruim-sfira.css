@@ -1,0 +1,23 @@
+/* ספירה לאחור לתאריך (/kelim/eruim/sfira/). שלושה סגנונות: לילה, קלף, ירוק זית. */
+.sf-card{border-radius:22px;padding:1.5rem 1rem 1.3rem;text-align:center;border:1px solid var(--gold-soft);background:linear-gradient(170deg,#1d2a29,#0f1d1c 70%);color:#f6f1e4;--sf-acc:#e3b765;--sf-box:rgba(255,255,255,.06);--sf-mut:#cfc8b6}
+.sf-card.s1{background:linear-gradient(170deg,#f8efd9,#eedfbd);color:#2a2110;border-color:#c9b27a;--sf-acc:#7a5a12;--sf-box:rgba(122,90,18,.1);--sf-mut:#4f432a}
+.sf-card.s2{background:linear-gradient(170deg,#4a5a33,#35421f);color:#f8f4e6;border-color:#8a9a66;--sf-acc:#f0d48a;--sf-box:rgba(255,255,255,.1);--sf-mut:#e6e2cf}
+.sf-em{font-size:3rem;line-height:1.1}
+.sf-name{font-family:var(--serif);font-size:clamp(1.5rem,6.5vw,2.2rem);line-height:1.25;margin:.3rem 0 0;color:inherit;overflow-wrap:anywhere}
+.sf-pre{margin:.6rem 0 .5rem;color:var(--sf-acc);font-weight:700;font-size:1.15rem}
+.sf-nums{display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem;direction:rtl}
+.sf-nums div{background:var(--sf-box);border-radius:14px;padding:.6rem .1rem}
+.sf-nums b{display:block;font-family:var(--serif);font-size:clamp(1.7rem,9vw,3rem);line-height:1.1;font-variant-numeric:tabular-nums;direction:ltr}
+.sf-nums div:first-child b{color:var(--sf-acc)}
+.sf-nums span{font-size:.9rem;color:var(--sf-mut)}
+.sf-extra{margin:.5rem 0 0;color:var(--sf-mut);font-size:.98rem;min-height:1.3em}
+.sf-date{margin:.5rem 0 0;font-size:1.05rem;color:inherit}
+.sf-note{margin:.8rem 0 0;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;justify-content:center;color:var(--parchment);background:rgba(227,183,101,.1);border:1px solid var(--gold-soft);border-radius:12px;padding:.6rem .8rem;text-align:center}
+.sf-form{margin-top:1.2rem}
+body.sf-fullscreen .topbar,body.sf-fullscreen .site-foot,body.sf-fullscreen .crumbs,body.sf-fullscreen .k-hero,body.sf-fullscreen .chesed,body.sf-fullscreen .fb,body.sf-fullscreen .k-sec,body.sf-fullscreen .sf-hide{display:none!important}
+body.sf-fullscreen .tool{max-width:60rem;padding-top:6vh}
+body.sf-fullscreen .sf-card{padding:8vh 1rem}
+body.sf-fullscreen .sf-name{font-size:clamp(2rem,7vw,4.5rem)}
+body.sf-fullscreen .sf-nums b{font-size:clamp(2.2rem,11vw,7rem)}
+body.sf-fullscreen .sf-em{font-size:clamp(3rem,10vw,6rem)}
+@media print{.sf-hide,.share-row{display:none}}
