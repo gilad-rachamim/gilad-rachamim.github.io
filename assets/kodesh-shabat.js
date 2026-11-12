@@ -2,6 +2,7 @@
 // אותו חישוב בדיוק כמו ב"זמנים לבסיס" (assets/zmanim.js), מ-@hebcal/core 6.14.7:
 //   הדלקת נרות = שקיעה מישורית בגובה פני הים, פחות X דקות (ירושלים 40, חיפה ובית שמש 30, שאר המקומות 20), מעוגל למטה לדקה.
 //   צאת השבת  = השמש 8.5° מתחת לאופק, מעוגל למעלה לדקה.
+//   רבנו תם   = 72 דקות שוות אחרי השקיעה המישורית של שבת, מעוגל למעלה לדקה (כמו בלוחות הנפוצים בארץ).
 // הקובץ נטען גם ב-node (tools/shabat_pages.js) כדי שהטבלאות שבדף עצמו ייצאו מאותו קוד.
 (function (root) {
   'use strict';
@@ -64,6 +65,7 @@
         fri: fri, sat: sat, mins: mins,
         candle: down(new Date(new H.Zmanim(gl, fri, false).sunset().getTime() - mins * 60000)),
         havdala: up(new H.Zmanim(gl, sat, false).tzeit(8.5)),
+        rt: up(new Date(new H.Zmanim(gl, sat, false).sunset().getTime() + 72 * 60000)),
         hdate: hd.renderGematriya(true), name: '', title: 'שבת', notes: []
       };
       try {
@@ -106,25 +108,25 @@
       return '<h2 class="sb-h">' + w.title + '</h2>' +
         '<p class="sb-st">' + where + ' · שבת, ' + w.hdate + ' (' + dm(w.sat) + '.' + w.sat.getFullYear() + ')</p>' +
         '<div class="sb-two"><div><strong>כניסת שבת</strong><b>' + t(w.candle) + '</b><span>הדלקת נרות, יום שישי ' + dm(w.fri) + '<br>' + w.mins + ' דק׳ לפני השקיעה</span></div>' +
-        '<div><strong>צאת שבת</strong><b>' + t(w.havdala) + '</b><span>מוצאי שבת ' + dm(w.sat) + '<br>צאת הכוכבים</span></div></div>' +
+        '<div><strong>צאת שבת</strong><b>' + t(w.havdala) + '</b><span>מוצאי שבת ' + dm(w.sat) + '<br>צאת הכוכבים</span><span class="sb-rt">לפי רבנו תם: <bdi>' + t(w.rt) + '</bdi></span></div></div>' +
         (c ? '<p class="sb-count">' + c + '</p>' : '') +
         w.notes.map(function (n) { return '<p class="sb-note">' + n + '</p>'; }).join('');
     }
     function weeksHtml(list) {
-      return '<table class="sb-tbl"><thead><tr><th scope="col">שבת</th><th scope="col" class="c">כניסה</th><th scope="col" class="c">יציאה</th></tr></thead><tbody>' +
+      return '<table class="sb-tbl"><thead><tr><th scope="col">שבת</th><th scope="col" class="c">כניסה</th><th scope="col" class="c">יציאה</th><th scope="col" class="c rt"><abbr title="לפי רבנו תם">ר״ת</abbr></th></tr></thead><tbody>' +
         list.map(function (w, i) {
-          return '<tr' + (i === 0 ? ' class="now"' : '') + '><th scope="row">' + (w.name || 'שבת') + '<small>' + w.hdate + ' · ' + dm(w.sat) + '</small></th><td class="t">' + t(w.candle) + '</td><td class="t">' + t(w.havdala) + '</td></tr>';
+          return '<tr' + (i === 0 ? ' class="now"' : '') + '><th scope="row">' + (w.name || 'שבת') + '<small>' + w.hdate + ' · ' + dm(w.sat) + '</small></th><td class="t">' + t(w.candle) + '</td><td class="t">' + t(w.havdala) + '</td><td class="t rt">' + t(w.rt) + '</td></tr>';
         }).join('') + '</tbody></table>';
     }
     function citiesHtml(fri) {
-      return '<table class="sb-tbl"><thead><tr><th scope="col">עיר</th><th scope="col" class="c">כניסת שבת</th><th scope="col" class="c">צאת שבת</th></tr></thead><tbody>' +
+      return '<table class="sb-tbl"><thead><tr><th scope="col">עיר</th><th scope="col" class="c">כניסת שבת</th><th scope="col" class="c">צאת שבת</th><th scope="col" class="c rt">רבנו תם</th></tr></thead><tbody>' +
         CITIES.map(function (c) {
           var w = week(c[3], c[4], fri, c[5]);
-          return '<tr><th scope="row"><a href="' + HOME + c[0] + '/">' + c[1] + '</a></th><td class="t">' + t(w.candle) + '</td><td class="t">' + t(w.havdala) + '</td></tr>';
+          return '<tr><th scope="row"><a href="' + HOME + c[0] + '/">' + c[1] + '</a></th><td class="t">' + t(w.candle) + '</td><td class="t">' + t(w.havdala) + '</td><td class="t rt">' + t(w.rt) + '</td></tr>';
         }).join('') + '</tbody></table>';
     }
     function shareText(w, where, url) {
-      return w.title + ' (' + w.hdate + ')\n' + where + '\n\nכניסת שבת (הדלקת נרות): ' + t(w.candle) + '\nצאת שבת: ' + t(w.havdala) +
+      return w.title + ' (' + w.hdate + ')\n' + where + '\n\nכניסת שבת (הדלקת נרות): ' + t(w.candle) + '\nצאת שבת: ' + t(w.havdala) + '\nצאת שבת לפי רבנו תם: ' + t(w.rt) +
         (w.notes.length ? '\n' + w.notes.join('\n') : '') + '\n\nזמני השבת לכל עיר: ' + url;
     }
     return { t: t, dm: dm, add: add, week: week, weeks: weeks, firstFriday: firstFriday, heroHtml: heroHtml, weeksHtml: weeksHtml, citiesHtml: citiesHtml, shareText: shareText, countText: countText };
@@ -164,7 +166,7 @@
     $('sb-more').hidden = shown >= 60;
     if ($('sb-cities')) { $('sb-cities').innerHTML = C.citiesHtml(fri); var cap = $('sb-cities-h'); if (cap) cap.textContent = 'זמני השבת בכל הערים, ' + w.title.replace(/^שבת /, '') + ' (' + C.dm(w.sat) + ')'; }
     lastText = C.shareText(w, p.name, location.origin + p.url);
-    lastSay = p.name + ', ' + w.title + ': כניסת שבת ' + C.t(w.candle) + ', צאת שבת ' + C.t(w.havdala);
+    lastSay = p.name + ', ' + w.title + ': כניסת שבת ' + C.t(w.candle) + ', צאת שבת ' + C.t(w.havdala) + ', לפי רבנו תם ' + C.t(w.rt);
     $('sb-wa').href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(lastText);
   }
   sel.addEventListener('change', function () {
