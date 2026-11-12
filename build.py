@@ -452,7 +452,8 @@ for path in sorted(SRC.rglob("*.html")):
             "site_css": "".join(f'<link rel="stylesheet" href="{c}">' for c in site.get("css", [])),
         })
         rep["foot"] += "".join(f'<script src="{j}" defer></script>' for j in site.get("js", []))
-        site_pages[key].append(url_path)
+        if not meta.get("no_precache"):  # דפים רבים מאותו סוג (פרקי תהילים): לא נשמרים מראש בטלפון, רק כשנכנסים אליהם
+            site_pages[key].append(url_path)
     for k, v in rep.items():
         html = html.replace("{{" + k + "}}", v)
     for key in ["yerushalaim", "sipur", "hachana", "moed", "madrich", "kartis"]:

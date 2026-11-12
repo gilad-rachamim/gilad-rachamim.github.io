@@ -1,0 +1,49 @@
+/* דפי קריאה (ברכת המזון, תפילת הדרך, תהילים). נטען אחרי boker.css ומשתמש באותו עיצוב (bk-*). */
+.bk-seg.kr-3{grid-template-columns:repeat(3,1fr)}
+.bk-seg.kr-3 button{font-size:.95rem;padding:.55rem .2rem}
+/* נוסח: מסתירים כל מה שלא שייך לנוסח שנבחר (data-n יכול להכיל כמה נוסחים, למשל "ash sef") */
+.bk-paper[data-nusach=ash] [data-n]:not([data-n~=ash]),
+.bk-paper[data-nusach=sef] [data-n]:not([data-n~=sef]),
+.bk-paper[data-nusach=em] [data-n]:not([data-n~=em]){display:none}
+.kr-fl-title{flex:1;min-width:0;color:var(--cream);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* הוראה קטנה בתוך שורת התפילה (כמו בסידור: "בעשרה", "אם חוזר בו ביום מוסיף") */
+.bk-sec .ii{font-family:var(--sans,inherit);font-size:.68em;color:#6b5a32;font-weight:400}
+.bk-sec p.ins .ii{font-size:1em;color:inherit}
+/* תוספת לימים מיוחדים: במקום שלה, במסגרת */
+.kr-add{margin:.7rem 0;border:1px solid #e3d3a6;border-inline-start:5px solid #b8902f;border-radius:10px;padding:.3rem .75rem .45rem;background:#fbf5e4}
+.kr-add-t{font-family:var(--sans,inherit);font-weight:700;color:#7a5a12;font-size:1rem;margin:.25rem 0 .15rem!important;line-height:1.4}
+.kr-add p{font-size:calc(var(--fs) * .97)}
+.kr-note{font-family:var(--sans,inherit);font-size:.95rem!important;color:#6a4b10;border:1px dashed #c9a85a;border-radius:8px;padding:.35rem .6rem;line-height:1.55;background:#fffaf0}
+.bk-det>div{padding-bottom:.3rem}
+.bk-det[open] summary{margin-bottom:.2rem}
+.bk-paper.dark .kr-add{background:#1b2232;border-color:#3a3f4c;border-inline-start-color:#b8902f}
+.bk-paper.dark .kr-add-t,.bk-paper.dark .bk-sec .ii{color:#e2c178}
+.bk-paper.dark .kr-note{background:#1f2636;color:#d9c9a2;border-color:#5a5034}
+.kr-nus-now{font-family:var(--sans,inherit);text-align:center;font-size:.9rem;color:#6b5a32;margin:.2rem 0 0}
+.bk-paper.dark .kr-nus-now{color:#a99d80}
+
+/* מקורות שמצוטטים בשאלות */
+.seo-faq q,.seo-txt q{font-family:var(--serif);quotes:"\201D" "\201C";color:var(--cream)}
+.seo-faq cite,.seo-txt cite{font-style:normal;color:var(--gold);font-size:.92em}
+
+/* תהילים */
+.ps p.kr-ps{text-align:justify}
+.ps .vn{font-family:var(--sans,inherit);font-size:.62em;color:#8a6a20;font-weight:700;vertical-align:.25em;margin-inline-end:.15em}
+.bk-paper.dark .ps .vn{color:#d7b46a}
+.kr-pn{display:flex;gap:.5rem;justify-content:space-between;margin-top:1rem;flex-wrap:wrap}
+.kr-pn a{flex:1 1 40%;text-align:center;padding:.6rem .5rem;border-radius:10px;border:1px solid var(--line);color:var(--cream);text-decoration:none;font-weight:700;min-height:44px}
+.kr-pn a:hover{border-color:var(--gold)}
+.kr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(3.1rem,1fr));gap:.35rem;margin:.6rem 0 0}
+.kr-grid a{display:flex;align-items:center;justify-content:center;min-height:44px;border-radius:9px;border:1px solid var(--line);color:var(--cream);text-decoration:none;font-weight:700;font-family:var(--serif);font-size:1.05rem}
+.kr-grid a:hover,.kr-grid a:focus-visible{border-color:var(--gold);color:var(--gold)}
+.kr-tbl{width:100%;border-collapse:collapse;margin-top:.5rem;font-size:1rem}
+.kr-tbl th,.kr-tbl td{border-bottom:1px solid var(--line);padding:.45rem .3rem;text-align:start;vertical-align:top;color:var(--body)}
+.kr-tbl th{color:var(--cream);white-space:nowrap}
+.kr-tbl a{color:var(--gold)}
+.kr-tbl tr.kr-now td,.kr-tbl tr.kr-now th{background:rgba(212,176,98,.14)}
+.kr-today{background:rgba(212,176,98,.12);border:1px solid var(--gold);border-radius:12px;padding:.6rem .8rem;color:var(--cream);margin:.2rem 0 .8rem}
+.kr-today a{color:var(--gold);font-weight:700}
+.kr-meta{font-family:var(--sans,inherit);font-size:.95rem;color:#5e5644;text-align:center;line-height:1.6;margin:.1rem 0 .8rem!important}
+.bk-paper.dark .kr-meta{color:#a99d80}
+@media print{.kr-pn,.kr-today{display:none!important}}
