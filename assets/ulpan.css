@@ -44,4 +44,6 @@ body.ul-recording .ul-wave{border-color:#d8493a}
 .ul-note b{color:var(--gold)}
 .ul-note span{color:var(--parchment);font-size:.95rem}
 #ul-voice2{gap:.35rem}
+#ul-v2where[hidden]{display:none}
+#ul-v2where button{padding:.35rem .8rem;font-size:.95rem;min-height:0}
 #ul-voice2 button{padding-inline:.6rem}

@@ -14,7 +14,7 @@
   <h1>אולפן הקלטות</h1>
   <p class="sub">שומעים את המוזיקה ושרים עליה מהטלפון. האולפן מסנכרן, מנקה, מיישר לקצב ומתקן זיופים, ומחזיר שיר מוכן. לא צריך לשיר מושלם.</p>
 </header>
-<div class="tool" id="ul-root" data-dsp="/assets/ulpan-dsp.js?v=5">
+<div class="tool" id="ul-root" data-dsp="/assets/ulpan-dsp.js?v=6">
   <nav class="shr-steps" aria-label="שלבי השיר"><a href="/kelim/shir/milim/"><b>1</b>מילים</a><a href="/kelim/shir/lachan/"><b>2</b>לחן</a><a class="on" href="/kelim/shir/ulpan/"><b>3</b>אולפן</a><a href="/kelim/shir/clip/"><b>4</b>קליפ</a></nav>
 
   <section class="ul-box">
@@ -51,9 +51,9 @@
     <div class="k-form ul-set">
       <div class="field"><span class="label">ניקוי רעשים</span><div class="shr-chips" id="ul-noise"><button type="button" data-v="0">בלי</button><button type="button" data-v="1">עדין</button><button type="button" data-v="2">רגיל</button><button type="button" data-v="3">חזק</button></div></div>
       <div class="field"><span class="label">יישור לקצב</span><div class="shr-chips" id="ul-tight"><button type="button" data-v="0">בלי</button><button type="button" data-v="0.5">עדין</button><button type="button" data-v="1">חזק</button></div></div>
-      <div class="field"><span class="label">תיקון זיופים</span><div class="shr-chips" id="ul-tune"><button type="button" data-v="0">בלי</button><button type="button" data-v="0.4">עדין</button><button type="button" data-v="0.7">בינוני</button><button type="button" data-v="1">חזק</button></div><p class="hint" id="ul-tune-hint" hidden>בשיר שהלחנתם כאן האולפן מכיר את המנגינה. ב"בינוני" וב"חזק" הוא מחזיר אליה גם תו שנחת על התו השכן.</p></div>
+      <div class="field"><span class="label">תיקון זיופים</span><div class="shr-chips" id="ul-tune"><button type="button" data-v="0">בלי</button><button type="button" data-v="0.4">עדין</button><button type="button" data-v="0.7">בינוני</button><button type="button" data-v="1">חזק</button></div><p class="hint" id="ul-tune-hint" hidden>בשיר שהלחנתם כאן האולפן מכיר את המנגינה. ב"בינוני" וב"חזק" הוא מחזיר אליה גם תו שנחת על התו השכן, וגם הברה שנשארתם בה על התו הקודם.</p></div>
       <div class="field"><span class="label">צליל הקול</span><div class="shr-chips" id="ul-style"><button type="button" data-v="tivi">טבעי</button><button type="button" data-v="ulpan">אולפן</button><button type="button" data-v="ulam">אולם גדול</button></div></div>
-      <div class="field"><span class="label">קולות ליווי</span><div class="shr-chips" id="ul-voice2"><button type="button" data-v="off">בלי</button><button type="button" data-v="double">הכפלה</button><button type="button" data-v="second">קול שני</button><button type="button" data-v="choir">מקהלה</button></div><p class="hint">הכפלה מעבה את הקול, כמו ששרים פעמיים. קול שני שר איתכם בהרמוניה שמתאימה למוזיקה. מקהלה: הכול יחד.</p></div>
+      <div class="field"><span class="label">קולות ליווי</span><div class="shr-chips" id="ul-voice2"><button type="button" data-v="off">בלי</button><button type="button" data-v="double">הכפלה</button><button type="button" data-v="second">קול שני</button><button type="button" data-v="choir">מקהלה</button></div><div class="shr-chips" id="ul-v2where" hidden><button type="button" data-v="0">בכל השיר</button><button type="button" data-v="1">רק בפזמון</button></div><p class="hint">הכפלה מעבה את הקול, כמו ששרים פעמיים. קול שני שר איתכם בהרמוניה שמתאימה למוזיקה. מקהלה: הכול יחד.</p></div>
       <div class="field"><span class="label">מה חזק יותר?</span><div class="shr-range"><span>המוזיקה</span><input type="range" id="ul-bal" min="-8" max="8" step="1" value="0" aria-label="היחס בין הקול למוזיקה"><span>הקול</span></div></div>
       <details class="ul-det"><summary>⚙️ סנכרון ומיקרופון (אם הקול לא יושב על המוזיקה)</summary>
         <div class="field"><span class="label">הקול מקדים או מאחר?</span><div class="shr-range"><span>מקדים</span><input type="range" id="ul-off" min="-300" max="300" step="10" value="0" aria-label="תזמון הקול"><span>מאחר</span></div><p class="hint" id="ul-offv"></p></div>
@@ -82,8 +82,8 @@
     <div><b>מסנכרן</b><span>כל טלפון מקליט באיחור קטן. האולפן מודד אותו לבד ומחזיר את הקול בדיוק למקום.</span></div>
     <div><b>מנקה</b><span>מוריד רעש רקע, משקיט את ההפסקות שבין משפט למשפט, ומוריד גם את המוזיקה שנכנסה למיקרופון אם שרתם בלי אוזניות.</span></div>
     <div><b>מיישר לקצב</b><span>משפט שנכנס קצת מוקדם או מאוחר זז בעדינות למקום שבו הוא יושב על המוזיקה. בשיר שהלחנתם כאן: בדיוק לפי המקום של כל הברה.</span></div>
-    <div><b>מתקן זיופים</b><span>כל תו זז לתו הקרוב בסולם של השיר. בשיר שהלחנתם כאן האולפן מכיר את המנגינה ומחזיר אליה גם תו שברח. הרטט הטבעי של הקול נשאר, כך שזה עדיין אתם.</span></div>
-    <div><b>מוסיף קולות</b><span>אם רוצים: הכפלה שמעבה את הקול, קול שני בהרמוניה לפי האקורדים של המוזיקה, או מקהלה קטנה. הכול נבנה מהקול שלכם.</span></div>
+    <div><b>מתקן זיופים</b><span>כל תו זז לתו הקרוב בסולם של השיר. בשיר שהלחנתם כאן האולפן מכיר את המנגינה ומחזיר אליה גם תו שברח, וגם הברה שנשארה על התו הקודם. הרטט הטבעי של הקול נשאר, כך שזה עדיין אתם.</span></div>
+    <div><b>מוסיף קולות</b><span>אם רוצים: הכפלה שמעבה את הקול, קול שני בהרמוניה לפי האקורדים של המוזיקה, או מקהלה קטנה. בשיר שהלחנתם כאן אפשר גם רק בפזמון. הכול נבנה מהקול שלכם.</span></div>
     <div><b>מערבב</b><span>מאזן בין הקול למוזיקה ומוסיף הד עדין וברק, כמו באולפן.</span></div>
   </div>
   <h2 style="margin-top:1.6rem">שאלות נפוצות</h2>
