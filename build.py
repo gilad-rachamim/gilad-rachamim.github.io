@@ -383,6 +383,7 @@ def chesed_band(p, meta):
             + f'</p><p class="chesed-s">{sub}</p>{box}</div>')
 
 pages = []
+TOOLS_JSON = []
 site_pages = {k: [] for k in SITES}
 for path in sorted(SRC.rglob("*.html")):
     raw = path.read_text(encoding="utf-8")
@@ -461,6 +462,15 @@ for path in sorted(SRC.rglob("*.html")):
     html = version_assets(html)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
+    if site and not meta.get("noindex") and not meta.get("no_precache") and not re.search(r"/(pratiut|negishut|tosaf)/$", url_path):
+        # רשימת הכלים לתוסף הכרום (kelim/tools.json): כלי חדש באתר מופיע בתוסף בלי לשלוח גרסה לחנות
+        cr = meta.get("crumbs") or []
+        name = cr[-1][0] if cr else re.split(r"\s[–—|-]\s|:\s", meta["title"])[0].strip()
+        t = {"n": name, "d": meta["description"][:120], "u": url_path, "s": site["short"],
+             "c": cr[-2][0] if len(cr) > 1 else site["name"]}
+        if seo_is_hub(url_path): t["h"] = 1
+        if meta.get("ext"): t["x"] = meta["ext"]
+        TOOLS_JSON.append(t)
     if not meta.get("noindex"):
         pages.append((url, meta.get("priority", "0.6")))
     print("built", url_path)
@@ -494,6 +504,12 @@ for key, site in SITES.items():
     ver = datetime.datetime.now().strftime("%Y%m%d%H%M")
     (d / "sw.js").write_text(SW_SRC.replace("__CACHE__", f"{key}-{ver}").replace("__PRECACHE__", json.dumps(pre)), encoding="utf-8")
     print(f"pwa {key}: {len(site_pages[key])} pages")
+
+# tools.json: לאתר (התוסף מעדכן ממנו את הרשימה) ועותק בתוך התוסף, למקרה שאין אינטרנט
+_tj = json.dumps({"tools": TOOLS_JSON}, ensure_ascii=False, separators=(",", ":"))
+for _p in (ROOT / "kelim" / "tools.json", ROOT / "tools" / "chatima-ext" / "tools.json"):
+    _p.write_text(_tj, encoding="utf-8", newline="\n")
+print("tools.json:", len(TOOLS_JSON), "pages,", sum(1 for t in TOOLS_JSON if "x" in t), "take files")
 
 today = datetime.date.today().isoformat()
 sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
