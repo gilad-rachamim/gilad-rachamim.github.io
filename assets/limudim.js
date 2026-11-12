@@ -398,6 +398,7 @@
     var cfg = load('limudim-timer-cfg', { mode: '25', f: 25, b: 5, l: 15, why: '', wake: true, sound: true, noise: false, auto: true });
     var run = load(RUN, null); // {phase, endAt, left, round, running}
     var clock = $('tm-clock'), wakeLock = null, tick = null, audio = null, noiseNode = null;
+    var baseTitle = window.__baseTitle || document.title, titled = false;
     $('tm-why').value = cfg.why || '';
     $('tm-wake').checked = cfg.wake; $('tm-sound').checked = cfg.sound; $('tm-noise').checked = cfg.noise; $('tm-auto').checked = cfg.auto;
     $('tm-cf').value = cfg.f; $('tm-cb').value = cfg.b;
@@ -418,7 +419,8 @@
       $('tm-go').textContent = run.running ? 'הפסקה רגעית ⏸' : (ms < phaseLen(run.phase) ? 'להמשיך ▶' : brk ? 'להתחיל הפסקה ▶' : 'להתחיל ללמוד ▶');
       var dots = '', r = run.round % 4; for (var i = 0; i < 4; i++) dots += '<i class="' + (i < r ? 'on' : '') + '"></i>';
       $('tm-dots').innerHTML = dots;
-      document.title = (run.running ? fmt(ms) + ' · ' : '') + 'טיימר למידה | כלים ללימודים';
+      // הכותרת של הדף (מה שגוגל רואה) נשארת כמו שהיא; רק בזמן שהטיימר רץ מוצג בה הזמן
+      if (run.running) { document.title = fmt(ms) + ' · טיימר למידה'; titled = true; } else if (titled) { document.title = baseTitle; titled = false; }
     }
     function logStats() {
       var lg = load(LOG, {}), t = today(), tt = lg[t] || { m: 0, n: 0 }, wk = 0;
