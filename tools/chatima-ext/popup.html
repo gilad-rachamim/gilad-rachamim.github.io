@@ -8,18 +8,24 @@
 <body>
 <header><img src="icon32.png" alt="" width="24" height="24"><b>הכלים של גילעד רחמים</b></header>
 
+<label class="search"><span class="sr">חיפוש כלי</span><input id="q" type="search" placeholder="🔍 מה צריך? למשל: חתימה, תמונה, הזמנה" autocomplete="off" autofocus></label>
+
 <section id="pdf" hidden aria-labelledby="pdf-h">
   <h2 id="pdf-h">ה-PDF הפתוח</h2>
-  <button class="gold" type="button" data-tool="chatima">✍ למלא ולחתום</button>
-  <div class="row">
-    <button class="line" type="button" data-tool="pdf">🗜 לכווץ</button>
-    <button class="line" type="button" data-tool="fax">📠 לשלוח כפקס</button>
-  </div>
+  <div class="chips" id="pdf-tools"></div>
   <p class="msg" id="pdf-msg" role="status"></p>
 </section>
 
-<section id="qr" hidden aria-labelledby="qr-h">
-  <h2 id="qr-h">קוד QR לדף הזה</h2>
+<section aria-live="polite">
+  <div id="list"></div>
+</section>
+
+<div class="row tabs">
+  <button class="line" type="button" id="qr-btn" aria-expanded="false" aria-controls="qr">▦ קוד QR לדף</button>
+  <button class="line" type="button" id="pw-btn" aria-expanded="false" aria-controls="pw">🔑 סיסמה חזקה</button>
+</div>
+
+<section id="qr" hidden aria-label="קוד QR לדף הזה">
   <div id="qr-box" class="qr-box" role="img" aria-label="קוד QR של הדף הפתוח"></div>
   <p class="small" id="qr-title"></p>
   <div class="row">
@@ -28,26 +34,16 @@
   </div>
 </section>
 
-<section aria-labelledby="pw-h">
-  <h2 id="pw-h">סיסמה חזקה</h2>
-  <div class="pw"><code id="pw-out" dir="ltr" aria-live="polite">לחצו ליצירה</code></div>
+<section id="pw" hidden aria-label="סיסמה חזקה">
+  <div class="pw"><code id="pw-out" dir="ltr" aria-live="polite"></code></div>
   <div class="row">
-    <button class="line" type="button" id="pw-new">🔑 סיסמה חדשה</button>
-    <button class="line" type="button" id="pw-copy" disabled>להעתיק</button>
+    <button class="line" type="button" id="pw-new">סיסמה אחרת</button>
+    <button class="line" type="button" id="pw-copy">להעתיק</button>
   </div>
   <p class="small">נוצרת כאן, במחשב שלכם. טיפ: לחיצה ימנית בשדה סיסמה באתר ← "להכניס סיסמה חזקה".</p>
 </section>
 
-<nav aria-label="כלים באתר">
-  <h2>עוד כלים בחינם</h2>
-  <a href="https://hakelim.com/kelim/machshev/chatima/" target="_blank">✍ חתימה על PDF</a>
-  <a href="https://hakelim.com/kelim/machshev/tmuna/" target="_blank">📷 הקטנת תמונה</a>
-  <a href="https://hakelim.com/kelim/machshev/pdf/" target="_blank">🗜 כיווץ PDF</a>
-  <a href="https://hakelim.com/kelim/machshev/fax/" target="_blank">📠 פקס בלי פקס</a>
-  <a href="https://hakelim.com/kelim/machshev/sisma/" target="_blank">🔑 בודק סיסמה</a>
-  <a href="https://hakelim.com/kelim/" target="_blank" class="all">כל הכלים ←</a>
-</nav>
-<footer>שום קובץ לא עולה לשרת. <a href="https://hakelim.com/kelim/machshev/chatima/tosaf/" target="_blank">פרטיות</a></footer>
+<footer><a href="https://hakelim.com/kelim/?utm_source=tosaf" target="_blank">כל הכלים באתר</a> · שום קובץ לא עולה לשרת · <a href="https://hakelim.com/kelim/machshev/chatima/tosaf/" target="_blank">פרטיות</a></footer>
 <script src="qrcode.min.js"></script>
 <script src="popup.js"></script>
 </body>

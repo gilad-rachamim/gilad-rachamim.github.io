@@ -2,25 +2,17 @@
   "manifest_version": 3,
   "name": "הכלים של גילעד רחמים",
   "short_name": "הכלים",
-  "version": "2.0.0",
-  "description": "חתימה על PDF מג׳ימייל, הקטנת תמונה, כיווץ PDF, פקס, קוד QR וסיסמה חזקה. בחינם, והקבצים לא עולים לשום שרת.",
+  "version": "3.0.0",
+  "description": "כל הכלים החינמיים של hakelim.com בכרום: חיפוש, מועדפים, חתימה על PDF, הקטנת תמונה, פקס, QR וסיסמה. הקבצים לא עולים לשרת.",
   "homepage_url": "https://hakelim.com/kelim/machshev/chatima/tosaf/",
   "icons": { "16": "icon16.png", "32": "icon32.png", "48": "icon48.png", "128": "icon128.png" },
   "action": { "default_title": "הכלים של גילעד רחמים", "default_popup": "popup.html", "default_icon": { "16": "icon16.png", "32": "icon32.png" } },
   "background": { "service_worker": "background.js" },
-  "permissions": ["contextMenus", "storage", "unlimitedStorage", "activeTab", "scripting"],
+  "permissions": ["contextMenus", "storage", "unlimitedStorage", "activeTab", "scripting", "alarms"],
   "host_permissions": ["https://mail.google.com/*", "https://*.googleusercontent.com/*"],
   "optional_host_permissions": ["<all_urls>"],
   "content_scripts": [
     { "matches": ["https://mail.google.com/*"], "js": ["gmail.js"], "css": ["gmail.css"] },
-    {
-      "matches": [
-        "https://hakelim.com/kelim/machshev/chatima/*", "https://gilad-rachamim.github.io/kelim/machshev/chatima/*",
-        "https://hakelim.com/kelim/machshev/tmuna/*", "https://gilad-rachamim.github.io/kelim/machshev/tmuna/*",
-        "https://hakelim.com/kelim/machshev/pdf/*", "https://gilad-rachamim.github.io/kelim/machshev/pdf/*",
-        "https://hakelim.com/kelim/machshev/fax/*", "https://gilad-rachamim.github.io/kelim/machshev/fax/*"
-      ],
-      "js": ["bridge.js"], "run_at": "document_idle"
-    }
+    { "matches": ["https://hakelim.com/*"], "js": ["bridge.js"], "run_at": "document_idle" }
   ]
 }
