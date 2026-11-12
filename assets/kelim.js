@@ -221,3 +221,46 @@
   });
   if (box) box.addEventListener('toggle', function () { if (box.open) inp.focus(); });
 })();
+
+// נגישות (WCAG 2.1.1, 12.11.2026): אזור עם גלילה פנימית (קוד, כרטיס רחב, טבלה) מקבל פוקוס מקלדת,
+// כדי שמי שלא משתמש בעכבר יוכל לגלול אותו בחיצים. רק כשיש בו באמת מה לגלול ואין בו כבר משהו לחיץ.
+(function () {
+  var main = document.getElementById('main'); if (!main || !window.getComputedStyle) return;
+  var FOC = 'a[href],button,input,select,textarea,[tabindex]';
+  function scan() {
+    var els = main.querySelectorAll('pre,div,section,table,figure,ul,ol,p');
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i]; if (el.hasAttribute('tabindex')) continue;
+      var cs = getComputedStyle(el), sc = /(auto|scroll)/, pre = el.tagName === 'PRE' && (sc.test(cs.overflowX) || sc.test(cs.overflowY));
+      if (!pre && !(sc.test(cs.overflowX) && el.scrollWidth > el.clientWidth + 1) && !(sc.test(cs.overflowY) && el.scrollHeight > el.clientHeight + 1)) continue;
+      if (el.querySelector(FOC)) continue;
+      el.setAttribute('tabindex', '0');
+      if (!el.hasAttribute('aria-label') && !el.hasAttribute('role')) { el.setAttribute('role', 'region'); el.setAttribute('aria-label', 'אזור עם גלילה'); }
+    }
+  }
+  var t; function later() { clearTimeout(t); t = setTimeout(scan, 400); }
+  window.addEventListener('load', later); window.addEventListener('resize', later);
+  if (window.MutationObserver) new MutationObserver(later).observe(main, { childList: true, subtree: true });
+})();
+
+// נגישות (WCAG 4.1.2, 12.11.2026): כפתורי בחירה בקבוצה (צ'יפים, לשוניות, מקטעים) מסמנים את הבחירה רק בצבע (class "on").
+// כאן הבחירה נמסרת גם לקורא מסך: aria-pressed="true/false". נוגעים רק בקבוצה שבה כפתור כלשהו באמת מסומן כנבחר,
+// ורק בכפתורים שהכלי עצמו לא הגדיר להם תפקיד או מצב.
+(function () {
+  var main = document.getElementById('main'); if (!main) return;
+  var GRP = /(^|[\s-])(chips|seg|tabs|opts|pills|toggle)(\s|$)/, ON = /(^|\s)(on|active|sel|selected|picked)(\s|$)/;
+  function own(b) { return b.hasAttribute('data-ap') || !(b.hasAttribute('aria-pressed') || b.hasAttribute('aria-selected') || b.hasAttribute('aria-checked') || b.hasAttribute('role')); }
+  function sync() {
+    var gs = main.querySelectorAll('[class]');
+    for (var i = 0; i < gs.length; i++) {
+      var g = gs[i]; if (!GRP.test(g.className) || typeof g.className !== 'string' || g.getAttribute('role') === 'tablist') continue;
+      var bs = [], any = false;
+      for (var j = 0; j < g.children.length; j++) { var b = g.children[j]; if (b.tagName === 'BUTTON' && own(b)) { bs.push(b); if (ON.test(b.className)) any = true; } }
+      if (!any && !(bs.length && bs[0].hasAttribute('data-ap'))) continue;
+      bs.forEach(function (b) { b.setAttribute('data-ap', ''); var v = ON.test(b.className) ? 'true' : 'false'; if (b.getAttribute('aria-pressed') !== v) b.setAttribute('aria-pressed', v); });
+    }
+  }
+  var t; function later() { clearTimeout(t); t = setTimeout(sync, 150); }
+  sync(); window.addEventListener('load', later);
+  if (window.MutationObserver) new MutationObserver(later).observe(main, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+})();

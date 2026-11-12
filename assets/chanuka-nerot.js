@@ -67,7 +67,7 @@
     return { big: t(o.tzeit), small: 'צאת הכוכבים · השקיעה ' + t(o.sunset) };
   }
   function candles(n) {
-    var h = '<div class="cn-menorah" aria-label="' + n + ' נרות ושמש">';
+    var h = '<div class="cn-menorah" role="img" aria-label="' + n + ' נרות ושמש">';
     // בדף מימין לשמאל: הנר הראשון בימין, השמש באמצע וגבוה יותר
     for (var i = 1; i <= 8; i++) h += '<span class="c' + (i <= n ? ' lit' : '') + '"></span>' + (i === 4 ? '<span class="c sh lit"></span>' : '');
     return h + '</div>';

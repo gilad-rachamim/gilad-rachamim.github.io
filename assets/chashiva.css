@@ -303,7 +303,7 @@
 .av-g.drop{border:2px dashed #e8c87c;cursor:pointer}
 .av-new{all:unset;box-sizing:border-box;display:flex;align-items:center;padding:.4rem .7rem;border:2px dashed #e8c87c;border-radius:9px;color:#fff8e6;cursor:pointer;font-size:.9rem}
 .av-t{all:unset;box-sizing:border-box;width:clamp(26px,7.4vw,34px);height:clamp(36px,10vw,46px);background:#fffaf0;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:clamp(1rem,4.6vw,1.3rem);box-shadow:inset 0 -3px 0 #d9cfb6,0 1px 3px rgba(0,0,0,.45);cursor:pointer;font-family:var(--sans)}
-.av-t.c0{color:#c0392b}.av-t.c1{color:#1f5fbf}.av-t.c2{color:#d97706}.av-t.c3{color:#111}
+.av-t.c0{color:#c0392b}.av-t.c1{color:#1f5fbf}.av-t.c2{color:#b45309}.av-t.c3{color:#111}
 .av-t.j{color:#8e44ad;font-size:1.3rem}
 .av-t.sel{transform:translateY(-6px);box-shadow:0 0 0 3px #e8c87c,0 4px 8px rgba(0,0,0,.4)}
 .av-t.nw{background:#fff4c7}

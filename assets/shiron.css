@@ -21,7 +21,7 @@
 .sh-sg{break-inside:avoid;margin-bottom:1.3rem}
 .sh-sg h2 span{color:#b9a46a;margin-inline-end:.35rem}
 .sh-sg p{white-space:pre-wrap;font-size:1em}
-.sh-empty{color:#888;text-align:center;font-family:var(--sans)}
+.sh-empty{color:#5c5c5c;text-align:center;font-family:var(--sans)}
 @media print{
   @page{size:A4;margin:14mm 13mm}
   html,body{background:#fff!important}

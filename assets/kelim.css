@@ -100,3 +100,8 @@ body[data-tool="rega"] .rel{display:none}
 /* "בחינם, בלי הגבלה ובלי פרסומות" – פס בראש כל דף (build.py chesed_band) */
 .chesed{max-width:44rem;margin:.7rem auto 0;padding:0 1.25rem;text-align:center}.chesed-t{display:flex;flex-wrap:wrap;justify-content:center;gap:.35rem .45rem;margin:0}.chesed-t b{display:inline-flex;align-items:center;padding:.22rem .75rem;border-radius:999px;border:1px solid var(--gold-soft);background:rgba(216,179,95,.1);color:var(--gold);font-weight:700;font-size:.92rem;line-height:1.4;white-space:nowrap}.chesed-s{margin:.4rem 0 0;color:var(--muted);font-size:.86rem;line-height:1.5}@media print{.chesed{display:none!important}}
 .chesed-p{margin:.5rem auto 0;max-width:26rem;font-size:.88rem;color:var(--muted)}.chesed-p summary{cursor:pointer;color:var(--gold);display:inline-block}.chesed-p label{display:block;margin:.5rem 0 .3rem;color:var(--body)}.chesed-p input{display:block;width:100%;max-width:14rem;margin:.3rem auto 0;text-align:center;font-size:1.1rem;letter-spacing:.08em}.chesed-p span{display:block;margin-top:.25rem}.chesed-p .chesed-ok{color:var(--accent);font-weight:600}
+
+/* נגישות WCAG 2.2 AA (12.11.2026): התגית על כרטיס בצבע כהה על זהב (".dom span" דרס אותה לאפור, ניגודיות 1.1) */
+.dom span.badge{color:var(--ink);font-size:.8rem;margin-top:0;line-height:1.5}
+.dom span.badge.soon{color:var(--muted)}
+.install-bar .x{min-width:2.75rem;min-height:2.75rem}

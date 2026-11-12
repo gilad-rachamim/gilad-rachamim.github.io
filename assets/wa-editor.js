@@ -23,7 +23,7 @@
   function draw() {
     var t = ta.value;
     var d = new Date();
-    $('we-prev').innerHTML = (t.trim() ? render(t) : '<span style="opacity:.6">ההודעה תופיע כאן</span>') + '<span class="tm">' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + ' ✓✓</span>';
+    $('we-prev').innerHTML = (t.trim() ? render(t) : '<span style="opacity:.85">ההודעה תופיע כאן</span>') + '<span class="tm">' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + ' ✓✓</span>';
     $('we-cnt').textContent = t.length + ' תווים';
     $('we-wa').href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(t);
   }
