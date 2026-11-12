@@ -343,12 +343,38 @@ function notesOf(f) {
   }
   return out;
 }
+// מפצל תו ששרו ברצף אחד לפי התווים של המנגינה שמתחתיו. מחזיר את החלקים (כל אחד עם התו שלו במנגינה), או null כשאין מה לפצל.
+function splitByMel(nt, f, M, t0) {
+  var a = t0 + nt.st * 0.01 + 0.02, b = t0 + nt.end * 0.01 + 0.03, lo = 0, hi = M.n, j, g = [], i, k;
+  while (lo < hi) { var md = (lo + hi) >> 1; if (M.e[md] <= a) lo = md + 1; else hi = md; }
+  for (j = lo; j < M.n && M.t[j] < b; j++) {
+    if (M.line[j] !== nt.line || Math.min(b, M.e[j]) - Math.max(a, M.t[j]) < 0.09) continue;
+    if (g.length && g[g.length - 1].midi === M.midi[j]) { g[g.length - 1].e = M.e[j]; continue; } // אותו תו פעמיים ברצף: אין מה לפצל
+    g.push({ midi: M.midi[j], t: M.t[j], e: M.e[j], k: Math.round((M.t[j] - t0 - 0.02) / 0.01) });
+  }
+  if (g.length < 2 || b - a < 0.7 * (g[g.length - 1].e - g[0].t)) return null; // תו קצר שרק יושב על הגבול (הזמר הקדים או איחר): לא מפצלים
+  var segs = [], st = nt.st, gi = 0;
+  for (i = 1; i < g.length; i++) { // הגבול: המקום במנגינה, ואם יש לידו עיצור (רגע בלי גובה) – שם
+    var kb = g[i].k, best = -1; for (k = 0; k <= 6 && best < 0; k++) { if (!f[kb - k]) best = kb - k; else if (!f[kb + k]) best = kb + k; }
+    if (best >= 0) kb = best;
+    if (kb - st < 7) { gi = i; continue; } // החלק שלפני הגבול קצר מדי: מצטרף לתו הבא
+    if (nt.end - kb + 1 < 7) break;        // החלק שאחריו קצר מדי: נשאר עם התו הנוכחי
+    segs.push({ st: st, end: kb - 1, g: g[gi] }); st = kb; gi = i;
+  }
+  segs.push({ st: st, end: nt.end, g: g[gi] });
+  if (segs.length < 2) return null;
+  return segs.map(function (q) {
+    var ms = []; for (k = q.st; k <= q.end; k++) if (f[k]) ms.push(f2m(f[k])); if (!ms.length) ms.push(nt.med); ms.sort(function (x, y) { return x - y; });
+    var med = ms[ms.length >> 1], ml = q.g.midi + 12 * Math.round((med - q.g.midi) / 12);
+    return { st: q.st, end: q.end, med: med, mel: ml, dev: med - ml, line: nt.line, lineOk: true, follow: Math.abs(med - ml) <= 2.6 };
+  });
+}
 // מתקן כל תו כיחידה אחת: מזיז את כולו לתו הקרוב בסולם, והרטט והגלישות נשארים טבעיים
 // mel (שיר מהאתר, מתיקון "בינוני" ומעלה): {M: המנגינה הידועה, t0: הזמן בשיר של תחילת x}. שורה שבה באמת שרים את המנגינה
 // (70% מהזמן בטווח טון וחצי ממנה) מתוקנת לתו של המנגינה עצמה, גם כשהזמר נחת על התו השכן. שורה ששרים אחרת: לפי הסולם, כרגיל.
 function tune(x, sr, pcs, strength, mel) {
-  var f = pitchTrack(x, sr), n = f.length, sh = new Float32Array(n), has = new Uint8Array(n), k, i, notes = 0, sumAbs = 0, melN = 0;
-  if (!strength) return { y: x, f: f, notes: 0, cents: 0, mel: 0 };
+  var f = pitchTrack(x, sr), n = f.length, sh = new Float32Array(n), has = new Uint8Array(n), k, i, notes = 0, sumAbs = 0, melN = 0, split = 0, edges = [];
+  if (!strength) return { y: x, f: f, notes: 0, cents: 0, mel: 0, split: 0 };
   var nts = notesOf(f);
   if (mel && mel.M && strength >= 0.7) {
     var M = mel.M, lines = {};
@@ -360,19 +386,23 @@ function tune(x, sr, pcs, strength, mel) {
       nt.mel = M.midi[bi] + 12 * Math.round((nt.med - M.midi[bi]) / 12); nt.dev = nt.med - nt.mel; nt.line = M.line[bi];
       var L = lines[nt.line] = lines[nt.line] || { tot: 0, ok: 0, n: 0 }, len = nt.end - nt.st + 1; L.tot += len; L.n++; if (Math.abs(nt.dev) <= 1.5) L.ok += len;
     });
-    nts.forEach(function (nt) { var L = nt.mel != null ? lines[nt.line] : null; nt.follow = !!L && L.n >= 3 && L.ok >= (mel.thr || 0.7) * L.tot && Math.abs(nt.dev) <= 2.6; });
+    nts.forEach(function (nt) { var L = nt.mel != null ? lines[nt.line] : null; nt.lineOk = !!L && L.n >= 3 && L.ok >= (mel.thr || 0.7) * L.tot; nt.follow = nt.lineOk && Math.abs(nt.dev) <= 2.6; });
+    // תו ארוך שהמנגינה מתחלפת בתוכו (הזמר נשאר על אותו גובה בשתי הברות): מפצלים אותו לפי המנגינה, וכל חלק מתוקן לתו שלו.
+    // רק בשורה שבאמת שרים בה את המנגינה, ורק כשכל חלק ארוך מספיק (90 אלפיות שנייה במנגינה, 70 בשירה).
+    if (!mel.nosplit) { var out = []; nts.forEach(function (nt) { var sg = nt.lineOk ? splitByMel(nt, f, M, mel.t0) : null; if (sg) { split++; edges.push.apply(edges, sg.slice(1).map(function (q) { return q.st; })); out.push.apply(out, sg); } else out.push(nt); }); nts = out; }
   }
   nts.forEach(function (nt) {
     var sc = scaleNote(nt.med, pcs), d = sc - nt.med; if (Math.abs(d) < 0.06) d = 0; d *= strength;
     if (nt.follow && nt.mel !== sc) { d += nt.mel - sc; melN++; } // התו הנכון במנגינה הוא לא התו הקרוב בסולם: קופצים אליו
     for (i = nt.st; i <= nt.end; i++) { sh[i] = d; has[i] = 1; } notes++; sumAbs += Math.abs(d) * 100;
   });
+  edges.forEach(function (e) { var u = sh[e - 4], w = sh[e + 3]; if (e - 4 < 0 || e + 3 >= n || u === w) return; for (k = -3; k <= 2; k++) sh[e + k] = u + (w - u) * (k + 4) / 7; }); // בתוך תו שפוצל: גלישה קצרה בין שני הגבהים
   // בין תווים: מעבר הדרגתי. ואז החלקה של 50 אלפיות שנייה
   var lastI = -1;
   for (i = 0; i < n; i++) { if (!has[i]) continue; if (lastI >= 0 && i - lastI > 1 && i - lastI < 30) for (k = lastI + 1; k < i; k++) sh[k] = sh[lastI] + (sh[i] - sh[lastI]) * (k - lastI) / (i - lastI); lastI = i; }
   var ratio = new Float32Array(n);
   for (i = 0; i < n; i++) { var s = 0, c = 0; for (k = -2; k <= 2; k++) if (i + k >= 0 && i + k < n) { s += sh[i + k]; c++; } ratio[i] = f[i] ? Math.pow(2, s / c / 12) : 1; }
-  return { y: psola(x, sr, f, ratio), f: f, notes: notes, cents: notes ? Math.round(sumAbs / notes) : 0, mel: melN };
+  return { y: psola(x, sr, f, ratio), f: f, notes: notes, cents: notes ? Math.round(sumAbs / notes) : 0, mel: melN, split: split };
 }
 // TD-PSOLA: מקטעים של שתי תקופות, מונחים מחדש במרווח תקופה/יחס. האורך והצבע של הקול נשמרים.
 function psola(x, sr, f, ratio) {
@@ -499,8 +529,14 @@ function melSync(ev, envS, lo, hi) {
 function envFrom(env, t0) { if (t0 >= 0) return env.subarray(Math.min(t0, env.length)); var y = new Float32Array(env.length - t0); y.set(env, -t0); return y; }
 function setRef(x, sr, pcs, mel) { var cf = chromaFrames(x, sr); REF = { x: x, sr: sr, env: onsetEnv(x, sr), cf: cf, mel: mel && mel.length >= 12 ? melOf(mel) : null, key: pcs && pcs.length ? { pcs: pcs, name: '', conf: 1, margin: 1 } : detectKey(x, sr, cf) }; TAKES = {}; return { key: REF.key, dur: x.length / sr }; }
 // קולות הליווי של השיר כולו (v = ערוץ הקול המוכן, על ציר הזמן של המוזיקה)
-function stageBack(v, mode) {
+// zones (לא חובה): [התחלה, סוף, התחלה, סוף...] בשניות על ציר המוזיקה. הליווי נשמע רק בהם (למשל רק בפזמון), עם כניסה ויציאה רכות.
+function stageBack(v, mode, zones) {
   var key = REF.key, pcs = !key.pcs || key.conf < 0.45 ? null : key.pcs, r = backing(v, REF.sr, { mode: mode, pcs: pcs, cf: REF.cf });
+  if (zones && zones.length >= 2) {
+    var n = r.L.length, g = new Float32Array(n), F = Math.round(0.12 * r.sr), z, i;
+    for (z = 0; z + 1 < zones.length; z += 2) { var a = Math.max(0, Math.round(zones[z] * r.sr) - F), b = Math.min(n, Math.round(zones[z + 1] * r.sr) + F); for (i = a; i < b; i++) { var w = Math.min(1, (i - a) / F, (b - i) / F); if (w > g[i]) g[i] = w; } }
+    for (i = 0; i < n; i++) { r.L[i] *= g[i]; r.R[i] *= g[i]; }
+  }
   return { L: r.L, R: r.R, sr: r.sr, notes: r.info.notes };
 }
 function refSlice(start, n) { var y = new Float32Array(n), x = REF.x; for (var i = 0; i < n; i++) { var p = start + i; y[i] = p >= 0 && p < x.length ? x[p] : 0; } return y; }
@@ -560,9 +596,9 @@ function stageFinish(id, o) {
   var sr = T.sr, t0 = Math.round((T.start - (o.shiftS || 0)) / (sr * 0.01)), envM = envFrom(REF.env, t0), M = o.nomel ? null : REF.mel;
   var tg = tighten(T.a, sr, envM, o.tight || 0, 70, M ? envFrom(M.env, t0) : null, M ? M.range : 0);
   var key = REF.key, pcs = o.chromatic || !key.pcs || key.conf < 0.45 ? null : key.pcs;
-  var tn = tune(tg.y, sr, pcs, o.tune || 0, M ? { M: M, t0: (T.start - (o.shiftS || 0)) / sr, thr: o.melThr } : null);
+  var tn = tune(tg.y, sr, pcs, o.tune || 0, M ? { M: M, t0: (T.start - (o.shiftS || 0)) / sr, thr: o.melThr, nosplit: o.nosplit } : null);
   var y = tn.y === T.a ? new Float32Array(tn.y) : tn.y;
-  return { y: y, phrases: tg.phrases, notes: tn.notes, cents: tn.cents, mel: tn.mel, moved: tg.phrases.filter(function (p) { return p.ms; }).length };
+  return { y: y, phrases: tg.phrases, notes: tn.notes, cents: tn.cents, mel: tn.mel, split: tn.split || 0, moved: tg.phrases.filter(function (p) { return p.ms; }).length };
 }
 
 if (typeof self !== 'undefined' && typeof module === 'undefined') {
@@ -573,7 +609,7 @@ if (typeof self !== 'undefined' && typeof module === 'undefined') {
       if (d.cmd === 'ref') { r = setRef(d.x, d.sr, d.pcs, d.mel); r.id = d.id; self.postMessage(r); }
       else if (d.cmd === 'clean') { r = stageClean(d.take, d.rec, d.start, d.o || {}, prog); r.id = d.id; self.postMessage(r); }
       else if (d.cmd === 'finish') { r = stageFinish(d.take, d.o || {}); r.id = d.id; self.postMessage(r, [r.y.buffer]); }
-      else if (d.cmd === 'back') { r = stageBack(d.v, d.mode); r.id = d.id; self.postMessage(r, [r.L.buffer, r.R.buffer]); }
+      else if (d.cmd === 'back') { r = stageBack(d.v, d.mode, d.zones); r.id = d.id; self.postMessage(r, [r.L.buffer, r.R.buffer]); }
       else if (d.cmd === 'raw') { var T = TAKES[d.take]; self.postMessage({ id: d.id, y: T ? new Float32Array(T.a) : null }); }
       else if (d.cmd === 'drop') { delete TAKES[d.take]; self.postMessage({ id: d.id }); }
       else if (d.cmd === 'lag') { r = findLag(d.rec, d.ref, d.sr, d.lo, d.hi); r.id = d.id; self.postMessage(r); }
@@ -581,4 +617,4 @@ if (typeof self !== 'undefined' && typeof module === 'undefined') {
     } catch (err) { self.postMessage({ id: d.id, error: String(err && err.message || err) }); }
   };
 }
-if (typeof module !== 'undefined') module.exports = { fft: fft, decim: decim, gcc: gcc, findLag: findLag, shiftRec: shiftRec, clean: clean, onsetEnv: onsetEnv, phrases: phrases, gate: gate, GATE: GATE, tighten: tighten, pitchTrack: pitchTrack, detectKey: detectKey, chromaFrames: chromaFrames, notesOf: notesOf, scaleNote: scaleNote, f2m: f2m, tune: tune, psola: psola, harmShift: harmShift, backing: backing, melOf: melOf, melSync: melSync, micBand: micBand, envFrom: envFrom, onsetEnv2: onsetEnv, setRef: setRef, stageClean: stageClean, stageFinish: stageFinish, stageBack: stageBack, ref: function () { return REF; }, rms: rms };
+if (typeof module !== 'undefined') module.exports = { fft: fft, decim: decim, gcc: gcc, findLag: findLag, shiftRec: shiftRec, clean: clean, onsetEnv: onsetEnv, phrases: phrases, gate: gate, GATE: GATE, tighten: tighten, pitchTrack: pitchTrack, detectKey: detectKey, chromaFrames: chromaFrames, notesOf: notesOf, scaleNote: scaleNote, f2m: f2m, tune: tune, psola: psola, harmShift: harmShift, backing: backing, melOf: melOf, melSync: melSync, micBand: micBand, splitByMel: splitByMel, envFrom: envFrom, onsetEnv2: onsetEnv, setRef: setRef, stageClean: stageClean, stageFinish: stageFinish, stageBack: stageBack, ref: function () { return REF; }, rms: rms };

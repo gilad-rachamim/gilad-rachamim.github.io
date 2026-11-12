@@ -5,7 +5,7 @@
   var S = window.Shir, M = S.M, TOOL = 'shir_ulpan', LS = 'ulpan:v1';
   var $ = function (id) { return document.getElementById(id); };
   var esc = S.esc;
-  var st = { set: { phones: 1, noise: 2, tight: 0.5, tune: 0.7, style: 'ulpan', voice2: 'off', bal: 0, off: 0, mic: '' }, cal: {}, words: '', src: null, takes: [] };
+  var st = { set: { phones: 1, noise: 2, tight: 0.5, tune: 0.7, style: 'ulpan', voice2: 'off', v2cho: 0, bal: 0, off: 0, mic: '' }, cal: {}, words: '', src: null, takes: [] };
   var music = null;      // {buf, name, dur, kind, songId, rms, peaks, key}
   var takes = [];        // {id, startS, n, pcm:Int16Array, mode, lag, lagMs, on, y:Float32Array, ph:[{a,b,ms}], notes, cents, moved, a, b}
   var actx = null, sr = 48000, W = null, wcb = {}, wid = 0, busy = false, rec = null, player = null, head = 0, comp = {}, lastUsed = {};
@@ -43,7 +43,7 @@
   // ---------- 1. המוזיקה ----------
   function monoOf(buf) { var n = buf.length, m = new Float32Array(n), nc = buf.numberOfChannels; for (var c = 0; c < nc; c++) { var d = buf.getChannelData(c); for (var i = 0; i < n; i++) m[i] += d[i] / nc; } return m; }
   function rmsOf(x) { var s = 0; for (var i = 0; i < x.length; i++) s += x[i] * x[i]; return Math.sqrt(s / Math.max(1, x.length)); }
-  function setMusic(buf, name, kind, songId, pcs, mel) {
+  function setMusic(buf, name, kind, songId, pcs, mel, cho) {
     stopAll();
     var mono = monoOf(buf), P = 600, peaks = new Float32Array(P), step = mono.length / P;
     for (var p = 0; p < P; p++) { var a = Math.floor(p * step), b = Math.min(mono.length, Math.floor((p + 1) * step)), mx = 0; for (var i = a; i < b; i += 8) { var v = Math.abs(mono[i]); if (v > mx) mx = v; } peaks[p] = mx; }
@@ -54,7 +54,7 @@
     [].forEach.call($('ul-src').children, function (b) { b.classList.toggle('on', b.getAttribute('data-v') === kind); });
     $('ul-songs').hidden = kind !== 'song';
     draw(); drawTakes(); save();
-    music.mel = !!(mel && mel.length); chips();
+    music.mel = !!(mel && mel.length); music.cho = cho && cho.length ? cho : null; chips(); // cho = איפה הפזמון בשיר (שניות): [התחלה, סוף, ...]
     return work({ cmd: 'ref', x: mono, sr: sr, pcs: pcs || null, mel: mel || null }, [mono.buffer]).then(function (r) { if (music) music.key = r.key; });
   }
   function dropTakes() { takes.forEach(function (t) { dbDel('take:' + t.id); work({ cmd: 'drop', take: t.id }).catch(function () {}); delete pcmOf[t.id]; }); takes = []; comp = {}; }
@@ -81,7 +81,10 @@
       var mm = M.music(song), tn = M.tonic(mm), pcs = M.scale(mm).map(function (x) { return ((tn + x) % 12 + 12) % 12; });
       // המנגינה הידועה: [התחלה, אורך, תו, שורה] לכל הברה. לפיה האולפן מיישר ומתקן, לא רק לפי הסולם
       var mel = new Float32Array(tl.notes.length * 4); tl.notes.forEach(function (nt, i) { mel[i * 4] = nt.t; mel[i * 4 + 1] = nt.dur; mel[i * 4 + 2] = nt.midi; mel[i * 4 + 3] = nt.line; });
-      return setMusic(buf, song.title || song.topic || 'שיר בלי שם', 'song', song.id, pcs, mel);
+      // איפה הפזמון: לפי החלקים של השיר. לשם אפשר לכוון את קולות הליווי ("רק בפזמון")
+      var types = {}, cho = []; (song.parts || []).forEach(function (p) { types[p.id] = p.type; });
+      tl.lines.forEach(function (ln) { if (types[ln.part] !== 'chorus') return; var a = ln.tb != null ? ln.tb : ln.t0; if (cho.length && a - cho[cho.length - 1] < 0.05) cho[cho.length - 1] = ln.t1; else cho.push(a, ln.t1); });
+      return setMusic(buf, song.title || song.topic || 'שיר בלי שם', 'song', song.id, pcs, mel, cho);
     }).then(function () { busy = false; msg(''); }, function (e) { busy = false; msg('לא הצלחתי להכין את המוזיקה. (' + (e && e.message || '') + ')'); });
   }
   function hash(s) { var h = 5381; for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36) + s.length; }
@@ -161,7 +164,7 @@
         var sh = c.createBiquadFilter(); sh.type = 'highpass'; sh.frequency.value = 300;
         var cv = c.createConvolver(); cv.buffer = ir(c, sty.secs); var wet = c.createGain(); wet.gain.value = sty.wet * 1.6;
         post.connect(sh); sh.connect(cv); cv.connect(wet); wet.connect(lim);
-        var bk = comp.back && comp.back.buf && comp.back.mode === st.set.voice2 ? comp.back.buf : null;
+        var bk = comp.back && comp.back.buf && comp.back.mode === backKey() ? comp.back.buf : null;
         if (bk) { // קולות הליווי (הכפלה / קול שני): מתחת לקול, בלי הנמוכים ובלי הגבוהים, ועם אותו הד
           var bs = c.createBufferSource(); bs.buffer = bk; nodes.push(bs);
           var bg = c.createGain(); bg.gain.value = pre.gain.value;
@@ -179,17 +182,18 @@
   function stopAll() { if (player) { player.stop(); player = null; } $('ul-play').textContent = '▶'; var l = $('ul-listen'); if (l) l.textContent = '▶ לשמוע את השיר'; }
   // קולות הליווי נבנים פעם אחת לכל השיר, רק כשבאמת צריך אותם (לפני שמיעה או הכנת הקובץ)
   var BACK_MSG = { double: 'מכפיל את הקול…', second: 'מוסיף קול שני…', choir: 'מוסיף מקהלה…' };
-  function backNeeded() { var m = st.set.voice2; return !!m && m !== 'off' && !!music && takes.length > 0 && !(comp.back && comp.back.mode === m); }
+  function backKey() { return st.set.voice2 + (st.set.v2cho && music && music.cho ? ':c' : ''); } // ':c' = הליווי רק בפזמון
+  function backNeeded() { var m = st.set.voice2; return !!m && m !== 'off' && !!music && takes.length > 0 && !(comp.back && comp.back.mode === backKey()); }
   function prepBack() {
     if (!backNeeded()) return Promise.resolve();
-    var m = st.set.voice2, cp = composite('final'), c0 = comp;
-    if (!cp.rms) { c0.back = { mode: m, buf: null }; return Promise.resolve(); }
+    var m = st.set.voice2, key = backKey(), cp = composite('final'), c0 = comp;
+    if (!cp.rms) { c0.back = { mode: key, buf: null }; return Promise.resolve(); }
     var v = new Float32Array(cp.v);
-    return work({ cmd: 'back', v: v, mode: m }, [v.buffer]).then(function (r) {
+    return work({ cmd: 'back', v: v, mode: m, zones: key !== m ? music.cho : null }, [v.buffer]).then(function (r) {
       if (comp !== c0) return; // ההקלטות השתנו בינתיים
       var b = ctx().createBuffer(2, r.L.length, r.sr); b.getChannelData(0).set(r.L); b.getChannelData(1).set(r.R);
-      c0.back = { mode: m, buf: b, notes: r.notes };
-    }, function () { if (comp === c0) c0.back = { mode: m, buf: null }; });
+      c0.back = { mode: key, buf: b, notes: r.notes };
+    }, function () { if (comp === c0) c0.back = { mode: key, buf: null }; });
   }
   function play(mode) {
     if (!music || rec) return;
@@ -380,7 +384,7 @@
   }
   function finishTake(t) {
     return work({ cmd: 'finish', take: t.id, o: { tight: st.set.tight, tune: st.set.tune, shiftS: Math.round(st.set.off / 1000 * sr) } }).then(function (r) {
-      t.y = r.y; t.ph = r.phrases; t.notes = r.notes; t.cents = r.cents; t.moved = r.moved; t.mel = r.mel || 0;
+      t.y = r.y; t.ph = r.phrases; t.notes = r.notes; t.cents = r.cents; t.moved = r.moved; t.mel = r.mel || 0; t.split = r.split || 0;
       if (r.phrases.length) { t.a = Math.max(0, r.phrases[0].a - 0.12); t.b = Math.min(t.n / sr, r.phrases[r.phrases.length - 1].b + 0.3); } else { t.a = t.b = null; }
       comp = {}; draw(); drawTakes();
     });
@@ -464,7 +468,7 @@
   // ---------- כפתורים ----------
   function chips() {
     var s = st.set;
-    [['ul-phones', s.phones], ['ul-noise', s.noise], ['ul-tight', s.tight], ['ul-tune', s.tune], ['ul-style', s.style], ['ul-voice2', s.voice2]].forEach(function (p) { [].forEach.call($(p[0]).children, function (b) { b.classList.toggle('on', b.getAttribute('data-v') === String(p[1])); }); });
+    [['ul-phones', s.phones], ['ul-noise', s.noise], ['ul-tight', s.tight], ['ul-tune', s.tune], ['ul-style', s.style], ['ul-voice2', s.voice2], ['ul-v2where', s.v2cho ? 1 : 0]].forEach(function (p) { [].forEach.call($(p[0]).children, function (b) { b.classList.toggle('on', b.getAttribute('data-v') === String(p[1])); }); });
     $('ul-offv').textContent = (s.off > 0 ? 'מקדימים את הקול ב-' + s.off : s.off < 0 ? 'מאחרים את הקול ב-' + (-s.off) : '0') + ' אלפיות שנייה';
     $('ul-ph-hint').textContent = !s.phones ? 'אפשר גם בלי: האולפן מוריד מההקלטה את המוזיקה שנכנסה למיקרופון. מנגנים בעוצמה בינונית.'
       : bt.manual ? 'בחרתם במיקרופון של אוזניות הבלוטות\': הקול יישמע כמו בשיחת טלפון. לקול מלא בוחרים ב"סנכרון ומיקרופון" את "האולפן בוחר לבד".'
@@ -473,6 +477,7 @@
       : bt.on ? '🎧 זיהיתי אוזניות בלוטות\'. מקליט מהמיקרופון של הטלפון.'
       : 'הכי נקי. אוזניות עם חוט עדיפות על בלוטות\'.';
     var th = $('ul-tune-hint'); if (th) th.hidden = !(music && music.mel);
+    $('ul-v2where').hidden = !(music && music.cho) || !s.voice2 || s.voice2 === 'off';
     var last = takes[takes.length - 1], btc = !!s.phones && bt.on;
     $('ul-calw').hidden = !s.phones; $('ul-calnote').hidden = !s.phones || calMs() != null || (btc && !!last && (last.mode === 'bleed' || !!(last.stat && last.stat.sync === 'mel'))); // כבר סונכרן לבד
     $('ul-calt').textContent = btc ? 'אוזניות בלוטות\': בדיקת סנכרון של 5 שניות' : 'פעם אחת, 5 שניות: בדיקת סנכרון';
@@ -489,11 +494,13 @@
     chipGroup('ul-tight', 'tight', 1, function () { refinish('מיישר לקצב…'); });
     chipGroup('ul-tune', 'tune', 1, function () { refinish('מכוון את הקול…'); });
     chipGroup('ul-style', 'style', 0, function () { if (player && player.mode !== 'none') play(player.mode); });
-    chipGroup('ul-voice2', 'voice2', 0, function () { // שומעים מיד את ההבדל
+    function hearBack() { // שומעים מיד את ההבדל
       if (!takes.length) return; var on = player && player.mode !== 'none';
       if (!on) { stopAll(); var t = takes[takes.length - 1]; head = Math.max(0, t.startS / sr + (t.a || 0) - 0.5); }
       play('final');
-    });
+    }
+    chipGroup('ul-voice2', 'voice2', 0, hearBack);
+    chipGroup('ul-v2where', 'v2cho', 1, hearBack);
     $('ul-src').onclick = function (e) {
       var b = e.target.closest('[data-v]'); if (!b || busy || rec) return;
       if (b.getAttribute('data-v') === 'file') $('ul-file').click(); else if (!music || music.kind !== 'song') { if (okToReplace()) { used('music_song'); loadSong(); } } else $('ul-songs').hidden = false;
