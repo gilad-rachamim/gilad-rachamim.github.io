@@ -1,8 +1,8 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'nefesh-202611120200';
-var PRECACHE = ["/nefesh/hayom/", "/nefesh/", "/nefesh/koach/", "/nefesh/michtav/", "/nefesh/mishpacha/", "/nefesh/rega/", "/nefesh/tmicha/", "/nefesh/yoman/", "/assets/site.css?v=94531167", "/assets/kelim.css?v=9599f0f5", "/assets/kelim.js?v=5c4b7217", "/assets/track.js?v=963b507e", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-nefesh-192.png", "/assets/nefesh.css?v=21cf25b4", "/assets/nefesh.js?v=bb3ac2d0"];
+var CACHE = 'nefesh-202611120916';
+var PRECACHE = ["/nefesh/hayom/", "/nefesh/", "/nefesh/koach/", "/nefesh/michtav/", "/nefesh/mishpacha/", "/nefesh/rega/", "/nefesh/tmicha/", "/nefesh/yoman/", "/assets/site.css?v=a3787b54", "/assets/kelim.css?v=a9338a1f", "/assets/kelim.js?v=3e566672", "/assets/track.js?v=ced9ffb1", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-nefesh-192.png", "/assets/nefesh.css?v=3bab036d", "/assets/nefesh.js?v=09bba7c5"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
 });

@@ -1,8 +1,8 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'esek-202611120200';
-var PRECACHE = ["/esek/", "/esek/mivtza/", "/esek/ptiha/", "/esek/qr/", "/esek/tafrit/", "/assets/site.css?v=94531167", "/assets/kelim.css?v=9599f0f5", "/assets/kelim.js?v=5c4b7217", "/assets/track.js?v=963b507e", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-esek-192.png", "/assets/esek.css?v=c4c0dedb"];
+var CACHE = 'esek-202611120916';
+var PRECACHE = ["/esek/", "/esek/mivtza/", "/esek/ptiha/", "/esek/qr/", "/esek/tafrit/", "/assets/site.css?v=a3787b54", "/assets/kelim.css?v=a9338a1f", "/assets/kelim.js?v=3e566672", "/assets/track.js?v=ced9ffb1", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-esek-192.png", "/assets/esek.css?v=f220d517"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
 });

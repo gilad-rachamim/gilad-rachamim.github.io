@@ -75,7 +75,7 @@
   }
 
   var game = {
-    g: 'avanim', tool: 'chashiva_avanim', name: 'אבני מספרים', minP: 2, maxP: 4, defP: 2, botDelay: 1300,
+    g: 'avanim', tool: 'chashiva_avanim', name: 'אבני מספרים (רמי)', minP: 2, maxP: 4, defP: 2, botDelay: 1300,
     botNames: ['רוני', 'נועה', 'איתי'],
     init: function (seed, n, names) {
       var all = []; for (var t = 0; t < 106; t++) all.push(t);
