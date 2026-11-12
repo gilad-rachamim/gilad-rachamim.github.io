@@ -25,3 +25,6 @@
 .sb-chips a[aria-current]{border-color:var(--gold);color:var(--gold-hi)}
 .sb-chips a:hover{border-color:var(--gold-soft);color:var(--cream)}
 @media print{.sb-chips,.sb-more{display:none}}
+.sb-two .sb-rt{margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--gold-soft);color:var(--cream);font-size:.95rem}
+.sb-tbl th.rt,.sb-tbl td.t.rt{font-size:1.02rem;color:var(--body)}
+.sb-tbl abbr{text-decoration:none}
