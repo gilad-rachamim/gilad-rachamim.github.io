@@ -29,12 +29,39 @@
   var hold = document.createElement('div'), cache = { key: null, cv: null };
   hold.style.display = 'none'; hold.setAttribute('aria-hidden', 'true');
   document.body.appendChild(hold);
+  // לוגו באמצע (13.11.2026): עם לוגו הקוד נוצר ברמת תיקון שגיאות H (עד 30%), והלוגו מכסה כ-5% מהשטח בלבד
+  var logoImg = null;
+  function setLogo(src) {
+    if (!src) { logoImg = null; $('qr-logo-rm').hidden = true; try { localStorage.removeItem('esek-qr-logo'); } catch (e) {} cache.key = null; form.dispatchEvent(new Event('change')); return; }
+    var im = new Image(); im.onload = function () { logoImg = im; $('qr-logo-rm').hidden = false; cache.key = null; form.dispatchEvent(new Event('change')); }; im.src = src;
+  }
+  if ($('qr-logo')) {
+    $('qr-logo').addEventListener('change', function () {
+      var f = this.files && this.files[0]; if (!f) return;
+      var r = new FileReader();
+      r.onload = function () {
+        var im = new Image();
+        im.onload = function () {  // מקטינים ל-256 פיקסלים כדי לשמור בטלפון
+          var s = Math.min(1, 256 / Math.max(im.width, im.height)), c = document.createElement('canvas');
+          c.width = Math.max(1, Math.round(im.width * s)); c.height = Math.max(1, Math.round(im.height * s));
+          c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+          var url = c.toDataURL('image/png'); try { localStorage.setItem('esek-qr-logo', url); } catch (e) {}
+          setLogo(url); if (window.toolUsed) window.toolUsed('esek_qr', { action: 'logo' });
+        };
+        im.src = r.result;
+      };
+      r.readAsDataURL(f); this.value = '';
+    });
+    $('qr-logo-rm').addEventListener('click', function () { setLogo(null); });
+    try { var savedLogo = localStorage.getItem('esek-qr-logo'); if (savedLogo) setLogo(savedLogo); } catch (e) {}
+  }
   function make(text) {
-    if (cache.key === text) return cache.cv;
-    hold.innerHTML = ''; cache.key = text; cache.cv = null;
+    var key = text + (logoImg ? '|H' : '|M');
+    if (cache.key === key) return cache.cv;
+    hold.innerHTML = ''; cache.key = key; cache.cv = null;
     if (!window.QRCode || !text) return null;
     try {
-      new window.QRCode(hold, { text: text, width: 1024, height: 1024, colorDark: '#000000', colorLight: '#ffffff', correctLevel: window.QRCode.CorrectLevel.M });
+      new window.QRCode(hold, { text: text, width: 1024, height: 1024, colorDark: '#000000', colorLight: '#ffffff', correctLevel: logoImg ? window.QRCode.CorrectLevel.H : window.QRCode.CorrectLevel.M });
       cache.cv = hold.querySelector('canvas');
       err.hidden = true;
     } catch (e) { err.textContent = 'הטקסט ארוך מדי בשביל קוד אחד. כדאי לקצר.'; err.hidden = false; }
@@ -83,7 +110,15 @@
       rrect(ctx, x - pad, y - pad, S + 2 * pad, S + 2 * pad, pad * 0.9); ctx.fillStyle = '#ffffff'; ctx.fill(); ctx.restore();
       ctx.strokeStyle = th.frame; ctx.lineWidth = 4; rrect(ctx, x - pad, y - pad, S + 2 * pad, S + 2 * pad, pad * 0.9); ctx.stroke();
       var q = make(d);
-      if (q) { ctx.imageSmoothingEnabled = false; ctx.drawImage(q, x, y, S, S); ctx.imageSmoothingEnabled = true; }
+      if (q) {
+        ctx.imageSmoothingEnabled = false; ctx.drawImage(q, x, y, S, S); ctx.imageSmoothingEnabled = true;
+        if (logoImg) {  // ריבוע לבן מעוגל באמצע, והלוגו בתוכו בלי עיוות
+          var L = Math.round(S * 0.22), lp = Math.round(L * 0.1), lx = x + (S - L) / 2, ly = y + (S - L) / 2;
+          rrect(ctx, lx - lp, ly - lp, L + 2 * lp, L + 2 * lp, lp * 1.4); ctx.fillStyle = '#ffffff'; ctx.fill();
+          var sc = Math.min(L / logoImg.width, L / logoImg.height), lw = logoImg.width * sc, lh = logoImg.height * sc;
+          ctx.drawImage(logoImg, lx + (L - lw) / 2, ly + (L - lh) / 2, lw, lh);
+        }
+      }
       else { ctx.fillStyle = '#9a968c'; ctx.font = '600 40px ' + k.SANS; ctx.textAlign = 'center'; ctx.fillText(d ? 'הקוד ארוך מדי' : 'כאן יופיע הקוד', W / 2, cy); }
       var extra = [];
       if (t === 'wifi' && v('ssid')) { extra.push(['רשת: ' + v('ssid'), '700', tall ? 60 : 34, 'sans', th.text, 8]); if ($('qr-showpass').checked && v('pass') && v('sec') !== 'nopass') extra.push(['סיסמה: ' + v('pass'), '700', tall ? 60 : 34, 'sans', th.text, 8]); }

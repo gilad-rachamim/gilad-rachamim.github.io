@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://hakelim.com/bait/</loc><lastmod>2026-11-12</lastmod><priority>0.9</priority></url>
-  <url><loc>https://hakelim.com/bait/kniyot/</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/bait/kniyot/</loc><lastmod>2026-11-13</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/bait/matana/</loc><lastmod>2026-11-11</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/bait/mazgan/</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/bait/mevi/</loc><lastmod>2026-11-11</lastmod><priority>0.8</priority></url>
@@ -12,11 +12,11 @@
   <url><loc>https://hakelim.com/esek/</loc><lastmod>2026-11-11</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/esek/mivtza/</loc><lastmod>2026-11-11</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/esek/ptiha/</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/esek/qr/</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/esek/qr/</loc><lastmod>2026-11-13</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/esek/tafrit/</loc><lastmod>2026-11-11</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/</loc><lastmod>2026-11-07</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/avoda/</loc><lastmod>2026-11-11</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kelim/avoda/korot/</loc><lastmod>2026-11-12</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kelim/avoda/korot/</loc><lastmod>2026-11-13</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/avoda/misrot/</loc><lastmod>2026-11-11</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/avoda/reayon/</loc><lastmod>2026-11-10</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/bakasha/</loc><lastmod>2026-11-11</lastmod><priority>0.8</priority></url>
@@ -28,6 +28,7 @@
   <url><loc>https://hakelim.com/kelim/chashiva/avanim/</loc><lastmod>2026-11-13</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kelim/chashiva/blackjack/</loc><lastmod>2026-11-13</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kelim/chashiva/chidon/</loc><lastmod>2026-11-13</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kelim/chashiva/chidon/sheelot/</loc><lastmod>2026-11-13</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/chashiva/damka/</loc><lastmod>2026-11-10</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/chashiva/galgal/</loc><lastmod>2026-11-13</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/chashiva/galgal/ken-o-lo/</loc><lastmod>2026-11-13</lastmod><priority>0.7</priority></url>
@@ -171,7 +172,7 @@
   <url><loc>https://hakelim.com/kesef/achuzim/</loc><lastmod>2026-11-13</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kesef/ashrai/</loc><lastmod>2026-11-11</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kesef/halvaa/</loc><lastmod>2026-11-10</lastmod><priority>0.6</priority></url>
-  <url><loc>https://hakelim.com/kesef/hechzer/</loc><lastmod>2026-11-12</lastmod><priority>0.6</priority></url>
+  <url><loc>https://hakelim.com/kesef/hechzer/</loc><lastmod>2026-11-13</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kesef/</loc><lastmod>2026-11-11</lastmod><priority>0.9</priority></url>
   <url><loc>https://hakelim.com/kesef/kranot/</loc><lastmod>2026-11-12</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kesef/maam/</loc><lastmod>2026-11-13</lastmod><priority>0.6</priority></url>
@@ -193,7 +194,7 @@
   <url><loc>https://hakelim.com/kodesh/boker/</loc><lastmod>2026-11-11</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/brachon/</loc><lastmod>2026-11-13</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/brachot/</loc><lastmod>2026-11-13</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kodesh/brachot/yom-huledet/</loc><lastmod>2026-11-11</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/brachot/yom-huledet/</loc><lastmod>2026-11-13</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/britot/</loc><lastmod>2026-11-13</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kodesh/britot-meyuchadot/</loc><lastmod>2026-11-13</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kodesh/chag-basis/</loc><lastmod>2026-11-13</lastmod><priority>0.7</priority></url>
@@ -488,7 +489,7 @@
   <url><loc>https://hakelim.com/limudim/machberet/kita/</loc><lastmod>2026-11-10</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/limudim/machshevon/</loc><lastmod>2026-11-13</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/limudim/maslul/</loc><lastmod>2026-11-10</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/limudim/matematika/</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/limudim/matematika/</loc><lastmod>2026-11-13</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/limudim/mivchan/</loc><lastmod>2026-11-10</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/limudim/olami/</loc><lastmod>2026-11-11</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/limudim/poter/</loc><lastmod>2026-11-10</lastmod><priority>0.8</priority></url>
