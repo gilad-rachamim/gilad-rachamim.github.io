@@ -1,0 +1,71 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_sudoku_yeladim",
+  "title": "סודוקו לילדים: 4×4 ו-6×6 עם ציורים, לשחק בטלפון או להדפיס בחינם | הכלים של גילעד רחמים",
+  "description": "סודוקו לילדים בחינם: לוחות 4×4 לקטנים ו-6×6 לילדים, במספרים או בציורים של פירות. לוח חדש בכל פעם, עזרה כשנתקעים, ואפשר גם להדפיס. בלי פרסומות ובלי הרשמה.",
+  "og_title": "סודוקו לילדים – 4×4 ו-6×6 עם ציורים",
+  "priority": "0.7",
+  "crumbs": [
+    [
+      "משחקי חשיבה",
+      "/kelim/chashiva/"
+    ],
+    [
+      "סודוקו",
+      "/kelim/chashiva/sudoku/"
+    ],
+    [
+      "לילדים",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/chashiva.css\"><link rel=\"stylesheet\" href=\"/assets/chashiva-sudoku-extra.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"מאיזה גיל אפשר לשחק סודוקו?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בערך מגיל 4–5 בלוח 4×4 עם ציורים, יחד עם הורה. מגיל 6–7 רוב הילדים פותרים לבד ועוברים ל-6×6.\"}}, {\"@type\": \"Question\", \"name\": \"מה ההבדל בין 4×4 ל-6×6?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"ב-4×4 יש ארבעה סימנים וריבועים של 2×2. ב-6×6 יש שישה סימנים וריבועים של 2×3, וזה השלב שלפני הסודוקו הרגיל.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לשחק עם ציורים במקום מספרים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. הכפתור \\\"ציורים\\\" מחליף את המספרים בפירות, כך שגם ילדים שלא מכירים ספרות יכולים לשחק.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר להדפיס סודוקו לילדים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן, בדף סודוקו להדפסה: בוחרים 4×4 או 6×6, מסמנים ציורים ומדפיסים עם פתרונות.\"}}, {\"@type\": \"Question\", \"name\": \"מה עושים כשהילד נתקע?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כפתור \\\"עזרה\\\" ממלא משבצת אחת. עדיף קודם לשאול אותו מה חסר בשורה או בריבוע.\"}}, {\"@type\": \"Question\", \"name\": \"סודוקו טוב לילדים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"סודוקו מאמן ריכוז, היגיון ובדיקה עצמית, בלי חשבון. הוא מתאים גם לילדים שקשה להם במספרים.\"}}]}</script>",
+  "foot": "<script src=\"/assets/chashiva.js\" defer></script><script src=\"/assets/chashiva-sudoku-kids.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>סודוקו לילדים</h1>
+  <p class="sub">לוחות קטנים, 4×4 או 6×6, במספרים או בציורים. כל לוח חדש, ולכל לוח פתרון אחד.</p>
+</header>
+<div class="tool">
+  <div class="ch-chips" id="sk-size" role="group" aria-label="גודל הלוח"><button type="button" data-n="4">4×4 לקטנים</button><button type="button" data-n="6">6×6 לילדים</button></div>
+  <div class="ch-chips" id="sk-lvl" role="group" aria-label="רמה"><button type="button" data-l="kal">קל</button><button type="button" data-l="kashe">מאתגר</button></div>
+  <div class="sd-board" id="sk-board" dir="ltr" aria-label="לוח סודוקו לילדים"></div>
+  <div id="sk-pad" dir="ltr"></div>
+  <div class="ch-tools"><button type="button" id="sk-pics" aria-pressed="false">🍎 ציורים</button><button type="button" id="sk-hint">💡 עזרה</button><button type="button" id="sk-new">🎲 לוח חדש</button></div>
+  <p class="ch-msg" id="sk-msg" aria-live="polite"></p>
+  <div class="sk-win" id="sk-win" hidden><p id="sk-win-t" role="status"></p><button class="btn btn-gold" type="button" id="sk-again">🎲 עוד לוח</button></div>
+  <details class="ch-how"><summary>איך משחקים?</summary><ul>
+    <li>בכל שורה, בכל עמודה ובכל ריבוע מודגש: כל מספר (או ציור) פעם אחת בלבד.</li>
+    <li>נוגעים במשבצת ריקה ואז במספר למטה. טעות נצבעת באדום.</li>
+    <li>"ציורים" מחליף את המספרים בפירות, למי שעוד לא מכיר ספרות.</li>
+    <li>4×4 מתאים מגיל 4–5 בערך, 6×6 מגיל 6–7. כשזה קל מדי, עוברים ל<a href="/kelim/chashiva/sudoku/kal/">סודוקו קל</a> הרגיל.</li>
+  </ul></details>
+</div>
+<nav class="gr-links sd-links" aria-label="עוד סוגי סודוקו"><a href="/kelim/chashiva/sudoku/">🔢 סודוקו יומי</a><a href="/kelim/chashiva/sudoku/kal/">קל</a><a href="/kelim/chashiva/sudoku/beinoni/">בינוני</a><a href="/kelim/chashiva/sudoku/kashe/">קשה וקשה מאוד</a><a href="/kelim/chashiva/sudoku/lehadpasa/">🖨 להדפסה</a><a href="/kelim/chashiva/sudoku/yeladim/" aria-current="page">🧒 לילדים</a></nav>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+<h2 id="seo-h">סודוקו לילדים: מתחילים בקטן, עם ציורים</h2>
+  <p>לוח סודוקו רגיל של 9×9 גדול מדי לילד בן חמש. לכן הסודוקו לילדים כאן מתחיל בלוח של 4×4: ארבע שורות, ארבע עמודות וארבעה ריבועים קטנים של 2×2. החוק זהה לסודוקו של המבוגרים, רק קצר יותר: בכל שורה, בכל עמודה ובכל ריבוע כל מספר מופיע פעם אחת. ילד שפתר כמה לוחות כאלה עובר ל-6×6, ומשם לסודוקו הרגיל.</p>
+  <h3>ציורים במקום מספרים</h3>
+  <p>הכפתור "ציורים" מחליף את 1, 2, 3 ו-4 בתפוח, בננה, ענבים ותות. כך גם ילדים בגן, שעוד לא מכירים ספרות, יכולים לשחק. הם לומדים לחפש "מה חסר בשורה", וזו בדיוק החשיבה שסודוקו מאמן.</p>
+  <h3>מאיזה גיל</h3>
+  <p>בערך מגיל 4–5 אפשר להתחיל ב-4×4 עם ציורים, יחד עם הורה. מגיל 6–7 רוב הילדים פותרים 4×4 לבד ועוברים ל-6×6. בכיתות ג–ד אפשר לעבור ל<a href="/kelim/chashiva/sudoku/kal/">סודוקו קל</a> של 9×9. כל ילד מתקדם בקצב שלו, ואין שעון שלוחץ.</p>
+  <h3>מה ילדים לומדים מסודוקו</h3>
+  <p>סודוקו מלמד להסתכל על כמה כיוונים בבת אחת (שורה, עמודה וריבוע), לבדוק את עצמך, ולא לוותר כשטועים. אין בו חשבון: המספרים הם רק סימנים, ולכן הוא מתאים גם לילדים שקשה להם בחשבון. כשהלוח מלא ויש טעות, המשחק אומר זאת בעדינות ומסמן באדום את המקום.</p>
+  <h3>להדפיס לגן או לכיתה</h3>
+  <p>ב<a href="/kelim/chashiva/sudoku/lehadpasa/">סודוקו להדפסה</a> בוחרים 4×4 או 6×6, מסמנים "ציורים", ומדפיסים 6 לוחות בדף עם דף פתרונות. גננות ומורות מדפיסות דף כזה לפינת החשיבה או למי שמסיים מוקדם.</p>
+  <h3>טיפים להורים</h3>
+  <p>שבו יחד בלוח הראשון ושאלו שאלות במקום לתת תשובות: "איזה פרי חסר בשורה הזאת?". כשהילד נתקע, כפתור "עזרה" ממלא משבצת אחת בלבד. אחרי כל לוח מופיע כמה לוחות פתר עד עכשיו, וזה מעודד לחזור מחר.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>מאיזה גיל אפשר לשחק סודוקו?</summary><p>בערך מגיל 4–5 בלוח 4×4 עם ציורים, יחד עם הורה. מגיל 6–7 רוב הילדים פותרים לבד ועוברים ל-6×6.</p></details>
+  <details><summary>מה ההבדל בין 4×4 ל-6×6?</summary><p>ב-4×4 יש ארבעה סימנים וריבועים של 2×2. ב-6×6 יש שישה סימנים וריבועים של 2×3, וזה השלב שלפני הסודוקו הרגיל.</p></details>
+  <details><summary>אפשר לשחק עם ציורים במקום מספרים?</summary><p>כן. הכפתור "ציורים" מחליף את המספרים בפירות, כך שגם ילדים שלא מכירים ספרות יכולים לשחק.</p></details>
+  <details><summary>אפשר להדפיס סודוקו לילדים?</summary><p>כן, בדף סודוקו להדפסה: בוחרים 4×4 או 6×6, מסמנים ציורים ומדפיסים עם פתרונות.</p></details>
+  <details><summary>מה עושים כשהילד נתקע?</summary><p>כפתור "עזרה" ממלא משבצת אחת. עדיף קודם לשאול אותו מה חסר בשורה או בריבוע.</p></details>
+  <details><summary>סודוקו טוב לילדים?</summary><p>סודוקו מאמן ריכוז, היגיון ובדיקה עצמית, בלי חשבון. הוא מתאים גם לילדים שקשה להם במספרים.</p></details>
+</section>
+<!--/seo-txt-->

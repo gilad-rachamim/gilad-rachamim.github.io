@@ -1,0 +1,74 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_sudoku",
+  "title": "סודוקו קשה וקשה מאוד אונליין בחינם: לוחות למומחים | הכלים של גילעד רחמים",
+  "description": "סודוקו קשה וקשה מאוד אונליין בחינם: כ-27 ו-22 מספרים נתונים, לכל לוח פתרון יחיד בלי ניחושים. הערות בעיפרון, ביטול, רמז ובדיקה, ושיטות פתרון מתקדמות מוסברות. בלי הרשמה.",
+  "og_title": "סודוקו קשה וקשה מאוד – למומחים",
+  "priority": "0.7",
+  "crumbs": [
+    [
+      "משחקי חשיבה",
+      "/kelim/chashiva/"
+    ],
+    [
+      "סודוקו",
+      "/kelim/chashiva/sudoku/"
+    ],
+    [
+      "קשה",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/chashiva.css\"><link rel=\"stylesheet\" href=\"/assets/chashiva-sudoku-extra.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"מה ההבדל בין סודוקו קשה לקשה מאוד?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בקשה יש כ-27 מספרים נתונים, ובקשה מאוד (מומחה) כ-22. שני הסוגים דורשים שיטות מתקדמות, וקשה מאוד דורש לפעמים שרשראות.\"}}, {\"@type\": \"Question\", \"name\": \"צריך לנחש בסודוקו קשה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. לכל לוח פתרון אחד, ותמיד אפשר להגיע אליו בהיגיון, גם אם זה דורש לבדוק שני מקרים.\"}}, {\"@type\": \"Question\", \"name\": \"איך פותרים סודוקו קשה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כותבים הערות בעיפרון בכל המשבצות, ומחפשים זוגות סגורים, הצבעה ו-X-Wing. ההסבר המלא בדף.\"}}, {\"@type\": \"Question\", \"name\": \"מה זה X-Wing בסודוקו?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מספר שבשתי שורות יכול להיות רק באותם שני טורים. אז הוא חייב להיות באחת מארבע הפינות, ואפשר למחוק אותו משאר הטורים.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר להדפיס סודוקו קשה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן, בדף סודוקו להדפסה: בוחרים \\\"קשה\\\" או \\\"קשה מאוד\\\", עם דף פתרונות.\"}}, {\"@type\": \"Question\", \"name\": \"כמה זמן לוקח לוח קשה מאוד?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לשחקנים מנוסים 20–45 דקות, ולפעמים יותר. השעון נעצר כשסוגרים את הדף, והלוח נשמר.\"}}]}</script>",
+  "foot": "<script src=\"/assets/chashiva.js\" defer></script><script src=\"/assets/chashiva-sudoku.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>סודוקו קשה</h1>
+  <p class="sub">לוח קשה עם כ-27 מספרים נתונים, ולוח "קשה מאוד" עם כ-22. צריך עיפרון ומחשבה כמה צעדים קדימה.</p>
+</header>
+<div class="tool">
+  <div class="ch-tabs" id="sd-tabs" role="tablist"><button type="button" role="tab" data-m="daily" aria-selected="true">⭐ אתגר יומי</button><button type="button" role="tab" data-m="levels" aria-selected="false">🪜 ארבע רמות</button></div>
+  <p class="ch-weekline" id="ch-weekline"></p>
+  <div class="ch-vsbanner" id="ch-vsbanner" hidden></div>
+  <div id="sd-lvlbox" hidden><div class="ch-chips" id="sd-levels"></div><p class="ch-hint" id="sd-lockmsg"></p></div>
+  <div class="ch-done-today" id="sd-today" hidden></div>
+  <div class="ch-bar"><span id="sd-label"></span><span>⏱ <b id="sd-time">0:00</b></span></div>
+  <div class="sd-board" id="sd-board" data-level="kashe" dir="ltr" aria-label="לוח סודוקו"></div>
+  <div class="sd-pad" id="sd-pad" dir="ltr"><button type="button" data-d="1">1<small></small></button><button type="button" data-d="2">2<small></small></button><button type="button" data-d="3">3<small></small></button><button type="button" data-d="4">4<small></small></button><button type="button" data-d="5">5<small></small></button><button type="button" data-d="6">6<small></small></button><button type="button" data-d="7">7<small></small></button><button type="button" data-d="8">8<small></small></button><button type="button" data-d="9">9<small></small></button></div>
+  <div class="ch-tools"><button type="button" id="sd-pencil" aria-pressed="false">✏️ עיפרון</button><button type="button" id="sd-erase">⌫ מחיקה</button><button type="button" id="sd-undo">↶ ביטול</button><button type="button" id="sd-hint">💡 רמז</button><button type="button" id="sd-check">✓ בדיקה</button><button type="button" id="sd-new" hidden>🎲 לוח חדש</button></div>
+  <p class="ch-msg" id="sd-msg" aria-live="polite"></p>
+  <div id="sd-win"></div>
+  <details class="ch-how"><summary>איך משחקים?</summary><ul>
+    <li>נוגעים במשבצת ריקה, ואז בספרה למטה. המספר הקטן מתחת לכל ספרה אומר כמה עוד חסרות ממנה.</li>
+    <li>"עיפרון": רושמים בקטן כמה אפשרויות למשבצת. כשממלאים ספרה, היא נמחקת לבד מההערות של השכנים.</li>
+    <li>ספרה שחוזרת פעמיים באותה שורה, עמודה או ריבוע נצבעת באדום.</li>
+    <li>קל ובינוני נפתרים בלי לנחש. בקשה ובמומחה יש פחות ספרות, וצריך לחשוב כמה צעדים קדימה.</li>
+    <li>הלוח נשמר בטלפון. אפשר לסגור ולחזור אליו מתי שרוצים.</li>
+  </ul></details>
+</div>
+<nav class="gr-links sd-links" aria-label="עוד סוגי סודוקו"><a href="/kelim/chashiva/sudoku/">🔢 סודוקו יומי</a><a href="/kelim/chashiva/sudoku/kal/">קל</a><a href="/kelim/chashiva/sudoku/beinoni/">בינוני</a><a href="/kelim/chashiva/sudoku/kashe/" aria-current="page">קשה וקשה מאוד</a><a href="/kelim/chashiva/sudoku/lehadpasa/">🖨 להדפסה</a><a href="/kelim/chashiva/sudoku/yeladim/">🧒 לילדים</a></nav>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+<h2 id="seo-h">סודוקו קשה וקשה מאוד: לוחות שלא נפתרים בצעדים פשוטים</h2>
+  <p>לוח קשה כאן הוא לא רק לוח עם פחות מספרים. המחשב בודק כל לוח קשה: אם אפשר לפתור אותו רק ב"מספר יחיד" וב"מקום יחיד", הוא נזרק ונוצר לוח אחר. כך מגיע אליכם לוח שבאמת דורש שיטות מתקדמות, ועדיין יש לו פתרון אחד בלבד שאפשר להגיע אליו בלי לנחש. ברמה <b>קשה</b> יש כ-27 מספרים, וברמה <b>קשה מאוד</b> (מומחה) כ-22. בוחרים את "מומחה" בשורת הרמות למעלה.</p>
+  <h3>הכלי הכי חשוב: עיפרון</h3>
+  <p>בלוח קשה כמעט אי אפשר להחזיק הכול בראש. מפעילים "עיפרון" וכותבים בכל משבצת ריקה את כל המספרים האפשריים בה. כשממלאים ספרה, היא נמחקת לבד מההערות של כל השכנים, כך שהעבודה הידנית קטנה מאוד.</p>
+  <h3>השיטות לרמה קשה</h3>
+  <p><b>זוג סגור ושלישייה סגורה:</b> שתי משבצות באותה שורה שבשתיהן אפשריים רק 4 ו-7, אז 4 ו-7 לא יכולים להיות בשום משבצת אחרת בשורה. אותו דבר עם שלוש משבצות ושלושה מספרים. <b>הצבעה:</b> אם בריבוע מסוים המספר 3 יכול להיות רק בשורה אחת, אפשר למחוק את 3 משאר השורה הזאת מחוץ לריבוע. <b>X-Wing:</b> מספר שבשתי שורות יכול להיות רק בשני אותם טורים, ולכן אפשר למחוק אותו משאר שני הטורים.</p>
+  <h3>ולקשה מאוד</h3>
+  <p>ברמת מומחה מגיעים רגעים שבהם אף שיטה פשוטה לא עובדת. כאן עוזרים <b>שרשראות</b>: בודקים משבצת עם שתי אפשרויות בלבד, ועוקבים לאן כל אחת מובילה. אם שתי הדרכים מגיעות לאותה מסקנה במשבצת אחרת, המסקנה נכונה. זה לא ניחוש, זו הוכחה בשני מקרים.</p>
+  <h3>אתגר לחברים והדפסה</h3>
+  <p>כשמסיימים, אפשר לשלוח את אותו לוח בדיוק לחבר ולראות מי פותר מהר יותר. מי שאוהב לפתור על נייר יכול להדפיס <a href="/kelim/chashiva/sudoku/lehadpasa/">סודוקו קשה להדפסה</a>. ואם הלוח קשה מדי בינתיים, <a href="/kelim/chashiva/sudoku/beinoni/">סודוקו בינוני</a> הוא הצעד שלפני.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>מה ההבדל בין סודוקו קשה לקשה מאוד?</summary><p>בקשה יש כ-27 מספרים נתונים, ובקשה מאוד (מומחה) כ-22. שני הסוגים דורשים שיטות מתקדמות, וקשה מאוד דורש לפעמים שרשראות.</p></details>
+  <details><summary>צריך לנחש בסודוקו קשה?</summary><p>לא. לכל לוח פתרון אחד, ותמיד אפשר להגיע אליו בהיגיון, גם אם זה דורש לבדוק שני מקרים.</p></details>
+  <details><summary>איך פותרים סודוקו קשה?</summary><p>כותבים הערות בעיפרון בכל המשבצות, ומחפשים זוגות סגורים, הצבעה ו-X-Wing. ההסבר המלא בדף.</p></details>
+  <details><summary>מה זה X-Wing בסודוקו?</summary><p>מספר שבשתי שורות יכול להיות רק באותם שני טורים. אז הוא חייב להיות באחת מארבע הפינות, ואפשר למחוק אותו משאר הטורים.</p></details>
+  <details><summary>אפשר להדפיס סודוקו קשה?</summary><p>כן, בדף סודוקו להדפסה: בוחרים "קשה" או "קשה מאוד", עם דף פתרונות.</p></details>
+  <details><summary>כמה זמן לוקח לוח קשה מאוד?</summary><p>לשחקנים מנוסים 20–45 דקות, ולפעמים יותר. השעון נעצר כשסוגרים את הדף, והלוח נשמר.</p></details>
+</section>
+<!--/seo-txt-->

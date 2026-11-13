@@ -1,0 +1,75 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_sudoku",
+  "title": "סודוקו קל אונליין בחינם: לוח חדש בכל פעם, למתחילים | הכלים של גילעד רחמים",
+  "description": "סודוקו קל אונליין בחינם: כ-40 מספרים נתונים, נפתר בהיגיון בלי לנחש. לוח חדש בכל לחיצה, עיפרון, רמז ובדיקה. מתאים למתחילים, לילדים ולגיל השלישי. בלי פרסומות ובלי הרשמה.",
+  "og_title": "סודוקו קל – לוח חדש בכל פעם",
+  "priority": "0.7",
+  "crumbs": [
+    [
+      "משחקי חשיבה",
+      "/kelim/chashiva/"
+    ],
+    [
+      "סודוקו",
+      "/kelim/chashiva/sudoku/"
+    ],
+    [
+      "קל",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/chashiva.css\"><link rel=\"stylesheet\" href=\"/assets/chashiva-sudoku-extra.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"מה זה סודוקו קל?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לוח עם כ-40 מספרים נתונים, שנפתר עד הסוף בשתי שיטות פשוטות בלי לנחש. מתאים למתחילים.\"}}, {\"@type\": \"Question\", \"name\": \"כמה זמן לוקח לפתור סודוקו קל?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"למתחילים בערך 10–20 דקות. מי שמשחק הרבה פותר לוח קל ב-3–6 דקות.\"}}, {\"@type\": \"Question\", \"name\": \"יש לוח חדש בכל פעם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. כל לחיצה על \\\"לוח חדש\\\" יוצרת לוח קל חדש, בלי הגבלה.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לקבל רמז?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. כפתור \\\"רמז\\\" ממלא משבצת אחת. בתוצאה ייכתב כמה רמזים השתמשתם.\"}}, {\"@type\": \"Question\", \"name\": \"מה עושים אחרי שסודוקו קל נהיה קל מדי?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"עוברים לסודוקו בינוני: עדיין בלי ניחושים, אבל עם פחות מספרים בהתחלה.\"}}]}</script>",
+  "foot": "<script src=\"/assets/chashiva.js\" defer></script><script src=\"/assets/chashiva-sudoku.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>סודוקו קל</h1>
+  <p class="sub">לוח קל עם כ-40 מספרים נתונים. נפתר בצעדים פשוטים, בלי ניחושים. לוח חדש בכל לחיצה.</p>
+</header>
+<div class="tool">
+  <div class="ch-tabs" id="sd-tabs" role="tablist"><button type="button" role="tab" data-m="daily" aria-selected="true">⭐ אתגר יומי</button><button type="button" role="tab" data-m="levels" aria-selected="false">🪜 ארבע רמות</button></div>
+  <p class="ch-weekline" id="ch-weekline"></p>
+  <div class="ch-vsbanner" id="ch-vsbanner" hidden></div>
+  <div id="sd-lvlbox" hidden><div class="ch-chips" id="sd-levels"></div><p class="ch-hint" id="sd-lockmsg"></p></div>
+  <div class="ch-done-today" id="sd-today" hidden></div>
+  <div class="ch-bar"><span id="sd-label"></span><span>⏱ <b id="sd-time">0:00</b></span></div>
+  <div class="sd-board" id="sd-board" data-level="kal" dir="ltr" aria-label="לוח סודוקו"></div>
+  <div class="sd-pad" id="sd-pad" dir="ltr"><button type="button" data-d="1">1<small></small></button><button type="button" data-d="2">2<small></small></button><button type="button" data-d="3">3<small></small></button><button type="button" data-d="4">4<small></small></button><button type="button" data-d="5">5<small></small></button><button type="button" data-d="6">6<small></small></button><button type="button" data-d="7">7<small></small></button><button type="button" data-d="8">8<small></small></button><button type="button" data-d="9">9<small></small></button></div>
+  <div class="ch-tools"><button type="button" id="sd-pencil" aria-pressed="false">✏️ עיפרון</button><button type="button" id="sd-erase">⌫ מחיקה</button><button type="button" id="sd-undo">↶ ביטול</button><button type="button" id="sd-hint">💡 רמז</button><button type="button" id="sd-check">✓ בדיקה</button><button type="button" id="sd-new" hidden>🎲 לוח חדש</button></div>
+  <p class="ch-msg" id="sd-msg" aria-live="polite"></p>
+  <div id="sd-win"></div>
+  <details class="ch-how"><summary>איך משחקים?</summary><ul>
+    <li>נוגעים במשבצת ריקה, ואז בספרה למטה. המספר הקטן מתחת לכל ספרה אומר כמה עוד חסרות ממנה.</li>
+    <li>"עיפרון": רושמים בקטן כמה אפשרויות למשבצת. כשממלאים ספרה, היא נמחקת לבד מההערות של השכנים.</li>
+    <li>ספרה שחוזרת פעמיים באותה שורה, עמודה או ריבוע נצבעת באדום.</li>
+    <li>קל ובינוני נפתרים בלי לנחש. בקשה ובמומחה יש פחות ספרות, וצריך לחשוב כמה צעדים קדימה.</li>
+    <li>הלוח נשמר בטלפון. אפשר לסגור ולחזור אליו מתי שרוצים.</li>
+  </ul></details>
+</div>
+<nav class="gr-links sd-links" aria-label="עוד סוגי סודוקו"><a href="/kelim/chashiva/sudoku/">🔢 סודוקו יומי</a><a href="/kelim/chashiva/sudoku/kal/" aria-current="page">קל</a><a href="/kelim/chashiva/sudoku/beinoni/">בינוני</a><a href="/kelim/chashiva/sudoku/kashe/">קשה וקשה מאוד</a><a href="/kelim/chashiva/sudoku/lehadpasa/">🖨 להדפסה</a><a href="/kelim/chashiva/sudoku/yeladim/">🧒 לילדים</a></nav>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+<h2 id="seo-h">סודוקו קל: המקום הנכון להתחיל</h2>
+  <p>בסודוקו קל יש בערך 40 מספרים כתובים מתוך 81 משבצות, כלומר כמעט חצי לוח כבר מלא. כל לוח כאן נבדק לפני שהוא מוצג: יש לו פתרון אחד בלבד, והוא נפתר עד הסוף בשתי שיטות פשוטות, בלי לנחש אף פעם. זה הופך את הרמה הקלה למקום הכי טוב ללמוד את המשחק, או להירגע עם לוח של 5–10 דקות.</p>
+  <h3>שתי השיטות שפותרות כל לוח קל</h3>
+  <p><b>מספר יחיד במשבצת:</b> בוחרים משבצת ריקה ובודקים אילו מספרים כבר מופיעים בשורה, בעמודה ובריבוע שלה. אם נשאר רק מספר אחד אפשרי, הוא התשובה. <b>מקום יחיד למספר:</b> בוחרים מספר, נניח 5, ובודקים באיזה מקום בריבוע מסוים הוא עוד יכול לשבת. אם יש רק מקום אחד, כותבים אותו. חוזרים על שתי השיטות לסירוגין, והלוח נפתח לאט.</p>
+  <h3>איך להתחיל לוח</h3>
+  <p>התחילו בשורה, בעמודה או בריבוע שחסרים בהם הכי מעט מספרים. המספר הקטן מתחת לכל כפתור בתחתית אומר כמה פעמים הספרה הזאת עוד חסרה בלוח: ספרה שחסרה רק פעם אחת או פעמיים קל למצוא ראשונה. כשטועים, הספרה נצבעת באדום, ואפשר לבטל.</p>
+  <h3>למי מתאים סודוקו קל</h3>
+  <p>למתחילים שעוד לא שיחקו, לילדים מכיתה ג בערך, ולגיל השלישי כאימון ריכוז יומי. לילדים קטנים יותר יש <a href="/kelim/chashiva/sudoku/yeladim/">סודוקו לילדים</a> בלוחות של 4×4 ו-6×6. מי שמעדיף נייר יכול להדפיס <a href="/kelim/chashiva/sudoku/lehadpasa/">לוחות קלים להדפסה</a>.</p>
+  <h3>מתי לעבור לרמה הבאה</h3>
+  <p>כשלוח קל לוקח לכם פחות מ-10 דקות בלי רמזים, הגיע הזמן ל<a href="/kelim/chashiva/sudoku/beinoni/">סודוקו בינוני</a>. גם שם אין ניחושים, אבל יש פחות מספרים בהתחלה וצריך להשתמש יותר בשיטה השנייה.</p>
+  <h3>סודוקו קל לגיל השלישי</h3>
+  <p>הרבה סבים וסבתות פותרים סודוקו כל בוקר. בטלפון קשה לפעמים לראות ספרות קטנות, ולכן המשבצות כאן גדולות, והספרה שנבחרה מסומנת בצבע בכל הלוח. מי שמעדיף נייר יכול להדפיס לוח אחד גדול בדף, ברמה קלה, ולפתור עם עט.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>מה זה סודוקו קל?</summary><p>לוח עם כ-40 מספרים נתונים, שנפתר עד הסוף בשתי שיטות פשוטות בלי לנחש. מתאים למתחילים.</p></details>
+  <details><summary>כמה זמן לוקח לפתור סודוקו קל?</summary><p>למתחילים בערך 10–20 דקות. מי שמשחק הרבה פותר לוח קל ב-3–6 דקות.</p></details>
+  <details><summary>יש לוח חדש בכל פעם?</summary><p>כן. כל לחיצה על "לוח חדש" יוצרת לוח קל חדש, בלי הגבלה.</p></details>
+  <details><summary>אפשר לקבל רמז?</summary><p>כן. כפתור "רמז" ממלא משבצת אחת. בתוצאה ייכתב כמה רמזים השתמשתם.</p></details>
+  <details><summary>מה עושים אחרי שסודוקו קל נהיה קל מדי?</summary><p>עוברים לסודוקו בינוני: עדיין בלי ניחושים, אבל עם פחות מספרים בהתחלה.</p></details>
+</section>
+<!--/seo-txt-->

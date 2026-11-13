@@ -1,0 +1,8 @@
+/* טבלאות בתוך טקסט ההסבר (13.11.2026) – נטען רק בדפים שיש בהם טבלה */
+.seo-tbl-wrap{overflow-x:auto;margin:.4rem 0 1rem;-webkit-overflow-scrolling:touch}
+.seo-tbl{border-collapse:collapse;width:100%;min-width:320px;font-size:.98rem;color:var(--body)}
+.seo-tbl caption{caption-side:top;text-align:start;color:var(--muted);font-size:.9rem;padding-bottom:.3rem}
+.seo-tbl th,.seo-tbl td{border:1px solid var(--line);padding:.4rem .5rem;text-align:center}
+.seo-tbl thead th{background:rgba(216,179,95,.14);color:var(--cream)}
+.seo-tbl tbody th{color:var(--gold-hi);font-weight:700}
+@media print{.seo-tbl-wrap{display:none}}
