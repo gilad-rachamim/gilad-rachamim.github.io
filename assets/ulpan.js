@@ -84,7 +84,7 @@
       // איפה הפזמון: לפי החלקים של השיר. לשם אפשר לכוון את קולות הליווי ("רק בפזמון")
       var types = {}, cho = []; (song.parts || []).forEach(function (p) { types[p.id] = p.type; });
       tl.lines.forEach(function (ln) { if (types[ln.part] !== 'chorus') return; var a = ln.tb != null ? ln.tb : ln.t0; if (cho.length && a - cho[cho.length - 1] < 0.05) cho[cho.length - 1] = ln.t1; else cho.push(a, ln.t1); });
-      return setMusic(buf, song.title || song.topic || 'שיר בלי שם', 'song', song.id, pcs, mel, cho);
+      vidSet(null); return setMusic(buf, song.title || song.topic || 'שיר בלי שם', 'song', song.id, pcs, mel, cho);
     }).then(function () { busy = false; msg(''); }, function (e) { busy = false; msg('לא הצלחתי להכין את המוזיקה. (' + (e && e.message || '') + ')'); });
   }
   function hash(s) { var h = 5381; for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36) + s.length; }
@@ -95,7 +95,7 @@
       if (buf.duration > 600) throw new Error('long');
       if (buf.duration < 3) throw new Error('short');
       if (!keep) { dropTakes(); dbPut('music', { blob: file, name: file.name }); }
-      return setMusic(buf, file.name.replace(/\.[a-z0-9]{2,5}$/i, ''), 'file');
+      return setMusic(buf, file.name.replace(/\.[a-z0-9]{2,5}$/i, ''), 'file').then(function (r) { vidSet(file); return r; });
     }).then(function () { busy = false; msg(''); used('music_file'); }, function (e) {
       busy = false; var m = e && e.message;
       msg(m === 'long' ? 'הקובץ ארוך מ-10 דקות. בוחרים קובץ קצר יותר.' : m === 'short' ? 'הקובץ קצר מדי.' : 'לא הצלחתי לפתוח את הקובץ. קובצי MP3, M4A ו-WAV עובדים הכי טוב.');
@@ -179,7 +179,22 @@
     }
     return { stop: function () { nodes.forEach(function (n) { try { n.stop(); } catch (e) {} }); try { lim.disconnect(); } catch (e) {} } };
   }
-  function stopAll() { if (player) { player.stop(); player = null; } $('ul-play').textContent = '▶'; var l = $('ul-listen'); if (l) l.textContent = '▶ לשמוע את השיר'; }
+  // סרטון קריוקי (למשל מהבוט): המילים רצות מול העיניים, מסונכרן לשעון של המוזיקה
+  var vidUrl = null;
+  function vidSet(file) {
+    var v = $('ul-vid'), w = $('ul-vidw'); if (!v) return;
+    if (vidUrl) { try { URL.revokeObjectURL(vidUrl); } catch (e) {} vidUrl = null; }
+    var isV = file && (/^video\//.test(file.type || '') || /\.(mp4|mov|webm|m4v)$/i.test(file.name || ''));
+    if (isV) { vidUrl = URL.createObjectURL(file); v.src = vidUrl; v.muted = true; v.load(); } else { v.removeAttribute('src'); try { v.load(); } catch (e) {} }
+    if (isV && st.wordsOf) { st.words = ''; st.wordsOf = null; $('ul-words').value = ''; save(); } // מילים של שיר מהאתר לא מתאימות לסרטון
+    w.hidden = !isV; $('ul-vidhint').hidden = !isV; showWords();
+    if (isV) [].forEach.call($('ul-src').children, function (b) { var k = b.getAttribute('data-v'); if (k === 'karaoke' || k === 'file') b.classList.toggle('on', k === 'karaoke'); });
+  }
+  function vidOn() { var v = $('ul-vid'); return !!(v && vidUrl && !$('ul-vidw').hidden); }
+  function vidGo(from, t0) { if (!vidOn()) return; var v = $('ul-vid'), c = ctx(); v.pause(); try { v.currentTime = Math.max(0, from); } catch (e) {} setTimeout(function () { var p = v.play(); if (p && p.catch) p.catch(function () {}); }, Math.max(0, (t0 - c.currentTime) * 1000)); }
+  function vidFix(at) { if (!vidOn()) return; var v = $('ul-vid'); if (!v.paused && Math.abs(v.currentTime - at) > 0.3) { try { v.currentTime = at; } catch (e) {} } }
+  function vidStop(at) { if (!vidOn()) return; var v = $('ul-vid'); v.pause(); if (at != null) { try { v.currentTime = at; } catch (e) {} } }
+  function stopAll() { vidStop(); if (player) { player.stop(); player = null; } $('ul-play').textContent = '▶'; var l = $('ul-listen'); if (l) l.textContent = '▶ לשמוע את השיר'; }
   // קולות הליווי נבנים פעם אחת לכל השיר, רק כשבאמת צריך אותם (לפני שמיעה או הכנת הקובץ)
   var BACK_MSG = { double: 'מכפיל את הקול…', second: 'מוסיף קול שני…', choir: 'מוסיף מקהלה…' };
   function backKey() { return st.set.voice2 + (st.set.v2cho && music && music.cho ? ':c' : ''); } // ':c' = הליווי רק בפזמון
@@ -204,8 +219,8 @@
     }
     stopAll(); var c = wake();
     if (head >= music.dur - 0.3) head = 0;
-    var t0 = c.currentTime + 0.08, from = head, h = graph(c, c.destination, t0, from, mode), done = false, raf, tm;
-    function tick() { if (done) return; head = Math.min(music.dur, from + Math.max(0, c.currentTime - t0)); draw(); if (head >= music.dur - 0.02) { stop(); head = 0; draw(); stopAll(); return; } raf = requestAnimationFrame(tick); clearTimeout(tm); tm = setTimeout(tick, 60); }
+    var t0 = c.currentTime + 0.08, from = head, h = graph(c, c.destination, t0, from, mode), done = false, raf, tm; vidGo(from, t0);
+    function tick() { if (done) return; head = Math.min(music.dur, from + Math.max(0, c.currentTime - t0)); draw(); if (c.currentTime > t0 + 0.3) vidFix(head); if (head >= music.dur - 0.02) { stop(); head = 0; draw(); stopAll(); return; } raf = requestAnimationFrame(tick); clearTimeout(tm); tm = setTimeout(tick, 60); }
     function stop() { done = true; cancelAnimationFrame(raf); clearTimeout(tm); h.stop(); }
     player = { stop: stop, mode: mode }; $('ul-play').textContent = '❚❚'; if (mode !== 'none') $('ul-listen').textContent = '❚❚ לעצור'; tick();
   }
@@ -316,14 +331,14 @@
         : ' ההקלטה נשמעת כמו שיחת טלפון: כנראה הקליט מיקרופון של אוזניות בלוטות\'. לקול מלא מקליטים שוב בלי האוזניות, או עם אוזניות חוט.';
     });
   }
-  function showWords() { var w = (st.words || '').trim(); $('ul-lyrv').textContent = w || 'שרים עם המוזיקה. כשמסיימים – לוחצים "לסיים".'; }
+  function showWords() { var w = (st.words || '').trim(), on = vidOn(); $('ul-lyrv').textContent = w || (on ? '' : 'שרים עם המוזיקה. כשמסיימים – לוחצים "לסיים".'); $('ul-lyrv').hidden = !w && on; $('ul-stage').classList.toggle('ul-mini', !w && on); }
   function record() {
     if (busy || rec) return; if (!music) { msg('קודם בוחרים מוזיקה.'); return; }
     stopAll(); var c = wake(); busy = true; msg('מבקש גישה למיקרופון…');
     getMic().then(capture).then(function (cap) {
       busy = false; msg(''); used('rec');
       var pos = head > 0.5 ? head : 0, pre = pos ? Math.min(3, pos) : 0, startPos = pos - pre, lead = pos ? 0.35 : 2.4, t0 = c.currentTime + lead;
-      var ms = c.createBufferSource(); ms.buffer = music.buf; var mg = c.createGain(); mg.gain.value = st.set.phones ? 0.9 : 0.7; ms.connect(mg); mg.connect(c.destination); ms.start(t0, startPos);
+      var ms = c.createBufferSource(); ms.buffer = music.buf; var mg = c.createGain(); mg.gain.value = st.set.phones ? 0.9 : 0.7; ms.connect(mg); mg.connect(c.destination); ms.start(t0, startPos); vidGo(startPos, t0); if (vidOn()) { try { $('ul-vidw').scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) {} }
       var lock = null; try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(function (l) { lock = l; }, function () {}); } catch (e) {}
       rec = { cap: cap, t0: t0, startPos: startPos, ms: ms, done: false, mic: micNow };
       document.body.classList.add('ul-recording'); $('ul-rec').hidden = true; $('ul-stop').hidden = false; $('ul-stage').hidden = false; showWords();
@@ -332,14 +347,14 @@
         if (!rec || rec.done) return;
         var now = c.currentTime, t = now - t0, left = pos ? pre - t : -t;
         if (left > 0.05) { cnt.hidden = false; cnt.textContent = pos ? 'מתחילים לשיר בעוד ' + Math.ceil(left) : String(Math.max(1, Math.ceil(left / 0.8))); } else cnt.hidden = true;
-        head = Math.max(0, startPos + Math.max(0, t)); draw();
+        head = Math.max(0, startPos + Math.max(0, t)); draw(); if (t > 0.3) vidFix(head);
         var p = cap.peak(); if (p > 0.97) clip++; $('ul-lvl').style.width = Math.min(100, Math.round(Math.sqrt(p) * 100)) + '%';
         if (head >= music.dur - 0.02) { finish(); return; }
         raf = requestAnimationFrame(tick); clearTimeout(tm); tm = setTimeout(tick, 60);
       }
       function finish() {
         if (!rec || rec.done) return; rec.done = true; cancelAnimationFrame(raf); clearTimeout(tm);
-        try { ms.stop(); } catch (e) {} if (lock) { try { lock.release(); } catch (e) {} }
+        try { ms.stop(); } catch (e) {} vidStop(); if (lock) { try { lock.release(); } catch (e) {} }
         var sungFor = c.currentTime - t0 - pre;
         setTimeout(function () { // עוד רגע של הקלטה, כדי לא לחתוך את סוף המילה (וגם את האיחור של המכשיר)
           cap.stop().then(function (r) {
@@ -503,7 +518,7 @@
     chipGroup('ul-v2where', 'v2cho', 1, hearBack);
     $('ul-src').onclick = function (e) {
       var b = e.target.closest('[data-v]'); if (!b || busy || rec) return;
-      if (b.getAttribute('data-v') === 'file') $('ul-file').click(); else if (!music || music.kind !== 'song') { if (okToReplace()) { used('music_song'); loadSong(); } } else $('ul-songs').hidden = false;
+      if (b.getAttribute('data-v') === 'file' || b.getAttribute('data-v') === 'karaoke') { if (b.getAttribute('data-v') === 'karaoke') { used('music_karaoke'); $('ul-karhelp').hidden = false; } $('ul-file').click(); } else if (!music || music.kind !== 'song') { if (okToReplace()) { used('music_song'); loadSong(); } } else $('ul-songs').hidden = false;
     };
     $('ul-file').onchange = function () { var f = this.files && this.files[0]; this.value = ''; if (f && okToReplace()) loadFile(f); };
     $('ul-songs').onchange = function () { if (busy || rec) return; if (okToReplace()) { used('music_song'); loadSong(this.value); } else drawSongs(); };
@@ -540,7 +555,7 @@
   // פותחים מאיפה שהפסקנו: המוזיקה וההקלטות נשמרות בטלפון
   function restore() {
     var src = st.src, p, savedTakes = st.takes || [];
-    if (src && src.kind === 'file') p = dbGet('music').then(function (m) { return m && m.blob ? loadFile(new File([m.blob], m.name || 'מוזיקה'), true) : loadSong(null, true); });
+    if (src && src.kind === 'file') p = dbGet('music').then(function (m) { return m && m.blob ? loadFile(new File([m.blob], m.name || 'מוזיקה', { type: m.blob.type || '' }), true) : loadSong(null, true); });
     else p = loadSong(src && src.id, true);
     p.then(function () {
       var saved = savedTakes.filter(function (t) { return t.sr === sr; }); if (!music || !saved.length) return;
