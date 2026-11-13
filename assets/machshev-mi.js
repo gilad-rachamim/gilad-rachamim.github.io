@@ -135,6 +135,16 @@
       L.push({ id: 'wa', t: 'לפתוח בווטסאפ', d: 'רואים תמונה ושם שבעל המספר בחר, ובעסק – את שם העסק. לא נשלחת הודעה.', u: 'https://wa.me/' + r.intl });
       L.push({ id: 'tg', t: 'לפתוח בטלגרם', d: 'אם בעל המספר מאפשר למצוא אותו לפי מספר, יופיעו השם והתמונה.', u: 'https://t.me/+' + r.intl });
     }
+    // לא מצאתם בווטסאפ? אפליקציות זיהוי מתקשר. כל אחד מתחבר עם החשבון שלו ומשתמש בחיפושים החינמיים היומיים שלו.
+    if (r.israeli && /^0\d{8,9}$/.test(r.local)) {
+      L.push({ id: 'tc', t: 'לחפש ב-Truecaller', d: 'מראה את השם שאנשים אחרים שמרו למספר. צריך להתחבר עם גוגל, ויש כמה חיפושים חינם ביום.', u: 'https://www.truecaller.com/search/il/' + r.local });
+    }
+    if (r.intl && r.intl.length >= 9) {
+      L.push({ id: 'sm', t: 'לחפש ב-Sync.ME', d: 'עוד מאגר של שמות וסימוני ספאם. גם כאן יש מגבלה יומית קטנה.', u: 'https://sync.me/search/?number=' + r.intl });
+    }
+    if (r.israeli && /^05\d{8}$/.test(r.local)) {
+      L.push({ id: 'me', t: 'לבדוק באפליקציית Me', d: 'אפליקציה ישראלית לזיהוי מתקשר. מתקינים פעם אחת, ומדביקים בה את המספר.', u: 'https://meapp.co.il/' });
+    }
     var forms = [];
     if (r.israeli && /^0\d+$/.test(r.local)) forms = ['"' + r.local + '"', '"' + fmtIL(r.local) + '"', '"+' + r.intl + '"'];
     else if (r.israeli && /^1\d{9}$/.test(r.local)) forms = ['"' + r.local + '"', '"' + fmtIL(r.local) + '"'];
