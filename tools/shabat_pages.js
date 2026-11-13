@@ -35,16 +35,18 @@ function tool(city) {
   return `<div class="tool" id="sb" data-city="${main ? '' : c[0]}">
   <form class="k-form" id="sb-form" novalidate>
     <div class="field"><label for="sb-place">${main ? 'איפה?' : 'עיר'}</label><select id="sb-place">${options(c[0])}</select></div>
-${main ? '    <div class="field"><div class="sb-loc"><button class="btn btn-line btn-sm" type="button" id="sb-gps">📍 לפי המיקום שלי</button><span class="sb-st" id="sb-st" role="status"></span></div></div>\n' : ''}    <div class="field"><label for="sb-candle">הדלקת נרות</label><select id="sb-candle"><option value="auto">לפי המקום (20, 30 או 40 דק׳)</option><option value="18">18 דקות לפני השקיעה</option><option value="20">20 דקות</option><option value="30">30 דקות</option><option value="40">40 דקות</option></select></div>
+${main ? '    <div class="field"><div class="sb-loc"><button class="btn btn-line btn-sm" type="button" id="sb-gps">📍 לפי המיקום שלי</button><span class="sb-st" id="sb-st" role="status"></span></div></div>\n'
+    : `    <div class="field"><span class="label">המקום המדויק שלכם ${c[2]}</span><div class="sb-loc"><button class="btn btn-line btn-sm" type="button" id="sb-gps">📍 לפי המיקום המדויק שלי</button><button class="btn btn-line btn-sm" type="button" id="sb-center" hidden>חזרה למרכז העיר</button><span class="sb-st" id="sb-st" role="status"></span></div></div>\n`}    <div class="field"><label for="sb-candle">הדלקת נרות</label><select id="sb-candle"><option value="auto">לפי המקום (20, 30 או 40 דק׳)</option><option value="18">18 דקות לפני השקיעה</option><option value="20">20 דקות</option><option value="30">30 דקות</option><option value="40">40 דקות</option></select></div>
   </form>
   <div class="res" id="sb-res">${C.heroHtml(list[0], c[1], null)}</div>
+  <p class="sb-diff" id="sb-diff" hidden></p>
   <p class="vh" id="sb-live" role="status"></p>
   <div class="share-row">
     <a class="btn btn-gold btn-sm" href="#" id="sb-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את זמני השבת</a>
     <button class="btn btn-line btn-sm" type="button" id="sb-copy">להעתיק</button>
   </div>
   <p class="disclaimer">כניסת שבת: זמן הדלקת הנרות, ${CANDLE_RULE} לפני השקיעה (אפשר לשנות). צאת שבת: צאת הכוכבים לפי 8.5° (כמו ברוב הלוחות בארץ), ולידו לפי רבנו תם: 72 דקות אחרי השקיעה. החישוב לפי גובה פני הים ושקיעה מישורית. לזמנים להלכה במקום מסוים – שואלים את הרב.</p>
-${main ? '  <p class="disclaimer">המיקום נשאר בטלפון ולא נשלח לשום מקום. הוא נשמר לפעם הבאה.</p>\n' : `  <p class="disclaimer"><a class="gold" href="${HOME}">עיר אחרת, או לפי המיקום שלי ←</a></p>\n`}</div>
+${main ? '  <p class="disclaimer">המיקום נשאר בטלפון ולא נשלח לשום מקום. הוא נשמר לפעם הבאה.</p>\n' : `  <p class="disclaimer">הזמנים למעלה הם של מרכז ${c[1]}. בכל שכונה השקיעה שונה בכמה שניות, ולפעמים זה מזיז את הדקה: "לפי המיקום המדויק שלי" מחשב לפי המקום שבו אתם. המיקום נשאר בטלפון ולא נשלח לשום מקום. <a class="gold" href="${HOME}">עיר אחרת ←</a></p>\n`}</div>
 
 <section class="k-sec" aria-labelledby="sb-weeks-h">
   <h2 id="sb-weeks-h">${main ? 'זמני כניסת שבת וצאת שבת לשבתות הבאות' : 'זמני השבת ' + c[2] + ' לשבתות הבאות'}</h2>
@@ -190,6 +192,7 @@ CITIES.forEach(function (c, ci) {
     [[`יש הבדל בין ${c[1]} לערים אחרות?`, cmpTxt + `. ההבדל נובע מהמיקום: ככל שהעיר מזרחית יותר השמש שוקעת בה מוקדם יותר.`],
      [`זמני השבת ${loc} זהים לירושלים?`, cmpTxt + `. כל עיר מקבלת זמן משלה לפי המיקום שלה.`],
      [`למה הזמנים ${loc} שונים מעיר אחרת?`, `בגלל קו האורך וקו הרוחב של העיר, ובגלל מנהג ההדלקה. בשבת הקרובה: ` + cmpTxt + '.']][v(4)],
+    [`אפשר לקבל זמני שבת לפי הבית שלי ${loc}?`, `כן. לוחצים "לפי המיקום המדויק שלי", והזמנים מחושבים לפי המקום שבו אתם, עם ההבדל בשניות ממרכז ${c[1]}. בתוך העיר ההבדל קטן, אבל לפעמים הוא מזיז את ההדלקה או את צאת השבת בדקה. המיקום נשמר בטלפון בלבד.`],
     [['אפשר לשלוח את הזמנים בווטסאפ?', 'כן. הכפתור ״לשלוח את זמני השבת״ פותח הודעה מוכנה עם הפרשה, כניסת השבת וצאת השבת.'],
      [`איך שולחים את זמני השבת ${loc} לקבוצה?`, 'לוחצים ״לשלוח את זמני השבת״, ונפתחת הודעת ווטסאפ מוכנה עם שם הפרשה, שעת ההדלקה ושעת צאת השבת. אפשר גם ״להעתיק״ ולהדביק בכל מקום.'],
      ['צריך להוריד אפליקציה?', `לא. זה דף אינטרנט רגיל. שומרים את הקישור, או מוסיפים אותו למסך הבית, ובכל כניסה מקבלים את זמני השבת הקרובה ${loc}.`]][v(0)]
