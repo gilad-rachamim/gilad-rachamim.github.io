@@ -8,11 +8,11 @@
   "og_title": "Base64, URL ו-JWT – ממיר שמבין עברית",
   "priority": "0.7",
   "crumbs": [["כלים למתכנתים", "/kelim/tichnut/"], ["Base64 ו-JWT", null]],
-  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><style>.tn-code{width:100%;direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:.92rem;line-height:1.5;padding:.7rem .8rem;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.25);color:var(--parchment);unicode-bidi:plaintext;text-align:start;white-space:pre-wrap;word-break:break-all}textarea.tn-code{min-height:7rem;resize:vertical}.tn-code.bad{color:#f0a39b;direction:rtl;text-align:right}.b6-tabs{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.8rem}.b6-tabs button{flex:1;min-width:6.5rem;padding:.55rem .5rem;border:1px solid var(--line);border-radius:12px;background:none;color:var(--body);font:inherit;cursor:pointer}.b6-tabs button[aria-pressed=true]{border-color:var(--gold);color:var(--cream);background:rgba(216,179,95,.1)}.b6-info{margin-top:.6rem;padding:.6rem .8rem;border:1px solid var(--gold-soft);border-radius:12px;color:var(--parchment);white-space:pre-line}.tn-lab{display:block;margin:.8rem 0 .3rem;color:var(--cream);font-weight:600}.tn-btns{display:flex;flex-wrap:wrap;gap:.45rem;margin:.7rem 0}</style><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"מה זה Base64?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"דרך לכתוב מידע בינארי באותיות ובמספרים בלבד, כדי שיעבור בבטחה באימייל או בכתובת. זה לא הצפנה.\"}}, {\"@type\": \"Question\", \"name\": \"למה העברית יוצאת משובשת בממירים אחרים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כי הם לא ממירים קודם ל-UTF-8. כאן ההמרה נכונה, גם לאימוג'י.\"}}, {\"@type\": \"Question\", \"name\": \"איך מפענחים JWT?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בוחרים \\\"לפענח JWT\\\" ומדביקים את הטוקן. רואים את התוכן ואת תאריך התפוגה.\"}}, {\"@type\": \"Question\", \"name\": \"הטוקן נשלח לשרת?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. הכול רץ בדפדפן שלכם.\"}}]}</script>",
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><style>.tn-code{width:100%;direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:.92rem;line-height:1.5;padding:.7rem .8rem;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.25);color:var(--parchment);unicode-bidi:plaintext;text-align:start;white-space:pre-wrap;word-break:break-all}textarea.tn-code{min-height:7rem;resize:vertical}.tn-code.bad{color:#f0a39b;direction:rtl;text-align:right}.b6-tabs{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.8rem}.b6-tabs button{flex:1;min-width:6.5rem;padding:.55rem .5rem;border:1px solid var(--line);border-radius:12px;background:none;color:var(--body);font:inherit;cursor:pointer}.b6-tabs button[aria-pressed=true]{border-color:var(--gold);color:var(--cream);background:rgba(216,179,95,.1)}.b6-info{margin-top:.6rem;padding:.6rem .8rem;border:1px solid var(--gold-soft);border-radius:12px;color:var(--parchment);white-space:pre-line}.tn-lab{display:block;margin:.8rem 0 .3rem;color:var(--cream);font-weight:600}.tn-btns{display:flex;flex-wrap:wrap;gap:.45rem;margin:.7rem 0}</style><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"מה זה Base64?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"דרך לכתוב מידע בינארי באותיות ובמספרים בלבד, כדי שיעבור בבטחה באימייל או בכתובת. זה לא הצפנה.\"}}, {\"@type\": \"Question\", \"name\": \"למה העברית יוצאת משובשת בממירים אחרים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כי הם לא ממירים קודם ל-UTF-8. כאן ההמרה נכונה, גם לאימוג'י.\"}}, {\"@type\": \"Question\", \"name\": \"איך מפענחים JWT?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בוחרים \\\"לפענח JWT\\\" ומדביקים את הטוקן. רואים את התוכן ואת תאריך התפוגה.\"}}, {\"@type\": \"Question\", \"name\": \"הטוקן נשלח לשרת?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. הכול רץ בדפדפן שלכם.\"}}, {\"@type\": \"Question\", \"name\": \"Base64 הוא הצפנה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. זה קידוד, וכל אחד יכול לפענח אותו בלי מפתח. לא שומרים בו סיסמאות או מידע סודי.\"}}]}</script>",
   "foot": "<script src=\"/assets/tichnut-data.js\" defer></script><script src=\"/assets/tichnut-base64.js\" defer></script>"
 } -->
 <header class="k-hero">
-  <h1>Base64, URL ו-JWT</h1>
+  <h1>ממיר Base64 בעברית, קידוד URL ופענוח JWT</h1>
   <p class="sub">מקודדים ומפענחים בלחיצה, גם עם עברית ואימוג'י. ו-JWT? רואים מה כתוב בו ועד מתי הוא בתוקף.</p>
 </header>
 <div class="tool">
@@ -44,6 +44,16 @@
   <p>מדביקים טוקן JWT ורואים מה כתוב בו: הכותרת, המידע, ועד מתי הוא בתוקף, בתאריך בעברית. שימו לב: הפענוח רק מראה מה כתוב, ולא בודק שהחתימה אמיתית.</p>
   <h3>רץ בדפדפן</h3>
   <p>שום דבר לא נשלח ולא נשמר, גם לא הטוקן. וחשוב לזכור: Base64 הוא קידוד ולא הצפנה. כל אחד יכול לפענח אותו. עוד: <a class="gold" href="/kelim/tichnut/json/">מסדר JSON</a> ו<a class="gold" href="/kelim/tichnut/regex/">בודק Regex</a>.</p>
+  <h3>איך משתמשים</h3>
+  <p>בוחרים פעולה: לקודד או לפענח Base64, לקודד או לפענח URL, או לפענח JWT. מדביקים את הטקסט, והתוצאה מופיעה מיד בשדה התוצאה. "להעתיק" מעתיק אותה, ו"להפוך כיוון" מעביר את התוצאה לקלט ומחליף בין קידוד לפענוח, כדי לבדוק שהטקסט חוזר בדיוק כמו שהיה.</p>
+  <h3>Base64 ועברית: מה קורה מאחורי הקלעים</h3>
+  <p>Base64 עובד על בתים, לא על אותיות. כל אות עברית תופסת שני בתים ב-UTF-8, ואימוג'י תופס ארבעה. ממיר שמקודד ישר בלי להמיר ל-UTF-8 קודם, שובר את העברית. כאן ההמרה ל-UTF-8 נעשית קודם, ולכן מקבלים את אותו פלט כמו בשפות תכנות, ופענוח שמחזיר עברית תקינה.</p>
+  <h3>מתי צריך קידוד URL</h3>
+  <p>בכתובת אינטרנט אסור לכתוב רווחים, עברית ותווים כמו & ו-?, בלי לקודד אותם. קידוד URL הופך אותם לרצפים כמו ‎%D7%90, ופענוח מחזיר את הטקסט הקריא. זה שימושי כשבונים קישור עם פרמטרים, או כשמקבלים קישור ארוך ולא מבינים מה כתוב בו.</p>
+  <h3>מה רואים בפענוח JWT</h3>
+  <p>טוקן JWT בנוי משלושה חלקים, מופרדים בנקודות: כותרת, מידע וחתימה. הכלי מפענח את הכותרת ואת המידע ומציג אותם מסודרים, ומראה בתאריך בעברית עד מתי הטוקן בתוקף.</p>
+  <h3>למה זה בחינם</h3>
+  <p>הכלים של גילעד רחמים נבנים כחסד: בלי תשלום, בלי פרסומות ובלי הרשמה, כדי שכל אחד יוכל להשתמש בהם. מי שרוצה לעזור, שולח את הדף לחבר שזה יכול לעזור לו. חסר לכם כלי? אפשר <a class="gold" href="/kelim/bakasha/">לבקש כלי חדש</a>.</p>
 </section>
 <section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
   <h2 id="seo-faq-h">שאלות ותשובות</h2>
@@ -51,5 +61,6 @@
   <details><summary>למה העברית יוצאת משובשת בממירים אחרים?</summary><p>כי הם לא ממירים קודם ל-UTF-8. כאן ההמרה נכונה, גם לאימוג'י.</p></details>
   <details><summary>איך מפענחים JWT?</summary><p>בוחרים "לפענח JWT" ומדביקים את הטוקן. רואים את התוכן ואת תאריך התפוגה.</p></details>
   <details><summary>הטוקן נשלח לשרת?</summary><p>לא. הכול רץ בדפדפן שלכם.</p></details>
+  <details><summary>Base64 הוא הצפנה?</summary><p>לא. זה קידוד, וכל אחד יכול לפענח אותו בלי מפתח. לא שומרים בו סיסמאות או מידע סודי.</p></details>
 </section>
 <!--/seo-txt-->

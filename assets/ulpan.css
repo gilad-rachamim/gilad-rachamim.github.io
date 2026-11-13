@@ -47,3 +47,9 @@ body.ul-recording .ul-wave{border-color:#d8493a}
 #ul-v2where[hidden]{display:none}
 #ul-v2where button{padding:.35rem .8rem;font-size:.95rem;min-height:0}
 #ul-voice2 button{padding-inline:.6rem}
+.ul-vidw{margin-top:.8rem;border-radius:18px;overflow:hidden;background:#000;border:1px solid var(--line,#333)}
+.ul-vidw[hidden]{display:none}
+.ul-vidw video{display:block;width:100%;max-height:62vh;background:#000}
+body.ul-recording .ul-vidw{border-color:#d8493a;box-shadow:0 0 0 2px rgba(216,73,58,.35)}
+.ul-stage.ul-mini{min-height:0;padding:0;border:0;background:none}
+.ul-part b{color:var(--gold)}
