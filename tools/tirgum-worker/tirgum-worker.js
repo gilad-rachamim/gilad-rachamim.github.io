@@ -11,8 +11,8 @@ const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 const T_PER = 400, T_CAP = 6000;     // בקשות טקסט: לכתובת ביום / לכל האתר ביום
 const I_PER = 15, I_CAP = 400;       // תמונות
 const MAX_Q = 5000, MAX_IMG = 4_000_000;
-const LITE = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite'];
-const VISION = ['gemini-3.5-flash', 'gemini-3.5-flash-lite'];
+const LITE = ['gemini-3.1-flash-lite', 'gemini-3.5-flash'];   // 3.5-flash-lite מחזיר 400 עם thinkingBudget:0
+const VISION = ['gemini-3.5-flash', 'gemini-3.1-flash-lite'];
 const AI_TEXT = ['@cf/meta/llama-4-scout-17b-16e-instruct', '@cf/mistralai/mistral-small-3.1-24b-instruct', '@cf/meta/llama-3.3-70b-instruct-fp8-fast'];
 const AI_VISION = '@cf/meta/llama-4-scout-17b-16e-instruct';
 
@@ -149,6 +149,7 @@ async function imageRoute(request, env, h) {
     out = (await gemini(env, VISION, imgRules(to), [{ inlineData: { mimeType: img.mime, data: img.data } }, { text: 'Read and translate the text in this image.' }], IMG_SCHEMA, 45000)).data;
     out.engine = 'gemini';
   } catch (e) {
+    var why = String(e && e.message || e).slice(0, 100);
     try {
       const r = await env.AI.run(AI_VISION, { messages: [
         { role: 'system', content: imgRules(to) + ' Answer with JSON only: {"found":true,"src":"...","from":"en","t":"..."}' },
@@ -157,12 +158,12 @@ async function imageRoute(request, env, h) {
       let txt = r && (r.response || '');
       if (typeof txt === 'object') out = txt;
       else { txt = String(txt).replace(/^```(?:json)?\s*|\s*```$/g, ''); out = JSON.parse(txt.slice(txt.indexOf('{'), txt.lastIndexOf('}') + 1)); }
-      out.engine = 'llama';
+      out.engine = 'llama'; out.why = why;
     } catch (e2) { return json({ error: 'busy' }, 200, h); }
   }
   out.from = String(out.from || '').slice(0, 2).toLowerCase();
   if (to === 'he') out.t = stripNiqqud(out.t || '');
-  return json({ found: !!out.found && !!String(out.src || '').trim(), src: out.src || '', from: NAMES[out.from] ? out.from : '', t: out.t || '', engine: out.engine, left: quota.left }, 200, h);
+  return json({ found: !!out.found && !!String(out.src || '').trim(), src: out.src || '', from: NAMES[out.from] ? out.from : '', t: out.t || '', engine: out.engine, why: out.why, left: quota.left }, 200, h);
 }
 
 export default {
