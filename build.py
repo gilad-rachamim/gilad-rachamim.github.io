@@ -472,7 +472,7 @@ for path in sorted(SRC.rglob("*.html")):
         if meta.get("ext"): t["x"] = meta["ext"]
         TOOLS_JSON.append(t)
     if not meta.get("noindex"):
-        pages.append((url, meta.get("priority", "0.6")))
+        pages.append((url, meta.get("priority", "0.6"), path))
     print("built", url_path)
 
 # PWA לכל תת-אתר: manifest + service worker בתיקייה של התת-אתר (הטווח שלו = התיקייה).
@@ -512,9 +512,30 @@ for _p in (ROOT / "kelim" / "tools.json", ROOT / "tools" / "chatima-ext" / "tool
 print("tools.json:", len(TOOLS_JSON), "pages,", sum(1 for t in TOOLS_JSON if "x" in t), "take files")
 
 today = datetime.date.today().isoformat()
+# lastmod אמיתי: התאריך של הקומיט האחרון שנגע בקובץ המקור של הדף (קובץ ששונה ועוד לא נשמר = היום).
+# כשכל הדפים מסומנים "עודכנו היום" גוגל מפסיק לסמוך על התאריך; ככה הוא יודע אילו דפים באמת השתנו.
+def _git_dates():
+    import subprocess
+    run = lambda *a: subprocess.run(["git", *a], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", check=True).stdout
+    try:
+        out = run("-c", "core.quotepath=off", "log", "--format=@%cs", "--name-only", "--", "src/pages")
+        dirty = run("-c", "core.quotepath=off", "status", "--porcelain", "--untracked-files=all", "--", "src/pages")
+    except Exception:
+        return {}, set()
+    dates, cur = {}, today
+    for line in out.splitlines():
+        if line.startswith("@"):
+            cur = line[1:]
+        elif line.strip():
+            dates.setdefault(line.strip(), cur)
+    return dates, {l[3:].strip() for l in dirty.splitlines() if l.strip()}
+GIT_DATES, GIT_DIRTY = _git_dates()
+def lastmod(path):
+    rel = path.relative_to(ROOT).as_posix()
+    return today if rel in GIT_DIRTY else GIT_DATES.get(rel, today)
 sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
-for url, pr in pages:
-    sm.append(f"  <url><loc>{url}</loc><lastmod>{today}</lastmod><priority>{pr}</priority></url>")
+for url, pr, path in pages:
+    sm.append(f"  <url><loc>{url}</loc><lastmod>{lastmod(path)}</lastmod><priority>{pr}</priority></url>")
 sm.append("</urlset>")
 (ROOT / "sitemap.xml").write_text("\n".join(sm) + "\n", encoding="utf-8")
 (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /mohel/todah/\nSitemap: {BASE}/sitemap.xml\n", encoding="utf-8", newline="\n")
