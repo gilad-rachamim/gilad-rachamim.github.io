@@ -1,0 +1,13 @@
+/* תרגום דפים: התרגום נכנס כאלמנט חדש ליד הקטע, והטקסט המקורי לא משתנה. */
+hk-tr { unicode-bidi: isolate !important; text-align: start !important; text-indent: 0 !important; text-transform: none !important; letter-spacing: normal !important; font-style: normal !important; white-space: normal !important; }
+/* שתי השפות: התרגום מתחת לקטע, עם פס זהב דק בצד */
+hk-tr.hk-bi { display: block !important; margin: .3em 0 .15em !important; padding-inline-start: .55em !important; border-inline-start: 3px solid rgba(201, 162, 75, .8) !important; opacity: .96; }
+/* רק תרגום: המקור מוסתר (בגודל אפס, בלי למחוק אותו), והתרגום מקבל את גודל הכתב של הקטע */
+hk-tr.hk-only, [data-hk-hide] hk-tr.hk-only { display: block !important; font-size: var(--hk-fs) !important; line-height: var(--hk-lh) !important; }
+hk-tr.hk-only.hk-inl, [data-hk-hide] hk-tr.hk-only.hk-inl { display: inline !important; }
+hk-tr.hk-only:hover { background: rgba(217, 178, 95, .16) !important; border-radius: 3px; }
+[data-hk-hide] { font-size: 0 !important; line-height: 0 !important; margin-block: var(--hk-mb) !important; padding: var(--hk-p) !important; }
+[data-hk-hide] > :not(hk-tr), [data-hk-hide] > :not(hk-tr) * { font-size: 0 !important; }
+[data-hk-hide] svg, [data-hk-hide] img { font-size: var(--hk-fs) !important; }
+hk-tr.hk-off { display: none !important; }
+@media print { hk-tr-ui { display: none !important; } }
