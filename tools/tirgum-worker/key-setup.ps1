@@ -6,12 +6,12 @@ Write-Host ''
 Write-Host 'מחכה שתעתיקו את המפתח החדש מ-AI Studio (כפתור ההעתקה ליד המפתח)...' -ForegroundColor Yellow
 Set-Clipboard ' '
 $key = $null
-for ($i = 0; $i -lt 900 -and -not $key; $i++) {
+for ($i = 0; $i -lt 3600 -and -not $key; $i++) {
   $c = (Get-Clipboard -Raw); if ($c) { $c = $c.Trim() }
   if ($c -match '^(AIza[0-9A-Za-z_\-]{30,}|AQ\.[0-9A-Za-z_\-\.]{20,})$') { $key = $c } else { Start-Sleep 1 }
 }
 Set-Clipboard ' '
-if (-not $key) { Write-Host 'לא הועתק מפתח תוך 15 דקות.' -ForegroundColor Red; exit 1 }
+if (-not $key) { Write-Host 'לא הועתק מפתח תוך שעה.' -ForegroundColor Red; exit 1 }
 $sec = "$env:USERPROFILE\.claude\secrets\kelim-tirgum-gemini.txt"
 [IO.File]::WriteAllText($sec, $key)
 Write-Host 'המפתח התקבל ונשמר. שומר אותו בשרת...' -ForegroundColor Green
