@@ -21,6 +21,9 @@ import unicodedata
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from tehillim_perakim import T as PEREK_T  # נושא ומנהג אמירה לכל פרק
 SRC = json.loads((ROOT / "tools" / "data" / "dapei-kria-source.json").read_text(encoding="utf-8"))
 TEH = json.loads((ROOT / "tools" / "data" / "tehillim-source.json").read_text(encoding="utf-8"))
 PAGES = ROOT / "src" / "pages" / "kodesh"
@@ -548,6 +551,14 @@ for n in range(1, 151):
     b = book_of(n)
     prev_a = f'<a href="{purl(n - 1)}" rel="prev">→ פרק {heb(n - 1)}</a>' if n > 1 else f'<a href="{HUB}">→ כל הפרקים</a>'
     next_a = f'<a href="{purl(n + 1)}" rel="next">פרק {heb(n + 1)} ←</a>' if n < 150 else f'<a href="{HUB}">כל הפרקים ←</a>'
+    theme, use = PEREK_T[n]
+    wk_t = 'ב' + wk[0] if wk[0] != 'שבת' else 'בשבת'
+    cyc = f"במחזור החודשי הוא נקרא {yom_t}, ובמחזור השבועי {wk_t} ({range_txt(wk[1], wk[2])})."
+    qa = [
+        (f"על מה מדבר תהילים פרק {h}?", theme),
+        (f"מתי אומרים תהילים פרק {h}?", (use + " " if use else "") + cyc),
+        (f"כמה פסוקים יש בתהילים פרק {h}?", f"בפרק {h} יש {nv} פסוקים. הוא נפתח במילים \"{start}\", והוא בספר {SNAME[b]} מתוך חמשת הספרים של תהילים ({range_txt(*SEFER[b])})."),
+    ]
     m = {
         "site": "kodesh", "nav": "rabanim", "tool": "tehillim_perek",
         "title": f"תהילים פרק {h} – הטקסט המלא בניקוד | כלי קודש",
@@ -558,7 +569,7 @@ for n in range(1, 151):
         "no_rel": True,
         "no_precache": True,
         "crumbs": [["תהילים", HUB], [f"פרק {h}", None]],
-        "head": HEAD,
+        "head": HEAD + faq_ld(qa),
         "foot": FOOT,
     }
     page = meta(m) + f"""<header class="k-hero">
@@ -581,9 +592,11 @@ for n in range(1, 151):
 <!--seo-txt-->
 <section class="k-sec seo-txt" aria-labelledby="seo-h">
   <h2 id="seo-h">על תהילים פרק {h}</h2>
-  <p>פרק {h} בספר {SNAME[b]} של תהילים ({range_txt(*SEFER[b])}). הוא נפתח במילים "{start}", ויש בו {nv} פסוקים. במחזור החודשי הוא נקרא {yom_t}, ובמחזור השבועי {'ב' + wk[0] if wk[0] != 'שבת' else 'בשבת'}.</p>
+  <p>{theme}</p>
+  <p>{use + ' ' if use else ''}{cyc} הפרק בספר {SNAME[b]} של תהילים ({range_txt(*SEFER[b])}), נפתח במילים "{start}", ויש בו {nv} פסוקים.</p>
   <p>לכל הפרקים, ולחלוקה לפי ימי החודש וימי השבוע: <a class="gold" href="{HUB}">ספר תהילים המלא</a>. רוצים לגמור את הספר יחד עם עוד אנשים, לעילוי נשמה או לרפואה? <a class="gold" href="/kodesh/tehillim/">סיום תהילים בקישור</a>. ולפי אותיות השם: <a class="gold" href="/kodesh/tehillim/shem/">תהילים לפי שם</a>.</p>
 </section>
+{faq_html(qa)}
 <!--/seo-txt-->
 """
     write(f"tehillim/sefer/{n}", page)
