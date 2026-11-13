@@ -355,6 +355,7 @@ CHESED_PARTNER = {
     "/kelim/tochen/studio/": "kelim-studio PER_IP 40; x-kelim-partner",
     "/limudim/poter/": "limudim-poter PER_IP 12; x-kelim-partner",
     "/limudim/machberet/": "limudim-poter; x-kelim-partner",
+    "/kelim/miluim/gibush/": "7 ימים בחינם; קוד שותף (18 ₪) פותח את כל המסלול, הספר וההקלטה – Worker kelim-gibush",
 }
 CHESED_NO_PATH = {}  # כרגע ריק: לכל הכלים עם מכסה יש קוד שותף (11.11.2026)
 CHESED_SKIP = SEO_SKIP | {"404"}

@@ -1,0 +1,17 @@
+# "הכנה לגיבוש" – התוכן לשותפים של /kelim/miluim/gibush/ (Cloudflare Worker, חינם).
+# לפני פריסה: python -I tools/gibush_data.py  (יוצר private/days.json), ולהעתיק ל-private/ את book.pdf, 40-days.pdf, erev.m4a
+#             מתיקיית הספר "לחנות". private/ לא במאגר (.gitignore).
+# פריסה:   cd tools/gibush-worker && npx wrangler deploy
+# סוד:     npx wrangler secret put PARTNER_SECRET   (אותו סוד של שאר הכלים: ~/.claude/secrets/chaye-partner-secret.txt)
+name = "kelim-gibush"
+main = "gibush-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[assets]
+directory = "./private"
+binding = "ASSETS"
+run_worker_first = true
+
+[vars]
+BAD_MAX = "12"
