@@ -1,7 +1,7 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'kesef-202611121606';
+var CACHE = 'kesef-202611130805';
 var PRECACHE = ["/kesef/achuzim/", "/kesef/ashrai/", "/kesef/halvaa/", "/kesef/hechzer/", "/kesef/", "/kesef/kranot/", "/kesef/maam/", "/kesef/mechir/", "/kesef/minuyim/", "/kesef/mismachim/", "/kesef/mivtza/", "/kesef/ribit-dribit/", "/kesef/shana/", "/kesef/taktziv/", "/kesef/tlush/", "/kesef/yeladim/", "/assets/site.css?v=b4546dc2", "/assets/kelim.css?v=56115877", "/assets/kelim.js?v=5c4b7217", "/assets/track.js?v=963b507e", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-kesef-192.png", "/assets/kesef.css?v=b790a201", "/assets/kesef.js?v=27f16432"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
@@ -15,7 +15,7 @@ self.addEventListener('activate', function (e) {
 self.addEventListener('fetch', function (e) {
   var req = e.request;
   // קבצים ששותפו מאפליקציה אחרת (share_target ב-manifest של הכלים): שומרים רגע ב-Cache ופותחים את הכלי המתאים.
-  // קובץ אחד של שמע או וידאו (הודעה קולית מווטסאפ) – כלי התמלול. כל השאר (תמונות, כמה קבצים) – מסדר התיקיות, כמו תמיד.
+  // קובץ אחד של שמע או וידאו (הודעה קולית מווטסאפ) – כלי התמלול. PDF אחד – מילוי וחתימה. כל השאר (תמונות, כמה קבצים) – מסדר התיקיות, כמו תמיד.
   if (req.method === 'POST' && /\/machshev\/sader\/$/.test(new URL(req.url).pathname)) {
     e.respondWith(req.formData().then(function (fd) {
       var files = fd.getAll('files').filter(function (f) { return f && typeof f !== 'string'; });
@@ -23,6 +23,11 @@ self.addEventListener('fetch', function (e) {
       var ext = files.length === 1 ? (/\.([a-z0-9]+)$/i.exec(files[0].name || '') || [])[1] : '';
       var byExt = ext ? AVX[ext.toLowerCase()] : '';
       var av = files.length === 1 && (/^(audio|video)\//.test(files[0].type || '') || !!byExt);
+      // קובץ PDF בודד – הכלי למילוי וחתימה על PDF
+      var pdf = files.length === 1 && (/pdf$/i.test(files[0].type || '') || /\.pdf$/i.test(files[0].name || ''));
+      if (pdf) return caches.delete('chatima-share').then(function () { return caches.open('chatima-share'); }).then(function (c) {
+        return c.put('/chatima-share/0', new Response(files[0], { headers: { 'content-type': 'application/pdf', 'x-name': encodeURIComponent(files[0].name || 'מסמך.pdf') } }));
+      }).then(function () { return Response.redirect('/kelim/machshev/chatima/?share=1', 303); });
       var box = av ? 'tamlul-share' : 'sader-share';
       return caches.delete(box).then(function () { return caches.open(box); }).then(function (c) {
         return Promise.all(files.map(function (f, i) {
