@@ -144,6 +144,9 @@
     // קישור עם משך מוכן: /limudim/timer/#t=10 (דקות) או #t=1:30 (דקה וחצי)
     var hm = /[#&]t=(\d{1,3})(?::(\d{1,2}))?/.exec(location.hash);
     if (hm && !st.running) setLen((+hm[1] * 60 + (+hm[2] || 0)) * 1000);
+    // דפי משך קבוע (/limudim/timer/5-dakot/ וכו', 13.11.2026): data-preset בשניות על #ft-clock
+    var pre = +($('ft-clock').getAttribute('data-preset') || 0);
+    if (pre && !hm && !st.running) setLen(pre * 1000);
     fields(); paint();
     if (st.running) { if (remaining() <= 0) finish(); else { tick = setInterval(loop, 250); wake(true); } paint(); }
     document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') { if (st.running) wake(true); loop(); } });
@@ -229,6 +232,7 @@
     var h = location.hash, first = load(K, null);
     // מי שכבר לומד עם הפומודורו (יש לו סבבים שמורים) ממשיך לראות אותו ראשון
     if (!first) first = (load('limudim-timer-log', null) || (load('limudim-timer', null) || {}).running) ? 'pomo' : 'ft';
+    if ($('ft-clock') && $('ft-clock').getAttribute('data-preset')) first = 'ft';
     if (/shaon-etzer|stopwatch/.test(h)) first = 'sw'; else if (/pomodoro/.test(h)) first = 'pomo'; else if (/[#&]t=\d/.test(h)) first = 'ft';
     show(first, false);
   }

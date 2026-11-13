@@ -5,9 +5,8 @@
   'use strict';
   var CH = window.CH, TOOL = 'chashiva_sudoku', G = 'sudoku';
   function $(id) { return document.getElementById(id); }
-  if (!$('sd-board')) return;
 
-  // ---------- מנוע ----------
+  // ---------- מנוע (משותף גם לדף "סודוקו להדפסה": window.SDGEN) ----------
   var ROW = [], COL = [], BOX = [], PEERS = [];
   for (var i = 0; i < 81; i++) { ROW.push(Math.floor(i / 9)); COL.push(i % 9); BOX.push(Math.floor(i / 27) * 3 + Math.floor((i % 9) / 3)); }
   for (var a = 0; a < 81; a++) { var p = []; for (var b = 0; b < 81; b++) if (a !== b && (ROW[a] === ROW[b] || COL[a] === COL[b] || BOX[a] === BOX[b])) p.push(b); PEERS.push(p); }
@@ -69,12 +68,16 @@
     }
     return out;
   }
+  window.SDGEN = { generate: generate, LEVELS: LEVELS, ORDER: ORDER };
+  if (!$('sd-board')) return;
 
   // ---------- מצב ----------
   var data = CH.load(G); data.wins = data.wins || {}; data.best = data.best || {};
   var P = null, v = [], notes = [], hinted = {}, undo = [], sel = -1, pencil = false, won = false, mode = 'daily', lv = 'beinoni', hints = 0, mistakes = 0, started = false;
   var clock = CH.clock($('sd-time'));
-  function unlocked(l) { var n = NEED[l]; return !n || (data.wins[n[0]] || 0) >= n[1]; }
+  // 13.11.2026: כל הרמות פתוחות מההתחלה (מי שמחפש "סודוקו קשה" צריך לקבל לוח קשה מיד). NEED נשאר רק להודעת "כל הכבוד".
+  function unlocked() { return true; }
+  var PAGE_LV = $('sd-board').getAttribute('data-level'); if (!LEVELS[PAGE_LV]) PAGE_LV = null;
   function say(t) { $('sd-msg').textContent = t || ''; }
   function persist() {
     var s = CH.load(G); s.wins = data.wins; s.best = data.best;
@@ -196,7 +199,7 @@
     var share = '🔢 סודוקו · ' + (daily ? 'אתגר יומי #' + CH.dayNum() + ' · ' : '') + LEVELS[lv].name + '\n⏱ ' + CH.fmt(clock.sec) + (hints ? ' · 💡 ' + hints + ' רמזים' : ' · בלי רמזים') + (daily && st.streak ? '\n🔥 רצף ' + CH.days(st.streak) : '') + '\nמנסים לנצח אותי? 😉';
     var newly = ORDER.filter(function (l) { return NEED[l] && NEED[l][0] === lv && data.wins[lv] === NEED[l][1]; })[0];
     var next = [{ label: 'עוד לוח ' + LEVELS[lv].name, fn: function () { tab('levels'); start('level', lv); } }];
-    if (newly) next.unshift({ label: '🔓 נפתחה רמת ' + LEVELS[newly].name + ' ←', fn: function () { tab('levels'); pick(newly); } });
+    if (newly) next.unshift({ label: '🪜 מוכנים לרמת ' + LEVELS[newly].name + '? ←', fn: function () { tab('levels'); pick(newly); } });
     CH.win({ tool: TOOL, el: $('sd-win'), daily: daily && !already, stats: st,
       title: hints ? 'פתרתם! 🎉' : 'פתרתם בלי רמזים! 🎉',
       line: '<span>⏱ <b>' + CH.fmt(clock.sec) + '</b></span>' + (rec && !hints ? '<span>🏆 שיא חדש ב' + LEVELS[lv].name + '</span>' : data.best[lv] ? '<span>השיא שלכם: ' + CH.fmt(data.best[lv]) + '</span>' : '') + (hints ? '<span>💡 ' + hints + '</span>' : ''),
@@ -211,8 +214,7 @@
       var open = unlocked(l), n = NEED[l];
       return '<button type="button" data-l="' + l + '"' + (open ? '' : ' disabled') + ' class="' + (mode === 'level' && lv === l ? 'on' : '') + '" title="' + (open ? '' : 'נפתח אחרי ' + n[1] + ' לוחות ' + LEVELS[n[0]].name) + '">' + (open ? '' : '🔒 ') + LEVELS[l].name + (data.wins[l] ? ' · ' + data.wins[l] + '✓' : '') + '</button>';
     }).join('');
-    var lock = ORDER.filter(function (l) { return !unlocked(l); })[0];
-    $('sd-lockmsg').textContent = lock ? 'רמת ' + LEVELS[lock].name + ' נפתחת אחרי ' + NEED[lock][1] + ' ' + (NEED[lock][1] === 1 ? 'לוח' : 'לוחות') + ' ' + LEVELS[NEED[lock][0]].name + '. האתגר היומי פתוח לכולם.' : 'כל הרמות פתוחות. כל הכבוד! 🏆';
+    $('sd-lockmsg').textContent = 'קל ובינוני נפתרים בלי לנחש. קשה ומומחה (קשה מאוד) דורשים לחשוב כמה צעדים קדימה.';
     $('sd-levels').querySelectorAll('button').forEach(function (b) { b.onclick = function () { pick(b.getAttribute('data-l')); }; });
   }
   function pick(l) { if (!unlocked(l)) return; start('level', l); drawLevels(); }
@@ -224,8 +226,8 @@
     if (m === 'daily') start('daily', 'beinoni');
     else {
       var sv = data.cur;
-      if (sv && /^sudoku-(kal|beinoni|kashe|mumche)-\d+$/.test(sv.key)) start('level', sv.lv, sv.key);
-      else start('level', ORDER.filter(unlocked).pop());
+      if (sv && /^sudoku-(kal|beinoni|kashe|mumche)-\d+$/.test(sv.key) && (!PAGE_LV || sv.lv === PAGE_LV)) start('level', sv.lv, sv.key);
+      else start('level', PAGE_LV || 'beinoni');
       drawLevels();
     }
   }
@@ -233,5 +235,5 @@
   var V = CH.vsIn && CH.vsIn.g === 'sudoku' && typeof CH.vsIn.s === 'string' && /^sudoku-/.test(CH.vsIn.s) && LEVELS[CH.vsIn.l] ? CH.vsIn : null;
   if (V && V.s === 'sudoku-daily-' + CH.today()) { tab('daily'); CH.vsStart(TOOL, 'הלוח הזה'); }
   else if (V) { document.querySelectorAll('#sd-tabs button').forEach(function (b) { b.setAttribute('aria-selected', 'false'); }); $('sd-new').hidden = false; start('vs', V.l, V.s); CH.vsStart(TOOL, 'הלוח הזה'); }
-  else tab(data.cur && /^sudoku-(kal|beinoni|kashe|mumche)-/.test(data.cur.key) ? 'levels' : 'daily');
+  else tab(PAGE_LV || (data.cur && /^sudoku-(kal|beinoni|kashe|mumche)-/.test(data.cur.key)) ? 'levels' : 'daily');
 })();
