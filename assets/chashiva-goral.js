@@ -5,7 +5,7 @@
   'use strict';
   var root = document.getElementById('gr');
   if (!root) return;
-  var MODE = root.getAttribute('data-mode'), KEY = 'chashiva-goral-' + MODE, PATH = location.pathname;
+  var MODE = root.getAttribute('data-mode'), KEY = 'chashiva-goral-' + (root.getAttribute('data-key') || MODE), PATH = location.pathname;
   var $ = function (id) { return document.getElementById(id); };
   function load(def) { try { var v = JSON.parse(localStorage.getItem(KEY) || 'null'); if (v && typeof v === 'object') Object.keys(v).forEach(function (k) { def[k] = v[k]; }); } catch (e) {} return def; }
   function save(st) { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
@@ -73,9 +73,13 @@
       nums: ['מספר מ-1 עד 10', '1\n2\n3\n4\n5\n6\n7\n8\n9\n10'],
       chores: ['מי עושה מה בבית?', 'כלים\nכביסה\nזבל\nלסדר את הסלון\nלערוך שולחן\nפטור היום 🎉'],
       names: ['מי עולה בגורל?', 'נועה\nאיתי\nתמר\nיונתן\nמאיה\nדניאל\nשירה\nאורי'],
-      prizes: ['גלגל הפרסים', 'ממתק\nמדבקה\nעוד סיבוב\nפרס גדול 🎁\nמחיאות כפיים\nבוחרים שיר']
+      prizes: ['גלגל הפרסים', 'ממתק\nמדבקה\nעוד סיבוב\nפרס גדול 🎁\nמחיאות כפיים\nבוחרים שיר'],
+      sheelot: ['גלגל שאלות היכרות', 'מה המאכל הכי אהוב עליך?\nלאן היית רוצה לטוס?\nמה הכישרון הסודי שלך?\nמה הזיכרון הכי מצחיק מהילדות?\nאיזה שיר מרים לך את מצב הרוח?\nמה היית עושה עם מיליון שקל?\nמי הדמות שהכי מעוררת בך השראה?\nמה למדת השנה?\nאיזו חיה היית רוצה להיות?\nמה הדבר הכי טוב שקרה לך השבוע?\nבמה אתה הכי גאה?\nמה החלום הכי גדול שלך?']
     };
-    var st = load({ title: MODE === 'names' ? 'מי עולה בגורל?' : 'מה אוכלים הערב?', text: DEF, remove: MODE === 'names', sound: true, hist: [], orig: '' });
+    // דפי נחיתה (13.11.2026): data-start = גלגל מוכן בכניסה הראשונה, data-key = שמירה נפרדת מהגלגל הראשי
+    var SP = PRESETS[root.getAttribute('data-start')];
+    if (SP) DEF = SP[1];
+    var st = load({ title: SP ? SP[0] : MODE === 'names' ? 'מי עולה בגורל?' : 'מה אוכלים הערב?', text: DEF, remove: MODE === 'names', sound: true, hist: [], orig: '' });
     var PAL = [['#d8b25a', '#14110a'], ['#2f6f6a', '#fff'], ['#b5553c', '#fff'], ['#3d5a80', '#fff'], ['#7a8f3c', '#fff'], ['#8a4f7d', '#fff'], ['#e9dcc0', '#14110a'], ['#4b7f52', '#fff']];
     var cv = $('gr-canvas'), g = cv.getContext('2d'), angle = -Math.PI / 2, spinning = false, list = [], backup = null;
     // גלגל שהגיע בקישור: #g=<base64url של {t, i}>

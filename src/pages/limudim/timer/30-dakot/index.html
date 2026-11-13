@@ -1,0 +1,150 @@
+<!--meta {
+  "site": "limudim",
+  "nav": "timer",
+  "tool": "timer",
+  "title": "טיימר 30 דקות אונליין: ספירה לאחור של חצי שעה, עם צלצול | כלים ללימודים",
+  "description": "טיימר 30 דקות אונליין בחינם: ספירה לאחור של חצי שעה בלחיצה אחת, עם צלצול בסוף ומסך מלא. לשיעורי בית, למבחן, להליכה יומית, לחיבור בפסיכומטרי ולבישול. עובד גם כשהמסך כבוי.",
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/limudim-shaon.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך מפעילים טיימר של חצי שעה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"הטיימר בדף הזה כבר מכוון ל-30 דקות. לוחצים \\\"להתחיל\\\", ובסוף נשמע צלצול.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר להשתמש בו לתרגול חיבור בפסיכומטרי?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. משימת הכתיבה נמשכת בדרך כלל כחצי שעה; בודקים את הזמן המדויק בהוראות העדכניות.\"}}, {\"@type\": \"Question\", \"name\": \"איך עוזרים לילד להתרכז בשיעורי בית?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מסכמים מראש על חצי שעה עם סוף ברור, מפעילים את הטיימר מולו, ונותנים הפסקה בסוף.\"}}, {\"@type\": \"Question\", \"name\": \"הטיימר ממשיך לרוץ כשהמסך כבוי?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. הזמן נמדד לפי השעון של המכשיר, כך שגם אם המסך נכבה או שעברתם לאפליקציה אחרת, הספירה נכונה. כדי לשמוע צלצול כשהמסך כבוי, מפעילים \\\"התראות\\\" בהגדרות.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לשנות את הזמן?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. כפתורי הזמן למעלה, \\\"+ דקה\\\", או שדות השעות, הדקות והשניות בהגדרות.\"}}]}</script>",
+  "og_title": "טיימר 30 דקות – מתחיל בלחיצה, בחינם",
+  "priority": "0.7",
+  "crumbs": [
+    [
+      "טיימר",
+      "/limudim/timer/"
+    ],
+    [
+      "טיימר 30 דקות",
+      null
+    ]
+  ],
+  "foot": "<script src=\"/assets/hitkadmut.js\" defer></script><script src=\"/assets/limudim-shaon.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>טיימר 30 דקות</h1>
+  <p class="sub">חצי שעה, מוכן מראש. לוחצים "להתחיל" ושומעים צלצול בסוף.</p>
+</header>
+
+<div class="tool">
+  <div class="modes tk-tabs hide-focus" role="group" aria-label="איזה שעון">
+    <button type="button" data-kind="ft" aria-pressed="true">⏲ טיימר</button><button type="button" data-kind="sw" aria-pressed="false">⏱ שעון עצר</button><button type="button" data-kind="pomo" aria-pressed="false">📚 פומודורו ללימוד</button>
+  </div>
+
+  <div id="tk-ft" role="group" aria-label="טיימר">
+    <div class="modes hide-focus" role="group" aria-label="כמה זמן">
+      <button type="button" data-mins="1">1 דק׳</button><button type="button" data-mins="3">3 דק׳</button><button type="button" data-mins="5">5 דק׳</button><button type="button" data-mins="10">10 דק׳</button><button type="button" data-mins="15">15 דק׳</button><button type="button" data-mins="20">20 דק׳</button><button type="button" data-mins="30">30 דק׳</button><button type="button" data-mins="45">45 דק׳</button><button type="button" data-mins="60">שעה</button>
+    </div>
+    <div class="clock" id="ft-clock" data-preset="1800" style="margin-top:.8rem">
+      <div class="lbl" id="ft-lbl">טיימר</div>
+      <div class="t" id="ft-t">05:00</div>
+      <div class="ring"><i id="ft-ring"></i></div>
+    </div>
+    <p class="vh" id="ft-live" role="status"></p>
+    <div class="btns" style="margin-top:1rem"><button class="btn btn-gold btn-block big" type="button" id="ft-go">להתחיל ▶</button></div>
+    <div class="btns c" style="margin-top:.6rem"><button class="btn btn-line btn-sm" type="button" id="ft-plus">+ דקה</button><button class="btn btn-line btn-sm" type="button" id="ft-reset">לאפס</button><button class="btn btn-line btn-sm" type="button" data-full>מסך מלא</button></div>
+    <div class="panel hide-focus">
+      <div class="ft-hms">
+        <div class="field"><label for="ft-h">שעות</label><input id="ft-h" type="number" min="0" max="99" inputmode="numeric" placeholder="0"></div>
+        <div class="field"><label for="ft-m">דקות</label><input id="ft-m" type="number" min="0" max="999" inputmode="numeric" placeholder="0"></div>
+        <div class="field"><label for="ft-s">שניות</label><input id="ft-s" type="number" min="0" max="59" inputmode="numeric" placeholder="0"></div>
+      </div>
+      <div class="field"><label for="ft-label">על מה הטיימר? <span class="opt">(לא חובה)</span></label>
+        <input id="ft-label" type="text" maxlength="60" placeholder="למשל: העוגה בתנור"></div>
+      <div class="checks"><label><input type="checkbox" id="ft-sound"> צלצול כשהזמן נגמר</label></div>
+      <button class="btn btn-line btn-sm" type="button" id="ft-notif" style="justify-self:start">להפעיל התראות (גם כשהמסך כבוי)</button>
+      <p class="note">הטיימר מחשב לפי השעון, ולכן הזמן נכון גם אם סוגרים את הדף וחוזרים. כדי לשמוע את הצלצול בזמן, הכי בטוח להשאיר את המסך דלוק. בזמן שהטיימר רץ, הדף מבקש מהמסך לא לכבות.</p>
+    </div>
+  </div>
+
+  <div id="tk-sw" role="group" aria-label="שעון עצר" hidden>
+    <div class="clock" id="sw-clock">
+      <div class="lbl" id="sw-lbl">שעון עצר</div>
+      <div class="t long" id="sw-t"><span id="sw-main">00:00</span><small id="sw-cs">.00</small></div>
+    </div>
+    <p class="vh" id="sw-live" role="status"></p>
+    <div class="btns" style="margin-top:1rem"><button class="btn btn-gold btn-block big" type="button" id="sw-go">להתחיל ▶</button></div>
+    <div class="btns c" style="margin-top:.6rem"><button class="btn btn-line btn-sm" type="button" id="sw-lap" disabled>🏁 הקפה</button><button class="btn btn-line btn-sm" type="button" id="sw-reset" disabled>לאפס</button><button class="btn btn-line btn-sm" type="button" data-full>מסך מלא</button></div>
+    <div id="sw-laps"></div>
+    <div class="share-row hide-focus" id="sw-share" hidden>
+      <a class="btn btn-gold btn-sm" href="#" id="sw-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את התוצאות</a>
+      <button class="btn btn-line btn-sm" type="button" id="sw-copy">להעתיק</button>
+    </div>
+    <p class="note hide-focus" style="margin-top:1rem">"הקפה" שומרת זמן ביניים בלי לעצור את השעון. שעון העצר ממשיך לרוץ גם אם סוגרים את הדף וחוזרים.</p>
+  </div>
+
+  <div id="tk-pomo" role="group" aria-label="פומודורו ללימוד" hidden>
+    <div class="panel hide-focus">
+      <div class="field"><label for="tm-why">למה אני לומד? <span class="opt">(משפט אחד שלך, יופיע מול העיניים)</span></label>
+        <input id="tm-why" type="text" maxlength="120" placeholder="למשל: כדי להצליח במבחן ולעזור לאנשים"></div>
+      <div class="modes" role="group" aria-label="אורך הסבב">
+        <button type="button" data-mode="25"><span dir="ltr">25 / 5</span></button><button type="button" data-mode="50"><span dir="ltr">50 / 10</span></button><button type="button" data-mode="15"><span dir="ltr">15 / 3</span> (יום קשה)</button><button type="button" data-mode="custom">אחר</button>
+      </div>
+      <div class="row2" id="tm-custom" hidden>
+        <div class="field"><label for="tm-cf">דקות לימוד</label><input id="tm-cf" type="number" min="1" max="180" inputmode="numeric"></div>
+        <div class="field"><label for="tm-cb">דקות הפסקה</label><input id="tm-cb" type="number" min="1" max="60" inputmode="numeric"></div>
+      </div>
+    </div>
+
+    <div class="clock" id="tm-clock" style="margin-top:1rem" aria-live="off">
+      <div class="lbl" id="tm-lbl">זמן לימוד</div>
+      <div class="t" id="tm-t">25:00</div>
+      <div class="why" id="tm-whyshow"></div>
+      <div class="ring"><i id="tm-ring"></i></div>
+      <div class="dots" id="tm-dots" role="img" aria-label="סבבים"></div>
+    </div>
+    <div class="btns" style="margin-top:1rem"><button class="btn btn-gold btn-block big" type="button" id="tm-go">להתחיל ללמוד ▶</button></div>
+    <div class="btns c" style="margin-top:.6rem"><button class="btn btn-line btn-sm" type="button" id="tm-skip">לדלג ⏭</button><button class="btn btn-line btn-sm" type="button" id="tm-reset">להתחיל מחדש</button><button class="btn btn-line btn-sm" type="button" id="tm-full">מסך ריכוז (בלי כל השאר)</button></div>
+
+    <div class="panel hide-focus">
+      <h3>הגדרות</h3>
+      <div class="checks">
+        <label><input type="checkbox" id="tm-sound"> צלצול בסוף כל שלב</label>
+        <label><input type="checkbox" id="tm-wake"> להשאיר את המסך דלוק בזמן הלימוד</label>
+        <label><input type="checkbox" id="tm-noise"> רעש רקע שקט לריכוז</label>
+        <label><input type="checkbox" id="tm-auto"> אחרי ההפסקה, להתחיל ללמוד לבד</label>
+      </div>
+      <button class="btn btn-line btn-sm" type="button" id="tm-notif" style="justify-self:start">להפעיל התראות (גם כשהמסך כבוי)</button>
+      <p class="note">כשהמסך כבוי, הטלפון לפעמים "מרדים" את הדף. הטיימר מחשב לפי השעון, ולכן כשחוזרים הזמן תמיד נכון. כדי לשמוע צלצול גם עם מסך כבוי: להפעיל התראות, ובאנדרואיד גם רעש הרקע עוזר לדף להישאר ער. הכי בטוח: להשאיר את המסך דלוק.</p>
+    </div>
+
+    <div class="panel hide-focus">
+      <h3>כמה למדת</h3>
+      <p class="hk-strip" data-hk="timer" data-goal="5" data-tool="timer" data-what="לימוד" hidden></p>
+      <div class="stat3"><div><b id="tm-s-today">0</b><span>דקות היום</span></div><div><b id="tm-s-n">0</b><span>סבבים היום</span></div><div><b id="tm-s-week">0</b><span>דקות השבוע</span></div></div>
+      <div id="tm-hk" hidden></div>
+    </div>
+  </div>
+
+  <div class="hide-focus">
+    <div class="local-note"><span>🔒</span><span>הכול נשמר רק במכשיר הזה.</span></div>
+    <div class="share-row"><a class="btn btn-gold btn-sm" href="#" data-share-tool="wa" data-text="טיימר אונליין בחינם: טיימר לכל משך, שעון עצר ופומודורו ללימודים" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר בווטסאפ</a></div>
+    <p class="disclaimer"><a class="gold" href="/limudim/">כל הכלים ללימודים</a> · חינם · בלי הרשמה</p>
+  </div>
+</div>
+<nav class="gr-links tm-links" aria-label="עוד טיימרים"><a href="/limudim/timer/">⏲ טיימר לכל משך</a><a href="/limudim/timer/daka/">טיימר דקה</a><a href="/limudim/timer/2-dakot/">טיימר 2 דקות</a><a href="/limudim/timer/3-dakot/">טיימר 3 דקות</a><a href="/limudim/timer/5-dakot/">טיימר 5 דקות</a><a href="/limudim/timer/10-dakot/">טיימר 10 דקות</a><a href="/limudim/timer/15-dakot/">טיימר 15 דקות</a><a href="/limudim/timer/20-dakot/">טיימר 20 דקות</a><a href="/limudim/timer/30-dakot/" aria-current="page">טיימר 30 דקות</a><a href="/limudim/shaon-etzer/">⏱ שעון עצר</a></nav>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+<h2 id="seo-h">טיימר 30 דקות: חצי שעה של ריכוז</h2>
+  <p>חצי שעה היא הזמן של "עכשיו עושים את זה": שיעורי בית, מבחן תרגול, אימון או ניקיון. הטיימר בדף הזה מכוון ל-30:00 ומתחיל בלחיצה אחת. העיגול מראה כמה עבר, ובסוף נשמע צלצול. הזמן מדויק גם כשהמסך כבוי.</p>
+  <h3>שיעורי בית בלי ויכוחים</h3>
+  <p>ילדים מתרכזים יותר כשיש להם סוף ברור. מסכמים מראש: חצי שעה של עבודה, ואחר כך הפסקה. מפעילים את הטיימר מולם, ולא מסתכלים בטלפון בינתיים. למי שקשה לו להתרכז חצי שעה רצוף, <a href="/limudim/timer/">טיימר הפומודורו</a> מחלק את הזמן לסבבים קצרים עם הפסקות.</p>
+  <h3>תרגול כתיבה ומבחנים</h3>
+  <p>בהרבה מבחנים יש משימת כתיבה קצובה, ובפסיכומטרי משימת החיבור נמשכת בדרך כלל כחצי שעה (בודקים בהוראות העדכניות של המרכז הארצי לבחינות ולהערכה). כותבים מול טיימר אמיתי, ולומדים כמה זמן לתכנן, כמה לכתוב וכמה לבדוק.</p>
+  <h3>חצי שעה של תנועה</h3>
+  <p>המלצות בריאות רבות מדברות על כחצי שעה של פעילות גופנית מתונה ביום, למשל הליכה מהירה. מפעילים את הטיימר ויוצאים: 15 דקות הלוך ו-15 חזור. זו המלצה כללית; מי שיש לו מגבלה רפואית שואל את הרופא.</p>
+  <h3>במטבח ובבית</h3>
+  <p>חצי שעה זה בערך הזמן לאפות עוגה בתבנית שטוחה, לבשל מרק ירקות או לצלות חזה עוף בתנור. וגם זמן טוב לסידור יסודי של חדר אחד. לזמנים אחרים יש <a href="/limudim/timer/20-dakot/">טיימר 20 דקות</a> ו<a href="/limudim/timer/">טיימר לכל משך</a>, עד 99 שעות.</p>
+  <h3>חצי שעה בלי מסכים</h3>
+  <p>משפחות רבות קובעות חצי שעה ביום בלי מסכים לכולם, גם להורים. הטיימר על המסך הוא הדבר האחרון שרואים לפני שמניחים את הטלפונים בסל, והצלצול הוא האות שאפשר לחזור. בזמן הזה קוראים, משחקים משחק קופסה או פשוט מדברים.</p>
+  <h3>חצי שעה לארוחה רגועה</h3>
+  <p>אכילה מהירה מול מסך היא הרגל נפוץ. חצי שעה מוקצבת לארוחה, בלי לקום באמצע, עוזרת לאכול לאט וליהנות. זו הצעה כללית, לא ייעוץ תזונתי.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך מפעילים טיימר של חצי שעה?</summary><p>הטיימר בדף הזה כבר מכוון ל-30 דקות. לוחצים "להתחיל", ובסוף נשמע צלצול.</p></details>
+  <details><summary>אפשר להשתמש בו לתרגול חיבור בפסיכומטרי?</summary><p>כן. משימת הכתיבה נמשכת בדרך כלל כחצי שעה; בודקים את הזמן המדויק בהוראות העדכניות.</p></details>
+  <details><summary>איך עוזרים לילד להתרכז בשיעורי בית?</summary><p>מסכמים מראש על חצי שעה עם סוף ברור, מפעילים את הטיימר מולו, ונותנים הפסקה בסוף.</p></details>
+  <details><summary>הטיימר ממשיך לרוץ כשהמסך כבוי?</summary><p>כן. הזמן נמדד לפי השעון של המכשיר, כך שגם אם המסך נכבה או שעברתם לאפליקציה אחרת, הספירה נכונה. כדי לשמוע צלצול כשהמסך כבוי, מפעילים "התראות" בהגדרות.</p></details>
+  <details><summary>אפשר לשנות את הזמן?</summary><p>כן. כפתורי הזמן למעלה, "+ דקה", או שדות השעות, הדקות והשניות בהגדרות.</p></details>
+</section>
+<!--/seo-txt-->

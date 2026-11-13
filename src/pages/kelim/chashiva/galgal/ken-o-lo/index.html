@@ -1,0 +1,81 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_galgal",
+  "title": "גלגל כן או לא אונליין: גלגל המזל שעונה על כל שאלה, בחינם | הכלים של גילעד רחמים",
+  "description": "גלגל כן או לא אונליין בחינם: שואלים שאלה, מסובבים, והגלגל עונה כן או לא, עם סיכוי שווה לשניהם. אפשר להוסיף \"אולי\" או \"שאלו שוב\", לשתף בקישור ולשחק עם חברים. בלי הרשמה.",
+  "og_title": "גלגל כן או לא – שואלים, מסובבים, והגלגל עונה",
+  "priority": "0.7",
+  "crumbs": [
+    [
+      "משחקי חשיבה",
+      "/kelim/chashiva/"
+    ],
+    [
+      "גלגל המזל",
+      "/kelim/chashiva/galgal/"
+    ],
+    [
+      "גלגל כן או לא",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/chashiva-goral.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"גלגל כן או לא באמת אקראי?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בגלגל שלוש משבצות של כן ושלוש של לא, ולכל משבצת אותו סיכוי בכל סיבוב. הבחירה נעשית במכשיר שלכם.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר להוסיף \\\"אולי\\\" לגלגל?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. כותבים \\\"אולי\\\" בשורה חדשה בתיבה, והגלגל מתעדכן מיד. אפשר להוסיף כל תשובה שרוצים.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לתת לתשובה אחת יותר סיכוי?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. כותבים אותה יותר פעמים. למשל שלוש פעמים כן ופעם אחת לא נותן לכן שלושה רבעים מהסיכוי.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לשלוח את הגלגל לחבר?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. \\\"לשלוח את הגלגל\\\" יוצר קישור לווטסאפ עם אותן תשובות, וכל אחד יכול לסובב בעצמו.\"}}, {\"@type\": \"Question\", \"name\": \"מה ההבדל בין גלגל כן או לא להטלת מטבע?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בתוצאה אין הבדל: חצי-חצי. בגלגל אפשר להוסיף תשובות כמו \\\"אולי\\\", והסיבוב מותח יותר.\"}}]}</script>",
+  "foot": "<script src=\"/assets/chashiva-goral.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>גלגל כן או לא</h1>
+  <p class="sub">שואלים שאלה, מסובבים, והגלגל עונה: כן או לא. לכל תשובה אותו סיכוי בדיוק.</p>
+</header>
+
+<div class="tool" id="gr" data-mode="wheel" data-start="yesno" data-key="wheel-yesno">
+  <p class="gr-head" id="gr-head"></p>
+  <div class="gr-wheel"><span class="gr-pointer" aria-hidden="true"></span><canvas id="gr-canvas" width="640" height="640" role="img" aria-label="גלגל"></canvas><button class="gr-hub" type="button" id="gr-spin">לסובב</button></div>
+  <p class="gr-count" id="gr-count"></p>
+  <div class="gr-res" id="gr-res" role="status" hidden></div>
+  <div class="gr-main"><button class="btn btn-gold btn-block gr-big" type="button" id="gr-spin2">🎡 לסובב את הגלגל</button></div>
+  <p class="gr-note gr-hide" id="gr-note" hidden></p>
+  <form class="k-form gr-form gr-hide" id="gr-form" novalidate>
+    <div class="field"><label for="gr-text">מה בגלגל? <span class="opt">(שורה לכל שם או אפשרות)</span></label><textarea id="gr-text" rows="7" dir="auto"></textarea></div>
+    <div class="gr-btns s"><button class="btn btn-line btn-sm" type="button" id="gr-shuffle">🔀 לערבב</button><button class="btn btn-line btn-sm" type="button" id="gr-clear">לרוקן</button></div>
+    <div class="field"><label for="gr-title">שם הגלגל <span class="opt">(לא חובה)</span></label><input id="gr-title" type="text" maxlength="60" autocomplete="off"></div>
+    <div class="field"><span class="label" id="gr-pre-l">גלגלים מוכנים</span><div class="gr-chips" role="group" aria-labelledby="gr-pre-l"><button type="button" data-preset="food">מה אוכלים?</button><button type="button" data-preset="yesno">כן או לא</button><button type="button" data-preset="nums">מספר 1–10</button><button type="button" data-preset="chores">מטלות בבית</button><button type="button" data-preset="prizes">גלגל פרסים</button><button type="button" data-preset="names">שמות</button></div></div>
+    <div class="gr-checks"><label><input type="checkbox" id="gr-remove"> להוציא מהגלגל את מי שעלה בגורל</label><label><input type="checkbox" id="gr-sound"> צלילים</label></div>
+  </form>
+  <div class="gr-sec gr-hide" id="gr-hist-sec" hidden>
+    <h2>מי עלה בגורל</h2>
+    <ol class="gr-hist" id="gr-hist"></ol>
+    <div class="share-row"><a class="btn btn-gold btn-sm" href="#" id="gr-hist-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את התוצאות</a><button class="btn btn-line btn-sm" type="button" id="gr-hist-copy">להעתיק</button><button class="btn btn-line btn-sm" type="button" id="gr-hist-clear">למחוק</button></div>
+  </div>
+  <div class="share-row gr-hide"><a class="btn btn-gold btn-sm" href="#" id="gr-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הגלגל</a><button class="btn btn-line btn-sm" type="button" id="gr-copy">🔗 להעתיק קישור לגלגל</button></div>
+  <div class="share-row"><button class="btn btn-line btn-sm" type="button" id="gr-full">מסך מלא</button></div>
+  <p class="gr-fair gr-hide">הבחירה אקראית לגמרי ונעשית במכשיר שלכם. שום דבר לא נשלח לשום מקום, ואין לנו דרך להשפיע על התוצאה.</p>
+  <nav class="gr-links gr-hide" aria-label="עוד דרכים להגריל"><a href="/kelim/chashiva/galgal/" aria-current="page">🎡 גלגל המזל</a><a href="/kelim/chashiva/galgal-shemot/">👥 גלגל שמות</a><a href="/kelim/chashiva/hagrala/">🎟 הגרלה</a><a href="/kelim/chashiva/kubiya/">🎲 הטלת קוביה</a><a href="/kelim/chashiva/matbea/">🌳 הטלת מטבע</a></nav>
+  <div class="share-row gr-hide"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="גלגל המזל בחינם: כותבים שמות או אפשרויות, מסובבים, והגלגל בוחר:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
+<nav class="gr-links" aria-label="עוד גלגלים"><a href="/kelim/chashiva/galgal/">🎡 גלגל המזל</a><a href="/kelim/chashiva/galgal/ken-o-lo/" aria-current="page">גלגל כן או לא</a><a href="/kelim/chashiva/galgal/sheelot/">גלגל שאלות</a><a href="/kelim/chashiva/galgal-shemot/">גלגל שמות</a></nav>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+<h2 id="seo-h">גלגל כן או לא: כשקשה להחליט</h2>
+  <p>לפעמים ההתלבטות לוקחת יותר זמן מההחלטה עצמה. לצאת הערב או להישאר בבית? לקנות או לחכות? גלגל כן או לא מסיים את הוויכוח בשנייה: חושבים על שאלה, לוחצים "לסובב", והגלגל עוצר על כן או על לא. בגלגל יש שש משבצות, שלוש של כן ושלוש של לא, כך שלכל תשובה יש בדיוק חצי סיכוי בכל סיבוב.</p>
+  <h3>טריק של פסיכולוגים: מה הרגשתם כשהגלגל עצר?</h3>
+  <p>יש שיטה ידועה להחלטות קטנות: נותנים להגרלה להחליט, ושמים לב לתחושה ברגע שהתשובה מופיעה. אם הרגשתם הקלה, זו התשובה. אם הרגשתם אכזבה, כנראה שבעצם רציתם את התשובה השנייה. הגלגל לא מחליט בשבילכם, הוא עוזר לכם לגלות מה רציתם.</p>
+  <h3>להוסיף "אולי" ותשובות משלכם</h3>
+  <p>הכול בגלגל ניתן לשינוי. רוצים גלגל עם "כן", "לא", "אולי" ו"שאלו שוב מחר"? כותבים כל תשובה בשורה נפרדת בתיבה, והגלגל מתעדכן מיד. אם רוצים שלאחת התשובות יהיה סיכוי גדול יותר, פשוט כותבים אותה פעמיים.</p>
+  <h3>משחקים עם גלגל כן או לא</h3>
+  <p>במסיבה, כל אחד שואל את הגלגל שאלה מצחיקה ("האם המורה תיתן מבחן מחר?"), והחברים מנחשים מה ייצא לפני הסיבוב. בכיתה, המורה מסובבת כדי להחליט אם קוראים בקול או בשקט. ובבית, כשהילדים רבים מי מתחיל, הגלגל הוא שופט שאף אחד לא יכול להאשים.</p>
+  <h3>הוגן באמת</h3>
+  <p>הבחירה נעשית במכשיר שלכם, עם מחולל המספרים האקראיים של הדפדפן, ושום דבר לא נשלח לשום מקום. לבחירה בין שמות יש <a href="/kelim/chashiva/galgal-shemot/">גלגל שמות</a>, ולהגרלת זוכים <a href="/kelim/chashiva/hagrala/">הגרלה</a>. ואם רוצים פשוט עץ או פלי, יש <a href="/kelim/chashiva/matbea/">הטלת מטבע</a>.</p>
+  <h3>שאלות שכדאי לשאול את הגלגל</h3>
+  <p>הגלגל מתאים להחלטות קטנות שאין בהן תשובה נכונה: לאכול בחוץ או לבשל, לראות סרט או לצאת להליכה, ללבוש את החולצה הכחולה או הלבנה. להחלטות גדולות באמת, כמו כסף, בריאות או עבודה, הגלגל הוא רק משחק: שם עדיף לשבת, לכתוב יתרונות וחסרונות ולהתייעץ עם מי שמבין.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>גלגל כן או לא באמת אקראי?</summary><p>כן. בגלגל שלוש משבצות של כן ושלוש של לא, ולכל משבצת אותו סיכוי בכל סיבוב. הבחירה נעשית במכשיר שלכם.</p></details>
+  <details><summary>אפשר להוסיף "אולי" לגלגל?</summary><p>כן. כותבים "אולי" בשורה חדשה בתיבה, והגלגל מתעדכן מיד. אפשר להוסיף כל תשובה שרוצים.</p></details>
+  <details><summary>אפשר לתת לתשובה אחת יותר סיכוי?</summary><p>כן. כותבים אותה יותר פעמים. למשל שלוש פעמים כן ופעם אחת לא נותן לכן שלושה רבעים מהסיכוי.</p></details>
+  <details><summary>אפשר לשלוח את הגלגל לחבר?</summary><p>כן. "לשלוח את הגלגל" יוצר קישור לווטסאפ עם אותן תשובות, וכל אחד יכול לסובב בעצמו.</p></details>
+  <details><summary>מה ההבדל בין גלגל כן או לא להטלת מטבע?</summary><p>בתוצאה אין הבדל: חצי-חצי. בגלגל אפשר להוסיף תשובות כמו "אולי", והסיבוב מותח יותר.</p></details>
+</section>
+<!--/seo-txt-->
