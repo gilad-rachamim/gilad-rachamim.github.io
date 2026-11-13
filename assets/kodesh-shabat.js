@@ -142,18 +142,26 @@
   function say() { var l = $('sb-live'); if (l) l.textContent = lastSay; }
   var st = { city: 'yerushalaim', gps: null, candle: 'auto' };
   try { var sv = JSON.parse(localStorage.getItem(KEY) || 'null'); if (sv) Object.keys(sv).forEach(function (k) { st[k] = sv[k]; }); } catch (e) {}
-  if (fixed) { st.city = fixed; st.gps = null; }
-  function save() { if (fixed) { try { var o = JSON.parse(localStorage.getItem(KEY) || '{}'); o.candle = st.candle; localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} return; } try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+  // בדף של עיר: אפשר מיקום מדויק בתוך העיר. הוא נשמר לכל עיר בנפרד (gps:<עיר>), ולא נוגע במיקום של הדף הראשי.
+  if (fixed) { st.city = fixed; st.gps = (sv && sv['gps:' + fixed]) || null; }
+  function save() { if (fixed) { try { var o = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; o.candle = st.candle; o['gps:' + fixed] = st.gps; localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} return; } try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+  // העיר הקרובה למיקום (בדף עיר – העיר של הדף). עד 10 ק״מ ממנה הולכים לפי מנהג ההדלקה שלה (ירושלים 40, חיפה 30).
+  function nearCity(lat, lon) {
+    if (fixed) return [cityOf(fixed), 0];
+    var best = CITIES[0], bd = 1e9;
+    CITIES.forEach(function (c) { var r = Math.PI / 180, x = (c[4] - lon) * r * Math.cos((c[3] + lat) / 2 * r), y = (c[3] - lat) * r, d = Math.sqrt(x * x + y * y) * 6371; if (d < bd) { bd = d; best = c; } });
+    return [best, bd];
+  }
   function used(how) { if (window.toolUsed) window.toolUsed('shabat', { how: how }); }
   function cityOf(slug) { return CITIES.filter(function (c) { return c[0] === slug; })[0] || CITIES[0]; }
   function place() {
-    if (st.gps) return { name: 'לפי המיקום שלי', lat: st.gps[0], lon: st.gps[1], mins: 20, url: HOME };
+    if (st.gps) { var nc = nearCity(st.gps[0], st.gps[1]); return { name: fixed ? 'המיקום שלי ' + nc[0][2] : 'לפי המיקום שלי', lat: st.gps[0], lon: st.gps[1], mins: nc[1] <= 10 ? nc[0][5] : 20, url: HOME + (fixed ? fixed + '/' : ''), ref: nc }; }
     var c = cityOf(st.city);
     return { name: c[1], lat: c[3], lon: c[4], mins: c[5], url: HOME + c[0] + '/' };
   }
   var sel = $('sb-place'), cand = $('sb-candle');
   sel.innerHTML = CITIES.map(function (c) { return '<option value="' + c[0] + '">' + c[1] + '</option>'; }).join('') + (fixed ? '' : '<option value="gps" hidden>המיקום שלי</option>');
-  sel.value = st.gps ? 'gps' : cityOf(st.city)[0];
+  sel.value = st.gps && !fixed ? 'gps' : cityOf(st.city)[0];
   cand.value = st.candle || 'auto';
   if (cand.value !== String(st.candle || 'auto')) { st.candle = 'auto'; cand.value = 'auto'; }
 
@@ -168,6 +176,24 @@
     lastText = C.shareText(w, p.name, location.origin + p.url);
     lastSay = p.name + ', ' + w.title + ': כניסת שבת ' + C.t(w.candle) + ', צאת שבת ' + C.t(w.havdala) + ', לפי רבנו תם ' + C.t(w.rt);
     $('sb-wa').href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(lastText);
+    diff(p, w, mins);
+  }
+  // כמה המיקום המדויק שונה ממרכז העיר הקרובה, בשניות (לפני העיגול לדקה)
+  function diff(p, w, mins) {
+    var el = $('sb-diff'), back = $('sb-center');
+    if (back) back.hidden = !(fixed && st.gps);
+    if (!el) return;
+    if (!p.ref || p.ref[1] > 25) { el.hidden = true; return; }
+    var H = window.hebcal, c = p.ref[0];
+    function z(lat, lon, d) { return new H.Zmanim(new H.GeoLocation('', lat, lon, 0, 'Asia/Jerusalem'), d, false); }
+    var dSet = Math.round((z(p.lat, p.lon, w.fri).sunset() - z(c[3], c[4], w.fri).sunset()) / 1000);
+    var dOut = Math.round((z(p.lat, p.lon, w.sat).tzeit(8.5) - z(c[3], c[4], w.sat).tzeit(8.5)) / 1000);
+    var cw = C.week(c[3], c[4], w.fri, mins);
+    function sec(n) { if (n === 0) return 'באותה שנייה'; var a = Math.abs(n), m = Math.floor(a / 60), s = a % 60; return (m ? m + ' דק׳' + (s ? ' ו-' + s + ' שנ׳' : '') : s + ' שניות') + (n < 0 ? ' מוקדם יותר' : ' מאוחר יותר'); }
+    el.innerHTML = 'לעומת מרכז ' + c[1] + ': השקיעה ביום שישי אצלכם ' + sec(dSet) + ', וצאת השבת ' + sec(dOut) + '. במרכז העיר: הדלקה <bdi>' + C.t(cw.candle) + '</bdi>, יציאה <bdi>' + C.t(cw.havdala) + '</bdi>.' +
+      (C.t(cw.candle) !== C.t(w.candle) || C.t(cw.havdala) !== C.t(w.havdala) ? ' <b>אצלכם הזמן יוצא בדקה אחרת.</b>' : ' בדקות, הזמנים יוצאים זהים.') +
+      (p.ref[1] > 10 ? ' (אתם במרחק של כ-' + Math.round(p.ref[1]) + ' ק״מ מ' + c[1] + ', ולכן ההדלקה לפי 20 דקות. אפשר לשנות למטה.)' : '');
+    el.hidden = false;
   }
   sel.addEventListener('change', function () {
     if (sel.value === 'gps') return;
@@ -183,9 +209,11 @@
     s.textContent = 'מאתר…';
     navigator.geolocation.getCurrentPosition(function (pos) {
       st.gps = [+pos.coords.latitude.toFixed(4), +pos.coords.longitude.toFixed(4)];
-      save(); sel.value = 'gps'; s.textContent = 'נמצא ✓ הזמנים לפי המקום שבו אתם'; draw(); say(); used('gps');
+      save(); if (!fixed) sel.value = 'gps'; s.textContent = 'נמצא ✓ הזמנים לפי המקום שבו אתם'; draw(); say(); used('gps');
     }, function () { s.textContent = 'לא קיבלתי מיקום. צריך לאשר מיקום לדפדפן, או לבחור עיר מהרשימה.'; }, { enableHighAccuracy: false, timeout: 15000, maximumAge: 600000 });
   });
+  var back = $('sb-center');
+  if (back) back.addEventListener('click', function () { st.gps = null; save(); if ($('sb-st')) $('sb-st').textContent = ''; draw(); say(); used('center'); });
   $('sb-wa').addEventListener('click', function () { used('wa'); });
   $('sb-copy').addEventListener('click', function () {
     var b = this;
