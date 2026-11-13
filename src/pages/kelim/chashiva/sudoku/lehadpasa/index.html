@@ -1,0 +1,69 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_sudoku_lehadpasa",
+  "title": "סודוקו להדפסה בחינם: לוחות קל, בינוני וקשה עם פתרונות, גם PDF | הכלים של גילעד רחמים",
+  "description": "סודוקו להדפסה בחינם: בוחרים רמה (קל, בינוני, קשה או קשה מאוד), 1 עד 6 לוחות בדף ועד 5 דפים, עם דף פתרונות בסוף. גם 4×4 ו-6×6 לילדים. לוחות חדשים בכל לחיצה, שומרים כ-PDF.",
+  "og_title": "סודוקו להדפסה – לוחות חדשים בכל לחיצה",
+  "priority": "0.7",
+  "crumbs": [
+    [
+      "משחקי חשיבה",
+      "/kelim/chashiva/"
+    ],
+    [
+      "סודוקו",
+      "/kelim/chashiva/sudoku/"
+    ],
+    [
+      "להדפסה",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/chashiva.css\"><link rel=\"stylesheet\" href=\"/assets/chashiva-sudoku-extra.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך מדפיסים סודוקו בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בוחרים רמה וכמה לוחות בדף, ולוחצים \\\"להדפיס או לשמור PDF\\\". הלוחות חדשים בכל פעם, ויש דף פתרונות בסוף.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לשמור את הלוחות כקובץ PDF?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בחלון ההדפסה בוחרים \\\"שמירה כ-PDF\\\" במקום מדפסת, ושולחים את הקובץ במייל או בווטסאפ.\"}}, {\"@type\": \"Question\", \"name\": \"יש פתרונות ללוחות?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. כשהתיבה \\\"דף פתרונות בסוף\\\" מסומנת, מודפס דף נוסף עם הפתרון של כל לוח לפי המספר שלו.\"}}, {\"@type\": \"Question\", \"name\": \"כמה לוחות אפשר להדפיס?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"עד 6 לוחות בדף ועד 5 דפים בכל הדפסה, כלומר 30 לוחות. אחר כך לוחצים \\\"לוחות חדשים\\\" ומדפיסים שוב, בלי הגבלה.\"}}, {\"@type\": \"Question\", \"name\": \"יש סודוקו להדפסה לילדים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בוחרים 4×4 או 6×6, ואפשר להחליף את המספרים בציורים של פירות.\"}}, {\"@type\": \"Question\", \"name\": \"הלוחות מתאימים לגיל השלישי?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בוחרים \\\"לוח אחד גדול\\\" ורמה קלה, והמספרים מודפסים גדולים וברורים.\"}}]}</script>",
+  "foot": "<script src=\"/assets/chashiva.js\" defer></script><script src=\"/assets/chashiva-sudoku.js\" defer></script><script src=\"/assets/chashiva-sudoku-kids.js\" defer></script><script src=\"/assets/chashiva-sudoku-print.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>סודוקו להדפסה</h1>
+  <p class="sub">בוחרים רמה וכמה לוחות בדף, ומדפיסים. כל לחיצה יוצרת לוחות חדשים, ולכל לוח יש פתרון אחד בלבד.</p>
+</header>
+<div class="tool">
+  <div class="pr-ctl">
+    <span class="lbl" id="pr-size-l">גודל הלוח</span><div class="ch-chips" id="pr-size" role="group" aria-labelledby="pr-size-l"></div>
+    <span class="lbl" id="pr-lv-l">רמה</span><div class="ch-chips" id="pr-lv" role="group" aria-labelledby="pr-lv-l"></div>
+    <span class="lbl" id="pr-per-l">כמה לוחות בדף</span><div class="ch-chips" id="pr-per" role="group" aria-labelledby="pr-per-l"></div>
+    <span class="lbl" id="pr-pages-l">כמה דפים</span><div class="ch-chips" id="pr-pages" role="group" aria-labelledby="pr-pages-l"></div>
+  </div>
+  <div class="pr-checks"><label><input type="checkbox" id="pr-sol" checked> דף פתרונות בסוף</label><label id="pr-pics-row" hidden><input type="checkbox" id="pr-pics"> ציורים במקום מספרים</label></div>
+  <div class="pr-btns"><button class="btn btn-gold" type="button" id="pr-print">🖨 להדפיס או לשמור PDF</button><button class="btn btn-line" type="button" id="pr-make">🎲 לוחות חדשים</button></div>
+  <p class="pr-status" id="pr-status" role="status"></p>
+  <div id="pr-sheets" aria-label="תצוגה מקדימה של הדפים"></div>
+  <p class="ch-hint">לשמירה כ-PDF: לוחצים "להדפיס", ובחלון ההדפסה בוחרים במדפסת "שמירה כ-PDF". בטלפון: "שיתוף" ואז "הדפסה".</p>
+</div>
+<nav class="gr-links sd-links" aria-label="עוד סוגי סודוקו"><a href="/kelim/chashiva/sudoku/">🔢 סודוקו יומי</a><a href="/kelim/chashiva/sudoku/kal/">קל</a><a href="/kelim/chashiva/sudoku/beinoni/">בינוני</a><a href="/kelim/chashiva/sudoku/kashe/">קשה וקשה מאוד</a><a href="/kelim/chashiva/sudoku/lehadpasa/" aria-current="page">🖨 להדפסה</a><a href="/kelim/chashiva/sudoku/yeladim/">🧒 לילדים</a></nav>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+<h2 id="seo-h">סודוקו להדפסה: לוחות חדשים בכל פעם, עם פתרונות</h2>
+  <p>רוב האתרים מציעים כמה עשרות לוחות קבועים להדפסה. כאן המחשב מייצר לוחות חדשים בכל לחיצה, כך שאי אפשר "לגמור" אותם. כל לוח נבדק לפני שהוא מוצג: יש לו פתרון אחד בלבד, ובקל ובבינוני הוא נפתר בהיגיון בלי לנחש. בוחרים רמה, כמה לוחות בדף וכמה דפים, ומקבלים דף פתרונות בסוף.</p>
+  <h3>איך מדפיסים או שומרים כ-PDF</h3>
+  <p>לוחצים "להדפיס או לשמור PDF". במחשב נפתח חלון ההדפסה: בוחרים מדפסת, או "שמירה כ-PDF" כדי לשמור קובץ ולשלוח אותו. בטלפון אנדרואיד בוחרים "שמירה כ-PDF" בראש חלון ההדפסה; באייפון לוחצים "הדפסה" ואז אפשר לשתף את הקובץ. הדף מודפס נקי, בלי תפריטים ובלי פרסומות, ובכל לוח יש מספר כדי שיהיה קל למצוא את הפתרון שלו.</p>
+  <h3>כמה לוחות בדף לבחור</h3>
+  <p><b>לוח אחד גדול</b> מתאים לראייה חלשה, לגיל השלישי ולמי שאוהב לכתוב הערות קטנות בכל משבצת. <b>2 בדף</b> הוא גודל של עיתון. <b>4 בדף</b> הוא הבחירה הנפוצה לחוברת לנסיעה או לחופשה. <b>6 בדף</b> חוסך נייר, ומתאים לדפי עבודה בכיתה. אפשר לבחור עד 5 דפים בבת אחת, כלומר עד 30 לוחות בהדפסה אחת.</p>
+  <h3>הרמות</h3>
+  <p><b>קל</b>: כ-40 מספרים נתונים, נפתר בצעדים פשוטים. <b>בינוני</b>: כ-32 מספרים, עדיין בלי ניחושים. <b>קשה</b>: כ-27 מספרים, צריך הערות בעיפרון. <b>קשה מאוד</b>: כ-22 מספרים, ללוחות מומחים. לוח קשה מאוד לוקח למחשב קצת יותר זמן להכין, כי הוא בודק שהלוח באמת קשה ועדיין יש לו פתרון יחיד.</p>
+  <h3>סודוקו לילדים להדפסה</h3>
+  <p>בבחירת "4×4 לקטנים" או "6×6 לילדים" מקבלים לוחות קטנים, ואפשר לסמן "ציורים במקום מספרים": תפוח, בננה, ענבים ותות במקום 1 עד 4. זה מתאים לגן ולכיתות א–ב, לפני שהילדים מכירים את כל הספרות. ללוחות לילדים יש גם <a href="/kelim/chashiva/sudoku/yeladim/">דף משחק בטלפון</a>.</p>
+  <h3>לגננות, למורים ולבתי אבות</h3>
+  <p>מורים מדפיסים דף של 6 לוחות כפעילות פתיחה או כמשימה למי שמסיים מוקדם. בבתי אבות ובמרכזי יום מדפיסים לוח אחד גדול בדף, ברמה קלה, כפעילות ריכוז רגועה. הכול בחינם ובלי הרשמה, ואפשר להדפיס כמה שרוצים.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך מדפיסים סודוקו בחינם?</summary><p>בוחרים רמה וכמה לוחות בדף, ולוחצים "להדפיס או לשמור PDF". הלוחות חדשים בכל פעם, ויש דף פתרונות בסוף.</p></details>
+  <details><summary>אפשר לשמור את הלוחות כקובץ PDF?</summary><p>כן. בחלון ההדפסה בוחרים "שמירה כ-PDF" במקום מדפסת, ושולחים את הקובץ במייל או בווטסאפ.</p></details>
+  <details><summary>יש פתרונות ללוחות?</summary><p>כן. כשהתיבה "דף פתרונות בסוף" מסומנת, מודפס דף נוסף עם הפתרון של כל לוח לפי המספר שלו.</p></details>
+  <details><summary>כמה לוחות אפשר להדפיס?</summary><p>עד 6 לוחות בדף ועד 5 דפים בכל הדפסה, כלומר 30 לוחות. אחר כך לוחצים "לוחות חדשים" ומדפיסים שוב, בלי הגבלה.</p></details>
+  <details><summary>יש סודוקו להדפסה לילדים?</summary><p>כן. בוחרים 4×4 או 6×6, ואפשר להחליף את המספרים בציורים של פירות.</p></details>
+  <details><summary>הלוחות מתאימים לגיל השלישי?</summary><p>כן. בוחרים "לוח אחד גדול" ורמה קלה, והמספרים מודפסים גדולים וברורים.</p></details>
+</section>
+<!--/seo-txt-->

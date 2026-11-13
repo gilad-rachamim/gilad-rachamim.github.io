@@ -1,0 +1,75 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_sudoku",
+  "title": "סודוקו בינוני אונליין בחינם: לוח חדש בכל פעם, בלי הרשמה | הכלים של גילעד רחמים",
+  "description": "סודוקו בינוני אונליין בחינם: כ-32 מספרים נתונים, נפתר בהיגיון בלי לנחש. לוח חדש בכל לחיצה, הערות בעיפרון, רמז, ביטול ובדיקה. נשמר בטלפון, בלי פרסומות ובלי הרשמה.",
+  "og_title": "סודוקו בינוני – לוח חדש בכל פעם",
+  "priority": "0.7",
+  "crumbs": [
+    [
+      "משחקי חשיבה",
+      "/kelim/chashiva/"
+    ],
+    [
+      "סודוקו",
+      "/kelim/chashiva/sudoku/"
+    ],
+    [
+      "בינוני",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/chashiva.css\"><link rel=\"stylesheet\" href=\"/assets/chashiva-sudoku-extra.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"כמה מספרים יש בסודוקו בינוני?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בערך 32 מתוך 81. בלוח קל יש כ-40, ובקשה כ-27.\"}}, {\"@type\": \"Question\", \"name\": \"צריך לנחש בסודוקו בינוני?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. כל לוח בינוני כאן נבדק ונפתר עד הסוף בצעדים לוגיים בלבד.\"}}, {\"@type\": \"Question\", \"name\": \"כמה זמן לוקח לפתור סודוקו בינוני?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לרוב השחקנים 10–25 דקות. השיא שלכם נשמר בטלפון.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר להדפיס סודוקו בינוני?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן, בדף סודוקו להדפסה: בוחרים \\\"בינוני\\\" ועד 6 לוחות בדף, עם דף פתרונות.\"}}, {\"@type\": \"Question\", \"name\": \"הלוח נשמר אם יוצאים מהדף?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. הלוח נשמר בטלפון, וכשחוזרים הוא מחכה בדיוק איפה שעצרתם.\"}}]}</script>",
+  "foot": "<script src=\"/assets/chashiva.js\" defer></script><script src=\"/assets/chashiva-sudoku.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>סודוקו בינוני</h1>
+  <p class="sub">לוח בינוני עם כ-32 מספרים נתונים. עדיין בלי ניחושים, אבל צריך לחשוב. לוח חדש בכל לחיצה.</p>
+</header>
+<div class="tool">
+  <div class="ch-tabs" id="sd-tabs" role="tablist"><button type="button" role="tab" data-m="daily" aria-selected="true">⭐ אתגר יומי</button><button type="button" role="tab" data-m="levels" aria-selected="false">🪜 ארבע רמות</button></div>
+  <p class="ch-weekline" id="ch-weekline"></p>
+  <div class="ch-vsbanner" id="ch-vsbanner" hidden></div>
+  <div id="sd-lvlbox" hidden><div class="ch-chips" id="sd-levels"></div><p class="ch-hint" id="sd-lockmsg"></p></div>
+  <div class="ch-done-today" id="sd-today" hidden></div>
+  <div class="ch-bar"><span id="sd-label"></span><span>⏱ <b id="sd-time">0:00</b></span></div>
+  <div class="sd-board" id="sd-board" data-level="beinoni" dir="ltr" aria-label="לוח סודוקו"></div>
+  <div class="sd-pad" id="sd-pad" dir="ltr"><button type="button" data-d="1">1<small></small></button><button type="button" data-d="2">2<small></small></button><button type="button" data-d="3">3<small></small></button><button type="button" data-d="4">4<small></small></button><button type="button" data-d="5">5<small></small></button><button type="button" data-d="6">6<small></small></button><button type="button" data-d="7">7<small></small></button><button type="button" data-d="8">8<small></small></button><button type="button" data-d="9">9<small></small></button></div>
+  <div class="ch-tools"><button type="button" id="sd-pencil" aria-pressed="false">✏️ עיפרון</button><button type="button" id="sd-erase">⌫ מחיקה</button><button type="button" id="sd-undo">↶ ביטול</button><button type="button" id="sd-hint">💡 רמז</button><button type="button" id="sd-check">✓ בדיקה</button><button type="button" id="sd-new" hidden>🎲 לוח חדש</button></div>
+  <p class="ch-msg" id="sd-msg" aria-live="polite"></p>
+  <div id="sd-win"></div>
+  <details class="ch-how"><summary>איך משחקים?</summary><ul>
+    <li>נוגעים במשבצת ריקה, ואז בספרה למטה. המספר הקטן מתחת לכל ספרה אומר כמה עוד חסרות ממנה.</li>
+    <li>"עיפרון": רושמים בקטן כמה אפשרויות למשבצת. כשממלאים ספרה, היא נמחקת לבד מההערות של השכנים.</li>
+    <li>ספרה שחוזרת פעמיים באותה שורה, עמודה או ריבוע נצבעת באדום.</li>
+    <li>קל ובינוני נפתרים בלי לנחש. בקשה ובמומחה יש פחות ספרות, וצריך לחשוב כמה צעדים קדימה.</li>
+    <li>הלוח נשמר בטלפון. אפשר לסגור ולחזור אליו מתי שרוצים.</li>
+  </ul></details>
+</div>
+<nav class="gr-links sd-links" aria-label="עוד סוגי סודוקו"><a href="/kelim/chashiva/sudoku/">🔢 סודוקו יומי</a><a href="/kelim/chashiva/sudoku/kal/">קל</a><a href="/kelim/chashiva/sudoku/beinoni/" aria-current="page">בינוני</a><a href="/kelim/chashiva/sudoku/kashe/">קשה וקשה מאוד</a><a href="/kelim/chashiva/sudoku/lehadpasa/">🖨 להדפסה</a><a href="/kelim/chashiva/sudoku/yeladim/">🧒 לילדים</a></nav>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+<h2 id="seo-h">סודוקו בינוני: הרמה הכי פופולרית</h2>
+  <p>סודוקו בינוני הוא הרמה שהכי הרבה אנשים מחפשים: מאתגר מספיק כדי שיהיה מעניין, ועדיין נפתר בלי לנחש. בלוח בינוני כאן יש בערך 32 מספרים נתונים. כל לוח נבדק לפני שהוא מוצג: יש לו פתרון אחד בלבד, והוא נפתר עד הסוף בצעדים לוגיים, בלי "ננסה ונראה".</p>
+  <h3>מה ההבדל מסודוקו קל</h3>
+  <p>בלוח קל כמעט תמיד יש משבצת שאפשר למלא מיד. בבינוני יש רגעים שבהם צריך לחפש יותר: לבחור מספר ולעבור עליו ריבוע אחרי ריבוע, ולשאול "איפה הוא עוד יכול להיות". השיטה הזאת, "מקום יחיד למספר", היא המפתח לרמה הבינונית.</p>
+  <h3>מתי להשתמש בעיפרון</h3>
+  <p>כשנתקעים, מפעילים "עיפרון" וכותבים בקטן את האפשרויות בכמה משבצות של אותה שורה או ריבוע. לפעמים מתגלה <b>זוג סגור</b>: שתי משבצות שבשתיהן אפשריים רק אותם שני מספרים, ואז אפשר למחוק את שני המספרים האלה משאר המשבצות בשורה. כשממלאים ספרה, היא נמחקת לבד מההערות של השכנים.</p>
+  <h3>כמה זמן זה לוקח</h3>
+  <p>לוח בינוני לוקח לרוב השחקנים 10–25 דקות. השעון למעלה מודד, והשיא שלכם בכל רמה נשמר בטלפון. האתגר היומי בדף <a href="/kelim/chashiva/sudoku/">סודוקו</a> הראשי הוא ברמה בינונית, זהה לכל מי שמשחק, ואפשר להשוות זמנים עם חברים.</p>
+  <h3>להדפיס או לעבור רמה</h3>
+  <p>אפשר להדפיס <a href="/kelim/chashiva/sudoku/lehadpasa/">סודוקו בינוני להדפסה</a>, עד 6 לוחות בדף עם פתרונות. כשבינוני נפתר אצלכם בפחות מ-10 דקות, נסו <a href="/kelim/chashiva/sudoku/kashe/">סודוקו קשה</a>.</p>
+  <h3>טעות נפוצה ברמה הבינונית</h3>
+  <p>הטעות הכי נפוצה היא למלא ספרה "כמעט בטוחה". בבינוני אין צורך לנחש אף פעם, ולכן אם אתם מתלבטים בין שתי אפשרויות, כנראה שיש משבצת אחרת שכבר אפשר לפתור. עברו לשורה או לריבוע אחר, וחזרו למשבצת הזאת אחר כך. ספרה שגויה מוקדם מדי מקלקלת את כל הלוח, והתיקון לוקח יותר זמן מהחיפוש.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>כמה מספרים יש בסודוקו בינוני?</summary><p>בערך 32 מתוך 81. בלוח קל יש כ-40, ובקשה כ-27.</p></details>
+  <details><summary>צריך לנחש בסודוקו בינוני?</summary><p>לא. כל לוח בינוני כאן נבדק ונפתר עד הסוף בצעדים לוגיים בלבד.</p></details>
+  <details><summary>כמה זמן לוקח לפתור סודוקו בינוני?</summary><p>לרוב השחקנים 10–25 דקות. השיא שלכם נשמר בטלפון.</p></details>
+  <details><summary>אפשר להדפיס סודוקו בינוני?</summary><p>כן, בדף סודוקו להדפסה: בוחרים "בינוני" ועד 6 לוחות בדף, עם דף פתרונות.</p></details>
+  <details><summary>הלוח נשמר אם יוצאים מהדף?</summary><p>כן. הלוח נשמר בטלפון, וכשחוזרים הוא מחכה בדיוק איפה שעצרתם.</p></details>
+</section>
+<!--/seo-txt-->
