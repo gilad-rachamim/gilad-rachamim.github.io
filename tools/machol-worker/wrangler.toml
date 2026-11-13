@@ -1,0 +1,20 @@
+# עוזר המילים של המחוללים – בינגו, תשבץ, תפזורת (Cloudflare Worker + Workers AI, חינם, בלי מפתח).
+# פריסה (רק אחרי "כן" של גילעד):  cd tools/machol-worker && npx wrangler deploy   (אותו חשבון כמו kelim-shir)
+# אחרי הפריסה הראשונה: להעלות את סוד השותפים (אותו של kelim-shir):  npx wrangler secret put PARTNER_SECRET
+# בדיקה:  node test.mjs
+# הדפים:  https://hakelim.com/kelim/chashiva/bingo/  /tashbetz/  /tifzoret/
+name = "kelim-machol"
+main = "machol-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[ai]
+binding = "AI"
+
+[[durable_objects.bindings]]
+name = "QUOTA"
+class_name = "Quota"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Quota"]

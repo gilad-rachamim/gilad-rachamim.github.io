@@ -1,0 +1,92 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "machol_tifzoret",
+  "title": "מחולל תפזורת: תפזורת להדפסה מהמילים שלכם, בעברית ובאנגלית | הכלים של גילעד רחמים",
+  "description": "מחולל תפזורת בחינם: כותבים מילים או בוחרים נושא, ומקבלים תפזורת להדפסה עם דף פתרון – בארבע רמות, מתפזורת לילדים ועד תפזורת קשה בכל הכיוונים. בעברית ובאנגלית, פותרים גם בטלפון ושולחים לתלמידים בקישור. בלי הרשמה.",
+  "og_title": "מחולל תפזורת – תפזורת להדפסה בחינם",
+  "priority": "0.8",
+  "crumbs": [["משחקי חשיבה", "/kelim/chashiva/"], ["מחולל תפזורת", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/machol.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך מכינים תפזורת להדפסה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כותבים מילים (אחת בכל שורה או עם פסיקים) או בוחרים נושא מוכן, בוחרים רמה ולוחצים \\\"ליצור את התפזורת\\\". אחר כך \\\"להדפיס\\\" או \\\"קובץ PDF\\\". מקבלים דף A4 עם הלוח ורשימת המילים, ודף פתרון נפרד.\"}}, {\"@type\": \"Question\", \"name\": \"איזו רמה מתאימה לכיתה א׳–ב׳?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"הרמה \\\"קל\\\": מילים רק לרוחב ולמטה, בלי מילים הפוכות ובלי אותיות משותפות, ולוח קטן של 8 עד 10 שורות. כדאי 6 עד 10 מילים קצרות. מכיתה ג׳ אפשר \\\"בינוני\\\" עם אלכסונים.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר להכין תפזורת באנגלית?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. כותבים את המילים באנגלית, והלוח נבנה באותיות גדולות משמאל לימין. בנושא \\\"אנגלית\\\" יש רשימות מוכנות לילדים: צבעים, בני משפחה, בית ספר ובעלי חיים.\"}}, {\"@type\": \"Question\", \"name\": \"כמה מילים כדאי לשים בתפזורת?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לילדים צעירים 6 עד 10 מילים, לכיתות הגבוהות 12 עד 20, ולמבוגרים עד 30. ככל שיש יותר מילים הלוח גדל. אם מילה לא נכנסה, מופיעה הודעה, ואפשר לבחור לוח גדול יותר או רמה עם יותר כיוונים.\"}}, {\"@type\": \"Question\", \"name\": \"יש דף פתרון?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בהדפסה וב-PDF יש דף פתרון שבו כל מילה מסומנת בצבע אחר. על המסך יש כפתור \\\"לגלות את המילים\\\".\"}}, {\"@type\": \"Question\", \"name\": \"איך פותרים תפזורת בטלפון?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"גוררים את האצבע מהאות הראשונה של המילה עד האחרונה, או נוגעים באות הראשונה ואחר כך באחרונה. מילה שנמצאה נצבעת ונמחקת מהרשימה, והשעון מראה כמה זמן לקח.\"}}]}</script>",
+  "foot": "<script src=\"/assets/machol-banks.js\" defer></script><script src=\"/assets/machol-core.js\" defer></script><script src=\"/assets/machol-tifzoret.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מחולל תפזורת – תפזורת להדפסה מהמילים שלכם</h1>
+  <p class="sub">כותבים מילים, בוחרים נושא, או גם וגם – ומקבלים תפזורת מוכנה עם דף פתרון. ארבע רמות, בעברית ובאנגלית. פותרים בטלפון, מדפיסים או שולחים לכיתה. בחינם, בלי הרשמה.</p>
+</header>
+<div class="tool" id="tz-app">
+  <div class="mc-from mc-sonly" id="tz-from" hidden>
+    <span>🔎 קיבלתם תפזורת</span><b id="tz-from-t">תפזורת</b>
+    <p class="note">גוררים את האצבע מהאות הראשונה של המילה עד האחרונה, או נוגעים באות הראשונה ואז באחרונה.</p>
+    <button class="btn btn-line btn-sm" type="button" id="tz-own">🔎 להכין תפזורת משלי</button>
+  </div>
+
+  <div class="mc-build">
+    <h2 class="mc-step"><b>1</b> המילים</h2>
+    <div class="mc-box-ui"><div id="tz-words"></div></div>
+    <h2 class="mc-step"><b>2</b> הרמה והלוח</h2>
+    <div class="mc-box-ui">
+      <div class="mc-opts">
+        <div class="field"><label for="tz-lvl">רמה</label><select id="tz-lvl"><option value="1">קל – לרוחב ולמטה (כיתות א׳–ב׳)</option><option value="2">בינוני – גם באלכסון</option><option value="3">קשה – גם הפוך</option><option value="4">מומחה – כל 8 הכיוונים</option></select></div>
+        <div class="field"><label for="tz-size">גודל הלוח</label><select id="tz-size"><option value="0">אוטומטי – לפי המילים</option><option value="10">10×10</option><option value="12">12×12</option><option value="15">15×15</option><option value="18">18×18</option></select></div>
+        <div class="field"><label for="tz-listm">רשימת המילים בדף</label><select id="tz-listm"><option value="w">המילים עצמן</option><option value="c">הגדרות – מוצאים לפי רמז</option></select></div>
+        <div class="field"><label for="tz-title">כותרת <span class="opt">(לא חובה)</span></label><input id="tz-title" type="text" maxlength="50" placeholder="תפזורת בעלי חיים"></div>
+      </div>
+      <div class="mc-checks"><label><input type="checkbox" id="tz-ans"> דף פתרון בהדפסה</label></div>
+    </div>
+    <button class="btn btn-gold btn-block mc-make" type="button" id="tz-make">🔎 ליצור את התפזורת</button>
+  </div>
+
+  <div id="tz-play" hidden>
+    <h2 class="mc-step mc-build"><b>3</b> התפזורת מוכנה</h2>
+    <p class="mc-sum" id="tz-sum"></p>
+    <div class="mc-warn" id="tz-miss" hidden></div>
+    <div class="tz-bar"><span>גוררים מהאות הראשונה עד האחרונה</span><span id="tz-time" aria-live="off"></span></div>
+    <div class="tz-grid" id="tz-grid" role="group" aria-label="לוח התפזורת"></div>
+    <p class="mc-msg" id="tz-msg" aria-live="polite"></p>
+    <div class="tz-list" id="tz-list"></div>
+    <div class="mc-acts">
+      <button class="btn btn-line btn-sm" type="button" id="tz-new">🔀 לוח חדש</button>
+      <button class="btn btn-line btn-sm" type="button" id="tz-reveal">לגלות את המילים</button>
+      <button class="btn btn-line btn-sm" type="button" id="tz-restart">להתחיל מחדש</button>
+    </div>
+    <div class="mc-acts">
+      <button class="btn btn-gold btn-sm" type="button" id="tz-print">🖨️ להדפיס</button>
+      <button class="btn btn-line btn-sm" type="button" id="tz-pdf">📄 קובץ PDF</button>
+      <button class="btn btn-line btn-sm" type="button" id="tz-send"><svg class="ic"><use href="#wa"/></svg> לשלוח לפתרון בטלפון</button>
+      <button class="btn btn-line btn-sm" type="button" id="tz-copy">🔗 להעתיק קישור</button>
+    </div>
+    <div class="mc-build">
+      <h2 class="mc-step"><b>4</b> ככה זה ייראה בדף</h2>
+      <div class="mc-prev" id="tz-prev"></div>
+    </div>
+  </div>
+
+  <p class="k-next mc-build">🧩 עוד מחוללים: <a class="gold" href="/kelim/chashiva/tashbetz/">מחולל תשבצים</a> · <a class="gold" href="/kelim/chashiva/bingo/">מחולל בינגו</a> · <a class="gold" href="/kelim/chashiva/tzviya-misparim/">צביעה לפי מספרים</a></p>
+  <div class="share-row mc-build"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מחולל תפזורת בחינם: כותבים מילים או בוחרים נושא, ומקבלים תפזורת להדפסה עם פתרון, או לפתרון בטלפון:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">תפזורת מילים להדפסה, בכמה שניות</h2>
+  <p>תפזורת היא לוח של אותיות שבו מסתתרות מילים – לרוחב, לאורך, באלכסון ולפעמים גם הפוך – וצריך למצוא ולסמן את כולן. זו פעילות שקטה ומהנה לילדים ולמבוגרים, והיא מתרגלת קריאה, איות, סריקה עם העיניים וריכוז. במחולל התפזורת מכינים תפזורת משלכם: מהמילים של השיעור, מנושא החג, מאוצר המילים באנגלית או משמות הילדים בכיתה. הלוח נבנה לבד, האותיות שמסביב מתמלאות באקראי, ובסוף מקבלים דף מוכן להדפסה ודף פתרון שבו כל מילה מסומנת בצבע.</p>
+  <h3>ארבע רמות: מתפזורת לילדים ועד תפזורת קשה</h3>
+  <p><b>קל</b> – המילים רק לרוחב (מימין לשמאל) ולמטה, ובלי שהן חולקות אותיות. מתאים לכיתות א׳–ב׳ ולמי שרק התחיל לקרוא. <b>בינוני</b> – מוסיף מילים באלכסון. <b>קשה</b> – מוסיף מילים הפוכות, ואותיות המילוי לקוחות מתוך המילים עצמן, כך שקשה יותר להבחין. <b>מומחה</b> – כל שמונת הכיוונים, ומילים שחולקות אותיות זו עם זו. גודל הלוח נקבע לבד לפי מספר המילים ואורכן, ואפשר לבחור גודל קבוע.</p>
+  <h3>תפזורת לפי נושא</h3>
+  <p>לוחצים על נושא מוכן – חנוכה, פורים, פסח, ראש השנה, סוכות, ט"ו בשבט, שבועות, שבת, בעלי חיים, פירות וירקות, גוף האדם, החלל, מדעים, ארץ ישראל, דמויות בתנ"ך, מקצועות, ספורט, תחבורה, חורף, קיץ, בית הספר ומוזיקה – ומקבלים רשימת מילים מוכנה. אפשר למחוק ולהוסיף, או לבחור "גם וגם": לכתוב כמה מילים משלכם ולתת למחולל להשלים.</p>
+  <h3>תפזורת באנגלית</h3>
+  <p>מילים באנגלית נכתבות באותיות גדולות והלוח נבנה משמאל לימין. זה תרגול מצוין לאיות באנגלית: הילד צריך לזהות את רצף האותיות הנכון. במצב "הגדרות" הרשימה מתחת ללוח מציגה את התרגום בעברית, והילד צריך לדעת איזו מילה באנגלית לחפש – תרגול כפול של אוצר מילים.</p>
+  <h3>מוצאים לפי הגדרה</h3>
+  <p>לגדולים: במקום רשימת המילים, מתחת ללוח מופיעות הגדרות (למשל "מלך החיות (4)"), וצריך קודם לפתור ואז למצוא. ההגדרות מגיעות מהנושאים המוכנים, ובמילים שכתבתם בעצמכם אפשר להוסיף הגדרה אחרי מקף.</p>
+  <h3>לפתור בטלפון ולשלוח לכיתה</h3>
+  <p>התפזורת עובדת גם על המסך: גוררים את האצבע על המילה, והיא נצבעת. יש שעון, ספירה של מה שנמצא, ובסוף הודעת סיום. "לשלוח לפתרון בטלפון" יוצר קישור עם אותה תפזורת בדיוק, כך שכל הכיתה פותרת את אותו לוח. מאותן מילים אפשר להכין גם <a class="gold" href="/kelim/chashiva/tashbetz/">תשבץ אישי</a> ו<a class="gold" href="/kelim/chashiva/bingo/">כרטיסי בינגו</a>, ולחנוכה יש <a class="gold" href="/kodesh/chanuka/tashbetz/">תשבץ ותפזורת מוכנים</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך מכינים תפזורת להדפסה?</summary><p>כותבים מילים (אחת בכל שורה או עם פסיקים) או בוחרים נושא מוכן, בוחרים רמה ולוחצים "ליצור את התפזורת". אחר כך "להדפיס" או "קובץ PDF". מקבלים דף A4 עם הלוח ורשימת המילים, ודף פתרון נפרד.</p></details>
+  <details><summary>איזו רמה מתאימה לכיתה א׳–ב׳?</summary><p>הרמה "קל": מילים רק לרוחב ולמטה, בלי מילים הפוכות ובלי אותיות משותפות, ולוח קטן של 8 עד 10 שורות. כדאי 6 עד 10 מילים קצרות. מכיתה ג׳ אפשר "בינוני" עם אלכסונים.</p></details>
+  <details><summary>אפשר להכין תפזורת באנגלית?</summary><p>כן. כותבים את המילים באנגלית, והלוח נבנה באותיות גדולות משמאל לימין. בנושא "אנגלית" יש רשימות מוכנות לילדים: צבעים, בני משפחה, בית ספר ובעלי חיים.</p></details>
+  <details><summary>כמה מילים כדאי לשים בתפזורת?</summary><p>לילדים צעירים 6 עד 10 מילים, לכיתות הגבוהות 12 עד 20, ולמבוגרים עד 30. ככל שיש יותר מילים הלוח גדל. אם מילה לא נכנסה, מופיעה הודעה, ואפשר לבחור לוח גדול יותר או רמה עם יותר כיוונים.</p></details>
+  <details><summary>יש דף פתרון?</summary><p>כן. בהדפסה וב-PDF יש דף פתרון שבו כל מילה מסומנת בצבע אחר. על המסך יש כפתור "לגלות את המילים".</p></details>
+  <details><summary>איך פותרים תפזורת בטלפון?</summary><p>גוררים את האצבע מהאות הראשונה של המילה עד האחרונה, או נוגעים באות הראשונה ואחר כך באחרונה. מילה שנמצאה נצבעת ונמחקת מהרשימה, והשעון מראה כמה זמן לקח.</p></details>
+</section>
+<!--/seo-txt-->
