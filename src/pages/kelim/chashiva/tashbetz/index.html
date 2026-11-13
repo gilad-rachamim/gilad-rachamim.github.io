@@ -1,0 +1,96 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "machol_tashbetz",
+  "title": "מחולל תשבצים: יצירת תשבץ אישי להדפסה ולפתרון בטלפון | הכלים של גילעד רחמים",
+  "description": "מחולל תשבצים בעברית, בחינם: כותבים מילים והגדרות, או בוחרים נושא ומקבלים מילים והגדרות מוכנות, והתשבץ נבנה לבד. פותרים בטלפון, מדפיסים עם דף פתרון ומחסן מילים, או שולחים קישור לתלמידים. גם באנגלית, בלי הרשמה.",
+  "og_title": "מחולל תשבצים – תשבץ אישי בחינם",
+  "priority": "0.8",
+  "crumbs": [["משחקי חשיבה", "/kelim/chashiva/"], ["מחולל תשבצים", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/machol.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך מכינים תשבץ בעצמי?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כותבים בכל שורה מילה, מקף והגדרה, או בוחרים נושא מוכן, ולוחצים \\\"לבנות את התשבץ\\\". המילים מסתדרות לבד כך שהן מצטלבות, עם מספרים והגדרות במאוזן ובמאונך. אפשר לפתור על המסך, להדפיס או לשמור PDF.\"}}, {\"@type\": \"Question\", \"name\": \"מה עושים אם מילה לא נכנסה לתשבץ?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מילה נכנסת רק אם יש לה אות משותפת עם מילה אחרת. לוחצים \\\"סידור אחר\\\", בוחרים גודל לוח גדול יותר, או מוסיפים עוד מילים בנושא. המילים שלא נכנסו מופיעות בהודעה מעל התשבץ.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר להכין תשבץ באנגלית?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. כותבים את המילים באנגלית וההגדרות בעברית (או באנגלית), והתשבץ נבנה משמאל לימין. בנושאים המוכנים יש רשימות מילים באנגלית לילדים עם תרגום כהגדרה.\"}}, {\"@type\": \"Question\", \"name\": \"איך שולחים את התשבץ לתלמידים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לוחצים \\\"לשלוח לפתרון בטלפון\\\" ושולחים את הקישור בווטסאפ או במייל. כל תלמיד פותח ופותר בטלפון שלו, עם בדיקה ורמז, בלי הרשמה. כל התשבץ שמור בתוך הקישור.\"}}, {\"@type\": \"Question\", \"name\": \"יש דף פתרון?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בהדפסה וב-PDF מתווסף דף פתרון עם הלוח המלא ורשימת התשובות לפי מספר. אפשר לבטל אותו בהגדרות. על המסך יש \\\"לבדוק\\\", \\\"אות אחת\\\" ו\\\"לגלות הכול\\\".\"}}, {\"@type\": \"Question\", \"name\": \"מה ההבדל בין תשבץ לתשחץ?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בתשבץ ההגדרה מתארת את המילה באופן ישיר. בתשחץ (תשבץ היגיון) כל הגדרה היא חידה עם משחק מילים. כאן מכינים תשבץ רגיל משלכם, ובאתר יש גם תשחץ יומי בעברית עם הסבר לכל הגדרה.\"}}]}</script>",
+  "foot": "<script src=\"/assets/machol-banks.js\" defer></script><script src=\"/assets/machol-core.js\" defer></script><script src=\"/assets/machol-tashbetz.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מחולל תשבצים – תשבץ אישי משלכם</h1>
+  <p class="sub">מילים והגדרות משלכם, נושא מוכן, או שילוב של שניהם. התשבץ נבנה לבד, עם מספור ודף פתרון. פותרים בטלפון, מדפיסים או שולחים לכיתה. בחינם, בלי הרשמה.</p>
+</header>
+<div class="tool" id="tb-app">
+  <div class="mc-from mc-sonly" id="tb-from" hidden>
+    <span>🧩 קיבלתם תשבץ</span><b id="tb-from-t">תשבץ</b>
+    <p class="note">נוגעים במשבצת וכותבים. נגיעה שנייה באותה משבצת מחליפה בין מאוזן למאונך. הכול נשמר בטלפון.</p>
+    <button class="btn btn-line btn-sm" type="button" id="tb-own">🧩 להכין תשבץ משלי</button>
+  </div>
+
+  <div class="mc-build">
+    <h2 class="mc-step"><b>1</b> המילים וההגדרות</h2>
+    <div class="mc-box-ui"><div id="tb-words"></div></div>
+    <h2 class="mc-step"><b>2</b> איך התשבץ ייראה</h2>
+    <div class="mc-box-ui">
+      <div class="mc-opts">
+        <div class="field"><label for="tb-size">גודל מקסימלי</label><select id="tb-size"><option value="11">קטן – עד 11 משבצות</option><option value="14">רגיל – עד 14</option><option value="18">גדול – עד 18</option></select></div>
+        <div class="field"><label for="tb-title">כותרת <span class="opt">(לא חובה)</span></label><input id="tb-title" type="text" maxlength="50" placeholder="תשבץ חנוכה לכיתה ד׳"></div>
+      </div>
+      <div class="mc-checks">
+        <label><input type="checkbox" id="tb-bankon"> מחסן מילים מתחת לתשבץ (לקטנים)</label>
+        <label><input type="checkbox" id="tb-ans"> דף פתרון בהדפסה</label>
+      </div>
+    </div>
+    <button class="btn btn-gold btn-block mc-make" type="button" id="tb-make">🧩 לבנות את התשבץ</button>
+  </div>
+
+  <div id="tb-play" hidden>
+    <h2 class="mc-step mc-build"><b>3</b> התשבץ מוכן</h2>
+    <p class="mc-sum" id="tb-sum"></p>
+    <div class="mc-warn" id="tb-miss" hidden></div>
+    <div class="tb-now" id="tb-now" aria-live="polite"></div>
+    <div class="tb-grid" id="tb-grid" role="group"></div>
+    <p class="mc-msg" id="tb-msg" aria-live="polite"></p>
+    <div class="mc-acts">
+      <button class="btn btn-line btn-sm" type="button" id="tb-check">✓ לבדוק</button>
+      <button class="btn btn-line btn-sm" type="button" id="tb-hint">💡 אות אחת</button>
+      <button class="btn btn-line btn-sm" type="button" id="tb-reveal">לגלות הכול</button>
+      <button class="btn btn-line btn-sm" type="button" id="tb-clear">לנקות</button>
+      <button class="btn btn-line btn-sm" type="button" id="tb-new">🔀 סידור אחר</button>
+    </div>
+    <div class="tb-clues" id="tb-clues"></div>
+    <div class="tb-bank" id="tb-bank" hidden></div>
+    <div class="mc-acts">
+      <button class="btn btn-gold btn-sm" type="button" id="tb-print">🖨️ להדפיס</button>
+      <button class="btn btn-line btn-sm" type="button" id="tb-pdf">📄 קובץ PDF</button>
+      <button class="btn btn-line btn-sm" type="button" id="tb-send"><svg class="ic"><use href="#wa"/></svg> לשלוח לפתרון בטלפון</button>
+      <button class="btn btn-line btn-sm" type="button" id="tb-copy">🔗 להעתיק קישור</button>
+    </div>
+    <div class="mc-build">
+      <h2 class="mc-step"><b>4</b> ככה זה ייראה בדף</h2>
+      <div class="mc-prev" id="tb-prev"></div>
+    </div>
+  </div>
+
+  <p class="k-next mc-build">🎯 עוד מחוללים: <a class="gold" href="/kelim/chashiva/tifzoret/">מחולל תפזורת</a> · <a class="gold" href="/kelim/chashiva/bingo/">מחולל בינגו</a> · <a class="gold" href="/kelim/chashiva/tzviya-misparim/">צביעה לפי מספרים</a>. אוהבים אתגר? <a class="gold" href="/kelim/chashiva/tashchetz/">תשחץ יומי</a>.</p>
+  <div class="share-row mc-build"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מחולל תשבצים בחינם: כותבים מילים או בוחרים נושא, והתשבץ נבנה לבד – להדפסה או לפתרון בטלפון:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">איך יוצרים תשבץ אישי בכמה דקות</h2>
+  <p>להכין תשבץ ביד זה עבודה של שעה: לשבץ את המילים כך שיצטלבו, לספור משבצות, למספר, לכתוב הגדרות ולהכין דף פתרון. מחולל התשבצים עושה את כל החלק הטכני לבד. אתם רק מחליטים על המילים וההגדרות, והוא מסדר אותן בלוח כך שהמילים חולקות אותיות, מוסיף מספרים לפי סדר הקריאה ומחלק את ההגדרות למאוזן ולמאונך. לא אהבתם את הסידור? "סידור אחר" בונה את התשבץ מחדש מאותן מילים.</p>
+  <h3>מילים והגדרות: שלוש דרכים</h3>
+  <p><b>אני כותב/ת:</b> בכל שורה מילה, מקף והגדרה – למשל "אריה - מלך החיות". <b>לפי נושא:</b> בוחרים נושא מוכן (חגים, בעלי חיים, גוף האדם, החלל, דמויות בתנ"ך, מקצועות, אנגלית ועוד) ומקבלים מילים יחד עם הגדרות מנוסחות לילדים, שאפשר לערוך. <b>גם וגם:</b> כותבים כמה מילים משלכם – אפילו בלי הגדרה – והמחולל משלים מילים מהנושא ומוסיף הגדרות למילים שהוא מכיר.</p>
+  <h3>תשבץ לילדים להדפסה, עם מחסן מילים</h3>
+  <p>לילדים צעירים כדאי להוסיף "מחסן מילים" – רשימת כל התשובות מתחת לתשבץ. כך הם מתרגלים קריאה וכתיבה גם בלי לדעת את כל התשובות בעל פה. בהדפסה מתקבל דף A4 נקי: כותרת, שורה לשם ולתאריך, הלוח, ההגדרות בשני טורים, ובדף נפרד הפתרון למורה או להורה. אפשר גם לשמור קובץ PDF ולשלוח בווטסאפ.</p>
+  <h3>תשבץ לכיתה: קישור שכל תלמיד פותר בטלפון</h3>
+  <p>הכפתור "לשלוח לפתרון בטלפון" יוצר קישור שבתוכו כל התשבץ. תלמיד שפותח אותו רואה רק את התשבץ, פותר בנגיעות, בודק את עצמו ומקבל רמז של אות אחת כשהוא תקוע. לא צריך חשבון ולא צריך אפליקציה, ומה שכתב נשמר אצלו. זה עובד מצוין לשיעורי בית, לחזרה לפני מבחן ולפעילות בחג.</p>
+  <h3>איך כותבים הגדרות טובות</h3>
+  <p>הגדרה טובה קצרה, ברורה ומובילה לתשובה אחת. לקטנים עדיפות הגדרות מהחיים ("אומר מיאו") או השלמת משפט ("נס גדול היה ___"). לגדולים אפשר הגדרות שדורשות ידע מהשיעור. לא כותבים את מילת התשובה בתוך ההגדרה, ושמים לב למספר האותיות – הוא מופיע בסוגריים ליד כל הגדרה. מילה שלא הצליחה להיכנס ללוח? בדרך כלל אין לה אותיות משותפות עם השאר. מוסיפים עוד מילים או בוחרים לוח גדול יותר.</p>
+  <h3>תשבץ באנגלית</h3>
+  <p>מילים באנגלית עם הגדרה בעברית הן דרך מצוינת לתרגל אוצר מילים: התשבץ נבנה משמאל לימין, ובנושא "אנגלית" יש רשימות מוכנות של צבעים, בני משפחה, בית ספר ובעלי חיים. מאותן מילים אפשר להכין גם <a class="gold" href="/kelim/chashiva/tifzoret/">תפזורת</a> או <a class="gold" href="/kelim/chashiva/bingo/">בינגו</a>. ולמי שאוהב תשבצי היגיון, יש <a class="gold" href="/kelim/chashiva/tashchetz/">תשחץ יומי</a> ו<a class="gold" href="/kodesh/chanuka/tashbetz/">תשבץ לחנוכה</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך מכינים תשבץ בעצמי?</summary><p>כותבים בכל שורה מילה, מקף והגדרה, או בוחרים נושא מוכן, ולוחצים "לבנות את התשבץ". המילים מסתדרות לבד כך שהן מצטלבות, עם מספרים והגדרות במאוזן ובמאונך. אפשר לפתור על המסך, להדפיס או לשמור PDF.</p></details>
+  <details><summary>מה עושים אם מילה לא נכנסה לתשבץ?</summary><p>מילה נכנסת רק אם יש לה אות משותפת עם מילה אחרת. לוחצים "סידור אחר", בוחרים גודל לוח גדול יותר, או מוסיפים עוד מילים בנושא. המילים שלא נכנסו מופיעות בהודעה מעל התשבץ.</p></details>
+  <details><summary>אפשר להכין תשבץ באנגלית?</summary><p>כן. כותבים את המילים באנגלית וההגדרות בעברית (או באנגלית), והתשבץ נבנה משמאל לימין. בנושאים המוכנים יש רשימות מילים באנגלית לילדים עם תרגום כהגדרה.</p></details>
+  <details><summary>איך שולחים את התשבץ לתלמידים?</summary><p>לוחצים "לשלוח לפתרון בטלפון" ושולחים את הקישור בווטסאפ או במייל. כל תלמיד פותח ופותר בטלפון שלו, עם בדיקה ורמז, בלי הרשמה. כל התשבץ שמור בתוך הקישור.</p></details>
+  <details><summary>יש דף פתרון?</summary><p>כן. בהדפסה וב-PDF מתווסף דף פתרון עם הלוח המלא ורשימת התשובות לפי מספר. אפשר לבטל אותו בהגדרות. על המסך יש "לבדוק", "אות אחת" ו"לגלות הכול".</p></details>
+  <details><summary>מה ההבדל בין תשבץ לתשחץ?</summary><p>בתשבץ ההגדרה מתארת את המילה באופן ישיר. בתשחץ (תשבץ היגיון) כל הגדרה היא חידה עם משחק מילים. כאן מכינים תשבץ רגיל משלכם, ובאתר יש גם תשחץ יומי בעברית עם הסבר לכל הגדרה.</p></details>
+</section>
+<!--/seo-txt-->
