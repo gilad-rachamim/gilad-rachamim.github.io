@@ -22,14 +22,20 @@
   function heDate(s) { var p = s.split('-'); return +p[2] + '.' + +p[1] + '.' + p[0]; }
 
   // ---------- מצב ושמירה ----------
-  var st = { items: [], day: '', took: {}, sent: {}, notif: false, started: false };
+  var st = { items: [], day: '', took: {}, sent: {}, notif: false, started: false, hist: {}, big: false, voice: false };
   try { var sv = JSON.parse(localStorage.getItem(KEY) || 'null'); if (sv) Object.keys(sv).forEach(function (k) { st[k] = sv[k]; }); } catch (e) {}
+  if (!st.hist || typeof st.hist !== 'object') st.hist = {};
   function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
-  function fresh() { if (st.day !== today()) { st.day = today(); st.took = {}; st.sent = {}; save(); } }
+  function fresh() {
+    if (st.day === today()) return;
+    if (st.day) st.hist[st.day] = st.took; // היסטוריה: מה סומן בכל יום
+    var keep = dnum(today()) - 30; Object.keys(st.hist).forEach(function (d) { if (dnum(d) < keep) delete st.hist[d]; });
+    st.day = today(); st.took = {}; st.sent = {}; save();
+  }
   if (!st.started) { // דוגמה מלאה בכניסה הראשונה
     var t0 = today();
     st.items = [
-      { id: 'ex1', k: '💊', n: 'אומפרדקס 20 מ״ג', w: '', times: ['08:00'], r: 'd', days: [], every: 2, s: t0, e: '', o: 'חצי שעה לפני ארוחת הבוקר', ex: 1 },
+      { id: 'ex1', k: '💊', n: 'אומפרדקס 20 מ״ג', w: '', times: ['08:00'], r: 'd', days: [], every: 2, s: t0, e: '', o: 'חצי שעה לפני ארוחת הבוקר', stock: 9, again: 1, ex: 1 },
       { id: 'ex2', k: '💧', n: 'לשתות כוס מים', w: 'אבא', times: ['10:00', '13:00', '16:00'], r: 'd', days: [], every: 2, s: t0, e: '', o: '', ex: 1 },
       { id: 'ex3', k: '💊', n: 'ויטמין D', w: '', times: ['20:00'], r: 'w', days: [0, 3], every: 2, s: t0, e: '', o: 'עם האוכל', ex: 1 }
     ];
@@ -99,9 +105,14 @@
         dt('DTSTART', stamp(fd, hm)), dt('DTEND', plusMin(fd, hm, 5))];
       var rr = rrule(it); if (rr) L.push(rr);
       L.push('SUMMARY:' + icsText(title(it)), 'DESCRIPTION:' + icsText(desc), 'TRANSP:TRANSPARENT',
-        'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsText(title(it)), 'TRIGGER:-PT0M', 'END:VALARM', 'END:VEVENT');
+        'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsText(title(it)), 'TRIGGER:-PT0M', 'END:VALARM');
+      if (it.again) L.push('BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsText('שוב: ' + title(it)), 'TRIGGER:PT10M', 'END:VALARM'); // תזכורת שנייה אחרי 10 דקות
+      L.push('END:VEVENT');
       return L;
-    }).reduce(function (a, b) { return a.concat(b); }, []);
+    }).reduce(function (a, b) { return a.concat(b); }, []).concat(it.refill ? [ // אירוע חד-פעמי: לחדש מרשם
+      'BEGIN:VEVENT', 'UID:' + it.id + '-refill@hakelim.com', 'DTSTAMP:' + now, dt('DTSTART', stamp(it.refill, '10:00')), dt('DTEND', plusMin(it.refill, '10:00', 15)),
+      'SUMMARY:' + icsText('🧾 לחדש מרשם: ' + it.n + (it.w ? ' – ' + it.w : '')), 'DESCRIPTION:' + icsText('לבקש מרשם חדש מהרופא או בקופה. תזכורת מ-' + PAGE), 'TRANSP:TRANSPARENT',
+      'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsText('לחדש מרשם: ' + it.n), 'TRIGGER:-PT0M', 'END:VALARM', 'END:VEVENT'] : []);
   }
   function ics(items) {
     var L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//hakelim.com//tizkorot//HE', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH'];
@@ -146,7 +157,8 @@
   }
   function resetForm() {
     editId = null; kind = '💊'; times = [];
-    ['tz-name', 'tz-who', 'tz-note', 'tz-end', 'tz-time'].forEach(function (id) { $(id).value = ''; });
+    ['tz-name', 'tz-who', 'tz-note', 'tz-end', 'tz-time', 'tz-stock', 'tz-refill'].forEach(function (id) { $(id).value = ''; });
+    $('tz-again').checked = false;
     $('tz-rep').value = 'd'; $('tz-every').value = '2'; $('tz-start').value = today();
     form.querySelectorAll('[data-day]').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
     $('tz-save').textContent = 'לשמור את התזכורת'; $('tz-cancel').classList.add('tz-hide');
@@ -173,7 +185,9 @@
     if (r === 'w' && !days.length) { msg.textContent = 'חסר: באילו ימים בשבוע?'; return; }
     if (en && dnum(en) < dnum(s)) { msg.textContent = 'תאריך הסיום לפני תאריך ההתחלה.'; return; }
     var it = { id: editId || 't' + Date.now().toString(36), k: kind, n: n, w: $('tz-who').value.trim(), times: times.slice().sort(), r: r, days: days,
-      every: Math.min(60, Math.max(2, +$('tz-every').value || 2)), s: s, e: en, o: $('tz-note').value.trim() };
+      every: Math.min(60, Math.max(2, +$('tz-every').value || 2)), s: s, e: en, o: $('tz-note').value.trim(),
+      again: $('tz-again').checked ? 1 : 0, refill: $('tz-refill').value || '' };
+    var sk = $('tz-stock').value.trim(); if (sk !== '' && +sk >= 0) it.stock = Math.min(9999, Math.round(+sk));
     var hadEx = st.items.some(function (x) { return x.ex; });
     st.items = st.items.filter(function (x) { return !x.ex && x.id !== it.id; }); // הדוגמה יורדת כשמוסיפים תזכורת אמיתית
     st.items.push(it);
@@ -209,7 +223,10 @@
     // הרשימה
     $('tz-items').innerHTML = st.items.length ? st.items.map(function (it) {
       var g = it.times.map(function (hm) { return '<a class="btn btn-line btn-sm" href="' + esc(gcal(it, hm)) + '" target="_blank" rel="noopener" data-gcal="1">📅 ליומן גוגל' + (it.times.length > 1 ? ' <bdi dir="ltr">' + hm + '</bdi>' : '') + '</a>'; }).join('');
-      return '<li data-item="' + it.id + '"><div class="t">' + esc(title(it)) + '</div><div class="w">' + whenText(it) + '</div>' + (it.o ? '<div class="o">' + esc(it.o) + '</div>' : '') +
+      var left = daysLeft(it);
+      var stock = it.stock == null ? '' : '<div class="o' + (left != null && left <= 7 ? ' low' : '') + '">' + (it.stock === 0 ? '⚠️ נגמרה הקופסה' : '📦 נשארו ' + it.stock + (left != null ? ' · מספיק לעוד כ-' + left + ' ימים' : '')) + (left != null && left <= 7 ? ' – זה הזמן לקנות או לחדש מרשם' : '') + '</div>';
+      var refill = it.refill ? '<div class="o">🧾 לחדש מרשם: ' + heDate(it.refill) + ' (נכנס ליומן עם התזכורת)</div>' : '';
+      return '<li data-item="' + it.id + '"><div class="t">' + esc(title(it)) + '</div><div class="w">' + whenText(it) + (it.again ? ' · ושוב אחרי 10 דקות' : '') + '</div>' + (it.o ? '<div class="o">' + esc(it.o) + '</div>' : '') + stock + refill +
         '<div class="tz-acts"><button type="button" class="btn btn-gold btn-sm" data-ics="' + it.id + '">📲 להוסיף ליומן בטלפון</button>' + g +
         '<button type="button" class="lnk" data-edit="' + it.id + '">לערוך</button><button type="button" class="lnk" data-del="' + it.id + '">למחוק</button></div></li>';
     }).join('') : '<li><p class="note">אין עדיין תזכורות.</p></li>';
@@ -219,14 +236,59 @@
       return '▫️ ' + title(it) + ' – ' + whenText(it).replace(/<[^>]+>/g, '') + (it.o ? ' (' + it.o + ')' : '');
     }).join('\n') + '\n\nלהוסיף ליומן עם התראה: https://' + PAGE;
     $('tz-wa').href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(waText);
-    paintNotif();
+    // עדכון למשפחה: מה כבר נלקח היום ומה עוד לא
+    var fam = '✅ עדכון להיום' + (who ? ' (' + who + ')' : '') + '\n\n' + (occ.length ? occ.map(function (o) {
+      return (st.took[o.key] ? '✓ ' : '⏳ ') + o.hm + ' ' + o.it.n + (st.took[o.key] ? ' – ' + doneWord(o.it) : ' – עוד לא');
+    }).join('\n') : 'היום אין תזכורות.') + '\n\n' + done + ' מתוך ' + occ.length;
+    $('tz-fam').href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(fam);
+    $('tz-fam').classList.toggle('tz-hide', !occ.length);
+    drawHist(); drawSheet();
+    paintNotif(); paintPrefs();
   }
+  function perDay(it) { // כמה מנות ביום, בממוצע
+    var n = it.times.length;
+    return it.r === 'w' ? n * it.days.length / 7 : it.r === 'n' ? n / Math.max(1, it.every) : it.r === 'o' ? 0 : n;
+  }
+  function daysLeft(it) { var p = perDay(it); return it.stock == null || !p ? null : Math.floor(it.stock / p); }
+  function dayStat(ds) { // כמה היו וכמה סומנו ביום מסוים
+    var marks = ds === today() ? st.took : (st.hist[ds] || {}), tot = 0, ok = 0;
+    st.items.forEach(function (it) { if (!it.ex && activeOn(it, ds)) it.times.forEach(function (hm) { tot++; if (marks[it.id + '@' + hm]) ok++; }); });
+    return [ok, tot];
+  }
+  function drawHist() {
+    var first = Object.keys(st.hist).concat([today()]).reduce(function (a, b) { return dnum(a) < dnum(b) ? a : b; });
+    var t = dnum(today()), rows = [], sOk = 0, sTot = 0;
+    for (var n = t; n > t - 14 && n >= dnum(first); n--) {
+      var ds = fromNum(n), r = dayStat(ds); if (!r[1]) continue;
+      if (n < t) { sOk += r[0]; sTot += r[1]; }
+      var full = r[0] === r[1];
+      rows.push('<li class="' + (full ? 'full' : r[0] ? 'part' : 'none') + '"><span>' + (n === t ? 'היום' : new Date(n * 864e5).toLocaleDateString('he-IL', { weekday: 'short', day: 'numeric', month: 'numeric', timeZone: 'UTC' })) + '</span><b>' + r[0] + '/' + r[1] + (full ? ' ✓' : '') + '</b></li>');
+    }
+    $('tz-hist').innerHTML = rows.length > 1 ? '<p class="note">' + (sTot ? 'בימים שעברו סומנו ' + sOk + ' מתוך ' + sTot + ' (' + Math.round(100 * sOk / sTot) + '%). כל יום הוא התחלה חדשה.' : '') + '</p><ul class="tz-hist">' + rows.join('') + '</ul>'
+      : '<p class="note">כאן יופיע מה סומן בכל יום, ב-14 הימים האחרונים. ההיסטוריה נשמרת רק בטלפון הזה.</p>';
+  }
+  function drawSheet() { // לוח שבועי להדפסה למקרר
+    var t = dnum(today()), ds = []; for (var i = 0; i < 7; i++) ds.push(fromNum(t + i));
+    var rows = [];
+    st.items.forEach(function (it) { it.times.forEach(function (hm) {
+      if (!ds.some(function (d) { return activeOn(it, d); })) return;
+      rows.push([hm, '<tr><th><b>' + hm + '</b> ' + esc(title(it)) + (it.o ? '<small>' + esc(it.o) + '</small>' : '') + '</th>' + ds.map(function (d) { return '<td>' + (activeOn(it, d) ? '☐' : '–') + '</td>'; }).join('') + '</tr>']);
+    }); });
+    rows.sort(function (a, b) { return a[0] < b[0] ? -1 : 1; });
+    $('tz-sheet').innerHTML = '<h2>⏰ התזכורות לשבוע' + (who0() ? ' – ' + esc(who0()) : '') + '</h2><p>מסמנים ✓ בכל פעם שלוקחים. ' + heDate(ds[0]) + ' עד ' + heDate(ds[6]) + '</p>' +
+      '<table><tr><th></th>' + ds.map(function (d) { return '<th>' + DAYS[new Date(dnum(d) * 864e5).getUTCDay()] + '<br><small>' + +d.split('-')[2] + '.' + +d.split('-')[1] + '</small></th>'; }).join('') + '</tr>' + rows.map(function (r) { return r[1]; }).join('') + '</table>' +
+      '<p class="ft">hakelim.com/kelim/briut/tizkorot · הכלי עוזר לזכור ולא נותן ייעוץ רפואי</p>';
+  }
+  function who0() { return st.items.length && st.items.every(function (x) { return x.w && x.w === st.items[0].w; }) ? st.items[0].w : ''; }
   function use(how) { if (window.toolUsed) window.toolUsed(TOOL, { how: how }); }
 
   $('tz-today').addEventListener('change', function (e) {
     var k = e.target.getAttribute('data-took'); if (!k) return;
-    if (e.target.checked) st.took[k] = 1; else delete st.took[k];
+    var it = st.items.filter(function (x) { return x.id === k.split('@')[0]; })[0];
+    if (e.target.checked) { st.took[k] = 1; if (it && it.stock != null && it.stock > 0) it.stock--; }
+    else { delete st.took[k]; if (it && it.stock != null) it.stock++; }
     save(); draw();
+    if (e.target.checked) { var f = document.querySelector('[data-took="' + k.replace(/"/g, '') + '"]'); if (f) f.focus(); }
   });
   $('tz-today').addEventListener('click', function (e) {
     if (e.target.id !== 'tz-clear-ex') return;
@@ -244,6 +306,8 @@
       editId = it.id; kind = it.k; times = it.times.slice();
       $('tz-name').value = it.n; $('tz-who').value = it.w; $('tz-note').value = it.o; $('tz-rep').value = it.r;
       $('tz-every').value = it.every; $('tz-start').value = it.s; $('tz-end').value = it.e;
+      $('tz-stock').value = it.stock == null ? '' : it.stock; $('tz-refill').value = it.refill || ''; $('tz-again').checked = !!it.again;
+      if (it.stock != null || it.refill || it.again) $('tz-more').open = true;
       form.querySelectorAll('[data-day]').forEach(function (x) { x.setAttribute('aria-pressed', it.days.indexOf(+x.getAttribute('data-day')) >= 0 ? 'true' : 'false'); });
       $('tz-save').textContent = 'לשמור את השינוי'; $('tz-cancel').classList.remove('tz-hide');
       paintForm(); form.scrollIntoView({ behavior: 'smooth' }); $('tz-name').focus();
@@ -303,12 +367,42 @@
       var q = o.hm.split(':'), m = +q[0] * 60 + +q[1];
       if (m <= mins && mins - m <= 15 && !st.took[o.key] && !st.sent[o.key]) { // בשעה, ועד רבע שעה אחריה
         st.sent[o.key] = 1; changed = true;
+        if (st.voice) speak('הגיע הזמן: ' + o.it.n + (o.it.w ? ', ל' + o.it.w : ''));
         if (st.notif && hasN && Notification.permission === 'granted') show('⏰ ' + title(o.it), 'עכשיו ' + o.hm + (o.it.o ? ' · ' + o.it.o : '') + '. מסמנים בדף כש' + doneWord(o.it) + '.', o.key);
       }
     });
     if (changed) save();
     draw();
   }
+  // ---------- הקראה בקול, כתב גדול, הדפסה ----------
+  var hasV = 'speechSynthesis' in window;
+  function heVoice() { try { return speechSynthesis.getVoices().filter(function (v) { return /^(he|iw)/i.test(v.lang); })[0] || null; } catch (e) { return null; } }
+  function speak(text) {
+    if (!hasV) return;
+    try { var u = new SpeechSynthesisUtterance(text), v = heVoice(); u.lang = 'he-IL'; if (v) u.voice = v; u.rate = 0.9; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (e) {}
+  }
+  function paintPrefs() {
+    document.documentElement.classList.toggle('tz-big', !!st.big);
+    $('tz-big').setAttribute('aria-pressed', st.big ? 'true' : 'false');
+    $('tz-big').textContent = st.big ? '🔠 כתב גדול: פועל' : '🔠 כתב גדול';
+    var vb = $('tz-voice');
+    if (!hasV) { vb.classList.add('tz-hide'); return; }
+    vb.setAttribute('aria-pressed', st.voice ? 'true' : 'false');
+    vb.textContent = st.voice ? '🔊 הקראה בקול: פועלת' : '🔊 להקריא בקול';
+  }
+  $('tz-big').addEventListener('click', function () { st.big = !st.big; save(); paintPrefs(); if (st.big) use('big'); });
+  $('tz-voice').addEventListener('click', function () {
+    st.voice = !st.voice; save(); paintPrefs();
+    var m = $('tz-vmsg'); m.textContent = '';
+    if (st.voice) {
+      use('voice'); speak('שלום. כך תישמע התזכורת: הגיע הזמן לקחת את הכדור.');
+      m.textContent = (heVoice() ? '' : 'במכשיר הזה אין קול בעברית, אז ההקראה עלולה להישמע לא טוב. ') + 'ההקראה פועלת כל עוד הדף פתוח. כשהדף סגור – ההתראה מגיעה מהיומן.';
+    }
+  });
+  $('tz-print').addEventListener('click', function () { drawSheet(); use('print'); window.print(); });
+  $('tz-fam').addEventListener('click', function () { use('family'); });
+  try { if (hasV) speechSynthesis.onvoiceschanged = function () {}; } catch (e) {}
+
   setInterval(tick, 20000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden) tick(); });
 
