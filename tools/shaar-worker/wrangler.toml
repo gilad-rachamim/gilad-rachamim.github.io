@@ -1,0 +1,7 @@
+# שער יציג (/kelim/cheshbon/shaar/) – Cloudflare Worker בלי מצב, מביא מבנק ישראל ושומר במטמון.
+# פריסה:        cd tools/shaar-worker && npx wrangler deploy   (אותו חשבון כמו kelim-bakasha)
+# בדיקה מקומית: npx wrangler dev --port 8871
+name = "kelim-shaar"
+main = "shaar-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true

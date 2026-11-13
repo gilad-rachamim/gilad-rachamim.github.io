@@ -1,0 +1,83 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "cheshbon_shaar",
+  "title": "שער יציג היום ולכל תאריך – דולר, יורו ו-14 מטבעות, ממיר ומחשבון הפרשי שער | הכלים של גילעד רחמים",
+  "description": "שער יציג של בנק ישראל להיום ולכל תאריך: דולר, יורו, פאונד ועוד. ממירים סכום לשקלים לפי השער היציג של יום החשבונית, מחשבים הפרשי שער בין חשבונית לתשלום, ומעבירים רשימת חשבוניות במט\"ח מאקסל. בחינם, בלי הרשמה.",
+  "og_title": "שער יציג – היום ולכל תאריך, עם ממיר והפרשי שער",
+  "priority": "0.8",
+  "crumbs": [["רואי חשבון ויועצי מס", "/kelim/cheshbon/"], ["שער יציג", null]],
+  "ext": {"accept": ["text"], "input": "sh-amt", "menu": "להמיר לשקלים לפי השער היציג"},
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/cheshbon.css\"><link rel=\"preconnect\" href=\"https://kelim-shaar.gilad4049.workers.dev\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"מה השער היציג של הדולר היום?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"הכלי מראה בראש הדף את השער היציג האחרון שבנק ישראל פרסם, עם התאריך שלו. השער של היום מתפרסם ביום עסקים, ועד אז מוצג השער של יום העסקים הקודם.\"}}, {\"@type\": \"Question\", \"name\": \"מה ההבדל בין שער יציג לשער בבנק?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"השער היציג הוא השער הרשמי שבנק ישראל מפרסם פעם ביום. בבנק ובצ'יינג' משלמים לפי שער קנייה או מכירה, שכולל מרווח, ולכן הוא שונה מהשער היציג.\"}}, {\"@type\": \"Question\", \"name\": \"איזה שער לוקחים ביום שישי או בחג?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בימים שבנק ישראל לא מפרסם בהם שער, משתמשים בשער היציג האחרון שפורסם לפניהם. הכלי עושה את זה לבד וכותב מאיזה תאריך השער.\"}}, {\"@type\": \"Question\", \"name\": \"איך מחשבים הפרשי שער?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מכפילים את הסכום במטבע בשער של יום התשלום, ומורידים את הסכום שנרשם לפי השער של יום החשבונית. אם יוצא חיובי, זה רווח מהפרשי שער; אם שלילי, הפסד.\"}}, {\"@type\": \"Question\", \"name\": \"למה השער של הין נראה קטן?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בנק ישראל מפרסם את השער של הין היפני ל-100 ין. הכלי מחלק לפי זה כשהוא ממיר.\"}}, {\"@type\": \"Question\", \"name\": \"מאיפה הנתונים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מבנק ישראל, השערים היציגים הרשמיים. הם עוברים דרך שרת קטן של האתר שרק שומר אותם במטמון, כי בנק ישראל לא מאפשר לדפדפן לקרוא אותם ישירות.\"}}]}</script>",
+  "foot": "<script src=\"/assets/cheshbon.js\" defer></script><script src=\"/assets/cheshbon-shaar.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>שער יציג</h1>
+  <p class="sub">השער היציג של בנק ישראל להיום ולכל תאריך. ממירים סכום לשקלים, בודקים הפרשי שער בין החשבונית לתשלום, ומעבירים רשימה שלמה מאקסל.</p>
+</header>
+
+<div class="tool ch" id="shaar">
+  <div class="res" id="sh-today" aria-live="polite"><p class="hint">טוען את השער היציג…</p></div>
+
+  <div class="seg no-print" id="sh-mode" role="group" aria-label="מה רוצים לעשות">
+    <button type="button" data-v="conv" aria-pressed="true">להמיר סכום</button>
+    <button type="button" data-v="diff" aria-pressed="false">הפרשי שער</button>
+    <button type="button" data-v="many" aria-pressed="false">רשימה מאקסל</button>
+  </div>
+
+  <form class="k-form" id="sh-conv" novalidate>
+    <div class="row2">
+      <div class="field"><label for="sh-amt">סכום</label><input id="sh-amt" class="num-in" type="text" inputmode="decimal" autocomplete="off" placeholder="1,000"></div>
+      <div class="field"><label for="sh-cur">מטבע</label><select id="sh-cur"></select></div>
+      <div class="field"><label for="sh-date">לפי השער של תאריך</label><input id="sh-date" type="date"></div>
+      <div class="field"><label for="sh-dir">כיוון</label><select id="sh-dir"><option value="to">מהמטבע לשקלים</option><option value="from">משקלים למטבע</option></select></div>
+    </div>
+  </form>
+  <div class="res" id="sh-res" aria-live="polite"></div>
+
+  <form class="k-form" id="sh-diff" novalidate hidden>
+    <h2>הפרשי שער בין החשבונית לתשלום</h2>
+    <div class="row2">
+      <div class="field"><label for="sd-amt">סכום במטבע</label><input id="sd-amt" class="num-in" type="text" inputmode="decimal" autocomplete="off"></div>
+      <div class="field"><label for="sd-cur">מטבע</label><select id="sd-cur"></select></div>
+      <div class="field"><label for="sd-d1">תאריך החשבונית</label><input id="sd-d1" type="date"></div>
+      <div class="field"><label for="sd-d2">תאריך התשלום</label><input id="sd-d2" type="date"></div>
+    </div>
+  </form>
+  <div class="res" id="sd-res" aria-live="polite" hidden></div>
+
+  <form class="k-form" id="sh-many" novalidate hidden>
+    <h2>רשימת חשבוניות במט"ח</h2>
+    <div class="field"><label for="sm-list">מדביקים מאקסל: תאריך · סכום · מטבע (USD, EUR, $, €) בכל שורה. אפשר גם תיאור.</label>
+      <textarea id="sm-list" spellcheck="false"></textarea></div>
+    <div class="btns"><button class="btn btn-gold" type="button" id="sm-go">להמיר את כל הרשימה</button></div>
+    <p class="msg" id="sm-msg" aria-live="polite"></p>
+  </form>
+  <div id="sm-out" hidden></div>
+
+  <p class="src">המקור: בנק ישראל – השערים היציגים שהוא מפרסם בכל יום עסקים. ביום בלי שער (שישי, שבת, חג, או לפני הפרסום של היום) משתמשים בשער היציג האחרון שפורסם לפניו, והכלי כותב מאיזה תאריך הוא. השערים מגיעים דרך שרת קטן של האתר, כי בנק ישראל לא מאפשר לדפדפן לקרוא אותם ישירות; הסכומים שמקלידים לא נשלחים לשום מקום.</p>
+  <div class="share-row no-print"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="שער יציג של בנק ישראל להיום ולכל תאריך, עם ממיר והפרשי שער – בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר</a></div>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">מה זה שער יציג, ולמה משתמשים בו</h2>
+  <p>השער היציג הוא שער החליפין שבנק ישראל מפרסם בכל יום עסקים לדולר, ליורו ולעוד מטבעות. הוא נקבע לפי המסחר בשוק המטבע באותו יום, ומשמש כשער הרשמי: לחשבוניות ולתקבולים במטבע חוץ, להנהלת חשבונות, לדיווח לרשות המסים, לחוזים צמודים לדולר ולפסקי דין. בנקים ומכשירי המרה נותנים שערי קנייה ומכירה שונים מהשער היציג, ולכן מי שצריך את השער הרשמי בודק אותו כאן.</p>
+  <h3>שער יציג לכל תאריך</h3>
+  <p>בוחרים תאריך, והכלי מראה את השער היציג של אותו יום לכל המטבעות. אם התאריך הוא שישי, שבת, חג או יום שבנק ישראל עוד לא פרסם בו שער, הכלי לוקח את השער האחרון שפורסם לפניו וכותב מאיזה יום הוא. ככה עושים גם בהנהלת החשבונות: לחשבונית ביום בלי שער רושמים לפי השער היציג האחרון הידוע. בין ההוראות של רשות המסים יש מקרים שבהם קובעים אחרת, ולכן במקרה של ספק שואלים את רואה החשבון.</p>
+  <h3>הפרשי שער</h3>
+  <p>כשחשבונית בדולרים נרשמת בשער של יום החשבונית, והלקוח משלם אחרי חודש בשער אחר, נוצר הפרש שער: רווח אם השער עלה, הפסד אם ירד. במחשבון הפרשי השער מקלידים סכום, מטבע, תאריך חשבונית ותאריך תשלום, ורואים את שני הסכומים בשקלים ואת ההפרש. משרד רואי חשבון יכול להדביק מאקסל רשימה של חשבוניות במט"ח ולקבל לכל שורה את השער היציג של התאריך שלה ואת הסכום בשקלים, ולהוריד חזרה לאקסל.</p>
+  <h3>ין ולירה לבנונית</h3>
+  <p>בנק ישראל מפרסם את השער של הין היפני ל-100 ין, ואת השער של הלירה הלבנונית ל-10 לירות. הכלי מחשב לפי היחידה הנכונה וכותב אותה ליד השער.</p>
+  <p>עוד כלים: <a class="gold" href="/kelim/cheshbon/hakzaa/">בודק מספר הקצאה</a>, <a class="gold" href="/kelim/cheshbon/mikdamot/">מחשבון מקדמות ודוח מע"מ</a>, <a class="gold" href="/kelim/cheshbon/moadim/">לוח מועדי דיווח</a>, <a class="gold" href="/kesef/maam/">מחשבון מע"מ</a>, וכל <a class="gold" href="/kelim/cheshbon/">הכלים לרואי חשבון ויועצי מס</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>מה השער היציג של הדולר היום?</summary><p>הכלי מראה בראש הדף את השער היציג האחרון שבנק ישראל פרסם, עם התאריך שלו. השער של היום מתפרסם ביום עסקים, ועד אז מוצג השער של יום העסקים הקודם.</p></details>
+  <details><summary>מה ההבדל בין שער יציג לשער בבנק?</summary><p>השער היציג הוא השער הרשמי שבנק ישראל מפרסם פעם ביום. בבנק ובצ'יינג' משלמים לפי שער קנייה או מכירה, שכולל מרווח, ולכן הוא שונה מהשער היציג.</p></details>
+  <details><summary>איזה שער לוקחים ביום שישי או בחג?</summary><p>בימים שבנק ישראל לא מפרסם בהם שער, משתמשים בשער היציג האחרון שפורסם לפניהם. הכלי עושה את זה לבד וכותב מאיזה תאריך השער.</p></details>
+  <details><summary>איך מחשבים הפרשי שער?</summary><p>מכפילים את הסכום במטבע בשער של יום התשלום, ומורידים את הסכום שנרשם לפי השער של יום החשבונית. אם יוצא חיובי, זה רווח מהפרשי שער; אם שלילי, הפסד.</p></details>
+  <details><summary>למה השער של הין נראה קטן?</summary><p>בנק ישראל מפרסם את השער של הין היפני ל-100 ין. הכלי מחלק לפי זה כשהוא ממיר.</p></details>
+  <details><summary>מאיפה הנתונים?</summary><p>מבנק ישראל, השערים היציגים הרשמיים. הם עוברים דרך שרת קטן של האתר שרק שומר אותם במטמון, כי בנק ישראל לא מאפשר לדפדפן לקרוא אותם ישירות.</p></details>
+</section>
+<!--/seo-txt-->
