@@ -69,7 +69,7 @@ body:not(.mc-student) .mc-sonly{display:none}
 .mc-name{display:flex;justify-content:space-between;margin-top:3mm;font-size:11pt}
 .mc-pf{margin-top:auto;text-align:center;font-size:7.5pt;color:#555!important;padding-top:2mm}
 .mc-gridbox{display:flex;align-items:center;justify-content:center;flex:none}
-.mc-svg{display:block;max-width:100%}
+.mc-svg{display:block;max-width:100%;direction:ltr}
 .mc-clues{display:grid;grid-template-columns:1fr 1fr;gap:6mm;font-size:11pt}
 .mc-clues h3{font:700 1.08em Assistant,Arial,sans-serif;margin:0 0 1.5mm;border-bottom:.3mm solid #999;padding-bottom:1mm}
 .mc-clues ol{list-style:none;margin:0;padding:0;display:grid;gap:1.1mm}
