@@ -155,15 +155,25 @@
       L.push({ id: 'g', t: 'לחפש בגוגל של מי המספר', d: 'אם זה עסק, או שמישהו כבר כתב על המספר – זה יופיע.', u: 'https://www.google.com/search?q=' + encodeURIComponent(q) });
       L.push({ id: 'gs', t: 'לחפש דיווחים על ספאם', d: 'האם אנשים אחרים כתבו שהמספר הזה מטריד או מנסה לעקוץ.', u: 'https://www.google.com/search?q=' + encodeURIComponent('(' + q + ') ספאם OR הטרדה OR עוקץ OR spam OR scam') });
     }
+    if (r.israeli && /^0[2-489]\d{7}$|^07\d{8}$|^1\d{9}$/.test(r.local)) {
+      L.push({ id: 'b144', t: 'לחפש במדריך 144 ובדפי זהב', d: 'מספרים קוויים ועסקיים רשומים שם עם שם וכתובת.', u: 'https://www.google.com/search?q=' + encodeURIComponent('(site:b144.co.il OR site:d.co.il) ("' + r.local + '" OR "' + fmtIL(r.local) + '")') });
+    }
     return L;
   }
 
-  var MI = { check: check, fmtIL: fmtIL };
+  var MI = { check: check, fmtIL: fmtIL, T: { MOBILE: MOBILE, PAL: PAL, AREA: AREA, SHORT: SHORT, CC: CC, WANGIRI: WANGIRI, CARIB: CARIB } };
   if (typeof module !== 'undefined' && module.exports) { module.exports = MI; return; }
   root.MI = MI;
 
   // ---------- הדף ----------
   var $ = function (id) { return document.getElementById(id); };
+  var go = $('mi-go');
+  if (go) go.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = ($('mi-go-n').value || '').trim();
+    if (window.toolUsed) window.toolUsed('mi', { how: 'go' });
+    location.href = '/kelim/machshev/mi-mitkasher/' + (v ? '#' + encodeURIComponent(v) : '');
+  });
   var inp = $('mi-n');
   if (!inp) return;
   var KEY = 'kelim-machshev-mi';
