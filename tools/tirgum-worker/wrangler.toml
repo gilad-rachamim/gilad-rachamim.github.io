@@ -1,0 +1,20 @@
+# "המתרגם" – תרגום לטלפונים ותרגום מתמונה (Cloudflare Worker, חינם).
+# פריסה:      cd tools/tirgum-worker && npx wrangler deploy   (אותו חשבון כמו kelim-shir)
+# מפתח Gemini: powershell -File key-setup.ps1   (מעתיקים מפתח מ-AI Studio, פרויקט tirgum-1; הסקריפט קולט מהלוח ושומר כסוד GEMINI_KEYS)
+#              בלי מפתח השרת עובד עם Llama 4 של Workers AI.
+# הדף: https://hakelim.com/kelim/tochen/tirgum/
+name = "kelim-tirgum"
+main = "tirgum-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[ai]
+binding = "AI"
+
+[[durable_objects.bindings]]
+name = "QUOTA"
+class_name = "Quota"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Quota"]

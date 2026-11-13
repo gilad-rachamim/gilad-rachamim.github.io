@@ -187,20 +187,59 @@
       var e = new Error('need-click'); e.needClick = true; throw e;
     }
     var g = applyGlossary(text);
-    var lines = g.text.split('\n'), res = [];
-    for (var i = 0; i < lines.length; i++) {
-      var ln = lines[i];
-      if (!ln.trim()) { res.push(ln); continue; }
-      if (tr) { res.push(await tr.translate(ln)); usedEngine = 'chrome'; }
-      else { res.push(await fallbackTranslate(ln, a, b)); usedEngine = 'mm'; }
+    var joined = null;
+    if (!tr) {
+      // השרת של מיזם הכלים (Gemini / Llama), ואם הוא עמוס או שנגמרה המכסה – MyMemory
+      try { joined = await serverTranslate(g.text, a, b); usedEngine = 'server'; }
+      catch (e) { if (e && e.message === 'too_long') throw e; joined = null; }
     }
-    var outT = restoreGlossary(res.join('\n'), g.map);
+    if (joined == null) {
+      var lines = g.text.split('\n'), res = [];
+      for (var i = 0; i < lines.length; i++) {
+        var ln = lines[i];
+        if (!ln.trim()) { res.push(ln); continue; }
+        if (tr) { res.push(await tr.translate(ln)); usedEngine = 'chrome'; }
+        else { res.push(await fallbackTranslate(ln, a, b)); usedEngine = 'mm'; }
+      }
+      joined = res.join('\n');
+    }
+    var outT = restoreGlossary(joined, g.map);
     if (b === 'he') outT = stripNiqqud(outT);
     return outT;
   }
 
+  // ---------- שרת התרגום של מיזם הכלים ----------
+  var API = 'https://kelim-tirgum.gilad4049.workers.dev';
+  var serverDown = 0;
+  async function post(path, body, ms) {
+    var ctl = new AbortController(), timer = setTimeout(function () { ctl.abort(); }, ms || 30000);
+    try {
+      var r = await fetch(API + path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), signal: ctl.signal });
+      return await r.json();
+    } finally { clearTimeout(timer); }
+  }
+  async function serverTranslate(text, a, b) {
+    if (serverDown && Date.now() - serverDown < 10 * 60e3) throw new Error('down');
+    // קטעים של עד 4,500 תווים, לפי פסקאות
+    var paras = text.split(/(\n\s*\n)/), parts = [], cur = '';
+    paras.forEach(function (p) { if ((cur + p).length > 4500 && cur) { parts.push(cur); cur = p; } else cur += p; });
+    if (cur) parts.push(cur);
+    var outp = [];
+    for (var i = 0; i < parts.length; i++) {
+      if (parts[i].length > 5000) throw new Error('too_long_part');
+      if (!parts[i].trim()) { outp.push(parts[i]); continue; }
+      var lead = parts[i].match(/^\s*/)[0], trail = parts[i].match(/\s*$/)[0];
+      var d = await post('/t', { q: parts[i].trim(), from: a, to: b });
+      if (!d || d.error || typeof d.t !== 'string') { if (d && (d.error === 'quota' || d.error === 'busy')) serverDown = Date.now(); throw new Error(d && d.error || 'server'); }
+      outp.push(lead + d.t + trail);
+    }
+    return outp.join('');
+  }
+
   function showEngine() {
     if (usedEngine === 'chrome') engineEl.textContent = '🔒 תורגם בתוך המחשב, בתרגום המובנה של הדפדפן. הטקסט לא נשלח לשום מקום.';
+    else if (usedEngine === 'server') engineEl.textContent = 'תורגם בשרת התרגום של מיזם הכלים. הטקסט נשלח רק כדי לתרגם, ולא נשמר אצלנו. בכרום במחשב התרגום נעשה בתוך המחשב.';
+    else if (usedEngine === 'image') engineEl.textContent = 'הטקסט נקרא מהתמונה ותורגם בשרת של מיזם הכלים. התמונה לא נשמרת.';
     else if (usedEngine === 'mm') engineEl.textContent = HAS_T
       ? 'את השפה הזאת כרום עוד לא מתרגם בתוך המחשב, ולכן היא תורגמה בשירות התרגום החינמי MyMemory (הטקסט נשלח אליו כדי לתרגם).'
       : 'תורגם בשירות התרגום החינמי MyMemory (הטקסט נשלח אליו כדי לתרגם). בכרום במחשב התרגום נעשה בתוך המחשב, פרטי ובלי הגבלה.';
@@ -463,21 +502,82 @@
   $('tg-conv-a').addEventListener('click', function () { convTurn(this, convA, convB, 'a'); });
   $('tg-conv-b').addEventListener('click', function () { convTurn(this, convB, convA, 'b'); });
 
+  // ---------- תרגום מתמונה (מצלמה, קובץ, הדבקה, גרירה) ----------
+  var fileIn = $('tg-file'), camBtn = $('tg-cam'), imgBusy = false;
+  function shrink(file) {
+    return new Promise(function (ok, bad) {
+      var url = URL.createObjectURL(file), im = new Image();
+      im.onload = function () {
+        var max = 1800, w = im.naturalWidth, h = im.naturalHeight, k = Math.min(1, max / Math.max(w, h));
+        var c = document.createElement('canvas'); c.width = Math.round(w * k); c.height = Math.round(h * k);
+        var x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(im, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        ok(c.toDataURL('image/jpeg', 0.85).split(',')[1]);
+      };
+      im.onerror = function () { URL.revokeObjectURL(url); bad(new Error('img')); };
+      im.src = url;
+    });
+  }
+  async function fromImage(file) {
+    if (!file || !/^image\//.test(file.type)) { setStatus('אפשר לתרגם רק תמונה (צילום, צילום מסך או קובץ תמונה).', true); return; }
+    if (imgBusy) return;
+    imgBusy = true; camBtn.disabled = true;
+    var to = selTo.value;
+    setStatus('קורא את הטקסט מהתמונה ומתרגם ל' + NAME[to] + '…');
+    track('image');
+    try {
+      var data = await shrink(file);
+      var d = await post('/img', { to: to, image: { mime: 'image/jpeg', data: data } }, 90000);
+      if (d && d.error === 'quota') { setStatus('הגעתם למכסה היומית של תרגום מתמונה (15 ביום). מחר היא מתחדשת.', true); return; }
+      if (!d || d.error) { setStatus('השרת עמוס כרגע. נסו שוב בעוד דקה.', true); return; }
+      if (!d.found) { setStatus('לא מצאתי טקסט בתמונה. נסו צילום קרוב וחד יותר, באור טוב.', true); return; }
+      if (selFrom.value !== 'auto' && d.from && NAME[d.from]) selFrom.value = d.from;
+      src.value = d.src; updCount(); st.src = d.src; save();
+      out.textContent = d.t; out.dir = dirOf(to); out.lang = to;
+      lastKey = (d.from || selFrom.value) + '|' + to + '|' + d.src.trim() + '|' + JSON.stringify(st.gl);
+      usedEngine = 'image'; showEngine();
+      setStatus('✓ תורגם מהתמונה' + (d.from && NAME[d.from] ? ' (' + NAME[d.from] + ' ← ' + NAME[to] + ')' : ''));
+      remember(d.src, d.t, d.from || 'auto', to);
+    } catch (e) { setStatus('לא הצלחתי לקרוא את התמונה. נסו שוב.', true); }
+    finally { imgBusy = false; camBtn.disabled = false; fileIn.value = ''; }
+  }
+  camBtn.addEventListener('click', function () { fileIn.click(); });
+  fileIn.addEventListener('change', function () { if (fileIn.files && fileIn.files[0]) fromImage(fileIn.files[0]); });
+  src.addEventListener('paste', function (e) {
+    var it = e.clipboardData && [].slice.call(e.clipboardData.items || []).filter(function (i) { return /^image\//.test(i.type); })[0];
+    if (it) { e.preventDefault(); fromImage(it.getAsFile()); }
+  });
+  ['dragover', 'drop'].forEach(function (ev) {
+    src.addEventListener(ev, function (e) {
+      var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if (ev === 'dragover') { if (e.dataTransfer && [].indexOf.call(e.dataTransfer.types || [], 'Files') >= 0) e.preventDefault(); return; }
+      if (f && /^image\//.test(f.type)) { e.preventDefault(); fromImage(f); }
+    });
+  });
+
   // ---------- פתיחה ----------
+  // דף נחיתה לזוג שפות (data-from / data-to) – הכיוון של הדף גובר על מה שנשמר
+  if (app.dataset.from && (NAME[app.dataset.from] || app.dataset.from === 'auto')) selFrom.value = app.dataset.from;
+  if (app.dataset.to && NAME[app.dataset.to]) selTo.value = app.dataset.to;
+  setConvLabels();
   var q = null;
   try { q = new URLSearchParams(location.search).get('q'); } catch (e) {}
+  var landing = !!app.dataset.exSrc;
+  if (landing) { EX_SRC = app.dataset.exSrc; EX_OUT = app.dataset.exOut || ''; }
   if (q) { src.value = q.slice(0, 20000); schedule(); }
-  else if (st.src) { src.value = st.src; updCount(); schedule(); }
-  else if (!st.seen) {
-    // דוגמה מלאה בכניסה הראשונה
+  else if (st.src && !landing) { src.value = st.src; updCount(); schedule(); }
+  else if (!st.seen || landing) {
+    // דוגמה מלאה בכניסה הראשונה (ובדף של זוג שפות – הדוגמה של הדף)
+    var exFrom = landing ? (app.dataset.from === 'auto' ? (scriptGuess(EX_SRC) || 'en') : app.dataset.from) : 'en';
+    var exTo = landing ? selTo.value : 'he';
     src.value = EX_SRC; updCount();
     out.textContent = EX_OUT;
-    var ex = document.createElement('span'); ex.className = 'tg-ex'; ex.textContent = 'זו דוגמה. כתבו, הדביקו או הקליטו טקסט משלכם.';
-    out.appendChild(ex); out.dir = 'rtl'; out.lang = 'he';
+    var ex = document.createElement('span'); ex.className = 'tg-ex'; ex.textContent = 'זו דוגמה. כתבו, הדביקו או הקליטו טקסט משלכם.'; ex.dir = 'rtl';
+    out.appendChild(ex); out.dir = dirOf(exTo); out.lang = exTo;
     st.seen = true; save();
-    lastKey = 'en|he|' + EX_SRC + '|' + JSON.stringify(st.gl);
+    lastKey = exFrom + '|' + exTo + '|' + EX_SRC + '|' + JSON.stringify(st.gl);
     src.addEventListener('focus', function once() { src.removeEventListener('focus', once); if (src.value === EX_SRC) src.select(); });
   }
-  if (!HAS_T) engineEl.textContent = 'בדפדפן הזה התרגום עובר דרך שירות תרגום חינמי. בכרום במחשב התרגום נעשה בתוך המחשב – פרטי, מהיר ובלי הגבלה.';
+  if (!HAS_T) engineEl.textContent = 'בדפדפן הזה התרגום נעשה בשרת התרגום של מיזם הכלים (הטקסט לא נשמר). בכרום במחשב התרגום נעשה בתוך המחשב – פרטי, מהיר ובלי הגבלה.';
   else engineEl.textContent = '🔒 בדפדפן הזה התרגום נעשה בתוך המחשב. הטקסט לא נשלח לשום מקום.';
 })();

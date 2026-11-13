@@ -1,0 +1,126 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tochen_tirgum_camera",
+  "title": "תרגום מצלמה – מצלמים טקסט ומתרגמים לעברית בחינם | הכלים של גילעד רחמים",
+  "description": "תרגום מצלמה בחינם: מצלמים שלט, תפריט, מכתב או צילום מסך, והטקסט נקרא ומתורגם לעברית – מאנגלית, ערבית, רוסית, צרפתית ועוד. בטלפון ובמחשב, בלי אפליקציה ובלי הרשמה.",
+  "og_title": "תרגום מצלמה – מצלמים ומתרגמים",
+  "priority": "0.8",
+  "crumbs": [
+    [
+      "יצירת תוכן",
+      "/kelim/tochen/"
+    ],
+    [
+      "תרגום מאנגלית לעברית",
+      "/kelim/tochen/tirgum/"
+    ],
+    [
+      "תרגום מצלמה",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/tochen-tirgum.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך מתרגמים טקסט מתמונה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לוחצים על 📷 תמונה, מצלמים או בוחרים תמונה, ומחכים כמה שניות. הטקסט שבתמונה מופיע למעלה, והתרגום לעברית מתחת.\"}}, {\"@type\": \"Question\", \"name\": \"זה עובד בלי להוריד אפליקציה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. הכול עובד בדפדפן, בטלפון ובמחשב. אפשר להוסיף את האתר למסך הבית כדי לפתוח אותו כמו אפליקציה.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לתרגם צילום מסך?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. במחשב מדביקים צילום מסך עם Ctrl+V בתיבת הטקסט, או גוררים אליה את קובץ התמונה. בטלפון בוחרים את צילום המסך מהגלריה.\"}}, {\"@type\": \"Question\", \"name\": \"התמונה נשמרת אצלכם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. התמונה נשלחת לשרת רק כדי לקרוא את הטקסט ולתרגם, ולא נשמרת. ההיסטוריה של התרגומים נשמרת רק אצלכם במכשיר.\"}}, {\"@type\": \"Question\", \"name\": \"כמה תמונות אפשר לתרגם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"עד 15 תמונות ביום לכל משתמש, בחינם. תרגום של טקסט שמקלידים או מדביקים מוגבל הרבה פחות.\"}}]}</script>",
+  "foot": "<script src=\"/assets/tochen-tirgum.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>תרגום מצלמה – מצלמים טקסט ומקבלים אותו בעברית</h1>
+  <p class="sub">שלט בחו"ל, תפריט במסעדה, הוראות על אריזה או מכתב רשמי: לוחצים על 📷 תמונה, מצלמים, והטקסט נקרא ומתורגם. בלי להוריד אפליקציה.</p>
+  <p class="tg-free">🔒 חינם · בלי הרשמה · בכרום במחשב התרגום נשאר במחשב שלכם</p>
+</header>
+<div class="tool tg" id="tg-app" data-from="auto" data-to="he" data-ex-src="Please keep this door closed at all times. Emergency exit only." data-ex-out="נא להשאיר את הדלת הזאת סגורה בכל עת. יציאת חירום בלבד.">
+  <div class="tg-langs">
+    <label class="tg-l"><span class="sr">מתרגמים מ</span><select id="tg-from" aria-label="שפת המקור"></select></label>
+    <button type="button" class="tg-swap" id="tg-swap" aria-label="להחליף בין השפות" title="להחליף בין השפות">⇄</button>
+    <label class="tg-l"><span class="sr">מתרגמים ל</span><select id="tg-to" aria-label="שפת התרגום"></select></label>
+  </div>
+
+  <div class="tg-panes">
+    <div class="tg-pane">
+      <textarea id="tg-src" class="tg-text" rows="6" placeholder="כותבים או מדביקים כאן טקסט, לוחצים על המיקרופון ומדברים, או מצלמים שלט ומכתב ב-📷" aria-label="הטקסט לתרגום"></textarea>
+      <div class="tg-bar">
+        <button type="button" class="tg-ic tg-mic" id="tg-mic" aria-pressed="false" title="לדבר במקום להקליד">🎙️<span>לדבר</span></button>
+        <button type="button" class="tg-ic" id="tg-cam" title="לתרגם מתמונה או מצילום">📷<span>תמונה</span></button><input type="file" id="tg-file" accept="image/*" hidden aria-hidden="true" tabindex="-1">
+        <button type="button" class="tg-ic" id="tg-say-src" title="להקריא את המקור">🔊</button>
+        <button type="button" class="tg-ic" id="tg-clear" title="לנקות">✕</button>
+        <span class="tg-count" id="tg-count" aria-live="polite"></span>
+      </div>
+    </div>
+    <div class="tg-pane tg-outp">
+      <div id="tg-out" class="tg-text tg-result" role="region" aria-live="polite" tabindex="0" aria-label="התרגום"></div>
+      <div class="tg-bar">
+        <button type="button" class="tg-ic" id="tg-say" title="להקריא את התרגום">🔊<span>להקריא</span></button>
+        <select id="tg-rate" class="tg-rate" aria-label="מהירות ההקראה"><option value="0.75">איטי</option><option value="1" selected>רגיל</option><option value="1.25">מהיר</option></select>
+        <button type="button" class="tg-ic" id="tg-copy" title="להעתיק">📋<span>להעתיק</span></button>
+        <a class="tg-ic tg-wa" id="tg-wa" href="#" target="_blank" rel="noopener" title="לשלוח בווטסאפ"><svg class="ic"><use href="#wa"/></svg><span>ווטסאפ</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="tg-go-row">
+    <button type="button" class="btn btn-gold tg-go" id="tg-go">לתרגם</button>
+    <span class="tg-status" id="tg-status" role="status"></span>
+  </div>
+  <div class="tg-dl" id="tg-dl" hidden>
+    <p id="tg-dl-t">כדי לתרגם בתוך המחשב, כרום מוריד פעם אחת את מודל התרגום לשפות האלה. אחר כך זה מהיר ועובד גם בלי אינטרנט.</p>
+    <div class="tg-prog" aria-hidden="true"><i id="tg-prog"></i></div>
+  </div>
+  <p class="tg-engine" id="tg-engine"></p>
+
+  <div class="tg-tools">
+    <button type="button" class="tg-tab" data-tab="conv" aria-expanded="false">🗣️ מצב שיחה</button>
+    <button type="button" class="tg-tab" data-tab="gl" aria-expanded="false">📖 מילון אישי</button>
+    <button type="button" class="tg-tab" data-tab="hist" aria-expanded="false">🕘 היסטוריה</button>
+    <button type="button" class="tg-tab" id="tg-big" aria-pressed="false">אא גופן גדול</button>
+  </div>
+
+  <section class="tg-box" id="tg-conv" hidden aria-label="מצב שיחה">
+    <p class="note">שני אנשים, שתי שפות, טלפון אחד. כל אחד לוחץ על הכפתור שלו ומדבר, והתרגום מוקרא בקול לצד השני.</p>
+    <div class="tg-conv-btns">
+      <button type="button" class="btn btn-gold" id="tg-conv-a">🎙️ <span id="tg-conv-a-l">עברית</span></button>
+      <button type="button" class="btn btn-line" id="tg-conv-b">🎙️ <span id="tg-conv-b-l">English</span></button>
+    </div>
+    <ol class="tg-conv-log" id="tg-conv-log"></ol>
+  </section>
+
+  <section class="tg-box" id="tg-gl" hidden aria-label="מילון אישי">
+    <p class="note">מילה או ביטוי שחשוב לכם שיתורגמו תמיד אותו דבר: שם של חברה, מונח מקצועי, כינוי. המתרגם ישתמש בתרגום שלכם בכל פעם.</p>
+    <form class="tg-gl-add" id="tg-gl-form">
+      <input id="tg-gl-a" placeholder="במקור (למשל: Board)" aria-label="המילה במקור" required>
+      <input id="tg-gl-b" placeholder="התרגום שלי (למשל: ועד מנהל)" aria-label="התרגום המועדף" required>
+      <button class="btn btn-gold btn-sm" type="submit">להוסיף</button>
+    </form>
+    <ul class="tg-list" id="tg-gl-list"></ul>
+  </section>
+
+  <section class="tg-box" id="tg-hist" hidden aria-label="היסטוריה">
+    <p class="note">התרגומים האחרונים, שמורים רק במכשיר הזה. נגיעה מחזירה תרגום למסך.</p>
+    <ul class="tg-list" id="tg-hist-list"></ul>
+    <button type="button" class="btn btn-line btn-sm" id="tg-hist-clear">למחוק את ההיסטוריה</button>
+  </section>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">תרגום מתמונה, ישר מהדפדפן</h2>
+  <p>תרגום מצלמה חוסך את החלק הכי קשה: להקליד טקסט בשפה שאתם לא מכירים. מצלמים, והמתרגם קורא את כל הטקסט שבתמונה, לפי הסדר, ומתרגם אותו לעברית. הטקסט המקורי מופיע בתיבה העליונה, והתרגום מתחת – אפשר לתקן מילה שנקראה לא נכון ולתרגם שוב.</p>
+  <h3>בטלפון: מצלמים. במחשב: מדביקים</h3>
+  <p>בטלפון, הכפתור 📷 פותח את המצלמה או את הגלריה. במחשב בוחרים קובץ תמונה, גוררים תמונה לתיבת הטקסט, או מדביקים צילום מסך עם Ctrl+V. כך אפשר לתרגם גם הודעה שהגיעה כתמונה, מסמך סרוק או צילום מסך מאתר.</p>
+  <h3>איך מצלמים כדי שהתרגום יצא טוב</h3>
+  <p>מצלמים קרוב, שהטקסט ימלא את רוב התמונה. אור טוב בלי השתקפות, והטלפון ישר מול הטקסט. בכתב יד, באותיות מעוצבות מאוד או בתמונה מטושטשת, חלק מהמילים עלולות להיקרא לא נכון – אז מתקנים בתיבה העליונה.</p>
+  <h3>מכל שפה לעברית, ולהפך</h3>
+  <p>המתרגם מזהה לבד את שפת הטקסט שבתמונה: אנגלית, ערבית, רוסית, צרפתית, ספרדית, אמהרית ועוד. רוצים תרגום לשפה אחרת? בוחרים אותה בשפת התרגום לפני שמצלמים. אפשר לתרגם מצלמה עד 15 תמונות ביום, בחינם.</p>
+  <h3>בחו"ל, בבית ובעבודה</h3>
+  <p>בטיול מצלמים תפריט, שלט ברכבת או הוראות בחדר במלון. בבית מצלמים מכתב, תווית של תרופה או הוראות הפעלה של מכשיר. בעבודה מצלמים מסמך מספק מחו"ל או צילום מסך של מערכת באנגלית. אחרי שהטקסט עלה לתיבה, אפשר להשמיע אותו בקול, להעתיק, לשלוח בווטסאפ, או לשמור מונחים במילון האישי לפעם הבאה.</p>
+  <h3>עוד דפי תרגום</h3>
+  <p><a class="gold" href="/kelim/tochen/tirgum/">תרגום מאנגלית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/ivrit-anglit/">תרגום מעברית לאנגלית</a> · <a class="gold" href="/kelim/tochen/tirgum/aravit-ivrit/">תרגום מערבית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/ivrit-aravit/">תרגום מעברית לערבית</a> · <a class="gold" href="/kelim/tochen/tirgum/rusit-ivrit/">תרגום מרוסית לעברית</a>. ולתמלול הקלטה לפני התרגום – <a class="gold" href="/kelim/tamlul/">כלי התמלול</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך מתרגמים טקסט מתמונה?</summary><p>לוחצים על 📷 תמונה, מצלמים או בוחרים תמונה, ומחכים כמה שניות. הטקסט שבתמונה מופיע למעלה, והתרגום לעברית מתחת.</p></details>
+  <details><summary>זה עובד בלי להוריד אפליקציה?</summary><p>כן. הכול עובד בדפדפן, בטלפון ובמחשב. אפשר להוסיף את האתר למסך הבית כדי לפתוח אותו כמו אפליקציה.</p></details>
+  <details><summary>אפשר לתרגם צילום מסך?</summary><p>כן. במחשב מדביקים צילום מסך עם Ctrl+V בתיבת הטקסט, או גוררים אליה את קובץ התמונה. בטלפון בוחרים את צילום המסך מהגלריה.</p></details>
+  <details><summary>התמונה נשמרת אצלכם?</summary><p>לא. התמונה נשלחת לשרת רק כדי לקרוא את הטקסט ולתרגם, ולא נשמרת. ההיסטוריה של התרגומים נשמרת רק אצלכם במכשיר.</p></details>
+  <details><summary>כמה תמונות אפשר לתרגם?</summary><p>עד 15 תמונות ביום לכל משתמש, בחינם. תרגום של טקסט שמקלידים או מדביקים מוגבל הרבה פחות.</p></details>
+</section>
+<!--/seo-txt-->

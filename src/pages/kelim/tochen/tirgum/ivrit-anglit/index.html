@@ -1,0 +1,126 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tochen_tirgum_he_en",
+  "title": "תרגום מעברית לאנגלית – מתרגם חינם למשפטים, מיילים וקורות חיים | הכלים של גילעד רחמים",
+  "description": "תרגום מעברית לאנגלית בחינם ובלי הרשמה: משפטים, מיילים, קורות חיים והודעות – באנגלית טבעית ולא מילה במילה. מדברים בעברית ושומעים את התרגום באנגלית, מילון אישי למונחים, ושליחה לווטסאפ.",
+  "og_title": "תרגום מעברית לאנגלית – בחינם",
+  "priority": "0.8",
+  "crumbs": [
+    [
+      "יצירת תוכן",
+      "/kelim/tochen/"
+    ],
+    [
+      "תרגום מאנגלית לעברית",
+      "/kelim/tochen/tirgum/"
+    ],
+    [
+      "תרגום מעברית לאנגלית",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/tochen-tirgum.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך מתרגמים מעברית לאנגלית בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כותבים או מדביקים את הטקסט בעברית בתיבה העליונה, והתרגום לאנגלית מופיע מיד בתיבה השנייה. אין הרשמה ואין תשלום. אפשר להעתיק, לשמוע בקול או לשלוח בווטסאפ.\"}}, {\"@type\": \"Question\", \"name\": \"התרגום מתאים למייל רשמי או לקורות חיים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. המתרגם מתרגם לפי משמעות ומחזיר אנגלית טבעית. לקורות חיים כדאי לשמור במילון האישי את שם התפקיד ואת המונחים המקצועיים, ולעבור על התוצאה פעם אחת לפני ששולחים.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לדבר בעברית ולקבל אנגלית?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. לוחצים על המיקרופון ומדברים בעברית. הטקסט נכתב תוך כדי דיבור, ומתורגם לאנגלית. כפתור ההקראה משמיע את האנגלית בקול.\"}}, {\"@type\": \"Question\", \"name\": \"איך בודקים שהתרגום נכון?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לוחצים על ⇄: האנגלית עוברת לתיבה העליונה ומתורגמת בחזרה לעברית. אם המשמעות נשמרה, התרגום טוב.\"}}, {\"@type\": \"Question\", \"name\": \"יש הגבלה על אורך הטקסט?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בכרום במחשב אין הגבלה, כי התרגום נעשה בתוך המחשב. בטלפון אפשר לתרגם עד כמה אלפי תווים בכל פעם, עם מכסה יומית נדיבה.\"}}]}</script>",
+  "foot": "<script src=\"/assets/tochen-tirgum.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>תרגום מעברית לאנגלית – משפטים שלמים, באנגלית טבעית</h1>
+  <p class="sub">כותבים או אומרים בעברית, ומקבלים אנגלית שנשמעת כמו שכותבים אותה באמת: למייל, לקורות חיים, ללקוח או לחבר בחו"ל. שומעים איך מבטאים, ומעתיקים בלחיצה.</p>
+  <p class="tg-free">🔒 חינם · בלי הרשמה · בכרום במחשב התרגום נשאר במחשב שלכם</p>
+</header>
+<div class="tool tg" id="tg-app" data-from="he" data-to="en" data-ex-src="שלום רב, מצורפים קורות החיים שלי למשרת מנהל הפרויקטים. אשמח לתאם ראיון בזמן שנוח לכם." data-ex-out="Hello, please find attached my résumé for the project manager position. I would be happy to schedule an interview at a time that suits you.">
+  <div class="tg-langs">
+    <label class="tg-l"><span class="sr">מתרגמים מ</span><select id="tg-from" aria-label="שפת המקור"></select></label>
+    <button type="button" class="tg-swap" id="tg-swap" aria-label="להחליף בין השפות" title="להחליף בין השפות">⇄</button>
+    <label class="tg-l"><span class="sr">מתרגמים ל</span><select id="tg-to" aria-label="שפת התרגום"></select></label>
+  </div>
+
+  <div class="tg-panes">
+    <div class="tg-pane">
+      <textarea id="tg-src" class="tg-text" rows="6" placeholder="כותבים או מדביקים כאן טקסט, לוחצים על המיקרופון ומדברים, או מצלמים שלט ומכתב ב-📷" aria-label="הטקסט לתרגום"></textarea>
+      <div class="tg-bar">
+        <button type="button" class="tg-ic tg-mic" id="tg-mic" aria-pressed="false" title="לדבר במקום להקליד">🎙️<span>לדבר</span></button>
+        <button type="button" class="tg-ic" id="tg-cam" title="לתרגם מתמונה או מצילום">📷<span>תמונה</span></button><input type="file" id="tg-file" accept="image/*" hidden aria-hidden="true" tabindex="-1">
+        <button type="button" class="tg-ic" id="tg-say-src" title="להקריא את המקור">🔊</button>
+        <button type="button" class="tg-ic" id="tg-clear" title="לנקות">✕</button>
+        <span class="tg-count" id="tg-count" aria-live="polite"></span>
+      </div>
+    </div>
+    <div class="tg-pane tg-outp">
+      <div id="tg-out" class="tg-text tg-result" role="region" aria-live="polite" tabindex="0" aria-label="התרגום"></div>
+      <div class="tg-bar">
+        <button type="button" class="tg-ic" id="tg-say" title="להקריא את התרגום">🔊<span>להקריא</span></button>
+        <select id="tg-rate" class="tg-rate" aria-label="מהירות ההקראה"><option value="0.75">איטי</option><option value="1" selected>רגיל</option><option value="1.25">מהיר</option></select>
+        <button type="button" class="tg-ic" id="tg-copy" title="להעתיק">📋<span>להעתיק</span></button>
+        <a class="tg-ic tg-wa" id="tg-wa" href="#" target="_blank" rel="noopener" title="לשלוח בווטסאפ"><svg class="ic"><use href="#wa"/></svg><span>ווטסאפ</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="tg-go-row">
+    <button type="button" class="btn btn-gold tg-go" id="tg-go">לתרגם</button>
+    <span class="tg-status" id="tg-status" role="status"></span>
+  </div>
+  <div class="tg-dl" id="tg-dl" hidden>
+    <p id="tg-dl-t">כדי לתרגם בתוך המחשב, כרום מוריד פעם אחת את מודל התרגום לשפות האלה. אחר כך זה מהיר ועובד גם בלי אינטרנט.</p>
+    <div class="tg-prog" aria-hidden="true"><i id="tg-prog"></i></div>
+  </div>
+  <p class="tg-engine" id="tg-engine"></p>
+
+  <div class="tg-tools">
+    <button type="button" class="tg-tab" data-tab="conv" aria-expanded="false">🗣️ מצב שיחה</button>
+    <button type="button" class="tg-tab" data-tab="gl" aria-expanded="false">📖 מילון אישי</button>
+    <button type="button" class="tg-tab" data-tab="hist" aria-expanded="false">🕘 היסטוריה</button>
+    <button type="button" class="tg-tab" id="tg-big" aria-pressed="false">אא גופן גדול</button>
+  </div>
+
+  <section class="tg-box" id="tg-conv" hidden aria-label="מצב שיחה">
+    <p class="note">שני אנשים, שתי שפות, טלפון אחד. כל אחד לוחץ על הכפתור שלו ומדבר, והתרגום מוקרא בקול לצד השני.</p>
+    <div class="tg-conv-btns">
+      <button type="button" class="btn btn-gold" id="tg-conv-a">🎙️ <span id="tg-conv-a-l">עברית</span></button>
+      <button type="button" class="btn btn-line" id="tg-conv-b">🎙️ <span id="tg-conv-b-l">English</span></button>
+    </div>
+    <ol class="tg-conv-log" id="tg-conv-log"></ol>
+  </section>
+
+  <section class="tg-box" id="tg-gl" hidden aria-label="מילון אישי">
+    <p class="note">מילה או ביטוי שחשוב לכם שיתורגמו תמיד אותו דבר: שם של חברה, מונח מקצועי, כינוי. המתרגם ישתמש בתרגום שלכם בכל פעם.</p>
+    <form class="tg-gl-add" id="tg-gl-form">
+      <input id="tg-gl-a" placeholder="במקור (למשל: Board)" aria-label="המילה במקור" required>
+      <input id="tg-gl-b" placeholder="התרגום שלי (למשל: ועד מנהל)" aria-label="התרגום המועדף" required>
+      <button class="btn btn-gold btn-sm" type="submit">להוסיף</button>
+    </form>
+    <ul class="tg-list" id="tg-gl-list"></ul>
+  </section>
+
+  <section class="tg-box" id="tg-hist" hidden aria-label="היסטוריה">
+    <p class="note">התרגומים האחרונים, שמורים רק במכשיר הזה. נגיעה מחזירה תרגום למסך.</p>
+    <ul class="tg-list" id="tg-hist-list"></ul>
+    <button type="button" class="btn btn-line btn-sm" id="tg-hist-clear">למחוק את ההיסטוריה</button>
+  </section>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">תרגום מעברית לאנגלית שלא נשמע כמו מכונה</h2>
+  <p>רוב מי שמחפש תרגום מעברית לאנגלית צריך לכתוב משהו אמיתי: מייל לחברה בחו"ל, פנייה לשירות לקוחות, קורות חיים, תיאור מוצר או הודעה לחבר. תרגום מילה במילה יוצא מגוחך, ולכן המתרגם כאן עובד על משפטים שלמים ומחזיר אנגלית טבעית, עם סדר מילים נכון וביטויים שאנשים באמת משתמשים בהם.</p>
+  <h3>מייל באנגלית, קורות חיים ומכתב מקדים</h3>
+  <p>כותבים בעברית כמו שמדברים, והתרגום מסדר את זה באנגלית מנומסת ועניינית. מונחים שחוזרים אצלכם – שם החברה, שם התפקיד, מונח מקצועי – שומרים במילון האישי, והמתרגם ישתמש בהם בכל פעם. כך "מנהל פרויקטים" יוצא תמיד Project Manager, ולא פעם כך ופעם אחרת.</p>
+  <h3>לשמוע איך אומרים את זה</h3>
+  <p>לפני שיחת טלפון או פגישה באנגלית, לוחצים על 🔊 ושומעים את המשפט בקול, לאט או בקצב רגיל. אפשר גם ללחוץ על המיקרופון, לומר את המשפט בעברית, ולקבל אותו באנגלית מוכן להקראה. זה עוזר גם לתלמידים שמתכוננים לבגרות בעל פה.</p>
+  <h3>בדיקה כפולה: מתרגמים חזרה</h3>
+  <p>רוצים לוודא שהתרגום אומר מה שהתכוונתם? לוחצים על ⇄, והאנגלית חוזרת לתיבה ומתורגמת בחזרה לעברית. אם המשמעות נשמרה – אפשר לשלוח בראש שקט. בכרום במחשב כל זה קורה בתוך המחשב, כך שגם מכתב אישי לא יוצא לשום שרת.</p>
+  <h3>אנגלית לעבודה, ללימודים ולטיולים</h3>
+  <p>מעבר למיילים, המתרגם עוזר גם בדברים קטנים של היום-יום: לנסח ביקורת על מוצר, לשאול שאלה בפורום באנגלית, לכתוב הודעה למארח בחו"ל, או להכין משפטים לפני טיסה. ההיסטוריה שומרת את מה שתרגמתם במכשיר, כך שאפשר לחזור למשפט ששלחתם אתמול, להעתיק אותו שוב ולשלוח בווטסאפ בלחיצה. ולמי שקשה לקרוא, יש כפתור "גופן גדול".</p>
+  <h3>עוד דפי תרגום</h3>
+  <p><a class="gold" href="/kelim/tochen/tirgum/">תרגום מאנגלית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/aravit-ivrit/">תרגום מערבית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/ivrit-aravit/">תרגום מעברית לערבית</a> · <a class="gold" href="/kelim/tochen/tirgum/rusit-ivrit/">תרגום מרוסית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/mitzlema/">תרגום מצלמה</a>. ולתמלול הקלטה לפני התרגום – <a class="gold" href="/kelim/tamlul/">כלי התמלול</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך מתרגמים מעברית לאנגלית בחינם?</summary><p>כותבים או מדביקים את הטקסט בעברית בתיבה העליונה, והתרגום לאנגלית מופיע מיד בתיבה השנייה. אין הרשמה ואין תשלום. אפשר להעתיק, לשמוע בקול או לשלוח בווטסאפ.</p></details>
+  <details><summary>התרגום מתאים למייל רשמי או לקורות חיים?</summary><p>כן. המתרגם מתרגם לפי משמעות ומחזיר אנגלית טבעית. לקורות חיים כדאי לשמור במילון האישי את שם התפקיד ואת המונחים המקצועיים, ולעבור על התוצאה פעם אחת לפני ששולחים.</p></details>
+  <details><summary>אפשר לדבר בעברית ולקבל אנגלית?</summary><p>כן. לוחצים על המיקרופון ומדברים בעברית. הטקסט נכתב תוך כדי דיבור, ומתורגם לאנגלית. כפתור ההקראה משמיע את האנגלית בקול.</p></details>
+  <details><summary>איך בודקים שהתרגום נכון?</summary><p>לוחצים על ⇄: האנגלית עוברת לתיבה העליונה ומתורגמת בחזרה לעברית. אם המשמעות נשמרה, התרגום טוב.</p></details>
+  <details><summary>יש הגבלה על אורך הטקסט?</summary><p>בכרום במחשב אין הגבלה, כי התרגום נעשה בתוך המחשב. בטלפון אפשר לתרגם עד כמה אלפי תווים בכל פעם, עם מכסה יומית נדיבה.</p></details>
+</section>
+<!--/seo-txt-->
