@@ -17,4 +17,7 @@ const r = await worker.fetch(new Request('https://x/words', { method: 'POST', he
 assert.equal(r.status, 403);
 const r2 = await worker.fetch(new Request('https://x/words', { method: 'POST', headers: { origin: 'https://hakelim.com' }, body: '{"n":0,"clueFor":[]}' }), {});
 assert.equal(r2.status, 200);
+// רק מילים מהמילון: 'מאסודקוס' המומצאת בחוץ, 'ביצה' בפנים, אנגלית לא נבדקת
+const d = parseOut({ response: '{"items":[{"w":"מאסודקוס","c":"דינוזאור"},{"w":"ביצה","c":"ממנה בקע הגור"},{"w":"DINO","c":"דינוזאור"}]}' }, { n: 5, clues: true, dict: new Set(['ביצה']) });
+assert.deepEqual(d.items.map(x => x.w), ['ביצה', 'DINO']);
 console.log('✓ הכול עבר');
