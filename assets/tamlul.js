@@ -85,6 +85,28 @@
     return new Blob([b], { type: 'audio/wav' });
   }
 
+  // ---------- חימום השרת בענן (13.11.2026, גילעד: "חייב שהתמלול יהיה מהיר יותר") ----------
+  // נמדד: שרת כבוי = 20–30 שניות של התנעה לפני כל תמלול; שרת דולק = הקלטה של 10 שניות חוזרת ב-2 שניות.
+  // לכן כשרואים כוונה (לחיצה על "להקליט" או על בחירת קובץ) מעירים את השרת מראש, והוא מוכן כשהקובץ מגיע.
+  // /tamlul/warm לא נספר במכסה היומית. עד שהנתיב קיים ב-Worker: חימום אחד בהקלטה שקטה קצרה דרך /run.
+  var warmAt = 0, warmRoute = true, warmFallback = false;
+  function warm() {
+    if (Date.now() - warmAt < 20000) return;
+    warmAt = Date.now();
+    if (warmRoute) {
+      fetch(API + '/warm', { method: 'POST' }).then(function (r) {
+        if (r.status === 404) { warmRoute = false; warmAt = 0; warm(); }
+      }).catch(function () {});
+      return;
+    }
+    if (warmFallback) return;   // בלי הנתיב: רק פעם אחת בביקור, כדי לא לאכול מהמכסה
+    warmFallback = true;
+    b64(wav(new Int16Array(8000))).then(function (data) {
+      return fetch(API + '/run', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ b64: data, lang: 'he' }) });
+    }).catch(function () {});
+  }
+  fileIn.addEventListener('click', warm);   // גם לחיצה על התווית "לבחור קובץ" מגיעה לכאן
+
   // ---------- שליחה לענן ----------
   function run(blob, lang) {
     return b64(blob).then(function (data) {
@@ -103,7 +125,7 @@
           if (j.status === 'FAILED' || j.status === 'CANCELLED' || j.error) return rej(new Error('failed'));
           onState(j.status);
           if (Date.now() - t0 > 20 * 60e3) return rej(new Error('timeout'));
-          setTimeout(tick, 3000);
+          setTimeout(tick, Date.now() - t0 < 120e3 ? 1500 : 3000);   // בהתחלה בודקים כל שנייה וחצי: תמלול קצר חוזר תוך שניות
         }).catch(function () { if (Date.now() - t0 > 20 * 60e3) rej(new Error('net')); else setTimeout(tick, 5000); });
       })();
     });
@@ -212,6 +234,11 @@
       };
       rec.start(1000);
       t0 = Date.now();
+      warm();   // השרת מתעורר בזמן שמדברים
+      var keep = setInterval(function () {   // ושומרים אותו ער עד 3 דקות של הקלטה (אחר כך ההתנעה קטנה ביחס לאורך)
+        if (!rec || rec.state !== 'recording' || Date.now() - t0 > 180e3) return clearInterval(keep);
+        if (warmRoute) warm();
+      }, 20000);
       recBtn.classList.add('on');
       timer = setInterval(function () { recBtn.textContent = '⏹ לעצור ולתמלל (' + mmss((Date.now() - t0) / 1000) + ')'; }, 500);
       recBtn.textContent = '⏹ לעצור ולתמלל (0:00)';
