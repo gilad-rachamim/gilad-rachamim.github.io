@@ -6,7 +6,8 @@
   var form = $('zm-form'), res = $('zm-res');
   if (!form) return;
   var H = window.hebcal, KEY = 'kodesh-zmanim';
-  var CITIES = [['31.778,35.235', 'ירושלים', 40], ['32.08,34.78', 'תל אביב', 20], ['32.79,34.99', 'חיפה', 30], ['31.25,34.79', 'באר שבע', 20], ['32.965,35.496', 'צפת', 20], ['32.79,35.53', 'טבריה', 20], ['29.557,34.952', 'אילת', 20], ['31.53,35.1', 'חברון', 20], ['31.35,34.3', 'עוטף עזה', 20], ['33.2,35.57', 'גבול הצפון (קריית שמונה)', 20], ['32.3,35.2', 'שומרון', 20], ['31.0,34.8', 'הנגב (צאלים)', 20], ['32.9,35.75', 'רמת הגולן', 20]];
+  // הערים: אותה רשימה כמו בדפי השבת (assets/kodesh-shabat.js), ועוד אזורים לחיילים בשטח.
+  var CITIES = [['31.778,35.235', 'ירושלים', 40], ['32.08,34.78', 'תל אביב', 20], ['32.79,34.99', 'חיפה', 30], ['31.25,34.79', 'באר שבע', 20], ['32.09,34.88', 'פתח תקווה', 20], ['31.97,34.79', 'ראשון לציון', 20], ['32.32,34.85', 'נתניה', 20], ['31.8,34.65', 'אשדוד', 20], ['32.08,34.83', 'בני ברק', 20], ['32.02,34.78', 'חולון', 20], ['32.07,34.82', 'רמת גן', 20], ['32.02,34.75', 'בת ים', 20], ['31.89,34.81', 'רחובות', 20], ['31.67,34.57', 'אשקלון', 20], ['31.71,35', 'בית שמש', 30], ['31.9,35', 'מודיעין', 20], ['32.17,34.84', 'הרצליה', 20], ['32.18,34.91', 'כפר סבא', 20], ['32.18,34.87', 'רעננה', 20], ['32.44,34.92', 'חדרה', 20], ['31.95,34.89', 'לוד', 20], ['31.93,34.87', 'רמלה', 20], ['31.61,34.77', 'קריית גת', 20], ['31.07,35.03', 'דימונה', 20], ['29.557,34.952', 'אילת', 20], ['31.53,35.1', 'חברון וקריית ארבע', 20], ['32.79,35.53', 'טבריה', 20], ['32.965,35.496', 'צפת', 20], ['32.61,35.29', 'עפולה', 20], ['32.93,35.08', 'עכו', 20], ['33.01,35.1', 'נהריה', 20], ['32.92,35.3', 'כרמיאל', 20], ['33.2,35.57', 'קריית שמונה', 20], ['31.35,34.3', 'עוטף עזה', 20], ['32.3,35.2', 'שומרון', 20], ['31.0,34.8', 'הנגב (צאלים)', 20], ['32.9,35.75', 'רמת הגולן', 20]], NCITY = 33;
   var ZM = [
     ['עלות השחר', function (z) { return z.alotHaShachar(); }],
     ['זמן ציצית ותפילין (משיכיר)', function (z) { return z.misheyakir(); }],
@@ -20,7 +21,7 @@
     ['שקיעה', function (z) { return z.sunset(); }, 1],
     ['צאת הכוכבים', function (z) { return z.tzeit(8.5); }]
   ];
-  var st = { place: CITIES[0][0], name: 'ירושלים', candle: 'auto' };
+  var st = { place: CITIES[0][0], name: 'ירושלים', candle: 'auto', elev: '' };
   try { var sv = JSON.parse(localStorage.getItem(KEY) || 'null'); if (sv) Object.keys(sv).forEach(function (k) { st[k] = sv[k]; }); } catch (e) {}
   function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
 
@@ -29,6 +30,8 @@
   function iso(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
   $('zm-date').value = iso(new Date());
   $('zm-candle').value = st.candle || 'auto';
+  $('zm-elev').value = st.elev || '';
+  $('zm-elev').addEventListener('input', function () { var v = this.value.trim(); st.elev = /^-?\d{1,4}$/.test(v) ? v : ''; save(); draw(); });
   function syncSel() {
     var city = CITIES.some(function (c) { return c[0] === st.place; });
     sel.value = city ? st.place : (st.name === 'המיקום שלי' ? 'gps' : 'manual');
@@ -52,6 +55,7 @@
     s.textContent = 'מאתר…';
     navigator.geolocation.getCurrentPosition(function (p) {
       st.place = p.coords.latitude.toFixed(4) + ',' + p.coords.longitude.toFixed(4); st.name = 'המיקום שלי';
+      if (p.coords.altitude != null && !isNaN(p.coords.altitude)) { st.elev = String(Math.round(p.coords.altitude)); $('zm-elev').value = st.elev; }
       save(); syncSel(); s.textContent = 'נמצא ✓ ' + st.place; draw();
       if (window.toolUsed) window.toolUsed('zmanim', { how: 'gps' });
     }, function () { s.textContent = 'לא קיבלתי מיקום. צריך לאשר מיקום לדפדפן, או לבחור מקום מהרשימה.'; }, { enableHighAccuracy: false, timeout: 15000, maximumAge: 600000 });
@@ -63,8 +67,29 @@
   function up(d) { return new Date(Math.ceil(d.getTime() / 60000) * 60000); }
   function parse(s) { var p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2], 12); }
   function add(d, n) { var x = new Date(d); x.setDate(x.getDate() + n); return x; }
+  var tfs = new Intl.DateTimeFormat('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Asia/Jerusalem' });
+  function ts(d) { return d && !isNaN(d) ? tfs.format(d) : '—'; }
+  function km(a, b) { var r = Math.PI / 180, x = (b[1] - a[1]) * r * Math.cos((a[0] + b[0]) / 2 * r), y = (b[0] - a[0]) * r; return Math.sqrt(x * x + y * y) * 6371; }
+  function secs(n) { var a = Math.abs(n), m = Math.floor(a / 60), s = a % 60; return (m ? m + ' דק׳' + (s ? ' ו-' : '') : '') + (s || !m ? s + ' שניות' : ''); }
   var DAYS = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
   var lastText = '';
+
+  // השקיעה בדיוק של שניות, וההבדל מהמקום הקרוב ברשימה: כל מקום מקבל זמן משלו.
+  function exact(gl, d, ll, city) {
+    var ss = new H.Zmanim(gl, d, false).sunset(), out = '<div class="zm-ex"><p><b>השקיעה בדיוק: <bdi>' + ts(ss) + '</bdi></b> (בגובה פני הים)</p>';
+    var el = parseInt(st.elev, 10);
+    if (!isNaN(el) && el > 0) {
+      var ge = new H.GeoLocation('', ll[0], ll[1], el, 'Asia/Jerusalem'), ze = new H.Zmanim(ge, d, true);
+      out += '<p>לפי גובה של ' + el + ' מטר: הנץ <bdi>' + ts(ze.sunrise()) + '</bdi>, שקיעה <bdi>' + ts(ze.sunset()) + '</bdi>. מגובה רואים את השמש ' + secs(Math.round((ze.sunset() - ss) / 1000)) + ' אחרי השקיעה בגובה פני הים.</p>';
+    }
+    if (city) out += '<p>זה מרכז ' + city[1] + '. בשכונות שונות באותה עיר השקיעה יכולה להשתנות בעשרות שניות, ובמקום גבוה בכמה דקות. לזמן של המקום המדויק: "המיקום שלי עכשיו".</p>';
+    else {
+      var near = CITIES.slice(0, NCITY).map(function (c) { var q = c[0].split(',').map(Number); return [c, q, km(ll, q)]; }).sort(function (a, b) { return a[2] - b[2]; })[0];
+      var sc = new H.Zmanim(new H.GeoLocation('', near[1][0], near[1][1], 0, 'Asia/Jerusalem'), d, false).sunset(), df = Math.round((ss - sc) / 1000);
+      out += '<p>מרכז ' + near[0][1] + ' (כ-' + Math.max(1, Math.round(near[2])) + ' ק״מ מכאן): שקיעה <bdi>' + ts(sc) + '</bdi>. ' + (df === 0 ? 'באותה שנייה.' : 'אצלכם השקיעה ' + secs(df) + ' ' + (df < 0 ? 'מוקדם' : 'מאוחר') + ' יותר.') + '</p>';
+    }
+    return out + '</div>';
+  }
 
   function draw() {
     if (!H) return;
@@ -89,7 +114,7 @@
       return '<tr' + (x[2] ? ' class="hl"' : '') + '><td>' + x[0] + alt + '</td><td class="t">' + main + '</td></tr>';
     }).join('');
     res.innerHTML = '<h3>יום ' + DAYS[d.getDay()] + ', ' + hd + '</h3><p class="zm-st">' + where + '</p>' +
-      '<table class="zm-tbl">' + rows + '</table>' +
+      '<table class="zm-tbl">' + rows + '</table>' + exact(gl, d, ll, city) +
       '<h3 style="margin-top:1.2rem">שבת' + (parsha ? ' ' + parsha : '') + '</h3>' +
       '<div class="zm-shab"><div><b>' + t(candle) + '</b><span>הדלקת נרות, שישי<br>(' + mins + ' דק׳ לפני השקיעה)</span></div><div><b>' + t(havdala) + '</b><span>צאת השבת</span></div></div>';
     lastText = 'זמני היום – יום ' + DAYS[d.getDay()] + ', ' + hd + '\n' + where + '\n\n' +
