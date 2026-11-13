@@ -6,8 +6,12 @@
   var $ = function (id) { return document.getElementById(id); };
   var form = $('tz-form');
   if (!form) return;
-  var KEY = 'kelim-tizkorot', TOOL = 'tizkorot', PAGE = 'hakelim.com/kelim/briut/tizkorot/';
-  var KINDS = [['💊', 'תרופה'], ['💧', 'לשתות'], ['🩺', 'בדיקה או תור'], ['📋', 'משימה'], ['⭐', 'אחר']];
+  // שני דפים, מנוע אחד ורשימה אחת: תזכורת לתרופות (בריאות) ותזכורת כללית (מחשב וטלפון)
+  var GEN = (form.closest('[data-tz-mode]') || form).getAttribute('data-tz-mode') === 'klali';
+  var KEY = 'kelim-tizkorot', TOOL = GEN ? 'tizkoret' : 'tizkorot', PAGE = GEN ? 'hakelim.com/kelim/machshev/tizkoret/' : 'hakelim.com/kelim/briut/tizkorot/';
+  var KINDS = GEN ? [['📋', 'משימה'], ['📞', 'להתקשר'], ['🎂', 'יום הולדת או אירוע'], ['💳', 'תשלום'], ['💧', 'לשתות'], ['💊', 'תרופה'], ['⭐', 'אחר']]
+    : [['💊', 'תרופה'], ['💧', 'לשתות'], ['🩺', 'בדיקה או תור'], ['📋', 'משימה'], ['⭐', 'אחר']];
+  var KIND0 = KINDS[0][0];
   var PRESETS = [['08:00', 'בוקר'], ['13:00', 'צהריים'], ['19:00', 'ערב'], ['22:00', 'לפני השינה']];
   var DAYS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'], BYDAY = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
   var TZ = 'Asia/Jerusalem';
@@ -33,8 +37,13 @@
     st.day = today(); st.took = {}; st.sent = {}; save();
   }
   if (!st.started) { // דוגמה מלאה בכניסה הראשונה
-    var t0 = today();
-    st.items = [
+    var t0 = today(), nx = function (dow) { var n = dnum(t0); while (new Date(n * 864e5).getUTCDay() !== dow) n++; return fromNum(n); };
+    st.items = GEN ? [
+      { id: 'ex1', k: '📋', n: 'להוציא את הזבל', w: '', times: ['20:00'], r: 'w', days: [0, 3], every: 2, s: t0, e: '', o: '', ex: 1 },
+      { id: 'ex2', k: '📞', n: 'להתקשר לאמא', w: '', times: ['12:00'], r: 'w', days: [5], every: 2, s: nx(5), e: '', o: 'לפני שבת', ex: 1 },
+      { id: 'ex3', k: '💳', n: 'לשלם ועד בית', w: '', times: ['09:00'], r: 'm', days: [], every: 2, s: t0.slice(0, 8) + '10', e: '', o: '', pre: 'P1D', ex: 1 },
+      { id: 'ex4', k: '💧', n: 'לשתות כוס מים', w: '', times: ['10:00', '13:00', '16:00'], r: 'd', days: [], every: 2, s: t0, e: '', o: '', ex: 1 }
+    ] : [
       { id: 'ex1', k: '💊', n: 'אומפרדקס 20 מ״ג', w: '', times: ['08:00'], r: 'd', days: [], every: 2, s: t0, e: '', o: 'חצי שעה לפני ארוחת הבוקר', stock: 9, again: 1, ex: 1 },
       { id: 'ex2', k: '💧', n: 'לשתות כוס מים', w: 'אבא', times: ['10:00', '13:00', '16:00'], r: 'd', days: [], every: 2, s: t0, e: '', o: '', ex: 1 },
       { id: 'ex3', k: '💊', n: 'ויטמין D', w: '', times: ['20:00'], r: 'w', days: [0, 3], every: 2, s: t0, e: '', o: 'עם האוכל', ex: 1 }
@@ -50,6 +59,10 @@
     if (it.r === 'w') return it.days.indexOf(new Date(n * 864e5).getUTCDay()) >= 0;
     if (it.r === 'n') return (n - s) % Math.max(1, it.every) === 0;
     if (it.r === 'o') return n === s;
+    if (it.r === 'm' || it.r === 'y') {
+      var a = new Date(n * 864e5), b = new Date(s * 864e5);
+      return a.getUTCDate() === b.getUTCDate() && (it.r === 'm' || a.getUTCMonth() === b.getUTCMonth());
+    }
     return true;
   }
   function firstDay(it) { // יום ההתחלה האמיתי (בימים מסוימים: היום הראשון שמתאים)
@@ -60,7 +73,10 @@
   function whenText(it) {
     var t = 'ב-' + it.times.map(function (x) { return '<bdi dir="ltr">' + x + '</bdi>'; }).join(', ');
     var r = it.r === 'w' ? 'בימים ' + it.days.slice().sort().map(function (d) { return DAYS[d]; }).join(' ') :
-      it.r === 'n' ? 'כל ' + it.every + ' ימים' : it.r === 'o' ? 'פעם אחת, ' + heDate(it.s) : 'כל יום';
+      it.r === 'n' ? 'כל ' + it.every + ' ימים' : it.r === 'o' ? 'פעם אחת, ' + heDate(it.s) :
+      it.r === 'm' ? 'כל חודש ב-' + +it.s.split('-')[2] + ' בחודש' : it.r === 'y' ? 'כל שנה ב-' + +it.s.split('-')[2] + '.' + +it.s.split('-')[1] : 'כל יום';
+    var PRE = { PT15M: 'רבע שעה', PT1H: 'שעה', P1D: 'יום', P7D: 'שבוע' };
+    if (it.pre && PRE[it.pre]) t += ' · וגם ' + PRE[it.pre] + ' לפני';
     var range = it.r === 'o' ? '' : (dnum(it.s) > dnum(today()) ? ' · מתחיל ' + heDate(it.s) : '') + (it.e ? ' · עד ' + heDate(it.e) : '');
     return r + ' ' + t + range;
   }
@@ -93,7 +109,8 @@
   function rrule(it) {
     if (it.r === 'o') return '';
     var r = it.r === 'w' ? 'FREQ=WEEKLY;BYDAY=' + it.days.slice().sort().map(function (d) { return BYDAY[d]; }).join(',') :
-      it.r === 'n' ? 'FREQ=DAILY;INTERVAL=' + Math.max(1, it.every) : 'FREQ=DAILY';
+      it.r === 'n' ? 'FREQ=DAILY;INTERVAL=' + Math.max(1, it.every) :
+      it.r === 'm' ? 'FREQ=MONTHLY;BYMONTHDAY=' + +it.s.split('-')[2] : it.r === 'y' ? 'FREQ=YEARLY' : 'FREQ=DAILY';
     return 'RRULE:' + r + (it.e ? ';UNTIL=' + until(it) : '');
   }
   function dt(prop, val) { return IL ? prop + ';TZID=Asia/Jerusalem:' + val : prop + ':' + val; }
@@ -106,6 +123,7 @@
       var rr = rrule(it); if (rr) L.push(rr);
       L.push('SUMMARY:' + icsText(title(it)), 'DESCRIPTION:' + icsText(desc), 'TRANSP:TRANSPARENT',
         'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsText(title(it)), 'TRIGGER:-PT0M', 'END:VALARM');
+      if (it.pre && /^P(T\d+[MH]|\d+D)$/.test(it.pre)) L.push('BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsText('בקרוב: ' + title(it)), 'TRIGGER:-' + it.pre, 'END:VALARM'); // תזכורת מראש
       if (it.again) L.push('BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsText('שוב: ' + title(it)), 'TRIGGER:PT10M', 'END:VALARM'); // תזכורת שנייה אחרי 10 דקות
       L.push('END:VEVENT');
       return L;
@@ -140,7 +158,7 @@
   }
 
   // ---------- הטופס ----------
-  var kind = '💊', times = [], editId = null;
+  var kind = KIND0, times = [], editId = null;
   $('tz-kinds').innerHTML = KINDS.map(function (k) { return '<button type="button" data-kind="' + k[0] + '" aria-pressed="false">' + k[0] + ' ' + k[1] + '</button>'; }).join('');
   $('tz-presets').innerHTML = PRESETS.map(function (p) { return '<button type="button" data-hm="' + p[0] + '" aria-pressed="false">' + p[1] + ' <bdi dir="ltr">' + p[0] + '</bdi></button>'; }).join('');
   $('tz-days').innerHTML = DAYS.map(function (d, i) { return '<button type="button" data-day="' + i + '" aria-pressed="false" aria-label="יום ' + d + '">' + d + '</button>'; }).join('');
@@ -153,10 +171,10 @@
     $('tz-days-f').classList.toggle('tz-hide', r !== 'w');
     $('tz-every-f').classList.toggle('tz-hide', r !== 'n');
     $('tz-end-f').classList.toggle('tz-hide', r === 'o');
-    $('tz-start-l').textContent = r === 'o' ? 'באיזה תאריך?' : 'מתחילים מתאריך';
+    $('tz-start-l').textContent = r === 'o' ? 'באיזה תאריך?' : r === 'm' ? 'מתאריך (היום בחודש נקבע לפיו)' : r === 'y' ? 'איזה תאריך בשנה?' : 'מתחילים מתאריך';
   }
   function resetForm() {
-    editId = null; kind = '💊'; times = [];
+    editId = null; kind = KIND0; times = []; $('tz-pre').value = '';
     ['tz-name', 'tz-who', 'tz-note', 'tz-end', 'tz-time', 'tz-stock', 'tz-refill'].forEach(function (id) { $(id).value = ''; });
     $('tz-again').checked = false;
     $('tz-rep').value = 'd'; $('tz-every').value = '2'; $('tz-start').value = today();
@@ -186,7 +204,7 @@
     if (en && dnum(en) < dnum(s)) { msg.textContent = 'תאריך הסיום לפני תאריך ההתחלה.'; return; }
     var it = { id: editId || 't' + Date.now().toString(36), k: kind, n: n, w: $('tz-who').value.trim(), times: times.slice().sort(), r: r, days: days,
       every: Math.min(60, Math.max(2, +$('tz-every').value || 2)), s: s, e: en, o: $('tz-note').value.trim(),
-      again: $('tz-again').checked ? 1 : 0, refill: $('tz-refill').value || '' };
+      again: $('tz-again').checked ? 1 : 0, refill: $('tz-refill').value || '', pre: $('tz-pre').value || '' };
     var sk = $('tz-stock').value.trim(); if (sk !== '' && +sk >= 0) it.stock = Math.min(9999, Math.round(+sk));
     var hadEx = st.items.some(function (x) { return x.ex; });
     st.items = st.items.filter(function (x) { return !x.ex && x.id !== it.id; }); // הדוגמה יורדת כשמוסיפים תזכורת אמיתית
@@ -247,7 +265,7 @@
   }
   function perDay(it) { // כמה מנות ביום, בממוצע
     var n = it.times.length;
-    return it.r === 'w' ? n * it.days.length / 7 : it.r === 'n' ? n / Math.max(1, it.every) : it.r === 'o' ? 0 : n;
+    return it.r === 'w' ? n * it.days.length / 7 : it.r === 'n' ? n / Math.max(1, it.every) : it.r === 'o' ? 0 : it.r === 'm' ? n / 30 : it.r === 'y' ? n / 365 : n;
   }
   function daysLeft(it) { var p = perDay(it); return it.stock == null || !p ? null : Math.floor(it.stock / p); }
   function dayStat(ds) { // כמה היו וכמה סומנו ביום מסוים
@@ -306,8 +324,8 @@
       editId = it.id; kind = it.k; times = it.times.slice();
       $('tz-name').value = it.n; $('tz-who').value = it.w; $('tz-note').value = it.o; $('tz-rep').value = it.r;
       $('tz-every').value = it.every; $('tz-start').value = it.s; $('tz-end').value = it.e;
-      $('tz-stock').value = it.stock == null ? '' : it.stock; $('tz-refill').value = it.refill || ''; $('tz-again').checked = !!it.again;
-      if (it.stock != null || it.refill || it.again) $('tz-more').open = true;
+      $('tz-stock').value = it.stock == null ? '' : it.stock; $('tz-refill').value = it.refill || ''; $('tz-again').checked = !!it.again; $('tz-pre').value = it.pre || '';
+      if (it.stock != null || it.refill || it.again || it.pre) $('tz-more').open = true;
       form.querySelectorAll('[data-day]').forEach(function (x) { x.setAttribute('aria-pressed', it.days.indexOf(+x.getAttribute('data-day')) >= 0 ? 'true' : 'false'); });
       $('tz-save').textContent = 'לשמור את השינוי'; $('tz-cancel').classList.remove('tz-hide');
       paintForm(); form.scrollIntoView({ behavior: 'smooth' }); $('tz-name').focus();
@@ -319,7 +337,7 @@
   // ---------- ייבוא מ"התרופות שלי" ----------
   (function () {
     var tf = null; try { tf = JSON.parse(localStorage.getItem('kelim-trufot') || 'null'); } catch (e) {}
-    if (!tf || !tf.meds || !tf.meds.length) return;
+    if (!tf || !tf.meds || !tf.meds.length || !$('tz-import')) return;
     var MAP = { b: '08:00', c: '13:00', e: '19:00', l: '22:00' };
     $('tz-import').classList.remove('tz-hide');
     $('tz-import-n').textContent = tf.meds.length;
