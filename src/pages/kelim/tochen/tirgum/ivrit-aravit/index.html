@@ -1,0 +1,126 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tochen_tirgum_he_ar",
+  "title": "תרגום מעברית לערבית – מתרגם חינם עם השמעה בקול | הכלים של גילעד רחמים",
+  "description": "תרגום מעברית לערבית בחינם: כותבים או אומרים בעברית, ומקבלים ערבית כתובה – עם השמעה בקול כדי לשמוע איך אומרים, ושליחה בווטסאפ. משפטים שלמים, בלי הרשמה.",
+  "og_title": "תרגום מעברית לערבית – בחינם",
+  "priority": "0.8",
+  "crumbs": [
+    [
+      "יצירת תוכן",
+      "/kelim/tochen/"
+    ],
+    [
+      "תרגום מאנגלית לעברית",
+      "/kelim/tochen/tirgum/"
+    ],
+    [
+      "תרגום מעברית לערבית",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/tochen-tirgum.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך מתרגמים מעברית לערבית בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כותבים בעברית בתיבה העליונה, והתרגום לערבית מופיע מיד. אפשר להעתיק, לשלוח בווטסאפ או לשמוע בקול. בלי הרשמה.\"}}, {\"@type\": \"Question\", \"name\": \"איך יודעים שהתרגום לערבית נכון, בלי לקרוא ערבית?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לוחצים על ⇄ – הערבית מתורגמת בחזרה לעברית. אם המשמעות נשמרה, התרגום טוב. אפשר גם לשמוע אותו בקול.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר להשמיע את התרגום בערבית?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן, בכפתור 🔊. אם אין במכשיר קול בערבית, מופיעה הודעה, ואפשר להוסיף קול ערבית בהגדרות השפה של הטלפון או המחשב.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לדבר בעברית ולקבל ערבית?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. לוחצים על המיקרופון, אומרים את המשפט בעברית, והוא מתורגם לערבית.\"}}, {\"@type\": \"Question\", \"name\": \"התרגום יוצא בערבית מדוברת או ספרותית?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בערבית כתובה ופשוטה, שמובנת לכל דובר ערבית. למכתב רשמי או משפטי כדאי להראות את התרגום לדובר ערבית לפני ששולחים.\"}}]}</script>",
+  "foot": "<script src=\"/assets/tochen-tirgum.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>תרגום מעברית לערבית – לכתוב, לשלוח ולשמוע איך אומרים</h1>
+  <p class="sub">כותבים או אומרים בעברית, ומקבלים את המשפט בערבית – מוכן לשליחה בווטסאפ, להדפסה על שלט, או להשמעה בקול למי שעומד מולכם.</p>
+  <p class="tg-free">🔒 חינם · בלי הרשמה · בכרום במחשב התרגום נשאר במחשב שלכם</p>
+</header>
+<div class="tool tg" id="tg-app" data-from="he" data-to="ar" data-ex-src="שלום, הפגישה נדחתה ליום רביעי בשעה 10:00. נא לאשר שקיבלת את ההודעה." data-ex-out="مرحبا، تم تأجيل الاجتماع إلى يوم الأربعاء الساعة 10:00. يرجى تأكيد استلام الرسالة.">
+  <div class="tg-langs">
+    <label class="tg-l"><span class="sr">מתרגמים מ</span><select id="tg-from" aria-label="שפת המקור"></select></label>
+    <button type="button" class="tg-swap" id="tg-swap" aria-label="להחליף בין השפות" title="להחליף בין השפות">⇄</button>
+    <label class="tg-l"><span class="sr">מתרגמים ל</span><select id="tg-to" aria-label="שפת התרגום"></select></label>
+  </div>
+
+  <div class="tg-panes">
+    <div class="tg-pane">
+      <textarea id="tg-src" class="tg-text" rows="6" placeholder="כותבים או מדביקים כאן טקסט, לוחצים על המיקרופון ומדברים, או מצלמים שלט ומכתב ב-📷" aria-label="הטקסט לתרגום"></textarea>
+      <div class="tg-bar">
+        <button type="button" class="tg-ic tg-mic" id="tg-mic" aria-pressed="false" title="לדבר במקום להקליד">🎙️<span>לדבר</span></button>
+        <button type="button" class="tg-ic" id="tg-cam" title="לתרגם מתמונה או מצילום">📷<span>תמונה</span></button><input type="file" id="tg-file" accept="image/*" hidden aria-hidden="true" tabindex="-1">
+        <button type="button" class="tg-ic" id="tg-say-src" title="להקריא את המקור">🔊</button>
+        <button type="button" class="tg-ic" id="tg-clear" title="לנקות">✕</button>
+        <span class="tg-count" id="tg-count" aria-live="polite"></span>
+      </div>
+    </div>
+    <div class="tg-pane tg-outp">
+      <div id="tg-out" class="tg-text tg-result" role="region" aria-live="polite" tabindex="0" aria-label="התרגום"></div>
+      <div class="tg-bar">
+        <button type="button" class="tg-ic" id="tg-say" title="להקריא את התרגום">🔊<span>להקריא</span></button>
+        <select id="tg-rate" class="tg-rate" aria-label="מהירות ההקראה"><option value="0.75">איטי</option><option value="1" selected>רגיל</option><option value="1.25">מהיר</option></select>
+        <button type="button" class="tg-ic" id="tg-copy" title="להעתיק">📋<span>להעתיק</span></button>
+        <a class="tg-ic tg-wa" id="tg-wa" href="#" target="_blank" rel="noopener" title="לשלוח בווטסאפ"><svg class="ic"><use href="#wa"/></svg><span>ווטסאפ</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="tg-go-row">
+    <button type="button" class="btn btn-gold tg-go" id="tg-go">לתרגם</button>
+    <span class="tg-status" id="tg-status" role="status"></span>
+  </div>
+  <div class="tg-dl" id="tg-dl" hidden>
+    <p id="tg-dl-t">כדי לתרגם בתוך המחשב, כרום מוריד פעם אחת את מודל התרגום לשפות האלה. אחר כך זה מהיר ועובד גם בלי אינטרנט.</p>
+    <div class="tg-prog" aria-hidden="true"><i id="tg-prog"></i></div>
+  </div>
+  <p class="tg-engine" id="tg-engine"></p>
+
+  <div class="tg-tools">
+    <button type="button" class="tg-tab" data-tab="conv" aria-expanded="false">🗣️ מצב שיחה</button>
+    <button type="button" class="tg-tab" data-tab="gl" aria-expanded="false">📖 מילון אישי</button>
+    <button type="button" class="tg-tab" data-tab="hist" aria-expanded="false">🕘 היסטוריה</button>
+    <button type="button" class="tg-tab" id="tg-big" aria-pressed="false">אא גופן גדול</button>
+  </div>
+
+  <section class="tg-box" id="tg-conv" hidden aria-label="מצב שיחה">
+    <p class="note">שני אנשים, שתי שפות, טלפון אחד. כל אחד לוחץ על הכפתור שלו ומדבר, והתרגום מוקרא בקול לצד השני.</p>
+    <div class="tg-conv-btns">
+      <button type="button" class="btn btn-gold" id="tg-conv-a">🎙️ <span id="tg-conv-a-l">עברית</span></button>
+      <button type="button" class="btn btn-line" id="tg-conv-b">🎙️ <span id="tg-conv-b-l">English</span></button>
+    </div>
+    <ol class="tg-conv-log" id="tg-conv-log"></ol>
+  </section>
+
+  <section class="tg-box" id="tg-gl" hidden aria-label="מילון אישי">
+    <p class="note">מילה או ביטוי שחשוב לכם שיתורגמו תמיד אותו דבר: שם של חברה, מונח מקצועי, כינוי. המתרגם ישתמש בתרגום שלכם בכל פעם.</p>
+    <form class="tg-gl-add" id="tg-gl-form">
+      <input id="tg-gl-a" placeholder="במקור (למשל: Board)" aria-label="המילה במקור" required>
+      <input id="tg-gl-b" placeholder="התרגום שלי (למשל: ועד מנהל)" aria-label="התרגום המועדף" required>
+      <button class="btn btn-gold btn-sm" type="submit">להוסיף</button>
+    </form>
+    <ul class="tg-list" id="tg-gl-list"></ul>
+  </section>
+
+  <section class="tg-box" id="tg-hist" hidden aria-label="היסטוריה">
+    <p class="note">התרגומים האחרונים, שמורים רק במכשיר הזה. נגיעה מחזירה תרגום למסך.</p>
+    <ul class="tg-list" id="tg-hist-list"></ul>
+    <button type="button" class="btn btn-line btn-sm" id="tg-hist-clear">למחוק את ההיסטוריה</button>
+  </section>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">תרגום מעברית לערבית למי שלא קורא ערבית</h2>
+  <p>כשמתרגמים לערבית, קשה לבדוק את התוצאה: האותיות לא מוכרות, ואי אפשר לדעת אם יצא נכון. לכן המתרגם כאן נותן שלוש דרכים לעבוד בביטחון – לשמוע את הערבית בקול, לתרגם בחזרה לעברית בלחיצה על ⇄, ולשמור מונחים קבועים במילון האישי.</p>
+  <h3>הודעה לעובדים, לשכנים וללקוחות</h3>
+  <p>מעסיקים, ועדי בתים, מרפאות ובעלי עסקים צריכים לשלוח הודעות קצרות בערבית: שינוי בשעות, הנחיות בטיחות, תזכורת לתור. כותבים בעברית, מקבלים ערבית, ולוחצים "ווטסאפ" כדי לשלוח. אפשר גם להדפיס כשלט.</p>
+  <h3>לשמוע ולהשמיע</h3>
+  <p>כפתור 🔊 משמיע את הערבית בקול, במהירות שבוחרים. כשהצד השני לא קורא טוב, פשוט משמיעים לו את המשפט. ובמצב שיחה, הוא עונה בערבית למיקרופון ואתם שומעים את התשובה בעברית.</p>
+  <h3>ערבית כתובה, מובנת לכולם</h3>
+  <p>התרגום יוצא בערבית תקנית ופשוטה, שמובנת לדוברי ערבית מכל מקום. שמות, מספרים ושעות נשמרים כמו שכתבתם, ומונחים מיוחדים קובעים במילון האישי.</p>
+  <h3>שלט או הודעה מודפסת</h3>
+  <p>צריכים שלט בערבית לאתר עבודה, לחדר אוכל או לבניין? כותבים את ההוראה בעברית, מקבלים אותה בערבית, מגדילים בכפתור "גופן גדול" ומדפיסים מהדפדפן. כך גם לרשימת הנחיות למטפלת, לעובד במטבח או לנהג. ההיסטוריה שומרת את מה שתרגמתם רק במכשיר שלכם, כך שאפשר לחזור לאותו נוסח בפעם הבאה ולשלוח אותו שוב בלי לתרגם מחדש.</p>
+  <h3>עוד דפי תרגום</h3>
+  <p><a class="gold" href="/kelim/tochen/tirgum/">תרגום מאנגלית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/ivrit-anglit/">תרגום מעברית לאנגלית</a> · <a class="gold" href="/kelim/tochen/tirgum/aravit-ivrit/">תרגום מערבית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/rusit-ivrit/">תרגום מרוסית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/mitzlema/">תרגום מצלמה</a>. ולתמלול הקלטה לפני התרגום – <a class="gold" href="/kelim/tamlul/">כלי התמלול</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך מתרגמים מעברית לערבית בחינם?</summary><p>כותבים בעברית בתיבה העליונה, והתרגום לערבית מופיע מיד. אפשר להעתיק, לשלוח בווטסאפ או לשמוע בקול. בלי הרשמה.</p></details>
+  <details><summary>איך יודעים שהתרגום לערבית נכון, בלי לקרוא ערבית?</summary><p>לוחצים על ⇄ – הערבית מתורגמת בחזרה לעברית. אם המשמעות נשמרה, התרגום טוב. אפשר גם לשמוע אותו בקול.</p></details>
+  <details><summary>אפשר להשמיע את התרגום בערבית?</summary><p>כן, בכפתור 🔊. אם אין במכשיר קול בערבית, מופיעה הודעה, ואפשר להוסיף קול ערבית בהגדרות השפה של הטלפון או המחשב.</p></details>
+  <details><summary>אפשר לדבר בעברית ולקבל ערבית?</summary><p>כן. לוחצים על המיקרופון, אומרים את המשפט בעברית, והוא מתורגם לערבית.</p></details>
+  <details><summary>התרגום יוצא בערבית מדוברת או ספרותית?</summary><p>בערבית כתובה ופשוטה, שמובנת לכל דובר ערבית. למכתב רשמי או משפטי כדאי להראות את התרגום לדובר ערבית לפני ששולחים.</p></details>
+</section>
+<!--/seo-txt-->
