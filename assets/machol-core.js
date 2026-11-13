@@ -91,7 +91,7 @@
 
   // ---------- עוזר המילים בענן (נושא שאין במאגר, והגדרות למילים שלכם) ----------
   MC.ai = function (body) {
-    var ctl = window.AbortController ? new AbortController() : null, tm = setTimeout(function () { if (ctl) ctl.abort(); }, 35000);
+    var ctl = window.AbortController ? new AbortController() : null, tm = setTimeout(function () { if (ctl) ctl.abort(); }, 100000);
     var h = { 'content-type': 'application/json' };
     try { var c = localStorage.getItem('kelim-partner'); if (c) h['x-kelim-partner'] = c; } catch (e) {}
     return fetch(MC.AI_URL, { method: 'POST', headers: h, body: JSON.stringify(body), signal: ctl && ctl.signal }).then(function (r) {
@@ -178,7 +178,7 @@
         if (cfg.clues) fillClues(true);
         return;
       }
-      say('מחפשים מילים בנושא "' + MC.esc(topic) + '"...');
+      say('✨ עוזר המילים מחפש מילים בנושא "' + MC.esc(topic) + '" ומנסח הגדרות. זה לוקח כדקה – נושא שכבר ביקשו חוזר מיד...');
       MC.ai({ tool: cfg.tool, topic: topic, n: need, have: mine.map(function (it) { return it.w; }).slice(0, 60), clues: !!cfg.clues, clueFor: cfg.clues ? mine.filter(function (it) { return !it.c; }).map(function (it) { return it.w; }).slice(0, 40) : [] }).then(function (j) {
         var en = /אנגלית|english/i.test(topic);
         var got = (j.items || []).map(function (x) { return { w: MC.clean(x.w, 30), c: MC.clean(x.c, 110) }; }).filter(function (x) { return okItem(x, en) || okItem(x, !en); });
