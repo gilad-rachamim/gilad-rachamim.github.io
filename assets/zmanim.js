@@ -86,6 +86,11 @@
   var lastText = '';
 
   // השקיעה בדיוק של שניות, וההבדל מהמקום הקרוב ברשימה: כל מקום מקבל זמן משלו.
+  // העיר הקרובה (בדף עיר – העיר של הדף): [עיר, ק״מ]
+  function nearest(ll) {
+    var list = CITIES.slice(0, NCITY).filter(function (c) { return !FIXED || c[3] === FIXED; });
+    return list.map(function (c) { return [c, km(ll, c[0].split(',').map(Number))]; }).sort(function (a, b) { return a[1] - b[1]; })[0];
+  }
   function exact(gl, d, ll, city) {
     var ss = new H.Zmanim(gl, d, false).sunset(), out = '<div class="zm-ex"><p><b>השקיעה בדיוק: <bdi>' + ts(ss) + '</bdi></b> (בגובה פני הים)</p>';
     var el = parseInt(st.elev, 10);
@@ -95,7 +100,7 @@
     }
     if (city) out += '<p>זה מרכז ' + city[1] + '. בשכונות שונות באותה עיר השקיעה יכולה להשתנות בעשרות שניות, ובמקום גבוה בכמה דקות. לזמן של המקום המדויק: "המיקום שלי עכשיו".</p>';
     else {
-      var near = CITIES.slice(0, NCITY).map(function (c) { var q = c[0].split(',').map(Number); return [c, q, km(ll, q)]; }).sort(function (a, b) { return a[2] - b[2]; })[0];
+      var n0 = nearest(ll), near = [n0[0], n0[0][0].split(',').map(Number), n0[1]];
       var sc = new H.Zmanim(new H.GeoLocation('', near[1][0], near[1][1], 0, 'Asia/Jerusalem'), d, false).sunset(), df = Math.round((ss - sc) / 1000);
       out += '<p>מרכז ' + near[0][1] + ' (כ-' + Math.max(1, Math.round(near[2])) + ' ק״מ מכאן): שקיעה <bdi>' + ts(sc) + '</bdi>. ' + (df === 0 ? 'באותה שנייה.' : 'אצלכם השקיעה ' + secs(df) + ' ' + (df < 0 ? 'מוקדם' : 'מאוחר') + ' יותר.') + '</p>';
     }
@@ -110,7 +115,8 @@
     var d = parse($('zm-date').value || iso(new Date()));
     var z = new H.Zmanim(gl, d, false);
     var city = CITIES.filter(function (c) { return c[0] === st.place; })[0];
-    var mins = st.candle === 'auto' ? (city ? city[2] : 20) : +st.candle;
+    var nc = city ? [city, 0] : nearest(ll);  // במיקום מהטלפון: עד 10 ק״מ מעיר הולכים לפי מנהג ההדלקה שלה (ירושלים 40)
+    var mins = st.candle === 'auto' ? (nc[1] <= 10 ? nc[0][2] : 20) : +st.candle;
     // השבת הקרובה (אם היום שבת – השבת הזו)
     var fri = add(d, (5 - d.getDay() + 7) % 7); if (d.getDay() === 6) fri = add(d, -1);
     var sat = add(fri, 1);
