@@ -1,0 +1,88 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "cheshbon_mikdamot",
+  "title": "מחשבון מקדמות מס הכנסה ודוח מע\"מ – כמה לשלם החודש, כולל ניכוי במקור | הכלים של גילעד רחמים",
+  "description": "מחשבון מקדמות מס הכנסה ודוח מע\"מ תקופתי: עסקאות, תשומות, אחוז המקדמה וניכוי במקור, ובסוף כמה לשלם ועד מתי. מע\"מ 18%, חודשי או דו-חודשי, וגם טבלה לכל הלקוחות של המשרד מאקסל. בחינם, בלי הרשמה.",
+  "og_title": "מחשבון מקדמות מס הכנסה ודוח מע\"מ",
+  "priority": "0.8",
+  "crumbs": [["רואי חשבון ויועצי מס", "/kelim/cheshbon/"], ["מקדמות ודוח מע\"מ", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/cheshbon.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך מחשבים מקדמה למס הכנסה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מכפילים את המחזור של התקופה, לפני מע\\\"מ, באחוז המקדמה. למשל 40,000 ₪ כפול 5% הם 2,000 ₪. מורידים מזה מס שנוכה במקור באותה תקופה.\"}}, {\"@type\": \"Question\", \"name\": \"האם המקדמה מחושבת לפני מע\\\"מ או אחרי?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לפני מע\\\"מ. המחזור למקדמה הוא סכום העסקאות בלי המע\\\"מ, כולל עסקאות פטורות ובשיעור אפס.\"}}, {\"@type\": \"Question\", \"name\": \"מה עושים עם ניכוי במקור?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מורידים אותו מהמקדמה של אותה תקופה. אם הוא גדול מהמקדמה, אין תשלום בתקופה הזאת, וההפרש נלקח בחשבון בדוח השנתי.\"}}, {\"@type\": \"Question\", \"name\": \"איך יודעים מה אחוז המקדמה שלי?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"הוא מופיע בפנקס המקדמות, בהודעה מרשות המסים ובאזור האישי באתר רשות המסים. רואה החשבון יכול לבקש לשנות אותו.\"}}, {\"@type\": \"Question\", \"name\": \"עד מתי משלמים מע\\\"מ ומקדמות?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לפי החוק ב-15 לחודש שאחרי התקופה, אבל רשות המסים קובעת מועדים מעודכנים. למשל, על אוקטובר 2026 המועד הוא 16.11.2026. הכלי מראה את המועד לכל תקופה.\"}}, {\"@type\": \"Question\", \"name\": \"מה ההבדל בין תשומות ציוד לתשומות אחרות?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"תשומות ציוד הן מע\\\"מ על רכוש קבוע, כמו מחשב, רכב או מכונה. תשומות אחרות הן מע\\\"מ על הוצאות שוטפות. בדוח המע\\\"מ מדווחים עליהן בשורות נפרדות.\"}}]}</script>",
+  "foot": "<script src=\"/assets/cheshbon.js\" defer></script><script src=\"/assets/cheshbon-mikdamot.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מחשבון מקדמות מס הכנסה ודוח מע"מ</h1>
+  <p class="sub">עסקאות, תשומות, אחוז המקדמה וניכוי במקור. מקבלים כמה מע"מ לשלם (או להחזר), כמה מקדמה, ועד איזה תאריך.</p>
+</header>
+
+<div class="tool ch" id="mikdamot">
+  <div class="seg no-print" id="mk-mode" role="group" aria-label="לקוח אחד או כל המשרד">
+    <button type="button" data-v="one" aria-pressed="true">לקוח אחד</button>
+    <button type="button" data-v="many" aria-pressed="false">כל הלקוחות מאקסל (למשרד)</button>
+  </div>
+
+  <form class="k-form" id="mk-one" novalidate>
+    <div class="row2">
+      <div class="field"><label for="mk-per">תקופת הדיווח</label><select id="mk-per"></select></div>
+      <div class="field"><label for="mk-freq">מדווח</label><select id="mk-freq"><option value="1">חודשי</option><option value="2">דו-חודשי</option></select></div>
+    </div>
+    <h2>מע"מ</h2>
+    <div class="row2">
+      <div class="field"><label for="mk-a">עסקאות חייבות, לפני מע"מ</label><input id="mk-a" class="num-in" type="text" inputmode="decimal" autocomplete="off"></div>
+      <div class="field"><label for="mk-b">עסקאות פטורות או בשיעור אפס <span class="opt">(לא חובה)</span></label><input id="mk-b" class="num-in" type="text" inputmode="decimal" autocomplete="off"></div>
+      <div class="field"><label for="mk-c">מע"מ תשומות על ציוד <span class="opt">(לא חובה)</span></label><input id="mk-c" class="num-in" type="text" inputmode="decimal" autocomplete="off"></div>
+      <div class="field"><label for="mk-d">מע"מ תשומות אחרות</label><input id="mk-d" class="num-in" type="text" inputmode="decimal" autocomplete="off"></div>
+    </div>
+    <div class="field"><label for="mk-rate">שיעור מע"מ (%)</label><input id="mk-rate" class="num-in" type="text" inputmode="decimal" autocomplete="off" value="18"></div>
+    <h2>מקדמות מס הכנסה</h2>
+    <div class="row2">
+      <div class="field"><label for="mk-p">אחוז המקדמה (%)</label><input id="mk-p" class="num-in" type="text" inputmode="decimal" autocomplete="off"></div>
+      <div class="field"><label for="mk-f">ניכוי במקור שנוכה בתקופה <span class="opt">(לא חובה)</span></label><input id="mk-f" class="num-in" type="text" inputmode="decimal" autocomplete="off"></div>
+    </div>
+    <p class="hint">את אחוז המקדמה קובע פקיד השומה, והוא מופיע בפנקס המקדמות או באזור האישי ברשות המסים.</p>
+    <div class="field"><label for="mk-name">שם הלקוח <span class="opt">(לא חובה, להודעה)</span></label><input id="mk-name" type="text" maxlength="60" autocomplete="off"></div>
+  </form>
+  <div class="res" id="mk-res" aria-live="polite"></div>
+  <div class="btns no-print" id="mk-btns">
+    <button class="btn btn-gold btn-sm" type="button" id="mk-copy">להעתיק סיכום ללקוח</button>
+    <a class="btn btn-line btn-sm" id="mk-wa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח בווטסאפ</a>
+    <button class="btn btn-line btn-sm" type="button" onclick="window.print()">להדפיס</button>
+    <button class="btn btn-line btn-sm" type="button" id="mk-clear">לנקות</button>
+  </div>
+  <p class="msg" id="mk-msg1" aria-live="polite"></p>
+
+  <form class="k-form" id="mk-many" novalidate hidden>
+    <h2>כל הלקוחות בטבלה אחת</h2>
+    <div class="field"><label for="mk-list">מדביקים מאקסל, בסדר הזה: שם לקוח · עסקאות חייבות לפני מע"מ · מע"מ תשומות · אחוז מקדמה · ניכוי במקור (לא חובה) · עסקאות פטורות (לא חובה)</label>
+      <textarea id="mk-list" spellcheck="false"></textarea></div>
+    <div class="btns"><button class="btn btn-gold" type="button" id="mk-go">לחשב לכל הלקוחות</button></div>
+    <p class="msg" id="mk-msg" aria-live="polite"></p>
+  </form>
+  <div id="mk-out"></div>
+
+  <p class="src">החישוב: מע"מ לתשלום = מע"מ על העסקאות פחות מע"מ התשומות. מקדמה = כל העסקאות לפני מע"מ (חייבות, פטורות ובשיעור אפס) כפול אחוז המקדמה, פחות הניכוי במקור. המועדים: לפי הודעות רשות המסים לשנים 2026 ו-2027. זה כלי עזר לחישוב; הדיווח עצמו נעשה במערכות של רשות המסים.</p>
+  <div class="share-row no-print"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מחשבון מקדמות מס הכנסה ודוח מע״מ, בחינם – כולל ניכוי במקור ומועד התשלום:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר</a></div>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">איך מחשבים מקדמות מס הכנסה</h2>
+  <p>עצמאי וחברה משלמים מס הכנסה במהלך השנה בתשלומים שנקראים מקדמות. כל חודש, או כל חודשיים, מכפילים את המחזור של התקופה, כלומר כל ההכנסות מעסקאות לפני מע"מ, באחוז המקדמה שקבע פקיד השומה. למשל: מחזור של 40,000 ₪ ואחוז מקדמה של 5% נותנים מקדמה של 2,000 ₪. אם לקוחות ניכו לכם מס במקור בתקופה הזאת, מורידים אותו מהמקדמה. אם הניכוי גדול מהמקדמה, אין מה לשלם בתקופה הזאת, וההפרש נלקח בחשבון בדוח השנתי.</p>
+  <h3>אחוז המקדמה: מאיפה הוא מגיע</h3>
+  <p>פקיד השומה קובע את האחוז לפי היחס בין המס להכנסות בשנים הקודמות. הוא מופיע בפנקס המקדמות, בהודעה מרשות המסים ובאזור האישי באתר רשות המסים. עוסק חדש מקבל אחוז ראשוני בפתיחת התיק. אם האחוז לא מתאים להכנסה של השנה, רואה החשבון יכול לבקש לשנות אותו.</p>
+  <h3>דוח מע"מ תקופתי</h3>
+  <p>בדוח המע"מ מדווחים על העסקאות ועל התשומות של התקופה. מע"מ העסקאות הוא 18% מהעסקאות החייבות (מ-1.1.2025). ממנו מורידים את המע"מ ששולם על קניות לעסק: תשומות על ציוד, כמו מחשב או מכונה, ותשומות אחרות. אם התשומות גדולות מהעסקאות, יוצא החזר. עסקאות פטורות ועסקאות בשיעור אפס (למשל ייצוא) נכנסות למחזור ולמקדמה, אבל אין עליהן מע"מ.</p>
+  <h3>עד מתי משלמים</h3>
+  <p>לפי החוק המועד הוא ה-15 בחודש שאחרי התקופה, אבל רשות המסים קובעת כל שנה מועדים מעודכנים בגלל חגים וסופי שבוע. הכלי מראה את המועד לפי ההודעות הרשמיות לשנים 2026 ו-2027, ואת כל המועדים אפשר לראות ב<a class="gold" href="/kelim/cheshbon/moadim/">לוח מועדי הדיווח</a>. משרד עם הרבה לקוחות מדביק טבלה מאקסל ומקבל לכל לקוח מע"מ ומקדמה לתשלום, עם סיכום ויצוא חזרה לאקסל.</p>
+  <p>עוד כלים: <a class="gold" href="/kesef/maam/">מחשבון מע"מ</a>, <a class="gold" href="/kelim/cheshbon/hakzaa/">בודק מספר הקצאה</a>, <a class="gold" href="/kelim/cheshbon/osek/">בדיקת ח.פ ומספר עוסק</a>, וכל <a class="gold" href="/kelim/cheshbon/">הכלים לרואי חשבון ויועצי מס</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך מחשבים מקדמה למס הכנסה?</summary><p>מכפילים את המחזור של התקופה, לפני מע"מ, באחוז המקדמה. למשל 40,000 ₪ כפול 5% הם 2,000 ₪. מורידים מזה מס שנוכה במקור באותה תקופה.</p></details>
+  <details><summary>האם המקדמה מחושבת לפני מע"מ או אחרי?</summary><p>לפני מע"מ. המחזור למקדמה הוא סכום העסקאות בלי המע"מ, כולל עסקאות פטורות ובשיעור אפס.</p></details>
+  <details><summary>מה עושים עם ניכוי במקור?</summary><p>מורידים אותו מהמקדמה של אותה תקופה. אם הוא גדול מהמקדמה, אין תשלום בתקופה הזאת, וההפרש נלקח בחשבון בדוח השנתי.</p></details>
+  <details><summary>איך יודעים מה אחוז המקדמה שלי?</summary><p>הוא מופיע בפנקס המקדמות, בהודעה מרשות המסים ובאזור האישי באתר רשות המסים. רואה החשבון יכול לבקש לשנות אותו.</p></details>
+  <details><summary>עד מתי משלמים מע"מ ומקדמות?</summary><p>לפי החוק ב-15 לחודש שאחרי התקופה, אבל רשות המסים קובעת מועדים מעודכנים. למשל, על אוקטובר 2026 המועד הוא 16.11.2026. הכלי מראה את המועד לכל תקופה.</p></details>
+  <details><summary>מה ההבדל בין תשומות ציוד לתשומות אחרות?</summary><p>תשומות ציוד הן מע"מ על רכוש קבוע, כמו מחשב, רכב או מכונה. תשומות אחרות הן מע"מ על הוצאות שוטפות. בדוח המע"מ מדווחים עליהן בשורות נפרדות.</p></details>
+</section>
+<!--/seo-txt-->
