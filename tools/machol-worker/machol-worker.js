@@ -5,11 +5,16 @@
 // פרטיות: לא שומרים מה כתבו. נשמר רק מונה יומי (כתובת IP מגובבת), ומטמון של נושאים כלליים (נושא -> מילים), בלי פרטים אישיים.
 // מכסות: PER_IP לכל כתובת ביום, ו-DAY_CAP לכל האתר, כדי להישאר בתוך המכסה החינמית של Workers AI (משותפת עם kelim-shir).
 
+import { heWords } from './he-words.js';
 const MODEL = '@cf/openai/gpt-oss-120b'; // נבחר כמו ב-kelim-shir: עברית טבעית, זמין בתוכנית החינמית
 const ALLOWED = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 const PER_IP = 25;
-const DAY_CAP = 200;
+const DAY_CAP = 150; // המכסה החינמית של Workers AI משותפת עם kelim-shir ו-limudim-poter
+// מילה עברית חדשה נכנסת רק אם היא ב-20,000 המילים השכיחות או בבנקים (he-words.js): כך המודל לא יכול להמציא מילים.
+// נבדק 13.11.2026: בלי זה הומצאו שמות דינוזאורים, ובדיקת עובדות בקריאה שנייה לא תפסה אותם ולקחה 115 שניות.
+let DICT = null;
+const dict = () => DICT || (DICT = new Set(heWords().split(String.fromCharCode(10))));
 const MAX_IN = 4000;
 const CACHE_DAYS = 30;
 const PCODE = /^(\d{3})-?(\d{5})$/;
@@ -36,8 +41,10 @@ const SYSTEM = `את/ה עוזר/ת למורים, להורים ולמדריכי�
 כללים:
 - כל מילה היא מילה אחת בלבד: בלי רווחים, מקפים, גרשיים, ניקוד או מספרים. בין 2 ל-12 אותיות.
 - עברית תקנית בכתיב מלא, כמו שכותבים היום. אם הנושא הוא אנגלית (או כתוב "באנגלית") – המילים באנגלית וההגדרה היא התרגום בעברית.
-- מילים מוכרות שקשורות ישירות לנושא, מגוונות, מהקלות אל הקשות. בלי כפילויות ובלי מילים שכבר ברשימה.
-- הגדרה (רק כשמבקשים): קצרה, עד 8 מילים, נכונה עובדתית ומובילה לתשובה אחת. בלי מילת התשובה ובלי מילה מאותו שורש. מותר להשלמה: "___".
+- רק מילים יומיומיות ונפוצות מהעברית המדוברת, שכל ילד בכיתה ה׳ מכיר: מושגים, חפצים, פעולות, תכונות ומקומות שקשורים ישירות לנושא. מגוונות, מהקלות אל הקשות.
+- אסור להמציא מילים. בלי שמות מדעיים, בלי שמות של מינים ובלי שמות פרטיים. מילה נדירה תימחק אוטומטית – עדיף מילה פשוטה ונפוצה.
+- בלי כפילויות ובלי מילים שכבר ברשימה.
+- הגדרה (רק כשמבקשים): קצרה, עד 8 מילים, נכונה עובדתית ומובילה לתשובה אחת. לא בטוחים בעובדה? הגדרה כללית ופשוטה. בלי מילת התשובה ובלי מילה מאותו שורש. מותר להשלמה: "___".
 - תוכן שמתאים לכל הגילים ולכיתה: בלי אלימות, בלי מילים גסות, בלי פוליטיקה. נושא שלא מתאים – מחזירים רשימה ריקה.
 - מחזירים JSON בלבד, בלי שום טקסט נוסף: {"items":[{"w":"מילה","c":"הגדרה"}],"clues":{"מילה שקיבלת":"הגדרה"}}`;
 
@@ -54,6 +61,13 @@ export function buildPrompt(b) {
   return [{ role: 'system', content: SYSTEM }, { role: 'user', content: lines.join('\n') }];
 }
 
+function rawText(raw) {
+  let t = typeof raw === 'string' ? raw : (raw && (raw.response || raw.output_text)) || '';
+  if (!t && raw && Array.isArray(raw.output)) for (const o of raw.output) for (const c of (o.content || [])) if (c.type === 'output_text') t += c.text;
+  if (!t && raw && raw.choices) t = raw.choices[0]?.message?.content || '';
+  return typeof t === 'object' ? JSON.stringify(t) : t;
+}
+
 export function parseOut(raw, want) {
   let t = typeof raw === 'string' ? raw : (raw && (raw.response || raw.output_text)) || '';
   if (!t && raw && Array.isArray(raw.output)) for (const o of raw.output) for (const c of (o.content || [])) if (c.type === 'output_text') t += c.text;
@@ -67,6 +81,7 @@ export function parseOut(raw, want) {
     const w = clip(it && (it.w || it.word), 30), c = clip(it && (it.c || it.clue), 110), L = letters(w);
     if (L.length < 2 || L.length > 14 || /\s/.test(w) || seen.has(L)) continue;
     if (c && !isEn(w) && c.includes(w)) continue; // הגדרה שמגלה את התשובה
+    if (want.dict && !isEn(w) && !want.dict.has(w)) continue; // מילה שלא במילון השכיחות – כנראה מומצאת או נדירה
     seen.add(L); items.push({ w, c: want.clues ? c : '' });
     if (items.length >= Math.max(1, want.n || 0)) break;
   }
@@ -79,8 +94,8 @@ async function ipHash(ip, day) {
   const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(day + '|' + ip + '|machol'));
   return [...new Uint8Array(b)].slice(0, 8).map(x => x.toString(16).padStart(2, '0')).join('');
 }
-export async function runModel(env, messages) {
-  return env.AI.run(MODEL, { instructions: messages[0].content, input: messages[1].content, reasoning: { effort: 'low' } });
+export async function runModel(env, messages, effort) {
+  return env.AI.run(MODEL, { instructions: messages[0].content, input: messages[1].content, reasoning: { effort: effort || 'low' } });
 }
 
 export default {
@@ -100,7 +115,7 @@ export default {
 
     const stub = env.QUOTA.get(env.QUOTA.idFromName('q'));
     // מטמון: נושא כללי בלי מילים משלהם -> אותה רשימה (מעורבבת), בלי לבזבז מכסה
-    const ckey = !b.have.length && !b.clueFor.length ? 'c:' + clip(b.topic, 60).toLowerCase() + '|' + (b.clues ? 1 : 0) : '';
+    const ckey = !b.have.length && !b.clueFor.length ? 'c4:' + clip(b.topic, 60).toLowerCase() + '|' + (b.clues ? 1 : 0) : ''; // c3: רק מילים מהמילון (c:/c2: ישנים – לא בשימוש)
     if (ckey) {
       const hit = await (await stub.fetch('https://q/get', { method: 'POST', body: JSON.stringify({ k: ckey }) })).json();
       if (hit && hit.items && hit.items.length >= Math.min(b.n, 12)) {
@@ -113,8 +128,10 @@ export default {
     const q = await (await stub.fetch('https://q/take', { method: 'POST', body: JSON.stringify({ day, who: await ipHash(ip, day), per, cap: DAY_CAP }) })).json();
     if (!q.ok) return json({ error: 'quota', rest: true }, 429, h);
     try {
-      const want = { n: ckey ? Math.max(b.n, 24) : b.n, clues: b.clues, have: b.have, clueFor: b.clueFor };
-      const out = parseOut(await runModel(env, buildPrompt({ ...b, n: want.n })), want);
+      const n0 = ckey ? Math.max(b.n, 16) : b.n, ask = n0 ? Math.min(32, Math.ceil(n0 * 1.8) + 2) : 0;
+      const want = { n: ask, clues: b.clues, have: b.have, clueFor: b.clueFor, dict: dict() };
+      const out = parseOut(await runModel(env, buildPrompt({ ...b, n: ask }), b.clues || b.clueFor.length ? 'medium' : 'low'), want);
+      out.items = out.items.slice(0, n0);
       if (!out.items.length && !Object.keys(out.clues).length) return json({ error: 'empty' }, 502, h);
       if (ckey && out.items.length >= 8) await stub.fetch('https://q/put', { method: 'POST', body: JSON.stringify({ k: ckey, items: out.items, days: CACHE_DAYS }) });
       return json({ items: out.items.slice(0, b.n), clues: out.clues }, 200, h);
