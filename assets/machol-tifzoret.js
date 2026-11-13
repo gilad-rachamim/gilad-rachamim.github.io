@@ -166,7 +166,7 @@
       caps += '<line x1="' + cx(p.c0).toFixed(2) + '" y1="' + cy(p.r).toFixed(2) + '" x2="' + cx(c1).toFixed(2) + '" y2="' + cy(r1).toFixed(2) + '" stroke="' + ['#f6c343', '#8fd3f4', '#b5e48c', '#f4a6c6', '#c3a6f4', '#f7a072'][i % 6] + '" stroke-width="' + (cs * 0.78).toFixed(2) + '" stroke-linecap="round" opacity=".75"/>';
     });
     for (var r = 0; r < X.N; r++) for (var c = 0; c < X.N; c++) s += '<text x="' + cx(c).toFixed(2) + '" y="' + (cy(r) + cs * 0.22).toFixed(2) + '" font-size="' + (cs * 0.6).toFixed(2) + '" text-anchor="middle">' + MC.esc(X.g[r][c]) + '</text>';
-    return '<svg class="mc-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W.toFixed(2) + ' ' + W.toFixed(2) + '" width="' + W.toFixed(1) + 'mm" height="' + W.toFixed(1) + 'mm" font-family="Assistant, Arial, sans-serif" font-weight="600" fill="#111">' +
+    return '<svg class="mc-svg" direction="ltr" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W.toFixed(2) + ' ' + W.toFixed(2) + '" width="' + W.toFixed(1) + 'mm" height="' + W.toFixed(1) + 'mm" font-family="Assistant, Arial, sans-serif" font-weight="600" fill="#111">' +
       '<rect x="0.3" y="0.3" width="' + (W - 0.6).toFixed(2) + '" height="' + (W - 0.6).toFixed(2) + '" rx="3" fill="none" stroke="#333" stroke-width="0.6"/>' + caps + s + '</svg>';
   }
   function pages() {

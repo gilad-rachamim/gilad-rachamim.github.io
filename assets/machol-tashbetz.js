@@ -152,7 +152,7 @@
     var k = el.getAttribute('data-k');
     el.addEventListener('focus', function () {
       if (!act || cellsOf(act).indexOf(k) < 0) { act = wordAt(k, dir) || wordAt(k, !dir); if (act) dir = act.h; }
-      mark(); el.parentNode.classList.add('cur'); setTimeout(function () { try { el.select(); } catch (e) {} }, 0);
+      mark(); el.parentNode.classList.add('cur'); setTimeout(function () { try { el.select(); } catch (e) {} keepVisible(el); }, 0);
     });
     el.addEventListener('blur', function () { el.parentNode.classList.remove('cur'); });
     el.addEventListener('click', function () { // נגיעה שנייה באותה משבצת מחליפה כיוון
@@ -173,6 +173,12 @@
       if (e.key === 'Enter') { e.preventDefault(); var i2 = cur.P.indexOf(act); focusWord(cur.P[(i2 + 1) % cur.P.length]); }
     });
   }
+  // שורת ההגדרה דביקה למעלה: משבצת שנכנסה מתחתיה (או מתחת למקלדת) – גוללים אותה למקום שרואים
+  function keepVisible(el) {
+    var bar = $('tb-now').getBoundingClientRect(), r = el.getBoundingClientRect(), vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    if (r.top < bar.bottom + 6) window.scrollBy(0, r.top - bar.bottom - 14);
+    else if (r.bottom > vh - 8) window.scrollBy(0, r.bottom - vh + 24);
+  }
   function saveFill() { if (PK) MC.save(PK, fill); }
   function right(k) { var e = cur.cells[k], v = fill[k]; return v && MC.norm(v) === e.k; }
   function checkDone() {
@@ -191,7 +197,7 @@
       if (X.starts[k]) s += '<text x="' + (X.en ? x + cs * 0.08 : x + cs * 0.92).toFixed(2) + '" y="' + (y + cs * 0.3).toFixed(2) + '" font-size="' + (cs * 0.28).toFixed(2) + '" text-anchor="' + (X.en ? 'start' : 'end') + '" fill="#333">' + X.starts[k] + '</text>';
       if (ans) s += '<text x="' + (x + cs / 2).toFixed(2) + '" y="' + (y + cs * 0.74).toFixed(2) + '" font-size="' + (cs * 0.55).toFixed(2) + '" text-anchor="middle" font-weight="700" fill="#1d3a6e">' + MC.esc(e.l) + '</text>';
     }
-    return '<svg class="mc-svg" xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 ' + (W + 1).toFixed(2) + ' ' + (H + 1).toFixed(2) + '" width="' + (W + 1).toFixed(1) + 'mm" height="' + (H + 1).toFixed(1) + 'mm" font-family="Assistant, Arial, sans-serif">' + s + '</svg>';
+    return '<svg class="mc-svg" direction="ltr" xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 ' + (W + 1).toFixed(2) + ' ' + (H + 1).toFixed(2) + '" width="' + (W + 1).toFixed(1) + 'mm" height="' + (H + 1).toFixed(1) + 'mm" font-family="Assistant, Arial, sans-serif">' + s + '</svg>';
   }
   function pages() {
     var X = cur, title = O.title || ('תשבץ ' + (panel ? panel.topicName() : '')).trim();
