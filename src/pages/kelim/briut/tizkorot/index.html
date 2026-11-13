@@ -47,7 +47,7 @@
       <div class="tz-picked" id="tz-picked" aria-live="polite"></div>
     </div>
     <div class="field"><label for="tz-rep">כל כמה זמן?</label>
-      <select id="tz-rep"><option value="d">כל יום</option><option value="w">רק בימים מסוימים בשבוע</option><option value="n">כל כמה ימים</option><option value="o">פעם אחת</option></select>
+      <select id="tz-rep"><option value="d">כל יום</option><option value="w">רק בימים מסוימים בשבוע</option><option value="n">כל כמה ימים</option><option value="o">פעם אחת</option><option value="m">כל חודש</option><option value="y">כל שנה</option></select>
     </div>
     <div class="field tz-hide" id="tz-days-f"><span class="label" id="tz-days-l">באילו ימים?</span><div class="tz-chips" id="tz-days" role="group" aria-labelledby="tz-days-l"></div></div>
     <div class="field tz-hide" id="tz-every-f"><label for="tz-every">כל כמה ימים?</label><input id="tz-every" type="number" min="2" max="60" value="2" inputmode="numeric"></div>
@@ -57,6 +57,7 @@
     <details class="tz-more" id="tz-more"><summary>עוד אפשרויות: כמה כדורים יש, חידוש מרשם, תזכורת שנייה</summary>
       <div class="field"><label for="tz-stock">כמה כדורים יש בקופסה? <span class="opt">(לא חובה – יורד בכל סימון)</span></label><input id="tz-stock" type="number" min="0" max="9999" inputmode="numeric" placeholder="30"></div>
       <div class="field"><label for="tz-refill">מתי לחדש מרשם? <span class="opt">(לא חובה – נכנס ליומן)</span></label><input id="tz-refill" type="date"></div>
+      <div class="field"><label for="tz-pre">להזכיר גם מראש? <span class="opt">(ביומן)</span></label><select id="tz-pre"><option value="">לא, רק בזמן</option><option value="PT15M">רבע שעה לפני</option><option value="PT1H">שעה לפני</option><option value="P1D">יום לפני</option><option value="P7D">שבוע לפני</option></select></div>
       <label class="check"><input type="checkbox" id="tz-again"> <span>להזכיר שוב אחרי 10 דקות (ביומן)</span></label>
     </details>
     <button class="btn btn-gold btn-block" type="submit" id="tz-save">לשמור את התזכורת</button>
@@ -89,6 +90,7 @@
   </section>
 
   <p class="disclaimer">הכלי עוזר לזכור, ולא נותן ייעוץ רפואי. מתי ואיך לקחת תרופה – רק לפי הרופא או הרוקח. שכחתם מנה? שואלים את הרוקח מה עושים, ולא מכפילים על דעת עצמכם. הכול נשמר רק בטלפון הזה.</p>
+  <p class="k-next">⏰ תזכורת למשהו אחר – תשלום, יום הולדת, להתקשר? <a class="gold" href="/kelim/machshev/tizkoret/">תזכורת בטלפון לכל דבר</a> (אותה רשימה).</p>
   <p class="k-next">💊 רשימת תרופות להדפסה ולרופא, עם אלרגיות: <a class="gold" href="/kelim/briut/trufot/">התרופות שלי</a>. 🩺 יש תור? <a class="gold" href="/kelim/briut/rofe/">הכנה לביקור אצל רופא</a>.</p>
   <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="תזכורת לתרופות שבאמת מצלצלת בזמן – נכנסת ליומן בטלפון, עם הקראה בקול וכתב גדול, גם להורים. בחינם ובלי להוריד אפליקציה:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
 </div>

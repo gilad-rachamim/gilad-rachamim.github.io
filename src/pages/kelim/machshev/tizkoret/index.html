@@ -1,0 +1,118 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tizkoret",
+  "title": "תזכורת בטלפון – יומית, חודשית או פעם אחת, בחינם | הכלים של גילעד רחמים",
+  "description": "תזכורת בטלפון לכל מה שאסור לשכוח: תשלום, יום הולדת, להתקשר, לשתות מים. בוחרים שעה וכל כמה זמן – כל יום, בימים מסוימים, כל חודש או כל שנה – ומוסיפים ליומן באייפון, בסמסונג או בגוגל. מצלצל גם כשהדף סגור, עם הקראה בקול. בחינם, בלי הרשמה.",
+  "og_title": "תזכורת בטלפון לכל דבר – בחינם, בלי אפליקציה",
+  "priority": "0.8",
+  "crumbs": [
+    [
+      "מחשב וטלפון",
+      "/kelim/machshev/"
+    ],
+    [
+      "תזכורת בטלפון",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/tizkorot.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך עושים תזכורת בטלפון?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כותבים מה להזכיר, בוחרים שעה ובוחרים כל כמה זמן: כל יום, בימים מסוימים, כל חודש, כל שנה או פעם אחת. לוחצים 'להוסיף ליומן בטלפון' באייפון ובסמסונג, או 'ליומן גוגל', והיומן מצלצל בזמן. בלי להוריד אפליקציה ובלי הרשמה.\"}}, {\"@type\": \"Question\", \"name\": \"איך עושים תזכורת יומית שחוזרת כל יום?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בוחרים 'כל יום' ושעה אחת או כמה. התזכורת נכנסת ליומן כאירוע שחוזר, ומצלצלת כל יום באותה שעה עד שמוחקים אותה, או עד תאריך סיום שבוחרים.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר תזכורת חודשית לתשלום או תזכורת שנתית ליום הולדת?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. 'כל חודש' חוזר באותו תאריך בכל חודש (למשל ועד בית ב-10), ו'כל שנה' חוזר באותו תאריך כל שנה (יום הולדת, יום נישואין, חידוש ביטוח). אפשר להוסיף התראה מראש: רבע שעה, שעה, יום או שבוע לפני.\"}}, {\"@type\": \"Question\", \"name\": \"התזכורת מצלצלת גם כשהדף סגור?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן, אחרי שמוסיפים ליומן. את ההתראה שולח היומן של הטלפון, גם כשהדף והדפדפן סגורים. ההתראות וההקראה בקול של הדף עצמו פועלות רק כל עוד הוא פתוח.\"}}, {\"@type\": \"Question\", \"name\": \"יש תזכורת קולית?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. כפתור 'להקריא בקול' מקריא את התזכורת בעברית בשעה שלה, כל עוד הדף פתוח. ביומן של הטלפון אפשר לבחור צליל התראה, ויש גם אפשרות שהתזכורת תחזור שוב אחרי 10 דקות.\"}}, {\"@type\": \"Question\", \"name\": \"זה עובד באייפון, בסמסונג וביומן גוגל?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. באייפון ובסמסונג הכפתור פותח את ההוספה ליומן של הטלפון, ובגוגל יש כפתור נפרד. ביומן גוגל ההתראה נקבעת לפי ההגדרה של היומן (לפעמים 30 דקות לפני), ואפשר לשנות אותה ל'בזמן האירוע' בעריכת האירוע.\"}}]}</script>",
+  "foot": "<script src=\"/assets/tizkorot.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>תזכורת בטלפון – לכל מה שאסור לשכוח</h1>
+  <p class="sub">תשלום, יום הולדת, להתקשר, להוציא את הזבל. בוחרים שעה וכל כמה זמן, ומוסיפים ליומן בלחיצה. התזכורת מצלצלת בזמן, גם כשהדף סגור. בחינם, בלי הרשמה ובלי אפליקציה.</p>
+</header>
+<div class="tool" data-tz-mode="klali">
+  <div class="res tz-today" id="tz-today" aria-live="polite"></div>
+  <div class="share-row">
+    <button class="btn btn-line btn-sm" type="button" id="tz-notif" aria-pressed="false">🔔 להפעיל התראות כשהדף פתוח</button>
+    <button class="btn btn-line btn-sm" type="button" id="tz-voice" aria-pressed="false">🔊 להקריא בקול</button>
+    <button class="btn btn-line btn-sm" type="button" id="tz-big" aria-pressed="false">🔠 כתב גדול</button>
+    <a class="btn btn-line btn-sm tz-hide" href="#" id="tz-fam" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לעדכן את המשפחה מה נלקח</a>
+  </div>
+  <p class="note tz-msg" id="tz-nmsg" aria-live="polite"></p>
+  <p class="note tz-msg" id="tz-vmsg" aria-live="polite"></p>
+
+
+  <form class="k-form" id="tz-form" novalidate style="margin-top:1.4rem">
+    <h2 style="font-family:var(--serif);color:var(--cream);font-size:1.35rem">תזכורת חדשה</h2>
+    <div class="field"><span class="label" id="tz-kinds-l">מה סוג התזכורת?</span><div class="tz-chips" id="tz-kinds" role="group" aria-labelledby="tz-kinds-l"></div></div>
+    <div class="field"><label for="tz-name">מה להזכיר?</label><input id="tz-name" type="text" maxlength="60" required placeholder="לשלם ארנונה / להתקשר לסבתא / יום הולדת לנועה"></div>
+    <div class="field"><label for="tz-who">בשביל מי? <span class="opt">(לא חובה)</span></label><input id="tz-who" type="text" maxlength="30" placeholder="אמא / סבא / אני"></div>
+    <div class="field"><span class="label" id="tz-presets-l">באילו שעות? <span class="opt">(אפשר כמה)</span></span>
+      <div class="tz-chips" id="tz-presets" role="group" aria-labelledby="tz-presets-l"></div>
+      <div class="tz-row"><input id="tz-time" type="time" aria-label="שעה אחרת"><button class="btn btn-line btn-sm" type="button" id="tz-addtime">+ שעה אחרת</button></div>
+      <div class="tz-picked" id="tz-picked" aria-live="polite"></div>
+    </div>
+    <div class="field"><label for="tz-rep">כל כמה זמן?</label>
+      <select id="tz-rep"><option value="d">כל יום</option><option value="w">רק בימים מסוימים בשבוע</option><option value="n">כל כמה ימים</option><option value="o">פעם אחת</option><option value="m">כל חודש</option><option value="y">כל שנה</option></select>
+    </div>
+    <div class="field tz-hide" id="tz-days-f"><span class="label" id="tz-days-l">באילו ימים?</span><div class="tz-chips" id="tz-days" role="group" aria-labelledby="tz-days-l"></div></div>
+    <div class="field tz-hide" id="tz-every-f"><label for="tz-every">כל כמה ימים?</label><input id="tz-every" type="number" min="2" max="60" value="2" inputmode="numeric"></div>
+    <div class="field"><label for="tz-start" id="tz-start-l">מתחילים מתאריך</label><input id="tz-start" type="date"></div>
+    <div class="field" id="tz-end-f"><label for="tz-end">עד תאריך <span class="opt">(לא חובה – למשל סוף טיפול)</span></label><input id="tz-end" type="date"></div>
+    <div class="field"><label for="tz-note">הערה <span class="opt">(לא חובה)</span></label><input id="tz-note" type="text" maxlength="80" placeholder="מספר הטלפון / מה להביא"></div>
+    <details class="tz-more" id="tz-more"><summary>עוד אפשרויות: להזכיר מראש, תזכורת שנייה</summary>
+      <input id="tz-stock" type="hidden">
+      <input id="tz-refill" type="hidden">
+      <div class="field"><label for="tz-pre">להזכיר גם מראש? <span class="opt">(ביומן)</span></label><select id="tz-pre"><option value="">לא, רק בזמן</option><option value="PT15M">רבע שעה לפני</option><option value="PT1H">שעה לפני</option><option value="P1D">יום לפני</option><option value="P7D">שבוע לפני</option></select></div>
+      <label class="check"><input type="checkbox" id="tz-again"> <span>להזכיר שוב אחרי 10 דקות (ביומן)</span></label>
+    </details>
+    <button class="btn btn-gold btn-block" type="submit" id="tz-save">לשמור את התזכורת</button>
+    <button class="btn btn-line btn-block tz-hide" type="button" id="tz-cancel" style="margin-top:.5rem">ביטול העריכה</button>
+    <p class="note tz-msg" id="tz-fmsg" aria-live="polite"></p>
+  </form>
+
+  <section class="tz-sec" style="margin-top:1.6rem" aria-labelledby="tz-list-h">
+    <h3 id="tz-list-h">התזכורות שלי</h3>
+    <p class="note">כדי שהתזכורת תצלצל גם כשהדף סגור: לוחצים על "להוסיף ליומן בטלפון" (אייפון וסמסונג) או על "ליומן גוגל".</p>
+    <ul class="tz-items" id="tz-items"></ul>
+    <div class="share-row">
+      <button class="btn btn-gold btn-sm tz-hide" type="button" id="tz-all">📲 את כל התזכורות ליומן, בבת אחת</button>
+      <button class="btn btn-line btn-sm" type="button" id="tz-print">🖨️ להדפיס לוח שבועי למקרר</button>
+      <a class="btn btn-line btn-sm" href="#" id="tz-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הרשימה למשפחה</a>
+    </div>
+    <div class="tz-banner tz-hide" id="tz-after" role="status">
+      <b>הקובץ ירד. מה עכשיו?</b>
+      <ul class="tz-how">
+        <li><b>אייפון:</b> נפתח חלון – לוחצים "הוסף הכל" ובוחרים יומן.</li>
+        <li><b>סמסונג:</b> פותחים את הקובץ שירד (בהתראה למעלה או ב"הקבצים שלי") ← "יומן Samsung" ← שמירה.</li>
+        <li><b>יומן גוגל באנדרואיד:</b> האפליקציה לא פותחת קבצים – משתמשים בכפתור "ליומן גוגל".</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="tz-sec" style="margin-top:1.6rem" aria-labelledby="tz-hist-h">
+    <h3 id="tz-hist-h">מה סומן בימים האחרונים</h3>
+    <div id="tz-hist"></div>
+  </section>
+
+  <p class="disclaimer">הכול נשמר רק בטלפון הזה, בלי הרשמה. התזכורות נכנסות רק ליומן שלכם.</p>
+  <p class="k-next">💊 תזכורות לתרופות, עם ספירת כדורים וחידוש מרשם: <a class="gold" href="/kelim/briut/tizkorot/">תזכורת לתרופות</a> (אותה רשימה). 🛂 תוקף דרכון, רישיון וביטוח: <a class="gold" href="/bait/mismachim/">המסמכים של הבית</a>.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="תזכורת בטלפון לכל דבר – יומית, שבועית, חודשית או פעם אחת. נכנסת ליומן ומצלצלת בזמן, גם כשהדף סגור. בחינם ובלי אפליקציה:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
+<div id="tz-sheet" class="tz-sheet" aria-hidden="true"></div>
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">תזכורת בטלפון שמצלצלת בזמן, בלי אפליקציה</h2>
+  <p>כולנו שוכחים: את התשלום לוועד הבית, את יום ההולדת של החבר, את השיחה שהבטחנו לאמא, את הזבל ביום שלפני הפינוי. הטלפון יודע להזכיר, אבל לא תמיד ברור איך עושים תזכורת בטלפון שחוזרת לבד, באייפון או בסמסונג. כאן זה פשוט: כותבים מה להזכיר בדף אחד, ולוחצים להוסיף ליומן שכבר יש בטלפון. היומן מצלצל בזמן, גם כשהדף סגור, וממשיך לחזור כמה שצריך.</p>
+  <h3>תזכורת יומית, שבועית, חודשית או שנתית</h3>
+  <p>בוחרים שעה אחת או כמה, וכל כמה זמן: כל יום (לשתות מים, לעשות הליכה), רק בימים מסוימים בשבוע (הזבל ביום ראשון ורביעי, חוג ביום שלישי), כל כמה ימים, כל חודש באותו תאריך (שכר דירה, ועד בית, חשבון חשמל), כל שנה (ימי הולדת, יום נישואין, חידוש ביטוח), או פעם אחת בלבד (תור, פגישה, משלוח). אפשר לקבוע גם תאריך סיום.</p>
+  <h3>להזכיר מראש, ולהזכיר שוב</h3>
+  <p>ליום הולדת כדאי לדעת יום לפני, כדי להספיק לקנות מתנה, ולתשלום – שבוע לפני. בכל תזכורת אפשר להוסיף התראה מראש: רבע שעה, שעה, יום או שבוע לפני. ולמי שלא שמע בפעם הראשונה, התזכורת ביומן יכולה לחזור שוב אחרי עשר דקות.</p>
+  <h3>תזכורת קולית וכתב גדול</h3>
+  <p>כפתור "להקריא בקול" מקריא את התזכורת בעברית בשעה שלה, כל עוד הדף פתוח – כמו שעון מעורר מדבר. כפתור "כתב גדול" מגדיל את הכלי, וזה עוזר במיוחד להורים ולמבוגרים. בראש הדף יש רשימה של מה צריך היום, ומסמנים "בוצע" על כל דבר שנעשה.</p>
+  <h3>לכל המשפחה, ובלי לשתף מידע</h3>
+  <p>שולחים את הרשימה בווטסאפ לבני הבית, מדפיסים לוח שבועי למקרר, ושולחים עדכון של מה כבר נעשה היום. אין הרשמה ואין שרת: התזכורות נשמרות רק בטלפון שלכם ונכנסות רק ליומן שלכם. לתרופות יש <a class="gold" href="/kelim/briut/tizkorot/">תזכורת לתרופות</a> עם ספירת כדורים וחידוש מרשם, באותה רשימה. לתוקף של דרכון, רישיון וביטוח: <a class="gold" href="/bait/mismachim/">המסמכים של הבית</a>. ועוד <a class="gold" href="/kelim/machshev/">כלים למחשב ולטלפון</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך עושים תזכורת בטלפון?</summary><p>כותבים מה להזכיר, בוחרים שעה ובוחרים כל כמה זמן: כל יום, בימים מסוימים, כל חודש, כל שנה או פעם אחת. לוחצים 'להוסיף ליומן בטלפון' באייפון ובסמסונג, או 'ליומן גוגל', והיומן מצלצל בזמן. בלי להוריד אפליקציה ובלי הרשמה.</p></details>
+  <details><summary>איך עושים תזכורת יומית שחוזרת כל יום?</summary><p>בוחרים 'כל יום' ושעה אחת או כמה. התזכורת נכנסת ליומן כאירוע שחוזר, ומצלצלת כל יום באותה שעה עד שמוחקים אותה, או עד תאריך סיום שבוחרים.</p></details>
+  <details><summary>אפשר תזכורת חודשית לתשלום או תזכורת שנתית ליום הולדת?</summary><p>כן. 'כל חודש' חוזר באותו תאריך בכל חודש (למשל ועד בית ב-10), ו'כל שנה' חוזר באותו תאריך כל שנה (יום הולדת, יום נישואין, חידוש ביטוח). אפשר להוסיף התראה מראש: רבע שעה, שעה, יום או שבוע לפני.</p></details>
+  <details><summary>התזכורת מצלצלת גם כשהדף סגור?</summary><p>כן, אחרי שמוסיפים ליומן. את ההתראה שולח היומן של הטלפון, גם כשהדף והדפדפן סגורים. ההתראות וההקראה בקול של הדף עצמו פועלות רק כל עוד הוא פתוח.</p></details>
+  <details><summary>יש תזכורת קולית?</summary><p>כן. כפתור 'להקריא בקול' מקריא את התזכורת בעברית בשעה שלה, כל עוד הדף פתוח. ביומן של הטלפון אפשר לבחור צליל התראה, ויש גם אפשרות שהתזכורת תחזור שוב אחרי 10 דקות.</p></details>
+  <details><summary>זה עובד באייפון, בסמסונג וביומן גוגל?</summary><p>כן. באייפון ובסמסונג הכפתור פותח את ההוספה ליומן של הטלפון, ובגוגל יש כפתור נפרד. ביומן גוגל ההתראה נקבעת לפי ההגדרה של היומן (לפעמים 30 דקות לפני), ואפשר לשנות אותה ל'בזמן האירוע' בעריכת האירוע.</p></details>
+</section>
+<!--/seo-txt-->
