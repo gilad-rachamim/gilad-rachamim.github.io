@@ -85,10 +85,10 @@ body:not(.mc-student) .mc-sonly{display:none}
 .tb-now small{color:var(--muted)}
 .tb-grid{display:grid;gap:2px;max-width:34rem;margin:0 auto;touch-action:manipulation}
 .tb-grid .x{aspect-ratio:1}
-.tb-grid .c{position:relative;aspect-ratio:1;background:#fbf6ea;border-radius:3px}
+.tb-grid .c{position:relative;aspect-ratio:1;min-height:0;background:#fbf6ea;border-radius:3px}
 .tb-grid .c i{position:absolute;top:1px;right:2px;font-style:normal;font-size:clamp(.45rem,1.6vw,.66rem);color:#7a5c1e;line-height:1;pointer-events:none}
 .tb-grid[dir=ltr] .c i{right:auto;left:2px}
-.tb-grid input{scroll-margin:7rem 0 9rem;min-width:0;width:100%;height:100%;border:0;background:transparent;text-align:center;font:700 clamp(.8rem,3.6vw,1.3rem) var(--sans);color:#1d2a4a;padding:0;border-radius:3px;caret-color:transparent}
+.tb-grid input{position:absolute;inset:0;scroll-margin:7rem 0 9rem;min-width:0;width:100%;height:100%;line-height:1;border:0;background:transparent;text-align:center;font:700 clamp(.8rem,3.6vw,1.3rem) var(--sans);color:#1d2a4a;padding:0;border-radius:3px;caret-color:transparent}
 .tb-grid input:focus{outline:none}
 .tb-grid .c.on{background:#f3e2b3}
 .tb-grid .c.cur{background:#e8c56a;box-shadow:0 0 0 2px #b8862a inset}
