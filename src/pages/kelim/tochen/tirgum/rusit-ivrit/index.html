@@ -1,0 +1,126 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tochen_tirgum_ru_he",
+  "title": "תרגום מרוסית לעברית – מתרגם חינם בקול ובצילום | הכלים של גילעד רחמים",
+  "description": "תרגום מרוסית לעברית בחינם: מדברים ברוסית, מדביקים הודעה או מצלמים מסמך – ומקבלים עברית ברורה. מצב שיחה להורים וסבים, הקראה בקול, ובלי הרשמה. Перевод с русского на иврит бесплатно.",
+  "og_title": "תרגום מרוסית לעברית – בחינם",
+  "priority": "0.8",
+  "crumbs": [
+    [
+      "יצירת תוכן",
+      "/kelim/tochen/"
+    ],
+    [
+      "תרגום מאנגלית לעברית",
+      "/kelim/tochen/tirgum/"
+    ],
+    [
+      "תרגום מרוסית לעברית",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/tochen-tirgum.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך מתרגמים מרוסית לעברית בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מדביקים את הטקסט ברוסית, מדברים ברוסית במיקרופון, או מצלמים אותו ב-📷. התרגום לעברית מופיע מיד, בחינם ובלי הרשמה.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לתרגם גם מעברית לרוסית?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. לוחצים על ⇄ כדי להחליף כיוון, או בוחרים \\\"עברית\\\" למעלה ו\\\"רוסית\\\" בשפת התרגום.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לתרגם מכתב רשמי מצילום?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. מצלמים את המכתב ב-📷, והטקסט נקרא ומתורגם. במסמך חשוב (משפטי או רפואי) כדאי לבדוק את התרגום עם מי שמכיר את הנושא.\"}}, {\"@type\": \"Question\", \"name\": \"איך סבא וסבתא שמדברים רק רוסית יכולים להשתמש בזה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"ב\\\"מצב שיחה\\\": כל אחד לוחץ על הכפתור שלו ומדבר בשפה שלו, והתרגום מוקרא בקול. אפשר גם להגדיל את הגופן בכפתור \\\"גופן גדול\\\".\"}}, {\"@type\": \"Question\", \"name\": \"המתרגם מבין אוקראינית?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. הוא מזהה אוקראינית לפי האותיות המיוחדות לה ומתרגם ממנה לעברית.\"}}]}</script>",
+  "foot": "<script src=\"/assets/tochen-tirgum.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>תרגום מרוסית לעברית – לדבר, להדביק או לצלם</h1>
+  <p class="sub">להורים, לסבים ולעולים: אומרים את המשפט ברוסית, או מצלמים מכתב, ומקבלים עברית ברורה. ובכיוון ההפוך – תרגום מעברית לרוסית בלחיצה על ⇄.</p>
+  <p class="tg-free">🔒 חינם · בלי הרשמה · בכרום במחשב התרגום נשאר במחשב שלכם</p>
+</header>
+<div class="tool tg" id="tg-app" data-from="ru" data-to="he" data-ex-src="Здравствуйте! Подскажите, пожалуйста, какие документы нужно принести в банк для открытия счёта?" data-ex-out="שלום! תוכלו בבקשה לומר לי אילו מסמכים צריך להביא לבנק כדי לפתוח חשבון?">
+  <div class="tg-langs">
+    <label class="tg-l"><span class="sr">מתרגמים מ</span><select id="tg-from" aria-label="שפת המקור"></select></label>
+    <button type="button" class="tg-swap" id="tg-swap" aria-label="להחליף בין השפות" title="להחליף בין השפות">⇄</button>
+    <label class="tg-l"><span class="sr">מתרגמים ל</span><select id="tg-to" aria-label="שפת התרגום"></select></label>
+  </div>
+
+  <div class="tg-panes">
+    <div class="tg-pane">
+      <textarea id="tg-src" class="tg-text" rows="6" placeholder="כותבים או מדביקים כאן טקסט, לוחצים על המיקרופון ומדברים, או מצלמים שלט ומכתב ב-📷" aria-label="הטקסט לתרגום"></textarea>
+      <div class="tg-bar">
+        <button type="button" class="tg-ic tg-mic" id="tg-mic" aria-pressed="false" title="לדבר במקום להקליד">🎙️<span>לדבר</span></button>
+        <button type="button" class="tg-ic" id="tg-cam" title="לתרגם מתמונה או מצילום">📷<span>תמונה</span></button><input type="file" id="tg-file" accept="image/*" hidden aria-hidden="true" tabindex="-1">
+        <button type="button" class="tg-ic" id="tg-say-src" title="להקריא את המקור">🔊</button>
+        <button type="button" class="tg-ic" id="tg-clear" title="לנקות">✕</button>
+        <span class="tg-count" id="tg-count" aria-live="polite"></span>
+      </div>
+    </div>
+    <div class="tg-pane tg-outp">
+      <div id="tg-out" class="tg-text tg-result" role="region" aria-live="polite" tabindex="0" aria-label="התרגום"></div>
+      <div class="tg-bar">
+        <button type="button" class="tg-ic" id="tg-say" title="להקריא את התרגום">🔊<span>להקריא</span></button>
+        <select id="tg-rate" class="tg-rate" aria-label="מהירות ההקראה"><option value="0.75">איטי</option><option value="1" selected>רגיל</option><option value="1.25">מהיר</option></select>
+        <button type="button" class="tg-ic" id="tg-copy" title="להעתיק">📋<span>להעתיק</span></button>
+        <a class="tg-ic tg-wa" id="tg-wa" href="#" target="_blank" rel="noopener" title="לשלוח בווטסאפ"><svg class="ic"><use href="#wa"/></svg><span>ווטסאפ</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="tg-go-row">
+    <button type="button" class="btn btn-gold tg-go" id="tg-go">לתרגם</button>
+    <span class="tg-status" id="tg-status" role="status"></span>
+  </div>
+  <div class="tg-dl" id="tg-dl" hidden>
+    <p id="tg-dl-t">כדי לתרגם בתוך המחשב, כרום מוריד פעם אחת את מודל התרגום לשפות האלה. אחר כך זה מהיר ועובד גם בלי אינטרנט.</p>
+    <div class="tg-prog" aria-hidden="true"><i id="tg-prog"></i></div>
+  </div>
+  <p class="tg-engine" id="tg-engine"></p>
+
+  <div class="tg-tools">
+    <button type="button" class="tg-tab" data-tab="conv" aria-expanded="false">🗣️ מצב שיחה</button>
+    <button type="button" class="tg-tab" data-tab="gl" aria-expanded="false">📖 מילון אישי</button>
+    <button type="button" class="tg-tab" data-tab="hist" aria-expanded="false">🕘 היסטוריה</button>
+    <button type="button" class="tg-tab" id="tg-big" aria-pressed="false">אא גופן גדול</button>
+  </div>
+
+  <section class="tg-box" id="tg-conv" hidden aria-label="מצב שיחה">
+    <p class="note">שני אנשים, שתי שפות, טלפון אחד. כל אחד לוחץ על הכפתור שלו ומדבר, והתרגום מוקרא בקול לצד השני.</p>
+    <div class="tg-conv-btns">
+      <button type="button" class="btn btn-gold" id="tg-conv-a">🎙️ <span id="tg-conv-a-l">עברית</span></button>
+      <button type="button" class="btn btn-line" id="tg-conv-b">🎙️ <span id="tg-conv-b-l">English</span></button>
+    </div>
+    <ol class="tg-conv-log" id="tg-conv-log"></ol>
+  </section>
+
+  <section class="tg-box" id="tg-gl" hidden aria-label="מילון אישי">
+    <p class="note">מילה או ביטוי שחשוב לכם שיתורגמו תמיד אותו דבר: שם של חברה, מונח מקצועי, כינוי. המתרגם ישתמש בתרגום שלכם בכל פעם.</p>
+    <form class="tg-gl-add" id="tg-gl-form">
+      <input id="tg-gl-a" placeholder="במקור (למשל: Board)" aria-label="המילה במקור" required>
+      <input id="tg-gl-b" placeholder="התרגום שלי (למשל: ועד מנהל)" aria-label="התרגום המועדף" required>
+      <button class="btn btn-gold btn-sm" type="submit">להוסיף</button>
+    </form>
+    <ul class="tg-list" id="tg-gl-list"></ul>
+  </section>
+
+  <section class="tg-box" id="tg-hist" hidden aria-label="היסטוריה">
+    <p class="note">התרגומים האחרונים, שמורים רק במכשיר הזה. נגיעה מחזירה תרגום למסך.</p>
+    <ul class="tg-list" id="tg-hist-list"></ul>
+    <button type="button" class="btn btn-line btn-sm" id="tg-hist-clear">למחוק את ההיסטוריה</button>
+  </section>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">תרגום מרוסית לעברית, ומעברית לרוסית, בלי לחפש מקלדת</h2>
+  <p>הרבה משפחות בישראל מדברות רוסית בבית ועברית בחוץ. מכתב מביטוח לאומי, הודעה מבית הספר, טופס בקופת חולים – ומישהו צריך לתרגם. המתרגם כאן עושה את זה בלי הקלדה: מדברים ברוסית במיקרופון, או מצלמים את המכתב, והתרגום מופיע. Говорите по-русски – перевод на иврит появится сразу.</p>
+  <h3>מכתב ומסמך בצילום</h3>
+  <p>לוחצים על 📷 ומצלמים מכתב, טופס או שלט. הטקסט נקרא מהתמונה ומתורגם. זה עובד בשני הכיוונים: מכתב בעברית לסבתא מתורגם לרוסית, ומסמך ישן ברוסית מתורגם לעברית.</p>
+  <h3>שיחה בין הדורות</h3>
+  <p>ב"מצב שיחה" הנכד לוחץ ומדבר עברית, הסבתא לוחצת ומדברת רוסית, וכל אחד שומע את השני בשפה שלו. מתאים גם לרופא, לעובדת סוציאלית ולמטפלת.</p>
+  <h3>גם אוקראינית</h3>
+  <p>המתרגם מבחין לבד בין רוסית לאוקראינית לפי האותיות, ומתרגם משתיהן לעברית. אפשר לבחור את השפה גם ידנית ברשימה.</p>
+  <h3>טפסים, מכתבים ותורים</h3>
+  <p>הרבה מהמכתבים שמגיעים הביתה הם מגופים כמו ביטוח לאומי, משרד הקליטה, קופת החולים או העירייה. מצלמים אותם, והתרגום לרוסית או לעברית מופיע מיד, עם הטקסט המקורי למעלה כדי שאפשר יהיה לבדוק. רוצים לענות? כותבים ברוסית, מחליפים כיוון בלחיצה על ⇄, ומקבלים עברית מוכנה לשליחה. ההיסטוריה שומרת את התרגומים רק בטלפון שלכם, והמילון האישי זוכר מונחים כמו שמות של משרדים.</p>
+  <h3>עוד דפי תרגום</h3>
+  <p><a class="gold" href="/kelim/tochen/tirgum/">תרגום מאנגלית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/ivrit-anglit/">תרגום מעברית לאנגלית</a> · <a class="gold" href="/kelim/tochen/tirgum/aravit-ivrit/">תרגום מערבית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/ivrit-aravit/">תרגום מעברית לערבית</a> · <a class="gold" href="/kelim/tochen/tirgum/mitzlema/">תרגום מצלמה</a>. ולתמלול הקלטה לפני התרגום – <a class="gold" href="/kelim/tamlul/">כלי התמלול</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך מתרגמים מרוסית לעברית בחינם?</summary><p>מדביקים את הטקסט ברוסית, מדברים ברוסית במיקרופון, או מצלמים אותו ב-📷. התרגום לעברית מופיע מיד, בחינם ובלי הרשמה.</p></details>
+  <details><summary>אפשר לתרגם גם מעברית לרוסית?</summary><p>כן. לוחצים על ⇄ כדי להחליף כיוון, או בוחרים "עברית" למעלה ו"רוסית" בשפת התרגום.</p></details>
+  <details><summary>אפשר לתרגם מכתב רשמי מצילום?</summary><p>כן. מצלמים את המכתב ב-📷, והטקסט נקרא ומתורגם. במסמך חשוב (משפטי או רפואי) כדאי לבדוק את התרגום עם מי שמכיר את הנושא.</p></details>
+  <details><summary>איך סבא וסבתא שמדברים רק רוסית יכולים להשתמש בזה?</summary><p>ב"מצב שיחה": כל אחד לוחץ על הכפתור שלו ומדבר בשפה שלו, והתרגום מוקרא בקול. אפשר גם להגדיל את הגופן בכפתור "גופן גדול".</p></details>
+  <details><summary>המתרגם מבין אוקראינית?</summary><p>כן. הוא מזהה אוקראינית לפי האותיות המיוחדות לה ומתרגם ממנה לעברית.</p></details>
+</section>
+<!--/seo-txt-->
