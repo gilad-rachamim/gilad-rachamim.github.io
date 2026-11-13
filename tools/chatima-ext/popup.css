@@ -38,3 +38,4 @@ footer { font-size: 11.5px; color: var(--muted); text-align: center; }
 footer a { color: var(--gold2); }
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; }
 .grid button { padding: 6px 7px; font-size: 13px; }
+.grid .wide { grid-column: 1 / -1; border-color: var(--gold); font-weight: 600; }

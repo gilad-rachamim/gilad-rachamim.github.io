@@ -3,7 +3,7 @@
 // כך שכלי חדש באתר מופיע בתוסף – בחיפוש, ואם הוא מקבל קבצים גם בלחיצה הימנית – בלי גרסה חדשה בחנות.
 // קבצים: התוסף מביא את הקובץ שהמשתמש בחר, שומר אותו רגע ב-storage ופותח את הכלי. bridge.js מכניס
 // אותו לכלי. שום דבר לא נשלח לשרת: הכלים עצמם עובדים בתוך הדפדפן.
-importScripts('page-tools.js');   // תיקון שפה, צילום עמוד, הקראה, כיוון עברית, מצב כהה
+importScripts('page-tools.js');   // תיקון שפה, צילום עמוד, הקראה, כיוון עברית, מצב כהה, תרגום
 var SITE = 'https://hakelim.com';
 var LIST_URL = SITE + '/kelim/tools.json';
 var MAX_BYTES = 300 * 1024 * 1024;
@@ -52,6 +52,8 @@ function buildMenus() {
           var C = chrome.contextMenus.create;
           C({ id: 'hk', title: 'הכלים של גילעד רחמים', contexts: ['image', 'video', 'link', 'page', 'editable', 'selection'] });
           C({ parentId: 'hk', id: 'fix', title: 'לתקן: כתבתי בשפה הלא נכונה (Alt+Shift+H)', contexts: ['selection', 'editable'] });
+          C({ parentId: 'hk', id: 'tr-sel', title: '🌐 לתרגם את המסומן', contexts: ['selection'] });
+          C({ parentId: 'hk', id: 'translate', title: '🌐 לתרגם את הדף (Alt+Shift+T)', contexts: ['page'] });
           C({ parentId: 'hk', id: 'speak', title: '🔊 להקריא בקול', contexts: ['selection'] });
           C({ parentId: 'hk', id: 'speak-stop', title: '⏹ לעצור את ההקראה', contexts: ['all'], visible: false });
           C({ parentId: 'hk', id: 'shot', title: '📸 צילום של כל העמוד', contexts: ['page'] });
@@ -252,4 +254,9 @@ chrome.runtime.onMessage.addListener(function (m, sender, reply) {
 });
 
 // קיצור מקשים: Alt+Shift+H מתקן טקסט שנכתב בשפה הלא נכונה
-chrome.commands.onCommand.addListener(function (cmd, tab) { if (cmd === 'fix-layout' && tab) PAGE_ACTS.fix(tab, {}); });
+// Alt+Shift+T מתרגם את הדף (ולחיצה נוספת מחזירה אותו כמו שהיה)
+chrome.commands.onCommand.addListener(function (cmd, tab) {
+  if (!tab) return;
+  if (cmd === 'fix-layout') PAGE_ACTS.fix(tab, {});
+  if (cmd === 'translate-page') PAGE_ACTS.translate(tab).catch(function () {});
+});

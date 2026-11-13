@@ -1,5 +1,5 @@
 // כלים שעובדים על הדף הפתוח, רק אחרי לחיצה של המשתמש (activeTab): תיקון שפת מקלדת, צילום של כל העמוד,
-// הקראה בקול, סידור כיוון עברית ומצב כהה. הכול במחשב, בלי שרת. נטען ב-background.js (importScripts).
+// הקראה בקול, סידור כיוון עברית, מצב כהה ותרגום הדף. הכול במחשב, בלי שרת. נטען ב-background.js (importScripts).
 
 // ---------- הודעה קטנה בדף ----------
 function hkInstallToast() { window.__hkToast = function (msg, good, extra) {
@@ -187,6 +187,19 @@ function fullShot(tab) {
   }).then(function () { return { ok: true }; });
 }
 
+// ---------- 7. תרגום הדף ותרגום של טקסט מסומן (translate.js, במנוע התרגום שבתוך כרום) ----------
+function trInTab(tab, cmd, arg) {
+  var target = { tabId: tab.id };
+  return chrome.scripting.executeScript({ target: target, func: function () { return !!window.__hkTr; } })
+    .then(function (r) {
+      if (r && r[0] && r[0].result) return;
+      return chrome.scripting.insertCSS({ target: target, files: ['translate.css'] }).catch(function () {})
+        .then(function () { return chrome.scripting.executeScript({ target: target, files: ['translate.js'] }); });
+    })
+    .then(function () { return chrome.scripting.executeScript({ target: target, func: function (c, a) { return window.__hkTr.cmd(c, a); }, args: [cmd, arg || ''] }); })
+    .then(function (r) { return { ok: true, r: r && r[0] && r[0].result }; });
+}
+
 // ---------- מה כל פריט עושה ----------
 var PAGE_ACTS = {
   fix: function (tab) { return inTab(tab, fixLayoutInPage).then(function (r) { return { ok: true, r: r }; }); },
@@ -196,5 +209,7 @@ var PAGE_ACTS = {
   'speak-stop': function () { chrome.tts.stop(); setStopVisible(false); return Promise.resolve({ ok: true }); },
   shot: function (tab) { return fullShot(tab); },
   rtl: function (tab) { return inTab(tab, rtlInPage).then(function (r) { return { ok: true, r: r }; }); },
-  dark: function (tab) { return inTab(tab, darkInPage).then(function (r) { return { ok: true, r: r }; }); }
+  dark: function (tab) { return inTab(tab, darkInPage).then(function (r) { return { ok: true, r: r }; }); },
+  translate: function (tab) { return trInTab(tab, 'toggle'); },
+  'tr-sel': function (tab, info) { return trInTab(tab, 'sel', info && info.selectionText || ''); }
 };
