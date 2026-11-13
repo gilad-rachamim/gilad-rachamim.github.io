@@ -1,0 +1,102 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "machol_tzviya",
+  "title": "צביעה לפי מספרים: דף צביעה מתמונה אישית או מציור מוכן, להדפסה ואונליין | הכלים של גילעד רחמים",
+  "description": "צביעה לפי מספרים בחינם: מעלים תמונה מהטלפון (היא לא יוצאת מהמכשיר) או בוחרים ציור מוכן, ומקבלים דף צביעה ממוספר עם מקרא צבעים ודף \"ככה זה ייראה\". צובעים אונליין בנגיעה או מדפיסים. לילדים ולמבוגרים, בשלוש רמות פירוט.",
+  "og_title": "צביעה לפי מספרים – מכל תמונה, בחינם",
+  "priority": "0.8",
+  "crumbs": [["משחקי חשיבה", "/kelim/chashiva/"], ["צביעה לפי מספרים", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/machol.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך הופכים תמונה לצביעה לפי מספרים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בוחרים \\\"תמונה משלי\\\", בוחרים תמונה מהגלריה או מצלמים, ובוחרים רמת פירוט וכמה צבעים. תוך שניות מתקבל דף צביעה ממוספר עם מקרא צבעים, שאפשר לצבוע על המסך, להדפיס או לשמור כ-PDF.\"}}, {\"@type\": \"Question\", \"name\": \"התמונה שלי עולה לאינטרנט?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. כל העיבוד נעשה בתוך הדפדפן שבטלפון או במחשב שלכם, והתמונה לא נשלחת לשום שרת. היא גם לא נשמרת אחרי שסוגרים את הדף.\"}}, {\"@type\": \"Question\", \"name\": \"כמה צבעים לבחור?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לילדים קטנים 5 עד 8 צבעים ורמה \\\"קל\\\". לילדים בבית הספר 10 עד 14. למבוגרים, שרוצים תוצאה שדומה לתמונה, 18 עד 24 צבעים ורמה \\\"מפורט\\\".\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לצבוע בטלפון בלי להדפיס?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בוחרים צבע בשורת הצבעים ונוגעים באזורים שכתוב בהם אותו מספר. ההתקדמות נשמרת בציורים המוכנים, ובסוף אפשר להוריד את הציור הצבוע כתמונה.\"}}, {\"@type\": \"Question\", \"name\": \"איך מדפיסים דף צביעה לפי מספרים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לוחצים \\\"להדפיס\\\" ובוחרים מדפסת, או \\\"קובץ PDF\\\" כדי לשמור ולשלוח. מקבלים דף A4 עם הציור הממוספר ומקרא הצבעים עם שם לכל צבע, ודף נוסף שמראה איך הציור ייראה צבוע.\"}}, {\"@type\": \"Question\", \"name\": \"מה ההבדל בין \\\"אזורים\\\" ל\\\"משבצות\\\"?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"ב\\\"אזורים\\\" הציור מחולק לצורות חופשיות, כמו בערכות של ציור לפי מספרים. ב\\\"משבצות\\\" הוא מחולק לרשת ריבועים עם מספר בכל ריבוע, כמו פסיפס – פשוט יותר לילדים קטנים.\"}}]}</script>",
+  "foot": "<script src=\"/assets/machol-core.js\" defer></script><script src=\"/assets/machol-tzviya.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>צביעה לפי מספרים – מכל תמונה, להדפסה או אונליין</h1>
+  <p class="sub">בוחרים ציור מוכן או תמונה מהטלפון – של הילדים, של בעל חיים, של נוף – ומקבלים דף צביעה ממוספר עם מקרא צבעים. צובעים בנגיעה על המסך או מדפיסים. התמונה לא יוצאת מהמכשיר. בחינם, בלי הרשמה.</p>
+</header>
+<div class="tool" id="cz-app" data-src="tpl" data-style="r">
+  <h2 class="mc-step"><b>1</b> מה צובעים?</h2>
+  <div class="mc-seg" id="cz-srcs" role="radiogroup" aria-label="מקור הציור">
+    <button type="button" role="radio" data-s="tpl" aria-checked="true">🎨 ציור מוכן</button>
+    <button type="button" role="radio" data-s="img" aria-checked="false">🖼️ תמונה משלי</button>
+  </div>
+  <div class="mc-box-ui" style="margin-top:.8rem">
+    <div class="cz-tplonly"><div class="cz-tpls" id="cz-tpls" role="radiogroup" aria-label="ציורים מוכנים"></div></div>
+    <div class="cz-imgonly cz-drop">
+      <span>📷 בוחרים תמונה מהגלריה או מצלמים</span>
+      <button class="btn btn-gold btn-sm" type="button" id="cz-pick">לבחור תמונה</button>
+      <input type="file" id="cz-file" accept="image/*" hidden>
+      <span class="note">🔒 התמונה מעובדת בתוך הטלפון ולא עולה לשום מקום. הכי יפה: נושא אחד ברור, אור טוב ורקע פשוט.</span>
+    </div>
+  </div>
+
+  <h2 class="mc-step"><b>2</b> סגנון ורמה</h2>
+  <div class="mc-box-ui">
+    <div class="field"><span class="label" id="cz-styles-l">סגנון</span>
+      <div class="mc-seg" id="cz-styles" role="radiogroup" aria-labelledby="cz-styles-l">
+        <button type="button" role="radio" data-s="r">🖌️ אזורים – כמו ציור לפי מספרים</button>
+        <button type="button" role="radio" data-s="g">🟦 משבצות – כמו פסיפס</button>
+      </div>
+    </div>
+    <div class="mc-opts" style="margin-top:.8rem">
+      <div class="field"><label for="cz-det">רמת פירוט</label><select id="cz-det"><option value="1">קל – אזורים גדולים (לקטנים)</option><option value="2">בינוני</option><option value="3">מפורט – למבוגרים</option></select></div>
+      <div class="field" id="cz-kf"><label for="cz-k">כמה צבעים</label><select id="cz-k"><option value="5">5 – פשוט מאוד</option><option value="8">8</option><option value="10">10</option><option value="14">14</option><option value="18">18</option><option value="24">24 – הכי מדויק</option></select></div>
+      <div class="field"><label for="cz-title">כותרת <span class="opt">(לא חובה)</span></label><input id="cz-title" type="text" maxlength="50" placeholder="הכלב שלנו, רקסי"></div>
+    </div>
+    <div class="mc-checks">
+      <label><input type="checkbox" id="cz-light"> קווים ומספרים בהירים (פחות בולטים אחרי הצביעה)</label>
+      <label><input type="checkbox" id="cz-ans"> דף "ככה זה ייראה" בהדפסה</label>
+    </div>
+  </div>
+
+  <div class="cz-busy" id="cz-busy" role="status" hidden>⏳ מכינים את דף הצביעה...</div>
+  <div id="cz-out" hidden>
+    <h2 class="mc-step"><b>3</b> צובעים</h2>
+    <p class="mc-sum" id="cz-sum"></p>
+    <p class="mc-msg" id="cz-msg" aria-live="polite"></p>
+    <div class="cz-box" id="cz-box"><canvas id="cz-cv" role="img" aria-label="דף הצביעה. בוחרים צבע ונוגעים באזור עם אותו מספר."></canvas></div>
+    <p class="mc-sum" id="cz-prog" aria-live="polite"></p>
+    <div class="cz-pal" id="cz-pal" role="radiogroup" aria-label="הצבעים"></div>
+    <div class="mc-acts">
+      <button class="btn btn-line btn-sm" type="button" id="cz-hint">💡 איפה הצבע הזה?</button>
+      <button class="btn btn-line btn-sm" type="button" id="cz-zoom" aria-pressed="false">🔍 הגדלה</button>
+      <button class="btn btn-line btn-sm" type="button" id="cz-reset">לנקות</button>
+      <button class="btn btn-line btn-sm" type="button" id="cz-fillall">לצבוע הכול</button>
+    </div>
+    <div class="mc-acts">
+      <button class="btn btn-gold btn-sm" type="button" id="cz-print">🖨️ להדפיס</button>
+      <button class="btn btn-line btn-sm" type="button" id="cz-pdf">📄 קובץ PDF</button>
+      <button class="btn btn-line btn-sm" type="button" id="cz-png">⬇️ הציור הצבוע כתמונה</button>
+    </div>
+    <h2 class="mc-step"><b>4</b> ככה זה ייראה בדף</h2>
+    <div class="mc-prev" id="cz-prev"></div>
+  </div>
+
+  <p class="k-next">🧩 עוד דפים להדפסה: <a class="gold" href="/kodesh/chanuka/tzviya/">דפי צביעה לחנוכה</a> · <a class="gold" href="/kelim/chashiva/tifzoret/">מחולל תפזורת</a> · <a class="gold" href="/kelim/chashiva/tashbetz/">מחולל תשבצים</a> · <a class="gold" href="/kelim/chashiva/bingo/">מחולל בינגו</a>. ולמי שאוהב פסיפס: <a class="gold" href="/kelim/chashiva/shachor/">שחור ופתור</a>.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="צביעה לפי מספרים בחינם: הופכים כל תמונה לדף צביעה ממוספר, להדפסה או לצביעה בטלפון:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">דף צביעה לפי מספרים מתמונה אישית</h2>
+  <p>צביעה לפי מספרים היא דף שבו הציור מחולק לאזורים, ובכל אזור כתוב מספר. בתחתית הדף יש מקרא: לכל מספר צבע. צובעים כל אזור בצבע של המספר שלו, ולאט לאט נגלית תמונה שלמה. זו פעילות מרגיעה שמתאימה לגיל הרך, לילדים, לבני נוער ולמבוגרים – ובערכות "צביעה לפי מספרים בעיצוב אישי" משלמים עליה הרבה כסף. כאן אפשר להפוך כל תמונה לדף כזה בחינם: תמונה של הילדים, של חיית המחמד, של סבא וסבתא או של נוף מטיול.</p>
+  <h3>איך זה עובד</h3>
+  <p>המחולל מקטין את התמונה, בוחר את הצבעים שהכי מייצגים אותה (בשיטה שנקראת k-means), ומחליק את הגבולות כדי שלא יהיו נקודות קטנות. אחר כך הוא מאחד אזורים קטנים מדי לשכנים שלהם, כך שבכל אזור יש מספיק מקום לצבוע ולכתוב מספר. המספר נכתב בנקודה הכי רחבה של כל אזור. כל העבודה נעשית בדפדפן, בתוך הטלפון או המחשב שלכם – התמונה לא נשלחת לשום שרת.</p>
+  <h3>צביעה לפי מספרים לילדים ולמבוגרים</h3>
+  <p>ברמה <b>קל</b> האזורים גדולים וכדאי לבחור 5 עד 8 צבעים – מתאים לגיל הרך ולכיתות הנמוכות. ברמה <b>בינוני</b> יש יותר פרטים, וברמה <b>מפורט</b> עם 18 עד 24 צבעים מתקבל דף מאתגר למבוגרים, שדומה לערכות הקנבס. בציורים המוכנים – בית ושמש, דג בים, פרפר, פרח בעציץ, כדור פורח, חנוכייה, מכונית וקשת בענן – הצבעים כבר נבחרו מראש והקווים נקיים במיוחד.</p>
+  <h3>אזורים או משבצות</h3>
+  <p><b>אזורים</b> הוא הסגנון הקלאסי: צורות חופשיות כמו בציור לפי מספרים על קנבס. <b>משבצות</b> מחלק את התמונה לרשת של ריבועים, ובכל ריבוע מספר – כמו פסיפס או ציור פיקסלים. במשבצות קל יותר לילדים לשמור על הגבולות, וזה גם תרגול מצוין לזיהוי מספרים.</p>
+  <h3>טיפים לתמונה שיוצאת יפה</h3>
+  <p>בוחרים תמונה עם נושא אחד ברור ורקע פשוט, באור טוב. פנים יוצאות טוב יותר בצילום קרוב. אם הדף עמוס מדי, מורידים את מספר הצבעים או את רמת הפירוט. אם חסרים פרטים חשובים (עיניים, למשל), מעלים את רמת הפירוט. אפשר לבחור "קווים בהירים", כדי שהקווים והמספרים כמעט לא ייראו אחרי הצביעה.</p>
+  <h3>צביעה אונליין, הדפסה ו-PDF</h3>
+  <p>על המסך בוחרים צבע מהשורה שלמטה ונוגעים באזורים עם אותו מספר. "איפה הצבע הזה?" מסמן את כל האזורים שלו, ו"הגדלה" עוזרת באזורים קטנים. בהדפסה מקבלים דף A4 עם הציור והמקרא, ודף "ככה זה ייראה" להשוואה בסוף. לחגים יש גם <a class="gold" href="/kodesh/chanuka/tzviya/">דפי צביעה לחנוכה</a>, ולמי שאוהב חידות ציור יש <a class="gold" href="/kelim/chashiva/shachor/">שחור ופתור</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך הופכים תמונה לצביעה לפי מספרים?</summary><p>בוחרים "תמונה משלי", בוחרים תמונה מהגלריה או מצלמים, ובוחרים רמת פירוט וכמה צבעים. תוך שניות מתקבל דף צביעה ממוספר עם מקרא צבעים, שאפשר לצבוע על המסך, להדפיס או לשמור כ-PDF.</p></details>
+  <details><summary>התמונה שלי עולה לאינטרנט?</summary><p>לא. כל העיבוד נעשה בתוך הדפדפן שבטלפון או במחשב שלכם, והתמונה לא נשלחת לשום שרת. היא גם לא נשמרת אחרי שסוגרים את הדף.</p></details>
+  <details><summary>כמה צבעים לבחור?</summary><p>לילדים קטנים 5 עד 8 צבעים ורמה "קל". לילדים בבית הספר 10 עד 14. למבוגרים, שרוצים תוצאה שדומה לתמונה, 18 עד 24 צבעים ורמה "מפורט".</p></details>
+  <details><summary>אפשר לצבוע בטלפון בלי להדפיס?</summary><p>כן. בוחרים צבע בשורת הצבעים ונוגעים באזורים שכתוב בהם אותו מספר. ההתקדמות נשמרת בציורים המוכנים, ובסוף אפשר להוריד את הציור הצבוע כתמונה.</p></details>
+  <details><summary>איך מדפיסים דף צביעה לפי מספרים?</summary><p>לוחצים "להדפיס" ובוחרים מדפסת, או "קובץ PDF" כדי לשמור ולשלוח. מקבלים דף A4 עם הציור הממוספר ומקרא הצבעים עם שם לכל צבע, ודף נוסף שמראה איך הציור ייראה צבוע.</p></details>
+  <details><summary>מה ההבדל בין "אזורים" ל"משבצות"?</summary><p>ב"אזורים" הציור מחולק לצורות חופשיות, כמו בערכות של ציור לפי מספרים. ב"משבצות" הוא מחולק לרשת ריבועים עם מספר בכל ריבוע, כמו פסיפס – פשוט יותר לילדים קטנים.</p></details>
+</section>
+<!--/seo-txt-->
