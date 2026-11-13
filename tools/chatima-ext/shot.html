@@ -1,0 +1,27 @@
+<!doctype html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<title>צילום של כל העמוד – הכלים של גילעד רחמים</title>
+<link rel="stylesheet" href="popup.css">
+<style>
+  body { width: auto; max-width: 1100px; margin: 0 auto; padding: 16px; }
+  .bar { position: sticky; top: 0; z-index: 2; background: var(--bg); padding: 8px 0 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .bar button { width: auto; }
+  .gold { background: var(--gold); color: #141210; border: 0; font-weight: 700; }
+  .meta { color: var(--muted); font-size: 13px; flex: 1 1 100%; }
+  #img { display: block; max-width: 100%; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+</style>
+</head>
+<body>
+<header><img src="icon32.png" alt="" width="24" height="24"><b>צילום של כל העמוד</b></header>
+<div class="bar">
+  <button class="gold" type="button" id="png">⬇ להוריד כתמונה (PNG)</button>
+  <button class="line" type="button" id="pdf">📄 להוריד כ-PDF</button>
+  <button class="line" type="button" id="copy">📋 להעתיק את התמונה</button>
+  <p class="meta" id="meta" role="status"></p>
+</div>
+<img id="img" alt="צילום של כל העמוד">
+<script src="shot.js"></script>
+</body>
+</html>

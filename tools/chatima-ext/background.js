@@ -3,6 +3,7 @@
 // כך שכלי חדש באתר מופיע בתוסף – בחיפוש, ואם הוא מקבל קבצים גם בלחיצה הימנית – בלי גרסה חדשה בחנות.
 // קבצים: התוסף מביא את הקובץ שהמשתמש בחר, שומר אותו רגע ב-storage ופותח את הכלי. bridge.js מכניס
 // אותו לכלי. שום דבר לא נשלח לשרת: הכלים עצמם עובדים בתוך הדפדפן.
+importScripts('page-tools.js');   // תיקון שפה, צילום עמוד, הקראה, כיוון עברית, מצב כהה
 var SITE = 'https://hakelim.com';
 var LIST_URL = SITE + '/kelim/tools.json';
 var MAX_BYTES = 300 * 1024 * 1024;
@@ -39,7 +40,8 @@ var CTX = {   // הקשר בכרום ← אילו סוגי קבצים
   image: { types: ['image'] },
   video: { types: ['video'] },
   link: { types: ['pdf'] },
-  page: { types: ['pdf'], patterns: PDF_PAGES }
+  page: { types: ['pdf'], patterns: PDF_PAGES },
+  selection: { types: ['text'] }
 };
 var menuBusy = Promise.resolve();
 function buildMenus() {
@@ -48,7 +50,14 @@ function buildMenus() {
       return new Promise(function (done) {
         chrome.contextMenus.removeAll(function () {
           var C = chrome.contextMenus.create;
-          C({ id: 'hk', title: 'הכלים של גילעד רחמים', contexts: ['image', 'video', 'link', 'page', 'editable'] });
+          C({ id: 'hk', title: 'הכלים של גילעד רחמים', contexts: ['image', 'video', 'link', 'page', 'editable', 'selection'] });
+          C({ parentId: 'hk', id: 'fix', title: 'לתקן: כתבתי בשפה הלא נכונה (Alt+Shift+H)', contexts: ['selection', 'editable'] });
+          C({ parentId: 'hk', id: 'speak', title: '🔊 להקריא בקול', contexts: ['selection'] });
+          C({ parentId: 'hk', id: 'speak-stop', title: '⏹ לעצור את ההקראה', contexts: ['all'], visible: false });
+          C({ parentId: 'hk', id: 'shot', title: '📸 צילום של כל העמוד', contexts: ['page'] });
+          C({ parentId: 'hk', id: 'rtl', title: '↔ לסדר עברית בדף (ימין לשמאל)', contexts: ['page', 'editable'] });
+          C({ parentId: 'hk', id: 'dark', title: '🌙 מצב כהה לדף', contexts: ['page'] });
+          C({ parentId: 'hk', id: 'sep1', type: 'separator', contexts: ['all'] });
           Object.keys(CTX).forEach(function (ctx) {
             var spec = CTX[ctx];
             tools.filter(function (t) { return t.x && t.x.accept.some(function (a) { return spec.types.indexOf(a) >= 0; }); })
@@ -113,8 +122,12 @@ function nameFrom(url, type) {
 function toolUrl(t, withFile) { return SITE + t.u + (withFile ? '?ext=1' : '?utm_source=tosaf'); }
 
 // שומרים את הקובץ ופותחים את הכלי. כלי החתימה מקבל בפורמט הישן (pending), השאר: pendingFiles.
-function openTool(t, file) {
+function openTool(t, file, text) {
   var save = Promise.resolve();
+  if (text) {
+    save = chrome.storage.local.set({ pendingFiles: { id: Date.now() + '', u: t.u, input: t.x.input, at: Date.now(), text: String(text).slice(0, 20000) } });
+    return save.then(function () { return chrome.tabs.create({ url: toolUrl(t, true) }); });
+  }
   if (file) {
     var id = Date.now() + '-' + Math.random().toString(36).slice(2);
     save = t.u === '/kelim/machshev/chatima/'
@@ -203,9 +216,12 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
     return;
   }
   if (id === 'all') { chrome.tabs.create({ url: SITE + '/kelim/?utm_source=tosaf' }); return; }
+  if (PAGE_ACTS[id]) { if (tab && tab.id != null) PAGE_ACTS[id](tab, info); return; }
   var parts = id.split('|');
   if (parts[0] !== 'f') return;
-  var ctx = parts[1], url = ctx === 'link' ? info.linkUrl : ctx === 'page' ? info.pageUrl : info.srcUrl;
+  var ctx = parts[1];
+  if (ctx === 'selection') { findTool(parts.slice(2).join('|')).then(function (t) { if (t) openTool(t, null, info.selectionText); }); return; }
+  var url = ctx === 'link' ? info.linkUrl : ctx === 'page' ? info.pageUrl : info.srcUrl;
   if (!url) return;
   var origin = null;
   try { if (/^https?:/.test(url)) origin = new URL(url).origin + '/*'; } catch (e) { return; }
@@ -218,13 +234,22 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
 chrome.runtime.onMessage.addListener(function (m, sender, reply) {
   if (!m) return;
   if (m.refresh) { refresh(false).then(function () { reply({ ok: true }); }); return true; }
+  if (m.act && PAGE_ACTS[m.act]) {
+    chrome.tabs.get(m.tabId).then(function (tab) { return PAGE_ACTS[m.act](tab, {}); })
+      .then(function (r) { reply(r || { ok: true }); }, function (e) { reply({ ok: false, err: String(e && e.message || e) }); });
+    return true;
+  }
   var u = m.tool || '/kelim/machshev/chatima/';
   if (u.charAt(0) !== '/') u = '/kelim/machshev/' + u + '/';   // תאימות לגרסה 2 (chatima/pdf/fax)
   findTool(u).then(function (t) {
     if (!t) { reply({ ok: false }); return; }
     if (m.data) openTool(t, { name: m.name || 'מסמך.pdf', type: m.type || 'application/pdf', b64: m.data }).then(function () { reply({ ok: true }); });
+    else if (m.text) openTool(t, null, m.text).then(function () { reply({ ok: true }); });
     else if (m.open) openUrl(t, m.open, m.name).then(function (ok) { reply({ ok: ok }); });
     else reply({ ok: false });
   });
   return true;
 });
+
+// קיצור מקשים: Alt+Shift+H מתקן טקסט שנכתב בשפה הלא נכונה
+chrome.commands.onCommand.addListener(function (cmd, tab) { if (cmd === 'fix-layout' && tab) PAGE_ACTS.fix(tab, {}); });

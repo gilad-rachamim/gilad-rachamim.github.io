@@ -167,6 +167,22 @@
       if (/\.pdf($|[?#])/i.test(tabUrl)) { $('pdf').hidden = false; pdfTools(); }
     });
   });
+  // ---------- כלים לדף הזה: צילום, הקראה, כיוון, מצב כהה ----------
+  [].forEach.call(document.querySelectorAll('#acts [data-act]'), function (b) {
+    b.addEventListener('click', function () {
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        var tab = tabs && tabs[0], act = b.getAttribute('data-act');
+        if (!tab || !/^(https?|file):/.test(tab.url || '')) { $('act-msg').textContent = 'בדף הזה כרום לא מאפשר לתוספים לעבוד. נסו באתר רגיל.'; return; }
+        $('act-msg').textContent = act === 'shot' ? 'מצלם את העמוד, רגע…' : '';
+        chrome.runtime.sendMessage({ act: act, tabId: tab.id }, function (r) {
+          void chrome.runtime.lastError;
+          if (r && r.ok) { if (act !== 'speak') window.close(); else $('act-msg').textContent = '🔊 מקריא. לעצור: לחיצה ימנית ← "לעצור את ההקראה".'; }
+          else $('act-msg').textContent = r && r.err === 'no hebrew voice' ? 'אין במחשב קול עברי. ההסבר מופיע בדף.' : r && r.err === 'no text' ? 'קודם מסמנים טקסט בדף.' : 'לא הצלחתי בדף הזה.';
+        });
+      });
+    });
+  });
+
   // רשימה שהתעדכנה ברקע בזמן שהחלון פתוח
   chrome.storage.onChanged.addListener(function (ch, area) {
     if (area === 'local' && (ch.tools || ch.seen)) load().then(render);
