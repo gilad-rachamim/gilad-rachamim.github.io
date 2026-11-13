@@ -33,7 +33,20 @@
     var tries = 0;
     (function put() {
       var inp = document.getElementById(p.input);
-      if (!inp || inp.type !== 'file') { if (++tries < 40) setTimeout(put, 150); return; }
+      if (!inp) { if (++tries < 40) setTimeout(put, 150); return; }
+      if (p.text != null) {   // טקסט מסומן ← שדה הטקסט של הכלי
+        if (!/^(TEXTAREA|INPUT)$/.test(inp.tagName)) return;
+        var proto = inp.tagName === 'TEXTAREA' ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
+        setTimeout(function () {
+          Object.getOwnPropertyDescriptor(proto, 'value').set.call(inp, p.text);
+          inp.dispatchEvent(new Event('input', { bubbles: true }));
+          inp.dispatchEvent(new Event('change', { bubbles: true }));
+          chrome.storage.local.remove('pendingFiles');
+          inp.focus(); if (inp.scrollIntoView) inp.scrollIntoView({ block: 'center' });
+        }, 300);
+        return;
+      }
+      if (inp.type !== 'file') return;
       var dt = new DataTransfer();
       p.files.forEach(function (f) { dt.items.add(new File([bytes(f.b64)], f.name, { type: f.type })); });
       inp.files = dt.files;
