@@ -1,0 +1,76 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "cheshbon_moadim",
+  "title": "מועדי דיווח מע\"מ, מקדמות וניכויים 2026–2027 – לוח מלא עם תזכורת ביומן | הכלים של גילעד רחמים",
+  "description": "לוח מועדי דיווח ותשלום לרשות המסים לשנים 2026 ו-2027: דוח מע\"מ תקופתי, מקדמות מס הכנסה, ניכויים (102) ודוח מפורט (874), לחודשי ולדו-חודשי, לפי ההודעות הרשמיות. ספירה לאחור, תזכורת ביומן, ולוח לכל לקוחות המשרד. בחינם.",
+  "og_title": "מועדי דיווח מע\"מ ומקדמות 2026–2027",
+  "priority": "0.8",
+  "crumbs": [["רואי חשבון ויועצי מס", "/kelim/cheshbon/"], ["לוח מועדי דיווח", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/cheshbon.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"עד מתי מדווחים מע\\\"מ על אוקטובר 2026?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"עד 16.11.2026 – דוח תקופתי ומקדמות, וגם ניכויים. הדוח המפורט (874) עד 23.11.2026.\"}}, {\"@type\": \"Question\", \"name\": \"עד מתי מדווחים על נובמבר 2026?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"דוח מע\\\"מ ומקדמות עד 15.12.2026, ניכויים עד 16.12.2026, ודוח מפורט עד 23.12.2026.\"}}, {\"@type\": \"Question\", \"name\": \"מה המועד לדיווח הדו-חודשי של ספטמבר–אוקטובר?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"המועד של החודש השני בתקופה, כלומר של אוקטובר: 16.11.2026.\"}}, {\"@type\": \"Question\", \"name\": \"למה המועד לא תמיד ב-15 לחודש?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כשה-15 נופל בשישי, בשבת, בראשון או בחג, רשות המסים דוחה את המועד ליום העסקים הבא. היא מפרסמת את הטבלה המלאה פעם בשנה.\"}}, {\"@type\": \"Question\", \"name\": \"מה המועדים ב-2027?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"רשות המסים פרסמה אותם ב-13.10.2026. למשל: על ינואר 2027 – עד 15.2.2027, על מרץ – עד 15.4.2027, ועל ספטמבר – עד 28.10.2027. כולם בלוח.\"}}, {\"@type\": \"Question\", \"name\": \"איך מקבלים תזכורת לפני המועד?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לוחצים \\\"להוסיף את כל המועדים ליומן\\\". נוצר קובץ יומן עם כל המועדים לפי מה שבחרתם, ותזכורת יומיים לפני כל אחד.\"}}]}</script>",
+  "foot": "<script src=\"/assets/cheshbon.js\" defer></script><script src=\"/assets/cheshbon-moadim.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מועדי דיווח מע"מ, מקדמות וניכויים</h1>
+  <p class="sub">המועדים שרשות המסים קבעה לשנים 2026 ו-2027, לפי מה שאתם מדווחים. ספירה לאחור, תזכורת ביומן בטלפון, ולוח אחד לכל לקוחות המשרד.</p>
+</header>
+
+<div class="tool ch" id="moadim">
+  <div class="res" id="md-next" aria-live="polite"></div>
+
+  <form class="k-form" id="md-form" novalidate>
+    <h2>מה מדווחים?</h2>
+    <div class="row2">
+      <div class="field"><label for="md-vat">דוח מע"מ ומקדמות</label><select id="md-vat"><option value="1">חודשי</option><option value="2">דו-חודשי</option><option value="0">לא מדווח</option></select></div>
+      <div class="field"><label for="md-nik">ניכויים מס הכנסה (102)</label><select id="md-nik"><option value="1">חודשי</option><option value="2">דו-חודשי</option><option value="0">אין עובדים / לא מדווח</option></select></div>
+    </div>
+    <div class="chips"><label><input type="checkbox" id="md-mef"> גם דוח מפורט מע"מ (874)</label></div>
+  </form>
+
+  <div class="btns no-print">
+    <button class="btn btn-gold btn-sm" type="button" id="md-ics">📅 להוסיף את כל המועדים ליומן</button>
+    <a class="btn btn-line btn-sm" id="md-gcal" href="#" target="_blank" rel="noopener">למועד הקרוב ביומן גוגל</a>
+    <button class="btn btn-line btn-sm" type="button" onclick="window.print()">להדפיס</button>
+  </div>
+  <p class="hint">היומן בטלפון יזכיר יומיים לפני כל מועד. באייפון ובאנדרואיד הקובץ נפתח ישר ביומן.</p>
+  <ul class="up" id="md-list"></ul>
+
+  <form class="k-form" id="md-clients" novalidate style="margin-top:1.6rem">
+    <h2>לוח למשרד: כל הלקוחות</h2>
+    <p class="hint">מוסיפים לקוחות עם תדירות הדיווח שלהם, ומקבלים בכל מועד את רשימת הלקוחות שצריך לדווח עבורם. נשמר רק בדפדפן הזה.</p>
+    <div class="row2">
+      <div class="field"><label for="mc-name">שם הלקוח</label><input id="mc-name" type="text" maxlength="50" autocomplete="off"></div>
+      <div class="field"><label for="mc-vat">מע"מ ומקדמות</label><select id="mc-vat"><option value="1">חודשי</option><option value="2">דו-חודשי</option><option value="0">לא</option></select></div>
+      <div class="field"><label for="mc-nik">ניכויים</label><select id="mc-nik"><option value="0">לא</option><option value="1">חודשי</option><option value="2">דו-חודשי</option></select></div>
+      <div class="field" style="align-self:end"><button class="btn btn-gold" type="submit">+ להוסיף לקוח</button></div>
+    </div>
+    <div class="field"><label for="mc-paste">או להדביק מאקסל: שם · תדירות מע"מ (חודשי/דו-חודשי) · ניכויים (חודשי/דו-חודשי/לא)</label><textarea id="mc-paste" spellcheck="false" style="min-height:4rem"></textarea></div>
+    <div class="btns"><button class="btn btn-line btn-sm" type="button" id="mc-add-paste">להוסיף מהרשימה</button><button class="btn btn-line btn-sm" type="button" id="mc-csv">להוריד לאקסל</button></div>
+    <ul class="clients" id="mc-list"></ul>
+  </form>
+  <div id="mc-out"></div>
+
+  <p class="src">מקור: הודעות רשות המסים "קביעת מועדי הדיווח והתשלום" <a href="https://www.gov.il/he/pages/pa151025-2" target="_blank" rel="noopener">לשנת 2026</a> ו<a href="https://www.gov.il/he/pages/pa131026-1" target="_blank" rel="noopener">לשנת 2027</a> (פורסמה 13.10.2026). דו-חודשי: המועד הוא של החודש השני בתקופה. במקרה של הארכה או דחייה מיוחדת, ההודעה של רשות המסים קובעת.</p>
+  <div class="share-row no-print"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="לוח מועדי דיווח מע״מ, מקדמות וניכויים ל-2026–2027, עם תזכורת ביומן – בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר</a></div>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">מועדי הדיווח לרשות המסים, 2026–2027</h2>
+  <p>לפי החוק, דוח המע"מ התקופתי והמקדמות למס הכנסה מוגשים ומשולמים עד ה-15 בחודש שאחרי התקופה, הניכויים ממשכורות (טופס 102) עד ה-16, והדוח המפורט למע"מ (874) עד ה-23. בפועל רשות המסים מפרסמת כל שנה טבלה של מועדים מעודכנים, כי כשהמועד נופל בשישי, בשבת, בראשון או בחג הוא נדחה. לכן בשנת 2026, למשל, הדיווח על מרץ נדחה ל-27 באפריל, והדיווח על אוגוסט ל-24 בספטמבר, אחרי החגים.</p>
+  <h3>חודשי או דו-חודשי</h3>
+  <p>עוסק עם מחזור קטן מדווח בדרך כלל על מע"מ פעם בחודשיים: ינואר–פברואר, מרץ–אפריל וכן הלאה. המועד שלו הוא המועד של החודש השני בתקופה. עוסק גדול מדווח כל חודש. גם ניכויים יכולים להיות חודשיים או דו-חודשיים, לפי מספר העובדים והיקף הניכויים. בוחרים בכלי את התדירות של כל סוג דוח, ומקבלים רק את המועדים הרלוונטיים, עם ספירה לאחור.</p>
+  <h3>תזכורת ביומן, ולוח לכל המשרד</h3>
+  <p>בלחיצה אחת כל המועדים נכנסים ליומן בטלפון או במחשב, עם תזכורת יומיים לפני. משרד רואי חשבון מוסיף את הלקוחות שלו עם התדירות של כל אחד, ומקבל בכל מועד את רשימת הלקוחות שצריך לדווח עבורם, להדפסה או לאקסל. הרשימה נשמרת רק בדפדפן שלכם.</p>
+  <p>המועדים בכלי הועתקו מההודעות הרשמיות של רשות המסים לשנים 2026 ו-2027. אם רשות המסים מפרסמת הארכה מיוחדת (למשל בזמן מלחמה), ההודעה שלה קובעת. עוד כלים: <a class="gold" href="/kelim/cheshbon/mikdamot/">מחשבון מקדמות ודוח מע"מ</a>, <a class="gold" href="/kelim/cheshbon/hakzaa/">בודק מספר הקצאה</a>, <a class="gold" href="/kelim/cheshbon/osek/">בדיקת ח.פ</a>, <a class="gold" href="/kelim/briut/tizkorot/">תזכורות ביומן</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>עד מתי מדווחים מע"מ על אוקטובר 2026?</summary><p>עד 16.11.2026 – דוח תקופתי ומקדמות, וגם ניכויים. הדוח המפורט (874) עד 23.11.2026.</p></details>
+  <details><summary>עד מתי מדווחים על נובמבר 2026?</summary><p>דוח מע"מ ומקדמות עד 15.12.2026, ניכויים עד 16.12.2026, ודוח מפורט עד 23.12.2026.</p></details>
+  <details><summary>מה המועד לדיווח הדו-חודשי של ספטמבר–אוקטובר?</summary><p>המועד של החודש השני בתקופה, כלומר של אוקטובר: 16.11.2026.</p></details>
+  <details><summary>למה המועד לא תמיד ב-15 לחודש?</summary><p>כשה-15 נופל בשישי, בשבת, בראשון או בחג, רשות המסים דוחה את המועד ליום העסקים הבא. היא מפרסמת את הטבלה המלאה פעם בשנה.</p></details>
+  <details><summary>מה המועדים ב-2027?</summary><p>רשות המסים פרסמה אותם ב-13.10.2026. למשל: על ינואר 2027 – עד 15.2.2027, על מרץ – עד 15.4.2027, ועל ספטמבר – עד 28.10.2027. כולם בלוח.</p></details>
+  <details><summary>איך מקבלים תזכורת לפני המועד?</summary><p>לוחצים "להוסיף את כל המועדים ליומן". נוצר קובץ יומן עם כל המועדים לפי מה שבחרתם, ותזכורת יומיים לפני כל אחד.</p></details>
+</section>
+<!--/seo-txt-->

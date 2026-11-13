@@ -1,0 +1,52 @@
+/* כלים לרואי חשבון ויועצי מס – עיצוב משותף לארבעת הכלים */
+.ch [hidden]{display:none!important}
+.ch .seg{display:flex;flex-wrap:wrap;gap:.4rem;margin:.2rem 0 .9rem}
+.ch .seg button{flex:1;min-width:8rem;font:inherit;font-size:1rem;padding:.6rem .5rem;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--body);cursor:pointer}
+.ch .seg button[aria-pressed=true]{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700}
+.ch .k-form{margin-top:.4rem}
+.ch .k-form h2{font-family:var(--serif);color:var(--cream);font-size:1.3rem}
+.ch .row2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+@media (max-width:420px){.ch .row2{grid-template-columns:1fr}}
+.ch .num-in{font-size:1.3rem;direction:ltr;text-align:right}
+.ch .res:empty{display:none}
+.ch .res .ok{color:#7fd6b8;font-weight:700}
+.ch .res .bad{color:#f0a08a;font-weight:700}
+.ch .res .warn{color:var(--gold);font-weight:700}
+.ch .res dl{display:grid;grid-template-columns:auto 1fr;gap:.35rem .9rem;margin-top:.7rem;color:var(--body)}
+.ch .res dt{color:var(--muted)}
+.ch .res dd{color:var(--cream);margin:0}
+.ch .sum{display:grid;gap:.3rem;margin-top:.6rem}
+.ch .sum div{display:flex;justify-content:space-between;gap:1rem;border-bottom:1px dashed var(--line);padding:.3rem 0;color:var(--body)}
+.ch .sum div b{color:var(--cream);direction:ltr;unicode-bidi:isolate}
+.ch .sum .tot{font-size:1.2rem;border-bottom:0}
+.ch .sum .tot b{color:var(--gold);font-size:1.35rem}
+.ch .tbl-wrap{overflow-x:auto;margin-top:.8rem;border:1px solid var(--line);border-radius:12px}
+.ch table{width:100%;border-collapse:collapse;font-size:.95rem;color:var(--body)}
+.ch th,.ch td{padding:.5rem .6rem;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+.ch th{color:var(--cream);background:rgba(255,255,255,.04);font-weight:700;white-space:nowrap}
+.ch td.n{direction:ltr;text-align:left;white-space:nowrap;unicode-bidi:isolate}
+.ch tr.is-bad td{background:rgba(240,160,138,.07)}
+.ch tr.is-ok td:first-child{border-inline-start:3px solid #5fbfa6}
+.ch tr.is-bad td:first-child{border-inline-start:3px solid #e08a72}
+.ch .hint{color:var(--muted);font-size:.93rem;margin-top:.3rem}
+.ch .msg{color:var(--gold);min-height:1.2em;margin-top:.4rem}
+.ch .btns{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.8rem}
+.ch .chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.ch .chips label{position:relative;display:inline-flex;align-items:center;gap:.35rem;padding:.45rem .75rem;border:1px solid var(--line);border-radius:999px;cursor:pointer;color:var(--body)}
+.ch .chips input{accent-color:var(--gold)}
+.ch .src{font-size:.9rem;color:var(--muted);margin-top:.8rem}
+.ch .src a{color:var(--gold)}
+.ch .up{display:grid;gap:.5rem;margin-top:.8rem}
+.ch .up li{list-style:none;display:flex;justify-content:space-between;gap:.8rem;padding:.55rem .75rem;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.02)}
+.ch .up li b{color:var(--cream)}
+.ch .up li .d{color:var(--gold);white-space:nowrap}
+.ch .up li.soon{border-color:var(--gold)}
+.ch .clients li{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:.6rem;padding:.4rem 0;border-bottom:1px dashed var(--line)}
+.ch .clients button{font:inherit;background:none;border:0;color:var(--muted);cursor:pointer;min-width:44px;min-height:44px}
+@media print{
+  .topbar,.site-foot,.crumbs,.no-print,.skip,.k-form,.seg,.btns,.share-row,.seo-txt,.seo-faq,.k-hero .sub{display:none!important}
+  body{background:#fff!important;color:#000!important}
+  .ch .res{border:0;background:none}
+  .ch table,.ch th,.ch td,.ch .res *{color:#000!important}
+  .ch .tbl-wrap{overflow:visible;border:0}
+}
