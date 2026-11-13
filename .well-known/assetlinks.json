@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.hakelim.kelim",
+      "sha256_cert_fingerprints": [
+        "A2:C1:93:69:CF:EF:B7:CD:30:4C:A1:4A:38:C0:EA:A2:05:FE:21:53:70:5E:82:40:48:B8:74:54:16:BF:77:02"
+      ]
+    }
+  }
+]
