@@ -1,0 +1,189 @@
+/**
+ * תיק מסמכים לרואה חשבון – הכלים של גילעד רחמים
+ * https://hakelim.com/kelim/cheshbon/tik/
+ *
+ * הקוד הזה רץ בחשבון הגוגל שלכם בלבד.
+ * הקבצים שהלקוחות מעלים נשמרים בגוגל דרייב שלכם, בתיקייה "תיק מסמכים ללקוחות",
+ * והטבלה נשמרת בגיליון באותה תיקייה. שום קובץ לא עובר דרך אתר הכלים.
+ *
+ * התקנה (פעם אחת, כ-5 דקות): ההוראות המלאות בדף "פתיחת חדר" באתר.
+ * גרסה 1 · 14.11.2026
+ */
+var VER = 1;
+var ROOT_NAME = 'תיק מסמכים ללקוחות';
+var MAX_B64 = 34 * 1024 * 1024;   // קובץ עד ~25MB
+var DAY_LIMIT = 300;               // העלאות ללקוח ביום
+var C_HEAD = ['שם הלקוח', 'סוג', 'קוד', 'תיקייה', 'נוצר', 'פעיל'];
+var D_HEAD = ['הועלה', 'לקוח', 'שנה', 'מגירה', 'חודש', 'סכום', 'הערה', 'שם הקובץ', 'קישור', 'מזהה', 'קוד לקוח', 'נמחק'];
+
+function doGet() { return out_({ ok: true, app: 'tik', ver: VER }); }
+
+function doPost(e) {
+  var b;
+  try { b = JSON.parse(e.postData.contents); } catch (x) { return out_({ ok: false, err: 'bad' }); }
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(20000);
+    return out_(route_(b || {}));
+  } catch (x) {
+    return out_({ ok: false, err: 'server', msg: String(x && x.message || x).slice(0, 200) });
+  } finally {
+    try { lock.releaseLock(); } catch (x) {}
+  }
+}
+
+function route_(b) {
+  var P = PropertiesService.getScriptProperties();
+  var a = String(b.a || '');
+  if (a === 'ping') return { ok: true, app: 'tik', ver: VER, ready: !!P.getProperty('ADMIN') };
+  if (a === 'init') {
+    if (P.getProperty('ADMIN')) return { ok: false, err: 'already' };
+    var key = rnd_(32);
+    P.setProperty('ADMIN', key);
+    P.setProperty('OFFICE', clip_(b.office, 80) || 'המשרד');
+    setup_();
+    return { ok: true, key: key, office: P.getProperty('OFFICE'), sheet: ss_().getUrl(), folder: root_().getUrl() };
+  }
+  // ---- פעולות של רואה החשבון (עם המפתח) ----
+  if (a.charAt(0) === 'm') {
+    if (!P.getProperty('ADMIN') || String(b.key || '') !== P.getProperty('ADMIN')) return { ok: false, err: 'key' };
+    if (a === 'mInfo') return { ok: true, office: P.getProperty('OFFICE'), sheet: ss_().getUrl(), folder: root_().getUrl(), ver: VER };
+    if (a === 'mOffice') { P.setProperty('OFFICE', clip_(b.office, 80) || 'המשרד'); return { ok: true, office: P.getProperty('OFFICE') }; }
+    if (a === 'mAdd') return addClient_(b);
+    if (a === 'mClients') return { ok: true, clients: clients_().map(function (c) { return { name: c.name, type: c.type, t: c.t, on: c.on, created: c.created }; }) };
+    if (a === 'mDocs') return { ok: true, docs: docs_(b.year, null) };
+    if (a === 'mClient') return setClient_(b);
+    return { ok: false, err: 'action' };
+  }
+  // ---- פעולות של לקוח (עם הקוד האישי שלו) ----
+  var c = byToken_(b.t);
+  if (!c) return { ok: false, err: 'token' };
+  if (!c.on) return { ok: false, err: 'off' };
+  if (a === 'cInfo') return { ok: true, office: P.getProperty('OFFICE'), name: c.name, type: c.type, docs: docs_(b.year, c.t) };
+  if (a === 'cUp') return upload_(c, b);
+  if (a === 'cDel') return delDoc_(c, b.id);
+  return { ok: false, err: 'action' };
+}
+
+function addClient_(b) {
+  var name = clip_(b.name, 60);
+  if (!name) return { ok: false, err: 'name' };
+  var type = b.type === 'osek' ? 'osek' : 'sachir';
+  var t = rnd_(24);
+  var f = root_().createFolder(name);
+  sheet_('לקוחות', C_HEAD).appendRow([name, type === 'osek' ? 'עוסק' : 'שכיר / פרטי', t, f.getUrl(), new Date(), 'כן']);
+  return { ok: true, client: { name: name, type: type, t: t, on: true } };
+}
+
+function setClient_(b) {
+  var sh = sheet_('לקוחות', C_HEAD), v = sh.getDataRange().getValues();
+  for (var i = 1; i < v.length; i++) {
+    if (String(v[i][2]) === String(b.t || '')) {
+      if (b.on != null) sh.getRange(i + 1, 6).setValue(b.on ? 'כן' : 'לא');
+      if (b.name) sh.getRange(i + 1, 1).setValue(clip_(b.name, 60));
+      return { ok: true };
+    }
+  }
+  return { ok: false, err: 'token' };
+}
+
+function upload_(c, b) {
+  var data = String(b.data || '');
+  if (!data || data.length > MAX_B64) return { ok: false, err: 'size' };
+  var cache = CacheService.getScriptCache(), ck = 'n_' + c.t, n = +(cache.get(ck) || 0);
+  if (n >= DAY_LIMIT) return { ok: false, err: 'limit' };
+  cache.put(ck, String(n + 1), 21600);
+  var year = /^\d{4}$/.test(String(b.year)) ? String(b.year) : String(new Date().getFullYear());
+  var drawer = clip_(b.drawer, 60) || 'אחר';
+  var month = clip_(b.month, 20);
+  var mime = /^[\w.+-]+\/[\w.+-]+$/.test(String(b.mime || '')) ? String(b.mime) : 'application/octet-stream';
+  var orig = clip_(b.name, 120).replace(/[\\/:*?"<>|]/g, '_') || 'מסמך';
+  var fname = (month ? month + ' - ' : '') + orig;
+  var folder = sub_(sub_(sub_(root_(), year), c.name), drawer);
+  var file = folder.createFile(Utilities.newBlob(Utilities.base64Decode(data), mime, fname));
+  var amount = b.amount === '' || b.amount == null || isNaN(+b.amount) ? '' : +b.amount;
+  sheet_('מסמכים', D_HEAD).appendRow([new Date(), c.name, year, drawer, month, amount, clip_(b.note, 200), fname, file.getUrl(), file.getId(), c.t, '']);
+  return { ok: true, id: file.getId() };
+}
+
+function delDoc_(c, id) {
+  var sh = sheet_('מסמכים', D_HEAD), v = sh.getDataRange().getValues();
+  for (var i = 1; i < v.length; i++) {
+    if (String(v[i][9]) === String(id || '') && String(v[i][10]) === c.t && !v[i][11]) {
+      try { DriveApp.getFileById(String(id)).setTrashed(true); } catch (x) {}
+      sh.getRange(i + 1, 12).setValue(new Date());
+      return { ok: true };
+    }
+  }
+  return { ok: false, err: 'nf' };
+}
+
+function docs_(year, token) {
+  var sh = sheet_('מסמכים', D_HEAD), v = sh.getDataRange().getValues(), out = [];
+  for (var i = 1; i < v.length; i++) {
+    var r = v[i];
+    if (r[11]) continue;
+    if (year && String(r[2]) !== String(year)) continue;
+    if (token && String(r[10]) !== token) continue;
+    var row = { at: r[0] instanceof Date ? r[0].toISOString() : String(r[0]), year: String(r[2]), drawer: String(r[3]), month: String(r[4]), amount: r[5] === '' ? '' : +r[5], note: String(r[6]), name: String(r[7]), id: String(r[9]) };
+    if (!token) { row.client = String(r[1]); row.t = String(r[10]); row.url = String(r[8]); }
+    out.push(row);
+  }
+  return out;
+}
+
+function clients_() {
+  var v = sheet_('לקוחות', C_HEAD).getDataRange().getValues(), out = [];
+  for (var i = 1; i < v.length; i++) out.push({ name: String(v[i][0]), type: String(v[i][1]) === 'עוסק' ? 'osek' : 'sachir', t: String(v[i][2]), on: String(v[i][5]) !== 'לא', created: v[i][4] instanceof Date ? v[i][4].toISOString() : '' });
+  return out;
+}
+function byToken_(t) {
+  t = String(t || '');
+  if (t.length < 20) return null;
+  var cs = clients_();
+  for (var i = 0; i < cs.length; i++) if (cs[i].t === t) return cs[i];
+  return null;
+}
+
+// ---- דרייב וגיליון ----
+function setup_() { root_(); sheet_('לקוחות', C_HEAD); sheet_('מסמכים', D_HEAD); }
+function root_() {
+  var P = PropertiesService.getScriptProperties(), id = P.getProperty('ROOT');
+  if (id) { try { return DriveApp.getFolderById(id); } catch (x) {} }
+  var f = DriveApp.createFolder(ROOT_NAME);
+  P.setProperty('ROOT', f.getId());
+  return f;
+}
+function ss_() {
+  var P = PropertiesService.getScriptProperties(), id = P.getProperty('SHEET');
+  if (id) { try { return SpreadsheetApp.openById(id); } catch (x) {} }
+  var ss = SpreadsheetApp.create('תיק מסמכים - טבלת הלקוחות');
+  var file = DriveApp.getFileById(ss.getId());
+  root_().addFile(file);
+  try { DriveApp.getRootFolder().removeFile(file); } catch (x) {}
+  P.setProperty('SHEET', ss.getId());
+  var first = ss.getSheets()[0];
+  first.setName('לקוחות'); first.appendRow(C_HEAD); first.setFrozenRows(1); first.setRightToLeft(true);
+  return ss;
+}
+function sheet_(name, head) {
+  var ss = ss_(), sh = ss.getSheetByName(name);
+  if (!sh) { sh = ss.insertSheet(name); sh.appendRow(head); sh.setFrozenRows(1); sh.setRightToLeft(true); }
+  return sh;
+}
+function sub_(parent, name) {
+  var it = parent.getFoldersByName(name);
+  return it.hasNext() ? it.next() : parent.createFolder(name);
+}
+
+// ---- עזרים ----
+function rnd_(n) {
+  var s = '';
+  while (s.length < n) s += Utilities.getUuid().replace(/-/g, '');
+  return s.slice(0, n);
+}
+function clip_(s, n) { return String(s == null ? '' : s).replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, n); }
+function out_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
+
+// להרצה ידנית מהעורך: מאשר את ההרשאות ויוצר את התיקייה והגיליון
+function setup() { setup_(); Logger.log('מוכן. התיקייה: ' + root_().getUrl()); }
