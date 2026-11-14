@@ -137,9 +137,9 @@
     if (!cfg) return;
     T.call(cfg.u, { a: 'mInfo', key: cfg.key }).then(function (r) {
       if (!r.ok) return;
-      var old = (r.ver || 1) < 4;
+      var old = (r.ver || 1) < 5;
       $('cd-upgrade').hidden = !old;
-      $('cd-remind').checked = !!r.remind; $('cd-remind').disabled = old;
+      $('cd-remind').checked = !!r.remind; $('cd-remind').disabled = (r.ver || 1) < 4;
     }).catch(function () {});
   }
   $('cd-remind').addEventListener('change', function () {
