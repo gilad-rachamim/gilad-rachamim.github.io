@@ -407,7 +407,8 @@ def demo_block(meta, url):
         return "", ""
     sp = DEMO_SPECS / f"{tool}.json"
     spec = json.loads(sp.read_text(encoding="utf-8")) if sp.exists() else {}
-    dur = sum(s.get("dur", 0) for s in spec.get("scenes", [])) or 45
+    dur = spec.get("duration") or sum(s.get("dur", 0) for s in spec.get("scenes", [])) or 45
+    wide = spec.get("wide")  # סרטון הדרכה לרוחב (16:9), למשל צילומי מסך של מחשב
     name = spec.get("name", "ככה זה עובד")
     v, poster = f"/assets/demo/{tool}.mp4", f"/assets/demo/{tool}.jpg"
     post, status = f"/assets/demo/{tool}-post.png", f"/assets/demo/{tool}-status.png"
@@ -420,11 +421,12 @@ def demo_block(meta, url):
           f'<a class="btn btn-line" href="{status}" download data-dv-dl="status">⬇️ להורדה (סטטוס)</a></div></details>') if has_fl else ""
     blk = (
         '<style>.dv-sec .dv-video{display:block;width:100%;max-width:20rem;aspect-ratio:9/16;height:auto;margin:.6rem auto 0;border-radius:1.2rem;background:#0e1628;box-shadow:0 8px 30px rgba(0,0,0,.35)}'
+        '.dv-sec .dv-video.dv-wide{max-width:100%;aspect-ratio:16/9;border-radius:.8rem}'
         '.dv-acts{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.9rem}.dv-acts .btn{font-size:.95rem}'
         '.dv-fl{margin-top:1rem}.dv-fl summary{cursor:pointer;color:var(--gold);font-weight:700;text-align:center}'
         '.dv-fl img{display:block;width:100%;max-width:24rem;height:auto;margin:.8rem auto 0;border-radius:1rem}</style>'
         f'<section class="k-sec dv-sec no-print" aria-labelledby="dv-h"><h2 id="dv-h">🎬 {html_lib.escape(name)}</h2>'
-        f'<video class="dv-video" controls playsinline preload="none" poster="{poster}" width="720" height="1280" aria-label="{html_lib.escape(spec.get("description", name))}" data-dv-play="{tool}">'
+        f'<video class="dv-video{' dv-wide' if wide else ''}" controls playsinline preload="none" poster="{poster}" width="{1280 if wide else 720}" height="{720 if wide else 1280}" aria-label="{html_lib.escape(spec.get("description", name))}" data-dv-play="{tool}">'
         f'<source src="{v}" type="video/mp4"></video>'
         f'<div class="dv-acts"><button type="button" class="btn btn-gold" data-dv-share="{v}" data-dv-kind="video">💌 לשלוח את הסרטון לחבר</button>'
         f'<a class="btn btn-line" href="{v}" download data-dv-dl="video">⬇️ להורדת הסרטון</a></div>{fl}'
