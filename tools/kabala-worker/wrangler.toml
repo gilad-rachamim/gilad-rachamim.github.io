@@ -1,0 +1,24 @@
+# "קורא הקבלות" – סכום, תאריך ושם העסק מצילום קבלה, לרואי חשבון שותפים בפורטל /kelim/cheshbon/tik/.
+# פריסה:  cd tools/kabala-worker && npx wrangler deploy        (אותו חשבון כמו kelim-shir; כל פריסה רק אחרי "כן" של גילעד)
+# סוד:    npx wrangler secret put PARTNER_SECRET            (אותו סוד של קודי השותפים: ~/.claude/secrets/chaye-partner-secret.txt)
+# Workers AI במכסה החינמית (Llama 4 Scout). קבלה אחת ≈ 60 נוירונים, לכן התקרה היומית לכל האתר DAY_CAP.
+name = "kelim-kabala"
+main = "kabala-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[ai]
+binding = "AI"
+
+[vars]
+PER_PARTNER = "80"
+DAY_CAP = "150"
+REVOKED = ""
+
+[[durable_objects.bindings]]
+name = "QUOTA"
+class_name = "Quota"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Quota"]
