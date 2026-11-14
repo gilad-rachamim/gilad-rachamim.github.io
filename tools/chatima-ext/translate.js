@@ -12,14 +12,30 @@
   var RTL = { he: 1, ar: 1, fa: 1, ur: 1, yi: 1 };
   var HEB = /[֐-׿]/, HEB_G = /[֐-׿]/g, LET_G = /\p{L}/gu, TWO = /\p{L}{2}/u;
   // לא מתרגמים: קוד, שדות כתיבה, מה שהאתר סימן "לא לתרגם", והחלקים שלנו
-  var SKIP = 'script,style,noscript,template,code,pre,kbd,samp,textarea,input,select,option,svg,math,canvas,video,audio,iframe,object,[contenteditable=""],[contenteditable="true"],[translate="no"],.notranslate,hk-tr,hk-tr-ui';
+  // .html5-video-player = נגן יוטיוב: את הכתוביות שלו מתרגמים בנפרד (למטה, "כתוביות ביוטיוב")
+  var SKIP = 'script,style,noscript,template,code,pre,kbd,samp,textarea,input,select,option,svg,math,canvas,video,audio,iframe,object,[contenteditable=""],[contenteditable="true"],[translate="no"],.notranslate,.html5-video-player,hk-tr,hk-tr-ui,hk-tr-cap';
   var HARD = 'script,style,noscript,template,svg,math,textarea,select,input,hk-tr';
+  // קישורים והדגשות בתוך משפט: נשמרים גם בתרגום (הקישור נשאר לחיץ)
+  var RICH = 'a[href],b,strong,em,i,u,mark';
+  // שמות של מוצרים ומונחי תכנות נשארים כמו שהם (אחרת React יוצא "להגיב" ו-Intersection Observer "צופה צומת").
+  // המילון האישי גובר על הרשימה הזאת.
+  // רק שמות שהמנוע הופך למילה רגילה (React "להגיב", Rust "חלודה", Flask "בקבוק"). שמות כמו Microsoft או Google
+  // נשארים לתרגום, כי בעברית כותבים אותם "מיקרוסופט", "גוגל".
+  var BRANDS = ['React Native', 'React', 'Next.js', 'Node.js', 'Nuxt', 'Vue', 'Vue.js', 'Angular', 'Svelte', 'SvelteKit', 'Gatsby', 'Vite', 'Webpack', 'Babel', 'ESLint', 'Prettier', 'Tailwind', 'Tailwind CSS', 'Bootstrap', 'jQuery', 'Redux', 'Zustand', 'Flutter', 'Electron', 'Deno', 'Rust', 'Kotlin', 'Ruby on Rails', 'Django', 'Flask', 'FastAPI', 'Laravel', 'Spring Boot', 'Docker', 'Kubernetes', 'Git', 'npm', 'pnpm', 'Yarn', 'Server Components', 'Server Actions', 'MDN', 'Stack Overflow', 'Visual Studio Code', 'VS Code', 'Figma', 'Vercel', 'Netlify', 'Firebase', 'Supabase', 'MongoDB', 'PostgreSQL', 'MySQL', 'SQLite', 'Redis', 'GraphQL', 'JSX', 'TSX', 'DOM', 'WebAssembly', 'WebGL', 'WebGPU', 'WebSocket', 'WebSockets', 'Intersection Observer', 'Intersection Observer API', 'Mutation Observer', 'Resize Observer', 'Service Worker', 'Service Workers', 'Web Workers', 'Web Worker', 'Web Components', 'Hook', 'Hooks', 'Shadow DOM', 'Fetch API', 'Web API', 'Web APIs', 'Raspberry Pi', 'Microsoft Teams'];
+  // מילים בצורה של קוד שהן בעצם שמות מוכרים, ונכתבים בעברית ("וואטסאפ", "יוטיוב"): מתרגמים כרגיל
+  var POPULAR = { YouTube: 1, WhatsApp: 1, iPhone: 1, iPad: 1, iPod: 1, TikTok: 1, LinkedIn: 1, PlayStation: 1, McDonald: 1, McDonalds: 1, OpenAI: 1, ChatGPT: 1, PayPal: 1, FedEx: 1, eBay: 1, iOS: 1, macOS: 1, SpaceX: 1, BlackRock: 1, AstraZeneca: 1, GlaxoSmithKline: 1, PepsiCo: 1, HarperCollins: 1, JetBlue: 1, DreamWorks: 1, MasterCard: 1, MasterChef: 1, SoftBank: 1, DeepMind: 1, DeepSeek: 1, MediaTek: 1, MacBook: 1, AirPods: 1, iCloud: 1, iTunes: 1, FaceTime: 1, YouGov: 1, McKinsey: 1, GoFundMe: 1 };
+  var BRAND_RE = new RegExp('(^|[^\\p{L}\\p{N}_.@/-])(' + BRANDS.slice().sort(function (a, b) { return b.length - a.length; }).map(esc).join('|') + ')(?![\\p{L}\\p{N}_])', 'gu');
+  // מילים שנראות כמו קוד: useState, getElementById, IntersectionObserver, fetch(), index.js
+  var CODE_RE = /(^|[^\p{L}\p{N}_.])([a-z]+[A-Z][\p{L}\p{N}_]*|[A-Z][a-z]+[A-Z][\p{L}\p{N}_]*|[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*\(\)|[\w-]+\.(?:js|jsx|ts|tsx|mjs|json|py|css|html|md|php|rb|go|rs|sh|yml|yaml|xml|toml))(?![\p{L}\p{N}_])/gu;
   // כפתורים, קישורים בתפריט ותוויות: במצב דו-לשוני לא מכפילים אותם (שלא יישבר העיצוב), במצב "רק תרגום" כן
   var UI = 'a,button,label,summary,option,nav,header,[role="button"],[role="tab"],[role="menuitem"],[role="option"],[role="navigation"],[role="menubar"],[role="tablist"],[role="banner"]';
 
+  var YT = /(^|\.)youtube\.com$/.test(location.hostname);
   var S = { on: false, mode: 'bi', src: '', tgt: 'he', tr: null, pairs: {}, byBlock: new Map(), queue: [], busy: 0, done: 0, cache: {}, ckey: '', gloss: [], ghash: '', err: '' };
   var disp = new WeakMap();
-  function display(el) { var d = disp.get(el); if (d === undefined) { d = getComputedStyle(el).display; disp.set(el, d); } return d; }
+  // getComputedStyle של החלון שהאלמנט שייך אליו (גם בתוך iframe מאותו אתר)
+  function gcs(el) { return (el.ownerDocument && el.ownerDocument.defaultView || window).getComputedStyle(el); }
+  function display(el) { var d = disp.get(el); if (d === undefined) { d = gcs(el).display; disp.set(el, d); } return d; }
   // inline-block וכו' נחשבים חלק מהשורה (כדי לא לחתוך משפט באמצע). בתוך flex/grid כרום ממילא מדווח עליהם block.
   function isInline(el) { var d = display(el); return d === 'inline' || d === 'contents' || d.indexOf('inline-') === 0; }
   function clean(t) { return t.replace(/\s+/g, ' ').trim(); }
@@ -29,7 +45,8 @@
   // ---------- מה נחשב "קטע" ----------
   function blockOf(node) {
     var el = node.nodeType === 1 ? node : node.parentElement;
-    while (el && el !== document.body && el !== document.documentElement && isInline(el)) el = el.parentElement;
+    // עוצרים גם בראש של רכיב סגור (shadow root), שם אין "הורה"
+    while (el && el.parentElement && el !== el.ownerDocument.body && isInline(el)) el = el.parentElement;
     return el;
   }
   function textOf(n) {
@@ -71,10 +88,32 @@
     var out = [];
     runs.forEach(function (r) {
       r.text = clean(r.nodes.map(textOf).join(''));
-      if (worth(r.text)) out.push(r);
+      if (worth(r.text)) { var m = markOf(r.nodes); r.rich = m.rich; r.marked = m.marked; out.push(r); }
     });
     out.leaf = !boundary && runs.length === 1;
     return out;
+  }
+  // הטקסט של הקטע עם סימנים סביב קישורים והדגשות: <x1>…</x1>. משמש רק כדי למצוא איפה הקישור נמצא בתרגום.
+  function markOf(nodes) {
+    var rich = [], s = '';
+    function walk(n, depth) {
+      if (n.nodeType === 3) { s += n.nodeValue; return; }
+      if (n.nodeType !== 1 || n.matches(HARD)) return;
+      if (n.localName === 'br') { s += ' '; return; }
+      var k = 0;
+      if (depth < 2 && rich.length < 8 && n.matches(RICH)) {
+        var t = clean(textOf(n));
+        if (TWO.test(t) && display(n) !== 'none') {
+          var ln = n.localName;
+          k = rich.push({ el: n, tag: ln === 'a' ? 'a' : ln === 'b' || ln === 'strong' ? 'b' : ln === 'u' || ln === 'mark' ? ln : 'i', text: t });
+        }
+      }
+      if (k) s += '<x' + k + '>';
+      for (var c = n.firstChild; c; c = c.nextSibling) walk(c, depth + (k ? 1 : 0));
+      if (k) s += '</x' + k + '>';
+    }
+    nodes.forEach(function (n) { walk(n, 0); });
+    return { rich: rich, marked: clean(s) };
   }
   function addBlock(b) {
     if (!b || !b.isConnected) return;
@@ -84,12 +123,12 @@
     if (old && old.sig === sig) { old.units.forEach(place); return; }     // אותו טקסט: רק לוודא שהתרגום במקום
     if (old) drop(b);
     if (!runs.length) return;
-    var ui = !!b.closest(UI) || /nowrap/.test(getComputedStyle(b).whiteSpace);
+    var ui = !!b.closest(UI) || /nowrap/.test(gcs(b).whiteSpace);
     var rec = { sig: sig, units: runs.map(function (r) {
       // קטע שכולו קישור או כפתור אחד (תפריט, פירורי לחם) נחשב גם הוא "כפתור"
       var solid = r.nodes.filter(function (n) { return n.nodeType === 1 || n.nodeValue.trim(); });
       var solo = solid.length === 1 && solid[0].nodeType === 1 && solid[0].matches('a,button,[role="button"],[role="link"],[role="menuitem"],[role="tab"]');
-      return { block: b, nodes: r.nodes, text: r.text, tr: null, out: null, q: 0, leaf: runs.leaf, ui: (ui || solo) && r.text.split(' ').length < 5 };
+      return { block: b, nodes: r.nodes, text: r.text, rich: r.rich, marked: r.marked, layout: null, tr: null, out: null, q: 0, leaf: runs.leaf, ui: (ui || solo) && r.text.split(' ').length < 5 };
     }) };
     S.byBlock.set(b, rec);
     io.observe(b);
@@ -103,14 +142,62 @@
   function scan(root) {
     if (!root || !root.isConnected) return;
     if (root.nodeType === 3) { addBlock(blockOf(root)); return; }
-    if (root.nodeType !== 1 || root.closest(SKIP)) return;
-    var blocks = new Set(), w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: function (t) { return TWO.test(t.nodeValue) ? 1 : 3; } }), t;
+    if (root.nodeType === 1 && root.closest(SKIP)) { if (root.localName === 'iframe') frame(root); return; }
+    if (root.nodeType !== 1 && root.nodeType !== 11) return;
+    var doc = root.ownerDocument || document;
+    var blocks = new Set(), w = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: function (t) { return TWO.test(t.nodeValue) ? 1 : 3; } }), t;
     while ((t = w.nextNode())) {
       var p = t.parentElement;
       if (!p || p.closest(SKIP)) continue;
-      blocks.add(blockOf(t));
+      var b = blockOf(t);
+      if (b) blocks.add(b);
     }
     blocks.forEach(addBlock);
+    // רכיבים סגורים (shadow DOM פתוח) ומסגרות פנימיות מאותו אתר: גם הם חלק מהדף
+    var all = root.querySelectorAll('*');
+    for (var i = 0; i < all.length; i++) {
+      var e = all[i];
+      if (e.localName === 'iframe') frame(e);
+      else if (e.shadowRoot && e.localName !== 'hk-tr-ui' && !e.closest(SKIP)) addRoot(e.shadowRoot);
+    }
+  }
+
+  // ---------- רכיבים סגורים ומסגרות פנימיות ----------
+  // העיצוב של translate.css לא נכנס לתוך shadow root או iframe, אז מכניסים אותו בעצמנו (העתק של translate.css)
+  var TRCSS = 'hk-tr{unicode-bidi:isolate!important;text-align:start!important;text-indent:0!important;text-transform:none!important;letter-spacing:normal!important;font-style:normal!important;white-space:normal!important}' +
+    'hk-tr.hk-bi{display:block!important;margin:.3em 0 .15em!important;padding-inline-start:.55em!important;border-inline-start:3px solid rgba(201,162,75,.8)!important;opacity:.96}' +
+    'hk-tr.hk-only,[data-hk-hide] hk-tr.hk-only{display:block!important;font-size:var(--hk-fs)!important;line-height:var(--hk-lh)!important}' +
+    'hk-tr.hk-only.hk-inl,[data-hk-hide] hk-tr.hk-only.hk-inl{display:inline!important}' +
+    '[data-hk-hide]{font-size:0!important;line-height:0!important;margin-block:var(--hk-mb)!important;padding:var(--hk-p)!important}' +
+    '[data-hk-hide]>:not(hk-tr),[data-hk-hide]>:not(hk-tr) *{font-size:0!important}[data-hk-hide] svg,[data-hk-hide] img{font-size:var(--hk-fs)!important}' +
+    'hk-tr.hk-off{display:none!important}hk-tr .hk-more{font-size:.85em;opacity:.85}';
+  var roots = new Set(), gen = 1, MO = { childList: true, subtree: true, characterData: true };
+  function addRoot(r) {
+    if (!r || roots.has(r)) return;
+    roots.add(r);
+    try {
+      if (r.nodeType === 11) {
+        var sh = new CSSStyleSheet(); sh.replaceSync(TRCSS);
+        r.adoptedStyleSheets = r.adoptedStyleSheets.concat([sh]);
+      } else if (r !== document && !r.getElementById('hk-tr-css')) {
+        var st = r.createElement('style'); st.id = 'hk-tr-css'; st.textContent = TRCSS; (r.head || r.documentElement).appendChild(st);
+      }
+    } catch (e) {}
+    var top = r.nodeType === 9 ? r.body : r;
+    if (!top) return;
+    mo.observe(top, MO);
+    scan(top);
+  }
+  function frame(f) {
+    if (f.__hkF === gen) return;
+    f.__hkF = gen;
+    var my = gen;
+    function go() {
+      if (my !== gen || !S.on || !S.tr) return;
+      try { var d = f.contentDocument; if (d && d.body && d.location.href !== 'about:blank') addRoot(d); } catch (e) {}   // מאתר אחר: כרום לא נותן להיכנס
+    }
+    f.addEventListener('load', go);
+    go();
   }
 
   // ---------- הצגה ----------
@@ -120,22 +207,57 @@
     for (var i = u.nodes.length - 1; i >= 0; i--) if (u.nodes[i].parentNode === u.block) { anchor = u.nodes[i]; break; }
     if (!anchor) return;
     if (!u.tr) {
-      u.tr = document.createElement('hk-tr');
+      u.tr = u.block.ownerDocument.createElement('hk-tr');
       u.tr.setAttribute('translate', 'no');
       u.tr.__hk = u;
     }
     u.tr.setAttribute('dir', RTL[base(S.tgt)] ? 'rtl' : 'ltr');
     u.tr.setAttribute('lang', S.tgt);
-    if (u.tr.textContent !== u.out) u.tr.textContent = u.out;
+    fill(u);
     if (u.tr.previousSibling !== anchor || u.tr.parentNode !== u.block) u.block.insertBefore(u.tr, anchor.nextSibling);
     look(u);
+  }
+  // התרגום עם הקישורים וההדגשות במקומם. קישור בתרגום מפעיל את הקישור המקורי (כך גם אתרי React מנווטים כרגיל).
+  function fill(u) {
+    var key = u.out + '\u0001' + (u.layout ? JSON.stringify(u.layout.r) + JSON.stringify(u.layout.x) : '');
+    if (u.tr.__key === key) return;
+    u.tr.__key = key; u.tr.textContent = '';
+    if (!u.layout) { u.tr.textContent = u.out; return; }
+    var pos = 0, out = u.out;
+    u.layout.r.forEach(function (x) {
+      if (x[1] < pos) return;
+      if (x[1] > pos) u.tr.appendChild(u.tr.ownerDocument.createTextNode(out.slice(pos, x[1])));
+      u.tr.appendChild(richEl(u, x[0], out.slice(x[1], x[2])));
+      pos = x[2];
+    });
+    if (pos < out.length) u.tr.appendChild(u.tr.ownerDocument.createTextNode(out.slice(pos)));
+    // קישור שלא נמצא לו מקום בתוך המשפט המתורגם: מופיע בסוף, שלא ילך לאיבוד
+    u.layout.x.forEach(function (x) {
+      u.tr.appendChild(u.tr.ownerDocument.createTextNode(' '));
+      var a = richEl(u, x[0], '↗ ' + x[1]); a.className = 'hk-more'; u.tr.appendChild(a);
+    });
+  }
+  function richEl(u, k, text) {
+    var r = u.rich[k - 1], d = u.tr.ownerDocument, e;
+    if (r.tag === 'a') {
+      e = d.createElement('a');
+      e.href = r.el.href;
+      if (r.el.target) e.target = r.el.target;
+      e.rel = 'noopener';
+      e.addEventListener('click', function (ev) {
+        if (ev.ctrlKey || ev.metaKey || ev.shiftKey || ev.button) return;      // לשונית חדשה: כרגיל
+        if (r.el.isConnected) { ev.preventDefault(); r.el.click(); }
+      });
+    } else e = d.createElement(r.tag);
+    e.textContent = text;
+    return e;
   }
   function look(u) {
     if (!u.tr) return;
     var only = S.mode === 'only' && u.leaf, b = u.block;
     if (only) {
       if (!b.hasAttribute('data-hk-hide')) {
-        var cs = getComputedStyle(b);
+        var cs = gcs(b);
         b.style.setProperty('--hk-fs', cs.fontSize);
         b.style.setProperty('--hk-lh', cs.lineHeight);
         // רווחים שמוגדרים לפי גודל הכתב (em) היו נעלמים כשהמקור מוסתר: שומרים אותם בפיקסלים
@@ -174,19 +296,51 @@
     });
     return hits;
   }
-  function pre(text, hits) {
-    hits.forEach(function (h, i) { h.tok = '[' + (71 + i) + ']'; text = text.replace(h.re, function (m, p) { return p + h.tok; }); });
-    return text;
-  }
-  function post(out, hits) {
-    hits.forEach(function (h) {
-      var re = new RegExp('([הובכלמש]{0,3})-?' + esc(h.tok), 'g');
-      out = out.replace(re, function (m, pfx) {
-        if (HEB.test(h.to) && pfx) { if (/ה$/.test(pfx) && /^ה/.test(h.to)) pfx = pfx.slice(0, -1); return pfx + h.to; }
-        return pfx + h.to;
-      });
+  // לפני התרגום: מונחים מהמילון ושמות מוצרים מוחלפים בסימן [מספר] שהמנוע לא נוגע בו.
+  // מחזיר את הטקסט עם הסימנים ואת הרשימה של מה להחזיר במקום כל סימן.
+  function encode(text, src, keep) {
+    var toks = [], n = 71;
+    glossFor(text, src).forEach(function (h) {
+      var tok = '[' + (n++) + ']';
+      text = text.replace(h.re, function (m, p) { return p + tok; });
+      toks.push({ tok: tok, to: h.to });
     });
+    if (keep !== false) {
+      [BRAND_RE, CODE_RE].forEach(function (re) {
+        re.lastIndex = 0;
+        text = text.replace(re, function (m, p, w) {
+          if (toks.length >= 24 || POPULAR[w]) return m;
+          var tok = '[' + (n++) + ']'; toks.push({ tok: tok, to: w }); return p + tok;
+        });
+      });
+    }
+    return { text: text, toks: toks };
+  }
+  // אחרי התרגום: הסימנים חוזרים למילים. בעברית אות היחס נצמדת עם מקף למילה לועזית: "ב-React".
+  // סימן שהמנוע איבד ← null, ואז מתרגמים שוב בלי סימנים.
+  function decode(out, toks) {
+    for (var i = 0; i < toks.length; i++) {
+      var h = toks[i], re = new RegExp('([הובכלמש]{0,3})-?\\[\\s*' + h.tok.slice(1, -1) + '\\s*\\]', 'g'), found = false;
+      out = out.replace(re, function (m, pfx) {
+        found = true;
+        if (HEB.test(h.to)) { if (/ה$/.test(pfx) && /^ה/.test(h.to)) pfx = pfx.slice(0, -1); return pfx + h.to; }
+        return pfx ? pfx + '-' + h.to : h.to;
+      });
+      if (!found) return null;
+    }
     return out;
+  }
+  // לתרגם טקסט אחד, עם המילון ועם השמות שנשמרים
+  function engine(tr, text, src) {
+    var e = encode(text, src);
+    if (!e.toks.length) return tr.translate(text).then(tidy);
+    if (!TWO.test(e.text.replace(/\[\d+\]/g, ''))) return Promise.resolve(text);       // רק שמות: אין מה לתרגם
+    return tr.translate(e.text).then(function (out) {
+      var d = decode(out, e.toks);
+      if (d != null) return tidy(d);
+      var g = encode(text, src, false);                                                   // שוב, רק עם המילון
+      return tr.translate(g.text).then(function (o2) { var d2 = decode(o2, g.toks); return tidy(d2 != null ? d2 : o2.replace(/\[\d+\]/g, '')); });
+    });
   }
 
   // המנוע מוסיף לפעמים ניקוד למילה בודדת ("לְחַפֵּשׂ"). בעברית רגילה בלי ניקוד.
@@ -207,13 +361,77 @@
   }
   function translate(text) {
     var hit = S.cache[text];
-    if (hit != null) return Promise.resolve(hit);
-    var hits = glossFor(text, S.src);
-    return S.tr.translate(pre(text, hits)).then(function (out) {
-      out = tidy(post(out, hits));
+    if (typeof hit === 'string') return Promise.resolve(hit);
+    return engine(S.tr, text, S.src).then(function (out) {
       S.cache[text] = out; saveCache();
       return out;
     });
+  }
+  // איפה כל קישור או הדגשה נמצאים בתוך התרגום: מתרגמים פעם נוספת עם סימנים (<x1>…</x1>), ומחפשים את הקטע
+  // שבין הסימנים בתוך התרגום הרגיל (הרגיל מדויק יותר, כי סימנים מבלבלים את המנוע). לא נמצא? מתרגמים את
+  // הקישור לבד ומחפשים שוב. התוצאה נשמרת במטמון כמו התרגום.
+  function stripEnds(c) {
+    c = String(c || '').replace(/^[\s"'“”„«»\[]+|[\s"'“”„«».,:;!?\]]+$/g, '');
+    // סוגריים מורידים רק כשהם לא סגורים בתוך הקטע (שלא ייחתך "fetch()")
+    while (/^\(/.test(c) && c.indexOf(')') < 0) c = c.slice(1);
+    while (/\)$/.test(c) && c.indexOf('(') < 0) c = c.slice(0, -1);
+    return c.trim();
+  }
+  function findFree(lo, v, taken) {
+    var from = 0, at;
+    while ((at = lo.indexOf(v, from)) >= 0) {
+      var e = at + v.length;
+      if (!taken.some(function (t) { return at < t[1] && e > t[0]; })) return at;
+      from = at + 1;
+    }
+    return -1;
+  }
+  function align(out, spans) {
+    var lo = out.toLowerCase(), taken = [], res = [];
+    spans.slice().sort(function (a, b) { return b.a - a.a; }).forEach(function (s) {
+      for (var i = 0; i < s.c.length; i++) {
+        var c = stripEnds(s.c[i]); if (c.length < 2) continue;
+        var vars = [c]; if (/^ה[א-ת]{2}/.test(c)) vars.push(c.slice(1));
+        for (var j = 0; j < vars.length; j++) {
+          var at = findFree(lo, vars[j].toLowerCase(), taken);
+          if (at >= 0) {
+            var e = at + vars[j].length;
+            while (e < out.length && /[א-ת]/.test(out[e]) && /[א-ת]/.test(out[e - 1])) e++;   // סוף המילה
+            taken.push([at, e]); res.push([s.k, at, e]); return;
+          }
+        }
+      }
+    });
+    return res.sort(function (a, b) { return a[1] - b[1]; });
+  }
+  function layoutFor(u, out) {
+    var key = '\u0001' + u.marked, hit = S.cache[key];
+    if (hit && hit.o === out) return Promise.resolve(hit);
+    var p;
+    if (u.rich.length === 1 && u.rich[0].text === u.text) p = Promise.resolve({ o: out, r: [[1, 0, out.length]], x: [] });   // כל הקטע הוא קישור אחד
+    else p = engine(S.tr, u.marked, S.src).then(function (m) {
+      var spans = u.rich.map(function (r, i) {
+        var k = i + 1, mm = new RegExp('<x' + k + '>([\\s\\S]*?)</x' + k + '>').exec(m);
+        return { k: k, a: r.tag === 'a' ? 1 : 0, c: [mm ? clean(mm[1].replace(/<\/?x\d+>/g, '')) : '', r.text] };
+      });
+      var res = align(out, spans);
+      var miss = spans.filter(function (s) { return !res.some(function (x) { return x[0] === s.k; }); });
+      if (!miss.length) return { o: out, r: res, x: [] };
+      return Promise.all(miss.map(function (s) {
+        return translate(u.rich[s.k - 1].text).then(function (t) { s.c.push(t); s.alone = t; }, function () {});
+      })).then(function () {
+        // עדיין לא נמצא: מילה לועזית מתוך הקישור שנשארה כמו שהיא בתרגום (useEffect, React) מקבלת את הקישור
+      miss.forEach(function (s) {
+        (u.rich[s.k - 1].text.match(/[A-Za-z][\w.$]{2,}/g) || []).sort(function (a, b) { return b.length - a.length; })
+          .forEach(function (w) { if (out.indexOf(w) >= 0) s.c.push(w); });
+      });
+      var r2 = align(out, spans);
+        var x = spans.filter(function (s) { return s.a && !r2.some(function (y) { return y[0] === s.k; }); })
+          .map(function (s) { return [s.k, stripEnds(s.alone || u.rich[s.k - 1].text)]; });
+        return { o: out, r: r2, x: x };
+      });
+    });
+    return p.then(function (l) { S.cache[key] = l; saveCache(); return l; });
   }
   function enqueue(u) {
     if (u.q || u.out != null || u.dead) return;
@@ -227,7 +445,10 @@
   function run(u) {
     if (u.dead || !u.block.isConnected) return;
     S.busy++;
-    translate(u.text).then(function (out) { u.out = out; place(u); S.done++; }, function () { u.q = 0; })
+    translate(u.text).then(function (out) {
+      if (!u.rich || !u.rich.length) return out;
+      return layoutFor(u, out).then(function (l) { u.layout = l; return out; }, function () { return out; });
+    }).then(function (out) { u.out = out; place(u); S.done++; }, function () { u.q = 0; })
       .then(function () { S.busy--; pump(); });
   }
   var io = new IntersectionObserver(function (ents) {
@@ -259,9 +480,10 @@
   function loadPrefs() {
     return Promise.all([
       chrome.storage.local.get('trPrefs').catch(function () { return {}; }),
-      chrome.storage.sync.get('glossary').catch(function () { return {}; })
+      chrome.storage.sync.get(['glossary', 'trSites']).catch(function () { return {}; })
     ]).then(function (r) {
       var p = r[0].trPrefs || {};
+      S.always = Array.isArray(r[1].trSites) && r[1].trSites.indexOf(location.origin) >= 0;
       S.mode = p.mode === 'only' ? 'only' : 'bi';
       S.tgt = p.tgt || 'he';
       S.gloss = Array.isArray(r[1].glossary) ? r[1].glossary.filter(function (g) { return g && g.a && g.b; }) : [];
@@ -284,10 +506,25 @@
       });
     }).catch(function () { return lang || 'en'; });
   }
-  function pageSample() {
-    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT), t, s = '';
+  // דוגמה מהתוכן עצמו (כתבה, תיאור הסרטון) ולא מהתפריטים: באתר עם תפריטים בעברית ותוכן באנגלית, התוכן קובע
+  function sampleOf(root) {
+    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT), t, s = '';
     while ((t = w.nextNode()) && s.length < 4000) { var p = t.parentElement; if (p && !p.closest(SKIP) && TWO.test(t.nodeValue)) s += t.nodeValue + ' '; }
     return clean(s);
+  }
+  // שפת הדף, כשמי שמשתמש בתוסף רוצה עברית: אתר עם תפריטים בעברית (יוטיוב, פייסבוק) ותוכן בלועזית הוא דף בלועזית.
+  // רק דף שכמעט כולו בעברית נחשב עברי (ואז מתרגמים ממנו לאנגלית).
+  function pageLang(sample) {
+    if (S.tgt !== 'he') return detect(sample);
+    var heb = (sample.match(HEB_G) || []).length, all = (sample.match(LET_G) || []).length || 1;
+    var rest = clean(sample.replace(/\S*[֐-׿]\S*/g, ' '));
+    if (heb / all > 0.85 || (rest.match(LET_G) || []).length < 80) return Promise.resolve(heb / all > 0.4 ? 'he' : detect(sample));
+    return detect(rest);
+  }
+  function pageSample() {
+    var main = (YT && document.querySelector('ytd-watch-metadata #title, ytd-watch-metadata #description')) || document.querySelector('article, main, [role="main"]');
+    var s = main ? sampleOf(main) : '';
+    return s.length > 150 ? s : sampleOf(document.body);
   }
 
   // ---------- המעקב אחרי שינויים בדף (אתרי React, גלילה אינסופית) ----------
@@ -310,9 +547,10 @@
     list.forEach(function (n) {
       if (!n.isConnected) return;
       try {
-      if (n.nodeType === 1 && !isInline(n)) addBlock(n); else addBlock(blockOf(n));
-      if (n.nodeType === 1) scan(n);
-      } catch (e) { S.ferr = String(e && e.stack || e).slice(0, 300); }
+        if (n.nodeType === 11) { scan(n); return; }
+        if (n.nodeType === 1 && !isInline(n)) addBlock(n); else addBlock(blockOf(n));
+        if (n.nodeType === 1) scan(n);
+      } catch (e) {}
     });
   }
 
@@ -354,8 +592,10 @@
     B.mode = el('button');
     B.go = el('button', 'gold hid', '⬇ להוריד את מנוע התרגום (פעם אחת)');
     B.glb = el('button', '', '📖 מילון'); B.glb.setAttribute('aria-expanded', 'false');
+    B.al = el('button'); B.al.onclick = alwaysClick;
+    if (!canAlways()) B.al.classList.add('hid');
     B.x = el('button', '', '✕'); B.x.title = 'לבטל את התרגום (Alt+Shift+T)'; B.x.setAttribute('aria-label', 'לבטל את התרגום ולהחזיר את הדף כמו שהיה');
-    [B.ico, B.st, B.go, B.sel, B.mode, B.glb, B.x].forEach(function (x) { top.appendChild(x); });
+    [B.ico, B.st, B.go, B.sel, B.mode, B.glb, B.al, B.x].forEach(function (x) { top.appendChild(x); });
     B.root.appendChild(top);
     // המילון
     B.gl = el('div', 'gl hid');
@@ -393,7 +633,11 @@
     if (!msg && !S.err) B.st.appendChild(sub);
     B.sel.value = S.tgt;
     B.mode.textContent = S.mode === 'bi' ? '📄 רק תרגום' : '📑 שתי השפות';
-    B.mode.title = S.mode === 'bi' ? 'להסתיר את המקור ולהציג רק את התרגום (מעבר עם העכבר מראה את המקור)' : 'להציג את המקור ואת התרגום זה מתחת לזה';
+    B.al.textContent = S.always ? '📌 ✓ תמיד באתר הזה' : '📌 תמיד באתר הזה';
+    B.al.setAttribute('aria-pressed', S.always ? 'true' : 'false');
+    B.al.title = S.always ? 'האתר הזה מתורגם לבד בכל כניסה. לחיצה מבטלת.' : 'לתרגם לבד כל דף באתר הזה, בלי ללחוץ';
+    if (YT && C.t && !msg && !S.err) sub.textContent += (sub.textContent ? ' · ' : '') + '🎬 הכתוביות מתורגמות';
+    B.mode.title = S.mode === 'bi' ?'להסתיר את המקור ולהציג רק את התרגום (מעבר עם העכבר מראה את המקור)' : 'להציג את המקור ואת התרגום זה מתחת לזה';
   }
 
   // ---------- המקור במעבר עכבר, במצב "רק תרגום" ----------
@@ -419,6 +663,25 @@
   function pairFor(text) {
     if (HEB.test(text) && (text.match(HEB_G) || []).length > (text.match(LET_G) || []).length * 0.4) return Promise.resolve(['he', S.tgt !== 'he' ? S.tgt : 'en']);
     return detect(text).then(function (src) { var t = S.tgt === src ? (src === 'he' ? 'en' : 'he') : (S.on ? S.tgt : 'he'); if (src === t) t = 'en'; return [src, t]; });
+  }
+  // סימון שנחתך באמצע מילה ("e Intersection Obs") מתרחב למילים שלמות, גם על המסך
+  function expandSel() {
+    var s = getSelection();
+    if (!s || !s.rangeCount || s.isCollapsed) return s ? String(s) : '';
+    var r = s.getRangeAt(0), W = /[\p{L}\p{N}\p{M}'’_]/u;
+    var a = r.startContainer, ao = r.startOffset, b = r.endContainer, bo = r.endOffset, ch = false;
+    if (a.nodeType === 3) {
+      var t = a.nodeValue, mid = ao > 0 && W.test(t[ao - 1] || '') && W.test(t[ao] || '');
+      while (mid && ao > 0 && W.test(t[ao - 1])) { ao--; ch = true; }
+    }
+    if (b.nodeType === 3) {
+      var u = b.nodeValue, mid2 = bo < u.length && W.test(u[bo] || '') && W.test(u[bo - 1] || '');
+      while (mid2 && bo < u.length && W.test(u[bo])) { bo++; ch = true; }
+    }
+    if (ch) {
+      try { var r2 = r.cloneRange(); r2.setStart(a, ao); r2.setEnd(b, bo); s.removeAllRanges(); s.addRange(r2); } catch (e) {}
+    }
+    return String(s);
   }
   function selRect() {
     var s = getSelection(); if (!s || !s.rangeCount) return null;
@@ -451,8 +714,7 @@
       tgt = p[1];
       var src0 = p[0];
       return translator(p[0], p[1], function (x) { t.textContent = 'מוריד את מנוע התרגום, פעם אחת: ' + Math.round(x * 100) + '%'; }).then(function (tr) {
-        var hits = glossFor(text, src0);
-        return tr.translate(pre(text, hits)).then(function (out) { return tidy(post(out, hits)); });
+        return engine(tr, text, src0);
       });
     }).then(function (out) {
       t.textContent = out; t.setAttribute('dir', RTL[tgt] ? 'rtl' : 'ltr'); t.setAttribute('lang', tgt);
@@ -476,8 +738,8 @@
   document.addEventListener('mouseup', function (e) {
     if (!S.on || (e.composedPath && e.composedPath().indexOf(host) >= 0)) return;
     setTimeout(function () {
-      var s = getSelection(), text = s ? String(s).trim() : '';
       var ed = document.activeElement && (document.activeElement.isContentEditable || /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName));
+      var text = ed ? '' : expandSel().trim();
       if (!text || text.length > 3000 || !TWO.test(text) || ed) { hidePin(); return; }
       var r = selRect(); if (!r) return;
       ensureHost();
@@ -509,6 +771,96 @@
     });
   }, { passive: true, capture: true });
 
+  // ---------- כתוביות ביוטיוב ----------
+  // יוטיוב מציג כל שורת כתוביות כטקסט רגיל בתוך הנגן. כל 0.2 שניות קוראים את השורה שעל המסך, מתרגמים אותה
+  // (ושומרים במטמון), ומציגים את התרגום בתוך הנגן: מעל הכתוביות המקוריות, או במקומן במצב "רק תרגום".
+  // אם הכתוביות כבויות – מדליקים אותן פעם אחת. עובד גם במסך מלא וגם בכתוביות אוטומטיות.
+  var C = { t: 0, el: null, last: '', seq: 0, vid: '', cc: false, src: '', cache: {}, n: 0 };
+  function player() { return document.querySelector('#movie_player') || document.querySelector('.html5-video-player'); }
+  function capOn() { if (YT && !C.t) C.t = setInterval(capTick, 200); }
+  function capOff() {
+    clearInterval(C.t); C.t = 0; C.last = '';
+    if (C.el) C.el.remove(); C.el = null;
+    var pl = player(); if (pl) pl.removeAttribute('data-hk-cap');
+  }
+  function capLang(text) {
+    if ((text.match(HEB_G) || []).length > (text.match(LET_G) || []).length * 0.4) return Promise.resolve('he');
+    if (!('LanguageDetector' in self)) return Promise.resolve('en');
+    // create() בלי שהמזהה כבר במחשב מחכה להורדה (ולפעמים ללחיצה): אז מניחים אנגלית, הנפוץ ביוטיוב
+    return LanguageDetector.availability().then(function (a) {
+      if (a !== 'available') return null;
+      if (!C.det) C.det = LanguageDetector.create();
+      return C.det.then(function (d) { return d.detect(text); });
+    }).then(function (r) {
+      var top = r && r[0];
+      return top && top.detectedLanguage !== 'und' && top.confidence > 0.4 ? base(top.detectedLanguage) : 'en';
+    }).catch(function () { return 'en'; });
+  }
+  function capTick() {
+    var pl = player(); if (!pl || !S.on) return;
+    var vid = new URLSearchParams(location.search).get('v') || location.pathname;
+    if (vid !== C.vid) { C.vid = vid; C.cc = false; C.src = ''; }
+    if (pl.classList.contains('ad-showing')) { if (C.el) C.el.hidden = true; C.last = ''; return; }   // בזמן פרסומת: לא נוגעים בכתוביות ולא מתרגמים
+    var btn = pl.querySelector('.ytp-subtitles-button');
+    if (btn && btn.getAttribute('aria-pressed') === 'true') C.cc = true;
+    else if (!C.cc && btn && btn.getAttribute('aria-pressed') === 'false' && btn.offsetParent) { C.cc = true; btn.click(); }
+    pl.setAttribute('data-hk-cap', S.mode);
+    var lines = [].map.call(pl.querySelectorAll('.caption-window .caption-visual-line'), function (l) { return l.textContent; });
+    var text = clean(lines.join(' '));
+    if (text !== C.last) { C.last = text; capTranslate(text); }
+    capPlace(pl);
+  }
+  function capTranslate(text) {
+    var my = ++C.seq;
+    if (!text) { capShow(''); return; }
+    var hit = C.cache[text];
+    if (hit != null) { capShow(hit); return; }
+    (C.src ? Promise.resolve(C.src) : capLang(text).then(function (l) { if (text.length > 20) C.src = l; return l; })).then(function (src) {
+      var tgt = S.tgt !== src ? S.tgt : (src === 'he' ? 'en' : 'he');
+      C.tgt = tgt;
+      return translator(src, tgt).then(function (tr) { return engine(tr, text, src); });
+    }).then(function (out) {
+      if (++C.n > 600) { C.cache = {}; C.n = 0; }
+      C.cache[text] = out;
+      if (my === C.seq) capShow(out);
+    }, function () {});
+  }
+  function capShow(out) {
+    var pl = player(); if (!pl) return;
+    if (!C.el || !C.el.isConnected) {
+      C.el = document.createElement('hk-tr-cap');
+      C.el.setAttribute('translate', 'no');
+      C.el.setAttribute('aria-live', 'polite');
+      pl.appendChild(C.el);
+    }
+    C.el.hidden = !out;
+    C.el.textContent = out;
+    C.el.setAttribute('dir', RTL[base(C.tgt)] ? 'rtl' : 'ltr');
+    C.el.setAttribute('lang', C.tgt || S.tgt);
+    capPlace(pl);
+  }
+  function capPlace(pl) {
+    if (!C.el || C.el.hidden) return;
+    var pr = pl.getBoundingClientRect(), win = pl.querySelector('.caption-window');
+    C.el.style.fontSize = Math.max(15, Math.min(36, pr.height / 19)) + 'px';
+    var bottom;
+    if (S.mode === 'bi' && win && C.last) bottom = pr.bottom - win.getBoundingClientRect().top + 6;
+    else bottom = pl.classList.contains('ytp-autohide') ? pr.height * 0.05 : 62;
+    C.el.style.bottom = Math.round(bottom) + 'px';
+  }
+
+  // ---------- "לתרגם תמיד את האתר הזה" ----------
+  function canAlways() { return /^https?:$/.test(location.protocol); }
+  function alwaysClick() {
+    var msg = S.always ? { trAlways: location.origin, on: false } : { trAsk: location.origin };
+    try { chrome.runtime.sendMessage(msg, function () { void chrome.runtime.lastError; }); } catch (e) {}
+  }
+  try {
+    chrome.storage.onChanged.addListener(function (ch, area) {
+      if (area === 'sync' && ch.trSites) { var l = ch.trSites.newValue; S.always = Array.isArray(l) && l.indexOf(location.origin) >= 0; bar(); }
+    });
+  } catch (e) {}
+
   // ---------- הפעלה וכיבוי ----------
   function errText(e) {
     var m = String(e && (e.message || e.name) || e);
@@ -529,8 +881,8 @@
         S.tr = tr;
         return loadCache().then(function () {
           disp = new WeakMap();
-          scan(document.body);
-          mo.observe(document.body, { childList: true, subtree: true, characterData: true });
+          roots.clear();
+          addRoot(document);
           bar(); pump();
         });
       }, function (e) {
@@ -540,25 +892,28 @@
         S.err = errText(e); bar();
       });
   }
-  function on() {
+  function on(auto) {
     if (S.on) return Promise.resolve('on');
     S.on = true; S.done = 0; S.queue = []; S.tr = null;
-    return loadPrefs().then(function () { return detect(pageSample()); }).then(function (src) {
+    return loadPrefs().then(function () { return pageLang(pageSample()); }).then(function (src) {
       S.src = src;
+      // "לתרגם תמיד": דף שכבר בשפה שלנו (למשל דף בעברית באותו אתר) נשאר בשקט
+      if (auto && S.tgt === S.src) { S.on = false; return 'same'; }
       if (S.tgt === S.src) S.tgt = S.src === 'he' ? 'en' : 'he';
-      buildBar(); B.root.classList.remove('mini');
+      buildBar(); if (!auto) B.root.classList.remove('mini');
       start(false);
+      capOn();
       return 'on';
     });
   }
   function clearPage() {
-    mo.disconnect(); clearTimeout(flushT); flushT = 0; dirty.clear();
+    mo.disconnect(); clearTimeout(flushT); flushT = 0; dirty.clear(); roots.clear(); gen++;
     S.byBlock.forEach(function (rec, b) { drop(b); io.unobserve(b); });
     S.byBlock.clear(); S.queue = []; S.done = 0; S.tr = null;
   }
   function off() {
     S.on = false; startId++;
-    clearPage(); hideBubble(); hidePin(); hideTip();
+    clearPage(); hideBubble(); hidePin(); hideTip(); capOff();
     if (B && B.root) B.root.remove(); B = null;
     return 'off';
   }
@@ -573,12 +928,11 @@
   window.__hkTr = {
     cmd: function (c, arg) {
       if (c === 'toggle') return S.on ? off() : on();
+      if (c === 'auto') return S.on ? 'on' : on(true);
       if (c === 'sel') {
-        var txt = arg || String(getSelection() || '');
+        var live = expandSel().trim(), txt = live || arg;
         return (S.on ? Promise.resolve() : loadPrefs()).then(function () { return showBubble(txt); }).then(function (ok) { return ok ? 'sel' : 'sel-fail'; });
       }
-      if (c === 'scan') { disp = new WeakMap(); scan(document.body); return S.byBlock.size; }
-      if (c === 'dbg') return { on: S.on, busy: S.busy, q: S.queue.length, blocks: S.byBlock.size, done: S.done, ferr: S.ferr, dirty: dirty.size, flushT: !!flushT, tr: !!S.tr, src: S.src, tgt: S.tgt };
       return 'unknown';
     }
   };

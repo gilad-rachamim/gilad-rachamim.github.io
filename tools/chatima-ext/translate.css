@@ -11,3 +11,9 @@ hk-tr.hk-only:hover { background: rgba(217, 178, 95, .16) !important; border-rad
 [data-hk-hide] svg, [data-hk-hide] img { font-size: var(--hk-fs) !important; }
 hk-tr.hk-off { display: none !important; }
 @media print { hk-tr-ui { display: none !important; } }
+/* קישורים שלא נמצא להם מקום בתוך המשפט המתורגם */
+hk-tr .hk-more { font-size: .85em !important; opacity: .85; }
+/* כתוביות מתורגמות ביוטיוב: בתוך הנגן, מעל הכתוביות המקוריות (או במקומן במצב "רק תרגום") */
+hk-tr-cap { position: absolute !important; left: 50% !important; transform: translateX(-50%) !important; z-index: 70 !important; max-width: 86% !important; width: max-content !important; background: rgba(8, 8, 8, .8) !important; color: #fff !important; padding: .12em .55em .2em !important; border-radius: 4px !important; line-height: 1.4 !important; text-align: center !important; pointer-events: none !important; unicode-bidi: isolate !important; font-family: "Segoe UI", Arial, sans-serif !important; white-space: pre-line !important; }
+hk-tr-cap[hidden] { display: none !important; }
+[data-hk-cap="only"] .ytp-caption-window-container { visibility: hidden !important; }
