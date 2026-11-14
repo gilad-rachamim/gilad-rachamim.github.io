@@ -109,7 +109,7 @@
   // =====================================================================
   //  הנושאים: סדר, כיתות, ונושאים קודמים לכל נושא
   // =====================================================================
-  var ORD = ['kefel', 'hiluk', 'seder', 'shetach', 'asroni', 'shvarim', 'kefel-shvarim', 'memutza', 'achuzim', 'yachas', 'histabrut', 'pilug', 'mishvaa', 'chezkot', 'kav', 'pitagoras', 'maarechet', 'trinom', 'shorashim', 'parabola-tavla'];
+  var ORD = ['meunach', 'kefel', 'seder', 'hiluk', 'shetach', 'shvarim', 'asroni', 'kefel-shvarim', 'memutza', 'achuzim', 'yachas', 'igul', 'gufim', 'mechuvanim', 'tzirim', 'zaviot', 'bituyim', 'histabrut', 'pilug', 'mishvaa', 'chezkot', 'pitagoras', 'kav', 'i-shivyon', 'maarechet', 'kefel-mekutzar', 'trinom', 'mechanim', 'shorashim', 'parabola-tavla', 'merubaim'];
   var T = MX.T.concat(EXTRA), byId = {};
   T.forEach(function (t) { byId[t.id] = t; });
   T.sort(function (x, y) { var i = ORD.indexOf(x.id), j = ORD.indexOf(y.id); return (i < 0 ? 99 : i) - (j < 0 ? 99 : j); }); // יציב: נושאי הבגרות נשארים בסדר שלהם
@@ -118,7 +118,8 @@
   //  ז׳–ט׳: פריסות ההוראה הארציות תשפ"ז (meyda .../matmatika/Chativat-Beynayim/tashpaz/prisa_7, prisa_8, prisa_9A, prisa_9B)
   //  י׳–י״ב: המלצות ההוראה תשפ"ז, תוכנית הלימודים החדשה (meyda .../Chativa-Elyona/mafmar/3-points, 4-points, 5-points-tashpaz.pdf)
   // מערך = הכיתות (לכל רמות היחידות). אובייקט = 0: כיתות ב׳–ט׳, 3/4/5: הכיתות בתיכון לפי מספר היחידות.
-  var GR = { kefel: [2, 3], seder: [3, 4, 5, 6], hiluk: [4, 5], shetach: [4, 5, 6, 7], shvarim: [4, 5, 6], asroni: [5, 6], 'kefel-shvarim': [6], memutza: [5, 6, 8],
+  var GR = { meunach: [2, 3, 4], igul: [6, 7], gufim: [6, 7, 8], mechuvanim: [7], tzirim: [7], zaviot: [7, 8], bituyim: [7], 'i-shivyon': [8, 9], 'kefel-mekutzar': { 0: [9], 4: [10], 5: [10] }, mechanim: [9], merubaim: { 0: [9], 3: [11] },
+    kefel: [2, 3], seder: [3, 4, 5, 6], hiluk: [4, 5], shetach: [4, 5, 6, 7], shvarim: [4, 5, 6], asroni: [5, 6], 'kefel-shvarim': [6], memutza: [5, 6, 8],
     achuzim: { 0: [6, 8], 3: [10] }, yachas: { 0: [6, 8], 3: [11] }, histabrut: { 0: [7, 8, 9], 3: [10] }, pilug: [7, 9], mishvaa: [7, 8], chezkot: [7, 9], pitagoras: { 0: [7, 8, 9], 3: [10] },
     kav: { 0: [8, 9], 3: [10, 12] }, maarechet: [8, 9], tnua: { 0: [8, 9], 3: [10] }, dimyon: { 0: [8, 9], 3: [11], 4: [10], 5: [10] }, stiya: { 0: [8], 3: [10, 11], 4: [10, 11] },
     trinom: { 0: [9], 4: [10], 5: [10] }, shorashim: { 0: [9], 3: [10], 4: [10], 5: [10] }, 'parabola-tavla': { 0: [9], 3: [12], 4: [10], 5: [10] }, parabola: { 0: [9], 3: [12], 4: [10], 5: [10] }, etz: { 0: [9], 3: [11], 4: [10, 11], 5: [11] },
@@ -141,7 +142,18 @@
     return ((g < 10 ? r[0] : r[u]) || []).indexOf(g) > -1;
   }
   // מה כתוב בפריסה של משרד החינוך על כל נושא (מוצג מתחת לבחירת הנושא)
-  var OFF = { kefel: 'ב׳: משמעות הכפל והחילוק, לוח הכפל עד 10×10 · ג׳: השלמה וביסוס של לוח הכפל',
+  var OFF = { meunach: 'ב׳: חיבור וחיסור במאונך · ג׳: בתחום הרבבה, כפל במאונך · ד׳: כפל במאונך',
+    igul: 'ו׳: מעגל ועיגול, היקף המעגל ושטח העיגול · ז׳: שטח עיגול והיקף מעגל (ח׳: להשלים אם לא נלמד)',
+    gufim: 'ו׳: נפח תיבה, גליל, חרוט, מנסרה · ז׳: קובייה ותיבה, מנסרה משולשת · ח׳: גליל וחרוט',
+    mechuvanim: 'ז׳: הכרת השליליים ומספרים נגדיים, חיבור וחיסור, כפל וחילוק מספרים מכוונים',
+    tzirim: 'ז׳: מערכת צירים ברביע הראשון, הרחבת מערכת הצירים, קטעים ושטחים במערכת צירים',
+    zaviot: 'ז׳: סימון ומדידה, חוצה זווית, צמודות וקודקודיות, סכום זוויות במשולש ובמרובע · ח׳: מתחלפות ומתאימות בין מקבילים',
+    bituyim: 'ז׳: המשתנה, ביטויים אלגבריים, הצבה, שוויון בין ביטויים (זהות)',
+    'i-shivyon': 'ח׳: אי שוויונות · ט׳: אי שוויון ריבועי בהקשר של פונקציה ריבועית',
+    'kefel-mekutzar': 'ט׳: חוק הפילוג המורחב, נוסחאות הכפל המקוצר, פירוק בהוצאת גורם משותף',
+    mechanim: 'ט׳: שברים אלגבריים, משוואות עם פירוק לגורמים במכנה ותחום הצבה · ט׳ מצומצמת: משוואה עם מכנה מספרי',
+    merubaim: 'ט׳: דלתון, טרפז, מקבילית, מלבן, מעוין וריבוע: תכונות ומשפטים הפוכים · י״א 3 יח״ל: תכונות מרובעים',
+    kefel: 'ב׳: משמעות הכפל והחילוק, לוח הכפל עד 10×10 · ג׳: השלמה וביסוס של לוח הכפל',
     seder: 'ג׳–ד׳: סדר הפעולות והשימוש בסוגריים · ה׳–ו׳: סדר פעולות וחוקי הפעולות',
     hiluk: 'ד׳: חילוק ארוך כשהמחלק חד־ספרתי או עשרת שלמה · ה׳: ארבע הפעולות במספרים גדולים, חילוק עם שארית',
     shetach: 'ד׳: נוסחאות שטח והיקף מלבן · ה׳: שטח משולש ושטחי מצולעים · ו׳: מעגל ועיגול · ז׳: שטחים, חישוב היקפים',
@@ -177,7 +189,7 @@
     merchav: 'י״ב 4–5 יח״ל: גופים במרחב', merukav: 'י״ב 5 יח״ל: מספרים מרוכבים', 'nefach-sivuv': 'לא מופיע בהמלצות ההוראה של התוכנית החדשה (תשפ״ז)' };
   function offNote(id) { return OFF[id] ? 'בפריסת משרד החינוך: ' + OFF[id] : ''; }
   // נושאים קודמים שכדאי להזכיר בכל נושא (עד שלושה, מהקרוב לרחוק)
-  var PRE = { hiluk: ['kefel'], seder: ['kefel', 'hiluk'], shetach: ['kefel', 'seder'], asroni: ['hiluk', 'seder', 'kefel'], shvarim: ['kefel', 'hiluk', 'seder'], 'kefel-shvarim': ['shvarim', 'kefel', 'hiluk'], memutza: ['hiluk', 'asroni', 'seder'], achuzim: ['asroni', 'kefel-shvarim', 'shvarim'], yachas: ['kefel-shvarim', 'shvarim', 'achuzim'], histabrut: ['shvarim', 'achuzim', 'yachas'], pilug: ['seder', 'kefel', 'shetach'], mishvaa: ['pilug', 'seder', 'shvarim'], chezkot: ['seder', 'kefel', 'pilug'], kav: ['mishvaa', 'pilug', 'yachas'], pitagoras: ['chezkot', 'shetach', 'mishvaa'], maarechet: ['mishvaa', 'pilug', 'kav'], trinom: ['pilug', 'chezkot', 'mishvaa'], shorashim: ['trinom', 'chezkot', 'mishvaa'], 'parabola-tavla': ['chezkot', 'kav', 'mishvaa'], parabola: ['parabola-tavla', 'shorashim', 'kav'], sidra: ['mishvaa', 'pilug', 'memutza'], merchak: ['pitagoras', 'kav', 'memutza'], trigo: ['pitagoras', 'yachas', 'mishvaa'], gdila: ['achuzim', 'chezkot', 'asroni'], stiya: ['memutza', 'chezkot', 'achuzim'], nigzeret: ['chezkot', 'kav', 'pilug'], mashik: ['nigzeret', 'kav', 'mishvaa'], kitzon: ['nigzeret', 'shorashim', 'parabola'], integral: ['nigzeret', 'chezkot', 'shetach'], maagal: ['merchak', 'pitagoras', 'shorashim'], normalit: ['stiya', 'achuzim', 'memutza'], handasit: ['sidra', 'chezkot', 'yachas'], sinusim: ['trigo', 'pitagoras', 'shetach'], etz: ['histabrut', 'kefel-shvarim', 'shvarim'], tnua: ['mishvaa', 'maarechet', 'shorashim'], rationalit: ['nigzeret', 'shorashim', 'kitzon'], 'shoresh-f': ['nigzeret', 'chezkot', 'kitzon'], merchav: ['trigo', 'pitagoras', 'sinusim'], 'trig-nigzeret': ['nigzeret', 'trigo', 'kitzon'], piramida: ['merchav', 'trigo', 'pitagoras'], vektor: ['merchak', 'pitagoras', 'trigo'], merukav: ['shorashim', 'pilug', 'chezkot'], logaritm: ['chezkot', 'gdila', 'mishvaa'], 'exp-ln': ['nigzeret', 'logaritm', 'kitzon'], dimyon: ['yachas', 'pitagoras', 'mishvaa'], 'zaviot-maagal': ['dimyon', 'maagal', 'mishvaa'], parametr: ['shorashim', 'nigzeret', 'kitzon'], induktzia: ['sidra', 'pilug', 'chezkot'], 'nefach-sivuv': ['integral', 'chezkot', 'shetach'] };
+  var PRE = { meunach: ['kefel', 'seder'], igul: ['shetach', 'asroni', 'kefel-shvarim'], gufim: ['shetach', 'kefel', 'asroni'], mechuvanim: ['seder', 'asroni', 'shvarim'], tzirim: ['mechuvanim', 'shetach', 'seder'], zaviot: ['shetach', 'seder', 'mishvaa'], bituyim: ['seder', 'chezkot', 'mechuvanim'], 'i-shivyon': ['mishvaa', 'mechuvanim', 'pilug'], 'kefel-mekutzar': ['pilug', 'chezkot', 'mechuvanim'], mechanim: ['mishvaa', 'shvarim', 'pilug'], merubaim: ['zaviot', 'pitagoras', 'shetach'], hiluk: ['kefel'], seder: ['kefel', 'hiluk'], shetach: ['kefel', 'seder'], asroni: ['hiluk', 'seder', 'kefel'], shvarim: ['kefel', 'hiluk', 'seder'], 'kefel-shvarim': ['shvarim', 'kefel', 'hiluk'], memutza: ['hiluk', 'asroni', 'seder'], achuzim: ['asroni', 'kefel-shvarim', 'shvarim'], yachas: ['kefel-shvarim', 'shvarim', 'achuzim'], histabrut: ['shvarim', 'achuzim', 'yachas'], pilug: ['bituyim', 'mechuvanim', 'seder'], mishvaa: ['pilug', 'bituyim', 'mechuvanim'], chezkot: ['seder', 'kefel', 'pilug'], kav: ['tzirim', 'mishvaa', 'yachas'], pitagoras: ['chezkot', 'shetach', 'mishvaa'], maarechet: ['mishvaa', 'pilug', 'kav'], trinom: ['kefel-mekutzar', 'pilug', 'chezkot'], shorashim: ['trinom', 'chezkot', 'mishvaa'], 'parabola-tavla': ['chezkot', 'kav', 'mishvaa'], parabola: ['parabola-tavla', 'shorashim', 'kav'], sidra: ['mishvaa', 'pilug', 'memutza'], merchak: ['pitagoras', 'kav', 'memutza'], trigo: ['pitagoras', 'yachas', 'mishvaa'], gdila: ['achuzim', 'chezkot', 'asroni'], stiya: ['memutza', 'chezkot', 'achuzim'], nigzeret: ['chezkot', 'kav', 'pilug'], mashik: ['nigzeret', 'kav', 'mishvaa'], kitzon: ['nigzeret', 'shorashim', 'parabola'], integral: ['nigzeret', 'chezkot', 'shetach'], maagal: ['merchak', 'pitagoras', 'shorashim'], normalit: ['stiya', 'achuzim', 'memutza'], handasit: ['sidra', 'chezkot', 'yachas'], sinusim: ['trigo', 'pitagoras', 'shetach'], etz: ['histabrut', 'kefel-shvarim', 'shvarim'], tnua: ['mishvaa', 'maarechet', 'shorashim'], rationalit: ['nigzeret', 'shorashim', 'kitzon'], 'shoresh-f': ['nigzeret', 'chezkot', 'kitzon'], merchav: ['trigo', 'pitagoras', 'sinusim'], 'trig-nigzeret': ['nigzeret', 'trigo', 'kitzon'], piramida: ['merchav', 'trigo', 'pitagoras'], vektor: ['merchak', 'pitagoras', 'trigo'], merukav: ['shorashim', 'pilug', 'chezkot'], logaritm: ['chezkot', 'gdila', 'mishvaa'], 'exp-ln': ['nigzeret', 'logaritm', 'kitzon'], dimyon: ['yachas', 'pitagoras', 'mishvaa'], 'zaviot-maagal': ['dimyon', 'maagal', 'mishvaa'], parametr: ['shorashim', 'nigzeret', 'kitzon'], induktzia: ['sidra', 'pilug', 'chezkot'], 'nefach-sivuv': ['integral', 'chezkot', 'shetach'] };
   // נושאים שהשיעור שלהם נמצא בדף "מתמטיקה צעד אחרי צעד" (לקישור מהתזכורות)
   function lessonUrl(t) { return MX.T.indexOf(t) > -1 ? 'https://hakelim.com/limudim/matematika/#' + t.id : BASE + '?d=' + [t.id, 'h', 15, 1, '', 7, 1].join('.'); }
 
@@ -531,7 +543,12 @@
     // ---------------------------------------------------------------------
     //  "ספרו במילים שלכם": תיאור חופשי (כתוב או מוקלט) -> 3 דפים לבחירה. הכול בדפדפן, בלי שרת
     // ---------------------------------------------------------------------
-    var SYN = { kefel: ['לוח הכפל', 'לוח כפל', 'כפל'], hiluk: ['חילוק ארוך', 'חילוק'], seder: ['סדר פעולות'], shetach: ['שטח', 'היקף'], asroni: ['עשרוני'],
+    var SYN = { mechuvanim: ['מספרים מכוונים', 'מכוונים', 'מספרים שליליים', 'שליליים', 'מספר נגדי', 'ערך מוחלט'], zaviot: ['זוויות', 'זווית', 'צמודות', 'קודקודיות', 'מתחלפות', 'מתאימות', 'סכום זוויות'],
+      bituyim: ['ביטויים אלגבריים', 'ביטוי אלגברי', 'הצבה', 'הצבות', 'משתנה'], tzirim: ['מערכת צירים', 'צירים', 'נקודות במישור', 'שיעורי נקודה', 'רביע'], 'kefel-mekutzar': ['כפל מקוצר', 'נוסחאות הכפל המקוצר', 'פילוג מורחב', 'חוק הפילוג המורחב'],
+      'i-shivyon': ['אי שוויון', 'אי שוויונות', 'אי-שוויון', 'אי-שוויונות'], mechanim: ['משוואות עם מכנה', 'משוואה עם מכנה', 'מכנים', 'שברים אלגבריים', 'משוואה עם שברים', 'תחום הצבה'],
+      gufim: ['נפח', 'תיבה', 'מנסרה', 'גליל', 'חרוט', 'גופים', 'שטח פנים', 'קובייה'], merubaim: ['מרובעים', 'מקבילית', 'מעוין', 'מעויין', 'טרפז', 'דלתון', 'ריבוע'],
+      igul: ['היקף מעגל', 'שטח עיגול', 'עיגול', 'פאי', 'רדיוס', 'קוטר'], meunach: ['במאונך', 'חיבור במאונך', 'חיסור במאונך', 'כפל במאונך', 'פריטה', 'המרה'],
+      kefel: ['לוח הכפל', 'לוח כפל', 'כפל'], hiluk: ['חילוק ארוך', 'חילוק'], seder: ['סדר פעולות'], shetach: ['שטח', 'היקף'], asroni: ['עשרוני'],
       shvarim: ['חיבור שברים', 'חיסור שברים', 'שברים', 'שבר', 'מכנה משותף'], 'kefel-shvarim': ['כפל שברים', 'חילוק שברים'], memutza: ['ממוצע'], achuzim: ['אחוז', 'הנחה'],
       yachas: ['יחס', 'פרופורציה'], histabrut: ['הסתברות', 'קובי', 'מטבע'], pilug: ['סוגריים', 'כינוס', 'חוק הפילוג', 'פילוג'], mishvaa: ['משוואה עם נעלם', 'משוואות', 'משוואה', 'נעלם'],
       chezkot: ['חזקה', 'חזקות'], kav: ['פונקציה קווית', 'שיפוע', 'קו ישר', 'גרף'], pitagoras: ['פיתגורס', 'פיטגורס'], maarechet: ['מערכת משוואות', 'שני נעלמים', 'מערכת'],
@@ -582,7 +599,7 @@
       // נושאים: ניקוד לכל נושא לפי מילים נרדפות ומילים מהשם; ביטוי ארוך גובר על קצר
       var sc = T.map(function (t) {
         var n = 0, list = (SYN[t.id] || []).slice();
-        t.name.split(/[\s:,()]+/).forEach(function (w) { if (w.length >= 5 && ['פונקציה', 'משוואה', 'משוואות', 'נקודות', 'ושטח', 'מתחת', 'לגרף', 'חקירה', 'פרמטר', 'טבלת', 'ערכים'].indexOf(w) < 0) list.push(w); });
+        t.name.split(/[\s:,()]+/).forEach(function (w) { if (w.length >= 5 && ['פונקציה', 'משוואה', 'משוואות', 'נקודות', 'ושטח', 'מתחת', 'לגרף', 'חקירה', 'פרמטר', 'טבלת', 'ערכים', 'זוויות', 'צירים:', 'מכוונים:', 'מרובעים:', 'קטעים', 'ושטחים'].indexOf(w) < 0) list.push(w); });
         list.forEach(function (w) { if (has(s, [w])) n = Math.max(n, w.split(' ').length * 2 + w.length / 10); });
         return { t: t, n: n };
       }).filter(function (x) { return x.n > 0; });
