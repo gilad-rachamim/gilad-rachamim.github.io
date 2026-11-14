@@ -87,7 +87,7 @@ export class Kita {
     for (const c of ['np INTEGER DEFAULT 0', "due TEXT DEFAULT ''", "note TEXT DEFAULT ''"]) { try { this.sql.exec('ALTER TABLE hw ADD COLUMN ' + c); } catch (e) {} }
     this.sql.exec('CREATE TABLE IF NOT EXISTS hpage (hw TEXT, i INTEGER, mime TEXT, data TEXT, PRIMARY KEY (hw, i))');
     // שאלות לכיתה: sid = 'T' כשהמורה כותבת. par = 0 לשאלה, אחרת מזהה השאלה. help = השואלת סימנה "עזר לי", good = המורה סימנה מצוין
-    for (const c of ["kind TEXT DEFAULT ''", "prep TEXT DEFAULT ''"]) { try { this.sql.exec('ALTER TABLE hw ADD COLUMN ' + c); } catch (e) {} }
+    for (const c of ["kind TEXT DEFAULT ''", "prep TEXT DEFAULT ''", 'mar INTEGER DEFAULT 0']) { try { this.sql.exec('ALTER TABLE hw ADD COLUMN ' + c); } catch (e) {} }
     // פרגון ותזכורת מהמורה לתלמיד/ה (sid = '*' לכל הכיתה)
     this.sql.exec("CREATE TABLE IF NOT EXISTS note (id INTEGER PRIMARY KEY AUTOINCREMENT, sid TEXT, kind TEXT, emoji TEXT DEFAULT '', text TEXT, pts INTEGER DEFAULT 0, t INTEGER)");
     // הכנה לשיעור: צפייה בסרטון ותשובות לשאלות הבדיקה
@@ -102,12 +102,13 @@ export class Kita {
     if (pts > 0) this.sql.exec('INSERT INTO ev (sid, ref, game, pts, day, t) VALUES (?, ?, ?, ?, ?, ?)', sid, ref, game, pts, day, Date.now());
     return pts;
   }
+  full(hw, n) { return n ? this.rows('SELECT COUNT(*) AS n FROM (SELECT sid FROM hwork WHERE hw = ? AND done = 1 GROUP BY sid HAVING COUNT(*) >= ?)', hw, n)[0].n : 0; }
   posts(all, me) {
-    const nick = {}; for (const s of this.rows('SELECT sid, nick FROM st')) nick[s.sid] = s.nick;
+    const nick = {}, crown = {}; for (const s of this.rows('SELECT sid, nick, crown FROM st')) { nick[s.sid] = s.nick; crown[s.sid] = s.crown || ''; }
     const roots = this.rows('SELECT * FROM post WHERE par = 0' + (all ? '' : ' AND hid = 0') + ' ORDER BY id DESC LIMIT 120');
     const ids = roots.map(r => r.id);
     const reps = ids.length ? this.rows('SELECT * FROM post WHERE par IN (' + ids.join(',') + ')' + (all ? '' : ' AND hid = 0') + ' ORDER BY id') : [];
-    const out = r => ({ id: r.id, par: r.par, hw: r.hw, ex: r.ex, text: r.text, t: r.t, good: r.good, help: r.help, hid: all ? r.hid : 0, rep: all ? (r.rep ? r.rep.split(',').length : 0) : 0, teacher: r.sid === 'T' ? 1 : 0, nick: r.sid === 'T' ? (this.get('teacher') || 'המורה') : (nick[r.sid] || 'תלמיד/ה שיצא/ה'), me: me && r.sid === me ? 1 : 0, sid: all ? r.sid : undefined });
+    const out = r => ({ id: r.id, par: r.par, hw: r.hw, ex: r.ex, text: r.text, t: r.t, good: r.good, help: r.help, hid: all ? r.hid : 0, rep: all ? (r.rep ? r.rep.split(',').length : 0) : 0, teacher: r.sid === 'T' ? 1 : 0, nick: r.sid === 'T' ? (this.get('teacher') || 'המורה') : (nick[r.sid] || 'תלמיד/ה שיצא/ה'), me: me && r.sid === me ? 1 : 0, crown: crown[r.sid] || '', sid: all ? r.sid : undefined });
     return roots.map(r => Object.assign(out(r), { replies: reps.filter(x => x.par === r.id).map(out) }));
   }
   async hub(p, b) {
@@ -193,7 +194,9 @@ export class Kita {
 
     if (p === '/hw' && req.method === 'POST') { // התלמיד/ה: המטלות הפתוחות, העבודה שלי וההודעות אליי
       const s = await this.student(b); if (!s) return json({ error: 'לא מצאנו אתכם בכיתה. אפשר להצטרף שוב עם הקוד מהמורה.', gone: 1 }, 403);
-      const list = this.rows('SELECT id, title, ex, t, np, due, note, kind, prep FROM hw WHERE open = 1 ORDER BY t DESC LIMIT 20').map(h => ({ id: h.id, title: h.title, t: h.t, np: h.np || 0, due: h.due || '', note: h.note || '', kind: h.kind || '', prep: h.kind === 'prep' && h.prep ? JSON.parse(h.prep) : undefined, ex: JSON.parse(h.ex).map(e => ({ q: e.q, pg: e.pg || 0, tl: e.tl || 'sci', v: e.v || '', top: e.top || '' })) }));
+      const nst = this.rows('SELECT COUNT(*) AS n FROM st')[0].n;
+      const list = this.rows('SELECT id, title, ex, t, np, due, note, kind, prep, mar FROM hw WHERE open = 1 ORDER BY t DESC LIMIT 20').map(h => ({ id: h.id, title: h.title, t: h.t, np: h.np || 0, due: h.due || '', note: h.note || '', kind: h.kind || '', prep: h.kind === 'prep' && h.prep ? JSON.parse(h.prep) : undefined,
+        mar: h.mar ? { goal: Math.ceil(h.mar * nst / 100), full: this.full(h.id, JSON.parse(h.ex).length), n: nst, pct: h.mar } : undefined, ex: JSON.parse(h.ex).map(e => ({ q: e.q, pg: e.pg || 0, tl: e.tl || 'sci', v: e.v || '', top: e.top || '' })) }));
       const mprep = this.rows('SELECT hw, ans, ok, t FROM prep WHERE sid = ?', s.sid).map(r => Object.assign(r, { ans: JSON.parse(r.ans || '[]') }));
       const work = this.rows('SELECT hw, ex, rows, ok, warn, done, stuck, t FROM hwork WHERE sid = ?', s.sid).map(w => Object.assign(w, { rows: JSON.parse(w.rows || '[]') }));
       const msgs = this.rows('SELECT id, hw, ex, kind, text, t FROM hmsg WHERE sid = ? OR sid = \'*\' ORDER BY id', s.sid);
@@ -221,6 +224,13 @@ export class Kita {
           if (pts) this.sql.exec('INSERT INTO ev (sid, ref, game, pts, day, t) VALUES (?, ?, ?, ?, ?, ?)', s.sid, ref, 'machberet', pts, day, Date.now());
         }
       }
+      let marDone = 0;
+      const hm = this.rows('SELECT mar FROM hw WHERE id = ?', String(b.hw))[0];
+      if (done && hm && hm.mar) {
+        const goal = Math.ceil(hm.mar * this.rows('SELECT COUNT(*) AS n FROM st')[0].n / 100);
+        const fulls = this.rows('SELECT sid FROM hwork WHERE hw = ? AND done = 1 GROUP BY sid HAVING COUNT(*) >= ?', String(b.hw), n).map(r => r.sid);
+        if (fulls.length >= goal) { for (const sid of fulls) this.award(sid, 'mar:' + b.hw, 'bonus', 20); marDone = 1; }
+      }
       // בונוס זריזות: שלוש הראשונות שמסיימות את כל המטלה מקבלות 15 / 10 / 5
       let bonus = 0, rank = 0;
       if (done && !(prev && prev.done) && this.rows('SELECT COUNT(*) AS n FROM hwork WHERE hw = ? AND sid = ? AND done = 1', String(b.hw), s.sid)[0].n === n) {
@@ -232,7 +242,7 @@ export class Kita {
         }
       }
       this.touch();
-      return json({ ok: 1, pts, bonus, rank });
+      return json({ ok: 1, pts, bonus, rank, marDone });
     }
 
     // הכנה לשיעור: צפיתי בסרטון + תשובות. 10 נקודות על הצפייה ו-5 לכל תשובה נכונה (התשובה הנכונה תמיד ראשונה בשרת)
@@ -274,7 +284,7 @@ export class Kita {
       if (days.length && days[0] !== ilDay(Date.now())) d0.setUTCDate(d0.getUTCDate() - 1);
       for (const d of days) { if (d === d0.toISOString().slice(0, 10)) { streak++; d0.setUTCDate(d0.getUTCDate() - 1); } else break; }
       const c = (q, ...a) => this.rows(q, ...a)[0].n;
-      return json({ ok: 1, nick: this.rows('SELECT nick FROM st WHERE sid = ?', s.sid)[0].nick, name: this.get('name'), teacher: this.get('teacher'), msg: this.get('msg'), gifts: JSON.parse(this.get('gifts', '[]')), period: per,
+      return json({ ok: 1, nick: this.rows('SELECT nick FROM st WHERE sid = ?', s.sid)[0].nick, crown: this.rows('SELECT crown FROM st WHERE sid = ?', s.sid)[0].crown || '', name: this.get('name'), teacher: this.get('teacher'), msg: this.get('msg'), gifts: JSON.parse(this.get('gifts', '[]')), period: per,
         pts: mine.pts || 0, place: mine.place || 0, of: board.length, all, streak, days: days.length,
         solved: c('SELECT COUNT(*) AS n FROM hwork WHERE sid = ? AND done = 1', s.sid),
         fast: c("SELECT COUNT(*) AS n FROM ev WHERE sid = ? AND ref LIKE 'fast:%'", s.sid),
@@ -393,24 +403,26 @@ export class Kita {
           const raw = String((b.prep && b.prep.v) || '').trim();
           const yt = raw.match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/|^)([A-Za-z0-9_-]{11})(?:[?&#]|$)/), dr = raw.match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([A-Za-z0-9_-]{20,})/);
           const v = yt ? yt[1] : dr ? 'd:' + dr[1] : '';
-          if (!v) return json({ error: 'בהכנה לשיעור צריך קישור לסרטון: יוטיוב (אפשר "לא רשום") או גוגל דרייב.' }, 400);
+          const top = /^[a-z0-9-]{2,20}$/.test((b.prep && b.prep.top) || '') ? b.prep.top : ''; // שיעור מהמאגר של האתר (/limudim/matematika/#top)
+          if (!v && !top) return json({ error: 'בהכנה לשיעור צריך סרטון (יוטיוב או גוגל דרייב) או שיעור מהמאגר.' }, 400);
           const q = ((b.prep && Array.isArray(b.prep.q)) ? b.prep.q : []).slice(0, 5).map(x => ({ q: cleanQ(x && x.q, 200), a: ((x && Array.isArray(x.a)) ? x.a : []).slice(0, 4).map(o => cleanQ(o, 80)).filter(Boolean) })).filter(x => x.q && x.a.length >= 2);
-          prep = JSON.stringify({ v, q });
+          prep = JSON.stringify(top ? { v, top, q } : { v, q });
           ex.length = 0;
         } else if (!ex.length) return json({ error: 'צריך לפחות תרגיל אחד. כל תרגיל בשורה משלו, למשל: x^2-5x+6=0' }, 400);
         if (this.rows('SELECT COUNT(*) AS n FROM hw')[0].n >= 60) return json({ error: 'יש כבר 60 מטלות בכיתה. אפשר למחוק ישנות.' }, 403);
         const id = rid(8);
         const due = /^\d{4}-\d{2}-\d{2}$/.test(b.due || '') ? b.due : '', note = mathText(b.note, 400) || '';
-        this.sql.exec('INSERT INTO hw (id, title, ex, t, open, np, due, note, kind, prep) VALUES (?, ?, ?, ?, 1, 0, ?, ?, ?, ?)', id, title, JSON.stringify(ex), Date.now(), due, note, kind, prep);
+        const mar = kind ? 0 : Math.max(0, Math.min(100, Math.floor(+b.mar || 0))); // מרתון חזרה: אחוז מהכיתה שצריך לסיים לבונוס כיתתי
+        this.sql.exec('INSERT INTO hw (id, title, ex, t, open, np, due, note, kind, prep, mar) VALUES (?, ?, ?, ?, 1, 0, ?, ?, ?, ?, ?)', id, title, JSON.stringify(ex), Date.now(), due, note, kind, prep, mar ? Math.max(30, mar) : 0);
         this.touch();
         return json({ ok: 1, id });
       } else if (a === 'hw_list') {
         const st = this.rows('SELECT COUNT(*) AS n FROM st')[0].n;
-        const hw = this.rows('SELECT id, title, ex, t, open, np, due, kind FROM hw ORDER BY t DESC').map(h => {
+        const hw = this.rows('SELECT id, title, ex, t, open, np, due, kind, mar FROM hw ORDER BY t DESC').map(h => {
           const w = this.rows('SELECT COUNT(DISTINCT sid) AS who, SUM(done) AS done, SUM(stuck) AS stuck FROM hwork WHERE hw = ?', h.id)[0];
           const full = this.rows('SELECT COUNT(*) AS n FROM (SELECT sid FROM hwork WHERE hw = ? AND done = 1 GROUP BY sid HAVING COUNT(*) >= ?)', h.id, JSON.parse(h.ex).length)[0].n;
           if (h.kind === 'prep') { const pr = this.rows('SELECT COUNT(*) AS n, COALESCE(SUM(ok), 0) AS ok FROM prep WHERE hw = ?', h.id)[0]; return { id: h.id, title: h.title, kind: 'prep', n: 0, t: h.t, open: !!h.open, due: h.due || '', full: pr.n, who: pr.n, okSum: pr.ok, done: 0, stuck: 0, np: 0 }; }
-          return { id: h.id, title: h.title, n: JSON.parse(h.ex).length, t: h.t, open: !!h.open, np: h.np || 0, due: h.due || '', who: w.who || 0, done: w.done || 0, stuck: w.stuck || 0, full };
+          return { id: h.id, title: h.title, n: JSON.parse(h.ex).length, t: h.t, open: !!h.open, np: h.np || 0, due: h.due || '', who: w.who || 0, done: w.done || 0, stuck: w.stuck || 0, full, mar: h.mar || 0 };
         });
         return json({ ok: 1, name: this.get('name'), students: st, hw });
       } else if (a === 'hw_view') {

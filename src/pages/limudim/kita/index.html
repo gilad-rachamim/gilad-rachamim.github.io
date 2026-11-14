@@ -58,6 +58,18 @@
     </div>
 
     <section id="kp-p-hw" role="tabpanel" aria-labelledby="kp-t-hw">
+      <details class="panel kp-bank" id="kp-bank">
+        <summary><b>📚 מאגר השיעורים</b> <small>48 שיעורים מוכנים, מלוח הכפל ועד הבגרות – שולחים לכיתה בלחיצה</small></summary>
+        <p class="note">כל שיעור מתנגן כמו סרטון קצר, עם תרגול ורמזים. שולחים אותו כ"הכנה לשיעור" או כחזרה, ורואים מי עבר עליו.</p>
+        <div class="kp-chips" id="kp-bfilter" role="group" aria-label="סינון לפי שכבה">
+          <button type="button" class="kp-chip-b" data-band="all" aria-pressed="true">הכול</button>
+          <button type="button" class="kp-chip-b" data-band="ys" aria-pressed="false">יסודי (ב׳–ו׳)</button>
+          <button type="button" class="kp-chip-b" data-band="zt" aria-pressed="false">חטיבה (ז׳–ט׳)</button>
+          <button type="button" class="kp-chip-b" data-band="bg" aria-pressed="false">תיכון ובגרות</button>
+        </div>
+        <input class="kh-in" id="kp-bq" type="search" placeholder="🔍 חיפוש נושא, למשל: שברים" aria-label="חיפוש נושא">
+        <div class="kp-bgrid" id="kp-bgrid"></div>
+      </details>
       <details class="panel kp-newhw" id="kp-newhw">
         <summary><b>➕ מטלה חדשה</b> <small>דף עבודה, שיעורי בית או תרגול</small></summary>
         <label class="pt-lbl" for="kp-title">שם המטלה</label><input class="kh-in" id="kp-title" maxlength="60" placeholder="למשל: דף עבודה – משוואות ריבועיות">
@@ -71,7 +83,9 @@
         </div>
         <div id="kp-prepparts" hidden>
           <p class="note">מצלמים בטלפון סרטון קצר (2–5 דקות) שמסביר את החומר של השיעור הבא, מעלים ליוטיוב כ"לא רשום" או לגוגל דרייב, ומדביקים כאן את הקישור. התלמידים צופים, עונים על שאלות קצרות, ומגיעים לשיעור מוכנים. צפייה = 10 נקודות, כל תשובה נכונה = 5.</p>
-          <label class="pt-lbl" for="kp-pv">קישור לסרטון ההכנה</label>
+          <label class="pt-lbl" for="kp-ptop">📚 שיעור מהמאגר שלנו</label>
+          <select class="kh-in" id="kp-ptop"></select>
+          <label class="pt-lbl" for="kp-pv">🎥 ו/או קישור לסרטון שלך</label>
           <input class="kh-in" id="kp-pv" dir="ltr" placeholder="https://youtu.be/… או קישור מגוגל דרייב">
           <h3>❓ שאלות בדיקה קצרות <small>(לא חובה, עד 3)</small></h3>
           <div id="kp-pq"></div>
@@ -86,6 +100,10 @@
         <ol class="kp-exlist" id="kp-exlist"></ol>
         <div class="btns"><button type="button" class="btn btn-sm" id="kp-exadd">➕ עוד תרגיל</button>
           <span class="kp-pgq"><label for="kp-pgn">כמה שאלות יש בדף?</label><input class="kh-in" type="number" id="kp-pgn" min="1" max="20" value="5"><button type="button" class="btn btn-sm" id="kp-pgadd">להוסיף</button></span></div>
+        <div class="kp-mar">
+          <label class="kp-switch"><input type="checkbox" id="kp-mar"> 🏃 מרתון חזרה למבחן – בונוס כיתתי</label>
+          <p class="note" id="kp-mar-d" hidden>אם <select class="kh-in kp-inl" id="kp-marp" aria-label="כמה מהכיתה"><option value="50">חצי</option><option value="70" selected>70%</option><option value="80">80%</option><option value="100">כל</option></select> מהכיתה מסיימים את כל התרגילים עד תאריך ההגשה – כל מי שסיים/ה מקבל/ת 20 נקודות בונוס. כולם רואים את ההתקדמות של הכיתה, ומעודדים אחד את השני.</p>
+        </div>
         </div>
         <button type="button" class="btn btn-gold" id="kp-send">לתת לכיתה</button> <span class="note" id="kp-sendst" aria-live="polite"></span>
         <p class="pt-err" id="kp-err" hidden></p>
@@ -122,6 +140,16 @@
         <div class="btns"><button type="button" class="btn btn-gold" id="kp-ksend">💐 לשלוח פרגון</button><a class="btn btn-sm" id="kp-kpar" target="_blank" rel="noopener" hidden>📲 לספר גם להורים (ווטסאפ)</a></div>
         <details class="kp-more"><summary>הפרגונים ששלחתי</summary><ul class="kp-plain" id="kp-klist"></ul></details>
       </div>
+      <div class="panel kp-roles">
+        <h3>🦸 תפקידים בכיתה</h3>
+        <p class="note">תפקיד מופיע ליד הכינוי בלוח ובשאלות לכיתה. "עוזר/ת השבוע" עונה ראשון/ה לשאלות ומקבל/ת תג.</p>
+        <p class="kp-sugg" id="kp-rsugg" hidden></p>
+        <div class="kp-2">
+          <div><label class="pt-lbl" for="kp-rwho">למי</label><select class="kh-in" id="kp-rwho"></select></div>
+          <div><label class="pt-lbl" for="kp-rrole">התפקיד</label><select class="kh-in" id="kp-rrole"><option>🦸 עוזר/ת השבוע</option><option>⭐ תלמיד/ת השבוע</option><option>📣 אחראי/ת שאלות</option><option>🧠 אלוף/ת החשיבה</option><option>🏃 מוביל/ת המרתון</option><option value="">— להסיר תפקיד —</option></select></div>
+        </div>
+        <div class="btns"><button type="button" class="btn btn-gold" id="kp-rgo">להעניק</button></div>
+      </div>
       <div id="kp-kids"><p class="note">טוענים…</p></div>
       <div class="panel">
         <label class="pt-lbl" for="kp-cmsg">📣 הודעה שמופיעה לכל הכיתה</label>
@@ -133,6 +161,11 @@
 
     <section id="kp-p-fun" role="tabpanel" aria-labelledby="kp-t-fun" hidden>
       <h2>כיף בכיתה</h2>
+      <div class="panel kp-proj">
+        <h3>📺 מצב מקרן לשיעור</h3>
+        <p class="note">פותחים על המחשב של הכיתה ומקרינים: לוח הנקודות, ההתקדמות במטלות, המרתון, הפסקת החשיבה עם שעון גדול, וקוד להצטרפות. מתעדכן לבד כל כמה שניות.</p>
+        <p><a class="btn btn-gold" id="kp-proj" target="_blank" rel="noopener" href="/limudim/kita/makren/">📺 לפתוח את מצב המקרן</a></p>
+      </div>
       <div class="panel">
         <h3>🧩 הפסקת חשיבה</h3>
         <p class="note">5 דקות של משחק חשיבה באמצע השיעור, או כפרס לכיתה. המשחק מופיע לכל התלמידים בפורטל, וכל ניצחון מוסיף נקודות ללוח.</p>

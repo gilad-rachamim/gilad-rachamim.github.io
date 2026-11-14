@@ -181,3 +181,43 @@ button.kp-card{cursor:pointer}button.kp-card:hover{border-color:var(--gold-soft)
 .kp-hmsgs li{padding:.9rem 1rem;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.04)}
 .kp-hmsgs p{margin:0 0 .3rem;color:var(--cream);white-space:pre-line}.kp-hmsgs small{color:var(--muted)}
 @media (prefers-reduced-motion:reduce){.kp-kudo{animation:none}}
+
+/* מאגר השיעורים, מרתון, תפקידים */
+.kp-bank summary{cursor:pointer;font-size:1.08rem;color:var(--cream)}
+.kp-bank summary small{color:var(--muted);font-weight:400;margin-inline-start:.4rem}
+.kp-chip-b[aria-pressed="true"]{border-color:var(--gold);background:rgba(220,183,105,.16);color:var(--cream)}
+.kp-bgrid{display:grid;gap:.5rem;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));max-height:70vh;overflow:auto;padding:.2rem}
+.kp-bk{display:grid;gap:.2rem;padding:.7rem .8rem;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.035)}
+.kp-bk-e{font-size:1.6rem;line-height:1}.kp-bk b{color:var(--cream)}.kp-bk small{color:var(--muted)}
+.kp-mar{margin:.8rem 0;padding:.6rem .8rem;border-radius:14px;border:1px dashed var(--gold-soft)}
+.kp-inl{display:inline-block;width:auto;padding:.2rem .4rem;font-size:.95rem}
+.kp-sugg{margin:0;padding:.55rem .75rem;border-radius:12px;background:rgba(134,197,230,.12);color:var(--parchment)}
+.kp-crown{font-size:.8rem;padding:.06rem .45rem;border-radius:999px;background:rgba(134,197,230,.18);color:var(--parchment)}
+.kp-marbox{display:grid;gap:.3rem;padding:.6rem .8rem;border-radius:12px;background:rgba(220,183,105,.1);margin:.2rem 0}
+.kp-marbox b{color:var(--gold-hi)}
+
+/* מצב מקרן */
+body.km-body .topbar,body.km-body .site-foot,body.km-body .crumbs,body.km-body .dock,body.km-body .k-badges,body.km-body .rel,body.km-body .install-bar,body.km-body .k-promise,body.km-body .promise{display:none!important}
+#km-fs{cursor:pointer;background:rgba(255,255,255,.06);color:var(--cream);border:1px solid var(--line)}
+.kp-proj-app{max-width:1500px;margin:0 auto;padding:1.2rem 1.4rem 2rem}
+.km-head{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.km-head h1{font-size:clamp(2rem,4vw,3.4rem);margin:0;color:var(--cream)}
+.km-head p{margin:.3rem 0 0;font-size:clamp(1.1rem,2vw,1.6rem);color:var(--parchment)}
+.km-join{display:grid;grid-template-columns:auto auto;gap:.1rem .7rem;align-items:center;padding:.7rem 1rem;border-radius:16px;border:1px solid var(--gold-soft);font-size:clamp(1rem,1.6vw,1.3rem);color:var(--body)}
+.km-join b{color:var(--cream)}.km-code{font-size:clamp(1.6rem,3vw,2.6rem);color:var(--gold-hi)!important;letter-spacing:.12em}
+.km-grid{display:grid;gap:1.2rem}
+@media (min-width:900px){.km-grid{grid-template-columns:1fr 1.2fr}}
+.km-box{padding:1rem 1.2rem;border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.035)}
+.km-box h2{font-size:clamp(1.4rem,2.4vw,2rem);margin:0 0 .6rem;color:var(--gold-hi)}
+.km-board{list-style:none;padding:0;margin:0;display:grid;gap:.4rem}
+.km-board li{display:grid;grid-template-columns:3rem 1fr auto;gap:.6rem;align-items:center;padding:.5rem .8rem;border-radius:12px;background:rgba(255,255,255,.04);font-size:clamp(1.2rem,2vw,1.7rem)}
+.km-board b{color:var(--cream)}.km-board small{font-size:.65em;color:var(--accent)}.km-board em{font-style:normal;color:var(--gold-hi);font-weight:700}
+.km-hw{display:grid;gap:.35rem;margin-bottom:1rem;font-size:clamp(1.05rem,1.7vw,1.4rem);color:var(--body)}
+.km-hw b{color:var(--cream)}
+.km-bar{height:16px;position:relative;overflow:visible}
+.km-bar u{position:absolute;top:-5px;bottom:-5px;width:3px;background:var(--cream);border-radius:2px}
+.km-brk{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:center;margin:0 0 1rem;padding:1rem;border-radius:20px;border:3px solid var(--accent);background:rgba(134,197,230,.14);font-size:clamp(1.4rem,3vw,2.4rem);color:var(--cream)}
+.km-timer{font-size:clamp(2.4rem,6vw,5rem);color:var(--gold-hi);font-variant-numeric:tabular-nums}
+.km-upd{color:var(--muted);text-align:center;margin-top:1rem}
+.kp-lesson{display:grid;gap:.3rem;justify-items:start;padding:.9rem 1rem;border-radius:16px;border:1px solid var(--gold-soft);background:rgba(220,183,105,.08);margin:.4rem 0 .8rem}
+.kp-lesson b{color:var(--cream);font-size:1.1rem}

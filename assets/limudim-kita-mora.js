@@ -104,6 +104,7 @@
     $('kp-slink').value = sLink();
     $('kp-live').href = '/limudim/machberet/kita/#c=' + C.code + '&k=' + C.key;
     $('kp-gifts').href = '/kelim/chashiva/kita/more/#c=' + C.code + '&k=' + C.key;
+    $('kp-proj').href = '/limudim/kita/makren/#c=' + C.code + '&k=' + C.key;
     setTab(tab);
   }
   $('kp-copy').addEventListener('click', function () { copy(sLink(), '✓ הקישור לתלמידים הועתק'); used('slink_copy'); });
@@ -231,6 +232,35 @@
   });
   exRow();
 
+  var BANK = [["seder", "🧮", "סדר פעולות חשבון", "כיתות ד׳–ו׳"], ["shvarim", "🍕", "חיבור וחיסור שברים", "כיתות ה׳–ו׳"], ["achuzim", "％", "אחוזים", "כיתות ו׳–ז׳"], ["mishvaa", "⚖️", "משוואה עם נעלם אחד", "כיתות ז׳–ח׳"], ["pilug", "🔓", "פתיחת סוגריים וכינוס איברים", "כיתה ז׳"], ["pitagoras", "📐", "משפט פיתגורס", "כיתות ח׳–ט׳"], ["shorashim", "√", "משוואה ריבועית ונוסחת השורשים", "כיתות ט׳–י׳"], ["kefel", "✖️", "לוח הכפל", "כיתות ב׳–ד׳"], ["shetach", "▭", "שטח והיקף", "כיתות ד׳–ו׳"], ["kefel-shvarim", "🍰", "כפל וחילוק שברים", "כיתה ו׳"], ["chezkot", "⚡", "חזקות", "כיתות ז׳–ח׳"], ["maarechet", "🔗", "מערכת משוואות", "כיתות ח׳–ט׳"], ["hiluk", "➗", "חילוק ארוך", "כיתות ד׳–ה׳"], ["asroni", "🔢", "מספרים עשרוניים", "כיתות ה׳–ו׳"], ["memutza", "📊", "ממוצע", "כיתות ו׳–ז׳"], ["yachas", "🍹", "יחס ופרופורציה", "כיתות ו׳–ז׳"], ["histabrut", "🎲", "הסתברות", "כיתות ו׳–ח׳"], ["kav", "📈", "פונקציה קווית וגרף", "כיתות ח׳–ט׳"], ["sidra", "🪜", "סדרה חשבונית", "בגרות"], ["merchak", "📍", "מרחק בין נקודות ואמצע קטע", "בגרות"], ["parabola", "🌈", "פונקציה ריבועית: קודקוד וחיתוך עם הצירים", "בגרות"], ["trigo", "📏", "טריגונומטריה במשולש ישר זווית", "בגרות"], ["gdila", "💰", "גדילה ודעיכה (ריבית)", "בגרות"], ["stiya", "📉", "חציון, שכיח וסטיית תקן", "בגרות"], ["nigzeret", "🧭", "נגזרת של פולינום", "בגרות"], ["mashik", "↗️", "משוואת משיק", "בגרות"], ["kitzon", "⛰️", "נקודות קיצון", "בגרות"], ["integral", "∫", "אינטגרל ושטח מתחת לגרף", "בגרות"], ["maagal", "⭕", "משוואת מעגל", "בגרות"], ["normalit", "🔔", "התפלגות נורמלית", "בגרות"], ["handasit", "✖", "סדרה הנדסית", "בגרות"], ["sinusim", "🔺", "משפט הסינוסים, הקוסינוסים ושטח משולש", "בגרות"], ["tnua", "🚗", "בעיות תנועה ועבודה", "בגרות"], ["merchav", "📦", "טריגונומטריה במרחב: תיבה", "בגרות"], ["rationalit", "🎢", "פונקציה רציונלית: תחום ואסימפטוטות", "בגרות"], ["shoresh-f", "🌱", "פונקציית שורש: תחום ונגזרת", "בגרות"], ["etz", "🌳", "הסתברות: עץ והסתברות מותנית", "בגרות"], ["trig-nigzeret", "〰️", "נגזרת של sin ושל cos", "בגרות"], ["vektor", "➡️", "וקטורים", "בגרות"], ["merukav", "🌀", "מספרים מרוכבים", "בגרות"], ["logaritm", "🔍", "לוגריתמים ומשוואות מעריכיות", "בגרות"], ["exp-ln", "🧪", "נגזרת של e ושל ln", "בגרות"], ["piramida", "⛺", "פירמידה: מקצוע, גובה וזוויות", "בגרות"], ["dimyon", "🪞", "דמיון משולשים", "בגרות"], ["zaviot-maagal", "🎯", "זוויות במעגל", "בגרות"], ["parametr", "🎛️", "חקירה עם פרמטר", "בגרות"], ["induktzia", "🁢", "אינדוקציה", "בגרות"], ["nefach-sivuv", "🏺", "נפח גוף סיבוב", "בגרות"]];
+  // ---------- מאגר השיעורים של האתר: 48 נושאים, שולחים לכיתה כ"הכנה לשיעור" ----------
+  function band(g) { var m = (g || '').match(/כית(?:ות|ה) ([א-ת])/); if (!m) return 'bg'; if ('בגדהו'.indexOf(m[1]) >= 0) return 'ys'; return 'זחט'.indexOf(m[1]) >= 0 ? 'zt' : 'bg'; }
+  var bandF = 'all';
+  function renderBank() {
+    var q = $('kp-bq').value.trim();
+    var l = BANK.filter(function (t) { return (bandF === 'all' || band(t[3]) === bandF) && (!q || t[2].indexOf(q) >= 0); });
+    $('kp-bgrid').innerHTML = l.map(function (t) {
+      return '<div class="kp-bk"><span class="kp-bk-e" aria-hidden="true">' + t[1] + '</span><b>' + esc(t[2]) + '</b><small>' + esc(t[3] || 'בגרות') + '</small>' +
+        '<span class="btns"><button type="button" class="btn btn-sm btn-gold" data-bsend="' + t[0] + '">📨 לשלוח לכיתה</button><a class="btn btn-sm" href="/limudim/matematika/#' + t[0] + '" target="_blank" rel="noopener">👀 לצפות</a></span></div>';
+    }).join('') || '<p class="note">לא מצאנו נושא כזה. אפשר לבקש שנוסיף אותו.</p>';
+  }
+  $('kp-bfilter').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-band]'); if (!b) return; bandF = b.dataset.band;
+    Array.prototype.forEach.call(this.querySelectorAll('[data-band]'), function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+    renderBank();
+  });
+  $('kp-bq').addEventListener('input', renderBank);
+  $('kp-bank').addEventListener('toggle', function () { if (this.open) { renderBank(); used('bank_open'); } });
+  $('kp-bgrid').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-bsend]'); if (!b) return;
+    var t = BANK.filter(function (x) { return x[0] === b.dataset.bsend; })[0];
+    $('kp-newhw').open = true; document.querySelector('input[name="kp-kind"][value="prep"]').click();
+    $('kp-ptop').value = t[0]; $('kp-title').value = 'שיעור: ' + t[2];
+    $('kp-bank').open = false; $('kp-newhw').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    toast('📚 השיעור נכנס למטלה. אפשר להוסיף תאריך ושאלות, ואז "לתת לכיתה".'); used('bank_pick', true);
+  });
+  $('kp-ptop').innerHTML = '<option value="">— בלי, רק הסרטון שלי —</option>' + BANK.map(function (t) { return '<option value="' + t[0] + '">' + t[1] + ' ' + t[2] + '</option>'; }).join('');
+
   // ---------- הכנה לשיעור: סרטון + עד 3 שאלות ----------
   function kind() { var r = document.querySelector('input[name="kp-kind"]:checked'); return r ? r.value : ''; }
   Array.prototype.forEach.call(document.querySelectorAll('input[name="kp-kind"]'), function (r) {
@@ -241,22 +271,23 @@
       '<div class="kp-2"><input class="kh-in kp-pq-ok" maxlength="80" placeholder="✓ התשובה הנכונה"><input class="kh-in kp-pq-no" maxlength="160" placeholder="✗ תשובות לא נכונות, מופרדות בפסיק"></div></fieldset>';
   }).join('');
   function prepData() {
-    return { v: $('kp-pv').value.trim(), q: Array.prototype.map.call(document.querySelectorAll('.kp-pqrow'), function (f) {
+    return { v: $('kp-pv').value.trim(), top: $('kp-ptop').value, q: Array.prototype.map.call(document.querySelectorAll('.kp-pqrow'), function (f) {
       var q = f.querySelector('.kp-pq-q').value.trim(), ok = f.querySelector('.kp-pq-ok').value.trim(), no = f.querySelector('.kp-pq-no').value.split(/[,،]/).map(function (x) { return x.trim(); }).filter(Boolean);
       return q && ok && no.length ? { q: q, a: [ok].concat(no.slice(0, 3)) } : null;
     }).filter(Boolean) };
   }
   function resetNew() {
     PAGES = []; pageThumbs(); $('kp-title').value = ''; $('kp-due').value = ''; $('kp-note').value = ''; $('kp-exlist').innerHTML = ''; exRow();
-    $('kp-pv').value = ''; Array.prototype.forEach.call(document.querySelectorAll('.kp-pqrow input'), function (i) { i.value = ''; });
+    $('kp-pv').value = ''; $('kp-ptop').value = ''; $('kp-mar').checked = false; $('kp-mar-d').hidden = true; Array.prototype.forEach.call(document.querySelectorAll('.kp-pqrow input'), function (i) { i.value = ''; });
     $('kp-newhw').open = false; loadHw();
   }
 
+  $('kp-mar').addEventListener('change', function () { $('kp-mar-d').hidden = !this.checked; if (this.checked && !$('kp-title').value) $('kp-title').value = 'מרתון חזרה למבחן'; used('mar_toggle'); });
   $('kp-send').addEventListener('click', function () {
     var b = this; err('kp-err', '');
     if (kind() === 'prep') {
       if (!$('kp-title').value.trim()) { err('kp-err', 'כותבים שם, למשל: הכנה לשיעור – נגזרת.'); $('kp-title').focus(); return; }
-      if (!$('kp-pv').value.trim()) { err('kp-err', 'מדביקים קישור לסרטון ההכנה.'); $('kp-pv').focus(); return; }
+      if (!$('kp-pv').value.trim() && !$('kp-ptop').value) { err('kp-err', 'בוחרים שיעור מהמאגר או מדביקים קישור לסרטון.'); $('kp-ptop').focus(); return; }
       b.disabled = true;
       admin('hw_new', { kind: 'prep', title: $('kp-title').value, due: $('kp-due').value, note: $('kp-note').value, prep: prepData() }).then(function (d) {
         b.disabled = false; if (!d.ok) return err('kp-err', d.error);
@@ -272,7 +303,8 @@
     if (!ex.length) { err('kp-err', 'צריך לפחות תרגיל אחד. אם התרגילים בדף שהעליתם: "כמה שאלות יש בדף" ← להוסיף.'); return; }
     if (ex.some(function (e) { return e.pg; }) && !PAGES.length) { err('kp-err', 'סימנתם תרגילים "מהדף", אבל עוד לא העליתם את הדף.'); return; }
     b.disabled = true; $('kp-sendst').textContent = 'שולחים…';
-    admin('hw_new', { title: $('kp-title').value, due: $('kp-due').value, note: $('kp-note').value, ex: ex }).then(function (d) {
+    if ($('kp-mar').checked && !$('kp-due').value) { err('kp-err', 'במרתון חזרה צריך תאריך: עד מתי (יום המבחן).'); $('kp-due').focus(); return; }
+    admin('hw_new', { title: $('kp-title').value, due: $('kp-due').value, note: $('kp-note').value, ex: ex, mar: $('kp-mar').checked ? +$('kp-marp').value : 0 }).then(function (d) {
       if (!d.ok) { b.disabled = false; $('kp-sendst').textContent = ''; return err('kp-err', d.error); }
       var id = d.id;
       (function up(i) {
@@ -307,7 +339,7 @@
             '<span class="btns"><button type="button" class="btn btn-sm btn-gold" data-pv="' + h.id + '">👀 מי צפה ומה ענו</button>' + acts + '</span><div class="kp-pvbox" id="pv-' + h.id + '" hidden></div></div>';
         }
         return '<div class="kp-card kp-tcard' + (h.open ? '' : ' is-closed') + '"><span class="kp-card-t"><b>' + esc(h.title) + '</b>' +
-          (h.np ? '<span class="kp-tag">📄 ' + h.np + ' עמ׳</span>' : '') + (h.due ? '<span class="kp-tag">📅 ' + new Date(h.due + 'T12:00:00').toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric' }) + '</span>' : '') + (h.open ? '' : '<span class="kp-tag">סגורה</span>') + (h.stuck ? '<span class="kp-tag warn">🙋 ' + h.stuck + ' נתקעו</span>' : '') + '</span>' +
+          (h.mar ? '<span class="kp-tag">🏃 מרתון · יעד ' + h.mar + '%</span>' : '') + (h.np ? '<span class="kp-tag">📄 ' + h.np + ' עמ׳</span>' : '') + (h.due ? '<span class="kp-tag">📅 ' + new Date(h.due + 'T12:00:00').toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric' }) + '</span>' : '') + (h.open ? '' : '<span class="kp-tag">סגורה</span>') + (h.stuck ? '<span class="kp-tag warn">🙋 ' + h.stuck + ' נתקעו</span>' : '') + '</span>' +
           '<span class="kp-bar" aria-hidden="true"><i style="width:' + pct + '%"></i></span><span class="kp-sub">' + h.full + ' מתוך ' + d.students + ' סיימו הכול · ' + h.who + ' התחילו · ' + h.n + ' תרגילים</span>' +
           '<span class="btns"><a class="btn btn-sm btn-gold" href="/limudim/machberet/kita/#c=' + C.code + '&k=' + C.key + '">📊 מעקב חי ורמזים</a>' + acts + '</span></div>';
       }).join('') : '<p class="note">עוד אין מטלות. לוחצים על "מטלה חדשה" למעלה.</p>';
@@ -371,7 +403,7 @@
   function loadKids() {
     admin('get', {}).then(function (d) {
       if (!d.ok) { $('kp-kids').innerHTML = '<p class="pt-err">' + esc(d.error) + '</p>'; return; }
-      KD = d; fillKto(); if (tab === 'fun') showBrk(d.brk);
+      KD = d; fillKto(); if (tab === 'kids') fillRoles(); if (tab === 'fun') showBrk(d.brk);
       $('kp-lock').checked = !!d.locked; $('kp-cmsg').value = d.msg || '';
       var act = d.rows.filter(function (r) { return r.last > Date.now() - 7 * 864e5; }).length;
       $('kp-ksum').textContent = d.rows.length + ' תלמידים · ' + act + ' פעילים השבוע';
@@ -416,6 +448,24 @@
       $('kp-klist').innerHTML = d.notes.length ? d.notes.map(function (n) { return '<li>' + esc(n.emoji) + ' <b>' + esc(n.nick) + '</b>: ' + esc(n.text) + (n.pts ? ' (+' + n.pts + ')' : '') + ' <small>' + ago(n.t) + '</small></li>'; }).join('') : '<li class="note">עוד לא נשלחו פרגונים.</li>';
     });
   }
+
+  // ---------- תפקידים בכיתה (crown) + הצעה: מי עזר/ה הכי הרבה השבוע בשאלות ----------
+  function fillRoles() {
+    if (!KD) return;
+    $('kp-rwho').innerHTML = KD.rows.slice().sort(function (a, b) { return a.nick.localeCompare(b.nick, 'he'); }).map(function (r) { return '<option value="' + r.sid + '">' + esc(r.nick) + (r.crown ? ' – ' + esc(r.crown) : '') + '</option>'; }).join('');
+    admin('forum').then(function (d) {
+      if (!d.ok) return;
+      var cnt = {}, wk = Date.now() - 7 * 864e5;
+      d.posts.forEach(function (p) { p.replies.forEach(function (r) { if (r.sid && r.sid !== 'T' && r.t > wk) cnt[r.sid] = (cnt[r.sid] || 0) + 1 + (r.help ? 2 : 0) + (r.good ? 2 : 0); }); });
+      var best = Object.keys(cnt).sort(function (a, b) { return cnt[b] - cnt[a]; })[0], who = best && KD.rows.filter(function (r) { return r.sid === best; })[0];
+      var el = $('kp-rsugg'); el.hidden = !who;
+      if (who) { el.innerHTML = '💡 השבוע הכי עזר/ה לחברים בשאלות: <b>' + esc(who.nick) + '</b> <button type="button" class="btn btn-sm" id="kp-rsugg-b">להעניק "עוזר/ת השבוע"</button>'; $('kp-rsugg-b').onclick = function () { $('kp-rwho').value = who.sid; $('kp-rrole').selectedIndex = 0; $('kp-rgo').click(); }; }
+    });
+  }
+  $('kp-rgo').addEventListener('click', function () {
+    var sid = $('kp-rwho').value, role = $('kp-rrole').value; if (!sid) return;
+    admin('crown', { sid: sid, label: role }).then(function (d) { if (!d.ok) return toast(d.error); toast(role ? '🦸 התפקיד הוענק' : 'התפקיד הוסר'); used('role', true); loadKids(); });
+  });
 
   // ---------- הפסקת חשיבה ----------
   var GAMES = [['sudoku', 'סודוקו'], ['mila', 'מילה – וורדל בעברית'], ['avanim', 'אבני מספרים'], ['reviiot', 'ארבע בשורה'], ['tzviya-misparim', 'צביעה לפי מספרים'], ['tashbetz', 'תשבץ'], ['damka', 'דמקה'], ['shachmat', 'שחמט']];

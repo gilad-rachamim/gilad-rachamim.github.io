@@ -91,7 +91,7 @@
     el.innerHTML = HWD.hw.map(function (h) {
       var dn = doneOf(h), n = nOf(h), pct = Math.round(dn / n * 100);
       if (h.kind === 'prep') return '<button type="button" class="kp-card kp-prepc' + (dn ? ' is-done' : '') + '" data-hw="' + h.id + '"><span class="kp-card-t"><b>' + esc(h.title) + '</b><span class="kp-tag">🎬 הכנה לשיעור</span>' + (h.due ? '<span class="kp-tag' + (/עברה|היום/.test(dueTxt(h.due)) ? ' warn' : '') + '">📅 ' + dueTxt(h.due) + '</span>' : '') + '</span><span class="kp-sub">' + (dn ? 'צפית וענית ✓' : 'סרטון קצר' + (h.prep && h.prep.q.length ? ' ו-' + h.prep.q.length + ' שאלות' : '') + ' · עד ' + (10 + 5 * (h.prep ? h.prep.q.length : 0)) + ' נקודות') + '</span></button>';
-      return '<button type="button" class="kp-card' + (dn === n ? ' is-done' : '') + '" data-hw="' + h.id + '"><span class="kp-card-t"><b>' + esc(h.title) + '</b>' + (h.np ? '<span class="kp-tag">📄 ' + h.np + ' עמ׳</span>' : '') + (h.due ? '<span class="kp-tag' + (/עברה|היום/.test(dueTxt(h.due)) ? ' warn' : '') + '">📅 ' + dueTxt(h.due) + '</span>' : '') + '</span>' +
+      return '<button type="button" class="kp-card' + (dn === n ? ' is-done' : '') + '" data-hw="' + h.id + '"><span class="kp-card-t"><b>' + esc(h.title) + '</b>' + (h.mar ? '<span class="kp-tag">🏃 מרתון כיתתי</span>' : '') + (h.np ? '<span class="kp-tag">📄 ' + h.np + ' עמ׳</span>' : '') + (h.due ? '<span class="kp-tag' + (/עברה|היום/.test(dueTxt(h.due)) ? ' warn' : '') + '">📅 ' + dueTxt(h.due) + '</span>' : '') + '</span>' +
         '<span class="kp-bar" aria-hidden="true"><i style="width:' + pct + '%"></i></span><span class="kp-sub">' + (dn === n ? 'הכול נפתר ✓ כל הכבוד!' : dn + ' מתוך ' + n + ' תרגילים') + '</span></button>';
     }).join('');
   }
@@ -107,6 +107,12 @@
     $('ks-prep').hidden = true; $('ks-exs').hidden = false; $('ks-exh').hidden = false;
     $('ks-h-meta').textContent = [h.due ? '📅 ' + dueTxt(h.due) : '', h.np ? '📄 ' + (h.np === 1 ? 'עמוד אחד' : h.np + ' עמודים') : '', doneOf(h) + ' מתוך ' + h.ex.length + ' נפתרו'].filter(Boolean).join(' · ');
     $('ks-h-note').hidden = !h.note; $('ks-h-note').textContent = h.note ? '📌 ' + h.note : '';
+    var mb = $('ks-mar'); mb.hidden = !h.mar;
+    if (h.mar) {
+      var left = Math.max(0, h.mar.goal - h.mar.full);
+      mb.innerHTML = '<b>🏃 מרתון חזרה למבחן</b><span class="kp-bar" aria-hidden="true"><i style="width:' + Math.min(100, Math.round(h.mar.full / Math.max(1, h.mar.goal) * 100)) + '%"></i></span>' +
+        '<span>' + (left ? h.mar.full + ' מתוך ' + h.mar.n + ' כבר סיימו. עוד ' + left + ' – וכל מי שסיים/ה מקבל/ת 20 נקודות בונוס! 💪' : '🎉 הכיתה השיגה את היעד! כל מי שמסיים/ת מקבל/ת 20 נקודות בונוס.') + '</span>';
+    }
     var pg = $('ks-pages');
     if (!quiet || pg.getAttribute('data-hw') !== id) {
       pg.setAttribute('data-hw', id); pg.hidden = !h.np;
@@ -135,14 +141,16 @@
   function vidSrc(v) { return /^d:/.test(v) ? 'https://drive.google.com/file/d/' + v.slice(2) + '/preview' : 'https://www.youtube-nocookie.com/embed/' + v + '?rel=0'; }
   function shuffle(n, seed) { var a = []; for (var i = 0; i < n; i++) a.push(i); var x = seed; for (var j = n - 1; j > 0; j--) { x = (x * 9301 + 49297) % 233280; var k = Math.floor(x / 233280 * (j + 1)); var t = a[j]; a[j] = a[k]; a[k] = t; } return a; }
   function openPrep(h, quiet) {
-    $('ks-pages').hidden = true; $('ks-exs').hidden = true; $('ks-exh').hidden = true; $('ks-prep').hidden = false;
+    $('ks-pages').hidden = true; $('ks-exs').hidden = true; $('ks-exh').hidden = true; $('ks-prep').hidden = false; $('ks-mar').hidden = true;
     $('ks-h-meta').textContent = [h.due ? '📅 ' + dueTxt(h.due) : '', '🎬 הכנה לשיעור הבא'].filter(Boolean).join(' · ');
     $('ks-h-note').hidden = !h.note; $('ks-h-note').textContent = h.note ? '📌 ' + h.note : '';
     var mine = prepOf(h), el = $('ks-prep');
     if (quiet && el.getAttribute('data-hw') === h.id && !mine) return;
     el.setAttribute('data-hw', h.id);
     var q = (h.prep && h.prep.q) || [], seed = 0; for (var i = 0; i < ME.sid.length; i++) seed += ME.sid.charCodeAt(i);
-    el.innerHTML = '<div class="kp-video"><iframe src="' + esc(vidSrc(h.prep.v)) + '" title="סרטון ההכנה" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></div>' +
+    var tn = h.prep.top ? topicName(h.prep.top) : '';
+    el.innerHTML = (h.prep.top ? '<div class="kp-lesson"><b>📚 השיעור: ' + esc(tn) + '</b><p class="note">שיעור קצר שמתנגן כמו סרטון, ואחריו תרגול עם רמזים.</p><a class="btn btn-gold" href="/limudim/matematika/#' + esc(h.prep.top) + '" target="_blank" rel="noopener" id="ks-lesson-a">▶️ לפתוח את השיעור</a></div>' : '') +
+      (h.prep.v ? '<div class="kp-video"><iframe src="' + esc(vidSrc(h.prep.v)) + '" title="סרטון ההכנה" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></div>' : '') +
       (q.length ? '<h3>שאלות קצרות אחרי הצפייה</h3>' : '') +
       q.map(function (x, qi) {
         var ord = shuffle(x.a.length, seed + qi * 7);
@@ -151,8 +159,8 @@
           return '<label class="kp-opt' + cls + '"><input type="radio" name="pq' + qi + '" value="' + ai + '"' + (mine ? ' disabled' + (mine.ans[qi] === ai ? ' checked' : '') : '') + '> <span dir="auto">' + esc(x.a[ai]) + '</span></label>';
         }).join('') + '</fieldset>';
       }).join('') +
-      (mine ? '<p class="kp-note">✓ צפית' + (q.length ? ' וענית: ' + mine.ok + ' מתוך ' + q.length + ' נכון' : '') + '. נתראה בשיעור מוכנים! 🎉</p>'
-        : '<button type="button" class="btn btn-gold" id="ks-prep-b">✓ צפיתי' + (q.length ? ' ועניתי' : '') + ' – לשלוח</button><p class="note">צפייה = 10 נקודות, וכל תשובה נכונה = עוד 5.</p>');
+      (mine ? '<p class="kp-note">✓ ' + (h.prep.top && !h.prep.v ? 'עברת על השיעור' : 'צפית') + (q.length ? ' וענית: ' + mine.ok + ' מתוך ' + q.length + ' נכון' : '') + '. נתראה בשיעור מוכנים! 🎉</p>'
+        : '<button type="button" class="btn btn-gold" id="ks-prep-b">✓ ' + (h.prep.top && !h.prep.v ? 'עברתי על השיעור' : 'צפיתי') + (q.length ? ' ועניתי' : '') + ' – לשלוח</button><p class="note">צפייה = 10 נקודות, וכל תשובה נכונה = עוד 5.</p>');
     if (!mine) $('ks-prep-b').addEventListener('click', function () {
       var ans = q.map(function (x, qi) { var c = el.querySelector('input[name="pq' + qi + '"]:checked'); return c ? +c.value : -1; });
       if (ans.some(function (a) { return a < 0; }) && !confirm('לא ענית על כל השאלות. לשלוח בכל זאת?')) return;
@@ -206,7 +214,7 @@
     if (!p.me && !p.teacher) acts += '<button type="button" class="linkish" data-rep="' + p.id + '" title="לדווח למורה על הודעה לא מתאימה">🚩</button>';
     if (p.me) acts += '<button type="button" class="linkish" data-del="' + p.id + '">למחוק</button>';
     if (root && root.me && !p.me && !p.teacher && !p.help) acts += '<button type="button" class="btn btn-sm" data-help="' + p.id + '">👍 זה עזר לי</button>';
-    return '<div class="kp-post' + (p.teacher ? ' is-t' : '') + (p.good ? ' is-good' : '') + '"><div class="kp-post-h"><b>' + (p.teacher ? '👩‍🏫 ' : '') + esc(p.nick) + (p.me ? ' (אני)' : '') + '</b><span>' + ago(p.t) + '</span>' +
+    return '<div class="kp-post' + (p.teacher ? ' is-t' : '') + (p.good ? ' is-good' : '') + '"><div class="kp-post-h"><b>' + (p.teacher ? '👩‍🏫 ' : '') + esc(p.nick) + (p.me ? ' (אני)' : '') + '</b>' + (p.crown ? '<span class="kp-crown">' + esc(p.crown) + '</span>' : '') + '<span>' + ago(p.t) + '</span>' +
       (p.good ? '<span class="kp-badge">⭐ תשובה מצוינת</span>' : '') + (p.help ? '<span class="kp-badge">👍 עזר</span>' : '') + '</div>' +
       '<p dir="auto">' + esc(p.text).replace(/\n/g, '<br>') + '</p>' + (acts ? '<div class="kp-post-a">' + acts + '</div>' : '') + '</div>';
   }
@@ -268,6 +276,7 @@
     call('/c/' + ME.code + '/me', { sid: ME.sid, token: ME.token }).then(function (m) {
       if (gone(m) || !m.ok) return;
       $('ks-mypts').textContent = m.pts; $('ks-chip').hidden = false;
+      $('ks-role').hidden = !m.crown; $('ks-role').textContent = m.crown || '';
       $('ks-msg').hidden = !m.msg; $('ks-msg').textContent = m.msg ? '📣 ' + m.msg : '';
       $('ks-stats').innerHTML = '<div><b>' + m.pts + '</b><span>נקודות ' + (PER[m.period] || 'השבוע') + '</span></div><div><b>' + (m.place ? m.place : '–') + '</b><span>מקום בלוח (מתוך ' + m.of + ')</span></div><div><b>' + m.streak + (m.streak ? ' 🔥' : '') + '</b><span>ימים ברצף</span></div><div><b>' + m.solved + '</b><span>תרגילים פתורים</span></div>';
       var got = BADGES.filter(function (b) { return b[3](m); }).length;
