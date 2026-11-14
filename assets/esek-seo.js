@@ -3,7 +3,7 @@
 (function () {
   'use strict';
   // מפתח דפדפן ציבורי, מוגבל ל-PageSpeed Insights ולכתובות hakelim.com / gilad-rachamim.github.io (לא סוד).
-  var KEY = '';
+  var KEY = 'AIzaSyBrvmyCbWH8lnLFuRH37HLTiqVLqC8kdH8';
   var API = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed';
   var LS = 'esek-seo-v1';
   var WA = '972584049049';
