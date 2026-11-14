@@ -273,5 +273,21 @@
   if (goodP(getP())) { $('cd-partner').open = true; }
   brandOn();
 
+  // ---- הודעה לכל הלקוחות: להעתיק את כולם עם הקישורים (טאבים), ולהדביק ב"רשימת תפוצה" (/esek/tfutsa/) ----
+  (function () {
+    var tbl = $('cd-table'); if (!tbl || $('cd-all')) return;
+    tbl.insertAdjacentHTML('beforebegin', '<div class="btns" id="cd-all"><button class="btn btn-line btn-sm" type="button" id="cd-all-copy">📋 להעתיק את כל הלקוחות עם הקישורים</button>' +
+      '<a class="btn btn-line btn-sm" href="/esek/tfutsa/" target="_blank" rel="noopener">✉️ הודעה לכל הלקוחות</a><span class="hint" id="cd-all-msg" role="status"></span></div>');
+    $('cd-all-copy').addEventListener('click', function () {
+      var act = clients.filter(function (c) { return c.on; });
+      if (!act.length) { $('cd-all-msg').textContent = 'עוד אין לקוחות.'; return; }
+      var clean = function (v) { return String(v || '').replace(/[\t\r\n]+/g, ' ').trim(); };
+      var rows = ['שם\tטלפון\tמייל\tקישור'].concat(act.map(function (c) { return [clean(c.name), clean(c.phone), clean(c.email), link(c)].join('\t'); }));
+      copyRaw(rows.join('\n'), $('cd-all-msg'));
+      $('cd-all-msg').textContent = act.length + ' לקוחות הועתקו ✓ מדביקים ב"רשימת תפוצה" ושולחים לכל אחד את הקישור שלו.';
+      CH.used('cheshbon_tik_cheder', 'copy_all');
+    });
+  })();
+
   show();
 })();
