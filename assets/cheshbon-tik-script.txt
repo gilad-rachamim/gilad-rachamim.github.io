@@ -8,9 +8,9 @@
  * מיילים (תזכורות ללקוחות, "סיימתי להעלות") יוצאים מה-Gmail שלכם בלבד.
  *
  * התקנה (פעם אחת, כ-5 דקות): ההוראות המלאות בדף "פתיחת חדר" באתר.
- * גרסה 4 · 14.11.2026 (תזכורות, סיום העלאה, תיק מלא, כפולים, מסמכים לחתימה, מגירות לכל לקוח, קריאת סכום מהקבלה)
+ * גרסה 5 · 14.11.2026 (תזכורות, סיום העלאה, תיק מלא, כפולים, מסמכים לחתימה, מגירות לכל לקוח, קריאת סכום מהקבלה, הצעות מחיר עם אישור הלקוח)
  */
-var VER = 4;
+var VER = 5;
 var ROOT_NAME = 'תיק מסמכים ללקוחות';
 var SITE = 'https://hakelim.com/kelim/cheshbon/tik/';
 var MAX_B64 = 34 * 1024 * 1024;   // קובץ עד ~25MB
@@ -18,6 +18,7 @@ var DAY_LIMIT = 300;               // העלאות ללקוח ביום
 var C_HEAD = ['שם הלקוח', 'סוג', 'קוד', 'תיקייה', 'נוצר', 'פעיל', 'מייל', 'מגירות', 'בקשות מיוחדות', 'סיים להעלות'];
 var D_HEAD = ['הועלה', 'לקוח', 'שנה', 'מגירה', 'חודש', 'סכום', 'הערה', 'שם הקובץ', 'קישור', 'מזהה', 'קוד לקוח', 'נמחק', 'טביעה'];
 var S_HEAD = ['קוד לקוח', 'מזהה', 'שם הקובץ', 'נוסף', 'לקוח'];
+var Q_HEAD = ['נוצרה', 'מספר', 'לקוח', 'לחודש', 'לשנה', 'קוד', 'נצפתה', 'אושרה', 'שם המאשר', 'נתוני ההצעה'];
 // שמות המגירות – אותם שמות כמו בדף (לתזכורות במייל)
 var DRAWERS = { '106': 'טופס 106 מכל מעסיק', truma: 'קבלות על תרומות (סעיף 46)', pensia: 'פנסיה, קופת גמל וקרן השתלמות', bituach: 'ביטוח חיים ואובדן כושר עבודה', '867': 'טופס 867 מהבנק ומבית ההשקעות', bl: 'אישורים מביטוח לאומי', zikui: 'נקודות זיכוי: תואר, שחרור, ילדים', refui: 'הוצאות רפואיות ומוסדות', dira: 'שכר דירה ונדל"ן', yipui: 'ייפוי כוח וטפסים חתומים', hotzaot: 'חשבוניות הוצאה של העסק', hachnasot: 'קבלות וחשבוניות הכנסה', bank: 'דפי בנק וכרטיסי אשראי', rechev: 'רכב: דלק, טיפולים וביטוח', tashlumim: 'מקדמות, מע"מ וביטוח לאומי ששילמתם', acher: 'מסמכים אחרים' };
 var OSEK_ONLY = ['hotzaot', 'hachnasot', 'bank', 'rechev', 'tashlumim'];
@@ -71,8 +72,13 @@ function route_(b) {
     if (a === 'mBundle') return bundle_(b.t, b.year);
     if (a === 'mAttach') return attach_(b);
     if (a === 'mUndone') return markDone_(b.t, '');
+    if (a === 'mQuote') return saveQuote_(b);
+    if (a === 'mQuotes') return { ok: true, quotes: quotes_() };
     return { ok: false, err: 'action' };
   }
+  // ---- הצעת מחיר: הלקוח רואה ומאשר (עם הקוד של ההצעה) ----
+  if (a === 'qGet') return getQuote_(b.q);
+  if (a === 'qOk') return okQuote_(b.q, b.name);
   // ---- פעולות של לקוח (עם הקוד האישי שלו) ----
   var c = byToken_(b.t);
   if (!c) return { ok: false, err: 'token' };
@@ -299,6 +305,51 @@ function setAi_(b) {
   if (sh.getDataRange().getValues().length < 2) sh.appendRow(['', '', '']);
   sh.getRange(2, 3).setValue(k);
   return { ok: true, ai: !!aiKey_() };
+}
+
+// ---- הצעות מחיר: רו"ח שומר הצעה, הלקוח פותח קישור ומאשר. הכול נרשם בגיליון "הצעות מחיר" ----
+function saveQuote_(b) {
+  var d = String(b.data || '');
+  if (!d || d.length > 12000) return { ok: false, err: 'size' };
+  try { JSON.parse(d); } catch (x) { return { ok: false, err: 'bad' }; }
+  var q = rnd_(20);
+  sheet_('הצעות מחיר', Q_HEAD).appendRow([new Date(), clip_(b.no, 20), clip_(b.client, 60), +b.month || '', +b.year || '', q, '', '', '', d]);
+  return { ok: true, q: q };
+}
+function quoteRow_(q) {
+  q = String(q || '');
+  if (q.length < 16) return null;
+  var sh = sheet_('הצעות מחיר', Q_HEAD), v = sh.getDataRange().getValues();
+  for (var i = 1; i < v.length; i++) if (String(v[i][5]) === q) return { sh: sh, row: i + 1, r: v[i] };
+  return null;
+}
+function getQuote_(q) {
+  var f = quoteRow_(q); if (!f) return { ok: false, err: 'quote' };
+  if (!f.r[6]) f.sh.getRange(f.row, 7).setValue(new Date());
+  var ok = f.r[7] instanceof Date ? f.r[7].toISOString() : String(f.r[7] || '');
+  return { ok: true, data: String(f.r[9]), approved: ok, by: String(f.r[8] || ''), office: PropertiesService.getScriptProperties().getProperty('OFFICE'), brand: brand_() };
+}
+function okQuote_(q, name) {
+  var f = quoteRow_(q); if (!f) return { ok: false, err: 'quote' };
+  name = clip_(name, 60);
+  if (!name) return { ok: false, err: 'name' };
+  if (f.r[7]) return { ok: true, approved: f.r[7] instanceof Date ? f.r[7].toISOString() : String(f.r[7]), by: String(f.r[8] || '') };
+  var now = new Date();
+  f.sh.getRange(f.row, 8).setValue(now); f.sh.getRange(f.row, 9).setValue(name);
+  var me = Session.getEffectiveUser().getEmail();
+  if (me) {
+    try { MailApp.sendEmail({ to: me, subject: name + ' אישר/ה את הצעת המחיר ' + String(f.r[1] || ''), body: name + ' אישר/ה את הצעת המחיר' + (f.r[1] ? ' מספר ' + f.r[1] : '') + ' ללקוח ' + String(f.r[2] || '') + '.\n' + (f.r[3] ? 'לחודש: ' + f.r[3] + ' ₪\n' : '') + (f.r[4] ? 'לשנה: ' + f.r[4] + ' ₪\n' : '') + '\nכל ההצעות בגיליון: ' + ss_().getUrl() + '\n\nהצעת מחיר ללקוח – הכלים של גילעד רחמים' }); } catch (x) {}
+  }
+  return { ok: true, approved: now.toISOString(), by: name };
+}
+function quotes_() {
+  var v = sheet_('הצעות מחיר', Q_HEAD).getDataRange().getValues(), out = [];
+  for (var i = 1; i < v.length; i++) {
+    var r = v[i];
+    out.push({ at: r[0] instanceof Date ? r[0].toISOString() : String(r[0]), no: String(r[1]), client: String(r[2]), month: r[3], year: r[4], q: String(r[5]),
+      seen: r[6] instanceof Date ? r[6].toISOString() : String(r[6] || ''), approved: r[7] instanceof Date ? r[7].toISOString() : String(r[7] || ''), by: String(r[8] || '') });
+  }
+  return out.reverse();
 }
 
 // ---- דרייב וגיליון ----
