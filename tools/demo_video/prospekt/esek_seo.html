@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>בדיקת SEO לאתר – פרוספקט לבעלי עסקים</title>
+<!-- פרוספקט A4 לבעלי עסקים ואתרים (14.11.2026). pdf.py מכניס את ה-QR ומדפיס ל-PDF.
+     העובדות רק מהדפים: src/pages/esek/seo/, assets/esek-seo.js, ~/.claude/skills/seo-audit/references/offer.md -->
+<style>
+@font-face{font-family:Assistant;src:url(../../../assets/fonts/Assistant-wght.woff) format("woff");font-weight:200 900}
+@font-face{font-family:Frank;src:url(../../../assets/fonts/FrankRuhlLibre-wght.woff) format("woff");font-weight:300 900}
+@page{size:A4;margin:0}
+:root{--ink:#141c2b;--ink2:#1b2538;--gold:#dcb769;--gold-hi:#ecca83;--gold-d:#9a7a35;--paper:#fbfaf3;--card:#ffffff;--text:#1d2433;--muted:#5d6678;--line:#e6dfcc;--accent:#2f7fb0;--ok:#2e9a6a}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--paper)}
+body{font-family:Assistant,"Segoe UI",Arial,sans-serif;color:var(--text);-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:10.6pt;line-height:1.45}
+.page{width:210mm;height:297mm;overflow:hidden;position:relative;display:flex;flex-direction:column;page-break-after:always;background:var(--paper)}
+.page:last-child{page-break-after:auto}
+em{font-style:normal;color:var(--gold-d);font-weight:700}
+.band{background:radial-gradient(70% 90% at 90% 0%,rgba(220,183,105,.30),transparent 70%),linear-gradient(160deg,var(--ink2),var(--ink));color:#fff;padding:11mm 14mm 9mm;display:flex;gap:7mm;align-items:center}
+.band .ic{flex:0 0 22mm;height:22mm;border-radius:6mm;background:linear-gradient(145deg,var(--gold-hi),var(--gold));display:flex;align-items:center;justify-content:center;font-size:34pt}
+.kick{color:var(--gold-hi);font-weight:700;font-size:10.5pt;letter-spacing:.2px}
+h1{font-family:Frank,serif;font-size:27pt;line-height:1.08;font-weight:800;margin-top:1mm}
+h1 em{color:var(--gold-hi)}
+.band p{font-size:12pt;margin-top:2mm;color:#e6eaf3;line-height:1.4}
+.band p em{color:var(--gold-hi)}
+.body{padding:7mm 14mm 0;display:flex;flex-direction:column;gap:4.2mm;flex:1}
+h2{font-family:Frank,serif;font-size:14.5pt;color:var(--ink);font-weight:800;margin-bottom:1.6mm;display:flex;gap:2mm;align-items:center}
+.box{background:var(--card);border:1px solid var(--line);border-radius:4mm;padding:4mm 5mm}
+.prob{display:grid;grid-template-columns:1fr 1fr;gap:4mm}
+.prob .box:first-child{border-color:#efc9bf;background:#fff8f5}
+.prob .box:last-child{border-color:#bfe2d0;background:#f5fbf8}
+.prob p{font-size:10.6pt}
+.prob b{font-size:11pt}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:4mm}
+ul.l{list-style:none;display:grid;gap:1.5mm}
+ul.l li{display:flex;gap:2mm;align-items:flex-start;font-size:10pt;line-height:1.38}
+ul.l li i{font-style:normal;flex:0 0 5.5mm;text-align:center}
+ul.l li b{color:var(--ink)}
+.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm;align-items:start}
+.shots figure{text-align:center}
+.shots img{width:100%;height:52mm;object-fit:cover;object-position:top;border-radius:3.5mm;border:2.4mm solid #232c3d;display:block}
+.shots figcaption{font-size:9pt;color:var(--muted);margin-top:1.2mm;font-weight:600}
+.foot{margin-top:auto;padding:3.5mm 14mm;background:var(--ink);color:#cfd6e4;font-size:9pt;display:flex;justify-content:space-between;align-items:center}
+.foot b{color:var(--gold-hi)}
+.priv{display:grid;grid-template-columns:1fr 1fr;gap:2mm 6mm}
+.priv div{font-size:9.5pt;line-height:1.36}
+.priv b{display:block;color:var(--ink);font-size:10.4pt}
+.tiers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3.5mm;align-items:stretch}
+.tier{background:var(--card);border:1px solid var(--line);border-radius:4mm;padding:4mm 4mm 3.5mm;text-align:center;display:flex;flex-direction:column;gap:1mm}
+.tier .n{font-family:Frank,serif;font-size:15pt;font-weight:800;color:var(--ink)}
+.tier .s{font-size:12pt;font-weight:800;color:var(--gold-d)}
+.tier .d{font-size:9.4pt;color:var(--muted);line-height:1.35}
+.tier.top{background:linear-gradient(160deg,var(--ink2),var(--ink));border:1.5px solid var(--gold);color:#fff}
+.tier.top .n{color:var(--gold-hi)}.tier.top .s{color:#fff}.tier.top .d{color:#d6dcea}
+.tier .tag{align-self:center;background:var(--gold);color:var(--ink);font-weight:800;font-size:8.6pt;border-radius:99px;padding:.4mm 3mm;margin-bottom:.6mm}
+.note{font-size:9.8pt;color:var(--muted);line-height:1.45}
+.gold{background:linear-gradient(160deg,#fff7e4,#fffdf6);border:1.4px solid var(--gold)}
+.end{display:grid;grid-template-columns:auto 1fr;gap:6mm;align-items:center}
+.qr{width:30mm;height:30mm;background:#fff;border:1px solid var(--line);border-radius:3mm;padding:2mm}
+.qr svg{width:100%;height:100%;display:block}
+.end h3{font-family:Frank,serif;font-size:15pt;color:var(--ink)}
+.url{direction:ltr;unicode-bidi:isolate;font-weight:800;color:var(--accent);font-size:12pt}
+.sig{font-size:10pt;color:var(--text);margin-top:1.5mm;line-height:1.45}
+.sig b{color:var(--ink)}
+.mak{display:grid;grid-template-columns:62mm 1fr;gap:5mm;align-items:center}
+.mak img{width:100%;border-radius:2.5mm;border:1.8mm solid #232c3d;display:block}
+.shots img{height:74mm}
+</style>
+<body>
+
+<!-- ===== עמוד 1 ===== -->
+<section class="page">
+  <header class="band">
+    <div class="ic">🔎</div>
+    <div>
+      <div class="kick">מיזם הכלים של גילעד רחמים · לבעלי עסקים ואתרים</div>
+      <h1>בדיקת SEO <em>לאתר שלכם</em></h1>
+      <p>מה גוגל רואה כשהוא נכנס לאתר שלכם – ומה לתקן, <em>בעברית פשוטה</em>, לפי סדר החשיבות. בחינם, בלי הרשמה ובלי מייל.</p>
+    </div>
+  </header>
+  <div class="body">
+    <div class="prob">
+      <div class="box">
+        <h2>😟 הבעיה</h2>
+        <p>רוב בעלי העסקים לא יודעים מה גוגל רואה באתר שלהם. במחשב הכול נראה טוב, אבל בטלפון הדף נטען לאט, חסר לו תיאור לגוגל, ונשארו בו דפים מהתבנית. <b>הלקוח מחפש, לוחץ, מחכה – ועובר למתחרה.</b></p>
+      </div>
+      <div class="box">
+        <h2>✅ מה הבדיקה עושה</h2>
+        <p>מריצה על הדף את הכלי של גוגל (PageSpeed Insights) ומתרגמת את התוצאה לעברית: <b>מה הבעיה, למה היא חשובה, ואיך מתקנים</b> – גם בוויקס ובוורדפרס. התוצאה מגיעה אחרי 20–60 שניות.</p>
+      </div>
+    </div>
+
+    <div class="cols">
+      <div class="box">
+        <h2>📋 מה יש בדוח</h2>
+        <ul class="l">
+          <li><i>📊</i><span><b>ארבעה ציונים של גוגל:</b> SEO, מהירות, נגישות ואמינות.</span></li>
+          <li><i>⚡</i><span><b>Core Web Vitals בשפה פשוטה:</b> כמה זמן התוכן הראשי נטען, אם הדף "קופץ", ואם הוא נתקע.</span></li>
+          <li><i>🛠</i><span><b>מה לתקן, לפי סדר החשיבות,</b> עם "למה זה חשוב" ו"איך מתקנים".</span></li>
+          <li><i>🧩</i><span><b>הסבר לוויקס ולוורדפרס</b> – איפה בדיוק לוחצים.</span></li>
+          <li><i>📱</i><span><b>בטלפון או במחשב:</b> גוגל מדרג לפי הטלפון, ואפשר להשוות.</span></li>
+          <li><i>📲</i><span><b>שליחה בווטסאפ ושמירה כ-PDF</b> – למי שבנה לכם את האתר.</span></li>
+        </ul>
+      </div>
+      <div class="box">
+        <h2>🏪 מה זה נותן לעסק</h2>
+        <ul class="l">
+          <li><i>🏃</i><span><b>אתר מהיר בטלפון</b> – פחות אנשים שעוזבים לפני שראו את הטלפון שלכם.</span></li>
+          <li><i>🔤</i><span><b>כותרת ותיאור נכונים</b> – גוגל מציג את שם העסק ואת מה שאתם עושים, ולא טקסט אקראי מהדף.</span></li>
+          <li><i>♿</i><span><b>נגישות</b> – האתר נוח לכל אחד, גם בטלפון קטן ובגופן גדול.</span></li>
+          <li><i>🧹</i><span><b>ניקיון</b> – דפים שבורים, דפי תבנית ושאריות שגוגל רואה ואתם לא.</span></li>
+          <li><i>🤝</i><span><b>בלי הבטחות:</b> אף אחד לא יכול להבטיח מקום בגוגל. הבדיקה מורידה את המכשולים שמפריעים לו.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="shots">
+      <figure><img src="../shots/seo/s2-scores.jpg" alt=""><figcaption>ארבעה ציונים של גוגל</figcaption></figure>
+      <figure><img src="../shots/seo/s3-vitals.jpg" alt=""><figcaption>מה גוגל מודד באמת</figcaption></figure>
+      <figure><img src="../shots/seo/s4-fixes.jpg" alt=""><figcaption>מה לתקן – ואיך</figcaption></figure>
+    </div>
+  </div>
+  <footer class="foot"><span><b>מיזם הכלים של גילעד רחמים</b> · כלים חינמיים לכל אחד</span><span class="url" style="color:var(--gold-hi);font-size:9.5pt">hakelim.com/esek/seo</span></footer>
+</section>
+
+<!-- ===== עמוד 2 ===== -->
+<section class="page">
+  <div class="body" style="padding-top:8mm;gap:3.4mm">
+    <div class="box">
+      <h2>🗂 סריקה של כל האתר – גם בחינם</h2>
+      <p class="note" style="color:var(--text)">הבדיקה באתר בודקת דף אחד בכל פעם. אפשר לבקש ממני סריקה של <b>כל האתר, עד 50 דפים</b>: כותרות ותיאורים חסרים או כפולים, קישורים שבורים, דפים שאין אליהם קישור, דפים חסומים לגוגל, מפת האתר ותמונות בלי תיאור – בדוח מלא בעברית, לפי סדר החשיבות, עם הערכה כמה עבודה יש בכל תיקון.</p>
+    </div>
+
+    <div>
+      <h2>💛 רוצים שנתקן בשבילכם? שותפות במיזם – במדרגות של חי</h2>
+      <div class="tiers">
+        <div class="tier"><div class="n">סריקה</div><div class="s">חינם</div><div class="d">דוח מלא לכל האתר: ציון, כל הבעיות לפי סדר החשיבות, ואיך מתקנים.</div></div>
+        <div class="tier"><div class="n">חי</div><div class="s">18 ₪</div><div class="d">הדוח + 5 התיקונים הכי חשובים לאתר שלכם, מוסברים צעד-צעד לתיקון עצמי.</div></div>
+        <div class="tier"><div class="n">עשר פעמים חי</div><div class="s">180 ₪</div><div class="d">בדיקת מומחה: מחקר מילות חיפוש ו-5 המתחרים בגוגל לעד 5 דפים מרכזיים, ותוכנית דף-דף.</div></div>
+        <div class="tier top"><span class="tag">לאתר קטן</span><div class="n">עשרים פעמים חי</div><div class="s">360 ₪</div><div class="d">תיקון מלא לאתר עד 15 דפים: התיקונים הטכניים, כותרות, תיאורים, H1, Schema וקישורים פנימיים + סריקה חוזרת אחרי 30 יום.</div></div>
+        <div class="tier"><div class="n">מייסדים · פי 50</div><div class="s">900 ₪</div><div class="d">כמו פי 20, לאתר עד 50 דפים + פרופיל העסק בגוגל + 2 דפים חדשים לביטויים שחסרים באתר.</div></div>
+        <div class="tier"><div class="n">VIP · פי 100</div><div class="s">1,800 ₪</div><div class="d">הכול + ליווי שנה: סריקה כל חודש, דוח לפני/אחרי, דף נחיתה לביטוי המרכזי, ושם העסק בדף "שותפים במיזם".</div></div>
+      </div>
+      <p class="note" style="margin-top:2.5mm">זה <b>מיזם חסד – לא השקעה, לא רכישה ולא מנוי.</b> בכל מדרגה: כל מה שכתוב בה ייעשה, עם דוח לפני ואחרי. אתר גדול מ-50 דפים או בקשה מיוחדת – נדייק יחד. גילעד כאן כדי לדייק לכל אחד מה יהיה מושלם עבורו.</p>
+    </div>
+
+    <div class="box gold">
+      <h2>🧰 עוד כלים חינמיים לעסק קטן</h2>
+      <p>במיזם יש כלים לכל תחום, ובהם לעסקים: <b>יוצר קוד QR מעוצב, תפריט דיגיטלי, מודעת מבצע לסטטוס, רשימת תפוצה אישית בווטסאפ ובמייל, וצ'ק-ליסט לפתיחת עוסק.</b> הכול בחינם ובלי הרשמה: <span class="url" style="font-size:10.5pt">hakelim.com/kelim</span></p>
+    </div>
+
+    <div class="box end">
+      <div class="qr">{{QR}}</div>
+      <div>
+        <h3>סורקים ובודקים את האתר – בחינם</h3>
+        <div class="url">hakelim.com/esek/seo</div>
+        <p class="sig">אני <b>גילעד רחמים</b>. נפצעתי קשה במלחמה, בחאן יונס, ומאז אני בונה את הכלים האלה לבד – באהבה ובחסד. אני עושה את זה כדי שכל עסק קטן יקבל עזרה טובה בחינם, גם מי שאין לו תקציב לחברת שיווק. <b>אשמח להיות כאן בשבילכם.</b></p>
+        <p class="note" style="margin-top:1.2mm">ליצירת קשר: <span class="url" style="font-size:10.5pt">058-4049049</span> (ווטסאפ)</p>
+      </div>
+    </div>
+  </div>
+  <footer class="foot"><span><b>מיזם הכלים של גילעד רחמים</b> · hakelim.com</span><span>בדיקה חינם · לתיקון – שותפות במיזם</span></footer>
+</section>
+</body>
+</html>
