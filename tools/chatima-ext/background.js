@@ -84,7 +84,9 @@ chrome.runtime.onInstalled.addListener(function (d) {
   chrome.alarms.create('refresh', { periodInMinutes: 12 * 60 });
   buildMenus().then(function () { return refresh(d.reason === 'install'); });
 });
-chrome.runtime.onStartup.addListener(function () { refresh(false); });
+chrome.runtime.onStartup.addListener(function () { refresh(false); syncAutoTr(); });
+chrome.runtime.onInstalled.addListener(function () { syncAutoTr(); });
+chrome.permissions.onRemoved.addListener(function () { syncAutoTr(); });
 chrome.alarms.onAlarm.addListener(function (a) { if (a.name === 'refresh') refresh(false); });
 
 // ---------- קבצים ----------
@@ -236,6 +238,16 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
 chrome.runtime.onMessage.addListener(function (m, sender, reply) {
   if (!m) return;
   if (m.refresh) { refresh(false).then(function () { reply({ ok: true }); }); return true; }
+  // תרגום: PDF מתוך הכרטיסייה שלו, ו"לתרגם תמיד את האתר הזה"
+  if (m.pdfFromTab) { pdfFromTab(m.pdfFromTab).then(reply, function (e) { reply({ err: String(e && e.message || e) }); }); return true; }
+  if (m.trAsk) { askAutoTr(m.trAsk).then(function () { reply({ ok: true }); }, function () { reply({ ok: false }); }); return true; }
+  if (m.trAlways) {
+    // הוספה רק אחרי שהרשות כבר ניתנה (מתוך always.html); הסרה – מכל מקום
+    (m.on ? chrome.permissions.contains({ origins: [m.trAlways + '/*'] }) : Promise.resolve(true)).then(function (ok) {
+      return ok ? setAutoTr(m.trAlways, !!m.on) : false;
+    }).then(function (ok) { reply({ ok: ok }); }, function () { reply({ ok: false }); });
+    return true;
+  }
   if (m.act && PAGE_ACTS[m.act]) {
     chrome.tabs.get(m.tabId).then(function (tab) { return PAGE_ACTS[m.act](tab, {}); })
       .then(function (r) { reply(r || { ok: true }); }, function (e) { reply({ ok: false, err: String(e && e.message || e) }); });

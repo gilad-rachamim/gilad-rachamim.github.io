@@ -1,0 +1,30 @@
+<!doctype html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<title>לתרגם תמיד באתר הזה</title>
+<link rel="icon" href="icon32.png">
+<style>
+  :root { color-scheme: light dark; }
+  body { margin: 0; padding: 18px 20px; background: #141210; color: #f3ead7; font: 15px/1.6 "Segoe UI", Arial, sans-serif; }
+  h1 { font-size: 18px; margin: 0 0 8px; color: #e9c977; }
+  p { margin: 0 0 12px; }
+  b.site { direction: ltr; unicode-bidi: isolate; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  button { font: inherit; border-radius: 10px; padding: 7px 14px; cursor: pointer; border: 1px solid #4a3d24; background: transparent; color: #f3ead7; }
+  button.gold { background: #d9b25f; color: #141210; border-color: #d9b25f; font-weight: 700; }
+  button:focus-visible { outline: 2px solid #e9c977; outline-offset: 2px; }
+  small { display: block; color: #bdb3a0; margin-top: 12px; }
+</style>
+</head>
+<body>
+<h1>🌐 לתרגם תמיד את <b class="site" id="site"></b>?</h1>
+<p>מעכשיו כל דף באתר הזה יתורגם לבד כשהוא נפתח, בלי ללחוץ. התרגום נעשה בתוך המחשב, בלי שרת.</p>
+<div class="row">
+  <button class="gold" type="button" id="yes">✓ כן, לתרגם תמיד</button>
+  <button type="button" id="no">לא עכשיו</button>
+</div>
+<small id="msg" role="status">כרום ישאל אם לתת לתוסף גישה לאתר הזה. זה נחוץ כדי שהתרגום יופעל לבד. מבטלים בכל רגע בכפתור שבפס התרגום.</small>
+<script src="always.js"></script>
+</body>
+</html>
