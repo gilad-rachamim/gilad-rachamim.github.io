@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>מנוע סרטוני הדמיה</title>
+<!-- מנוע סרטוני ההדמיה של הכלים (14.11.2026). render.py טוען את הדף, קורא ל-DV.load(spec) ואז DV.seek(t) לכל פריים.
+     כל סצנה = מחלקת CSS עם אנימציות; הזמן נקבע ידנית (currentTime) ולכן כל פריים יוצא זהה בכל ריצה. -->
+<style>
+@font-face{font-family:Assistant;src:url(../../assets/Assistant-wght.woff) format("woff");font-weight:200 900}
+:root{--ink:#0e1628;--ink2:#15203a;--gold:#d4b062;--gold-hi:#f0d38e;--body:#e3e8f2;--muted:#9aa6bf;--accent:#5aa9e6;--ok:#6fd3a4}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:720px;height:1280px;overflow:hidden;background:var(--ink)}
+body{font-family:Assistant,"Segoe UI",Arial,sans-serif;color:var(--body);-webkit-font-smoothing:antialiased}
+*,*::before,*::after{animation-play-state:paused!important;animation-fill-mode:both!important}
+#bg{position:absolute;inset:0;background:radial-gradient(120% 70% at 50% 0%,var(--ink2),var(--ink) 70%)}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.35}
+#brand{position:absolute;top:34px;right:0;left:0;text-align:center;font-size:22px;letter-spacing:.5px;color:var(--muted);z-index:5}
+#brand b{color:var(--gold)}
+#bar{position:absolute;bottom:0;right:0;height:8px;background:linear-gradient(90deg,var(--gold-hi),var(--gold));z-index:5}
+.scene{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;padding:110px 56px 90px;text-align:center}
+.scene.on{display:flex}
+.scene>.wrap{width:100%;animation:sceneIn .55s cubic-bezier(.2,.8,.2,1)}
+.scene.out>.wrap{animation:sceneOut .4s ease-in}
+@keyframes sceneIn{from{opacity:0;transform:translateY(40px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes sceneOut{from{opacity:1}to{opacity:0;transform:translateY(-30px)}}
+@keyframes pop{0%{opacity:0;transform:scale(.6)}70%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+@keyframes up{from{opacity:0;transform:translateY(34px)}to{opacity:1;transform:none}}
+@keyframes side{from{opacity:0;transform:translateX(-60px)}to{opacity:1;transform:none}}
+@keyframes sideR{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.a-pop{animation:pop .6s cubic-bezier(.2,.8,.2,1)}
+.a-up{animation:up .55s cubic-bezier(.2,.8,.2,1)}
+.a-side{animation:side .55s cubic-bezier(.2,.8,.2,1)}
+.a-sideR{animation:sideR .55s cubic-bezier(.2,.8,.2,1)}
+.a-fade{animation:fade .5s ease}
+
+/* כותרת */
+.t-icon{font-size:150px;line-height:1;margin-bottom:26px;display:inline-block}
+.t-icon span{display:inline-block;animation:float 3s ease-in-out infinite}
+.t-kicker{font-size:30px;color:var(--gold);font-weight:700;margin-bottom:14px}
+.t-title{font-size:72px;font-weight:800;line-height:1.08;color:#fff;white-space:pre-line}
+.t-title em{font-style:normal;color:var(--gold-hi)}
+.t-sub{font-size:36px;line-height:1.35;margin-top:24px;color:var(--body)}
+.chips{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:34px}
+.chip{background:rgba(255,255,255,.07);border:1px solid rgba(212,176,98,.35);border-radius:999px;padding:10px 22px;font-size:27px;font-weight:600}
+
+/* כותרת סצנה */
+.h{font-size:52px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:12px}
+.h em{font-style:normal;color:var(--gold-hi)}
+.hs{font-size:29px;color:var(--muted);margin-bottom:34px}
+
+/* שלבים */
+.steps{display:grid;gap:24px;text-align:right}
+.step{display:flex;gap:24px;align-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:28px;padding:26px 28px}
+.step .n{flex:0 0 78px;height:78px;border-radius:50%;background:var(--gold);color:var(--ink);font-size:44px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.step .tx{font-size:34px;line-height:1.3;font-weight:600;color:#fff}
+.step .tx small{display:block;font-size:26px;font-weight:400;color:var(--muted);margin-top:4px}
+
+/* כרטיסי אפשרויות */
+.cards{display:grid;gap:18px;text-align:right}
+.card{display:flex;gap:22px;align-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-right:6px solid var(--gold);border-radius:24px;padding:20px 24px}
+.card .ic{flex:0 0 74px;height:74px;border-radius:20px;background:rgba(212,176,98,.14);font-size:42px;display:flex;align-items:center;justify-content:center}
+.card b{display:block;font-size:33px;color:#fff;line-height:1.2}
+.card span{display:block;font-size:25px;color:var(--muted);line-height:1.35;margin-top:4px}
+.gold .wrap{background:linear-gradient(160deg,rgba(212,176,98,.22),rgba(212,176,98,.05));border:2px solid rgba(240,211,142,.55);border-radius:40px;padding:44px 34px;box-shadow:0 0 90px rgba(212,176,98,.18)}
+.gold .card{background:rgba(14,22,40,.55);border-right-color:var(--gold-hi)}
+.badge{display:inline-block;background:var(--gold);color:var(--ink);font-weight:800;font-size:28px;border-radius:999px;padding:8px 26px;margin-bottom:18px}
+.foot{margin-top:28px;font-size:29px;color:var(--gold-hi);font-weight:700}
+
+/* מספרים גדולים */
+.nums{display:grid;gap:22px}
+.num{background:rgba(255,255,255,.06);border-radius:30px;padding:26px}
+.num b{display:block;font-size:84px;font-weight:800;color:var(--gold-hi);line-height:1}
+.num span{display:block;font-size:31px;color:#fff;margin-top:8px}
+
+/* צ'אט (טלגרם/ווטסאפ) */
+.phone{width:560px;height:860px;margin:0 auto;border-radius:56px;background:#0e1621;border:10px solid #232c3d;box-shadow:0 30px 80px rgba(0,0,0,.55);overflow:hidden;display:flex;flex-direction:column;text-align:right}
+.phone .top{display:flex;align-items:center;gap:16px;padding:26px 24px 18px;background:#17212b}
+.phone .av{width:62px;height:62px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:34px}
+.phone .nm{font-size:28px;font-weight:700;color:#fff}.phone .st{font-size:20px;color:#7d8b99}
+.phone .msgs{flex:1;padding:22px 18px;display:flex;flex-direction:column;justify-content:flex-end;gap:12px;background:#0e1621}
+.m{max-width:84%;font-size:25px;line-height:1.35;padding:13px 18px;border-radius:22px;color:#fff;white-space:pre-line}
+.m.me{align-self:flex-start;background:#2b5278;border-bottom-left-radius:6px}
+.m.bot{align-self:flex-end;background:#182533;border-bottom-right-radius:6px}
+.m.note{align-self:center;background:rgba(255,255,255,.08);font-size:20px;padding:6px 16px;color:#9fb0c0}
+.m.media{padding:8px;width:84%}
+.m.media .scr{border-radius:16px;height:230px;background:radial-gradient(90% 90% at 50% 40%,#1a2a55,#070b18);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.m.media .scr b{font-size:30px;color:#fff}.m.media .scr b i{font-style:normal;color:#ffd84a}
+.m.media .scr small{font-size:20px;color:#8c97b2}
+.m.media .cap{font-size:20px;color:#9fb0c0;padding:8px 6px 2px}
+.kb{align-self:flex-end;width:84%;display:grid;gap:6px}
+.kb div{background:rgba(43,82,120,.55);border-radius:12px;text-align:center;font-size:21px;padding:9px;color:#fff}
+.kb div.hl{animation:pulse 1.2s ease-in-out infinite;background:#3a6ea0}
+.phone .inp{display:flex;align-items:center;gap:12px;padding:16px 20px;background:#17212b;font-size:24px;color:#7d8b99}
+.phone .inp .send{margin-right:auto;width:52px;height:52px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px}
+.cap2{margin-top:26px;font-size:31px;font-weight:700;color:var(--gold-hi)}
+
+/* מסך קריוקי */
+.kar{width:620px;height:620px;margin:0 auto;border-radius:40px;background:radial-gradient(80% 70% at 50% 45%,#1b2d63,#060a17);box-shadow:0 30px 80px rgba(0,0,0,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.kar .tt{position:absolute;top:30px;font-size:24px;color:#8c97b2}
+.kar .ln{font-size:56px;font-weight:800;color:#fff;position:relative;white-space:nowrap}
+.kar .ln .hl{position:absolute;inset:0;color:#ffd84a;clip-path:inset(0 0 0 100%);animation:sing 3.2s linear}
+@keyframes sing{from{clip-path:inset(0 0 0 100%)}to{clip-path:inset(0 0 0 0)}}
+.kar .nx{font-size:36px;color:#7f8aa6;margin-top:26px}
+.kar .pb{position:absolute;bottom:0;right:0;left:0;height:10px;background:#222b45}
+.kar .pb i{position:absolute;inset:0;background:#ffd84a;transform-origin:right;animation:grow 5s linear}
+@keyframes grow{from{transform:scaleX(.15)}to{transform:scaleX(.55)}}
+.kar .eq{position:absolute;bottom:34px;display:flex;gap:7px;align-items:flex-end;height:50px}
+.kar .eq i{width:10px;background:rgba(255,216,74,.6);border-radius:4px;animation:eq .7s ease-in-out infinite}
+@keyframes eq{0%,100%{height:12px}50%{height:46px}}
+.tags{display:flex;flex-direction:column;gap:14px;margin-top:34px}
+.tag{font-size:31px;font-weight:700;color:#fff}.tag em{font-style:normal;color:var(--gold-hi)}
+
+/* צילום מסך בתוך טלפון (לכלים באתר) */
+.shot{width:520px;height:900px;margin:0 auto;border-radius:52px;border:10px solid #232c3d;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.55);position:relative;background:#fff}
+.shot img{width:100%;display:block;animation:scrollShot 6s ease-in-out}
+@keyframes scrollShot{from{transform:translateY(0)}to{transform:translateY(var(--sy,0px))}}
+.tap{position:absolute;width:90px;height:90px;border-radius:50%;border:6px solid var(--gold-hi);box-shadow:0 0 0 999px rgba(0,0,0,0);animation:pop .5s ease}
+
+/* סיום */
+.cta-btn{direction:ltr;unicode-bidi:isolate;display:inline-flex;align-items:center;gap:14px;background:var(--accent);color:#fff;font-size:40px;font-weight:800;border-radius:999px;padding:24px 46px;margin-top:40px;animation:pulse 1.6s ease-in-out infinite}
+.cta-btn.goldb{background:var(--gold);color:var(--ink)}
+.url{margin-top:30px;font-size:34px;color:var(--gold-hi);font-weight:700;direction:ltr}
+.small{margin-top:18px;font-size:26px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<div id="brand">🧰 <b>מיזם הכלים של גילעד רחמים</b> · hakelim.com</div>
+<div id="stage"></div>
+<div id="bar"></div>
+<script>
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+// טקסט עם *הדגשה* בזהב
+const rich = s => esc(s).replace(/\*([^*]+)\*/g,'<em>$1</em>');
+const d = (cls, delay, inner, extra='') => `<div class="${cls}" style="animation-delay:${delay}s${extra}">${inner}</div>`;
+
+const R = {
+  title(s){
+    return `<div class="wrap">
+      ${s.icon?`<div class="t-icon a-pop" style="animation-delay:.1s"><span>${s.icon}</span></div>`:''}
+      ${s.kicker?d('t-kicker a-up',.3,rich(s.kicker)):''}
+      ${d('t-title a-up',.45,rich(s.title))}
+      ${s.sub?d('t-sub a-up',.8,rich(s.sub)):''}
+      ${s.chips?`<div class="chips">${s.chips.map((c,i)=>d('chip a-pop',1.2+i*.18,rich(c))).join('')}</div>`:''}
+    </div>`;
+  },
+  steps(s){
+    const g = s.gap ?? 1.1;
+    return `<div class="wrap">${d('h a-up',0,rich(s.title))}${s.sub?d('hs a-up',.15,rich(s.sub)):''}
+      <div class="steps">${s.items.map((it,i)=>d('step a-side',.5+i*g,`<div class="n">${i+1}</div><div class="tx">${rich(it[0])}${it[1]?`<small>${rich(it[1])}</small>`:''}</div>`)).join('')}</div></div>`;
+  },
+  cards(s){
+    const g = s.gap ?? .75;
+    return `<div class="wrap">${s.badge?d('badge a-pop',0,rich(s.badge)):''}${d('h a-up',.1,rich(s.title))}${s.sub?d('hs a-up',.25,rich(s.sub)):''}
+      <div class="cards">${s.items.map((it,i)=>d('card a-sideR',.6+i*g,`<div class="ic">${it[0]}</div><div><b>${rich(it[1])}</b>${it[2]?`<span>${rich(it[2])}</span>`:''}</div>`)).join('')}</div>
+      ${s.foot?d('foot a-up',.6+s.items.length*g+.2,rich(s.foot)):''}</div>`;
+  },
+  nums(s){
+    return `<div class="wrap">${d('h a-up',0,rich(s.title))}${s.sub?d('hs a-up',.15,rich(s.sub)):''}
+      <div class="nums">${s.items.map((it,i)=>d('num a-pop',.5+i*.8,`<b>${rich(it[0])}</b><span>${rich(it[1])}</span>`)).join('')}</div></div>`;
+  },
+  chat(s){
+    let t = .5, out = [];
+    for (const m of s.msgs){
+      t += m.wait ?? .9;
+      if (m.kb) out.push(d('kb a-up',t,m.kb.map((b,i)=>`<div${i===m.hl?' class="hl"':''}>${esc(b)}</div>`).join('')));
+      else if (m.media) out.push(d('m bot media a-pop',t,`<div class="scr"><b>${m.media[0]}</b><small>${esc(m.media[1]||'')}</small></div>${m.cap?`<div class="cap">${esc(m.cap)}</div>`:''}`));
+      else out.push(d(`m ${m.who||'bot'} a-pop`,t,esc(m.text)));
+    }
+    return `<div class="wrap"><div class="phone">
+      <div class="top"><div class="av">${s.avatar||'🤖'}</div><div><div class="nm">${esc(s.name)}</div><div class="st">${esc(s.status||'בוט')}</div></div></div>
+      <div class="msgs">${out.join('')}</div>
+      <div class="inp">😊 <span>הודעה</span><div class="send">➤</div></div></div>
+      ${s.caption?d('cap2 a-up',.3,rich(s.caption)):''}</div>`;
+  },
+  karaoke(s){
+    return `<div class="wrap">${s.title?d('h a-up',0,rich(s.title)):''}
+      <div class="kar a-pop" style="animation-delay:.2s"><div class="tt">${esc(s.song)}</div>
+        <div class="ln">${esc(s.line)}<span class="hl" style="animation-delay:.9s">${esc(s.line)}</span></div>
+        <div class="nx">${esc(s.next)}</div>
+        <div class="eq">${Array.from({length:12},(_,i)=>`<i style="animation-delay:${(i*.13)%0.7}s"></i>`).join('')}</div>
+        <div class="pb"><i></i></div></div>
+      <div class="tags">${(s.tags||[]).map((x,i)=>d('tag a-up',1.2+i*.7,rich(x))).join('')}</div></div>`;
+  },
+  shot(s){
+    return `<div class="wrap">${d('h a-up',0,rich(s.title))}
+      <div class="shot a-pop" style="animation-delay:.2s"><img src="${esc(s.img)}" style="--sy:${s.scroll||0}px;animation-delay:1s"></div>
+      ${s.caption?d('cap2 a-up',.6,rich(s.caption)):''}</div>`;
+  },
+  cta(s){
+    return `<div class="wrap">${s.icon?`<div class="t-icon a-pop"><span>${s.icon}</span></div>`:''}
+      ${d('t-title a-up',.2,rich(s.title))}${s.sub?d('t-sub a-up',.45,rich(s.sub)):''}
+      ${s.button?`<div class="a-pop" style="animation-delay:.8s"><span class="cta-btn ${s.gold?'goldb':''}">${esc(s.button)}</span></div>`:''}
+      ${s.url?d('url a-up',1.2,esc(s.url)):''}${s.small?d('small a-up',1.5,rich(s.small)):''}</div>`;
+  },
+  html(s){ return `<div class="wrap">${s.html}</div>`; }
+};
+
+const DV = {
+  scenes: [], total: 0, el: [],
+  load(spec){
+    const st = document.getElementById('stage');
+    if (spec.theme) for (const [k,v] of Object.entries(spec.theme)) document.documentElement.style.setProperty('--'+k, v);
+    let t = 0;
+    DV.scenes = spec.scenes.map(s => { const o = {s, t0:t, t1:t+s.dur}; t += s.dur; return o; });
+    DV.total = t;
+    st.innerHTML = DV.scenes.map(o => `<section class="scene ${o.s.cls||''}">${R[o.s.type](o.s)}</section>`).join('');
+    DV.el = [...st.children];
+    const bg = document.getElementById('bg');
+    const cols = spec.blobs || ['#d4b062','#3b5bdb','#12b886'];
+    bg.innerHTML = cols.map((c,i)=>`<div class="blob" style="background:${c};width:${420+i*80}px;height:${420+i*80}px"></div>`).join('');
+    return {total: t, cuts: DV.scenes.map(o => o.t0)};
+  },
+  seek(T){
+    // רקע זז לאט לפי הזמן הכולל
+    [...document.querySelectorAll('.blob')].forEach((b,i)=>{
+      const a = T*0.25 + i*2.1;
+      b.style.transform = `translate(${360-210+Math.cos(a)*230}px, ${300+i*330+Math.sin(a*1.3)*120}px)`;
+    });
+    document.getElementById('bar').style.width = (100*T/DV.total)+'%';
+    DV.scenes.forEach((o,i) => {
+      const el = DV.el[i], on = T >= o.t0 && T < o.t1 || (i === DV.scenes.length-1 && T >= o.t0);
+      el.classList.toggle('on', on);
+      if (!on) return;
+      const local = T - o.t0, outAt = o.t1 - .4, last = i === DV.scenes.length-1;
+      el.classList.toggle('out', !last && local >= o.s.dur - .4);
+      for (const a of el.getAnimations({subtree:true})) {
+        const nm = a.animationName;
+        a.currentTime = (nm === 'sceneOut' ? (local - (o.s.dur - .4)) : local) * 1000;
+      }
+    });
+  }
+};
+window.DV = DV;
+</script>
+</body>
+</html>
