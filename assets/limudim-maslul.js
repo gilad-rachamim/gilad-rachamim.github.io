@@ -19,6 +19,8 @@
   function dayDiff(a, b) { return Math.round((new Date(b + 'T12:00:00') - new Date(a + 'T12:00:00')) / 864e5); }
 
   var st = load() || {};
+  var OLDQ = { '35182': '35172', '35381': '35371', '35382': '35372', '35481': '35471', '35482': '35472', '35581': '35571', '35582': '35572' }; // השאלונים של התוכנית הקודמת -> תשפ"ז
+  if (st.tr && OLDQ[st.tr]) st.tr = OLDQ[st.tr];
   st.v = 1; st.s = st.s || {}; st.b = st.b || {}; st.d = st.d || []; st.snd = st.snd == null ? 1 : st.snd;
   st.n = st.n || 0; st.best = st.best || 0;
 
