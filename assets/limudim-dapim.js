@@ -475,6 +475,145 @@
       $('dp-bank-msg').textContent = '✓ נוספו ' + n + ' שאלות על ' + tp.name + '. הן בסוף הדף, עם התשובות בדף המורה, ואפשר לערוך אותן למעלה. למטה עוד 5 הצעות חדשות.';
     });
     $('dp-only').addEventListener('change', render);
+
+    // ---------------------------------------------------------------------
+    //  "ספרו במילים שלכם": תיאור חופשי (כתוב או מוקלט) -> 3 דפים לבחירה. הכול בדפדפן, בלי שרת
+    // ---------------------------------------------------------------------
+    var SYN = { kefel: ['לוח הכפל', 'לוח כפל', 'כפל'], hiluk: ['חילוק ארוך', 'חילוק'], seder: ['סדר פעולות'], shetach: ['שטח', 'היקף'], asroni: ['עשרוני'],
+      shvarim: ['חיבור שברים', 'חיסור שברים', 'שברים', 'שבר', 'מכנה משותף'], 'kefel-shvarim': ['כפל שברים', 'חילוק שברים'], memutza: ['ממוצע'], achuzim: ['אחוז', 'הנחה'],
+      yachas: ['יחס', 'פרופורציה'], histabrut: ['הסתברות', 'קובי', 'מטבע'], pilug: ['סוגריים', 'כינוס', 'חוק הפילוג', 'פילוג'], mishvaa: ['משוואה עם נעלם', 'משוואות', 'משוואה', 'נעלם'],
+      chezkot: ['חזקה', 'חזקות'], kav: ['פונקציה קווית', 'שיפוע', 'קו ישר', 'גרף'], pitagoras: ['פיתגורס', 'פיטגורס'], maarechet: ['מערכת משוואות', 'שני נעלמים', 'מערכת'],
+      trinom: ['טרינום', 'פירוק לגורמים', 'פירוק'], shorashim: ['נוסחת השורשים', 'משוואה ריבועית', 'ריבועית'], 'parabola-tavla': ['פרבולה', 'טבלת ערכים'], parabola: ['פרבולה', 'פונקציה ריבועית', 'קודקוד'],
+      sidra: ['סדרה חשבונית', 'סדרות'], handasit: ['סדרה הנדסית'], merchak: ['מרחק בין נקודות', 'אמצע קטע'], trigo: ['טריגונומטריה', 'טריגו', 'סינוס', 'קוסינוס', 'טנגנס'],
+      gdila: ['גדילה', 'דעיכה', 'ריבית'], stiya: ['חציון', 'שכיח', 'סטיית תקן', 'סטטיסטיקה'], normalit: ['נורמלית', 'התפלגות'], nigzeret: ['נגזרת', 'נגזרות', 'גזירה'], mashik: ['משיק'],
+      kitzon: ['קיצון', 'מקסימום', 'מינימום', 'חקירה'], integral: ['אינטגרל'], maagal: ['משוואת מעגל', 'מעגל'], sinusim: ['משפט הסינוסים', 'משפט הקוסינוסים'], tnua: ['בעיות תנועה', 'תנועה', 'הספק'],
+      merchav: ['טריגונומטריה במרחב', 'תיבה'], rationalit: ['רציונלית', 'אסימפטוט'], 'shoresh-f': ['פונקציית שורש'], etz: ['הסתברות מותנית', 'עץ'], 'trig-nigzeret': ['נגזרת של סינוס'],
+      vektor: ['וקטור'], merukav: ['מרוכב'], logaritm: ['לוגריתם', 'לוג', 'מעריכית'], 'exp-ln': ['ln', 'e בחזקת'], piramida: ['פירמידה'], dimyon: ['דמיון', 'משולשים דומים'],
+      'zaviot-maagal': ['זוויות במעגל', 'זווית היקפית', 'זווית מרכזית'], parametr: ['פרמטר'], induktzia: ['אינדוקציה'], 'nefach-sivuv': ['נפח גוף סיבוב', 'גוף סיבוב'] };
+    var GL = { 'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9, 'י': 10, 'יא': 11, 'יב': 12 };
+    var HEB_NUM = { 'עשר': 10, 'עשרה': 10, 'חמש עשרה': 15, 'רבע שעה': 15, 'עשרים': 20, 'חצי שעה': 30, 'שלושים': 30, 'ארבעים וחמש': 45, 'שעה וחצי': 90, 'שעה': 60, 'שישים': 60, 'תשעים': 90 };
+    function reEsc(w) { return w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+    function has(s, list) { // מילה שלמה, עם אות שימוש אחת לפניה (ו/ה/ב/ל/ש/מ/כ): "מתקשה" זה לא "קשה", "פירוק" זה לא "ירוק"
+      return list.some(function (w) { return new RegExp('(^|[\\s,.;:!?()\\-])[והבלשמכ]?' + reEsc(w.trim())).test(s); });
+    }
+    function aiParse(raw) {
+      var s = ' ' + String(raw || '').replace(/[׳'`]/g, '׳').replace(/["״]/g, '״').replace(/\s+/g, ' ') + ' ', r = { said: [] }, m;
+      // כיתה
+      m = s.match(/כית(?:ה|ות)\s*([א-י]{1,2})[׳״]?(?=[\s\d,.!?-]|$)/) || s.match(/(?:^|\s)[לבו]?([א-י]{1,2})[׳״](?=[\s\d,.]|$)/);
+      if (m && GL[m[1].replace(/[׳״]/g, '')]) r.g = GL[m[1].replace(/[׳״]/g, '')];
+      if (!r.g && (m = s.match(/כית(?:ה|ות)\s*(\d{1,2})/))) r.g = Math.min(12, Math.max(2, +m[1]));
+      if (!r.g && has(s, ['תיכון', 'בגרות'])) r.g = 11;
+      if ((m = s.match(/(\d)\s*(?:יח|יחידות)/)) || (m = s.match(/(שלוש|ארבע|חמש)\s*יחידות/))) { r.u = { 'שלוש': 3, 'ארבע': 4, 'חמש': 5 }[m[1]] || +m[1]; if (!r.g) r.g = 11; }
+      // זמן
+      if ((m = s.match(/(\d{1,3})\s*(?:דק|ד׳)/))) r.m = +m[1];
+      else if (has(s, ['שיעור כפול', 'שעתיים'])) r.m = 90;
+      else Object.keys(HEB_NUM).sort(function (a, b) { return b.length - a.length; }).some(function (k) { if (s.indexOf(k) > -1 && (k.indexOf('שעה') > -1 || s.indexOf(k + ' דק') > -1)) { r.m = HEB_NUM[k]; return true; } });
+      if (!r.m && has(s, ['שיעור שלם', 'שיעור אחד', 'לשיעור'])) r.m = 45;
+      if (r.m) r.m = [10, 15, 20, 30, 45, 60, 90].reduce(function (a, b) { return Math.abs(b - r.m) < Math.abs(a - r.m) ? b : a; });
+      // סוג, רמה, עזרה
+      if (has(s, ['חזרה', 'לחזור', 'לפני מבחן', 'לפני המבחן', 'לפני בוחן', 'חזרות', 'תרגול', 'לתרגל', 'בוחן'])) r.k = 'z';
+      if (has(s, ['הקנייה', 'נושא חדש', 'מתחילים', 'להכיר', 'ללמד', 'פעם ראשונה', 'היכרות'])) r.k = 'h';
+      if (has(s, ['מתקשים', 'מתקשה', 'חלשים', 'חלשה', 'קל ', 'קלים', 'קלות', 'בסיס', 'פשוט', 'ליקויי', 'לקויות'])) r.lv = 1;
+      if (has(s, ['מאתגר', 'אתגר', 'קשה', 'קשים', 'חזקים', 'חזקה', 'מצטיינים', 'מתקדמים', 'מחוננים', 'מצוינות'])) r.lv = 3;
+      if (has(s, ['הרבה עזרה', 'מודרך', 'צעד אחרי צעד', 'צעד צעד', 'מתקשים', 'מתקשה', 'רמזים', 'לקויות', 'ליקויי'])) r.a = 2;
+      if (has(s, ['בלי עזרה', 'בלי רמזים', 'בוחן', 'מבחן קצר', 'לבד', 'עצמאי', 'בלי הסברים'])) r.a = 0;
+      // עיצוב
+      if (has(s, ['צבעוני', 'שמח', 'צבעים'])) r.style = 'tzivoni';
+      if (has(s, ['חוסך דיו', 'חסכוני', 'שחור לבן', 'שחור-לבן', 'פשוט להדפסה'])) r.style = 'lavan';
+      if (has(s, ['קלף'])) r.style = 'klaf';
+      if (has(s, ['זית', 'ירוק'])) r.style = 'zayit';
+      if (has(s, ['כתב גדול', 'גדול', 'נגיש', 'ראייה', 'לקות'])) r.font = 1;
+      if (has(s, ['אמריקא', 'רב ברירה', 'רב-ברירה', 'סימון תשובה'])) r.mc = 1;
+      if (has(s, ['מילולי', 'בעיות מילוליות', 'סיפור'])) r.words = 1;
+      if ((m = s.match(/(?:כותרת|לכתוב למעלה|שם הכיתה)\s*[:-]?\s*([^,.\n]{2,30})/))) r.title = m[1].trim();
+      else if ((m = s.match(/(?:^|\s)[לבו]?([א-י]{1,2}[׳״]?\d{1,2})(?=[\s,.]|$)/)) && GL[m[1].replace(/[׳״\s\d]/g, '')]) r.title = m[1].trim(); // ט׳2
+      // נושאים: ניקוד לכל נושא לפי מילים נרדפות ומילים מהשם; ביטוי ארוך גובר על קצר
+      var sc = T.map(function (t) {
+        var n = 0, list = (SYN[t.id] || []).slice();
+        t.name.split(/[\s:,()]+/).forEach(function (w) { if (w.length >= 5 && ['פונקציה', 'משוואה', 'משוואות', 'נקודות', 'ושטח', 'מתחת', 'לגרף', 'חקירה', 'פרמטר', 'טבלת', 'ערכים'].indexOf(w) < 0) list.push(w); });
+        list.forEach(function (w) { if (has(s, [w])) n = Math.max(n, w.split(' ').length * 2 + w.length / 10); });
+        return { t: t, n: n };
+      }).filter(function (x) { return x.n > 0; });
+      var G = groups(r.g || +gs.value, r.u || +$('dp-units').value);
+      sc.forEach(function (x) { if (G.now.indexOf(x.t) > -1) x.n += 0.6; else if (G.near.indexOf(x.t) > -1) x.n += 0.3; });
+      sc.sort(function (a, b) { return b.n - a.n; });
+      r.ts = [];
+      sc.forEach(function (x) { if (r.ts.length < 3 && x.n >= sc[0].n - 2.5 && !r.ts.some(function (y) { return (SYN[y.id] || []).join() === (SYN[x.t.id] || []).join(); })) r.ts.push(x.t); });
+      // שני נושאי פרבולה תמיד נתפסים יחד: משאירים את המתאים לכיתה
+      var pb = r.ts.filter(function (t) { return t.id.indexOf('parabola') === 0; });
+      if (pb.length === 2) { var gg = r.g || +gs.value, drop = byId[gg >= 10 && G.now.indexOf(byId.parabola) > -1 ? 'parabola-tavla' : 'parabola']; r.ts.splice(r.ts.indexOf(drop), 1); }
+      // לא נאמרה כיתה: לוקחים את הכיתה שבה לומדים את הנושא (אלא אם הנושא כבר מתאים לכיתה שבחרו למעלה)
+      if (!r.g && r.ts.length && G.near.indexOf(r.ts[0]) < 0) r.gAuto = Math.max(2, grOf(r.ts[0])[0]);
+      return r;
+    }
+    function aiCfgs(r) {
+      var g = r.g || r.gAuto || +gs.value, u = r.u || +$('dp-units').value, G = groups(g, u), base;
+      var ts = r.ts.length ? r.ts : [G.now[G.now.length - 1] || G.near[0]];
+      base = { g: g, u: u, t: ts[0].id, x: ts.slice(1).map(function (t) { return t.id; }), k: r.k || 'h', m: r.m || 30, lv: r.lv || 2, a: r.a === undefined ? 1 : r.a, style: r.style, font: r.font, title: r.title, mc: r.mc };
+      var easy = Object.assign({}, base, { lv: Math.max(1, base.lv - 1), a: 2, name: '🤝 עם יותר עזרה', why: 'לתלמידים שמתקשים: כל תרגיל מפורק לצעדים קטנים, ברמה קלה יותר.' });
+      var hard = Object.assign({}, base, { lv: Math.min(3, base.lv + 1), a: base.a === 2 ? 1 : 0, name: '🚀 עם יותר אתגר', why: 'לכיתה חזקה או לבוחן: פחות עזרה ותרגילים קשים יותר.' });
+      if (base.x.length === 0) { // דף משולב עם נושא קרוב, לחזרה
+        var near = (PRE[base.t] || []).filter(function (id) { return byId[id] && G.near.indexOf(byId[id]) > -1; })[0] || (PRE[base.t] || [])[0];
+        if (near && base.lv >= 2) hard = Object.assign({}, base, { k: 'z', x: [near], a: Math.min(base.a, 1), name: '🔁 חזרה משולבת', why: 'אותו נושא, משולב עם ' + byId[near].name + '. מתאים לחזרה לפני מבחן.' });
+      }
+      base.name = '🎯 בדיוק מה שביקשתם'; base.why = 'הדף לפי התיאור שלכם.';
+      [base, easy, hard].forEach(function (c) { if (c.a === 2 && c.lv === 3) c.lv = 2; });
+      if (easy.lv === base.lv && easy.a === base.a) easy = Object.assign({}, base, { k: base.k === 'h' ? 'z' : 'h', name: base.k === 'h' ? '🔁 כדף חזרה' : '📘 כדף הקנייה', why: base.k === 'h' ? 'אותו נושא, כדף חזרה: תזכורת קצרה בראש הדף ותרגול שעולה בהדרגה.' : 'אותו נושא, כדף הקנייה: הסברים קצרים ותרגיל מודרך.' });
+      if (hard.lv === base.lv && hard.a === base.a && hard.k === base.k && hard.x.join() === base.x.join()) hard = Object.assign({}, base, { m: base.m >= 45 ? 20 : 45, name: base.m >= 45 ? '⏱ גרסה קצרה, 20 דקות' : '⏱ גרסה לשיעור שלם, 45 דקות', why: 'אותו דף, באורך אחר.' });
+      return [base, easy, hard];
+    }
+    var LVN = { 1: 'בסיס', 2: 'רגילה', 3: 'מאתגרת' }, HELPN = { 0: 'בלי עזרה', 1: 'עזרה רגילה', 2: 'הרבה עזרה' };
+    var aiLast = [];
+    function aiShow() {
+      var txt = $('dp-ai-t').value.trim(), out = $('dp-ai-res');
+      if (txt.length < 3) { out.innerHTML = '<p class="dp-ai-heard">כתבו כמה מילים על הדף שאתם צריכים: כיתה, נושא, כמה זמן, ואיך הכיתה.</p>'; $('dp-ai-t').focus(); return; }
+      var r = aiParse(txt), cs = aiCfgs(r); aiLast = cs;
+      var heard = [];
+      heard.push(r.g ? 'כיתה ' + GRN[r.g] + (r.u ? ', ' + r.u + ' יח״ל' : '') : 'לא נאמרה כיתה, אז לקחתי ' + GRN[cs[0].g]);
+      heard.push(r.ts.length ? 'נושא: ' + r.ts.map(function (t) { return t.name; }).join(' + ') : 'לא זיהיתי נושא, אז בחרתי ' + byId[cs[0].t].name + ' (אפשר לשנות למטה)');
+      if (r.m) heard.push(r.m + ' דקות'); if (r.k) heard.push(r.k === 'z' ? 'דף חזרה' : 'דף הקנייה');
+      if (r.lv) heard.push('רמה ' + LVN[r.lv]); if (r.a !== undefined) heard.push(HELPN[r.a]);
+      if (r.mc) heard.push('עם שאלות אמריקאיות'); if (r.style) heard.push('עיצוב ' + $('dp-style').querySelector('[value="' + r.style + '"]').textContent);
+      if (r.font) heard.push('כתב גדול'); if (r.title) heard.push('כותרת: ' + r.title);
+      out.innerHTML = '<p class="dp-ai-heard"><b>מה הבנתי:</b> ' + heard.map(esc).join(' · ') + '</p><div class="dp-ai-opts">' + cs.map(function (c, j) {
+        var tp = byId[c.t], ex = [];
+        for (var i = 0; i < 6 && ex.length < 2; i++) { var q = seeded(c.lv * 1000 + i + j * 7, function () { return genQ(tp, c.lv); }); if (q.t && ex.indexOf(q.t) < 0) ex.push(q.t); }
+        return '<div class="dp-ai-opt"><h3>' + c.name + '</h3><p class="why">' + esc(c.why) + '</p><div class="chips"><span>' + GRN[c.g] + '</span><span>' + esc([c.t].concat(c.x).map(function (id) { return byId[id].name; }).join(' + ')) + '</span><span>' + (c.k === 'z' ? 'חזרה' : 'הקנייה') + '</span><span>' + c.m + ' דק׳</span><span>' + LVN[c.lv] + '</span><span>' + HELPN[c.a] + '</span></div>' +
+          '<p class="why">לדוגמה מהדף:</p><ol>' + ex.map(function (t) { return '<li dir="rtl">' + mwx(esc(t)) + '</li>'; }).join('') + '</ol>' +
+          '<button class="btn ' + (j ? 'btn-line' : 'btn-gold') + ' btn-sm" type="button" data-ai="' + j + '">✓ לבחור את הדף הזה</button></div>';
+      }).join('') + '</div>';
+      used('ai_suggest', { topic: cs[0].t, found: r.ts.length });
+    }
+    function aiApply(c) {
+      gs.value = c.g; $('dp-units').value = c.u;
+      var G = groups(c.g, c.u); $('dp-all').checked = [c.t].concat(c.x).some(function (id) { return G.near.indexOf(byId[id]) < 0; });
+      fillTopics(c.t); fillRevs(null, [c.x[0] || '', c.x[1] || '']);
+      setKind(c.k); $('dp-min').value = c.m; $('dp-lv').value = c.lv; $('dp-help').value = c.a;
+      if (c.style) $('dp-style').value = c.style; if (c.font) $('dp-font').value = c.font; if (c.title) $('dp-title').value = c.title.slice(0, 40);
+      var done = function () { render(); var p = $('dp-paper'); if (p) p.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+      if (c.mc && BANK_OF[c.t]) { // שאלות אמריקאיות מהבנק, כשיש לנושא
+        var go = function () { var bt = bank && bank.topics.filter(function (x) { return x.id === BANK_OF[c.t]; })[0]; if (bt) { var have = ownQ.map(function (x) { return x.t; }), pool = bt.q.map(lineQ).filter(function (x) { return x && have.indexOf(x.t) < 0; }).slice(0, 4); addMany(pool, 'ai_mc'); } done(); };
+        if (bank) go(); else fetch('/assets/kita-bank.json').then(function (r) { return r.json(); }).then(function (j) { bank = j; go(); }).catch(done);
+      } else done();
+      used('ai_pick', { topic: c.t });
+    }
+    $('dp-ai-go').addEventListener('click', aiShow);
+    $('dp-ai-t').addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); aiShow(); } });
+    $('dp-ai-res').addEventListener('click', function (e) { var b = e.target.closest('[data-ai]'); if (b) aiApply(aiLast[+b.dataset.ai]); });
+    (function () { // הקלטה: זיהוי דיבור של הדפדפן (כרום, אדג׳, אנדרואיד, ספארי חדש)
+      var SR = window.SpeechRecognition || window.webkitSpeechRecognition, btn = $('dp-ai-mic'), note = $('dp-ai-mic-note'), rec = null, before = '';
+      if (!SR) { btn.addEventListener('click', function () { note.hidden = false; note.textContent = 'הדפדפן הזה לא מקליט. אפשר ללחוץ על המיקרופון שבמקלדת של הטלפון ולדבר, או לפתוח את הדף בכרום.'; $('dp-ai-t').focus(); }); return; }
+      function stop() { if (rec) { try { rec.stop(); } catch (_) {} } }
+      btn.addEventListener('click', function () {
+        if (rec) { stop(); return; }
+        rec = new SR(); rec.lang = 'he-IL'; rec.interimResults = true; rec.continuous = true; before = $('dp-ai-t').value.trim();
+        btn.classList.add('on'); btn.setAttribute('aria-pressed', 'true'); btn.textContent = '⏹ לעצור את ההקלטה'; note.hidden = false; note.textContent = '🎙️ מקשיבה… מדברים בחופשיות, ולוחצים "לעצור" בסוף.';
+        rec.onresult = function (e) { var t = ''; for (var i = 0; i < e.results.length; i++) t += e.results[i][0].transcript + ' '; $('dp-ai-t').value = (before ? before + ' ' : '') + t.trim(); };
+        rec.onerror = function (e) { note.textContent = e.error === 'not-allowed' ? 'צריך לאשר לדפדפן גישה למיקרופון, ואז ללחוץ שוב.' : 'ההקלטה נעצרה. אפשר ללחוץ שוב, או לכתוב.'; };
+        rec.onend = function () { rec = null; btn.classList.remove('on'); btn.setAttribute('aria-pressed', 'false'); btn.textContent = '🎤 להקליט במקום לכתוב'; if ($('dp-ai-t').value.trim().length > 3) { note.textContent = '✓ נקלט. אפשר לתקן את הטקסט, ואז "להציע לי דפים".'; aiShow(); } };
+        try { rec.start(); used('ai_mic'); } catch (_) { rec = null; }
+      });
+    })();
     drawOwn();
     var curMsg = '', curLink = '';
     function readCfg() {

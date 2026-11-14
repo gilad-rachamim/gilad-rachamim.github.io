@@ -204,6 +204,20 @@ body.dp-student .k-hero{display:none}
 .dp-sq .q{display:block;overflow-wrap:anywhere}
 .dp-sq .a{display:block;margin-top:.2rem;font-size:.88rem;opacity:.8}
 .dp-sq .tg{display:inline-block;margin-inline-start:.4rem;padding:0 .45rem;border-radius:99px;font-size:.75rem;border:1px solid var(--line)}
+.dp-ai{display:grid;gap:.6rem;margin:0 0 1.4rem;padding:1rem;border:2px solid var(--gold);border-radius:18px;background:rgba(201,162,39,.07)}
+.dp-ai .dp-h{margin:0}
+.dp-ai textarea{width:100%;font-size:1.08rem;line-height:1.6;min-height:6.5rem}
+#dp-ai-mic.on{background:#b3261e;border-color:#b3261e;color:#fff}
+.dp-ai-heard{margin:0;padding:.6rem .8rem;border-radius:12px;background:rgba(80,160,120,.13);border:1px solid rgba(80,160,120,.4);font-size:.95rem;line-height:1.7}
+.dp-ai-opts{display:grid;gap:.7rem;margin-top:.3rem}
+@media(min-width:900px){.dp-ai-opts{grid-template-columns:repeat(3,1fr)}}
+.dp-ai-opt{display:grid;gap:.45rem;align-content:start;padding:.9rem;border:2px solid var(--line);border-radius:16px}
+.dp-ai-opt h3{margin:0;font-size:1.08rem}
+.dp-ai-opt .why{margin:0;font-size:.9rem;opacity:.85}
+.dp-ai-opt .chips{display:flex;flex-wrap:wrap;gap:.3rem}
+.dp-ai-opt .chips span{padding:.1rem .55rem;border-radius:99px;border:1px solid var(--line);font-size:.82rem}
+.dp-ai-opt ol{margin:0;padding-inline-start:1.3rem;font-size:.95rem;line-height:1.6}
+.dp-ai-opt .btn{justify-self:stretch;min-height:2.8rem}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 /* PDF לקבוצת ווטסאפ: עותק של הדף ברוחב A4 (מחוץ למסך), כמו בהדפסה */
 .dp-pdfbox{margin:.6rem 0;padding:.6rem .8rem;border:1.5px dashed var(--gold,#b8913a);border-radius:12px}

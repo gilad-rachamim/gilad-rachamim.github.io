@@ -20,6 +20,19 @@
   <!-- המסך של המורה -->
   <div id="dp-build" class="no-print">
     <form class="panel dp-form" id="dp-form" autocomplete="off">
+      <section class="dp-ai" id="dp-ai" aria-labelledby="dp-ai-h">
+        <h2 class="dp-h" id="dp-ai-h">✨ הכי פשוט: ספרו במילים שלכם איזה דף אתם צריכים</h2>
+        <p class="note">כותבים או מקליטים, כמו שמספרים לחברה לעבודה, ומקבלים 3 דפים מוכנים לבחירה. אחר כך אפשר לשנות כל פרט בטופס שלמטה.</p>
+        <label for="dp-ai-t" class="sr-only">תיאור הדף במילים שלכם</label>
+        <textarea id="dp-ai-t" rows="3" maxlength="600" placeholder="למשל: כיתה ח׳, חזרה על משוואות לפני המבחן, יש לי 45 דקות. הכיתה מתקשה אז הרבה עזרה, ועוד כמה שאלות אמריקאיות. דף צבעוני."></textarea>
+        <div class="btns">
+          <button class="btn btn-gold" type="button" id="dp-ai-go">✨ להציע לי דפים</button>
+          <button class="btn btn-line" type="button" id="dp-ai-mic" aria-pressed="false">🎤 להקליט במקום לכתוב</button>
+        </div>
+        <p class="note" id="dp-ai-mic-note" hidden></p>
+        <div id="dp-ai-res" aria-live="polite"></div>
+      </section>
+
       <h2 class="dp-h">1. מה מלמדים</h2>
       <div class="dp-row">
         <label>מקצוע
