@@ -20,7 +20,7 @@
     return 'שלום ' + c.name + ',\nפתחתי לך תיק מסמכים אישי לדוח השנתי. מצלמים כל קבלה ומסמך כשהם מגיעים, והם נכנסים ישר אליי למשרד:\n' + link(c) + '\n\nהקישור אישי, לא להעביר אותו לאחרים.\n' + (cfg.office || '');
   }
   function remind(c) {
-    var L = T.list(c.type), mine = docs.filter(function (d) { return d.t === c.t; });
+    var L = T.forClient(c), mine = docs.filter(function (d) { return d.t === c.t; });
     var miss = L.filter(function (d) { return !mine.some(function (x) { return x.drawer === d.t; }); });
     return 'שלום ' + c.name + ', תזכורת קטנה לדוח ' + year + '. עוד לא הגיעו אליי:\n' + miss.map(function (d) { return '☐ ' + d.t; }).join('\n') + '\n\nמעלים כאן: ' + link(c) + '\nתודה!\n' + (cfg.office || '');
   }
@@ -33,7 +33,7 @@
     $('cd-office').textContent = cfg.office || 'המשרד';
     $('cd-links').innerHTML = (cfg.sheet ? '<a class="gold" href="' + esc(cfg.sheet) + '" target="_blank" rel="noopener">הטבלה בגוגל שיטס</a> · ' : '') + (cfg.folder ? '<a class="gold" href="' + esc(cfg.folder) + '" target="_blank" rel="noopener">התיקייה בדרייב</a>' : '');
     $('cd-year').innerHTML = [year + 1, year, year - 1, year - 2].filter(function (y) { return y <= new Date().getFullYear(); }).map(function (y) { return '<button type="button" data-v="' + y + '" aria-pressed="' + (y === year) + '">' + y + '</button>'; }).join('');
-    refresh();
+    refresh(); office();
   }
 
   function refresh() {
@@ -47,21 +47,49 @@
   function table() {
     var act = clients.filter(function (c) { return c.on; });
     if (!act.length) { $('cd-table').innerHTML = '<p class="hint">עוד אין לקוחות. מוסיפים לקוח למעלה, ושולחים לו את הקישור בווטסאפ.</p>'; return; }
+    var P = isPartner();
     $('cd-table').innerHTML = act.map(function (c, i) {
-      var L = T.list(c.type), mine = docs.filter(function (d) { return d.t === c.t; });
+      var L = T.forClient(c), mine = docs.filter(function (d) { return d.t === c.t; });
       var have = L.filter(function (d) { return mine.some(function (x) { return x.drawer === d.t; }); }).length;
       var sum = mine.reduce(function (s, d) { return s + (d.amount === '' ? 0 : +d.amount); }, 0);
-      var s = '<div class="cd-c' + (open[c.t] ? ' is-open' : '') + '"><button type="button" class="cd-h" data-open="' + c.t + '" aria-expanded="' + !!open[c.t] + '"><b>' + esc(c.name) + '</b><span>' + (c.type === 'osek' ? 'עוסק' : 'שכיר / פרטי') + ' · ' + mine.length + ' קבצים · ' + have + '/' + L.length + ' מגירות</span><span class="tk-bar"><i style="width:' + Math.round(100 * have / L.length) + '%"></i></span></button>';
+      var hashes = {}; mine.forEach(function (d) { if (d.hash) hashes[d.hash] = (hashes[d.hash] || 0) + 1; });
+      var s = '<div class="cd-c' + (open[c.t] ? ' is-open' : '') + '"><button type="button" class="cd-h" data-open="' + c.t + '" aria-expanded="' + !!open[c.t] + '"><b>' + esc(c.name) + (c.done ? '<span class="badge-done">✓ סיים להעלות</span>' : '') + '</b><span>' + (c.type === 'osek' ? 'עוסק' : 'שכיר / פרטי') + ' · ' + mine.length + ' קבצים · ' + have + '/' + L.length + ' מגירות</span><span class="tk-bar"><i style="width:' + Math.round(100 * have / L.length) + '%"></i></span></button>';
       if (open[c.t]) {
         s += '<div class="cd-body"><div class="btns"><button class="btn btn-gold btn-sm" type="button" data-inv="' + i + '">שליחת הקישור בווטסאפ</button><button class="btn btn-line btn-sm" type="button" data-rem="' + i + '">תזכורת על מה שחסר</button><button class="btn btn-line btn-sm" type="button" data-cp="' + i + '">להעתיק קישור</button><button class="btn btn-line btn-sm" type="button" data-off="' + i + '">לסגור את התיק</button></div><p class="msg" id="cd-cpm-' + i + '"></p>';
         s += '<div class="tbl-wrap"><table><thead><tr><th>מגירה</th><th>קבצים</th><th>סכום</th></tr></thead><tbody>' + L.map(function (d) {
           var f = mine.filter(function (x) { return x.drawer === d.t; }), a = f.reduce(function (s2, x) { return s2 + (x.amount === '' ? 0 : +x.amount); }, 0);
-          return '<tr class="' + (f.length ? 'is-ok' : '') + '"><td>' + esc(d.t) + '</td><td>' + (f.length ? f.map(function (x) { return '<a class="gold" href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.name) + '</a>'; }).join('<br>') : '<span class="hint">חסר</span>') + '</td><td class="n">' + (a ? CH.money(a) : '') + '</td></tr>';
-        }).join('') + (sum ? '<tr><td><b>סה"כ סכומים שהלקוח רשם</b></td><td></td><td class="n"><b>' + CH.money(sum) + '</b></td></tr>' : '') + '</tbody></table></div></div>';
+          return '<tr class="' + (f.length ? 'is-ok' : '') + '"><td>' + esc(d.t) + '</td><td>' + (f.length ? f.map(function (x) { return '<a class="gold" href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.name) + '</a>' + (x.hash && hashes[x.hash] > 1 ? ' <span class="warn">⚠ כפול</span>' : ''); }).join('<br>') : '<span class="hint">חסר</span>') + '</td><td class="n">' + (a ? CH.money(a) : '') + '</td></tr>';
+        }).join('') + (sum ? '<tr><td><b>סה"כ סכומים שהלקוח רשם</b></td><td></td><td class="n"><b>' + CH.money(sum) + '</b></td></tr>' : '') + '</tbody></table></div>' + adv(c, i, P) + '</div>';
       }
       return s + '</div>';
     }).join('');
   }
+
+  // ---- כלים מתקדמים לכל לקוח (לשותפים) ----
+  function adv(c, i, P) {
+    if (!P) return '<p class="hint cd-adv">🤝 לשותפים במיזם: מייל ללקוח ותזכורות אוטומטיות, מגירות אישיות ובקשות מיוחדות, תיק מלא בלחיצה, ומסמכים לחתימה. <a class="gold" href="#cd-partner-h">פרטים למטה</a></p>';
+    var keys = String(c.drawers || '').split(',').filter(Boolean), def = T.list(c.type).map(function (d) { return d.k; });
+    return '<div class="cd-adv"><h3>הגדרות ללקוח</h3>' +
+      '<div class="field"><label for="cd-em-' + i + '">המייל של הלקוח (לתזכורות)</label><input id="cd-em-' + i + '" type="email" dir="ltr" value="' + esc(c.email || '') + '" autocomplete="off"></div>' +
+      '<p class="hint">המגירות שהלקוח רואה:</p><div class="chips" id="cd-dr-' + i + '">' + T.DRAWERS.map(function (d) { var on = keys.length ? keys.indexOf(d.k) >= 0 : def.indexOf(d.k) >= 0; return '<label><input type="checkbox" value="' + d.k + '"' + (on ? ' checked' : '') + '> ' + esc(d.t) + '</label>'; }).join('') + '</div>' +
+      '<div class="field"><label for="cd-rq-' + i + '">בקשות מיוחדות, שורה לכל אחת (למשל: אישור מהמעסיק השני)</label><textarea id="cd-rq-' + i + '">' + esc(c.requests || '') + '</textarea></div>' +
+      '<div class="btns"><button class="btn btn-gold btn-sm" type="button" data-save="' + i + '">לשמור הגדרות</button>' + (c.email ? '<button class="btn btn-line btn-sm" type="button" data-mail="' + i + '">לשלוח עכשיו תזכורת במייל</button>' : '') +
+      '<button class="btn btn-line btn-sm" type="button" data-zip="' + i + '">📦 תיק מלא (ZIP) לשנת ' + year + '</button>' + (c.done ? '<button class="btn btn-line btn-sm" type="button" data-undone="' + i + '">לפתוח את התיק מחדש</button>' : '') + '</div>' +
+      '<p class="hint">מסמך לחתימה (ייפוי כוח, טופס): הלקוח יראה אותו בדף שלו, יוריד, יחתום ויעלה בחזרה.</p><label class="btn btn-line btn-sm tk-file">📝 להעלות מסמך לחתימה<input type="file" accept="application/pdf,image/*" data-attach="' + i + '"></label>' +
+      '<p class="msg" id="cd-am-' + i + '"></p></div>';
+  }
+  function isPartner() { try { return /^\d{3}-?\d{5}$/.test((localStorage.getItem('kelim-partner') || '').replace(/\s/g, '')); } catch (e) { return false; } }
+
+  root.addEventListener('change', function (e) {
+    var inp = e.target.closest('[data-attach]'); if (!inp || !inp.files || !inp.files[0]) return;
+    var i = +inp.getAttribute('data-attach'), c = clients.filter(function (x) { return x.on; })[i], m = $('cd-am-' + i);
+    m.textContent = 'מעלה…';
+    T.prep(inp.files[0]).then(function (x) {
+      return T.call(cfg.u, { a: 'mAttach', key: cfg.key, t: c.t, name: x.name, mime: x.mime, data: x.data });
+    }).then(function (r) { m.textContent = r.ok ? 'נוסף ✓ הלקוח יראה אותו בדף שלו.' : T.err(r.err); if (r.ok) CH.used('cheshbon_tik_cheder', 'attach'); })
+      .catch(function () { m.textContent = T.err('net'); });
+    inp.value = '';
+  });
 
   root.addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
@@ -70,6 +98,29 @@
     else if (b.hasAttribute('data-inv')) { CH.used('cheshbon_tik_cheder', 'invite'); goWa(invite(act[+b.getAttribute('data-inv')])); }
     else if (b.hasAttribute('data-rem')) { CH.used('cheshbon_tik_cheder', 'remind'); goWa(remind(act[+b.getAttribute('data-rem')])); }
     else if (b.hasAttribute('data-cp')) { var i = +b.getAttribute('data-cp'); copyRaw(link(act[i]), $('cd-cpm-' + i)); }
+    else if (b.hasAttribute('data-save')) {
+      var si = +b.getAttribute('data-save'), sc = act[si], sm = $('cd-am-' + si);
+      var drs = [].slice.call($('cd-dr-' + si).querySelectorAll('input:checked')).map(function (x) { return x.value; });
+      var def = T.list(sc.type).map(function (d) { return d.k; });
+      var same = drs.length === def.length && drs.every(function (k) { return def.indexOf(k) >= 0; });
+      var upd = { a: 'mClient', key: cfg.key, t: sc.t, email: $('cd-em-' + si).value.trim(), drawers: same ? '' : drs.join(','), requests: $('cd-rq-' + si).value };
+      sm.textContent = 'שומר…';
+      T.call(cfg.u, upd).then(function (r) { if (!r.ok) { sm.textContent = T.err(r.err); return; } CH.used('cheshbon_tik_cheder', 'settings'); refresh(); }).catch(function () { sm.textContent = T.err('net'); });
+    }
+    else if (b.hasAttribute('data-mail')) {
+      var mi = +b.getAttribute('data-mail'), mm = $('cd-am-' + mi); mm.textContent = 'שולח…';
+      T.call(cfg.u, { a: 'mRemindNow', key: cfg.key, t: act[mi].t }).then(function (r) { mm.textContent = r.ok ? (r.sent ? 'נשלח מייל ✓' : 'לא נשלח: חסר מייל, או שאין מה להזכיר.') : T.err(r.err); }).catch(function () { mm.textContent = T.err('net'); });
+    }
+    else if (b.hasAttribute('data-zip')) {
+      var zi = +b.getAttribute('data-zip'), zm = $('cd-am-' + zi); zm.textContent = 'אורז את התיק…';
+      T.call(cfg.u, { a: 'mBundle', key: cfg.key, t: act[zi].t, year: year }).then(function (r) {
+        zm.innerHTML = r.ok ? 'התיק מוכן (' + r.files + ' קבצים): <a class="gold" href="' + esc(r.url) + '" target="_blank" rel="noopener">לפתוח בדרייב ולהוריד</a>' : esc(T.err(r.err));
+        if (r.ok) CH.used('cheshbon_tik_cheder', 'zip');
+      }).catch(function () { zm.textContent = T.err('net'); });
+    }
+    else if (b.hasAttribute('data-undone')) {
+      T.call(cfg.u, { a: 'mUndone', key: cfg.key, t: act[+b.getAttribute('data-undone')].t }).then(refresh);
+    }
     else if (b.hasAttribute('data-off')) {
       var c = act[+b.getAttribute('data-off')];
       if (!confirm('לסגור את התיק של ' + c.name + '? הקישור שלו יפסיק לעבוד. הקבצים נשארים בדרייב.')) return;
@@ -78,6 +129,41 @@
   });
 
   CH.seg($('cd-year'), function (v) { year = +v; refresh(); });
+
+  // ---- כלים למשרד כולו (לשותפים): גרסת הקוד, תזכורות חודשיות, ייבוא מאקסל ----
+  function office() {
+    var P = isPartner();
+    $('cd-office-adv').hidden = !P;
+    if (!cfg) return;
+    T.call(cfg.u, { a: 'mInfo', key: cfg.key }).then(function (r) {
+      if (!r.ok) return;
+      var old = (r.ver || 1) < 3;
+      $('cd-upgrade').hidden = !old;
+      $('cd-remind').checked = !!r.remind; $('cd-remind').disabled = old;
+    }).catch(function () {});
+  }
+  $('cd-remind').addEventListener('change', function () {
+    var on = this.checked, m = $('cd-om');
+    m.textContent = 'מעדכן…';
+    T.call(cfg.u, { a: 'mRemind', key: cfg.key, on: on }).then(function (r) {
+      m.textContent = r.ok ? (r.remind ? 'פועל ✓ ב-1 לכל חודש, ב-10:00, יוצא מייל לכל לקוח שחסר לו משהו (רק למי שיש מייל ועוד לא סיים).' : 'התזכורות כבויות.') : T.err(r.err);
+      if (r.ok) CH.used('cheshbon_tik_cheder', 'auto_remind');
+    }).catch(function () { m.textContent = T.err('net'); });
+  });
+  $('cd-import').addEventListener('click', function () {
+    var rows = CH.rows($('cd-paste').value), m = $('cd-om');
+    var list = rows.map(function (r) {
+      var email = (r.filter(function (x) { return /@/.test(x); })[0] || '').trim();
+      var type = r.some(function (x) { return /עוסק|osek/i.test(x); }) ? 'osek' : 'sachir';
+      return { name: r[0], type: type, email: email };
+    }).filter(function (x) { return x.name && !/^שם/.test(x.name); });
+    if (!list.length) { m.textContent = 'לא מצאנו שמות. מדביקים עמודה של שמות מאקסל (אפשר גם מייל וסוג באותה שורה).'; return; }
+    m.textContent = 'פותח ' + list.length + ' תיקים…';
+    T.call(cfg.u, { a: 'mAddMany', key: cfg.key, list: list }).then(function (r) {
+      if (!r.ok) { m.textContent = T.err(r.err); return; }
+      m.textContent = 'נפתחו ' + r.clients.length + ' תיקים ✓'; $('cd-paste').value = ''; CH.used('cheshbon_tik_cheder', 'import'); refresh();
+    }).catch(function () { m.textContent = T.err('net'); });
+  });
 
   $('cd-add').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -133,6 +219,7 @@
   }
   function brandOn() {
     var on = goodP(getP()); $('cd-brand').hidden = !on;
+    if (cfg && $('cd-office-adv').hidden === on) { office(); table(); }
     if (on) { $('cd-pcode').value = getP(); colors(); if (cfg) T.call(cfg.u, { a: 'mInfo', key: cfg.key }).then(function (r) { if (r.ok && r.brand) { brand = r.brand; colors(); } }).catch(function () {}); }
   }
   $('cd-pcode').addEventListener('input', function () {

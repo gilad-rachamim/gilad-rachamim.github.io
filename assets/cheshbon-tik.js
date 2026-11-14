@@ -16,6 +16,7 @@
     { k: 'zikui', t: 'נקודות זיכוי: תואר, שחרור, ילדים', h: 'תעודת תואר, תעודת שחרור, אישור על ילד עם צרכים מיוחדים, מגורים ביישוב מזכה. רואה החשבון יגיד מה רלוונטי.' },
     { k: 'refui', t: 'הוצאות רפואיות ומוסדות', h: 'קבלות על טיפול קבוע, מוסד או החזקת קרוב. שומרים הכול, רואה החשבון יבדוק.' },
     { k: 'dira', t: 'שכר דירה ונדל"ן', h: 'חוזה שכירות וקבלות, אם השכרתם דירה. מכירה או קנייה של דירה: גם את החוזה.' },
+    { k: 'yipui', t: 'ייפוי כוח וטפסים חתומים', h: 'ייפוי כוח לרואה החשבון וכל טופס שהוא ביקש לחתום. חותמים בטלפון בכלי "חתימה על PDF" ומעלים לכאן.' },
     { k: 'hotzaot', t: 'חשבוניות הוצאה של העסק', h: 'כל הוצאה של העסק: ציוד, טלפון, תוכנות, שכירות משרד. מצלמים מיד כשמקבלים.', m: 1, o: 1 },
     { k: 'hachnasot', t: 'קבלות וחשבוניות הכנסה', h: 'מה שהוצאתם ללקוחות. אם יש לכם תוכנה, מספיק דוח חודשי ממנה.', m: 1, o: 1 },
     { k: 'bank', t: 'דפי בנק וכרטיסי אשראי', h: 'דף חשבון חודשי של חשבון העסק ופירוט האשראי.', m: 1, o: 1 },
@@ -25,6 +26,15 @@
   ];
   T.MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
   T.list = function (type) { return T.DRAWERS.filter(function (d) { return type === 'osek' || !d.o; }); };
+  // המגירות של לקוח מסוים: מה שרואה החשבון בחר (או ברירת המחדל לסוג), ועוד הבקשות המיוחדות שלו
+  T.forClient = function (c) {
+    var keys = String(c.drawers || '').split(',').filter(Boolean);
+    var L = keys.length ? T.DRAWERS.filter(function (d) { return keys.indexOf(d.k) >= 0; }) : T.list(c.type);
+    String(c.requests || '').split('\n').map(function (s) { return s.trim(); }).filter(Boolean).forEach(function (r, i) {
+      L.push({ k: 'r' + i, t: r, h: 'בקשה אישית מרואה החשבון.', req: 1 });
+    });
+    return L;
+  };
   T.byName = function (name) { return T.DRAWERS.filter(function (d) { return d.t === name; })[0]; };
   // קריאה לקוד של רואה החשבון: POST בטקסט פשוט (בלי preflight), ו-Apps Script מחזיר JSON
   T.call = function (url, body) {
@@ -34,7 +44,7 @@
   };
   T.okUrl = function (u) { return /^https:\/\/script\.google(usercontent)?\.com\/[\w\/.\-]+\/exec$/.test(u) || /^http:\/\/127\.0\.0\.1:\d+\/[\w\/.\-]*exec$/.test(u); };
   T.err = function (e) {
-    var m = { token: 'הקישור כבר לא פעיל. בקשו מרואה החשבון קישור חדש.', off: 'רואה החשבון סגר את התיק הזה. דברו איתו.', size: 'הקובץ גדול מדי (עד 25MB). אפשר לכווץ אותו בכלי "כיווץ PDF".', limit: 'הגעתם למספר ההעלאות המקסימלי להיום. נסו שוב מחר.', key: 'המפתח של המשרד לא נכון.', already: 'החדר כבר פתוח. כדי להתחבר ממכשיר נוסף, השתמשו במפתח המשרד.' };
+    var m = { dup: 'הקובץ הזה כבר הועלה, אז לא העלינו אותו שוב.', token: 'הקישור כבר לא פעיל. בקשו מרואה החשבון קישור חדש.', off: 'רואה החשבון סגר את התיק הזה. דברו איתו.', size: 'הקובץ גדול מדי (עד 25MB). אפשר לכווץ אותו בכלי "כיווץ PDF".', limit: 'הגעתם למספר ההעלאות המקסימלי להיום. נסו שוב מחר.', key: 'המפתח של המשרד לא נכון.', already: 'החדר כבר פתוח. כדי להתחבר ממכשיר נוסף, השתמשו במפתח המשרד.' };
     return m[e] || 'משהו השתבש בחיבור לדרייב. נסו שוב בעוד דקה.';
   };
   // כיווץ תמונה בטלפון: עד 2000 פיקסלים בצד הארוך, JPEG. PDF ושאר הקבצים עולים כמו שהם.
@@ -78,16 +88,17 @@
   function yearSel() {
     return years().map(function (y) { return '<button type="button" data-v="' + y + '" aria-pressed="' + (st.year === y) + '">' + y + '</button>'; }).join('');
   }
-  function countBy(k) { return docs.filter(function (d) { return d.drawer === T.DRAWERS.filter(function (x) { return x.k === k; })[0].t; }); }
+  function countBy(d0) { return docs.filter(function (d) { return d.drawer === d0.t; }); }
+  var LIST = [];
 
   function render() {
-    var type = info ? info.type : st.type, L = T.list(type);
+    var type = info ? info.type : st.type, L = LIST = info ? T.forClient(info) : T.list(type);
     $('tik-year').innerHTML = yearSel();
     $('tik-type').hidden = !!info;
     CH.pick($('tik-type'), st.type);
     var have = 0;
     var html = L.map(function (d) {
-      var got = info ? countBy(d.k) : [], ok = info ? got.length > 0 : !!st.done[d.k];
+      var got = info ? countBy(d) : [], ok = info ? got.length > 0 : !!st.done[d.k];
       if (ok) have++;
       var s = '<li class="tk-d' + (ok ? ' is-ok' : '') + '" data-k="' + d.k + '"><div class="tk-top">';
       if (info) s += '<span class="tk-mark" aria-hidden="true">' + (ok ? '✓' : '') + '</span>';
@@ -112,6 +123,14 @@
       if (br.color && /^#[0-9a-f]{6}$/i.test(br.color)) root.style.setProperty('--gold', br.color);
       $('tik-who').innerHTML = (br.logo && /^data:image\/(png|jpeg|webp);base64,/.test(br.logo) ? '<img class="tk-logo" src="' + esc(br.logo) + '" alt="' + esc(info.office) + '">' : '') + '<b>' + esc(info.name) + '</b>, כאן מעלים את המסמכים ל<b>' + esc(info.office) + '</b>. כל קובץ נכנס ישר לתיקייה שלכם אצל רואה החשבון.';
       $('tik-who').hidden = false; $('tik-solo').hidden = true; $('tik-wa').hidden = true;
+      // מסמכים שרואה החשבון ביקש לחתום
+      var sg = info.sign || [];
+      $('tik-sign').hidden = !sg.length;
+      $('tik-sign').innerHTML = sg.length ? '<b>רואה החשבון ביקש לחתום על:</b><ul class="tk-files">' + sg.map(function (s) { return '<li><span>' + esc(s.name) + '</span><button type="button" class="btn btn-line btn-sm" data-sign="' + esc(s.id) + '">להוריד</button></li>'; }).join('') + '</ul><p class="hint">מורידים, חותמים בטלפון ב<a class="gold" href="/kelim/machshev/chatima/" target="_blank" rel="noopener">חתימה על PDF</a>, ומעלים את הקובץ החתום למגירה "ייפוי כוח וטפסים חתומים".</p>' : '';
+      // סיימתי להעלות
+      $('tik-done-box').hidden = false;
+      $('tik-done-msg').textContent = info.done ? 'שלחתם לרואה החשבון שסיימתם ✓ אם תעלו עוד משהו, התיק ייפתח שוב לבד.' : 'העליתם הכול לשנה הזו? לחיצה אחת, ורואה החשבון מקבל הודעה שהתיק מוכן.';
+      $('tik-done').hidden = !!info.done;
     }
   }
 
@@ -124,7 +143,7 @@
   }
 
   function upload(k, files) {
-    var d = T.DRAWERS.filter(function (x) { return x.k === k; })[0];
+    var d = LIST.filter(function (x) { return x.k === k; })[0];
     var ms = root.querySelector('[data-month="' + k + '"]'), am = root.querySelector('[data-amount="' + k + '"]');
     var month = ms ? ms.value : '', amount = am ? CH.num(am.value) : NaN;
     var list = [].slice.call(files), i = 0, okN = 0;
@@ -153,6 +172,27 @@
     if (t.matches('[data-file]') && t.files && t.files.length) { upload(t.getAttribute('data-file'), t.files); t.value = ''; }
   });
   root.addEventListener('click', function (e) {
+    var sgn = e.target.closest('[data-sign]');
+    if (sgn && conn) {
+      $('tik-msg').textContent = 'מוריד…';
+      T.call(conn.u, { a: 'cFile', t: conn.t, id: sgn.getAttribute('data-sign') }).then(function (r) {
+        if (!r.ok) { $('tik-msg').textContent = T.err(r.err); return; }
+        var bin = atob(r.data), u8 = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+        var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([u8], { type: r.mime })); a.download = r.name;
+        document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+        $('tik-msg').textContent = 'הקובץ ירד ✓ עכשיו חותמים ומעלים בחזרה.'; CH.used('cheshbon_tik', 'sign');
+      }).catch(function () { $('tik-msg').textContent = T.err('net'); });
+      return;
+    }
+    if (e.target.closest('#tik-done') && conn) {
+      $('tik-done').disabled = true;
+      T.call(conn.u, { a: 'cDone', t: conn.t, year: st.year }).then(function (r) {
+        $('tik-done').disabled = false;
+        if (!r.ok) { $('tik-msg').textContent = T.err(r.err); return; }
+        CH.used('cheshbon_tik', 'done'); loadInfo();
+      }).catch(function () { $('tik-done').disabled = false; $('tik-msg').textContent = T.err('net'); });
+      return;
+    }
     var b = e.target.closest('[data-del]');
     if (b && conn && !busy) {
       if (!confirm('למחוק את הקובץ מהתיק אצל רואה החשבון?')) return;
