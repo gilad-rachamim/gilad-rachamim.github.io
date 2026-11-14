@@ -1,0 +1,95 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "cheshbon_tik_cheder",
+  "title": "פורטל לקוחות לרואה חשבון בחינם – איסוף מסמכים וקבלות מלקוחות לגוגל דרייב | הכלים של גילעד רחמים",
+  "description": "פורטל לקוחות חינמי למשרד רואי חשבון ויועצי מס: קישור אישי לכל לקוח, הלקוח מצלם קבלות, טופס 106 ותרומות מהטלפון, והקבצים נכנסים ישר לגוגל דרייב של המשרד לפי שנה ומגירה, עם טבלה שנתית של מה חסר. בלי מנוי, והמסמכים לא עוברים דרך שום שרת חיצוני.",
+  "og_title": "פורטל לקוחות לרואה חשבון, בחינם",
+  "priority": "0.8",
+  "crumbs": [["רואי חשבון ויועצי מס", "/kelim/cheshbon/"], ["מסמכים לדוח שנתי", "/kelim/cheshbon/tik/"], ["חדר לרואה חשבון", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/cheshbon.css\"><link rel=\"stylesheet\" href=\"/assets/cheshbon-tik.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"כמה זה עולה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כלום. בלי מנוי ובלי הגבלה על מספר הלקוחות. הקבצים נשמרים בגוגל דרייב של המשרד, ו-15GB כלולים בחינם בכל חשבון גוגל.\"}}, {\"@type\": \"Question\", \"name\": \"איפה נשמרים המסמכים של הלקוחות?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"רק בגוגל דרייב של המשרד, בתיקייה 'תיק מסמכים ללקוחות', לפי שנה, לקוח ומגירה. הקוד שמקבל את הקבצים רץ בחשבון הגוגל של המשרד, ואתר הכלים לא שומר שום קובץ.\"}}, {\"@type\": \"Question\", \"name\": \"הלקוח צריך להוריד אפליקציה או להירשם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. הוא פותח את הקישור האישי בטלפון, בוחר מגירה ומצלם. אין סיסמה ואין הרשמה.\"}}, {\"@type\": \"Question\", \"name\": \"למה גוגל כותב שהאפליקציה לא אומתה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כי זה קוד שאתם עצמכם יצרתם בחשבון שלכם, ולא אפליקציה שפורסמה בחנות של גוגל. ההרשאה ניתנת לקוד שלכם בלבד, ואפשר לקרוא את כולו לפני שמאשרים.\"}}, {\"@type\": \"Question\", \"name\": \"למה לא מזדהים עם תעודת זהות?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כי מספר זהות קל לנחש או למצוא. כל לקוח מקבל קישור עם קוד אקראי ארוך, ואפשר לסגור אותו בלחיצה.\"}}]}</script>",
+  "foot": "<script src=\"/assets/cheshbon.js\" defer></script><script src=\"/assets/cheshbon-tik.js\" defer></script><script src=\"/assets/cheshbon-tik-cheder.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>פורטל לקוחות לרואה חשבון, בחינם</h1>
+  <p class="sub">כל לקוח מקבל קישור אישי, מצלם קבלות ומסמכים במהלך השנה, והכול נכנס לגוגל דרייב שלכם לפי שנה, לקוח ומגירה. בסוף השנה הטבלה כבר מוכנה, בלי שהלקוח מגיע למשרד.</p>
+</header>
+
+<div class="tool ch" id="cheder">
+  <p class="msg" id="cd-msg" aria-live="polite"></p>
+
+  <!-- לפני החיבור: התקנה -->
+  <div id="cd-setup">
+    <form class="k-form" id="cd-install" novalidate onsubmit="return false">
+      <h2>התקנה, פעם אחת, כ-5 דקות</h2>
+      <p class="hint">הקוד רץ בחשבון הגוגל של המשרד, והקבצים נשמרים רק בדרייב שלכם. אתר הכלים רק נותן את הדפים.</p>
+      <ol class="cd-steps">
+        <li>נכנסים ל-<a class="gold" href="https://script.google.com/home/projects/create" target="_blank" rel="noopener">script.google.com</a> עם חשבון הגוגל של המשרד. נפתח <b>פרויקט חדש</b>.</li>
+        <li>לוחצים <button class="btn btn-gold btn-sm" type="button" id="cd-copy-code">להעתיק את הקוד</button>, מוחקים בעורך את מה שכתוב, ומדביקים. שומרים (Ctrl+S).
+          <span class="msg" id="cd-code-msg"></span><textarea id="cd-code" readonly hidden aria-label="הקוד להעתקה"></textarea>
+          <span class="hint">רוצים לקרוא לפני? <a class="gold" href="/assets/cheshbon-tik-script.txt" target="_blank" rel="noopener">הקוד המלא</a>, כ-200 שורות עם הסברים בעברית.</span></li>
+        <li>למעלה בוחרים את הפונקציה <code>setup</code> ולוחצים <b>הפעלה</b> (Run). גוגל יבקש הרשאה: <b>בדיקת הרשאות</b> ← בוחרים את החשבון ← "Google לא אימת את האפליקציה" ← <b>מתקדם</b> ← <b>מעבר אל הפרויקט</b> ← <b>אישור</b>. זה קורה כי זה קוד שלכם, לא אפליקציה מהחנות.</li>
+        <li><b>פריסה</b> (Deploy) ← <b>פריסה חדשה</b> ← סוג: <b>אפליקציית אינטרנט</b> (Web app). "ביצוע בתור": <b>אני</b>. "למי יש גישה": <b>כל אחד</b> (Anyone). לוחצים פריסה ומעתיקים את הכתובת שמסתיימת ב-<code>/exec</code>.</li>
+        <li>מדביקים כאן, כותבים את שם המשרד, וזהו.</li>
+      </ol>
+    </form>
+    <form class="k-form" id="cd-connect" novalidate>
+      <div class="field"><label for="cd-url">כתובת ה-Web app (מסתיימת ב-/exec)</label><input id="cd-url" type="url" dir="ltr" autocomplete="off" spellcheck="false" placeholder="https://script.google.com/macros/s/.../exec"></div>
+      <div class="row2">
+        <div class="field"><label for="cd-oname">שם המשרד, כפי שהלקוחות יראו</label><input id="cd-oname" type="text" maxlength="80" autocomplete="organization"></div>
+        <div class="field"><label for="cd-key">מפתח המשרד (רק בחיבור ממכשיר נוסף)</label><input id="cd-key" type="text" dir="ltr" autocomplete="off" spellcheck="false"></div>
+      </div>
+      <button class="btn btn-gold" type="submit">לפתוח את החדר</button>
+      <p class="msg" id="cd-cmsg" aria-live="polite"></p>
+    </form>
+  </div>
+
+  <!-- אחרי החיבור: החדר -->
+  <div id="cd-room" hidden>
+    <div class="tk-who"><b id="cd-office"></b> · החדר פתוח. <span id="cd-links"></span></div>
+    <form class="k-form" id="cd-add" novalidate>
+      <h2>לקוח חדש</h2>
+      <div class="row2">
+        <div class="field"><label for="cd-name">שם הלקוח</label><input id="cd-name" type="text" maxlength="60" autocomplete="off"></div>
+        <div class="field"><label for="cd-type">סוג</label><select id="cd-type"><option value="sachir">שכיר / פרטי (106, תרומות, פנסיה...)</option><option value="osek">עוסק (גם חשבוניות, בנק ורכב לפי חודש)</option></select></div>
+      </div>
+      <button class="btn btn-gold" type="submit">+ לפתוח תיק ולקבל קישור</button>
+    </form>
+    <h2 class="cd-title">הלקוחות</h2>
+    <div class="seg" id="cd-year" role="group" aria-label="שנת המס"></div>
+    <div id="cd-table"></div>
+    <div class="btns no-print">
+      <button class="btn btn-line btn-sm" type="button" id="cd-csv">להוריד את כל המסמכים לאקסל</button>
+      <button class="btn btn-line btn-sm" type="button" id="cd-showkey">מפתח המשרד (למחשב נוסף)</button>
+      <button class="btn btn-line btn-sm" type="button" id="cd-logout">לנתק את הדפדפן הזה</button>
+    </div>
+    <div class="cd-keybox" id="cd-keybox" hidden>מפתח המשרד: <span class="cd-key" id="cd-keyval"></span><br><span class="hint">שמרו אותו במקום בטוח. בעזרתו מתחברים לחדר ממחשב או טלפון נוסף. מי שיש לו את המפתח רואה את כל הלקוחות.</span></div>
+  </div>
+
+  <section class="k-sec partner" aria-labelledby="cd-partner-h" style="margin-top:1.6rem">
+    <h2 id="cd-partner-h">שותפים במיזם</h2>
+    <p class="lead2">את המערכת הזו בניתי לבד, בהשקעה גדולה של זמן וכסף, כדי שגם משרד קטן יקבל פורטל לקוחות כמו של המשרדים הגדולים. היא חינמית ותישאר חינמית, בלי מנוי ובלי פרסומות.</p>
+    <p class="lead2">אם היא חוסכת לכם שעות עבודה בעונת הדוחות, אשמח שתהיו שותפים: תמיכה קבועה קטנה, חסות של המשרד, או רעיון לשיפור. ואם לא, זה בסדר גמור. מספיק שתספרו לעוד רואה חשבון. גילעד רחמים</p>
+    <div class="actions"><a class="btn btn-gold" href="/kelim/#litmoch">להיות שותפים</a><a class="btn btn-line" href="/kelim/bakasha/">רעיון לשיפור</a><a class="btn btn-line" href="#" data-share-tool="wa" data-text="פורטל לקוחות חינמי לרואי חשבון: קישור אישי לכל לקוח, והקבלות נכנסות ישר לגוגל דרייב של המשרד:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לספר לרואה חשבון</a></div>
+  </section>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">פורטל לקוחות למשרד רואי חשבון, בלי מנוי</h2>
+  <p>בעונת הדוחות השנתיים רוב הזמן במשרד הולך על איסוף: לבקש מהלקוח טופס 106, לחכות לקבלות על תרומות, לקבל צילום מטושטש בווטסאפ ולשמור אותו בתיקייה הנכונה. פורטל לקוחות פותר את זה, אבל המערכות המוכרות עולות מאות עד אלפי שקלים בשנה, ולפעמים מחייבות את הלקוח לשלם על תוכנה משלו. כאן זה חינם.</p>
+  <h3>איך זה עובד</h3>
+  <p>פותחים חדר פעם אחת: קוד קצר שרץ בחשבון הגוגל של המשרד יוצר תיקייה וגיליון. לכל לקוח פותחים תיק ושולחים לו קישור אישי בווטסאפ. הלקוח רואה את המגירות שלו: 106, תרומות, פנסיה וביטוח, 867, ביטוח לאומי ונקודות זיכוי, ולעוסק גם חשבוניות, דפי בנק ורכב לפי חודש. הוא מצלם, והקובץ נכנס לתיקייה שלו בדרייב שלכם, עם שורה בגיליון. אתם רואים לכל לקוח מה הגיע ומה חסר, שולחים תזכורת בלחיצה, ומורידים הכול לאקסל.</p>
+  <h3>אבטחת מידע ופרטיות</h3>
+  <p>מסמכים פיננסיים ומספרי זהות הם מידע רגיש. לכן המערכת בנויה כך שהם לא עוברים דרך אף צד שלישי: הקבצים עוברים ישר מהטלפון של הלקוח לגוגל דרייב של המשרד, שבו אתם כבר שומרים את התיקים. אין כניסה עם מספר זהות; כל לקוח מקבל קישור עם קוד אקראי ארוך, ואפשר לסגור אותו בכל רגע. הטלפון מכווץ את הצילומים לפני השליחה, כך שגם 15GB החינמיים של גוגל מספיקים להרבה לקוחות.</p>
+  <p>הכלי עוזר לאסוף, ולא מחליף את שיקול הדעת המקצועי ואת נהלי אבטחת המידע של המשרד. עוד כלים למשרד: <a class="gold" href="/kelim/cheshbon/moadim/">מועדי דיווח</a>, <a class="gold" href="/kelim/cheshbon/hakzaa/">בודק מספר הקצאה</a>, <a class="gold" href="/kelim/cheshbon/osek/">בדיקת ח.פ</a>, <a class="gold" href="/kelim/cheshbon/mikdamot/">מקדמות ודוח מע"מ</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>כמה זה עולה?</summary><p>כלום. בלי מנוי ובלי הגבלה על מספר הלקוחות. הקבצים נשמרים בגוגל דרייב של המשרד, ו-15GB כלולים בחינם בכל חשבון גוגל.</p></details>
+  <details><summary>איפה נשמרים המסמכים של הלקוחות?</summary><p>רק בגוגל דרייב של המשרד, בתיקייה "תיק מסמכים ללקוחות", לפי שנה, לקוח ומגירה. הקוד שמקבל את הקבצים רץ בחשבון הגוגל של המשרד, ואתר הכלים לא שומר שום קובץ.</p></details>
+  <details><summary>הלקוח צריך להוריד אפליקציה או להירשם?</summary><p>לא. הוא פותח את הקישור האישי בטלפון, בוחר מגירה ומצלם. אין סיסמה ואין הרשמה.</p></details>
+  <details><summary>למה גוגל כותב שהאפליקציה לא אומתה?</summary><p>כי זה קוד שאתם עצמכם יצרתם בחשבון שלכם, ולא אפליקציה שפורסמה בחנות של גוגל. ההרשאה ניתנת לקוד שלכם בלבד, ואפשר לקרוא את כולו לפני שמאשרים.</p></details>
+  <details><summary>למה לא מזדהים עם תעודת זהות?</summary><p>כי מספר זהות קל לנחש או למצוא. כל לקוח מקבל קישור עם קוד אקראי ארוך, ואפשר לסגור אותו בלחיצה.</p></details>
+</section>
+<!--/seo-txt-->
