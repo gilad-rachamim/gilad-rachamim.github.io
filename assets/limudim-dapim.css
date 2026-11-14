@@ -227,3 +227,42 @@ body.dp-student .k-hero{display:none}
 .dp-pdfhost .dp-paper.big{font-size:18.7px}
 .dp-pdfhost .dp-paper footer.dp-pf{display:block!important}
 .dp-pdfhost .dp-paper header.dp-ph{display:flex!important}
+/* ---------- "דף לפי התיאור": דף שנבנה מבלוקים לפי מה שהמורה תיארה ---------- */
+.dp-aimode .dp-noai{display:none!important}
+.dp-ai-wait{display:flex;gap:.8rem;align-items:center;padding:.8rem 1rem;border-radius:14px;border:2px dashed var(--gold);background:rgba(201,162,39,.08);line-height:1.6}
+.dp-ai-wait small{opacity:.8}
+.dp-ai-spin{flex:none;width:1.6rem;height:1.6rem;border-radius:50%;border:3px solid rgba(201,162,39,.3);border-top-color:var(--gold);animation:dpspin 1s linear infinite}
+@keyframes dpspin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.dp-ai-spin{animation:none}}
+.dp-ai-mine{border-color:var(--gold);background:rgba(201,162,39,.08)}
+.dp-ai-ttl{margin:0;font-weight:700;font-size:1.05rem}
+.dp-ai-err{background:rgba(179,38,30,.1);border-color:rgba(179,38,30,.45)}
+.dp-ai-more summary{cursor:pointer;padding:.4rem 0;font-weight:700}
+.dp-ai-exact,.dp-ai-last{margin:.2rem 0 0}
+.dp-xpaper[contenteditable="true"]:focus{outline:none}
+.dp-xpaper [contenteditable] :focus,.dp-xpaper:focus-within p:focus{outline:2px dashed var(--ac)}
+.dp-xintro{margin:.4rem 0 .6rem!important;font-size:.98em;line-height:1.6}
+.dp-xpart{margin:1.1rem 0 .5rem;padding:.25rem .8rem;border-inline-start:6px solid var(--ac);background:var(--tint);border-radius:8px;font-size:1.15em;color:var(--hi);break-after:avoid}
+.dp-xexp{margin:.5rem 0;line-height:1.65;break-inside:avoid}
+.dp-xexp p,.dp-xnote p{margin:0}
+.dp-xm{text-align:center;font-size:1.2em;line-height:1.7;margin:.25rem auto;padding:.15rem .6rem;border-radius:10px;width:fit-content;max-width:100%;overflow-wrap:anywhere;background:var(--tint)}
+.dp-xnote{display:flex;gap:.6rem;align-items:flex-start;margin:.6rem 0;padding:.55rem .8rem;border:2px solid #d9a521;border-radius:12px;background:#fff6dc;color:#3b2f0b;line-height:1.6;break-inside:avoid}
+.dp-xnote>span{font-size:1.3em;line-height:1.2}
+.dp-xnote .dp-xm{background:#fff}
+.dp-xt{font-weight:700;line-height:1.55}
+p.dp-xt{margin:0 0 .3rem!important}
+.dp-xitems{list-style:none;margin:.35rem 0 0;padding:0;display:grid;gap:.15rem}
+.dp-xitems li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.1rem .5rem;padding:.3rem 0;border-top:1px dotted var(--bd);line-height:1.75}
+.dp-xitems li:first-child{border-top:0}
+.dp-xl{font-weight:700;color:var(--hi)}
+.dp-xiq .sb{min-width:6em}
+.dp-xlines{grid-column:1/-1;background-image:repeating-linear-gradient(transparent 0 calc(8.5mm - 1px),#9aa3b5 calc(8.5mm - 1px) 8.5mm)}
+.dp-xgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 .7rem}
+.dp-xgrid .dp-q{margin:.35rem 0}
+.dp-xq .dp-grid{display:block;margin:.3rem auto 0}
+.dp-xkey{list-style:none;padding:0;margin:.6rem 0 0;display:grid;gap:.35rem}
+.dp-xk{display:flex;flex-wrap:wrap;gap:.2rem .9rem;align-items:center;padding:.35rem 0;border-top:1px dotted var(--bd);break-inside:avoid}
+.dp-xk.g .dp-grid{max-width:200px!important;flex:0 1 200px}
+.dp-xk.g .dp-tbl{font-size:.85em;margin:0}
+.dp-xka{line-height:1.6}
+@media(max-width:560px){.dp-xgrid{grid-template-columns:1fr}}

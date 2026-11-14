@@ -8,6 +8,7 @@
 // פרטיות: לא שומרים שאלות ותמונות. נשמר רק מונה יומי (כתובת מגובבת, נמחק אחרי יום).
 
 import { runChecks } from './check.js';
+import { DAF_RULES, DAF_SCHEMA, DAF_MAX_TEXT, dafPrompt, tidyDaf } from './daf.js';
 
 const ALLOWED = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
@@ -478,6 +479,34 @@ async function machberet(request, env, ctx, h, path) {
   return streamed(ctx, h, async () => Object.assign(proof ? await aiProof(env, b) : await aiHint(env, b), { left: q.left }));
 }
 
+// ============ מחולל דפי העבודה: דף לפי תיאור חופשי של המורה (/daf) ============
+// המורה כותבת או מקליטה מה היא צריכה -> מבנה של בלוקים. אותו תיאור = אותו דף מהזיכרון (90 יום), בלי לגעת במכסה.
+const DAF_PER = 10, DAF_CAP = 200;
+async function dafRoute(request, env, ctx, h) {
+  const raw = await request.text();
+  if (raw.length > DAF_MAX_TEXT * 4 + 500) return json({ error: 'too_big' }, 413, h);
+  let b; try { b = JSON.parse(raw); } catch (_) { return json({ error: 'bad_json' }, 400, h); }
+  const text = String(b.text || '').replace(/\s+/g, ' ').trim();
+  if (text.length < 10) return json({ error: 'empty' }, 400, h);
+  const dg = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('daf1|' + (b.grade || '') + '|' + text.slice(0, DAF_MAX_TEXT)));
+  const k = [...new Uint8Array(dg)].map(x => x.toString(16).padStart(2, '0')).join('');
+  const cache = env.QUOTA.get(env.QUOTA.idFromName('cache'));
+  const call = async (path, o) => { try { return await (await cache.fetch('https://q/' + path, { method: 'POST', body: JSON.stringify(Object.assign({ k }, o || {})) })).json(); } catch (_) { return {}; } };
+  if (!b.fresh) { const hit = await call('cget'); if (hit.v) { const out = JSON.parse(hit.v); out.cached = true; return json(out, 200, h); } }
+  const q = await takeQuota(env, 'daf', request, DAF_PER, DAF_CAP);
+  if (!q.ok) return json({ error: 'quota' }, 200, h);
+  return streamed(ctx, h, async () => {
+    const r = await solver(env, DAF_RULES, [{ text: dafPrompt({ text, grade: b.grade }) }], DAF_SCHEMA, { timeout: 150000 });
+    const out = tidyDaf(r.data);
+    if (!out.blocks.length) return { error: 'ai' };
+    out.model = r.model;
+    const v = JSON.stringify(out);
+    if (v.length < 120000) await call('cput', { v, ok: true });
+    out.left = q.left;
+    return out;
+  });
+}
+
 async function ipHash(ip, day) {
   const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(day + '|' + ip + '|poter'));
   return [...new Uint8Array(b)].slice(0, 8).map(x => x.toString(16).padStart(2, '0')).join('');
@@ -497,6 +526,10 @@ export default {
     if ((url.pathname === '/hint' || url.pathname === '/check-proof') && request.method === 'POST') {
       if (!h) return json({ error: 'origin' }, 403);
       return machberet(request, env, ctx, h, url.pathname);
+    }
+    if (url.pathname === '/daf' && request.method === 'POST') {
+      if (!h) return json({ error: 'origin' }, 403);
+      return dafRoute(request, env, ctx, h);
     }
     if (url.pathname !== '/solve' || request.method !== 'POST') return json({ name: 'הפותר – שאלות בגרות במתמטיקה', page: 'https://hakelim.com/limudim/poter/' }, 200);
     if (!h) return json({ error: 'origin' }, 403);

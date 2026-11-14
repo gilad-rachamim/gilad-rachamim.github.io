@@ -22,14 +22,15 @@
     <form class="panel dp-form" id="dp-form" autocomplete="off">
       <section class="dp-ai" id="dp-ai" aria-labelledby="dp-ai-h">
         <h2 class="dp-h" id="dp-ai-h">✨ הכי פשוט: ספרו במילים שלכם איזה דף אתם צריכים</h2>
-        <p class="note">כותבים או מקליטים, כמו שמספרים לחברה לעבודה, ומקבלים 3 דפים מוכנים לבחירה. אחר כך אפשר לשנות כל פרט בטופס שלמטה.</p>
+        <p class="note">כותבים או מקליטים, כמו שמספרים לחברה לעבודה. בקשה קצרה ("כיתה ח׳, חזרה על משוואות, 45 דקות") נותנת 3 דפים מוכנים לבחירה. תיאור מפורט (מה מסבירים, באיזה סדר, אילו טבלאות, שרטוטים ותרגילים) נותן דף שנבנה בדיוק לפיו, סעיף אחרי סעיף, עם דף תשובות.</p>
         <label for="dp-ai-t" class="sr-only">תיאור הדף במילים שלכם</label>
-        <textarea id="dp-ai-t" rows="3" maxlength="600" placeholder="למשל: כיתה ח׳, חזרה על משוואות לפני המבחן, יש לי 45 דקות. הכיתה מתקשה אז הרבה עזרה, ועוד כמה שאלות אמריקאיות. דף צבעוני."></textarea>
+        <textarea id="dp-ai-t" rows="4" maxlength="3000" placeholder="למשל: כיתה ח׳, חזרה על משוואות לפני המבחן, יש לי 45 דקות. הכיתה מתקשה אז הרבה עזרה, ועוד כמה שאלות אמריקאיות. דף צבעוני."></textarea>
         <div class="btns">
           <button class="btn btn-gold" type="button" id="dp-ai-go">✨ להציע לי דפים</button>
           <button class="btn btn-line" type="button" id="dp-ai-mic" aria-pressed="false">🎤 להקליט במקום לכתוב</button>
         </div>
         <p class="note" id="dp-ai-mic-note" hidden></p>
+        <div id="dp-ai-daf" aria-live="polite"></div>
         <div id="dp-ai-res" aria-live="polite"></div>
       </section>
 
@@ -138,7 +139,7 @@
       <div class="btns">
         <button class="btn btn-gold" type="button" id="dp-print">🖨 להדפיס</button>
         <button class="btn btn-gold" type="button" id="dp-pdf">📄 PDF לקבוצת ווטסאפ</button>
-        <a class="btn btn-line" id="dp-open" href="#" target="_blank" rel="noopener">👁 לפתוח את הדף הדיגיטלי</a>
+        <a class="btn btn-line dp-noai" id="dp-open" href="#" target="_blank" rel="noopener">👁 לפתוח את הדף הדיגיטלי</a>
       </div>
       <div class="dp-pdfbox" id="dp-pdfbox" hidden>
         <p id="dp-pdfmsg" aria-live="polite"></p>
@@ -147,13 +148,13 @@
           <a class="btn btn-line" id="dp-pdf-dl" href="#" download>⬇️ להוריד את ה-PDF</a>
         </div>
       </div>
-      <div class="btns">
+      <div class="btns dp-noai">
         <button class="btn btn-line btn-sm" type="button" id="dp-share" hidden>📤 לשתף קישור</button>
         <a class="btn btn-line btn-sm" id="dp-wa" href="#" target="_blank" rel="noopener">📲 לשלוח לכיתה בווטסאפ</a>
         <button class="btn btn-line btn-sm" type="button" id="dp-copy">🔗 להעתיק קישור</button>
         <button class="btn btn-line btn-sm" type="button" id="dp-new">🎲 תרגילים אחרים</button>
       </div>
-      <p class="note">הקישור פותח לתלמידים את אותו דף בדיוק, עם אותם מספרים, בגרסה דיגיטלית: בדיקה מיד, רמזים, ומחשבון פשוט שעוזר בחשבון ולא פותר במקומם. בסוף הם שולחים לכם סיכום בווטסאפ.</p>
+      <p class="note dp-noai">הקישור פותח לתלמידים את אותו דף בדיוק, עם אותם מספרים, בגרסה דיגיטלית: בדיקה מיד, רמזים, ומחשבון פשוט שעוזר בחשבון ולא פותר במקומם. בסוף הם שולחים לכם סיכום בווטסאפ.</p>
     </div>
     <h2 class="dp-h dp-prevh">כך ייראה הדף המודפס</h2>
   </div>

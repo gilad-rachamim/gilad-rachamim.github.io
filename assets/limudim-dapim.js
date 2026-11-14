@@ -264,6 +264,167 @@
   }
 
   // =====================================================================
+  //  "דף לפי התיאור": המורה מתארת דף במילים שלה, השרת מחזיר בלוקים, וכאן בונים את הדף.
+  //  את ערכי הטבלאות ואת הגרפים מחשבים כאן מהפונקציה עצמה, כך שאין בדף מספר שהדגם המציא.
+  // =====================================================================
+  // ביטוי בכתיב מחשב ("-x^2+3", "2(x-1)^2") -> פונקציה. רק x, מספרים, + - * / ^ וסוגריים.
+  function fx(src) {
+    var s = String(src || '').replace(/²/g, '^2').replace(/³/g, '^3').replace(/[−–]/g, '-').replace(/[·×]/g, '*').replace(/\s+/g, '').replace(/^y=/, '');
+    if (!/^[x0-9+\-*/^().]{1,40}$/.test(s)) return null;
+    var tk = s.match(/\d+(?:\.\d+)?|[x+\-*/^()]/g) || [], i = 0;
+    function peek() { return tk[i]; }
+    function expr() { var a = term(); while (peek() === '+' || peek() === '-') { var op = tk[i++], b = term(); a = (function (a, b, op) { return function (x) { return op === '+' ? a(x) + b(x) : a(x) - b(x); }; })(a, b, op); } return a; }
+    function term() {
+      var a = unary();
+      while (peek() === '*' || peek() === '/' || peek() === 'x' || peek() === '(' || /^\d/.test(peek() || '')) {
+        var op = peek() === '*' || peek() === '/' ? tk[i++] : '*', b = unary();
+        a = (function (a, b, op) { return function (x) { return op === '*' ? a(x) * b(x) : a(x) / b(x); }; })(a, b, op);
+      }
+      return a;
+    }
+    function unary() { if (peek() === '-') { i++; var a = unary(); return function (x) { return -a(x); }; } if (peek() === '+') { i++; return unary(); } return power(); }
+    function power() { var a = atom(); if (peek() === '^') { i++; var b = unary(); return function (x) { return Math.pow(a(x), b(x)); }; } return a; }
+    function atom() {
+      var t = tk[i++];
+      if (t === 'x') return function (x) { return x; };
+      if (t === '(') { var a = expr(); if (tk[i++] !== ')') throw 0; return a; }
+      if (/^\d/.test(t || '')) { var v = +t; return function () { return v; }; }
+      throw 0;
+    }
+    try { var f = expr(); return i === tk.length ? f : null; } catch (e) { return null; }
+  }
+  function fxNum(v) { var r = Math.round(v * 100) / 100; return r === 0 ? '0' : num(r); }
+  // כתיב מחשב -> כתיב של דף: x^2 -> x², 2*x -> 2x, מינוס אמיתי
+  function pm(s) {
+    return String(s).replace(/\^2(?![0-9])/g, '²').replace(/\^3(?![0-9])/g, '³').replace(/\^\(([^()]{1,12})\)/g, '<sup>$1</sup>').replace(/\^(-?[0-9a-z]+)/g, '<sup>$1</sup>')
+      .replace(/(\d)\s*\*\s*(?=[a-z(])/g, '$1').replace(/\s*\*\s*/g, ' · ');
+  }
+  function fnShow(f) { return 'y = ' + pm(String(f).replace(/([+\-])/g, ' $1 ').replace(/^\s*-\s*/, '-').replace(/\(\s*-\s*/g, '(-').replace(/\s+/g, ' ').trim()).replace(/-/g, '−'); }
+  // טקסט מהדגם -> HTML בטוח: בורחים, כתיב מתמטי, וכיוון שמאל-לימין לקטעי מתמטיקה בתוך עברית
+  // מפרק טקסט לקטעי עברית וקטעי מתמטיקה (קטע מתמטיקה נכתב משמאל לימין, בלי לגנוב סוגריים או נקודה מהמשפט)
+  function mruns(raw, seg) { // מפרק טקסט לקטעי עברית וקטעי מתמטיקה; seg(text, isMath)
+    var s = String(raw), out = '', at = 0, re = /[A-Za-z0-9()+\-−=·×÷*\/^²³√<>≤≥≠.,|→←∞π_ ]+/g, m;
+    while ((m = re.exec(s))) {
+      var a = m.index, b = a + m[0].length, t;
+      while (a < b && /[\s.,:;!?]/.test(s[a])) a++;
+      while (b > a && /[\s.,:;!?(]/.test(s[b - 1])) b--;
+      if (a < b && s[a] === '-' && a > 0 && /[\u0590-\u05FF]/.test(s[a - 1])) a++;
+      for (var k = 0; k < 3; k++) {
+        t = s.slice(a, b);
+        var o = (t.match(/\(/g) || []).length, c = (t.match(/\)/g) || []).length;
+        if (c > o && t[t.length - 1] === ')') b--; else if (c > o && t[0] === ')') a++; else if (o > c && t[0] === '(') a++; else if (o > c && t[t.length - 1] === '(') b--; else break;
+      }
+      t = s.slice(a, b);
+      if (!t || !(/[=+×÷^²³√<>≤≥≠→·]/.test(t) || /.-./.test(t) || /^-?\d/.test(t) && /[a-z]/i.test(t) || /^\(.+,.+\)$/.test(t))) continue;
+      out += seg(s.slice(at, a), false) + seg(t, true); at = b;
+    }
+    return out + seg(s.slice(at), false);
+  }
+  function tx(s) { return mruns(s, function (t, m) { return m ? '<bdi dir="ltr">' + pm(esc(t)) + '</bdi>' : pm(esc(t)); }); }
+  function mline(s) { return String(s).split(/\s;\s/).map(function (z) { return '<div class="dp-xm" dir="ltr">' + pm(esc(z.trim())).replace(/-/g, '−') + '</div>'; }).join(''); }
+  // מערכת צירים בטווח נתון; draw = פונקציות שמצוירות
+  function axesSvg(g, draw) {
+    var x0 = Math.min(0, Math.floor(g.xmin)), x1 = Math.max(0, Math.ceil(g.xmax)), y0 = Math.min(0, Math.floor(g.ymin)), y1 = Math.max(0, Math.ceil(g.ymax));
+    var sy = y1 - y0 <= 16 ? 1 : y1 - y0 <= 32 ? 2 : 5; y0 = Math.floor(y0 / sy); y1 = Math.ceil(y1 / sy);
+    var sx = x1 - x0 <= 16 ? 1 : 2;
+    var C = 22, mx = 22, my = 18, W = (x1 - x0) * C + mx * 2, H = (y1 - y0) * C + my * 2;
+    var X = function (x) { return mx + (x - x0) * C; }, Y = function (y) { return my + (y1 - y / sy) * C; };
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="dp-grid" direction="ltr" style="max-width:' + Math.round(W * 1.15) + 'px" role="img" aria-label="מערכת צירים">', k;
+    for (k = x0; k <= x1; k++) s += '<path d="M' + X(k) + ' ' + my + ' V' + (H - my) + '" class="gl"/>' + (k && k % sx === 0 ? '<text x="' + X(k) + '" y="' + (Y(0) + 12) + '" class="gt" text-anchor="middle">' + num(k) + '</text>' : '');
+    for (k = y0; k <= y1; k++) s += '<path d="M' + mx + ' ' + Y(k * sy) + ' H' + (W - mx) + '" class="gl"/>' + (k && k < y1 ? '<text x="' + (X(0) - 4) + '" y="' + (Y(k * sy) + 3.5) + '" class="gt" text-anchor="end">' + num(k * sy) + '</text>' : '');
+    s += '<path d="M' + mx + ' ' + Y(0) + ' H' + (W - mx) + ' M' + X(0) + ' ' + my + ' V' + (H - my) + '" class="ga"/><text x="' + (W - mx + 5) + '" y="' + (Y(0) + 4) + '" class="gt">x</text><text x="' + X(0) + '" y="' + (my - 5) + '" class="gt" text-anchor="middle">y</text>';
+    var cols = ['#3f8fc4', '#c0552b', '#2e8b57', '#8a4fbf', '#c9972f', '#555'];
+    (draw || []).forEach(function (src, j) {
+      var f = fx(src); if (!f) return;
+      var d = '', on = false;
+      for (var x = x0; x <= x1 + 1e-9; x += 0.05) {
+        var y = f(x), ok = isFinite(y) && y / sy >= y0 - 0.02 && y / sy <= y1 + 0.02;
+        if (ok) { d += (on ? ' L' : ' M') + X(x).toFixed(1) + ' ' + Y(y).toFixed(1); on = true; } else on = false;
+      }
+      s += '<path d="' + d + '" class="gc" style="stroke:' + cols[j % cols.length] + '"/>';
+    });
+    return s + '</svg>';
+  }
+  // "שרטטו את y = x² + 1" -> ["x^2+1"]: כשהדגם לא מילא key, לוקחים את הפונקציות מתוך ההוראה
+  function fnsInText(t) {
+    var out = [], m, re = /y\s*=\s*([−\-+x0-9²³^*·().\s]{1,30})/g;
+    while ((m = re.exec(String(t || '')))) { var f = m[1].replace(/[\s.]+$/, '').trim(); if (/x/.test(f) && fx(f)) out.push(f.replace(/\s+/g, '')); }
+    return out;
+  }
+  var HEL = 'אבגדהוזחטיכלמנסעפצקרשת';
+  function dafTblHtml(b, full) {
+    var f = fx(b.fn);
+    return '<table class="dp-tbl fill" dir="ltr"><tr><th>x</th>' + b.xs.map(function (x) { return '<td>' + fxNum(x) + '</td>'; }).join('') + '</tr><tr><th>y</th>' + b.xs.map(function (x, j) {
+      return '<td>' + (full || j < b.given ? (j < b.given && !full ? '<b>' : '') + fxNum(f(x)) + (j < b.given && !full ? '</b>' : '') : '') + '</td>';
+    }).join('') + '</tr></table>';
+  }
+  // בלוקים -> רשימת פריטים לדף: טבלה ואחריה גרף באותה פונקציה נכנסים לאותה תיבה, עם מספר אחד
+  function dafItems(doc) {
+    var items = [], n = 0, bs = doc.blocks || [];
+    for (var i = 0; i < bs.length; i++) {
+      var b = bs[i];
+      if (b.type === 'table' && !fx(b.fn)) continue;
+      if (b.type === 'table') {
+        var g = bs[i + 1] && bs[i + 1].type === 'graph' ? bs[++i] : null;
+        if (g && !g.key.length && !g.fns.length) g = Object.assign({}, g, { key: fnsInText(g.text).length ? fnsInText(g.text) : [b.fn] });
+        items.push({ k: 'table', b: b, g: g, n: ++n }); continue;
+      }
+      if (b.type === 'graph') {
+        var key = b.key.length ? b.key : b.fns.length ? [] : fnsInText(b.text);
+        items.push({ k: 'graph', b: b, key: key, n: (key.length || !b.fns.length) ? ++n : 0 }); continue;
+      }
+      if (b.type === 'task' || b.type === 'fill' || b.type === 'lines') { items.push({ k: b.type, b: b, n: ++n }); continue; }
+      items.push({ k: b.type, b: b });
+    }
+    // כמה גרפים לשרטוט ברצף -> רשת של שניים בשורה
+    return items;
+  }
+  function dafQ(it, inner) { return '<section class="dp-q dp-xq">' + (it.n ? '<div class="dp-qh"><span class="dp-n">' + it.n + '</span>' + (it.b.text ? '<span class="dp-xt">' + tx(it.b.text) + '</span>' : '') + '</div>' : it.b.text ? '<p class="dp-xt">' + tx(it.b.text) + '</p>' : '') + inner + '</section>'; }
+  function dafPaperHtml(doc, o) {
+    var items = dafItems(doc), nq = items.filter(function (x) { return x.n; }).length, h = '<article class="dp-paper dp-xpaper st-' + o.style + (o.font ? ' big' : '') + '"' + (o.edit ? ' contenteditable="true" spellcheck="false"' : '') + '>';
+    h += '<header class="dp-ph"><div class="dp-pt"><span class="dp-kind">דף עבודה · מתמטיקה' + (doc.grade ? ' · כיתה ' + esc(doc.grade) : '') + '</span><h2>' + tx(doc.title) + '</h2>' + (o.title ? '<p class="dp-sub">' + esc(o.title) + '</p>' : '') +
+      '<p class="dp-name">שם: <span class="sb w"></span> תאריך: <span class="sb"></span></p></div></header>';
+    h += '<div class="dp-strip">' + (doc.minutes && o.time ? '<span>⏱ כ-' + doc.minutes + ' דקות</span>' : '') + '<span>' + nq + ' משימות</span>' + (o.stars ? '<span class="dp-stars" aria-label="כוכב לכל משימה">' + items.filter(function (x) { return x.n; }).map(function () { return '☆'; }).join('') + '</span><span class="dp-strip-n">צובעים כוכב אחרי כל משימה</span>' : '') + '</div>';
+    if (doc.intro) h += '<p class="dp-xintro">' + tx(doc.intro) + '</p>';
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i], b = it.b;
+      if (it.k === 'part') h += '<h3 class="dp-xpart">' + tx(b.text || '') + '</h3>';
+      else if (it.k === 'explain') h += '<div class="dp-xexp">' + (b.text ? '<p>' + tx(b.text) + '</p>' : '') + (b.math ? mline(b.math) : '') + '</div>';
+      else if (it.k === 'note') h += '<div class="dp-xnote"><span aria-hidden="true">⚠️</span><div>' + (b.text ? '<p>' + tx(b.text) + '</p>' : '') + (b.math ? mline(b.math) : '') + '</div></div>';
+      else if (it.k === 'task') h += dafQ(it, '<ol class="dp-xitems">' + b.items.map(function (x, j) {
+        return '<li><span class="dp-xl">' + HEL[j % HEL.length] + '.</span><span class="dp-xiq">' + tx(x.q.replace(/_{3,}/g, '﹍')).replace(/﹍/g, '<span class="sb"></span>') + (b.n ? '' : (/_{3,}/.test(x.q) ? '' : ' <span class="sb w"></span>')) + '</span>' + (b.n ? '<div class="dp-xlines" style="height:' + b.n * 8.5 + 'mm"></div>' : '') + '</li>';
+      }).join('') + '</ol>');
+      else if (it.k === 'fill') h += dafQ(it, '<ol class="dp-xitems">' + b.items.map(function (x, j) {
+        return '<li><span class="dp-xl">' + HEL[j % HEL.length] + '.</span><span class="dp-xiq">' + tx(x.q.replace(/_{2,}/g, '﹍')).replace(/﹍/g, '<span class="sb"></span>') + (/_{2,}/.test(x.q) ? '' : ' <span class="sb w"></span>') + '</span></li>';
+      }).join('') + '</ol>');
+      else if (it.k === 'lines') h += dafQ(it, '<div class="dp-xlines" style="height:' + b.n * 8.5 + 'mm"></div>');
+      else if (it.k === 'table') h += dafQ(it, (it.g && it.g.text ? '<p class="dp-eg">' + tx(it.g.text) + '</p>' : '') + '<div class="dp-tw">' + dafTblHtml(b, false) + (it.g ? axesSvg(it.g, it.g.fns) : '') + '</div>');
+      else if (it.k === 'graph') {
+        // גרפים לשרטוט ברצף: שניים בשורה
+        var run = [it]; while (items[i + 1] && items[i + 1].k === 'graph' && items[i + 1].n && it.n) run.push(items[++i]);
+        if (run.length > 1) h += '<div class="dp-xgrid">' + run.map(function (r) { return dafQ(r, axesSvg(r.b, r.b.fns)); }).join('') + '</div>';
+        else h += dafQ(it, axesSvg(b, b.fns));
+      }
+    }
+    if (o.feel) h += '<section class="dp-feel"><b>איך הרגשתי עם הדף?</b><span>😀 הבנתי הכול</span><span>🙂 הבנתי את הרוב</span><span>🤔 צריך עוד הסבר</span><span class="dp-feel-q">מה עוד לא ברור לי: <span class="sb w"></span></span></section>';
+    h += '<footer class="dp-pf">טעות היא חלק מהלימוד. ממשיכים הלאה 💪 &nbsp;·&nbsp; דף מ"הכלים של גילעד רחמים", חינם: <bdi dir="ltr">hakelim.com/limudim/dapim</bdi></footer></article>';
+    if (o.key) {
+      h += '<article class="dp-paper dp-keyp dp-xpaper st-' + o.style + '"' + (o.edit ? ' contenteditable="true" spellcheck="false"' : '') + '><header class="dp-ph"><div class="dp-pt"><span class="dp-kind">דף תשובות למורה</span><h2>' + tx(doc.title) + '</h2></div></header><ol class="dp-key dp-xkey">';
+      items.forEach(function (it) {
+        if (!it.n) return;
+        var b = it.b, a = '';
+        if (it.k === 'task' || it.k === 'fill') a = b.items.map(function (x, j) { return '<span class="dp-xka"><b>' + HEL[j % HEL.length] + '.</b> ' + (x.a ? tx(x.a) : '—') + '</span>'; }).join('');
+        else if (it.k === 'table') a = dafTblHtml(b, true) + (it.g && it.g.key.length ? axesSvg(it.g, it.g.fns.concat(it.g.key)) : '');
+        else if (it.k === 'graph') a = (it.key.length ? '<span class="dp-xka">' + it.key.map(function (f) { return '<bdi dir="ltr">' + fnShow(f) + '</bdi>'; }).join(' , ') + '</span>' : '') + axesSvg(b, b.fns.concat(it.key));
+        else a = '<span class="dp-xka">תשובה פתוחה</span>';
+        h += '<li class="dp-xk' + (it.k === 'graph' || it.k === 'table' ? ' g' : '') + '"><b>' + it.n + '.</b> ' + a + '</li>';
+      });
+      h += '</ol></article>';
+    }
+    return h;
+  }
+
+  // =====================================================================
   //  הדף המודפס
   // =====================================================================
   var qrJobs = [];
@@ -568,6 +729,7 @@
       var txt = $('dp-ai-t').value.trim(), out = $('dp-ai-res');
       if (txt.length < 3) { out.innerHTML = '<p class="dp-ai-heard">כתבו כמה מילים על הדף שאתם צריכים: כיתה, נושא, כמה זמן, ואיך הכיתה.</p>'; $('dp-ai-t').focus(); return; }
       var r = aiParse(txt), cs = aiCfgs(r); aiLast = cs;
+      var exact = detailed(txt); aiReq++; dafLast();
       var heard = [];
       heard.push(r.g ? 'כיתה ' + GRN[r.g] + (r.u ? ', ' + r.u + ' יח״ל' : '') : 'לא נאמרה כיתה, אז לקחתי ' + GRN[cs[0].g]);
       heard.push(r.ts.length ? 'נושא: ' + r.ts.map(function (t) { return t.name; }).join(' + ') : 'לא זיהיתי נושא, אז בחרתי ' + byId[cs[0].t].name + ' (אפשר לשנות למטה)');
@@ -580,11 +742,14 @@
         for (var i = 0; i < 6 && ex.length < 2; i++) { var q = seeded(c.lv * 1000 + i + j * 7, function () { return genQ(tp, c.lv); }); if (q.t && ex.indexOf(q.t) < 0) ex.push(q.t); }
         return '<div class="dp-ai-opt"><h3>' + c.name + '</h3><p class="why">' + esc(c.why) + '</p><div class="chips"><span>' + GRN[c.g] + '</span><span>' + esc([c.t].concat(c.x).map(function (id) { return byId[id].name; }).join(' + ')) + '</span><span>' + (c.k === 'z' ? 'חזרה' : 'הקנייה') + '</span><span>' + c.m + ' דק׳</span><span>' + LVN[c.lv] + '</span><span>' + HELPN[c.a] + '</span></div>' +
           '<p class="why">לדוגמה מהדף:</p><ol>' + ex.map(function (t) { return '<li dir="rtl">' + mwx(esc(t)) + '</li>'; }).join('') + '</ol>' +
-          '<button class="btn ' + (j ? 'btn-line' : 'btn-gold') + ' btn-sm" type="button" data-ai="' + j + '">✓ לבחור את הדף הזה</button></div>';
+          '<button class="btn ' + (j || exact ? 'btn-line' : 'btn-gold') + ' btn-sm" type="button" data-ai="' + j + '">✓ לבחור את הדף הזה</button></div>';
       }).join('') + '</div>';
-      used('ai_suggest', { topic: cs[0].t, found: r.ts.length });
+      if (exact) { out.innerHTML = '<details class="dp-ai-more"><summary>או: 3 דפים מוכנים מהמחולל, עם תרגילים מתחלפים</summary>' + out.innerHTML + '</details>'; dafAsk(txt); }
+      else out.innerHTML += '<p class="dp-ai-exact"><button class="btn btn-line btn-sm" type="button" data-daf>🪄 לבנות דף מדויק לפי מה שכתבתי, סעיף אחרי סעיף</button></p>';
+      used('ai_suggest', { topic: cs[0].t, found: r.ts.length, exact: exact });
     }
     function aiApply(c) {
+      dafOff();
       gs.value = c.g; $('dp-units').value = c.u;
       var G = groups(c.g, c.u); $('dp-all').checked = [c.t].concat(c.x).some(function (id) { return G.near.indexOf(byId[id]) < 0; });
       fillTopics(c.t); fillRevs(null, [c.x[0] || '', c.x[1] || '']);
@@ -600,6 +765,70 @@
     $('dp-ai-go').addEventListener('click', aiShow);
     $('dp-ai-t').addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); aiShow(); } });
     $('dp-ai-res').addEventListener('click', function (e) { var b = e.target.closest('[data-ai]'); if (b) aiApply(aiLast[+b.dataset.ai]); });
+    // ---------- "דף לפי התיאור": תיאור מפורט -> השרת בונה את הדף מבלוקים ----------
+    var POTER = (function () { try { var o = localStorage.getItem('poter-api'); if (o) return o; } catch (e) {} return 'https://limudim-poter.gilad4049.workers.dev'; })();
+    var DKEY = 'limudim-dapim-daf', aiDoc = null, aiOn = false, aiReq = 0;
+    function detailed(s) { // תיאור של מבנה (מה קודם, מה מסבירים, אילו תרגילים) -> דף מדויק. בקשה קצרה וכללית -> המחולל הרגיל
+      var mk = ['אחר כך', 'אחרי זה', 'ואז', 'מתחילים', 'בסוף', 'סיכום', 'טבלת ערכים', 'שרטוט', 'לשרטט', 'להסביר', 'הסבר', 'דוגמאות', 'להדגיש', 'מדגישים', 'קודם', 'חלק ', 'סעיף', 'שלב', 'מכונה', 'להציב', 'מציבים', 'להשלמה', 'משימה', 'תרגילי', 'למידה עצמית'];
+      var n = mk.filter(function (w) { return s.indexOf(w) > -1; }).length;
+      return s.length >= 220 || n >= 3 || (s.length >= 110 && n >= 2);
+    }
+    function dafAsk(txt, fresh) {
+      var id = ++aiReq, t0 = Date.now(), box = $('dp-ai-daf');
+      box.innerHTML = '<div class="dp-ai-wait" role="status"><span class="dp-ai-spin" aria-hidden="true"></span><span>🪄 בונים את הדף לפי התיאור שלכם, סעיף אחרי סעיף… <b id="dp-ai-sec">0</b> שנ׳<br><small>בדרך כלל חצי דקה עד דקה. הטבלאות והגרפים מחושבים מהפונקציה עצמה, כך שהמספרים נכונים.</small></span></div>';
+      var tick = setInterval(function () { var e = $('dp-ai-sec'); if (e && id === aiReq) e.textContent = Math.round((Date.now() - t0) / 1000); else clearInterval(tick); }, 1000);
+      used('daf_ask', { len: txt.length, fresh: !!fresh });
+      var ac = window.AbortController ? new AbortController() : null; setTimeout(function () { if (ac) ac.abort(); }, 210000); // השרת עונה עד כ-3 דקות; אחר כך מוותרים בנימוס
+      fetch(POTER + '/daf', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ text: txt, grade: GRN[+gs.value], fresh: fresh ? 1 : 0 }), signal: ac ? ac.signal : undefined })
+        .then(function (r) { return r.text(); }).then(function (t) { return JSON.parse(t.trim()); })
+        .then(function (d) {
+          clearInterval(tick); if (id !== aiReq) return;
+          if (!d || d.error || !d.blocks || !d.blocks.length) throw d || {};
+          aiDoc = d; save(DKEY, { t: txt, d: d }); dafCard(d, true); dafOn();
+          used('daf_ok', { blocks: d.blocks.length, sec: Math.round((Date.now() - t0) / 1000), cached: !!d.cached });
+        })
+        .catch(function (e) {
+          clearInterval(tick); if (id !== aiReq) return;
+          box.innerHTML = '<p class="dp-ai-heard dp-ai-err">' + (e && e.error === 'quota' ? 'הגעתם למכסה של היום לדפים לפי תיאור. מחר אפשר שוב, ובינתיים יש כאן דפים מוכנים מהמחולל.' : 'לא הצלחנו לבנות את הדף הפעם (השרת עמוס). אפשר לנסות שוב בעוד דקה, או לבחור אחד מהדפים המוכנים.') + ' <button class="linkish" type="button" data-daf>לנסות שוב</button></p>';
+          var m = $('dp-ai-res').querySelector('details'); if (m) m.open = true;
+          used('daf_fail', { why: (e && e.error) || 'net' });
+        });
+    }
+    function dafCard(d, fresh) {
+      var it = dafItems(d), c = function (f) { return it.filter(f).length; };
+      var nt = c(function (x) { return x.k === 'table'; }), ng = c(function (x) { return x.k === 'graph' || (x.k === 'table' && x.g); }), nq = c(function (x) { return x.n; });
+      var parts = d.blocks.filter(function (b) { return b.type === 'part'; });
+      var chips = [d.grade ? 'כיתה ' + esc(d.grade) : '', d.minutes ? 'כ-' + d.minutes + ' דק׳' : '', nq + ' משימות', nt ? nt + ' טבלאות ערכים' : '', ng ? ng + ' מערכות צירים' : '', 'דף תשובות'].filter(Boolean);
+      $('dp-ai-daf').innerHTML = '<div class="dp-ai-opt dp-ai-mine"><h3>🎯 הדף שתיארתם, סעיף אחרי סעיף</h3><p class="dp-ai-ttl">' + tx(d.title) + '</p><div class="chips">' + chips.map(function (x) { return '<span>' + x + '</span>'; }).join('') + '</div>' +
+        (parts.length ? '<ol>' + parts.map(function (b) { return '<li>' + tx(b.text) + '</li>'; }).join('') + '</ol>' : '') +
+        '<p class="why">' + (fresh ? '✓ הדף מוכן למטה. ' : '') + 'אפשר ללחוץ על כל טקסט בדף ולתקן אותו לפני ההדפסה.</p>' +
+        '<div class="btns"><button class="btn btn-gold btn-sm" type="button" data-daf-see>👁 לראות את הדף</button><button class="btn btn-line btn-sm" type="button" data-daf-again>🔄 לבנות גרסה אחרת</button></div></div>';
+    }
+    function dafOn() { aiOn = true; app.classList.add('dp-aimode'); render(); }
+    function dafOff() { if (!aiOn) return; aiOn = false; app.classList.remove('dp-aimode'); }
+    function renderDaf() {
+      var o = { style: $('dp-style').value, font: +$('dp-font').value, title: $('dp-title').value.trim(), key: $('dp-key').checked, edit: true };
+      ['time', 'stars', 'feel'].forEach(function (k) { o[k] = $('dp-o-' + k).checked; });
+      $('dp-paper').innerHTML = dafPaperHtml(aiDoc, o);
+      var nq = dafItems(aiDoc).filter(function (x) { return x.n; }).length;
+      cur = { t: { id: 'daf', name: aiDoc.title }, name: aiDoc.title, only: true, cfg: { k: 'h', m: aiDoc.minutes || 0 }, daf: 1 };
+      $('dp-sum').innerHTML = '<b>📝 דף לפי התיאור שלכם: ' + tx(aiDoc.title) + '</b> · ' + nq + ' משימות' + (aiDoc.minutes ? ' · כ-' + aiDoc.minutes + ' דקות' : '') +
+        '<br><small>✏️ אפשר ללחוץ על כל טקסט בדף ולתקן אותו. שולחים לכיתה עם "PDF לקבוצת ווטסאפ". שינוי של עיצוב או של כתב מחזיר את הנוסח המקורי.</small><br><button class="linkish" type="button" id="dp-ai-exit">↩ לחזור למחולל הרגיל</button>';
+      pdfReset();
+    }
+    $('dp-sum').addEventListener('click', function (e) { if (e.target.id === 'dp-ai-exit') { dafOff(); render(); used('daf_exit'); } });
+    function dafClick(e) {
+      var t = e.target.closest('[data-daf],[data-daf-see],[data-daf-again],[data-daf-open]'); if (!t) return;
+      if (t.hasAttribute('data-daf')) { var v = $('dp-ai-t').value.trim(); if (v.length > 3) dafAsk(v); }
+      else if (t.hasAttribute('data-daf-again')) { var v2 = $('dp-ai-t').value.trim() || (load(DKEY, {}).t || ''); if (v2.length > 3) dafAsk(v2, true); }
+      else if (t.hasAttribute('data-daf-open')) { var sv = load(DKEY, null); if (sv && sv.d) { aiDoc = sv.d; if (!$('dp-ai-t').value.trim()) $('dp-ai-t').value = sv.t || ''; dafCard(sv.d); dafOn(); used('daf_reopen'); } }
+      if (t.hasAttribute('data-daf-see') || t.hasAttribute('data-daf-open')) { var p = $('dp-paper'); if (p) p.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    }
+    $('dp-ai-res').addEventListener('click', dafClick);
+    $('dp-ai-daf').addEventListener('click', dafClick);
+    function dafLast() { var sv = load(DKEY, null); $('dp-ai-daf').innerHTML = sv && sv.d && sv.d.title ? '<p class="dp-ai-last">הדף האחרון שבניתם לפי תיאור: <b>' + tx(sv.d.title) + '</b> <button class="linkish" type="button" data-daf-open>לפתוח אותו שוב</button></p>' : ''; }
+    dafLast();
+
     (function () { // הקלטה: זיהוי דיבור של הדפדפן (כרום, אדג׳, אנדרואיד, ספארי חדש)
       var SR = window.SpeechRecognition || window.webkitSpeechRecognition, btn = $('dp-ai-mic'), note = $('dp-ai-mic-note'), rec = null, before = '';
       if (!SR) { btn.addEventListener('click', function () { note.hidden = false; note.textContent = 'הדפדפן הזה לא מקליט. אפשר ללחוץ על המיקרופון שבמקלדת של הטלפון ולדבר, או לפתוח את הדף בכרום.'; $('dp-ai-t').focus(); }); return; }
@@ -622,6 +851,7 @@
       return { t: $('dp-topic').value, x: xs, q: ownQ.filter(function (x) { return x.t.trim(); }), only: $('dp-only').checked && ownQ.some(function (x) { return x.t.trim(); }), k: kind, m: +$('dp-min').value, lv: +$('dp-lv').value, r: r, s: seed, a: +$('dp-help').value };
     }
     function render() {
+      if (aiOn && aiDoc) { renderDaf(); return; }
       var cfg = readCfg(), sh = build(cfg); if (!sh) return; cur = sh;
       var o = { style: $('dp-style').value, font: +$('dp-font').value, title: $('dp-title').value.trim(), grade: GRN[+gs.value], key: $('dp-key').checked };
       ['time', 'stars', 'bonus', 'feel', 'grid', 'qr'].forEach(function (k) { o[k] = $('dp-o-' + k).checked; });
@@ -654,15 +884,15 @@
     function setKind(k) { kind = k; app.querySelectorAll('[data-kind]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.kind === k ? 'true' : 'false'); }); }
     if (st.all) $('dp-all').checked = true;
     fillTopics(st.t || 'parabola-tavla'); fillRevs(st.r, st.x || ['', '']); setKind(kind); render();
-    function regrade() { fillTopics(); fillRevs(); if (!$('dp-bank').hidden) { bankTopics(); suggest(); } render(); }
+    function regrade() { dafOff(); fillTopics(); fillRevs(); if (!$('dp-bank').hidden) { bankTopics(); suggest(); } render(); }
     gs.addEventListener('change', regrade);
     $('dp-units').addEventListener('change', regrade);
     $('dp-all').addEventListener('change', function () { regrade(); used('all_topics', { on: this.checked }); });
-    $('dp-topic').addEventListener('change', function () { fillRevs(); render(); used('build', { topic: $('dp-topic').value }); });
+    $('dp-topic').addEventListener('change', function () { dafOff(); fillRevs(); render(); used('build', { topic: $('dp-topic').value }); });
     $('dp-form').addEventListener('change', function (e) { if (['dp-grade', 'dp-units', 'dp-topic'].indexOf(e.target.id) < 0 && !e.target.closest('#dp-own')) render(); });
     $('dp-title').addEventListener('input', render);
     $('dp-form').addEventListener('submit', function (e) { e.preventDefault(); });
-    app.querySelectorAll('[data-kind]').forEach(function (b) { b.addEventListener('click', function () { setKind(b.dataset.kind); render(); }); });
+    app.querySelectorAll('[data-kind]').forEach(function (b) { b.addEventListener('click', function () { dafOff(); setKind(b.dataset.kind); render(); }); });
     // הצעת שדרוג ובקשת כלי אישי: נשלחות לגילעד בווטסאפ
     [['dp-idea', 'הצעה לשדרוג מחולל דפי העבודה'], ['dp-ishi', 'בקשה לכלי אישי למורה']].forEach(function (q) {
       var b = $(q[0] + '-wa'); if (!b) return;
@@ -672,7 +902,7 @@
         used(q[0] === 'dp-idea' ? 'idea' : 'personal_tool');
       });
     });
-    $('dp-new').addEventListener('click', function () { seed = R(1000, 99999); render(); used('new'); });
+    $('dp-new').addEventListener('click', function () { dafOff(); seed = R(1000, 99999); render(); used('new'); });
     $('dp-print').addEventListener('click', function () { used('print', { topic: cur.t.id, kind: cur.cfg.k, min: cur.cfg.m }); window.print(); });
     $('dp-wa').addEventListener('click', function () { used('wa', { topic: cur.t.id }); });
     $('dp-open').addEventListener('click', function () { used('open_digital', { topic: cur.t.id }); });
