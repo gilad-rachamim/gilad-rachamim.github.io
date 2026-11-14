@@ -108,7 +108,9 @@
 
   function head() {
     if (info) {
-      $('tik-who').innerHTML = '<b>' + esc(info.name) + '</b>, כאן מעלים את המסמכים ל<b>' + esc(info.office) + '</b>. כל קובץ נכנס ישר לתיקייה שלכם אצל רואה החשבון.';
+      var br = info.brand || {};
+      if (br.color && /^#[0-9a-f]{6}$/i.test(br.color)) root.style.setProperty('--gold', br.color);
+      $('tik-who').innerHTML = (br.logo && /^data:image\/(png|jpeg|webp);base64,/.test(br.logo) ? '<img class="tk-logo" src="' + esc(br.logo) + '" alt="' + esc(info.office) + '">' : '') + '<b>' + esc(info.name) + '</b>, כאן מעלים את המסמכים ל<b>' + esc(info.office) + '</b>. כל קובץ נכנס ישר לתיקייה שלכם אצל רואה החשבון.';
       $('tik-who').hidden = false; $('tik-solo').hidden = true; $('tik-wa').hidden = true;
     }
   }
