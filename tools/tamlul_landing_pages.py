@@ -217,7 +217,10 @@ def page(p):
     o += ['<section class="k-sec tlp-sec" aria-labelledby="tlp-why">', '  <h2 id="tlp-why">למה זה בחינם</h2>', f"  <p>{WHY}</p>", "</section>",
           '<section class="k-sec" aria-labelledby="faq-h">', '  <h2 id="faq-h">שאלות ותשובות</h2>']
     o += [f"  <details><summary>{esc(q)}</summary><p>{esc(a)}</p></details>" for q, a in p["faq"]]
+    rel = ", ".join(f'<a class="gold" href="/kelim/tamlul/{q["slug"]}/">{esc(q["crumb"])}</a>' for q in PAGES if q["slug"] != p["slug"])
     o += ["</section>",
+          '<section class="k-sec k-rel no-print" aria-labelledby="rel-h">', '  <h2 id="rel-h">עוד דרכים לתמלל, גם בחינם</h2>',
+          f'  <p>{rel}. ועוד: <a class="gold" href="/kelim/shir/karaoke/">קריוקי בעברית בטלגרם</a>, וכל הכלים בעמוד <a class="gold" href="{TOOL}">תמלול</a>.</p>', "</section>",
           '<section class="k-sec tlp-end" aria-labelledby="tlp-go">',
           '  <h2 id="tlp-go">מתחילים?</h2>',
           f'  <div class="actions" style="justify-content:center">{buttons(p, "end")}'
