@@ -59,4 +59,5 @@
 .ch .cd-tier-on{border:2px solid var(--gold);background:rgba(201,162,77,.08)}
 .ch .cd-t-tag{align-self:flex-start;background:var(--gold);color:var(--ink);font-weight:700;font-size:.82rem;border-radius:99px;padding:.1rem .6rem}
 .ch .cd-t-h{display:grid;gap:.05rem}.ch .cd-t-h span{color:var(--muted);font-size:.9rem}.ch .cd-t-h b{color:var(--cream);font-size:1.6rem;line-height:1.2}.ch .cd-t-h small{color:var(--muted);font-size:.85rem}
+.ch .cd-tier-vip{border:2px solid var(--cream);background:linear-gradient(160deg,rgba(201,162,77,.18),rgba(201,162,77,.04))}
 @media print{.ch .tk-up,.ch .tk-files button,.ch .partner{display:none!important}.ch .tk-d{border-color:#999}.ch .tk-txt b,.ch .tk-txt span{color:#000!important}}
