@@ -8,7 +8,7 @@
 // פרטיות: לא שומרים שאלות ותמונות. נשמר רק מונה יומי (כתובת מגובבת, נמחק אחרי יום).
 
 import { runChecks } from './check.js';
-import { DAF_RULES, DAF_SCHEMA, DAF_MAX_TEXT, dafPrompt, tidyDaf } from './daf.js';
+import { DAF_RULES, DAF_SCHEMA, DAF_MAX_TEXT, dafPrompt, dafEditPrompt, tidyDaf } from './daf.js';
 
 const ALLOWED = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
@@ -481,14 +481,18 @@ async function machberet(request, env, ctx, h, path) {
 
 // ============ מחולל דפי העבודה: דף לפי תיאור חופשי של המורה (/daf) ============
 // המורה כותבת או מקליטה מה היא צריכה -> מבנה של בלוקים. אותו תיאור = אותו דף מהזיכרון (90 יום), בלי לגעת במכסה.
-const DAF_PER = 10, DAF_CAP = 200;
+const DAF_PER = 25, DAF_CAP = 400; // כולל תיקונים במילים של דף שכבר נבנה
 async function dafRoute(request, env, ctx, h) {
   const raw = await request.text();
-  if (raw.length > DAF_MAX_TEXT * 4 + 500) return json({ error: 'too_big' }, 413, h);
+  if (raw.length > 90000) return json({ error: 'too_big' }, 413, h);
   let b; try { b = JSON.parse(raw); } catch (_) { return json({ error: 'bad_json' }, 400, h); }
   const text = String(b.text || '').replace(/\s+/g, ' ').trim();
   if (text.length < 10) return json({ error: 'empty' }, 400, h);
-  const dg = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('daf1|' + (b.grade || '') + '|' + text.slice(0, DAF_MAX_TEXT)));
+  // תיקון במילים: הדף הנוכחי + מה לשנות -> הדף המלא המעודכן
+  const change = String(b.change || '').replace(/\s+/g, ' ').trim().slice(0, 1500);
+  const doc = change && b.doc && typeof b.doc === 'object' ? tidyDaf(b.doc) : null;
+  if (change && !doc) return json({ error: 'empty' }, 400, h);
+  const dg = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('daf1|' + (b.grade || '') + '|' + text.slice(0, DAF_MAX_TEXT) + (doc ? '|edit|' + change + '|' + JSON.stringify(doc) : '')));
   const k = [...new Uint8Array(dg)].map(x => x.toString(16).padStart(2, '0')).join('');
   const cache = env.QUOTA.get(env.QUOTA.idFromName('cache'));
   const call = async (path, o) => { try { return await (await cache.fetch('https://q/' + path, { method: 'POST', body: JSON.stringify(Object.assign({ k }, o || {})) })).json(); } catch (_) { return {}; } };
@@ -496,7 +500,7 @@ async function dafRoute(request, env, ctx, h) {
   const q = await takeQuota(env, 'daf', request, DAF_PER, DAF_CAP);
   if (!q.ok) return json({ error: 'quota' }, 200, h);
   return streamed(ctx, h, async () => {
-    const r = await solver(env, DAF_RULES, [{ text: dafPrompt({ text, grade: b.grade }) }], DAF_SCHEMA, { timeout: 150000 });
+    const r = await solver(env, DAF_RULES, [{ text: doc ? dafEditPrompt({ text, doc, change }) : dafPrompt({ text, grade: b.grade }) }], DAF_SCHEMA, { timeout: 150000 });
     const out = tidyDaf(r.data);
     if (!out.blocks.length) return { error: 'ai' };
     out.model = r.model;

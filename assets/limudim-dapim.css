@@ -266,3 +266,10 @@ p.dp-xt{margin:0 0 .3rem!important}
 .dp-xk.g .dp-tbl{font-size:.85em;margin:0}
 .dp-xka{line-height:1.6}
 @media(max-width:560px){.dp-xgrid{grid-template-columns:1fr}}
+.dp-ai-fix{display:grid;gap:.45rem;margin-top:.4rem;padding-top:.7rem;border-top:1px dashed var(--line)}
+.dp-ai-fix textarea{width:100%;font-size:1rem;line-height:1.55}
+.dp-ai-fix .note{margin:0;font-size:.86rem}
+.dp-ai-fix .dp-ai-wait{padding:.5rem .7rem}
+.dp-ai-done{margin:0;padding:.45rem .7rem;border-radius:10px;background:rgba(80,160,120,.15);border:1px solid rgba(80,160,120,.45);font-size:.92rem}
+[data-daf-mic].on{background:#b3261e;border-color:#b3261e;color:#fff}
+.dp-ai-fix button[disabled]{opacity:.7;cursor:wait}

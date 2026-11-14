@@ -767,7 +767,7 @@
     $('dp-ai-res').addEventListener('click', function (e) { var b = e.target.closest('[data-ai]'); if (b) aiApply(aiLast[+b.dataset.ai]); });
     // ---------- "דף לפי התיאור": תיאור מפורט -> השרת בונה את הדף מבלוקים ----------
     var POTER = (function () { try { var o = localStorage.getItem('poter-api'); if (o) return o; } catch (e) {} return 'https://limudim-poter.gilad4049.workers.dev'; })();
-    var DKEY = 'limudim-dapim-daf', aiDoc = null, aiOn = false, aiReq = 0;
+    var DKEY = 'limudim-dapim-daf', aiDoc = null, aiOn = false, aiReq = 0, aiBase = '', aiHist = [], aiFixed = '';
     function detailed(s) { // תיאור של מבנה (מה קודם, מה מסבירים, אילו תרגילים) -> דף מדויק. בקשה קצרה וכללית -> המחולל הרגיל
       var mk = ['אחר כך', 'אחרי זה', 'ואז', 'מתחילים', 'בסוף', 'סיכום', 'טבלת ערכים', 'שרטוט', 'לשרטט', 'להסביר', 'הסבר', 'דוגמאות', 'להדגיש', 'מדגישים', 'קודם', 'חלק ', 'סעיף', 'שלב', 'מכונה', 'להציב', 'מציבים', 'להשלמה', 'משימה', 'תרגילי', 'למידה עצמית'];
       var n = mk.filter(function (w) { return s.indexOf(w) > -1; }).length;
@@ -784,7 +784,7 @@
         .then(function (d) {
           clearInterval(tick); if (id !== aiReq) return;
           if (!d || d.error || !d.blocks || !d.blocks.length) throw d || {};
-          aiDoc = d; save(DKEY, { t: txt, d: d }); dafCard(d, true); dafOn();
+          aiDoc = d; aiBase = txt; aiHist = []; aiFixed = ''; save(DKEY, { t: txt, d: d }); dafCard(d, true); dafOn();
           used('daf_ok', { blocks: d.blocks.length, sec: Math.round((Date.now() - t0) / 1000), cached: !!d.cached });
         })
         .catch(function (e) {
@@ -802,7 +802,52 @@
       $('dp-ai-daf').innerHTML = '<div class="dp-ai-opt dp-ai-mine"><h3>🎯 הדף שתיארתם, סעיף אחרי סעיף</h3><p class="dp-ai-ttl">' + tx(d.title) + '</p><div class="chips">' + chips.map(function (x) { return '<span>' + x + '</span>'; }).join('') + '</div>' +
         (parts.length ? '<ol>' + parts.map(function (b) { return '<li>' + tx(b.text) + '</li>'; }).join('') + '</ol>' : '') +
         '<p class="why">' + (fresh ? '✓ הדף מוכן למטה. ' : '') + 'אפשר ללחוץ על כל טקסט בדף ולתקן אותו לפני ההדפסה.</p>' +
-        '<div class="btns"><button class="btn btn-gold btn-sm" type="button" data-daf-see>👁 לראות את הדף</button><button class="btn btn-line btn-sm" type="button" data-daf-again>🔄 לבנות גרסה אחרת</button></div></div>';
+        '<div class="btns"><button class="btn btn-gold btn-sm" type="button" data-daf-see>👁 לראות את הדף</button><button class="btn btn-line btn-sm" type="button" data-daf-again>🔄 לבנות גרסה אחרת</button></div>' +
+        '<div class="dp-ai-fix">' + (aiFixed ? '<p class="dp-ai-done">✓ הדף עודכן לפי: "' + esc(aiFixed) + '"</p>' : '') +
+        '<label for="dp-ai-fix-t"><b>✏️ רוצים לשנות, להוסיף או לדייק? כתבו או הקליטו במילים שלכם</b></label>' +
+        '<textarea id="dp-ai-fix-t" rows="3" maxlength="1500" placeholder="למשל: תוסיפי בסוף עוד 2 תרגילי שרטוט עם מינוס x בריבוע, תקצרי את ההסבר על המכונה, ובסיכום תוסיפי שורה על ציר הסימטריה."></textarea>' +
+        '<div class="btns"><button class="btn btn-gold btn-sm" type="button" data-daf-fix>✏️ לתקן את הדף</button><button class="btn btn-line btn-sm" type="button" data-daf-mic aria-pressed="false">🎤 להקליט</button>' +
+        (aiHist.length ? '<button class="btn btn-line btn-sm" type="button" data-daf-undo>↶ לחזור לגרסה הקודמת</button>' : '') + '</div>' +
+        '<p class="note" id="dp-ai-fix-note" aria-live="polite">אפשר לתקן כמה פעמים, ותמיד לחזור אחורה. תיקון קטן של מילה אפשר לעשות גם ישר על הדף, בלחיצה עליה (עדיף בסוף, אחרי התיקונים במילים).</p></div></div>';
+    }
+    // תיקון במילים של המורה: הדף הנוכחי + מה לשנות -> השרת מחזיר את הדף המלא המעודכן
+    function dafFix(change) {
+      if (!aiDoc || change.length < 3) return;
+      var id = ++aiReq, t0 = Date.now(), note = $('dp-ai-fix-note'), btn = $('dp-ai-daf').querySelector('[data-daf-fix]');
+      btn.disabled = true; btn.textContent = 'מתקנים…';
+      note.innerHTML = '<span class="dp-ai-wait"><span class="dp-ai-spin" aria-hidden="true"></span><span>✏️ מתקנים את הדף לפי מה שביקשתם… <b id="dp-ai-sec">0</b> שנ׳ <small>(בדרך כלל חצי דקה עד דקה)</small></span></span>';
+      var tick = setInterval(function () { var e = $('dp-ai-sec'); if (e && id === aiReq) e.textContent = Math.round((Date.now() - t0) / 1000); else clearInterval(tick); }, 1000);
+      used('daf_fix', { len: change.length });
+      var doc = { title: aiDoc.title, grade: aiDoc.grade, minutes: aiDoc.minutes, intro: aiDoc.intro, blocks: aiDoc.blocks };
+      var ac = window.AbortController ? new AbortController() : null; setTimeout(function () { if (ac) ac.abort(); }, 210000);
+      fetch(POTER + '/daf', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ text: aiBase || $('dp-ai-t').value.trim() || aiDoc.title, doc: doc, change: change }), signal: ac ? ac.signal : undefined })
+        .then(function (r) { return r.text(); }).then(function (t) { return JSON.parse(t.trim()); })
+        .then(function (d) {
+          clearInterval(tick); if (id !== aiReq) return;
+          if (!d || d.error || !d.blocks || !d.blocks.length) throw d || {};
+          aiHist.push(aiDoc); if (aiHist.length > 10) aiHist.shift();
+          aiDoc = d; aiFixed = change; save(DKEY, { t: aiBase, d: d }); dafCard(d); dafOn();
+          used('daf_fix_ok', { blocks: d.blocks.length, sec: Math.round((Date.now() - t0) / 1000) });
+        })
+        .catch(function (e) {
+          clearInterval(tick); if (id !== aiReq) return;
+          btn.disabled = false; btn.textContent = '✏️ לתקן את הדף';
+          note.innerHTML = '<span class="dp-ai-err">' + (e && e.error === 'quota' ? 'הגעתם למכסה של היום לתיקונים. מחר אפשר שוב, ובינתיים אפשר לתקן ישר על הדף.' : 'לא הצלחנו לתקן הפעם (השרת עמוס). הבקשה נשארה בתיבה: לוחצים שוב בעוד דקה.') + '</span>';
+          used('daf_fail', { why: (e && e.error) || 'net', fix: 1 });
+        });
+    }
+    // הקלטה לתיבת התיקון (אותו זיהוי דיבור של הדפדפן)
+    var fixRec = null;
+    function fixMic(btn) {
+      var SR = window.SpeechRecognition || window.webkitSpeechRecognition, ta = $('dp-ai-fix-t'), note = $('dp-ai-fix-note');
+      if (!SR) { note.textContent = 'הדפדפן הזה לא מקליט. אפשר ללחוץ על המיקרופון שבמקלדת של הטלפון ולדבר.'; ta.focus(); return; }
+      if (fixRec) { try { fixRec.stop(); } catch (_) {} return; }
+      var before = ta.value.trim(); fixRec = new SR(); fixRec.lang = 'he-IL'; fixRec.interimResults = true; fixRec.continuous = true;
+      btn.classList.add('on'); btn.setAttribute('aria-pressed', 'true'); btn.textContent = '⏹ לעצור'; note.textContent = '🎙️ מקשיבה… אומרים מה לשנות, ולוחצים "לעצור".';
+      fixRec.onresult = function (e) { var t = ''; for (var i = 0; i < e.results.length; i++) t += e.results[i][0].transcript + ' '; ta.value = (before ? before + ' ' : '') + t.trim(); };
+      fixRec.onerror = function (e) { note.textContent = e.error === 'not-allowed' ? 'צריך לאשר לדפדפן גישה למיקרופון, ואז ללחוץ שוב.' : 'ההקלטה נעצרה. אפשר ללחוץ שוב, או לכתוב.'; };
+      fixRec.onend = function () { fixRec = null; btn.classList.remove('on'); btn.setAttribute('aria-pressed', 'false'); btn.textContent = '🎤 להקליט'; if (ta.value.trim().length > 3) note.textContent = '✓ נקלט. אפשר לתקן את הטקסט, ואז "לתקן את הדף".'; };
+      try { fixRec.start(); used('daf_fix_mic'); } catch (_) { fixRec = null; }
     }
     function dafOn() { aiOn = true; app.classList.add('dp-aimode'); render(); }
     function dafOff() { if (!aiOn) return; aiOn = false; app.classList.remove('dp-aimode'); }
@@ -818,14 +863,18 @@
     }
     $('dp-sum').addEventListener('click', function (e) { if (e.target.id === 'dp-ai-exit') { dafOff(); render(); used('daf_exit'); } });
     function dafClick(e) {
-      var t = e.target.closest('[data-daf],[data-daf-see],[data-daf-again],[data-daf-open]'); if (!t) return;
+      var t = e.target.closest('[data-daf],[data-daf-see],[data-daf-again],[data-daf-open],[data-daf-fix],[data-daf-mic],[data-daf-undo]'); if (!t) return;
+      if (t.hasAttribute('data-daf-fix')) { var ch = $('dp-ai-fix-t').value.trim(); if (ch.length < 3) { $('dp-ai-fix-note').textContent = 'כתבו או הקליטו מה לשנות בדף.'; $('dp-ai-fix-t').focus(); } else dafFix(ch); return; }
+      if (t.hasAttribute('data-daf-mic')) { fixMic(t); return; }
+      if (t.hasAttribute('data-daf-undo')) { if (aiHist.length) { aiDoc = aiHist.pop(); aiFixed = ''; save(DKEY, { t: aiBase, d: aiDoc }); dafCard(aiDoc); dafOn(); used('daf_undo'); } return; }
       if (t.hasAttribute('data-daf')) { var v = $('dp-ai-t').value.trim(); if (v.length > 3) dafAsk(v); }
       else if (t.hasAttribute('data-daf-again')) { var v2 = $('dp-ai-t').value.trim() || (load(DKEY, {}).t || ''); if (v2.length > 3) dafAsk(v2, true); }
-      else if (t.hasAttribute('data-daf-open')) { var sv = load(DKEY, null); if (sv && sv.d) { aiDoc = sv.d; if (!$('dp-ai-t').value.trim()) $('dp-ai-t').value = sv.t || ''; dafCard(sv.d); dafOn(); used('daf_reopen'); } }
+      else if (t.hasAttribute('data-daf-open')) { var sv = load(DKEY, null); if (sv && sv.d) { aiDoc = sv.d; aiBase = sv.t || ''; aiHist = []; aiFixed = ''; if (!$('dp-ai-t').value.trim()) $('dp-ai-t').value = sv.t || ''; dafCard(sv.d); dafOn(); used('daf_reopen'); } }
       if (t.hasAttribute('data-daf-see') || t.hasAttribute('data-daf-open')) { var p = $('dp-paper'); if (p) p.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
     }
     $('dp-ai-res').addEventListener('click', dafClick);
     $('dp-ai-daf').addEventListener('click', dafClick);
+    $('dp-ai-daf').addEventListener('keydown', function (e) { if (e.target.id === 'dp-ai-fix-t' && e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); var ch = e.target.value.trim(); if (ch.length > 2) dafFix(ch); } });
     function dafLast() { var sv = load(DKEY, null); $('dp-ai-daf').innerHTML = sv && sv.d && sv.d.title ? '<p class="dp-ai-last">הדף האחרון שבניתם לפי תיאור: <b>' + tx(sv.d.title) + '</b> <button class="linkish" type="button" data-daf-open>לפתוח אותו שוב</button></p>' : ''; }
     dafLast();
 
