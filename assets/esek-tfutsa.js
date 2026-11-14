@@ -117,10 +117,12 @@
   }
   function addPeople(arr, src) {
     if (st.demo) { st.list = []; st.demo = false; }
-    var seen = {}, added = 0, dup = 0, bad = 0;
-    st.list.forEach(function (p) { if (p.phone) seen['t' + p.phone] = 1; if (p.email) seen['e' + p.email] = 1; });
+    var seen = {}, added = 0, dup = 0, bad = 0, nocon = 0;
+    function nk(p) { return 'n' + String(p.name || '').trim() + '|' + (p.link || ''); }
+    st.list.forEach(function (p) { if (p.phone) seen['t' + p.phone] = 1; if (p.email) seen['e' + p.email] = 1; if (!p.phone && !p.email) seen[nk(p)] = 1; });
     arr.forEach(function (p) {
-      if (!p.phone && !p.email) { bad++; return; }
+      // בלי טלפון ובלי מייל: נכנס רק אם יש שם (למשל לקוח מהחדר עם קישור), ומוסיפים לו טלפון ברשימה
+      if (!p.phone && !p.email) { if (!String(p.name || '').trim()) { bad++; return; } if (seen[nk(p)]) { dup++; return; } seen[nk(p)] = 1; st.list.push(mk(p)); added++; nocon++; return; }
       if ((p.phone && seen['t' + p.phone]) || (p.email && seen['e' + p.email])) { dup++; return; }
       if (p.phone) seen['t' + p.phone] = 1; if (p.email) seen['e' + p.email] = 1;
       st.list.push(mk(p)); added++;
@@ -128,7 +130,8 @@
     persist(); renderAll(); used(src);
     var t = 'נוספו ' + added + '.';
     if (dup) t += ' ' + dup + ' כבר היו ברשימה.';
-    if (bad) t += ' ' + bad + ' בלי טלפון ובלי מייל, ולא נכנסו.';
+    if (nocon) t += ' ל-' + nocon + ' אין טלפון ומייל: מוסיפים להם ברשימה ב"+ טלפון".';
+    if (bad) t += ' ' + bad + ' שורות ריקות לא נכנסו.';
     $('tp-add-msg').textContent = t;
     return added;
   }
@@ -171,6 +174,7 @@
         '<span dir="ltr">' + esc(showPhone(p.phone)) + (p.phone && p.email ? ' · ' : '') + esc(p.email) + '</span>' +
         (p.link ? '<span class="tp-lnk" dir="ltr">' + esc(p.link) + '</span>' : '') + (p.note ? '<span>' + esc(p.note) + '</span>' : '') + '</div>' +
         '<div class="tp-st">' + (p.wa > 0 ? '<span class="tp-badge">✓ וואטסאפ</span>' : '') + (p.em > 0 ? '<span class="tp-badge">✓ מייל</span>' : '') +
+        (!p.phone ? '<button type="button" class="tp-off" data-addph="' + i + '">+ טלפון</button>' : '') + (!p.email ? '<button type="button" class="tp-off" data-addem="' + i + '">+ מייל</button>' : '') +
         '<button type="button" class="tp-off" data-off="' + i + '" aria-pressed="' + (p.off ? 'true' : 'false') + '">הסרה</button>' +
         '<button type="button" class="tp-del" data-del="' + i + '" aria-label="למחוק את ' + esc(p.name || 'השורה') + '">✖</button></div></li>';
     });
@@ -180,6 +184,13 @@
     var b = e.target.closest('button'); if (!b) return;
     if (b.hasAttribute('data-del')) { st.list.splice(+b.getAttribute('data-del'), 1); }
     else if (b.hasAttribute('data-off')) { var p = st.list[+b.getAttribute('data-off')]; p.off = !p.off; }
+    else if (b.hasAttribute('data-addph')) {
+      var q = st.list[+b.getAttribute('data-addph')], v = prompt('הטלפון של ' + (q.name || 'הלקוח') + ':', ''); if (v == null) return;
+      if (!normPhone(v)) { alert('הטלפון לא נראה תקין.'); return; } q.phone = normPhone(v);
+    } else if (b.hasAttribute('data-addem')) {
+      var q2 = st.list[+b.getAttribute('data-addem')], v2 = prompt('המייל של ' + (q2.name || 'הלקוח') + ':', ''); if (v2 == null) return;
+      v2 = v2.trim().toLowerCase(); if (!EMAIL_RE.test(v2)) { alert('המייל לא נראה תקין.'); return; } q2.email = v2;
+    }
     persist(); renderAll();
   });
   $('tp-find').addEventListener('input', renderList);
