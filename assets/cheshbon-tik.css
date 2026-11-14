@@ -33,6 +33,14 @@
 .ch .perks li::before{content:"🤝";position:absolute;inset-inline-start:0}
 .ch .perks b{color:var(--cream)}
 .ch .founders{color:var(--muted);font-size:.95rem;border-top:1px dashed var(--line);margin-top:.9rem;padding-top:.7rem}
+.ch .warn{color:var(--gold);font-weight:700}
+.ch .tk-done{border:1px solid var(--gold);border-radius:14px;padding:.9rem;margin-top:1rem;text-align:center;color:var(--body)}
+.ch .tk-done p{margin:0 0 .6rem}
+.ch .cd-adv{border-top:1px dashed var(--line);margin-top:.8rem;padding-top:.7rem}
+.ch .cd-adv h3{font-size:1rem;color:var(--cream);margin:.2rem 0 .4rem}
+.ch .cd-adv .chips label{font-size:.9rem}
+.ch .cd-adv textarea{width:100%;min-height:3.5rem}
+.ch .badge-done{display:inline-block;background:rgba(95,191,166,.15);color:#7fd6b8;border-radius:99px;padding:.05rem .55rem;font-size:.85rem;margin-inline-start:.4rem}
 .ch .tk-lock{font-size:.9rem;color:var(--muted);margin-top:.6rem}
 /* החדר */
 .ch .cd-steps{counter-reset:s;display:grid;gap:.7rem;padding:0;margin:.6rem 0}
