@@ -1080,6 +1080,7 @@
       HWD = d;
       $('mb-hwlist').hidden = false; $('mb-hwcls').textContent = '📚 ' + d.name + (d.teacher ? ' · ' + d.teacher : '');
       $('mb-hwme').textContent = 'הכינוי שלי: ' + KME.nick;
+      d.hw = d.hw.filter(function (h) { return h.ex && h.ex.length; }); // "הכנה לשיעור" (סרטון) נמצאת בפורטל הכיתה, לא במחברת
       $('mb-hwul').innerHTML = d.hw.length ? d.hw.map(function (h) {
         var mine = d.work.filter(function (w) { return w.hw === h.id; }), done = mine.filter(function (w) { return w.done; }).length;
         return '<li><button type="button" class="kh-hw" data-hw="' + h.id + '"><b>' + esc(h.title) + '</b><span>' + h.ex.length + ' תרגילים · ' + (done === h.ex.length ? 'הכול נפתר ✓' : done + ' ✓') + '</span></button></li>';
@@ -1093,14 +1094,15 @@
     var h = HWD && HWD.hw.filter(function (x) { return x.id === id; })[0]; if (!h) return;
     if (!HW) ownA = A;
     var loc = hwLocal(), key = id + ':' + ex, srv = HWD.work.filter(function (w) { return w.hw === id && w.ex === ex; })[0];
-    var rows = (loc[key] && loc[key].rows) || (srv && srv.rows && srv.rows.length ? srv.rows : null) || [h.ex[ex].q, ''];
-    rows[0] = h.ex[ex].q;
+    var fromPage = !!h.ex[ex].pg; // שאלה מדף העבודה שהמורה העלתה: התלמיד/ה מעתיק/ה את התרגיל לשורה הראשונה
+    var rows = (loc[key] && loc[key].rows) || (srv && srv.rows && srv.rows.length ? srv.rows : null) || (fromPage ? ['', ''] : [h.ex[ex].q, '']);
+    if (!fromPage) rows[0] = h.ex[ex].q;
     HW = { id: id, ex: ex, h: h, stuck: !!(srv && srv.stuck), done: !!(srv && srv.done) };
     A = { rows: rows.slice(), deg: ownA ? ownA.deg : true };
     showTab(false);
     $('mb-hwbar').hidden = false; $('mb-ex') && ($('mb-ex').hidden = true);
     document.querySelector('#mb-alg .mb-ex').hidden = true; $('mb-new').hidden = true; $('mb-share').hidden = true;
-    $('mb-hwtitle').textContent = '📚 ' + h.title + ' · תרגיל ' + (ex + 1) + ' מתוך ' + h.ex.length;
+    $('mb-hwtitle').textContent = '📚 ' + h.title + ' · תרגיל ' + (ex + 1) + ' מתוך ' + h.ex.length + (fromPage ? ' · ' + h.ex[ex].q + ' (עמוד ' + h.ex[ex].pg + ') – מעתיקים את התרגיל לשורה הראשונה' : '');
     $('mb-hwex').innerHTML = h.ex.map(function (q, i) {
       var w = HWD.work.filter(function (x) { return x.hw === id && x.ex === i; })[0];
       return '<button type="button" data-ex="' + i + '"' + (i === ex ? ' aria-current="true" class="on"' : '') + '>' + (i + 1) + (w && w.done ? ' ✓' : '') + '</button>';
@@ -1196,7 +1198,11 @@
 
   renderRows(); showOld(); prenderRows(); applyKbOnly(); dLoad();
   if (sharedTab) { showTab(sharedTab === 'p'); if (sharedTab === 'p') $('mb-pcheck').click(); }
-  else if (kq) showHwTab();
+  else if (kq) {
+    showHwTab();
+    var hh = location.hash.match(/hw=([a-z0-9]{8})(?:&ex=(\d+))?/); // מגיעים מפורטל הכיתה ישר לתרגיל
+    if (hh && KME && KME.code === kq) hwLoad(function () { hwOpen(hh[1], Math.max(0, +(hh[2] || 0))); });
+  }
   else {
     if (/[?&]demo=1/.test(location.search)) $('mb-pcheck').click();
     if (store('mb-tab') === 'p' || /[?&]tab=proof/.test(location.search)) showTab(true);
