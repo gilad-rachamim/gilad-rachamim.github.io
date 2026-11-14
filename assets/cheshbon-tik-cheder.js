@@ -109,7 +109,7 @@
       CH.save(KEY, cfg); CH.used('cheshbon_tik_cheder', 'connect');
       $('cd-cmsg').textContent = ''; show();
       if (!key) $('cd-keybox').hidden = false, $('cd-keyval').textContent = r.key;
-    }).catch(function () { $('cd-cmsg').textContent = 'אין תשובה מהכתובת. בדקו שבפריסה בחרתם "כל אחד" (Anyone) ושהעתקתם את כתובת ה-Web app.'; });
+    }).catch(function () { $('cd-cmsg').textContent = 'אין תשובה מהכתובת. בדקו שבפריסה בחרתם "כולם" (Anyone) ושהעתקתם את כתובת ה-Web app.'; });
   });
   $('cd-showkey').addEventListener('click', function () { $('cd-keybox').hidden = false; $('cd-keyval').textContent = cfg.key; });
   $('cd-logout').addEventListener('click', function () {
@@ -133,8 +133,28 @@
   }
   function brandOn() {
     var on = goodP(getP()); $('cd-brand').hidden = !on;
-    if (on) { $('cd-pcode').value = getP(); colors(); if (cfg) T.call(cfg.u, { a: 'mInfo', key: cfg.key }).then(function (r) { if (r.ok && r.brand) { brand = r.brand; colors(); } }).catch(function () {}); }
+    if (on) { $('cd-pcode').value = getP(); colors(); if (cfg) T.call(cfg.u, { a: 'mInfo', key: cfg.key }).then(function (r) { if (r.ok && r.brand) { brand = r.brand; colors(); } if (r.ok) aiShow(!!r.ai); }).catch(function () {}); }
   }
+  // קריאת סכום מהקבלה: קוד השותף מוחלף בשרת במפתח קריאה, והמפתח נשמר בקוד של המשרד בגוגל
+  function aiShow(on) { $('cd-ai-on').hidden = on; $('cd-ai-off').hidden = !on; if (on) $('cd-aimsg').textContent = 'פעיל ✓ הלקוחות יתבקשו לאשר בכל קבלה.'; }
+  function aiErr(r) { return r.err === 'action' ? 'צריך לעדכן את הקוד בגוגל לגרסה 3: מעתיקים שוב את הקוד, מדביקים במקום הישן, ופריסה ← ניהול פריסות ← עריכה ← גרסה חדשה.' : T.err(r.err); }
+  $('cd-ai-on').addEventListener('click', function () {
+    if (!cfg) { $('cd-aimsg').textContent = 'קודם פותחים את החדר (למעלה), ואז מפעילים.'; return; }
+    $('cd-aimsg').textContent = 'מפעיל…';
+    fetch(T.AI + '/key', { method: 'POST', headers: { 'x-kelim-partner': getP() } }).then(function (r) { return r.json(); }).then(function (k) {
+      if (!k.key) { $('cd-aimsg').textContent = k.error === 'blocked' ? 'יותר מדי ניסיונות היום. נסו מחר.' : 'קוד השותף לא נכון. בדקו את הספרות.'; return; }
+      return T.call(cfg.u, { a: 'mAi', key: cfg.key, ai: k.key }).then(function (r) {
+        if (!r.ok) { $('cd-aimsg').textContent = aiErr(r); return; }
+        aiShow(true); CH.used('cheshbon_tik_cheder', 'ai_on');
+      });
+    }).catch(function () { $('cd-aimsg').textContent = T.err('net'); });
+  });
+  $('cd-ai-off').addEventListener('click', function () {
+    T.call(cfg.u, { a: 'mAi', key: cfg.key, ai: '' }).then(function (r) {
+      if (!r.ok) { $('cd-aimsg').textContent = aiErr(r); return; }
+      aiShow(false); $('cd-aimsg').textContent = 'כובה. הלקוחות ימשיכו להעלות כרגיל, בלי קריאה.'; CH.used('cheshbon_tik_cheder', 'ai_off');
+    }).catch(function () { $('cd-aimsg').textContent = T.err('net'); });
+  });
   $('cd-pcode').addEventListener('input', function () {
     var v = this.value.replace(/\s/g, '');
     if (goodP(v)) { try { localStorage.setItem('kelim-partner', v); } catch (e) {} CH.used('cheshbon_tik_cheder', 'partner'); }
@@ -159,7 +179,7 @@
     if (!cfg) { $('cd-bmsg').textContent = 'קודם פותחים את החדר (למעלה), ואז שומרים מיתוג.'; return; }
     $('cd-bmsg').textContent = 'שומר…';
     T.call(cfg.u, { a: 'mBrand', key: cfg.key, logo: brand.logo, color: brand.color }).then(function (r) {
-      $('cd-bmsg').textContent = r.ok ? 'נשמר ✓ הלקוחות יראו את הלוגו והצבע בכניסה הבאה.' : (r.err === 'action' ? 'צריך לעדכן את הקוד בגוגל לגרסה 2: מעתיקים שוב את הקוד, מדביקים, ופריסה ← ניהול פריסות ← גרסה חדשה.' : T.err(r.err));
+      $('cd-bmsg').textContent = r.ok ? 'נשמר ✓ הלקוחות יראו את הלוגו והצבע בכניסה הבאה.' : (r.err === 'action' ? 'צריך לעדכן את הקוד בגוגל לגרסה 3: מעתיקים שוב את הקוד, מדביקים, ופריסה ← ניהול פריסות ← גרסה חדשה.' : T.err(r.err));
       if (r.ok) CH.used('cheshbon_tik_cheder', 'brand');
     }).catch(function () { $('cd-bmsg').textContent = T.err('net'); });
   });

@@ -14,3 +14,4 @@ tools/*/.wrangler/
 
 # כלי הגיבוש: הספר, ההקלטה ו-40 הימים לשותפים – רק בתוך ה-Worker, לא במאגר הציבורי
 tools/gibush-worker/private/
+tools/*/.dev.vars
