@@ -113,24 +113,69 @@
   var T = MX.T.concat(EXTRA), byId = {};
   T.forEach(function (t) { byId[t.id] = t; });
   T.sort(function (x, y) { var i = ORD.indexOf(x.id), j = ORD.indexOf(y.id); return (i < 0 ? 99 : i) - (j < 0 ? 99 : j); }); // יציב: נושאי הבגרות נשארים בסדר שלהם
-  // לאיזה כיתות כל נושא מתאים (לפי תוכנית הלימודים המקובלת). נושאי בגרות: י׳–י״ב, לפי היחידות של השאלון.
-  var GR = { kefel: [2, 4], hiluk: [4, 5], seder: [4, 6], shetach: [4, 6], asroni: [5, 6], shvarim: [5, 6], 'kefel-shvarim': [6, 7], memutza: [6, 7], achuzim: [6, 8], yachas: [6, 8], histabrut: [7, 9], pilug: [7, 8], mishvaa: [7, 8], chezkot: [7, 9], kav: [8, 9], pitagoras: [8, 9], maarechet: [8, 9], trinom: [9, 10], shorashim: [9, 10], 'parabola-tavla': [9, 10],
-    // נושאי הבגרות: באיזו שנה לומדים אותם בפועל (כדי ש"השנה הבאה" של ט׳ לא תציג אינטגרלים)
-    dimyon: [9, 10], parabola: [10, 11], merchak: [10, 11], trigo: [10, 11], tnua: [10, 11], etz: [10, 11], maagal: [10, 11], 'zaviot-maagal': [10, 11],
-    sidra: [11, 12], handasit: [11, 12], gdila: [11, 12], stiya: [11, 12], normalit: [11, 12], sinusim: [11, 12], nigzeret: [11, 12], mashik: [11, 12], kitzon: [11, 12], integral: [11, 12],
-    rationalit: [11, 12], 'shoresh-f': [11, 12], merchav: [11, 12], piramida: [11, 12], vektor: [11, 12], logaritm: [11, 12], parametr: [11, 12], induktzia: [11, 12],
-    'trig-nigzeret': [12, 12], 'exp-ln': [12, 12], merukav: [12, 12], 'nefach-sivuv': [12, 12] };
+  // באיזו כיתה לומדים כל נושא, לפי פריסות ההוראה של משרד החינוך (נבדק 14.11.2026):
+  //  ב׳–ו׳: הצעות הפריסה של מדריכות המתמטיקה במחוז מרכז, לפי תוכנית הלימודים (meyda .../Merkaz/Mathematics/peiluyot/math[b,c,d,h,v]2022.pdf)
+  //  ז׳–ט׳: פריסות ההוראה הארציות תשפ"ז (meyda .../matmatika/Chativat-Beynayim/tashpaz/prisa_7, prisa_8, prisa_9A, prisa_9B)
+  //  י׳–י״ב: המלצות ההוראה תשפ"ז, תוכנית הלימודים החדשה (meyda .../Chativa-Elyona/mafmar/3-points, 4-points, 5-points-tashpaz.pdf)
+  // מערך = הכיתות (לכל רמות היחידות). אובייקט = 0: כיתות ב׳–ט׳, 3/4/5: הכיתות בתיכון לפי מספר היחידות.
+  var GR = { kefel: [2, 3], seder: [3, 4, 5, 6], hiluk: [4, 5], shetach: [4, 5, 6, 7], shvarim: [4, 5, 6], asroni: [5, 6], 'kefel-shvarim': [6], memutza: [5, 6, 8],
+    achuzim: { 0: [6, 8], 3: [10] }, yachas: { 0: [6, 8], 3: [11] }, histabrut: { 0: [7, 8, 9], 3: [10] }, pilug: [7, 9], mishvaa: [7, 8], chezkot: [7, 9], pitagoras: { 0: [7, 8, 9], 3: [10] },
+    kav: { 0: [8, 9], 3: [10, 12] }, maarechet: [8, 9], tnua: { 0: [8, 9], 3: [10] }, dimyon: { 0: [8, 9], 3: [11], 4: [10], 5: [10] }, stiya: { 0: [8], 3: [10, 11], 4: [10, 11] },
+    trinom: { 0: [9], 4: [10], 5: [10] }, shorashim: { 0: [9], 3: [10], 4: [10], 5: [10] }, 'parabola-tavla': { 0: [9], 3: [12], 4: [10], 5: [10] }, parabola: { 0: [9], 3: [12], 4: [10], 5: [10] }, etz: { 0: [9], 3: [11], 4: [10, 11], 5: [11] },
+    // תיכון
+    merchak: { 4: [10], 5: [10, 12] }, trigo: { 3: [11], 4: [10], 5: [10] }, nigzeret: { 4: [10], 5: [10] }, mashik: { 4: [10], 5: [10] }, kitzon: { 4: [10], 5: [10] }, 'shoresh-f': { 4: [10, 11], 5: [10] },
+    maagal: { 4: [11], 5: [10, 12] }, 'zaviot-maagal': { 4: [11], 5: [10] }, sinusim: { 4: [11], 5: [10, 11] }, rationalit: { 4: [11], 5: [10, 11] }, integral: { 4: [11], 5: [11] }, normalit: { 3: [12], 4: [11] }, parametr: { 4: [11], 5: [11] },
+    gdila: { 3: [11], 4: [12], 5: [12] }, sidra: { 4: [12], 5: [11] }, handasit: { 4: [12], 5: [11] }, induktzia: { 5: [11] }, 'trig-nigzeret': { 5: [11] },
+    logaritm: { 4: [12], 5: [12] }, 'exp-ln': { 4: [12], 5: [12] }, vektor: { 4: [12], 5: [12] }, piramida: { 4: [12], 5: [12] }, merchav: { 4: [12], 5: [12] }, merukav: { 5: [12] },
+    'nefach-sivuv': {} }; // לא מופיע בתוכנית החדשה: רק תחת "כל הנושאים"
   var GRN = { 2: 'ב׳', 3: 'ג׳', 4: 'ד׳', 5: 'ה׳', 6: 'ו׳', 7: 'ז׳', 8: 'ח׳', 9: 'ט׳', 10: 'י׳', 11: 'י״א', 12: 'י״ב' };
-  function grOf(t) { return GR[t.id] || [10, 12]; }
-  function unitsOf(t) { // ['35481', ...] -> [4]
-    if (!t.q) return null;
-    var u = {}; t.q.forEach(function (c) { u[c.slice(0, 3) === '355' ? 5 : c.slice(0, 3) === '354' ? 4 : 3] = 1; });
-    return Object.keys(u).map(Number);
+  // כל הכיתות של נושא (u: רק ברמת יחידות אחת)
+  function grsOf(t, u) {
+    var r = GR[t.id] || {}; if (Array.isArray(r)) return r;
+    var a = (r[0] || []).slice(); [3, 4, 5].forEach(function (k) { if (!u || k === u) a = a.concat(r[k] || []); });
+    return a.filter(function (g, i) { return a.indexOf(g) === i; }).sort(function (x, y) { return x - y; });
   }
+  function grOf(t) { var a = grsOf(t); return a.length ? [a[0], a[a.length - 1]] : [12, 12]; }
   function fits(t, g, u) {
-    var r = grOf(t); if (g < r[0] || g > r[1]) return false;
-    var un = unitsOf(t); return !un || g < 10 || un.indexOf(u) > -1;
+    var r = GR[t.id] || {}; if (Array.isArray(r)) return r.indexOf(g) > -1;
+    return ((g < 10 ? r[0] : r[u]) || []).indexOf(g) > -1;
   }
+  // מה כתוב בפריסה של משרד החינוך על כל נושא (מוצג מתחת לבחירת הנושא)
+  var OFF = { kefel: 'ב׳: משמעות הכפל והחילוק, לוח הכפל עד 10×10 · ג׳: השלמה וביסוס של לוח הכפל',
+    seder: 'ג׳–ד׳: סדר הפעולות והשימוש בסוגריים · ה׳–ו׳: סדר פעולות וחוקי הפעולות',
+    hiluk: 'ד׳: חילוק ארוך כשהמחלק חד־ספרתי או עשרת שלמה · ה׳: ארבע הפעולות במספרים גדולים, חילוק עם שארית',
+    shetach: 'ד׳: נוסחאות שטח והיקף מלבן · ה׳: שטח משולש ושטחי מצולעים · ו׳: מעגל ועיגול · ז׳: שטחים, חישוב היקפים',
+    shvarim: 'ד׳: מכנים שווים או קרובים · ה׳: כשמכנה אחד כפולה של השני · ו׳: חיבור וחיסור שברים',
+    asroni: 'ה׳: משמעות השבר העשרוני, חיבור וחיסור, השוואה · ו׳: כפל וחילוק מספרים עשרוניים',
+    'kefel-shvarim': 'ו׳: כפל שבר בשבר כולל מספרים מעורבים, חילוק שברים פשוטים',
+    memutza: 'ה׳–ו׳: חקר נתונים, משמעות הממוצע ותכונותיו · ח׳: טווח נתונים ומדדי מרכז',
+    achuzim: 'ו׳: הכרת האחוז, חישוב ערך האחוז וחישוב האחוז · ח׳: אחוזים ושאלות מילוליות · י׳ 3 יח״ל: אחוזים',
+    yachas: 'ו׳: יחס וקנה מידה · ח׳: יחס, פרופורציה וקנה מידה · י״א 3 יח״ל: יחס, פרופורציה, קנה מידה',
+    histabrut: 'ז׳: הסתברות בהקשר של שכיחות יחסית · ח׳: הסתברות א׳–ב׳ · ט׳: מאורע משלים, מאורעות דו־שלביים',
+    pilug: 'ז׳: כינוס איברים דומים וחוק הפילוג · ט׳: חוק הפילוג המורחב (עדיין לא במחולל)',
+    mishvaa: 'ז׳: משוואה ממעלה ראשונה ושאלות בהקשרים · ח׳: משוואות ושאלות מילוליות (אחוזים, תנועה)',
+    chezkot: 'ז׳: חזקות עם מעריך טבעי ושורש ריבועי · ט׳: חוקי חזקות (מעריך טבעי או אפס), חוקי שורש',
+    pitagoras: 'ז׳: משפט פיתגורס ושימושיו (חדש בתוכנית תשפ״ז) · ח׳: פיתגורס, ופיתגורס במרחב · ט׳ מצומצמת',
+    kav: 'ח׳: מבוא לפונקציות, שיפוע, ייצוג אלגברי של פונקציה קווית · ט׳ מצומצמת: פונקציה קווית',
+    maarechet: 'ח׳: מערכת משוואות (רמה בסיסית), שאלות מילוליות · ט׳: מערכת משוואות ממעלה שנייה',
+    tnua: 'ח׳–ט׳: שאלות מילוליות, כולל תנועה · י׳ 3 יח״ל: מהירות, זמן ודרך',
+    dimyon: 'ח׳: דמיון משולשים · ט׳: יחסי שטחים במשולשים דומים · י׳ 4–5 יח״ל: שלושת משפטי הדמיון',
+    stiya: 'ח׳: טווח ומדדי מרכז (ממוצע, שכיח, חציון) · י׳ 4 יח״ל, י״א 3 יח״ל: סטיית תקן',
+    trinom: 'ט׳: פירוק טרינום (מקדם 1), נוסחאות הכפל המקוצר, משוואות בפירוק לגורמים',
+    shorashim: 'ט׳: משוואה ריבועית בנוסחת השורשים',
+    'parabola-tavla': 'ט׳: פונקציה ריבועית, קודקוד, הזזות, חיתוך עם הצירים',
+    parabola: 'ט׳: פונקציה ריבועית בהצגה סטנדרטית ובהצגת מכפלה · י׳ 4–5 יח״ל: חזרה בקדם־אנליזה',
+    etz: 'ט׳: מאורעות דו־שלביים, טבלה ודיאגרמת עץ · י׳ 4 יח״ל: הסתברות מותנית ועץ',
+    merchak: 'י׳ 4–5 יח״ל: גאומטריה אנליטית, נקודות, קטעים וישרים', trigo: 'י׳ 4–5 יח״ל, י״א 3 יח״ל: סינוס, קוסינוס וטנגנס במשולש ישר זווית',
+    nigzeret: 'י׳ 4–5 יח״ל: מושג הנגזרת, נגזרת פולינום', mashik: 'י׳ 4–5 יח״ל: משוואת משיק', kitzon: 'י׳ 4–5 יח״ל: חקירה ובעיות קיצון בפולינום',
+    'shoresh-f': 'י׳ 4–5 יח״ל: פונקציית שורש ונגזרתה', maagal: 'י״א 4 יח״ל, י׳ 5 יח״ל: משוואת מעגל', 'zaviot-maagal': 'י״א 4 יח״ל, י׳ 5 יח״ל: זוויות מרכזיות והיקפיות',
+    sinusim: 'י״א 4 יח״ל: משפט הסינוסים · י׳ 5 יח״ל: הסינוסים, הקוסינוסים ושטח משולש', rationalit: 'י״א 4 יח״ל, י׳ 5 יח״ל: פונקציה רציונלית',
+    integral: 'י״א 4–5 יח״ל: פונקציה קדומה, אינטגרל וחישובי שטחים', normalit: 'י״א 4 יח״ל, י״ב 3 יח״ל: התפלגות נורמלית וציון תקן', parametr: 'י״א 4–5 יח״ל: משפחות פרמטריות של פונקציות',
+    gdila: 'י״א 3 יח״ל, י״ב 4–5 יח״ל: גדילה ודעיכה', sidra: 'י״ב 4 יח״ל: סדרה חשבונית · י״א 5 יח״ל: מבוא לסדרות', handasit: 'י״ב 4 יח״ל, י״א 5 יח״ל: סדרה הנדסית',
+    induktzia: 'י״א 5 יח״ל: אינדוקציה מתמטית', 'trig-nigzeret': 'י״א 5 יח״ל: נגזרת של פונקציות טריגונומטריות', logaritm: 'י״ב 4–5 יח״ל: לוגריתמים ומשוואות מעריכיות',
+    'exp-ln': 'י״ב 4–5 יח״ל: נגזרת של פונקציה מעריכית ולוגריתמית', vektor: 'י״ב 4–5 יח״ל: וקטורים', piramida: 'י״ב 4–5 יח״ל: גופים במרחב, מנסרה ופירמידה',
+    merchav: 'י״ב 4–5 יח״ל: גופים במרחב', merukav: 'י״ב 5 יח״ל: מספרים מרוכבים', 'nefach-sivuv': 'לא מופיע בהמלצות ההוראה של התוכנית החדשה (תשפ״ז)' };
+  function offNote(id) { return OFF[id] ? 'בפריסת משרד החינוך: ' + OFF[id] : ''; }
   // נושאים קודמים שכדאי להזכיר בכל נושא (עד שלושה, מהקרוב לרחוק)
   var PRE = { hiluk: ['kefel'], seder: ['kefel', 'hiluk'], shetach: ['kefel', 'seder'], asroni: ['hiluk', 'seder', 'kefel'], shvarim: ['kefel', 'hiluk', 'seder'], 'kefel-shvarim': ['shvarim', 'kefel', 'hiluk'], memutza: ['hiluk', 'asroni', 'seder'], achuzim: ['asroni', 'kefel-shvarim', 'shvarim'], yachas: ['kefel-shvarim', 'shvarim', 'achuzim'], histabrut: ['shvarim', 'achuzim', 'yachas'], pilug: ['seder', 'kefel', 'shetach'], mishvaa: ['pilug', 'seder', 'shvarim'], chezkot: ['seder', 'kefel', 'pilug'], kav: ['mishvaa', 'pilug', 'yachas'], pitagoras: ['chezkot', 'shetach', 'mishvaa'], maarechet: ['mishvaa', 'pilug', 'kav'], trinom: ['pilug', 'chezkot', 'mishvaa'], shorashim: ['trinom', 'chezkot', 'mishvaa'], 'parabola-tavla': ['chezkot', 'kav', 'mishvaa'], parabola: ['parabola-tavla', 'shorashim', 'kav'], sidra: ['mishvaa', 'pilug', 'memutza'], merchak: ['pitagoras', 'kav', 'memutza'], trigo: ['pitagoras', 'yachas', 'mishvaa'], gdila: ['achuzim', 'chezkot', 'asroni'], stiya: ['memutza', 'chezkot', 'achuzim'], nigzeret: ['chezkot', 'kav', 'pilug'], mashik: ['nigzeret', 'kav', 'mishvaa'], kitzon: ['nigzeret', 'shorashim', 'parabola'], integral: ['nigzeret', 'chezkot', 'shetach'], maagal: ['merchak', 'pitagoras', 'shorashim'], normalit: ['stiya', 'achuzim', 'memutza'], handasit: ['sidra', 'chezkot', 'yachas'], sinusim: ['trigo', 'pitagoras', 'shetach'], etz: ['histabrut', 'kefel-shvarim', 'shvarim'], tnua: ['mishvaa', 'maarechet', 'shorashim'], rationalit: ['nigzeret', 'shorashim', 'kitzon'], 'shoresh-f': ['nigzeret', 'chezkot', 'kitzon'], merchav: ['trigo', 'pitagoras', 'sinusim'], 'trig-nigzeret': ['nigzeret', 'trigo', 'kitzon'], piramida: ['merchav', 'trigo', 'pitagoras'], vektor: ['merchak', 'pitagoras', 'trigo'], merukav: ['shorashim', 'pilug', 'chezkot'], logaritm: ['chezkot', 'gdila', 'mishvaa'], 'exp-ln': ['nigzeret', 'logaritm', 'kitzon'], dimyon: ['yachas', 'pitagoras', 'mishvaa'], 'zaviot-maagal': ['dimyon', 'maagal', 'mishvaa'], parametr: ['shorashim', 'nigzeret', 'kitzon'], induktzia: ['sidra', 'pilug', 'chezkot'], 'nefach-sivuv': ['integral', 'chezkot', 'shetach'] };
   // נושאים שהשיעור שלהם נמצא בדף "מתמטיקה צעד אחרי צעד" (לקישור מהתזכורות)
@@ -356,7 +401,7 @@
     function groups(g, u) {
       var now = T.filter(function (t) { return fits(t, g, u); });
       var prev = g > 2 ? T.filter(function (t) { return now.indexOf(t) < 0 && fits(t, g - 1, u); }) : [];
-      var next = g < 12 ? T.filter(function (t) { return now.indexOf(t) < 0 && prev.indexOf(t) < 0 && (g + 1 < 10 ? fits(t, g + 1, u) : (g >= 10 ? fits(t, g + 1, u) : grOf(t)[0] <= g + 1 && grOf(t)[1] >= g + 1)); }) : [];
+      var next = g < 12 ? T.filter(function (t) { return now.indexOf(t) < 0 && prev.indexOf(t) < 0 && fits(t, g + 1, g === 9 ? 4 : u); }) : []; // אחרי ט׳: הנושאים של י׳ ברמת 4 יח״ל, אליה מכוונת פריסת ט׳ הרגילה
       var near = now.concat(prev, next);
       return { now: now, prev: prev, next: next, near: near, rest: T.filter(function (t) { return near.indexOf(t) < 0; }) };
     }
@@ -372,7 +417,14 @@
       var shown = all.checked ? T : G.near;
       if (was && byId[was] && shown.indexOf(byId[was]) > -1 && (keep || all.checked || G.near.indexOf(byId[was]) > -1)) sel.value = was; else sel.value = (G.now[G.now.length - 1] || G.near[0] || T[0]).id;
       $('dp-topic-note').textContent = all.checked ? 'מוצגים כל ' + T.length + ' הנושאים: קודם של כיתה ' + GRN[g] + ', שנה לפני ושנה אחרי, ואחריהם כל השאר.' :
-        'מוצגים הנושאים של כיתה ' + GRN[g] + ', ולצידם נושאים של שנה לפני (לחזרה) ושל שנה אחרי (למתקדמים). רוצים נושא אחר? מסמנים "להציג את כל הנושאים".';
+        'מוצגים הנושאים של כיתה ' + GRN[g] + ' לפי פריסת ההוראה של משרד החינוך, ולצידם נושאים של שנה לפני (לחזרה) ושל שנה אחרי (למתקדמים). רוצים נושא אחר? מסמנים "להציג את כל הנושאים".';
+      offShow();
+    }
+    // מתחת לבחירת הנושא: מה כתוב עליו בפריסת משרד החינוך
+    function offShow() {
+      var n = $('dp-topic-off'), w = $('dp-topic-note');
+      if (!n && w) { n = document.createElement('p'); n.id = 'dp-topic-off'; n.className = w.className; n.style.marginTop = '.25rem'; w.parentNode.insertBefore(n, w.nextSibling); }
+      if (n) { var s = offNote($('dp-topic').value); n.textContent = s ? '📘 ' + s : ''; n.hidden = !s; }
     }
     function fillRevs(keep, keepX) {
       var g = +gs.value, tid = $('dp-topic').value, pre = PRE[tid] || [];
@@ -544,6 +596,7 @@
       if (pb.length === 2) { var gg = r.g || +gs.value, drop = byId[gg >= 10 && G.now.indexOf(byId.parabola) > -1 ? 'parabola-tavla' : 'parabola']; r.ts.splice(r.ts.indexOf(drop), 1); }
       // לא נאמרה כיתה: לוקחים את הכיתה שבה לומדים את הנושא (אלא אם הנושא כבר מתאים לכיתה שבחרו למעלה)
       if (!r.g && r.ts.length && G.near.indexOf(r.ts[0]) < 0) r.gAuto = Math.max(2, grOf(r.ts[0])[0]);
+      if (r.gAuto >= 10 && !r.u) { var uu = [4, 5, 3].filter(function (k) { return fits(r.ts[0], r.gAuto, k); })[0]; if (uu) r.u = uu; }
       return r;
     }
     function aiCfgs(r) {
@@ -622,6 +675,7 @@
       return { t: $('dp-topic').value, x: xs, q: ownQ.filter(function (x) { return x.t.trim(); }), only: $('dp-only').checked && ownQ.some(function (x) { return x.t.trim(); }), k: kind, m: +$('dp-min').value, lv: +$('dp-lv').value, r: r, s: seed, a: +$('dp-help').value };
     }
     function render() {
+      offShow();
       var cfg = readCfg(), sh = build(cfg); if (!sh) return; cur = sh;
       var o = { style: $('dp-style').value, font: +$('dp-font').value, title: $('dp-title').value.trim(), grade: GRN[+gs.value], key: $('dp-key').checked };
       ['time', 'stars', 'bonus', 'feel', 'grid', 'qr'].forEach(function (k) { o[k] = $('dp-o-' + k).checked; });
