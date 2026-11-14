@@ -92,11 +92,16 @@
     (lr.stackPacks || []).forEach(function (s) { if (s && s.title) m.stack.push(s.title); });
     function items(a) {
       var d = a.details || {}, list = [];
-      (d.items || []).slice(0, 4).forEach(function (it) {
-        var s = (it.node && (it.node.snippet || it.node.nodeLabel)) || it.url || it.source && it.source.url || it.label || '';
-        if (typeof s === 'object') s = s.url || s.value || '';
-        if (s) list.push(String(s).slice(0, 160));
-      });
+      try {   // לפעמים items הוא אובייקט, או רשימה של טבלאות (type: list) – לא לתת לזה להפיל את הדוח
+        var arr = Array.isArray(d.items) ? d.items : [];
+        if (d.type === 'list') arr = arr.reduce(function (o, x) { return o.concat(x && Array.isArray(x.items) ? x.items : []); }, []);
+        arr.slice(0, 4).forEach(function (it) {
+          if (!it || typeof it !== 'object') return;
+          var s = (it.node && (it.node.snippet || it.node.nodeLabel)) || it.url || (it.source && it.source.url) || it.label || '';
+          if (typeof s === 'object') s = s.url || s.value || '';
+          if (s) list.push(String(s).slice(0, 160));
+        });
+      } catch (e) {}
       return list;
     }
     var seen = {};
@@ -107,7 +112,9 @@
     function bad(a) { return a && a.score !== null && a.score < 0.9 && ['manual', 'notApplicable', 'informative', 'error'].indexOf(a.scoreDisplayMode) < 0; }
     ['seo', 'performance', 'accessibility', 'best-practices'].forEach(function (cat) {
       var c = C[cat]; if (!c) return;
-      (c.auditRefs || []).forEach(function (r) {
+      (c.auditRefs || []).forEach(function (r) { try { one(cat, r); } catch (e) {} });   // בדיקה אחת חריגה לא מפילה את הדוח
+    });
+    function one(cat, r) {
         var a = A[r.id]; if (!a) return;
         if (cat === 'performance') {
           if (r.group === 'metrics' || r.group === 'hidden' || r.weight > 0) return;   // מדדים מוצגים למעלה, לא כבעיות
@@ -126,8 +133,7 @@
         } else if (cat === 'seo' && a.score === 1 && a.scoreDisplayMode !== 'manual') {
           m.pass.push(plain(a.title));   // ב-locale=he הכותרת של בדיקה שעברה היא הניסוח החיובי
         }
-      });
-    });
+    }
     m.issues.sort(function (x, y) { var o = { seo: 0, performance: 1, accessibility: 2, 'best-practices': 3 }; return x.sev - y.sev || o[x.cat] - o[y.cat]; });
     var cnt = {};
     m.issues = m.issues.filter(function (x) { cnt[x.cat] = (cnt[x.cat] || 0) + 1; return x.cat === 'seo' || cnt[x.cat] <= 6; });   // לא להציף: עד 6 לכל תחום מלבד SEO
