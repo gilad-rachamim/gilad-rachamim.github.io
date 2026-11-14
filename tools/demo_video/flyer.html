@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>פרוספקט כלי</title>
+<!-- פרוספקט לשיתוף (14.11.2026): render.py קורא ל-FL.load(spec.flyer, qrDataUri, size) ומצלם PNG.
+     שני גדלים: post = 1080x1350 (ווטסאפ/פייסבוק/אינסטגרם), status = 1080x1920 (סטטוס/סטורי). -->
+<style>
+@font-face{font-family:Assistant;src:url(../../assets/Assistant-wght.woff) format("woff");font-weight:200 900}
+:root{--ink:#0e1628;--ink2:#15203a;--gold:#d4b062;--gold-hi:#f0d38e;--body:#e3e8f2;--muted:#a3aec5;--accent:#5aa9e6}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;overflow:hidden}
+body{font-family:Assistant,"Segoe UI",Arial,sans-serif;color:var(--body);background:var(--ink);-webkit-font-smoothing:antialiased}
+.pg{position:relative;width:1080px;padding:54px 64px 0;display:flex;flex-direction:column;background:
+  radial-gradient(70% 40% at 85% 0%,rgba(212,176,98,.28),transparent 70%),
+  radial-gradient(60% 40% at 0% 100%,rgba(59,91,219,.25),transparent 70%),
+  linear-gradient(170deg,var(--ink2),var(--ink) 60%)}
+.top{display:flex;align-items:center;gap:30px}
+.ic{flex:0 0 150px;height:150px;border-radius:40px;background:linear-gradient(145deg,var(--gold-hi),var(--gold));display:flex;align-items:center;justify-content:center;font-size:92px;box-shadow:0 14px 40px rgba(212,176,98,.35)}
+.kick{font-size:32px;color:var(--gold-hi);font-weight:700}
+h1{font-size:76px;line-height:1.05;font-weight:800;color:#fff;margin-top:4px}
+h1 em,.sub em,li em{font-style:normal;color:var(--gold-hi)}
+.sub{font-size:35px;line-height:1.32;margin-top:22px;color:#fff;font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.chip{background:rgba(255,255,255,.08);border:1.5px solid rgba(212,176,98,.45);border-radius:999px;padding:8px 24px;font-size:28px;font-weight:700}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:28px}
+.box{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.09);border-radius:34px;padding:24px 26px 22px}
+.box h2{font-size:32px;color:var(--gold-hi);font-weight:800;margin-bottom:12px}
+.box ol,.box ul{list-style:none;display:grid;gap:10px}
+.box li{font-size:26px;line-height:1.28;display:flex;gap:14px;align-items:flex-start}
+.box ol{counter-reset:s}.box ol li{counter-increment:s}
+.box ol li::before{content:counter(s);flex:0 0 46px;height:46px;border-radius:50%;background:var(--gold);color:var(--ink);font-weight:800;font-size:28px;display:flex;align-items:center;justify-content:center}
+.box ul li .e{flex:0 0 42px;font-size:32px;text-align:center}
+.wide{grid-column:1/-1}
+.partner{background:linear-gradient(160deg,rgba(212,176,98,.26),rgba(212,176,98,.07));border:2px solid rgba(240,211,142,.6)}
+.partner ul{grid-template-columns:1fr 1fr;column-gap:24px}
+.partner .note{font-size:24px;color:var(--muted);margin-top:10px}
+.end{margin-top:auto;display:flex;align-items:center;gap:36px;padding:22px 0 82px}
+.qr{flex:0 0 200px;height:200px;background:#fff;border-radius:28px;padding:16px}
+.qr img{width:100%;height:100%;display:block;image-rendering:pixelated}
+.go b{display:block;font-size:44px;color:#fff;font-weight:800;line-height:1.15}
+.go .btn{display:inline-block;direction:ltr;unicode-bidi:isolate;margin-top:16px;background:var(--accent);color:#fff;font-size:34px;font-weight:800;border-radius:999px;padding:14px 34px}
+.go .btn.g{background:var(--gold);color:var(--ink)}
+.go .url{margin-top:14px;font-size:30px;color:var(--gold-hi);font-weight:700;direction:ltr;text-align:right}
+.brand{position:absolute;bottom:0;right:0;left:0;height:56px;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;font-size:25px;color:var(--muted)}
+.brand b{color:var(--gold);margin:0 8px}
+/* סטטוס: גבוה יותר, הכול בעמודה אחת וגדול יותר */
+.status .cols{grid-template-columns:1fr}
+.status h1{font-size:82px}.status .sub{font-size:40px}
+.status .box li{font-size:30px}
+.status .end{padding-bottom:90px}
+.status .end{flex-direction:column;text-align:center}.status .go .url{text-align:center}
+.status .qr{flex-basis:auto;width:250px;height:250px}
+</style>
+</head>
+<body><div class="pg" id="pg"></div>
+<script>
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const rich = s => esc(s).replace(/\*([^*]+)\*/g,'<em>$1</em>');
+window.FL = {
+  load(f, qr, size){
+    const pg = document.getElementById('pg');
+    if (f.theme) for (const [k,v] of Object.entries(f.theme)) document.documentElement.style.setProperty('--'+k, v);
+    const H = size === 'status' ? 1920 : 1350;
+    pg.className = 'pg ' + size;
+    pg.style.height = H + 'px';
+    document.body.style.height = H + 'px';
+    const steps = (f.steps||[]).map(s => `<li><span>${rich(s)}</span></li>`).join('');
+    const feats = (f.features||[]).map(([e,t]) => `<li><span class="e">${e}</span><span>${rich(t)}</span></li>`).join('');
+    const part = f.partner ? `<div class="box partner wide"><h2>${rich(f.partner.title)}</h2><ul>${f.partner.items.map(([e,t])=>`<li><span class="e">${e}</span><span>${rich(t)}</span></li>`).join('')}</ul>${f.partner.note?`<div class="note">${rich(f.partner.note)}</div>`:''}</div>` : '';
+    pg.innerHTML = `
+      <div class="top"><div class="ic">${f.icon||'🧰'}</div><div>${f.kicker?`<div class="kick">${rich(f.kicker)}</div>`:''}<h1>${rich(f.title)}</h1></div></div>
+      <div class="sub">${rich(f.sub)}</div>
+      ${f.chips?`<div class="chips">${f.chips.map(c=>`<span class="chip">${rich(c)}</span>`).join('')}</div>`:''}
+      <div class="cols">
+        <div class="box"><h2>איך משתמשים</h2><ol>${steps}</ol></div>
+        <div class="box"><h2>${rich(f.features_title||'מה כלול')}</h2><ul>${feats}</ul></div>
+        ${part}
+      </div>
+      <div class="end"><div class="qr"><img src="${qr}"></div>
+        <div class="go"><b>${rich(f.cta||'נכנסים ומתחילים')}</b>${f.button?`<span class="btn ${f.gold?'g':''}">${esc(f.button)}</span>`:''}<div class="url">${esc(f.url_text)}</div></div></div>
+      <div class="brand">🧰<b>מיזם הכלים של גילעד רחמים</b>· כלים חינמיים לכל אחד · hakelim.com</div>`;
+    return {height: H, overflow: pg.scrollHeight > H + 2 ? pg.scrollHeight : 0};
+  }
+};
+</script>
+</body>
+</html>
