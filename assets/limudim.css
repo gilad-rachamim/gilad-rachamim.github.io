@@ -221,6 +221,7 @@ details.panel summary{cursor:pointer;color:var(--cream)}
 .mx-rect i{aspect-ratio:1;background:rgba(134,197,230,.35);border:1px solid rgba(134,197,230,.6)}
 .mx-rect i.cut{background:none;border:1px dashed rgba(255,255,255,.2)}
 .mx-vert{display:inline-block;direction:ltr;text-align:right;font-variant-numeric:tabular-nums;line-height:1.35;padding:0 .25em .1em;border-bottom:2px solid currentColor}
+.mx-tbl{border-collapse:collapse;margin:.3rem auto;font-size:.8em;font-variant-numeric:tabular-nums}.mx-tbl th,.mx-tbl td{border:1px solid currentColor;padding:.15em .5em;text-align:center}.mx-tbl th{font-weight:600;white-space:nowrap}
 .mx-cols{display:flex;align-items:flex-end;gap:.8rem;height:7rem;justify-content:center;border-bottom:2px solid var(--muted);padding:0 .6rem}
 .mx-cols i{width:2.2rem;background:linear-gradient(var(--gold),var(--gold-soft));border-radius:6px 6px 0 0;position:relative}
 .mx-cols::after{content:"";position:absolute}
