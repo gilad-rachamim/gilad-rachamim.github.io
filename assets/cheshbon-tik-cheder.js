@@ -109,7 +109,7 @@
       CH.save(KEY, cfg); CH.used('cheshbon_tik_cheder', 'connect');
       $('cd-cmsg').textContent = ''; show();
       if (!key) $('cd-keybox').hidden = false, $('cd-keyval').textContent = r.key;
-    }).catch(function () { $('cd-cmsg').textContent = 'אין תשובה מהכתובת. בדקו שבפריסה בחרתם "כל אחד" (Anyone) ושהעתקתם את כתובת ה-Web app.'; });
+    }).catch(function () { $('cd-cmsg').textContent = 'אין תשובה מהכתובת. בדקו שבפריסה בחרתם "כולם" (Anyone) ושהעתקתם את כתובת ה-Web app.'; });
   });
   $('cd-showkey').addEventListener('click', function () { $('cd-keybox').hidden = false; $('cd-keyval').textContent = cfg.key; });
   $('cd-logout').addEventListener('click', function () {
