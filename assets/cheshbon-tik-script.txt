@@ -8,9 +8,9 @@
  * מיילים (תזכורות ללקוחות, "סיימתי להעלות") יוצאים מה-Gmail שלכם בלבד.
  *
  * התקנה (פעם אחת, כ-5 דקות): ההוראות המלאות בדף "פתיחת חדר" באתר.
- * גרסה 3 · 14.11.2026 (תזכורות, סיום העלאה, תיק מלא, כפולים, מסמכים לחתימה, מגירות לכל לקוח)
+ * גרסה 4 · 14.11.2026 (תזכורות, סיום העלאה, תיק מלא, כפולים, מסמכים לחתימה, מגירות לכל לקוח, קריאת סכום מהקבלה)
  */
-var VER = 3;
+var VER = 4;
 var ROOT_NAME = 'תיק מסמכים ללקוחות';
 var SITE = 'https://hakelim.com/kelim/cheshbon/tik/';
 var MAX_B64 = 34 * 1024 * 1024;   // קובץ עד ~25MB
@@ -53,8 +53,9 @@ function route_(b) {
   // ---- פעולות של רואה החשבון (עם המפתח) ----
   if (a.charAt(0) === 'm') {
     if (!P.getProperty('ADMIN') || String(b.key || '') !== P.getProperty('ADMIN')) return { ok: false, err: 'key' };
-    if (a === 'mInfo') return { ok: true, office: P.getProperty('OFFICE'), sheet: ss_().getUrl(), folder: root_().getUrl(), ver: VER, brand: brand_(), remind: remindOn_() };
+    if (a === 'mInfo') return { ok: true, office: P.getProperty('OFFICE'), sheet: ss_().getUrl(), folder: root_().getUrl(), ver: VER, brand: brand_(), remind: remindOn_(), ai: !!aiKey_() };
     if (a === 'mBrand') return setBrand_(b);
+    if (a === 'mAi') return setAi_(b);
     if (a === 'mOffice') { P.setProperty('OFFICE', clip_(b.office, 80) || 'המשרד'); return { ok: true, office: P.getProperty('OFFICE') }; }
     if (a === 'mAdd') return addClient_(b);
     if (a === 'mAddMany') {
@@ -76,7 +77,7 @@ function route_(b) {
   var c = byToken_(b.t);
   if (!c) return { ok: false, err: 'token' };
   if (!c.on) return { ok: false, err: 'off' };
-  if (a === 'cInfo') return { ok: true, office: P.getProperty('OFFICE'), name: c.name, type: c.type, drawers: c.drawers, requests: c.requests, done: c.done, docs: docs_(b.year, c.t), brand: brand_(), sign: signs_(c.t), ver: VER };
+  if (a === 'cInfo') return { ok: true, office: P.getProperty('OFFICE'), name: c.name, type: c.type, drawers: c.drawers, requests: c.requests, done: c.done, docs: docs_(b.year, c.t), brand: brand_(), sign: signs_(c.t), ver: VER, ai: aiKey_() };
   if (a === 'cUp') return upload_(c, b);
   if (a === 'cDel') return delDoc_(c, b.id);
   if (a === 'cDone') return clientDone_(c, b.year);
@@ -269,7 +270,7 @@ function signFile_(c, id) {
 // ---- מיתוג המשרד (לוגו קטן וצבע) – נשמר בגיליון "הגדרות" ----
 var COLORS = ['#c9a24d', '#5fbfa6', '#7aa7e0', '#e08a72', '#b48ad6', '#e0c35a'];
 function brand_() {
-  var v = sheet_('הגדרות', ['לוגו', 'צבע']).getDataRange().getValues();
+  var v = sheet_('הגדרות', ['לוגו', 'צבע', 'קריאת קבלות']).getDataRange().getValues();
   var r = v[1] || ['', ''];
   return { logo: /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+\/=]+$/.test(String(r[0])) ? String(r[0]) : '', color: COLORS.indexOf(String(r[1])) >= 0 ? String(r[1]) : '' };
 }
@@ -277,10 +278,27 @@ function setBrand_(b) {
   var logo = String(b.logo || ''), color = String(b.color || '');
   if (logo && (logo.length > 45000 || !/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+\/=]+$/.test(logo))) return { ok: false, err: 'logo' };
   if (color && COLORS.indexOf(color) < 0) return { ok: false, err: 'color' };
-  var sh = sheet_('הגדרות', ['לוגו', 'צבע']);
-  if (sh.getDataRange().getValues().length < 2) sh.appendRow([logo, color]);
+  var sh = sheet_('הגדרות', ['לוגו', 'צבע', 'קריאת קבלות']);
+  if (sh.getDataRange().getValues().length < 2) sh.appendRow([logo, color, '']);
   else { sh.getRange(2, 1).setValue(logo); sh.getRange(2, 2).setValue(color); }
   return { ok: true, brand: brand_() };
+}
+
+// ---- קריאת סכום מהקבלה (לשותפים) ----
+// מפתח קריאה מאתר הכלים (לא קוד השותף עצמו). הלקוח מקבל אותו כדי לבקש קריאה, ותמיד מאשר לפני שהתמונה נשלחת.
+// כיבוי: מוחקים את המפתח (בחדר, או בתא C2 בגיליון "הגדרות").
+function aiKey_() {
+  var v = sheet_('הגדרות', ['לוגו', 'צבע', 'קריאת קבלות']).getDataRange().getValues();
+  var k = String((v[1] || [])[2] || '');
+  return /^\d{3}\.[0-9a-f]{20}$/.test(k) ? k : '';
+}
+function setAi_(b) {
+  var k = String(b.ai || '');
+  if (k && !/^\d{3}\.[0-9a-f]{20}$/.test(k)) return { ok: false, err: 'ai' };
+  var sh = sheet_('הגדרות', ['לוגו', 'צבע', 'קריאת קבלות']);
+  if (sh.getDataRange().getValues().length < 2) sh.appendRow(['', '', '']);
+  sh.getRange(2, 3).setValue(k);
+  return { ok: true, ai: !!aiKey_() };
 }
 
 // ---- דרייב וגיליון ----

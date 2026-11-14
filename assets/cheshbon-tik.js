@@ -67,6 +67,51 @@
     });
   };
 
+  // ---- קריאת סכום מהקבלה (הטבה לשותפים) ----
+  // רק אחרי שהלקוח אישר: תמונה מוקטנת (או העמוד הראשון והאחרון של PDF) נשלחת ל-Worker, וחוזרים סכום, תאריך ושם העסק.
+  // שום דבר לא נשמר שם. הקובץ המקורי עולה לדרייב של רואה החשבון כמו תמיד.
+  T.AI = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://127.0.0.1:8841' : 'https://kelim-kabala.gilad4049.workers.dev';
+  T.isPdf = function (f) { return f.type === 'application/pdf' || /\.pdf$/i.test(f.name || ''); };
+  T.canRead = function (f) { return /^image\/(jpeg|png|webp)$/.test(f.type) || T.isPdf(f); };
+  function shrink(src, w, h) {
+    var s = Math.min(1, 1600 / Math.max(w, h)), c = document.createElement('canvas');
+    c.width = Math.round(w * s); c.height = Math.round(h * s);
+    var x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(src, 0, 0, c.width, c.height);
+    return { mime: 'image/jpeg', data: c.toDataURL('image/jpeg', 0.85).split(',')[1] };
+  }
+  function pdfLib() {
+    if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+    return new Promise(function (res, rej) {
+      var sc = document.createElement('script'); sc.src = '/assets/vendor/pdfjs/pdf.min.js';
+      sc.onload = function () { window.pdfjsLib.GlobalWorkerOptions.workerSrc = '/assets/vendor/pdfjs/pdf.worker.min.js'; res(window.pdfjsLib); };
+      sc.onerror = rej; document.head.appendChild(sc);
+    });
+  }
+  T.pages = function (f) {
+    if (!T.isPdf(f)) return new Promise(function (res, rej) {
+      var img = new Image(), u = URL.createObjectURL(f);
+      img.onload = function () { URL.revokeObjectURL(u); res([shrink(img, img.naturalWidth, img.naturalHeight)]); };
+      img.onerror = function () { URL.revokeObjectURL(u); rej(new Error('img')); };
+      img.src = u;
+    });
+    return Promise.all([pdfLib(), f.arrayBuffer()]).then(function (a) { return a[0].getDocument({ data: a[1] }).promise; }).then(function (doc) {
+      var nums = doc.numPages > 1 ? [1, doc.numPages] : [1]; // הסכום הסופי בדרך כלל בעמוד האחרון
+      return Promise.all(nums.map(function (n) {
+        return doc.getPage(n).then(function (pg) {
+          var v0 = pg.getViewport({ scale: 1 }), v = pg.getViewport({ scale: 1600 / Math.max(v0.width, v0.height) }), c = document.createElement('canvas');
+          c.width = Math.round(v.width); c.height = Math.round(v.height);
+          var x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
+          return pg.render({ canvasContext: x, viewport: v }).promise.then(function () { return shrink(c, c.width, c.height); });
+        });
+      }));
+    });
+  };
+  T.read = function (key, f) {
+    return T.pages(f).then(function (pages) {
+      return fetch(T.AI + '/read', { method: 'POST', headers: { 'content-type': 'application/json', 'x-kelim-partner': key }, body: JSON.stringify({ pages: pages }) });
+    }).then(function (r) { return r.json(); });
+  };
+
   // ---------------- הדף ללקוח ----------------
   var root = document.getElementById('tik');
   if (!root) return;
@@ -82,6 +127,7 @@
   var now = new Date();
   var st = CH.load('tik-local', null) || { type: 'sachir', year: now.getFullYear(), done: { '106': 1, 'truma': 1 }, ex: 1 };
   var docs = [], info = null, busy = 0;
+  var pend = null; // קבלה שמחכה לאישור הקריאה: {k, file, stage: 'ask'|'read'|'edit', amount, date, vendor, note}
   function save() { CH.save('tik-local', st); }
 
   function years() { var y = now.getFullYear(); return [y, y - 1, y - 2]; }
@@ -104,7 +150,8 @@
       if (info) s += '<span class="tk-mark" aria-hidden="true">' + (ok ? '✓' : '') + '</span>';
       else s += '<label class="tk-chk"><input type="checkbox" data-done="' + d.k + '"' + (ok ? ' checked' : '') + '><span class="vh">יש לי</span></label>';
       s += '<div class="tk-txt"><b>' + esc(d.t) + '</b><span>' + esc(d.h) + '</span></div></div>';
-      if (info) {
+      if (info && pend && pend.k === d.k) s += aiCard();
+      else if (info) {
         s += '<div class="tk-up no-print">';
         if (d.m) s += '<label class="tk-m">חודש <select data-month="' + d.k + '"><option value="">כל השנה</option>' + T.MONTHS.map(function (m, i) { return '<option' + (i === Math.max(0, now.getMonth() - 1) && st.year === now.getFullYear() ? ' selected' : '') + '>' + m + '</option>'; }).join('') + '</select></label>';
         s += '<label class="tk-m">סכום (לא חובה) <input type="text" inputmode="decimal" data-amount="' + d.k + '" maxlength="12" autocomplete="off"></label>';
@@ -115,6 +162,43 @@
     }).join('');
     $('tik-list').innerHTML = html;
     $('tik-prog').innerHTML = '<b>' + have + ' מתוך ' + L.length + '</b> ' + (info ? 'מגירות עם מסמכים' : 'מסמכים כבר אצלכם') + '<span class="tk-bar"><i style="width:' + Math.round(100 * have / L.length) + '%"></i></span>';
+  }
+
+  function aiCard() {
+    var s = '<div class="tk-ai no-print" role="group" aria-label="קריאת הקבלה"><p class="tk-ai-f">📄 ' + esc(pend.file.name || 'צילום') + '</p>';
+    if (pend.stage === 'ask') {
+      s += '<p><b>לקרוא את הסכום, התאריך ושם העסק מהקבלה?</b></p><p class="hint">התמונה תישלח לקריאה אוטומטית ולא תישמר. לפני ההעלאה בודקים את מה שנקרא. אפשר גם בלי.</p>' +
+        '<div class="btns"><button class="btn btn-gold btn-sm" type="button" data-ai="yes">כן, לקרוא</button><button class="btn btn-line btn-sm" type="button" data-ai="no">לא, רק להעלות</button><button class="btn btn-line btn-sm" type="button" data-ai="cancel">ביטול</button></div>';
+    } else if (pend.stage === 'read') {
+      s += '<p class="tk-ai-wait">קורא את הקבלה…</p>';
+    } else {
+      s += (pend.note ? '<p class="hint">' + esc(pend.note) + '</p>' : '') +
+        '<div class="tk-up"><label class="tk-m">סכום<input type="text" inputmode="decimal" data-ai-f="amount" maxlength="12" autocomplete="off" value="' + esc(pend.amount) + '"></label>' +
+        '<label class="tk-m">תאריך<input type="date" data-ai-f="date" value="' + esc(pend.date) + '"></label>' +
+        '<label class="tk-m tk-m-w">שם העסק<input type="text" data-ai-f="vendor" maxlength="60" autocomplete="off" value="' + esc(pend.vendor) + '"></label></div>' +
+        '<div class="btns"><button class="btn btn-gold btn-sm" type="button" data-ai="up">להעלות לרואה החשבון</button><button class="btn btn-line btn-sm" type="button" data-ai="cancel">ביטול</button></div>';
+    }
+    return s + '</div>';
+  }
+  function aiVals() {
+    ['amount', 'date', 'vendor'].forEach(function (f) { var el = root.querySelector('[data-ai-f="' + f + '"]'); if (el) pend[f] = el.value.trim(); });
+  }
+  function aiRead() {
+    var p = pend; p.stage = 'read'; render(); $('tik-msg').textContent = 'קורא את הקבלה…';
+    CH.used('cheshbon_tik', 'ai_read');
+    T.read(info.ai, p.file).then(function (r) {
+      if (pend !== p) return;
+      p.stage = 'edit';
+      if (r.found) {
+        p.amount = String(r.amount); p.date = r.date || ''; p.vendor = r.vendor || '';
+        p.note = 'נקרא מהקבלה. בדקו שהפרטים נכונים, ותקנו אם צריך.';
+        var y = r.date ? +r.date.slice(0, 4) : 0;
+        if (y && y !== st.year) p.note += ' שימו לב: הקבלה משנת ' + y + ', והתיק פתוח לשנת ' + st.year + '.';
+        CH.used('cheshbon_tik', 'ai_found');
+      } else p.note = (r.error === 'quota' ? 'הקריאה האוטומטית הגיעה למכסה של היום.' : r.error === 'partner' ? 'הקריאה האוטומטית כבויה כרגע.' : 'לא הצלחנו לקרוא את הסכום מהקבלה.') + ' אפשר לכתוב אותו כאן, או להעלות בלי.';
+      $('tik-msg').textContent = ''; render();
+      var f = root.querySelector('[data-ai-f="amount"]'); if (f) f.focus();
+    }).catch(function () { if (pend !== p) return; p.stage = 'edit'; p.note = 'אין חיבור לקריאה האוטומטית. אפשר לכתוב את הסכום כאן, או להעלות בלי.'; $('tik-msg').textContent = ''; render(); });
   }
 
   function head() {
@@ -142,10 +226,11 @@
     }).catch(function () { $('tik-msg').textContent = T.err('net'); });
   }
 
-  function upload(k, files) {
+  function upload(k, files, ex) {
     var d = LIST.filter(function (x) { return x.k === k; })[0];
     var ms = root.querySelector('[data-month="' + k + '"]'), am = root.querySelector('[data-amount="' + k + '"]');
-    var month = ms ? ms.value : '', amount = am ? CH.num(am.value) : NaN;
+    var month = ms ? ms.value : '', amount = am ? CH.num(am.value) : NaN, note = '';
+    if (ex) { amount = CH.num(ex.amount); note = ex.note || ''; if (d.m && ex.month) month = ex.month; }
     var list = [].slice.call(files), i = 0, okN = 0;
     if (list.length > 1) amount = NaN; // סכום שייך לקבלה אחת
     busy++;
@@ -159,7 +244,7 @@
       $('tik-msg').textContent = 'מעלה ' + i + ' מתוך ' + list.length + '…';
       T.prep(f).then(function (x) {
         if (!x) { $('tik-msg').textContent = 'לא הצלחנו לקרוא את הקובץ ' + (f.name || ''); return next(); }
-        return T.call(conn.u, { a: 'cUp', t: conn.t, year: st.year, drawer: d.t, month: month, amount: isFinite(amount) ? amount : '', name: x.name, mime: x.mime, data: x.data })
+        return T.call(conn.u, { a: 'cUp', t: conn.t, year: st.year, drawer: d.t, month: month, amount: isFinite(amount) ? amount : '', note: note, name: x.name, mime: x.mime, data: x.data })
           .then(function (r) { if (r.ok) okN++; else $('tik-msg').textContent = T.err(r.err); next(); });
       }).catch(function () { $('tik-msg').textContent = T.err('net'); busy--; });
     }
@@ -169,9 +254,28 @@
   root.addEventListener('change', function (e) {
     var t = e.target;
     if (t.matches('[data-done]')) { st.done[t.getAttribute('data-done')] = t.checked ? 1 : 0; save(); render(); CH.used('cheshbon_tik', 'check'); }
-    if (t.matches('[data-file]') && t.files && t.files.length) { upload(t.getAttribute('data-file'), t.files); t.value = ''; }
+    if (t.matches('[data-file]') && t.files && t.files.length) {
+      var k = t.getAttribute('data-file');
+      if (info && info.ai && t.files.length === 1 && T.canRead(t.files[0])) { // שותף: קודם שואלים אם לקרוא
+        pend = { k: k, file: t.files[0], stage: 'ask', amount: '', date: '', vendor: '', note: '' }; render();
+        var yb = root.querySelector('[data-ai="yes"]'); if (yb) yb.focus();
+      } else upload(k, t.files);
+      t.value = '';
+    }
   });
   root.addEventListener('click', function (e) {
+    var a = e.target.closest('[data-ai]');
+    if (a && pend) {
+      var act = a.getAttribute('data-ai'), p = pend;
+      if (act === 'yes') return aiRead();
+      if (act === 'cancel') { pend = null; render(); return; }
+      if (act === 'no') { pend = null; render(); return upload(p.k, [p.file]); }
+      if (act === 'up') {
+        aiVals(); pend = null; render();
+        var dt = p.date ? CH.date(p.date) : null;
+        return upload(p.k, [p.file], { amount: p.amount, note: [p.vendor, dt ? CH.heDate(dt) : ''].filter(Boolean).join(' · '), month: dt && dt.getFullYear() === st.year ? T.MONTHS[dt.getMonth()] : '' });
+      }
+    }
     var sgn = e.target.closest('[data-sign]');
     if (sgn && conn) {
       $('tik-msg').textContent = 'מוריד…';

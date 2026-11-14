@@ -56,4 +56,7 @@
 .ch .cd-keybox{border:1px dashed var(--gold);border-radius:12px;padding:.7rem .9rem;margin-top:.8rem;color:var(--body)}
 .ch .partner{border:1px solid var(--gold);border-radius:16px;padding:1rem 1.1rem;background:rgba(201,162,77,.06)}
 .ch .partner h2{margin-top:0}
+.ch .tk-ai{margin-top:.7rem;border:1px solid var(--gold,#c9a24d);border-radius:12px;padding:.7rem .8rem;background:rgba(201,162,77,.06)}
+.ch .tk-ai p{margin:.2rem 0}.ch .tk-ai .btns{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem}.ch .tk-ai-f{font-size:.9rem;color:var(--muted);overflow-wrap:anywhere}.ch .tk-ai-wait{color:var(--gold,#c9a24d);font-weight:700}.ch .tk-m-w input{max-width:none;width:14rem}
+.ch .cd-ai{margin-top:1rem;border-top:1px dashed var(--line);padding-top:.8rem}.ch .cd-ai h3{font-size:1.02rem;margin:0 0 .3rem}
 @media print{.ch .tk-up,.ch .tk-files button,.ch .partner{display:none!important}.ch .tk-d{border-color:#999}.ch .tk-txt b,.ch .tk-txt span{color:#000!important}}
