@@ -179,7 +179,7 @@
     if (!cfg) { $('cd-bmsg').textContent = 'קודם פותחים את החדר (למעלה), ואז שומרים מיתוג.'; return; }
     $('cd-bmsg').textContent = 'שומר…';
     T.call(cfg.u, { a: 'mBrand', key: cfg.key, logo: brand.logo, color: brand.color }).then(function (r) {
-      $('cd-bmsg').textContent = r.ok ? 'נשמר ✓ הלקוחות יראו את הלוגו והצבע בכניסה הבאה.' : (r.err === 'action' ? 'צריך לעדכן את הקוד בגוגל לגרסה 2: מעתיקים שוב את הקוד, מדביקים, ופריסה ← ניהול פריסות ← גרסה חדשה.' : T.err(r.err));
+      $('cd-bmsg').textContent = r.ok ? 'נשמר ✓ הלקוחות יראו את הלוגו והצבע בכניסה הבאה.' : (r.err === 'action' ? 'צריך לעדכן את הקוד בגוגל לגרסה 3: מעתיקים שוב את הקוד, מדביקים, ופריסה ← ניהול פריסות ← גרסה חדשה.' : T.err(r.err));
       if (r.ok) CH.used('cheshbon_tik_cheder', 'brand');
     }).catch(function () { $('cd-bmsg').textContent = T.err('net'); });
   });
