@@ -124,12 +124,13 @@
   });
 
   // ---------- לשוניות ----------
+  var TABS = ['hw', 'forum', 'kids', 'fun', 'par'];
   function setTab(t) {
     tab = t;
-    ['hw', 'forum', 'kids'].forEach(function (x) { $('kp-t-' + x).setAttribute('aria-selected', x === t ? 'true' : 'false'); $('kp-p-' + x).hidden = x !== t; });
-    if (t === 'hw') loadHw(); else if (t === 'forum') loadForum(); else loadKids();
+    TABS.forEach(function (x) { $('kp-t-' + x).setAttribute('aria-selected', x === t ? 'true' : 'false'); $('kp-p-' + x).hidden = x !== t; });
+    if (t === 'hw') loadHw(); else if (t === 'forum') loadForum(); else if (t === 'kids') { loadKids(); loadNotes(); } else if (t === 'fun') { loadKids(); race(); } else loadPar();
   }
-  ['hw', 'forum', 'kids'].forEach(function (x) { $('kp-t-' + x).addEventListener('click', function () { setTab(x); used('tab_' + x); }); });
+  TABS.forEach(function (x) { $('kp-t-' + x).addEventListener('click', function () { setTab(x); used('tab_' + x); }); });
   setInterval(function () { if (!C || document.hidden) return; if (tab === 'forum') loadForum(); else if (tab === 'hw') loadHw(); }, 40000);
 
   // ---------- מטלה חדשה: דפים ותרגילים ----------
@@ -230,8 +231,39 @@
   });
   exRow();
 
+  // ---------- הכנה לשיעור: סרטון + עד 3 שאלות ----------
+  function kind() { var r = document.querySelector('input[name="kp-kind"]:checked'); return r ? r.value : ''; }
+  Array.prototype.forEach.call(document.querySelectorAll('input[name="kp-kind"]'), function (r) {
+    r.addEventListener('change', function () { var p = kind() === 'prep'; $('kp-prepparts').hidden = !p; $('kp-hwparts').hidden = p; if (p && !$('kp-title').value) $('kp-title').placeholder = 'למשל: הכנה לשיעור – נגזרת'; used('kind_' + (p ? 'prep' : 'hw')); });
+  });
+  $('kp-pq').innerHTML = [1, 2, 3].map(function (i) {
+    return '<fieldset class="kp-pqrow"><legend>שאלה ' + i + '</legend><input class="kh-in kp-pq-q" maxlength="200" placeholder="השאלה, למשל: מה הנגזרת של x²?">' +
+      '<div class="kp-2"><input class="kh-in kp-pq-ok" maxlength="80" placeholder="✓ התשובה הנכונה"><input class="kh-in kp-pq-no" maxlength="160" placeholder="✗ תשובות לא נכונות, מופרדות בפסיק"></div></fieldset>';
+  }).join('');
+  function prepData() {
+    return { v: $('kp-pv').value.trim(), q: Array.prototype.map.call(document.querySelectorAll('.kp-pqrow'), function (f) {
+      var q = f.querySelector('.kp-pq-q').value.trim(), ok = f.querySelector('.kp-pq-ok').value.trim(), no = f.querySelector('.kp-pq-no').value.split(/[,،]/).map(function (x) { return x.trim(); }).filter(Boolean);
+      return q && ok && no.length ? { q: q, a: [ok].concat(no.slice(0, 3)) } : null;
+    }).filter(Boolean) };
+  }
+  function resetNew() {
+    PAGES = []; pageThumbs(); $('kp-title').value = ''; $('kp-due').value = ''; $('kp-note').value = ''; $('kp-exlist').innerHTML = ''; exRow();
+    $('kp-pv').value = ''; Array.prototype.forEach.call(document.querySelectorAll('.kp-pqrow input'), function (i) { i.value = ''; });
+    $('kp-newhw').open = false; loadHw();
+  }
+
   $('kp-send').addEventListener('click', function () {
     var b = this; err('kp-err', '');
+    if (kind() === 'prep') {
+      if (!$('kp-title').value.trim()) { err('kp-err', 'כותבים שם, למשל: הכנה לשיעור – נגזרת.'); $('kp-title').focus(); return; }
+      if (!$('kp-pv').value.trim()) { err('kp-err', 'מדביקים קישור לסרטון ההכנה.'); $('kp-pv').focus(); return; }
+      b.disabled = true;
+      admin('hw_new', { kind: 'prep', title: $('kp-title').value, due: $('kp-due').value, note: $('kp-note').value, prep: prepData() }).then(function (d) {
+        b.disabled = false; if (!d.ok) return err('kp-err', d.error);
+        used('prep_new', true); resetNew(); toast('✓ ההכנה לשיעור נשלחה לכיתה');
+      });
+      return;
+    }
     var ex = Array.prototype.map.call($('kp-exlist').children, function (li, i) {
       var pgOn = li.querySelector('.kp-pg-on').checked, q = li.querySelector('.kp-exq').value.trim();
       return { q: pgOn ? (q ? 'שאלה ' + q + ' מהדף' : '') : q, pg: pgOn ? +li.querySelector('.kp-pg').value : 0, tl: li.querySelector('.kp-tl').value, v: li.querySelector('.kp-v').value.trim(), top: li.querySelector('.kp-top').value, h: li.querySelector('.kp-h').value.trim(), a: li.querySelector('.kp-a').value.trim() };
@@ -246,8 +278,7 @@
       (function up(i) {
         if (i >= PAGES.length) {
           b.disabled = false; $('kp-sendst').textContent = '';
-          PAGES = []; pageThumbs(); $('kp-title').value = ''; $('kp-due').value = ''; $('kp-note').value = ''; $('kp-exlist').innerHTML = ''; exRow();
-          $('kp-newhw').open = false; used('hw_new', true); loadHw(); toast('✓ המטלה נשלחה לכיתה');
+          used('hw_new', true); resetNew(); toast('✓ המטלה נשלחה לכיתה');
           return;
         }
         $('kp-sendst').textContent = 'מעלים את דף העבודה: עמוד ' + (i + 1) + ' מתוך ' + PAGES.length + '…';
@@ -266,16 +297,37 @@
       $('kp-nst').textContent = d.students + ' תלמידים בכיתה';
       $('kp-hwlist').innerHTML = d.hw.length ? d.hw.map(function (h) {
         var pct = d.students ? Math.round(h.full / d.students * 100) : 0;
+        var late = h.due && new Date(h.due + 'T23:59:00') < Date.now(), left = d.students - h.full;
+        var acts = '<button type="button" class="btn btn-sm" data-open="' + h.id + '" data-v="' + (h.open ? 0 : 1) + '">' + (h.open ? 'לסגור' : 'לפתוח שוב') + '</button><button type="button" class="btn btn-sm" data-del="' + h.id + '">למחוק</button>';
+        if (h.open && left > 0) acts = '<button type="button" class="btn btn-sm" data-remind="' + h.id + '">🔔 תזכורת ל-' + left + ' שלא סיימו</button>' + acts;
+        if (h.kind === 'prep') {
+          return '<div class="kp-card kp-tcard' + (h.open ? '' : ' is-closed') + '"><span class="kp-card-t"><b>' + esc(h.title) + '</b><span class="kp-tag">🎬 הכנה לשיעור</span>' +
+            (h.due ? '<span class="kp-tag' + (late ? ' warn' : '') + '">📅 ' + new Date(h.due + 'T12:00:00').toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric' }) + '</span>' : '') + (h.open ? '' : '<span class="kp-tag">סגורה</span>') + '</span>' +
+            '<span class="kp-bar" aria-hidden="true"><i style="width:' + pct + '%"></i></span><span class="kp-sub">' + h.full + ' מתוך ' + d.students + ' צפו וענו' + (h.full ? ' · ' + h.okSum + ' תשובות נכונות' : '') + '</span>' +
+            '<span class="btns"><button type="button" class="btn btn-sm btn-gold" data-pv="' + h.id + '">👀 מי צפה ומה ענו</button>' + acts + '</span><div class="kp-pvbox" id="pv-' + h.id + '" hidden></div></div>';
+        }
         return '<div class="kp-card kp-tcard' + (h.open ? '' : ' is-closed') + '"><span class="kp-card-t"><b>' + esc(h.title) + '</b>' +
           (h.np ? '<span class="kp-tag">📄 ' + h.np + ' עמ׳</span>' : '') + (h.due ? '<span class="kp-tag">📅 ' + new Date(h.due + 'T12:00:00').toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric' }) + '</span>' : '') + (h.open ? '' : '<span class="kp-tag">סגורה</span>') + (h.stuck ? '<span class="kp-tag warn">🙋 ' + h.stuck + ' נתקעו</span>' : '') + '</span>' +
           '<span class="kp-bar" aria-hidden="true"><i style="width:' + pct + '%"></i></span><span class="kp-sub">' + h.full + ' מתוך ' + d.students + ' סיימו הכול · ' + h.who + ' התחילו · ' + h.n + ' תרגילים</span>' +
-          '<span class="btns"><a class="btn btn-sm btn-gold" href="/limudim/machberet/kita/#c=' + C.code + '&k=' + C.key + '">📊 מעקב חי ורמזים</a><button type="button" class="btn btn-sm" data-open="' + h.id + '" data-v="' + (h.open ? 0 : 1) + '">' + (h.open ? 'לסגור' : 'לפתוח שוב') + '</button><button type="button" class="btn btn-sm" data-del="' + h.id + '">למחוק</button></span></div>';
+          '<span class="btns"><a class="btn btn-sm btn-gold" href="/limudim/machberet/kita/#c=' + C.code + '&k=' + C.key + '">📊 מעקב חי ורמזים</a>' + acts + '</span></div>';
       }).join('') : '<p class="note">עוד אין מטלות. לוחצים על "מטלה חדשה" למעלה.</p>';
     });
   }
   $('kp-hwlist').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
-    if (b.dataset.open) admin('hw_open', { hw: b.dataset.open, open: +b.dataset.v }).then(loadHw);
+    if (b.dataset.remind) { b.disabled = true; admin('remind', { hw: b.dataset.remind }).then(function (d) { toast(d.ok ? '🔔 נשלחה תזכורת אישית ל-' + d.n + ' תלמידים' : d.error); used('remind', true); }); }
+    else if (b.dataset.pv) {
+      var box = $('pv-' + b.dataset.pv); if (!box.hidden) { box.hidden = true; return; }
+      admin('prep_view', { hw: b.dataset.pv }).then(function (d) {
+        if (!d.ok) return toast(d.error);
+        var q = d.prep.q || [];
+        box.hidden = false;
+        box.innerHTML = '<table class="kp-tbl"><thead><tr><th>כינוי</th><th>צפה/תה</th>' + q.map(function (x, i) { return '<th title="' + esc(x.q) + '">ש' + (i + 1) + '</th>'; }).join('') + '</tr></thead><tbody>' + d.rows.map(function (r) {
+          return '<tr><td><b>' + esc(r.nick) + '</b></td><td>' + (r.done ? '✓' : '—') + '</td>' + q.map(function (x, i) { var a = r.ans[i]; return '<td>' + (!r.done || a === undefined || a < 0 ? '·' : a === 0 ? '✓' : '✗') + '</td>'; }).join('') + '</tr>';
+        }).join('') + '</tbody></table>' + (q.length ? '<p class="note">' + q.map(function (x, i) { var n = d.rows.filter(function (r) { return r.done; }).length, okn = d.rows.filter(function (r) { return r.ans[i] === 0; }).length; return 'ש' + (i + 1) + ': ' + esc(x.q) + ' – ' + okn + '/' + n + ' נכון'; }).join('<br>') + '</p>' : '');
+      });
+    }
+    else if (b.dataset.open) admin('hw_open', { hw: b.dataset.open, open: +b.dataset.v }).then(loadHw);
     else if (b.dataset.del && confirm('למחוק את המטלה, את דף העבודה ואת העבודה של התלמידים בה?')) admin('hw_del', { hw: b.dataset.del }).then(loadHw);
   });
 
@@ -319,12 +371,12 @@
   function loadKids() {
     admin('get', {}).then(function (d) {
       if (!d.ok) { $('kp-kids').innerHTML = '<p class="pt-err">' + esc(d.error) + '</p>'; return; }
-      KD = d;
+      KD = d; fillKto(); if (tab === 'fun') showBrk(d.brk);
       $('kp-lock').checked = !!d.locked; $('kp-cmsg').value = d.msg || '';
       var act = d.rows.filter(function (r) { return r.last > Date.now() - 7 * 864e5; }).length;
       $('kp-ksum').textContent = d.rows.length + ' תלמידים · ' + act + ' פעילים השבוע';
       $('kp-kids').innerHTML = d.rows.length ? '<table class="kp-tbl"><thead><tr><th>מקום</th><th>כינוי</th><th>נקודות</th><th>נכנס/ה לאחרונה</th><th></th></tr></thead><tbody>' + d.rows.map(function (r) {
-        return '<tr><td>' + (r.place ? ['🥇', '🥈', '🥉'][r.place - 1] || r.place : '·') + '</td><td><b>' + esc(r.nick) + '</b>' + (r.crown ? ' 👑 ' + esc(r.crown) : '') + '</td><td>' + r.pts + '</td><td>' + ago(r.last) + '</td><td><button type="button" class="linkish" data-rm="' + r.sid + '" data-n="' + esc(r.nick) + '">להסיר</button></td></tr>';
+        return '<tr><td>' + (r.place ? ['🥇', '🥈', '🥉'][r.place - 1] || r.place : '·') + '</td><td><b>' + esc(r.nick) + '</b>' + (r.crown ? ' 👑 ' + esc(r.crown) : '') + '</td><td>' + r.pts + '</td><td>' + ago(r.last) + '</td><td><button type="button" class="linkish" data-kudo="' + r.sid + '" aria-label="פרגון">💐</button> <button type="button" class="linkish" data-rm="' + r.sid + '" data-n="' + esc(r.nick) + '">להסיר</button></td></tr>';
       }).join('') + '</tbody></table>' : '<p class="note">עוד אף אחד לא הצטרף. שולחים לכיתה את הקישור שלמעלה.</p>';
     });
   }
@@ -334,6 +386,106 @@
   });
   $('kp-lock').addEventListener('change', function () { admin('settings', { locked: this.checked }).then(function (d) { toast(d.ok ? (d.locked ? '🔒 ההצטרפות נסגרה' : '✓ נשמר') : d.error); }); });
   $('kp-cmsg-b').addEventListener('click', function () { admin('settings', { msg: $('kp-cmsg').value }).then(function (d) { toast(d.ok ? '✓ ההודעה מופיעה לכיתה' : d.error); if (d.ok) used('class_msg', true); }); });
+
+  // ---------- פרגון ----------
+  var KTPL = [['🌟', 'איזו התמדה השבוע! גאה בך'], ['🚀', 'שיפור ענק בשבוע האחרון. ככה ממשיכים!'], ['🤝', 'תודה שעזרת לחברים בשאלות לכיתה'], ['💯', 'כל התרגילים נפתרו נכון. מדהים!'], ['🧠', 'דרך פתרון יצירתית ומקורית'], ['💐', 'כל הכבוד לכל הכיתה על ההשקעה!']];
+  var kEmoji = '💐';
+  $('kp-ktpl').innerHTML = KTPL.map(function (t, i) { return '<button type="button" class="kp-chip-b" data-k="' + i + '">' + t[0] + ' ' + esc(t[1]) + '</button>'; }).join('');
+  $('kp-ktpl').addEventListener('click', function (e) { var b = e.target.closest('[data-k]'); if (!b) return; var t = KTPL[+b.dataset.k]; kEmoji = t[0]; $('kp-ktext').value = t[1]; });
+  function fillKto() {
+    if (!KD) return; var v = $('kp-kto').value;
+    $('kp-kto').innerHTML = '<option value="*">לכל הכיתה</option>' + KD.rows.slice().sort(function (a, b) { return a.nick.localeCompare(b.nick, 'he'); }).map(function (r) { return '<option value="' + r.sid + '">' + esc(r.nick) + '</option>'; }).join('');
+    if (v) $('kp-kto').value = v;
+  }
+  $('kp-ksend').addEventListener('click', function () {
+    var t = $('kp-ktext').value.trim(), b = this; if (!t) { $('kp-ktext').focus(); return; }
+    var to = $('kp-kto').value, nick = to === '*' ? '' : $('kp-kto').selectedOptions[0].textContent;
+    b.disabled = true;
+    admin('kudos', { sid: to, text: t, emoji: kEmoji, pts: +$('kp-kpts').value }).then(function (d) {
+      b.disabled = false; if (!d.ok) return toast(d.error);
+      toast('💐 הפרגון נשלח' + (+$('kp-kpts').value ? ' עם ' + $('kp-kpts').value + ' נקודות' : ''));
+      var w = $('kp-kpar'); w.hidden = false;
+      w.href = 'https://wa.me/?text=' + encodeURIComponent((nick ? 'שלום, רציתי לשתף ולפרגן ל' + nick + ' 💐\n' : 'הורים יקרים, רציתי לפרגן לכל הכיתה 💐\n') + t + '\n' + (C.name ? '– ' + C.name : ''));
+      $('kp-ktext').value = ''; kEmoji = '💐'; used('kudos', true); loadNotes(); loadKids();
+    });
+  });
+  $('kp-kids').addEventListener('click', function (e) { var b = e.target.closest('[data-kudo]'); if (!b) return; $('kp-kto').value = b.dataset.kudo; $('kp-kudos').scrollIntoView({ behavior: 'smooth', block: 'start' }); $('kp-ktext').focus(); });
+  function loadNotes() {
+    admin('notes').then(function (d) {
+      if (!d.ok) return;
+      $('kp-klist').innerHTML = d.notes.length ? d.notes.map(function (n) { return '<li>' + esc(n.emoji) + ' <b>' + esc(n.nick) + '</b>: ' + esc(n.text) + (n.pts ? ' (+' + n.pts + ')' : '') + ' <small>' + ago(n.t) + '</small></li>'; }).join('') : '<li class="note">עוד לא נשלחו פרגונים.</li>';
+    });
+  }
+
+  // ---------- הפסקת חשיבה ----------
+  var GAMES = [['sudoku', 'סודוקו'], ['mila', 'מילה – וורדל בעברית'], ['avanim', 'אבני מספרים'], ['reviiot', 'ארבע בשורה'], ['tzviya-misparim', 'צביעה לפי מספרים'], ['tashbetz', 'תשבץ'], ['damka', 'דמקה'], ['shachmat', 'שחמט']];
+  $('kp-bgame').innerHTML = GAMES.map(function (g) { return '<option value="' + g[0] + '">' + g[1] + '</option>'; }).join('');
+  var brkT = null;
+  function showBrk(k) {
+    clearInterval(brkT); $('kp-bstop').hidden = !k; $('kp-bgo').hidden = !!k;
+    if (!k) { $('kp-bst').textContent = ''; return; }
+    var name = (GAMES.filter(function (g) { return g[0] === k.g; })[0] || [0, k.g])[1];
+    var tick = function () { var s = Math.max(0, Math.round((k.until - Date.now()) / 1000)); $('kp-bst').textContent = '🧩 ' + name + ' – נשארו ' + Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2); if (!s) { clearInterval(brkT); showBrk(null); } };
+    tick(); brkT = setInterval(tick, 1000);
+  }
+  $('kp-bgo').addEventListener('click', function () {
+    admin('brk', { game: $('kp-bgame').value, min: +$('kp-bmin').value }).then(function (d) { if (!d.ok) return toast(d.error); showBrk(d.brk); toast('🧩 ההפסקה התחילה. התלמידים רואים אותה בפורטל'); used('brk', true); });
+  });
+  $('kp-bstop').addEventListener('click', function () { admin('brk', { min: 0 }).then(function (d) { showBrk(null); }); });
+
+  // ---------- תחרות בין הכיתות שלי (לוח השבוע של כל כיתה) ----------
+  var RACE = [];
+  function race() {
+    var el = $('kp-race'); el.innerHTML = '<li class="note">סופרים…</li>';
+    Promise.all(CL.map(function (c) {
+      return fetch(API + '/c/' + c.code + '/board?p=week').then(function (r) { return r.json(); }).then(function (d) {
+        var rows = (d && d.rows) || [], pts = rows.reduce(function (s, r) { return s + r.pts; }, 0), act = rows.filter(function (r) { return r.pts > 0; }).length;
+        return { name: c.name, pts: pts, n: rows.length, act: act, avg: rows.length ? Math.round(pts / rows.length) : 0, me: c.code === C.code };
+      }).catch(function () { return null; });
+    })).then(function (l) {
+      RACE = l.filter(Boolean).sort(function (a, b) { return b.avg - a.avg; });
+      el.innerHTML = RACE.map(function (r, i) { return '<li class="' + (r.me ? 'me' : '') + '"><span>' + (['🥇', '🥈', '🥉'][i] || i + 1) + '</span><b>' + esc(r.name) + ' <small>(' + r.act + ' מתוך ' + r.n + ' פעילים)</small></b><em>' + r.avg + '</em></li>'; }).join('') || '<li class="note">עוד אין נקודות השבוע.</li>';
+    });
+  }
+  $('kp-racewa').addEventListener('click', function () {
+    if (!RACE.length) return;
+    window.open('https://wa.me/?text=' + encodeURIComponent('🏆 התחרות בין הכיתות – השבוע (נקודות לתלמיד/ה בממוצע)\n' + RACE.map(function (r, i) { return (['🥇', '🥈', '🥉'][i] || (i + 1) + '.') + ' ' + r.name + ' – ' + r.avg; }).join('\n') + '\nממשיכים לתרגל בכיתה הווירטואלית!'), '_blank'); used('race_wa');
+  });
+
+  // ---------- הורים ----------
+  function pLink() { return location.origin + '/limudim/kita/horim/?kita=' + C.code; }
+  function loadPar() {
+    $('kp-plink').href = pLink(); $('kp-plink').textContent = pLink();
+    admin('get', {}).then(function (d) { if (!d.ok) return; KD = d; renderPar(d.pmsgs || []); });
+  }
+  function renderPar(l) {
+    $('kp-plist').innerHTML = l.map(function (m) { return '<li><p dir="auto">' + esc(m.text).replace(/\n/g, '<br>') + '</p><small>' + ago(m.t) + '</small> <button type="button" class="linkish" data-pdel="' + m.id + '">למחוק</button></li>'; }).join('');
+  }
+  $('kp-plist').addEventListener('click', function (e) { var b = e.target.closest('[data-pdel]'); if (b && confirm('למחוק את ההודעה מדף ההורים?')) admin('pmsg_del', { id: b.dataset.pdel }).then(function (d) { if (d.ok) renderPar(d.pmsgs); }); });
+  $('kp-psend').addEventListener('click', function () {
+    var t = $('kp-ptext').value.trim(), b = this; if (!t) { $('kp-ptext').focus(); return; }
+    var w = window.open('', '_blank'); b.disabled = true;
+    admin('pmsg', { text: t }).then(function (d) {
+      b.disabled = false;
+      if (!d.ok) { if (w) w.close(); return toast(d.error); }
+      renderPar(d.pmsgs); $('kp-ptext').value = ''; used('pmsg', true);
+      var url = 'https://wa.me/?text=' + encodeURIComponent('📣 ' + C.name + '\n' + t + '\n\nכל העדכונים ושיעורי הבית של הכיתה:\n' + pLink());
+      if (w) w.location = url; else location.href = url;
+    });
+  });
+  $('kp-pweek').addEventListener('click', function () {
+    Promise.all([admin('get', { p: 'week' }), admin('hw_list')]).then(function (r) {
+      var g = r[0], h = r[1]; if (!g.ok || !h.ok) return;
+      var act = g.rows.filter(function (x) { return x.pts > 0; }).length, top = g.rows.filter(function (x) { return x.pts > 0; }).slice(0, 3).map(function (x) { return x.nick; });
+      var open = h.hw.filter(function (x) { return x.open; });
+      $('kp-ptext').value = 'הורים יקרים, סיכום השבוע ב' + C.name + ':\n' +
+        '• ' + act + ' מתוך ' + g.rows.length + ' תלמידים תרגלו השבוע בכיתה הווירטואלית.\n' +
+        (open.length ? '• פתוח עכשיו: ' + open.map(function (x) { return x.title + (x.due ? ' (עד ' + new Date(x.due + 'T12:00:00').toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric' }) + ')' : ''); }).join(', ') + '.\n' : '') +
+        (top.length ? '• כל הכבוד ל' + top.join(', ') + ' על ההשקעה! 🌟\n' : '') +
+        'תודה על העידוד מהבית. ' + (g.teacher || '');
+      $('kp-ptext').focus(); used('pweek', true);
+    });
+  });
 
   loadHub();
 })();

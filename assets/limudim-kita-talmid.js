@@ -56,7 +56,7 @@
     if (history.replaceState && qcode) history.replaceState(null, '', location.pathname + location.hash);
     var h = location.hash.slice(1); setTab(/^(hw|forum|pts)$/.test(h) ? h : 'hw');
     loadMe();
-    clearInterval(poll); poll = setInterval(function () { if (document.hidden) return; if (tab === 'forum') loadForum(); else if (tab === 'hw' && !OPEN) loadHw(); }, 45000);
+    clearInterval(poll); poll = setInterval(function () { if (document.hidden) return; loadMe(); if (tab === 'forum') loadForum(); else if (tab === 'hw' && !OPEN) loadHw(); }, 30000);
   }
   function gone(d) { if (d && d.gone) { lsSet('kita-me', null); ME = null; toast(d.error); showJoin(); return true; } return false; }
 
@@ -77,7 +77,9 @@
       HWD = d; renderHwList(); if (OPEN) openHw(OPEN, true); if (cb) cb();
     });
   }
-  function doneOf(h) { return HWD.work.filter(function (w) { return w.hw === h.id && w.done; }).length; }
+  function prepOf(h) { return (HWD.mprep || []).filter(function (r) { return r.hw === h.id; })[0]; }
+  function doneOf(h) { if (h.kind === 'prep') return prepOf(h) ? 1 : 0; return HWD.work.filter(function (w) { return w.hw === h.id && w.done; }).length; }
+  function nOf(h) { return h.kind === 'prep' ? 1 : h.ex.length; }
   function dueTxt(due) {
     if (!due) return '';
     var d = Math.round((new Date(due + 'T23:59:00') - Date.now()) / 864e5);
@@ -87,7 +89,8 @@
     var el = $('ks-hwlist');
     if (!HWD.hw.length) { el.innerHTML = '<p class="note">עוד אין מטלות מהמורה. כשתהיה, היא תופיע כאן.</p>'; return; }
     el.innerHTML = HWD.hw.map(function (h) {
-      var dn = doneOf(h), n = h.ex.length, pct = Math.round(dn / n * 100);
+      var dn = doneOf(h), n = nOf(h), pct = Math.round(dn / n * 100);
+      if (h.kind === 'prep') return '<button type="button" class="kp-card kp-prepc' + (dn ? ' is-done' : '') + '" data-hw="' + h.id + '"><span class="kp-card-t"><b>' + esc(h.title) + '</b><span class="kp-tag">🎬 הכנה לשיעור</span>' + (h.due ? '<span class="kp-tag' + (/עברה|היום/.test(dueTxt(h.due)) ? ' warn' : '') + '">📅 ' + dueTxt(h.due) + '</span>' : '') + '</span><span class="kp-sub">' + (dn ? 'צפית וענית ✓' : 'סרטון קצר' + (h.prep && h.prep.q.length ? ' ו-' + h.prep.q.length + ' שאלות' : '') + ' · עד ' + (10 + 5 * (h.prep ? h.prep.q.length : 0)) + ' נקודות') + '</span></button>';
       return '<button type="button" class="kp-card' + (dn === n ? ' is-done' : '') + '" data-hw="' + h.id + '"><span class="kp-card-t"><b>' + esc(h.title) + '</b>' + (h.np ? '<span class="kp-tag">📄 ' + h.np + ' עמ׳</span>' : '') + (h.due ? '<span class="kp-tag' + (/עברה|היום/.test(dueTxt(h.due)) ? ' warn' : '') + '">📅 ' + dueTxt(h.due) + '</span>' : '') + '</span>' +
         '<span class="kp-bar" aria-hidden="true"><i style="width:' + pct + '%"></i></span><span class="kp-sub">' + (dn === n ? 'הכול נפתר ✓ כל הכבוד!' : dn + ' מתוך ' + n + ' תרגילים') + '</span></button>';
     }).join('');
@@ -100,6 +103,8 @@
     OPEN = id;
     $('ks-hwlist').hidden = true; $('ks-hwhead').hidden = true; $('ks-hw1').hidden = false;
     $('ks-h-title').textContent = h.title;
+    if (h.kind === 'prep') return openPrep(h, quiet);
+    $('ks-prep').hidden = true; $('ks-exs').hidden = false; $('ks-exh').hidden = false;
     $('ks-h-meta').textContent = [h.due ? '📅 ' + dueTxt(h.due) : '', h.np ? '📄 ' + (h.np === 1 ? 'עמוד אחד' : h.np + ' עמודים') : '', doneOf(h) + ' מתוך ' + h.ex.length + ' נפתרו'].filter(Boolean).join(' · ');
     $('ks-h-note').hidden = !h.note; $('ks-h-note').textContent = h.note ? '📌 ' + h.note : '';
     var pg = $('ks-pages');
@@ -126,6 +131,41 @@
     }).join('');
     if (!quiet) window.scrollTo({ top: $('ks-app').offsetTop - 60, behavior: 'smooth' });
   }
+  // ---------- הכנה לשיעור ----------
+  function vidSrc(v) { return /^d:/.test(v) ? 'https://drive.google.com/file/d/' + v.slice(2) + '/preview' : 'https://www.youtube-nocookie.com/embed/' + v + '?rel=0'; }
+  function shuffle(n, seed) { var a = []; for (var i = 0; i < n; i++) a.push(i); var x = seed; for (var j = n - 1; j > 0; j--) { x = (x * 9301 + 49297) % 233280; var k = Math.floor(x / 233280 * (j + 1)); var t = a[j]; a[j] = a[k]; a[k] = t; } return a; }
+  function openPrep(h, quiet) {
+    $('ks-pages').hidden = true; $('ks-exs').hidden = true; $('ks-exh').hidden = true; $('ks-prep').hidden = false;
+    $('ks-h-meta').textContent = [h.due ? '📅 ' + dueTxt(h.due) : '', '🎬 הכנה לשיעור הבא'].filter(Boolean).join(' · ');
+    $('ks-h-note').hidden = !h.note; $('ks-h-note').textContent = h.note ? '📌 ' + h.note : '';
+    var mine = prepOf(h), el = $('ks-prep');
+    if (quiet && el.getAttribute('data-hw') === h.id && !mine) return;
+    el.setAttribute('data-hw', h.id);
+    var q = (h.prep && h.prep.q) || [], seed = 0; for (var i = 0; i < ME.sid.length; i++) seed += ME.sid.charCodeAt(i);
+    el.innerHTML = '<div class="kp-video"><iframe src="' + esc(vidSrc(h.prep.v)) + '" title="סרטון ההכנה" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></div>' +
+      (q.length ? '<h3>שאלות קצרות אחרי הצפייה</h3>' : '') +
+      q.map(function (x, qi) {
+        var ord = shuffle(x.a.length, seed + qi * 7);
+        return '<fieldset class="kp-pq1"><legend>' + (qi + 1) + '. ' + esc(x.q) + '</legend>' + ord.map(function (ai) {
+          var cls = mine ? (ai === 0 ? ' ok' : mine.ans[qi] === ai ? ' no' : '') : '';
+          return '<label class="kp-opt' + cls + '"><input type="radio" name="pq' + qi + '" value="' + ai + '"' + (mine ? ' disabled' + (mine.ans[qi] === ai ? ' checked' : '') : '') + '> <span dir="auto">' + esc(x.a[ai]) + '</span></label>';
+        }).join('') + '</fieldset>';
+      }).join('') +
+      (mine ? '<p class="kp-note">✓ צפית' + (q.length ? ' וענית: ' + mine.ok + ' מתוך ' + q.length + ' נכון' : '') + '. נתראה בשיעור מוכנים! 🎉</p>'
+        : '<button type="button" class="btn btn-gold" id="ks-prep-b">✓ צפיתי' + (q.length ? ' ועניתי' : '') + ' – לשלוח</button><p class="note">צפייה = 10 נקודות, וכל תשובה נכונה = עוד 5.</p>');
+    if (!mine) $('ks-prep-b').addEventListener('click', function () {
+      var ans = q.map(function (x, qi) { var c = el.querySelector('input[name="pq' + qi + '"]:checked'); return c ? +c.value : -1; });
+      if (ans.some(function (a) { return a < 0; }) && !confirm('לא ענית על כל השאלות. לשלוח בכל זאת?')) return;
+      this.disabled = true;
+      call('/c/' + ME.code + '/prep', { sid: ME.sid, token: ME.token, hw: h.id, ans: ans }).then(function (d) {
+        if (gone(d)) return; if (!d.ok) { toast(d.error); loadHw(); return; }
+        toast('🎉 +' + d.pts + ' נקודות! ' + (q.length ? d.right + ' מתוך ' + d.of + ' נכון' : 'מוכנים לשיעור'));
+        used('prep_done', true); loadHw(function () { openHw(h.id, true); }); loadMe();
+      });
+    });
+    if (!quiet) window.scrollTo({ top: $('ks-app').offsetTop - 60, behavior: 'smooth' });
+  }
+
   $('ks-exs').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
     if (b.dataset.calc) { dlg(CALC[b.dataset.calc][0], CALC[b.dataset.calc][1]); used('calc_' + b.dataset.calc, true); }
@@ -234,6 +274,7 @@
       $('ks-badges-n').textContent = got + ' מתוך ' + BADGES.length;
       $('ks-badges').innerHTML = BADGES.map(function (b) { var on = b[3](m); return '<li class="' + (on ? 'on' : '') + '"><span aria-hidden="true">' + (on ? b[0] : '🔒') + '</span><b>' + b[1] + '</b><small>' + b[2] + '</small></li>'; }).join('');
       $('ks-top').innerHTML = m.top.length ? m.top.map(function (r) { return '<li class="' + (r.me ? 'me' : '') + '"><span>' + (r.place ? ['🥇', '🥈', '🥉'][r.place - 1] || r.place : '·') + '</span><b>' + esc(r.nick) + (r.crown ? ' 👑 ' + esc(r.crown) : '') + '</b><em>' + r.pts + '</em></li>'; }).join('') : '<li class="note">עוד אין נקודות השבוע.</li>';
+      showNotes(m.notes || []); showBrk(m.brk);
       $('ks-gifts').hidden = !m.gifts.length;
       $('ks-gifts-l').innerHTML = m.gifts.map(function (g) {
         var who = g.who === 'all' ? 'לכל מי שמשתתף/ת' : g.who === 'top3' ? 'לשלושת הראשונים' : /^pts:/.test(g.who) ? 'למי שמגיע/ה ל-' + g.who.slice(4) + ' נקודות' : 'למקום ' + g.who;
@@ -241,6 +282,40 @@
       }).join('');
     });
   }
+  // ---------- פרגון ותזכורות מהמורה ----------
+  function showNotes(notes) {
+    var seen = lsGet('kita-seen-' + ME.code, []), fresh = notes.filter(function (n) { return seen.indexOf(n.id) < 0; });
+    var k = fresh.filter(function (n) { return n.kind === 'kudos'; })[0], r = fresh.filter(function (n) { return n.kind === 'remind'; })[0];
+    var box = $('ks-notes'); box.innerHTML = '';
+    if (k) box.insertAdjacentHTML('beforeend', '<div class="kp-kudo" role="status"><span class="kp-kudo-e" aria-hidden="true">' + esc(k.emoji || '💐') + '</span><div><b>פרגון מהמורה' + (k.pts ? ' · +' + k.pts + ' נקודות' : '') + '</b><p dir="auto">' + esc(k.text) + '</p></div><button type="button" class="linkish" data-seen="' + k.id + '">תודה! ✕</button></div>');
+    if (r) box.insertAdjacentHTML('beforeend', '<div class="kp-remind" role="status"><span aria-hidden="true">⏰</span><p dir="auto">' + esc(r.text) + '</p><button type="button" class="linkish" data-seen="' + r.id + '">✕</button></div>');
+    var ks = notes.filter(function (n) { return n.kind === 'kudos'; });
+    $('ks-kudos').hidden = !ks.length;
+    $('ks-kudos-l').innerHTML = ks.map(function (n) { return '<li><span aria-hidden="true">' + esc(n.emoji || '💐') + '</span><b dir="auto">' + esc(n.text) + '</b><small>' + ago(n.t) + (n.pts ? ' · +' + n.pts : '') + '</small></li>'; }).join('');
+  }
+  $('ks-notes').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-seen]'); if (!b) return;
+    var seen = lsGet('kita-seen-' + ME.code, []); seen.push(+b.dataset.seen); lsSet('kita-seen-' + ME.code, seen.slice(-80));
+    b.parentNode.remove(); used('note_seen', true);
+  });
+
+  // ---------- הפסקת חשיבה מהמורה ----------
+  var GAMES = { sudoku: 'סודוקו', mila: 'מילה – וורדל בעברית', avanim: 'אבני מספרים', reviiot: 'ארבע בשורה', 'tzviya-misparim': 'צביעה לפי מספרים', tashbetz: 'תשבץ', damka: 'דמקה', shachmat: 'שחמט' }, brkT = null;
+  function showBrk(k) {
+    clearInterval(brkT); var el = $('ks-brk');
+    if (!k || k.until < Date.now()) { el.hidden = true; return; }
+    el.hidden = false; $('ks-brk-g').textContent = GAMES[k.g] || k.g; $('ks-brk-a').href = '/kelim/chashiva/' + k.g + '/';
+    var tick = function () { var s = Math.max(0, Math.round((k.until - Date.now()) / 1000)); $('ks-brk-t').textContent = Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2); if (!s) { clearInterval(brkT); el.hidden = true; } };
+    tick(); brkT = setInterval(tick, 1000);
+  }
+  $('ks-brk-a').addEventListener('click', function () { used('brk_play', true); });
+
+  // ---------- להורים ----------
+  $('ks-par').addEventListener('click', function () {
+    var u = location.origin + '/kelim/chashiva/kita/horim/#c=' + ME.code + '&s=' + ME.sid;
+    window.open('https://wa.me/?text=' + encodeURIComponent('אמא, אבא, כאן רואים את ההתקדמות שלי בכיתה הווירטואלית 🏆\n' + u), '_blank'); used('parents_wa');
+  });
+
   $('ks-leave').addEventListener('click', function () {
     if (!confirm('לצאת מהכיתה? הנקודות והעבודה שלך יימחקו.')) return;
     call('/c/' + ME.code + '/leave', { sid: ME.sid, token: ME.token }).then(function () { lsSet('kita-me', null); ME = null; used('leave'); showJoin(); });

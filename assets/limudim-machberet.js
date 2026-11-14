@@ -1080,6 +1080,7 @@
       HWD = d;
       $('mb-hwlist').hidden = false; $('mb-hwcls').textContent = '📚 ' + d.name + (d.teacher ? ' · ' + d.teacher : '');
       $('mb-hwme').textContent = 'הכינוי שלי: ' + KME.nick;
+      d.hw = d.hw.filter(function (h) { return h.ex && h.ex.length; }); // "הכנה לשיעור" (סרטון) נמצאת בפורטל הכיתה, לא במחברת
       $('mb-hwul').innerHTML = d.hw.length ? d.hw.map(function (h) {
         var mine = d.work.filter(function (w) { return w.hw === h.id; }), done = mine.filter(function (w) { return w.done; }).length;
         return '<li><button type="button" class="kh-hw" data-hw="' + h.id + '"><b>' + esc(h.title) + '</b><span>' + h.ex.length + ' תרגילים · ' + (done === h.ex.length ? 'הכול נפתר ✓' : done + ' ✓') + '</span></button></li>';

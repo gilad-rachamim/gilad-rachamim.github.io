@@ -34,6 +34,8 @@
       <button type="button" class="kp-chip" id="ks-chip" hidden onclick="document.getElementById('ks-t-pts').click()">⭐ <b id="ks-mypts">0</b> נק׳</button>
     </div>
     <p class="kp-msgbar" id="ks-msg" hidden></p>
+    <div class="kp-brk" id="ks-brk" role="status" hidden><span aria-hidden="true">🧩</span><div><b>הפסקת חשיבה מהמורה!</b><span><span id="ks-brk-g"></span> · נשארו <b id="ks-brk-t" dir="ltr"></b></span></div><a class="btn btn-gold btn-sm" id="ks-brk-a" href="/kelim/chashiva/">לשחק ▶️</a></div>
+    <div id="ks-notes"></div>
 
     <div class="kp-tabs" role="tablist" aria-label="הכיתה">
       <button type="button" role="tab" id="ks-t-hw" aria-selected="true">📚 המטלות</button>
@@ -50,7 +52,8 @@
         <p class="kp-meta" id="ks-h-meta"></p>
         <p class="kp-note" id="ks-h-note" hidden></p>
         <div id="ks-pages" hidden></div>
-        <h3>התרגילים</h3>
+        <div id="ks-prep" hidden></div>
+        <h3 id="ks-exh">התרגילים</h3>
         <ol class="kp-exs" id="ks-exs"></ol>
       </div>
     </section>
@@ -84,6 +87,11 @@
         <h3>🎁 הפרסים מהמורה</h3>
         <ul class="kp-badges kp-gifts" id="ks-gifts-l"></ul>
       </div>
+      <div class="panel" id="ks-kudos" hidden>
+        <h3>💐 פרגונים מהמורה</h3>
+        <ul class="kp-badges kp-gifts kp-kudl" id="ks-kudos-l"></ul>
+      </div>
+      <p><button type="button" class="btn btn-sm" id="ks-par">📲 להראות להורים את ההתקדמות שלי</button></p>
       <p><button type="button" class="linkish" id="ks-leave">לצאת מהכיתה ולמחוק את הנתונים שלי</button></p>
     </section>
   </section>
