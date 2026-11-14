@@ -1,0 +1,90 @@
+/* הצעת מחיר ללקוח של רואה חשבון: מסמך בהיר (כמו נייר) בתוך האתר הכהה, ואותו מסמך ב-PDF */
+.hz-doc{--hz:#c9a24d;--hz-ink:#1d1a15;--hz-mut:#5f574a;background:#fffdf8;color:var(--hz-ink);border-radius:14px;padding:1.4rem 1.3rem 1.2rem;box-shadow:0 8px 30px rgba(0,0,0,.35);font-family:var(--sans);line-height:1.6;max-width:46rem;margin:0 auto;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.hz-doc *{color:inherit}
+.hz-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.8rem 1.2rem;padding-bottom:.9rem;border-bottom:4px solid var(--hz)}
+.hz-brand{display:flex;align-items:center;gap:.75rem;min-width:0}
+.hz-logo{max-height:64px;max-width:180px;object-fit:contain}
+.hz-mono{display:inline-grid;place-items:center;width:58px;height:58px;border-radius:50%;background:#16130f;color:var(--hz)!important;border:3px solid var(--hz);font:700 1.25rem var(--serif);flex:none}
+.hz-o b{display:block;font:700 1.25rem/1.25 var(--serif)}
+.hz-o span{display:block;color:var(--hz-mut);font-size:.92rem}
+.hz-meta{text-align:end}
+.hz-meta h2{margin:0;font:700 1.55rem/1.1 var(--serif);color:var(--hz-ink)}
+.hz-meta span{display:block;color:var(--hz-mut);font-size:.9rem}
+.hz-to{margin:1rem 0 .2rem;font-size:1.05rem}
+.hz-intro{margin:.2rem 0 .6rem;color:#3a342b}
+.hz-h{font:700 1.12rem var(--serif);margin:1.1rem 0 .5rem;padding-inline-start:.6rem;border-inline-start:4px solid var(--hz)}
+.hz-items{list-style:none;margin:0;padding:0}
+.hz-items>li{border:1px solid #e7dfcf;border-radius:12px;padding:.7rem .85rem;margin-bottom:.55rem;background:#fff;break-inside:avoid}
+.hz-ih{display:flex;justify-content:space-between;align-items:baseline;gap:.8rem}
+.hz-ih b{font-size:1.05rem}
+.hz-p{font-weight:700;white-space:nowrap;font-size:1.05rem}
+.hz-p small{font-weight:400;color:var(--hz-mut)}
+.hz-inc{display:inline-block;background:color-mix(in srgb,var(--hz) 22%,#fff);border-radius:999px;padding:0 .7rem;font-size:.92rem}
+.hz-d{margin:.35rem 0 0;padding:0;list-style:none;columns:2 15rem;column-gap:1.2rem}
+.hz-d li{position:relative;padding-inline-start:1.3rem;color:#3a342b;font-size:.96rem;break-inside:avoid}
+.hz-d li::before{content:"✓";position:absolute;inset-inline-start:0;color:#1d1a15;font-weight:700}
+.hz-portal{margin:1rem 0 .4rem;padding:.85rem 1rem;border-radius:12px;background:color-mix(in srgb,var(--hz) 12%,#fff);border:1px solid color-mix(in srgb,var(--hz) 45%,#fff);break-inside:avoid}
+.hz-portal h3{margin:0 0 .3rem;font:700 1.12rem var(--serif)}
+.hz-portal .hz-pl{margin:0 0 .4rem;color:#3a342b}
+.hz-portal ul{margin:0;padding:0;list-style:none}
+.hz-portal li{position:relative;padding-inline-start:1.6rem;margin:.3rem 0;color:#3a342b}
+.hz-portal li::before{content:"📲";position:absolute;inset-inline-start:0}
+.hz-portal li:nth-child(2)::before{content:"🗂️"}
+.hz-portal li:nth-child(3)::before{content:"⏰"}
+.hz-portal li:nth-child(4)::before{content:"✨"}
+.hz-portal li b{color:#1d1a15}
+.hz-total{margin:1.1rem 0 .4rem;padding:1rem;border-radius:14px;background:#16130f;text-align:center;break-inside:avoid}
+.hz-total *{color:#fbf5e7}
+.hz-big{font:700 2.2rem/1.15 var(--serif);color:var(--hz)!important}
+.hz-big small{font-size:1.05rem;color:#fbf5e7!important}
+.hz-sub{font-size:1.12rem;font-weight:700;margin-top:.15rem}
+.hz-vat{font-size:.88rem;opacity:.85;margin-top:.25rem}
+.hz-terms{margin:0;padding-inline-start:1.2rem;color:#3a342b;font-size:.95rem}
+.hz-sign{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:1rem;margin-top:1.3rem;padding-top:.8rem;border-top:1px solid #e7dfcf;color:#3a342b}
+.hz-ok-line{display:none;align-items:flex-end;gap:.5rem;font-size:.9rem}
+.hz-ok-line i{display:inline-block;width:7.5rem;border-bottom:1px solid #8a826f}
+/* דף הלקוח */
+.hz-page .hz-act{max-width:46rem;margin:1rem auto 0}
+.hz-page .hz-ok{background:rgba(201,162,77,.1);border:1px solid var(--line);border-radius:14px;padding:1rem}
+.hz-page .hz-ok h2{margin:0 0 .4rem;font-size:1.2rem}
+.hz-page .hz-done{background:rgba(95,191,166,.15);border:1px solid #5fbfa6;border-radius:12px;padding:.8rem 1rem;font-size:1.05rem}
+.hz-page .btns{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}
+/* הבונה בחדר */
+.ch .hz-build{margin-top:1.6rem}
+.ch .hz-row{display:grid;grid-template-columns:auto 1fr 6.5rem 6.5rem;gap:.4rem;align-items:center;padding:.45rem .5rem;border:1px solid var(--line);border-radius:12px;margin-bottom:.4rem;opacity:.75}
+.ch .hz-row.is-on{opacity:1;border-color:var(--gold);background:rgba(201,162,77,.07)}
+.ch .hz-row input[type=text],.ch .hz-row select,.ch .hz-row textarea{font:inherit;font-size:1rem;padding:.45rem .5rem;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--cream);min-width:0;width:100%}
+.ch .hz-on input{width:1.3rem;height:1.3rem;accent-color:var(--gold)}
+.ch .hz-more{grid-column:1/-1}
+.ch .hz-more summary{cursor:pointer;color:var(--muted);font-size:.92rem}
+.ch .hz-more textarea{margin:.3rem 0}
+.ch .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.ch .hz-prev{margin:1rem 0}
+.ch .hz-sumline{font-size:1.1rem;margin:.6rem 0}
+.ch .hz-yes{color:#5fbfa6}
+.ch .hz-teaser{border:1px dashed var(--gold);border-radius:14px;padding:.9rem 1rem;margin-top:1.4rem}
+@media (max-width:560px){
+  .hz-doc{padding:1rem .85rem}
+  .hz-meta{text-align:start}
+  .hz-big{font-size:1.85rem}
+  .ch .hz-row{grid-template-columns:auto 1fr 1fr}
+  .ch .hz-row .hz-n{grid-column:2/-1}
+  .ch .hz-row .hz-pr{grid-column:2}
+}
+@media print{
+  @page{size:A4;margin:12mm}
+  html,body{background:#fff!important;height:auto!important;min-height:0!important;padding:0!important;margin:0!important}
+  main,#main,.tool{min-height:0!important}
+  #hz-msg,#hz-empty{display:none!important}
+  .topbar,.site-foot,.crumbs,.dock,.install-bar,.k-hero,.no-print,.seo-txt,.seo-faq,.share-row,.k-related,.hz-act{display:none!important}
+  main,#main,.hz-page{padding:0!important;margin:0!important}
+  .hz-doc{box-shadow:none;max-width:none;border-radius:0;padding:0;background:#fff;font-size:15.5px;line-height:1.45}
+  .hz-items>li{padding:.45rem .7rem;margin-bottom:.4rem}
+  .hz-h{margin:.7rem 0 .35rem}
+  .hz-portal{margin:.7rem 0 .3rem;padding:.6rem .8rem}
+  .hz-portal li{margin:.15rem 0}
+  .hz-total{margin:.7rem 0 .3rem;padding:.7rem}
+  .hz-big{font-size:1.9rem}
+  .hz-sign{margin-top:.8rem}
+  .hz-ok-line{display:flex}
+}
