@@ -24,6 +24,9 @@ function fixName(w) {
 }
 const srcText = s => plain(s).replace(/[א-ת֑-ֽֿ-ׇ‑]+/g, fixName);
 let bad = 0, n = 0, segs = 0;
+// חור במקור: 4 מקטעים ריקים ברצף ומעלה = קטע שחסר בספריא (כך נעלם סוף ברכת המזון ב"תורת אמת"). בודקים כל נוסח שהברכון משתמש בו.
+const used = new Set(); for (const kind of Object.keys(KINDS)) for (const nus of Object.keys(KINDS[kind].n)) for (const brit of [false, true]) BUILD(kind, nus, { brit }).secs.forEach(s => used.add(s.key));
+for (const k of used) { let run = 0; for (const t of SRC[k].text) { run = (typeof t === 'string' && !plain(t)) ? run + 1 : 0; if (run === 4) { console.log('חור במקור (4+ מקטעים ריקים ברצף):', k); bad++; } } }
 for (const kind of Object.keys(KINDS)) for (const nus of Object.keys(KINDS[kind].n)) for (const brit of [false, true]) {
   const b = BUILD(kind, nus, { brit }); n++;
   for (const s of b.secs) {

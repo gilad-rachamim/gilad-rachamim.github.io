@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "הכלים של גילעד רחמים",
+  "short_name": "הכלים",
+  "version": "3.2.0",
+  "description": "כל הכלים החינמיים של hakelim.com בכרום: תרגום דפים לעברית, תיקון עברית-אנגלית, צילום עמוד שלם, הקראה, חתימה על PDF ועוד. בלי שרת.",
+  "homepage_url": "https://hakelim.com/kelim/machshev/chatima/tosaf/",
+  "icons": { "16": "icon16.png", "32": "icon32.png", "48": "icon48.png", "128": "icon128.png" },
+  "action": { "default_title": "הכלים של גילעד רחמים", "default_popup": "popup.html", "default_icon": { "16": "icon16.png", "32": "icon32.png" } },
+  "background": { "service_worker": "background.js" },
+  "permissions": ["contextMenus", "storage", "unlimitedStorage", "activeTab", "scripting", "alarms", "tts"],
+  "host_permissions": ["https://mail.google.com/*", "https://*.googleusercontent.com/*"],
+  "optional_host_permissions": ["<all_urls>"],
+  "commands": {
+    "fix-layout": { "suggested_key": { "default": "Alt+Shift+H" }, "description": "לתקן טקסט שנכתב בשפה הלא נכונה (עברית/אנגלית)" },
+    "translate-page": { "suggested_key": { "default": "Alt+Shift+T" }, "description": "לתרגם את הדף (לחיצה נוספת מחזירה)" }
+  },
+  "content_scripts": [
+    { "matches": ["https://mail.google.com/*"], "js": ["gmail.js"], "css": ["gmail.css"] },
+    { "matches": ["https://hakelim.com/*"], "js": ["bridge.js"], "run_at": "document_idle" }
+  ]
+}

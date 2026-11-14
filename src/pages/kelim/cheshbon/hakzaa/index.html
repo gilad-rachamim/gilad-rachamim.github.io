@@ -1,0 +1,83 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "cheshbon_hakzaa",
+  "title": "מספר הקצאה לחשבונית – בודק בחינם: מתי צריך מספר הקצאה (מעל 5,000 ₪ מ-1.6.2026) | הכלים של גילעד רחמים",
+  "description": "בודק מספר הקצאה לחשבונית: מקלידים סכום ותאריך, ורואים מיד אם החשבונית חייבת מספר הקצאה של חשבוניות ישראל. מ-1.6.2026 – עסקה שעולה על 5,000 ₪ לפני מע\"מ. גם בדיקה של רשימת חשבוניות מאקסל, למשרד. בחינם, בלי הרשמה.",
+  "og_title": "מספר הקצאה – האם החשבונית צריכה מספר הקצאה?",
+  "priority": "0.8",
+  "crumbs": [["רואי חשבון ויועצי מס", "/kelim/cheshbon/"], ["בודק מספר הקצאה", null]],
+  "ext": {"accept": ["text"], "input": "hk-amt", "menu": "צריך מספר הקצאה? (חשבוניות ישראל)"},
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/cheshbon.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"מאיזה סכום צריך מספר הקצאה ב-2026?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מ-1.6.2026: לעסקה שעולה על 5,000 ₪ לפני מע\\\"מ. מ-1.1.2026 עד 31.5.2026 הרף היה 10,000 ₪ לפני מע\\\"מ.\"}}, {\"@type\": \"Question\", \"name\": \"חשבונית של 5,000 ₪ בדיוק צריכה מספר הקצאה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. החובה חלה על עסקה שסכומה עולה על 5,000 ₪ לפני מע\\\"מ, כלומר מ-5,000.01 ₪.\"}}, {\"@type\": \"Question\", \"name\": \"הרף הוא לפני מע\\\"מ או כולל מע\\\"מ?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לפני מע\\\"מ. בשיעור 18%, חשבונית של עד 5,900 ₪ כולל מע\\\"מ עדיין מתחת לרף.\"}}, {\"@type\": \"Question\", \"name\": \"לקוח פרטי צריך מספר הקצאה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. מספר ההקצאה נדרש כדי שעוסק או חברה יוכלו לקזז את מע\\\"מ התשומות. ללקוח פרטי או לעוסק פטור הוא לא נדרש.\"}}, {\"@type\": \"Question\", \"name\": \"מה קורה אם קיבלתי חשבונית בלי מספר הקצאה מעל הרף?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לפי הודעת רשות המסים, בלי מספר הקצאה לא ניתן לקזז את מס התשומות שבחשבונית. מבקשים מהספק להוציא חשבונית עם מספר הקצאה.\"}}, {\"@type\": \"Question\", \"name\": \"איך מקבלים מספר הקצאה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מי שמוציא את החשבונית מבקש אותו, בדרך כלל ישר מתוכנת החשבוניות שמחוברת לרשות המסים, או בשירות המקוון של רשות המסים.\"}}]}</script>",
+  "foot": "<script src=\"/assets/cheshbon.js\" defer></script><script src=\"/assets/cheshbon-hakzaa.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מספר הקצאה לחשבונית: צריך או לא?</h1>
+  <p class="sub">מקלידים את הסכום ואת תאריך החשבונית, ורואים מיד אם היא חייבת מספר הקצאה של "חשבוניות ישראל". גם לרשימה שלמה של חשבוניות מאקסל.</p>
+</header>
+
+<div class="tool ch" id="hakzaa">
+  <div class="seg no-print" id="hk-mode" role="group" aria-label="חשבונית אחת או רשימה">
+    <button type="button" data-v="one" aria-pressed="true">חשבונית אחת</button>
+    <button type="button" data-v="many" aria-pressed="false">רשימת חשבוניות (למשרד)</button>
+  </div>
+
+  <form class="k-form" id="hk-one" novalidate>
+    <div class="row2">
+      <div class="field"><label for="hk-amt">סכום החשבונית</label><input id="hk-amt" class="num-in" type="text" inputmode="decimal" autocomplete="off" placeholder="7,500"></div>
+      <div class="field"><label for="hk-date">תאריך החשבונית</label><input id="hk-date" type="date"></div>
+    </div>
+    <div class="field"><span class="label" id="hk-vat-l">הסכום הוא</span>
+      <div class="seg" id="hk-vat" role="group" aria-labelledby="hk-vat-l"><button type="button" data-v="ex" aria-pressed="true">לפני מע"מ</button><button type="button" data-v="in" aria-pressed="false">כולל מע"מ</button></div></div>
+    <div class="field"><span class="label" id="hk-buy-l">מי הלקוח?</span>
+      <div class="seg" id="hk-buy" role="group" aria-labelledby="hk-buy-l"><button type="button" data-v="m" aria-pressed="true">עוסק מורשה או חברה</button><button type="button" data-v="p" aria-pressed="false">לקוח פרטי / עוסק פטור</button></div></div>
+  </form>
+  <div class="res" id="hk-res" aria-live="polite"></div>
+
+  <form class="k-form" id="hk-many" novalidate hidden>
+    <h2>רשימת חשבוניות</h2>
+    <div class="field"><label for="hk-list">מדביקים מאקסל: תאריך וסכום בכל שורה (אפשר גם מספר חשבונית ושם לקוח)</label>
+      <textarea id="hk-list" spellcheck="false" placeholder="15/06/2026&#9;1043&#9;לקוח א&#9;6,200"></textarea></div>
+    <div class="field"><span class="label" id="hk-mvat-l">הסכומים ברשימה הם</span>
+      <div class="seg" id="hk-mvat" role="group" aria-labelledby="hk-mvat-l"><button type="button" data-v="ex" aria-pressed="true">לפני מע"מ</button><button type="button" data-v="in" aria-pressed="false">כולל מע"מ</button></div></div>
+    <p class="hint">הבדיקה מניחה שכל הלקוחות ברשימה הם עוסקים מורשים או חברות. לקוח פרטי לא צריך מספר הקצאה.</p>
+    <div class="btns"><button class="btn btn-gold" type="button" id="hk-go">לבדוק את הרשימה</button></div>
+    <p class="msg" id="hk-msg" aria-live="polite"></p>
+  </form>
+  <div id="hk-out"></div>
+
+  <div class="res" style="margin-top:1.2rem">
+    <h3>הרף לפי תאריך החשבונית</h3>
+    <div class="tbl-wrap"><table><thead><tr><th>מתאריך</th><th>חובת מספר הקצאה לעסקה שעולה על</th></tr></thead><tbody>
+      <tr><td>1.6.2026 והלאה</td><td class="n">₪5,000 לפני מע"מ</td></tr>
+      <tr><td>1.1.2026 עד 31.5.2026</td><td class="n">₪10,000 לפני מע"מ</td></tr>
+      <tr><td>1.1.2025 עד 31.12.2025</td><td class="n">₪20,000 לפני מע"מ</td></tr>
+      <tr><td>5.5.2024 עד 31.12.2024</td><td class="n">₪25,000 לפני מע"מ</td></tr>
+    </tbody></table></div>
+    <p class="src">מקור: הודעת רשות המסים מ-24.5.2026, <a href="https://www.gov.il/he/pages/pa240525-1" target="_blank" rel="noopener">"החל מה-1 ביוני 2026: חובת מספר הקצאה תחול מ-5,000 ₪"</a>. בקשת מספר הקצאה: <a href="https://www.gov.il/he/service/request-assignment-number-for-tax-invoice" target="_blank" rel="noopener">השירות ברשות המסים</a>, או ישר מתוכנת החשבוניות.</p>
+  </div>
+  <div class="share-row no-print"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="בודק מספר הקצאה לחשבונית, בחינם – מקלידים סכום ותאריך ורואים אם צריך:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר</a></div>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">מה זה מספר הקצאה, ומתי חשבונית צריכה אותו</h2>
+  <p>מספר הקצאה הוא מספר שרשות המסים נותנת לחשבונית מס במסגרת הרפורמה "חשבוניות ישראל". המטרה היא לעצור חשבוניות פיקטיביות: עוסק שקיבל חשבונית בלי מספר הקצאה, כשהעסקה מעל הרף, לא יוכל לקזז את מע"מ התשומות שבה. לכן מי שמוציא את החשבונית מבקש את המספר, בדרך כלל ישר מתוכנת החשבוניות, ומדפיס אותו על החשבונית.</p>
+  <h3>הרף ב-2026: 5,000 ₪ לפני מע"מ</h3>
+  <p>מ-1 ביוני 2026 החובה חלה על עסקה שסכומה עולה על 5,000 ₪ לפני מע"מ. עד 31 במאי 2026 הרף היה 10,000 ₪, בשנת 2025 הוא היה 20,000 ₪, ובשנת 2024 (מ-5 במאי) 25,000 ₪. הכלי בוחר את הרף לפי תאריך החשבונית, ולכן אפשר לבדוק גם חשבוניות ישנות. "עולה על" פירושו יותר מהרף: חשבונית של 5,000 ₪ בדיוק לפני מע"מ עוד לא חייבת.</p>
+  <h3>לפני מע"מ או כולל מע"מ?</h3>
+  <p>הרף נמדד לפני מע"מ. אם יש לכם רק את הסכום הכולל, בוחרים "כולל מע"מ" והכלי מוריד את המע"מ לפי השיעור שהיה בתוקף ביום החשבונית: 18% מ-1.1.2025, ו-17% לפני כן. כך 5,900 ₪ כולל מע"מ ב-2026 הם 5,000 ₪ לפני מע"מ בדיוק, ולא צריך מספר הקצאה; 5,901 ₪ כבר צריך.</p>
+  <h3>מי צריך מספר הקצאה ומי לא</h3>
+  <p>מספר ההקצאה נדרש כשהלקוח הוא עוסק שמקזז את המע"מ: עוסק מורשה או חברה. לקוח פרטי, עוסק פטור, או גוף שלא מקזז מע"מ, לא צריכים אותו. משרד רואי חשבון יכול להדביק את כל רשימת החשבוניות של לקוח מאקסל ולראות מיד אילו מהן חייבות מספר הקצאה, ולהוריד את הטבלה חזרה לאקסל לבדיקה מול החשבוניות שהתקבלו.</p>
+  <p>עוד כלים למשרד: <a class="gold" href="/kelim/cheshbon/shaar/">מחשבון שער יציג</a>, <a class="gold" href="/kelim/cheshbon/tik/">רשימת מסמכים לדוח שנתי</a>, <a class="gold" href="/kelim/cheshbon/osek/">בדיקת ח.פ ומספר עוסק</a>, <a class="gold" href="/kelim/cheshbon/mikdamot/">מחשבון דוח מע"מ ומקדמות</a>, <a class="gold" href="/kelim/cheshbon/moadim/">לוח מועדי דיווח</a>, <a class="gold" href="/kesef/maam/">מחשבון מע"מ</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>מאיזה סכום צריך מספר הקצאה ב-2026?</summary><p>מ-1.6.2026: לעסקה שעולה על 5,000 ₪ לפני מע"מ. מ-1.1.2026 עד 31.5.2026 הרף היה 10,000 ₪ לפני מע"מ.</p></details>
+  <details><summary>חשבונית של 5,000 ₪ בדיוק צריכה מספר הקצאה?</summary><p>לא. החובה חלה על עסקה שסכומה עולה על 5,000 ₪ לפני מע"מ, כלומר מ-5,000.01 ₪.</p></details>
+  <details><summary>הרף הוא לפני מע"מ או כולל מע"מ?</summary><p>לפני מע"מ. בשיעור 18%, חשבונית של עד 5,900 ₪ כולל מע"מ עדיין מתחת לרף.</p></details>
+  <details><summary>לקוח פרטי צריך מספר הקצאה?</summary><p>לא. מספר ההקצאה נדרש כדי שעוסק או חברה יוכלו לקזז את מע"מ התשומות. ללקוח פרטי או לעוסק פטור הוא לא נדרש.</p></details>
+  <details><summary>מה קורה אם קיבלתי חשבונית בלי מספר הקצאה מעל הרף?</summary><p>לפי הודעת רשות המסים, בלי מספר הקצאה לא ניתן לקזז את מס התשומות שבחשבונית. מבקשים מהספק להוציא חשבונית עם מספר הקצאה.</p></details>
+  <details><summary>איך מקבלים מספר הקצאה?</summary><p>מי שמוציא את החשבונית מבקש אותו, בדרך כלל ישר מתוכנת החשבוניות שמחוברת לרשות המסים, או בשירות המקוון של רשות המסים.</p></details>
+</section>
+<!--/seo-txt-->

@@ -1,0 +1,21 @@
+/* טיימר חופשי, שעון עצר ולשוניות (/limudim/timer/, /limudim/shaon-etzer/) */
+.tk-tabs{margin-bottom:1rem}
+.tk-tabs button{font-size:1.05rem;padding:.6rem 1rem}
+.ft-hms{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+.ft-hms input{text-align:center}
+.clock .t.long{font-size:clamp(3rem,15.5vw,5.5rem)}
+.clock .t small{font-size:.45em;color:var(--parchment)}
+.sw-tbl{width:100%;border-collapse:collapse;margin-top:1rem;font-variant-numeric:tabular-nums}
+.sw-tbl th,.sw-tbl td{padding:.5rem .3rem;border-bottom:1px solid var(--line);text-align:center;color:var(--body);font-weight:400}
+.sw-tbl thead th{color:var(--gold);font-weight:700;font-size:.92rem}
+.sw-tbl td{direction:ltr;font-family:var(--serif);font-size:1.15rem;color:var(--cream)}
+.btns button:disabled{opacity:.45;cursor:default}
+body.focus-mode .chesed,body.focus-mode .fb,body.focus-mode .k-sec{display:none!important}
+body.focus-mode .tool{padding-top:8vh}
+body.focus-mode .clock .t{font-size:clamp(4.5rem,24vw,11rem)}
+body.focus-mode .clock .t.long{font-size:clamp(3.2rem,17vw,9rem)}
+#tk-ft>.modes button{padding:.42rem .75rem;font-size:.98rem}
+/* קישורים לדפי "טיימר N דקות" (13.11.2026) */
+.tm-links{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center;margin:1.2rem 0 .4rem}
+.tm-links a{padding:.5rem .85rem;border:1px solid var(--line);border-radius:99px;color:var(--body);text-decoration:none;font-size:1rem;min-height:44px;display:inline-flex;align-items:center}
+.tm-links a[aria-current]{border-color:var(--gold);color:var(--gold-hi)}

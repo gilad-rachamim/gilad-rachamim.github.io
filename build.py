@@ -51,7 +51,7 @@ SITES = {
         "desc": "כלים חינמיים לעסק קטן: תפריט בקישור ו-QR, מודעת מבצע, QR מעוצב וצ'ק-ליסט לפתיחת עסק",
         "css": ["/assets/esek.css"],
         "nav": [("tafrit", "/esek/tafrit/", "תפריט ו-QR"), ("mivtza", "/esek/mivtza/", "מודעת מבצע"),
-                ("qr", "/esek/qr/", "QR מעוצב"), ("ptiha", "/esek/ptiha/", "פתיחת עסק"), ("kelim", "/kelim/", "כל הכלים")],
+                ("qr", "/esek/qr/", "QR מעוצב"), ("ptiha", "/esek/ptiha/", "פתיחת עסק"), ("tfutsa", "/esek/tfutsa/", "תפוצה ללקוחות"), ("seo", "/esek/seo/", "בדיקת SEO"), ("kelim", "/kelim/", "כל הכלים")],
     },
     # משפחה ובית: קניות, תורנויות, שבת ואורחים, מי מביא מה. בלי שרת: הנתונים בטלפון (localStorage),
     # ושיתוף עם אחרים דרך ווטסאפ וקישור שמכיל את המצב (#d=...).
@@ -112,6 +112,18 @@ WA_TEXT = "שלום גילעד, אשמח לשמוע פרטים על ברית מ�
 from urllib.parse import quote
 WA = "https://wa.me/972584049049?text=" + quote(WA_TEXT)
 
+# כתובת המייל לכפתור "או במייל" לא כתובה בקוד (14.11.2026): היא נקראת ממשתנה הסביבה SITE_CONTACT_EMAIL,
+# או מהקובץ ~/.config/hakelim/contact_email.txt. שניהם נוצרים פעם אחת בקובץ "בניית אתר הכלים.bat" שעל שולחן העבודה.
+def _contact_mail():
+    v = os.environ.get("SITE_CONTACT_EMAIL", "").strip()
+    f = pathlib.Path.home() / ".config" / "hakelim" / "contact_email.txt"
+    if not v and f.exists():
+        v = f.read_text(encoding="utf-8").strip()
+    if not v:
+        raise SystemExit("חסרה כתובת המייל לאתר: מגדירים את SITE_CONTACT_EMAIL או את ~/.config/hakelim/contact_email.txt")
+    return v
+CONTACT_MAIL = _contact_mail()
+
 CTA = """
 <section id="contact" class="contact" aria-labelledby="contact-h">
   <div class="wrap">
@@ -120,7 +132,7 @@ CTA = """
     <a class="phone" href="{wa}"><small class="wa-tag">(ווטסאפ)</small> 058-404-9049</a>
     <div class="actions">
       <a class="btn btn-gold" href="{wa}"><svg class="ic"><use href="#wa"/></svg> שליחת הודעה בווטסאפ</a>
-      <a class="btn btn-line" href="mailto:gilad4049@gmail.com"><svg class="ic"><use href="#mail"/></svg> או במייל</a>
+      <a class="btn btn-line" href="mailto:{mail}"><svg class="ic"><use href="#mail"/></svg> או במייל</a>
     </div>
   </div>
 </section>
@@ -292,6 +304,8 @@ def seo_children(p):
     return [c for c in INDEX if c != p and seo_parent(c) == p and c.rstrip("/").rsplit("/", 1)[1] not in SEO_SKIP]
 
 def seo_is_hub(p):
+    if INDEX.get(p, {}).get("no_hub"):  # כלי שיש מתחתיו דפי נחיתה (תמלול): נשאר כלי, לא דף מרכז
+        return False
     return any(s["home"] == p for s in SITES.values()) or len(seo_children(p)) >= 3
 
 def seo_ld(p, url):
@@ -353,6 +367,7 @@ CHESED_PARTNER = {
     "/kelim/tochen/studio/": "kelim-studio PER_IP 40; x-kelim-partner",
     "/limudim/poter/": "limudim-poter PER_IP 12; x-kelim-partner",
     "/limudim/machberet/": "limudim-poter; x-kelim-partner",
+    "/kelim/miluim/gibush/": "7 ימים בחינם; קוד שותף (18 ₪) פותח את כל המסלול, הספר וההקלטה – Worker kelim-gibush",
 }
 CHESED_NO_PATH = {}  # כרגע ריק: לכל הכלים עם מכסה יש קוד שותף (11.11.2026)
 CHESED_SKIP = SEO_SKIP | {"404"}
@@ -380,7 +395,60 @@ def chesed_band(p, meta):
     return ('<div class="chesed no-print" role="note"><p class="chesed-t">' + "".join(f"<b>✓ {c}</b>" for c in chips)
             + f'</p><p class="chesed-s">{sub}</p>{box}</div>')
 
+# סרטון הדמיה + פרוספקט לשיתוף (14.11.2026, גילעד: "סרטוני הדמיה באתר לכל כלי... ודף פרוספקט מעוצב לכל כלי שאפשר לשתף").
+# נוצרים ב-tools/demo_video/render.py לתוך assets/demo/<tool>.*; כשהקבצים קיימים הבלוק נכנס לבד אחרי ה-header של דף הכלי,
+# או במקום <!--demo--> אם הדף שם אותו במקום אחר. המפרט (שם, תיאור, משך) נקרא מ-tools/demo_video/specs/<tool>.json.
+DEMO_DIR = ROOT / "assets" / "demo"
+DEMO_SPECS = ROOT / "tools" / "demo_video" / "specs"
+
+def demo_block(meta, url):
+    tool = meta.get("tool", "")
+    if not tool or not (DEMO_DIR / f"{tool}.mp4").exists():
+        return "", ""
+    sp = DEMO_SPECS / f"{tool}.json"
+    spec = json.loads(sp.read_text(encoding="utf-8")) if sp.exists() else {}
+    dur = spec.get("duration") or sum(s.get("dur", 0) for s in spec.get("scenes", [])) or 45
+    wide = spec.get("wide")  # סרטון הדרכה לרוחב (16:9), למשל צילומי מסך של מחשב
+    name = spec.get("name", "ככה זה עובד")
+    v, poster = f"/assets/demo/{tool}.mp4", f"/assets/demo/{tool}.jpg"
+    post, status = f"/assets/demo/{tool}-post.png", f"/assets/demo/{tool}-status.png"
+    has_fl = (DEMO_DIR / f"{tool}-post.png").exists()
+    share_txt = meta.get("og_title", meta["title"]).split(" | ")[0]
+    fl = (f'<details class="dv-fl"><summary>📄 פרוספקט לשיתוף – תמונה אחת שמסבירה הכול</summary>'
+          f'<a href="{post}" target="_blank" rel="noopener"><img src="{post}" alt="פרוספקט: {html_lib.escape(name)}" loading="lazy" width="1080" height="1350"></a>'
+          f'<div class="dv-acts"><button type="button" class="btn btn-gold" data-dv-share="{post}" data-dv-kind="flyer">💌 לשלוח את הפרוספקט</button>'
+          f'<a class="btn btn-line" href="{post}" download data-dv-dl="flyer">⬇️ להורדה (פוסט)</a>'
+          f'<a class="btn btn-line" href="{status}" download data-dv-dl="status">⬇️ להורדה (סטטוס)</a></div></details>') if has_fl else ""
+    blk = (
+        '<style>.dv-sec .dv-video{display:block;width:100%;max-width:20rem;aspect-ratio:9/16;height:auto;margin:.6rem auto 0;border-radius:1.2rem;background:#0e1628;box-shadow:0 8px 30px rgba(0,0,0,.35)}'
+        '.dv-sec .dv-video.dv-wide{max-width:100%;aspect-ratio:16/9;border-radius:.8rem}'
+        '.dv-acts{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.9rem}.dv-acts .btn{font-size:.95rem}'
+        '.dv-fl{margin-top:1rem}.dv-fl summary{cursor:pointer;color:var(--gold);font-weight:700;text-align:center}'
+        '.dv-fl img{display:block;width:100%;max-width:24rem;height:auto;margin:.8rem auto 0;border-radius:1rem}</style>'
+        f'<section class="k-sec dv-sec no-print" aria-labelledby="dv-h"><h2 id="dv-h">🎬 {html_lib.escape(name)}</h2>'
+        f'<video class="dv-video{' dv-wide' if wide else ''}" controls playsinline preload="none" poster="{poster}" width="{1280 if wide else 720}" height="{720 if wide else 1280}" aria-label="{html_lib.escape(spec.get("description", name))}" data-dv-play="{tool}">'
+        f'<source src="{v}" type="video/mp4"></video>'
+        f'<div class="dv-acts"><button type="button" class="btn btn-gold" data-dv-share="{v}" data-dv-kind="video">💌 לשלוח את הסרטון לחבר</button>'
+        f'<a class="btn btn-line" href="{v}" download data-dv-dl="video">⬇️ להורדת הסרטון</a></div>{fl}'
+        f'<script>window.DV_SHARE={json.dumps({"tool": tool, "text": share_txt, "url": url}, ensure_ascii=False)}</script>'
+        '<script src="/assets/demo-share.js" defer></script></section>')
+    ld = json.dumps({"@context": "https://schema.org", "@type": "VideoObject", "name": name,
+                     "description": spec.get("description", meta["description"]),
+                     "thumbnailUrl": [BASE + poster], "contentUrl": BASE + v,
+                     "uploadDate": spec.get("upload", "2026-11-14T12:00:00+02:00"), "duration": f"PT{round(dur)}S",
+                     "inLanguage": "he", "publisher": {"@type": "Person", "name": "גילעד רחמים", "url": BASE + "/kelim/"}}, ensure_ascii=False)
+    return blk, f'<script type="application/ld+json">{ld}</script>'
+
+def insert_demo(content, blk):
+    if not blk:
+        return content.replace("<!--demo-->", "")
+    if "<!--demo-->" in content:
+        return content.replace("<!--demo-->", blk, 1)
+    i = content.find("</header>")
+    return content[: i + 9] + blk + content[i + 9:] if i >= 0 else blk + content
+
 pages = []
+TOOLS_JSON = []
 site_pages = {k: [] for k in SITES}
 for path in sorted(SRC.rglob("*.html")):
     raw = path.read_text(encoding="utf-8")
@@ -401,6 +469,8 @@ for path in sorted(SRC.rglob("*.html")):
     root = (site["name"], site["home"]) if site else ("עמוד המוהל", "/mohel/")
     html = LAYOUT_KELIM if site else LAYOUT
     content += seo_related(url_path)
+    dv_blk, dv_ld = demo_block(meta, url) if site else ("", "")
+    content = insert_demo(content, dv_blk)
     og_own = "og/" + url_path.strip("/").replace("/", "-") + ".jpg"
     og_default = og_own + "?v=4" if (site and (ROOT / "assets" / og_own).exists()) else (site["og"] if site else "og-mohel.jpg")
     # תיאור השיתוף (og:description) פותח ב"בחינם, בלי הגבלה ובלי הרשמה" - גילעד 11.11.2026.
@@ -422,13 +492,13 @@ for path in sorted(SRC.rglob("*.html")):
         "og_title": meta.get("og_title", meta["title"]),
         "og_image": meta.get("og_image", og_default),
         "robots": '<meta name="robots" content="noindex">' if meta.get("noindex") else "",
-        "head": meta.get("head_pre", "") + GA + KISHUR + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url),
+        "head": meta.get("head_pre", "") + GA + KISHUR + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url) + dv_ld,
         "body_class": meta.get("body_class", ""),
         "sprite": SPRITE,
         "wa": WA,
         "crumbs": crumbs_html(meta.get("crumbs"), root),
         "content": content,
-        "cta": "" if (meta.get("no_cta") or site) else CTA.format(wa=WA),
+        "cta": "" if (meta.get("no_cta") or site) else CTA.format(wa=WA, mail=CONTACT_MAIL),
         "dock_href": meta.get("dock_href", "/mohel/madrich/"),
         "dock_label": meta.get("dock_label", "מדריך חינם"),
         "foot": meta.get("foot", "") + ('<script src="/assets/lead.js" defer></script>' if "data-lead" in content else "") + ('<script src="/assets/moed.js" defer></script>' if "moed-form" in content else "") + ('<script src="/assets/yt.js" defer></script>' if 'class="yt"' in content else ""),
@@ -450,7 +520,8 @@ for path in sorted(SRC.rglob("*.html")):
             "site_css": "".join(f'<link rel="stylesheet" href="{c}">' for c in site.get("css", [])),
         })
         rep["foot"] += "".join(f'<script src="{j}" defer></script>' for j in site.get("js", []))
-        site_pages[key].append(url_path)
+        if not meta.get("no_precache"):  # דפים רבים מאותו סוג (פרקי תהילים): לא נשמרים מראש בטלפון, רק כשנכנסים אליהם
+            site_pages[key].append(url_path)
     for k, v in rep.items():
         html = html.replace("{{" + k + "}}", v)
     for key in ["yerushalaim", "sipur", "hachana", "moed", "madrich", "kartis"]:
@@ -458,8 +529,17 @@ for path in sorted(SRC.rglob("*.html")):
     html = version_assets(html)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
+    if site and not meta.get("noindex") and not meta.get("no_precache") and not re.search(r"/(pratiut|negishut|tosaf)/$", url_path):
+        # רשימת הכלים לתוסף הכרום (kelim/tools.json): כלי חדש באתר מופיע בתוסף בלי לשלוח גרסה לחנות
+        cr = meta.get("crumbs") or []
+        name = cr[-1][0] if cr else re.split(r"\s[–—|-]\s|:\s", meta["title"])[0].strip()
+        t = {"n": name, "d": meta["description"][:120], "u": url_path, "s": site["short"],
+             "c": cr[-2][0] if len(cr) > 1 else site["name"]}
+        if seo_is_hub(url_path): t["h"] = 1
+        if meta.get("ext"): t["x"] = meta["ext"]
+        TOOLS_JSON.append(t)
     if not meta.get("noindex"):
-        pages.append((url, meta.get("priority", "0.6")))
+        pages.append((url, meta.get("priority", "0.6"), path))
     print("built", url_path)
 
 # PWA לכל תת-אתר: manifest + service worker בתיקייה של התת-אתר (הטווח שלו = התיקייה).
@@ -478,9 +558,11 @@ for key, site in SITES.items():
     if key == "kelim":  # לחיצה ארוכה על האייקון: ישר לכלים הכי שימושיים
         man["shortcuts"] = [{"name": n, "short_name": n, "url": u + "?utm_source=pwa_shortcut", "icons": [{"src": "/assets/icon-kelim-192.png", "sizes": "192x192"}]}
                             for n, u in [("תמלול", "/kelim/tamlul/"), ("התרופות שלי", "/kelim/briut/trufot/"), ("הכנה לוועדה", "/kelim/shikum/vaada/"), ("הקטנת סרטון", "/kelim/machshev/video/")]]
-    if key == "kelim":  # "שיתוף" מהגלריה בטלפון ישר למסדר התיקיות (src/sw.js מקבל את הקבצים)
+    if key == "kelim":  # "שיתוף" מאפליקציה אחרת בטלפון: src/sw.js מקבל את הקבצים ומנתב – שמע/וידאו בודד לתמלול, השאר למסדר התיקיות
         man["share_target"] = {"action": "/kelim/machshev/sader/?share=1", "method": "POST", "enctype": "multipart/form-data",
-                               "params": {"files": [{"name": "files", "accept": ["*/*"]}]}}
+                               "params": {"files": [{"name": "files", "accept": ["*/*", "audio/*", "video/*", "image/*", "audio/ogg", "audio/opus", "audio/mpeg", "audio/mp4", "audio/aac", "audio/amr", "audio/wav", "video/mp4", "video/3gpp", "video/webm"]}]}}
+        # "פתח באמצעות" במחשב (אחרי התקנת האתר כאפליקציה): קובץ PDF נפתח בכלי המילוי והחתימה
+        man["file_handlers"] = [{"action": "/kelim/machshev/chatima/", "accept": {"application/pdf": [".pdf"]}}]
     (d / "manifest.webmanifest").write_text(json.dumps(man, ensure_ascii=False, indent=1), encoding="utf-8")
     pre = site_pages[key] + ["/assets/site.css", "/assets/kelim.css", "/assets/kelim.js", "/assets/track.js",
                              "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff",
@@ -490,10 +572,37 @@ for key, site in SITES.items():
     (d / "sw.js").write_text(SW_SRC.replace("__CACHE__", f"{key}-{ver}").replace("__PRECACHE__", json.dumps(pre)), encoding="utf-8")
     print(f"pwa {key}: {len(site_pages[key])} pages")
 
+# tools.json: לאתר (התוסף מעדכן ממנו את הרשימה) ועותק בתוך התוסף, למקרה שאין אינטרנט
+_tj = json.dumps({"tools": TOOLS_JSON}, ensure_ascii=False, separators=(",", ":"))
+for _p in (ROOT / "kelim" / "tools.json", ROOT / "tools" / "chatima-ext" / "tools.json"):
+    _p.write_text(_tj, encoding="utf-8", newline="\n")
+print("tools.json:", len(TOOLS_JSON), "pages,", sum(1 for t in TOOLS_JSON if "x" in t), "take files")
+
 today = datetime.date.today().isoformat()
+# lastmod אמיתי: התאריך של הקומיט האחרון שנגע בקובץ המקור של הדף (קובץ ששונה ועוד לא נשמר = היום).
+# כשכל הדפים מסומנים "עודכנו היום" גוגל מפסיק לסמוך על התאריך; ככה הוא יודע אילו דפים באמת השתנו.
+def _git_dates():
+    import subprocess
+    run = lambda *a: subprocess.run(["git", *a], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", check=True).stdout
+    try:
+        out = run("-c", "core.quotepath=off", "log", "--format=@%cs", "--name-only", "--", "src/pages")
+        dirty = run("-c", "core.quotepath=off", "status", "--porcelain", "--untracked-files=all", "--", "src/pages")
+    except Exception:
+        return {}, set()
+    dates, cur = {}, today
+    for line in out.splitlines():
+        if line.startswith("@"):
+            cur = line[1:]
+        elif line.strip():
+            dates.setdefault(line.strip(), cur)
+    return dates, {l[3:].strip() for l in dirty.splitlines() if l.strip()}
+GIT_DATES, GIT_DIRTY = _git_dates()
+def lastmod(path):
+    rel = path.relative_to(ROOT).as_posix()
+    return today if rel in GIT_DIRTY else GIT_DATES.get(rel, today)
 sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
-for url, pr in pages:
-    sm.append(f"  <url><loc>{url}</loc><lastmod>{today}</lastmod><priority>{pr}</priority></url>")
+for url, pr, path in pages:
+    sm.append(f"  <url><loc>{url}</loc><lastmod>{lastmod(path)}</lastmod><priority>{pr}</priority></url>")
 sm.append("</urlset>")
 (ROOT / "sitemap.xml").write_text("\n".join(sm) + "\n", encoding="utf-8")
 (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /mohel/todah/\nSitemap: {BASE}/sitemap.xml\n", encoding="utf-8", newline="\n")

@@ -16,7 +16,11 @@ refs={'ash_shema':("Siddur Ashkenaz, Weekday, Maariv, Keri'at Shema al Hamita",M
 'ash_meein':("Siddur Ashkenaz, Berachot, Birkat Hanehenin, Eating, Brachot Achronot, Al Hamichyah",D),
 'ash_nefashot':("Siddur Ashkenaz, Berachot, Birkat Hanehenin, Eating, Brachot Achronot, Borei Nefashot",D),
 'sef_shema':("Siddur Sefard, Bedtime Shema",T),
-'sef_mazon':("Siddur Sefard, Birchat HaMazon, Birchat HaMazon",T),
+# ברכת המזון ספרד: ב"תורת אמת" שבספריא מקטעים 79–90 ריקים (מ"הרחמן הוא ינחילנו" ועד "יראו את ה'").
+# לכן סוף הברכה בלבד (אותם מקטעים, אותה הפניה) לקוח מסידור "מצודה". כך גם כתוב בדף ובשורת המקור בברכון.
+'sef_mazon':("Siddur Sefard, Birchat HaMazon, Birchat HaMazon",T,(0,79)),
+'sef_mazon_end':("Siddur Sefard, Birchat HaMazon, Birchat HaMazon",M,(79,91)),
+'sef_mazon_shichecha':("Siddur Sefard, Birchat HaMazon, Birchat HaMazon",T,(91,None)),
 'sef_foods':("Siddur Sefard, Birchat HaMazon, Blessing on Foods",T),
 'em_shema':("Siddur Edot HaMizrach, Bedtime Shema",E),
 'em_mazon':("Siddur Edot HaMizrach, Post Meal Blessing",E),
@@ -26,10 +30,11 @@ refs={'ash_shema':("Siddur Ashkenaz, Weekday, Maariv, Keri'at Shema al Hamita",M
 'em_haderech':("Siddur Edot HaMizrach, Assorted Blessings and Prayers, Traveler's Prayer",E),
 }
 out={}
-for k,(r,ver) in refs.items():
+for k,(r,ver,*cut) in refs.items():
     j=get('https://www.sefaria.org/api/v3/texts/'+urllib.parse.quote(r)+'?version='+urllib.parse.quote('hebrew|'+ver if ver else 'hebrew'))
     v=j['versions'][0]
-    out[k]={'ref':r,'heRef':j.get('heRef'),'versionTitle':v.get('versionTitle'),'license':v.get('license'),'versionSource':v.get('versionSource'),'text':v['text']}
+    out[k]={'ref':r,'heRef':j.get('heRef'),'versionTitle':v.get('versionTitle'),'license':v.get('license'),'versionSource':v.get('versionSource'),'text':v['text'][cut[0][0]:cut[0][1]] if cut else v['text']}
+    if cut: out[k]['segments']=[cut[0][0],cut[0][1] if cut[0][1] is not None else len(v['text'])]
     print(k,v.get('versionTitle'),v.get('license'),len(v['text']),file=sys.stderr)
     time.sleep(3)
 json.dump(out,open(sys.argv[1],'w',encoding='utf-8'),ensure_ascii=False,indent=1)

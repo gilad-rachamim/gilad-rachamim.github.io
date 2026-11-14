@@ -1,0 +1,123 @@
+<!--meta {
+  "ext": {"accept": ["pdf"], "input": "ch-file", "menu": "למלא ולחתום על ה-PDF"},
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "machshev_chatima",
+  "title": "עריכת PDF וחתימה על PDF בחינם: למלא טופס PDF ולחתום בטלפון ובמחשב | הכלים של גילעד רחמים",
+  "description": "עריכת PDF בחינם, בלי הרשמה ובלי להעלות את הקובץ לאף אתר: פותחים טופס PDF, הכלי מוצא לבד את הקווים הריקים והתיבות, ממלאים טקסט בגודל שמתאים לשורה, חותמים באצבע או בעכבר, מוסיפים תאריך ווי, ושומרים PDF חתום. גם תוסף לכרום שפותח PDF ישר מהמייל.",
+  "og_title": "קיבלתם טופס PDF במייל? ממלאים וחותמים בדקה, בטלפון",
+  "priority": "0.8",
+  "crumbs": [["מחשב וטלפון", "/kelim/machshev/"], ["עריכת PDF וחתימה", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/machshev-chatima.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך חותמים על PDF בטלפון?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"פותחים את הדף בטלפון, בוחרים את קובץ ה-PDF, לוחצים על \\\"חתימה\\\" ואז על המקום שבו צריך לחתום. חותמים באצבע, והחתימה נכנסת לדף. בסוף לוחצים \\\"לשמור PDF חתום\\\" ומורידים או שולחים בווטסאפ ובמייל.\"}}, {\"@type\": \"Question\", \"name\": \"איך ממלאים טופס PDF בלי להדפיס?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"הכלי מוצא לבד את הקווים הריקים בטופס ומסמן אותם. לוחצים על קו ומקלידים, והאותיות מתאימות את עצמן לגודל השורה. אפשר גם ללחוץ בכל מקום אחר בדף ולכתוב שם.\"}}, {\"@type\": \"Question\", \"name\": \"הקובץ שלי עולה לאינטרנט?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. הכול קורה בתוך הטלפון או המחשב שלכם. הקובץ והחתימה לא נשלחים לשום שרת.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לפתוח PDF ישר מהמייל?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. במחשב יש תוסף לכרום שמוסיף כפתור \\\"למלא ולחתום\\\" ליד קובץ PDF בג׳ימייל, ובטלפון משתפים את הקובץ מאפליקציית המייל אל \\\"הכלים\\\" אחרי שמתקינים את האתר במסך הבית.\"}}, {\"@type\": \"Question\", \"name\": \"זו חתימה דיגיטלית מאושרת?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"זו חתימה כמו חתימה ביד על דף סרוק, וכך רוב המשרדים מקבלים טפסים. היא לא חתימה אלקטרונית מאושרת עם תעודה. אם גוף מבקש במפורש חתימה אלקטרונית מאושרת, צריך את הכלי שהוא נותן.\"}}, {\"@type\": \"Question\", \"name\": \"זה עולה כסף?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. בחינם, בלי הרשמה, בלי סימן מים ובלי הגבלה על מספר הקבצים.\"}}]}</script>",
+  "foot": "<script src=\"/assets/machshev-chatima.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>עריכת PDF וחתימה: ממלאים טופס וחותמים</h1>
+  <p class="sub">קיבלתם טופס PDF במייל ואין מדפסת? פותחים אותו כאן, כותבים על הקווים, חותמים באצבע ושולחים בחזרה. בלי להדפיס, בלי לסרוק ובלי להעלות לאף אתר.</p>
+</header>
+<div class="tool ch-tool" id="ch-app">
+  <p class="tm-safe">🔒 הקובץ והחתימה לא עולים לשום מקום: הכול קורה בתוך הטלפון או המחשב שלכם.</p>
+  <label class="ch-pick" for="ch-file"><b>📄 לבחור קובץ PDF</b>מהטלפון או מהמחשב (אפשר גם לגרור לכאן)<input id="ch-file" type="file" accept="application/pdf,.pdf" hidden></label>
+  <p class="ch-sample" id="ch-sample" hidden>👀 זה טופס לדוגמה כדי לנסות. כבר מילאנו בו שם ווי. בחרו את הקובץ שלכם למעלה.</p>
+  <p class="ch-fname" id="ch-fname"></p>
+  <div class="ch-tools" id="ch-tools">
+    <div class="ch-modes" id="ch-modes" role="group" aria-label="מה מוסיפים לדף">
+      <button type="button" data-m="text" aria-pressed="true"><span aria-hidden="true">✏️</span> טקסט</button>
+      <button type="button" data-m="sig" aria-pressed="false"><span aria-hidden="true">✍️</span> חתימה</button>
+      <button type="button" data-m="date" aria-pressed="false"><span aria-hidden="true">📅</span> תאריך</button>
+      <button type="button" data-m="check" aria-pressed="false"><span aria-hidden="true">✔️</span> וי</button>
+      <button type="button" data-m="white" aria-pressed="false"><span aria-hidden="true">⬜</span> להסתיר</button>
+    </div>
+    <div class="ch-row2">
+      <span class="ch-color" id="ch-color" role="group" aria-label="צבע">
+        <button type="button" data-c="#111111" aria-pressed="true" aria-label="שחור"><i style="background:#111"></i></button>
+        <button type="button" data-c="#1b3a8f" aria-pressed="false" aria-label="כחול"><i style="background:#1b3a8f"></i></button>
+      </span>
+      <button type="button" id="ch-zout" aria-label="להקטין את התצוגה">🔍−</button>
+      <button type="button" id="ch-zin" aria-label="להגדיל את התצוגה">🔍+</button>
+      <button type="button" id="ch-undo">↶ לבטל</button>
+      <label class="ch-chk"><input type="checkbox" id="ch-showb" checked> לסמן מקומות למילוי</label>
+    </div>
+    <p class="ch-hint" id="ch-hint" aria-live="polite"></p>
+  </div>
+  <div class="ch-pages" id="ch-pages"></div>
+  <p class="ch-msg" id="ch-msg" role="status" aria-live="polite"></p>
+  <div class="actions ch-actions">
+    <button class="btn btn-gold" type="button" id="ch-save">💾 לשמור PDF חתום</button>
+    <label class="btn btn-line" for="ch-file2">קובץ אחר<input id="ch-file2" type="file" accept="application/pdf,.pdf" hidden></label>
+  </div>
+  <div class="share-row ch-out" id="ch-out" hidden>
+    <a class="btn btn-gold btn-sm" id="ch-dl" href="#" download>⬇ להוריד את הקובץ החתום</a>
+    <button class="btn btn-line btn-sm" type="button" id="ch-share" hidden>לשלוח (ווטסאפ, מייל…)</button>
+  </div>
+  <p class="disclaimer">הכלי לא משנה את הטקסט שכבר כתוב בקובץ. הוא מוסיף מעליו את מה שכתבתם, את החתימה, את התאריך ואת הסימונים, וכל השאר נשאר בדיוק כמו שהיה. את הקובץ המקורי הוא לא משנה.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="קיבלתם טופס PDF וצריך למלא ולחתום? עושים את זה בטלפון, בלי להדפיס ובלי להעלות לאף אתר, בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
+
+<dialog class="ch-dlg" id="ch-sigdlg" aria-labelledby="ch-sig-h">
+  <h2 id="ch-sig-h">החתימה שלכם</h2>
+  <div id="ch-saved-w" hidden><p class="note">חתימה ששמרתם – לחיצה אחת:</p><div class="ch-saved" id="ch-saved"></div></div>
+  <p class="note">חתמו באצבע או בעכבר בתוך המסגרת:</p>
+  <canvas class="ch-pad" id="ch-pad" aria-label="משטח חתימה – מציירים את החתימה"></canvas>
+  <div class="ch-padrow">
+    <span class="ch-color" id="ch-pen" role="group" aria-label="צבע העט">
+      <button type="button" data-c="#1b3a8f" aria-pressed="true" aria-label="עט כחול"><i style="background:#1b3a8f"></i></button>
+      <button type="button" data-c="#111111" aria-pressed="false" aria-label="עט שחור"><i style="background:#111"></i></button>
+    </span>
+    <button type="button" class="btn btn-line btn-sm" id="ch-sig-clear">לנקות</button>
+  </div>
+  <label class="ch-typed-l" for="ch-typed">או לכתוב את השם במקום לצייר:</label>
+  <input type="text" id="ch-typed" dir="auto" autocomplete="name" placeholder="למשל: ישראל ישראלי">
+  <label class="ch-chk"><input type="checkbox" id="ch-keep" checked> לשמור את החתימה במכשיר הזה (רק אצלכם, אפשר למחוק)</label>
+  <p class="ch-msg bad" id="ch-sig-msg" aria-live="polite"></p>
+  <div class="actions"><button type="button" class="btn btn-gold" id="ch-sig-ok">להכניס את החתימה</button><button type="button" class="btn btn-line" id="ch-sig-cancel">ביטול</button></div>
+</dialog>
+
+<section class="k-sec ch-ext" id="tosaf" aria-labelledby="ext-h">
+  <h2 id="ext-h">פותחים PDF ישר מהמייל</h2>
+  <div class="ch-ways">
+    <div>
+      <h3>💻 במחשב: תוסף לכרום</h3>
+      <p>התוסף מוסיף כפתור זהב "✍ למלא ולחתום" ליד כל קובץ PDF בג׳ימייל. לחיצה אחת, והקובץ נפתח כאן מוכן לחתימה. אפשר גם ללחוץ בעכבר הימני על כל קישור ל-PDF, או על כפתור התוסף כשקובץ PDF פתוח בכרום.</p>
+      <p>באותו תוסף יש את כל הכלים של האתר: חיפוש ומועדפים, הקטנת תמונה וכיווץ PDF לפני שליחה, שליחה כפקס, סיסמה חזקה וקוד QR לדף הפתוח. כלי חדש באתר מופיע בו לבד. <a class="gold" href="/kelim/machshev/chatima/tosaf/">מה יש בתוסף</a></p>
+      <ol class="ch-steps">
+        <li><a class="gold" href="/assets/machshev-chatima-ext.zip" download>להוריד את התוסף</a> ולחלץ את הקובץ (לחיצה ימנית ← "חלץ הכל").</li>
+        <li>לפתוח בכרום את הכתובת <code dir="ltr">chrome://extensions</code> ולהדליק למעלה "מצב מפתח".</li>
+        <li>ללחוץ "טעינת תוסף לא ארוז" ולבחור את התיקייה שחילצתם.</li>
+      </ol>
+      <p class="note">התוסף לא אוסף שום מידע. הוא רק מעביר את הקובץ שבחרתם אל הכלי, בתוך המחשב שלכם. <a class="gold" href="/kelim/machshev/chatima/tosaf/">פרטיות והרשאות</a></p>
+    </div>
+    <div>
+      <h3>📱 בטלפון: "שיתוף" מהמייל</h3>
+      <p>מתקינים את אתר הכלים במסך הבית (בתפריט הדפדפן: "הוספה למסך הבית"). מעכשיו, בכל קובץ PDF בג׳ימייל או בווטסאפ לוחצים "שיתוף" ובוחרים "הכלים", והוא נפתח כאן מוכן למילוי.</p>
+      <h3>🖥 במחשב בלי תוסף</h3>
+      <p>אחרי שמתקינים את האתר כאפליקציה במחשב (בכרום או באדג׳: סמל ההתקנה בשורת הכתובת), אפשר ללחוץ בעכבר הימני על קובץ PDF ← "פתח באמצעות" ← "הכלים".</p>
+    </div>
+  </div>
+</section>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">עריכת PDF וחתימה על PDF – בלי מדפסת ובלי סורק</h2>
+  <p>טופס של ביטוח לאומי, של קופת החולים, של בית הספר או של המעסיק מגיע במייל כקובץ PDF, וכתוב "למלא, לחתום ולהחזיר". בלי מחשב עם תוכנה מיוחדת, הדרך הרגילה היא להדפיס, לכתוב ביד, לחתום, לסרוק ולשלוח. הכלי הזה חוסך את כל הסיבוב: פותחים את הקובץ בטלפון או במחשב, כותבים על הקווים, חותמים באצבע ושולחים בחזרה. בחינם, בלי הרשמה ובלי סימן מים.</p>
+  <h3>איך ממלאים טופס PDF</h3>
+  <p>אחרי שבוחרים קובץ, הכלי סורק כל עמוד ומסמן במסגרת זהב את המקומות למילוי: קווים ריקים, שורות של קווים תחתונים, תיבות סימון קטנות, ושדות מילוי אם הטופס נבנה עם שדות. לוחצים על קו ומקלידים. גודל האותיות נקבע לפי גובה השורה, ואם הטקסט ארוך, האותיות מתכווצות לבד כדי שהכול ייכנס. אפשר גם ללחוץ בכל מקום אחר בדף ולכתוב שם, להזיז כל שורה עם הכפתור ✥, ולהגדיל או להקטין את האותיות.</p>
+  <h3>איך חותמים על PDF</h3>
+  <p>לוחצים "חתימה" ואז על המקום בדף שבו צריך לחתום. נפתח משטח חתימה, חותמים באצבע או בעכבר, והחתימה נכנסת בדיוק לשורה. אפשר לשמור את החתימה במכשיר, ובפעם הבאה היא מחכה בלחיצה אחת. אפשר גם לכתוב את השם במקום לצייר. הכפתור "תאריך" כותב את התאריך של היום, והכפתור "וי" מסמן תיבה.</p>
+  <h3>עריכת PDF: להסתיר, להוסיף ולתקן</h3>
+  <p>מעבר למילוי, אפשר להוסיף טקסט בכל מקום בדף ולהסתיר פרט שלא רוצים לשלוח (למשל מספר חשבון) עם מלבן לבן. הכלי לא משנה את הטקסט שכבר כתוב בקובץ, ולכן המסמך נשאר חד וקריא, והוא שוקל כמעט כמו המקורי.</p>
+  <h2>פרטיות: הקובץ נשאר אצלכם</h2>
+  <p>רוב האתרים לחתימה על PDF מעלים את המסמך לשרת שלהם. כאן לא. הקובץ נפתח בתוך הדפדפן, נערך ונשמר אצלכם, וגם החתימה השמורה נשארת רק במכשיר שלכם, ואפשר למחוק אותה בלחיצה. לכן אפשר למלא כאן בשקט גם טפסים רפואיים, תלושים ומסמכים אישיים.</p>
+  <h3>עוד כלים למסמכים</h3>
+  <p>הקובץ החתום כבד מדי לטופס באינטרנט? <a class="gold" href="/kelim/machshev/pdf/">הקטנת PDF</a> מקטינה אותו. יש לכם צילומים של טופס ולא PDF? <a class="gold" href="/kelim/machshev/tzilumim/">מצילומים ל-PDF אחד</a> מחבר אותם. וצריך לשלוח למשרד שעוד מבקש פקס? יש <a class="gold" href="/kelim/machshev/fax/">חלופה חינמית לפקס</a>. כל הכלים חלק ממיזם הכלים של גילעד רחמים: כלים חינמיים, בלי הרשמה ובלי פרסומות, בשביל מי שצריך הנגשה.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך חותמים על PDF בטלפון?</summary><p>פותחים את הדף בטלפון, בוחרים את קובץ ה-PDF, לוחצים על "חתימה" ואז על המקום שבו צריך לחתום. חותמים באצבע, והחתימה נכנסת לדף. בסוף לוחצים "לשמור PDF חתום" ומורידים או שולחים בווטסאפ ובמייל.</p></details>
+  <details><summary>איך ממלאים טופס PDF בלי להדפיס?</summary><p>הכלי מוצא לבד את הקווים הריקים בטופס ומסמן אותם. לוחצים על קו ומקלידים, והאותיות מתאימות את עצמן לגודל השורה. אפשר גם ללחוץ בכל מקום אחר בדף ולכתוב שם.</p></details>
+  <details><summary>הקובץ שלי עולה לאינטרנט?</summary><p>לא. הכול קורה בתוך הטלפון או המחשב שלכם. הקובץ והחתימה לא נשלחים לשום שרת.</p></details>
+  <details><summary>אפשר לפתוח PDF ישר מהמייל?</summary><p>כן. במחשב יש תוסף לכרום שמוסיף כפתור "למלא ולחתום" ליד קובץ PDF בג׳ימייל, ובטלפון משתפים את הקובץ מאפליקציית המייל אל "הכלים" אחרי שמתקינים את האתר במסך הבית.</p></details>
+  <details><summary>זו חתימה דיגיטלית מאושרת?</summary><p>זו חתימה כמו חתימה ביד על דף סרוק, וכך רוב המשרדים מקבלים טפסים. היא לא חתימה אלקטרונית מאושרת עם תעודה. אם גוף מבקש במפורש חתימה אלקטרונית מאושרת, צריך את הכלי שהוא נותן.</p></details>
+  <details><summary>זה עולה כסף?</summary><p>לא. בחינם, בלי הרשמה, בלי סימן מים ובלי הגבלה על מספר הקבצים.</p></details>
+</section>
+<!--/seo-txt-->

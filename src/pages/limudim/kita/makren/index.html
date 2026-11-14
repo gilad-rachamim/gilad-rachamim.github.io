@@ -1,0 +1,28 @@
+<!--meta {
+  "site": "limudim",
+  "nav": "machshevon",
+  "tool": "kita_makren",
+  "title": "מצב מקרן – הכיתה הווירטואלית | כלים ללימודים",
+  "description": "מסך גדול לכיתה: לוח הנקודות, ההתקדמות במטלות, המרתון והפסקת החשיבה, מתעדכן לבד.",
+  "og_title": "מצב מקרן לכיתה",
+  "priority": "0.1",
+  "no_chesed": true,
+  "no_rel": true,
+  "crumbs": [["הכיתה הווירטואלית", "/limudim/kita/"], ["מצב מקרן", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/limudim-kita-portal.css\"><meta name=\"robots\" content=\"noindex\">",
+  "foot": "<script src=\"/assets/limudim-kita-makren.js\" defer></script>"
+} -->
+<div class="kp-proj-app" id="km-app">
+  <div class="km-head">
+    <div><h1 id="km-name">הכיתה הווירטואלית</h1><p id="km-msg" hidden></p></div>
+    <div class="km-join"><span>מצטרפים בטלפון:</span><b dir="ltr" id="km-url"></b><span>קוד הכיתה</span><b class="km-code" dir="ltr" id="km-code"></b></div>
+    <button type="button" class="btn btn-sm" id="km-fs">⛶ מסך מלא</button>
+  </div>
+  <p class="pt-err" id="km-err" hidden></p>
+  <div class="km-brk" id="km-brk" hidden><span aria-hidden="true">🧩</span><b>הפסקת חשיבה!</b><span id="km-brk-g"></span><b class="km-timer" id="km-brk-t" dir="ltr"></b></div>
+  <div class="km-grid">
+    <section class="km-box"><h2>🏆 לוח השבוע</h2><ol class="km-board" id="km-board"></ol></section>
+    <section class="km-box"><h2>📚 המטלות</h2><div id="km-hw"></div></section>
+  </div>
+  <p class="km-upd" id="km-upd" aria-live="polite"></p>
+</div>

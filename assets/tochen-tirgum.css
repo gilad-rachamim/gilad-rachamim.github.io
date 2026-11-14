@@ -1,0 +1,58 @@
+/* מתרגם – /kelim/tochen/tirgum/ */
+.tg-free{margin:.6rem 0 0;color:var(--gold);font-size:1rem}
+.tg{max-width:58rem}
+.tg .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tg-langs{display:flex;align-items:center;gap:.5rem;margin:0 0 .7rem}
+.tg-l{flex:1;min-width:0;position:relative}
+.tg-l select{width:100%;font:inherit;font-size:1.05rem;padding:.6rem .7rem;border-radius:12px;border:1px solid var(--gold-soft);background:var(--ink-2);color:var(--cream)}
+.tg-swap{flex:none;width:2.9rem;height:2.9rem;border-radius:50%;border:1px solid var(--gold-soft);background:transparent;color:var(--gold);font-size:1.35rem;cursor:pointer}
+.tg-swap:hover{border-color:var(--gold);background:rgba(201,165,92,.1)}
+.tg-panes{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+@media (max-width:760px){.tg-panes{grid-template-columns:1fr}}
+.tg-pane{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.03);overflow:hidden}
+.tg-outp{background:rgba(201,165,92,.06);border-color:var(--gold-soft)}
+.tg-text{box-sizing:border-box;width:100%;min-height:11rem;margin:0;padding:.9rem 1rem;border:0;background:transparent;color:var(--cream);font:inherit;font-size:1.15rem;line-height:1.65;resize:vertical;unicode-bidi:plaintext;text-align:start}
+.tg-text:focus{outline:2px solid var(--gold);outline-offset:-2px}
+.tg-result{white-space:pre-wrap;overflow-wrap:anywhere}
+.tg-result:empty::before{content:"התרגום יופיע כאן";color:var(--muted)}
+.tg-result .tg-ex{display:block;margin-top:.6rem;font-size:.9rem;color:var(--muted)}
+.tg-big .tg-text{font-size:1.55rem;line-height:1.6}
+.tg-bar{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;padding:.45rem .55rem;border-top:1px solid var(--line)}
+.tg-ic{display:inline-flex;align-items:center;gap:.3rem;min-height:2.6rem;min-width:2.6rem;justify-content:center;padding:.3rem .6rem;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--cream);font:inherit;font-size:.98rem;cursor:pointer;text-decoration:none}
+.tg-ic:hover{border-color:var(--gold-soft)}
+.tg-ic .ic{width:1.1rem;height:1.1rem}
+.tg-mic[aria-pressed="true"]{background:#7a1f1f;border-color:#e06666;animation:tgPulse 1.2s infinite}
+@keyframes tgPulse{50%{box-shadow:0 0 0 6px rgba(224,102,102,.25)}}
+@media (prefers-reduced-motion:reduce){.tg-mic[aria-pressed="true"]{animation:none}}
+.tg-rate{font:inherit;font-size:.95rem;min-height:2.6rem;padding:.2rem .4rem;border-radius:10px;border:1px solid var(--line);background:var(--ink-2);color:var(--cream)}
+.tg-count{margin-inline-start:auto;color:var(--muted);font-size:.85rem}
+.tg-go-row{display:flex;flex-wrap:wrap;align-items:center;gap:.8rem;margin:.9rem 0 .3rem}
+.tg-go{min-width:9rem}
+.tg-status{color:var(--muted);font-size:.98rem}
+.tg-status.err{color:#f0a0a0}
+.tg-engine{margin:.2rem 0 1rem;color:var(--muted);font-size:.92rem}
+.tg-dl{margin:.6rem 0;padding:.8rem 1rem;border:1px dashed var(--gold-soft);border-radius:14px}
+.tg-dl p{margin:0 0 .5rem}
+.tg-prog{height:.6rem;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.tg-prog i{display:block;height:100%;width:0;background:var(--gold);transition:width .3s}
+.tg-tools{display:flex;flex-wrap:wrap;gap:.45rem;margin:.4rem 0 .6rem}
+.tg-tab{font:inherit;font-size:1rem;min-height:2.7rem;padding:.4rem .85rem;border-radius:99px;border:1px solid var(--gold-soft);background:transparent;color:var(--parchment);cursor:pointer}
+.tg-tab[aria-expanded="true"],.tg-tab[aria-pressed="true"]{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.tg-box{margin:.4rem 0 1rem;padding:1rem;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.03)}
+.tg-box .note{margin:0 0 .7rem}
+.tg-gl-add{display:flex;flex-wrap:wrap;gap:.45rem;margin:0 0 .7rem}
+.tg-gl-add input{flex:1 1 12rem;min-width:0;font:inherit;font-size:1rem;padding:.55rem .7rem;border-radius:10px;border:1px solid var(--line);background:var(--ink-2);color:var(--cream)}
+.tg-list{list-style:none;margin:0 0 .7rem;padding:0;display:grid;gap:.4rem}
+.tg-list li{display:flex;align-items:flex-start;gap:.5rem;padding:.55rem .7rem;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.15)}
+.tg-list li .tg-li-t{flex:1;min-width:0;text-align:start;font:inherit;color:var(--cream);background:none;border:0;padding:0;cursor:pointer;unicode-bidi:plaintext;overflow-wrap:anywhere}
+.tg-list li small{display:block;color:var(--muted);margin-top:.15rem}
+.tg-list li .tg-del{flex:none;min-width:2.4rem;min-height:2.4rem;border-radius:8px;border:1px solid var(--line);background:none;color:var(--muted);cursor:pointer;font:inherit}
+.tg-list:empty::before{content:"עוד אין כאן כלום";color:var(--muted)}
+.tg-conv-btns{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.tg-conv-btns .btn{min-height:3.6rem;font-size:1.1rem}
+.tg-conv-btns .btn.on{background:#7a1f1f;border-color:#e06666;color:#fff}
+.tg-conv-log{list-style:none;margin:.8rem 0 0;padding:0;display:grid;gap:.45rem}
+.tg-conv-log li{padding:.6rem .8rem;border-radius:14px;background:rgba(255,255,255,.05);unicode-bidi:plaintext}
+.tg-conv-log li.b{background:rgba(201,165,92,.12)}
+.tg-conv-log li small{display:block;color:var(--muted);font-size:.85rem;margin-top:.2rem;unicode-bidi:plaintext}
+@media print{.topbar,.site-foot,.crumbs,.no-print,.tg-bar,.tg-tools,.tg-go-row,.tg-langs,.skip{display:none!important}}

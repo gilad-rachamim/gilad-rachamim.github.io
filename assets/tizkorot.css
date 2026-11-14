@@ -1,0 +1,64 @@
+/* תזכורות – לתרופות ולכל מה שאסור לשכוח */
+.tz-chips{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.45rem}
+.tz-chips button{font:inherit;font-size:1rem;min-height:44px;padding:.4rem .85rem;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--body);cursor:pointer}
+.tz-chips button:hover{border-color:var(--gold-soft);color:var(--cream)}
+.tz-chips button[aria-pressed=true]{background:var(--gold);border-color:var(--gold);color:#14110a;font-weight:700}
+.tz-picked{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.55rem;min-height:1.5rem}
+.tz-picked span{display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .3rem .25rem .7rem;border-radius:99px;background:rgba(216,178,90,.14);color:var(--cream);font-size:1.05rem}
+.tz-picked button{background:none;border:0;color:var(--muted);font-size:1.25rem;cursor:pointer;min-width:32px;min-height:32px;line-height:1}
+.tz-row{display:flex;gap:.5rem;align-items:stretch;margin-top:.5rem}
+.tz-row input{flex:1}
+.tz-row .btn{white-space:nowrap}
+.tz-hide{display:none!important}
+.tz-today h3,.tz-sec h3{font-family:var(--serif);color:var(--cream);font-size:1.3rem;margin-top:.4rem}
+.tz-today ul{list-style:none;display:grid;gap:.35rem;margin-top:.6rem}
+.tz-today li label{display:grid;grid-template-columns:1.6rem 3.6rem 1fr;gap:.6rem;align-items:center;padding:.6rem .55rem;border-radius:12px;border:1px solid var(--line);cursor:pointer;color:var(--parchment);font-size:1.08rem}
+.tz-today li input{width:1.4rem;height:1.4rem;accent-color:var(--gold)}
+.tz-today .tm{font-weight:700;color:var(--gold-hi);direction:ltr;text-align:center}
+.tz-today small{display:block;color:var(--muted);font-size:.9rem}
+.tz-today li.due label{border-color:var(--gold);background:rgba(216,178,90,.12)}
+.tz-today li.due small{color:var(--gold-hi);font-weight:700}
+.tz-today li.done label{opacity:.7}
+.tz-today li.done b{text-decoration:line-through;color:var(--muted)}
+.tz-banner{margin-top:.6rem;padding:.7rem .8rem;border-radius:12px;background:rgba(216,178,90,.12);border:1px dashed var(--gold-soft);color:var(--cream);font-size:.98rem}
+.tz-banner button{font:inherit;background:none;border:0;color:var(--gold-hi);text-decoration:underline;cursor:pointer;padding:.2rem}
+.tz-items{list-style:none;display:grid;gap:.7rem;margin-top:.6rem}
+.tz-items>li{border:1px solid var(--line);border-radius:14px;padding:.8rem .85rem}
+.tz-items .t{color:var(--cream);font-size:1.12rem;font-weight:700}
+.tz-items .w{color:var(--body);margin-top:.2rem}
+.tz-items .o{color:var(--muted);font-size:.92rem;margin-top:.15rem}
+.tz-acts{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
+.tz-acts .btn{min-height:44px}
+.tz-acts .lnk{font:inherit;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:.4rem .5rem;min-height:44px}
+.tz-how{margin-top:.6rem;color:var(--body);font-size:.98rem}
+.tz-how li{margin:.25rem 1.1rem 0 0}
+.k-form .res:empty,.tz-msg:empty{display:none}
+.tz-msg{margin-top:.5rem;color:var(--gold-hi)}
+.tz-more{margin:.4rem 0 1rem;border:1px solid var(--line);border-radius:12px;padding:.5rem .8rem}
+.tz-more summary{cursor:pointer;color:var(--gold-hi);min-height:44px;display:flex;align-items:center}
+.tz-more .field{margin-top:.6rem}
+.tz-items .o.low{color:var(--gold-hi);font-weight:700}
+.tz-hist{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(6.4rem,1fr));gap:.4rem;margin-top:.5rem}
+.tz-hist li{border:1px solid var(--line);border-radius:10px;padding:.4rem .5rem;display:flex;flex-direction:column;font-size:.92rem;color:var(--body)}
+.tz-hist li b{color:var(--cream);font-size:1.05rem}
+.tz-hist li.full{border-color:var(--gold-soft)}
+.tz-hist li.full b{color:var(--gold-hi)}
+.tz-hist li.none b{color:var(--muted)}
+html.tz-big .tool{font-size:1.2rem}
+html.tz-big .tz-today li label{font-size:1.3rem;padding:.85rem .6rem}
+html.tz-big .tz-today li input{width:1.8rem;height:1.8rem}
+html.tz-big .tz-items .t{font-size:1.35rem}
+.tz-sheet{display:none}
+@media print{
+  .topbar,.site-foot,.crumbs,.no-print,.k-hero,.tool,.seo-txt,.seo-faq,.skip,.install-bar,footer,header,nav{display:none!important}
+  body{background:#fff!important;color:#000!important}
+  .tz-sheet{display:block!important;color:#000;font-family:Arial,sans-serif}
+  .tz-sheet h2{font-size:20pt;margin:0 0 4pt}
+  .tz-sheet p{margin:0 0 8pt;font-size:11pt}
+  .tz-sheet table{width:100%;border-collapse:collapse;font-size:12pt}
+  .tz-sheet th,.tz-sheet td{border:1px solid #000;padding:6pt 4pt;text-align:center}
+  .tz-sheet tr th:first-child{text-align:right;width:38%}
+  .tz-sheet small{display:block;font-size:9pt;font-weight:normal}
+  .tz-sheet td{font-size:18pt}
+  .tz-sheet .ft{margin-top:8pt;font-size:9pt;color:#444}
+}

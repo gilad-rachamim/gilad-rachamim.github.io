@@ -1,8 +1,8 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'limudim-202611120919';
-var PRECACHE = ["/limudim/batei-sefer/", "/limudim/dapim/", "/limudim/ilui/", "/limudim/", "/limudim/kahoot/", "/limudim/kartisiot/", "/limudim/krav/", "/limudim/krav-anglit/", "/limudim/kvutza/", "/limudim/machberet/", "/limudim/machberet/kita/", "/limudim/machshevon/", "/limudim/maslul/", "/limudim/matematika/", "/limudim/mivchan/", "/limudim/olami/", "/limudim/poter/", "/limudim/timer/", "/limudim/yomi/", "/assets/site.css?v=a3787b54", "/assets/kelim.css?v=a9338a1f", "/assets/kelim.js?v=3e566672", "/assets/track.js?v=ced9ffb1", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-limudim-192.png", "/assets/limudim.css?v=345d8d07", "/assets/limudim.js?v=f7ea189f"];
+var CACHE = 'limudim-202611141927';
+var PRECACHE = ["/limudim/batei-sefer/", "/limudim/dapim/", "/limudim/ilui/", "/limudim/", "/limudim/kahoot/", "/limudim/kartisiot/", "/limudim/kita/horim/", "/limudim/kita/", "/limudim/kita/makren/", "/limudim/kita/talmidim/", "/limudim/krav/", "/limudim/krav-anglit/", "/limudim/kvutza/", "/limudim/machberet/", "/limudim/machberet/kita/", "/limudim/machshevon/", "/limudim/maslul/", "/limudim/matematika/", "/limudim/mivchan/", "/limudim/olami/", "/limudim/poter/", "/limudim/shaon-etzer/", "/limudim/timer/10-dakot/", "/limudim/timer/15-dakot/", "/limudim/timer/2-dakot/", "/limudim/timer/20-dakot/", "/limudim/timer/3-dakot/", "/limudim/timer/30-dakot/", "/limudim/timer/5-dakot/", "/limudim/timer/daka/", "/limudim/timer/", "/limudim/yomi/", "/assets/site.css?v=b4546dc2", "/assets/kelim.css?v=56115877", "/assets/kelim.js?v=5c4b7217", "/assets/track.js?v=963b507e", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-limudim-192.png", "/assets/limudim.css?v=b9223dd1", "/assets/limudim.js?v=6f7a9e77"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
 });
@@ -14,16 +14,28 @@ self.addEventListener('activate', function (e) {
 });
 self.addEventListener('fetch', function (e) {
   var req = e.request;
-  // קבצים ששותפו מהגלריה (share_target ב-manifest של הכלים): שומרים רגע ב-Cache ופותחים את מסדר התיקיות
+  // קבצים ששותפו מאפליקציה אחרת (share_target ב-manifest של הכלים): שומרים רגע ב-Cache ופותחים את הכלי המתאים.
+  // קובץ אחד של שמע או וידאו (הודעה קולית מווטסאפ) – כלי התמלול. PDF אחד – מילוי וחתימה. כל השאר (תמונות, כמה קבצים) – מסדר התיקיות, כמו תמיד.
   if (req.method === 'POST' && /\/machshev\/sader\/$/.test(new URL(req.url).pathname)) {
     e.respondWith(req.formData().then(function (fd) {
-      var files = fd.getAll('files');
-      return caches.delete('sader-share').then(function () { return caches.open('sader-share'); }).then(function (c) {
+      var files = fd.getAll('files').filter(function (f) { return f && typeof f !== 'string'; });
+      var AVX = { opus: 'audio/ogg', ogg: 'audio/ogg', oga: 'audio/ogg', m4a: 'audio/mp4', mp3: 'audio/mpeg', aac: 'audio/aac', amr: 'audio/amr', wav: 'audio/wav', flac: 'audio/flac', mp4: 'video/mp4', '3gp': 'video/3gpp', webm: 'video/webm', mov: 'video/quicktime' };
+      var ext = files.length === 1 ? (/\.([a-z0-9]+)$/i.exec(files[0].name || '') || [])[1] : '';
+      var byExt = ext ? AVX[ext.toLowerCase()] : '';
+      var av = files.length === 1 && (/^(audio|video)\//.test(files[0].type || '') || !!byExt);
+      // קובץ PDF בודד – הכלי למילוי וחתימה על PDF
+      var pdf = files.length === 1 && (/pdf$/i.test(files[0].type || '') || /\.pdf$/i.test(files[0].name || ''));
+      if (pdf) return caches.delete('chatima-share').then(function () { return caches.open('chatima-share'); }).then(function (c) {
+        return c.put('/chatima-share/0', new Response(files[0], { headers: { 'content-type': 'application/pdf', 'x-name': encodeURIComponent(files[0].name || 'מסמך.pdf') } }));
+      }).then(function () { return Response.redirect('/kelim/machshev/chatima/?share=1', 303); });
+      var box = av ? 'tamlul-share' : 'sader-share';
+      return caches.delete(box).then(function () { return caches.open(box); }).then(function (c) {
         return Promise.all(files.map(function (f, i) {
-          return c.put('/sader-share/' + i, new Response(f, { headers: { 'content-type': f.type || 'application/octet-stream', 'x-name': encodeURIComponent(f.name), 'x-mod': String(f.lastModified || '') } }));
+          var type = f.type && (!av || /^(audio|video)\//.test(f.type)) ? f.type : (av && byExt) || 'application/octet-stream';
+          return c.put('/' + box + '/' + i, new Response(f, { headers: { 'content-type': type, 'x-name': encodeURIComponent(f.name), 'x-mod': String(f.lastModified || '') } }));
         }));
-      });
-    }).then(function () { return Response.redirect('/kelim/machshev/sader/?share=1', 303); }));
+      }).then(function () { return Response.redirect(av ? '/kelim/tamlul/?share=1' : '/kelim/machshev/sader/?share=1', 303); });
+    }));
     return;
   }
   if (req.method !== 'GET') return;

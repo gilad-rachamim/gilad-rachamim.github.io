@@ -1,8 +1,8 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'kodesh-202611120919';
-var PRECACHE = ["/kodesh/album/", "/kodesh/alon/", "/kodesh/atar/", "/kodesh/azkara/", "/kodesh/beit-knesset/", "/kodesh/boker/", "/kodesh/brachon/", "/kodesh/brachot/", "/kodesh/brachot/yom-huledet/", "/kodesh/britot/", "/kodesh/britot-meyuchadot/", "/kodesh/chag-basis/", "/kodesh/chanuka/bracha/", "/kodesh/chanuka/chanukiya/", "/kodesh/chanuka/chesed/", "/kodesh/chanuka/chidon/", "/kodesh/chanuka/chufsha/", "/kodesh/chanuka/", "/kodesh/chanuka/kniyot/", "/kodesh/chanuka/matkonim/", "/kodesh/chanuka/nerot/", "/kodesh/chanuka/sevivon/", "/kodesh/chanuka/shiron/", "/kodesh/chanuka/sipurim/", "/kodesh/chanuka/tashbetz/", "/kodesh/chanuka/tshii/", "/kodesh/chanuka/tzviya/", "/kodesh/chayal/", "/kodesh/dapei-tefila/", "/kodesh/dvar-torah/", "/kodesh/gimatria/", "/kodesh/hachlama/", "/kodesh/hodaot/", "/kodesh/", "/kodesh/kartis/", "/kodesh/kartis-mohel/", "/kodesh/kibudim-yechida/", "/kodesh/luach/", "/kodesh/luach-shana/", "/kodesh/masach/", "/kodesh/mekorot/", "/kodesh/misheberach/", "/kodesh/mohalim/bli-atar/", "/kodesh/mohalim/", "/kodesh/olpan/", "/kodesh/olpan/kol/", "/kodesh/olpan/mara/", "/kodesh/olpan/prompter/", "/kodesh/olpan/reka/", "/kodesh/omer-avot/", "/kodesh/post/", "/kodesh/psak/", "/kodesh/qr/", "/kodesh/r/", "/kodesh/shavua/", "/kodesh/shiur/", "/kodesh/shut/", "/kodesh/simcha/", "/kodesh/sipur/", "/kodesh/sipurim/", "/kodesh/taarichim/", "/kodesh/tehillim/", "/kodesh/tehillim/shem/", "/kodesh/teuda/", "/kodesh/tofes-brit/", "/kodesh/tziyud/", "/kodesh/video/", "/kodesh/video-parasha/", "/kodesh/video-shiur/", "/kodesh/zmanim/", "/assets/site.css?v=a3787b54", "/assets/kelim.css?v=a9338a1f", "/assets/kelim.js?v=3e566672", "/assets/track.js?v=ced9ffb1", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-kodesh-192.png"];
+var CACHE = 'kodesh-202611141927';
+var PRECACHE = ["/kodesh/album/", "/kodesh/alon/", "/kodesh/atar/", "/kodesh/azkara/", "/kodesh/beit-knesset/", "/kodesh/birkat-hamazon/", "/kodesh/boker/", "/kodesh/brachon/", "/kodesh/brachot/", "/kodesh/brachot/yom-huledet/", "/kodesh/britot/", "/kodesh/britot-meyuchadot/", "/kodesh/chag-basis/", "/kodesh/chanuka/bracha/", "/kodesh/chanuka/chanukiya/", "/kodesh/chanuka/chesed/", "/kodesh/chanuka/chidon/", "/kodesh/chanuka/chufsha/", "/kodesh/chanuka/", "/kodesh/chanuka/kniyot/", "/kodesh/chanuka/matkonim/", "/kodesh/chanuka/nerot/", "/kodesh/chanuka/sevivon/", "/kodesh/chanuka/shiron/", "/kodesh/chanuka/sipurim/", "/kodesh/chanuka/tashbetz/", "/kodesh/chanuka/tshii/", "/kodesh/chanuka/tzviya/", "/kodesh/chayal/", "/kodesh/dapei-tefila/", "/kodesh/dvar-torah/", "/kodesh/gimatria/", "/kodesh/hachlama/", "/kodesh/hodaot/", "/kodesh/", "/kodesh/kartis/", "/kodesh/kartis-mohel/", "/kodesh/kibudim-yechida/", "/kodesh/luach/", "/kodesh/luach-ivri/", "/kodesh/luach-shana/", "/kodesh/masach/", "/kodesh/mekorot/", "/kodesh/misheberach/", "/kodesh/mohalim/bli-atar/", "/kodesh/mohalim/", "/kodesh/olpan/", "/kodesh/olpan/kol/", "/kodesh/olpan/mara/", "/kodesh/olpan/prompter/", "/kodesh/olpan/reka/", "/kodesh/omer-avot/", "/kodesh/post/", "/kodesh/psak/", "/kodesh/qr/", "/kodesh/r/", "/kodesh/shabat/afula/", "/kodesh/shabat/akko/", "/kodesh/shabat/ashdod/", "/kodesh/shabat/ashkelon/", "/kodesh/shabat/bat-yam/", "/kodesh/shabat/beer-sheva/", "/kodesh/shabat/beit-shemesh/", "/kodesh/shabat/bnei-brak/", "/kodesh/shabat/dimona/", "/kodesh/shabat/eilat/", "/kodesh/shabat/hadera/", "/kodesh/shabat/haifa/", "/kodesh/shabat/herzliya/", "/kodesh/shabat/hevron/", "/kodesh/shabat/holon/", "/kodesh/shabat/", "/kodesh/shabat/karmiel/", "/kodesh/shabat/kfar-saba/", "/kodesh/shabat/kiryat-gat/", "/kodesh/shabat/kiryat-shmona/", "/kodesh/shabat/lod/", "/kodesh/shabat/modiin/", "/kodesh/shabat/nahariya/", "/kodesh/shabat/netanya/", "/kodesh/shabat/petah-tikva/", "/kodesh/shabat/raanana/", "/kodesh/shabat/ramat-gan/", "/kodesh/shabat/ramla/", "/kodesh/shabat/rehovot/", "/kodesh/shabat/rishon-lezion/", "/kodesh/shabat/tel-aviv/", "/kodesh/shabat/tveria/", "/kodesh/shabat/tzfat/", "/kodesh/shabat/yerushalaim/", "/kodesh/shavua/", "/kodesh/shiur/", "/kodesh/shut/", "/kodesh/simcha/", "/kodesh/sipur/", "/kodesh/sipurim/", "/kodesh/taarich-ivri/", "/kodesh/taarichim/", "/kodesh/tefilat-haderech/", "/kodesh/tehillim/", "/kodesh/tehillim/sefer/", "/kodesh/tehillim/shem/", "/kodesh/teuda/", "/kodesh/tofes-brit/", "/kodesh/tziyud/", "/kodesh/video/", "/kodesh/video-parasha/", "/kodesh/video-shiur/", "/kodesh/zmanim/afula/", "/kodesh/zmanim/akko/", "/kodesh/zmanim/ashdod/", "/kodesh/zmanim/ashkelon/", "/kodesh/zmanim/bat-yam/", "/kodesh/zmanim/beer-sheva/", "/kodesh/zmanim/beit-shemesh/", "/kodesh/zmanim/bnei-brak/", "/kodesh/zmanim/dimona/", "/kodesh/zmanim/eilat/", "/kodesh/zmanim/hadera/", "/kodesh/zmanim/haifa/", "/kodesh/zmanim/herzliya/", "/kodesh/zmanim/hevron/", "/kodesh/zmanim/holon/", "/kodesh/zmanim/", "/kodesh/zmanim/karmiel/", "/kodesh/zmanim/kfar-saba/", "/kodesh/zmanim/kiryat-gat/", "/kodesh/zmanim/kiryat-shmona/", "/kodesh/zmanim/lod/", "/kodesh/zmanim/modiin/", "/kodesh/zmanim/nahariya/", "/kodesh/zmanim/netanya/", "/kodesh/zmanim/petah-tikva/", "/kodesh/zmanim/raanana/", "/kodesh/zmanim/ramat-gan/", "/kodesh/zmanim/ramla/", "/kodesh/zmanim/rehovot/", "/kodesh/zmanim/rishon-lezion/", "/kodesh/zmanim/tel-aviv/", "/kodesh/zmanim/tveria/", "/kodesh/zmanim/tzfat/", "/kodesh/zmanim/yerushalaim/", "/assets/site.css?v=b4546dc2", "/assets/kelim.css?v=56115877", "/assets/kelim.js?v=5c4b7217", "/assets/track.js?v=963b507e", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-kodesh-192.png"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
 });
@@ -14,16 +14,28 @@ self.addEventListener('activate', function (e) {
 });
 self.addEventListener('fetch', function (e) {
   var req = e.request;
-  // קבצים ששותפו מהגלריה (share_target ב-manifest של הכלים): שומרים רגע ב-Cache ופותחים את מסדר התיקיות
+  // קבצים ששותפו מאפליקציה אחרת (share_target ב-manifest של הכלים): שומרים רגע ב-Cache ופותחים את הכלי המתאים.
+  // קובץ אחד של שמע או וידאו (הודעה קולית מווטסאפ) – כלי התמלול. PDF אחד – מילוי וחתימה. כל השאר (תמונות, כמה קבצים) – מסדר התיקיות, כמו תמיד.
   if (req.method === 'POST' && /\/machshev\/sader\/$/.test(new URL(req.url).pathname)) {
     e.respondWith(req.formData().then(function (fd) {
-      var files = fd.getAll('files');
-      return caches.delete('sader-share').then(function () { return caches.open('sader-share'); }).then(function (c) {
+      var files = fd.getAll('files').filter(function (f) { return f && typeof f !== 'string'; });
+      var AVX = { opus: 'audio/ogg', ogg: 'audio/ogg', oga: 'audio/ogg', m4a: 'audio/mp4', mp3: 'audio/mpeg', aac: 'audio/aac', amr: 'audio/amr', wav: 'audio/wav', flac: 'audio/flac', mp4: 'video/mp4', '3gp': 'video/3gpp', webm: 'video/webm', mov: 'video/quicktime' };
+      var ext = files.length === 1 ? (/\.([a-z0-9]+)$/i.exec(files[0].name || '') || [])[1] : '';
+      var byExt = ext ? AVX[ext.toLowerCase()] : '';
+      var av = files.length === 1 && (/^(audio|video)\//.test(files[0].type || '') || !!byExt);
+      // קובץ PDF בודד – הכלי למילוי וחתימה על PDF
+      var pdf = files.length === 1 && (/pdf$/i.test(files[0].type || '') || /\.pdf$/i.test(files[0].name || ''));
+      if (pdf) return caches.delete('chatima-share').then(function () { return caches.open('chatima-share'); }).then(function (c) {
+        return c.put('/chatima-share/0', new Response(files[0], { headers: { 'content-type': 'application/pdf', 'x-name': encodeURIComponent(files[0].name || 'מסמך.pdf') } }));
+      }).then(function () { return Response.redirect('/kelim/machshev/chatima/?share=1', 303); });
+      var box = av ? 'tamlul-share' : 'sader-share';
+      return caches.delete(box).then(function () { return caches.open(box); }).then(function (c) {
         return Promise.all(files.map(function (f, i) {
-          return c.put('/sader-share/' + i, new Response(f, { headers: { 'content-type': f.type || 'application/octet-stream', 'x-name': encodeURIComponent(f.name), 'x-mod': String(f.lastModified || '') } }));
+          var type = f.type && (!av || /^(audio|video)\//.test(f.type)) ? f.type : (av && byExt) || 'application/octet-stream';
+          return c.put('/' + box + '/' + i, new Response(f, { headers: { 'content-type': type, 'x-name': encodeURIComponent(f.name), 'x-mod': String(f.lastModified || '') } }));
         }));
-      });
-    }).then(function () { return Response.redirect('/kelim/machshev/sader/?share=1', 303); }));
+      }).then(function () { return Response.redirect(av ? '/kelim/tamlul/?share=1' : '/kelim/machshev/sader/?share=1', 303); });
+    }));
     return;
   }
   if (req.method !== 'GET') return;

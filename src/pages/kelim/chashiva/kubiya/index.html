@@ -1,0 +1,68 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_kubiya",
+  "title": "הטלת קוביה אונליין: קוביות וירטואליות בחינם, מאחת ועד שש | הכלים של גילעד רחמים",
+  "description": "הטלת קוביה אונליין בחינם: מטילים קוביה אחת או עד שש קוביות בלחיצה, ורואים את התוצאה ואת הסכום. גם קוביות של 4, 8, 10, 12 ו-20 פאות. למשחקי קופסה כשהקוביה הלכה לאיבוד, לשש-בש ולכיתה. בלי הרשמה.",
+  "og_title": "הטלת קוביה: לוחצים, והקוביות מתגלגלות",
+  "priority": "0.7",
+  "crumbs": [
+    [
+      "משחקי חשיבה",
+      "/kelim/chashiva/"
+    ],
+    [
+      "הטלת קוביה",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/chashiva-goral.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך מטילים קוביה אונליין?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לוחצים ״להטיל״ או על הקוביה עצמה. הקוביה מתגלגלת ומראה מספר אקראי בין 1 ל-6.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר להטיל שתי קוביות?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בוחרים כמה קוביות, מאחת ועד שש, ורואים גם את הסכום של כולן.\"}}, {\"@type\": \"Question\", \"name\": \"יש קוביה של 20 פאות?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. יש קוביות של 4, 6, 8, 10, 12 ו-20 פאות.\"}}, {\"@type\": \"Question\", \"name\": \"הקוביה הוגנת?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. לכל פאה יש אותו סיכוי בכל הטלה, והתוצאה נקבעת במכשיר שלכם.\"}}, {\"@type\": \"Question\", \"name\": \"זה בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בחינם, בלי הרשמה ובלי פרסומות.\"}}]}</script>",
+  "foot": "<script src=\"/assets/chashiva-goral.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>הטלת קוביה</h1>
+  <p class="sub">הקוביה הלכה לאיבוד? לוחצים, והקוביות מתגלגלות. מאחת ועד שש קוביות, עם הסכום.</p>
+</header>
+
+<div class="tool" id="gr" data-mode="dice">
+  <div class="gr-dice" id="gr-dice" role="img" aria-label="קוביות"></div>
+  <div class="gr-res" id="gr-res" role="status" hidden></div>
+  <div class="gr-main"><button class="btn btn-gold btn-block gr-big" type="button" id="gr-go">🎲 להטיל</button></div>
+  <div class="k-form gr-form gr-hide">
+    <div class="field"><span class="label" id="gr-n-l">כמה קוביות?</span><div class="gr-chips" role="group" aria-labelledby="gr-n-l"><button type="button" data-n="1">1</button><button type="button" data-n="2">2</button><button type="button" data-n="3">3</button><button type="button" data-n="4">4</button><button type="button" data-n="5">5</button><button type="button" data-n="6">6</button></div></div>
+    <div class="field"><span class="label" id="gr-s-l">כמה פאות לכל קוביה?</span><div class="gr-chips" role="group" aria-labelledby="gr-s-l"><button type="button" data-sides="4">4</button><button type="button" data-sides="6">6 (רגילה)</button><button type="button" data-sides="8">8</button><button type="button" data-sides="10">10</button><button type="button" data-sides="12">12</button><button type="button" data-sides="20">20</button></div></div>
+    <div class="gr-checks"><label><input type="checkbox" id="gr-sound"> צלילים</label></div>
+  </div>
+  <div class="gr-sec gr-hide" id="gr-hist-sec" hidden>
+    <h2>ההטלות האחרונות</h2>
+    <ol class="gr-hist one" id="gr-hist" reversed></ol>
+    <div class="gr-btns s" style="margin-top:.6rem"><button class="btn btn-line btn-sm" type="button" id="gr-hist-clear">למחוק</button></div>
+  </div>
+  <div class="share-row"><button class="btn btn-line btn-sm" type="button" id="gr-full">מסך מלא</button></div>
+  <p class="gr-fair gr-hide">הבחירה אקראית לגמרי ונעשית במכשיר שלכם. שום דבר לא נשלח לשום מקום, ואין לנו דרך להשפיע על התוצאה.</p>
+  <nav class="gr-links gr-hide" aria-label="עוד דרכים להגריל"><a href="/kelim/chashiva/galgal/">🎡 גלגל המזל</a><a href="/kelim/chashiva/galgal-shemot/">👥 גלגל שמות</a><a href="/kelim/chashiva/hagrala/">🎟 הגרלה</a><a href="/kelim/chashiva/kubiya/" aria-current="page">🎲 הטלת קוביה</a><a href="/kelim/chashiva/matbea/">🌳 הטלת מטבע</a></nav>
+  <div class="share-row gr-hide"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="הטלת קוביה אונליין בחינם, מאחת ועד שש קוביות:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">קוביות וירטואליות למשחקי קופסה, לשש-בש ולכיתה</h2>
+  <p>הקוביה של המשחק נעלמה? כאן מטילים קוביה בלחיצה. הקוביות הווירטואליות מתאימות למונופול ולמשחקי קופסה, לשש-בש, למשחקי תפקידים, לשיעור חשבון ולשיעור הסתברות, ולכל פעם שצריך מספר אקראי בין 1 ל-6.</p>
+  <h3>איך משתמשים</h3>
+  <p>בוחרים כמה קוביות להטיל, מאחת ועד שש, ולוחצים "להטיל" או על הקוביות עצמן. רואים מה יצא בכל קוביה ואת הסכום של כולן. ההטלות האחרונות נשמרות ברשימה, כדי שלא יהיו ויכוחים על מה יצא.</p>
+  <h3>קוביות עם יותר פאות</h3>
+  <p>חוץ מהקוביה הרגילה של שש פאות, יש קוביות של 4, 8, 10, 12 ו-20 פאות, כמו במשחקי תפקידים. בוחרים את מספר הפאות, והקוביה מראה מספר במקום נקודות.</p>
+  <h3>קוביה וירטואלית לכיתה ולשיעור הסתברות</h3>
+  <p>בשיעור חשבון אפשר להטיל קוביה 60 פעמים ולבדוק אם כל מספר יוצא בערך עשר פעמים. עם שתי קוביות רואים למה 7 יוצא הכי הרבה, ולמה 2 ו-12 נדירים: יש שש דרכים לקבל 7, ורק דרך אחת לקבל 2. רשימת ההטלות האחרונות עוזרת לרשום תוצאות בלי לפספס. "מסך מלא" מציג את הקוביות בגדול על המקרן.</p>
+  <h3>הטלה הוגנת</h3>
+  <p>לכל פאה יש בדיוק אותו סיכוי, בכל הטלה. התוצאה נקבעת במכשיר שלכם, עם מחולל המספרים האקראיים של הדפדפן. (הכתיב התקני הוא "קובייה", אבל רוב האנשים מחפשים "קוביה".) רוצים לשחק שש-בש מלא? יש <a href="/kelim/chashiva/shesh-besh/">שש-בש מול המחשב או מול חבר</a>. צריכים עץ או פלי? יש <a href="/kelim/chashiva/matbea/">הטלת מטבע</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך מטילים קוביה אונליין?</summary><p>לוחצים "להטיל" או על הקוביה עצמה. הקוביה מתגלגלת ומראה מספר אקראי בין 1 ל-6.</p></details>
+  <details><summary>אפשר להטיל שתי קוביות?</summary><p>כן. בוחרים כמה קוביות, מאחת ועד שש, ורואים גם את הסכום של כולן.</p></details>
+  <details><summary>יש קוביה של 20 פאות?</summary><p>כן. יש קוביות של 4, 6, 8, 10, 12 ו-20 פאות.</p></details>
+  <details><summary>הקוביה הוגנת?</summary><p>כן. לכל פאה יש אותו סיכוי בכל הטלה, והתוצאה נקבעת במכשיר שלכם.</p></details>
+  <details><summary>זה בחינם?</summary><p>כן. בחינם, בלי הרשמה ובלי פרסומות.</p></details>
+</section>
+<!--/seo-txt-->

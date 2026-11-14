@@ -1,0 +1,167 @@
+{
+ "id": "kita_portal",
+ "page": "/limudim/kita/",
+ "name": "הכיתה הווירטואלית למתמטיקה – ככה זה עובד",
+ "description": "סרטון הסבר קצר על הכיתה הווירטואלית למתמטיקה: כמה כיתות והקבצות בקישור אחד, דף עבודה עם מחשבון וסרטון לכל תרגיל, מחברת שבודקת כל שורה, הכנה לשיעור מתוך 48 שיעורים, שאלות לכיתה, פרגון ונקודות, מרתון חזרה, הפסקת חשיבה, מצב מקרן ודף הורים. חינם לכל מורה; לבית ספר – שותפות במיזם.",
+ "mood": "calm",
+ "poster_t": 2.4,
+ "scenes": [
+  {
+   "type": "title",
+   "dur": 3.6,
+   "icon": "🏫",
+   "kicker": "מיזם הכלים · לימודים",
+   "title": "כיתה וירטואלית\n*למתמטיקה*",
+   "sub": "כל הכיתות, כל התרגילים, וכל שורה שהתלמידה כותבת",
+   "chips": [
+    "חינם לכל מורה",
+    "בלי הרשמה",
+    "קוד וכינוי בלבד"
+   ]
+  },
+  {
+   "type": "html",
+   "dur": 3.4,
+   "html": "<div class=\"h a-up\">כל הכיתות וההקבצות <em>בקישור אחד</em></div><div class=\"shot a-pop\" style=\"animation-delay:.15s;height:880px\"><img src=\"shots/kita/k1-classes.jpg\" style=\"--sy:0px;animation-delay:.7s;animation-duration:1.8s;animation-fill-mode:both\"></div>"
+  },
+  {
+   "type": "html",
+   "dur": 3.6,
+   "html": "<div class=\"h a-up\">לכל תרגיל: <em>מחשבון, סרטון ושיעור</em></div><div class=\"shot a-pop\" style=\"animation-delay:.15s;height:800px\"><img src=\"shots/kita/k2-newhw.jpg\" style=\"--sy:-90px;animation-delay:.7s;animation-duration:2.0s;animation-fill-mode:both\"></div><div class=\"cap2 a-up\" style=\"animation-delay:.5s\">מעלים דף עבודה או כותבים תרגילים</div>"
+  },
+  {
+   "type": "html",
+   "dur": 3.8,
+   "html": "<div class=\"h a-up\">מחברת שבודקת <em>כל שורה</em></div><div class=\"shot a-pop\" style=\"animation-delay:.15s;height:800px\"><img src=\"shots/kita/k5-machberet.jpg\" style=\"--sy:0px;animation-delay:.7s;animation-duration:2.2s;animation-fill-mode:both\"></div><div class=\"cap2 a-up\" style=\"animation-delay:.5s\">נתקעה? 🙋 המורה רואה מיד ושולחת רמז</div>"
+  },
+  {
+   "type": "html",
+   "dur": 3.2,
+   "html": "<div class=\"h a-up\">הכנה לשיעור מתוך <em>48 שיעורים</em></div><div class=\"shot a-pop\" style=\"animation-delay:.15s;height:800px\"><img src=\"shots/kita/k4-bank.jpg\" style=\"--sy:0px;animation-delay:.7s;animation-duration:1.6s;animation-fill-mode:both\"></div><div class=\"cap2 a-up\" style=\"animation-delay:.5s\">מלוח הכפל ועד הבגרות</div>"
+  },
+  {
+   "type": "html",
+   "dur": 3.6,
+   "html": "<div class=\"h a-up\">שאלות לכיתה: <em>לומדות אחת מהשנייה</em></div><div class=\"shot a-pop\" style=\"animation-delay:.15s;height:880px\"><img src=\"shots/kita/k6-forum.jpg\" style=\"--sy:-300px;animation-delay:.7s;animation-duration:2.0s;animation-fill-mode:both\"></div>"
+  },
+  {
+   "type": "html",
+   "dur": 3.6,
+   "html": "<div class=\"h a-up\">פרגון, נקודות <em>ותגים</em></div><div class=\"shot a-pop\" style=\"animation-delay:.15s;height:880px\"><img src=\"shots/kita/k8-talmid.jpg\" style=\"--sy:-330px;animation-delay:.7s;animation-duration:2.0s;animation-fill-mode:both\"></div>"
+  },
+  {
+   "type": "html",
+   "dur": 3.2,
+   "html": "<div class=\"h a-up\">מרתון חזרה עם <em>בונוס כיתתי</em></div><div class=\"shot a-pop\" style=\"animation-delay:.15s;height:800px\"><img src=\"shots/kita/k3-hwlist.jpg\" style=\"--sy:-80px;animation-delay:.7s;animation-duration:1.6s;animation-fill-mode:both\"></div><div class=\"cap2 a-up\" style=\"animation-delay:.5s\">ובונוס זריזות לשלוש הראשונות</div>"
+  },
+  {
+   "type": "html",
+   "dur": 3.6,
+   "html": "<div class=\"h a-up\">הפסקת חשיבה <em>ותחרות בין הכיתות</em></div><div class=\"shot a-pop\" style=\"animation-delay:.15s;height:880px\"><img src=\"shots/kita/k9-fun.jpg\" style=\"--sy:-420px;animation-delay:.7s;animation-duration:2.0s;animation-fill-mode:both\"></div>"
+  },
+  {
+   "type": "html",
+   "dur": 3.2,
+   "html": "<div class=\"h a-up\">מצב מקרן <em>לשיעור</em></div><div class=\"a-pop\" style=\"animation-delay:.15s\"><img src=\"shots/kita/k10-makren.jpg\" style=\"width:620px;border-radius:26px;border:10px solid #232c3d;box-shadow:0 30px 80px rgba(0,0,0,.55);display:block;margin:0 auto\"></div><div class=\"cap2 a-up\" style=\"animation-delay:.5s\">לוח הנקודות, המטלות והשעון – על הלוח בכיתה</div>"
+  },
+  {
+   "type": "html",
+   "dur": 3.2,
+   "html": "<div class=\"h a-up\">דף להורים – <em>בלי פרטי תלמידות</em></div><div class=\"shot a-pop\" style=\"animation-delay:.15s;height:880px\"><img src=\"shots/kita/k11-horim.jpg\" style=\"--sy:-150px;animation-delay:.7s;animation-duration:1.6s;animation-fill-mode:both\"></div>"
+  },
+  {
+   "type": "cards",
+   "cls": "gold",
+   "dur": 4.6,
+   "badge": "💛 לבית הספר",
+   "title": "שותפות *במיזם*",
+   "gap": 0.6,
+   "items": [
+    [
+     "👩‍🏫",
+     "לכל מורה – חינם",
+     "כמה כיתות, מטלות, מחברת ושאלות"
+    ],
+    [
+     "🏫",
+     "לכל צוות המתמטיקה",
+     "הדרכה לצוות, דפים בלי הגבלה ותמיכה"
+    ],
+    [
+     "📚",
+     "גם לאנגלית ולמקצועות נוספים",
+     "פורטל כזה לכל מקצוע שצריך"
+    ]
+   ],
+   "foot": "עשר פעמים חי (180 ₪) לשנה לכל בית הספר"
+  },
+  {
+   "type": "cta",
+   "dur": 4.6,
+   "icon": "🏫",
+   "title": "חינם *לכל מורה*",
+   "sub": "לבית ספר – שותפות במיזם, עשר פעמים חי (180 ₪) לשנה",
+   "button": "לפתוח כיתה",
+   "gold": true,
+   "url": "hakelim.com/limudim/kita",
+   "small": "בלי שמות מלאים, טלפון או מייל של תלמידים"
+  }
+ ],
+ "flyer": {
+  "icon": "🏫",
+  "kicker": "כיתה וירטואלית למתמטיקה",
+  "title": "כל שורה נבדקת, *כל תלמידה מקבלת עזרה*",
+  "sub": "לכל תרגיל – *מחשבון, סרטון ושיעור*.",
+  "chips": [
+   "חינם לכל מורה",
+   "בלי הרשמה",
+   "קוד וכינוי בלבד"
+  ],
+  "steps": [
+   "פותחים כיתה או הקבצה",
+   "שולחים לבנות את הקישור בווטסאפ",
+   "נותנים מטלה ורואים מי פתרה ומי נתקעה"
+  ],
+  "features_title": "מה יש בכיתה",
+  "features": [
+   [
+    "📓",
+    "מחברת שבודקת כל שורה"
+   ],
+   [
+    "🎬",
+    "הכנה לשיעור מ-48 שיעורים"
+   ],
+   [
+    "💬",
+    "שאלות לכיתה, עם חסימות"
+   ],
+   [
+    "🏆",
+    "נקודות, 14 תגים ומרתון"
+   ]
+  ],
+  "partner": {
+   "title": "💛 לבית הספר · שותפות במיזם",
+   "items": [
+    [
+     "🏫",
+     "כל הצוות, *עם הדרכה*"
+    ],
+    [
+     "📄",
+     "דפים *בלי הגבלה*"
+    ],
+    [
+     "📚",
+     "גם *לאנגלית ולמקצועות*"
+    ]
+   ],
+   "note": "עשר פעמים חי (180 ₪) לשנה לכל בית הספר. לכל מורה – בחינם."
+  },
+  "cta": "סורקים ופותחים כיתה",
+  "button": "לפתוח כיתה",
+  "url": "https://hakelim.com/limudim/kita/?utm_source=flyer&utm_medium=share",
+  "url_text": "hakelim.com/limudim/kita"
+ }
+}

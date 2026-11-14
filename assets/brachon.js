@@ -5,23 +5,25 @@
   'use strict';
   var D = window.BRACHON_DATA;
   var NUS = { ash: 'אשכנז', sef: 'ספרד (חסידי)', em: 'עדות המזרח' };
+  // ברכת המזון ספרד: "תורת אמת", חוץ מסוף הברכה שריק שם ולכן מסידור "מצודה" (ראו tools/fetch_brachon.py). המשך = לא נכנס לתוכן העניינים.
+  var SEF_MAZON = [['', 'sef_mazon'], ['', 'sef_mazon_end', 1], ['', 'sef_mazon_shichecha', 1]];
   var KINDS = {
     shema: { t: 'קריאת שמע שעל המיטה', cover: ['קריאת שמע', 'שעל המיטה'], n: { ash: [['', 'ash_shema']], sef: [['', 'sef_shema']], em: [['', 'em_shema']] } },
-    mazon: { t: 'ברכת המזון', cover: ['ברכת המזון'], n: { ash: [['', 'ash_mazon']], sef: [['', 'sef_mazon']], em: [['', 'em_mazon']] }, brit: { sef: 'sef_brit' } },
+    mazon: { t: 'ברכת המזון', cover: ['ברכת המזון'], n: { ash: [['', 'ash_mazon']], sef: SEF_MAZON, em: [['', 'em_mazon']] }, brit: { sef: 'sef_brit' } },
     meein: { t: 'ברכה מעין שלוש', cover: ['ברכה', 'מעין שלוש'], n: { ash: [['ברכה מעין שלוש', 'ash_meein'], ['בורא נפשות', 'ash_nefashot']], em: [['', 'em_meein']] },
       miss: { sef: 'בסידור "תורת אמת" (נוסח ספרד) שבספריא אין ברכה מעין שלוש, ולכן אין כאן נוסח ספרד. אפשר לבחור אשכנז או עדות המזרח.' } },
     haderech: { t: 'תפילת הדרך', cover: ['תפילת הדרך'], n: { ash: [['', 'ash_haderech']], em: [['', 'em_haderech']] },
       miss: { sef: 'בסידור "תורת אמת" (נוסח ספרד) שבספריא אין תפילת הדרך. אפשר לבחור אשכנז או עדות המזרח.' } },
     kol: { t: 'ברכון לאירוע', cover: ['ברכון'], n: {
       ash: [['ברכת המזון', 'ash_mazon'], ['ברכה מעין שלוש', 'ash_meein'], ['בורא נפשות', 'ash_nefashot'], ['תפילת הדרך', 'ash_haderech']],
-      sef: [['ברכת המזון', 'sef_mazon'], ['', 'sef_foods']],
+      sef: SEF_MAZON.map(function (p, i) { return i ? p : ['ברכת המזון', p[1]]; }).concat([['', 'sef_foods']]),
       em: [['', 'em_mazon'], ['', 'em_meein'], ['', 'em_haderech']] }, brit: { sef: 'sef_brit' } }
   };
   // מחזיר את מה שמודפס: כותרות (שלנו) ומקטעים (מהמקור, כמו שהם).
   function build(kind, nus, opts) {
     var K = KINDS[kind], list = (K.n[nus] || []).slice(), secs = [];
     if (opts && opts.brit && K.brit && K.brit[nus]) list.push(['', K.brit[nus]]);
-    list.forEach(function (p) { var d = D[p[1]]; secs.push({ label: p[0], key: p[1], src: d.src, segs: d.segs }); });
+    list.forEach(function (p) { var d = D[p[1]]; secs.push({ label: p[0], key: p[1], src: d.src, segs: d.segs, cont: !!p[2] }); });
     return { title: K.t, cover: K.cover, miss: K.miss && K.miss[nus], hasBrit: !!(K.brit && K.brit[nus]), secs: secs };
   }
   window.BRACHON_KINDS = KINDS; window.BRACHON_NUS = NUS; window.BRACHON_BUILD = build;
@@ -56,7 +58,7 @@
     var evk = v('event'), line = evk === 'other' ? v('eventtxt') : EVENTS[evk] || '', names = v('names'), date = v('date'), ded = v('ded');
     var cover = '<div class="br-frame"><span class="bsd">בס"ד</span><div class="br-orn" aria-hidden="true"></div>' +
       '<h2>' + b.cover.map(esc).join('<br>') + '</h2>' +
-      (b.secs.length > 1 && kind === 'kol' ? '<p class="br-cont">' + b.secs.map(function (s) { return esc(s.label || D[s.key].segs[0].replace(/<[^>]+>/g, '')); }).join(' · ') + '</p>' : '') +
+      (b.secs.length > 1 && kind === 'kol' ? '<p class="br-cont">' + b.secs.filter(function (s) { return !s.cont; }).map(function (s) { return esc(s.label || D[s.key].segs[0].replace(/<[^>]+>/g, '')); }).join(' · ') + '</p>' : '') +
       '<p class="br-nus">נוסח ' + esc(NUS[nus]) + '</p>' +
       ((line || names || date || ded) ? '<div class="br-ded">' + (line ? '<p class="l1">' + esc(line) + '</p>' : '') + (names ? '<p class="nm">' + esc(names) + '</p>' : '') +
         (date ? '<p class="dt">' + esc(date) + '</p>' : '') + (ded ? '<p class="sn">' + esc(ded).replace(/\n/g, '<br>') + '</p>' : '') + '</div>' : '') +

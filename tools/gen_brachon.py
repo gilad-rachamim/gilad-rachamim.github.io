@@ -43,12 +43,15 @@ def clean(seg):
 LIC = {"Public Domain": "נחלת הכלל", "CC0": "CC0, נחלת הכלל", "CC-BY": "רישיון CC-BY"}
 VER = {"Daat Siddur Ashkenaz": "סידור אשכנז, מהדורת \"דעת\"", "Torat Emet 357": "סידור ספרד, \"תורת אמת\"",
        "Shaliehsaboo Edition": "סידור עדות המזרח, מהדורת שלייסבו", "The Metsudah siddur, 1981": "סידור \"מצודה\" (1981)"}
+# קטע שנלקח ממהדורה אחרת – כתוב במפורש בשורת המקור שבברכון
+PART = {"sef_mazon_end": 'סוף ברכת המזון (מ"הרחמן הוא ינחילנו" ועד הסוף) מ'}
+WHY = {"sef_mazon_end": ', כי בסידור "תורת אמת" שבספריא הקטע הזה ריק'}
 out = {}
 for k, v in SRC.items():
     segs = [clean(s) for s in v["text"] if isinstance(s, str)]
     segs = [s for s in segs if re.sub(r"<[^>]+>|\s", "", s)]
     vt = (v.get("versionTitle") or "").strip()
-    out[k] = {"src": VER.get(vt, vt) + ", " + LIC.get(v.get("license"), v.get("license") or "") + ", דרך ספריא",
+    out[k] = {"src": PART.get(k, "") + VER.get(vt, vt) + ", " + LIC.get(v.get("license"), v.get("license") or "") + ", דרך ספריא" + WHY.get(k, ""),
               "ref": v["ref"], "segs": segs}
 
 js = ("// נוצר אוטומטית ע\"י tools/gen_brachon.py מתוך tools/brachon-source.json – לא לערוך ביד.\n"

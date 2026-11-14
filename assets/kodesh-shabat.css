@@ -1,0 +1,32 @@
+/* כניסת שבת וצאת שבת לפי עיר (/kodesh/shabat/) */
+.sb-loc{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.sb-st{color:var(--muted);font-size:.98rem;margin:.15rem 0 0}
+.sb-h{font-family:var(--serif);color:var(--gold-hi);font-size:clamp(1.5rem,6.5vw,2rem);margin:0;line-height:1.25}
+.sb-two{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:.9rem}
+.sb-two div{padding:.9rem .4rem;border:1px solid var(--gold-soft);border-radius:14px;text-align:center;background:rgba(212,176,98,.07)}
+.sb-two strong{display:block;color:var(--gold);font-size:1.05rem}
+.sb-two b{display:block;font-family:var(--serif);font-size:clamp(2.3rem,12vw,3.2rem);color:var(--cream);direction:ltr;font-variant-numeric:tabular-nums;line-height:1.2}
+.sb-two span{display:block;color:var(--body);font-size:.92rem;line-height:1.5}
+.sb-count{margin:.9rem 0 0;text-align:center;color:var(--cream);font-size:1.08rem}
+.sb-note{margin:.6rem 0 0;padding:.55rem .7rem;border:1px solid var(--gold-soft);border-radius:10px;color:var(--body);font-size:.98rem}
+.sb-tbl{width:100%;border-collapse:collapse;font-size:1.05rem}
+.sb-tbl th,.sb-tbl td{padding:.6rem .3rem;border-bottom:1px solid var(--line);text-align:start;color:var(--body);font-weight:400;vertical-align:middle}
+.sb-tbl thead th{color:var(--gold);font-weight:700;font-size:.95rem}
+.sb-tbl th.c{text-align:center}
+.sb-tbl tbody th{color:var(--cream)}
+.sb-tbl td.t{direction:ltr;text-align:center;font-family:var(--serif);font-size:1.25rem;color:var(--cream);font-variant-numeric:tabular-nums;white-space:nowrap}
+.sb-tbl small{display:block;color:var(--muted);font-size:.86rem}
+.sb-tbl a{color:var(--cream);text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:.2em;display:inline-block;padding:.25rem 0}
+.sb-tbl tr.now th,.sb-tbl tr.now td{background:rgba(212,176,98,.09)}
+.sb-tbl tr.now td.t{color:var(--gold-hi);font-weight:700}
+.sb-more{margin-top:.8rem}
+.sb-chips{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.6rem}
+.sb-chips a{padding:.5rem .85rem;border:1px solid var(--line);border-radius:99px;color:var(--body);text-decoration:none;font-size:1rem}
+.sb-chips a[aria-current]{border-color:var(--gold);color:var(--gold-hi)}
+.sb-chips a:hover{border-color:var(--gold-soft);color:var(--cream)}
+@media print{.sb-chips,.sb-more{display:none}}
+.sb-two .sb-rt{margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--gold-soft);color:var(--cream);font-size:.95rem}
+.sb-tbl th.rt,.sb-tbl td.t.rt{font-size:1.02rem;color:var(--body)}
+.sb-tbl abbr{text-decoration:none}
+.sb-diff{margin:.6rem 0 0;padding:.55rem .85rem;border-right:3px solid var(--gold);background:rgba(212,176,98,.06);border-radius:8px;color:var(--body);font-size:1rem}
+.sb-diff b{color:var(--gold-hi)}

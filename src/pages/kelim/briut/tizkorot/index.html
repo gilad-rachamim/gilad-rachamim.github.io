@@ -1,0 +1,122 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tizkorot",
+  "title": "תזכורת לתרופות בטלפון – בחינם, בלי להוריד אפליקציה | הכלים של גילעד רחמים",
+  "description": "תזכורת לתרופות שמצלצלת בזמן, גם כשהדף סגור: בוחרים שעות וימים ומוסיפים ליומן באייפון, בסמסונג או ביומן גוגל. הקראה בקול, כתב גדול, ספירת כדורים וחידוש מרשם, לוח שבועי להדפסה ועדכון למשפחה. בחינם, בלי הרשמה.",
+  "og_title": "תזכורת לתרופות בטלפון – בחינם, בלי אפליקציה",
+  "priority": "0.8",
+  "crumbs": [
+    [
+      "בריאות",
+      "/kelim/briut/"
+    ],
+    [
+      "תזכורת לתרופות",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/tizkorot.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"יש אפליקציה לתזכורת תרופות בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן, והיא עובדת בלי להוריד כלום. פותחים את הדף בטלפון, כותבים את שם התרופה ובוחרים שעות, ולוחצים להוסיף ליומן. היומן של הטלפון מצלצל בזמן כל יום. בחינם, בלי הרשמה ובלי פרסומות, והכול נשמר רק בטלפון. אפשר גם להוסיף את הדף למסך הבית, ואז הוא נפתח כמו אפליקציה.\"}}, {\"@type\": \"Question\", \"name\": \"התזכורת מצלצלת גם כשהדף סגור?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן, אחרי שמוסיפים ליומן. את ההתראה שולח היומן של הטלפון, גם כשהדף והדפדפן סגורים. ההתראות וההקראה של הדף עצמו פועלות רק כל עוד הוא פתוח.\"}}, {\"@type\": \"Question\", \"name\": \"זה עובד באייפון ובסמסונג?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. באייפון ובסמסונג הכפתור פותח את ההוספה ליומן של הטלפון, ומי שעובד עם יומן גוגל לוחץ על הכפתור של יומן גוגל. ביומן גוגל ההתראה נקבעת לפי ההגדרה של היומן (לפעמים 30 דקות לפני), ואפשר לשנות אותה ל'בזמן האירוע' בעריכת האירוע.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לנהל תזכורות לתרופות של הורה מבוגר?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. כותבים בשביל מי (אמא, אבא, סבא), מדפיסים לוח שבועי למקרר, ושולחים לאחים בווטסאפ את הרשימה או עדכון של מה כבר נלקח היום. הכי טוב להוסיף את התזכורות ליומן בטלפון של ההורה עצמו, כדי שההתראה תקפוץ אצלו.\"}}, {\"@type\": \"Question\", \"name\": \"יש תזכורת קולית וכתב גדול?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. כפתור 'להקריא בקול' מקריא את שם התרופה בשעה שלה, כל עוד הדף פתוח, וכפתור 'כתב גדול' מגדיל את כל הכלי. ביומן אפשר לבחור צליל התראה, ויש גם אפשרות שהתזכורת תחזור שוב אחרי 10 דקות.\"}}, {\"@type\": \"Question\", \"name\": \"איך יודעים מתי נגמרים הכדורים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כותבים כמה כדורים יש בקופסה, ובכל סימון 'נלקח' המספר יורד. הכלי מחשב לכמה ימים זה מספיק, ומתריע כשנשאר שבוע. אפשר גם לקבוע תאריך לחידוש מרשם, והוא נכנס ליומן עם התזכורת.\"}}]}</script>",
+  "foot": "<script src=\"/assets/tizkorot.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>תזכורת לתרופות – בלי להוריד אפליקציה</h1>
+  <p class="sub">בוחרים שעות וימים, ומוסיפים ליומן בטלפון בלחיצה. התזכורת מצלצלת בזמן, גם כשהדף סגור. גם להורים, בכתב גדול ובקול. בחינם, בלי הרשמה, והכול נשאר רק אצלכם.</p>
+</header>
+<div class="tool">
+  <div class="res tz-today" id="tz-today" aria-live="polite"></div>
+  <div class="share-row">
+    <button class="btn btn-line btn-sm" type="button" id="tz-notif" aria-pressed="false">🔔 להפעיל התראות כשהדף פתוח</button>
+    <button class="btn btn-line btn-sm" type="button" id="tz-voice" aria-pressed="false">🔊 להקריא בקול</button>
+    <button class="btn btn-line btn-sm" type="button" id="tz-big" aria-pressed="false">🔠 כתב גדול</button>
+    <a class="btn btn-line btn-sm tz-hide" href="#" id="tz-fam" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לעדכן את המשפחה מה נלקח</a>
+  </div>
+  <p class="note tz-msg" id="tz-nmsg" aria-live="polite"></p>
+  <p class="note tz-msg" id="tz-vmsg" aria-live="polite"></p>
+
+  <p class="tz-banner tz-hide" id="tz-import">יש לכם רשימה ב"התרופות שלי" (<b id="tz-import-n"></b>). <button type="button" id="tz-import-b">להביא אותן לכאן</button><span class="tz-msg" id="tz-import-msg" aria-live="polite" style="display:block"></span></p>
+
+  <form class="k-form" id="tz-form" novalidate style="margin-top:1.4rem">
+    <h2 style="font-family:var(--serif);color:var(--cream);font-size:1.35rem">תזכורת חדשה</h2>
+    <div class="field"><span class="label" id="tz-kinds-l">מה סוג התזכורת?</span><div class="tz-chips" id="tz-kinds" role="group" aria-labelledby="tz-kinds-l"></div></div>
+    <div class="field"><label for="tz-name">מה להזכיר?</label><input id="tz-name" type="text" maxlength="60" required placeholder="אומפרדקס 20 מ״ג / למדוד לחץ דם"></div>
+    <div class="field"><label for="tz-who">בשביל מי? <span class="opt">(לא חובה)</span></label><input id="tz-who" type="text" maxlength="30" placeholder="אמא / סבא / אני"></div>
+    <div class="field"><span class="label" id="tz-presets-l">באילו שעות? <span class="opt">(אפשר כמה)</span></span>
+      <div class="tz-chips" id="tz-presets" role="group" aria-labelledby="tz-presets-l"></div>
+      <div class="tz-row"><input id="tz-time" type="time" aria-label="שעה אחרת"><button class="btn btn-line btn-sm" type="button" id="tz-addtime">+ שעה אחרת</button></div>
+      <div class="tz-picked" id="tz-picked" aria-live="polite"></div>
+    </div>
+    <div class="field"><label for="tz-rep">כל כמה זמן?</label>
+      <select id="tz-rep"><option value="d">כל יום</option><option value="w">רק בימים מסוימים בשבוע</option><option value="n">כל כמה ימים</option><option value="o">פעם אחת</option><option value="m">כל חודש</option><option value="y">כל שנה</option></select>
+    </div>
+    <div class="field tz-hide" id="tz-days-f"><span class="label" id="tz-days-l">באילו ימים?</span><div class="tz-chips" id="tz-days" role="group" aria-labelledby="tz-days-l"></div></div>
+    <div class="field tz-hide" id="tz-every-f"><label for="tz-every">כל כמה ימים?</label><input id="tz-every" type="number" min="2" max="60" value="2" inputmode="numeric"></div>
+    <div class="field"><label for="tz-start" id="tz-start-l">מתחילים מתאריך</label><input id="tz-start" type="date"></div>
+    <div class="field" id="tz-end-f"><label for="tz-end">עד תאריך <span class="opt">(לא חובה – למשל סוף טיפול)</span></label><input id="tz-end" type="date"></div>
+    <div class="field"><label for="tz-note">הערה <span class="opt">(לא חובה)</span></label><input id="tz-note" type="text" maxlength="80" placeholder="אחרי האוכל / עם כוס מים"></div>
+    <details class="tz-more" id="tz-more"><summary>עוד אפשרויות: כמה כדורים יש, חידוש מרשם, תזכורת שנייה</summary>
+      <div class="field"><label for="tz-stock">כמה כדורים יש בקופסה? <span class="opt">(לא חובה – יורד בכל סימון)</span></label><input id="tz-stock" type="number" min="0" max="9999" inputmode="numeric" placeholder="30"></div>
+      <div class="field"><label for="tz-refill">מתי לחדש מרשם? <span class="opt">(לא חובה – נכנס ליומן)</span></label><input id="tz-refill" type="date"></div>
+      <div class="field"><label for="tz-pre">להזכיר גם מראש? <span class="opt">(ביומן)</span></label><select id="tz-pre"><option value="">לא, רק בזמן</option><option value="PT15M">רבע שעה לפני</option><option value="PT1H">שעה לפני</option><option value="P1D">יום לפני</option><option value="P7D">שבוע לפני</option></select></div>
+      <label class="check"><input type="checkbox" id="tz-again"> <span>להזכיר שוב אחרי 10 דקות (ביומן)</span></label>
+    </details>
+    <button class="btn btn-gold btn-block" type="submit" id="tz-save">לשמור את התזכורת</button>
+    <button class="btn btn-line btn-block tz-hide" type="button" id="tz-cancel" style="margin-top:.5rem">ביטול העריכה</button>
+    <p class="note tz-msg" id="tz-fmsg" aria-live="polite"></p>
+  </form>
+
+  <section class="tz-sec" style="margin-top:1.6rem" aria-labelledby="tz-list-h">
+    <h3 id="tz-list-h">התזכורות שלי</h3>
+    <p class="note">כדי שהתזכורת תצלצל גם כשהדף סגור: לוחצים על "להוסיף ליומן בטלפון" (אייפון וסמסונג) או על "ליומן גוגל".</p>
+    <ul class="tz-items" id="tz-items"></ul>
+    <div class="share-row">
+      <button class="btn btn-gold btn-sm tz-hide" type="button" id="tz-all">📲 את כל התזכורות ליומן, בבת אחת</button>
+      <button class="btn btn-line btn-sm" type="button" id="tz-print">🖨️ להדפיס לוח שבועי למקרר</button>
+      <a class="btn btn-line btn-sm" href="#" id="tz-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הרשימה למשפחה</a>
+    </div>
+    <div class="tz-banner tz-hide" id="tz-after" role="status">
+      <b>הקובץ ירד. מה עכשיו?</b>
+      <ul class="tz-how">
+        <li><b>אייפון:</b> נפתח חלון – לוחצים "הוסף הכל" ובוחרים יומן.</li>
+        <li><b>סמסונג:</b> פותחים את הקובץ שירד (בהתראה למעלה או ב"הקבצים שלי") ← "יומן Samsung" ← שמירה.</li>
+        <li><b>יומן גוגל באנדרואיד:</b> האפליקציה לא פותחת קבצים – משתמשים בכפתור "ליומן גוגל".</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="tz-sec" style="margin-top:1.6rem" aria-labelledby="tz-hist-h">
+    <h3 id="tz-hist-h">מה סומן בימים האחרונים</h3>
+    <div id="tz-hist"></div>
+  </section>
+
+  <p class="disclaimer">הכלי עוזר לזכור, ולא נותן ייעוץ רפואי. מתי ואיך לקחת תרופה – רק לפי הרופא או הרוקח. שכחתם מנה? שואלים את הרוקח מה עושים, ולא מכפילים על דעת עצמכם. הכול נשמר רק בטלפון הזה.</p>
+  <p class="k-next">⏰ תזכורת למשהו אחר – תשלום, יום הולדת, להתקשר? <a class="gold" href="/kelim/machshev/tizkoret/">תזכורת בטלפון לכל דבר</a> (אותה רשימה).</p>
+  <p class="k-next">💊 רשימת תרופות להדפסה ולרופא, עם אלרגיות: <a class="gold" href="/kelim/briut/trufot/">התרופות שלי</a>. 🩺 יש תור? <a class="gold" href="/kelim/briut/rofe/">הכנה לביקור אצל רופא</a>.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="תזכורת לתרופות שבאמת מצלצלת בזמן – נכנסת ליומן בטלפון, עם הקראה בקול וכתב גדול, גם להורים. בחינם ובלי להוריד אפליקציה:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
+<div id="tz-sheet" class="tz-sheet" aria-hidden="true"></div>
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">תזכורת לתרופות שמצלצלת בזמן, בלי להוריד אפליקציה</h2>
+  <p>"לקחתי כבר את הכדור?" זו אחת השאלות הכי נפוצות בבית, במיוחד כשיש כמה תרופות בכמה שעות, או כשדואגים להורה מבוגר. רוב מי שמחפש אפליקציה לתזכורת תרופות מגלה שצריך להוריד אותה, להירשם, לקבל פרסומות, ולפעמים לשלם. כאן זה אחרת: בונים את התזכורת בדף אחד, ומכניסים אותה ליומן שכבר יש בטלפון. היומן מצלצל בשעה הנכונה כל יום, גם כשהדף והדפדפן סגורים, בלי חשבון ובלי שום דבר שיוצא מהטלפון.</p>
+  <h3>איך עושים תזכורת לתרופות בטלפון, בשלושה צעדים</h3>
+  <p>כותבים מה להזכיר – שם התרופה והמינון, או כל דבר אחר: לשתות מים, למדוד לחץ דם או סוכר, להחליף מדבקה, גלולה, תור לבדיקה. בוחרים שעה אחת או כמה (בוקר, צהריים, ערב, לפני השינה, או כל שעה אחרת), וכל כמה זמן: כל יום, רק בימים מסוימים בשבוע, כל כמה ימים, או פעם אחת. אפשר לקבוע גם תאריך סיום, למשל לשבוע של אנטיביוטיקה. בסוף לוחצים "להוסיף ליומן בטלפון" באייפון ובסמסונג, או "ליומן גוגל", וזהו.</p>
+  <h3>כמו שעון תזכורת לתרופות, רק בטלפון</h3>
+  <p>מי שמחפש שעון מעורר מדבר שמזכיר לקחת כדורים יכול להפעיל כאן הקראה בקול: בשעה שנקבעה הדף אומר בעברית מה לקחת, כל עוד הוא פתוח. כפתור "כתב גדול" מגדיל את כל הכלי, והתזכורת ביומן יכולה לחזור שוב אחרי עשר דקות למי שלא שמע בפעם הראשונה.</p>
+  <h3>מה כבר נלקח היום, ומתי נגמרת הקופסה</h3>
+  <p>בראש הדף מופיעה רשימת היום לפי השעות, ומסמנים בה "נלקח" או "בוצע". מה שהגיע זמנו ועוד לא סומן מודגש בזהב, והסימונים מתאפסים לבד בכל בוקר. למטה רואים מה סומן בכל אחד מ-14 הימים האחרונים. אם כותבים כמה כדורים יש בקופסה, המספר יורד בכל סימון, והכלי מתריע כשנשאר שבוע – זה הזמן לקנות או לחדש מרשם. את תאריך חידוש המרשם אפשר להכניס ליומן יחד עם התזכורת.</p>
+  <h3>תזכורת לתרופות להורים מבוגרים ולמטפלים</h3>
+  <p>יש שדה "בשביל מי", כך שאפשר לנהל תזכורות לאמא, לאבא או לסבא. מדפיסים לוח שבועי למקרר עם משבצות לסימון, שולחים לאחים את הרשימה בווטסאפ, ובסוף היום שולחים עדכון קצר של מה כבר נלקח ומה עוד לא. הכי טוב לפתוח את הדף בטלפון של ההורה ולהוסיף שם ליומן – ואז ההתראה קופצת אצלו.</p>
+  <h3>פרטיות, ומה הכלי לא עושה</h3>
+  <p>אין הרשמה ואין שרת. התזכורות נשמרות רק בטלפון שלכם, ונכנסות רק ליומן שלכם. הכלי עוזר לזכור ולא נותן ייעוץ רפואי: את השעות והמינון קובעים עם הרופא או הרוקח, ומי ששכח מנה שואל את הרוקח מה לעשות. עוד כלים לבריאות: <a class="gold" href="/kelim/briut/trufot/">התרופות שלי</a> – רשימה להדפסה עם אלרגיות, <a class="gold" href="/kelim/briut/madadim/">יומן מדדים</a> ללחץ דם וסוכר, <a class="gold" href="/kelim/briut/rofe/">הכנה לביקור אצל רופא</a>, ו<a class="gold" href="/kelim/briut/">כל כלי הבריאות</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>יש אפליקציה לתזכורת תרופות בחינם?</summary><p>כן, והיא עובדת בלי להוריד כלום. פותחים את הדף בטלפון, כותבים את שם התרופה ובוחרים שעות, ולוחצים להוסיף ליומן. היומן של הטלפון מצלצל בזמן כל יום. בחינם, בלי הרשמה ובלי פרסומות, והכול נשמר רק בטלפון. אפשר גם להוסיף את הדף למסך הבית, ואז הוא נפתח כמו אפליקציה.</p></details>
+  <details><summary>התזכורת מצלצלת גם כשהדף סגור?</summary><p>כן, אחרי שמוסיפים ליומן. את ההתראה שולח היומן של הטלפון, גם כשהדף והדפדפן סגורים. ההתראות וההקראה של הדף עצמו פועלות רק כל עוד הוא פתוח.</p></details>
+  <details><summary>זה עובד באייפון ובסמסונג?</summary><p>כן. באייפון ובסמסונג הכפתור פותח את ההוספה ליומן של הטלפון, ומי שעובד עם יומן גוגל לוחץ על הכפתור של יומן גוגל. ביומן גוגל ההתראה נקבעת לפי ההגדרה של היומן (לפעמים 30 דקות לפני), ואפשר לשנות אותה ל'בזמן האירוע' בעריכת האירוע.</p></details>
+  <details><summary>אפשר לנהל תזכורות לתרופות של הורה מבוגר?</summary><p>כן. כותבים בשביל מי (אמא, אבא, סבא), מדפיסים לוח שבועי למקרר, ושולחים לאחים בווטסאפ את הרשימה או עדכון של מה כבר נלקח היום. הכי טוב להוסיף את התזכורות ליומן בטלפון של ההורה עצמו, כדי שההתראה תקפוץ אצלו.</p></details>
+  <details><summary>יש תזכורת קולית וכתב גדול?</summary><p>כן. כפתור 'להקריא בקול' מקריא את שם התרופה בשעה שלה, כל עוד הדף פתוח, וכפתור 'כתב גדול' מגדיל את כל הכלי. ביומן אפשר לבחור צליל התראה, ויש גם אפשרות שהתזכורת תחזור שוב אחרי 10 דקות.</p></details>
+  <details><summary>איך יודעים מתי נגמרים הכדורים?</summary><p>כותבים כמה כדורים יש בקופסה, ובכל סימון 'נלקח' המספר יורד. הכלי מחשב לכמה ימים זה מספיק, ומתריע כשנשאר שבוע. אפשר גם לקבוע תאריך לחידוש מרשם, והוא נכנס ליומן עם התזכורת.</p></details>
+</section>
+<!--/seo-txt-->

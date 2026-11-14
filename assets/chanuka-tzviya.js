@@ -91,6 +91,55 @@
       s += R(78, 224, 144, 12) + R(70, 236, 160, 12);
       s += star(44, 50, 11) + star(150, 30, 9);
       return s;
+    } },
+    /* 13.11.2026: עוד חמישה ציורים (מנדלה, חנוכה שמח, לביבות, ענף זית, חנוכייה לקטנים) */
+    { id: 'mandala', name: 'מנדלה לחנוכה', svg: function () {
+      var s = bg(), i, a, x, y;
+      s += C(150, 150, 138);
+      for (i = 0; i < 16; i++) { a = i * 22.5; s += '<ellipse class="r" cx="150" cy="35" rx="13" ry="22" transform="rotate(' + a + ' 150 150)"/>'; }
+      s += C(150, 150, 98);
+      for (i = 0; i < 8; i++) { a = i * 45; s += '<path class="r" d="M150 62 L166 92 L150 122 L134 92 Z" transform="rotate(' + a + ' 150 150)"/>'; }
+      for (i = 0; i < 8; i++) { a = (i * 45 + 22.5) * Math.PI / 180; x = 150 + 78 * Math.sin(a); y = 150 - 78 * Math.cos(a); s += C(x.toFixed(1), y.toFixed(1), 9); }
+      s += C(150, 150, 44);
+      for (i = 0; i < 8; i++) { a = i * 45; s += '<ellipse class="r" cx="150" cy="122" rx="7" ry="14" transform="rotate(' + a + ' 150 150)"/>'; }
+      s += C(150, 150, 16);
+      return s;
+    } },
+    { id: 'sameach', name: 'חנוכה שמח', svg: function () {
+      var s = bg(), i;
+      s += R(24, 24, 252, 252, 14);
+      s += T(150, 132, 64, 'חנוכה') + T(150, 214, 64, 'שמח');
+      for (i = 0; i < 8; i++) { s += R(38 + i * 30, 238, 12, 26, 2) + flame(44 + i * 30, 236); }
+      s += star(48, 54, 14) + star(252, 54, 14) + star(150, 50, 10);
+      return s;
+    } },
+    { id: 'levivot', name: 'לביבות במחבת', svg: function () {
+      var s = bg();
+      s += R(222, 150, 70, 18, 8);
+      s += E(130, 170, 104, 70) + E(130, 162, 88, 54);
+      s += E(96, 150, 26, 16) + E(156, 140, 26, 16) + E(104, 186, 26, 16) + E(166, 182, 26, 16);
+      s += L('M96 92 C86 78 106 70 96 54') + L('M130 88 C120 74 140 66 130 50') + L('M164 92 C154 78 174 70 164 54');
+      s += E(70, 268, 46, 14) + E(70, 262, 30, 8) + C(240, 250, 22);
+      return s;
+    } },
+    { id: 'zayit', name: 'ענף זית', svg: function () {
+      var s = bg(), i, t, px, py, th, cx, cy, ts = [0.12, 0.26, 0.4, 0.54, 0.68, 0.82];
+      s += L('M60 40 L250 240');
+      for (i = 0; i < ts.length; i++) {  // עלים לסירוגין משני צדי הענף, מכוונים קדימה
+        t = ts[i]; px = 60 + 190 * t; py = 40 + 200 * t; th = i % 2 ? 95 : -5;
+        cx = px + 25 * Math.cos(th * Math.PI / 180); cy = py + 25 * Math.sin(th * Math.PI / 180);
+        s += '<ellipse class="r" cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" rx="24" ry="9" transform="rotate(' + th + ' ' + cx.toFixed(1) + ' ' + cy.toFixed(1) + ')"/>';
+      }
+      for (i = 0; i < 3; i++) { t = 0.33 + i * 0.28; px = 60 + 190 * t; py = 40 + 200 * t; s += E((px + 18).toFixed(1), (py - 12).toFixed(1), 9, 12); }
+      s += P('M40 276 L40 236 Q40 222 54 216 L54 204 L74 204 L74 216 Q88 222 88 236 L88 276 Z');
+      return s;
+    } },
+    { id: 'ktanim', name: 'חנוכייה לקטנים', svg: function () {
+      var s = bg(), i, xs = [34, 62, 90, 118, 182, 210, 238, 266];
+      s += R(16, 210, 268, 26, 10) + P('M100 236 L200 236 L222 280 L78 280 Z');
+      for (i = 0; i < 8; i++) { s += R(xs[i] - 11, 130, 22, 80, 4) + flame(xs[i], 128); }
+      s += R(139, 96, 22, 114, 4) + flame(150, 94);
+      return s;
     } }
   ];
 

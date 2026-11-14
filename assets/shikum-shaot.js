@@ -1,32 +1,44 @@
-// דוח שעות חודשי למטפל: פרטים + סידור קבוע + שעות לפי ימים נשמרים בטלפון (localStorage).
-// חתימות באצבע (לא נשמרות), ומהדף נוצר PDF (html-to-image + jsPDF מקומיים) לשליחה במייל / ווטסאפ.
+// דוח שעות חודשי למטפל / מלווה: פרטים + סידור קבוע + שעות לפי ימים נשמרים בטלפון (localStorage).
+// שני סוגי דוח: "ליווי" (זכאי ומלווה, עד 3 כניסות/יציאות ביום ונסיעות – כמו טופס חברת הליווי)
+// ו"עובד סיעודי" (מעסיק ועובד). חתימות באצבע או בהקלדה (לא נשמרות), ומהדף נוצר PDF
+// (html-to-image + jsPDF מקומיים) לשליחה במייל / ווטסאפ / פקס.
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
   if (!$('sh-days')) return;
   var KEY = 'kelim-shikum-shaot', TOOL = 'shikum_shaot';
   var DN = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'], DS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
-  var NOTES = ['חופש', 'מחלה', 'חג', 'לא עבד/ה'];
+  var NOTES = ['חופש', 'מחלה', 'חג', 'לא עבד/ה'], ROM = ['', 'I', 'II', 'III'];
+  var KIND = {
+    liva: { r1: 'הזכאי/ת', r2: 'המלווה', r1s: 'זכאי/ת', r2s: 'מלווה', title: 'דו"ח שעות ליווי לחודש', id2: 'ת"ז / דרכון המלווה' },
+    siud: { r1: 'המעסיק', r2: 'העובד/ת', r1s: 'מעסיק', r2s: 'עובד/ת', title: 'דוח שעות עבודה חודשי – עובד/ת סיעודי/ת', id2: 'ת"ז / דרכון העובד/ת' }
+  };
+  function K() { return KIND[st.kind] || KIND.siud; }
   function pad(n) { return ('0' + n).slice(-2); }
   function defMonth() { var d = new Date(); if (d.getDate() <= 7) d.setMonth(d.getMonth() - 1); return d.getFullYear() + '-' + pad(d.getMonth() + 1); }
   function blankWeek() { var w = []; for (var i = 0; i < 7; i++) w.push({ on: 0, a: '08:00', b: '14:00' }); return w; }
   function demoState() {
     var w = blankWeek(); for (var i = 0; i < 5; i++) w[i].on = 1; w[5] = { on: 1, a: '08:00', b: '12:00' };
-    var s = { demo: 1, d: { emp: 'משה כהן', empId: '', empAddr: 'הרצל 12, רחובות', empTel: '050-0000000', wrk: 'מריה סנטוס', wrkId: '', wrkAddr: 'הרצל 12, רחובות', wrkTel: '052-0000000', to: 'אגף השיקום', mail: '' }, week: w, month: defMonth(), m: {} };
-    s.m[s.month] = fillFrom(w, s.month); var k = Object.keys(s.m[s.month]);
-    if (k[3]) s.m[s.month][k[3]] = { a: '', b: '', n: 'חופש' };
-    var lng = k.filter(function (d) { return +d > 6 && s.m[s.month][d].a; })[0];
-    if (lng) s.m[s.month][lng].b = '16:30'; // יום אחד ארוך יותר, כדי שיראו שמתקנים יום
+    var s = { demo: 1, kind: 'liva', d: { emp: 'משה כהן', empId: '', empAddr: 'הרצל 12, רחובות', empTel: '050-0000000', wrk: 'מריה סנטוס', wrkId: '', wrkAddr: 'הרצל 12, רחובות', wrkTel: '052-0000000', to: 'חברת הליווי', mail: '' }, week: w, month: defMonth(), m: {} };
+    var c = s.m[s.month] = fillFrom(w, s.month), k = Object.keys(c);
+    if (k[3]) c[k[3]] = { a: '', b: '', n: 'חופש' };
+    var wk = k.filter(function (d) { return +d > 6 && c[d].a; });
+    if (wk[0]) { c[wk[0]].b = '11:00'; c[wk[0]].a2 = '16:00'; c[wk[0]].b2 = '19:00'; } // יום מפוצל: בוקר וערב
+    if (wk[2]) { c[wk[2]].tf = '09:30'; c[wk[2]].tt = '11:30'; c[wk[2]].tg = 'בית חולים קפלן, ביקורת'; c[wk[2]].trip = 1; } // נסיעה לטיפול
     return s;
   }
-  function used(how, x) { if (window.toolUsed) window.toolUsed(TOOL, Object.assign({ how: how }, x || {})); }
+  function used(how, x) { if (window.toolUsed) window.toolUsed(TOOL, Object.assign({ how: how, kind: st.kind }, x || {})); }
   function esc(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function days(mo) { var p = mo.split('-'); return new Date(+p[0], +p[1], 0).getDate(); }
   function wd(mo, d) { var p = mo.split('-'); return new Date(+p[0], +p[1] - 1, d).getDay(); }
   function monthName(mo) { var p = mo.split('-'); try { return new Date(+p[0], +p[1] - 1, 1).toLocaleDateString('he-IL', { month: 'long', year: 'numeric' }); } catch (e) { return p[1] + '/' + p[0]; } }
   function fillFrom(w, mo) { var r = {}; for (var d = 1; d <= days(mo); d++) { var x = w[wd(mo, d)]; r[d] = x.on ? { a: x.a, b: x.b, n: '' } : { a: '', b: '', n: '' }; } return r; }
   function mins(t) { if (!t) return null; var p = t.split(':'); return +p[0] * 60 + +p[1]; }
-  function dur(r) { var a = mins(r.a), b = mins(r.b); if (a === null || b === null) return 0; var m = b - a; if (m <= 0) m += 1440; return m; }
+  function span(a, b) { a = mins(a); b = mins(b); if (a === null || b === null) return 0; var m = b - a; if (m <= 0) m += 1440; return m; }
+  function pairs(r) { return [[r.a, r.b], [r.a2, r.b2], [r.a3, r.b3]]; }
+  function npairs(r) { return r.a3 || r.b3 || r.x >= 3 ? 3 : r.a2 || r.b2 || r.x >= 2 ? 2 : 1; }
+  function hasTrip(r) { return !!(r.trip || r.tf || r.tt || r.tg); }
+  function dur(r) { return pairs(r).reduce(function (s, p) { return s + span(p[0], p[1]); }, 0); }
   function hm(m) { return Math.floor(m / 60) + ':' + pad(m % 60); }
   function hdec(m) { var h = Math.round(m / 6) / 10; return String(h).replace(/\.0$/, ''); }
 
@@ -34,8 +46,22 @@
   try { st = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
   if (!st || !st.week) st = demoState();
   if (!st.m) st.m = {};
+  if (!st.kind) st.kind = 'siud'; // מי שהתחיל לפני שהיה בחירה – נשאר עם מה שהכיר
   function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
   function cur() { if (!st.m[st.month]) st.m[st.month] = fillFrom(st.week, st.month); return st.m[st.month]; }
+
+  // ---------- סוג הדוח ושמות התפקידים ----------
+  function roles() {
+    var k = K();
+    document.querySelectorAll('[data-role]').forEach(function (el) { el.textContent = k[el.dataset.role]; });
+    $('sh-wrk-id-l').firstChild.nodeValue = k.id2 + ' ';
+    $('sh-wrk-id-o').textContent = st.kind === 'liva' ? '(בטופס הליווי: חובה)' : '(אם הטופס דורש)';
+    document.querySelectorAll('input[name="sh-kind"]').forEach(function (x) { x.checked = x.value === st.kind; });
+    $('sh-liva-tips').hidden = st.kind !== 'liva';
+  }
+  document.querySelectorAll('input[name="sh-kind"]').forEach(function (x) {
+    x.addEventListener('change', function () { if (!this.checked) return; st.kind = this.value; save(); roles(); names(); renderPaper(); used('kind'); });
+  });
 
   // ---------- פרטים ----------
   var F = { emp: 'sh-emp', empId: 'sh-emp-id', empAddr: 'sh-emp-addr', empTel: 'sh-emp-tel', wrk: 'sh-wrk', wrkId: 'sh-wrk-id', wrkAddr: 'sh-wrk-addr', wrkTel: 'sh-wrk-tel', to: 'sh-to', mail: 'sh-mail' };
@@ -55,7 +81,7 @@
     });
   });
   $('sh-demo-x').addEventListener('click', function () { endDemo(''); st.week = blankWeek(); renderWeek(); renderDays(); save(); used('clear_demo'); });
-  $('sh-month').addEventListener('change', function () { if (!this.value) return; st.month = this.value; save(); renderDays(); used('month'); });
+  $('sh-month').addEventListener('change', function () { if (!this.value) return; st.month = this.value; save(); renderDays(); remind(); used('month'); });
   function names() { $('sh-emp-n').textContent = st.d.emp ? '(' + st.d.emp + ')' : ''; $('sh-wrk-n').textContent = st.d.wrk ? '(' + st.d.wrk + ')' : ''; }
 
   // ---------- סידור קבוע ----------
@@ -72,40 +98,66 @@
     save();
   });
   $('sh-fill').addEventListener('click', function () {
-    var c = st.m[st.month], any = c && Object.keys(c).some(function (k) { return c[k].a || c[k].n; });
+    var c = st.m[st.month], any = c && Object.keys(c).some(function (k) { return c[k].a || c[k].n || c[k].a2 || hasTrip(c[k]); });
     if (any && !confirm('למלא מחדש את כל ' + monthName(st.month) + ' לפי הסידור? השינויים שעשיתם בחודש הזה יימחקו.')) return;
     st.m[st.month] = fillFrom(st.week, st.month); save(); renderDays(); used('fill');
   });
 
   // ---------- ימים ----------
+  function dayLabel(d) { return 'יום ' + DN[wd(st.month, d)] + ' ' + d + '.' + +st.month.split('-')[1]; }
+  function dayHtml(d) {
+    var r = cur()[d], w = wd(st.month, d), m = dur(r), dl = dayLabel(d), np = npairs(r), h = '', sfx = ['', '2', '3'];
+    h += '<div class="ts-day' + (m ? ' work' : '') + (w === 6 ? ' sat' : '') + '" data-d="' + d + '" role="group" aria-label="' + dl + '"><div class="d" aria-hidden="true"><b>' + d + '.' + +st.month.split('-')[1] + '</b><small>יום ' + DS[w] + '</small></div>' +
+      '<input type="time" value="' + (r.a || '') + '" data-k="a" aria-label="' + dl + ', כניסה' + (np > 1 ? ' ראשונה' : '') + '"><input type="time" value="' + (r.b || '') + '" data-k="b" aria-label="' + dl + ', יציאה' + (np > 1 ? ' ראשונה' : '') + '">' +
+      '<span class="h"><span class="vh">שעות: </span>' + (m ? hm(m) : '–') + '</span>';
+    for (var p = 2; p <= np; p++) {
+      var s = sfx[p - 1], nm = p === 2 ? 'שנייה' : 'שלישית';
+      h += '<div class="ts-x"><span class="xl">' + ROM[p] + '</span><input type="time" value="' + (r['a' + s] || '') + '" data-k="a' + s + '" aria-label="' + dl + ', כניסה ' + nm + '"><input type="time" value="' + (r['b' + s] || '') + '" data-k="b' + s + '" aria-label="' + dl + ', יציאה ' + nm + '">' +
+        (p === np ? '<button type="button" class="rm" data-rm="pair" aria-label="להסיר את הכניסה ה' + nm + ' ב' + dl + '">✕</button>' : '<span></span>') + '</div>';
+    }
+    if (hasTrip(r)) {
+      h += '<div class="ts-trip"><span class="xl" aria-hidden="true">🚗</span><input type="time" value="' + (r.tf || '') + '" data-k="tf" aria-label="' + dl + ', נסיעה משעה"><input type="time" value="' + (r.tt || '') + '" data-k="tt" aria-label="' + dl + ', נסיעה עד שעה">' +
+        '<button type="button" class="rm" data-rm="trip" aria-label="להסיר את הנסיעה ב' + dl + '">✕</button>' +
+        '<input type="text" class="tg" maxlength="60" value="' + esc(r.tg || '') + '" data-k="tg" placeholder="לאן? (למשל: בית חולים, טיפול)" aria-label="' + dl + ', יעד הנסיעה"></div>';
+    }
+    h += '<div class="nt">' + NOTES.map(function (t) { return '<button type="button" data-n="' + t + '" aria-pressed="' + (r.n === t) + '" aria-label="' + t + ' ב' + dl + '"' + (r.n === t ? ' class="on"' : '') + '>' + t + '</button>'; }).join('') +
+      (np < 3 ? '<button type="button" class="add" data-add="pair" aria-label="עוד כניסה ויציאה ב' + dl + '">+ כניסה</button>' : '') +
+      (hasTrip(r) ? '' : '<button type="button" class="add" data-add="trip" aria-label="להוסיף נסיעה ב' + dl + '">+ נסיעה</button>') + '</div></div>';
+    return h;
+  }
   function renderDays() {
     var c = cur(), n = days(st.month), h = '';
-    for (var d = 1; d <= n; d++) {
-      var r = c[d] || (c[d] = { a: '', b: '', n: '' }), w = wd(st.month, d), m = dur(r);
-      var dl = 'יום ' + DN[w] + ' ' + d + '.' + +st.month.split('-')[1];
-      h += '<div class="ts-day' + (m ? ' work' : '') + (w === 6 ? ' sat' : '') + '" data-d="' + d + '" role="group" aria-label="' + dl + '"><div class="d" aria-hidden="true"><b>' + d + '.' + +st.month.split('-')[1] + '</b><small>יום ' + DS[w] + '</small></div>' +
-        '<input type="time" value="' + (r.a || '') + '" data-k="a" aria-label="' + dl + ', משעה"><input type="time" value="' + (r.b || '') + '" data-k="b" aria-label="' + dl + ', עד שעה">' +
-        '<span class="h"><span class="vh">שעות: </span>' + (m ? hm(m) : '–') + '</span>' +
-        '<div class="nt">' + NOTES.map(function (t) { return '<button type="button" data-n="' + t + '" aria-pressed="' + (r.n === t) + '" aria-label="' + t + ' ב' + dl + '"' + (r.n === t ? ' class="on"' : '') + '>' + t + '</button>'; }).join('') + '</div></div>';
-    }
+    for (var d = 1; d <= n; d++) { if (!c[d]) c[d] = { a: '', b: '', n: '' }; h += dayHtml(d); }
     $('sh-days').innerHTML = h; summary(); renderPaper();
   }
+  function redrawDay(d, focusSel) {
+    var old = document.querySelector('.ts-day[data-d="' + d + '"]'), tmp = document.createElement('div'); tmp.innerHTML = dayHtml(d);
+    old.parentNode.replaceChild(tmp.firstChild, old);
+    if (focusSel) { var f = document.querySelector('.ts-day[data-d="' + d + '"] ' + focusSel); if (f) f.focus(); } // הפוקוס נשאר במקום אחרי בנייה מחדש
+    summary(); renderPaper();
+  }
   $('sh-days').addEventListener('change', function (e) {
-    var row = e.target.closest('.ts-day'); if (!row || e.target.type !== 'time') return;
-    var r = cur()[+row.dataset.d]; r[e.target.dataset.k] = e.target.value; if (r.a && r.b) r.n = '';
+    var row = e.target.closest('.ts-day'), k = e.target.dataset.k; if (!row || !k) return;
+    var r = cur()[+row.dataset.d]; r[k] = e.target.type === 'text' ? e.target.value.trim() : e.target.value; if (dur(r)) r.n = '';
     var m = dur(r); row.querySelector('.h').innerHTML = '<span class="vh">שעות: </span>' + (m ? hm(m) : '–'); row.classList.toggle('work', !!m);
-    row.querySelectorAll('.nt button').forEach(function (b) { b.classList.toggle('on', b.dataset.n === r.n); b.setAttribute('aria-pressed', String(b.dataset.n === r.n)); });
+    row.querySelectorAll('.nt button[data-n]').forEach(function (b) { b.classList.toggle('on', b.dataset.n === r.n); b.setAttribute('aria-pressed', String(b.dataset.n === r.n)); });
     save(); summary(); renderPaper();
   });
   $('sh-days').addEventListener('click', function (e) {
-    var b = e.target.closest('.nt button'); if (!b) return; var row = b.closest('.ts-day'), r = cur()[+row.dataset.d];
-    if (r.n === b.dataset.n) r.n = ''; else { r.n = b.dataset.n; r.a = ''; r.b = ''; }
-    var d = row.dataset.d, n = b.dataset.n;
-    save(); renderDays();
-    var nb = document.querySelector('.ts-day[data-d="' + d + '"] .nt button[data-n="' + n + '"]'); if (nb) nb.focus(); // הפוקוס נשאר על הכפתור אחרי שהרשימה נבנית מחדש
+    var b = e.target.closest('button'); if (!b) return; var row = b.closest('.ts-day'); if (!row) return;
+    var d = +row.dataset.d, r = cur()[d];
+    if (b.dataset.n) {
+      var n = b.dataset.n;
+      if (r.n === n) r.n = ''; else { r.n = n; ['a', 'b', 'a2', 'b2', 'a3', 'b3', 'tf', 'tt', 'tg'].forEach(function (k) { r[k] = ''; }); r.x = 0; r.trip = 0; }
+      save(); redrawDay(d, '.nt button[data-n="' + n + '"]'); return;
+    }
+    if (b.dataset.add === 'pair') { var np = npairs(r) + 1; r.x = np; save(); redrawDay(d, 'input[data-k="a' + np + '"]'); used('pair'); return; }
+    if (b.dataset.add === 'trip') { r.trip = 1; save(); redrawDay(d, 'input[data-k="tf"]'); used('trip'); return; }
+    if (b.dataset.rm === 'pair') { var p = npairs(r); r['a' + p] = ''; r['b' + p] = ''; r.x = p - 1; save(); redrawDay(d, '.nt .add[data-add="pair"]'); return; }
+    if (b.dataset.rm === 'trip') { r.tf = ''; r.tt = ''; r.tg = ''; r.trip = 0; save(); redrawDay(d, '.nt .add[data-add="trip"]'); return; }
   });
-  function totals() { var c = cur(), t = 0, dd = 0; Object.keys(c).forEach(function (k) { var m = dur(c[k]); if (m) { t += m; dd++; } }); return { m: t, d: dd }; }
-  function summary() { var t = totals(); $('sh-sum').innerHTML = '<div><b>' + hm(t.m) + '</b><span>שעות בחודש</span></div><div><b>' + t.d + '</b><span>ימי עבודה</span></div>'; }
+  function totals() { var c = cur(), t = 0, dd = 0, tr = 0; Object.keys(c).forEach(function (k) { var m = dur(c[k]); if (m) { t += m; dd++; } if (hasTrip(c[k])) tr++; }); return { m: t, d: dd, tr: tr }; }
+  function summary() { var t = totals(); $('sh-sum').innerHTML = '<div><b>' + hm(t.m) + '</b><span>שעות בחודש</span></div><div><b>' + t.d + '</b><span>ימי עבודה</span></div>' + (t.tr ? '<div><b>' + t.tr + '</b><span>נסיעות</span></div>' : ''); }
 
   // ---------- חתימות ----------
   var sig = {};
@@ -140,32 +192,52 @@
   // ---------- הדף ----------
   function today() { var d = new Date(); return d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear(); }
   function renderPaper() {
-    var c = cur(), n = days(st.month), t = totals(), mo = +st.month.split('-')[1], rows = '';
+    var c = cur(), n = days(st.month), t = totals(), mo = +st.month.split('-')[1], k = K(), liva = st.kind === 'liva';
+    var P = 1, T = liva; // כמה זוגות כניסה/יציאה ועמודת נסיעות. בטופס הליווי: תמיד 3 ונסיעות, כמו בטופס של החברה
+    Object.keys(c).forEach(function (x) { P = Math.max(P, npairs(c[x])); if (hasTrip(c[x])) T = true; });
+    if (liva) P = 3;
+    var head = '<th scope="col">יום</th><th scope="col">יום בשבוע</th>';
+    for (var p = 1; p <= P; p++) head += P > 1 ? '<th scope="col">כניסה ' + ROM[p] + '</th><th scope="col">יציאה ' + ROM[p] + '</th>' : '<th scope="col">משעה</th><th scope="col">עד שעה</th>';
+    head += '<th scope="col">סה"כ שעות</th>' + (T ? '<th scope="col">נסיעות (משעה–עד שעה, יעד)</th>' : '') + '<th scope="col">הערות</th>';
+    var rows = '';
     for (var d = 1; d <= n; d++) {
-      var r = c[d] || {}, w = wd(st.month, d), m = dur(r);
-      rows += '<tr' + (w === 6 ? ' class="sat"' : '') + '><td>' + d + '.' + mo + '</td><td>' + DN[w] + '</td><td>' + (m ? r.a : '') + '</td><td>' + (m ? r.b : '') + '</td><td>' + (m ? hm(m) : '') + '</td><td class="nt">' + esc(r.n || '') + '</td></tr>';
+      var r = c[d] || {}, w = wd(st.month, d), m = dur(r), pr = pairs(r), cells = '';
+      for (var q = 0; q < P; q++) { var ok = span(pr[q][0], pr[q][1]); cells += '<td>' + (ok ? pr[q][0] : '') + '</td><td>' + (ok ? pr[q][1] : '') + '</td>'; }
+      var trip = hasTrip(r) ? (r.tf || r.tt ? '<span dir="ltr">' + esc(r.tf || '') + '–' + esc(r.tt || '') + '</span> ' : '') + esc(r.tg || '') : '';
+      rows += '<tr' + (w === 6 ? ' class="sat"' : '') + '><td>' + d + '</td><td>' + DN[w] + '</td>' + cells + '<td><b>' + (m ? hm(m) : '') + '</b></td>' + (T ? '<td class="nt">' + trip + '</td>' : '') + '<td class="nt">' + esc(r.n || '') + '</td></tr>';
     }
-    var D = st.d;
-    function who(title, n, id, addr, tel, idl) {
-      return '<div class="pp"><h4>' + title + '</h4><div><b>שם:</b> ' + esc(n) + '</div>' + (id ? '<div><b>' + idl + ':</b> ' + esc(id) + '</div>' : '') +
+    var D = st.d, span0 = 2 + P * 2;
+    function who(title, nm, id, addr, tel, idl) {
+      return '<div class="pp"><h4>' + title + '</h4><div><b>שם (פרטי + משפחה):</b> ' + esc(nm) + '</div>' + (id ? '<div><b>' + idl + ':</b> ' + esc(id) + '</div>' : '') +
         '<div><b>כתובת:</b> ' + esc(addr) + '</div><div><b>טלפון:</b> <span dir="ltr">' + esc(tel) + '</span></div></div>';
     }
-    $('sh-paper').innerHTML = '<h3>דוח שעות עבודה חודשי – עובד/ת סיעודי/ת</h3><p class="mon">חודש הדיווח: ' + esc(monthName(st.month)) + '</p>' + (D.to ? '<p class="sub">אל: ' + esc(D.to) + '</p>' : '') +
-      '<div class="info">' + who('פרטי המעסיק', D.emp, D.empId, D.empAddr, D.empTel, 'ת"ז') + who('פרטי העובד/ת', D.wrk, D.wrkId, D.wrkAddr, D.wrkTel, 'ת"ז / דרכון') +
-      '<div class="tot"><b>ימי עבודה:</b> ' + t.d + ' &nbsp;·&nbsp; <b>סה"כ שעות:</b> ' + hm(t.m) + ' (' + hdec(t.m) + ')</div></div>' +
-      '<table><thead><tr><th scope="col">תאריך</th><th scope="col">יום</th><th scope="col">משעה</th><th scope="col">עד שעה</th><th scope="col">שעות</th><th scope="col">הערה</th></tr></thead><tbody>' + rows + '</tbody>' +
-      '<tfoot><tr><td colspan="4">סה"כ בחודש</td><td>' + hm(t.m) + '</td><td class="nt">' + t.d + ' ימי עבודה</td></tr></tfoot></table>' +
-      '<p class="decl">אנו מאשרים שהשעות בדוח הן השעות שבהן העובד/ת עבד/ה בפועל בחודש זה.</p>' +
-      '<div class="sigs"><div>' + sigImg('sh-sig1', 'חתימת המעסיק') + '<div class="ln">חתימת המעסיק' + (D.emp ? ': ' + esc(D.emp) : '') + '</div></div><div>' + sigImg('sh-sig2', 'חתימת העובד/ת') + '<div class="ln">חתימת העובד/ת' + (D.wrk ? ': ' + esc(D.wrk) : '') + '</div></div></div>' +
-      '<p class="sub" style="margin-top:6px">תאריך: ' + today() + '</p><p class="ft">הופק בכלי "דוח שעות חודשי למטפל" · hakelim.com</p>';
-    pdfReset();
+    var s1 = liva ? 'מאשר/ת ש' + (D.wrk ? esc(D.wrk) : 'המלווה') + ' עבד/ה בהתאם למפורט לעיל' : 'מאשר/ת שהעובד/ת עבד/ה בהתאם למפורט לעיל';
+    var s2 = 'מאשר/ת שביצעתי את העבודה כמפורט';
+    $('sh-paper').className = 'ts-paper' + (P > 1 || T ? ' wide' : '');
+    $('sh-paper').innerHTML = '<h3>' + k.title + (liva ? ': ' + esc(monthName(st.month)) : '') + '</h3>' + (liva ? '' : '<p class="mon">חודש הדיווח: ' + esc(monthName(st.month)) + '</p>') + (D.to ? '<p class="sub">' + (liva ? 'החברה / האזור: ' : 'אל: ') + esc(D.to) + '</p>' : '') +
+      '<div class="info">' + who('פרטי ' + k.r1, D.emp, D.empId, D.empAddr, D.empTel, 'ת"ז') + who('פרטי ' + k.r2, D.wrk, D.wrkId, D.wrkAddr, D.wrkTel, liva ? 'ת"ז / מס\' דרכון' : 'ת"ז / דרכון') +
+      '<div class="tot"><b>ימי עבודה:</b> ' + t.d + ' &nbsp;·&nbsp; <b>סה"כ שעות:</b> ' + hm(t.m) + ' (' + hdec(t.m) + ')' + (t.tr ? ' &nbsp;·&nbsp; <b>נסיעות:</b> ' + t.tr : '') + '</div></div>' +
+      '<table><thead><tr>' + head + '</tr></thead><tbody>' + rows + '</tbody>' +
+      '<tfoot><tr><td colspan="' + span0 + '">סה"כ שעות בחודש · ' + t.d + ' ימי עבודה</td><td>' + hm(t.m) + '</td>' + (T ? '<td></td>' : '') + '<td></td></tr></tfoot></table>' +
+      '<div class="sigs"><div><p class="sl">' + s1 + '</p>' + sigImg('sh-sig1', 'חתימת ' + k.r1) + '<div class="ln">חתימת ' + k.r1 + (D.emp ? ': ' + esc(D.emp) : '') + ' &nbsp; תאריך: ' + today() + '</div></div>' +
+      '<div><p class="sl">' + s2 + '</p>' + sigImg('sh-sig2', 'חתימת ' + k.r2) + '<div class="ln">חתימת ' + k.r2 + (D.wrk ? ': ' + esc(D.wrk) : '') + ' &nbsp; תאריך: ' + today() + '</div></div></div>' +
+      '<p class="ft">הופק בכלי "דוח שעות חודשי למטפל" · hakelim.com</p>';
+    fitPaper(); pdfReset();
   }
+
+  // ---------- תזכורת חודשית (בטופס הליווי: שולחים עד ה-25) ----------
+  function remind() {
+    var p = st.month.split('-'), y = +p[0], m = +p[1], dt = y + pad(m) + '23', nx = y + pad(m) + '24';
+    $('sh-cal').href = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent('לשלוח את דו"ח שעות הליווי (עד ה-25)') +
+      '&dates=' + dt + '/' + nx + '&recur=' + encodeURIComponent('RRULE:FREQ=MONTHLY') + '&details=' + encodeURIComponent('ממלאים, חותמים ושולחים:\n' + location.origin + location.pathname);
+  }
+  $('sh-cal').addEventListener('click', function () { used('calendar'); });
 
   // ---------- PDF ושליחה ----------
   var pdfFile = null, pdfUrl = '';
   function pdfReset() { pdfFile = null; if (pdfUrl) { URL.revokeObjectURL(pdfUrl); pdfUrl = ''; } $('sh-out').hidden = true; var b = $('sh-pdf'); b.disabled = false; b.textContent = '📄 להכין PDF'; }
-  function fname() { return ('דוח שעות - ' + (st.d.wrk || 'מטפל') + ' - ' + monthName(st.month)).replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, ' ').trim() + '.pdf'; }
-  function mailText() { var t = totals(); return 'שלום,\nמצורף דוח השעות' + (st.d.wrk ? ' של ' + st.d.wrk : '') + ' לחודש ' + monthName(st.month) + ', חתום על ידי המעסיק והעובד/ת.\nסה"כ ' + hm(t.m) + ' שעות ב-' + t.d + ' ימי עבודה.\n\nבברכה,\n' + (st.d.emp || ''); }
+  function fname() { return ((st.kind === 'liva' ? 'דוח שעות ליווי - ' : 'דוח שעות - ') + (st.d.wrk || 'מטפל') + ' - ' + monthName(st.month)).replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, ' ').trim() + '.pdf'; }
+  function mailText() { var t = totals(), k = K(); return 'שלום,\nמצורף דוח השעות' + (st.d.wrk ? ' של ' + st.d.wrk : '') + ' לחודש ' + monthName(st.month) + ', חתום על ידי ' + k.r1 + ' ו' + k.r2 + '.\nסה"כ ' + hm(t.m) + ' שעות ב-' + t.d + ' ימי עבודה.\nאשמח לאישור שהדוח התקבל.\n\nבברכה,\n' + (st.d.emp || ''); }
   function loadJs(src) { return new Promise(function (ok, no) { var x = document.createElement('script'); x.src = src; x.onload = ok; x.onerror = no; document.head.appendChild(x); }); }
   function makePdf() {
     var host = document.createElement('div'); host.className = 'ts-pdfhost'; host.setAttribute('aria-hidden', 'true');
@@ -183,9 +255,11 @@
   }
   $('sh-pdf').addEventListener('click', function () {
     var b = this; if (b.disabled) return;
-    var miss = [];
-    if (!st.d.emp) miss.push('שם המעסיק'); if (!st.d.wrk) miss.push('שם העובד/ת');
-    if (!st.d.empAddr || !st.d.empTel) miss.push('כתובת וטלפון של המעסיק'); if (!st.d.wrkAddr || !st.d.wrkTel) miss.push('כתובת וטלפון של העובד/ת'); if (!totals().m) miss.push('שעות');
+    var miss = [], k = K();
+    if (!st.d.emp) miss.push('שם ' + k.r1); if (!st.d.wrk) miss.push('שם ' + k.r2);
+    if (!st.d.empAddr || !st.d.empTel) miss.push('כתובת וטלפון של ' + k.r1); if (!st.d.wrkAddr || !st.d.wrkTel) miss.push('כתובת וטלפון של ' + k.r2);
+    if (st.kind === 'liva' && !st.d.wrkId) miss.push('ת"ז / דרכון של המלווה (בטופס הליווי זו חובה)');
+    if (!totals().m) miss.push('שעות');
     if (!sig['sh-sig1'] || !sig['sh-sig2']) miss.push('שתי החתימות');
     if (st.demo) miss.unshift('הדוגמה עדיין כאן: כתבו את השמות שלכם');
     if (miss.length && !confirm('חסר: ' + miss.join(', ') + '.\nלהכין PDF בכל זאת?')) return;
@@ -196,7 +270,7 @@
       var can = false; try { can = !!(navigator.canShare && navigator.canShare({ files: [pdfFile] })); } catch (e) {}
       $('sh-share').hidden = !can;
       var ml = $('sh-mailto'); ml.href = 'mailto:' + encodeURIComponent(st.d.mail || '') + '?subject=' + encodeURIComponent(name.replace(/\.pdf$/, '')) + '&body=' + encodeURIComponent(mailText()); ml.hidden = false;
-      $('sh-msg').textContent = '✓ ה-PDF מוכן (' + Math.max(1, Math.round(blob.size / 1024)) + ' KB). ' + (can ? 'לוחצים "לשלוח" ובוחרים מייל או ווטסאפ – הקובץ כבר מצורף.' : 'מורידים את הקובץ, ואז פותחים מייל עם הנוסח ומצרפים אותו (📎).');
+      $('sh-msg').textContent = '✓ ה-PDF מוכן (' + Math.max(1, Math.round(blob.size / 1024)) + ' KB). ' + (can ? 'לוחצים "לשלוח" ובוחרים מייל או ווטסאפ – הקובץ כבר מצורף.' : 'מורידים את הקובץ, ואז פותחים מייל עם הנוסח ומצרפים אותו (📎).') + ' שמרו עותק אצלכם.';
       $('sh-out').hidden = false; b.textContent = '✓ ה-PDF מוכן';
       used('pdf', { kb: Math.round(blob.size / 1024), hours: hdec(totals().m) });
     }).catch(function () {
@@ -219,5 +293,5 @@
   // בטלפון הדף (ברוחב A4) מוקטן כדי שייראה כולו
   function fitPaper() { var p = $('sh-paper'), w = p.parentNode.clientWidth - 4; p.style.zoom = w > 0 && w < 711 ? (w / 711).toFixed(3) : ''; }
   window.addEventListener('resize', fitPaper);
-  fillFields(); showDemo(); names(); renderWeek(); renderDays(); fitPaper();
+  fillFields(); showDemo(); roles(); names(); renderWeek(); renderDays(); remind();
 })();

@@ -1,0 +1,59 @@
+<!doctype html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<title>הכלים של גילעד רחמים</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<header><img src="icon32.png" alt="" width="24" height="24"><b>הכלים של גילעד רחמים</b></header>
+
+<label class="search"><span class="sr">חיפוש כלי</span><input id="q" type="search" placeholder="🔍 מה צריך? למשל: חתימה, תמונה, הזמנה" autocomplete="off" autofocus></label>
+
+<section id="pdf" hidden aria-labelledby="pdf-h">
+  <h2 id="pdf-h">ה-PDF הפתוח</h2>
+  <div class="chips" id="pdf-tools"></div>
+  <p class="msg" id="pdf-msg" role="status"></p>
+</section>
+
+<div class="grid" id="acts" role="group" aria-label="כלים לדף הזה">
+  <button class="line wide" type="button" data-act="translate" title="Alt+Shift+T">🌐 לתרגם את הדף – בלי לשבור אותו</button>
+  <button class="line" type="button" data-act="shot">📸 צילום כל העמוד</button>
+  <button class="line" type="button" data-act="speak">🔊 להקריא מסומן</button>
+  <button class="line" type="button" data-act="rtl">↔ לסדר עברית</button>
+  <button class="line" type="button" data-act="dark">🌙 מצב כהה</button>
+</div>
+<p class="msg" id="act-msg" role="status"></p>
+
+<section aria-live="polite">
+  <div id="list"></div>
+</section>
+
+<div class="row tabs">
+  <button class="line" type="button" id="qr-btn" aria-expanded="false" aria-controls="qr">▦ קוד QR לדף</button>
+  <button class="line" type="button" id="pw-btn" aria-expanded="false" aria-controls="pw">🔑 סיסמה חזקה</button>
+</div>
+
+<section id="qr" hidden aria-label="קוד QR לדף הזה">
+  <div id="qr-box" class="qr-box" role="img" aria-label="קוד QR של הדף הפתוח"></div>
+  <p class="small" id="qr-title"></p>
+  <div class="row">
+    <button class="line" type="button" id="qr-dl">⬇ להוריד כתמונה</button>
+    <button class="line" type="button" id="qr-copy">🔗 להעתיק קישור</button>
+  </div>
+</section>
+
+<section id="pw" hidden aria-label="סיסמה חזקה">
+  <div class="pw"><code id="pw-out" dir="ltr" aria-live="polite"></code></div>
+  <div class="row">
+    <button class="line" type="button" id="pw-new">סיסמה אחרת</button>
+    <button class="line" type="button" id="pw-copy">להעתיק</button>
+  </div>
+  <p class="small">נוצרת כאן, במחשב שלכם. טיפ: לחיצה ימנית בשדה סיסמה באתר ← "להכניס סיסמה חזקה".</p>
+</section>
+
+<footer><a href="https://hakelim.com/kelim/?utm_source=tosaf" target="_blank">כל הכלים באתר</a> · שום קובץ לא עולה לשרת · <a href="https://hakelim.com/kelim/machshev/chatima/tosaf/" target="_blank">פרטיות</a></footer>
+<script src="qrcode.min.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>

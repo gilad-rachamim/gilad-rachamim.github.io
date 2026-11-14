@@ -1,0 +1,4 @@
+# GitHub Pages (Jekyll) מדלג על תיקיות שמתחילות בנקודה. .well-known חייבת להיות מוגשת:
+# שם assetlinks.json, שמאשר לאנדרואיד שאפליקציית הכלים ב-Google Play שייכת לאתר (בלי שורת כתובת באפליקציה).
+include:
+  - .well-known

@@ -1,0 +1,76 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "chashiva_galgal",
+  "title": "גלגל המזל אונליין בחינם: גלגל מסתובב עם שמות או אפשרויות משלכם | הכלים של גילעד רחמים",
+  "description": "גלגל המזל אונליין בחינם: כותבים שמות או אפשרויות משלכם, מסובבים, והגלגל בוחר באקראי. לכיתה, למסיבה, להגרלה ולהחלטות קטנות כמו מה אוכלים הערב. אפשר לשלוח את הגלגל בקישור. בלי הרשמה ובלי פרסומות.",
+  "og_title": "גלגל המזל: כותבים, מסובבים, והגלגל בוחר",
+  "priority": "0.8",
+  "no_hub": true,
+  "crumbs": [
+    [
+      "משחקי חשיבה",
+      "/kelim/chashiva/"
+    ],
+    [
+      "גלגל המזל",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/chashiva-goral.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך מוסיפים שמות לגלגל המזל?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כותבים בתיבה שם או אפשרות בכל שורה, או מדביקים רשימה מוכנה. הגלגל מתעדכן מיד.\"}}, {\"@type\": \"Question\", \"name\": \"הגלגל באמת אקראי?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. לכל אפשרות יש אותו סיכוי בכל סיבוב, והבחירה נעשית במכשיר שלכם עם מחולל המספרים האקראיים של הדפדפן.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר להוציא את מי שכבר עלה בגורל?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. מסמנים ״להוציא מהגלגל את מי שעלה בגורל״, או לוחצים ״להוציא מהגלגל״ אחרי הסיבוב. ״להחזיר את כולם״ מחזיר את הרשימה המלאה.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לשתף את הגלגל שהכנתי?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. ״לשלוח את הגלגל״ יוצר קישור לווטסאפ. מי שפותח אותו מקבל את אותו גלגל, עם אותן אפשרויות.\"}}, {\"@type\": \"Question\", \"name\": \"כמה אפשרויות אפשר לשים בגלגל?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"עד 300. כשיש יותר מ-120 אפשרויות, השמות לא נכתבים על הגלגל עצמו, אבל מי שעלה בגורל מוצג בגדול.\"}}, {\"@type\": \"Question\", \"name\": \"זה בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בחינם, בלי הרשמה ובלי פרסומות.\"}}]}</script>",
+  "foot": "<script src=\"/assets/chashiva-goral.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>גלגל המזל</h1>
+  <p class="sub">כותבים שמות או אפשרויות, מסובבים, והגלגל בוחר. לכיתה, למשפחה, למסיבה ולכל החלטה קטנה.</p>
+</header>
+
+<div class="tool" id="gr" data-mode="wheel">
+  <p class="gr-head" id="gr-head"></p>
+  <div class="gr-wheel"><span class="gr-pointer" aria-hidden="true"></span><canvas id="gr-canvas" width="640" height="640" role="img" aria-label="גלגל"></canvas><button class="gr-hub" type="button" id="gr-spin">לסובב</button></div>
+  <p class="gr-count" id="gr-count"></p>
+  <div class="gr-res" id="gr-res" role="status" hidden></div>
+  <div class="gr-main"><button class="btn btn-gold btn-block gr-big" type="button" id="gr-spin2">🎡 לסובב את הגלגל</button></div>
+  <p class="gr-note gr-hide" id="gr-note" hidden></p>
+  <form class="k-form gr-form gr-hide" id="gr-form" novalidate>
+    <div class="field"><label for="gr-text">מה בגלגל? <span class="opt">(שורה לכל שם או אפשרות)</span></label><textarea id="gr-text" rows="7" dir="auto"></textarea></div>
+    <div class="gr-btns s"><button class="btn btn-line btn-sm" type="button" id="gr-shuffle">🔀 לערבב</button><button class="btn btn-line btn-sm" type="button" id="gr-clear">לרוקן</button></div>
+    <div class="field"><label for="gr-title">שם הגלגל <span class="opt">(לא חובה)</span></label><input id="gr-title" type="text" maxlength="60" autocomplete="off"></div>
+    <div class="field"><span class="label" id="gr-pre-l">גלגלים מוכנים</span><div class="gr-chips" role="group" aria-labelledby="gr-pre-l"><button type="button" data-preset="food">מה אוכלים?</button><button type="button" data-preset="yesno">כן או לא</button><button type="button" data-preset="nums">מספר 1–10</button><button type="button" data-preset="chores">מטלות בבית</button><button type="button" data-preset="prizes">גלגל פרסים</button><button type="button" data-preset="names">שמות</button></div></div>
+    <div class="gr-checks"><label><input type="checkbox" id="gr-remove"> להוציא מהגלגל את מי שעלה בגורל</label><label><input type="checkbox" id="gr-sound"> צלילים</label></div>
+  </form>
+  <div class="gr-sec gr-hide" id="gr-hist-sec" hidden>
+    <h2>מי עלה בגורל</h2>
+    <ol class="gr-hist" id="gr-hist"></ol>
+    <div class="share-row"><a class="btn btn-gold btn-sm" href="#" id="gr-hist-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את התוצאות</a><button class="btn btn-line btn-sm" type="button" id="gr-hist-copy">להעתיק</button><button class="btn btn-line btn-sm" type="button" id="gr-hist-clear">למחוק</button></div>
+  </div>
+  <div class="share-row gr-hide"><a class="btn btn-gold btn-sm" href="#" id="gr-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הגלגל</a><button class="btn btn-line btn-sm" type="button" id="gr-copy">🔗 להעתיק קישור לגלגל</button></div>
+  <div class="share-row"><button class="btn btn-line btn-sm" type="button" id="gr-full">מסך מלא</button></div>
+  <p class="gr-fair gr-hide">הבחירה אקראית לגמרי ונעשית במכשיר שלכם. שום דבר לא נשלח לשום מקום, ואין לנו דרך להשפיע על התוצאה.</p>
+  <nav class="gr-links gr-hide" aria-label="עוד דרכים להגריל"><a href="/kelim/chashiva/galgal/" aria-current="page">🎡 גלגל המזל</a><a href="/kelim/chashiva/galgal-shemot/">👥 גלגל שמות</a><a href="/kelim/chashiva/hagrala/">🎟 הגרלה</a><a href="/kelim/chashiva/kubiya/">🎲 הטלת קוביה</a><a href="/kelim/chashiva/matbea/">🌳 הטלת מטבע</a></nav>
+  <div class="share-row gr-hide"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="גלגל המזל בחינם: כותבים שמות או אפשרויות, מסובבים, והגלגל בוחר:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
+
+<nav class="gr-links" aria-label="עוד גלגלים"><a href="/kelim/chashiva/galgal/" aria-current="page">🎡 גלגל המזל</a><a href="/kelim/chashiva/galgal/ken-o-lo/">גלגל כן או לא</a><a href="/kelim/chashiva/galgal/sheelot/">גלגל שאלות</a><a href="/kelim/chashiva/galgal-shemot/">גלגל שמות</a></nav>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">גלגל המזל אונליין: כותבים, מסובבים, והגלגל מחליט</h2>
+  <p>גלגל המזל הוא הדרך הכי כיפית לבחור באקראי. כותבים בכל שורה שם או אפשרות, לוחצים "לסובב", והגלגל מסתובב ועוצר על אחת מהן. הוא מתאים לכיתה ולגן, לערב משפחתי, למסיבת יום הולדת, לחלוקת פרסים, להגרלה בין חברים, וגם להחלטות קטנות: מה אוכלים הערב, איזה סרט רואים, ומי שוטף כלים.</p>
+  <h3>איך משתמשים</h3>
+  <p>מוחקים את הדוגמה וכותבים את האפשרויות שלכם, שורה לכל אחת. אפשר גם להדביק רשימה שלמה. נותנים לגלגל שם, ולוחצים על הגלגל או על הכפתור. אחרי הסיבוב רואים מי עלה בגורל, ואפשר לסובב שוב או להוציא אותו מהגלגל. יש גם גלגלים מוכנים: כן או לא, מספרים, מטלות בבית וגלגל פרסים.</p>
+  <h3>שולחים את הגלגל בקישור</h3>
+  <p>הכפתור "לשלוח את הגלגל" יוצר קישור עם כל האפשרויות שכתבתם. מי שפותח אותו מקבל את אותו גלגל ויכול לסובב בעצמו. כך מכינים גלגל אחד לכל הכיתה או לכל המשפחה. "מסך מלא" מציג רק את הגלגל, בגדול, למקרן או לטלוויזיה.</p>
+  <h3>הגרלה הוגנת</h3>
+  <p>בכל סיבוב לכל אפשרות יש בדיוק אותו סיכוי. הבחירה נעשית במכשיר שלכם, עם מחולל המספרים האקראיים של הדפדפן, ושום דבר לא נשלח לשום מקום. רוצים שאפשרות תופיע יותר? כותבים אותה בכמה שורות. צריכים להגריל כמה זוכים בבת אחת? יש <a href="/kelim/chashiva/hagrala/">הגרלת שמות ומספרים</a>, וגם <a href="/kelim/chashiva/kubiya/">הטלת קוביה</a> ו<a href="/kelim/chashiva/matbea/">הטלת מטבע</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך מוסיפים שמות לגלגל המזל?</summary><p>כותבים בתיבה שם או אפשרות בכל שורה, או מדביקים רשימה מוכנה. הגלגל מתעדכן מיד.</p></details>
+  <details><summary>הגלגל באמת אקראי?</summary><p>כן. לכל אפשרות יש אותו סיכוי בכל סיבוב, והבחירה נעשית במכשיר שלכם עם מחולל המספרים האקראיים של הדפדפן.</p></details>
+  <details><summary>אפשר להוציא את מי שכבר עלה בגורל?</summary><p>כן. מסמנים "להוציא מהגלגל את מי שעלה בגורל", או לוחצים "להוציא מהגלגל" אחרי הסיבוב. "להחזיר את כולם" מחזיר את הרשימה המלאה.</p></details>
+  <details><summary>אפשר לשתף את הגלגל שהכנתי?</summary><p>כן. "לשלוח את הגלגל" יוצר קישור לווטסאפ. מי שפותח אותו מקבל את אותו גלגל, עם אותן אפשרויות.</p></details>
+  <details><summary>כמה אפשרויות אפשר לשים בגלגל?</summary><p>עד 300. כשיש יותר מ-120 אפשרויות, השמות לא נכתבים על הגלגל עצמו, אבל מי שעלה בגורל מוצג בגדול.</p></details>
+  <details><summary>זה בחינם?</summary><p>כן. בחינם, בלי הרשמה ובלי פרסומות.</p></details>
+</section>
+<!--/seo-txt-->
