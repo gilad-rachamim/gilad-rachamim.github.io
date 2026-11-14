@@ -112,6 +112,18 @@ WA_TEXT = "שלום גילעד, אשמח לשמוע פרטים על ברית מ�
 from urllib.parse import quote
 WA = "https://wa.me/972584049049?text=" + quote(WA_TEXT)
 
+# כתובת המייל לכפתור "או במייל" לא כתובה בקוד (14.11.2026): היא נקראת ממשתנה הסביבה SITE_CONTACT_EMAIL,
+# או מהקובץ ~/.config/hakelim/contact_email.txt. שניהם נוצרים פעם אחת בקובץ "בניית אתר הכלים.bat" שעל שולחן העבודה.
+def _contact_mail():
+    v = os.environ.get("SITE_CONTACT_EMAIL", "").strip()
+    f = pathlib.Path.home() / ".config" / "hakelim" / "contact_email.txt"
+    if not v and f.exists():
+        v = f.read_text(encoding="utf-8").strip()
+    if not v:
+        raise SystemExit("חסרה כתובת המייל לאתר: מגדירים את SITE_CONTACT_EMAIL או את ~/.config/hakelim/contact_email.txt")
+    return v
+CONTACT_MAIL = _contact_mail()
+
 CTA = """
 <section id="contact" class="contact" aria-labelledby="contact-h">
   <div class="wrap">
@@ -120,7 +132,7 @@ CTA = """
     <a class="phone" href="{wa}"><small class="wa-tag">(ווטסאפ)</small> 058-404-9049</a>
     <div class="actions">
       <a class="btn btn-gold" href="{wa}"><svg class="ic"><use href="#wa"/></svg> שליחת הודעה בווטסאפ</a>
-      <a class="btn btn-line" href="mailto:gilad4049@gmail.com"><svg class="ic"><use href="#mail"/></svg> או במייל</a>
+      <a class="btn btn-line" href="mailto:{mail}"><svg class="ic"><use href="#mail"/></svg> או במייל</a>
     </div>
   </div>
 </section>
@@ -432,7 +444,7 @@ for path in sorted(SRC.rglob("*.html")):
         "wa": WA,
         "crumbs": crumbs_html(meta.get("crumbs"), root),
         "content": content,
-        "cta": "" if (meta.get("no_cta") or site) else CTA.format(wa=WA),
+        "cta": "" if (meta.get("no_cta") or site) else CTA.format(wa=WA, mail=CONTACT_MAIL),
         "dock_href": meta.get("dock_href", "/mohel/madrich/"),
         "dock_label": meta.get("dock_label", "מדריך חינם"),
         "foot": meta.get("foot", "") + ('<script src="/assets/lead.js" defer></script>' if "data-lead" in content else "") + ('<script src="/assets/moed.js" defer></script>' if "moed-form" in content else "") + ('<script src="/assets/yt.js" defer></script>' if 'class="yt"' in content else ""),
