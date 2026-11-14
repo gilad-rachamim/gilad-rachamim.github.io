@@ -4,7 +4,7 @@
 .kp .note{color:var(--muted)}
 .kp .btn{cursor:pointer}
 .kp .btns{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
-.kp .btns .btn:not(.btn-gold),.kp .kh-link .btn,.kp .kp-reply .btn{background:rgba(255,255,255,.06);color:var(--cream);border:1px solid var(--line)}
+.kp .btns .btn:not(.btn-gold),.kp .kh-link .btn,.kp .kp-reply .btn,.kp button.btn:not(.btn-gold):not(.btn-line):not(.btn-ok):not(.btn-no){background:rgba(255,255,255,.06);color:var(--cream);border:1px solid var(--line)}
 .kp textarea.kh-in{resize:vertical;line-height:1.5}
 .kp select.kh-in{appearance:auto}
 .kp-2{display:grid;gap:.6rem}
