@@ -395,6 +395,56 @@ def chesed_band(p, meta):
     return ('<div class="chesed no-print" role="note"><p class="chesed-t">' + "".join(f"<b>✓ {c}</b>" for c in chips)
             + f'</p><p class="chesed-s">{sub}</p>{box}</div>')
 
+# סרטון הדמיה + פרוספקט לשיתוף (14.11.2026, גילעד: "סרטוני הדמיה באתר לכל כלי... ודף פרוספקט מעוצב לכל כלי שאפשר לשתף").
+# נוצרים ב-tools/demo_video/render.py לתוך assets/demo/<tool>.*; כשהקבצים קיימים הבלוק נכנס לבד אחרי ה-header של דף הכלי,
+# או במקום <!--demo--> אם הדף שם אותו במקום אחר. המפרט (שם, תיאור, משך) נקרא מ-tools/demo_video/specs/<tool>.json.
+DEMO_DIR = ROOT / "assets" / "demo"
+DEMO_SPECS = ROOT / "tools" / "demo_video" / "specs"
+
+def demo_block(meta, url):
+    tool = meta.get("tool", "")
+    if not tool or not (DEMO_DIR / f"{tool}.mp4").exists():
+        return "", ""
+    sp = DEMO_SPECS / f"{tool}.json"
+    spec = json.loads(sp.read_text(encoding="utf-8")) if sp.exists() else {}
+    dur = sum(s.get("dur", 0) for s in spec.get("scenes", [])) or 45
+    name = spec.get("name", "ככה זה עובד")
+    v, poster = f"/assets/demo/{tool}.mp4", f"/assets/demo/{tool}.jpg"
+    post, status = f"/assets/demo/{tool}-post.png", f"/assets/demo/{tool}-status.png"
+    has_fl = (DEMO_DIR / f"{tool}-post.png").exists()
+    share_txt = meta.get("og_title", meta["title"]).split(" | ")[0]
+    fl = (f'<details class="dv-fl"><summary>📄 פרוספקט לשיתוף – תמונה אחת שמסבירה הכול</summary>'
+          f'<a href="{post}" target="_blank" rel="noopener"><img src="{post}" alt="פרוספקט: {html_lib.escape(name)}" loading="lazy" width="1080" height="1350"></a>'
+          f'<div class="dv-acts"><button type="button" class="btn btn-gold" data-dv-share="{post}" data-dv-kind="flyer">💌 לשלוח את הפרוספקט</button>'
+          f'<a class="btn btn-line" href="{post}" download data-dv-dl="flyer">⬇️ להורדה (פוסט)</a>'
+          f'<a class="btn btn-line" href="{status}" download data-dv-dl="status">⬇️ להורדה (סטטוס)</a></div></details>') if has_fl else ""
+    blk = (
+        '<style>.dv-sec .dv-video{display:block;width:100%;max-width:20rem;aspect-ratio:9/16;height:auto;margin:.6rem auto 0;border-radius:1.2rem;background:#0e1628;box-shadow:0 8px 30px rgba(0,0,0,.35)}'
+        '.dv-acts{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.9rem}.dv-acts .btn{font-size:.95rem}'
+        '.dv-fl{margin-top:1rem}.dv-fl summary{cursor:pointer;color:var(--gold);font-weight:700;text-align:center}'
+        '.dv-fl img{display:block;width:100%;max-width:24rem;height:auto;margin:.8rem auto 0;border-radius:1rem}</style>'
+        f'<section class="k-sec dv-sec no-print" aria-labelledby="dv-h"><h2 id="dv-h">🎬 {html_lib.escape(name)}</h2>'
+        f'<video class="dv-video" controls playsinline preload="none" poster="{poster}" width="720" height="1280" aria-label="{html_lib.escape(spec.get("description", name))}" data-dv-play="{tool}">'
+        f'<source src="{v}" type="video/mp4"></video>'
+        f'<div class="dv-acts"><button type="button" class="btn btn-gold" data-dv-share="{v}" data-dv-kind="video">💌 לשלוח את הסרטון לחבר</button>'
+        f'<a class="btn btn-line" href="{v}" download data-dv-dl="video">⬇️ להורדת הסרטון</a></div>{fl}'
+        f'<script>window.DV_SHARE={json.dumps({"tool": tool, "text": share_txt, "url": url}, ensure_ascii=False)}</script>'
+        '<script src="/assets/demo-share.js" defer></script></section>')
+    ld = json.dumps({"@context": "https://schema.org", "@type": "VideoObject", "name": name,
+                     "description": spec.get("description", meta["description"]),
+                     "thumbnailUrl": [BASE + poster], "contentUrl": BASE + v,
+                     "uploadDate": spec.get("upload", "2026-11-14T12:00:00+02:00"), "duration": f"PT{round(dur)}S",
+                     "inLanguage": "he", "publisher": {"@type": "Person", "name": "גילעד רחמים", "url": BASE + "/kelim/"}}, ensure_ascii=False)
+    return blk, f'<script type="application/ld+json">{ld}</script>'
+
+def insert_demo(content, blk):
+    if not blk:
+        return content.replace("<!--demo-->", "")
+    if "<!--demo-->" in content:
+        return content.replace("<!--demo-->", blk, 1)
+    i = content.find("</header>")
+    return content[: i + 9] + blk + content[i + 9:] if i >= 0 else blk + content
+
 pages = []
 TOOLS_JSON = []
 site_pages = {k: [] for k in SITES}
@@ -417,6 +467,8 @@ for path in sorted(SRC.rglob("*.html")):
     root = (site["name"], site["home"]) if site else ("עמוד המוהל", "/mohel/")
     html = LAYOUT_KELIM if site else LAYOUT
     content += seo_related(url_path)
+    dv_blk, dv_ld = demo_block(meta, url) if site else ("", "")
+    content = insert_demo(content, dv_blk)
     og_own = "og/" + url_path.strip("/").replace("/", "-") + ".jpg"
     og_default = og_own + "?v=4" if (site and (ROOT / "assets" / og_own).exists()) else (site["og"] if site else "og-mohel.jpg")
     # תיאור השיתוף (og:description) פותח ב"בחינם, בלי הגבלה ובלי הרשמה" - גילעד 11.11.2026.
@@ -438,7 +490,7 @@ for path in sorted(SRC.rglob("*.html")):
         "og_title": meta.get("og_title", meta["title"]),
         "og_image": meta.get("og_image", og_default),
         "robots": '<meta name="robots" content="noindex">' if meta.get("noindex") else "",
-        "head": meta.get("head_pre", "") + GA + KISHUR + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url),
+        "head": meta.get("head_pre", "") + GA + KISHUR + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url) + dv_ld,
         "body_class": meta.get("body_class", ""),
         "sprite": SPRITE,
         "wa": WA,

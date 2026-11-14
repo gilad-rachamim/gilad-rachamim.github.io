@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>כיתה וירטואלית למתמטיקה – פרוספקט לבתי ספר</title>
+<!-- פרוספקט A4 למנהלות ולרכזות מתמטיקה (14.11.2026). pdf.py מכניס את ה-QR ומדפיס ל-PDF.
+     העובדות רק מהקוד ומהדפים: src/pages/limudim/kita/, src/pages/limudim/batei-sefer/, tools/kita-worker/kita-worker.js -->
+<style>
+@font-face{font-family:Assistant;src:url(../../../assets/fonts/Assistant-wght.woff) format("woff");font-weight:200 900}
+@font-face{font-family:Frank;src:url(../../../assets/fonts/FrankRuhlLibre-wght.woff) format("woff");font-weight:300 900}
+@page{size:A4;margin:0}
+:root{--ink:#141c2b;--ink2:#1b2538;--gold:#dcb769;--gold-hi:#ecca83;--gold-d:#9a7a35;--paper:#fbfaf3;--card:#ffffff;--text:#1d2433;--muted:#5d6678;--line:#e6dfcc;--accent:#2f7fb0;--ok:#2e9a6a}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--paper)}
+body{font-family:Assistant,"Segoe UI",Arial,sans-serif;color:var(--text);-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:10.6pt;line-height:1.45}
+.page{width:210mm;height:297mm;overflow:hidden;position:relative;display:flex;flex-direction:column;page-break-after:always;background:var(--paper)}
+.page:last-child{page-break-after:auto}
+em{font-style:normal;color:var(--gold-d);font-weight:700}
+.band{background:radial-gradient(70% 90% at 90% 0%,rgba(220,183,105,.30),transparent 70%),linear-gradient(160deg,var(--ink2),var(--ink));color:#fff;padding:11mm 14mm 9mm;display:flex;gap:7mm;align-items:center}
+.band .ic{flex:0 0 22mm;height:22mm;border-radius:6mm;background:linear-gradient(145deg,var(--gold-hi),var(--gold));display:flex;align-items:center;justify-content:center;font-size:34pt}
+.kick{color:var(--gold-hi);font-weight:700;font-size:10.5pt;letter-spacing:.2px}
+h1{font-family:Frank,serif;font-size:27pt;line-height:1.08;font-weight:800;margin-top:1mm}
+h1 em{color:var(--gold-hi)}
+.band p{font-size:12pt;margin-top:2mm;color:#e6eaf3;line-height:1.4}
+.band p em{color:var(--gold-hi)}
+.body{padding:7mm 14mm 0;display:flex;flex-direction:column;gap:4.2mm;flex:1}
+h2{font-family:Frank,serif;font-size:14.5pt;color:var(--ink);font-weight:800;margin-bottom:1.6mm;display:flex;gap:2mm;align-items:center}
+.box{background:var(--card);border:1px solid var(--line);border-radius:4mm;padding:4mm 5mm}
+.prob{display:grid;grid-template-columns:1fr 1fr;gap:4mm}
+.prob .box:first-child{border-color:#efc9bf;background:#fff8f5}
+.prob .box:last-child{border-color:#bfe2d0;background:#f5fbf8}
+.prob p{font-size:10.6pt}
+.prob b{font-size:11pt}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:4mm}
+ul.l{list-style:none;display:grid;gap:1.5mm}
+ul.l li{display:flex;gap:2mm;align-items:flex-start;font-size:10pt;line-height:1.38}
+ul.l li i{font-style:normal;flex:0 0 5.5mm;text-align:center}
+ul.l li b{color:var(--ink)}
+.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm;align-items:start}
+.shots figure{text-align:center}
+.shots img{width:100%;height:52mm;object-fit:cover;object-position:top;border-radius:3.5mm;border:2.4mm solid #232c3d;display:block}
+.shots figcaption{font-size:9pt;color:var(--muted);margin-top:1.2mm;font-weight:600}
+.foot{margin-top:auto;padding:3.5mm 14mm;background:var(--ink);color:#cfd6e4;font-size:9pt;display:flex;justify-content:space-between;align-items:center}
+.foot b{color:var(--gold-hi)}
+.priv{display:grid;grid-template-columns:1fr 1fr;gap:2mm 6mm}
+.priv div{font-size:9.5pt;line-height:1.36}
+.priv b{display:block;color:var(--ink);font-size:10.4pt}
+.tiers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3.5mm;align-items:stretch}
+.tier{background:var(--card);border:1px solid var(--line);border-radius:4mm;padding:4mm 4mm 3.5mm;text-align:center;display:flex;flex-direction:column;gap:1mm}
+.tier .n{font-family:Frank,serif;font-size:15pt;font-weight:800;color:var(--ink)}
+.tier .s{font-size:12pt;font-weight:800;color:var(--gold-d)}
+.tier .d{font-size:9.4pt;color:var(--muted);line-height:1.35}
+.tier.top{background:linear-gradient(160deg,var(--ink2),var(--ink));border:1.5px solid var(--gold);color:#fff}
+.tier.top .n{color:var(--gold-hi)}.tier.top .s{color:#fff}.tier.top .d{color:#d6dcea}
+.tier .tag{align-self:center;background:var(--gold);color:var(--ink);font-weight:800;font-size:8.6pt;border-radius:99px;padding:.4mm 3mm;margin-bottom:.6mm}
+.note{font-size:9.8pt;color:var(--muted);line-height:1.45}
+.gold{background:linear-gradient(160deg,#fff7e4,#fffdf6);border:1.4px solid var(--gold)}
+.end{display:grid;grid-template-columns:auto 1fr;gap:6mm;align-items:center}
+.qr{width:30mm;height:30mm;background:#fff;border:1px solid var(--line);border-radius:3mm;padding:2mm}
+.qr svg{width:100%;height:100%;display:block}
+.end h3{font-family:Frank,serif;font-size:15pt;color:var(--ink)}
+.url{direction:ltr;unicode-bidi:isolate;font-weight:800;color:var(--accent);font-size:12pt}
+.sig{font-size:10pt;color:var(--text);margin-top:1.5mm;line-height:1.45}
+.sig b{color:var(--ink)}
+.mak{display:grid;grid-template-columns:62mm 1fr;gap:5mm;align-items:center}
+.mak img{width:100%;border-radius:2.5mm;border:1.8mm solid #232c3d;display:block}
+</style>
+</head>
+<body>
+
+<!-- ===== עמוד 1 ===== -->
+<section class="page">
+  <header class="band">
+    <div class="ic">🏫</div>
+    <div>
+      <div class="kick">מיזם הכלים של גילעד רחמים · לבתי ספר, למנהלות ולרכזות מתמטיקה</div>
+      <h1>כיתה וירטואלית <em>למתמטיקה</em></h1>
+      <p>פורטל המורה לכל הכיתות וההקבצות. כל שורה שהתלמידה כותבת נבדקת מיד, והמורה רואה <em>מי פתרה, מי בדרך ומי נתקעה</em> – בזמן אמת.</p>
+    </div>
+  </header>
+  <div class="body">
+    <div class="prob">
+      <div class="box">
+        <h2>😟 הבעיה</h2>
+        <p>רוב הכיתות הווירטואליות נבנו לכל המקצועות: מעלים קובץ, התלמידה מגישה קובץ, והמורה בודקת בערב. במתמטיקה זה לא עובד טוב. <b>תלמידה נתקעת בשורה השנייה, ואף אחד לא יודע עד הבוקר.</b></p>
+      </div>
+      <div class="box">
+        <h2>✅ הכיתה הזאת בנויה הפוך</h2>
+        <p>כל שורה במחברת נבדקת מיד מול השורה שלפניה. מי שנתקעת לוחצת <b>"נתקעתי"</b>, מקבלת רמז, והמורה רואה אותה ברשימה ושולחת רמז או משחררת תשובה – <b>עוד באותו ערב</b>.</p>
+      </div>
+    </div>
+
+    <div class="cols">
+      <div class="box">
+        <h2>👩‍🏫 מה המורה מקבלת</h2>
+        <ul class="l">
+          <li><i>🗂</i><span><b>כמה כיתות והקבצות</b> בקישור אישי אחד, מהטלפון ומהמחשב.</span></li>
+          <li><i>📄</i><span><b>דף עבודה:</b> מעלים PDF או מצלמים (עד 20 עמודים), וכל עמוד ברור בטלפון.</span></li>
+          <li><i>🧮</i><span><b>לכל תרגיל:</b> מחשבון מדעי, גרפים, מצב בחינה או בלי מחשבון; סרטון מיוטיוב או שיעור קצר מהאתר; רמז ותשובה מוכנים.</span></li>
+          <li><i>📊</i><span><b>מעקב חי:</b> ✓ פתרה, ✏️ בדרך, 🙋 נתקעה – ורואים את הפתרון שורה אחרי שורה.</span></li>
+          <li><i>🎬</i><span><b>הכנה לשיעור:</b> סרטון שלך או אחד מ-<b>48 שיעורים</b> מוכנים, מלוח הכפל ועד הבגרות, עם עד 3 שאלות. רואים מי צפתה ומה ענתה.</span></li>
+          <li><i>🏃</i><span><b>מרתון חזרה למבחן</b> עם בונוס כיתתי, ותזכורת אישית בלחיצה למי שלא סיימה.</span></li>
+          <li><i>📺</i><span><b>מצב מקרן</b> לשיעור, <b>הפסקת חשיבה</b> של כמה דקות, ותחרות בין הכיתות שלך.</span></li>
+          <li><i>📣</i><span><b>דף להורים</b> עם ההודעות ושיעורי הבית הפתוחים, וסיכום שבועי מוכן.</span></li>
+        </ul>
+      </div>
+      <div class="box">
+        <h2>🎒 מה התלמידות מקבלות</h2>
+        <ul class="l">
+          <li><i>📱</i><span>עובדות <b>מהטלפון</b>, עם מקלדת מתמטית במחברת.</span></li>
+          <li><i>📓</i><span><b>מחברת שבודקת כל שורה</b> מול הקודמת, עם רמז לצעד הבא ונוסחאות לפי הנושא.</span></li>
+          <li><i>💡</i><span>העזרה <b>ליד התרגיל</b> – מחשבון, סרטון או שיעור – בלי לחפש.</span></li>
+          <li><i>💬</i><span><b>שאלות לכיתה:</b> שואלות, וכל הכיתה עונה. תשובה שעזרה = 10 נקודות, "תשובה מצוינת" מהמורה = 15.</span></li>
+          <li><i>🏆</i><span><b>נקודות ו-14 תגים:</b> 20 נקודות לתרגיל שנפתר, בונוס זריזות לשלוש הראשונות, רצף ימים.</span></li>
+          <li><i>💐</i><span><b>פרגון מהמורה</b> שמופיע בגדול כשנכנסים, ואפשר לשלוח אותו גם להורים.</span></li>
+          <li><i>🧩</i><span><b>הפסקת חשיבה:</b> סודוקו, וורדל או אבני מספרים – והתוצאות נכנסות ללוח הכיתה.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="shots">
+      <figure><img src="../shots/kita/k5-machberet.jpg" alt=""><figcaption>המחברת: כל שורה נבדקת</figcaption></figure>
+      <figure><img src="../shots/kita/k3-hwlist.jpg" alt=""><figcaption>המורה: מי סיימה ומי נתקעה</figcaption></figure>
+      <figure><img src="../shots/kita/k6-forum.jpg" alt=""><figcaption>שאלות לכיתה, עם "תשובה מצוינת"</figcaption></figure>
+    </div>
+  </div>
+  <footer class="foot"><span><b>מיזם הכלים של גילעד רחמים</b> · כלים חינמיים לכל אחד</span><span class="url" style="color:var(--gold-hi);font-size:9.5pt">hakelim.com/limudim/kita</span></footer>
+</section>
+
+<!-- ===== עמוד 2 ===== -->
+<section class="page">
+  <div class="body" style="padding-top:8mm;gap:3.4mm">
+    <div class="box">
+      <h2>🔒 פרטיות – מה נשמר ומה לא</h2>
+      <div class="priv">
+        <div><b>קוד כיתה וכינוי בלבד</b>בלי שם מלא, תעודת זהות, טלפון, מייל, כתובת, תמונות או מיקום. בלי הרשמה.</div>
+        <div><b>מה נשמר בשרת</b>שם הכיתה, הכינוי שהתלמידה בחרה, השורות שכתבה בשיעורי הבית והנקודות בלוח הכיתה.</div>
+        <div><b>שאלות לכיתה – בלי צ'אט פרטי</b>קישורים, טלפונים, מיילים ומילים לא יפות נחסמים לבד. שלושה דיווחים מסתירים הודעה עד שהמורה מחליטה.</div>
+        <div><b>מחיקה</b>המורה מוחקת מטלה, תלמידה או כיתה שלמה בלחיצה. תלמידה יכולה לצאת ולמחוק את שלה. כיתה בלי פעילות חצי שנה נמחקת לבד.</div>
+        <div><b>דף ההורים</b>בלי שמות ובלי פרטים על תלמידות – רק מה שהמורה פרסמה לכל ההורים.</div>
+        <div><b>בלי פרסומות</b>המחברת הפרטית, המחשבון והשיעורים נשמרים רק בטלפון. האתר סופר כניסות לדפים, בלי שמות.</div>
+      </div>
+    </div>
+
+    <div class="box mak">
+      <img src="../shots/kita/k10-makren.jpg" alt="">
+      <div>
+        <h2>🏫 מה בית הספר מקבל</h2>
+        <ul class="l">
+          <li><i>👩‍🏫</i><span><b>לכל מורה – חינם,</b> כבר היום, בלי הרשמה ובלי פרסומות.</span></li>
+          <li><i>🤝</i><span><b>לכל צוות המתמטיקה:</b> הדרכה קצרה לצוות, מקום לדפי עבודה בלי הגבלה, ותמיכה ישירה.</span></li>
+          <li><i>🛠</i><span><b>כלי שנבנה לפי תוכנית הלימודים שלכם</b> – מטלות לשאלון שלכם, נושא שאתם מלמדים.</span></li>
+          <li><i>🎁</i><span>שובר מתנה מהמיזם <b>למקום הראשון בכל חודש</b> בכיתה פעילה – באהבה.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <h2>💛 שותפות במיזם – במדרגות של חי, פעם בשנה</h2>
+      <div class="tiers">
+        <div class="tier"><div class="n">חי ₪</div><div class="s">18 ₪ לשנה</div><div class="d">כלי קטן או התאמה קטנה: מחשבון, דף אחד, נושא נוסף בכלי קיים.</div></div>
+        <div class="tier"><div class="n">חמש פעמים חי</div><div class="s">90 ₪ לשנה</div><div class="d">כלי בינוני, או כלי אישי שנבנה לכיתה או למורה.</div></div>
+        <div class="tier top"><span class="tag">לבית הספר</span><div class="n">עשר פעמים חי</div><div class="s">180 ₪ לשנה</div><div class="d">מערכת שלמה, כמו הכיתה הווירטואלית לכל צוות המתמטיקה, עם הדרכה ותמיכה. פחות משקל אחד ליום לימודים.</div></div>
+      </div>
+      <p class="note" style="margin-top:2.5mm">זה <b>מיזם חסד</b> – לא רכישה, לא מנוי ולא השקעה. הסכום סמלי, והכול הולך להחזקת השרתים, כדי שהכלים יישארו חינמיים לכל תלמיד ולכל מורה. ואני כאן כדי לדייק יחד אתכם מה יהיה מושלם עבור בית הספר שלכם.</p>
+    </div>
+
+    <div class="box gold">
+      <h2>📚 אוהבים את זה? נבנה גם למקצועות נוספים</h2>
+      <p>בית ספר שהכיתה הווירטואלית עובדת אצלו במתמטיקה – אבנה לו פורטל כזה גם <b>לאנגלית, למדעים, ללשון ולכל מקצוע שצריך</b>, עם הכלים שמתאימים לו.</p>
+    </div>
+
+    <div class="box end">
+      <div class="qr">{{QR}}</div>
+      <div>
+        <h3>סורקים ופותחים כיתה – בחינם</h3>
+        <div class="url">hakelim.com/limudim/kita</div>
+        <p class="note">לבתי ספר ולשותפות במיזם: <span class="url" style="font-size:10pt">hakelim.com/limudim/batei-sefer</span></p>
+        <p class="sig">אני <b>גילעד רחמים</b>. נפצעתי קשה במלחמה, בחאן יונס, ומאז אני בונה את הכלים האלה לבד – באהבה ובחסד. זה עולה לי הרבה כסף וזמן, ואני עושה את זה כדי שכל תלמיד ותלמידה יקבלו עזרה טובה בחינם, גם מי שאין לו שיעורים פרטיים. אשמח לשמוע מה חסר לכם.</p>
+      </div>
+    </div>
+  </div>
+  <footer class="foot"><span><b>מיזם הכלים של גילעד רחמים</b> · hakelim.com</span><span>חינם לכל מורה · לבית ספר – שותפות במיזם</span></footer>
+</section>
+</body>
+</html>
