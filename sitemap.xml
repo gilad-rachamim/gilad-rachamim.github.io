@@ -181,12 +181,18 @@
   <url><loc>https://hakelim.com/kelim/tochen/moda/</loc><lastmod>2026-11-14</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/tochen/shiron/</loc><lastmod>2026-11-14</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/tochen/studio/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kelim/tochen/tirgum/aravit-ivrit/</loc><lastmod>2026-11-13</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kelim/tochen/tirgum/</loc><lastmod>2026-11-13</lastmod><priority>0.9</priority></url>
-  <url><loc>https://hakelim.com/kelim/tochen/tirgum/ivrit-anglit/</loc><lastmod>2026-11-13</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kelim/tochen/tirgum/ivrit-aravit/</loc><lastmod>2026-11-13</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kelim/tochen/tirgum/mitzlema/</loc><lastmod>2026-11-13</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kelim/tochen/tirgum/rusit-ivrit/</loc><lastmod>2026-11-13</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/tirgum/amharit-ivrit/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/tirgum/aravit-ivrit/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/tirgum/</loc><lastmod>2026-11-14</lastmod><priority>0.9</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/tirgum/ivrit-anglit/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/tirgum/ivrit-aravit/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/tirgum/ivrit-rusit/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/tirgum/koli/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/tirgum/mismachim/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/tirgum/mitzlema/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/tirgum/rusit-ivrit/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/tirgum/sfaradit-ivrit/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/tirgum/tzarfatit-ivrit/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/tochen/wa/</loc><lastmod>2026-11-14</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kesef/achuzim/</loc><lastmod>2026-11-14</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kesef/ashrai/</loc><lastmod>2026-11-14</lastmod><priority>0.6</priority></url>
@@ -496,7 +502,7 @@
   <url><loc>https://hakelim.com/kodesh/zmanim/tzfat/</loc><lastmod>2026-11-13</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kodesh/zmanim/yerushalaim/</loc><lastmod>2026-11-13</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/limudim/batei-sefer/</loc><lastmod>2026-11-14</lastmod><priority>0.7</priority></url>
-  <url><loc>https://hakelim.com/limudim/dapim/</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/limudim/dapim/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/limudim/ilui/</loc><lastmod>2026-11-14</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/limudim/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/limudim/kahoot/</loc><lastmod>2026-11-14</lastmod><priority>0.6</priority></url>

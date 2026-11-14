@@ -1,0 +1,129 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tochen_tirgum_fr_he",
+  "title": "תרגום מצרפתית לעברית ומעברית לצרפתית – מתרגם חינם | הכלים של גילעד רחמים",
+  "description": "תרגום מצרפתית לעברית ומעברית לצרפתית בחינם: מדביקים, מדברים או מצלמים, ומקבלים תרגום של משפטים שלמים. להודעות למשפחה בצרפת, למסמכים ולעולים, עם הקראה בקול ובלי הרשמה.",
+  "og_title": "תרגום מצרפתית לעברית – בחינם",
+  "priority": "0.8",
+  "crumbs": [
+    [
+      "יצירת תוכן",
+      "/kelim/tochen/"
+    ],
+    [
+      "תרגום מאנגלית לעברית",
+      "/kelim/tochen/tirgum/"
+    ],
+    [
+      "תרגום מצרפתית לעברית",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/tochen-tirgum.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך מתרגמים מצרפתית לעברית בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מדביקים את הטקסט בצרפתית, מדברים בצרפתית במיקרופון, או מצלמים אותו. התרגום לעברית מופיע מיד, בחינם ובלי הרשמה.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לתרגם גם מעברית לצרפתית?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. לוחצים על ⇄ כדי להחליף כיוון, וכותבים בעברית.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לתרגם מסמך PDF בצרפתית?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. לוחצים על 📄 מסמך ובוחרים PDF, Word או TXT. הטקסט נקרא בדפדפן ומתורגם, ואפשר להוריד את התרגום כקובץ Word.\"}}, {\"@type\": \"Question\", \"name\": \"המתרגם פונה ב-tu או ב-vous?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בטקסט רשמי – בפנייה המנומסת (vous). כדאי לבדוק את התשובה בתרגום חזרה לעברית לפני ששולחים.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לשמוע את התרגום בצרפתית?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן, בכפתור 🔊, במהירות רגילה, איטית או מהירה.\"}}]}</script>",
+  "foot": "<script src=\"/assets/tochen-tirgum.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>תרגום מצרפתית לעברית, ומעברית לצרפתית</h1>
+  <p class="sub">הודעה מהמשפחה בצרפת, מכתב מבנק צרפתי או מתכון של סבתא: מדביקים, מצלמים או מדברים, והתרגום מופיע. לחיצה על ⇄ – ואתם עונים בצרפתית.</p>
+  <p class="tg-free">🔒 חינם · בלי הרשמה · בכרום במחשב התרגום נשאר במחשב שלכם</p>
+</header>
+<div class="tool tg" id="tg-app" data-from="fr" data-to="he" data-ex-src="Bonjour, nous arrivons à Tel Aviv jeudi soir. Pouvez-vous nous recommander un restaurant près de la plage ?" data-ex-out="שלום, אנחנו מגיעים לתל אביב ביום חמישי בערב. תוכלו להמליץ לנו על מסעדה ליד הים?">
+  <div class="tg-langs">
+    <label class="tg-l"><span class="sr">מתרגמים מ</span><select id="tg-from" aria-label="שפת המקור"></select></label>
+    <button type="button" class="tg-swap" id="tg-swap" aria-label="להחליף בין השפות" title="להחליף בין השפות">⇄</button>
+    <label class="tg-l"><span class="sr">מתרגמים ל</span><select id="tg-to" aria-label="שפת התרגום"></select></label>
+  </div>
+
+  <div class="tg-panes">
+    <div class="tg-pane">
+      <textarea id="tg-src" class="tg-text" rows="6" placeholder="כותבים או מדביקים כאן טקסט, לוחצים על המיקרופון ומדברים, או מצלמים שלט ומכתב ב-📷" aria-label="הטקסט לתרגום"></textarea>
+      <div class="tg-bar">
+        <button type="button" class="tg-ic tg-mic" id="tg-mic" aria-pressed="false" title="לדבר במקום להקליד">🎙️<span>לדבר</span></button>
+        <button type="button" class="tg-ic" id="tg-cam" title="לתרגם מתמונה או מצילום">📷<span>תמונה</span></button><input type="file" id="tg-file" accept="image/*" hidden aria-hidden="true" tabindex="-1">
+        <button type="button" class="tg-ic" id="tg-doc" title="לתרגם מסמך: PDF, Word או TXT">📄<span>מסמך</span></button><input type="file" id="tg-docfile" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden aria-hidden="true" tabindex="-1">
+        <button type="button" class="tg-ic" id="tg-voice" title="לתרגם הודעה קולית או הקלטה">🎧<span>הקלטה</span></button><input type="file" id="tg-voicefile" accept="audio/*,video/*,.opus,.ogg,.m4a,.mp3,.wav,.aac,.amr" hidden aria-hidden="true" tabindex="-1">
+        <button type="button" class="tg-ic" id="tg-say-src" title="להקריא את המקור">🔊</button>
+        <button type="button" class="tg-ic" id="tg-clear" title="לנקות">✕</button>
+        <span class="tg-count" id="tg-count" aria-live="polite"></span>
+      </div>
+    </div>
+    <div class="tg-pane tg-outp">
+      <div id="tg-out" class="tg-text tg-result" role="region" aria-live="polite" tabindex="0" aria-label="התרגום"></div>
+      <div class="tg-bar">
+        <button type="button" class="tg-ic" id="tg-say" title="להקריא את התרגום">🔊<span>להקריא</span></button>
+        <select id="tg-rate" class="tg-rate" aria-label="מהירות ההקראה"><option value="0.75">איטי</option><option value="1" selected>רגיל</option><option value="1.25">מהיר</option></select>
+        <button type="button" class="tg-ic" id="tg-copy" title="להעתיק">📋<span>להעתיק</span></button>
+        <button type="button" class="tg-ic" id="tg-word" title="להוריד את התרגום כקובץ Word">⬇️<span>Word</span></button>
+        <a class="tg-ic tg-wa" id="tg-wa" href="#" target="_blank" rel="noopener" title="לשלוח בווטסאפ"><svg class="ic"><use href="#wa"/></svg><span>ווטסאפ</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="tg-go-row">
+    <button type="button" class="btn btn-gold tg-go" id="tg-go">לתרגם</button>
+    <span class="tg-status" id="tg-status" role="status"></span>
+  </div>
+  <div class="tg-dl" id="tg-dl" hidden>
+    <p id="tg-dl-t">כדי לתרגם בתוך המחשב, כרום מוריד פעם אחת את מודל התרגום לשפות האלה. אחר כך זה מהיר ועובד גם בלי אינטרנט.</p>
+    <div class="tg-prog" aria-hidden="true"><i id="tg-prog"></i></div>
+  </div>
+  <p class="tg-engine" id="tg-engine"></p>
+
+  <div class="tg-tools">
+    <button type="button" class="tg-tab" data-tab="conv" aria-expanded="false">🗣️ מצב שיחה</button>
+    <button type="button" class="tg-tab" data-tab="gl" aria-expanded="false">📖 מילון אישי</button>
+    <button type="button" class="tg-tab" data-tab="hist" aria-expanded="false">🕘 היסטוריה</button>
+    <button type="button" class="tg-tab" id="tg-big" aria-pressed="false">אא גופן גדול</button>
+  </div>
+
+  <section class="tg-box" id="tg-conv" hidden aria-label="מצב שיחה">
+    <p class="note">שני אנשים, שתי שפות, טלפון אחד. כל אחד לוחץ על הכפתור שלו ומדבר, והתרגום מוקרא בקול לצד השני.</p>
+    <div class="tg-conv-btns">
+      <button type="button" class="btn btn-gold" id="tg-conv-a">🎙️ <span id="tg-conv-a-l">עברית</span></button>
+      <button type="button" class="btn btn-line" id="tg-conv-b">🎙️ <span id="tg-conv-b-l">English</span></button>
+    </div>
+    <ol class="tg-conv-log" id="tg-conv-log"></ol>
+  </section>
+
+  <section class="tg-box" id="tg-gl" hidden aria-label="מילון אישי">
+    <p class="note">מילה או ביטוי שחשוב לכם שיתורגמו תמיד אותו דבר: שם של חברה, מונח מקצועי, כינוי. המתרגם ישתמש בתרגום שלכם בכל פעם.</p>
+    <form class="tg-gl-add" id="tg-gl-form">
+      <input id="tg-gl-a" placeholder="במקור (למשל: Board)" aria-label="המילה במקור" required>
+      <input id="tg-gl-b" placeholder="התרגום שלי (למשל: ועד מנהל)" aria-label="התרגום המועדף" required>
+      <button class="btn btn-gold btn-sm" type="submit">להוסיף</button>
+    </form>
+    <ul class="tg-list" id="tg-gl-list"></ul>
+  </section>
+
+  <section class="tg-box" id="tg-hist" hidden aria-label="היסטוריה">
+    <p class="note">התרגומים האחרונים, שמורים רק במכשיר הזה. נגיעה מחזירה תרגום למסך.</p>
+    <ul class="tg-list" id="tg-hist-list"></ul>
+    <button type="button" class="btn btn-line btn-sm" id="tg-hist-clear">למחוק את ההיסטוריה</button>
+  </section>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">תרגום מצרפתית לעברית, לעולים ולמשפחות</h2>
+  <p>הרבה משפחות בישראל מתכתבות עם קרובים בצרפת, ועולים חדשים מקבלים מכתבים ומסמכים בצרפתית. המתרגם כאן מתרגם משפטים שלמים מצרפתית לעברית בעברית טבעית, ובלחיצה על ⇄ – מעברית לצרפתית, כדי לענות.</p>
+  <h3>לענות בצרפתית מנומסת</h3>
+  <p>בצרפתית יש הבדל בין פנייה אישית (tu) לפנייה מנומסת (vous). המתרגם בוחר בפנייה המנומסת כשהטקסט רשמי. כדי לוודא, מתרגמים את התשובה בחזרה לעברית לפני ששולחים.</p>
+  <h3>מכתבים ומסמכים מצרפת</h3>
+  <p>מסמך PDF או Word מבנק, ממשרד ממשלתי או מבית ספר בצרפת? לוחצים על 📄 מסמך, והטקסט נקרא ומתורגם. התרגום יורד גם כקובץ Word בלחיצה. מכתב מודפס – מצלמים ב-📷.</p>
+  <h3>לשמוע את ההגייה</h3>
+  <p>לפני שיחת טלפון עם פקיד בצרפת, כותבים את המשפט בעברית, מתרגמים לצרפתית ולוחצים 🔊 כדי לשמוע איך אומרים אותו. אפשר להאט את הקצב בבחירת "איטי".</p>
+  <h3>הכול נשאר אצלכם</h3>
+  <p>בכרום במחשב התרגום נעשה בתוך המחשב, והטקסט לא נשלח לשום שרת. ההיסטוריה והמילון האישי נשמרים רק במכשיר שלכם, כך שאפשר לחזור לתרגום של אתמול.</p>
+  <h3>עוד דפי תרגום</h3>
+  <p><a class="gold" href="/kelim/tochen/tirgum/">תרגום מאנגלית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/ivrit-anglit/">תרגום מעברית לאנגלית</a> · <a class="gold" href="/kelim/tochen/tirgum/aravit-ivrit/">תרגום מערבית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/ivrit-aravit/">תרגום מעברית לערבית</a> · <a class="gold" href="/kelim/tochen/tirgum/rusit-ivrit/">תרגום מרוסית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/mitzlema/">תרגום מצלמה</a> · <a class="gold" href="/kelim/tochen/tirgum/ivrit-rusit/">תרגום מעברית לרוסית</a> · <a class="gold" href="/kelim/tochen/tirgum/sfaradit-ivrit/">תרגום מספרדית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/amharit-ivrit/">תרגום מאמהרית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/koli/">תרגום קולי</a> · <a class="gold" href="/kelim/tochen/tirgum/mismachim/">תרגום מסמכים</a>. ולתמלול הקלטה לפני התרגום – <a class="gold" href="/kelim/tamlul/">כלי התמלול</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך מתרגמים מצרפתית לעברית בחינם?</summary><p>מדביקים את הטקסט בצרפתית, מדברים בצרפתית במיקרופון, או מצלמים אותו. התרגום לעברית מופיע מיד, בחינם ובלי הרשמה.</p></details>
+  <details><summary>אפשר לתרגם גם מעברית לצרפתית?</summary><p>כן. לוחצים על ⇄ כדי להחליף כיוון, וכותבים בעברית.</p></details>
+  <details><summary>אפשר לתרגם מסמך PDF בצרפתית?</summary><p>כן. לוחצים על 📄 מסמך ובוחרים PDF, Word או TXT. הטקסט נקרא בדפדפן ומתורגם, ואפשר להוריד את התרגום כקובץ Word.</p></details>
+  <details><summary>המתרגם פונה ב-tu או ב-vous?</summary><p>בטקסט רשמי – בפנייה המנומסת (vous). כדאי לבדוק את התשובה בתרגום חזרה לעברית לפני ששולחים.</p></details>
+  <details><summary>אפשר לשמוע את התרגום בצרפתית?</summary><p>כן, בכפתור 🔊, במהירות רגילה, איטית או מהירה.</p></details>
+</section>
+<!--/seo-txt-->

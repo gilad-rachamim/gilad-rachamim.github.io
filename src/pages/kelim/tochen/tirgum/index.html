@@ -29,6 +29,8 @@
       <div class="tg-bar">
         <button type="button" class="tg-ic tg-mic" id="tg-mic" aria-pressed="false" title="לדבר במקום להקליד">🎙️<span>לדבר</span></button>
         <button type="button" class="tg-ic" id="tg-cam" title="לתרגם מתמונה או מצילום">📷<span>תמונה</span></button><input type="file" id="tg-file" accept="image/*" hidden aria-hidden="true" tabindex="-1">
+        <button type="button" class="tg-ic" id="tg-doc" title="לתרגם מסמך: PDF, Word או TXT">📄<span>מסמך</span></button><input type="file" id="tg-docfile" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden aria-hidden="true" tabindex="-1">
+        <button type="button" class="tg-ic" id="tg-voice" title="לתרגם הודעה קולית או הקלטה">🎧<span>הקלטה</span></button><input type="file" id="tg-voicefile" accept="audio/*,video/*,.opus,.ogg,.m4a,.mp3,.wav,.aac,.amr" hidden aria-hidden="true" tabindex="-1">
         <button type="button" class="tg-ic" id="tg-say-src" title="להקריא את המקור">🔊</button>
         <button type="button" class="tg-ic" id="tg-clear" title="לנקות">✕</button>
         <span class="tg-count" id="tg-count" aria-live="polite"></span>
@@ -40,6 +42,7 @@
         <button type="button" class="tg-ic" id="tg-say" title="להקריא את התרגום">🔊<span>להקריא</span></button>
         <select id="tg-rate" class="tg-rate" aria-label="מהירות ההקראה"><option value="0.75">איטי</option><option value="1" selected>רגיל</option><option value="1.25">מהיר</option></select>
         <button type="button" class="tg-ic" id="tg-copy" title="להעתיק">📋<span>להעתיק</span></button>
+        <button type="button" class="tg-ic" id="tg-word" title="להוריד את התרגום כקובץ Word">⬇️<span>Word</span></button>
         <a class="tg-ic tg-wa" id="tg-wa" href="#" target="_blank" rel="noopener" title="לשלוח בווטסאפ"><svg class="ic"><use href="#wa"/></svg><span>ווטסאפ</span></a>
       </div>
     </div>
@@ -100,8 +103,10 @@
   <p>מלבד אנגלית יש ערבית, רוסית, צרפתית, ספרדית, אמהרית, אוקראינית ועוד. לא צריך לבחור את שפת המקור: המתרגם מזהה לבד באיזו שפה כתבתם. אם כתבתם בעברית, הוא מתרגם לאנגלית; אם כתבתם בשפה אחרת, הוא מתרגם לעברית. הכפתור ⇄ מחליף כיוון בלחיצה.</p>
   <h3>חלופה פרטית לגוגל תרגום</h3>
   <p>בכרום במחשב, התרגום נעשה במודל שכרום מוריד פעם אחת למחשב שלכם. הטקסט לא נשלח לשום שרת, כך שאפשר לתרגם גם מסמך אישי, מכתב רפואי או חוזה בלי לחשוש. אחרי ההורדה הראשונה התרגום מהיר מאוד ועובד גם בלי אינטרנט. בטלפון ובדפדפנים אחרים התרגום עובר בשרת התרגום של מיזם הכלים, שלא שומר את הטקסט.</p>
+  <h3>תרגום מסמכים והודעות קוליות</h3>
+  <p>לוחצים על 📄 מסמך ובוחרים קובץ PDF, Word או TXT: הטקסט נקרא בדפדפן ומתורגם, ובלחיצה על ⬇️ Word מקבלים את התרגום כקובץ, מסודר מימין לשמאל. קיבלתם הודעה קולית בשפה זרה? שומרים אותה כקובץ, לוחצים על 🎧 הקלטה, וההקלטה מתומללת בענן ומתורגמת. אפשר גם לגרור מסמך או הקלטה ישר לתיבת הטקסט.</p>
   <h3>תרגום לפי שפה</h3>
-  <p>לכל כיוון נפוץ יש דף משלו, עם הכיוון כבר מוכן ועם הסבר מותאם: <a class="gold" href="/kelim/tochen/tirgum/ivrit-anglit/">תרגום מעברית לאנגלית</a> למיילים וקורות חיים, <a class="gold" href="/kelim/tochen/tirgum/aravit-ivrit/">תרגום מערבית לעברית</a> ו<a class="gold" href="/kelim/tochen/tirgum/ivrit-aravit/">מעברית לערבית</a>, <a class="gold" href="/kelim/tochen/tirgum/rusit-ivrit/">תרגום מרוסית לעברית</a>, ו<a class="gold" href="/kelim/tochen/tirgum/mitzlema/">תרגום מצלמה</a> לשלטים, תפריטים ומכתבים.</p>
+  <p>לכל כיוון נפוץ יש דף משלו, עם הכיוון כבר מוכן ועם הסבר מותאם: <a class="gold" href="/kelim/tochen/tirgum/ivrit-anglit/">תרגום מעברית לאנגלית</a> למיילים וקורות חיים, <a class="gold" href="/kelim/tochen/tirgum/aravit-ivrit/">תרגום מערבית לעברית</a> ו<a class="gold" href="/kelim/tochen/tirgum/ivrit-aravit/">מעברית לערבית</a>, <a class="gold" href="/kelim/tochen/tirgum/rusit-ivrit/">תרגום מרוסית לעברית</a>, <a class="gold" href="/kelim/tochen/tirgum/ivrit-rusit/">מעברית לרוסית</a>, <a class="gold" href="/kelim/tochen/tirgum/tzarfatit-ivrit/">מצרפתית לעברית</a>, <a class="gold" href="/kelim/tochen/tirgum/sfaradit-ivrit/">מספרדית לעברית</a>, <a class="gold" href="/kelim/tochen/tirgum/amharit-ivrit/">מאמהרית לעברית</a>, <a class="gold" href="/kelim/tochen/tirgum/mitzlema/">תרגום מצלמה</a> לשלטים, תפריטים ומכתבים, <a class="gold" href="/kelim/tochen/tirgum/koli/">תרגום קולי</a> ו<a class="gold" href="/kelim/tochen/tirgum/mismachim/">תרגום מסמכים</a> (PDF ו-Word).</p>
   <h3>מילון אישי, היסטוריה וגופן גדול</h3>
   <p>במילון האישי קובעים איך יתורגמו מונחים שחוזרים אצלכם, והמתרגם שומר עליהם בכל טקסט. ההיסטוריה שומרת את התרגומים האחרונים רק במכשיר שלכם. "גופן גדול" מגדיל את הטקסט למי שקשה לו לקרוא. כדי לתמלל הקלטה ארוכה לפני התרגום יש את <a class="gold" href="/kelim/tamlul/">כלי התמלול</a>, כדי לעצב את ההודעה לפני ששולחים יש את <a class="gold" href="/kelim/tochen/wa/">עורך ההודעות לווטסאפ</a>, ולתרגול אנגלית לבגרות יש את <a class="gold" href="/limudim/krav-anglit/">הדו-קרב באנגלית</a>. עם <a class="gold" href="/kelim/machshev/chatima/tosaf/">התוסף לכרום של מיזם הכלים</a> אפשר לסמן טקסט בכל אתר, ללחוץ קליק ימני ולשלוח אותו לכאן לתרגום.</p>
 </section>

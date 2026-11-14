@@ -41,6 +41,8 @@
       <div class="tg-bar">
         <button type="button" class="tg-ic tg-mic" id="tg-mic" aria-pressed="false" title="לדבר במקום להקליד">🎙️<span>לדבר</span></button>
         <button type="button" class="tg-ic" id="tg-cam" title="לתרגם מתמונה או מצילום">📷<span>תמונה</span></button><input type="file" id="tg-file" accept="image/*" hidden aria-hidden="true" tabindex="-1">
+        <button type="button" class="tg-ic" id="tg-doc" title="לתרגם מסמך: PDF, Word או TXT">📄<span>מסמך</span></button><input type="file" id="tg-docfile" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden aria-hidden="true" tabindex="-1">
+        <button type="button" class="tg-ic" id="tg-voice" title="לתרגם הודעה קולית או הקלטה">🎧<span>הקלטה</span></button><input type="file" id="tg-voicefile" accept="audio/*,video/*,.opus,.ogg,.m4a,.mp3,.wav,.aac,.amr" hidden aria-hidden="true" tabindex="-1">
         <button type="button" class="tg-ic" id="tg-say-src" title="להקריא את המקור">🔊</button>
         <button type="button" class="tg-ic" id="tg-clear" title="לנקות">✕</button>
         <span class="tg-count" id="tg-count" aria-live="polite"></span>
@@ -52,6 +54,7 @@
         <button type="button" class="tg-ic" id="tg-say" title="להקריא את התרגום">🔊<span>להקריא</span></button>
         <select id="tg-rate" class="tg-rate" aria-label="מהירות ההקראה"><option value="0.75">איטי</option><option value="1" selected>רגיל</option><option value="1.25">מהיר</option></select>
         <button type="button" class="tg-ic" id="tg-copy" title="להעתיק">📋<span>להעתיק</span></button>
+        <button type="button" class="tg-ic" id="tg-word" title="להוריד את התרגום כקובץ Word">⬇️<span>Word</span></button>
         <a class="tg-ic tg-wa" id="tg-wa" href="#" target="_blank" rel="noopener" title="לשלוח בווטסאפ"><svg class="ic"><use href="#wa"/></svg><span>ווטסאפ</span></a>
       </div>
     </div>
@@ -113,7 +116,7 @@
   <h3>טפסים, מכתבים ותורים</h3>
   <p>הרבה מהמכתבים שמגיעים הביתה הם מגופים כמו ביטוח לאומי, משרד הקליטה, קופת החולים או העירייה. מצלמים אותם, והתרגום לרוסית או לעברית מופיע מיד, עם הטקסט המקורי למעלה כדי שאפשר יהיה לבדוק. רוצים לענות? כותבים ברוסית, מחליפים כיוון בלחיצה על ⇄, ומקבלים עברית מוכנה לשליחה. ההיסטוריה שומרת את התרגומים רק בטלפון שלכם, והמילון האישי זוכר מונחים כמו שמות של משרדים.</p>
   <h3>עוד דפי תרגום</h3>
-  <p><a class="gold" href="/kelim/tochen/tirgum/">תרגום מאנגלית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/ivrit-anglit/">תרגום מעברית לאנגלית</a> · <a class="gold" href="/kelim/tochen/tirgum/aravit-ivrit/">תרגום מערבית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/ivrit-aravit/">תרגום מעברית לערבית</a> · <a class="gold" href="/kelim/tochen/tirgum/mitzlema/">תרגום מצלמה</a>. ולתמלול הקלטה לפני התרגום – <a class="gold" href="/kelim/tamlul/">כלי התמלול</a>.</p>
+  <p><a class="gold" href="/kelim/tochen/tirgum/">תרגום מאנגלית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/ivrit-anglit/">תרגום מעברית לאנגלית</a> · <a class="gold" href="/kelim/tochen/tirgum/aravit-ivrit/">תרגום מערבית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/ivrit-aravit/">תרגום מעברית לערבית</a> · <a class="gold" href="/kelim/tochen/tirgum/mitzlema/">תרגום מצלמה</a> · <a class="gold" href="/kelim/tochen/tirgum/ivrit-rusit/">תרגום מעברית לרוסית</a> · <a class="gold" href="/kelim/tochen/tirgum/tzarfatit-ivrit/">תרגום מצרפתית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/sfaradit-ivrit/">תרגום מספרדית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/amharit-ivrit/">תרגום מאמהרית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/koli/">תרגום קולי</a> · <a class="gold" href="/kelim/tochen/tirgum/mismachim/">תרגום מסמכים</a>. ולתמלול הקלטה לפני התרגום – <a class="gold" href="/kelim/tamlul/">כלי התמלול</a>.</p>
 </section>
 <section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
   <h2 id="seo-faq-h">שאלות ותשובות</h2>

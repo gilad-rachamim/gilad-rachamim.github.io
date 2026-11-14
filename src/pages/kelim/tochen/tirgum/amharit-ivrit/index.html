@@ -1,0 +1,129 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "tochen_tirgum_am_he",
+  "title": "תרגום מאמהרית לעברית ומעברית לאמהרית – מתרגם חינם | הכלים של גילעד רחמים",
+  "description": "תרגום מאמהרית לעברית ומעברית לאמהרית בחינם: הודעות, מכתבים ושיחה בקול. לסבים ולהורים, לרופאים, לעובדים סוציאליים ולמורים. מדברים, מצלמים או מדביקים – בלי הרשמה.",
+  "og_title": "תרגום מאמהרית לעברית – בחינם",
+  "priority": "0.8",
+  "crumbs": [
+    [
+      "יצירת תוכן",
+      "/kelim/tochen/"
+    ],
+    [
+      "תרגום מאנגלית לעברית",
+      "/kelim/tochen/tirgum/"
+    ],
+    [
+      "תרגום מאמהרית לעברית",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/tochen-tirgum.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך מתרגמים מאמהרית לעברית בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מדביקים את הטקסט, מצלמים אותו, או נותנים לדובר אמהרית לדבר במיקרופון. התרגום לעברית מופיע מיד, בלי הרשמה.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לתרגם מעברית לאמהרית?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. לוחצים על ⇄ כדי להחליף כיוון, וכותבים או אומרים בעברית.\"}}, {\"@type\": \"Question\", \"name\": \"אין לי מקלדת באמהרית. מה עושים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מדברים במיקרופון, מדביקים הודעה שקיבלתם, או מצלמים את הטקסט ב-📷 תמונה.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לשמוע את התרגום באמהרית?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"רק אם במכשיר יש קול באמהרית. ברוב הטלפונים אין, אז עדיף להראות את הטקסט הכתוב.\"}}, {\"@type\": \"Question\", \"name\": \"הטקסט נשמר אצלכם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. הוא נשלח לשרת רק כדי לתרגם, ולא נשמר. ההיסטוריה נשמרת רק במכשיר שלכם.\"}}]}</script>",
+  "foot": "<script src=\"/assets/tochen-tirgum.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>תרגום מאמהרית לעברית, ומעברית לאמהרית</h1>
+  <p class="sub">לסבא ולסבתא, להורים, לרופא, לעובדת הסוציאלית ולמורה: אומרים או כותבים, ומקבלים את המשפט בשפה של הצד השני – כתוב ובקול.</p>
+  <p class="tg-free">🔒 חינם · בלי הרשמה · בכרום במחשב התרגום נשאר במחשב שלכם</p>
+</header>
+<div class="tool tg" id="tg-app" data-from="am" data-to="he" data-ex-src="ሰላም፣ ነገ ጠዋት ወደ ሥራ እመጣለሁ።" data-ex-out="שלום, מחר בבוקר אבוא לעבודה.">
+  <div class="tg-langs">
+    <label class="tg-l"><span class="sr">מתרגמים מ</span><select id="tg-from" aria-label="שפת המקור"></select></label>
+    <button type="button" class="tg-swap" id="tg-swap" aria-label="להחליף בין השפות" title="להחליף בין השפות">⇄</button>
+    <label class="tg-l"><span class="sr">מתרגמים ל</span><select id="tg-to" aria-label="שפת התרגום"></select></label>
+  </div>
+
+  <div class="tg-panes">
+    <div class="tg-pane">
+      <textarea id="tg-src" class="tg-text" rows="6" placeholder="כותבים או מדביקים כאן טקסט, לוחצים על המיקרופון ומדברים, או מצלמים שלט ומכתב ב-📷" aria-label="הטקסט לתרגום"></textarea>
+      <div class="tg-bar">
+        <button type="button" class="tg-ic tg-mic" id="tg-mic" aria-pressed="false" title="לדבר במקום להקליד">🎙️<span>לדבר</span></button>
+        <button type="button" class="tg-ic" id="tg-cam" title="לתרגם מתמונה או מצילום">📷<span>תמונה</span></button><input type="file" id="tg-file" accept="image/*" hidden aria-hidden="true" tabindex="-1">
+        <button type="button" class="tg-ic" id="tg-doc" title="לתרגם מסמך: PDF, Word או TXT">📄<span>מסמך</span></button><input type="file" id="tg-docfile" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden aria-hidden="true" tabindex="-1">
+        <button type="button" class="tg-ic" id="tg-voice" title="לתרגם הודעה קולית או הקלטה">🎧<span>הקלטה</span></button><input type="file" id="tg-voicefile" accept="audio/*,video/*,.opus,.ogg,.m4a,.mp3,.wav,.aac,.amr" hidden aria-hidden="true" tabindex="-1">
+        <button type="button" class="tg-ic" id="tg-say-src" title="להקריא את המקור">🔊</button>
+        <button type="button" class="tg-ic" id="tg-clear" title="לנקות">✕</button>
+        <span class="tg-count" id="tg-count" aria-live="polite"></span>
+      </div>
+    </div>
+    <div class="tg-pane tg-outp">
+      <div id="tg-out" class="tg-text tg-result" role="region" aria-live="polite" tabindex="0" aria-label="התרגום"></div>
+      <div class="tg-bar">
+        <button type="button" class="tg-ic" id="tg-say" title="להקריא את התרגום">🔊<span>להקריא</span></button>
+        <select id="tg-rate" class="tg-rate" aria-label="מהירות ההקראה"><option value="0.75">איטי</option><option value="1" selected>רגיל</option><option value="1.25">מהיר</option></select>
+        <button type="button" class="tg-ic" id="tg-copy" title="להעתיק">📋<span>להעתיק</span></button>
+        <button type="button" class="tg-ic" id="tg-word" title="להוריד את התרגום כקובץ Word">⬇️<span>Word</span></button>
+        <a class="tg-ic tg-wa" id="tg-wa" href="#" target="_blank" rel="noopener" title="לשלוח בווטסאפ"><svg class="ic"><use href="#wa"/></svg><span>ווטסאפ</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="tg-go-row">
+    <button type="button" class="btn btn-gold tg-go" id="tg-go">לתרגם</button>
+    <span class="tg-status" id="tg-status" role="status"></span>
+  </div>
+  <div class="tg-dl" id="tg-dl" hidden>
+    <p id="tg-dl-t">כדי לתרגם בתוך המחשב, כרום מוריד פעם אחת את מודל התרגום לשפות האלה. אחר כך זה מהיר ועובד גם בלי אינטרנט.</p>
+    <div class="tg-prog" aria-hidden="true"><i id="tg-prog"></i></div>
+  </div>
+  <p class="tg-engine" id="tg-engine"></p>
+
+  <div class="tg-tools">
+    <button type="button" class="tg-tab" data-tab="conv" aria-expanded="false">🗣️ מצב שיחה</button>
+    <button type="button" class="tg-tab" data-tab="gl" aria-expanded="false">📖 מילון אישי</button>
+    <button type="button" class="tg-tab" data-tab="hist" aria-expanded="false">🕘 היסטוריה</button>
+    <button type="button" class="tg-tab" id="tg-big" aria-pressed="false">אא גופן גדול</button>
+  </div>
+
+  <section class="tg-box" id="tg-conv" hidden aria-label="מצב שיחה">
+    <p class="note">שני אנשים, שתי שפות, טלפון אחד. כל אחד לוחץ על הכפתור שלו ומדבר, והתרגום מוקרא בקול לצד השני.</p>
+    <div class="tg-conv-btns">
+      <button type="button" class="btn btn-gold" id="tg-conv-a">🎙️ <span id="tg-conv-a-l">עברית</span></button>
+      <button type="button" class="btn btn-line" id="tg-conv-b">🎙️ <span id="tg-conv-b-l">English</span></button>
+    </div>
+    <ol class="tg-conv-log" id="tg-conv-log"></ol>
+  </section>
+
+  <section class="tg-box" id="tg-gl" hidden aria-label="מילון אישי">
+    <p class="note">מילה או ביטוי שחשוב לכם שיתורגמו תמיד אותו דבר: שם של חברה, מונח מקצועי, כינוי. המתרגם ישתמש בתרגום שלכם בכל פעם.</p>
+    <form class="tg-gl-add" id="tg-gl-form">
+      <input id="tg-gl-a" placeholder="במקור (למשל: Board)" aria-label="המילה במקור" required>
+      <input id="tg-gl-b" placeholder="התרגום שלי (למשל: ועד מנהל)" aria-label="התרגום המועדף" required>
+      <button class="btn btn-gold btn-sm" type="submit">להוסיף</button>
+    </form>
+    <ul class="tg-list" id="tg-gl-list"></ul>
+  </section>
+
+  <section class="tg-box" id="tg-hist" hidden aria-label="היסטוריה">
+    <p class="note">התרגומים האחרונים, שמורים רק במכשיר הזה. נגיעה מחזירה תרגום למסך.</p>
+    <ul class="tg-list" id="tg-hist-list"></ul>
+    <button type="button" class="btn btn-line btn-sm" id="tg-hist-clear">למחוק את ההיסטוריה</button>
+  </section>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">תרגום מאמהרית לעברית, לבית, למרפאה ולבית הספר</h2>
+  <p>בהרבה בתים בישראל הדור המבוגר מדבר אמהרית והצעירים עברית. גם אנשי מקצוע – רופאים, אחיות, עובדות סוציאליות ומורים – צריכים לפעמים להסביר משהו חשוב למי שלא מבין עברית טוב. המתרגם כאן מתרגם בין אמהרית לעברית בשני הכיוונים, כתוב ובקול.</p>
+  <h3>מדברים במקום לכתוב</h3>
+  <p>הכתב האמהרי (געז) לא נמצא ברוב המקלדות. לכן הדרך הכי נוחה היא לדבר: לוחצים על המיקרופון, והדובר אומר את המשפט. אפשר גם להדביק הודעה שהגיעה בווטסאפ, או לצלם מכתב ב-📷.</p>
+  <h3>מצב שיחה</h3>
+  <p>ב"מצב שיחה" כל צד לוחץ על הכפתור שלו ומדבר: אחד בעברית, השני באמהרית, וכל אחד שומע את התרגום. זה מתאים לביקור אצל רופא, לשיחה עם הורים בבית הספר ולשיחה משפחתית.</p>
+  <h3>איך זה עובד מאחורי הקלעים</h3>
+  <p>כרום עוד לא מתרגם אמהרית בתוך המחשב, ולכן התרגום עובר בשרת התרגום של מיזם הכלים, שלא שומר את הטקסט. בהודעה רפואית או משפטית חשובה – כדאי שגם דובר אמהרית יקרא את התרגום.</p>
+  <h3>שומרים מילים חשובות</h3>
+  <p>שמות של תרופות, של מקומות ושל אנשי משפחה – שומרים במילון האישי, והמתרגם ישתמש בהם בכל פעם. ההיסטוריה שומרת את המשפטים שתרגמתם רק במכשיר שלכם.</p>
+  <h3>עוד דפי תרגום</h3>
+  <p><a class="gold" href="/kelim/tochen/tirgum/">תרגום מאנגלית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/ivrit-anglit/">תרגום מעברית לאנגלית</a> · <a class="gold" href="/kelim/tochen/tirgum/aravit-ivrit/">תרגום מערבית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/ivrit-aravit/">תרגום מעברית לערבית</a> · <a class="gold" href="/kelim/tochen/tirgum/rusit-ivrit/">תרגום מרוסית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/mitzlema/">תרגום מצלמה</a> · <a class="gold" href="/kelim/tochen/tirgum/ivrit-rusit/">תרגום מעברית לרוסית</a> · <a class="gold" href="/kelim/tochen/tirgum/tzarfatit-ivrit/">תרגום מצרפתית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/sfaradit-ivrit/">תרגום מספרדית לעברית</a> · <a class="gold" href="/kelim/tochen/tirgum/koli/">תרגום קולי</a> · <a class="gold" href="/kelim/tochen/tirgum/mismachim/">תרגום מסמכים</a>. ולתמלול הקלטה לפני התרגום – <a class="gold" href="/kelim/tamlul/">כלי התמלול</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך מתרגמים מאמהרית לעברית בחינם?</summary><p>מדביקים את הטקסט, מצלמים אותו, או נותנים לדובר אמהרית לדבר במיקרופון. התרגום לעברית מופיע מיד, בלי הרשמה.</p></details>
+  <details><summary>אפשר לתרגם מעברית לאמהרית?</summary><p>כן. לוחצים על ⇄ כדי להחליף כיוון, וכותבים או אומרים בעברית.</p></details>
+  <details><summary>אין לי מקלדת באמהרית. מה עושים?</summary><p>מדברים במיקרופון, מדביקים הודעה שקיבלתם, או מצלמים את הטקסט ב-📷 תמונה.</p></details>
+  <details><summary>אפשר לשמוע את התרגום באמהרית?</summary><p>רק אם במכשיר יש קול באמהרית. ברוב הטלפונים אין, אז עדיף להראות את הטקסט הכתוב.</p></details>
+  <details><summary>הטקסט נשמר אצלכם?</summary><p>לא. הוא נשלח לשרת רק כדי לתרגם, ולא נשמר. ההיסטוריה נשמרת רק במכשיר שלכם.</p></details>
+</section>
+<!--/seo-txt-->
