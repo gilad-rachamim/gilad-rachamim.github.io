@@ -17,6 +17,7 @@
   function save(a) { try { localStorage.setItem(LS, JSON.stringify(a.slice(0, 8))); } catch (e) {} }
   function used(how) { try { window.toolUsed && window.toolUsed('seo', { how: how }); } catch (e) {} }
   function d2(t) { var d = new Date(t); return d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear(); }
+  function pretty(u) { try { return decodeURI(u); } catch (e) { return u; } }
   function host(u) { try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return u; } }
 
   /* ---------- טקסטים בעברית לכל בדיקה ----------
@@ -107,7 +108,7 @@
     var seen = {};
     function add(cat, a, sev, txt) {
       var key = cat + ':' + (txt ? txt[0] : a.id); if (seen[key]) return; seen[key] = 1;   // ישן + "תובנה" חדשה עם אותו נושא = פריט אחד
-      m.issues.push({ id: a.id, cat: cat, sev: sev, ti: txt ? txt[0] : a.title, why: txt ? txt[1] : '', fix: txt ? txt[2] : plain(a.description).split('. ')[0] + '.', wix: txt && txt[3] || '', wp: txt && txt[4] || '', dv: a.displayValue || '', it: items(a), lt: a.title });
+      m.issues.push({ id: a.id, cat: cat, sev: sev, ti: txt ? txt[0] : plain(a.title), why: txt ? txt[1] : '', fix: txt ? txt[2] : plain(a.description).split('. ')[0] + '.', wix: txt && txt[3] || '', wp: txt && txt[4] || '', dv: a.displayValue || '', it: items(a), lt: a.title });
     }
     function bad(a) { return a && a.score !== null && a.score < 0.9 && ['manual', 'notApplicable', 'informative', 'error'].indexOf(a.scoreDisplayMode) < 0; }
     ['seo', 'performance', 'accessibility', 'best-practices'].forEach(function (cat) {
@@ -172,7 +173,7 @@
     m.issues.forEach(function (x) { if (x.sev === 1) n1++; else if (x.sev === 2) n2++; else n3++; });
     var h = '';
     if (demo) h += '<p class="sx-demo">👀 זו דוגמה: הבדיקה של hakelim.com מ-' + d2(m.t) + '. כתבו את הכתובת שלכם למעלה ולחצו "לבדוק".</p>';
-    h += '<div class="sx-head"><div><h2 id="sx-rep-h">הדוח של ' + esc(host(m.final)) + '</h2><p class="sx-meta"><span dir="ltr">' + esc(m.final) + '</span><br>' + (m.strategy === 'mobile' ? 'בטלפון' : 'במחשב') + ' · ' + d2(m.t) + (m.stack.length ? ' · בנוי ב-' + esc(m.stack.join(', ')) : '') + '</p></div>' +
+    h += '<div class="sx-head"><div><h2 id="sx-rep-h">הדוח של ' + esc(host(m.final)) + '</h2><p class="sx-meta"><span dir="ltr">' + esc(pretty(m.final)) + '</span><br>' + (m.strategy === 'mobile' ? 'בטלפון' : 'במחשב') + ' · ' + d2(m.t) + (m.stack.length ? ' · בנוי ב-' + esc(m.stack.join(', ')) : '') + '</p></div>' +
       (m.shot ? '<img class="sx-shot" src="' + m.shot + '" alt="צילום של הדף ' + esc(host(m.final)) + ' כפי שגוגל ראה אותו">' : '') + '</div>';
     h += '<div class="sx-rings">' + CATS.map(function (c) { return ring(m.s[c[0]], c[1], c[2]); }).join('') + '</div>';
     if (prev && prev.s) {
@@ -190,6 +191,7 @@
     } else {
       h += '<p class="sx-note">אין עדיין מספיק גולשים בכרום כדי שגוגל יפרסם נתוני אמת לאתר הזה (זה רגיל באתר קטן). אלה המדידות במעבדה של גוגל, ' + (m.strategy === 'mobile' ? 'בטלפון ממוצע ברשת סלולרית' : 'במחשב') + ':</p>';
     }
+    if (m.field && (m.field.lcp || m.field.inp)) h += '<p class="sx-note"><b>ובמעבדה של גוגל</b> (טלפון ממוצע ברשת סלולרית איטית, לכן המספרים כאן בדרך כלל גבוהים יותר):</p>';
     h += '<ul class="sx-cwv sx-lab">' + labRow('LCP – טעינת התוכן הראשי', m.lab['largest-contentful-paint'], 'טוב: עד 2.5 שניות') + labRow('CLS – קפיצות בדף', m.lab['cumulative-layout-shift'], 'טוב: עד 0.1') + labRow('TBT – זמן שהדף "תקוע"', m.lab['total-blocking-time'], 'קשור לתגובה ללחיצות. טוב: עד 200 מ"ש') + labRow('FCP – משהו ראשון על המסך', m.lab['first-contentful-paint'], 'טוב: עד 1.8 שניות') + '</ul>';
     // רשימת התיקונים
     if (m.issues.length) h += '<h3>מה לתקן, לפי סדר החשיבות</h3><ol class="sx-list">' + m.issues.map(issueHtml).join('') + '</ol>';
