@@ -114,7 +114,12 @@
   T.forEach(function (t) { byId[t.id] = t; });
   T.sort(function (x, y) { var i = ORD.indexOf(x.id), j = ORD.indexOf(y.id); return (i < 0 ? 99 : i) - (j < 0 ? 99 : j); }); // יציב: נושאי הבגרות נשארים בסדר שלהם
   // לאיזה כיתות כל נושא מתאים (לפי תוכנית הלימודים המקובלת). נושאי בגרות: י׳–י״ב, לפי היחידות של השאלון.
-  var GR = { kefel: [2, 4], hiluk: [4, 5], seder: [4, 6], shetach: [4, 6], asroni: [5, 6], shvarim: [5, 6], 'kefel-shvarim': [6, 7], memutza: [6, 7], achuzim: [6, 8], yachas: [6, 8], histabrut: [7, 9], pilug: [7, 8], mishvaa: [7, 8], chezkot: [7, 9], kav: [8, 9], pitagoras: [8, 9], maarechet: [8, 9], trinom: [9, 10], shorashim: [9, 10], 'parabola-tavla': [9, 10] };
+  var GR = { kefel: [2, 4], hiluk: [4, 5], seder: [4, 6], shetach: [4, 6], asroni: [5, 6], shvarim: [5, 6], 'kefel-shvarim': [6, 7], memutza: [6, 7], achuzim: [6, 8], yachas: [6, 8], histabrut: [7, 9], pilug: [7, 8], mishvaa: [7, 8], chezkot: [7, 9], kav: [8, 9], pitagoras: [8, 9], maarechet: [8, 9], trinom: [9, 10], shorashim: [9, 10], 'parabola-tavla': [9, 10],
+    // נושאי הבגרות: באיזו שנה לומדים אותם בפועל (כדי ש"השנה הבאה" של ט׳ לא תציג אינטגרלים)
+    dimyon: [9, 10], parabola: [10, 11], merchak: [10, 11], trigo: [10, 11], tnua: [10, 11], etz: [10, 11], maagal: [10, 11], 'zaviot-maagal': [10, 11],
+    sidra: [11, 12], handasit: [11, 12], gdila: [11, 12], stiya: [11, 12], normalit: [11, 12], sinusim: [11, 12], nigzeret: [11, 12], mashik: [11, 12], kitzon: [11, 12], integral: [11, 12],
+    rationalit: [11, 12], 'shoresh-f': [11, 12], merchav: [11, 12], piramida: [11, 12], vektor: [11, 12], logaritm: [11, 12], parametr: [11, 12], induktzia: [11, 12],
+    'trig-nigzeret': [12, 12], 'exp-ln': [12, 12], merukav: [12, 12], 'nefach-sivuv': [12, 12] };
   var GRN = { 2: 'ב׳', 3: 'ג׳', 4: 'ד׳', 5: 'ה׳', 6: 'ו׳', 7: 'ז׳', 8: 'ח׳', 9: 'ט׳', 10: 'י׳', 11: 'י״א', 12: 'י״ב' };
   function grOf(t) { return GR[t.id] || [10, 12]; }
   function unitsOf(t) { // ['35481', ...] -> [4]
@@ -146,6 +151,8 @@
   function cost(p, guided) { return Math.max(2, Math.round(1 + p.steps.length * (guided ? 0.6 : 0.8)) + (p.table ? 2 : 0)); }
   // cfg: {t: נושא, k: 'h' הקנייה | 'z' חזרה, m: דקות, lv: 1-3, r: [נושאי תזכורת], s: זרע, a: עזרה 0-2}
   // חשבון בתוך שאלה בעברית: עוטפים כל ביטוי עם סימן פעולה בכיוון שמאל-לימין, אחרת "1/2 + 1/3" מתהפך ל-"1/3 + 1/2"
+  // גרסה רחבה: כל רצף בלי עברית שיש בו פעולה (y = x² − 6x, f(x) = ...) נשאר משמאל לימין בתוך משפט בעברית
+  function mwx(h) { return h.replace(/[^֐-׿·:?!׳״]+/g, function (m) { var c = m.trim(); if (!c || !(/[=+\-−×÷^²³√∫\/]/.test(c) || /^\(.+,.+\)$/.test(c)) || !/[0-9a-zA-Z]/.test(c)) return m; var a = m.indexOf(c); return m.slice(0, a) + '<bdi dir="ltr">' + c + '</bdi>' + m.slice(a + c.length); }); }
   function mw(h) { return h.replace(/[0-9(][0-9\s+\-−×÷*\/=().,^²³√%:]*[0-9)²³%]/g, function (m) { return /[+\-−×÷*\/=^:]/.test(m) ? '<bdi dir="ltr">' + m + '</bdi>' : m; }); }
   var OWN_MAX = 20; // שאלות משלי: עד 20 (גם מיבוא מכיתה משחקת ומבנק השאלות)
   function build(cfg) {
@@ -158,10 +165,10 @@
         if (wr.length && String(x.a || '').trim()) { // שאלה אמריקאית: התשובה הנכונה + השגויות, בסדר מעורבב (קבוע לפי ה-seed)
           var op = [String(x.a).trim()].concat(wr.map(function (z) { return String(z).trim(); })), at = 0;
           for (var oi = op.length - 1; oi > 0; oi--) { var oj = Math.floor(Math.random() * (oi + 1)), ot = op[oi]; op[oi] = op[oj]; op[oj] = ot; if (at === oi) at = oj; else if (at === oj) at = oi; }
-          return { k: 'ex', own: true, mc: true, guided: false, lv: 1, min: x.m, p: { ex: '<span class="dp-own" dir="rtl">' + mw(esc(x.t.trim())) + '</span>', fin: '<bdi>' + esc(op[at]) + '</bdi>',
+          return { k: 'ex', own: true, mc: true, guided: false, lv: 1, min: x.m, p: { ex: '<span class="dp-own" dir="rtl">' + mwx(esc(x.t.trim())) + '</span>', fin: '<bdi>' + esc(op[at]) + '</bdi>',
             steps: [{ show: '', q: 'בוחרים את התשובה:', opts: op.map(function (z) { return '<bdi>' + esc(z) + '</bdi>'; }), a: at, hint: 'קוראים שוב את השאלה, לאט, ובודקים כל אחת מהתשובות.' }] } };
         }
-        return { k: 'ex', own: true, guided: false, lv: 1, min: x.m, p: { ex: '<span class="dp-own" dir="rtl">' + mw(esc(x.t.trim())) + '</span>', fin: x.a ? '<bdi>' + esc(x.a) + '</bdi>' : '',
+        return { k: 'ex', own: true, guided: false, lv: 1, min: x.m, p: { ex: '<span class="dp-own" dir="rtl">' + mwx(esc(x.t.trim())) + '</span>', fin: x.a ? '<bdi>' + esc(x.a) + '</bdi>' : '',
           steps: [isNum ? { show: '', q: 'התשובה:', a: v, hint: 'זו שאלה מהמורה. קוראים שוב את השאלה, לאט, ובודקים את החישוב.' } : { free: true, show: '', q: 'התשובה שלי:', a: 0, txt: x.a || '', hint: '' }] } };
       });
       var items = [], total = own.reduce(function (z, x) { return z + x.min; }, 0), n = 0, i = 0;
@@ -345,18 +352,32 @@
     ['time', 'stars', 'bonus', 'feel', 'grid', 'qr'].forEach(function (k) { if (st['o' + k] === false) $('dp-o-' + k).checked = false; });
     if (st.key === false) $('dp-key').checked = false;
     function opt(t) { return '<option value="' + t.id + '">' + t.name + '</option>'; }
+    // שלוש קבוצות לכל כיתה: השנה, שנה שעברה (לחזרה) ושנה הבאה (לתלמידים חזקים). "כל הנושאים" פותח את כל השאר
+    function groups(g, u) {
+      var now = T.filter(function (t) { return fits(t, g, u); });
+      var prev = g > 2 ? T.filter(function (t) { return now.indexOf(t) < 0 && fits(t, g - 1, u); }) : [];
+      var next = g < 12 ? T.filter(function (t) { return now.indexOf(t) < 0 && prev.indexOf(t) < 0 && (g + 1 < 10 ? fits(t, g + 1, u) : (g >= 10 ? fits(t, g + 1, u) : grOf(t)[0] <= g + 1 && grOf(t)[1] >= g + 1)); }) : [];
+      var near = now.concat(prev, next);
+      return { now: now, prev: prev, next: next, near: near, rest: T.filter(function (t) { return near.indexOf(t) < 0; }) };
+    }
     function fillTopics(keep) {
       var g = +gs.value, u = +$('dp-units').value; $('dp-units-w').hidden = g < 10;
-      var now = T.filter(function (t) { return fits(t, g, u); }), before = T.filter(function (t) { return grOf(t)[1] < g; }), later = T.filter(function (t) { return now.indexOf(t) < 0 && before.indexOf(t) < 0; });
-      var sel = $('dp-topic'), was = keep || sel.value;
-      sel.innerHTML = (now.length ? '<optgroup label="הנושאים של כיתה ' + GRN[g] + (g >= 10 ? ', ' + u + ' יח״ל' : '') + '">' + now.map(opt).join('') + '</optgroup>' : '') +
-        (before.length ? '<optgroup label="מכיתות קודמות, לחזרה">' + before.map(opt).join('') + '</optgroup>' : '') +
-        (later.length ? '<optgroup label="נושאים מתקדמים יותר">' + later.map(opt).join('') + '</optgroup>' : '');
-      if (was && byId[was] && (keep || now.indexOf(byId[was]) > -1)) sel.value = was; else sel.value = (now[now.length - 1] || T[0]).id;
+      var G = groups(g, u), sel = $('dp-topic'), was = keep || sel.value, all = $('dp-all');
+      if (keep && byId[keep] && G.near.indexOf(byId[keep]) < 0) all.checked = true; // דף שמור או קישור בנושא רחוק: לא מאבדים אותו
+      var nowL = 'הנושאים של כיתה ' + GRN[g] + (g >= 10 ? ', ' + u + ' יח״ל' : '');
+      sel.innerHTML = (G.now.length ? '<optgroup label="' + nowL + '">' + G.now.map(opt).join('') + '</optgroup>' : '') +
+        (G.prev.length ? '<optgroup label="מכיתה ' + GRN[g - 1] + ', לחזרה">' + G.prev.map(opt).join('') + '</optgroup>' : '') +
+        (G.next.length ? '<optgroup label="מכיתה ' + GRN[g + 1] + ', למתקדמים">' + G.next.map(opt).join('') + '</optgroup>' : '') +
+        (all.checked && G.rest.length ? '<optgroup label="כל שאר הנושאים">' + G.rest.map(opt).join('') + '</optgroup>' : '');
+      var shown = all.checked ? T : G.near;
+      if (was && byId[was] && shown.indexOf(byId[was]) > -1 && (keep || all.checked || G.near.indexOf(byId[was]) > -1)) sel.value = was; else sel.value = (G.now[G.now.length - 1] || G.near[0] || T[0]).id;
+      $('dp-topic-note').textContent = all.checked ? 'מוצגים כל ' + T.length + ' הנושאים: קודם של כיתה ' + GRN[g] + ', שנה לפני ושנה אחרי, ואחריהם כל השאר.' :
+        'מוצגים הנושאים של כיתה ' + GRN[g] + ', ולצידם נושאים של שנה לפני (לחזרה) ושל שנה אחרי (למתקדמים). רוצים נושא אחר? מסמנים "להציג את כל הנושאים".';
     }
     function fillRevs(keep, keepX) {
       var g = +gs.value, tid = $('dp-topic').value, pre = PRE[tid] || [];
-      var pool = T.filter(function (t) { return t.id !== tid && grOf(t)[0] <= g; });
+      var G = groups(g, +$('dp-units').value), allOn = $('dp-all').checked;
+      var pool = T.filter(function (t) { return t.id !== tid && (allOn || G.near.indexOf(t) > -1 || pre.indexOf(t.id) > -1 || (keep && keep.indexOf(t.id) > -1) || (keepX && keepX.indexOf(t.id) > -1)); });
       [1, 2].forEach(function (k, j) { var s = $('dp-x' + k), was = keepX ? keepX[j] : s.value; s.innerHTML = '<option value="">בלי</option>' + pool.map(opt).join(''); s.value = was && was !== tid && byId[was] ? was : ''; });
       [1, 2, 3].forEach(function (k, j) {
         var s = $('dp-r' + k);
@@ -400,21 +421,58 @@
         history.replaceState(null, '', location.pathname);
       }
     }
-    // בנק השאלות המוכן של כיתה משחקת (assets/kita-bank.json), נושאי המתמטיקה. נטען רק בלחיצה
-    var bank = null;
+    // 5 שאלות מוצעות לבחירה, מכל נושא: תרגילים מהמחולל, ובנושאים שיש להם בנק בכיתה משחקת (assets/kita-bank.json) גם שאלות אמריקאיות משם
+    var bank = null, sug = [], BANK_OF = { shvarim: 'shevarim', achuzim: 'achuzim', mishvaa: 'mishvaot', kefel: 'kefel', shetach: 'shetach', chezkot: 'chezkot' };
+    function plain(h) { // שבר -> 3/4 (או (x+1)/2), חזקה -> ^, ואז טקסט
+      var d = document.createElement('div'); d.innerHTML = String(h || '').replace(/<br\s*\/?>/gi, ' · ');
+      [].slice.call(d.querySelectorAll('.fr')).reverse().forEach(function (f) { /* מהפנימי החוצה */ var p = f.children, w = function (s) { s = s.trim(); return /^[−-]?[\w.]+$/.test(s) ? s : '(' + s + ')'; }; if (p.length === 2) f.textContent = w(p[0].textContent) + '/' + w(p[1].textContent); });
+      d.querySelectorAll('sub').forEach(function (s) { var t = s.textContent.trim(); s.textContent = /^\d+$/.test(t) ? t.replace(/\d/g, function (c) { return '₀₁₂₃₄₅₆₇₈₉'[c]; }) : '_' + t; });
+      d.querySelectorAll('sup').forEach(function (s) { var t = s.textContent.trim(), m = { '2': '²', '3': '³' }[t]; s.textContent = m || '^' + (/^\w+$/.test(t) ? t : '(' + t + ')'); });
+      return d.textContent.replace(/ /g, ' ').replace(/\s+/g, ' ').replace(/^ · | · $/g, '').trim(); }
+    function genQ(tp, lv) { // תרגיל מהמחולל -> שאלה משלי (טקסט פשוט, תשובה מלאה לדף המורה)
+      var p = tp.gen(lv), last = p.steps && p.steps[p.steps.length - 1];
+      var a = plain(p.fin) || (last ? plain(String(last.a)) : '');
+      var t = plain(p.ex); if (!/[֐-׿]/.test(t)) t = 'פתרו: ' + t;
+      return { t: t.slice(0, 300), a: a.slice(0, 80), m: Math.min(20, cost(p, false)), o: [] };
+    }
+    function bankTopics() { // אותה רשימה כמו בבחירת הנושא: השנה, שנה לפני, שנה אחרי (או הכול)
+      var g = +gs.value, G = groups(g, +$('dp-units').value), list = $('dp-all').checked ? G.near.concat(G.rest) : G.near, cur = $('dp-bank-t').value || $('dp-topic').value;
+      $('dp-bank-t').innerHTML = list.map(opt).join('');
+      $('dp-bank-t').value = list.indexOf(byId[cur]) > -1 ? cur : list[0].id;
+    }
+    function suggest() {
+      var tp = byId[$('dp-bank-t').value]; if (!tp) return;
+      var lv = +$('dp-bank-lv').value, have = ownQ.map(function (x) { return x.t; }), out = [], seen = {}, i;
+      var bt = bank && BANK_OF[tp.id] && bank.topics.filter(function (x) { return x.id === BANK_OF[tp.id]; })[0];
+      if (bt) {
+        var pool = bt.q.map(lineQ).filter(function (x) { return x && have.indexOf(x.t) < 0; });
+        for (i = pool.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), tmp = pool[i]; pool[i] = pool[j]; pool[j] = tmp; }
+        pool.slice(0, 2).forEach(function (x) { x.src = 'bank'; out.push(x); seen[x.t] = 1; });
+      }
+      for (i = 0; out.length < 5 && i < 40; i++) { var q = genQ(tp, lv); if (q.t && !seen[q.t] && have.indexOf(q.t) < 0) { seen[q.t] = 1; out.push(q); } }
+      sug = out;
+      $('dp-sug').innerHTML = '<legend class="sr-only">שאלות מוצעות על ' + esc(tp.name) + '</legend>' + sug.map(function (x, k) {
+        return '<label class="dp-sq"><input type="checkbox" data-k="' + k + '" checked><span><span class="q" dir="rtl">' + '<b>' + (k + 1) + '.</b> <bdi>' + mwx(esc(x.t)) + '</bdi>' +(x.src ? '<span class="tg">אמריקאית</span>' : '') + '</span>' +
+          (x.a ? '<span class="a" dir="rtl">תשובה: ' + mwx(esc(x.a)) +'</span>' : '') + '</span></label>';
+      }).join('');
+      $('dp-bank-msg').textContent = 'כל 5 השאלות מסומנות. מורידים את הסימון ממה שלא מתאים, ולוחצים "להוסיף את המסומנות לדף".';
+    }
     $('dp-bank-open').addEventListener('click', function () {
       var b = this; b.disabled = true;
-      fetch('/assets/kita-bank.json').then(function (r) { if (!r.ok) throw new Error('bank'); return r.json(); }).then(function (j) {
-        bank = j; $('dp-bank').hidden = false; b.hidden = true;
-        $('dp-bank-t').innerHTML = j.topics.filter(function (t) { return t.subj === 'math'; }).map(function (t) { return '<option value="' + t.id + '">' + esc(t.name) + '</option>'; }).join('');
-      }).catch(function () { b.disabled = false; b.textContent = 'הבנק לא נטען. לנסות שוב'; });
+      function show() { $('dp-bank').hidden = false; b.hidden = true; bankTopics(); suggest(); $('dp-bank-t').focus(); used('suggest_open'); }
+      fetch('/assets/kita-bank.json').then(function (r) { if (!r.ok) throw new Error('bank'); return r.json(); }).then(function (j) { bank = j; show(); }).catch(show); // בלי הבנק עדיין יש תרגילים מהמחולל
     });
+    $('dp-bank-t').addEventListener('change', suggest);
+    $('dp-bank-lv').addEventListener('change', suggest);
+    $('dp-bank-more').addEventListener('click', function () { suggest(); used('suggest_more'); });
+    $('dp-bank-allq').addEventListener('click', function () { var bx = $('dp-sug').querySelectorAll('input'), on = [].some.call(bx, function (x) { return !x.checked; }); bx.forEach(function (x) { x.checked = on; }); this.textContent = on ? 'להוריד את כל הסימונים' : 'לסמן הכול'; });
     $('dp-bank-go').addEventListener('click', function () {
-      var t = bank && bank.topics.filter(function (x) { return x.id === $('dp-bank-t').value; })[0]; if (!t) return;
-      var have = ownQ.map(function (x) { return x.t; }), pool = t.q.map(lineQ).filter(function (x) { return x && have.indexOf(x.t) < 0; });
-      for (var i = pool.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), tmp = pool[i]; pool[i] = pool[j]; pool[j] = tmp; }
-      var n = addMany(pool.slice(0, +$('dp-bank-n').value), 'bank_' + t.id);
-      $('dp-bank-msg').textContent = n ? '✓ נוספו ' + n + ' שאלות על ' + t.name + '. הן בסוף הדף, עם התשובות בדף המורה.' : 'אין מקום לעוד שאלות (עד ' + OWN_MAX + '). מסירים כמה ומנסים שוב.';
+      var pick = [].filter.call($('dp-sug').querySelectorAll('input'), function (x) { return x.checked; }).map(function (x) { var s = sug[+x.dataset.k]; return { t: s.t, a: s.a, m: s.m, o: s.o || [] }; });
+      if (!pick.length) { $('dp-bank-msg').textContent = 'לא סומנה אף שאלה. מסמנים לפחות אחת.'; return; }
+      var n = addMany(pick, 'suggest_add'), tp = byId[$('dp-bank-t').value];
+      if (!n) { $('dp-bank-msg').textContent = 'אין מקום לעוד שאלות (עד ' + OWN_MAX + '). מסירים כמה ומנסים שוב.'; return; }
+      suggest();
+      $('dp-bank-msg').textContent = '✓ נוספו ' + n + ' שאלות על ' + tp.name + '. הן בסוף הדף, עם התשובות בדף המורה, ואפשר לערוך אותן למעלה. למטה עוד 5 הצעות חדשות.';
     });
     $('dp-only').addEventListener('change', render);
     drawOwn();
@@ -449,15 +507,18 @@
       $('dp-wa').href = 'https://wa.me/?text=' + encodeURIComponent(curMsg);
       pdfReset();
       $('dp-copy').dataset.link = link;
-      var keep = { g: gs.value, u: $('dp-units').value, k: kind, s: seed, t: cfg.t, x: [$('dp-x1').value, $('dp-x2').value], own: ownQ, only: $('dp-only').checked, r: [1, 2, 3].map(function (k) { return $('dp-r' + k).value; }), title: o.title, key: o.key };
+      var keep = { g: gs.value, u: $('dp-units').value, k: kind, s: seed, t: cfg.t, x: [$('dp-x1').value, $('dp-x2').value], own: ownQ, only: $('dp-only').checked, all: $('dp-all').checked, r: [1, 2, 3].map(function (k) { return $('dp-r' + k).value; }), title: o.title, key: o.key };
       ['min', 'lv', 'help', 'style', 'font'].forEach(function (k) { keep[k] = $('dp-' + k).value; });
       ['time', 'stars', 'bonus', 'feel', 'grid', 'qr'].forEach(function (k) { keep['o' + k] = o[k]; });
       save(CKEY, keep);
     }
     function setKind(k) { kind = k; app.querySelectorAll('[data-kind]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.kind === k ? 'true' : 'false'); }); }
+    if (st.all) $('dp-all').checked = true;
     fillTopics(st.t || 'parabola-tavla'); fillRevs(st.r, st.x || ['', '']); setKind(kind); render();
-    gs.addEventListener('change', function () { fillTopics(); fillRevs(); render(); });
-    $('dp-units').addEventListener('change', function () { fillTopics(); fillRevs(); render(); });
+    function regrade() { fillTopics(); fillRevs(); if (!$('dp-bank').hidden) { bankTopics(); suggest(); } render(); }
+    gs.addEventListener('change', regrade);
+    $('dp-units').addEventListener('change', regrade);
+    $('dp-all').addEventListener('change', function () { regrade(); used('all_topics', { on: this.checked }); });
     $('dp-topic').addEventListener('change', function () { fillRevs(); render(); used('build', { topic: $('dp-topic').value }); });
     $('dp-form').addEventListener('change', function (e) { if (['dp-grade', 'dp-units', 'dp-topic'].indexOf(e.target.id) < 0 && !e.target.closest('#dp-own')) render(); });
     $('dp-title').addEventListener('input', render);

@@ -195,6 +195,16 @@ body.dp-student .k-hero{display:none}
 .dp-mc span{white-space:nowrap}
 .dp-imp{margin:.4rem 0;padding:.6rem .8rem;border-radius:12px;background:rgba(80,160,120,.15);border:1px solid rgba(80,160,120,.45)}
 .dp-bank{display:grid;gap:.4rem;margin:.4rem 0;padding:.8rem;border:1px dashed var(--line);border-radius:14px}
+.dp-sug-h{margin:0;font-size:1.05rem}
+.dp-sug{display:grid;gap:.5rem;margin:0;padding:0;border:0;min-width:0}
+#dp-app label.dp-sq{display:flex;align-items:flex-start;gap:.7rem;padding:.75rem .85rem;border:2px solid var(--line);border-radius:14px;cursor:pointer;font-size:1.05rem;line-height:1.55}
+#dp-app label.dp-sq:has(input:checked){border-color:var(--gold);background:rgba(201,162,39,.1)}
+#dp-app label.dp-sq:focus-within{outline:3px solid var(--gold);outline-offset:2px}
+.dp-sq input{flex:none;width:1.6rem;height:1.6rem;margin-top:.15rem;accent-color:var(--gold)}
+.dp-sq .q{display:block;overflow-wrap:anywhere}
+.dp-sq .a{display:block;margin-top:.2rem;font-size:.88rem;opacity:.8}
+.dp-sq .tg{display:inline-block;margin-inline-start:.4rem;padding:0 .45rem;border-radius:99px;font-size:.75rem;border:1px solid var(--line)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 /* PDF לקבוצת ווטסאפ: עותק של הדף ברוחב A4 (מחוץ למסך), כמו בהדפסה */
 .dp-pdfbox{margin:.6rem 0;padding:.6rem .8rem;border:1.5px dashed var(--gold,#b8913a);border-radius:12px}
 .dp-pdfbox p{margin:0 0 .4rem}
