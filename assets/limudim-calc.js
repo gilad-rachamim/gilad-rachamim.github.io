@@ -1040,7 +1040,7 @@
   });
 
   // ---------- כמה יחידות ----------
-  var QS = { 3: '35182, 35381, 35382', 4: '35481, 35482', 5: '35581, 35582' };
+  var QS = { 3: '35172, 35371, 35372', 4: '35471, 35472', 5: '35571, 35572' };
   function lvSet(lv) {
     st.lv = lv; save();
     document.querySelectorAll('.cx-lv [data-lv]').forEach(function (b) { var on = +b.dataset.lv === lv; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
