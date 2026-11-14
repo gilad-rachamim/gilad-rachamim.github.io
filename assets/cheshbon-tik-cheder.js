@@ -122,5 +122,49 @@
     CH.csv('תיק-מסמכים-' + year + '.csv', rows); CH.used('cheshbon_tik_cheder', 'csv');
   });
 
+  // ---- שותפים: קוד שותף פותח מיתוג (לוגו + צבע). אותו מפתח כמו בשאר האתר ----
+  var COLORS = ['#c9a24d', '#5fbfa6', '#7aa7e0', '#e08a72', '#b48ad6', '#e0c35a'];
+  var brand = { logo: '', color: '' };
+  function getP() { try { return localStorage.getItem('kelim-partner') || ''; } catch (e) { return ''; } }
+  function goodP(v) { return /^\d{3}-?\d{5}$/.test(String(v || '').replace(/\s/g, '')); }
+  function colors() {
+    $('cd-colors').innerHTML = COLORS.map(function (c) { return '<button type="button" data-color="' + c + '" aria-pressed="' + (brand.color === c) + '" aria-label="צבע ' + c + '" style="background:' + c + '"></button>'; }).join('');
+    var pv = $('cd-logo-prev'); pv.hidden = !brand.logo; if (brand.logo) pv.src = brand.logo;
+  }
+  function brandOn() {
+    var on = goodP(getP()); $('cd-brand').hidden = !on;
+    if (on) { $('cd-pcode').value = getP(); colors(); if (cfg) T.call(cfg.u, { a: 'mInfo', key: cfg.key }).then(function (r) { if (r.ok && r.brand) { brand = r.brand; colors(); } }).catch(function () {}); }
+  }
+  $('cd-pcode').addEventListener('input', function () {
+    var v = this.value.replace(/\s/g, '');
+    if (goodP(v)) { try { localStorage.setItem('kelim-partner', v); } catch (e) {} CH.used('cheshbon_tik_cheder', 'partner'); }
+    brandOn();
+  });
+  $('cd-colors').addEventListener('click', function (e) { var b = e.target.closest('[data-color]'); if (b) { brand.color = b.getAttribute('data-color'); colors(); } });
+  $('cd-logo').addEventListener('change', function () {
+    var f = this.files && this.files[0]; if (!f) return;
+    var img = new Image(), u = URL.createObjectURL(f);
+    img.onload = function () {
+      var s = Math.min(1, 360 / img.width, 144 / img.height), c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(img.width * s)); c.height = Math.max(1, Math.round(img.height * s));
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(u);
+      var d = c.toDataURL('image/png'); if (d.length > 45000) d = c.toDataURL('image/webp', 0.85); if (d.length > 45000) d = c.toDataURL('image/jpeg', 0.8);
+      if (d.length > 45000) { $('cd-bmsg').textContent = 'הלוגו גדול מדי. נסו קובץ פשוט יותר.'; return; }
+      brand.logo = d; colors(); $('cd-bmsg').textContent = '';
+    };
+    img.onerror = function () { $('cd-bmsg').textContent = 'לא הצלחנו לפתוח את התמונה.'; };
+    img.src = u;
+  });
+  $('cd-brand-save').addEventListener('click', function () {
+    if (!cfg) { $('cd-bmsg').textContent = 'קודם פותחים את החדר (למעלה), ואז שומרים מיתוג.'; return; }
+    $('cd-bmsg').textContent = 'שומר…';
+    T.call(cfg.u, { a: 'mBrand', key: cfg.key, logo: brand.logo, color: brand.color }).then(function (r) {
+      $('cd-bmsg').textContent = r.ok ? 'נשמר ✓ הלקוחות יראו את הלוגו והצבע בכניסה הבאה.' : (r.err === 'action' ? 'צריך לעדכן את הקוד בגוגל לגרסה 2: מעתיקים שוב את הקוד, מדביקים, ופריסה ← ניהול פריסות ← גרסה חדשה.' : T.err(r.err));
+      if (r.ok) CH.used('cheshbon_tik_cheder', 'brand');
+    }).catch(function () { $('cd-bmsg').textContent = T.err('net'); });
+  });
+  if (goodP(getP())) { $('cd-partner').open = true; }
+  brandOn();
+
   show();
 })();

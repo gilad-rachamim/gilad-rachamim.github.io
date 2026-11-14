@@ -24,6 +24,15 @@
 .ch .tk-files button{flex:none;font:inherit;background:none;border:0;color:var(--muted);cursor:pointer;min-width:44px;min-height:44px}
 .ch .tk-who{border:1px solid var(--gold);border-radius:14px;padding:.8rem .9rem;color:var(--body);margin-bottom:.8rem}
 .ch .tk-who b{color:var(--cream)}
+.ch .tk-logo{display:block;max-width:180px;max-height:72px;margin:0 0 .6rem;border-radius:8px;background:#fff;padding:4px}
+.ch .cd-colors{display:flex;flex-wrap:wrap;gap:.5rem;margin:.4rem 0}
+.ch .cd-colors button{width:44px;height:44px;border-radius:50%;border:2px solid var(--line);cursor:pointer}
+.ch .cd-colors button[aria-pressed=true]{border-color:var(--cream);box-shadow:0 0 0 3px rgba(255,255,255,.25)}
+.ch .perks{display:grid;gap:.45rem;padding:0;margin:.6rem 0}
+.ch .perks li{list-style:none;color:var(--body);padding-inline-start:1.6rem;position:relative}
+.ch .perks li::before{content:"🤝";position:absolute;inset-inline-start:0}
+.ch .perks b{color:var(--cream)}
+.ch .founders{color:var(--muted);font-size:.95rem;border-top:1px dashed var(--line);margin-top:.9rem;padding-top:.7rem}
 .ch .tk-lock{font-size:.9rem;color:var(--muted);margin-top:.6rem}
 /* החדר */
 .ch .cd-steps{counter-reset:s;display:grid;gap:.7rem;padding:0;margin:.6rem 0}
