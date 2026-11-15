@@ -16,6 +16,17 @@ run('שבת בני ברק ואחר כך סבב שני', [['m0', '4'], ['c0', '2'
 run('הודעה', [['m0', '5'], ['r0', 'yes']]);
 run('דף יומי', [['m0', '6']]);
 run('חנוכה ירושלים', [['m0', '7'], ['c0', '1']]);
+// לא הוקש כלום אחרי תשובת כלי (ימות שולחים None): לא חוזרים על התשובה, ובפעם השנייה ברצף מסיימים
+{
+  const v = { m0: '4', c0: '1' };
+  const answer = decide(v).text;
+  v.m1 = 'None'; const t1 = decide(v).text;
+  v.m2 = 'None'; const t2 = decide(v).text;
+  const ok = answer.includes('1,Ok,None') && !t1.includes('ירושלים') && t1.includes('לכלי נוסף') && t1.includes('=m2,')
+    && t2.includes('go_to_folder=hangup') && decide({ m0: '' }).text.includes('=m1,');
+  console.log('\n=== לא הוקש כלום\n[m1=None] > ' + t1 + '\n[m2=None] > ' + t2);
+  if (!ok) { console.error('נכשל: לא הוקש כלום'); process.exitCode = 1; } else console.log('עבר');
+}
 // שלוחה 8 – חדשות (סיכום לדוגמה; בשרת מגיע מ-kelim-news)
 {
   const ed = { name: 'בוקר', time: '07:00', date: { day: 'שני' }, sections: { main: [{ text: 'הריבית ירדה ל-4.5% – כך הודיע הבנק.' }, { text: 'נקודה שנייה, עם "מירכאות".' }], haredi: [{ text: 'כנס גדול בבני ברק.' }], economy: [] } };

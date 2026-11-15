@@ -43,9 +43,15 @@ function clean(s) {
 function msgs(parts) {
   return parts.filter(Boolean).map(p => (typeof p === 'object' ? p.raw : 't-' + clean(p))).filter(x => x !== 't-').join('.');
 }
-function readDigits(parts, name, { max = 1, min = 1, allowed = '' } = {}) {
-  return `read=${msgs(parts)}=${name},no,${max},${min},7,No,no,no,,${allowed},,,`;
+// emptyOk: כשלא מקישים כלום, ימות לא חוזרים על כל ההודעה ("לא הוקשה בחירה" ואז הכל מההתחלה).
+// אחרי השמעה אחת הם שולחים לשרת את הערך EMPTY, והשרת מחליט מה להשמיע (רק תפריט קצר).
+// שדות 11–13 בפקודת read: כמה פעמים להשמיע, Ok = לאפשר ערך ריק, הערך שנשלח לשרת כשלא הוקש כלום.
+const EMPTY = 'None';
+function readDigits(parts, name, { max = 1, min = 1, allowed = '', emptyOk = false } = {}) {
+  const tail = emptyOk ? `1,Ok,${EMPTY}` : ',';
+  return `read=${msgs(parts)}=${name},no,${max},${min},7,No,no,no,,${allowed},${tail},`;
 }
+function isEmptyKey(x) { return x === EMPTY || x === ''; }
 function readRecord(parts, name, fileName) {
   // מקליטים לשלוחה 8 במערכת של גילעד (9 שם היא חדר ועידה); עד 2 דקות. שומעים באתר הניהול.
   return `read=${msgs(parts)}=${name},no,record,/8,${fileName},,yes,,1,120`;
@@ -263,7 +269,7 @@ export function toolNews(ed) {
 // ---------- המכונה: מה לשאול עכשיו ----------
 function menuRead(round, intro) {
   if (round >= MAX_ROUNDS) return sayAndHangup([...(intro || []), 'תודה שהתקשרתם. להתראות']);
-  return readDigits([...(intro || []), MENU], `m${round}`, { allowed: '0.1.2.3.4.5.6.7.8' });
+  return readDigits([...(intro || []), MENU], `m${round}`, { allowed: '0.1.2.3.4.5.6.7.8', emptyOk: true });
 }
 
 // sponsor: משפט הקדשה/חסות אופציונלי (משתנה SPONSOR ב-Cloudflare), מוקרא אחרי הברכה
@@ -272,6 +278,11 @@ function decide(v, sponsor = '', news = null) {
   for (let i = 0; i < MAX_ROUNDS; i++) if (v[`m${i}`] !== undefined) r = i;
   if (r < 0) return { text: menuRead(0, [WELCOME, sponsor]), event: 'call' };
   const tool = v[`m${r}`], next = r + 1;
+  // לא הוקש כלום בתפריט: לא חוזרים על תשובת הכלי. פעם ראשונה – רק התפריט; פעם שנייה ברצף – מסיימים.
+  if (isEmptyKey(tool)) {
+    if (r > 0 && isEmptyKey(v[`m${r - 1}`])) return { text: sayAndHangup(['תודה שהתקשרתם לקו הכלים של גילעד רחמים', 'להתראות']) };
+    return { text: menuRead(next, [r === 0 ? 'לבחירת כלי' : 'לכלי נוסף']) };
+  }
   // אחרי הכלי הראשון: לשמור את הקו באנשי הקשר ובקיצור חיוג, ולספר לחבר
   const after = res => menuRead(next, [...res, ...(r === 0 ? SAVE : []), 'לכלי נוסף']);
   const askCity = () => readDigits(['בחרו עיר', CITY_MENU], `c${r}`, { allowed: '1.2.3.4.5.6.7.8.9' });
