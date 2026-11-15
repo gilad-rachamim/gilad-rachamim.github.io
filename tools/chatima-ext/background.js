@@ -109,6 +109,28 @@ chrome.commands.onCommand.addListener(bumpUse);
 chrome.permissions.onRemoved.addListener(function () { syncAutoTr(); });
 chrome.alarms.onAlarm.addListener(function (a) { if (a.name === 'refresh') refresh(false); });
 
+// ---------- ניסוח מייל וווטסאפ: נוסחים מהכלי באתר (/kelim/tochen/mail/), עם עותק בתוך התוסף ----------
+var MAIL_URL = SITE + '/assets/tochen-mail.json';
+function validMail(j) { return j && Array.isArray(j.types) && j.types.length > 5 && Array.isArray(j.cats) && j.types.every(function (t) { return t && t.he && t.en && Array.isArray(t.he.s); }); }
+function getMailTpl() {
+  return chrome.storage.local.get('mailTpl').then(function (o) {
+    if (o.mailTpl && validMail(o.mailTpl)) return o.mailTpl;
+    return fetch(chrome.runtime.getURL('mail-nusach.json')).then(function (r) { return r.json(); });
+  });
+}
+function refreshMail() {
+  return fetch(MAIL_URL, { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw 0; return r.json(); })
+    .then(function (j) { if (validMail(j)) return chrome.storage.local.set({ mailTpl: j }); }).catch(function () {});
+}
+chrome.runtime.onInstalled.addListener(function () { refreshMail(); });
+chrome.runtime.onStartup.addListener(function () { refreshMail(); });
+chrome.alarms.onAlarm.addListener(function (a) { if (a.name === 'refresh') refreshMail(); });
+chrome.runtime.onMessage.addListener(function (m, sender, reply) {
+  if (!m || !m.mailTpl) return;
+  getMailTpl().then(function (j) { reply({ ok: true, data: j }); }, function () { reply({ ok: false }); });
+  return true;
+});
+
 // ---------- טקסטים מוכנים (נשמרים ב-notes.html, משותפים לווטסאפ ולתפריט) ----------
 var SNIPS_DEF = ['תודה רבה! 🙏', 'קיבלתי, אחזור אליך בהקדם.', 'אפשר לתאם שיחה? מתי נוח לך?', 'מצורף הקובץ. אשמח לאישור שהתקבל.', 'אני בדרך, אגיע בעוד כמה דקות', 'שבת שלום ומבורך! 🕯🕯', 'מזל טוב! 🎉 שתזכו לרוב נחת'];
 function getSnips() {
@@ -404,7 +426,7 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
 
 // הודעות מג׳ימייל ומהחלון הקטן
 chrome.runtime.onMessage.addListener(function (m, sender, reply) {
-  if (!m) return;
+  if (!m || m.mailTpl) return;   // mailTpl: מטופל במאזין של ניסוח המייל
   if (m.act || m.tabsManager || m.gmailUnsub) bumpUse();
   if (m.tabsManager) { openTabsManager().then(function () { reply({ ok: true }); }, function () { reply({ ok: false }); }); return true; }
   if (m.gmailUnsub) { gmailUnsub(m.gmailUnsub).then(reply, function () { reply({ ok: false }); }); return true; }
