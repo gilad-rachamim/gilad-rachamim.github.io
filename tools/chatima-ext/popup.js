@@ -300,6 +300,11 @@
         }, function () { $('gm-msg').textContent = 'לא הצלחתי להגיע לחלון הכתיבה. מרעננים את ג׳ימייל ומנסים שוב.'; });
       });
     });
+    // מפת שולחים (gmail-map.js): נכנס לג׳ימייל רק בלחיצה הזאת
+    $('gm-map').addEventListener('click', function () {
+      chrome.scripting.executeScript({ target: { tabId: t.id }, files: ['gmail-map.js'] })
+        .then(function () { window.close(); }, function () { $('gm-msg').textContent = 'לא הצלחתי לפתוח את המפה. מרעננים את ג׳ימייל ומנסים שוב.'; });
+    });
     $('gm-unsub').addEventListener('click', function () {
       $('gm-msg').textContent = 'מחפש במייל הפתוח…';
       var old = $('gm-unsub-go'); if (old) old.remove();
