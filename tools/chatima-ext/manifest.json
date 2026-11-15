@@ -35,7 +35,8 @@
     "favicon"
   ],
   "optional_permissions": [
-    "tabs"
+    "tabs",
+    "topSites"
   ],
   "host_permissions": [
     "https://mail.google.com/*",

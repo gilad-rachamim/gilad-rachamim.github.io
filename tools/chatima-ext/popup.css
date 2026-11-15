@@ -51,4 +51,5 @@ footer a { color: var(--gold2); }
 details.quick { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 6px 10px; margin-bottom: 8px; }
 details.quick summary { cursor: pointer; color: var(--gold2); font-weight: 700; font-size: 13px; }
 details.quick h3 { margin-top: 6px; }
+.grid .hi { border-color: var(--gold); font-weight: 600; }
 .grid .wide { grid-column: 1 / -1; border-color: var(--gold); font-weight: 600; }

@@ -23,6 +23,7 @@ select { background: #0d0c0a; color: var(--text); border: 1px solid var(--line);
 .acts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
 .acts button { font-size: 13px; padding: 7px 6px; }
 .found { grid-template-columns: 1fr 1fr; margin-top: 6px; }
+.found button { font-size: 12.5px; }
 .found button { border-color: var(--gold); }
 .msg { font-size: 13px; color: var(--gold2); margin: 8px 0 0; min-height: 0; }
 .msg:empty { display: none; }
@@ -43,6 +44,8 @@ select { background: #0d0c0a; color: var(--text); border: 1px solid var(--line);
 .grp { font-size: 11px; border-radius: 6px; padding: 0 6px; color: #141210; font-weight: 700; flex: none; }
 .ic { width: 32px; flex: none; background: transparent; border: 0; color: var(--muted); padding: 5px 2px; font-size: 14px; }
 .ic:hover { color: var(--gold2); }
+.ic[aria-pressed="false"] { filter: grayscale(1); opacity: .55; }
+.ic[aria-pressed="false"]:hover { filter: none; opacity: 1; }
 .empty { color: var(--muted); font-size: 13px; }
 .saved { border-top: 1px solid #2c261e; padding: 8px 0 2px; }
 .saved summary { cursor: pointer; }
