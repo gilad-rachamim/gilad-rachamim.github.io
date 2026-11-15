@@ -2,6 +2,8 @@
 (~/.claude/state/kelim-seo/research-2026-11-15-tosaf-menahel.md, research-2026-11-15-tosaf-2.md).
 כל דף: הבעיה כמו שאנשים מחפשים אותה, הדרך המובנית (בלי תוסף), הדרך בתוסף, טקסט, שאלות ותשובות.
 הרצה: python tools/tosaf_promo/landing_pages.py  (כותב ל-src/pages/kelim/machshev/...)
+⚠ מ-15.11.2026 הדפים נערכו גם ידנית (סבב עומק SEO, PR 500). הרצה מלאה מוחקת את התוספות האלה!
+  דף חדש: להריץ ולשמור רק את הדף החדש (git checkout -- לשאר). שינוי בדף קיים: לערוך את הדף עצמו ב-src/pages.
 """
 import io, json, os, pathlib
 R = pathlib.Path(__file__).resolve().parents[2]
