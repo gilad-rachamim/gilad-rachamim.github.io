@@ -80,6 +80,9 @@ window.FL = {
       <div class="end"><div class="qr"><img src="${qr}"></div>
         <div class="go"><b>${rich(f.cta||'נכנסים ומתחילים')}</b>${f.button?`<span class="btn ${f.gold?'g':''}">${esc(f.button)}</span>`:''}<div class="url">${esc(f.url_text)}</div></div></div>
       <div class="brand">🧰<b>מיזם הכלים של גילעד רחמים</b>· כלים חינמיים לכל אחד · hakelim.com</div>`;
+    // התאמה אוטומטית (15.11.2026): כלי עם הרבה טקסט – מקטינים מעט את גוף הפרוספקט עד שהכול נכנס, בלי לחתוך
+    const body = [...pg.querySelectorAll('.top,.sub,.chips,.cols')];
+    for (let z = 1; pg.scrollHeight > H + 2 && z > .66; z -= .03) body.forEach(el => el.style.zoom = z.toFixed(2));
     return {height: H, overflow: pg.scrollHeight > H + 2 ? pg.scrollHeight : 0};
   }
 };

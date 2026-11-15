@@ -198,7 +198,7 @@ def build_spec(page, base, page_obj):
         "icon": icon, "kicker": domain or "מיזם הכלים", "title": h1, "sub": sub_short, "chips": chips[:3],
         "steps": steps or ["נכנסים לדף", "ממלאים או בוחרים", "מקבלים תוצאה, בחינם"],
         "features_title": "מה כלול",
-        "features": [[f[0], f[1]] for f in feats[:4]] or [["🎁", "בחינם"], ["🚫", "בלי פרסומות"]],
+        "features": [[f[0], f[1] if len(feats) > 2 else f"{f[1]}: {clip(f[2], 46)}"] for f in feats[:4]] or [["🎁", "בחינם"], ["🚫", "בלי פרסומות"]],
         "partner": {"title": "💛 באהבה ממיזם הכלים · מיזם חינמי להנגשה",
                     "items": [[i[0], i[1]] for i in love_items(soft, limited)],
                     "note": "לא הכול זה כסף: גם שיתוף, רעיון או עזרה בהפצה מחזיקים את המיזם · hakelim.com/kelim/#truma" if not soft
