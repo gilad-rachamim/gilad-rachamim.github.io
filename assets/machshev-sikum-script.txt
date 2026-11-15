@@ -9,9 +9,9 @@
  *
  * התקנה (פעם אחת, כ-3 דקות): בוחרים למעלה את הפונקציה setup ולוחצים "הפעלה".
  * לשלוח סיכום עכשיו: runNow. להפסיק: uninstall (התוויות והמיילים נשארים).
- * גרסה 1 · 15.11.2026
+ * גרסה 4 · 15.11.2026 (מהיר יותר, בלי הודעות לעצמך, פנייה לכמה נמענים בשורה אחת)
  */
-var VER = 1;
+var VER = 4;
 var SITE = 'https://hakelim.com/kelim/machshev/sidur-mailim/';
 
 // ===== ההגדרות שלכם (נוצרו בדף הכלי; אפשר גם לשנות כאן ידנית) =====
@@ -180,10 +180,14 @@ function classify_(after, me, now) {
   out.total = threads.length;
   var promoIds = idSet_(q + ' (category:promotions OR category:social)');
   var importantIds = idSet_(q + ' is:important');
+  // קריאה אחת לכל ההודעות של כל השיחות (מהיר בהרבה מקריאה לכל שיחה)
+  var allMsgs = GmailApp.getMessagesForThreads(threads);
 
-  threads.forEach(function (t) {
-    var msgs = t.getMessages();
+  threads.forEach(function (t, ti) {
+    var msgs = allMsgs[ti] || t.getMessages();
     var lastMsg = msgs[msgs.length - 1];
+    // שיחה שכולה ממני (התראות ששלחתי לעצמי, והסיכום עצמו) – לא נכנסת לסיכום
+    if (msgs.every(function (x) { return me[addrOf_(x.getFrom())]; })) { out.total--; return; }
     var lastFrom = addrOf_(lastMsg.getFrom());
     var fromMe = !!me[lastFrom];
     // ההודעה האחרונה שלא ממני
@@ -241,11 +245,11 @@ function classify_(after, me, now) {
     out.reply.forEach(function (x) { seen[x.id] = 1; });
     var oldQ = 'in:inbox label:' + labelQuery_(String(CONFIG.labelRoot || 'סיכום') + '/' + CATS.reply.name) +
       ' before:' + after + ' newer_than:14d';
-    var old = [];
-    try { old = GmailApp.search(oldQ, 0, 40); } catch (e) {}
-    old.forEach(function (t) {
+    var old = [], oldMsgs = [];
+    try { old = GmailApp.search(oldQ, 0, 40); oldMsgs = GmailApp.getMessagesForThreads(old); } catch (e) {}
+    old.forEach(function (t, ti) {
       if (seen[t.getId()]) return;
-      var msgs = t.getMessages(), last = msgs[msgs.length - 1];
+      var msgs = oldMsgs[ti] || t.getMessages(), last = msgs[msgs.length - 1];
       if (me[addrOf_(last.getFrom())]) return;               // כבר ענית
       out.reply.push({ id: t.getId(), subj: t.getFirstMessageSubject() || '(בלי נושא)', who: nameOf_(last.getFrom()),
         addr: addrOf_(last.getFrom()), snip: snippet_(last), date: last.getDate(), thread: t,
@@ -267,20 +271,39 @@ function followUps_(me, now) {
   var days = Math.max(1, Number(CONFIG.followDays) || 3);
   var list = [];
   var threads = [];
-  try { threads = GmailApp.search('in:sent older_than:' + days + 'd newer_than:' + (days + 14) + 'd', 0, 60); } catch (e) {}
-  threads.forEach(function (t) {
-    var msgs = t.getMessages();
+  var all = [];
+  try {
+    // -to:me: בלי התראות ששלחת לעצמך (הן ממלאות את הרשימה ומסתירות את המיילים האמיתיים)
+    threads = GmailApp.search('in:sent -to:me older_than:' + days + 'd newer_than:' + (days + 14) + 'd', 0, 100);
+    all = GmailApp.getMessagesForThreads(threads);
+  } catch (e) {}
+  var bySubj = {};
+  threads.forEach(function (t, ti) {
+    var msgs = all[ti] || t.getMessages();
     var last = msgs[msgs.length - 1];
     if (!me[addrOf_(last.getFrom())]) return;            // ענו לי
     var toList = String(last.getTo() || '');
     if (!toList || /no-?reply/i.test(toList)) return;
     if (me[addrOf_(toList.split(',')[0])]) return;         // שלחתי לעצמי
-    list.push({ id: t.getId(), subj: t.getFirstMessageSubject() || '(בלי נושא)', who: nameOf_(toList.split(',')[0]),
-      addr: addrOf_(toList.split(',')[0]), snip: snippet_(last), date: last.getDate(), thread: t,
-      why: 'שלחת ' + ago_(last.getDate(), now), wait: now - last.getDate() });
+    var subj = t.getFirstMessageSubject() || '(בלי נושא)';
+    var who = nameOf_(toList.split(',')[0]);
+    // אותו מייל לכמה נמענים (למשל פנייה לכמה עיתונים) – שורה אחת
+    var g = bySubj[subj];
+    if (g) { g.n++; if (g.names.length < 3) g.names.push(who); return; }
+    g = bySubj[subj] = { id: t.getId(), subj: subj, who: who, names: [who], n: 1,
+      addr: addrOf_(toList.split(',')[0]), last: last, date: last.getDate(), thread: t, wait: now - last.getDate() };
+    list.push(g);
   });
-  list.sort(function (a, b) { return b.wait - a.wait; });
-  return list.slice(0, MAX_SHOW);
+  // הכי חדשים קודם: על מה ששלחת לפני כמה ימים עוד כדאי להזכיר; מה שמלפני שבועיים כבר פחות
+  list.sort(function (a, b) { return a.wait - b.wait; });
+  list = list.slice(0, MAX_SHOW);
+  list.forEach(function (g) {
+    if (g.n > 1) g.who = g.names.join(', ') + (g.n > g.names.length ? ' ועוד ' + (g.n - g.names.length) : '');
+    g.why = 'שלחת ' + ago_(g.date, now) + (g.n > 1 ? ' ל-' + g.n + ' נמענים' : '');
+    g.snip = snippet_(g.last);
+    delete g.last; delete g.names;
+  });
+  return list;
 }
 
 function countShown_(d) {

@@ -294,9 +294,16 @@
         }
         chrome.scripting.executeScript({ target: { tabId: t.id }, func: hkPutSignature, args: [s.html] }).then(function (res) {
           var r = res && res[0] && res[0].result;
+          var dup = /-dup$/.test(r || ''); r = String(r || '').replace(/-dup$/, '');
           $('gm-msg').textContent = r === 'ok' ? '✓ החתימה נכנסה בסוף המייל שאתם כותבים.' : r === 'replaced' ? '✓ החתימה עודכנה במייל שאתם כותבים.' : 'קודם פותחים "כתיבה" או "השב" בג׳ימייל, ואז לוחצים כאן.';
+          if (dup) $('gm-msg').textContent += ' שימו לב: יש לכם גם חתימה קבועה של ג׳ימייל – אפשר למחוק אותה מהמייל, או לבטל אותה בהגדרות.';
         }, function () { $('gm-msg').textContent = 'לא הצלחתי להגיע לחלון הכתיבה. מרעננים את ג׳ימייל ומנסים שוב.'; });
       });
+    });
+    // מפת שולחים (gmail-map.js): נכנס לג׳ימייל רק בלחיצה הזאת
+    $('gm-map').addEventListener('click', function () {
+      chrome.scripting.executeScript({ target: { tabId: t.id }, files: ['gmail-map.js'] })
+        .then(function () { window.close(); }, function () { $('gm-msg').textContent = 'לא הצלחתי לפתוח את המפה. מרעננים את ג׳ימייל ומנסים שוב.'; });
     });
     $('gm-unsub').addEventListener('click', function () {
       $('gm-msg').textContent = 'מחפש במייל הפתוח…';
@@ -428,6 +435,22 @@
         p.then(function () { var m = o.waBlur || {}; m[tab.id] = !on; return chrome.storage.session.set({ waBlur: m }); }).then(function () { window.close(); });
       });
     });
+    // סידור צ'אטים (wa.js): נכנס לדף בלחיצה הזאת (activeTab), בלי הרשאה קבועה
+    $('wa-sidur').addEventListener('click', function () {
+      chrome.scripting.executeScript({ target: { tabId: tab.id }, func: function () { window.__hkWaOpen = true; } })
+        .then(function () { return chrome.scripting.insertCSS({ target: { tabId: tab.id }, files: ['wa.css'] }); })
+        .then(function () { return chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['wa.js'] }); })
+        .then(function () { window.close(); }, function () { $('wa-msg').textContent = 'לא הצלחתי לפתוח את הסידור. מרעננים את ווטסאפ ווב ומנסים שוב.'; });
+    });
+    chrome.storage.local.get('waAlways').then(function (o) { $('wa-always').checked = !!o.waAlways; }).catch(function () {});
+    $('wa-always').addEventListener('change', function () {
+      var on = $('wa-always').checked;
+      var p = on ? chrome.permissions.request({ origins: ['https://web.whatsapp.com/*'] }) : Promise.resolve(true);
+      p.then(function (ok) {
+        if (!ok) { $('wa-always').checked = false; $('wa-msg').textContent = 'בלי האישור הזה פותחים את 📋 בלחיצה כאן.'; return; }
+        chrome.runtime.sendMessage({ waAlways: on }, function () { void chrome.runtime.lastError; $('wa-msg').textContent = on ? '✓ מהרענון הבא 📋 יופיע לבד בווטסאפ ווב.' : 'כובה.'; });
+      }, function () { $('wa-always').checked = false; });
+    });
     $('wa-export').addEventListener('click', function () {
       run(waRead).then(function (r) {
         if (!r || !r.lines.length) { $('wa-msg').textContent = 'לא מצאתי הודעות. פותחים צ׳אט, גוללים למעלה עד איפה שרוצים, ולוחצים שוב.'; return; }
@@ -470,26 +493,60 @@
 })();
 
 // רץ בתוך דף ג׳ימייל (chrome.scripting): מכניס את החתימה לתיבת הכתיבה הפתוחה.
-// מנקה את ה-HTML (בלי סקריפטים, בלי on*, רק קישורים בטוחים), ומחליף חתימה קודמת שלנו אם יש.
+// ג׳ימייל אוכף Trusted Types – אסור innerHTML / DOMParser. לכן ה-HTML מפורק כאן ידנית ונבנה
+// אלמנט-אלמנט (createElement + setAttribute + createTextNode), עם רשימה לבנה של תגיות ומאפיינים.
+// מחליף חתימה קודמת שלנו אם יש. לא קורא שום מייל.
 function hkPutSignature(html) {
   var boxes = [].slice.call(document.querySelectorAll('div[contenteditable="true"][role="textbox"]')).filter(function (b) { return b.offsetParent !== null; });
   if (!boxes.length) return 'none';
   var a = document.activeElement, box = boxes.filter(function (b) { return b === a || b.contains(a); })[0] || boxes[boxes.length - 1];
-  var doc = new DOMParser().parseFromString('<div>' + String(html).slice(0, 20000) + '</div>', 'text/html');
-  [].forEach.call(doc.querySelectorAll('script,style,iframe,object,embed,form,input,button,link,meta,svg'), function (n) { n.remove(); });
-  [].forEach.call(doc.querySelectorAll('*'), function (n) {
-    [].slice.call(n.attributes).forEach(function (at) {
-      var k = at.name.toLowerCase(), v = at.value.trim();
-      if (k.indexOf('on') === 0) n.removeAttribute(at.name);
-      else if (k === 'href' && !/^(https?:|mailto:|tel:)/i.test(v)) n.removeAttribute(at.name);
-      else if (k === 'src' && !/^(https?:|data:image\/(png|jpe?g|gif|webp);)/i.test(v)) n.removeAttribute(at.name);
-      else if (k === 'style' && /url\s*\(|expression/i.test(v)) n.removeAttribute(at.name);
+  var TAGS = { div: 1, span: 1, a: 1, table: 1, tbody: 1, tr: 1, td: 1, img: 1, br: 1, b: 1, i: 1, strong: 1, em: 1, p: 1 };
+  var VOID = { br: 1, img: 1 };
+  var ATTRS = { style: 1, href: 1, dir: 1, src: 1, width: 1, height: 1, alt: 1, cellpadding: 1, cellspacing: 1, border: 1, align: 1, colspan: 1 };
+  function dec(s) {
+    return s.replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|#39|apos|nbsp);/gi, function (m, c) {
+      c = c.toLowerCase();
+      if (c[0] === '#') return String.fromCodePoint(c[1] === 'x' ? parseInt(c.slice(2), 16) : parseInt(c.slice(1), 10));
+      return { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' }[c];
     });
-  });
+  }
+  function okAttr(k, v) {
+    if (!ATTRS[k]) return false;
+    if (k === 'href') return /^(https?:|mailto:|tel:)/i.test(v);
+    if (k === 'src') return /^(https?:|data:image\/(png|jpe?g|gif|webp);)/i.test(v);
+    if (k === 'style') return !/url\s*\(|expression|javascript:/i.test(v);
+    return true;
+  }
+  var root = document.createElement('div'), stack = [root], cur = root, m;
+  var re = /<\/([a-zA-Z0-9]+)\s*>|<([a-zA-Z0-9]+)((?:\s+[a-zA-Z_:][-a-zA-Z0-9_:.]*(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"'>]+))?)*)\s*\/?>|<!--[\s\S]*?-->|([^<]+)|</g;
+  var src = String(html).slice(0, 20000);
+  while ((m = re.exec(src))) {
+    if (m[4] != null || m[0] === '<') { cur.appendChild(document.createTextNode(dec(m[4] != null ? m[4] : '<'))); continue; }
+    if (m[1]) {   // תגית סוגרת – חוזרים עד התגית המתאימה
+      var t = m[1].toLowerCase();
+      for (var j = stack.length - 1; j > 0; j--) if (stack[j].tagName.toLowerCase() === t) { stack.length = j; cur = stack[j - 1]; break; }
+      continue;
+    }
+    if (!m[2]) continue;   // הערה
+    var tag = m[2].toLowerCase();
+    if (/^(script|style|iframe|object|textarea|title)$/.test(tag)) {   // דילוג על כל התוכן שלהן, לא רק על התגית
+      var close = src.toLowerCase().indexOf('</' + tag, re.lastIndex); re.lastIndex = close < 0 ? src.length : close; continue;
+    }
+    if (!TAGS[tag]) continue;
+    var el = document.createElement(tag), ar = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>]+)))?/g, am;
+    while ((am = ar.exec(m[3] || ''))) {
+      var k = am[1].toLowerCase(), v = dec(am[2] != null ? am[2] : am[3] != null ? am[3] : am[4] || '').trim();
+      if (okAttr(k, v)) el.setAttribute(k, v);
+    }
+    cur.appendChild(el);
+    if (!VOID[tag] && !/\/>$/.test(m[0])) { stack.push(el); cur = el; }
+  }
   var old = box.querySelector('[data-hk-sig]'), wrap = document.createElement('div');
   wrap.setAttribute('data-hk-sig', '1');
-  wrap.innerHTML = '<br>' + doc.body.firstChild.innerHTML;
+  wrap.appendChild(document.createElement('br'));
+  while (root.firstChild) wrap.appendChild(root.firstChild);
   if (old) { old.replaceWith(wrap); } else { box.appendChild(wrap); }
   box.dispatchEvent(new Event('input', { bubbles: true }));
+  if (box.querySelector('.gmail_signature')) return old ? 'replaced-dup' : 'ok-dup';   // יש גם חתימה של ג׳ימייל עצמו
   return old ? 'replaced' : 'ok';
 }

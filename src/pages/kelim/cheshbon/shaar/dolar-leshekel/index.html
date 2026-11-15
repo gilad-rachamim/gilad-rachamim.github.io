@@ -1,0 +1,102 @@
+<!--meta {
+ "site": "kelim",
+ "nav": "tchumim",
+ "tool": "cheshbon_shaar_usd",
+ "title": "המרת דולר לשקל – ממיר לפי השער היציג של היום, בחינם | הכלים של גילעד רחמים",
+ "description": "המרת דולר לשקל ומשקל לדולר לפי השער היציג של בנק ישראל, להיום ולכל תאריך. מקלידים סכום ומקבלים תוצאה מיד. גם הפרשי שער ורשימה מאקסל. בחינם, בלי פרסומות.",
+ "og_title": "המרת דולר לשקל – לפי השער היציג",
+ "priority": "0.7",
+ "crumbs": [
+  [
+   "רואי חשבון ויועצי מס",
+   "/kelim/cheshbon/"
+  ],
+  [
+   "שער יציג",
+   "/kelim/cheshbon/shaar/"
+  ],
+  [
+   "המרת דולר לשקל",
+   null
+  ]
+ ],
+ "ext": {
+  "accept": [
+   "text"
+  ],
+  "input": "sh-amt",
+  "menu": "להמיר לשקלים לפי השער היציג"
+ },
+ "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/cheshbon.css\"><link rel=\"preconnect\" href=\"https://kelim-shaar.gilad4049.workers.dev\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך ממירים דולר לשקל?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מכפילים את הסכום בדולרים בשער הדולר. בממיר שבדף מקלידים את הסכום, והתוצאה בשקלים מופיעה מיד, לפי השער היציג של בנק ישראל.\"}}, {\"@type\": \"Question\", \"name\": \"מה שער הדולר היום?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"השער היציג האחרון מופיע בראש הדף, עם תאריך הפרסום. בשישי, בשבת ובחג נשאר השער האחרון שפורסם.\"}}, {\"@type\": \"Question\", \"name\": \"למה בכרטיס האשראי חויבתי ביותר?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"חברות האשראי והבנקים ממירים לפי שער שכולל עמלה ומרווח, ולכן החיוב גבוה מעט מהשער היציג.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר להמיר משקלים לדולרים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בשדה \\\"כיוון\\\" בוחרים \\\"משקלים למטבע\\\", ומקבלים כמה דולרים שווה הסכום בשקלים.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לבדוק לפי תאריך של חשבונית?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בוחרים את התאריך, והכלי מביא את השער היציג של אותו יום. לחישוב הפרש בין יום החשבונית ליום התשלום יש כפתור \\\"הפרשי שער\\\".\"}}]}</script>",
+ "foot": "<script src=\"/assets/cheshbon.js\" defer></script><script src=\"/assets/cheshbon-shaar.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>המרת דולר לשקל</h1>
+  <p class="sub">מקלידים סכום בדולרים ומקבלים כמה הוא שווה בשקלים, לפי השער היציג של בנק ישראל היום או בכל תאריך אחר.</p>
+</header>
+
+<div class="tool ch" id="shaar" data-cur="USD">
+  <div class="res" id="sh-today" aria-live="polite"><p class="hint">טוען את השער היציג…</p></div>
+
+  <div class="seg no-print" id="sh-mode" role="group" aria-label="מה רוצים לעשות">
+    <button type="button" data-v="conv" aria-pressed="true">להמיר סכום</button>
+    <button type="button" data-v="diff" aria-pressed="false">הפרשי שער</button>
+    <button type="button" data-v="many" aria-pressed="false">רשימה מאקסל</button>
+  </div>
+
+  <form class="k-form" id="sh-conv" novalidate>
+    <div class="row2">
+      <div class="field"><label for="sh-amt">סכום</label><input id="sh-amt" class="num-in" type="text" inputmode="decimal" autocomplete="off" placeholder="1,000"></div>
+      <div class="field"><label for="sh-cur">מטבע</label><select id="sh-cur"></select></div>
+      <div class="field"><label for="sh-date">לפי השער של תאריך</label><input id="sh-date" type="date"></div>
+      <div class="field"><label for="sh-dir">כיוון</label><select id="sh-dir"><option value="to">מהמטבע לשקלים</option><option value="from">משקלים למטבע</option></select></div>
+    </div>
+  </form>
+  <div class="res" id="sh-res" aria-live="polite"></div>
+
+  <form class="k-form" id="sh-diff" novalidate hidden>
+    <h2>הפרשי שער בין החשבונית לתשלום</h2>
+    <div class="row2">
+      <div class="field"><label for="sd-amt">סכום במטבע</label><input id="sd-amt" class="num-in" type="text" inputmode="decimal" autocomplete="off"></div>
+      <div class="field"><label for="sd-cur">מטבע</label><select id="sd-cur"></select></div>
+      <div class="field"><label for="sd-d1">תאריך החשבונית</label><input id="sd-d1" type="date"></div>
+      <div class="field"><label for="sd-d2">תאריך התשלום</label><input id="sd-d2" type="date"></div>
+    </div>
+  </form>
+  <div class="res" id="sd-res" aria-live="polite" hidden></div>
+
+  <form class="k-form" id="sh-many" novalidate hidden>
+    <h2>רשימת חשבוניות במט"ח</h2>
+    <div class="field"><label for="sm-list">מדביקים מאקסל: תאריך · סכום · מטבע (USD, EUR, $, €) בכל שורה. אפשר גם תיאור.</label>
+      <textarea id="sm-list" spellcheck="false"></textarea></div>
+    <div class="btns"><button class="btn btn-gold" type="button" id="sm-go">להמיר את כל הרשימה</button></div>
+    <p class="msg" id="sm-msg" aria-live="polite"></p>
+  </form>
+  <div id="sm-out" hidden></div>
+
+  <p class="src">המקור: בנק ישראל – השערים היציגים שהוא מפרסם בכל יום עסקים. ביום בלי שער (שישי, שבת, חג, או לפני הפרסום של היום) משתמשים בשער היציג האחרון שפורסם לפניו, והכלי כותב מאיזה תאריך הוא. השערים מגיעים דרך שרת קטן של האתר, כי בנק ישראל לא מאפשר לדפדפן לקרוא אותם ישירות; הסכומים שמקלידים לא נשלחים לשום מקום.</p>
+  <div class="share-row no-print"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="שער יציג של בנק ישראל להיום ולכל תאריך, עם ממיר והפרשי שער – בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר</a></div>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">ממיר דולר לשקל לפי השער היציג</h2>
+  <p>המרת דולר לשקל היא אחד החישובים הנפוצים ביותר: קנייה באתר בחו"ל, משכורת או חשבונית בדולרים, חופשה או שכר דירה. כאן מקלידים את הסכום בדולרים, והממיר מכפיל אותו בשער היציג של בנק ישראל ומראה את התוצאה בשקלים, עם השער והתאריך שלפיהם חושב. השער היציג מתעדכן בכל יום עסקים.</p>
+  <h3>משקלים לדולרים, ובכל תאריך</h3>
+  <p>רוצים לדעת כמה דולרים יתקבלו על סכום בשקלים? בוחרים "משקלים למטבע". ואם צריך את השער של יום מסוים, למשל יום החשבונית או יום התשלום, בוחרים תאריך, והכלי מביא את השער של אותו יום, או של יום העסקים האחרון שלפניו.</p>
+  <h3>כמה באמת יורד מהכרטיס?</h3>
+  <p>בקנייה בכרטיס אשראי או בהמרה בבנק, השער כולל בדרך כלל עמלת המרה ומרווח, ולכן הסכום בפועל גבוה מעט מהתוצאה כאן. השער היציג הוא נקודת הייחוס הרשמית: לפיו מדווחים לרשות המסים, ולפיו כדאי לבדוק כמה עמלה גובים מכם.</p>
+  <h3>עוד מטבעות וחישובים</h3>
+  <p>אותו ממיר עובד גם עם יורו, לירה שטרלינג ועוד 11 מטבעות: <a class="gold" href="/kelim/cheshbon/shaar/">שער הדולר היום ושער יציג</a> ו<a class="gold" href="/kelim/cheshbon/shaar/euro/">שער היורו היום</a>. לעסקים יש גם חישוב הפרשי שער בין חשבונית לתשלום, והמרה של רשימה שלמה מאקסל. וחישובי אחוזים ומע"מ: <a class="gold" href="/kesef/achuzim/">מחשבון אחוזים</a> ו<a class="gold" href="/kesef/maam/">מחשבון מע"מ</a>.</p>
+  <h3>דוגמה: כמה זה 100 דולר בשקלים?</h3>
+  <p>אם השער היציג הוא 3.20 ₪ לדולר, 100 דולר שווים 320 ₪, ו-1,000 דולר שווים 3,200 ₪. בכיוון ההפוך מחלקים: 500 ₪ חלקי 3.20 הם כ-156 דולר. בממיר למעלה לא צריך לחשב בכלל – מקלידים את הסכום, והתוצאה מופיעה לפי השער האמיתי של היום, עם התאריך שלו.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך ממירים דולר לשקל?</summary><p>מכפילים את הסכום בדולרים בשער הדולר. בממיר שבדף מקלידים את הסכום, והתוצאה בשקלים מופיעה מיד, לפי השער היציג של בנק ישראל.</p></details>
+  <details><summary>מה שער הדולר היום?</summary><p>השער היציג האחרון מופיע בראש הדף, עם תאריך הפרסום. בשישי, בשבת ובחג נשאר השער האחרון שפורסם.</p></details>
+  <details><summary>למה בכרטיס האשראי חויבתי ביותר?</summary><p>חברות האשראי והבנקים ממירים לפי שער שכולל עמלה ומרווח, ולכן החיוב גבוה מעט מהשער היציג.</p></details>
+  <details><summary>אפשר להמיר משקלים לדולרים?</summary><p>כן. בשדה "כיוון" בוחרים "משקלים למטבע", ומקבלים כמה דולרים שווה הסכום בשקלים.</p></details>
+  <details><summary>אפשר לבדוק לפי תאריך של חשבונית?</summary><p>כן. בוחרים את התאריך, והכלי מביא את השער היציג של אותו יום. לחישוב הפרש בין יום החשבונית ליום התשלום יש כפתור "הפרשי שער".</p></details>
+</section>
+<!--/seo-txt-->

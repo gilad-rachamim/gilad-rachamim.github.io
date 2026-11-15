@@ -6,7 +6,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var FIELDS = ['closing', 'name', 'role', 'company', 'phone', 'mobile', 'email', 'site', 'address', 'slogan', 'greet',
     'fb', 'ig', 'li', 'yt', 'tt', 'logoUrl'];
-  var CHECKS = ['wa', 'confid'];
+  var CHECKS = ['wa', 'confid', 'hand'];
   var COLORS = ['#a8842f', '#1f3a5f', '#5f5d43', '#7a1f2b', '#11706b', '#222222', '#c2410c', '#6d28d9'];
   var FONTS = { arial: 'Arial,Helvetica,sans-serif', tahoma: 'Tahoma,Geneva,sans-serif', verdana: 'Verdana,Geneva,sans-serif', georgia: 'Georgia,"Times New Roman",serif' };
 
@@ -27,6 +27,36 @@
       email: 'noa@example.com', site: 'www.example.com', address: '10 Herzl St., Rishon LeZion, Israel', slogan: 'Design that brings clients', fb: 'https://facebook.com/', ig: 'https://instagram.com/',
       li: 'https://linkedin.com/', yt: '', tt: '', greet: '', confid: false, tpl: 'merkaz', color: '#222222', font: 'verdana', dir: 'ltr', logoW: 90, logoAuto: true }
   };
+  // עוד 15 מקצועות לגלריה: [מפתח, תווית, שם, תפקיד, עסק, נייד, אתר, סלוגן, תבנית, צבע, גופן, רשתות, סודיות]
+  var MORE = [
+    ['nadlan', 'סוכן נדל״ן', 'יוסי מזרחי', 'יועץ נדל״ן', 'מזרחי נכסים – מכירה והשכרה', '050-765-1122', 'www.example.co.il', 'הבית הבא שלכם מתחיל כאן', 'banner', '#c2410c', 'arial', 'fb ig', false],
+    ['bituach', 'סוכנת ביטוח', 'אורית שמעוני', 'סוכנת ביטוח ופנסיה', 'שמעוני ביטוחים', '052-334-5566', 'www.example.co.il', 'שקט נפשי לכל המשפחה', 'pas', '#1f3a5f', 'arial', 'fb', true],
+    ['klinika', 'קליניקה', 'ד״ר אלון גבאי', 'פיזיותרפיסט', 'קליניקה לפיזיותרפיה', '054-998-7711', 'www.example.co.il', 'חוזרים לתנועה', 'kartis', '#11706b', 'tahoma', 'fb', true],
+    ['metapelet', 'מטפלת רגשית', 'שירה ברק', 'מטפלת רגשית (M.A)', 'קליניקה פרטית', '053-445-1122', 'www.example.co.il', 'מקום בטוח לדבר', 'merkaz', '#6d28d9', 'georgia', 'ig', true],
+    ['koach', 'מאמן כושר', 'עידו נחום', 'מאמן כושר אישי', 'IDO FIT', '050-224-6688', 'www.example.co.il', 'מתחילים היום', 'banner', '#222222', 'verdana', 'ig yt tt', false],
+    ['tzalam', 'צלמת', 'הדס פרץ', 'צלמת אירועים ומשפחות', 'הדס – צילום', '054-667-3344', 'www.example.co.il', 'רגעים שנשארים לתמיד', 'merkaz', '#a8842f', 'georgia', 'fb ig', false],
+    ['adrichal', 'אדריכלית', 'מאיה רוזן', 'אדריכלית ומעצבת פנים', 'רוזן אדריכלות', '052-889-0011', 'www.example.co.il', '', 'minimali', '#5f5d43', 'georgia', 'ig li', false],
+    ['handasa', 'מהנדס', 'אבי דהן', 'מהנדס בניין', 'דהן הנדסה ופיקוח', '050-112-9988', 'www.example.co.il', '', 'klasi', '#1f3a5f', 'tahoma', 'li', true],
+    ['mashkanta', 'יועץ משכנתאות', 'רון אלמוג', 'יועץ משכנתאות', 'אלמוג – ייעוץ פיננסי', '054-221-4433', 'www.example.co.il', 'המשכנתא הנכונה בשבילכם', 'kartis', '#a8842f', 'arial', 'fb li', true],
+    ['shiputzim', 'קבלן שיפוצים', 'משה ביטון', 'קבלן שיפוצים רשום', 'ביטון שיפוצים ובנייה', '052-556-7788', 'www.example.co.il', 'עבודה נקייה, בזמן', 'banner', '#c2410c', 'arial', 'fb', false],
+    ['amuta', 'עמותה', 'תמר גולן', 'רכזת מתנדבים', 'עמותת "יד ביד"', '053-778-9900', 'www.example.org.il', 'ביחד עושים טוב', 'pas', '#11706b', 'arial', 'fb ig', false],
+    ['kehila', 'בית כנסת / קהילה', 'יעקב אוחיון', 'גבאי', 'בית הכנסת "אהבת ישראל"', '050-334-2211', '', 'שבת שלום ומבורך', 'merkaz', '#7a1f2b', 'georgia', '', false],
+    ['mazkira', 'מזכירות משרד', 'ליאת חדד', 'מנהלת משרד', 'חדד ושות׳', '054-889-6655', 'www.example.co.il', '', 'minimali', '#1f3a5f', 'tahoma', '', true],
+    ['avoda', 'מחפש עבודה', 'דניאל כץ', 'מפתח תוכנה Full Stack', 'זמין למשרה', '050-990-1234', 'github.com/', '', 'klasi', '#222222', 'verdana', 'li', false],
+    ['chanut', 'חנות אונליין', 'רחל עזרא', 'בעלים', 'רחל – מתנות בעבודת יד', '052-123-9876', 'www.example.co.il', 'משלוח חינם מעל 200 ₪', 'banner', '#6d28d9', 'arial', 'fb ig tt', false]
+  ];
+  var LABELS = { esek: 'מעצבת / עסק קטן', orech: 'עורך דין', roeh: 'רואת חשבון', more: 'מורה', en: 'באנגלית' };
+  MORE.forEach(function (m, i) {
+    var soc = m[11].split(' ');
+    EXAMPLES[m[0]] = { closing: 'בברכה,', name: m[2], role: m[3], company: m[4], phone: '', mobile: m[5], wa: true,
+      email: 'office@example.co.il', site: m[6], address: '', slogan: m[7],
+      fb: soc.indexOf('fb') >= 0 ? 'https://facebook.com/' : '', ig: soc.indexOf('ig') >= 0 ? 'https://instagram.com/' : '',
+      li: soc.indexOf('li') >= 0 ? 'https://linkedin.com/' : '', yt: soc.indexOf('yt') >= 0 ? 'https://youtube.com/' : '',
+      tt: soc.indexOf('tt') >= 0 ? 'https://tiktok.com/' : '', greet: '', confid: m[12], tpl: m[8], color: m[9], font: m[10], dir: 'rtl', logoW: 80, logoAuto: i % 3 !== 2 };
+    LABELS[m[0]] = m[1];
+  });
+  var HAND_KEY = 'chatima-sigs';   // החתימות בכתב יד, משותף עם "חתימה על PDF" ועם "יצירת חתימה בכתב יד"
+  function handSig() { try { var l = JSON.parse(localStorage.getItem(HAND_KEY) || '[]'); return l[0] && l[0].url ? l[0] : null; } catch (x) { return null; } }
 
   var S;
   function load() {
@@ -78,8 +108,8 @@
     var link = 'color:' + A + ';text-decoration:none';
     function row(lbl, inner) { return '<span style="color:' + A + ';font-weight:bold">' + lbl + '</span>&nbsp;' + inner; }
     var items = [];
-    if (S.phone) items.push(row(L.t, '<a href="tel:+' + intl(S.phone) + '" style="color:#333333;text-decoration:none"><span dir="ltr">' + e(S.phone) + '</span></a>'));
-    if (S.mobile) items.push(row(L.m, '<a href="tel:+' + intl(S.mobile) + '" style="color:#333333;text-decoration:none"><span dir="ltr">' + e(S.mobile) + '</span></a>'));
+    if (S.phone) items.push(row(L.t, '<a href="tel:+' + intl(S.phone) + '" style="color:#333333;text-decoration:none"><span dir="ltr" style="white-space:nowrap">' + e(S.phone) + '</span></a>'));
+    if (S.mobile) items.push(row(L.m, '<a href="tel:+' + intl(S.mobile) + '" style="color:#333333;text-decoration:none"><span dir="ltr" style="white-space:nowrap">' + e(S.mobile) + '</span></a>'));
     if (S.email) items.push(row(L.e, '<a href="mailto:' + e(S.email.trim()) + '" style="color:#333333;text-decoration:none">' + e(S.email.trim()) + '</a>'));
     var su = url(S.site);
     if (su) items.push(row(L.w, '<a href="' + e(su) + '" style="' + link + '">' + e(siteText(S.site)) + '</a>'));
@@ -133,6 +163,11 @@
     }
     var top = (S.greet ? '<div style="font-size:15px;color:' + A + ';font-weight:bold;padding-bottom:8px">' + e(S.greet) + '</div>' : '') +
       (S.closing ? '<div style="font-size:14px;color:#333333;padding-bottom:6px">' + e(S.closing) + '</div>' : '');
+    var hs = S.hand && mode !== 'gmail' ? handSig() : null;
+    if (hs && /^data:image\/png;base64,/.test(hs.url)) {
+      var hh = 46, hw = Math.round(hh / (hs.ratio || 0.4));
+      top += '<div style="padding-bottom:4px"><img src="' + hs.url + '" width="' + hw + '" height="' + hh + '" alt="' + e(S.name || 'חתימה') + '" style="display:block;width:' + hw + 'px;height:' + hh + 'px;border:0"></div>';
+    }
     var conf = S.confid ? '<div style="font-size:10px;color:#999999;line-height:1.4;padding-top:10px;max-width:520px">' + L.conf + '</div>' : '';
     return '<div dir="' + (rtl ? 'rtl' : 'ltr') + '" style="direction:' + (rtl ? 'rtl' : 'ltr') + ';text-align:' + al + ';font-family:' + F + ';color:#333333">' + top + body + conf + '</div>';
   }
@@ -186,7 +221,9 @@
     var gm = $('cm-gmail-len');
     gm.textContent = 'אורך החתימה לג׳ימייל: ' + g.toLocaleString('he-IL') + ' תווים מתוך 10,000 המותרים' + (g > 10000 ? ' – ארוך מדי, כדאי להוריד שורה או רשת.' : ' ✓');
     var noLogoInGmail = !url(S.logoUrl) && (S.logoData || S.logoAuto);
-    $('cm-gmail-logo').hidden = !noLogoInGmail;
+    $('cm-gmail-logo').hidden = !(noLogoInGmail || (S.hand && handSig()));
+    var hn = $('cm-hand-note');
+    if (hn) hn.textContent = !S.hand ? '' : handSig() ? '✓ החתימה בכתב יד שלכם מופיעה מעל השם (באאוטלוק ובאייפון; בג׳ימייל מעלים אותה כתמונה).' : 'עוד אין חתימה בכתב יד שמורה בדפדפן הזה. לוחצים על "ליצור חתימה בכתב יד", חותמים ושומרים, וחוזרים לכאן.';
     save();
     clearTimeout(tExt);
     tExt = setTimeout(function () { try { window.postMessage({ type: 'hakelim-sig-save', html: build('gmail'), name: S.name || '' }, location.origin); } catch (x) {} }, 600);
@@ -299,10 +336,32 @@
     });
   }
 
+  // ---------- גלריית דוגמאות (בדף הדוגמאות) ----------
+  function buildFor(st, mode) { var keep = S; S = st; try { return build(mode); } finally { S = keep; } }
+  function gallery() {
+    var g = $('cm-gallery'); if (!g) return;
+    Object.keys(EXAMPLES).forEach(function (k) {
+      var card = document.createElement('div'); card.className = 'cm-gcard';
+      var h = document.createElement('h3'); h.textContent = LABELS[k] || k;
+      var box = document.createElement('div'); box.className = 'cm-mail cm-gprev'; box.innerHTML = buildFor(fresh(k), 'full');
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'btn btn-line btn-sm'; b.textContent = '✏ לערוך את הדוגמה הזו עם הפרטים שלי';
+      b.addEventListener('click', function () {
+        S = fresh(k); toForm(); render(); used('gallery_' + k);
+        msg('נטענה הדוגמה "' + (LABELS[k] || k) + '". מחליפים את הפרטים בשלכם.');
+        $('cm-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      card.appendChild(h); card.appendChild(box); card.appendChild(b); g.appendChild(card);
+    });
+  }
+
   function init() {
     if (!$('cm-form')) return;
-    S = load() || fresh('esek');
-    bind(); toForm(); render();
+    var root = document.querySelector('[data-cm-start]'), start = root ? root.dataset : {};
+    S = load();
+    if (!S) { S = fresh(EXAMPLES[start.cmEx] ? start.cmEx : 'esek'); }
+    if (S.hand === undefined) S.hand = false;
+    bind(); toForm(); render(); gallery();
+    if (start.cmOpen) { var d = $('cm-how-' + start.cmOpen); if (d) d.open = true; }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

@@ -1,457 +1,1556 @@
 {
-  "v": 1,
-  "updated": "2026-11-15",
-  "fields": {
-    "name": {"l": "השם שלכם", "ex": "יעל לוי"},
-    "to": {"l": "שם הנמען", "ex": "דני"}
+ "v": 1,
+ "updated": "2026-11-15",
+ "fields": {
+  "name": {
+   "l": "השם שלכם",
+   "ex": "יעל לוי"
   },
-  "cats": [
-    {"id": "lakoach", "n": "לקוחות ועסק"},
-    {"id": "avoda", "n": "עבודה"},
-    {"id": "limudim", "n": "לימודים"},
-    {"id": "rishmi", "n": "פניות רשמיות ותלונות"},
-    {"id": "horim", "n": "הורים וקהילה"},
-    {"id": "ishi", "n": "אירועים ואישי"}
-  ],
-  "types": [
+  "to": {
+   "l": "שם הנמען",
+   "ex": "דני"
+  }
+ },
+ "cats": [
+  {
+   "id": "lakoach",
+   "n": "לקוחות ועסק"
+  },
+  {
+   "id": "avoda",
+   "n": "עבודה"
+  },
+  {
+   "id": "limudim",
+   "n": "לימודים"
+  },
+  {
+   "id": "rishmi",
+   "n": "פניות רשמיות ותלונות"
+  },
+  {
+   "id": "horim",
+   "n": "הורים וקהילה"
+  },
+  {
+   "id": "ishi",
+   "n": "אירועים ואישי"
+  }
+ ],
+ "types": [
+  {
+   "id": "pnia",
+   "cat": "rishmi",
+   "i": "📨",
+   "n": "פנייה רשמית כללית",
+   "f": [
     {
-      "id": "pnia", "cat": "rishmi", "i": "📨", "n": "פנייה רשמית כללית",
-      "f": [
-        {"k": "to", "l": "למי פונים", "ex": "מחלקת שירות הלקוחות"},
-        {"k": "topic", "l": "הנושא בקצרה", "ex": "עדכון כתובת למשלוח חשבונות"},
-        {"k": "details", "l": "מה מבקשים", "ex": "לעדכן את כתובת המשלוח לרחוב הזית 4, מודיעין", "long": 1},
-        {"k": "num", "l": "מספר לקוח / תיק (אם יש)", "ex": "48213", "opt": 1}
-      ],
-      "he": {
-        "s": ["פנייה בנושא {topic}", "בקשה: {topic}[[ (מס' {num})]]", "{topic} – אשמח לטיפולכם"],
-        "b": "לכבוד {to},\n\nשלום רב,\n\nאני פונה אליכם בנושא {topic}.\n\nאבקש {details}.\n\n[[לנוחיותכם, מספר הלקוח שלי: {num}.\n\n]]אשמח לאישור שהפנייה התקבלה ולעדכון כשהטיפול יסתיים.\n\nתודה מראש,\n{name}"
-      },
-      "en": {
-        "s": ["Request regarding {topic}", "{topic}[[ (ref. {num})]]", "Inquiry: {topic}"],
-        "b": "Dear {to},\n\nI am writing regarding {topic}.\n\nI would like to ask you to {details}.\n\n[[For your reference, my customer number is {num}.\n\n]]I would appreciate a confirmation that this request has been received, and an update once it has been handled.\n\nThank you in advance,\n{name}"
-      }
+     "k": "to",
+     "l": "למי פונים",
+     "ex": "מחלקת שירות הלקוחות"
     },
     {
-      "id": "lakoach-hatzaa", "cat": "lakoach", "i": "💼", "n": "מייל ללקוח: הצעת מחיר",
-      "f": [
-        {"k": "to", "l": "שם הלקוח", "ex": "משה"},
-        {"k": "service", "l": "השירות / המוצר", "ex": "עיצוב לוגו ושלט לחנות"},
-        {"k": "price", "l": "המחיר", "ex": "2,400 ₪ כולל מע\"מ"},
-        {"k": "date", "l": "תוקף ההצעה / מועד מסירה", "ex": "תוך 10 ימי עבודה מהאישור"},
-        {"k": "biz", "l": "שם העסק", "ex": "סטודיו לוי"}
-      ],
-      "he": {
-        "s": ["הצעת מחיר: {service}", "הצעת מחיר מ{biz} – {service}", "{to}, הנה ההצעה שדיברנו עליה"],
-        "b": "שלום {to},\n\nתודה על הפנייה ועל השיחה הנעימה.\n\nכפי שסיכמנו, מצורפת הצעת מחיר עבור {service}:\n• המחיר: {price}\n• זמן ביצוע: {date}\n\nאם יש שאלות או משהו שתרצה לשנות, אשמח לדבר ולהתאים.\nלאישור מספיק להשיב למייל הזה.\n\nבברכה,\n{name}\n{biz}"
-      },
-      "en": {
-        "s": ["Price quote: {service}", "Your quote from {biz}", "{to}, here is the quote we discussed"],
-        "b": "Hi {to},\n\nThank you for reaching out, and for the pleasant conversation.\n\nAs discussed, here is our quote for {service}:\n• Price: {price}\n• Timeline: {date}\n\nIf you have any questions or would like to adjust anything, I would be happy to talk.\nTo approve, simply reply to this email.\n\nBest regards,\n{name}\n{biz}"
-      }
+     "k": "topic",
+     "l": "הנושא בקצרה",
+     "ex": "עדכון כתובת למשלוח חשבונות"
     },
     {
-      "id": "lakoach-maakav", "cat": "lakoach", "i": "🔁", "n": "תזכורת עדינה: לא קיבלתי תשובה",
-      "f": [
-        {"k": "to", "l": "שם הנמען", "ex": "רונית"},
-        {"k": "topic", "l": "על מה כתבתם", "ex": "הצעת המחיר לשיפוץ המטבח"},
-        {"k": "date", "l": "מתי שלחתם", "ex": "יום ראשון שעבר"}
-      ],
-      "he": {
-        "s": ["תזכורת: {topic}", "רציתי לוודא שהמייל הקודם הגיע", "המשך לגבי {topic}"],
-        "b": "שלום {to},\n\nרציתי לוודא שהמייל ששלחתי {date} בנושא {topic} הגיע.\n\nאני יודע/ת שיש הרבה על הראש, ולכן רק מזכיר/ה בעדינות. אם נוח לך, אפשר גם לדבר בטלפון כמה דקות.\n\nתודה רבה,\n{name}"
-      },
-      "en": {
-        "s": ["Following up: {topic}", "Just checking in on my previous email", "Quick follow-up regarding {topic}"],
-        "b": "Hi {to},\n\nI wanted to follow up on the email I sent {date} regarding {topic}, in case it got buried.\n\nI know things get busy, so this is just a gentle reminder. If it is easier, I am happy to have a quick call.\n\nThank you,\n{name}"
-      }
+     "k": "details",
+     "l": "מה מבקשים",
+     "ex": "לעדכן את כתובת המשלוח לרחוב הזית 4, מודיעין",
+     "long": 1
     },
     {
-      "id": "lakoach-tashlum", "cat": "lakoach", "i": "🧾", "n": "תזכורת לתשלום",
-      "f": [
-        {"k": "to", "l": "שם הלקוח", "ex": "אבי"},
-        {"k": "inv", "l": "מספר חשבונית", "ex": "1057"},
-        {"k": "price", "l": "הסכום", "ex": "1,800 ₪"},
-        {"k": "date", "l": "מועד התשלום שעבר", "ex": "1 בנובמבר"},
-        {"k": "biz", "l": "שם העסק", "ex": "סטודיו לוי"}
-      ],
-      "he": {
-        "s": ["תזכורת: חשבונית {inv} לתשלום", "חשבונית מס' {inv} – תזכורת ידידותית", "תשלום פתוח: {price}"],
-        "b": "שלום {to},\n\nרציתי להזכיר שחשבונית מס' {inv} על סך {price} הייתה לתשלום ב-{date}, ולפי הרישום שלנו עדיין לא התקבלה.\n\nאם כבר שילמתם, תודה רבה ואפשר להתעלם מהמייל (ואשמח לאסמכתא כדי לעדכן אצלנו).\nאם יש שאלה או צורך בפריסה, אני כאן.\n\nבברכה,\n{name}\n{biz}"
-      },
-      "en": {
-        "s": ["Payment reminder: invoice {inv}", "Friendly reminder – invoice #{inv}", "Outstanding payment: {price}"],
-        "b": "Hi {to},\n\nThis is a friendly reminder that invoice #{inv} for {price} was due on {date}, and according to our records it has not yet been paid.\n\nIf you have already paid, thank you, and please ignore this email (a payment confirmation would help us update our records).\nIf you have any questions or need a payment plan, I am here to help.\n\nBest regards,\n{name}\n{biz}"
-      }
-    },
-    {
-      "id": "lakoach-hodaa", "cat": "lakoach", "i": "📣", "n": "הודעה ללקוחות (שינוי, עדכון, שעות פעילות)",
-      "f": [
-        {"k": "biz", "l": "שם העסק", "ex": "סטודיו לוי"},
-        {"k": "topic", "l": "מה משתנה", "ex": "שעות הפעילות בחנוכה"},
-        {"k": "details", "l": "הפרטים", "ex": "בימים א'–ה' נהיה פתוחים 9:00–14:00, וביום שישי סגור", "long": 1},
-        {"k": "date", "l": "מתי זה מתחיל", "ex": "יום ראשון, 6 בדצמבר"}
-      ],
-      "he": {
-        "s": ["עדכון חשוב: {topic}", "לקוחות יקרים – {topic}", "{biz}: שימו לב ל{topic}"],
-        "b": "לקוחות יקרים,\n\nרצינו לעדכן אתכם מראש: {topic}.\n\n{details}.\n\nהשינוי בתוקף מ{date}.\n\nלכל שאלה אנחנו זמינים בטלפון ובמייל. תודה שאתם איתנו!\n\nבברכה,\n{name}\n{biz}"
-      },
-      "en": {
-        "s": ["Important update: {topic}", "Dear customers – {topic}", "{biz}: please note {topic}"],
-        "b": "Dear customers,\n\nWe wanted to let you know in advance about {topic}.\n\n{details}.\n\nThis change takes effect on {date}.\n\nIf you have any questions, we are available by phone and email. Thank you for being with us!\n\nBest regards,\n{name}\n{biz}"
-      }
-    },
-    {
-      "id": "pgisha", "cat": "lakoach", "i": "📅", "n": "בקשה לפגישה או שיחה",
-      "f": [
-        {"k": "to", "l": "שם הנמען", "ex": "עדי"},
-        {"k": "topic", "l": "על מה הפגישה", "ex": "שיתוף פעולה בפרויקט החדש"},
-        {"k": "date", "l": "מועדים אפשריים", "ex": "יום שני או שלישי בין 10:00 ל-13:00"}
-      ],
-      "he": {
-        "s": ["תיאום פגישה: {topic}", "אפשר 20 דקות לשיחה על {topic}?", "הצעה לפגישה קצרה"],
-        "b": "שלום {to},\n\nאשמח לקבוע פגישה קצרה (כ-20 דקות) כדי לדבר על {topic}.\n\nנוח לי {date}, ואם המועדים האלה לא מתאימים, אשמח לשמוע איזה זמן נוח לך. אפשר בזום, בטלפון או פנים אל פנים.\n\nתודה,\n{name}"
-      },
-      "en": {
-        "s": ["Meeting request: {topic}", "Do you have 20 minutes to discuss {topic}?", "Scheduling a short call"],
-        "b": "Hi {to},\n\nI would love to set up a short meeting (about 20 minutes) to discuss {topic}.\n\nI am available {date}. If those times do not work for you, please suggest another time. We can meet on Zoom, by phone or in person.\n\nThank you,\n{name}"
-      }
-    },
-    {
-      "id": "toda", "cat": "lakoach", "i": "🙏", "n": "מייל תודה והוקרה",
-      "f": [
-        {"k": "to", "l": "למי מודים", "ex": "צוות המשרד"},
-        {"k": "details", "l": "על מה", "ex": "הליווי הסבלני והמקצועי בתהליך המעבר", "long": 1}
-      ],
-      "he": {
-        "s": ["תודה גדולה", "תודה על {details}", "רציתי להגיד תודה"],
-        "b": "שלום {to},\n\nרציתי לעצור לרגע ולהגיד תודה על {details}.\n\nזה עשה לי הבדל גדול, ואני מעריך/ה מאוד את ההשקעה ואת היחס.\n\nבהערכה רבה,\n{name}"
-      },
-      "en": {
-        "s": ["A big thank you", "Thank you for {details}", "Just wanted to say thanks"],
-        "b": "Hi {to},\n\nI wanted to take a moment to thank you for {details}.\n\nIt made a real difference, and I truly appreciate your effort and care.\n\nWith appreciation,\n{name}"
-      }
-    },
-    {
-      "id": "hitnatzlut", "cat": "lakoach", "i": "🕊", "n": "התנצלות על עיכוב או טעות",
-      "f": [
-        {"k": "to", "l": "שם הנמען", "ex": "שירה"},
-        {"k": "topic", "l": "מה התעכב / מה קרה", "ex": "העיכוב במשלוח ההזמנה"},
-        {"k": "details", "l": "מה עושים עכשיו", "ex": "ההזמנה יצאה היום ותגיע עד יום חמישי", "long": 1}
-      ],
-      "he": {
-        "s": ["התנצלות על {topic}", "עדכון והתנצלות", "{to}, אנחנו מצטערים על {topic}"],
-        "b": "שלום {to},\n\nאני מתנצל/ת על {topic}. זה לא הסטנדרט שאנחנו רוצים לתת, ואני מבין/ה את אי הנוחות.\n\nמה קורה עכשיו: {details}.\n\nאם יש עוד משהו שאפשר לעשות כדי לתקן, אשמח לשמוע.\n\nבברכה,\n{name}"
-      },
-      "en": {
-        "s": ["Our apologies for {topic}", "An update and an apology", "{to}, we are sorry about {topic}"],
-        "b": "Hi {to},\n\nI sincerely apologize for {topic}. This is not the standard we aim for, and I understand the inconvenience it caused.\n\nHere is what happens now: {details}.\n\nIf there is anything else we can do to make this right, please let me know.\n\nBest regards,\n{name}"
-      }
-    },
-    {
-      "id": "hitpatrut", "cat": "avoda", "i": "📝", "n": "מכתב התפטרות",
-      "f": [
-        {"k": "to", "l": "שם המנהל/ת", "ex": "אורית"},
-        {"k": "role", "l": "התפקיד שלכם", "ex": "רכזת שיווק"},
-        {"k": "date", "l": "יום העבודה האחרון", "ex": "31 בדצמבר 2026"}
-      ],
-      "he": {
-        "s": ["הודעה על התפטרות – {name}", "התפטרות מתפקיד {role}", "מכתב התפטרות"],
-        "b": "שלום {to},\n\nבמייל הזה אני מבקש/ת להודיע על התפטרותי מתפקיד {role}. יום העבודה האחרון שלי יהיה {date}, בהתאם לתקופת ההודעה המוקדמת.\n\nאני רוצה להודות לך ולצוות על התקופה שעבדנו יחד, על האמון ועל מה שלמדתי כאן.\n\nעד סוף התקופה אדאג להעברה מסודרת של כל המשימות, ואשמח לעזור בחפיפה למי שיחליף אותי.\n\nבברכה ובהערכה,\n{name}"
-      },
-      "en": {
-        "s": ["Resignation – {name}", "Resignation from the position of {role}", "Letter of resignation"],
-        "b": "Dear {to},\n\nPlease accept this email as formal notice of my resignation from my position as {role}. My last working day will be {date}, in accordance with my notice period.\n\nI want to thank you and the team for the time we worked together, for your trust, and for everything I learned here.\n\nUntil my last day I will make sure all my work is handed over properly, and I will be glad to help train my replacement.\n\nWith appreciation,\n{name}"
-      }
-    },
-    {
-      "id": "korot", "cat": "avoda", "i": "📄", "n": "שליחת קורות חיים למשרה",
-      "f": [
-        {"k": "to", "l": "שם איש/אשת הגיוס (אם ידוע)", "ex": "מיכל", "opt": 1},
-        {"k": "role", "l": "המשרה", "ex": "מנהלת חשבונות"},
-        {"k": "details", "l": "משפט עליכם", "ex": "אני מנהלת חשבונות סוג 3 עם ניסיון של 6 שנים במשרד רואי חשבון", "long": 1},
-        {"k": "phone", "l": "טלפון", "ex": "050-1234567"}
-      ],
-      "he": {
-        "s": ["קורות חיים למשרת {role} – {name}", "מועמדות למשרת {role}", "{role}: {name}, קו\"ח מצורפים"],
-        "b": "שלום[[ {to}]],\n\nראיתי את המודעה למשרת {role} ואשמח להגיש מועמדות.\n\nבקצרה עליי: {details}.\n\nקורות החיים שלי מצורפים למייל. אשמח לשיחה ולהרחיב.\nאפשר להשיג אותי בטלפון {phone}.\n\nתודה על הזמן,\n{name}"
-      },
-      "en": {
-        "s": ["Application for {role} – {name}", "{role} position – CV attached", "Applying for the {role} role"],
-        "b": "Hello[[ {to}]],\n\nI saw your posting for the {role} position and would like to apply.\n\nA little about me: {details}.\n\nMy CV is attached. I would be happy to talk and tell you more.\nYou can reach me at {phone}.\n\nThank you for your time,\n{name}"
-      }
-    },
-    {
-      "id": "toda-reayon", "cat": "avoda", "i": "🤝", "n": "תודה אחרי ראיון עבודה",
-      "f": [
-        {"k": "to", "l": "שם המראיין/ת", "ex": "גיל"},
-        {"k": "role", "l": "המשרה", "ex": "מפתח צד לקוח"},
-        {"k": "details", "l": "משהו שדיברתם עליו", "ex": "התוכנית להנגיש את האפליקציה לכל המשתמשים"}
-      ],
-      "he": {
-        "s": ["תודה על הראיון – {role}", "תודה על הזמן היום", "{name} – המשך לראיון למשרת {role}"],
-        "b": "שלום {to},\n\nתודה על הראיון היום למשרת {role}. נהניתי מהשיחה, ובמיוחד מהחלק על {details}.\n\nהשיחה רק חיזקה את הרצון שלי להצטרף לצוות. אם צריך ממני עוד משהו, אשמח לשלוח.\n\nבברכה,\n{name}"
-      },
-      "en": {
-        "s": ["Thank you for the interview – {role}", "Thank you for your time today", "{name} – following up on the {role} interview"],
-        "b": "Dear {to},\n\nThank you for interviewing me today for the {role} position. I enjoyed our conversation, especially the part about {details}.\n\nIt strengthened my wish to join the team. If you need anything else from me, I would be glad to send it.\n\nBest regards,\n{name}"
-      }
-    },
-    {
-      "id": "chofesh", "cat": "avoda", "i": "🏖", "n": "בקשת חופשה מהמנהל",
-      "f": [
-        {"k": "to", "l": "שם המנהל/ת", "ex": "אורית"},
-        {"k": "date", "l": "התאריכים", "ex": "13–15 בדצמבר"},
-        {"k": "details", "l": "מי מחליף / מה מסודר", "ex": "נועה תטפל בפניות הדחופות, והדוח החודשי יוגש לפני כן"}
-      ],
-      "he": {
-        "s": ["בקשה לחופשה: {date}", "חופשה ב-{date} – לאישורך", "{name}: בקשת ימי חופש"],
-        "b": "שלום {to},\n\nאני מבקש/ת לצאת לחופשה בתאריכים {date}.\n\nדאגתי שהעבודה תמשיך כרגיל: {details}.\n\nאשמח לאישור, ואם התאריכים לא נוחים לצוות, אפשר לדבר ולהתאים.\n\nתודה,\n{name}"
-      },
-      "en": {
-        "s": ["Vacation request: {date}", "Time off on {date} – for your approval", "{name}: leave request"],
-        "b": "Hi {to},\n\nI would like to request time off on {date}.\n\nI have made sure work will continue as usual: {details}.\n\nI would appreciate your approval, and if these dates are difficult for the team, I am happy to adjust.\n\nThank you,\n{name}"
-      }
-    },
-    {
-      "id": "michutz", "cat": "avoda", "i": "✈", "n": "הודעת מחוץ למשרד (מענה אוטומטי)",
-      "f": [
-        {"k": "date", "l": "עד מתי לא זמינים", "ex": "יום ראשון, 22 בנובמבר"},
-        {"k": "sub", "l": "מי מחליף (שם ומייל)", "ex": "נועה כהן, noa@example.com"}
-      ],
-      "he": {
-        "s": ["מחוץ למשרד עד {date}", "מענה אוטומטי: לא זמין/ה עד {date}", "תודה על פנייתך – אחזור ב-{date}"],
-        "b": "שלום,\n\nתודה על פנייתך. אני מחוץ למשרד עד {date}, עם גישה מוגבלת למייל.\n\nאענה על המייל שלך כשאחזור.\nלעניין דחוף אפשר לפנות אל {sub}.\n\nבברכה,\n{name}"
-      },
-      "en": {
-        "s": ["Out of office until {date}", "Auto-reply: away until {date}", "Thank you for your email – back on {date}"],
-        "b": "Hello,\n\nThank you for your email. I am out of the office until {date}, with limited access to email.\n\nI will reply when I return.\nFor urgent matters, please contact {sub}.\n\nBest regards,\n{name}"
-      }
-    },
-    {
-      "id": "lehamlitz", "cat": "avoda", "i": "📜", "n": "מכתב \"לכל המעוניין\" (המלצה / אישור)",
-      "f": [
-        {"k": "person", "l": "על מי המכתב", "ex": "דנה כהן"},
-        {"k": "role", "l": "תפקיד ותקופה", "ex": "עבדה אצלנו כמזכירה רפואית בשנים 2022–2026"},
-        {"k": "details", "l": "מה חשוב לכתוב עליה/עליו", "ex": "אחראית, מסודרת וסבלנית מאוד עם מטופלים", "long": 1},
-        {"k": "phone", "l": "טלפון לבירורים", "ex": "050-1234567"}
-      ],
-      "he": {
-        "s": ["לכל המעוניין – {person}", "מכתב המלצה: {person}", "אישור והמלצה עבור {person}"],
-        "b": "לכל המעוניין,\n\nהנדון: מכתב המלצה עבור {person}\n\n{person} {role}.\n\nבתקופה הזאת הכרתי אדם {details}. אני ממליץ/ה בלב שלם.\n\nלפרטים נוספים אפשר לפנות אליי בטלפון {phone}.\n\nבברכה,\n{name}"
-      },
-      "en": {
-        "s": ["To whom it may concern – {person}", "Letter of recommendation: {person}", "Reference for {person}"],
-        "b": "To whom it may concern,\n\nRe: Letter of recommendation for {person}\n\n{person} {role}.\n\nDuring this time I came to know someone who is {details}. I recommend them wholeheartedly.\n\nFor further details, please contact me at {phone}.\n\nSincerely,\n{name}"
-      }
-    },
-    {
-      "id": "martze-arachat", "cat": "limudim", "i": "🎓", "n": "מייל למרצה: בקשה להארכה",
-      "f": [
-        {"k": "to", "l": "שם המרצה", "ex": "ד\"ר כהן"},
-        {"k": "course", "l": "שם הקורס", "ex": "מבוא לסטטיסטיקה"},
-        {"k": "task", "l": "המטלה", "ex": "עבודה מס' 3"},
-        {"k": "reason", "l": "הסיבה בקצרה", "ex": "שירות מילואים בשבועיים האחרונים"},
-        {"k": "date", "l": "עד מתי מבקשים", "ex": "יום חמישי הבא"},
-        {"k": "id", "l": "מספר סטודנט (אם צריך)", "ex": "301234567", "opt": 1}
-      ],
-      "he": {
-        "s": ["בקשה להארכה – {task}, {course}", "{course}: בקשה להגשה מאוחרת של {task}", "הארכה ל{task} – {name}"],
-        "b": "שלום {to},\n\nאני סטודנט/ית בקורס {course}[[ (מספר סטודנט {id})]].\n\nבגלל {reason}, לא אצליח להגיש את {task} במועד. אבקש לאשר לי הארכה עד {date}.\n\nאם צריך אישור או מסמך, אשמח לשלוח.\n\nתודה רבה על ההתחשבות,\n{name}"
-      },
-      "en": {
-        "s": ["Extension request – {task}, {course}", "{course}: request for a late submission of {task}", "{task} extension – {name}"],
-        "b": "Dear {to},\n\nI am a student in your {course} course[[ (student ID {id})]].\n\nDue to {reason}, I will not be able to submit {task} on time. I would like to ask for an extension until {date}.\n\nIf any documentation is needed, I will be glad to send it.\n\nThank you for your consideration,\n{name}"
-      }
-    },
-    {
-      "id": "martze-sheela", "cat": "limudim", "i": "❓", "n": "מייל למרצה: שאלה או בקשה לפגישה",
-      "f": [
-        {"k": "to", "l": "שם המרצה", "ex": "פרופ' לוי"},
-        {"k": "course", "l": "שם הקורס", "ex": "תולדות האמנות"},
-        {"k": "details", "l": "השאלה", "ex": "האם אפשר לכתוב את העבודה הסופית על אמן ישראלי", "long": 1}
-      ],
-      "he": {
-        "s": ["שאלה בקורס {course}", "{course}: שאלה לגבי העבודה", "בקשה לשעת קבלה – {course}"],
-        "b": "שלום {to},\n\nאני סטודנט/ית בקורס {course}.\n\nרציתי לשאול {details}?\n\nאם קל יותר לענות על זה בשעת קבלה, אשמח לדעת מתי אפשר להגיע.\n\nתודה רבה,\n{name}"
-      },
-      "en": {
-        "s": ["Question about {course}", "{course}: a question about the assignment", "Office hours request – {course}"],
-        "b": "Dear {to},\n\nI am a student in your {course} course.\n\nI wanted to ask: {details}?\n\nIf it is easier to discuss this during office hours, please let me know when I can come by.\n\nThank you very much,\n{name}"
-      }
-    },
-    {
-      "id": "horim", "cat": "horim", "i": "🏫", "n": "הודעה להורים (מורה / גננת / מדריך)",
-      "f": [
-        {"k": "group", "l": "הכיתה / הגן", "ex": "כיתה ג'2"},
-        {"k": "topic", "l": "הנושא", "ex": "טיול שנתי ביום שלישי"},
-        {"k": "details", "l": "מה חשוב שידעו", "ex": "יוצאים ב-8:00 מבית הספר וחוזרים ב-14:00. להביא כובע, 2 בקבוקי מים וארוחת עשר", "long": 1},
-        {"k": "date", "l": "עד מתי לאשר / להחזיר", "ex": "יום ראשון"}
-      ],
-      "he": {
-        "s": ["{group}: {topic}", "הורים יקרים – {topic}", "חשוב לקרוא: {topic}"],
-        "b": "הורים יקרים של {group}, שלום רב,\n\nרציתי לעדכן לגבי {topic}.\n\n{details}.\n\nנא לאשר שקראתם עד {date} (מספיק להשיב \"קראתי\").\n\nלכל שאלה אני כאן.\nתודה ושבוע טוב,\n{name}"
-      },
-      "en": {
-        "s": ["{group}: {topic}", "Dear parents – {topic}", "Please read: {topic}"],
-        "b": "Dear parents of {group},\n\nI would like to update you about {topic}.\n\n{details}.\n\nPlease confirm that you have read this by {date} (a short \"read\" reply is enough).\n\nIf you have any questions, I am here.\nThank you, and have a good week,\n{name}"
-      }
-    },
-    {
-      "id": "talona", "cat": "rishmi", "i": "⚠", "n": "תלונה לחברה או לשירות לקוחות",
-      "f": [
-        {"k": "to", "l": "שם החברה", "ex": "חברת הסלולר"},
-        {"k": "topic", "l": "הבעיה בקצרה", "ex": "חיוב כפול בחשבון אוקטובר"},
-        {"k": "details", "l": "מה קרה", "ex": "חויבתי פעמיים על אותו חודש, 89 ₪ כל פעם. פניתי בטלפון ב-3 בנובמבר והבטיחו לחזור אליי, ולא חזרו", "long": 1},
-        {"k": "ask", "l": "מה מבקשים", "ex": "להחזיר את החיוב הכפול לכרטיס האשראי"},
-        {"k": "num", "l": "מספר לקוח / פנייה", "ex": "48213"}
-      ],
-      "he": {
-        "s": ["תלונה: {topic} (לקוח {num})", "בקשה לטיפול דחוף – {topic}", "פנייה חוזרת: {topic}"],
-        "b": "לכבוד {to},\n\nהנדון: {topic} – מספר לקוח {num}\n\nאני פונה אליכם בכתב לאחר שהבעיה לא נפתרה.\n\n{details}.\n\nאבקש {ask}, ולקבל אישור בכתב על הטיפול תוך 14 ימים.\n\nאני שומר/ת את התכתובת הזאת, ואם הבעיה לא תיפתר אשקול לפנות לגורמים המוסמכים.\n\nבברכה,\n{name}"
-      },
-      "en": {
-        "s": ["Complaint: {topic} (account {num})", "Request for urgent handling – {topic}", "Second request: {topic}"],
-        "b": "To {to},\n\nRe: {topic} – account number {num}\n\nI am writing after this issue was not resolved.\n\n{details}.\n\nI ask that you {ask}, and that you confirm the resolution in writing within 14 days.\n\nI am keeping a record of this correspondence, and if the issue is not resolved I will consider contacting the relevant authorities.\n\nSincerely,\n{name}"
-      }
-    },
-    {
-      "id": "bitul", "cat": "rishmi", "i": "✂", "n": "ביטול מנוי או שירות",
-      "f": [
-        {"k": "to", "l": "שם החברה", "ex": "חדר הכושר"},
-        {"k": "service", "l": "מה מבטלים", "ex": "המנוי החודשי"},
-        {"k": "num", "l": "מספר לקוח / ת\"ז של בעל המנוי", "ex": "48213"},
-        {"k": "date", "l": "ממתי", "ex": "מיידית"}
-      ],
-      "he": {
-        "s": ["בקשה לביטול {service} – לקוח {num}", "הודעת ביטול: {service}", "ביטול {service} {date}"],
-        "b": "לכבוד {to},\n\nהנדון: ביטול {service} – מספר לקוח {num}\n\nאני מבקש/ת לבטל את {service} {date}, ולהפסיק את כל החיובים מעתה.\n\nאבקש אישור בכתב על הביטול, כולל תאריך החיוב האחרון.\n\nתודה,\n{name}"
-      },
-      "en": {
-        "s": ["Cancellation request: {service} – account {num}", "Notice of cancellation: {service}", "Please cancel {service}"],
-        "b": "To {to},\n\nRe: Cancellation of {service} – account number {num}\n\nPlease cancel my {service}, effective {date}, and stop all future charges.\n\nI would appreciate a written confirmation of the cancellation, including the date of the final charge.\n\nThank you,\n{name}"
-      }
-    },
-    {
-      "id": "hechzer", "cat": "rishmi", "i": "💳", "n": "בקשה להחזר כספי",
-      "f": [
-        {"k": "to", "l": "שם החנות / החברה", "ex": "חנות הרהיטים"},
-        {"k": "service", "l": "מה קניתם", "ex": "כיסא משרדי"},
-        {"k": "date", "l": "תאריך הקנייה", "ex": "2 בנובמבר"},
-        {"k": "num", "l": "מספר הזמנה", "ex": "77120"},
-        {"k": "reason", "l": "הסיבה", "ex": "הכיסא הגיע עם משענת שבורה"}
-      ],
-      "he": {
-        "s": ["בקשה להחזר כספי – הזמנה {num}", "החזר עבור {service}", "הזמנה {num}: {reason}"],
-        "b": "לכבוד {to},\n\nהנדון: בקשה להחזר כספי – הזמנה מס' {num}\n\nב-{date} רכשתי אצלכם {service}. לצערי, {reason}.\n\nאבקש לקבל החזר כספי מלא לאמצעי התשלום שבו שילמתי. אשמח לתאם את החזרת המוצר.\n\nמצורפת הקבלה.\n\nבברכה,\n{name}"
-      },
-      "en": {
-        "s": ["Refund request – order {num}", "Refund for {service}", "Order {num}: {reason}"],
-        "b": "To {to},\n\nRe: Refund request – order #{num}\n\nOn {date} I purchased a {service} from you. Unfortunately, {reason}.\n\nI would like to request a full refund to my original payment method, and I am happy to arrange the return of the item.\n\nThe receipt is attached.\n\nBest regards,\n{name}"
-      }
-    },
-    {
-      "id": "hatraa", "cat": "rishmi", "i": "⚖", "n": "מכתב התראה לפני תביעה (נוסח כללי)",
-      "note": "נוסח כללי בלבד, לא ייעוץ משפטי. בעניין משמעותי כדאי להתייעץ עם עורך דין.",
-      "f": [
-        {"k": "to", "l": "למי (שם מלא / חברה)", "ex": "שיפוצים בע\"מ"},
-        {"k": "details", "l": "מה קרה, בקצרה ובתאריכים", "ex": "ב-1 באוגוסט שילמתי 6,000 ₪ מקדמה לשיפוץ האמבטיה. העבודה לא התחילה עד היום, למרות שלוש פניות בטלפון", "long": 1},
-        {"k": "ask", "l": "מה דורשים", "ex": "להחזיר את המקדמה במלואה"},
-        {"k": "days", "l": "תוך כמה ימים", "ex": "14"}
-      ],
-      "he": {
-        "s": ["מכתב התראה לפני נקיטת הליכים משפטיים", "התראה אחרונה: {ask}", "דרישה לפני תביעה"],
-        "b": "לכבוד {to},\n\nהנדון: מכתב התראה לפני נקיטת הליכים משפטיים\n\n1. {details}.\n\n2. לאור האמור, אני דורש/ת {ask}, וזאת תוך {days} ימים מקבלת מכתב זה.\n\n3. אם הדרישה לא תתקיים במועד, אשקול להגיש תביעה (למשל בבית המשפט לתביעות קטנות) ללא הודעה נוספת, ואדרוש גם את ההוצאות.\n\n4. אין באמור כדי לגרוע מכל זכות או טענה העומדות לי.\n\nבכבוד רב,\n{name}"
-      },
-      "en": {
-        "s": ["Letter before legal action", "Final notice: {ask}", "Formal demand before legal proceedings"],
-        "b": "To {to},\n\nRe: Letter before legal action\n\n1. {details}.\n\n2. Accordingly, I demand that you {ask} within {days} days of receiving this letter.\n\n3. If this demand is not met in time, I will consider filing a claim against you (for example in small claims court) without further notice, and will also seek my costs.\n\n4. Nothing in this letter waives any of my rights or claims.\n\nSincerely,\n{name}"
-      }
-    },
-    {
-      "id": "hazmana", "cat": "ishi", "i": "💌", "n": "הזמנה לחתונה או לאירוע במייל",
-      "f": [
-        {"k": "event", "l": "האירוע", "ex": "החתונה של נועה ואיתי"},
-        {"k": "date", "l": "מתי", "ex": "יום רביעי, 9 בדצמבר, קבלת פנים ב-19:00"},
-        {"k": "place", "l": "איפה", "ex": "אולמי הגן, מודיעין"},
-        {"k": "rsvp", "l": "איך מאשרים הגעה", "ex": "בהודעה ל-050-1234567 עד 1 בדצמבר"}
-      ],
-      "he": {
-        "s": ["הזמנה: {event}", "נשמח לראותכם ב{event}", "שמרו את התאריך – {event}"],
-        "b": "משפחה וחברים יקרים,\n\nבשמחה ובהתרגשות אנחנו מזמינים אתכם ל{event}.\n\n📅 {date}\n📍 {place}\n\nנשמח מאוד לראותכם איתנו. אישור הגעה: {rsvp}.\n\nבאהבה,\n{name}"
-      },
-      "en": {
-        "s": ["You are invited: {event}", "We would love to see you at {event}", "Save the date – {event}"],
-        "b": "Dear family and friends,\n\nWith great joy we invite you to {event}.\n\n📅 {date}\n📍 {place}\n\nWe would be so happy to celebrate with you. Please RSVP {rsvp}.\n\nWith love,\n{name}"
-      }
-    },
-    {
-      "id": "hekerut", "cat": "ishi", "i": "👋", "n": "היכרות: לחבר בין שני אנשים",
-      "f": [
-        {"k": "to", "l": "האדם הראשון", "ex": "רון"},
-        {"k": "person", "l": "האדם השני", "ex": "שרית"},
-        {"k": "details", "l": "למה כדאי שיכירו", "ex": "שרית מנהלת חנות פרחים ומחפשת צלם למוצרים, ורון צלם מוצר מעולה", "long": 1}
-      ],
-      "he": {
-        "s": ["היכרות: {to} ו{person}", "{to}, תכיר את {person}", "חיבור שכדאי לכם"],
-        "b": "שלום לשניכם,\n\nרציתי להכיר ביניכם: {details}.\n\nאני משאיר/ה לכם להמשיך מכאן. {person}, אני מעביר/ה אותך להעתק כדי שיהיה לכם את המייל אחד של השני.\n\nבהצלחה!\n{name}"
-      },
-      "en": {
-        "s": ["Introduction: {to} and {person}", "{to}, meet {person}", "An introduction worth making"],
-        "b": "Hi both,\n\nI wanted to introduce you to each other: {details}.\n\nI will let you take it from here. {person}, I am copying you so you both have each other's email.\n\nGood luck!\n{name}"
-      }
+     "k": "num",
+     "l": "מספר לקוח / תיק (אם יש)",
+     "ex": "48213",
+     "opt": 1
     }
+   ],
+   "he": {
+    "s": [
+     "פנייה בנושא {topic}",
+     "בקשה: {topic}[[ (מס' {num})]]",
+     "{topic} – אשמח לטיפולכם"
+    ],
+    "b": "לכבוד {to},\n\nשלום רב,\n\nאני פונה אליכם בנושא {topic}.\n\nאבקש {details}.\n\n[[לנוחיותכם, מספר הלקוח שלי: {num}.\n\n]]אשמח לאישור שהפנייה התקבלה ולעדכון כשהטיפול יסתיים.\n\nתודה מראש,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Request regarding {topic}",
+     "{topic}[[ (ref. {num})]]",
+     "Inquiry: {topic}"
+    ],
+    "b": "Dear {to},\n\nI am writing regarding {topic}.\n\nI would like to ask you to {details}.\n\n[[For your reference, my customer number is {num}.\n\n]]I would appreciate a confirmation that this request has been received, and an update once it has been handled.\n\nThank you in advance,\n{name}"
+   }
+  },
+  {
+   "id": "lakoach-hatzaa",
+   "cat": "lakoach",
+   "i": "💼",
+   "n": "מייל ללקוח: הצעת מחיר",
+   "f": [
+    {
+     "k": "to",
+     "l": "שם הלקוח",
+     "ex": "משה"
+    },
+    {
+     "k": "service",
+     "l": "השירות / המוצר",
+     "ex": "עיצוב לוגו ושלט לחנות"
+    },
+    {
+     "k": "price",
+     "l": "המחיר",
+     "ex": "2,400 ₪ כולל מע\"מ"
+    },
+    {
+     "k": "date",
+     "l": "תוקף ההצעה / מועד מסירה",
+     "ex": "תוך 10 ימי עבודה מהאישור"
+    },
+    {
+     "k": "biz",
+     "l": "שם העסק",
+     "ex": "סטודיו לוי"
+    }
+   ],
+   "he": {
+    "s": [
+     "הצעת מחיר: {service}",
+     "הצעת מחיר מ{biz} – {service}",
+     "{to}, הנה ההצעה שדיברנו עליה"
+    ],
+    "b": "שלום {to},\n\nתודה על הפנייה ועל השיחה הנעימה.\n\nכפי שסיכמנו, מצורפת הצעת מחיר עבור {service}:\n• המחיר: {price}\n• זמן ביצוע: {date}\n\nאם יש שאלות או משהו שתרצה לשנות, אשמח לדבר ולהתאים.\nלאישור מספיק להשיב למייל הזה.\n\nבברכה,\n{name}\n{biz}"
+   },
+   "en": {
+    "s": [
+     "Price quote: {service}",
+     "Your quote from {biz}",
+     "{to}, here is the quote we discussed"
+    ],
+    "b": "Hi {to},\n\nThank you for reaching out, and for the pleasant conversation.\n\nAs discussed, here is our quote for {service}:\n• Price: {price}\n• Timeline: {date}\n\nIf you have any questions or would like to adjust anything, I would be happy to talk.\nTo approve, simply reply to this email.\n\nBest regards,\n{name}\n{biz}"
+   }
+  },
+  {
+   "id": "lakoach-maakav",
+   "cat": "lakoach",
+   "i": "🔁",
+   "n": "תזכורת עדינה: לא קיבלתי תשובה",
+   "f": [
+    {
+     "k": "to",
+     "l": "שם הנמען",
+     "ex": "רונית"
+    },
+    {
+     "k": "topic",
+     "l": "על מה כתבתם",
+     "ex": "הצעת המחיר לשיפוץ המטבח"
+    },
+    {
+     "k": "date",
+     "l": "מתי שלחתם",
+     "ex": "יום ראשון שעבר"
+    }
+   ],
+   "he": {
+    "s": [
+     "תזכורת: {topic}",
+     "רציתי לוודא שהמייל הקודם הגיע",
+     "המשך לגבי {topic}"
+    ],
+    "b": "שלום {to},\n\nרציתי לוודא שהמייל ששלחתי {date} בנושא {topic} הגיע.\n\nאני יודע/ת שיש הרבה על הראש, ולכן רק מזכיר/ה בעדינות. אם נוח לך, אפשר גם לדבר בטלפון כמה דקות.\n\nתודה רבה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Following up: {topic}",
+     "Just checking in on my previous email",
+     "Quick follow-up regarding {topic}"
+    ],
+    "b": "Hi {to},\n\nI wanted to follow up on the email I sent {date} regarding {topic}, in case it got buried.\n\nI know things get busy, so this is just a gentle reminder. If it is easier, I am happy to have a quick call.\n\nThank you,\n{name}"
+   }
+  },
+  {
+   "id": "lakoach-tashlum",
+   "cat": "lakoach",
+   "i": "🧾",
+   "n": "תזכורת לתשלום",
+   "f": [
+    {
+     "k": "to",
+     "l": "שם הלקוח",
+     "ex": "אבי"
+    },
+    {
+     "k": "inv",
+     "l": "מספר חשבונית",
+     "ex": "1057"
+    },
+    {
+     "k": "price",
+     "l": "הסכום",
+     "ex": "1,800 ₪"
+    },
+    {
+     "k": "date",
+     "l": "מועד התשלום שעבר",
+     "ex": "1 בנובמבר"
+    },
+    {
+     "k": "biz",
+     "l": "שם העסק",
+     "ex": "סטודיו לוי"
+    }
+   ],
+   "he": {
+    "s": [
+     "תזכורת: חשבונית {inv} לתשלום",
+     "חשבונית מס' {inv} – תזכורת ידידותית",
+     "תשלום פתוח: {price}"
+    ],
+    "b": "שלום {to},\n\nרציתי להזכיר שחשבונית מס' {inv} על סך {price} הייתה לתשלום ב-{date}, ולפי הרישום שלנו עדיין לא התקבלה.\n\nאם כבר שילמתם, תודה רבה ואפשר להתעלם מהמייל (ואשמח לאסמכתא כדי לעדכן אצלנו).\nאם יש שאלה או צורך בפריסה, אני כאן.\n\nבברכה,\n{name}\n{biz}"
+   },
+   "en": {
+    "s": [
+     "Payment reminder: invoice {inv}",
+     "Friendly reminder – invoice #{inv}",
+     "Outstanding payment: {price}"
+    ],
+    "b": "Hi {to},\n\nThis is a friendly reminder that invoice #{inv} for {price} was due on {date}, and according to our records it has not yet been paid.\n\nIf you have already paid, thank you, and please ignore this email (a payment confirmation would help us update our records).\nIf you have any questions or need a payment plan, I am here to help.\n\nBest regards,\n{name}\n{biz}"
+   }
+  },
+  {
+   "id": "lakoach-hodaa",
+   "cat": "lakoach",
+   "i": "📣",
+   "n": "הודעה ללקוחות (שינוי, עדכון, שעות פעילות)",
+   "f": [
+    {
+     "k": "biz",
+     "l": "שם העסק",
+     "ex": "סטודיו לוי"
+    },
+    {
+     "k": "topic",
+     "l": "מה משתנה",
+     "ex": "שעות הפעילות בחנוכה"
+    },
+    {
+     "k": "details",
+     "l": "הפרטים",
+     "ex": "בימים א'–ה' נהיה פתוחים 9:00–14:00, וביום שישי סגור",
+     "long": 1
+    },
+    {
+     "k": "date",
+     "l": "מתי זה מתחיל",
+     "ex": "יום ראשון, 6 בדצמבר"
+    }
+   ],
+   "he": {
+    "s": [
+     "עדכון חשוב: {topic}",
+     "לקוחות יקרים – {topic}",
+     "{biz}: שימו לב ל{topic}"
+    ],
+    "b": "לקוחות יקרים,\n\nרצינו לעדכן אתכם מראש: {topic}.\n\n{details}.\n\nהשינוי בתוקף מ{date}.\n\nלכל שאלה אנחנו זמינים בטלפון ובמייל. תודה שאתם איתנו!\n\nבברכה,\n{name}\n{biz}"
+   },
+   "en": {
+    "s": [
+     "Important update: {topic}",
+     "Dear customers – {topic}",
+     "{biz}: please note {topic}"
+    ],
+    "b": "Dear customers,\n\nWe wanted to let you know in advance about {topic}.\n\n{details}.\n\nThis change takes effect on {date}.\n\nIf you have any questions, we are available by phone and email. Thank you for being with us!\n\nBest regards,\n{name}\n{biz}"
+   }
+  },
+  {
+   "id": "pgisha",
+   "cat": "lakoach",
+   "i": "📅",
+   "n": "בקשה לפגישה או שיחה",
+   "f": [
+    {
+     "k": "to",
+     "l": "שם הנמען",
+     "ex": "עדי"
+    },
+    {
+     "k": "topic",
+     "l": "על מה הפגישה",
+     "ex": "שיתוף פעולה בפרויקט החדש"
+    },
+    {
+     "k": "date",
+     "l": "מועדים אפשריים",
+     "ex": "יום שני או שלישי בין 10:00 ל-13:00"
+    }
+   ],
+   "he": {
+    "s": [
+     "תיאום פגישה: {topic}",
+     "אפשר 20 דקות לשיחה על {topic}?",
+     "הצעה לפגישה קצרה"
+    ],
+    "b": "שלום {to},\n\nאשמח לקבוע פגישה קצרה (כ-20 דקות) כדי לדבר על {topic}.\n\nנוח לי {date}, ואם המועדים האלה לא מתאימים, אשמח לשמוע איזה זמן נוח לך. אפשר בזום, בטלפון או פנים אל פנים.\n\nתודה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Meeting request: {topic}",
+     "Do you have 20 minutes to discuss {topic}?",
+     "Scheduling a short call"
+    ],
+    "b": "Hi {to},\n\nI would love to set up a short meeting (about 20 minutes) to discuss {topic}.\n\nI am available {date}. If those times do not work for you, please suggest another time. We can meet on Zoom, by phone or in person.\n\nThank you,\n{name}"
+   }
+  },
+  {
+   "id": "toda",
+   "cat": "lakoach",
+   "i": "🙏",
+   "n": "מייל תודה והוקרה",
+   "f": [
+    {
+     "k": "to",
+     "l": "למי מודים",
+     "ex": "צוות המשרד"
+    },
+    {
+     "k": "details",
+     "l": "על מה",
+     "ex": "הליווי הסבלני והמקצועי בתהליך המעבר",
+     "long": 1
+    }
+   ],
+   "he": {
+    "s": [
+     "תודה גדולה",
+     "תודה על {details}",
+     "רציתי להגיד תודה"
+    ],
+    "b": "שלום {to},\n\nרציתי לעצור לרגע ולהגיד תודה על {details}.\n\nזה עשה לי הבדל גדול, ואני מעריך/ה מאוד את ההשקעה ואת היחס.\n\nבהערכה רבה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "A big thank you",
+     "Thank you for {details}",
+     "Just wanted to say thanks"
+    ],
+    "b": "Hi {to},\n\nI wanted to take a moment to thank you for {details}.\n\nIt made a real difference, and I truly appreciate your effort and care.\n\nWith appreciation,\n{name}"
+   }
+  },
+  {
+   "id": "hitnatzlut",
+   "cat": "lakoach",
+   "i": "🕊",
+   "n": "התנצלות על עיכוב או טעות",
+   "f": [
+    {
+     "k": "to",
+     "l": "שם הנמען",
+     "ex": "שירה"
+    },
+    {
+     "k": "topic",
+     "l": "מה התעכב / מה קרה",
+     "ex": "העיכוב במשלוח ההזמנה"
+    },
+    {
+     "k": "details",
+     "l": "מה עושים עכשיו",
+     "ex": "ההזמנה יצאה היום ותגיע עד יום חמישי",
+     "long": 1
+    }
+   ],
+   "he": {
+    "s": [
+     "התנצלות על {topic}",
+     "עדכון והתנצלות",
+     "{to}, אנחנו מצטערים על {topic}"
+    ],
+    "b": "שלום {to},\n\nאני מתנצל/ת על {topic}. זה לא הסטנדרט שאנחנו רוצים לתת, ואני מבין/ה את אי הנוחות.\n\nמה קורה עכשיו: {details}.\n\nאם יש עוד משהו שאפשר לעשות כדי לתקן, אשמח לשמוע.\n\nבברכה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Our apologies for {topic}",
+     "An update and an apology",
+     "{to}, we are sorry about {topic}"
+    ],
+    "b": "Hi {to},\n\nI sincerely apologize for {topic}. This is not the standard we aim for, and I understand the inconvenience it caused.\n\nHere is what happens now: {details}.\n\nIf there is anything else we can do to make this right, please let me know.\n\nBest regards,\n{name}"
+   }
+  },
+  {
+   "id": "hitpatrut",
+   "cat": "avoda",
+   "i": "📝",
+   "n": "מכתב התפטרות",
+   "f": [
+    {
+     "k": "to",
+     "l": "שם המנהל/ת",
+     "ex": "אורית"
+    },
+    {
+     "k": "role",
+     "l": "התפקיד שלכם",
+     "ex": "רכזת שיווק"
+    },
+    {
+     "k": "date",
+     "l": "יום העבודה האחרון",
+     "ex": "31 בדצמבר 2026"
+    }
+   ],
+   "he": {
+    "s": [
+     "הודעה על התפטרות – {name}",
+     "התפטרות מתפקיד {role}",
+     "מכתב התפטרות"
+    ],
+    "b": "שלום {to},\n\nבמייל הזה אני מבקש/ת להודיע על התפטרותי מתפקיד {role}. יום העבודה האחרון שלי יהיה {date}, בהתאם לתקופת ההודעה המוקדמת.\n\nאני רוצה להודות לך ולצוות על התקופה שעבדנו יחד, על האמון ועל מה שלמדתי כאן.\n\nעד סוף התקופה אדאג להעברה מסודרת של כל המשימות, ואשמח לעזור בחפיפה למי שיחליף אותי.\n\nבברכה ובהערכה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Resignation – {name}",
+     "Resignation from the position of {role}",
+     "Letter of resignation"
+    ],
+    "b": "Dear {to},\n\nPlease accept this email as formal notice of my resignation from my position as {role}. My last working day will be {date}, in accordance with my notice period.\n\nI want to thank you and the team for the time we worked together, for your trust, and for everything I learned here.\n\nUntil my last day I will make sure all my work is handed over properly, and I will be glad to help train my replacement.\n\nWith appreciation,\n{name}"
+   }
+  },
+  {
+   "id": "hitpatrut-katzar",
+   "cat": "avoda",
+   "i": "✂",
+   "n": "מכתב התפטרות קצר",
+   "f": [
+    {
+     "k": "to",
+     "l": "שם המנהל/ת",
+     "ex": "אורית"
+    },
+    {
+     "k": "role",
+     "l": "התפקיד שלכם",
+     "ex": "רכזת שיווק"
+    },
+    {
+     "k": "date",
+     "l": "יום העבודה האחרון",
+     "ex": "31 בדצמבר 2026"
+    }
+   ],
+   "he": {
+    "s": [
+     "הודעת התפטרות – {name}",
+     "התפטרות מתפקיד {role}",
+     "מכתב התפטרות"
+    ],
+    "b": "שלום {to},\n\nהריני להודיע על התפטרותי מתפקיד {role}. יום העבודה האחרון שלי יהיה {date}.\n\nתודה על התקופה המשותפת. אדאג להעברה מסודרת של העבודה.\n\nבברכה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Resignation – {name}",
+     "Resignation from {role}",
+     "Letter of resignation"
+    ],
+    "b": "Dear {to},\n\nPlease accept this as notice of my resignation from my position as {role}. My last working day will be {date}.\n\nThank you for the time we worked together. I will make sure my work is handed over properly.\n\nBest regards,\n{name}"
+   }
+  },
+  {
+   "id": "hitpatrut-harat",
+   "cat": "avoda",
+   "i": "⚖",
+   "n": "התפטרות עקב הרעת תנאים (בדין מפוטר)",
+   "note": "לפני התפטרות כזאת צריך להתריע בפני המעסיק בכתב ולתת לו זמן סביר לתקן. הזכאות לפיצויים תלויה בתנאים שבחוק. נוסח כללי, לא ייעוץ משפטי: בודקים בכל-זכות (kolzchut.org.il) או עם עורך דין.",
+   "f": [
+    {
+     "k": "to",
+     "l": "שם המעסיק / המנהל",
+     "ex": "אורית"
+    },
+    {
+     "k": "role",
+     "l": "התפקיד שלכם",
+     "ex": "מחסנאי"
+    },
+    {
+     "k": "details",
+     "l": "מה השתנה לרעה",
+     "ex": "המשכורת שלי מאוחרת כבר שלושה חודשים ברציפות, והשעות קוצצו בלי הסכמתי",
+     "long": 1
+    },
+    {
+     "k": "warn",
+     "l": "מתי התרעתם בכתב",
+     "ex": "1 באוקטובר 2026"
+    },
+    {
+     "k": "date",
+     "l": "יום העבודה האחרון",
+     "ex": "30 בנובמבר 2026"
+    }
+   ],
+   "he": {
+    "s": [
+     "הודעה על התפטרות בדין מפוטר – {name}",
+     "התפטרות עקב הרעה מוחשית בתנאי העבודה",
+     "מכתב התפטרות – הרעת תנאים"
+    ],
+    "b": "לכבוד {to},\n\nהנדון: הודעה על התפטרות בדין מפוטר\n\n1. אני עובד/ת אצלכם בתפקיד {role}.\n\n2. {details}.\n\n3. במכתבי מיום {warn} התרעתי על כך וביקשתי לתקן, אך המצב לא תוקן.\n\n4. בנסיבות האלה לא ניתן לדרוש ממני להמשיך בעבודה, ולכן אני מתפטר/ת. לפי סעיף 11(א) לחוק פיצויי פיטורים, התפטרות עקב הרעה מוחשית בתנאי העבודה היא בדין פיטורים, ואבקש לקבל את פיצויי הפיטורים ואת כל הזכויות המגיעות לי.\n\n5. יום העבודה האחרון שלי יהיה {date}.\n\nבכבוד רב,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Resignation due to a substantial worsening of working conditions – {name}",
+     "Notice of constructive dismissal",
+     "Resignation – worsened conditions"
+    ],
+    "b": "To {to},\n\nRe: Notice of resignation (constructive dismissal)\n\n1. I work for you as {role}.\n\n2. {details}.\n\n3. In my letter of {warn} I raised this and asked for it to be corrected, but the situation has not changed.\n\n4. Under these circumstances I cannot be expected to continue working, and I am therefore resigning. Under section 11(a) of the Severance Pay Law, a resignation due to a substantial worsening of working conditions is treated as a dismissal, and I ask to receive severance pay and all my other entitlements.\n\n5. My last working day will be {date}.\n\nSincerely,\n{name}"
+   }
+  },
+  {
+   "id": "hitpatrut-yeled",
+   "cat": "avoda",
+   "i": "👶",
+   "n": "התפטרות לטובת גידול הילד",
+   "note": "התפטרות כזאת צריכה להיות בתוך 9 חודשים מהלידה (או מקבלת ילד לאימוץ). הזכאות לפיצויים תלויה בתנאים שבחוק. נוסח כללי, לא ייעוץ משפטי: בודקים בכל-זכות (kolzchut.org.il) או עם עורך דין.",
+   "f": [
+    {
+     "k": "to",
+     "l": "שם המנהל/ת",
+     "ex": "אורית"
+    },
+    {
+     "k": "role",
+     "l": "התפקיד שלכם",
+     "ex": "גננת"
+    },
+    {
+     "k": "birth",
+     "l": "תאריך הלידה",
+     "ex": "3 ביוני 2026"
+    },
+    {
+     "k": "date",
+     "l": "יום העבודה האחרון",
+     "ex": "28 בפברואר 2027"
+    }
+   ],
+   "he": {
+    "s": [
+     "הודעה על התפטרות לטובת גידול הילד – {name}",
+     "התפטרות לפי סעיף 7 לחוק פיצויי פיטורים",
+     "מכתב התפטרות – גידול הילד"
+    ],
+    "b": "לכבוד {to},\n\nהנדון: התפטרות לטובת טיפול בילד\n\nבעקבות הלידה ב-{birth}, החלטתי להתפטר מתפקיד {role} כדי לטפל בילד.\n\nההתפטרות היא בתוך תשעה חודשים מהלידה, ולכן לפי סעיף 7 לחוק פיצויי פיטורים אבקש לקבל פיצויי פיטורים ואת כל הזכויות המגיעות לי.\n\nיום העבודה האחרון שלי יהיה {date}.\n\nתודה על התקופה המשותפת ועל ההתחשבות.\n\nבברכה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Resignation to care for my child – {name}",
+     "Resignation under section 7 of the Severance Pay Law",
+     "Resignation – childcare"
+    ],
+    "b": "To {to},\n\nRe: Resignation to care for my child\n\nFollowing the birth on {birth}, I have decided to resign from my position as {role} in order to care for my child.\n\nThis resignation is within nine months of the birth, and therefore, under section 7 of the Severance Pay Law, I ask to receive severance pay and all my other entitlements.\n\nMy last working day will be {date}.\n\nThank you for the time we worked together and for your understanding.\n\nBest regards,\n{name}"
+   }
+  },
+  {
+   "id": "hitpatrut-briut",
+   "cat": "avoda",
+   "i": "🩺",
+   "n": "התפטרות עקב מצב בריאותי",
+   "note": "מצרפים אישור רפואי. הזכאות לפיצויים תלויה בתנאים שבחוק. נוסח כללי, לא ייעוץ משפטי: בודקים בכל-זכות (kolzchut.org.il) או עם עורך דין.",
+   "f": [
+    {
+     "k": "to",
+     "l": "שם המנהל/ת",
+     "ex": "אורית"
+    },
+    {
+     "k": "role",
+     "l": "התפקיד שלכם",
+     "ex": "נהג חלוקה"
+    },
+    {
+     "k": "who",
+     "l": "מצב בריאותי של מי",
+     "ex": "שלי"
+    },
+    {
+     "k": "date",
+     "l": "יום העבודה האחרון",
+     "ex": "31 בדצמבר 2026"
+    }
+   ],
+   "he": {
+    "s": [
+     "הודעה על התפטרות עקב מצב בריאותי – {name}",
+     "התפטרות מסיבות רפואיות",
+     "מכתב התפטרות – מצב בריאותי"
+    ],
+    "b": "לכבוד {to},\n\nהנדון: התפטרות עקב מצב בריאותי\n\nלצערי, בגלל מצב בריאותי ({who}), אין לי אפשרות להמשיך לעבוד בתפקיד {role}. מצורף אישור רפואי.\n\nלפי סעיף 6 לחוק פיצויי פיטורים, אבקש לראות בהתפטרות זו התפטרות בדין פיטורים ולשלם לי פיצויי פיטורים ואת כל הזכויות המגיעות לי.\n\nיום העבודה האחרון שלי יהיה {date}.\n\nתודה על התקופה המשותפת ועל ההבנה.\n\nבברכה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Resignation for health reasons – {name}",
+     "Resignation due to medical reasons",
+     "Resignation – health condition"
+    ],
+    "b": "To {to},\n\nRe: Resignation for health reasons\n\nUnfortunately, due to a health condition ({who}), I am unable to continue working as {role}. A medical certificate is attached.\n\nUnder section 6 of the Severance Pay Law, I ask that this resignation be treated as a dismissal and that I receive severance pay and all my other entitlements.\n\nMy last working day will be {date}.\n\nThank you for the time we worked together and for your understanding.\n\nBest regards,\n{name}"
+   }
+  },
+  {
+   "id": "hitpatrut-dira",
+   "cat": "avoda",
+   "i": "🚚",
+   "n": "התפטרות עקב מעבר דירה",
+   "note": "במעבר דירה הזכאות לפיצויים קיימת רק במקרים מסוימים (למשל מעבר בעקבות נישואין). הזכאות לפיצויים תלויה בתנאים שבחוק. נוסח כללי, לא ייעוץ משפטי: בודקים בכל-זכות (kolzchut.org.il) או עם עורך דין.",
+   "f": [
+    {
+     "k": "to",
+     "l": "שם המנהל/ת",
+     "ex": "אורית"
+    },
+    {
+     "k": "role",
+     "l": "התפקיד שלכם",
+     "ex": "מזכירה"
+    },
+    {
+     "k": "place",
+     "l": "לאן עוברים",
+     "ex": "באר שבע"
+    },
+    {
+     "k": "date",
+     "l": "יום העבודה האחרון",
+     "ex": "31 בינואר 2027"
+    }
+   ],
+   "he": {
+    "s": [
+     "הודעה על התפטרות עקב מעבר דירה – {name}",
+     "התפטרות בעקבות מעבר ל{place}",
+     "מכתב התפטרות – מעבר דירה"
+    ],
+    "b": "שלום {to},\n\nבעקבות מעבר הדירה שלי ל{place}, המרחק לא מאפשר לי להמשיך לעבוד בתפקיד {role}, ולכן אני מבקש/ת להודיע על התפטרותי.\n\nיום העבודה האחרון שלי יהיה {date}, בהתאם להודעה המוקדמת.\n\nתודה רבה על התקופה המשותפת. אדאג להעברה מסודרת של העבודה.\n\nבברכה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Resignation due to relocation – {name}",
+     "Resignation – moving to {place}",
+     "Letter of resignation (relocation)"
+    ],
+    "b": "Dear {to},\n\nFollowing my move to {place}, the distance no longer allows me to continue working as {role}, and I would therefore like to give notice of my resignation.\n\nMy last working day will be {date}, in accordance with my notice period.\n\nThank you very much for the time we worked together. I will make sure my work is handed over properly.\n\nBest regards,\n{name}"
+   }
+  },
+  {
+   "id": "hitpatrut-pensia",
+   "cat": "avoda",
+   "i": "🌅",
+   "n": "התפטרות עקב יציאה לפנסיה",
+   "f": [
+    {
+     "k": "to",
+     "l": "שם המנהל/ת",
+     "ex": "אורית"
+    },
+    {
+     "k": "role",
+     "l": "התפקיד שלכם",
+     "ex": "מנהלת חשבונות"
+    },
+    {
+     "k": "years",
+     "l": "כמה שנים עבדתם",
+     "ex": "22"
+    },
+    {
+     "k": "date",
+     "l": "יום העבודה האחרון",
+     "ex": "31 במרץ 2027"
+    }
+   ],
+   "he": {
+    "s": [
+     "הודעה על פרישה לגמלאות – {name}",
+     "פרישה לפנסיה מתפקיד {role}",
+     "מכתב פרישה"
+    ],
+    "b": "שלום {to},\n\nאחרי {years} שנים בתפקיד {role}, הגיע הזמן לצאת לפנסיה. יום העבודה האחרון שלי יהיה {date}.\n\nאני רוצה להודות לך ולכל הצוות על השנים הטובות, על האמון ועל הדרך המשותפת.\n\nעד היציאה אדאג להעברה מסודרת של כל מה שבאחריותי, ואשמח לעזור בחפיפה.\n\nאבקש לקבל את כל הזכויות המגיעות לי בפרישה.\n\nבהערכה רבה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Retirement notice – {name}",
+     "Retiring from {role}",
+     "Letter of retirement"
+    ],
+    "b": "Dear {to},\n\nAfter {years} years as {role}, the time has come for me to retire. My last working day will be {date}.\n\nI want to thank you and the whole team for the good years, for your trust, and for the journey we shared.\n\nUntil then I will make sure everything under my responsibility is handed over properly, and I will be glad to help with the transition.\n\nI would appreciate receiving all the entitlements due to me upon retirement.\n\nWith great appreciation,\n{name}"
+   }
+  },
+  {
+   "id": "korot",
+   "cat": "avoda",
+   "i": "📄",
+   "n": "שליחת קורות חיים למשרה",
+   "f": [
+    {
+     "k": "to",
+     "l": "שם איש/אשת הגיוס (אם ידוע)",
+     "ex": "מיכל",
+     "opt": 1
+    },
+    {
+     "k": "role",
+     "l": "המשרה",
+     "ex": "מנהלת חשבונות"
+    },
+    {
+     "k": "details",
+     "l": "משפט עליכם",
+     "ex": "אני מנהלת חשבונות סוג 3 עם ניסיון של 6 שנים במשרד רואי חשבון",
+     "long": 1
+    },
+    {
+     "k": "phone",
+     "l": "טלפון",
+     "ex": "050-1234567"
+    }
+   ],
+   "he": {
+    "s": [
+     "קורות חיים למשרת {role} – {name}",
+     "מועמדות למשרת {role}",
+     "{role}: {name}, קו\"ח מצורפים"
+    ],
+    "b": "שלום[[ {to}]],\n\nראיתי את המודעה למשרת {role} ואשמח להגיש מועמדות.\n\nבקצרה עליי: {details}.\n\nקורות החיים שלי מצורפים למייל. אשמח לשיחה ולהרחיב.\nאפשר להשיג אותי בטלפון {phone}.\n\nתודה על הזמן,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Application for {role} – {name}",
+     "{role} position – CV attached",
+     "Applying for the {role} role"
+    ],
+    "b": "Hello[[ {to}]],\n\nI saw your posting for the {role} position and would like to apply.\n\nA little about me: {details}.\n\nMy CV is attached. I would be happy to talk and tell you more.\nYou can reach me at {phone}.\n\nThank you for your time,\n{name}"
+   }
+  },
+  {
+   "id": "toda-reayon",
+   "cat": "avoda",
+   "i": "🤝",
+   "n": "תודה אחרי ראיון עבודה",
+   "f": [
+    {
+     "k": "to",
+     "l": "שם המראיין/ת",
+     "ex": "גיל"
+    },
+    {
+     "k": "role",
+     "l": "המשרה",
+     "ex": "מפתח צד לקוח"
+    },
+    {
+     "k": "details",
+     "l": "משהו שדיברתם עליו",
+     "ex": "התוכנית להנגיש את האפליקציה לכל המשתמשים"
+    }
+   ],
+   "he": {
+    "s": [
+     "תודה על הראיון – {role}",
+     "תודה על הזמן היום",
+     "{name} – המשך לראיון למשרת {role}"
+    ],
+    "b": "שלום {to},\n\nתודה על הראיון היום למשרת {role}. נהניתי מהשיחה, ובמיוחד מהחלק על {details}.\n\nהשיחה רק חיזקה את הרצון שלי להצטרף לצוות. אם צריך ממני עוד משהו, אשמח לשלוח.\n\nבברכה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Thank you for the interview – {role}",
+     "Thank you for your time today",
+     "{name} – following up on the {role} interview"
+    ],
+    "b": "Dear {to},\n\nThank you for interviewing me today for the {role} position. I enjoyed our conversation, especially the part about {details}.\n\nIt strengthened my wish to join the team. If you need anything else from me, I would be glad to send it.\n\nBest regards,\n{name}"
+   }
+  },
+  {
+   "id": "chofesh",
+   "cat": "avoda",
+   "i": "🏖",
+   "n": "בקשת חופשה מהמנהל",
+   "f": [
+    {
+     "k": "to",
+     "l": "שם המנהל/ת",
+     "ex": "אורית"
+    },
+    {
+     "k": "date",
+     "l": "התאריכים",
+     "ex": "13–15 בדצמבר"
+    },
+    {
+     "k": "details",
+     "l": "מי מחליף / מה מסודר",
+     "ex": "נועה תטפל בפניות הדחופות, והדוח החודשי יוגש לפני כן"
+    }
+   ],
+   "he": {
+    "s": [
+     "בקשה לחופשה: {date}",
+     "חופשה ב-{date} – לאישורך",
+     "{name}: בקשת ימי חופש"
+    ],
+    "b": "שלום {to},\n\nאני מבקש/ת לצאת לחופשה בתאריכים {date}.\n\nדאגתי שהעבודה תמשיך כרגיל: {details}.\n\nאשמח לאישור, ואם התאריכים לא נוחים לצוות, אפשר לדבר ולהתאים.\n\nתודה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Vacation request: {date}",
+     "Time off on {date} – for your approval",
+     "{name}: leave request"
+    ],
+    "b": "Hi {to},\n\nI would like to request time off on {date}.\n\nI have made sure work will continue as usual: {details}.\n\nI would appreciate your approval, and if these dates are difficult for the team, I am happy to adjust.\n\nThank you,\n{name}"
+   }
+  },
+  {
+   "id": "michutz",
+   "cat": "avoda",
+   "i": "✈",
+   "n": "הודעת מחוץ למשרד (מענה אוטומטי)",
+   "f": [
+    {
+     "k": "date",
+     "l": "עד מתי לא זמינים",
+     "ex": "יום ראשון, 22 בנובמבר"
+    },
+    {
+     "k": "sub",
+     "l": "מי מחליף (שם ומייל)",
+     "ex": "נועה כהן, noa@example.com"
+    }
+   ],
+   "he": {
+    "s": [
+     "מחוץ למשרד עד {date}",
+     "מענה אוטומטי: לא זמין/ה עד {date}",
+     "תודה על פנייתך – אחזור ב-{date}"
+    ],
+    "b": "שלום,\n\nתודה על פנייתך. אני מחוץ למשרד עד {date}, עם גישה מוגבלת למייל.\n\nאענה על המייל שלך כשאחזור.\nלעניין דחוף אפשר לפנות אל {sub}.\n\nבברכה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Out of office until {date}",
+     "Auto-reply: away until {date}",
+     "Thank you for your email – back on {date}"
+    ],
+    "b": "Hello,\n\nThank you for your email. I am out of the office until {date}, with limited access to email.\n\nI will reply when I return.\nFor urgent matters, please contact {sub}.\n\nBest regards,\n{name}"
+   }
+  },
+  {
+   "id": "lehamlitz",
+   "cat": "avoda",
+   "i": "📜",
+   "n": "מכתב \"לכל המעוניין\" (המלצה / אישור)",
+   "f": [
+    {
+     "k": "person",
+     "l": "על מי המכתב",
+     "ex": "דנה כהן"
+    },
+    {
+     "k": "role",
+     "l": "תפקיד ותקופה",
+     "ex": "עבדה אצלנו כמזכירה רפואית בשנים 2022–2026"
+    },
+    {
+     "k": "details",
+     "l": "מה חשוב לכתוב עליה/עליו",
+     "ex": "אחראית, מסודרת וסבלנית מאוד עם מטופלים",
+     "long": 1
+    },
+    {
+     "k": "phone",
+     "l": "טלפון לבירורים",
+     "ex": "050-1234567"
+    }
+   ],
+   "he": {
+    "s": [
+     "לכל המעוניין – {person}",
+     "מכתב המלצה: {person}",
+     "אישור והמלצה עבור {person}"
+    ],
+    "b": "לכל המעוניין,\n\nהנדון: מכתב המלצה עבור {person}\n\n{person} {role}.\n\nבתקופה הזאת הכרתי אדם {details}. אני ממליץ/ה בלב שלם.\n\nלפרטים נוספים אפשר לפנות אליי בטלפון {phone}.\n\nבברכה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "To whom it may concern – {person}",
+     "Letter of recommendation: {person}",
+     "Reference for {person}"
+    ],
+    "b": "To whom it may concern,\n\nRe: Letter of recommendation for {person}\n\n{person} {role}.\n\nDuring this time I came to know someone who is {details}. I recommend them wholeheartedly.\n\nFor further details, please contact me at {phone}.\n\nSincerely,\n{name}"
+   }
+  },
+  {
+   "id": "shimua",
+   "cat": "avoda",
+   "i": "🗓",
+   "n": "זימון לשימוע לפני פיטורים (למעסיק)",
+   "note": "לשימוע צריך לתת לעובד זמן סביר להתכונן ולפרט את הטענות. נוסח כללי, לא ייעוץ משפטי.",
+   "f": [
+    {
+     "k": "emp",
+     "l": "שם העובד/ת",
+     "ex": "דנה כהן"
+    },
+    {
+     "k": "date",
+     "l": "מועד השימוע",
+     "ex": "יום שלישי, 1 בדצמבר 2026, בשעה 10:00"
+    },
+    {
+     "k": "place",
+     "l": "איפה",
+     "ex": "חדר הישיבות במשרד"
+    },
+    {
+     "k": "reasons",
+     "l": "הסיבות ששוקלים",
+     "ex": "צמצום בהיקף העבודה במחלקה, ואיחורים חוזרים בחודשים האחרונים",
+     "long": 1
+    },
+    {
+     "k": "biz",
+     "l": "שם העסק",
+     "ex": "סטודיו לוי"
+    }
+   ],
+   "he": {
+    "s": [
+     "זימון לשימוע – {emp}",
+     "הזמנה לשימוע בתאריך {date}",
+     "שימוע לפני החלטה על המשך העסקה"
+    ],
+    "b": "לכבוד {emp},\n\nהנדון: זימון לשימוע\n\n1. אנו שוקלים להפסיק את העסקתך ב{biz}, מהסיבות האלה: {reasons}.\n\n2. לפני שתתקבל החלטה, אנו מזמינים אותך לשימוע ב{date}, ב{place}, כדי לשמוע את עמדתך.\n\n3. אפשר להביא לשימוע מסמכים ולהגיע עם מלווה. אפשר גם להגיש את התגובה בכתב לפני השימוע.\n\n4. אם המועד לא מתאים, נשמח לתאם מועד אחר בהקדם.\n\nבברכה,\n{name}\n{biz}"
+   },
+   "en": {
+    "s": [
+     "Invitation to a hearing – {emp}",
+     "Hearing scheduled for {date}",
+     "Hearing before a decision on your employment"
+    ],
+    "b": "Dear {emp},\n\nRe: Invitation to a hearing\n\n1. We are considering ending your employment with {biz} for the following reasons: {reasons}.\n\n2. Before any decision is made, we invite you to a hearing on {date}, at {place}, so that we can hear your position.\n\n3. You may bring documents and be accompanied by a person of your choice. You may also submit your response in writing before the hearing.\n\n4. If this time does not suit you, we will be happy to arrange another time soon.\n\nSincerely,\n{name}\n{biz}"
+   }
+  },
+  {
+   "id": "pitturim",
+   "cat": "avoda",
+   "i": "📃",
+   "n": "מכתב פיטורים / סיום העסקה (למעסיק)",
+   "note": "לפני פיטורים חובה לקיים שימוע ולתת הודעה מוקדמת כחוק. נוסח כללי, לא ייעוץ משפטי.",
+   "f": [
+    {
+     "k": "emp",
+     "l": "שם העובד/ת",
+     "ex": "דנה כהן"
+    },
+    {
+     "k": "role",
+     "l": "התפקיד",
+     "ex": "מזכירה"
+    },
+    {
+     "k": "hearing",
+     "l": "תאריך השימוע",
+     "ex": "1 בדצמבר 2026"
+    },
+    {
+     "k": "date",
+     "l": "יום העבודה האחרון",
+     "ex": "31 בדצמבר 2026"
+    },
+    {
+     "k": "biz",
+     "l": "שם העסק",
+     "ex": "סטודיו לוי"
+    }
+   ],
+   "he": {
+    "s": [
+     "הודעה על סיום העסקה – {emp}",
+     "מכתב פיטורים",
+     "סיום העסקה בתפקיד {role}"
+    ],
+    "b": "לכבוד {emp},\n\nהנדון: הודעה על סיום העסקה\n\n1. בהמשך לשימוע שהתקיים ב-{hearing}, ולאחר ששקלנו את דברייך, החלטנו לסיים את העסקתך בתפקיד {role} ב{biz}.\n\n2. מכתב זה הוא הודעה מוקדמת. יום העבודה האחרון יהיה {date}.\n\n3. בסיום העבודה ישולמו כל הזכויות המגיעות לפי החוק, ויימסרו מכתב שחרור לקופת הפנסיה וטופס 161.\n\n4. אנו מודים לך על עבודתך ומאחלים הצלחה בהמשך.\n\nבברכה,\n{name}\n{biz}"
+   },
+   "en": {
+    "s": [
+     "Notice of termination of employment – {emp}",
+     "Termination letter",
+     "End of employment as {role}"
+    ],
+    "b": "Dear {emp},\n\nRe: Notice of termination of employment\n\n1. Following the hearing held on {hearing}, and after considering what you said, we have decided to end your employment as {role} at {biz}.\n\n2. This letter serves as advance notice. Your last working day will be {date}.\n\n3. Upon termination, all entitlements due by law will be paid, and you will receive a release letter for your pension fund and Form 161.\n\n4. We thank you for your work and wish you success in the future.\n\nSincerely,\n{name}\n{biz}"
+   }
+  },
+  {
+   "id": "martze-arachat",
+   "cat": "limudim",
+   "i": "🎓",
+   "n": "מייל למרצה: בקשה להארכה",
+   "f": [
+    {
+     "k": "to",
+     "l": "שם המרצה",
+     "ex": "ד\"ר כהן"
+    },
+    {
+     "k": "course",
+     "l": "שם הקורס",
+     "ex": "מבוא לסטטיסטיקה"
+    },
+    {
+     "k": "task",
+     "l": "המטלה",
+     "ex": "עבודה מס' 3"
+    },
+    {
+     "k": "reason",
+     "l": "הסיבה בקצרה",
+     "ex": "שירות מילואים בשבועיים האחרונים"
+    },
+    {
+     "k": "date",
+     "l": "עד מתי מבקשים",
+     "ex": "יום חמישי הבא"
+    },
+    {
+     "k": "id",
+     "l": "מספר סטודנט (אם צריך)",
+     "ex": "301234567",
+     "opt": 1
+    }
+   ],
+   "he": {
+    "s": [
+     "בקשה להארכה – {task}, {course}",
+     "{course}: בקשה להגשה מאוחרת של {task}",
+     "הארכה ל{task} – {name}"
+    ],
+    "b": "שלום {to},\n\nאני סטודנט/ית בקורס {course}[[ (מספר סטודנט {id})]].\n\nבגלל {reason}, לא אצליח להגיש את {task} במועד. אבקש לאשר לי הארכה עד {date}.\n\nאם צריך אישור או מסמך, אשמח לשלוח.\n\nתודה רבה על ההתחשבות,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Extension request – {task}, {course}",
+     "{course}: request for a late submission of {task}",
+     "{task} extension – {name}"
+    ],
+    "b": "Dear {to},\n\nI am a student in your {course} course[[ (student ID {id})]].\n\nDue to {reason}, I will not be able to submit {task} on time. I would like to ask for an extension until {date}.\n\nIf any documentation is needed, I will be glad to send it.\n\nThank you for your consideration,\n{name}"
+   }
+  },
+  {
+   "id": "martze-sheela",
+   "cat": "limudim",
+   "i": "❓",
+   "n": "מייל למרצה: שאלה או בקשה לפגישה",
+   "f": [
+    {
+     "k": "to",
+     "l": "שם המרצה",
+     "ex": "פרופ' לוי"
+    },
+    {
+     "k": "course",
+     "l": "שם הקורס",
+     "ex": "תולדות האמנות"
+    },
+    {
+     "k": "details",
+     "l": "השאלה",
+     "ex": "האם אפשר לכתוב את העבודה הסופית על אמן ישראלי",
+     "long": 1
+    }
+   ],
+   "he": {
+    "s": [
+     "שאלה בקורס {course}",
+     "{course}: שאלה לגבי העבודה",
+     "בקשה לשעת קבלה – {course}"
+    ],
+    "b": "שלום {to},\n\nאני סטודנט/ית בקורס {course}.\n\nרציתי לשאול {details}?\n\nאם קל יותר לענות על זה בשעת קבלה, אשמח לדעת מתי אפשר להגיע.\n\nתודה רבה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Question about {course}",
+     "{course}: a question about the assignment",
+     "Office hours request – {course}"
+    ],
+    "b": "Dear {to},\n\nI am a student in your {course} course.\n\nI wanted to ask: {details}?\n\nIf it is easier to discuss this during office hours, please let me know when I can come by.\n\nThank you very much,\n{name}"
+   }
+  },
+  {
+   "id": "hamlatza-student",
+   "cat": "limudim",
+   "i": "🎓",
+   "n": "מכתב המלצה לסטודנט / לתואר שני",
+   "f": [
+    {
+     "k": "person",
+     "l": "על מי המכתב",
+     "ex": "נועם לוי"
+    },
+    {
+     "k": "course",
+     "l": "איך מכירים אותו/ה",
+     "ex": "היה סטודנט שלי בשלושה קורסים בתואר הראשון במדעי המחשב"
+    },
+    {
+     "k": "details",
+     "l": "מה בולט אצלו/ה",
+     "ex": "חשיבה עצמאית, עבודה יסודית ויכולת להסביר לאחרים",
+     "long": 1
+    },
+    {
+     "k": "program",
+     "l": "לאיזה לימודים",
+     "ex": "תואר שני במדעי הנתונים"
+    },
+    {
+     "k": "phone",
+     "l": "טלפון או מייל לבירורים",
+     "ex": "050-1234567"
+    }
+   ],
+   "he": {
+    "s": [
+     "מכתב המלצה – {person}",
+     "המלצה עבור {person}  – {program}",
+     "לכל המעוניין: המלצה על {person}"
+    ],
+    "b": "לכבוד ועדת הקבלה,\n\nהנדון: מכתב המלצה עבור {person}\n\nאני שמח/ה להמליץ על {person}, ש{course}.\n\nבתקופה הזאת בלטו {details}.\n\nאני ממליץ/ה בחום לקבל את {person} ללימודי {program}, ובטוח/ה שזה המקום הנכון.\n\nלפרטים נוספים: {phone}.\n\nבברכה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Letter of recommendation – {person}",
+     "Recommendation for {person} – {program}",
+     "Reference for {person}"
+    ],
+    "b": "Dear Admissions Committee,\n\nRe: Letter of recommendation for {person}\n\nI am pleased to recommend {person}, who {course}.\n\nDuring this time, {person} stood out for {details}.\n\nI warmly recommend {person} for {program}, and I am confident they will succeed there.\n\nFor further details: {phone}.\n\nSincerely,\n{name}"
+   }
+  },
+  {
+   "id": "horim",
+   "cat": "horim",
+   "i": "🏫",
+   "n": "הודעה להורים (מורה / גננת / מדריך)",
+   "f": [
+    {
+     "k": "group",
+     "l": "הכיתה / הגן",
+     "ex": "כיתה ג'2"
+    },
+    {
+     "k": "topic",
+     "l": "הנושא",
+     "ex": "טיול שנתי ביום שלישי"
+    },
+    {
+     "k": "details",
+     "l": "מה חשוב שידעו",
+     "ex": "יוצאים ב-8:00 מבית הספר וחוזרים ב-14:00. להביא כובע, 2 בקבוקי מים וארוחת עשר",
+     "long": 1
+    },
+    {
+     "k": "date",
+     "l": "עד מתי לאשר / להחזיר",
+     "ex": "יום ראשון"
+    }
+   ],
+   "he": {
+    "s": [
+     "{group}: {topic}",
+     "הורים יקרים – {topic}",
+     "חשוב לקרוא: {topic}"
+    ],
+    "b": "הורים יקרים של {group}, שלום רב,\n\nרציתי לעדכן לגבי {topic}.\n\n{details}.\n\nנא לאשר שקראתם עד {date} (מספיק להשיב \"קראתי\").\n\nלכל שאלה אני כאן.\nתודה ושבוע טוב,\n{name}"
+   },
+   "en": {
+    "s": [
+     "{group}: {topic}",
+     "Dear parents – {topic}",
+     "Please read: {topic}"
+    ],
+    "b": "Dear parents of {group},\n\nI would like to update you about {topic}.\n\n{details}.\n\nPlease confirm that you have read this by {date} (a short \"read\" reply is enough).\n\nIf you have any questions, I am here.\nThank you, and have a good week,\n{name}"
+   }
+  },
+  {
+   "id": "talona",
+   "cat": "rishmi",
+   "i": "⚠",
+   "n": "תלונה לחברה או לשירות לקוחות",
+   "f": [
+    {
+     "k": "to",
+     "l": "שם החברה",
+     "ex": "חברת הסלולר"
+    },
+    {
+     "k": "topic",
+     "l": "הבעיה בקצרה",
+     "ex": "חיוב כפול בחשבון אוקטובר"
+    },
+    {
+     "k": "details",
+     "l": "מה קרה",
+     "ex": "חויבתי פעמיים על אותו חודש, 89 ₪ כל פעם. פניתי בטלפון ב-3 בנובמבר והבטיחו לחזור אליי, ולא חזרו",
+     "long": 1
+    },
+    {
+     "k": "ask",
+     "l": "מה מבקשים",
+     "ex": "להחזיר את החיוב הכפול לכרטיס האשראי"
+    },
+    {
+     "k": "num",
+     "l": "מספר לקוח / פנייה",
+     "ex": "48213"
+    }
+   ],
+   "he": {
+    "s": [
+     "תלונה: {topic} (לקוח {num})",
+     "בקשה לטיפול דחוף – {topic}",
+     "פנייה חוזרת: {topic}"
+    ],
+    "b": "לכבוד {to},\n\nהנדון: {topic} – מספר לקוח {num}\n\nאני פונה אליכם בכתב לאחר שהבעיה לא נפתרה.\n\n{details}.\n\nאבקש {ask}, ולקבל אישור בכתב על הטיפול תוך 14 ימים.\n\nאני שומר/ת את התכתובת הזאת, ואם הבעיה לא תיפתר אשקול לפנות לגורמים המוסמכים.\n\nבברכה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Complaint: {topic} (account {num})",
+     "Request for urgent handling – {topic}",
+     "Second request: {topic}"
+    ],
+    "b": "To {to},\n\nRe: {topic} – account number {num}\n\nI am writing after this issue was not resolved.\n\n{details}.\n\nI ask that you {ask}, and that you confirm the resolution in writing within 14 days.\n\nI am keeping a record of this correspondence, and if the issue is not resolved I will consider contacting the relevant authorities.\n\nSincerely,\n{name}"
+   }
+  },
+  {
+   "id": "bitul",
+   "cat": "rishmi",
+   "i": "✂",
+   "n": "ביטול מנוי או שירות",
+   "f": [
+    {
+     "k": "to",
+     "l": "שם החברה",
+     "ex": "חדר הכושר"
+    },
+    {
+     "k": "service",
+     "l": "מה מבטלים",
+     "ex": "המנוי החודשי"
+    },
+    {
+     "k": "num",
+     "l": "מספר לקוח / ת\"ז של בעל המנוי",
+     "ex": "48213"
+    },
+    {
+     "k": "date",
+     "l": "ממתי",
+     "ex": "מיידית"
+    }
+   ],
+   "he": {
+    "s": [
+     "בקשה לביטול {service} – לקוח {num}",
+     "הודעת ביטול: {service}",
+     "ביטול {service} {date}"
+    ],
+    "b": "לכבוד {to},\n\nהנדון: ביטול {service} – מספר לקוח {num}\n\nאני מבקש/ת לבטל את {service} {date}, ולהפסיק את כל החיובים מעתה.\n\nאבקש אישור בכתב על הביטול, כולל תאריך החיוב האחרון.\n\nתודה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Cancellation request: {service} – account {num}",
+     "Notice of cancellation: {service}",
+     "Please cancel {service}"
+    ],
+    "b": "To {to},\n\nRe: Cancellation of {service} – account number {num}\n\nPlease cancel my {service}, effective {date}, and stop all future charges.\n\nI would appreciate a written confirmation of the cancellation, including the date of the final charge.\n\nThank you,\n{name}"
+   }
+  },
+  {
+   "id": "hechzer",
+   "cat": "rishmi",
+   "i": "💳",
+   "n": "בקשה להחזר כספי",
+   "f": [
+    {
+     "k": "to",
+     "l": "שם החנות / החברה",
+     "ex": "חנות הרהיטים"
+    },
+    {
+     "k": "service",
+     "l": "מה קניתם",
+     "ex": "כיסא משרדי"
+    },
+    {
+     "k": "date",
+     "l": "תאריך הקנייה",
+     "ex": "2 בנובמבר"
+    },
+    {
+     "k": "num",
+     "l": "מספר הזמנה",
+     "ex": "77120"
+    },
+    {
+     "k": "reason",
+     "l": "הסיבה",
+     "ex": "הכיסא הגיע עם משענת שבורה"
+    }
+   ],
+   "he": {
+    "s": [
+     "בקשה להחזר כספי – הזמנה {num}",
+     "החזר עבור {service}",
+     "הזמנה {num}: {reason}"
+    ],
+    "b": "לכבוד {to},\n\nהנדון: בקשה להחזר כספי – הזמנה מס' {num}\n\nב-{date} רכשתי אצלכם {service}. לצערי, {reason}.\n\nאבקש לקבל החזר כספי מלא לאמצעי התשלום שבו שילמתי. אשמח לתאם את החזרת המוצר.\n\nמצורפת הקבלה.\n\nבברכה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Refund request – order {num}",
+     "Refund for {service}",
+     "Order {num}: {reason}"
+    ],
+    "b": "To {to},\n\nRe: Refund request – order #{num}\n\nOn {date} I purchased a {service} from you. Unfortunately, {reason}.\n\nI would like to request a full refund to my original payment method, and I am happy to arrange the return of the item.\n\nThe receipt is attached.\n\nBest regards,\n{name}"
+   }
+  },
+  {
+   "id": "hatraa",
+   "cat": "rishmi",
+   "i": "⚖",
+   "n": "מכתב התראה לפני תביעה (נוסח כללי)",
+   "note": "נוסח כללי בלבד, לא ייעוץ משפטי. בעניין משמעותי כדאי להתייעץ עם עורך דין.",
+   "f": [
+    {
+     "k": "to",
+     "l": "למי (שם מלא / חברה)",
+     "ex": "שיפוצים בע\"מ"
+    },
+    {
+     "k": "details",
+     "l": "מה קרה, בקצרה ובתאריכים",
+     "ex": "ב-1 באוגוסט שילמתי 6,000 ₪ מקדמה לשיפוץ האמבטיה. העבודה לא התחילה עד היום, למרות שלוש פניות בטלפון",
+     "long": 1
+    },
+    {
+     "k": "ask",
+     "l": "מה דורשים",
+     "ex": "להחזיר את המקדמה במלואה"
+    },
+    {
+     "k": "days",
+     "l": "תוך כמה ימים",
+     "ex": "14"
+    }
+   ],
+   "he": {
+    "s": [
+     "מכתב התראה לפני נקיטת הליכים משפטיים",
+     "התראה אחרונה: {ask}",
+     "דרישה לפני תביעה"
+    ],
+    "b": "לכבוד {to},\n\nהנדון: מכתב התראה לפני נקיטת הליכים משפטיים\n\n1. {details}.\n\n2. לאור האמור, אני דורש/ת {ask}, וזאת תוך {days} ימים מקבלת מכתב זה.\n\n3. אם הדרישה לא תתקיים במועד, אשקול להגיש תביעה (למשל בבית המשפט לתביעות קטנות) ללא הודעה נוספת, ואדרוש גם את ההוצאות.\n\n4. אין באמור כדי לגרוע מכל זכות או טענה העומדות לי.\n\nבכבוד רב,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Letter before legal action",
+     "Final notice: {ask}",
+     "Formal demand before legal proceedings"
+    ],
+    "b": "To {to},\n\nRe: Letter before legal action\n\n1. {details}.\n\n2. Accordingly, I demand that you {ask} within {days} days of receiving this letter.\n\n3. If this demand is not met in time, I will consider filing a claim against you (for example in small claims court) without further notice, and will also seek my costs.\n\n4. Nothing in this letter waives any of my rights or claims.\n\nSincerely,\n{name}"
+   }
+  },
+  {
+   "id": "hazmana",
+   "cat": "ishi",
+   "i": "💌",
+   "n": "הזמנה לחתונה או לאירוע במייל",
+   "f": [
+    {
+     "k": "event",
+     "l": "האירוע",
+     "ex": "החתונה של נועה ואיתי"
+    },
+    {
+     "k": "date",
+     "l": "מתי",
+     "ex": "יום רביעי, 9 בדצמבר, קבלת פנים ב-19:00"
+    },
+    {
+     "k": "place",
+     "l": "איפה",
+     "ex": "אולמי הגן, מודיעין"
+    },
+    {
+     "k": "rsvp",
+     "l": "איך מאשרים הגעה",
+     "ex": "בהודעה ל-050-1234567 עד 1 בדצמבר"
+    }
+   ],
+   "he": {
+    "s": [
+     "הזמנה: {event}",
+     "נשמח לראותכם ב{event}",
+     "שמרו את התאריך – {event}"
+    ],
+    "b": "משפחה וחברים יקרים,\n\nבשמחה ובהתרגשות אנחנו מזמינים אתכם ל{event}.\n\n📅 {date}\n📍 {place}\n\nנשמח מאוד לראותכם איתנו. אישור הגעה: {rsvp}.\n\nבאהבה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "You are invited: {event}",
+     "We would love to see you at {event}",
+     "Save the date – {event}"
+    ],
+    "b": "Dear family and friends,\n\nWith great joy we invite you to {event}.\n\n📅 {date}\n📍 {place}\n\nWe would be so happy to celebrate with you. Please RSVP {rsvp}.\n\nWith love,\n{name}"
+   }
+  },
+  {
+   "id": "hekerut",
+   "cat": "ishi",
+   "i": "👋",
+   "n": "היכרות: לחבר בין שני אנשים",
+   "f": [
+    {
+     "k": "to",
+     "l": "האדם הראשון",
+     "ex": "רון"
+    },
+    {
+     "k": "person",
+     "l": "האדם השני",
+     "ex": "שרית"
+    },
+    {
+     "k": "details",
+     "l": "למה כדאי שיכירו",
+     "ex": "שרית מנהלת חנות פרחים ומחפשת צלם למוצרים, ורון צלם מוצר מעולה",
+     "long": 1
+    }
+   ],
+   "he": {
+    "s": [
+     "היכרות: {to} ו{person}",
+     "{to}, תכיר את {person}",
+     "חיבור שכדאי לכם"
+    ],
+    "b": "שלום לשניכם,\n\nרציתי להכיר ביניכם: {details}.\n\nאני משאיר/ה לכם להמשיך מכאן. {person}, אני מעביר/ה אותך להעתק כדי שיהיה לכם את המייל אחד של השני.\n\nבהצלחה!\n{name}"
+   },
+   "en": {
+    "s": [
+     "Introduction: {to} and {person}",
+     "{to}, meet {person}",
+     "An introduction worth making"
+    ],
+    "b": "Hi both,\n\nI wanted to introduce you to each other: {details}.\n\nI will let you take it from here. {person}, I am copying you so you both have each other's email.\n\nGood luck!\n{name}"
+   }
+  }
+ ],
+ "open": {
+  "he": [
+   "שלום {to},",
+   "שלום רב,",
+   "לכבוד {to},",
+   "{to} שלום,",
+   "בוקר טוב {to},"
   ],
-  "open": {
-    "he": ["שלום {to},", "שלום רב,", "לכבוד {to},", "{to} שלום,", "בוקר טוב {to},"],
-    "en": ["Dear {to},", "Hi {to},", "Hello {to},", "Good morning {to},", "To whom it may concern,"]
-  },
-  "close": {
-    "he": ["בברכה,", "תודה מראש,", "בכבוד רב,", "בהערכה,", "יום נעים,", "תודה רבה,"],
-    "en": ["Best regards,", "Kind regards,", "Thank you in advance,", "Sincerely,", "Many thanks,", "Have a great day,"]
-  },
-  "wa": [
-    {"n": "להורים", "items": [
-      "הורים יקרים, תזכורת: מחר יוצאים לטיול. להביא כובע, 2 בקבוקי מים וארוחת עשר. תודה! 🙏",
-      "שלום להורי הכיתה, אשמח שכל אחד יאשר כאן ב-👍 שקרא את ההודעה. תודה!",
-      "הורים יקרים, מחר יום לבן 🤍 – נא להלביש חולצה לבנה.",
-      "שלום, רציתי לשתף שהיה לנו היום יום מקסים בכיתה. הילדים היו מדהימים! 🌟",
-      "שלום [שם], אשמח לשיחה קצרה על [שם הילד/ה]. מתי נוח לך?"
-    ]},
-    {"n": "ללקוחות", "items": [
-      "שלום [שם], תודה שפנית! קיבלתי את הפרטים ואחזור אליך עד [מועד].",
-      "שלום [שם], מצורפת הצעת המחיר שדיברנו עליה. אשמח לשמוע מה דעתך 🙂",
-      "שלום [שם], ההזמנה שלך מוכנה! אפשר לאסוף מ[מקום] בין [שעות].",
-      "שלום [שם], רק מזכיר/ה בעדינות לגבי התשלום על [מה]. אם כבר שילמת – תודה רבה ותתעלם/י 🙏",
-      "תודה רבה על הקנייה! נשמח מאוד אם תכתוב/י לנו כמה מילים על החוויה ⭐"
-    ]},
-    {"n": "תזכורת לתור", "items": [
-      "שלום [שם], תזכורת לתור שלך מחר, [יום] בשעה [שעה], ב[מקום]. לאישור השב/י 1, לביטול 2.",
-      "שלום [שם], רק מזכיר/ה שנפגשים היום ב-[שעה]. מחכה לך! 🙂",
-      "שלום [שם], התפנה תור ב-[יום] בשעה [שעה]. רוצה אותו?",
-      "שלום [שם], נאלצתי להזיז את התור שלנו. אפשר ב-[יום] בשעה [שעה]? מצטער/ת על השינוי 🙏",
-      "שלום, אני מתעכב/ת בכ-10 דקות. מצטער/ת ומודה על הסבלנות!"
-    ]},
-    {"n": "ברכות", "items": [
-      "מזל טוב! 🎉 שתזכו לרוב נחת ושמחה",
-      "יום הולדת שמח! 🎂 מאחל/ת לך שנה מלאה בבריאות, אהבה והצלחה",
-      "שבת שלום ומבורך! 🕯🕯",
-      "חג שמח! 🌸 שיהיה חג של שמחה, בריאות וביחד",
-      "רפואה שלמה ומהירה! 💙 מחכים לראות אותך בריא/ה",
-      "המקום ינחם אתכם בתוך שאר אבלי ציון וירושלים. 🕯",
-      "שנה טובה ומתוקה! 🍎🍯"
-    ]},
-    {"n": "מחוץ למשרד", "items": [
-      "שלום, תודה על ההודעה! אני לא זמין/ה כרגע ואחזור אליך בהקדם.",
-      "שלום, אני בחופשה עד [תאריך]. לעניין דחוף: [שם] בטלפון [מספר].",
-      "שלום, קיבלתי. אני בפגישה עכשיו ואחזור אליך אחרי [שעה].",
-      "שלום, תודה על פנייתך! שעות המענה שלנו: א'–ה' [שעות]. נחזור אליך ביום העבודה הבא."
-    ]},
-    {"n": "כללי", "items": [
-      "תודה רבה! 🙏",
-      "קיבלתי, אחזור אליך בהקדם.",
-      "אפשר לתאם שיחה? מתי נוח לך?",
-      "מצורף הקובץ. אשמח לאישור שהתקבל.",
-      "אני בדרך, אגיע בעוד כמה דקות"
-    ]}
+  "en": [
+   "Dear {to},",
+   "Hi {to},",
+   "Hello {to},",
+   "Good morning {to},",
+   "To whom it may concern,"
   ]
+ },
+ "close": {
+  "he": [
+   "בברכה,",
+   "תודה מראש,",
+   "בכבוד רב,",
+   "בהערכה,",
+   "יום נעים,",
+   "תודה רבה,"
+  ],
+  "en": [
+   "Best regards,",
+   "Kind regards,",
+   "Thank you in advance,",
+   "Sincerely,",
+   "Many thanks,",
+   "Have a great day,"
+  ]
+ },
+ "wa": [
+  {
+   "n": "להורים",
+   "items": [
+    "הורים יקרים, תזכורת: מחר יוצאים לטיול. להביא כובע, 2 בקבוקי מים וארוחת עשר. תודה! 🙏",
+    "שלום להורי הכיתה, אשמח שכל אחד יאשר כאן ב-👍 שקרא את ההודעה. תודה!",
+    "הורים יקרים, מחר יום לבן 🤍 – נא להלביש חולצה לבנה.",
+    "שלום, רציתי לשתף שהיה לנו היום יום מקסים בכיתה. הילדים היו מדהימים! 🌟",
+    "שלום [שם], אשמח לשיחה קצרה על [שם הילד/ה]. מתי נוח לך?"
+   ]
+  },
+  {
+   "n": "ללקוחות",
+   "items": [
+    "שלום [שם], תודה שפנית! קיבלתי את הפרטים ואחזור אליך עד [מועד].",
+    "שלום [שם], מצורפת הצעת המחיר שדיברנו עליה. אשמח לשמוע מה דעתך 🙂",
+    "שלום [שם], ההזמנה שלך מוכנה! אפשר לאסוף מ[מקום] בין [שעות].",
+    "שלום [שם], רק מזכיר/ה בעדינות לגבי התשלום על [מה]. אם כבר שילמת – תודה רבה ותתעלם/י 🙏",
+    "תודה רבה על הקנייה! נשמח מאוד אם תכתוב/י לנו כמה מילים על החוויה ⭐"
+   ]
+  },
+  {
+   "n": "תזכורת לתור",
+   "items": [
+    "שלום [שם], תזכורת לתור שלך מחר, [יום] בשעה [שעה], ב[מקום]. לאישור השב/י 1, לביטול 2.",
+    "שלום [שם], רק מזכיר/ה שנפגשים היום ב-[שעה]. מחכה לך! 🙂",
+    "שלום [שם], התפנה תור ב-[יום] בשעה [שעה]. רוצה אותו?",
+    "שלום [שם], נאלצתי להזיז את התור שלנו. אפשר ב-[יום] בשעה [שעה]? מצטער/ת על השינוי 🙏",
+    "שלום, אני מתעכב/ת בכ-10 דקות. מצטער/ת ומודה על הסבלנות!"
+   ]
+  },
+  {
+   "n": "ברכות",
+   "items": [
+    "מזל טוב! 🎉 שתזכו לרוב נחת ושמחה",
+    "יום הולדת שמח! 🎂 מאחל/ת לך שנה מלאה בבריאות, אהבה והצלחה",
+    "שבת שלום ומבורך! 🕯🕯",
+    "חג שמח! 🌸 שיהיה חג של שמחה, בריאות וביחד",
+    "רפואה שלמה ומהירה! 💙 מחכים לראות אותך בריא/ה",
+    "המקום ינחם אתכם בתוך שאר אבלי ציון וירושלים. 🕯",
+    "שנה טובה ומתוקה! 🍎🍯"
+   ]
+  },
+  {
+   "n": "מחוץ למשרד",
+   "items": [
+    "שלום, תודה על ההודעה! אני לא זמין/ה כרגע ואחזור אליך בהקדם.",
+    "שלום, אני בחופשה עד [תאריך]. לעניין דחוף: [שם] בטלפון [מספר].",
+    "שלום, קיבלתי. אני בפגישה עכשיו ואחזור אליך אחרי [שעה].",
+    "שלום, תודה על פנייתך! שעות המענה שלנו: א'–ה' [שעות]. נחזור אליך ביום העבודה הבא."
+   ]
+  },
+  {
+   "n": "כללי",
+   "items": [
+    "תודה רבה! 🙏",
+    "קיבלתי, אחזור אליך בהקדם.",
+    "אפשר לתאם שיחה? מתי נוח לך?",
+    "מצורף הקובץ. אשמח לאישור שהתקבל.",
+    "אני בדרך, אגיע בעוד כמה דקות"
+   ]
+  }
+ ]
 }

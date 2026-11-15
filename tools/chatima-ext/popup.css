@@ -71,3 +71,5 @@ h2 .small { font-weight: 400; display: inline; }
 .grid .wide { grid-column: 1 / -1; border-color: var(--gold); font-weight: 600; }
 .chips.wa-cats button[aria-pressed="true"] { background: var(--gold); color: #141210; border-color: var(--gold); font-weight: 700; }
 #wa a, #gm a { color: var(--gold); }
+
+#wa-sidur, #gm-map { background: var(--gold); color: #141210; border: 0; font-weight: 700; width: 100%; }
