@@ -453,7 +453,7 @@ def insert_demo(content, blk):
         return content.replace("<!--demo-->", "")
     if "<!--demo-->" in content:
         return content.replace("<!--demo-->", blk, 1)
-    if '<div class="tool"' in content and "<!--seo-txt-->" in content:  # כלי רגיל: הכלי קודם, הסרטון אחריו
+    if "<!--seo-txt-->" in content:  # כלי או דף תחום: הכלי/הכרטיסים קודם, הסרטון לפני ההסברים
         return content.replace("<!--seo-txt-->", blk + "<!--seo-txt-->", 1)
     i = content.find("</header>")
     return content[: i + 9] + blk + content[i + 9:] if i >= 0 else blk + content
