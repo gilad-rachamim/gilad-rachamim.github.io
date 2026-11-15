@@ -34,13 +34,19 @@
     <button type="button" data-hash="#scheduled">⏰ מיילים מתוזמנים</button>
     <button type="button" data-url="https://takeout.google.com/settings/takeout/custom/gmail">💾 גיבוי כל המיילים</button>
   </div>
+  <div class="chips gm" id="gm-sig">
+    <button type="button" id="gm-sig-new">✍ ליצור חתימה</button>
+    <button type="button" id="gm-sig-put">📥 להכניס את החתימה שלי</button>
+  </div>
   <button class="line" type="button" id="gm-unsub">✂ להסיר אותי מרשימת הדיוור של המייל הפתוח</button>
   <p class="msg" id="gm-msg" role="status"></p>
+  <p class="small">✍ <b>ניסוח מייל:</b> בחלון כתיבת מייל יש כפתור "✍ ניסוח" – נושא ומייל מוכנים ללקוח, למרצה, התפטרות, תלונה ועוד, בעברית ובאנגלית.</p>
   <p class="small">לנקות: בוחרים חיפוש ← תיבת הסימון למעלה ← "בחירת כל השיחות התואמות" ← 🗑. התוסף לא קורא ולא שומר את המיילים.</p>
 </section>
 
 <section id="wa" hidden aria-labelledby="wa-h">
   <h2 id="wa-h">💬 ווטסאפ ווב</h2>
+  <div class="chips gm wa-cats" id="wa-cats" role="group" aria-label="סוג הנוסח"></div>
   <div class="chips gm" id="wa-tpl"></div>
   <div class="row add-tpl" id="wa-add" hidden><label class="sr" for="wa-new">תבנית חדשה</label><input id="wa-new" placeholder="נוסח חדש…" maxlength="500"><button type="button" class="line" id="wa-save">➕</button></div>
   <div class="row">
@@ -48,7 +54,7 @@
     <button class="line" type="button" id="wa-export">💾 לשמור את הצ׳אט</button>
   </div>
   <p class="msg" id="wa-msg" role="status"></p>
-  <p class="small">לוחצים על נוסח והוא נכנס לתיבת ההודעה של הצ׳אט הפתוח. שולחים בעצמכם (Enter). ✎ מוסיף נוסח משלכם.</p>
+  <p class="small">בוחרים סוג (להורים, ללקוחות, תזכורת לתור, ברכות, מחוץ למשרד), לוחצים על נוסח והוא נכנס לתיבת ההודעה. שולחים בעצמכם (Enter). ✎ ב"שלי" מוסיף נוסח משלכם. מייל רשמי: <a href="https://hakelim.com/kelim/tochen/mail/" target="_blank">ניסוח מייל</a>.</p>
 </section>
 
 <section id="site" hidden aria-labelledby="site-h">

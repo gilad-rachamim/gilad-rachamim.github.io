@@ -1,3 +1,6 @@
 .hk-chatima{display:inline-block;margin:6px 4px;padding:6px 12px;border:0;border-radius:99px;background:#c9a55c;color:#16130f;font:700 13px Arial,sans-serif;cursor:pointer;direction:rtl;vertical-align:top;box-shadow:0 1px 3px rgba(0,0,0,.25)}
 .hk-chatima:hover{background:#dcbb74}
 .hk-chatima:disabled{opacity:.7;cursor:wait}
+.hk-nusach{display:inline-block;margin:0 6px;padding:7px 12px;border:1px solid #c9a55c;border-radius:99px;background:#fff8e6;color:#3d2f12;font:700 13px Arial,sans-serif;cursor:pointer;direction:rtl;white-space:nowrap;vertical-align:middle}
+.hk-nusach:hover{background:#c9a55c;color:#16130f}
+.hk-nusach-td{vertical-align:middle;padding:0 2px}

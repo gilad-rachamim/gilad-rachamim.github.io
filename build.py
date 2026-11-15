@@ -577,6 +577,12 @@ _tj = json.dumps({"tools": TOOLS_JSON}, ensure_ascii=False, separators=(",", ":"
 for _p in (ROOT / "kelim" / "tools.json", ROOT / "tools" / "chatima-ext" / "tools.json"):
     _p.write_text(_tj, encoding="utf-8", newline="\n")
 print("tools.json:", len(TOOLS_JSON), "pages,", sum(1 for t in TOOLS_JSON if "x" in t), "take files")
+# ניסוח מייל: הנוסחים והמנוע של /kelim/tochen/mail/ גם בתוך התוסף (כפתור "✍ ניסוח" בג'ימייל, נוסחים בווטסאפ ווב)
+for _src, _dst in (("tochen-mail.json", "mail-nusach.json"), ("tochen-mail-fill.js", "mail-fill.js")):
+    _b = (ROOT / "assets" / _src).read_bytes()
+    _d = ROOT / "tools" / "chatima-ext" / _dst
+    if not _d.exists() or _d.read_bytes() != _b:
+        _d.write_bytes(_b)
 
 today = datetime.date.today().isoformat()
 # lastmod אמיתי: התאריך של הקומיט האחרון שנגע בקובץ המקור של הדף (קובץ ששונה ועוד לא נשמר = היום).
