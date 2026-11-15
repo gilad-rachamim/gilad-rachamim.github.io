@@ -557,18 +557,20 @@
   // ---------- פס הבקרה בפינה (Shadow DOM, שעיצוב האתר לא ישפיע עליו) ----------
   var host = null, R = null;
   var CSS = ':host{all:initial}*{box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif}' +
-    '.bar{position:fixed;z-index:2147483646;bottom:14px;left:14px;direction:rtl;background:#141210;color:#f3ead7;border:2px solid #d9b25f;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.35);font-size:14px;line-height:1.4;max-width:min(430px,calc(100vw - 28px))}' +
-    '.top{display:flex;align-items:center;gap:6px;padding:7px 9px;flex-wrap:wrap}.st{flex:1;min-width:120px}.st small{display:block;color:#bdb3a0;font-size:12px}' +
-    'button,select{font:inherit;font-size:13px;background:transparent;color:#f3ead7;border:1px solid #4a3d24;border-radius:9px;padding:4px 8px;cursor:pointer}button:hover,select:hover{border-color:#d9b25f}' +
+    '.bar{position:fixed;z-index:2147483646;bottom:14px;left:14px;direction:rtl;background:#141210;color:#f3ead7;border:2px solid #d9b25f;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.35);font-size:16px;line-height:1.4;max-width:min(430px,calc(100vw - 28px))}' +
+    '.top{display:flex;align-items:center;gap:6px;padding:7px 9px;flex-wrap:wrap}.st{flex:1;min-width:120px}.st small{display:block;color:#bdb3a0;font-size:14.5px}' +
+    'button,select{font:inherit;font-size:15px;background:transparent;color:#f3ead7;border:1px solid #8a7448;border-radius:9px;padding:4px 8px;cursor:pointer}button:hover,select:hover{border-color:#d9b25f}' +
     'button.gold{background:#d9b25f;color:#141210;border-color:#d9b25f;font-weight:700}select{background:#201c17}' +
     'button:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid #e9c977;outline-offset:1px}' +
     '.mini .top>:not(.ico){display:none}.ico{border:0;font-size:18px;padding:2px 4px}' +
-    '.gl{border-top:1px solid #4a3d24;padding:8px 9px}.gl textarea{width:100%;min-height:96px;background:#0d0c0a;color:#f3ead7;border:1px solid #4a3d24;border-radius:8px;font:13px/1.5 Consolas,"Segoe UI",monospace;padding:6px;direction:ltr;text-align:left}' +
-    '.gl p{margin:0 0 6px;font-size:12.5px;color:#bdb3a0}.row{display:flex;gap:6px;margin-top:6px}' +
+    '.gl{border-top:1px solid #8a7448;padding:8px 9px}.gl textarea{width:100%;min-height:96px;background:#0d0c0a;color:#f3ead7;border:1px solid #8a7448;border-radius:8px;font:15px/1.5 Consolas,"Segoe UI",monospace;padding:6px;direction:ltr;text-align:left}' +
+    '.gl p{margin:0 0 6px;font-size:15px;color:#bdb3a0}.row{display:flex;gap:6px;margin-top:6px}' +
     '.bub{position:fixed;z-index:2147483647;direction:rtl;background:#141210;color:#f3ead7;border:2px solid #d9b25f;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.35);padding:9px 11px;font-size:15px;line-height:1.55;max-width:min(440px,calc(100vw - 20px));max-height:50vh;overflow:auto}' +
-    '.bub .t{white-space:pre-wrap;unicode-bidi:isolate;text-align:start}.bub .o{color:#bdb3a0;font-size:12.5px;margin-bottom:5px;unicode-bidi:isolate;text-align:start;white-space:pre-wrap}.bub .row{justify-content:flex-start}' +
+    '.bub .t{white-space:pre-wrap;unicode-bidi:isolate;text-align:start}.bub .o{color:#bdb3a0;font-size:15px;margin-bottom:5px;unicode-bidi:isolate;text-align:start;white-space:pre-wrap}.bub .row{justify-content:flex-start}' +
     '.pin{position:fixed;z-index:2147483647;width:30px;height:30px;border-radius:50%;background:#d9b25f;color:#141210;border:0;font-size:16px;padding:0;box-shadow:0 3px 12px rgba(0,0,0,.3)}' +
-    '.hid{display:none!important}';
+    '.hid{display:none!important}' +
+    // נגישות: כפתורים גדולים, פוקוס בולט
+    'button,select{min-height:36px}.ico{min-width:40px;min-height:40px}button:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #ffd97a!important;outline-offset:2px}.pin:focus-visible{outline-color:#141210!important}';
   function ensureHost() {
     if (host && host.isConnected) return;
     host = document.createElement('hk-tr-ui');

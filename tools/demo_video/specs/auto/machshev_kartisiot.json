@@ -24,6 +24,14 @@
    ]
   },
   {
+   "type": "shot",
+   "dur": 6.5,
+   "title": "ככה זה *נראה*",
+   "img": "shots/auto/machshev_kartisiot.jpg",
+   "scroll": 0,
+   "caption": "סגרתם כרטיסייה בטעות?"
+  },
+  {
    "type": "cards",
    "dur": 6.5,
    "title": "מה *כלול?*",
@@ -48,7 +56,8 @@
      "קיצור מקלדת שכדאי לזכור",
      "Ctrl+Shift+T פותח מחדש את הכרטיסייה האחרונה שנסגרה"
     ]
-   ]
+   ],
+   "gap": 0.75
   },
   {
    "type": "cards",

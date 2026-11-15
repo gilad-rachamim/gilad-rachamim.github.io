@@ -78,7 +78,21 @@ var T = [
   ['קבוצה חדשה בשם משפחה באנשי קשר', 'contacts', ['contacts.google.com/'], function (r) { return /משפחה/.test(r.head); }],
   ['מה הטלפון של יוסי כהן באנשי קשר', 'contacts', ['contacts.google.com/search/יוסי כהן']],
   // Keep
-  ['פתק חדש: לקנות חלב', 'keep', ['keep.new'], function (r) { return r.copy === 'לקנות חלב'; }]
+  ['פתק חדש: לקנות חלב', 'keep', ['keep.new'], function (r) { return r.copy === 'לקנות חלב'; }],
+  // חשבוניות: ספירה, רשימה לאקסל, תווית
+  ['כמה חשבוניות קיבלתי השנה', 'gmail', ['(חשבונית OR קבלה OR invoice OR receipt)', 'after:2026/01/01'], function (r) { return r.doit && r.doit.act === 'list' && !/newer_than/.test(r.q); }],
+  ['רשימת חשבוניות מהחודש לאקסל', 'gmail', ['(חשבונית OR קבלה', 'newer_than:1m'], function (r) { return r.doit && r.doit.act === 'list'; }],
+  ['חשבוניות מהחודש', 'gmail', ['(חשבונית OR קבלה', 'newer_than:1m'], function (r) { return !r.doit && r.listDo && r.listDo.act === 'list' && r.alt[0].url === 'doit:list'; }],
+  ['לשמור את כל החשבוניות לתווית חשבוניות 2026', 'gmail', ['(חשבונית OR קבלה'], function (r) { return r.doit && r.doit.act === 'label' && r.doit.label === 'חשבוניות 2026' && !/after:2026/.test(r.q); }],
+  ['חשבוניות מחברת חשמל בשנת 2025', 'gmail', ['from:(iec.co.il OR "חברת חשמל")', 'after:2025/01/01 before:2026/01/01']],
+  ['מעקב חשבוניות מבזק מהשנה האחרונה', 'gmail', ['from:(bezeq.co.il OR "בזק")', 'newer_than:1y'], function (r) { return r.doit && r.doit.act === 'list'; }],
+  // קבצים מצורפים: לשמור בדרייב / להוריד
+  ['לשמור את כל הקבצים המצורפים מביטוח לאומי', 'gmail', ['from:(btl.gov.il OR "ביטוח לאומי")', 'has:attachment'], function (r) { return r.doit && r.doit.act === 'files-drive'; }],
+  ['לשמור בדרייב את כל הקבצים המצורפים מביטוח לאומי', 'gmail', ['from:(btl.gov.il OR "ביטוח לאומי")', 'has:attachment'], function (r) { return r.doit && r.doit.act === 'files-drive'; }],
+  ['לשמור את החשבוניות מבזק בדרייב', 'gmail', ['from:(bezeq.co.il OR "בזק")', 'has:attachment', '(חשבונית OR'], function (r) { return r.doit && r.doit.act === 'files-drive'; }],
+  ['להוריד למחשב את הקבלות מהחודש', 'gmail', ['has:attachment', 'newer_than:1m'], function (r) { return r.doit && r.doit.act === 'files-down'; }],
+  ['להוריד את כל הקבצים המצורפים מרשות המסים', 'gmail', ['from:(taxes.gov.il OR "רשות המסים")', 'has:attachment'], function (r) { return r.doit && r.doit.act === 'files-down'; }],
+  ['מיילים מרשות המסים עם PDF מהשנה', 'gmail', ['from:(taxes.gov.il OR "רשות המסים")', 'filename:pdf', 'after:2026/01/01']]
 ];
 var fail = 0;
 T.forEach(function (x, i) {
@@ -92,6 +106,6 @@ T.forEach(function (x, i) {
   else console.log('✓ ' + (i + 1) + '. ' + x[0] + '  →  ' + (r.q || dec(r.url)).slice(0, 110));
 });
 // הגנה: אף כתובת לא יוצאת מגוגל / hakelim / התוסף
-T.forEach(function (x) { var r = C.parse(x[0], { now: NOW }); [r.url].concat((r.alt || []).map(function (a) { return a.url; })).forEach(function (u) { if (u && !/^(https:\/\/(mail|drive|docs|calendar|contacts)\.google\.com\/|https:\/\/(docs|sheets|slides|forms|keep)\.new|https:\/\/hakelim\.com\/|ext:|rem:|gmap:)/.test(u)) { fail++; console.log('✗ כתובת לא צפויה: ' + u); } }); });
+T.forEach(function (x) { var r = C.parse(x[0], { now: NOW }); [r.url].concat((r.alt || []).map(function (a) { return a.url; })).forEach(function (u) { if (u && !/^(https:\/\/(mail|drive|docs|calendar|contacts)\.google\.com\/|https:\/\/(docs|sheets|slides|forms|keep)\.new|https:\/\/hakelim\.com\/|ext:|rem:|gmap:|doit:)/.test(u)) { fail++; console.log('✗ כתובת לא צפויה: ' + u); } }); });
 console.log('\n' + (T.length - fail) + '/' + T.length + ' עברו' + (fail ? ' – ' + fail + ' נכשלו' : ''));
 process.exit(fail ? 1 : 0);

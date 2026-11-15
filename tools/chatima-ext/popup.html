@@ -5,11 +5,12 @@
 <title>הכלים של גילעד רחמים</title>
 <link rel="stylesheet" href="popup.css">
 <link rel="stylesheet" href="cmd.css">
-<link rel="stylesheet" href="cmd.css">
+<link rel="stylesheet" href="a11y.css">
+<script src="a11y.js"></script>
 </head>
 <body>
-<header><img src="icon32.png" alt="" width="24" height="24"><b>הכלים של גילעד רחמים</b></header>
-
+<header><img src="icon32.png" alt="" width="24" height="24"><h1 class="hk-title">הכלים של גילעד רחמים</h1><div class="hk-size" data-hk-size-ctl></div></header>
+<main class="hk-main">
 <div id="hkcmd" aria-label="מה לעשות בגוגל, במילים"></div>
 
 <label class="search"><span class="sr">חיפוש כלי</span><input id="q" type="search" placeholder="🔍 מה צריך? למשל: חתימה, תמונה, הזמנה" autocomplete="off" autofocus></label>
@@ -60,7 +61,7 @@
   <p class="small">🎤 <b>לדבר:</b> אחרי 📋 מופיע מעל תיבת ההודעה "🎤 לדבר" – מדברים, וההודעה נכנסת מסודרת (פיסוק, בלי "אממ"). שולחים בעצמכם.</p>
   <div class="chips gm wa-cats" id="wa-cats" role="group" aria-label="סוג הנוסח"></div>
   <div class="chips gm" id="wa-tpl"></div>
-  <div class="row add-tpl" id="wa-add" hidden><label class="sr" for="wa-new">תבנית חדשה</label><input id="wa-new" placeholder="נוסח חדש…" maxlength="500"><button type="button" class="line" id="wa-save">➕</button></div>
+  <div class="row add-tpl" id="wa-add" hidden><label class="sr" for="wa-new">תבנית חדשה</label><input id="wa-new" placeholder="נוסח חדש…" maxlength="500"><button type="button" class="line" id="wa-save" aria-label="לשמור את הנוסח">➕</button></div>
   <div class="row">
     <button class="line" type="button" id="wa-blur" aria-pressed="false">🙈 מצב פרטיות</button>
     <button class="line" type="button" id="wa-export">💾 לשמור את הצ׳אט</button>
@@ -98,7 +99,7 @@
 <details class="quick" id="quick">
   <summary>🚀 גוגל, ווטסאפ והמחשב</summary>
   <h3>📅 אירוע מהיר ליומן</h3>
-  <form class="ev" id="ev"><label class="sr" for="ev-q">מה ומתי</label><input id="ev-q" placeholder="למשל: רופא שיניים מחר ב-10:30" autocomplete="off"><button type="submit" class="line">➕</button></form>
+  <form class="ev" id="ev"><label class="sr" for="ev-q">מה ומתי</label><input id="ev-q" placeholder="למשל: רופא שיניים מחר ב-10:30" autocomplete="off"><button type="submit" class="line" aria-label="לפתוח ביומן">➕</button></form>
   <p class="small" id="ev-pre">כותבים מה ומתי, והיומן של גוגל נפתח עם הכול מוכן. טיפ: מסמנים טקסט בדף ← לחיצה ימנית ← "להוסיף ליומן".</p>
   <h3>➕ ליצור חדש</h3>
   <div class="go-chips" id="new-chips">
@@ -171,7 +172,8 @@
   <div class="row"><button type="button" class="gold" id="rate-go">⭐ לדרג בחנות</button><button type="button" class="line" id="rate-note">💬 הערה</button><button type="button" class="line" id="rate-later">אחר כך</button></div>
 </section>
 
-<section aria-live="polite">
+<section aria-label="רשימת הכלים">
+  <p class="sr" id="list-st" role="status"></p>
   <div id="list"></div>
 </section>
 
@@ -197,7 +199,7 @@
   </div>
   <p class="small">נוצרת כאן, במחשב שלכם. טיפ: לחיצה ימנית בשדה סיסמה באתר ← "להכניס סיסמה חזקה".</p>
 </section>
-
+</main>
 <footer><span class="chesed">מיזם הכלים · מיזם חסד, בלי פרסומות</span><br><a href="#" id="share-btn">💬 לשתף חבר</a> · <a href="https://hakelim.com/kelim/?utm_source=tosaf" target="_blank">כל הכלים באתר</a> · שום קובץ לא עולה לשרת · <a href="https://hakelim.com/kelim/machshev/chatima/tosaf/" target="_blank">פרטיות</a></footer>
 <script src="qrcode.min.js"></script>
 <script src="when.js"></script>

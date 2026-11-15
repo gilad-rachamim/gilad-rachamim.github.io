@@ -24,6 +24,14 @@
    ]
   },
   {
+   "type": "shot",
+   "dur": 6.5,
+   "title": "ככה זה *נראה*",
+   "img": "shots/auto/chanuka_matkonim.jpg",
+   "scroll": 0,
+   "caption": "כל אחד מעלה מתכון חנוכה שהמציא, עם תמונה"
+  },
+  {
    "type": "cards",
    "cls": "gold",
    "dur": 7,
