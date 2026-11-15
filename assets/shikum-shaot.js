@@ -293,5 +293,16 @@
   // בטלפון הדף (ברוחב A4) מוקטן כדי שייראה כולו
   function fitPaper() { var p = $('sh-paper'), w = p.parentNode.clientWidth - 4; p.style.zoom = w > 0 && w < 711 ? (w / 711).toFixed(3) : ''; }
   window.addEventListener('resize', fitPaper);
+  // גודל הטקסט (בקשת יובל וגנר, 15.11.2026): רגיל / גדול (ברירת מחדל) / גדול מאוד, נשמר בטלפון
+  var SZ = KEY + '-size';
+  function setSize(n, track) {
+    document.documentElement.setAttribute('data-ts-size', n);
+    document.querySelectorAll('.ts-size [data-size]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-size') === n ? 'true' : 'false'); });
+    try { localStorage.setItem(SZ, n); } catch (e) {}
+    fitPaper();
+    if (track) used('size-' + n);
+  }
+  document.querySelectorAll('.ts-size [data-size]').forEach(function (b) { b.addEventListener('click', function () { setSize(b.getAttribute('data-size'), true); }); });
+  try { var s0 = localStorage.getItem(SZ); if (s0 === '1' || s0 === '3') setSize(s0, false); } catch (e) {}
   fillFields(); showDemo(); roles(); names(); renderWeek(); renderDays(); remind();
 })();
