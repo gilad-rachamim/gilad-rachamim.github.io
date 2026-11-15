@@ -72,6 +72,7 @@ function buildMenus() {
                 C(o);
               });
           });
+          C({ parentId: 'hk', id: 'lens', title: '🔎 לחפש את התמונה בגוגל (מאיפה היא?)', contexts: ['image'] });
           C({ parentId: 'hk', id: 'pw', title: 'להכניס סיסמה חזקה', contexts: ['editable'] });
           if (snips.length) {
             C({ parentId: 'hk', id: 'sn', title: '📋 טקסט מוכן', contexts: ['editable'] });
@@ -117,6 +118,26 @@ function insertSnip(text) {
   return false;
 }
 chrome.storage.onChanged.addListener(function (ch) { if (ch.snips) buildMenus(); });
+
+// ---------- פתיחת שירותים במקש (המשתמש קובע מקשים ב-chrome://extensions/shortcuts) ----------
+// אם השירות כבר פתוח בכרטיסייה – עוברים אליה (רק כשיש רשות "tabs"), אחרת פותחים חדשה.
+var SERVICES = {
+  'open-whatsapp': ['https://web.whatsapp.com/', 'https://web.whatsapp.com/*'],
+  'open-gmail': ['https://mail.google.com/mail/u/0/', 'https://mail.google.com/*'],
+  'open-calendar': ['https://calendar.google.com/', 'https://calendar.google.com/*'],
+  'open-drive': ['https://drive.google.com/', 'https://drive.google.com/*'],
+  'open-photos': ['https://photos.google.com/', 'https://photos.google.com/*'],
+  'open-home': ['home.html', '']
+};
+function openService(s) {
+  if (!s[1]) return chrome.tabs.create({ url: chrome.runtime.getURL(s[0]) });
+  return chrome.permissions.contains({ permissions: ['tabs'] }).then(function (ok) {
+    return ok ? chrome.tabs.query({ url: s[1] }) : [];
+  }).then(function (found) {
+    if (found && found[0]) return chrome.tabs.update(found[0].id, { active: true }).then(function () { return chrome.windows.update(found[0].windowId, { focused: true }); });
+    return chrome.tabs.create({ url: s[0] });
+  }).catch(function () { return chrome.tabs.create({ url: s[0] }); });
+}
 
 // ---------- חלון צד: כלים מהאתר ליד הדף ----------
 // חייב לקרות מיד בתוך הלחיצה, לכן קודם פותחים ואחר כך שומרים לאיזה דף (הצד מתעדכן לבד).
@@ -339,6 +360,12 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
     return;
   }
   if (id === 'side') { if (tab) openSide(tab); return; }
+  if (id === 'lens') {
+    var src = info.srcUrl || '';
+    if (/^https?:/.test(src)) chrome.tabs.create({ url: 'https://lens.google.com/uploadbyurl?url=' + encodeURIComponent(src), index: tab ? tab.index + 1 : undefined });
+    else chrome.tabs.create({ url: 'https://lens.google.com/', index: tab ? tab.index + 1 : undefined });
+    return;
+  }
   if (id === 'sn-edit') { if (tab) { try { chrome.sidePanel.open({ windowId: tab.windowId }).catch(function () {}); } catch (e) {} chrome.storage.session.set({ spCtx: { url: tab.url || '', title: tab.title || '', view: 'notes', at: Date.now() } }); } return; }
   if (id.indexOf('sn|') === 0) {
     if (!tab || tab.id == null) return;
@@ -401,6 +428,7 @@ chrome.runtime.onMessage.addListener(function (m, sender, reply) {
 // Alt+Shift+T מתרגם את הדף (ולחיצה נוספת מחזירה אותו כמו שהיה)
 chrome.commands.onCommand.addListener(function (cmd, tab) {
   if (cmd === 'tabs-manager') { openTabsManager(); return; }
+  if (SERVICES[cmd]) { openService(SERVICES[cmd]); return; }
   if (cmd === 'side-panel') { if (tab) openSide(tab); return; }
   if (cmd === 'notes') { if (tab) { try { chrome.sidePanel.open({ windowId: tab.windowId }).catch(function () {}); } catch (e) {} chrome.storage.session.set({ spCtx: { url: tab.url || '', title: tab.title || '', view: 'notes', at: Date.now() } }); } return; }
   if (!tab) return;

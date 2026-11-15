@@ -27,6 +27,13 @@
     <button type="button" data-q="older_than:2y">🗓 ישנים משנתיים</button>
     <button type="button" data-q="is:starred">⭐ מסומנים</button>
   </div>
+  <div class="chips gm" id="gm-set">
+    <button type="button" data-hash="#settings/general">✍ חתימה וביטול שליחה</button>
+    <button type="button" data-hash="#settings/filters">🚫 חסומים ומסננים</button>
+    <button type="button" data-hash="#trash">♻ לשחזר מייל שנמחק</button>
+    <button type="button" data-hash="#scheduled">⏰ מיילים מתוזמנים</button>
+    <button type="button" data-url="https://takeout.google.com/settings/takeout/custom/gmail">💾 גיבוי כל המיילים</button>
+  </div>
   <button class="line" type="button" id="gm-unsub">✂ להסיר אותי מרשימת הדיוור של המייל הפתוח</button>
   <p class="msg" id="gm-msg" role="status"></p>
   <p class="small">לנקות: בוחרים חיפוש ← תיבת הסימון למעלה ← "בחירת כל השיחות התואמות" ← 🗑. התוסף לא קורא ולא שומר את המיילים.</p>
@@ -59,6 +66,7 @@
 <div class="grid" id="acts" role="group" aria-label="כלים לדף הזה">
   <button class="line hi" type="button" id="tabs-btn" title="Alt+Shift+K">🗂 הכרטיסיות</button>
   <button class="line hi" type="button" id="home-btn">🏠 הדף שלי</button>
+  <button class="line hi wide" type="button" id="panui-btn">🧹 נפח בגוגל מלא? לפנות מקום בחינם</button>
   <button class="line hi" type="button" id="notes-btn">📝 פתקים</button>
   <button class="line hi" type="button" id="files-btn">📁 הקבצים שלי</button>
   <button class="line wide" type="button" data-act="translate" title="Alt+Shift+T">🌐 לתרגם את הדף – בלי לשבור אותו</button>
@@ -93,6 +101,42 @@
     <button type="button" data-go="https://web.whatsapp.com/">💬 ווטסאפ ווב</button>
     <button type="button" data-go="https://drive.google.com/drive/recent">🕘 אחרונים בדרייב</button>
     <button type="button" data-go="https://one.google.com/storage/management">🧹 לפנות מקום בגוגל</button>
+  </div>
+  <h3>📅 יומן גוגל בעברית</h3>
+  <div class="go-chips">
+    <button type="button" data-go="https://calendar.google.com/calendar/render?cid=webcal%3A%2F%2Fdownload.hebcal.com%2Fical%2Fhdate-he-v2.ics">📅 תאריך עברי בכל יום</button>
+    <button type="button" data-go="https://calendar.google.com/calendar/render?cid=iw.jewish%23holiday%40group.v.calendar.google.com">🕎 חגים יהודיים</button>
+    <button type="button" data-go="https://calendar.google.com/calendar/render?cid=webcal%3A%2F%2Fdownload.hebcal.com%2Fical%2Ftorah-readings-israel-he.ics">📖 פרשת השבוע</button>
+  </div>
+  <h3>🔑 סיסמאות, היסטוריה ואנשי קשר</h3>
+  <div class="go-chips">
+    <button type="button" data-go="chrome://password-manager/passwords">🔑 הסיסמאות השמורות שלי</button>
+    <button type="button" data-go="https://hakelim.com/kelim/machshev/sisma/?utm_source=tosaf">🔐 כמה חזקה הסיסמה?</button>
+    <button type="button" id="hist-btn">🕘 לנקות היסטוריה</button>
+    <button type="button" data-go="https://contacts.google.com/merge">👥 מיזוג אנשי קשר כפולים</button>
+    <button type="button" data-go="https://contacts.google.com/trash">♻ לשחזר איש קשר שנמחק</button>
+    <button type="button" data-go="https://hakelim.com/kelim/kesharim/sidur/?utm_source=tosaf">📇 לסדר ולייצא אנשי קשר</button>
+  </div>
+  <div class="row hist" id="hist" hidden>
+    <button type="button" class="line" data-since="1">שעה אחרונה</button>
+    <button type="button" class="line" data-since="24">היום</button>
+    <button type="button" class="line" data-since="168">שבוע</button>
+    <button type="button" class="line" data-since="0">הכול</button>
+  </div>
+  <p class="small" id="hist-msg" role="status"></p>
+  <h3>📊 גיליונות (אקסל) בעברית</h3>
+  <div class="go-chips">
+    <button type="button" data-go="https://docs.google.com/spreadsheets/create?hl=iw">📊 גיליון חדש בעברית</button>
+    <button type="button" data-go="https://docs.google.com/spreadsheets/u/0/?ftv=1&hl=iw">📋 תבניות מוכנות</button>
+    <button type="button" data-go="https://hakelim.com/kesef/taktziv/?utm_source=tosaf">💰 תקציב משפחתי</button>
+    <button type="button" data-go="https://hakelim.com/bait/kniyot/?utm_source=tosaf">🛒 רשימת קניות</button>
+  </div>
+  <p class="small">גיליון מימין לשמאל: בגיליון ← תפריט "עיצוב" ← "מימין לשמאל".</p>
+  <h3>🌐 כרום</h3>
+  <div class="go-chips">
+    <button type="button" id="reopen-btn">↩ לפתוח שוב כרטיסייה שנסגרה</button>
+    <button type="button" data-go="chrome://settings/performance">🐢 כרום איטי? חיסכון בזיכרון</button>
+    <button type="button" data-go="chrome://extensions/shortcuts">⌨ מקשי קיצור לשירותים</button>
   </div>
   <h3>💻 במחשב</h3>
   <div class="go-chips">
