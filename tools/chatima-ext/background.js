@@ -427,6 +427,7 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
 // הודעות מג׳ימייל ומהחלון הקטן
 chrome.runtime.onMessage.addListener(function (m, sender, reply) {
   if (!m || m.mailTpl) return;   // mailTpl: מטופל במאזין של ניסוח המייל
+  if (m.waAlarm || 'waAlways' in m) return;   // סידור צ'אטים בוואטסאפ: מטופל במאזין שבסוף הקובץ
   if (m.act || m.tabsManager || m.gmailUnsub) bumpUse();
   if (m.tabsManager) { openTabsManager().then(function () { reply({ ok: true }); }, function () { reply({ ok: false }); }); return true; }
   if (m.gmailUnsub) { gmailUnsub(m.gmailUnsub).then(reply, function () { reply({ ok: false }); }); return true; }
@@ -468,4 +469,47 @@ chrome.commands.onCommand.addListener(function (cmd, tab) {
   if (!tab) return;
   if (cmd === 'fix-layout') PAGE_ACTS.fix(tab, {});
   if (cmd === 'translate-page') PAGE_ACTS.translate(tab).catch(function () {});
+});
+
+// ---------- סידור צ'אטים בוואטסאפ ווב (wa.js): תזכורות, תזמון והפעלה קבועה ----------
+// התזכורות נשמרות רק במחשב (waRem). בזמן שנקבע: סימן ⏰ על כפתור התוסף, ופס בתוך וואטסאפ ווב.
+// שום הודעה לא נשלחת מכאן – גם "תזמון" רק מכין את הטקסט בתיבה, והמשתמש לוחץ שלח.
+var WA_ORIGIN = 'https://web.whatsapp.com/*';
+function waBadge() {
+  return chrome.storage.local.get('waRem').then(function (o) {
+    var due = (o.waRem || []).filter(function (r) { return r.at <= Date.now(); }).length;
+    chrome.action.setBadgeBackgroundColor({ color: '#e53935' });
+    return chrome.action.setBadgeText({ text: due ? '⏰' + (due > 1 ? due : '') : '' });
+  }).catch(function () {});
+}
+function waSyncAlarms() {
+  return chrome.storage.local.get('waRem').then(function (o) {
+    (o.waRem || []).forEach(function (r) { if (r.at > Date.now()) chrome.alarms.create('wa:' + r.id, { when: r.at }); });
+    return waBadge();
+  }).catch(function () {});
+}
+function waSyncScript() {
+  return Promise.all([chrome.storage.local.get('waAlways'), chrome.permissions.contains({ origins: [WA_ORIGIN] })]).then(function (r) {
+    var on = !!r[0].waAlways && r[1];
+    return chrome.scripting.getRegisteredContentScripts({ ids: ['hk-wa'] }).then(function (have) {
+      if (!on) return have.length ? chrome.scripting.unregisterContentScripts({ ids: ['hk-wa'] }) : null;
+      var spec = { id: 'hk-wa', matches: [WA_ORIGIN], js: ['wa.js'], css: ['wa.css'], runAt: 'document_idle', persistAcrossSessions: true };
+      return have.length ? chrome.scripting.updateContentScripts([spec]) : chrome.scripting.registerContentScripts([spec]);
+    });
+  }).catch(function () {});
+}
+chrome.runtime.onStartup.addListener(function () { waSyncAlarms(); waSyncScript(); });
+chrome.runtime.onInstalled.addListener(function () { waSyncAlarms(); waSyncScript(); });
+chrome.permissions.onRemoved.addListener(function () { waSyncScript(); });
+chrome.alarms.onAlarm.addListener(function (a) { if (a.name.indexOf('wa:') === 0) waBadge(); });
+chrome.storage.onChanged.addListener(function (ch, area) { if (area === 'local' && ch.waRem) waBadge(); });
+chrome.runtime.onMessage.addListener(function (m, sender, reply) {
+  if (!m || !(m.waAlarm || 'waAlways' in m)) return;
+  if (m.waAlarm) {
+    var id = 'wa:' + String(m.waAlarm.id).replace(/[^a-z0-9]/gi, '');
+    if (m.waAlarm.cancel) chrome.alarms.clear(id); else if (m.waAlarm.at > Date.now()) chrome.alarms.create(id, { when: m.waAlarm.at });
+    waBadge(); reply({ ok: true }); return;
+  }
+  chrome.storage.local.set({ waAlways: !!m.waAlways }).then(waSyncScript).then(function () { reply({ ok: true }); }, function () { reply({ ok: false }); });
+  return true;
 });

@@ -430,6 +430,22 @@
         p.then(function () { var m = o.waBlur || {}; m[tab.id] = !on; return chrome.storage.session.set({ waBlur: m }); }).then(function () { window.close(); });
       });
     });
+    // סידור צ'אטים (wa.js): נכנס לדף בלחיצה הזאת (activeTab), בלי הרשאה קבועה
+    $('wa-sidur').addEventListener('click', function () {
+      chrome.scripting.executeScript({ target: { tabId: tab.id }, func: function () { window.__hkWaOpen = true; } })
+        .then(function () { return chrome.scripting.insertCSS({ target: { tabId: tab.id }, files: ['wa.css'] }); })
+        .then(function () { return chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['wa.js'] }); })
+        .then(function () { window.close(); }, function () { $('wa-msg').textContent = 'לא הצלחתי לפתוח את הסידור. מרעננים את ווטסאפ ווב ומנסים שוב.'; });
+    });
+    chrome.storage.local.get('waAlways').then(function (o) { $('wa-always').checked = !!o.waAlways; }).catch(function () {});
+    $('wa-always').addEventListener('change', function () {
+      var on = $('wa-always').checked;
+      var p = on ? chrome.permissions.request({ origins: ['https://web.whatsapp.com/*'] }) : Promise.resolve(true);
+      p.then(function (ok) {
+        if (!ok) { $('wa-always').checked = false; $('wa-msg').textContent = 'בלי האישור הזה פותחים את 📋 בלחיצה כאן.'; return; }
+        chrome.runtime.sendMessage({ waAlways: on }, function () { void chrome.runtime.lastError; $('wa-msg').textContent = on ? '✓ מהרענון הבא 📋 יופיע לבד בווטסאפ ווב.' : 'כובה.'; });
+      }, function () { $('wa-always').checked = false; });
+    });
     $('wa-export').addEventListener('click', function () {
       run(waRead).then(function (r) {
         if (!r || !r.lines.length) { $('wa-msg').textContent = 'לא מצאתי הודעות. פותחים צ׳אט, גוללים למעלה עד איפה שרוצים, ולוחצים שוב.'; return; }
