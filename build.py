@@ -406,6 +406,8 @@ def demo_block(meta, url):
     if not tool or not (DEMO_DIR / f"{tool}.mp4").exists():
         return "", ""
     sp = DEMO_SPECS / f"{tool}.json"
+    if not sp.exists():
+        sp = DEMO_SPECS / "auto" / f"{tool}.json"  # מפרט שנוצר אוטומטית מתוכן הדף (autospec.py)
     spec = json.loads(sp.read_text(encoding="utf-8")) if sp.exists() else {}
     dur = spec.get("duration") or sum(s.get("dur", 0) for s in spec.get("scenes", [])) or 45
     wide = spec.get("wide")  # סרטון הדרכה לרוחב (16:9), למשל צילומי מסך של מחשב
@@ -418,18 +420,25 @@ def demo_block(meta, url):
           f'<a href="{post}" target="_blank" rel="noopener"><img src="{post}" alt="פרוספקט: {html_lib.escape(name)}" loading="lazy" width="1080" height="1350"></a>'
           f'<div class="dv-acts"><button type="button" class="btn btn-gold" data-dv-share="{post}" data-dv-kind="flyer">💌 לשלוח את הפרוספקט</button>'
           f'<a class="btn btn-line" href="{post}" download data-dv-dl="flyer">⬇️ להורדה (פוסט)</a>'
-          f'<a class="btn btn-line" href="{status}" download data-dv-dl="status">⬇️ להורדה (סטטוס)</a></div></details>') if has_fl else ""
+          + (f'<a class="btn btn-line" href="{status}" download data-dv-dl="status">⬇️ להורדה (סטטוס)</a>' if (DEMO_DIR / f"{tool}-status.png").exists() else "")
+          + '</div></details>') if has_fl else ""
+    # גילעד 15.11.2026: "הכל באהבה ממיזם הכלים... מיזם חינמי כדי להנגיש... לא הכל זה כסף!!" (בכלים רגישים בלי בקשת כסף)
+    soft = re.search(r"^/nefesh/|azkara|avel|shiva|levaya|kadish|rega|tmicha", url.replace(BASE, ""))
+    help_row = ('<p class="dv-help">💛 <b>באהבה ממיזם הכלים של גילעד רחמים</b> · מיזם חינמי להנגשה. לא הכול זה כסף: '
+                + ('מכירים מישהו שזה יעזור לו? שלחו לו את הדף.' if soft else
+                   '<a href="/kelim/#truma">רעיון, תוכן או עזרה בהפצה</a>, או <a href="/kelim/#litmoch">שותפות במיזם</a>.') + '</p>')
     blk = (
         '<style>.dv-sec .dv-video{display:block;width:100%;max-width:20rem;aspect-ratio:9/16;height:auto;margin:.6rem auto 0;border-radius:1.2rem;background:#0e1628;box-shadow:0 8px 30px rgba(0,0,0,.35)}'
         '.dv-sec .dv-video.dv-wide{max-width:100%;aspect-ratio:16/9;border-radius:.8rem}'
         '.dv-acts{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.9rem}.dv-acts .btn{font-size:.95rem}'
         '.dv-fl{margin-top:1rem}.dv-fl summary{cursor:pointer;color:var(--gold);font-weight:700;text-align:center}'
-        '.dv-fl img{display:block;width:100%;max-width:24rem;height:auto;margin:.8rem auto 0;border-radius:1rem}</style>'
+        '.dv-fl img{display:block;width:100%;max-width:24rem;height:auto;margin:.8rem auto 0;border-radius:1rem}'
+        '.dv-help{text-align:center;font-size:.95rem;margin-top:1rem;color:var(--muted,inherit)}</style>'
         f'<section class="k-sec dv-sec no-print" aria-labelledby="dv-h"><h2 id="dv-h">🎬 {html_lib.escape(name)}</h2>'
         f'<video class="dv-video{' dv-wide' if wide else ''}" controls playsinline preload="none" poster="{poster}" width="{1280 if wide else 720}" height="{720 if wide else 1280}" aria-label="{html_lib.escape(spec.get("description", name))}" data-dv-play="{tool}">'
         f'<source src="{v}" type="video/mp4"></video>'
         f'<div class="dv-acts"><button type="button" class="btn btn-gold" data-dv-share="{v}" data-dv-kind="video">💌 לשלוח את הסרטון לחבר</button>'
-        f'<a class="btn btn-line" href="{v}" download data-dv-dl="video">⬇️ להורדת הסרטון</a></div>{fl}'
+        f'<a class="btn btn-line" href="{v}" download data-dv-dl="video">⬇️ להורדת הסרטון</a></div>{fl}{help_row}'
         f'<script>window.DV_SHARE={json.dumps({"tool": tool, "text": share_txt, "url": url}, ensure_ascii=False)}</script>'
         '<script src="/assets/demo-share.js" defer></script></section>')
     ld = json.dumps({"@context": "https://schema.org", "@type": "VideoObject", "name": name,
@@ -444,6 +453,8 @@ def insert_demo(content, blk):
         return content.replace("<!--demo-->", "")
     if "<!--demo-->" in content:
         return content.replace("<!--demo-->", blk, 1)
+    if '<div class="tool"' in content and "<!--seo-txt-->" in content:  # כלי רגיל: הכלי קודם, הסרטון אחריו
+        return content.replace("<!--seo-txt-->", blk + "<!--seo-txt-->", 1)
     i = content.find("</header>")
     return content[: i + 9] + blk + content[i + 9:] if i >= 0 else blk + content
 
