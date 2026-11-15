@@ -6,7 +6,9 @@
   'use strict';
   var MC = window.MC, $ = MC.$, TOOL = 'machol_bingo', KEY = 'machol-bingo';
   var app = $('bg-app'); if (!app) return;
-  var O = MC.load(KEY + '-o', { k: 'w', z: 4, free: true, ft: 'חינם ★', cnt: 30, per: 2, title: '', em: true, name: true, call: true, slips: false, from: 1, to: 75, cols: true, seed: '' });
+  // דף נחיתה יכול לקבוע נושא התחלתי, גודל ומפתח שמירה משלו: data-example / data-z / data-wkey על #bg-app (בינגו לילדים, 15.11.2026)
+  var EX = app.getAttribute('data-example') || 'chanuka', WK = app.getAttribute('data-wkey') || '';
+  var O = MC.load(KEY + WK + '-o', { k: 'w', z: +(app.getAttribute('data-z') || 4), free: true, ft: 'חינם ★', cnt: 30, per: 2, title: '', em: true, name: true, call: true, slips: false, from: 1, to: 75, cols: true, seed: '' });
   if (!O.seed) O.seed = MC.seed();
   var shared = MC.dec(MC.param('d') || ''), panel = null, POOL = [], EMO = {};
   var HEAD = ['ב', 'י', 'נ', 'ג', 'ו'];
@@ -200,7 +202,7 @@
     var el = $(id); if (!el) return;
     if (kind === 'c') el.checked = !!O[prop]; else el.value = O[prop] == null ? '' : String(O[prop]);
     el.addEventListener(kind === 'c' ? 'change' : 'input', function () {
-      O[prop] = kind === 'c' ? el.checked : kind === 'n' ? +el.value : el.value; MC.save(KEY + '-o', O);
+      O[prop] = kind === 'c' ? el.checked : kind === 'n' ? +el.value : el.value; MC.save(KEY + WK + '-o', O);
       clearTimeout(el._t); el._t = setTimeout(function () { syncUi(); (after || show)(); }, kind === 'c' ? 0 : 450);
     });
   }
@@ -212,8 +214,8 @@
     $('bg-colsf').hidden = !(O.k === 'n' && +O.z === 5);
   }
   function settings() {
-    [].forEach.call(document.querySelectorAll('#bg-kind button'), function (b) { b.addEventListener('click', function () { O.k = b.getAttribute('data-k'); if (O.k === 'n' && +O.z === 4) O.z = 5; MC.save(KEY + '-o', O); syncUi(); show(); MC.used(TOOL, 'kind_' + O.k); }); });
-    [].forEach.call(document.querySelectorAll('#bg-size button'), function (b) { b.addEventListener('click', function () { O.z = +b.getAttribute('data-z'); MC.save(KEY + '-o', O); syncUi(); show(); }); });
+    [].forEach.call(document.querySelectorAll('#bg-kind button'), function (b) { b.addEventListener('click', function () { O.k = b.getAttribute('data-k'); if (O.k === 'n' && +O.z === 4) O.z = 5; MC.save(KEY + WK + '-o', O); syncUi(); show(); MC.used(TOOL, 'kind_' + O.k); }); });
+    [].forEach.call(document.querySelectorAll('#bg-size button'), function (b) { b.addEventListener('click', function () { O.z = +b.getAttribute('data-z'); MC.save(KEY + WK + '-o', O); syncUi(); show(); }); });
     bind('bg-free', 'free', 'c'); bind('bg-ft', 'ft', 't'); bind('bg-cntn', 'cnt', 'n'); bind('bg-per', 'per', 'n', refreshPreview); bind('bg-title', 'title', 't');
     bind('bg-em', 'em', 'c'); bind('bg-name', 'name', 'c', refreshPreview); bind('bg-callp', 'call', 'c', refreshPreview); bind('bg-slips', 'slips', 'c', refreshPreview);
     bind('bg-nfrom', 'from', 'n'); bind('bg-nto', 'to', 'n'); bind('bg-cols', 'cols', 'c');
@@ -222,7 +224,7 @@
   function actions() {
     $('bg-prevc').addEventListener('click', function () { view = view > 1 ? view - 1 : Math.max(1, +O.cnt || 30); show(); });
     $('bg-nextc').addEventListener('click', function () { view = view < (+O.cnt || 30) ? view + 1 : 1; show(); });
-    $('bg-shuf').addEventListener('click', function () { O.seed = MC.seed(); MC.save(KEY + '-o', O); show(); MC.used(TOOL, 'shuffle'); });
+    $('bg-shuf').addEventListener('click', function () { O.seed = MC.seed(); MC.save(KEY + WK + '-o', O); show(); MC.used(TOOL, 'shuffle'); });
     $('bg-make').addEventListener('click', function () { POOL = panel ? panel.items().map(function (x) { return x.w; }) : POOL; show(); MC.used(TOOL, 'make', { k: O.k, z: O.z, n: O.cnt, mode: panel ? panel.mode() : '' }); var t = $('bg-out'); if (t.scrollIntoView) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
     $('bg-print').addEventListener('click', function () { var p = pages(); if (!p.length) return; MC.print(p, title()); MC.used(TOOL, 'print', { k: O.k, z: O.z, n: O.cnt }); });
     MC.pdfButton($('bg-pdf'), pages, title, TOOL);
@@ -238,6 +240,6 @@
   window.addEventListener('resize', function () { clearTimeout(window._bgr); window._bgr = setTimeout(refreshPreview, 300); });
   if (shared && (shared.i || shared.k === 'n')) { player(shared); return; }
   settings(); actions();
-  panel = MC.panel($('bg-words'), { key: KEY + '-w', tool: TOOL, clues: false, n: 24, example: 'chanuka', onChange: fromPanel });
+  panel = MC.panel($('bg-words'), { key: KEY + WK + '-w', tool: TOOL, clues: false, n: 24, example: EX, onChange: fromPanel });
   fromPanel(panel.items());
 })();
