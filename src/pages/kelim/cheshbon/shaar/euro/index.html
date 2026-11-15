@@ -1,0 +1,100 @@
+<!--meta {
+ "site": "kelim",
+ "nav": "tchumim",
+ "tool": "cheshbon_shaar_euro",
+ "title": "שער היורו היום – שער יציג של בנק ישראל, וממיר יורו לשקל | הכלים של גילעד רחמים",
+ "description": "שער היורו היום: השער היציג של בנק ישראל להיום ולכל תאריך, וממיר מיורו לשקלים ומשקלים ליורו. גם הפרשי שער ורשימה מאקסל. בחינם, בלי הרשמה ובלי פרסומות.",
+ "og_title": "שער היורו היום – וממיר יורו לשקל",
+ "priority": "0.7",
+ "crumbs": [
+  [
+   "רואי חשבון ויועצי מס",
+   "/kelim/cheshbon/"
+  ],
+  [
+   "שער יציג",
+   "/kelim/cheshbon/shaar/"
+  ],
+  [
+   "שער היורו",
+   null
+  ]
+ ],
+ "ext": {
+  "accept": [
+   "text"
+  ],
+  "input": "sh-amt",
+  "menu": "להמיר לשקלים לפי השער היציג"
+ },
+ "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/cheshbon.css\"><link rel=\"preconnect\" href=\"https://kelim-shaar.gilad4049.workers.dev\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"מה שער היורו היום?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"השער היציג האחרון של היורו מופיע בראש הדף, עם התאריך שבו בנק ישראל פרסם אותו. בימים שאין בהם פרסום (שישי, שבת וחג) מוצג השער האחרון שפורסם.\"}}, {\"@type\": \"Question\", \"name\": \"איך ממירים יורו לשקלים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מכפילים את הסכום ביורו בשער היציג. בממיר שבדף מקלידים את הסכום, והתוצאה בשקלים מופיעה מיד. לכיוון ההפוך בוחרים \\\"משקלים למטבע\\\".\"}}, {\"@type\": \"Question\", \"name\": \"מה ההבדל בין שער יציג לשער בבנק?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"השער היציג הוא השער הרשמי של בנק ישראל, פעם ביום. בבנק ובצ'יינג' קונים ומוכרים לפי שער שכולל מרווח ועמלה, ולכן הוא שונה מעט.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לבדוק את שער היורו בתאריך שעבר?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בוחרים תאריך בשדה \\\"לפי השער של תאריך\\\", והכלי מביא את השער היציג של אותו יום, או של יום העסקים האחרון לפניו.\"}}, {\"@type\": \"Question\", \"name\": \"מאיפה הנתונים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מבנק ישראל, השערים היציגים הרשמיים. הם עוברים דרך שרת קטן של האתר ששומר אותם במטמון, כי בנק ישראל לא מאפשר לדפדפן לקרוא אותם ישירות.\"}}]}</script>",
+ "foot": "<script src=\"/assets/cheshbon.js\" defer></script><script src=\"/assets/cheshbon-shaar.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>שער היורו היום</h1>
+  <p class="sub">השער היציג של היורו לפי בנק ישראל, להיום ולכל תאריך. מקלידים סכום ומקבלים כמה זה בשקלים, או כמה יורו מקבלים על שקלים.</p>
+</header>
+
+<div class="tool ch" id="shaar" data-cur="EUR">
+  <div class="res" id="sh-today" aria-live="polite"><p class="hint">טוען את השער היציג…</p></div>
+
+  <div class="seg no-print" id="sh-mode" role="group" aria-label="מה רוצים לעשות">
+    <button type="button" data-v="conv" aria-pressed="true">להמיר סכום</button>
+    <button type="button" data-v="diff" aria-pressed="false">הפרשי שער</button>
+    <button type="button" data-v="many" aria-pressed="false">רשימה מאקסל</button>
+  </div>
+
+  <form class="k-form" id="sh-conv" novalidate>
+    <div class="row2">
+      <div class="field"><label for="sh-amt">סכום</label><input id="sh-amt" class="num-in" type="text" inputmode="decimal" autocomplete="off" placeholder="1,000"></div>
+      <div class="field"><label for="sh-cur">מטבע</label><select id="sh-cur"></select></div>
+      <div class="field"><label for="sh-date">לפי השער של תאריך</label><input id="sh-date" type="date"></div>
+      <div class="field"><label for="sh-dir">כיוון</label><select id="sh-dir"><option value="to">מהמטבע לשקלים</option><option value="from">משקלים למטבע</option></select></div>
+    </div>
+  </form>
+  <div class="res" id="sh-res" aria-live="polite"></div>
+
+  <form class="k-form" id="sh-diff" novalidate hidden>
+    <h2>הפרשי שער בין החשבונית לתשלום</h2>
+    <div class="row2">
+      <div class="field"><label for="sd-amt">סכום במטבע</label><input id="sd-amt" class="num-in" type="text" inputmode="decimal" autocomplete="off"></div>
+      <div class="field"><label for="sd-cur">מטבע</label><select id="sd-cur"></select></div>
+      <div class="field"><label for="sd-d1">תאריך החשבונית</label><input id="sd-d1" type="date"></div>
+      <div class="field"><label for="sd-d2">תאריך התשלום</label><input id="sd-d2" type="date"></div>
+    </div>
+  </form>
+  <div class="res" id="sd-res" aria-live="polite" hidden></div>
+
+  <form class="k-form" id="sh-many" novalidate hidden>
+    <h2>רשימת חשבוניות במט"ח</h2>
+    <div class="field"><label for="sm-list">מדביקים מאקסל: תאריך · סכום · מטבע (USD, EUR, $, €) בכל שורה. אפשר גם תיאור.</label>
+      <textarea id="sm-list" spellcheck="false"></textarea></div>
+    <div class="btns"><button class="btn btn-gold" type="button" id="sm-go">להמיר את כל הרשימה</button></div>
+    <p class="msg" id="sm-msg" aria-live="polite"></p>
+  </form>
+  <div id="sm-out" hidden></div>
+
+  <p class="src">המקור: בנק ישראל – השערים היציגים שהוא מפרסם בכל יום עסקים. ביום בלי שער (שישי, שבת, חג, או לפני הפרסום של היום) משתמשים בשער היציג האחרון שפורסם לפניו, והכלי כותב מאיזה תאריך הוא. השערים מגיעים דרך שרת קטן של האתר, כי בנק ישראל לא מאפשר לדפדפן לקרוא אותם ישירות; הסכומים שמקלידים לא נשלחים לשום מקום.</p>
+  <div class="share-row no-print"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="שער יציג של בנק ישראל להיום ולכל תאריך, עם ממיר והפרשי שער – בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר</a></div>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">שער היורו היום, ישר מבנק ישראל</h2>
+  <p>בראש הדף מופיע השער היציג של היורו כפי שבנק ישראל פרסם אותו, עם התאריך שלו. שער יציג הוא השער הרשמי שבנק ישראל קובע פעם ביום, לפי המסחר בשוק המטבעות. לפיו מחשבים חשבוניות, חוזים, החזרי הוצאות מחו"ל ודיווחים לרשות המסים. השער מתעדכן בכל יום עסקים, וביום שישי, בשבת ובחג נשאר השער האחרון שפורסם.</p>
+  <h3>ממיר יורו לשקל ומשקל ליורו</h3>
+  <p>מקלידים סכום ביורו ומקבלים כמה הוא שווה בשקלים לפי השער היציג. רוצים לדעת כמה יורו יתקבלו על סכום בשקלים? מחליפים את הכיוון ל"משקלים למטבע". אפשר לבחור כל תאריך שעבר, למשל יום החשבונית, ולראות את השער של אותו יום. הכלי זוכר את הבחירה בטלפון, כך שבפעם הבאה הוא נפתח ישר ביורו.</p>
+  <h3>למה בבנק מקבלים שער אחר?</h3>
+  <p>בבנק, בצ'יינג' או בכרטיס האשראי משלמים לפי שער קנייה או מכירה, שכולל עמלה ומרווח. לכן הסכום שתקבלו שם יהיה קצת שונה מהשער היציג. השער היציג הוא נקודת ההשוואה ההוגנת: כשמשווים בין צ'יינג'ים, כדאי לבדוק כמה כל אחד רחוק ממנו.</p>
+  <h3>לרואי חשבון ולעסקים</h3>
+  <p>בכפתורים שמעל הממיר יש גם חישוב הפרשי שער בין יום החשבונית ליום התשלום, והמרה של רשימה שלמה של סכומים ותאריכים מאקסל. כל החישובים נעשים אצלכם בטלפון. לדולר ול-12 מטבעות נוספים: <a class="gold" href="/kelim/cheshbon/shaar/">שער הדולר היום ושער יציג</a>, ולהמרה מהירה מדולרים: <a class="gold" href="/kelim/cheshbon/shaar/dolar-leshekel/">המרת דולר לשקל</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>מה שער היורו היום?</summary><p>השער היציג האחרון של היורו מופיע בראש הדף, עם התאריך שבו בנק ישראל פרסם אותו. בימים שאין בהם פרסום (שישי, שבת וחג) מוצג השער האחרון שפורסם.</p></details>
+  <details><summary>איך ממירים יורו לשקלים?</summary><p>מכפילים את הסכום ביורו בשער היציג. בממיר שבדף מקלידים את הסכום, והתוצאה בשקלים מופיעה מיד. לכיוון ההפוך בוחרים "משקלים למטבע".</p></details>
+  <details><summary>מה ההבדל בין שער יציג לשער בבנק?</summary><p>השער היציג הוא השער הרשמי של בנק ישראל, פעם ביום. בבנק ובצ'יינג' קונים ומוכרים לפי שער שכולל מרווח ועמלה, ולכן הוא שונה מעט.</p></details>
+  <details><summary>אפשר לבדוק את שער היורו בתאריך שעבר?</summary><p>כן. בוחרים תאריך בשדה "לפי השער של תאריך", והכלי מביא את השער היציג של אותו יום, או של יום העסקים האחרון לפניו.</p></details>
+  <details><summary>מאיפה הנתונים?</summary><p>מבנק ישראל, השערים היציגים הרשמיים. הם עוברים דרך שרת קטן של האתר ששומר אותם במטמון, כי בנק ישראל לא מאפשר לדפדפן לקרוא אותם ישירות.</p></details>
+</section>
+<!--/seo-txt-->

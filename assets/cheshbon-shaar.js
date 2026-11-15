@@ -10,6 +10,9 @@
     SEK: 'כתר שוודי', NOK: 'כתר נורווגי', DKK: 'כתר דני', JOD: 'דינר ירדני', EGP: 'לירה מצרית', LBP: 'לירה לבנונית', ZAR: 'ראנד דרום אפריקאי' };
   var SYM = { '$': 'USD', '€': 'EUR', '£': 'GBP', '¥': 'JPY', 'דולר': 'USD', 'יורו': 'EUR', 'אירו': 'EUR', 'פאונד': 'GBP', 'שטרלינג': 'GBP', 'פרנק': 'CHF', 'ין': 'JPY' };
   var cache = {}, st = CH.load(KEY, null) || { cur: 'USD', dir: 'to' };
+  // דף נחיתה (שער היורו היום / המרת דולר לשקל) קובע את המטבע שמוצג קודם: data-cur על #shaar
+  var PRE = (document.getElementById('shaar') || document.body).getAttribute('data-cur');
+  if (PRE) st.cur = PRE;
 
   function today() { var d = new Date(); return CH.iso(new Date(d.getFullYear(), d.getMonth(), d.getDate())); }
   function getDay(d) {
