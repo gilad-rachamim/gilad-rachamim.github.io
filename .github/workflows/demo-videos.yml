@@ -46,8 +46,7 @@ jobs:
           name: specs
           path: |
             tools/demo_video/specs/auto/
-            .cache/demo-shots/
-          include-hidden-files: true
+            tools/demo_video/shots/auto/
           retention-days: 3
 
   render:
@@ -60,7 +59,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
-        with: { name: specs, path: . }
+        with: { name: specs, path: tools/demo_video }  # ה-artifact נשמר יחסית ל-tools/demo_video (specs/auto, shots/auto)
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - name: install
@@ -90,7 +89,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
-        with: { name: specs, path: . }
+        with: { name: specs, path: tools/demo_video }  # ה-artifact נשמר יחסית ל-tools/demo_video (specs/auto, shots/auto)
       - uses: actions/download-artifact@v4
         with: { pattern: demo-*, path: parts }
       - uses: actions/setup-python@v5
@@ -100,7 +99,7 @@ jobs:
           pip install -q numpy qrcode[pil]
           for d in parts/*/; do [ -d "$d/assets" ] && cp -r "$d/assets/." assets/; done
           python tools/demo_video/render.py --reindex
-          rm -rf .cache parts
+          rm -rf parts tools/demo_video/shots/auto
       - name: commit and push
         run: |
           git config user.name "demo-videos-bot"

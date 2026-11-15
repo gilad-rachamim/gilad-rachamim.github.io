@@ -7,7 +7,7 @@
 בנוסף מצלם את הכלי האמיתי ברוחב טלפון (שרת מקומי שמגיש את הריפו), והצילום נכנס לסצנת "ככה זה נראה".
 
   python -I tools/demo_video/autospec.py --base http://127.0.0.1:8799 [--only tool1,tool2] [--limit N]
-יוצא: tools/demo_video/specs/auto/<tool>.json ו-.cache/demo-shots/<tool>.jpg (לא נשמר בגיט).
+יוצא: tools/demo_video/specs/auto/<tool>.json ו-tools/demo_video/shots/auto/<tool>.jpg (לא נשמר בגיט).
 מפרט שנכתב ביד (tools/demo_video/specs/<tool>.json) תמיד גובר, ולכלי כזה לא נוצר מפרט אוטומטי.
 """
 import argparse
@@ -20,7 +20,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 SRC = ROOT / "src" / "pages"
 OUT = HERE / "specs" / "auto"
-SHOTS = ROOT / ".cache" / "demo-shots"
+SHOTS = HERE / "shots" / "auto"  # לא נשמר בגיט (.gitignore); בענן עובר בין השלבים כ-artifact
 
 ICONS = {"bait": "🏠", "esek": "💼", "kesef": "💰", "kodesh": "📜", "limudim": "📚", "nefesh": "🌿",
          "machshev": "💻", "tamlul": "🎙", "shir": "🎵", "briut": "🩺", "avoda": "🧑‍💼", "shikum": "🦾",
@@ -182,7 +182,7 @@ def build_spec(page, base, page_obj):
     scenes = [{"type": "title", "dur": 4, "icon": icon, "kicker": domain or "מיזם הכלים", "title": h1, "sub": hook or sub_short,
                "chips": chips[:3]}]
     if shot_h:
-        scenes.append({"type": "shot", "dur": 6.5, "title": "ככה זה *נראה*", "img": f"../../.cache/demo-shots/{tool}.jpg",
+        scenes.append({"type": "shot", "dur": 6.5, "title": "ככה זה *נראה*", "img": f"shots/auto/{tool}.jpg",
                        "scroll": scroll, "caption": clip(sub_short, 60)})
     if steps:
         scenes.append({"type": "steps", "dur": 5.5 + .5 * len(steps), "title": f"איך משתמשים? *{len(steps)} צעדים*" if len(steps) > 1 else "איך *משתמשים?*",
