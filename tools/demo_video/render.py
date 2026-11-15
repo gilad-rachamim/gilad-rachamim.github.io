@@ -43,6 +43,10 @@ def render_video(page, spec, out_dir, fps):
     page.goto((HERE / "engine.html").as_uri())
     page.evaluate("document.fonts.ready")
     info = page.evaluate("s => DV.load(s)", spec)
+    # צילום של הכלי (סצנת shot): לחכות שהתמונה תיטען, אחרת יוצא מסך לבן
+    page.evaluate("Promise.all([...document.images].map(i => i.decode().catch(() => null)))")
+    for img in page.evaluate("[...document.images].filter(i => !i.naturalWidth).map(i => i.src)"):
+        print("WARN image missing:", img, flush=True)
     total, cuts = info["total"], info["cuts"]
     sid = spec["id"]
     tmp = Path(tempfile.mkdtemp(prefix="dv-"))
