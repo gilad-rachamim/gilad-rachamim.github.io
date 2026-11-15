@@ -142,8 +142,12 @@
     for (var i = 0; i < 400; i++) {
       collect(); rows().forEach(function (r) { var n = rowName(r); if (n && !seen[n]) { seen[n] = 1; total++; } });
       setMsg('סורק… ' + total + ' צ\'אטים');
-      var before = ps.scrollTop; ps.scrollTop += Math.max(200, ps.clientHeight * 0.7); await sleep(260);
-      if (ps.scrollTop === before) { await sleep(400); collect(); if (ps.scrollTop === before) break; }
+      // צעד של חצי מסך, ומחכים שוואטסאפ באמת יצייר את השורות החדשות (אחרת מדלגים על קטע ברשימה)
+      var first = rows().map(rowName).join('|');
+      var before = ps.scrollTop; ps.scrollTop += Math.max(150, ps.clientHeight * 0.5);
+      if (ps.scrollTop === before) { await sleep(500); collect(); break; }
+      for (var w = 0; w < 25; w++) { await sleep(80); if (rows().map(rowName).join('|') !== first) break; }
+      await sleep(120);
     }
     ps.scrollTop = keep; scanning = false; save();
     store.set({ waScanAt: Date.now() }).catch(function () {});
