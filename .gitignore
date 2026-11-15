@@ -17,3 +17,4 @@ tools/gibush-worker/private/
 tools/*/.dev.vars
 .cache/
 __pycache__/
+tools/demo_video/shots/auto/
