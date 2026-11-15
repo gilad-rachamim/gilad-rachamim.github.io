@@ -439,7 +439,7 @@
     $('wa-sidur').addEventListener('click', function () {
       chrome.scripting.executeScript({ target: { tabId: tab.id }, func: function () { window.__hkWaOpen = true; } })
         .then(function () { return chrome.scripting.insertCSS({ target: { tabId: tab.id }, files: ['wa.css'] }); })
-        .then(function () { return chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['wa.js'] }); })
+        .then(function () { return chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['dibur.js', 'wa.js'] }); })
         .then(function () { window.close(); }, function () { $('wa-msg').textContent = 'לא הצלחתי לפתוח את הסידור. מרעננים את ווטסאפ ווב ומנסים שוב.'; });
     });
     chrome.storage.local.get('waAlways').then(function (o) { $('wa-always').checked = !!o.waAlways; }).catch(function () {});
