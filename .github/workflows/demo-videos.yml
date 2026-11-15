@@ -97,6 +97,7 @@ jobs:
         with: { python-version: "3.12" }
       - name: merge + index
         run: |
+          pip install -q numpy qrcode[pil]
           for d in parts/*/; do [ -d "$d/assets" ] && cp -r "$d/assets/." assets/; done
           python tools/demo_video/render.py --reindex
           rm -rf .cache parts
