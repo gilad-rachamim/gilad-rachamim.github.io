@@ -1,0 +1,28 @@
+/* סידור מיילים בג'ימייל */
+.sk-trust{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0 0;padding:0;list-style:none}
+.sk-trust li{border:1px solid var(--line);border-radius:999px;padding:.15rem .7rem;font-size:.9rem}
+.sk-grid{display:grid;gap:1.2rem;margin-top:1.2rem}
+@media (min-width:900px){.sk-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}.sk-prevwrap{position:sticky;top:1rem}}
+.sk-freq{display:flex;flex-wrap:wrap;gap:.4rem}
+.sk-freq label{position:relative;border:1px solid var(--line);border-radius:999px;padding:.35rem .9rem;cursor:pointer}
+.sk-freq input{position:absolute;top:0;right:0;width:1px;height:1px;opacity:0}
+.sk-freq input:checked+span{color:var(--gold);font-weight:700}
+.sk-freq label:has(input:checked){border-color:var(--gold)}
+.sk-freq label:has(input:focus-visible){outline:2px solid var(--gold);outline-offset:2px}
+.sk-cats{display:grid;gap:.35rem}
+.sk-cats .check small{display:block;opacity:.75;font-size:.85rem}
+.k-form textarea{min-height:4.6rem;width:100%}
+.sk-prev{background:#fff;color:#1f2328;border-radius:12px;padding:10px;max-height:760px;overflow:auto;border:1px solid var(--line)}
+.sk-prev a{color:#1a5fb4}
+.sk-mailhead{border-bottom:1px solid #e5e0d0;margin:0 0 10px;padding:0 4px 8px;font-size:14px;color:#333}
+.sk-mailhead b{display:block;font-size:15px;color:#111}
+.sk-steps{counter-reset:s;list-style:none;padding:0;margin:0}
+.sk-steps>li{counter-increment:s;position:relative;padding:.2rem 2.6rem .9rem 0}
+.sk-steps>li::before{content:counter(s);position:absolute;right:0;top:.1rem;width:1.9rem;height:1.9rem;border-radius:50%;background:var(--gold);color:#111;font-weight:700;display:grid;place-items:center}
+.sk-code{width:100%;min-height:14rem;direction:ltr;text-align:left;font:12px/1.4 ui-monospace,Consolas,monospace}
+.sk-row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.k-form .note:empty,.sk-msg:empty{display:none}
+code{direction:ltr;unicode-bidi:isolate}
+@media print{.topbar,.site-foot,.crumbs,.no-print,.skip{display:none!important}}
+.sk-more{border:1px solid var(--line);border-radius:12px;padding:.6rem .9rem;margin:.4rem 0 1rem}
+.sk-more summary{cursor:pointer;font-weight:700;color:var(--gold)}
