@@ -24,6 +24,8 @@
     var where = { page: location.pathname };
     // דף המוהלים: שליחה להורים היא לא פנייה אליי, לכן אירוע נפרד לכל כלי (share_parents_hazmana וכו') ולא whatsapp_click.
     if (a.hasAttribute('data-share')) { ev('share_parents_' + a.getAttribute('data-share'), where); return; }
+    // תוסף הכרום: כל לחיצה על "להוסיף לכרום" (קישור לחנות), עם המקום בדף שממנו לחצו.
+    if (/chromewebstore\.google\.com/.test(h)) { ev('tosaf_store_click', { page: location.pathname, from: a.getAttribute('data-store') || '' }); return; }
     if (/wa\.me|whatsapp/.test(h)) ev('whatsapp_click', where);
     else if (/t\.me\//.test(h)) ev('telegram_click', { page: location.pathname, bot: h.split('t.me/')[1].split('?')[0] });
     else if (h.indexOf('tel:') === 0) ev('phone_click', where);

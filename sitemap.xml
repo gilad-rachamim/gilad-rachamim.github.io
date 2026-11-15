@@ -63,7 +63,7 @@
   <url><loc>https://hakelim.com/kelim/chashiva/tzviya-misparim/</loc><lastmod>2026-11-13</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/chashiva/yaniv/</loc><lastmod>2026-11-14</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kelim/cheshbon/hakzaa/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kelim/cheshbon/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/cheshbon/</loc><lastmod>2026-11-15</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/cheshbon/mikdamot/</loc><lastmod>2026-11-13</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/cheshbon/moadim/</loc><lastmod>2026-11-13</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/cheshbon/osek/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
@@ -88,7 +88,7 @@
   <url><loc>https://hakelim.com/kelim/eruim/sfira/</loc><lastmod>2026-11-14</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/eruim/tochnit/</loc><lastmod>2026-11-13</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/hitkadmut/</loc><lastmod>2026-11-10</lastmod><priority>0.5</priority></url>
-  <url><loc>https://hakelim.com/kelim/</loc><lastmod>2026-11-14</lastmod><priority>0.9</priority></url>
+  <url><loc>https://hakelim.com/kelim/</loc><lastmod>2026-11-15</lastmod><priority>0.9</priority></url>
   <url><loc>https://hakelim.com/kelim/kehila/aliyot/</loc><lastmod>2026-11-13</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/kehila/azkarot/</loc><lastmod>2026-11-14</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/kehila/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
@@ -103,11 +103,11 @@
   <url><loc>https://hakelim.com/kelim/kesharim/yomulda/</loc><lastmod>2026-11-14</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/machshev/chadashot/</loc><lastmod>2026-11-13</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/machshev/chadashot/moda/</loc><lastmod>2026-11-14</lastmod><priority>0.5</priority></url>
-  <url><loc>https://hakelim.com/kelim/machshev/chatima/</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kelim/machshev/chatima/tosaf/</loc><lastmod>2026-11-14</lastmod><priority>0.5</priority></url>
+  <url><loc>https://hakelim.com/kelim/machshev/chatima/</loc><lastmod>2026-11-15</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/machshev/chatima/tosaf/</loc><lastmod>2026-11-15</lastmod><priority>0.5</priority></url>
   <url><loc>https://hakelim.com/kelim/machshev/fax/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/machshev/gibui/</loc><lastmod>2026-11-14</lastmod><priority>0.7</priority></url>
-  <url><loc>https://hakelim.com/kelim/machshev/</loc><lastmod>2026-11-13</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/machshev/</loc><lastmod>2026-11-15</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/machshev/kasher/</loc><lastmod>2026-11-14</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/machshev/kav/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/machshev/mi-mitkasher/chul/</loc><lastmod>2026-11-14</lastmod><priority>0.7</priority></url>
@@ -185,16 +185,18 @@
   <url><loc>https://hakelim.com/kelim/tochen/studio/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/tochen/tirgum/amharit-ivrit/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/tochen/tirgum/aravit-ivrit/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kelim/tochen/tirgum/</loc><lastmod>2026-11-14</lastmod><priority>0.9</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/tirgum/atar/</loc><lastmod>2026-11-15</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/tirgum/</loc><lastmod>2026-11-15</lastmod><priority>0.9</priority></url>
   <url><loc>https://hakelim.com/kelim/tochen/tirgum/ivrit-anglit/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/tochen/tirgum/ivrit-aravit/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/tochen/tirgum/ivrit-rusit/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/tochen/tirgum/koli/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kelim/tochen/tirgum/mismachim/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/tirgum/mismachim/</loc><lastmod>2026-11-15</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/tochen/tirgum/mitzlema/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/tochen/tirgum/rusit-ivrit/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/tochen/tirgum/sfaradit-ivrit/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/tochen/tirgum/tzarfatit-ivrit/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/tirgum/youtube/</loc><lastmod>2026-11-15</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/tochen/wa/</loc><lastmod>2026-11-14</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kesef/achuzim/</loc><lastmod>2026-11-14</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kesef/ashrai/</loc><lastmod>2026-11-14</lastmod><priority>0.6</priority></url>
