@@ -59,7 +59,16 @@ def cards(w, h):
     more = card('<div class=c><h1 style="font-size:%dpx">ועוד בתוסף אחד</h1><div class=grid style="grid-template-columns:repeat(%d,1fr);width:%dpx">%s</div></div>' % (int(80 * s), cols, int(w * .86), grid), w, h, "more")
     priv = card('<div class=c><h1 style="font-size:%dpx">הכול בתוך המחשב<b>בלי שרת. בלי חשבון.</b></h1><p class=sub style="font-size:%dpx">התוסף לא קורא את המיילים ולא שולח את הדפים לשום מקום.<br>חינם, בלי פרסומות.</p></div>' % (int(96 * s), mid), w, h, "priv")
     cta = card('<div class=c>%s<h1 style="font-size:%dpx">להוסיף לכרום<b>בחינם</b></h1><p class=sub style="font-size:%dpx">בחנות של כרום: <span class=gold>"הכלים של גילעד רחמים"</span></p><p class="btn" style="font-size:%dpx;padding:18px 46px;direction:ltr">hakelim.com/kelim/machshev/chatima/tosaf</p></div>' % (brand, big, mid, int(38 * s)), w, h, "cta")
-    return intro, tr, more, priv, cta
+    # "🎤 לדבר" (תוסף 3.5): מה שאמרתם ← מה שנכנס למייל. הטקסט המסודר = הפלט של HKDibur.tidy על אותו דיבור.
+    said = "שלום דני אממ רציתי לשאול לגבי החשבונית של אוקטובר כאילו היא עוד לא הגיעה אליי אפשר לשלוח שוב תודה רבה"
+    mail = "<span class=gold>נושא: בעניין החשבונית של אוקטובר</span><br><br>שלום דני,<br><br>רציתי לשאול לגבי החשבונית של אוקטובר. היא עוד לא הגיעה אליי. אפשר לשלוח שוב?<br><br>תודה רבה!<br>בברכה,<br>גילעד"
+    fs = int(30 * s)
+    box = 'border:1px solid #4a3f2a;background:rgba(255,255,255,.05);border-radius:22px;padding:24px 28px;text-align:right;line-height:1.5;font-size:%dpx' % fs
+    lab = 'display:block;color:#e2b85c;font-weight:800;margin-bottom:10px;font-size:%dpx' % int(28 * s)
+    two = ('display:flex;flex-direction:column;gap:16px;width:%dpx' % int(w * .86)) if tall else ('display:grid;grid-template-columns:1fr auto 1.25fr;gap:26px;align-items:center;width:%dpx' % int(w * .84))
+    arrow = '<div style="font-size:%dpx;color:#e2b85c;text-align:center">%s</div>' % (int(60 * s), "⬇" if tall else "⬅")
+    dibur = card('<div class=c><h1 style="font-size:%dpx">🎤 מדברים<b>והוא מסדר</b></h1><div style="%s"><div style="%s"><span style="%s">מה שאמרתם</span><span style="color:#b9ae98">"%s"</span></div>%s<div style="%s;background:rgba(226,184,92,.08);border-color:#e2b85c"><span style="%s">מה שנכנס למייל</span>%s</div></div><p class=sub style="font-size:%dpx">בג׳ימייל ובווטסאפ ווב: פיסוק, פסקאות, בלי "אממ" – ושולחים בעצמכם.</p></div>' % (int(84 * s), two, box, lab, said, arrow, box, lab, mail, int(34 * s)), w, h, "dibur")
+    return intro, tr, more, priv, cta, dibur
 
 # קטעי ההקלטה: (שם, חיתוך x,y,w,h בתוך פריים 1280x800 או None)
 # סדר הסרטון: (שם הקלטה, חיתוך x,y,w,h או None, עד כמה שניות), ("still", מספר), ("card", שם)
@@ -68,10 +77,10 @@ import os
 VARIANT = os.environ.get("VARIANT", "full")
 if VARIANT == "short":
     SEGS = [("panui", (80, 0, 1120, 800), 9), ("popup", (300, 0, 720, 800), 13), ("tabs", (240, 0, 800, 800), 10),
-            ("card", "tr"), ("atar", None, 11), ("youtube", (372, 0, 880, 700), 8)]
+            ("card", "dibur"), ("card", "tr"), ("atar", None, 11), ("youtube", (372, 0, 880, 700), 8)]
 else:
     SEGS = [("panui", (80, 0, 1120, 800)), ("popup", (300, 0, 720, 800)), ("still", 3), ("tabs", (240, 0, 800, 800)),
-            ("still", 0), ("still", 1), ("still", 2), ("card", "tr"),
+            ("still", 0), ("still", 1), ("still", 2), ("card", "dibur"), ("card", "tr"),
             ("atar", None), ("youtube", (372, 0, 880, 700)), ("pdf2", None, 6)]
 
 def seg_video(name):
@@ -90,8 +99,9 @@ def seg_video(name):
     return out, t[-1] - t[0]
 
 def build(w, h, tag):
-    intro, tr, more, priv, cta = cards(w, h)
-    named = {"tr": tr}
+    intro, tr, more, priv, cta, dibur = cards(w, h)
+    named = {"tr": tr, "dibur": dibur}
+    hold = {"dibur": 5.5}
     bg = card("", w, h, "bg")
     parts = []
     def still(png, sec, name):
@@ -103,7 +113,7 @@ def build(w, h, tag):
         name, crop = item[0], item[1]
         maxdur = item[2] if len(item) > 2 else None
         if name == "card":
-            still(named[crop], 3.0, crop); continue
+            still(named[crop], hold.get(crop, 3.0), crop); continue
         if name == "still":
             if crop >= len(STILLS): continue
             o = TMP / ("%s-still%d.mp4" % (tag, crop)); sec = 4.6
