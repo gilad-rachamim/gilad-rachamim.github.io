@@ -294,7 +294,7 @@
       '<div class="dv-acts"><button type="button" class="btn btn-gold" data-dv-share="' + v + '" data-dv-kind="video">💌 לשלוח את הסרטון לחבר</button>' +
       '<a class="btn btn-line" href="' + v + '" download data-dv-dl="video">⬇️ להורדת הסרטון</a></div>' + fl + help;
     // כלי רגיל: הסרטון אחרי הכלי (לפני ההסברים), כדי לא לדחוף את הכלי למטה. דף נחיתה בלי .tool: אחרי הכותרת.
-    var seo = document.querySelector('.tool') && document.querySelector('section.seo-txt');
+    var seo = document.querySelector('section.seo-txt');
     var h = document.querySelector('header.k-hero') || document.querySelector('main header') || document.querySelector('h1');
     var at = h && h.closest('header') || h;
     if (seo) seo.parentNode.insertBefore(sec, seo);

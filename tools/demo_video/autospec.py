@@ -95,7 +95,10 @@ def as_steps(text):
 def pick_steps(ol, faq, h3s):
     if 2 <= len(ol) <= 6 and all(len(x) <= 120 for x in ol) and sum(bool(VERB.match(x)) for x in ol) >= 2:
         return [clip((sentences(x) or [x])[0], STEP_MAX) for x in ol[:3]]
-    srcs = [p for h, p in h3s if "איך" in h] + [a for q, a in faq if q.startswith("איך")]
+    # שאלות על עדכון, ביטול, מחיקה או תקלה הן לא "איך משתמשים" (סידור מיילים, 15.11.2026)
+    not_use = re.compile(r"מעדכנ|מבטל|מסיר|מוחק|מחזיר|משחזר|בעיה|לא עובד|תקלה|מתקינים מחדש|עוצרים")
+    srcs = [p for h, p in h3s if "איך" in h and not not_use.search(h)] + \
+           [a for q, a in faq if q.startswith("איך") and not not_use.search(q)]
     best = []
     for s in srcs:
         st = as_steps(s)
@@ -138,7 +141,7 @@ def love_items(soft, limited):
     return items
 
 
-def build_spec(page, base, page_obj):
+def build_spec(page, base, page_obj, hub=False):
     url = "/" + page.parent.relative_to(SRC).as_posix() + "/"
     built = ROOT / page.parent.relative_to(SRC) / "index.html"
     meta, h1, sub, faq, h3s, ol, chips = parse(page, url, built)
@@ -152,6 +155,22 @@ def build_spec(page, base, page_obj):
     limited = any("מכסה" in c or "לשותפים" in c for c in chips) or "לשותפים במיזם ללא הגבלה" in " ".join(chips)
     steps = pick_steps(ol, faq, h3s)
     feats = pick_features(h3s, faq)
+    raw_body = page.read_text(encoding="utf-8")
+    cards = re.findall(r'<a href="(/[^"]+/)"[^>]*>(?:<span class="badge">[^<]*</span>)?<b>([^<]{3,60})</b><span>([^<]{8,400})</span></a>', raw_body)
+    is_hub = hub or (len(cards) >= 4 and '<div class="tool"' not in raw_body)
+    if is_hub:
+        steps = []
+        seen_u = set()
+        feats = []
+        for cu, cn, cd in cards:
+            if cu in seen_u or cu == url:
+                continue
+            seen_u.add(cu)
+            cn = strip(cn)
+            emo = re.match(r"^(\W{1,3})\s", cn)
+            feats.append([emo.group(1) if emo else "✨", clip(re.sub(r"^\W{1,3}\s", "", cn), 40), clip(sentences(cd)[0] if sentences(cd) else strip(cd), FEAT_MAX)])
+            if len(feats) >= 5:
+                break
     hook = meta.get("og_title", "").split(" | ")[0]
     if not hook or h1 in hook or hook.split(" – ")[0].strip() in h1:  # כותרת השיתוף שחוזרת על ה-H1 לא מוסיפה כלום
         hook = ""
@@ -188,7 +207,8 @@ def build_spec(page, base, page_obj):
         scenes.append({"type": "steps", "dur": 5.5 + .5 * len(steps), "title": f"איך משתמשים? *{len(steps)} צעדים*" if len(steps) > 1 else "איך *משתמשים?*",
                        "items": [[s, ""] for s in steps], "gap": 1.0})
     if len(feats) >= 2:
-        scenes.append({"type": "cards", "dur": 6.5, "title": "מה *כלול?*", "items": feats})
+        scenes.append({"type": "cards", "dur": 7.5 if is_hub else 6.5, "title": "מה יש *בתחום?*" if is_hub else "מה *כלול?*",
+                       "items": feats[:5] if is_hub else feats, "gap": .65 if is_hub else .75})
     scenes.append({"type": "cards", "cls": "gold", "dur": 7, "badge": "💛 באהבה ממיזם הכלים", "title": "מיזם חינמי, *כדי להנגיש*",
                    "items": love_items(soft, limited), "gap": .8,
                    "foot": "לעזור למיזם: hakelim.com/kelim/#truma" if not soft else "בלי פרסומות · בלי הרשמה · בחינם"})
@@ -197,7 +217,7 @@ def build_spec(page, base, page_obj):
     flyer = {
         "icon": icon, "kicker": domain or "מיזם הכלים", "title": h1, "sub": sub_short, "chips": chips[:3],
         "steps": steps or ["נכנסים לדף", "ממלאים או בוחרים", "מקבלים תוצאה, בחינם"],
-        "features_title": "מה כלול",
+        "features_title": "מה יש בתחום" if is_hub else "מה כלול",
         "features": [[f[0], f[1] if len(feats) > 2 else f"{f[1]}: {clip(f[2], 46)}"] for f in feats[:4]] or [["🎁", "בחינם"], ["🚫", "בלי פרסומות"]],
         "partner": {"title": "💛 באהבה ממיזם הכלים · מיזם חינמי להנגשה",
                     "items": [[i[0], i[1]] for i in love_items(soft, limited)],
@@ -214,22 +234,26 @@ def build_spec(page, base, page_obj):
             "mood": "calm" if soft else "bright", "size": [540, 960], "scenes": scenes, "flyer": flyer}
 
 
+NOT_TOOL = re.compile(r"/(pratiut|negishut|privacy|tosaf/lehitraot)/")
+
+
 def targets(only=None):
     tj = json.loads((ROOT / "kelim" / "tools.json").read_text(encoding="utf-8"))["tools"]
+    hubs = {t["u"] for t in tj if t.get("h")}
     hand = {p.stem for p in (HERE / "specs").glob("*.json")}
     seen = set()
-    for t in tj:
-        if t.get("h"):
-            continue
-        page = SRC / t["u"].strip("/") / "index.html"
-        if not page.exists():
-            continue
+    for page in sorted(SRC.rglob("index.html")):
+        url = "/" + page.parent.relative_to(SRC).as_posix() + "/"
         m = re.match(r"\s*<!--meta\s*(\{.*?\})\s*-->", page.read_text(encoding="utf-8"), re.S)
-        tool = json.loads(m.group(1)).get("tool")
-        if not tool or tool in hand or tool in seen or (only and tool not in only):
+        if not m:
+            continue
+        meta = json.loads(m.group(1))
+        tool = meta.get("tool")
+        if (not tool or meta.get("noindex") or meta.get("no_precache") or not meta.get("site") or NOT_TOOL.search(url)
+                or tool in hand or tool in seen or (only and tool not in only)):
             continue
         seen.add(tool)
-        yield page
+        yield page, url in hubs
 
 
 def main():
@@ -251,9 +275,9 @@ def main():
         br = pw.chromium.launch()
         pg = br.new_page(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True)
     n = 0
-    for p in pages:
+    for p, hub in pages:
         try:
-            spec = build_spec(p, a.base, pg)
+            spec = build_spec(p, a.base, pg, hub)
         except Exception as e:
             print("SKIP", p, e)
             continue
