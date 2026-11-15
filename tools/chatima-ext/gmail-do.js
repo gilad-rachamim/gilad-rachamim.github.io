@@ -90,12 +90,12 @@
   function el(tag, txt, css) { var e = document.createElement(tag); if (txt != null) e.textContent = txt; if (css) e.style.cssText = css; return e; }
   function panel() {
     if (pan && document.body.contains(pan)) { pan.textContent = ''; return pan; }
-    pan = el('div', null, 'position:fixed;z-index:2147483646;top:72px;left:24px;width:340px;max-width:calc(100vw - 48px);background:#141210;color:#f3ead7;border:2px solid #d9b25f;border-radius:14px;padding:12px 14px;font:14px/1.5 "Segoe UI",Arial,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.45);direction:rtl;text-align:right');
+    pan = el('div', null, 'position:fixed;z-index:2147483646;top:72px;left:24px;width:340px;max-width:calc(100vw - 48px);background:#141210;color:#f3ead7;border:2px solid #d9b25f;border-radius:14px;padding:12px 14px;font:16px/1.5 "Segoe UI",Arial,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.45);direction:rtl;text-align:right');
     pan.setAttribute('role', 'dialog'); pan.setAttribute('aria-label', 'פקודה במילים – הכלים של גילעד רחמים');
     document.body.appendChild(pan); return pan;
   }
   function button(txt, gold, fn) {
-    var b = el('button', txt, 'font:inherit;cursor:pointer;border-radius:9px;padding:7px 12px;margin:6px 0 0 6px;' + (gold ? 'background:#d9b25f;color:#141210;border:0;font-weight:700' : 'background:transparent;color:#f3ead7;border:1px solid #4a3d24'));
+    var b = el('button', txt, 'font:inherit;cursor:pointer;border-radius:9px;padding:7px 12px;margin:6px 0 0 6px;' + (gold ? 'background:#d9b25f;color:#141210;border:0;font-weight:700' : 'background:transparent;color:#f3ead7;border:1px solid #8a7448'));
     b.type = 'button'; b.addEventListener('click', fn); return b;
   }
   function closeBtn(p) { var x = button('✕', false, function () { p.remove(); }); x.setAttribute('aria-label', 'סגירה'); x.style.cssText += ';position:absolute;top:4px;left:4px;margin:0;padding:2px 8px'; return x; }
@@ -116,7 +116,7 @@
     if (o.act === 'list') { msg.textContent = 'נמצאו ' + cnt + ' שיחות.'; return list(o, p, msg); }
     var what = a.he + (o.act === 'label' ? ' "' + o.label + '"' : '');
     p.appendChild(el('div', 'מה ייעשה: ' + what + (/^files/.test(o.act) ? ' – בשיחות שבחיפוש (עד 25, אחת-אחת).' : ' – לכל השיחות שבחיפוש.'), 'margin-top:6px;color:#e9c977'));
-    p.appendChild(el('div', 'החיפוש: ' + o.q, 'margin-top:4px;font-size:12px;color:#bdb3a0;direction:ltr;text-align:left;word-break:break-word'));
+    p.appendChild(el('div', 'החיפוש: ' + o.q, 'margin-top:4px;font-size:14.5px;color:#bdb3a0;direction:ltr;text-align:left;word-break:break-word'));
     var go = button('✓ לבצע: ' + what, true, async function () {
       go.disabled = true; no.disabled = true; msg.textContent = '⏳ מבצע…';
       if (/^files/.test(o.act)) { go.remove(); no.remove(); await files(o, p, msg, o.act); p.appendChild(button('סגירה', false, function () { p.remove(); })); return; }
@@ -183,8 +183,8 @@
     msg.textContent = '✓ ' + L.length.toLocaleString('he-IL') + ' שיחות' + (L.length >= 1000 ? ' (עד 1,000 – לצמצם בזמן כדי לקבל הכול)' : '') + '.';
     if (nAmt) p.appendChild(el('div', 'סכום שמופיע בשורות: ' + nAmt + ' מיילים, סך הכול ₪' + Math.round(sum).toLocaleString('he-IL') + ' (לפי מה שכתוב בנושא ובשורה בלבד – לבדוק מול החשבונית).', 'margin-top:6px;color:#e9c977'));
     var top = Object.keys(by).sort(function (a, b) { return by[b] - by[a]; }).slice(0, 6);
-    p.appendChild(el('div', 'הכי הרבה: ' + top.map(function (k) { return k + ' (' + by[k] + ')'; }).join(' · '), 'margin-top:4px;font-size:12.5px'));
-    var tbl = el('div', null, 'margin-top:8px;max-height:180px;overflow:auto;border:1px solid #4a3d24;border-radius:8px;font-size:12px');
+    p.appendChild(el('div', 'הכי הרבה: ' + top.map(function (k) { return k + ' (' + by[k] + ')'; }).join(' · '), 'margin-top:4px;font-size:15px'));
+    var tbl = el('div', null, 'margin-top:8px;max-height:180px;overflow:auto;border:1px solid #8a7448;border-radius:8px;font-size:14.5px');
     L.slice(0, 60).forEach(function (d) { tbl.appendChild(el('div', (d.short || '') + ' · ' + (d.name || d.mail) + ' · ' + d.subj.slice(0, 50) + (d.amt ? ' · ' + d.amt.c + d.amt.v : ''), 'padding:3px 6px;border-bottom:1px solid #2a241a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis')); });
     p.appendChild(tbl);
     var data = csv(L, base);
@@ -198,7 +198,7 @@
       var tsv = data.slice(1).split('\r\n').map(function (l) { return l.replace(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/g, '\t').replace(/"/g, ''); }).join('\n');
       navigator.clipboard.writeText(tsv).then(function () { msg.textContent = '✓ הועתק. בגיליון גוגל או באקסל: Ctrl+V.'; }, function () { msg.textContent = 'ההעתקה נחסמה – אפשר להוריד לאקסל.'; });
     }));
-    p.appendChild(el('div', 'רק מה שמוצג ברשימה. שום מייל לא נפתח, ושום דבר לא יוצא מהמחשב.', 'margin-top:6px;font-size:11.5px;color:#bdb3a0'));
+    p.appendChild(el('div', 'רק מה שמוצג ברשימה. שום מייל לא נפתח, ושום דבר לא יוצא מהמחשב.', 'margin-top:6px;font-size:14px;color:#bdb3a0'));
   }
   // ---------- קבצים מצורפים: פותחים כל שיחה, ולוחצים על הכפתור של ג׳ימייל עצמו ליד כל קובץ ----------
   var RE_DRIVE = /(?:^|\s)(?:הוספ\S*\s(?:\S+\s){0,2}?ל-?\s?(?:google\s)?(?:drive|דרייב)|שמירה\sב-?\s?(?:google\s)?(?:drive|דרייב)|add\s(?:\S+\s){0,2}?to\s(?:google\s)?drive|save\sto\s(?:google\s)?drive)/i;

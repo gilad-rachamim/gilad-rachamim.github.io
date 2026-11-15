@@ -1,0 +1,86 @@
+/* נגישות – שכבה משותפת לכל דפי התוסף (נטענת אחרונה, אחרי העיצוב של כל דף).
+   הצבעים נשארים זהב-על-כהה; רק גבולות של כפתורים ושדות בהירים יותר (ניגודיות 3:1),
+   מטרות לחיצה גדולות (44px, ולפחות 32px במקומות צפופים) ופוקוס בולט בכל מקום. */
+:root { --edge: #8a7448; --focus: #ffd97a; }
+/* דף התרגום של PDF (hk-paper) יכול להיות בהיר – שם לא נוגעים בצבעי הטקסט */
+:root.hk-paper { --edge: #8a7448; }
+
+/* ---------- גודל טקסט לפי בחירה (רגיל / גדול / גדול מאוד) ---------- */
+html[data-hk-size="l"] { zoom: 1.15; }
+html[data-hk-size="xl"] { zoom: 1.32; }
+
+/* <main> שעוטף את הדף רק בשביל קורא המסך – לא משנה את הפריסה */
+.hk-main { display: contents; }
+
+/* ---------- טקסט בסיס (16px נקבע בקובץ של כל דף) ---------- */
+.hk-title { font-size: 18px; margin: 0; color: var(--gold2); font-weight: 700; flex: 1; min-width: 0; }
+.hk-sr, .sr { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.hk-emo { speak: never; }
+
+/* ---------- מטרות לחיצה ---------- */
+button, select, summary, .btn, a.line, .go a, .feat a { min-height: 44px; }
+summary { display: list-item; padding-block: 10px; }
+input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]), select { min-height: 44px; }
+textarea { min-height: 88px; }
+input[type=checkbox], input[type=radio] { width: 22px; height: 22px; accent-color: var(--gold, #d9b25f); vertical-align: middle; }
+label:has(> input[type=checkbox]) { display: inline-flex; gap: 8px; align-items: center; min-height: 44px; cursor: pointer; }
+/* צפוף: צ׳יפים, כוכבים, אייקונים בשורה – לפחות 32px (מעל 24 של WCAG 2.2) */
+.chips button, .go-chips button, .hkcmd-tabs button, .hkcmd-ex button, .saved .row button, .sm, .bar button { min-height: 40px; }
+.star { width: 44px !important; min-height: 44px; color: #a89a80 !important; font-size: 20px !important; }
+.star[aria-pressed="true"] { color: var(--gold) !important; }
+.ic { width: 40px !important; min-height: 40px; }
+.ic[aria-pressed="false"] { opacity: .8 !important; }
+.tile .x, .tile .mv, .tile .pin { width: 32px !important; height: 32px !important; font-size: 15px !important; }
+.snipw .x { width: 32px !important; height: 32px !important; font-size: 15px !important; }
+.snip { padding-inline-end: 36px !important; }
+.note .tools button { min-width: 36px; min-height: 36px; font-size: 16px !important; }
+.hkcmd-rem button { min-width: 36px; min-height: 36px; }
+.tool a, .it { min-height: 44px; }
+
+/* ---------- גבולות של רכיבים: 3:1 מול הרקע ---------- */
+.line, .chips.gm button, .go-chips button, .hkcmd-f button:not(.hkcmd-go), .hkcmd-alt, .hkcmd-ex button, .hkcmd-tabs button,
+input:not([type=checkbox]):not([type=radio]), select, textarea, .snip, .go a { border-color: var(--edge); }
+.line:hover, .chips.gm button:hover, .go-chips button:hover, .go a:hover { border-color: var(--gold); }
+.hkcmd-tabs button { color: var(--text); }
+::placeholder { color: #a99f8c !important; opacity: 1; }
+
+/* ---------- קישורים בתוך טקסט: גם קו תחתון, לא רק צבע ---------- */
+p a, .small a, footer a, li a, .tips a, .howto a { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- פוקוס בולט: טבעת זהב בהירה + שוליים כהים, נראית על כל רקע ---------- */
+:focus-visible { outline: 3px solid var(--focus) !important; outline-offset: 2px !important; box-shadow: 0 0 0 6px #0d0c0a !important; border-radius: 6px; }
+.gold:focus-visible, .hkcmd-go:focus-visible, [aria-pressed="true"]:focus-visible { outline-color: #fff !important; }
+iframe:focus-visible { outline-offset: -3px !important; box-shadow: none !important; }
+.tile .pin:focus-visible { opacity: 1; }
+
+/* ---------- בורר גודל הטקסט ---------- */
+.hk-size { display: inline-flex; gap: 4px; align-items: flex-end; flex: none; margin-inline-start: auto; }
+.hk-size button { width: 40px !important; min-height: 40px; padding: 0 !important; display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; color: var(--text, #f3ead7); border: 1px solid var(--edge); border-radius: 9px; font-weight: 700; line-height: 1; cursor: pointer; font-family: inherit; }
+.hk-size .hk-sz-m { font-size: 14px; }
+.hk-size .hk-sz-l { font-size: 18px; }
+.hk-size .hk-sz-xl { font-size: 23px; }
+.hk-size button:hover { border-color: var(--gold); }
+.hk-size button[aria-pressed="true"] { background: var(--gold, #d9b25f); color: #141210; border-color: var(--gold, #d9b25f); }
+.hk-size-corner { position: absolute; top: 12px; inset-inline-end: 14px; }
+
+/* ---------- פחות תנועה ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  .tile:hover { transform: none !important; }
+}
+
+/* ---------- ניגודיות גבוהה (כשמבקשים במערכת) ---------- */
+@media (prefers-contrast: more) {
+  :root:not(.hk-paper) { --text: #ffffff; --muted: #ece3cf; --line: #b39657; --edge: #e9c977; --gold2: #ffe08f; }
+  :root:not(.hk-paper) :is(section, .card, .tile, .hkcmd, details.quick) { border-color: var(--edge) !important; }
+  :root:not(.hk-paper) :is(.small, small, .empty, .stats) { color: var(--muted) !important; }
+}
+
+/* ---------- מצב צבעים מאולץ (ניגודיות גבוהה של Windows) ---------- */
+@media (forced-colors: active) {
+  button, select, input, textarea, .tile, section, .card, .hkcmd, details.quick, .tool, .it, .snip, .note { border: 1px solid CanvasText !important; }
+  :focus-visible { outline: 3px solid Highlight !important; box-shadow: none !important; }
+  [aria-pressed="true"], [aria-selected="true"], .gold, .hkcmd-go, .chips button { forced-color-adjust: none; background: Highlight !important; color: HighlightText !important; }
+  .chips.gm button:not([aria-pressed="true"]), .go-chips button { forced-color-adjust: auto; background: ButtonFace !important; color: ButtonText !important; }
+}

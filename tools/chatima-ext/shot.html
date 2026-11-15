@@ -9,12 +9,15 @@
   .bar { position: sticky; top: 0; z-index: 2; background: var(--bg); padding: 8px 0 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
   .bar button { width: auto; }
   .gold { background: var(--gold); color: #141210; border: 0; font-weight: 700; }
-  .meta { color: var(--muted); font-size: 13px; flex: 1 1 100%; }
+  .meta { color: var(--muted); font-size: 15px; flex: 1 1 100%; }
   #img { display: block; max-width: 100%; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
 </style>
+<link rel="stylesheet" href="a11y.css">
+<script src="a11y.js"></script>
 </head>
 <body>
-<header><img src="icon32.png" alt="" width="24" height="24"><b>צילום של כל העמוד</b></header>
+<header><img src="icon32.png" alt="" width="24" height="24"><h1 class="hk-title">צילום של כל העמוד</h1></header>
+<main class="hk-main">
 <div class="bar">
   <button class="gold" type="button" id="png">⬇ להוריד כתמונה (PNG)</button>
   <button class="line" type="button" id="pdf">📄 להוריד כ-PDF</button>
@@ -22,6 +25,7 @@
   <p class="meta" id="meta" role="status"></p>
 </div>
 <img id="img" alt="צילום של כל העמוד">
+</main>
 <script src="shot.js"></script>
 </body>
 </html>

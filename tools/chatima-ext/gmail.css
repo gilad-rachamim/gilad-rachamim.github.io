@@ -1,7 +1,9 @@
-.hk-chatima{display:inline-block;margin:6px 4px;padding:6px 12px;border:0;border-radius:99px;background:#c9a55c;color:#16130f;font:700 13px Arial,sans-serif;cursor:pointer;direction:rtl;vertical-align:top;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.hk-chatima{display:inline-block;margin:6px 4px;padding:6px 12px;min-height:36px;border:1px solid #8a6d2f;border-radius:99px;background:#c9a55c;color:#16130f;font:700 15px Arial,sans-serif;cursor:pointer;direction:rtl;vertical-align:top;box-shadow:0 1px 3px rgba(0,0,0,.25)}
 .hk-chatima:hover{background:#dcbb74}
 .hk-chatima:disabled{opacity:.7;cursor:wait}
-.hk-nusach{display:inline-block;margin:0 6px;padding:7px 12px;border:1px solid #c9a55c;border-radius:99px;background:#fff8e6;color:#3d2f12;font:700 13px Arial,sans-serif;cursor:pointer;direction:rtl;white-space:nowrap;vertical-align:middle}
+.hk-nusach{display:inline-block;margin:0 6px;padding:7px 12px;min-height:36px;border:1px solid #8a6d2f;border-radius:99px;background:#fff8e6;color:#3d2f12;font:700 15px Arial,sans-serif;cursor:pointer;direction:rtl;white-space:nowrap;vertical-align:middle}
 .hk-nusach:hover{background:#c9a55c;color:#16130f}
 .hk-nusach-td{vertical-align:middle;padding:0 2px}
-.hk-att{display:inline-block;margin:6px 0 4px;padding:6px 12px;border:1px solid #c9a55c;border-radius:99px;background:#fff8e6;color:#3d2f12;font:700 12.5px Arial,sans-serif;cursor:pointer;direction:rtl}.hk-att:hover{background:#c9a55c;color:#16130f}.hk-att:focus-visible{outline:2px solid #3d2f12;outline-offset:2px}
+.hk-att{display:inline-block;margin:6px 0 4px;padding:6px 12px;min-height:36px;border:1px solid #8a6d2f;border-radius:99px;background:#fff8e6;color:#3d2f12;font:700 15px Arial,sans-serif;cursor:pointer;direction:rtl}.hk-att:hover{background:#c9a55c;color:#16130f}.hk-att:focus-visible{outline:2px solid #3d2f12;outline-offset:2px}
+/* נגישות: פוקוס דו-צבעי שנראה גם על הלבן של ג׳ימייל */
+.hk-chatima:focus-visible,.hk-nusach:focus-visible,.hk-att:focus-visible{outline:3px solid #3d2f12;outline-offset:2px;box-shadow:0 0 0 5px #fff}

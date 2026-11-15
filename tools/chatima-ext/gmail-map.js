@@ -64,23 +64,28 @@
   var css = document.createElement('style');
   css.textContent = [
     ':host{all:initial}', '*{box-sizing:border-box;font-family:Arial,Segoe UI,sans-serif}',
-    '.pan{position:fixed;left:12px;top:70px;bottom:16px;z-index:2147483000;width:min(520px,calc(100vw - 24px));background:#fff;color:#1b1b1b;border:1px solid #d9cfb8;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.3);display:flex;flex-direction:column;direction:rtl;font-size:14px;overflow:hidden}',
+    '.pan{position:fixed;left:12px;top:70px;bottom:16px;z-index:2147483000;width:min(520px,calc(100vw - 24px));background:#fff;color:#1b1b1b;border:1px solid #d9cfb8;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.3);display:flex;flex-direction:column;direction:rtl;font-size:16px;overflow:hidden}',
     '@media (prefers-color-scheme:dark){.pan{background:#1f1f1f;color:#e8eaed;border-color:#444}tr:hover td{background:#2a2a2a!important}.mut{color:#bbb!important}select{background:#111;color:#eee}}',
     'header{display:flex;align-items:center;gap:8px;padding:10px 12px;background:#1f1a12;color:#e9c46a}', 'header h2{font-size:15px;margin:0;flex:1}',
     'header button{background:transparent;border:0;color:#e9c46a;font-size:18px;cursor:pointer}',
     '.bar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:8px 12px;border-bottom:1px solid #e6dcc6}',
-    '.btn{border:1px solid #c9a45c;background:transparent;color:inherit;border-radius:10px;padding:5px 9px;cursor:pointer;font-size:13px;text-decoration:none;display:inline-block}',
-    '.btn.g{background:#e9c46a;color:#1f1a12;border-color:#e9c46a}', '.btn.s{padding:2px 6px;font-size:12px}',
+    '.btn{border:1px solid #c9a45c;background:transparent;color:inherit;border-radius:10px;padding:5px 9px;cursor:pointer;font-size:15px;text-decoration:none;display:inline-block}',
+    '.btn.g{background:#e9c46a;color:#1f1a12;border-color:#e9c46a}', '.btn.s{padding:2px 6px;font-size:14.5px}',
     'button:focus-visible,select:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #e9c46a;outline-offset:2px}',
-    'select{border:1px solid #d9cfb8;border-radius:8px;padding:4px 6px;font-size:13px}',
-    '.body{flex:1;overflow:auto;padding:6px 8px}', '.mut{color:#6b6252;font-size:12px}',
+    'select{border:1px solid #d9cfb8;border-radius:8px;padding:4px 6px;font-size:15px}',
+    '.body{flex:1;overflow:auto;padding:6px 8px}', '.mut{color:#6b6252;font-size:14.5px}',
     '.sum{padding:6px 4px 8px;line-height:1.6}',
-    'table{width:100%;border-collapse:collapse;font-size:13px}', 'th,td{padding:5px 4px;border-bottom:1px solid #eee;text-align:right;vertical-align:middle}',
-    'th{position:sticky;top:0;background:#f7f3ea;cursor:pointer;font-size:12px}', '@media (prefers-color-scheme:dark){th{background:#2a2a2a}}',
-    'td.nm{max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}', 'td.nm small{display:block;color:#6b6252;font-size:11px;direction:ltr;text-align:right}',
-    '.tag{font-size:11px;border-radius:999px;padding:1px 7px;background:#fde7c8;color:#7a4b00;white-space:nowrap}',
-    '.msg{padding:6px 12px;min-height:22px;font-size:12px;color:#6b6252;border-top:1px solid #e6dcc6}',
-    '.empty{padding:18px;color:#6b6252;text-align:center;line-height:1.7}'
+    'table{width:100%;border-collapse:collapse;font-size:15px}', 'th,td{padding:5px 4px;border-bottom:1px solid #eee;text-align:right;vertical-align:middle}',
+    'th{position:sticky;top:0;background:#f7f3ea;cursor:pointer;font-size:14.5px}', '@media (prefers-color-scheme:dark){th{background:#2a2a2a}}',
+    'td.nm{max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}', 'td.nm small{display:block;color:#6b6252;font-size:13.5px;direction:ltr;text-align:right}',
+    '.tag{font-size:13.5px;border-radius:999px;padding:1px 7px;background:#fde7c8;color:#7a4b00;white-space:nowrap}',
+    '.msg{padding:6px 12px;min-height:22px;font-size:14.5px;color:#6b6252;border-top:1px solid #e6dcc6}',
+    '.empty{padding:18px;color:#6b6252;text-align:center;line-height:1.7}',
+    // נגישות: גבולות כפתורים בניגודיות 3:1 גם על לבן, כפתורים גדולים, פוקוס דו-צבעי שנראה על בהיר ועל כהה
+    '.btn,.tabs button,select,input,textarea{border-color:#8a6d2f!important}', 'button,.btn,select{min-height:36px}', 'header button{min-width:40px;min-height:40px}',
+    '@media (prefers-color-scheme:dark){.btn,.tabs button,select,input,textarea{border-color:#a8894a!important}}',
+    ':focus-visible{outline:3px solid #e9c46a!important;outline-offset:3px!important;box-shadow:0 0 0 3px #1f1a12!important}',
+    '@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}'
   ].join('\n');
   root.appendChild(css);
   function el(tag, attrs, kids) {

@@ -43,7 +43,7 @@
   }
   function group(title, list, emptyText) {
     var frag = document.createDocumentFragment();
-    var h = document.createElement('h3'); h.textContent = title; frag.appendChild(h);
+    var h = document.createElement('h2'); h.className = 'grp'; h.textContent = title; frag.appendChild(h);
     if (!list.length && emptyText) { var p = document.createElement('p'); p.className = 'empty'; p.textContent = emptyText; frag.appendChild(p); }
     list.forEach(function (t) { frag.appendChild(row(t)); });
     return frag;
@@ -72,6 +72,7 @@
     if (q) {
       box.appendChild(findIn(q));
       shown = search(q);
+      clearTimeout(render.t); render.t = setTimeout(function () { $('list-st').textContent = shown.length > 1 ? 'נמצאו ' + shown.length + ' כלים' : shown.length ? 'נמצא כלי אחד' : 'לא נמצא כלי'; }, 700);
       box.appendChild(group(shown.length > 1 ? 'נמצאו ' + shown.length + ' כלים' : shown.length ? 'נמצא כלי אחד' : 'לא נמצא כלי', shown, 'אפשר לבקש כלי חדש באתר, בדף "בקשת כלי".'));
       return;
     }
@@ -96,7 +97,7 @@
   }
   function findIn(q) {
     var e = encodeURIComponent(q), wrap = document.createElement('div');
-    var h = document.createElement('h3'); h.textContent = 'לחפש את "' + q.slice(0, 30) + '" ב:'; wrap.appendChild(h);
+    var h = document.createElement('h2'); h.className = 'grp'; h.textContent = 'לחפש את "' + q.slice(0, 30) + '" ב:'; wrap.appendChild(h);
     var row = document.createElement('div'); row.className = 'go-chips find';
     var list = [];
     var ph = phone(q);
@@ -422,7 +423,7 @@
           b.addEventListener('contextmenu', function (e) { e.preventDefault(); list.splice(i, 1); chrome.storage.sync.set({ snips: list }); draw(); });
           box.appendChild(b);
         });
-        var ed = document.createElement('button'); ed.type = 'button'; ed.textContent = '✎'; ed.title = 'להוסיף נוסח (לחיצה ימנית על נוסח מוחקת אותו)';
+        var ed = document.createElement('button'); ed.type = 'button'; ed.textContent = '✎'; ed.title = 'להוסיף נוסח (לחיצה ימנית על נוסח מוחקת אותו)'; ed.setAttribute('aria-label', 'להוסיף נוסח משלי');
         ed.addEventListener('click', function () { $('wa-add').hidden = false; $('wa-new').focus(); }); box.appendChild(ed);
       }
       $('wa-save').addEventListener('click', function () { var v = $('wa-new').value.trim(); if (!v) return; list.push(v); chrome.storage.sync.set({ snips: list }); $('wa-new').value = ''; $('wa-add').hidden = true; draw(); });
