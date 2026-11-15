@@ -161,6 +161,9 @@ def main():
     for p in paths:
         spec = json.loads(p.read_text(encoding="utf-8"))
         h = spec_hash(p)
+        if a.only == "flyer":  # פרוספקט בלבד: הסרטון נשאר, וה-hash מתעדכן כדי שלא ירונדר שוב סתם
+            todo.append((p, spec, h))
+            continue
         if a.changed and idx.get(spec["id"], {}).get("h") == h and (out_dir / f"{spec['id']}.mp4").exists():
             continue
         todo.append((p, spec, h))

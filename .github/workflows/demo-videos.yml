@@ -11,6 +11,10 @@ on:
         description: "רק הכלים האלה (tool ids, פסיקים). ריק = כל הכלים"
         required: false
         default: ""
+      part:
+        description: "מה לרנדר: all / flyer (רק פרוספקטים, בלי סרטונים)"
+        required: false
+        default: "all"
       force:
         description: "לרנדר מחדש גם מה שלא השתנה"
         type: boolean
@@ -72,6 +76,7 @@ jobs:
           touch /tmp/marker
           python tools/demo_video/render.py tools/demo_video/specs/auto \
             ${{ github.event.inputs.force == 'true' && ' ' || '--changed' }} \
+            ${{ github.event.inputs.part == 'flyer' && '--only flyer' || ' ' }} \
             --shard ${{ matrix.shard }}/${{ env.SHARDS }} --index-name index-${{ matrix.shard }}.json
           mkdir -p out && find assets/demo -type f -newer /tmp/marker -exec cp --parents {} out/ \;
           ls out/assets/demo 2>/dev/null | wc -l
