@@ -264,3 +264,47 @@
   sync(); window.addEventListener('load', later);
   if (window.MutationObserver) new MutationObserver(later).observe(main, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
 })();
+
+// סרטון הדמיה + פרוספקט לכל כלי (15.11.2026): אם הדף עוד לא נבנה עם הבלוק (build.py demo_block),
+// קוראים את assets/demo/index.json ומכניסים את אותו בלוק כאן. ככה כלי שקיבל סרטון בענן מציג אותו מיד, בלי בנייה מחדש.
+(function () {
+  var tool = document.body && document.body.getAttribute('data-tool');
+  if (!tool || document.querySelector('.dv-sec, header video') || !window.fetch) return;
+  fetch('/assets/demo/index.json', { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : {}; }).then(function (idx) {
+    var d = idx[tool]; if (!d || document.querySelector('.dv-sec')) return;
+    var esc = function (s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); };
+    var b = '/assets/demo/' + tool, v = b + '.mp4?h=' + d.h, post = b + '-post.png?h=' + d.h, st = b + '-status.png?h=' + d.h;
+    var soft = /^\/nefesh\/|azkara|avel|shiva|levaya|kadish|rega|tmicha/.test(location.pathname);
+    var fl = d.post ? '<details class="dv-fl"><summary>📄 פרוספקט לשיתוף – תמונה אחת שמסבירה הכול</summary>' +
+      '<a href="' + post + '" target="_blank" rel="noopener"><img src="' + post + '" alt="פרוספקט: ' + esc(d.name) + '" loading="lazy" width="1080" height="1350"></a>' +
+      '<div class="dv-acts"><button type="button" class="btn btn-gold" data-dv-share="' + post + '" data-dv-kind="flyer">💌 לשלוח את הפרוספקט</button>' +
+      '<a class="btn btn-line" href="' + post + '" download data-dv-dl="flyer">⬇️ להורדה</a>' +
+      (d.status ? '<a class="btn btn-line" href="' + st + '" download data-dv-dl="status">⬇️ לסטטוס</a>' : '') + '</div></details>' : '';
+    var help = '<p class="dv-help">💛 <b>באהבה ממיזם הכלים של גילעד רחמים</b> · מיזם חינמי להנגשה. לא הכול זה כסף: ' +
+      (soft ? 'מכירים מישהו שזה יעזור לו? שלחו לו את הדף.' :
+        '<a href="/kelim/#truma">רעיון, תוכן או עזרה בהפצה</a>, או <a href="/kelim/#litmoch">שותפות במיזם</a>.') + '</p>';
+    var sec = document.createElement('section');
+    sec.className = 'k-sec dv-sec no-print'; sec.setAttribute('aria-labelledby', 'dv-h');
+    sec.innerHTML = '<style>.dv-sec .dv-video{display:block;width:100%;max-width:20rem;aspect-ratio:9/16;height:auto;margin:.6rem auto 0;border-radius:1.2rem;background:#0e1628;box-shadow:0 8px 30px rgba(0,0,0,.35)}' +
+      '.dv-acts{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.9rem}.dv-acts .btn{font-size:.95rem}' +
+      '.dv-fl{margin-top:1rem}.dv-fl summary{cursor:pointer;color:var(--gold);font-weight:700;text-align:center}' +
+      '.dv-fl img{display:block;width:100%;max-width:24rem;height:auto;margin:.8rem auto 0;border-radius:1rem}.dv-help{text-align:center;font-size:.95rem;margin-top:1rem;color:var(--muted,inherit)}</style>' +
+      '<h2 id="dv-h">🎬 ' + esc(d.name) + '</h2>' +
+      '<video class="dv-video" controls playsinline preload="none" poster="' + b + '.jpg?h=' + d.h + '" width="540" height="960" aria-label="' + esc(d.desc || d.name) + '" data-dv-play="' + tool + '"><source src="' + v + '" type="video/mp4"></video>' +
+      '<div class="dv-acts"><button type="button" class="btn btn-gold" data-dv-share="' + v + '" data-dv-kind="video">💌 לשלוח את הסרטון לחבר</button>' +
+      '<a class="btn btn-line" href="' + v + '" download data-dv-dl="video">⬇️ להורדת הסרטון</a></div>' + fl + help;
+    // כלי רגיל: הסרטון אחרי הכלי (לפני ההסברים), כדי לא לדחוף את הכלי למטה. דף נחיתה בלי .tool: אחרי הכותרת.
+    var seo = document.querySelector('.tool') && document.querySelector('section.seo-txt');
+    var h = document.querySelector('header.k-hero') || document.querySelector('main header') || document.querySelector('h1');
+    var at = h && h.closest('header') || h;
+    if (seo) seo.parentNode.insertBefore(sec, seo);
+    else if (at && at.parentNode) at.parentNode.insertBefore(sec, at.nextSibling); else return;
+    window.DV_SHARE = { tool: tool, text: document.title.split(' | ')[0], url: location.origin + location.pathname };
+    var ld = document.createElement('script'); ld.type = 'application/ld+json';
+    ld.textContent = JSON.stringify({ '@context': 'https://schema.org', '@type': 'VideoObject', name: d.name, description: d.desc || d.name,
+      thumbnailUrl: [location.origin + b + '.jpg'], contentUrl: location.origin + b + '.mp4', uploadDate: '2026-11-15T12:00:00+02:00',
+      duration: 'PT' + (d.dur || 30) + 'S', inLanguage: 'he', publisher: { '@type': 'Person', name: 'גילעד רחמים', url: location.origin + '/kelim/' } });
+    document.head.appendChild(ld);
+    var s = document.createElement('script'); s.src = '/assets/demo-share.js'; s.defer = true; document.head.appendChild(s);
+  }).catch(function () {});
+})();

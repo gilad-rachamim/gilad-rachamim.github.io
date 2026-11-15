@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "הכלים של גילעד רחמים – תרגום, כרטיסיות, ג׳ימייל ו-PDF בעברית",
   "short_name": "הכלים",
-  "version": "3.4.6",
+  "version": "3.5.1",
   "description": "כלי עזר אחד לכרום: סידור כרטיסיות, ג׳ימייל, תרגום דפים ו-PDF, תיקון עברית-אנגלית, צילום עמוד וכל הכלים של hakelim.com. בלי שרת.",
   "homepage_url": "https://hakelim.com/kelim/machshev/chatima/tosaf/",
   "icons": {
@@ -107,7 +107,8 @@
       "js": [
         "mail-fill.js",
         "gmail.js",
-        "gmail-nusach.js"
+        "gmail-nusach.js",
+        "dibur.js"
       ],
       "css": [
         "gmail.css"

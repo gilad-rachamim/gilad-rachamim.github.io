@@ -11,17 +11,21 @@ build.py מוסיף לבד לדף הכלי את הסרטון וכפתורי הש
 """
 import argparse
 import base64
+import hashlib
 import io
 import json
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 sys.path.insert(0, str(HERE))
 from music import write_music  # noqa: E402
+
+INDEX_NAME = "index.json"
 
 
 def qr_data_uri(url):
@@ -44,9 +48,11 @@ def render_video(page, spec, out_dir, fps):
     tmp = Path(tempfile.mkdtemp(prefix="dv-"))
     wav = write_music(tmp / "m.wav", total, cuts=cuts, mood=spec.get("mood", "bright"))
     mp4 = out_dir / f"{sid}.mp4"
+    w, h = spec.get("size", [720, 1280])
     ff = subprocess.Popen([
         "ffmpeg", "-v", "error", "-y", "-f", "image2pipe", "-framerate", str(fps), "-c:v", "mjpeg", "-i", "-",
-        "-i", str(wav), "-c:v", "libx264", "-preset", "slow", "-crf", "27", "-pix_fmt", "yuv420p",
+        "-i", str(wav), "-vf", f"scale={w}:{h}:flags=lanczos", "-c:v", "libx264", "-preset", "slow",
+        "-crf", str(spec.get("crf", 29 if spec.get("auto") else 27)), "-pix_fmt", "yuv420p",
         "-c:a", "aac", "-b:a", "96k", "-shortest", "-movflags", "+faststart", str(mp4)], stdin=subprocess.PIPE)
     n = int(total * fps)
     poster_t = spec.get("poster_t", min(2.6, cuts[1] - .3 if len(cuts) > 1 else 2))
@@ -54,12 +60,12 @@ def render_video(page, spec, out_dir, fps):
         t = i / fps
         page.evaluate("t => DV.seek(t)", t)
         ff.stdin.write(page.screenshot(type="jpeg", quality=92))
-        if i % (fps * 5) == 0:
-            print(f"  frame {i}/{n}", flush=True)
     ff.stdin.close()
     ff.wait()
     page.evaluate("t => DV.seek(t)", poster_t)
-    page.screenshot(path=str(out_dir / f"{sid}.jpg"), type="jpeg", quality=82)
+    page.screenshot(path=str(tmp / "p.jpg"), type="jpeg", quality=90)
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(tmp / "p.jpg"), "-vf", f"scale={w}:{h}", "-q:v", "4",
+                    str(out_dir / f"{sid}.jpg")], check=True)
     print(f"video: {mp4} {mp4.stat().st_size/1e6:.2f}MB {total:.1f}s")
     return total
 
@@ -67,7 +73,7 @@ def render_video(page, spec, out_dir, fps):
 def render_flyer(page, spec, out_dir):
     f = spec["flyer"]
     qr = qr_data_uri(f["url"])
-    for size in ("post", "status"):
+    for size in (("post",) if spec.get("auto") else ("post", "status")):
         page.set_viewport_size({"width": 1080, "height": 1920 if size == "status" else 1350})
         page.goto((HERE / "flyer.html").as_uri())
         page.evaluate("document.fonts.ready")
@@ -82,26 +88,97 @@ def render_flyer(page, spec, out_dir):
         print(f"flyer: {p} {p.stat().st_size/1e3:.0f}KB")
 
 
+def spec_hash(spec_path):
+    """המפרט + קבצי המנוע: שינוי באחד מהם = לרנדר מחדש."""
+    hsh = hashlib.sha1(Path(spec_path).read_bytes())
+    for f in ("engine.html", "flyer.html", "music.py", "render.py"):
+        hsh.update((HERE / f).read_bytes())
+    return hsh.hexdigest()[:12]
+
+
+def update_index(out_dir, spec, h, total):
+    """assets/demo/index.json: מה יש לכל כלי. kelim.js קורא אותו ומכניס את הסרטון לדף גם בלי בנייה מחדש."""
+    ip = out_dir / INDEX_NAME
+    idx = json.loads(ip.read_text(encoding="utf-8")) if ip.exists() else {}
+    sid = spec["id"]
+    idx[sid] = {"h": h, "name": spec.get("name", "ככה זה עובד"), "desc": spec.get("description", ""),
+                "dur": round(total or idx.get(sid, {}).get("dur", 40)),
+                "post": (out_dir / f"{sid}-post.png").exists(), "status": (out_dir / f"{sid}-status.png").exists()}
+    ip.write_text(json.dumps(dict(sorted(idx.items())), ensure_ascii=False, indent=0), encoding="utf-8")
+
+
+def reindex(out_dir):
+    """index.json מחדש מכל הסרטונים שיש (גם כאלה שנבנו בענן במקביל, כל אחד עם index משלו)."""
+    ip = out_dir / "index.json"
+    idx = json.loads(ip.read_text(encoding="utf-8")) if ip.exists() else {}
+    for part in out_dir.glob("index-*.json"):
+        idx.update(json.loads(part.read_text(encoding="utf-8")))
+        part.unlink()
+    for mp4 in out_dir.glob("*.mp4"):
+        sid = mp4.stem
+        if sid in idx:
+            continue
+        sp = next((x for x in (HERE / "specs" / f"{sid}.json", HERE / "specs" / "auto" / f"{sid}.json") if x.exists()), None)
+        spec = json.loads(sp.read_text(encoding="utf-8")) if sp else {"id": sid}
+        idx[sid] = {"h": spec_hash(sp)[:12] if sp else "0", "name": spec.get("name", "ככה זה עובד"),
+                    "desc": spec.get("description", ""), "dur": round(spec.get("duration") or sum(x.get("dur", 0) for x in spec.get("scenes", [])) or 40),
+                    "post": (out_dir / f"{sid}-post.png").exists(), "status": (out_dir / f"{sid}-status.png").exists()}
+    ip.write_text(json.dumps(dict(sorted(idx.items())), ensure_ascii=False, indent=0), encoding="utf-8")
+    print("index:", len(idx))
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("spec")
+    ap.add_argument("specs", nargs="*", help="קובצי מפרט או תיקייה (למשל tools/demo_video/specs/auto)")
     ap.add_argument("--only", choices=["video", "flyer"])
-    ap.add_argument("--fps", type=int, default=30)
+    ap.add_argument("--fps", type=int)
+    ap.add_argument("--changed", action="store_true", help="רק מפרטים שהשתנו מאז הרינדור האחרון (לפי index.json)")
+    ap.add_argument("--shard", help="i/n: רק החלק ה-i מתוך n (להרצה מקבילה בענן)")
+    ap.add_argument("--reindex", action="store_true")
+    ap.add_argument("--index-name", default="index.json", help="בענן: index-<shard>.json, ומאחדים בסוף עם --reindex")
     a = ap.parse_args()
-    spec = json.loads(Path(a.spec).read_text(encoding="utf-8"))
+    if a.reindex:
+        reindex(ROOT / "assets" / "demo")
+        return
+    global INDEX_NAME
+    INDEX_NAME = a.index_name
+    paths = []
+    for s in a.specs:
+        p = Path(s)
+        paths += sorted(p.glob("*.json")) if p.is_dir() else [p]
+    if a.shard:
+        i, n = map(int, a.shard.split("/"))
+        paths = paths[i::n]
     out_dir = ROOT / "assets" / "demo"
     out_dir.mkdir(parents=True, exist_ok=True)
+    ip = out_dir / "index.json"
+    idx = json.loads(ip.read_text(encoding="utf-8")) if ip.exists() else {}
+    todo = []
+    for p in paths:
+        spec = json.loads(p.read_text(encoding="utf-8"))
+        h = spec_hash(p)
+        if a.changed and idx.get(spec["id"], {}).get("h") == h and (out_dir / f"{spec['id']}.mp4").exists():
+            continue
+        todo.append((p, spec, h))
+    print(f"to render: {len(todo)} of {len(paths)}", flush=True)
     from playwright.sync_api import sync_playwright
-    with sync_playwright() as p:
-        b = p.chromium.launch()
+    with sync_playwright() as pw:
+        b = pw.chromium.launch()
         page = b.new_page(viewport={"width": 720, "height": 1280}, device_scale_factor=1)
-        if a.only != "flyer":
-            render_video(page, spec, out_dir, a.fps)
-        if a.only != "video" and spec.get("flyer"):
-            page2 = b.new_page(viewport={"width": 1080, "height": 1350}, device_scale_factor=1)
-            render_flyer(page2, spec, out_dir)
+        page2 = b.new_page(viewport={"width": 1080, "height": 1350}, device_scale_factor=1)
+        for k, (p, spec, h) in enumerate(todo, 1):
+            t0 = time.time()
+            total = None
+            try:
+                if a.only != "flyer":
+                    total = render_video(page, spec, out_dir, a.fps or (24 if spec.get("auto") else 30))
+                if a.only != "video" and spec.get("flyer"):
+                    render_flyer(page2, spec, out_dir)
+                update_index(out_dir, spec, h, total)
+                print(f"DONE {spec['id']} [{k}/{len(todo)}] {time.time()-t0:.0f}s", flush=True)
+            except Exception as e:
+                print(f"FAILED {spec['id']}: {e}", flush=True)
         b.close()
-    print("DONE", spec["id"])
 
 
 if __name__ == "__main__":

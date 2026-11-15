@@ -493,7 +493,7 @@ function waSyncScript() {
     var on = !!r[0].waAlways && r[1];
     return chrome.scripting.getRegisteredContentScripts({ ids: ['hk-wa'] }).then(function (have) {
       if (!on) return have.length ? chrome.scripting.unregisterContentScripts({ ids: ['hk-wa'] }) : null;
-      var spec = { id: 'hk-wa', matches: [WA_ORIGIN], js: ['wa.js'], css: ['wa.css'], runAt: 'document_idle', persistAcrossSessions: true };
+      var spec = { id: 'hk-wa', matches: [WA_ORIGIN], js: ['dibur.js', 'wa.js'], css: ['wa.css'], runAt: 'document_idle', persistAcrossSessions: true };
       return have.length ? chrome.scripting.updateContentScripts([spec]) : chrome.scripting.registerContentScripts([spec]);
     });
   }).catch(function () {});
