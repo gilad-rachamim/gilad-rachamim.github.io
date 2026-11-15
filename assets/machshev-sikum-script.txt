@@ -9,9 +9,9 @@
  *
  * התקנה (פעם אחת, כ-3 דקות): בוחרים למעלה את הפונקציה setup ולוחצים "הפעלה".
  * לשלוח סיכום עכשיו: runNow. להפסיק: uninstall (התוויות והמיילים נשארים).
- * גרסה 3 · 15.11.2026 (מהיר יותר, בלי הודעות לעצמך, פנייה לכמה נמענים בשורה אחת)
+ * גרסה 4 · 15.11.2026 (מהיר יותר, בלי הודעות לעצמך, פנייה לכמה נמענים בשורה אחת)
  */
-var VER = 3;
+var VER = 4;
 var SITE = 'https://hakelim.com/kelim/machshev/sidur-mailim/';
 
 // ===== ההגדרות שלכם (נוצרו בדף הכלי; אפשר גם לשנות כאן ידנית) =====
@@ -294,7 +294,8 @@ function followUps_(me, now) {
       addr: addrOf_(toList.split(',')[0]), last: last, date: last.getDate(), thread: t, wait: now - last.getDate() };
     list.push(g);
   });
-  list.sort(function (a, b) { return b.wait - a.wait; });
+  // הכי חדשים קודם: על מה ששלחת לפני כמה ימים עוד כדאי להזכיר; מה שמלפני שבועיים כבר פחות
+  list.sort(function (a, b) { return a.wait - b.wait; });
   list = list.slice(0, MAX_SHOW);
   list.forEach(function (g) {
     if (g.n > 1) g.who = g.names.join(', ') + (g.n > g.names.length ? ' ועוד ' + (g.n - g.names.length) : '');
