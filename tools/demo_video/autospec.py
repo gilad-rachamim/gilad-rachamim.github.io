@@ -95,7 +95,10 @@ def as_steps(text):
 def pick_steps(ol, faq, h3s):
     if 2 <= len(ol) <= 6 and all(len(x) <= 120 for x in ol) and sum(bool(VERB.match(x)) for x in ol) >= 2:
         return [clip((sentences(x) or [x])[0], STEP_MAX) for x in ol[:3]]
-    srcs = [p for h, p in h3s if "איך" in h] + [a for q, a in faq if q.startswith("איך")]
+    # שאלות על עדכון, ביטול, מחיקה או תקלה הן לא "איך משתמשים" (סידור מיילים, 15.11.2026)
+    not_use = re.compile(r"מעדכנ|מבטל|מסיר|מוחק|מחזיר|משחזר|בעיה|לא עובד|תקלה|מתקינים מחדש|עוצרים")
+    srcs = [p for h, p in h3s if "איך" in h and not not_use.search(h)] + \
+           [a for q, a in faq if q.startswith("איך") and not not_use.search(q)]
     best = []
     for s in srcs:
         st = as_steps(s)
