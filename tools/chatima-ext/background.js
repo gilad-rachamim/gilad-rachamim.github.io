@@ -95,6 +95,17 @@ chrome.runtime.onInstalled.addListener(function (d) {
 });
 chrome.runtime.onStartup.addListener(function () { refresh(false); syncAutoTr(); });
 chrome.runtime.onInstalled.addListener(function () { syncAutoTr(); });
+
+// ---------- התקנה, עזיבה ושימוש (בשביל דף הברוכים הבאים ובקשת הדירוג; נשמר רק במחשב) ----------
+var STORE_URL = 'https://chromewebstore.google.com/detail/ckjmijllmaoooihonpedfajaofhbegfg';
+chrome.runtime.onInstalled.addListener(function (d) {
+  chrome.storage.local.get('installedAt').then(function (o) { if (!o.installedAt) chrome.storage.local.set({ installedAt: Date.now() }); });
+  if (d.reason === 'install') chrome.tabs.create({ url: chrome.runtime.getURL('welcome.html') });
+});
+try { chrome.runtime.setUninstallURL('https://hakelim.com/kelim/machshev/chatima/tosaf/lehitraot/?v=' + chrome.runtime.getManifest().version); } catch (e) {}
+function bumpUse() { chrome.storage.local.get('uses').then(function (o) { chrome.storage.local.set({ uses: (+o.uses || 0) + 1 }); }).catch(function () {}); }
+chrome.contextMenus.onClicked.addListener(bumpUse);
+chrome.commands.onCommand.addListener(bumpUse);
 chrome.permissions.onRemoved.addListener(function () { syncAutoTr(); });
 chrome.alarms.onAlarm.addListener(function (a) { if (a.name === 'refresh') refresh(false); });
 
@@ -394,6 +405,7 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
 // הודעות מג׳ימייל ומהחלון הקטן
 chrome.runtime.onMessage.addListener(function (m, sender, reply) {
   if (!m) return;
+  if (m.act || m.tabsManager || m.gmailUnsub) bumpUse();
   if (m.tabsManager) { openTabsManager().then(function () { reply({ ok: true }); }, function () { reply({ ok: false }); }); return true; }
   if (m.gmailUnsub) { gmailUnsub(m.gmailUnsub).then(reply, function () { reply({ ok: false }); }); return true; }
   if (m.refresh) { refresh(false).then(function () { reply({ ok: true }); }); return true; }

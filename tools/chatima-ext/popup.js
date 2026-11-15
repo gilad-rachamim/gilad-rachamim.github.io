@@ -211,6 +211,23 @@
     chrome.runtime.sendMessage({ tabsManager: true }, function () { void chrome.runtime.lastError; window.close(); });
   });
 
+  // ---------- דירוג ושיתוף ----------
+  // מוצג פעם אחת, רק אחרי שימוש אמיתי (8 פעולות ו-3 ימים), לכולם (לא רק למרוצים – זה הכלל של גוגל). "אחר כך" = שבועיים.
+  var STORE = 'https://chromewebstore.google.com/detail/ckjmijllmaoooihonpedfajaofhbegfg';
+  chrome.storage.local.get(['uses', 'installedAt', 'rateDone', 'rateLater']).then(function (o) {
+    var uses = (+o.uses || 0) + 1, inst = o.installedAt || Date.now();
+    chrome.storage.local.set({ uses: uses, installedAt: inst });
+    if (!o.rateDone && uses >= 8 && Date.now() - inst > 3 * 864e5 && !(o.rateLater > Date.now())) $('rate').hidden = false;
+  });
+  $('rate-go').addEventListener('click', function () { chrome.storage.local.set({ rateDone: true }); chrome.tabs.create({ url: STORE + '/reviews?utm_source=tosaf_rate' }); window.close(); });
+  $('rate-note').addEventListener('click', function () { chrome.storage.local.set({ rateLater: Date.now() + 30 * 864e5 }); chrome.tabs.create({ url: 'https://hakelim.com/kelim/bakasha/?utm_source=tosaf_rate' }); window.close(); });
+  $('rate-later').addEventListener('click', function () { chrome.storage.local.set({ rateLater: Date.now() + 14 * 864e5 }); $('rate').hidden = true; });
+  $('share-btn').addEventListener('click', function (e) {
+    e.preventDefault();
+    chrome.tabs.create({ url: 'https://wa.me/?text=' + encodeURIComponent('מצאתי תוסף חינמי לכרום בעברית: מתרגם אתרים בלי לשבור אותם, מסדר כרטיסיות, מפנה מקום בגוגל, פתקים ועוד. בלי פרסומות ובלי לאסוף מידע 👇\n' + STORE + '?utm_source=share_popup') });
+    window.close();
+  });
+
   $('panui-btn').addEventListener('click', function () { chrome.tabs.create({ url: chrome.runtime.getURL('panui.html') }); window.close(); });
   // ניקוי היסטוריית גלישה (browsingData, רק היסטוריה): שעה / היום / שבוע / הכול – לחיצה שנייה לאישור
   $('hist-btn').addEventListener('click', function () { $('hist').hidden = !$('hist').hidden; $('hist-msg').textContent = $('hist').hidden ? '' : 'בוחרים כמה למחוק (רק היסטוריית הגלישה; סיסמאות וחיבורים נשארים).'; });
