@@ -1,0 +1,65 @@
+<!doctype html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>הדף שלי</title>
+<link rel="icon" href="icon32.png">
+<link rel="stylesheet" href="home.css">
+</head>
+<body>
+<main>
+  <h1><img src="icon32.png" alt="" width="28" height="28"> הדף שלי</h1>
+  <p class="clock" id="clock" aria-live="off"></p>
+  <div class="perm tip" id="start-tip" hidden><span>💡 שהדף הזה ייפתח לבד כשפותחים את כרום?</span><button type="button" class="gold sm" id="start-how">איך עושים את זה</button><button type="button" class="line sm" id="start-x" aria-label="לא להציג שוב">✕</button></div>
+
+  <form class="search" action="https://www.google.com/search" method="get" role="search">
+    <label><span class="sr">חיפוש בגוגל</span><input name="q" type="search" placeholder="🔍 לחפש בגוגל" autocomplete="off" autofocus></label>
+  </form>
+  <form class="ev" id="ev"><label><span class="sr">אירוע חדש ביומן: מה ומתי</span><input id="ev-q" placeholder="📅 אירוע ליומן: מה ומתי? למשל: אסיפת הורים ביום שלישי ב-19:00" autocomplete="off"></label><button type="submit" class="line">להוסיף ליומן</button></form>
+  <p class="small ev-pre" id="ev-pre" aria-live="polite"></p>
+
+  <section aria-labelledby="mine-h">
+    <div class="h"><h2 id="mine-h">⭐ הקיצורים שלי</h2><button type="button" class="line sm" id="edit" aria-pressed="false">✎ לסדר</button></div>
+    <div class="tiles" id="mine"></div>
+    <form class="add" id="add" hidden>
+      <label>שם <input id="add-n" required maxlength="40"></label>
+      <label>כתובת <input id="add-u" required dir="ltr" placeholder="https://"></label>
+      <button type="submit" class="gold sm">➕ להוסיף</button>
+    </form>
+  </section>
+
+  <section aria-labelledby="top-h">
+    <div class="h"><h2 id="top-h">🔥 האתרים שאני נכנס אליהם הכי הרבה</h2></div>
+    <div id="top-perm" class="perm" hidden>
+      <p>כרום יודע לאילו אתרים נכנסים הכי הרבה, ויכול להראות אותם כאן – רק אם תאשרו. שום דבר לא יוצא מהמחשב.</p>
+      <button type="button" class="gold sm" id="top-btn">✓ להראות את האתרים שלי</button>
+    </div>
+    <div class="tiles" id="top"></div>
+  </section>
+
+  <section aria-labelledby="g-h">
+    <div class="h"><h2 id="g-h">🚀 גוגל, ווטסאפ והכלים</h2></div>
+    <div class="tiles apps" id="apps"></div>
+  </section>
+
+  <section aria-labelledby="s-h" id="saved-sec" hidden>
+    <div class="h"><h2 id="s-h">💾 כרטיסיות ששמרתי</h2><button type="button" class="line sm" id="tabs">🗂 לניהול הכרטיסיות</button></div>
+    <div id="saved" class="saved"></div>
+  </section>
+
+  <details class="howto">
+    <summary>🏠 איך הדף הזה נפתח לבד כשפותחים את כרום?</summary>
+    <ol>
+      <li>להעתיק את הכתובת של הדף: <button type="button" class="line sm" id="copy">📋 להעתיק כתובת</button></li>
+      <li>בכרום: ⋮ ← הגדרות ← "בהפעלה" (או להדביק בשורת הכתובת: <code dir="ltr">chrome://settings/onStartup</code>).</li>
+      <li>לבחור "פתיחת דף מסוים או קבוצת דפים" ← "הוספת דף חדש" ← להדביק ← "הוספה".</li>
+    </ol>
+    <p class="small">וגם: Alt+Shift+K פותח את ניהול הכרטיסיות, ובכפתור התוסף יש "🏠 הדף שלי".</p>
+  </details>
+</main>
+<footer>מיזם הכלים של גילעד רחמים – מיזם חסד, בלי פרסומות · הכול נשמר בכרום שלכם, בלי שרת · <a href="https://hakelim.com/kelim/?utm_source=tosaf_home" target="_blank">כל הכלים באתר</a></footer>
+<script src="when.js"></script>
+<script src="home.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "machshev_chatima_tosaf_lehitraot",
+  "title": "התוסף הוסר – מה היה חסר? | הכלים של גילעד רחמים",
+  "description": "הסרתם את התוסף לכרום \"הכלים של גילעד רחמים\". לחיצה אחת שמספרת למה – עוזרת לי לתקן.",
+  "og_title": "התוסף הוסר – מה היה חסר?",
+  "priority": "0.1",
+  "noindex": true,
+  "crumbs": [
+    ["מחשב וטלפון", "/kelim/machshev/"],
+    ["התוסף לכרום", "/kelim/machshev/chatima/tosaf/"],
+    ["התוסף הוסר", null]
+  ]
+} -->
+<header class="k-hero">
+  <h1>התוסף הוסר. תודה שניסיתם 🙏</h1>
+  <p class="sub">לחיצה אחת – למה הסרתם? זה אנונימי, ועוזר לי לתקן את מה שלא עבד.</p>
+</header>
+<section class="k-sec" aria-labelledby="why-h">
+  <h2 id="why-h">למה הסרתם?</h2>
+  <div class="actions" id="why">
+    <button type="button" class="btn btn-line" data-why="not_working">משהו לא עבד</button>
+    <button type="button" class="btn btn-line" data-why="too_much">יותר מדי דברים, מבלבל</button>
+    <button type="button" class="btn btn-line" data-why="slow">הכרום נהיה איטי</button>
+    <button type="button" class="btn btn-line" data-why="missing">חסר לי משהו</button>
+    <button type="button" class="btn btn-line" data-why="privacy">חששתי מההרשאות</button>
+    <button type="button" class="btn btn-line" data-why="temporary">רק זמנית / אתקין שוב</button>
+  </div>
+  <p id="thanks" role="status" aria-live="polite"></p>
+</section>
+<section class="k-sec" aria-labelledby="back-h">
+  <h2 id="back-h">רוצים לספר יותר, או לחזור?</h2>
+  <div class="actions">
+    <a class="btn btn-gold" href="/kelim/bakasha/?utm_source=tosaf_bye">💬 לכתוב לי מה לתקן</a>
+    <a class="btn btn-line" href="https://chromewebstore.google.com/detail/ckjmijllmaoooihonpedfajaofhbegfg?utm_source=hakelim&amp;utm_medium=tosaf_bye" target="_blank" rel="noopener" data-store="tosaf_bye">🧩 להתקין שוב</a>
+  </div>
+  <p>כל הכלים באתר ממשיכים לעבוד גם בלי התוסף: <a class="gold" href="/kelim/">hakelim.com/kelim</a>.</p>
+</section>
+<script>
+(function () {
+  var ver = (location.search.match(/[?&]v=([\d.]+)/) || [])[1] || '';
+  document.querySelectorAll('#why [data-why]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (window.gtag) gtag('event', 'tosaf_uninstall', { reason: b.dataset.why, version: ver });
+      document.querySelectorAll('#why [data-why]').forEach(function (x) { x.disabled = true; x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      document.getElementById('thanks').textContent = 'תודה! ' + (b.dataset.why === 'missing' || b.dataset.why === 'not_working' ? 'אשמח אם תכתבו לי מה בדיוק – בכפתור למטה.' : 'זה עוזר לי.');
+    });
+  });
+})();
+</script>

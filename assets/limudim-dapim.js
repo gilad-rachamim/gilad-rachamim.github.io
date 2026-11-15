@@ -109,25 +109,97 @@
   // =====================================================================
   //  הנושאים: סדר, כיתות, ונושאים קודמים לכל נושא
   // =====================================================================
-  var ORD = ['kefel', 'hiluk', 'seder', 'shetach', 'asroni', 'shvarim', 'kefel-shvarim', 'memutza', 'achuzim', 'yachas', 'histabrut', 'pilug', 'mishvaa', 'chezkot', 'kav', 'pitagoras', 'maarechet', 'trinom', 'shorashim', 'parabola-tavla'];
+  var ORD = ['meunach', 'kefel', 'seder', 'hiluk', 'shetach', 'hashvaat-shvarim', 'shvarim', 'asroni', 'kefel-shvarim', 'memutza', 'achuzim', 'yachas', 'igul', 'gufim', 'mechuvanim', 'tzirim', 'zaviot', 'bituyim', 'shchiut', 'histabrut', 'pilug', 'mishvaa', 'chezkot', 'pitagoras', 'grafim', 'kav', 'i-shivyon', 'hafifa', 'maarechet', 'kefel-mekutzar', 'gorem-meshutaf', 'trinom', 'mechanim', 'shorashim', 'i-shivyon-ribui', 'parabola-tavla', 'merubaim'];
   var T = MX.T.concat(EXTRA), byId = {};
   T.forEach(function (t) { byId[t.id] = t; });
   T.sort(function (x, y) { var i = ORD.indexOf(x.id), j = ORD.indexOf(y.id); return (i < 0 ? 99 : i) - (j < 0 ? 99 : j); }); // יציב: נושאי הבגרות נשארים בסדר שלהם
-  // לאיזה כיתות כל נושא מתאים (לפי תוכנית הלימודים המקובלת). נושאי בגרות: י׳–י״ב, לפי היחידות של השאלון.
-  var GR = { kefel: [2, 4], hiluk: [4, 5], seder: [4, 6], shetach: [4, 6], asroni: [5, 6], shvarim: [5, 6], 'kefel-shvarim': [6, 7], memutza: [6, 7], achuzim: [6, 8], yachas: [6, 8], histabrut: [7, 9], pilug: [7, 8], mishvaa: [7, 8], chezkot: [7, 9], kav: [8, 9], pitagoras: [8, 9], maarechet: [8, 9], trinom: [9, 10], shorashim: [9, 10], 'parabola-tavla': [9, 10] };
+  // באיזו כיתה לומדים כל נושא, לפי פריסות ההוראה של משרד החינוך (נבדק 14.11.2026):
+  //  ב׳–ו׳: הצעות הפריסה של מדריכות המתמטיקה במחוז מרכז, לפי תוכנית הלימודים (meyda .../Merkaz/Mathematics/peiluyot/math[b,c,d,h,v]2022.pdf)
+  //  ז׳–ט׳: פריסות ההוראה הארציות תשפ"ז (meyda .../matmatika/Chativat-Beynayim/tashpaz/prisa_7, prisa_8, prisa_9A, prisa_9B)
+  //  י׳–י״ב: המלצות ההוראה תשפ"ז, תוכנית הלימודים החדשה (meyda .../Chativa-Elyona/mafmar/3-points, 4-points, 5-points-tashpaz.pdf)
+  // מערך = הכיתות (לכל רמות היחידות). אובייקט = 0: כיתות ב׳–ט׳, 3/4/5: הכיתות בתיכון לפי מספר היחידות.
+  var GR = { peulot: { 4: [10], 5: [10] }, regresia: { 4: [11] }, 'trig-yechida': { 5: [10, 11] }, thales: { 5: [10] }, 'chatchei-charut': { 5: [12] }, bernoulli: { 5: [11] }, 'tichnun-lineari': { 3: [12] }, 'i-shivyon-ribui': { 0: [9], 4: [10], 5: [10] },
+    meunach: [2, 3, 4], 'hashvaat-shvarim': [4, 5], shchiut: { 0: [7, 8], 3: [10] }, grafim: { 0: [8, 9], 3: [10] }, hafifa: [8, 9], 'gorem-meshutaf': { 0: [9], 4: [10], 5: [10] }, igul: [6, 7], gufim: [6, 7, 8], mechuvanim: [7], tzirim: [7], zaviot: [7, 8], bituyim: [7], 'i-shivyon': [8, 9], 'kefel-mekutzar': { 0: [9], 4: [10], 5: [10] }, mechanim: [9], merubaim: { 0: [9], 3: [11] },
+    kefel: [2, 3], seder: [3, 4, 5, 6], hiluk: [4, 5], shetach: [4, 5, 6, 7], shvarim: [4, 5, 6], asroni: [5, 6], 'kefel-shvarim': [6], memutza: [5, 6, 8],
+    achuzim: { 0: [6, 8], 3: [10] }, yachas: { 0: [6, 8], 3: [11] }, histabrut: { 0: [7, 8, 9], 3: [10] }, pilug: [7, 9], mishvaa: [7, 8], chezkot: [7, 9], pitagoras: { 0: [7, 8, 9], 3: [10] },
+    kav: { 0: [8, 9], 3: [10, 12] }, maarechet: [8, 9], tnua: { 0: [8, 9], 3: [10] }, dimyon: { 0: [8, 9], 3: [11], 4: [10], 5: [10] }, stiya: { 0: [8], 3: [10, 11], 4: [10, 11] },
+    trinom: { 0: [9], 4: [10], 5: [10] }, shorashim: { 0: [9], 3: [10], 4: [10], 5: [10] }, 'parabola-tavla': { 0: [9], 3: [12], 4: [10], 5: [10] }, parabola: { 0: [9], 3: [12], 4: [10], 5: [10] }, etz: { 0: [9], 3: [11], 4: [10, 11], 5: [11] },
+    // תיכון
+    merchak: { 4: [10], 5: [10, 12] }, trigo: { 3: [11], 4: [10], 5: [10] }, nigzeret: { 4: [10], 5: [10] }, mashik: { 4: [10], 5: [10] }, kitzon: { 4: [10], 5: [10] }, 'shoresh-f': { 4: [10, 11], 5: [10] },
+    maagal: { 4: [11], 5: [10, 12] }, 'zaviot-maagal': { 4: [11], 5: [10] }, sinusim: { 4: [11], 5: [10, 11] }, rationalit: { 4: [11], 5: [10, 11] }, integral: { 4: [11], 5: [11] }, normalit: { 3: [12], 4: [11] }, parametr: { 4: [11], 5: [11] },
+    gdila: { 3: [11], 4: [12], 5: [12] }, sidra: { 4: [12], 5: [11] }, handasit: { 4: [12], 5: [11] }, induktzia: { 5: [11] }, 'trig-nigzeret': { 5: [11] },
+    logaritm: { 4: [12], 5: [12] }, 'exp-ln': { 4: [12], 5: [12] }, vektor: { 4: [12], 5: [12] }, piramida: { 4: [12], 5: [12] }, merchav: { 4: [12], 5: [12] }, merukav: { 5: [12] },
+    'nefach-sivuv': {} }; // לא מופיע בתוכנית החדשה: רק תחת "כל הנושאים"
   var GRN = { 2: 'ב׳', 3: 'ג׳', 4: 'ד׳', 5: 'ה׳', 6: 'ו׳', 7: 'ז׳', 8: 'ח׳', 9: 'ט׳', 10: 'י׳', 11: 'י״א', 12: 'י״ב' };
-  function grOf(t) { return GR[t.id] || [10, 12]; }
-  function unitsOf(t) { // ['35481', ...] -> [4]
-    if (!t.q) return null;
-    var u = {}; t.q.forEach(function (c) { u[c.slice(0, 3) === '355' ? 5 : c.slice(0, 3) === '354' ? 4 : 3] = 1; });
-    return Object.keys(u).map(Number);
+  // כל הכיתות של נושא (u: רק ברמת יחידות אחת)
+  function grsOf(t, u) {
+    var r = GR[t.id] || {}; if (Array.isArray(r)) return r;
+    var a = (r[0] || []).slice(); [3, 4, 5].forEach(function (k) { if (!u || k === u) a = a.concat(r[k] || []); });
+    return a.filter(function (g, i) { return a.indexOf(g) === i; }).sort(function (x, y) { return x - y; });
   }
+  function grOf(t) { var a = grsOf(t); return a.length ? [a[0], a[a.length - 1]] : [12, 12]; }
   function fits(t, g, u) {
-    var r = grOf(t); if (g < r[0] || g > r[1]) return false;
-    var un = unitsOf(t); return !un || g < 10 || un.indexOf(u) > -1;
+    var r = GR[t.id] || {}; if (Array.isArray(r)) return r.indexOf(g) > -1;
+    return ((g < 10 ? r[0] : r[u]) || []).indexOf(g) > -1;
   }
+  // מה כתוב בפריסה של משרד החינוך על כל נושא (מוצג מתחת לבחירת הנושא)
+  var OFF = { peulot: 'י׳ 4–5 יח״ל: פעולות על פונקציות (הזזה, מתיחה, כיווץ, שיקוף), פונקציית ערך מוחלט', regresia: 'י״א 4 יח״ל: רגרסיה לינארית, דיאגרמת פיזור, מקדם מתאם',
+    'trig-yechida': 'י׳–י״א 5 יח״ל: מעגל היחידה, זהויות ומשוואות טריגונומטריות, תכונות הפונקציות', thales: 'י׳ 5 יח״ל: משפט תאלס והרחבותיו, משפט חוצה זווית במשולש',
+    'chatchei-charut': 'י״ב 5 יח״ל: פרבולה, אליפסה והיפרבולה כמקום גאומטרי', bernoulli: 'י״א 5 יח״ל: מאורעות רב שלביים ונוסחת ברנולי', 'tichnun-lineari': 'י״ב 3 יח״ל: תכנון לינארי (אשכול פיננסי-כלכלי)',
+    'i-shivyon-ribui': 'ט׳: אי שוויון ריבועי בהקשר של פונקציה ריבועית · י׳ 4–5 יח״ל: פתרון אי שוויונות',
+    'hashvaat-shvarim': 'ד׳: משמעויות השבר, שמות שונים לשבר, השוואה · ה׳: השוואת שברים בדרכים שונות, הרחבה וצמצום',
+    shchiut: 'ז׳: איסוף, ייצוג וקריאת מידע, שכיחות, שכיחות יחסית (בלי ועם אחוזים) · ח׳: שכיחות יחסית, טווח ומדדי מרכז · י׳ 3 יח״ל: טבלת שכיחויות',
+    grafim: 'ז׳: נקודות על גרף · ח׳: מבוא לפונקציות, פונקציות בייצוגים שונים, עלייה וירידה · ט׳ מצומצמת: קריאת גרפים',
+    hafifa: 'ח׳: חפיפת משולשים, צלעות ותיכון במשולש, משולש שווה שוקיים · ט׳: משפטים הפוכים למשולש שווה שוקיים',
+    'gorem-meshutaf': 'ט׳: פירוק לגורמים בעזרת הוצאת גורם משותף, פתרון משוואות ריבועיות בסיסיות בפירוק',
+    meunach: 'ב׳: חיבור וחיסור במאונך · ג׳: בתחום הרבבה, כפל במאונך · ד׳: כפל במאונך',
+    igul: 'ו׳: מעגל ועיגול, היקף המעגל ושטח העיגול · ז׳: שטח עיגול והיקף מעגל (ח׳: להשלים אם לא נלמד)',
+    gufim: 'ו׳: נפח תיבה, גליל, חרוט, מנסרה · ז׳: קובייה ותיבה, מנסרה משולשת · ח׳: גליל וחרוט',
+    mechuvanim: 'ז׳: הכרת השליליים ומספרים נגדיים, חיבור וחיסור, כפל וחילוק מספרים מכוונים',
+    tzirim: 'ז׳: מערכת צירים ברביע הראשון, הרחבת מערכת הצירים, קטעים ושטחים במערכת צירים',
+    zaviot: 'ז׳: סימון ומדידה, חוצה זווית, צמודות וקודקודיות, סכום זוויות במשולש ובמרובע · ח׳: מתחלפות ומתאימות בין מקבילים',
+    bituyim: 'ז׳: המשתנה, ביטויים אלגבריים, הצבה, שוויון בין ביטויים (זהות)',
+    'i-shivyon': 'ח׳: אי שוויונות · ט׳: אי שוויון ריבועי בהקשר של פונקציה ריבועית',
+    'kefel-mekutzar': 'ט׳: חוק הפילוג המורחב, נוסחאות הכפל המקוצר, פירוק בהוצאת גורם משותף',
+    mechanim: 'ט׳: שברים אלגבריים, משוואות עם פירוק לגורמים במכנה ותחום הצבה · ט׳ מצומצמת: משוואה עם מכנה מספרי',
+    merubaim: 'ט׳: דלתון, טרפז, מקבילית, מלבן, מעוין וריבוע: תכונות ומשפטים הפוכים · י״א 3 יח״ל: תכונות מרובעים',
+    kefel: 'ב׳: משמעות הכפל והחילוק, לוח הכפל עד 10×10 · ג׳: השלמה וביסוס של לוח הכפל',
+    seder: 'ג׳–ד׳: סדר הפעולות והשימוש בסוגריים · ה׳–ו׳: סדר פעולות וחוקי הפעולות',
+    hiluk: 'ד׳: חילוק ארוך כשהמחלק חד־ספרתי או עשרת שלמה · ה׳: ארבע הפעולות במספרים גדולים, חילוק עם שארית',
+    shetach: 'ד׳: נוסחאות שטח והיקף מלבן · ה׳: שטח משולש ושטחי מצולעים · ו׳: מעגל ועיגול · ז׳: שטחים, חישוב היקפים',
+    shvarim: 'ד׳: מכנים שווים או קרובים · ה׳: כשמכנה אחד כפולה של השני · ו׳: חיבור וחיסור שברים',
+    asroni: 'ה׳: משמעות השבר העשרוני, חיבור וחיסור, השוואה · ו׳: כפל וחילוק מספרים עשרוניים',
+    'kefel-shvarim': 'ו׳: כפל שבר בשבר כולל מספרים מעורבים, חילוק שברים פשוטים',
+    memutza: 'ה׳–ו׳: חקר נתונים, משמעות הממוצע ותכונותיו · ח׳: טווח נתונים ומדדי מרכז',
+    achuzim: 'ו׳: הכרת האחוז, חישוב ערך האחוז וחישוב האחוז · ח׳: אחוזים ושאלות מילוליות · י׳ 3 יח״ל: אחוזים',
+    yachas: 'ו׳: יחס וקנה מידה · ח׳: יחס, פרופורציה וקנה מידה · י״א 3 יח״ל: יחס, פרופורציה, קנה מידה',
+    histabrut: 'ז׳: הסתברות בהקשר של שכיחות יחסית · ח׳: הסתברות א׳–ב׳ · ט׳: מאורע משלים, מאורעות דו־שלביים',
+    pilug: 'ז׳: כינוס איברים דומים וחוק הפילוג · ט׳: חוק הפילוג המורחב (עדיין לא במחולל)',
+    mishvaa: 'ז׳: משוואה ממעלה ראשונה ושאלות בהקשרים · ח׳: משוואות ושאלות מילוליות (אחוזים, תנועה)',
+    chezkot: 'ז׳: חזקות עם מעריך טבעי ושורש ריבועי · ט׳: חוקי חזקות (מעריך טבעי או אפס), חוקי שורש',
+    pitagoras: 'ז׳: משפט פיתגורס ושימושיו (חדש בתוכנית תשפ״ז) · ח׳: פיתגורס, ופיתגורס במרחב · ט׳ מצומצמת',
+    kav: 'ח׳: מבוא לפונקציות, שיפוע, ייצוג אלגברי של פונקציה קווית · ט׳ מצומצמת: פונקציה קווית',
+    maarechet: 'ח׳: מערכת משוואות (רמה בסיסית), שאלות מילוליות · ט׳: מערכת משוואות ממעלה שנייה',
+    tnua: 'ח׳–ט׳: שאלות מילוליות, כולל תנועה · י׳ 3 יח״ל: מהירות, זמן ודרך',
+    dimyon: 'ח׳: דמיון משולשים · ט׳: יחסי שטחים במשולשים דומים · י׳ 4–5 יח״ל: שלושת משפטי הדמיון',
+    stiya: 'ח׳: טווח ומדדי מרכז (ממוצע, שכיח, חציון) · י׳ 4 יח״ל, י״א 3 יח״ל: סטיית תקן',
+    trinom: 'ט׳: פירוק טרינום (מקדם 1), נוסחאות הכפל המקוצר, משוואות בפירוק לגורמים',
+    shorashim: 'ט׳: משוואה ריבועית בנוסחת השורשים',
+    'parabola-tavla': 'ט׳: פונקציה ריבועית, קודקוד, הזזות, חיתוך עם הצירים',
+    parabola: 'ט׳: פונקציה ריבועית בהצגה סטנדרטית ובהצגת מכפלה · י׳ 4–5 יח״ל: חזרה בקדם־אנליזה',
+    etz: 'ט׳: מאורעות דו־שלביים, טבלה ודיאגרמת עץ · י׳ 4 יח״ל: הסתברות מותנית ועץ',
+    merchak: 'י׳ 4–5 יח״ל: גאומטריה אנליטית, נקודות, קטעים וישרים', trigo: 'י׳ 4–5 יח״ל, י״א 3 יח״ל: סינוס, קוסינוס וטנגנס במשולש ישר זווית',
+    nigzeret: 'י׳ 4–5 יח״ל: מושג הנגזרת, נגזרת פולינום', mashik: 'י׳ 4–5 יח״ל: משוואת משיק', kitzon: 'י׳ 4–5 יח״ל: חקירה ובעיות קיצון בפולינום',
+    'shoresh-f': 'י׳ 4–5 יח״ל: פונקציית שורש ונגזרתה', maagal: 'י״א 4 יח״ל, י׳ 5 יח״ל: משוואת מעגל', 'zaviot-maagal': 'י״א 4 יח״ל, י׳ 5 יח״ל: זוויות מרכזיות והיקפיות',
+    sinusim: 'י״א 4 יח״ל: משפט הסינוסים · י׳ 5 יח״ל: הסינוסים, הקוסינוסים ושטח משולש', rationalit: 'י״א 4 יח״ל, י׳ 5 יח״ל: פונקציה רציונלית',
+    integral: 'י״א 4–5 יח״ל: פונקציה קדומה, אינטגרל וחישובי שטחים', normalit: 'י״א 4 יח״ל, י״ב 3 יח״ל: התפלגות נורמלית וציון תקן', parametr: 'י״א 4–5 יח״ל: משפחות פרמטריות של פונקציות',
+    gdila: 'י״א 3 יח״ל, י״ב 4–5 יח״ל: גדילה ודעיכה', sidra: 'י״ב 4 יח״ל: סדרה חשבונית · י״א 5 יח״ל: מבוא לסדרות', handasit: 'י״ב 4 יח״ל, י״א 5 יח״ל: סדרה הנדסית',
+    induktzia: 'י״א 5 יח״ל: אינדוקציה מתמטית', 'trig-nigzeret': 'י״א 5 יח״ל: נגזרת של פונקציות טריגונומטריות', logaritm: 'י״ב 4–5 יח״ל: לוגריתמים ומשוואות מעריכיות',
+    'exp-ln': 'י״ב 4–5 יח״ל: נגזרת של פונקציה מעריכית ולוגריתמית', vektor: 'י״ב 4–5 יח״ל: וקטורים', piramida: 'י״ב 4–5 יח״ל: גופים במרחב, מנסרה ופירמידה',
+    merchav: 'י״ב 4–5 יח״ל: גופים במרחב', merukav: 'י״ב 5 יח״ל: מספרים מרוכבים', 'nefach-sivuv': 'לא מופיע בהמלצות ההוראה של התוכנית החדשה (תשפ״ז)' };
+  function offNote(id) { return OFF[id] ? 'בפריסת משרד החינוך: ' + OFF[id] : ''; }
   // נושאים קודמים שכדאי להזכיר בכל נושא (עד שלושה, מהקרוב לרחוק)
-  var PRE = { hiluk: ['kefel'], seder: ['kefel', 'hiluk'], shetach: ['kefel', 'seder'], asroni: ['hiluk', 'seder', 'kefel'], shvarim: ['kefel', 'hiluk', 'seder'], 'kefel-shvarim': ['shvarim', 'kefel', 'hiluk'], memutza: ['hiluk', 'asroni', 'seder'], achuzim: ['asroni', 'kefel-shvarim', 'shvarim'], yachas: ['kefel-shvarim', 'shvarim', 'achuzim'], histabrut: ['shvarim', 'achuzim', 'yachas'], pilug: ['seder', 'kefel', 'shetach'], mishvaa: ['pilug', 'seder', 'shvarim'], chezkot: ['seder', 'kefel', 'pilug'], kav: ['mishvaa', 'pilug', 'yachas'], pitagoras: ['chezkot', 'shetach', 'mishvaa'], maarechet: ['mishvaa', 'pilug', 'kav'], trinom: ['pilug', 'chezkot', 'mishvaa'], shorashim: ['trinom', 'chezkot', 'mishvaa'], 'parabola-tavla': ['chezkot', 'kav', 'mishvaa'], parabola: ['parabola-tavla', 'shorashim', 'kav'], sidra: ['mishvaa', 'pilug', 'memutza'], merchak: ['pitagoras', 'kav', 'memutza'], trigo: ['pitagoras', 'yachas', 'mishvaa'], gdila: ['achuzim', 'chezkot', 'asroni'], stiya: ['memutza', 'chezkot', 'achuzim'], nigzeret: ['chezkot', 'kav', 'pilug'], mashik: ['nigzeret', 'kav', 'mishvaa'], kitzon: ['nigzeret', 'shorashim', 'parabola'], integral: ['nigzeret', 'chezkot', 'shetach'], maagal: ['merchak', 'pitagoras', 'shorashim'], normalit: ['stiya', 'achuzim', 'memutza'], handasit: ['sidra', 'chezkot', 'yachas'], sinusim: ['trigo', 'pitagoras', 'shetach'], etz: ['histabrut', 'kefel-shvarim', 'shvarim'], tnua: ['mishvaa', 'maarechet', 'shorashim'], rationalit: ['nigzeret', 'shorashim', 'kitzon'], 'shoresh-f': ['nigzeret', 'chezkot', 'kitzon'], merchav: ['trigo', 'pitagoras', 'sinusim'], 'trig-nigzeret': ['nigzeret', 'trigo', 'kitzon'], piramida: ['merchav', 'trigo', 'pitagoras'], vektor: ['merchak', 'pitagoras', 'trigo'], merukav: ['shorashim', 'pilug', 'chezkot'], logaritm: ['chezkot', 'gdila', 'mishvaa'], 'exp-ln': ['nigzeret', 'logaritm', 'kitzon'], dimyon: ['yachas', 'pitagoras', 'mishvaa'], 'zaviot-maagal': ['dimyon', 'maagal', 'mishvaa'], parametr: ['shorashim', 'nigzeret', 'kitzon'], induktzia: ['sidra', 'pilug', 'chezkot'], 'nefach-sivuv': ['integral', 'chezkot', 'shetach'] };
+  var PRE = { peulot: ['parabola', 'kav', 'mechuvanim'], regresia: ['kav', 'stiya', 'memutza'], 'trig-yechida': ['trigo', 'pitagoras', 'sinusim'], thales: ['dimyon', 'yachas', 'mishvaa'], 'chatchei-charut': ['maagal', 'merchak', 'pitagoras'], bernoulli: ['etz', 'histabrut', 'chezkot'], 'tichnun-lineari': ['kav', 'maarechet', 'i-shivyon'], 'i-shivyon-ribui': ['shorashim', 'parabola', 'i-shivyon'], 'hashvaat-shvarim': ['kefel', 'hiluk'], shchiut: ['achuzim', 'shvarim', 'memutza'], grafim: ['tzirim', 'mishvaa', 'mechuvanim'], hafifa: ['zaviot', 'mishvaa', 'shetach'], 'gorem-meshutaf': ['kefel-mekutzar', 'pilug', 'chezkot'], meunach: ['kefel', 'seder'], igul: ['shetach', 'asroni', 'kefel-shvarim'], gufim: ['shetach', 'kefel', 'asroni'], mechuvanim: ['seder', 'asroni', 'shvarim'], tzirim: ['mechuvanim', 'shetach', 'seder'], zaviot: ['shetach', 'seder', 'mishvaa'], bituyim: ['seder', 'chezkot', 'mechuvanim'], 'i-shivyon': ['mishvaa', 'mechuvanim', 'pilug'], 'kefel-mekutzar': ['pilug', 'chezkot', 'mechuvanim'], mechanim: ['mishvaa', 'shvarim', 'pilug'], merubaim: ['zaviot', 'pitagoras', 'shetach'], hiluk: ['kefel'], seder: ['kefel', 'hiluk'], shetach: ['kefel', 'seder'], asroni: ['hiluk', 'seder', 'kefel'], shvarim: ['kefel', 'hiluk', 'seder'], 'kefel-shvarim': ['shvarim', 'kefel', 'hiluk'], memutza: ['hiluk', 'asroni', 'seder'], achuzim: ['asroni', 'kefel-shvarim', 'shvarim'], yachas: ['kefel-shvarim', 'shvarim', 'achuzim'], histabrut: ['shvarim', 'achuzim', 'yachas'], pilug: ['bituyim', 'mechuvanim', 'seder'], mishvaa: ['pilug', 'bituyim', 'mechuvanim'], chezkot: ['seder', 'kefel', 'pilug'], kav: ['tzirim', 'mishvaa', 'yachas'], pitagoras: ['chezkot', 'shetach', 'mishvaa'], maarechet: ['mishvaa', 'pilug', 'kav'], trinom: ['kefel-mekutzar', 'pilug', 'chezkot'], shorashim: ['trinom', 'chezkot', 'mishvaa'], 'parabola-tavla': ['chezkot', 'kav', 'mishvaa'], parabola: ['parabola-tavla', 'shorashim', 'kav'], sidra: ['mishvaa', 'pilug', 'memutza'], merchak: ['pitagoras', 'kav', 'memutza'], trigo: ['pitagoras', 'yachas', 'mishvaa'], gdila: ['achuzim', 'chezkot', 'asroni'], stiya: ['memutza', 'chezkot', 'achuzim'], nigzeret: ['chezkot', 'kav', 'pilug'], mashik: ['nigzeret', 'kav', 'mishvaa'], kitzon: ['nigzeret', 'shorashim', 'parabola'], integral: ['nigzeret', 'chezkot', 'shetach'], maagal: ['merchak', 'pitagoras', 'shorashim'], normalit: ['stiya', 'achuzim', 'memutza'], handasit: ['sidra', 'chezkot', 'yachas'], sinusim: ['trigo', 'pitagoras', 'shetach'], etz: ['histabrut', 'kefel-shvarim', 'shvarim'], tnua: ['mishvaa', 'maarechet', 'shorashim'], rationalit: ['nigzeret', 'shorashim', 'kitzon'], 'shoresh-f': ['nigzeret', 'chezkot', 'kitzon'], merchav: ['trigo', 'pitagoras', 'sinusim'], 'trig-nigzeret': ['nigzeret', 'trigo', 'kitzon'], piramida: ['merchav', 'trigo', 'pitagoras'], vektor: ['merchak', 'pitagoras', 'trigo'], merukav: ['shorashim', 'pilug', 'chezkot'], logaritm: ['chezkot', 'gdila', 'mishvaa'], 'exp-ln': ['nigzeret', 'logaritm', 'kitzon'], dimyon: ['yachas', 'pitagoras', 'mishvaa'], 'zaviot-maagal': ['dimyon', 'maagal', 'mishvaa'], parametr: ['shorashim', 'nigzeret', 'kitzon'], induktzia: ['sidra', 'pilug', 'chezkot'], 'nefach-sivuv': ['integral', 'chezkot', 'shetach'] };
   // נושאים שהשיעור שלהם נמצא בדף "מתמטיקה צעד אחרי צעד" (לקישור מהתזכורות)
   function lessonUrl(t) { return MX.T.indexOf(t) > -1 ? 'https://hakelim.com/limudim/matematika/#' + t.id : BASE + '?d=' + [t.id, 'h', 15, 1, '', 7, 1].join('.'); }
 
@@ -146,6 +218,8 @@
   function cost(p, guided) { return Math.max(2, Math.round(1 + p.steps.length * (guided ? 0.6 : 0.8)) + (p.table ? 2 : 0)); }
   // cfg: {t: נושא, k: 'h' הקנייה | 'z' חזרה, m: דקות, lv: 1-3, r: [נושאי תזכורת], s: זרע, a: עזרה 0-2}
   // חשבון בתוך שאלה בעברית: עוטפים כל ביטוי עם סימן פעולה בכיוון שמאל-לימין, אחרת "1/2 + 1/3" מתהפך ל-"1/3 + 1/2"
+  // גרסה רחבה: כל רצף בלי עברית שיש בו פעולה (y = x² − 6x, f(x) = ...) נשאר משמאל לימין בתוך משפט בעברית
+  function mwx(h) { return h.replace(/[^֐-׿·:?!׳״]+/g, function (m) { var c = m.trim(); if (!c || !(/[=+\-−×÷^²³√∫\/]/.test(c) || /^\(.+,.+\)$/.test(c)) || !/[0-9a-zA-Z]/.test(c)) return m; var a = m.indexOf(c); return m.slice(0, a) + '<bdi dir="ltr">' + c + '</bdi>' + m.slice(a + c.length); }); }
   function mw(h) { return h.replace(/[0-9(][0-9\s+\-−×÷*\/=().,^²³√%:]*[0-9)²³%]/g, function (m) { return /[+\-−×÷*\/=^:]/.test(m) ? '<bdi dir="ltr">' + m + '</bdi>' : m; }); }
   var OWN_MAX = 20; // שאלות משלי: עד 20 (גם מיבוא מכיתה משחקת ומבנק השאלות)
   function build(cfg) {
@@ -158,10 +232,10 @@
         if (wr.length && String(x.a || '').trim()) { // שאלה אמריקאית: התשובה הנכונה + השגויות, בסדר מעורבב (קבוע לפי ה-seed)
           var op = [String(x.a).trim()].concat(wr.map(function (z) { return String(z).trim(); })), at = 0;
           for (var oi = op.length - 1; oi > 0; oi--) { var oj = Math.floor(Math.random() * (oi + 1)), ot = op[oi]; op[oi] = op[oj]; op[oj] = ot; if (at === oi) at = oj; else if (at === oj) at = oi; }
-          return { k: 'ex', own: true, mc: true, guided: false, lv: 1, min: x.m, p: { ex: '<span class="dp-own" dir="rtl">' + mw(esc(x.t.trim())) + '</span>', fin: '<bdi>' + esc(op[at]) + '</bdi>',
+          return { k: 'ex', own: true, mc: true, guided: false, lv: 1, min: x.m, p: { ex: '<span class="dp-own" dir="rtl">' + mwx(esc(x.t.trim())) + '</span>', fin: '<bdi>' + esc(op[at]) + '</bdi>',
             steps: [{ show: '', q: 'בוחרים את התשובה:', opts: op.map(function (z) { return '<bdi>' + esc(z) + '</bdi>'; }), a: at, hint: 'קוראים שוב את השאלה, לאט, ובודקים כל אחת מהתשובות.' }] } };
         }
-        return { k: 'ex', own: true, guided: false, lv: 1, min: x.m, p: { ex: '<span class="dp-own" dir="rtl">' + mw(esc(x.t.trim())) + '</span>', fin: x.a ? '<bdi>' + esc(x.a) + '</bdi>' : '',
+        return { k: 'ex', own: true, guided: false, lv: 1, min: x.m, p: { ex: '<span class="dp-own" dir="rtl">' + mwx(esc(x.t.trim())) + '</span>', fin: x.a ? '<bdi>' + esc(x.a) + '</bdi>' : '',
           steps: [isNum ? { show: '', q: 'התשובה:', a: v, hint: 'זו שאלה מהמורה. קוראים שוב את השאלה, לאט, ובודקים את החישוב.' } : { free: true, show: '', q: 'התשובה שלי:', a: 0, txt: x.a || '', hint: '' }] } };
       });
       var items = [], total = own.reduce(function (z, x) { return z + x.min; }, 0), n = 0, i = 0;
@@ -257,6 +331,167 @@
   }
 
   // =====================================================================
+  //  "דף לפי התיאור": המורה מתארת דף במילים שלה, השרת מחזיר בלוקים, וכאן בונים את הדף.
+  //  את ערכי הטבלאות ואת הגרפים מחשבים כאן מהפונקציה עצמה, כך שאין בדף מספר שהדגם המציא.
+  // =====================================================================
+  // ביטוי בכתיב מחשב ("-x^2+3", "2(x-1)^2") -> פונקציה. רק x, מספרים, + - * / ^ וסוגריים.
+  function fx(src) {
+    var s = String(src || '').replace(/²/g, '^2').replace(/³/g, '^3').replace(/[−–]/g, '-').replace(/[·×]/g, '*').replace(/\s+/g, '').replace(/^y=/, '');
+    if (!/^[x0-9+\-*/^().]{1,40}$/.test(s)) return null;
+    var tk = s.match(/\d+(?:\.\d+)?|[x+\-*/^()]/g) || [], i = 0;
+    function peek() { return tk[i]; }
+    function expr() { var a = term(); while (peek() === '+' || peek() === '-') { var op = tk[i++], b = term(); a = (function (a, b, op) { return function (x) { return op === '+' ? a(x) + b(x) : a(x) - b(x); }; })(a, b, op); } return a; }
+    function term() {
+      var a = unary();
+      while (peek() === '*' || peek() === '/' || peek() === 'x' || peek() === '(' || /^\d/.test(peek() || '')) {
+        var op = peek() === '*' || peek() === '/' ? tk[i++] : '*', b = unary();
+        a = (function (a, b, op) { return function (x) { return op === '*' ? a(x) * b(x) : a(x) / b(x); }; })(a, b, op);
+      }
+      return a;
+    }
+    function unary() { if (peek() === '-') { i++; var a = unary(); return function (x) { return -a(x); }; } if (peek() === '+') { i++; return unary(); } return power(); }
+    function power() { var a = atom(); if (peek() === '^') { i++; var b = unary(); return function (x) { return Math.pow(a(x), b(x)); }; } return a; }
+    function atom() {
+      var t = tk[i++];
+      if (t === 'x') return function (x) { return x; };
+      if (t === '(') { var a = expr(); if (tk[i++] !== ')') throw 0; return a; }
+      if (/^\d/.test(t || '')) { var v = +t; return function () { return v; }; }
+      throw 0;
+    }
+    try { var f = expr(); return i === tk.length ? f : null; } catch (e) { return null; }
+  }
+  function fxNum(v) { var r = Math.round(v * 100) / 100; return r === 0 ? '0' : num(r); }
+  // כתיב מחשב -> כתיב של דף: x^2 -> x², 2*x -> 2x, מינוס אמיתי
+  function pm(s) {
+    return String(s).replace(/\^2(?![0-9])/g, '²').replace(/\^3(?![0-9])/g, '³').replace(/\^\(([^()]{1,12})\)/g, '<sup>$1</sup>').replace(/\^(-?[0-9a-z]+)/g, '<sup>$1</sup>')
+      .replace(/(\d)\s*\*\s*(?=[a-z(])/g, '$1').replace(/\s*\*\s*/g, ' · ');
+  }
+  function fnShow(f) { return 'y = ' + pm(String(f).replace(/([+\-])/g, ' $1 ').replace(/^\s*-\s*/, '-').replace(/\(\s*-\s*/g, '(-').replace(/\s+/g, ' ').trim()).replace(/-/g, '−'); }
+  // טקסט מהדגם -> HTML בטוח: בורחים, כתיב מתמטי, וכיוון שמאל-לימין לקטעי מתמטיקה בתוך עברית
+  // מפרק טקסט לקטעי עברית וקטעי מתמטיקה (קטע מתמטיקה נכתב משמאל לימין, בלי לגנוב סוגריים או נקודה מהמשפט)
+  function mruns(raw, seg) { // מפרק טקסט לקטעי עברית וקטעי מתמטיקה; seg(text, isMath)
+    var s = String(raw), out = '', at = 0, re = /[A-Za-z0-9()+\-−=·×÷*\/^²³√<>≤≥≠.,|→←∞π_ ]+/g, m;
+    while ((m = re.exec(s))) {
+      var a = m.index, b = a + m[0].length, t;
+      while (a < b && /[\s.,:;!?]/.test(s[a])) a++;
+      while (b > a && /[\s.,:;!?(]/.test(s[b - 1])) b--;
+      if (a < b && s[a] === '-' && a > 0 && /[\u0590-\u05FF]/.test(s[a - 1])) a++;
+      for (var k = 0; k < 3; k++) {
+        t = s.slice(a, b);
+        var o = (t.match(/\(/g) || []).length, c = (t.match(/\)/g) || []).length;
+        if (c > o && t[t.length - 1] === ')') b--; else if (c > o && t[0] === ')') a++; else if (o > c && t[0] === '(') a++; else if (o > c && t[t.length - 1] === '(') b--; else break;
+      }
+      t = s.slice(a, b);
+      if (!t || !(/[=+×÷^²³√<>≤≥≠→·]/.test(t) || /.-./.test(t) || /^-?\d/.test(t) && /[a-z]/i.test(t) || /^\(.+,.+\)$/.test(t))) continue;
+      out += seg(s.slice(at, a), false) + seg(t, true); at = b;
+    }
+    return out + seg(s.slice(at), false);
+  }
+  function tx(s) { return mruns(s, function (t, m) { return m ? '<bdi dir="ltr">' + pm(esc(t)) + '</bdi>' : pm(esc(t)); }); }
+  function mline(s) { return String(s).split(/\s;\s/).map(function (z) { return '<div class="dp-xm" dir="ltr">' + pm(esc(z.trim())).replace(/-/g, '−') + '</div>'; }).join(''); }
+  // מערכת צירים בטווח נתון; draw = פונקציות שמצוירות
+  function axesSvg(g, draw) {
+    var x0 = Math.min(0, Math.floor(g.xmin)), x1 = Math.max(0, Math.ceil(g.xmax)), y0 = Math.min(0, Math.floor(g.ymin)), y1 = Math.max(0, Math.ceil(g.ymax));
+    var sy = y1 - y0 <= 16 ? 1 : y1 - y0 <= 32 ? 2 : 5; y0 = Math.floor(y0 / sy); y1 = Math.ceil(y1 / sy);
+    var sx = x1 - x0 <= 16 ? 1 : 2;
+    var C = 22, mx = 22, my = 18, W = (x1 - x0) * C + mx * 2, H = (y1 - y0) * C + my * 2;
+    var X = function (x) { return mx + (x - x0) * C; }, Y = function (y) { return my + (y1 - y / sy) * C; };
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="dp-grid" direction="ltr" style="max-width:' + Math.round(W * 1.15) + 'px" role="img" aria-label="מערכת צירים">', k;
+    for (k = x0; k <= x1; k++) s += '<path d="M' + X(k) + ' ' + my + ' V' + (H - my) + '" class="gl"/>' + (k && k % sx === 0 ? '<text x="' + X(k) + '" y="' + (Y(0) + 12) + '" class="gt" text-anchor="middle">' + num(k) + '</text>' : '');
+    for (k = y0; k <= y1; k++) s += '<path d="M' + mx + ' ' + Y(k * sy) + ' H' + (W - mx) + '" class="gl"/>' + (k && k < y1 ? '<text x="' + (X(0) - 4) + '" y="' + (Y(k * sy) + 3.5) + '" class="gt" text-anchor="end">' + num(k * sy) + '</text>' : '');
+    s += '<path d="M' + mx + ' ' + Y(0) + ' H' + (W - mx) + ' M' + X(0) + ' ' + my + ' V' + (H - my) + '" class="ga"/><text x="' + (W - mx + 5) + '" y="' + (Y(0) + 4) + '" class="gt">x</text><text x="' + X(0) + '" y="' + (my - 5) + '" class="gt" text-anchor="middle">y</text>';
+    var cols = ['#3f8fc4', '#c0552b', '#2e8b57', '#8a4fbf', '#c9972f', '#555'];
+    (draw || []).forEach(function (src, j) {
+      var f = fx(src); if (!f) return;
+      var d = '', on = false;
+      for (var x = x0; x <= x1 + 1e-9; x += 0.05) {
+        var y = f(x), ok = isFinite(y) && y / sy >= y0 - 0.02 && y / sy <= y1 + 0.02;
+        if (ok) { d += (on ? ' L' : ' M') + X(x).toFixed(1) + ' ' + Y(y).toFixed(1); on = true; } else on = false;
+      }
+      s += '<path d="' + d + '" class="gc" style="stroke:' + cols[j % cols.length] + '"/>';
+    });
+    return s + '</svg>';
+  }
+  // "שרטטו את y = x² + 1" -> ["x^2+1"]: כשהדגם לא מילא key, לוקחים את הפונקציות מתוך ההוראה
+  function fnsInText(t) {
+    var out = [], m, re = /y\s*=\s*([−\-+x0-9²³^*·().\s]{1,30})/g;
+    while ((m = re.exec(String(t || '')))) { var f = m[1].replace(/[\s.]+$/, '').trim(); if (/x/.test(f) && fx(f)) out.push(f.replace(/\s+/g, '')); }
+    return out;
+  }
+  var HEL = 'אבגדהוזחטיכלמנסעפצקרשת';
+  function dafTblHtml(b, full) {
+    var f = fx(b.fn);
+    return '<table class="dp-tbl fill" dir="ltr"><tr><th>x</th>' + b.xs.map(function (x) { return '<td>' + fxNum(x) + '</td>'; }).join('') + '</tr><tr><th>y</th>' + b.xs.map(function (x, j) {
+      return '<td>' + (full || j < b.given ? (j < b.given && !full ? '<b>' : '') + fxNum(f(x)) + (j < b.given && !full ? '</b>' : '') : '') + '</td>';
+    }).join('') + '</tr></table>';
+  }
+  // בלוקים -> רשימת פריטים לדף: טבלה ואחריה גרף באותה פונקציה נכנסים לאותה תיבה, עם מספר אחד
+  function dafItems(doc) {
+    var items = [], n = 0, bs = doc.blocks || [];
+    for (var i = 0; i < bs.length; i++) {
+      var b = bs[i];
+      if (b.type === 'table' && !fx(b.fn)) continue;
+      if (b.type === 'table') {
+        var g = bs[i + 1] && bs[i + 1].type === 'graph' ? bs[++i] : null;
+        if (g && !g.key.length && !g.fns.length) g = Object.assign({}, g, { key: fnsInText(g.text).length ? fnsInText(g.text) : [b.fn] });
+        items.push({ k: 'table', b: b, g: g, n: ++n }); continue;
+      }
+      if (b.type === 'graph') {
+        var key = b.key.length ? b.key : b.fns.length ? [] : fnsInText(b.text);
+        items.push({ k: 'graph', b: b, key: key, n: (key.length || !b.fns.length) ? ++n : 0 }); continue;
+      }
+      if (b.type === 'task' || b.type === 'fill' || b.type === 'lines') { items.push({ k: b.type, b: b, n: ++n }); continue; }
+      items.push({ k: b.type, b: b });
+    }
+    // כמה גרפים לשרטוט ברצף -> רשת של שניים בשורה
+    return items;
+  }
+  function dafQ(it, inner) { return '<section class="dp-q dp-xq">' + (it.n ? '<div class="dp-qh"><span class="dp-n">' + it.n + '</span>' + (it.b.text ? '<span class="dp-xt">' + tx(it.b.text) + '</span>' : '') + '</div>' : it.b.text ? '<p class="dp-xt">' + tx(it.b.text) + '</p>' : '') + inner + '</section>'; }
+  function dafPaperHtml(doc, o) {
+    var items = dafItems(doc), nq = items.filter(function (x) { return x.n; }).length, h = '<article class="dp-paper dp-xpaper st-' + o.style + (o.font ? ' big' : '') + '"' + (o.edit ? ' contenteditable="true" spellcheck="false"' : '') + '>';
+    h += '<header class="dp-ph"><div class="dp-pt"><span class="dp-kind">דף עבודה · מתמטיקה' + (doc.grade ? ' · כיתה ' + esc(doc.grade) : '') + '</span><h2>' + tx(doc.title) + '</h2>' + (o.title ? '<p class="dp-sub">' + esc(o.title) + '</p>' : '') +
+      '<p class="dp-name">שם: <span class="sb w"></span> תאריך: <span class="sb"></span></p></div></header>';
+    h += '<div class="dp-strip">' + (doc.minutes && o.time ? '<span>⏱ כ-' + doc.minutes + ' דקות</span>' : '') + '<span>' + nq + ' משימות</span>' + (o.stars ? '<span class="dp-stars" aria-label="כוכב לכל משימה">' + items.filter(function (x) { return x.n; }).map(function () { return '☆'; }).join('') + '</span><span class="dp-strip-n">צובעים כוכב אחרי כל משימה</span>' : '') + '</div>';
+    if (doc.intro) h += '<p class="dp-xintro">' + tx(doc.intro) + '</p>';
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i], b = it.b;
+      if (it.k === 'part') h += '<h3 class="dp-xpart">' + tx(b.text || '') + '</h3>';
+      else if (it.k === 'explain') h += '<div class="dp-xexp">' + (b.text ? '<p>' + tx(b.text) + '</p>' : '') + (b.math ? mline(b.math) : '') + '</div>';
+      else if (it.k === 'note') h += '<div class="dp-xnote"><span aria-hidden="true">⚠️</span><div>' + (b.text ? '<p>' + tx(b.text) + '</p>' : '') + (b.math ? mline(b.math) : '') + '</div></div>';
+      else if (it.k === 'task') h += dafQ(it, '<ol class="dp-xitems">' + b.items.map(function (x, j) {
+        return '<li><span class="dp-xl">' + HEL[j % HEL.length] + '.</span><span class="dp-xiq">' + tx(x.q.replace(/_{3,}/g, '﹍')).replace(/﹍/g, '<span class="sb"></span>') + (b.n ? '' : (/_{3,}/.test(x.q) ? '' : ' <span class="sb w"></span>')) + '</span>' + (b.n ? '<div class="dp-xlines" style="height:' + b.n * 8.5 + 'mm"></div>' : '') + '</li>';
+      }).join('') + '</ol>');
+      else if (it.k === 'fill') h += dafQ(it, '<ol class="dp-xitems">' + b.items.map(function (x, j) {
+        return '<li><span class="dp-xl">' + HEL[j % HEL.length] + '.</span><span class="dp-xiq">' + tx(x.q.replace(/_{2,}/g, '﹍')).replace(/﹍/g, '<span class="sb"></span>') + (/_{2,}/.test(x.q) ? '' : ' <span class="sb w"></span>') + '</span></li>';
+      }).join('') + '</ol>');
+      else if (it.k === 'lines') h += dafQ(it, '<div class="dp-xlines" style="height:' + b.n * 8.5 + 'mm"></div>');
+      else if (it.k === 'table') h += dafQ(it, (it.g && it.g.text ? '<p class="dp-eg">' + tx(it.g.text) + '</p>' : '') + '<div class="dp-tw">' + dafTblHtml(b, false) + (it.g ? axesSvg(it.g, it.g.fns) : '') + '</div>');
+      else if (it.k === 'graph') {
+        // גרפים לשרטוט ברצף: שניים בשורה
+        var run = [it]; while (items[i + 1] && items[i + 1].k === 'graph' && items[i + 1].n && it.n) run.push(items[++i]);
+        if (run.length > 1) h += '<div class="dp-xgrid">' + run.map(function (r) { return dafQ(r, axesSvg(r.b, r.b.fns)); }).join('') + '</div>';
+        else h += dafQ(it, axesSvg(b, b.fns));
+      }
+    }
+    if (o.feel) h += '<section class="dp-feel"><b>איך הרגשתי עם הדף?</b><span>😀 הבנתי הכול</span><span>🙂 הבנתי את הרוב</span><span>🤔 צריך עוד הסבר</span><span class="dp-feel-q">מה עוד לא ברור לי: <span class="sb w"></span></span></section>';
+    h += '<footer class="dp-pf">טעות היא חלק מהלימוד. ממשיכים הלאה 💪 &nbsp;·&nbsp; דף מ"הכלים של גילעד רחמים", חינם: <bdi dir="ltr">hakelim.com/limudim/dapim</bdi></footer></article>';
+    if (o.key) {
+      h += '<article class="dp-paper dp-keyp dp-xpaper st-' + o.style + '"' + (o.edit ? ' contenteditable="true" spellcheck="false"' : '') + '><header class="dp-ph"><div class="dp-pt"><span class="dp-kind">דף תשובות למורה</span><h2>' + tx(doc.title) + '</h2></div></header><ol class="dp-key dp-xkey">';
+      items.forEach(function (it) {
+        if (!it.n) return;
+        var b = it.b, a = '';
+        if (it.k === 'task' || it.k === 'fill') a = b.items.map(function (x, j) { return '<span class="dp-xka"><b>' + HEL[j % HEL.length] + '.</b> ' + (x.a ? tx(x.a) : '—') + '</span>'; }).join('');
+        else if (it.k === 'table') a = dafTblHtml(b, true) + (it.g && it.g.key.length ? axesSvg(it.g, it.g.fns.concat(it.g.key)) : '');
+        else if (it.k === 'graph') a = (it.key.length ? '<span class="dp-xka">' + it.key.map(function (f) { return '<bdi dir="ltr">' + fnShow(f) + '</bdi>'; }).join(' , ') + '</span>' : '') + axesSvg(b, b.fns.concat(it.key));
+        else a = '<span class="dp-xka">תשובה פתוחה</span>';
+        h += '<li class="dp-xk' + (it.k === 'graph' || it.k === 'table' ? ' g' : '') + '"><b>' + it.n + '.</b> ' + a + '</li>';
+      });
+      h += '</ol></article>';
+    }
+    return h;
+  }
+
+  // =====================================================================
   //  הדף המודפס
   // =====================================================================
   var qrJobs = [];
@@ -345,18 +580,39 @@
     ['time', 'stars', 'bonus', 'feel', 'grid', 'qr'].forEach(function (k) { if (st['o' + k] === false) $('dp-o-' + k).checked = false; });
     if (st.key === false) $('dp-key').checked = false;
     function opt(t) { return '<option value="' + t.id + '">' + t.name + '</option>'; }
+    // שלוש קבוצות לכל כיתה: השנה, שנה שעברה (לחזרה) ושנה הבאה (לתלמידים חזקים). "כל הנושאים" פותח את כל השאר
+    function groups(g, u) {
+      var now = T.filter(function (t) { return fits(t, g, u); });
+      var prev = g > 2 ? T.filter(function (t) { return now.indexOf(t) < 0 && fits(t, g - 1, u); }) : [];
+      var next = g < 12 ? T.filter(function (t) { return now.indexOf(t) < 0 && prev.indexOf(t) < 0 && fits(t, g + 1, g === 9 ? 4 : u); }) : []; // אחרי ט׳: הנושאים של י׳ ברמת 4 יח״ל, אליה מכוונת פריסת ט׳ הרגילה
+      var near = now.concat(prev, next);
+      return { now: now, prev: prev, next: next, near: near, rest: T.filter(function (t) { return near.indexOf(t) < 0; }) };
+    }
     function fillTopics(keep) {
       var g = +gs.value, u = +$('dp-units').value; $('dp-units-w').hidden = g < 10;
-      var now = T.filter(function (t) { return fits(t, g, u); }), before = T.filter(function (t) { return grOf(t)[1] < g; }), later = T.filter(function (t) { return now.indexOf(t) < 0 && before.indexOf(t) < 0; });
-      var sel = $('dp-topic'), was = keep || sel.value;
-      sel.innerHTML = (now.length ? '<optgroup label="הנושאים של כיתה ' + GRN[g] + (g >= 10 ? ', ' + u + ' יח״ל' : '') + '">' + now.map(opt).join('') + '</optgroup>' : '') +
-        (before.length ? '<optgroup label="מכיתות קודמות, לחזרה">' + before.map(opt).join('') + '</optgroup>' : '') +
-        (later.length ? '<optgroup label="נושאים מתקדמים יותר">' + later.map(opt).join('') + '</optgroup>' : '');
-      if (was && byId[was] && (keep || now.indexOf(byId[was]) > -1)) sel.value = was; else sel.value = (now[now.length - 1] || T[0]).id;
+      var G = groups(g, u), sel = $('dp-topic'), was = keep || sel.value, all = $('dp-all');
+      if (keep && byId[keep] && G.near.indexOf(byId[keep]) < 0) all.checked = true; // דף שמור או קישור בנושא רחוק: לא מאבדים אותו
+      var nowL = 'הנושאים של כיתה ' + GRN[g] + (g >= 10 ? ', ' + u + ' יח״ל' : '');
+      sel.innerHTML = (G.now.length ? '<optgroup label="' + nowL + '">' + G.now.map(opt).join('') + '</optgroup>' : '') +
+        (G.prev.length ? '<optgroup label="מכיתה ' + GRN[g - 1] + ', לחזרה">' + G.prev.map(opt).join('') + '</optgroup>' : '') +
+        (G.next.length ? '<optgroup label="מכיתה ' + GRN[g + 1] + ', למתקדמים">' + G.next.map(opt).join('') + '</optgroup>' : '') +
+        (all.checked && G.rest.length ? '<optgroup label="כל שאר הנושאים">' + G.rest.map(opt).join('') + '</optgroup>' : '');
+      var shown = all.checked ? T : G.near;
+      if (was && byId[was] && shown.indexOf(byId[was]) > -1 && (keep || all.checked || G.near.indexOf(byId[was]) > -1)) sel.value = was; else sel.value = (G.now[G.now.length - 1] || G.near[0] || T[0]).id;
+      $('dp-topic-note').textContent = all.checked ? 'מוצגים כל ' + T.length + ' הנושאים: קודם של כיתה ' + GRN[g] + ', שנה לפני ושנה אחרי, ואחריהם כל השאר.' :
+        'מוצגים הנושאים של כיתה ' + GRN[g] + ' לפי פריסת ההוראה של משרד החינוך, ולצידם נושאים של שנה לפני (לחזרה) ושל שנה אחרי (למתקדמים). רוצים נושא אחר? מסמנים "להציג את כל הנושאים".';
+      offShow();
+    }
+    // מתחת לבחירת הנושא: מה כתוב עליו בפריסת משרד החינוך
+    function offShow() {
+      var n = $('dp-topic-off'), w = $('dp-topic-note');
+      if (!n && w) { n = document.createElement('p'); n.id = 'dp-topic-off'; n.className = w.className; n.style.marginTop = '.25rem'; w.parentNode.insertBefore(n, w.nextSibling); }
+      if (n) { var s = offNote($('dp-topic').value); n.textContent = s ? '📘 ' + s : ''; n.hidden = !s; }
     }
     function fillRevs(keep, keepX) {
       var g = +gs.value, tid = $('dp-topic').value, pre = PRE[tid] || [];
-      var pool = T.filter(function (t) { return t.id !== tid && grOf(t)[0] <= g; });
+      var G = groups(g, +$('dp-units').value), allOn = $('dp-all').checked;
+      var pool = T.filter(function (t) { return t.id !== tid && (allOn || G.near.indexOf(t) > -1 || pre.indexOf(t.id) > -1 || (keep && keep.indexOf(t.id) > -1) || (keepX && keepX.indexOf(t.id) > -1)); });
       [1, 2].forEach(function (k, j) { var s = $('dp-x' + k), was = keepX ? keepX[j] : s.value; s.innerHTML = '<option value="">בלי</option>' + pool.map(opt).join(''); s.value = was && was !== tid && byId[was] ? was : ''; });
       [1, 2, 3].forEach(function (k, j) {
         var s = $('dp-r' + k);
@@ -400,23 +656,329 @@
         history.replaceState(null, '', location.pathname);
       }
     }
-    // בנק השאלות המוכן של כיתה משחקת (assets/kita-bank.json), נושאי המתמטיקה. נטען רק בלחיצה
-    var bank = null;
+    // 5 שאלות מוצעות לבחירה, מכל נושא: תרגילים מהמחולל, ובנושאים שיש להם בנק בכיתה משחקת (assets/kita-bank.json) גם שאלות אמריקאיות משם
+    var bank = null, sug = [], BANK_OF = { shvarim: 'shevarim', achuzim: 'achuzim', mishvaa: 'mishvaot', kefel: 'kefel', shetach: 'shetach', chezkot: 'chezkot' };
+    function plain(h) { // שבר -> 3/4 (או (x+1)/2), חזקה -> ^, ואז טקסט
+      var d = document.createElement('div'); d.innerHTML = String(h || '').replace(/<br\s*\/?>/gi, ' · ');
+      [].slice.call(d.querySelectorAll('.fr')).reverse().forEach(function (f) { /* מהפנימי החוצה */ var p = f.children, w = function (s) { s = s.trim(); return /^[−-]?[\w.]+$/.test(s) ? s : '(' + s + ')'; }; if (p.length === 2) f.textContent = w(p[0].textContent) + '/' + w(p[1].textContent); });
+      d.querySelectorAll('sub').forEach(function (s) { var t = s.textContent.trim(); s.textContent = /^\d+$/.test(t) ? t.replace(/\d/g, function (c) { return '₀₁₂₃₄₅₆₇₈₉'[c]; }) : '_' + t; });
+      d.querySelectorAll('sup').forEach(function (s) { var t = s.textContent.trim(), m = { '2': '²', '3': '³' }[t]; s.textContent = m || '^' + (/^\w+$/.test(t) ? t : '(' + t + ')'); });
+      return d.textContent.replace(/ /g, ' ').replace(/\s+/g, ' ').replace(/^ · | · $/g, '').trim(); }
+    function genQ(tp, lv) { // תרגיל מהמחולל -> שאלה משלי (טקסט פשוט, תשובה מלאה לדף המורה)
+      var p = tp.gen(lv), last = p.steps && p.steps[p.steps.length - 1];
+      var a = plain(p.fin) || (last ? plain(String(last.a)) : '');
+      var t = plain(p.ex); if (!/[֐-׿]/.test(t)) t = 'פתרו: ' + t;
+      return { t: t.slice(0, 300), a: a.slice(0, 80), m: Math.min(20, cost(p, false)), o: [] };
+    }
+    function bankTopics() { // אותה רשימה כמו בבחירת הנושא: השנה, שנה לפני, שנה אחרי (או הכול)
+      var g = +gs.value, G = groups(g, +$('dp-units').value), list = $('dp-all').checked ? G.near.concat(G.rest) : G.near, cur = $('dp-bank-t').value || $('dp-topic').value;
+      $('dp-bank-t').innerHTML = list.map(opt).join('');
+      $('dp-bank-t').value = list.indexOf(byId[cur]) > -1 ? cur : list[0].id;
+    }
+    function suggest() {
+      var tp = byId[$('dp-bank-t').value]; if (!tp) return;
+      var lv = +$('dp-bank-lv').value, have = ownQ.map(function (x) { return x.t; }), out = [], seen = {}, i;
+      var bt = bank && BANK_OF[tp.id] && bank.topics.filter(function (x) { return x.id === BANK_OF[tp.id]; })[0];
+      if (bt) {
+        var pool = bt.q.map(lineQ).filter(function (x) { return x && have.indexOf(x.t) < 0; });
+        for (i = pool.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), tmp = pool[i]; pool[i] = pool[j]; pool[j] = tmp; }
+        pool.slice(0, 2).forEach(function (x) { x.src = 'bank'; out.push(x); seen[x.t] = 1; });
+      }
+      for (i = 0; out.length < 5 && i < 40; i++) { var q = genQ(tp, lv); if (q.t && !seen[q.t] && have.indexOf(q.t) < 0) { seen[q.t] = 1; out.push(q); } }
+      sug = out;
+      $('dp-sug').innerHTML = '<legend class="sr-only">שאלות מוצעות על ' + esc(tp.name) + '</legend>' + sug.map(function (x, k) {
+        return '<label class="dp-sq"><input type="checkbox" data-k="' + k + '" checked><span><span class="q" dir="rtl">' + '<b>' + (k + 1) + '.</b> <bdi>' + mwx(esc(x.t)) + '</bdi>' +(x.src ? '<span class="tg">אמריקאית</span>' : '') + '</span>' +
+          (x.a ? '<span class="a" dir="rtl">תשובה: ' + mwx(esc(x.a)) +'</span>' : '') + '</span></label>';
+      }).join('');
+      $('dp-bank-msg').textContent = 'כל 5 השאלות מסומנות. מורידים את הסימון ממה שלא מתאים, ולוחצים "להוסיף את המסומנות לדף".';
+    }
     $('dp-bank-open').addEventListener('click', function () {
       var b = this; b.disabled = true;
-      fetch('/assets/kita-bank.json').then(function (r) { if (!r.ok) throw new Error('bank'); return r.json(); }).then(function (j) {
-        bank = j; $('dp-bank').hidden = false; b.hidden = true;
-        $('dp-bank-t').innerHTML = j.topics.filter(function (t) { return t.subj === 'math'; }).map(function (t) { return '<option value="' + t.id + '">' + esc(t.name) + '</option>'; }).join('');
-      }).catch(function () { b.disabled = false; b.textContent = 'הבנק לא נטען. לנסות שוב'; });
+      function show() { $('dp-bank').hidden = false; b.hidden = true; bankTopics(); suggest(); $('dp-bank-t').focus(); used('suggest_open'); }
+      fetch('/assets/kita-bank.json').then(function (r) { if (!r.ok) throw new Error('bank'); return r.json(); }).then(function (j) { bank = j; show(); }).catch(show); // בלי הבנק עדיין יש תרגילים מהמחולל
     });
+    $('dp-bank-t').addEventListener('change', suggest);
+    $('dp-bank-lv').addEventListener('change', suggest);
+    $('dp-bank-more').addEventListener('click', function () { suggest(); used('suggest_more'); });
+    $('dp-bank-allq').addEventListener('click', function () { var bx = $('dp-sug').querySelectorAll('input'), on = [].some.call(bx, function (x) { return !x.checked; }); bx.forEach(function (x) { x.checked = on; }); this.textContent = on ? 'להוריד את כל הסימונים' : 'לסמן הכול'; });
     $('dp-bank-go').addEventListener('click', function () {
-      var t = bank && bank.topics.filter(function (x) { return x.id === $('dp-bank-t').value; })[0]; if (!t) return;
-      var have = ownQ.map(function (x) { return x.t; }), pool = t.q.map(lineQ).filter(function (x) { return x && have.indexOf(x.t) < 0; });
-      for (var i = pool.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), tmp = pool[i]; pool[i] = pool[j]; pool[j] = tmp; }
-      var n = addMany(pool.slice(0, +$('dp-bank-n').value), 'bank_' + t.id);
-      $('dp-bank-msg').textContent = n ? '✓ נוספו ' + n + ' שאלות על ' + t.name + '. הן בסוף הדף, עם התשובות בדף המורה.' : 'אין מקום לעוד שאלות (עד ' + OWN_MAX + '). מסירים כמה ומנסים שוב.';
+      var pick = [].filter.call($('dp-sug').querySelectorAll('input'), function (x) { return x.checked; }).map(function (x) { var s = sug[+x.dataset.k]; return { t: s.t, a: s.a, m: s.m, o: s.o || [] }; });
+      if (!pick.length) { $('dp-bank-msg').textContent = 'לא סומנה אף שאלה. מסמנים לפחות אחת.'; return; }
+      var n = addMany(pick, 'suggest_add'), tp = byId[$('dp-bank-t').value];
+      if (!n) { $('dp-bank-msg').textContent = 'אין מקום לעוד שאלות (עד ' + OWN_MAX + '). מסירים כמה ומנסים שוב.'; return; }
+      suggest();
+      $('dp-bank-msg').textContent = '✓ נוספו ' + n + ' שאלות על ' + tp.name + '. הן בסוף הדף, עם התשובות בדף המורה, ואפשר לערוך אותן למעלה. למטה עוד 5 הצעות חדשות.';
     });
     $('dp-only').addEventListener('change', render);
+
+    // ---------------------------------------------------------------------
+    //  "ספרו במילים שלכם": תיאור חופשי (כתוב או מוקלט) -> 3 דפים לבחירה. הכול בדפדפן, בלי שרת
+    // ---------------------------------------------------------------------
+    var SYN = { peulot: ['הזזה', 'הזזות', 'שיקוף', 'מתיחה', 'ערך מוחלט', 'פעולות על פונקציות'], regresia: ['רגרסיה', 'מתאם', 'דיאגרמת פיזור', 'קו רגרסיה'],
+      'trig-yechida': ['מעגל היחידה', 'זהויות טריגונומטריות', 'משוואות טריגונומטריות', 'פונקציות טריגונומטריות'], thales: ['תאלס', 'משפט תאלס', 'חוצה זווית'],
+      'chatchei-charut': ['אליפסה', 'היפרבולה', 'חתכי חרוט', 'מוקד', 'מדריך'], bernoulli: ['ברנולי', 'נוסחת ברנולי', 'התפלגות בינומית'], 'tichnun-lineari': ['תכנון לינארי', 'תכנון ליניארי', 'רווח מקסימלי'],
+      'i-shivyon-ribui': ['אי שוויון ריבועי', 'אי שוויונות ריבועיים'],
+      'hashvaat-shvarim': ['השוואת שברים', 'צמצום', 'הרחבה', 'שבר גדול', 'צמצום שברים'], shchiut: ['שכיחות', 'שכיחות יחסית', 'שכיח', 'טבלת שכיחויות'],
+      grafim: ['קריאת גרפים', 'קריאת גרף', 'מבוא לפונקציות', 'טבלת ערכים', 'עלייה וירידה'], hafifa: ['חפיפה', 'חפיפת משולשים', 'משולשים חופפים', 'שווה שוקיים', 'משולש שווה שוקיים'],
+      'gorem-meshutaf': ['גורם משותף', 'הוצאת גורם משותף', 'פירוק לגורמים'],
+      mechuvanim: ['מספרים מכוונים', 'מכוונים', 'מספרים שליליים', 'שליליים', 'מספר נגדי', 'ערך מוחלט'], zaviot: ['זוויות', 'זווית', 'צמודות', 'קודקודיות', 'מתחלפות', 'מתאימות', 'סכום זוויות'],
+      bituyim: ['ביטויים אלגבריים', 'ביטוי אלגברי', 'הצבה', 'הצבות', 'משתנה'], tzirim: ['מערכת צירים', 'צירים', 'נקודות במישור', 'שיעורי נקודה', 'רביע'], 'kefel-mekutzar': ['כפל מקוצר', 'נוסחאות הכפל המקוצר', 'פילוג מורחב', 'חוק הפילוג המורחב'],
+      'i-shivyon': ['אי שוויון', 'אי שוויונות', 'אי-שוויון', 'אי-שוויונות'], mechanim: ['משוואות עם מכנה', 'משוואה עם מכנה', 'מכנים', 'שברים אלגבריים', 'משוואה עם שברים', 'תחום הצבה'],
+      gufim: ['נפח', 'תיבה', 'מנסרה', 'גליל', 'חרוט', 'גופים', 'שטח פנים', 'קובייה'], merubaim: ['מרובעים', 'מקבילית', 'מעוין', 'מעויין', 'טרפז', 'דלתון', 'ריבוע'],
+      igul: ['היקף מעגל', 'שטח עיגול', 'עיגול', 'פאי', 'רדיוס', 'קוטר'], meunach: ['במאונך', 'חיבור במאונך', 'חיסור במאונך', 'כפל במאונך', 'פריטה', 'המרה'],
+      kefel: ['לוח הכפל', 'לוח כפל', 'כפל'], hiluk: ['חילוק ארוך', 'חילוק'], seder: ['סדר פעולות'], shetach: ['שטח', 'היקף'], asroni: ['עשרוני'],
+      shvarim: ['חיבור שברים', 'חיסור שברים', 'שברים', 'שבר', 'מכנה משותף'], 'kefel-shvarim': ['כפל שברים', 'חילוק שברים'], memutza: ['ממוצע'], achuzim: ['אחוז', 'הנחה'],
+      yachas: ['יחס', 'פרופורציה'], histabrut: ['הסתברות', 'קובי', 'מטבע'], pilug: ['סוגריים', 'כינוס', 'חוק הפילוג', 'פילוג'], mishvaa: ['משוואה עם נעלם', 'משוואות', 'משוואה', 'נעלם'],
+      chezkot: ['חזקה', 'חזקות'], kav: ['פונקציה קווית', 'שיפוע', 'קו ישר', 'גרף'], pitagoras: ['פיתגורס', 'פיטגורס'], maarechet: ['מערכת משוואות', 'שני נעלמים', 'מערכת'],
+      trinom: ['טרינום', 'פירוק לגורמים', 'פירוק'], shorashim: ['נוסחת השורשים', 'משוואה ריבועית', 'ריבועית'], 'parabola-tavla': ['פרבולה', 'טבלת ערכים'], parabola: ['פרבולה', 'פונקציה ריבועית', 'קודקוד'],
+      sidra: ['סדרה חשבונית', 'סדרות'], handasit: ['סדרה הנדסית'], merchak: ['מרחק בין נקודות', 'אמצע קטע'], trigo: ['טריגונומטריה', 'טריגו', 'סינוס', 'קוסינוס', 'טנגנס'],
+      gdila: ['גדילה', 'דעיכה', 'ריבית'], stiya: ['חציון', 'שכיח', 'סטיית תקן', 'סטטיסטיקה'], normalit: ['נורמלית', 'התפלגות'], nigzeret: ['נגזרת', 'נגזרות', 'גזירה'], mashik: ['משיק'],
+      kitzon: ['קיצון', 'מקסימום', 'מינימום', 'חקירה'], integral: ['אינטגרל'], maagal: ['משוואת מעגל', 'מעגל'], sinusim: ['משפט הסינוסים', 'משפט הקוסינוסים'], tnua: ['בעיות תנועה', 'תנועה', 'הספק'],
+      merchav: ['טריגונומטריה במרחב', 'תיבה'], rationalit: ['רציונלית', 'אסימפטוט'], 'shoresh-f': ['פונקציית שורש'], etz: ['הסתברות מותנית', 'עץ'], 'trig-nigzeret': ['נגזרת של סינוס'],
+      vektor: ['וקטור'], merukav: ['מרוכב'], logaritm: ['לוגריתם', 'לוג', 'מעריכית'], 'exp-ln': ['ln', 'e בחזקת'], piramida: ['פירמידה'], dimyon: ['דמיון', 'משולשים דומים'],
+      'zaviot-maagal': ['זוויות במעגל', 'זווית היקפית', 'זווית מרכזית'], parametr: ['פרמטר'], induktzia: ['אינדוקציה'], 'nefach-sivuv': ['נפח גוף סיבוב', 'גוף סיבוב'] };
+    var GL = { 'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9, 'י': 10, 'יא': 11, 'יב': 12 };
+    var HEB_NUM = { 'עשר': 10, 'עשרה': 10, 'חמש עשרה': 15, 'רבע שעה': 15, 'עשרים': 20, 'חצי שעה': 30, 'שלושים': 30, 'ארבעים וחמש': 45, 'שעה וחצי': 90, 'שעה': 60, 'שישים': 60, 'תשעים': 90 };
+    function reEsc(w) { return w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+    function has(s, list) { // מילה שלמה, עם אות שימוש אחת לפניה (ו/ה/ב/ל/ש/מ/כ): "מתקשה" זה לא "קשה", "פירוק" זה לא "ירוק"
+      return list.some(function (w) { return new RegExp('(^|[\\s,.;:!?()\\-])[והבלשמכ]?' + reEsc(w.trim())).test(s); });
+    }
+    function aiParse(raw) {
+      var s = ' ' + String(raw || '').replace(/[׳'`]/g, '׳').replace(/["״]/g, '״').replace(/\s+/g, ' ') + ' ', r = { said: [] }, m;
+      // כיתה
+      m = s.match(/כית(?:ה|ות)\s*([א-י]{1,2})[׳״]?(?=[\s\d,.!?-]|$)/) || s.match(/(?:^|\s)[לבו]?([א-י]{1,2})[׳״](?=[\s\d,.]|$)/);
+      if (m && GL[m[1].replace(/[׳״]/g, '')]) r.g = GL[m[1].replace(/[׳״]/g, '')];
+      if (!r.g && (m = s.match(/כית(?:ה|ות)\s*(\d{1,2})/))) r.g = Math.min(12, Math.max(2, +m[1]));
+      if (!r.g && has(s, ['תיכון', 'בגרות'])) r.g = 11;
+      if ((m = s.match(/(\d)\s*(?:יח|יחידות)/)) || (m = s.match(/(שלוש|ארבע|חמש)\s*יחידות/))) { r.u = { 'שלוש': 3, 'ארבע': 4, 'חמש': 5 }[m[1]] || +m[1]; if (!r.g) r.g = 11; }
+      // זמן
+      if ((m = s.match(/(\d{1,3})\s*(?:דק|ד׳)/))) r.m = +m[1];
+      else if (has(s, ['שיעור כפול', 'שעתיים'])) r.m = 90;
+      else Object.keys(HEB_NUM).sort(function (a, b) { return b.length - a.length; }).some(function (k) { if (s.indexOf(k) > -1 && (k.indexOf('שעה') > -1 || s.indexOf(k + ' דק') > -1)) { r.m = HEB_NUM[k]; return true; } });
+      if (!r.m && has(s, ['שיעור שלם', 'שיעור אחד', 'לשיעור'])) r.m = 45;
+      if (r.m) r.m = [10, 15, 20, 30, 45, 60, 90].reduce(function (a, b) { return Math.abs(b - r.m) < Math.abs(a - r.m) ? b : a; });
+      // סוג, רמה, עזרה
+      if (has(s, ['חזרה', 'לחזור', 'לפני מבחן', 'לפני המבחן', 'לפני בוחן', 'חזרות', 'תרגול', 'לתרגל', 'בוחן'])) r.k = 'z';
+      if (has(s, ['הקנייה', 'נושא חדש', 'מתחילים', 'להכיר', 'ללמד', 'פעם ראשונה', 'היכרות'])) r.k = 'h';
+      if (has(s, ['מתקשים', 'מתקשה', 'חלשים', 'חלשה', 'קל ', 'קלים', 'קלות', 'בסיס', 'פשוט', 'ליקויי', 'לקויות'])) r.lv = 1;
+      if (has(s, ['מאתגר', 'אתגר', 'קשה', 'קשים', 'חזקים', 'חזקה', 'מצטיינים', 'מתקדמים', 'מחוננים', 'מצוינות'])) r.lv = 3;
+      if (has(s, ['הרבה עזרה', 'מודרך', 'צעד אחרי צעד', 'צעד צעד', 'מתקשים', 'מתקשה', 'רמזים', 'לקויות', 'ליקויי'])) r.a = 2;
+      if (has(s, ['בלי עזרה', 'בלי רמזים', 'בוחן', 'מבחן קצר', 'לבד', 'עצמאי', 'בלי הסברים'])) r.a = 0;
+      // עיצוב
+      if (has(s, ['צבעוני', 'שמח', 'צבעים'])) r.style = 'tzivoni';
+      if (has(s, ['חוסך דיו', 'חסכוני', 'שחור לבן', 'שחור-לבן', 'פשוט להדפסה'])) r.style = 'lavan';
+      if (has(s, ['קלף'])) r.style = 'klaf';
+      if (has(s, ['זית', 'ירוק'])) r.style = 'zayit';
+      if (has(s, ['כתב גדול', 'גדול', 'נגיש', 'ראייה', 'לקות'])) r.font = 1;
+      if (has(s, ['אמריקא', 'רב ברירה', 'רב-ברירה', 'סימון תשובה'])) r.mc = 1;
+      if (has(s, ['מילולי', 'בעיות מילוליות', 'סיפור'])) r.words = 1;
+      if ((m = s.match(/(?:כותרת|לכתוב למעלה|שם הכיתה)\s*[:-]?\s*([^,.\n]{2,30})/))) r.title = m[1].trim();
+      else if ((m = s.match(/(?:^|\s)[לבו]?([א-י]{1,2}[׳״]?\d{1,2})(?=[\s,.]|$)/)) && GL[m[1].replace(/[׳״\s\d]/g, '')]) r.title = m[1].trim(); // ט׳2
+      // נושאים: ניקוד לכל נושא לפי מילים נרדפות ומילים מהשם; ביטוי ארוך גובר על קצר
+      var sc = T.map(function (t) {
+        var n = 0, list = (SYN[t.id] || []).slice();
+        t.name.split(/[\s:,()]+/).forEach(function (w) { if (w.length >= 5 && ['פונקציה', 'משוואה', 'משוואות', 'נקודות', 'ושטח', 'מתחת', 'לגרף', 'חקירה', 'פרמטר', 'טבלת', 'ערכים', 'זוויות', 'צירים:', 'מכוונים:', 'מרובעים:', 'קטעים', 'ושטחים'].indexOf(w) < 0) list.push(w); });
+        list.forEach(function (w) { if (has(s, [w])) n = Math.max(n, w.split(' ').length * 2 + w.length / 10); });
+        return { t: t, n: n };
+      }).filter(function (x) { return x.n > 0; });
+      var G = groups(r.g || +gs.value, r.u || +$('dp-units').value);
+      sc.forEach(function (x) { if (G.now.indexOf(x.t) > -1) x.n += 0.6; else if (G.near.indexOf(x.t) > -1) x.n += 0.3; });
+      sc.sort(function (a, b) { return b.n - a.n; });
+      r.ts = [];
+      sc.forEach(function (x) { if (r.ts.length < 3 && x.n >= sc[0].n - 2.5 && !r.ts.some(function (y) { return (SYN[y.id] || []).join() === (SYN[x.t.id] || []).join(); })) r.ts.push(x.t); });
+      // שני נושאי פרבולה תמיד נתפסים יחד: משאירים את המתאים לכיתה
+      var pb = r.ts.filter(function (t) { return t.id.indexOf('parabola') === 0; });
+      if (pb.length === 2) { var gg = r.g || +gs.value, drop = byId[gg >= 10 && G.now.indexOf(byId.parabola) > -1 ? 'parabola-tavla' : 'parabola']; r.ts.splice(r.ts.indexOf(drop), 1); }
+      // לא נאמרה כיתה: לוקחים את הכיתה שבה לומדים את הנושא (אלא אם הנושא כבר מתאים לכיתה שבחרו למעלה)
+      if (!r.g && r.ts.length && G.near.indexOf(r.ts[0]) < 0) r.gAuto = Math.max(2, grOf(r.ts[0])[0]);
+      if (r.gAuto >= 10 && !r.u) { var uu = [4, 5, 3].filter(function (k) { return fits(r.ts[0], r.gAuto, k); })[0]; if (uu) r.u = uu; }
+      return r;
+    }
+    function aiCfgs(r) {
+      var g = r.g || r.gAuto || +gs.value, u = r.u || +$('dp-units').value, G = groups(g, u), base;
+      var ts = r.ts.length ? r.ts : [G.now[G.now.length - 1] || G.near[0]];
+      base = { g: g, u: u, t: ts[0].id, x: ts.slice(1).map(function (t) { return t.id; }), k: r.k || 'h', m: r.m || 30, lv: r.lv || 2, a: r.a === undefined ? 1 : r.a, style: r.style, font: r.font, title: r.title, mc: r.mc };
+      var easy = Object.assign({}, base, { lv: Math.max(1, base.lv - 1), a: 2, name: '🤝 עם יותר עזרה', why: 'לתלמידים שמתקשים: כל תרגיל מפורק לצעדים קטנים, ברמה קלה יותר.' });
+      var hard = Object.assign({}, base, { lv: Math.min(3, base.lv + 1), a: base.a === 2 ? 1 : 0, name: '🚀 עם יותר אתגר', why: 'לכיתה חזקה או לבוחן: פחות עזרה ותרגילים קשים יותר.' });
+      if (base.x.length === 0) { // דף משולב עם נושא קרוב, לחזרה
+        var near = (PRE[base.t] || []).filter(function (id) { return byId[id] && G.near.indexOf(byId[id]) > -1; })[0] || (PRE[base.t] || [])[0];
+        if (near && base.lv >= 2) hard = Object.assign({}, base, { k: 'z', x: [near], a: Math.min(base.a, 1), name: '🔁 חזרה משולבת', why: 'אותו נושא, משולב עם ' + byId[near].name + '. מתאים לחזרה לפני מבחן.' });
+      }
+      base.name = '🎯 בדיוק מה שביקשתם'; base.why = 'הדף לפי התיאור שלכם.';
+      [base, easy, hard].forEach(function (c) { if (c.a === 2 && c.lv === 3) c.lv = 2; });
+      if (easy.lv === base.lv && easy.a === base.a) easy = Object.assign({}, base, { k: base.k === 'h' ? 'z' : 'h', name: base.k === 'h' ? '🔁 כדף חזרה' : '📘 כדף הקנייה', why: base.k === 'h' ? 'אותו נושא, כדף חזרה: תזכורת קצרה בראש הדף ותרגול שעולה בהדרגה.' : 'אותו נושא, כדף הקנייה: הסברים קצרים ותרגיל מודרך.' });
+      if (hard.lv === base.lv && hard.a === base.a && hard.k === base.k && hard.x.join() === base.x.join()) hard = Object.assign({}, base, { m: base.m >= 45 ? 20 : 45, name: base.m >= 45 ? '⏱ גרסה קצרה, 20 דקות' : '⏱ גרסה לשיעור שלם, 45 דקות', why: 'אותו דף, באורך אחר.' });
+      return [base, easy, hard];
+    }
+    var LVN = { 1: 'בסיס', 2: 'רגילה', 3: 'מאתגרת' }, HELPN = { 0: 'בלי עזרה', 1: 'עזרה רגילה', 2: 'הרבה עזרה' };
+    var aiLast = [];
+    function aiShow() {
+      var txt = $('dp-ai-t').value.trim(), out = $('dp-ai-res');
+      if (txt.length < 3) { out.innerHTML = '<p class="dp-ai-heard">כתבו כמה מילים על הדף שאתם צריכים: כיתה, נושא, כמה זמן, ואיך הכיתה.</p>'; $('dp-ai-t').focus(); return; }
+      var r = aiParse(txt), cs = aiCfgs(r); aiLast = cs;
+      var exact = detailed(txt); aiReq++; dafLast();
+      var heard = [];
+      heard.push(r.g ? 'כיתה ' + GRN[r.g] + (r.u ? ', ' + r.u + ' יח״ל' : '') : 'לא נאמרה כיתה, אז לקחתי ' + GRN[cs[0].g]);
+      heard.push(r.ts.length ? 'נושא: ' + r.ts.map(function (t) { return t.name; }).join(' + ') : 'לא זיהיתי נושא, אז בחרתי ' + byId[cs[0].t].name + ' (אפשר לשנות למטה)');
+      if (r.m) heard.push(r.m + ' דקות'); if (r.k) heard.push(r.k === 'z' ? 'דף חזרה' : 'דף הקנייה');
+      if (r.lv) heard.push('רמה ' + LVN[r.lv]); if (r.a !== undefined) heard.push(HELPN[r.a]);
+      if (r.mc) heard.push('עם שאלות אמריקאיות'); if (r.style) heard.push('עיצוב ' + $('dp-style').querySelector('[value="' + r.style + '"]').textContent);
+      if (r.font) heard.push('כתב גדול'); if (r.title) heard.push('כותרת: ' + r.title);
+      out.innerHTML = '<p class="dp-ai-heard"><b>מה הבנתי:</b> ' + heard.map(esc).join(' · ') + '</p><div class="dp-ai-opts">' + cs.map(function (c, j) {
+        var tp = byId[c.t], ex = [];
+        for (var i = 0; i < 6 && ex.length < 2; i++) { var q = seeded(c.lv * 1000 + i + j * 7, function () { return genQ(tp, c.lv); }); if (q.t && ex.indexOf(q.t) < 0) ex.push(q.t); }
+        return '<div class="dp-ai-opt"><h3>' + c.name + '</h3><p class="why">' + esc(c.why) + '</p><div class="chips"><span>' + GRN[c.g] + '</span><span>' + esc([c.t].concat(c.x).map(function (id) { return byId[id].name; }).join(' + ')) + '</span><span>' + (c.k === 'z' ? 'חזרה' : 'הקנייה') + '</span><span>' + c.m + ' דק׳</span><span>' + LVN[c.lv] + '</span><span>' + HELPN[c.a] + '</span></div>' +
+          '<p class="why">לדוגמה מהדף:</p><ol>' + ex.map(function (t) { return '<li dir="rtl">' + mwx(esc(t)) + '</li>'; }).join('') + '</ol>' +
+          '<button class="btn ' + (j || exact ? 'btn-line' : 'btn-gold') + ' btn-sm" type="button" data-ai="' + j + '">✓ לבחור את הדף הזה</button></div>';
+      }).join('') + '</div>';
+      if (exact) { out.innerHTML = '<details class="dp-ai-more"><summary>או: 3 דפים מוכנים מהמחולל, עם תרגילים מתחלפים</summary>' + out.innerHTML + '</details>'; dafAsk(txt); }
+      else out.innerHTML += '<p class="dp-ai-exact"><button class="btn btn-line btn-sm" type="button" data-daf>🪄 לבנות דף מדויק לפי מה שכתבתי, סעיף אחרי סעיף</button></p>';
+      used('ai_suggest', { topic: cs[0].t, found: r.ts.length, exact: exact });
+    }
+    function aiApply(c) {
+      dafOff();
+      gs.value = c.g; $('dp-units').value = c.u;
+      var G = groups(c.g, c.u); $('dp-all').checked = [c.t].concat(c.x).some(function (id) { return G.near.indexOf(byId[id]) < 0; });
+      fillTopics(c.t); fillRevs(null, [c.x[0] || '', c.x[1] || '']);
+      setKind(c.k); $('dp-min').value = c.m; $('dp-lv').value = c.lv; $('dp-help').value = c.a;
+      if (c.style) $('dp-style').value = c.style; if (c.font) $('dp-font').value = c.font; if (c.title) $('dp-title').value = c.title.slice(0, 40);
+      var done = function () { render(); var p = $('dp-paper'); if (p) p.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+      if (c.mc && BANK_OF[c.t]) { // שאלות אמריקאיות מהבנק, כשיש לנושא
+        var go = function () { var bt = bank && bank.topics.filter(function (x) { return x.id === BANK_OF[c.t]; })[0]; if (bt) { var have = ownQ.map(function (x) { return x.t; }), pool = bt.q.map(lineQ).filter(function (x) { return x && have.indexOf(x.t) < 0; }).slice(0, 4); addMany(pool, 'ai_mc'); } done(); };
+        if (bank) go(); else fetch('/assets/kita-bank.json').then(function (r) { return r.json(); }).then(function (j) { bank = j; go(); }).catch(done);
+      } else done();
+      used('ai_pick', { topic: c.t });
+    }
+    $('dp-ai-go').addEventListener('click', aiShow);
+    $('dp-ai-t').addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); aiShow(); } });
+    $('dp-ai-res').addEventListener('click', function (e) { var b = e.target.closest('[data-ai]'); if (b) aiApply(aiLast[+b.dataset.ai]); });
+    // ---------- "דף לפי התיאור": תיאור מפורט -> השרת בונה את הדף מבלוקים ----------
+    var POTER = (function () { try { var o = localStorage.getItem('poter-api'); if (o) return o; } catch (e) {} return 'https://limudim-poter.gilad4049.workers.dev'; })();
+    var DKEY = 'limudim-dapim-daf', aiDoc = null, aiOn = false, aiReq = 0, aiBase = '', aiHist = [], aiFixed = '';
+    function detailed(s) { // תיאור של מבנה (מה קודם, מה מסבירים, אילו תרגילים) -> דף מדויק. בקשה קצרה וכללית -> המחולל הרגיל
+      var mk = ['אחר כך', 'אחרי זה', 'ואז', 'מתחילים', 'בסוף', 'סיכום', 'טבלת ערכים', 'שרטוט', 'לשרטט', 'להסביר', 'הסבר', 'דוגמאות', 'להדגיש', 'מדגישים', 'קודם', 'חלק ', 'סעיף', 'שלב', 'מכונה', 'להציב', 'מציבים', 'להשלמה', 'משימה', 'תרגילי', 'למידה עצמית'];
+      var n = mk.filter(function (w) { return s.indexOf(w) > -1; }).length;
+      return s.length >= 220 || n >= 3 || (s.length >= 110 && n >= 2);
+    }
+    function dafAsk(txt, fresh) {
+      var id = ++aiReq, t0 = Date.now(), box = $('dp-ai-daf');
+      box.innerHTML = '<div class="dp-ai-wait" role="status"><span class="dp-ai-spin" aria-hidden="true"></span><span>🪄 בונים את הדף לפי התיאור שלכם, סעיף אחרי סעיף… <b id="dp-ai-sec">0</b> שנ׳<br><small>בדרך כלל חצי דקה עד דקה. הטבלאות והגרפים מחושבים מהפונקציה עצמה, כך שהמספרים נכונים.</small></span></div>';
+      var tick = setInterval(function () { var e = $('dp-ai-sec'); if (e && id === aiReq) e.textContent = Math.round((Date.now() - t0) / 1000); else clearInterval(tick); }, 1000);
+      used('daf_ask', { len: txt.length, fresh: !!fresh });
+      var ac = window.AbortController ? new AbortController() : null; setTimeout(function () { if (ac) ac.abort(); }, 210000); // השרת עונה עד כ-3 דקות; אחר כך מוותרים בנימוס
+      fetch(POTER + '/daf', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ text: txt, grade: GRN[+gs.value], fresh: fresh ? 1 : 0 }), signal: ac ? ac.signal : undefined })
+        .then(function (r) { return r.text(); }).then(function (t) { return JSON.parse(t.trim()); })
+        .then(function (d) {
+          clearInterval(tick); if (id !== aiReq) return;
+          if (!d || d.error || !d.blocks || !d.blocks.length) throw d || {};
+          aiDoc = d; aiBase = txt; aiHist = []; aiFixed = ''; save(DKEY, { t: txt, d: d }); dafCard(d, true); dafOn();
+          used('daf_ok', { blocks: d.blocks.length, sec: Math.round((Date.now() - t0) / 1000), cached: !!d.cached });
+        })
+        .catch(function (e) {
+          clearInterval(tick); if (id !== aiReq) return;
+          box.innerHTML = '<p class="dp-ai-heard dp-ai-err">' + (e && e.error === 'quota' ? 'הגעתם למכסה של היום לדפים לפי תיאור. מחר אפשר שוב, ובינתיים יש כאן דפים מוכנים מהמחולל.' : 'לא הצלחנו לבנות את הדף הפעם (השרת עמוס). אפשר לנסות שוב בעוד דקה, או לבחור אחד מהדפים המוכנים.') + ' <button class="linkish" type="button" data-daf>לנסות שוב</button></p>';
+          var m = $('dp-ai-res').querySelector('details'); if (m) m.open = true;
+          used('daf_fail', { why: (e && e.error) || 'net' });
+        });
+    }
+    function dafCard(d, fresh) {
+      var it = dafItems(d), c = function (f) { return it.filter(f).length; };
+      var nt = c(function (x) { return x.k === 'table'; }), ng = c(function (x) { return x.k === 'graph' || (x.k === 'table' && x.g); }), nq = c(function (x) { return x.n; });
+      var parts = d.blocks.filter(function (b) { return b.type === 'part'; });
+      var chips = [d.grade ? 'כיתה ' + esc(d.grade) : '', d.minutes ? 'כ-' + d.minutes + ' דק׳' : '', nq + ' משימות', nt ? nt + ' טבלאות ערכים' : '', ng ? ng + ' מערכות צירים' : '', 'דף תשובות'].filter(Boolean);
+      $('dp-ai-daf').innerHTML = '<div class="dp-ai-opt dp-ai-mine"><h3>🎯 הדף שתיארתם, סעיף אחרי סעיף</h3><p class="dp-ai-ttl">' + tx(d.title) + '</p><div class="chips">' + chips.map(function (x) { return '<span>' + x + '</span>'; }).join('') + '</div>' +
+        (parts.length ? '<ol>' + parts.map(function (b) { return '<li>' + tx(b.text) + '</li>'; }).join('') + '</ol>' : '') +
+        '<p class="why">' + (fresh ? '✓ הדף מוכן למטה. ' : '') + 'אפשר ללחוץ על כל טקסט בדף ולתקן אותו לפני ההדפסה.</p>' +
+        '<div class="btns"><button class="btn btn-gold btn-sm" type="button" data-daf-see>👁 לראות את הדף</button><button class="btn btn-line btn-sm" type="button" data-daf-again>🔄 לבנות גרסה אחרת</button></div>' +
+        '<div class="dp-ai-fix">' + (aiFixed ? '<p class="dp-ai-done">✓ הדף עודכן לפי: "' + esc(aiFixed) + '"</p>' : '') +
+        '<label for="dp-ai-fix-t"><b>✏️ רוצים לשנות, להוסיף או לדייק? כתבו או הקליטו במילים שלכם</b></label>' +
+        '<textarea id="dp-ai-fix-t" rows="3" maxlength="1500" placeholder="למשל: תוסיפי בסוף עוד 2 תרגילי שרטוט עם מינוס x בריבוע, תקצרי את ההסבר על המכונה, ובסיכום תוסיפי שורה על ציר הסימטריה."></textarea>' +
+        '<div class="btns"><button class="btn btn-gold btn-sm" type="button" data-daf-fix>✏️ לתקן את הדף</button><button class="btn btn-line btn-sm" type="button" data-daf-mic aria-pressed="false">🎤 להקליט</button>' +
+        (aiHist.length ? '<button class="btn btn-line btn-sm" type="button" data-daf-undo>↶ לחזור לגרסה הקודמת</button>' : '') + '</div>' +
+        '<p class="note" id="dp-ai-fix-note" aria-live="polite">אפשר לתקן כמה פעמים, ותמיד לחזור אחורה. תיקון קטן של מילה אפשר לעשות גם ישר על הדף, בלחיצה עליה (עדיף בסוף, אחרי התיקונים במילים).</p></div></div>';
+    }
+    // תיקון במילים של המורה: הדף הנוכחי + מה לשנות -> השרת מחזיר את הדף המלא המעודכן
+    function dafFix(change) {
+      if (!aiDoc || change.length < 3) return;
+      var id = ++aiReq, t0 = Date.now(), note = $('dp-ai-fix-note'), btn = $('dp-ai-daf').querySelector('[data-daf-fix]');
+      btn.disabled = true; btn.textContent = 'מתקנים…';
+      note.innerHTML = '<span class="dp-ai-wait"><span class="dp-ai-spin" aria-hidden="true"></span><span>✏️ מתקנים את הדף לפי מה שביקשתם… <b id="dp-ai-sec">0</b> שנ׳ <small>(בדרך כלל חצי דקה עד דקה)</small></span></span>';
+      var tick = setInterval(function () { var e = $('dp-ai-sec'); if (e && id === aiReq) e.textContent = Math.round((Date.now() - t0) / 1000); else clearInterval(tick); }, 1000);
+      used('daf_fix', { len: change.length });
+      var doc = { title: aiDoc.title, grade: aiDoc.grade, minutes: aiDoc.minutes, intro: aiDoc.intro, blocks: aiDoc.blocks };
+      var ac = window.AbortController ? new AbortController() : null; setTimeout(function () { if (ac) ac.abort(); }, 210000);
+      fetch(POTER + '/daf', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ text: aiBase || $('dp-ai-t').value.trim() || aiDoc.title, doc: doc, change: change }), signal: ac ? ac.signal : undefined })
+        .then(function (r) { return r.text(); }).then(function (t) { return JSON.parse(t.trim()); })
+        .then(function (d) {
+          clearInterval(tick); if (id !== aiReq) return;
+          if (!d || d.error || !d.blocks || !d.blocks.length) throw d || {};
+          aiHist.push(aiDoc); if (aiHist.length > 10) aiHist.shift();
+          aiDoc = d; aiFixed = change; save(DKEY, { t: aiBase, d: d }); dafCard(d); dafOn();
+          used('daf_fix_ok', { blocks: d.blocks.length, sec: Math.round((Date.now() - t0) / 1000) });
+        })
+        .catch(function (e) {
+          clearInterval(tick); if (id !== aiReq) return;
+          btn.disabled = false; btn.textContent = '✏️ לתקן את הדף';
+          note.innerHTML = '<span class="dp-ai-err">' + (e && e.error === 'quota' ? 'הגעתם למכסה של היום לתיקונים. מחר אפשר שוב, ובינתיים אפשר לתקן ישר על הדף.' : 'לא הצלחנו לתקן הפעם (השרת עמוס). הבקשה נשארה בתיבה: לוחצים שוב בעוד דקה.') + '</span>';
+          used('daf_fail', { why: (e && e.error) || 'net', fix: 1 });
+        });
+    }
+    // הקלטה לתיבת התיקון (אותו זיהוי דיבור של הדפדפן)
+    var fixRec = null;
+    function fixMic(btn) {
+      var SR = window.SpeechRecognition || window.webkitSpeechRecognition, ta = $('dp-ai-fix-t'), note = $('dp-ai-fix-note');
+      if (!SR) { note.textContent = 'הדפדפן הזה לא מקליט. אפשר ללחוץ על המיקרופון שבמקלדת של הטלפון ולדבר.'; ta.focus(); return; }
+      if (fixRec) { try { fixRec.stop(); } catch (_) {} return; }
+      var before = ta.value.trim(); fixRec = new SR(); fixRec.lang = 'he-IL'; fixRec.interimResults = true; fixRec.continuous = true;
+      btn.classList.add('on'); btn.setAttribute('aria-pressed', 'true'); btn.textContent = '⏹ לעצור'; note.textContent = '🎙️ מקשיבה… אומרים מה לשנות, ולוחצים "לעצור".';
+      fixRec.onresult = function (e) { var t = ''; for (var i = 0; i < e.results.length; i++) t += e.results[i][0].transcript + ' '; ta.value = (before ? before + ' ' : '') + t.trim(); };
+      fixRec.onerror = function (e) { note.textContent = e.error === 'not-allowed' ? 'צריך לאשר לדפדפן גישה למיקרופון, ואז ללחוץ שוב.' : 'ההקלטה נעצרה. אפשר ללחוץ שוב, או לכתוב.'; };
+      fixRec.onend = function () { fixRec = null; btn.classList.remove('on'); btn.setAttribute('aria-pressed', 'false'); btn.textContent = '🎤 להקליט'; if (ta.value.trim().length > 3) note.textContent = '✓ נקלט. אפשר לתקן את הטקסט, ואז "לתקן את הדף".'; };
+      try { fixRec.start(); used('daf_fix_mic'); } catch (_) { fixRec = null; }
+    }
+    function dafOn() { aiOn = true; app.classList.add('dp-aimode'); render(); }
+    function dafOff() { if (!aiOn) return; aiOn = false; app.classList.remove('dp-aimode'); }
+    function renderDaf() {
+      var o = { style: $('dp-style').value, font: +$('dp-font').value, title: $('dp-title').value.trim(), key: $('dp-key').checked, edit: true };
+      ['time', 'stars', 'feel'].forEach(function (k) { o[k] = $('dp-o-' + k).checked; });
+      $('dp-paper').innerHTML = dafPaperHtml(aiDoc, o);
+      var nq = dafItems(aiDoc).filter(function (x) { return x.n; }).length;
+      cur = { t: { id: 'daf', name: aiDoc.title }, name: aiDoc.title, only: true, cfg: { k: 'h', m: aiDoc.minutes || 0 }, daf: 1 };
+      $('dp-sum').innerHTML = '<b>📝 דף לפי התיאור שלכם: ' + tx(aiDoc.title) + '</b> · ' + nq + ' משימות' + (aiDoc.minutes ? ' · כ-' + aiDoc.minutes + ' דקות' : '') +
+        '<br><small>✏️ אפשר ללחוץ על כל טקסט בדף ולתקן אותו. שולחים לכיתה עם "PDF לקבוצת ווטסאפ". שינוי של עיצוב או של כתב מחזיר את הנוסח המקורי.</small><br><button class="linkish" type="button" id="dp-ai-exit">↩ לחזור למחולל הרגיל</button>';
+      pdfReset();
+    }
+    $('dp-sum').addEventListener('click', function (e) { if (e.target.id === 'dp-ai-exit') { dafOff(); render(); used('daf_exit'); } });
+    function dafClick(e) {
+      var t = e.target.closest('[data-daf],[data-daf-see],[data-daf-again],[data-daf-open],[data-daf-fix],[data-daf-mic],[data-daf-undo]'); if (!t) return;
+      if (t.hasAttribute('data-daf-fix')) { var ch = $('dp-ai-fix-t').value.trim(); if (ch.length < 3) { $('dp-ai-fix-note').textContent = 'כתבו או הקליטו מה לשנות בדף.'; $('dp-ai-fix-t').focus(); } else dafFix(ch); return; }
+      if (t.hasAttribute('data-daf-mic')) { fixMic(t); return; }
+      if (t.hasAttribute('data-daf-undo')) { if (aiHist.length) { aiDoc = aiHist.pop(); aiFixed = ''; save(DKEY, { t: aiBase, d: aiDoc }); dafCard(aiDoc); dafOn(); used('daf_undo'); } return; }
+      if (t.hasAttribute('data-daf')) { var v = $('dp-ai-t').value.trim(); if (v.length > 3) dafAsk(v); }
+      else if (t.hasAttribute('data-daf-again')) { var v2 = $('dp-ai-t').value.trim() || (load(DKEY, {}).t || ''); if (v2.length > 3) dafAsk(v2, true); }
+      else if (t.hasAttribute('data-daf-open')) { var sv = load(DKEY, null); if (sv && sv.d) { aiDoc = sv.d; aiBase = sv.t || ''; aiHist = []; aiFixed = ''; if (!$('dp-ai-t').value.trim()) $('dp-ai-t').value = sv.t || ''; dafCard(sv.d); dafOn(); used('daf_reopen'); } }
+      if (t.hasAttribute('data-daf-see') || t.hasAttribute('data-daf-open')) { var p = $('dp-paper'); if (p) p.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    }
+    $('dp-ai-res').addEventListener('click', dafClick);
+    $('dp-ai-daf').addEventListener('click', dafClick);
+    $('dp-ai-daf').addEventListener('keydown', function (e) { if (e.target.id === 'dp-ai-fix-t' && e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); var ch = e.target.value.trim(); if (ch.length > 2) dafFix(ch); } });
+    function dafLast() { var sv = load(DKEY, null); $('dp-ai-daf').innerHTML = sv && sv.d && sv.d.title ? '<p class="dp-ai-last">הדף האחרון שבניתם לפי תיאור: <b>' + tx(sv.d.title) + '</b> <button class="linkish" type="button" data-daf-open>לפתוח אותו שוב</button></p>' : ''; }
+    dafLast();
+
+    (function () { // הקלטה: זיהוי דיבור של הדפדפן (כרום, אדג׳, אנדרואיד, ספארי חדש)
+      var SR = window.SpeechRecognition || window.webkitSpeechRecognition, btn = $('dp-ai-mic'), note = $('dp-ai-mic-note'), rec = null, before = '';
+      if (!SR) { btn.addEventListener('click', function () { note.hidden = false; note.textContent = 'הדפדפן הזה לא מקליט. אפשר ללחוץ על המיקרופון שבמקלדת של הטלפון ולדבר, או לפתוח את הדף בכרום.'; $('dp-ai-t').focus(); }); return; }
+      function stop() { if (rec) { try { rec.stop(); } catch (_) {} } }
+      btn.addEventListener('click', function () {
+        if (rec) { stop(); return; }
+        rec = new SR(); rec.lang = 'he-IL'; rec.interimResults = true; rec.continuous = true; before = $('dp-ai-t').value.trim();
+        btn.classList.add('on'); btn.setAttribute('aria-pressed', 'true'); btn.textContent = '⏹ לעצור את ההקלטה'; note.hidden = false; note.textContent = '🎙️ מקשיבה… מדברים בחופשיות, ולוחצים "לעצור" בסוף.';
+        rec.onresult = function (e) { var t = ''; for (var i = 0; i < e.results.length; i++) t += e.results[i][0].transcript + ' '; $('dp-ai-t').value = (before ? before + ' ' : '') + t.trim(); };
+        rec.onerror = function (e) { note.textContent = e.error === 'not-allowed' ? 'צריך לאשר לדפדפן גישה למיקרופון, ואז ללחוץ שוב.' : 'ההקלטה נעצרה. אפשר ללחוץ שוב, או לכתוב.'; };
+        rec.onend = function () { rec = null; btn.classList.remove('on'); btn.setAttribute('aria-pressed', 'false'); btn.textContent = '🎤 להקליט במקום לכתוב'; if ($('dp-ai-t').value.trim().length > 3) { note.textContent = '✓ נקלט. אפשר לתקן את הטקסט, ואז "להציע לי דפים".'; aiShow(); } };
+        try { rec.start(); used('ai_mic'); } catch (_) { rec = null; }
+      });
+    })();
     drawOwn();
     var curMsg = '', curLink = '';
     function readCfg() {
@@ -425,6 +987,8 @@
       return { t: $('dp-topic').value, x: xs, q: ownQ.filter(function (x) { return x.t.trim(); }), only: $('dp-only').checked && ownQ.some(function (x) { return x.t.trim(); }), k: kind, m: +$('dp-min').value, lv: +$('dp-lv').value, r: r, s: seed, a: +$('dp-help').value };
     }
     function render() {
+      if (aiOn && aiDoc) { renderDaf(); return; }
+      offShow();
       var cfg = readCfg(), sh = build(cfg); if (!sh) return; cur = sh;
       var o = { style: $('dp-style').value, font: +$('dp-font').value, title: $('dp-title').value.trim(), grade: GRN[+gs.value], key: $('dp-key').checked };
       ['time', 'stars', 'bonus', 'feel', 'grid', 'qr'].forEach(function (k) { o[k] = $('dp-o-' + k).checked; });
@@ -449,20 +1013,23 @@
       $('dp-wa').href = 'https://wa.me/?text=' + encodeURIComponent(curMsg);
       pdfReset();
       $('dp-copy').dataset.link = link;
-      var keep = { g: gs.value, u: $('dp-units').value, k: kind, s: seed, t: cfg.t, x: [$('dp-x1').value, $('dp-x2').value], own: ownQ, only: $('dp-only').checked, r: [1, 2, 3].map(function (k) { return $('dp-r' + k).value; }), title: o.title, key: o.key };
+      var keep = { g: gs.value, u: $('dp-units').value, k: kind, s: seed, t: cfg.t, x: [$('dp-x1').value, $('dp-x2').value], own: ownQ, only: $('dp-only').checked, all: $('dp-all').checked, r: [1, 2, 3].map(function (k) { return $('dp-r' + k).value; }), title: o.title, key: o.key };
       ['min', 'lv', 'help', 'style', 'font'].forEach(function (k) { keep[k] = $('dp-' + k).value; });
       ['time', 'stars', 'bonus', 'feel', 'grid', 'qr'].forEach(function (k) { keep['o' + k] = o[k]; });
       save(CKEY, keep);
     }
     function setKind(k) { kind = k; app.querySelectorAll('[data-kind]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.kind === k ? 'true' : 'false'); }); }
+    if (st.all) $('dp-all').checked = true;
     fillTopics(st.t || 'parabola-tavla'); fillRevs(st.r, st.x || ['', '']); setKind(kind); render();
-    gs.addEventListener('change', function () { fillTopics(); fillRevs(); render(); });
-    $('dp-units').addEventListener('change', function () { fillTopics(); fillRevs(); render(); });
-    $('dp-topic').addEventListener('change', function () { fillRevs(); render(); used('build', { topic: $('dp-topic').value }); });
+    function regrade() { dafOff(); fillTopics(); fillRevs(); if (!$('dp-bank').hidden) { bankTopics(); suggest(); } render(); }
+    gs.addEventListener('change', regrade);
+    $('dp-units').addEventListener('change', regrade);
+    $('dp-all').addEventListener('change', function () { regrade(); used('all_topics', { on: this.checked }); });
+    $('dp-topic').addEventListener('change', function () { dafOff(); fillRevs(); render(); used('build', { topic: $('dp-topic').value }); });
     $('dp-form').addEventListener('change', function (e) { if (['dp-grade', 'dp-units', 'dp-topic'].indexOf(e.target.id) < 0 && !e.target.closest('#dp-own')) render(); });
     $('dp-title').addEventListener('input', render);
     $('dp-form').addEventListener('submit', function (e) { e.preventDefault(); });
-    app.querySelectorAll('[data-kind]').forEach(function (b) { b.addEventListener('click', function () { setKind(b.dataset.kind); render(); }); });
+    app.querySelectorAll('[data-kind]').forEach(function (b) { b.addEventListener('click', function () { dafOff(); setKind(b.dataset.kind); render(); }); });
     // הצעת שדרוג ובקשת כלי אישי: נשלחות לגילעד בווטסאפ
     [['dp-idea', 'הצעה לשדרוג מחולל דפי העבודה'], ['dp-ishi', 'בקשה לכלי אישי למורה']].forEach(function (q) {
       var b = $(q[0] + '-wa'); if (!b) return;
@@ -472,7 +1039,7 @@
         used(q[0] === 'dp-idea' ? 'idea' : 'personal_tool');
       });
     });
-    $('dp-new').addEventListener('click', function () { seed = R(1000, 99999); render(); used('new'); });
+    $('dp-new').addEventListener('click', function () { dafOff(); seed = R(1000, 99999); render(); used('new'); });
     $('dp-print').addEventListener('click', function () { used('print', { topic: cur.t.id, kind: cur.cfg.k, min: cur.cfg.m }); window.print(); });
     $('dp-wa').addEventListener('click', function () { used('wa', { topic: cur.t.id }); });
     $('dp-open').addEventListener('click', function () { used('open_digital', { topic: cur.t.id }); });

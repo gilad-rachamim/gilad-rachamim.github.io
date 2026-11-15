@@ -70,6 +70,7 @@
     var q = $('q').value.trim(), box = $('list');
     box.textContent = '';
     if (q) {
+      box.appendChild(findIn(q));
       shown = search(q);
       box.appendChild(group(shown.length > 1 ? 'נמצאו ' + shown.length + ' כלים' : shown.length ? 'נמצא כלי אחד' : 'לא נמצא כלי', shown, 'אפשר לבקש כלי חדש באתר, בדף "בקשת כלי".'));
       return;
@@ -84,6 +85,41 @@
     var n = tools.filter(function (t) { return !t.h; }).length;
     var p2 = document.createElement('p'); p2.className = 'empty'; p2.textContent = n + ' כלים באתר. מקלידים למעלה כדי לחפש.'; box.appendChild(p2);
   }
+  // ---------- לחפש את מה שהוקלד גם בשירותים של גוגל, ומספר טלפון ← ווטסאפ ----------
+  function goTo(url) { chrome.tabs.create({ url: url }); window.close(); }
+  function phone(q) {
+    var d = q.replace(/[\s\-().]/g, '');
+    if (!/^\+?\d{9,15}$/.test(d)) return '';
+    d = d.replace(/^\+/, '');
+    if (/^0\d{8,9}$/.test(d)) d = '972' + d.slice(1);   // מספר ישראלי
+    return d;
+  }
+  function findIn(q) {
+    var e = encodeURIComponent(q), wrap = document.createElement('div');
+    var h = document.createElement('h3'); h.textContent = 'לחפש את "' + q.slice(0, 30) + '" ב:'; wrap.appendChild(h);
+    var row = document.createElement('div'); row.className = 'go-chips find';
+    var list = [];
+    var ph = phone(q);
+    if (ph) list.push(['💬 ווטסאפ למספר (בלי לשמור)', 'https://web.whatsapp.com/send?phone=' + ph]);
+    list.push(['📁 דרייב', 'https://drive.google.com/drive/search?q=' + e],
+      ['✉ ג׳ימייל', 'https://mail.google.com/mail/u/0/#search/' + e.replace(/%20/g, '+')],
+      ['🖼 תמונות', 'https://photos.google.com/search/' + e],
+      ['👥 אנשי קשר', 'https://contacts.google.com/search/' + e],
+      ['📅 יומן', 'https://calendar.google.com/calendar/r/search?q=' + e]);
+    if (!ph) list.push(['📅 אירוע חדש: "' + q.slice(0, 18) + '"', 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + e]);
+    list.forEach(function (x) {
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = x[0];
+      b.addEventListener('click', function () { goTo(x[1]); }); row.appendChild(b);
+    });
+    wrap.appendChild(row);
+    return wrap;
+  }
+  [].forEach.call(document.querySelectorAll('#quick [data-go]'), function (b) {
+    b.addEventListener('click', function () { goTo(b.getAttribute('data-go')); });
+  });
+  try { $('quick').open = localStorage.getItem('hkQuick') === '1'; } catch (e) {}
+  $('quick').addEventListener('toggle', function () { try { localStorage.setItem('hkQuick', $('quick').open ? '1' : '0'); } catch (e) {} });
+
   function toggleFav(u) {
     var i = favs.indexOf(u);
     if (i >= 0) favs.splice(i, 1); else favs.unshift(u);
@@ -167,6 +203,250 @@
       if (/\.pdf($|[?#])/i.test(tabUrl)) { $('pdf').hidden = false; pdfTools(); }
     });
   });
+  // ---------- ניהול כרטיסיות ----------
+  chrome.tabs.query({}).then(function (all) {
+    $('tabs-btn').textContent = '🗂 הכרטיסיות (' + all.length + ')';
+  }).catch(function () {});
+  $('tabs-btn').addEventListener('click', function () {
+    chrome.runtime.sendMessage({ tabsManager: true }, function () { void chrome.runtime.lastError; window.close(); });
+  });
+
+  // ---------- דירוג ושיתוף ----------
+  // מוצג פעם אחת, רק אחרי שימוש אמיתי (8 פעולות ו-3 ימים), לכולם (לא רק למרוצים – זה הכלל של גוגל). "אחר כך" = שבועיים.
+  var STORE = 'https://chromewebstore.google.com/detail/ckjmijllmaoooihonpedfajaofhbegfg';
+  chrome.storage.local.get(['uses', 'installedAt', 'rateDone', 'rateLater']).then(function (o) {
+    var uses = (+o.uses || 0) + 1, inst = o.installedAt || Date.now();
+    chrome.storage.local.set({ uses: uses, installedAt: inst });
+    if (!o.rateDone && uses >= 8 && Date.now() - inst > 3 * 864e5 && !(o.rateLater > Date.now())) $('rate').hidden = false;
+  });
+  $('rate-go').addEventListener('click', function () { chrome.storage.local.set({ rateDone: true }); chrome.tabs.create({ url: STORE + '/reviews?utm_source=tosaf_rate' }); window.close(); });
+  $('rate-note').addEventListener('click', function () { chrome.storage.local.set({ rateLater: Date.now() + 30 * 864e5 }); chrome.tabs.create({ url: 'https://hakelim.com/kelim/bakasha/?utm_source=tosaf_rate' }); window.close(); });
+  $('rate-later').addEventListener('click', function () { chrome.storage.local.set({ rateLater: Date.now() + 14 * 864e5 }); $('rate').hidden = true; });
+  $('share-btn').addEventListener('click', function (e) {
+    e.preventDefault();
+    chrome.tabs.create({ url: 'https://wa.me/?text=' + encodeURIComponent('מצאתי תוסף חינמי לכרום בעברית (מיזם חסד, בלי פרסומות): מתרגם אתרים בלי לשבור אותם, מסדר כרטיסיות, מפנה מקום בגוגל, פתקים ועוד, ובלי לאסוף מידע 👇\n' + STORE + '?utm_source=share_popup') });
+    window.close();
+  });
+
+  $('panui-btn').addEventListener('click', function () { chrome.tabs.create({ url: chrome.runtime.getURL('panui.html') }); window.close(); });
+  // ניקוי היסטוריית גלישה (browsingData, רק היסטוריה): שעה / היום / שבוע / הכול – לחיצה שנייה לאישור
+  $('hist-btn').addEventListener('click', function () { $('hist').hidden = !$('hist').hidden; $('hist-msg').textContent = $('hist').hidden ? '' : 'בוחרים כמה למחוק (רק היסטוריית הגלישה; סיסמאות וחיבורים נשארים).'; });
+  [].forEach.call(document.querySelectorAll('#hist [data-since]'), function (b) {
+    b.addEventListener('click', function () {
+      if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'ללחוץ שוב'; return; }
+      var h = +b.dataset.since, since = h ? Date.now() - h * 3600000 : 0;
+      chrome.browsingData.remove({ since: since }, { history: true }).then(function () { $('hist-msg').textContent = '🕘 ההיסטוריה ' + (h ? 'של ' + b.parentNode.querySelector('[data-since="' + h + '"]').dataset.label : 'כולה') + ' נמחקה.'; $('hist').hidden = true; }, function () { $('hist-msg').textContent = 'לא הצלחתי למחוק.'; });
+    });
+    b.dataset.label = b.textContent;
+  });
+  // כרטיסייה שנסגרה: הרשאה אופציונלית sessions, מבקשים בלחיצה הראשונה
+  $('reopen-btn').addEventListener('click', function () {
+    chrome.permissions.request({ permissions: ['sessions'] }, function (ok) {
+      void chrome.runtime.lastError;
+      if (!ok) { $('hist-msg').textContent = 'בלי הרשות: Ctrl+Shift+T פותח את מה שנסגר.'; return; }
+      chrome.sessions.restore().then(function () { window.close(); }, function () { $('hist-msg').textContent = 'אין כרטיסייה סגורה לפתוח.'; });
+    });
+  });
+
+  $('notes-btn').addEventListener('click', function () {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      var tab = tabs && tabs[0] || {};
+      try { chrome.sidePanel.open({ windowId: tab.windowId }); } catch (e) {}
+      chrome.storage.session.set({ spCtx: { url: tab.url || '', title: tab.title || '', view: 'notes', at: Date.now() } }).then(function () { window.close(); });
+    });
+  });
+  $('files-btn').addEventListener('click', function () { chrome.tabs.create({ url: chrome.runtime.getURL('files.html') }); window.close(); });
+  $('home-btn').addEventListener('click', function () { chrome.tabs.create({ url: chrome.runtime.getURL('home.html') }); window.close(); });
+
+  // ---------- ג׳ימייל: חיפושים מוכנים לסידור ולניקוי, והסרה מרשימת דיוור ----------
+  // החיפושים רק משנים את הכתובת של ג׳ימייל (#search/...) – כאילו הקלדתם בחיפוש. שום מייל לא נקרא.
+  function gmailTab(cb) {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      var t = tabs && tabs[0];
+      if (t && /^https:\/\/mail\.google\.com\/mail\//.test(t.url || '')) cb(t);
+    });
+  }
+  gmailTab(function (t) {
+    $('gm').hidden = false;
+    var m = (t.url || '').match(/^(https:\/\/mail\.google\.com\/mail\/u\/\d+\/)/), base = m ? m[1] : 'https://mail.google.com/mail/u/0/';
+    [].forEach.call(document.querySelectorAll('#gm-q [data-q]'), function (b) {
+      b.title = 'חיפוש בג׳ימייל: ' + b.getAttribute('data-q');
+      b.addEventListener('click', function () {
+        var q = encodeURIComponent(b.getAttribute('data-q')).replace(/%20/g, '+');
+        chrome.tabs.update(t.id, { url: base + '#search/' + q }).then(function () { window.close(); });
+      });
+    });
+    [].forEach.call(document.querySelectorAll('#gm-set button'), function (b) {
+      b.addEventListener('click', function () {
+        if (b.dataset.url) { chrome.tabs.create({ url: b.dataset.url }); window.close(); return; }
+        chrome.tabs.update(t.id, { url: base + b.dataset.hash }).then(function () { window.close(); });
+      });
+    });
+    // חתימה למייל: יוצרים בכלי שבאתר; הכלי שומר את החתימה בתוסף (bridge.js), וכאן מכניסים אותה לחלון כתיבה פתוח.
+    // נוגעים רק בתיבת הכתיבה של המייל שכותבים עכשיו – לא קוראים שום מייל.
+    $('gm-sig-new').addEventListener('click', function () { chrome.tabs.create({ url: 'https://hakelim.com/kelim/tochen/chatimat-mail/' }); window.close(); });
+    $('gm-sig-put').addEventListener('click', function () {
+      chrome.storage.local.get('mailSig', function (o) {
+        var s = o && o.mailSig;
+        if (!s || !s.html) {
+          $('gm-msg').textContent = 'עוד אין חתימה שמורה. לוחצים "✍ ליצור חתימה", ממלאים, וחוזרים לכאן.';
+          return;
+        }
+        chrome.scripting.executeScript({ target: { tabId: t.id }, func: hkPutSignature, args: [s.html] }).then(function (res) {
+          var r = res && res[0] && res[0].result;
+          $('gm-msg').textContent = r === 'ok' ? '✓ החתימה נכנסה בסוף המייל שאתם כותבים.' : r === 'replaced' ? '✓ החתימה עודכנה במייל שאתם כותבים.' : 'קודם פותחים "כתיבה" או "השב" בג׳ימייל, ואז לוחצים כאן.';
+        }, function () { $('gm-msg').textContent = 'לא הצלחתי להגיע לחלון הכתיבה. מרעננים את ג׳ימייל ומנסים שוב.'; });
+      });
+    });
+    $('gm-unsub').addEventListener('click', function () {
+      $('gm-msg').textContent = 'מחפש במייל הפתוח…';
+      var old = $('gm-unsub-go'); if (old) old.remove();
+      chrome.runtime.sendMessage({ gmailUnsub: t.id }, function (r) {
+        void chrome.runtime.lastError;
+        if (!r || !r.ok) { $('gm-msg').textContent = 'לא הצלחתי לבדוק את המייל הזה.'; return; }
+        if (r.gmail) { $('gm-msg').textContent = 'פתחתי את "ביטול הרשמה" של ג׳ימייל. מאשרים בחלון שנפתח בג׳ימייל.'; return; }
+        if (r.href) {
+          $('gm-msg').textContent = 'נמצא קישור הסרה של ' + (r.host || 'השולח') + '. לוחצים רק אם מכירים את השולח:';
+          var go = document.createElement('button'); go.type = 'button'; go.id = 'gm-unsub-go'; go.textContent = '✂ לפתוח את דף ההסרה';
+          go.addEventListener('click', function () { chrome.tabs.create({ url: r.href }); window.close(); });
+          $('gm-msg').insertAdjacentElement('afterend', go);
+          return;
+        }
+        $('gm-msg').textContent = r.open ? 'לא מצאתי קישור הסרה במייל הזה. אפשר לסמן אותו כספאם (!) – ג׳ימייל ילמד.' : 'קודם פותחים את המייל של הדיוור, ואז לוחצים כאן.';
+      });
+    });
+  });
+
+  // ---------- אירוע מהיר ליומן ----------
+  function evPreview() {
+    var v = $('ev-q').value.trim();
+    if (!v) { $('ev-pre').textContent = 'כותבים מה ומתי, והיומן של גוגל נפתח עם הכול מוכן.'; return null; }
+    var w = HKWhen.parse(v); $('ev-pre').textContent = '📅 ' + (w.title || 'אירוע') + ' · ' + HKWhen.describe(w); return w;
+  }
+  $('ev-q').addEventListener('input', evPreview);
+  $('ev').addEventListener('submit', function (e) { e.preventDefault(); var w = evPreview(); if (w) goTo(HKWhen.calendarUrl(w)); });
+
+  // ---------- האתר הזה + כלים מתאימים + חלון צד ----------
+  function sidePanel(tab, tool) {
+    try { chrome.sidePanel.open({ windowId: tab.windowId }); } catch (e) {}
+    chrome.storage.session.set({ spCtx: { url: tab.url || '', title: tab.title || '', tool: tool || '', at: Date.now() } }).then(function () { window.close(); });
+  }
+  function siteSection(tab) {
+    var url = tab.url || '';
+    if (!/^https?:/.test(url)) return;
+    var host = new URL(url).hostname.replace(/^www\./, '');
+    $('site').hidden = false; $('site-host').textContent = '· ' + host;
+    HKSuggest(url, tools, 4).tools.forEach(function (t) {
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = t.n; b.title = 'לפתוח בצד, ליד הדף: ' + t.n;
+      b.addEventListener('click', function () { sidePanel(tab, t.u); }); $('sug').appendChild(b);
+    });
+    $('side-btn').addEventListener('click', function () { sidePanel(tab, ''); });
+    $('site-home').addEventListener('click', function () {
+      Promise.all([chrome.storage.sync.get('homeLinks').catch(function () { return {}; })]).then(function (r) {
+        var list = Array.isArray(r[0].homeLinks) ? r[0].homeLinks : [], u = new URL(url).origin + '/';
+        if (!list.some(function (x) { return x.u === u || x.u === url; })) list.push({ n: (tab.title || host).split(/\s[|\-–—]\s/)[0].slice(0, 30), u: u });
+        return chrome.storage.sync.set({ homeLinks: list.slice(0, 40) });
+      }).then(function () { $('site-msg').textContent = '⭐ נוסף ל"הדף שלי".'; });
+    });
+    var muted = tab.mutedInfo && tab.mutedInfo.muted;
+    $('site-mute').textContent = muted ? '🔊 להחזיר קול' : '🔇 להשתיק';
+    $('site-mute').addEventListener('click', function () { chrome.tabs.update(tab.id, { muted: !muted }).then(function () { window.close(); }); });
+    $('site-clean').addEventListener('click', function () {
+      var b = this;
+      if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'ללחוץ שוב לאישור'; $('site-msg').textContent = 'זה מוחק את העוגיות והזיכרון של ' + host + ' במחשב – תצטרכו להתחבר אליו שוב. עוזר כשאתר "נתקע" או מתנהג מוזר.'; return; }
+      chrome.browsingData.remove({ origins: [new URL(url).origin] }, { cookies: true, localStorage: true, indexedDB: true, cacheStorage: true, serviceWorkers: true, cache: true, fileSystems: true })
+        .then(function () { $('site-msg').textContent = '🧹 ' + host + ' נוקה. טוען את הדף מחדש…'; return chrome.tabs.reload(tab.id); })
+        .catch(function () { $('site-msg').textContent = 'לא הצלחתי לנקות את האתר הזה.'; });
+    });
+  }
+
+  // ---------- ווטסאפ ווב: נוסחים מוכנים, מצב פרטיות, שמירת הצ'אט ----------
+  var WA_DEF = ['תודה רבה! 🙏', 'קיבלתי, אחזור אליך בהקדם.', 'אפשר לתאם שיחה? מתי נוח לך?', 'מצורף הקובץ. אשמח לאישור שהתקבל.', 'אני בדרך, אגיע בעוד כמה דקות', 'שבת שלום ומבורך! 🕯🕯', 'מזל טוב! 🎉 שתזכו לרוב נחת'];
+  var BLUR = '#pane-side [role=gridcell] span[title], #pane-side img, #main .message-in, #main .message-out, #main header span[title], #main header img { filter: blur(6px) !important; } #pane-side [role=listitem]:hover span[title], #pane-side [role=listitem]:hover img, #main .message-in:hover, #main .message-out:hover, #main header:hover span[title], #main header:hover img { filter: none !important; }';
+  function waInsert(text) {
+    var box = document.querySelector('footer div[contenteditable="true"]') || document.querySelector('#main div[contenteditable="true"][role="textbox"]');
+    if (!box) return false;
+    box.focus(); document.execCommand('insertText', false, text); return true;
+  }
+  function waRead() {
+    var out = [], title = '';
+    var h = document.querySelector('#main header span[title]'); if (h) title = h.getAttribute('title');
+    document.querySelectorAll('#main [data-pre-plain-text]').forEach(function (el) {
+      var pre = el.getAttribute('data-pre-plain-text') || '', t = el.querySelector('.selectable-text');
+      out.push(pre.trim() + ' ' + (t ? t.innerText : el.innerText).trim());
+    });
+    return { title: title, lines: out };
+  }
+  function waSection(tab) {
+    $('wa').hidden = false;
+    var run = function (func, args) { return chrome.scripting.executeScript({ target: { tabId: tab.id }, func: func, args: args || [] }).then(function (r) { return r && r[0] && r[0].result; }); };
+    // קטגוריות מוכנות (להורים, ללקוחות, תזכורת לתור, ברכות, מחוץ למשרד) מהכלי באתר, ו"⭐ שלי" – הנוסחים של המשתמש
+    var waCats = [], waCat = 'mine';
+    var gotCats = new Promise(function (res) {
+      try { chrome.runtime.sendMessage({ mailTpl: 1 }, function (r) { void chrome.runtime.lastError; if (r && r.ok && Array.isArray(r.data.wa)) waCats = r.data.wa; res(); }); } catch (e) { res(); }
+    });
+    chrome.storage.local.get('waCat').then(function (o) { if (o.waCat) waCat = o.waCat; }).catch(function () {});
+    Promise.all([chrome.storage.sync.get('snips').catch(function () { return {}; }), gotCats]).then(function (rr) {
+      var o = rr[0];
+      var list = Array.isArray(o.snips) ? o.snips : WA_DEF.slice();
+      function put(t) { run(waInsert, [t]).then(function (ok) { if (ok) window.close(); else $('wa-msg').textContent = 'קודם פותחים צ׳אט, ואז בוחרים נוסח.'; }, function () { $('wa-msg').textContent = 'לא הצלחתי להכניס את הנוסח.'; }); }
+      function chip(t) { var b = document.createElement('button'); b.type = 'button'; b.textContent = t.length > 26 ? t.slice(0, 25) + '…' : t; b.title = t; b.addEventListener('click', function () { put(t); }); return b; }
+      function draw() {
+        var cats = $('wa-cats'); cats.textContent = '';
+        if (!waCats.some(function (c) { return c.n === waCat; })) waCat = 'mine';
+        [{ n: 'mine', l: '⭐ שלי' }].concat(waCats.map(function (c) { return { n: c.n, l: c.n }; })).forEach(function (c) {
+          var b = document.createElement('button'); b.type = 'button'; b.textContent = c.l; b.setAttribute('aria-pressed', String(c.n === waCat));
+          b.addEventListener('click', function () { waCat = c.n; chrome.storage.local.set({ waCat: waCat }); draw(); });
+          cats.appendChild(b);
+        });
+        var box = $('wa-tpl'); box.textContent = '';
+        if (waCat !== 'mine') {
+          var cat = waCats.filter(function (c) { return c.n === waCat; })[0];
+          (cat ? cat.items : []).forEach(function (t) {
+            var b = chip(t); b.title = t + '\n(לחיצה ימנית: להוסיף ל"שלי")';
+            b.addEventListener('contextmenu', function (e) { e.preventDefault(); if (list.indexOf(t) < 0) { list.push(t); chrome.storage.sync.set({ snips: list }); } $('wa-msg').textContent = '⭐ נוסף ל"שלי"'; });
+            box.appendChild(b);
+          });
+          $('wa-msg').textContent = /\[[^\]]+\]/.test((cat ? cat.items : []).join('')) ? 'מה שבסוגריים [ ] משלימים בתיבה לפני השליחה.' : '';
+          return;
+        }
+        list.forEach(function (t, i) {
+          var b = chip(t);
+          b.addEventListener('contextmenu', function (e) { e.preventDefault(); list.splice(i, 1); chrome.storage.sync.set({ snips: list }); draw(); });
+          box.appendChild(b);
+        });
+        var ed = document.createElement('button'); ed.type = 'button'; ed.textContent = '✎'; ed.title = 'להוסיף נוסח (לחיצה ימנית על נוסח מוחקת אותו)';
+        ed.addEventListener('click', function () { $('wa-add').hidden = false; $('wa-new').focus(); }); box.appendChild(ed);
+      }
+      $('wa-save').addEventListener('click', function () { var v = $('wa-new').value.trim(); if (!v) return; list.push(v); chrome.storage.sync.set({ snips: list }); $('wa-new').value = ''; $('wa-add').hidden = true; draw(); });
+      draw();
+    });
+    chrome.storage.session.get('waBlur').then(function (o) {
+      var on = !!(o.waBlur && o.waBlur[tab.id]); $('wa-blur').setAttribute('aria-pressed', on ? 'true' : 'false'); $('wa-blur').textContent = on ? '👁 לבטל מצב פרטיות' : '🙈 מצב פרטיות';
+      $('wa-blur').addEventListener('click', function () {
+        var p = on ? chrome.scripting.removeCSS({ target: { tabId: tab.id }, css: BLUR }) : chrome.scripting.insertCSS({ target: { tabId: tab.id }, css: BLUR });
+        p.then(function () { var m = o.waBlur || {}; m[tab.id] = !on; return chrome.storage.session.set({ waBlur: m }); }).then(function () { window.close(); });
+      });
+    });
+    $('wa-export').addEventListener('click', function () {
+      run(waRead).then(function (r) {
+        if (!r || !r.lines.length) { $('wa-msg').textContent = 'לא מצאתי הודעות. פותחים צ׳אט, גוללים למעלה עד איפה שרוצים, ולוחצים שוב.'; return; }
+        var txt = '\ufeff' + (r.title ? 'צ׳אט: ' + r.title + '\r\n\r\n' : '') + r.lines.join('\r\n');
+        var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain' }));
+        a.download = 'ווטסאפ - ' + (r.title || 'צאט').replace(/[\\/:*?"<>|]/g, '') + '.txt'; document.body.appendChild(a); a.click(); a.remove();
+        $('wa-msg').textContent = 'נשמרו ' + r.lines.length + ' הודעות (רק מה שנטען במסך – לגלול למעלה כדי לשמור עוד).';
+      }, function () { $('wa-msg').textContent = 'לא הצלחתי לקרוא את הצ׳אט.'; });
+    });
+  }
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    var tab = tabs && tabs[0]; if (!tab) return;
+    var ready = new Promise(function (r) { var k = 0, iv = setInterval(function () { if (tools.length || ++k > 40) { clearInterval(iv); r(); } }, 50); });
+    ready.then(function () {
+      if (/^https:\/\/web\.whatsapp\.com\//.test(tab.url || '')) waSection(tab);
+      siteSection(tab);
+    });
+  });
+
   // ---------- כלים לדף הזה: צילום, הקראה, כיוון, מצב כהה ----------
   [].forEach.call(document.querySelectorAll('#acts [data-act]'), function (b) {
     b.addEventListener('click', function () {
@@ -188,3 +468,28 @@
     if (area === 'local' && (ch.tools || ch.seen)) load().then(render);
   });
 })();
+
+// רץ בתוך דף ג׳ימייל (chrome.scripting): מכניס את החתימה לתיבת הכתיבה הפתוחה.
+// מנקה את ה-HTML (בלי סקריפטים, בלי on*, רק קישורים בטוחים), ומחליף חתימה קודמת שלנו אם יש.
+function hkPutSignature(html) {
+  var boxes = [].slice.call(document.querySelectorAll('div[contenteditable="true"][role="textbox"]')).filter(function (b) { return b.offsetParent !== null; });
+  if (!boxes.length) return 'none';
+  var a = document.activeElement, box = boxes.filter(function (b) { return b === a || b.contains(a); })[0] || boxes[boxes.length - 1];
+  var doc = new DOMParser().parseFromString('<div>' + String(html).slice(0, 20000) + '</div>', 'text/html');
+  [].forEach.call(doc.querySelectorAll('script,style,iframe,object,embed,form,input,button,link,meta,svg'), function (n) { n.remove(); });
+  [].forEach.call(doc.querySelectorAll('*'), function (n) {
+    [].slice.call(n.attributes).forEach(function (at) {
+      var k = at.name.toLowerCase(), v = at.value.trim();
+      if (k.indexOf('on') === 0) n.removeAttribute(at.name);
+      else if (k === 'href' && !/^(https?:|mailto:|tel:)/i.test(v)) n.removeAttribute(at.name);
+      else if (k === 'src' && !/^(https?:|data:image\/(png|jpe?g|gif|webp);)/i.test(v)) n.removeAttribute(at.name);
+      else if (k === 'style' && /url\s*\(|expression/i.test(v)) n.removeAttribute(at.name);
+    });
+  });
+  var old = box.querySelector('[data-hk-sig]'), wrap = document.createElement('div');
+  wrap.setAttribute('data-hk-sig', '1');
+  wrap.innerHTML = '<br>' + doc.body.firstChild.innerHTML;
+  if (old) { old.replaceWith(wrap); } else { box.appendChild(wrap); }
+  box.dispatchEvent(new Event('input', { bubbles: true }));
+  return old ? 'replaced' : 'ok';
+}

@@ -1,0 +1,105 @@
+<!--meta {
+  "site": "limudim",
+  "nav": "machshevon",
+  "tool": "kita_talmidim",
+  "title": "כניסה לכיתה הווירטואלית – לתלמידים | כלים ללימודים",
+  "description": "נכנסים עם קוד הכיתה מהמורה וכינוי: המטלות ודפי העבודה, מחברת שבודקת כל שורה, מחשבון וסרטון לכל תרגיל, שאלות לכיתה, נקודות ותגים. חינם, בלי הרשמה.",
+  "og_title": "הכיתה הווירטואלית – כניסה לתלמידים",
+  "priority": "0.4",
+  "crumbs": [["הכיתה הווירטואלית", "/limudim/kita/"], ["כניסה לתלמידים", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/limudim-kita-portal.css\"><meta name=\"robots\" content=\"noindex\">",
+  "foot": "<script src=\"/assets/limudim-kita-talmid.js\" defer></script>"
+} -->
+<header class="k-hero kp-hero">
+  <h1>הכיתה הווירטואלית</h1>
+  <p class="sub">המטלות מהמורה, דף העבודה, ולכל תרגיל: מחברת שבודקת כל שורה, מחשבון, סרטון ושאלה לכיתה.</p>
+</header>
+
+<div class="tool kp" id="ks-app">
+  <section class="panel" id="ks-join" hidden>
+    <h2>נכנסים לכיתה</h2>
+    <p>את הקוד (6 ספרות) המורה שולחת לכיתה. בוחרים כינוי, עדיף לא שם מלא.</p>
+    <label class="pt-lbl" for="ks-code">קוד הכיתה</label>
+    <input class="kh-in kp-code-in" id="ks-code" inputmode="numeric" maxlength="7" autocomplete="off" dir="ltr" placeholder="123456">
+    <label class="pt-lbl" for="ks-nick">הכינוי שלי בכיתה</label>
+    <input class="kh-in" id="ks-nick" maxlength="16" autocomplete="off" placeholder="למשל: נועה ב׳ או 🦊 שועלה">
+    <button type="button" class="btn btn-gold" id="ks-join-b">להיכנס לכיתה</button>
+    <p class="pt-err" id="ks-jerr" hidden></p>
+    <p class="note">🔒 בלי הרשמה, בלי טלפון ובלי מייל. רק כינוי. המורה יכולה למחוק הכול בכל רגע.</p>
+  </section>
+
+  <section id="ks-main" hidden>
+    <div class="kp-top">
+      <div><b id="ks-cls"></b><span id="ks-tch"></span><br><small>הכינוי שלי: <span id="ks-nickshow"></span></small> <span class="kp-crown" id="ks-role" hidden></span></div>
+      <button type="button" class="kp-chip" id="ks-chip" hidden onclick="document.getElementById('ks-t-pts').click()">⭐ <b id="ks-mypts">0</b> נק׳</button>
+    </div>
+    <p class="kp-msgbar" id="ks-msg" hidden></p>
+    <div class="kp-brk" id="ks-brk" role="status" hidden><span aria-hidden="true">🧩</span><div><b>הפסקת חשיבה מהמורה!</b><span><span id="ks-brk-g"></span> · נשארו <b id="ks-brk-t" dir="ltr"></b></span></div><a class="btn btn-gold btn-sm" id="ks-brk-a" href="/kelim/chashiva/">לשחק ▶️</a></div>
+    <div id="ks-notes"></div>
+
+    <div class="kp-tabs" role="tablist" aria-label="הכיתה">
+      <button type="button" role="tab" id="ks-t-hw" aria-selected="true">📚 המטלות</button>
+      <button type="button" role="tab" id="ks-t-forum" aria-selected="false">💬 שאלות לכיתה</button>
+      <button type="button" role="tab" id="ks-t-pts" aria-selected="false">🏆 הנקודות שלי</button>
+    </div>
+
+    <section id="ks-p-hw" role="tabpanel" aria-labelledby="ks-t-hw">
+      <h2 id="ks-hwhead">המטלות שלי</h2>
+      <div class="kp-cards" id="ks-hwlist"><p class="note">טוענים…</p></div>
+      <div id="ks-hw1" hidden>
+        <button type="button" class="linkish" id="ks-back">→ לכל המטלות</button>
+        <h2 id="ks-h-title"></h2>
+        <p class="kp-meta" id="ks-h-meta"></p>
+        <p class="kp-note" id="ks-h-note" hidden></p>
+        <div class="kp-marbox" id="ks-mar" hidden></div>
+        <div id="ks-pages" hidden></div>
+        <div id="ks-prep" hidden></div>
+        <h3 id="ks-exh">התרגילים</h3>
+        <ol class="kp-exs" id="ks-exs"></ol>
+      </div>
+    </section>
+
+    <section id="ks-p-forum" role="tabpanel" aria-labelledby="ks-t-forum" hidden>
+      <h2>שאלות לכיתה</h2>
+      <p class="note">נתקעת? שואלים כאן, וכל הכיתה יכולה לעזור. תשובה שעזרה = 10 נקודות למי שענה. המורה רואה הכול.</p>
+      <p class="pt-err" id="ks-closed" hidden>המורה סגרה כרגע את השאלות לכיתה. אפשר לקרוא, ולשאול שוב כשהיא תפתח.</p>
+      <div class="panel kp-askbox" id="ks-askbox">
+        <p class="kp-about-on" id="ks-about" hidden>על: <b id="ks-about-t"></b> <button type="button" class="linkish" id="ks-about-x" aria-label="בלי לקשר לתרגיל">✕</button></p>
+        <label class="pt-lbl" for="ks-ask">השאלה שלי</label>
+        <textarea class="kh-in" id="ks-ask" rows="3" maxlength="600" placeholder="למשל: בתרגיל 2 יצא לי x=5 אבל בבדיקה זה לא מסתדר. איפה הטעות?"></textarea>
+        <button type="button" class="btn btn-gold" id="ks-ask-b">לשאול את הכיתה</button>
+      </div>
+      <div id="ks-posts"><p class="note">טוענים…</p></div>
+    </section>
+
+    <section id="ks-p-pts" role="tabpanel" aria-labelledby="ks-t-pts" hidden>
+      <h2>הנקודות שלי</h2>
+      <div class="kp-stats" id="ks-stats"></div>
+      <div class="panel">
+        <div class="kh-row"><h3>התגים שלי</h3><span class="note" id="ks-badges-n"></span></div>
+        <ul class="kp-badges" id="ks-badges"></ul>
+      </div>
+      <div class="panel">
+        <h3>לוח הכיתה</h3>
+        <ol class="kp-top5" id="ks-top"></ol>
+        <p class="note">איך מקבלים נקודות: תרגיל שנפתר נכון במחברת – 20. שלושת הראשונים שמסיימים מטלה – בונוס 15 / 10 / 5. תשובה שעזרה למישהו – 10. "תשובה מצוינת" מהמורה – 15. וגם כל תרגול ב<a class="gold" href="/kelim/chashiva/kita/">כיתה משחקת</a>.</p>
+      </div>
+      <div class="panel" id="ks-gifts" hidden>
+        <h3>🎁 הפרסים מהמורה</h3>
+        <ul class="kp-badges kp-gifts" id="ks-gifts-l"></ul>
+      </div>
+      <div class="panel" id="ks-kudos" hidden>
+        <h3>💐 פרגונים מהמורה</h3>
+        <ul class="kp-badges kp-gifts kp-kudl" id="ks-kudos-l"></ul>
+      </div>
+      <p><button type="button" class="btn btn-sm" id="ks-par">📲 להראות להורים את ההתקדמות שלי</button></p>
+      <p><button type="button" class="linkish" id="ks-leave">לצאת מהכיתה ולמחוק את הנתונים שלי</button></p>
+    </section>
+  </section>
+
+  <dialog class="kp-dlg" id="ks-dlg" aria-labelledby="ks-dlg-t">
+    <div class="kp-dlg-h"><b id="ks-dlg-t"></b><span><a class="linkish" id="ks-dlg-open" target="_blank" rel="noopener">לפתוח בחלון מלא</a> <button type="button" class="btn btn-sm" id="ks-dlg-x">✕ לסגור</button></span></div>
+    <div class="kp-dlg-f" id="ks-dlg-f"></div>
+  </dialog>
+  <div class="kp-toast" id="ks-toast" role="status" aria-live="polite" hidden></div>
+</div>

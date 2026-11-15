@@ -16,7 +16,68 @@
   <p class="msg" id="pdf-msg" role="status"></p>
 </section>
 
+<section id="gm" hidden aria-labelledby="gm-h">
+  <h2 id="gm-h">✉ לסדר את ג׳ימייל</h2>
+  <div class="chips gm" id="gm-q">
+    <button type="button" data-q="is:unread">✉ לא נקראו</button>
+    <button type="button" data-q="has:attachment">📎 עם קבצים</button>
+    <button type="button" data-q="larger:10M">📦 גדולים מ-10MB</button>
+    <button type="button" data-q="category:promotions older_than:1m">📰 דיוור ישן</button>
+    <button type="button" data-q="category:social older_than:1m">👥 רשתות ישנות</button>
+    <button type="button" data-q="older_than:2y">🗓 ישנים משנתיים</button>
+    <button type="button" data-q="is:starred">⭐ מסומנים</button>
+    <button type="button" data-q="label:סיכום-מחכים-לתשובה-ממך">📬 מחכים לתשובה ממני</button>
+  </div>
+  <div class="chips gm" id="gm-set">
+    <button type="button" data-hash="#settings/general">✍ חתימה וביטול שליחה</button>
+    <button type="button" data-hash="#settings/filters">🚫 חסומים ומסננים</button>
+    <button type="button" data-hash="#trash">♻ לשחזר מייל שנמחק</button>
+    <button type="button" data-hash="#scheduled">⏰ מיילים מתוזמנים</button>
+    <button type="button" data-url="https://takeout.google.com/settings/takeout/custom/gmail">💾 גיבוי כל המיילים</button>
+    <button type="button" data-url="https://hakelim.com/kelim/machshev/sidur-mailim/?utm_source=tosaf">📬 סיכום מיילים כל בוקר</button>
+  </div>
+  <div class="chips gm" id="gm-sig">
+    <button type="button" id="gm-sig-new">✍ ליצור חתימה</button>
+    <button type="button" id="gm-sig-put">📥 להכניס את החתימה שלי</button>
+  </div>
+  <button class="line" type="button" id="gm-unsub">✂ להסיר אותי מרשימת הדיוור של המייל הפתוח</button>
+  <p class="msg" id="gm-msg" role="status"></p>
+  <p class="small">📬 <b>סיכום מיילים:</b> כל בוקר מייל אחד מסודר – מכירות, מי מחכה לתשובה, חשבוניות – ותוויות לבד. הקוד רץ רק בחשבון הגוגל שלכם.</p>
+  <p class="small">✍ <b>ניסוח מייל:</b> בחלון כתיבת מייל יש כפתור "✍ ניסוח" – נושא ומייל מוכנים ללקוח, למרצה, התפטרות, תלונה ועוד, בעברית ובאנגלית.</p>
+  <p class="small">לנקות: בוחרים חיפוש ← תיבת הסימון למעלה ← "בחירת כל השיחות התואמות" ← 🗑. התוסף לא קורא ולא שומר את המיילים.</p>
+</section>
+
+<section id="wa" hidden aria-labelledby="wa-h">
+  <h2 id="wa-h">💬 ווטסאפ ווב</h2>
+  <div class="chips gm wa-cats" id="wa-cats" role="group" aria-label="סוג הנוסח"></div>
+  <div class="chips gm" id="wa-tpl"></div>
+  <div class="row add-tpl" id="wa-add" hidden><label class="sr" for="wa-new">תבנית חדשה</label><input id="wa-new" placeholder="נוסח חדש…" maxlength="500"><button type="button" class="line" id="wa-save">➕</button></div>
+  <div class="row">
+    <button class="line" type="button" id="wa-blur" aria-pressed="false">🙈 מצב פרטיות</button>
+    <button class="line" type="button" id="wa-export">💾 לשמור את הצ׳אט</button>
+  </div>
+  <p class="msg" id="wa-msg" role="status"></p>
+  <p class="small">בוחרים סוג (להורים, ללקוחות, תזכורת לתור, ברכות, מחוץ למשרד), לוחצים על נוסח והוא נכנס לתיבת ההודעה. שולחים בעצמכם (Enter). ✎ ב"שלי" מוסיף נוסח משלכם. מייל רשמי: <a href="https://hakelim.com/kelim/tochen/mail/" target="_blank">ניסוח מייל</a>.</p>
+</section>
+
+<section id="site" hidden aria-labelledby="site-h">
+  <h2 id="site-h">🧰 מתאים לדף הזה <span class="small" id="site-host"></span></h2>
+  <div class="chips gm" id="sug"></div>
+  <div class="row site-acts">
+    <button class="line" type="button" id="side-btn" title="Alt+Shift+S">◧ כלים בצד</button>
+    <button class="line" type="button" id="site-home">⭐ לדף שלי</button>
+    <button class="line" type="button" id="site-mute">🔇 להשתיק</button>
+    <button class="line" type="button" id="site-clean">🧹 לנקות אתר</button>
+  </div>
+  <p class="msg" id="site-msg" role="status"></p>
+</section>
+
 <div class="grid" id="acts" role="group" aria-label="כלים לדף הזה">
+  <button class="line hi" type="button" id="tabs-btn" title="Alt+Shift+K">🗂 הכרטיסיות</button>
+  <button class="line hi" type="button" id="home-btn">🏠 הדף שלי</button>
+  <button class="line hi wide" type="button" id="panui-btn">🧹 נפח בגוגל מלא? לפנות מקום בחינם</button>
+  <button class="line hi" type="button" id="notes-btn">📝 פתקים</button>
+  <button class="line hi" type="button" id="files-btn">📁 הקבצים שלי</button>
   <button class="line wide" type="button" data-act="translate" title="Alt+Shift+T">🌐 לתרגם את הדף – בלי לשבור אותו</button>
   <button class="line" type="button" data-act="shot">📸 צילום כל העמוד</button>
   <button class="line" type="button" data-act="speak">🔊 להקריא מסומן</button>
@@ -24,6 +85,82 @@
   <button class="line" type="button" data-act="dark">🌙 מצב כהה</button>
 </div>
 <p class="msg" id="act-msg" role="status"></p>
+
+<details class="quick" id="quick">
+  <summary>🚀 גוגל, ווטסאפ והמחשב</summary>
+  <h3>📅 אירוע מהיר ליומן</h3>
+  <form class="ev" id="ev"><label class="sr" for="ev-q">מה ומתי</label><input id="ev-q" placeholder="למשל: רופא שיניים מחר ב-10:30" autocomplete="off"><button type="submit" class="line">➕</button></form>
+  <p class="small" id="ev-pre">כותבים מה ומתי, והיומן של גוגל נפתח עם הכול מוכן. טיפ: מסמנים טקסט בדף ← לחיצה ימנית ← "להוסיף ליומן".</p>
+  <h3>➕ ליצור חדש</h3>
+  <div class="go-chips" id="new-chips">
+    <button type="button" data-go="https://calendar.google.com/calendar/r/eventedit">📅 אירוע ביומן</button>
+    <button type="button" data-go="https://docs.new">📄 מסמך</button>
+    <button type="button" data-go="https://sheets.new">📊 גיליון (אקסל)</button>
+    <button type="button" data-go="https://slides.new">📽 מצגת</button>
+    <button type="button" data-go="https://forms.new">📝 טופס</button>
+    <button type="button" data-go="https://contacts.google.com/new">👤 איש קשר</button>
+    <button type="button" data-go="https://keep.new">🗒 פתק</button>
+  </div>
+  <h3>📂 לפתוח</h3>
+  <div class="go-chips">
+    <button type="button" data-go="https://calendar.google.com/">📅 יומן</button>
+    <button type="button" data-go="https://drive.google.com/drive/my-drive">📁 דרייב</button>
+    <button type="button" data-go="https://photos.google.com/">🖼 תמונות</button>
+    <button type="button" data-go="https://contacts.google.com/">👥 אנשי קשר</button>
+    <button type="button" data-go="https://web.whatsapp.com/">💬 ווטסאפ ווב</button>
+    <button type="button" data-go="https://drive.google.com/drive/recent">🕘 אחרונים בדרייב</button>
+    <button type="button" data-go="https://one.google.com/storage/management">🧹 לפנות מקום בגוגל</button>
+  </div>
+  <h3>📅 יומן גוגל בעברית</h3>
+  <div class="go-chips">
+    <button type="button" data-go="https://calendar.google.com/calendar/render?cid=webcal%3A%2F%2Fdownload.hebcal.com%2Fical%2Fhdate-he-v2.ics">📅 תאריך עברי בכל יום</button>
+    <button type="button" data-go="https://calendar.google.com/calendar/render?cid=iw.jewish%23holiday%40group.v.calendar.google.com">🕎 חגים יהודיים</button>
+    <button type="button" data-go="https://calendar.google.com/calendar/render?cid=webcal%3A%2F%2Fdownload.hebcal.com%2Fical%2Ftorah-readings-israel-he.ics">📖 פרשת השבוע</button>
+  </div>
+  <h3>🔑 סיסמאות, היסטוריה ואנשי קשר</h3>
+  <div class="go-chips">
+    <button type="button" data-go="chrome://password-manager/passwords">🔑 הסיסמאות השמורות שלי</button>
+    <button type="button" data-go="https://hakelim.com/kelim/machshev/sisma/?utm_source=tosaf">🔐 כמה חזקה הסיסמה?</button>
+    <button type="button" id="hist-btn">🕘 לנקות היסטוריה</button>
+    <button type="button" data-go="https://contacts.google.com/merge">👥 מיזוג אנשי קשר כפולים</button>
+    <button type="button" data-go="https://contacts.google.com/trash">♻ לשחזר איש קשר שנמחק</button>
+    <button type="button" data-go="https://hakelim.com/kelim/kesharim/sidur/?utm_source=tosaf">📇 לסדר ולייצא אנשי קשר</button>
+  </div>
+  <div class="row hist" id="hist" hidden>
+    <button type="button" class="line" data-since="1">שעה אחרונה</button>
+    <button type="button" class="line" data-since="24">היום</button>
+    <button type="button" class="line" data-since="168">שבוע</button>
+    <button type="button" class="line" data-since="0">הכול</button>
+  </div>
+  <p class="small" id="hist-msg" role="status"></p>
+  <h3>📊 גיליונות (אקסל) בעברית</h3>
+  <div class="go-chips">
+    <button type="button" data-go="https://docs.google.com/spreadsheets/create?hl=iw">📊 גיליון חדש בעברית</button>
+    <button type="button" data-go="https://docs.google.com/spreadsheets/u/0/?ftv=1&hl=iw">📋 תבניות מוכנות</button>
+    <button type="button" data-go="https://hakelim.com/kesef/taktziv/?utm_source=tosaf">💰 תקציב משפחתי</button>
+    <button type="button" data-go="https://hakelim.com/bait/kniyot/?utm_source=tosaf">🛒 רשימת קניות</button>
+  </div>
+  <p class="small">גיליון מימין לשמאל: בגיליון ← תפריט "עיצוב" ← "מימין לשמאל".</p>
+  <h3>🌐 כרום</h3>
+  <div class="go-chips">
+    <button type="button" id="reopen-btn">↩ לפתוח שוב כרטיסייה שנסגרה</button>
+    <button type="button" data-go="chrome://settings/performance">🐢 כרום איטי? חיסכון בזיכרון</button>
+    <button type="button" data-go="chrome://extensions/shortcuts">⌨ מקשי קיצור לשירותים</button>
+  </div>
+  <h3>💻 במחשב</h3>
+  <div class="go-chips">
+    <button type="button" data-go="https://hakelim.com/kelim/machshev/sader/?utm_source=tosaf">🗂 לסדר תיקייה במחשב</button>
+    <button type="button" data-go="chrome://downloads/">⬇ ההורדות</button>
+    <button type="button" data-go="chrome://history/">🕘 היסטוריה</button>
+  </div>
+  <p class="small">טיפ: מקלידים בחיפוש למעלה ומחפשים ישר בדרייב, בתמונות, באנשי קשר ובג׳ימייל. מספר טלפון ← ווטסאפ בלי לשמור איש קשר.</p>
+</details>
+
+<section id="rate" class="rate" hidden aria-labelledby="rate-h">
+  <h2 id="rate-h">⭐ התוסף עוזר לכם?</h2>
+  <p class="small">זה מיזם חסד, בלי פרסומות. דירוג קצר בחנות עוזר לו להגיע לעוד אנשים. ויש הערה או משהו שחסר – אני קורא הכול.</p>
+  <div class="row"><button type="button" class="gold" id="rate-go">⭐ לדרג בחנות</button><button type="button" class="line" id="rate-note">💬 הערה</button><button type="button" class="line" id="rate-later">אחר כך</button></div>
+</section>
 
 <section aria-live="polite">
   <div id="list"></div>
@@ -52,8 +189,10 @@
   <p class="small">נוצרת כאן, במחשב שלכם. טיפ: לחיצה ימנית בשדה סיסמה באתר ← "להכניס סיסמה חזקה".</p>
 </section>
 
-<footer><a href="https://hakelim.com/kelim/?utm_source=tosaf" target="_blank">כל הכלים באתר</a> · שום קובץ לא עולה לשרת · <a href="https://hakelim.com/kelim/machshev/chatima/tosaf/" target="_blank">פרטיות</a></footer>
+<footer><span class="chesed">מיזם הכלים · מיזם חסד, בלי פרסומות</span><br><a href="#" id="share-btn">💬 לשתף חבר</a> · <a href="https://hakelim.com/kelim/?utm_source=tosaf" target="_blank">כל הכלים באתר</a> · שום קובץ לא עולה לשרת · <a href="https://hakelim.com/kelim/machshev/chatima/tosaf/" target="_blank">פרטיות</a></footer>
 <script src="qrcode.min.js"></script>
+<script src="when.js"></script>
+<script src="suggest.js"></script>
 <script src="popup.js"></script>
 </body>
 </html>

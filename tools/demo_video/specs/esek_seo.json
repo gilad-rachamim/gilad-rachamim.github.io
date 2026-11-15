@@ -1,0 +1,188 @@
+{
+ "id": "esek_seo",
+ "page": "/esek/seo/",
+ "name": "בדיקת SEO לאתר – ככה זה עובד",
+ "description": "סרטון הסבר קצר על בדיקת ה-SEO החינמית של מיזם הכלים: מדביקים כתובת, גוגל בודק את הדף בטלפון, ומקבלים דוח בעברית עם ציוני SEO, מהירות, נגישות ואמינות, Core Web Vitals ותיקונים לפי סדר החשיבות – גם לוויקס ולוורדפרס. חינם, בלי הרשמה; למי שרוצה שנתקן – שותפות במיזם.",
+ "mood": "calm",
+ "poster_t": 2.4,
+ "scenes": [
+  {
+   "type": "title",
+   "dur": 4.0,
+   "icon": "🔎",
+   "kicker": "מיזם הכלים · לעסקים",
+   "title": "בדיקת SEO\n*לאתר שלכם*",
+   "sub": "מה גוגל רואה כשהוא נכנס לאתר שלכם",
+   "chips": [
+    "חינם",
+    "בלי הרשמה",
+    "דוח בעברית"
+   ]
+  },
+  {
+   "type": "steps",
+   "dur": 5.6,
+   "title": "שלושה *צעדים*",
+   "items": [
+    [
+     "מדביקים את כתובת האתר",
+     "דף הבית או כל דף אחר"
+    ],
+    [
+     "גוגל בודק את הדף בטלפון",
+     "20–60 שניות"
+    ],
+    [
+     "מקבלים דוח בעברית",
+     "מה לתקן, לפי סדר החשיבות"
+    ]
+   ]
+  },
+  {
+   "type": "html",
+   "dur": 4.0,
+   "html": "<div class=\"h a-up\">מדביקים <em>כתובת</em> ולוחצים</div><div class=\"a-pop\" style=\"animation-delay:.15s\"><img src=\"shots/seo/s1-form.jpg\" style=\"width:600px;border-radius:26px;border:10px solid #232c3d;box-shadow:0 30px 80px rgba(0,0,0,.55);display:block;margin:0 auto\"></div><div class=\"cap2 a-up\" style=\"animation-delay:.5s\">בטלפון או במחשב</div>"
+  },
+  {
+   "type": "html",
+   "dur": 4.0,
+   "html": "<div class=\"h a-up\">ארבעה ציונים <em>של גוגל</em></div><div class=\"shot a-pop\" style=\"animation-delay:.15s;height:800px\"><img src=\"shots/seo/s2-scores.jpg\" style=\"--sy:-60px;animation-delay:.7s;animation-duration:2.0s;animation-fill-mode:both\"></div><div class=\"cap2 a-up\" style=\"animation-delay:.5s\">SEO · מהירות · נגישות · אמינות</div>"
+  },
+  {
+   "type": "html",
+   "dur": 3.8,
+   "html": "<div class=\"h a-up\">מה גוגל <em>מודד באמת</em></div><div class=\"shot a-pop\" style=\"animation-delay:.15s;height:800px\"><img src=\"shots/seo/s3-vitals.jpg\" style=\"--sy:-120px;animation-delay:.7s;animation-duration:2.0s;animation-fill-mode:both\"></div><div class=\"cap2 a-up\" style=\"animation-delay:.5s\">Core Web Vitals – בשפה פשוטה</div>"
+  },
+  {
+   "type": "html",
+   "dur": 4.8,
+   "html": "<div class=\"h a-up\">מה לתקן, <em>לפי סדר החשיבות</em></div><div class=\"shot a-pop\" style=\"animation-delay:.15s;height:800px\"><img src=\"shots/seo/s4-fixes.jpg\" style=\"--sy:-140px;animation-delay:.7s;animation-duration:2.4s;animation-fill-mode:both\"></div><div class=\"cap2 a-up\" style=\"animation-delay:.5s\">למה זה חשוב – ואיך מתקנים</div>"
+  },
+  {
+   "type": "cards",
+   "dur": 5.6,
+   "title": "מה כלול *בחינם*",
+   "items": [
+    [
+     "📱",
+     "בדיקה בטלפון ובמחשב",
+     "כמו שגוגל רואה את הדף"
+    ],
+    [
+     "🛠️",
+     "הסבר לתיקון",
+     "גם *לוויקס ולוורדפרס*"
+    ],
+    [
+     "📲",
+     "שליחה בווטסאפ ושמירה כ-PDF",
+     "לשלוח למי שבנה את האתר"
+    ],
+    [
+     "🗂️",
+     "סריקה של כל האתר",
+     "עד 50 דפים – מבקשים מגילעד"
+    ]
+   ]
+  },
+  {
+   "type": "cards",
+   "cls": "gold",
+   "dur": 6.4,
+   "badge": "💛 שותפות במיזם",
+   "title": "רוצים שנתקן *בשבילכם*?",
+   "gap": 0.6,
+   "items": [
+    [
+     "🧭",
+     "חי – 18 ₪",
+     "5 התיקונים הכי חשובים, צעד-צעד"
+    ],
+    [
+     "🔍",
+     "180 ₪",
+     "מחקר מילות חיפוש ו-5 המתחרים"
+    ],
+    [
+     "🛠️",
+     "360 ₪",
+     "תיקון מלא לאתר עד 15 דפים"
+    ],
+    [
+     "⭐",
+     "VIP – 1,800 ₪",
+     "ליווי שנה וסריקה כל חודש"
+    ]
+   ],
+   "foot": "גילעד כאן כדי לדייק לכל אחד מה יהיה מושלם עבורו"
+  },
+  {
+   "type": "cta",
+   "dur": 5.4,
+   "icon": "🔎",
+   "title": "בודקים *בחינם*",
+   "sub": "מיזם חסד – לא השקעה, לא רכישה ולא מנוי",
+   "button": "לבדוק את האתר שלי",
+   "gold": true,
+   "url": "hakelim.com/esek/seo",
+   "small": "מיזם הכלים של גילעד רחמים"
+  }
+ ],
+ "flyer": {
+  "icon": "🔎",
+  "kicker": "מיזם הכלים של גילעד רחמים",
+  "title": "מה גוגל רואה *באתר שלכם?*",
+  "sub": "בדיקת SEO בחינם, עם *דוח בעברית* ומה לתקן.",
+  "chips": [
+   "חינם",
+   "בלי הרשמה",
+   "דוח בעברית"
+  ],
+  "steps": [
+   "מדביקים את כתובת האתר",
+   "גוגל בודק את הדף בטלפון",
+   "מקבלים מה לתקן, לפי סדר החשיבות"
+  ],
+  "features_title": "מה בדוח",
+  "features": [
+   [
+    "📊",
+    "ציוני SEO, מהירות, נגישות"
+   ],
+   [
+    "⚡",
+    "Core Web Vitals בשפה פשוטה"
+   ],
+   [
+    "🛠️",
+    "תיקונים לוויקס ולוורדפרס"
+   ],
+   [
+    "📲",
+    "שליחה בווטסאפ ו-PDF"
+   ]
+  ],
+  "partner": {
+   "title": "💛 רוצים שנתקן? · שותפות במיזם",
+   "items": [
+    [
+     "🧭",
+     "חי 18 ₪: *5 תיקונים צעד-צעד*"
+    ],
+    [
+     "🛠️",
+     "360 ₪: *תיקון מלא עד 15 דפים*"
+    ],
+    [
+     "⭐",
+     "VIP: *ליווי שנה*"
+    ]
+   ],
+   "note": "מיזם חסד – לא השקעה, לא רכישה ולא מנוי. גילעד כאן כדי לדייק לכל אחד מה יהיה מושלם עבורו."
+  },
+  "cta": "סורקים ובודקים את האתר",
+  "button": "לבדוק את האתר שלי",
+  "url": "https://hakelim.com/esek/seo/?utm_source=flyer&utm_medium=share",
+  "url_text": "hakelim.com/esek/seo"
+ }
+}

@@ -1,0 +1,71 @@
+/* תיק מסמכים לדוח השנתי + חדר לרואה חשבון */
+.ch .tk-prog{margin:.4rem 0 .8rem;color:var(--body)}
+.ch .tk-prog b{color:var(--cream)}
+.ch .tk-bar{display:block;height:8px;border-radius:99px;background:rgba(255,255,255,.08);margin-top:.4rem;overflow:hidden}
+.ch .tk-bar i{display:block;height:100%;background:var(--gold);border-radius:99px;transition:width .3s}
+.ch .tk-list{display:grid;gap:.6rem;padding:0;margin:0}
+.ch .tk-d{list-style:none;border:1px solid var(--line);border-radius:14px;padding:.75rem .85rem;background:rgba(255,255,255,.02)}
+.ch .tk-d.is-ok{border-color:rgba(95,191,166,.55)}
+.ch .tk-top{display:flex;gap:.75rem;align-items:flex-start}
+.ch .tk-txt{display:grid;gap:.2rem;min-width:0}
+.ch .tk-txt b{color:var(--cream);font-size:1.05rem}
+.ch .tk-txt span{color:var(--muted);font-size:.93rem}
+.ch .tk-chk{position:relative;flex:none;display:grid;place-items:center;width:44px;height:44px;margin:-.4rem -.3rem 0 0;cursor:pointer}
+.ch .tk-chk input{width:24px;height:24px;accent-color:var(--gold);cursor:pointer}
+.ch .tk-mark{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--line);color:#7fd6b8;font-weight:700}
+.ch .tk-d.is-ok .tk-mark{border-color:#5fbfa6;background:rgba(95,191,166,.12)}
+.ch .tk-up{display:flex;flex-wrap:wrap;gap:.5rem;align-items:end;margin-top:.7rem}
+.ch .tk-m{display:grid;gap:.2rem;font-size:.88rem;color:var(--muted)}
+.ch .tk-m select,.ch .tk-m input{font:inherit;font-size:1rem;padding:.45rem .55rem;border-radius:10px;border:1px solid var(--line);background:var(--bg2,#14110d);color:var(--cream);min-height:44px;max-width:9.5rem}
+.ch .tk-file{position:relative;overflow:hidden;cursor:pointer;min-height:44px}
+.ch .tk-file input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.ch .tk-files{display:grid;gap:.3rem;margin:.6rem 0 0;padding:0}
+.ch .tk-files li{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:.5rem;font-size:.92rem;color:var(--body);border-top:1px dashed var(--line);padding-top:.3rem;overflow-wrap:anywhere}
+.ch .tk-files button{flex:none;font:inherit;background:none;border:0;color:var(--muted);cursor:pointer;min-width:44px;min-height:44px}
+.ch .tk-who{border:1px solid var(--gold);border-radius:14px;padding:.8rem .9rem;color:var(--body);margin-bottom:.8rem}
+.ch .tk-who b{color:var(--cream)}
+.ch .tk-logo{display:block;max-width:180px;max-height:72px;margin:0 0 .6rem;border-radius:8px;background:#fff;padding:4px}
+.ch .cd-colors{display:flex;flex-wrap:wrap;gap:.5rem;margin:.4rem 0}
+.ch .cd-colors button{width:44px;height:44px;border-radius:50%;border:2px solid var(--line);cursor:pointer}
+.ch .cd-colors button[aria-pressed=true]{border-color:var(--cream);box-shadow:0 0 0 3px rgba(255,255,255,.25)}
+.ch .perks{display:grid;gap:.45rem;padding:0;margin:.6rem 0}
+.ch .perks li{list-style:none;color:var(--body);padding-inline-start:1.6rem;position:relative}
+.ch .perks li::before{content:"🤝";position:absolute;inset-inline-start:0}
+.ch .perks b{color:var(--cream)}
+.ch .founders{color:var(--muted);font-size:.95rem;border-top:1px dashed var(--line);margin-top:.9rem;padding-top:.7rem}
+.ch .warn{color:var(--gold);font-weight:700}
+.ch .tk-done{border:1px solid var(--gold);border-radius:14px;padding:.9rem;margin-top:1rem;text-align:center;color:var(--body)}
+.ch .tk-done p{margin:0 0 .6rem}
+.ch .cd-adv{border-top:1px dashed var(--line);margin-top:.8rem;padding-top:.7rem}
+.ch .cd-adv h3{font-size:1rem;color:var(--cream);margin:.2rem 0 .4rem}
+.ch .cd-adv .chips label{font-size:.9rem}
+.ch .cd-adv textarea{width:100%;min-height:3.5rem}
+.ch .badge-done{display:inline-block;background:rgba(95,191,166,.15);color:#7fd6b8;border-radius:99px;padding:.05rem .55rem;font-size:.85rem;margin-inline-start:.4rem}
+.ch .tk-lock{font-size:.9rem;color:var(--muted);margin-top:.6rem}
+/* החדר */
+.ch .cd-steps{counter-reset:s;display:grid;gap:.7rem;padding:0;margin:.6rem 0}
+.ch .cd-steps li{list-style:none;counter-increment:s;position:relative;padding:.7rem .9rem .7rem 0;padding-inline-start:3rem;border:1px solid var(--line);border-radius:14px;color:var(--body)}
+.ch .cd-steps li::before{content:counter(s);position:absolute;inset-inline-start:.8rem;top:.7rem;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--gold);color:var(--ink);display:grid;place-items:center;font-weight:700}
+.ch .cd-steps b{color:var(--cream)}
+.ch .cd-steps code,.ch .cd-key{direction:ltr;unicode-bidi:isolate;background:rgba(255,255,255,.06);padding:.05rem .35rem;border-radius:6px;font-size:.9em;overflow-wrap:anywhere}
+.ch #cd-code{width:100%;min-height:9rem;direction:ltr;font-family:ui-monospace,Consolas,monospace;font-size:.8rem;margin-top:.5rem}
+.ch .cd-c{border:1px solid var(--line);border-radius:14px;margin-bottom:.6rem;overflow:hidden}
+.ch .cd-h{display:grid;gap:.2rem;width:100%;text-align:right;font:inherit;background:none;border:0;color:var(--body);padding:.8rem .9rem;cursor:pointer;min-height:44px}
+.ch .cd-h b{color:var(--cream);font-size:1.05rem}
+.ch .cd-body{padding:0 .9rem .9rem}
+.ch .cd-keybox{border:1px dashed var(--gold);border-radius:12px;padding:.7rem .9rem;margin-top:.8rem;color:var(--body)}
+.ch .partner{border:1px solid var(--gold);border-radius:16px;padding:1rem 1.1rem;background:rgba(201,162,77,.06)}
+.ch .partner h2{margin-top:0}
+.ch .tk-ai{margin-top:.7rem;border:1px solid var(--gold,#c9a24d);border-radius:12px;padding:.7rem .8rem;background:rgba(201,162,77,.06)}
+.ch .tk-ai p{margin:.2rem 0}.ch .tk-ai .btns{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem}.ch .tk-ai-f{font-size:.9rem;color:var(--muted);overflow-wrap:anywhere}.ch .tk-ai-wait{color:var(--gold,#c9a24d);font-weight:700}.ch .tk-m-w input{max-width:none;width:14rem}
+.ch .cd-ai{margin-top:1rem;border-top:1px dashed var(--line);padding-top:.8rem}.ch .cd-ai h3{font-size:1.02rem;margin:0 0 .3rem}
+.ch .cd-value{border-inline-start:4px solid var(--gold);background:rgba(201,162,77,.08);border-radius:12px;padding:.7rem .9rem;margin:.4rem 0 .9rem}
+.ch .cd-value p{color:var(--body);margin:.25rem 0}.ch .cd-value b{color:var(--cream)}
+.ch .cd-tiers{display:grid;gap:.8rem;margin:.8rem 0;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+.ch .cd-tier{border:1px solid var(--line);border-radius:14px;padding:.9rem;display:flex;flex-direction:column;gap:.4rem;position:relative}
+.ch .cd-tier .perks{flex:1;margin:.3rem 0}.ch .cd-tier .btn{text-align:center}
+.ch .cd-tier-on{border:2px solid var(--gold);background:rgba(201,162,77,.08)}
+.ch .cd-t-tag{align-self:flex-start;background:var(--gold);color:var(--ink);font-weight:700;font-size:.82rem;border-radius:99px;padding:.1rem .6rem}
+.ch .cd-t-h{display:grid;gap:.05rem}.ch .cd-t-h span{color:var(--muted);font-size:.9rem}.ch .cd-t-h b{color:var(--cream);font-size:1.6rem;line-height:1.2}.ch .cd-t-h small{color:var(--muted);font-size:.85rem}
+.ch .cd-tier-vip{border:2px solid var(--cream);background:linear-gradient(160deg,rgba(201,162,77,.18),rgba(201,162,77,.04))}
+@media print{.ch .tk-up,.ch .tk-files button,.ch .partner{display:none!important}.ch .tk-d{border-color:#999}.ch .tk-txt b,.ch .tk-txt span{color:#000!important}}

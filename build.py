@@ -51,7 +51,7 @@ SITES = {
         "desc": "כלים חינמיים לעסק קטן: תפריט בקישור ו-QR, מודעת מבצע, QR מעוצב וצ'ק-ליסט לפתיחת עסק",
         "css": ["/assets/esek.css"],
         "nav": [("tafrit", "/esek/tafrit/", "תפריט ו-QR"), ("mivtza", "/esek/mivtza/", "מודעת מבצע"),
-                ("qr", "/esek/qr/", "QR מעוצב"), ("ptiha", "/esek/ptiha/", "פתיחת עסק"), ("kelim", "/kelim/", "כל הכלים")],
+                ("qr", "/esek/qr/", "QR מעוצב"), ("ptiha", "/esek/ptiha/", "פתיחת עסק"), ("tfutsa", "/esek/tfutsa/", "תפוצה ללקוחות"), ("seo", "/esek/seo/", "בדיקת SEO"), ("kelim", "/kelim/", "כל הכלים")],
     },
     # משפחה ובית: קניות, תורנויות, שבת ואורחים, מי מביא מה. בלי שרת: הנתונים בטלפון (localStorage),
     # ושיתוף עם אחרים דרך ווטסאפ וקישור שמכיל את המצב (#d=...).
@@ -112,6 +112,18 @@ WA_TEXT = "שלום גילעד, אשמח לשמוע פרטים על ברית מ�
 from urllib.parse import quote
 WA = "https://wa.me/972584049049?text=" + quote(WA_TEXT)
 
+# כתובת המייל לכפתור "או במייל" לא כתובה בקוד (14.11.2026): היא נקראת ממשתנה הסביבה SITE_CONTACT_EMAIL,
+# או מהקובץ ~/.config/hakelim/contact_email.txt. שניהם נוצרים פעם אחת בקובץ "בניית אתר הכלים.bat" שעל שולחן העבודה.
+def _contact_mail():
+    v = os.environ.get("SITE_CONTACT_EMAIL", "").strip()
+    f = pathlib.Path.home() / ".config" / "hakelim" / "contact_email.txt"
+    if not v and f.exists():
+        v = f.read_text(encoding="utf-8").strip()
+    if not v:
+        raise SystemExit("חסרה כתובת המייל לאתר: מגדירים את SITE_CONTACT_EMAIL או את ~/.config/hakelim/contact_email.txt")
+    return v
+CONTACT_MAIL = _contact_mail()
+
 CTA = """
 <section id="contact" class="contact" aria-labelledby="contact-h">
   <div class="wrap">
@@ -120,7 +132,7 @@ CTA = """
     <a class="phone" href="{wa}"><small class="wa-tag">(ווטסאפ)</small> 058-404-9049</a>
     <div class="actions">
       <a class="btn btn-gold" href="{wa}"><svg class="ic"><use href="#wa"/></svg> שליחת הודעה בווטסאפ</a>
-      <a class="btn btn-line" href="mailto:gilad4049@gmail.com"><svg class="ic"><use href="#mail"/></svg> או במייל</a>
+      <a class="btn btn-line" href="mailto:{mail}"><svg class="ic"><use href="#mail"/></svg> או במייל</a>
     </div>
   </div>
 </section>
@@ -395,7 +407,8 @@ def demo_block(meta, url):
         return "", ""
     sp = DEMO_SPECS / f"{tool}.json"
     spec = json.loads(sp.read_text(encoding="utf-8")) if sp.exists() else {}
-    dur = sum(s.get("dur", 0) for s in spec.get("scenes", [])) or 45
+    dur = spec.get("duration") or sum(s.get("dur", 0) for s in spec.get("scenes", [])) or 45
+    wide = spec.get("wide")  # סרטון הדרכה לרוחב (16:9), למשל צילומי מסך של מחשב
     name = spec.get("name", "ככה זה עובד")
     v, poster = f"/assets/demo/{tool}.mp4", f"/assets/demo/{tool}.jpg"
     post, status = f"/assets/demo/{tool}-post.png", f"/assets/demo/{tool}-status.png"
@@ -408,11 +421,12 @@ def demo_block(meta, url):
           f'<a class="btn btn-line" href="{status}" download data-dv-dl="status">⬇️ להורדה (סטטוס)</a></div></details>') if has_fl else ""
     blk = (
         '<style>.dv-sec .dv-video{display:block;width:100%;max-width:20rem;aspect-ratio:9/16;height:auto;margin:.6rem auto 0;border-radius:1.2rem;background:#0e1628;box-shadow:0 8px 30px rgba(0,0,0,.35)}'
+        '.dv-sec .dv-video.dv-wide{max-width:100%;aspect-ratio:16/9;border-radius:.8rem}'
         '.dv-acts{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.9rem}.dv-acts .btn{font-size:.95rem}'
         '.dv-fl{margin-top:1rem}.dv-fl summary{cursor:pointer;color:var(--gold);font-weight:700;text-align:center}'
         '.dv-fl img{display:block;width:100%;max-width:24rem;height:auto;margin:.8rem auto 0;border-radius:1rem}</style>'
         f'<section class="k-sec dv-sec no-print" aria-labelledby="dv-h"><h2 id="dv-h">🎬 {html_lib.escape(name)}</h2>'
-        f'<video class="dv-video" controls playsinline preload="none" poster="{poster}" width="720" height="1280" aria-label="{html_lib.escape(spec.get("description", name))}" data-dv-play="{tool}">'
+        f'<video class="dv-video{' dv-wide' if wide else ''}" controls playsinline preload="none" poster="{poster}" width="{1280 if wide else 720}" height="{720 if wide else 1280}" aria-label="{html_lib.escape(spec.get("description", name))}" data-dv-play="{tool}">'
         f'<source src="{v}" type="video/mp4"></video>'
         f'<div class="dv-acts"><button type="button" class="btn btn-gold" data-dv-share="{v}" data-dv-kind="video">💌 לשלוח את הסרטון לחבר</button>'
         f'<a class="btn btn-line" href="{v}" download data-dv-dl="video">⬇️ להורדת הסרטון</a></div>{fl}'
@@ -484,7 +498,7 @@ for path in sorted(SRC.rglob("*.html")):
         "wa": WA,
         "crumbs": crumbs_html(meta.get("crumbs"), root),
         "content": content,
-        "cta": "" if (meta.get("no_cta") or site) else CTA.format(wa=WA),
+        "cta": "" if (meta.get("no_cta") or site) else CTA.format(wa=WA, mail=CONTACT_MAIL),
         "dock_href": meta.get("dock_href", "/mohel/madrich/"),
         "dock_label": meta.get("dock_label", "מדריך חינם"),
         "foot": meta.get("foot", "") + ('<script src="/assets/lead.js" defer></script>' if "data-lead" in content else "") + ('<script src="/assets/moed.js" defer></script>' if "moed-form" in content else "") + ('<script src="/assets/yt.js" defer></script>' if 'class="yt"' in content else ""),
@@ -563,6 +577,12 @@ _tj = json.dumps({"tools": TOOLS_JSON}, ensure_ascii=False, separators=(",", ":"
 for _p in (ROOT / "kelim" / "tools.json", ROOT / "tools" / "chatima-ext" / "tools.json"):
     _p.write_text(_tj, encoding="utf-8", newline="\n")
 print("tools.json:", len(TOOLS_JSON), "pages,", sum(1 for t in TOOLS_JSON if "x" in t), "take files")
+# ניסוח מייל: הנוסחים והמנוע של /kelim/tochen/mail/ גם בתוך התוסף (כפתור "✍ ניסוח" בג'ימייל, נוסחים בווטסאפ ווב)
+for _src, _dst in (("tochen-mail.json", "mail-nusach.json"), ("tochen-mail-fill.js", "mail-fill.js")):
+    _b = (ROOT / "assets" / _src).read_bytes()
+    _d = ROOT / "tools" / "chatima-ext" / _dst
+    if not _d.exists() or _d.read_bytes() != _b:
+        _d.write_bytes(_b)
 
 today = datetime.date.today().isoformat()
 # lastmod אמיתי: התאריך של הקומיט האחרון שנגע בקובץ המקור של הדף (קובץ ששונה ועוד לא נשמר = היום).

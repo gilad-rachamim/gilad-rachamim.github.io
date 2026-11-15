@@ -1,0 +1,248 @@
+<!--meta {
+  "site": "limudim",
+  "nav": "machshevon",
+  "tool": "kita_portal",
+  "title": "כיתה וירטואלית למתמטיקה – פורטל המורה: שיעורי בית, דפי עבודה ושאלות לכיתה, בחינם | כלים ללימודים",
+  "description": "כיתה וירטואלית למורות ולמורים למתמטיקה: כל הכיתות וההקבצות בקישור אחד, מעלים דף עבודה, ולכל תרגיל מחשבון, סרטון הדרכה ומחברת שבודקת כל שורה. בלוג שאלות שכל הכיתה עונה בו, נקודות, תגים ובונוסים. חינם, בלי הרשמה, בלי שמות מלאים.",
+  "og_title": "כיתה וירטואלית למתמטיקה – פורטל המורה",
+  "priority": "0.9",
+  "crumbs": [["כיתה וירטואלית למתמטיקה", null]],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/limudim-kita-portal.css\"><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"מה זה הכיתה הווירטואלית למתמטיקה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"פורטל חינמי למורות ולמורים למתמטיקה: פותחים כיתה או הקבצה, מעלים דף עבודה או כותבים תרגילים, ולכל תרגיל בוחרים מחשבון, סרטון הדרכה או שיעור קצר. התלמידים פותרים במחברת שבודקת כל שורה, שואלים שאלות בבלוג של הכיתה ואוספים נקודות ותגים.\"}}, {\"@type\": \"Question\", \"name\": \"כמה זה עולה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לכל מורה – חינם, בלי הרשמה ובלי פרסומות. בית ספר שרוצה את הפורטל לכל הצוות, עם הדרכה ומקום לדפים בלי הגבלה, מצטרף כשותף במיזם בהשתתפות סמלית.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לנהל כמה כיתות והקבצות?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. כל הכיתות וההקבצות מופיעות למעלה, ועוברים ביניהן בלחיצה. יש קישור אישי אחד שפותח את כולן מכל מכשיר – בטלפון ובמחשב.\"}}, {\"@type\": \"Question\", \"name\": \"איך מעלים דף עבודה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"במטלה חדשה בוחרים קובץ PDF או מצלמים את הדף. כל עמוד הופך לתמונה ברורה שהתלמידים רואים בטלפון. אחר כך כותבים כמה שאלות יש בדף, ולכל שאלה אפשר לבחור מחשבון, סרטון ורמז.\"}}, {\"@type\": \"Question\", \"name\": \"מה עם פרטיות התלמידים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"התלמידים נכנסים עם קוד הכיתה וכינוי בלבד – בלי שם מלא, טלפון או מייל. בבלוג נחסמים אוטומטית קישורים, מספרי טלפון ומילים לא יפות, כל תלמיד יכול לדווח, והמורה מסתירה או מוחקת בלחיצה. כיתה בלי פעילות חצי שנה נמחקת לבד.\"}}, {\"@type\": \"Question\", \"name\": \"איך התלמידים מקבלים נקודות ובונוסים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"תרגיל שנפתר נכון במחברת – 20 נקודות. שלושת הראשונים שמסיימים מטלה מקבלים בונוס 15, 10 ו-5. תשובה בבלוג שעזרה לחבר – 10, ותשובה שהמורה סימנה מצוינת – 15. יש 14 תגים, ולוח כיתתי עם פרסים שהמורה בוחרת.\"}}]}</script>",
+  "foot": "<script src=\"/assets/limudim-kita-mora.js\" defer></script>"
+} -->
+<header class="k-hero kp-hero">
+  <h1>כיתה וירטואלית למתמטיקה</h1>
+  <p class="sub">פורטל המורה: כל הכיתות וההקבצות במקום אחד. מעלים דף עבודה, ולכל תרגיל בוחרים מחשבון, סרטון הדרכה ושיעור קצר. התלמידים פותרים במחברת שבודקת כל שורה, שואלים את הכיתה, ואוספים נקודות ותגים. בחינם.</p>
+  <div class="actions">
+    <a class="btn btn-gold" href="#kp-app">לפתוח כיתה</a>
+    <a class="btn btn-line" href="/limudim/kita/talmidim/">כניסה לתלמידים</a>
+  </div>
+</header>
+
+<div class="tool kp" id="kp-app">
+  <p class="note" id="kp-loading">טוענים את הכיתות…</p>
+  <p class="pt-err" id="kp-hub-err" hidden></p>
+
+  <section class="panel kp-start" id="kp-start" hidden>
+    <h2>מתחילים בדקה</h2>
+    <ol class="cx-steps">
+      <li>פותחים כיתה או הקבצה (למשל "ט׳ הקבצה א").</li>
+      <li>שולחים לתלמידים את הקישור בווטסאפ. כל אחד בוחר כינוי, בלי הרשמה.</li>
+      <li>נותנים מטלה: מעלים דף עבודה או כותבים תרגילים, ורואים בזמן אמת מי פתר ומי נתקע.</li>
+    </ol>
+  </section>
+
+  <div class="kp-classes" id="kp-classes" aria-label="הכיתות שלי"></div>
+
+  <section class="panel" id="kp-new" hidden>
+    <h2>כיתה או הקבצה חדשה</h2>
+    <label class="pt-lbl" for="kp-cname">השם</label><input class="kh-in" id="kp-cname" maxlength="40" placeholder="למשל: ט׳ הקבצה א / י״א 5 יח״ל">
+    <label class="pt-lbl" for="kp-cteacher">איך לחתום <small>(לא חובה)</small></label><input class="kh-in" id="kp-cteacher" maxlength="30" placeholder="למשל: המורה רחל">
+    <button type="button" class="btn btn-gold" id="kp-create">לפתוח</button>
+    <p class="pt-err" id="kp-cerr" hidden></p>
+  </section>
+
+  <section id="kp-class" hidden>
+    <div class="panel kp-clhead">
+      <div class="kh-row"><h2 id="kp-cl-name"></h2><span><button type="button" class="linkish" id="kp-rename">לשנות שם</button> · <button type="button" class="linkish" id="kp-remove">להסיר מהפורטל</button></span></div>
+      <p>קוד הכיתה: <b class="kh-code" id="kp-code" dir="ltr"></b> · <span id="kp-nst"></span></p>
+      <div class="kh-link"><input class="kh-in" id="kp-slink" readonly dir="ltr" aria-label="הקישור לתלמידים"><button type="button" class="btn btn-sm" id="kp-copy">להעתיק</button><button type="button" class="btn btn-sm" id="kp-wa">ווטסאפ לכיתה</button></div>
+    </div>
+
+    <div class="kp-tabs" role="tablist" aria-label="ניהול הכיתה">
+      <button type="button" role="tab" id="kp-t-hw" aria-selected="true">📚 מטלות</button>
+      <button type="button" role="tab" id="kp-t-forum" aria-selected="false">💬 שאלות הכיתה</button>
+      <button type="button" role="tab" id="kp-t-kids" aria-selected="false">👥 תלמידים ופרגון</button>
+      <button type="button" role="tab" id="kp-t-fun" aria-selected="false">🎉 כיף בכיתה</button>
+      <button type="button" role="tab" id="kp-t-par" aria-selected="false">📣 הורים</button>
+    </div>
+
+    <section id="kp-p-hw" role="tabpanel" aria-labelledby="kp-t-hw">
+      <details class="panel kp-bank" id="kp-bank">
+        <summary><b>📚 מאגר השיעורים</b> <small>72 שיעורים מוכנים, מלוח הכפל ועד הבגרות – שולחים לכיתה בלחיצה</small></summary>
+        <p class="note">כל שיעור מתנגן כמו סרטון קצר, עם תרגול ורמזים. שולחים אותו כ"הכנה לשיעור" או כחזרה, ורואים מי עבר עליו.</p>
+        <div class="kp-chips" id="kp-bfilter" role="group" aria-label="סינון לפי שכבה">
+          <button type="button" class="kp-chip-b" data-band="all" aria-pressed="true">הכול</button>
+          <button type="button" class="kp-chip-b" data-band="ys" aria-pressed="false">יסודי (ב׳–ו׳)</button>
+          <button type="button" class="kp-chip-b" data-band="zt" aria-pressed="false">חטיבה (ז׳–ט׳)</button>
+          <button type="button" class="kp-chip-b" data-band="bg" aria-pressed="false">תיכון ובגרות</button>
+        </div>
+        <input class="kh-in" id="kp-bq" type="search" placeholder="🔍 חיפוש נושא, למשל: שברים" aria-label="חיפוש נושא">
+        <div class="kp-bgrid" id="kp-bgrid"></div>
+      </details>
+      <details class="panel kp-newhw" id="kp-newhw">
+        <summary><b>➕ מטלה חדשה</b> <small>דף עבודה, שיעורי בית או תרגול</small></summary>
+        <label class="pt-lbl" for="kp-title">שם המטלה</label><input class="kh-in" id="kp-title" maxlength="60" placeholder="למשל: דף עבודה – משוואות ריבועיות">
+        <div class="kp-2">
+          <div><label class="pt-lbl" for="kp-due">להגיש עד <small>(לא חובה)</small></label><input class="kh-in" type="date" id="kp-due"></div>
+          <div><label class="pt-lbl" for="kp-note">הוראות קצרות <small>(לא חובה)</small></label><input class="kh-in" id="kp-note" maxlength="400" placeholder="למשל: פותרים 1–4, את 5 רק מי שרוצה"></div>
+        </div>
+        <div class="kp-type" role="radiogroup" aria-label="סוג המטלה">
+          <label><input type="radio" name="kp-kind" value="" checked> 📚 תרגילים / דף עבודה</label>
+          <label><input type="radio" name="kp-kind" value="prep"> 🎬 הכנה לשיעור הבא</label>
+        </div>
+        <div id="kp-prepparts" hidden>
+          <p class="note">מצלמים בטלפון סרטון קצר (2–5 דקות) שמסביר את החומר של השיעור הבא, מעלים ליוטיוב כ"לא רשום" או לגוגל דרייב, ומדביקים כאן את הקישור. התלמידים צופים, עונים על שאלות קצרות, ומגיעים לשיעור מוכנים. צפייה = 10 נקודות, כל תשובה נכונה = 5.</p>
+          <label class="pt-lbl" for="kp-ptop">📚 שיעור מהמאגר שלנו</label>
+          <select class="kh-in" id="kp-ptop"></select>
+          <label class="pt-lbl" for="kp-pv">🎥 ו/או קישור לסרטון שלך</label>
+          <input class="kh-in" id="kp-pv" dir="ltr" placeholder="https://youtu.be/… או קישור מגוגל דרייב">
+          <h3>❓ שאלות בדיקה קצרות <small>(לא חובה, עד 3)</small></h3>
+          <div id="kp-pq"></div>
+        </div>
+        <div id="kp-hwparts">
+        <h3>📄 דף העבודה <small>(לא חובה)</small></h3>
+        <label class="kp-drop"><input type="file" id="kp-files" accept="image/*,application/pdf,.pdf" multiple><span>📎 לבחור PDF או לצלם את הדף</span><small>עד 20 עמודים. כל עמוד הופך לתמונה ברורה לטלפון.</small></label>
+        <p class="note" id="kp-pgst" aria-live="polite"></p>
+        <div class="kp-thumbs" id="kp-thumbs"></div><small class="note" id="kp-pgcount"></small>
+        <h3>✏️ התרגילים</h3>
+        <p class="note">כל תרגיל בשורה. תרגיל מהדף: מסמנים "מהדף", והתלמידים מעתיקים אותו למחברת. ב"מחשבון, סרטון…" בוחרים לכל תרגיל מה יעזור.</p>
+        <ol class="kp-exlist" id="kp-exlist"></ol>
+        <div class="btns"><button type="button" class="btn btn-sm" id="kp-exadd">➕ עוד תרגיל</button>
+          <span class="kp-pgq"><label for="kp-pgn">כמה שאלות יש בדף?</label><input class="kh-in" type="number" id="kp-pgn" min="1" max="20" value="5"><button type="button" class="btn btn-sm" id="kp-pgadd">להוסיף</button></span></div>
+        <div class="kp-mar">
+          <label class="kp-switch"><input type="checkbox" id="kp-mar"> 🏃 מרתון חזרה למבחן – בונוס כיתתי</label>
+          <p class="note" id="kp-mar-d" hidden>אם <select class="kh-in kp-inl" id="kp-marp" aria-label="כמה מהכיתה"><option value="50">חצי</option><option value="70" selected>70%</option><option value="80">80%</option><option value="100">כל</option></select> מהכיתה מסיימים את כל התרגילים עד תאריך ההגשה – כל מי שסיים/ה מקבל/ת 20 נקודות בונוס. כולם רואים את ההתקדמות של הכיתה, ומעודדים אחד את השני.</p>
+        </div>
+        </div>
+        <button type="button" class="btn btn-gold" id="kp-send">לתת לכיתה</button> <span class="note" id="kp-sendst" aria-live="polite"></span>
+        <p class="pt-err" id="kp-err" hidden></p>
+      </details>
+      <h2>המטלות</h2>
+      <div class="kp-cards" id="kp-hwlist"><p class="note">טוענים…</p></div>
+      <p class="note">ב"מעקב חי" רואים כל תלמיד/ה בכל תרגיל: ✓ פתר, ✏️ בדרך, 🙋 נתקע. לוחצים, רואים את הפתרון שורה אחרי שורה, ושולחים רמז או משחררים תשובה.</p>
+    </section>
+
+    <section id="kp-p-forum" role="tabpanel" aria-labelledby="kp-t-forum" hidden>
+      <div class="kh-row"><h2>שאלות הכיתה</h2><span class="note" id="kp-fsum"></span></div>
+      <label class="kp-switch"><input type="checkbox" id="kp-fopen" checked> התלמידים יכולים לשאול ולענות</label>
+      <p class="note">כל הכיתה רואה ועונה. קישורים, טלפונים ומילים לא יפות נחסמים לבד. שלושה דיווחים מסתירים הודעה עד שתחליטו. ⭐ מצוינת = 15 נקודות לכותב/ת.</p>
+      <div class="panel kp-askbox">
+        <label class="pt-lbl" for="kp-fask">שאלה או הודעה לכיתה</label>
+        <textarea class="kh-in" id="kp-fask" rows="2" maxlength="600" placeholder="למשל: מי יכול להסביר למה בתרגיל 3 יש שני פתרונות?"></textarea>
+        <button type="button" class="btn btn-gold" id="kp-fask-b">לפרסם</button>
+      </div>
+      <div id="kp-posts"><p class="note">טוענים…</p></div>
+    </section>
+
+    <section id="kp-p-kids" role="tabpanel" aria-labelledby="kp-t-kids" hidden>
+      <div class="kh-row"><h2>התלמידים והנקודות</h2><span class="note" id="kp-ksum"></span></div>
+      <div class="panel kp-kudos" id="kp-kudos">
+        <h3>💐 פרגון</h3>
+        <p class="note">מילה טובה מהמורה עושה המון. הפרגון מופיע לתלמיד/ה בגדול כשנכנסים, ואפשר לצרף נקודות בונוס.</p>
+        <div class="kp-2">
+          <div><label class="pt-lbl" for="kp-kto">למי</label><select class="kh-in" id="kp-kto"><option value="*">לכל הכיתה</option></select></div>
+          <div><label class="pt-lbl" for="kp-kpts">בונוס</label><select class="kh-in" id="kp-kpts"><option value="0">בלי נקודות</option><option value="5">5 נקודות</option><option value="10" selected>10 נקודות</option><option value="20">20 נקודות</option></select></div>
+        </div>
+        <div class="kp-chips" id="kp-ktpl"></div>
+        <label class="pt-lbl" for="kp-ktext">המילים שלך</label>
+        <textarea class="kh-in" id="kp-ktext" rows="2" maxlength="300" placeholder="למשל: ראיתי כמה השקעת בדף העבודה. גאה בך!"></textarea>
+        <div class="btns"><button type="button" class="btn btn-gold" id="kp-ksend">💐 לשלוח פרגון</button><a class="btn btn-sm" id="kp-kpar" target="_blank" rel="noopener" hidden>📲 לספר גם להורים (ווטסאפ)</a></div>
+        <details class="kp-more"><summary>הפרגונים ששלחתי</summary><ul class="kp-plain" id="kp-klist"></ul></details>
+      </div>
+      <div class="panel kp-roles">
+        <h3>🦸 תפקידים בכיתה</h3>
+        <p class="note">תפקיד מופיע ליד הכינוי בלוח ובשאלות לכיתה. "עוזר/ת השבוע" עונה ראשון/ה לשאלות ומקבל/ת תג.</p>
+        <p class="kp-sugg" id="kp-rsugg" hidden></p>
+        <div class="kp-2">
+          <div><label class="pt-lbl" for="kp-rwho">למי</label><select class="kh-in" id="kp-rwho"></select></div>
+          <div><label class="pt-lbl" for="kp-rrole">התפקיד</label><select class="kh-in" id="kp-rrole"><option>🦸 עוזר/ת השבוע</option><option>⭐ תלמיד/ת השבוע</option><option>📣 אחראי/ת שאלות</option><option>🧠 אלוף/ת החשיבה</option><option>🏃 מוביל/ת המרתון</option><option value="">— להסיר תפקיד —</option></select></div>
+        </div>
+        <div class="btns"><button type="button" class="btn btn-gold" id="kp-rgo">להעניק</button></div>
+      </div>
+      <div id="kp-kids"><p class="note">טוענים…</p></div>
+      <div class="panel">
+        <label class="pt-lbl" for="kp-cmsg">📣 הודעה שמופיעה לכל הכיתה</label>
+        <div class="kh-link"><input class="kh-in" id="kp-cmsg" maxlength="140" placeholder="למשל: מחר בוחן על משוואות. בהצלחה!"><button type="button" class="btn btn-sm" id="kp-cmsg-b">לשמור</button></div>
+        <label class="kp-switch"><input type="checkbox" id="kp-lock"> לסגור הצטרפות של תלמידים חדשים</label>
+      </div>
+      <p><a class="btn btn-line" id="kp-live" href="/limudim/machberet/kita/">📊 מעקב חי</a></p>
+    </section>
+
+    <section id="kp-p-fun" role="tabpanel" aria-labelledby="kp-t-fun" hidden>
+      <h2>כיף בכיתה</h2>
+      <div class="panel kp-proj">
+        <h3>📺 מצב מקרן לשיעור</h3>
+        <p class="note">פותחים על המחשב של הכיתה ומקרינים: לוח הנקודות, ההתקדמות במטלות, המרתון, הפסקת החשיבה עם שעון גדול, וקוד להצטרפות. מתעדכן לבד כל כמה שניות.</p>
+        <p><a class="btn btn-gold" id="kp-proj" target="_blank" rel="noopener" href="/limudim/kita/makren/">📺 לפתוח את מצב המקרן</a></p>
+      </div>
+      <div class="panel">
+        <h3>🧩 הפסקת חשיבה</h3>
+        <p class="note">5 דקות של משחק חשיבה באמצע השיעור, או כפרס לכיתה. המשחק מופיע לכל התלמידים בפורטל, וכל ניצחון מוסיף נקודות ללוח.</p>
+        <div class="kp-2">
+          <div><label class="pt-lbl" for="kp-bgame">המשחק</label><select class="kh-in" id="kp-bgame"></select></div>
+          <div><label class="pt-lbl" for="kp-bmin">כמה זמן</label><select class="kh-in" id="kp-bmin"><option value="3">3 דקות</option><option value="5" selected>5 דקות</option><option value="10">10 דקות</option><option value="15">15 דקות</option></select></div>
+        </div>
+        <div class="btns"><button type="button" class="btn btn-gold" id="kp-bgo">▶️ להתחיל הפסקת חשיבה</button><button type="button" class="btn btn-sm" id="kp-bstop" hidden>⏹ לעצור</button><span class="note" id="kp-bst" aria-live="polite"></span></div>
+      </div>
+      <div class="panel">
+        <div class="kh-row"><h3>🏆 תחרות בין הכיתות שלי</h3><span class="note">השבוע</span></div>
+        <p class="note">כל ההקבצות שלך, לפי הנקודות של השבוע. נקודות לתלמיד/ה בממוצע, כדי שגם כיתה קטנה תוכל לנצח.</p>
+        <ol class="kp-top5" id="kp-race"></ol>
+        <div class="btns"><button type="button" class="btn btn-sm" id="kp-racewa">📲 לשתף את התוצאות</button></div>
+      </div>
+      <div class="panel">
+        <h3>🎁 פרסים, תעודות ושובר</h3>
+        <p>בוחרים פרסים לכיתה (תפקיד, הפתעה, יציאה), מדפיסים תעודות, ומציבים יעד כיתתי. בנוסף, <b>מיזם הכלים נותן שובר מתנה</b> למקום הראשון בכל חודש בכיתה פעילה – באהבה.</p>
+        <p><a class="btn btn-gold" id="kp-gifts" href="/kelim/chashiva/kita/">🎁 פרסים, תעודות ושובר</a></p>
+      </div>
+    </section>
+
+    <section id="kp-p-par" role="tabpanel" aria-labelledby="kp-t-par" hidden>
+      <h2>עדכונים להורים</h2>
+      <p class="note">ההודעה נשמרת בדף ההורים של הכיתה, ואת הקישור שולחים פעם אחת לקבוצת ההורים בווטסאפ. בלי טלפונים של הורים באתר, ובלי פרטים על תלמידים בדף ההורים.</p>
+      <div class="panel">
+        <label class="pt-lbl" for="kp-ptext">הודעה להורים</label>
+        <textarea class="kh-in" id="kp-ptext" rows="3" maxlength="600" placeholder="למשל: הורים יקרים, ביום ראשון בוחן על משוואות. אשמח שתעודדו את הבנות לתרגל בפורטל. תודה!"></textarea>
+        <div class="btns"><button type="button" class="btn btn-gold" id="kp-psend">📣 לפרסם ולשלוח בווטסאפ</button><button type="button" class="btn btn-sm" id="kp-pweek">📊 לכתוב לי סיכום שבועי</button></div>
+        <p class="note">הקישור לדף ההורים: <a class="gold" id="kp-plink" target="_blank" rel="noopener"></a></p>
+      </div>
+      <ul class="kp-plain" id="kp-plist"></ul>
+    </section>
+  </section>
+
+  <section class="panel kp-mine" id="kp-mine" hidden>
+    <h2>🔑 הקישור האישי שלך לפורטל</h2>
+    <p>הקישור הזה פותח את כל הכיתות שלך, בכל מכשיר. שומרים אותו לעצמך, ולא שולחים לתלמידים.</p>
+    <div class="kh-link"><input class="kh-in" id="kp-mylink" readonly dir="ltr" aria-label="הקישור האישי לפורטל"><button type="button" class="btn btn-sm" id="kp-copymine">להעתיק</button><button type="button" class="btn btn-sm" id="kp-wamine">לשלוח לעצמי בווטסאפ</button></div>
+  </section>
+
+  <div class="kp-toast" id="kp-toast" role="status" aria-live="polite" hidden></div>
+</div>
+
+<!--demo-->
+<section class="k-sec seo-txt" aria-labelledby="kp-what">
+  <h2 id="kp-what">כיתה וירטואלית שנבנתה למתמטיקה</h2>
+  <p>רוב הכיתות הווירטואליות נבנו לכל המקצועות: מעלים קובץ, התלמידים מגישים קובץ, והמורה בודקת בערב. במתמטיקה זה לא עובד טוב. התלמיד נתקע בשורה השנייה, ואף אחד לא יודע עד הבוקר. הכיתה הזאת בנויה הפוך. כל שורה שהתלמיד כותב במחברת נבדקת מיד מול השורה שלפניה. המורה רואה בזמן אמת מי פתר, מי בדרך ומי נתקע. מי שנתקע לוחץ "נתקעתי" ומקבל רמז.</p>
+  <p>לכל תרגיל המורה מחליטה מה יעזור: מחשבון מדעי, מחשבון עם גרפים, מצב בחינה, או בלי מחשבון בכלל כשמתרגלים לבוחן. אפשר להוסיף סרטון הדרכה מיוטיוב, או שיעור קצר מהאתר מתוך 72 נושאים, מלוח הכפל ועד אינטגרלים. כך התלמיד מקבל את העזרה ליד התרגיל, ולא צריך לחפש.</p>
+
+  <h2>דף עבודה, שיעורי בית ותרגול – בכמה כיתות והקבצות</h2>
+  <p>מורה למתמטיקה מלמדת בדרך כלל כמה כיתות וכמה הקבצות. בפורטל כולן מופיעות למעלה, ועוברים ביניהן בלחיצה. לכל כיתה קוד משלה, קישור לתלמידים, מטלות, שאלות ולוח נקודות. קישור אישי אחד פותח את כל הכיתות מהטלפון ומהמחשב. מעלים דף עבודה כ-PDF או מצלמים אותו, וכל עמוד מופיע לתלמידים ברור בטלפון. מסמנים כמה שאלות יש בדף, ולכל שאלה בוחרים עמוד, מחשבון ורמז מוכן.</p>
+
+  <h2>שאלות לכיתה: לומדים גם אחד מהשני</h2>
+  <p>לכל כיתה יש בלוג שאלות. תלמיד שנתקע שואל, וכל הכיתה יכולה לענות. גם המורה עונה כשצריך. שאלה יכולה להיות קשורה לתרגיל מסוים, ואז רואים אותה ליד התרגיל. מי שהתשובה שלו עזרה מקבל 10 נקודות, והמורה יכולה לסמן "תשובה מצוינת". כדי שהמקום יישאר נקי, קישורים, מספרי טלפון ומילים לא יפות נחסמים לבד. כל תלמיד יכול לדווח, ושלושה דיווחים מסתירים הודעה עד שהמורה מחליטה.</p>
+
+  <h2>נקודות, תגים ובונוסים</h2>
+  <p>תרגיל שנפתר נכון נותן 20 נקודות. שלושת הראשונים שמסיימים מטלה מקבלים בונוס זריזות. יש 14 תגים: צעד ראשון, שלושה ימים ברצף, עזרה לחברים, ראש הלוח ועוד. הנקודות נכנסות ללוח של <a class="gold" href="/kelim/chashiva/kita/">כיתה משחקת</a>, שם המורה בוחרת פרסים ומדפיסה תעודות.</p>
+
+  <h2>הכנה לשיעור, פרגון והורים – בלי עבודה נוספת</h2>
+  <p>לפני השיעור מצלמים סרטון קצר שמסביר את החומר החדש, ונותנים אותו כ"הכנה לשיעור" עם שתיים־שלוש שאלות קצרות. רואים מי צפה ומה ענה, והשיעור מתחיל מהמקום שבו הכיתה באמת נמצאת. מי שלא סיים מטלה מקבל תזכורת אישית בלחיצה אחת. פרגון לתלמיד או לכל הכיתה מופיע להם בגדול כשנכנסים, עם נקודות בונוס, ואפשר לשלוח אותו גם להורים בווטסאפ. להורים יש דף משלהם עם ההודעות שלכם ושיעורי הבית הפתוחים, וכפתור שכותב לכם סיכום שבועי מוכן. ובאמצע השיעור, "הפסקת חשיבה": סודוקו, וורדל או אבני מספרים לחמש דקות, והתוצאות נכנסות ללוח הכיתה.</p>
+
+  <h2>לבתי ספר</h2>
+  <p>לכל מורה הפורטל בחינם. בית ספר שרוצה אותו לכל צוות המתמטיקה, עם הדרכה לצוות ומקום לדפים בלי הגבלה, מצטרף כשותף במיזם בהשתתפות סמלית: עשר פעמים חי (180 ₪) לשנה לכל בית הספר. בית ספר שאוהב את זה יקבל פורטל כזה גם לאנגלית ולמקצועות נוספים. <a class="gold" href="/limudim/batei-sefer/#portal">הפרטים לבתי ספר</a>.</p>
+
+  <h2>שאלות נפוצות</h2>
+  <details><summary>כמה זה עולה?</summary><p>לכל מורה – חינם, בלי הרשמה ובלי פרסומות. בית ספר שרוצה את הפורטל לכל הצוות מצטרף כשותף במיזם בהשתתפות סמלית.</p></details>
+  <details><summary>צריך להירשם או לתת מייל?</summary><p>לא. פותחים כיתה ומקבלים קישור אישי. שומרים אותו, והוא פותח את כל הכיתות בכל מכשיר.</p></details>
+  <details><summary>מה עם פרטיות התלמידים?</summary><p>רק קוד כיתה וכינוי. בלי שם מלא, טלפון או מייל. המורה יכולה להסיר תלמיד או למחוק מטלה בכל רגע, וכיתה בלי פעילות חצי שנה נמחקת לבד.</p></details>
+  <details><summary>זה עובד בטלפון?</summary><p>כן. התלמידים עובדים מהטלפון, עם מקלדת מתמטית במחברת. המורה יכולה לנהל מהטלפון או מהמחשב.</p></details>
+  <details><summary>אפשר להשתמש בזה גם בשיעור עצמו?</summary><p>כן. נותנים שלושה תרגילים בתחילת השיעור, ורואים על הלוח מי פתר ומי צריך עזרה. אחר כך ממשיכים ל<a class="gold" href="/limudim/krav/">דו-קרב לבגרות</a> או ל<a class="gold" href="/limudim/kahoot/">חידון</a>.</p></details>
+
+  <h2>עוד כלים למורים למתמטיקה</h2>
+  <div class="lcards">
+    <a href="/limudim/dapim/"><span class="em" aria-hidden="true">📝</span><b>מחולל דפי עבודה</b><span class="d">מספרים במילים שלכם (או מקליטים) איזה דף צריך, ומקבלים 3 דפים לבחירה. לכל כיתה רק הנושאים שלה, ו-5 שאלות מוצעות מכל נושא. אפשר להעלות את הדף ישר למטלה.</span></a>
+    <a href="/limudim/machberet/"><span class="em" aria-hidden="true">📓</span><b>המחברת</b><span class="d">פותרים שורה אחרי שורה, וכל שורה נבדקת מיד.</span></a>
+    <a href="/limudim/matematika/"><span class="em" aria-hidden="true">➗</span><b>מתמטיקה צעד אחרי צעד</b><span class="d">72 שיעורים קצרים עם תרגול ורמזים.</span></a>
+    <a href="/limudim/machshevon/"><span class="em" aria-hidden="true">🧮</span><b>מחשבון לבגרות</b><span class="d">מחשבון מדעי בעברית, עם גרפים ומצב בחינה.</span></a>
+  </div>
+</section>

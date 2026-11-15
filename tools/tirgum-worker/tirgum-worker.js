@@ -2,6 +2,7 @@
 // Cloudflare Worker, חינם:
 //   POST /t   {q, from, to}             -> {t, engine}     טקסט: Gemini (מפתח משלו) ← Llama 4 ב-Workers AI
 //   POST /img {image:{mime,data}, to}   -> {src, from, t}  תמונה: Gemini רואה, מעתיק את הטקסט ומתרגם ← Llama 4 ב-Workers AI
+//   POST /voice {mime, data, to}        -> {src, from, t}  הקלטה בשפה זרה: Gemini שומע ומתרגם ← Whisper + Llama 4
 //   GET  /ping
 // פרטיות: לא שומרים טקסטים ותמונות. נשמר רק מונה יומי (כתובת מגובבת, מתאפס כל יום),
 // ותרגומי טקסט זהים נשמרים במטמון של Cloudflare (לפי טביעת אצבע) כדי לא לבזבז מכסה.
@@ -10,11 +11,14 @@ const ALLOWED = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'htt
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 const T_PER = 400, T_CAP = 6000;     // בקשות טקסט: לכתובת ביום / לכל האתר ביום
 const I_PER = 15, I_CAP = 400;       // תמונות
+const V_PER = 15, V_CAP = 400;       // הודעות קוליות
+const MAX_AUDIO = 7_000_000;         // base64
 const MAX_Q = 5000, MAX_IMG = 4_000_000;
 const LITE = ['gemini-3.1-flash-lite', 'gemini-3.5-flash'];   // 3.5-flash-lite מחזיר 400 עם thinkingBudget:0
 const VISION = ['gemini-3.5-flash', 'gemini-3.1-flash-lite'];
 const AI_TEXT = ['@cf/meta/llama-4-scout-17b-16e-instruct', '@cf/mistralai/mistral-small-3.1-24b-instruct', '@cf/meta/llama-3.3-70b-instruct-fp8-fast'];
 const AI_VISION = '@cf/meta/llama-4-scout-17b-16e-instruct';
+const AI_WHISPER = '@cf/openai/whisper-large-v3-turbo';
 
 export const NAMES = {
   he: 'Hebrew', en: 'English', ar: 'Arabic', ru: 'Russian', fr: 'French', es: 'Spanish', am: 'Amharic', uk: 'Ukrainian',
@@ -166,15 +170,49 @@ async function imageRoute(request, env, h) {
   return json({ found: !!out.found && !!String(out.src || '').trim(), src: out.src || '', from: NAMES[out.from] ? out.from : '', t: out.t || '', engine: out.engine, why: out.why, left: quota.left }, 200, h);
 }
 
+// הודעה קולית בשפה זרה: Gemini שומע, מתמלל ומתרגם; גיבוי – Whisper ב-Workers AI ואחריו תרגום
+export function voiceRules(to) {
+  return `You transcribe short voice messages and recordings. Write down exactly what is said, in the spoken language and its own script ` +
+    `(field "src"), give the spoken language as a two-letter ISO code (field "from"), then translate it into natural, fluent ${NAMES[to] || to}` +
+    (to === 'he' ? ' without niqqud' : '') + ` (field "t"). If there is no speech, found=false and all strings empty. Never invent words.`;
+}
+async function voiceRoute(request, env, ctx, h) {
+  const raw = await request.text();
+  if (raw.length > MAX_AUDIO + 2000) return json({ error: 'too_big' }, 413, h);
+  let b; try { b = JSON.parse(raw); } catch (_) { return json({ error: 'bad_json' }, 400, h); }
+  const to = String(b.to || 'he'), mime = String(b.mime || ''), data = String(b.data || '');
+  if (!NAMES[to] || !/^(audio|video)\//.test(mime) || !data) return json({ error: 'bad' }, 400, h);
+  const quota = await take(env, request, 'v', V_PER, V_CAP);
+  if (!quota.ok) return json({ error: 'quota' }, 200, h);
+  let out, why;
+  try {
+    out = (await gemini(env, VISION, voiceRules(to), [{ inlineData: { mimeType: mime.replace(/;.*$/, ''), data } }, { text: 'Transcribe and translate this recording.' }], IMG_SCHEMA, 60000)).data;
+    out.engine = 'gemini';
+  } catch (e) {
+    why = String(e && e.message || e).slice(0, 100);
+    try {
+      const w = await env.AI.run(AI_WHISPER, { audio: data });
+      const src = String((w && w.text) || '').trim();
+      const from = String((w && w.transcription_info && w.transcription_info.language) || '').slice(0, 2);
+      if (!src) out = { found: false, src: '', from: '', t: '' };
+      else out = { found: true, src, from, t: from === to ? src : await aiText(env, src, NAMES[from] ? from : 'en', to) };
+      out.engine = 'whisper'; out.why = why;
+    } catch (e2) { return json({ error: 'busy', detail: String(e2 && e2.message || e2).slice(0, 100) }, 200, h); }
+  }
+  out.from = String(out.from || '').slice(0, 2).toLowerCase();
+  if (to === 'he') out.t = stripNiqqud(out.t || '');
+  return json({ found: !!out.found && !!String(out.src || '').trim(), src: out.src || '', from: NAMES[out.from] ? out.from : '', t: out.t || '', engine: out.engine, why: out.why, left: quota.left }, 200, h);
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const h = cors(request.headers.get('origin'));
     if (request.method === 'OPTIONS') return h ? new Response('', { headers: h }) : new Response('', { status: 403 });
     if (url.pathname === '/ping') return json({ ok: true, gemini: geminiKeys(env).length, ai: !!env.AI }, 200, h || {});
-    if (request.method === 'POST' && (url.pathname === '/t' || url.pathname === '/img')) {
+    if (request.method === 'POST' && (url.pathname === '/t' || url.pathname === '/img' || url.pathname === '/voice')) {
       if (!h) return json({ error: 'origin' }, 403);
-      return url.pathname === '/t' ? translateRoute(request, env, ctx, h) : imageRoute(request, env, h);
+      return url.pathname === '/t' ? translateRoute(request, env, ctx, h) : url.pathname === '/voice' ? voiceRoute(request, env, ctx, h) : imageRoute(request, env, h);
     }
     return json({ error: 'not_found' }, 404, h || {});
   }

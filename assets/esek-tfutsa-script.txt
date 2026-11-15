@@ -1,0 +1,74 @@
+/**
+ * שליחת מיילים אישיים מהחשבון של העסק – רשימת תפוצה, הכלים של גילעד רחמים
+ * https://hakelim.com/esek/tfutsa/
+ *
+ * הקוד הזה רץ בחשבון הגוגל שלכם בלבד, ושולח מהג'ימייל שלכם (המיילים מופיעים אצלכם ב"דואר יוצא").
+ * רשימת הלקוחות לא נשמרת כאן ולא עוברת דרך אתר הכלים: הדף שולח כל פעם רק את המיילים לשליחה.
+ * מכסה יומית של גוגל: כ-100 נמענים בג'ימייל רגיל, כ-1,500 ב-Google Workspace.
+ *
+ * התקנה (פעם אחת, כ-5 דקות): ההוראות המלאות בדף, בלשונית "מהחשבון שלכם".
+ * גרסה 1 · 14.11.2026
+ */
+var VER = 1;
+var MAX_ITEMS = 25;       // מיילים בכל בקשה
+var MAX_BODY = 20000;     // תווים בגוף המייל
+var EMAIL_RE = /^[^\s@,;<>"]+@[^\s@,;<>"]+\.[^\s@,;<>"]{2,}$/;
+
+function doGet() { return out_({ ok: true, app: 'tfutsa', ver: VER }); }
+
+function doPost(e) {
+  var b;
+  try { b = JSON.parse(e.postData.contents); } catch (x) { return out_({ ok: false, err: 'bad' }); }
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(20000);
+    return out_(route_(b || {}));
+  } catch (x) {
+    return out_({ ok: false, err: 'server', msg: String(x && x.message || x).slice(0, 200) });
+  } finally {
+    try { lock.releaseLock(); } catch (x) {}
+  }
+}
+
+function route_(b) {
+  var P = PropertiesService.getScriptProperties();
+  var a = String(b.a || '');
+  // חיבור ראשון: נוצר מפתח, והדפדפן ששמר אותו הוא היחיד שיכול לשלוח
+  if (a === 'init') {
+    if (P.getProperty('KEY')) return { ok: false, err: 'already' };
+    var k = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '').slice(0, 8);
+    P.setProperty('KEY', k);
+    return { ok: true, key: k, quota: MailApp.getRemainingDailyQuota(), ver: VER };
+  }
+  if (!b.key || b.key !== P.getProperty('KEY')) return { ok: false, err: 'key' };
+  if (a === 'ping') return { ok: true, quota: MailApp.getRemainingDailyQuota(), ver: VER };
+  if (a === 'send') {
+    var items = (b.items || []).slice(0, MAX_ITEMS), sent = [], failed = [];
+    var name = String(b.name || '').slice(0, 60);
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i] || {}, to = String(it.to || '').trim();
+      if (MailApp.getRemainingDailyQuota() < 1) return { ok: false, err: 'quota', sent: sent, failed: failed, quota: 0 };
+      if (!EMAIL_RE.test(to)) { failed.push({ id: it.id, err: 'email' }); continue; }
+      try {
+        var msg = { to: to, subject: String(it.subject || '').slice(0, 250), body: String(it.body || '').slice(0, MAX_BODY) };
+        if (name) msg.name = name;
+        MailApp.sendEmail(msg);
+        sent.push(it.id);
+      } catch (x) {
+        if (/limit|quota|too many/i.test(String(x))) return { ok: false, err: 'quota', sent: sent, failed: failed, quota: 0 };
+        failed.push({ id: it.id, err: String(x && x.message || x).slice(0, 120) });
+      }
+    }
+    P.setProperty('SENT', String((+P.getProperty('SENT') || 0) + sent.length));
+    return { ok: true, sent: sent, failed: failed, quota: MailApp.getRemainingDailyQuota() };
+  }
+  return { ok: false, err: 'bad' };
+}
+
+function out_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
+
+// להרצה ידנית מהעורך, פעם אחת: מאשר את ההרשאה לשליחת מייל ומראה את המכסה של היום
+function setup() { Logger.log('מוכן. אפשר לשלוח היום עוד ' + MailApp.getRemainingDailyQuota() + ' מיילים.'); }
+
+// להרצה ידנית אם רוצים לחבר דפדפן אחר: מוחק את המפתח הישן
+function resetKey() { PropertiesService.getScriptProperties().deleteProperty('KEY'); Logger.log('המפתח נמחק. מחברים מחדש מהדף.'); }

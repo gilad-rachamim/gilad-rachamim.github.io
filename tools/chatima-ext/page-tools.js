@@ -188,16 +188,67 @@ function fullShot(tab) {
 }
 
 // ---------- 7. תרגום הדף ותרגום של טקסט מסומן (translate.js, במנוע התרגום שבתוך כרום) ----------
+// PDF: כרום מציג אותו במציג סגור, אז פותחים אותו בדף התרגום של התוסף (pdf.html) בכרטיסייה ליד
+function openPdfView(tab) {
+  return chrome.tabs.create({ url: chrome.runtime.getURL('pdf.html') + '?u=' + encodeURIComponent(tab.url || '') + '&t=' + tab.id, index: tab.index + 1 })
+    .then(function () { return { ok: true, r: 'pdf' }; });
+}
 function trInTab(tab, cmd, arg) {
   var target = { tabId: tab.id };
-  return chrome.scripting.executeScript({ target: target, func: function () { return !!window.__hkTr; } })
+  var pdfUrl = /^(https?|file):/.test(tab.url || '') && /\.pdf($|[?#])/i.test(tab.url || '');
+  return chrome.scripting.executeScript({ target: target, func: function () { return { has: !!window.__hkTr, pdf: document.contentType === 'application/pdf' }; } })
     .then(function (r) {
-      if (r && r[0] && r[0].result) return;
+      var st = r && r[0] && r[0].result || {};
+      if (st.pdf && cmd === 'toggle') throw { pdf: true };
+      if (st.has) return;
       return chrome.scripting.insertCSS({ target: target, files: ['translate.css'] }).catch(function () {})
         .then(function () { return chrome.scripting.executeScript({ target: target, files: ['translate.js'] }); });
     })
     .then(function () { return chrome.scripting.executeScript({ target: target, func: function (c, a) { return window.__hkTr.cmd(c, a); }, args: [cmd, arg || ''] }); })
-    .then(function (r) { return { ok: true, r: r && r[0] && r[0].result }; });
+    .then(function (r) { return { ok: true, r: r && r[0] && r[0].result }; }, function (e) {
+      if (cmd === 'toggle' && (e && e.pdf || pdfUrl)) return openPdfView(tab);
+      throw e;
+    });
+}
+// מביא את קובץ ה-PDF מתוך הכרטיסייה שלו (שם הוא "מאותו אתר", ולתוסף יש רשות אחרי הלחיצה)
+function pdfFromTab(tabId) {
+  return chrome.scripting.executeScript({ target: { tabId: tabId }, func: function () {
+    return fetch(location.href, { credentials: 'include' }).then(function (r) { return r.arrayBuffer(); }).then(function (buf) {
+      var bytes = new Uint8Array(buf), out = '', step = 0x8000;
+      for (var i = 0; i < bytes.length; i += step) out += String.fromCharCode.apply(null, bytes.subarray(i, i + step));
+      return btoa(out);
+    });
+  } }).then(function (r) { var b = r && r[0] && r[0].result; if (!b) throw new Error('empty'); return { b64: b }; });
+}
+
+// ---------- "לתרגם תמיד את האתר הזה": סקריפט שנטען לבד רק באתרים שנבחרו וקיבלו רשות ----------
+function syncAutoTr() {
+  return chrome.storage.sync.get('trSites').catch(function () { return {}; }).then(function (o) {
+    var list = Array.isArray(o.trSites) ? o.trSites : [];
+    return Promise.all(list.map(function (s) {
+      return chrome.permissions.contains({ origins: [s + '/*'] }).then(function (ok) { return ok ? s : null; }, function () { return null; });
+    }));
+  }).then(function (ok) {
+    var m = ok.filter(Boolean).map(function (s) { return s + '/*'; });
+    return chrome.scripting.getRegisteredContentScripts({ ids: ['hk-tr-auto'] }).then(function (have) {
+      if (!m.length) return have.length ? chrome.scripting.unregisterContentScripts({ ids: ['hk-tr-auto'] }) : null;
+      var spec = { id: 'hk-tr-auto', matches: m, js: ['translate.js', 'translate-auto.js'], css: ['translate.css'], runAt: 'document_idle', persistAcrossSessions: true };
+      return have.length ? chrome.scripting.updateContentScripts([spec]) : chrome.scripting.registerContentScripts([spec]);
+    });
+  }).catch(function () {});
+}
+function setAutoTr(origin, on) {
+  if (!/^https?:\/\/[^/]+$/.test(origin)) return Promise.resolve(false);
+  return chrome.storage.sync.get('trSites').catch(function () { return {}; }).then(function (o) {
+    var list = (Array.isArray(o.trSites) ? o.trSites : []).filter(function (s) { return s !== origin; });
+    if (on) list.unshift(origin);
+    return chrome.storage.sync.set({ trSites: list.slice(0, 200) });
+  }).then(function () {
+    if (!on) return chrome.permissions.remove({ origins: [origin + '/*'] }).catch(function () {});
+  }).then(syncAutoTr).then(function () { return true; });
+}
+function askAutoTr(origin) {
+  return chrome.windows.create({ url: chrome.runtime.getURL('always.html') + '?o=' + encodeURIComponent(origin), type: 'popup', width: 440, height: 300, focused: true });
 }
 
 // ---------- מה כל פריט עושה ----------

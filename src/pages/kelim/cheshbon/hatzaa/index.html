@@ -1,0 +1,35 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "cheshbon_hatzaa",
+  "noindex": true,
+  "no_rel": true,
+  "title": "הצעת מחיר מרואה החשבון | הכלים של גילעד רחמים",
+  "description": "הצעת מחיר מסודרת מרואה החשבון: מה מקבלים, כמה זה עולה, ואישור בלחיצה.",
+  "og_title": "הצעת מחיר מרואה החשבון",
+  "crumbs": [["רואי חשבון ויועצי מס", "/kelim/cheshbon/"], ["הצעת מחיר", null]],
+  "head_pre": "<script>try{var h=location.hash;if(/[#&](d|q)=/.test(h)){window.__hzH=h;try{sessionStorage.setItem('hz-h',h)}catch(e){}history.replaceState(null,'',location.pathname+location.search)}}catch(e){}</script>",
+  "head": "<link rel=\"stylesheet\" href=\"/assets/cheshbon.css\"><link rel=\"stylesheet\" href=\"/assets/cheshbon-tik.css\"><link rel=\"stylesheet\" href=\"/assets/cheshbon-hatzaa.css\">",
+  "foot": "<script src=\"/assets/cheshbon.js\" defer></script><script src=\"/assets/cheshbon-tik.js\" defer></script><script src=\"/assets/cheshbon-hatzaa.js\" defer></script>"
+} -->
+<div class="tool ch hz-page" id="hz-page">
+  <h1 class="sr">הצעת מחיר מרואה החשבון</h1>
+  <p class="msg" id="hz-msg" aria-live="polite"></p>
+  <div id="hz-view"></div>
+  <div class="hz-act no-print" id="hz-act" hidden>
+    <form class="hz-ok" id="hz-form" novalidate>
+      <h2>מאשרים את ההצעה?</h2>
+      <div class="field"><label for="hz-name">השם המלא שלך</label><input id="hz-name" type="text" maxlength="60" autocomplete="name"></div>
+      <button class="btn btn-gold" type="submit">✓ מאשר/ת את ההצעה</button>
+      <p class="msg" id="hz-fmsg" aria-live="polite"></p>
+    </form>
+    <div class="hz-done" id="hz-done" hidden role="status"></div>
+    <div class="btns">
+      <button class="btn btn-line btn-sm" type="button" id="hz-print">להוריד PDF או להדפיס</button>
+      <a class="btn btn-line btn-sm" id="hz-ask" href="#" target="_blank" rel="noopener" hidden><svg class="ic"><use href="#wa"/></svg> שאלה על ההצעה? לכתוב למשרד</a>
+    </div>
+  </div>
+  <div class="k-form" id="hz-empty" hidden>
+    <p>רואי חשבון ויועצי מס שולחים מכאן הצעות מחיר מסודרות ללקוחות, עם אישור בלחיצה. <a class="gold" href="#demo" onclick="setTimeout(function(){location.reload()},10)">לראות דוגמה</a> · <a class="gold" href="/kelim/cheshbon/tik/cheder/#hz-build">איך מכינים הצעה</a></p>
+  </div>
+</div>

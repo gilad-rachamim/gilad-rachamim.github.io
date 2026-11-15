@@ -1,0 +1,38 @@
+<!doctype html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<title>כלים בצד – הכלים של גילעד רחמים</title>
+<link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+<nav class="tabs" role="tablist" aria-label="מה בחלון הצד">
+  <button type="button" role="tab" id="t-tools" aria-selected="true">🧰 כלים</button>
+  <button type="button" role="tab" id="t-notes" aria-selected="false">📝 פתקים וטקסטים</button>
+</nav>
+<iframe id="notes" title="פתקים וטקסטים מוכנים" hidden></iframe>
+<div id="pick">
+  <header><img src="icon32.png" alt="" width="22" height="22"><b>כלים בצד</b><span class="small">פתוחים ליד הדף, בלי לעזוב אותו</span></header>
+  <label class="search"><span class="sr">חיפוש כלי</span><input id="q" type="search" placeholder="🔍 איזה כלי לפתוח בצד?" autocomplete="off"></label>
+  <section id="sug-sec" aria-labelledby="sug-h">
+    <h2 id="sug-h">🧰 מתאים לדף הזה</h2>
+    <p class="small" id="sug-site"></p>
+    <div id="sug" class="list"></div>
+  </section>
+  <section aria-labelledby="res-h">
+    <h2 id="res-h">כל הכלים</h2>
+    <div id="res" class="list"></div>
+  </section>
+</div>
+<div id="tool" hidden>
+  <div class="bar">
+    <button type="button" class="line" id="back">→ כלים</button>
+    <b id="tool-name"></b>
+    <button type="button" class="line" id="out" title="לפתוח את הכלי בכרטיסייה רגילה">↗ בכרטיסייה</button>
+  </div>
+  <iframe id="frame" title="הכלי" allow="clipboard-read; clipboard-write; microphone; camera; fullscreen; display-capture"></iframe>
+</div>
+<script src="suggest.js"></script>
+<script src="sidepanel.js"></script>
+</body>
+</html>

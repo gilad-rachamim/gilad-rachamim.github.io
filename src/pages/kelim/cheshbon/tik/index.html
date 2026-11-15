@@ -1,0 +1,72 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "cheshbon_tik",
+  "title": "מסמכים לדוח שנתי למס הכנסה – רשימה מלאה ותיק מסודר לרואה החשבון | הכלים של גילעד רחמים",
+  "description": "רשימת המסמכים לדוח השנתי ולהחזר מס: טופס 106, קבלות תרומות (סעיף 46), טופס 867, פנסיה וביטוח, ביטוח לאומי ונקודות זיכוי, ולעוסקים גם חשבוניות ודפי בנק. מסמנים מה כבר יש, ועם קישור מרואה החשבון מצלמים והקבצים נכנסים ישר אליו. בחינם.",
+  "og_title": "מסמכים לדוח שנתי: רשימה ותיק לרואה החשבון",
+  "priority": "0.8",
+  "crumbs": [["רואי חשבון ויועצי מס", "/kelim/cheshbon/"], ["מסמכים לדוח שנתי", null]],
+  "head_pre": "<script>try{var h=location.hash;if(/[#&]t=/.test(h)){window.__tikH=h;try{sessionStorage.setItem('tik-h',h)}catch(e){}history.replaceState(null,'',location.pathname+location.search)}}catch(e){}</script>",
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/cheshbon.css\"><link rel=\"stylesheet\" href=\"/assets/cheshbon-tik.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"אילו מסמכים צריך לדוח שנתי למס הכנסה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בדרך כלל: טופס 106 מכל מעסיק, קבלות על תרומות לפי סעיף 46, אישורים שנתיים מקרן הפנסיה, קופת הגמל וביטוח החיים, טופס 867 מהבנק, אישורים מביטוח לאומי, ומסמכים לנקודות זיכוי. עוסקים מוסיפים חשבוניות הוצאה והכנסה, דפי בנק ותשלומי מקדמות. רואה החשבון קובע מה רלוונטי לכם.\"}}, {\"@type\": \"Question\", \"name\": \"מה ההבדל בין דוח שנתי להחזר מס?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"דוח שנתי הוא חובה לעוסקים ולחלק מהשכירים. שכיר שלא חייב בדוח יכול להגיש בקשה להחזר מס על שש השנים האחרונות. המסמכים כמעט אותם מסמכים.\"}}, {\"@type\": \"Question\", \"name\": \"איך שולחים את המסמכים לרואה החשבון?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"אם רואה החשבון פתח לכם תיק בכלי, מקבלים ממנו קישור אישי. פותחים אותו בטלפון, מצלמים כל מסמך, והוא נכנס ישר לתיקייה שלכם בגוגל דרייב של המשרד.\"}}, {\"@type\": \"Question\", \"name\": \"הקבצים עוברים דרך האתר?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. הקבצים עוברים ישר מהטלפון לגוגל דרייב של רואה החשבון. אתר הכלים לא שומר שום קובץ, שם או מספר זהות.\"}}, {\"@type\": \"Question\", \"name\": \"איפה מוצאים את טופס 106 וטופס 867?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"טופס 106 מקבלים מהמעסיק, בדרך כלל עד סוף מרץ, ולפעמים באזור האישי באתר המעסיק או במערכת השכר. טופס 867 נמצא באתר הבנק או בית ההשקעות, תחת אישורים שנתיים.\"}}]}</script>",
+  "foot": "<script src=\"/assets/cheshbon.js\" defer></script><script src=\"/assets/cheshbon-tik.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מסמכים לדוח שנתי למס הכנסה</h1>
+  <p class="sub">הרשימה המלאה לדוח השנתי ולהחזר מס, מגירה לכל סוג מסמך. מסמנים מה כבר יש. ואם רואה החשבון שלכם שלח קישור, מצלמים כל מסמך והוא נכנס ישר אליו.</p>
+</header>
+
+<div class="tool ch" id="tik">
+  <div class="tk-who" id="tik-who" hidden></div>
+  <div id="tik-solo">
+    <div class="seg" id="tik-type" role="group" aria-label="מי אתם">
+      <button type="button" data-v="sachir" aria-pressed="true">שכיר / פרטי</button>
+      <button type="button" data-v="osek" aria-pressed="false">עוסק פטור או מורשה</button>
+    </div>
+  </div>
+  <div class="seg" id="tik-year" role="group" aria-label="שנת המס"></div>
+  <div class="tk-prog" id="tik-prog" aria-live="polite"></div>
+  <p class="msg" id="tik-msg" aria-live="polite"></p>
+  <div class="tk-who" id="tik-sign" hidden></div>
+  <ul class="tk-list" id="tik-list"></ul>
+  <div class="tk-done no-print" id="tik-done-box" hidden>
+    <p id="tik-done-msg"></p>
+    <button class="btn btn-gold" type="button" id="tik-done">✓ סיימתי להעלות</button>
+  </div>
+
+  <div class="btns no-print">
+    <button class="btn btn-gold btn-sm" type="button" id="tik-wa"><svg class="ic"><use href="#wa"/></svg> לשלוח לעצמי מה חסר</button>
+    <button class="btn btn-line btn-sm" type="button" id="tik-print">להדפיס את הרשימה</button>
+    <button class="btn btn-line btn-sm" type="button" id="tik-reset">לנקות סימונים</button>
+  </div>
+  <p class="tk-lock">🔒 הסימונים נשמרים רק בטלפון שלכם. כשמעלים לרואה חשבון, הקבצים עוברים ישר לגוגל דרייב שלו, לא דרך האתר. הרשימה עוזרת לאסוף; רואה החשבון קובע מה צריך.</p>
+
+  <section class="k-sec" aria-labelledby="tik-cpa-h" style="margin-top:1.4rem">
+    <h2 id="tik-cpa-h">רואה חשבון? פתחו חדר ללקוחות</h2>
+    <p class="lead2">קישור אישי לכל לקוח, הקבצים נכנסים לגוגל דרייב שלכם לפי שנה, לקוח ומגירה, וטבלה שנתית שמראה מה חסר. חלופה חינמית לפורטל לקוחות בתשלום: נבנתה בעשרות שעות פיתוח, חינמית ושלמה לכל משרד בזכות השותפים במיזם. <a class="gold" href="/kelim/cheshbon/tik/cheder/#cd-partner-h">מדרגות השותפות במיזם</a>.</p>
+    <div class="actions"><a class="btn btn-gold" href="/kelim/cheshbon/tik/cheder/">לפתוח חדר למשרד</a><a class="btn btn-line" href="/kelim/machshev/tzilumim/">צילומים ל-PDF</a></div>
+  </section>
+  <div class="share-row no-print"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="רשימת המסמכים לדוח השנתי ולהחזר מס, עם וי על מה שכבר יש – בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר</a></div>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">רשימת מסמכים לדוח שנתי ולהחזר מס</h2>
+  <p>כל שנה, בין ינואר ליוני, רואי החשבון מבקשים מהלקוחות את אותם מסמכים, והלקוחות מחפשים אותם בין המיילים, המגירות והאזורים האישיים. הרשימה כאן מסדרת את זה מראש: מגירה לכל סוג מסמך, עם הסבר קצר מאיפה מביאים אותו. מסמנים וי על מה שכבר אצלכם, ושולחים לעצמכם בווטסאפ את מה שעוד חסר.</p>
+  <h3>מסמכים לשכיר</h3>
+  <p><b>טופס 106</b> מכל מעסיק שעבדתם אצלו בשנה, גם לתקופה קצרה. <b>קבלות על תרומות</b> לעמותה שיש לה אישור לפי סעיף 46, על שמכם. <b>אישורים שנתיים</b> מקרן הפנסיה, מקופת הגמל ומביטוח החיים או אובדן כושר העבודה, בעיקר אם הפקדתם באופן עצמאי. <b>טופס 867</b> מהבנק ומבית ההשקעות על ריבית ורווחים. <b>אישורים מביטוח לאומי</b> על דמי לידה, מילואים, אבטלה או נכות. ומסמכים שיכולים לזכות בנקודות זיכוי: תואר, תעודת שחרור, ילד עם צרכים מיוחדים או מגורים ביישוב מזכה.</p>
+  <h3>מסמכים לעוסק פטור או מורשה</h3>
+  <p>לעוסק נוספות מגירות לפי חודש: חשבוניות הוצאה של העסק, קבלות וחשבוניות הכנסה, דפי בנק וכרטיסי אשראי, הוצאות רכב, ואישורי תשלום של מקדמות, מע"מ וביטוח לאומי. כשמצלמים כל קבלה ביום שמקבלים אותה, בסוף השנה אין ערימה.</p>
+  <h3>תיק אישי אצל רואה החשבון</h3>
+  <p>רואה חשבון שפתח <a class="gold" href="/kelim/cheshbon/tik/cheder/">חדר למשרד</a> שולח לכל לקוח קישור אישי. הלקוח פותח אותו בטלפון, בוחר מגירה, מצלם, והקובץ נכנס ישר לתיקייה שלו בגוגל דרייב של המשרד, עם שורה בטבלה השנתית. אין אפליקציה להוריד ואין הרשמה. אפשר להוסיף את הדף למסך הבית, והוא נפתח כמו אפליקציה.</p>
+  <p>הרשימה כללית ולא מחליפה ייעוץ: רואה החשבון קובע מה צריך לדוח שלכם. עוד כלים: <a class="gold" href="/kesef/hechzer/">בדיקת החזר מס</a>, <a class="gold" href="/kelim/machshev/tzilumim/">צילומים ל-PDF</a>, <a class="gold" href="/kelim/machshev/pdf/">כיווץ PDF</a>, <a class="gold" href="/kelim/cheshbon/moadim/">מועדי דיווח</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>אילו מסמכים צריך לדוח שנתי למס הכנסה?</summary><p>בדרך כלל: טופס 106 מכל מעסיק, קבלות על תרומות לפי סעיף 46, אישורים שנתיים מקרן הפנסיה, קופת הגמל וביטוח החיים, טופס 867 מהבנק, אישורים מביטוח לאומי, ומסמכים לנקודות זיכוי. עוסקים מוסיפים חשבוניות הוצאה והכנסה, דפי בנק ותשלומי מקדמות. רואה החשבון קובע מה רלוונטי לכם.</p></details>
+  <details><summary>מה ההבדל בין דוח שנתי להחזר מס?</summary><p>דוח שנתי הוא חובה לעוסקים ולחלק מהשכירים. שכיר שלא חייב בדוח יכול להגיש בקשה להחזר מס על שש השנים האחרונות. המסמכים כמעט אותם מסמכים.</p></details>
+  <details><summary>איך שולחים את המסמכים לרואה החשבון?</summary><p>אם רואה החשבון פתח לכם תיק בכלי, מקבלים ממנו קישור אישי. פותחים אותו בטלפון, מצלמים כל מסמך, והוא נכנס ישר לתיקייה שלכם בגוגל דרייב של המשרד.</p></details>
+  <details><summary>הקבצים עוברים דרך האתר?</summary><p>לא. הקבצים עוברים ישר מהטלפון לגוגל דרייב של רואה החשבון. אתר הכלים לא שומר שום קובץ, שם או מספר זהות.</p></details>
+  <details><summary>איפה מוצאים את טופס 106 וטופס 867?</summary><p>טופס 106 מקבלים מהמעסיק, בדרך כלל עד סוף מרץ, ולפעמים באזור האישי באתר המעסיק או במערכת השכר. טופס 867 נמצא באתר הבנק או בית ההשקעות, תחת אישורים שנתיים.</p></details>
+</section>
+<!--/seo-txt-->

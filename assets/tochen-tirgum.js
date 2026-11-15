@@ -198,6 +198,7 @@
       for (var i = 0; i < lines.length; i++) {
         var ln = lines[i];
         if (!ln.trim()) { res.push(ln); continue; }
+        if (lines.length > 40 && i % 15 === 0) setStatus('מתרגם… ' + Math.round(i * 100 / lines.length) + '%');
         if (tr) { res.push(await tr.translate(ln)); usedEngine = 'chrome'; }
         else { res.push(await fallbackTranslate(ln, a, b)); usedEngine = 'mm'; }
       }
@@ -240,6 +241,7 @@
     if (usedEngine === 'chrome') engineEl.textContent = '🔒 תורגם בתוך המחשב, בתרגום המובנה של הדפדפן. הטקסט לא נשלח לשום מקום.';
     else if (usedEngine === 'server') engineEl.textContent = 'תורגם בשרת התרגום של מיזם הכלים. הטקסט נשלח רק כדי לתרגם, ולא נשמר אצלנו. בכרום במחשב התרגום נעשה בתוך המחשב.';
     else if (usedEngine === 'image') engineEl.textContent = 'הטקסט נקרא מהתמונה ותורגם בשרת של מיזם הכלים. התמונה לא נשמרת.';
+    else if (usedEngine === 'voice') engineEl.textContent = 'ההקלטה תומללה ותורגמה בשרת של מיזם הכלים. ההקלטה לא נשמרת.';
     else if (usedEngine === 'mm') engineEl.textContent = HAS_T
       ? 'את השפה הזאת כרום עוד לא מתרגם בתוך המחשב, ולכן היא תורגמה בשירות התרגום החינמי MyMemory (הטקסט נשלח אליו כדי לתרגם).'
       : 'תורגם בשירות התרגום החינמי MyMemory (הטקסט נשלח אליו כדי לתרגם). בכרום במחשב התרגום נעשה בתוך המחשב, פרטי ובלי הגבלה.';
@@ -553,6 +555,204 @@
       if (ev === 'dragover') { if (e.dataTransfer && [].indexOf.call(e.dataTransfer.types || [], 'Files') >= 0) e.preventDefault(); return; }
       if (f && /^image\//.test(f.type)) { e.preventDefault(); fromImage(f); }
     });
+  });
+
+  // ---------- תרגום מסמכים: PDF, Word, TXT (נקרא בדפדפן, בלי להעלות את הקובץ) ----------
+  var MAX_DOC = 60000;
+  function loadScript(u) {
+    return new Promise(function (ok, bad) { var s = document.createElement('script'); s.src = u; s.onload = ok; s.onerror = bad; document.head.appendChild(s); });
+  }
+  // ב-PDF כל שורה מודפסת נשברת באמצע משפט; מחברים שורות של אותה פסקה כדי שהתרגום יקבל משפט שלם
+  function reflow(t) {
+    var outp = [], cur = '';
+    t.split('\n').forEach(function (ln) {
+      ln = ln.trim();
+      if (!ln) { if (cur) outp.push(cur); cur = ''; outp.push(''); return; }
+      if (!cur) { cur = ln; return; }
+      if (/[.!?:;׃"”)\]]$/.test(cur) || cur.length < 45 || /^[-•●▪*\d]+[.)]?\s/.test(ln)) { outp.push(cur); cur = ln; }
+      else cur += ' ' + ln;
+    });
+    if (cur) outp.push(cur);
+    return outp.join('\n').replace(/\n{3,}/g, '\n\n');
+  }
+  async function pdfText(buf) {
+    if (!window.pdfjsLib) await loadScript('/assets/vendor/pdfjs/pdf.min.js');
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = '/assets/vendor/pdfjs/pdf.worker.min.js';
+    var doc = await window.pdfjsLib.getDocument({ data: buf }).promise, pages = [];
+    for (var i = 1; i <= doc.numPages; i++) {
+      var tc = await (await doc.getPage(i)).getTextContent();
+      pages.push(reflow(tc.items.map(function (it) { return (it.str || '') + (it.hasEOL ? '\n' : ''); }).join('').replace(/[ \t]+\n/g, '\n').trim()));
+      setStatus('קורא את המסמך… עמוד ' + i + ' מתוך ' + doc.numPages);
+    }
+    return pages.join('\n\n');
+  }
+  // קורא קובץ אחד מתוך ZIP (קובץ Word הוא ZIP), בלי ספרייה: DecompressionStream של הדפדפן
+  async function zipEntry(buf, name) {
+    var dv = new DataView(buf), e = buf.byteLength - 22;
+    while (e >= 0 && dv.getUint32(e, true) !== 0x06054b50) e--;
+    if (e < 0) throw new Error('zip');
+    var n = dv.getUint16(e + 10, true), p = dv.getUint32(e + 16, true), dec = new TextDecoder();
+    for (var i = 0; i < n; i++) {
+      var method = dv.getUint16(p + 10, true), csize = dv.getUint32(p + 20, true), nl = dv.getUint16(p + 28, true),
+          xl = dv.getUint16(p + 30, true), cl = dv.getUint16(p + 32, true), lho = dv.getUint32(p + 42, true);
+      var fname = dec.decode(new Uint8Array(buf, p + 46, nl));
+      if (fname === name) {
+        var start = lho + 30 + dv.getUint16(lho + 26, true) + dv.getUint16(lho + 28, true);
+        var data = new Uint8Array(buf, start, csize);
+        if (method === 0) return data;
+        var ds = new DecompressionStream('deflate-raw');
+        return new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(ds)).arrayBuffer());
+      }
+      p += 46 + nl + xl + cl;
+    }
+    throw new Error('no ' + name);
+  }
+  async function docxText(buf) {
+    var xml = new TextDecoder().decode(await zipEntry(buf, 'word/document.xml'));
+    var d = new DOMParser().parseFromString(xml, 'application/xml'), out2 = [];
+    [].forEach.call(d.getElementsByTagNameNS('*', 'p'), function (p) {
+      var t = '';
+      [].forEach.call(p.getElementsByTagNameNS('*', '*'), function (el) {
+        if (el.localName === 't') t += el.textContent;
+        else if (el.localName === 'tab') t += '\t';
+        else if (el.localName === 'br') t += '\n';
+      });
+      out2.push(t);
+    });
+    return out2.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  }
+  var docName = '';
+  async function fromDoc(file) {
+    if (!file) return;
+    var name = file.name || '', low = name.toLowerCase(), text = '';
+    setStatus('קורא את המסמך…');
+    track('doc');
+    try {
+      var buf = await file.arrayBuffer();
+      if (/\.pdf$/.test(low) || file.type === 'application/pdf') text = await pdfText(buf);
+      else if (/\.docx$/.test(low)) text = await docxText(buf);
+      else if (/\.txt$/.test(low) || /^text\//.test(file.type)) text = new TextDecoder().decode(buf);
+      else if (/\.doc$/.test(low)) { setStatus('קובץ Word ישן (doc.) לא נתמך. שמרו אותו ב-Word כ-docx ונסו שוב.', true); return; }
+      else { setStatus('אפשר לתרגם קובץ PDF, Word (docx) או TXT.', true); return; }
+    } catch (e) { setStatus('לא הצלחתי לקרוא את הקובץ. אם הוא מוגן בסיסמה – פתחו אותו ושמרו עותק בלי סיסמה.', true); return; }
+    finally { $('tg-docfile').value = ''; }
+    text = text.replace(/\r/g, '').trim();
+    if (text.replace(/\s/g, '').length < 15) { setStatus('לא מצאתי טקסט במסמך – כנראה שהוא סרוק כתמונה. צלמו את העמוד ותרגמו ב-📷 תמונה.', true); return; }
+    var cut = text.length > MAX_DOC;
+    if (cut) text = text.slice(0, MAX_DOC);
+    docName = name.replace(/\.[^.]+$/, '');
+    src.value = text; updCount(); st.src = text.slice(0, 20000); save();
+    setStatus((cut ? 'המסמך ארוך – מתרגם את 60,000 התווים הראשונים. ' : '') + 'המסמך נקרא, מתרגם…');
+    clearTimeout(tmr); lastKey = ''; run(true);
+  }
+  $('tg-doc').addEventListener('click', function () { $('tg-docfile').click(); });
+  $('tg-docfile').addEventListener('change', function () { var f = this.files && this.files[0]; if (f) fromDoc(f); });
+
+  // ---------- הורדת התרגום כקובץ Word ----------
+  var CRC = (function () { var t = [], c, n, k; for (n = 0; n < 256; n++) { c = n; for (k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+  function crc32(u8) { var c = 0xFFFFFFFF; for (var i = 0; i < u8.length; i++) c = CRC[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+  function zipStore(files) {   // ZIP בלי דחיסה – מספיק לקובץ Word
+    var enc = new TextEncoder(), parts = [], cd = [], off = 0;
+    files.forEach(function (f) {
+      var nm = enc.encode(f[0]), data = enc.encode(f[1]), crc = crc32(data);
+      var h = new DataView(new ArrayBuffer(30));
+      h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint32(14, crc, true);
+      h.setUint32(18, data.length, true); h.setUint32(22, data.length, true); h.setUint16(26, nm.length, true);
+      parts.push(h.buffer, nm, data);
+      var c = new DataView(new ArrayBuffer(46));
+      c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint32(16, crc, true);
+      c.setUint32(20, data.length, true); c.setUint32(24, data.length, true); c.setUint16(28, nm.length, true); c.setUint32(42, off, true);
+      cd.push(c.buffer, nm);
+      off += 30 + nm.length + data.length;
+    });
+    var cdLen = cd.reduce(function (s, b) { return s + (b.byteLength || b.length); }, 0), e = new DataView(new ArrayBuffer(22));
+    e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true); e.setUint32(12, cdLen, true); e.setUint32(16, off, true);
+    return new Blob(parts.concat(cd, [e.buffer]), { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+  }
+  function xmlEsc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function makeDocx(text, lang) {
+    var rtl = dirOf(lang) === 'rtl';
+    var paras = text.split('\n').map(function (ln) {
+      return '<w:p><w:pPr>' + (rtl ? '<w:bidi/><w:jc w:val="right"/>' : '') + '</w:pPr><w:r><w:rPr>' + (rtl ? '<w:rtl/>' : '') +
+        '<w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr><w:t xml:space="preserve">' + xmlEsc(ln) + '</w:t></w:r></w:p>';
+    }).join('');
+    return zipStore([
+      ['[Content_Types].xml', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>'],
+      ['_rels/.rels', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>'],
+      ['word/document.xml', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>' + paras +
+        '<w:sectPr>' + (rtl ? '<w:bidi/>' : '') + '<w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="0" w:footer="0" w:gutter="0"/></w:sectPr></w:body></w:document>']
+    ]);
+  }
+  $('tg-word').addEventListener('click', function () {
+    var t = resultText(); if (!t) { setStatus('אין עדיין תרגום להורדה.', true); return; }
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(makeDocx(t, out.lang || selTo.value));
+    a.download = (docName ? docName + ' - ' : '') + 'תרגום ל' + (NAME[out.lang || selTo.value] || '') + '.docx';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
+    track('word');
+  });
+
+  // ---------- תרגום הודעה קולית / הקלטה: תמלול בענן של כלי התמלול, ואז תרגום ----------
+  var TAMLUL = 'https://gilad-hub.gilad4049.workers.dev/tamlul';
+  function blob64(blob) {
+    return new Promise(function (ok, bad) { var r = new FileReader(); r.onload = function () { ok(String(r.result).split(',')[1] || ''); }; r.onerror = bad; r.readAsDataURL(blob); });
+  }
+  async function fromVoice(file) {
+    if (!file) return;
+    if (file.size > 5e6) { setStatus('ההקלטה ארוכה מדי לכאן (עד כ-5 דקות). הקלטה ארוכה בעברית – בכלי התמלול (/kelim/tamlul/), ואז מדביקים את הטקסט.', true); return; }
+    $('tg-voice').disabled = true;
+    track('voice');
+    try {
+      var data = await blob64(file), to = selTo.value;
+      if (selFrom.value === 'he') {
+        // עברית: התמלול של כלי התמלול (מודל ivrit.ai), ואז תרגום
+        setStatus('שולח את ההקלטה לתמלול…');
+        fetch(TAMLUL + '/warm', { method: 'POST' }).catch(function () {});
+        var r = await fetch(TAMLUL + '/run', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ b64: data, lang: 'he' }) });
+        if (r.status === 429) throw new Error('limit');
+        var j = await r.json(); if (!j.token) throw new Error(j.error || 'run');
+        var t0 = Date.now(), segs = null;
+        while (!segs) {
+          await new Promise(function (ok) { setTimeout(ok, Date.now() - t0 < 120e3 ? 1500 : 3000); });
+          var s2 = await (await fetch(TAMLUL + '/status/' + j.token)).json();
+          if (s2.status === 'COMPLETED') segs = s2.segments || [];
+          else if (s2.status === 'FAILED' || s2.status === 'CANCELLED' || s2.error) throw new Error('failed');
+          else setStatus(s2.status === 'IN_QUEUE' ? 'בתור לתמלול. בפעם הראשונה זה יכול לקחת דקה…' : 'מתמלל את ההקלטה…');
+          if (Date.now() - t0 > 10 * 60e3) throw new Error('timeout');
+        }
+        var text = segs.map(function (x) { return x.text; }).join(' ').replace(/\s+/g, ' ').trim();
+        if (!text) { setStatus('לא נשמע דיבור בהקלטה.', true); return; }
+        src.value = text; updCount(); st.src = text; save();
+        setStatus('ההקלטה תומללה, מתרגם…');
+        clearTimeout(tmr); lastKey = ''; run(true);
+        return;
+      }
+      // כל שפה אחרת: שרת המתרגם שומע, מתמלל ומתרגם בבת אחת
+      setStatus('מקשיב להקלטה ומתרגם ל' + NAME[to] + '…');
+      var d = await post('/voice', { to: to, mime: file.type || 'audio/ogg', data: data }, 120000);
+      if (d && d.error === 'quota') { setStatus('הגעתם למכסה היומית של תרגום הקלטות (15 ביום). מחר היא מתחדשת.', true); return; }
+      if (!d || d.error) { setStatus('השרת עמוס כרגע. נסו שוב בעוד דקה.', true); return; }
+      if (!d.found) { setStatus('לא נשמע דיבור בהקלטה.', true); return; }
+      if (selFrom.value !== 'auto' && d.from && NAME[d.from]) selFrom.value = d.from;
+      src.value = d.src; updCount(); st.src = d.src; save();
+      out.textContent = d.t; out.dir = dirOf(to); out.lang = to;
+      lastKey = (d.from || selFrom.value) + '|' + to + '|' + d.src.trim() + '|' + JSON.stringify(st.gl);
+      usedEngine = 'voice'; showEngine();
+      setStatus('✓ ההקלטה תורגמה' + (d.from && NAME[d.from] ? ' (' + NAME[d.from] + ' ← ' + NAME[to] + ')' : ''));
+      remember(d.src, d.t, d.from || 'auto', to);
+    } catch (e) {
+      setStatus(e && e.message === 'limit' ? 'הגעתם למספר התמלולים להיום. אפשר לנסות שוב מחר.' : 'לא הצלחתי לתרגם את ההקלטה. נסו שוב, או קובץ שמע אחר (ogg, mp3, m4a).', true);
+    } finally { $('tg-voice').disabled = false; $('tg-voicefile').value = ''; }
+  }
+  $('tg-voice').addEventListener('click', function () { $('tg-voicefile').click(); });
+  $('tg-voicefile').addEventListener('change', function () { var f = this.files && this.files[0]; if (f) fromVoice(f); });
+  // גרירה של מסמך או של הקלטה לתיבת הטקסט
+  src.addEventListener('drop', function (e) {
+    var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (!f) return;
+    if (/\.(pdf|docx|txt)$/i.test(f.name)) { e.preventDefault(); fromDoc(f); }
+    else if (/^(audio|video)\//.test(f.type) || /\.(opus|ogg|m4a|mp3|wav|aac|amr)$/i.test(f.name)) { e.preventDefault(); fromVoice(f); }
   });
 
   // ---------- פתיחה ----------
