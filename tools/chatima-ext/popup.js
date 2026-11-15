@@ -70,6 +70,7 @@
     var q = $('q').value.trim(), box = $('list');
     box.textContent = '';
     if (q) {
+      box.appendChild(findIn(q));
       shown = search(q);
       box.appendChild(group(shown.length > 1 ? 'נמצאו ' + shown.length + ' כלים' : shown.length ? 'נמצא כלי אחד' : 'לא נמצא כלי', shown, 'אפשר לבקש כלי חדש באתר, בדף "בקשת כלי".'));
       return;
@@ -84,6 +85,41 @@
     var n = tools.filter(function (t) { return !t.h; }).length;
     var p2 = document.createElement('p'); p2.className = 'empty'; p2.textContent = n + ' כלים באתר. מקלידים למעלה כדי לחפש.'; box.appendChild(p2);
   }
+  // ---------- לחפש את מה שהוקלד גם בשירותים של גוגל, ומספר טלפון ← ווטסאפ ----------
+  function goTo(url) { chrome.tabs.create({ url: url }); window.close(); }
+  function phone(q) {
+    var d = q.replace(/[\s\-().]/g, '');
+    if (!/^\+?\d{9,15}$/.test(d)) return '';
+    d = d.replace(/^\+/, '');
+    if (/^0\d{8,9}$/.test(d)) d = '972' + d.slice(1);   // מספר ישראלי
+    return d;
+  }
+  function findIn(q) {
+    var e = encodeURIComponent(q), wrap = document.createElement('div');
+    var h = document.createElement('h3'); h.textContent = 'לחפש את "' + q.slice(0, 30) + '" ב:'; wrap.appendChild(h);
+    var row = document.createElement('div'); row.className = 'go-chips find';
+    var list = [];
+    var ph = phone(q);
+    if (ph) list.push(['💬 ווטסאפ למספר (בלי לשמור)', 'https://web.whatsapp.com/send?phone=' + ph]);
+    list.push(['📁 דרייב', 'https://drive.google.com/drive/search?q=' + e],
+      ['✉ ג׳ימייל', 'https://mail.google.com/mail/u/0/#search/' + e.replace(/%20/g, '+')],
+      ['🖼 תמונות', 'https://photos.google.com/search/' + e],
+      ['👥 אנשי קשר', 'https://contacts.google.com/search/' + e],
+      ['📅 יומן', 'https://calendar.google.com/calendar/r/search?q=' + e]);
+    if (!ph) list.push(['📅 אירוע חדש: "' + q.slice(0, 18) + '"', 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + e]);
+    list.forEach(function (x) {
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = x[0];
+      b.addEventListener('click', function () { goTo(x[1]); }); row.appendChild(b);
+    });
+    wrap.appendChild(row);
+    return wrap;
+  }
+  [].forEach.call(document.querySelectorAll('#quick [data-go]'), function (b) {
+    b.addEventListener('click', function () { goTo(b.getAttribute('data-go')); });
+  });
+  try { $('quick').open = localStorage.getItem('hkQuick') === '1'; } catch (e) {}
+  $('quick').addEventListener('toggle', function () { try { localStorage.setItem('hkQuick', $('quick').open ? '1' : '0'); } catch (e) {} });
+
   function toggleFav(u) {
     var i = favs.indexOf(u);
     if (i >= 0) favs.splice(i, 1); else favs.unshift(u);
@@ -167,6 +203,51 @@
       if (/\.pdf($|[?#])/i.test(tabUrl)) { $('pdf').hidden = false; pdfTools(); }
     });
   });
+  // ---------- ניהול כרטיסיות ----------
+  chrome.tabs.query({}).then(function (all) {
+    $('tabs-btn').textContent = '🗂 לסדר את הכרטיסיות (' + all.length + ' פתוחות)';
+  }).catch(function () {});
+  $('tabs-btn').addEventListener('click', function () {
+    chrome.runtime.sendMessage({ tabsManager: true }, function () { void chrome.runtime.lastError; window.close(); });
+  });
+
+  // ---------- ג׳ימייל: חיפושים מוכנים לסידור ולניקוי, והסרה מרשימת דיוור ----------
+  // החיפושים רק משנים את הכתובת של ג׳ימייל (#search/...) – כאילו הקלדתם בחיפוש. שום מייל לא נקרא.
+  function gmailTab(cb) {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      var t = tabs && tabs[0];
+      if (t && /^https:\/\/mail\.google\.com\/mail\//.test(t.url || '')) cb(t);
+    });
+  }
+  gmailTab(function (t) {
+    $('gm').hidden = false;
+    var m = (t.url || '').match(/^(https:\/\/mail\.google\.com\/mail\/u\/\d+\/)/), base = m ? m[1] : 'https://mail.google.com/mail/u/0/';
+    [].forEach.call(document.querySelectorAll('#gm-q [data-q]'), function (b) {
+      b.title = 'חיפוש בג׳ימייל: ' + b.getAttribute('data-q');
+      b.addEventListener('click', function () {
+        var q = encodeURIComponent(b.getAttribute('data-q')).replace(/%20/g, '+');
+        chrome.tabs.update(t.id, { url: base + '#search/' + q }).then(function () { window.close(); });
+      });
+    });
+    $('gm-unsub').addEventListener('click', function () {
+      $('gm-msg').textContent = 'מחפש במייל הפתוח…';
+      var old = $('gm-unsub-go'); if (old) old.remove();
+      chrome.runtime.sendMessage({ gmailUnsub: t.id }, function (r) {
+        void chrome.runtime.lastError;
+        if (!r || !r.ok) { $('gm-msg').textContent = 'לא הצלחתי לבדוק את המייל הזה.'; return; }
+        if (r.gmail) { $('gm-msg').textContent = 'פתחתי את "ביטול הרשמה" של ג׳ימייל. מאשרים בחלון שנפתח בג׳ימייל.'; return; }
+        if (r.href) {
+          $('gm-msg').textContent = 'נמצא קישור הסרה של ' + (r.host || 'השולח') + '. לוחצים רק אם מכירים את השולח:';
+          var go = document.createElement('button'); go.type = 'button'; go.id = 'gm-unsub-go'; go.textContent = '✂ לפתוח את דף ההסרה';
+          go.addEventListener('click', function () { chrome.tabs.create({ url: r.href }); window.close(); });
+          $('gm-msg').insertAdjacentElement('afterend', go);
+          return;
+        }
+        $('gm-msg').textContent = r.open ? 'לא מצאתי קישור הסרה במייל הזה. אפשר לסמן אותו כספאם (!) – ג׳ימייל ילמד.' : 'קודם פותחים את המייל של הדיוור, ואז לוחצים כאן.';
+      });
+    });
+  });
+
   // ---------- כלים לדף הזה: צילום, הקראה, כיוון, מצב כהה ----------
   [].forEach.call(document.querySelectorAll('#acts [data-act]'), function (b) {
     b.addEventListener('click', function () {

@@ -16,7 +16,24 @@
   <p class="msg" id="pdf-msg" role="status"></p>
 </section>
 
+<section id="gm" hidden aria-labelledby="gm-h">
+  <h2 id="gm-h">✉ לסדר את ג׳ימייל</h2>
+  <div class="chips gm" id="gm-q">
+    <button type="button" data-q="is:unread">✉ לא נקראו</button>
+    <button type="button" data-q="has:attachment">📎 עם קבצים</button>
+    <button type="button" data-q="larger:10M">📦 גדולים מ-10MB</button>
+    <button type="button" data-q="category:promotions older_than:1m">📰 דיוור ישן</button>
+    <button type="button" data-q="category:social older_than:1m">👥 רשתות ישנות</button>
+    <button type="button" data-q="older_than:2y">🗓 ישנים משנתיים</button>
+    <button type="button" data-q="is:starred">⭐ מסומנים</button>
+  </div>
+  <button class="line" type="button" id="gm-unsub">✂ להסיר אותי מרשימת הדיוור של המייל הפתוח</button>
+  <p class="msg" id="gm-msg" role="status"></p>
+  <p class="small">לנקות: בוחרים חיפוש ← תיבת הסימון למעלה ← "בחירת כל השיחות התואמות" ← 🗑. התוסף לא קורא ולא שומר את המיילים.</p>
+</section>
+
 <div class="grid" id="acts" role="group" aria-label="כלים לדף הזה">
+  <button class="line wide" type="button" id="tabs-btn" title="Alt+Shift+K">🗂 לסדר את הכרטיסיות</button>
   <button class="line wide" type="button" data-act="translate" title="Alt+Shift+T">🌐 לתרגם את הדף – בלי לשבור אותו</button>
   <button class="line" type="button" data-act="shot">📸 צילום כל העמוד</button>
   <button class="line" type="button" data-act="speak">🔊 להקריא מסומן</button>
@@ -24,6 +41,36 @@
   <button class="line" type="button" data-act="dark">🌙 מצב כהה</button>
 </div>
 <p class="msg" id="act-msg" role="status"></p>
+
+<details class="quick" id="quick">
+  <summary>🚀 גוגל, ווטסאפ והמחשב</summary>
+  <h3>➕ ליצור חדש</h3>
+  <div class="go-chips" id="new-chips">
+    <button type="button" data-go="https://calendar.google.com/calendar/r/eventedit">📅 אירוע ביומן</button>
+    <button type="button" data-go="https://docs.new">📄 מסמך</button>
+    <button type="button" data-go="https://sheets.new">📊 גיליון (אקסל)</button>
+    <button type="button" data-go="https://slides.new">📽 מצגת</button>
+    <button type="button" data-go="https://forms.new">📝 טופס</button>
+    <button type="button" data-go="https://contacts.google.com/new">👤 איש קשר</button>
+    <button type="button" data-go="https://keep.new">🗒 פתק</button>
+  </div>
+  <h3>📂 לפתוח</h3>
+  <div class="go-chips">
+    <button type="button" data-go="https://calendar.google.com/">📅 יומן</button>
+    <button type="button" data-go="https://drive.google.com/drive/my-drive">📁 דרייב</button>
+    <button type="button" data-go="https://photos.google.com/">🖼 תמונות</button>
+    <button type="button" data-go="https://contacts.google.com/">👥 אנשי קשר</button>
+    <button type="button" data-go="https://web.whatsapp.com/">💬 ווטסאפ ווב</button>
+    <button type="button" data-go="https://drive.google.com/drive/quota">💾 כמה מקום נשאר</button>
+  </div>
+  <h3>💻 במחשב</h3>
+  <div class="go-chips">
+    <button type="button" data-go="https://hakelim.com/kelim/machshev/sader/?utm_source=tosaf">🗂 לסדר תיקייה במחשב</button>
+    <button type="button" data-go="chrome://downloads/">⬇ ההורדות</button>
+    <button type="button" data-go="chrome://history/">🕘 היסטוריה</button>
+  </div>
+  <p class="small">טיפ: מקלידים בחיפוש למעלה ומחפשים ישר בדרייב, בתמונות, באנשי קשר ובג׳ימייל. מספר טלפון ← ווטסאפ בלי לשמור איש קשר.</p>
+</details>
 
 <section aria-live="polite">
   <div id="list"></div>

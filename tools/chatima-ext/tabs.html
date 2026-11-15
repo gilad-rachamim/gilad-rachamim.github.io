@@ -1,0 +1,68 @@
+<!doctype html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>הכרטיסיות שלי – הכלים של גילעד רחמים</title>
+<link rel="icon" href="icon32.png">
+<link rel="stylesheet" href="tabs.css">
+</head>
+<body>
+<header>
+  <img src="icon32.png" alt="" width="26" height="26">
+  <div>
+    <h1>🗂 הכרטיסיות שלי</h1>
+    <p id="stats" class="stats" role="status"></p>
+  </div>
+</header>
+
+<section id="perm" class="card perm" hidden aria-labelledby="perm-h">
+  <h2 id="perm-h">כדי לראות את השמות של הכרטיסיות</h2>
+  <p>כרום מבקש רשות לפני שתוסף רואה את הכתובת ואת השם של כל כרטיסייה. בלי זה אפשר רק להשהות ולאחד חלונות. עם הרשות: חיפוש, סגירת כפולות, קיבוץ לפי אתר ושמירת רשימה.</p>
+  <p class="small">שום דבר לא יוצא מהמחשב. אפשר לבטל בכל רגע בהגדרות של התוסף.</p>
+  <button type="button" class="gold" id="perm-btn">✓ לתת רשות לראות את הכרטיסיות</button>
+</section>
+
+<label class="search"><span class="sr">חיפוש כרטיסייה</span><input id="q" type="search" placeholder="🔍 חיפוש כרטיסייה לפי שם או אתר" autocomplete="off"></label>
+
+<div class="acts" id="acts" role="group" aria-label="פעולות על כל הכרטיסיות">
+  <button type="button" class="line" id="dupes" data-need="tabs">🧹 לסגור כפולות</button>
+  <button type="button" class="line" id="group" data-need="tabs">🗂 לקבץ לפי אתר</button>
+  <button type="button" class="line" id="nap">💤 להשהות את כל השאר</button>
+  <button type="button" class="line" id="merge">🪟 לאחד חלונות</button>
+  <button type="button" class="line" id="ungroup">↩ לבטל קבוצות</button>
+  <button type="button" class="line" id="save" data-need="tabs">💾 לשמור רשימה</button>
+</div>
+<div class="acts found" id="found" hidden role="group" aria-label="פעולות על מה שנמצא">
+  <button type="button" class="line" id="f-close"></button>
+  <button type="button" class="line" id="f-nap"></button>
+</div>
+<p class="msg" id="msg" role="status" aria-live="polite"></p>
+
+<main id="list" aria-label="רשימת הכרטיסיות"></main>
+
+<section class="card" aria-labelledby="saved-h">
+  <h2 id="saved-h">💾 רשימות ששמרתי</h2>
+  <p class="small">שומרים את כל הכרטיסיות כרשימה, ואפשר לסגור אותן ולפנות זיכרון. כשפותחים רשימה, הכרטיסיות נפתחות מושהות ונטענות רק כשלוחצים עליהן.</p>
+  <button type="button" class="line" id="save-close" data-need="tabs">💾 לשמור ולסגור את כל השאר</button>
+  <div id="saved"></div>
+</section>
+
+<section class="card" aria-labelledby="auto-h">
+  <h2 id="auto-h">💤 השהיה אוטומטית</h2>
+  <label class="row-l" for="auto">להשהות לבד כרטיסייה שלא נגעו בה:
+    <select id="auto">
+      <option value="0">כבוי</option>
+      <option value="15">15 דקות</option>
+      <option value="30">חצי שעה</option>
+      <option value="60">שעה</option>
+      <option value="180">3 שעות</option>
+    </select>
+  </label>
+  <p class="small">כרטיסייה מושהית נשארת בפס, משחררת את הזיכרון שלה ונטענת מחדש כשלוחצים עליה. לא משהים כרטיסייה פתוחה, נעוצה 📌 או כזו שמשמיעה קול. טופס שמילאתם באמצע: כדאי לשלוח או לשמור אותו לפני השהיה.</p>
+</section>
+
+<footer>מקש קיצור: <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd> · הכול קורה בתוך הכרום שלכם · <a href="https://hakelim.com/kelim/machshev/chatima/tosaf/" target="_blank">פרטיות</a></footer>
+<script src="tabs.js"></script>
+</body>
+</html>

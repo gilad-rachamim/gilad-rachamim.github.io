@@ -89,6 +89,82 @@ chrome.runtime.onInstalled.addListener(function () { syncAutoTr(); });
 chrome.permissions.onRemoved.addListener(function () { syncAutoTr(); });
 chrome.alarms.onAlarm.addListener(function (a) { if (a.name === 'refresh') refresh(false); });
 
+// ---------- ניהול כרטיסיות (tabs.html) ----------
+// Alt+Shift+K או הכפתור בחלון הקטן: פותח חלון קטן עם כל הכרטיסיות. אם כבר פתוח – מביאים אותו קדימה.
+function openTabsManager() {
+  var url = chrome.runtime.getURL('tabs.html');
+  // runtime.getContexts מוצא את הדף של התוסף בלי צורך ברשות "tabs"
+  var find = chrome.runtime.getContexts ? chrome.runtime.getContexts({ contextTypes: ['TAB'], documentUrls: [url] }) : Promise.resolve([]);
+  return find.catch(function () { return []; }).then(function (found) {
+    if (found && found[0] && found[0].tabId > -1) return chrome.windows.update(found[0].windowId, { focused: true }).then(function () { return chrome.tabs.update(found[0].tabId, { active: true }); });
+    return chrome.windows.getLastFocused().catch(function () { return null; }).then(function (w) {
+      var o = { url: url, type: 'popup', width: 520, height: 760, focused: true };
+      if (w && w.left != null && w.width) { o.left = Math.max(0, w.left + w.width - 540); o.top = Math.max(0, (w.top || 0) + 70); }
+      return chrome.windows.create(o);
+    });
+  });
+}
+// השהיה אוטומטית: כל 5 דקות, אם המשתמש הדליק את זה, משהים כרטיסיות שלא נגעו בהן מזמן.
+// לא נוגעים בכרטיסייה פתוחה, נעוצה, משמיעה קול, או כזו שכרום סימן שאסור להשהות.
+function autoNap() {
+  return chrome.storage.local.get('autoNap').then(function (o) {
+    var min = +o.autoNap || 0; if (!min) return;
+    var limit = Date.now() - min * 60000;
+    return chrome.tabs.query({ discarded: false, active: false, pinned: false, audible: false }).then(function (tabs) {
+      tabs.forEach(function (t) {
+        if (t.autoDiscardable === false || !t.lastAccessed || t.lastAccessed > limit) return;
+        if (t.url && /^chrome-extension:/.test(t.url)) return;
+        chrome.tabs.discard(t.id).catch(function () {});
+      });
+    });
+  }).catch(function () {});
+}
+chrome.alarms.get('nap', function (a) { if (!a) chrome.alarms.create('nap', { periodInMinutes: 5 }); });
+chrome.alarms.onAlarm.addListener(function (a) { if (a.name === 'nap') autoNap(); });
+
+// ---------- ג׳ימייל: הסרה מרשימת דיוור ----------
+// רץ רק אחרי לחיצה בחלון הקטן, רק בכרטיסיית ג׳ימייל, ורק בתוך המחשב: מחפש במייל הפתוח
+// את כפתור "ביטול הרשמה" של ג׳ימייל עצמו (ולוחץ עליו – ג׳ימייל שואל לפני שהוא שולח),
+// ואם אין – קישור שכתוב עליו "הסרה" / unsubscribe בגוף המייל. שום דבר לא נשמר ולא נשלח.
+function findUnsub() {
+  var RX = /unsubscribe|opt[\s-]?out|(^|[\s(\[|])(ל)?הס(ר|רה|רת|ירו|יר)(?=$|[\s.!:)\]|])|ביטול\s*(ה)?(הרשמה|מינוי|מנוי)|הפסקת\s*(קבלת|דיוור)|לא\s*לקבל|manage\s*(email\s*)?(preferences|subscription)/i;
+  function vis(el) { var r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0; }
+  // 1. הכפתור של ג׳ימייל ליד שם השולח
+  var own = [].filter.call(document.querySelectorAll('span[role=link], span[role=button], button, a'), function (el) {
+    if (el.closest('.a3s') || !vis(el)) return false;
+    var t = (el.textContent || '').trim();
+    return t.length < 30 && /^(unsubscribe|ביטול (ה)?הרשמה|הסרת (ה)?הרשמה|ביטול המינוי)$/i.test(t);
+  });
+  if (own.length) { own[own.length - 1].click(); return { gmail: true }; }
+  // 2. קישור בגוף המייל הפתוח (האחרון שמוצג)
+  var bodies = [].filter.call(document.querySelectorAll('.a3s'), vis);
+  for (var i = bodies.length - 1; i >= 0; i--) {
+    var links = bodies[i].querySelectorAll('a[href]');
+    var best = null;
+    for (var j = 0; j < links.length; j++) {
+      var a = links[j], href = a.href || '', txt = (a.textContent || '') + ' ' + (a.getAttribute('aria-label') || '');
+      if (!/^https?:/i.test(href)) continue;
+      // ג׳ימייל עוטף קישורים ב-google.com/url?q=...
+      try { var u = new URL(href); if (/(^|\.)google\.com$/.test(u.hostname) && u.pathname === '/url' && u.searchParams.get('q')) href = u.searchParams.get('q'); } catch (e) {}
+      if (!/^https?:/i.test(href)) continue;
+      if (RX.test(txt)) { best = href; break; }
+      if (!best && /unsubscribe|optout|opt-out/i.test(href)) best = href;
+    }
+    if (best) { var host = ''; try { host = new URL(best).hostname; } catch (e) {} return { href: best, host: host }; }
+    if (bodies.length) break;   // רק המייל האחרון שפתוח
+  }
+  return { none: true, open: bodies.length > 0 };
+}
+function gmailUnsub(tabId) {
+  return chrome.tabs.get(tabId).then(function (tab) {
+    if (!/^https:\/\/mail\.google\.com\//.test(tab.url || '')) return { ok: false, err: 'not gmail' };
+    return chrome.scripting.executeScript({ target: { tabId: tabId }, func: findUnsub }).then(function (r) {
+      var v = r && r[0] && r[0].result || {};
+      v.ok = true; return v;
+    });
+  });
+}
+
 // ---------- קבצים ----------
 function b64(buf) {
   var bytes = new Uint8Array(buf), out = '', step = 0x8000;
@@ -237,6 +313,8 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
 // הודעות מג׳ימייל ומהחלון הקטן
 chrome.runtime.onMessage.addListener(function (m, sender, reply) {
   if (!m) return;
+  if (m.tabsManager) { openTabsManager().then(function () { reply({ ok: true }); }, function () { reply({ ok: false }); }); return true; }
+  if (m.gmailUnsub) { gmailUnsub(m.gmailUnsub).then(reply, function () { reply({ ok: false }); }); return true; }
   if (m.refresh) { refresh(false).then(function () { reply({ ok: true }); }); return true; }
   // תרגום: PDF מתוך הכרטיסייה שלו, ו"לתרגם תמיד את האתר הזה"
   if (m.pdfFromTab) { pdfFromTab(m.pdfFromTab).then(reply, function (e) { reply({ err: String(e && e.message || e) }); }); return true; }
@@ -268,6 +346,7 @@ chrome.runtime.onMessage.addListener(function (m, sender, reply) {
 // קיצור מקשים: Alt+Shift+H מתקן טקסט שנכתב בשפה הלא נכונה
 // Alt+Shift+T מתרגם את הדף (ולחיצה נוספת מחזירה אותו כמו שהיה)
 chrome.commands.onCommand.addListener(function (cmd, tab) {
+  if (cmd === 'tabs-manager') { openTabsManager(); return; }
   if (!tab) return;
   if (cmd === 'fix-layout') PAGE_ACTS.fix(tab, {});
   if (cmd === 'translate-page') PAGE_ACTS.translate(tab).catch(function () {});
