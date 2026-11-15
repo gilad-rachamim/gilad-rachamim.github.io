@@ -78,8 +78,8 @@
     var link = 'color:' + A + ';text-decoration:none';
     function row(lbl, inner) { return '<span style="color:' + A + ';font-weight:bold">' + lbl + '</span>&nbsp;' + inner; }
     var items = [];
-    if (S.phone) items.push(row(L.t, '<a href="tel:+' + intl(S.phone) + '" style="color:#333333;text-decoration:none"><span dir="ltr">' + e(S.phone) + '</span></a>'));
-    if (S.mobile) items.push(row(L.m, '<a href="tel:+' + intl(S.mobile) + '" style="color:#333333;text-decoration:none"><span dir="ltr">' + e(S.mobile) + '</span></a>'));
+    if (S.phone) items.push(row(L.t, '<a href="tel:+' + intl(S.phone) + '" style="color:#333333;text-decoration:none"><span dir="ltr" style="white-space:nowrap">' + e(S.phone) + '</span></a>'));
+    if (S.mobile) items.push(row(L.m, '<a href="tel:+' + intl(S.mobile) + '" style="color:#333333;text-decoration:none"><span dir="ltr" style="white-space:nowrap">' + e(S.mobile) + '</span></a>'));
     if (S.email) items.push(row(L.e, '<a href="mailto:' + e(S.email.trim()) + '" style="color:#333333;text-decoration:none">' + e(S.email.trim()) + '</a>'));
     var su = url(S.site);
     if (su) items.push(row(L.w, '<a href="' + e(su) + '" style="' + link + '">' + e(siteText(S.site)) + '</a>'));
