@@ -364,13 +364,38 @@
   function waSection(tab) {
     $('wa').hidden = false;
     var run = function (func, args) { return chrome.scripting.executeScript({ target: { tabId: tab.id }, func: func, args: args || [] }).then(function (r) { return r && r[0] && r[0].result; }); };
-    chrome.storage.sync.get('snips').catch(function () { return {}; }).then(function (o) {
+    // קטגוריות מוכנות (להורים, ללקוחות, תזכורת לתור, ברכות, מחוץ למשרד) מהכלי באתר, ו"⭐ שלי" – הנוסחים של המשתמש
+    var waCats = [], waCat = 'mine';
+    var gotCats = new Promise(function (res) {
+      try { chrome.runtime.sendMessage({ mailTpl: 1 }, function (r) { void chrome.runtime.lastError; if (r && r.ok && Array.isArray(r.data.wa)) waCats = r.data.wa; res(); }); } catch (e) { res(); }
+    });
+    chrome.storage.local.get('waCat').then(function (o) { if (o.waCat) waCat = o.waCat; }).catch(function () {});
+    Promise.all([chrome.storage.sync.get('snips').catch(function () { return {}; }), gotCats]).then(function (rr) {
+      var o = rr[0];
       var list = Array.isArray(o.snips) ? o.snips : WA_DEF.slice();
+      function put(t) { run(waInsert, [t]).then(function (ok) { if (ok) window.close(); else $('wa-msg').textContent = 'קודם פותחים צ׳אט, ואז בוחרים נוסח.'; }, function () { $('wa-msg').textContent = 'לא הצלחתי להכניס את הנוסח.'; }); }
+      function chip(t) { var b = document.createElement('button'); b.type = 'button'; b.textContent = t.length > 26 ? t.slice(0, 25) + '…' : t; b.title = t; b.addEventListener('click', function () { put(t); }); return b; }
       function draw() {
+        var cats = $('wa-cats'); cats.textContent = '';
+        if (!waCats.some(function (c) { return c.n === waCat; })) waCat = 'mine';
+        [{ n: 'mine', l: '⭐ שלי' }].concat(waCats.map(function (c) { return { n: c.n, l: c.n }; })).forEach(function (c) {
+          var b = document.createElement('button'); b.type = 'button'; b.textContent = c.l; b.setAttribute('aria-pressed', String(c.n === waCat));
+          b.addEventListener('click', function () { waCat = c.n; chrome.storage.local.set({ waCat: waCat }); draw(); });
+          cats.appendChild(b);
+        });
         var box = $('wa-tpl'); box.textContent = '';
+        if (waCat !== 'mine') {
+          var cat = waCats.filter(function (c) { return c.n === waCat; })[0];
+          (cat ? cat.items : []).forEach(function (t) {
+            var b = chip(t); b.title = t + '\n(לחיצה ימנית: להוסיף ל"שלי")';
+            b.addEventListener('contextmenu', function (e) { e.preventDefault(); if (list.indexOf(t) < 0) { list.push(t); chrome.storage.sync.set({ snips: list }); } $('wa-msg').textContent = '⭐ נוסף ל"שלי"'; });
+            box.appendChild(b);
+          });
+          $('wa-msg').textContent = /\[[^\]]+\]/.test((cat ? cat.items : []).join('')) ? 'מה שבסוגריים [ ] משלימים בתיבה לפני השליחה.' : '';
+          return;
+        }
         list.forEach(function (t, i) {
-          var b = document.createElement('button'); b.type = 'button'; b.textContent = t.length > 26 ? t.slice(0, 25) + '…' : t; b.title = t;
-          b.addEventListener('click', function () { run(waInsert, [t]).then(function (ok) { if (ok) window.close(); else $('wa-msg').textContent = 'קודם פותחים צ׳אט, ואז בוחרים נוסח.'; }, function () { $('wa-msg').textContent = 'לא הצלחתי להכניס את הנוסח.'; }); });
+          var b = chip(t);
           b.addEventListener('contextmenu', function (e) { e.preventDefault(); list.splice(i, 1); chrome.storage.sync.set({ snips: list }); draw(); });
           box.appendChild(b);
         });
