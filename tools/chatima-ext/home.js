@@ -6,7 +6,7 @@
     ['✉', 'ג׳ימייל', 'https://mail.google.com/'], ['📅', 'יומן', 'https://calendar.google.com/'], ['📁', 'דרייב', 'https://drive.google.com/'],
     ['📄', 'מסמך חדש', 'https://docs.new'], ['📊', 'גיליון חדש', 'https://sheets.new'], ['🖼', 'תמונות', 'https://photos.google.com/'],
     ['👥', 'אנשי קשר', 'https://contacts.google.com/'], ['💬', 'ווטסאפ ווב', 'https://web.whatsapp.com/'], ['▶', 'יוטיוב', 'https://www.youtube.com/'],
-    ['🗺', 'מפות', 'https://www.google.com/maps'], ['📁', 'הקבצים שלי', 'files.html'], ['📝', 'פתקים', 'notes.html'], ['🧰', 'הכלים של גילעד', 'https://hakelim.com/kelim/?utm_source=tosaf_home'], ['🗂', 'הכרטיסיות שלי', 'tabs.html']
+    ['🗺', 'מפות', 'https://www.google.com/maps'], ['📁', 'הקבצים שלי', 'files.html'], ['📝', 'פתקים', 'notes.html'], ['🧹', 'לפנות מקום בגוגל', 'panui.html'], ['🧰', 'הכלים של גילעד', 'https://hakelim.com/kelim/?utm_source=tosaf_home'], ['🗂', 'הכרטיסיות שלי', 'tabs.html']
   ];
   var mine = [], editing = false;
 
@@ -110,6 +110,9 @@
   $('copy').addEventListener('click', function () { var b = this; navigator.clipboard.writeText(location.href.split('#')[0]).then(function () { b.textContent = '✓ הועתק'; }); });
 
   function render() { renderMine(); renderTop(); }
+  chrome.storage.local.get('startTipOff').then(function (o) { $('start-tip').hidden = !!o.startTipOff; });
+  $('start-x').addEventListener('click', function () { $('start-tip').hidden = true; chrome.storage.local.set({ startTipOff: true }); });
+  $('start-how').addEventListener('click', function () { var d = document.querySelector('.howto'); d.open = true; d.scrollIntoView({ behavior: 'smooth' }); });
   function evPre() { var v = $('ev-q').value.trim(); if (!v) { $('ev-pre').textContent = ''; return null; } var w = HKWhen.parse(v); $('ev-pre').textContent = '📅 ' + (w.title || 'אירוע') + ' · ' + HKWhen.describe(w); return w; }
   $('ev-q').addEventListener('input', evPre);
   $('ev').addEventListener('submit', function (e) { e.preventDefault(); var w = evPre(); if (w) location.href = HKWhen.calendarUrl(w); });

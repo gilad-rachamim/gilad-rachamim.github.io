@@ -41,7 +41,8 @@
   ],
   "optional_permissions": [
     "tabs",
-    "topSites"
+    "topSites",
+    "sessions"
   ],
   "host_permissions": [
     "https://mail.google.com/*",
@@ -77,6 +78,24 @@
     },
     "notes": {
       "description": "לפתוח פתקים וטקסטים מוכנים בחלון הצד (אפשר לקבוע מקש ב-chrome://extensions/shortcuts)"
+    },
+    "open-whatsapp": {
+      "description": "לפתוח את ווטסאפ ווב"
+    },
+    "open-gmail": {
+      "description": "לפתוח את ג׳ימייל"
+    },
+    "open-calendar": {
+      "description": "לפתוח את יומן גוגל"
+    },
+    "open-drive": {
+      "description": "לפתוח את גוגל דרייב"
+    },
+    "open-photos": {
+      "description": "לפתוח את גוגל תמונות"
+    },
+    "open-home": {
+      "description": "לפתוח את \"הדף שלי\""
     }
   },
   "content_scripts": [

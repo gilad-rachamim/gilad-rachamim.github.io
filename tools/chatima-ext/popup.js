@@ -211,6 +211,26 @@
     chrome.runtime.sendMessage({ tabsManager: true }, function () { void chrome.runtime.lastError; window.close(); });
   });
 
+  $('panui-btn').addEventListener('click', function () { chrome.tabs.create({ url: chrome.runtime.getURL('panui.html') }); window.close(); });
+  // ניקוי היסטוריית גלישה (browsingData, רק היסטוריה): שעה / היום / שבוע / הכול – לחיצה שנייה לאישור
+  $('hist-btn').addEventListener('click', function () { $('hist').hidden = !$('hist').hidden; $('hist-msg').textContent = $('hist').hidden ? '' : 'בוחרים כמה למחוק (רק היסטוריית הגלישה; סיסמאות וחיבורים נשארים).'; });
+  [].forEach.call(document.querySelectorAll('#hist [data-since]'), function (b) {
+    b.addEventListener('click', function () {
+      if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'ללחוץ שוב'; return; }
+      var h = +b.dataset.since, since = h ? Date.now() - h * 3600000 : 0;
+      chrome.browsingData.remove({ since: since }, { history: true }).then(function () { $('hist-msg').textContent = '🕘 ההיסטוריה ' + (h ? 'של ' + b.parentNode.querySelector('[data-since="' + h + '"]').dataset.label : 'כולה') + ' נמחקה.'; $('hist').hidden = true; }, function () { $('hist-msg').textContent = 'לא הצלחתי למחוק.'; });
+    });
+    b.dataset.label = b.textContent;
+  });
+  // כרטיסייה שנסגרה: הרשאה אופציונלית sessions, מבקשים בלחיצה הראשונה
+  $('reopen-btn').addEventListener('click', function () {
+    chrome.permissions.request({ permissions: ['sessions'] }, function (ok) {
+      void chrome.runtime.lastError;
+      if (!ok) { $('hist-msg').textContent = 'בלי הרשות: Ctrl+Shift+T פותח את מה שנסגר.'; return; }
+      chrome.sessions.restore().then(function () { window.close(); }, function () { $('hist-msg').textContent = 'אין כרטיסייה סגורה לפתוח.'; });
+    });
+  });
+
   $('notes-btn').addEventListener('click', function () {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       var tab = tabs && tabs[0] || {};
@@ -237,6 +257,12 @@
       b.addEventListener('click', function () {
         var q = encodeURIComponent(b.getAttribute('data-q')).replace(/%20/g, '+');
         chrome.tabs.update(t.id, { url: base + '#search/' + q }).then(function () { window.close(); });
+      });
+    });
+    [].forEach.call(document.querySelectorAll('#gm-set button'), function (b) {
+      b.addEventListener('click', function () {
+        if (b.dataset.url) { chrome.tabs.create({ url: b.dataset.url }); window.close(); return; }
+        chrome.tabs.update(t.id, { url: base + b.dataset.hash }).then(function () { window.close(); });
       });
     });
     $('gm-unsub').addEventListener('click', function () {

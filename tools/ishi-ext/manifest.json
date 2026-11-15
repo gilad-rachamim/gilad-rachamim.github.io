@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "הכלים של גילעד – מצב אישי",
+  "short_name": "מצב אישי",
+  "version": "1.0.0",
+  "description": "פרטי, רק למחשב של גילעד: היומן, ג׳ימייל, הדרייב, אנשי הקשר והמשימות שלו, דרך הסקריפט בחשבון הגוגל שלו.",
+  "icons": { "16": "icon16.png", "32": "icon32.png", "48": "icon48.png", "128": "icon128.png" },
+  "action": { "default_title": "מצב אישי – היומן, המיילים והקבצים שלי", "default_popup": "ishi.html", "default_icon": { "16": "icon16.png", "32": "icon32.png" } },
+  "side_panel": { "default_path": "ishi.html" },
+  "permissions": ["storage", "sidePanel"],
+  "host_permissions": ["https://script.google.com/*", "https://script.googleusercontent.com/*"],
+  "commands": {
+    "_execute_action": { "suggested_key": { "default": "Alt+Shift+G" }, "description": "לפתוח את המצב האישי" }
+  }
+}

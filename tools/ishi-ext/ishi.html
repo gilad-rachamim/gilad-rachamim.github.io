@@ -1,0 +1,68 @@
+<!doctype html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מצב אישי – גילעד</title>
+<link rel="icon" href="icon32.png">
+<link rel="stylesheet" href="ishi.css">
+</head>
+<body>
+<header>
+  <b>🔐 מצב אישי</b><span class="who" id="who"></span>
+  <span class="sp"></span>
+  <button type="button" class="ic" id="side" title="לפתוח בחלון הצד">◧</button>
+  <button type="button" class="ic" id="big" title="לפתוח בכרטיסייה גדולה">⤢</button>
+</header>
+<nav role="tablist" aria-label="מה לנהל">
+  <button role="tab" type="button" data-tab="cal" aria-selected="true">📅 יומן</button>
+  <button role="tab" type="button" data-tab="tasks" aria-selected="false">✅ משימות</button>
+  <button role="tab" type="button" data-tab="mail" aria-selected="false">✉ מייל</button>
+  <button role="tab" type="button" data-tab="drive" aria-selected="false">📁 דרייב</button>
+  <button role="tab" type="button" data-tab="ppl" aria-selected="false">👥 אנשים</button>
+</nav>
+<p class="msg" id="msg" role="status" aria-live="polite"></p>
+
+<section id="setup" hidden>
+  <h2>חיבור לחשבון</h2>
+  <p>חסרה כתובת הסקריפט או המפתח. הם נכנסים לקובץ config.js בתיקיית התוסף.</p>
+</section>
+
+<section data-pane="cal">
+  <form class="add" id="ev"><input id="ev-q" placeholder="אירוע חדש: מה ומתי? למשל: רופא מחר ב-10:30" autocomplete="off" aria-label="אירוע חדש"><button class="gold" type="submit">➕</button></form>
+  <p class="pre" id="ev-pre"></p>
+  <div id="cal" class="list"></div>
+</section>
+
+<section data-pane="tasks" hidden>
+  <form class="add" id="tk"><input id="tk-q" placeholder="משימה חדשה (אפשר עם תאריך: לשלם ארנונה ביום חמישי)" autocomplete="off" aria-label="משימה חדשה"><button class="gold" type="submit">➕</button></form>
+  <p class="pre" id="tk-pre"></p>
+  <div id="tasks" class="list"></div>
+</section>
+
+<section data-pane="mail" hidden>
+  <p class="big" id="unread"></p>
+  <h3>🧹 לנקות (לאשפה – 30 יום אפשר לשחזר)</h3>
+  <div id="clean" class="list"></div>
+  <p class="small">רק החיפושים האלה, ושום דבר אחר. לפני כל ניקוי – לחיצה שנייה לאישור.</p>
+</section>
+
+<section data-pane="drive" hidden>
+  <p id="quota" class="big"></p>
+  <form class="add" id="ds"><input id="ds-q" placeholder="🔍 חיפוש בדרייב (גם בתוך מסמכים)" autocomplete="off" aria-label="חיפוש בדרייב"><button class="line" type="submit">חיפוש</button></form>
+  <div id="drive" class="list"></div>
+  <button type="button" class="line" id="dbig">🐘 מה תופס הכי הרבה מקום בדרייב?</button>
+</section>
+
+<section data-pane="ppl" hidden>
+  <form class="add" id="ps"><input id="ps-q" placeholder="🔍 שם או מספר" autocomplete="off" aria-label="חיפוש איש קשר"><button class="line" type="submit">חיפוש</button></form>
+  <div id="ppl" class="list"></div>
+  <details><summary>➕ איש קשר חדש</summary>
+    <form id="pa" class="col"><input id="pa-n" placeholder="שם" required><input id="pa-p" placeholder="טלפון" dir="ltr"><input id="pa-e" placeholder="מייל" dir="ltr"><button class="gold" type="submit">לשמור באנשי הקשר</button></form>
+  </details>
+</section>
+<script src="config.js"></script>
+<script src="when.js"></script>
+<script src="ishi.js"></script>
+</body>
+</html>

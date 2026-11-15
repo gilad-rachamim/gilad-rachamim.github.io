@@ -37,6 +37,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visibl
 .add input { background: #0d0c0a; color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
 .perm { background: var(--card); border: 1px solid var(--gold); border-radius: 12px; padding: 10px 14px; }
 .perm p { margin: 0 0 8px; }
+.tip { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0 0 12px; }
+.tip span { flex: 1; }
 .saved { display: flex; flex-wrap: wrap; gap: 8px; }
 .empty, .small { color: var(--muted); font-size: 13px; }
 .howto { margin: 22px 0 6px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 8px 14px; }

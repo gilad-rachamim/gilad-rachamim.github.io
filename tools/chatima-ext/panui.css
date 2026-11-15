@@ -1,0 +1,14 @@
+.steps { list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 8px; }
+.steps li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; position: relative; }
+.steps li.done { border-color: #4caf50; }
+.steps li.done h2::after { content: " ✓"; color: #9be29e; }
+.steps h2 { font-size: 15px; margin: 0 0 4px; }
+.steps p { margin: 0 0 8px; }
+.go { display: flex; flex-wrap: wrap; gap: 6px; }
+.go a { border: 1px solid var(--gold); border-radius: 9px; padding: 6px 10px; color: var(--text); text-decoration: none; font-size: 13px; cursor: pointer; }
+.go a:hover { background: #2d261b; }
+.done-btn { position: absolute; top: 8px; inset-inline-end: 10px; font-size: 12px; padding: 3px 8px; }
+.prog { color: var(--gold2); font-size: 13px; margin: 6px 0 0; }
+.tips { margin: 4px 0 0; padding-inline-start: 20px; font-size: 13px; }
+.tips li { margin: 4px 0; }
+.tips a { color: var(--gold2); }
