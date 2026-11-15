@@ -62,9 +62,17 @@ def cards(w, h):
     return intro, tr, more, priv, cta
 
 # קטעי ההקלטה: (שם, חיתוך x,y,w,h בתוך פריים 1280x800 או None)
-# סדר הסרטון: הקלטות, ("still", מספר) = צילום מ-STILLS, ("card", שם)
-SEGS = [("tabs", (240, 0, 800, 800)), ("home", (190, 0, 900, 800)), ("still", 0), ("still", 1), ("still", 2), ("still", 3), ("card", "tr"),
-        ("atar", None), ("links", None), ("youtube", (372, 0, 880, 700)), ("pdf", None), ("pdf2", None)]
+# סדר הסרטון: (שם הקלטה, חיתוך x,y,w,h או None, עד כמה שניות), ("still", מספר), ("card", שם)
+# לפי מה שהכי מחפשים (מחקר מילות המפתח 15.11.2026): אחסון גוגל, יומן עברי וגוגל, ג'ימייל, כרטיסיות, ואז התרגום.
+import os
+VARIANT = os.environ.get("VARIANT", "full")
+if VARIANT == "short":
+    SEGS = [("panui", (80, 0, 1120, 800), 9), ("popup", (300, 0, 720, 800), 13), ("tabs", (240, 0, 800, 800), 10),
+            ("card", "tr"), ("atar", None, 11), ("youtube", (372, 0, 880, 700), 8)]
+else:
+    SEGS = [("panui", (80, 0, 1120, 800)), ("popup", (300, 0, 720, 800)), ("still", 3), ("tabs", (240, 0, 800, 800)),
+            ("still", 0), ("still", 1), ("still", 2), ("card", "tr"),
+            ("atar", None), ("youtube", (372, 0, 880, 700)), ("pdf2", None, 6)]
 
 def seg_video(name):
     d = REC / ("seg-" + name)
@@ -90,8 +98,10 @@ def build(w, h, tag):
         o = TMP / ("%s-%s.mp4" % (tag, name))
         run("ffmpeg", "-loglevel", "error", "-y", "-loop", "1", "-t", sec, "-i", png, "-vf", "fps=%d,format=yuv420p,fade=in:0:9,fade=out:st=%.2f:d=0.3" % (FPS, sec - 0.3), "-c:v", "libx264", "-crf", "16", o)
         parts.append((o, sec))
-    still(intro, 3.6, "intro")
-    for name, crop in SEGS:
+    still(intro, 3.0 if VARIANT == "short" else 3.6, "intro")
+    for item in SEGS:
+        name, crop = item[0], item[1]
+        maxdur = item[2] if len(item) > 2 else None
         if name == "card":
             still(named[crop], 3.0, crop); continue
         if name == "still":
@@ -103,6 +113,7 @@ def build(w, h, tag):
                 "-t", "%.2f" % sec, "-c:v", "libx264", "-crf", "17", o)
             parts.append((o, sec)); continue
         raw, dur = seg_video(name)
+        if maxdur: dur = min(dur, maxdur)
         f = "crop=%d:%d:%d:%d," % (crop[2], crop[3], crop[0], crop[1]) if crop else ""
         maxw, maxh = (int(w * .86), int(h * .9)) if w > h else (int(w * .96), int(h * .62))
         o = TMP / ("%s-%s.mp4" % (tag, name))
@@ -111,14 +122,15 @@ def build(w, h, tag):
             "[1:v]%sscale=%d:%d:force_original_aspect_ratio=decrease:flags=lanczos,pad=iw+6:ih+6:3:3:color=0xe2b85c[v];[0:v][v]overlay=(W-w)/2:(H-h)/2:shortest=1,fps=%d,format=yuv420p,%sfade=out:st=%.2f:d=0.25" % (f, maxw, maxh, FPS, fade, dur - 0.25),
             "-t", "%.2f" % dur, "-c:v", "libx264", "-crf", "17", o)
         parts.append((o, dur))
-    still(more, 5.0, "more"); still(priv, 3.8, "priv"); still(cta, 5.0, "cta")
+    if VARIANT != "short": still(more, 5.0, "more"); still(priv, 3.8, "priv")
+    still(cta, 4.5 if VARIANT == "short" else 5.0, "cta")
     lst = TMP / (tag + "-all.txt")
     lst.write_text("\n".join("file '%s'" % p.as_posix() for p, _ in parts))
     total = sum(d for _, d in parts)
     cuts, acc = [], 0.0
     for _, d in parts: cuts.append(acc); acc += d
     wav = TMP / "music.wav"; write_music(str(wav), total + 0.5, cuts=cuts, mood="bright")
-    out = "%s-%s.mp4" % (OUT, tag)
+    out = "%s-%s%s.mp4" % (OUT, tag, "-short" if VARIANT == "short" else "")
     run("ffmpeg", "-loglevel", "error", "-y", "-f", "concat", "-safe", "0", "-i", lst, "-i", wav, "-c:v", "libx264", "-crf", "18", "-preset", "slow", "-pix_fmt", "yuv420p",
         "-af", "afade=in:0:d=0.6,afade=out:st=%.2f:d=1.5,volume=0.8" % (total - 1.5), "-c:a", "aac", "-b:a", "160k", "-shortest", "-movflags", "+faststart", out)
     print(tag, out, round(total, 1), "s")

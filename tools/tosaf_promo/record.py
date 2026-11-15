@@ -239,13 +239,48 @@ async def seg_tabs(ctx, sw, pg):
             try: await p2.close()
             except Exception: pass
 
+ZOOM = "(z) => { document.body.style.zoom = z || 1.9; document.body.style.margin = '0 auto'; document.documentElement.style.background = getComputedStyle(document.body).backgroundColor; }"
+
+async def seg_popup(ctx, sw, pg):
+    ext = sw.url.split('/')[2]
+    p2 = await ctx.new_page(); await p2.set_viewport_size({"width": 1280, "height": 800})
+    await p2.goto(f"chrome-extension://{ext}/popup.html"); await p2.bring_to_front(); await asyncio.sleep(1.5)
+    await p2.evaluate(ZOOM, 1.9); await asyncio.sleep(1.0)
+    r = Rec(ctx, "popup"); await r.start(p2)
+    await ui(p2, 'cap', 'כפתור אחד – <b>כל מה שצריך במחשב</b>'); await asyncio.sleep(2.8)
+    await p2.evaluate("() => document.getElementById('quick').open = true"); await asyncio.sleep(0.4)
+    await p2.evaluate("() => document.getElementById('quick').scrollIntoView({behavior:'smooth'})"); await asyncio.sleep(1.2)
+    await ui(p2, 'cap', 'אירוע ליומן <b>מתוך משפט</b>'); await click_sel(p2, '#ev-q', 0.7); await ui(p2, 'mouseoff')
+    await p2.locator('#ev-q').type('רופא שיניים מחר ב-10:30', delay=110); await asyncio.sleep(2.4)
+    await p2.evaluate("() => [...document.querySelectorAll('#quick h3')].find(h => /יומן גוגל בעברית/.test(h.textContent)).scrollIntoView({behavior:'smooth', block:'center'})"); await asyncio.sleep(1.2)
+    await ui(p2, 'cap', 'יומן גוגל עם <b>תאריך עברי, חגים ופרשה</b>')
+    loc = p2.locator('button', has_text='תאריך עברי בכל יום').first; bb = await loc.bounding_box()
+    if bb: await ui(p2, 'mouse', bb['x'] + bb['width'] / 2, bb['y'] + bb['height'] / 2)
+    await asyncio.sleep(2.8); await ui(p2, 'mouseoff')
+    await p2.evaluate("() => [...document.querySelectorAll('#quick h3')].find(h => /סיסמאות/.test(h.textContent)).scrollIntoView({behavior:'smooth', block:'center'})"); await asyncio.sleep(1.2)
+    await ui(p2, 'cap', 'סיסמאות, היסטוריה, <b>אנשי קשר כפולים</b>'); await asyncio.sleep(2.8)
+    await ui(p2, 'cap', ''); await asyncio.sleep(0.4)
+    await r.stop()
+    p3 = await ctx.new_page(); await p3.set_viewport_size({"width": 1280, "height": 800})
+    await p3.goto(f"chrome-extension://{ext}/panui.html"); await p3.bring_to_front(); await asyncio.sleep(1.5)
+    await p3.evaluate(ZOOM, 1.45); await asyncio.sleep(0.5)
+    r = Rec(ctx, "panui"); await r.start(p3)
+    await ui(p3, 'cap', 'נפח האחסון בגוגל מלא? <b>5 צעדים, בחינם</b>'); await asyncio.sleep(3.0)
+    await smooth(p3, 560, 1600); await asyncio.sleep(0.6)
+    await ui(p3, 'cap', 'מיילים כבדים, קבצים גדולים, <b>סרטונים בתמונות</b>'); await asyncio.sleep(2.6)
+    await smooth(p3, 560, 1600); await asyncio.sleep(0.6)
+    await ui(p3, 'cap', 'כל צעד פותח את המקום הנכון. <b>אתם מחליטים מה למחוק</b>'); await asyncio.sleep(2.8)
+    await ui(p3, 'cap', ''); await asyncio.sleep(0.4)
+    await r.stop()
+    await p2.close(); await p3.close()
+
 async def main():
     async with async_playwright() as p:
         ctx, sw = await boot(p)
         pg = ctx.pages[0]
         await pg.set_viewport_size({"width": 1280, "height": 800})
         await sw.evaluate("chrome.storage.local.clear()"); await sw.evaluate("chrome.storage.sync.remove(['glossary','trSites'])")
-        for name, f in [("tabs", seg_tabs), ("atar", seg_atar), ("links", seg_links), ("pdf", seg_pdf), ("youtube", seg_youtube)]:
+        for name, f in [("popup", seg_popup), ("tabs", seg_tabs), ("atar", seg_atar), ("links", seg_links), ("pdf", seg_pdf), ("youtube", seg_youtube)]:
             if ONLY and name not in ONLY: continue
             await sw.evaluate("chrome.storage.local.remove('trPrefs')")
             try: await f(ctx, sw, pg)
