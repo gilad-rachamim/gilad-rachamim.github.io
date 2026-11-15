@@ -72,4 +72,4 @@ h2 .small { font-weight: 400; display: inline; }
 .chips.wa-cats button[aria-pressed="true"] { background: var(--gold); color: #141210; border-color: var(--gold); font-weight: 700; }
 #wa a, #gm a { color: var(--gold); }
 
-#wa-sidur { background: var(--gold); color: #141210; border: 0; font-weight: 700; width: 100%; }
+#wa-sidur, #gm-map { background: var(--gold); color: #141210; border: 0; font-weight: 700; width: 100%; }
