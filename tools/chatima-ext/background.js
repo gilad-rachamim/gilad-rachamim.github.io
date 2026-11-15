@@ -513,3 +513,66 @@ chrome.runtime.onMessage.addListener(function (m, sender, reply) {
   chrome.storage.local.set({ waAlways: !!m.waAlways }).then(waSyncScript).then(function () { reply({ ok: true }); }, function () { reply({ ok: false }); });
   return true;
 });
+
+// ---------- "🧹 מה לעשות?" – ביצוע בג׳ימייל ותזכורות במחשב ----------
+// ג׳ימייל: פותחים/מוצאים את הכרטיסייה של ג׳ימייל, מריצים את החיפוש, ו-gmail-do.js מראה על הדף כמה נמצאו.
+// שום דבר לא קורה עד שהמשתמש לוחץ "✓ לבצע" שם.
+function hkGmailTab(base) {
+  return chrome.tabs.query({ active: true, currentWindow: true }).then(function (act) {
+    var t = act && act[0];
+    if (t && /^https:\/\/mail\.google\.com\/mail\//.test(t.url || '')) return t;
+    return chrome.tabs.query({ url: 'https://mail.google.com/mail/*' }).then(function (L) {
+      if (L && L.length) return chrome.tabs.update(L[0].id, { active: true }).then(function (x) { return chrome.windows.update(x.windowId, { focused: true }).then(function () { return x; }, function () { return x; }); });
+      return chrome.tabs.create({ url: base || 'https://mail.google.com/mail/u/0/#inbox' }).then(function (x) {
+        return new Promise(function (res) {
+          var done = false;
+          function fin() { if (done) return; done = true; chrome.tabs.onUpdated.removeListener(on); setTimeout(function () { res(x); }, 2500); }
+          function on(id, ch) { if (id === x.id && ch.status === 'complete') fin(); }
+          chrome.tabs.onUpdated.addListener(on); setTimeout(fin, 15000);
+        });
+      });
+    });
+  });
+}
+function hkRemAlarms() {
+  return chrome.storage.local.get('hkRem').then(function (o) {
+    var L = (o.hkRem || []).filter(function (r) { return r.at > Date.now() - 864e5; });
+    L.forEach(function (r) { if (r.at > Date.now()) chrome.alarms.create('hk:' + r.id, { when: r.at }); });
+    return chrome.storage.local.set({ hkRem: L });
+  }).catch(function () {});
+}
+chrome.runtime.onStartup.addListener(hkRemAlarms);
+chrome.runtime.onInstalled.addListener(hkRemAlarms);
+chrome.alarms.onAlarm.addListener(function (a) {
+  if (a.name.indexOf('hk:') !== 0) return;
+  var id = a.name.slice(3);
+  chrome.storage.local.get('hkRem').then(function (o) {
+    var r = (o.hkRem || []).filter(function (x) { return x.id === id; })[0]; if (!r) return;
+    try {
+      chrome.notifications.create('hk:' + id, { type: 'basic', iconUrl: 'icon128.png', title: '🔔 תזכורת', message: r.text || 'תזכורת', priority: 2, requireInteraction: true });
+    } catch (e) {}
+    chrome.storage.local.set({ hkRem: (o.hkRem || []).filter(function (x) { return x.id !== id; }) });
+  });
+});
+chrome.runtime.onMessage.addListener(function (m, sender, reply) {
+  if (!m || !(m.gmailDo || m.gmailMap || m.hkRem || m.needMic)) return;
+  if (m.needMic) { chrome.tabs.create({ url: chrome.runtime.getURL('mic.html') }); reply({ ok: true }); return; }
+  if (m.hkRem) {
+    var R = m.hkRem, id = String(R.id || '').replace(/[^a-z0-9]/gi, '');
+    chrome.storage.local.get('hkRem').then(function (o) {
+      var L = (o.hkRem || []).filter(function (x) { return x.id !== id; });
+      if (R.cancel) chrome.alarms.clear('hk:' + id);
+      else if (R.at > Date.now()) { L.push({ id: id, at: +R.at, text: String(R.text || '').slice(0, 200) }); chrome.alarms.create('hk:' + id, { when: +R.at }); }
+      return chrome.storage.local.set({ hkRem: L.slice(-100) });
+    }).then(function () { reply({ ok: true }); }, function () { reply({ ok: false }); });
+    return true;
+  }
+  var d = m.gmailDo;
+  hkGmailTab(m.base).then(function (t) {
+    if (m.gmailMap) return chrome.scripting.executeScript({ target: { tabId: t.id }, files: ['gmail-map.js'] });
+    return chrome.scripting.executeScript({ target: { tabId: t.id }, files: ['gmail-do.js'] }).then(function () {
+      return chrome.scripting.executeScript({ target: { tabId: t.id }, func: function (o) { return window.hkGmailDo(o); }, args: [{ q: String(d.q), act: String(d.act), label: String(d.label || ''), head: String(d.head || '') }] });
+    });
+  }).then(function () { reply({ ok: true }); }, function (e) { reply({ ok: false, err: String(e && e.message || e) }); });
+  return true;
+});
