@@ -73,6 +73,11 @@
     go.setAttribute('aria-label', 'לעבור אל: ' + b.textContent);
     go.addEventListener('click', function () { focusTab(t); });
     d.appendChild(go);
+    var pin = document.createElement('button'); pin.type = 'button'; pin.className = 'ic' + (t.pinned ? ' on' : ''); pin.textContent = '📌';
+    pin.title = pin.ariaLabel = (t.pinned ? 'לבטל נעיצה: ' : 'לנעוץ (כרטיסייה קבועה): ') + b.textContent;
+    pin.setAttribute('aria-pressed', t.pinned ? 'true' : 'false');
+    pin.addEventListener('click', function () { chrome.tabs.update(t.id, { pinned: !t.pinned }).then(function () { say(t.pinned ? 'הנעיצה בוטלה.' : 'נעוצה 📌: הכרטיסייה קבועה בתחילת הפס, קטנה, ולא נסגרת בטעות.'); }).catch(function () {}).then(load); });
+    d.appendChild(pin);
     var nap = document.createElement('button'); nap.type = 'button'; nap.className = 'ic'; nap.textContent = '💤';
     nap.title = nap.ariaLabel = 'להשהות: ' + b.textContent; nap.disabled = t.discarded || t.active;
     nap.addEventListener('click', function () { chrome.tabs.discard(t.id).then(function () { say('הכרטיסייה הושהתה. היא תיטען שוב כשתלחצו עליה.'); }, function () { say('כרום לא השהה את הכרטיסייה הזאת.'); }).then(load); });
@@ -105,7 +110,8 @@
     if (!shown.length) { var p = document.createElement('p'); p.className = 'empty'; p.textContent = words.length ? 'לא נמצאה כרטיסייה כזאת.' : 'אין כרטיסיות פתוחות.'; box.appendChild(p); }
     var f = words.length && shown.length;
     $('found').hidden = !f;
-    if (f) { $('f-close').textContent = '✕ לסגור את ' + shown.length + ' שנמצאו'; $('f-nap').textContent = '💤 להשהות את ' + shown.length + ' שנמצאו'; }
+    if (f) { $('f-close').textContent = '✕ לסגור את ' + shown.length + ' שנמצאו'; $('f-nap').textContent = '💤 להשהות את ' + shown.length + ' שנמצאו';
+      $('f-group').textContent = '🗂 לקבץ את ' + shown.length + ' לקבוצה "' + $('q').value.trim().slice(0, 16) + '"'; $('f-pin').textContent = '📌 לנעוץ את ' + shown.length + ' שנמצאו'; }
     renderSaved();
   }
   function focusTab(t) {
@@ -172,6 +178,20 @@
     b.dataset.sure = '';
     var ids = shown.map(function (t) { return t.id; }), n = ids.length;
     chrome.tabs.remove(ids).then(function () { $('q').value = ''; say('נסגרו ' + n + ' כרטיסיות. להחזיר: Ctrl+Shift+T (אחת אחת).'); }).then(load);
+  });
+  // קבוצה מכל מה שנמצא בחיפוש, עם המילה שחיפשו כשם הקבוצה
+  $('f-group').addEventListener('click', function () {
+    var list = shown.filter(function (t) { return !t.pinned; }), title = $('q').value.trim().slice(0, 24);
+    if (!list.length) { say('כרטיסיות נעוצות לא נכנסות לקבוצה.'); return; }
+    var win = list[0].windowId;
+    chrome.tabs.group({ tabIds: list.map(function (t) { return t.id; }), createProperties: { windowId: win } })
+      .then(function (gid) { return chrome.tabGroups.update(gid, { title: title, color: COLORS[Object.keys(groups).length % COLORS.length] }); })
+      .then(function () { say('נוצרה קבוצה "' + title + '" עם ' + list.length + ' כרטיסיות.'); }, function () { say('כרום לא יצר את הקבוצה.'); }).then(load);
+  });
+  $('f-pin').addEventListener('click', function () {
+    var list = shown.filter(function (t) { return !t.pinned; });
+    Promise.all(list.map(function (t) { return chrome.tabs.update(t.id, { pinned: true }).catch(function () {}); }))
+      .then(function () { say('ננעצו ' + list.length + ' כרטיסיות 📌. הן קבועות בתחילת הפס.'); }).then(load);
   });
   $('merge').addEventListener('click', function () {
     if (wins.length < 2) { say('יש רק חלון אחד.'); return; }

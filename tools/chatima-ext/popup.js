@@ -205,11 +205,13 @@
   });
   // ---------- ניהול כרטיסיות ----------
   chrome.tabs.query({}).then(function (all) {
-    $('tabs-btn').textContent = '🗂 לסדר את הכרטיסיות (' + all.length + ' פתוחות)';
+    $('tabs-btn').textContent = '🗂 הכרטיסיות (' + all.length + ')';
   }).catch(function () {});
   $('tabs-btn').addEventListener('click', function () {
     chrome.runtime.sendMessage({ tabsManager: true }, function () { void chrome.runtime.lastError; window.close(); });
   });
+
+  $('home-btn').addEventListener('click', function () { chrome.tabs.create({ url: chrome.runtime.getURL('home.html') }); window.close(); });
 
   // ---------- ג׳ימייל: חיפושים מוכנים לסידור ולניקוי, והסרה מרשימת דיוור ----------
   // החיפושים רק משנים את הכתובת של ג׳ימייל (#search/...) – כאילו הקלדתם בחיפוש. שום מייל לא נקרא.
