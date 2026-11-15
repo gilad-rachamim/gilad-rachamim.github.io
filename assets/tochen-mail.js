@@ -115,11 +115,40 @@
     location.href = 'mailto:' + encodeURIComponent(to).replace(/%40/g, '@') + '?subject=' + encodeURIComponent(subject()) + '&body=' + encodeURIComponent($('ml-body').value.replace(/\n/g, '\r\n'));
     used('mailto');
   });
+  // הדפסה וקובץ Word: המכתב לבד, בדף נקי
+  function letterHtml() {
+    var dir = st.lang === 'en' ? 'ltr' : 'rtl', body = $('ml-body').value;
+    var paras = body.split(/\n{2,}/).map(function (p) { return '<p>' + esc(p).replace(/\n/g, '<br>') + '</p>'; }).join('');
+    return '<!doctype html><html dir="' + dir + '" lang="' + (st.lang === 'en' ? 'en' : 'he') + '"><head><meta charset="utf-8"><title>' + esc(subject()) +
+      '</title><style>body{font-family:Arial,"David",sans-serif;font-size:13pt;line-height:1.6;max-width:16cm;margin:2cm auto;color:#000}p{margin:0 0 .9em}.d{text-align:' + (dir === 'rtl' ? 'left' : 'right') + ';margin-bottom:1.5em}</style></head><body><div class="d">' +
+      new Date().toLocaleDateString(st.lang === 'en' ? 'en-GB' : 'he-IL', { day: 'numeric', month: 'long', year: 'numeric' }) + '</div>' + paras + '</body></html>';
+  }
+  $('ml-print').addEventListener('click', function () {
+    var w = window.open('', '_blank');
+    if (!w) { msg('הדפדפן חסם חלון חדש. מאשרים חלונות קופצים ומנסים שוב.'); return; }
+    w.document.open(); w.document.write(letterHtml()); w.document.close(); w.focus();
+    setTimeout(function () { try { w.print(); } catch (e) {} }, 300); used('print');
+  });
+  $('ml-word').addEventListener('click', function () {
+    var blob = new Blob(['﻿' + letterHtml()], { type: 'application/msword' });
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = type().n.replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, ' ').slice(0, 60) + '.doc';
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+    msg('✓ הקובץ ירד. פותחים ב-Word, משנים מה שרוצים ושומרים.'); used('word');
+  });
   try { $('ml-to').value = localStorage.getItem(KEY + '-to') || ''; } catch (e) {}
   $('ml-to').addEventListener('input', function () { try { localStorage.setItem(KEY + '-to', $('ml-to').value); } catch (e) {} });
 
   fetch('/assets/tochen-mail.json').then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (j) {
-    D = j; fromHash(); all();
+    D = j;
+    // דף נחיתה (למשל /kelim/tochen/mail/hitpatrut/) פותח את הנוסח שלו
+    if (!fromHash() && root.getAttribute('data-t')) {
+      var pt = root.getAttribute('data-t');
+      for (var i = 0; i < D.types.length; i++) if (D.types[i].id === pt) { st.t = pt; st.cat = root.getAttribute('data-cat') || D.types[i].cat; }
+      if (root.getAttribute('data-lang')) st.lang = root.getAttribute('data-lang');
+      st.sub = 0;
+    }
+    all();
     window.addEventListener('hashchange', function () { if (fromHash()) { edited = false; all(); } });
   }).catch(function () { $('ml-msg').textContent = 'הנוסחים לא נטענו. בודקים את החיבור ומרעננים את הדף.'; });
 })();
