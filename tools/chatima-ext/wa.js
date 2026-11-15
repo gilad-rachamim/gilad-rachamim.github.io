@@ -718,7 +718,7 @@
     var it, res = 'ok';
     if (c.act === 'archive') {
       it = findItem(/העברת הצ'אט לארכיון|העברה לארכיון|^archive/i);
-      if (it) it.click(); else res = findItem(/הוצאה מהארכיון|unarchive/i) ? 'skip' : 'nomenu';
+      if (it) it.click(); else res = findItem(/מהארכיון|unarchive/i) ? 'skip' : 'nomenu';
     } else if (c.act === 'read') {
       it = findItem(/סימון כנקרא|mark as read/i);
       if (it) it.click(); else res = 'skip';
