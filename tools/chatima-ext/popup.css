@@ -51,5 +51,14 @@ footer a { color: var(--gold2); }
 details.quick { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 6px 10px; margin-bottom: 8px; }
 details.quick summary { cursor: pointer; color: var(--gold2); font-weight: 700; font-size: 13px; }
 details.quick h3 { margin-top: 6px; }
+.row.site-acts { flex-wrap: wrap; margin-top: 6px; }
+.row.site-acts button { flex: 1 1 45%; font-size: 12.5px; padding: 5px 6px; }
+#wa .row { margin-top: 6px; }
+#wa .row button { font-size: 12.5px; }
+.add-tpl input, .ev input { flex: 1; min-width: 0; font: inherit; font-size: 13px; background: #0d0c0a; color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 5px 8px; }
+.add-tpl button, .ev button { width: auto; flex: none; }
+.ev { display: flex; gap: 5px; margin: 0 0 4px; }
+#sug button { border-color: var(--gold); }
+h2 .small { font-weight: 400; display: inline; }
 .grid .hi { border-color: var(--gold); font-weight: 600; }
 .grid .wide { grid-column: 1 / -1; border-color: var(--gold); font-weight: 600; }

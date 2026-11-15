@@ -1,0 +1,65 @@
+<!doctype html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>הקבצים שלי – מה תופס מקום</title>
+<link rel="icon" href="icon32.png">
+<link rel="stylesheet" href="tabs.css">
+<link rel="stylesheet" href="files.css">
+</head>
+<body>
+<header>
+  <img src="icon32.png" alt="" width="26" height="26">
+  <div>
+    <h1>📁 הקבצים שלי</h1>
+    <p class="stats">מה תופס מקום בתיקייה, אילו קבצים כפולים, ומה ישן. הכול נבדק בתוך המחשב – שום קובץ לא עולה לשום מקום.</p>
+  </div>
+</header>
+
+<section class="card" id="start">
+  <p>בוחרים תיקייה (למשל "הורדות", "מסמכים" או "תמונות"), וכרום שואל אם לתת לתוסף לקרוא אותה. בהתחלה רק קוראים – שום דבר לא משתנה.</p>
+  <button type="button" class="gold big" id="pick">📂 לבחור תיקייה לבדיקה</button>
+  <p class="small" id="pick-msg" role="status"></p>
+</section>
+
+<section class="card" id="prog" hidden><p id="prog-t" role="status" aria-live="polite">סורק…</p><progress id="prog-b"></progress><button type="button" class="line" id="stop">⏹ לעצור</button></section>
+
+<div id="out" hidden>
+  <section class="card" aria-labelledby="sum-h">
+    <h2 id="sum-h">📊 <span id="dir-name"></span></h2>
+    <p id="sum" class="sum"></p>
+    <div id="bars" class="bars"></div>
+  </section>
+
+  <section class="card" aria-labelledby="big-h">
+    <h2 id="big-h">🐘 הקבצים הכי גדולים</h2>
+    <ol id="big" class="files"></ol>
+  </section>
+
+  <section class="card" aria-labelledby="dup-h">
+    <h2 id="dup-h">👯 קבצים כפולים</h2>
+    <p class="small" id="dup-sum"></p>
+    <div id="dups"></div>
+    <div class="row" id="dup-acts" hidden>
+      <button type="button" class="gold" id="dup-move">📦 להעביר את העותקים המיותרים לתיקייה "_כפולים"</button>
+    </div>
+    <p class="small">מעבירים, לא מוחקים: מכל קבוצה נשאר הקובץ הראשון במקומו, והשאר עוברים לתיקייה אחת. אחרי שבדקתם – מוחקים אותה בעצמכם.</p>
+    <p class="msg" id="dup-msg" role="status"></p>
+  </section>
+
+  <section class="card" aria-labelledby="old-h">
+    <h2 id="old-h">🕰 לא נפתחו (לא שונו) יותר משנתיים</h2>
+    <p id="old" class="small"></p>
+  </section>
+
+  <section class="card" aria-labelledby="go-h">
+    <h2 id="go-h">🧰 הצעד הבא – כלים באתר</h2>
+    <div class="go" id="go"></div>
+    <div class="row"><button type="button" class="line" id="csv">⬇ להוריד דוח (Excel / CSV)</button><button type="button" class="line" id="again">📂 תיקייה אחרת</button></div>
+  </section>
+</div>
+<footer><a href="home.html">🏠 הדף שלי</a> · <a href="tabs.html">🗂 הכרטיסיות</a> · הכלים של גילעד רחמים</footer>
+<script src="files.js"></script>
+</body>
+</html>

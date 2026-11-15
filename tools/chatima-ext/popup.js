@@ -211,6 +211,14 @@
     chrome.runtime.sendMessage({ tabsManager: true }, function () { void chrome.runtime.lastError; window.close(); });
   });
 
+  $('notes-btn').addEventListener('click', function () {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      var tab = tabs && tabs[0] || {};
+      try { chrome.sidePanel.open({ windowId: tab.windowId }); } catch (e) {}
+      chrome.storage.session.set({ spCtx: { url: tab.url || '', title: tab.title || '', view: 'notes', at: Date.now() } }).then(function () { window.close(); });
+    });
+  });
+  $('files-btn').addEventListener('click', function () { chrome.tabs.create({ url: chrome.runtime.getURL('files.html') }); window.close(); });
   $('home-btn').addEventListener('click', function () { chrome.tabs.create({ url: chrome.runtime.getURL('home.html') }); window.close(); });
 
   // ---------- ג׳ימייל: חיפושים מוכנים לסידור ולניקוי, והסרה מרשימת דיוור ----------
@@ -247,6 +255,111 @@
         }
         $('gm-msg').textContent = r.open ? 'לא מצאתי קישור הסרה במייל הזה. אפשר לסמן אותו כספאם (!) – ג׳ימייל ילמד.' : 'קודם פותחים את המייל של הדיוור, ואז לוחצים כאן.';
       });
+    });
+  });
+
+  // ---------- אירוע מהיר ליומן ----------
+  function evPreview() {
+    var v = $('ev-q').value.trim();
+    if (!v) { $('ev-pre').textContent = 'כותבים מה ומתי, והיומן של גוגל נפתח עם הכול מוכן.'; return null; }
+    var w = HKWhen.parse(v); $('ev-pre').textContent = '📅 ' + (w.title || 'אירוע') + ' · ' + HKWhen.describe(w); return w;
+  }
+  $('ev-q').addEventListener('input', evPreview);
+  $('ev').addEventListener('submit', function (e) { e.preventDefault(); var w = evPreview(); if (w) goTo(HKWhen.calendarUrl(w)); });
+
+  // ---------- האתר הזה + כלים מתאימים + חלון צד ----------
+  function sidePanel(tab, tool) {
+    try { chrome.sidePanel.open({ windowId: tab.windowId }); } catch (e) {}
+    chrome.storage.session.set({ spCtx: { url: tab.url || '', title: tab.title || '', tool: tool || '', at: Date.now() } }).then(function () { window.close(); });
+  }
+  function siteSection(tab) {
+    var url = tab.url || '';
+    if (!/^https?:/.test(url)) return;
+    var host = new URL(url).hostname.replace(/^www\./, '');
+    $('site').hidden = false; $('site-host').textContent = '· ' + host;
+    HKSuggest(url, tools, 4).tools.forEach(function (t) {
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = t.n; b.title = 'לפתוח בצד, ליד הדף: ' + t.n;
+      b.addEventListener('click', function () { sidePanel(tab, t.u); }); $('sug').appendChild(b);
+    });
+    $('side-btn').addEventListener('click', function () { sidePanel(tab, ''); });
+    $('site-home').addEventListener('click', function () {
+      Promise.all([chrome.storage.sync.get('homeLinks').catch(function () { return {}; })]).then(function (r) {
+        var list = Array.isArray(r[0].homeLinks) ? r[0].homeLinks : [], u = new URL(url).origin + '/';
+        if (!list.some(function (x) { return x.u === u || x.u === url; })) list.push({ n: (tab.title || host).split(/\s[|\-–—]\s/)[0].slice(0, 30), u: u });
+        return chrome.storage.sync.set({ homeLinks: list.slice(0, 40) });
+      }).then(function () { $('site-msg').textContent = '⭐ נוסף ל"הדף שלי".'; });
+    });
+    var muted = tab.mutedInfo && tab.mutedInfo.muted;
+    $('site-mute').textContent = muted ? '🔊 להחזיר קול' : '🔇 להשתיק';
+    $('site-mute').addEventListener('click', function () { chrome.tabs.update(tab.id, { muted: !muted }).then(function () { window.close(); }); });
+    $('site-clean').addEventListener('click', function () {
+      var b = this;
+      if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'ללחוץ שוב לאישור'; $('site-msg').textContent = 'זה מוחק את העוגיות והזיכרון של ' + host + ' במחשב – תצטרכו להתחבר אליו שוב. עוזר כשאתר "נתקע" או מתנהג מוזר.'; return; }
+      chrome.browsingData.remove({ origins: [new URL(url).origin] }, { cookies: true, localStorage: true, indexedDB: true, cacheStorage: true, serviceWorkers: true, cache: true, fileSystems: true })
+        .then(function () { $('site-msg').textContent = '🧹 ' + host + ' נוקה. טוען את הדף מחדש…'; return chrome.tabs.reload(tab.id); })
+        .catch(function () { $('site-msg').textContent = 'לא הצלחתי לנקות את האתר הזה.'; });
+    });
+  }
+
+  // ---------- ווטסאפ ווב: נוסחים מוכנים, מצב פרטיות, שמירת הצ'אט ----------
+  var WA_DEF = ['תודה רבה! 🙏', 'קיבלתי, אחזור אליך בהקדם.', 'אפשר לתאם שיחה? מתי נוח לך?', 'מצורף הקובץ. אשמח לאישור שהתקבל.', 'אני בדרך, אגיע בעוד כמה דקות', 'שבת שלום ומבורך! 🕯🕯', 'מזל טוב! 🎉 שתזכו לרוב נחת'];
+  var BLUR = '#pane-side [role=gridcell] span[title], #pane-side img, #main .message-in, #main .message-out, #main header span[title], #main header img { filter: blur(6px) !important; } #pane-side [role=listitem]:hover span[title], #pane-side [role=listitem]:hover img, #main .message-in:hover, #main .message-out:hover, #main header:hover span[title], #main header:hover img { filter: none !important; }';
+  function waInsert(text) {
+    var box = document.querySelector('footer div[contenteditable="true"]') || document.querySelector('#main div[contenteditable="true"][role="textbox"]');
+    if (!box) return false;
+    box.focus(); document.execCommand('insertText', false, text); return true;
+  }
+  function waRead() {
+    var out = [], title = '';
+    var h = document.querySelector('#main header span[title]'); if (h) title = h.getAttribute('title');
+    document.querySelectorAll('#main [data-pre-plain-text]').forEach(function (el) {
+      var pre = el.getAttribute('data-pre-plain-text') || '', t = el.querySelector('.selectable-text');
+      out.push(pre.trim() + ' ' + (t ? t.innerText : el.innerText).trim());
+    });
+    return { title: title, lines: out };
+  }
+  function waSection(tab) {
+    $('wa').hidden = false;
+    var run = function (func, args) { return chrome.scripting.executeScript({ target: { tabId: tab.id }, func: func, args: args || [] }).then(function (r) { return r && r[0] && r[0].result; }); };
+    chrome.storage.sync.get('snips').catch(function () { return {}; }).then(function (o) {
+      var list = Array.isArray(o.snips) ? o.snips : WA_DEF.slice();
+      function draw() {
+        var box = $('wa-tpl'); box.textContent = '';
+        list.forEach(function (t, i) {
+          var b = document.createElement('button'); b.type = 'button'; b.textContent = t.length > 26 ? t.slice(0, 25) + '…' : t; b.title = t;
+          b.addEventListener('click', function () { run(waInsert, [t]).then(function (ok) { if (ok) window.close(); else $('wa-msg').textContent = 'קודם פותחים צ׳אט, ואז בוחרים נוסח.'; }, function () { $('wa-msg').textContent = 'לא הצלחתי להכניס את הנוסח.'; }); });
+          b.addEventListener('contextmenu', function (e) { e.preventDefault(); list.splice(i, 1); chrome.storage.sync.set({ snips: list }); draw(); });
+          box.appendChild(b);
+        });
+        var ed = document.createElement('button'); ed.type = 'button'; ed.textContent = '✎'; ed.title = 'להוסיף נוסח (לחיצה ימנית על נוסח מוחקת אותו)';
+        ed.addEventListener('click', function () { $('wa-add').hidden = false; $('wa-new').focus(); }); box.appendChild(ed);
+      }
+      $('wa-save').addEventListener('click', function () { var v = $('wa-new').value.trim(); if (!v) return; list.push(v); chrome.storage.sync.set({ snips: list }); $('wa-new').value = ''; $('wa-add').hidden = true; draw(); });
+      draw();
+    });
+    chrome.storage.session.get('waBlur').then(function (o) {
+      var on = !!(o.waBlur && o.waBlur[tab.id]); $('wa-blur').setAttribute('aria-pressed', on ? 'true' : 'false'); $('wa-blur').textContent = on ? '👁 לבטל מצב פרטיות' : '🙈 מצב פרטיות';
+      $('wa-blur').addEventListener('click', function () {
+        var p = on ? chrome.scripting.removeCSS({ target: { tabId: tab.id }, css: BLUR }) : chrome.scripting.insertCSS({ target: { tabId: tab.id }, css: BLUR });
+        p.then(function () { var m = o.waBlur || {}; m[tab.id] = !on; return chrome.storage.session.set({ waBlur: m }); }).then(function () { window.close(); });
+      });
+    });
+    $('wa-export').addEventListener('click', function () {
+      run(waRead).then(function (r) {
+        if (!r || !r.lines.length) { $('wa-msg').textContent = 'לא מצאתי הודעות. פותחים צ׳אט, גוללים למעלה עד איפה שרוצים, ולוחצים שוב.'; return; }
+        var txt = '\ufeff' + (r.title ? 'צ׳אט: ' + r.title + '\r\n\r\n' : '') + r.lines.join('\r\n');
+        var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain' }));
+        a.download = 'ווטסאפ - ' + (r.title || 'צאט').replace(/[\\/:*?"<>|]/g, '') + '.txt'; document.body.appendChild(a); a.click(); a.remove();
+        $('wa-msg').textContent = 'נשמרו ' + r.lines.length + ' הודעות (רק מה שנטען במסך – לגלול למעלה כדי לשמור עוד).';
+      }, function () { $('wa-msg').textContent = 'לא הצלחתי לקרוא את הצ׳אט.'; });
+    });
+  }
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    var tab = tabs && tabs[0]; if (!tab) return;
+    var ready = new Promise(function (r) { var k = 0, iv = setInterval(function () { if (tools.length || ++k > 40) { clearInterval(iv); r(); } }, 50); });
+    ready.then(function () {
+      if (/^https:\/\/web\.whatsapp\.com\//.test(tab.url || '')) waSection(tab);
+      siteSection(tab);
     });
   });
 

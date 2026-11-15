@@ -3,7 +3,7 @@
 // כך שכלי חדש באתר מופיע בתוסף – בחיפוש, ואם הוא מקבל קבצים גם בלחיצה הימנית – בלי גרסה חדשה בחנות.
 // קבצים: התוסף מביא את הקובץ שהמשתמש בחר, שומר אותו רגע ב-storage ופותח את הכלי. bridge.js מכניס
 // אותו לכלי. שום דבר לא נשלח לשרת: הכלים עצמם עובדים בתוך הדפדפן.
-importScripts('page-tools.js');   // תיקון שפה, צילום עמוד, הקראה, כיוון עברית, מצב כהה, תרגום
+importScripts('page-tools.js', 'when.js');   // תיקון שפה, צילום עמוד, הקראה, כיוון עברית, מצב כהה, תרגום
 var SITE = 'https://hakelim.com';
 var LIST_URL = SITE + '/kelim/tools.json';
 var MAX_BYTES = 300 * 1024 * 1024;
@@ -46,7 +46,8 @@ var CTX = {   // הקשר בכרום ← אילו סוגי קבצים
 var menuBusy = Promise.resolve();
 function buildMenus() {
   menuBusy = menuBusy.then(function () {
-    return getTools().then(function (tools) {
+    return Promise.all([getTools(), getSnips()]).then(function (r) {
+      var tools = r[0], snips = r[1];
       return new Promise(function (done) {
         chrome.contextMenus.removeAll(function () {
           var C = chrome.contextMenus.create;
@@ -54,6 +55,8 @@ function buildMenus() {
           C({ parentId: 'hk', id: 'fix', title: 'לתקן: כתבתי בשפה הלא נכונה (Alt+Shift+H)', contexts: ['selection', 'editable'] });
           C({ parentId: 'hk', id: 'tr-sel', title: '🌐 לתרגם את המסומן', contexts: ['selection'] });
           C({ parentId: 'hk', id: 'translate', title: '🌐 לתרגם את הדף (Alt+Shift+T)', contexts: ['page'] });
+          C({ parentId: 'hk', id: 'cal', title: '📅 להוסיף ליומן', contexts: ['selection'] });
+          C({ parentId: 'hk', id: 'side', title: '◧ כלים בצד, ליד הדף (Alt+Shift+S)', contexts: ['page'] });
           C({ parentId: 'hk', id: 'speak', title: '🔊 להקריא בקול', contexts: ['selection'] });
           C({ parentId: 'hk', id: 'speak-stop', title: '⏹ לעצור את ההקראה', contexts: ['all'], visible: false });
           C({ parentId: 'hk', id: 'shot', title: '📸 צילום של כל העמוד', contexts: ['page'] });
@@ -70,6 +73,11 @@ function buildMenus() {
               });
           });
           C({ parentId: 'hk', id: 'pw', title: 'להכניס סיסמה חזקה', contexts: ['editable'] });
+          if (snips.length) {
+            C({ parentId: 'hk', id: 'sn', title: '📋 טקסט מוכן', contexts: ['editable'] });
+            snips.slice(0, 15).forEach(function (t, i) { C({ parentId: 'sn', id: 'sn|' + i, title: (t.length > 45 ? t.slice(0, 44) + '…' : t).replace(/\n/g, ' ⏎ ').replace(/&/g, '&&'), contexts: ['editable'] }); });
+            C({ parentId: 'sn', id: 'sn-edit', title: '✎ לערוך את הטקסטים…', contexts: ['editable'] });
+          }
           C({ parentId: 'hk', id: 'all', title: 'כל הכלים באתר…', contexts: ['page', 'link', 'image', 'video'] });
           void chrome.runtime.lastError;
           done();
@@ -88,6 +96,34 @@ chrome.runtime.onStartup.addListener(function () { refresh(false); syncAutoTr();
 chrome.runtime.onInstalled.addListener(function () { syncAutoTr(); });
 chrome.permissions.onRemoved.addListener(function () { syncAutoTr(); });
 chrome.alarms.onAlarm.addListener(function (a) { if (a.name === 'refresh') refresh(false); });
+
+// ---------- טקסטים מוכנים (נשמרים ב-notes.html, משותפים לווטסאפ ולתפריט) ----------
+var SNIPS_DEF = ['תודה רבה! 🙏', 'קיבלתי, אחזור אליך בהקדם.', 'אפשר לתאם שיחה? מתי נוח לך?', 'מצורף הקובץ. אשמח לאישור שהתקבל.', 'אני בדרך, אגיע בעוד כמה דקות', 'שבת שלום ומבורך! 🕯🕯', 'מזל טוב! 🎉 שתזכו לרוב נחת'];
+function getSnips() {
+  return chrome.storage.sync.get('snips').catch(function () { return {}; }).then(function (o) {
+    if (Array.isArray(o.snips)) return o.snips;
+    return chrome.storage.local.get('snips').then(function (l) { return Array.isArray(l.snips) ? l.snips : SNIPS_DEF; });
+  });
+}
+// רץ בתוך הדף, רק אחרי הלחיצה: מכניס את הטקסט לשדה שלחצו בו (גם בעורכים כמו ג׳ימייל וווטסאפ)
+function insertSnip(text) {
+  var el = document.activeElement;
+  while (el && el.shadowRoot && el.shadowRoot.activeElement) el = el.shadowRoot.activeElement;
+  if (el && (el.isContentEditable || el instanceof HTMLTextAreaElement || el instanceof HTMLInputElement)) {
+    el.focus();
+    if (document.execCommand('insertText', false, text)) return true;
+    if ('value' in el) { var s = el.selectionStart || 0, e = el.selectionEnd || 0; el.value = el.value.slice(0, s) + text + el.value.slice(e); el.dispatchEvent(new Event('input', { bubbles: true })); return true; }
+  }
+  return false;
+}
+chrome.storage.onChanged.addListener(function (ch) { if (ch.snips) buildMenus(); });
+
+// ---------- חלון צד: כלים מהאתר ליד הדף ----------
+// חייב לקרות מיד בתוך הלחיצה, לכן קודם פותחים ואחר כך שומרים לאיזה דף (הצד מתעדכן לבד).
+function openSide(tab, tool) {
+  try { chrome.sidePanel.open({ windowId: tab.windowId }).catch(function () {}); } catch (e) {}
+  return chrome.storage.session.set({ spCtx: { url: tab.url || '', title: tab.title || '', tool: tool || '', at: Date.now() } });
+}
 
 // ---------- ניהול כרטיסיות (tabs.html) ----------
 // Alt+Shift+K או הכפתור בחלון הקטן: פותח חלון קטן עם כל הכרטיסיות. אם כבר פתוח – מביאים אותו קדימה.
@@ -295,6 +331,24 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
     chrome.scripting.executeScript({ target: target, func: putPassword, args: [makePassword(16)] }).catch(function () {});
     return;
   }
+  if (id === 'cal') {
+    // הטקסט המסומן ← אירוע ביומן גוגל עם התאריך והשעה שזוהו בו, והקישור לדף בפרטים
+    var sel = String(info.selectionText || '').slice(0, 300), w = HKWhen.parse(sel);
+    if (w.title.length > 80) w.title = w.title.slice(0, 80) + '…';
+    chrome.tabs.create({ url: HKWhen.calendarUrl(w, sel + (info.pageUrl ? '\n\n' + info.pageUrl : '')), index: tab ? tab.index + 1 : undefined });
+    return;
+  }
+  if (id === 'side') { if (tab) openSide(tab); return; }
+  if (id === 'sn-edit') { if (tab) { try { chrome.sidePanel.open({ windowId: tab.windowId }).catch(function () {}); } catch (e) {} chrome.storage.session.set({ spCtx: { url: tab.url || '', title: tab.title || '', view: 'notes', at: Date.now() } }); } return; }
+  if (id.indexOf('sn|') === 0) {
+    if (!tab || tab.id == null) return;
+    getSnips().then(function (list) {
+      var text = list[+id.slice(3)]; if (!text) return;
+      var target = { tabId: tab.id }; if (info.frameId) target.frameIds = [info.frameId];
+      chrome.scripting.executeScript({ target: target, func: insertSnip, args: [text] }).catch(function () {});
+    });
+    return;
+  }
   if (id === 'all') { chrome.tabs.create({ url: SITE + '/kelim/?utm_source=tosaf' }); return; }
   if (PAGE_ACTS[id]) { if (tab && tab.id != null) PAGE_ACTS[id](tab, info); return; }
   var parts = id.split('|');
@@ -347,6 +401,8 @@ chrome.runtime.onMessage.addListener(function (m, sender, reply) {
 // Alt+Shift+T מתרגם את הדף (ולחיצה נוספת מחזירה אותו כמו שהיה)
 chrome.commands.onCommand.addListener(function (cmd, tab) {
   if (cmd === 'tabs-manager') { openTabsManager(); return; }
+  if (cmd === 'side-panel') { if (tab) openSide(tab); return; }
+  if (cmd === 'notes') { if (tab) { try { chrome.sidePanel.open({ windowId: tab.windowId }).catch(function () {}); } catch (e) {} chrome.storage.session.set({ spCtx: { url: tab.url || '', title: tab.title || '', view: 'notes', at: Date.now() } }); } return; }
   if (!tab) return;
   if (cmd === 'fix-layout') PAGE_ACTS.fix(tab, {});
   if (cmd === 'translate-page') PAGE_ACTS.translate(tab).catch(function () {});

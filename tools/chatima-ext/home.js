@@ -6,7 +6,7 @@
     ['✉', 'ג׳ימייל', 'https://mail.google.com/'], ['📅', 'יומן', 'https://calendar.google.com/'], ['📁', 'דרייב', 'https://drive.google.com/'],
     ['📄', 'מסמך חדש', 'https://docs.new'], ['📊', 'גיליון חדש', 'https://sheets.new'], ['🖼', 'תמונות', 'https://photos.google.com/'],
     ['👥', 'אנשי קשר', 'https://contacts.google.com/'], ['💬', 'ווטסאפ ווב', 'https://web.whatsapp.com/'], ['▶', 'יוטיוב', 'https://www.youtube.com/'],
-    ['🗺', 'מפות', 'https://www.google.com/maps'], ['🧰', 'הכלים של גילעד', 'https://hakelim.com/kelim/?utm_source=tosaf_home'], ['🗂', 'הכרטיסיות שלי', 'tabs.html']
+    ['🗺', 'מפות', 'https://www.google.com/maps'], ['📁', 'הקבצים שלי', 'files.html'], ['📝', 'פתקים', 'notes.html'], ['🧰', 'הכלים של גילעד', 'https://hakelim.com/kelim/?utm_source=tosaf_home'], ['🗂', 'הכרטיסיות שלי', 'tabs.html']
   ];
   var mine = [], editing = false;
 
@@ -110,6 +110,9 @@
   $('copy').addEventListener('click', function () { var b = this; navigator.clipboard.writeText(location.href.split('#')[0]).then(function () { b.textContent = '✓ הועתק'; }); });
 
   function render() { renderMine(); renderTop(); }
+  function evPre() { var v = $('ev-q').value.trim(); if (!v) { $('ev-pre').textContent = ''; return null; } var w = HKWhen.parse(v); $('ev-pre').textContent = '📅 ' + (w.title || 'אירוע') + ' · ' + HKWhen.describe(w); return w; }
+  $('ev-q').addEventListener('input', evPre);
+  $('ev').addEventListener('submit', function (e) { e.preventDefault(); var w = evPre(); if (w) location.href = HKWhen.calendarUrl(w); });
   Promise.all([chrome.storage.sync.get('homeLinks').catch(function () { return {}; }), chrome.storage.local.get(['homeLinks', 'savedTabs'])]).then(function (r) {
     mine = Array.isArray(r[0].homeLinks) ? r[0].homeLinks : Array.isArray(r[1].homeLinks) ? r[1].homeLinks : [];
     render(); renderSaved(Array.isArray(r[1].savedTabs) ? r[1].savedTabs : []);

@@ -22,6 +22,9 @@
   "background": {
     "service_worker": "background.js"
   },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
   "permissions": [
     "contextMenus",
     "storage",
@@ -32,7 +35,9 @@
     "tts",
     "tabGroups",
     "system.memory",
-    "favicon"
+    "favicon",
+    "sidePanel",
+    "browsingData"
   ],
   "optional_permissions": [
     "tabs",
@@ -63,6 +68,15 @@
         "default": "Alt+Shift+K"
       },
       "description": "לפתוח את ניהול הכרטיסיות"
+    },
+    "side-panel": {
+      "suggested_key": {
+        "default": "Alt+Shift+S"
+      },
+      "description": "לפתוח כלים בחלון צד, ליד הדף"
+    },
+    "notes": {
+      "description": "לפתוח פתקים וטקסטים מוכנים בחלון הצד (אפשר לקבוע מקש ב-chrome://extensions/shortcuts)"
     }
   },
   "content_scripts": [

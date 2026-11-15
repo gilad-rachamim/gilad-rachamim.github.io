@@ -32,9 +32,35 @@
   <p class="small">לנקות: בוחרים חיפוש ← תיבת הסימון למעלה ← "בחירת כל השיחות התואמות" ← 🗑. התוסף לא קורא ולא שומר את המיילים.</p>
 </section>
 
+<section id="wa" hidden aria-labelledby="wa-h">
+  <h2 id="wa-h">💬 ווטסאפ ווב</h2>
+  <div class="chips gm" id="wa-tpl"></div>
+  <div class="row add-tpl" id="wa-add" hidden><label class="sr" for="wa-new">תבנית חדשה</label><input id="wa-new" placeholder="נוסח חדש…" maxlength="500"><button type="button" class="line" id="wa-save">➕</button></div>
+  <div class="row">
+    <button class="line" type="button" id="wa-blur" aria-pressed="false">🙈 מצב פרטיות</button>
+    <button class="line" type="button" id="wa-export">💾 לשמור את הצ׳אט</button>
+  </div>
+  <p class="msg" id="wa-msg" role="status"></p>
+  <p class="small">לוחצים על נוסח והוא נכנס לתיבת ההודעה של הצ׳אט הפתוח. שולחים בעצמכם (Enter). ✎ מוסיף נוסח משלכם.</p>
+</section>
+
+<section id="site" hidden aria-labelledby="site-h">
+  <h2 id="site-h">🧰 מתאים לדף הזה <span class="small" id="site-host"></span></h2>
+  <div class="chips gm" id="sug"></div>
+  <div class="row site-acts">
+    <button class="line" type="button" id="side-btn" title="Alt+Shift+S">◧ כלים בצד</button>
+    <button class="line" type="button" id="site-home">⭐ לדף שלי</button>
+    <button class="line" type="button" id="site-mute">🔇 להשתיק</button>
+    <button class="line" type="button" id="site-clean">🧹 לנקות אתר</button>
+  </div>
+  <p class="msg" id="site-msg" role="status"></p>
+</section>
+
 <div class="grid" id="acts" role="group" aria-label="כלים לדף הזה">
   <button class="line hi" type="button" id="tabs-btn" title="Alt+Shift+K">🗂 הכרטיסיות</button>
   <button class="line hi" type="button" id="home-btn">🏠 הדף שלי</button>
+  <button class="line hi" type="button" id="notes-btn">📝 פתקים</button>
+  <button class="line hi" type="button" id="files-btn">📁 הקבצים שלי</button>
   <button class="line wide" type="button" data-act="translate" title="Alt+Shift+T">🌐 לתרגם את הדף – בלי לשבור אותו</button>
   <button class="line" type="button" data-act="shot">📸 צילום כל העמוד</button>
   <button class="line" type="button" data-act="speak">🔊 להקריא מסומן</button>
@@ -45,6 +71,9 @@
 
 <details class="quick" id="quick">
   <summary>🚀 גוגל, ווטסאפ והמחשב</summary>
+  <h3>📅 אירוע מהיר ליומן</h3>
+  <form class="ev" id="ev"><label class="sr" for="ev-q">מה ומתי</label><input id="ev-q" placeholder="למשל: רופא שיניים מחר ב-10:30" autocomplete="off"><button type="submit" class="line">➕</button></form>
+  <p class="small" id="ev-pre">כותבים מה ומתי, והיומן של גוגל נפתח עם הכול מוכן. טיפ: מסמנים טקסט בדף ← לחיצה ימנית ← "להוסיף ליומן".</p>
   <h3>➕ ליצור חדש</h3>
   <div class="go-chips" id="new-chips">
     <button type="button" data-go="https://calendar.google.com/calendar/r/eventedit">📅 אירוע ביומן</button>
@@ -62,7 +91,8 @@
     <button type="button" data-go="https://photos.google.com/">🖼 תמונות</button>
     <button type="button" data-go="https://contacts.google.com/">👥 אנשי קשר</button>
     <button type="button" data-go="https://web.whatsapp.com/">💬 ווטסאפ ווב</button>
-    <button type="button" data-go="https://drive.google.com/drive/quota">💾 כמה מקום נשאר</button>
+    <button type="button" data-go="https://drive.google.com/drive/recent">🕘 אחרונים בדרייב</button>
+    <button type="button" data-go="https://one.google.com/storage/management">🧹 לפנות מקום בגוגל</button>
   </div>
   <h3>💻 במחשב</h3>
   <div class="go-chips">
@@ -102,6 +132,8 @@
 
 <footer><a href="https://hakelim.com/kelim/?utm_source=tosaf" target="_blank">כל הכלים באתר</a> · שום קובץ לא עולה לשרת · <a href="https://hakelim.com/kelim/machshev/chatima/tosaf/" target="_blank">פרטיות</a></footer>
 <script src="qrcode.min.js"></script>
+<script src="when.js"></script>
+<script src="suggest.js"></script>
 <script src="popup.js"></script>
 </body>
 </html>
