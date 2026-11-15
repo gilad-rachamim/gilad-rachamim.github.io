@@ -1,5 +1,6 @@
 :root { --bg: #141210; --card: #201c17; --line: #4a3d24; --gold: #d9b25f; --gold2: #e9c977; --text: #f3ead7; --muted: #bdb3a0; }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body { margin: 0; width: 350px; background: var(--bg); color: var(--text); font: 14px/1.45 "Segoe UI", Arial, sans-serif; padding: 10px 12px 8px; }
 header { display: flex; align-items: center; gap: 8px; font-size: 16px; color: var(--gold2); margin-bottom: 8px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
@@ -38,4 +39,16 @@ footer { font-size: 11.5px; color: var(--muted); text-align: center; }
 footer a { color: var(--gold2); }
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; }
 .grid button { padding: 6px 7px; font-size: 13px; }
+.chips.gm { margin-bottom: 6px; }
+.chips.gm button { background: transparent; color: var(--text); border: 1px solid var(--line); font-weight: 400; font-size: 12.5px; padding: 5px 8px; }
+.chips.gm button:hover { border-color: var(--gold); }
+#gm .line { font-size: 13px; }
+#gm-unsub-go { margin-top: 6px; background: var(--gold); color: #141210; border: 0; font-weight: 700; }
+.go-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 4px; }
+.go-chips button { width: auto; background: transparent; color: var(--text); border: 1px solid var(--line); font-size: 12.5px; padding: 5px 8px; }
+.go-chips button:hover { border-color: var(--gold); }
+.go-chips.find button { border-color: var(--gold); }
+details.quick { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 6px 10px; margin-bottom: 8px; }
+details.quick summary { cursor: pointer; color: var(--gold2); font-weight: 700; font-size: 13px; }
+details.quick h3 { margin-top: 6px; }
 .grid .wide { grid-column: 1 / -1; border-color: var(--gold); font-weight: 600; }
