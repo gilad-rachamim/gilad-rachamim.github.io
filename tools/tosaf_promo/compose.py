@@ -49,11 +49,11 @@ def cards(w, h):
     s = 1.0 if not tall else 0.95
     big, mid, small = int(110 * s), int(46 * s), int(34 * s)
     brand = '<div class=brand style="font-size:%dpx"><img src="%s" width=%d height=%d>מיזם הכלים של גילעד רחמים</div>' % (small, ICON, int(56 * s), int(56 * s))
-    intro = card('<div class=c>%s<h1 style="font-size:%dpx">תוסף אחד לכרום<b>שמסדר לכם את המחשב</b></h1><p class=sub style="font-size:%dpx">כרטיסיות, ג׳ימייל, גוגל, תרגום – וכל הכלים של מיזם הכלים.</p></div>' % (brand, big, mid), w, h, "intro")
+    intro = card('<div class=c>%s<h1 style="font-size:%dpx">תוסף אחד לכרום<b>שמסדר לכם את המחשב</b></h1><p class=sub style="font-size:%dpx">כרטיסיות, ג׳ימייל, ווטסאפ, קבצים, פתקים, תרגום – ומאות כלים.</p></div>' % (brand, big, mid), w, h, "intro")
     tr = card('<div class=c><p class=sub style="font-size:%dpx">והכלי הכי חזק:</p><h1 style="font-size:%dpx">כל אתר באנגלית<b>בעברית, בלי שיישבר</b></h1></div>' % (mid, big), w, h, "tr")
     feats = [("🔍 מאות כלים בחיפוש", "כלי חדש באתר נכנס לתוסף לבד"), ("✍ חתימה על PDF", "ישר מג׳ימייל, בלי להדפיס"), ("⌨ utz ← ואז", "כתבתם באנגלית במקום בעברית? Alt+Shift+H"),
-             ("📸 צילום עמוד שלם", "כל הדף, כתמונה או PDF"), ("🗜 תמונה ו-PDF קטנים", "לחיצה ימנית – מקטינים לפני שליחה"), ("💾 לשמור את כל הכרטיסיות", "ולפתוח הכול אחר כך"),
-             ("💬 ווטסאפ למספר", "בלי לשמור איש קשר"), ("📅 אירוע, מסמך, גיליון", "חדש בלחיצה אחת")]
+             ("📸 צילום עמוד שלם", "כל הדף, כתמונה או PDF"), ("🗜 תמונה ו-PDF קטנים", "לחיצה ימנית – מקטינים לפני שליחה"), ("📅 \"רופא מחר ב-10:30\"", "נכנס ליומן גוגל לבד"),
+             ("💬 ווטסאפ למספר", "בלי לשמור איש קשר"), ("🌐 האתר הזה", "להשתיק, להוסיף לדף שלי, לנקות כשנתקע")]
     cols = 2 if tall else 4
     grid = ''.join('<div><b style="font-size:%dpx">%s</b><span style="font-size:%dpx">%s</span></div>' % (int(36 * s), a, int(27 * s), b) for a, b in feats)
     more = card('<div class=c><h1 style="font-size:%dpx">ועוד בתוסף אחד</h1><div class=grid style="grid-template-columns:repeat(%d,1fr);width:%dpx">%s</div></div>' % (int(80 * s), cols, int(w * .86), grid), w, h, "more")
@@ -63,7 +63,7 @@ def cards(w, h):
 
 # קטעי ההקלטה: (שם, חיתוך x,y,w,h בתוך פריים 1280x800 או None)
 # סדר הסרטון: הקלטות, ("still", מספר) = צילום מ-STILLS, ("card", שם)
-SEGS = [("tabs", (240, 0, 800, 800)), ("home", (190, 0, 900, 800)), ("still", 0), ("card", "tr"),
+SEGS = [("tabs", (240, 0, 800, 800)), ("home", (190, 0, 900, 800)), ("still", 0), ("still", 1), ("still", 2), ("still", 3), ("card", "tr"),
         ("atar", None), ("links", None), ("youtube", (372, 0, 880, 700)), ("pdf", None), ("pdf2", None)]
 
 def seg_video(name):
@@ -96,7 +96,7 @@ def build(w, h, tag):
             still(named[crop], 3.0, crop); continue
         if name == "still":
             if crop >= len(STILLS): continue
-            o = TMP / ("%s-still%d.mp4" % (tag, crop)); sec = 5.5
+            o = TMP / ("%s-still%d.mp4" % (tag, crop)); sec = 4.6
             maxw, maxh = (int(w * .9), int(h * .9)) if w > h else (int(w * .98), int(h * .7))
             run("ffmpeg", "-loglevel", "error", "-y", "-loop", "1", "-i", bg, "-loop", "1", "-i", STILLS[crop], "-filter_complex",
                 "[1:v]scale=%d:%d:force_original_aspect_ratio=decrease:flags=lanczos[v];[0:v][v]overlay=(W-w)/2:(H-h)/2,fps=%d,format=yuv420p,fade=in:0:9,fade=out:st=%.2f:d=0.3" % (maxw, maxh, FPS, sec - 0.3),
