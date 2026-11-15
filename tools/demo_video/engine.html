@@ -6,7 +6,7 @@
 <!-- מנוע סרטוני ההדמיה של הכלים (14.11.2026). render.py טוען את הדף, קורא ל-DV.load(spec) ואז DV.seek(t) לכל פריים.
      כל סצנה = מחלקת CSS עם אנימציות; הזמן נקבע ידנית (currentTime) ולכן כל פריים יוצא זהה בכל ריצה. -->
 <style>
-@font-face{font-family:Assistant;src:url(../../assets/Assistant-wght.woff) format("woff");font-weight:200 900}
+@font-face{font-family:Assistant;src:url(../../assets/fonts/Assistant-wght.woff) format("woff");font-weight:200 900}
 :root{--ink:#0e1628;--ink2:#15203a;--gold:#d4b062;--gold-hi:#f0d38e;--body:#e3e8f2;--muted:#9aa6bf;--accent:#5aa9e6;--ok:#6fd3a4}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:720px;height:1280px;overflow:hidden;background:var(--ink)}
@@ -119,6 +119,48 @@ body{font-family:Assistant,"Segoe UI",Arial,sans-serif;color:var(--body);-webkit
 @keyframes scrollShot{from{transform:translateY(0)}to{transform:translateY(var(--sy,0px))}}
 .tap{position:absolute;width:90px;height:90px;border-radius:50%;border:6px solid var(--gold-hi);box-shadow:0 0 0 999px rgba(0,0,0,0);animation:pop .5s ease}
 
+/* ווטסאפ (צ'אט ירוק) */
+.phone.wa{background:#0b141a}
+.phone.wa .top{background:#202c33}.phone.wa .av{background:#00a884}
+.phone.wa .msgs{background:#0b141a radial-gradient(rgba(255,255,255,.035) 1.5px,transparent 1.6px) 0 0/22px 22px}
+.phone.wa .m.me{background:#005c4b}.phone.wa .m.bot{background:#202c33}
+.phone.wa .kb div{background:#202c33;color:#53bdeb}.phone.wa .kb div.hl{background:#2a3942}
+.phone.wa .inp{background:#202c33}.phone.wa .inp .send{background:#00a884}
+.m .vc{display:flex;align-items:center;gap:12px;direction:ltr}
+.m .vc i{font-style:normal;font-size:26px}
+.m .vc .wv{display:flex;gap:3px;align-items:center;height:34px}
+.m .vc .wv b{display:block;width:4px;border-radius:2px;background:rgba(255,255,255,.7)}
+.m .vc small{font-size:19px;color:rgba(255,255,255,.65)}
+.soon{display:inline-block;background:#00a884;color:#fff;font-weight:800;font-size:26px;border-radius:999px;padding:6px 22px;margin-bottom:16px}
+
+/* רצף צילומים: טלפון או מחשב */
+.mont{position:relative;margin:0 auto}
+.mont.phonef{width:500px;height:860px;border-radius:52px;border:10px solid #232c3d;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.55);background:#111}
+.mont.laptop{width:100%;aspect-ratio:16/10.6;border-radius:18px 18px 6px 6px;border:12px solid #232c3d;border-top-width:34px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.55);background:#111}
+.lap-base{width:106%;height:20px;margin:0 -3%;border-radius:0 0 24px 24px;background:linear-gradient(#3a4458,#1c2232)}
+.lap-dots{position:absolute;top:-24px;left:10px;display:flex;gap:7px;z-index:3}
+.lap-dots i{width:12px;height:12px;border-radius:50%;background:#56607a}
+.mont .it{position:absolute;inset:0;overflow:hidden;background:#111;animation:slideL .6s cubic-bezier(.2,.8,.2,1)}
+@keyframes slideL{from{opacity:0;transform:translateX(-70px)}to{opacity:1;transform:none}}
+.mont.phonef .it img{width:100%;display:block;animation:scrollShot 3s ease-in-out}
+.mont.laptop .it img{width:100%;height:100%;object-fit:cover;object-position:top;display:block;animation:kb 3s ease-out}
+@keyframes kb{from{transform:scale(1)}to{transform:scale(1.07)}}
+.mcaps{position:relative;height:120px;margin-top:26px}
+.mcap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:800;color:#fff;line-height:1.2;background:var(--ink);animation:up .45s cubic-bezier(.2,.8,.2,1)}
+.mcap em{font-style:normal;color:var(--gold-hi)}
+.mcap small{display:block;font-size:26px;font-weight:500;color:var(--muted);margin-top:6px}
+.mdots{display:flex;gap:10px;justify-content:center;margin-top:6px}
+.mdots i{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.18)}
+.mdots i b{display:block;width:100%;height:100%;border-radius:50%;background:var(--gold);animation:fade .2s}
+
+.scene.wide{padding-left:14px;padding-right:14px}
+.scene.wide .mcap{font-size:40px}
+/* רשת תחומים */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.gi{background:rgba(255,255,255,.06);border:1px solid rgba(212,176,98,.25);border-radius:24px;padding:18px 6px 14px}
+.gi .gic{font-size:52px;line-height:1}
+.gi .gl{font-size:22px;font-weight:700;color:#fff;margin-top:10px;line-height:1.2}
+
 /* סיום */
 .cta-btn{direction:ltr;unicode-bidi:isolate;display:inline-flex;align-items:center;gap:14px;background:var(--accent);color:#fff;font-size:40px;font-weight:800;border-radius:999px;padding:24px 46px;margin-top:40px;animation:pulse 1.6s ease-in-out infinite}
 .cta-btn.goldb{background:var(--gold);color:var(--ink)}
@@ -168,9 +210,10 @@ const R = {
       t += m.wait ?? .9;
       if (m.kb) out.push(d('kb a-up',t,m.kb.map((b,i)=>`<div${i===m.hl?' class="hl"':''}>${esc(b)}</div>`).join('')));
       else if (m.media) out.push(d('m bot media a-pop',t,`<div class="scr"><b>${m.media[0]}</b><small>${esc(m.media[1]||'')}</small></div>${m.cap?`<div class="cap">${esc(m.cap)}</div>`:''}`));
+      else if (m.voice) out.push(d(`m ${m.who||'me'} a-pop`,t,`<div class="vc"><i>▶</i><span class="wv">${Array.from({length:22},(_,i)=>`<b style="height:${8+Math.round(Math.abs(Math.sin(i*1.7))*24)}px"></b>`).join('')}</span><small>${esc(m.voice)}</small></div>`));
       else out.push(d(`m ${m.who||'bot'} a-pop`,t,esc(m.text)));
     }
-    return `<div class="wrap"><div class="phone">
+    return `<div class="wrap">${s.badge?d('soon a-pop',0,rich(s.badge)):''}${s.title?d('h a-up',.1,rich(s.title)):''}<div class="phone${s.wa?' wa':''}"${s.title?' style="height:'+(s.h||760)+'px"':''}>
       <div class="top"><div class="av">${s.avatar||'🤖'}</div><div><div class="nm">${esc(s.name)}</div><div class="st">${esc(s.status||'בוט')}</div></div></div>
       <div class="msgs">${out.join('')}</div>
       <div class="inp">😊 <span>הודעה</span><div class="send">➤</div></div></div>
@@ -195,6 +238,22 @@ const R = {
       ${d('t-title a-up',.2,rich(s.title))}${s.sub?d('t-sub a-up',.45,rich(s.sub)):''}
       ${s.button?`<div class="a-pop" style="animation-delay:.8s"><span class="cta-btn ${s.gold?'goldb':''}">${esc(s.button)}</span></div>`:''}
       ${s.url?d('url a-up',1.2,esc(s.url)):''}${s.small?d('small a-up',1.5,rich(s.small)):''}</div>`;
+  },
+  // רצף צילומים אמיתיים: items = [[img, כיתוב, תת-כיתוב?], ...], frame = phone | laptop
+  montage(s){
+    const n = s.items.length, t0 = s.t0 ?? .5, per = (s.dur - t0 - .5) / n, lap = s.frame === 'laptop';
+    const its = s.items.map((it,i)=>`<div class="it" style="z-index:${i+1};animation-delay:${i?t0+i*per:0}s"><img src="${esc(it[0])}" style="--sy:${it[3]||(lap?0:s.scroll||-480)}px;animation-delay:${t0+i*per+.5}s;animation-duration:${Math.max(per-.6,1)}s"></div>`).join('');
+    const caps = s.items.map((it,i)=>`<div class="mcap" style="z-index:${i+1};animation-delay:${i?t0+i*per:.3}s"><div>${rich(it[1])}${it[2]?`<small>${rich(it[2])}</small>`:''}</div></div>`).join('');
+    const dots = s.items.map((_,i)=>`<i><b style="animation-delay:${i?t0+i*per:0}s"></b></i>`).join('');
+    return `<div class="wrap">${s.badge?d('badge a-pop',0,rich(s.badge)):''}${s.title?d('h a-up',.05,rich(s.title)):''}
+      <div class="a-pop" style="animation-delay:.15s"><div class="mont ${lap?'laptop':'phonef'}">${lap?'<div class="lap-dots"><i></i><i></i><i></i></div>':''}${its}</div>${lap?'<div class="lap-base"></div>':''}</div>
+      <div class="mcaps">${caps}</div><div class="mdots">${dots}</div></div>`;
+  },
+  grid(s){
+    const g = s.gap ?? .14;
+    return `<div class="wrap">${d('h a-up',0,rich(s.title))}${s.sub?d('hs a-up',.15,rich(s.sub)):''}
+      <div class="grid">${s.items.map((it,i)=>d('gi a-pop',.5+i*g,`<div class="gic">${it[0]}</div><div class="gl">${rich(it[1])}</div>`)).join('')}</div>
+      ${s.foot?d('foot a-up',.5+s.items.length*g+.3,rich(s.foot)):''}</div>`;
   },
   html(s){ return `<div class="wrap">${s.html}</div>`; }
 };

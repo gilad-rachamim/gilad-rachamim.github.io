@@ -1,0 +1,41 @@
+# סרטוני תדמית למיזם הכלים (15.11.2026) – רינדור בענן, לא במחשב של גילעד.
+# tools/demo_video/specs/promo/*.json -> 1080x1920 (סטטוס/רילס) + 1920x1080 (אתר/יוטיוב) + תמונת פתיחה.
+# התוצאה עולה כ-artifact בשם promo-videos (לא נכנסת לאתר לבד; אחרי אישור מעתיקים ל-assets/promo/).
+name: promo-videos
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "רק המפרטים האלה (id, פסיקים). ריק = כולם"
+        required: false
+        default: ""
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        id: [promo_atar, promo_tosaf, promo_botim]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: install
+        run: |
+          pip install -q playwright qrcode[pil] numpy
+          python -m playwright install --with-deps chromium > /dev/null
+          sudo apt-get install -y -qq fonts-noto-color-emoji ffmpeg > /dev/null
+      - name: render
+        run: |
+          ONLY="${{ github.event.inputs.only }}"
+          if [ -n "$ONLY" ] && ! echo ",$ONLY," | grep -q ",${{ matrix.id }},"; then echo skip; exit 0; fi
+          python tools/demo_video/render.py tools/demo_video/specs/promo/${{ matrix.id }}.json
+          ls -la assets/promo
+      - uses: actions/upload-artifact@v4
+        with:
+          name: promo-${{ matrix.id }}
+          path: |
+            assets/promo/*.mp4
+            assets/promo/*.jpg
+          if-no-files-found: ignore
+          retention-days: 7
