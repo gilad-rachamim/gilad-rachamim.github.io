@@ -1,0 +1,38 @@
+<!doctype html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>פתקים וטקסטים מוכנים</title>
+<link rel="icon" href="icon32.png">
+<link rel="stylesheet" href="notes.css">
+</head>
+<body>
+<header><h1>📝 פתקים וטקסטים מוכנים</h1><p class="small">נשמר לבד, רק בכרום שלכם.</p></header>
+
+<section aria-labelledby="sn-h" class="card">
+  <div class="h"><h2 id="sn-h">📋 טקסטים מוכנים להדבקה</h2><button type="button" class="line sm" id="sn-add-btn">➕ טקסט</button></div>
+  <p class="small">לחיצה מעתיקה. בכל שדה באתר: לחיצה ימנית ← "הכלים של גילעד רחמים" ← "📋 טקסט מוכן", והטקסט נכנס לבד.</p>
+  <form id="sn-form" hidden><label class="sr" for="sn-new">טקסט מוכן חדש</label><textarea id="sn-new" rows="3" placeholder="למשל: בברכה, ישראל ישראלי · 050-0000000"></textarea><div class="row"><button type="submit" class="gold sm">שמירה</button><button type="button" class="line sm" id="sn-cancel">ביטול</button></div></form>
+  <div id="snips" class="snips"></div>
+</section>
+
+<section aria-labelledby="nt-h" class="card">
+  <div class="h"><h2 id="nt-h">🗒 הפתקים שלי</h2><label class="sr" for="nt-q">חיפוש בפתקים</label><input id="nt-q" type="search" placeholder="🔍 חיפוש" autocomplete="off"></div>
+  <div class="new">
+    <label class="sr" for="nt-new">פתק חדש</label>
+    <textarea id="nt-new" rows="3" placeholder="פתק חדש… (Ctrl+Enter לשמירה)"></textarea>
+    <div class="row kinds" role="group" aria-label="סוג פתק">
+      <button type="button" class="line sm" data-kind="note" aria-pressed="true">🗒 רגיל</button>
+      <button type="button" class="line sm" data-kind="list" aria-pressed="false">✅ רשימת משימות</button>
+      <button type="button" class="line sm" data-kind="date" aria-pressed="false">📅 עם תאריך</button>
+      <button type="button" class="gold sm" id="nt-save">שמירה</button>
+    </div>
+  </div>
+  <div id="notes" class="notes"></div>
+  <div class="row foot"><button type="button" class="line sm" id="nt-export">⬇ לשמור הכול כקובץ</button><span class="msg" id="msg" role="status" aria-live="polite"></span></div>
+</section>
+<script src="when.js"></script>
+<script src="notes.js"></script>
+</body>
+</html>

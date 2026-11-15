@@ -1,0 +1,22 @@
+.big { font-size: 16px; padding: 10px 16px; }
+.card p { margin: 0 0 8px; }
+progress { width: 100%; height: 8px; accent-color: var(--gold); margin: 4px 0 8px; }
+.sum { font-size: 15px; }
+.bars { display: grid; gap: 5px; }
+.bar { display: grid; grid-template-columns: 120px 1fr 90px; align-items: center; gap: 8px; font-size: 13px; }
+.bar i { display: block; height: 12px; border-radius: 6px; background: var(--gold); min-width: 2px; }
+.bar span:last-child { color: var(--muted); text-align: left; direction: ltr; }
+.files { margin: 0; padding-inline-start: 22px; font-size: 13px; }
+.files li { margin: 3px 0; }
+.files .p { color: var(--muted); font-size: 11.5px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.files b { font-weight: 600; unicode-bidi: isolate; }
+bdi { unicode-bidi: isolate; }
+.sz { color: var(--gold2); margin: 0 10px 0 0; font-weight: 700; direction: ltr; unicode-bidi: isolate; display: inline-block; }
+.dup { border-top: 1px solid #2c261e; padding: 6px 0; font-size: 13px; }
+.dup:first-child { border-top: 0; }
+.dup .p { color: var(--muted); font-size: 11.5px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dup .p.keep { color: #9be29e; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+.go { display: flex; gap: 6px; flex-wrap: wrap; }
+.go a { border: 1px solid var(--line); border-radius: 9px; padding: 6px 10px; color: var(--text); text-decoration: none; font-size: 13px; }
+.go a:hover { border-color: var(--gold); }
