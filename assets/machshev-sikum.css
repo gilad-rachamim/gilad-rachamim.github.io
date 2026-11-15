@@ -26,3 +26,5 @@ code{direction:ltr;unicode-bidi:isolate}
 @media print{.topbar,.site-foot,.crumbs,.no-print,.skip{display:none!important}}
 .sk-more{border:1px solid var(--line);border-radius:12px;padding:.6rem .9rem;margin:.4rem 0 1rem}
 .sk-more summary{cursor:pointer;font-weight:700;color:var(--gold)}
+.k-form fieldset.field{border:0;padding:0;margin:0 0 1rem;min-width:0}
+.k-form fieldset.field legend{padding:0;margin-bottom:.4rem}
