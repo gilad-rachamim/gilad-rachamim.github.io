@@ -1,0 +1,31 @@
+/* לוח הכפל – /limudim/luach-hakefel/ */
+.kf-seg{display:flex;gap:.4rem;flex-wrap:wrap;margin:.2rem 0 .8rem}
+.kf-seg button{border:1px solid var(--line);background:transparent;color:var(--cream);border-radius:10px;padding:.45rem .9rem;font:inherit;cursor:pointer}
+.kf-seg button[aria-pressed=true]{background:var(--gold);color:#1a1405;border-color:var(--gold);font-weight:700}
+.kf-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+#kf-tbl{border-collapse:collapse;margin:0 auto;font-variant-numeric:tabular-nums;direction:ltr}
+#kf-tbl th,#kf-tbl td{width:2.6rem;height:2.4rem;text-align:center;border:1px solid var(--line);font-size:1.02rem}
+#kf-tbl th{color:var(--gold);font-weight:800;background:rgba(216,178,90,.08)}
+#kf-tbl td{cursor:pointer}
+#kf-tbl .kf-line{background:rgba(216,178,90,.18)}
+#kf-tbl .kf-hit{background:var(--gold);color:#1a1405;font-weight:800}
+#kf-tbl td:focus{outline:2px solid var(--gold);outline-offset:-2px}
+.kf-say{text-align:center;font-size:1.25rem;font-weight:700;min-height:1.8em;margin:.7rem 0 0;color:var(--cream)}
+.kf-rows{display:flex;flex-wrap:wrap;gap:.35rem .8rem;margin:.4rem 0 .8rem}
+.kf-rows label{display:inline-flex;gap:.25rem;align-items:center}
+.kf-q{font-size:2.2rem;font-weight:800;text-align:center;margin:.4rem 0;direction:ltr}
+#kf-form{display:flex;gap:.5rem;justify-content:center}
+#kf-a{width:7rem;font-size:1.6rem;text-align:center}
+.kf-fb{text-align:center;min-height:1.6em;font-weight:700;margin:.5rem 0 0}
+.kf-fb.ok{color:#6fd28a}.kf-fb.no{color:#f0a868}
+.kf-prog{text-align:center;color:var(--muted);font-size:.92rem}
+.kf-w{display:inline-block;background:rgba(240,168,104,.15);border-radius:8px;padding:.1rem .45rem;margin:.15rem;direction:ltr}
+@media (max-width:480px){#kf-tbl th,#kf-tbl td{width:1.95rem;height:2rem;font-size:.86rem}}
+@media print{
+  body *{visibility:hidden}
+  #kf-print-area,#kf-print-area *{visibility:visible}
+  #kf-print-area{position:absolute;inset:0;padding:1cm}
+  #kf-tbl th,#kf-tbl td{color:#000;border-color:#555;background:#fff!important;width:1.3cm;height:1.1cm;font-size:14pt}
+  #kf-tbl th{background:#eee!important}
+  .kf-say,.kf-seg{display:none}
+}

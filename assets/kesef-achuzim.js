@@ -41,6 +41,8 @@
 
   var saved = load();
   var st = Object.assign({}, DEF, saved || {});
+  // דף נחיתה (למשל /kesef/achuzim/hanacha/) יכול לבקש כיוון התחלתי: data-a4d="sub" = להוריד אחוז (הנחה)
+  if (!saved && root.getAttribute('data-a4d')) st.a4d = root.getAttribute('data-a4d');
   var texts = {};
 
   function show(k, o) {
