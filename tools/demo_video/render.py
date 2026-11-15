@@ -71,7 +71,47 @@ def render_video(page, spec, out_dir, fps):
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(tmp / "p.jpg"), "-vf", f"scale={w}:{h}", "-q:v", "4",
                     str(out_dir / f"{sid}.jpg")], check=True)
     print(f"video: {mp4} {mp4.stat().st_size/1e6:.2f}MB {total:.1f}s")
+    if spec.get("wide"):
+        render_wide(page.context.browser, spec, mp4, out_dir / f"{sid}-wide.mp4", tmp)
     return total
+
+
+WIDE_HTML = """<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><style>
+@font-face{font-family:Assistant;src:url(%(font)s) format("woff");font-weight:200 900}
+*{margin:0;box-sizing:border-box}html,body{width:1920px;height:1080px;background:transparent;font-family:Assistant,sans-serif}
+.side{position:absolute;top:0;bottom:0;width:600px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:60px;color:#e3e8f2}
+.r{right:0}.l{left:0}
+.ic{font-size:110px}.k{font-size:34px;color:#d4b062;font-weight:700;margin-top:18px}
+.t{font-size:60px;font-weight:800;color:#fff;line-height:1.1;margin-top:14px}.t em{font-style:normal;color:#f0d38e}
+.s{font-size:30px;margin-top:22px;line-height:1.4;color:#c9d1e2}
+.qr{width:260px;height:260px;border-radius:24px;background:#fff;padding:14px}.qr img{width:100%%;height:100%%}
+.u{direction:ltr;font-size:40px;font-weight:800;color:#f0d38e;margin-top:26px}
+.f{font-size:28px;margin-top:16px;color:#c9d1e2}
+</style></head><body>
+<div class="side r"><div class="ic">%(icon)s</div><div class="k">מיזם הכלים של גילעד רחמים</div><div class="t">%(title)s</div><div class="s">%(sub)s</div></div>
+<div class="side l"><div class="qr"><img src="%(qr)s"></div><div class="u">%(url_text)s</div><div class="f">%(foot)s</div></div>
+</body></html>"""
+
+
+def render_wide(browser, spec, mp4, out, tmp):
+    """גרסה רחבה 1920x1080 (לאתר וליוטיוב): הסרטון האנכי באמצע, רקע מטושטש ממנו, ושני צדדים קבועים: מה זה + QR."""
+    import html as H
+    import re
+    wd = spec["wide"]
+    rich = lambda s: re.sub(r"\*([^*]+)\*", r"<em>\1</em>", H.escape(s)).replace("\n", "<br>")
+    font = (ROOT / "assets" / "fonts" / "Assistant-wght.woff").as_uri()
+    page = browser.new_page(viewport={"width": 1920, "height": 1080})
+    page.set_content(WIDE_HTML % {"font": font, "icon": wd.get("icon", "🧰"), "title": rich(wd["title"]), "sub": rich(wd.get("sub", "")),
+                                  "qr": qr_data_uri(wd["url"]), "url_text": H.escape(wd["url_text"]), "foot": rich(wd.get("foot", ""))})
+    page.evaluate("document.fonts.ready")
+    side = tmp / "side.png"
+    page.screenshot(path=str(side), omit_background=True)
+    page.close()
+    fc = ("[0:v]split[a][b];[a]scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,boxblur=30:3,eq=brightness=-0.22[bg];"
+          "[b]scale=-2:1080:flags=lanczos[fg];[bg][1:v]overlay=0:0[bs];[bs][fg]overlay=(W-w)/2:0,format=yuv420p[v]")
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(mp4), "-i", str(side), "-filter_complex", fc, "-map", "[v]", "-map", "0:a",
+                    "-c:v", "libx264", "-preset", "slow", "-crf", "24", "-c:a", "copy", "-movflags", "+faststart", str(out)], check=True)
+    print(f"wide: {out} {out.stat().st_size/1e6:.2f}MB")
 
 
 def render_flyer(page, spec, out_dir):
@@ -131,6 +171,39 @@ def reindex(out_dir):
     print("index:", len(idx))
 
 
+def render_promo(paths, a):
+    """סרטוני תדמית (specs/promo): המנוע ב-720x1280 בצפיפות x1.5 = פריימים חדים של 1080x1920."""
+    out_dir = ROOT / "assets" / "promo"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    from playwright.sync_api import sync_playwright
+    with sync_playwright() as pw:
+        b = pw.chromium.launch()
+        page = b.new_page(viewport={"width": 720, "height": 1280}, device_scale_factor=1.5)
+        for p in paths:
+            spec = json.loads(p.read_text(encoding="utf-8"))
+            spec.setdefault("size", [1080, 1920])
+            spec.setdefault("crf", 23)
+            if a.only == "flyer":
+                continue
+            t0 = time.time()
+            if a.fps and a.fps < 10:  # תצוגה מקדימה: כמה פריימים בלבד, בלי סרטון
+                info = None
+                page.goto((HERE / "engine.html").as_uri())
+                page.evaluate("document.fonts.ready")
+                info = page.evaluate("s => DV.load(s)", spec)
+                page.evaluate("Promise.all([...document.images].map(i => i.decode().catch(() => null)))")
+                prev = out_dir / "preview"
+                prev.mkdir(exist_ok=True)
+                for t in [x / a.fps for x in range(int(info["total"] * a.fps))]:
+                    page.evaluate("t => DV.seek(t)", t)
+                    page.screenshot(path=str(prev / f"{spec['id']}-{t:05.1f}.jpg"), type="jpeg", quality=80)
+                print("preview", spec["id"], info["total"])
+                continue
+            render_video(page, spec, out_dir, a.fps or 30)
+            print(f"DONE {spec['id']} {time.time()-t0:.0f}s", flush=True)
+        b.close()
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("specs", nargs="*", help="קובצי מפרט או תיקייה (למשל tools/demo_video/specs/auto)")
@@ -155,6 +228,12 @@ def main():
         paths = paths[i::n]
     out_dir = ROOT / "assets" / "demo"
     out_dir.mkdir(parents=True, exist_ok=True)
+    promo = [p for p in paths if json.loads(p.read_text(encoding="utf-8")).get("promo")]
+    if promo:  # סרטוני תדמית: 1080x1920 + רחב, ל-assets/promo, בלי index של דפי הכלים
+        render_promo(promo, a)
+        paths = [p for p in paths if p not in promo]
+        if not paths:
+            return
     ip = out_dir / "index.json"
     idx = json.loads(ip.read_text(encoding="utf-8")) if ip.exists() else {}
     todo = []
