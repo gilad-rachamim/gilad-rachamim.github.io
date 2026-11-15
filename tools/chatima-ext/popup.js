@@ -224,7 +224,7 @@
   $('rate-later').addEventListener('click', function () { chrome.storage.local.set({ rateLater: Date.now() + 14 * 864e5 }); $('rate').hidden = true; });
   $('share-btn').addEventListener('click', function (e) {
     e.preventDefault();
-    chrome.tabs.create({ url: 'https://wa.me/?text=' + encodeURIComponent('מצאתי תוסף חינמי לכרום בעברית: מתרגם אתרים בלי לשבור אותם, מסדר כרטיסיות, מפנה מקום בגוגל, פתקים ועוד. בלי פרסומות ובלי לאסוף מידע 👇\n' + STORE + '?utm_source=share_popup') });
+    chrome.tabs.create({ url: 'https://wa.me/?text=' + encodeURIComponent('מצאתי תוסף חינמי לכרום בעברית (מיזם חסד, בלי פרסומות): מתרגם אתרים בלי לשבור אותם, מסדר כרטיסיות, מפנה מקום בגוגל, פתקים ועוד, ובלי לאסוף מידע 👇\n' + STORE + '?utm_source=share_popup') });
     window.close();
   });
 
