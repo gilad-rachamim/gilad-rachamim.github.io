@@ -6,6 +6,18 @@
   var path = location.pathname;
   function bytes(b) { var bin = atob(b), buf = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i); return buf; }
 
+  // מחולל החתימה למייל: החתימה שנבנית בדף נשמרת בתוסף, כדי שאפשר יהיה להכניס אותה בג׳ימייל בלחיצה.
+  if (path === '/kelim/tochen/chatimat-mail/') {
+    window.addEventListener('message', function (e) {
+      if (e.source !== window || !e.data || e.data.type !== 'hakelim-sig-save') return;
+      var h = e.data.html;
+      if (typeof h !== 'string' || !h || h.length > 20000) return;
+      chrome.storage.local.set({ mailSig: { html: h, name: String(e.data.name || '').slice(0, 80), at: Date.now() } });
+    });
+    window.postMessage({ type: 'hakelim-sig-ext' }, location.origin);
+    return;
+  }
+
   if (path === '/kelim/machshev/chatima/') {
     var sent = false;
     var send = function () {

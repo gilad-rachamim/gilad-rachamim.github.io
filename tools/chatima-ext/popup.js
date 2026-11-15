@@ -282,6 +282,22 @@
         chrome.tabs.update(t.id, { url: base + b.dataset.hash }).then(function () { window.close(); });
       });
     });
+    // חתימה למייל: יוצרים בכלי שבאתר; הכלי שומר את החתימה בתוסף (bridge.js), וכאן מכניסים אותה לחלון כתיבה פתוח.
+    // נוגעים רק בתיבת הכתיבה של המייל שכותבים עכשיו – לא קוראים שום מייל.
+    $('gm-sig-new').addEventListener('click', function () { chrome.tabs.create({ url: 'https://hakelim.com/kelim/tochen/chatimat-mail/' }); window.close(); });
+    $('gm-sig-put').addEventListener('click', function () {
+      chrome.storage.local.get('mailSig', function (o) {
+        var s = o && o.mailSig;
+        if (!s || !s.html) {
+          $('gm-msg').textContent = 'עוד אין חתימה שמורה. לוחצים "✍ ליצור חתימה", ממלאים, וחוזרים לכאן.';
+          return;
+        }
+        chrome.scripting.executeScript({ target: { tabId: t.id }, func: hkPutSignature, args: [s.html] }).then(function (res) {
+          var r = res && res[0] && res[0].result;
+          $('gm-msg').textContent = r === 'ok' ? '✓ החתימה נכנסה בסוף המייל שאתם כותבים.' : r === 'replaced' ? '✓ החתימה עודכנה במייל שאתם כותבים.' : 'קודם פותחים "כתיבה" או "השב" בג׳ימייל, ואז לוחצים כאן.';
+        }, function () { $('gm-msg').textContent = 'לא הצלחתי להגיע לחלון הכתיבה. מרעננים את ג׳ימייל ומנסים שוב.'; });
+      });
+    });
     $('gm-unsub').addEventListener('click', function () {
       $('gm-msg').textContent = 'מחפש במייל הפתוח…';
       var old = $('gm-unsub-go'); if (old) old.remove();
@@ -427,3 +443,28 @@
     if (area === 'local' && (ch.tools || ch.seen)) load().then(render);
   });
 })();
+
+// רץ בתוך דף ג׳ימייל (chrome.scripting): מכניס את החתימה לתיבת הכתיבה הפתוחה.
+// מנקה את ה-HTML (בלי סקריפטים, בלי on*, רק קישורים בטוחים), ומחליף חתימה קודמת שלנו אם יש.
+function hkPutSignature(html) {
+  var boxes = [].slice.call(document.querySelectorAll('div[contenteditable="true"][role="textbox"]')).filter(function (b) { return b.offsetParent !== null; });
+  if (!boxes.length) return 'none';
+  var a = document.activeElement, box = boxes.filter(function (b) { return b === a || b.contains(a); })[0] || boxes[boxes.length - 1];
+  var doc = new DOMParser().parseFromString('<div>' + String(html).slice(0, 20000) + '</div>', 'text/html');
+  [].forEach.call(doc.querySelectorAll('script,style,iframe,object,embed,form,input,button,link,meta,svg'), function (n) { n.remove(); });
+  [].forEach.call(doc.querySelectorAll('*'), function (n) {
+    [].slice.call(n.attributes).forEach(function (at) {
+      var k = at.name.toLowerCase(), v = at.value.trim();
+      if (k.indexOf('on') === 0) n.removeAttribute(at.name);
+      else if (k === 'href' && !/^(https?:|mailto:|tel:)/i.test(v)) n.removeAttribute(at.name);
+      else if (k === 'src' && !/^(https?:|data:image\/(png|jpe?g|gif|webp);)/i.test(v)) n.removeAttribute(at.name);
+      else if (k === 'style' && /url\s*\(|expression/i.test(v)) n.removeAttribute(at.name);
+    });
+  });
+  var old = box.querySelector('[data-hk-sig]'), wrap = document.createElement('div');
+  wrap.setAttribute('data-hk-sig', '1');
+  wrap.innerHTML = '<br>' + doc.body.firstChild.innerHTML;
+  if (old) { old.replaceWith(wrap); } else { box.appendChild(wrap); }
+  box.dispatchEvent(new Event('input', { bubbles: true }));
+  return old ? 'replaced' : 'ok';
+}
