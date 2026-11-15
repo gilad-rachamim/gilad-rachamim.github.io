@@ -1,0 +1,112 @@
+# סרטוני הדמיה ופרוספקטים לכל הכלים – בענן, לא במחשב של גילעד (15.11.2026).
+# 1) specs: מפרט אוטומטי לכל כלי מתוך הדף עצמו + צילום אמיתי של הכלי ברוחב טלפון (tools/demo_video/autospec.py)
+# 2) render: 20 מכונות במקביל, כל אחת חלק מהכלים (render.py --shard). רק מה שהשתנה (--changed).
+# 3) commit: מאחד הכול, מעדכן assets/demo/index.json ודוחף ל-main. kelim.js מכניס את הסרטון לדף לבד, בלי בנייה.
+# הפעלה: Actions -> demo-videos -> Run workflow (only = רשימת כלים מופרדת בפסיקים, ריק = כולם).
+name: demo-videos
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "רק הכלים האלה (tool ids, פסיקים). ריק = כל הכלים"
+        required: false
+        default: ""
+      force:
+        description: "לרנדר מחדש גם מה שלא השתנה"
+        type: boolean
+        default: false
+permissions:
+  contents: write
+concurrency:
+  group: demo-videos
+  cancel-in-progress: false
+env:
+  SHARDS: 20
+
+jobs:
+  specs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: install
+        run: |
+          pip install -q playwright qrcode[pil] numpy
+          python -m playwright install --with-deps chromium > /dev/null
+          sudo apt-get install -y -qq fonts-noto-color-emoji > /dev/null
+      - name: specs + real screenshots
+        run: |
+          python -m http.server 8799 --bind 127.0.0.1 > /dev/null 2>&1 &
+          sleep 2
+          ONLY="${{ github.event.inputs.only }}"
+          python tools/demo_video/autospec.py --base http://127.0.0.1:8799 ${ONLY:+--only "$ONLY"}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: specs
+          path: |
+            tools/demo_video/specs/auto/
+            .cache/demo-shots/
+          include-hidden-files: true
+          retention-days: 3
+
+  render:
+    needs: specs
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: specs, path: . }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: install
+        run: |
+          pip install -q playwright qrcode[pil] numpy
+          python -m playwright install --with-deps chromium > /dev/null
+          sudo apt-get install -y -qq fonts-noto-color-emoji ffmpeg > /dev/null
+      - name: render shard
+        run: |
+          touch /tmp/marker
+          python tools/demo_video/render.py tools/demo_video/specs/auto \
+            ${{ github.event.inputs.force == 'true' && ' ' || '--changed' }} \
+            --shard ${{ matrix.shard }}/${{ env.SHARDS }} --index-name index-${{ matrix.shard }}.json
+          mkdir -p out && find assets/demo -type f -newer /tmp/marker -exec cp --parents {} out/ \;
+          ls out/assets/demo 2>/dev/null | wc -l
+      - uses: actions/upload-artifact@v4
+        with:
+          name: demo-${{ matrix.shard }}
+          path: out/
+          if-no-files-found: ignore
+          retention-days: 3
+
+  commit:
+    needs: render
+    if: always() && needs.specs.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: specs, path: . }
+      - uses: actions/download-artifact@v4
+        with: { pattern: demo-*, path: parts }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: merge + index
+        run: |
+          for d in parts/*/; do [ -d "$d/assets" ] && cp -r "$d/assets/." assets/; done
+          python tools/demo_video/render.py --reindex
+          rm -rf .cache parts
+      - name: commit and push
+        run: |
+          git config user.name "demo-videos-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/demo_video/specs/auto assets/demo
+          git diff --cached --quiet && { echo "אין שינוי"; exit 0; }
+          N=$(git diff --cached --name-only -- 'assets/demo/*.mp4' | wc -l)
+          git commit -q -m "סרטוני הדמיה ופרוספקטים: $N כלים (מיזם הכלים, רינדור בענן)"
+          for i in 1 2 3 4 5 6; do git pull -q --rebase -X theirs origin main && git push -q origin HEAD:main && exit 0; sleep $((i*10)); done
+          exit 1
