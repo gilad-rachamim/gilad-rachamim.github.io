@@ -246,7 +246,7 @@
   function labelColor(name) { var i = D.labels.indexOf(D.tags[name]); return i >= 0 ? COLORS[i % 8] : 'transparent'; }
   function list() { return Object.keys(D.map).map(function (k) { return D.map[k]; }); }
   var RECENT = 14 * 864e5;
-  function visible(c) { return !(D.opt.hideMuted && c.mu) && (D.opt.groups || !c.g) && (!D.opt.recent || !c.t || Date.now() - c.t < RECENT); }
+  function visible(c) { return !c.ar && !(D.opt.hideMuted && c.mu) && (D.opt.groups || !c.g) && (!D.opt.recent || !c.t || Date.now() - c.t < RECENT); }
 
   function chatRow(c, extra) {
     var b = el('button', { class: 'row', type: 'button', title: 'לפתוח את הצ\'אט', on: { click: function () { openChat(c.n).then(function (ok) { if (!ok) setMsg('לא מצאתי את "' + c.n + '" ברשימה. אפשר לחפש אותו בחיפוש של וואטסאפ.'); }); } } }, [
@@ -348,7 +348,7 @@
   }
 
   // ---------- הלשוניות ----------
-  var TABS = [['wait', '⏳ מחכים לי'], ['sent', '📤 לא ענו לי'], ['rem', '⏰ תזכורות'], ['map', '🗺 מפה'], ['multi', '📨 לכמה צ\'אטים'], ['labels', '🏷 תוויות']];
+  var TABS = [['wait', '⏳ מחכים לי'], ['sent', '📤 לא ענו לי'], ['rem', '⏰ תזכורות'], ['map', '🗺 מפה'], ['multi', '📨 לכמה צ\'אטים'], ['act', '🧹 פקודה במילים'], ['labels', '🏷 תוויות']];
   function draw() {
     if (!open) return;
     pan.textContent = '';
@@ -361,7 +361,7 @@
     pan.appendChild(curBar());
     var fb = formBox(); if (fb) pan.appendChild(fb);
     var body = el('div', { class: 'body' });
-    ({ wait: drawWait, sent: drawSent, rem: drawRem, map: drawMap, multi: drawMulti, labels: drawLabels })[tab](body);
+    ({ wait: drawWait, sent: drawSent, rem: drawRem, map: drawMap, multi: drawMulti, act: drawAct, labels: drawLabels })[tab](body);
     pan.appendChild(body); pan.appendChild(msgEl);
   }
   function drawWait(body) {
@@ -628,6 +628,172 @@
     }).catch(function () {});
   }
 
+  // ---------- פקודה במילים: להשתיק / לארכב / לסמן כנקרא – הרבה צ'אטים בבת אחת ----------
+  // הפענוח נעשה כאן, בלי שרת ובלי AI. לפני כל ביצוע מוצגת הרשימה המדויקת, ורק "לבצע" של המשתמש מפעיל.
+  // הפעולות הן אותן פעולות של תפריט הצ'אט של וואטסאפ (לחיצה ימנית). אין כאן מחיקה, יציאה מקבוצה או שליחה.
+  var NUM_HE = { 'אחד': 1, 'אחת': 1, 'שניים': 2, 'שני': 2, 'שתיים': 2, 'שתי': 2, 'שלושה': 3, 'שלוש': 3, 'ארבעה': 4, 'ארבע': 4, 'חמישה': 5, 'חמש': 5, 'שישה': 6, 'שש': 6 };
+  function parseCmd(text) {
+    var t = ' ' + String(text || '').replace(/["״׳']/g, function (c) { return c === '\'' || c === '׳' ? '\'' : '"'; }).trim() + ' ';
+    var c = { act: '', dur: 'always', who: 'all', days: 0, word: '', label: '', unread: false, words: [] };
+    if (/השתק|להשתיק|השתיקו|mute/i.test(t)) c.act = 'mute';
+    if (/ארכיון|לארכב|ארכב|archive/i.test(t)) c.act = c.act ? c.act : 'archive';
+    if (/כנקרא|כנקראו|כנקראה|לנקות.*(לא נקרא|מספר)|mark.*read/i.test(t)) c.act = 'read';
+    if (/(שבוע|7 ימים)/.test(t) && c.act === 'mute' && !/(מ|ב|של|לפני)\s*שבוע/.test(t)) c.dur = 'week';
+    if (/8\s*שעות|שמונה שעות/.test(t)) c.dur = '8h';
+    if (/קבוצ|groups?/i.test(t)) c.who = 'groups';
+    if (/(פרטי|אנשים|אנשי קשר|private)/i.test(t) && c.who !== 'groups') c.who = 'private';
+    var m = t.match(/(\d+|אחד|אחת|שניים|שני|שתיים|שתי|שלושה|שלוש|ארבעה|ארבע|חמישה|חמש|שישה|שש)?\s*(יום|ימים|שבוע|שבועות|חודש|חודשים|שנה|שנים)/);
+    var quiet = /(שקט|שקטות|שקטים|כלום|בלי פעילות|לא פעיל|לא כתבו|אין הודעות|ישנ|מת|מתות|רדומ)/.test(t);
+    if (m && (quiet || /(מעל|יותר מ|לפני|כבר|מ-|מזה|ב-?\s*\d)/.test(t) || m[1])) {
+      var n = m[1] ? (/^\d+$/.test(m[1]) ? +m[1] : NUM_HE[m[1]] || 1) : 1;
+      var unit = /שנ/.test(m[2]) ? 365 : /חוד/.test(m[2]) ? 30 : /שבוע/.test(m[2]) ? 7 : 1;
+      if (!(c.act === 'mute' && c.dur === 'week' && unit === 7 && !m[1] && !quiet)) c.days = n * unit;
+    } else if (quiet) c.days = 30;
+    var q = t.match(/"([^"]{2,40})"/) || t.match(/(?:עם המילה|שכתוב בהם|שמכילות?|בשם|שנקרא(?:ות|ים)?)\s+([^\s,]{2,30})/);
+    if (q) c.word = q[1].trim();
+    D.labels.forEach(function (l) { if (t.indexOf(' ' + l + ' ') >= 0 || t.indexOf('תווית ' + l) >= 0) c.label = l; });
+    if (/(שלא נקרא|לא נקראו|עם הודעות חדשות)/.test(t) && c.act !== 'read') c.unread = true;
+    return c;
+  }
+  function cmdMatches(c) {
+    var now = Date.now();
+    return list().filter(function (x) {
+      if (x.ar) return false;
+      if (c.who === 'groups' && !x.g) return false;
+      if (c.who === 'private' && x.g) return false;
+      if (c.days && (!x.t || now - x.t < c.days * 864e5)) return false;
+      if (c.word && x.n.indexOf(c.word) < 0) return false;
+      if (c.label && D.tags[x.n] !== c.label) return false;
+      if (c.unread && !x.u) return false;
+      if (c.act === 'mute' && x.mu) return false;          // כבר מושתק
+      if (c.act === 'read' && !x.u) return false;          // אין מה לסמן
+      if (c.act === 'archive' && x.pin) return false;      // לא מארכבים צ'אט מוצמד
+      return true;
+    }).sort(function (a, b) { return (a.t || 0) - (b.t || 0); });
+  }
+  function cmdText(c, n) {
+    var what = c.act === 'mute' ? 'להשתיק ' + ({ always: 'לתמיד', week: 'לשבוע', '8h': 'ל-8 שעות' })[c.dur] : c.act === 'archive' ? 'להעביר לארכיון' : c.act === 'read' ? 'לסמן כנקרא' : '';
+    var who = c.who === 'groups' ? 'קבוצות' : c.who === 'private' ? 'צ\'אטים פרטיים' : 'צ\'אטים';
+    var parts = [what, n + ' ' + who];
+    if (c.days) parts.push('שלא היה בהם כלום ' + (c.days % 365 === 0 ? (c.days === 365 ? 'שנה' : c.days / 365 + ' שנים') : c.days % 30 === 0 ? (c.days / 30) + ' חודשים' : c.days % 7 === 0 ? (c.days === 7 ? 'שבוע' : c.days / 7 + ' שבועות') : c.days + ' ימים'));
+    if (c.word) parts.push('עם "' + c.word + '" בשם');
+    if (c.label) parts.push('בתווית ' + c.label);
+    if (c.unread) parts.push('עם הודעות שלא נקראו');
+    return parts.join(' ').replace('1 חודשים', 'חודש');
+  }
+  function visMenu() { return [].slice.call(document.querySelectorAll('[role=menuitem]')).filter(function (e) { return e.offsetParent; }); }
+  function itemText(e) { var c = e.cloneNode(true); [].forEach.call(c.querySelectorAll('svg'), function (s) { s.remove(); }); return (c.textContent || '').trim(); }
+  function findItem(re) { return visMenu().filter(function (e) { return re.test(itemText(e)); })[0]; }
+  function fire(elm, types, extra) {
+    var r = elm.getBoundingClientRect(), o = Object.assign({ bubbles: true, cancelable: true, composed: true, view: window, clientX: r.left + Math.min(20, r.width / 2), clientY: r.top + r.height / 2 }, extra || {});
+    types.forEach(function (tp) { elm.dispatchEvent(/^pointer/.test(tp) ? new PointerEvent(tp, o) : new MouseEvent(tp, o)); });
+  }
+  async function closeMenus() {
+    for (var i = 0; i < 3 && visMenu().length; i++) {
+      var m = visMenu()[0]; m.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27, bubbles: true }));
+      await sleep(200);
+    }
+    if (visMenu().length) { fire(document.querySelector('#pane-side') || document.body, ['pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click']); await sleep(200); }
+  }
+  async function rowFor(name) {
+    var row = findRow(name), ps = document.querySelector('#pane-side');
+    if (row || !ps) return row;
+    ps.scrollTop = 0; await sleep(300);
+    for (var i = 0; i < 120 && !row; i++) {
+      row = findRow(name); if (row) break;
+      var rr = rows(), rh = rr.length ? (rr[0].offsetHeight || 72) : 72, before = ps.scrollTop;
+      ps.scrollTop += Math.max(150, (rr.length - 4) * rh * 0.6); await sleep(350);
+      if (ps.scrollTop === before) break;
+    }
+    return row;
+  }
+  // פעולה אחת על צ'אט אחד, דרך תפריט הצ'אט של וואטסאפ. מחזיר 'ok' / 'skip' / 'nochat' / 'nomenu'
+  async function doOne(name, c) {
+    var row = await rowFor(name); if (!row) return 'nochat';
+    row.scrollIntoView({ block: 'center' }); await sleep(150);
+    var t = row.querySelector('span[title]') || row;
+    fire(t, ['pointerdown', 'mousedown', 'pointerup', 'mouseup', 'contextmenu'], { button: 2, buttons: 2 });
+    for (var w = 0; w < 12 && !visMenu().length; w++) await sleep(100);
+    if (!visMenu().length) return 'nomenu';
+    var it, res = 'ok';
+    if (c.act === 'archive') {
+      it = findItem(/העברת הצ'אט לארכיון|העברה לארכיון|^archive/i);
+      if (it) it.click(); else res = findItem(/הוצאה מהארכיון|unarchive/i) ? 'skip' : 'nomenu';
+    } else if (c.act === 'read') {
+      it = findItem(/סימון כנקרא|mark as read/i);
+      if (it) it.click(); else res = 'skip';
+    } else if (c.act === 'mute') {
+      it = findItem(/השתקת התראות|^mute/i);
+      if (!it) res = findItem(/ביטול השתקה|unmute/i) ? 'skip' : 'nomenu';
+      else {
+        fire(it, ['pointerover', 'pointerenter', 'mouseover', 'mouseenter', 'pointermove', 'mousemove']);
+        var re = c.dur === 'week' ? /שבוע|week/i : c.dur === '8h' ? /8|שעות|hours/i : /תמיד|always/i, sub;
+        for (var k = 0; k < 12 && !(sub = findItem(re)); k++) await sleep(100);
+        if (!sub) { it.click(); for (k = 0; k < 10 && !(sub = findItem(re)); k++) await sleep(100); }
+        if (sub) {
+          sub.click(); await sleep(350);
+          // גרסה ישנה של וואטסאפ ווב: חלון עם כפתור "השתקה"
+          var ok = [].slice.call(document.querySelectorAll('[role=dialog] button, div[data-animate-modal-popup] button')).filter(function (b) { return b.offsetParent && /^(השתקה|mute)$/i.test((b.textContent || '').trim()); })[0];
+          if (ok) ok.click();
+        } else res = 'nomenu';
+      }
+    }
+    await sleep(300); await closeMenus();
+    if (res === 'ok') { var x = D.map[name]; if (x) { if (c.act === 'mute') x.mu = 1; if (c.act === 'read') x.u = 0; if (c.act === 'archive') x.ar = 1; dirty = true; } }
+    return res;
+  }
+  var cmd = { text: '', c: null, pick: {}, run: false, stop: false, log: '' };
+  var CMD_EX = ['להשתיק לתמיד את כל הקבוצות שלא היה בהן כלום חודש', 'להעביר לארכיון קבוצות שקטות מ-3 חודשים', 'לסמן כנקרא את כל הקבוצות', 'להשתיק לשבוע את הקבוצות עם המילה "שיווק"', 'להעביר לארכיון צ\'אטים פרטיים בלי פעילות שנה'];
+  async function runCmd() {
+    var names = Object.keys(cmd.pick); if (!names.length) return;
+    cmd.run = true; cmd.stop = false; var done = 0, skip = 0, fail = 0; draw();
+    for (var i = 0; i < names.length && !cmd.stop; i++) {
+      cmd.log = (i + 1) + ' מתוך ' + names.length + ': ' + names[i]; setMsg(cmd.log);
+      var r = await doOne(names[i], cmd.c);
+      if (r === 'ok') { done++; delete cmd.pick[names[i]]; } else if (r === 'skip') { skip++; delete cmd.pick[names[i]]; } else fail++;
+      await sleep(250);
+    }
+    cmd.run = false; save();
+    cmd.log = '✓ בוצע ב-' + done + ' צ\'אטים' + (skip ? ', ' + skip + ' כבר היו כך' : '') + (fail ? ', ' + fail + ' לא הצלחתי (נשארו מסומנים – אפשר לנסות שוב)' : '') + (cmd.stop ? '. נעצר באמצע.' : '.');
+    setMsg(cmd.log); draw();
+  }
+  function drawAct(body) {
+    if (cmd.run) {
+      body.appendChild(el('div', { class: 'form' }, [el('b', { text: '⏳ ' + cmd.log }), el('span', { class: 'mut', text: 'לא לגעת בוואטסאפ בזמן הביצוע. כל צ\'אט לוקח כשנייה.' }),
+        el('button', { class: 'btn', type: 'button', on: { click: function () { cmd.stop = true; } } }, ['⏹ לעצור'])]));
+      return;
+    }
+    body.appendChild(el('div', { class: 'mut', style: 'padding:4px 6px', text: 'כותבים במילים מה לעשות. אפשר: להשתיק (לתמיד / לשבוע / ל-8 שעות), להעביר לארכיון, לסמן כנקרא. לפני הביצוע תראו בדיוק אילו צ\'אטים. בלי מחיקה, בלי יציאה מקבוצות ובלי שליחה.' }));
+    var ta = el('textarea', { 'aria-label': 'מה לעשות', maxlength: '300', placeholder: 'למשל: להשתיק לתמיד את כל הקבוצות שלא היה בהן כלום חודש' });
+    ta.value = cmd.text;
+    var go = function () { cmd.text = ta.value; cmd.c = parseCmd(cmd.text); cmd.pick = {}; if (cmd.c.act) cmdMatches(cmd.c).forEach(function (x) { cmd.pick[x.n] = 1; }); cmd.log = ''; draw(); };
+    ta.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); go(); } });
+    body.appendChild(ta);
+    var ex = el('div', { class: 'opt' });
+    CMD_EX.forEach(function (x) { ex.appendChild(el('button', { class: 'btn', type: 'button', style: 'font-size:12px', on: { click: function () { ta.value = x; go(); } } }, [x])); });
+    body.appendChild(el('div', { class: 'opt' }, [el('button', { class: 'btn g', type: 'button', on: { click: go } }, ['🔎 להראות על מה זה יחול'])]));
+    if (!cmd.c) { body.appendChild(ex); return; }
+    if (!cmd.c.act) { body.appendChild(el('div', { class: 'empty', text: 'לא הבנתי מה לעשות. כותבים "להשתיק", "להעביר לארכיון" או "לסמן כנקרא", ועל מה: קבוצות / פרטיים / שקטות מחודש / עם המילה "…".' })); return; }
+    var L = cmdMatches(cmd.c);
+    if (!Object.keys(D.map).length) { emptyHint(body, 'קודם סורקים את רשימת הצ\'אטים.'); return; }
+    if (!L.length) { body.appendChild(el('div', { class: 'empty', text: 'אין צ\'אטים שמתאימים: ' + cmdText(cmd.c, 0) + '. אם הרשימה לא עדכנית – 🔄 לסרוק.' })); return; }
+    var n = Object.keys(cmd.pick).length;
+    var run = el('button', { class: 'btn g', type: 'button', on: { click: function () {
+      var k = Object.keys(cmd.pick).length; if (!k) return;
+      if (k > 150) { setMsg('עד 150 צ\'אטים בפעם אחת. מורידים סימון מחלק, או מצמצמים את הפקודה.'); return; }
+      if (!confirm(cmdText(cmd.c, k) + '?\n\nזה כמו ללחוץ בתפריט של כל צ\'אט. אפשר לבטל אחר כך מתפריט הצ\'אט.')) return;
+      runCmd();
+    } } }, ['✓ לבצע (' + n + ')']);
+    body.appendChild(el('div', { class: 'form' }, [el('b', { text: cmdText(cmd.c, L.length) }), el('div', { style: 'display:flex;gap:6px;flex-wrap:wrap' }, [run,
+      el('button', { class: 'btn', type: 'button', on: { click: function () { var all = L.every(function (x) { return cmd.pick[x.n]; }); L.forEach(function (x) { if (all) delete cmd.pick[x.n]; else cmd.pick[x.n] = 1; }); draw(); } } }, ['לסמן הכול / לבטל'])])]));
+    L.slice(0, 300).forEach(function (x) {
+      var id = 'c' + Math.abs(hash(x.n));
+      var cb = el('input', { type: 'checkbox', id: id }); cb.checked = !!cmd.pick[x.n];
+      cb.addEventListener('change', function () { if (cb.checked) cmd.pick[x.n] = 1; else delete cmd.pick[x.n]; run.textContent = '✓ לבצע (' + Object.keys(cmd.pick).length + ')'; });
+      body.appendChild(el('label', { for: id, class: 'row', style: 'cursor:pointer' }, [cb, el('span', { class: 'nm', text: (x.g ? '👥 ' : '') + x.n }), el('span', { class: 'mut', text: x.t ? 'אחרון לפני ' + ago(x.t) : '' })]));
+    });
+  }
+
   // ---------- תזכורות שהגיע זמנן: פס למעלה ----------
   var bannerBox = el('div'); root.appendChild(bannerBox);
   async function act(r) {
@@ -668,7 +834,7 @@
     if (open) { collect(); draw(); }
   }
   api.toggle = toggle;
-  api._t = { morning: morning, personal: personal, grpStart: grpStart, parseWhen: parseWhen, readRow: readRow, collect: collect, D: D, scanAll: scanAll, prepare: prepare, exportCsv: exportCsv, openChat: openChat };
+  api._t = { parseCmd: parseCmd, cmdMatches: cmdMatches, doOne: doOne, morning: morning, personal: personal, grpStart: grpStart, parseWhen: parseWhen, readRow: readRow, collect: collect, D: D, scanAll: scanAll, prepare: prepare, exportCsv: exportCsv, openChat: openChat };
 
   // ---------- טעינה ומעקב ----------
   store.get(['waMap', 'waLabels', 'waTags', 'waNotes', 'waRem', 'waOpt']).then(function (o) {
