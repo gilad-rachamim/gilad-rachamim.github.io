@@ -545,7 +545,7 @@
   }
   function ymd(d) { return d.getUTCFullYear() + ('0' + (d.getUTCMonth() + 1)).slice(-2) + ('0' + d.getUTCDate()).slice(-2); }
   var PAGE = 'https://hakelim.com/kelim/kesharim/bracha-lechag/';
-  function remindDay(o) { return addD(occDate(o), o.greg ? -1 : -2); }
+  function remindDay(o) { return addD(occDate(o), -2); }
   function renderRemind() {
     var U = upcoming(), nx = U.filter(function (o) { return o.id !== cur; })[0] || U[0];
     if (!nx) { $('bl-rem-next').hidden = true; return; }
