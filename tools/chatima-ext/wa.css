@@ -1,0 +1,12 @@
+/* סידור צ'אטים בוואטסאפ ווב: פס צבע בצד של צ'אט שקיבל תווית (wa.js שם data-hk-tag על השורה). */
+#pane-side [data-hk-tag] { box-shadow: inset -5px 0 0 var(--hk-c, #c9a45c) !important; }
+html[dir="ltr"] #pane-side [data-hk-tag] { box-shadow: inset 5px 0 0 var(--hk-c, #c9a45c) !important; }
+#pane-side [data-hk-tag="0"] { --hk-c: #e53935; }
+#pane-side [data-hk-tag="1"] { --hk-c: #1e88e5; }
+#pane-side [data-hk-tag="2"] { --hk-c: #43a047; }
+#pane-side [data-hk-tag="3"] { --hk-c: #fb8c00; }
+#pane-side [data-hk-tag="4"] { --hk-c: #8e24aa; }
+#pane-side [data-hk-tag="5"] { --hk-c: #00897b; }
+#pane-side [data-hk-tag="6"] { --hk-c: #c9a45c; }
+#pane-side [data-hk-tag="7"] { --hk-c: #6d4c41; }
+#pane-side [data-hk-due] { background: rgba(251, 140, 0, .14) !important; }

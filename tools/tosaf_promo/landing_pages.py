@@ -11,6 +11,7 @@ STYLE = ('<style>.ts-fig{margin:1rem auto;max-width:640px}.ts-fig img{display:bl
          '.ts-two{display:grid;gap:1rem}@media(min-width:760px){.ts-two{grid-template-columns:1fr 1fr}}.ts-two>div{border:1px solid var(--line);border-radius:14px;padding:.9rem 1rem}.ts-two h3{margin-top:0}</style>')
 
 ALL = [("achsun-google", "הגדלת נפח אחסון גוגל בחינם"), ("yoman-ivri", "תאריך עברי ליומן גוגל"), ("whatsapp-lo-shamur", "וואטסאפ למספר לא שמור"),
+       ("whatsapp-tizmun", "תזמון הודעות בוואטסאפ ווב"), ("whatsapp-sidur", "תזכורת בוואטסאפ ווב ומחכים לתשובה"),
        ("whatsapp-pratiut", "הסתרת צ׳אט בוואטסאפ ווב"), ("whatsapp-shmirat-chat", "שמירת צ׳אט בוואטסאפ"), ("whatsapp-web", "וואטסאפ ווב בעברית"),
        ("makom-bamachshev", "מה תופס מקום במחשב"), ("ptakim", "פתקים דביקים במחשב"), ("lens", "גוגל לנס במחשב"), ("sismaot", "איפה נשמרות הסיסמאות"),
        ("historia", "מחיקת היסטוריית גלישה"), ("anshei-kesher", "אנשי קשר כפולים ושחזור"), ("chrome-iti", "כרום איטי"), ("kartisiot", "שמירת כרטיסיות"),
@@ -423,3 +424,7 @@ page('gilayon-rtl', 'גיליון מימין לשמאל בגוגל שיטס וב
   <p>גיליון שנפתח משמאל לימין עובד, אבל העין העברית מחפשת את העמודה הראשונה מימין. כשהופכים את הכיוון, העמודה A עוברת לימין, הטקסט מיושר נכון, ונוסחאות ממשיכות לעבוד כרגיל. בגוגל שיטס ההגדרה שמורה לכל לשונית בנפרד, ולכן בגיליון עם כמה לשוניות הופכים כל אחת.</p>
   <h3>במקום גיליון</h3>
   <p>לפעמים לא צריך גיליון בכלל. באתר יש <a class="gold" href="/kelim/">כלים מוכנים</a> לתקציב, לחלוקת הוצאות ולרשימות, שעובדים מהטלפון בלי נוסחאות.</p>''')
+
+# סידור צ׳אטים בוואטסאפ ווב (תוסף 3.4.5)
+import sys as _s; _s.path.insert(0, str(pathlib.Path(__file__).parent))
+import wa_sidur_pages; wa_sidur_pages.build(page, ol, POP)
