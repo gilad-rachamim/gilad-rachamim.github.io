@@ -490,6 +490,25 @@
   chrome.storage.onChanged.addListener(function (ch, area) {
     if (area === 'local' && (ch.tools || ch.seen)) load().then(render);
   });
+
+  // ---------- 🧹 מה לעשות? – פקודה במילים (cmd.js) לג׳ימייל, יומן, דרייב, מסמכים, גיליונות ואנשי קשר ----------
+  var gmBase = '', gmTab = null;
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    var t = tabs && tabs[0], m = ((t && t.url) || '').match(/^(https:\/\/mail\.google\.com\/mail\/u\/\d+\/)/);
+    if (m) { gmBase = m[1]; gmTab = t; }
+  });
+  function bg(msg) { try { chrome.runtime.sendMessage(msg, function () { void chrome.runtime.lastError; }); } catch (e) {} }
+  HKCmd.mount($('hkcmd'), {
+    gmailBase: function () { return gmBase; },
+    open: function (url) {
+      // חיפוש בג׳ימייל כשג׳ימייל פתוח – באותה כרטיסייה
+      if (gmTab && url.indexOf(gmBase) === 0) { chrome.tabs.update(gmTab.id, { url: url }).then(function () { window.close(); }); return; }
+      goTo(url);
+    },
+    doit: function (d) { bg({ gmailDo: d, base: gmBase ? gmBase + '#inbox' : '' }); setTimeout(function () { window.close(); }, 250); },
+    gmap: function () { bg({ gmailMap: true, base: gmBase ? gmBase + '#inbox' : '' }); setTimeout(function () { window.close(); }, 250); },
+    needMic: function () { bg({ needMic: true }); }
+  });
 })();
 
 // רץ בתוך דף ג׳ימייל (chrome.scripting): מכניס את החתימה לתיבת הכתיבה הפתוחה.

@@ -86,4 +86,20 @@
     tools = t || [];
     return chrome.storage.session.get('spCtx');
   }).then(function (o) { useCtx(o.spCtx); if (!cur) $('q').focus(); });
+
+  // ---------- 🧹 מה לעשות? – פקודה במילים (cmd.js). חלון הצד נשאר פתוח, הדף נפתח לידו ----------
+  function gmBase() { var m = (ctx.url || '').match(/^(https:\/\/mail\.google\.com\/mail\/u\/\d+\/)/); return m ? m[1] : ''; }
+  function bg(msg) { try { chrome.runtime.sendMessage(msg, function () { void chrome.runtime.lastError; }); } catch (e) {} }
+  HKCmd.mount($('hkcmd'), {
+    gmailBase: gmBase,
+    open: function (url) {
+      chrome.tabs.query({ active: true, lastFocusedWindow: true }).then(function (r) {
+        var t = r && r[0], b = gmBase();
+        if (t && b && url.indexOf(b) === 0) chrome.tabs.update(t.id, { url: url }); else chrome.tabs.create({ url: url });
+      });
+    },
+    doit: function (d) { bg({ gmailDo: d, base: gmBase() ? gmBase() + '#inbox' : '' }); },
+    gmap: function () { bg({ gmailMap: true, base: gmBase() ? gmBase() + '#inbox' : '' }); },
+    needMic: function () { bg({ needMic: true }); }
+  });
 })();
