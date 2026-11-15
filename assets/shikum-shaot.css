@@ -15,6 +15,10 @@ body[data-tool="shikum_shaot"] p,body[data-tool="shikum_shaot"] li{line-height:1
 /* מסגרת האתר: פס עליון, נתיב, תחתית - גם הם על לבן */
 body[data-tool="shikum_shaot"] .topbar{background:#fff;border-bottom:2px solid #000;backdrop-filter:none}
 body[data-tool="shikum_shaot"] .topbar a,body[data-tool="shikum_shaot"] .topbar button{color:#000}
+/* הפס העליון נשאר בגודל קבוע (16px) כדי שכפתור "התחומים" לא ייחתך כשהטקסט מוגדל */
+body[data-tool="shikum_shaot"] .topbar .in{padding:8px 16px;gap:10px;font-size:16px}
+body[data-tool="shikum_shaot"] .topbar .in *{font-size:16px}
+body[data-tool="shikum_shaot"] .topbar .brand img{width:36px;height:36px}
 body[data-tool="shikum_shaot"] .crumbs,body[data-tool="shikum_shaot"] .crumbs a{color:#000;text-decoration:underline}
 body[data-tool="shikum_shaot"] .crumbs span::before{color:#000}
 body[data-tool="shikum_shaot"] .site-foot,body[data-tool="shikum_shaot"] .site-foot a,body[data-tool="shikum_shaot"] .ft .ft-link,body[data-tool="shikum_shaot"] .ft .ft-promise{color:#000}
