@@ -29,6 +29,10 @@
    "n": "פניות רשמיות ותלונות"
   },
   {
+   "id": "mosdot",
+   "n": "מוסדות, מסים וכספים"
+  },
+  {
    "id": "horim",
    "n": "הורים וקהילה"
   },
@@ -1138,6 +1142,398 @@
    }
   },
   {
+   "id": "mosad-irur",
+   "cat": "mosdot",
+   "i": "⚖",
+   "n": "השגה או ערעור על החלטה (ביטוח לאומי, מס הכנסה, ארנונה)",
+   "note": "המועד להשגה כתוב במכתב ההחלטה, ולפעמים הוא קצר: במס הכנסה 30 יום מקבלת השומה, בארנונה 90 יום מקבלת הודעת התשלום. שולחים לפני שהמועד עובר ושומרים אישור שהפנייה התקבלה. בעניין גדול כדאי להתייעץ עם עורך דין, רואה חשבון או ארגון זכויות.",
+   "f": [
+    {
+     "k": "to",
+     "l": "לאיזה גוף",
+     "ex": "המוסד לביטוח לאומי – סניף חולון"
+    },
+    {
+     "k": "num",
+     "l": "מספר תיק / לקוח / אסמכתא",
+     "ex": "תביעה 123456"
+    },
+    {
+     "k": "topic",
+     "l": "על איזו החלטה",
+     "ex": "דחיית התביעה לדמי אבטלה, במכתב מיום 2.11.2026"
+    },
+    {
+     "k": "details",
+     "l": "למה ההחלטה לא נכונה",
+     "ex": "עבדתי 12 חודשים מתוך 18 החודשים האחרונים, ותלושי השכר מצורפים. נראה שחודשי העבודה אצל המעסיק השני לא נספרו",
+     "long": 1
+    },
+    {
+     "k": "ask",
+     "l": "מה מבקשים",
+     "ex": "לבטל את ההחלטה ולאשר את התביעה"
+    },
+    {
+     "k": "tz",
+     "l": "תעודת זהות (לא חובה)",
+     "ex": "012345678"
+    },
+    {
+     "k": "phone",
+     "l": "טלפון (לא חובה)",
+     "ex": "050-1234567"
+    }
+   ],
+   "he": {
+    "s": [
+     "השגה על {topic} – {num}",
+     "בקשה לבחינה מחדש: {topic}",
+     "ערעור על החלטה – תיק {num}"
+    ],
+    "b": "לכבוד\n{to}\n\nהנדון: השגה על {topic}\nמספר תיק / אסמכתא: {num}\n\nאני מגיש/ה בזאת השגה על ההחלטה שבנדון, ומבקש/ת לבחון אותה מחדש.\n\nואלה הנימוקים:\n{details}.\n\nלאור זאת אבקש {ask}.\n\nאם חסר מסמך כלשהו לבחינת ההשגה, אשמח שתודיעו לי ואעביר אותו מיד. אבקש לקבל אישור על קבלת הפנייה, ואת ההחלטה בה בכתב.\n\nבכבוד רב,\n{name}[[\nת.ז. {tz}]][[\nטלפון: {phone}]]"
+   },
+   "en": {
+    "s": [
+     "Objection to {topic} – {num}",
+     "Request for reconsideration: {topic}",
+     "Appeal – file {num}"
+    ],
+    "b": "To\n{to}\n\nRe: Objection to {topic}\nFile / reference number: {num}\n\nI hereby submit an objection to the above decision and ask that it be reconsidered.\n\nMy reasons are as follows:\n{details}.\n\nI therefore ask that you {ask}.\n\nIf any document is missing for reviewing this objection, please let me know and I will send it immediately. Please confirm receipt of this request and send me the decision in writing.\n\nSincerely,\n{name}[[\nID no. {tz}]][[\nPhone: {phone}]]"
+   }
+  },
+  {
+   "id": "mosad-hesber",
+   "cat": "mosdot",
+   "i": "🔍",
+   "n": "בקשת הסבר לחיוב (בנק, כרטיס אשראי, ארנונה, חשמל)",
+   "note": "חיוב בכרטיס אשראי שלא ביצעתם בכלל? קודם מתקשרים לחברת האשראי לחסום את הכרטיס, ורק אחר כך כותבים.",
+   "f": [
+    {
+     "k": "to",
+     "l": "לאיזה גוף",
+     "ex": "בנק לאומי – סניף 802"
+    },
+    {
+     "k": "num",
+     "l": "מספר חשבון / לקוח / כרטיס",
+     "ex": "כרטיס המסתיים ב-1234"
+    },
+    {
+     "k": "sum",
+     "l": "הסכום",
+     "ex": "348 ₪"
+    },
+    {
+     "k": "date",
+     "l": "תאריך החיוב",
+     "ex": "10.11.2026"
+    },
+    {
+     "k": "topic",
+     "l": "איך החיוב נקרא בדף",
+     "ex": "עמלת טיפול"
+    },
+    {
+     "k": "phone",
+     "l": "טלפון (לא חובה)",
+     "ex": "050-1234567"
+    }
+   ],
+   "he": {
+    "s": [
+     "בקשה להסבר על חיוב – {num}",
+     "חיוב לא מוכר בסך {sum} מ-{date}",
+     "בירור חיוב: {topic}"
+    ],
+    "b": "לכבוד\n{to}\n\nהנדון: בקשה להסבר על חיוב – {num}\n\nבדף החשבון מופיע חיוב בסך {sum} מתאריך {date}, בשם \"{topic}\".\n\nאינני מזהה את החיוב הזה, ולכן אבקש:\n1. הסבר מפורט: על מה החיוב, ולפי איזה הסכם או תעריף.\n2. העתק של המסמך או ההרשאה שעליהם הוא מבוסס.\n3. אם החיוב נעשה בטעות – לבטל אותו ולהחזיר את הסכום לחשבון.\n\nאבקש לקבל תשובה בכתב בתוך 14 ימים.\n\nבכבוד רב,\n{name}[[\nת.ז. {tz}]][[\nטלפון: {phone}]]"
+   },
+   "en": {
+    "s": [
+     "Request for explanation of a charge – {num}",
+     "Unrecognized charge of {sum} on {date}",
+     "Charge inquiry: {topic}"
+    ],
+    "b": "To\n{to}\n\nRe: Request for explanation of a charge – {num}\n\nMy statement shows a charge of {sum} dated {date}, described as \"{topic}\".\n\nI do not recognize this charge, and therefore ask for:\n1. A detailed explanation: what the charge is for, and under which agreement or rate.\n2. A copy of the document or authorization it is based on.\n3. If it was charged in error – to cancel it and refund the amount to my account.\n\nPlease reply in writing within 14 days.\n\nSincerely,\n{name}[[\nID no. {tz}]][[\nPhone: {phone}]]"
+   }
+  },
+  {
+   "id": "mosad-prisa",
+   "cat": "mosdot",
+   "i": "📆",
+   "n": "בקשה לפריסת חוב לתשלומים (הסדר תשלומים)",
+   "note": "בארנונה, במס הכנסה ובביטוח לאומי יש לפעמים בקשה מקוונת להסדר באזור האישי. בהוצאה לפועל מגישים בקשה בטופס של רשות האכיפה והגבייה (למשל בקשה לחקירת יכולת), ולא במייל.",
+   "f": [
+    {
+     "k": "to",
+     "l": "לאיזה גוף",
+     "ex": "המוסד לביטוח לאומי – סניף חולון"
+    },
+    {
+     "k": "num",
+     "l": "מספר תיק / לקוח / אסמכתא",
+     "ex": "תביעה 123456"
+    },
+    {
+     "k": "sum",
+     "l": "גובה החוב",
+     "ex": "4,200 ₪"
+    },
+    {
+     "k": "pay",
+     "l": "לכמה תשלומים",
+     "ex": "12 תשלומים חודשיים"
+    },
+    {
+     "k": "reason",
+     "l": "למה קשה לשלם עכשיו",
+     "ex": "בחודשים האחרונים ההכנסה שלי ירדה בחצי, כי אני בחופשת מחלה ארוכה",
+     "long": 1
+    },
+    {
+     "k": "tz",
+     "l": "תעודת זהות (לא חובה)",
+     "ex": "012345678"
+    },
+    {
+     "k": "phone",
+     "l": "טלפון (לא חובה)",
+     "ex": "050-1234567"
+    }
+   ],
+   "he": {
+    "s": [
+     "בקשה להסדר תשלומים – {num}",
+     "בקשה לפריסת חוב בסך {sum}",
+     "פריסת החוב ל-{pay}"
+    ],
+    "b": "לכבוד\n{to}\n\nהנדון: בקשה להסדר תשלומים – {num}\n\nקיבלתי דרישה לתשלום בסך {sum}. אני מבקש/ת להסדיר את התשלום, אך כרגע אינני יכול/ה לשלם את כל הסכום בבת אחת.\n\n{reason}.\n\nלכן אבקש לפרוס את הסכום ל-{pay}, החל מהחודש הקרוב, ולעכב בינתיים הליכי גבייה, ריבית ותוספות פיגור.\n\nאשמח לחתום על הסדר מסודר, ולצרף מסמכים על המצב אם תבקשו.\n\nבכבוד רב,\n{name}[[\nת.ז. {tz}]][[\nטלפון: {phone}]]"
+   },
+   "en": {
+    "s": [
+     "Request for a payment arrangement – {num}",
+     "Request to split a debt of {sum}",
+     "Spreading the debt over {pay}"
+    ],
+    "b": "To\n{to}\n\nRe: Request for a payment arrangement – {num}\n\nI received a demand for payment of {sum}. I wish to settle this, but I am currently unable to pay the full amount at once.\n\n{reason}.\n\nI therefore ask to spread the amount over {pay}, starting this coming month, and to suspend collection proceedings, interest and late fees in the meantime.\n\nI will gladly sign a formal arrangement and provide documents about my situation if requested.\n\nSincerely,\n{name}[[\nID no. {tz}]][[\nPhone: {phone}]]"
+   }
+  },
+  {
+   "id": "mosad-dchiya",
+   "cat": "mosdot",
+   "i": "⏳",
+   "n": "בקשה לדחיית מועד (תשלום, הגשת דוח, תור)",
+   "note": "בבית משפט ובהוצאה לפועל בקשה בתיק עצמו (דחיית דיון, הארכת מועד) מגישים בדרך כלל דרך נט המשפט או באתר רשות האכיפה והגבייה, ולא במייל. מייל מתאים לבירור ולתיאום.",
+   "f": [
+    {
+     "k": "to",
+     "l": "לאיזה גוף",
+     "ex": "המוסד לביטוח לאומי – סניף חולון"
+    },
+    {
+     "k": "num",
+     "l": "מספר תיק / לקוח / אסמכתא",
+     "ex": "תביעה 123456"
+    },
+    {
+     "k": "topic",
+     "l": "מה רוצים לדחות",
+     "ex": "הגשת הדוח השנתי לשנת 2025"
+    },
+    {
+     "k": "date",
+     "l": "המועד שנקבע",
+     "ex": "30.11.2026"
+    },
+    {
+     "k": "newdate",
+     "l": "עד מתי מבקשים",
+     "ex": "31.12.2026"
+    },
+    {
+     "k": "reason",
+     "l": "הסיבה",
+     "ex": "אני מאושפז/ת מאז תחילת החודש, והמסמכים אצל רואה החשבון עוד לא מוכנים",
+     "long": 1
+    },
+    {
+     "k": "phone",
+     "l": "טלפון (לא חובה)",
+     "ex": "050-1234567"
+    }
+   ],
+   "he": {
+    "s": [
+     "בקשה לדחיית מועד – {topic} ({num})",
+     "בקשה להארכת מועד עד {newdate}",
+     "דחיית מועד: {topic}"
+    ],
+    "b": "לכבוד\n{to}\n\nהנדון: בקשה לדחיית מועד – {topic}\nמספר תיק / אסמכתא: {num}\n\nהמועד שנקבע ל{topic} הוא {date}. אני מבקש/ת לדחות אותו עד {newdate}.\n\nהסיבה: {reason}.\n\nאני פונה לפני המועד, כדי שלא ייגרמו עיכוב או קנס. אם צריך מסמך שמאשר את הסיבה, אצרף אותו.\n\nאבקש לקבל אישור בכתב על הדחייה.\n\nבכבוד רב,\n{name}[[\nת.ז. {tz}]][[\nטלפון: {phone}]]"
+   },
+   "en": {
+    "s": [
+     "Request to postpone a deadline – {topic} ({num})",
+     "Request for an extension until {newdate}",
+     "Deadline extension: {topic}"
+    ],
+    "b": "To\n{to}\n\nRe: Request to postpone a deadline – {topic}\nFile / reference number: {num}\n\nThe deadline set for {topic} is {date}. I kindly ask to postpone it until {newdate}.\n\nThe reason: {reason}.\n\nI am writing before the deadline so that no delay or fine is incurred. If a supporting document is needed, I will attach it.\n\nPlease confirm the postponement in writing.\n\nSincerely,\n{name}[[\nID no. {tz}]][[\nPhone: {phone}]]"
+   }
+  },
+  {
+   "id": "mosad-shilamti",
+   "cat": "mosdot",
+   "i": "✅",
+   "n": "הודעה על תשלום שכבר בוצע",
+   "f": [
+    {
+     "k": "to",
+     "l": "לאיזה גוף",
+     "ex": "המוסד לביטוח לאומי – סניף חולון"
+    },
+    {
+     "k": "num",
+     "l": "מספר תיק / לקוח / אסמכתא",
+     "ex": "תביעה 123456"
+    },
+    {
+     "k": "sum",
+     "l": "כמה שילמתם",
+     "ex": "1,150 ₪"
+    },
+    {
+     "k": "date",
+     "l": "תאריך התשלום",
+     "ex": "12.11.2026"
+    },
+    {
+     "k": "how",
+     "l": "איך שילמתם",
+     "ex": "העברה בנקאית"
+    },
+    {
+     "k": "asm",
+     "l": "מספר אסמכתא",
+     "ex": "88412390"
+    }
+   ],
+   "he": {
+    "s": [
+     "הודעה על תשלום – {num}",
+     "התשלום בסך {sum} בוצע ב-{date}",
+     "אישור תשלום, אסמכתא {asm}"
+    ],
+    "b": "לכבוד\n{to}\n\nהנדון: הודעה על תשלום – {num}\n\nהריני להודיע כי ביום {date} שילמתי {sum} ב{how}, מספר אסמכתא {asm}. אישור התשלום מצורף למייל.\n\nאבקש לעדכן את התשלום בחשבון, לעצור כל תזכורת או הליך גבייה בגין הסכום הזה, ולשלוח לי אישור שהחוב סגור.\n\nבברכה,\n{name}"
+   },
+   "en": {
+    "s": [
+     "Payment notice – {num}",
+     "Payment of {sum} made on {date}",
+     "Payment confirmation, reference {asm}"
+    ],
+    "b": "To\n{to}\n\nRe: Payment notice – {num}\n\nPlease note that on {date} I paid {sum} by {how}, reference number {asm}. The payment confirmation is attached.\n\nPlease record the payment in my account, stop any reminder or collection proceedings for this amount, and send me confirmation that the balance is cleared.\n\nBest regards,\n{name}"
+   }
+  },
+  {
+   "id": "mosad-mismach",
+   "cat": "mosdot",
+   "i": "📄",
+   "n": "בקשה למסמך או לאישור (אישור יתרה, פרוטוקול, אישור תשלום)",
+   "note": "הרבה אישורים אפשר להוריד מיד באזור האישי באתר (אישורי תשלום, טופס 867 מהבנק, אישורים מביטוח לאומי). מייל מתאים כשאין שם.",
+   "f": [
+    {
+     "k": "to",
+     "l": "לאיזה גוף",
+     "ex": "המוסד לביטוח לאומי – סניף חולון"
+    },
+    {
+     "k": "num",
+     "l": "מספר תיק / לקוח (לא חובה)",
+     "ex": "חשבון 12-345678"
+    },
+    {
+     "k": "doc",
+     "l": "איזה מסמך",
+     "ex": "אישור על יתרת המשכנתא לסוף שנת 2025"
+    },
+    {
+     "k": "why",
+     "l": "בשביל מה (לא חובה)",
+     "ex": "הגשת דוח שנתי למס הכנסה"
+    },
+    {
+     "k": "tz",
+     "l": "תעודת זהות (לא חובה)",
+     "ex": "012345678"
+    }
+   ],
+   "he": {
+    "s": [
+     "בקשה למסמך – {doc}",
+     "בקשה לקבלת {doc}",
+     "בקשה לאישור – {num}"
+    ],
+    "b": "לכבוד\n{to}\n\nהנדון: בקשה למסמך – {doc}[[\nמספר תיק / לקוח: {num}]]\n\nאבקש לקבל {doc}[[, לצורך {why}]].\n\nאפשר לשלוח אותו במייל חוזר לכתובת הזאת, כקובץ PDF.\n\nתודה מראש,\n{name}[[\nת.ז. {tz}]]"
+   },
+   "en": {
+    "s": [
+     "Document request – {doc}",
+     "Request to receive {doc}",
+     "Confirmation request – {num}"
+    ],
+    "b": "To\n{to}\n\nRe: Document request – {doc}[[\nFile / account number: {num}]]\n\nI kindly ask to receive {doc}[[, for {why}]].\n\nYou may send it by reply to this address, as a PDF file.\n\nThank you in advance,\n{name}[[\nID no. {tz}]]"
+   }
+  },
+  {
+   "id": "mosad-birur",
+   "cat": "mosdot",
+   "i": "🔁",
+   "n": "פנייה חוזרת: לא קיבלתי תשובה ממוסד",
+   "note": "גם אחרי פנייה חוזרת אין מענה? פונים לממונה על פניות הציבור של אותו גוף, או לנציב תלונות הציבור במשרד מבקר המדינה (על גופים ציבוריים ורשויות). על בנק – לפניות הציבור בבנק ישראל.",
+   "f": [
+    {
+     "k": "to",
+     "l": "לאיזה גוף",
+     "ex": "המוסד לביטוח לאומי – סניף חולון"
+    },
+    {
+     "k": "num",
+     "l": "מספר תיק / לקוח / אסמכתא",
+     "ex": "תביעה 123456"
+    },
+    {
+     "k": "topic",
+     "l": "על מה פניתם",
+     "ex": "בקשה להחזר ארנונה על דירה ריקה"
+    },
+    {
+     "k": "date",
+     "l": "מתי פניתם",
+     "ex": "1.10.2026"
+    },
+    {
+     "k": "phone",
+     "l": "טלפון (לא חובה)",
+     "ex": "050-1234567"
+    }
+   ],
+   "he": {
+    "s": [
+     "פנייה חוזרת – {topic} ({num})",
+     "טרם התקבלה תשובה לפנייה מ-{date}",
+     "בירור מצב הטיפול – {num}"
+    ],
+    "b": "לכבוד\n{to}\n\nהנדון: פנייה חוזרת – {topic}\nמספר תיק / אסמכתא: {num}\n\nביום {date} פניתי אליכם בעניין {topic}, ועד היום לא קיבלתי תשובה.\n\nאבקש לדעת מה מצב הטיפול, מי מטפל בפנייה, ומתי צפויה החלטה.\n\nאודה לתשובה בתוך 7 ימים.\n\nבכבוד רב,\n{name}[[\nת.ז. {tz}]][[\nטלפון: {phone}]]"
+   },
+   "en": {
+    "s": [
+     "Follow-up – {topic} ({num})",
+     "No reply yet to my request of {date}",
+     "Status inquiry – {num}"
+    ],
+    "b": "To\n{to}\n\nRe: Follow-up – {topic}\nFile / reference number: {num}\n\nOn {date} I contacted you regarding {topic}, and I have not yet received a reply.\n\nPlease let me know the status of my request, who is handling it, and when a decision is expected.\n\nI would appreciate a reply within 7 days.\n\nSincerely,\n{name}[[\nID no. {tz}]][[\nPhone: {phone}]]"
+   }
+  },
+  {
    "id": "horim",
    "cat": "horim",
    "i": "🏫",
@@ -1552,5 +1948,182 @@
     "אני בדרך, אגיע בעוד כמה דקות"
    ]
   }
+ ],
+ "inst": [
+  {
+   "d": [
+    "btl.gov.il"
+   ],
+   "n": "המוסד לביטוח לאומי",
+   "t": "mosad-irur",
+   "num": "מספר זהות / מספר תביעה"
+  },
+  {
+   "d": [
+    "taxes.gov.il"
+   ],
+   "n": "רשות המסים – פקיד השומה",
+   "t": "mosad-irur",
+   "num": "מספר תיק במס הכנסה / מע״מ"
+  },
+  {
+   "d": [
+    "eca.gov.il"
+   ],
+   "n": "לשכת ההוצאה לפועל – רשות האכיפה והגבייה",
+   "t": "mosad-prisa",
+   "num": "מספר תיק הוצאה לפועל"
+  },
+  {
+   "d": [
+    "court.gov.il"
+   ],
+   "n": "מזכירות בית המשפט",
+   "t": "mosad-mismach",
+   "num": "מספר תיק"
+  },
+  {
+   "d": [
+    ".muni.il",
+    "tel-aviv.gov.il",
+    "jerusalem.muni.il",
+    "haifa.muni.il",
+    "arnona"
+   ],
+   "n": "מחלקת הארנונה בעירייה",
+   "t": "mosad-hesber",
+   "num": "מספר משלם / מספר נכס"
+  },
+  {
+   "d": [
+    "bankhapoalim.co.il",
+    "poalim.co.il"
+   ],
+   "n": "בנק הפועלים",
+   "t": "mosad-hesber",
+   "num": "מספר סניף וחשבון"
+  },
+  {
+   "d": [
+    "leumi.co.il"
+   ],
+   "n": "בנק לאומי",
+   "t": "mosad-hesber",
+   "num": "מספר סניף וחשבון"
+  },
+  {
+   "d": [
+    "discountbank.co.il",
+    "discount.co.il"
+   ],
+   "n": "בנק דיסקונט",
+   "t": "mosad-hesber",
+   "num": "מספר סניף וחשבון"
+  },
+  {
+   "d": [
+    "mizrahi-tefahot.co.il",
+    "umtb.co.il"
+   ],
+   "n": "בנק מזרחי טפחות",
+   "t": "mosad-hesber",
+   "num": "מספר סניף וחשבון"
+  },
+  {
+   "d": [
+    "fibi.co.il"
+   ],
+   "n": "הבנק הבינלאומי",
+   "t": "mosad-hesber",
+   "num": "מספר סניף וחשבון"
+  },
+  {
+   "d": [
+    "mercantile.co.il"
+   ],
+   "n": "בנק מרכנתיל",
+   "t": "mosad-hesber",
+   "num": "מספר סניף וחשבון"
+  },
+  {
+   "d": [
+    "bank-yahav.co.il"
+   ],
+   "n": "בנק יהב",
+   "t": "mosad-hesber",
+   "num": "מספר סניף וחשבון"
+  },
+  {
+   "d": [
+    "isracard.co.il"
+   ],
+   "n": "ישראכרט",
+   "t": "mosad-hesber",
+   "num": "4 הספרות האחרונות של הכרטיס"
+  },
+  {
+   "d": [
+    "americanexpress.co.il"
+   ],
+   "n": "אמריקן אקספרס",
+   "t": "mosad-hesber",
+   "num": "4 הספרות האחרונות של הכרטיס"
+  },
+  {
+   "d": [
+    "cal-online.co.il",
+    "icc.co.il"
+   ],
+   "n": "כאל",
+   "t": "mosad-hesber",
+   "num": "4 הספרות האחרונות של הכרטיס"
+  },
+  {
+   "d": [
+    "max.co.il",
+    "leumi-card.co.il"
+   ],
+   "n": "מקס",
+   "t": "mosad-hesber",
+   "num": "4 הספרות האחרונות של הכרטיס"
+  },
+  {
+   "d": [
+    "iec.co.il"
+   ],
+   "n": "חברת החשמל",
+   "t": "mosad-hesber",
+   "num": "מספר חוזה"
+  },
+  {
+   "d": [
+    "gov.il"
+   ],
+   "n": "",
+   "t": "mosad-birur",
+   "num": "מספר תיק / אסמכתא"
+  }
+ ],
+ "instKw": [
+  [
+   "mosad-prisa",
+   "חוב|דרישת תשלום|פיגור|התראה לפני|הסדר"
+  ],
+  [
+   "mosad-irur",
+   "החלטה|נדחת|נדחה|דחיית התביעה|שומה|קנס"
+  ],
+  [
+   "mosad-dchiya",
+   "מועד|דיון|זימון|הגשת דוח"
+  ],
+  [
+   "mosad-hesber",
+   "חיוב|חשבון ארנונה|חשבונית|חשבון תקופתי"
+  ],
+  [
+   "mosad-mismach",
+   "אישור|מסמך|פרוטוקול"
+  ]
  ]
 }

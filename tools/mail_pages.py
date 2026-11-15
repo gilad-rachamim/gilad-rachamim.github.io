@@ -140,7 +140,7 @@ PAGES = [
    ("איך מסיימים מייל באנגלית?", "במשפט שאומר מה מבקשים, ואחריו Best regards או Kind regards (רשמי מאוד: Sincerely), ובשורה נפרדת השם."),
    ("מה כותבים בנושא (Subject) של מייל באנגלית?", "כמה מילים שאומרות על מה המייל ומה רוצים, למשל Extension request – Assignment 3. הכלי נותן שלושה נושאים לכל מייל."),
    ("אפשר לראות את המייל גם בעברית?", "כן. כל נוסח קיים בעברית ובאנגלית. לוחצים \"עברית\" ו\"English\" כדי לעבור בין השניים."),
-   ("יש דוגמאות למייל באנגלית לחברה או ללקוח?", "כן: פנייה רשמית, הצעת מחיר, תזכורת, תלונה, ביטול, בקשת החזר, התפטרות ועוד, 32 נוסחים בסך הכול."),
+   ("יש דוגמאות למייל באנגלית לחברה או ללקוח?", "כן: פנייה רשמית, הצעת מחיר, תזכורת, תלונה, ביטול, בקשת החזר, התפטרות ועוד, 39 נוסחים בסך הכול."),
   ],
  },
  {
@@ -203,7 +203,7 @@ def build():
                 f'<header class="k-hero">\n  <h1>{p["h1"]}</h1>\n  <p class="sub">{p["sub"]}</p>\n</header>\n'
                 + t + "\n\n<!--seo-txt-->\n"
                 '<section class="k-sec seo-txt" aria-labelledby="seo-h">\n' + p["text"] + "\n"
-                f'<p>עוד נוסחים: <a class="gold" href="/kelim/tochen/mail/">ניסוח מייל רשמי ומכתב רשמי (32 נוסחים)</a> · {others}</p>\n</section>\n'
+                f'<p>עוד נוסחים: <a class="gold" href="/kelim/tochen/mail/">ניסוח מייל רשמי ומכתב רשמי (39 נוסחים)</a> · {others}</p>\n</section>\n'
                 '<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">\n  <h2 id="seo-faq-h">שאלות ותשובות</h2>\n' + faq_html + "\n</section>\n<!--/seo-txt-->\n")
         d = MAIN.parent / p["slug"]
         d.mkdir(exist_ok=True)
