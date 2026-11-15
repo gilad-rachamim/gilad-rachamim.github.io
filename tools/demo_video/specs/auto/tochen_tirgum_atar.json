@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/tochen_tirgum_atar.jpg",
-   "scroll": -105,
-   "caption": "לוחצים Alt+Shift+T בכל אתר, והעברית מופיעה מתחת לכל פסקה"
-  },
-  {
    "type": "steps",
    "dur": 6.5,
    "title": "איך משתמשים? *2 צעדים*",

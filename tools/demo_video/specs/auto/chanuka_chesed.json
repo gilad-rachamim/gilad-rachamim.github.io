@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/chanuka_chesed.jpg",
-   "scroll": 0,
-   "caption": "לכל לילה של חנוכה, מעשה טוב קטן שעושים כמשפחה"
-  },
-  {
    "type": "cards",
    "dur": 6.5,
    "title": "מה *כלול?*",

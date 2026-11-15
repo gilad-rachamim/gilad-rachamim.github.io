@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/tamlul_sirton.jpg",
-   "scroll": 0,
-   "caption": "שיעור מצולם, הרצאה, ראיון או סרטון לרשתות"
-  },
-  {
    "type": "steps",
    "dur": 7.0,
    "title": "איך משתמשים? *3 צעדים*",

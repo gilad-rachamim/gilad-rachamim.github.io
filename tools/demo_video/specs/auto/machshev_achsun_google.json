@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/machshev_achsun_google.jpg",
-   "scroll": -688,
-   "caption": "קיבלתם \"נפח האחסון שלך כמעט מלא\"?"
-  },
-  {
    "type": "cards",
    "dur": 6.5,
    "title": "מה *כלול?*",

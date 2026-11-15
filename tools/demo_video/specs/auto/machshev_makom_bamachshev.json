@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/machshev_makom_bamachshev.jpg",
-   "scroll": -570,
-   "caption": "המחשב התמלא ואתם לא יודעים ממה?"
-  },
-  {
    "type": "cards",
    "dur": 6.5,
    "title": "מה *כלול?*",

@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/tamlul_whatsapp.jpg",
-   "scroll": 0,
-   "caption": "קיבלתם הודעה קולית ארוכה, ואין איך להקשיב עכשיו?"
-  },
-  {
    "type": "cards",
    "cls": "gold",
    "dur": 7,

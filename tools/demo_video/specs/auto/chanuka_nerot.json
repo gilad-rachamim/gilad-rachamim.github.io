@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/chanuka_nerot.jpg",
-   "scroll": 0,
-   "caption": "זמני ההדלקה לפי העיר שלכם, הברכות והשירים"
-  },
-  {
    "type": "cards",
    "dur": 6.5,
    "title": "מה *כלול?*",

@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/machshev_ptakim.jpg",
-   "scroll": -570,
-   "caption": "מספר טלפון שצריך עוד דקה, רשימת קניות, משימות להיום"
-  },
-  {
    "type": "cards",
    "dur": 6.5,
    "title": "מה *כלול?*",

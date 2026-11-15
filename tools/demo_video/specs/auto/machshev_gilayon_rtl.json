@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/machshev_gilayon_rtl.jpg",
-   "scroll": -128,
-   "caption": "העמודה A מופיעה משמאל והעברית נראית הפוכה?"
-  },
-  {
    "type": "cards",
    "dur": 6.5,
    "title": "מה *כלול?*",

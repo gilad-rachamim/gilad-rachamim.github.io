@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/machshev_whatsapp_lo_shamur.jpg",
-   "scroll": -572,
-   "caption": "צריך לשלוח הודעה לאינסטלטור, לספק או למספר מפרסום"
-  },
-  {
    "type": "cards",
    "dur": 6.5,
    "title": "מה *כלול?*",

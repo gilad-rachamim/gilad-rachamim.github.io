@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/tochen_tirgum_youtube.jpg",
-   "scroll": 0,
-   "caption": "פותחים סרטון ביוטיוב, מדליקים כתוביות ולוחצים Alt+Shift+T"
-  },
-  {
    "type": "steps",
    "dur": 7.0,
    "title": "איך משתמשים? *3 צעדים*",

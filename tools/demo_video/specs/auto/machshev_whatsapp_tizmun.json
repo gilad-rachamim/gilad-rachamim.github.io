@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/machshev_whatsapp_tizmun.jpg",
-   "scroll": -726,
-   "caption": "צריך לשלוח ברכה בחצות, תזכורת ללקוח מחר בבוקר"
-  },
-  {
    "type": "cards",
    "dur": 6.5,
    "title": "מה *כלול?*",

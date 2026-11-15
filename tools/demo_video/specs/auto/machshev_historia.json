@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/machshev_historia.jpg",
-   "scroll": -92,
-   "caption": "קניתם הפתעה, חיפשתם משהו רגיש או עבדתם במחשב משותף?"
-  },
-  {
    "type": "steps",
    "dur": 7.0,
    "title": "איך משתמשים? *3 צעדים*",

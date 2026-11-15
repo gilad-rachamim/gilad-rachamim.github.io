@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/chanuka_chufsha.jpg",
-   "scroll": -229,
-   "caption": "רעיון לכל יום בחופשה, בבית ובחינם"
-  },
-  {
    "type": "cards",
    "dur": 6.5,
    "title": "מה *כלול?*",

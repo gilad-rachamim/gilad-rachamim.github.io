@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/machshev_sismaot.jpg",
-   "scroll": -287,
-   "caption": "שכחתם סיסמה שכרום או הטלפון זוכרים בשבילכם?"
-  },
-  {
    "type": "cards",
    "dur": 6.5,
    "title": "מה *כלול?*",

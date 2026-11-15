@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/chanuka_tshii.jpg",
-   "scroll": 0,
-   "caption": "אחרי החג עושים מדורה גדולה ושורפים בה את הפתילות והשמן…"
-  },
-  {
    "type": "cards",
    "dur": 6.5,
    "title": "מה *כלול?*",

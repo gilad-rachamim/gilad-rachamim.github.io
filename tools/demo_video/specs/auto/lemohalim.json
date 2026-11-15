@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/lemohalim.jpg",
-   "scroll": -1043,
-   "caption": "חברים יקרים, קיבצתי כאן את כל הכלים בשבילכם"
-  },
-  {
    "type": "cards",
    "dur": 6.5,
    "title": "מה *כלול?*",

@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/tamlul_sicha.jpg",
-   "scroll": 0,
-   "caption": "שיחה עם הבנק, פגישה בעבודה, ראיון לעבודת מחקר"
-  },
-  {
    "type": "steps",
    "dur": 7.0,
    "title": "איך משתמשים? *3 צעדים*",

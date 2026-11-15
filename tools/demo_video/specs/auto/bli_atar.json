@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/bli_atar.jpg",
-   "scroll": -1043,
-   "caption": "לכל מי שלא נכנס לאתרים: כל כלי כקובץ וורד, PDF להדפסה"
-  },
-  {
    "type": "cards",
    "dur": 6.5,
    "title": "מה *כלול?*",

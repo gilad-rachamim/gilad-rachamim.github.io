@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/shir_karaoke_erev.jpg",
-   "scroll": -77,
-   "caption": "ערב חברים, יום הולדת, מסיבת כיתה או בר מצווה"
-  },
-  {
    "type": "cards",
    "cls": "gold",
    "dur": 7,

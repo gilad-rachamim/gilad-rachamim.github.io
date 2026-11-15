@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/chanuka_tzviya.jpg",
-   "scroll": -453,
-   "caption": "בוחרים ציור, בוחרים צבע, ונוגעים באזור שרוצים לצבוע"
-  },
-  {
    "type": "cards",
    "dur": 6.5,
    "title": "מה *כלול?*",

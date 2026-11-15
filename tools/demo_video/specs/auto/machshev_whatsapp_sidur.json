@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/machshev_whatsapp_sidur.jpg",
-   "scroll": -1043,
-   "caption": "קראתם הודעה, אמרתם \"אענה אחר כך\" – והיא נבלעה ברשימה?"
-  },
-  {
    "type": "cards",
    "dur": 6.5,
    "title": "מה *כלול?*",

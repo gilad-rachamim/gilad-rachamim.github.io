@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/tamlul_telegram.jpg",
-   "scroll": 0,
-   "caption": "שולחים לבוט הודעה קולית, הקלטה או סרטון, ומקבלים אותם כתובים"
-  },
-  {
    "type": "steps",
    "dur": 7.0,
    "title": "איך משתמשים? *3 צעדים*",

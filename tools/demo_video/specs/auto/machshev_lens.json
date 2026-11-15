@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/machshev_lens.jpg",
-   "scroll": -168,
-   "caption": "ראיתם תמונה ורוצים לדעת מה זה, איפה קונים"
-  },
-  {
    "type": "cards",
    "dur": 6.5,
    "title": "מה *כלול?*",

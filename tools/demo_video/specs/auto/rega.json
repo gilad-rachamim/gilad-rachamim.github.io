@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/rega.jpg",
-   "scroll": 0,
-   "caption": "מסך אחד לרגע של הצפה: נשימת 4-7-8 מונפשת"
-  },
-  {
    "type": "cards",
    "cls": "gold",
    "dur": 7,
