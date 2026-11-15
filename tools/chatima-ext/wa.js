@@ -40,6 +40,14 @@
     var r = ps.querySelectorAll('[role=listitem]'); if (!r.length) r = ps.querySelectorAll('[role=row]');
     return [].slice.call(r);
   }
+  function icons(row) {
+    var out = [];
+    row.querySelectorAll('[data-icon]').forEach(function (e) { out.push(e.getAttribute('data-icon') || ''); });
+    row.querySelectorAll('svg title').forEach(function (e) { out.push(e.textContent || ''); });
+    return out;
+  }
+  function hasIcon(list, re) { for (var i = 0; i < list.length; i++) if (re.test(list[i])) return list[i]; return ''; }
+  var TICK_RE = /(^|-)(read|delivered|sent|dblcheck|check|msg-time|pending|time)$/i;
   function rowName(row) { var t = row.querySelector('span[title]'); return t ? (t.getAttribute('title') || t.textContent || '').trim() : ''; }
   function readRow(row, now) {
     var name = rowName(row); if (!name) return null;
@@ -50,23 +58,30 @@
       var tx = (el.textContent || '').replace(/[‎‏]/g, '').trim();
       if (tx && tx.length < 14 && TIME_RE.test(tx)) { when = tx; break; }
     }
-    var tick = row.querySelector('[data-icon^="status-dblcheck"],[data-icon^="status-check"],[data-icon^="status-time"],[data-icon^="msg-dblcheck"],[data-icon^="msg-check"],[data-icon="msg-time"]');
-    var read = false;
-    if (tick) {
-      var lab = (tick.getAttribute('aria-label') || (tick.parentElement && tick.parentElement.getAttribute('aria-label')) || '').trim();
-      read = /^(read|נקראה|נקרא)$/i.test(lab) || /rgb\(83,\s*189,\s*235\)|rgb\(0,\s*157,\s*226\)/.test(getComputedStyle(tick).color || '');
+    var ic = icons(row), tickName = hasIcon(ic, TICK_RE), read = false;
+    if (tickName) {
+      read = /(^|-)read$/i.test(tickName);
+      if (!read) {
+        var tick = row.querySelector('[data-icon="' + tickName + '"]');
+        if (tick) {
+          var lab = (tick.getAttribute('aria-label') || (tick.parentElement && tick.parentElement.getAttribute('aria-label')) || '').trim();
+          read = /^(read|נקראה|נקרא)$/i.test(lab) || /rgb\(83,\s*189,\s*235\)|rgb\(0,\s*157,\s*226\)/.test(getComputedStyle(tick).color || '');
+        }
+      }
     }
     var unread = 0;
     var ub = row.querySelectorAll('[aria-label]');
     for (var k = 0; k < ub.length; k++) {
       var a = ub[k].getAttribute('aria-label') || '';
-      if (/unread|לא נקרא/i.test(a)) { var n = a.match(/\d+/); unread = n ? +n[0] : (unread || 1); break; }
+      if (/unread|לא נקרא/i.test(a)) { var n = a.replace(/[,.](?=\d{3})/g, '').match(/\d+/); unread = n ? +n[0] : (unread || 1); break; }
     }
-    var group = !!row.querySelector('[data-icon*="group"],[data-icon*="community"]');
+    // קבוצה: אייקון קבוצה (רק בקבוצה בלי תמונה), או שם השולח לפני ההודעה האחרונה ("רפי: …") – בלי לקרוא את ההודעה עצמה
+    var group = !!hasIcon(ic, /group|community/i) || [].some.call(row.querySelectorAll('span'), function (sp) { return !sp.children.length && sp.textContent.length < 40 && /\S:\s*$/.test(sp.textContent) && !TIME_RE.test(sp.textContent.trim()); });
+    var loading = !when && /בטעינה|loading/i.test(row.textContent || '');
     return {
-      n: name, w: when, t: parseWhen(when, now), me: tick ? 1 : 0, rd: read ? 1 : 0, u: unread,
-      mu: row.querySelector('[data-icon*="muted"]') ? 1 : 0, pin: row.querySelector('[data-icon*="pinned"]') ? 1 : 0,
-      g: group ? 1 : 0, seen: now
+      n: name, w: when, t: parseWhen(when, now), me: tickName ? 1 : 0, rd: read ? 1 : 0, u: unread,
+      mu: hasIcon(ic, /mute|notifications-off/i) ? 1 : 0, pin: hasIcon(ic, /push-pin|pinned/i) ? 1 : 0,
+      g: group ? 1 : 0, seen: now, ld: loading ? 1 : 0
     };
   }
   function collect() {
@@ -75,6 +90,7 @@
       var r = readRow(row, now); if (!r) return;
       var old = D.map[r.n];
       if (old && old.g && !r.g) r.g = 1;   // קבוצה נשארת קבוצה גם כשהאייקון לא נטען
+      if (r.ld && old && old.t) { r.w = old.w; r.t = old.t; r.me = old.me; r.rd = old.rd; r.ld = 0; }   // עוד בטעינה – משאירים את מה שידענו
       if (!old || old.w !== r.w || old.me !== r.me || old.rd !== r.rd || old.u !== r.u || old.mu !== r.mu || old.pin !== r.pin || old.g !== r.g) dirty = true;
       D.map[r.n] = r; n++; decorate(row, r.n);
     });
@@ -144,14 +160,17 @@
       setMsg('סורק… ' + total + ' צ\'אטים');
       // צעד של חצי מסך, ומחכים שוואטסאפ באמת יצייר את השורות החדשות (אחרת מדלגים על קטע ברשימה)
       var first = rows().map(rowName).join('|');
-      var before = ps.scrollTop; ps.scrollTop += Math.max(150, ps.clientHeight * 0.5);
+      // הצעד: לפי השורות שכבר צוירו (וואטסאפ מצייר כ-16 שורות), לא לפי גובה החלון – בחלון קטן זה היה איטי פי 4
+      var rr = rows(), rh = rr.length ? (rr[0].offsetHeight || 72) : 72;
+      var before = ps.scrollTop; ps.scrollTop += Math.max(150, ps.clientHeight * 0.5, (rr.length - 4) * rh * 0.6);
       if (ps.scrollTop === before) { await sleep(500); collect(); break; }
       for (var w = 0; w < 25; w++) { await sleep(80); if (rows().map(rowName).join('|') !== first) break; }
       await sleep(120);
     }
     ps.scrollTop = keep; scanning = false; save();
     store.set({ waScanAt: Date.now() }).catch(function () {});
-    setMsg('נסרקו ' + total + ' צ\'אטים. נשמר רק במחשב.');
+    var ld = list().filter(function (c) { return c.ld; }).length;
+    setMsg('נסרקו ' + total + ' צ\'אטים. נשמר רק במחשב.' + (ld ? ' ' + ld + ' צ\'אטים עוד בטעינה אצל וואטסאפ – כדאי לסרוק שוב בעוד כמה דקות.' : ''));
     draw(); return total;
   }
 
