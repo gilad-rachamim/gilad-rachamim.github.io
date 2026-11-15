@@ -9,9 +9,9 @@
  *
  * התקנה (פעם אחת, כ-3 דקות): בוחרים למעלה את הפונקציה setup ולוחצים "הפעלה".
  * לשלוח סיכום עכשיו: runNow. להפסיק: uninstall (התוויות והמיילים נשארים).
- * גרסה 2 · 15.11.2026 (מהיר יותר, בלי הודעות לעצמך, פנייה לכמה נמענים בשורה אחת)
+ * גרסה 3 · 15.11.2026 (מהיר יותר, בלי הודעות לעצמך, פנייה לכמה נמענים בשורה אחת)
  */
-var VER = 2;
+var VER = 3;
 var SITE = 'https://hakelim.com/kelim/machshev/sidur-mailim/';
 
 // ===== ההגדרות שלכם (נוצרו בדף הכלי; אפשר גם לשנות כאן ידנית) =====
@@ -273,7 +273,8 @@ function followUps_(me, now) {
   var threads = [];
   var all = [];
   try {
-    threads = GmailApp.search('in:sent older_than:' + days + 'd newer_than:' + (days + 14) + 'd', 0, 60);
+    // -to:me: בלי התראות ששלחת לעצמך (הן ממלאות את הרשימה ומסתירות את המיילים האמיתיים)
+    threads = GmailApp.search('in:sent -to:me older_than:' + days + 'd newer_than:' + (days + 14) + 'd', 0, 100);
     all = GmailApp.getMessagesForThreads(threads);
   } catch (e) {}
   var bySubj = {};
