@@ -267,6 +267,7 @@
     [['note', '📝 פתק'], ['rem', '⏰ להזכיר לי'], ['sched', '🕐 לתזמן הודעה']].forEach(function (f) {
       bar.appendChild(el('button', { class: 'btn' + (form === f[0] ? ' g' : ''), type: 'button', 'aria-expanded': String(form === f[0]), on: { click: function () { form = form === f[0] ? null : f[0]; draw(); } } }, [f[1]]));
     });
+    if (isGroupOpen()) bar.appendChild(el('button', { class: 'btn' + (form === 'grp' ? ' g' : ''), type: 'button', 'aria-expanded': String(form === 'grp'), on: { click: function () { form = form === 'grp' ? null : 'grp'; if (form === 'grp') grpStart(); draw(); } } }, ['👥 חברי הקבוצה לאקסל']));
     return bar;
   }
   function whenPicker() {
@@ -292,6 +293,7 @@
   function formBox() {
     var name = openName(); if (!name || !form) return null;
     var box = el('div', { class: 'form' });
+    if (form === 'grp') return grpBox(box, name);
     if (form === 'note') {
       var ta = el('textarea', { 'aria-label': 'פתק פרטי לצ\'אט', maxlength: '2000', placeholder: 'למשל: ביקש הצעת מחיר עד יום חמישי' });
       ta.value = D.notes[name] || '';
@@ -327,7 +329,7 @@
   }
 
   // ---------- הלשוניות ----------
-  var TABS = [['wait', '⏳ מחכים לי'], ['sent', '📤 לא ענו לי'], ['rem', '⏰ תזכורות'], ['map', '🗺 מפה'], ['labels', '🏷 תוויות']];
+  var TABS = [['wait', '⏳ מחכים לי'], ['sent', '📤 לא ענו לי'], ['rem', '⏰ תזכורות'], ['map', '🗺 מפה'], ['multi', '📨 לכמה צ\'אטים'], ['labels', '🏷 תוויות']];
   function draw() {
     if (!open) return;
     pan.textContent = '';
@@ -335,12 +337,12 @@
       el('button', { type: 'button', title: 'לסרוק את כל הצ\'אטים', 'aria-label': 'לסרוק את כל הצ\'אטים', on: { click: scanAll } }, [scanning ? '⏳' : '🔄']),
       el('button', { type: 'button', title: 'סגירה', 'aria-label': 'סגירה', on: { click: function () { toggle(false); } } }, ['✕'])]));
     var tl = el('div', { class: 'tabs', role: 'tablist' });
-    TABS.forEach(function (t) { tl.appendChild(el('button', { type: 'button', role: 'tab', 'aria-selected': String(tab === t[0]), on: { click: function () { tab = t[0]; draw(); } } }, [t[1]])); });
+    TABS.forEach(function (t) { tl.appendChild(el('button', { type: 'button', role: 'tab', 'aria-selected': String(tab === t[0]), on: { click: function () { tab = t[0]; setMsg(''); draw(); } } }, [t[1]])); });
     pan.appendChild(tl);
     pan.appendChild(curBar());
     var fb = formBox(); if (fb) pan.appendChild(fb);
     var body = el('div', { class: 'body' });
-    ({ wait: drawWait, sent: drawSent, rem: drawRem, map: drawMap, labels: drawLabels })[tab](body);
+    ({ wait: drawWait, sent: drawSent, rem: drawRem, map: drawMap, multi: drawMulti, labels: drawLabels })[tab](body);
     pan.appendChild(body); pan.appendChild(msgEl);
   }
   function drawWait(body) {
@@ -433,11 +435,178 @@
     list().sort(function (a, b) { return (b.t || 0) - (a.t || 0); }).forEach(function (c) {
       lines.push([c.n, c.g ? 'קבוצה' : 'פרטי', c.w, c.t ? new Date(c.t).toLocaleDateString('he-IL') : '', c.me ? 'אני' : 'הצד השני', c.me ? (c.rd ? 'כן' : 'לא') : '', c.u || '', c.mu ? 'כן' : '', c.pin ? 'כן' : '', D.tags[c.n] || '', D.notes[c.n] || ''].map(q).join(','));
     });
+    download('מפת הצאטים בוואטסאפ - ' + today() + '.csv', lines);
+    setMsg('נשמר קובץ לאקסל עם ' + (lines.length - 1) + ' צ\'אטים. בלי תוכן הודעות.');
+  }
+
+  function today() { return new Date().toLocaleDateString('he-IL').replace(/\./g, '-'); }
+  function csvq(v) { v = String(v == null ? '' : v); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+  function download(fname, lines) {
     var a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' }));
-    a.download = 'מפת הצאטים בוואטסאפ - ' + new Date().toLocaleDateString('he-IL').replace(/\./g, '-') + '.csv';
-    root.appendChild(a); a.click(); a.remove();
-    setMsg('נשמר קובץ לאקסל עם ' + (lines.length - 1) + ' צ\'אטים. בלי תוכן הודעות.');
+    a.download = fname.replace(/[\\/:*?"<>|]/g, ''); root.appendChild(a); a.click(); a.remove();
+  }
+
+  // ---------- חברי הקבוצה לאקסל / לאנשי הקשר של גוגל ----------
+  // מקורות: השורה שמתחת לשם הקבוצה (רשימת המשתתפים), וחלונית "פרטי הקבוצה" אם פתוחה – אוספים תוך כדי גלילה בה.
+  var PHONE_RE = /^\+?[\d\s\-()‎‏]{8,}$/;
+  var ME_RE = /^(את\/ה|אתה|את|you)$/i;
+  function subtitleMembers() {
+    var spans = [].slice.call(document.querySelectorAll('#main header span[title]')).slice(1);
+    for (var i = 0; i < spans.length; i++) {
+      var t = spans[i].getAttribute('title') || '';
+      if (t.indexOf(',') > 0) return t.split(/\s*,\s*/).filter(function (x) { return x && !ME_RE.test(x.trim()); });
+    }
+    return [];
+  }
+  function isGroupOpen() {
+    var n = openName(); if (n && D.map[n] && D.map[n].g) return true;
+    return !!document.querySelector('#main header [data-icon*="group"]') || !!subtitleMembers().length;
+  }
+  function normPhone(t) {
+    var d = String(t || '').replace(/[^\d+]/g, ''); if (!d) return '';
+    if (d[0] === '+') return d; if (/^972/.test(d)) return '+' + d; if (/^0\d{8,9}$/.test(d)) return '+972' + d.slice(1); return d;
+  }
+  var grp = null;   // { name, m: Map(key -> {n, p}) }
+  function grpAdd(name, phone) {
+    name = (name || '').replace(/^~\s*/, '').trim(); phone = normPhone(phone);
+    if (!name && !phone) return; if (ME_RE.test(name)) return;
+    if (!phone) { var dup = false; grp.m.forEach(function (x) { if (x.n === name) dup = true; }); if (dup) return; }
+    var key = phone || name, old = grp.m.get(key);
+    if (!old) { if (phone && name && grp.m.has(name)) grp.m.delete(name); grp.m.set(key, { n: name, p: phone }); }
+    else if (!old.n && name) old.n = name;
+  }
+  function grpCollect() {
+    if (!grp) return;
+    subtitleMembers().forEach(function (x) { if (PHONE_RE.test(x)) grpAdd('', x); else grpAdd(x, ''); });
+    // חלונית פרטי הקבוצה: שורות רשימה מחוץ לרשימת הצ'אטים ומחוץ לשיחה
+    [].slice.call(document.querySelectorAll('[role=listitem], [role=row]')).forEach(function (row) {
+      if (row.closest('#pane-side') || row.closest('#main') || row.closest('#hk-wa-host')) return;
+      if (!row.offsetParent && getComputedStyle(row).position !== 'fixed') return;   // רק מה שעל המסך
+      var t = row.querySelector('span[title]'); if (!t) return;
+      var title = (t.getAttribute('title') || '').replace(/[‎‏‪-‮]/g, '').trim(), phone = '', name = '';
+      if (PHONE_RE.test(title)) phone = title; else name = title;
+      [].slice.call(row.querySelectorAll('span')).forEach(function (sp) {
+        if (sp.children.length) return; var x = (sp.textContent || '').replace(/[‎‏‪-‮]/g, '').trim();
+        if (!phone && PHONE_RE.test(x)) phone = x;
+        if (!name && /^~/.test(x)) name = x;
+      });
+      grpAdd(name, phone);
+    });
+  }
+  function grpStart() { var n = openName(); if (!grp || grp.name !== n) grp = { name: n, m: new Map() }; grpCollect(); }
+  function grpBox(box, name) {
+    if (!grp) grpStart(); grpCollect();
+    var L = Array.from(grp.m.values()), withPhone = L.filter(function (x) { return x.p; }).length;
+    box.appendChild(el('b', { text: '👥 ' + L.length + ' חברים נאספו מ"' + name + '" (' + withPhone + ' עם מספר)' }));
+    box.appendChild(el('span', { class: 'mut', text: 'לכל הרשימה: לוחצים על שם הקבוצה למעלה ← "הצגת הכול" במשתתפים, וגוללים עד הסוף. אני אוסף תוך כדי. אנשי קשר שמורים מופיעים בשם, ומי שלא שמור – במספר.' }));
+    box.appendChild(el('div', { style: 'display:flex;gap:6px;flex-wrap:wrap' }, [
+      el('button', { class: 'btn g', type: 'button', on: { click: function () {
+        grpCollect(); var rows = [['שם', 'טלפון', 'קבוצה'].join(',')];
+        grp.m.forEach(function (x) { rows.push([x.n, x.p, grp.name].map(csvq).join(',')); });
+        download('חברי הקבוצה ' + grp.name + ' - ' + today() + '.csv', rows);
+        setMsg('נשמר קובץ לאקסל עם ' + (rows.length - 1) + ' חברים.');
+      } } }, ['⬇ לאקסל']),
+      el('button', { class: 'btn', type: 'button', title: 'קובץ שגוגל אנשי קשר יודע לייבא, עם תווית בשם הקבוצה', on: { click: function () {
+        grpCollect(); var rows = ['Name,Phone 1 - Type,Phone 1 - Value,Labels,Notes'];
+        grp.m.forEach(function (x) { if (x.p) rows.push([x.n || ('מקבוצת ' + grp.name + ' ' + x.p.slice(-4)), 'Mobile', x.p, grp.name + ' ::: * myContacts', 'מקבוצת ווטסאפ: ' + grp.name].map(csvq).join(',')); });
+        download('לייבוא לגוגל - ' + grp.name + '.csv', rows);
+        setMsg((rows.length - 1) + ' מספרים בקובץ. מייבאים ב-contacts.google.com ← ייבוא. כדאי לעבור על הרשימה לפני הייבוא.');
+      } } }, ['⬇ לאנשי הקשר של גוגל'])
+    ]));
+    return box;
+  }
+
+  // ---------- אותה הודעה לכמה צ'אטים – אחד אחד, ואתם לוחצים שלח בכל אחד ----------
+  var multi = { pick: {}, text: '', lab: '', q: [], i: -1, st: '' };
+  function personal(text, name) {
+    var first = (PHONE_RE.test(name) || (D.map[name] && D.map[name].g)) ? '' : name.split(/\s+/)[0];
+    return text.replace(/\{שם\}/g, first).replace(/[ \t]+([,!.])/g, '$1').replace(/^\s+/, '');
+  }
+  async function multiStep() {
+    var name = multi.q[multi.i]; if (!name) return;
+    multi.st = 'מכין…'; draw();
+    var res = await prepare(name, personal(multi.text, name));
+    multi.st = res === 'ok' ? 'ההודעה בתיבה. בודקים ולוחצים שלח בוואטסאפ, ואז "שלחתי – הבא".' : res === 'busy' ? 'בתיבה כבר יש טקסט – לא נגעתי. מפנים אותה ולוחצים "להכין שוב".' : 'לא מצאתי את הצ\'אט ברשימה. אפשר לדלג.';
+    draw();
+  }
+  function multiNext(skip) {
+    var name = multi.q[multi.i], box = composeBox();
+    if (!skip && openName() === name && box && (box.innerText || '').trim()) {
+      if (!confirm('ההודעה עוד בתיבה ולא נשלחה. לעבור הלאה בלי לשלוח?')) return;
+    }
+    multi.i++;
+    if (multi.i >= multi.q.length) { setMsg('✓ סיימנו ' + multi.q.length + ' צ\'אטים.'); multi.q = []; multi.i = -1; multi.st = ''; draw(); return; }
+    multiStep();
+  }
+  function hash(x) { var h = 0; for (var i = 0; i < x.length; i++) h = (h * 31 + x.charCodeAt(i)) | 0; return h; }
+  function drawMulti(body) {
+    if (multi.i >= 0) {
+      var name = multi.q[multi.i];
+      body.appendChild(el('div', { class: 'form' }, [
+        el('b', { text: 'צ\'אט ' + (multi.i + 1) + ' מתוך ' + multi.q.length + ': ' + name }),
+        el('span', { class: 'mut', text: multi.st }),
+        el('div', { style: 'display:flex;gap:6px;flex-wrap:wrap' }, [
+          el('button', { class: 'btn g', type: 'button', on: { click: function () { multiNext(false); } } }, ['שלחתי – הבא ←']),
+          el('button', { class: 'btn', type: 'button', on: { click: multiStep } }, ['להכין שוב']),
+          el('button', { class: 'btn', type: 'button', on: { click: function () { multiNext(true); } } }, ['לדלג']),
+          el('button', { class: 'btn', type: 'button', on: { click: function () { multi.q = []; multi.i = -1; setMsg('נעצר.'); draw(); } } }, ['⏹ לעצור'])
+        ])
+      ]));
+      return;
+    }
+    body.appendChild(el('div', { class: 'mut', style: 'padding:4px 6px', text: 'כותבים הודעה ומסמנים צ\'אטים. התוסף פותח כל צ\'אט עם ההודעה בתיבה – ואתם לוחצים שלח בכל אחד. שום דבר לא נשלח לבד. לרשימה קבועה של אנשים: רשימת תפוצה של וואטסאפ.' }));
+    var ta = el('textarea', { 'aria-label': 'ההודעה', maxlength: '4000', placeholder: 'שלום {שם}, …   ({שם} = השם הפרטי)' });
+    ta.value = multi.text; ta.addEventListener('input', function () { multi.text = ta.value; });
+    body.appendChild(ta);
+    var bar = el('div', { class: 'opt' });
+    var fl = el('select', { 'aria-label': 'לפי תווית' });
+    fl.appendChild(el('option', { value: '', text: 'כל הצ\'אטים' }));
+    D.labels.forEach(function (l) { var o = el('option', { value: l, text: l }); if (multi.lab === l) o.selected = true; fl.appendChild(o); });
+    fl.addEventListener('change', function () { multi.lab = fl.value; draw(); });
+    bar.appendChild(fl);
+    var L = list().filter(function (c) { return !multi.lab || D.tags[c.n] === multi.lab; }).sort(function (a, b) { return (b.t || 0) - (a.t || 0); }).slice(0, 300);
+    bar.appendChild(el('button', { class: 'btn', type: 'button', on: { click: function () { var all = L.length && L.every(function (c) { return multi.pick[c.n]; }); L.forEach(function (c) { if (all) delete multi.pick[c.n]; else multi.pick[c.n] = 1; }); draw(); } } }, ['לסמן הכול / לבטל']));
+    var go = el('button', { class: 'btn g', type: 'button', on: { click: function () {
+      var q = Object.keys(multi.pick);
+      if (!multi.text.trim()) { setMsg('כותבים קודם את ההודעה.'); return; }
+      if (!q.length) { setMsg('מסמנים לפחות צ\'אט אחד.'); return; }
+      if (q.length > 50) { setMsg('עד 50 צ\'אטים בפעם אחת. לקבוצה גדולה יותר – רשימת תפוצה.'); return; }
+      multi.q = q; multi.i = 0; multi.pick = {}; multiStep();
+    } } }, ['להתחיל (' + Object.keys(multi.pick).length + ')']);
+    bar.appendChild(go);
+    body.appendChild(bar);
+    L.forEach(function (c) {
+      var id = 'm' + Math.abs(hash(c.n));
+      var cb = el('input', { type: 'checkbox', id: id }); cb.checked = !!multi.pick[c.n];
+      cb.addEventListener('change', function () { if (cb.checked) multi.pick[c.n] = 1; else delete multi.pick[c.n]; go.textContent = 'להתחיל (' + Object.keys(multi.pick).length + ')'; });
+      body.appendChild(el('label', { for: id, class: 'row', style: 'cursor:pointer' }, [cb, el('span', { class: 'dot', style: 'background:' + labelColor(c.n) }), el('span', { class: 'nm', text: (c.g ? '👥 ' : '') + c.n }), el('span', { class: 'mut', text: c.w || '' })]));
+    });
+  }
+
+  // ---------- סיכום בוקר: פעם ביום, בפתיחה הראשונה של וואטסאפ ווב ----------
+  var morningBox = el('div'); root.appendChild(morningBox);
+  function morning(force) {
+    var d = new Date(), key = d.toDateString();
+    if (!force && (d.getHours() < 5 || D.opt.morningOff)) return Promise.resolve();
+    return store.get('waDaily').then(function (o) {
+      if (!force && o.waDaily === key) return;
+      collect();
+      var L = list().filter(visible);
+      var wait = L.filter(function (c) { return !c.me && c.t && (c.u || !c.g); }).length;
+      var sent = L.filter(function (c) { return c.me && c.t && Date.now() - c.t > 864e5; }).length;
+      var end = new Date(); end.setHours(23, 59, 59, 999);
+      var rem = D.rem.filter(function (r) { return r.at <= end.getTime(); }).length;
+      if (!wait && !sent && !rem && !force) return;
+      store.set({ waDaily: key });
+      morningBox.textContent = '';
+      morningBox.appendChild(el('div', { class: 'banner', role: 'status', style: 'top:auto;bottom:150px' }, [
+        el('span', { text: (d.getHours() < 12 ? '☀ בוקר טוב: ' : '📋 מה מחכה היום: ') + wait + ' צ\'אטים מחכים לך · ' + rem + ' תזכורות להיום · ' + sent + ' לא ענו לך' }),
+        el('button', { class: 'btn g', type: 'button', on: { click: function () { morningBox.textContent = ''; tab = 'wait'; toggle(true); } } }, ['להציג']),
+        el('button', { class: 'btn', type: 'button', 'aria-label': 'סגירה', on: { click: function () { morningBox.textContent = ''; } } }, ['✕']),
+        el('button', { class: 'btn', type: 'button', on: { click: function () { D.opt.morningOff = true; store.set({ waOpt: D.opt }); morningBox.textContent = ''; } } }, ['לא להציג יותר'])
+      ]));
+    }).catch(function () {});
   }
 
   // ---------- תזכורות שהגיע זמנן: פס למעלה ----------
@@ -480,7 +649,7 @@
     if (open) { collect(); draw(); }
   }
   api.toggle = toggle;
-  api._t = { parseWhen: parseWhen, readRow: readRow, collect: collect, D: D, scanAll: scanAll, prepare: prepare, exportCsv: exportCsv, openChat: openChat };
+  api._t = { morning: morning, personal: personal, grpStart: grpStart, parseWhen: parseWhen, readRow: readRow, collect: collect, D: D, scanAll: scanAll, prepare: prepare, exportCsv: exportCsv, openChat: openChat };
 
   // ---------- טעינה ומעקב ----------
   store.get(['waMap', 'waLabels', 'waTags', 'waNotes', 'waRem', 'waOpt']).then(function (o) {
@@ -491,6 +660,7 @@
     if (Array.isArray(o.waRem)) D.rem = o.waRem;
     if (o.waOpt) D.opt = Object.assign(D.opt, o.waOpt);
     collect(); banners(); if (open) draw();
+    setTimeout(function () { morning(false); }, 4000);
   }).catch(function () {});
   chrome.storage.onChanged.addListener(function (ch, area) {
     if (area !== 'local') return;
@@ -499,11 +669,11 @@
   var pend = 0;
   new MutationObserver(function () {
     if (pend) return;
-    pend = setTimeout(function () { pend = 0; if (!scanning) collect(); }, 700);
+    pend = setTimeout(function () { pend = 0; if (!scanning) collect(); if (form === 'grp' && grp && open) { var b = grp.m.size; grpCollect(); if (grp.m.size !== b) draw(); } }, 700);
   }).observe(document.documentElement, { childList: true, subtree: true });
   setInterval(save, 4000);
   setInterval(banners, 30000);
   var lastOpen = '';
-  setInterval(function () { var n = openName(); if (n !== lastOpen) { lastOpen = n; if (open) { form = null; draw(); } } }, 1000);
+  setInterval(function () { var n = openName(); if (n !== lastOpen) { lastOpen = n; grp = null; if (open) { form = null; draw(); } } else if (form === 'grp' && grp && open) { var b = grp.m.size; grpCollect(); if (grp.m.size !== b) draw(); } }, 1000);
   if (window.__hkWaOpen) { window.__hkWaOpen = false; toggle(true); }
 })();
