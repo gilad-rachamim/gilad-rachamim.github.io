@@ -10,7 +10,18 @@ T = pathlib.Path(os.path.expanduser("~/.claude/state/chrome-ext-test"))
 sys.path.insert(0, str(T))
 os.environ.setdefault("HKSRC", str(pathlib.Path(__file__).resolve().parents[1] / "chatima-ext"))
 from playwright.async_api import async_playwright
+import harness
 from harness import boot, act
+
+# בהקלטה: ההרשאות האופציונליות (tabs, topSites) כבר ניתנו, כמו אצל משתמש שלחץ "לתת רשות" פעם אחת
+_mc = harness.make_copy
+def _make_copy():
+    _mc()
+    mp = os.path.join(harness.EXT, "manifest.json")
+    m = json.load(open(mp, encoding="utf-8"))
+    m["permissions"] = list(dict.fromkeys(m.get("permissions", []) + m.get("optional_permissions", [])))
+    json.dump(m, open(mp, "w", encoding="utf-8"), ensure_ascii=False)
+harness.make_copy = _make_copy
 
 OUT = pathlib.Path(sys.argv[1]); OUT.mkdir(parents=True, exist_ok=True)
 ONLY = sys.argv[2:]  # אפשר להקליט רק חלק מהקטעים
@@ -180,13 +191,61 @@ async def seg_youtube(ctx, sw, pg):
     await ui(pg, 'cap', ''); await asyncio.sleep(0.4)
     await r.stop()
 
+async def click_sel(pg, sel, wait=0.9):
+    loc = pg.locator(sel).first
+    bb = await loc.bounding_box()
+    if not bb: print("no", sel); return
+    await ui(pg, 'mouse', bb['x'] + bb['width'] / 2, bb['y'] + bb['height'] / 2); await asyncio.sleep(wait)
+    await ui(pg, 'down'); await loc.click(); await asyncio.sleep(0.3)
+
+TAB_URLS = [f"http://localhost:{PORT}/demo.html", f"http://localhost:{PORT}/demo2.html", f"http://localhost:{PORT}/demo.html",
+            "https://react.dev/learn", "https://react.dev/learn/thinking-in-react", "https://en.wikipedia.org/wiki/Jerusalem",
+            "https://en.wikipedia.org/wiki/Google_Chrome", "https://www.youtube.com/watch?v=arj7oStGLkU", "https://www.youtube.com/watch?v=arj7oStGLkU",
+            "https://hakelim.com/kelim/", "https://hakelim.com/kelim/", "https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API",
+            "https://hakelim.com/kelim/tochen/tirgum/"]
+
+async def seg_tabs(ctx, sw, pg):
+    for u in TAB_URLS:
+        p2 = await ctx.new_page()
+        try: await p2.goto(u, wait_until="commit", timeout=20000)
+        except Exception: pass
+    await asyncio.sleep(8)
+    ext = sw.url.split('/')[2]
+    t = await ctx.new_page(); await t.set_viewport_size({"width": 1280, "height": 800})
+    await t.goto(f"chrome-extension://{ext}/tabs.html"); await t.bring_to_front(); await asyncio.sleep(2)
+    r = Rec(ctx, "tabs"); await r.start(t)
+    await ui(t, 'cap', 'עשרות כרטיסיות פתוחות? <b>Alt+Shift+K</b>'); await ui(t, 'keys', 'Alt+Shift+K'); await asyncio.sleep(2.6); await ui(t, 'keys', '')
+    await ui(t, 'cap', 'סוגרים <b>כפולות</b> בלחיצה'); await click_sel(t, '#dupes'); await asyncio.sleep(2.4)
+    await ui(t, 'cap', 'מקבצים <b>לפי אתר</b>, בצבעים'); await click_sel(t, '#group'); await asyncio.sleep(2.6)
+    await ui(t, 'cap', 'משהים את השאר – <b>ומפנים זיכרון</b>'); await click_sel(t, '#nap'); await asyncio.sleep(2.6)
+    await ui(t, 'cap', 'מחפשים כרטיסייה...'); await click_sel(t, '#q', 0.6); await ui(t, 'mouseoff')
+    await t.locator('#q').type('react', delay=180); await asyncio.sleep(1.2)
+    await ui(t, 'cap', '...<b>ונועצים</b> או מקבצים את מה שנמצא'); await click_sel(t, '#f-pin'); await asyncio.sleep(2.4)
+    await ui(t, 'mouseoff'); await ui(t, 'cap', ''); await asyncio.sleep(0.4)
+    await r.stop()
+    h = await ctx.new_page(); await h.set_viewport_size({"width": 1280, "height": 800})
+    await h.goto(f"chrome-extension://{ext}/home.html"); await h.bring_to_front(); await asyncio.sleep(1.5)
+    try:
+        if await h.locator('#top-btn').is_visible(): await h.locator('#top-btn').click(); await asyncio.sleep(1)
+    except Exception: pass
+    r = Rec(ctx, "home"); await r.start(h)
+    await ui(h, 'cap', '🏠 <b>הדף שלי</b>: הקיצורים והאתרים שלכם'); await asyncio.sleep(3.2)
+    await smooth(h, 500, 1400); await asyncio.sleep(0.6)
+    await ui(h, 'cap', 'גוגל, ווטסאפ ווב והמחשב – <b>בלחיצה</b>'); await asyncio.sleep(3.0)
+    await ui(h, 'cap', ''); await asyncio.sleep(0.4)
+    await r.stop()
+    for p2 in list(ctx.pages):
+        if p2 is not pg:
+            try: await p2.close()
+            except Exception: pass
+
 async def main():
     async with async_playwright() as p:
         ctx, sw = await boot(p)
         pg = ctx.pages[0]
         await pg.set_viewport_size({"width": 1280, "height": 800})
         await sw.evaluate("chrome.storage.local.clear()"); await sw.evaluate("chrome.storage.sync.remove(['glossary','trSites'])")
-        for name, f in [("atar", seg_atar), ("links", seg_links), ("pdf", seg_pdf), ("youtube", seg_youtube)]:
+        for name, f in [("tabs", seg_tabs), ("atar", seg_atar), ("links", seg_links), ("pdf", seg_pdf), ("youtube", seg_youtube)]:
             if ONLY and name not in ONLY: continue
             await sw.evaluate("chrome.storage.local.remove('trPrefs')")
             try: await f(ctx, sw, pg)
