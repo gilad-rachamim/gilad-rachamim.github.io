@@ -24,14 +24,6 @@
    ]
   },
   {
-   "type": "shot",
-   "dur": 6.5,
-   "title": "ככה זה *נראה*",
-   "img": "shots/auto/machshev_gmail.jpg",
-   "scroll": 0,
-   "caption": "האחסון של גוגל מתמלא?"
-  },
-  {
    "type": "steps",
    "dur": 6.5,
    "title": "איך משתמשים? *2 צעדים*",
