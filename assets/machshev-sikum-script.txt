@@ -1,0 +1,421 @@
+/**
+ * סיכום מיילים יומי – מיזם הכלים של גילעד רחמים
+ * https://hakelim.com/kelim/machshev/sidur-mailim/
+ *
+ * הקוד הזה רץ רק בחשבון הגוגל שלכם. הוא קורא את המיילים בתוך החשבון,
+ * ממיין אותם, מסמן תוויות ושולח מייל סיכום אליכם בלבד.
+ * שום מייל לא נשלח לאתר הכלים או לשום שרת אחר: בקוד אין UrlFetchApp בכלל
+ * (אפשר לחפש בעורך Ctrl+F ולראות).
+ *
+ * התקנה (פעם אחת, כ-3 דקות): בוחרים למעלה את הפונקציה setup ולוחצים "הפעלה".
+ * לשלוח סיכום עכשיו: runNow. להפסיק: uninstall (התוויות והמיילים נשארים).
+ * גרסה 1 · 15.11.2026
+ */
+var VER = 1;
+var SITE = 'https://hakelim.com/kelim/machshev/sidur-mailim/';
+
+// ===== ההגדרות שלכם (נוצרו בדף הכלי; אפשר גם לשנות כאן ידנית) =====
+var CONFIG = /*__CONFIG__*/{
+  "freq": "daily",
+  "hour": 7,
+  "weekday": "SUNDAY",
+  "everyDays": 3,
+  "to": "",
+  "labels": true,
+  "labelRoot": "סיכום",
+  "followDays": 3,
+  "tasks": false,
+  "archivePromo": false,
+  "skipEmpty": false,
+  "order": ["sales", "reply", "important", "money", "follow", "ship", "promo"],
+  "on": { "sales": true, "reply": true, "important": true, "money": true, "follow": true, "ship": true, "promo": true },
+  "vip": [],
+  "salesWords": ["הצעת מחיר", "מעוניין", "מעוניינת", "מתעניין", "מתעניינת", "פנייה מהאתר", "ליד חדש", "טופס יצירת קשר", "הזמנה חדשה", "רכישה", "כמה עולה", "מחיר", "לקוח חדש", "quote", "inquiry", "new order", "new lead"],
+  "importantWords": ["דחוף", "חשוב", "בהקדם", "עד מחר", "תזכורת אחרונה", "חוב", "קנס", "urgent", "asap", "deadline"],
+  "moneyWords": ["חשבונית", "קבלה", "חיוב", "תשלום", "העברה בנקאית", "דרישת תשלום", "invoice", "receipt", "payment", "billing"],
+  "shipWords": ["משלוח", "נשלח", "יצא למשלוח", "מספר מעקב", "דואר ישראל", "איסוף", "tracking", "shipped", "delivery"],
+  "rules": []
+}/*__END__*/;
+
+var CATS = {
+  sales:     { name: 'מכירות ופניות', icon: '💰', hint: 'פניות של לקוחות, הצעות מחיר והזמנות' },
+  reply:     { name: 'מחכים לתשובה ממך', icon: '✉️', hint: 'כתבו אליך ישירות ועוד לא ענית' },
+  important: { name: 'חשוב', icon: '⭐', hint: 'אנשים ברשימה שלך, מילים דחופות, או מה שגוגל סימן כחשוב' },
+  money:     { name: 'חשבוניות ותשלומים', icon: '🧾', hint: 'חשבוניות, קבלות וחיובים' },
+  follow:    { name: 'כתבת ולא ענו לך', icon: '⏳', hint: 'שלחת מייל ועוד אין תשובה' },
+  ship:      { name: 'משלוחים והזמנות', icon: '📦', hint: 'משלוחים בדרך ומספרי מעקב' },
+  promo:     { name: 'דיוור ופרסומות', icon: '📣', hint: 'רק כמה הגיעו ומאיפה' }
+};
+var MAX_THREADS = 250;      // מקסימום שיחות בכל סיכום
+var MAX_SHOW = 15;          // מקסימום שורות בכל קטגוריה במייל
+
+// ===== פעולות שמפעילים מהעורך =====
+
+/** התקנה: יוצר תזמון ושולח סיכום ראשון. */
+function setup() {
+  uninstall_(true);
+  var t = ScriptApp.newTrigger('runDigest').timeBased();
+  var h = Math.max(0, Math.min(23, Number(CONFIG.hour) || 7));
+  if (CONFIG.freq === 'weekly') {
+    t.onWeekDay(ScriptApp.WeekDay[CONFIG.weekday] || ScriptApp.WeekDay.SUNDAY).atHour(h).create();
+  } else {
+    var n = CONFIG.freq === 'every' ? Math.max(1, Math.min(30, Number(CONFIG.everyDays) || 3)) : 1;
+    t.everyDays(n).atHour(h).create();
+  }
+  PropertiesService.getUserProperties().deleteProperty('lastRun');
+  var r = runDigest();
+  Logger.log('הותקן. סיכום ' + freqText_() + '. בסיכום הראשון: ' + r.total + ' שיחות. המייל נשלח אל ' + r.to);
+}
+
+/** לשלוח סיכום עכשיו (בלי לשנות את התזמון). */
+function runNow() {
+  var r = runDigest();
+  Logger.log('נשלח אל ' + r.to + ': ' + r.total + ' שיחות.');
+}
+
+/** להפסיק: מוחק את התזמון. התוויות והמיילים נשארים. */
+function uninstall() { uninstall_(false); Logger.log('הסיכום הופסק. כדי לחזור: setup.'); }
+
+function uninstall_(quiet) {
+  ScriptApp.getProjectTriggers().forEach(function (tr) {
+    if (tr.getHandlerFunction() === 'runDigest') ScriptApp.deleteTrigger(tr);
+  });
+}
+
+// ===== הסיכום עצמו =====
+
+function runDigest() {
+  var props = PropertiesService.getUserProperties();
+  var now = new Date();
+  var last = Number(props.getProperty('lastRun')) || 0;
+  var defDays = CONFIG.freq === 'weekly' ? 7 : CONFIG.freq === 'every' ? (Number(CONFIG.everyDays) || 3) : 1;
+  var since = last ? new Date(last) : new Date(now.getTime() - defDays * 864e5);
+  var maxBack = new Date(now.getTime() - 14 * 864e5);
+  if (since < maxBack) since = maxBack;
+  var after = Math.floor(since.getTime() / 1000);
+
+  var me = meAddresses_();
+  var data = classify_(after, me, now);
+  var to = (CONFIG.to || '').trim() || Session.getActiveUser().getEmail() || Session.getEffectiveUser().getEmail();
+
+  var total = data.total;
+  if (!(CONFIG.skipEmpty && countShown_(data) === 0)) {
+    var html = renderHtml_(data, since, now);
+    var plain = renderPlain_(data, since, now);
+    GmailApp.sendEmail(to, subject_(data, now), plain, { htmlBody: html, name: 'סיכום המיילים שלי' });
+  }
+  if (CONFIG.labels) applyLabels_(data);
+  if (CONFIG.tasks) addTasks_(data);
+  if (CONFIG.archivePromo) archivePromo_(data);
+  props.setProperty('lastRun', String(now.getTime()));
+  return { total: total, to: to };
+}
+
+function meAddresses_() {
+  var list = [Session.getEffectiveUser().getEmail()];
+  try { list = list.concat(GmailApp.getAliases()); } catch (e) {}
+  var set = {};
+  list.forEach(function (a) { if (a) set[String(a).toLowerCase()] = 1; });
+  return set;
+}
+
+function addrOf_(s) {
+  var m = String(s || '').match(/<([^>]+)>/);
+  return (m ? m[1] : String(s || '')).trim().toLowerCase();
+}
+function nameOf_(s) {
+  s = String(s || '');
+  var m = s.match(/^\s*"?([^"<]+?)"?\s*</);
+  return (m ? m[1] : s.replace(/<.*>/, '')).trim() || addrOf_(s);
+}
+function hasWord_(text, words) {
+  text = String(text || '').toLowerCase();
+  for (var i = 0; i < (words || []).length; i++) {
+    var w = String(words[i] || '').trim().toLowerCase();
+    if (w && text.indexOf(w) >= 0) return words[i];
+  }
+  return '';
+}
+function idSet_(q) {
+  var set = {};
+  try { GmailApp.search(q, 0, MAX_THREADS).forEach(function (t) { set[t.getId()] = 1; }); } catch (e) {}
+  return set;
+}
+function isVip_(addr) {
+  var a = String(addr || '').toLowerCase();
+  return (CONFIG.vip || []).some(function (v) {
+    v = String(v || '').trim().toLowerCase();
+    if (!v) return false;
+    if (v.charAt(0) === '@') return a.slice(-v.length) === v;
+    return v.indexOf('@') > 0 ? a === v : a.indexOf(v) >= 0;
+  });
+}
+function isBulk_(msg, addr) {
+  if (/(no-?reply|do-?not-?reply|newsletter|mailer-daemon|notifications?@|news@|marketing@|promo)/i.test(addr)) return true;
+  try { if (msg.getHeader('List-Unsubscribe') || msg.getHeader('List-Id')) return true; } catch (e) {}
+  try { if (/bulk|list/i.test(msg.getHeader('Precedence') || '')) return true; } catch (e) {}
+  return false;
+}
+function snippet_(msg) {
+  var t = '';
+  try { t = msg.getPlainBody() || ''; } catch (e) {}
+  // מורידים ציטוטים של מיילים קודמים וחתימות
+  t = t.split(/\n(?:>|On .+wrote:|ב-.+כתב|ב.+ כתב\/ה:|-----Original|________________)/)[0];
+  t = t.replace(/https?:\/\/\S+/g, '').replace(/\s+/g, ' ').trim();
+  return t.length > 160 ? t.slice(0, 157) + '…' : t;
+}
+function ago_(d, now) {
+  var h = Math.floor((now - d) / 36e5);
+  if (h < 1) return 'עכשיו';
+  if (h < 24) return 'לפני ' + h + ' שע׳';
+  var dd = Math.floor(h / 24);
+  return dd === 1 ? 'אתמול' : 'לפני ' + dd + ' ימים';
+}
+
+function classify_(after, me, now) {
+  var out = { total: 0, promoSenders: {}, promoCount: 0 };
+  Object.keys(CATS).forEach(function (k) { out[k] = []; });
+  var q = 'in:inbox after:' + after;
+  var threads = GmailApp.search(q, 0, MAX_THREADS);
+  out.total = threads.length;
+  var promoIds = idSet_(q + ' (category:promotions OR category:social)');
+  var importantIds = idSet_(q + ' is:important');
+
+  threads.forEach(function (t) {
+    var msgs = t.getMessages();
+    var lastMsg = msgs[msgs.length - 1];
+    var lastFrom = addrOf_(lastMsg.getFrom());
+    var fromMe = !!me[lastFrom];
+    // ההודעה האחרונה שלא ממני
+    var m = lastMsg;
+    for (var i = msgs.length - 1; i >= 0; i--) { if (!me[addrOf_(msgs[i].getFrom())]) { m = msgs[i]; break; } }
+    var from = m.getFrom(), addr = addrOf_(from);
+    var subj = t.getFirstMessageSubject() || '(בלי נושא)';
+    var body = snippet_(m);
+    var text = subj + ' ' + body;
+    var item = {
+      id: t.getId(), subj: subj, who: nameOf_(from), addr: addr, snip: body,
+      date: m.getDate(), unread: t.isUnread(), thread: t, why: ''
+    };
+    var id = t.getId();
+    var bulk = isBulk_(m, addr) || !!promoIds[id];
+    var toMe = false;
+    try { toMe = String(m.getTo() || '').toLowerCase().split(',').some(function (x) { return me[addrOf_(x)]; }); } catch (e) {}
+
+    // כללים אישיים: "מילה או כתובת -> תווית"
+    (CONFIG.rules || []).forEach(function (r) {
+      if (r && r.match && r.label && (addr.indexOf(String(r.match).toLowerCase()) >= 0 || hasWord_(text, [r.match]))) {
+        (item.rules = item.rules || []).push(r.label);
+      }
+    });
+
+    if (bulk && !isVip_(addr)) {
+      if (CONFIG.on.money && hasWord_(text, CONFIG.moneyWords)) { item.why = hasWord_(text, CONFIG.moneyWords); out.money.push(item); return; }
+      if (CONFIG.on.ship && hasWord_(text, CONFIG.shipWords)) { item.why = hasWord_(text, CONFIG.shipWords); out.ship.push(item); return; }
+      out.promoCount++;
+      var key = item.who || addr;
+      out.promoSenders[key] = (out.promoSenders[key] || 0) + 1;
+      out.promo.push(item);
+      return;
+    }
+    var w;
+    if (CONFIG.on.sales && (w = hasWord_(text, CONFIG.salesWords))) { item.why = w; out.sales.push(item); return; }
+    if (!fromMe && CONFIG.on.reply && (toMe || msgs.length > 1) && looksLikeAsk_(text)) {
+      item.why = 'שאלו אותך משהו';
+      item.wait = now - lastMsg.getDate();
+      out.reply.push(item); return;
+    }
+    if (CONFIG.on.money && (w = hasWord_(text, CONFIG.moneyWords))) { item.why = w; out.money.push(item); return; }
+    if (CONFIG.on.important && (isVip_(addr) || importantIds[id] || (w = hasWord_(text, CONFIG.importantWords)))) {
+      item.why = isVip_(addr) ? 'ברשימה שלך' : (w || 'גוגל סימן כחשוב'); out.important.push(item); return;
+    }
+    if (CONFIG.on.ship && (w = hasWord_(text, CONFIG.shipWords))) { item.why = w; out.ship.push(item); return; }
+    var thanks = body.length < 80 && /^(תודה|תודה רבה|תודה!|קיבלתי|מעולה|סגור|thanks|thank you|got it)/i.test(body);
+    if (!fromMe && CONFIG.on.reply && toMe && !thanks) { item.why = 'נשלח ישירות אליך'; item.wait = now - lastMsg.getDate(); out.reply.push(item); return; }
+    out.other = out.other || []; out.other.push(item);
+  });
+
+  // מיילים מסיכומים קודמים שעדיין לא ענית עליהם – חוזרים כל עוד לא ענית (עד שבועיים)
+  if (CONFIG.on.reply && CONFIG.labels) {
+    var seen = {};
+    out.reply.forEach(function (x) { seen[x.id] = 1; });
+    var oldQ = 'in:inbox label:' + labelQuery_(String(CONFIG.labelRoot || 'סיכום') + '/' + CATS.reply.name) +
+      ' before:' + after + ' newer_than:14d';
+    var old = [];
+    try { old = GmailApp.search(oldQ, 0, 40); } catch (e) {}
+    old.forEach(function (t) {
+      if (seen[t.getId()]) return;
+      var msgs = t.getMessages(), last = msgs[msgs.length - 1];
+      if (me[addrOf_(last.getFrom())]) return;               // כבר ענית
+      out.reply.push({ id: t.getId(), subj: t.getFirstMessageSubject() || '(בלי נושא)', who: nameOf_(last.getFrom()),
+        addr: addrOf_(last.getFrom()), snip: snippet_(last), date: last.getDate(), thread: t,
+        why: 'עדיין לא ענית', wait: now - last.getDate(), old: true });
+    });
+  }
+
+  if (CONFIG.on.follow) out.follow = followUps_(me, now);
+  out.reply.sort(function (a, b) { return (b.wait || 0) - (a.wait || 0); });
+  return out;
+}
+
+function looksLikeAsk_(text) {
+  return /\?|אפשר|תוכל|תוכלי|תוכלו|בבקשה|נא ל|מחכה ל|אשמח ל|תעדכן|תעדכני|תחזור|תחזרי|תשלח|תשלחי|תאשר|תאשרי|מה דעתך|מתי|האם|please|could you|can you|let me know/i.test(text);
+}
+
+/** מיילים ששלחתי לפני X ימים ואין עליהם תשובה. */
+function followUps_(me, now) {
+  var days = Math.max(1, Number(CONFIG.followDays) || 3);
+  var list = [];
+  var threads = [];
+  try { threads = GmailApp.search('in:sent older_than:' + days + 'd newer_than:' + (days + 14) + 'd', 0, 60); } catch (e) {}
+  threads.forEach(function (t) {
+    var msgs = t.getMessages();
+    var last = msgs[msgs.length - 1];
+    if (!me[addrOf_(last.getFrom())]) return;            // ענו לי
+    var toList = String(last.getTo() || '');
+    if (!toList || /no-?reply/i.test(toList)) return;
+    if (me[addrOf_(toList.split(',')[0])]) return;         // שלחתי לעצמי
+    list.push({ id: t.getId(), subj: t.getFirstMessageSubject() || '(בלי נושא)', who: nameOf_(toList.split(',')[0]),
+      addr: addrOf_(toList.split(',')[0]), snip: snippet_(last), date: last.getDate(), thread: t,
+      why: 'שלחת ' + ago_(last.getDate(), now), wait: now - last.getDate() });
+  });
+  list.sort(function (a, b) { return b.wait - a.wait; });
+  return list.slice(0, MAX_SHOW);
+}
+
+function countShown_(d) {
+  var n = 0;
+  CONFIG.order.forEach(function (k) { if (k !== 'promo' && CONFIG.on[k]) n += (d[k] || []).length; });
+  return n;
+}
+
+// ===== המייל =====
+
+function esc_(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function link_(id) { return 'https://mail.google.com/mail/u/0/#all/' + id; }
+function fmtDate_(d) { return Utilities.formatDate(d, Session.getScriptTimeZone(), 'dd.MM HH:mm'); }
+function freqText_() {
+  if (CONFIG.freq === 'weekly') return 'פעם בשבוע';
+  if (CONFIG.freq === 'every') return 'כל ' + CONFIG.everyDays + ' ימים';
+  return 'כל בוקר';
+}
+function subject_(d, now) {
+  var parts = [];
+  if (d.sales.length) parts.push(d.sales.length + ' מכירות');
+  if (d.reply.length) parts.push(d.reply.length + ' לענות');
+  if (d.important.length) parts.push(d.important.length + ' חשובים');
+  return '📬 סיכום המיילים · ' + Utilities.formatDate(now, Session.getScriptTimeZone(), 'dd.MM') +
+    (parts.length ? ' · ' + parts.join(', ') : ' · אין משהו דחוף');
+}
+
+function renderHtml_(d, since, now) {
+  var gold = '#b8860b';
+  var h = '<div dir="rtl" style="font-family:Arial,Helvetica,sans-serif;max-width:640px;margin:0 auto;color:#1f2328;line-height:1.5">';
+  h += '<div style="background:#111;color:#f3d27a;padding:14px 18px;border-radius:12px 12px 0 0;font-size:18px;font-weight:bold">📬 סיכום המיילים שלך</div>';
+  h += '<div style="border:1px solid #e5e0d0;border-top:0;padding:14px 18px;border-radius:0 0 12px 12px">';
+  h += '<p style="margin:0 0 10px;color:#555">' + d.total + ' שיחות חדשות בתיבה מאז ' + fmtDate_(since) + '.</p>';
+  // שורת מונים
+  h += '<p style="margin:0 0 14px">';
+  CONFIG.order.forEach(function (k) {
+    if (!CONFIG.on[k] || !CATS[k]) return;
+    var n = k === 'promo' ? d.promoCount : (d[k] || []).length;
+    h += '<span style="display:inline-block;border:1px solid #e5e0d0;border-radius:999px;padding:2px 10px;margin:0 0 6px 6px;font-size:13px">' +
+      CATS[k].icon + ' ' + CATS[k].name + ': <b>' + n + '</b></span>';
+  });
+  h += '</p>';
+  CONFIG.order.forEach(function (k) {
+    if (!CONFIG.on[k] || !CATS[k]) return;
+    if (k === 'promo') {
+      if (!d.promoCount) return;
+      var top = Object.keys(d.promoSenders).sort(function (a, b) { return d.promoSenders[b] - d.promoSenders[a]; }).slice(0, 6);
+      h += '<h3 style="margin:18px 0 6px;font-size:16px;color:' + gold + '">' + CATS.promo.icon + ' ' + CATS.promo.name + ' (' + d.promoCount + ')</h3>';
+      h += '<p style="margin:0;color:#555;font-size:14px">הכי הרבה מ: ' + top.map(function (s) { return esc_(s) + ' (' + d.promoSenders[s] + ')'; }).join(' · ') + '</p>';
+      return;
+    }
+    var list = d[k] || [];
+    if (!list.length) return;
+    h += '<h3 style="margin:18px 0 6px;font-size:16px;color:' + gold + '">' + CATS[k].icon + ' ' + CATS[k].name + ' (' + list.length + ')</h3>';
+    list.slice(0, MAX_SHOW).forEach(function (it) {
+      h += '<div style="border-right:3px solid ' + gold + ';padding:6px 10px;margin:0 0 8px;background:#faf8f2;border-radius:6px">' +
+        '<a href="' + link_(it.id) + '" style="color:#1a5fb4;font-weight:bold;text-decoration:none">' + esc_(it.subj) + '</a>' +
+        '<div style="font-size:13px;color:#444">' + esc_(it.who) + ' · ' + esc_(ago_(it.date, now)) + (it.why ? ' · <span style="color:#8a6d00">' + esc_(it.why) + '</span>' : '') + '</div>' +
+        (it.snip ? '<div style="font-size:13px;color:#666">' + esc_(it.snip) + '</div>' : '') + '</div>';
+    });
+    if (list.length > MAX_SHOW) h += '<p style="font-size:13px;color:#555">ועוד ' + (list.length - MAX_SHOW) + (CONFIG.labels ? ' – כולם בתווית "' + esc_(CONFIG.labelRoot + '/' + CATS[k].name) + '"' : '') + '.</p>';
+  });
+  if (!countShown_(d)) h += '<p style="font-size:15px">✅ אין שום דבר שמחכה לך. יום טוב!</p>';
+  h += '<hr style="border:0;border-top:1px solid #e5e0d0;margin:16px 0 8px">';
+  h += '<p style="font-size:12px;color:#777;margin:0">הסיכום נוצר ' + freqText_() + ' בחשבון הגוגל שלך בלבד, בקוד שהתקנת מ<a href="' + SITE + '" style="color:#777">מיזם הכלים של גילעד רחמים</a>. שום מייל לא יוצא מהחשבון. לשנות הגדרות: נכנסים לדף הכלי, מעתיקים קוד חדש ומריצים setup.</p>';
+  h += '</div></div>';
+  return h;
+}
+
+function renderPlain_(d, since, now) {
+  var s = 'סיכום המיילים שלך – ' + d.total + ' שיחות חדשות מאז ' + fmtDate_(since) + '\n\n';
+  CONFIG.order.forEach(function (k) {
+    if (!CONFIG.on[k] || !CATS[k]) return;
+    if (k === 'promo') { if (d.promoCount) s += CATS.promo.name + ': ' + d.promoCount + '\n\n'; return; }
+    var list = d[k] || [];
+    if (!list.length) return;
+    s += CATS[k].name + ' (' + list.length + ')\n';
+    list.slice(0, MAX_SHOW).forEach(function (it) { s += '- ' + it.subj + ' | ' + it.who + ' | ' + link_(it.id) + '\n'; });
+    s += '\n';
+  });
+  return s + SITE;
+}
+
+// ===== תוויות, משימות, ארכיון =====
+
+function label_(name) {
+  return GmailApp.getUserLabelByName(name) || GmailApp.createLabel(name);
+}
+function applyLabels_(d) {
+  var root = String(CONFIG.labelRoot || 'סיכום');
+  Object.keys(CATS).forEach(function (k) {
+    if (k === 'follow' || !CONFIG.on[k]) return;
+    var list = d[k] || [];
+    if (!list.length) return;
+    var lb = label_(root + '/' + CATS[k].name);
+    for (var i = 0; i < list.length; i += 100) lb.addToThreads(list.slice(i, i + 100).map(function (x) { return x.thread; }));
+  });
+  // כללים אישיים
+  var byLabel = {};
+  Object.keys(CATS).concat(['other']).forEach(function (k) {
+    (d[k] || []).forEach(function (it) { (it.rules || []).forEach(function (l) { (byLabel[l] = byLabel[l] || []).push(it.thread); }); });
+  });
+  Object.keys(byLabel).forEach(function (l) { label_(root + '/' + l).addToThreads(byLabel[l].slice(0, 100)); });
+}
+
+/** משימות בגוגל משימות (Google Tasks). צריך להוסיף את השירות Tasks בעורך – ראו בדף הכלי. */
+function addTasks_(d) {
+  if (typeof Tasks === 'undefined') { Logger.log('כדי להוסיף משימות: בעורך, שירותים (+) ← Google Tasks API ← הוספה.'); return; }
+  var listName = 'מיילים לטיפול', listId = null;
+  var lists = Tasks.Tasklists.list({ maxResults: 100 }).items || [];
+  lists.forEach(function (l) { if (l.title === listName) listId = l.id; });
+  if (!listId) listId = Tasks.Tasklists.insert({ title: listName }).id;
+  var props = PropertiesService.getUserProperties();
+  var done = JSON.parse(props.getProperty('taskIds') || '{}');
+  var due = new Date(); due.setHours(0, 0, 0, 0);
+  ['sales', 'reply', 'important', 'money'].forEach(function (k) {
+    if (!CONFIG.on[k]) return;
+    (d[k] || []).slice(0, 10).forEach(function (it) {
+      if (done[it.id]) return;
+      var verb = k === 'reply' ? 'לענות ל-' : k === 'sales' ? 'לחזור ל-' : k === 'money' ? 'לבדוק תשלום: ' : 'לקרוא: ';
+      Tasks.Tasks.insert({ title: verb + it.who + ' – ' + it.subj, notes: (it.snip || '') + '\n' + link_(it.id), due: due.toISOString() }, listId);
+      done[it.id] = Date.now();
+    });
+  });
+  // שומרים רק 30 יום אחורה
+  var cut = Date.now() - 30 * 864e5;
+  Object.keys(done).forEach(function (k) { if (done[k] < cut) delete done[k]; });
+  props.setProperty('taskIds', JSON.stringify(done));
+}
+
+/** תווית בחיפוש של ג'ימייל: רווחים ו-/ הופכים למקף. */
+function labelQuery_(name) { return '"' + String(name).replace(/[\s\/]+/g, '-') + '"'; }
+
+/** דיוור ופרסומות עוברים לארכיון (לא נמחקים: נשארים ב"כל הדואר" ובתווית). */
+function archivePromo_(d) {
+  var list = (d.promo || []).map(function (it) { return it.thread; });
+  for (var i = 0; i < list.length; i += 100) GmailApp.moveThreadsToArchive(list.slice(i, i + 100));
+}
