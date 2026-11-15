@@ -6,6 +6,8 @@
 <title>הכרטיסיות שלי – הכלים של גילעד רחמים</title>
 <link rel="icon" href="icon32.png">
 <link rel="stylesheet" href="tabs.css">
+<link rel="stylesheet" href="a11y.css">
+<script src="a11y.js"></script>
 </head>
 <body>
 <header>
@@ -15,7 +17,7 @@
     <p id="stats" class="stats" role="status"></p>
   </div>
 </header>
-
+<main class="hk-main">
 <section id="perm" class="card perm" hidden aria-labelledby="perm-h">
   <h2 id="perm-h">כדי לראות את השמות של הכרטיסיות</h2>
   <p>כרום מבקש רשות לפני שתוסף רואה את הכתובת ואת השם של כל כרטיסייה. בלי זה אפשר רק להשהות ולאחד חלונות. עם הרשות: חיפוש, סגירת כפולות, קיבוץ לפי אתר ושמירת רשימה.</p>
@@ -41,7 +43,7 @@
 </div>
 <p class="msg" id="msg" role="status" aria-live="polite"></p>
 
-<main id="list" aria-label="רשימת הכרטיסיות"></main>
+<section id="list" aria-label="רשימת הכרטיסיות"></section>
 
 <section class="card" aria-labelledby="saved-h">
   <h2 id="saved-h">💾 רשימות ששמרתי</h2>
@@ -63,7 +65,7 @@
   </label>
   <p class="small">כרטיסייה מושהית נשארת בפס, משחררת את הזיכרון שלה ונטענת מחדש כשלוחצים עליה. לא משהים כרטיסייה פתוחה, נעוצה 📌 או כזו שמשמיעה קול. טופס שמילאתם באמצע: כדאי לשלוח או לשמור אותו לפני השהיה.</p>
 </section>
-
+</main>
 <footer><a href="home.html">🏠 הדף שלי</a> · מקש קיצור: <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd> · הכול קורה בתוך הכרום שלכם · <a href="https://hakelim.com/kelim/machshev/chatima/tosaf/" target="_blank">פרטיות</a></footer>
 <script src="tabs.js"></script>
 </body>

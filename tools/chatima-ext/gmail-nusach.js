@@ -21,19 +21,21 @@
 
   // ---------- החלון הקטן (בתוך shadow DOM, כדי שהעיצוב של ג׳ימייל לא ישבור אותו) ----------
   var CSS = ':host{all:initial}*{box-sizing:border-box;font-family:Arial,"Segoe UI",sans-serif}' +
-    '.p{position:fixed;z-index:2147483000;width:380px;max-width:calc(100vw - 16px);max-height:min(640px,calc(100vh - 24px));overflow:auto;direction:rtl;background:#16130f;color:#efe6d2;border:1px solid #c9a55c;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.45);padding:12px 14px;font-size:13px}' +
+    '.p{position:fixed;z-index:2147483000;width:380px;max-width:calc(100vw - 16px);max-height:min(640px,calc(100vh - 24px));overflow:auto;direction:rtl;background:#16130f;color:#efe6d2;border:1px solid #c9a55c;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.45);padding:12px 14px;font-size:15px}' +
     'h2{margin:0 0 8px;font-size:15px;color:#c9a55c;display:flex;justify-content:space-between;align-items:center}' +
     '.x{background:none;border:0;color:#efe6d2;font-size:18px;cursor:pointer;padding:0 4px}' +
-    'select,input,textarea{width:100%;font-size:13px;color:#efe6d2;background:#221d16;border:1px solid #4a4033;border-radius:8px;padding:6px 8px}' +
+    'select,input,textarea{width:100%;font-size:15px;color:#efe6d2;background:#221d16;border:1px solid #8a7448;border-radius:8px;padding:6px 8px}' +
     'select:focus,input:focus,textarea:focus,button:focus-visible{outline:2px solid #c9a55c;outline-offset:1px}' +
-    'label{display:block;margin:6px 0 0;color:#b9ae98;font-size:12px}' +
-    '.seg{display:flex;gap:4px;flex-wrap:wrap;margin:8px 0 2px}.seg button{border:1px solid #4a4033;background:transparent;color:#efe6d2;border-radius:99px;padding:4px 10px;font-size:12px;cursor:pointer}.seg button[aria-pressed=true]{background:#c9a55c;color:#16130f;border-color:#c9a55c;font-weight:700}' +
+    'label{display:block;margin:6px 0 0;color:#b9ae98;font-size:14.5px}' +
+    '.seg{display:flex;gap:4px;flex-wrap:wrap;margin:8px 0 2px}.seg button{border:1px solid #8a7448;background:transparent;color:#efe6d2;border-radius:99px;padding:4px 10px;font-size:14.5px;cursor:pointer}.seg button[aria-pressed=true]{background:#c9a55c;color:#16130f;border-color:#c9a55c;font-weight:700}' +
     '.f{display:grid;grid-template-columns:1fr 1fr;gap:0 8px}.f .w{grid-column:1/-1}' +
-    '.sub{display:flex;gap:6px;align-items:flex-start;margin:4px 0;padding:6px 8px;border:1px solid #4a4033;border-radius:8px;cursor:pointer;color:#efe6d2;font-size:12.5px}.sub input{width:auto;margin-top:2px;accent-color:#c9a55c}' +
-    '.h{margin:10px 0 4px;color:#c9a55c;font-weight:700;font-size:12.5px}' +
+    '.sub{display:flex;gap:6px;align-items:flex-start;margin:4px 0;padding:6px 8px;border:1px solid #8a7448;border-radius:8px;cursor:pointer;color:#efe6d2;font-size:15px}.sub input{width:auto;margin-top:2px;accent-color:#c9a55c}' +
+    '.h{margin:10px 0 4px;color:#c9a55c;font-weight:700;font-size:15px}' +
     'textarea.b{min-height:120px;line-height:1.5}' +
-    '.go{display:flex;gap:6px;margin-top:10px}.go button{flex:1;border:0;border-radius:99px;padding:8px 10px;font-weight:700;cursor:pointer;font-size:13px}.ok{background:#c9a55c;color:#16130f}.ln{background:transparent!important;color:#efe6d2!important;border:1px solid #4a4033!important;font-weight:400!important}' +
-    '.r{background:rgba(201,165,92,.12);border:1px solid #c9a55c;border-radius:8px;padding:6px 8px;margin-top:6px;font-size:12px}.n{background:rgba(230,180,80,.14);border:1px solid rgba(230,180,80,.4);border-radius:8px;padding:6px 8px;margin-top:6px;font-size:12px}.m{min-height:1.2em;color:#c9a55c;margin:6px 0 0;font-size:12px}.s{color:#8f8573;font-size:11px;margin-top:6px}a{color:#c9a55c}';
+    '.go{display:flex;gap:6px;margin-top:10px}.go button{flex:1;border:0;border-radius:99px;padding:8px 10px;font-weight:700;cursor:pointer;font-size:15px}.ok{background:#c9a55c;color:#16130f}.ln{background:transparent!important;color:#efe6d2!important;border:1px solid #8a7448!important;font-weight:400!important}' +
+    '.r{background:rgba(201,165,92,.12);border:1px solid #c9a55c;border-radius:8px;padding:6px 8px;margin-top:6px;font-size:14.5px}.n{background:rgba(230,180,80,.14);border:1px solid rgba(230,180,80,.4);border-radius:8px;padding:6px 8px;margin-top:6px;font-size:14.5px}.m{min-height:1.2em;color:#c9a55c;margin:6px 0 0;font-size:14.5px}.s{color:#8f8573;font-size:13.5px;margin-top:6px}a{color:#c9a55c}' +
+    // נגישות: כפתורים גדולים, פוקוס בולט, גבולות בניגודיות 3:1
+    'button{min-height:36px}.x{min-width:40px;min-height:40px}button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid #ffd97a!important;outline-offset:2px}@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}';
 
   // בונים את החלון מאלמנטים ולא ממחרוזת HTML: ג׳ימייל מפעיל Trusted Types, שחוסם innerHTML
   function el(tag, props, kids) {

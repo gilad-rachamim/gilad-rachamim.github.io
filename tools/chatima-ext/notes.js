@@ -16,10 +16,11 @@
     var box = $('snips'); box.textContent = '';
     snips.forEach(function (t, i) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'snip'; b.textContent = t; b.title = 'להעתיק';
-      b.addEventListener('click', function (e) { if (e.target.classList.contains('x')) return; copy(t); });
+      b.addEventListener('click', function () { copy(t); });
       var x = document.createElement('button'); x.type = 'button'; x.className = 'x'; x.textContent = '✕'; x.setAttribute('aria-label', 'למחוק את הטקסט: ' + t.slice(0, 30));
       x.addEventListener('click', function () { snips.splice(i, 1); saveSnips(); drawSnips(); say('הטקסט נמחק'); });
-      b.appendChild(x); box.appendChild(b);
+      // שני כפתורים זה ליד זה (ולא כפתור בתוך כפתור), כדי שקורא מסך ומקלדת יגיעו לשניהם
+      var w = document.createElement('span'); w.className = 'snipw'; w.appendChild(b); w.appendChild(x); box.appendChild(w);
     });
     if (!snips.length) { var p = document.createElement('p'); p.className = 'empty'; p.textContent = 'אין עדיין. "➕ טקסט" מוסיף.'; box.appendChild(p); }
   }

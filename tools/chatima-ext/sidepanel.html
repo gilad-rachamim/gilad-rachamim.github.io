@@ -5,15 +5,18 @@
 <title>כלים בצד – הכלים של גילעד רחמים</title>
 <link rel="stylesheet" href="sidepanel.css">
 <link rel="stylesheet" href="cmd.css">
+<link rel="stylesheet" href="a11y.css">
+<script src="a11y.js"></script>
 </head>
 <body>
-<nav class="tabs" role="tablist" aria-label="מה בחלון הצד">
-  <button type="button" role="tab" id="t-tools" aria-selected="true">🧰 כלים</button>
-  <button type="button" role="tab" id="t-notes" aria-selected="false">📝 פתקים וטקסטים</button>
-</nav>
+<main class="hk-main">
+<div class="tabs" role="tablist" aria-label="מה בחלון הצד">
+  <button type="button" role="tab" id="t-tools" aria-selected="true" aria-controls="pick">🧰 כלים</button>
+  <button type="button" role="tab" id="t-notes" aria-selected="false" aria-controls="notes">📝 פתקים וטקסטים</button>
+</div>
 <iframe id="notes" title="פתקים וטקסטים מוכנים" hidden></iframe>
-<div id="pick">
-  <header><img src="icon32.png" alt="" width="22" height="22"><b>כלים בצד</b><span class="small">פתוחים ליד הדף, בלי לעזוב אותו</span></header>
+<div id="pick" role="tabpanel" aria-labelledby="t-tools">
+  <header><img src="icon32.png" alt="" width="22" height="22"><h1 class="hk-title">כלים בצד</h1><div class="hk-size" data-hk-size-ctl></div><span class="small">פתוחים ליד הדף, בלי לעזוב אותו</span></header>
   <div id="hkcmd" aria-label="מה לעשות בגוגל, במילים"></div>
   <label class="search"><span class="sr">חיפוש כלי</span><input id="q" type="search" placeholder="🔍 איזה כלי לפתוח בצד?" autocomplete="off"></label>
   <section id="sug-sec" aria-labelledby="sug-h">
@@ -28,12 +31,13 @@
 </div>
 <div id="tool" hidden>
   <div class="bar">
-    <button type="button" class="line" id="back">→ כלים</button>
+    <button type="button" class="line" id="back" aria-label="חזרה לרשימת הכלים">→ כלים</button>
     <b id="tool-name"></b>
     <button type="button" class="line" id="out" title="לפתוח את הכלי בכרטיסייה רגילה">↗ בכרטיסייה</button>
   </div>
   <iframe id="frame" title="הכלי" allow="clipboard-read; clipboard-write; microphone; camera; fullscreen; display-capture"></iframe>
 </div>
+</main>
 <script src="when.js"></script>
 <script src="cmd.js"></script>
 <script src="suggest.js"></script>

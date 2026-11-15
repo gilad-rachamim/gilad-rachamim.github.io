@@ -6,10 +6,12 @@
 <title>פתקים וטקסטים מוכנים</title>
 <link rel="icon" href="icon32.png">
 <link rel="stylesheet" href="notes.css">
+<link rel="stylesheet" href="a11y.css">
+<script src="a11y.js"></script>
 </head>
 <body>
 <header><h1>📝 פתקים וטקסטים מוכנים</h1><p class="small">נשמר לבד, רק בכרום שלכם.</p></header>
-
+<main class="hk-main">
 <section aria-labelledby="sn-h" class="card">
   <div class="h"><h2 id="sn-h">📋 טקסטים מוכנים להדבקה</h2><button type="button" class="line sm" id="sn-add-btn">➕ טקסט</button></div>
   <p class="small">לחיצה מעתיקה. בכל שדה באתר: לחיצה ימנית ← "הכלים של גילעד רחמים" ← "📋 טקסט מוכן", והטקסט נכנס לבד.</p>
@@ -32,6 +34,7 @@
   <div id="notes" class="notes"></div>
   <div class="row foot"><button type="button" class="line sm" id="nt-export">⬇ לשמור הכול כקובץ</button><span class="msg" id="msg" role="status" aria-live="polite"></span></div>
 </section>
+</main>
 <script src="when.js"></script>
 <script src="notes.js"></script>
 </body>

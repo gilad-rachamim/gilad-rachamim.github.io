@@ -16,8 +16,11 @@
   button:focus-visible { outline: 2px solid #e9c977; outline-offset: 2px; }
   small { display: block; color: #bdb3a0; margin-top: 12px; }
 </style>
+<link rel="stylesheet" href="a11y.css">
+<script src="a11y.js"></script>
 </head>
 <body>
+<main class="hk-main">
 <h1>🌐 לתרגם תמיד את <b class="site" id="site"></b>?</h1>
 <p>מעכשיו כל דף באתר הזה יתורגם לבד כשהוא נפתח, בלי ללחוץ. התרגום נעשה בתוך המחשב, בלי שרת.</p>
 <div class="row">
@@ -25,6 +28,7 @@
   <button type="button" id="no">לא עכשיו</button>
 </div>
 <small id="msg" role="status">כרום ישאל אם לתת לתוסף גישה לאתר הזה. זה נחוץ כדי שהתרגום יופעל לבד. מבטלים בכל רגע בכפתור שבפס התרגום.</small>
+</main>
 <script src="always.js"></script>
 </body>
 </html>
