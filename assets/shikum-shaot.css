@@ -1,62 +1,120 @@
 /* דוח שעות חודשי למטפל (/kelim/shikum/shaot/) */
-/* נגישות (12.11.2026, בקשה של יובל): פונט Arial בכל הדף, וניגודיות גבוהה בין הטקסט לרקע.
+/* נגישות, סבב 2 (15.11.2026, הצעות של יובל וגנר מ"נגישות בישראל"):
+   1. שחור על רקע לבן בכל הדף (במקום הרקע הכהה של אתר הכלים).
+   2. כותרות גדולות, שחורות ומודגשות.
+   3. טקסט גדול יותר כברירת מחדל (19px), ובורר "גודל הטקסט" (רגיל / גדול / גדול מאוד) שנשמר בטלפון.
+   4. כפתורים ושדות גבוהים (48px לפחות) - "אצבעות גדולות ומגושמות".
    הקובץ נטען רק בדף הזה, ולכן ההגדרות לא משנות דפים אחרים. */
-:root{--serif:Arial,"Noto Sans Hebrew",sans-serif;--sans:Arial,"Noto Sans Hebrew",sans-serif;--muted:#dfe5e2;--body:#f3f6f4;--parchment:#f7f3e8;--cream:#ffffff}
+body.site-kelim[data-tool="shikum_shaot"]{--ink:#ffffff;--ink-2:#f2f2f2;--gold:#000000;--gold-hi:#222222;--gold-soft:#595959;--body:#000000;--muted:#1f1f1f;--parchment:#000000;--cream:#000000;--line:#767676;--accent:#0a4fb4;--serif:Arial,"Noto Sans Hebrew",sans-serif;--sans:Arial,"Noto Sans Hebrew",sans-serif;--focus:#0a4fb4;background:#fff;color:#000}
+html:has(body[data-tool="shikum_shaot"]){background:#fff;font-size:118.75%} /* 19px */
+html[data-ts-size="1"]:has(body[data-tool="shikum_shaot"]){font-size:100%}
+html[data-ts-size="3"]:has(body[data-tool="shikum_shaot"]){font-size:137.5%} /* 22px */
 body,body button,body input,body select,body textarea,body h1,body h2,body h3,body h4,body p,body a,body span,body label,body small,body b{font-family:Arial,"Noto Sans Hebrew",sans-serif!important}
-body .tool input,body .tool select,body .tool textarea{color:#fff;border-color:#a7b2ad;background:rgba(255,255,255,.07)}
-body .tool input::placeholder{color:#c3ccc8;opacity:1}
-body .tool input:focus,body .tool button:focus-visible,body .tool a:focus-visible,body .tool canvas:focus-visible{outline:3px solid #ffd479;outline-offset:2px}
-body .disclaimer,body .k-hero .sub,body .opt{color:#e9eeeb!important}
-.ts-day .d small,.ts-step h2 small,.ts-hint,.ts-sum span{color:#e2e8e5}
-.ts-day .nt button{color:#e9eeeb;border-color:#8e9a95}
-.ts-step{margin-top:1.6rem}
-.ts-step h2{font-family:var(--serif);color:var(--cream);font-size:1.3rem;display:flex;gap:.55rem;align-items:baseline;flex-wrap:wrap;margin-bottom:.6rem}
-.ts-step h2 small{font-family:var(--sans);font-size:.9rem;color:var(--muted)}
-.ts-step h2 .n{display:inline-grid;place-items:center;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--gold);color:#1a1408;font-family:var(--sans);font-size:1rem;font-weight:700;flex:none}
+body[data-tool="shikum_shaot"] p,body[data-tool="shikum_shaot"] li{line-height:1.6}
+
+/* מסגרת האתר: פס עליון, נתיב, תחתית - גם הם על לבן */
+body[data-tool="shikum_shaot"] .topbar{background:#fff;border-bottom:2px solid #000;backdrop-filter:none}
+body[data-tool="shikum_shaot"] .topbar a,body[data-tool="shikum_shaot"] .topbar button{color:#000}
+/* הפס העליון נשאר בגודל קבוע (16px) כדי שכפתור "התחומים" לא ייחתך כשהטקסט מוגדל */
+body[data-tool="shikum_shaot"] .topbar .in{padding:8px 16px;gap:10px;font-size:16px}
+body[data-tool="shikum_shaot"] .topbar .in *{font-size:16px}
+body[data-tool="shikum_shaot"] .topbar .brand img{width:36px;height:36px}
+body[data-tool="shikum_shaot"] .crumbs,body[data-tool="shikum_shaot"] .crumbs a{color:#000;text-decoration:underline}
+body[data-tool="shikum_shaot"] .crumbs span::before{color:#000}
+body[data-tool="shikum_shaot"] .site-foot,body[data-tool="shikum_shaot"] .site-foot a,body[data-tool="shikum_shaot"] .ft .ft-link,body[data-tool="shikum_shaot"] .ft .ft-promise{color:#000}
+body[data-tool="shikum_shaot"] .ft .ft-cta,body[data-tool="shikum_shaot"] .ft .ft-help{background:#fff;border:2px solid #000}
+body[data-tool="shikum_shaot"] .ft .ft-help a{background:#fff;border-color:#000;color:#000}
+body[data-tool="shikum_shaot"] .ft .ft-help a b{color:#0a4fb4}
+body[data-tool="shikum_shaot"] .ft .ft-help a.urgent b{color:#b00020}
+body[data-tool="shikum_shaot"] .ft .ft-help a.go,body[data-tool="shikum_shaot"] .ft .end a,body[data-tool="shikum_shaot"] a.gold{color:#0a4fb4;text-decoration:underline}
+
+/* כותרות */
+body[data-tool="shikum_shaot"] .k-hero h1{color:#000;font-weight:700;font-size:clamp(2.1rem,8vw,3rem)}
+body[data-tool="shikum_shaot"] .k-hero .sub{color:#000;font-size:1.1rem}
+body[data-tool="shikum_shaot"] .seo-txt h2,body[data-tool="shikum_shaot"] .seo-txt h3,body[data-tool="shikum_shaot"] .seo-faq h2{color:#000;font-weight:700}
+body[data-tool="shikum_shaot"] .seo-txt p,body[data-tool="shikum_shaot"] .seo-faq p,body[data-tool="shikum_shaot"] .seo-faq summary{color:#000}
+body[data-tool="shikum_shaot"] .seo-faq details{border-color:#767676;background:#fff}
+
+/* כפתורים: שחור מלא עם טקסט לבן, או מסגרת שחורה עבה. גובה 48px לפחות */
+body[data-tool="shikum_shaot"] .btn{min-height:3rem;font-weight:700;border-radius:12px}
+body[data-tool="shikum_shaot"] .btn-gold{background:#000;color:#fff;border:2px solid #000}
+body[data-tool="shikum_shaot"] .btn-gold:hover{background:#333;color:#fff}
+body[data-tool="shikum_shaot"] .btn-line{background:#fff;color:#000;border:2px solid #000}
+body[data-tool="shikum_shaot"] .btn-line:hover{background:#f0f0f0;color:#000;border-color:#000}
+body[data-tool="shikum_shaot"] .btn-sm{font-size:1rem;padding:.6rem 1.1rem}
+
+/* שדות */
+body[data-tool="shikum_shaot"] .k-form{background:#fff;border:2px solid #000}
+body[data-tool="shikum_shaot"] .field label,body[data-tool="shikum_shaot"] .field .label{color:#000;font-weight:700;font-size:1rem}
+body .tool input,body .tool select,body .tool textarea{color:#000;border:2px solid #595959;background:#fff;min-height:3rem;font-size:1rem}
+body[data-tool="shikum_shaot"] .field input,body[data-tool="shikum_shaot"] .field select{color:#000;border:2px solid #595959;background:#fff;min-height:3rem;font-size:1rem}
+body[data-tool="shikum_shaot"] .field input:focus,body[data-tool="shikum_shaot"] .field select:focus{background:#fff;border-color:#000}
+body[data-tool="shikum_shaot"] .field input[type=date],body[data-tool="shikum_shaot"] .field input[type=time],body[data-tool="shikum_shaot"] .field input[type=month],body .tool input[type=time],body .tool input[type=month]{color-scheme:light}
+body .tool input::placeholder,body[data-tool="shikum_shaot"] .field input::placeholder{color:#595959;opacity:1}
+body .tool input:focus,body .tool select:focus,body .tool button:focus-visible,body .tool a:focus-visible,body .tool canvas:focus-visible,body[data-tool="shikum_shaot"] a:focus-visible,body[data-tool="shikum_shaot"] summary:focus-visible{outline:4px solid #0a4fb4;outline-offset:2px}
+body .disclaimer,body .k-hero .sub,body .opt{color:#000!important}
+body[data-tool="shikum_shaot"] .opt{font-weight:400}
+body[data-tool="shikum_shaot"] .sk-note{background:#fff7d6;border:2px solid #000;color:#000}
+
+/* בורר גודל הטקסט */
+.ts-size{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;justify-content:center;margin:0 0 1rem;padding:.6rem .7rem;border:2px solid #000;border-radius:14px;background:#fff}
+.ts-size .t{font-weight:700;color:#000}
+.ts-size button{min-height:3rem;min-width:3rem;padding:.4rem .9rem;border:2px solid #000;border-radius:12px;background:#fff;color:#000;font:inherit;font-weight:700;cursor:pointer}
+.ts-size button[data-size="1"]{font-size:.9rem}
+.ts-size button[data-size="3"]{font-size:1.2rem}
+.ts-size button[aria-pressed="true"]{background:#000;color:#fff}
+
+.ts-day .d small,.ts-step h2 small,.ts-hint,.ts-sum span{color:#1f1f1f}
+.ts-step{margin-top:2rem}
+.ts-step h2{font-family:var(--serif);color:#000;font-size:1.55rem;font-weight:700;display:flex;gap:.6rem;align-items:baseline;flex-wrap:wrap;margin-bottom:.7rem;padding-bottom:.35rem;border-bottom:3px solid #000}
+.ts-step h2 small{font-family:var(--sans);font-size:1rem;font-weight:400;color:#1f1f1f}
+.ts-step h2 .n{display:inline-grid;place-items:center;width:2.1rem;height:2.1rem;border-radius:50%;background:#000;color:#fff;font-family:var(--sans);font-size:1.15rem;font-weight:700;flex:none}
 /* הסידור הקבוע */
-.ts-week{display:grid;gap:.35rem}
-.ts-wd{display:grid;grid-template-columns:5.2rem 1fr 1fr;gap:.45rem;align-items:center;padding:.35rem .5rem;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}
-.ts-wd label{display:flex;gap:.4rem;align-items:center;color:var(--parchment);cursor:pointer;position:relative}
-.ts-wd input[type=checkbox]{width:1.2rem;height:1.2rem;accent-color:var(--gold)}
+.ts-week{display:grid;gap:.45rem}
+.ts-wd{display:grid;grid-template-columns:5.4rem 1fr 1fr;gap:.45rem;align-items:center;padding:.45rem .5rem;border:2px solid #767676;border-radius:12px;background:#fff}
+.ts-wd label{display:flex;gap:.5rem;align-items:center;color:#000;font-weight:700;cursor:pointer;position:relative;min-height:3rem}
+.ts-wd input[type=checkbox]{width:1.7rem;height:1.7rem;min-height:0;accent-color:#000}
 .ts-wd input[type=time]{min-width:0;width:100%}
-.ts-wd.off input[type=time]{opacity:.35}
+.ts-wd.off{background:#f2f2f2}
+.ts-wd.off input[type=time]{opacity:.45}
 /* הימים */
-.ts-sum{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-bottom:.7rem}
-.ts-sum div{border:1px solid var(--gold-soft);border-radius:12px;padding:.45rem .9rem;text-align:center;background:rgba(227,183,101,.08);min-width:6.5rem}
-.ts-sum b{display:block;font-family:var(--serif);font-size:1.5rem;color:var(--gold);line-height:1.2}
-.ts-sum span{color:var(--muted);font-size:.88rem}
-.ts-days{display:grid;gap:.3rem}
-.ts-day{display:grid;grid-template-columns:3.6rem 1fr 1fr 3.2rem;gap:.4rem;align-items:center;padding:.3rem .45rem;border-radius:10px;border:1px solid transparent}
-.ts-day.work{border-color:var(--line);background:rgba(255,255,255,.035)}
-.ts-day.sat .d b{color:#e8b48c}
-.ts-day .d{line-height:1.15;color:var(--parchment)}
-.ts-day .d b{display:block;font-size:1.02rem}
-.ts-day .d small{color:var(--muted);font-size:.8rem}
+.ts-sum{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-bottom:.8rem}
+.ts-sum div{border:2px solid #000;border-radius:12px;padding:.5rem 1rem;text-align:center;background:#fff;min-width:6.5rem}
+.ts-sum b{display:block;font-family:var(--serif);font-size:1.7rem;color:#000;line-height:1.2}
+.ts-sum span{color:#000;font-size:.95rem}
+.ts-days{display:grid;gap:.4rem}
+.ts-day{display:grid;grid-template-columns:3.8rem 1fr 1fr 3.2rem;gap:.4rem;align-items:center;padding:.4rem .45rem;border-radius:10px;border:2px solid transparent}
+.ts-day.work{border-color:#767676;background:#fff}
+.ts-day.sat{background:#f2f2f2}
+.ts-day.sat .d b{color:#000;text-decoration:underline}
+.ts-day .d{line-height:1.15;color:#000}
+.ts-day .d b{display:block;font-size:1.05rem}
+.ts-day .d small{color:#1f1f1f;font-size:.85rem}
 .ts-day input[type=time]{min-width:0;width:100%;padding:.35rem .3rem}
-.ts-day .h{text-align:center;color:var(--gold);font-weight:700}
-.ts-day .nt{grid-column:1/-1;display:flex;gap:.35rem;flex-wrap:wrap;padding-inline-start:4rem}
-.ts-day .nt button{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:.12rem .55rem;font:inherit;font-size:.8rem;cursor:pointer}
-.ts-day .nt button.on{border-color:var(--gold);color:var(--cream);background:rgba(227,183,101,.15)}
+.ts-day .h{text-align:center;color:#000;font-weight:700}
+.ts-day .nt{grid-column:1/-1;display:flex;gap:.45rem;flex-wrap:wrap;padding-inline-start:4.2rem}
+.ts-day .nt button{border:2px solid #595959;background:#fff;color:#000;border-radius:999px;padding:.3rem .8rem;font:inherit;font-size:.9rem;cursor:pointer;min-height:2.75rem;min-width:2.75rem}
+.ts-day .nt button.on{border-color:#000;color:#fff;background:#000}
 /* חתימות */
-.ts-decl{color:var(--parchment);margin-bottom:.6rem}
-.ts-sigs{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.ts-decl{color:#000;margin-bottom:.6rem}
+.ts-sigs{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
 @media (max-width:560px){.ts-sigs{grid-template-columns:1fr}}
-.ts-sig label{display:block;color:var(--cream);margin-bottom:.3rem}
-.ts-sig label span{color:var(--muted);font-size:.9rem}
-.ts-sig canvas{display:block;width:100%;aspect-ratio:600/220;background:#fff;border-radius:12px;border:2px dashed var(--gold-soft);touch-action:none;cursor:crosshair}
-.ts-sig canvas.signed{border-style:solid;border-color:var(--gold)}
-.ts-sig .linkish{margin-top:.35rem;background:transparent;border:1px solid #a7b2ad;color:#fff;border-radius:999px;padding:.3rem .9rem;font:inherit;font-size:.95rem;cursor:pointer}
-.ts-hint{color:var(--muted);font-size:.9rem;margin-top:.5rem}
-.ts-out{margin-top:.8rem;border:1px solid var(--gold-soft);border-radius:14px;padding:.8rem;background:rgba(227,183,101,.07)}
-.ts-out .res{color:var(--parchment);text-align:center}
+.ts-sig label{display:block;color:#000;margin-bottom:.3rem}
+.ts-sig label span{color:#1f1f1f;font-size:.9rem}
+.ts-sig canvas{display:block;width:100%;aspect-ratio:600/220;background:#fff;border-radius:12px;border:3px dashed #000;touch-action:none;cursor:crosshair}
+.ts-sig canvas.signed{border-style:solid;border-color:#000}
+.ts-sig .linkish{margin-top:.45rem;background:#fff;border:2px solid #000;color:#000;border-radius:12px;padding:.4rem 1rem;font:inherit;font-size:1rem;font-weight:700;cursor:pointer}
+.ts-hint{color:#000;font-size:.95rem;margin-top:.5rem}
+.ts-out{margin-top:.9rem;border:2px solid #000;border-radius:14px;padding:.9rem;background:#fff}
+.ts-out .res{color:#000;text-align:center;font-weight:700}
 .k-form .res:empty{display:none}
-/* הדף עצמו (תצוגה, PDF והדפסה) */
-.ts-prevh{font-family:var(--serif);color:var(--cream);font-size:1.3rem;text-align:center;margin:2rem 0 .6rem}
+/* הדף עצמו (תצוגה, PDF והדפסה) - נשאר בגודל קבוע בפיקסלים, כמו הטופס של החברה */
+.ts-prevh{font-family:var(--serif);color:#000;font-size:1.55rem;font-weight:700;text-align:center;margin:2rem 0 .6rem}
 .ts-paperwrap{overflow-x:auto;padding:0 0 1rem}
-.ts-paper{width:711px;margin:0 auto;background:#fff;color:#111;padding:26px 28px;font-family:Arial,"Noto Sans Hebrew",sans-serif;font-size:12.5px;line-height:1.35;direction:rtl;border-radius:6px;box-shadow:0 2px 14px rgba(0,0,0,.35)}
+.ts-paper{width:711px;margin:0 auto;background:#fff;color:#111;padding:26px 28px;font-family:Arial,"Noto Sans Hebrew",sans-serif;font-size:12.5px;line-height:1.35;direction:rtl;border-radius:6px;border:2px solid #000;box-shadow:none}
 .ts-paper h3{font-weight:700;font-size:19px;text-align:center;margin:0 0 4px;color:#111;font-family:inherit}
 .ts-paper .sub{text-align:center;color:#444;margin:0 0 10px}
-.ts-gap{margin-top:.9rem;padding-top:.9rem;border-top:1px dashed var(--line)}
+.ts-gap{margin-top:.9rem;padding-top:.9rem;border-top:2px dashed #767676}
 .ts-paper .mon{text-align:center;font-size:16px;font-weight:700;margin:2px 0 4px;color:#111}
 .ts-paper .info{display:grid;grid-template-columns:1fr 1fr;gap:3px 18px;border:1px solid #999;padding:7px 10px;margin-bottom:10px}
 .ts-paper .info h4{font-size:13px;margin:0 0 2px;border-bottom:1px solid #bbb;font-family:inherit;color:#111}
@@ -76,43 +134,57 @@ body .disclaimer,body .k-hero .sub,body .opt{color:#e9eeeb!important}
 .ts-paper .sigs .empty{height:62px}
 .ts-paper .ft{text-align:center;color:#555;font-size:10px;margin-top:12px}
 .ts-pdfhost{position:fixed;left:-12000px;top:0;width:711px;z-index:-1;pointer-events:none}
-.ts-pdfhost .ts-paper{box-shadow:none;border-radius:0;margin:0}
+.ts-pdfhost .ts-paper{box-shadow:none;border:0;border-radius:0;margin:0}
 @media print{
   .topbar,.site-foot,.crumbs,.no-print,.skip{display:none!important}
   body{background:#fff!important}
   .ts-paperwrap{overflow:visible;padding:0}
-  .ts-paper{box-shadow:none;margin:0 auto;padding:0;width:100%}
+  .ts-paper{box-shadow:none;border:0;margin:0 auto;padding:0;width:100%}
   @page{size:A4;margin:11mm}
 }
 /* WCAG 2.2 AA (12.11.2026) */
 .vh{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 html{scroll-padding-top:5rem;scroll-padding-bottom:7rem} /* 2.4.11: מה שבפוקוס לא מוסתר מתחת לפס העליון או לבאנר התחתון */
-.ts-sig .lb{color:#fff;margin:0 0 .3rem;font-weight:700}
-.ts-sig .lb span{color:#e2e8e5;font-weight:400;font-size:.9rem}
-.ts-type{display:flex;gap:.4rem;margin-top:.45rem;align-items:center}
-.ts-type input{flex:1;min-width:0;min-height:2.6rem;padding:.4rem .6rem;border-radius:10px;border:1px solid #a7b2ad;background:rgba(255,255,255,.07);color:#fff;font:inherit}
+.ts-sig .lb{color:#000;margin:0 0 .3rem;font-weight:700;font-size:1.1rem}
+.ts-sig .lb span{color:#000;font-weight:400;font-size:1rem}
+.ts-sig{min-width:0}
+.ts-type{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.45rem;align-items:center}
+.ts-type input{flex:1 1 9rem}
+.ts-type input{flex:1;min-width:0;min-height:3rem;padding:.4rem .6rem;border-radius:10px;border:2px solid #595959;background:#fff;color:#000;font:inherit}
 .ts-type .linkish{margin-top:0;white-space:nowrap}
-.ts-st{color:#ffe2a3;font-size:.92rem;min-height:1.2em;margin:.25rem 0 0}
-.ts-sig .linkish,.ts-day .nt button{min-height:2.25rem;min-width:2.75rem} /* 2.5.8: מטרה של 24px לפחות, כאן ~36px */
-.ts-day .nt{gap:.45rem}
-.ts-day .nt button{font-size:.9rem;padding:.25rem .7rem}
-.ts-wd input[type=checkbox]{width:1.5rem;height:1.5rem}
+.ts-st{color:#000;font-weight:700;font-size:.95rem;min-height:1.2em;margin:.25rem 0 0}
+.ts-sig .linkish{min-height:3rem;min-width:3rem} /* 2.5.8 + בקשת יובל: 48px לפחות */
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 /* סוג הדוח + כניסות נוספות ונסיעות (12.11.2026, לפי טופס הליווי של יובל) */
-.ts-kind{border:1px solid var(--gold-soft);border-radius:14px;padding:.6rem .8rem .8rem;margin:0 0 1rem;display:grid;gap:.5rem}
-.ts-kind legend{color:#fff;font-weight:700;padding:0 .4rem}
-.ts-kind label{display:flex;gap:.6rem;align-items:flex-start;cursor:pointer;padding:.5rem .6rem;border-radius:10px;border:1px solid #6f7c77;position:relative}
-.ts-kind label:has(input:checked){border-color:#ffd479;background:rgba(227,183,101,.12)}
-.ts-kind input{width:1.3rem;height:1.3rem;margin-top:.15rem;accent-color:var(--gold);flex:none}
-.ts-kind b{display:block;color:#fff}
-.ts-kind small{display:block;color:#e2e8e5;font-size:.9rem}
-.ts-x,.ts-trip{grid-column:1/-1;display:grid;grid-template-columns:3.6rem 1fr 1fr 3.2rem;gap:.4rem;align-items:center}
-.ts-x .xl,.ts-trip .xl{text-align:center;color:#ffd479;font-weight:700}
-.ts-trip .tg{grid-column:2/-1;min-width:0;min-height:2.4rem;padding:.35rem .55rem;border-radius:10px;border:1px solid #a7b2ad;background:rgba(255,255,255,.07);color:#fff;font:inherit}
-.ts-day .rm{min-width:2.4rem;min-height:2.4rem;border-radius:50%;border:1px solid #a7b2ad;background:transparent;color:#fff;font:inherit;cursor:pointer}
-.ts-day .nt button.add{border-style:dashed;border-color:#ffd479;color:#ffe2a3}
-.ts-tips{border:1px solid var(--gold-soft);border-radius:12px;padding:.7rem .8rem;margin-bottom:.8rem;background:rgba(227,183,101,.08);color:#f3f6f4}
+.ts-kind{border:2px solid #000;border-radius:14px;padding:.6rem .8rem .8rem;margin:0 0 1rem;display:grid;gap:.55rem;background:#fff}
+.ts-kind legend{color:#000;font-weight:700;font-size:1.15rem;padding:0 .4rem}
+.ts-kind label{display:flex;gap:.65rem;align-items:flex-start;cursor:pointer;padding:.65rem .7rem;border-radius:10px;border:2px solid #767676;position:relative;background:#fff}
+.ts-kind label:has(input:checked){border:3px solid #000;background:#f2f2f2}
+.ts-kind input{width:1.6rem;height:1.6rem;min-height:0;margin-top:.1rem;accent-color:#000;flex:none}
+.ts-kind b{display:block;color:#000;font-size:1.05rem}
+.ts-kind small{display:block;color:#1f1f1f;font-size:.95rem}
+.ts-x,.ts-trip{grid-column:1/-1;display:grid;grid-template-columns:3.8rem 1fr 1fr 3.2rem;gap:.4rem;align-items:center}
+.ts-x .xl,.ts-trip .xl{text-align:center;color:#000;font-weight:700}
+.ts-trip .tg{grid-column:2/-1;min-width:0;min-height:3rem;padding:.35rem .55rem;border-radius:10px;border:2px solid #595959;background:#fff;color:#000;font:inherit}
+.ts-day .rm{min-width:3rem;min-height:3rem;border-radius:50%;border:2px solid #000;background:#fff;color:#000;font:inherit;font-weight:700;cursor:pointer}
+.ts-day .nt button.add{border-style:dashed;border-color:#000;color:#000}
+.ts-tips{border:2px solid #000;border-radius:12px;padding:.8rem .9rem;margin-bottom:.9rem;background:#fff7d6;color:#000}
 .ts-tips .sk-tools{margin-top:.6rem}
 .ts-paper.wide{font-size:11px}
 .ts-paper.wide th,.ts-paper.wide td{padding:1px 3px;height:16px}
 .ts-paper .sigs .sl{font-size:11.5px;margin:0 0 2px;color:#222}
+/* טלפון: כל שורת יום בשתי שורות - למעלה התאריך והסה"כ, למטה שתי שעות רחבות (שהשעה לא תיחתך) */
+@media (max-width:560px){
+  .ts-day{grid-template-columns:1fr 1fr;gap:.45rem}
+  .ts-day .d{grid-row:1;grid-column:1;display:flex;gap:.5rem;align-items:baseline}
+  .ts-day .h{grid-row:1;grid-column:2;text-align:end;font-size:1.05rem}
+  .ts-day>input[type=time]{grid-row:2}
+  .ts-day .nt{padding-inline-start:0}
+  .ts-x,.ts-trip{grid-template-columns:1fr 1fr}
+  .ts-x .xl,.ts-trip .xl{grid-column:1;text-align:start}
+  .ts-x .rm,.ts-trip .rm,.ts-x>span:last-child{grid-column:2;grid-row:1;justify-self:end}
+  .ts-x input[type=time],.ts-trip input[type=time]{grid-row:2}
+  .ts-trip .tg{grid-column:1/-1;grid-row:3}
+  html[data-ts-size="3"] .ts-wd{grid-template-columns:1fr 1fr}
+  html[data-ts-size="3"] .ts-wd label{grid-column:1/-1}
+}
