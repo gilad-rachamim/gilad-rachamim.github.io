@@ -1,0 +1,8 @@
+/* קריאת שמע שעל המיטה (כלי קודש). הנוסח עצמו מעוצב ב-boker.css */
+.ks-seg3{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.bk-bar .bk-seg+.bk-seg{margin-top:.4rem}
+.bk-paper[data-k=ash] .ks-n:not([data-k=ash]),.bk-paper[data-k=sef] .ks-n:not([data-k=sef]),.bk-paper[data-k=em] .ks-n:not([data-k=em]){display:none}
+.bk-paper[data-l=short] .ks-full,.bk-paper[data-l=short] .ks-full-only,.bk-paper[data-l=full] .ks-short-only{display:none}
+.ks-n big{font-size:1.15em}
+.ks-n small{font-size:.85em;opacity:.85}
+@media print{.bk-paper .ks-n{display:revert}.bk-paper[data-k=ash] .ks-n:not([data-k=ash]),.bk-paper[data-k=sef] .ks-n:not([data-k=sef]),.bk-paper[data-k=em] .ks-n:not([data-k=em]){display:none}}
