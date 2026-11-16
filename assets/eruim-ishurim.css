@@ -29,6 +29,10 @@
 .ish-glist .go{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;background:var(--gold);color:var(--ink);font:700 .85rem var(--sans);text-decoration:none;border:0;cursor:pointer;white-space:nowrap}
 .ish-glist .go.line{background:none;border:1px solid var(--gold-soft);color:var(--cream)}
 .ish-glist .go .ic{width:1em;height:1em}
+.ish-glist li.gh{display:block;border:0;padding:.7rem .2rem .1rem;font:700 .9rem var(--sans);color:var(--gold)}
+.ish-glist li.gh-yes{color:#9fd8a8}.ish-glist li.gh-no{color:var(--muted)}
+.ish-glist .acts{display:inline-flex;gap:.35rem;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.ish-next{margin:.2rem 0 .8rem;text-align:center}.ish-next[aria-disabled]{opacity:.7;background:none;color:var(--cream);border:1px solid var(--line)}
 .ish-glist .x{background:none;border:0;color:var(--muted);font-size:1.25rem;cursor:pointer;padding:0 .2rem;line-height:1}
 .ish-more{margin-top:1.2rem}
 .ish-more .btn{grid-column:1/-1}

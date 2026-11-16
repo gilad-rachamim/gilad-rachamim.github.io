@@ -333,24 +333,73 @@
     used('guests_add', { n: added });
     if (data) show(); else drawGuests();
   });
+  // הרשימה מחולקת: מחכים לתשובה (עם הזמנה / תזכורת אישית), אולי, אישרו, לא מגיעים.
+  // g.s = מתי נפתחה לו הודעה בפעם האחרונה (רק בטלפון), כדי לדעת אם לשלוח הזמנה או תזכורת.
+  function dm(ts) { var t = new Date(ts); return t.getDate() + '.' + (t.getMonth() + 1); }
+  function waText(ev, g, a, d) {
+    var link = personalUrl(ev, g), t = titleOf(d, ev) + ', ' + whenText(d);
+    if (a && a.ok === 2) return 'שלום ' + g.n + '!\nתזכורת קטנה: ' + t + '.\nסימנתם "אולי". כשתדעו, אפשר לעדכן כאן בלחיצה:\n' + link;
+    if (g.s) return 'שלום ' + g.n + '! 🎉\nתזכורת: ' + t + '.\nעוד לא קיבלנו מכם תשובה. נשמח לדעת אם תגיעו, בלחיצה כאן:\n' + link;
+    return 'שלום ' + g.n + '!\nהוזמנתם: ' + t + '.\nנשמח לדעת אם תגיעו. אישור הגעה בלחיצה:\n' + link;
+  }
+  function waHref(ev, g, a, d) { var tel = telIntl(g.p); return tel ? 'https://wa.me/' + tel + '?text=' + encodeURIComponent(waText(ev, g, a, d)) : ''; }
+  function needs(g, m) { var a = m[g.c]; return !a || a.ok === 2; }
+  var round = {}; // מי כבר נפתח בסבב הנוכחי של "הבא בתור"
+  function nextInQueue(ev, m) {
+    return (ev.g || []).filter(function (g) { return !m[g.c] && telIntl(g.p) && !round[g.c]; })[0] ||
+      (ev.g || []).filter(function (g) { return m[g.c] && m[g.c].ok === 2 && telIntl(g.p) && !round[g.c]; })[0] || null;
+  }
   function drawGuests(m) {
     var ev = cur(), ul = $('#g-list'); if (!ev) return;
     m = m || (data ? matchGuests() : {});
-    var G = (ev.g || []).slice(), d = data ? data.d : {};
-    // קודם מי שלא ענה
-    G.sort(function (a, b) { return (m[a.c] ? 1 : 0) - (m[b.c] ? 1 : 0); });
-    ul.innerHTML = G.map(function (g) {
-      var a = m[g.c], tel = telIntl(g.p), act = '';
-      if (!a && data) {
-        var txt = 'שלום ' + g.n + '!\nהוזמנתם: ' + titleOf(d, ev) + ', ' + whenText(d) + '.\nנשמח לדעת אם תגיעו. אישור הגעה בלחיצה:\n' + personalUrl(ev, g);
-        act = tel ? '<a class="go" href="https://wa.me/' + tel + '?text=' + encodeURIComponent(txt) + '" target="_blank" rel="noopener" data-wa="1"><svg class="ic"><use href="#wa"/></svg> לשלוח</a>'
+    var G = ev.g || [], d = data ? data.d : {};
+    function row(g) {
+      var a = m[g.c], act = '', meta = [];
+      if (data && needs(g, m)) {
+        var href = waHref(ev, g, a, d), lbl = (a || g.s) ? 'תזכורת' : 'הזמנה';
+        act = href ? '<a class="go" href="' + href + '" target="_blank" rel="noopener" data-wa="' + g.c + '"><svg class="ic"><use href="#wa"/></svg> ' + lbl + '</a>'
           : '<button class="go line" type="button" data-copy="' + g.c + '">העתקת קישור</button>';
-      } else act = a ? chip(a) : '';
-      return '<li class="' + (a ? 'ans' : '') + '"><span class="nm">' + esc(g.n) + '</span>' + act + '<button class="x" type="button" data-del="' + g.c + '" aria-label="להסיר את ' + esc(g.n) + '">×</button>' + (g.p ? '<span class="ph">' + esc(g.p) + '</span>' : '') + '</li>';
-    }).join('');
-    var n = G.length, ans = G.filter(function (g) { return m[g.c]; }).length;
+        if (a) act = chip(a) + act;
+      } else if (a) act = chip(a);
+      if (g.s && needs(g, m)) meta.push('נשלח ' + dm(g.s));
+      if (g.p) meta.push('<span dir="ltr">' + esc(g.p) + '</span>');
+      return '<li class="' + (a && a.ok !== 2 ? 'ans' : '') + '"><span class="nm">' + esc(g.n) + '</span><span class="acts">' + act + '</span><button class="x" type="button" data-del="' + g.c + '" aria-label="להסיר את ' + esc(g.n) + '">×</button>' + (meta.length ? '<span class="ph">' + meta.join(' · ') + '</span>' : '') + '</li>';
+    }
+    if (!data) { ul.innerHTML = G.map(row).join(''); }
+    else {
+      var groups = [
+        ['wait', 'מחכים לתשובה', G.filter(function (g) { return !m[g.c]; })],
+        ['maybe', 'אמרו "אולי"', G.filter(function (g) { return m[g.c] && m[g.c].ok === 2; })],
+        ['yes', 'אישרו הגעה', G.filter(function (g) { return m[g.c] && m[g.c].ok === 1; })],
+        ['no', 'לא מגיעים', G.filter(function (g) { return m[g.c] && !m[g.c].ok; })]
+      ];
+      ul.innerHTML = groups.filter(function (x) { return x[2].length; }).map(function (x) {
+        var ppl = x[0] === 'yes' ? ' · ' + x[2].reduce(function (s, g) { return s + (+m[g.c].c || 1); }, 0) + ' אנשים' : '';
+        return '<li class="gh gh-' + x[0] + '">' + x[1] + ' (' + x[2].length + ppl + ')</li>' + x[2].map(row).join('');
+      }).join('');
+    }
+    var n = G.length, ans = G.filter(function (g) { return m[g.c]; }).length, left = G.filter(function (g) { return needs(g, m); }).length;
     $('#g-sum').hidden = !n;
-    $('#g-sum').textContent = n ? 'ענו ' + ans + ' מתוך ' + n + ' ברשימה' + (n - ans ? '. עוד ' + (n - ans) + ' לא ענו: לוחצים "לשלוח" ליד כל אחד, וההודעה האישית נפתחת בווטסאפ.' : '. כולם ענו 🎉') : '';
+    $('#g-sum').textContent = !n ? '' : !data ? 'טוען תשובות…' : 'ענו ' + ans + ' מתוך ' + n + '. ' + (left ? 'מי שמאשר עובר לבד ל"אישרו הגעה". ליד מי שעוד לא ענה יש כפתור הזמנה או תזכורת, וההודעה האישית נפתחת בווטסאפ. אתם לוחצים שלח.' : 'כולם ענו 🎉');
+    var q = $('#g-next'), nx = data ? nextInQueue(ev, m) : null;
+    q.hidden = !data || !left;
+    if (nx) {
+      var lbl = m[nx.c] ? 'תזכורת' : nx.s ? 'תזכורת' : 'הזמנה';
+      q.href = waHref(ev, nx, m[nx.c], d); q.setAttribute('data-wa', nx.c); q.removeAttribute('aria-disabled');
+      q.innerHTML = '<svg class="ic"><use href="#wa"/></svg> הבא בתור: ' + lbl + ' ל' + esc(nx.n);
+    } else if (data && left) {
+      q.removeAttribute('href'); q.removeAttribute('data-wa'); q.setAttribute('aria-disabled', 'true');
+      q.textContent = Object.keys(round).length ? 'עברתם על כולם בסבב הזה ✓ (לחיצה מתחילה סבב חדש)' : 'למי שלא ענה אין טלפון ברשימה: העתיקו לו קישור';
+    }
+  }
+  $('#g-next').addEventListener('click', function (e) {
+    var q = e.currentTarget, c = q.getAttribute('data-wa');
+    if (!c) { e.preventDefault(); if (Object.keys(round).length) { round = {}; drawGuests(); } return; }
+    round[c] = 1; markSent(c); used('remind_next');
+  });
+  function markSent(c) {
+    var ev = cur(); (ev.g || []).forEach(function (g) { if (g.c === c) g.s = Date.now(); }); save();
+    setTimeout(function () { drawGuests(); }, 400);
   }
   $('#g-list').addEventListener('click', function (e) {
     var ev = cur(), b = e.target.closest('button,a'); if (!b || !ev) return;
@@ -361,7 +410,7 @@
     } else if (b.hasAttribute('data-copy')) {
       var g = ev.g.filter(function (x) { return x.c === b.getAttribute('data-copy'); })[0];
       if (g) { copy(personalUrl(ev, g), b); used('copy_personal'); }
-    } else if (b.hasAttribute('data-wa')) used('remind_one');
+    } else if (b.hasAttribute('data-wa')) { markSent(b.getAttribute('data-wa')); used('remind_one'); }
   });
 
   // ---------- סיכום, ייצוא ומחיקה ----------
