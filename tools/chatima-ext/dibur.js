@@ -127,10 +127,20 @@
   function save() { try { chrome.storage.local.set({ diburSt: st }); } catch (e) {} }
 
   var rec = null, want = false, parts = [], interim = '', onUpd = null, onState = null;
+  // עדיף זיהוי דיבור בתוך המחשב (כרום חדש, אם המודל העברי מותקן). אם אין – כרום שולח את הקול לשירות הדיבור של גוגל. אצלנו לא נשמר כלום.
+  var local = null;
   function startRec() {
     if (!SR) { onState && onState('nosr'); return; }
+    if (local === null && typeof SR.available === 'function') {
+      try {
+        SR.available({ langs: ['he-IL'], processLocally: true }).then(function (r) { local = r === 'available'; startRec(); }, function () { local = false; startRec(); });
+        return;
+      } catch (e) {}
+    }
+    if (local === null) local = false;
     want = true; interim = '';
     rec = new SR(); rec.lang = 'he-IL'; rec.continuous = true; rec.interimResults = true; rec.maxAlternatives = 1;
+    if (local) try { rec.processLocally = true; } catch (e) {}
     rec.onresult = function (e) {
       interim = '';
       for (var i = e.resultIndex; i < e.results.length; i++) {
@@ -141,10 +151,14 @@
     };
     rec.onerror = function (e) {
       if (e.error === 'no-speech' || e.error === 'aborted') return;
+      if (e.error === 'language-not-supported' && local) { local = false; return; }   // onend ממשיך בלי זיהוי מקומי
       want = false; onState && onState(e.error === 'not-allowed' || e.error === 'service-not-allowed' ? 'deny' : e.error === 'network' ? 'net' : 'err');
     };
     // כרום עוצר את ההקלטה אחרי שתיקה – אם עוד לא לחצו "סיימתי", ממשיכים להקשיב
-    rec.onend = function () { if (want) { try { rec.start(); return; } catch (e) {} } rec = null; onState && onState('stop'); };
+    rec.onend = function () {
+      if (want) { if (!local && rec && rec.processLocally) { rec = null; startRec(); return; } try { rec.start(); return; } catch (e) {} }
+      rec = null; onState && onState('stop');
+    };
     try { rec.start(); onState && onState('on'); } catch (e) { onState && onState('err'); }
   }
   function stopRec() { want = false; if (interim.trim()) { parts.push(interim.trim()); interim = ''; } if (rec) try { rec.stop(); } catch (e) {} else onState && onState('stop'); }
