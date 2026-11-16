@@ -107,3 +107,5 @@ button.tf-d{font:inherit;border:0;cursor:pointer;font-size:1.05rem}
 .tf-rules ul{margin:.1rem 0 .3rem;padding-inline-start:1.2rem;color:var(--body);line-height:1.65;font-size:.92rem}
 .tf-rules b{color:var(--cream)}
 @media print{.bk-paper [data-m]{display:revert}.bk-paper[data-minhag=ash] [data-m]:not([data-m~=ash]),.bk-paper[data-minhag=sf] [data-m]:not([data-m~=sf]),.bk-paper[data-minhag=em] [data-m]:not([data-m~=em]){display:none}}
+/* טקסט בתוך details בדף הנוסח יורש את צבע הדף (seo-txt.css צובע details p בבהיר) */
+.bk-paper details p{color:inherit}
