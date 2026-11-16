@@ -5,7 +5,8 @@
       "namespace": "android_app",
       "package_name": "com.hakelim.kelim",
       "sha256_cert_fingerprints": [
-        "A2:C1:93:69:CF:EF:B7:CD:30:4C:A1:4A:38:C0:EA:A2:05:FE:21:53:70:5E:82:40:48:B8:74:54:16:BF:77:02"
+        "A2:C1:93:69:CF:EF:B7:CD:30:4C:A1:4A:38:C0:EA:A2:05:FE:21:53:70:5E:82:40:48:B8:74:54:16:BF:77:02",
+        "1B:AF:C0:BF:0D:DC:9C:C7:0D:B7:78:D7:4F:08:D8:F8:B6:8B:56:4E:FA:2D:CA:2C:6C:B7:9B:C0:19:BE:80:DC"
       ]
     }
   }
