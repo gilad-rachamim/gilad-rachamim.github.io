@@ -64,3 +64,46 @@ html.tf-locked,html.tf-locked body{overflow:hidden}
 .tf-lock-later span{position:relative}
 @media (prefers-reduced-motion:reduce){.tf-lock-later.holding::before{transition:none}}
 @media print{.tf-card,.tf-set,.tf-lock,.k-hero .sub{display:none!important}}
+
+/* סבב 2: שלושה מנהגים, איור, משחק נקודות, יום פטור */
+.bk-paper[data-minhag=ash] [data-m]:not([data-m~=ash]),.bk-paper[data-minhag=sf] [data-m]:not([data-m~=sf]),.bk-paper[data-minhag=em] [data-m]:not([data-m~=em]){display:none}
+.tf-seg3{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}
+.tf-seg3 button{display:flex;flex-direction:column;align-items:center;line-height:1.2;padding:.35rem .2rem}
+.tf-seg3 button small{font-size:.72rem;opacity:.8;font-weight:400}
+.tf-fig{margin:.6rem auto 1rem;max-width:22rem;text-align:center}
+.tf-fig svg{width:100%;max-width:17rem;height:auto;display:block;margin:0 auto}
+.tf-body{fill:#e9dfc6}
+.bk-paper.dark .tf-body{fill:#3a4152}
+.tf-hair{fill:none;stroke:#8a6d2f;stroke-width:5;stroke-linecap:round;stroke-dasharray:2 6}
+.tf-box{fill:#151515;stroke:#000;stroke-width:1}
+.tf-strap{fill:none;stroke:#151515;stroke-width:4;stroke-linecap:round}
+.bk-paper.dark .tf-box,.bk-paper.dark .tf-strap{stroke:#d9d2c0}
+.tf-num circle{fill:#b8862b}
+.tf-num text{fill:#fff;font:700 15px/1 sans-serif;text-anchor:middle}
+.tf-fig figcaption{font-family:var(--sans,inherit);font-size:.9rem;color:#5e5644;background:#f6efdc;border-radius:10px;padding:.45rem .6rem;line-height:1.55;margin-top:.4rem}
+.bk-paper.dark .tf-fig figcaption{background:#1f2636;color:#cfc4a6}
+.tf-where{border-inline-start:3px solid #b8862b}
+.tf-biur{margin-top:.6rem}
+.tf-biur p{font-family:var(--sans,inherit);font-size:1rem;line-height:1.75}
+.tf-ptur{display:block;width:100%;margin-top:.5rem;font:inherit;font-size:.95rem;min-height:44px;border-radius:12px;border:1px dashed rgba(212,176,98,.55);background:transparent;color:var(--body);cursor:pointer}
+.tf-ptur[hidden]{display:none}
+.tf-toast{margin:.6rem 0 0;padding:.6rem .8rem;border-radius:12px;background:rgba(212,176,98,.16);border:1px solid rgba(212,176,98,.6);color:var(--cream);text-align:center;font-weight:700;line-height:1.5}
+.tf-toast[hidden]{display:none}
+button.tf-d{font:inherit;border:0;cursor:pointer;font-size:1.05rem}
+.tf-d.pt{background:rgba(212,176,98,.14);color:var(--cream)}
+.tf-d.miss{background:rgba(255,255,255,.04)}
+.tf-alt{flex-basis:100%;text-align:center;font-size:.85rem;opacity:.85}
+.tf-game{margin-top:.9rem;padding:.8rem .9rem;border-radius:14px;background:linear-gradient(135deg,rgba(212,176,98,.14),rgba(212,176,98,.04));border:1px solid rgba(212,176,98,.35)}
+.tf-lvl{display:flex;align-items:baseline;gap:.4rem;flex-wrap:wrap;color:var(--body)}
+.tf-pts{font-size:1.9rem;font-weight:800;color:var(--gold);line-height:1}
+.tf-lvl b{margin-inline-start:auto;color:var(--cream);font-size:1rem}
+.tf-bar{height:10px;border-radius:99px;background:rgba(255,255,255,.08);margin:.55rem 0 .35rem;overflow:hidden}
+.tf-bar i{display:block;height:100%;width:0;background:var(--gold);border-radius:99px;transition:width .6s}
+.tf-next{margin:0;color:var(--body);font-size:.88rem}
+.tf-cheer{margin:.45rem 0 0;color:var(--cream);font-size:.95rem;line-height:1.55}
+.tf-cheer:empty{display:none}
+.tf-rules{margin-top:.5rem}
+.tf-rules summary{cursor:pointer;color:var(--gold);min-height:40px;display:flex;align-items:center;font-weight:700;font-size:.95rem}
+.tf-rules ul{margin:.1rem 0 .3rem;padding-inline-start:1.2rem;color:var(--body);line-height:1.65;font-size:.92rem}
+.tf-rules b{color:var(--cream)}
+@media print{.bk-paper [data-m]{display:revert}.bk-paper[data-minhag=ash] [data-m]:not([data-m~=ash]),.bk-paper[data-minhag=sf] [data-m]:not([data-m~=sf]),.bk-paper[data-minhag=em] [data-m]:not([data-m~=em]){display:none}}
