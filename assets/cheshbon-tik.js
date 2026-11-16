@@ -123,6 +123,7 @@
     if (p.get('u') && p.get('t') && T.okUrl(p.get('u'))) { conn = { u: p.get('u'), t: p.get('t') }; CH.save('tik-conn', conn); }
   } catch (e) {}
   if (!conn) { var sv = CH.load('tik-conn', null); if (sv && sv.u && sv.t && T.okUrl(sv.u)) conn = sv; }
+  T.conn = conn; // מגירת דוח המע"מ (cheshbon-maam.js) משתמשת באותו חיבור
 
   var now = new Date();
   var st = CH.load('tik-local', null) || { type: 'sachir', year: now.getFullYear(), done: { '106': 1, 'truma': 1 }, ex: 1 };
@@ -223,6 +224,7 @@
     return T.call(conn.u, { a: 'cInfo', t: conn.t, year: st.year }).then(function (r) {
       if (!r.ok) { $('tik-msg').textContent = T.err(r.err); if (r.err === 'token') { CH.save('tik-conn', null); } return; }
       info = r; docs = r.docs || []; $('tik-msg').textContent = ''; head(); render();
+      try { document.dispatchEvent(new CustomEvent('tik:info', { detail: r })); } catch (e) {}
     }).catch(function () { $('tik-msg').textContent = T.err('net'); });
   }
 
