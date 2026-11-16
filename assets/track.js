@@ -25,6 +25,8 @@
     // דף המוהלים: שליחה להורים היא לא פנייה אליי, לכן אירוע נפרד לכל כלי (share_parents_hazmana וכו') ולא whatsapp_click.
     if (a.hasAttribute('data-share')) { ev('share_parents_' + a.getAttribute('data-share'), where); return; }
     // תוסף הכרום: כל לחיצה על "להוסיף לכרום" (קישור לחנות), עם המקום בדף שממנו לחצו.
+    // הורדת אפליקציה (כרגע APK מהאתר; כשתעלה ל-Play הקישור יתחלף לחנות והאירוע יישאר): app_download{app, store}
+    if (a.hasAttribute('data-app-dl')) { ev('app_download', { page: location.pathname, app: a.getAttribute('data-app-dl'), store: /play\.google\.com/.test(h) ? 'play' : 'apk' }); return; }
     if (/chromewebstore\.google\.com/.test(h)) { ev('tosaf_store_click', { page: location.pathname, from: a.getAttribute('data-store') || '' }); return; }
     if (/wa\.me|whatsapp/.test(h)) ev('whatsapp_click', where);
     else if (/t\.me\//.test(h)) ev('telegram_click', { page: location.pathname, bot: h.split('t.me/')[1].split('?')[0] });
