@@ -91,14 +91,14 @@
       if (prev) {
         var gap = prev.y - l.y;
         if (gap > lh * 1.45 || gap < -2) brk = true;                                        // רווח גדול או מעבר לטור
-        if (Math.abs(l.size - prev.size) > fs * 0.2) brk = true;                            // גודל כתב אחר (כותרת)
+        if (Math.abs(l.size - prev.size) > fs * 0.1) brk = true;                            // גודל כתב אחר (כותרת, גם 17 מול 15)
         if ((prev.x1 - prev.x0) < wide * 0.7 && /[.:!?״"”)]$/.test(prev.text)) brk = true; // שורה קצרה שנגמרת במשפט
       }
       if (brk) { p = { text: l.text, size: l.size }; out.push(p); return; }
       if (/[A-Za-z]-$/.test(p.text) && /^[a-z]/.test(l.text)) p.text = p.text.slice(0, -1) + l.text;   // מילה שנחתכה במקף
       else p.text += ' ' + l.text;
     });
-    out.forEach(function (x) { x.head = x.size > fs * 1.2 && x.text.length < 160; });
+    out.forEach(function (x) { x.head = x.size > fs * 1.1 && x.text.length < 160; });
     return out;
   }
 
