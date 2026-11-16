@@ -1,0 +1,20 @@
+# "תפילין – הכלים": בדיקת תמונה עם תפילין לפתיחה מוקדמת של הנעילה המחייבת באפליקציה (Cloudflare Worker, חינם).
+# פריסה:      cd tools/tefillin-worker && npx wrangler deploy
+# מפתח Gemini: סקיל gemini-key-for-worker, פרויקט tefillin-1, סוד GEMINI_KEYS. בלי מפתח עובד עם Llama 4 של Workers AI.
+# בדיקה:      node test.mjs   (בלי רשת)
+# האפליקציה: https://hakelim.com/kodesh/tefillin/
+name = "kodesh-tefillin"
+main = "tefillin-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[ai]
+binding = "AI"
+
+[[durable_objects.bindings]]
+name = "QUOTA"
+class_name = "Quota"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Quota"]
