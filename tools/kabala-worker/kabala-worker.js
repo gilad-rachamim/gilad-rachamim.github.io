@@ -74,10 +74,13 @@ function rules(pages) {
     '"date": the document date exactly as printed (e.g. "06/11/2026", "17/05/26", "24.06.2026"). Israeli dates are day/month/year. Empty if none.\n' +
     '"vendor": the name of the business that ISSUED the receipt, as printed at the top or next to its business number (e.g. "רמי לוי שיווק השקמה", "מאוחדת פארם", "יוניון ספורט"). Never the customer ("לכבוד", "שם לקוח"), never the software or payment company. Short, max 6 words. Empty if unsure.\n' +
     '"doc": the document type in Hebrew as printed ("חשבונית מס/קבלה", "קבלה", "חשבונית מס"), or empty.\n' +
+    '"vat": the VAT amount line (מע"מ, מע"מ 18%), digits and a decimal point only. Empty if the document shows no separate VAT line (e.g. a plain receipt from an exempt dealer).\n' +
+    '"osek": the business number of the business that ISSUED the document (ח.פ, ע.מ, עוסק מורשה, מס\' עוסק), 8-9 digits only. Never the customer\'s number (after "לכבוד" / "לקוח"), never a phone, a branch or an approval number. Empty if unsure.\n' +
+    '"number": the document number (מספר חשבונית, חשבונית מס מס\', מס\' קבלה, מס\' מסמך), as printed, max 20 characters. Empty if none.\n' +
     '"found": true if this is a receipt or invoice with a readable total, else false.\n' +
     'Never invent anything that is not in the image. Inside Hebrew strings write ״ (gershayim) instead of a straight double quote, e.g. בע״מ.';
 }
-const SHAPE = ' Answer with JSON only: {"found":true,"total":"45.00","date":"06/11/2026","vendor":"...","doc":"חשבונית מס/קבלה"}';
+const SHAPE = ' Answer with JSON only: {"found":true,"total":"45.00","date":"06/11/2026","vendor":"...","doc":"חשבונית מס/קבלה","vat":"6.86","osek":"515432102","number":"10234"}';
 
 function parseOut(r) {
   let o = r && (r.response !== undefined ? r.response : r.choices ? r.choices[0].message.content : r);
@@ -85,8 +88,8 @@ function parseOut(r) {
     const t = o.replace(/^\s*```(?:json)?\s*|\s*```\s*$/g, '');
     try { o = JSON.parse(t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1)); }
     catch (e) { // מירכאות בתוך מילה בעברית (בע"מ, סה"כ) שוברות JSON – מחלצים כל שדה לבד
-      const f = k => { const m = t.match(new RegExp('"' + k + '"\\s*:\\s*"([\\s\\S]*?)"\\s*(?:,\\s*"(?:found|total|date|vendor|doc)"|\\s*})')); return m ? m[1] : ''; };
-      o = { total: f('total'), date: f('date'), vendor: f('vendor'), doc: f('doc') };
+      const f = k => { const m = t.match(new RegExp('"' + k + '"\\s*:\\s*"([\\s\\S]*?)"\\s*(?:,\\s*"(?:found|total|date|vendor|doc|vat|osek|number)"|\\s*})')); return m ? m[1] : ''; };
+      o = { total: f('total'), date: f('date'), vendor: f('vendor'), doc: f('doc'), vat: f('vat'), osek: f('osek'), number: f('number') };
       if (!o.total && !o.date) throw e;
     }
   }
@@ -114,7 +117,7 @@ async function readImage(env, pages) {
   let last;
   for (const model of VISION) {
     try {
-      const r = await env.AI.run(model, { messages: [{ role: 'system', content: rules(pages.length) + SHAPE }, { role: 'user', content }], max_tokens: 300, temperature: 0 });
+      const r = await env.AI.run(model, { messages: [{ role: 'system', content: rules(pages.length) + SHAPE }, { role: 'user', content }], max_tokens: 400, temperature: 0 });
       return { o: parseOut(r), model };
     } catch (e) { last = e; }
   }
@@ -137,7 +140,10 @@ async function readRoute(request, env, h) {
   let out;
   try { out = await readImage(env, pages); } catch (e) { return json({ error: 'busy' }, 200, h); }
   const o = out.o, amount = money(o.total);
-  return json({ found: !!amount, amount, date: isoDate(o.date), vendor: clean(o.vendor, 60), doc: clean(o.doc, 30), left: q.left }, 200, h);
+  // לדוח מע"מ (16.11.2026): מע"מ, ח.פ של המנפיק ומספר המסמך – רק כשהם הגיוניים, אחרת ריק
+  let vat = money(o.vat); if (!amount || !vat || vat >= amount) vat = null;
+  const osek = String(o.osek || '').replace(/\D/g, ''), docNo = clean(o.number, 20).replace(/[^\w\-/]/g, '');
+  return json({ found: !!amount, amount, date: isoDate(o.date), vendor: clean(o.vendor, 60), doc: clean(o.doc, 30), vat, osek: /^\d{8,9}$/.test(osek) ? osek : '', no: docNo, left: q.left }, 200, h);
 }
 
 async function keyRoute(request, env, h) {

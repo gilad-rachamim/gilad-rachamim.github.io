@@ -1,0 +1,39 @@
+/* דוח מע"מ מהחשבוניות + מגירת המע"מ בפורטל הלקוחות */
+.ch .lbl{display:block;color:var(--cream);font-weight:700;margin-bottom:.35rem}
+.ch .mm-form{border:1px solid var(--line);border-radius:16px;padding:.9rem 1rem;background:rgba(255,255,255,.02)}
+.ch .mm-form h2{margin-top:0}
+.ch .mm-photo{margin:.2rem 0 .6rem}
+.ch .mm-w{color:#f0a08a;font-size:.86rem;margin-top:.2rem;line-height:1.4}
+.ch .mm-act{white-space:nowrap}
+.ch .mm-act button{font:inherit;background:none;border:0;color:var(--muted);cursor:pointer;min-width:40px;min-height:40px}
+.ch .mm-act button:hover,.ch .mm-act button:focus-visible{color:var(--gold)}
+.ch .mm-paste{margin-top:.9rem;border:1px dashed var(--line);border-radius:12px;padding:.6rem .9rem}
+.ch .mm-paste summary{cursor:pointer;color:var(--gold);font-weight:700}
+.ch .mm-paste textarea{min-height:7rem;direction:rtl}
+.ch #mm-list{margin-top:1rem}
+.ch .res h3{margin:0;color:var(--cream)}
+/* בפורטל: מגירת המע"מ אצל הלקוח */
+.tk-vat{border:1px solid var(--gold);border-radius:16px;padding:.9rem 1rem;margin:1rem 0;background:rgba(201,162,77,.06)}
+.tk-vat h2{font-family:var(--serif);color:var(--cream);font-size:1.25rem;margin:0 0 .3rem}
+.tk-vat .tk-up{display:flex;flex-wrap:wrap;gap:.5rem;align-items:flex-end;margin-top:.5rem}
+.tk-vat .tk-m{display:flex;flex-direction:column;gap:.2rem;font-size:.9rem;color:var(--muted)}
+.tk-vat .tk-m input,.tk-vat .tk-m select{font:inherit;min-width:7rem}
+.tk-vat .tk-m select[data-v-per],.tk-vat .tk-m select[data-c-per]{min-width:12.5rem}
+@media (max-width:520px){.ch #mm-list td{padding:.45rem .35rem;font-size:.9rem}}
+.tk-vat .tk-m-w input{min-width:12rem}
+/* בחדר של רואה החשבון: דוחות מע"מ לכל הלקוחות */
+.cd-vat-row td:first-child{font-weight:700}
+.cd-vat .n.pay{color:#f0a08a}
+.cd-vat .n.ref{color:#7fd6b8}
+.cd-vat .tk-files li span{white-space:normal;overflow-wrap:anywhere}
+@media (max-width:560px){
+  .cd-vat th:nth-child(3),.cd-vat td:nth-child(3),.cd-vat th:nth-child(5),.cd-vat td:nth-child(5){display:none}
+  .cd-vat td[colspan] {display:table-cell!important}
+  .cd-vat th,.cd-vat td{padding:.45rem .4rem}
+}
+@media print{
+  .ch .mm-form,.ch .mm-paste,.ch .mm-act{display:none!important}
+  .ch .mm-w{color:#000!important}
+}
+.cd-vlink{font:inherit;font-weight:700;background:none;border:0;color:var(--gold);cursor:pointer;padding:0;text-align:right;min-height:32px}
+.cd-vlink:hover,.cd-vlink:focus-visible{text-decoration:underline}

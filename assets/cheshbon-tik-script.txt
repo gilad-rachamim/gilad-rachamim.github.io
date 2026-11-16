@@ -8,9 +8,10 @@
  * מיילים (תזכורות ללקוחות, "סיימתי להעלות") יוצאים מה-Gmail שלכם בלבד.
  *
  * התקנה (פעם אחת, כ-5 דקות): ההוראות המלאות בדף "פתיחת חדר" באתר.
- * גרסה 5 · 14.11.2026 (תזכורות, סיום העלאה, תיק מלא, כפולים, מסמכים לחתימה, מגירות לכל לקוח, קריאת סכום מהקבלה, הצעות מחיר עם אישור הלקוח)
+ * גרסה 6 · 16.11.2026 (תזכורות, סיום העלאה, תיק מלא, כפולים, מסמכים לחתימה, מגירות לכל לקוח, קריאת סכום מהקבלה, הצעות מחיר עם אישור הלקוח,
+ *   ומגירת דוח מע"מ: הלקוח מעלה חשבוניות לתקופה, ZIP לתקופה בלבד, ו"סיימתי" לכל תקופה)
  */
-var VER = 5;
+var VER = 6;
 var ROOT_NAME = 'תיק מסמכים ללקוחות';
 var SITE = 'https://hakelim.com/kelim/cheshbon/tik/';
 var MAX_B64 = 34 * 1024 * 1024;   // קובץ עד ~25MB
@@ -18,6 +19,7 @@ var DAY_LIMIT = 300;               // העלאות ללקוח ביום
 var C_HEAD = ['שם הלקוח', 'סוג', 'קוד', 'תיקייה', 'נוצר', 'פעיל', 'מייל', 'מגירות', 'בקשות מיוחדות', 'סיים להעלות'];
 var D_HEAD = ['הועלה', 'לקוח', 'שנה', 'מגירה', 'חודש', 'סכום', 'הערה', 'שם הקובץ', 'קישור', 'מזהה', 'קוד לקוח', 'נמחק', 'טביעה'];
 var S_HEAD = ['קוד לקוח', 'מזהה', 'שם הקובץ', 'נוסף', 'לקוח'];
+var V_HEAD = ['נשלח', 'קוד לקוח', 'לקוח', 'תקופה', 'חשבוניות'];
 var Q_HEAD = ['נוצרה', 'מספר', 'לקוח', 'לחודש', 'לשנה', 'קוד', 'נצפתה', 'אושרה', 'שם המאשר', 'נתוני ההצעה'];
 // שמות המגירות – אותם שמות כמו בדף (לתזכורות במייל)
 var DRAWERS = { '106': 'טופס 106 מכל מעסיק', truma: 'קבלות על תרומות (סעיף 46)', pensia: 'פנסיה, קופת גמל וקרן השתלמות', bituach: 'ביטוח חיים ואובדן כושר עבודה', '867': 'טופס 867 מהבנק ומבית ההשקעות', bl: 'אישורים מביטוח לאומי', zikui: 'נקודות זיכוי: תואר, שחרור, ילדים', refui: 'הוצאות רפואיות ומוסדות', dira: 'שכר דירה ונדל"ן', yipui: 'ייפוי כוח וטפסים חתומים', hotzaot: 'חשבוניות הוצאה של העסק', hachnasot: 'קבלות וחשבוניות הכנסה', bank: 'דפי בנק וכרטיסי אשראי', rechev: 'רכב: דלק, טיפולים וביטוח', tashlumim: 'מקדמות, מע"מ וביטוח לאומי ששילמתם', acher: 'מסמכים אחרים' };
@@ -69,7 +71,8 @@ function route_(b) {
     if (a === 'mClient') return setClient_(b);
     if (a === 'mRemind') return setRemind_(!!b.on);
     if (a === 'mRemindNow') { var n = remindAll_(b.t || ''); return { ok: true, sent: n }; }
-    if (a === 'mBundle') return bundle_(b.t, b.year);
+    if (a === 'mBundle') return bundle_(b.t, b.year, b.ids, b.label);
+    if (a === 'mVat') return { ok: true, done: vatDone_() };
     if (a === 'mAttach') return attach_(b);
     if (a === 'mUndone') return markDone_(b.t, '');
     if (a === 'mQuote') return saveQuote_(b);
@@ -87,6 +90,7 @@ function route_(b) {
   if (a === 'cUp') return upload_(c, b);
   if (a === 'cDel') return delDoc_(c, b.id);
   if (a === 'cDone') return clientDone_(c, b.year);
+  if (a === 'cVatDone') return clientVatDone_(c, b.label, b.n);
   if (a === 'cFile') return signFile_(c, b.id);
   return { ok: false, err: 'action' };
 }
@@ -200,6 +204,23 @@ function clientDone_(c, year) {
   return { ok: true };
 }
 
+// ---- דוח מע"מ: הלקוח לוחץ "סיימתי" לתקופה, ורואה החשבון מקבל מייל ושורה בגיליון "דוח מע"מ" ----
+function clientVatDone_(c, label, n) {
+  label = clip_(label, 40) || 'התקופה';
+  n = Math.max(0, Math.min(9999, +n || 0));
+  sheet_('דוח מע"מ', V_HEAD).appendRow([new Date(), c.t, c.name, label, n]);
+  var me = Session.getEffectiveUser().getEmail();
+  if (me) {
+    try { MailApp.sendEmail({ to: me, subject: c.name + ' סיים/ה להעלות חשבוניות לדוח מע"מ ' + label, body: c.name + ' לחץ/ה "סיימתי" בחשבוניות לדוח המע"מ של ' + label + ' (' + n + ' חשבוניות).\nהסיכום לכל הלקוחות בחדר: https://hakelim.com/kelim/cheshbon/tik/cheder/\nהתיקייה: ' + root_().getUrl() + '\n\nפורטל לקוחות לרואה חשבון – הכלים של גילעד רחמים' }); } catch (x) {}
+  }
+  return { ok: true };
+}
+function vatDone_() {
+  var v = sheet_('דוח מע"מ', V_HEAD).getDataRange().getValues(), out = [];
+  for (var i = 1; i < v.length; i++) out.push({ at: v[i][0] instanceof Date ? v[i][0].toISOString() : String(v[i][0]), t: String(v[i][1]), label: String(v[i][3]), n: +v[i][4] || 0 });
+  return out;
+}
+
 // ---- תזכורות חודשיות ללקוחות (מה-Gmail של המשרד) ----
 function remindOn_() { return ScriptApp.getProjectTriggers().some(function (t) { return t.getHandlerFunction() === 'monthlyReminder'; }); }
 function setRemind_(on) {
@@ -232,10 +253,12 @@ function remindAll_(onlyT) {
 }
 
 // ---- תיק מלא של לקוח: ZIP אחד בדרייב ----
-function bundle_(t, year) {
+// ids = רק הקבצים האלה (למשל החשבוניות של תקופת מע"מ אחת), label = שם לקובץ ה-ZIP
+function bundle_(t, year, ids, label) {
   var c = byToken_(t); if (!c) return { ok: false, err: 'token' };
   year = /^\d{4}$/.test(String(year)) ? String(year) : String(new Date().getFullYear());
-  var docs = docs_(year, c.t), blobs = [], used = {};
+  var docs = docs_(year, c.t), blobs = [], used = {}, sel = ids && ids.length ? ids.map(String) : null;
+  if (sel) docs = docs.filter(function (d) { return sel.indexOf(d.id) >= 0; });
   docs.forEach(function (d) {
     try {
       var bl = DriveApp.getFileById(d.id).getBlob();
@@ -244,11 +267,12 @@ function bundle_(t, year) {
       used[nm] = 1; bl.setName(nm); blobs.push(bl);
     } catch (x) {}
   });
-  var idx = 'מגירה,חודש,סכום,קובץ,הועלה\n' + docs.map(function (d) { return [d.drawer, d.month, d.amount, d.name, d.at.slice(0, 10)].map(function (s) { s = String(s); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }).join(','); }).join('\n');
+  var idx = 'מגירה,חודש,סכום,קובץ,הועלה,פרטים\n' + docs.map(function (d) { return [d.drawer, d.month, d.amount, d.name, d.at.slice(0, 10), d.note].map(function (s) { s = String(s); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }).join(','); }).join('\n');
   blobs.push(Utilities.newBlob('﻿' + idx, 'text/csv', 'רשימת המסמכים.csv'));
-  var zip = Utilities.zip(blobs, 'תיק מלא - ' + c.name + ' - ' + year + '.zip');
+  var zname = sel ? (clip_(label, 40).replace(/[\\/:*?"<>|]/g, '-') || 'חשבוניות') : 'תיק מלא';
+  var zip = Utilities.zip(blobs, zname + ' - ' + c.name + ' - ' + year + '.zip');
   var f = sub_(sub_(root_(), year), c.name).createFile(zip);
-  return { ok: true, url: f.getUrl(), files: docs.length };
+  return { ok: true, url: f.getUrl(), files: docs.length, sel: !!sel };
 }
 
 // ---- מסמכים לחתימה: רו"ח מעלה, הלקוח מוריד, חותם ומעלה בחזרה ----

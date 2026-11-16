@@ -29,6 +29,7 @@
   function show() {
     var on = !!cfg;
     $('cd-setup').hidden = on; $('cd-room').hidden = !on;
+    try { document.dispatchEvent(new CustomEvent(on ? 'cheder:on' : 'cheder:off')); } catch (e) {} // מגירת דוח המע"מ (cheshbon-tik-maam.js)
     if (!on) return;
     $('cd-office').textContent = cfg.office || 'המשרד';
     $('cd-links').innerHTML = (cfg.sheet ? '<a class="gold" href="' + esc(cfg.sheet) + '" target="_blank" rel="noopener">הטבלה בגוגל שיטס</a> · ' : '') + (cfg.folder ? '<a class="gold" href="' + esc(cfg.folder) + '" target="_blank" rel="noopener">התיקייה בדרייב</a>' : '');
@@ -137,7 +138,7 @@
     if (!cfg) return;
     T.call(cfg.u, { a: 'mInfo', key: cfg.key }).then(function (r) {
       if (!r.ok) return;
-      var old = (r.ver || 1) < 5;
+      var old = (r.ver || 1) < 6;
       $('cd-upgrade').hidden = !old;
       $('cd-remind').checked = !!r.remind; $('cd-remind').disabled = (r.ver || 1) < 4;
     }).catch(function () {});
