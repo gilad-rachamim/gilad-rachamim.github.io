@@ -284,6 +284,11 @@ def shipurim_list():
 # דף שלא רוצים בו את הבלוק: "no_rel": true ב-meta. תמונות השיתוף נוצרות ב-tools/og_images.py אל assets/og/.
 SEO_SKIP = {"pratiut", "privacy", "shipurim", "hitkadmut", "negishut"}
 SEO_AUTHOR = {"@type": "Person", "name": "גילעד רחמים אביעד", "url": BASE + "/kelim/#mi"}
+def in_sitemap(meta):
+    """דף עם noindex - גם בדגל וגם כשהוכנס ידנית ב-head - לא נכנס למפת האתר.
+    גוגל מתריע כשדף במפה חסום ב-noindex (סרץ' קונסול, 16.11.2026)."""
+    return not meta.get("noindex") and not re.search(r"<meta[^>]+name=.robots.[^>]*noindex", meta.get("head", ""), re.I)
+
 INDEX = {}
 for _p in sorted(SRC.rglob("index.html")):
     _raw = _p.read_text(encoding="utf-8")
@@ -549,7 +554,7 @@ for path in sorted(SRC.rglob("*.html")):
         if seo_is_hub(url_path): t["h"] = 1
         if meta.get("ext"): t["x"] = meta["ext"]
         TOOLS_JSON.append(t)
-    if not meta.get("noindex"):
+    if in_sitemap(meta):
         pages.append((url, meta.get("priority", "0.6"), path))
     print("built", url_path)
 
