@@ -762,6 +762,17 @@
   setConvLabels();
   var q = null;
   try { q = new URLSearchParams(location.search).get('q'); } catch (e) {}
+  // טקסט שמגיע אחרי # (מקיצור מקשים או מקישור): לא נשלח לשרת ולא נרשם בסטטיסטיקה.
+  // #q=טקסט&to=he – ואחרי הקריאה מנקים אותו מהכתובת.
+  try {
+    var hp = new URLSearchParams(location.hash.replace(/^#/, ''));
+    if (hp.get('q')) {
+      q = hp.get('q');
+      selFrom.value = 'auto';
+      if (hp.get('to') && NAME[hp.get('to')]) selTo.value = hp.get('to');
+      history.replaceState(null, '', location.pathname + location.search);
+    }
+  } catch (e) {}
   var landing = !!app.dataset.exSrc;
   if (landing) { EX_SRC = app.dataset.exSrc; EX_OUT = app.dataset.exOut || ''; }
   if (q) { src.value = q.slice(0, 20000); schedule(); }
