@@ -111,7 +111,7 @@
   function today() {
     var d = new Date(), z = zm(d), k = dayKind(d);
     var sr = z.sunrise(), ss = z.sunset(), sz = (ss - sr) / 720;
-    return { d: d, k: k, ss: ss, msh: z.misheyakir(), msh2: new Date(sr.getTime() - 66 * sz), done: st.done[iso(d)], ptur: st.ptur[iso(d)] };
+    return { d: d, k: k, ss: ss, msh: z.misheyakir(), msh2: new Date(sr.getTime() - 66 * sz), tz: z.tzeit(), done: st.done[iso(d)], ptur: st.ptur[iso(d)] };
   }
   function draw() {
     if (!H) return;
@@ -127,7 +127,9 @@
       box.classList.add('ok'); box.innerHTML = '<b>✓ הנחת תפילין היום</b><span>סומן בשעה ' + x.done + '. יישר כוח!</span>';
       btn.hidden = false; btn.textContent = 'לבטל את הסימון'; btn.classList.add('ghost');
     } else if (now > x.ss) {
-      box.classList.add('late'); box.innerHTML = '<b>השקיעה עברה (' + t(x.ss) + ')</b><span>מחר בבוקר מתחילים מחדש. מי שלא הספיק – שואלים רב מה עושים אחרי השקיעה.</span>';
+      box.classList.add('late'); box.innerHTML = now < x.tz
+        ? '<b>השקיעה עברה (' + t(x.ss) + ')</b><span>מי שממש לא הספיק, יכול עוד להניח עד צאת הכוכבים (<bdi>' + t(x.tz) + '</bdi>) – אבל בלי ברכה.</span>'
+        : '<b>היום כבר עבר</b><span>מחר בבוקר מתחילים מחדש, בלי להלקות את עצמך. הקב"ה אוהב אותך.</span>';
       btn.hidden = false; btn.textContent = 'הנחתי היום ✓'; btn.classList.remove('ghost');
     } else {
       var m = x.ss - now;
@@ -137,7 +139,7 @@
         (x.k.moed ? '<span>' + x.k.why + ': בארץ ישראל רוב הנוהגים לא מניחים. כל אחד לפי מנהגו.</span>' : '');
       btn.hidden = false; btn.textContent = 'הנחתי תפילין ✓'; btn.classList.remove('ghost');
     }
-    tm.innerHTML = '<span>' + (st.name || 'המקום') + '</span><span>מאיזו שעה (משיכיר): <bdi>' + t(x.msh) + '</bdi></span><span>שקיעה: <bdi>' + t(x.ss) + '</bdi></span><span class="tf-alt">משיכיר לדעת פוסקים מסוימים בדורנו (66 דק׳ זמניות לפני הנץ): <bdi>' + t(x.msh2) + '</bdi></span>';
+    tm.innerHTML = '<span>' + (st.name || 'המקום') + '</span><span>מאיזו שעה (משיכיר): <bdi>' + t(x.msh) + '</bdi></span><span>שקיעה: <bdi>' + t(x.ss) + '</bdi></span><span>צאת הכוכבים: <bdi>' + t(x.tz) + '</bdi></span><span class="tf-alt">משיכיר לדעת פוסקים מסוימים בדורנו (66 דק׳ זמניות לפני הנץ): <bdi>' + t(x.msh2) + '</bdi></span>';
     // שבוע אחרון
     var w = '', d0 = add(new Date(), -6), names = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'];
     for (var i = 0; i < 7; i++) {
@@ -147,6 +149,7 @@
     $('tf-week').innerHTML = w;
     drawGame();
     $('tf-ptur').hidden = !!(x.k.off || x.done || x.ptur);
+    if ($('tf-quick')) $('tf-quick').hidden = !!(x.k.off || x.done || new Date() > x.tz);
     var s = streak();
     $('tf-streak').textContent = s ? 'רצף: ' + s + (s === 1 ? ' יום' : ' ימים') + ' (שבתות, חגים וימי פטור לא שוברים את הרצף)' : 'כל יום שמסמנים נכנס לרצף. שבתות, חגים וימי פטור לא שוברים אותו.';
     lockCheck();
@@ -259,7 +262,7 @@
     return now >= from;
   }
   function lockCheck() {
-    if (!lk) return;
+    if (!lk || quick) return;
     var on = lockWanted();
     if (on && lk.hidden) {
       var x = today();
@@ -268,10 +271,20 @@
       setTimeout(function () { var b = $('tf-lock-done'); if (b) b.focus(); }, 50);
     } else if (!on && !lk.hidden) unlock();
   }
-  function unlock() { if (!lk) return; lk.hidden = true; document.documentElement.classList.remove('tf-locked'); }
+  var quick = false;
+  function unlock() { if (!lk) return; lk.hidden = true; document.documentElement.classList.remove('tf-locked'); if (quick) { quick = false; lk.classList.remove('quick'); $('tf-lock-h').textContent = 'עוד לא הנחת תפילין היום'; $('tf-lock-read').textContent = 'לפתוח את הסדר המלא'; } }
+  function openQuick() {
+    if (!lk) return; quick = true; lk.classList.add('quick');
+    $('tf-lock-h').textContent = 'בקצרה, כשלא מרגישים טוב';
+    $('tf-lock-ss').textContent = 'מניחים, מברכים, אומרים שמע ישראל – ואפשר להוריד. זו מצווה שלמה.';
+    $('tf-lock-read').textContent = 'סגירה';
+    lk.hidden = false; document.documentElement.classList.add('tf-locked'); used('quick');
+    setTimeout(function () { var b = $('tf-lock-done'); if (b) b.focus(); }, 50);
+  }
+  if ($('tf-quick')) $('tf-quick').addEventListener('click', openQuick);
   if (lk) {
     $('tf-lock-done').addEventListener('click', function () { var k = iso(new Date()); st.done[k] = t(new Date()); delete st.ptur[k]; save(); used('done'); unlock(); draw(); toast('יישר כוח! ' + score().today.join(' · ') + ' ✨'); });
-    $('tf-lock-read').addEventListener('click', function () { unlock(); snoozeUntil = Date.now() + 20 * 60000; var s = $('tefillin'); if (s) s.scrollIntoView({ behavior: 'instant', block: 'start' }); });
+    $('tf-lock-read').addEventListener('click', function () { if (quick) { unlock(); return; } unlock(); snoozeUntil = Date.now() + 20 * 60000; var s = $('tefillin'); if (s) s.scrollIntoView({ behavior: 'instant', block: 'start' }); });
     // "לא עכשיו": צריך להחזיק 3 שניות – כדי שזה יהיה החלטה, לא לחיצה בטעות
     var hold = $('tf-lock-later'), ht = null;
     function hStart(e) { e.preventDefault(); hold.classList.add('holding'); ht = setTimeout(function () { snoozeUntil = Date.now() + 30 * 60000; hold.classList.remove('holding'); unlock(); used('snooze'); }, 3000); }
