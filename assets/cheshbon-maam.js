@@ -155,6 +155,7 @@
     if (r.vat) o.vat = String(r.vat);
     if (r.osek) o.osek = String(r.osek).replace(/\D/g, '');
     if (r.no) o.no = String(r.no);
+    if (r.hk) o.hk = String(r.hk).replace(/\D/g, '');
     return o;
   };
 

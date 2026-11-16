@@ -75,12 +75,14 @@ function rules(pages) {
     '"vendor": the name of the business that ISSUED the receipt, as printed at the top or next to its business number (e.g. "רמי לוי שיווק השקמה", "מאוחדת פארם", "יוניון ספורט"). Never the customer ("לכבוד", "שם לקוח"), never the software or payment company. Short, max 6 words. Empty if unsure.\n' +
     '"doc": the document type in Hebrew as printed ("חשבונית מס/קבלה", "קבלה", "חשבונית מס"), or empty.\n' +
     '"vat": the VAT amount line (מע"מ, מע"מ 18%), digits and a decimal point only. Empty if the document shows no separate VAT line (e.g. a plain receipt from an exempt dealer).\n' +
-    '"osek": the business number of the business that ISSUED the document (ח.פ, ע.מ, עוסק מורשה, מס\' עוסק), 8-9 digits only. Never the customer\'s number (after "לכבוד" / "לקוח"), never a phone, a branch or an approval number. Empty if unsure.\n' +
+    '"osek": the business number of the ISSUER, printed in the HEADER right under or next to the vendor name (e.g. "ח.פ 516773405", "ע.מ 012345678"), 8-9 digits only. Never a phone, a branch or an approval number. Empty if unsure.\n' +
+    '"customer_osek": a business or ID number that belongs to the CUSTOMER block ("לכבוד", "לקוח", "שם הלקוח", "עוסק מורשה" written after the customer name), 8-9 digits, or empty. A number in the customer block is NEVER the "osek".\n' +
+    '"allocation": the Tax Authority allocation number: the 9 digits right after the words "מספר הקצאה" (or "אישור הקצאה"), often in a small line near the bottom. Copy them exactly. Empty only if those words do not appear. Never a card approval number (אישור עסקה).\n' +
     '"number": the document number (מספר חשבונית, חשבונית מס מס\', מס\' קבלה, מס\' מסמך), as printed, max 20 characters. Empty if none.\n' +
     '"found": true if this is a receipt or invoice with a readable total, else false.\n' +
     'Never invent anything that is not in the image. Inside Hebrew strings write ״ (gershayim) instead of a straight double quote, e.g. בע״מ.';
 }
-const SHAPE = ' Answer with JSON only: {"found":true,"total":"45.00","date":"06/11/2026","vendor":"...","doc":"חשבונית מס/קבלה","vat":"6.86","osek":"515432102","number":"10234"}';
+const SHAPE = ' Answer with JSON only: {"found":true,"total":"45.00","date":"06/11/2026","vendor":"...","doc":"חשבונית מס/קבלה","vat":"6.86","osek":"515432102","customer_osek":"","allocation":"","number":"10234"}';
 
 function parseOut(r) {
   let o = r && (r.response !== undefined ? r.response : r.choices ? r.choices[0].message.content : r);
@@ -88,8 +90,8 @@ function parseOut(r) {
     const t = o.replace(/^\s*```(?:json)?\s*|\s*```\s*$/g, '');
     try { o = JSON.parse(t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1)); }
     catch (e) { // מירכאות בתוך מילה בעברית (בע"מ, סה"כ) שוברות JSON – מחלצים כל שדה לבד
-      const f = k => { const m = t.match(new RegExp('"' + k + '"\\s*:\\s*"([\\s\\S]*?)"\\s*(?:,\\s*"(?:found|total|date|vendor|doc|vat|osek|number)"|\\s*})')); return m ? m[1] : ''; };
-      o = { total: f('total'), date: f('date'), vendor: f('vendor'), doc: f('doc'), vat: f('vat'), osek: f('osek'), number: f('number') };
+      const f = k => { const m = t.match(new RegExp('"' + k + '"\\s*:\\s*"([\\s\\S]*?)"\\s*(?:,\\s*"(?:found|total|date|vendor|doc|vat|osek|customer_osek|allocation|number)"|\\s*})')); return m ? m[1] : ''; };
+      o = { total: f('total'), date: f('date'), vendor: f('vendor'), doc: f('doc'), vat: f('vat'), osek: f('osek'), customer_osek: f('customer_osek'), allocation: f('allocation'), number: f('number') };
       if (!o.total && !o.date) throw e;
     }
   }
@@ -142,8 +144,11 @@ async function readRoute(request, env, h) {
   const o = out.o, amount = money(o.total);
   // לדוח מע"מ (16.11.2026): מע"מ, ח.פ של המנפיק ומספר המסמך – רק כשהם הגיוניים, אחרת ריק
   let vat = money(o.vat); if (!amount || !vat || vat >= amount) vat = null;
-  const osek = String(o.osek || '').replace(/\D/g, ''), docNo = clean(o.number, 20).replace(/[^\w\-/]/g, '');
-  return json({ found: !!amount, amount, date: isoDate(o.date), vendor: clean(o.vendor, 60), doc: clean(o.doc, 30), vat, osek: /^\d{8,9}$/.test(osek) ? osek : '', no: docNo, left: q.left }, 200, h);
+  const cust = String(o.customer_osek || '').replace(/\D/g, '');
+  let osek = String(o.osek || '').replace(/\D/g, ''); if (osek && osek === cust) osek = '';
+  const hk = String(o.allocation || '').replace(/\D/g, '');
+  const docNo = clean(o.number, 20).replace(/[^\w\-/]/g, '');
+  return json({ found: !!amount, amount, date: isoDate(o.date), vendor: clean(o.vendor, 60), doc: clean(o.doc, 30), vat, osek: /^\d{8,9}$/.test(osek) ? osek : '', no: docNo, hk: /^\d{9}$/.test(hk) ? hk : '', left: q.left }, 200, h);
 }
 
 async function keyRoute(request, env, h) {
