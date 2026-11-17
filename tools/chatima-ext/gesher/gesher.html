@@ -63,10 +63,22 @@
   <p class="small">בטלפון: מעתיקים ← מושכים את סרגל ההתראות ← "📋 לוח למחשב" (או "שיתוף" ← "למחשב"). טקסט בלבד, עד 100KB.</p>
 </section>
 
+<section id="inbox" class="card" hidden>
+  <h2>📨 מהטלפון</h2>
+  <p class="small">הודעות חדשות מהטלפון (ווטסאפ, SMS, טלגרם…). 50 אחרונות, רק בזיכרון – נמחקות כשכרום נסגר. ✕ סוגר גם בטלפון.</p>
+  <div id="ntf-list" class="ntf-list" aria-live="polite"></div>
+  <p class="msg" id="ntf-msg" role="status"></p>
+  <label class="opt"><input type="checkbox" id="opt-notif"> להקפיץ התראה במחשב על כל הודעה</label>
+  <label class="opt"><input type="checkbox" id="opt-dnd"> 🌙 נא לא להפריע עכשיו (ההודעות נכנסות לרשימה בשקט)</label>
+  <label class="opt"><input type="checkbox" id="opt-dnd-hours"> 🌙 כל יום משעה <input type="time" id="dnd-from"> עד <input type="time" id="dnd-to"></label>
+  <p class="small">בטלפון: אפליקציית "הכלים" ← "🔔 הודעות מהטלפון במחשב" – שם בוחרים מאילו אפליקציות.</p>
+</section>
+
 </main>
 <script src="../qrcode.min.js"></script>
 <script src="crypto.js"></script>
 <script src="store.js"></script>
 <script src="gesher.js"></script>
+<script src="inbox.js"></script>
 </body>
 </html>

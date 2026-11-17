@@ -10,7 +10,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var ws = null, timer = null, alive = false;
 
-  function show(id) { ['off', 'pairing', 'on'].forEach(function (x) { $(x).hidden = x !== id; }); $('clip').hidden = id !== 'on'; }
+  function show(id) { ['off', 'pairing', 'on'].forEach(function (x) { $(x).hidden = x !== id; }); $('clip').hidden = id !== 'on'; $('inbox').hidden = id !== 'on'; }
   function ask(m) { return chrome.runtime.sendMessage(m); }
 
   // ---------- מצב ----------

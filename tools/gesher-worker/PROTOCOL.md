@@ -82,7 +82,9 @@ AAD   = חדר ‖ 10 בתי הכותרת
 | `bye` | שני הכיוונים | – צד אחד מתנתק; השני מוחק את המפתחות שלו | 1 |
 | `ping` | – | (טקסט "ping" → "pong", עונה Cloudflare בלי להעיר את החדר) | 1 |
 | `clip` | שני הכיוונים | `text` – לוח משותף | 2 |
-| `notif` | טלפון → מחשב | `app`, `title`, `text`, `at` | 3 |
+| `notif` | טלפון → מחשב | `id`, `key` (מפתח ההתראה באנדרואיד), `pkg`, `app` (שם האפליקציה), `title`, `text`, `icon` (data:image/png, 64px), `reply` (יש פעולת תשובה), `at` | 3 |
+| `notif-x` | שני הכיוונים | `id`, `key` – נסגרה בצד אחד ← נסגרת/נעלמת בשני (בטלפון: `cancelNotification`) | 3 |
+| `notif-reply` | מחשב → טלפון | `id`, `key`, `text` – מענה שהמשתמש הקליד; הטלפון שולח דרך RemoteInput ומחזיר `ack` עם `ok` (ואם לא – `why`: `gone`/`noreply`/`fail`) | 3 |
 | `link` | שני הכיוונים | `url`, `title` | 3 |
 | `file` | שני הכיוונים | `name`, `mime`, `part`, `parts`, `data` (b64) – חלקים עד 256KB | 4 |
 

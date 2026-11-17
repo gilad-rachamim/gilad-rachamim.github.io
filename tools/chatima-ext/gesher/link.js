@@ -37,7 +37,7 @@
         if (typeof e.data === 'string') {
           if (e.data === 'pong') return;
           var m; try { m = JSON.parse(e.data); } catch (x) { return; }
-          if (m.t === 'peer') { phoneOn = !!m.on; setState({ online: true, phone: phoneOn }); if (phoneOn) flushClip(); }
+          if (m.t === 'peer') { phoneOn = !!m.on; setState({ online: true, phone: phoneOn }); if (phoneOn) { flushClip(); flushOut(); } }
           return;
         }
         onFrame(new Uint8Array(e.data));
@@ -74,7 +74,9 @@
       if (o.type === 'otp' && /^[0-9A-Za-z]{3,10}$/.test(String(o.code || ''))) return gotCode(o);
       if (o.type === 'bye') return forget('הטלפון ניתק את החיבור');
       if (o.type === 'clip' && typeof o.text === 'string') return gotClip(o);
-      if (o.type === 'ack' && o.id) return clipAcked(o.id);
+      if (o.type === 'notif') return gotNotif(o);
+      if (o.type === 'notif-x' && o.key) return send({ type: 'ack', id: o.id }).then(function () { return dropNotif(String(o.key), false); });
+      if (o.type === 'ack' && o.id) return Promise.all([clipAcked(o.id), outAcked(o)]);
     }).catch(function () { /* מסגרת לא תקינה / ישנה – מתעלמים בשקט */ });
   }
 
@@ -97,7 +99,7 @@
       send({ type: 'ack', id: c.id, filled: !!res.filled });
     });
   }
-  function opts() { return chrome.storage.local.get('gesherOpts').then(function (o) { return Object.assign({ copy: true, clipIn: true, clipOut: true, pause: false }, o.gesherOpts || {}); }); }
+  function opts() { return chrome.storage.local.get('gesherOpts').then(function (o) { return Object.assign({ copy: true, clipIn: true, clipOut: true, pause: false, notif: true, dnd: false, dndHours: false, dndFrom: '22:00', dndTo: '07:00' }, o.gesherOpts || {}); }); }
   function srcLine(c) {
     var s = 'הגיע ב' + (c.src === 'app' ? 'התראה' : '-' + (SRC[c.src] || c.src));
     if (c.from) s += ' מ' + (/^[֐-׿]/.test(c.from) ? '' : '-') + c.from;
@@ -277,6 +279,118 @@
     }).catch(function () {});
   }
 
+  // ---------- הודעות מהטלפון (notif) ----------
+  // הרשימה נשמרת רק ב-chrome.storage.session (בזיכרון, נמחקת כשכרום נסגר), 50 אחרונות. שום תוכן לא נכתב ללוג.
+  var NOTIF_MAX = 50, OUT_TTL = 10 * 60e3;
+  function nid(key) { return 'gn:' + hash(String(key)); }
+  function notifs() { return chrome.storage.session.get('gNotifs').then(function (o) { return o.gNotifs || []; }); }
+  function saveNotifs(a) { return chrome.storage.session.set({ gNotifs: a.slice(0, NOTIF_MAX) }).then(badge); }
+  function badge() {
+    return notifs().then(function (a) {
+      var n = a.filter(function (x) { return !x.seen; }).length;
+      return chrome.action.getBadgeText({}).then(function (t) {
+        if (t === '🔑') return;
+        chrome.action.setBadgeBackgroundColor({ color: '#1565c0' });
+        chrome.action.setBadgeText({ text: n ? String(Math.min(n, 99)) : '' });
+      });
+    }).catch(function () {});
+  }
+  function hhmm(s) { var m = /^(\d{1,2}):(\d{2})$/.exec(s || ''); return m ? +m[1] * 60 + +m[2] : null; }
+  function quiet(op) {
+    if (op.dnd) return true;
+    if (!op.dndHours) return false;
+    var a = hhmm(op.dndFrom), b = hhmm(op.dndTo);
+    if (a === null || b === null || a === b) return false;
+    var d = new Date(), now = d.getHours() * 60 + d.getMinutes();
+    return a < b ? now >= a && now < b : now >= a || now < b;
+  }
+  function gotNotif(o) {
+    var item = {
+      key: String(o.key || o.id), id: o.id, pkg: String(o.pkg || ''), app: String(o.app || 'הטלפון').slice(0, 60),
+      title: String(o.title || '').slice(0, 200), text: String(o.text || '').slice(0, 4000),
+      icon: /^data:image\/png;base64,[A-Za-z0-9+/=]{10,40000}$/.test(o.icon || '') ? o.icon : '',
+      reply: !!o.reply, at: o.at || Date.now(), got: Date.now()
+    };
+    return send({ type: 'ack', id: o.id }).then(function () {
+      return Promise.all([notifs(), opts()]);
+    }).then(function (r) {
+      var a = r[0].filter(function (x) { return x.key !== item.key; });
+      a.unshift(item);
+      return saveNotifs(a).then(function () {
+        if (!r[1].notif || quiet(r[1])) return;
+        var btns = item.reply ? [{ title: '↩ לענות' }, { title: '📋 להעתיק' }] : [{ title: '📋 להעתיק' }];
+        chrome.notifications.create(nid(item.key), {
+          type: 'basic', iconUrl: item.icon || 'icon128.png', priority: 1,
+          title: item.title || item.app, message: item.text || ' ', contextMessage: '📲 ' + item.app, buttons: btns
+        });
+      });
+    });
+  }
+  // fromPc=true: נסגרה במחשב → לסגור גם בטלפון. false: נסגרה בטלפון → רק להעלים מהמחשב.
+  function dropNotif(key, fromPc) {
+    chrome.notifications.clear(nid(key));
+    return notifs().then(function (a) {
+      var had = a.some(function (x) { return x.key === key; });
+      return saveNotifs(a.filter(function (x) { return x.key !== key; })).then(function () {
+        if (fromPc && had) return queueOut({ type: 'notif-x', key: key });
+      });
+    });
+  }
+  // מחשב → טלפון (סגירה / מענה): תור קטן ב-session עד שהטלפון מאשר, עד 10 דקות
+  function queueOut(m) {
+    m.id = 'o' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    m.at = Date.now();
+    return chrome.storage.session.get('gOut').then(function (o) {
+      var q = (o.gOut || []).filter(function (x) { return Date.now() - x.at < OUT_TTL; });
+      q.push(m);
+      return chrome.storage.session.set({ gOut: q.slice(-30) });
+    }).then(flushOut).then(function () { return m.id; });
+  }
+  function flushOut() {
+    return chrome.storage.session.get('gOut').then(function (o) {
+      var q = (o.gOut || []).filter(function (x) { return Date.now() - x.at < OUT_TTL; });
+      if (!q.length) return;
+      if (!phoneOn) { connect(); return; }
+      return q.reduce(function (p, m) { return p.then(function () { return send(m); }); }, Promise.resolve());
+    }).catch(function () {});
+  }
+  function outAcked(a) {
+    return chrome.storage.session.get(['gOut', 'gReplies']).then(function (o) {
+      var q = o.gOut || [], m = q.filter(function (x) { return x.id === a.id; })[0];
+      if (!m) return;
+      chrome.storage.session.set({ gOut: q.filter(function (x) { return x.id !== a.id; }) });
+      if (m.type !== 'notif-reply') return;
+      var r = o.gReplies || {};
+      r[m.key] = { ok: a.ok !== false, why: a.why || '', at: Date.now() };
+      chrome.storage.session.set({ gReplies: r });
+      if (a.ok !== false) return notifs().then(function (list) {
+        list.forEach(function (x) { if (x.key === m.key) { x.seen = true; x.replied = (x.replied || []).concat([m.text]).slice(-5); } });
+        return saveNotifs(list);
+      });
+    });
+  }
+  function replyNotif(key, text) {
+    text = String(text || '').trim();
+    if (!text || !key) return Promise.resolve({ ok: false });
+    return chrome.storage.session.get('gReplies').then(function (o) {
+      var r = o.gReplies || {};
+      r[key] = { pending: true, at: Date.now() };
+      return chrome.storage.session.set({ gReplies: r });
+    }).then(function () { return queueOut({ type: 'notif-reply', key: key, text: text.slice(0, 4000) }); })
+      .then(function () { return { ok: true, online: phoneOn }; });
+  }
+  function openReply(key) {
+    var base = chrome.runtime.getURL('gesher/gesher.html');
+    var url = base + '?reply=' + encodeURIComponent(key) + '#inbox';
+    return chrome.tabs.query({ url: base + '*' }).then(function (t) {
+      if (t[0]) return chrome.tabs.update(t[0].id, { url: url, active: true }).then(function () { chrome.windows.update(t[0].windowId, { focused: true }); });
+      return chrome.tabs.create({ url: url });
+    });
+  }
+  function keyOf(id) {
+    return notifs().then(function (a) { return a.filter(function (x) { return nid(x.key) === id; })[0] || null; });
+  }
+
   // ---------- ניתוק ----------
   function forget(why) {
     var p = pair;
@@ -284,7 +398,8 @@
     try { if (ws) ws.close(); } catch (e) {}
     ws = null;
     clearInterval(pingT);
-    chrome.storage.session.remove(['gLast', 'gField', 'gClip', 'gClipOut']);
+    chrome.storage.session.remove(['gLast', 'gField', 'gClip', 'gClipOut', 'gNotifs', 'gOut', 'gReplies']);
+    badge();
     setState({ online: false, unpaired: true });
     return S.clear().then(function () {
       if (why) chrome.notifications.create('gesher:off', { type: 'basic', iconUrl: 'icon128.png', title: 'הגשר לטלפון נותק', message: why });
@@ -344,6 +459,9 @@
     if (m.t === 'gesher-fill-last') { typeLast().then(reply); return true; }
     if (m.t === 'gesher-clip-local') { localClip(String(m.text || '')); return; }
     if (m.t === 'gesher-clip-sync') { syncClipWatch().then(function () { reply({ ok: true }); }); return true; }
+    if (m.t === 'gesher-ntf-reply') { replyNotif(String(m.key || ''), m.text).then(reply); return true; }
+    if (m.t === 'gesher-ntf-dismiss') { dropNotif(String(m.key || ''), true).then(function () { reply({ ok: true }); }); return true; }
+    if (m.t === 'gesher-ntf-seen') { notifs().then(function (a) { a.forEach(function (x) { x.seen = true; }); return saveNotifs(a); }).then(function () { reply({ ok: true }); }); return true; }
   });
 
   function typeLast() {
@@ -356,8 +474,22 @@
 
   chrome.notifications.onClicked.addListener(function (id) {
     if (id === 'gesher:code') { typeLast(); chrome.notifications.clear(id); }
+    if (id.indexOf('gn:') === 0) keyOf(id).then(function (x) { if (x) openReply(x.key); });
+  });
+  // סגירה ביד של התראה מהטלפון (X) → נסגרת גם בטלפון
+  chrome.notifications.onClosed.addListener(function (id, byUser) {
+    if (!byUser || id.indexOf('gn:') !== 0) return;
+    keyOf(id).then(function (x) { if (x) dropNotif(x.key, true); });
   });
   chrome.notifications.onButtonClicked.addListener(function (id, i) {
+    if (id.indexOf('gn:') === 0) {
+      keyOf(id).then(function (x) {
+        if (!x) return;
+        if (x.reply && i === 0) return openReply(x.key);
+        copy((x.title ? x.title + ': ' : '') + x.text);
+      });
+      return;
+    }
     if (id !== 'gesher:code') return;
     chrome.storage.session.get('gLast').then(function (o) {
       if (!o.gLast) return;
@@ -381,7 +513,7 @@
   }
 
   chrome.alarms.get('gesher', function (a) { if (!a) chrome.alarms.create('gesher', { periodInMinutes: 1 }); });
-  chrome.alarms.onAlarm.addListener(function (a) { if (a.name === 'gesher') { connect(); syncClipWatch(); flushClip(); } });
+  chrome.alarms.onAlarm.addListener(function (a) { if (a.name === 'gesher') { connect(); syncClipWatch(); flushClip(); flushOut(); } });
   chrome.runtime.onStartup.addListener(function () { connect(); syncWatch(); syncClipWatch(); });
   chrome.runtime.onInstalled.addListener(function () { connect(); syncWatch(); syncClipWatch(); });
   chrome.permissions.onAdded.addListener(function () { syncWatch(); syncClipWatch(); });
@@ -390,5 +522,5 @@
   connect();
   syncClipWatch();
 
-  self.Gesher = { connect: connect, unpair: unpair, typeLast: typeLast, gesherFill: gesherFill, localClip: localClip, hash: hash };
+  self.Gesher = { connect: connect, unpair: unpair, typeLast: typeLast, gesherFill: gesherFill, localClip: localClip, hash: hash, quiet: quiet, replyNotif: replyNotif, dropNotif: dropNotif };
 })();

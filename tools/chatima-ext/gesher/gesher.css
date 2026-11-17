@@ -22,3 +22,19 @@ button.danger { border-color: #c62828; color: #ef9a9a; }
 bdi { unicode-bidi: isolate; }
 .pause { width: 100%; border: 2px solid var(--gold); font-weight: 700; }
 .pause.paused { background: #c62828; border-color: #c62828; color: #fff; }
+.ntf-list { display: flex; flex-direction: column; gap: 10px; margin: 10px 0; }
+.ntf-empty { color: var(--muted); font-size: 15px; }
+.ntf { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: grid; grid-template-columns: 36px 1fr; gap: 4px 10px; }
+.ntf.new { border-color: var(--gold); }
+.ntf.focus { box-shadow: 0 0 0 2px var(--gold); }
+.ntf img { width: 32px; height: 32px; border-radius: 8px; grid-row: span 2; }
+.ntf .hd { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.ntf .hd b { font-size: 16px; }
+.ntf .hd span { color: var(--muted); font-size: 13px; }
+.ntf .tx { font-size: 16px; white-space: pre-wrap; word-break: break-word; }
+.ntf .acts { grid-column: 2; display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.ntf .acts button { font-size: 14px; padding: 5px 10px; }
+.ntf .mine { grid-column: 2; color: var(--muted); font-size: 14px; }
+.ntf form { grid-column: 2; display: flex; gap: 8px; margin-top: 6px; }
+.ntf textarea { flex: 1; min-height: 44px; font: inherit; font-size: 16px; padding: 8px; border-radius: 9px; border: 1px solid var(--line); background: transparent; color: var(--text); resize: vertical; }
+input[type=time] { font: inherit; font-size: 15px; background: transparent; color: var(--text); border: 1px solid var(--line); border-radius: 7px; padding: 2px 6px; }
