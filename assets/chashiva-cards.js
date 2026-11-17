@@ -39,6 +39,7 @@
       '<p class="ch-weekline" id="ch-weekline"></p><div class="ch-vsbanner" id="ch-vsbanner" hidden></div>' +
       '<div id="tb-opts" class="tb-opts"></div>' +
       '<div class="ch-bar"><span id="tb-status"></span><span id="tb-score"></span></div>' +
+      '<p class="ch-msg tb-recon" id="tb-recon" role="status" hidden></p>' +
       '<div class="ch-felt tb-felt" id="tb-felt"><div id="tb-board"></div><div class="tb-cover" id="tb-cover" hidden></div></div>' +
       '<ol class="tb-log" id="tb-log"></ol>' +
       '<p class="ch-msg" id="tb-msg" aria-live="polite"></p>' +
@@ -46,11 +47,12 @@
       '<div id="tb-win"></div>';
     var $ = function (id) { return document.getElementById(id); };
     var data = CH.load(G); data.n = Math.min(cfg.maxP, Math.max(cfg.minP, data.n || cfg.defP)); data.names = data.names || ['', '', '', '', '', ''];
-    var T = { mode: 'bot', st: null, seats: [], me: 0, shown: -1, seed: '' }, botTimer = null, finished = false, started = false;
+    var T = { mode: 'bot', st: null, seats: [], me: 0, shown: -1, seed: '', mv: 0, watch: [], turnEnd: 0 }, botTimer = null, finished = false, started = false;
+    var clockT = 0, clockKey = '';
     var live = null; // {ws, id, pid, host, members, seats}
 
     function say(t) { $('tb-msg').textContent = t || ''; }
-    function persist() { if (T.mode === 'live' && !(live && live.isHost)) return; var d = CH.load(G); d.n = data.n; d.names = data.names; d.tab = T.mode; d.cur = d.cur || {}; d.cur[T.mode] = { st: T.st, seats: T.seats, seed: T.seed }; CH.save(G, d); }
+    function persist() { if (T.mode === 'live' && !(live && live.isHost)) return; var d = CH.load(G); d.n = data.n; d.names = data.names; d.tab = T.mode; d.cur = d.cur || {}; d.cur[T.mode] = { st: T.st, seats: T.seats, seed: T.seed }; if (T.mode === 'live' && live) d.cur.live.room = live.id; CH.save(G, d); }
     function myName() { return CH.myName() || 'אתם'; }
     function viewer() { return T.mode === 'phone' ? T.shown : T.me; }
 
@@ -61,7 +63,11 @@
       if (T.mode === 'phone' && !ov && T.shown !== turn) { cover(turn); return; }
       $('tb-cover').hidden = true;
       var view = T.remoteView || cfg.view(T.st, v);
-      cfg.render(view, $('tb-board'), { act: act, seat: v, mine: !ov && turn === v && canAct(), over: !!ov, names: names(), say: say, mode: T.mode });
+      var isLive = T.mode === 'live' && !!live;
+      cfg.render(view, $('tb-board'), { act: act, seat: v, mine: !ov && turn === v && canAct(), over: !!ov, names: names(), say: say, mode: T.mode,
+        send: isLive ? function (d) { live.send('*', d); } : null,
+        seatInfo: isLive ? (T.remoteView ? T.info || [] : seatOn()) : null,
+        turnEnd: isLive ? T.turnEnd : 0, turnSec: cfg.turnSec, pendingMe: !!T.pendingMe });
       var log = view.log || [];
       $('tb-log').innerHTML = log.slice(-4).map(function (x) { return '<li>' + x + '</li>'; }).join('');
       $('tb-status').textContent = ov ? '🏁 המשחק נגמר' : turn === v ? (T.mode === 'phone' ? '👉 התור של ' + names()[v] : '👉 התור שלכם') : '⏳ התור של ' + (names()[turn] || '');
@@ -88,7 +94,7 @@
       var r = cfg.act(T.st, seat, a);
       if (typeof r === 'string') { if (T.mode === 'live' && live && live.isHost && seat !== T.me) live.sendSeat(seat, { k: 'err', m: r }); else say(r); return; }
       if (!started) { started = true; CH.used(TOOL, 'start', { mode: T.mode, n: T.seats.length }); }
-      T.st = r; say('');
+      T.st = r; say(''); T.mv++; armClock();
       if (T.mode === 'phone' && cfg.turn(T.st) !== seat) T.shown = -1;
       persist(); broadcast(); draw(); loop();
     }
@@ -104,8 +110,8 @@
       var v = T.mode === 'phone' ? -1 : T.me, iWon = ov.w.indexOf(v) >= 0, all = names();
       var head = ov.w.map(function (s) { return all[s]; }).join(' ו') + (ov.w.length > 1 ? ' ניצחו' : ' ניצח');
       if (T.mode === 'phone' || !iWon) {
-        if (T.mode !== 'phone') CH.used(TOOL, 'end', { mode: T.mode, r: 'lose' });
-        $('tb-win').innerHTML = '<div class="ch-win"><h2>' + (T.mode === 'phone' ? '🏆 ' + esc(head) + '!' : '💪 הפעם ' + esc(head)) + '</h2><p class="ch-hint">' + (ov.text || '') + '</p><div class="ch-next"><button class="btn btn-gold" type="button" id="tb-again">משחק חדש</button></div></div>';
+        if (T.mode !== 'phone' && v >= 0) CH.used(TOOL, 'end', { mode: T.mode, r: 'lose' });
+        $('tb-win').innerHTML = '<div class="ch-win"><h2>' + (T.mode === 'phone' ? '🏆 ' + esc(head) + '!' : v < 0 ? '🏁 ' + esc(head) + '!' : '💪 הפעם ' + esc(head)) + '</h2><p class="ch-hint">' + (ov.text || '') + '</p><div class="ch-next"><button class="btn btn-gold" type="button" id="tb-again">משחק חדש</button></div></div>';
         $('tb-again').onclick = function () { newGame(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
         if (T.mode === 'phone') CH.used(TOOL, 'end', { mode: 'phone' });
         return;
@@ -149,7 +155,7 @@
       var go = $('tb-names-go'); if (go) go.onclick = newGame;
     }
     function tab(m) {
-      CH.vsReset(); clearTimeout(botTimer); finished = false; T.mode = m; T.remoteView = null;
+      CH.vsReset(); clearTimeout(botTimer); clearTimeout(clockT); clockKey = ''; finished = false; T.mode = m; T.remoteView = null; T.turnEnd = 0; T.watch = []; T.pendingMe = false; T.info = null;
       document.querySelectorAll('#tb-tabs button').forEach(function (b) { b.setAttribute('aria-selected', b.getAttribute('data-m') === m); });
       $('tb-win').innerHTML = ''; say(''); $('tb-opts').innerHTML = ''; $('tb-cover').hidden = true;
       if (m !== 'live' && live) { live.close(); live = null; }
@@ -162,14 +168,72 @@
     document.querySelectorAll('#tb-tabs button').forEach(function (b) { b.onclick = function () { tab(b.getAttribute('data-m')); }; });
 
     // ---------- חדר אונליין ----------
+    // מי שפתח את החדר ("המארח") מחזיק את המשחק: סופר את שעון התור, מושיב מצטרפים ושולח לכל אחד רק את מה שמותר לו לראות.
+    function seatOn() { return T.seats.map(function (s) { return { on: !(s.kind === 'remote' && s.on === false) }; }); }
+    function seatsOut() { return T.seats.map(function (x) { return { name: x.name, kind: x.kind === 'bot' ? 'bot' : 'p', sid: x.pid ? x.pid.slice(0, 6) : '' }; }); }
     function broadcast() {
-      if (T.mode !== 'live' || !live || !live.isHost) return;
-      T.seats.forEach(function (s, k) { if (s.kind === 'remote') live.send(s.pid, { k: 'view', v: cfg.view(T.st, k), seat: k, seats: T.seats.map(function (x) { return { name: x.name, kind: x.kind === 'bot' ? 'bot' : 'p' }; }), turn: cfg.turn(T.st), over: cfg.over(T.st) }); });
+      if (T.mode !== 'live' || !live || !live.isHost || !T.st) return;
+      var base = { seats: seatsOut(), turn: cfg.turn(T.st), over: cfg.over(T.st), te: T.turnEnd ? Math.max(0, T.turnEnd - Date.now()) : 0, info: seatOn() };
+      T.seats.forEach(function (s, k) {
+        if (s.kind !== 'remote') return;
+        var v = cfg.view(T.st, k); if (s.pend && v && v.seat === k) delete s.pend;
+        live.send(s.pid, Object.assign({ k: 'view', v: v, seat: s.pend ? -1 : k, pm: !!s.pend }, base));
+      });
+      if (T.watch.length) { var wv = cfg.view(T.st, -1); T.watch.forEach(function (p) { live.send(p, Object.assign({ k: 'view', v: wv, seat: -1, pm: false }, base)); }); }
     }
+    // שעון תור (רק אצל המארח): נגמר הזמן – הפעולה הבטוחה (בפוקר: צ'ק אם אפשר, אחרת קיפול). מי שהתנתק – כמעט מיד.
+    function armClock() {
+      var on = cfg.turnSec && cfg.timeoutAct && T.mode === 'live' && live && live.isHost && T.st && !cfg.over(T.st);
+      var t = on ? cfg.turn(T.st) : -1, s = T.seats[t];
+      if (!on || !s || s.kind === 'bot') { clearTimeout(clockT); clockKey = ''; T.turnEnd = 0; return; }
+      var off = s.kind === 'remote' && s.on === false, key = T.mv + ':' + t + ':' + off;
+      if (key === clockKey) return;
+      clockKey = key; clearTimeout(clockT);
+      var ms = off ? Math.max(1000, (cfg.botDelayFor && cfg.botDelayFor(T.st)) || 1000) : cfg.turnSec * 1000;
+      if (window.CHTEST && window.CHTEST_TURN) ms = Math.min(ms, window.CHTEST_TURN);
+      T.turnEnd = Date.now() + ms;
+      clockT = setTimeout(function () {
+        if (clockKey !== key || !T.st || cfg.over(T.st)) return;
+        var mv = T.mv, a = cfg.timeoutAct(T.st, t);
+        if (a) { if (!off) CH.used(TOOL, 'turn_timeout'); apply(t, a); }
+        if (T.mv === mv) { clockKey = ''; armClock(); broadcast(); draw(); }
+      }, ms);
+    }
+    // מישהו נכנס לחדר באמצע משחק: בשולחן פתוח – מושב ביד הבאה; אחרת – צופה
+    function seatNew(p) {
+      if (!p || p === live.pid || T.seats.some(function (s) { return s.pid === p; }) || T.watch.indexOf(p) >= 0) return;
+      var mem = live.members.filter(function (x) { return x.pid === p; })[0], nm = mem ? mem.name : 'אורח';
+      if (cfg.liveSeats && cfg.join && !cfg.over(T.st)) {
+        var r = cfg.join(T.st, nm);
+        if (r && typeof r === 'object' && r.seat === T.seats.length) { T.st = r.st; T.seats.push({ name: nm, kind: 'remote', pid: p, on: true, pend: true }); CH.used(TOOL, 'room_midjoin'); return; }
+      }
+      if (cfg.liveSeats) T.watch.push(p);
+    }
+    // המארח רענן את הדף: המשחק חוזר מהשמירה בטלפון שלו
+    function restoreHost() {
+      var cur = (CH.load(G).cur || {}).live;
+      if (!cur || cur.room !== live.id || !cur.st || !cur.seats || cfg.over(cur.st)) return;
+      T.st = cur.st; T.seats = cur.seats; T.seed = cur.seed; T.me = 0; T.watch = []; started = true; finished = false; T.mv++;
+      $('tb-opts').innerHTML = '<p class="ch-hint">🌐 חדר ' + esc(live.id) + ' · ' + T.seats.length + ' שחקנים · המשחק חזר</p>';
+      live.members.forEach(function (x) { if (x.on && x.pid !== live.pid) seatNew(x.pid); });
+      CH.used(TOOL, 'room_restore'); loop();
+    }
+    function relay(from, d) {
+      if (!cfg.onMsg) return;
+      var now = Date.now(); T.emoAt = T.emoAt || {};
+      if (d.k === 'emo') { if (now - (T.emoAt[from] || 0) < 2500) return; T.emoAt[from] = now; }
+      var sid = String(from || '').slice(0, 6), seat = -1;
+      T.seats.forEach(function (s, k) { if (seat < 0 && (s.pid ? s.pid === from : s.sid && s.sid === sid)) seat = k; });
+      cfg.onMsg(d, seat);
+    }
+    function forgetRoom() { var d = CH.load(G); delete d.room; if (d.tab === 'live') d.tab = 'bot'; CH.save(G, d); }
+    function recon(t) { var e = $('tb-recon'); if (!e) return; e.hidden = !t; e.textContent = t || ''; }
+
     function liveLobby(code) {
-      T.st = null; $('tb-board').innerHTML = ''; $('tb-log').innerHTML = ''; $('tb-status').textContent = ''; $('tb-score').textContent = '';
+      T.st = null; T.remoteView = null; T.watch = []; T.pendingMe = false; armClock();
+      $('tb-board').innerHTML = ''; $('tb-log').innerHTML = ''; $('tb-status').textContent = ''; $('tb-score').textContent = '';
       var o = $('tb-opts');
-      if (live && live.id) { lobbyDraw(); return; }
+      if (live && live.id) { if (live.isHost) live.send('*', { k: 'lobby' }); lobbyDraw(); return; }
       o.innerHTML = '<div class="tb-live"><p>פותחים חדר, שולחים לחברים קישור בווטסאפ, וכל אחד משחק מהטלפון שלו. כל אחד רואה רק את הקלפים שלו.</p>' +
         '<input type="text" maxlength="14" id="tb-myname" placeholder="השם שלכם" value="' + esc(CH.myName()) + '" aria-label="השם שלכם">' +
         '<div class="actions"><button class="btn btn-gold" type="button" id="tb-open">🌐 לפתוח חדר</button></div><p class="ch-hint" id="tb-livemsg"></p></div>';
@@ -187,50 +251,107 @@
       }).catch(function () { liveMsg('😕 החדרים האונליין עוד לא פתוחים (השרת בהכנה). בינתיים אפשר לשחק מול המחשב או כמה על טלפון אחד.'); });
     }
     function joinRoom(id) {
-      live = { id: id, pid: pid(), members: [], isHost: false, host: '' };
-      var url = API.replace(/^http/, 'ws') + '/r/' + id + '/ws?pid=' + encodeURIComponent(live.pid) + '&name=' + encodeURIComponent(myName()) + '&g=' + G;
-      var ws; try { ws = new WebSocket(url); } catch (e) { liveMsg('😕 אין חיבור לשרת החדרים.'); return; }
-      live.ws = ws;
-      live.send = function (to, d) { if (ws.readyState === 1) ws.send(JSON.stringify({ t: 'to', to: to, d: d })); };
-      live.sendSeat = function (seat, d) { var s = T.seats[seat]; if (s && s.pid) live.send(s.pid, d); };
-      live.close = function () { try { ws.close(); } catch (e) {} };
-      ws.onerror = function () { liveMsg('😕 אין חיבור לשרת החדרים. אולי הקישור ישן, או שהשרת עוד בהכנה.'); };
-      ws.onclose = function () { if (live && live.ws === ws && T.mode === 'live') say('החיבור לחדר נותק. רעננו את הדף כדי לחזור.'); };
-      ws.onmessage = function (e) {
+      if (live && live.close) live.close();
+      var L = live = { id: id, pid: pid(), members: [], isHost: false, host: '', tries: 0, ok: false, down: 0 };
+      L.send = function (to, d) { if (L.ws && L.ws.readyState === 1) L.ws.send(JSON.stringify({ t: 'to', to: to, d: d })); };
+      L.sendSeat = function (seat, d) { var s = T.seats[seat]; if (s && s.pid) L.send(s.pid, d); };
+      L.close = function () { L.closed = true; clearTimeout(L.rt); recon(''); try { L.ws.close(); } catch (e) {} };
+      // חיבור שנפל מתחבר שוב לבד: 1 → 2 → 4 → 8 שניות, עד דקה
+      function retry() {
+        if (!L.down) L.down = Date.now();
+        if (Date.now() - L.down > 60000) { recon(''); say('החיבור לחדר נותק. רעננו את הדף כדי לחזור.'); return; }
+        var w = [1, 2, 4, 8][Math.min(L.tries, 3)] * 1000; L.tries++;
+        recon('🔄 החיבור נפל – מתחברים מחדש…');
+        clearTimeout(L.rt); L.rt = setTimeout(L.connect, window.CHTEST ? 50 : w);
+      }
+      L.retryNow = function () { if (L.closed || !L.ok || live !== L || (L.ws && L.ws.readyState < 2)) return; L.tries = 0; L.down = Date.now(); clearTimeout(L.rt); L.connect(); };
+      L.connect = function () {
+        clearTimeout(L.rt);
+        var url = API.replace(/^http/, 'ws') + '/r/' + id + '/ws?pid=' + encodeURIComponent(L.pid) + '&name=' + encodeURIComponent(myName()) + '&g=' + G;
+        var ws; try { ws = new WebSocket(url); } catch (e) { if (L.ok) retry(); else liveMsg('😕 אין חיבור לשרת החדרים.'); return; }
+        L.ws = ws;
+        ws.onerror = function () { if (!L.ok && live === L && L.ws === ws) { forgetRoom(); liveMsg('😕 אין חיבור לשרת החדרים. אולי הקישור ישן, או שהשרת עוד בהכנה.'); } };
+        ws.onclose = function (ev) {
+          if (L.closed || live !== L || L.ws !== ws || T.mode !== 'live') return;
+          if (ev.code === 4000) { recon(''); say('החדר נפתח בחלון אחר, וכאן החיבור נסגר.'); return; }
+          if (ev.code === 4001) { recon(''); forgetRoom(); say('החדר נסגר – עברו 24 שעות. אפשר לפתוח חדר חדש.'); return; }
+          if (!L.ok) return;
+          if (!cfg.reconnect) { say('החיבור לחדר נותק. רעננו את הדף כדי לחזור.'); return; }
+          retry();
+        };
+        ws.onmessage = onMsg;
+      };
+      function onMsg(e) {
+        if (live !== L) return;
         var m; try { m = JSON.parse(e.data); } catch (x) { return; }
         if (m.t === 'members' || m.t === 'hello') {
-          live.members = m.members || []; live.host = m.host; live.isHost = m.host === live.pid;
-          if (live.isHost && T.st) { T.seats.forEach(function (s) { if (s.kind === 'remote') s.on = live.members.some(function (x) { return x.pid === s.pid && x.on; }); }); broadcast(); }
+          L.members = m.members || []; L.host = m.host; L.isHost = m.host === L.pid;
+          if (m.t === 'hello') {
+            if (L.ok) CH.used(TOOL, 'room_reconnect');
+            L.ok = true; L.tries = 0; L.down = 0; recon('');
+            var d0 = CH.load(G); d0.tab = 'live'; d0.room = { id: L.id, at: (d0.room && d0.room.id === L.id && d0.room.at) || Date.now() }; CH.save(G, d0);
+            if (L.isHost && !T.st && cfg.reconnect) restoreHost();
+          }
+          if (L.isHost && T.st) {
+            T.seats.forEach(function (s) { if (s.kind === 'remote') s.on = L.members.some(function (x) { return x.pid === s.pid && x.on; }); });
+            T.watch = T.watch.filter(function (p) { return L.members.some(function (x) { return x.pid === p && x.on; }); });
+            armClock(); broadcast(); draw();
+          }
+          if (!L.isHost && T.remoteView) { var hm = L.members.filter(function (x) { return x.pid === L.host; })[0]; say(hm && !hm.on ? '⏳ מי שפתח את החדר התנתק – מחכים שיחזור…' : ''); }
           if (!T.st && !T.remoteView) lobbyDraw();
-          if (m.t === 'hello' && !live.isHost) live.send(live.host, { k: 'hi' });
+          if (m.t === 'hello' && !L.isHost) L.send(L.host, { k: 'hi' });
         } else if (m.t === 'msg') {
           var d = m.d || {};
-          if (live.isHost) {
+          if (d.k === 'emo' || d.k === 'av') { relay(m.from, d); return; }
+          if (L.isHost) {
             if (d.k === 'act') { var seat = T.seats.findIndex(function (s) { return s.pid === m.from; }); if (seat >= 0) apply(seat, d.a); }
-            if (d.k === 'hi' && T.st) broadcast();
+            if (d.k === 'hi' && T.st) { seatNew(m.from); persist(); broadcast(); }
           } else {
             if (d.k === 'view') {
-              T.remoteView = d.v; T.me = d.seat; T.seats = d.seats; finished = false;
+              T.remoteView = d.v; T.me = d.seat; T.seats = d.seats; if (!d.over) finished = false;
+              T.turnEnd = d.te ? Date.now() + d.te : 0; T.info = d.info || null; T.pendingMe = !!d.pm;
               T.st = { _remote: true, turn: d.turn, over: d.over };
-              $('tb-opts').innerHTML = '<p class="ch-hint">🌐 חדר ' + esc(live.id) + '</p>';
+              $('tb-opts').innerHTML = '<p class="ch-hint">🌐 חדר ' + esc(L.id) + (d.seat < 0 ? ' · 👀 ' + (d.pm ? 'נכנסים ביד הבאה' : 'צופים במשחק') : '') + '</p>';
               draw(); if (d.over) finish(d.over);
             }
             if (d.k === 'err') say(d.m);
-            if (d.k === 'lobby') lobbyDraw();
+            if (d.k === 'lobby') {
+              T.st = null; T.remoteView = null; T.pendingMe = false; T.turnEnd = 0; finished = false;
+              $('tb-win').innerHTML = ''; $('tb-board').innerHTML = ''; $('tb-log').innerHTML = ''; $('tb-status').textContent = ''; $('tb-score').textContent = '';
+              lobbyDraw();
+            }
           }
         }
-      };
+      }
+      L.connect();
     }
     function lobbyDraw() {
       if (!live) return;
       var link = CH.vsLink({ g: G, z: 'room:' + live.id }, 'room_' + G);
-      var ppl = live.members.filter(function (x) { return x.on; });
-      var h = '<div class="tb-live"><b>🌐 החדר שלכם: ' + esc(live.id) + '</b><p>מי כבר בחדר: ' + ppl.map(function (x) { return esc(x.name) + (x.pid === live.host ? ' (פתח את החדר)' : ''); }).join(', ') + '</p>' +
+      var ppl = live.members.filter(function (x) { return x.on; }), np = Math.min(ppl.length, cfg.maxP);
+      var want = Math.min(cfg.maxP, Math.max(cfg.minP, np, data.liveN || 0)), bots = want - np;
+      var h = '<div class="tb-live"><p class="ch-hint" style="margin:0">קוד החדר</p><b dir="ltr" style="display:block;text-align:center;font-size:2.1rem;letter-spacing:.18em;line-height:1.15">' + esc(live.id) + '</b>' +
+        '<p style="margin:0">מי בחדר (' + ppl.length + '):</p><ul style="list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:.35rem">' + ppl.map(function (x) {
+          return '<li style="border:1px solid var(--line);border-radius:99px;padding:.25rem .7rem">' + (x.pid === live.host ? '👑 ' : '🙂 ') + esc(x.name) + (x.pid === live.pid ? ' (אתם)' : '') + '</li>';
+        }).join('') + '</ul>' +
         '<div class="actions"><a class="btn btn-gold" target="_blank" rel="noopener" href="https://api.whatsapp.com/send?text=' + encodeURIComponent('🃏 בואו לשחק איתי ' + cfg.name + ' – חדר ' + live.id + ':\n' + link) + '" id="tb-invite"><svg class="ic"><use href="#wa"/></svg> להזמין חברים בווטסאפ</a>' +
-        (live.isHost ? '<button class="btn btn-line" type="button" id="tb-go">▶️ להתחיל (' + Math.max(cfg.minP, ppl.length) + ' שחקנים' + (ppl.length < cfg.minP ? ', עם מחשב' : '') + ')</button>' : '') + '</div>' +
-        (live.isHost ? '<p class="ch-hint">' + (ppl.length < cfg.minP ? 'אם אין מספיק חברים, המחשב משלים את השולחן.' : 'אפשר להתחיל כשכולם בפנים. עד ' + cfg.maxP + ' שחקנים.') + '</p>' : '<p class="ch-hint">מחכים שמי שפתח את החדר יתחיל…</p>') + '</div>';
+        '<button class="btn btn-line" type="button" id="tb-copy">🔗 להעתיק קישור</button></div>';
+      if (live.isHost) {
+        h += '<div id="tb-lx"></div><p class="ch-hint" style="margin:0">כמה מושבים בשולחן? (המחשב משלים את החסרים)</p><div class="ch-chips">';
+        for (var n = Math.max(cfg.minP, np); n <= cfg.maxP; n++) h += '<button type="button" data-ln="' + n + '" class="' + (n === want ? 'on' : '') + '" aria-pressed="' + (n === want) + '">' + n + '</button>';
+        h += '</div><div class="actions"><button class="btn btn-gold" type="button" id="tb-go">▶️ להתחיל – ' + want + ' שחקנים' + (bots ? ' (' + bots + ' מחשב)' : '') + '</button></div>' +
+          '<p class="ch-hint">' + (cfg.liveSeats ? 'מי שמגיע אחרי שהתחלתם – צופה, ובשולחן פתוח נכנס ביד הבאה.' : 'אפשר להתחיל כשכולם בפנים. עד ' + cfg.maxP + ' שחקנים.') + '</p>';
+      } else h += '<p class="ch-hint">מחכים שמי שפתח את החדר יתחיל…</p>';
+      h += '</div>';
       $('tb-opts').innerHTML = h;
       $('tb-invite').onclick = function () { CH.used(TOOL, 'room_invite'); };
+      $('tb-copy').onclick = function () {
+        var b = this; CH.used(TOOL, 'room_copy');
+        var done = function () { b.textContent = '✅ הקישור הועתק'; setTimeout(function () { b.textContent = '🔗 להעתיק קישור'; }, 2500); };
+        try { navigator.clipboard.writeText(link).then(done, function () { window.prompt('העתיקו את הקישור:', link); }); } catch (e) { window.prompt('העתיקו את הקישור:', link); }
+      };
+      if (cfg.lobbyExtra && $('tb-lx')) cfg.lobbyExtra($('tb-lx'), live.isHost);
+      $('tb-opts').querySelectorAll('[data-ln]').forEach(function (b) { b.onclick = function () { data.liveN = +b.getAttribute('data-ln'); var d = CH.load(G); d.liveN = data.liveN; CH.save(G, d); lobbyDraw(); }; });
       var go = $('tb-go'); if (go) go.onclick = liveStart;
     }
     function liveStart() {
@@ -238,12 +359,13 @@
       // מי שפתח את החדר ראשון
       ppl.sort(function (a, b) { return (a.pid === live.pid ? -1 : 0) - (b.pid === live.pid ? -1 : 0); });
       T.seats = ppl.map(function (x) { return { name: x.name, kind: x.pid === live.pid ? 'me' : 'remote', pid: x.pid, on: true }; });
+      var want = Math.min(cfg.maxP, Math.max(cfg.minP, T.seats.length, data.liveN || 0));
       var bn = cfg.botNames || ['רוני', 'נועה', 'איתי', 'מאיה', 'עומר']; var k = 0;
-      while (T.seats.length < cfg.minP) T.seats.push({ name: '🤖 ' + bn[k++], kind: 'bot' });
-      T.me = 0; T.seed = G + '-' + Date.now().toString(36); T.st = cfg.init(T.seed, T.seats.length, names()); finished = false; started = false;
+      while (T.seats.length < want) { T.seats.push({ name: '🤖 ' + (bn[k] || 'מחשב ' + (k + 1)), kind: 'bot' }); k++; }
+      T.me = 0; T.watch = []; T.mv++; T.seed = G + '-' + Date.now().toString(36); T.st = cfg.init(T.seed, T.seats.length, names()); finished = false; started = false;
       $('tb-opts').innerHTML = '<p class="ch-hint">🌐 חדר ' + esc(live.id) + ' · ' + T.seats.length + ' שחקנים</p>';
       CH.used(TOOL, 'room_start', { n: T.seats.length });
-      persist(); broadcast(); draw(); loop();
+      armClock(); persist(); broadcast(); draw(); loop();
     }
     // השחקן המרוחק: turn/over מגיעים מהמארח
     var _turn = cfg.turn, _over = cfg.over;
@@ -252,14 +374,25 @@
 
     // ---------- פתיחה ----------
     var V = CH.vsIn && CH.vsIn.g === G && typeof CH.vsIn.z === 'string' && /^room:[a-z0-9]{4,10}$/.test(CH.vsIn.z) ? CH.vsIn : null;
-    if (V) {
+    // חדר שהיינו בו בשעות האחרונות (רענון, טלפון שנרדם) – חוזרים אליו לבד
+    var R = (function () { var d = CH.load(G), r = d.room; return cfg.reconnect && r && r.id && Date.now() - (r.at || 0) < 23.5 * 3600e3 ? { id: r.id, tab: d.tab } : null; })();
+    function liveResume(id) {
+      T.mode = 'live';
+      document.querySelectorAll('#tb-tabs button').forEach(function (b) { b.setAttribute('aria-selected', b.getAttribute('data-m') === 'live'); });
+      liveLobby(); liveMsg('🔄 חוזרים לחדר ' + id + '…'); joinRoom(id);
+    }
+    window.addEventListener('online', function () { if (live && live.retryNow) live.retryNow(); });
+    document.addEventListener('visibilitychange', function () { if (!document.hidden && live && live.retryNow) live.retryNow(); });
+    if (V && R && R.id === V.z.slice(5)) liveResume(R.id);
+    else if (V) {
       T.mode = 'live';
       document.querySelectorAll('#tb-tabs button').forEach(function (b) { b.setAttribute('aria-selected', b.getAttribute('data-m') === 'live'); });
       CH.turnBanner('🌐 <b>הוזמנתם לחדר ' + esc(V.z.slice(5)) + '</b>' + (V.m ? ' מאת ' + esc(V.m) : '') + '. כתבו את השם שלכם ונכנסים.');
       liveLobby();
       var o = $('tb-opts'); o.querySelector('.actions').innerHTML = '<button class="btn btn-gold" type="button" id="tb-join">🌐 להיכנס לחדר</button>';
       $('tb-join').onclick = function () { saveName(); CH.used(TOOL, 'room_join'); joinRoom(V.z.slice(5)); };
-    } else tab(CH.load(G).tab === 'phone' ? 'phone' : 'bot');
+    } else if (R && R.tab === 'live') liveResume(R.id);
+    else tab(CH.load(G).tab === 'phone' ? 'phone' : 'bot');
     return T;
   };
 })();
