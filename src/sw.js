@@ -19,6 +19,13 @@ self.addEventListener('fetch', function (e) {
   if (req.method === 'POST' && /\/machshev\/sader\/$/.test(new URL(req.url).pathname)) {
     e.respondWith(req.formData().then(function (fd) {
       var files = fd.getAll('files').filter(function (f) { return f && typeof f !== 'string'; });
+      // טקסט ששותף בלי קבצים (הודעה עם קוד אימות): שומרים רגע ב-Cache ופותחים את כלי קוד האימות. לא נשלח לשום שרת.
+      if (!files.length) {
+        var shared = [fd.get('title'), fd.get('text'), fd.get('url')].filter(function (v) { return v && typeof v === 'string'; }).join('\n');
+        return caches.delete('kod-share').then(function () { return caches.open('kod-share'); }).then(function (c) {
+          return c.put('/kod-share/0', new Response(shared, { headers: { 'content-type': 'text/plain; charset=utf-8' } }));
+        }).then(function () { return Response.redirect('/kelim/machshev/kod-imut/?share=1', 303); });
+      }
       var AVX = { opus: 'audio/ogg', ogg: 'audio/ogg', oga: 'audio/ogg', m4a: 'audio/mp4', mp3: 'audio/mpeg', aac: 'audio/aac', amr: 'audio/amr', wav: 'audio/wav', flac: 'audio/flac', mp4: 'video/mp4', '3gp': 'video/3gpp', webm: 'video/webm', mov: 'video/quicktime' };
       var ext = files.length === 1 ? (/\.([a-z0-9]+)$/i.exec(files[0].name || '') || [])[1] : '';
       var byExt = ext ? AVX[ext.toLowerCase()] : '';
