@@ -5,6 +5,10 @@
 //   POST /challenge {device, mode:'video'}           -> {id, gesture, he, gesture2, he2, exp}   שני סימנים, בסדר הזה
 //   POST /check-video {id, device, motion, frames:[{t,mime,data}]} -> {pass, reason, engine, left}  (1.3.0, סרטון קצר)
 //   GET  /ping
+//   GET  /status?device=CODE[&from=HH:MM]            -> טקסט: ok / no   (קיצור הדרך באייפון, מ-17.11.2026)
+//        ok = עבר היום בדיקת תפילין, או שעכשיו לא זמן תפילין (לפני משיכיר / אחרי השקיעה / שבת / חג / חול המועד),
+//        או שבתשעה באב לפני חצות. no = זמן תפילין ועוד לא עבר היום.
+// CORS: רק לאתר (hakelim.com, github.io, localhost) – לדף "נעילת תפילין באייפון".
 // פרטיות: התמונה נבדקת בזיכרון ונזרקת. לא נשמרת בשום מקום, לא נרשמת ביומן.
 // נשמר רק: מונה יומי לכל מכשיר (מזהה אקראי של האפליקציה, מגובב) ואתגרים פתוחים ל-3 דקות.
 // נגד רמאות: אתגר אקראי שחייב להופיע בתמונה, תוקף קצר, שימוש אחד, הגבלת ניסיונות,
@@ -34,9 +38,96 @@ export const GESTURES = [
 const json = (o, status) => new Response(JSON.stringify(o), {
   status: status || 200, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' }
 });
+const ORIGINS = /^https:\/\/(hakelim\.com|www\.hakelim\.com|gilad-rachamim\.github\.io)$|^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+// הוספת CORS לתשובה – רק לבקשה מהאתר. האפליקציה לא שולחת Origin, אז אצלה שום דבר לא משתנה.
+export function cors(request, res) {
+  const o = request.headers.get('origin') || '';
+  if (!ORIGINS.test(o)) return res;
+  const h = new Headers(res.headers);
+  h.set('access-control-allow-origin', o);
+  h.set('vary', 'origin');
+  h.set('access-control-allow-methods', 'GET, POST, OPTIONS');
+  h.set('access-control-allow-headers', 'content-type');
+  h.set('access-control-max-age', '86400');
+  return new Response(res.body, { status: res.status, headers: h });
+}
 export function geminiKeys(env) { return String(env.GEMINI_KEYS || env.GEMINI_KEY || '').split(/[,\s]+/).filter(Boolean); }
 const spent = new Map();
 const pday = () => new Date(Date.now() - 8 * 3600e3).toISOString().slice(0, 10);
+
+// ---------- זמנים ולוח (לקיצור הדרך באייפון). אותן נוסחאות כמו Sun.kt / Luach.kt באפליקציה ----------
+const IL = 'Asia/Jerusalem', JLAT = 31.778, JLON = 35.235;
+export const ilDate = (t = Date.now()) => new Intl.DateTimeFormat('en-CA', { timeZone: IL }).format(new Date(t));
+const R = Math.PI / 180;
+function solar(t) {
+  const l0 = ((280.46646 + t * (36000.76983 + t * 0.0003032)) % 360 + 360) % 360;
+  const m = 357.52911 + t * (35999.05029 - 0.0001537 * t);
+  const e = 0.016708634 - t * (0.000042037 + 0.0000001267 * t);
+  const c = Math.sin(m * R) * (1.914602 - t * (0.004817 + 0.000014 * t)) + Math.sin(2 * m * R) * (0.019993 - 0.000101 * t) + Math.sin(3 * m * R) * 0.000289;
+  const om = 125.04 - 1934.136 * t;
+  const app = l0 + c - 0.00569 - 0.00478 * Math.sin(om * R);
+  const mo = 23 + (26 + (21.448 - t * (46.815 + t * (0.00059 - t * 0.001813))) / 60) / 60;
+  const ob = mo + 0.00256 * Math.cos(om * R);
+  const decl = Math.asin(Math.sin(ob * R) * Math.sin(app * R));
+  const y = Math.tan(ob * R / 2) ** 2;
+  const eq = 4 / R * (y * Math.sin(2 * l0 * R) - 2 * e * Math.sin(m * R) + 4 * e * y * Math.sin(m * R) * Math.cos(2 * l0 * R) -
+    0.5 * y * y * Math.sin(4 * l0 * R) - 1.25 * e * e * Math.sin(2 * m * R));
+  return [eq, decl];
+}
+// זמן השמש (מילישניות UTC) בתאריך YYYY-MM-DD. zenith 90.833 = זריחה/שקיעה, 101.5 = משיכיר (כמו באפליקציה ובאתר).
+export function sunAt(date, zenith, rise, lat = JLAT, lon = JLON) {
+  const d0 = Date.parse(date + 'T00:00:00Z'), jd0 = d0 / 864e5 + 2440587.5;
+  let min = 720 - 4 * lon;
+  for (let i = 0; i < 3; i++) {
+    const [eq, decl] = solar((jd0 + min / 1440 - 2451545) / 36525);
+    const ch = Math.cos(zenith * R) / (Math.cos(lat * R) * Math.cos(decl)) - Math.tan(lat * R) * Math.tan(decl);
+    if (ch < -1 || ch > 1) return null;
+    const ha = Math.acos(ch) / R;
+    min = 720 - 4 * lon - eq + (rise ? -4 * ha : 4 * ha);
+  }
+  return d0 + Math.round(min * 60) * 1000;
+}
+// סוג היום – כמו Luach.kind באפליקציה (ארץ ישראל, יום טוב אחד). off = שבת/חג, moed = חול המועד, av = תשעה באב.
+export function dayKind(date) {
+  const t = new Date(date + 'T12:00:00Z');
+  if (t.getUTCDay() === 6) return { off: true, why: 'שבת' };
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-u-ca-hebrew', { timeZone: 'UTC', month: 'long', day: 'numeric' })
+    .formatToParts(t).map(x => [x.type, x.value]));
+  const m = p.month, d = +p.day;
+  if (m === 'Tishri') {
+    if (d === 1 || d === 2) return { off: true, why: 'ראש השנה' };
+    if (d === 10) return { off: true, why: 'יום כיפור' };
+    if (d === 15) return { off: true, why: 'סוכות' };
+    if (d >= 16 && d <= 21) return { off: false, moed: true, why: 'חול המועד סוכות' };
+    if (d === 22) return { off: true, why: 'שמיני עצרת' };
+  }
+  if (m === 'Nisan') {
+    if (d === 15) return { off: true, why: 'פסח' };
+    if (d >= 16 && d <= 20) return { off: false, moed: true, why: 'חול המועד פסח' };
+    if (d === 21) return { off: true, why: 'שביעי של פסח' };
+  }
+  if (m === 'Sivan' && d === 6) return { off: true, why: 'שבועות' };
+  if (m === 'Av' && (d === 9 || (d === 10 && t.getUTCDay() === 0))) return { off: false, av: true, why: 'תשעה באב' };
+  return { off: false, why: '' };
+}
+// האם עכשיו זמן שבו החסימה באייפון פעילה (לפני שבדקו תפילין היום). from = "HH:MM" שעון ישראל, לא לפני משיכיר.
+export function lockTime(now = Date.now(), from = '') {
+  const date = ilDate(now), k = dayKind(date);
+  if (k.off || k.moed) return false;
+  const sunset = sunAt(date, 90.833, false);
+  if (sunset && now >= sunset) return false;
+  let start = sunAt(date, 101.5, true) || Date.parse(date + 'T04:30:00Z');
+  if (k.av) start = Math.max(start, (sunAt(date, 90.833, true) + sunset) / 2); // תשעה באב: מניחים במנחה – מחצות
+  const f = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(from || '');
+  if (f) {
+    // ההפרש בין שעון ישראל ל-UTC ביום הזה
+    const noon = Date.parse(date + 'T12:00:00Z');
+    const hm = new Intl.DateTimeFormat('en-GB', { timeZone: IL, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(noon)).split(':');
+    const off = ((+hm[0] - 12) * 60 + +hm[1]) * 60000;
+    start = Math.max(start, Date.parse(date + 'T00:00:00Z') + (+f[1] * 60 + +f[2]) * 60000 - off);
+  }
+  return now >= start;
+}
 
 async function sha(s) {
   const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
@@ -154,6 +245,7 @@ async function check(request, env) {
   }
   // TEST_PASS קיים רק ב-.dev.vars לבדיקה מקומית (wrangler dev). אף פעם לא כסוד בשרת.
   const pass = verdict(o) || (env.TEST_PASS === '1' && ['localhost', '127.0.0.1'].includes(new URL(request.url).hostname));
+  if (pass) await call(env, 'done', { who, day: ilDate() });
   const reason = pass ? 'רואים תפילין. יישר כוח!' : (why(o) || String(o.reason_he || '').slice(0, 160) || 'התמונה לא עברה.');
   return json({ pass, reason, engine, left: ch.left,
     parts: { rosh: !!o.shel_rosh, yad: !!o.shel_yad, gesture: !!o.gesture, hand: !!o.wrapped_hand, screen: o.screen !== false, live: !!o.live } });
@@ -262,21 +354,41 @@ async function checkVideo(request, env) {
   const miss = vwhy(o, n);
   // TEST_PASS קיים רק ב-.dev.vars לבדיקה מקומית (wrangler dev). אף פעם לא כסוד בשרת.
   const pass = !miss || (env.TEST_PASS === '1' && ['localhost', '127.0.0.1'].includes(new URL(request.url).hostname));
+  if (pass) await call(env, 'done', { who, day: ilDate() });
   const f = (o && Array.isArray(o.frames) ? o.frames : []).slice(0, n);
   return json({ pass, reason: pass ? 'רואים תפילין. יישר כוח!' : miss, engine, left: ch.left,
     frames: f.map(x => ({ rosh: !!(x && x.shel_rosh), yad: !!(x && x.shel_yad), a: !!(x && x.gesture_a), b: !!(x && x.gesture_b), screen: !(x && x.screen === false) })),
     parts: { same: !!(o && o.same_person), motion: !!(o && o.motion), hand: !!(o && o.wrapped_hand), screen: !(o && o.screen === false), live: !!(o && o.live) } });
 }
 
+// קיצור הדרך באייפון: טקסט פשוט ok / no. בלי מכסה. at= רק לבדיקת הלוח (בלי "עבר היום").
+const text = s => new Response(s, { headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } });
+async function status(url, env) {
+  const d = dev(url.searchParams.get('device'));
+  if (!d) return text('bad');
+  const at = url.searchParams.get('at');
+  const now = at ? Date.parse(at) : Date.now();
+  if (!Number.isFinite(now)) return text('bad');
+  if (!lockTime(now, url.searchParams.get('from') || '')) return text('ok');
+  if (at) return text('no');
+  const who = (await sha('tf|' + d)).slice(0, 16);
+  const r = await call(env, 'is', { who, day: ilDate(now) });
+  return text(r.done ? 'ok' : 'no');
+}
+
+async function route(request, env) {
+  const url = new URL(request.url);
+  if (request.method === 'OPTIONS') return new Response(null, { status: 204 });
+  if (url.pathname === '/ping') return json({ ok: true, gemini: geminiKeys(env).length, ai: !!env.AI });
+  if (request.method === 'GET' && url.pathname === '/status') return status(url, env);
+  if (request.method === 'POST' && url.pathname === '/challenge') return challenge(request, env);
+  if (request.method === 'POST' && url.pathname === '/check') return check(request, env);
+  if (request.method === 'POST' && url.pathname === '/check-video') return checkVideo(request, env);
+  return json({ error: 'not_found' }, 404);
+}
+
 export default {
-  async fetch(request, env) {
-    const url = new URL(request.url);
-    if (url.pathname === '/ping') return json({ ok: true, gemini: geminiKeys(env).length, ai: !!env.AI });
-    if (request.method === 'POST' && url.pathname === '/challenge') return challenge(request, env);
-    if (request.method === 'POST' && url.pathname === '/check') return check(request, env);
-    if (request.method === 'POST' && url.pathname === '/check-video') return checkVideo(request, env);
-    return json({ error: 'not_found' }, 404);
-  }
+  async fetch(request, env) { return cors(request, await route(request, env)); }
 };
 
 // אתגרים פתוחים (3 דקות) + מונה יומי למכשיר. בלי תמונות.
@@ -303,6 +415,12 @@ export class Quota {
       await this.s.put('q', q);
       return Response.json({ g: c.g, g2: c.g2 || '', left: b.per - n - 1 });
     }
+    // "עבר היום" למכשיר (מזהה מגובב), לקיצור הדרך באייפון. נשמר רק התאריך האחרון.
+    if (path === '/done') {
+      await this.s.put('ok:' + b.who, b.day);
+      return Response.json({ ok: true });
+    }
+    if (path === '/is') return Response.json({ done: (await this.s.get('ok:' + b.who)) === b.day });
     return Response.json({ error: 'path' });
   }
 }
