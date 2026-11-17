@@ -82,5 +82,21 @@
 .bz-leg .l-fert{background:rgba(95,191,166,.5)}
 .bz-leg .l-ov{background:var(--gold)}
 .bz-steps{padding-inline-start:1.3rem;line-height:1.8}
+/* שיבוץ ביומן והכנות ללידה */
+.hr-cal{margin:1.2rem 0;padding:1rem 1.1rem;border-radius:16px;border:1px solid rgba(95,191,166,.45);background:rgba(95,191,166,.07)}
+.hr-cal .hr-h3{margin-top:0}
+.hr-cal p{margin:.2rem 0 .8rem;color:var(--body);line-height:1.7}
+.hr-cal .opt{color:var(--muted);font-size:.85rem;margin:.5rem 0 0}
+.hr-gl{margin-top:.8rem}
+.hr-gl summary{cursor:pointer;color:var(--gold-hi)}
+.hr-gl ul{list-style:none;padding:0;margin:.5rem 0 0;display:grid;gap:.3rem}
+.hr-gl li{display:flex;justify-content:space-between;align-items:center;gap:.6rem;padding:.45rem .6rem;border:1px solid var(--line);border-radius:10px}
+.hr-gl li span{color:var(--cream);font-size:.92rem}
+.hr-gl li small{display:block;color:var(--muted);font-size:.8rem}
+.hr-gl li a{white-space:nowrap;color:var(--gold-hi);text-decoration:none;border:1px solid var(--gold-soft);border-radius:99px;padding:.25rem .7rem;font-size:.85rem}
+.hr-prep{display:grid;gap:.7rem}
+.hr-prep .hr-part h3{font-family:var(--serif);color:var(--cream);font-size:1.12rem;margin:0 0 .35rem}
+.hr-prep ul{margin:.3rem 0;padding-inline-start:1.2rem;color:var(--body);line-height:1.75}
+.hr-prep .when{color:var(--gold-hi);font-size:.88rem}
 @media (max-width:420px){.hr-big strong{font-size:1.9rem}.bz-grid .d{min-height:2.5rem}}
 @media print{.hr-mohel,.share-row{display:none}}
