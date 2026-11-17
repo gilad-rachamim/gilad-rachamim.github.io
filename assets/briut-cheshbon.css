@@ -1,0 +1,12 @@
+/* מחשבון BMI ומחשבון קלוריות */
+.bm-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.bm-cat{font-family:var(--sans,inherit);font-size:1rem;font-weight:700;padding:.15rem .6rem;border-radius:99px;vertical-align:middle;margin-inline-start:.4rem}
+.bm-cat.ok{background:rgba(95,191,166,.18);color:#7fe0c4}.bm-cat.lo{background:rgba(124,196,255,.15);color:#9ccfff}
+.bm-cat.mid{background:rgba(255,179,92,.16);color:#ffc27a}.bm-cat.hi{background:rgba(242,155,143,.16);color:#f6a99e}
+.bm-scale{position:relative;height:12px;border-radius:99px;margin:1rem 0 .3rem;direction:ltr;background:linear-gradient(90deg,#7cc4ff 0 14%,#5fbfa6 14% 40%,#ffb35c 40% 60%,#f2786b 60%)}
+.bm-scale i{position:absolute;top:-5px;width:4px;height:22px;border-radius:2px;background:var(--cream);box-shadow:0 0 0 2px var(--ink);transform:translateX(-2px);left:auto}
+.bm-legend{display:flex;justify-content:space-between;direction:ltr;color:var(--muted);font-size:.78rem}
+.bm-legend span{direction:rtl}
+.bm-tbl{list-style:none;padding:0;display:grid;gap:.35rem}
+.bm-tbl b{display:inline-block;min-width:7.5rem;color:var(--cream)}
+.gr-links{text-align:center;margin:1.2rem 0 .4rem;color:var(--muted);line-height:2}.gr-links a{color:var(--gold);text-decoration:none;white-space:nowrap}

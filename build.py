@@ -355,6 +355,59 @@ def seo_related(p):
     return ('\n<section class="k-sec rel no-print" aria-labelledby="rel-h">\n  <h2 id="rel-h">עוד כלים בחינם שאולי יעזרו</h2>\n  <div class="dom">'
             + "".join(card(c) for c in pick) + f"</div>\n  {more}\n</section>\n")
 
+# ---------- מפת האתר לאנשים (/mapa/): כל הדפים שבמפת האתר, לפי אתר ותחום. נוצרת בכל build, אז לא מתיישנת ----------
+# גילעד (17.11.2026): "כדאי את הדפים המרכזיים שמפנים לכל האתר כמו הדף הראשי או המפה". בדף: {{mapa}} במקום הרשימה.
+MAPA_SITES = [("kelim", "/kelim/"), ("kodesh", "/kodesh/"), ("limudim", "/limudim/"), ("kesef", "/kesef/"), ("bait", "/bait/"),
+              ("esek", "/esek/"), ("nefesh", "/nefesh/"), ("mohel", "/mohel/")]
+def mapa_html():
+    items = []
+    for _p in sorted(SRC.rglob("*.html")):
+        _raw = _p.read_text(encoding="utf-8")
+        _m = re.match(r"\s*<!--meta\s*(\{.*?\})\s*-->", _raw, re.S)
+        if not _m:
+            continue
+        _meta = json.loads(_m.group(1))
+        if not in_sitemap(_meta):
+            continue
+        rel = _p.relative_to(SRC).as_posix()
+        u = "/" + (rel[:-len("index.html")] if rel.endswith("index.html") else rel)
+        if u == "/mapa/":
+            continue
+        _h1 = re.search(r"<h1[^>]*>(.*?)</h1>", _raw, re.S)
+        name = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", _h1.group(1))).strip() if _h1 else ""
+        name = name or re.split(r"\s[–—|]\s|:\s", _meta["title"])[0].strip()
+        items.append((u, name))
+    names = dict(items)
+    out, used = [], set()
+    for key, home in MAPA_SITES:
+        mine = [(u, n) for u, n in items if u.startswith(home)]
+        if not mine:
+            continue
+        used.update(u for u, _ in mine)
+        title = SITES[key]["name"] if key in SITES else "אתר המוהל – ברית מילה"
+        groups = {}
+        for u, n in mine:
+            seg = u[len(home):].split("/")[0]
+            groups.setdefault(seg, []).append((u, n))
+        loose = [it for s, g in groups.items() for it in g if s == "" or len(g) < 2]
+        sid = "m-" + key
+        out.append(f'<section class="mp-site" aria-labelledby="{sid}"><h2 id="{sid}"><a href="{home}">{html_lib.escape(title, quote=False)}</a> <small>{len(mine)} דפים</small></h2>')
+        if loose:
+            out.append('<ul class="mp-list">' + "".join(f'<li><a href="{u}">{html_lib.escape(n, quote=False)}</a></li>' for u, n in loose) + "</ul>")
+        for seg, g in groups.items():
+            if seg == "" or len(g) < 2:
+                continue
+            dhome = home + seg + "/"
+            dname = names.get(dhome, seg)
+            out.append(f'<details class="mp-dom" open><summary><a href="{dhome}">{html_lib.escape(dname, quote=False)}</a> <small>{len(g)}</small></summary><ul class="mp-list">'
+                       + "".join(f'<li><a href="{u}">{html_lib.escape(n, quote=False)}</a></li>' for u, n in g if u != dhome) + "</ul></details>")
+        out.append("</section>")
+    rest = [(u, n) for u, n in items if u not in used]
+    if rest:
+        out.append('<section class="mp-site" aria-labelledby="m-od"><h2 id="m-od">עוד דפים</h2><ul class="mp-list">'
+                   + "".join(f'<li><a href="{u}">{html_lib.escape(n, quote=False)}</a></li>' for u, n in rest) + "</ul></section>")
+    return f'<p class="mp-count">{len(items)} דפים באתר, כולם בחינם.</p>\n' + "\n".join(out)
+
 # ---------- "בחינם, ללא הגבלה ובלי פרסומות": פס קטן בראש כל דף בתתי-האתרים ----------
 # גילעד (11.11.2026): "אצלי זה גם בחינם גם ללא הגבלה וגם בלי פרסומות!! רק מרצון של חסד!!"
 # ועל כלים עם מכסה: "מי שיהיה טיפה שותף זה יהיה לו ללא הגבלה אז כן זה נכון שאני כותב ללא הגבלה!!"
@@ -473,6 +526,8 @@ for path in sorted(SRC.rglob("*.html")):
         raise SystemExit(f"{path}: חסר בלוק meta")
     meta = json.loads(m.group(1))
     content = leadforms(raw[m.end():]).replace("{{shipurim_list}}", shipurim_list())
+    if "{{mapa}}" in content:
+        content = content.replace("{{mapa}}", mapa_html())
     if meta.get("site") == "nefesh":
         content = nefesh_blocks(content)
     if meta.get("site") == "kesef":
