@@ -1,0 +1,86 @@
+/* הריון ולידה: מחשבון הריון, דפי השבועות ומחשבון ביוץ */
+.tool [hidden],.k-form [hidden]{display:none!important}
+.k-form select,.k-form input[type=date],.k-form input[type=number]{width:100%;font:inherit;font-size:1.05rem;color:var(--cream);background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;padding:.7rem .85rem;color-scheme:dark}
+.k-form select option{color:#16130f}
+.k-form .opt{display:block;color:var(--muted);font-size:.88rem;margin-top:.25rem}
+.hr-safe{color:var(--muted);font-size:.9rem;margin-top:.8rem}
+#hr-res,#bz-res{margin-top:1.3rem}
+.hr-big{display:grid;gap:.15rem;text-align:center;padding:1.1rem;border:1px solid var(--gold-soft);border-radius:16px;background:rgba(216,179,95,.08)}
+.hr-big .lbl,.hr-week .lbl,.bz-row .lbl{color:var(--muted);font-size:.9rem}
+.hr-big strong{font-family:var(--serif);font-size:2.2rem;color:var(--cream);direction:ltr}
+.hr-big .hd,.bz-row .hd{color:var(--gold-hi)}
+.hr-now{font-size:1.2rem;color:var(--cream);margin:1rem 0 .4rem;text-align:center}
+.hr-now b{color:var(--gold-hi)}
+.hr-bar{height:12px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.hr-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:99px}
+.hr-left{text-align:center;color:var(--body);margin:.45rem 0 1rem}
+.hr-week{display:grid;gap:.15rem;padding:.9rem 1rem;border-radius:14px;border:1px solid var(--gold);text-decoration:none;color:var(--body);background:rgba(216,179,95,.06)}
+.hr-week b{font-size:1.2rem;color:var(--cream)}
+.hr-h3{font-family:var(--serif);color:var(--cream);font-size:1.2rem;margin:1.3rem 0 .5rem}
+.hr-miles{list-style:none;display:grid;gap:.35rem;padding:0;margin:0}
+.hr-miles li{display:grid;grid-template-columns:1fr auto;gap:.1rem .7rem;padding:.55rem .75rem;border:1px solid var(--line);border-radius:12px}
+.hr-miles li span{direction:ltr;text-align:left;color:var(--cream);white-space:nowrap}
+.hr-miles li small{color:var(--muted);grid-column:1/-1;font-size:.85rem}
+.hr-miles li.past{opacity:.5}
+.hr-mohel{margin:1.2rem 0;padding:1rem 1.1rem;border-radius:14px;border:1px dashed var(--gold-soft);background:rgba(95,191,166,.06)}
+.hr-mohel b{display:block;color:var(--gold-hi);font-family:var(--serif);font-size:1.1rem;margin-bottom:.3rem}
+.hr-mohel p{margin:0;color:var(--body)}
+/* דפי השבוע */
+.hr-mine{padding:.6rem .9rem;border-radius:12px;background:rgba(95,191,166,.1);border:1px solid rgba(95,191,166,.35);color:var(--cream);margin-bottom:1rem}
+.hr-size{display:grid;grid-template-columns:auto 1fr;gap:.2rem 1rem;align-items:center;padding:1rem 1.1rem;border-radius:16px;border:1px solid var(--gold-soft);background:rgba(216,179,95,.08);margin-bottom:1rem}
+.hr-size .em{font-size:2.6rem;grid-row:span 2}
+.hr-size b{font-family:var(--serif);font-size:1.35rem;color:var(--cream)}
+.hr-size span{color:var(--muted)}
+.hr-part{padding:1rem 1.1rem;border:1px solid var(--line);border-radius:14px;margin-bottom:.8rem}
+.hr-part h2{font-family:var(--serif);color:var(--cream);font-size:1.25rem;margin:0 0 .4rem}
+.hr-part p{margin:.3rem 0;color:var(--body);line-height:1.7}
+.hr-part.good{background:rgba(216,179,95,.07);border-color:var(--gold-soft)}
+.hr-part.good p{font-size:1.15rem;color:var(--cream)}
+.hr-part.torah blockquote{margin:.4rem 0;padding:.6rem .9rem;border-right:3px solid var(--gold);font-family:var(--serif);font-size:1.2rem;color:var(--cream);background:rgba(0,0,0,.15);border-radius:8px}
+.hr-part.torah cite{font-style:normal;color:var(--gold-hi);font-size:.92rem}
+.hr-part.doc ul,.hr-tests ul{margin:.3rem 0;padding-inline-start:1.2rem;color:var(--body);line-height:1.7}
+.hr-tests{padding:.9rem 1.1rem;border-radius:14px;border:1px solid rgba(95,191,166,.35);background:rgba(95,191,166,.06);margin-bottom:.8rem}
+.hr-tests h2{font-size:1.1rem;color:var(--cream);margin:0 0 .3rem;font-family:var(--serif)}
+.hr-pn{display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;margin:1rem 0}
+.hr-src{font-size:.9rem;color:var(--muted)}
+.hr-src ul{padding-inline-start:1.2rem;line-height:1.8}
+.hr-src a{color:var(--muted)}
+.hr-weeks{display:grid;grid-template-columns:repeat(auto-fill,minmax(3.4rem,1fr));gap:.4rem;margin:.5rem 0 1rem}
+.hr-weeks a{display:block;text-align:center;padding:.5rem 0;border:1px solid var(--line);border-radius:10px;color:var(--cream);text-decoration:none}
+.hr-weeks a:hover,.hr-weeks a.cur{border-color:var(--gold);background:rgba(216,179,95,.12)}
+.hr-tri{color:var(--gold-hi);font-family:var(--serif);font-size:1.05rem;margin:.8rem 0 .2rem}
+/* מחשבון ביוץ */
+.bz-chk{display:flex;gap:.5rem;align-items:center;margin:.3rem 0 .8rem;color:var(--body)}
+.bz-chk input{width:1.2rem;height:1.2rem;accent-color:var(--gold)}
+.bz-two{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.bz-out{display:grid;gap:.5rem}
+.bz-row{display:grid;gap:.15rem;padding:.75rem .9rem;border-radius:12px;border:1px solid var(--line)}
+.bz-row b{color:var(--cream);font-size:1.15rem}
+.bz-row .to{color:var(--muted);font-size:.85rem}
+.bz-row .sub{color:var(--muted);font-size:.88rem}
+.bz-ov{border-color:var(--gold);background:rgba(216,179,95,.1)}
+.bz-fert{border-color:rgba(95,191,166,.5);background:rgba(95,191,166,.08)}
+.bz-tst{border-color:rgba(150,170,230,.5);background:rgba(150,170,230,.07)}
+.bz-cal-h{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin:1.2rem 0 .5rem}
+.bz-cal-h b{text-align:center;color:var(--cream);font-family:var(--serif);font-size:1.15rem}
+.bz-cal-h small{display:block;color:var(--gold-hi);font-size:.85rem;font-family:var(--sans,inherit)}
+.bz-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.bz-grid .dn{text-align:center;color:var(--muted);font-size:.85rem;padding:.2rem 0}
+.bz-grid .d{display:grid;justify-items:center;padding:.3rem 0;border-radius:8px;border:1px solid transparent;min-height:2.8rem}
+.bz-grid .d b{color:var(--cream);font-weight:600}
+.bz-grid .d small{color:var(--muted);font-size:.7rem}
+.bz-grid .d.p1{border-color:rgba(232,140,140,.55)}
+.bz-grid .d.tst{background:rgba(150,170,230,.16)}
+.bz-grid .d.fert{background:rgba(95,191,166,.22)}
+.bz-grid .d.ov{background:var(--gold)}
+.bz-grid .d.ov b,.bz-grid .d.ov small{color:var(--ink)}
+.bz-grid .d.today{outline:2px solid var(--cream);outline-offset:-2px}
+.bz-leg{display:flex;flex-wrap:wrap;gap:.4rem .9rem;margin:.6rem 0;font-size:.85rem;color:var(--body)}
+.bz-leg i{display:inline-block;width:.9rem;height:.9rem;border-radius:4px;vertical-align:-2px;margin-inline-end:.3rem}
+.bz-leg .l-p1{border:2px solid rgba(232,140,140,.7)}
+.bz-leg .l-tst{background:rgba(150,170,230,.4)}
+.bz-leg .l-fert{background:rgba(95,191,166,.5)}
+.bz-leg .l-ov{background:var(--gold)}
+.bz-steps{padding-inline-start:1.3rem;line-height:1.8}
+@media (max-width:420px){.hr-big strong{font-size:1.9rem}.bz-grid .d{min-height:2.5rem}}
+@media print{.hr-mohel,.share-row{display:none}}
