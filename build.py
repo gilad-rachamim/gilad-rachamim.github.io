@@ -449,6 +449,8 @@ def chesed_band(p, meta):
         chips, sub = ["הכול בחינם", "בלי פרסומות", "רוב הכלים ללא שום הגבלה"], CHESED_SUB
     else:
         chips, sub = ["בחינם", "ללא הגבלה", "בלי פרסומות"], CHESED_SUB
+    if not meta.get("_login"):  # שער המקום הראשון (17.11.2026): בכל דף כתוב במפורש "בלי הרשמה"; לא בדף עם כניסת גוגל
+        sub = sub.replace("בלי פרסומות, מתוך", "בלי הרשמה ובלי פרסומות, מתוך") if "בלי פרסומות, מתוך" in sub else sub.replace("כאן לא, מתוך", "כאן לא, וגם בלי הרשמה – מתוך")
     box = CHESED_CODE if any(p.startswith(l) for l in CHESED_PARTNER) and not p.startswith("/kelim/shir/karaoke/") else ""  # בקריוקי השותפות בתוך הבוט
     return ('<div class="chesed no-print" role="note"><p class="chesed-t">' + "".join(f"<b>✓ {c}</b>" for c in chips)
             + f'</p><p class="chesed-s">{sub}</p>{box}</div>')
@@ -585,7 +587,7 @@ for path in sorted(SRC.rglob("*.html")):
             "nav": "".join(f'<a href="{h}"' + (' aria-current="page"' if meta.get("nav") == k else "") + f'>{l}</a>' for k, h, l in site["nav"]),
             "tool": meta.get("tool", ""),
             "shipurim": shipurim_line(meta.get("tool", "")),
-            "chesed": chesed_band(url_path, meta),
+            "chesed": chesed_band(url_path, dict(meta, _login="gsi/client" in raw or "accounts.google.com" in raw)),
             "fb_note": fb_note(meta.get("tool", "")),
             "lead_endpoint": LEAD_ENDPOINT,
             "site_css": "".join(f'<link rel="stylesheet" href="{c}">' for c in site.get("css", [])),
