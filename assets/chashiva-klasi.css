@@ -1,0 +1,41 @@
+/* משחקים קלאסיים: שולה המוקשים, נחש, סוליטר */
+.kl-bar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;justify-content:center;margin:.4rem 0 .8rem}
+.kl-stat{display:flex;gap:1rem;justify-content:center;color:var(--body);font-size:1.02rem;margin-bottom:.6rem}
+.kl-stat b{color:var(--cream);font-variant-numeric:tabular-nums}
+.kl-best{color:var(--muted);text-align:center;font-size:.92rem;min-height:1.2em;margin-top:.4rem}
+.mk-msg,.sl-msg,.sn-msg{text-align:center;color:var(--body);min-height:2.6em;margin:.6rem 0}
+.mk-msg.win,.sl-msg.win{color:#7fe0c4;font-weight:700}.mk-msg.lose{color:#f29b8f;font-weight:700}
+/* שולה המוקשים */
+.mk-board{display:grid;grid-template-columns:repeat(var(--w),1fr);gap:2px;max-width:min(100%,30rem);margin:0 auto;direction:ltr;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.mk-c{aspect-ratio:1;border:0;border-radius:4px;background:#2b4a46;box-shadow:inset 0 -3px 0 rgba(0,0,0,.25);font:700 clamp(.75rem,3.6vw,1.05rem)/1 system-ui,sans-serif;color:var(--cream);padding:0;cursor:pointer;-webkit-touch-callout:none}
+.mk-c:hover{background:#355a55}.mk-c.o{background:#13221f;box-shadow:none;cursor:default}.mk-c.boom{background:#7a2b25}
+.mk-c.n1{color:#7cc4ff}.mk-c.n2{color:#7fe0a0}.mk-c.n3{color:#ff8f80}.mk-c.n4{color:#c9a0ff}.mk-c.n5{color:#ffb35c}.mk-c.n6{color:#5fe0e0}.mk-c.n7,.mk-c.n8{color:#fff}
+#mk-flag[aria-pressed=true]{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+/* נחש */
+.sn-wrap{max-width:480px;margin:0 auto}
+#sn-cv{display:block;width:100%;height:auto;border-radius:14px;border:1px solid var(--line);touch-action:none}
+.sn-pad{display:grid;grid-template-columns:repeat(3,3.4rem);grid-template-rows:repeat(2,3.1rem);gap:.35rem;justify-content:center;margin:.8rem auto 0;direction:ltr}
+.sn-pad button{font-size:1.35rem;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--cream);cursor:pointer;touch-action:manipulation}
+.sn-pad [data-sn=ArrowUp]{grid-column:2}.sn-pad [data-sn=ArrowLeft]{grid-column:1;grid-row:2}.sn-pad [data-sn=ArrowDown]{grid-column:2;grid-row:2}.sn-pad [data-sn=ArrowRight]{grid-column:3;grid-row:2}
+/* סוליטר */
+.tool#sl{max-width:46rem;padding:0 .5rem}
+.sl-top,.sl-tab{display:grid;grid-template-columns:repeat(7,1fr);gap:clamp(3px,1.2vw,8px);direction:ltr}
+.sl-top{margin-bottom:.8rem}
+#sl-stock{grid-column:1}#sl-waste{grid-column:2}#sl-found{grid-column:4/span 4;display:grid;grid-template-columns:repeat(4,1fr);gap:inherit}
+.sl-card,.sl-slot{position:relative;display:block;width:100%;aspect-ratio:5/7;border-radius:clamp(4px,1vw,8px);padding:0;font:inherit}
+.sl-slot{border:1.5px dashed rgba(255,255,255,.18);color:rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center;font-size:clamp(.9rem,3.5vw,1.4rem);background:transparent}
+button.sl-slot{cursor:pointer}
+.sl-card{background:#fbf7ee;border:1px solid #c9bfa8;color:#1d1d1d;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.35);text-align:start;overflow:hidden}
+.sl-card.red{color:#c0262d}
+.sl-card b{position:absolute;top:2px;left:3px;font:700 clamp(.62rem,2.9vw,1rem)/1 system-ui,sans-serif}
+.sl-card i{position:absolute;top:2px;right:3px;font-style:normal;font-size:clamp(.55rem,2.6vw,.9rem);line-height:1}
+.sl-card em{position:absolute;bottom:8%;left:0;right:0;text-align:center;font-style:normal;font-size:clamp(1rem,5.5vw,2rem);line-height:1}
+.sl-card.back{background:repeating-linear-gradient(45deg,#1f5f57 0 5px,#2a7569 5px 10px);border:2px solid #fbf7ee;cursor:pointer}
+.sl-card.back span{position:absolute;inset:auto 0 4px;text-align:center;color:#fff;font-size:.72rem;opacity:.85}
+.sl-col{display:flex;flex-direction:column;min-height:40vw}
+.sl-col>*+*{margin-top:calc(-1 * (100% * 7 / 5) + clamp(14px,4.8vw,26px))}
+.sl-col>.back+.back{margin-top:calc(-1 * (100% * 7 / 5) + clamp(6px,2vw,12px))}
+.shake{animation:sl-shake .3s}
+@keyframes sl-shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+@media (prefers-reduced-motion:reduce){.shake{animation:none}}
+.gr-links{text-align:center;margin:1.2rem 0 .4rem;color:var(--muted);line-height:2}.gr-links a{color:var(--gold);text-decoration:none;white-space:nowrap}
