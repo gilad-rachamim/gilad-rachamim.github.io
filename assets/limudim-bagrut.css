@@ -1,0 +1,8 @@
+/* ממוצע בגרות */
+.bg-head,.bg-row{display:grid;grid-template-columns:1fr 4.2rem 5rem 2.4rem;gap:.4rem;align-items:center}
+.bg-head{font-size:.85rem;color:var(--muted);margin-bottom:.3rem}
+#bg-rows{display:grid;gap:.4rem}
+.bg-row input,.bg-row select{font:inherit;width:100%;min-height:2.7rem;padding:.4rem .55rem;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.2);color:var(--cream)}
+.bg-x{min-height:2.7rem;border:0;background:none;color:var(--muted);font-size:1.1rem;cursor:pointer}
+.bg-btns{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.7rem}
+.bg-bonus{font-size:.9rem;color:var(--muted);margin-top:.6rem}

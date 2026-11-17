@@ -1,0 +1,28 @@
+/* מבחן תיאוריה */
+.te-modes{display:grid;gap:.5rem;margin:.4rem 0 .8rem}
+.te-modes label{display:flex;gap:.6rem;align-items:flex-start;padding:.7rem .8rem;border:1px solid var(--line);border-radius:12px;cursor:pointer;background:rgba(255,255,255,.03)}
+.te-modes label:has(input:checked){border-color:var(--gold);background:rgba(216,179,95,.1)}
+.te-modes input{margin-top:.3rem;accent-color:var(--gold)}
+.te-modes b{display:block;color:var(--cream)}
+.te-modes small{color:var(--muted)}
+#te-top{display:flex;justify-content:space-between;align-items:center;gap:.5rem;font-size:.95rem;color:var(--muted);margin-bottom:.5rem;flex-wrap:wrap}
+#te-t{font-weight:700;color:var(--gold)}
+.te-cat{color:var(--gold);font-size:.85rem;margin:0}
+.te-text{font-size:1.2rem;line-height:1.5;color:var(--cream);margin:.3rem 0 .7rem}
+.te-img{display:block;max-width:100%;max-height:260px;margin:.4rem auto .8rem;border-radius:10px;background:#fff}
+.te-img.sm{max-height:140px}
+.te-ans{display:grid;gap:.5rem}
+.te-ans button{font:inherit;text-align:start;padding:.8rem .9rem;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--body);cursor:pointer;line-height:1.45;min-height:3rem}
+.te-ans button:hover:not(:disabled){border-color:var(--gold)}
+.te-ans button.sel{border-color:var(--gold);background:rgba(216,179,95,.15)}
+.te-ans button.ok{border-color:#4caf7a;background:rgba(76,175,122,.18);color:var(--cream)}
+.te-ans button.no{border-color:#e06c5f;background:rgba(224,108,95,.16)}
+.te-ans button:disabled{cursor:default}
+.te-fb{min-height:1.4em;margin:.6rem 0 0;font-weight:700;color:var(--cream)}
+.te-nav{display:flex;justify-content:center;margin-top:.8rem}
+.te-rev{margin-top:1.4rem;color:var(--cream)}
+.te-w{padding:.7rem .8rem;border:1px solid var(--line);border-radius:12px;margin-top:.5rem}
+.te-w p{margin:.2rem 0}
+.te-w .ok{color:#6fd39c}.te-w .no{color:#f08a7e}
+#te-hist{font-size:.92rem;color:var(--muted);margin-top:.8rem}
+.te-src{font-size:.85rem;color:var(--muted);margin-top:.8rem}
