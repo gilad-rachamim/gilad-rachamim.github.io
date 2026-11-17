@@ -1,14 +1,23 @@
 <!--meta {
-  "site": "kelim",
-  "nav": "tchumim",
-  "tool": "tichnut_mehirut",
-  "title": "כמה טוקנים לשנייה? מחשבון מהירות מודל שפה על כרטיס NVIDIA | הכלים של גילעד רחמים",
-  "description": "בוחרים מודל (Llama, Qwen, Mistral), דיוק וכרטיס NVIDIA, ורואים כמה טוקנים לשנייה הוא יכתוב, כמה זמן עד המילה הראשונה, ואיך זה משתנה עם כמה משתמשים במקביל. השוואה בין כל הכרטיסים. בחינם.",
-  "og_title": "כמה מהר המודל יענה על הכרטיס שלך?",
-  "priority": "0.7",
-  "crumbs": [["כלים למתכנתים", "/kelim/tichnut/"], ["טוקנים לשנייה", null]],
-  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><style>.tn-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}.tn-r3{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}.tn-ltr{direction:ltr;text-align:left}.mh-big{margin-top:1rem;padding:1rem;border:1px solid var(--gold-soft);border-radius:14px;text-align:center;background:rgba(216,179,95,.07)}.mh-big b{display:block;font-family:var(--serif);font-size:2.8rem;color:var(--cream);line-height:1.1}.mh-big span{color:var(--body);font-size:.95rem}.mh-big small{display:block;margin-top:.35rem;color:var(--muted);font-size:.88rem}.mh-two{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.6rem}.mh-two div{padding:.7rem;border:1px solid var(--line);border-radius:12px;text-align:center}.mh-two b{display:block;color:var(--cream);font-size:1.25rem}.mh-two span{color:var(--muted);font-size:.85rem}.mh-note{margin-top:.7rem;color:var(--parchment)}.mh-cmp{list-style:none;display:grid;gap:.35rem;margin-top:.5rem}.mh-cmp li{display:grid;grid-template-columns:1fr auto;gap:.15rem .6rem;color:var(--parchment);font-size:.93rem}.mh-cmp li.me span,.mh-cmp li.me b{color:var(--gold);font-weight:700}.mh-cmp b{font-weight:400}.mh-cmp i{grid-column:1/-1;height:.35rem;border-radius:99px;background:var(--gold-soft)}.mh-cmp li.me i{background:var(--gold)}.tn-h{margin-top:1.3rem;color:var(--cream);font-size:1.15rem}</style><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"כמה טוקנים לשנייה זה מספיק?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"אדם קורא בערך 5 מילים בשנייה. המחשבון אומר אם הקצב מהיר מקצב קריאה או מרגיש איטי.\"}}, {\"@type\": \"Question\", \"name\": \"למה יותר משתמשים מאטים כל אחד?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כל משתמש מוסיף KV cache שצריך לקרוא בכל צעד. סך הכול הכרטיס מוציא יותר טוקנים, אבל כל משתמש מקבל פחות.\"}}, {\"@type\": \"Question\", \"name\": \"מודל ב-4 ביט מהיר יותר?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בדרך כלל כן, כי צריך לקרוא פחות זיכרון בכל טוקן.\"}}, {\"@type\": \"Question\", \"name\": \"זה מתאים גם למודלי MoE?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. נספרים רק הפרמטרים הפעילים לכל טוקן.\"}}, {\"@type\": \"Question\", \"name\": \"למה דיוק 4 ביט מהיר יותר?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כי המודל קטן יותר בזיכרון, והכרטיס קורא פחות נתונים בכל טוקן. מהירות הכתיבה תלויה בעיקר בכמות הנתונים שקוראים.\"}}]}</script>",
-  "foot": "<script src=\"/assets/tichnut-data.js\" defer></script><script src=\"/assets/tichnut-mehirut.js\" defer></script>"
+ "site": "kelim",
+ "nav": "tchumim",
+ "tool": "tichnut_mehirut",
+ "title": "כמה טוקנים לשנייה? מחשבון מהירות מודל שפה על כרטיס NVIDIA | הכלים של גילעד רחמים",
+ "description": "בוחרים מודל (Llama, Qwen, Mistral), דיוק וכרטיס NVIDIA, ורואים כמה טוקנים לשנייה הוא יכתוב, כמה זמן עד המילה הראשונה, ואיך זה משתנה עם כמה משתמשים במקביל. השוואה בין כל הכרטיסים. בחינם.",
+ "og_title": "כמה מהר המודל יענה על הכרטיס שלך?",
+ "priority": "0.7",
+ "crumbs": [
+  [
+   "כלים למתכנתים",
+   "/kelim/tichnut/"
+  ],
+  [
+   "טוקנים לשנייה",
+   null
+  ]
+ ],
+ "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><style>.tn-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}.tn-r3{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}.tn-ltr{direction:ltr;text-align:left}.mh-big{margin-top:1rem;padding:1rem;border:1px solid var(--gold-soft);border-radius:14px;text-align:center;background:rgba(216,179,95,.07)}.mh-big b{display:block;font-family:var(--serif);font-size:2.8rem;color:var(--cream);line-height:1.1}.mh-big span{color:var(--body);font-size:.95rem}.mh-big small{display:block;margin-top:.35rem;color:var(--muted);font-size:.88rem}.mh-two{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.6rem}.mh-two div{padding:.7rem;border:1px solid var(--line);border-radius:12px;text-align:center}.mh-two b{display:block;color:var(--cream);font-size:1.25rem}.mh-two span{color:var(--muted);font-size:.85rem}.mh-note{margin-top:.7rem;color:var(--parchment)}.mh-cmp{list-style:none;display:grid;gap:.35rem;margin-top:.5rem}.mh-cmp li{display:grid;grid-template-columns:1fr auto;gap:.15rem .6rem;color:var(--parchment);font-size:.93rem}.mh-cmp li.me span,.mh-cmp li.me b{color:var(--gold);font-weight:700}.mh-cmp b{font-weight:400}.mh-cmp i{grid-column:1/-1;height:.35rem;border-radius:99px;background:var(--gold-soft)}.mh-cmp li.me i{background:var(--gold)}.tn-h{margin-top:1.3rem;color:var(--cream);font-size:1.15rem}</style><script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"FAQPage\",\"mainEntity\":[{\"@type\":\"Question\",\"name\":\"כמה טוקנים לשנייה זה מספיק?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"אדם קורא בערך 5 מילים בשנייה. המחשבון אומר אם הקצב מהיר מקצב קריאה או מרגיש איטי.\"}},{\"@type\":\"Question\",\"name\":\"למה יותר משתמשים מאטים כל אחד?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"כל משתמש מוסיף KV cache שצריך לקרוא בכל צעד. סך הכול הכרטיס מוציא יותר טוקנים, אבל כל משתמש מקבל פחות.\"}},{\"@type\":\"Question\",\"name\":\"מודל ב-4 ביט מהיר יותר?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"בדרך כלל כן, כי צריך לקרוא פחות זיכרון בכל טוקן.\"}},{\"@type\":\"Question\",\"name\":\"זה מתאים גם למודלי MoE?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"כן. נספרים רק הפרמטרים הפעילים לכל טוקן.\"}},{\"@type\":\"Question\",\"name\":\"למה דיוק 4 ביט מהיר יותר?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"כי המודל קטן יותר בזיכרון, והכרטיס קורא פחות נתונים בכל טוקן. מהירות הכתיבה תלויה בעיקר בכמות הנתונים שקוראים.\"}},{\"@type\":\"Question\",\"name\":\"הדף הזה בחינם?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"כן. הכול כאן בחינם, בלי הרשמה ובלי פרסומות.\"}},{\"@type\":\"Question\",\"name\":\"זה עובד גם בטלפון?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"כן. הדף נפתח בדפדפן של הטלפון ושל המחשב, ולא צריך להתקין שום דבר.\"}}]}</script>",
+ "foot": "<script src=\"/assets/tichnut-data.js\" defer></script><script src=\"/assets/tichnut-mehirut.js\" defer></script>"
 } -->
 <header class="k-hero">
   <h1>כמה טוקנים לשנייה? מחשבון מהירות מודל שפה</h1>
@@ -71,5 +80,7 @@
   <details><summary>מודל ב-4 ביט מהיר יותר?</summary><p>בדרך כלל כן, כי צריך לקרוא פחות זיכרון בכל טוקן.</p></details>
   <details><summary>זה מתאים גם למודלי MoE?</summary><p>כן. נספרים רק הפרמטרים הפעילים לכל טוקן.</p></details>
   <details><summary>למה דיוק 4 ביט מהיר יותר?</summary><p>כי המודל קטן יותר בזיכרון, והכרטיס קורא פחות נתונים בכל טוקן. מהירות הכתיבה תלויה בעיקר בכמות הנתונים שקוראים.</p></details>
+  <details><summary>הדף הזה בחינם?</summary><p>כן. הכול כאן בחינם, בלי הרשמה ובלי פרסומות.</p></details>
+  <details><summary>זה עובד גם בטלפון?</summary><p>כן. הדף נפתח בדפדפן של הטלפון ושל המחשב, ולא צריך להתקין שום דבר.</p></details>
 </section>
 <!--/seo-txt-->
