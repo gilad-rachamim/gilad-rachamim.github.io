@@ -1,0 +1,147 @@
+/* פוקר על נקודות – שולחן בסגנון אפליקציה (/kelim/chashiva/poker/). קידומת pk2-. נטען רק בדף הפוקר. */
+#tb.pk2-on .ch-bar,#tb.pk2-on .tb-log{display:none}
+#tb.pk2-on .tb-felt{background:none;border:0;box-shadow:none;padding:0;margin:0;max-width:none;min-height:0;text-align:initial;color:inherit}
+#tb.pk2-on .tb-cover{border-radius:22px}
+.pk2{--bg:#0d1513;--felt1:#2c7a5e;--felt2:#145040;--rail:#2a1a10;--rail2:#5a3a1e;--gold:#e8c87c;--gold2:#b98d3a;--txt:#f4eedd;--plate:#101a18;--red:#c8463c;--green:#1f7a4a;--u:1;
+  position:relative;color:var(--txt);background:radial-gradient(ellipse at 50% 35%,#1b2a27,#0a100f 75%);border-radius:22px;overflow:hidden;font-family:var(--sans,Assistant,system-ui,sans-serif);
+  -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;margin:.4rem 0 .2rem}
+@media (max-width:680px){.pk2{margin-inline:-1.25rem;border-radius:0}}
+@media (min-width:820px){.pk2{width:min(1060px,calc(100vw - 32px));margin-inline:calc((100% - min(1060px,calc(100vw - 32px))) / 2)}}
+.pk2 button{font:inherit;color:inherit;cursor:pointer}
+.pk2 .sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* שורת המידע העליונה */
+.pk2-top{display:flex;align-items:center;justify-content:space-between;gap:5px;padding:8px 8px 2px;position:relative;z-index:6}
+.pk2-top .ic{display:flex;gap:6px}
+.pk2-top button,.pk2-side button{flex:none;width:40px;height:40px;min-width:40px;min-height:40px;max-height:40px;line-height:1;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.35);font-size:16px;display:flex;align-items:center;justify-content:center;padding:0}
+.pk2-top button[aria-pressed=true]{border-color:var(--gold)}
+.pk2-inf{flex:0 1 auto;max-width:230px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:4px 10px;line-height:1.2;text-align:center;font-size:13px;min-width:0}
+.pk2-inf b{color:var(--gold)}
+.pk2-inf small{display:block;color:#c9d3cd;font-size:11.5px}
+
+/* הבמה: שולחן + מושבים */
+.pk2-stage{position:relative;width:100%;aspect-ratio:390/580;max-height:calc(100dvh - 210px);min-height:420px}
+.pk2.wide .pk2-stage{aspect-ratio:16/8.6;max-height:none;min-height:0}
+.pk2-table{position:absolute;left:8.7%;right:8.7%;top:7%;bottom:19%;border-radius:999px;background:linear-gradient(160deg,var(--rail2),var(--rail));box-shadow:0 14px 34px rgba(0,0,0,.7),inset 0 2px 3px rgba(255,255,255,.18);padding:calc(12px * var(--u))}
+.pk2.wide .pk2-table{left:11%;right:11%;top:9%;bottom:17%}
+.pk2-felt{width:100%;height:100%;border-radius:999px;background:radial-gradient(ellipse at 50% 42%,var(--felt1),var(--felt2) 78%);box-shadow:inset 0 0 0 2px rgba(232,200,124,.35),inset 0 0 46px rgba(0,0,0,.5);position:relative}
+.pk2-felt:after{content:"הכלים · פוקר על נקודות";position:absolute;left:0;right:0;top:69%;text-align:center;font-size:11px;letter-spacing:.12em;color:rgba(255,255,255,.16);pointer-events:none}
+.pk2-mid{position:absolute;left:0;right:0;top:50%;transform:translateY(-58%);display:flex;flex-direction:column;align-items:center;gap:calc(8px * var(--u));z-index:2}
+.pk2-pot{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;min-height:26px}
+.pk2-pot span{display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,.45);border-radius:14px;padding:3px 12px;font-weight:700;font-size:15px}
+.pk2-pot span.side{font-size:12.5px;padding:2px 9px;opacity:.95}
+.pk2-board{display:flex;justify-content:center;gap:calc(5px * var(--u));direction:ltr}
+.pk2-hint{min-height:24px;text-align:center;font-size:12.5px;padding:0 6px}
+.pk2-hint span{display:inline-block;background:rgba(232,200,124,.16);border:1px solid rgba(232,200,124,.55);color:var(--gold);border-radius:12px;padding:2px 10px;line-height:1.35}
+.pk2-hint span.win{background:rgba(0,0,0,.55);color:#fff3cf;font-weight:700}
+
+/* אסימונים */
+.pk2-chip{display:inline-block;width:16px;height:16px;border-radius:50%;flex:none;background:radial-gradient(circle,#fff 0 22%,var(--c,#c8463c) 24% 58%,#fff 60% 68%,var(--c,#c8463c) 70%);box-shadow:0 2px 0 rgba(0,0,0,.45),0 -3px 0 -1px var(--c,#c8463c)}
+
+/* קלפים (רק בפוקר; לא נוגעים ב-.cd הכללי) */
+.pk2-c{width:calc(44px * var(--u));aspect-ratio:46/64;border-radius:6px;background:#fffdf6;box-shadow:0 3px 6px rgba(0,0,0,.5);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;line-height:1;color:#14211f;font-family:var(--sans,Assistant,sans-serif);position:relative;flex:none;transition:transform .25s,box-shadow .25s,opacity .25s}
+.pk2-c b{font-size:calc(21px * var(--u))}.pk2-c i{font-style:normal;font-size:calc(21px * var(--u));font-family:"Segoe UI Symbol","DejaVu Sans",serif}
+.pk2-c.h,.pk2-c.d{color:#c0392b}
+.pk2-4c .pk2-c.h{color:#c8372d}.pk2-4c .pk2-c.d{color:#2563c9}.pk2-4c .pk2-c.c{color:#1f8a4c}.pk2-4c .pk2-c.s{color:#14211f}
+.pk2-c.ph{background:rgba(255,255,255,.07);border:1px dashed rgba(255,255,255,.3);box-shadow:none}
+.pk2-c.back{background:repeating-linear-gradient(45deg,#2f5d50 0 4px,#264d42 4px 8px);border:2px solid #fffdf6}
+.pk2-c.win{box-shadow:0 0 0 2px var(--gold),0 0 14px rgba(232,200,124,.9);transform:translateY(-5px)}
+.pk2-c.dim{opacity:.45}
+.pk2-c.mini{width:26px}.pk2-c.mini b,.pk2-c.mini i{font-size:13px}
+
+/* מושבים */
+.pk2-seat{position:absolute;width:calc(86px * var(--u));transform:translate(-50%,-50%);text-align:center;z-index:3}
+.pk2-av{width:calc(52px * var(--u));height:calc(52px * var(--u));border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:calc(27px * var(--u));background:linear-gradient(160deg,#3a4d48,#1b2a27);border:3px solid #33433f;position:relative}
+.pk2-seat.turn .pk2-av{border-color:transparent;background:linear-gradient(160deg,#3a4d48,#1b2a27) padding-box,conic-gradient(var(--gold) 0 var(--tl,100%),rgba(255,255,255,.14) 0) border-box;box-shadow:0 0 16px rgba(232,200,124,.65)}
+.pk2-plate{margin-top:-9px;position:relative;background:var(--plate);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:3px 4px 4px;line-height:1.15}
+.pk2-plate b{display:block;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pk2-plate span{font-size:13px;font-weight:800;color:var(--gold)}
+.pk2-seat.fold .pk2-av,.pk2-seat.fold .pk2-plate,.pk2-seat.out .pk2-av,.pk2-seat.out .pk2-plate{opacity:.42}
+.pk2-seat.off .pk2-av:after{content:"מנותק";position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);font-size:10px;background:#55625f;border-radius:6px;padding:0 5px;white-space:nowrap}
+.pk2-seat.won .pk2-av{box-shadow:0 0 0 3px var(--gold),0 0 22px rgba(232,200,124,.9)}
+.pk2-tag{position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:800;border-radius:8px;padding:1px 7px;white-space:nowrap;color:#fff;z-index:2}
+.pk2-tag.r{background:var(--red)}.pk2-tag.g{background:var(--green)}.pk2-tag.k{background:#55625f}.pk2-tag.a{background:var(--gold);color:#221a08}.pk2-tag.w{background:var(--gold);color:#221a08}
+.pk2-bk{position:absolute;top:calc(14px * var(--u));display:flex;direction:ltr}
+.pk2-bk i{width:calc(19px * var(--u));height:calc(27px * var(--u));border-radius:3px;border:1.5px solid #fffdf6;background:repeating-linear-gradient(45deg,#2f5d50 0 4px,#264d42 4px 8px);box-shadow:0 2px 3px rgba(0,0,0,.5)}
+.pk2-bk i+i{margin-left:-8px;transform:rotate(9deg)}
+.pk2-seat.L .pk2-bk{right:-6px}.pk2-seat.R .pk2-bk{left:-6px}.pk2-seat.T .pk2-bk{right:-4px}
+.pk2-shown{position:absolute;top:calc(2px * var(--u));display:flex;gap:2px;direction:ltr;z-index:3}
+.pk2-seat.L .pk2-shown,.pk2-seat.T .pk2-shown{left:62%}.pk2-seat.R .pk2-shown{right:62%}
+.pk2-shown .pk2-c{width:calc(31px * var(--u))}.pk2-shown .pk2-c b,.pk2-shown .pk2-c i{font-size:calc(15px * var(--u))}
+.pk2-bet{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;gap:4px;font-size:12.5px;font-weight:800;background:rgba(0,0,0,.5);border-radius:10px;padding:1px 7px 1px 4px;direction:ltr;z-index:4;white-space:nowrap}
+.pk2-bet .pk2-chip{width:12px;height:12px}
+.pk2-dl{position:absolute;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:50%;background:#fffdf6;color:#14211f;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 3px rgba(0,0,0,.5);z-index:4}
+
+/* כפתורים בצד הבמה */
+.pk2-side{position:absolute;left:8px;bottom:8px;z-index:5;display:flex;flex-direction:column;gap:6px}
+.pk2-side.r{left:auto;right:8px}
+
+/* אתם */
+.pk2-hero{position:absolute;left:50%;bottom:1%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;z-index:4;width:60%}
+.pk2-hero .hc{display:flex;gap:4px;direction:ltr}
+.pk2-hero .pk2-c{width:calc(58px * var(--u))}.pk2-hero .pk2-c b,.pk2-hero .pk2-c i{font-size:calc(27px * var(--u))}
+.pk2-hero .hc .pk2-c:first-child{transform:rotate(-5deg)}.pk2-hero .hc .pk2-c:last-child{transform:rotate(5deg)}
+.pk2-hero .hc .pk2-c.win{transform:translateY(-6px)}
+.pk2-hero .pk2-plate{margin-top:-12px;min-width:138px;padding:4px 10px;border-color:var(--gold)}
+.pk2-hero.turn .pk2-plate{box-shadow:0 0 0 2px var(--gold),0 0 14px rgba(232,200,124,.6)}
+.pk2-hero.fold .hc{opacity:.45}
+.pk2-hero .pk2-tag{top:-6px}
+
+/* פס הפעולות */
+.pk2-dock{background:linear-gradient(#0f1917,#080d0c);border-top:1px solid rgba(255,255,255,.1);padding:8px 10px 12px;min-height:136px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;z-index:6}
+.pk2-pre{display:flex;gap:5px;margin-bottom:7px}
+.pk2-pre button{flex:1;min-height:34px;border-radius:9px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);font-size:13px;font-weight:700;padding:0 2px}
+.pk2-pre button.on,.pk2-pre button[aria-pressed=true]{background:rgba(232,200,124,.2);border-color:var(--gold);color:var(--gold)}
+.pk2-sl{display:flex;align-items:center;gap:8px;margin-bottom:8px;direction:ltr}
+.pk2-sl input[type=range]{flex:1;height:30px;accent-color:var(--gold);min-width:0;margin:0}
+.pk2-sl output{min-width:64px;text-align:center;background:#000;border:1px solid var(--gold);border-radius:9px;padding:4px 6px;font-weight:800;color:var(--gold)}
+.pk2-sl button{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.07);font-size:18px;font-weight:800;flex:none;padding:0}
+.pk2-acts{display:flex;gap:7px}
+.pk2-acts button{flex:1;min-height:56px;border-radius:13px;border:0;color:#fff;font-weight:800;font-size:16px;line-height:1.1;box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 3px 0 rgba(0,0,0,.45);padding:4px}
+.pk2-acts button:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 1px 0 rgba(0,0,0,.45)}
+.pk2-acts small{display:block;font-size:13px;font-weight:700;opacity:.95}
+.pk2-acts .bf{background:linear-gradient(#c94a40,#9a2c25)}.pk2-acts .bc{background:linear-gradient(#2c9a62,#17673e)}.pk2-acts .br{background:linear-gradient(#efcf85,#b98d3a);color:#221a08}
+.pk2-acts .bn{background:linear-gradient(#efcf85,#b98d3a);color:#221a08}
+.pk2-wait{text-align:center;color:#d6ddd8;font-size:14.5px;margin:6px 0 10px}
+.pk2-wait b{color:var(--gold)}
+.pk2-kb{display:none}
+@media (hover:hover) and (pointer:fine){.pk2-kb{display:inline;opacity:.65;font-size:11px;font-weight:600}}
+
+/* חלונות קופצים */
+.pk2-modal{position:absolute;inset:0;z-index:20;background:rgba(4,8,7,.82);display:flex;align-items:center;justify-content:center;padding:14px}
+.pk2-modal[hidden]{display:none}
+.pk2-box{background:#0f1a18;border:1px solid rgba(232,200,124,.45);border-radius:16px;max-width:520px;width:100%;max-height:100%;overflow:auto;padding:14px 14px 16px;text-align:right;-webkit-user-select:text;user-select:text}
+.pk2-box h2{margin:0 0 8px;font-size:1.2rem;color:var(--gold);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pk2-box h2 button{width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);font-size:16px;flex:none}
+.pk2-box h3{font-size:1rem;color:var(--gold);margin:12px 0 6px}
+.pk2-box p,.pk2-box li{color:#dfe5e1;font-size:14px;line-height:1.5}
+.pk2-ranks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.pk2-ranks li{display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px dashed rgba(255,255,255,.12);padding-bottom:6px}
+.pk2-ranks li>div{display:flex;gap:2px;direction:ltr;flex:none}
+.pk2-ranks b{color:#fff}.pk2-ranks small{display:block;color:#aebbb5}
+.pk2-opt{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
+.pk2-opt button{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.05);border-radius:10px;padding:8px 12px;min-height:42px;font-size:14px}
+.pk2-opt button[aria-pressed=true]{background:rgba(232,200,124,.2);border-color:var(--gold);color:#fff3cf;font-weight:700}
+.pk2-hist{list-style:none;margin:0;padding:0}
+.pk2-hist li{border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:8px;margin-bottom:8px}
+.pk2-hist .row{display:flex;gap:2px;direction:ltr;flex-wrap:wrap;align-items:center;margin:4px 0}
+.pk2-hist small{color:#aebbb5}
+.pk2-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.pk2-stats div{background:rgba(255,255,255,.05);border-radius:10px;padding:8px;text-align:center}
+.pk2-stats b{display:block;color:var(--gold);font-size:1.2rem}
+.pk2-avs{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:4px}
+.pk2-avs button{font-size:22px;min-height:42px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.04)}
+.pk2-avs button[aria-pressed=true]{border-color:var(--gold);background:rgba(232,200,124,.2)}
+.pk2-box input[type=text]{font:inherit;padding:.5rem .7rem;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:#08110f;color:#fff;width:100%;max-width:16rem}
+
+/* מסך מלא */
+body.pk2-fs{overflow:hidden}
+body.pk2-fs #tb.pk2-on{position:fixed;inset:0;z-index:1000;background:#0a100f;overflow:auto;margin:0;padding:0}
+body.pk2-fs #tb.pk2-on>*:not(#tb-felt):not(#tb-win):not(#tb-msg){display:none}
+body.pk2-fs #tb.pk2-on .pk2{margin:0;width:100%;border-radius:0;min-height:100dvh;display:flex;flex-direction:column}
+body.pk2-fs #tb.pk2-on .pk2-stage{flex:1;aspect-ratio:auto;max-height:none;min-height:300px}
+body.pk2-fs #tb.pk2-on #tb-msg{position:fixed;top:52px;left:0;right:0;z-index:30;pointer-events:none}
+body.pk2-fs #tb.pk2-on #tb-win{position:fixed;inset:auto 0 0 0;z-index:40;background:#0a100f;max-height:80dvh;overflow:auto;padding:0 12px}
+body.pk2-fs #tb.pk2-on #tb-win:empty{display:none}
+
+@media (prefers-reduced-motion:reduce){.pk2 *,.pk2 *:before,.pk2 *:after{transition:none!important;animation:none!important}}
