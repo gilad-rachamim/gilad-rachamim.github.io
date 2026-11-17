@@ -73,3 +73,41 @@ assert.equal(vshape({ frames: [fr(0), fr(1000), { ...fr(2000), data: 'x'.repeat(
 assert.ok(vrules('AAA', 'BBB', 4).includes('AAA') && vrules('AAA', 'BBB', 4).includes('exactly 4'));
 assert.ok(VSCHEMA.required.includes('motion') && VSCHEMA.required.includes('same_person'));
 console.log('ok – כל הבדיקות עברו');
+
+// ---- קיצור הדרך באייפון (17.11.2026): לוח, זמנים, CORS, "עבר היום" ----
+import { dayKind, sunAt, lockTime, ilDate, cors } from './tefillin-worker.js';
+assert.equal(dayKind('2026-11-21').why, 'שבת');
+assert.equal(dayKind('2026-09-12').off, true);          // ראש השנה
+assert.equal(dayKind('2026-09-21').why, 'יום כיפור');
+assert.equal(dayKind('2026-09-28').moed, true);         // חול המועד סוכות
+assert.equal(dayKind('2026-10-03').off, true);          // שמיני עצרת (חל בשבת)
+assert.equal(dayKind('2027-04-22').why, 'פסח');
+assert.equal(dayKind('2027-06-11').why, 'שבועות');
+assert.equal(dayKind('2026-11-17').off, false);
+assert.equal(dayKind('2027-08-12').av, true);           // ט' באב תשפ"ז
+// שקיעה בירושלים 17.11.2026 ~16:39 שעון ישראל (14:39 UTC)
+const ss = new Date(sunAt('2026-11-17', 90.833, false));
+assert.ok(Math.abs(ss.getUTCHours() * 60 + ss.getUTCMinutes() - (14 * 60 + 39)) <= 3, ss.toISOString());
+const mi = new Date(sunAt('2026-11-17', 101.5, true));    // משיכיר ~05:20 שעון ישראל
+assert.ok(mi.getUTCHours() === 3, mi.toISOString());
+assert.equal(ilDate(Date.parse('2026-11-17T23:30:00Z')), '2026-11-18');
+assert.equal(lockTime(Date.parse('2026-11-17T08:00:00Z')), true);    // 10:00 בבוקר יום חול
+assert.equal(lockTime(Date.parse('2026-11-17T02:00:00Z')), false);   // 04:00 – לפני משיכיר
+assert.equal(lockTime(Date.parse('2026-11-17T15:30:00Z')), false);   // אחרי השקיעה
+assert.equal(lockTime(Date.parse('2026-11-21T08:00:00Z')), false);   // שבת
+assert.equal(lockTime(Date.parse('2026-09-28T08:00:00Z')), false);   // חול המועד
+assert.equal(lockTime(Date.parse('2026-11-17T05:00:00Z'), '08:00'), false); // 07:00 לפני השעה שנבחרה
+assert.equal(lockTime(Date.parse('2026-11-17T06:30:00Z'), '08:00'), true);  // 08:30
+assert.equal(lockTime(Date.parse('2027-08-12T06:00:00Z')), false);   // תשעה באב בבוקר
+assert.equal(lockTime(Date.parse('2027-08-12T12:00:00Z')), true);    // תשעה באב אחרי חצות
+// CORS רק לאתר; בלי Origin (האפליקציה) התשובה לא משתנה
+const res = () => new Response('x', { headers: { 'content-type': 'text/plain' } });
+assert.equal(cors(new Request('https://w/ping'), res()).headers.get('access-control-allow-origin'), null);
+assert.equal(cors(new Request('https://w/ping', { headers: { origin: 'https://hakelim.com' } }), res()).headers.get('access-control-allow-origin'), 'https://hakelim.com');
+assert.equal(cors(new Request('https://w/ping', { headers: { origin: 'https://evil.com' } }), res()).headers.get('access-control-allow-origin'), null);
+// "עבר היום"
+await go('done', { who: 'dev5', day: '2026-11-17' });
+assert.equal((await go('is', { who: 'dev5', day: '2026-11-17' })).done, true);
+assert.equal((await go('is', { who: 'dev5', day: '2026-11-18' })).done, false);
+assert.equal((await go('is', { who: 'dev6', day: '2026-11-17' })).done, false);
+console.log('ok – בדיקות האייפון עברו');
