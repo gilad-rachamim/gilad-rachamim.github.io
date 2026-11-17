@@ -1,0 +1,77 @@
+<!--meta {
+  "site": "kesef",
+  "nav": "tchumim",
+  "tool": "shaot_avoda",
+  "title": "מחשבון שעות עבודה: חישוב שעות, הפסקות ושעות נוספות | הכלים של גילעד רחמים",
+  "description": "מחשבון שעות עבודה בחינם: כותבים שעת כניסה, שעת יציאה והפסקה לכל יום, ומקבלים סך שעות שבועי, שעות נוספות 125% ו-150% וכמה שכר מגיע. בלי הרשמה ובלי פרסומות.",
+  "og_title": "כמה שעות עבדתי השבוע?",
+  "priority": "0.7",
+  "crumbs": [
+    [
+      "הכסף שלי",
+      "/kesef/"
+    ],
+    [
+      "שעות עבודה",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/nosim.css\"><style>.sa-row{display:grid;grid-template-columns:64px 1fr 1fr 1fr;gap:8px;align-items:end;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.08)}.sa-row label{display:block;font-size:.8rem}.sa-row input{width:100%;min-width:0;padding:8px 4px;font-size:1rem;box-sizing:border-box}.sa-row .sa-h{grid-column:1/-1;font-weight:700;font-size:.92rem}@media(min-width:620px){.sa-row{grid-template-columns:72px 1fr 1fr 1fr 110px}.sa-row .sa-h{grid-column:auto}}</style><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך מחשבים שעות עבודה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מחסרים את שעת הכניסה משעת היציאה ומורידים את ההפסקה. המחשבון עושה את זה לכל יום ומחבר לסך שבועי.\"}}, {\"@type\": \"Question\", \"name\": \"כמה זה 8 שעות ו-30 דקות בשבר עשרוני?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"8.5 שעות. מחלקים את הדקות ב-60.\"}}, {\"@type\": \"Question\", \"name\": \"איך מחשבים שעות נוספות?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"שתי השעות הראשונות שמעבר ליום העבודה הרגיל הן ב-125 אחוז, והשעות שאחריהן ב-150 אחוז.\"}}, {\"@type\": \"Question\", \"name\": \"כמה שעות יש במשרה מלאה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"42 שעות בשבוע, שהן 182 שעות בחודש.\"}}, {\"@type\": \"Question\", \"name\": \"המחשבון מחשב משמרת לילה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. אם שעת היציאה מוקדמת משעת הכניסה, הוא מבין שהמשמרת נגמרה למחרת.\"}}, {\"@type\": \"Question\", \"name\": \"ההפסקה נחשבת שעת עבודה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בדרך כלל לא, אלא אם נדרשתם להישאר במקום העבודה בזמן ההפסקה.\"}}, {\"@type\": \"Question\", \"name\": \"זה בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. בחינם, בלי הגבלה, בלי הרשמה ובלי פרסומות.\"}}]}</script>",
+  "foot": "<script src=\"/assets/kesef-shaot-avoda.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מחשבון שעות עבודה</h1>
+  <p class="sub">כותבים שעת כניסה, שעת יציאה והפסקה לכל יום, ורואים כמה שעות עבדתם, כמה מהן נוספות, וכמה שכר מגיע.</p>
+</header>
+
+<div class="tool" id="sa-t">
+<div id="sa">
+    <div id="sa-rows"></div>
+    <div class="ns-grid2" style="margin-top:14px">
+      <div class="field"><label for="sa-std">שעות רגילות ביום</label><input id="sa-std" type="number" inputmode="decimal" step="0.1" min="1" value="8.6" dir="ltr" aria-describedby="sa-std-h"><small id="sa-std-h">מעבר לזה נספר כשעות נוספות.</small></div>
+      <div class="field"><label for="sa-w">שכר לשעה (₪, לא חובה)</label><input id="sa-w" type="number" inputmode="decimal" step="0.1" min="0" placeholder="35.40" dir="ltr"></div>
+    </div>
+    <div class="ns-res" aria-live="polite"><span>סך הכול השבוע:</span><br><b class="ns-big"><span id="sa-tot">0:00</span> שעות</b><br><span>(<span id="sa-dec">0</span> בשבר עשרוני, <span id="sa-days">0</span> ימי עבודה)</span></div>
+    <table class="ns-tbl"><tbody>
+      <tr><td>שעות רגילות</td><td id="sa-reg">0:00</td></tr>
+      <tr><td>שעות נוספות 125%</td><td id="sa-125">0:00</td></tr>
+      <tr><td>שעות נוספות 150%</td><td id="sa-150">0:00</td></tr>
+      <tr id="sa-payrow" hidden><td><b>שכר ברוטו לשבוע</b></td><td id="sa-pay"></td></tr>
+    </tbody></table>
+    <div class="ns-row"><button class="btn btn-line btn-sm" type="button" id="sa-clear">לנקות הכול</button></div>
+  </div>
+  <nav class="gr-links" aria-label="כלים קרובים"><a href="/kesef/bruto-neto/">💼 ברוטו נטו</a> · <a href="/kesef/shaot-avoda/">⏱️ שעות עבודה</a> · <a href="/kesef/gil/">🎂 מחשבון גיל</a> · <a href="/kesef/tlush/">🧾 בדיקת תלוש</a> · <a href="/kesef/achuzim/">％ אחוזים</a> · <a href="/kesef/taktziv/">תקציב</a> · <a href="/mapa/">מפת האתר</a></nav>
+  <p class="disclaimer">הערכה בלבד. החישוב המחייב של שעות נוספות ושכר הוא לפי התלוש, החוזה וההסכם שחל עליכם.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מחשבון שעות עבודה:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+<h2 id="seo-h">מחשבון שעות עבודה: איך מחשבים</h2>
+  <p>כדי לדעת כמה שעות עבדתם ביום, מחסרים את שעת הכניסה משעת היציאה ומורידים את זמן ההפסקה. מי שנכנס ב-8:00, יצא ב-17:00 ולקח חצי שעה הפסקה, עבד 8 שעות וחצי. המחשבון למעלה עושה את החישוב לכל ימות השבוע, מחבר את הכול, ומפריד בין שעות רגילות לשעות נוספות. הוא יודע לחשב גם משמרת לילה שמתחילה ביום אחד ונגמרת למחרת.</p>
+  <h3>שעות ודקות מול שבר עשרוני</h3>
+  <p>זו טעות נפוצה: 8 שעות ו-30 דקות הן 8.5 שעות, לא 8.30. כדי להפוך דקות לשבר עשרוני מחלקים אותן ב-60, ולכן 45 דקות הן 0.75 שעה ו-20 דקות הן 0.33 שעה. כשמכפילים שעות בשכר לשעה חייבים להשתמש בשבר העשרוני. המחשבון מציג את שתי הצורות.</p>
+  <h3>כמה שעות יש בשבוע עבודה</h3>
+  <p>שבוע העבודה המלא בישראל הוא 42 שעות, שהן 182 שעות בחודש. מי שעובד חמישה ימים בשבוע עובד בדרך כלל ארבעה ימים של 8.6 שעות ויום אחד של 7.6 שעות. מי שעובד שישה ימים עובד עד 8 שעות ביום. אם אצלכם יום העבודה שונה, משנים את המספר בשדה "שעות רגילות ביום".</p>
+  <h3>שעות נוספות: 125% ו-150%</h3>
+  <p>לפי חוק שעות עבודה ומנוחה, על כל אחת משתי השעות הנוספות הראשונות ביום מגיע שכר של 125 אחוז, ועל כל שעה נוספת שאחריהן 150 אחוז. המחשבון מחלק את השעות לפי הכלל הזה לכל יום בנפרד. הוא לא מחשב תוספת על עבודה בשבת, בחג או בלילה, ולא שעות נוספות שנוצרות ברמה השבועית.</p>
+  <h3>הפסקות: מה מגיע</h3>
+  <p>ביום עבודה של שש שעות ומעלה מגיעה הפסקה של 45 דקות לפחות, ומתוכה חצי שעה רצופה. בדרך כלל ההפסקה לא נחשבת חלק משעות העבודה ולא משלמים עליה, אלא אם העובד נדרש להישאר במקום העבודה. לכן המחשבון מוריד את ההפסקה מהסך.</p>
+  <h3>חישוב שכר לפי שעות</h3>
+  <p>כותבים את השכר לשעה, והמחשבון מכפיל: שעות רגילות בשכר המלא, ושעות נוספות ב-125 או ב-150 אחוז. שכר המינימום לשעה מ-1 באפריל 2026 הוא 35.40 ש"ח. התוצאה היא שכר ברוטו. כדי לדעת כמה יישאר נטו עוברים ל<a href="/kesef/bruto-neto/">מחשבון שכר ברוטו נטו</a>.</p>
+  <h3>עוד כלים לשכר</h3>
+  <p>קיבלתם תלוש? ב<a href="/kesef/tlush/">בדיקת תלוש שכר</a> בודקים שהוא תקין. ויש גם <a href="/kesef/achuzim/">מחשבון אחוזים</a>, <a href="/kesef/taktziv/">תקציב משפחתי</a>, <a href="/kesef/gil/">מחשבון גיל</a> ושאר הכלים של <a href="/kesef/">הכסף שלי</a>.</p>
+  <h3>בחינם, בלי הרשמה ובלי פרסומות</h3>
+  <p>המחשבון בחינם, בלי הגבלה, בלי הרשמה ובלי פרסומות. הכול מחושב בדפדפן שלכם, ושום מספר לא נשלח לשום שרת. זה חלק ממיזם חסד של כלים חינמיים בעברית.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך מחשבים שעות עבודה?</summary><p>מחסרים את שעת הכניסה משעת היציאה ומורידים את ההפסקה. המחשבון עושה את זה לכל יום ומחבר לסך שבועי.</p></details>
+  <details><summary>כמה זה 8 שעות ו-30 דקות בשבר עשרוני?</summary><p>8.5 שעות. מחלקים את הדקות ב-60.</p></details>
+  <details><summary>איך מחשבים שעות נוספות?</summary><p>שתי השעות הראשונות שמעבר ליום העבודה הרגיל הן ב-125 אחוז, והשעות שאחריהן ב-150 אחוז.</p></details>
+  <details><summary>כמה שעות יש במשרה מלאה?</summary><p>42 שעות בשבוע, שהן 182 שעות בחודש.</p></details>
+  <details><summary>המחשבון מחשב משמרת לילה?</summary><p>כן. אם שעת היציאה מוקדמת משעת הכניסה, הוא מבין שהמשמרת נגמרה למחרת.</p></details>
+  <details><summary>ההפסקה נחשבת שעת עבודה?</summary><p>בדרך כלל לא, אלא אם נדרשתם להישאר במקום העבודה בזמן ההפסקה.</p></details>
+  <details><summary>זה בחינם?</summary><p>כן. בחינם, בלי הגבלה, בלי הרשמה ובלי פרסומות.</p></details>
+</section>
+<!--/seo-txt-->
