@@ -1,0 +1,62 @@
+<!--meta {
+  "site": "kelim",
+  "nav": "tchumim",
+  "tool": "briut_bmi",
+  "title": "מחשבון BMI: חישוב מדד מסת גוף לפי גובה ומשקל | הכלים של גילעד רחמים",
+  "description": "מחשבון BMI בחינם: כותבים גובה ומשקל ומקבלים מיד את מדד מסת הגוף, האם הוא תקין, וטווח המשקל התקין לגובה שלכם. למבוגרים, הערכה בלבד.",
+  "og_title": "מחשבון BMI: מה המדד שלכם?",
+  "priority": "0.7",
+  "crumbs": [
+    [
+      "כלים לבריאות",
+      "/kelim/briut/"
+    ],
+    [
+      "מחשבון BMI",
+      null
+    ]
+  ],
+  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/briut-cheshbon.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"איך מחשבים BMI?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מחלקים את המשקל בקילוגרמים בגובה במטרים בריבוע. למשל 70 ק״ג ו-1.70 מטר: 70 חלקי 2.89, יוצא 24.2.\"}}, {\"@type\": \"Question\", \"name\": \"מה BMI תקין?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"למבוגרים, BMI בין 18.5 ל-24.9 נחשב תקין. מ-25 עד 29.9 עודף משקל, ומ-30 ומעלה השמנה.\"}}, {\"@type\": \"Question\", \"name\": \"האם המחשבון מתאים לילדים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. אצל ילדים ונוער עד גיל 18 משווים לעקומות גדילה לפי גיל ומין. שואלים את רופא הילדים.\"}}, {\"@type\": \"Question\", \"name\": \"יש הבדל בין גברים לנשים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בטבלה למבוגרים הטווחים זהים לגברים ולנשים.\"}}, {\"@type\": \"Question\", \"name\": \"BMI גבוה אומר שיש בעיה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא בהכרח. BMI לא מבדיל בין שריר לשומן. זו הערכה כללית בלבד, ושואלים את הרופא.\"}}, {\"@type\": \"Question\", \"name\": \"המידע נשמר אצלכם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. החישוב נעשה במכשיר שלכם, ושום דבר לא נשלח.\"}}]}</script>",
+  "foot": "<script src=\"/assets/briut-cheshbon.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מחשבון BMI</h1>
+  <p class="sub">גובה ומשקל, ומקבלים מיד את מדד מסת הגוף וטווח המשקל התקין לגובה שלכם.</p>
+</header>
+
+<div class="tool" id="bmi">
+<div class="k-form">
+    <div class="bm-row"><div class="field"><label for="bmi-h">גובה (ס"מ)</label><input id="bmi-h" type="number" inputmode="decimal" min="80" max="250" placeholder="170"></div>
+    <div class="field"><label for="bmi-w">משקל (ק"ג)</label><input id="bmi-w" type="number" inputmode="decimal" min="20" max="350" step="0.1" placeholder="70"></div></div>
+    <button class="btn btn-gold btn-block" type="button" id="bmi-go">לחשב BMI</button>
+  </div>
+  <div class="res" id="bmi-res" aria-live="polite" hidden></div>
+  <nav class="gr-links" aria-label="עוד כלים לבריאות"><a href="/kelim/briut/bmi/">⚖️ מחשבון BMI</a> · <a href="/kelim/briut/kaloriot/">🍽 מחשבון קלוריות</a> · <a href="/kelim/briut/madadim/">📈 יומן מדדים</a> · <a href="/kelim/briut/">כל כלי הבריאות</a></nav>
+  <p class="disclaimer">⚠️ הערכה בלבד, לא אבחנה רפואית. לכל שאלה על משקל, תזונה או בריאות שואלים את הרופא או את הדיאטנית.</p>
+  <div class="share-row"><a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="מחשבון BMI בחינם:" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח את הכלי לחבר</a></div>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+<h2 id="seo-h">מה זה BMI ואיך מחשבים אותו</h2>
+  <p>BMI, או בעברית מדד מסת גוף, הוא מספר אחד שמשווה בין המשקל לגובה. מחשבים אותו כך: המשקל בקילוגרמים, חלקי הגובה במטרים בריבוע. למשל, אדם בגובה 1.70 מטר ששוקל 70 קילו: 70 חלקי 2.89 (1.70 כפול 1.70), ויוצא BMI של 24.2. המחשבון עושה את החשבון לבד ומראה גם איפה אתם על הסקאלה.</p>
+  <h3>טבלת BMI למבוגרים</h3>
+  <ul class="bm-tbl"><li><b>מתחת ל-18.5</b> תת-משקל</li><li><b>18.5 עד 24.9</b> משקל תקין</li><li><b>25 עד 29.9</b> עודף משקל</li><li><b>30 ומעלה</b> השמנה</li></ul>
+  <p>אלה הטווחים המקובלים בארגון הבריאות העולמי ובקופות החולים בישראל, לגברים ולנשים מגיל 18. המחשבון מראה גם את טווח המשקל שנחשב תקין לגובה שלכם, כך שקל לראות כמה רחוקים מהטווח, אם בכלל.</p>
+  <h3>BMI לילדים ולנוער</h3>
+  <p>אצל ילדים ובני נוער עד גיל 18 משווים את ה-BMI לעקומות גדילה לפי גיל ומין, ולא לטבלה של המבוגרים. לכן המחשבון הזה מיועד למבוגרים. לילדים, רופא הילדים או אחות טיפת חלב יודעים לבדוק על העקומה.</p>
+  <h3>מה BMI לא יודע</h3>
+  <p>BMI לא מבדיל בין שריר לשומן. ספורטאי שרירי יכול לקבל "עודף משקל" בלי שום בעיה, ואדם מבוגר יכול לקבל "תקין" ועדיין לאבד שריר. הוא גם לא מתאים בהריון. לכן זה מדד כללי שנותן כיוון, ולא אבחנה. היקף מותניים, בדיקות דם ושיחה עם הרופא אומרים הרבה יותר.</p>
+  <h3>עוד כלים</h3>
+  <p>רוצים לדעת כמה לאכול? יש <a href="/kelim/briut/kaloriot/">מחשבון קלוריות יומי</a>. רוצים לעקוב אחרי המשקל לאורך זמן? ב<a href="/kelim/briut/madadim/">יומן המדדים</a> רושמים בשנייה ושולחים לרופא. וכל הכלים ב<a href="/kelim/briut/">כלים לבריאות</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך מחשבים BMI?</summary><p>מחלקים את המשקל בקילוגרמים בגובה במטרים בריבוע. למשל 70 ק״ג ו-1.70 מטר: 70 חלקי 2.89, יוצא 24.2.</p></details>
+  <details><summary>מה BMI תקין?</summary><p>למבוגרים, BMI בין 18.5 ל-24.9 נחשב תקין. מ-25 עד 29.9 עודף משקל, ומ-30 ומעלה השמנה.</p></details>
+  <details><summary>האם המחשבון מתאים לילדים?</summary><p>לא. אצל ילדים ונוער עד גיל 18 משווים לעקומות גדילה לפי גיל ומין. שואלים את רופא הילדים.</p></details>
+  <details><summary>יש הבדל בין גברים לנשים?</summary><p>בטבלה למבוגרים הטווחים זהים לגברים ולנשים.</p></details>
+  <details><summary>BMI גבוה אומר שיש בעיה?</summary><p>לא בהכרח. BMI לא מבדיל בין שריר לשומן. זו הערכה כללית בלבד, ושואלים את הרופא.</p></details>
+  <details><summary>המידע נשמר אצלכם?</summary><p>לא. החישוב נעשה במכשיר שלכם, ושום דבר לא נשלח.</p></details>
+</section>
+<!--/seo-txt-->
