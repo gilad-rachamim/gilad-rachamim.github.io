@@ -61,7 +61,7 @@
     var after = text.slice(end, end + 12);
     var b30 = text.slice(Math.max(0, start - 32), start);
     // סכומים
-    if (/[₪$€£]\s*$/.test(before) || /^\s*(₪|ש"ח|ש״ח|שח\b|שקל|NIS|ILS|USD|\$|€|אג['׳]|אגורות|ils|nis)/i.test(after)) return 'amount';
+    if (/[₪$€£]\s*$/.test(before) || /^\s*(₪|ש"ח|ש״ח|שח(?![א-ת])|שקל|NIS|ILS|USD|\$|€|אג['׳]|אגורות|ils|nis)/i.test(after)) return 'amount';
     if (/(סך|סכום|בסך|יתרה|חיוב|תשלום|amount|total|balance)\s*:?\s*$/i.test(before) && !STRONG_KEY_RE.test(before)) return 'amount';
     if (/^[.,]\d/.test(after) || /\d[.,]$/.test(before)) return 'amount';
     // שעה / תאריך
@@ -112,7 +112,7 @@
     var noUrls = text.replace(URL_RE, function (u) { return new Array(u.length + 1).join(' '); });
     var m;
     // פורמט WebOTP: "@example.com #123456"
-    var web = /@[\w.-]+\s+#([A-Za-z0-9]{4,10})\b/.exec(noUrls);
+    var web = /@[\w.-]+\s+#([A-Za-z0-9]{4,10})(?![A-Za-z0-9_])/.exec(noUrls);
     if (web) list.push({ raw: web[1], code: web[1], start: web.index + web[0].indexOf('#') + 1, end: web.index + web[0].length, webotp: true });
     // ספרות בקבוצות שוות עם רווח/מקף: 123 456 / 123-456 / 1234 5678 / 12 34 56 / 5 8 2 9 1 0
     var spaced = /(^|[^\d\-+/.:,])(\d{1,4}(?:[ \-]\d{1,4}){1,7})(?![\d\-/.:])/g;
@@ -134,7 +134,7 @@
       list.push({ raw: r, code: r, start: m.index, end: m.index + r.length });
     }
     // אותיות גדולות + ספרות: G-482913, A1B2C3, ABC-123
-    var alnum = /(^|[^A-Za-z0-9])([A-Z]{1,3}-\d{4,8}|(?=[A-Z0-9]{5,8}\b)(?=[A-Z0-9]*\d)(?=[A-Z0-9]*[A-Z])[A-Z0-9]{5,8}|[A-Z0-9]{3,4}-[A-Z0-9]{3,4})(?![A-Za-z0-9])/g;
+    var alnum = /(^|[^A-Za-z0-9])([A-Z]{1,3}-\d{4,8}|(?=[A-Z0-9]{5,8}(?![A-Za-z0-9_]))(?=[A-Z0-9]*\d)(?=[A-Z0-9]*[A-Z])[A-Z0-9]{5,8}|[A-Z0-9]{3,4}-[A-Z0-9]{3,4})(?![A-Za-z0-9])/g;
     while ((m = alnum.exec(noUrls))) {
       var a = m[2];
       if (!/\d/.test(a) || !/[A-Z]/.test(a)) continue;
