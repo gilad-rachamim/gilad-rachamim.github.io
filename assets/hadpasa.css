@@ -1,0 +1,27 @@
+/* להדפסה: אזור הדף והדפסה נקייה */
+.pr-area{background:#fff;color:#000;border:1px solid rgba(0,0,0,.18);border-radius:10px;padding:12px;margin:14px 0;overflow:hidden}
+.pr-area svg{display:block;width:100%;height:auto;max-height:78vh;margin:0 auto}
+.pr-title{font-weight:800;font-size:1.15rem;text-align:center;margin:0 0 8px;color:#000}
+.pr-foot{display:none;text-align:center;font-size:.72rem;color:#555;margin-top:6px}
+.ms-tbl{width:100%;border-collapse:collapse;table-layout:fixed;color:#000}
+.ms-tbl th,.ms-tbl td{border:1.5px solid #333;padding:0;text-align:center;height:44px;font-size:.86rem}
+.ms-tbl th{background:var(--ms-c,#e8f0ff);font-weight:800;padding:6px 2px}
+.ms-tbl td.ms-n{background:var(--ms-c,#e8f0ff);font-weight:700;width:34px}
+.ms-tbl input{width:100%;height:100%;min-height:44px;border:0;background:transparent;text-align:center;font:inherit;color:#000;padding:2px;box-sizing:border-box}
+.ms-tbl input:focus{outline:2px solid #2a62d8;outline-offset:-2px}
+.ms-name{width:100%;border:0;border-bottom:1.5px dashed #999;text-align:center;font-weight:800;font-size:1.15rem;margin:0 0 10px;padding:4px;background:transparent;color:#000;box-sizing:border-box}
+.dz-pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px;margin:10px 0}
+.dz-pick button{border:1.5px solid rgba(0,0,0,.2);border-radius:10px;background:#fff;padding:6px 2px;font-size:1.5rem;cursor:pointer;min-height:56px}
+.dz-pick button span{display:block;font-size:.7rem;color:#333}
+.dz-pick button[aria-pressed="true"]{border-color:#2a62d8;box-shadow:0 0 0 2px #2a62d8 inset}
+@media print{
+  body *{visibility:hidden!important}
+  .pr-area,.pr-area *{visibility:visible!important}
+  .pr-area{position:absolute;top:0;left:0;right:0;border:0;margin:0;padding:0;border-radius:0}
+  .pr-area svg{max-height:92vh}
+  .pr-foot{display:block}
+  .ms-name{border-bottom:0}
+  .ms-tbl th,.ms-tbl td.ms-n{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .ms-tbl td,.ms-tbl th{height:56px}
+  @page{margin:12mm}
+}
