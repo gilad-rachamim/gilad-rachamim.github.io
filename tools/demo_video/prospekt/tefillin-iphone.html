@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>מדריך לאייפון – נעילת אפליקציות עד הנחת תפילין</title>
+<!-- מדריך הדרכה A4 לבעלי אייפון (17.11.2026). pdf.py מכניס את ה-QR ומדפיס ל-PDF.
+     העובדות רק מהדפים: src/pages/kodesh/tefillin/iphone/, src/pages/kelim/iphone/. הצילומים: דפדפן ברוחב 390, לא אייפון אמיתי. -->
+<style>
+@font-face{font-family:Assistant;src:url(../../../assets/fonts/Assistant-wght.woff) format("woff");font-weight:200 900}
+@font-face{font-family:Frank;src:url(../../../assets/fonts/FrankRuhlLibre-wght.woff) format("woff");font-weight:300 900}
+@page{size:A4;margin:0}
+:root{--ink:#141c2b;--ink2:#1b2538;--gold:#dcb769;--gold-hi:#ecca83;--gold-d:#9a7a35;--paper:#fbfaf3;--card:#ffffff;--text:#1d2433;--muted:#5d6678;--line:#e6dfcc;--accent:#2f7fb0;--ok:#2e9a6a}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--paper)}
+body{font-family:Assistant,"Segoe UI",Arial,sans-serif;color:var(--text);-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:10.6pt;line-height:1.45}
+.page{width:210mm;height:297mm;overflow:hidden;position:relative;display:flex;flex-direction:column;page-break-after:always;background:var(--paper)}
+.page:last-child{page-break-after:auto}
+em{font-style:normal;color:var(--gold-d);font-weight:700}
+.band{background:radial-gradient(70% 90% at 90% 0%,rgba(220,183,105,.30),transparent 70%),linear-gradient(160deg,var(--ink2),var(--ink));color:#fff;padding:10mm 14mm 8mm;display:flex;gap:7mm;align-items:center}
+.band .ic{flex:0 0 22mm;height:22mm;border-radius:6mm;background:linear-gradient(145deg,var(--gold-hi),var(--gold));display:flex;align-items:center;justify-content:center;font-size:34pt}
+.kick{color:var(--gold-hi);font-weight:700;font-size:10.5pt}
+h1{font-family:Frank,serif;font-size:25pt;line-height:1.1;font-weight:800;margin-top:1mm}
+h1 em{color:var(--gold-hi)}
+.band p{font-size:11.6pt;margin-top:2mm;color:#e6eaf3;line-height:1.4}
+.band p em{color:var(--gold-hi)}
+.body{padding:6mm 14mm 0;display:flex;flex-direction:column;gap:4mm;flex:1}
+h2{font-family:Frank,serif;font-size:14pt;color:var(--ink);font-weight:800;margin-bottom:1.6mm}
+.box{background:var(--card);border:1px solid var(--line);border-radius:4mm;padding:4mm 5mm}
+.gold{background:linear-gradient(160deg,#fff7e4,#fffdf6);border:1.4px solid var(--gold)}
+ol.st{list-style:none;counter-reset:s;display:grid;gap:1.8mm}
+ol.st li{counter-increment:s;position:relative;padding-right:8mm;font-size:10.3pt;line-height:1.42}
+ol.st li::before{content:counter(s);position:absolute;right:0;top:.2mm;width:5.6mm;height:5.6mm;border-radius:50%;background:var(--gold);color:var(--ink);font-weight:800;font-size:9pt;display:flex;align-items:center;justify-content:center}
+ol.st b{color:var(--ink)}
+.mak{display:grid;grid-template-columns:1fr 50mm;gap:5mm;align-items:start}
+.mak img{width:100%;height:96mm;object-fit:cover;object-position:top;border-radius:3mm;border:2mm solid #232c3d;display:block}
+.mak figcaption{font-size:8.6pt;color:var(--muted);text-align:center;margin-top:1mm}
+code{direction:ltr;unicode-bidi:isolate;font-family:Consolas,monospace;font-size:9pt;background:#f2efe4;border-radius:1.5mm;padding:.3mm 1.5mm}
+ul.l{list-style:none;display:grid;gap:1.5mm}
+ul.l li{display:flex;gap:2mm;align-items:flex-start;font-size:10pt;line-height:1.38}
+ul.l li i{font-style:normal;flex:0 0 5.5mm;text-align:center}
+ul.l li b{color:var(--ink)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:4mm}
+.note{font-size:9.4pt;color:var(--muted);line-height:1.45}
+.end{display:grid;grid-template-columns:auto 1fr;gap:6mm;align-items:center}
+.qr{width:30mm;height:30mm;background:#fff;border:1px solid var(--line);border-radius:3mm;padding:2mm}
+.qr svg{width:100%;height:100%;display:block}
+.end h3{font-family:Frank,serif;font-size:15pt;color:var(--ink)}
+.url{direction:ltr;unicode-bidi:isolate;font-weight:800;color:var(--accent);font-size:12pt}
+.foot{margin-top:auto;padding:3.5mm 14mm;background:var(--ink);color:#cfd6e4;font-size:9pt;display:flex;justify-content:space-between;align-items:center}
+.foot b{color:var(--gold-hi)}
+</style>
+</head>
+<body>
+
+<!-- ===== עמוד 1: התפילין ===== -->
+<section class="page">
+  <header class="band">
+    <div class="ic">🔒</div>
+    <div>
+      <div class="kick">מיזם הכלים של גילעד רחמים · מדריך לבעלי אייפון</div>
+      <h1>נעילת אפליקציות באייפון <em>עד שמניחים תפילין</em></h1>
+      <p>בוחרים אפליקציות (ווטסאפ, יוטיוב...), ועד שמצלמים עם תפילין הן פותחות את דף האישור במקום. <em>בלי להוריד אפליקציה</em>, בעברית ובחינם.</p>
+    </div>
+  </header>
+  <div class="body">
+    <div class="mak">
+      <div class="box">
+        <h2>הגדרה, פעם אחת (בערך 5 דקות)</h2>
+        <ol class="st">
+          <li>פותחים באייפון, ב-<b>Safari</b>: <code>hakelim.com/kodesh/tefillin/iphone</code>. הדף יוצר <b>קוד אישי</b> לטלפון, ומכין את הכתובות להעתקה.</li>
+          <li>באפליקציית <b>קיצורים</b> ← <b>פעולה אוטומטית</b> ← <b>+</b> ← <b>אפליקציה</b>.</li>
+          <li><b>בחר</b> ← מסמנים את האפליקציות לנעילה ← <b>נפתחת</b> ← <b>הפעל מיד</b> ← הבא ← אוטומציה ריקה.</li>
+          <li><b>פעולה 1:</b> "קבל תוכן של כתובת אינטרנט" – מדביקים את הכתובת הראשונה מהדף.</li>
+          <li><b>פעולה 2:</b> "אם" – תוכן כתובת האינטרנט <b>אינו</b> <code>ok</code>.</li>
+          <li><b>פעולה 3</b> (בתוך ה"אם"): "פתח כתובות URL" – מדביקים את הכתובת השנייה מהדף.</li>
+        </ol>
+      </div>
+      <figure><img src="../shots/tefillin-iphone/setup.jpg" alt=""><figcaption>ההוראות בדף, עם כפתורי "להעתיק"</figcaption></figure>
+    </div>
+    <div class="cols">
+      <div class="box">
+        <h2>☀️ בכל בוקר</h2>
+        <ol class="st">
+          <li>פותחים אפליקציה נעולה – דף האישור נפתח.</li>
+          <li><b>מצלמים עם תפילין</b>: השרת נותן סימן יד, מצלמים עם התפילין והסימן תוך 3 דקות.</li>
+          <li>הבדיקה לוקחת עד דקה. אושר? האפליקציות פתוחות עד מחר.</li>
+        </ol>
+      </div>
+      <div class="box">
+        <h2>✋ בכנות</h2>
+        <ul class="l">
+          <li><i>✓</i><span><b>שבת, חג ולילה:</b> לא נועל.</span></li>
+          <li><i>✓</i><span><b>פרטיות:</b> התמונה נבדקת ונמחקת.</span></li>
+          <li><i>✓</i><span><b>שיחות וחירום</b> תמיד פתוחים.</span></li>
+          <li><i>✗</i><span><b>אפשר לכבות</b> את האוטומציה – אלא אם חבר מחזיק את קוד זמן המסך.</span></li>
+          <li><i>✗</i><span><b>בלי אינטרנט</b> הקיצור לא מקבל תשובה, והאפליקציה נפתחת.</span></li>
+        </ul>
+      </div>
+    </div>
+    <p class="note">שמות הכפתורים לפי iOS בעברית, וייתכנו הבדלים קטנים בין גרסאות. הצילומים מהדף באתר ברוחב של טלפון. לא נעול את כל הטלפון – אפל מאפשרת לנעול רק אפליקציות שבוחרים.</p>
+  </div>
+  <footer class="foot"><span><b>מיזם הכלים של גילעד רחמים</b> · מיזם חינמי, כדי להנגיש</span><span>עמוד 1 מתוך 2</span></footer>
+</section>
+
+<!-- ===== עמוד 2: מתחילים כאן + כל הכלים ===== -->
+<section class="page">
+  <header class="band">
+    <div class="ic">📱</div>
+    <div>
+      <div class="kick">מיזם הכלים של גילעד רחמים · מדריך לבעלי אייפון</div>
+      <h1>כלים לאייפון: <em>מה שאפל חוסמת</em>, ואיך עושים את זה בכל זאת</h1>
+    </div>
+  </header>
+  <div class="body">
+    <div class="cols">
+      <div class="box gold">
+        <h2>📲 להתקין את האתר כאפליקציה</h2>
+        <ol class="st">
+          <li>פותחים את הדף ב-<b>Safari</b>.</li>
+          <li>לוחצים על כפתור <b>השיתוף</b> ⬆︎ (לא רואים? קודם על <b>⋯</b>).</li>
+          <li>גוללים ← <b>הוספה למסך הבית</b> ← <b>הוסף</b>.</li>
+        </ol>
+        <p class="note" style="margin-top:2mm">נכנסים בלחיצה, במסך מלא, ורוב הכלים עובדים גם בלי אינטרנט.</p>
+      </div>
+      <div class="box">
+        <h2>🔔 התראות (iOS 16.4 ומעלה)</h2>
+        <ol class="st">
+          <li>פותחים את הכלי <b>מהאייקון במסך הבית</b>, לא מ-Safari.</li>
+          <li>כשהכלי מבקש – <b>אפשר</b>.</li>
+          <li>תזכורת שחייבת לצלצל: מוסיפים אותה <b>ליומן של האייפון</b>.</li>
+        </ol>
+      </div>
+    </div>
+    <div class="box">
+      <h2>🧰 הכלים, והדרך שעובדת באייפון</h2>
+      <ul class="l">
+        <li><i>🔒</i><span><b>נעילת אפליקציות עד הנחת תפילין</b> – אוטומציה של 3 פעולות ב"קיצורים" (עמוד 1).</span></li>
+        <li><i>🎙️</i><span><b>תמלול הודעה קולית</b> – אין "שיתוף" לאתר: בוואטסאפ לחיצה ארוכה ← העבר ← שיתוף ← שמירה בקבצים, ובדף התמלול בוחרים את הקובץ.</span></li>
+        <li><i>📞</i><span><b>תמלול שיחה מוקלטת</b> – מעלים את ההקלטה ומקבלים טקסט עם זמנים.</span></li>
+        <li><i>🔎</i><span><b>זיהוי מספר</b> – ⓘ ליד השיחה ← מעתיקים את המספר ← מדביקים בכלי.</span></li>
+        <li><i>⏰</i><span><b>תזכורת</b> – מוסיפים ליומן של האייפון, ומצלצל גם כשהדף סגור.</span></li>
+        <li><i>💬</i><span><b>שמירת צ'אט מוואטסאפ</b> – בצ'אט לוחצים על השם למעלה ← "ייצוא צ'אט".</span></li>
+        <li><i>🛡️</i><span><b>אייפון עם סינון</b> – נוסח מוכן לבקש מחברת הסינון לפתוח את האתר.</span></li>
+      </ul>
+    </div>
+    <div class="box">
+      <h2>🤍 מה אתר לא יכול לעשות באייפון</h2>
+      <p class="note">לנעול את כל הטלפון, להופיע בתפריט השיתוף, להיות ווידג'ט, או לרוץ ברקע. בשביל אלה צריך אפליקציה שאפל אישרה – וזה כבר בתכנון של המיזם.</p>
+    </div>
+    <div class="box gold end">
+      <div class="qr">{{QR}}</div>
+      <div>
+        <h3>כל הכלים לאייפון במקום אחד</h3>
+        <div class="url">hakelim.com/kelim/iphone</div>
+        <p class="note" style="margin-top:1.5mm">סורקים במצלמה של האייפון. בחינם, בלי הרשמה ובלי פרסומות.</p>
+      </div>
+    </div>
+  </div>
+  <footer class="foot"><span><b>מיזם הכלים של גילעד רחמים</b> · באהבה, כדי להנגיש</span><span>עמוד 2 מתוך 2</span></footer>
+</section>
+
+</body>
+</html>
