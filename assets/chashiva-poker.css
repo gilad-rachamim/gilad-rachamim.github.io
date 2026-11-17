@@ -12,10 +12,11 @@
 
 /* שורת המידע העליונה */
 .pk2-top{display:flex;align-items:center;justify-content:space-between;gap:5px;padding:8px 8px 2px;position:relative;z-index:6}
-.pk2-top .ic{display:flex;gap:6px}
+.pk2-top .pk2-ic{display:flex;gap:6px;flex:none}
 .pk2-top button,.pk2-side button{flex:none;width:40px;height:40px;min-width:40px;min-height:40px;max-height:40px;line-height:1;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.35);font-size:16px;display:flex;align-items:center;justify-content:center;padding:0}
+@media (max-width:400px){.pk2-top button{width:37px;height:37px;min-width:37px;min-height:37px;max-height:37px;font-size:15px}.pk2-top .pk2-ic{gap:4px}.pk2-inf{font-size:12px;padding:3px 7px}.pk2-inf small{font-size:11px}}
 .pk2-top button[aria-pressed=true]{border-color:var(--gold)}
-.pk2-inf{flex:0 1 auto;max-width:230px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:4px 10px;line-height:1.2;text-align:center;font-size:13px;min-width:0}
+.pk2-inf{flex:0 1 auto;max-width:min(230px,calc(100% - 184px));background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:4px 10px;line-height:1.2;text-align:center;font-size:13px;min-width:0}
 .pk2-inf b{color:var(--gold)}
 .pk2-inf small{display:block;color:#c9d3cd;font-size:11.5px}
 
@@ -143,5 +144,21 @@ body.pk2-fs #tb.pk2-on .pk2-stage{flex:1;aspect-ratio:auto;max-height:none;min-h
 body.pk2-fs #tb.pk2-on #tb-msg{position:fixed;top:52px;left:0;right:0;z-index:30;pointer-events:none}
 body.pk2-fs #tb.pk2-on #tb-win{position:fixed;inset:auto 0 0 0;z-index:40;background:#0a100f;max-height:80dvh;overflow:auto;padding:0 12px}
 body.pk2-fs #tb.pk2-on #tb-win:empty{display:none}
+
+/* סבב 2-4: מצב לימוד, תעופת אסימונים, שעון תור, תגובות */
+.pk2-eq{position:absolute;left:8px;bottom:56px;z-index:5;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:4px 8px;font-size:11px;text-align:center;line-height:1.2;min-width:62px}
+.pk2-eq b{display:block;font-size:17px;color:#7fe0a8}
+.pk2-eq small{display:block;color:#c9d3cd;font-size:10.5px}
+.pk2-eq[hidden]{display:none}
+.pk2-fly{position:absolute;z-index:15;pointer-events:none}
+.pk2-link{background:none;border:0;color:var(--gold);text-decoration:underline;font-weight:700;padding:4px 6px;min-height:36px}
+.pk2-timer{margin:0 0 6px;font-size:13px}
+@property --tl{syntax:'<percentage>';inherits:true;initial-value:100%}
+@keyframes pk2tl{from{--tl:var(--from,100%)}to{--tl:0%}}
+.pk2-seat.timed .pk2-av{animation:pk2tl 30s linear forwards}
+.pk2-emo{position:absolute;transform:translate(-50%,-100%);z-index:12;font-size:30px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6));pointer-events:none;animation:pk2pop 2.5s ease forwards;white-space:nowrap}
+.pk2-emo.t{font-size:14px;font-weight:800;background:#fffdf6;color:#14211f;border-radius:12px;padding:3px 10px;filter:none;box-shadow:0 3px 8px rgba(0,0,0,.5)}
+@keyframes pk2pop{0%{opacity:0;margin-top:8px}12%{opacity:1;margin-top:0}80%{opacity:1}100%{opacity:0;margin-top:-10px}}
+.pk2-side.r[hidden]{display:none}
 
 @media (prefers-reduced-motion:reduce){.pk2 *,.pk2 *:before,.pk2 *:after{transition:none!important;animation:none!important}}
