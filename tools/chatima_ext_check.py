@@ -105,7 +105,7 @@ unused = sorted(p.name for p in EXT.iterdir() if p.is_file() and p.name not in u
 API = {'contextMenus': r'chrome\.contextMenus', 'notifications': r'chrome\.notifications', 'storage': r'chrome\.storage',
        'scripting': r'chrome\.scripting', 'alarms': r'chrome\.alarms', 'tts': r'chrome\.tts', 'tabGroups': r'chrome\.tabGroups',
        'system.memory': r'chrome\.system\.memory', 'favicon': r'_favicon', 'sidePanel': r'chrome\.sidePanel',
-       'browsingData': r'chrome\.browsingData', 'tabs': r"permissions: \['tabs'\]|chrome\.tabs", 'topSites': r'chrome\.topSites',
+       'browsingData': r'chrome\.browsingData', 'offscreen': r'chrome\.offscreen', 'clipboardWrite': r"execCommand\('copy'\)", 'tabs': r"permissions: \['tabs'\]|chrome\.tabs", 'topSites': r'chrome\.topSites',
        'sessions': r'chrome\.sessions', 'unlimitedStorage': r'.', 'activeTab': r'chrome\.scripting|captureVisibleTab'}
 for p in man.get('permissions', []) + man.get('optional_permissions', []):
     rx = API.get(p)

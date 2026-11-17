@@ -1,0 +1,62 @@
+<!doctype html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>גשר לטלפון – קודי אימות נכנסים לבד</title>
+<link rel="icon" href="../icon32.png">
+<link rel="stylesheet" href="../tabs.css">
+<link rel="stylesheet" href="gesher.css">
+<link rel="stylesheet" href="../a11y.css">
+<script src="../a11y.js"></script>
+</head>
+<body>
+<header>
+  <img src="../icon32.png" alt="" width="26" height="26">
+  <div>
+    <h1>📲 גשר לטלפון</h1>
+    <p class="stats">קוד אימות שמגיע לטלפון (SMS, ווטסאפ, מייל) נכנס לבד לשדה במחשב. מוצפן מהטלפון עד המחשב – אף אחד באמצע לא יכול לקרוא אותו, גם לא אנחנו.</p>
+  </div>
+</header>
+<main>
+
+<section id="off" class="card" hidden>
+  <h2>חיבור הטלפון – פעם אחת</h2>
+  <ol class="steps">
+    <li>מתקינים בטלפון את האפליקציה "הכלים" (אנדרואיד).</li>
+    <li>לוחצים כאן "חיבור טלפון" וסורקים את הריבוע במצלמה של הטלפון.</li>
+    <li>זהו. מעכשיו כל קוד שמגיע לטלפון ממלא את עצמו כאן.</li>
+  </ol>
+  <p class="why">כרום ישאל אם לאפשר לתוסף לגשת לאתרים: זה כדי למצוא את שדה הקוד בכל אתר ולמלא אותו. התוסף לא קורא שום דבר אחר מהדף.</p>
+  <button class="big gold" id="start" type="button">📷 חיבור טלפון</button>
+  <p class="msg" id="off-msg" role="status"></p>
+</section>
+
+<section id="pairing" class="card" hidden>
+  <h2>סורקים בטלפון</h2>
+  <div class="qrwrap"><div id="qr" aria-label="קוד QR לחיבור הטלפון"></div></div>
+  <p class="msg" id="pair-msg" role="status">מחכים לטלפון…</p>
+  <p class="small">הריבוע תקף ל-<span id="left">3:00</span> דקות, ורק לטלפון אחד.</p>
+  <button type="button" id="cancel">ביטול</button>
+</section>
+
+<section id="on" class="card" hidden>
+  <h2>✅ מחובר <bdi id="phone-name"></bdi></h2>
+  <p class="status"><span id="dot" class="dot"></span> <span id="status-txt"></span></p>
+  <div id="last" class="last" hidden></div>
+  <label class="opt"><input type="checkbox" id="opt-copy"> להעתיק כל קוד גם ללוח (Ctrl+V)</label>
+  <p class="small">קיצור מקשים "להקליד את הקוד האחרון": אפשר לקבוע ב-<a href="#" id="keys">chrome://extensions/shortcuts</a>.</p>
+  <div class="row">
+    <button type="button" id="perm" hidden>לאפשר מילוי בכל האתרים</button>
+    <button type="button" id="unpair" class="danger">ניתוק הטלפון</button>
+  </div>
+  <p class="msg" id="on-msg" role="status"></p>
+</section>
+
+</main>
+<script src="../qrcode.min.js"></script>
+<script src="crypto.js"></script>
+<script src="store.js"></script>
+<script src="gesher.js"></script>
+</body>
+</html>

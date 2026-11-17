@@ -3,7 +3,7 @@
 // כך שכלי חדש באתר מופיע בתוסף – בחיפוש, ואם הוא מקבל קבצים גם בלחיצה הימנית – בלי גרסה חדשה בחנות.
 // קבצים: התוסף מביא את הקובץ שהמשתמש בחר, שומר אותו רגע ב-storage ופותח את הכלי. bridge.js מכניס
 // אותו לכלי. שום דבר לא נשלח לשרת: הכלים עצמם עובדים בתוך הדפדפן.
-importScripts('page-tools.js', 'when.js');   // תיקון שפה, צילום עמוד, הקראה, כיוון עברית, מצב כהה, תרגום
+importScripts('page-tools.js', 'when.js', 'gesher/crypto.js', 'gesher/store.js', 'gesher/link.js');   // תיקון שפה, צילום עמוד, הקראה, כיוון עברית, מצב כהה, תרגום
 var SITE = 'https://hakelim.com';
 var LIST_URL = SITE + '/kelim/tools.json';
 var MAX_BYTES = 300 * 1024 * 1024;

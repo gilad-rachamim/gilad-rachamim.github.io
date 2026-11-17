@@ -257,6 +257,7 @@
     });
   });
   $('files-btn').addEventListener('click', function () { chrome.tabs.create({ url: chrome.runtime.getURL('files.html') }); window.close(); });
+  $('gesher-btn').addEventListener('click', function () { chrome.tabs.create({ url: chrome.runtime.getURL('gesher/gesher.html') }); window.close(); });
   $('home-btn').addEventListener('click', function () { chrome.tabs.create({ url: chrome.runtime.getURL('home.html') }); window.close(); });
 
   // ---------- ג׳ימייל: חיפושים מוכנים לסידור ולניקוי, והסרה מרשימת דיוור ----------
