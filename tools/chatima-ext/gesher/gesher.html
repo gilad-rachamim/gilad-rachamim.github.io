@@ -27,7 +27,7 @@
     <li>לוחצים כאן "חיבור טלפון" וסורקים את הריבוע במצלמה של הטלפון.</li>
     <li>זהו. מעכשיו כל קוד שמגיע לטלפון ממלא את עצמו כאן.</li>
   </ol>
-  <p class="why">כרום ישאל אם לאפשר לתוסף לגשת לאתרים: זה כדי למצוא את שדה הקוד בכל אתר ולמלא אותו. התוסף לא קורא שום דבר אחר מהדף.</p>
+  <p class="why">כרום ישאל אם לאפשר לתוסף לגשת לאתרים: זה כדי למצוא את שדה הקוד בכל אתר ולמלא אותו. התוסף לא קורא שום דבר אחר מהדף. וגם לקרוא ולכתוב את הלוח – בשביל הלוח המשותף עם הטלפון.</p>
   <button class="big gold" id="start" type="button">📷 חיבור טלפון</button>
   <p class="msg" id="off-msg" role="status"></p>
 </section>
@@ -51,6 +51,16 @@
     <button type="button" id="unpair" class="danger">ניתוק הטלפון</button>
   </div>
   <p class="msg" id="on-msg" role="status"></p>
+</section>
+
+<section id="clip" class="card" hidden>
+  <h2>📋 לוח משותף</h2>
+  <button type="button" id="clip-pause" class="big pause">⏸ השהיית הלוח המשותף</button>
+  <p class="msg" id="clip-state" role="status"></p>
+  <label class="opt"><input type="checkbox" id="opt-clip-out"> מה שאני מעתיק במחשב (Ctrl+C) עובר לטלפון לבד</label>
+  <p class="small">כרום ישאל אם לאפשר לתוסף לקרוא את הלוח: זה כדי לזהות העתקה. הטקסט נשלח מוצפן רק לטלפון שלכם.</p>
+  <label class="opt"><input type="checkbox" id="opt-clip-in"> מה שאני שולח מהטלפון נכנס ללוח של המחשב (Ctrl+V)</label>
+  <p class="small">בטלפון: מעתיקים ← מושכים את סרגל ההתראות ← "📋 לוח למחשב" (או "שיתוף" ← "למחשב"). טקסט בלבד, עד 100KB.</p>
 </section>
 
 </main>

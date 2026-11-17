@@ -10,7 +10,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var ws = null, timer = null, alive = false;
 
-  function show(id) { ['off', 'pairing', 'on'].forEach(function (x) { $(x).hidden = x !== id; }); }
+  function show(id) { ['off', 'pairing', 'on'].forEach(function (x) { $(x).hidden = x !== id; }); $('clip').hidden = id !== 'on'; }
   function ask(m) { return chrome.runtime.sendMessage(m); }
 
   // ---------- מצב ----------
@@ -38,7 +38,7 @@
   function start() {
     $('off-msg').textContent = '';
     // בקשת ההרשאות חייבת לקרות מיד בלחיצה
-    chrome.permissions.request({ origins: ['<all_urls>'], permissions: ['clipboardWrite'] }).catch(function () { return false; }).then(function (granted) {
+    chrome.permissions.request({ origins: ['<all_urls>'], permissions: ['clipboardWrite', 'clipboardRead'] }).catch(function () { return false; }).then(function (granted) {
       if (!granted) $('off-msg').textContent = 'בלי הרשאה לאתרים הקוד לא ימולא לבד – רק יופיע בהתראה ויועתק. אפשר לאפשר אחר כך.';
       return pairNow();
     });
@@ -146,7 +146,49 @@
     chrome.storage.local.get('gesherOpts').then(function (o) { chrome.storage.local.set({ gesherOpts: Object.assign({}, o.gesherOpts, { copy: on }) }); });
     if (on) chrome.permissions.request({ permissions: ['clipboardWrite'] }).catch(function () {});
   });
-  chrome.storage.onChanged.addListener(function (c, area) { if (area === 'session' && (c.gState || c.gLast)) refresh(); });
+  chrome.storage.onChanged.addListener(function (c, area) { if (area === 'session' && (c.gState || c.gLast || c.gClip)) refresh(); });
+
+  // ---------- לוח משותף ----------
+  var CLIP_DEF = { clipIn: true, clipOut: true, pause: false };
+  function clipOpts() { return chrome.storage.local.get('gesherOpts').then(function (o) { return Object.assign({}, CLIP_DEF, o.gesherOpts || {}); }); }
+  function setOpt(k, v) {
+    return chrome.storage.local.get('gesherOpts').then(function (o) { var x = Object.assign({}, o.gesherOpts); x[k] = v; return chrome.storage.local.set({ gesherOpts: x }); })
+      .then(function () { return ask({ t: 'gesher-clip-sync' }); }).then(clipView);
+  }
+  function ago(t) { var s = Math.round((Date.now() - t) / 1000); return s < 60 ? 'לפני ' + s + ' שניות' : 'לפני ' + Math.round(s / 60) + ' דקות'; }
+  function clipView() {
+    return Promise.all([clipOpts(), chrome.permissions.contains({ permissions: ['clipboardRead'] }), chrome.storage.session.get('gClip')]).then(function (r) {
+      var op = r[0], canRead = r[1], last = r[2].gClip;
+      $('clip-pause').textContent = op.pause ? '▶ הלוח המשותף מושהה – להמשיך' : '⏸ השהיית הלוח המשותף';
+      $('clip-pause').classList.toggle('paused', op.pause);
+      $('opt-clip-out').checked = op.clipOut && canRead;
+      $('opt-clip-in').checked = op.clipIn;
+      $('opt-clip-out').disabled = $('opt-clip-in').disabled = op.pause;
+      var s = op.pause ? 'מושהה: שום דבר לא עובר בין הלוחות.' : '';
+      if (!op.pause && last) {
+        s = last.dir === 'in' ? 'אחרון: הגיע מהטלפון ' + ago(last.at) + (last.ok ? ' ✓' : ' – אין הרשאת לוח')
+          : 'אחרון: הועתק במחשב ' + ago(last.at) + (last.sent ? ' · הגיע לטלפון ✓' : ' · מחכה שהטלפון יתחבר (עד 10 דקות)');
+      }
+      $('clip-state').textContent = s;
+    }).catch(function () {});
+  }
+  $('clip-pause').addEventListener('click', function () { clipOpts().then(function (op) { setOpt('pause', !op.pause); }); });
+  $('opt-clip-in').addEventListener('change', function () {
+    var on = $('opt-clip-in').checked;
+    if (on) chrome.permissions.request({ permissions: ['clipboardWrite'] }).catch(function () {});
+    setOpt('clipIn', on);
+  });
+  $('opt-clip-out').addEventListener('change', function () {
+    if (!$('opt-clip-out').checked) return setOpt('clipOut', false);
+    // הבקשה חייבת לקרות מיד בלחיצה
+    chrome.permissions.request({ permissions: ['clipboardRead', 'clipboardWrite'] }).catch(function () { return false; }).then(function (ok) {
+      if (!ok) { $('opt-clip-out').checked = false; $('clip-state').textContent = 'בלי הרשאה לקרוא את הלוח אי אפשר לזהות העתקה במחשב.'; return; }
+      setOpt('clipOut', true);
+    });
+  });
+  chrome.storage.onChanged.addListener(function (c, area) { if ((area === 'local' && c.gesherOpts) || (area === 'session' && c.gClip)) clipView(); });
+  clipView();
+  setInterval(clipView, 5000);
 
   refresh();
   setInterval(refresh, 5000);

@@ -7,7 +7,7 @@
 (function () {
   'use strict';
   var G = self.GesherCrypto, S = self.GesherStore;
-  var ws = null, pingT = null, pair = null, connecting = false, lastSent = '0';
+  var ws = null, pingT = null, pair = null, connecting = false, lastSent = '0', phoneOn = false;
   var CODE_TTL = 10 * 60e3;          // קוד ישן מעשר דקות כבר לא ממלאים
   var FIELD_WAIT = 40e3;             // שדה קוד פתוח 40 שניות בלי קוד -> התראה "עוד לא הגיע"
   var SRC = { sms: 'SMS', whatsapp: 'ווטסאפ', mail: 'מייל', app: 'התראה של אפליקציה' };
@@ -37,7 +37,7 @@
         if (typeof e.data === 'string') {
           if (e.data === 'pong') return;
           var m; try { m = JSON.parse(e.data); } catch (x) { return; }
-          if (m.t === 'peer') setState({ online: true, phone: !!m.on });
+          if (m.t === 'peer') { phoneOn = !!m.on; setState({ online: true, phone: phoneOn }); if (phoneOn) flushClip(); }
           return;
         }
         onFrame(new Uint8Array(e.data));
@@ -45,7 +45,7 @@
       s.onclose = function (e) {
         connecting = false;
         clearInterval(pingT);
-        if (ws === s) ws = null;
+        if (ws === s) { ws = null; phoneOn = false; }
         setState({ online: false, code: e.code });
         if (e.code === 4003 || e.code === 4001) forget('הטלפון ניתק את החיבור');   // נותק מהצד השני / החדר פג
       };
@@ -73,6 +73,8 @@
       var o = r.obj || {};
       if (o.type === 'otp' && /^[0-9A-Za-z]{3,10}$/.test(String(o.code || ''))) return gotCode(o);
       if (o.type === 'bye') return forget('הטלפון ניתק את החיבור');
+      if (o.type === 'clip' && typeof o.text === 'string') return gotClip(o);
+      if (o.type === 'ack' && o.id) return clipAcked(o.id);
     }).catch(function () { /* מסגרת לא תקינה / ישנה – מתעלמים בשקט */ });
   }
 
@@ -95,7 +97,7 @@
       send({ type: 'ack', id: c.id, filled: !!res.filled });
     });
   }
-  function opts() { return chrome.storage.local.get('gesherOpts').then(function (o) { return Object.assign({ copy: true }, o.gesherOpts || {}); }); }
+  function opts() { return chrome.storage.local.get('gesherOpts').then(function (o) { return Object.assign({ copy: true, clipIn: true, clipOut: true, pause: false }, o.gesherOpts || {}); }); }
   function srcLine(c) {
     var s = 'הגיע ב' + (c.src === 'app' ? 'התראה' : '-' + (SRC[c.src] || c.src));
     if (c.from) s += ' מ' + (/^[֐-׿]/.test(c.from) ? '' : '-') + c.from;
@@ -199,12 +201,79 @@
   }
 
   // ---------- לוח ----------
+  function offscreen() {
+    if (!chrome.offscreen) return Promise.reject(new Error('no offscreen'));
+    return chrome.offscreen.hasDocument().then(function (h) {
+      return h ? null : chrome.offscreen.createDocument({ url: 'gesher/offscreen.html', reasons: ['CLIPBOARD'], justification: 'לוח משותף עם הטלפון: כתיבה ללוח של טקסט שהגיע מהטלפון, וזיהוי העתקה במחשב כשהמשתמש הדליק את זה' });
+    }).catch(function (e) { if (!/single offscreen|already/i.test(String(e && e.message))) throw e; });
+  }
   function copy(text) {
-    chrome.permissions.contains({ permissions: ['clipboardWrite'] }).then(function (has) {
-      if (!has || !chrome.offscreen) return;
-      return chrome.offscreen.hasDocument().then(function (h) {
-        return h ? null : chrome.offscreen.createDocument({ url: 'gesher/offscreen.html', reasons: ['CLIPBOARD'], justification: 'העתקת קוד האימות שהגיע מהטלפון ללוח' });
-      }).then(function () { return chrome.runtime.sendMessage({ t: 'gesher-copy', text: text }); });
+    rememberClip(text);
+    return chrome.permissions.contains({ permissions: ['clipboardWrite'] }).then(function (has) {
+      if (!has) return false;
+      return offscreen().then(function () { return chrome.runtime.sendMessage({ t: 'gesher-copy', text: text }); }).then(function () { return true; });
+    }).catch(function () { return false; });
+  }
+
+  // ---------- לוח משותף (clip) ----------
+  var CLIP_MAX = 100 * 1024, CLIP_TTL = 10 * 60e3;
+  function hash(t) { var h = 2166136261; for (var i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36) + ':' + t.length; }
+  function rememberClip(t) { return chrome.storage.session.set({ gClipHash: hash(String(t || '')) }).catch(function () {}); }
+  function preview(t) { t = t.replace(/\s+/g, ' ').trim(); return t.length > 90 ? t.slice(0, 88) + '…' : t; }
+  function looksSecret(t) { return t.length <= 40 && !/\s/.test(t) && (/^\d{4,10}$/.test(t) || (/[A-Za-z]/.test(t) && /\d/.test(t) && /[^A-Za-z0-9]/.test(t))); }
+
+  // טלפון -> מחשב: נכתב ללוח של Windows + התראה קטנה
+  function gotClip(o) {
+    var text = o.text.slice(0, CLIP_MAX);
+    return opts().then(function (op) {
+      if (op.pause || !op.clipIn) return send({ type: 'ack', id: o.id, paused: true });
+      return copy(text).then(function (ok) {
+        chrome.storage.session.set({ gClip: { dir: 'in', at: Date.now(), len: text.length, ok: ok } });
+        chrome.notifications.create('gesher:clip', {
+          type: 'basic', iconUrl: 'icon128.png', priority: 0, silent: true,
+          title: ok ? '📋 הועתק מהטלפון' : 'הגיע טקסט מהטלפון – אין הרשאת לוח',
+          message: o.sens ? '(טקסט רגיש – לא מוצג)' : (preview(text) || ' ')
+        });
+        setTimeout(function () { chrome.notifications.clear('gesher:clip'); }, 6000);
+        return send({ type: 'ack', id: o.id, ok: ok });
+      });
+    });
+  }
+
+  // מחשב -> טלפון: העתקה במחשב (זוהתה ב-offscreen). שולחים רק את האחרון; אם הטלפון לא מחובר – מחכה עד 10 דקות.
+  function localClip(text) {
+    if (!text || text.length > CLIP_MAX) return Promise.resolve();
+    return Promise.all([opts(), chrome.storage.session.get('gClipHash'), load()]).then(function (r) {
+      var op = r[0];
+      if (!r[2] || op.pause || !op.clipOut) return;
+      if (r[1].gClipHash === hash(text)) return;            // זה בדיוק מה שהגיע מהטלפון – לא מחזירים (מניעת לולאה)
+      rememberClip(text);
+      var out = { type: 'clip', id: 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), text: text, at: Date.now(), sens: looksSecret(text) };
+      return chrome.storage.session.set({ gClipOut: out, gClip: { dir: 'out', at: out.at, len: text.length, sent: false } }).then(flushClip);
+    });
+  }
+  function flushClip() {
+    return chrome.storage.session.get('gClipOut').then(function (o) {
+      var c = o.gClipOut;
+      if (!c) return;
+      if (Date.now() - c.at > CLIP_TTL) return chrome.storage.session.remove('gClipOut');
+      if (!phoneOn) { connect(); return; }
+      return send(c);
+    }).catch(function () {});
+  }
+  function clipAcked(id) {
+    return chrome.storage.session.get(['gClipOut', 'gClip']).then(function (o) {
+      if (!o.gClipOut || o.gClipOut.id !== id) return;
+      chrome.storage.session.remove('gClipOut');
+      chrome.storage.session.set({ gClip: Object.assign({}, o.gClip, { sent: true, at: Date.now() }) });
+    });
+  }
+  // מדליק/מכבה את הבדיקה של הלוח במחשב לפי המתגים וההרשאה
+  function syncClipWatch() {
+    return Promise.all([load(), opts(), chrome.permissions.contains({ permissions: ['clipboardRead'] })]).then(function (r) {
+      var on = !!r[0] && r[1].clipOut && !r[1].pause && r[2];
+      if (!on) return chrome.offscreen && chrome.offscreen.hasDocument().then(function (h) { if (h) return chrome.runtime.sendMessage({ t: 'gesher-clip-watch', on: false }); });
+      return offscreen().then(function () { return chrome.runtime.sendMessage({ t: 'gesher-clip-watch', on: true }); });
     }).catch(function () {});
   }
 
@@ -215,7 +284,7 @@
     try { if (ws) ws.close(); } catch (e) {}
     ws = null;
     clearInterval(pingT);
-    chrome.storage.session.remove(['gLast', 'gField']);
+    chrome.storage.session.remove(['gLast', 'gField', 'gClip', 'gClipOut']);
     setState({ online: false, unpaired: true });
     return S.clear().then(function () {
       if (why) chrome.notifications.create('gesher:off', { type: 'basic', iconUrl: 'icon128.png', title: 'הגשר לטלפון נותק', message: why });
@@ -263,16 +332,18 @@
       return;
     }
     if (!own) return;   // שאר הפקודות רק מדפי התוסף עצמו (דף הגשר פתוח בכרטיסייה, לכן לא בודקים sender.tab)
-    if (m.t === 'gesher-paired') { pair = null; lastSent = '0'; connect().then(function () { reply({ ok: true }); }); syncWatch(); return true; }
-    if (m.t === 'gesher-unpair') { unpair().then(function () { reply({ ok: true }); syncWatch(); }); return true; }
+    if (m.t === 'gesher-paired') { pair = null; lastSent = '0'; connect().then(function () { reply({ ok: true }); }); syncWatch(); syncClipWatch(); return true; }
+    if (m.t === 'gesher-unpair') { unpair().then(function () { reply({ ok: true }); syncWatch(); syncClipWatch(); }); return true; }
     if (m.t === 'gesher-state') {
-      Promise.all([load(), chrome.storage.session.get(['gState', 'gLast'])]).then(function (r) {
-        reply({ paired: !!r[0], name: r[0] && r[0].name, since: r[0] && r[0].at, online: !!(ws && ws.readyState === 1), state: r[1].gState || {}, last: r[1].gLast || null });
+      Promise.all([load(), chrome.storage.session.get(['gState', 'gLast', 'gClip'])]).then(function (r) {
+        reply({ paired: !!r[0], name: r[0] && r[0].name, since: r[0] && r[0].at, online: !!(ws && ws.readyState === 1), phone: phoneOn, state: r[1].gState || {}, last: r[1].gLast || null, clip: r[1].gClip || null });
       });
       if (!(ws && ws.readyState <= 1)) connect();
       return true;
     }
     if (m.t === 'gesher-fill-last') { typeLast().then(reply); return true; }
+    if (m.t === 'gesher-clip-local') { localClip(String(m.text || '')); return; }
+    if (m.t === 'gesher-clip-sync') { syncClipWatch().then(function () { reply({ ok: true }); }); return true; }
   });
 
   function typeLast() {
@@ -310,12 +381,14 @@
   }
 
   chrome.alarms.get('gesher', function (a) { if (!a) chrome.alarms.create('gesher', { periodInMinutes: 1 }); });
-  chrome.alarms.onAlarm.addListener(function (a) { if (a.name === 'gesher') connect(); });
-  chrome.runtime.onStartup.addListener(function () { connect(); syncWatch(); });
-  chrome.runtime.onInstalled.addListener(function () { connect(); syncWatch(); });
-  chrome.permissions.onAdded.addListener(syncWatch);
-  chrome.permissions.onRemoved.addListener(syncWatch);
+  chrome.alarms.onAlarm.addListener(function (a) { if (a.name === 'gesher') { connect(); syncClipWatch(); flushClip(); } });
+  chrome.runtime.onStartup.addListener(function () { connect(); syncWatch(); syncClipWatch(); });
+  chrome.runtime.onInstalled.addListener(function () { connect(); syncWatch(); syncClipWatch(); });
+  chrome.permissions.onAdded.addListener(function () { syncWatch(); syncClipWatch(); });
+  chrome.permissions.onRemoved.addListener(function () { syncWatch(); syncClipWatch(); });
+  chrome.storage.onChanged.addListener(function (c, area) { if (area === 'local' && c.gesherOpts) syncClipWatch(); });
   connect();
+  syncClipWatch();
 
-  self.Gesher = { connect: connect, unpair: unpair, typeLast: typeLast, gesherFill: gesherFill };
+  self.Gesher = { connect: connect, unpair: unpair, typeLast: typeLast, gesherFill: gesherFill, localClip: localClip, hash: hash };
 })();

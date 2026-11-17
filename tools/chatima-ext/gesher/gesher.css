@@ -20,3 +20,5 @@ main { max-width: 640px; margin: 0 auto; padding: 0 16px 40px; }
 button { font-size: 15px; padding: 8px 14px; border-radius: 9px; border: 1px solid var(--line); background: transparent; color: var(--text); cursor: pointer; }
 button.danger { border-color: #c62828; color: #ef9a9a; }
 bdi { unicode-bidi: isolate; }
+.pause { width: 100%; border: 2px solid var(--gold); font-weight: 700; }
+.pause.paused { background: #c62828; border-color: #c62828; color: #fff; }
