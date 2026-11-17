@@ -87,6 +87,55 @@
   ];
   MILES.sort(function (a, b) { return a[1] - b[1]; });
 
+  // ---- שיבוץ ביומן: בדיקה = תזכורת לקבוע תור 21 יום לפני + החלון עצמו; ועוד הכנות ללידה ----
+  var BOOK = 21;
+  var TESTS = [
+    ['שקיפות עורפית וסקר שליש ראשון', 77, 97],
+    ['סקירת מערכות מוקדמת', 84, 118],
+    ['תבחין משולש', 112, 139],
+    ['סקירת מערכות מאוחרת', 140, 174],
+    ['העמסת סוכר', 168, 202],
+    ['תרבית GBS', 252, 265]
+  ];
+  var PREP = [
+    ['לשאול את הרופא/ה על תוספי תזונה ועל התרופות הקבועות', 42, 'משרד הבריאות ממליץ בהריון על תוספים כמו חומצה פולית, ברזל, ויטמין D ויוד – את הכמות ומה מתאים לך קובע/ת הרופא/ה. תרופה קבועה לא מפסיקים לבד.'],
+    ['לבחור בית חולים ללידה', 182, 'כדאי לבחור מוקדם: לבדוק מרחק מהבית, ולברר באתר בית החולים איך נרשמים לסיור בחדר הלידה.'],
+    ['להירשם לסיור בחדר הלידה', 210, 'בחלק מבתי החולים מבקשים להירשם כ-6 עד 8 שבועות לפני הלידה. הסיורים בדרך כלל בחינם.'],
+    ['לקנות סלקל ולהתקין ברכב', 224, 'תינוק עד גיל שנה נוסע רק במושב בטיחות שגבו לכיוון הנסיעה, ובית החולים לא משחרר תינוק בלי מושב. להתקין מראש לפי הוראות היצרן.'],
+    ['להכין תיק ללידה', 238, 'תעודות זהות של שניכם, כרטיס קופת חולים, כרטיס מעקב ההריון וקלסר הבדיקות – ובגדים לתינוק ליציאה הביתה.']
+  ];
+  function events(L, t) {
+    var out = [];
+    function put(title, a, b, d) { if (diff(b || a, t) <= 0) out.push({ t: title, a: diff(a, t) > 0 ? t : a, b: b || a, d: d }); }
+    TESTS.forEach(function (x) {
+      var a = add(L, x[1]), b = add(L, x[2]);
+      put('לבקש הפניה ולקבוע תור: ' + x[0], add(a, -BOOK), null, 'הבדיקה מתאימה בין ' + g(a) + ' ל-' + g(b) + '. לבקש הפניה מהרופא/ה ולקבוע תור במקום ובשעה שנוחים לך.');
+      put(x[0] + ' – הזמן המתאים', a, b, 'את מועד הבדיקה המדויק קובעים עם הרופא/ה או האחות.');
+    });
+    PREP.forEach(function (x) { put(x[0], add(L, x[1]), null, x[2]); });
+    put('תאריך הלידה המשוער – בשעה טובה!', add(L, 280), null, 'רוב הלידות קורות בין שבוע 37 לשבוע 42.');
+    out.sort(function (x, y) { return x.a - y.a; });
+    return out;
+  }
+  function ymd(d) { return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()); }
+  function gcal(e) {
+    return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(e.t)
+      + '&dates=' + ymd(e.a) + '/' + ymd(add(e.b, 1)) + '&details=' + encodeURIComponent(e.d + '\nמחשבון הריון: https://hakelim.com/kelim/herayon/');
+  }
+  function esc(x) { return String(x).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n'); }
+  function ics(ev) {
+    var now = new Date(), st = now.getUTCFullYear() + pad(now.getUTCMonth() + 1) + pad(now.getUTCDate()) + 'T' + pad(now.getUTCHours()) + pad(now.getUTCMinutes()) + '00Z';
+    var L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//hakelim.com//herayon//HE', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH'];
+    ev.forEach(function (e, i) {
+      L.push('BEGIN:VEVENT', 'UID:hr-' + ymd(e.a) + '-' + i + '-' + now.getTime() + '@hakelim.com', 'DTSTAMP:' + st,
+        'DTSTART;VALUE=DATE:' + ymd(e.a), 'DTEND;VALUE=DATE:' + ymd(add(e.b, 1)),
+        'SUMMARY:' + esc(e.t), 'DESCRIPTION:' + esc(e.d + '\nמחשבון הריון: https://hakelim.com/kelim/herayon/'), 'TRANSP:TRANSPARENT',
+        'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + esc(e.t), 'TRIGGER:PT9H', 'END:VALARM', 'END:VEVENT');
+    });
+    L.push('END:VCALENDAR');
+    return L.join('\r\n') + '\r\n';
+  }
+
   function render(st) {
     var L = base(st), err = $('hr-err'), res = $('hr-res');
     err.textContent = '';
@@ -114,6 +163,18 @@
       h.push('<li' + (past ? ' class="past"' : '') + '><b>' + m[0] + '</b><span>' + (b ? g(a) + ' – ' + g(b) : g(a) + ' · ' + heb(a)) + '</span><small>' + wlab + '</small></li>');
     });
     h.push('</ul><p class="note">את מועדי הבדיקות קובעים עם הרופא/ה או האחות. הטווחים לפי משרד הבריאות.</p>');
+    var ev = events(L, t);
+    if (ev.length) {
+      h.push('<div class="hr-cal"><h3 class="hr-h3">לשבץ הכול ביומן – פעם אחת</h3>'
+        + '<p>כל הבדיקות וההכנות נכנסות ליומן שלך עם תזכורת. שלושה שבועות לפני כל בדיקה תקבלי תזכורת לבקש הפניה ולקבוע תור – כך יש זמן לבחור מקום ושעה שנוחים לך.</p>'
+        + '<button type="button" class="btn btn-gold btn-block" id="hr-ics"><svg class="ic"><use href="#cal"/></svg> להוסיף ' + ev.length + ' תזכורות ליומן</button>'
+        + '<p class="opt">מתאים לאייפון, לסמסונג, לאאוטלוק וליומן גוגל במחשב. הקובץ נוצר בטלפון שלך.</p>'
+        + '<details class="hr-gl"><summary>או להוסיף אחת אחת ליומן גוגל</summary><ul>');
+      ev.forEach(function (e) {
+        h.push('<li><span>' + e.t + '<small>' + g(e.a) + '</small></span><a target="_blank" rel="noopener" href="' + gcal(e) + '">+ ליומן</a></li>');
+      });
+      h.push('</ul></details></div>');
+    }
     var txt = (ga >= 0 && w >= 1 ? 'אנחנו בשבוע ' + w + ' להריון! ' : '') + 'תאריך לידה משוער: ' + g(edd) + ' (' + heb(edd) + '). מחשבון הריון בחינם: https://hakelim.com/kelim/herayon/';
     h.push('<div class="share-row"><a class="btn btn-gold btn-sm" id="hr-wa" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(txt) + '"><svg class="ic"><use href="#wa"/></svg> לשתף בווטסאפ</a></div>');
     h.push($('hr-mohel-tpl') ? $('hr-mohel-tpl').innerHTML : '');
@@ -121,6 +182,13 @@
     res.innerHTML = h.join('');
     res.hidden = false;
     var wa = $('hr-wa'); if (wa) wa.addEventListener('click', function () { if (window.toolUsed) window.toolUsed('herayon', { how: 'wa' }); });
+    var ib = $('hr-ics');
+    if (ib) ib.addEventListener('click', function () {
+      var url = URL.createObjectURL(new Blob([ics(ev)], { type: 'text/calendar;charset=utf-8' }));
+      if (/iP(hone|ad|od)/.test(navigator.userAgent)) { location.href = url; }
+      else { var a = document.createElement('a'); a.href = url; a.download = 'herayon-yoman.ics'; document.body.appendChild(a); a.click(); a.remove(); }
+      if (window.toolUsed) window.toolUsed('herayon', { how: 'ics', n: ev.length });
+    });
   }
 
   form.addEventListener('submit', function (e) {
@@ -136,5 +204,5 @@
     setMode(sv0.m || 'lmp'); $('hr-date').value = sv0.d; $('hr-cycle').value = sv0.c || 28; $('hr-emb').value = sv0.e || 5;
     render(sv0);
   } else setMode('lmp');
-  window.hrCalc = { base: base, add: add, g: g, heb: heb };
+  window.hrCalc = { base: base, add: add, g: g, heb: heb, events: events, ics: ics };
 })();
