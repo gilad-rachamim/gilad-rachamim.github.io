@@ -2,11 +2,11 @@
 .sh-top{display:flex;gap:.5rem;align-items:end;flex-wrap:wrap}
 .sh-top .field{flex:1 1 220px;margin:0}
 .sh-chips{display:flex;flex-wrap:wrap;gap:.35rem;margin:.7rem 0}
-.sh-chips button{font:inherit;font-size:.95rem;min-width:2.4rem;min-height:2.4rem;padding:.2rem .6rem;border:1px solid var(--line,#d8d2c4);border-radius:999px;background:var(--card,#fff);color:inherit;cursor:pointer}
+.sh-chips button{font:inherit;font-size:.95rem;min-width:2.4rem;min-height:2.4rem;padding:.2rem .6rem;border:1px solid var(--line,#d8d2c4);border-radius:999px;background:rgba(255,255,255,.04);color:inherit;cursor:pointer}
 .sh-chips button[aria-pressed="true"]{background:var(--gold,#c9a14a);border-color:var(--gold,#c9a14a);color:#1b1b1b;font-weight:700}
 #sh-count{font-size:.9rem;opacity:.75;margin:.3rem 0}
 #sh-list{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
-#sh-list li{display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"star name src" "star mean mean";gap:0 .6rem;align-items:center;padding:.55rem .7rem;border:1px solid var(--line,#e2dccf);border-radius:12px;background:var(--card,#fff)}
+#sh-list li{display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"star name src" "star mean mean";gap:0 .6rem;align-items:center;padding:.55rem .7rem;border:1px solid var(--line,#e2dccf);border-radius:12px;background:rgba(255,255,255,.04)}
 #sh-list li b{grid-area:name;font-size:1.2rem}
 #sh-list li span{grid-area:mean;font-size:.95rem;opacity:.85}
 #sh-list li small{grid-area:src;font-size:.75rem;opacity:.6}

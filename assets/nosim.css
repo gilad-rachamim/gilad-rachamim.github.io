@@ -1,0 +1,30 @@
+/* כלים קטנים: מוזיקה, המרות, טקסט, זמן, הדפסה */
+.gr-links{text-align:center;margin:1.2rem 0 .4rem;color:var(--muted);line-height:2}.gr-links a{color:var(--gold-hi)}
+.ns-big{font-size:clamp(3rem,16vw,5.2rem);font-weight:800;color:var(--cream);text-align:center;line-height:1;font-variant-numeric:tabular-nums;direction:ltr}
+.ns-sub{text-align:center;color:var(--muted);margin:.3rem 0 .8rem;min-height:1.4em}
+.ns-row{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;align-items:center;margin:.7rem 0}
+.ns-row .btn{min-width:3.2rem}
+.ns-range{width:100%;accent-color:var(--gold);margin:.4rem 0;direction:ltr}
+.ns-dots{display:flex;gap:.7rem;justify-content:center;margin:1rem 0;direction:ltr}
+.ns-dots i{width:1.5rem;height:1.5rem;border-radius:50%;border:2px solid var(--line);background:transparent;transition:background .05s}
+.ns-dots i.on{background:var(--gold);border-color:var(--gold)}.ns-dots i.on.first{background:#7fe0c4;border-color:#7fe0c4}
+.ns-chips{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center;margin:.6rem 0}
+.ns-chips button{padding:.5rem .85rem;border:1px solid var(--line);border-radius:99px;background:transparent;color:var(--body);font:inherit;cursor:pointer;min-height:2.6rem}
+.ns-chips button[aria-pressed=true]{border-color:var(--gold);color:var(--gold-hi);font-weight:700}
+.ns-res{border:1px solid var(--line);border-radius:14px;padding:1rem;margin:1rem 0;text-align:center;color:var(--body)}
+.ns-res b{color:var(--cream);font-size:1.5rem;font-variant-numeric:tabular-nums}
+.ns-res small{display:block;color:var(--muted);margin-top:.3rem}
+.ns-tbl{width:100%;border-collapse:collapse;margin:.8rem 0;font-variant-numeric:tabular-nums}
+.ns-tbl th,.ns-tbl td{border-bottom:1px solid var(--line);padding:.5rem .4rem;text-align:center;color:var(--body)}
+.ns-tbl th{color:var(--cream)}
+.ns-grid2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+@media(max-width:26rem){.ns-grid2{grid-template-columns:1fr}}
+/* כיוון גיטרה */
+.gt-meter{position:relative;height:3.2rem;border:1px solid var(--line);border-radius:12px;margin:1rem 0;direction:ltr;overflow:hidden}
+.gt-meter::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;background:var(--gold-soft)}
+.gt-needle{position:absolute;top:.35rem;bottom:.35rem;width:.7rem;margin-left:-.35rem;border-radius:6px;background:var(--muted);left:50%;transition:left .08s linear}
+.gt-needle.ok{background:#7fe0c4}.gt-needle.off{background:#f29b8f}
+.gt-strs{display:grid;grid-template-columns:repeat(6,1fr);gap:.4rem;direction:ltr;margin:.8rem 0}
+.gt-strs button{padding:.7rem 0;border:1px solid var(--line);border-radius:12px;background:transparent;color:var(--cream);font:inherit;font-weight:700;cursor:pointer;min-height:3.4rem}
+.gt-strs button small{display:block;color:var(--muted);font-weight:400;font-size:.78rem}
+.gt-strs button.on{border-color:var(--gold);color:var(--gold-hi)}
