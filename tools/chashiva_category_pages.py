@@ -47,6 +47,8 @@ def table(sid, h2, lead, head, rows):
 
 
 def build(p):
+    if not any("בחינם" in q for q, _ in p["faq"]):
+        p = dict(p, faq=list(p["faq"]) + [("הדף הזה בחינם?", "כן. בחינם, בלי הרשמה ובלי פרסומות, בטלפון ובמחשב.")])
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in p["faq"]]}
     meta = {

@@ -151,6 +151,8 @@ def esc_attr(s):
 
 def main():
     for p in PAGES:
+        if not any("בחינם" in q for q, _ in p["faq"]):
+            p = dict(p, faq=list(p["faq"]) + [("הכלי בחינם?", "כן. בחינם, בלי הרשמה ובלי פרסומות, בטלפון ובמחשב.")])
         F = FAM[p["fam"]]
         raw = (ROOT / F["main"]).read_text(encoding="utf-8").replace("\r\n", "\n")
         meta0 = json.loads(raw[raw.index("<!--meta ") + 9:raw.index(" -->")])

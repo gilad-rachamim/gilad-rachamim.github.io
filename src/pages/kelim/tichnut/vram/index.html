@@ -1,14 +1,23 @@
 <!--meta {
-  "site": "kelim",
-  "nav": "tchumim",
-  "tool": "tichnut_vram",
-  "title": "מחשבון VRAM – כמה זיכרון כרטיס מסך צריך למודל AI | הכלים של גילעד רחמים",
-  "description": "בוחרים מודל שפה (Llama, Qwen, Mistral...), דיוק (FP16, 8-bit, 4-bit) ואורך הקשר, ורואים כמה GB של VRAM צריך להרצה או לאימון LoRA, ואיזה כרטיס NVIDIA מספיק. בחינם, בלי הרשמה.",
-  "og_title": "כמה VRAM צריך כדי להריץ את המודל?",
-  "priority": "0.7",
-  "crumbs": [["כלים למתכנתים", "/kelim/tichnut/"], ["מחשבון VRAM", null]],
-  "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><style>.tn-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}.tn-modes{display:flex;flex-wrap:wrap;gap:.4rem;margin:.3rem 0 .8rem}.tn-modes label{position:relative;flex:1;min-width:8rem;border:1px solid var(--line);border-radius:12px;padding:.55rem .6rem;text-align:center;cursor:pointer;color:var(--body)}.tn-modes input{position:absolute;opacity:0;width:1px;height:1px;inset:0}.tn-modes label:has(input:checked){border-color:var(--gold);color:var(--cream);background:rgba(216,179,95,.1)}.tn-big{margin-top:1rem;padding:1rem;border:1px solid var(--gold-soft);border-radius:14px;text-align:center;background:rgba(216,179,95,.07)}.tn-big b{display:block;font-family:var(--serif);font-size:2.6rem;color:var(--cream);line-height:1.1;direction:ltr}.tn-big span{color:var(--body);font-size:.95rem}.tn-bars{list-style:none;display:grid;gap:.45rem;margin-top:.9rem}.tn-bars li{display:grid;grid-template-columns:1fr auto;gap:.3rem .6rem;color:var(--parchment);font-size:.95rem}.tn-bars b{color:var(--gold);direction:ltr}.tn-bars i{grid-column:1/-1;display:block;height:.45rem;border-radius:99px;background:var(--gold)}.tn-fit{list-style:none;display:grid;gap:.4rem;margin-top:.5rem}.tn-fit li{display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;padding:.55rem .8rem;border:1px solid var(--line);border-radius:12px;color:var(--parchment)}.tn-fit span{color:var(--muted);font-size:.9rem}.tn-h{margin-top:1.1rem;color:var(--cream);font-size:1.05rem}.tn-ltr{direction:ltr;text-align:left}</style><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"כמה VRAM צריך למודל 7B?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"ב-FP16 בערך 14 GB למשקלות בלבד, ועוד זיכרון להקשר. ב-4 ביט בערך רבע מזה. המחשבון נותן את המספר לפי מה שבחרתם.\"}}, {\"@type\": \"Question\", \"name\": \"מה זה KV cache?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"הזיכרון שהמודל שומר על ההקשר בזמן כתיבה. הוא גדל עם אורך ההקשר ועם מספר הבקשות במקביל.\"}}, {\"@type\": \"Question\", \"name\": \"כמה זיכרון צריך לאימון LoRA?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"הרבה פחות מאימון מלא, כי מאמנים רק חלק קטן מהמשקלות. בוחרים \\\"אימון LoRA\\\" ורואים את החישוב.\"}}, {\"@type\": \"Question\", \"name\": \"המספר מדויק?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"זו הערכה. בפועל זה משתנה לפי הספרייה (vLLM, llama.cpp, Transformers) וההגדרות.\"}}, {\"@type\": \"Question\", \"name\": \"כמה VRAM צריך למודל של 7 מיליארד פרמטרים?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בערך 14 GB ב-FP16 וכ-4 GB ב-4 ביט, ועוד מקום להקשר. המחשבון נותן את המספר המדויק לפי ההגדרות שבחרתם.\"}}]}</script>",
-  "foot": "<script src=\"/assets/tichnut-data.js\" defer></script><script src=\"/assets/tichnut-vram.js\" defer></script>"
+ "site": "kelim",
+ "nav": "tchumim",
+ "tool": "tichnut_vram",
+ "title": "מחשבון VRAM – כמה זיכרון כרטיס מסך צריך למודל AI | הכלים של גילעד רחמים",
+ "description": "מחשבון VRAM: בוחרים מודל שפה (Llama, Qwen, Mistral...), דיוק (FP16, 8-bit, 4-bit) ואורך הקשר, ורואים כמה GB של VRAM צריך להרצה או לאימון LoRA.",
+ "og_title": "כמה VRAM צריך כדי להריץ את המודל?",
+ "priority": "0.7",
+ "crumbs": [
+  [
+   "כלים למתכנתים",
+   "/kelim/tichnut/"
+  ],
+  [
+   "מחשבון VRAM",
+   null
+  ]
+ ],
+ "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><style>.tn-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}.tn-modes{display:flex;flex-wrap:wrap;gap:.4rem;margin:.3rem 0 .8rem}.tn-modes label{position:relative;flex:1;min-width:8rem;border:1px solid var(--line);border-radius:12px;padding:.55rem .6rem;text-align:center;cursor:pointer;color:var(--body)}.tn-modes input{position:absolute;opacity:0;width:1px;height:1px;inset:0}.tn-modes label:has(input:checked){border-color:var(--gold);color:var(--cream);background:rgba(216,179,95,.1)}.tn-big{margin-top:1rem;padding:1rem;border:1px solid var(--gold-soft);border-radius:14px;text-align:center;background:rgba(216,179,95,.07)}.tn-big b{display:block;font-family:var(--serif);font-size:2.6rem;color:var(--cream);line-height:1.1;direction:ltr}.tn-big span{color:var(--body);font-size:.95rem}.tn-bars{list-style:none;display:grid;gap:.45rem;margin-top:.9rem}.tn-bars li{display:grid;grid-template-columns:1fr auto;gap:.3rem .6rem;color:var(--parchment);font-size:.95rem}.tn-bars b{color:var(--gold);direction:ltr}.tn-bars i{grid-column:1/-1;display:block;height:.45rem;border-radius:99px;background:var(--gold)}.tn-fit{list-style:none;display:grid;gap:.4rem;margin-top:.5rem}.tn-fit li{display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;padding:.55rem .8rem;border:1px solid var(--line);border-radius:12px;color:var(--parchment)}.tn-fit span{color:var(--muted);font-size:.9rem}.tn-h{margin-top:1.1rem;color:var(--cream);font-size:1.05rem}.tn-ltr{direction:ltr;text-align:left}</style><script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"FAQPage\",\"mainEntity\":[{\"@type\":\"Question\",\"name\":\"כמה VRAM צריך למודל 7B?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"ב-FP16 בערך 14 GB למשקלות בלבד, ועוד זיכרון להקשר. ב-4 ביט בערך רבע מזה. המחשבון נותן את המספר לפי מה שבחרתם.\"}},{\"@type\":\"Question\",\"name\":\"מה זה KV cache?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"הזיכרון שהמודל שומר על ההקשר בזמן כתיבה. הוא גדל עם אורך ההקשר ועם מספר הבקשות במקביל.\"}},{\"@type\":\"Question\",\"name\":\"כמה זיכרון צריך לאימון LoRA?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"הרבה פחות מאימון מלא, כי מאמנים רק חלק קטן מהמשקלות. בוחרים \\\"אימון LoRA\\\" ורואים את החישוב.\"}},{\"@type\":\"Question\",\"name\":\"המספר מדויק?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"זו הערכה. בפועל זה משתנה לפי הספרייה (vLLM, llama.cpp, Transformers) וההגדרות.\"}},{\"@type\":\"Question\",\"name\":\"כמה VRAM צריך למודל של 7 מיליארד פרמטרים?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"בערך 14 GB ב-FP16 וכ-4 GB ב-4 ביט, ועוד מקום להקשר. המחשבון נותן את המספר המדויק לפי ההגדרות שבחרתם.\"}},{\"@type\":\"Question\",\"name\":\"הדף הזה בחינם?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"כן. הכול כאן בחינם, בלי הרשמה ובלי פרסומות.\"}}]}</script>",
+ "foot": "<script src=\"/assets/tichnut-data.js\" defer></script><script src=\"/assets/tichnut-vram.js\" defer></script>"
 } -->
 <header class="k-hero">
   <h1>מחשבון VRAM: כמה זיכרון צריך למודל AI</h1>
@@ -78,5 +87,6 @@
   <details><summary>כמה זיכרון צריך לאימון LoRA?</summary><p>הרבה פחות מאימון מלא, כי מאמנים רק חלק קטן מהמשקלות. בוחרים "אימון LoRA" ורואים את החישוב.</p></details>
   <details><summary>המספר מדויק?</summary><p>זו הערכה. בפועל זה משתנה לפי הספרייה (vLLM, llama.cpp, Transformers) וההגדרות.</p></details>
   <details><summary>כמה VRAM צריך למודל של 7 מיליארד פרמטרים?</summary><p>בערך 14 GB ב-FP16 וכ-4 GB ב-4 ביט, ועוד מקום להקשר. המחשבון נותן את המספר המדויק לפי ההגדרות שבחרתם.</p></details>
+  <details><summary>הדף הזה בחינם?</summary><p>כן. הכול כאן בחינם, בלי הרשמה ובלי פרסומות.</p></details>
 </section>
 <!--/seo-txt-->

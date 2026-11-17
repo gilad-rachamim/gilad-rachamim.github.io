@@ -33,6 +33,8 @@ EXTRA = {
 
 
 def page(slug, start, title, desc, og, crumb, h1, sub, body, faq):
+    if not any("בחינם" in q for q, _ in faq):
+        faq = list(faq) + [("הדף הזה בחינם?", "כן. בחינם, בלי הרשמה ובלי פרסומות, בטלפון ובמחשב.")]
     body = body.rstrip() + "\n  " + EXTRA[slug]
     meta = {"site": "kelim", "nav": "tchumim", "tool": "chashiva_galgal", "title": title + SITE, "description": desc,
             "og_title": og, "priority": "0.7", "crumbs": [["משחקי חשיבה", "/kelim/chashiva/"], ["גלגל המזל", "/kelim/chashiva/galgal/"], [crumb, None]],
