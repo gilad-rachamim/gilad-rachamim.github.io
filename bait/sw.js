@@ -1,7 +1,7 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'bait-202611162255';
+var CACHE = 'bait-202611171624';
 var PRECACHE = ["/bait/", "/bait/kniyot/", "/bait/matana/", "/bait/mazgan/", "/bait/mevi/", "/bait/mismachim/", "/bait/shabat/", "/bait/shigra/", "/bait/toranut/", "/assets/site.css?v=b4546dc2", "/assets/kelim.css?v=56115877", "/assets/kelim.js?v=00dd7db9", "/assets/track.js?v=b4642baf", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-bait-192.png", "/assets/bait.css?v=ed3b6a1f", "/assets/bait.js?v=e4a0d2b0"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
@@ -19,6 +19,13 @@ self.addEventListener('fetch', function (e) {
   if (req.method === 'POST' && /\/machshev\/sader\/$/.test(new URL(req.url).pathname)) {
     e.respondWith(req.formData().then(function (fd) {
       var files = fd.getAll('files').filter(function (f) { return f && typeof f !== 'string'; });
+      // טקסט ששותף בלי קבצים (הודעה עם קוד אימות): שומרים רגע ב-Cache ופותחים את כלי קוד האימות. לא נשלח לשום שרת.
+      if (!files.length) {
+        var shared = [fd.get('title'), fd.get('text'), fd.get('url')].filter(function (v) { return v && typeof v === 'string'; }).join('\n');
+        return caches.delete('kod-share').then(function () { return caches.open('kod-share'); }).then(function (c) {
+          return c.put('/kod-share/0', new Response(shared, { headers: { 'content-type': 'text/plain; charset=utf-8' } }));
+        }).then(function () { return Response.redirect('/kelim/machshev/kod-imut/?share=1', 303); });
+      }
       var AVX = { opus: 'audio/ogg', ogg: 'audio/ogg', oga: 'audio/ogg', m4a: 'audio/mp4', mp3: 'audio/mpeg', aac: 'audio/aac', amr: 'audio/amr', wav: 'audio/wav', flac: 'audio/flac', mp4: 'video/mp4', '3gp': 'video/3gpp', webm: 'video/webm', mov: 'video/quicktime' };
       var ext = files.length === 1 ? (/\.([a-z0-9]+)$/i.exec(files[0].name || '') || [])[1] : '';
       var byExt = ext ? AVX[ext.toLowerCase()] : '';

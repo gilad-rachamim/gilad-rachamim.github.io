@@ -576,7 +576,7 @@ for key, site in SITES.items():
                             for n, u in [("תמלול", "/kelim/tamlul/"), ("התרופות שלי", "/kelim/briut/trufot/"), ("הכנה לוועדה", "/kelim/shikum/vaada/"), ("הקטנת סרטון", "/kelim/machshev/video/")]]
     if key == "kelim":  # "שיתוף" מאפליקציה אחרת בטלפון: src/sw.js מקבל את הקבצים ומנתב – שמע/וידאו בודד לתמלול, השאר למסדר התיקיות
         man["share_target"] = {"action": "/kelim/machshev/sader/?share=1", "method": "POST", "enctype": "multipart/form-data",
-                               "params": {"files": [{"name": "files", "accept": ["*/*", "audio/*", "video/*", "image/*", "audio/ogg", "audio/opus", "audio/mpeg", "audio/mp4", "audio/aac", "audio/amr", "audio/wav", "video/mp4", "video/3gpp", "video/webm"]}]}}
+                               "params": {"title": "title", "text": "text", "url": "url", "files": [{"name": "files", "accept": ["*/*", "audio/*", "video/*", "image/*", "audio/ogg", "audio/opus", "audio/mpeg", "audio/mp4", "audio/aac", "audio/amr", "audio/wav", "video/mp4", "video/3gpp", "video/webm"]}]}}
         # "פתח באמצעות" במחשב (אחרי התקנת האתר כאפליקציה): קובץ PDF נפתח בכלי המילוי והחתימה
         man["file_handlers"] = [{"action": "/kelim/machshev/chatima/", "accept": {"application/pdf": [".pdf"]}}]
     (d / "manifest.webmanifest").write_text(json.dumps(man, ensure_ascii=False, indent=1), encoding="utf-8")
