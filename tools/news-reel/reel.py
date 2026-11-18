@@ -1,16 +1,20 @@
 # Daily faceless news Reel (1080x1920, ~24s, gold on black) from the latest edition.
 # usage: python reel.py <out.mp4> [edition-name e.g. ערב]
-import sys, os, json, html, subprocess, tempfile, urllib.request
+import sys, os, json, html, subprocess, tempfile, urllib.request, datetime
 from playwright.sync_api import sync_playwright
 
 OUT = sys.argv[1]
-WANT = sys.argv[2] if len(sys.argv) > 2 else None
+WANT = next((a for a in sys.argv[2:] if not a.startswith("--")), None)
 API = "https://kelim-news.gilad4049.workers.dev/history"
 ed = None
 for e in json.load(urllib.request.urlopen(urllib.request.Request(API, headers={"User-Agent": "kelim-reel"}), timeout=30)):
     if not WANT or e.get("name") == WANT:
         ed = e; break
 if not ed: sys.exit("no edition")
+# --fresh: רק מהדורה מהשעות האחרונות (שלא יעלה סרטון של אתמול אם המהדורה לא רצה)
+age = datetime.datetime.now(datetime.timezone.utc) - datetime.datetime.fromisoformat(ed["at"].replace("Z", "+00:00"))
+if "--fresh" in sys.argv and age > datetime.timedelta(hours=3):
+    print("stale edition", ed["at"]); sys.exit(3)
 points = [s["text"] for s in ed["sections"]["main"][:5]]
 day = ed.get("date", {}).get("day", ""); heb = ed.get("date", {}).get("he", "")
 
@@ -61,4 +65,8 @@ total = sum(d for _, d in slides)
 subprocess.run(["ffmpeg", "-y", "-loglevel", "error", *args, "-f", "lavfi", "-t", str(total), "-i", "anullsrc=r=44100:cl=stereo",
                 "-filter_complex", ";".join(filt), "-map", "[v]", "-map", f"{len(slides)}:a", "-r", "30", "-c:v", "libx264",
                 "-preset", "medium", "-crf", "21", "-c:a", "aac", "-shortest", "-movflags", "+faststart", OUT], check=True)
+desc = "\n".join([f"החדשות ב-3 דקות · סיכום {ed['name']}", ""] + [f"{i+1}. {p}" for i, p in enumerate(points)] +
+                 ["", "הסיכום המלא, 3 פעמים ביום, בחינם: https://hakelim.com/kelim/machshev/chadashot/?utm_source=reel",
+                  "טלפון כשר: 077-2253345 שלוחה 8"])
+open(OUT + ".txt", "w", encoding="utf-8").write(desc)
 print(OUT, round(total, 1), "s")

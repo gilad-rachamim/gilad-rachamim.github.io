@@ -354,6 +354,17 @@ export default {
       const force = url.searchParams.get('force') === '1';
       return json(await runEdition(env, { force, push: !force || url.searchParams.get('push') === '1' }));
     }
+    // רילס יומי: GitHub Action (news-reel.yml) מרנדר mp4 ושולח לכאן; השרת מעלה לדף בפייסבוק עם המפתח שכבר יש לו
+    if (url.pathname === '/reel' && request.method === 'POST') {
+      if (!admin) return json({ ok: false }, 403);
+      if (holyNow()) return json({ ok: false, error: 'שבת/חג' });
+      if (!env.FB_PAGE_TOKEN || !env.FB_PAGE_ID) return json({ ok: false, error: 'אין מפתח פייסבוק' });
+      const video = await request.arrayBuffer();
+      if (video.byteLength < 10000 || video.byteLength > 50e6) return json({ ok: false, error: 'גודל קובץ' }, 400);
+      const res = await postReel(env, video, String(url.searchParams.get('text') || '').slice(0, 2000)).catch(e => ({ error: String(e).slice(0, 300) }));
+      await call(env, '/post-log', { at: new Date().toISOString(), name: 'רילס', fb: res.id ? 'עלה' : 'שגיאה: ' + res.error, wa: '-' }).catch(() => {});
+      return json({ ok: !!res.id, ...res });
+    }
     if (url.pathname === '/wa-check') {
       if (!admin) return json({ ok: false }, 403);
       if (!env.WHAPI_TOKEN) return json({ ok: false, error: 'אין WHAPI_TOKEN' });
@@ -412,6 +423,19 @@ async function postFacebook(env, ed, links) {
   });
   const j = await r.json().catch(() => ({}));
   return r.ok ? { id: j.id } : { error: (j.error && j.error.message) || String(r.status) };
+}
+
+async function postReel(env, video, description) {
+  const v = env.FB_API_VERSION || 'v23.0', tok = env.FB_PAGE_TOKEN, base = `https://graph.facebook.com/${v}/${env.FB_PAGE_ID}/video_reels`;
+  const err = j => (j.error && j.error.message) || JSON.stringify(j).slice(0, 200);
+  const s = await (await fetch(base, { method: 'POST', body: new URLSearchParams({ upload_phase: 'start', access_token: tok }) })).json();
+  if (!s.video_id) return { error: 'start: ' + err(s) };
+  const u = await fetch(`https://rupload.facebook.com/video-upload/${v}/${s.video_id}`, {
+    method: 'POST', headers: { authorization: 'OAuth ' + tok, offset: '0', file_size: String(video.byteLength) }, body: video });
+  const uj = await u.json().catch(() => ({}));
+  if (!uj.success) return { error: 'upload: ' + err(uj) };
+  const f = await (await fetch(base, { method: 'POST', body: new URLSearchParams({ upload_phase: 'finish', video_id: s.video_id, video_state: 'PUBLISHED', description, access_token: tok }) })).json();
+  return f.success ? { id: s.video_id } : { error: 'finish: ' + err(f) };
 }
 
 // ---------- Web Push (VAPID, בלי תוכן) ----------
