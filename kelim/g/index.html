@@ -18,18 +18,18 @@
 <meta name="theme-color" content="#0f1d1c">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/icon-kelim-180.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="הכלים">
+<meta name="apple-mobile-web-app-capable" content="no">
+<meta name="mobile-web-app-capable" content="no">
+<meta name="apple-mobile-web-app-title" content="הגשר">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<link rel="manifest" href="/kelim/manifest.webmanifest">
+<link rel="manifest" href="/kelim/g/manifest.webmanifest">
 <link rel="stylesheet" href="/assets/site.css?v=b4546dc2">
 <link rel="stylesheet" href="/assets/kelim.css?v=56115877">
 <!-- באפליקציית Google Play (TWA): בלי תרומות, בלי קישורי תמיכה ובלי "שותפות במיזם" בתשלום (Play Billing). טקסט שמזכיר שותפות: class="no-app" -->
 <script>(function(){var k="kelim-in-app";try{if((document.referrer||"").indexOf("android-app://com.hakelim.kelim")===0)sessionStorage.setItem(k,"1");if(sessionStorage.getItem(k)==="1")document.documentElement.classList.add("in-app");}catch(e){if((document.referrer||"").indexOf("android-app://com.hakelim.kelim")===0)document.documentElement.classList.add("in-app");}})();</script>
 <style>html.in-app #litmoch,html.in-app #truma,html.in-app a[href*="#litmoch"],html.in-app a[href*="#truma"],html.in-app [data-donate],html.in-app .give,html.in-app .pr-help,html.in-app .dv-help,html.in-app .mx-support,html.in-app [data-support],html.in-app [data-ch-give],html.in-app [data-hk-give],html.in-app .ch-give,html.in-app .hk-give,html.in-app .ch-help ol li:nth-child(2),html.in-app .hk-help ol li:nth-child(2),html.in-app details:has([data-donate]),html.in-app section:has(> .actions > [data-donate]),html.in-app p:has(> a[href*="#litmoch"]),html.in-app p:has(> a[href*="#truma"]),html.in-app .tn-ways > div:last-child,html.in-app .free-note p:last-child,html.in-app .gb-price,html.in-app .gb-why,html.in-app .gb-steps,html.in-app .gb-pay,html.in-app .gb-gift,html.in-app .no-app,html.in-app .chesed-p,html.in-app .sx-partner,html.in-app [data-sx-tier],html.in-app section:has(> #tp-partner-h),html.in-app a[href="#tp-partner-h"],html.in-app [data-m="acc"],html.in-app .tp-mode[data-mode="acc"],html.in-app section:has(> #cd-partner-h),html.in-app #cd-office-adv,html.in-app .cd-adv,html.in-app #cd-founders,html.in-app #gb-partner,html.in-app a[href="#gb-partner"],html.in-app p:has(> a[href="#gb-partner"]),html.in-app li:has(> a[href="#gb-partner"]),html.in-app .kp-tiers,html.in-app h3:has(+ .kp-tiers),html.in-app #shutafim,html.in-app a[href*="#shutafim"],html.in-app .tn-shut,html.in-app #mm-photo-note,html.in-app .ch-partner{display:none!important}</style>
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-4QR4583VST"></script>
+<script>try{var h=location.hash;if(h.length>1){window.__gwH=h;history.replaceState(null,'',location.pathname+location.search)}}catch(e){}</script><script async src="https://www.googletagmanager.com/gtag/js?id=G-4QR4583VST"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4QR4583VST');</script>
 <script src="/assets/track.js?v=b4642baf" defer></script>
 <script src="/assets/kishur.js?v=4ef65215" defer></script>
@@ -85,7 +85,8 @@
     <li>מאז, כל פעם שפותחים את הדף הזה בטלפון, הוא מחובר למחשב.</li>
   </ol>
   <p><b>יש לכם אנדרואיד?</b> עדיף את אפליקציית מיזם הכלים (בקרוב ב-Google Play): היא מעבירה גם קודי אימות והתראות, ועובדת גם כשהיא סגורה. באייפון – הדף הזה הוא הדרך.</p>
-  <p>הדף בדפדפן עובד רק כשהוא פתוח, ומחליף טלפון אחר שמחובר לאותו מחשב (טלפון אחד לכל מחשב). זו גרסה ראשונה – אם משהו לא עובד, נשמח לשמוע.</p>
+  <p>הדף עובד כשהוא פתוח. אפשר לחבר לאותו מחשב עד 5 טלפונים (למשל אייפון וגם אנדרואיד) – כל אחד מוצפן בנפרד. אם משהו לא עובד, נשמח לשמוע.</p>
+  <p id="gw-standalone" class="gw-status" hidden>האייקון הזה נפתח כ"אפליקציה" נפרדת, שאין לה את החיבור של ספארי. כדי שיעבוד: מוחקים את האייקון, פותחים את הדף בספארי, ב"הוספה למסך הבית" <b>מכבים</b> את "פתיחה כאפליקציית רשת" ומוסיפים שוב.</p>
   <p><a class="gold" href="/kelim/machshev/haavarat-kvatzim/">כל מה שהגשר עושה, ואיך הוא שומר על הפרטיות ←</a></p>
 </section>
 
@@ -108,6 +109,27 @@
   <h2>מה עבר</h2>
   <p class="muted" style="font-size:.92rem">מה שהמחשב שולח מופיע כאן כל עוד הדף פתוח. שום דבר לא נשמר בשרת.</p>
   <ul id="gw-log" aria-live="polite"></ul>
+  <details class="gw-box" id="gw-home">
+    <summary><b>📲 אייקון במסך הבית – כמו אפליקציה</b></summary>
+    <ol>
+      <li>לוחצים על כפתור השיתוף של ספארי (ריבוע עם חץ למעלה).</li>
+      <li>"הוספה למסך הבית". אם מופיע המתג "פתיחה כאפליקציית רשת" – <b>מכבים</b> אותו (כך האייקון נשאר מחובר למחשב).</li>
+      <li>"הוסף". מעכשיו האייקון "הגשר" פותח את הדף הזה, מחובר.</li>
+    </ol>
+  </details>
+  <details class="gw-box" id="gw-shortcut">
+    <summary><b>↗️ "למחשב" מתפריט השיתוף באייפון (קיצור דרך)</b></summary>
+    <p>כך שולחים טקסט או קישור מכל אפליקציה (ספארי, ווטסאפ, פתקים) ישר למחשב. בונים פעם אחת, בערך דקה:</p>
+    <ol>
+      <li>פותחים את האפליקציה "קיצורים" (Shortcuts) ← ➕ קיצור חדש. קוראים לו "למחשב".</li>
+      <li>בהגדרות הקיצור (ⓘ) מדליקים "הצג בגיליון השיתוף", ובוחרים לקבל <b>טקסט</b> ו<b>כתובות URL</b>.</li>
+      <li>מוסיפים פעולה "קידוד URL" (URL Encode) על "קלט הקיצור".</li>
+      <li>מוסיפים פעולה "טקסט" וכותבים בה: <code dir="ltr">https://hakelim.com/kelim/g/#t=</code> ומיד אחריו בוחרים את המשתנה "טקסט מקודד".</li>
+      <li>מוסיפים פעולה "פתח כתובות URL" (Open URLs) על הטקסט הזה. שומרים.</li>
+    </ol>
+    <p>מעכשיו: שיתוף ← "למחשב" ← הדף נפתח ושולח לבד. הטקסט לא עובר בשרת שלנו בגלוי ולא נשמר באתר – הוא בחלק של הכתובת שאחרי ה-#, שלא נשלח לשום שרת.</p>
+    <p class="muted" style="font-size:.92rem">תמונות וקבצים: מהכפתור "📷 תמונה או קובץ למחשב" שבדף (אפשר לבחור כמה בבת אחת מהגלריה).</p>
+  </details>
   <div class="gw-row">
     <button class="btn btn-line" type="button" id="gw-retry">להתחבר שוב</button>
     <button class="btn btn-line" type="button" id="gw-unpair">ניתוק מהמחשב</button>
@@ -172,6 +194,6 @@
   <button class="x" type="button" data-install-close aria-label="סגירה">×</button>
 </div>
 <script src="/assets/kelim.js?v=00dd7db9" defer></script>
-<script src="/assets/gesher-crypto.js?v=281b9a86" defer></script><script src="/assets/gesher-web.js?v=032ff506" defer></script>
+<script src="/assets/gesher-crypto.js?v=281b9a86" defer></script><script src="/assets/gesher-web.js?v=6f4c51d4" defer></script>
 </body>
 </html>
