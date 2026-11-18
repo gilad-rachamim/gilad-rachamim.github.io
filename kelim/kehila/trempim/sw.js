@@ -2,7 +2,7 @@
 // נפרד מה-sw.js של כל האתר: לרישום אחד יש מינוי התראות אחד, ולטרמפים יש מפתח VAPID משלהם.
 // התראות: בקשה חדשה, אישור, דחייה, ביטול, ו"מישהו נוסע בדרך שחיפשת". לחיצה פותחת את הדף (או מביאה קדימה חלון פתוח).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. השיתוף מ-Waze/גוגל מפות מגיע ב-GET רגיל (?share=1) – אין צורך לטפל כאן.
-var CACHE = 'kelim-kehila-trempim-202611182212';
+var CACHE = 'kelim-kehila-trempim-202611190105';
 var SCOPE = '/kelim/kehila/trempim/';
 var PRE = [SCOPE, SCOPE + 'luz/', SCOPE + 'pratiut/', '/assets/icon-trempim-192.png'];
 self.addEventListener('install', function (e) {
