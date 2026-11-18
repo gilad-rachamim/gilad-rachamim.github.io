@@ -138,6 +138,8 @@ def sync(queue_path, dates_path=None, pages_n=None, page_ids=()):
             p = line.strip().split("|")
             if len(p) > 1 and re.fullmatch(r"\d{8}", p[1]):
                 dates[p[0]] = p[1]
+    sl_path = DATA.with_name("karaoke-library.slugs.json")   # כתובות קריאות לשירים חדשים: {"מזהה יוטיוב": "slug"}
+    more_slugs = json.loads(sl_path.read_text(encoding="utf-8")) if sl_path.exists() else {}
     old = {s["id"]: s for s in json.loads(DATA.read_text(encoding="utf-8"))["songs"]} if DATA.exists() else {}
     today = datetime.date.today().isoformat()
     first = not old
@@ -152,7 +154,7 @@ def sync(queue_path, dates_path=None, pages_n=None, page_ids=()):
         if o:
             s = dict(o, views=max(o.get("views", 0), x.get("views") or 0))
         else:
-            slug = SLUGS.get(song) or translit(song) or x["vid"].lower()
+            slug = more_slugs.get(x["vid"]) or SLUGS.get(song) or translit(song) or x["vid"].lower()
             if slug in slugs:
                 slug = (slug + "-" + translit(artist.split()[0])).strip("-")
             if slug in slugs:
