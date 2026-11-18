@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "הכלים של גילעד רחמים – תרגום, כרטיסיות, ג׳ימייל ו-PDF בעברית",
   "short_name": "הכלים",
-  "version": "3.12.0",
+  "version": "3.12.1",
   "description": "כלי עזר אחד לכרום: סידור כרטיסיות, ג׳ימייל, תרגום דפים ו-PDF, תיקון עברית-אנגלית, צילום עמוד וכל הכלים של hakelim.com. בלי שרת.",
   "homepage_url": "https://hakelim.com/kelim/machshev/chatima/tosaf/",
   "icons": {
