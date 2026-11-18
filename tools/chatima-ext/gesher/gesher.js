@@ -10,7 +10,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var ws = null, timer = null, alive = false;
 
-  function show(id) { ['off', 'pairing', 'on'].forEach(function (x) { $(x).hidden = x !== id; }); $('clip').hidden = id !== 'on'; $('inbox').hidden = id !== 'on'; }
+  function show(id) { ['off', 'pairing', 'on'].forEach(function (x) { $(x).hidden = x !== id; }); $('clip').hidden = id !== 'on'; $('inbox').hidden = id !== 'on'; $('files').hidden = id !== 'on'; }
   function ask(m) { return chrome.runtime.sendMessage(m); }
 
   // ---------- מצב ----------
@@ -38,7 +38,7 @@
   function start() {
     $('off-msg').textContent = '';
     // בקשת ההרשאות חייבת לקרות מיד בלחיצה
-    chrome.permissions.request({ origins: ['<all_urls>'], permissions: ['clipboardWrite', 'clipboardRead'] }).catch(function () { return false; }).then(function (granted) {
+    chrome.permissions.request({ origins: ['<all_urls>'], permissions: ['clipboardWrite', 'clipboardRead', 'downloads'] }).catch(function () { return false; }).then(function (granted) {
       if (!granted) $('off-msg').textContent = 'בלי הרשאה לאתרים הקוד לא ימולא לבד – רק יופיע בהתראה ויועתק. אפשר לאפשר אחר כך.';
       return pairNow();
     });

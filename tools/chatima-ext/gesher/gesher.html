@@ -53,6 +53,20 @@
   <p class="msg" id="on-msg" role="status"></p>
 </section>
 
+<section id="files" class="card" hidden>
+  <h2>📁 תמונות וקבצים</h2>
+  <label id="drop" class="drop" tabindex="0">
+    <input type="file" id="file-in" multiple hidden>
+    <b>📤 גוררים לכאן קובץ, או לוחצים לבחירה</b>
+    <span class="small">הקובץ נשלח מוצפן לטלפון ונשמר שם בתיקייה Downloads/Hakelim. עד 100MB לקובץ.</span>
+  </label>
+  <p class="msg" id="file-msg" role="status"></p>
+  <button type="button" id="file-perm" class="big" hidden>📥 לאשר שמירה של קבצים מהטלפון</button>
+  <div id="xfer-list" class="ntf-list" aria-live="polite"></div>
+  <label class="opt"><input type="checkbox" id="opt-file-clip"> תמונה שמגיעה מהטלפון נכנסת גם ללוח (Ctrl+V)</label>
+  <p class="small">מהטלפון: "שיתוף" ← "למחשב" על תמונה או קובץ (גם כמה ביחד). נשמר כאן במחשב ב"הורדות/מהטלפון".<br>מהמחשב: לחיצה ימנית על תמונה, קישור, טקסט מסומן או הדף ← "הכלים של גילעד רחמים" ← "📲 שלח לטלפון".</p>
+</section>
+
 <section id="clip" class="card" hidden>
   <h2>📋 לוח משותף</h2>
   <button type="button" id="clip-pause" class="big pause">⏸ השהיית הלוח המשותף</button>
@@ -80,5 +94,6 @@
 <script src="store.js"></script>
 <script src="gesher.js"></script>
 <script src="inbox.js"></script>
+<script src="files-ui.js"></script>
 </body>
 </html>

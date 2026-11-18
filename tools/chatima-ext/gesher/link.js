@@ -37,7 +37,7 @@
         if (typeof e.data === 'string') {
           if (e.data === 'pong') return;
           var m; try { m = JSON.parse(e.data); } catch (x) { return; }
-          if (m.t === 'peer') { phoneOn = !!m.on; setState({ online: true, phone: phoneOn }); if (phoneOn) { flushClip(); flushOut(); } }
+          if (m.t === 'peer') { phoneOn = !!m.on; setState({ online: true, phone: phoneOn }); if (phoneOn) { flushClip(); flushOut(); } if (self.GesherFiles) self.GesherFiles.peer(phoneOn); }
           return;
         }
         onFrame(new Uint8Array(e.data));
@@ -71,6 +71,7 @@
     }).then(function (r) {
       S.set('lastIn', r.ctr);
       var o = r.obj || {};
+      if (/^(file|file-ack|file-x|link)$/.test(o.type) && self.GesherFiles) return self.GesherFiles.onMsg(o);   // שלב 4 – gesher/files.js
       if (o.type === 'otp' && /^[0-9A-Za-z]{3,10}$/.test(String(o.code || ''))) return gotCode(o);
       if (o.type === 'bye') return forget('הטלפון ניתק את החיבור');
       if (o.type === 'clip' && typeof o.text === 'string') return gotClip(o);
@@ -206,7 +207,7 @@
   function offscreen() {
     if (!chrome.offscreen) return Promise.reject(new Error('no offscreen'));
     return chrome.offscreen.hasDocument().then(function (h) {
-      return h ? null : chrome.offscreen.createDocument({ url: 'gesher/offscreen.html', reasons: ['CLIPBOARD'], justification: 'לוח משותף עם הטלפון: כתיבה ללוח של טקסט שהגיע מהטלפון, וזיהוי העתקה במחשב כשהמשתמש הדליק את זה' });
+      return h ? null : chrome.offscreen.createDocument({ url: 'gesher/offscreen.html', reasons: ['CLIPBOARD', 'BLOBS'], justification: 'לוח משותף עם הטלפון: כתיבה ללוח של טקסט שהגיע מהטלפון, וזיהוי העתקה במחשב כשהמשתמש הדליק את זה. קבצים מהטלפון: חיבור החלקים בזיכרון לקובץ אחד לפני השמירה' });
     }).catch(function (e) { if (!/single offscreen|already/i.test(String(e && e.message))) throw e; });
   }
   function copy(text) {
@@ -398,7 +399,8 @@
     try { if (ws) ws.close(); } catch (e) {}
     ws = null;
     clearInterval(pingT);
-    chrome.storage.session.remove(['gLast', 'gField', 'gClip', 'gClipOut', 'gNotifs', 'gOut', 'gReplies']);
+    chrome.storage.session.remove(['gLast', 'gField', 'gClip', 'gClipOut', 'gNotifs', 'gOut', 'gReplies', 'gXfer']);
+    if (self.GesherFiles) self.GesherFiles.reset();
     badge();
     setState({ online: false, unpaired: true });
     return S.clear().then(function () {
@@ -522,5 +524,5 @@
   connect();
   syncClipWatch();
 
-  self.Gesher = { connect: connect, unpair: unpair, typeLast: typeLast, gesherFill: gesherFill, localClip: localClip, hash: hash, quiet: quiet, replyNotif: replyNotif, dropNotif: dropNotif };
+  self.Gesher = { send: send, load: load, offscreen: offscreen, copy: copy, opts: opts, queueOut: queueOut, isPhoneOn: function () { return phoneOn; }, connect: connect, unpair: unpair, typeLast: typeLast, gesherFill: gesherFill, localClip: localClip, hash: hash, quiet: quiet, replyNotif: replyNotif, dropNotif: dropNotif };
 })();

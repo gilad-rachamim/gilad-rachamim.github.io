@@ -3,7 +3,7 @@
 // כך שכלי חדש באתר מופיע בתוסף – בחיפוש, ואם הוא מקבל קבצים גם בלחיצה הימנית – בלי גרסה חדשה בחנות.
 // קבצים: התוסף מביא את הקובץ שהמשתמש בחר, שומר אותו רגע ב-storage ופותח את הכלי. bridge.js מכניס
 // אותו לכלי. שום דבר לא נשלח לשרת: הכלים עצמם עובדים בתוך הדפדפן.
-importScripts('page-tools.js', 'when.js', 'gesher/crypto.js', 'gesher/store.js', 'gesher/link.js');   // תיקון שפה, צילום עמוד, הקראה, כיוון עברית, מצב כהה, תרגום
+importScripts('page-tools.js', 'when.js', 'gesher/crypto.js', 'gesher/store.js', 'gesher/link.js', 'gesher/files.js');   // תיקון שפה, צילום עמוד, הקראה, כיוון עברית, מצב כהה, תרגום
 var SITE = 'https://hakelim.com';
 var LIST_URL = SITE + '/kelim/tools.json';
 var MAX_BYTES = 300 * 1024 * 1024;
@@ -53,6 +53,7 @@ function buildMenus() {
           var C = chrome.contextMenus.create;
           C({ id: 'hk', title: 'הכלים של גילעד רחמים', contexts: ['image', 'video', 'link', 'page', 'editable', 'selection'] });
           C({ parentId: 'hk', id: 'fix', title: 'לתקן: כתבתי בשפה הלא נכונה (Alt+Shift+H)', contexts: ['selection', 'editable'] });
+          C({ parentId: 'hk', id: 'hk-phone', title: '📲 שלח לטלפון', contexts: ['image', 'link', 'page', 'selection'] });
           C({ parentId: 'hk', id: 'tr-sel', title: '🌐 לתרגם את המסומן', contexts: ['selection'] });
           C({ parentId: 'hk', id: 'translate', title: '🌐 לתרגם את הדף (Alt+Shift+T)', contexts: ['page'] });
           C({ parentId: 'hk', id: 'cal', title: '📅 להוסיף ליומן', contexts: ['selection'] });
@@ -378,6 +379,7 @@ function putPassword(pw) {
 // ---------- לחיצה על פריט בתפריט ----------
 chrome.contextMenus.onClicked.addListener(function (info, tab) {
   var id = String(info.menuItemId);
+  if (id === 'hk-phone') { self.GesherFiles.fromMenu(info, tab); return; }   // גשר שלב 4
   if (id === 'pw') {
     if (!tab || tab.id == null) return;
     var target = { tabId: tab.id };
@@ -427,6 +429,7 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
 // הודעות מג׳ימייל ומהחלון הקטן
 chrome.runtime.onMessage.addListener(function (m, sender, reply) {
   if (!m || m.mailTpl) return;   // mailTpl: מטופל במאזין של ניסוח המייל
+  if (typeof m.t === 'string' && m.t.indexOf('gesher-') === 0) return;   // הגשר: מטופל ב-gesher/link.js וב-gesher/files.js (אחרת חלק של קובץ עם data היה נפתח ככלי)
   if (m.waAlarm || 'waAlways' in m) return;   // סידור צ'אטים בוואטסאפ: מטופל במאזין שבסוף הקובץ
   if (m.act || m.tabsManager || m.gmailUnsub) bumpUse();
   if (m.tabsManager) { openTabsManager().then(function () { reply({ ok: true }); }, function () { reply({ ok: false }); }); return true; }
