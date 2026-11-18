@@ -250,7 +250,8 @@
   });
 
   // מספר בכתובת (#050...) – לקיצור דרך מהבוט או מסימנייה; אחרת המספר האחרון, ואחרת דוגמה
-  var h = decodeURIComponent((location.hash || '').slice(1));
+  // the inline head script moves the number out of the address bar first, so analytics never sees it
+  var h = (typeof window !== 'undefined' && window.__miNum) || decodeURIComponent((location.hash || '').slice(1));
   inp.value = /^[+\d*][\d\s()+*-]{2,}$/.test(h) ? h : (store.last || DEMO);
   render(); list();
 })(typeof window !== 'undefined' ? window : this);
