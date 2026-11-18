@@ -22,6 +22,16 @@
 "page": true
 },
 {
+"id": "gtcBM63Brnk",
+"artist": "קטריקס ודורון ביטון",
+"song": "חופשייה",
+"views": 33730996,
+"date": "",
+"added": "2026-11-19",
+"slug": "chopshiih",
+"page": false
+},
+{
 "id": "9PTH36lPuzg",
 "artist": "אייל גולן",
 "song": "לעשות איתך שלום",
@@ -439,6 +449,16 @@
 "date": "20250626",
 "added": "",
 "slug": "kesher-mesukan",
+"page": true
+},
+{
+"id": "FuCCIq9h3G0",
+"artist": "נדב חנציס",
+"song": "קאט לדבר הבא",
+"views": 5390941,
+"date": "20261018",
+"added": "2026-11-19",
+"slug": "kat-ladavar-haba",
 "page": true
 },
 {
@@ -1222,6 +1242,16 @@
 "page": false
 },
 {
+"id": "fnp0aYw-w1E",
+"artist": "יאנג בוטה",
+"song": "גולגול מנקות",
+"views": 1144531,
+"date": "20261103",
+"added": "2026-11-19",
+"slug": "golgol-menakot",
+"page": true
+},
+{
 "id": "2Mp2e_BPTRI",
 "artist": "אושר כהן וליאור נרקיס",
 "song": "בחורה טובה",
@@ -1299,6 +1329,16 @@
 "date": "20190604",
 "added": "",
 "slug": "ish-ph-bit",
+"page": false
+},
+{
+"id": "HeiRF9nIKA8",
+"artist": "אייל גולן",
+"song": "טרנד",
+"views": 1045018,
+"date": "",
+"added": "2026-11-19",
+"slug": "trnd",
 "page": false
 },
 {
@@ -1390,6 +1430,16 @@
 "added": "",
 "slug": "aizh-mzl",
 "page": false
+},
+{
+"id": "kJSfgWW0wdc",
+"artist": "ששון איפרם שאולוב",
+"song": "סתם",
+"views": 985759,
+"date": "20261013",
+"added": "2026-11-19",
+"slug": "stam",
+"page": true
 },
 {
 "id": "SHErQrvvftQ",
@@ -2102,6 +2152,16 @@
 "page": false
 },
 {
+"id": "DHpswFL5UUM",
+"artist": "התקווה 6 ואינפקטד מאשרום",
+"song": "יום חדש עולה",
+"views": 375867,
+"date": "",
+"added": "2026-11-19",
+"slug": "iom-chdsh-aolh",
+"page": false
+},
+{
 "id": "C9eH_-NsOFw",
 "artist": "רביד פלוטניק עם מיכל לוטן",
 "song": "עת הלבנה",
@@ -2302,6 +2362,16 @@
 "page": false
 },
 {
+"id": "aM1toBwOGRo",
+"artist": "יובי",
+"song": "לטס גו!",
+"views": 299055,
+"date": "",
+"added": "2026-11-19",
+"slug": "lts-go",
+"page": false
+},
+{
 "id": "YZnxF8zbt28",
 "artist": "דודא",
 "song": "געגועים",
@@ -2399,6 +2469,16 @@
 "date": "20121129",
 "added": "",
 "slug": "ani-rotzh-laof",
+"page": false
+},
+{
+"id": "PRj2wceTdyU",
+"artist": "נונו",
+"song": "אוהב לא אוהב",
+"views": 236815,
+"date": "",
+"added": "2026-11-19",
+"slug": "aohb-la-aohb",
 "page": false
 },
 {
@@ -2639,6 +2719,16 @@
 "date": "20201210",
 "added": "",
 "slug": "lat-arb",
+"page": false
+},
+{
+"id": "fcjg11J68_8",
+"artist": "אביב גפן ושלומי שבן",
+"song": "מותק את אצלי בראש",
+"views": 107637,
+"date": "",
+"added": "2026-11-19",
+"slug": "motk-at-atzli-brash",
 "page": false
 },
 {
@@ -3022,6 +3112,16 @@
 "page": false
 },
 {
+"id": "5-V2W3KLSwk",
+"artist": "עומר אדם",
+"song": "חייל מלבנון",
+"views": 0,
+"date": "",
+"added": "2026-11-19",
+"slug": "chiil-mlbnon",
+"page": false
+},
+{
 "id": "UzIQGg1Wvc8",
 "artist": "עומר אדם",
 "song": "נתפוצץ כמו ילדים",
@@ -3029,6 +3129,16 @@
 "date": "20230601",
 "added": "",
 "slug": "ntpotztz-kmo-ildim",
+"page": false
+},
+{
+"id": "9kEYkOmQexY",
+"artist": "תמיד אוהב אותי",
+"song": "הריקוד",
+"views": 0,
+"date": "",
+"added": "2026-11-19",
+"slug": "hrikod",
 "page": false
 },
 {
@@ -3079,6 +3189,16 @@
 "date": "20180516",
 "added": "",
 "slug": "pshtidh",
+"page": false
+},
+{
+"id": "0kSexJ_5Xq8",
+"artist": "פלד מארח את סוויסה וכהן",
+"song": "אני זה אני",
+"views": 0,
+"date": "",
+"added": "2026-11-19",
+"slug": "ani-zh-ani",
 "page": false
 },
 {

@@ -44,6 +44,7 @@
 /kelim/shir/karaoke/shirim/li-vela/
 /kelim/shir/karaoke/shirim/robinson-crusoe/
 /kelim/shir/karaoke/shirim/kesher-mesukan/
+/kelim/shir/karaoke/shirim/kat-ladavar-haba/
 /kelim/shir/karaoke/shirim/ze-ma-shenishar/
 /kelim/shir/karaoke/shirim/lo-koev-li/
 /kelim/shir/karaoke/shirim/tapas-vetrifons/
@@ -61,6 +62,8 @@
 /kelim/shir/karaoke/shirim/natek-oti/
 /kelim/shir/karaoke/shirim/mikol-haleilot/
 /kelim/shir/karaoke/shirim/meohav-bageshem/
+/kelim/shir/karaoke/shirim/golgol-menakot/
+/kelim/shir/karaoke/shirim/stam/
 /kelim/shir/karaoke/zamar/ravid-plotnik/
 /kelim/shir/karaoke/zamar/omer-adam/
 /kelim/shir/karaoke/zamar/berry-sakharof/
@@ -69,8 +72,8 @@
 /kelim/shir/karaoke/zamar/osher-cohen/
 /kelim/shir/karaoke/zamar/dudu-tassa/
 /kelim/shir/karaoke/zamar/yasmin-moallem/
-/kelim/shir/karaoke/zamar/meir-ariel/
 /kelim/shir/karaoke/zamar/eyal-golan/
+/kelim/shir/karaoke/zamar/meir-ariel/
 /kelim/shir/karaoke/zamar/eden-hason/
 /kelim/shir/karaoke/zamar/itay-levi/
 /kelim/shir/karaoke/zamar/odeya/
