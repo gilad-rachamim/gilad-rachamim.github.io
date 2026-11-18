@@ -1,0 +1,41 @@
+# מעדכן את hakelim.com מיד אחרי כל שינוי ב-main (18.11.2026).
+# hakelim.com מוגש מהענף site של gilad-rachamim/hakelim. ה-cron שם רץ בפועל רק פעם בשעה,
+# ולכן כאן דוחפים את העותק מיד, עם מפתח גישה שמורשה לכתוב רק למאגר hakelim.
+name: mirror-hakelim
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: mirror-hakelim
+  cancel-in-progress: true
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: push copy to hakelim site branch
+        env:
+          DEPLOY_KEY: ${{ secrets.HAKELIM_DEPLOY_KEY }}
+        run: |
+          set -e
+          SRC=$(git rev-parse HEAD)
+          mkdir -p ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/hakelim
+          chmod 600 ~/.ssh/hakelim
+          ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts 2>/dev/null
+          export GIT_SSH_COMMAND="ssh -i ~/.ssh/hakelim -o IdentitiesOnly=yes"
+          rm -rf .git .github .claude
+          echo "hakelim.com" > CNAME
+          echo "$SRC" > .mirror-of
+          git init -q -b site
+          git config user.name "hakelim-mirror"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "mirror of gilad-rachamim.github.io@$SRC"
+          git push -f git@github.com:gilad-rachamim/hakelim.git site
+          rm -f ~/.ssh/hakelim
