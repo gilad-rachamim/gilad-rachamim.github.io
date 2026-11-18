@@ -90,10 +90,10 @@
   };
 
   function taskRow(t, i) {
-    return '<li><input type="checkbox" data-i="' + i + '"' + (t.done ? ' checked' : '') + ' aria-label="בוצע"><input class="as-in" type="text" data-ti="' + i + '" value="' + esc(t.t) + '" aria-label="המשימה"><button class="as-x" type="button" data-tdel="' + i + '" aria-label="למחוק משימה">✕</button></li>';
+    return '<li><input type="checkbox" data-i="' + i + '"' + (t.done ? ' checked' : '') + ' aria-label="בוצע"><textarea class="as-in" rows="2" data-ti="' + i + '" aria-label="המשימה">' + esc(t.t) + '</textarea><button class="as-x" type="button" data-tdel="' + i + '" aria-label="למחוק משימה">✕</button></li>';
   }
   function remRow(r, i) {
-    return '<li class="as-rem"><div class="as-rem-f"><input class="as-in" type="text" data-ri="' + i + '" data-f="title" value="' + esc(r.title) + '" aria-label="מה להזכיר">' +
+    return '<li class="as-rem"><div class="as-rem-f"><textarea class="as-in" rows="2" data-ri="' + i + '" data-f="title" aria-label="מה להזכיר">' + esc(r.title) + '</textarea>' +
       '<span class="as-dt"><input type="date" data-ri="' + i + '" data-f="date" value="' + esc(r.date) + '" aria-label="תאריך"><input type="time" data-ri="' + i + '" data-f="time" value="' + esc(r.time) + '" aria-label="שעה"></span>' +
       '<span class="as-rem-a"><a class="btn btn-gold btn-sm" data-gc="' + i + '" href="' + esc(C.gcal(r, curDetails())) + '" target="_blank" rel="noopener">📅 ליומן גוגל</a>' +
       '<button class="btn btn-line btn-sm" type="button" data-ics="' + i + '">קובץ יומן</button><button class="as-x" type="button" data-rdel="' + i + '" aria-label="למחוק תזכורת">✕</button></span></div></li>';
@@ -135,7 +135,7 @@
     else if ((i = t.getAttribute('data-ics')) != null) { C.download([cur.rems[+i]], CAL); used('ics'); }
     else if (t.getAttribute('data-gc') != null) used('gcal');
   });
-  $('as-rem-add').onclick = function () { var d = new Date(); d.setDate(d.getDate() + 1); cur.rems.push({ title: '', date: C.ymd(d), time: '09:00' }); drawRems(); var ins = $('as-rem').querySelectorAll('input[data-f=title]'); if (ins.length) ins[ins.length - 1].focus(); };
+  $('as-rem-add').onclick = function () { var d = new Date(); d.setDate(d.getDate() + 1); cur.rems.push({ title: '', date: C.ymd(d), time: '09:00' }); drawRems(); var ins = $('as-rem').querySelectorAll('[data-f=title]'); if (ins.length) ins[ins.length - 1].focus(); };
   $('as-rem-all').onclick = function () { C.download(cur.rems.filter(function (r) { return r.title && r.date; }), CAL); used('ics_all'); };
 
   /* paste an existing transcript */

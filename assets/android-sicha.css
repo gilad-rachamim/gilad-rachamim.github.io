@@ -10,7 +10,7 @@
 .as-alt{border-top:1px solid var(--line);padding:.55rem 0}
 .as-alt p{margin:.2rem 0}
 #as-var{min-height:44px}
-.as-in{width:100%;min-height:44px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--cream);font:inherit;padding:.4rem .6rem}
+.as-in{width:100%;resize:vertical;line-height:1.5;field-sizing:content;min-height:44px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--cream);font:inherit;padding:.4rem .6rem}
 #as-tasks li{display:flex;gap:.5rem;align-items:center;margin:.35rem 0}
 #as-tasks input[type=checkbox],.ys-tasks input[type=checkbox]{width:24px;height:24px;flex:0 0 24px;accent-color:var(--gold)}
 .as-x{min-width:44px;min-height:44px;border:0;background:none;color:var(--body);font-size:1.1rem;cursor:pointer}
