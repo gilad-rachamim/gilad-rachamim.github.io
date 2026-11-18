@@ -84,7 +84,10 @@
         if (m.t === 'peer' && m.on) $('pair-msg').textContent = 'הטלפון נמצא – מאמתים…';
         if (m.t === 'sealed' && sess) {
           var save = { room: G.b64u(room), w: SERVER, tokPc: sess.tokPc, k12: sess.k12, k21: sess.k21, name: phoneName || 'הטלפון', at: Date.now() };
-          S.clear().then(function () { return S.set('pair', save); }).then(function () { return ask({ t: 'gesher-paired' }); }).then(function () {
+          // הצימוד הקודם (אם היה) נמחק בשרת – כך הטלפון הישן לא נשאר "מצומד" לחדר מת
+          S.get('pair').then(function (old) {
+            if (old && old.room && old.room !== save.room) return fetch(old.w + '/r/' + old.room + '?tok=' + old.tokPc, { method: 'DELETE' }).catch(function () {});
+          }).catch(function () {}).then(function () { return S.clear(); }).then(function () { return S.set('pair', save); }).then(function () { return ask({ t: 'gesher-paired' }); }).then(function () {
             alive = false; clearInterval(timer);
             refresh();
             $('on-msg').textContent = 'מחובר! נסו: בקשו קוד באתר כלשהו – הוא ייכנס לבד.';

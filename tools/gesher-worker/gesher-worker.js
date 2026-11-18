@@ -80,7 +80,14 @@ export class Room {
       return json({ ok: true });
     }
     // WebSocket
-    if (!room) return new Response('room', { status: 404 });
+    if (!room) {
+      // החדר נמחק (ניתוק / צימוד חדש מהצד השני / 90 יום): מקבלים וסוגרים מיד ב-4003 – דפדפן לא רואה קוד 404,
+      // וכך גם מכשיר שהיה כבוי בזמן המחיקה יודע שהצימוד נגמר ומודיע למשתמש.
+      const gone = new WebSocketPair();
+      gone[1].accept();
+      gone[1].close(4003, 'unpaired');
+      return new Response(null, { status: 101, webSocket: gone[0] });
+    }
     const tok = url.searchParams.get('tok') || '';
     if (!TOK_RE.test(tok)) return new Response('tok', { status: 403 });
     const h = await tokHash(tok);

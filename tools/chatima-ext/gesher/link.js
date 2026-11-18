@@ -30,12 +30,18 @@
       s.onopen = function () {
         connecting = false;
         clearInterval(pingT);
-        pingT = setInterval(function () { try { s.send('ping'); } catch (e) {} }, 20e3);
+        // דופק: ping כל 20 שניות; אם 45 שניות לא חזר pong – החיבור מת בשקט (רשת התחלפה) → סוגרים ומתחברים מחדש
+        var lastPong = Date.now();
+        s.__pong = function () { lastPong = Date.now(); };
+        pingT = setInterval(function () {
+          if (Date.now() - lastPong > 45e3) { try { s.close(); } catch (e) {} if (ws === s) { ws = null; phoneOn = false; setState({ online: false }); } clearInterval(pingT); connect(); return; }
+          try { s.send('ping'); } catch (e) {}
+        }, 20e3);
         setState({ online: true });
       };
       s.onmessage = function (e) {
         if (typeof e.data === 'string') {
-          if (e.data === 'pong') return;
+          if (e.data === 'pong') { if (s.__pong) s.__pong(); return; }
           var m; try { m = JSON.parse(e.data); } catch (x) { return; }
           if (m.t === 'peer') { phoneOn = !!m.on; setState({ online: true, phone: phoneOn }); if (phoneOn) { flushClip(); flushOut(); } if (self.GesherFiles) self.GesherFiles.peer(phoneOn); }
           return;
@@ -72,7 +78,13 @@
       S.set('lastIn', r.ctr);
       var o = r.obj || {};
       if (/^(file|file-ack|file-x|link)$/.test(o.type) && self.GesherFiles) return self.GesherFiles.onMsg(o);   // שלב 4 – gesher/files.js
-      if (o.type === 'otp' && /^[0-9A-Za-z]{3,10}$/.test(String(o.code || ''))) return gotCode(o);
+      if (o.type === 'otp') {
+        // קוד כמו "123-456" או "123 456" – מנקים מקפים ורווחים. קוד שעדיין לא תקין מקבל ack (bad) כדי שהטלפון יפסיק לשלוח שוב
+        var cc = String(o.code || '').replace(/[\s\-‐-―.]/g, '');
+        if (!/^[0-9A-Za-z]{3,12}$/.test(cc)) return send({ type: 'ack', id: o.id, filled: false, bad: true });
+        o.code = cc;
+        return gotCode(o);
+      }
       if (o.type === 'bye') return forget('הטלפון ניתק את החיבור');
       if (o.type === 'clip' && typeof o.text === 'string') return gotClip(o);
       if (o.type === 'notif') return gotNotif(o);
@@ -84,6 +96,24 @@
   // ---------- קוד הגיע ----------
   function gotCode(o) {
     if (o.at && Date.now() - o.at > CODE_TTL) return send({ type: 'ack', id: o.id, filled: false, old: true });
+    // אותו קוד נשלח שוב (ה-ack הקודם אבד בדרך): רק מאשרים שוב – בלי למלא שוב ובלי התראה כפולה
+    return chrome.storage.session.get('gSeen').then(function (x) {
+      var seen = (x.gSeen || []).filter(function (e) { return Date.now() - e.at < CODE_TTL; });
+      // אותו id, או אותו קוד שכבר הגיע בשתי הדקות האחרונות (למשל SMS + התראת ווטסאפ על אותו קוד)
+      var dup = seen.filter(function (e) { return e.id === o.id || (e.code === String(o.code) && Date.now() - e.at < 120e3); })[0];
+      if (dup) return send({ type: 'ack', id: o.id, filled: !!dup.filled });
+      seen.push({ id: o.id, code: String(o.code), at: Date.now(), filled: false });
+      return chrome.storage.session.set({ gSeen: seen.slice(-50) }).then(function () { return gotNewCode(o); });
+    });
+  }
+  function markSeen(id, filled) {
+    return chrome.storage.session.get('gSeen').then(function (x) {
+      var seen = x.gSeen || [];
+      seen.forEach(function (e) { if (e.id === id) e.filled = filled; });
+      return chrome.storage.session.set({ gSeen: seen });
+    }).catch(function () {});
+  }
+  function gotNewCode(o) {
     var c = { code: String(o.code), src: o.src || 'app', from: o.from || '', app: o.app || '', at: o.at || Date.now(), id: o.id };
     return chrome.storage.session.set({ gLast: c }).then(function () {
       chrome.action.setBadgeBackgroundColor({ color: '#2e7d32' });
@@ -97,6 +127,7 @@
       c.filled = !!res.filled;
       chrome.storage.session.set({ gLast: c });
       notify(c, res);
+      markSeen(c.id, !!res.filled);
       send({ type: 'ack', id: c.id, filled: !!res.filled });
     });
   }
@@ -399,7 +430,7 @@
     try { if (ws) ws.close(); } catch (e) {}
     ws = null;
     clearInterval(pingT);
-    chrome.storage.session.remove(['gLast', 'gField', 'gClip', 'gClipOut', 'gNotifs', 'gOut', 'gReplies', 'gXfer']);
+    chrome.storage.session.remove(['gLast', 'gSeen', 'gField', 'gClip', 'gClipOut', 'gNotifs', 'gOut', 'gReplies', 'gXfer']);
     if (self.GesherFiles) self.GesherFiles.reset();
     badge();
     setState({ online: false, unpaired: true });

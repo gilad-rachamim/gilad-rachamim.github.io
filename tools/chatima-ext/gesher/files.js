@@ -8,7 +8,7 @@
   'use strict';
   var L = self.Gesher;
   var CHUNK = 192 * 1024, MAX_SIZE = 100 * 1024 * 1024, IDLE = 60e3, ACK_WAIT = 30e3, PHONE_WAIT = 90e3, XFER_MAX = 20;
-  var inc = {}, outs = {}, sweepT = null;
+  var inc = {}, outs = {}, doneIn = {}, sweepT = null;
 
   function fidNew() { return 'f' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
   function okFid(f) { return /^[A-Za-z0-9_-]{4,40}$/.test(f); }
@@ -61,9 +61,14 @@
       xfer(fid, { dir: 'in', name: f.name, size: sz, pct: 0, state: 'run' });
       sweep();
     }
-    if (!f) return ack(fid, part, false, { done: true, why: 'gone' });
+    if (!f) {
+      var d = doneIn[fid];                                              // האישור האחרון אבד בדרך – שולחים אותו שוב
+      if (d && Date.now() - d.at < 10 * 60e3) return ack(fid, part, d.ok, d.extra);
+      return ack(fid, part, false, { done: true, why: 'gone' });
+    }
+    if (f.busy) return;                                                 // עדיין שומרים את החלק הקודם
     if (part < f.next) return ack(fid, part, true);                    // שידור חוזר של חלק שכבר קיבלנו
-    if (part !== f.next || f.busy) return;                               // יגיע שוב אחרי timeout אצל השולח
+    if (part !== f.next) return;                               // יגיע שוב אחרי timeout אצל השולח
     f.busy = true; f.last = Date.now();
     return off({ t: 'gesher-blob-part', fid: fid, part: part, data: String(o.data || '') }).then(function (r) {
       if (!r || !r.ok) throw new Error((r && r.why) || 'err');
@@ -86,7 +91,10 @@
       delete inc[fid];
       chrome.notifications.clear('gesher:fin:' + fid);
       return save(fid, f, r.url).then(function (dl) {
-        ack(fid, part, true, { done: true, saved: dl.ok, clip: !!r.clip });
+        var extra = { done: true, saved: dl.ok, clip: !!r.clip };
+        doneIn[fid] = { at: Date.now(), ok: true, extra: extra };
+        var ks = Object.keys(doneIn); if (ks.length > 50) ks.slice(0, ks.length - 50).forEach(function (k) { delete doneIn[k]; });
+        ack(fid, part, true, extra);
         xfer(fid, { pct: 100, state: dl.ok ? 'ok' : 'wait', dl: dl.id || null, clip: !!r.clip });
         chrome.notifications.create('gesher:fdone:' + fid, {
           type: 'basic', iconUrl: 'icon128.png',
@@ -134,6 +142,10 @@
     sweepT = setInterval(function () {
       var now = Date.now(), any = false;
       Object.keys(inc).forEach(function (k) { if (now - inc[k].last > IDLE) dropIn(k, 'idle', true); else any = true; });
+      Object.keys(outs).forEach(function (k) {                     // דף הקבצים נסגר באמצע → לא נשארים תקועים על "שולח"
+        var x = outs[k];
+        if (!x.waiter && now - (x.last || 0) > IDLE) outEnd(x, 'idle', true); else any = true;
+      });
       Object.keys(pend).forEach(function (k) { if (now - pend[k].at > 10 * 60e3) { delete pend[k]; off({ t: 'gesher-blob-free', fid: k }).catch(function () {}); } else any = true; });
       if (!any) { clearInterval(sweepT); sweepT = null; }
     }, 10e3);
@@ -160,7 +172,9 @@
     return L.load().then(function (p) {
       if (!p) return { ok: false, why: 'unpaired' };
       var x = { fid: fidNew(), name: safeName(meta.name), mime: String(meta.mime || 'application/octet-stream').slice(0, 100), size: sz, sha: String(meta.sha || ''), parts: Math.max(1, Math.ceil(sz / CHUNK)), next: 0, cancel: false, waiter: null };
+      x.last = Date.now();
       outs[x.fid] = x;
+      sweep();
       xfer(x.fid, { dir: 'out', name: x.name, size: sz, pct: 0, state: 'run' });
       return { ok: true, fid: x.fid, parts: x.parts, chunk: CHUNK };
     });
@@ -169,6 +183,7 @@
     var x = outs[fid];
     if (!x || x.cancel) return Promise.resolve({ ok: false, why: 'cancel' });
     if (part !== x.next) return Promise.resolve({ ok: false, why: 'order' });
+    x.last = Date.now();
     var msg = { type: 'file', fid: fid, part: part, parts: x.parts, data: data };
     if (part === 0) { msg.name = x.name; msg.mime = x.mime; msg.size = x.size; msg.sha = x.sha; }
     var t0 = Date.now();
@@ -194,6 +209,7 @@
     }).then(function (r) {
       if (!r.ok) { outEnd(x, r.why || 'err', r.why !== 'cancel'); return r; }
       x.next++;
+      x.last = Date.now();
       var pct = Math.round(x.next * 100 / x.parts);
       if (x.next < x.parts) {
         if (x.notif) prog('gesher:fout:' + fid, '📤 שולח לטלפון: ' + x.name, size(x.size) + ' · ' + pct + '%', pct, true);
@@ -351,6 +367,15 @@
     p.then(reply, function () { reply({ ok: false, why: 'err' }); });
     return true;
   });
+
+  // ה-service worker עלה מחדש: העברה שהייתה "רצה" כבר לא חיה – מסמנים אותה "נקטע" במקום להשאיר "שולח" לנצח
+  xferQ = xferQ.then(function () {
+    return chrome.storage.session.get('gXfer').then(function (o) {
+      var a = o.gXfer || [], ch = false;
+      a.forEach(function (x) { if ((x.state === 'run' || x.state === 'wait') && !inc[x.fid] && !outs[x.fid]) { x.state = 'err'; x.why = 'idle'; ch = true; } });
+      if (ch) return chrome.storage.session.set({ gXfer: a });
+    });
+  }).catch(function () {});
 
   self.GesherFiles = { onMsg: onMsg, peer: peer, reset: reset, fromMenu: fromMenu, sendBytes: sendBytes, sendLink: sendLink, safeName: safeName, CHUNK: CHUNK };
 })();
