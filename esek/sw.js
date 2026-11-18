@@ -1,7 +1,7 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'esek-202611180352';
+var CACHE = 'esek-202611180427';
 var PRECACHE = ["/esek/", "/esek/mivtza/", "/esek/ptiha/", "/esek/qr/", "/esek/seo/", "/esek/tafrit/", "/esek/tfutsa/", "/assets/site.css?v=b4546dc2", "/assets/kelim.css?v=56115877", "/assets/kelim.js?v=00dd7db9", "/assets/track.js?v=b4642baf", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-esek-192.png", "/assets/esek.css?v=c4c0dedb"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
@@ -35,13 +35,16 @@ self.addEventListener('fetch', function (e) {
       if (pdf) return caches.delete('chatima-share').then(function () { return caches.open('chatima-share'); }).then(function (c) {
         return c.put('/chatima-share/0', new Response(files[0], { headers: { 'content-type': 'application/pdf', 'x-name': encodeURIComponent(files[0].name || 'מסמך.pdf') } }));
       }).then(function () { return Response.redirect('/kelim/machshev/chatima/?share=1', 303); });
+      // הקלטת שיחה (לפי שם הקובץ: Call recording..., call_rec, מספר טלפון ותאריך) – ליומן השיחות. הודעה קולית מווטסאפ (PTT/AUD, opus) – לתמלול כרגיל.
+      var nm = av ? String(files[0].name || '') : '';
+      var call = av && !/^(PTT|AUD)-/i.test(nm) && !/^(opus|ogg|oga)$/i.test(ext) && /(call|rec_|record|הקלט|שיחה|\+?\d{9,}|\d{8}[_-]?\d{6})/i.test(nm);
       var box = av ? 'tamlul-share' : 'sader-share';
       return caches.delete(box).then(function () { return caches.open(box); }).then(function (c) {
         return Promise.all(files.map(function (f, i) {
           var type = f.type && (!av || /^(audio|video)\//.test(f.type)) ? f.type : (av && byExt) || 'application/octet-stream';
           return c.put('/' + box + '/' + i, new Response(f, { headers: { 'content-type': type, 'x-name': encodeURIComponent(f.name), 'x-mod': String(f.lastModified || '') } }));
         }));
-      }).then(function () { return Response.redirect(av ? '/kelim/tamlul/?share=1' : '/kelim/machshev/sader/?share=1', 303); });
+      }).then(function () { return Response.redirect(call ? '/kelim/android/yoman-sichot/?share=1' : av ? '/kelim/tamlul/?share=1' : '/kelim/machshev/sader/?share=1', 303); });
     }));
     return;
   }

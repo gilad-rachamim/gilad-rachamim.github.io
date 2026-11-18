@@ -35,13 +35,16 @@ self.addEventListener('fetch', function (e) {
       if (pdf) return caches.delete('chatima-share').then(function () { return caches.open('chatima-share'); }).then(function (c) {
         return c.put('/chatima-share/0', new Response(files[0], { headers: { 'content-type': 'application/pdf', 'x-name': encodeURIComponent(files[0].name || 'מסמך.pdf') } }));
       }).then(function () { return Response.redirect('/kelim/machshev/chatima/?share=1', 303); });
+      // הקלטת שיחה (לפי שם הקובץ: Call recording..., call_rec, מספר טלפון ותאריך) – ליומן השיחות. הודעה קולית מווטסאפ (PTT/AUD, opus) – לתמלול כרגיל.
+      var nm = av ? String(files[0].name || '') : '';
+      var call = av && !/^(PTT|AUD)-/i.test(nm) && !/^(opus|ogg|oga)$/i.test(ext) && /(call|rec_|record|הקלט|שיחה|\+?\d{9,}|\d{8}[_-]?\d{6})/i.test(nm);
       var box = av ? 'tamlul-share' : 'sader-share';
       return caches.delete(box).then(function () { return caches.open(box); }).then(function (c) {
         return Promise.all(files.map(function (f, i) {
           var type = f.type && (!av || /^(audio|video)\//.test(f.type)) ? f.type : (av && byExt) || 'application/octet-stream';
           return c.put('/' + box + '/' + i, new Response(f, { headers: { 'content-type': type, 'x-name': encodeURIComponent(f.name), 'x-mod': String(f.lastModified || '') } }));
         }));
-      }).then(function () { return Response.redirect(av ? '/kelim/tamlul/?share=1' : '/kelim/machshev/sader/?share=1', 303); });
+      }).then(function () { return Response.redirect(call ? '/kelim/android/yoman-sichot/?share=1' : av ? '/kelim/tamlul/?share=1' : '/kelim/machshev/sader/?share=1', 303); });
     }));
     return;
   }
