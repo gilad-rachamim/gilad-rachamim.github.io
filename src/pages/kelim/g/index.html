@@ -1,0 +1,53 @@
+<!--meta {
+  "site": "kelim",
+  "tool": "kelim_gesher_web",
+  "noindex": true,
+  "title": "הגשר בדפדפן – טלפון ומחשב | הכלים של גילעד רחמים",
+  "description": "חיבור הטלפון למחשב בדפדפן, בלי להתקין: טקסט, קישורים, תמונות וקבצים בשני הכיוונים, מוצפן מקצה לקצה.",
+  "og_title": "הגשר בדפדפן – טלפון ומחשב",
+  "crumbs": [["מחשב וטלפון", "/kelim/machshev/"], ["העברת קבצים מהטלפון למחשב", "/kelim/machshev/haavarat-kvatzim/"], ["הגשר בדפדפן", null]],
+  "head": "<style>.gw-status{display:block;border:1px solid var(--line);border-radius:12px;padding:.55rem .8rem;margin:.6rem 0;font-weight:600}.gw-status.on{border-color:#2e8b57;color:#2e8b57}.gw-box{border:1px solid var(--line);border-radius:14px;padding:.9rem 1rem;margin:.8rem 0}.gw-box textarea{width:100%;min-height:5.5rem;font:inherit;padding:.6rem;border-radius:10px;border:1px solid var(--line);background:transparent;color:inherit;box-sizing:border-box}.gw-row{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.6rem}.gw-file{position:relative;overflow:hidden}.gw-file input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:200px}#gw-log{list-style:none;padding:0;margin:.4rem 0;display:grid;gap:.6rem}#gw-log li{border:1px solid var(--line);border-radius:12px;padding:.6rem .8rem;overflow-wrap:anywhere}#gw-log li>div{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin-top:.4rem}.gw-st{display:block;font-size:.9rem;opacity:.85;margin-top:.15rem}.gw-text{white-space:pre-wrap;margin:0;width:100%;max-height:12rem;overflow:auto}.gw-img{max-width:100%;max-height:16rem;border-radius:10px;display:block;width:auto}.gw-mini{padding:.35rem .8rem;font-size:.92rem}.gw-url{width:100%}</style>",
+  "foot": "<script src=\"/assets/gesher-crypto.js\" defer></script><script src=\"/assets/gesher-web.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>הגשר בדפדפן</h1>
+  <p class="sub">טקסט, קישורים, תמונות וקבצים בין הטלפון למחשב – בלי להתקין כלום בטלפון. מוצפן מקצה לקצה.</p>
+</header>
+
+<section class="k-sec" id="gw-intro">
+  <p id="gw-intro-msg" class="gw-status" role="alert" hidden></p>
+  <h2>איך מתחברים</h2>
+  <ol>
+    <li>במחשב, בתוסף הכלים לכרום, לוחצים "חיבור לטלפון". מופיע QR.</li>
+    <li>סורקים את ה-QR במצלמה של הטלפון – הדף הזה נפתח ומתחבר לבד.</li>
+    <li>מאז, כל פעם שפותחים את הדף הזה בטלפון, הוא מחובר למחשב.</li>
+  </ol>
+  <p><b>יש לכם אנדרואיד?</b> עדיף את אפליקציית מיזם הכלים (בקרוב ב-Google Play): היא מעבירה גם קודי אימות והתראות, ועובדת גם כשהיא סגורה. באייפון – הדף הזה הוא הדרך.</p>
+  <p>הדף בדפדפן עובד רק כשהוא פתוח, ומחליף טלפון אחר שמחובר לאותו מחשב (טלפון אחד לכל מחשב). זו גרסה ראשונה – אם משהו לא עובד, נשמח לשמוע.</p>
+  <p><a class="gold" href="/kelim/machshev/haavarat-kvatzim/">כל מה שהגשר עושה, ואיך הוא שומר על הפרטיות ←</a></p>
+</section>
+
+<section class="k-sec" id="gw-pairing" hidden>
+  <p class="gw-status" id="gw-pair-msg" role="status" aria-live="polite">מתחבר…</p>
+  <p>משאירים את הדף פתוח כמה שניות. המחשב צריך להיות עם ה-QR פתוח.</p>
+</section>
+
+<section class="k-sec" id="gw-on" hidden>
+  <p>מחובר אל: <b id="gw-pc"></b></p>
+  <p class="gw-status" id="gw-status" role="status" aria-live="polite">מתחבר…</p>
+  <div class="gw-box">
+    <label for="gw-text"><b>טקסט או קישור למחשב</b></label>
+    <textarea id="gw-text" maxlength="100000" placeholder="מדביקים או כותבים כאן – זה ייכנס ללוח של המחשב (קישור נפתח שם בלחיצה)"></textarea>
+    <div class="gw-row">
+      <button class="btn btn-gold" type="button" id="gw-send">שליחה למחשב</button>
+      <label class="btn btn-line gw-file">📷 תמונה או קובץ למחשב<input type="file" id="gw-file" multiple aria-label="בחירת תמונה או קובץ לשליחה למחשב"></label>
+    </div>
+  </div>
+  <h2>מה עבר</h2>
+  <p class="muted" style="font-size:.92rem">מה שהמחשב שולח מופיע כאן כל עוד הדף פתוח. שום דבר לא נשמר בשרת.</p>
+  <ul id="gw-log" aria-live="polite"></ul>
+  <div class="gw-row">
+    <button class="btn btn-line" type="button" id="gw-retry">להתחבר שוב</button>
+    <button class="btn btn-line" type="button" id="gw-unpair">ניתוק מהמחשב</button>
+  </div>
+</section>
