@@ -599,9 +599,19 @@ for path in sorted(SRC.rglob("*.html")):
         html = html.replace("{{" + k + "}}", v)
     for key in ["yerushalaim", "sipur", "hachana", "moed", "madrich", "kartis"]:
         html = html.replace("{{cur:" + key + "}}", ' aria-current="page"' if meta.get("nav") == key else "")
+    if meta.get("manifest"):  # דף שמותקן כאפליקציה משלו (למשל הגשר באייפון): manifest נפרד ליד הדף
+        man = dict(meta["manifest"])
+        html = re.sub(r'<link rel="manifest" href="[^"]*">', f'<link rel="manifest" href="{url_path}manifest.webmanifest">', html, count=1)
+        html = re.sub(r'(<meta name="apple-mobile-web-app-title" content=")[^"]*', lambda m: m.group(1) + man.get("short_name", ""), html, count=1)
+        if man.get("display") == "browser":  # באייפון: האייקון נפתח בספארי עצמו – עם אותו אחסון (והצימוד) של הדף
+            html = html.replace('<meta name="apple-mobile-web-app-capable" content="yes">', '<meta name="apple-mobile-web-app-capable" content="no">')
+            html = html.replace('<meta name="mobile-web-app-capable" content="yes">', '<meta name="mobile-web-app-capable" content="no">')
     html = version_assets(html)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
+    if meta.get("manifest"):
+        man = dict({"id": url_path, "start_url": url_path, "scope": url_path, "dir": "rtl", "lang": "he"}, **meta["manifest"])
+        (out.parent / "manifest.webmanifest").write_text(json.dumps(man, ensure_ascii=False, indent=1), encoding="utf-8")
     if site and not meta.get("noindex") and not meta.get("no_precache") and not re.search(r"/(pratiut|negishut|tosaf)/$", url_path):
         # רשימת הכלים לתוסף הכרום (kelim/tools.json): כלי חדש באתר מופיע בתוסף בלי לשלוח גרסה לחנות
         cr = meta.get("crumbs") or []

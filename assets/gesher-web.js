@@ -11,7 +11,7 @@
   var enc = new TextEncoder();
   var $ = function (id) { return document.getElementById(id); };
   var pair = null, ws = null, pingT = null, lastOut = '0', retry = 0, retryT = null, stopped = false;
-  var waiters = {}, inc = {}, outs = {};
+  var waiters = {}, inc = {}, outs = {}, pending = null;
 
   // ---------- IndexedDB (מפתחות AES לא ניתנים לייצוא נשמרים כמו שהם) ----------
   function db() {
@@ -59,9 +59,16 @@
   }
 
   // ---------- צימוד מה-QR ----------
+  function rawHash() { return String(self.__gwH || location.hash || ''); }
+  // "#t=<טקסט>" – מקיצור הדרך "למחשב" באייפון: הטקסט לשליחה, לא צימוד
+  function sharedText() {
+    var m = /^#t=([\s\S]*)$/.exec(rawHash());
+    if (!m) return null;
+    try { return decodeURIComponent(m[1].replace(/\+/g, ' ')).trim(); } catch (e) { return m[1]; }
+  }
   function fromHash() {
-    var h = location.hash.slice(1);
-    if (!h) return null;
+    var h = rawHash().slice(1);
+    if (!h || /^t=/.test(h)) return null;
     try { history.replaceState(null, '', location.pathname); } catch (e) {}   // הסוד לא נשאר בשורת הכתובת ובהיסטוריה
     try {
       var q = JSON.parse(new TextDecoder().decode(G.unb64u(h)));
@@ -132,6 +139,7 @@
         if (e.data === 'pong') return;
         var m; try { m = JSON.parse(e.data); } catch (x) { return; }
         if (m.t === 'peer') status(m.on ? 'מחובר ל' + pair.name + ' ✓' : pair.name + ' לא מחובר כרגע (כרום סגור?). פותחים כרום במחשב.', !!m.on);
+        if (m.t === 'peer' && m.on && pending) { var t = pending; pending = null; $('gw-text').value = t; sendText(); }
         if (m.t === 'err') status(m.e === 'size' ? 'החלק גדול מדי' : m.e === 'quota' ? 'הגעתם למכסה היומית' : 'שגיאה בשרת', false);
         return;
       }
@@ -342,13 +350,23 @@
     $('gw-unpair').addEventListener('click', function () { if (confirm('לנתק את הדפדפן הזה מהמחשב?')) unpair(); });
     $('gw-retry').addEventListener('click', function () { retry = 0; stopped = false; connect(); });
     document.addEventListener('visibilitychange', function () { if (!document.hidden && pair && !stopped && (!ws || ws.readyState > 1)) { retry = 0; connect(); } });
-    var hadHash = location.hash.length > 1, q = fromHash();
+    var standalone = navigator.standalone === true || (self.matchMedia && matchMedia('(display-mode: standalone)').matches);
+    var shared = sharedText();
+    if (shared && shared.length <= TEXT_MAX) pending = shared;
+    var hadHash = rawHash().length > 1, q = fromHash();
     if (q) return doPair(q);
-    if (hadHash) return pairFail('הקישור לא תקין. סורקים שוב את ה-QR מהתוסף.');
+    if (hadHash && !shared) return pairFail('הקישור לא תקין. סורקים שוב את ה-QR מהתוסף.');
     load().then(function (p) {
-      if (p && p.k12 && p.k21 && p.tokPhone) { pair = p; connected(); }
-      else show('gw-intro');
+      if (p && p.k12 && p.k21 && p.tokPhone) { pair = p; connected(); if (pending) $('gw-text').value = pending; }
+      else {
+        show('gw-intro');
+        if (pending) pairFail('הדפדפן הזה עוד לא מחובר למחשב, אז הטקסט לא נשלח. קודם מתחברים (סורקים QR מהתוסף), ואז משתפים שוב.');
+        if (standalone) $('gw-standalone').hidden = false;
+      }
     }, function () { show('gw-intro'); });
+    // הסבר "אייקון במסך הבית" – רק באייפון/אייפד בספארי (לא כשכבר נפתח מהאייקון)
+    if (!/iPhone|iPad/.test(navigator.userAgent) || standalone) { var hm = $('gw-home'); if (hm) hm.hidden = true; }
+    if (!/iPhone|iPad/.test(navigator.userAgent)) { var sc = $('gw-shortcut'); if (sc) sc.hidden = true; }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
