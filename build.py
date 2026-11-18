@@ -430,6 +430,23 @@ CHESED_PARTNER = {
 CHESED_NO_PATH = {}  # כרגע ריק: לכל הכלים עם מכסה יש קוד שותף (11.11.2026)
 CHESED_SKIP = SEO_SKIP | {"404"}
 # קוד שותף אחד לכל הכלים עם מכסה: נשמר ב-localStorage 'kelim-partner' (kelim.js), הכלים שולחים אותו בכותרת x-kelim-partner
+# פס "החדשות ב-3 דקות" (18.11.2026, תוכנית העצמת החדשות): בדף הבית של הכלים ובדפים הנצפים ביותר לפי GA4 (21.10–18.11).
+# פס דק ורגוע בראש התוכן, לא קופץ ולא מסתיר, בלי כותרות חדשות (רוגע בדפי הכלים). news-bar.js ממלא רק את שם המהדורה והשעה.
+NEWSBAR_PAGES = {"/kelim/", "/kodesh/", "/kelim/tamlul/", "/kodesh/mohalim/", "/kelim/shikum/", "/kelim/machshev/fax/",
+                 "/kelim/machshev/chatima/", "/limudim/dapim/", "/kelim/kehila/trempim/", "/kodesh/mohalim/bli-atar/",
+                 "/kodesh/kartis/", "/kelim/tochen/tirgum/"}
+NEWSBAR_URL = "/kelim/machshev/chadashot/?utm_source=home"
+NEWSBAR_HTML = ('<aside class="newsbar no-print" data-newsbar aria-label="החדשות ב-3 דקות">'
+                f'<a class="nb-main" href="{NEWSBAR_URL}" data-nb="open"><span class="nb-ic" aria-hidden="true">📰</span>'
+                '<span class="nb-txt"><b>החדשות ב-3 דקות</b> <span class="nb-ed" data-nb-ed>– המהדורה האחרונה</span>'
+                '<span class="nb-sub">5 נקודות רגועות, 3 פעמים ביום</span></span><span class="nb-go" aria-hidden="true">←</span></a>'
+                f'<a class="nb-bell" href="{NEWSBAR_URL}#nw-push" data-nb="bell" aria-label="לקבל התראה כשהסיכום יוצא">🔔<span class="nb-bell-t"> לקבל התראה</span></a></aside>')
+
+
+def news_bar(url_path):
+    return NEWSBAR_HTML if url_path in NEWSBAR_PAGES else ""
+
+
 CHESED_CODE = ('<details class="chesed-p"><summary>🤝 יש לי קוד שותף</summary><label>קוד השותף שקיבלתי '
                '<input type="text" inputmode="numeric" dir="ltr" maxlength="12" autocomplete="off" placeholder="123-45678" data-partner-code></label>'
                '<span class="chesed-ok" data-partner-ok hidden>✓ נשמר. תודה שאתם שותפים ❤ ללא הגבלה בכל הכלים.</span>'
@@ -587,12 +604,14 @@ for path in sorted(SRC.rglob("*.html")):
             "nav": "".join(f'<a href="{h}"' + (' aria-current="page"' if meta.get("nav") == k else "") + f'>{l}</a>' for k, h, l in site["nav"]),
             "tool": meta.get("tool", ""),
             "shipurim": shipurim_line(meta.get("tool", "")),
-            "chesed": chesed_band(url_path, dict(meta, _login="gsi/client" in raw or "accounts.google.com" in raw)),
+            "chesed": news_bar(url_path) + chesed_band(url_path, dict(meta, _login="gsi/client" in raw or "accounts.google.com" in raw)),
             "fb_note": fb_note(meta.get("tool", "")),
             "lead_endpoint": LEAD_ENDPOINT,
             "site_css": "".join(f'<link rel="stylesheet" href="{c}">' for c in site.get("css", [])),
         })
         rep["foot"] += "".join(f'<script src="{j}" defer></script>' for j in site.get("js", []))
+        if url_path in NEWSBAR_PAGES:
+            rep["foot"] += '<script src="/assets/news-bar.js" defer></script>'
         if not meta.get("no_precache"):  # דפים רבים מאותו סוג (פרקי תהילים): לא נשמרים מראש בטלפון, רק כשנכנסים אליהם
             site_pages[key].append(url_path)
     for k, v in rep.items():
