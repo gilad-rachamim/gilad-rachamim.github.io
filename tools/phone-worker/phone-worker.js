@@ -7,7 +7,7 @@ import { HDate, HebrewCalendar, Zmanim, GeoLocation, Locale, flags, DailyLearnin
 import '@hebcal/learning'; // רושם את הדף היומי, משניות יומיות ונ"ך יומי
 
 const TZ = 'Asia/Jerusalem';
-const VERSION = 1;
+const VERSION = 2;
 const MAX_ROUNDS = 15;
 const GILAD_PHONE = '0584049049';
 
@@ -47,9 +47,9 @@ function msgs(parts) {
 // אחרי השמעה אחת הם שולחים לשרת את הערך EMPTY, והשרת מחליט מה להשמיע (רק תפריט קצר).
 // שדות 11–13 בפקודת read: כמה פעמים להשמיע, Ok = לאפשר ערך ריק, הערך שנשלח לשרת כשלא הוקש כלום.
 const EMPTY = 'None';
-function readDigits(parts, name, { max = 1, min = 1, allowed = '', emptyOk = false } = {}) {
+function readDigits(parts, name, { max = 1, min = 1, allowed = '', emptyOk = false, wait = 7 } = {}) {
   const tail = emptyOk ? `1,Ok,${EMPTY}` : ',';
-  return `read=${msgs(parts)}=${name},no,${max},${min},7,No,no,no,,${allowed},${tail},`;
+  return `read=${msgs(parts)}=${name},no,${max},${min},${wait},No,no,no,,${allowed},${tail},`;
 }
 function isEmptyKey(x) { return x === EMPTY || x === ''; }
 function readRecord(parts, name, fileName) {
@@ -266,6 +266,22 @@ export function toolNews(ed) {
   return out;
 }
 
+// ימות ממירים את כל הטקסט לקול לפני שמתחילים להשמיע – סיכום ארוך = 5 שניות שקט אחרי הקשת 8 (18.11.2026).
+// לכן מחלקים לחתיכות קצרות: הראשונה (כותרת + נקודה ראשונה) מתחילה מיד, וכל חתיכה נשלחת כ-read עם המתנה של שנייה.
+// הקשה באמצע = דילוג לחתיכה הבאה.
+export function newsChunks(parts) {
+  const out = [];
+  let cur = [], len = 0;
+  parts.forEach((p, i) => {
+    const budget = out.length ? 260 : 140;
+    // מספר סידורי ("ראשון") תמיד נשאר צמוד לנקודה שאחריו
+    if (cur.length && len + p.length > budget && !/^(ראשון|שני|שלישי|רביעי|חמישי|שישי|שביעי)$/.test(cur[cur.length - 1])) { out.push(cur); cur = []; len = 0; }
+    cur.push(p); len += p.length;
+  });
+  if (cur.length) out.push(cur);
+  return out;
+}
+
 // ---------- המכונה: מה לשאול עכשיו ----------
 function menuRead(round, intro) {
   if (round >= MAX_ROUNDS) return sayAndHangup([...(intro || []), 'תודה שהתקשרתם. להתראות']);
@@ -295,7 +311,14 @@ function decide(v, sponsor = '', news = null) {
     return { text: after(tool === '1' ? toolZmanim(c) : toolShabbat(c)), event: tool === '1' ? 'zmanim' : 'shabbat' };
   }
   if (tool === '6') return { text: after(toolLearning()), event: 'learning' };
-  if (tool === '8') return { text: after(toolNews(news)), event: 'news' };
+  if (tool === '8') {
+    const chunks = newsChunks(toolNews(news));
+    let k = 0;
+    while (v[`n${r}_${k}`] !== undefined && k < chunks.length - 1) k++;
+    const event = k ? undefined : 'news';
+    if (k < chunks.length - 1) return { text: readDigits(chunks[k], `n${r}_${k}`, { allowed: '0.1.2.3.4.5.6.7.8.9', emptyOk: true, wait: 1 }), event };
+    return { text: after(chunks[k]), event };
+  }
   if (tool === '2') return { text: after(toolToday()), event: 'today' };
   if (tool === '3') {
     const k = +v[`k${r}`];
@@ -371,7 +394,8 @@ export default {
     let last;
     for (let i = 0; i < MAX_ROUNDS; i++) if (v[`m${i}`] !== undefined) last = v[`m${i}`];
     if (last === '8' && env.NEWS) {
-      try { news = await (await env.NEWS.fetch('https://news/latest?from=phone')).json(); } catch (e) {}
+      const more = Object.keys(v).some(k => /^n\d+_\d+$/.test(k) && v[k] !== undefined);
+      try { news = await (await env.NEWS.fetch('https://news/latest?from=' + (more ? 'none' : 'phone'))).json(); } catch (e) {}
     }
     try { out = decide(v, env.SPONSOR || '', news); } catch (e) { out = { text: sayAndHangup(['סליחה, הייתה תקלה. נסו שוב מאוחר יותר']) }; }
     count(env, ctx, out.event);

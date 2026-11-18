@@ -7,7 +7,7 @@
 import { HDate, HebrewCalendar, Zmanim, GeoLocation, flags } from '@hebcal/core';
 
 const TZ = 'Asia/Jerusalem';
-const VERSION = 1;
+const VERSION = 2;
 const RUN_HOURS = [7, 13, 20];
 const LATE_HOURS = [21, 22]; // ריצה מאוחרת רק אם הריצה של 20:00 נפלה על שבת/חג
 const JLM = new GeoLocation('ירושלים', 31.778, 35.235, 754, TZ);
@@ -128,6 +128,8 @@ const CHECK_SCHEMA = {
 async function gemini(env, system, user, schema) {
   const models = (env.GEMINI_MODELS || 'gemini-3.8-flash,gemini-3.7-flash,gemini-3.5-flash,gemini-flash-lite-latest,gemini-3.5-flash-lite').split(',').map(s => s.trim());
   let last;
+  for (let round = 0; round < 2; round++) {
+  if (round) await new Promise(r => setTimeout(r, 20000)); // כולם עמוסים (503) – מחכים רגע ומנסים סבב אחד נוסף
   for (const model of models) {
     let r;
     try {
@@ -148,7 +150,8 @@ async function gemini(env, system, user, schema) {
       return { data: JSON.parse(txt), model };
     }
     last = `${model} ${r.status} ${(await r.text()).slice(0, 200)}`;
-    if (![404, 429, 500, 503].includes(r.status)) break; // עמוס או לא קיים – מנסים את הדגם הבא
+    if (![404, 429, 500, 503].includes(r.status)) throw new Error(last); // שגיאה אמיתית – לא מנסים שוב
+  }
   }
   throw new Error(last);
 }
@@ -298,6 +301,7 @@ export async function runEdition(env, { force = false, now = new Date(), push = 
   const cfg = await call(env, '/config');
   if (push && env.FB_PAGE_TOKEN && env.FB_PAGE_ID) ed.fb = await postFacebook(env, ed, cfg.links || {}).catch(e => ({ error: String(e).slice(0, 200) }));
   if (push && env.WHAPI_TOKEN && cfg.waid) ed.wa = await postWhatsapp(env, ed, cfg.waid).catch(e => ({ error: String(e).slice(0, 200) }));
+  if (push) await call(env, '/post-log', { at: new Date().toISOString(), name: ed.name, fb: ed.fb ? (ed.fb.error ? 'שגיאה: ' + ed.fb.error : 'עלה') : 'לא מוגדר', wa: ed.wa ? (ed.wa.error ? 'שגיאה: ' + ed.wa.error : 'עלה') : (env.WHAPI_TOKEN ? 'אין מזהה ערוץ' : 'לא מוגדר') }).catch(() => {});
   return { ok: true, fb: ed.fb, wa: ed.wa, name: ed.name, mode: ed.mode, main: ed.sections.main.length, dropped: ed.dropped.length, failed, error: ed.error };
 }
 
@@ -315,7 +319,7 @@ export default {
     if (url.pathname === '/latest') {
       const ed = await call(env, '/latest');
       const from = url.searchParams.get('from');
-      ctx.waitUntil(call(env, '/hit', { e: FROM.includes(from) ? from : 'web' }).catch(() => {}));
+      if (from !== 'none') ctx.waitUntil(call(env, '/hit', { e: FROM.includes(from) ? from : 'web' }).catch(() => {})); // none = המשך הקראה בטלפון, כבר נספר
       if (!ed?.at) return json({ empty: true });
       const { dropped, error, fixed, checkError, ...pub } = ed;
       const links = (await call(env, '/config')).links || {};
@@ -349,6 +353,13 @@ export default {
       if (!admin) return json({ ok: false }, 403);
       const force = url.searchParams.get('force') === '1';
       return json(await runEdition(env, { force, push: !force || url.searchParams.get('push') === '1' }));
+    }
+    if (url.pathname === '/wa-check') {
+      if (!admin) return json({ ok: false }, 403);
+      if (!env.WHAPI_TOKEN) return json({ ok: false, error: 'אין WHAPI_TOKEN' });
+      const r = await fetch('https://gate.whapi.cloud/health', { headers: { authorization: 'Bearer ' + env.WHAPI_TOKEN } });
+      const j = await r.json().catch(() => ({}));
+      return json({ ok: r.ok, http: r.status, status: j.status || j.error || null, user: j.user ? { name: j.user.name } : null });
     }
     if (url.pathname === '/push-test') { // שולח התראה רק למנוי אחד (endpoint) – לבדיקה
       if (!admin) return json({ ok: false }, 403);
@@ -470,9 +481,14 @@ export class Store {
       await this.s.put('stats', st);
       return Response.json({ ok: true });
     }
+    if (path === '/post-log') {
+      const l = (await this.s.get('post-log')) || [];
+      l.unshift(body); await this.s.put('post-log', l.slice(0, 9));
+      return Response.json({ ok: true });
+    }
     if (path === '/stats') {
       const subs = (await this.s.list({ prefix: 'sub:' })).size;
-      return Response.json({ subscribers: subs, lastPush: (await this.s.get('push-last')) || null, days: (await this.s.get('stats')) || {} });
+      return Response.json({ subscribers: subs, lastPush: (await this.s.get('push-last')) || null, posts: (await this.s.get('post-log')) || [], days: (await this.s.get('stats')) || {} });
     }
     if (path === '/subscribe') { await this.s.put(await subKey(body.endpoint), { endpoint: body.endpoint, at: new Date().toISOString() }); return Response.json({ ok: true }); }
     if (path === '/unsubscribe') { await this.s.delete(await subKey(body.endpoint)); return Response.json({ ok: true }); }
