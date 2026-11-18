@@ -7,7 +7,7 @@
 import { HDate, HebrewCalendar, Zmanim, GeoLocation, flags } from '@hebcal/core';
 
 const TZ = 'Asia/Jerusalem';
-const VERSION = 2;
+const VERSION = 3;
 const RUN_HOURS = [7, 13, 20];
 const LATE_HOURS = [21, 22]; // ריצה מאוחרת רק אם הריצה של 20:00 נפלה על שבת/חג
 const JLM = new GeoLocation('ירושלים', 31.778, 35.235, 754, TZ);
@@ -301,8 +301,10 @@ export async function runEdition(env, { force = false, now = new Date(), push = 
   const cfg = await call(env, '/config');
   if (push && env.FB_PAGE_TOKEN && env.FB_PAGE_ID) ed.fb = await postFacebook(env, ed, cfg.links || {}).catch(e => ({ error: String(e).slice(0, 200) }));
   if (push && env.WHAPI_TOKEN && cfg.waid) ed.wa = await postWhatsapp(env, ed, cfg.waid).catch(e => ({ error: String(e).slice(0, 200) }));
-  if (push) await call(env, '/post-log', { at: new Date().toISOString(), name: ed.name, fb: ed.fb ? (ed.fb.error ? 'שגיאה: ' + ed.fb.error : 'עלה') : 'לא מוגדר', wa: ed.wa ? (ed.wa.error ? 'שגיאה: ' + ed.wa.error : 'עלה') : (env.WHAPI_TOKEN ? 'אין מזהה ערוץ' : 'לא מוגדר') }).catch(() => {});
-  return { ok: true, fb: ed.fb, wa: ed.wa, name: ed.name, mode: ed.mode, main: ed.sections.main.length, dropped: ed.dropped.length, failed, error: ed.error };
+  if (push && env.TG_TOKEN && cfg.tgid) ed.tg = await postTelegram(env, cfg.tgid, editionText(ed, cfg.links || {}, 'tg')).catch(e => ({ error: String(e).slice(0, 200) }));
+  const st = (r, tok, id) => r ? (r.error ? 'שגיאה: ' + r.error : 'עלה') : (tok ? (id ? 'לא נשלח' : 'אין מזהה ערוץ') : 'לא מוגדר');
+  if (push) await call(env, '/post-log', { at: new Date().toISOString(), name: ed.name, fb: st(ed.fb, env.FB_PAGE_TOKEN, env.FB_PAGE_ID), wa: st(ed.wa, env.WHAPI_TOKEN, cfg.waid), tg: st(ed.tg, env.TG_TOKEN, cfg.tgid) }).catch(() => {});
+  return { ok: true, fb: ed.fb, wa: ed.wa, tg: ed.tg, name: ed.name, mode: ed.mode, main: ed.sections.main.length, dropped: ed.dropped.length, failed, error: ed.error };
 }
 
 // ---------- השרת ----------
@@ -341,6 +343,16 @@ export default {
       if (!admin) return json({ ok: false }, 403);
       const wa = url.searchParams.get('wa');
       const waid = url.searchParams.get('waid');
+      // טלגרם: tg = קישור ציבורי לכפתור בדף (https://t.me/..), tgid = לאן הבוט שולח (@שם_הערוץ או -100...)
+      const tg = url.searchParams.get('tg'), tgid = url.searchParams.get('tgid');
+      if (tg !== null) {
+        if (tg && !/^https:\/\/t\.me\/[A-Za-z0-9_]{5,32}$/.test(tg)) return json({ ok: false, error: 'קישור טלגרם לא תקין' }, 400);
+        return json(await call(env, '/config-set', { tg }));
+      }
+      if (tgid !== null) {
+        if (tgid && !/^(@[A-Za-z0-9_]{5,32}|-100\d{6,16})$/.test(tgid)) return json({ ok: false, error: 'מזהה ערוץ טלגרם לא תקין' }, 400);
+        return json(await call(env, '/config-set', { tgid }));
+      }
       if (waid !== null) {
         if (waid && !/^\d{10,25}@newsletter$/.test(waid)) return json({ ok: false, error: 'מזהה ערוץ לא תקין' }, 400);
         return json(await call(env, '/config-set', { waid }));
@@ -358,12 +370,25 @@ export default {
     if (url.pathname === '/reel' && request.method === 'POST') {
       if (!admin) return json({ ok: false }, 403);
       if (holyNow()) return json({ ok: false, error: 'שבת/חג' });
-      if (!env.FB_PAGE_TOKEN || !env.FB_PAGE_ID) return json({ ok: false, error: 'אין מפתח פייסבוק' });
+      const cfg = await call(env, '/config');
+      const toTg = !!(env.TG_TOKEN && cfg.tgid), toFb = !!(env.FB_PAGE_TOKEN && env.FB_PAGE_ID);
+      if (!toFb && !toTg) return json({ ok: false, error: 'אין מפתח פייסבוק' });
       const video = await request.arrayBuffer();
       if (video.byteLength < 10000 || video.byteLength > 50e6) return json({ ok: false, error: 'גודל קובץ' }, 400);
-      const res = await postReel(env, video, String(url.searchParams.get('text') || '').slice(0, 2000)).catch(e => ({ error: String(e).slice(0, 300) }));
-      await call(env, '/post-log', { at: new Date().toISOString(), name: 'רילס', fb: res.id ? 'עלה' : 'שגיאה: ' + res.error, wa: '-' }).catch(() => {});
-      return json({ ok: !!res.id, ...res });
+      const text = String(url.searchParams.get('text') || '').slice(0, 2000);
+      const res = toFb ? await postReel(env, video, text).catch(e => ({ error: String(e).slice(0, 300) })) : { error: 'אין מפתח פייסבוק' };
+      const tgr = toTg ? await postTelegramVideo(env, cfg.tgid, video, text).catch(e => ({ error: String(e).slice(0, 200) })) : null;
+      await call(env, '/post-log', { at: new Date().toISOString(), name: 'רילס', fb: res.id ? 'עלה' : 'שגיאה: ' + res.error, wa: '-', tg: tgr ? (tgr.error ? 'שגיאה: ' + tgr.error : 'עלה') : '-' }).catch(() => {});
+      return json({ ok: !!res.id, ...res, tg: tgr });
+    }
+    if (url.pathname === '/tg-check') { // הבוט חי? הערוץ נמצא? כמה מצטרפים (למדידה השבועית)
+      if (!admin) return json({ ok: false }, 403);
+      if (!env.TG_TOKEN) return json({ ok: false, error: 'אין TG_TOKEN' });
+      const me = await tgApi(env, 'getMe', {});
+      const cfg = await call(env, '/config');
+      const chat = cfg.tgid ? await tgApi(env, 'getChat', { chat_id: cfg.tgid }) : null;
+      const n = cfg.tgid ? await tgApi(env, 'getChatMemberCount', { chat_id: cfg.tgid }) : null;
+      return json({ ok: !!me.ok, bot: me.result?.username || me.description, tgid: cfg.tgid || null, chat: chat ? (chat.result?.title || chat.description) : null, members: n?.result ?? null, link: cfg.links?.tg || null });
     }
     if (url.pathname === '/wa-check') {
       if (!admin) return json({ ok: false }, 403);
@@ -393,7 +418,7 @@ export default {
 // ---------- פייסבוק: פוסט לדף "החדשות ב-3 דקות" (Graph API, מפתח קבוע של הדף) ----------
 const PAGE_URL = 'https://hakelim.com/kelim/machshev/chadashot/';
 // מאיפה הגיעו (נספר ב-/stats): דף, טלפון, התראה, פייסבוק, ווטסאפ, מודעה (QR), שיתוף, דף הבית
-export const FROM = ['web', 'phone', 'push', 'fb', 'wa', 'qr', 'share', 'home'];
+export const FROM = ['web', 'phone', 'push', 'fb', 'wa', 'qr', 'share', 'home', 'tg'];
 // ערוץ הווטסאפ: דרך Whapi.Cloud (מסלול חינמי), שמחובר למספר של גילעד כ"מכשיר מקושר". אין API רשמי לערוצים.
 // WHAPI_TOKEN = סוד בשרת (tools/news-worker/wa-setup.ps1), מזהה הערוץ ב-/config?waid=
 async function postWhatsapp(env, ed, waid) {
@@ -411,9 +436,30 @@ export function editionText(ed, links = {}, src = 'fb') {
   ed.sections.main.forEach((p, i) => out.push(`${i + 1}. ${p.text}`));
   for (const k of ['haredi', 'economy']) if (ed.sections[k]?.length) { out.push('', `▪️ ${names[k]}`); ed.sections[k].forEach(p => out.push(`• ${p.text}`)); }
   out.push('', 'כל נקודה עם קישור למקור, והתראה 3 פעמים ביום:', PAGE_URL + '?utm_source=' + src);
-  if (links.wa) out.push('', '📲 בערוץ הווטסאפ, 3 פעמים ביום:', links.wa);
+  if (links.wa && src !== 'wa') out.push('', '📲 בערוץ הווטסאפ, 3 פעמים ביום:', links.wa);
+  if (links.tg && src !== 'tg') out.push('', '✈️ בערוץ הטלגרם:', links.tg);
   out.push('בטלפון כשר: 077-2253345 שלוחה 8');
   return out.join('\n');
+}
+// ---------- טלגרם: ערוץ "החדשות ב-3 דקות" (Bot API, חינמי ורשמי) ----------
+// TG_TOKEN = סוד בשרת (tools/news-worker/tg-setup.ps1), הבוט מנהל בערוץ; לאן שולחים – /config?tgid=
+async function tgApi(env, method, body) {
+  const r = await fetch(`https://api.telegram.org/bot${env.TG_TOKEN}/${method}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+  return r.json().catch(() => ({ ok: false, description: String(r.status) }));
+}
+async function postTelegram(env, chat, text) {
+  const j = await tgApi(env, 'sendMessage', { chat_id: chat, text: text.slice(0, 4000), link_preview_options: { is_disabled: true } });
+  return j.ok ? { id: j.result.message_id } : { error: j.description || 'שגיאה' };
+}
+async function postTelegramVideo(env, chat, video, caption) {
+  const f = new FormData();
+  f.append('chat_id', chat);
+  f.append('caption', caption.slice(0, 1000));
+  f.append('supports_streaming', 'true');
+  f.append('video', new Blob([video], { type: 'video/mp4' }), 'chadashot.mp4');
+  const r = await fetch(`https://api.telegram.org/bot${env.TG_TOKEN}/sendVideo`, { method: 'POST', body: f });
+  const j = await r.json().catch(() => ({}));
+  return j.ok ? { id: j.result.message_id } : { error: j.description || String(r.status) };
 }
 async function postFacebook(env, ed, links) {
   const v = env.FB_API_VERSION || 'v23.0';
@@ -494,6 +540,8 @@ export class Store {
       const c = (await this.s.get('config')) || { links: {} };
       if ('wa' in body) { if (body.wa) c.links.wa = body.wa; else delete c.links.wa; }
       if ('waid' in body) { if (body.waid) c.waid = body.waid; else delete c.waid; } // מזהה הערוץ לפרסום (לא מוצג לציבור)
+      if ('tg' in body) { if (body.tg) c.links.tg = body.tg; else delete c.links.tg; }
+      if ('tgid' in body) { if (body.tgid) c.tgid = body.tgid; else delete c.tgid; }
       await this.s.put('config', c);
       return Response.json({ ok: true, ...c });
     }

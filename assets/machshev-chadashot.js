@@ -14,7 +14,7 @@
     var s = '';
     try { s = (new URLSearchParams(location.search).get('utm_source') || '').toLowerCase(); } catch (e) {}
     if (s === 'facebook') s = 'fb';
-    return ['fb', 'wa', 'qr', 'share', 'home'].indexOf(s) > -1 ? s : 'web';
+    return ['fb', 'wa', 'qr', 'share', 'home', 'tg'].indexOf(s) > -1 ? s : 'web';
   })();
   function friendText() {
     return 'מצאתי משהו טוב: סיכום חדשות רגוע 3 פעמים ביום. 5 נקודות קצרות, בלי לרפרש כל רבע שעה. קו כשר, בחינם ובלי פרסומות.\n' +
@@ -55,6 +55,8 @@
     $('nw-wa').href = 'https://wa.me/?text=' + encodeURIComponent(asText());
     var wa = ed.links && ed.links.wa;
     if (wa && /^https:\/\/(www\.)?whatsapp\.com\/channel\//.test(wa)) { $('nw-chan-a').href = wa; $('nw-chan').hidden = false; }
+    var tg = ed.links && ed.links.tg;
+    if (tg && /^https:\/\/t\.me\/[A-Za-z0-9_]+$/.test(tg)) { $('nw-tg-a').href = tg; $('nw-tg').hidden = false; }
   }
 
   function asText() {
@@ -145,6 +147,7 @@
     $('nw-friend').href = 'https://wa.me/?text=' + encodeURIComponent(friendText());
     $('nw-friend').addEventListener('click', function () { used('friend'); });
     $('nw-chan-a').addEventListener('click', function () { used('channel'); });
+    $('nw-tg-a').addEventListener('click', function () { used('telegram'); });
     $('nw-fb').addEventListener('click', function () { used('facebook'); });
 
     fetch(API + '/latest?from=' + FROM, { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
