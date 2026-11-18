@@ -26,6 +26,10 @@ jobs:
         with:
           python-version: "3.12"
       - run: python tools/news_archive.py
+      - name: contact email from the live pages (build.py needs it; it is public on the site, never written in code)
+        run: |
+          M=$(grep -oh 'mailto:[^"?]*' kelim/index.html | head -1 | sed 's/^mailto://')
+          test -n "$M" && echo "SITE_CONTACT_EMAIL=$M" >> "$GITHUB_ENV"
       - run: python build.py
       - name: commit only the archive
         id: commit
