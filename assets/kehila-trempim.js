@@ -467,6 +467,12 @@
     document.querySelectorAll('.tp-pane').forEach(function (p) { p.hidden = p.getAttribute('data-pane') !== name; });
     if (name === 'inbox') loadInbox();
     if (name === 'drive') loadMyRides();
+    keepPushOffer();
+  }
+  // הצעת ההתראות יושבת בכרטיס של הפעולה. עוברים ללשונית אחרת – היא עוברת למעלה, מעל הלשוניות, כדי שלא תיעלם
+  function keepPushOffer() {
+    var x = document.querySelector('.tp-push'), slot = $('tp-push-slot');
+    if (x && slot && x.parentNode !== slot && !x.offsetParent) slot.appendChild(x);
   }
   function chips(id, multi) {
     var box = $(id);
