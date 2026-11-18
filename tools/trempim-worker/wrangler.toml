@@ -3,6 +3,8 @@
 # סכמה: npx wrangler d1 execute trempim --remote --file schema.sql
 # סודות: npx wrangler secret put SESSION_SECRET ; npx wrangler secret put ADMIN_KEY
 # מיגרציה 2 (תגמולים): npx wrangler d1 execute trempim --remote --file migrate-2-tagmulim.sql
+# מיגרציה 3 (התראות + מחפשים טרמפ): npx wrangler d1 execute trempim --remote --file migrate-3-push.sql
+# סוד ההתראות (פעם אחת): npx wrangler secret put VAPID_PRIVATE  (הערך ב-~/.config/hakelim/trempim-vapid.json, לא במאגר)
 name = "trempim"
 main = "trempim-worker.js"
 compatibility_date = "2026-09-01"
@@ -10,6 +12,7 @@ workers_dev = true
 
 [vars]
 GOOGLE_CLIENT_ID = "811978831024-vp67lekd6gmffh9sq07jqapvjvmdpudn.apps.googleusercontent.com"
+VAPID_PUBLIC = "BOVVU99h64VVRLppX27v5WuAZ9vCeKRzYX2SH_PGmzn_tg8PvyPs6xalVXHOQei_Qw_6xAcwe-xm1Ntiz3t5AUE"
 
 [[d1_databases]]
 binding = "DB"

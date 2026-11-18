@@ -599,10 +599,14 @@ for path in sorted(SRC.rglob("*.html")):
         html = html.replace("{{" + k + "}}", v)
     for key in ["yerushalaim", "sipur", "hachana", "moed", "madrich", "kartis"]:
         html = html.replace("{{cur:" + key + "}}", ' aria-current="page"' if meta.get("nav") == key else "")
-    if meta.get("manifest"):  # דף שמותקן כאפליקציה משלו (למשל הגשר באייפון): manifest נפרד ליד הדף
-        man = dict(meta["manifest"])
-        html = re.sub(r'<link rel="manifest" href="[^"]*">', f'<link rel="manifest" href="{url_path}manifest.webmanifest">', html, count=1)
+    if meta.get("manifest") or meta.get("manifest_of"):  # דף שמותקן כאפליקציה משלו (הגשר, הטרמפים): manifest נפרד ליד הדף
+        # manifest_of: דף-בן שמשתמש באפליקציה של דף אחר (הלו"ז והפרטיות של הטרמפים) – {"href", "short_name", "apple_touch_icon"}
+        man = dict(meta.get("manifest") or meta["manifest_of"])
+        href = man.get("href") or f"{url_path}manifest.webmanifest"
+        html = re.sub(r'<link rel="manifest" href="[^"]*">', f'<link rel="manifest" href="{href}">', html, count=1)
         html = re.sub(r'(<meta name="apple-mobile-web-app-title" content=")[^"]*', lambda m: m.group(1) + man.get("short_name", ""), html, count=1)
+        if man.get("apple_touch_icon"):
+            html = html.replace('<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">', f'<link rel="apple-touch-icon" href="{man["apple_touch_icon"]}">')
         if man.get("display") == "browser":  # באייפון: האייקון נפתח בספארי עצמו – עם אותו אחסון (והצימוד) של הדף
             html = html.replace('<meta name="apple-mobile-web-app-capable" content="yes">', '<meta name="apple-mobile-web-app-capable" content="no">')
             html = html.replace('<meta name="mobile-web-app-capable" content="yes">', '<meta name="mobile-web-app-capable" content="no">')
@@ -611,7 +615,12 @@ for path in sorted(SRC.rglob("*.html")):
     out.write_text(html, encoding="utf-8")
     if meta.get("manifest"):
         man = dict({"id": url_path, "start_url": url_path, "scope": url_path, "dir": "rtl", "lang": "he"}, **meta["manifest"])
+        man.pop("apple_touch_icon", None)
         (out.parent / "manifest.webmanifest").write_text(json.dumps(man, ensure_ascii=False, indent=1), encoding="utf-8")
+    if meta.get("sw_src"):  # service worker משלו לאפליקציה של הדף (טווח = תיקיית הדף), למשל התראות הטרמפים
+        _sw = (ROOT / meta["sw_src"]).read_text(encoding="utf-8")
+        _sw = _sw.replace("__CACHE__", url_path.strip("/").replace("/", "-") + "-" + datetime.datetime.now().strftime("%Y%m%d%H%M"))
+        (out.parent / "sw.js").write_text(_sw, encoding="utf-8")
     if site and not meta.get("noindex") and not meta.get("no_precache") and not re.search(r"/(pratiut|negishut|tosaf)/$", url_path):
         # רשימת הכלים לתוסף הכרום (kelim/tools.json): כלי חדש באתר מופיע בתוסף בלי לשלוח גרסה לחנות
         cr = meta.get("crumbs") or []
