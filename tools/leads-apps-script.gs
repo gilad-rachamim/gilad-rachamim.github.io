@@ -79,6 +79,10 @@ function doPost(e) {
       else sendGuideEmail(name, email, token, consent);
     }
     notifyOwner(row, dup);
+    if (!kelim && isGuideLead_(clean(p['מקור']))) {        // ליד של המדריך → אנשי הקשר של גילעד (לא מפיל את הטופס אם נכשל)
+      try { saveLeadContact_({ name: name, phone: phone, email: email, due: row[C['מועד לידה']], city: row[C['עיר']], date: row[C['תאריך']] }, contactKeys_()); }
+      catch (eC) { log('שמירת איש קשר נכשלה: ' + eC + ' | ' + name); }
+    }
     if (!mailOk) log('התקרה היומית (' + DAILY_CAP + ') עברה – לא נשלח מייל להורה: ' + email);
     return txt('ok');
   } catch (err) {
@@ -384,6 +388,59 @@ function testSendAllToOwner() {
     MailApp.sendEmail({ to: CFG.OWNER_EMAIL, subject: '[דוגמה] ' + SUBJECTS[c], htmlBody: h, body: toText(h), name: CFG.OWNER_NAME });
   });
   sendGuideEmail('גילעד', CFG.OWNER_EMAIL, 'test', 'כן');
+}
+
+// ---------- לידים של המדריך → אנשי הקשר (18.11.2026, החלטת גילעד: "<שם> ליד מדריך") ----------
+// דורש את השירות המתקדם People API בפרויקט (Services → People API, מזהה People).
+// מועד הלידה, העיר ותאריך ההרשמה נכתבים בהערות של איש הקשר. מספר או מייל שכבר שמורים אצלו – לא נשמרים שוב.
+var LEAD_TAG = ' ליד מדריך';
+function isGuideLead_(src) { return !/^(כלים:|מחולל הודעה)/.test(String(src || '')); }
+function contactKeys_() {
+  var keys = {}, pt;
+  do {
+    var r = People.People.Connections.list('people/me', { personFields: 'phoneNumbers,emailAddresses', pageSize: 1000, pageToken: pt });
+    (r.connections || []).forEach(function (c) {
+      (c.phoneNumbers || []).forEach(function (x) { var d = String(x.value || '').replace(/\D/g, '').slice(-9); if (d.length === 9) keys['p' + d] = 1; });
+      (c.emailAddresses || []).forEach(function (x) { keys['e' + String(x.value || '').toLowerCase()] = 1; });
+    });
+    pt = r.nextPageToken;
+  } while (pt);
+  return keys;
+}
+function saveLeadContact_(lead, keys) {
+  var name = String(lead.name || '').trim(), phone = String(lead.phone || ''), em = String(lead.email || '').toLowerCase();
+  var d = phone.replace(/\D/g, '').slice(-9);
+  if (!name || /^בדיקה/.test(name) || (d.length !== 9 && !em)) return 'דילוג';
+  if ((d.length === 9 && keys['p' + d]) || (em && keys['e' + em])) return 'קיים';
+  var when = lead.date instanceof Date ? lead.date : new Date();
+  var bio = ['מדריך לקראת הולדת הבן', 'נרשם ' + Utilities.formatDate(when, CFG.TZ, 'dd.MM.yyyy')];
+  if (lead.due) bio.push('מועד לידה: ' + (lead.due instanceof Date ? Utilities.formatDate(lead.due, CFG.TZ, 'dd.MM.yyyy') : lead.due));
+  if (lead.city) bio.push('עיר: ' + lead.city);
+  var body = { names: [{ givenName: name + LEAD_TAG }], biographies: [{ value: bio.join(' · '), contentType: 'TEXT_PLAIN' }] };
+  if (d.length === 9) body.phoneNumbers = [{ value: phone, type: 'mobile' }];
+  if (em) body.emailAddresses = [{ value: em }];
+  People.People.createContact(body);
+  if (d.length === 9) keys['p' + d] = 1;
+  if (em) keys['e' + em] = 1;
+  return 'נשמר';
+}
+// הרצה חד-פעמית מהעורך: כל לידי המדריך שכבר בגיליון → אנשי הקשר (בלי כפילויות). אפשר להריץ שוב בבטחה.
+function backfillLeadContacts() {
+  var data = sheet(SpreadsheetApp.getActive(), CFG.SHEET_LEADS, COLS).getDataRange().getValues();
+  var keys = contactKeys_(), n = { 'נשמר': 0, 'קיים': 0, 'דילוג': 0, 'שגיאה': 0 }, saved = [];
+  for (var i = 1; i < data.length; i++) {
+    var r = data[i];
+    if (String(r[C['סטטוס']]) === 'כלים' || !isGuideLead_(r[C['מקור']])) continue;
+    var res;
+    try {
+      res = saveLeadContact_({ name: r[C['שם']], phone: normPhone(r[C['טלפון']]), email: clean(r[C['מייל']]), due: r[C['מועד לידה']], city: clean(r[C['עיר']]), date: r[C['תאריך']] }, keys);
+    } catch (e) { res = 'שגיאה'; log('השלמת אנשי קשר, שורה ' + (i + 1) + ': ' + e); }
+    n[res]++;
+    if (res === 'נשמר') { saved.push(r[C['שם']]); Utilities.sleep(800); }
+  }
+  var msg = 'השלמת אנשי קשר: נשמרו ' + n['נשמר'] + ', כבר היו ' + n['קיים'] + ', דולגו ' + n['דילוג'] + ', שגיאות ' + n['שגיאה'] + (saved.length ? ' | ' + saved.join(', ') : '');
+  log(msg);
+  return msg;
 }
 
 // ---------- הודעה לגילעד ----------
