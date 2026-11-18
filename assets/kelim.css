@@ -105,3 +105,16 @@ body[data-tool="rega"] .rel{display:none}
 .dom span.badge{color:var(--ink);font-size:.8rem;margin-top:0;line-height:1.5}
 .dom span.badge.soon{color:var(--muted)}
 .install-bar .x{min-width:2.75rem;min-height:2.75rem}
+/* פס "החדשות ב-3 דקות" (18.11.2026) – דק ורגוע, בראש התוכן בדף הבית ובדפים הנצפים */
+.newsbar{display:flex;flex-wrap:nowrap;align-items:center;gap:.4rem .6rem;max-width:var(--max,1100px);margin:.6rem auto 0;padding:.45rem .7rem;border:1px solid var(--line);border-radius:12px;background:rgba(216,179,95,.06);font-size:.93rem;box-sizing:border-box;width:calc(100% - 2rem)}
+.newsbar a{text-decoration:none;color:inherit}
+.newsbar .nb-main{display:flex;align-items:center;gap:.5rem;flex:1 1 auto;min-width:0;min-height:2.75rem}
+.newsbar .nb-txt{min-width:0;line-height:1.45}
+.newsbar .nb-txt b{color:var(--gold)}
+.newsbar .nb-ed{color:var(--muted)}
+.newsbar .nb-sub{display:block;color:var(--muted);font-size:.86rem}
+.newsbar .nb-go{color:var(--gold);margin-inline-start:auto}
+.newsbar .nb-bell{border:1px solid var(--gold-soft);border-radius:99px;padding:.3rem .8rem;color:var(--gold);font-size:.88rem;min-height:2.75rem;display:inline-flex;align-items:center;white-space:nowrap}
+.newsbar .nb-bell{flex:0 0 auto;justify-content:center;min-width:2.75rem}
+@media (max-width:560px){.newsbar .nb-bell-t{display:none}.newsbar .nb-go{display:none}}
+.newsbar a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}

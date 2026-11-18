@@ -1,0 +1,36 @@
+# רילס יומי ל"החדשות ב-3 דקות" (תוכנית העצמת החדשות, צעד 3; גילעד אישר את הדוגמה 18.11.2026).
+# בכל ערב אחרי מהדורת 20:00: מרנדר סרטון 1080x1920 מהמהדורה (tools/news-reel/reel.py)
+# ושולח לשרת החדשות (/reel), שמעלה אותו כרילס לדף בפייסבוק. בשבת וחג השרת מסרב.
+name: news-reel
+on:
+  schedule:
+    - cron: "25 18 * * *"
+  workflow_dispatch:
+concurrency: { group: news-reel, cancel-in-progress: false }
+jobs:
+  reel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { sparse-checkout: tools/news-reel }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: install
+        run: |
+          pip install -q playwright
+          python -m playwright install --with-deps chromium > /dev/null
+          sudo apt-get install -y -qq ffmpeg fonts-noto-core > /dev/null
+      - name: render
+        id: r
+        run: |
+          set +e
+          python tools/news-reel/reel.py reel.mp4 ערב --fresh
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+      - name: post
+        if: steps.r.outputs.code == '0'
+        env: { KEY: "${{ secrets.KELIM_NEWS_KEY }}" }
+        run: |
+          TEXT=$(python -c "import urllib.parse;print(urllib.parse.quote(open('reel.mp4.txt',encoding='utf-8').read()))")
+          curl -sS -m 300 -X POST --data-binary @reel.mp4 -H "content-type: video/mp4" \
+            "https://kelim-news.gilad4049.workers.dev/reel?key=$KEY&text=$TEXT" | tee out.json
+          grep -q '"ok":true' out.json || grep -q 'שבת' out.json

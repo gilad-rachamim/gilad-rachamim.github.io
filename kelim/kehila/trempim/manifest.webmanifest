@@ -1,0 +1,77 @@
+{
+ "id": "/kelim/kehila/trempim/",
+ "start_url": "/kelim/kehila/trempim/?utm_source=pwa",
+ "scope": "/kelim/kehila/trempim/",
+ "dir": "rtl",
+ "lang": "he",
+ "name": "טרמפים בשכונה",
+ "short_name": "טרמפים",
+ "description": "מי נוסע היום דרכך? נהגים מהשכונה מפרסמים נסיעה, טרמפיסטים מבקשים. בחינם, מיזם חסד.",
+ "display": "standalone",
+ "background_color": "#0f1d1c",
+ "theme_color": "#0f1d1c",
+ "icons": [
+  {
+   "src": "/assets/icon-trempim-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "/assets/icon-trempim-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "/assets/icon-trempim-maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ],
+ "shortcuts": [
+  {
+   "name": "יוצא עכשיו",
+   "short_name": "יוצא עכשיו",
+   "url": "/kelim/kehila/trempim/?go=now&utm_source=pwa_shortcut#drive",
+   "icons": [
+    {
+     "src": "/assets/icon-trempim-192.png",
+     "sizes": "192x192"
+    }
+   ]
+  },
+  {
+   "name": "מחפש טרמפ",
+   "short_name": "מחפש טרמפ",
+   "url": "/kelim/kehila/trempim/?utm_source=pwa_shortcut#ride",
+   "icons": [
+    {
+     "src": "/assets/icon-trempim-192.png",
+     "sizes": "192x192"
+    }
+   ]
+  },
+  {
+   "name": "הלו\"ז שלי",
+   "short_name": "הלו\"ז שלי",
+   "url": "/kelim/kehila/trempim/luz/?utm_source=pwa_shortcut",
+   "icons": [
+    {
+     "src": "/assets/icon-trempim-192.png",
+     "sizes": "192x192"
+    }
+   ]
+  }
+ ],
+ "share_target": {
+  "action": "/kelim/kehila/trempim/",
+  "method": "GET",
+  "params": {
+   "title": "st",
+   "text": "sx",
+   "url": "su"
+  }
+ }
+}

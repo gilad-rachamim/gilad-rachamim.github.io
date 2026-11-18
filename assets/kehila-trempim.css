@@ -131,3 +131,26 @@
 .tp-board .meta{display:block;color:var(--muted);font-size:.88rem}
 .tp-ladder summary{cursor:pointer;color:var(--cream);font-weight:600}
 .tp-ladder ul{margin:.5rem 0;padding-inline-start:1.1rem;display:grid;gap:.3rem;color:var(--body)}
+/* לוח פתוח, "להודיע לי", התראות, התקנה, נסיעה מקישור */
+.tp-open{margin:1rem 0}
+.tp-open h3{font-size:1.05rem;color:var(--cream);margin:1rem 0 .4rem}
+.tp-open .kh-item .top b{color:var(--cream)}
+.tp-open .more{margin-top:.4rem}
+.tp-owant{display:flex;justify-content:space-between;align-items:center;gap:.6rem;flex-wrap:wrap}
+.tp-owant p{margin:0;color:var(--body)}
+.tp-owant b{color:var(--cream)}
+.tp-want,.tp-push{margin-top:.7rem;padding:.75rem .9rem;border:1px solid var(--gold-soft);border-radius:14px;background:rgba(216,179,95,.06);color:var(--body);line-height:1.6}
+.tp-want b,.tp-push b{color:var(--cream)}
+.tp-want .kh-chips{margin:.5rem 0}
+.tp-push .btn{margin-inline-start:.4rem;margin-top:.35rem}
+#tp-push-slot .tp-push{margin:0 0 .8rem}
+.tp-mywants h2{font-size:1.1rem}
+.tp-mywant .acts{display:flex;gap:.4rem;flex-wrap:wrap}
+.tp-why{color:var(--cream);font-weight:600;background:rgba(216,179,95,.14);border-radius:10px;padding:.55rem .75rem;margin:.4rem 0}
+.tp-login.flash{outline:2px solid var(--gold);outline-offset:3px}
+.tp-install{flex-wrap:wrap}
+.tp-ios{flex-basis:100%;margin:.3rem 0 0;color:var(--body)}
+.tp-one{border:1px solid var(--gold);border-radius:16px;padding:.8rem 1rem;background:rgba(216,179,95,.08)}
+.tp-one h2{font-size:1.1rem;margin-top:0}
+.tp-link{background:none;border:0;color:var(--gold);text-decoration:underline;font:inherit;cursor:pointer;padding:0}
+.tp-share{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem}

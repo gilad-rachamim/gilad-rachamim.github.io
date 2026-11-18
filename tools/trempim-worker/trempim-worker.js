@@ -14,7 +14,15 @@
 //  GET  /inbox                                       -> {asDriver, asRider}
 //  POST /report          {about, ride, text}          -> {ok}
 //  POST /ideas           {text}                       -> {ok}
-//  GET  /stats                                       -> {rides, users, joined}
+//  GET  /stats                                       -> {rides, users, joined, taxis, wants}
+//  GET  /board          [?r=id]                      -> {rides, wants}  (לוח פתוח בלי הרשמה: שם פרטי, אזור, שעה, מקומות)
+//  POST /search  גם בלי כניסה (אורח רואה תוצאות, מבקש רק אחרי כניסה)
+//  GET  /push/key                                    -> {key}           (VAPID ציבורי)
+//  POST /push/sub        {endpoint, keys:{p256dh, auth}} -> {ok}
+//  POST /push/unsub      {endpoint}                   -> {ok}
+//  POST /wants           {from, to, date|days, time_from, time_to, radius} -> {want}  ("מחפשים טרמפ")
+//  GET  /wants/mine                                  -> {wants}
+//  POST /wants/:id       {action: delete|renew}       -> {ok}
 //  GET  /leaders                                     -> {month, leaders}  (לוח כבוד ציבורי: שם פרטי בלבד)
 //  GET  /me/points                                   -> {log}             (פירוט נקודות החסד)
 //  POST /ratings         {request, stars, text}       -> {ok}
@@ -24,7 +32,11 @@
 // (פתוחה שבועיים או שמישהו הצטרף), 10/15 על טרמפ שאושר, 5 על דירוג חם. כל תנועה ב-points_log.
 // דרגות: 1 נהג חסד, 2 נהג קבוע, 3 עמוד התווך; amb = שגריר השכונה. דרגה לא יורדת.
 //
-// סודות (wrangler secret put): SESSION_SECRET, ADMIN_KEY. משתנים: GOOGLE_CLIENT_ID.
+// סודות (wrangler secret put): SESSION_SECRET, ADMIN_KEY, VAPID_PRIVATE. משתנים: GOOGLE_CLIENT_ID, VAPID_PUBLIC.
+// התראות: בקשה חדשה → לנהג; אישור/דחייה → למבקש; ביטול → לצד השני; התאמה ל"מחפשים טרמפ" → למחפש.
+// בגוף ההתראה אין טלפון ואין כתובת מלאה – רק שם פרטי, יום ושעה.
+
+import { sendPush, endpointOk } from './webpush.js';
 
 const ORIGINS = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const TZ = 'Asia/Jerusalem';
@@ -39,7 +51,9 @@ const SESSION_DAYS = 60;
 const TAXI = { start: 12.46, booking: 5.78, a: 1.95, b: 2.34, c: 2.73, over10: 1.84, maxJoin: 3, updated: '2026-04-01' };
 
 export default {
-  async fetch(req, env) {
+  async fetch(req, env, ctx) {
+    // env לכל בקשה בנפרד, עם ctx בשביל התראות שנשלחות ברקע אחרי התשובה
+    env = Object.assign(Object.create(env), { ctx });
     const url = new URL(req.url);
     const origin = req.headers.get('Origin') || '';
     const cors = corsHeaders(origin);
@@ -69,25 +83,38 @@ async function route(req, env, url) {
   if (p === '/stats' && m === 'GET') return stats(env);
   if (p === '/leaders' && m === 'GET') return leaders(env);
   if (p === '/admin' && m === 'GET') return adminPage();
+  if (p === '/board' && m === 'GET') return board(env, url);
+  if (p === '/push/key' && m === 'GET') return json({ key: env.VAPID_PUBLIC || '' });
   if (p.startsWith('/admin/') && m === 'POST') return admin(req, env, p);
   if (m === 'POST') {
     const origin = req.headers.get('Origin') || '';
     if (!corsHeaders(origin)['Access-Control-Allow-Origin']) bad('origin', 403);
   }
   if (p === '/auth' && m === 'POST') return auth(req, env);
+  // חיפוש פתוח גם לאורחים; עם כניסה – בלי הנסיעות שלי ועם סטטוס הבקשות שלי
+  if (p === '/search' && m === 'POST') {
+    let who = null;
+    if (req.headers.get('Authorization')) { try { who = await session(req, env); } catch (e) { who = null; } }
+    return search(req, env, who && !who.blocked ? who : null);
+  }
 
   const me = await session(req, env);
   if (p === '/me' && m === 'GET') { await syncActive(env, me.id); return json({ user: await meOut(env, me.id) }); }
   if (p === '/me' && m === 'POST') return saveMe(req, env, me);
   if (p === '/me/points' && m === 'GET') return pointsLog(env, me);
   if (p === '/ideas' && m === 'POST') return idea(req, env, me);
+  if (p === '/push/sub' && m === 'POST') return pushSub(req, env, me);
+  if (p === '/push/unsub' && m === 'POST') return pushUnsub(req, env, me);
+  if (p === '/wants' && m === 'POST') return createWant(req, env, me);
+  if (p === '/wants/mine' && m === 'GET') return myWants(env, me);
+  let wm;
+  if ((wm = p.match(/^\/wants\/([\w-]{6,40})$/)) && m === 'POST') return actWant(req, env, me, wm[1]);
   if (!me.phone || !me.agreed) bad('profile');
   if (me.blocked) bad('blocked', 403);
   if (p === '/rides' && m === 'POST') return createRide(req, env, me);
   if (p === '/rides/mine' && m === 'GET') return myRides(env, me);
   let mm;
   if ((mm = p.match(/^\/rides\/([\w-]{6,40})\/close$/)) && m === 'POST') return closeRide(env, me, mm[1]);
-  if (p === '/search' && m === 'POST') return search(req, env, me);
   if (p === '/requests' && m === 'POST') return createRequest(req, env, me);
   if ((mm = p.match(/^\/requests\/([\w-]{6,40})$/)) && m === 'POST') return actRequest(req, env, me, mm[1]);
   if (p === '/inbox' && m === 'GET') return inbox(env, me);
@@ -428,6 +455,9 @@ async function createRide(req, env, me) {
     // נהג שהגיע בהזמנה: השגריר מתקדם
     if (me.ref_by) await refreshLevel(env, me.ref_by);
   }
+  // "מחפשים טרמפ": מי שביקש להתעדכן על הדרך הזאת מקבל התראה (ברקע)
+  const ride = { id, driver: me.id, date, days, start, until, time, km: Math.round(km * 10) / 10, min: Math.round(mins), route: JSON.stringify(pts), kind };
+  later(env, notifyWants(env, ride, firstName(me.name)));
   return json({ ride: out });
 }
 async function myRides(env, me) {
@@ -525,7 +555,7 @@ async function search(req, env, me) {
      WHERE r.status='open' AND u.blocked=0 AND r.driver<>?
        AND ((r.date BETWEEN ? AND ?) OR (r.days IS NOT NULL AND r.start<=? AND r.until>=?))
      LIMIT 600`
-  ).bind(me.id, first, last, last, first).all();
+  ).bind(me ? me.id : '', first, last, last, first).all();
   const now = nowHM();
   const out = [];
   const taken = new Map();
@@ -542,7 +572,7 @@ async function search(req, env, me) {
       }
       const left = r.seats - taken.get(key);
       if (left <= 0) continue;
-      const mine = await env.DB.prepare(`SELECT id,status FROM requests WHERE ride=? AND date=? AND rider=? AND status IN ('pending','approved')`).bind(r.id, d, me.id).first();
+      const mine = me ? await env.DB.prepare(`SELECT id,status FROM requests WHERE ride=? AND date=? AND rider=? AND status IN ('pending','approved')`).bind(r.id, d, me.id).first() : null;
       const taxi = isTaxi(r) ? taxiInfo(r, m, d, taken.get(key) + (mine && mine.status === 'approved' ? 1 : 2)) : null;
       out.push({
         ride: r.id, date: d, time: r.time, pass: m.pass, from: r.from_label, to: r.to_label, kind: r.kind || 'car',
@@ -615,6 +645,11 @@ async function createRequest(req, env, me) {
     `INSERT INTO requests (id,ride,date,rider,pickup_label,pickup_lat,pickup_lng,drop_label,drop_lat,drop_lng,seg_km,price,pass_time,mode,msg,created)
      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
   ).bind(id, rideId, date, me.id, pickup.label, pickup.lat, pickup.lng, drop.label, drop.lat, drop.lng, m.segKm, price, m.pass, mode, msg, Date.now()).run();
+  later(env, notify(env, r.driver, {
+    title: isTaxi(r) ? 'מישהו רוצה להצטרף למונית שלך 🚕' : 'בקשת טרמפ חדשה 🚗',
+    body: firstName(me.name) + ' מבקש/ת להצטרף ' + dayWord(date) + ' בשעה ' + m.pass + '. נכנסים לאשר או לדחות.',
+    url: INBOX_URL, tag: 'req-' + id,
+  }));
   return json({ request: { id } });
 }
 async function actRequest(req, env, me, id) {
@@ -630,12 +665,23 @@ async function actRequest(req, env, me, id) {
     // מי שאישר וביטל: נקודות האישור חוזרות
     if (q.status === 'approved' && me.id === q.driver) await addPoints(env, me.id, 'approve_cancel', q.price || isTaxi(q) ? -10 : -15, q.ride);
     if (isTaxi(q) && q.status === 'approved') await retaxi(env, q.ride, q.date);
+    const other = me.id === q.driver ? q.rider : q.driver;
+    later(env, notify(env, other, {
+      title: 'טרמפ בוטל',
+      body: firstName(me.name) + ' ביטל/ה את הטרמפ ' + dayWord(q.date) + ' בשעה ' + (q.pass_time || q.time) + '.',
+      url: INBOX_URL, tag: 'req-' + id,
+    }));
     return json({ ok: true });
   }
   if (q.driver !== me.id) bad('not yours', 403);
   if (q.status !== 'pending') bad('state');
   if (action === 'decline') {
     await env.DB.prepare(`UPDATE requests SET status='declined', updated=? WHERE id=?`).bind(now, id).run();
+    later(env, notify(env, q.rider, {
+      title: 'הפעם זה לא הסתדר',
+      body: firstName(me.name) + ' לא יכול/ה לקחת אותך ' + dayWord(q.date) + '. אפשר לחפש נסיעה אחרת.',
+      url: INBOX_URL, tag: 'req-' + id,
+    }));
     return json({ ok: true });
   }
   if (action === 'approve') {
@@ -650,6 +696,11 @@ async function actRequest(req, env, me, id) {
     await refreshLevel(env, me.id);
     // במונית: מצטרף חדש מקטין את החלק של כל מי שכבר אושר
     if (isTaxi(q)) await retaxi(env, q.ride, q.date);
+    later(env, notify(env, q.rider, {
+      title: 'הטרמפ אושר! ✅',
+      body: firstName(me.name) + ' אישר/ה ' + dayWord(q.date) + ' בשעה ' + q.pass_time + '. הטלפון מחכה לך באתר.',
+      url: INBOX_URL, tag: 'req-' + id,
+    }));
     return json({ ok: true });
   }
   bad('action');
@@ -739,7 +790,222 @@ async function stats(env) {
   const u = await env.DB.prepare(`SELECT COUNT(*) n FROM users WHERE agreed=1`).first();
   const j = await env.DB.prepare(`SELECT COUNT(*) n FROM requests WHERE status='approved'`).first();
   const t = await env.DB.prepare(`SELECT COUNT(*) n FROM rides WHERE kind='taxi' AND status='open' AND (date>=? OR until>=?)`).bind(today, today).first();
-  return json({ rides: r.n, users: u.n, joined: j.n, taxis: t.n });
+  let w = { n: 0 };
+  try { w = await env.DB.prepare(`SELECT COUNT(*) n FROM wants WHERE expires>=?`).bind(today).first(); } catch (e) { /* לפני מיגרציה 3 */ }
+  return json({ rides: r.n, users: u.n, joined: j.n, taxis: t.n, wants: w.n });
+}
+
+/* ---------- התראות (Web Push) ---------- */
+const INBOX_URL = '/kelim/kehila/trempim/#inbox';
+const DAY_NAMES = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+function dayWord(date) {
+  if (date === todayIL()) return 'היום';
+  if (date === todayIL(1)) return 'מחר';
+  return 'ביום ' + DAY_NAMES[weekday(date)] + ' ' + (+date.slice(8, 10)) + '.' + (+date.slice(5, 7));
+}
+const addDays = (date, n) => new Date(Date.parse(date + 'T12:00:00Z') + n * DAY).toISOString().slice(0, 10);
+// עבודה ברקע אחרי התשובה (התראות). שגיאה כאן לא מפילה את הבקשה.
+function later(env, p) {
+  const safe = Promise.resolve(p).catch(e => console.log('BG', e && e.stack || e));
+  if (env.ctx && env.ctx.waitUntil) env.ctx.waitUntil(safe);
+  return safe;
+}
+// שולח התראה לכל המכשירים של המשתמש. מנוי שהדפדפן ביטל (404/410) נמחק.
+async function notify(env, userId, msg) {
+  if (!env.VAPID_PRIVATE || !env.VAPID_PUBLIC || !userId) return 0;
+  let subs;
+  try { subs = (await env.DB.prepare('SELECT endpoint,p256dh,auth FROM push_subs WHERE user_id=? LIMIT 10').bind(userId).all()).results; } catch (e) { return 0; }
+  const payload = { title: str(msg.title, 80), body: str(msg.body, 220), url: msg.url || INBOX_URL, tag: msg.tag || 'trempim' };
+  let sent = 0;
+  for (const s of subs) {
+    let st = 0;
+    try { st = await sendPush({ endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } }, payload, env); } catch (e) { st = -1; console.log('PUSH', e && e.message); }
+    if (st === 404 || st === 410) await env.DB.prepare('DELETE FROM push_subs WHERE endpoint=?').bind(s.endpoint).run();
+    else if (st >= 200 && st < 300) { sent++; await env.DB.prepare('UPDATE push_subs SET last_ok=? WHERE endpoint=?').bind(Date.now(), s.endpoint).run(); }
+  }
+  return sent;
+}
+async function pushSub(req, env, me) {
+  const b = await body(req);
+  const endpoint = typeof b.endpoint === 'string' ? b.endpoint.trim() : '';
+  const k = b.keys && typeof b.keys === 'object' ? b.keys : {};
+  const p256dh = str(k.p256dh, 120), auth = str(k.auth, 60);
+  if (endpoint.length > 1000 || !endpointOk(endpoint, env)) bad('endpoint');
+  if (!/^[\w-]{86,88}$/.test(p256dh) || !/^[\w-]{21,24}$/.test(auth)) bad('keys');
+  await env.DB.prepare(
+    `INSERT INTO push_subs (user_id,endpoint,p256dh,auth,created) VALUES (?,?,?,?,?)
+     ON CONFLICT(endpoint) DO UPDATE SET user_id=excluded.user_id, p256dh=excluded.p256dh, auth=excluded.auth`
+  ).bind(me.id, endpoint, p256dh, auth, Date.now()).run();
+  // עד 10 מכשירים למשתמש: הישנים יוצאים
+  await env.DB.prepare(`DELETE FROM push_subs WHERE user_id=?1 AND endpoint NOT IN (SELECT endpoint FROM push_subs WHERE user_id=?1 ORDER BY created DESC LIMIT 10)`).bind(me.id).run();
+  return json({ ok: true });
+}
+async function pushUnsub(req, env, me) {
+  const b = await body(req);
+  await env.DB.prepare('DELETE FROM push_subs WHERE endpoint=? AND user_id=?').bind(str(b.endpoint, 1000), me.id).run();
+  return json({ ok: true });
+}
+
+/* ---------- "מחפשים טרמפ" ---------- */
+const WANT_DAYS = 30;
+const WANT_MAX = 10;
+async function createWant(req, env, me) {
+  if (me.blocked) bad('blocked', 403);
+  const b = await body(req);
+  const from = place(b.from), to = place(b.to);
+  const radius = Math.min(5, Math.max(0.5, num(b.radius) || 2));
+  let tf = str(b.time_from, 5), tt = str(b.time_to, 5);
+  if (!TIME_RE.test(tf)) tf = '00:00';
+  if (!TIME_RE.test(tt)) tt = '23:59';
+  if (tf > tt) bad('time');
+  const today = todayIL();
+  let date = null, days = null, expires;
+  if (Array.isArray(b.days) && b.days.length) {
+    const ds = [...new Set(b.days.map(Number).filter(d => d >= 0 && d <= 6))].sort();
+    if (!ds.length) bad('days');
+    days = ds.join(',');
+    expires = todayIL(WANT_DAYS);
+  } else {
+    date = str(b.date, 10);
+    if (!DATE_RE.test(date) || date < today || date > todayIL(30)) bad('date');
+    expires = date;
+  }
+  // אותה בקשה שוב (אותו מוצא, יעד ומועד): מעדכנים במקום לשכפל
+  const dup = await env.DB.prepare(
+    `SELECT id FROM wants WHERE user_id=? AND expires>=? AND ABS(from_lat-?)<0.003 AND ABS(from_lng-?)<0.003 AND ABS(to_lat-?)<0.003 AND ABS(to_lng-?)<0.003
+       AND COALESCE(date,'')=? AND COALESCE(days,'')=?`
+  ).bind(me.id, today, from.lat, from.lng, to.lat, to.lng, date || '', days || '').first();
+  if (dup) {
+    await env.DB.prepare('UPDATE wants SET time_from=?, time_to=?, radius=?, expires=? WHERE id=?').bind(tf, tt, radius, expires, dup.id).run();
+    return json({ want: { id: dup.id, expires, dup: true } });
+  }
+  const open = await env.DB.prepare('SELECT COUNT(*) n FROM wants WHERE user_id=? AND expires>=?').bind(me.id, today).first();
+  if (open.n >= WANT_MAX) bad('too many wants');
+  const id = newId();
+  await env.DB.prepare(
+    `INSERT INTO wants (id,user_id,from_label,from_lat,from_lng,to_label,to_lat,to_lng,radius,date,days,time_from,time_to,created,expires)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+  ).bind(id, me.id, from.label, from.lat, from.lng, to.label, to.lat, to.lng, radius, date, days, tf, tt, Date.now(), expires).run();
+  return json({ want: { id, expires } });
+}
+async function myWants(env, me) {
+  const { results } = await env.DB.prepare(
+    `SELECT id,from_label,from_lat,from_lng,to_label,to_lat,to_lng,radius,date,days,time_from,time_to,expires,notified FROM wants WHERE user_id=? AND expires>=? ORDER BY created DESC LIMIT 20`
+  ).bind(me.id, todayIL()).all();
+  return json({ wants: results.map(w => ({
+    id: w.id, from: { label: w.from_label, lat: w.from_lat, lng: w.from_lng }, to: { label: w.to_label, lat: w.to_lat, lng: w.to_lng },
+    radius: w.radius, date: w.date, days: w.days ? w.days.split(',').map(Number) : null, timeFrom: w.time_from, timeTo: w.time_to,
+    expires: w.expires, notified: w.notified || 0,
+  })) });
+}
+async function actWant(req, env, me, id) {
+  const b = await body(req);
+  const w = await env.DB.prepare('SELECT id,user_id,days FROM wants WHERE id=?').bind(id).first();
+  if (!w || w.user_id !== me.id) bad('not found', 404);
+  if (b.action === 'renew') {
+    if (!w.days) bad('one-time');
+    const expires = todayIL(WANT_DAYS);
+    await env.DB.prepare('UPDATE wants SET expires=? WHERE id=?').bind(expires, id).run();
+    return json({ ok: true, expires });
+  }
+  await env.DB.prepare('DELETE FROM wants WHERE id=?').bind(id).run();
+  return json({ ok: true });
+}
+// התאריכים (עד 30 יום) שבהם הנסיעה יוצאת וגם המחפש צריך
+function wantDates(w, ride, today) {
+  let cand;
+  if (ride.date) cand = [ride.date];
+  else {
+    cand = [];
+    const rd = ride.days.split(',');
+    let d = ride.start > today ? ride.start : today;
+    const end = ride.until < todayIL(30) ? ride.until : todayIL(30);
+    for (let i = 0; i < 40 && d <= end; i++, d = addDays(d, 1)) if (rd.includes(String(weekday(d)))) cand.push(d);
+  }
+  return cand.filter(d => d >= today && d <= w.expires && (w.date ? d === w.date : w.days.split(',').includes(String(weekday(d)))));
+}
+// נסיעה חדשה: מחפשים מי חיכה לדרך הזאת (אותו חישוב קרבה כמו בחיפוש) ושולחים לו התראה
+async function notifyWants(env, ride, driverName) {
+  const today = todayIL(), nowMin = hm2min(nowHM());
+  let rows;
+  try { rows = (await env.DB.prepare('SELECT * FROM wants WHERE expires>=? AND user_id<>? LIMIT 3000').bind(today, ride.driver).all()).results; } catch (e) { return 0; }
+  const done = new Set();
+  let n = 0;
+  for (const w of rows) {
+    if (done.has(w.user_id)) continue;
+    const blocked = await env.DB.prepare('SELECT blocked FROM users WHERE id=?').bind(w.user_id).first();
+    if (!blocked || blocked.blocked) continue;
+    const m = matchRide(ride, { lat: w.from_lat, lng: w.from_lng }, { lat: w.to_lat, lng: w.to_lng }, w.radius || 2);
+    if (!m) continue;
+    if (m.passMin < hm2min(w.time_from) || m.passMin > hm2min(w.time_to)) continue;
+    const dates = wantDates(w, ride, today).filter(d => d > today || m.passMin >= nowMin);
+    if (!dates.length) continue;
+    done.add(w.user_id);
+    const sent = await notify(env, w.user_id, {
+      title: (ride.kind === 'taxi' ? 'מונית משותפת' : 'טרמפ') + ' בדרך שחיפשת 🚗',
+      body: driverName + ' נוסע/ת ' + dayWord(dates[0]) + ' ועובר/ת ליד נקודת האיסוף שלך בערך ב-' + m.pass + '. נכנסים לבקש מקום.',
+      url: '/kelim/kehila/trempim/?r=' + ride.id + '&d=' + dates[0], tag: 'want-' + w.id,
+    });
+    await env.DB.prepare('UPDATE wants SET notified=COALESCE(notified,0)+1 WHERE id=?').bind(w.id).run();
+    n += sent ? 1 : 0;
+  }
+  return n;
+}
+
+/* ---------- לוח פתוח (בלי הרשמה) ---------- */
+// אזור ברמת שכונה/רחוב: בלי מספרי בית, ונקודה מעוגלת (~1 ק"מ)
+// אזור בלבד ללוח הפתוח: חלק ראשון עם מספר בית הוא כתובת – יורד כולו (נשארים שכונה/עיר)
+const areaOf = (label) => String(label || '').split(',').filter((x, i, a) => !(i === 0 && a.length > 1 && /\d/.test(x))).map(x => x.replace(/\d+\s*[א-ת]?(?=\s|$)/g, '').replace(/\d+/g, '').replace(/\s+/g, ' ').trim()).filter(Boolean).slice(0, 2).join(', ') || 'נקודה במפה';
+const r2 = (x) => Math.round(x * 100) / 100;
+const partOf = (t) => { const x = hm2min(t); return x < 12 * 60 ? 'בבוקר' : x < 17 * 60 ? 'בצהריים' : 'בערב'; };
+function nextDate(r, today, end) {
+  if (r.date) return r.date >= today && r.date <= end ? r.date : null;
+  const rd = r.days.split(',');
+  for (let d = r.start > today ? r.start : today; d <= end && d <= r.until; d = addDays(d, 1)) if (rd.includes(String(weekday(d)))) return d;
+  return null;
+}
+async function board(env, url) {
+  const today = todayIL(), end = todayIL(7), nowMin = hm2min(nowHM());
+  const one = str(url.searchParams.get('r') || '', 40);
+  const cols = `r.id,r.kind,r.date,r.days,r.start,r.until,r.time,r.seats,r.from_label,r.from_lat,r.from_lng,r.to_label,r.to_lat,r.to_lng,u.name dname`;
+  const { results } = one
+    ? await env.DB.prepare(`SELECT ${cols} FROM rides r JOIN users u ON u.id=r.driver WHERE r.id=? AND r.status='open' AND u.blocked=0`).bind(one).all()
+    : await env.DB.prepare(
+      `SELECT ${cols} FROM rides r JOIN users u ON u.id=r.driver
+       WHERE r.status='open' AND u.blocked=0 AND ((r.date BETWEEN ? AND ?) OR (r.days IS NOT NULL AND r.until>=? AND r.start<=?))
+       ORDER BY r.time LIMIT 300`
+    ).bind(today, end, today, end).all();
+  const rides = [];
+  for (const r of results) {
+    let d = nextDate(r, today, one ? todayIL(30) : end);
+    if (d === today && hm2min(r.time) < nowMin - 30) d = r.days ? nextDate(r, todayIL(1), one ? todayIL(30) : end) : null;
+    if (!d) continue;
+    const c = await env.DB.prepare(`SELECT COUNT(*) n FROM requests WHERE ride=? AND date=? AND status='approved'`).bind(r.id, d).first();
+    const left = r.seats - c.n;
+    if (left <= 0 && !one) continue;
+    rides.push({
+      id: r.id, kind: r.kind || 'car', date: d, regular: !!r.days, days: r.days ? r.days.split(',').map(Number) : null,
+      time: r.time, seats: Math.max(0, left), driver: firstName(r.dname),
+      from: { area: areaOf(r.from_label), lat: r2(r.from_lat), lng: r2(r.from_lng) },
+      to: { area: areaOf(r.to_label), lat: r2(r.to_lat), lng: r2(r.to_lng) },
+    });
+  }
+  rides.sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+  if (one) return json({ ride: rides[0] || null });
+  // מחפשים טרמפ: רק מספרים מצטברים לפי אזור וחלק ביום, בלי שום פרט על המחפש
+  const groups = new Map();
+  try {
+    const { results: ws } = await env.DB.prepare('SELECT from_label,from_lat,from_lng,to_label,to_lat,to_lng,time_from,time_to FROM wants WHERE expires>=? LIMIT 2000').bind(today).all();
+    for (const w of ws) {
+      const f = areaOf(w.from_label), t = areaOf(w.to_label), part = w.time_from <= '04:00' && w.time_to >= '20:00' ? 'בכל שעה' : partOf(w.time_from);
+      const key = f + '|' + t + '|' + part;
+      const g = groups.get(key) || { from: { area: f, lat: r2(w.from_lat), lng: r2(w.from_lng) }, to: { area: t, lat: r2(w.to_lat), lng: r2(w.to_lng) }, part, time: w.time_from, n: 0 };
+      g.n++;
+      groups.set(key, g);
+    }
+  } catch (e) { /* לפני מיגרציה 3 */ }
+  const wants = [...groups.values()].sort((a, b) => b.n - a.n).slice(0, 20);
+  return json({ today, rides: rides.slice(0, 60), wants });
 }
 
 /* ---------- ניהול (לגילעד): זכאים לתעודה, רעיונות, דיווחים ---------- */

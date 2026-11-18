@@ -1,0 +1,3095 @@
+{
+"updated": "2026-11-19",
+"songs": [
+{
+"id": "qEEzKfGa1oY",
+"artist": "עדן בן זקן",
+"song": "חיים שלי",
+"views": 58876087,
+"date": "20180605",
+"added": "",
+"slug": "chaim-sheli",
+"page": true
+},
+{
+"id": "vTDjXjZO_hk",
+"artist": "עדן בן זקן",
+"song": "לזאת שניצחה",
+"views": 41471256,
+"date": "20170212",
+"added": "",
+"slug": "lazot-shenitzcha",
+"page": true
+},
+{
+"id": "9PTH36lPuzg",
+"artist": "אייל גולן",
+"song": "לעשות איתך שלום",
+"views": 29839395,
+"date": "20200123",
+"added": "",
+"slug": "laasot-itach-shalom",
+"page": true
+},
+{
+"id": "ckObp0fTNmU",
+"artist": "עומר אדם",
+"song": "לבד על המיטה",
+"views": 28456185,
+"date": "20220209",
+"added": "",
+"slug": "levad-al-hamita",
+"page": true
+},
+{
+"id": "UAP9A-0HlqU",
+"artist": "אייל גולן",
+"song": "עיר נמל",
+"views": 25999361,
+"date": "20230328",
+"added": "",
+"slug": "ir-namal",
+"page": true
+},
+{
+"id": "xXnouhOqxz4",
+"artist": "עומר אדם",
+"song": "בניתי עלייך",
+"views": 23477840,
+"date": "20110313",
+"added": "",
+"slug": "baniti-alayich",
+"page": true
+},
+{
+"id": "CRlNR8mdXK0",
+"artist": "אושר כהן",
+"song": "חמישי שישי",
+"views": 18662153,
+"date": "20220502",
+"added": "",
+"slug": "chamishi-shishi",
+"page": true
+},
+{
+"id": "oLAOEVYDcps",
+"artist": "יונתן קלימי",
+"song": "מי את היום בלעדיי",
+"views": 18177711,
+"date": "20230108",
+"added": "",
+"slug": "mi-at-hayom-biladay",
+"page": true
+},
+{
+"id": "e8LX8SxYWdI",
+"artist": "עקיבא",
+"song": "פשוטים",
+"views": 18162152,
+"date": "20200315",
+"added": "",
+"slug": "pshutim",
+"page": true
+},
+{
+"id": "pRQX6Xp2B48",
+"artist": "עמיר בניון",
+"song": "ניצחת איתי הכל",
+"views": 16101389,
+"date": "20111207",
+"added": "",
+"slug": "nitzacht-iti-hakol",
+"page": true
+},
+{
+"id": "V44t_SxTbFE",
+"artist": "ים רפאלי",
+"song": "שהכאב ימצא לו חברים",
+"views": 15478524,
+"date": "20180630",
+"added": "",
+"slug": "shehakeev-yimtza-lo-chaverim",
+"page": true
+},
+{
+"id": "yWDIcIVSsxM",
+"artist": "עדן מאירי",
+"song": "לך עם האמת שלך",
+"views": 15298478,
+"date": "20190520",
+"added": "",
+"slug": "lech-im-haemet-shelcha",
+"page": true
+},
+{
+"id": "eDfcyn5jLII",
+"artist": "טונה",
+"song": "היי בייב",
+"views": 13791209,
+"date": "20211217",
+"added": "",
+"slug": "hey-babe",
+"page": true
+},
+{
+"id": "jP4XtOEs-1s",
+"artist": "רביד פלוטניק",
+"song": "כפרה שלי",
+"views": 13614090,
+"date": "20170820",
+"added": "",
+"slug": "kapara-sheli",
+"page": true
+},
+{
+"id": "BYCndeezaTs",
+"artist": "אנה זק",
+"song": "כל הבאז",
+"views": 13125210,
+"date": "20210830",
+"added": "",
+"slug": "kol-habuzz",
+"page": true
+},
+{
+"id": "q1BMUlbr0D0",
+"artist": "אושר כהן",
+"song": "עושה לי בלאגן",
+"views": 12998905,
+"date": "20211017",
+"added": "",
+"slug": "osa-li-balagan",
+"page": true
+},
+{
+"id": "makagfaxN3c",
+"artist": "עדן חסון ואלה לי",
+"song": "שימי פס",
+"views": 12412367,
+"date": "20210616",
+"added": "",
+"slug": "simi-pas",
+"page": true
+},
+{
+"id": "jPjbleJ0qQo",
+"artist": "אושר כהן",
+"song": "איך שאת אוהבת",
+"views": 12105367,
+"date": "20230606",
+"added": "",
+"slug": "eich-sheat-ohevet",
+"page": true
+},
+{
+"id": "vNViGyjZpq0",
+"artist": "איתי לוי",
+"song": "כל העיר יודעת",
+"views": 10878285,
+"date": "20151122",
+"added": "",
+"slug": "kol-hair-yodaat",
+"page": true
+},
+{
+"id": "huHM8JgX1Ag",
+"artist": "אושר כהן",
+"song": "שירים של עומר",
+"views": 8977080,
+"date": "20210810",
+"added": "",
+"slug": "shirim-shel-omer",
+"page": true
+},
+{
+"id": "GuVdnFfIriQ",
+"artist": "ליעד מאיר מארח את מורן מזור",
+"song": "פרפרים בבטן",
+"views": 7701923,
+"date": "20240804",
+"added": "",
+"slug": "parparim-babeten",
+"page": true
+},
+{
+"id": "XdpLasLSIAw",
+"artist": "רביד פלוטניק",
+"song": "בדיוק כמו שאני",
+"views": 7149708,
+"date": "20170619",
+"added": "",
+"slug": "bidiyuk-kmo-sheani",
+"page": true
+},
+{
+"id": "_sMjZrVEB9E",
+"artist": "פלד",
+"song": "מה אני נראה לך",
+"views": 7110712,
+"date": "20180222",
+"added": "",
+"slug": "ma-ani-nire-lach",
+"page": true
+},
+{
+"id": "qvdQ4mGMVkg",
+"artist": "יסמין מועלם",
+"song": "יהיה טוב",
+"views": 7018723,
+"date": "20230529",
+"added": "",
+"slug": "yihye-tov",
+"page": true
+},
+{
+"id": "fOF3lVtPRiY",
+"artist": "אהובה עוזרי",
+"song": "צלצולי פעמונים",
+"views": 7007451,
+"date": "20120302",
+"added": "",
+"slug": "tziltzulei-paamonim",
+"page": true
+},
+{
+"id": "RPQ4Qq7Xyb4",
+"artist": "בנאל בן ציון",
+"song": "לא חוקי",
+"views": 6950052,
+"date": "20230813",
+"added": "",
+"slug": "lo-chuki",
+"page": true
+},
+{
+"id": "fPGimPUUiTs",
+"artist": "ישי ריבו",
+"song": "מקשה אחת זהב",
+"views": 6916416,
+"date": "20151029",
+"added": "",
+"slug": "miksha-achat-zahav",
+"page": true
+},
+{
+"id": "qjdBHZ_svyY",
+"artist": "האולטראס",
+"song": "טריו בריו",
+"views": 6882340,
+"date": "20180507",
+"added": "",
+"slug": "trio-brio",
+"page": true
+},
+{
+"id": "AoxfdFwvL5o",
+"artist": "אייל גולן",
+"song": "סוף ידוע",
+"views": 6672292,
+"date": "20230328",
+"added": "",
+"slug": "sof-yadua",
+"page": true
+},
+{
+"id": "ucnJWiWFGaQ",
+"artist": "עומר אדם & איזי",
+"song": "התעוררתי עם נמר",
+"views": 6459472,
+"date": "20230601",
+"added": "",
+"slug": "hitorarti-im-namer",
+"page": true
+},
+{
+"id": "yFXU0b_wCsg",
+"artist": "הגר יפת",
+"song": "שוב אני נשברת",
+"views": 6398759,
+"date": "20220126",
+"added": "",
+"slug": "shuv-ani-nishberet",
+"page": true
+},
+{
+"id": "c2s4qeXMEaA",
+"artist": "מוטי טקה",
+"song": "קשר רציני",
+"views": 6300026,
+"date": "20171025",
+"added": "",
+"slug": "kesher-retzini",
+"page": true
+},
+{
+"id": "P6DRY4n9qik",
+"artist": "מארינה מקסימיליאן & איתי גלו",
+"song": "עולה על שולחנות",
+"views": 6134858,
+"date": "20220712",
+"added": "",
+"slug": "ola-al-shulchanot",
+"page": true
+},
+{
+"id": "y7auJNBA0bs",
+"artist": "דודו פארוק",
+"song": "אלירן סבג",
+"views": 6070453,
+"date": "20181018",
+"added": "",
+"slug": "eliran-sabag",
+"page": true
+},
+{
+"id": "z7NHhggC5HM",
+"artist": "קובי ממן",
+"song": "עד שנגמר",
+"views": 5888115,
+"date": "20210202",
+"added": "",
+"slug": "ad-shenigmar",
+"page": true
+},
+{
+"id": "INrqmhd4dYA",
+"artist": "איתי לוי",
+"song": "ניו יורק סיטי",
+"views": 5821987,
+"date": "20190922",
+"added": "",
+"slug": "new-york-city",
+"page": true
+},
+{
+"id": "mKZoV8CTbJU",
+"artist": "מוש בן ארי",
+"song": "כמו בחיים",
+"views": 5778772,
+"date": "20130728",
+"added": "",
+"slug": "kmo-bachaim",
+"page": true
+},
+{
+"id": "MqelD0ZNJUU",
+"artist": "דודו אהרון",
+"song": "רומנטי או סימפטי",
+"views": 5734270,
+"date": "20110702",
+"added": "",
+"slug": "romanti-o-simpati",
+"page": true
+},
+{
+"id": "fB-U_dJKxb8",
+"artist": "אושר כהן & שחר סאול",
+"song": "בסוף נרקוד",
+"views": 5694925,
+"date": "20220808",
+"added": "",
+"slug": "basof-nirkod",
+"page": true
+},
+{
+"id": "3Q7FkbQLlp8",
+"artist": "ששון איפרם שאולוב",
+"song": "מתוך מחשבות",
+"views": 5689689,
+"date": "20220810",
+"added": "",
+"slug": "mitoch-machshavot",
+"page": true
+},
+{
+"id": "A09Bo93dveE",
+"artist": "עומר אדם",
+"song": "מה שנפל מהידיים",
+"views": 5631892,
+"date": "20210215",
+"added": "",
+"slug": "ma-shenafal-mehayadaim",
+"page": true
+},
+{
+"id": "5Oo6dw2BZUI",
+"artist": "רביד פלוטניק",
+"song": "לי ולה",
+"views": 5489147,
+"date": "20170619",
+"added": "",
+"slug": "li-vela",
+"page": true
+},
+{
+"id": "I9nJc6D0fco",
+"artist": "סטטיק ובן אל תבורי מארחים את רן דנקר",
+"song": "רובינזון קרוזו",
+"views": 5481417,
+"date": "20210701",
+"added": "",
+"slug": "robinson-crusoe",
+"page": true
+},
+{
+"id": "j_U2xOuWcBY",
+"artist": "רינת בר & אגם בוחבוט",
+"song": "קשר מסוכן",
+"views": 5469938,
+"date": "20250626",
+"added": "",
+"slug": "kesher-mesukan",
+"page": true
+},
+{
+"id": "2zk_cTSeLUk",
+"artist": "שלמה ארצי",
+"song": "זה מה שנשאר",
+"views": 5359420,
+"date": "20101220",
+"added": "",
+"slug": "ze-ma-shenishar",
+"page": true
+},
+{
+"id": "SlE5Dh9GkpQ",
+"artist": "אושר כהן",
+"song": "לא כואב לי",
+"views": 5263599,
+"date": "20250804",
+"added": "",
+"slug": "lo-koev-li",
+"page": true
+},
+{
+"id": "fj2xuvTOziI",
+"artist": "עומר אדם",
+"song": "טאפס וטריפונס",
+"views": 5198809,
+"date": "20230601",
+"added": "",
+"slug": "tapas-vetrifons",
+"page": true
+},
+{
+"id": "lainV5py0Rw",
+"artist": "אמיר דדון",
+"song": "בואי נדבר בינינו",
+"views": 5022837,
+"date": "20171207",
+"added": "",
+"slug": "boi-nedaber-beineinu",
+"page": true
+},
+{
+"id": "OudsUfjWbcM",
+"artist": "עומר אדם",
+"song": "מבת ים ועד הנצח",
+"views": 4863235,
+"date": "20240321",
+"added": "",
+"slug": "mibat-yam-vead-hanetzach",
+"page": true
+},
+{
+"id": "cVePUKEENbA",
+"artist": "שלומי שבת ואיתי לוי",
+"song": "היין שנשאר",
+"views": 4725234,
+"date": "20220118",
+"added": "",
+"slug": "hayain-shenishar",
+"page": true
+},
+{
+"id": "lQEcOqtNAB0",
+"artist": "עדן חסון",
+"song": "בואי נישן על זה",
+"views": 4682612,
+"date": "20220412",
+"added": "",
+"slug": "boi-nishan-al-ze",
+"page": true
+},
+{
+"id": "1g-mwRXWxHk",
+"artist": "אודיה עם איזי וליעד מאיר",
+"song": "הטוב הרע ועודיה",
+"views": 4661776,
+"date": "20240908",
+"added": "",
+"slug": "hatov-hara-veodeya",
+"page": true
+},
+{
+"id": "djrPmzxfKKU",
+"artist": "דודו פארוק",
+"song": "אחותך",
+"views": 4595357,
+"date": "20180623",
+"added": "",
+"slug": "achotcha",
+"page": true
+},
+{
+"id": "5UK2UkXlixw",
+"artist": "אייל גולן",
+"song": "שאריות מן העבר",
+"views": 4569638,
+"date": "20230328",
+"added": "",
+"slug": "sheeriyot-min-haavar",
+"page": true
+},
+{
+"id": "Hc6uJx73sh4",
+"artist": "בן זיני וטיילור מארחים את ליאור פרחי",
+"song": "טיפוס רומנטי",
+"views": 4377031,
+"date": "20190616",
+"added": "",
+"slug": "tipus-romanti",
+"page": true
+},
+{
+"id": "JK2wtKG_DT4",
+"artist": "רביד פלוטניק",
+"song": "גברת טיקטוק",
+"views": 4047919,
+"date": "20210924",
+"added": "",
+"slug": "gveret-tiktok",
+"page": true
+},
+{
+"id": "YvoYeqcDFuc",
+"artist": "עומר אדם, רואי אדם וגל אדם",
+"song": "לילות יפים",
+"views": 4014787,
+"date": "20260218",
+"added": "",
+"slug": "leilot-yafim",
+"page": true
+},
+{
+"id": "gpHrr-he4vA",
+"artist": "עומר אדם",
+"song": "בן 30",
+"views": 4010361,
+"date": "20230601",
+"added": "",
+"slug": "ben-30",
+"page": true
+},
+{
+"id": "mECyNzcHE-Q",
+"artist": "כפיר צפריר ונטע ברזילי",
+"song": "נתק אותי",
+"views": 3871860,
+"date": "20240312",
+"added": "",
+"slug": "natek-oti",
+"page": true
+},
+{
+"id": "yOlxurPMQ7w",
+"artist": "עילאי אלמקייס",
+"song": "מכל הלילות",
+"views": 3761662,
+"date": "20221206",
+"added": "",
+"slug": "mikol-haleilot",
+"page": true
+},
+{
+"id": "tiRnCbOSfEs",
+"artist": "פאר טסי",
+"song": "הולך ומתרחק",
+"views": 3748598,
+"date": "20200908",
+"added": "",
+"slug": "holk-omtrchk",
+"page": false
+},
+{
+"id": "suIbPZasPKc",
+"artist": "עומר אדם",
+"song": "מדבר של שקט",
+"views": 3567816,
+"date": "20230601",
+"added": "",
+"slug": "mdbr-shl-shkt",
+"page": false
+},
+{
+"id": "Zz1DrO0_aOg",
+"artist": "נתן גושן",
+"song": "אין הרבה מה לעשות",
+"views": 3307172,
+"date": "20200403",
+"added": "",
+"slug": "ain-hrbh-mh-lashot",
+"page": false
+},
+{
+"id": "4jhrux9DOz0",
+"artist": "הראל סקעת & נורוז",
+"song": "ברוך הבא לבלאגן",
+"views": 3197643,
+"date": "20220614",
+"added": "",
+"slug": "brok-hba-lblagn",
+"page": false
+},
+{
+"id": "DEJyRLt5M4s",
+"artist": "אהוד בנאי",
+"song": "אל אדון על כל המעשים",
+"views": 3066367,
+"date": "20110504",
+"added": "",
+"slug": "al-adon-al-kl-hmashim",
+"page": false
+},
+{
+"id": "mqQANKzL-Ms",
+"artist": "שקד קוממי",
+"song": "שמלה ברוח",
+"views": 3050381,
+"date": "20180415",
+"added": "",
+"slug": "shmlh-broch",
+"page": false
+},
+{
+"id": "LB2TYp7DTso",
+"artist": "עומר אדם",
+"song": "יש יותר מידי שירים היום",
+"views": 2925885,
+"date": "20260218",
+"added": "",
+"slug": "ish-iotr-midi-shirim-hiom",
+"page": false
+},
+{
+"id": "5SbnVxukAaI",
+"artist": "רביד פלוטניק",
+"song": "עולם ומלואו",
+"views": 2916823,
+"date": "20190629",
+"added": "",
+"slug": "aolm-omloao",
+"page": false
+},
+{
+"id": "GME1UyUpMPU",
+"artist": "מאיר אריאל",
+"song": "טרמינל לומינלט",
+"views": 2892338,
+"date": "20111010",
+"added": "",
+"slug": "trminl-lominlt",
+"page": false
+},
+{
+"id": "_H5Sk-XBVhI",
+"artist": "פרידה",
+"song": "ככה בול",
+"views": 2816307,
+"date": "20250812",
+"added": "",
+"slug": "kkh-bol",
+"page": false
+},
+{
+"id": "eWmdhy9DEkg",
+"artist": "גל אדם",
+"song": "מגנט של בלאגן",
+"views": 2749399,
+"date": "20220202",
+"added": "",
+"slug": "mgnt-shl-blagn",
+"page": false
+},
+{
+"id": "XJrVizZpMIA",
+"artist": "עברי לידר",
+"song": "האהבה הזאת שלנו",
+"views": 2648716,
+"date": "20141211",
+"added": "",
+"slug": "hahbh-hzat-shlno",
+"page": false
+},
+{
+"id": "3Tesymr5OpU",
+"artist": "מאיר אריאל",
+"song": "שיר כאב",
+"views": 2611712,
+"date": "20111010",
+"added": "",
+"slug": "shir-kab",
+"page": false
+},
+{
+"id": "8KnKnd-cvRo",
+"artist": "ברי סחרוף",
+"song": "כלום זה לא סתם",
+"views": 2600851,
+"date": "20110515",
+"added": "",
+"slug": "klom-zh-la-stm",
+"page": false
+},
+{
+"id": "jVwBYbdGzlo",
+"artist": "פאר טסי",
+"song": "גפרור",
+"views": 2508892,
+"date": "20240526",
+"added": "",
+"slug": "gpror",
+"page": false
+},
+{
+"id": "CKVwhQtwiGc",
+"artist": "עדן חסון איתי גלו",
+"song": "החיים לפניי",
+"views": 2494222,
+"date": "20230625",
+"added": "",
+"slug": "hchiim-lpnii",
+"page": false
+},
+{
+"id": "5HM1gk6dkKU",
+"artist": "גלעד שגב",
+"song": "אישה מהשמיים",
+"views": 2386691,
+"date": "20130110",
+"added": "",
+"slug": "aishh-mhshmiim",
+"page": false
+},
+{
+"id": "TEaLbyPAloY",
+"artist": "רביד פלוטניק",
+"song": "יום כיפור בכפר סירקין",
+"views": 2348924,
+"date": "20190629",
+"added": "",
+"slug": "iom-kipor-bkpr-sirkin",
+"page": false
+},
+{
+"id": "hA7z1PzPZ3E",
+"artist": "חן פורתי וליעד מאיר",
+"song": "תקוע בין דברים",
+"views": 2314743,
+"date": "20190901",
+"added": "",
+"slug": "tkoa-bin-dbrim",
+"page": false
+},
+{
+"id": "M0-t0KNFass",
+"artist": "אושר כהן",
+"song": "אני רוצה עוד אהבה",
+"views": 2281336,
+"date": "20250804",
+"added": "",
+"slug": "ani-rotzh-aod-ahbh",
+"page": false
+},
+{
+"id": "ad19CBOEUjs",
+"artist": "איתי לוי",
+"song": "מאוהב בגשם",
+"views": 2253026,
+"date": "20261018",
+"added": "2026-11-19",
+"slug": "meohav-bageshem",
+"page": true
+},
+{
+"id": "PWM9Oe7UivU",
+"artist": "אביב גפן",
+"song": "זה רק הלב שכואב לך",
+"views": 2213718,
+"date": "20120112",
+"added": "",
+"slug": "zh-rk-hlb-shkoab-lk",
+"page": false
+},
+{
+"id": "VDq_nVYvxZQ",
+"artist": "אלישע בנאי וארבעים השודדים",
+"song": "סן דייגו",
+"views": 2208653,
+"date": "20120121",
+"added": "",
+"slug": "sn-diigo",
+"page": false
+},
+{
+"id": "0rxH40-gJ6Q",
+"artist": "הראל סקעת & אניה בוקשטיין",
+"song": "כל היום",
+"views": 2179267,
+"date": "20200803",
+"added": "",
+"slug": "kl-hiom",
+"page": false
+},
+{
+"id": "IiHgBN1TGqw",
+"artist": "פאר טסי",
+"song": "רחוב המשבר",
+"views": 2172244,
+"date": "20250628",
+"added": "",
+"slug": "rchob-hmshbr",
+"page": false
+},
+{
+"id": "_bvyufA3gJk",
+"artist": "אביתר בנאי",
+"song": "אותיות פורחות באויר",
+"views": 2169745,
+"date": "20120722",
+"added": "",
+"slug": "aotiot-porchot-baoir",
+"page": false
+},
+{
+"id": "-i7LFIr0vhM",
+"artist": "קפליו",
+"song": "לונדון דובאי",
+"views": 2159819,
+"date": "20250316",
+"added": "",
+"slug": "london-dobai",
+"page": false
+},
+{
+"id": "GDE08MKkqgI",
+"artist": "עדן חסון",
+"song": "כולנו רוצים אהבה",
+"views": 2130417,
+"date": "20211216",
+"added": "",
+"slug": "kolno-rotzim-ahbh",
+"page": false
+},
+{
+"id": "UeHj6qfsVmM",
+"artist": "מאיר אריאל",
+"song": "מים מתוקים",
+"views": 2098079,
+"date": "20121111",
+"added": "",
+"slug": "mim-mtokim",
+"page": false
+},
+{
+"id": "V_FJDCsXXLc",
+"artist": "הראל סקעת",
+"song": "כל הציפורים",
+"views": 2086091,
+"date": "20110825",
+"added": "",
+"slug": "kl-htziporim",
+"page": false
+},
+{
+"id": "_qCtDKOAIvY",
+"artist": "עידן רייכל",
+"song": "אין לך דאגות",
+"views": 2050587,
+"date": "20230126",
+"added": "",
+"slug": "ain-lk-dagot",
+"page": false
+},
+{
+"id": "yzy_4AgnitY",
+"artist": "לירון עמרם",
+"song": "חלום ישן",
+"views": 2042834,
+"date": "20160907",
+"added": "",
+"slug": "chlom-ishn",
+"page": false
+},
+{
+"id": "YkSoSfmo49c",
+"artist": "טונה מארח את שלומי סרנגה",
+"song": "למה לא עכשיו?",
+"views": 1955731,
+"date": "20150822",
+"added": "",
+"slug": "lmh-la-akshio",
+"page": false
+},
+{
+"id": "8jCg5hJNtcA",
+"artist": "אייל גולן",
+"song": "החיים פאנן",
+"views": 1916728,
+"date": "20230328",
+"added": "",
+"slug": "hchiim-pann",
+"page": false
+},
+{
+"id": "LgSsT6JEAHI",
+"artist": "שי צברי",
+"song": "מעליי דממה",
+"views": 1883008,
+"date": "20130312",
+"added": "",
+"slug": "malii-dmmh",
+"page": false
+},
+{
+"id": "0lGoje8J--o",
+"artist": "איתי לוי וקובי פרץ",
+"song": "מה את רוצה ממני",
+"views": 1791886,
+"date": "20230928",
+"added": "",
+"slug": "mh-at-rotzh-mmni",
+"page": false
+},
+{
+"id": "4HXpfAZZF0E",
+"artist": "עומר אדם",
+"song": "מלאך של כבוד",
+"views": 1703197,
+"date": "20241110",
+"added": "",
+"slug": "mlak-shl-kbod",
+"page": false
+},
+{
+"id": "_EHz2IhM5vw",
+"artist": "שירי מימון",
+"song": "יש לי הכול",
+"views": 1692367,
+"date": "20171023",
+"added": "",
+"slug": "ish-li-hkol",
+"page": false
+},
+{
+"id": "3gu2YciqjjE",
+"artist": "הראל סקעת",
+"song": "חזק על הרצפה",
+"views": 1653351,
+"date": "20210222",
+"added": "",
+"slug": "chzk-al-hrtzph",
+"page": false
+},
+{
+"id": "M5Ie3b342yg",
+"artist": "עומר אדם & סטטיק ובן אל תבורי",
+"song": "אל תדליק אותי סתם",
+"views": 1572307,
+"date": "20220306",
+"added": "",
+"slug": "al-tdlik-aoti-stm",
+"page": false
+},
+{
+"id": "_4bhoCFGQ1k",
+"artist": "כרקוקלי",
+"song": "הכל אותו דבר",
+"views": 1547044,
+"date": "20210419",
+"added": "",
+"slug": "hkl-aoto-dbr",
+"page": false
+},
+{
+"id": "xu6agr1pRY4",
+"artist": "פאר טסי",
+"song": "ברסלב משוגעים",
+"views": 1538045,
+"date": "20240526",
+"added": "",
+"slug": "brslb-mshogaim",
+"page": false
+},
+{
+"id": "MEeYZG1_sNQ",
+"artist": "סטטיק",
+"song": "בול באמצע",
+"views": 1481888,
+"date": "20230222",
+"added": "",
+"slug": "bol-bamtza",
+"page": false
+},
+{
+"id": "GdrtiQa7U08",
+"artist": "מאיר אריאל",
+"song": "לא תתפוס אותי",
+"views": 1462543,
+"date": "20110612",
+"added": "",
+"slug": "la-ttpos-aoti",
+"page": false
+},
+{
+"id": "sOQx1rARccc",
+"artist": "קפליו",
+"song": "ליפול ולקום",
+"views": 1458134,
+"date": "20250222",
+"added": "",
+"slug": "lipol-olkom",
+"page": false
+},
+{
+"id": "Db4M22V2kHE",
+"artist": "עידן רייכל ועדן בן זקן",
+"song": "מתגעגעת אותך",
+"views": 1431394,
+"date": "20210125",
+"added": "",
+"slug": "mtgagat-aotk",
+"page": false
+},
+{
+"id": "mU5V0dRhI9U",
+"artist": "נורוז ובוי אצ׳י",
+"song": "מזתומרת",
+"views": 1387502,
+"date": "20200304",
+"added": "",
+"slug": "mztomrt",
+"page": false
+},
+{
+"id": "8gx6aE95WOA",
+"artist": "אגם בוחבוט",
+"song": "שחור תלתן",
+"views": 1378406,
+"date": "20220209",
+"added": "",
+"slug": "shchor-tltn",
+"page": false
+},
+{
+"id": "21DvNvRFFB0",
+"artist": "רביב כנר",
+"song": "נשרף העולם",
+"views": 1359001,
+"date": "20220327",
+"added": "",
+"slug": "nshrf-haolm",
+"page": false
+},
+{
+"id": "OXpFa8hAv1w",
+"artist": "גל אדם",
+"song": "איתך עושה לי טוב",
+"views": 1347423,
+"date": "20200624",
+"added": "",
+"slug": "aitk-aoshh-li-tob",
+"page": false
+},
+{
+"id": "WjD-EnYcU4M",
+"artist": "אמיר דדון",
+"song": "עדיין ילד",
+"views": 1340487,
+"date": "20190620",
+"added": "",
+"slug": "adiin-ild",
+"page": false
+},
+{
+"id": "fjDmvKCBS2s",
+"artist": "עומר אדם",
+"song": "רחוב החרדות",
+"views": 1336399,
+"date": "20230601",
+"added": "",
+"slug": "rchob-hchrdot",
+"page": false
+},
+{
+"id": "p1ttnYBonGo",
+"artist": "ישי ומיכאל סוויסה",
+"song": "אחשילי",
+"views": 1322242,
+"date": "20230820",
+"added": "",
+"slug": "achshili",
+"page": false
+},
+{
+"id": "qgMOny7mVO8",
+"artist": "נונו",
+"song": "גוליית 2",
+"views": 1287557,
+"date": "20220216",
+"added": "",
+"slug": "goliit-2",
+"page": false
+},
+{
+"id": "9xPbaaZEEkM",
+"artist": "אודיה",
+"song": "אתה ער",
+"views": 1286750,
+"date": "20260517",
+"added": "",
+"slug": "ath-ar",
+"page": false
+},
+{
+"id": "LGj4rxfEPAA",
+"artist": "אודיה",
+"song": "לילה לא רגוע",
+"views": 1256163,
+"date": "20240908",
+"added": "",
+"slug": "lilh-la-rgoa",
+"page": false
+},
+{
+"id": "9aj713Txvpo",
+"artist": "ג׳יין בורדו מארחים את אקו",
+"song": "אישה קשה",
+"views": 1248005,
+"date": "20210207",
+"added": "",
+"slug": "aishh-kshh",
+"page": false
+},
+{
+"id": "vns3qn9fYXQ",
+"artist": "גיא מזיג",
+"song": "אם רק תדברי",
+"views": 1247889,
+"date": "20160301",
+"added": "",
+"slug": "am-rk-tdbri",
+"page": false
+},
+{
+"id": "btJtnOr-SZ8",
+"artist": "רביד פלוטניק עם סולג'יי",
+"song": "בלדה לביישן",
+"views": 1227513,
+"date": "20210924",
+"added": "",
+"slug": "bldh-lbiishn",
+"page": false
+},
+{
+"id": "PCwDDGYely0",
+"artist": "ברי סחרוף",
+"song": "זמן של מספרים",
+"views": 1213715,
+"date": "20110309",
+"added": "",
+"slug": "zmn-shl-msprim",
+"page": false
+},
+{
+"id": "GmKoTZQQghw",
+"artist": "שולי רנד",
+"song": "מה התכלית",
+"views": 1189112,
+"date": "20180513",
+"added": "",
+"slug": "mh-htklit",
+"page": false
+},
+{
+"id": "UfbW4JI4JAk",
+"artist": "אריק איינשטיין",
+"song": "זה לא בדיוק געגוע",
+"views": 1183307,
+"date": "20070121",
+"added": "",
+"slug": "zh-la-bdiok-gagoa",
+"page": false
+},
+{
+"id": "2Mp2e_BPTRI",
+"artist": "אושר כהן וליאור נרקיס",
+"song": "בחורה טובה",
+"views": 1139286,
+"date": "20240721",
+"added": "",
+"slug": "bchorh-tobh",
+"page": false
+},
+{
+"id": "N-4A0o4OD2c",
+"artist": "עידן עמדי",
+"song": "אינסוף",
+"views": 1107053,
+"date": "20250106",
+"added": "",
+"slug": "ainsof",
+"page": false
+},
+{
+"id": "n-LLdO7FENM",
+"artist": "וייב איש",
+"song": "בואי לא",
+"views": 1102291,
+"date": "20250224",
+"added": "",
+"slug": "boai-la",
+"page": false
+},
+{
+"id": "NvBvp9YHZd4",
+"artist": "רביד פלוטניק",
+"song": "מדינת משטרה",
+"views": 1099954,
+"date": "20190629",
+"added": "",
+"slug": "mdint-mshtrh",
+"page": false
+},
+{
+"id": "CH18L6qXJGI",
+"artist": "טונה",
+"song": "אהבת אותי",
+"views": 1096213,
+"date": "20250529",
+"added": "",
+"slug": "ahbt-aoti",
+"page": false
+},
+{
+"id": "4wV51QyssS8",
+"artist": "שלומי שבת",
+"song": "מה ששלי שלך",
+"views": 1085083,
+"date": "20110210",
+"added": "",
+"slug": "mh-shshli-shlk",
+"page": false
+},
+{
+"id": "Yk7pPBpDDTo",
+"artist": "הדג נחש",
+"song": "קובלנה על מפלגות ישראל",
+"views": 1081712,
+"date": "20130206",
+"added": "",
+"slug": "koblnh-al-mplgot-ishral",
+"page": false
+},
+{
+"id": "TtSZJtbX_Yw",
+"artist": "מארינה מקסימיליאן",
+"song": "יש פה בית",
+"views": 1073134,
+"date": "20190604",
+"added": "",
+"slug": "ish-ph-bit",
+"page": false
+},
+{
+"id": "TZq0TUfrA1Q",
+"artist": "רן דנקר",
+"song": "חזרה למציאות",
+"views": 1040920,
+"date": "20230510",
+"added": "",
+"slug": "chzrh-lmtziaot",
+"page": false
+},
+{
+"id": "7fTkNIA1OGs",
+"artist": "בניה ברבי",
+"song": "חיים קורים",
+"views": 1040408,
+"date": "20220809",
+"added": "",
+"slug": "chiim-korim",
+"page": false
+},
+{
+"id": "NvLni-QU4VU",
+"artist": "שירי מימון",
+"song": "מי שפוי מי משוגע",
+"views": 1033837,
+"date": "20140917",
+"added": "",
+"slug": "mi-shpoi-mi-mshoga",
+"page": false
+},
+{
+"id": "FEqu1RFSbzY",
+"artist": "ג'יין בורדו",
+"song": "טי-שירט",
+"views": 1022347,
+"date": "20220124",
+"added": "",
+"slug": "ti-shirt",
+"page": false
+},
+{
+"id": "zXwkMXMyYJc",
+"artist": "דודו טסה",
+"song": "בית ביפו",
+"views": 1018023,
+"date": "20260211",
+"added": "",
+"slug": "bit-bipo",
+"page": false
+},
+{
+"id": "XnFFu6q_U6M",
+"artist": "גיא ויהל מארחים את עידן רייכל",
+"song": "במדבר שלי בלב",
+"views": 1006393,
+"date": "20181124",
+"added": "",
+"slug": "bmdbr-shli-blb",
+"page": false
+},
+{
+"id": "TKSwQUAQ0-Q",
+"artist": "וייב איש",
+"song": "גשם",
+"views": 995563,
+"date": "20230316",
+"added": "",
+"slug": "gshm",
+"page": false
+},
+{
+"id": "f-lTi6KDl24",
+"artist": "אודיה",
+"song": "לא תיקח לי את האושר",
+"views": 994429,
+"date": "20260517",
+"added": "",
+"slug": "la-tikch-li-at-haoshr",
+"page": false
+},
+{
+"id": "ex1wk0vmSSo",
+"artist": "התקווה 6 ורביד פלוטניק",
+"song": "איזה מזל",
+"views": 993891,
+"date": "20250820",
+"added": "",
+"slug": "aizh-mzl",
+"page": false
+},
+{
+"id": "SHErQrvvftQ",
+"artist": "ישי ריבו",
+"song": "אלול תשע\"ט",
+"views": 972585,
+"date": "20190915",
+"added": "",
+"slug": "alol-tsha-t",
+"page": false
+},
+{
+"id": "rBr18UhT2fs",
+"artist": "שולי רנד",
+"song": "בן מלך שעשוי מאבנים טובות",
+"views": 967399,
+"date": "20180513",
+"added": "",
+"slug": "bn-mlk-shashoi-mabnim-tobot",
+"page": false
+},
+{
+"id": "qd1VGjkJcTY",
+"artist": "טונה",
+"song": "שובו של מרדכי",
+"views": 956968,
+"date": "20211216",
+"added": "",
+"slug": "shobo-shl-mrdki",
+"page": false
+},
+{
+"id": "TRBFg4BzkXA",
+"artist": "עברי לידר",
+"song": "רק בשמחות",
+"views": 953426,
+"date": "20220828",
+"added": "",
+"slug": "rk-bshmchot",
+"page": false
+},
+{
+"id": "JNwJFLkoX80",
+"artist": "הדג נחש",
+"song": "הנה אני בא",
+"views": 945740,
+"date": "20131201",
+"added": "",
+"slug": "hnh-ani-ba",
+"page": false
+},
+{
+"id": "y1AE9Xz9oNI",
+"artist": "רביד פלוטניק",
+"song": "ערב טוב טרוריסטים",
+"views": 943744,
+"date": "20210923",
+"added": "",
+"slug": "arb-tob-troristim",
+"page": false
+},
+{
+"id": "ieNpIeIvWtk",
+"artist": "עדן חסון",
+"song": "לא שותה לא מעשן",
+"views": 943197,
+"date": "20230713",
+"added": "",
+"slug": "la-shoth-la-mashn",
+"page": false
+},
+{
+"id": "e5-MSZrjz8A",
+"artist": "אהרן רזאל",
+"song": "תן לי את היום הזה",
+"views": 927895,
+"date": "20181023",
+"added": "",
+"slug": "tn-li-at-hiom-hzh",
+"page": false
+},
+{
+"id": "BdZdhOT7lxU",
+"artist": "שחר סאול",
+"song": "תיקו תיקו",
+"views": 924584,
+"date": "20210613",
+"added": "",
+"slug": "tiko-tiko",
+"page": false
+},
+{
+"id": "WEyEDqXm-gI",
+"artist": "זהבה בן",
+"song": "אני שטה",
+"views": 922663,
+"date": "20111122",
+"added": "",
+"slug": "ani-shth",
+"page": false
+},
+{
+"id": "58ZzLbyYK3w",
+"artist": "פאר טסי",
+"song": "אומרים שהתרגלנו",
+"views": 912050,
+"date": "20250628",
+"added": "",
+"slug": "aomrim-shhtrglno",
+"page": false
+},
+{
+"id": "w9Ig5Y-I2Lk",
+"artist": "בר צברי",
+"song": "לאט לאט",
+"views": 907311,
+"date": "20250518",
+"added": "",
+"slug": "lat-lat",
+"page": false
+},
+{
+"id": "CQG33CFPJ3c",
+"artist": "חנן בן ארי",
+"song": "פרדס חנה",
+"views": 868367,
+"date": "20181024",
+"added": "",
+"slug": "prds-chnh",
+"page": false
+},
+{
+"id": "KBLHkHCH1Kc",
+"artist": "אהוד בנאי",
+"song": "אבן ספיר",
+"views": 857691,
+"date": "20110330",
+"added": "",
+"slug": "abn-spir",
+"page": false
+},
+{
+"id": "R9cVn4bMjIk",
+"artist": "טונה",
+"song": "בין העיר לפרדס",
+"views": 848904,
+"date": "20240329",
+"added": "",
+"slug": "bin-hair-lprds",
+"page": false
+},
+{
+"id": "oRkMHrpDkCU",
+"artist": "יסמין מועלם",
+"song": "הרבה זמן",
+"views": 848259,
+"date": "20230529",
+"added": "",
+"slug": "hrbh-zmn",
+"page": false
+},
+{
+"id": "8W9fpzPVGiI",
+"artist": "עידן רפאל חביב",
+"song": "מטוס כחול",
+"views": 843728,
+"date": "20211122",
+"added": "",
+"slug": "mtos-kchol",
+"page": false
+},
+{
+"id": "lZj8X48xmEY",
+"artist": "רביד פלוטניק",
+"song": "גולם",
+"views": 843038,
+"date": "20210923",
+"added": "",
+"slug": "golm",
+"page": false
+},
+{
+"id": "NoTGPqivL40",
+"artist": "תומר יוסף",
+"song": "כאלו",
+"views": 841091,
+"date": "20111118",
+"added": "",
+"slug": "kalo",
+"page": false
+},
+{
+"id": "0s-QsgzEm04",
+"artist": "טונה",
+"song": "אחד לסבתא",
+"views": 837098,
+"date": "20211216",
+"added": "",
+"slug": "achd-lsbta",
+"page": false
+},
+{
+"id": "E0p8euakP3Q",
+"artist": "שחר טבוך & נועם קלינשטיין",
+"song": "להתחתן איתי",
+"views": 830173,
+"date": "20250420",
+"added": "",
+"slug": "lhtchtn-aiti",
+"page": false
+},
+{
+"id": "kySj4xeBKus",
+"artist": "נונו",
+"song": "אומיגאד",
+"views": 828504,
+"date": "20230625",
+"added": "",
+"slug": "aomigad",
+"page": false
+},
+{
+"id": "LJgXuJvZZfc",
+"artist": "ישיבה קדם צבאית ברוכין",
+"song": "רוח והצלה",
+"views": 819460,
+"date": "20220224",
+"added": "",
+"slug": "roch-ohtzlh",
+"page": false
+},
+{
+"id": "VAh6EFwaF8Y",
+"artist": "יסמין מועלם",
+"song": "לא היה מעולם",
+"views": 811448,
+"date": "20220607",
+"added": "",
+"slug": "la-hih-maolm",
+"page": false
+},
+{
+"id": "8mhQz3kzvPw",
+"artist": "יאנג בוטה",
+"song": "סוד הנעורים",
+"views": 809810,
+"date": "20260830",
+"added": "",
+"slug": "sod-hnaorim",
+"page": false
+},
+{
+"id": "UB244IFUkYg",
+"artist": "שיר זוארץ",
+"song": "אבא תציל אותי",
+"views": 802660,
+"date": "20250708",
+"added": "",
+"slug": "aba-ttzil-aoti",
+"page": false
+},
+{
+"id": "vnP6cDHhW80",
+"artist": "מיה סולימן",
+"song": "מאושר בלעדיי",
+"views": 798109,
+"date": "20210720",
+"added": "",
+"slug": "maoshr-bladii",
+"page": false
+},
+{
+"id": "Jh7p4asiegg",
+"artist": "פאר טסי",
+"song": "זה יקר",
+"views": 797993,
+"date": "20250628",
+"added": "",
+"slug": "zh-ikr",
+"page": false
+},
+{
+"id": "tcSuw30MWhA",
+"artist": "פאר טסי",
+"song": "קו הדימיון",
+"views": 784107,
+"date": "20250628",
+"added": "",
+"slug": "ko-hdimion",
+"page": false
+},
+{
+"id": "4z8H6MNI5q8",
+"artist": "יושי",
+"song": "אין מספיק זמן",
+"views": 778047,
+"date": "20210301",
+"added": "",
+"slug": "ain-mspik-zmn",
+"page": false
+},
+{
+"id": "vAFcSblIWFg",
+"artist": "דודו טסה",
+"song": "נעמוד בזה",
+"views": 769506,
+"date": "20181015",
+"added": "",
+"slug": "namod-bzh",
+"page": false
+},
+{
+"id": "pMd16qAfU5w",
+"artist": "אודיה",
+"song": "דיזנגוף 99",
+"views": 754926,
+"date": "20260517",
+"added": "",
+"slug": "dizngof-99",
+"page": false
+},
+{
+"id": "FrTR_lM_xeY",
+"artist": "יהודה פוליקר",
+"song": "הצל ואני",
+"views": 745847,
+"date": "20120819",
+"added": "",
+"slug": "htzl-oani",
+"page": false
+},
+{
+"id": "F78pD-cPccE",
+"artist": "יזהר אשדות",
+"song": "במרחק נגיעה מכאן",
+"views": 743359,
+"date": "20120728",
+"added": "",
+"slug": "bmrchk-ngiah-mkan",
+"page": false
+},
+{
+"id": "xmX4Z4G0jG8",
+"artist": "נועם קלינשטיין",
+"song": "תן לי זמן",
+"views": 725825,
+"date": "20250206",
+"added": "",
+"slug": "tn-li-zmn",
+"page": false
+},
+{
+"id": "CWkdudLsoPY",
+"artist": "כוורת",
+"song": "ילד מזדקן",
+"views": 721338,
+"date": "20110503",
+"added": "",
+"slug": "ild-mzdkn",
+"page": false
+},
+{
+"id": "vjiUIAjXTDU",
+"artist": "פאר טסי",
+"song": "שעון החול",
+"views": 680553,
+"date": "20250628",
+"added": "",
+"slug": "shaon-hchol",
+"page": false
+},
+{
+"id": "V2QzQMyaKTU",
+"artist": "שירי מימון",
+"song": "אהבה מקוללת",
+"views": 677661,
+"date": "20180812",
+"added": "",
+"slug": "ahbh-mkollt",
+"page": false
+},
+{
+"id": "H4xxoifGlDU",
+"artist": "יונתן רזאל",
+"song": "פותח לב",
+"views": 661995,
+"date": "20170516",
+"added": "",
+"slug": "potch-lb",
+"page": false
+},
+{
+"id": "vwT7PJTux2w",
+"artist": "יסמין מועלם",
+"song": "בשם השם",
+"views": 659401,
+"date": "20230529",
+"added": "",
+"slug": "bshm-hshm",
+"page": false
+},
+{
+"id": "ngTz2SCC8Ik",
+"artist": "מירי מסיקה",
+"song": "אוקיינוס",
+"views": 648919,
+"date": "20190209",
+"added": "",
+"slug": "aokiinos",
+"page": false
+},
+{
+"id": "scjur_Kw5gY",
+"artist": "שולי רנד & עמיר בניון",
+"song": "כשאנחנו מנגנים",
+"views": 648132,
+"date": "20220222",
+"added": "",
+"slug": "kshanchno-mngnim",
+"page": false
+},
+{
+"id": "K0jzjQ2RH8I",
+"artist": "עילאי אלמקייס ומאיה דדון",
+"song": "חוף בלי אף אחד",
+"views": 629135,
+"date": "20230226",
+"added": "",
+"slug": "chof-bli-af-achd",
+"page": false
+},
+{
+"id": "qLq3pQVTwJM",
+"artist": "פאר טסי",
+"song": "מיליארד פנאטים",
+"views": 623774,
+"date": "20250628",
+"added": "",
+"slug": "miliard-pnatim",
+"page": false
+},
+{
+"id": "qPtl8wj36mc",
+"artist": "מאיר אריאל",
+"song": "שדות גולדברג",
+"views": 621437,
+"date": "20111010",
+"added": "",
+"slug": "shdot-goldbrg",
+"page": false
+},
+{
+"id": "NySbX9gXmEM",
+"artist": "אריאל זילבר",
+"song": "לאן פנתה אהבתנו",
+"views": 614356,
+"date": "20150603",
+"added": "",
+"slug": "lan-pnth-ahbtno",
+"page": false
+},
+{
+"id": "0UqOGJR5TaA",
+"artist": "אליעד",
+"song": "כתובה בספרים",
+"views": 592243,
+"date": "20230213",
+"added": "",
+"slug": "ktobh-bsprim",
+"page": false
+},
+{
+"id": "jj69P5rOwkQ",
+"artist": "ברי סחרוף",
+"song": "מפנה מקום",
+"views": 582293,
+"date": "20111103",
+"added": "",
+"slug": "mpnh-mkom",
+"page": false
+},
+{
+"id": "CWDlSL95CIU",
+"artist": "אריק סיני & רותם כהן",
+"song": "השיר הזה נכתב עכשיו עלייך",
+"views": 580021,
+"date": "20230205",
+"added": "",
+"slug": "hshir-hzh-nktb-akshio-aliik",
+"page": false
+},
+{
+"id": "Hb36d77VWgc",
+"artist": "ברי סחרוף",
+"song": "החיים שממול",
+"views": 576717,
+"date": "20110727",
+"added": "",
+"slug": "hchiim-shmmol",
+"page": false
+},
+{
+"id": "s2atQAQF-Yk",
+"artist": "אבנר גדסי",
+"song": "הגברים בוכים בלילה",
+"views": 570521,
+"date": "20110211",
+"added": "",
+"slug": "hgbrim-bokim-blilh",
+"page": false
+},
+{
+"id": "8snBhcBJI4U",
+"artist": "יהודה פוליקר",
+"song": "שלושה ימים",
+"views": 562540,
+"date": "20120112",
+"added": "",
+"slug": "shloshh-imim",
+"page": false
+},
+{
+"id": "3Fz56kP65_0",
+"artist": "אילנית",
+"song": "ללכת שבי אחרייך",
+"views": 541947,
+"date": "20140321",
+"added": "",
+"slug": "llkt-shbi-achriik",
+"page": false
+},
+{
+"id": "U4iBVK7EAhU",
+"artist": "אסף אמדורסקי",
+"song": "15 דקות",
+"views": 521430,
+"date": "20110814",
+"added": "",
+"slug": "15-dkot",
+"page": false
+},
+{
+"id": "p00mcqK319w",
+"artist": "מתי כספי",
+"song": "עוד תראי את הדרך",
+"views": 516476,
+"date": "20110504",
+"added": "",
+"slug": "aod-trai-at-hdrk",
+"page": false
+},
+{
+"id": "RXEfhYRtw1w",
+"artist": "קובי אפללו",
+"song": "מהן המילים",
+"views": 490222,
+"date": "20150817",
+"added": "",
+"slug": "mhn-hmilim",
+"page": false
+},
+{
+"id": "kHVpm0hTp60",
+"artist": "נתי לוי & פיני חדד",
+"song": "אוהב אבל מציאותי",
+"views": 489928,
+"date": "20120608",
+"added": "",
+"slug": "aohb-abl-mtziaoti",
+"page": false
+},
+{
+"id": "KH7ZbTcDaNo",
+"artist": "כוורת",
+"song": "העולם שמח",
+"views": 483318,
+"date": "20110503",
+"added": "",
+"slug": "haolm-shmch",
+"page": false
+},
+{
+"id": "grYFlbIA28Q",
+"artist": "כרקוקלי & הפשוטע",
+"song": "הגיל דופק בדלת",
+"views": 476671,
+"date": "20221128",
+"added": "",
+"slug": "hgil-dopk-bdlt",
+"page": false
+},
+{
+"id": "fd_Ts-fYfcE",
+"artist": "עידן עמדי",
+"song": "בלי לבחור",
+"views": 470210,
+"date": "20250106",
+"added": "",
+"slug": "bli-lbchor",
+"page": false
+},
+{
+"id": "tQMfuUU3G5Q",
+"artist": "רביד פלוטניק עם זי קיי",
+"song": "לילה טוב אהובה",
+"views": 468009,
+"date": "20250109",
+"added": "",
+"slug": "lilh-tob-ahobh",
+"page": false
+},
+{
+"id": "_d592Oyy8z4",
+"artist": "עברי לידר",
+"song": "הרגע הריק",
+"views": 465996,
+"date": "20210118",
+"added": "",
+"slug": "hrga-hrik",
+"page": false
+},
+{
+"id": "PaToWPI28xA",
+"artist": "טיפקס",
+"song": "גבר רומנטי",
+"views": 458927,
+"date": "20100811",
+"added": "",
+"slug": "gbr-romnti",
+"page": false
+},
+{
+"id": "BZ6CZ4oFLu0",
+"artist": "יסמין מועלם",
+"song": "משהו בשמיים",
+"views": 453563,
+"date": "20250612",
+"added": "",
+"slug": "mshho-bshmiim",
+"page": false
+},
+{
+"id": "F_B_hR5Mbdg",
+"artist": "עידן עמדי",
+"song": "שום דבר אחר",
+"views": 447675,
+"date": "20250106",
+"added": "",
+"slug": "shom-dbr-achr",
+"page": false
+},
+{
+"id": "7XyFiUPK8S8",
+"artist": "יובל גולד",
+"song": "היה נחמד",
+"views": 410130,
+"date": "20250206",
+"added": "",
+"slug": "hih-nchmd",
+"page": false
+},
+{
+"id": "ZoLyUiKWbBM",
+"artist": "מידד טסה",
+"song": "קח את האור",
+"views": 408464,
+"date": "20240304",
+"added": "",
+"slug": "kch-at-haor",
+"page": false
+},
+{
+"id": "-nqLNpf1_is",
+"artist": "טיפקס",
+"song": "והפעם שיר אהבה",
+"views": 396028,
+"date": "20100811",
+"added": "",
+"slug": "ohpam-shir-ahbh",
+"page": false
+},
+{
+"id": "jJ6od1bdm9w",
+"artist": "זקני צפת",
+"song": "רק אל תלכי",
+"views": 387388,
+"date": "20200307",
+"added": "",
+"slug": "rk-al-tlki",
+"page": false
+},
+{
+"id": "wwT63fmS-m8",
+"artist": "הפרברים",
+"song": "פעם היו שם פרחים",
+"views": 383534,
+"date": "20110426",
+"added": "",
+"slug": "pam-hio-shm-prchim",
+"page": false
+},
+{
+"id": "AXW-QxpHQA0",
+"artist": "חיים אוליאל ושאנן סטריט",
+"song": "תני לו ללכת",
+"views": 381935,
+"date": "20110318",
+"added": "",
+"slug": "tni-lo-llkt",
+"page": false
+},
+{
+"id": "C9eH_-NsOFw",
+"artist": "רביד פלוטניק עם מיכל לוטן",
+"song": "עת הלבנה",
+"views": 372958,
+"date": "20250109",
+"added": "",
+"slug": "at-hlbnh",
+"page": false
+},
+{
+"id": "HrFVSZ6AI-g",
+"artist": "עפרה חזה",
+"song": "נערה ושמה כנרת",
+"views": 372616,
+"date": "20110407",
+"added": "",
+"slug": "narh-oshmh-knrt",
+"page": false
+},
+{
+"id": "yKvlSAe3TCw",
+"artist": "שירי מרפסת",
+"song": "לילה שנשכח",
+"views": 371181,
+"date": "20190807",
+"added": "",
+"slug": "lilh-shnshkch",
+"page": false
+},
+{
+"id": "TgnSHR0v9Bg",
+"artist": "דקלון ורמי דנוך",
+"song": "גדליה רבע איש",
+"views": 360954,
+"date": "20181014",
+"added": "",
+"slug": "gdlih-rba-aish",
+"page": false
+},
+{
+"id": "XQ6G_WG6gI0",
+"artist": "יהורם גאון",
+"song": "שמרי לי על המנגינה",
+"views": 351805,
+"date": "20111127",
+"added": "",
+"slug": "shmri-li-al-hmnginh",
+"page": false
+},
+{
+"id": "tXiAYL9wQ48",
+"artist": "בר צברי ומיכה שטרית",
+"song": "גולות",
+"views": 340761,
+"date": "20230213",
+"added": "",
+"slug": "golot",
+"page": false
+},
+{
+"id": "K_qBlnJQ8CQ",
+"artist": "עטר מיינר",
+"song": "מאה שנה",
+"views": 339636,
+"date": "20201219",
+"added": "",
+"slug": "mah-shnh",
+"page": false
+},
+{
+"id": "pDxuq7r5XCg",
+"artist": "יזהר אשדות",
+"song": "תן לי קצת ממך",
+"views": 337617,
+"date": "20111007",
+"added": "",
+"slug": "tn-li-ktzt-mmk",
+"page": false
+},
+{
+"id": "Vjusx05G9sI",
+"artist": "טונה",
+"song": "ראש למעלה",
+"views": 334087,
+"date": "20250529",
+"added": "",
+"slug": "rash-lmalh",
+"page": false
+},
+{
+"id": "J500yzmVPsA",
+"artist": "יגל אושרי",
+"song": "אף אחד לא מושלם",
+"views": 333077,
+"date": "20220129",
+"added": "",
+"slug": "af-achd-la-moshlm",
+"page": false
+},
+{
+"id": "HesNC9kj6NA",
+"artist": "וייב איש",
+"song": "חשבתי עלייך",
+"views": 331951,
+"date": "20240313",
+"added": "",
+"slug": "chshbti-aliik",
+"page": false
+},
+{
+"id": "dd9XgJTJDDA",
+"artist": "צביקה פיק",
+"song": "שוב נתחיל מחדש",
+"views": 328654,
+"date": "20110901",
+"added": "",
+"slug": "shob-ntchil-mchdsh",
+"page": false
+},
+{
+"id": "fA9hcqaW2o0",
+"artist": "רביד פלוטניק",
+"song": "אין מה לחפש בחוץ",
+"views": 328431,
+"date": "20250109",
+"added": "",
+"slug": "ain-mh-lchpsh-bchotz",
+"page": false
+},
+{
+"id": "dxZI76aE76g",
+"artist": "יושי",
+"song": "מתי יבוא מחר",
+"views": 322454,
+"date": "20210711",
+"added": "",
+"slug": "mti-iboa-mchr",
+"page": false
+},
+{
+"id": "-dBwCWegG5k",
+"artist": "אלון אולארצ'יק",
+"song": "היא הולכת בדרכים",
+"views": 314753,
+"date": "20110815",
+"added": "",
+"slug": "hia-holkt-bdrkim",
+"page": false
+},
+{
+"id": "g_khvMOruxg",
+"artist": "ברי סחרוף",
+"song": "חבל שאת לא",
+"views": 307284,
+"date": "20111103",
+"added": "",
+"slug": "chbl-shat-la",
+"page": false
+},
+{
+"id": "WQopNK-nwD4",
+"artist": "טונה",
+"song": "פיראטים",
+"views": 303771,
+"date": "20250529",
+"added": "",
+"slug": "piratim",
+"page": false
+},
+{
+"id": "au-R2XyvGRU",
+"artist": "טונה",
+"song": "קשר בתקצורת",
+"views": 303378,
+"date": "20250529",
+"added": "",
+"slug": "kshr-btktzort",
+"page": false
+},
+{
+"id": "ybIOoeLtGa8",
+"artist": "מאיר אריאל",
+"song": "שיר תת-מודע זמני",
+"views": 303230,
+"date": "20111010",
+"added": "",
+"slug": "shir-tt-moda-zmni",
+"page": false
+},
+{
+"id": "IC-QdLuCG44",
+"artist": "יסמין מועלם",
+"song": "יושב לי על הלב",
+"views": 299153,
+"date": "20250710",
+"added": "",
+"slug": "ioshb-li-al-hlb",
+"page": false
+},
+{
+"id": "YZnxF8zbt28",
+"artist": "דודא",
+"song": "געגועים",
+"views": 296750,
+"date": "20260524",
+"added": "",
+"slug": "gagoaim",
+"page": false
+},
+{
+"id": "i7x1O7oQ7jw",
+"artist": "מאור כהן",
+"song": "מה ידוע על היום הזה",
+"views": 293922,
+"date": "20110930",
+"added": "",
+"slug": "mh-idoa-al-hiom-hzh",
+"page": false
+},
+{
+"id": "xV07bczRS-E",
+"artist": "טיפקס",
+"song": "עוד שבת",
+"views": 280348,
+"date": "20120513",
+"added": "",
+"slug": "aod-shbt",
+"page": false
+},
+{
+"id": "xmSWPrNMA-U",
+"artist": "אסף אמדורסקי",
+"song": "רוך וקושי",
+"views": 275206,
+"date": "20110814",
+"added": "",
+"slug": "rok-okoshi",
+"page": false
+},
+{
+"id": "zDNilHSQooo",
+"artist": "רביד פלוטניק",
+"song": "בחשכה",
+"views": 272085,
+"date": "20250109",
+"added": "",
+"slug": "bchshkh",
+"page": false
+},
+{
+"id": "jFBWIZHqMm4",
+"artist": "שמעון בוסקילה",
+"song": "השיר שלא העזתי לשיר",
+"views": 267406,
+"date": "20150702",
+"added": "",
+"slug": "hshir-shla-hazti-lshir",
+"page": false
+},
+{
+"id": "7LE607a6t8k",
+"artist": "אהרן רזאל",
+"song": "עשרה אנשים",
+"views": 256122,
+"date": "20130729",
+"added": "",
+"slug": "ashrh-anshim",
+"page": false
+},
+{
+"id": "l-sVle51fB0",
+"artist": "אריאל זילבר",
+"song": "התמהוני",
+"views": 249581,
+"date": "20110626",
+"added": "",
+"slug": "htmhoni",
+"page": false
+},
+{
+"id": "y5AOyYB-P0s",
+"artist": "אלון עדר ולהקה",
+"song": "בתנועה במבט",
+"views": 241766,
+"date": "20220223",
+"added": "",
+"slug": "btnoah-bmbt",
+"page": false
+},
+{
+"id": "Sna5B5lvFfo",
+"artist": "אבישי רוזן",
+"song": "אני רוצה לעוף",
+"views": 237014,
+"date": "20121129",
+"added": "",
+"slug": "ani-rotzh-laof",
+"page": false
+},
+{
+"id": "4DuZQ22fSvw",
+"artist": "להקת הנח\"ל",
+"song": "נאום תשובה לרב חובל איטלקי",
+"views": 230484,
+"date": "20110705",
+"added": "",
+"slug": "naom-tshobh-lrb-chobl-aitlki",
+"page": false
+},
+{
+"id": "fk8wHy5LvPs",
+"artist": "עטר מיינר",
+"song": "עודועוד",
+"views": 229726,
+"date": "20201219",
+"added": "",
+"slug": "aodoaod",
+"page": false
+},
+{
+"id": "soUczGwZZgw",
+"artist": "אביתר בנאי",
+"song": "שיחות שלום",
+"views": 223641,
+"date": "20250115",
+"added": "",
+"slug": "shichot-shlom",
+"page": false
+},
+{
+"id": "1K89cq1ooKk",
+"artist": "עידן עמדי",
+"song": "חמש צולבות שני רימונים",
+"views": 223269,
+"date": "20250106",
+"added": "",
+"slug": "chmsh-tzolbot-shni-rimonim",
+"page": false
+},
+{
+"id": "lk0Ec8lle4o",
+"artist": "גלי עטרי",
+"song": "נפאל",
+"views": 207817,
+"date": "20140320",
+"added": "",
+"slug": "npal",
+"page": false
+},
+{
+"id": "Kax4yA6JqGk",
+"artist": "כוורת",
+"song": "טנגו צפרדעים",
+"views": 203498,
+"date": "20071027",
+"added": "",
+"slug": "tngo-tzprdaim",
+"page": false
+},
+{
+"id": "5bhY9ey_31c",
+"artist": "יסמין מועלם",
+"song": "רק הזמן",
+"views": 187469,
+"date": "20240926",
+"added": "",
+"slug": "rk-hzmn",
+"page": false
+},
+{
+"id": "BvAjmo5-ShA",
+"artist": "טונה",
+"song": "יאכטה",
+"views": 187171,
+"date": "20250529",
+"added": "",
+"slug": "iakth",
+"page": false
+},
+{
+"id": "YE-4kWIUqwU",
+"artist": "יוסי בנאי",
+"song": "לא אבקש את ידך",
+"views": 157239,
+"date": "20110824",
+"added": "",
+"slug": "la-abksh-at-idk",
+"page": false
+},
+{
+"id": "LC8E-0f3WKQ",
+"artist": "בלקן ביט בוקס & ברי סחרוף",
+"song": "לובסטר",
+"views": 154892,
+"date": "20180506",
+"added": "",
+"slug": "lobstr",
+"page": false
+},
+{
+"id": "ZQtOkcIxt5U",
+"artist": "מתי כספי",
+"song": "יום שישי חזר",
+"views": 154874,
+"date": "20250518",
+"added": "",
+"slug": "iom-shishi-chzr",
+"page": false
+},
+{
+"id": "baDIw_c5xYg",
+"artist": "ברי סחרוף & דודו טסה",
+"song": "הרגעים האחרונים של האור",
+"views": 152778,
+"date": "20201210",
+"added": "",
+"slug": "hrgaim-hachronim-shl-haor",
+"page": false
+},
+{
+"id": "Dg4IGTu1HRQ",
+"artist": "שירי מרפסת",
+"song": "הצוק",
+"views": 151424,
+"date": "20190807",
+"added": "",
+"slug": "htzok",
+"page": false
+},
+{
+"id": "55XU6hBelQQ",
+"artist": "יוסי בנאי ואילנה רובינא",
+"song": "הגבירה בחום",
+"views": 150395,
+"date": "20121111",
+"added": "",
+"slug": "hgbirh-bchom",
+"page": false
+},
+{
+"id": "3C0i0e9ZHKU",
+"artist": "מוקי וברי סחרוף",
+"song": "מן עצבות שכזו",
+"views": 149880,
+"date": "20190617",
+"added": "",
+"slug": "mn-atzbot-shkzo",
+"page": false
+},
+{
+"id": "joHqwzeu658",
+"artist": "טונה",
+"song": "אין לזה סוף",
+"views": 145926,
+"date": "20250529",
+"added": "",
+"slug": "ain-lzh-sof",
+"page": false
+},
+{
+"id": "JJQNWCRvvHA",
+"artist": "עטר מיינר",
+"song": "חדש בעיר",
+"views": 143133,
+"date": "20201219",
+"added": "",
+"slug": "chdsh-bair",
+"page": false
+},
+{
+"id": "MHhSpDzOn0s",
+"artist": "תיסלם",
+"song": "פרצופה של המדינה",
+"views": 143027,
+"date": "20151213",
+"added": "",
+"slug": "prtzoph-shl-hmdinh",
+"page": false
+},
+{
+"id": "mUmQQavDFYE",
+"artist": "אסף אמדורסקי",
+"song": "יותר מדי פרחים",
+"views": 142924,
+"date": "20240130",
+"added": "",
+"slug": "iotr-mdi-prchim",
+"page": false
+},
+{
+"id": "r_k0Rrs--nw",
+"artist": "ברי סחרוף & דודו טסה",
+"song": "על פי הבאר",
+"views": 134056,
+"date": "20201210",
+"added": "",
+"slug": "al-pi-hbar",
+"page": false
+},
+{
+"id": "ZmWWZPBO-HQ",
+"artist": "אלון עדר ולהקה",
+"song": "נעבור את המדבר",
+"views": 130241,
+"date": "20220223",
+"added": "",
+"slug": "nabor-at-hmdbr",
+"page": false
+},
+{
+"id": "MCcoNr_GaiU",
+"artist": "דודא",
+"song": "היגיינה",
+"views": 120486,
+"date": "20261101",
+"added": "",
+"slug": "higiinh",
+"page": false
+},
+{
+"id": "ta61I0Ufw08",
+"artist": "מוקי",
+"song": "מה שעובר עליי",
+"views": 109584,
+"date": "20220712",
+"added": "",
+"slug": "mh-shaobr-alii",
+"page": false
+},
+{
+"id": "m4QkFwPgFf8",
+"artist": "ברי סחרוף & דודו טסה",
+"song": "לעת ערב",
+"views": 108661,
+"date": "20201210",
+"added": "",
+"slug": "lat-arb",
+"page": false
+},
+{
+"id": "pQX0jXwUuhM",
+"artist": "ברי סחרוף & דודו טסה",
+"song": "מה אספר לך",
+"views": 105965,
+"date": "20201210",
+"added": "",
+"slug": "mh-aspr-lk",
+"page": false
+},
+{
+"id": "QYgVN25j5Ro",
+"artist": "עוזי חיטמן",
+"song": "עושה את עצמי",
+"views": 104326,
+"date": "20150711",
+"added": "",
+"slug": "aoshh-at-atzmi",
+"page": false
+},
+{
+"id": "JyT3EJMsZ64",
+"artist": "ישי ומיכאל סוויסה",
+"song": "זמן טס",
+"views": 94384,
+"date": "20230820",
+"added": "",
+"slug": "zmn-ts",
+"page": false
+},
+{
+"id": "QpNxuQFNXqc",
+"artist": "הדג נחש",
+"song": "דג לייף",
+"views": 92745,
+"date": "20230919",
+"added": "",
+"slug": "dg-liif",
+"page": false
+},
+{
+"id": "kcjsUPcJDbQ",
+"artist": "וייב איש",
+"song": "כל יום קצת",
+"views": 88509,
+"date": "20250224",
+"added": "",
+"slug": "kl-iom-ktzt",
+"page": false
+},
+{
+"id": "mznD-oHKSzE",
+"artist": "חיים משה",
+"song": "קום בן אדם",
+"views": 88470,
+"date": "20160707",
+"added": "",
+"slug": "kom-bn-adm",
+"page": false
+},
+{
+"id": "bJ7jX4VWpAY",
+"artist": "קוקי לבנה ילד",
+"song": "למה הייתי רוצה?",
+"views": 84513,
+"date": "20250107",
+"added": "",
+"slug": "lmh-hiiti-rotzh",
+"page": false
+},
+{
+"id": "GKJtvR2Ha8Y",
+"artist": "אביתר בנאי",
+"song": "מחפש את הכיוון",
+"views": 83845,
+"date": "20231231",
+"added": "",
+"slug": "mchpsh-at-hkioon",
+"page": false
+},
+{
+"id": "XcdTPRz3D38",
+"artist": "דני סנדרסון והלהקה",
+"song": "מדינה קטנה בהסגר",
+"views": 82227,
+"date": "20200327",
+"added": "",
+"slug": "mdinh-ktnh-bhsgr",
+"page": false
+},
+{
+"id": "tF4e-GLvznU",
+"artist": "מרסדס בנד",
+"song": "למה מוזר",
+"views": 81367,
+"date": "20190603",
+"added": "",
+"slug": "lmh-mozr",
+"page": false
+},
+{
+"id": "e-gy4PmSU7w",
+"artist": "יושי",
+"song": "3 משאלות",
+"views": 80088,
+"date": "20250407",
+"added": "",
+"slug": "3-mshalot",
+"page": false
+},
+{
+"id": "6jNevZHhmtA",
+"artist": "קורין אלאל",
+"song": "אי שם בלב",
+"views": 76547,
+"date": "20110719",
+"added": "",
+"slug": "ai-shm-blb",
+"page": false
+},
+{
+"id": "d6Bm6FCZvhU",
+"artist": "אריאל הורוביץ",
+"song": "סיגל נחמיאס",
+"views": 75116,
+"date": "20121018",
+"added": "",
+"slug": "sigl-nchmias",
+"page": false
+},
+{
+"id": "3kXnjsLfIVs",
+"artist": "רביד פלוטניק עם טאבו פלוס",
+"song": "שגרה בזמן מלחמה",
+"views": 74390,
+"date": "20250109",
+"added": "",
+"slug": "shgrh-bzmn-mlchmh",
+"page": false
+},
+{
+"id": "MtR6mLHglCw",
+"artist": "אלון אולארצ'יק",
+"song": "כל הליל אני בגנך",
+"views": 70781,
+"date": "20110815",
+"added": "",
+"slug": "kl-hlil-ani-bgnk",
+"page": false
+},
+{
+"id": "HnDbhHWTT_c",
+"artist": "כנסיית השכל",
+"song": "האביב הנצחי",
+"views": 65947,
+"date": "20120606",
+"added": "",
+"slug": "habib-hntzchi",
+"page": false
+},
+{
+"id": "qTxqV-QqWBM",
+"artist": "קורין אלאל",
+"song": "אמור לי",
+"views": 64128,
+"date": "20110415",
+"added": "",
+"slug": "amor-li",
+"page": false
+},
+{
+"id": "qITrMgpZUU8",
+"artist": "כנסיית השכל ואיתן רייטר",
+"song": "השיר מהגן",
+"views": 61246,
+"date": "20260524",
+"added": "",
+"slug": "hshir-mhgn",
+"page": false
+},
+{
+"id": "2UxpvqdfE8Q",
+"artist": "דויד ברוזה ותומר ישעיהו",
+"song": "סוסים יפים",
+"views": 59833,
+"date": "20210821",
+"added": "",
+"slug": "sosim-ipim",
+"page": false
+},
+{
+"id": "a-em8sgObSU",
+"artist": "אלון עדר כהן אריאל זילבר",
+"song": "הנשמה הכי נצחית שלי",
+"views": 51076,
+"date": "20230509",
+"added": "",
+"slug": "hnshmh-hki-ntzchit-shli",
+"page": false
+},
+{
+"id": "QnHt8Nf-Jw0",
+"artist": "אריאל זילבר",
+"song": "אש אש",
+"views": 46430,
+"date": "20250806",
+"added": "",
+"slug": "ash-ash",
+"page": false
+},
+{
+"id": "uMrKPuBXm_A",
+"artist": "חיים אוליאל",
+"song": "סימני סערה",
+"views": 45147,
+"date": "20110913",
+"added": "",
+"slug": "simni-sarh",
+"page": false
+},
+{
+"id": "vJPCl6yD_bs",
+"artist": "מרסדס בנד",
+"song": "חברים מהקיבוץ",
+"views": 44115,
+"date": "20190211",
+"added": "",
+"slug": "chbrim-mhkibotz",
+"page": false
+},
+{
+"id": "VHXsnwdSNkU",
+"artist": "אהרן רזאל & עדי רן",
+"song": "השמחה האמיתית",
+"views": 41948,
+"date": "20260618",
+"added": "",
+"slug": "hshmchh-hamitit",
+"page": false
+},
+{
+"id": "dpBDj8OilQQ",
+"artist": "יוני רכטר",
+"song": "זה כל מה שיש",
+"views": 40536,
+"date": "20141122",
+"added": "",
+"slug": "zh-kl-mh-shish",
+"page": false
+},
+{
+"id": "n_0SSwbhqtQ",
+"artist": "אהוד מנור",
+"song": "ימי בנימינה",
+"views": 37873,
+"date": "20170305",
+"added": "",
+"slug": "imi-bniminh",
+"page": false
+},
+{
+"id": "3WIKyZPOuDs",
+"artist": "דודו טסה",
+"song": "שלושת הקופים",
+"views": 34246,
+"date": "20240623",
+"added": "",
+"slug": "shlosht-hkopim",
+"page": false
+},
+{
+"id": "rxJQctsIpDg",
+"artist": "אלון עדר ותומר ישעיהו",
+"song": "סוכר טלויזיה",
+"views": 18446,
+"date": "20220706",
+"added": "",
+"slug": "sokr-tloizih",
+"page": false
+},
+{
+"id": "-wepOptWlfg",
+"artist": "דני סנדרסון",
+"song": "פיקששתי",
+"views": 15828,
+"date": "20220407",
+"added": "",
+"slug": "pikshshti",
+"page": false
+},
+{
+"id": "aYTmk9Zzbys",
+"artist": "קורין אלאל",
+"song": "תמונה בכחול",
+"views": 14447,
+"date": "20130531",
+"added": "",
+"slug": "tmonh-bkchol",
+"page": false
+},
+{
+"id": "SF_IgMiLM6c",
+"artist": "איתי לוי",
+"song": "לא עצרנו",
+"views": 4966,
+"date": "20230524",
+"added": "",
+"slug": "la-atzrno",
+"page": false
+},
+{
+"id": "L2UV08m0DqY",
+"artist": "עדן חסון",
+"song": "מטפסים על הקירות",
+"views": 0,
+"date": "20220809",
+"added": "",
+"slug": "mtpsim-al-hkirot",
+"page": false
+},
+{
+"id": "3PHsKI49B_g",
+"artist": "שלומי שבת ורותם כהן",
+"song": "גם אם טעיתי",
+"views": 0,
+"date": "20211121",
+"added": "",
+"slug": "gm-am-taiti",
+"page": false
+},
+{
+"id": "0B3_F7ji3AI",
+"artist": "יגל אושרי",
+"song": "למה לך לטוס",
+"views": 0,
+"date": "20211128",
+"added": "",
+"slug": "lmh-lk-ltos",
+"page": false
+},
+{
+"id": "G4kiiBMBLRo",
+"artist": "עפרה חזה",
+"song": "סימנים של אוהבים",
+"views": 0,
+"date": "20100907",
+"added": "",
+"slug": "simnim-shl-aohbim",
+"page": false
+},
+{
+"id": "CO5oDcJLiQw",
+"artist": "רביד פלוטניק",
+"song": "בורות היא ברכה",
+"views": 0,
+"date": "20250109",
+"added": "",
+"slug": "borot-hia-brkh",
+"page": false
+},
+{
+"id": "-1QW0vWBX9s",
+"artist": "אליאב זוהר",
+"song": "תפתחי חלון",
+"views": 0,
+"date": "20220411",
+"added": "",
+"slug": "tptchi-chlon",
+"page": false
+},
+{
+"id": "VRXt_uFWDvQ",
+"artist": "פאר טסי",
+"song": "שמש ים",
+"views": 0,
+"date": "20190703",
+"added": "",
+"slug": "shmsh-im",
+"page": false
+},
+{
+"id": "UzIQGg1Wvc8",
+"artist": "עומר אדם",
+"song": "נתפוצץ כמו ילדים",
+"views": 0,
+"date": "20230601",
+"added": "",
+"slug": "ntpotztz-kmo-ildim",
+"page": false
+},
+{
+"id": "H4mJsHsT2Os",
+"artist": "ברי סחרוף & דודו טסה",
+"song": "הכי קרוב שיש",
+"views": 0,
+"date": "20201210",
+"added": "",
+"slug": "hki-krob-shish",
+"page": false
+},
+{
+"id": "FGGNveCaGxg",
+"artist": "בועז שרעבי",
+"song": "כל אותם זמנים",
+"views": 0,
+"date": "20130603",
+"added": "",
+"slug": "kl-aotm-zmnim",
+"page": false
+},
+{
+"id": "GAcllzQ2eHc",
+"artist": "ינון אליה",
+"song": "סך הכל ילדה",
+"views": 0,
+"date": "20260516",
+"added": "",
+"slug": "sk-hkl-ildh",
+"page": false
+},
+{
+"id": "G6JVm6QojoM",
+"artist": "אייל גולן",
+"song": "איזה בוקר",
+"views": 0,
+"date": "20230328",
+"added": "",
+"slug": "aizh-bokr",
+"page": false
+},
+{
+"id": "iWP1gSsz_Ik",
+"artist": "מיכאל סוויסה",
+"song": "פשטידה",
+"views": 0,
+"date": "20180516",
+"added": "",
+"slug": "pshtidh",
+"page": false
+},
+{
+"id": "JdkBE5WZggw",
+"artist": "קובי ממן",
+"song": "אבוד בלילות",
+"views": 0,
+"date": "20230606",
+"added": "",
+"slug": "abod-blilot",
+"page": false
+}
+]
+}

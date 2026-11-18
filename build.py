@@ -367,7 +367,7 @@ def mapa_html():
         if not _m:
             continue
         _meta = json.loads(_m.group(1))
-        if not in_sitemap(_meta):
+        if not in_sitemap(_meta) or _meta.get("no_mapa"):
             continue
         rel = _p.relative_to(SRC).as_posix()
         u = "/" + (rel[:-len("index.html")] if rel.endswith("index.html") else rel)
@@ -430,6 +430,23 @@ CHESED_PARTNER = {
 CHESED_NO_PATH = {}  # כרגע ריק: לכל הכלים עם מכסה יש קוד שותף (11.11.2026)
 CHESED_SKIP = SEO_SKIP | {"404"}
 # קוד שותף אחד לכל הכלים עם מכסה: נשמר ב-localStorage 'kelim-partner' (kelim.js), הכלים שולחים אותו בכותרת x-kelim-partner
+# פס "החדשות ב-3 דקות" (18.11.2026, תוכנית העצמת החדשות): בדף הבית של הכלים ובדפים הנצפים ביותר לפי GA4 (21.10–18.11).
+# פס דק ורגוע בראש התוכן, לא קופץ ולא מסתיר, בלי כותרות חדשות (רוגע בדפי הכלים). news-bar.js ממלא רק את שם המהדורה והשעה.
+NEWSBAR_PAGES = {"/kelim/", "/kodesh/", "/kelim/tamlul/", "/kodesh/mohalim/", "/kelim/shikum/", "/kelim/machshev/fax/",
+                 "/kelim/machshev/chatima/", "/limudim/dapim/", "/kelim/kehila/trempim/", "/kodesh/mohalim/bli-atar/",
+                 "/kodesh/kartis/", "/kelim/tochen/tirgum/"}
+NEWSBAR_URL = "/kelim/machshev/chadashot/?utm_source=home"
+NEWSBAR_HTML = ('<aside class="newsbar no-print" data-newsbar aria-label="החדשות ב-3 דקות">'
+                f'<a class="nb-main" href="{NEWSBAR_URL}" data-nb="open"><span class="nb-ic" aria-hidden="true">📰</span>'
+                '<span class="nb-txt"><b>החדשות ב-3 דקות</b> <span class="nb-ed" data-nb-ed>– המהדורה האחרונה</span>'
+                '<span class="nb-sub">5 נקודות רגועות, 3 פעמים ביום</span></span><span class="nb-go" aria-hidden="true">←</span></a>'
+                f'<a class="nb-bell" href="{NEWSBAR_URL}#nw-push" data-nb="bell" aria-label="לקבל התראה כשהסיכום יוצא">🔔<span class="nb-bell-t"> לקבל התראה</span></a></aside>')
+
+
+def news_bar(url_path):
+    return NEWSBAR_HTML if url_path in NEWSBAR_PAGES else ""
+
+
 CHESED_CODE = ('<details class="chesed-p"><summary>🤝 יש לי קוד שותף</summary><label>קוד השותף שקיבלתי '
                '<input type="text" inputmode="numeric" dir="ltr" maxlength="12" autocomplete="off" placeholder="123-45678" data-partner-code></label>'
                '<span class="chesed-ok" data-partner-ok hidden>✓ נשמר. תודה שאתם שותפים ❤ ללא הגבלה בכל הכלים.</span>'
@@ -587,22 +604,28 @@ for path in sorted(SRC.rglob("*.html")):
             "nav": "".join(f'<a href="{h}"' + (' aria-current="page"' if meta.get("nav") == k else "") + f'>{l}</a>' for k, h, l in site["nav"]),
             "tool": meta.get("tool", ""),
             "shipurim": shipurim_line(meta.get("tool", "")),
-            "chesed": chesed_band(url_path, dict(meta, _login="gsi/client" in raw or "accounts.google.com" in raw)),
+            "chesed": news_bar(url_path) + chesed_band(url_path, dict(meta, _login="gsi/client" in raw or "accounts.google.com" in raw)),
             "fb_note": fb_note(meta.get("tool", "")),
             "lead_endpoint": LEAD_ENDPOINT,
             "site_css": "".join(f'<link rel="stylesheet" href="{c}">' for c in site.get("css", [])),
         })
         rep["foot"] += "".join(f'<script src="{j}" defer></script>' for j in site.get("js", []))
+        if url_path in NEWSBAR_PAGES:
+            rep["foot"] += '<script src="/assets/news-bar.js" defer></script>'
         if not meta.get("no_precache"):  # דפים רבים מאותו סוג (פרקי תהילים): לא נשמרים מראש בטלפון, רק כשנכנסים אליהם
             site_pages[key].append(url_path)
     for k, v in rep.items():
         html = html.replace("{{" + k + "}}", v)
     for key in ["yerushalaim", "sipur", "hachana", "moed", "madrich", "kartis"]:
         html = html.replace("{{cur:" + key + "}}", ' aria-current="page"' if meta.get("nav") == key else "")
-    if meta.get("manifest"):  # דף שמותקן כאפליקציה משלו (למשל הגשר באייפון): manifest נפרד ליד הדף
-        man = dict(meta["manifest"])
-        html = re.sub(r'<link rel="manifest" href="[^"]*">', f'<link rel="manifest" href="{url_path}manifest.webmanifest">', html, count=1)
+    if meta.get("manifest") or meta.get("manifest_of"):  # דף שמותקן כאפליקציה משלו (הגשר, הטרמפים): manifest נפרד ליד הדף
+        # manifest_of: דף-בן שמשתמש באפליקציה של דף אחר (הלו"ז והפרטיות של הטרמפים) – {"href", "short_name", "apple_touch_icon"}
+        man = dict(meta.get("manifest") or meta["manifest_of"])
+        href = man.get("href") or f"{url_path}manifest.webmanifest"
+        html = re.sub(r'<link rel="manifest" href="[^"]*">', f'<link rel="manifest" href="{href}">', html, count=1)
         html = re.sub(r'(<meta name="apple-mobile-web-app-title" content=")[^"]*', lambda m: m.group(1) + man.get("short_name", ""), html, count=1)
+        if man.get("apple_touch_icon"):
+            html = html.replace('<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">', f'<link rel="apple-touch-icon" href="{man["apple_touch_icon"]}">')
         if man.get("display") == "browser":  # באייפון: האייקון נפתח בספארי עצמו – עם אותו אחסון (והצימוד) של הדף
             html = html.replace('<meta name="apple-mobile-web-app-capable" content="yes">', '<meta name="apple-mobile-web-app-capable" content="no">')
             html = html.replace('<meta name="mobile-web-app-capable" content="yes">', '<meta name="mobile-web-app-capable" content="no">')
@@ -611,7 +634,12 @@ for path in sorted(SRC.rglob("*.html")):
     out.write_text(html, encoding="utf-8")
     if meta.get("manifest"):
         man = dict({"id": url_path, "start_url": url_path, "scope": url_path, "dir": "rtl", "lang": "he"}, **meta["manifest"])
+        man.pop("apple_touch_icon", None)
         (out.parent / "manifest.webmanifest").write_text(json.dumps(man, ensure_ascii=False, indent=1), encoding="utf-8")
+    if meta.get("sw_src"):  # service worker משלו לאפליקציה של הדף (טווח = תיקיית הדף), למשל התראות הטרמפים
+        _sw = (ROOT / meta["sw_src"]).read_text(encoding="utf-8")
+        _sw = _sw.replace("__CACHE__", url_path.strip("/").replace("/", "-") + "-" + datetime.datetime.now().strftime("%Y%m%d%H%M"))
+        (out.parent / "sw.js").write_text(_sw, encoding="utf-8")
     if site and not meta.get("noindex") and not meta.get("no_precache") and not re.search(r"/(pratiut|negishut|tosaf)/$", url_path):
         # רשימת הכלים לתוסף הכרום (kelim/tools.json): כלי חדש באתר מופיע בתוסף בלי לשלוח גרסה לחנות
         cr = meta.get("crumbs") or []

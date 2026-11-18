@@ -48,6 +48,7 @@
     'name': 'חסר שם.', 'agree': 'צריך לסמן שאתה מעל 18 ומסכים לכללים.', 'paybox': 'קישור הפייבוקס לא נראה תקין.', 'profile': 'צריך להשלים פרופיל.',
     'seats': 'במונית אפשר עד 3 מצטרפים.', 'too many rides': 'יש לך כבר הרבה נסיעות פתוחות.', 'too many requests': 'שלחת הרבה בקשות היום. נסה שוב מחר.', 'place out of range': 'הכתובת מחוץ לישראל.',
     'already rated': 'כבר דירגת את הטרמפ הזה.', 'too early': 'אפשר לדרג אחרי הטרמפ.', 'stars': 'בחרו כמה כוכבים.',
+    'too many wants': 'יש לך כבר 10 בקשות "להודיע לי". מחקו אחת מהרשימה ונסו שוב.', 'blocked': 'החשבון חסום. אפשר לכתוב לגילעד.',
   };
   var errText = function (e) { return ERR[e && e.code] || 'משהו השתבש. נסה שוב בעוד רגע.'; };
 
@@ -211,7 +212,8 @@
     fetch(API + '/stats').then(function (r) { return r.json(); }).then(function (s) {
       if (!s || s.rides == null) return;
       $('tp-stats').innerHTML = '<span><b>' + s.rides + '</b> נסיעות פתוחות</span><span><b>' + s.users + '</b> חברים במיזם</span><span><b>' + s.joined + '</b> טרמפים שאושרו</span>' +
-        (s.taxis ? '<span><b>' + s.taxis + '</b> מוניות משותפות</span>' : '');
+        (s.taxis ? '<span><b>' + s.taxis + '</b> מוניות משותפות</span>' : '') +
+        (s.wants ? '<span><b>' + s.wants + '</b> ' + (s.wants === 1 ? 'מחפש' : 'מחפשים') + ' טרמפ</span>' : '');
     }).catch(function () {});
   }
 
@@ -256,13 +258,38 @@
     }).catch(function () { $('tp-login-msg').textContent = 'הכניסה לא הצליחה. נסו שוב.'; });
   }
   function logout(silent) {
+    if (!silent) pushOff(token);
     token = null; me = null; lsSet(TOKEN_KEY, null);
-    $('tp-app').hidden = true; $('tp-guest').hidden = false;
+    setGuest();
     if (!silent && window.google && google.accounts) google.accounts.id.disableAutoSelect();
+  }
+  // אורח: רואה את החיפוש, הלוח והטופס; כניסה רק כשמבקשים, מפרסמים או שומרים "להודיע לי"
+  function setGuest() {
+    $('tp-guest').hidden = false; $('tp-main').hidden = false;
+    ['tp-me', 'tp-rank', 'tp-cert', 'tp-profile', 'tp-badge', 'rd-wants'].forEach(function (id) { $(id).hidden = true; });
+    $('dr-list').innerHTML = '<p class="kh-empty">אחרי הכניסה יופיעו כאן הנסיעות שפרסמת.</p>';
+    $('tp-push-slot').innerHTML = '';
+  }
+  var loggedIn = function () { return !!(token && me && me.ready); };
+  var pending = null;
+  // פעולה שצריכה כניסה: נשמרת, ורצה מיד אחרי הכניסה (והשלמת הפרופיל)
+  function needLogin(why, fn) {
+    pending = fn;
+    if (token && !me) return; // עוד בודקים את הכניסה השמורה
+    var w = $('tp-login-why'); w.textContent = why; w.hidden = false;
+    var box = $('tp-login-box');
+    box.classList.add('flash'); setTimeout(function () { box.classList.remove('flash'); }, 2500);
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    used('login_ask');
+  }
+  function runPending() {
+    if (!pending) return;
+    var f = pending; pending = null; $('tp-login-why').hidden = true;
+    setTimeout(f, 60);
   }
 
   function showApp() {
-    $('tp-guest').hidden = true; $('tp-app').hidden = false;
+    $('tp-guest').hidden = true; $('tp-me').hidden = false;
     renderMe();
     if (!me.ready) {
       $('tp-profile').hidden = false; $('tp-main').hidden = true;
@@ -270,7 +297,9 @@
       $('pf-board').checked = me.board !== false;
     } else {
       $('tp-profile').hidden = true; $('tp-main').hidden = false;
-      loadInbox(); loadMyRides();
+      loadInbox(); loadMyRides(); loadWants();
+      pushSync().then(function () { if (lsGet('trempim_acted')) offerPush($('tp-push-slot')); });
+      runPending();
       // הגיעו מתזכורת ביומן: ישר ל"שוב כמו בפעם הקודמת"
       if (location.hash === '#again') { tab('drive'); setTimeout(function () { $('dr-again').scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300); }
     }
@@ -433,10 +462,17 @@
     });
   }
   function tab(name) {
+    if (name === 'inbox' && !loggedIn()) { needLogin('כדי לראות את הבקשות שלך צריך להיכנס.', function () { tab('inbox'); }); return; }
     document.querySelectorAll('.tp-tabs button').forEach(function (x) { x.classList.toggle('on', x.getAttribute('data-tab') === name); });
     document.querySelectorAll('.tp-pane').forEach(function (p) { p.hidden = p.getAttribute('data-pane') !== name; });
     if (name === 'inbox') loadInbox();
     if (name === 'drive') loadMyRides();
+    keepPushOffer();
+  }
+  // הצעת ההתראות יושבת בכרטיס של הפעולה. עוברים ללשונית אחרת – היא עוברת למעלה, מעל הלשוניות, כדי שלא תיעלם
+  function keepPushOffer() {
+    var x = document.querySelector('.tp-push'), slot = $('tp-push-slot');
+    if (x && slot && x.parentNode !== slot && !x.offsetParent) slot.appendChild(x);
   }
   function chips(id, multi) {
     var box = $(id);
@@ -450,7 +486,7 @@
   var chipVal = function (id, attr) { var b = $(id).querySelector('button.on'); return b ? b.getAttribute(attr) : null; };
 
   /* ---------- טרמפיסט ---------- */
-  var lastSearch = null;
+  var lastSearch = null, lastWhen = 'today';
   function initRider() {
     autocomplete($('rd-from')); autocomplete($('rd-to'));
     chips('rd-when'); chips('rd-radius');
@@ -460,7 +496,7 @@
   function search() {
     var msg = $('rd-msg'), list = $('rd-list');
     msg.textContent = 'מחפש מי עובר דרכך...'; list.innerHTML = '';
-    var w = chipVal('rd-when', 'data-w');
+    var w = chipVal('rd-when', 'data-w'); lastWhen = w;
     var dates = w === 'today' ? [addDays(0)] : w === 'tomorrow' ? [addDays(1)] : [0, 1, 2, 3, 4, 5, 6].map(addDays);
     Promise.all([placeOf($('rd-from')), placeOf($('rd-to'))]).then(function (pp) {
       lastSearch = { from: pp[0], to: pp[1], dates: dates, radius: +chipVal('rd-radius', 'data-r') };
@@ -470,7 +506,7 @@
       lastMatches = j.matches;
       msg.textContent = j.matches.length ? 'נמצאו ' + j.matches.length + ' נסיעות שעוברות לידך:' : '';
       list.innerHTML = j.matches.length ? j.matches.map(matchHtml).join('') :
-        '<p class="kh-empty">עוד אין מי שעובר כאן בזמן הזה. המיזם צומח מאנשים כמוך: שלחו את הדף לקבוצה של השכונה, וחזרו לבדוק מחר.</p>';
+        '<p class="kh-empty">עוד אין מי שעובר כאן בזמן הזה. המיזם צומח מאנשים כמוך: שלחו את הדף לקבוצה של השכונה.</p>' + wantOfferHtml();
     }).catch(function (err) {
       msg.textContent = err.message === 'notfound' || err.message === 'empty' ? 'לא מצאתי את הכתובת. כתבו רחוב ועיר ובחרו מהרשימה.' : errText(err);
     });
@@ -512,6 +548,9 @@
   var lastMatches = [];
   function initRiderActions() {
     $('rd-list').addEventListener('click', function (e) {
+      var wp = e.target.closest('#wt-part button');
+      if (wp) { $('wt-part').querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === wp); }); return; }
+      if (e.target.closest('#wt-save')) { saveWant(); return; }
       var f = e.target.closest('button[data-flag]');
       if (f) {
         var why = prompt('מה פוגע בתגובה הזאת? (גילעד יבדוק)', 'תגובה פוגענית');
@@ -525,13 +564,15 @@
       var card = b.closest('.tp-match');
       var m = lastMatches[+b.getAttribute('data-req')];
       if (!m) return;
+      if (!loggedIn()) { needLogin('כדי לבקש להצטרף צריך להיכנס פעם אחת עם גוגל. מיד אחרי הכניסה נמשיך לבקשה.', function () { if (document.body.contains(b)) b.click(); }); return; }
       var note = prompt(m.taxi ? 'רוצה להוסיף משהו למי שמזמין את המונית? (לא חובה)' : 'רוצה להוסיף משהו לנהג? (לא חובה)', '');
       if (note === null) return;
       b.disabled = true;
       api('/requests', { ride: m.ride, date: m.date, pickup: lastSearch.from, drop: lastSearch.to, mode: b.getAttribute('data-mode'), msg: note })
       .then(function () {
         used('request');
-        card.querySelector('.acts').innerHTML = '<span class="tp-st pending">הבקשה נשלחה. ' + (m.taxi ? 'מי שמזמין את המונית' : 'הנהג') + ' יקבל אותה כשייכנס לאתר, ותראה כאן בלשונית הבקשות כשיאשר.</span>';
+        card.querySelector('.acts').innerHTML = '<span class="tp-st pending">הבקשה נשלחה. ' + (m.taxi ? 'מי שמזמין את המונית' : 'הנהג') + ' מקבל אותה עכשיו, ותראה בלשונית הבקשות כשיאשר.</span>';
+        acted(card);
       }).catch(function (err) { b.disabled = false; alert(errText(err)); });
     });
   }
@@ -588,6 +629,7 @@
   }
   function publish() {
     var msg = $('dr-msg');
+    if (!loggedIn()) { needLogin('כדי לפרסם נסיעה צריך להיכנס פעם אחת עם גוגל. מה שמילאת נשמר, ומיד אחרי הכניסה הנסיעה תתפרסם.', publish); return; }
     var reg = chipVal('dr-kind', 'data-k') === 'regular';
     var days = [].map.call($('dr-days').querySelectorAll('button.on'), function (b) { return +b.getAttribute('data-d'); });
     if (reg && !days.length) { msg.textContent = 'בחרו לפחות יום אחד.'; return; }
@@ -609,12 +651,18 @@
       used(tx ? 'publish-taxi' : 'publish');
       var got = j && j.ride && j.ride.points;
       var when = reg ? 'בימים ' + days.map(function (d) { return LET[d] + "'"; }).join(' ') : dayLabel($('dr-date').value);
-      var share = tx ? 'אני לוקח מונית ' + when + ' ב-' + $('dr-time').value + ' מ' + from.label + ' ל' + to.label + '. מי שבדרך מוזמן להצטרף, ומתחלקים במונה: ' + PAGE :
-        'אני נוסע ' + when + ' ב-' + $('dr-time').value + ' מ' + from.label + ' ל' + to.label + ', ויש לי מקום. מי שבדרך מוזמן להצטרף: ' + PAGE;
-      msg.innerHTML = 'הנסיעה פורסמה! כל מי שבדרך יראה אותה.' + (got ? ' <b>+' + got + ' נקודות חסד</b>' + (reg ? ', ועוד 15 כשהיא תהיה פעילה.' : '.') : '') + ' <a class="btn btn-line btn-sm" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(share) + '">לספר בקבוצה של השכונה</a>';
+      var link = j && j.ride && j.ride.id ? PAGE + '?r=' + j.ride.id + '&utm_source=wa_ride' : PAGE;
+      var share = tx ? 'אני לוקח מונית ' + when + ' ב-' + $('dr-time').value + ' מ' + from.label + ' ל' + to.label + '. מי שבדרך מוזמן להצטרף, ומתחלקים במונה. לבקש בלחיצה: ' + link :
+        'אני נוסע ' + when + ' ב-' + $('dr-time').value + ' מ' + from.label + ' ל' + to.label + ', ויש לי מקום. מי שבדרך מוזמן להצטרף, לבקש בלחיצה: ' + link;
+      msg.innerHTML = 'הנסיעה פורסמה! כל מי שבדרך יראה אותה.' + (got ? ' <b>+' + got + ' נקודות חסד</b>' + (reg ? ', ועוד 15 כשהיא תהיה פעילה.' : '.') : '') +
+        '<div class="tp-share"><a class="btn btn-gold btn-sm" target="_blank" rel="noopener" id="dr-wa" href="https://wa.me/?text=' + encodeURIComponent(share) + '">📣 לשלוח לקבוצת הווטסאפ של השכונה</a>' +
+        (navigator.share ? '<button type="button" class="btn btn-line btn-sm" id="dr-share">לשתף בדרך אחרת</button>' : '') + '</div>';
+      $('dr-wa').addEventListener('click', function () { used('share_ride'); });
+      if ($('dr-share')) $('dr-share').addEventListener('click', function () { navigator.share({ text: share }).then(function () { used('share_ride'); }).catch(function () {}); });
       drRoute = null; $('dr-route').innerHTML = '';
       if (!sent.days) { $('dr-msg').insertAdjacentHTML('beforeend', afterOnce(sent)); wireAfter(sent); }
-      rememberRide(sent); loadMyRides(); loadStats(); refreshMe();
+      rememberRide(sent); loadMyRides(); loadStats(); refreshMe(); loadOpen();
+      acted(msg);
     }).catch(function (err) {
       msg.textContent = err.message === 'notfound' || err.message === 'empty' ? 'לא מצאתי את הכתובת. כתבו רחוב ועיר ובחרו מהרשימה.' : err.message === 'route' ? 'לא הצלחתי לחשב מסלול בין הנקודות.' : errText(err);
     });
@@ -1137,9 +1185,270 @@
     renderPlaces();
   }
 
+  /* ---------- "להודיע לי": מחפשים טרמפ ---------- */
+  var PARTS = { morning: ['05:00', '11:59', 'בבוקר'], noon: ['12:00', '16:59', 'בצהריים'], evening: ['17:00', '23:59', 'בערב'], all: ['00:00', '23:59', 'בכל שעה'] };
+  function partName(tf, tt) {
+    for (var k in PARTS) if (PARTS[k][0] === tf && PARTS[k][1] === tt) return PARTS[k][2];
+    return tf + '–' + tt;
+  }
+  function wantOfferHtml() {
+    return '<div class="tp-want" id="wt-box"><b>🔔 להודיע לי כשמישהו נוסע בדרך הזאת</b>' +
+      '<p class="kh-hint">נשמור את החיפוש, ונשלח לך התראה ברגע שנהג מפרסם נסיעה שעוברת לידך. נהגים יראו שיש מי שמחפש בדרך הזאת, בלי השם שלך.</p>' +
+      '<div class="kh-chips" id="wt-part"><button type="button" data-p="morning">בבוקר</button><button type="button" data-p="noon">בצהריים</button><button type="button" data-p="evening">בערב</button><button type="button" data-p="all" class="on">כל היום</button></div>' +
+      '<button type="button" class="btn btn-gold btn-sm" id="wt-save">להודיע לי</button><p class="res" id="wt-msg" aria-live="polite"></p></div>';
+  }
+  function saveWant() {
+    if (!lastSearch || !$('wt-box')) return;
+    if (!loggedIn()) { needLogin('כדי שנוכל להודיע לך צריך להיכנס פעם אחת עם גוגל. מיד אחרי הכניסה החיפוש יישמר.', saveWant); return; }
+    var key = chipVal('wt-part', 'data-p') || 'all', p = PARTS[key], wk = lastWhen === 'week';
+    var data = { from: lastSearch.from, to: lastSearch.to, radius: lastSearch.radius, time_from: p[0], time_to: p[1] };
+    if (wk) data.days = [0, 1, 2, 3, 4, 5, 6]; else data.date = lastWhen === 'tomorrow' ? addDays(1) : addDays(0);
+    var b = $('wt-save'), msg = $('wt-msg');
+    b.disabled = true; msg.textContent = 'שומר...';
+    api('/wants', data).then(function () {
+      used('want_save');
+      var box = $('wt-box');
+      box.innerHTML = '<b>✓ שמרתי.</b> ' + (wk ? 'כל יום, לחודש הקרוב,' : dayLabel(data.date)) + ' ' + p[2] + ': ברגע שמישהו יפרסם נסיעה שעוברת לידך, נודיע לך.';
+      acted(box); loadWants(); loadOpen(); loadStats();
+    }).catch(function (err) { b.disabled = false; msg.textContent = errText(err); });
+  }
+  function loadWants() {
+    if (!loggedIn()) return;
+    api('/wants/mine').then(function (j) {
+      var box = $('rd-wants'), ws = j.wants || [];
+      box.hidden = !ws.length;
+      box.innerHTML = '<h2>🔔 מחכה לטרמפ</h2><p class="kh-hint">נודיע לך כשמישהו יפרסם נסיעה שעוברת לידך.</p>' + ws.map(function (w) {
+        var when = w.days ? (w.days.length === 7 ? 'כל יום' : daysShort(w.days)) + ' · עד ' + w.expires.slice(8, 10) + '.' + w.expires.slice(5, 7) : dayLabel(w.date);
+        return '<div class="kh-item tp-mywant"><p><b>' + esc(short(w.from.label)) + ' ← ' + esc(short(w.to.label)) + '</b></p>' +
+          '<p class="lbl">' + esc(when) + ' · ' + esc(partName(w.timeFrom, w.timeTo)) + (w.notified ? ' · כבר שלחנו ' + (w.notified === 1 ? 'התראה אחת' : w.notified + ' התראות') : '') + '</p>' +
+          '<div class="acts">' + (w.days ? '<button type="button" data-wrenew="' + esc(w.id) + '">להאריך בחודש</button>' : '') + '<button type="button" data-wdel="' + esc(w.id) + '">למחוק</button></div></div>';
+      }).join('');
+    }).catch(function () {});
+  }
+  function initWants() {
+    $('rd-wants').addEventListener('click', function (e) {
+      var d = e.target.closest('button[data-wdel]'), r = e.target.closest('button[data-wrenew]');
+      if (!d && !r) return;
+      (d || r).disabled = true;
+      api('/wants/' + (d ? d.getAttribute('data-wdel') : r.getAttribute('data-wrenew')), { action: d ? 'delete' : 'renew' })
+        .then(function () { loadWants(); if (d) { loadOpen(); loadStats(); } }).catch(function (err) { (d || r).disabled = false; alert(errText(err)); });
+    });
+  }
+
+  /* ---------- התראות בטלפון (Web Push) ---------- */
+  var SCOPE = '/kelim/kehila/trempim/', swP = null, pushOn = false;
+  var IOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var STANDALONE = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  var pushSupported = function () { return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window; };
+  function swReg() {
+    if (!swP) swP = navigator.serviceWorker.register(SCOPE + 'sw.js', { scope: SCOPE }).then(function (reg) {
+      if (reg.active) return reg;
+      return new Promise(function (res) {
+        var w = reg.installing || reg.waiting;
+        if (!w) return res(reg);
+        w.addEventListener('statechange', function () { if (w.state === 'activated') res(reg); });
+      });
+    });
+    return swP;
+  }
+  function b64u(s) {
+    s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '=';
+    var b = atob(s), a = new Uint8Array(b.length);
+    for (var i = 0; i < b.length; i++) a[i] = b.charCodeAt(i);
+    return a;
+  }
+  function subscribe() {
+    return swReg().then(function (reg) {
+      return reg.pushManager.getSubscription().then(function (sub) {
+        if (sub) return sub;
+        return fetch(API + '/push/key').then(function (r) { return r.json(); }).then(function (k) {
+          return reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(k.key) });
+        });
+      });
+    }).then(function (sub) { return api('/push/sub', sub.toJSON()).then(function () { pushOn = true; return sub; }); });
+  }
+  // כבר אישרו התראות במכשיר הזה: מוודאים שהמינוי רשום בשרת (גם אחרי כניסה מחדש)
+  function pushSync() {
+    if (!pushSupported() || Notification.permission !== 'granted' || !loggedIn()) return Promise.resolve();
+    return subscribe().catch(function () {});
+  }
+  function pushOff(tok) {
+    if (!pushSupported() || !tok) return;
+    navigator.serviceWorker.getRegistration(SCOPE).then(function (reg) { return reg && reg.pushManager.getSubscription(); }).then(function (sub) {
+      if (!sub) return;
+      fetch(API + '/push/unsub', { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json' }, body: JSON.stringify({ endpoint: sub.endpoint }) }).catch(function () {});
+      pushOn = false; return sub.unsubscribe();
+    }).catch(function () {});
+  }
+  // אחרי פעולה ראשונה (בקשה, פרסום, "להודיע לי") – ורק אז – מציעים להדליק התראות
+  function acted(box) { lsSet('trempim_acted', '1'); offerPush(box); }
+  function offerPush(box) {
+    if (!box || !loggedIn() || pushOn) return;
+    var html;
+    if (IOS && !STANDALONE) html = '<b>🔔 רוצה לדעת מיד כשעונים לך?</b> באייפון ההתראות עובדות אחרי שמוסיפים את הטרמפים למסך הבית: <b>1.</b> כפתור השיתוף ⬆︎ בתחתית ספארי. <b>2.</b> "הוספה למסך הבית". <b>3.</b> פותחים את "טרמפים" מהמסך ומדליקים התראות.';
+    else if (!pushSupported()) return;
+    else if (Notification.permission === 'denied') html = 'ההתראות חסומות בדפדפן הזה. אפשר להדליק אותן בהגדרות האתר (המנעול ליד הכתובת).';
+    else html = '<b>🔔 רוצה לדעת מיד כשעונים לך?</b> נשלח התראה לטלפון כשמישהו מבקש להצטרף, כשמאשרים לך, וכשמישהו נוסע בדרך שחיפשת. <button type="button" class="btn btn-gold btn-sm" data-push-on>להדליק התראות</button>';
+    document.querySelectorAll('.tp-push').forEach(function (x) { x.remove(); });
+    box.insertAdjacentHTML('beforeend', '<div class="tp-push">' + html + '</div>');
+  }
+  function enablePush(btn) {
+    var box = btn.closest('.tp-push');
+    btn.disabled = true; btn.textContent = 'רגע...';
+    Promise.resolve(Notification.requestPermission()).then(function (p) {
+      if (p !== 'granted') { box.innerHTML = 'בלי אישור בדפדפן אי אפשר לשלוח התראות. אפשר לשנות את זה בהגדרות האתר.'; return; }
+      return subscribe().then(function () { used('push_on'); box.innerHTML = '✓ <b>ההתראות דולקות.</b> נודיע לך כאן בטלפון.'; });
+    }).catch(function () { box.innerHTML = 'לא הצלחתי להדליק התראות בדפדפן הזה. נסו שוב מאוחר יותר.'; });
+  }
+  function initPush() {
+    document.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-push-on]'); if (b) enablePush(b);
+      if (e.target.closest('[data-install]')) used('install');
+    });
+    if (!('serviceWorker' in navigator)) return;
+    swReg().catch(function () {});
+    navigator.serviceWorker.addEventListener('message', function (e) { if (e.data && e.data.tp === 'resub' && loggedIn()) subscribe().catch(function () {}); });
+  }
+
+  /* ---------- לוח פתוח: מי נוסע בקרוב, ומי מחפש ---------- */
+  var openData = null, oneRide = null, openAll = false;
+  function rideCardHtml(r, src, i) {
+    var seats = r.seats === 1 ? 'מקום אחד פנוי' : r.seats ? 'עוד ' + r.seats + ' מקומות' : 'מלא';
+    return '<div class="kh-item tp-oride">' +
+      '<div class="top"><b>' + (r.kind === 'taxi' ? '🚕 ' : '🚗 ') + esc(r.driver) + ' · ' + esc(dayLabel(r.date)) + ' ב-' + esc(r.time) + '</b><span>' + seats + '</span></div>' +
+      '<p>' + esc(r.from.area) + ' ← ' + esc(r.to.area) + (r.regular ? '<span class="tp-reg">נסיעה קבועה' + (r.days ? ': ' + daysShort(r.days) : '') + '</span>' : '') + '</p>' +
+      (r.seats ? '<div class="acts"><button type="button" class="go" data-ask="' + src + ':' + i + '">' + (r.kind === 'taxi' ? 'לבקש להצטרף למונית' : 'לבקש להצטרף') + '</button></div>' : '') + '</div>';
+  }
+  function renderOpen() {
+    var j = openData; if (!j) return;
+    var rides = j.rides || [], wants = j.wants || [], max = openAll ? rides.length : 6;
+    $('op-rides').innerHTML = rides.length ? rides.slice(0, max).map(function (r, i) { return rideCardHtml(r, 'open', i); }).join('') +
+      (rides.length > max ? '<button type="button" class="btn btn-line btn-sm more" data-more>לכל ' + rides.length + ' הנסיעות</button>' : '') :
+      '<p class="kh-empty">עוד אין נסיעות פתוחות לימים הקרובים. נוסעים בכל מקרה? <button type="button" class="tp-link" data-go-drive>לפרסם נסיעה</button> לוקח דקה.</p>';
+    $('op-wants').innerHTML = wants.length ? '<h3>🙋 מחפשים טרמפ</h3>' + wants.map(function (w, i) {
+      return '<div class="kh-item tp-owant"><p><b>' + (w.n === 1 ? 'מישהו מחפש' : w.n + ' אנשים מחפשים') + '</b> מ' + esc(w.from.area) + ' ל' + esc(w.to.area) + ' ' + esc(w.part) + '</p>' +
+        '<button type="button" class="btn btn-gold btn-sm" data-drive="' + i + '">🚗 אני נוסע לשם</button></div>';
+    }).join('') : '';
+    $('tp-open').hidden = false;
+  }
+  function loadOpen() {
+    fetch(API + '/board').then(function (r) { return r.json(); }).then(function (j) {
+      if (!j || !j.rides) return;
+      openData = j; renderOpen();
+    }).catch(function () {});
+  }
+  function setChip(id, attr, val) {
+    var box = $(id), b = box.querySelector('[' + attr + '="' + val + '"]');
+    if (b) box.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); });
+  }
+  // "לבקש" מהלוח או מקישור: ממלאים את החיפוש לפי הנסיעה ומחפשים, והבקשה עצמה מהתוצאה
+  function askRide(r) {
+    tab('ride');
+    fillPlace($('rd-from'), { label: r.from.area, lat: r.from.lat, lng: r.from.lng });
+    fillPlace($('rd-to'), { label: r.to.area, lat: r.to.lat, lng: r.to.lng });
+    setChip('rd-when', 'data-w', r.date === addDays(0) ? 'today' : r.date === addDays(1) ? 'tomorrow' : 'week');
+    if (chipVal('rd-radius', 'data-r') === '1') setChip('rd-radius', 'data-r', '2');
+    $('rd-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    search(); used('board_ask');
+  }
+  // "אני נוסע לשם": ממלאים את טופס הנהג לפי מה שמחפשים
+  function driveFor(w) {
+    tab('drive'); setMode('car');
+    fillPlace($('dr-from'), { label: w.from.area, lat: w.from.lat, lng: w.from.lng });
+    fillPlace($('dr-to'), { label: w.to.area, lat: w.to.lat, lng: w.to.lng });
+    var t = { 'בבוקר': '07:30', 'בצהריים': '13:00', 'בערב': '18:00' }[w.part];
+    if (t) { $('dr-time').value = t; setOnce(hhmm(new Date()) < t ? addDays(0) : addDays(1)); }
+    $('dr-msg').textContent = 'מילאתי את הדרך שמחפשים. בודקים את השעה ולוחצים לפרסם, ומי שמחפש יקבל התראה.';
+    $('dr-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    used('want_drive');
+  }
+  function initOpen() {
+    var click = function (e) {
+      var a = e.target.closest('button[data-ask]');
+      if (a) { var p = a.getAttribute('data-ask').split(':'), r = p[0] === 'one' ? oneRide : openData && openData.rides[+p[1]]; if (r) askRide(r); return; }
+      var d = e.target.closest('button[data-drive]');
+      if (d) { var w = openData && openData.wants[+d.getAttribute('data-drive')]; if (w) driveFor(w); return; }
+      if (e.target.closest('[data-more]')) { openAll = true; renderOpen(); return; }
+      if (e.target.closest('[data-go-drive]')) { tab('drive'); $('tp-main').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    };
+    $('tp-open').addEventListener('click', click); $('tp-one').addEventListener('click', click);
+    // נמדד פעם אחת, כשהלוח באמת נראה במסך
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (es) { if (es.some(function (x) { return x.isIntersecting; }) && openData) { used('board_view'); io.disconnect(); } });
+      io.observe($('tp-open'));
+    }
+    loadOpen();
+  }
+  // קישור לנסיעה אחת (?r=) – מה שהנהג שולח לקבוצה
+  function loadOne(id) {
+    fetch(API + '/board?r=' + encodeURIComponent(id)).then(function (r) { return r.json(); }).then(function (j) {
+      var box = $('tp-one');
+      box.innerHTML = j && j.ride ? '<h2>🚗 נסיעה ששלחו לך</h2>' + rideCardHtml(j.ride, 'one', 0) :
+        '<p class="kh-empty">הנסיעה הזאת כבר לא פתוחה. למטה אפשר לראות מי עוד נוסע בקרוב, או לחפש טרמפ.</p>';
+      oneRide = j && j.ride; box.hidden = false;
+      used('ride_link');
+    }).catch(function () {});
+  }
+
+  /* ---------- שיתוף מ-Waze או מגוגל מפות: היעד נכנס לטופס הנהג ---------- */
+  function geohash(h) {
+    var B = '0123456789bcdefghjkmnpqrstuvwxyz', lat = [-90, 90], lng = [-180, 180], ev = true;
+    for (var i = 0; i < h.length; i++) {
+      var cd = B.indexOf(h[i]); if (cd < 0) return null;
+      for (var m = 16; m; m >>= 1) { var r = ev ? lng : lat, mid = (r[0] + r[1]) / 2; if (cd & m) r[0] = mid; else r[1] = mid; ev = !ev; }
+    }
+    return { lat: (lat[0] + lat[1]) / 2, lng: (lng[0] + lng[1]) / 2 };
+  }
+  function coordsIn(s) {
+    var m = s.match(/waze\.com\/ul\/h([0-9b-hjkmnp-z]{5,12})/i), p = m && geohash(m[1].toLowerCase());
+    if (!p) {
+      m = s.match(/[?&](?:ll|q|query|destination|daddr)=(-?\d{1,2}\.\d+)(?:,|%2C)\s*(-?\d{1,3}\.\d+)/i) || s.match(/@(-?\d{1,2}\.\d+),(-?\d{1,3}\.\d+)/) || s.match(/(?:^|[^\d.])(3[0-3]\.\d{3,})\s*,\s*(3[4-5]\.\d{3,})/);
+      if (m) p = { lat: +m[1], lng: +m[2] };
+    }
+    return p && p.lat > 29 && p.lat < 34 && p.lng > 34 && p.lng < 36.5 ? { lat: +p.lat.toFixed(5), lng: +p.lng.toFixed(5) } : null;
+  }
+  function sharedIn(q) {
+    var all = [q.get('st') || '', q.get('sx') || '', q.get('su') || ''].join('\n');
+    if (!all.trim()) return false;
+    tab('drive'); setMode('car');
+    var msg = $('dr-msg'), to = $('dr-to');
+    var done = function (pl) {
+      fillPlace(to, pl);
+      msg.textContent = 'קיבלתי את היעד מהשיתוף: ' + pl.label + '. בוחרים שעה ולוחצים לפרסם.';
+      $('dr-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      used('share_in');
+    };
+    var p = coordsIn(all);
+    if (p) reverse(p.lat, p.lng).then(function (label) { done({ label: label === 'המיקום שלי' ? 'היעד מהשיתוף' : label, lat: p.lat, lng: p.lng }); });
+    else {
+      var text = all.split('\n').map(function (s) { return s.replace(/https?:\/\/\S+/g, '').trim(); }).filter(Boolean)[0];
+      if (text) { to.value = text.slice(0, 120); to._place = null; placeOf(to).then(done).catch(function () { msg.textContent = 'קיבלתי: "' + text.slice(0, 60) + '". אם זה לא המקום, מתקנים ובוחרים מהרשימה.'; }); }
+      else msg.textContent = 'לא הצלחתי לקרוא את המקום מהשיתוף. כתבו לאן נוסעים.';
+    }
+    return true;
+  }
+  // קיצורי האפליקציה וקישורים: ?go=now, ?r=, שיתוף, #drive / #ride / #inbox
+  function hashTab() {
+    var h = location.hash.slice(1);
+    if (h !== 'drive' && h !== 'ride' && h !== 'inbox') return;
+    tab(h);
+    if (h !== 'inbox' || loggedIn()) $('tp-main').scrollIntoView({ block: 'start' });
+  }
+  function initLinks() {
+    var q = new URLSearchParams(location.search), r = q.get('r');
+    if (r && /^[\w-]{1,40}$/.test(r)) loadOne(r);
+    if (!sharedIn(q)) {
+      if (q.get('go') === 'now') { tab('drive'); leaveNow(); }
+      else hashTab();
+    }
+    if (q.get('st') || q.get('sx') || q.get('su') || q.get('go')) history.replaceState(null, '', location.pathname + (r ? '?r=' + r : '') + location.hash);
+    window.addEventListener('hashchange', hashTab);
+  }
+
   /* ---------- התחלה ---------- */
   function start() {
     loadStats(); loadBoard(); initCert(); initCalc(); initProfile(); initTabs(); initRider(); initRiderActions(); initDriver(); initFast(); initCalendarPick(); initInboxActions(); initIdeas();
+    setGuest(); initWants(); initPush(); initOpen(); initLinks();
     if (token) {
       api('/me').then(function (j) { me = j.user; showApp(); }).catch(function () { initGoogle(); });
     }

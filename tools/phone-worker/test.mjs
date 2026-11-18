@@ -33,4 +33,13 @@ run('חנוכה ירושלים', [['m0', '7'], ['c0', '1']]);
   const v = { m0: '8' };
   console.log('\n=== חדשות\n> ' + decide(v, '', ed).text);
   console.log('> בלי שרת: ' + decide(v, '', null).text);
+  // 18.11.2026: חתיכות קצרות – הראשונה read עם המתנה של שנייה, האחרונה מסתיימת בתפריט; סופרים רק פעם אחת
+  const ed5 = { name: 'ערב', time: '20:00', date: { day: 'רביעי' }, sections: { main: Array.from({ length: 5 }, (_, i) => ({ text: 'נקודה ארוכה מספר ' + (i + 1) + ' עם הרבה מילים כדי לבדוק את החלוקה לחתיכות קצרות שמתחילות מיד '.repeat(2) })), haredi: [], economy: [] } };
+  const w = { m0: '8' }, seen = [];
+  let o = decide(w, '', ed5), steps = 0;
+  while (o.text.includes('=n0_') && steps < 20) { seen.push(o); w['n0_' + steps] = 'None'; steps++; o = decide(w, '', ed5); }
+  const ok8 = steps >= 2 && seen[0].event === 'news' && seen[0].text.includes(',1,No,') && seen.slice(1).every(x => !x.event) && !o.event && o.text.includes('=m1,')
+    && ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי'].every(n => seen.concat(o).some(x => x.text.includes('t-' + n + '.')));
+  console.log('חתיכות: ' + (steps + 1));
+  if (!ok8) { console.error('נכשל: חלוקת החדשות'); process.exitCode = 1; } else console.log('עבר: חלוקת החדשות');
 }
