@@ -60,6 +60,7 @@
 /kelim/shir/karaoke/shirim/ben-30/
 /kelim/shir/karaoke/shirim/natek-oti/
 /kelim/shir/karaoke/shirim/mikol-haleilot/
+/kelim/shir/karaoke/shirim/meohav-bageshem/
 /kelim/shir/karaoke/zamar/ravid-plotnik/
 /kelim/shir/karaoke/zamar/omer-adam/
 /kelim/shir/karaoke/zamar/berry-sakharof/
@@ -71,8 +72,8 @@
 /kelim/shir/karaoke/zamar/meir-ariel/
 /kelim/shir/karaoke/zamar/eyal-golan/
 /kelim/shir/karaoke/zamar/eden-hason/
-/kelim/shir/karaoke/zamar/odeya/
 /kelim/shir/karaoke/zamar/itay-levi/
+/kelim/shir/karaoke/zamar/odeya/
 /kelim/shir/karaoke/zamar/idan-amedi/
 /kelim/shir/karaoke/zamar/vibe-ish/
 /kelim/shir/karaoke/zamar/ariel-zilber/

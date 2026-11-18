@@ -1,5 +1,5 @@
 {
-"updated": "2026-11-18",
+"updated": "2026-11-19",
 "songs": [
 {
 "id": "qEEzKfGa1oY",
@@ -800,6 +800,16 @@
 "added": "",
 "slug": "ani-rotzh-aod-ahbh",
 "page": false
+},
+{
+"id": "ad19CBOEUjs",
+"artist": "איתי לוי",
+"song": "מאוהב בגשם",
+"views": 2253026,
+"date": "20261018",
+"added": "2026-11-19",
+"slug": "meohav-bageshem",
+"page": true
 },
 {
 "id": "PWM9Oe7UivU",
