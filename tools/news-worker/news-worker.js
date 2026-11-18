@@ -19,6 +19,8 @@ export const SOURCES = [
   ['maariv', 'מעריב', 'כללי', 'https://www.maariv.co.il/rss/rsschadashot'],
   ['inn', 'ערוץ 7', 'כללי', 'https://www.inn.co.il/Rss.aspx'],
   ['c14', 'ערוץ 14', 'כללי', 'https://www.c14.co.il/feed/'],
+  ['srugim', 'סרוגים', 'כללי', 'https://www.srugim.co.il/feed'],
+  ['kipa', 'כיפה', 'כללי', 'https://www.kipa.co.il/feed/'],
   ['kikar', 'כיכר השבת', 'חרדי', 'https://www.kikar.co.il/feed'],
   ['bhol', 'בחדרי חרדים', 'חרדי', 'https://www.bhol.co.il/rss'],
   ['jdn', 'JDN', 'חרדי', 'https://www.jdn.co.il/feed/'],
