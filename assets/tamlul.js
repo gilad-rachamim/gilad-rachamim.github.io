@@ -152,6 +152,7 @@
 
   var pending = null;
   function go(blob, name) {
+    try { if (window.tlOnFile) window.tlOnFile(blob, name); } catch (e) {}
     var lang = $('tl-lang').value;
     fileIn.disabled = true; recBtn.disabled = true; outBox.hidden = true;
     say('בודק את ההקלטה…', true);

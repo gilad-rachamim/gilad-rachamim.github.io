@@ -1,0 +1,42 @@
+/* /kelim/android/ call tools: picker badges, summary editors, call journal (on top of iphone.css) */
+.as-badges{list-style:none;padding:0;margin:.4rem 0 .8rem;display:flex;flex-wrap:wrap;gap:.5rem}
+.as-b{display:flex;gap:.45rem;align-items:center;border:1px solid var(--line);border-radius:999px;padding:.3rem .8rem;font-size:.95rem}
+.as-b b{font-weight:700}
+.as-ok{border-color:#5fa36a}.as-ok b{color:#8fd49a}
+.as-no{border-color:#b86a5c}.as-no b{color:#f0a294}
+.as-mid{border-color:var(--gold)}.as-mid b{color:var(--gold-hi,#dcbb74)}
+.ip-out h4,#as-how h4{margin:.9rem 0 .2rem;color:var(--cream);font-size:1rem}
+.as-src{font-size:.88rem;opacity:.85;margin-top:.8rem;line-height:1.7}
+.as-alt{border-top:1px solid var(--line);padding:.55rem 0}
+.as-alt p{margin:.2rem 0}
+#as-var{min-height:44px}
+.as-in{width:100%;min-height:44px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--cream);font:inherit;padding:.4rem .6rem}
+#as-tasks li{display:flex;gap:.5rem;align-items:center;margin:.35rem 0}
+#as-tasks input[type=checkbox],.ys-tasks input[type=checkbox]{width:24px;height:24px;flex:0 0 24px;accent-color:var(--gold)}
+.as-x{min-width:44px;min-height:44px;border:0;background:none;color:var(--body);font-size:1.1rem;cursor:pointer}
+#as-rem{list-style:none;padding:0;margin:.4rem 0}
+.as-rem{border:1px solid var(--line);border-radius:12px;padding:.6rem;margin:.5rem 0}
+.as-rem-f{display:flex;flex-direction:column;gap:.45rem}
+.as-dt{display:flex;gap:.45rem;flex-wrap:wrap}
+.as-dt input{min-height:44px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--cream);font:inherit;padding:.3rem .5rem;color-scheme:dark}
+.as-rem-a{display:flex;gap:.45rem;flex-wrap:wrap;align-items:center}
+.btn-sm{min-height:44px}
+#as-paste{width:100%;min-height:7rem;border:1px solid var(--line);border-radius:12px;background:transparent;color:var(--cream);font:inherit;padding:.6rem}
+.ys-bar{display:flex;gap:.8rem;flex-wrap:wrap}
+.ys-bar .ip-field{flex:1 1 220px}
+.ys-hide{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
+.ys-e{border:1px solid var(--line);border-radius:14px;padding:.9rem 1rem;margin:.8rem 0}
+.ys-e header{display:flex;flex-wrap:wrap;gap:.3rem .8rem;align-items:baseline}
+.ys-e header b{color:var(--cream);font-size:1.05rem}
+.ys-d{font-size:.9rem;opacity:.8}
+.ys-open{font-size:.85rem;background:var(--gold);color:var(--ink);border-radius:999px;padding:.05rem .6rem}
+.ys-tags span{display:inline-block;font-size:.85rem;border:1px solid var(--line);border-radius:999px;padding:0 .55rem;margin:.1rem 0}
+.ys-sum,.ys-tasks{margin:.4rem 0;padding-inline-start:1.2rem;line-height:1.7}
+.ys-tasks{list-style:none;padding:0}
+.ys-tasks label{display:flex;gap:.5rem;align-items:flex-start;min-height:44px;cursor:pointer}
+.ys-tasks input:checked+span{text-decoration:line-through;opacity:.65}
+.ys-rems{display:flex;flex-wrap:wrap;gap:.4rem}
+.ys-more summary{cursor:pointer;min-height:44px;display:flex;align-items:center;color:var(--gold-hi,#dcbb74)}
+.ys-more audio{width:100%;margin:.4rem 0}
+.ys-text{white-space:pre-wrap;line-height:1.8;max-height:22rem;overflow:auto}
+.ys-del{color:#f0a294}
