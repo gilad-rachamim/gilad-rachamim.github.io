@@ -1,0 +1,338 @@
+{
+ "day": "2026-11-18",
+ "editions": [
+  {
+   "name": "בוקר",
+   "time": "07:00",
+   "at": "2026-11-18T05:00:25.396Z",
+   "mode": "summary",
+   "date": {
+    "he": "ח׳ כסלו תשפ״ז",
+    "day": "רביעי"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "חבר הכנסת מתן כהנא נבחר לתפקיד יושב ראש הכנסת ה-26 ברוב של 66 קולות, ואושרו תשעה סגנים זמניים.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1794912/"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/syijmpcrgx"
+       },
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/political-news/kahana-elected-knesset-speaker-joint-list-support-2"
+       }
+      ]
+     },
+     {
+      "text": "אוסטרליה הודיעה על הטלת סנקציות נגד שלושה אזרחים ישראלים וארבעה ארגונים הפועלים ביהודה ושומרון, בהמשך לצעד דומה של בריטניה.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/world-news/australia-sanctions-israeli-settlers-construction-"
+       },
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1141404"
+       },
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1794944/"
+       }
+      ]
+     },
+     {
+      "text": "המפלגה הדמוקרטית בארה״ב הבטיחה רוב של 56 מושבים בסנאט, לאחר ניצחון בבחירות באלסקה.",
+      "sources": [
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/syzbai9cml"
+       },
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1141401"
+       }
+      ]
+     },
+     {
+      "text": "19 בני אדם נהרגו בהתרסקות מטוס תובלה צבאי של צבא רוסיה באזור סיביר.",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1141399"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744889"
+       }
+      ]
+     },
+     {
+      "text": "כוחות הביטחון סיכלו ניסיון הברחת רובי קלצ׳ניקוב באמצעות בלונים מגבול מצרים באזור ניצנה.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2767800/"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "האברך מבני ברק שנעדר במשך יממה אותר כשהוא בחיים במפעל נטוש בפתח תקווה, ופונה לבית החולים במצב בינוני.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/haredim-news/missing-person-found-petah-tikva"
+       }
+      ]
+     },
+     {
+      "text": "ראש ישיבת מאור התלמוד וחבר מועצת גדולי התורה, הגאון רבי אברהם יצחק קוק, השתתף בסעודה שלישית אצל פוסק הדור הגאון רבי משה שטרנבוך בבית שמש.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/haredim-news/tonxvx"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744892"
+       }
+      ]
+     },
+     {
+      "text": "בשכונת סטמפורד היל בלונדון נחגג מעמד הכנסת ספר תורה לבית המדרש של חסידות טשאבא בהשתתפות רבנים ואישי ציבור.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/hasidism/tonz9b"
+       }
+      ]
+     }
+    ],
+    "economy": []
+   }
+  },
+  {
+   "name": "צהריים",
+   "time": "13:00",
+   "at": "2026-11-18T11:00:25.226Z",
+   "mode": "summary",
+   "date": {
+    "he": "ח׳ כסלו תשפ״ז",
+    "day": "רביעי"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "ראש הממשלה נתניהו נפגש בכנסת עם נפתלי בנט, כאשר בליכוד הגדירו את המפגש כתדרוך ביטחוני. בעקבות הפגישה נדחה כינוס ראשי גוש השינוי.",
+      "sources": [
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/h1yufbormg"
+       },
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/political-news/bennett-netanyahu-meeting-drama"
+       },
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1795613/"
+       }
+      ]
+     },
+     {
+      "text": "מליאת הכנסת אישרה בקריאה טרומית הצעות חוק לביטול השינויים בהרכב הוועדה לבחירת שופטים ולביטול התיקון בחוק היועץ המשפטי לממשלה.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1795637/"
+       },
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2768210/"
+       },
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/politics/article-1389801"
+       }
+      ]
+     },
+     {
+      "text": "צה״ל סיים מבצע לאיסוף ציוד צבאי מן הציבור, שבמהלכו הוחזרו למעלה מחצי מיליון פריטי אמל״ח וציוד לחימה בעשרות מוקדים ברחבי הארץ.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2768185/"
+       },
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/military/article-1389796"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744924"
+       }
+      ]
+     },
+     {
+      "text": "כוחות צה״ל השמידו מתחם תת-קרקעי של ארגון חיזבאללה באזור הר דב, אשר שימש לחדרי שהייה ופיקוד.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001563868"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744923"
+       }
+      ]
+     },
+     {
+      "text": "משרד הבריאות הרחיב את האזהרה לציבור מפני צריכת כלל מוצרי הטחינה של מפעל אלג'מל משכם, בעקבות גילוי חיידק הסלמונלה.",
+      "sources": [
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383961905"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "ח״כ יעקב אשר הגיש הצעת חוק המבקשת למנוע מפקידי ממשלה לשלול הטבות, הנחות ומלגות ללא הסמכה מפורשת בחוק.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2768214/"
+       }
+      ]
+     },
+     {
+      "text": "דיינים מבית הדין הרבני בפתח תקווה הגיעו לבית החולים בילינסון וסידרו גט דחוף לבעל שעמד לעבור הליך רפואי מורכב, למניעת עגינות.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744922"
+       }
+      ]
+     },
+     {
+      "text": "בבני ברק נפטר הרה״ח ר' אהרן עמרם לוין זצ״ל, מלמד ותיק בתלמוד תורה חוג חתם סופר, והוא בן 82.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744918"
+       }
+      ]
+     }
+    ],
+    "economy": []
+   }
+  },
+  {
+   "name": "ערב",
+   "time": "20:00",
+   "at": "2026-11-18T18:00:25.505Z",
+   "mode": "titles",
+   "date": {
+    "he": "ח׳ כסלו תשפ״ז",
+    "day": "רביעי"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "רוכב אופנוע בן 18 נפצע בתל אביב עם חבלה רב-מערכתית",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1796835/"
+       }
+      ]
+     },
+     {
+      "text": "הרמטכ״ל, ראש המוסד ומפקד סנטקום התכנסו בקריה - איראן במוקד",
+      "sources": [
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/military/article-1389971"
+       }
+      ]
+     },
+     {
+      "text": "גורמים בליכוד: נתניהו לא שינה את עמדותיו לגבי הובלת הממשלה",
+      "sources": [
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/sjl3gpocge"
+       }
+      ]
+     },
+     {
+      "text": "אלף ימים בלי היימנוט: \"יש כאן מחדל\"",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1141547"
+       }
+      ]
+     },
+     {
+      "text": "משרד הבריאות בתוכנית חדשה להחזרת רופאים ישראלים מחו״ל: הדגש על הנגב והגליל",
+      "sources": [
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383962023"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "מתכוננים לאיראן? חיל האוויר מתרגל טווחים ארוכים באימון תדלוק משותף עם יוון",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2768639/"
+       }
+      ]
+     },
+     {
+      "text": "״מפחיד להסתובב ברחובות״: שורת תקיפות כלבים, ילדים ונשים בין הנפגעים",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/israel-news/dog-attacks-afula"
+       }
+      ]
+     },
+     {
+      "text": "סערה באיטליה: החוק נגד אנטישמיות אושר, פוליטקאי יהודי פרש בדמעות",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744985"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "איל וולדמן: \"אנבידיה צריכה לשקול את החזרת ג'נסן לתפקיד המנכ״ל\"",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001564058"
+       }
+      ]
+     }
+    ]
+   }
+  }
+ ]
+}

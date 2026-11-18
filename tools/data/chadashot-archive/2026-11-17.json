@@ -1,0 +1,330 @@
+{
+ "day": "2026-11-17",
+ "editions": [
+  {
+   "name": "בוקר",
+   "time": "07:00",
+   "at": "2026-11-17T05:00:26.140Z",
+   "mode": "summary",
+   "date": {
+    "he": "ז׳ כסלו תשפ״ז",
+    "day": "שלישי"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "פיגוע דריסה ותקיפה התרחש סמוך ליריחו, ושני ישראלים נפצעו באורח קל. כוחות הביטחון פתחו במרדף אחר החשודים.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001563693"
+       },
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1792668/"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/s12u00qy0gl"
+       }
+      ]
+     },
+     {
+      "text": "רוסיה תקפה גשרים ותשתיות בבירת אוקראינה, ובמקביל נפגע גשר קרץ' בחצי האי קרים מתקיפת כטב״מים אוקראיניים.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1792681/"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/hjoxpvkrfl"
+       }
+      ]
+     },
+     {
+      "text": "לפי דיווחים בארה״ב, מודיעין אמריקני מצביע על איומים איראניים נגד בכירי ממשל. בבית הלבן הבהירו כי אין איום מיידי.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1792729/"
+       },
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1141228"
+       },
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/world/article-1389268"
+       }
+      ]
+     },
+     {
+      "text": "תקלות טכניות גרמו לעיכובים בטיסות ולשיבושים בשירותים בנקאיים בארה״ב. גורמים בממשל הבהירו כי אין אינדיקציה למתקפת סייבר.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1792704/"
+       },
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1141234"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/s1jcowfafg"
+       }
+      ]
+     },
+     {
+      "text": "מזג האוויר כיום כולל ירידה קלה בטמפרטורות וגשם מקומי קל בצפון ובמישור החוף. בהמשך השבוע צפויה התחממות.",
+      "sources": [
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/weather/article-1389229"
+       },
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1792675/"
+       },
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383961732"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "הישיבה הגדולה של חסידות דושינסקיא העתיקה את משכנה מירושלים לעיר אלעד לאחר כ-80 שנה.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744782"
+       }
+      ]
+     },
+     {
+      "text": "בקהילה היהודית בניו יורק הביעו חשש בעקבות החלטת העירייה לפרק את יחידת המשטרה שאבטחה מוסדות יהודיים בעיר.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744770"
+       }
+      ]
+     },
+     {
+      "text": "במוסקבה נשלמות ההכנות למעמד חגיגי בהשתתפות אלפי יהודים לציון חג הגאולה י״ט בכסלו.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744771"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "לפי דיווח בגלובס, כ-2,000 עובדים פוטרו בחודש וחצי האחרונים בחברות הייטק ובחברות בורסאיות בישראל.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001563604"
+       }
+      ]
+     },
+     {
+      "text": "הדולר התחזק לרמתו הגבוהה ביותר זה 19 חודשים מול המטבעות המרכזיים, בעקבות נתוני אינפלציה בארה״ב.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1792667/"
+       },
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001563438"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "name": "צהריים",
+   "time": "13:00",
+   "at": "2026-11-17T11:00:25.650Z",
+   "mode": "summary",
+   "date": {
+    "he": "ז׳ כסלו תשפ״ז",
+    "day": "שלישי"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "שני בני אדם נפצעו בתאונת דרכים בין משאית לרכב פרטי בכביש 5714 סמוך לזמר, ופונו לבית החולים הלל יפה.",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1141296"
+       }
+      ]
+     },
+     {
+      "text": "בריטניה הטילה סנקציות על שמונה חברות בנייה ישראליות הפועלות ביהודה ושומרון ועל פעילי צו 9.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001563739"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/S14T8jtRfe"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744821"
+       }
+      ]
+     },
+     {
+      "text": "כביש 40 ייסגר הלילה לתנועה בין צומת אלעל למחלף לוד לצורך עבודות, והכניסה לנתב״ג תתאפשר דרך כביש 1 בלבד.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/economy/2767344/"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/sjkgt5y0ge"
+       }
+      ]
+     },
+     {
+      "text": "פיגוע משולב התרחש באזור יריחו ובו נפצעו שני ישראלים, וכוחות הביטחון מנהלים מצוד אחר החשודים.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001563693"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "הרב הירש הורה לחברי דגל התורה לתמוך במועמדותו של אופיר כץ לתפקיד יו״ר הכנסת.",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1141294"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/Sko5pitAMx"
+       }
+      ]
+     }
+    ],
+    "economy": []
+   }
+  },
+  {
+   "name": "ערב",
+   "time": "20:00",
+   "at": "2026-11-17T18:00:25.521Z",
+   "mode": "titles",
+   "date": {
+    "he": "ז׳ כסלו תשפ״ז",
+    "day": "שלישי"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "סער מאיים בצעדי נגד בעקבות הסנקציות הבריטיות: \"פעולה עוינת\"",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1794520/"
+       }
+      ]
+     },
+     {
+      "text": "פייגלין נפרד מסמוטריץ' ומבהיר: \"לא נשב בממשלה שתכין את ה-7 באוקטובר הבא\"",
+      "sources": [
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/politics/article-1389584"
+       }
+      ]
+     },
+     {
+      "text": "סוכל ניסיון הברחה של רובים דרך הגבול עם מצרים",
+      "sources": [
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/rjhxvz9cml"
+       }
+      ]
+     },
+     {
+      "text": "ח״כ ינון אזולאי עקץ את גוש מתנגדי נתניהו: \"שמח לראות את החיבוק שלכם לחרדים\"",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1141345"
+       }
+      ]
+     },
+     {
+      "text": "שריפה בבניין מגורים בת״א: אישה כבת 50 חולצה במצב אנוש ופונתה תוך פעולות החייאה",
+      "sources": [
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383961809"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "\"מלאס וגאס תצא תורה\": הרב ישראל יאיר הלוי על כסף, קירוב והבית היהודי",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/kikarfm/las-vegas-rabbi-kiruv-jewish-education"
+       }
+      ]
+     },
+     {
+      "text": "שר החוץ יוצא למתקפה נגד בריטניה ומאיים בצעדי תגובה: \"לא ניכנע – נחזק את ההתיישבות\"",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2767626/"
+       }
+      ]
+     },
+     {
+      "text": "סרבן הגט נשלח ל-27 חודשי מאסר: \"נהנה מסבלה המתמשך של אשתו\"",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744870"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "זיני עדכן את סולברג: \"אין ראיות לתשלום שוחד בחירות בהיקף שישפיע על התוצאות\"",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001563887"
+       }
+      ]
+     }
+    ]
+   }
+  }
+ ]
+}

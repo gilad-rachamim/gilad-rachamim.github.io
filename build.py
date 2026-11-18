@@ -367,7 +367,7 @@ def mapa_html():
         if not _m:
             continue
         _meta = json.loads(_m.group(1))
-        if not in_sitemap(_meta):
+        if not in_sitemap(_meta) or _meta.get("no_mapa"):
             continue
         rel = _p.relative_to(SRC).as_posix()
         u = "/" + (rel[:-len("index.html")] if rel.endswith("index.html") else rel)
