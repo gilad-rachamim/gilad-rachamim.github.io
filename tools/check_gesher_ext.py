@@ -25,7 +25,7 @@ TEST = work / 'ext'
 shutil.copytree(EXT, TEST)
 tm = json.loads((TEST / 'manifest.json').read_text(encoding='utf-8'))
 tm['host_permissions'] = ['<all_urls>']                 # בעותק הבדיקה בלבד: בלי חלון הרשאה
-tm['permissions'] = tm['permissions'] + ['clipboardWrite']
+tm['permissions'] = tm['permissions'] + ['clipboardWrite', 'clipboardRead', 'downloads']
 (TEST / 'manifest.json').write_text(json.dumps(tm, ensure_ascii=False), encoding='utf-8')
 state = work / 'phone.json'
 
@@ -148,7 +148,7 @@ async def main():
             await pg.wait_for_selector('#off:not([hidden])', timeout=10000)
             gone = False
             for _ in range(20):
-                gone = await sw.evaluate("GesherStore.get('pair').then(p => !p)")
+                gone = await sw.evaluate("Promise.all([GesherStore.get('pair'), GesherStore.get('pairs')]).then(r => !r[0] && !(r[1] && r[1].length))")
                 if gone: break
                 await asyncio.sleep(0.25)
             ok(gone, 'אחרי ניתוק המפתחות נמחקו מהמחשב')

@@ -8,7 +8,8 @@
   var qs = new URLSearchParams(location.search);
   if (/^http:\/\/127\.0\.0\.1:\d+$/.test(qs.get('w') || '')) SERVER = qs.get('w');   // בדיקה מקומית בלבד
   var $ = function (id) { return document.getElementById(id); };
-  var ws = null, timer = null, alive = false;
+  var ws = null, timer = null, alive = false, last = null;
+  var MAX = 5;
 
   function show(id) { ['off', 'pairing', 'on'].forEach(function (x) { $(x).hidden = x !== id; }); $('clip').hidden = id !== 'on'; $('inbox').hidden = id !== 'on'; $('files').hidden = id !== 'on'; }
   function ask(m) { return chrome.runtime.sendMessage(m); }
@@ -16,13 +17,21 @@
   // ---------- מצב ----------
   function refresh() {
     return ask({ t: 'gesher-state' }).then(function (st) {
+      last = st;
       if (!st || !st.paired) { if (!alive) show('off'); return; }
+      if (alive) return;   // באמצע צימוד טלפון נוסף – לא מסתירים את ה-QR
       show('on');
+      var ph = st.phones || [{ room: '', name: st.name, since: st.since, online: st.online, phone: st.state && st.state.phone }];
+      var many = ph.length > 1;
       var nm = st.name || 'טלפון';
-      $('phone-name').textContent = (/^[֐-׿]/.test(nm) ? 'ל' : 'ל-') + nm;
-      var phone = st.state && st.state.phone;
+      $('phone-name').textContent = many ? 'ל-' + ph.length + ' טלפונים' : (/^[֐-׿]/.test(nm) ? 'ל' : 'ל-') + nm;
+      var phone = st.phone || (st.state && st.state.phone);
       $('dot').className = 'dot' + (st.online ? (phone ? ' ok' : ' half') : '');
       $('status-txt').textContent = !st.online ? 'מתחבר לשרת…' : phone ? 'הטלפון מחובר עכשיו' : 'מחכה לטלפון (הוא מתחבר לבד כשמגיע קוד)';
+      $('one-status').hidden = many;
+      $('unpair').hidden = many;
+      $('add').hidden = ph.length >= (st.max || MAX);
+      phonesView(ph, many);
       if (st.last && Date.now() - st.last.at < 10 * 60e3) {
         var l = st.last, src = { sms: 'SMS', whatsapp: 'ווטסאפ', mail: 'מייל', app: 'התראה' }[l.src] || l.src;
         $('last').hidden = false;
@@ -32,6 +41,34 @@
       } else $('last').hidden = true;
       chrome.permissions.contains({ origins: ['<all_urls>'] }).then(function (has) { $('perm').hidden = has; });
     }).catch(function () {});
+  }
+
+  // רשימת הטלפונים: נקודה, שם, מצב, מתי צומד, וניתוק לכל אחד בנפרד
+  function when(t) { var d = new Date(t || 0); return d.getDate() + '.' + (d.getMonth() + 1) + ' ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
+  function phonesView(ph, many) {
+    var box = $('phones');
+    box.hidden = !many;
+    if (!many) { box.textContent = ''; return; }
+    var sig = JSON.stringify(ph.map(function (x) { return [x.room, x.online, x.phone]; }));
+    if (box.dataset.sig === sig) return;
+    box.dataset.sig = sig;
+    box.textContent = '';
+    ph.forEach(function (x) {
+      var li = document.createElement('li');
+      var dot = document.createElement('span'); dot.className = 'dot' + (x.online ? (x.phone ? ' ok' : ' half') : '');
+      var b = document.createElement('b'); b.textContent = '📱 ' + (x.name || 'טלפון');
+      var st = document.createElement('span'); st.className = 'st';
+      st.textContent = (!x.online ? 'מתחבר…' : x.phone ? 'מחובר עכשיו' : 'מחכה לטלפון') + ' · צומד ' + when(x.since);
+      var bt = document.createElement('button'); bt.type = 'button'; bt.className = 'danger'; bt.textContent = 'ניתוק';
+      bt.setAttribute('aria-label', 'ניתוק ' + (x.name || 'הטלפון'));
+      bt.addEventListener('click', function () {
+        if (!confirm('לנתק את «' + (x.name || 'הטלפון') + '»? שאר הטלפונים נשארים מחוברים.')) return;
+        bt.disabled = true;
+        ask({ t: 'gesher-unpair', room: x.room }).then(function () { box.dataset.sig = ''; $('on-msg').textContent = '«' + (x.name || 'הטלפון') + '» נותק. המפתחות שלו נמחקו מהמחשב.'; refresh(); });
+      });
+      li.appendChild(dot); li.appendChild(b); li.appendChild(st); li.appendChild(bt);
+      box.appendChild(li);
+    });
   }
 
   // ---------- צימוד ----------
@@ -49,7 +86,7 @@
     var room = G.random(16), secret = G.random(32), kp, pt;
     show('pairing');
     $('pair-msg').textContent = 'מכינים…';
-    $('qr').textContent = '';
+    $('qr').textContent = ''; delete $('qr').dataset.url;
     return G.newKeyPair().then(function (k) {
       kp = k;
       return G.pairToken(secret);
@@ -84,14 +121,12 @@
         if (m.t === 'peer' && m.on) $('pair-msg').textContent = 'הטלפון נמצא – מאמתים…';
         if (m.t === 'sealed' && sess) {
           var save = { room: G.b64u(room), w: SERVER, tokPc: sess.tokPc, k12: sess.k12, k21: sess.k21, name: phoneName || 'הטלפון', at: Date.now() };
-          // הצימוד הקודם (אם היה) נמחק בשרת – כך הטלפון הישן לא נשאר "מצומד" לחדר מת
-          S.get('pair').then(function (old) {
-            if (old && old.room && old.room !== save.room) return fetch(old.w + '/r/' + old.room + '?tok=' + old.tokPc, { method: 'DELETE' }).catch(function () {});
-          }).catch(function () {}).then(function () { return S.clear(); }).then(function () { return S.set('pair', save); }).then(function () { return ask({ t: 'gesher-paired' }); }).then(function () {
+          // טלפון נוסף מצטרף לרשימה – הטלפונים שכבר מחוברים נשארים מחוברים
+          addPair(save).then(function (n) { return ask({ t: 'gesher-paired', room: save.room }).then(function () { return n; }); }).then(function (n) {
             alive = false; clearInterval(timer);
             refresh();
-            $('on-msg').textContent = 'מחובר! נסו: בקשו קוד באתר כלשהו – הוא ייכנס לבד.';
-          });
+            $('on-msg').textContent = n > 1 ? '«' + save.name + '» נוסף! עכשיו ' + n + ' טלפונים מחוברים למחשב הזה.' : 'מחובר! נסו: בקשו קוד באתר כלשהו – הוא ייכנס לבד.';
+          }).catch(function (e) { fail((e && e.message) || 'השמירה נכשלה. נסו שוב.'); });
         }
         if (m.t === 'err') fail('החיבור נכשל. נסו שוב.');
         return;
@@ -115,6 +150,25 @@
     };
   }
 
+  // הרשימה ב-IndexedDB ('pairs'). גרסה ישנה שמרה צימוד יחיד ב-'pair' – מעבירים אותו לרשימה (כמו ב-link.js)
+  function pairsList() {
+    return S.get('pairs').then(function (a) {
+      if (Array.isArray(a)) return a;
+      return Promise.all([S.get('pair'), S.get('lastIn')]).then(function (r) {
+        if (!r[0]) return [];
+        return (r[1] ? S.set('lastIn:' + r[0].room, r[1]) : Promise.resolve()).then(function () { return Promise.all([S.del('pair'), S.del('lastIn')]); }).then(function () { return [r[0]]; });
+      });
+    });
+  }
+  function addPair(save) {
+    return pairsList().then(function (a) {
+      a = a.filter(function (p) { return p.room !== save.room; });
+      if (a.length >= MAX) throw new Error('כבר מחוברים ' + MAX + ' טלפונים. נתקו אחד ונסו שוב.');
+      a.push(save);
+      return S.set('pairs', a).then(function () { return a.length; });
+    });
+  }
+
   function countdown() {
     var end = Date.now() + 3 * 60e3;
     clearInterval(timer);
@@ -128,16 +182,24 @@
     alive = false;
     clearInterval(timer);
     try { if (ws) ws.close(); } catch (e) {}
+    // כבר יש טלפון מחובר (ניסינו להוסיף עוד אחד) – חוזרים למסך "מחובר", לא למסך הריק
+    if (last && last.paired) { show('on'); $('on-msg').textContent = msg; refresh(); return; }
     show('off');
     $('off-msg').textContent = msg;
   }
 
   // ---------- כפתורים ----------
   $('start').addEventListener('click', start);
+  $('add').addEventListener('click', function () {
+    $('on-msg').textContent = '';
+    if (last && last.phones && last.phones.length >= (last.max || MAX)) { $('on-msg').textContent = 'כבר מחוברים ' + MAX + ' טלפונים. נתקו אחד קודם.'; return; }
+    start();
+  });
   $('cancel').addEventListener('click', function () { fail(''); });
   $('unpair').addEventListener('click', function () {
     if (!confirm('לנתק את הטלפון? הקודים יפסיקו להגיע למחשב הזה.')) return;
-    ask({ t: 'gesher-unpair' }).then(function () { show('off'); $('off-msg').textContent = 'נותק. המפתחות נמחקו מהמחשב.'; });
+    var r = last && last.phones && last.phones[0] ? last.phones[0].room : undefined;
+    ask({ t: 'gesher-unpair', room: r }).then(function () { last = null; show('off'); $('off-msg').textContent = 'נותק. המפתחות נמחקו מהמחשב.'; });
   });
   $('perm').addEventListener('click', function () {
     chrome.permissions.request({ origins: ['<all_urls>'], permissions: ['clipboardWrite'] }).then(refresh);

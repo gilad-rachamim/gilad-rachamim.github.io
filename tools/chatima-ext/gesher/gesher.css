@@ -50,3 +50,11 @@ input[type=time] { font: inherit; font-size: 15px; background: transparent; colo
 .xf .st.ok { color: #6fcf73; }
 .xf .st.err { color: #ff8a80; }
 .xf .row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* כמה טלפונים */
+.phones { list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 8px; }
+.phones li { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; }
+.phones li b { font-size: 17px; }
+.phones li .st { color: var(--muted); font-size: 14px; flex: 1 1 160px; }
+.phones li button { font-size: 14px; padding: 5px 10px; }
+#file-to { font-size: 15px; padding: 4px 8px; border-radius: 8px; }

@@ -49,25 +49,25 @@
   }
 
   // ---------- נכנס: טלפון → מחשב ----------
-  function ack(fid, part, ok, extra) { return L.send(Object.assign({ type: 'file-ack', fid: fid, part: part, ok: ok }, extra || {})); }
+  function ack(fid, part, ok, extra, room) { return L.send(Object.assign({ type: 'file-ack', fid: fid, part: part, ok: ok }, extra || {}), room); }
   function onFile(o) {
     var fid = String(o.fid || ''), part = o.part | 0;
     if (!okFid(fid)) return;
     var f = inc[fid];
     if (part === 0 && !f) {
       var parts = o.parts | 0, sz = +o.size || 0;
-      if (parts < 1 || sz > MAX_SIZE || parts > Math.ceil(MAX_SIZE / CHUNK) + 1) return ack(fid, 0, false, { done: true, why: 'size' });
-      f = inc[fid] = { name: safeName(o.name), mime: String(o.mime || 'application/octet-stream').slice(0, 100), size: sz, parts: parts, sha: String(o.sha || '').toLowerCase(), clip: !!o.clip, next: 0, last: Date.now(), busy: false };
+      if (parts < 1 || sz > MAX_SIZE || parts > Math.ceil(MAX_SIZE / CHUNK) + 1) return ack(fid, 0, false, { done: true, why: 'size' }, o._r);
+      f = inc[fid] = { name: safeName(o.name), mime: String(o.mime || 'application/octet-stream').slice(0, 100), size: sz, parts: parts, sha: String(o.sha || '').toLowerCase(), clip: !!o.clip, next: 0, last: Date.now(), busy: false, room: o._r };
       xfer(fid, { dir: 'in', name: f.name, size: sz, pct: 0, state: 'run' });
       sweep();
     }
     if (!f) {
       var d = doneIn[fid];                                              // האישור האחרון אבד בדרך – שולחים אותו שוב
-      if (d && Date.now() - d.at < 10 * 60e3) return ack(fid, part, d.ok, d.extra);
-      return ack(fid, part, false, { done: true, why: 'gone' });
+      if (d && Date.now() - d.at < 10 * 60e3) return ack(fid, part, d.ok, d.extra, o._r);
+      return ack(fid, part, false, { done: true, why: 'gone' }, o._r);
     }
     if (f.busy) return;                                                 // עדיין שומרים את החלק הקודם
-    if (part < f.next) return ack(fid, part, true);                    // שידור חוזר של חלק שכבר קיבלנו
+    if (part < f.next) return ack(fid, part, true, null, f.room);                    // שידור חוזר של חלק שכבר קיבלנו
     if (part !== f.next) return;                               // יגיע שוב אחרי timeout אצל השולח
     f.busy = true; f.last = Date.now();
     return off({ t: 'gesher-blob-part', fid: fid, part: part, data: String(o.data || '') }).then(function (r) {
@@ -77,7 +77,7 @@
       if (f.next < f.parts) {
         prog('gesher:fin:' + fid, '📥 מקבל מהטלפון: ' + f.name, size(f.size) + ' · ' + pct + '%', pct, true);
         if (pct % 5 === 0 || f.next === 1) xfer(fid, { pct: pct });
-        return ack(fid, part, true);
+        return ack(fid, part, true, null, f.room);
       }
       return finish(fid, f, part);
     }).catch(function (e) { dropIn(fid, String(e && e.message || 'err'), true); });
@@ -94,7 +94,7 @@
         var extra = { done: true, saved: dl.ok, clip: !!r.clip };
         doneIn[fid] = { at: Date.now(), ok: true, extra: extra };
         var ks = Object.keys(doneIn); if (ks.length > 50) ks.slice(0, ks.length - 50).forEach(function (k) { delete doneIn[k]; });
-        ack(fid, part, true, extra);
+        ack(fid, part, true, extra, f.room);
         xfer(fid, { pct: 100, state: dl.ok ? 'ok' : 'wait', dl: dl.id || null, clip: !!r.clip });
         chrome.notifications.create('gesher:fdone:' + fid, {
           type: 'basic', iconUrl: 'icon128.png',
@@ -133,7 +133,7 @@
     chrome.notifications.clear('gesher:fin:' + fid);
     if (!f) return;
     xfer(fid, { state: w === 'cancel' ? 'x' : 'err', why: w });
-    if (tell) L.send({ type: 'file-x', fid: fid, why: w });
+    if (tell) L.send({ type: 'file-x', fid: fid, why: w }, f.room);
     if (w !== 'cancel' || tell) chrome.notifications.create('gesher:fx:' + fid, { type: 'basic', iconUrl: 'icon128.png', title: 'הקובץ מהטלפון לא נשמר: ' + f.name, message: why(w) + ' · לא נשאר קובץ חלקי', priority: 0 });
   }
   // חלק שלא הגיע 60 שניות → ההעברה נזרקת (שום דבר לא נכתב לדיסק)
@@ -153,14 +153,14 @@
 
   // ---------- יוצא: מחשב → טלפון ----------
   function waitPhone(x) {
-    if (L.isPhoneOn()) return Promise.resolve(true);
+    if (L.isPhoneOn(x.room)) return Promise.resolve(true);
     xfer(x.fid, { state: 'wait' });
     L.connect();
     var t0 = Date.now();
     return new Promise(function (res) {
       (function poll() {
         if (x.cancel) return res(false);
-        if (L.isPhoneOn()) { xfer(x.fid, { state: 'run' }); return res(true); }
+        if (L.isPhoneOn(x.room)) { xfer(x.fid, { state: 'run' }); return res(true); }
         if (Date.now() - t0 > PHONE_WAIT) return res(false);
         setTimeout(poll, 1000);
       })();
@@ -169,13 +169,14 @@
   function outStart(meta) {
     var sz = +meta.size || 0;
     if (sz > MAX_SIZE) return Promise.resolve({ ok: false, why: 'size' });
-    return L.load().then(function (p) {
+    return Promise.all([L.load(meta.room ? String(meta.room) : undefined), L.loadAll()]).then(function (r) {
+      var p = r[0];
       if (!p) return { ok: false, why: 'unpaired' };
-      var x = { fid: fidNew(), name: safeName(meta.name), mime: String(meta.mime || 'application/octet-stream').slice(0, 100), size: sz, sha: String(meta.sha || ''), parts: Math.max(1, Math.ceil(sz / CHUNK)), next: 0, cancel: false, waiter: null };
+      var x = { room: p.room, dev: r[1].length > 1 ? String(p.name || 'טלפון').slice(0, 40) : '', fid: fidNew(), name: safeName(meta.name), mime: String(meta.mime || 'application/octet-stream').slice(0, 100), size: sz, sha: String(meta.sha || ''), parts: Math.max(1, Math.ceil(sz / CHUNK)), next: 0, cancel: false, waiter: null };
       x.last = Date.now();
       outs[x.fid] = x;
       sweep();
-      xfer(x.fid, { dir: 'out', name: x.name, size: sz, pct: 0, state: 'run' });
+      xfer(x.fid, { dir: 'out', name: x.name, size: sz, pct: 0, state: 'run', dev: x.dev });
       return { ok: true, fid: x.fid, parts: x.parts, chunk: CHUNK };
     });
   }
@@ -198,7 +199,7 @@
           if (fin) return;
           if (!on) return done({ ok: false, why: x.cancel ? 'cancel' : 'nophone' });
           x.waiter = { part: part, res: done };
-          return L.send(msg).then(function (sent) {
+          return L.send(msg, x.room).then(function (sent) {
             if (fin) return;
             clearTimeout(x.timer);
             x.timer = setTimeout(go, sent ? ACK_WAIT : 2000);   // לא נענה / לא נשלח → שולחים את אותו חלק שוב (הטלפון מתעלם מכפילות)
@@ -223,14 +224,14 @@
     clearTimeout(x.timer);
     chrome.notifications.clear('gesher:fout:' + x.fid);
     xfer(x.fid, { pct: w ? undefined : 100, state: w ? (w === 'cancel' ? 'x' : 'err') : 'ok', why: w || '' });
-    if (tell) L.send({ type: 'file-x', fid: x.fid, why: w }).catch(function () {});
+    if (tell) L.send({ type: 'file-x', fid: x.fid, why: w }, x.room).catch(function () {});
     if (x.notif && w !== 'cancel') chrome.notifications.create('gesher:foutd:' + x.fid, { type: 'basic', iconUrl: 'icon128.png', priority: 0, title: w ? 'לא נשלח לטלפון: ' + x.name : '📲 נשלח לטלפון: ' + x.name, message: w ? why(w) : size(x.size) + ' · בטלפון: Downloads/Hakelim' });
   }
   function outCancel(fid) {
     var x = outs[fid];
     if (!x) return Promise.resolve({ ok: false });
     x.cancel = true;
-    L.send({ type: 'file-x', fid: fid, why: 'cancel' }).catch(function () {});
+    L.send({ type: 'file-x', fid: fid, why: 'cancel' }, x.room).catch(function () {});
     if (x.waiter) x.waiter.res({ ok: false, why: 'cancel' });
     else outEnd(x, 'cancel', false);
     return Promise.resolve({ ok: true });
@@ -256,7 +257,7 @@
   // ---------- קישור ----------
   function onLink(o) {
     var url = String(o.url || '');
-    L.send({ type: 'ack', id: o.id, ok: /^https?:\/\//i.test(url) });
+    L.send({ type: 'ack', id: o.id, ok: /^https?:\/\//i.test(url) }, o._r);
     if (!/^https?:\/\//i.test(url) || url.length > 4000) return;
     L.copy(url);
     chrome.storage.session.set({ gLinkIn: { url: url, title: String(o.title || '').slice(0, 200), at: Date.now() } });
@@ -266,7 +267,7 @@
     return L.load().then(function (p) {
       if (!p) return openPage();
       return L.queueOut({ type: 'link', url: url, title: String(title || '').slice(0, 200) }).then(function () {
-        note('🔗 נשלח לטלפון', (title ? title + '\n' : '') + url.slice(0, 150) + (L.isPhoneOn() ? '' : '\nיגיע כשהטלפון יתחבר (פתיחת נעילה)'));
+        note('🔗 נשלח לטלפון' + (p && p.name ? ' «' + p.name + '»' : ''), (title ? title + '\n' : '') + url.slice(0, 150) + (L.isPhoneOn(p.room) ? '' : '\nיגיע כשהטלפון יתחבר (פתיחת נעילה)'));
       });
     });
   }
@@ -311,19 +312,20 @@
     var fid = String(o.fid || '');
     if (o.type === 'file-ack') {
       var x = outs[fid];
-      if (x && x.waiter && x.waiter.part === (o.part | 0)) x.waiter.res({ ok: o.ok !== false, why: o.why || '', done: !!o.done });
+      if (x && x.room === o._r && x.waiter && x.waiter.part === (o.part | 0)) x.waiter.res({ ok: o.ok !== false, why: o.why || '', done: !!o.done });
       return;
     }
     if (o.type === 'file-x') {
-      if (inc[fid]) dropIn(fid, o.why || 'cancel', false);
-      if (outs[fid]) { var y = outs[fid]; y.cancel = true; if (y.waiter) y.waiter.res({ ok: false, why: o.why || 'cancel' }); else outEnd(y, o.why || 'cancel', false); }
+      if (inc[fid] && inc[fid].room === o._r) dropIn(fid, o.why || 'cancel', false);
+      if (outs[fid] && outs[fid].room === o._r) { var y = outs[fid]; y.cancel = true; if (y.waiter) y.waiter.res({ ok: false, why: o.why || 'cancel' }); else outEnd(y, o.why || 'cancel', false); }
     }
   }
-  function peer(on) { /* ניתוק באמצע: החלק הבא יישלח שוב כשהטלפון יחזור (עד 90 שניות), ובקבלה – sweep זורק אחרי 60 שניות */ }
-  function reset() {
-    Object.keys(inc).forEach(function (k) { off({ t: 'gesher-blob-drop', fid: k }).catch(function () {}); });
-    Object.keys(outs).forEach(function (k) { outs[k].cancel = true; if (outs[k].waiter) outs[k].waiter.res({ ok: false, why: 'cancel' }); });
-    inc = {}; outs = {}; pend = {};
+  function peer(on, room) { /* ניתוק באמצע: החלק הבא יישלח שוב כשהטלפון יחזור (עד 90 שניות), ובקבלה – sweep זורק אחרי 60 שניות */ }
+  // room = רק ההעברות של טלפון שנותק; בלי room – הכול (אין יותר טלפונים)
+  function reset(room) {
+    Object.keys(inc).forEach(function (k) { if (room && inc[k].room !== room) return; off({ t: 'gesher-blob-drop', fid: k }).catch(function () {}); xfer(k, { state: 'err', why: 'unpaired' }); delete inc[k]; });
+    Object.keys(outs).forEach(function (k) { if (room && outs[k].room !== room) return; outs[k].cancel = true; if (outs[k].waiter) outs[k].waiter.res({ ok: false, why: 'unpaired' }); else outEnd(outs[k], 'unpaired', false); });
+    if (!room) { inc = {}; outs = {}; pend = {}; }
   }
 
   // ---------- התראות ----------

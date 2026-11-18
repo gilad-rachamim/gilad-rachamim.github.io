@@ -2,6 +2,7 @@
 // "טלפון מדומה" לבדיקת התוסף לפני שיש אפליקציה: מצמד את עצמו לפי קישור ה-QR, ושולח קודים מוצפנים.
 //   node tools/gesher_fake_phone.js pair "<קישור ה-QR>" <קובץ-מצב.json>
 //   node tools/gesher_fake_phone.js send <קובץ-מצב.json> <קוד> [sms|whatsapp|mail|app] [שולח]
+//   node tools/gesher_fake_phone.js recv <קובץ-מצב.json> [שניות]   – מקבל מה שהמחשב שולח (ומאשר clip), מדפיס JSON
 // קובץ המצב מכיל מפתחות בדיקה בלבד – למחוק אחרי הבדיקה.
 'use strict';
 const fs = require('fs');
@@ -23,13 +24,13 @@ function next(c, p, ms = 15000) {
   return new Promise(r => { const x = { p, r }; c.w.push(x); setTimeout(() => { const k = c.w.indexOf(x); if (k >= 0) { c.w.splice(k, 1); r(null); } }, ms); });
 }
 
-async function pair(link, file) {
+async function pair(link, file, name) {
   const q = JSON.parse(dec.decode(G.unb64u(link.split('#')[1])));
   const room = G.unb64u(q.r), secret = G.unb64u(q.s), pcPub = G.unb64u(q.k);
   const me = await G.newKeyPair();
   const c = await sock(q.w.replace(/^http/, 'ws') + '/r/' + q.r + '/ws?tok=' + G.b64u(await G.pairToken(secret)));
   const mac = await G.helloMac(secret, room, pcPub, me.pub);
-  c.ws.send(enc.encode(JSON.stringify({ type: 'hello', pub: G.b64u(me.pub), mac: G.b64u(mac), name: 'טלפון מדומה' })));
+  c.ws.send(enc.encode(JSON.stringify({ type: 'hello', pub: G.b64u(me.pub), mac: G.b64u(mac), name: name || 'טלפון מדומה' })));
   if (!(await next(c, m => m.j && m.j.t === 'sealed'))) throw new Error('לא התקבל sealed');
   const s = await G.deriveSession(me.privateKey, pcPub, room);
   // לשמירה בקובץ צריך את המפתחות כבתים: גוזרים שוב עם okm
@@ -58,5 +59,26 @@ async function send(file, code, src, from) {
   process.exit(o.type === 'ack' && o.id === id ? 0 : 1);
 }
 
+async function recv(file, secs) {
+  const st = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const room = G.unb64u(st.room);
+  const imp = b => crypto.subtle.importKey('raw', G.unb64u(b), { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
+  const k21 = await imp(st.k21), k12 = await imp(st.k12);
+  const c = await sock(st.w.replace(/^http/, 'ws') + '/r/' + st.room + '/ws?tok=' + st.tokPhone);
+  const got = [], end = Date.now() + (Number(secs) || 8) * 1000;
+  while (Date.now() < end) {
+    const m = await next(c, m => m.bin, Math.max(50, end - Date.now()));
+    if (!m) break;
+    let o; try { o = (await G.open(k12, room, G.DIR_PC_TO_PHONE, m.bin, null)).obj; } catch (e) { got.push({ bad: true }); continue; }
+    got.push(o);
+    if (o.type === 'clip' && o.id) {   // אישור – כך המחשב יודע שהטלפון הזה קיבל
+      st.ctr = G.nextCtr(st.ctr); fs.writeFileSync(file, JSON.stringify(st));
+      c.ws.send(await G.seal(k21, room, G.DIR_PHONE_TO_PC, st.ctr, { type: 'ack', id: o.id, ok: true }));
+    }
+  }
+  console.log(JSON.stringify(got));
+  process.exit(c.closed ? 3 : 0);
+}
+
 const [cmd, a, b, c2, d] = process.argv.slice(2);
-(cmd === 'pair' ? pair(a, b) : cmd === 'send' ? send(a, b, c2, d) : Promise.reject(new Error('pair | send'))).catch(e => { console.error(e.message); process.exit(2); });
+(cmd === 'pair' ? pair(a, b, c2) : cmd === 'send' ? send(a, b, c2, d) : cmd === 'recv' ? recv(a, b) : Promise.reject(new Error('pair | send | recv'))).catch(e => { console.error(e.message); process.exit(2); });

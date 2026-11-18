@@ -23,7 +23,7 @@
 <section id="off" class="card" hidden>
   <h2>חיבור הטלפון – פעם אחת</h2>
   <ol class="steps">
-    <li>מתקינים בטלפון את האפליקציה "הכלים" (אנדרואיד).</li>
+    <li>אנדרואיד: מתקינים בטלפון את האפליקציה "הכלים". אייפון: לא צריך להתקין כלום – נפתח דף בספארי.</li>
     <li>לוחצים כאן "חיבור טלפון" וסורקים את הריבוע במצלמה של הטלפון.</li>
     <li>זהו. מעכשיו כל קוד שמגיע לטלפון ממלא את עצמו כאן.</li>
   </ol>
@@ -42,15 +42,18 @@
 
 <section id="on" class="card" hidden>
   <h2>✅ מחובר <bdi id="phone-name"></bdi></h2>
-  <p class="status"><span id="dot" class="dot"></span> <span id="status-txt"></span></p>
+  <p class="status" id="one-status"><span id="dot" class="dot"></span> <span id="status-txt"></span></p>
+  <ul id="phones" class="phones" hidden></ul>
   <div id="last" class="last" hidden></div>
   <label class="opt"><input type="checkbox" id="opt-copy"> להעתיק כל קוד גם ללוח (Ctrl+V)</label>
   <p class="small">קיצור מקשים "להקליד את הקוד האחרון": אפשר לקבוע ב-<a href="#" id="keys">chrome://extensions/shortcuts</a>.</p>
   <div class="row">
     <button type="button" id="perm" hidden>לאפשר מילוי בכל האתרים</button>
+    <button type="button" id="add" class="gold">➕ חיבור טלפון נוסף</button>
     <button type="button" id="unpair" class="danger">ניתוק הטלפון</button>
   </div>
   <p class="msg" id="on-msg" role="status"></p>
+  <p class="small" id="add-note">אפשר לחבר עד 5 טלפונים למחשב הזה (למשל אייפון וגם אנדרואיד). כל אחד מוצפן בנפרד, וניתוק של אחד לא נוגע באחרים.</p>
 </section>
 
 <section id="files" class="card" hidden>
@@ -60,6 +63,7 @@
     <b>📤 גוררים לכאן קובץ, או לוחצים לבחירה</b>
     <span class="small">הקובץ נשלח מוצפן לטלפון ונשמר שם בתיקייה Downloads/Hakelim. עד 100MB לקובץ.</span>
   </label>
+  <label class="opt" id="file-to-wrap" hidden>לאיזה טלפון לשלוח: <select id="file-to"></select></label>
   <p class="msg" id="file-msg" role="status"></p>
   <button type="button" id="file-perm" class="big" hidden>📥 לאשר שמירה של קבצים מהטלפון</button>
   <div id="xfer-list" class="ntf-list" aria-live="polite"></div>

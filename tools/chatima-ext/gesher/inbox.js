@@ -36,7 +36,7 @@
         var img = el('img'); img.alt = ''; img.src = x.icon || '../icon32.png'; card.appendChild(img);
         var hd = el('div', 'hd');
         hd.appendChild(el('b', '', x.title || x.app));
-        hd.appendChild(el('span', '', x.app + ' · ' + when(x.at)));
+        hd.appendChild(el('span', '', x.app + (x.dev ? ' · ' + x.dev : '') + ' · ' + when(x.at)));
         card.appendChild(hd);
         card.appendChild(el('div', 'tx', x.text));
         (x.replied || []).forEach(function (r) { card.appendChild(el('div', 'mine', '↩ אני: ' + r)); });

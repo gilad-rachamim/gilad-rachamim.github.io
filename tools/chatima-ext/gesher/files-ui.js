@@ -17,7 +17,7 @@
     if (f.size > 100 * 1024 * 1024) { msg('"' + f.name + '" גדול מדי (עד 100MB)'); return Promise.resolve(); }
     return f.arrayBuffer().then(function (ab) {
       return crypto.subtle.digest('SHA-256', ab).then(function (d) {
-        return ask({ t: 'gesher-file-start', name: f.name, mime: f.type || 'application/octet-stream', size: f.size, sha: hex(d) });
+        return ask({ t: 'gesher-file-start', name: f.name, mime: f.type || 'application/octet-stream', size: f.size, sha: hex(d), room: $('file-to').value || undefined });
       }).then(function (s) {
         if (!s || !s.ok) { msg('"' + f.name + '" לא נשלח: ' + (WHY[s && s.why] || WHY.err)); return; }
         var u8 = new Uint8Array(ab), i = 0;
@@ -52,7 +52,7 @@
         d.className = 'xf'; d.dataset.fid = x.fid;
         var hd = document.createElement('div'); hd.className = 'hd';
         var b = document.createElement('b'); b.textContent = (x.dir === 'in' ? '📥 ' : '📤 ') + x.name;
-        var sp = document.createElement('span'); sp.textContent = (x.dir === 'in' ? 'מהטלפון' : 'לטלפון') + ' · ' + size(x.size || 0) + ' · ' + new Date(x.at).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+        var sp = document.createElement('span'); sp.textContent = (x.dir === 'in' ? 'מהטלפון' : 'לטלפון') + (x.dev ? ' «' + x.dev + '»' : '') + ' · ' + size(x.size || 0) + ' · ' + new Date(x.at).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
         hd.appendChild(b); hd.appendChild(sp); d.appendChild(hd);
         var st = document.createElement('div'); st.className = 'st';
         var row = document.createElement('div'); row.className = 'row';
@@ -98,6 +98,25 @@
     if (on) chrome.permissions.request({ permissions: ['clipboardWrite'] }).catch(function () {});
   });
   chrome.storage.onChanged.addListener(function (c, area) { if (area === 'session' && c.gXfer) render(); });
+  // כמה טלפונים: בוחרים לאיזה טלפון הקובץ הולך (ברירת מחדל – זה שמחובר עכשיו / היה פעיל אחרון)
+  function phonesPick() {
+    ask({ t: 'gesher-state' }).then(function (st) {
+      var ph = (st && st.phones) || [], sel = $('file-to'), keep = sel.value;
+      $('file-to-wrap').hidden = ph.length < 2;
+      var sig = JSON.stringify(ph.map(function (x) { return [x.room, x.name, x.phone]; }));
+      if (sel.dataset.sig === sig) return;
+      sel.dataset.sig = sig;
+      sel.textContent = '';
+      ph.forEach(function (x) {
+        var o = document.createElement('option'); o.value = x.room;
+        o.textContent = '📱 ' + (x.name || 'טלפון') + (x.phone ? ' (מחובר)' : '');
+        if (x.room === keep || (!keep && x.main)) o.selected = true;
+        sel.appendChild(o);
+      });
+    }).catch(function () {});
+  }
+  phonesPick();
+  setInterval(phonesPick, 5000);
   chrome.permissions.onAdded.addListener(render);
   render();
   if (location.hash === '#files') setTimeout(function () { $('files').scrollIntoView({ block: 'start' }); }, 300);
