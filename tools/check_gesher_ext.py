@@ -2,7 +2,10 @@
 הרצה מתיקיית הריפו:  python -I -X utf8 tools/check_gesher_ext.py [כתובת-שרת] [תיקיית-צילומים]
 ברירת מחדל: השרת החי https://kelim-gesher.gilad4049.workers.dev
 בודק: דף הצימוד מציג QR, הטלפון המדומה מצמד את עצמו, המחשב מציג "מחובר", ואז קודים מוצפנים נכנסים לבד
-לשדה רגיל, ל-6 תיבות, לשדה של React – ולא נכנסים לשדה סיסמה, חיפוש או צ'אט. בסוף: ניתוק.
+לשדה רגיל, ל-6 תיבות, לשדה של React – ולא נכנסים לשדה סיסמה, חיפוש או צ'אט. דופק יומי (hello → ack),
+"נראה לאחרונה", התראה על 3 מסגרות שלא נפתחות. בסוף: ניתוק.
+אזהרה: בדיקות הגשר לעולם לא מצמדות את הטלפון האמיתי – רק "טלפון מדומה" (gesher_fake_phone.js) או אמולטור.
+צימוד הטלפון האמיתי מול פרופיל בדיקה דוחק החוצה את המחשב האמיתי (כך נשבר הצימוד ב-18.11.2026).
 """
 import json, os, sys, subprocess, shutil, tempfile, threading, time, asyncio
 from pathlib import Path
@@ -137,9 +140,26 @@ async def main():
             last = await sw.evaluate("chrome.storage.session.get('gLast').then(o => o.gLast)")
             ok(last and last.get('code') == '909090' and last.get('src') == 'sms', 'הקוד האחרון נשמר עם המקור (sms) – להקלדה בקיצור מקשים')
 
+            # ---- דופק יומי: hello → ack עם hello:true, ו"נראה לאחרונה" בדף ----
+            rc, out = await asyncio.to_thread(phone, 'hello', str(state))
+            ok(rc == 0, 'דופק יומי: המחשב עונה ack (hello:true) לטלפון', out)
+            # ---- 3 מסגרות במפתח שגוי → התראה "הצימוד לטלפון לא תואם" ----
+            rc, out = await asyncio.to_thread(phone, 'junk', str(state))
+            ids = []
+            for _ in range(10):
+                ids = await sw.evaluate("chrome.notifications.getAll().then(o => Object.keys(o))")
+                if 'gesher:bad' in ids: break
+                await asyncio.sleep(0.5)
+            ok('gesher:bad' in ids, '3 מסגרות שלא נפתחות → התראה "הצימוד לטלפון לא תואם – לצמד מחדש"', ids)
+            await sw.evaluate("chrome.notifications.clear('gesher:bad')")
+            # אחרי מסגרות שגויות הצימוד עדיין קיים ועובד
+            rc, out = await asyncio.to_thread(phone, 'hello', str(state))
+            ok(rc == 0, 'אחרי מסגרות שגויות – הצימוד לא נמחק והדופק עובד', out)
+
             await pg.bring_to_front(); await pg.reload()
             await pg.wait_for_selector('#on:not([hidden])', timeout=8000)
             await asyncio.sleep(1)
+            ok('נראה לאחרונה' in await pg.inner_text('#status-txt'), 'בדף הגשר: "הטלפון נראה לאחרונה: …"', await pg.inner_text('#status-txt'))
             if SHOTS: await pg.screenshot(path=str(SHOTS / '4-מחובר.png'))
 
             # ---- ניתוק ----

@@ -191,6 +191,14 @@ async function pairDevices() {
   const o2 = got2 && await G.open(sPc.k21, P.room, G.DIR_PHONE_TO_PC, got2.bin, lastAtPc);
   ok(o2 && o2.obj.code === '771204', 'אחרי החלפת חיבור הקודים ממשיכים להגיע');
 
+  // "מחשב קבוע": keep מצד מאומת לא שובר את החיבור, והקודים ממשיכים לעבור
+  phoneWs.ws.send(JSON.stringify({ t: 'keep', on: true }));
+  ctrPhone = G.nextCtr(ctrPhone);
+  phoneWs.ws.send(await G.seal(sPhone.k21, room, G.DIR_PHONE_TO_PC, ctrPhone, { type: 'otp', id: 'k4', code: '552211', src: 'sms', at: Date.now() }));
+  const got3 = await next(pcWs, isBin);
+  const o3 = got3 && await G.open(sPc.k21, P.room, G.DIR_PHONE_TO_PC, got3.bin, o2 && o2.ctr);
+  ok(o3 && o3.obj.code === '552211', 'אחרי keep:true הקודים ממשיכים לעבור');
+
   // מסגרת שהשתנתה בדרך לא נפתחת (מבחן ללקוח)
   const tampered = new Uint8Array(frame); tampered[tampered.length - 1] ^= 1;
   let bad = false; try { await G.open(sPc.k21, P.room, G.DIR_PHONE_TO_PC, tampered, null); } catch (e) { bad = true; }

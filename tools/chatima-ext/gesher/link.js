@@ -129,6 +129,8 @@
     }).then(function (r) {
       S.set('lastIn:' + room, r.ctr);
       conn(room).act = Date.now();
+      conn(room).bad = 0;
+      seenPhone(room);
       var o = r.obj || {};
       o._r = room;     // מאיזה טלפון הגיע – כל תשובה חוזרת לאותו טלפון
       if (/^(file|file-ack|file-x|link)$/.test(o.type) && self.GesherFiles) return self.GesherFiles.onMsg(o);   // שלב 4 – gesher/files.js
@@ -139,12 +141,30 @@
         o.code = cc;
         return gotCode(o);
       }
+      if (o.type === 'hello') return send({ type: 'ack', id: o.id, hello: true }, room);   // דופק יומי מהטלפון
       if (o.type === 'bye') return forget(room, 'הטלפון ניתק את החיבור');
       if (o.type === 'clip' && typeof o.text === 'string') return gotClip(o);
       if (o.type === 'notif') return gotNotif(o);
       if (o.type === 'notif-x' && o.key) return send({ type: 'ack', id: o.id }, room).then(function () { return dropNotif(ikey(room, String(o.key)), false); });
       if (o.type === 'ack' && o.id) return Promise.all([clipAcked(o.id, room), outAcked(o)]);
-    }).catch(function () { /* מסגרת לא תקינה / ישנה – מתעלמים בשקט */ });
+    }).catch(function (e) {
+      // מסגרת ישנה (replay) – רגיל, מתעלמים. מסגרת שלא נפתחת – 3 ברצף = המפתחות לא תואמים (צימוד שבור) → התראה
+      var why = e && e.message;
+      if (!p || why === 'replay' || why === 'gone') return;
+      var c = conn(room);
+      c.bad = (c.bad || 0) + 1;
+      if (c.bad === 3) chrome.notifications.create('gesher:bad', { type: 'basic', iconUrl: 'icon128.png', priority: 2,
+        title: 'הצימוד לטלפון לא תואם – לצמד מחדש',
+        message: '«' + (p.name || 'הטלפון') + '» שולח הודעות שהמחשב לא מצליח לפתוח. פותחים "גשר לטלפון" בתוסף, מנתקים אותו וסורקים שוב את ה-QR.' });
+    });
+  }
+
+  // מתי הטלפון נראה לאחרונה (כל מסגרת שנפתחה) – נשמר לכל טלפון, עד פעם בדקה
+  function seenPhone(room) {
+    var c = conn(room), now = Date.now();
+    if (c.seenAt && now - c.seenAt < 60e3) return;
+    c.seenAt = now;
+    S.set('seen:' + room, now);
   }
 
   // ---------- קוד הגיע ----------
@@ -520,7 +540,7 @@
         return S.clear();
       }
       setState({});
-      return Promise.all([S.set('pairs', pairs), S.del('lastIn:' + room),
+      return Promise.all([S.set('pairs', pairs), S.del('lastIn:' + room), S.del('seen:' + room),
         notifs().then(function (n) { n.filter(function (x) { return x.room === room; }).forEach(function (x) { chrome.notifications.clear(nid(x.key)); }); return saveNotifs(n.filter(function (x) { return x.room !== room; })); }),
         chrome.storage.session.get(['gOut', 'gClipOut']).then(function (o) {
           var w = { gOut: (o.gOut || []).filter(function (m) { return m.room !== room; }) };
@@ -583,8 +603,10 @@
     if (m.t === 'gesher-unpair') { unpair(m.room ? String(m.room) : undefined).then(function () { reply({ ok: true }); syncWatch(); syncClipWatch(); }); return true; }
     if (m.t === 'gesher-state') {
       Promise.all([loadAll(), chrome.storage.session.get(['gState', 'gLast', 'gClip'])]).then(function (r) {
+        return Promise.all(r[0].map(function (p) { return S.get('seen:' + p.room); })).then(function (seen) { r.push(seen); return r; });
+      }).then(function (r) {
         var a = r[0], main = pickRoom(a);
-        var phones = a.map(function (p) { return { room: p.room, name: p.name, since: p.at, online: isOpen(p.room), phone: !!(C[p.room] && C[p.room].phoneOn), main: p.room === main }; });
+        var phones = a.map(function (p, i) { return { room: p.room, name: p.name, since: p.at, seen: r[2][i] || null, online: isOpen(p.room), phone: !!(C[p.room] && C[p.room].phoneOn), main: p.room === main }; });
         var f = phones.filter(function (x) { return x.main; })[0] || phones[0] || {};
         reply({ paired: phones.length > 0, phones: phones, max: MAX_PHONES, name: f.name, since: f.since, online: phones.some(function (x) { return x.online; }), phone: phones.some(function (x) { return x.phone; }), state: r[1].gState || {}, last: r[1].gLast || null, clip: r[1].gClip || null });
       });

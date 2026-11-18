@@ -6,7 +6,7 @@
 //   POST   /pair            {room, ph}  -> {ok}       פתיחת חדר לצימוד (תוקף 3 דקות; עד 30 בשעה לכתובת)
 //   GET    /r/:room/ws?tok=             -> WebSocket   tok = אסימון צימוד (לפני חיבור) או אסימון המכשיר (אחרי)
 //   DELETE /r/:room?tok=                -> {ok}       ניתוק: מוחק את החדר
-// מסגרות טקסט (בקרה): לקוח -> {t:'seal', hPc, hPhone} (רק בזמן צימוד) ; שרת -> {t:'peer', on}, {t:'sealed'}, {t:'err', e}
+// מסגרות טקסט (בקרה): לקוח -> {t:'seal', hPc, hPhone} (רק בזמן צימוד), {t:'keep', on} (צד מאומת: לא למחוק בגלל חוסר שימוש) ; שרת -> {t:'peer', on}, {t:'sealed'}, {t:'err', e}
 // "ping" -> "pong" עונה Cloudflare בלי להעיר את החדר (חיסכון).
 const PAIR_MS = 3 * 60e3, IDLE_MS = 90 * 24 * 3600e3, MAX_FRAME = 300 * 1024, MAX_PER_DAY = 20000;
 const ROOM_RE = /^[A-Za-z0-9_-]{22}$/, TOK_RE = /^[A-Za-z0-9_-]{43}$/, HASH_RE = /^[0-9a-f]{64}$/;
@@ -135,6 +135,10 @@ export class Room {
         await this.ctx.storage.put('room', room);
         await this.ctx.storage.setAlarm(Date.now() + 24 * 3600e3);
         for (const w of this.ctx.getWebSockets()) try { w.send(JSON.stringify({ t: 'sealed' })); w.close(4002, 'sealed'); } catch (e) {}
+      } else if (m && m.t === 'keep' && (role === 'pc' || role === 'phone')) {
+        // "מחשב קבוע": חדר שאחד הצדדים ביקש לשמור לא נמחק אחרי 90 יום בלי שימוש (רק DELETE מוחק אותו)
+        const room = await this.ctx.storage.get('room');
+        if (room && room.sealed && !!room.keep !== !!m.on) { room.keep = !!m.on; await this.ctx.storage.put('room', room); }
       }
       return;
     }
@@ -170,7 +174,7 @@ export class Room {
   async alarm() {
     const room = await this.ctx.storage.get('room');
     const now = Date.now();
-    const dead = !room || (!room.sealed && now - room.at >= PAIR_MS) || (room.sealed && now - room.used > IDLE_MS);
+    const dead = !room || (!room.sealed && now - room.at >= PAIR_MS) || (room.sealed && !room.keep && now - room.used > IDLE_MS);
     if (dead) {
       for (const w of this.ctx.getWebSockets()) try { w.close(4001, 'expired'); } catch (e) {}
       await this.ctx.storage.deleteAll();

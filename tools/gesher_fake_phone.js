@@ -80,5 +80,27 @@ async function recv(file, secs) {
   process.exit(c.closed ? 3 : 0);
 }
 
+// hello: הדופק היומי של הטלפון – מצפים ל-ack עם hello:true. junk: 3 מסגרות במפתח שגוי (כמו צימוד שהמפתחות שלו לא תואמים)
+async function hello(file, junk) {
+  const st = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const room = G.unb64u(st.room);
+  const imp = b => crypto.subtle.importKey('raw', G.unb64u(b), { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
+  const k21 = await imp(junk ? G.b64u(G.random(32)) : st.k21), k12 = await imp(st.k12);
+  const c = await sock(st.w.replace(/^http/, 'ws') + '/r/' + st.room + '/ws?tok=' + st.tokPhone);
+  const peer = await next(c, m => m.j && m.j.t === 'peer');
+  if (!peer.j.on) { await next(c, m => m.j && m.j.t === 'peer' && m.j.on, 8000); }
+  const id = 'h' + Date.now();
+  for (let i = 0; i < (junk ? 3 : 1); i++) {
+    st.ctr = G.nextCtr(st.ctr); fs.writeFileSync(file, JSON.stringify(st));
+    c.ws.send(await G.seal(k21, room, G.DIR_PHONE_TO_PC, st.ctr, { type: 'hello', id: id + i, at: Date.now() }));
+  }
+  if (junk) { await new Promise(r => setTimeout(r, 1500)); console.log('{}'); process.exit(0); }
+  const a = await next(c, m => m.bin, 15000);
+  if (!a) { console.log('לא התקבל אישור מהמחשב'); process.exit(1); }
+  const o = (await G.open(k12, room, G.DIR_PC_TO_PHONE, a.bin, null)).obj;
+  console.log(JSON.stringify(o));
+  process.exit(o.type === 'ack' && o.hello === true && o.id === id + '0' ? 0 : 1);
+}
+
 const [cmd, a, b, c2, d] = process.argv.slice(2);
-(cmd === 'pair' ? pair(a, b, c2) : cmd === 'send' ? send(a, b, c2, d) : cmd === 'recv' ? recv(a, b) : Promise.reject(new Error('pair | send | recv'))).catch(e => { console.error(e.message); process.exit(2); });
+(cmd === 'pair' ? pair(a, b, c2) : cmd === 'send' ? send(a, b, c2, d) : cmd === 'recv' ? recv(a, b) : cmd === 'hello' ? hello(a, false) : cmd === 'junk' ? hello(a, true) : Promise.reject(new Error('pair | send | recv | hello | junk'))).catch(e => { console.error(e.message); process.exit(2); });

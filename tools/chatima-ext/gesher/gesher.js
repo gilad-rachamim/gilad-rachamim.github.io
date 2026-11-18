@@ -10,6 +10,8 @@
   var $ = function (id) { return document.getElementById(id); };
   var ws = null, timer = null, alive = false, last = null;
   var MAX = 5;
+  // שהדפדפן לא ימחק את מפתחות הצימוד כשחסר מקום בדיסק
+  try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
 
   function show(id) { ['off', 'pairing', 'on'].forEach(function (x) { $(x).hidden = x !== id; }); $('clip').hidden = id !== 'on'; $('inbox').hidden = id !== 'on'; $('files').hidden = id !== 'on'; }
   function ask(m) { return chrome.runtime.sendMessage(m); }
@@ -27,7 +29,8 @@
       $('phone-name').textContent = many ? 'ל-' + ph.length + ' טלפונים' : (/^[֐-׿]/.test(nm) ? 'ל' : 'ל-') + nm;
       var phone = st.phone || (st.state && st.state.phone);
       $('dot').className = 'dot' + (st.online ? (phone ? ' ok' : ' half') : '');
-      $('status-txt').textContent = !st.online ? 'מתחבר לשרת…' : phone ? 'הטלפון מחובר עכשיו' : 'מחכה לטלפון (הוא מתחבר לבד כשמגיע קוד)';
+      $('status-txt').textContent = (!st.online ? 'מתחבר לשרת…' : phone ? 'הטלפון מחובר עכשיו' : 'מחכה לטלפון (הוא מתחבר לבד כשמגיע קוד)')
+        + (!many && ph[0] && ph[0].seen ? ' · הטלפון נראה לאחרונה: ' + when(ph[0].seen) : '');
       $('one-status').hidden = many;
       $('unpair').hidden = many;
       $('add').hidden = ph.length >= (st.max || MAX);
@@ -58,7 +61,7 @@
       var dot = document.createElement('span'); dot.className = 'dot' + (x.online ? (x.phone ? ' ok' : ' half') : '');
       var b = document.createElement('b'); b.textContent = '📱 ' + (x.name || 'טלפון');
       var st = document.createElement('span'); st.className = 'st';
-      st.textContent = (!x.online ? 'מתחבר…' : x.phone ? 'מחובר עכשיו' : 'מחכה לטלפון') + ' · צומד ' + when(x.since);
+      st.textContent = (!x.online ? 'מתחבר…' : x.phone ? 'מחובר עכשיו' : 'מחכה לטלפון') + ' · צומד ' + when(x.since) + (x.seen ? ' · נראה לאחרונה ' + when(x.seen) : '');
       var bt = document.createElement('button'); bt.type = 'button'; bt.className = 'danger'; bt.textContent = 'ניתוק';
       bt.setAttribute('aria-label', 'ניתוק ' + (x.name || 'הטלפון'));
       bt.addEventListener('click', function () {
