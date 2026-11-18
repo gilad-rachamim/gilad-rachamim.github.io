@@ -1,0 +1,386 @@
+{
+ "day": "2026-11-12",
+ "editions": [
+  {
+   "name": "בוקר",
+   "time": "07:00",
+   "at": "2026-11-12T05:00:25.223Z",
+   "mode": "summary",
+   "date": {
+    "he": "ב׳ כסלו תשפ״ז",
+    "day": "חמישי"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "מזג האוויר צפוי להיות מעונן חלקית עד בהיר עם עלייה קלה בטמפרטורות, לצד סיכוי לגשם מקומי בבוקר בצפון ובמישור החוף.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/israel-news/israel-weather-forecast-light-rain-north-coast"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/hkq0s2frme"
+       },
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383961104"
+       }
+      ]
+     },
+     {
+      "text": "מבנה בן שלוש קומות קרס אל אתר חפירה בברוקלין שבניו יורק, וכתוצאה מכך נהרגו שני בני אדם ולפחות 17 נוספים נפצעו.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1785060/"
+       },
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1140602"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/sjym11omcmx"
+       }
+      ]
+     },
+     {
+      "text": "משמרות המהפכה באיראן חשפו מתקן תת-קרקעי המכיל טילים בליסטיים, טילי שיוט ומשגרים, כחלק ממאמץ להגן על הארסנל שלהם.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1785047/"
+       },
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/military/article-1387498"
+       }
+      ]
+     },
+     {
+      "text": "לפי דיווחים בעזה, שישה בני אדם נהרגו בתקיפה במתחם בית החולים נאסר בחאן יונס, וצה״ל מסר כי האירוע נמצא בבדיקה.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/security-news/khan-younis-nasser-hospital-strike-hamas-official"
+       },
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1785018/"
+       },
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1140607"
+       }
+      ]
+     },
+     {
+      "text": "שגריר ישראל בהולנד זומן מיד לישראל לבירור בעקבות פרסומים על דברים שאמר לתקשורת המקומית.",
+      "sources": [
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383961086"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744334"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "האדמו״ר מזמיגראד מבורו פארק מאושפז בבית החולים, ובימים האחרונים חלה החמרה במצבו והוא הורדם והונשם.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744344"
+       }
+      ]
+     },
+     {
+      "text": "אלפי אברכים השתתפו במוצאי הבחירות בלימוד רצוף בתענית דיבור, במסגרת מעמד שנערך במעונו של הגר״י זילברשטיין.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744341"
+       }
+      ]
+     },
+     {
+      "text": "בשכונת בורו פארק בברוקלין נפטר בגיל 71 הרה״ח ר' מנחם יהושע ראטה ז״ל, שהיה בעל תפילה, ממשוררי מקהלת בעלזא ושחקן בהצגות ביידיש.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744346"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "היקף המשנתאות מתחילת השנה חצה את רף 97.5 מיליארד השקלים, המהווה זינוק של כ-14% לעומת התקופה המקבילה אשתקד.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/economy/2764200/"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "name": "צהריים",
+   "time": "13:00",
+   "at": "2026-11-12T11:00:25.828Z",
+   "mode": "summary",
+   "date": {
+    "he": "ב׳ כסלו תשפ״ז",
+    "day": "חמישי"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "ראש הממשלה בנימין נתניהו ויו״ר יש עתיד גדי איזנקוט ייפגשו היום בלשכת ראש הממשלה בירושלים לעדכון מדיני־ביטחוני בהשתתפות המזכיר הצבאי.",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1140669"
+       },
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2764321/"
+       }
+      ]
+     },
+     {
+      "text": "צה״ל ושב״כ אישרו כי תקפו בח׳אן יונס את מח״ט ח׳אן יונס, שהיה אחראי על החזקת חטופים רבים בשבי.",
+      "sources": [
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/bjdjexqrfx"
+       },
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2764235/"
+       }
+      ]
+     },
+     {
+      "text": "משרד הבריאות הודיע על הסרת אזהרת הרחצה בחוף צ׳ארלס קלור בתל אביב, בכל חופי הרצליה ובחוף מי עמי באשדוד.",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1140674"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/bjf9oz7cze"
+       }
+      ]
+     },
+     {
+      "text": "משטרת ישראל עצרה נהג מונית מירושלים בחשד שהחליף כרטיסי אשראי של עשרות נוסעים לאחר שקיבל את הקוד הסודי ומשך באמצעותם מאות אלפי שקלים.",
+      "sources": [
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/law/article-1387671"
+       }
+      ]
+     },
+     {
+      "text": "שליחי ארה״ב הגיעו למוסקבה לפגישה עם נשיא רוסיה ולדימיר פוטין במטרה לקדם את סיום המלחמה באוקראינה.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1785815/"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "הדסה עזריאל, אמו של הילד אליהו עזריאל ז״ל שנהרג מאסון פח המיחזורית בביתר עילית, קוראת לבנות ישראל להתאחד ביום ה-30 למצוות הצניעות.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/haredim-news/bereaved-mother-modesty-initiative"
+       }
+      ]
+     },
+     {
+      "text": "ארגון זק״א מפרסם שורת הנחיות למנוע סכנות שיטפונות וההצפות לקראת עונת החורף, ומזהיר מפני כניסה לנחלים וחציית כבישים מוצפים.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/health-news/todwf0"
+       }
+      ]
+     },
+     {
+      "text": "המותג 'מאמא עוף' מבית תנובה משווק לראשונה בכשרות מהודרת של בד״ץ קהילות.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/consumption/todw64"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "חברת הביטוח הכשרה הגישה בקשה לרשות שוק ההון במטרה להיכנס לתחום קופות הגמל ולהגיע להיקף נכסים של 50 מיליארד שקל בשנים הקרובות.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001563169"
+       }
+      ]
+     },
+     {
+      "text": "מנכ״לית כאל נפגשה עם מנכ״ל משרד האוצר על רקע חידוש הליך המכירה של החברה ודרישה לדחות את מועד סיום העסקה.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001563163"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "name": "ערב",
+   "time": "20:00",
+   "at": "2026-11-12T18:00:25.506Z",
+   "mode": "summary",
+   "date": {
+    "he": "ב׳ כסלו תשפ״ז",
+    "day": "חמישי"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "תקלה טכנית ברכבלית בחיפה גרמה לעצירת הקרוניות ולהילכדות נוסעים באוויר, ולאחר כאירוע של שעה וחצי חודשה הפעילות והנוסעים חולצו בשלום.",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1140739"
+       },
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2764857/"
+       },
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/news/haifa-cable-car-malfunction-rescue-operation"
+       }
+      ]
+     },
+     {
+      "text": "ראש הממשלה בנימין נתניהו נועד עם יו״ר מפלגת ישר גדי איזנקוט לתדרוך ביטחוני שנמשך כשעתיים, ובתום המפגש סוכם על המשך עדכונים הדדיים.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2764833/"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/s1zfbux0ze"
+       },
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1786909/"
+       }
+      ]
+     },
+     {
+      "text": "שר החוץ גדעון סער החליט לאסור את כניסתם לישראל של שני בכירי מפלגת שמאל מצרפת, בעקבות התבטאויותיהם נגד המדינה.",
+      "sources": [
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/world/article-1387894"
+       },
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1786927/"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/rj0jzo7cze"
+       }
+      ]
+     },
+     {
+      "text": "צה״ל חשף כי הקומה השנייה בבית החולים נאצר בחאן יונס שימשה כמפקדת טרור של חמאס, וכי במתחם הוחזקו חטופים ישראלים.",
+      "sources": [
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/syqscwm0gl"
+       },
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1786895/"
+       },
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1140731"
+       }
+      ]
+     },
+     {
+      "text": "יו״ר ועדת הבחירות, השופט נעם סולברג, עדכן כי חקירת החשדות להתערבות זרה בבחירות נמשכת אך טרם התגבשה לראיות ממשיות, ומתח ביקורת על ההדלפות מהחקירה.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001563312"
+       },
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2764794/"
+       },
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/politics/article-1387872"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "ארגון ״אמת ליעקב״ פנה לרשויות בדרישה להחזיר את תחנת האוטובוס הסמוכה לרחבת הכותל המערבי, כדי להקל על קשישים ונוסעים עם מוגבלויות.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/economy/2764725/"
+       }
+      ]
+     },
+     {
+      "text": "בבני ברק התקיים מעמד הכנסת ספר תורה לבית המדרש זיו יהודה בשכונת קריית הרצוג, בהשתתפות תושבים רבים.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/flashes/2763954/"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "הפחתת הטבות המס על יבוא כלי רכב חשמליים מסין צפויה להביא להתייקרות מחירי המכוניות בישראל החל משנת 2027.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001563249"
+       }
+      ]
+     }
+    ]
+   }
+  }
+ ]
+}

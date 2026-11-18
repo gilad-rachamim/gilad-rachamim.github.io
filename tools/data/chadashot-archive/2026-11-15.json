@@ -1,0 +1,322 @@
+{
+ "day": "2026-11-15",
+ "editions": [
+  {
+   "name": "בוקר",
+   "time": "07:00",
+   "at": "2026-11-15T05:00:25.872Z",
+   "mode": "summary",
+   "date": {
+    "he": "ה׳ כסלו תשפ״ז",
+    "day": "ראשון"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "צה״ל ושב״כ חיסלו ברצועת עזה את סמיר אבו יונס, מפקד חטיבת רפיח בחמאס, שהיה מעורב בתכנון מתקפת השבעה באוקטובר.",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1140911"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/bykemflamg"
+       },
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2765300/"
+       }
+      ]
+     },
+     {
+      "text": "לפי דיווח ב״וול סטריט ג'ורנל\", הערכות מודיעין מצביעות על כך שבידי איראן נותרו בין 1,500 ל-2,500 טילים בליסטיים לצד אלפי כטב״מים.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/world-news/iran-missile-arsenal-remains-significant-despite-s"
+       },
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1787871/"
+       },
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1140918"
+       }
+      ]
+     }
+    ],
+    "haredi": [],
+    "economy": []
+   }
+  },
+  {
+   "name": "צהריים",
+   "time": "13:00",
+   "at": "2026-11-15T11:00:25.945Z",
+   "mode": "summary",
+   "date": {
+    "he": "ה׳ כסלו תשפ״ז",
+    "day": "ראשון"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "צוותי המשא ומתן של הליכוד ומפלגת \"ישר!\" צפויים להיפגש לדון בהקמת ממשלת אחדות. במקביל נערכה פגישה בין גדי איזנקוט לחבר הכנסת יעקב אשר.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1788636/"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/ryat7wp0mx"
+       },
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/politics/article-1388546"
+       }
+      ]
+     },
+     {
+      "text": "בספר זיכרונות חדש של נשיא ארצות הברית לשעבר ג'ו ביידן מובאת ביקורת על ראש הממשלה בנימין נתניהו ועל אופן ניהול היחסים במהלך המלחמה.",
+      "sources": [
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/rjhv0ew0fx"
+       },
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/world-news/biden-netanyahu-gaza-war-memoir"
+       },
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2765572/"
+       }
+      ]
+     },
+     {
+      "text": "לפי דיווח ב-JDN ובגלובס, איראן חשפה מתחם טילים חדש, ויו״ר הפרלמנט האיראני הודיע כי מדינתו לא תישאר במצב של חוסר הכרעה מול ארצות הברית.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2765616/"
+       },
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001563351"
+       }
+      ]
+     },
+     {
+      "text": "ארגון הבריאות העולמי פרסם לראשונה הנחיות לטיפול בסוכרת מסוג 1 במבוגרים, בעוד עמותת אמל״י מפרסמת סימנים מוקדמים לגילוי המחלה.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1788534/"
+       }
+      ]
+     },
+     {
+      "text": "סמ״ר לירון אנור נהרג הלילה בתאונת דרכים בנוף הגליל, לאחר שרכבו התנגש בעמוד חשמל.",
+      "sources": [
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/israel/article-1388580"
+       },
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1140952"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/sy45cjv0zx"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "האדמו״ר מבעלזא יצא בקריאה לחסידיו להשתתף בכנס \"אקספו בעלזא\" בבנייני האומה בירושלים, שמטרתו לחזק בעלי עסקים מהקהילה.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744590"
+       }
+      ]
+     },
+     {
+      "text": "הרב יצחק פישהוף והרב שמעון גלאי צפויים לצאת למסע תפילה בקברי צדיקים בפראג מטעם קופת העיר.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/j_world/2764861/"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "כארבעים דירות בפרויקט בנייה בחיפה מוצעות בהגרלת המשך במחיר בסיס המוערך לפי נתוני שנת 2020.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001563373"
+       }
+      ]
+     },
+     {
+      "text": "קרנות ההשתלמות הכלליות הציגו תשואה שלילית בחודש אוקטובר, על רקע הירידות בשווקים, למעט גוף אחד.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001563374"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "name": "ערב",
+   "time": "20:00",
+   "at": "2026-11-15T18:00:25.223Z",
+   "mode": "summary",
+   "date": {
+    "he": "ה׳ כסלו תשפ״ז",
+    "day": "ראשון"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "נציגי הליכוד ומפלגות נוספות קיימו פגישה ראשונה להקמת ממשלת אחדות וסיכמו להמשיך בשיחות. במקביל, ביהדות התורה הבהירו כי אין התקדמות ממשית במגעים.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1789942/"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/sysh8dvrgx"
+       },
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2765801/"
+       }
+      ]
+     },
+     {
+      "text": "נושאת המטוסים האמריקנית ״תאודור רוזוולט״ צפויה להגיע למזרח התיכון ולהצטרף לשתי נושאות מטוסים נוספות של צבא ארה״ב הפועלות באזור.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1789902/"
+       },
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/news/us-carrier-theodore-roosevelt-iran-drones-bahrain"
+       }
+      ]
+     },
+     {
+      "text": "אזרח ישראלי שנסחף ונעצר בידי חיל הים הירדני, שוחרר והוחזר לישראל לאחר מעורבות של כוחות הביטחון.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1789906/"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/syud6vw0ml"
+       },
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/military/article-1388700"
+       }
+      ]
+     },
+     {
+      "text": "כוחות צה״ל ויחידת יהל״ם השמידו תוואי תת-קרקעי באורך כ-35 מטרים של ארגון חיזבאללה בדרום לבנון.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2765775/"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744631"
+       }
+      ]
+     },
+     {
+      "text": "לפי דיווח בערוץ 14, בית המשפט המחוזי בירושלים הורה לפרקליטות להעביר להגנה מסמכים הנוגעים לאישורי היועץ המשפטי לממשלה לשעבר לפתיחת החקירות נגד נתניהו.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1789876/"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "יו״ר ש״ס אריה דרעי הזהיר בשיחות סגורות כי הקמת ממשלה המתבססת על גוש השינוי היא צעד מסוכן, בשל היעדר ערבות להעברת חוק הגיוס.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/haredim-news/tojj10"
+       }
+      ]
+     },
+     {
+      "text": "ארגון ״בלב אחד״ השיק מערך תמיכה וליווי למשפחות לילדים מיוחדים, שמטרתו לספק מעטפת סיוע כבר מרגע הלידה.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744630"
+       }
+      ]
+     },
+     {
+      "text": "תיק של ספר תורה עתיק שנגנב מבית כנסת בירושלים לפני 21 שנה, אותור ונתפס על ידי המשטרה במהלך פשיטה.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/police/stolen-torah-scroll-returned-family-21-years-jerus"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "מדד המחירים לצרכן ירד באוקטובר ב-0.1% והאינפלציה השנתית ירדה ל-1.1%. בנוסף נרשמה ירידה במחירי הדירות, לצד עלייה במחירי השכירות לשוכרים חדשים.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2765971/"
+       },
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001563501"
+       },
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/news/tojyi8"
+       }
+      ]
+     },
+     {
+      "text": "הצעת חוק חדשה מבקשת לקבוע מחיר מרבי מפוקח על חיתולים ומוצרי מזון לתינוקות, במטרה להפחית את ההוצאות החודשיות של המשפחות.",
+      "sources": [
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/politics/article-1388731"
+       }
+      ]
+     }
+    ]
+   }
+  }
+ ]
+}

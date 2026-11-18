@@ -1,0 +1,352 @@
+{
+ "day": "2026-11-16",
+ "editions": [
+  {
+   "name": "בוקר",
+   "time": "07:00",
+   "at": "2026-11-16T05:00:25.456Z",
+   "mode": "summary",
+   "date": {
+    "he": "ו׳ כסלו תשפ״ז",
+    "day": "שני"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "נושאת מטוסים אמריקאית שלישית הגיעה למזרח התיכון, במקביל לדיווחים על פגיעה במכליות נפט במצר הורמוז וחידוש ירי טילים באזור.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001563512"
+       },
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1790203/"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/r1hkvw00cmg"
+       }
+      ]
+     },
+     {
+      "text": "הקבינט המדיני-ביטחוני התכנס לדיון ראשון מזה חודש, ברקע אזהרות במערכת הביטחון ממעבר של תשתיות גרעין באיראן אל מתחת לקרקע.",
+      "sources": [
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/politics/article-1388801"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744656"
+       }
+      ]
+     },
+     {
+      "text": "תנועת הטיסות בארצות הברית צפויה לחזור לשגרה, לאחר שתקלה במערכת התקשורת של בקרת הטיסה גרמה לשבושים נרחבים ולביטולי המראות.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1790193/"
+       }
+      ]
+     },
+     {
+      "text": "ישראל, ארצות הברית ורוסיה הביעו התנגדות בוועידה בינלאומית בז'נבה לגיבוש אמנה מחייבת שתגביל שימוש בנשק המופעל על ידי בינה מלאכותית.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1790197/"
+       }
+      ]
+     },
+     {
+      "text": "מזג האוויר כיום מעונן חלקית עם ירידה קלה בטמפרטורות, ולקראת שעות הבוקר ייתכן טפטוף או גשם קל באזור החוף הצפוני.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1790191/"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/r1wkcg00rme"
+       },
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383961569"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "הרה״צ רבי אריה לייבוש לייפער זצ״ל, האדמו״ר מנדבורנה דעברעצין, הלך לעולמו בארצות הברית בגיל 97, וארונו יובא לקבורה בארץ.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744657"
+       }
+      ]
+     },
+     {
+      "text": "זקן חברי מועצת חכמי התורה של ש״ס, הגאון רבי משה מאיה, הבהיר כי התנועה לא תוכל להיות שותפה בממשלה יחד עם מפלגות שמאל.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744646"
+       }
+      ]
+     },
+     {
+      "text": "קהילת ״עדת ישראל״ במלבורן שבאוסטרליה קיימה מעמד פרידה מבית הכנסת שנשרף לפני שנתיים, לקראת תחילת עבודות הבנייה של המבנה החדש.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744659"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "לפי נתונים שפורסמו, האינפלציה בישראל ירדה לרמה של 1.1%, אך התייקרויות במוצרים שונים ממשיכות להכביד על הוצאות המשפחה.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744653"
+       }
+      ]
+     },
+     {
+      "text": "לפי תחזית קרן המטבע הבינלאומית, ישראל עלתה בדירוג הכלכלות הגדולות, אך במדד כוח הקנייה המשקף את רמת המחירים היא מדורגת במקום ה-50.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001563436"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "name": "צהריים",
+   "time": "13:00",
+   "at": "2026-11-16T11:00:25.829Z",
+   "mode": "summary",
+   "date": {
+    "he": "ו׳ כסלו תשפ״ז",
+    "day": "שני"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "מפכ״ל המשטרה הורה על בדיקה פנימית של התנהלות המשטרה ושרשרת קבלת ההחלטות סביב מעצרי פעילי רע״ם, לאחר שנודע כי המידע הגיע מעוזרו לשעבר של מנכ״ל משרד ראש הממשלה.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2766340/"
+       },
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/police/raam-arrests-deputy-commissioner-police-review"
+       },
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383961622"
+       }
+      ]
+     },
+     {
+      "text": "חיל האוויר תקף משלוח אמצעי לחימה שהועבר מסוריה ויועד לחיזבאללה באזור הגבול.",
+      "sources": [
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/military/article-1389003"
+       },
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001563512"
+       },
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2766234/"
+       }
+      ]
+     },
+     {
+      "text": "כוחות צה״ל הרסו הלילה את ביתו של המחבל שניסה לשגר רקטות לעבר מודיעין עילית.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2766267/"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744696"
+       }
+      ]
+     },
+     {
+      "text": "ראש הממשלה בנימין נתניהו הבהיר כי בכל ממשלה שתוקם ימשיך ללכת עם השותפים החרדים ויסדיר בחקיקה את מעמד לומדי התורה.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/political-news/netanyahu-promises-haredi-partners-draft-law"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/rjeaqhdcml"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744691"
+       }
+      ]
+     },
+     {
+      "text": "ח״כ לירן אבישר בן חורין נבחרה ליו״ר ועדת הכספים הזמנית, והצהירה כי תפעל לקידום שילוב משרתים ועצירת כספים שלדבריה מתמרצים השתמטות.",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1141117"
+       },
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1790779/"
+       },
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/haredim-news/committee-chair-declared-halt-budgets-mk-asher-nice-opening"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "ראשי הישיבות הגאון רבי משה הלל הירש והגאון רבי דוד כהן פרסמו מכתב חריג המתריע על מצוקת הדיור הקשה של משפחות אברכים.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/haredim-news/haredi-housing-crisis-rabbis-letter"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744699"
+       }
+      ]
+     },
+     {
+      "text": "בבני ברק התקיימה שמחת החתונה לנכד האדמו״ר מאלכסנדר ונכד האדמו״ר מזוועהיל.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744701"
+       }
+      ]
+     }
+    ],
+    "economy": []
+   }
+  },
+  {
+   "name": "ערב",
+   "time": "20:00",
+   "at": "2026-11-16T18:00:25.702Z",
+   "mode": "titles",
+   "date": {
+    "he": "ו׳ כסלו תשפ״ז",
+    "day": "שני"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "תשעה חודשים אחרי שפוטר: המאמן החדש של ענאן חלאילי",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1792292/"
+       }
+      ]
+     },
+     {
+      "text": "כוכב רשת נחקר בחשד שאיים על אשתו של כתב מהתאגיד - והפר צו למניעת הטרדה",
+      "sources": [
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/bjket300cgg"
+       }
+      ]
+     },
+     {
+      "text": "בתקשורת הבריטית מנתחים: התרחיש שעשוי להפיל את נתניהו",
+      "sources": [
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/world/article-1389188"
+       }
+      ]
+     },
+     {
+      "text": "הבן שנפל בקרב, והחלום שאמו מגשימה",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1141190"
+       }
+      ]
+     },
+     {
+      "text": "נגנב מבנו של לוחם השב״כ שנפל ב-7 באוקטובר - ואותר בשטח חקלאי",
+      "sources": [
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383961686"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "חמישה מחבלי חמאס חוסלו: אחד מהם פשט לישראל ב-7 באוקטובר",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/security-news/idf-eliminates-five-hamas-terrorists-jabaliya-octo"
+       }
+      ]
+     },
+     {
+      "text": "דיווח ב'ניו יורק טיימס': מדוע איראן מקימה סכרים ומפלי מים מרוחקים?",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2766758/"
+       }
+      ]
+     },
+     {
+      "text": "נתניהו מקציב לאיזנקוט 48 שעות: המגעים על סף פיצוץ",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1744749"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "לראשונה: מדינות אירופה יגרשו מהגרים לא-חוקיים לרואנדה",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001563682"
+       }
+      ]
+     }
+    ]
+   }
+  }
+ ]
+}

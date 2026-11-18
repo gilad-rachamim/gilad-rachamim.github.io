@@ -1,0 +1,49 @@
+# ארכיון "החדשות ב-3 דקות": כל ערב שומר את המהדורות מ-/history של kelim-news לקבצים בריפו
+# (tools/data/chadashot-archive/YYYY-MM-DD.json) ובונה דף קבוע לכל יום:
+#   /kelim/machshev/chadashot/archion/            – סיכום החדשות היום + כל הימים
+#   /kelim/machshev/chadashot/archion/YYYY-MM-DD/ – סיכום חדשות יומי
+# רץ ב-18:40 UTC (20:40 בחורף, 21:40 בקיץ) – אחרי מהדורת הערב. /history מחזיק שבוע, אז גם יום שנכשל מתמלא למחרת.
+# שומר רק את קבצי הארכיון, ה-sitemap והמפה, ואז מפעיל את המראה ל-hakelim.com (דחיפה של GITHUB_TOKEN לא מפעילה אותה לבד).
+name: news-archive
+on:
+  schedule:
+    - cron: "40 18 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: news-archive
+  cancel-in-progress: false
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # build.py לוקח את lastmod מההיסטוריה של git
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python tools/news_archive.py
+      - run: python build.py
+      - name: commit only the archive
+        id: commit
+        run: |
+          git add tools/data/chadashot-archive src/pages/kelim/machshev/chadashot/archion kelim/machshev/chadashot/archion sitemap.xml mapa/index.html kelim/machshev/chadashot/index.html
+          git checkout -- .
+          git clean -fdq
+          git diff --cached --quiet && { echo "אין שינוי"; exit 0; }
+          git config user.name "news-archive-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "ארכיון החדשות: $(TZ=Asia/Jerusalem date +%F)"
+          for i in 1 2 3 4 5; do
+            git pull --rebase -X theirs origin main && git push && { echo "pushed=1" >> "$GITHUB_OUTPUT"; exit 0; }
+            sleep 20
+          done
+          exit 1
+      - name: mirror to hakelim.com
+        if: steps.commit.outputs.pushed == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run mirror-hakelim.yml --ref main
