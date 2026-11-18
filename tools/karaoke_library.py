@@ -9,6 +9,7 @@
   python tools/karaoke_library.py sync QUEUE [DATES]    מעדכן קודם את תמונת המצב מתור הבנייה (קריאה בלבד),
                                                         DATES = קובץ שורות "vid|YYYYMMDD" (תאריך העלאה ליוטיוב)
   --pages N   כמה שירים (הנצפים ביותר) מקבלים דף משלהם בסך הכול (ברירת מחדל: מי שכבר קיבל).
+  --page-ids a,b   מזהי יוטיוב של שירים שמקבלים דף בכל מקרה (שירים חדשים שנכנסו למאגר).
 
 זכויות יוצרים: בדפים אין מילות שירים ואין סרטונים. רק שם השיר, שם הזמר וקישור לשיר המקורי ביוטיוב.
 """
@@ -128,7 +129,7 @@ def has_artist(song, name):
 
 
 # ---------- תמונת המצב ----------
-def sync(queue_path, dates_path=None, pages_n=None):
+def sync(queue_path, dates_path=None, pages_n=None, page_ids=()):
     q = json.loads(pathlib.Path(queue_path).read_text(encoding="utf-8"))
     q = q if isinstance(q, list) else q.get("items", [])
     dates = {}
@@ -165,6 +166,9 @@ def sync(queue_path, dates_path=None, pages_n=None):
     songs.sort(key=lambda s: -s["views"])
     if pages_n:
         for s in songs[:pages_n]:
+            s["page"] = True
+    for s in songs:
+        if s["id"] in page_ids:
             s["page"] = True
     DATA.parent.mkdir(parents=True, exist_ok=True)
     DATA.write_text(json.dumps({"updated": today, "songs": songs}, ensure_ascii=False, indent=0) + "\n", encoding="utf-8", newline="\n")
@@ -512,8 +516,13 @@ def main():
         i = args.index("--pages")
         pages_n = int(args[i + 1])
         del args[i:i + 2]
+    page_ids = ()
+    if "--page-ids" in args:
+        i = args.index("--page-ids")
+        page_ids = set(args[i + 1].split(","))
+        del args[i:i + 2]
     if args and args[0] == "sync":
-        sync(args[1], args[2] if len(args) > 2 else None, pages_n)
+        sync(args[1], args[2] if len(args) > 2 else None, pages_n, page_ids)
     data = json.loads(DATA.read_text(encoding="utf-8"))
     songs = sorted(data["songs"], key=lambda s: -s["views"])
     artists = {a: sl for a, sl in ARTISTS.items() if sum(1 for s in songs if has_artist(s, a)) >= 3}
