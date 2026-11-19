@@ -432,6 +432,7 @@ async function postWhatsapp(env, ed, waid) {
   const j = await r.json().catch(() => ({}));
   return r.ok ? { id: j.message?.id || true } : { error: (j.error && (j.error.message || j.error)) || String(r.status) };
 }
+const SUPPORT_URL = 'https://hakelim.com/kelim/';
 export function editionText(ed, links = {}, src = 'fb') {
   const out = [`📰 החדשות ב-3 דקות – ${ed.name}, יום ${ed.date.day} ${ed.date.he}`, ''];
   const names = { haredi: 'ציבור חרדי', economy: 'כלכלה וכיס' };
@@ -441,6 +442,8 @@ export function editionText(ed, links = {}, src = 'fb') {
   if (links.wa && src !== 'wa') out.push('', '📲 בערוץ הווטסאפ, 3 פעמים ביום:', links.wa);
   if (links.tg && src !== 'tg') out.push('', '✈️ בערוץ הטלגרם:', links.tg);
   out.push('בטלפון כשר: 077-2253345 שלוחה 8');
+  // 19.11.2026: שורת תמיכה קבועה – מיזם חסד, בלי כוונת רווח; הדף מציג ביט/פייבוקס ו-PayPal
+  out.push('', '💛 מיזם חסד: בחינם, בלי פרסומות ובלי כוונת רווח. רוצים לעזור שזה יימשך?', SUPPORT_URL + '?utm_source=' + src + '#litmoch');
   return out.join('\n');
 }
 // ---------- טלגרם: ערוץ "החדשות ב-3 דקות" (Bot API, חינמי ורשמי) ----------
