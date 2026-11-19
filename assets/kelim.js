@@ -90,6 +90,24 @@
       copyText(el ? (el.value || el.textContent).trim() : cp.getAttribute('data-copy'), cp, cp.getAttribute('data-copied') || 'הועתק ✓');
       ev('copy_click', { what: cp.getAttribute('data-copy-what') || src || '' });
     }
+    // על מה לחצו: link_click לכל קישור (פנימי או יוצא), כדי לדעת מה מושך ולשפר. בלי query string ובלי מידע אישי.
+    // קישורים שכבר שולחים אירוע משלהם (תרומה, שיתוף, התקנה, העתקה, פוטר, פס חדשות) לא נספרים פעמיים.
+    var a = e.target.closest('a[href]');
+    if (a && !a.closest('[data-donate],[data-share-tool],[data-install],[data-install-close],[data-copy],[data-copy-from],[data-ft],[data-newsbar]')) {
+      var raw = a.getAttribute('href') || '';
+      if (raw.charAt(0) !== '#' && !/^javascript:/i.test(raw)) {
+        var u; try { u = new URL(a.href, location.href); } catch (err) { u = null; }
+        if (u) {
+          var web = /^https?:$/.test(u.protocol), out = web && u.hostname !== location.hostname;
+          var area = a.closest('header,nav') ? 'header' : a.closest('footer') ? 'footer' : (a.closest('[data-tool],.tool,form,#tool') || body) !== body ? 'tool' : 'body';
+          ev('link_click', {
+            link_url: web ? (u.hostname + u.pathname).slice(0, 100) : u.protocol.replace(':', ''),
+            link_text: (a.getAttribute('aria-label') || a.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 60),
+            link_area: area, outbound: out ? 'true' : 'false'
+          });
+        }
+      }
+    }
   }, true);
 
   // העתקה ללוח, גם בדפדפנים ישנים או מסוננים שאין בהם navigator.clipboard
