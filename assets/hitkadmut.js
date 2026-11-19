@@ -168,6 +168,7 @@
           '<button class="btn btn-line btn-sm" type="button" data-hk-give>💛 לתמוך במיזם</button></div>' +
           '<div class="hk-give" hidden><p>בביט או בפייבוקס, למספר <b dir="ltr">058-404-9049</b>. אפשר לכתוב בהערה "כלים", כדי שאדע ואודה לכם.</p>' +
           '<button class="btn btn-gold btn-sm" type="button" data-donate="copy" data-num="0584049049">להעתיק את המספר</button> ' +
+          '<a class="btn btn-line btn-sm" href="https://paypal.me/giladrachamim" target="_blank" rel="noopener" data-donate="paypal">אשראי / PayPal</a> ' +
           '<a class="btn btn-line btn-sm" href="/kelim/#litmoch">עוד דרכים לעזור</a></div>' +
         '</div></div>';
     el.hidden = false;
