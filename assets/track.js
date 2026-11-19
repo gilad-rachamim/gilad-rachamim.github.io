@@ -72,3 +72,24 @@
   setInterval(tick, STEP);
   document.addEventListener('visibilitychange', function () { last = Date.now(); });
 })();
+
+// על מה לחצו (19.11.2026): link_click לכל קישור בדפי המוהל. בדפי הכלים (body[data-site]) זה נשלח מ-kelim.js, לכן לא כאן.
+// בלי query string ובלי מידע אישי; קישורי הפוטר (footer_click) לא נספרים פעמיים.
+(function () {
+  document.addEventListener('click', function (e) {
+    if (!window.gtag || document.body.hasAttribute('data-site')) return;
+    var a = e.target.closest && e.target.closest('a[href]');
+    if (!a || a.closest('[data-ft],[data-copy],[data-share-tool]')) return;
+    var raw = a.getAttribute('href') || '';
+    if (raw.charAt(0) === '#' || /^javascript:/i.test(raw)) return;
+    var u; try { u = new URL(a.href, location.href); } catch (err) { return; }
+    var web = /^https?:$/.test(u.protocol);
+    var area = a.closest('header,nav') ? 'header' : a.closest('footer') ? 'footer' : a.closest('form') ? 'tool' : 'body';
+    window.gtag('event', 'link_click', {
+      site: 'mohel', page: location.pathname,
+      link_url: web ? (u.hostname + u.pathname).slice(0, 100) : u.protocol.replace(':', ''),
+      link_text: (a.getAttribute('aria-label') || a.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 60),
+      link_area: area, outbound: web && u.hostname !== location.hostname ? 'true' : 'false'
+    });
+  }, true);
+})();
