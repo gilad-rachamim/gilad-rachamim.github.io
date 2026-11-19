@@ -9,13 +9,14 @@ OUT = ROOT / "assets" / "machshev-chatima-ext.zip"
 
 
 def files():
-    return [f for f in sorted(SRC.iterdir()) if f.is_file() and not f.name.startswith('.')]
+    # כולל תתי-תיקיות (gesher/) – בלעדיהן החנות דחתה את 3.12.0: offscreen/downloads "בלי שימוש" (18.11.2026)
+    return [f for f in sorted(SRC.rglob('*')) if f.is_file() and not any(x.startswith('.') for x in f.relative_to(SRC).parts)]
 
 
 def build(out, prefix):
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
         for f in files():
-            z.write(f, prefix + f.name)
+            z.write(f, prefix + f.relative_to(SRC).as_posix())
     return out
 
 
