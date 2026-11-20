@@ -148,7 +148,7 @@
       post('/add', data).then(function (j) {
         if (j.error) { r.textContent = j.error; return; }
         reg.reset();
-        r.innerHTML = '<b>הקבוצה נקלטה ומחכה לאישור.</b> אחרי בדיקה היא תופיע בהתאמות.<br>שמרו את קוד הניהול – בעזרתו אפשר להוריד את הקבוצה מתי שתרצו:<br><code dir="ltr">' + esc(j.id) + ' / ' + esc(j.key) + '</code>';
+        r.innerHTML = '<b>הקבוצה נקלטה ומחכה לאישור.</b> אחרי בדיקה היא תופיע בהתאמות.<br>שמרו את קוד הניהול – בעזרתו אפשר להוריד את הקבוצה מתי שתרצו:<br><code class="kv-code" dir="ltr">' + esc(j.id) + ' / ' + esc(j.key) + '</code>';
         used('add');
       }).catch(function () { r.textContent = 'אין חיבור. נסו שוב.'; });
     });
