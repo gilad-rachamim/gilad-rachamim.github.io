@@ -80,6 +80,17 @@ def page(slug, meta, h1, sub, mode, tool_note, body, faq, seo_h2):
     meta.setdefault("nav", "rabanim")
     meta["head"] = CSS + '<script type="application/ld+json">' + faq_ld(faq) + "</script>"
     meta["foot"] = FOOT
+    # התקנה למסך הבית כאפליקציה אחת של טהרת המשפחה (הכנה לאפליקציה – docs/tahara-app-next.md)
+    if slug == "":
+        meta["manifest"] = {"name": "טהרת המשפחה – מחשבון וסתות וליל טבילה", "short_name": "טהרה",
+                            "description": "מחשבון וסתות, ליל טבילה ולוח טהרה אישי. נשמר רק במכשיר.",
+                            "display": "standalone", "background_color": "#0e1628", "theme_color": "#0e1628",
+                            "apple_touch_icon": "/assets/icon-kodesh-180.png",
+                            "icons": [{"src": "/assets/icon-kodesh-192.png", "sizes": "192x192", "type": "image/png"},
+                                      {"src": "/assets/icon-kodesh-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}]}
+    else:
+        meta["manifest_of"] = {"href": "/kodesh/tahara/manifest.webmanifest", "short_name": "טהרה",
+                               "apple_touch_icon": "/assets/icon-kodesh-180.png"}
     out = "<!--meta " + json.dumps(meta, ensure_ascii=False, indent=1) + "\n-->\n"
     out += f"""<header class="k-hero">
   <h1>{h1}</h1>

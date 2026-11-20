@@ -1,0 +1,26 @@
+{
+ "id": "/kodesh/tahara/",
+ "start_url": "/kodesh/tahara/",
+ "scope": "/kodesh/tahara/",
+ "dir": "rtl",
+ "lang": "he",
+ "name": "טהרת המשפחה – מחשבון וסתות וליל טבילה",
+ "short_name": "טהרה",
+ "description": "מחשבון וסתות, ליל טבילה ולוח טהרה אישי. נשמר רק במכשיר.",
+ "display": "standalone",
+ "background_color": "#0e1628",
+ "theme_color": "#0e1628",
+ "icons": [
+  {
+   "src": "/assets/icon-kodesh-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "/assets/icon-kodesh-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  }
+ ]
+}
