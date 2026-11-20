@@ -1,5 +1,5 @@
 {
-"updated": "2026-11-19",
+"updated": "2026-11-20",
 "songs": [
 {
 "id": "qEEzKfGa1oY",
@@ -1570,6 +1570,16 @@
 "added": "",
 "slug": "hnh-ani-ba",
 "page": false
+},
+{
+"id": "OKbyJLHOZBc",
+"artist": "אייל גולן ועדן בן זקן",
+"song": "היה לנו דואט",
+"views": 943948,
+"date": "20261020",
+"added": "2026-11-20",
+"slug": "haya-lanu-duet",
+"page": true
 },
 {
 "id": "y1AE9Xz9oNI",

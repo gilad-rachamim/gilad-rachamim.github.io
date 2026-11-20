@@ -71,6 +71,7 @@
 /kelim/shir/karaoke/shirim/bayit-beyafo/
 /kelim/shir/karaoke/shirim/eize-mazal/
 /kelim/shir/karaoke/shirim/stam/
+/kelim/shir/karaoke/shirim/haya-lanu-duet/
 /kelim/shir/karaoke/shirim/dizengoff-99/
 /kelim/shir/karaoke/shirim/higyena/
 /kelim/shir/karaoke/zamar/ravid-plotnik/
@@ -79,10 +80,10 @@
 /kelim/shir/karaoke/zamar/berry-sakharof/
 /kelim/shir/karaoke/zamar/peer-tasi/
 /kelim/shir/karaoke/zamar/osher-cohen/
+/kelim/shir/karaoke/zamar/eyal-golan/
 /kelim/shir/karaoke/zamar/dudu-tassa/
 /kelim/shir/karaoke/zamar/itay-levi/
 /kelim/shir/karaoke/zamar/yasmin-moallem/
-/kelim/shir/karaoke/zamar/eyal-golan/
 /kelim/shir/karaoke/zamar/eden-hason/
 /kelim/shir/karaoke/zamar/meir-ariel/
 /kelim/shir/karaoke/zamar/odeya/
@@ -90,6 +91,7 @@
 /kelim/shir/karaoke/zamar/vibe-ish/
 /kelim/shir/karaoke/zamar/ariel-zilber/
 /kelim/shir/karaoke/zamar/corinne-allal/
+/kelim/shir/karaoke/zamar/eden-ben-zaken/
 /kelim/shir/karaoke/zamar/ivri-lider/
 /kelim/shir/karaoke/zamar/evyatar-banai/
 /kelim/shir/karaoke/zamar/hadag-nahash/
@@ -97,4 +99,3 @@
 /kelim/shir/karaoke/zamar/shiri-maimon/
 /kelim/shir/karaoke/zamar/assaf-amdursky/
 /kelim/shir/karaoke/zamar/kaveret/
-/kelim/shir/karaoke/zamar/eden-ben-zaken/
