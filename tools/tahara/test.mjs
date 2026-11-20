@@ -61,7 +61,7 @@ test('אשכנז: אין אור זרוע ליום ל"א', () => assert.ok(!T.com
 test('בן איש חי: אור זרוע מסומן "ראוי להחמיר"', () => assert.ok(T.compute([day('2026-11-13')], P.ben_ish_chai).onot.some(o => o.type === 'or_zarua' && o.recommended)));
 test('חב"ד: עונה בינונית בשתי עונות', () => assert.equal(T.compute([day('2026-11-13')], P.chabad).onot.filter(o => o.type === 'beinonit').length, 2));
 test('חב"ד: חסר סוף ראייה = שואלים רב', () => assert.ok(T.compute([day('2026-11-13'), day('2026-12-10')], P.chabad).needRav.includes('flow_end_missing')));
-test('חב"ד: אור זרוע לא אומת = שואלים רב', () => assert.ok(T.compute([day('2026-11-13')], P.chabad).needRav.includes('or_zarua')));
+test('חב"ד: אור זרוע לא אומת = שואלים רב', () => assert.ok(T.compute([day('2026-11-13')], P.chabad).unverified.includes('or_zarua')));
 test('מרוקו: כמו ספרדים בחישוב', () => {
   const a = T.compute([day('2026-10-12'), day('2026-11-13')], P.morocco).onot.map(o => o.ymd + o.type).join();
   const b = T.compute([day('2026-10-12'), day('2026-11-13')], P.sephardi_ovadia).onot.map(o => o.ymd + o.type).join();

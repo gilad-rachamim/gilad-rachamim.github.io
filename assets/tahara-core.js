@@ -168,9 +168,8 @@
     var all = sightings.slice().sort(function (a, b) { return idxOf(a.abs, a.onah) - idxOf(b.abs, b.onah); });
     var s = all.filter(function (q) { return !q.missed; });
     var missed = all.filter(function (q) { return q.missed; });
-    var res = { onot: [], fixed: null, flags: [], needRav: [], uprooted: false, preset: preset.id };
+    var res = { onot: [], fixed: null, flags: [], needRav: [], uprooted: false, preset: preset.id, unverified: (preset.unverified || []).slice() };
     function rav(x) { if (res.needRav.indexOf(x) < 0) res.needRav.push(x); }
-    (preset.unverified || []).forEach(rav);
     // הריון שהוכר (ד1, ex30): הכלי לא מחשב עונות – שואלים רב
     if (state.pregnant) { rav('pregnant'); return res; }
     if (state.nursing || state.menopause || state.pill) rav('special_state');
