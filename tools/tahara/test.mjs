@@ -13,7 +13,7 @@ const T = require(fileURLToPath(new URL('assets/tahara-core.js', root)))(globalT
 const EX = JSON.parse(fs.readFileSync(new URL('tools/tahara/examples.json', root), 'utf8'));
 
 const PRE = { sephardi_ovadia: 'sephardi_ovadia', ashkenaz: 'ashkenaz', chabad: 'chabad', any: 'sephardi_ovadia' };
-const TYPE = { beinonit_31_shach: 'beinonit_31', haflaga_chabad: 'haflaga', chodesh_partial_day: 'chodesh_partial' };
+const TYPE = { beinonit_31_shach: 'chodesh', haflaga_chabad: 'haflaga', chodesh_partial_day: 'chodesh_partial' };
 const MIK = { hefsek_tahara: 'hefsek', clean_day_1: 'cleanFirst', clean_day_7: 'cleanLast', tevila_night: 'tevila' };
 const toS = q => ({ abs: T.absFromYmd(q.greg), onah: q.onah, missed: !!q.missed,
   endAbs: q.flow_end ? T.absFromYmd(q.flow_end) : undefined, afterNetzMin: q.duration_after_netz_minutes });
@@ -146,4 +146,45 @@ test('שעון: קרוב לשקיעה = ספק', () => {
   const z = T.onahFromClock(2026, 11, 20, '12:00', J).sunset;
   const t = String(z.getHours()).padStart(2, '0') + ':' + String(z.getMinutes()).padStart(2, '0');
   assert.equal(T.onahFromClock(2026, 11, 20, t, J).near, 'sunset');
+});
+
+// תיקונים אחרי הבדיקה העצמאית (20.11)
+const dd = g => ({ abs: T.absFromYmd(g), onah: 'day' });
+test('אשכנז, חודש חסר: אין יום נוסף אחרי וסת החודש (חכמת אדם קיב:ה)', () => {
+  const r = T.compute([dd('2026-09-02')], T.PRESETS.ashkenaz);
+  assert.ok(!r.onot.some(o => o.ymd === '2026-10-02'), 'אין כ"א תשרי');
+  assert.ok(r.onot.some(o => o.type === 'chodesh' && o.alsoBeinonit), 'וסת החודש מסומן גם כעונה בינונית');
+});
+test('אשכנז, חודש מלא: יום ל\' ווסת החודש (יום אחרי)', () => {
+  const s = dd('2026-11-13'), r = T.compute([s], T.PRESETS.ashkenaz);
+  assert.ok(r.onot.some(o => o.type === 'beinonit' && o.abs === s.abs + 29));
+  const ch = r.onot.find(o => o.type === 'chodesh'); assert.ok(ch && ch.alsoBeinonit);
+});
+test('ספרדים: וסת החודש לא מסומן כעונה בינונית', () => {
+  assert.ok(!T.compute([dd('2026-11-13')], T.PRESETS.sephardi_ovadia).onot.some(o => o.alsoBeinonit));
+});
+test('וסת החודש מראייה קודמת באדר א\' – שואלים רב', () => {
+  // ה' אדר א' תשפ"ז ו-א' אדר ב' תשפ"ז
+  const H = globalThis.hebcal, a1 = new H.HDate(5, H.months.ADAR_I, 5787).abs(), a2 = new H.HDate(1, H.months.ADAR_II, 5787).abs();
+  const r = T.compute([{ abs: a1, onah: 'day' }, { abs: a2, onah: 'day' }], T.PRESETS.sephardi_ovadia);
+  assert.ok(r.needRav.includes('adar1'));
+});
+test('אין אותה עונה מאותו סוג פעמיים', () => {
+  for (const id of Object.keys(T.PRESETS)) {
+    const r = T.compute([dd('2026-08-01'), dd('2026-08-30'), dd('2026-09-28')], T.PRESETS[id]);
+    const k = r.onot.map(o => o.type + T.idxOf(o.abs, o.onah));
+    assert.equal(new Set(k).size, k.length, id);
+  }
+});
+test('merge: עונות באותו זמן – שורה אחת עם כל הסיבות', () => {
+  const r = T.compute([dd('2026-09-02')], T.PRESETS.ashkenaz), m = T.merge(r.onot);
+  const one = m.find(o => o.ymd === '2026-10-01' && o.onah === 'day');
+  assert.ok(one.parts.length >= 2 && one.type !== 'or_zarua');
+  assert.equal(new Set(m.map(o => T.idxOf(o.abs, o.onah))).size, m.length);
+});
+test('דוגמאות: תאריך אסור לא מופיע', () => {
+  for (const ex of EX) for (const f of (ex.forbidden || [])) {
+    const r = T.compute(ex.sightings.map(toS), T.PRESETS[PRE[ex.method]]);
+    assert.ok(!r.onot.some(o => o.ymd === f.greg && o.onah === f.onah), ex.id);
+  }
 });

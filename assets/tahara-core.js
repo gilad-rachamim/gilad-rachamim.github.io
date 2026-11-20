@@ -10,7 +10,7 @@
   if (!H || !H.HDate) throw new Error('hebcal חסר');
 
   /* ---------- שיטות (ז) ----------
-     beinonit: 'onah' (יום ל', העונה בלבד) | '24h' (מעת לעת של יום ל') | '31' (יום ל' + יום ל"א)
+     beinonit: 'onah' (יום ל', העונה בלבד) | '24h' (מעת לעת של יום ל') | '31' (יום ל' וגם וסת החודש – חכמת אדם קיב:ה; השם נשאר לתאימות)
      orZarua: false | true | 'recommended'
      haflagaFrom: 'start' | 'end' (חב"ד – מסוף הראייה, ב13)
      oldHaflagot: true (מציג) | 'ask' (מציג לחומרה + שואלים רב)
@@ -223,10 +223,10 @@
       add('beinonit', b, last.onah, 'יום ל\' מהראייה (יום הראייה הוא יום 1)', 'beinonit');
       if (preset.beinonit === '24h')
         add('beinonit', b, last.onah === 'day' ? 'night' : 'day', 'עונה בינונית מעת לעת – גם העונה השנייה של יום ל\'', 'beinonit_24h');
-      if (preset.beinonit === '31')
-        add('beinonit_31', b + 1, last.onah, 'יום ל"א – לשיטת הש"ך וחכמת אדם', 'beinonit_31');
-      // וסת החודש מהראייה האחרונה
-      var chL = addChodesh(last.abs, last.onah, 'אותו תאריך עברי בחודש הבא', 'chodesh');
+      // באשכנז (ב4): חוששת גם ליום ל' וגם לוסת החודש, כי "י"א שעונה בינונית הוא ווסת החודש" (חכמת אדם קיב:ה; ש"ך קפט ס"ק ל).
+      // אין יום ל"א קבוע: בחודש חסר וסת החודש הוא יום ל' עצמו.
+      var chWhy = preset.beinonit === '31' ? 'אותו תאריך עברי בחודש הבא – ולשיטת הש"ך וחכמת אדם זו גם עונה בינונית' : 'אותו תאריך עברי בחודש הבא';
+      var chL = addChodesh(last.abs, last.onah, chWhy, 'chodesh', preset.beinonit === '31' ? { alsoBeinonit: true } : null);
       // ראייה שנמשכה אחרי הנץ (א4, ex24): גם היום – רק כשיעור הזמן
       if (last.onah === 'night' && last.afterNetzMin) {
         rav('partial_day');
@@ -236,8 +236,10 @@
       for (var i = 0; i < s.length - 1; i++) {
         var nm = nextMonthSameDay(s[i].abs, preset);
         nm.list.forEach(function (a) {
-          if (idxOf(a, s[i].onah) > lastIdx && !(a === chL.abs && s[i].onah === last.onah))
+          if (idxOf(a, s[i].onah) > lastIdx && !(a === chL.abs && s[i].onah === last.onah)) {
+            if (isAdar1(s[i].abs)) rav('adar1');
             add('chodesh', a, s[i].onah, 'וסת החודש של הראייה הקודמת – עוד לא הגיע ולא נעקר', 'chodesh', { from: 'prev' });
+          }
         });
       }
       // הפלגה
@@ -264,13 +266,29 @@
     // אור זרוע (ז): העונה שלפני – לא לעונות הנוספות (24 שעות / יום ל"א)
     if (preset.orZarua) {
       res.onot.slice().forEach(function (o) {
-        if (o.rule === 'beinonit_24h' || o.rule === 'beinonit_31' || o.type === 'chodesh_partial') return;
+        if (o.rule === 'beinonit_24h' || o.type === 'chodesh_partial') return;
         var p = fromIdx(idxOf(o.abs, o.onah) - 1);
         add('or_zarua', p.abs, p.onah, 'אור זרוע – העונה שלפני ' + LABEL[o.type] + (preset.orZarua === 'recommended' ? ' (ראוי להחמיר)' : ''), 'or_zarua', { of: o.type, recommended: preset.orZarua === 'recommended' });
       });
     }
+    // אותה עונה מאותו סוג פעמיים (למשל אור זרוע לשתי עונות שנופלות יחד) – פעם אחת
+    var seen = {};
+    res.onot = res.onot.filter(function (o) { var k = o.type + ':' + idxOf(o.abs, o.onah); if (seen[k]) return false; seen[k] = 1; return true; });
     res.onot.sort(function (a, b) { return idxOf(a.abs, a.onah) - idxOf(b.abs, b.onah); });
     return res;
+  }
+
+  // לתצוגה: עונות שונות שנופלות באותה עונה – שורה אחת עם כל הסיבות (הסדר נשמר)
+  function merge(onot) {
+    var out = [], at = {};
+    onot.forEach(function (o) {
+      var k = idxOf(o.abs, o.onah);
+      if (at[k] == null) { var c = {}; for (var x in o) c[x] = o[x]; c.parts = [o]; at[k] = out.length; out.push(c); return; }
+      var m = out[at[k]]; m.parts.push(o);
+      if (o.doubt) m.doubt = true;
+      if (m.type === 'or_zarua' && o.type !== 'or_zarua') { m.type = o.type; m.rule = o.rule; }
+    });
+    return out;
   }
 
   var LABEL = {
@@ -359,6 +377,6 @@
     PRESETS: PRESETS, customPreset: customPreset,
     idxOf: idxOf, fromIdx: fromIdx, ymd: ymd, absFromYmd: absFromYmd, onahFromClock: onahFromClock, describe: describe, DOW: DOW,
     nextMonthSameDay: nextMonthSameDay, haflagaLen: haflagaLen, haflagaTarget: haflagaTarget, detectFixed: detectFixed,
-    compute: compute, mikveh: mikveh, holidayKinds: holidayKinds, ravText: ravText, LABEL: LABEL, RAV: RAV
+    compute: compute, merge: merge, mikveh: mikveh, holidayKinds: holidayKinds, ravText: ravText, LABEL: LABEL, RAV: RAV
   };
 }));
