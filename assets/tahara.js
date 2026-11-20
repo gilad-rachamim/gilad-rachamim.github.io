@@ -481,7 +481,7 @@
       }
       if (id === 'th-wipe') {
         if (!confirm('למחוק את כל הנתונים מהטלפון הזה? אי אפשר לבטל.')) return;
-        Store.clear(); S = blank(); renderAll(); msg('הכול נמחק.'); return;
+        Store.clear(); S = blank(); mount(ROOT); msg('הכול נמחק.'); return;
       }
       if (id === 'th-keep') { if (!confirm('לשמור את הלוח הזה אצלך? הוא יחליף את מה ששמור אצלך עכשיו.')) return; VIEW = false; history.replaceState(null, '', location.pathname); persist(); mount(ROOT); return; }
       if (id === 'th-leave') { VIEW = false; history.replaceState(null, '', location.pathname); start(ROOT); return; }
