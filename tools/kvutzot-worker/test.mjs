@@ -1,0 +1,77 @@
+// בדיקות לשרת "מוצאים קבוצה" – מדמה Durable Object בזיכרון, בלי wrangler ובלי רשת.
+import worker, { Groups, META } from './kvutzot-worker.js';
+class Store {
+  constructor() { this.m = new Map(); }
+  async get(k) { return this.m.has(k) ? structuredClone(this.m.get(k)) : undefined; }
+  async put(k, v) { if (typeof k === 'object') { for (const [a, b] of Object.entries(k)) this.m.set(a, structuredClone(b)); } else this.m.set(k, structuredClone(v)); }
+  async delete(k) { (Array.isArray(k) ? k : [k]).forEach(x => this.m.delete(x)); }
+  async list({ prefix = '', limit = 1000 } = {}) { return new Map([...this.m].filter(([k]) => k.startsWith(prefix)).sort().slice(0, limit)); }
+}
+const alerts = [];
+const env = { ADMIN_KEY: 'adm', HUB_SECRET: 's', HUB: { fetch: async (u, o) => { alerts.push(JSON.parse(o.body).text); return new Response('{"ok":true}'); } } };
+const ctx = { storage: new Store(), waitUntil: p => p };
+const obj = new Groups(ctx, env);
+env.GROUPS = { idFromName: () => 1, get: () => ({ fetch: (u, o) => obj.fetch(new Request(u, o)) }) };
+let ip = '1.1.1.1';
+async function call(path, data, headers = {}) {
+  const r = await worker.fetch(new Request('https://w' + path, { method: data ? 'POST' : 'GET', body: data ? JSON.stringify(data) : undefined,
+    headers: Object.assign({ 'CF-Connecting-IP': ip, Origin: 'https://hakelim.com' }, headers) }), env);
+  const j = await r.json(); j._s = r.status; j._cors = r.headers.get('Access-Control-Allow-Origin'); return j;
+}
+let fails = 0, n = 0;
+const ok = (c, m, x) => { n++; if (!c) { fails++; console.log('FAIL ' + m + (x !== undefined ? ' → ' + JSON.stringify(x) : '')); } };
+const G = { name: 'הולכים בשכונה', desc: 'קבוצת הליכה בבוקר בירושלים, בקצב נוח לכולם.', interests: ['ספורט והליכה', 'קהילה ושכונה'], region: 'ירושלים והסביבה', ages: ['45–60', '60+'], tags: [], link: 'https://chat.whatsapp.com/AbCdEfGhIj1234567890', ok18: true };
+
+ok((await call('/ping'))._s === 200, 'ping');
+ok((await call('/meta')).interests.length === META.interests.length, 'meta');
+ok((await call('/meta'))._cors === 'https://hakelim.com', 'cors hakelim');
+ok((await call('/add', Object.assign({}, G, { link: 'https://evil.com/x' })))._s === 400, 'bad link rejected');
+ok((await call('/add', Object.assign({}, G, { ok18: false })))._s === 400, 'must accept rules');
+ok((await call('/add', Object.assign({}, G, { interests: ['לא קיים'] })))._s === 400, 'unknown interest rejected');
+ok((await call('/add', Object.assign({}, G, { hp: 'x' }))).id === '0', 'honeypot');
+const a = await call('/add', Object.assign({}, G, { desc: G.desc + ' טלפון 050-1234567 https://x.com' }));
+ok(a._s === 200 && a.id && a.key, 'group added', a);
+ok(alerts.length === 1 && alerts[0].includes('ממתינה'), 'alert on new group');
+ok((await call('/add', G))._s === 409, 'duplicate link rejected');
+ok((await call('/groups')).items.length === 0, 'pending not public');
+ok((await call('/link', { id: a.id }))._s === 404, 'no link while pending');
+ok((await call('/admin/list'))._s === 403, 'admin needs key');
+ok((await call('/admin/set', { id: a.id, st: 'live' }, { 'X-Admin-Key': 'nope' }))._s === 403, 'admin wrong key');
+ok((await call('/admin/set', { id: a.id, st: 'live' }, { 'X-Admin-Key': 'adm' })).st === 'live', 'admin approve');
+const pub = await call('/groups');
+ok(pub.items.length === 1 && !('link' in pub.items[0]) && !('key' in pub.items[0]), 'public list without link/key', pub.items[0]);
+ok(!/050|https/.test(pub.items[0].desc), 'phone/url stripped from desc', pub.items[0].desc);
+ok((await call('/link', { id: a.id })).link === G.link, 'link after approval');
+const adm = await call('/admin/list', null, { 'X-Admin-Key': 'adm' });
+ok(adm.items.length === 1 && adm.items[0].key === undefined, 'admin list hides owner key hash');
+// דיווחים: אותה רשת פעמיים = דיווח אחד; שתי רשתות = מוסתר
+await call('/report', { id: a.id, why: 'פרסומות' });
+await call('/report', { id: a.id, why: 'פרסומות' });
+ok((await call('/groups')).items.length === 1, 'same network counted once');
+ip = '2.2.2.2'; await call('/report', { id: a.id, why: 'לא מתאים' });
+ok((await call('/groups')).items.length === 0, 'hidden after 2 reports');
+ok(alerts.some(t => t.includes('הוסתרה')), 'alert on hide');
+await call('/admin/set', { id: a.id, st: 'live' }, { 'X-Admin-Key': 'adm' });
+ok((await call('/groups')).items.length === 1, 're-approved');
+ok((await call('/remove', { id: a.id, key: 'wrong' }))._s === 403, 'remove wrong key');
+// ביקוש
+const W = { interest: 'צילום', region: 'הצפון', age: '60+', tag: '' };
+for (let i = 0; i < 5; i++) { ip = '9.9.9.' + i; await call('/want', W); }
+ip = '9.9.9.0'; ok((await call('/want', W)).dup, 'want once per network per day');
+ok(alerts.some(t => t.includes('5 אנשים') && t.includes('צילום')), 'alert at 5 wants', alerts);
+const before = alerts.length; ip = '9.9.9.77'; await call('/want', W);
+ok(alerts.length === before, 'alert only once');
+ok((await call('/want', { interest: 'x' }))._s === 400, 'want needs interest');
+// מגבלת קישורים
+ip = '5.5.5.5'; let last;
+for (let i = 0; i < 26; i++) last = await call('/link', { id: a.id });
+ok(last._s === 429, 'link rate limited');
+ok((await call('/remove', { id: a.id, key: a.key })).ok, 'owner removes');
+ok((await call('/groups')).items.length === 0, 'removed');
+// מגבלת הוספה
+ip = '6.6.6.6'; const st = [];
+for (let i = 0; i < 5; i++) st.push((await call('/add', Object.assign({}, G, { link: 'https://chat.whatsapp.com/Zz' + i + 'CdEfGhIj12345678' })))._s);
+ok(st.slice(0, 4).every(s => s === 200) && st[4] === 429, 'add rate limited', st);
+ok((await call('/groups', null, { Origin: 'https://evil.com' }))._cors === null, 'no cors for other sites');
+console.log((fails ? 'FAIL' : 'PASS') + ' ' + (n - fails) + '/' + n);
+process.exit(fails ? 1 : 0);

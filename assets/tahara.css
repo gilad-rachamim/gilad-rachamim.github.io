@@ -1,0 +1,83 @@
+/* טהרת המשפחה – מחשבון וסתות, ליל טבילה ולוח טהרה. הרעיון באדיבות אהרן גרינברג */
+.tool [hidden],.k-form [hidden],[data-th-app] [hidden]{display:none!important}
+.k-form select,.k-form input[type=date],.k-form input[type=number],.k-form input[type=time],.k-form input[type=password]{width:100%;font:inherit;font-size:1.05rem;color:var(--cream);background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;padding:.7rem .85rem;color-scheme:dark;min-height:48px}
+.k-form select option{color:#16130f}
+.k-form .opt{display:inline;color:var(--muted);font-size:.86rem}
+.k-form .label{display:block;margin-bottom:.35rem;color:var(--cream)}
+.th-box{margin:1.1rem 0;padding:1rem 1.05rem;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.02)}
+.th-h{font-family:var(--serif);color:var(--cream);font-size:1.3rem;margin:0 0 .6rem}
+.th-h3{font-family:var(--serif);color:var(--cream);font-size:1.1rem;margin:1.2rem 0 .5rem}
+.th-note{color:var(--muted);font-size:.92rem;margin:.5rem 0}
+.th-pick{color:var(--gold-hi);font-weight:600}
+.th-grid{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.th-presets{display:grid;gap:.5rem}
+.th-p{display:flex;gap:.65rem;align-items:flex-start;padding:.7rem .85rem;border:1px solid var(--line);border-radius:12px;cursor:pointer}
+.th-p:has(input:checked){border-color:var(--gold);background:rgba(216,179,95,.08)}
+.th-p input{margin-top:.3rem;accent-color:var(--gold);width:1.1rem;height:1.1rem;flex:none}
+.th-p b{display:block;color:var(--cream)}
+.th-p small{display:block;color:var(--muted);font-size:.88rem;margin-top:.15rem}
+.th-pinfo{margin-top:.7rem}
+.th-pinfo details,.th-on details,.th-tev details{margin-top:.35rem}
+.th-pinfo summary,.th-on summary,#th-tev details summary,.th-more summary{cursor:pointer;color:var(--gold-hi);min-height:44px;display:flex;align-items:center}
+.th-unv,.th-rav,.th-warn{margin:.7rem 0;padding:.75rem .9rem;border-radius:12px;border:1px dashed var(--gold-soft);background:rgba(216,179,95,.06)}
+.th-rav{border-style:solid;border-color:var(--gold)}
+.th-unv ul,.th-rav ul{margin:.35rem 0 0;padding-inline-start:1.2rem}
+.th-checks{display:grid;gap:.45rem}
+.th-prev{color:var(--body);min-height:1.4em}
+.th-list,.th-onot,.th-steps{list-style:none;padding:0;margin:0;display:grid;gap:.45rem}
+.th-list li{display:flex;justify-content:space-between;gap:.6rem;align-items:center;padding:.55rem .75rem;border:1px solid var(--line);border-radius:12px}
+.th-list li.th-missed{opacity:.6}
+.th-x{flex:none;min-width:44px;min-height:44px;border-radius:10px;border:1px solid var(--line);background:none;color:var(--muted);font-size:1rem;cursor:pointer}
+.th-empty{color:var(--muted)}
+.th-on{display:grid;gap:.2rem;padding:.7rem .85rem;border:1px solid var(--gold-soft);border-radius:12px;background:rgba(216,179,95,.05)}
+.th-on.th-oz{border-style:dashed;background:none}
+.th-on.th-doubt{border-color:#d58a5f}
+.th-on.th-past{opacity:.55}
+.th-lbl{color:var(--gold-hi);font-weight:700}
+.th-when{color:var(--cream)}
+.th-src{color:var(--muted);font-size:.88rem}
+.th-tag{display:inline-block;font-size:.78rem;padding:.05rem .45rem;border-radius:99px;background:rgba(213,138,95,.18);color:#f0c3a6;font-weight:600}
+.th-sm{color:var(--muted);font-size:.88rem}
+.th-miss{justify-self:start;margin-top:.3rem}
+.th-fixed{padding:.6rem .8rem;border-radius:12px;background:rgba(95,191,166,.1)}
+.th-tres{text-align:center}
+.th-k{color:var(--muted);margin:0}
+.th-big{font-family:var(--serif);font-size:1.8rem;color:var(--cream);margin:.1rem 0}
+.th-sub{color:var(--gold-hi);margin:0}
+.th-steps{margin-top:.8rem}
+.th-steps li{padding:.6rem .8rem;border:1px solid var(--line);border-radius:12px}
+.th-alert{margin:.6rem 0;padding:.65rem .85rem;border-radius:12px;border-inline-start:4px solid #d58a5f;background:rgba(213,138,95,.08)}
+.th-calbar{display:flex;justify-content:space-between;align-items:center;gap:.5rem}
+.th-calbar p{margin:0;text-align:center;color:var(--cream)}
+.th-calbar small{display:block;color:var(--muted)}
+.th-nav{min-width:48px;min-height:48px;border-radius:12px;border:1px solid var(--line);background:none;color:var(--gold-hi);font-size:1.4rem;cursor:pointer}
+.th-caltab{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:.6rem}
+.th-caltab th{color:var(--muted);font-weight:400;font-size:.8rem;padding:.25rem 0}
+.th-caltab td{vertical-align:top;border:1px solid var(--line);height:4.4rem;padding:.2rem;font-size:.7rem;overflow:hidden}
+.th-caltab td.th-today{outline:2px solid var(--gold);outline-offset:-2px}
+.th-dn{display:block;color:var(--cream);font-size:.9rem}
+.th-hd{display:block;color:var(--muted);font-size:.72rem}
+.th-mk{display:block;margin-top:.12rem;padding:.05rem .2rem;border-radius:5px;line-height:1.25;font-size:.68rem;color:#16130f;word-break:break-word}
+.th-legend{display:flex;flex-wrap:wrap;gap:.35rem;margin:.6rem 0 0}
+.th-legend .th-mk{display:inline-block;font-size:.8rem;padding:.1rem .45rem}
+.th-see{background:#e08a8a}.th-on.th-mk,.th-mk.th-on{background:var(--gold)}.th-mk.th-dbt{background:#e8b48f}
+.th-hef{background:#9fd3c4}.th-clean{background:#cfe8df}.th-tev{background:#7fc6ff}
+.th-file{position:relative;overflow:hidden}
+.th-file input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.th-danger{color:#f0a6a6;border-color:rgba(240,166,166,.5)}
+.th-msg{min-height:1.3em;color:var(--gold-hi)}
+.th-view{margin:0 0 1rem;padding:.8rem 1rem;border-radius:12px;background:rgba(127,198,255,.12);border:1px solid rgba(127,198,255,.5)}
+.th-disc{margin-top:1.2rem}
+.th-lock{max-width:420px}
+.th-src-tab{width:100%;border-collapse:collapse;font-size:.92rem}
+.th-src-tab th,.th-src-tab td{border:1px solid var(--line);padding:.45rem .55rem;text-align:start;vertical-align:top}
+.th-src-tab th{color:var(--gold-hi)}
+.th-credit{color:var(--muted);font-size:.9rem;text-align:center;margin:1rem 0 0}
+@media (max-width:420px){.th-caltab td{height:3.8rem;font-size:.62rem}.th-mk{font-size:.6rem}}
+@media print{
+  .th-data,.share-row,.th-miss,.th-x,#th-entry form,#th-method .th-presets,#th-custom,.th-nav,.iv-tabs,.seo-txt,.seo-faq{display:none!important}
+  .th-box{border:0;padding:0}
+  .th-on,.th-steps li,.th-caltab td{border-color:#999!important;color:#000!important}
+  details{display:block}details>*{display:block}
+  .th-mk{border:1px solid #666}
+}
