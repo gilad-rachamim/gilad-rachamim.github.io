@@ -152,6 +152,16 @@
 "page": true
 },
 {
+"id": "lkYpxD3SdSc",
+"artist": "עדן חסון",
+"song": "היי",
+"views": 14458218,
+"date": "",
+"added": "2026-11-19",
+"slug": "hii",
+"page": false
+},
+{
 "id": "eDfcyn5jLII",
 "artist": "טונה",
 "song": "היי בייב",
@@ -170,6 +180,26 @@
 "added": "",
 "slug": "kapara-sheli",
 "page": true
+},
+{
+"id": "SjHiX5vDI70",
+"artist": "פאר טסי מארח את אלון דה לוקו",
+"song": "שתיתי",
+"views": 13397781,
+"date": "",
+"added": "2026-11-19",
+"slug": "shtiti",
+"page": false
+},
+{
+"id": "dneZjDLdFos",
+"artist": "עידן רפאל חביב",
+"song": "כמו כל יום",
+"views": 13186352,
+"date": "",
+"added": "2026-11-19",
+"slug": "kmo-kl-iom",
+"page": false
 },
 {
 "id": "BYCndeezaTs",
@@ -632,6 +662,16 @@
 "page": true
 },
 {
+"id": "8znFbVYYVc0",
+"artist": "סטפן לגר",
+"song": "רק אני יודע",
+"views": 3910040,
+"date": "",
+"added": "2026-11-19",
+"slug": "rak-ani-yodea",
+"page": true
+},
+{
 "id": "mECyNzcHE-Q",
 "artist": "כפיר צפריר ונטע ברזילי",
 "song": "נתק אותי",
@@ -928,8 +968,8 @@
 "views": 2159819,
 "date": "20250316",
 "added": "",
-"slug": "london-dobai",
-"page": false
+"slug": "london-dubai",
+"page": true
 },
 {
 "id": "GDE08MKkqgI",
@@ -1108,8 +1148,8 @@
 "views": 1458134,
 "date": "20250222",
 "added": "",
-"slug": "lipol-olkom",
-"page": false
+"slug": "lipol-velakum",
+"page": true
 },
 {
 "id": "Db4M22V2kHE",
@@ -1308,8 +1348,8 @@
 "views": 1107053,
 "date": "20250106",
 "added": "",
-"slug": "ainsof",
-"page": false
+"slug": "einsof",
+"page": true
 },
 {
 "id": "n-LLdO7FENM",
@@ -1338,8 +1378,8 @@
 "views": 1096213,
 "date": "20250529",
 "added": "",
-"slug": "ahbt-aoti",
-"page": false
+"slug": "ahavt-oti",
+"page": true
 },
 {
 "id": "4wV51QyssS8",
@@ -1428,8 +1468,8 @@
 "views": 1018023,
 "date": "20260211",
 "added": "",
-"slug": "bit-bipo",
-"page": false
+"slug": "bayit-beyafo",
+"page": true
 },
 {
 "id": "XnFFu6q_U6M",
@@ -1468,8 +1508,8 @@
 "views": 993891,
 "date": "20250820",
 "added": "",
-"slug": "aizh-mzl",
-"page": false
+"slug": "eize-mazal",
+"page": true
 },
 {
 "id": "kJSfgWW0wdc",
@@ -1798,8 +1838,8 @@
 "views": 754926,
 "date": "20260517",
 "added": "",
-"slug": "dizngof-99",
-"page": false
+"slug": "dizengoff-99",
+"page": true
 },
 {
 "id": "FrTR_lM_xeY",
@@ -2738,8 +2778,8 @@
 "views": 120486,
 "date": "20261101",
 "added": "",
-"slug": "higiinh",
-"page": false
+"slug": "higyena",
+"page": true
 },
 {
 "id": "ta61I0Ufw08",

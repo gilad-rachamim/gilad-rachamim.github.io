@@ -9,5 +9,27 @@
         "1B:AF:C0:BF:0D:DC:9C:C7:0D:B7:78:D7:4F:08:D8:F8:B6:8B:56:4E:FA:2D:CA:2C:6C:B7:9B:C0:19:BE:80:DC"
       ]
     }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.hakelim.shabat",
+      "sha256_cert_fingerprints": [
+        "A2:C1:93:69:CF:EF:B7:CD:30:4C:A1:4A:38:C0:EA:A2:05:FE:21:53:70:5E:82:40:48:B8:74:54:16:BF:77:02",
+        "EB:86:39:88:7A:81:B4:84:E8:FF:6F:53:96:D9:97:2E:9B:36:C4:54:DE:00:1B:16:F1:4E:93:04:F4:59:34:56"
+      ]
+    }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.hakelim.birkon",
+      "sha256_cert_fingerprints": [
+        "A2:C1:93:69:CF:EF:B7:CD:30:4C:A1:4A:38:C0:EA:A2:05:FE:21:53:70:5E:82:40:48:B8:74:54:16:BF:77:02",
+        "C4:4E:7B:AC:1C:B7:92:29:D1:FF:F8:E2:2A:EC:16:1C:55:87:1B:D4:C1:3A:8A:7D:7A:0C:5B:A5:3F:7B:1E:17"
+      ]
+    }
   }
 ]
