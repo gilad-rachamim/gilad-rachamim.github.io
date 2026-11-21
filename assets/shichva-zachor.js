@@ -162,8 +162,8 @@
   function cmt(a) { return a.filter(function (x) { return x.text; }).map(function (x) { return '<p><b>' + esc(x.dh) + '</b> ' + esc(x.text) + '</p>'; }).join(''); }
   // רש"י תמיד בצד הפנימי (כלפי הכריכה), תוספות בחיצוני. עמוד א' מימין: פנימי = שמאל. עמוד ב' משמאל: פנימי = ימין.
   function amudHtml(side, d, gem, rashi, tos, first) {
-    var R = '<aside class="gm-rashi"><h4>רש"י</h4>' + cmt(rashi) + '</aside>', T = '<aside class="gm-tos"><h4>תוספות</h4>' + cmt(tos) + '</aside>';
-    var M = '<section class="gm-main">' + (first && d.mishna ? '<h4>מתניתין</h4>' + boldDh(lines(d.mishna)) : '') + (gem.length ? (first ? '<h4>גמרא</h4>' : '') + boldDh(gem) : '') + '</section>';
+    var R = '<aside class="gm-rashi">' + cmt(rashi) + '</aside>', T = '<aside class="gm-tos">' + cmt(tos) + '</aside>';
+    var M = '<section class="gm-main">' + (first && d.mishna ? '<div class="gm-frame">' + esc(lines(d.mishna)[0].split(' ')[0]) + '</div>' + boldDh(lines(d.mishna)) : '') + (gem.length ? boldDh(gem) : '') + '</section>';
     var rr = '<div class="gm-rr"></div>', tt = '<div class="gm-tt"></div>';
     var ord = side === 'a' ? T + M + R : R + M + T, rest = side === 'a' ? tt + rr : rr + tt;
     return '<div class="gm-amud gm-' + side + '"><div class="gm-badge">פורים תורה</div>' +

@@ -123,6 +123,19 @@
 .gm-main p,.gm-rashi p,.gm-tos p,.gm-rr p,.gm-tt p{margin:.12rem 0}
 .gm-rashi,.gm-tos,.gm-rr,.gm-tt{font-family:"Noto Rashi Hebrew","Frank Ruhl Libre",serif;font-size:.8rem;line-height:1.45}
 .gm-margin{margin-top:.5rem;border-top:1px dashed rgba(29,22,8,.4);padding-top:.25rem;font-size:.74rem;opacity:.8}
+.gm-amud{display:flex;flex-direction:column;min-height:62rem;padding:.5rem .55rem}
+.gm-top{grid-template-columns:1.05fr 1fr 1.05fr;gap:0}
+.gm-top>*{padding-inline:.35rem}
+.gm-rashi,.gm-tos,.gm-rr,.gm-tt{font-size:.72rem;line-height:1.28;text-align:justify;hyphens:none}
+.gm-rashi p,.gm-tos p,.gm-rr p,.gm-tt p{margin:0;display:inline}
+.gm-rashi p:after,.gm-tos p:after,.gm-rr p:after,.gm-tt p:after{content:" • ";color:#7a2e1a}
+.gm-main{font-size:.92rem;line-height:1.38;text-align:justify;border-inline:1px solid rgba(29,22,8,.55)}
+.gm-main p{margin:0 0 .15rem}
+.gm-frame{border:3px double #1d1608;outline:1px solid #1d1608;outline-offset:2px;margin:.3rem .5rem .5rem;padding:.4rem .2rem;text-align:center;font-size:1.5rem;font-weight:800;background:repeating-linear-gradient(45deg,#fbf6e8 0 4px,#efe3c4 4px 5px)}
+.gm-rest{flex:1;gap:0;align-content:start}
+.gm-rest>*{padding-inline:.4rem}
+.gm-rest>*+*{border-inline-start:1px solid rgba(29,22,8,.4)}
+.gm-margin{margin-top:auto}
 .gm-note{margin:.6rem 0 0;font-size:.72rem;text-align:center;opacity:.7}
 .sb-book{font-family:"Frank Ruhl Libre",serif;color:#1d1608}
 .sb-book h2{text-align:center;border-bottom:3px double #7a2e1a;padding-bottom:.3rem}
@@ -141,3 +154,4 @@
 @media (max-width:760px){.gm-spread{grid-template-columns:1fr}}
 @media (max-width:520px){.gm-top{grid-template-columns:1fr}.gm-main{order:-1;border-inline:0;padding-inline:0}.gm-rest{display:none}}
 @media print{.gm-spread{display:block}.gm-amud{break-after:page;border:0;font-size:12pt}.gm-amud:last-child{break-after:auto}.gm-top{grid-template-columns:1fr 1.5fr 1fr!important}.gm-main{order:0!important}}
+@media (max-width:760px){.gm-amud{min-height:0}}
