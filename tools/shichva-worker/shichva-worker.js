@@ -12,7 +12,7 @@ import { handle as kioskHandle, demoRows as kioskDemo } from './kiosk.js';
 const ORIGINS = ['https://hakelim.com', 'https://www.hakelim.com', 'https://gilad-rachamim.github.io'];
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 const CF_MODEL = '@cf/openai/gpt-oss-120b';
-const AI_PER_GRADE = 200, AI_PER_DEMO = 80, AI_DAY_CAP = 1500, JOIN_FAILS = 30;
+const AI_PER_GRADE = 600, AI_PER_DEMO = 120, AI_DAY_CAP = 3000, JOIN_FAILS = 30;
 const ROLES = ['rakaz', 'gizbar', 'chaver', 'melave'];
 const ROLE_HE = { rakaz: 'רכז', gizbar: 'גזבר', chaver: 'חבר', melave: 'מלווה מהצוות' };
 const STATES = ['draft', 'liked', 'head', 'melave', 'approved', 'replace'];
