@@ -112,15 +112,17 @@
 .sh-torah h3{text-align:center;margin:.2rem 0 .6rem}
 .sh-badge,.gm-badge{display:block;width:max-content;margin:0 auto .4rem;padding:.15rem .9rem;border:2px solid #7a2e1a;color:#7a2e1a;border-radius:99px;font-weight:800;letter-spacing:.04em}
 .sh-src{font-size:.88rem;padding-inline-start:1.2rem}
-.gm-page{min-width:34rem;font-family:"Frank Ruhl Libre","David Libre","Times New Roman",serif}
-.gm-head{display:flex;justify-content:space-between;border-bottom:2px solid #1d1608;padding-bottom:.2rem;font-weight:800;font-size:1.05rem}
-.gm-body{display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:.7rem;margin-top:.5rem;align-items:start}
-.gm-main{font-size:1.12rem;line-height:1.55;border-inline:1px solid rgba(29,22,8,.3);padding-inline:.6rem}
-.gm-main h4,.gm-rashi h4,.gm-tos h4{margin:.3rem 0;font-size:.78rem;letter-spacing:.06em;color:#7a2e1a}
-.gm-main p,.gm-rashi p,.gm-tos p{margin:.15rem 0}
-.gm-rashi,.gm-tos{font-family:"Noto Rashi Hebrew","Frank Ruhl Libre",serif;font-size:.86rem;line-height:1.5}
-.gm-empty{opacity:.4}
-.gm-margin{margin-top:.5rem;border-top:1px dashed rgba(29,22,8,.4);padding-top:.25rem;font-size:.78rem;opacity:.8}
+.gm-spread{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;font-family:"Frank Ruhl Libre","David Libre","Times New Roman",serif}
+.gm-amud{background:#fbf6e8;border:1px solid rgba(29,22,8,.35);padding:.6rem;min-width:0}
+.gm-head{display:flex;justify-content:space-between;border-bottom:2px solid #1d1608;padding-bottom:.2rem;font-weight:800;font-size:.95rem}
+.gm-top{display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:.5rem;margin-top:.4rem;align-items:start}
+.gm-rest{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.3rem;padding-top:.3rem;border-top:1px solid rgba(29,22,8,.3)}
+.gm-rest[hidden]{display:none}
+.gm-main{font-size:1rem;line-height:1.5;border-inline:1px solid rgba(29,22,8,.3);padding-inline:.4rem}
+.gm-main h4,.gm-rashi h4,.gm-tos h4{margin:.2rem 0;font-size:.72rem;letter-spacing:.06em;color:#7a2e1a}
+.gm-main p,.gm-rashi p,.gm-tos p,.gm-rr p,.gm-tt p{margin:.12rem 0}
+.gm-rashi,.gm-tos,.gm-rr,.gm-tt{font-family:"Noto Rashi Hebrew","Frank Ruhl Libre",serif;font-size:.8rem;line-height:1.45}
+.gm-margin{margin-top:.5rem;border-top:1px dashed rgba(29,22,8,.4);padding-top:.25rem;font-size:.74rem;opacity:.8}
 .gm-note{margin:.6rem 0 0;font-size:.72rem;text-align:center;opacity:.7}
 .sb-book{font-family:"Frank Ruhl Libre",serif;color:#1d1608}
 .sb-book h2{text-align:center;border-bottom:3px double #7a2e1a;padding-bottom:.3rem}
@@ -136,9 +138,6 @@
   #shPrintRoot .gm-page{min-width:0}
   #shPrintRoot .gm-body{font-size:.95em}
 }
-@media (max-width:620px){
-  .gm-page{min-width:0}
-  .gm-body{grid-template-columns:1fr}
-  .gm-main{order:-1;border-inline:0;padding-inline:0}
-}
-@media print{.gm-page{min-width:0}.gm-body{grid-template-columns:1fr 1.5fr 1fr!important}.gm-main{order:0!important;border-inline:1px solid rgba(29,22,8,.3)!important;padding-inline:.6rem!important}}
+@media (max-width:760px){.gm-spread{grid-template-columns:1fr}}
+@media (max-width:520px){.gm-top{grid-template-columns:1fr}.gm-main{order:-1;border-inline:0;padding-inline:0}.gm-rest{display:none}}
+@media print{.gm-spread{display:block}.gm-amud{break-after:page;border:0;font-size:12pt}.gm-amud:last-child{break-after:auto}.gm-top{grid-template-columns:1fr 1.5fr 1fr!important}.gm-main{order:0!important}}

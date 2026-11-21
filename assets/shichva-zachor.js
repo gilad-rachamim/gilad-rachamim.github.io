@@ -84,10 +84,11 @@
   function nl(t) { return esc(t).replace(/\n/g, '<br>'); }
 
   /* ---------- הדפסה: העתק של האזור בלבד, A4 ---------- */
-  function printNode(html, cls) {
+  function printNode(html, cls, after) {
     var old = document.getElementById('shPrintRoot'); if (old) old.remove();
     var d = document.createElement('div'); d.id = 'shPrintRoot'; d.className = cls || ''; d.innerHTML = html;
     document.body.appendChild(d); document.body.classList.add('sh-printing');
+    if (after) { d.style.cssText = 'display:block;position:absolute;left:-9999px;top:0;width:186mm'; after(d); d.style.cssText = ''; }
     var clean = function () { d.remove(); document.body.classList.remove('sh-printing'); window.removeEventListener('afterprint', clean); };
     window.addEventListener('afterprint', clean);
     setTimeout(function () { window.print(); }, 60);
@@ -148,19 +149,47 @@
 
   /* ================= דף גמרא ================= */
   // מדגישים את תחילת כל פסקה (דיבור המתחיל) בשתי מילים ראשונות
-  function boldDh(txt) {
-    return lines(txt).map(function (p) { var w = p.split(' '); return '<p><b>' + esc(w.slice(0, 2).join(' ')) + '</b> ' + esc(w.slice(2).join(' ')) + '</p>'; }).join('');
+  function boldDh(paras) {
+    return paras.map(function (p) { var w = p.split(' '); return '<p><b>' + esc(w.slice(0, 2).join(' ')) + '</b> ' + esc(w.slice(2).join(' ')) + '</p>'; }).join('');
+  }
+  // פיצול לעמוד א' ולעמוד ב': שורת "---" מסמנת מעבר עמוד, ובלעדיה חצי-חצי
+  function splitAmud(arr, isSep) {
+    var i = -1; arr.forEach(function (x, k) { if (i < 0 && isSep(x)) i = k; });
+    var clean = function (a) { return a.filter(function (x) { return !isSep(x); }); };
+    if (i >= 0) return [clean(arr.slice(0, i)), clean(arr.slice(i + 1))];
+    var all = clean(arr), h = Math.ceil(all.length / 2); return [all.slice(0, h), all.slice(h)];
+  }
+  function cmt(a) { return a.filter(function (x) { return x.text; }).map(function (x) { return '<p><b>' + esc(x.dh) + '</b> ' + esc(x.text) + '</p>'; }).join(''); }
+  // רש"י תמיד בצד הפנימי (כלפי הכריכה), תוספות בחיצוני. עמוד א' מימין: פנימי = שמאל. עמוד ב' משמאל: פנימי = ימין.
+  function amudHtml(side, d, gem, rashi, tos, first) {
+    var R = '<aside class="gm-rashi"><h4>רש"י</h4>' + cmt(rashi) + '</aside>', T = '<aside class="gm-tos"><h4>תוספות</h4>' + cmt(tos) + '</aside>';
+    var M = '<section class="gm-main">' + (first && d.mishna ? '<h4>מתניתין</h4>' + boldDh(lines(d.mishna)) : '') + (gem.length ? (first ? '<h4>גמרא</h4>' : '') + boldDh(gem) : '') + '</section>';
+    var rr = '<div class="gm-rr"></div>', tt = '<div class="gm-tt"></div>';
+    var ord = side === 'a' ? T + M + R : R + M + T, rest = side === 'a' ? tt + rr : rr + tt;
+    return '<div class="gm-amud gm-' + side + '"><div class="gm-badge">פורים תורה</div>' +
+      '<header class="gm-head"><span>' + esc(d.masechet || 'מסכת הכתרה') + '</span><span>' + esc(d.perek || 'פרק י"ב') + '</span><span>דף ' + esc(String(d.daf || 'ב').replace(/[.:\s]/g, '')) + (side === 'a' ? '.' : ':') + '</span></header>' +
+      '<div class="gm-top">' + ord + '</div><div class="gm-rest">' + rest + '</div>' +
+      (side === 'b' && d.margin ? '<footer class="gm-margin">' + nl(d.margin) + '</footer>' : '') + '</div>';
   }
   function gemaraHtml(d) {
-    var rashi = (d.rashi || []).filter(function (x) { return x.text; }), tos = (d.tosafot || []).filter(function (x) { return x.text; });
-    var side = function (a) { return a.map(function (x) { return '<p><b>' + esc(x.dh) + '</b> ' + esc(x.text) + '</p>'; }).join(''); };
-    return '<div class="gm-page"><div class="gm-badge">פורים תורה</div>' +
-      '<header class="gm-head"><span>' + esc(d.masechet || 'מסכת הכתרה') + '</span><span>' + esc(d.perek || 'פרק י"ב') + '</span><span>דף ' + esc(d.daf || 'ב.') + '</span></header>' +
-      '<div class="gm-body"><aside class="gm-rashi"><h4>רש"י</h4>' + (side(rashi) || '<p class="gm-empty">…</p>') + '</aside>' +
-      '<section class="gm-main"><h4>מתניתין</h4>' + boldDh(d.mishna) + '<h4>גמרא</h4>' + boldDh(d.gemara) + '</section>' +
-      '<aside class="gm-tos"><h4>תוספות</h4>' + (side(tos) || '<p class="gm-empty">…</p>') + '</aside></div>' +
-      (d.margin ? '<footer class="gm-margin">' + nl(d.margin) + '</footer>' : '') +
-      '<p class="gm-note">דף היתולי לפורים תורה – כל מה שכתוב כאן בצחוק. לא מקור ולא הלכה.</p></div>';
+    var g = splitAmud(lines(d.gemara), function (x) { return x === '---'; });
+    var r = splitAmud(d.rashi || [], function (x) { return x.sep; }), t = splitAmud(d.tosafot || [], function (x) { return x.sep; });
+    var two = g[1].length || r[1].length || t[1].length;
+    return '<div class="gm-spread">' + amudHtml('a', d, g[0], r[0], t[0], true) + (two ? amudHtml('b', d, g[1], r[1], t[1], false) : '') + '</div>' +
+      '<p class="gm-note">דף היתולי לפורים תורה – כל מה שכתוב כאן בצחוק. לא מקור ולא הלכה.</p>';
+  }
+  // הערות שגולשות מעבר לגובה הגמרא ממשיכות מתחתיה, בשני טורים מלאים (כמו בדף הרגיל)
+  function layoutDaf(root) {
+    root.querySelectorAll('.gm-amud').forEach(function (pg) {
+      var main = pg.querySelector('.gm-main'), lim = main.offsetHeight;
+      [['.gm-rashi', '.gm-rr'], ['.gm-tos', '.gm-tt']].forEach(function (x) {
+        var side = pg.querySelector(x[0]), dest = pg.querySelector(x[1]);
+        if (!side || !dest || side.offsetTop !== main.offsetTop || !lim) return;
+        var ps = Array.prototype.slice.call(side.querySelectorAll('p')), base = side.getBoundingClientRect().top;
+        for (var i = ps.length - 1; i >= 0; i--) { var r = ps[i].getBoundingClientRect(); if (r.bottom - base > lim + 2) dest.insertBefore(ps[i], dest.firstChild); else break; }
+      });
+      pg.querySelector('.gm-rest').hidden = !pg.querySelector('.gm-rr p, .gm-tt p');
+    });
   }
   SH.creators.gemara = function (root, existing) {
     var d = existing && existing.data ? JSON.parse(JSON.stringify(existing.data)) : { rashi: [], tosafot: [] };
@@ -173,13 +202,13 @@
       '<div class="sh-caps" id="gmJokes"></div><div id="gmLight"></div></section>' +
       '<section class="sh-card"><h2>הנוסח (אפשר לתקן הכול ביד)</h2>' +
       '<div class="sh-row"><label class="field">מסכת<input id="gmMas" maxlength="40" placeholder="מסכת הכתרה"></label><label class="field">פרק<input id="gmPer" maxlength="30" placeholder="פרק י&quot;ב"></label><label class="field">דף<input id="gmDaf" maxlength="10" placeholder="ב."></label></div>' +
-      '<label class="field">מתניתין<textarea id="gmMish" rows="2" maxlength="600"></textarea></label><label class="field">גמרא (כל פסקה בשורה נפרדת, שתי המילים הראשונות יודגשו)<textarea id="gmGem" rows="6" maxlength="1500"></textarea></label>' +
-      '<label class="field">רש"י (שורה לכל הערה: דיבור מתחיל, נקודתיים, הסבר)<textarea id="gmRashi" rows="4" maxlength="1200"></textarea></label>' +
-      '<label class="field">תוספות (שורה לכל קושיה: דיבור מתחיל, נקודתיים, קושיה)<textarea id="gmTos" rows="3" maxlength="900"></textarea></label>' +
+      '<label class="field">מתניתין<textarea id="gmMish" rows="2" maxlength="600"></textarea></label><label class="field">גמרא (כל פסקה בשורה נפרדת, שתי המילים הראשונות יודגשו; שורה עם --- בלבד מעבירה לעמוד ב׳)<textarea id="gmGem" rows="6" maxlength="1500"></textarea></label>' +
+      '<label class="field">רש"י (שורה לכל הערה: דיבור מתחיל, נקודתיים, הסבר; --- מעביר לעמוד ב׳)<textarea id="gmRashi" rows="4" maxlength="1200"></textarea></label>' +
+      '<label class="field">תוספות (שורה לכל קושיה: דיבור מתחיל, נקודתיים, קושיה; --- מעביר לעמוד ב׳)<textarea id="gmTos" rows="3" maxlength="900"></textarea></label>' +
       '<label class="field">הערות שוליים היתוליות (לא מראי מקומות אמיתיים)<textarea id="gmMar" rows="2" maxlength="400" placeholder="ראו עוד: שיעור בוקר ד. ע&quot;ב (כמעט)"></textarea></label></section>' +
       '<section class="sh-card"><h2>הדף</h2><div id="gmView" class="sh-paper"></div><div class="sh-row"><button type="button" class="btn btn-sm btn-line" id="gmPrint">הדפסה או PDF (A4)</button></div></section>' + saveBox(existing, 'gemara');
-    function toLines(a) { return a.map(function (x) { return (x.dh ? x.dh + ': ' : '') + x.text; }).join('\n'); }
-    function fromLines(t) { return lines(t).map(function (l) { var i = l.indexOf(':'); return i > 0 && i < 40 ? { dh: l.slice(0, i).trim(), text: l.slice(i + 1).trim() } : { dh: '', text: l }; }); }
+    function toLines(a) { return a.map(function (x) { return x.sep ? '---' : (x.dh ? x.dh + ': ' : '') + x.text; }).join('\n'); }
+    function fromLines(t) { return lines(t).map(function (l) { if (l === '---') return { sep: true }; var i = l.indexOf(':'); return i > 0 && i < 40 ? { dh: l.slice(0, i).trim(), text: l.slice(i + 1).trim() } : { dh: '', text: l }; }); }
     $('#gmTopic', root).value = d.topic || ''; $('#gmMas', root).value = d.masechet || ''; $('#gmPer', root).value = d.perek || ''; $('#gmDaf', root).value = d.daf || '';
     $('#gmMish', root).value = d.mishna || ''; $('#gmGem', root).value = d.gemara || ''; $('#gmRashi', root).value = toLines(d.rashi); $('#gmTos', root).value = toLines(d.tosafot); $('#gmMar', root).value = d.margin || ''; $('#gmJoke', root).value = d.joke || '';
     function gather() {
@@ -187,7 +216,7 @@
       d.mishna = $('#gmMish', root).value; d.gemara = $('#gmGem', root).value; d.rashi = fromLines($('#gmRashi', root).value); d.tosafot = fromLines($('#gmTos', root).value);
       d.margin = $('#gmMar', root).value; d.joke = $('#gmJoke', root).value;
     }
-    function paint() { gather(); $('#gmView', root).innerHTML = gemaraHtml(d); $('#gmLight', root).innerHTML = light ? SH.lightHtml(light.light, light.why) : ''; }
+    function paint() { gather(); $('#gmView', root).innerHTML = gemaraHtml(d); layoutDaf($('#gmView', root)); $('#gmLight', root).innerHTML = light ? SH.lightHtml(light.light, light.why) : ''; }
     root.addEventListener('input', function (e) { if (e.target.closest('.sh-card') && e.target.id && e.target.id.indexOf('gm') === 0) paint(); });
     $('#gmSuggest', root).onclick = function () {
       var b = this; b.disabled = true; $('#gmJokes', root).innerHTML = '<p class="msg">הגבאי חושב…</p>';
@@ -207,7 +236,7 @@
         light = { light: r.light, why: r.why }; paint(); toast('הדף נוסח. כדאי שמי שיודע ארמית יעבור עליו');
       }).catch(function (e) { toast(SH.err(e)); }).then(function () { b.disabled = false; b.textContent = 'לנסח כגמרא'; });
     };
-    $('#gmPrint', root).onclick = function () { gather(); printNode(gemaraHtml(d), 'sh-print-gemara'); };
+    $('#gmPrint', root).onclick = function () { gather(); printNode(gemaraHtml(d), 'sh-print-gemara', layoutDaf); };
     wireSave(root, existing, 'gemara', function () { gather(); return { light: light, body: [d.mishna, d.gemara].filter(Boolean).join('\n'), data: d }; });
     paint();
   };
