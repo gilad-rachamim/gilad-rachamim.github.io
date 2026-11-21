@@ -145,6 +145,7 @@
       '<p class="msg">רקע:</p><div class="sh-pal" id="mmPal">' + BG.map(function (g, i) { return '<button type="button" aria-label="רקע ' + (i + 1) + '" data-bg="' + i + '" style="background:linear-gradient(135deg,' + g[0] + ',' + g[1] + ')"></button>'; }).join('') + '</div>' +
       '<p class="msg">מדבקות של אדר (לחיצה מוסיפה, גוררים על המם):</p><div class="sh-row sh-stk">' + STICKERS.map(function (e) { return '<button type="button" data-stk="' + e + '">' + e + '</button>'; }).join('') + '<button type="button" class="btn btn-sm btn-line" id="mmClr">ניקוי מדבקות</button></div>' +
       '<div class="sh-row"><button type="button" class="btn btn-sm btn-gold" id="mmDl">הורדה כתמונה</button></div></section>' +
+      '<section class="sh-card" id="mmGimBox"></section>' +
       '<section class="sh-card"><h2>5 כיתובים מהגבאי</h2><p class="msg">מתארים במילים מה רואים בתמונה (התמונה עצמה לא נשלחת).</p><label class="field">מה בתמונה<input id="mmDesc" maxlength="200" placeholder="תלמיד נרדם על הגמרא בשיעור בוקר"></label>' +
       '<label class="sh-check"><input type="checkbox" id="mmStaff"> יש בתמונה איש צוות</label><button type="button" class="btn btn-line" id="mmAi">לקבל 5 כיתובים</button><div class="sh-caps" id="mmCaps"></div><div id="mmLight"></div></section>' +
       saveBox(existing, 'meme');
@@ -158,6 +159,8 @@
       $('#mmLight', root).innerHTML = light ? SH.lightHtml(light.light, light.why) : '';
     }
     T.oninput = function () { d.top = T.value; paint(); };
+    if (SH.gimBox) SH.gimBox($('#mmGimBox', root), { title: 'גימטריות למם', hint: 'המם הכי חזק כשהמספר מפתיע: למעלה המילה, למטה "בגימטריא" והצירוף. לוחצים על הצעה והיא נכנסת לכיתובים.', seed: function () { return T.value.split(/\s+/).slice(-1)[0]; },
+      insert: function (h, ln, sd) { d.top = T.value = SH.gim.parse(sd).join(' ') + ' = ' + SH.gim.value(sd); d.bottom = Bt.value = 'בגימטריא ' + h.t + (h.k ? ' (עם הכולל)' : ''); paint(); toast('נכנס לכיתובים. אפשר לתקן'); } });
     Bt.oninput = function () { d.bottom = Bt.value; paint(); };
     root.querySelectorAll('[data-bg]').forEach(function (b) { b.onclick = function () { d.bg = +b.getAttribute('data-bg'); paint(); }; });
     root.querySelectorAll('[data-fmt]').forEach(function (b) { b.onclick = function () { fmt = b.getAttribute('data-fmt'); paint(); }; });

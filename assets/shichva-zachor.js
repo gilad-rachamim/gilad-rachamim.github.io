@@ -115,6 +115,7 @@
       '<label class="field">על מה הדבר תורה<input id="tzTopic" maxlength="150" placeholder="מי אוכל את הקוגל האחרון בסעודה"></label>' +
       '<label class="field">הרעיון שלנו (לא חובה)<textarea id="tzIdea" rows="2" maxlength="400"></textarea></label>' +
       '<button type="button" class="btn btn-gold" id="tzGo">לבנות דבר תורה בגבאי</button><div id="tzLight"></div><p class="msg" id="tzHint"></p></section>' +
+      '<section class="sh-card" id="tzGim"></section>' +
       '<section class="sh-card"><h2>הנוסח (אפשר לתקן הכול ביד)</h2><label class="field">כותרת<input id="tzTitle" maxlength="80"></label>' +
       F.map(function (f) { return '<label class="field">' + f[1] + '<textarea data-f="' + f[0] + '" rows="' + f[2] + '" maxlength="700"></textarea></label>'; }).join('') +
       '<h3>מראה מקום אמיתי</h3><p class="msg">מוסיפים רק מה שבדקנו בספר. הגבאי לא נותן ציטוטים.</p><div id="tzSrc"></div>' +
@@ -132,6 +133,8 @@
       root.querySelectorAll('[data-sx]').forEach(function (x) { x.onclick = function () { d.sources.splice(+x.getAttribute('data-sx'), 1); paint(); }; });
     }
     root.addEventListener('input', function (e) { if (e.target.matches('[data-f],#tzTitle,#tzTopic')) paint(); });
+    if (SH.gimBox) SH.gimBox($('#tzGim', root), { title: 'גימטריות מצחיקות לדבר התורה', seed: function () { return $('#tzTopic', root).value.split(/\s+/).slice(-1)[0]; },
+      insert: function (h, ln) { var g = $('[data-f="gematria"]', root); g.value = (g.value.trim() ? g.value.replace(/\s+$/, '') + '\n' : '') + ln + '.'; g.dispatchEvent(new Event('input', { bubbles: true })); toast('נכנס לשדה "גימטריה". אפשר לתקן'); } });
     $('#tzSrcAdd', root).onclick = function () { var i = $('#tzSrcIn', root); if (!i.value.trim()) return; d.sources.push({ text: i.value.trim(), real: true }); i.value = ''; paint(); };
     $('#tzGo', root).onclick = function () {
       var b = this, tp = $('#tzTopic', root).value.trim(); if (!tp) { toast('צריך נושא'); return; }
@@ -277,6 +280,7 @@
       '<label class="field">הבדיחה בעברית רגילה<textarea id="gmJoke" rows="3" maxlength="500"></textarea></label>' +
       '<div class="sh-row"><button type="button" class="btn btn-line" id="gmSuggest">הצע בדיחה לסוגיה</button><button type="button" class="btn btn-gold" id="gmGo">לנסח כגמרא</button><button type="button" class="btn btn-line" id="gmSample">טען דף לדוגמה מלא</button></div>' +
       '<div class="sh-caps" id="gmJokes"></div><div id="gmLight"></div></section>' +
+      '<section class="sh-card" id="gmGimBox"></section>' +
       '<section class="sh-card"><h2>הנוסח (אפשר לתקן הכול ביד)</h2>' +
       '<div class="sh-row"><label class="field">מסכת<input id="gmMas" maxlength="40" placeholder="מסכת הכתרה"></label><label class="field">פרק<input id="gmPer" maxlength="30" placeholder="פרק י&quot;ב"></label><label class="field">דף<input id="gmDaf" maxlength="10" placeholder="ב."></label></div>' +
       '<label class="field">מתניתין<textarea id="gmMish" rows="2" maxlength="800"></textarea></label><label class="field">גמרא (כל פסקה בשורה נפרדת, שתי המילים הראשונות יודגשו; שורה עם --- בלבד מעבירה לעמוד ב׳)<textarea id="gmGem" rows="8" maxlength="3000"></textarea></label>' +
@@ -297,6 +301,12 @@
     }
     function paint() { gather(); $('#gmView', root).innerHTML = gemaraHtml(d); layoutDaf($('#gmView', root)); $('#gmLight', root).innerHTML = light ? SH.lightHtml(light.light, light.why) : ''; }
     root.addEventListener('input', function (e) { if (e.target.closest('.sh-card') && e.target.id && e.target.id.indexOf('gm') === 0) paint(); });
+    if (SH.gimBox) SH.gimBox($('#gmGimBox', root), { title: 'גימטריות מצחיקות לדף הגמרא', hint: 'ההצעה נכנסת לתוספות בלשון "בגימטריא", לפני המעבר לעמוד ב׳, עם החישוב המלא.', seed: function () { return $('#gmTopic', root).value.split(/\s+/).slice(-1)[0]; },
+      insert: function (h, ln, sd) {
+        var t = $('#gmTos', root), a = t.value.split('\n'), i = a.indexOf('---'), add = 'בגימטריא: ' + ln.replace(' בגימטריא ', ' כמניין ') + '.';
+        if (i < 0) a.push(add); else a.splice(i, 0, add);
+        t.value = a.filter(function (x, k) { return x.trim() || k < a.length; }).join('\n').replace(/^\n+/, ''); t.dispatchEvent(new Event('input', { bubbles: true })); toast('נכנס לתוספות. אפשר לתקן');
+      } });
     $('#gmSuggest', root).onclick = function () {
       var b = this; b.disabled = true; $('#gmJokes', root).innerHTML = '<p class="msg">הגבאי חושב…</p>';
       SH.api('/ai', { task: 'joke', topic: $('#gmTopic', root).value.trim() || 'חיי שכבת י"ב בישיבה' }).then(function (r) {

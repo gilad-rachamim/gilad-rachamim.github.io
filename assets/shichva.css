@@ -180,3 +180,5 @@
   body.sh-printing>*:not(#shPrintRoot){display:none!important}
   #shPrintRoot{display:block!important;background:#fff;color:#000}
 }
+
+.sh-gimchips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem}.sh-gimchips small{opacity:.75}.gim-val{font-size:1.05rem;margin:.4rem 0}
