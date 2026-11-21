@@ -610,7 +610,7 @@ async function askModel(env, user, shape) {
   const want = `\nהחזר JSON בלבד במבנה הזה (הערכים הם דוגמה):\n${JSON.stringify(shape)}`;
   if (env.GEMINI_KEYS) {
     const keys = String(env.GEMINI_KEYS).split(/[\s,]+/).filter(Boolean);
-    const models = (env.GEMINI_MODELS || 'gemini-3.8-flash,gemini-3.7-flash,gemini-3.5-flash,gemini-flash-lite-latest').split(',').map(s => s.trim());
+    const models = (env.GEMINI_MODELS || 'gemini-3.8-flash,gemini-3.5-flash,gemini-3.7-flash').split(',').map(s => s.trim());
     for (const key of keys) for (const model of models) {
       let r;
       try {
