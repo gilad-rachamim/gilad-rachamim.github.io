@@ -164,6 +164,9 @@
 .gm-t3 .gm-frame span{border:3px double #000;color:#000}
 .gm-t3 .gm-foot{border-top:2px solid #000}
 .sh-themes{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.4rem}.sh-hint{font-size:.85rem;margin:.2rem 0 .7rem;opacity:.85}
+.gm-promo{margin-top:6px;padding:4px 8px;text-align:center;font-size:17px;font-weight:900;letter-spacing:.05em;color:var(--paper);background:var(--acc);border-radius:2px}
+.gm-t1 .gm-promo{background:#8a2a17}.gm-t2 .gm-promo{background:linear-gradient(90deg,#a3201b,#d4381c);color:#ffe9a8}
+.gm-t3 .gm-promo{background:#000;color:#fff;border:2px solid #000;outline:1.5px solid #000;outline-offset:2px;font-size:19px}
 @media print{.gm-spread{display:block}.gm-amud,.gm-amud *{-webkit-print-color-adjust:exact;print-color-adjust:exact}.gm-amud{zoom:.93;box-shadow:none;margin:0 auto;break-after:page}.gm-amud:last-child{break-after:auto}}
 .sb-book{font-family:"Frank Ruhl Libre",serif;color:#1d1608}
 .sb-book h2{text-align:center;border-bottom:3px double #7a2e1a;padding-bottom:.3rem}

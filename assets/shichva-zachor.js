@@ -224,7 +224,7 @@
     var body = side === 'a' ? mesoret + '<div class="gm-core">' + halves + '<div class="gm-gem"><i class="gm-wr"></i><i class="gm-wl"></i>' + gemHtml + '</div></div>' + ein
       : ein + '<div class="gm-core">' + halves + '<div class="gm-gem"><i class="gm-wr"></i><i class="gm-wl"></i>' + gemHtml + '</div></div>' + mesoret;
     return '<div class="gm-amud gm-' + side + '"><header class="gm-head">' + head + '</header><div class="gm-body">' + body + '</div>' +
-      '<footer class="gm-foot"><b>גליון הש״ס</b> דף היתולי לפורים תורה – כל מה שכתוב כאן בצחוק. לא מקור ולא הלכה.</footer></div>';
+      (String(d.promo || '').trim() ? '<div class="gm-promo">' + esc(String(d.promo).trim()) + '</div>' : '') + '<footer class="gm-foot"><b>גליון הש״ס</b> דף היתולי לפורים תורה – כל מה שכתוב כאן בצחוק. לא מקור ולא הלכה.</footer></div>';
   }
   function gemaraHtml(d) {
     var g = splitAmud(lines(d.gemara), function (x) { return x === '---'; });
@@ -283,16 +283,17 @@
       '<label class="field">רש"י (שורה לכל הערה: דיבור מתחיל, נקודתיים, הסבר; --- מעביר לעמוד ב׳)<textarea id="gmRashi" rows="6" maxlength="3000"></textarea></label>' +
       '<label class="field">תוספות (שורה לכל קושיה: דיבור מתחיל, נקודתיים, קושיה; --- מעביר לעמוד ב׳)<textarea id="gmTos" rows="5" maxlength="2500"></textarea></label>' +
       '<label class="field">עין משפט נר מצוה – מראי מקומות מצחיקים (שורה לכל מקור; ריק = הגבאי ממלא לבד; --- מעביר לעמוד ב׳)<textarea id="gmEin" rows="3" maxlength="1500" placeholder="מיי\' פ&quot;א מהל\' שינה בשיעור הלכה ג. סמג עשין נ&quot;ה. טור ושו&quot;ע או&quot;ח סי\' ו סעיף א"></textarea></label>' +
+      '<label class="field">שורת שיווק למחזור – מודפסת בתחתית כל עמוד (ריק = בלי)<input id="gmPromo" maxlength="80" placeholder="מחזור ס&quot;ט במלכים!!!"></label>' +
       '<label class="field">מסורת הש"ס – הערות שוליים היתוליות (לא מראי מקומות אמיתיים)<textarea id="gmMar" rows="2" maxlength="400" placeholder="ראו עוד: שיעור בוקר ד. ע&quot;ב (כמעט)"></textarea></label></section>' +
       '<section class="sh-card"><h2>הדף</h2><div class="sh-themes" id="gmThemes" role="group" aria-label="עיצוב הדף"><button type="button" class="btn btn-sm btn-line" data-th="1">1 · קלף קלאסי</button><button type="button" class="btn btn-sm btn-line" data-th="2">2 · צבעוני מלא</button><button type="button" class="btn btn-sm btn-line" data-th="3">3 · שחור-לבן חד</button></div><p class="sh-hint">מדפיסים בלי צבע? בוחרים 3: הוא בנוי כך שכל ההדגשות בולטות גם בשחור-לבן. מדפיסים בצבע? 2 מראה הכי טוב כל צבע.</p><div id="gmView" class="sh-paper"></div><div class="sh-row"><button type="button" class="btn btn-sm btn-line" id="gmPrint">הדפסה או PDF (A4)</button></div></section>' + saveBox(existing, 'gemara');
     function toLines(a) { return a.map(function (x) { return x.sep ? '---' : (x.dh ? x.dh + ': ' : '') + x.text; }).join('\n'); }
     function fromLines(t) { return lines(t).map(function (l) { if (l === '---') return { sep: true }; var i = l.indexOf(':'); return i > 0 && i < 40 ? { dh: l.slice(0, i).trim(), text: l.slice(i + 1).trim() } : { dh: '', text: l }; }); }
     $('#gmTopic', root).value = d.topic || ''; $('#gmMas', root).value = d.masechet || ''; $('#gmPer', root).value = d.perek || ''; $('#gmDaf', root).value = d.daf || '';
-    $('#gmMish', root).value = d.mishna || ''; $('#gmGem', root).value = d.gemara || ''; $('#gmRashi', root).value = toLines(d.rashi); $('#gmTos', root).value = toLines(d.tosafot); $('#gmMar', root).value = d.margin || ''; $('#gmEin', root).value = d.ein || ''; $('#gmJoke', root).value = d.joke || '';
+    $('#gmMish', root).value = d.mishna || ''; $('#gmGem', root).value = d.gemara || ''; $('#gmRashi', root).value = toLines(d.rashi); $('#gmTos', root).value = toLines(d.tosafot); $('#gmMar', root).value = d.margin || ''; $('#gmEin', root).value = d.ein || ''; $('#gmPromo', root).value = d.promo == null ? 'מחזור ס"ט במלכים!!!' : d.promo; $('#gmJoke', root).value = d.joke || '';
     function gather() {
       d.topic = $('#gmTopic', root).value; d.masechet = $('#gmMas', root).value; d.perek = $('#gmPer', root).value; d.daf = $('#gmDaf', root).value;
       d.mishna = $('#gmMish', root).value; d.gemara = $('#gmGem', root).value; d.rashi = fromLines($('#gmRashi', root).value); d.tosafot = fromLines($('#gmTos', root).value);
-      d.margin = $('#gmMar', root).value; d.ein = $('#gmEin', root).value; d.joke = $('#gmJoke', root).value;
+      d.margin = $('#gmMar', root).value; d.ein = $('#gmEin', root).value; d.promo = $('#gmPromo', root).value; d.joke = $('#gmJoke', root).value;
     }
     function paint() { gather(); $('#gmView', root).innerHTML = gemaraHtml(d); layoutDaf($('#gmView', root)); $('#gmLight', root).innerHTML = light ? SH.lightHtml(light.light, light.why) : ''; }
     root.addEventListener('input', function (e) { if (e.target.closest('.sh-card') && e.target.id && e.target.id.indexOf('gm') === 0) paint(); });
@@ -318,7 +319,7 @@
     $('#gmSample', root).onclick = function () {
       $('#gmTopic', root).value = SAMPLE.topic; $('#gmMas', root).value = SAMPLE.masechet; $('#gmPer', root).value = SAMPLE.perek; $('#gmDaf', root).value = SAMPLE.daf;
       $('#gmJoke', root).value = SAMPLE.joke; $('#gmMish', root).value = SAMPLE.mishna; $('#gmGem', root).value = SAMPLE.gemara;
-      $('#gmRashi', root).value = toLines(SAMPLE.rashi); $('#gmTos', root).value = toLines(SAMPLE.tosafot); $('#gmMar', root).value = SAMPLE.margin; $('#gmEin', root).value = '';
+      $('#gmRashi', root).value = toLines(SAMPLE.rashi); $('#gmTos', root).value = toLines(SAMPLE.tosafot); $('#gmMar', root).value = SAMPLE.margin; $('#gmEin', root).value = ''; $('#gmPromo', root).value = 'מחזור ס"ט במלכים!!!';
       paint(); toast('נטען דף לדוגמה מלא. אפשר לתקן הכול'); $('#gmView', root).scrollIntoView({ behavior: 'smooth' });
     };
     function themeMark() { root.querySelectorAll('[data-th]').forEach(function (b) { var on = b.getAttribute('data-th') === (d.theme || '1'); b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.classList.toggle('btn-gold', on); b.classList.toggle('btn-line', !on); }); }
