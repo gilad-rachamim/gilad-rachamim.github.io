@@ -34,7 +34,19 @@
       var K = KINDS.indexOf(a.kind), G2 = KINDS.indexOf(g.kind);
       if (K >= 0 && G2 >= 0) { if (K === G2) { s += 12; why.push('בסגנון שביקשתם: ' + g.kind); } else s -= 8 * Math.abs(K - G2); }
     }
+    if (g.ver) { s += VER_BONUS; why.push('קבוצה מאומתת של ' + g.ver); }   // בונוס קטן: לא עוקף התאמה טובה יותר
     return { score: Math.max(1, s), why: why };
+  }
+  var VER_BONUS = 8;
+  /* ארגונים שותפים: מכל הקבוצות המאומתות, ארגון אחד בשורה עם מספר הקבוצות שלו */
+  function partners(groups) {
+    var m = {}, out = [];
+    (groups || []).forEach(function (g) {
+      if (!g.ver) return;
+      if (!m[g.ver]) { m[g.ver] = { org: g.ver, url: g.verUrl || '', n: 0 }; out.push(m[g.ver]); }
+      m[g.ver].n++; if (!m[g.ver].url && g.verUrl) m[g.ver].url = g.verUrl;
+    });
+    return out.sort(function (a, b) { return b.n - a.n || (a.org < b.org ? -1 : 1); });
   }
   function top(a, groups, n) {
     return groups.map(function (g) { var r = score(a, g); return { g: g, score: r.score, why: r.why }; })
@@ -42,7 +54,7 @@
       .sort(function (x, y) { return y.score - x.score || (x.g.name < y.g.name ? -1 : 1); })
       .slice(0, n || 3);
   }
-  root.KvutzotMatch = { score: score, top: top, fresh: fresh, isNew: isNew, KINDS: KINDS };
+  root.KvutzotMatch = { score: score, top: top, fresh: fresh, isNew: isNew, partners: partners, KINDS: KINDS, VER_BONUS: VER_BONUS };
   if (typeof module === 'object' && module.exports) { module.exports = root.KvutzotMatch; return; }
   if (typeof document === 'undefined') return;
 
@@ -86,7 +98,9 @@
     var g = x.g;
     var share = 'מצאתי קבוצת ווטסאפ שאולי תתאים לך: "' + g.name + '"\n' + PAGE_URL + '#g=' + g.id;
     return '<article class="kv-card" data-id="' + esc(g.id) + '">' + (note ? '<p class="kv-note">' + esc(note) + '</p>' : '') +
-      '<h3>' + esc(g.name) + (isNew(g) ? ' <span class="kv-new">חדשה</span>' : '') + '</h3><p class="kv-desc">' + esc(g.desc) + '</p>' +
+      '<h3>' + esc(g.name) + (isNew(g) ? ' <span class="kv-new">חדשה</span>' : '') + '</h3>' +
+      (g.ver ? '<p class="kv-ver"><span class="kv-ver-tag">✓ קבוצה מאומתת</span> של ' + esc(g.ver) + '</p>' : '') +
+      '<p class="kv-desc">' + esc(g.desc) + '</p>' +
       (g.kind ? '<p class="kv-kind">סגנון: ' + esc(g.kind) + '</p>' : '') +
       (x.why && x.why.length ? '<p class="kv-why"><b>למה זה מתאים:</b> ' + esc(x.why.join(' · ')) + '</p>' : '') +
       '<div class="kv-act"><button class="btn btn-gold" type="button" data-kv-link>לקבל קישור להצטרפות</button>' +
@@ -119,6 +133,24 @@
       '<p class="kv-more">לא מה שחיפשתם? <button class="kv-link" type="button" data-kv-want>ספרו לנו שאתם מחפשים קבוצה אחרת</button></p><p class="kv-msg" data-kv-want-msg role="status"></p>';
   }
 
+  function drawPartners() {
+    var box = $('[data-kv-partners]'); if (!box) return;
+    var list = partners(GROUPS);
+    box.innerHTML = list.length
+      ? '<ul class="kv-partners">' + list.map(function (p) {
+          var name = p.url ? '<a href="' + esc(p.url) + '" target="_blank" rel="noopener nofollow">' + esc(p.org) + '</a>' : esc(p.org);
+          return '<li><span class="kv-ver-tag">✓</span> ' + name + ' <small>· ' + (p.n === 1 ? 'קבוצה אחת' : p.n + ' קבוצות') + '</small></li>';
+        }).join('') + '</ul>'
+      : '<p class="kv-hint">עדיין אין ארגונים שותפים. הראשונים שיצטרפו יופיעו כאן.</p>';
+  }
+  function bars(weeks) {
+    var max = Math.max.apply(null, weeks.map(function (w) { return w.n; }).concat([1]));
+    return '<ul class="kv-bars">' + weeks.map(function (w, i) {
+      var d = w.w.split('-');
+      return '<li><span>' + (i === weeks.length - 1 ? 'השבוע' : +d[2] + '.' + +d[1]) + '</span><i style="width:' + Math.round(w.n / max * 100) + '%"></i><b>' + w.n + '</b></li>';
+    }).join('') + '</ul>';
+  }
+
   function init() {
     var f = $('[data-kv-form]'); if (!f) return;
     var reg = $('[data-kv-add]');
@@ -129,6 +161,7 @@
         chips($('[data-kv-aint]'), META.interests, 'aint'); chips($('[data-kv-atag]'), META.tags, 'atag'); chips($('[data-kv-aage]'), META.ages, 'aage');
         opts(reg.region, META.regions);
       }
+      drawPartners();
       if (f.kind) opts(f.kind, META.kinds || KINDS, 'לא משנה');
       if (reg && reg.kind) opts(reg.kind, META.kinds || KINDS, 'לא ידוע');
       var out = $('[data-kv-res]'), hm = /[#&]g=([a-z0-9]{4,20})/.exec(location.hash), saved = lsGet();
@@ -237,6 +270,20 @@
       post('/relink', { id: parts[0], key: parts[1], link: rl.nlink.value.trim() }).then(function (j) {
         r.textContent = j.ok ? (j.st === 'live' ? 'הקישור הוחלף, והקבוצה מופיעה שוב בהתאמות.' : 'הקישור הוחלף.') : (j.error || 'לא הצלחנו.');
         if (j.ok) used('relink');
+      }).catch(function () { r.textContent = 'אין חיבור. נסו שוב.'; });
+    });
+    var stt = $('[data-kv-stats]');
+    if (stt) stt.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var parts = stt.code.value.split('/').map(function (s) { return s.trim(); }), r = $('.res', stt);
+      r.textContent = 'בודק...';
+      post('/stats', { id: parts[0], key: parts[1] }).then(function (j) {
+        if (j.error) { r.textContent = j.error; return; }
+        var ST = { live: 'מופיעה בהתאמות', pending: 'מחכה לבדיקה', hidden: 'מוסתרת כרגע', rejected: 'לא אושרה' };
+        r.innerHTML = '<b>' + esc(j.name) + '</b> · ' + (ST[j.st] || '') + (j.ver ? ' · ✓ מאומתת' : '') + '<br>' +
+          'השבוע ביקשו קישור להצטרפות: <b>' + j.week + '</b> · בשבוע שעבר: <b>' + j.prev + '</b> · בשמונת השבועות האחרונים: <b>' + j.total + '</b>' +
+          bars(j.weeks) + '<span class="kv-hint">סופרים כל אדם פעם אחת ביום. אנחנו לא יודעים מי ביקש, ולא אם הוא הצטרף בסוף.</span>';
+        used('stats');
       }).catch(function () { r.textContent = 'אין חיבור. נסו שוב.'; });
     });
     var rm = $('[data-kv-rm]');

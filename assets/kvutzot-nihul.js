@@ -18,13 +18,14 @@
       var items = x[0].items.sort(function (a, b) { return (a.st === 'pending' ? 0 : a.st === 'hidden' ? 1 : 2) - (b.st === 'pending' ? 0 : b.st === 'hidden' ? 1 : 2) || b.t - a.t; });
       var html = '<h2>קבוצות (' + items.length + ')</h2>' + (items.length ? '' : '<p>אין עדיין קבוצות.</p>');
       html += items.map(function (g) {
-        return '<article class="kv-card"><h3>' + esc(g.name) + ' <small>· ' + ST[g.st] + (g.rep ? ' · ' + g.rep + ' דיווחים' : '') + (g.brk ? ' · ' + g.brk + ' דיווחי קישור שבור' : '') + (g.hid === 'broken' ? ' · ירדה בגלל קישור שבור' : '') + (g.kind ? ' · ' + esc(g.kind) : '') + '</small></h3>' +
+        return '<article class="kv-card"><h3>' + esc(g.name) + ' <small>· ' + ST[g.st] + (g.rep ? ' · ' + g.rep + ' דיווחים' : '') + (g.brk ? ' · ' + g.brk + ' דיווחי קישור שבור' : '') + (g.hid === 'broken' ? ' · ירדה בגלל קישור שבור' : '') + (g.kind ? ' · ' + esc(g.kind) : '') + ' · קישורים השבוע: ' + (g.wk || 0) + ' (שבוע שעבר ' + (g.pwk || 0) + ')</small></h3>' +
+          (g.ver ? '<p class="kv-ver"><span class="kv-ver-tag">✓ קבוצה מאומתת</span> של ' + esc(g.ver) + (g.verUrl ? ' · <a href="' + esc(g.verUrl) + '" target="_blank" rel="noopener nofollow" dir="ltr">' + esc(g.verUrl) + '</a>' : '') + '</p>' : '') +
           '<p>' + esc(g.desc) + '</p><p class="kv-why">' + esc(g.interests.join(', ')) + ' · ' + esc(g.region) + (g.ages.length ? ' · ' + esc(g.ages.join(', ')) : '') + (g.tags.length ? ' · ' + esc(g.tags.join(', ')) : '') + '</p>' +
           (g.whys && g.whys.length ? '<p class="kv-why">דיווחים: ' + esc(g.whys.filter(Boolean).join(' / ')) + '</p>' : '') +
           '<p><a href="' + esc(g.link) + '" target="_blank" rel="noopener nofollow" dir="ltr">' + esc(g.link) + '</a></p>' +
           '<div class="kv-act">' + ['live', 'hidden', 'rejected'].filter(function (s) { return s !== g.st; }).map(function (s) {
             return '<button class="btn' + (s === 'live' ? ' btn-gold' : '') + '" data-id="' + esc(g.id) + '" data-st="' + s + '">' + { live: 'לאשר', hidden: 'להסתיר', rejected: 'לדחות' }[s] + '</button>';
-          }).join('') + '</div></article>';
+          }).join('') + '<button class="btn" data-ver="' + esc(g.id) + '"' + (g.ver ? ' data-on="1">להסיר אימות' : '>✓ לסמן כמאומתת') + '</button></div></article>';
       }).join('');
       var w = x[1].items;
       html += '<h2>מה מחפשים ואין (' + w.length + ')</h2>' + (w.length ? '<ul>' + w.map(function (r) {
@@ -34,6 +35,20 @@
     }).catch(function (e) { box.innerHTML = '<p>' + esc(e.message || 'אין חיבור') + '</p>'; });
   }
   box.addEventListener('click', function (e) {
+    var v = e.target.closest('button[data-ver]');
+    if (v) {   // מסלול שותפים: שם הארגון (ואתר) – רק אחרי שבדקת שהארגון אמיתי והקבוצה שלו
+      var org = '', url = '';
+      if (!v.getAttribute('data-on')) {
+        org = window.prompt('שם הארגון שמנהל את הקבוצה:'); if (!org) return;
+        url = window.prompt('אתר הארגון (לא חובה, מתחיל ב-https://):') || '';
+      } else if (!window.confirm('להסיר את תג האימות?')) return;
+      v.disabled = true;
+      api('/admin/verify', { id: v.getAttribute('data-ver'), org: org, url: url.trim() }).then(function (j) {
+        if (j.error) { window.alert(j.error); v.disabled = false; return; }
+        draw();
+      });
+      return;
+    }
     var b = e.target.closest('button[data-st]'); if (!b) return;
     b.disabled = true;
     api('/admin/set', { id: b.getAttribute('data-id'), st: b.getAttribute('data-st') }).then(draw);

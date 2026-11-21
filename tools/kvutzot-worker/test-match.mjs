@@ -41,5 +41,18 @@ ok(M.fresh(sv, GK).map(x => x.g.id).join() === 'unk', 'fresh = only unseen', M.f
 ok(M.fresh(null, GK).length === 0, 'no saved = nothing');
 const now = Date.parse('2026-11-21');
 ok(M.isNew({ since: '2026-11-10' }, now) && !M.isNew({ since: '2026-10-01' }, now) && !M.isNew({}, now), 'new badge window');
+// מסלול שותפים: בונוס קטן לקבוצה מאומתת, לא עוקף התאמה טובה יותר ולא יוצר התאמה
+const GV = [g('plain', { interests: ['צילום'] }), g('ver', { interests: ['צילום'], ver: 'עמותת אור' }),
+  g('verOff', { interests: ['מוזיקה ושירה'], ver: 'עמותת אור' }), g('local', { interests: ['צילום'], region: 'הצפון' })];
+t = M.top({ interests: ['צילום'] }, GV, 3);
+ok(t[0].g.id === 'ver' && t[1].g.id === 'plain', 'verified first when otherwise equal', t.map(x => x.g.id));
+ok(t[0].why.some(w => w.includes('מאומתת') && w.includes('עמותת אור')), 'why mentions verified org', t[0].why);
+ok(!t.some(x => x.g.id === 'verOff'), 'verified without shared interest = no match');
+t = M.top({ interests: ['צילום'], region: 'הצפון' }, GV, 3);
+ok(t[0].g.id === 'local', 'better match beats verified bonus', t.map(x => x.g.id));
+ok(M.score({ interests: ['צילום'] }, GV[1]).score - M.score({ interests: ['צילום'] }, GV[0]).score === M.VER_BONUS, 'bonus size');
+const P = M.partners(GV.concat([g('v2', { ver: 'קהילת דרך', verUrl: 'https://d.org' }), g('v3', { ver: 'עמותת אור', verUrl: 'https://or.org' })]));
+ok(P.length === 2 && P[0].org === 'עמותת אור' && P[0].n === 3 && P[0].url === 'https://or.org' && P[1].url === 'https://d.org', 'partners grouped', P);
+ok(M.partners([]).length === 0 && M.partners(null).length === 0, 'no partners');
 console.log((fails ? 'FAIL' : 'PASS') + ' ' + (n - fails) + '/' + n);
 process.exit(fails ? 1 : 0);

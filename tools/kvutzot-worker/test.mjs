@@ -99,5 +99,35 @@ ok(alerts.some(t => t.includes('🔁')), 'alert on relink');
 ip = '8.8.8.1'; await call('/report', { id: b.id, why: 'x' }); ip = '8.8.8.2'; await call('/report', { id: b.id, why: 'x' });
 const rl2 = await call('/relink', { id: b.id, key: b.key, link: 'https://chat.whatsapp.com/Nn2CdEfGhIj12345678' });
 ok(rl2.ok && rl2.st === 'hidden', 'relink does not undo abuse hide', rl2);
+// מסלול שותפים 22.11: אימות ארגון, סטטיסטיקה שבועית למנהל, סיכום שבועי לגילעד
+ip = '3.3.3.1';
+const c = await call('/add', Object.assign({}, G, { link: 'https://chat.whatsapp.com/Pp1CdEfGhIj12345678' }));
+await call('/admin/set', { id: c.id, st: 'live' }, { 'X-Admin-Key': 'adm' });
+ok((await call('/admin/verify', { id: c.id, org: 'עמותה' }))._s === 403, 'verify needs admin');
+ok((await call('/admin/verify', { id: c.id, org: 'עמותה', url: 'javascript:x' }, { 'X-Admin-Key': 'adm' }))._s === 400, 'verify bad url');
+const v = await call('/admin/verify', { id: c.id, org: 'עמותת <b>הולכים</b>', url: 'https://example.org' }, { 'X-Admin-Key': 'adm' });
+ok(v.ok && v.ver === 'עמותת b הולכים /b' && v.verUrl === 'https://example.org', 'verify cleans org', v);
+let pc = (await call('/groups')).items.find(x => x.id === c.id);
+ok(pc.ver && pc.verUrl === 'https://example.org', 'public has ver', pc);
+ok((await call('/groups')).items.filter(x => x.id !== c.id).every(x => x.ver === ''), 'others not verified');
+ok((await call('/stats', { id: c.id, key: 'wrong' }))._s === 403, 'stats wrong key');
+let sc = await call('/stats', { id: c.id, key: c.key });
+ok(sc.week === 0 && sc.total === 0 && sc.weeks.length === 8, 'stats empty', sc);
+await call('/link', { id: c.id }); await call('/link', { id: c.id });   // אותה רשת = פעם אחת
+ip = '3.3.3.2'; await call('/link', { id: c.id });
+ip = '3.3.3.3'; await call('/link', { id: c.id });
+sc = await call('/stats', { id: c.id, key: c.key });
+ok(sc.week === 3 && sc.total === 3 && sc.weeks[7].n === 3 && sc.name === G.name, 'stats counts unique networks', sc);
+ok(!('link' in sc) && !('key' in sc), 'stats hides link/key');
+const al = (await call('/admin/list', null, { 'X-Admin-Key': 'adm' })).items.find(x => x.id === c.id);
+ok(al.wk === 3 && al.pwk === 0, 'admin list has week counts', al);
+const unv = await call('/admin/verify', { id: c.id, org: '' }, { 'X-Admin-Key': 'adm' });
+ok(unv.ok && unv.ver === '' && unv.verUrl === '', 'unverify');
+const { week } = await import('./kvutzot-worker.js');
+ok(week(Date.parse('2026-11-22T10:00Z')) === '2026-11-22' && week(Date.parse('2026-11-28T23:00Z')) === '2026-11-22' && week(Date.parse('2026-11-21T10:00Z')) === '2026-11-15', 'week starts Sunday');
+// סיכום שבועי: נשלח פעם אחת לשבוע
+const nAl = alerts.length, wk1 = await obj.weekly(), wk2 = await obj.weekly();
+ok(wk1.groups >= 1 && wk2.skipped && alerts.length === nAl + 1 && alerts[nAl].includes('📊'), 'weekly summary once', [wk1, wk2, alerts[nAl]]);
+ok((await call('/remove', { id: c.id, key: c.key })).ok && !(await ctx.storage.get('c:' + c.id)), 'remove deletes counts');
 console.log((fails ? 'FAIL' : 'PASS') + ' ' + (n - fails) + '/' + n);
 process.exit(fails ? 1 : 0);
