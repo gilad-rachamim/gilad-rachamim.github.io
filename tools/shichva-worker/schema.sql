@@ -114,3 +114,114 @@ CREATE TABLE IF NOT EXISTS ai_count (
   n INTEGER DEFAULT 0,
   PRIMARY KEY (grade_id, day)
 );
+
+/* ---------- סבב ב': קיוסק, גבייה וספונסרים. הסכומים באגורות (מספר שלם). האתר לא סולק ולא מחזיק כסף – זה פנקס בלבד. ---------- */
+CREATE TABLE IF NOT EXISTS k_items (
+  id TEXT PRIMARY KEY,
+  grade_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  price INTEGER NOT NULL DEFAULT 0,     -- מחיר מכירה
+  cost INTEGER NOT NULL DEFAULT 0,      -- עלות אחרונה ליחידה (מחושבת מקנייה)
+  stock INTEGER NOT NULL DEFAULT 0,
+  min_stock INTEGER NOT NULL DEFAULT 0, -- מתחת לזה: "נגמר במלאי"
+  track INTEGER NOT NULL DEFAULT 1,
+  active INTEGER NOT NULL DEFAULT 1,
+  created INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS k_items_grade ON k_items(grade_id, active);
+
+-- פנקס: לא מוחקים, רק מבטלים (voided) עם סיבה – כך תמיד רואים מה קרה.
+CREATE TABLE IF NOT EXISTS k_tx (
+  id TEXT PRIMARY KEY,
+  grade_id TEXT NOT NULL,
+  kind TEXT NOT NULL,                   -- income | expense
+  date TEXT NOT NULL,
+  amount INTEGER NOT NULL,
+  item_id TEXT DEFAULT '',
+  item_name TEXT DEFAULT '',
+  qty INTEGER DEFAULT 0,
+  category TEXT DEFAULT '',
+  method TEXT DEFAULT 'cash',           -- cash | bit | other
+  note TEXT DEFAULT '',
+  sale_id TEXT DEFAULT '',
+  by_id TEXT NOT NULL,
+  by_name TEXT NOT NULL,
+  voided INTEGER DEFAULT 0,
+  void_reason TEXT DEFAULT '',
+  void_by TEXT DEFAULT '',
+  created INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS k_tx_grade ON k_tx(grade_id, date);
+
+-- קבלה בצילום (לא חובה). קטנה ודחוסה מהדפדפן, מוגשת רק לגזבר/רכז. אין בה תמונות של תלמידים.
+CREATE TABLE IF NOT EXISTS k_receipt (
+  tx_id TEXT PRIMARY KEY,
+  grade_id TEXT NOT NULL,
+  mime TEXT NOT NULL,
+  data TEXT NOT NULL,
+  created INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS k_shop (
+  id TEXT PRIMARY KEY,
+  grade_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  qty TEXT DEFAULT '',
+  done INTEGER DEFAULT 0,
+  created INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS k_shop_grade ON k_shop(grade_id);
+
+CREATE TABLE IF NOT EXISTS k_shift (
+  id TEXT PRIMARY KEY,
+  grade_id TEXT NOT NULL,
+  day TEXT NOT NULL,
+  slot TEXT NOT NULL,
+  member_id TEXT NOT NULL,
+  name TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS k_shift_grade ON k_shift(grade_id, day);
+
+-- ספירת קופה: מה אמור להיות מול מה נספר
+CREATE TABLE IF NOT EXISTS k_count (
+  id TEXT PRIMARY KEY,
+  grade_id TEXT NOT NULL,
+  ts INTEGER NOT NULL,
+  counted INTEGER NOT NULL,
+  expected INTEGER NOT NULL,
+  diff INTEGER NOT NULL,
+  by_name TEXT NOT NULL,
+  note TEXT DEFAULT ''
+);
+CREATE INDEX IF NOT EXISTS k_count_grade ON k_count(grade_id, ts);
+
+-- גבייה שכבתית: קישור לקבוצת Bit/PayBox שהשכבה פתחה + "מי שילם" שהגזבר מסמן. אין סליקה.
+CREATE TABLE IF NOT EXISTS k_coll (
+  id TEXT PRIMARY KEY,
+  grade_id TEXT NOT NULL,
+  title TEXT NOT NULL,
+  per_head INTEGER NOT NULL DEFAULT 0,
+  link TEXT DEFAULT '',
+  due TEXT DEFAULT '',
+  created INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS k_coll_grade ON k_coll(grade_id);
+CREATE TABLE IF NOT EXISTS k_paid (
+  coll_id TEXT NOT NULL,
+  member_id TEXT NOT NULL,
+  ts INTEGER NOT NULL,
+  PRIMARY KEY (coll_id, member_id)
+);
+
+-- ספונסרים: עד 20 עסקים לשכבה. עסקים בלבד – לא פרטי קטינים. השליחה תמיד ידנית (מייל/ווטסאפ של התלמיד).
+CREATE TABLE IF NOT EXISTS k_sponsor (
+  id TEXT PRIMARY KEY,
+  grade_id TEXT NOT NULL,
+  business TEXT NOT NULL,
+  contact TEXT DEFAULT '',
+  package TEXT DEFAULT '',
+  status TEXT NOT NULL DEFAULT 'new',   -- new | letter | sent | talked | yes | no
+  note TEXT DEFAULT '',
+  updated INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS k_sponsor_grade ON k_sponsor(grade_id);

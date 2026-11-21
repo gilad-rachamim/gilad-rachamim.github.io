@@ -92,3 +92,13 @@
 .sh-cur{color:var(--gold);font-weight:700}
 @media (max-width:520px){.sh-card{padding:.9rem .8rem}.sh-count b{font-size:2.2rem}}
 @media (prefers-reduced-motion:reduce){.sh-flash{animation:none}}
+/* קיוסק וכסף */
+.sh-table th,.sh-table td{padding:.35rem .4rem;border-bottom:1px solid var(--line);text-align:center}
+.sh-table th:first-child,.sh-table td:first-child{text-align:start}
+.sh-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.5rem;margin:.6rem 0}
+.sh-tap{min-height:76px;font-size:1rem}
+.sh-warn{border:1px solid #c98a2b;background:rgba(201,138,43,.12);border-radius:10px;padding:.6rem .8rem;margin:.5rem 0}
+.sh-sub{display:flex;gap:.3rem;overflow-x:auto;margin-bottom:.7rem;padding-bottom:.2rem}
+.sh-sub button{flex:none;font:inherit;padding:.4rem .8rem;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--body);cursor:pointer}
+.sh-sub button[aria-selected=true]{background:var(--gold,#d8b35f);color:#16130f;border-color:transparent}
+@media print{.sh-top,.sh-tabs,.sh-sub,.sh-row,.sh-acts{display:none!important}}

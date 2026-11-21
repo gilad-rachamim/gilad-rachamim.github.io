@@ -24,6 +24,7 @@
     ai_off: 'הגבאי לא זמין כרגע.', ai_empty: 'הגבאי לא הצליח לענות הפעם. אפשר לנסח אחרת.', ai_bad: 'הגבאי לא הצליח לענות הפעם. אפשר לנסות שוב.',
     forbidden: 'הפעולה הזאת לא בהרשאה שלך.', state: 'המוצר כבר זז שלב. רענון…', note: 'צריך לכתוב הערה.', title: 'חסרה כותרת.',
     has_products: 'בוועדה יש מוצרים, אי אפשר למחוק אותה.', not_member: 'רק חברי הוועדה יכולים לעשות את זה.', storage_off: 'האלבום עוד לא פעיל.',
+    no_stock: 'אין מספיק במלאי. אפשר לרשום קנייה קודם.', amount: 'הסכום לא תקין.', qty: 'הכמות לא תקינה.', reason: 'צריך לכתוב סיבה.', link: 'הקישור חייב להתחיל ב-https://', sponsor_max: 'אפשר עד 20 עסקים.', too_many: 'יש כבר מספיק פריטים.', full: 'המשמרת מלאה.', receipts_full: 'נגמר המקום לקבלות.', already: 'כבר בוטל.',
     album_full: 'האלבום מלא.', orig_big: 'הקובץ גדול מדי.', committee: 'צריך לבחור ועדה.', name: 'חסר שם.'
   };
   function api(path, body, method) {
@@ -37,7 +38,7 @@
         });
       });
   }
-  SH.api = api; SH.API = API;
+  SH.api = api; SH.API = API; SH.token = function () { return token(); };
   SH.err = function (e) { return ERR[e && e.message] || (e && e.message === 'auth' ? 'הכניסה פגה.' : 'משהו השתבש. כדאי לנסות שוב.'); };
   function forget() {
     var s = loadS(); s.list.splice(s.cur || 0, 1); s.cur = 0; saveS(s);
@@ -109,7 +110,7 @@
   SH.refresh = refresh;
   function tabsFor() {
     if (melave()) return [['ishurim', 'מוצרים מוכנים'], ['bait', 'ההכתרה']];
-    var t = [['bait', 'בית'], ['vaadot', 'ועדות'], ['yetzira', 'יצירה'], ['mesimot', 'משימות'], ['gabai', 'הגבאי'], ['album', 'אלבום']];
+    var t = [['bait', 'בית'], ['vaadot', 'ועדות'], ['yetzira', 'יצירה'], ['mesimot', 'משימות'], ['kiosk', 'קיוסק וכסף'], ['gabai', 'הגבאי'], ['album', 'אלבום']];
     if (rakaz()) t.splice(2, 0, ['ishurim', 'אישורים']);
     t.push(['chaverim', rakaz() ? 'חברים והגדרות' : 'חברים']);
     return t;
@@ -238,7 +239,7 @@
   }
 
   /* ---------- מסכים ---------- */
-  var VIEWS = {};
+  var VIEWS = SH.views = {};
 
   VIEWS.bait = function (v) {
     var g = S.grade, n = daysTo(g.hachtara);
