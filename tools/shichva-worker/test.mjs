@@ -85,9 +85,26 @@ ok(st.tasks.find(t => t.id === t0.id).due === '2027-02-16' && st.progress > 0, '
 const nt = await call('/task/create', a.token, { title: 'משימה חדשה', due: '2027-03-01', committee_id: cc.id });
 ok(nt.id, 'משימה חדשה');
 
-// אלבום בלי R2
-const al = await fetch(BASE + '/album/upload', { method: 'POST', headers: { origin: O.origin, authorization: 'Bearer ' + a.token }, body: new FormData() });
-ok(al.status === 503, 'אלבום בלי R2 -> storage_off');
+// אלבום: עם R2 – העלאה, צפייה, חסימת מלווה, מחיקה; בלי R2 – storage_off
+const storage = (await call('/ping')).storage;
+if (storage) {
+  const jpg = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0, 16, 74, 70, 73, 70, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0xff, 0xd9]);
+  const fd = new FormData();
+  fd.append('thumb', new Blob([jpg], { type: 'image/jpeg' }), 't.jpg'); fd.append('folder', 'מצחיקים'); fd.append('w', '10'); fd.append('h', '10');
+  const up = await (await fetch(BASE + '/album/upload', { method: 'POST', headers: { origin: O.origin, authorization: 'Bearer ' + a.token }, body: fd })).json();
+  ok(up.ok && up.id, 'אלבום: תמונה עלתה');
+  const gf = await fetch(BASE + '/album/file?id=' + up.id, { headers: { origin: O.origin, authorization: 'Bearer ' + b.token } });
+  const bytes = new Uint8Array(await gf.arrayBuffer());
+  ok(gf.status === 200 && bytes.length === jpg.length, 'אלבום: חבר רואה את התמונה');
+  const mf = await fetch(BASE + '/album/file?id=' + up.id, { headers: { origin: O.origin, authorization: 'Bearer ' + mel.token } });
+  ok(mf.status === 403, 'אלבום: המלווה לא רואה תמונה שלא נשלחה אליו');
+  ok((await call('/album/delete', b.token, { id: up.id })).s === 403, 'אלבום: אי אפשר למחוק תמונה של אחר');
+  ok((await call('/album/delete', a.token, { id: up.id })).ok, 'אלבום: המעלה מחק');
+  ok((await fetch(BASE + '/album/file?id=' + up.id, { headers: { origin: O.origin, authorization: 'Bearer ' + a.token } })).status === 404, 'אלבום: אחרי מחיקה – 404');
+} else {
+  const al = await fetch(BASE + '/album/upload', { method: 'POST', headers: { origin: O.origin, authorization: 'Bearer ' + a.token }, body: new FormData() });
+  ok(al.status === 503, 'אלבום בלי R2 -> storage_off');
+}
 
 // הדגמה
 const demo = await call('/join', null, { code: 'הדגמה', name: 'מבקר', role: 'melave' });
