@@ -1,5 +1,5 @@
 {
-"updated": "2026-11-20",
+"updated": "2026-11-22",
 "songs": [
 {
 "id": "qEEzKfGa1oY",
@@ -2082,6 +2082,16 @@
 "page": false
 },
 {
+"id": "_A9dRpprQbY",
+"artist": "אייל גולן וששון שאולוב",
+"song": "ערב יום שישי",
+"views": 510790,
+"date": "20261020",
+"added": "2026-11-22",
+"slug": "erev-yom-shishi",
+"page": true
+},
+{
 "id": "RXEfhYRtw1w",
 "artist": "קובי אפללו",
 "song": "מהן המילים",
@@ -2182,6 +2192,16 @@
 "page": false
 },
 {
+"id": "yVI0er8SeUA",
+"artist": "בר צברי ובניה ברבי",
+"song": "אברהם יצחק יעקב",
+"views": 426919,
+"date": "20261028",
+"added": "2026-11-22",
+"slug": "avraham-yitzhak-yaakov",
+"page": true
+},
+{
 "id": "7XyFiUPK8S8",
 "artist": "יובל גולד",
 "song": "היה נחמד",
@@ -2240,6 +2260,16 @@
 "added": "",
 "slug": "tni-lo-llkt",
 "page": false
+},
+{
+"id": "eZT-axR-8e8",
+"artist": "בנאל בן ציון",
+"song": "בניתי לך בית",
+"views": 378933,
+"date": "20261021",
+"added": "2026-11-22",
+"slug": "baniti-lecha-bayit",
+"page": true
 },
 {
 "id": "DHpswFL5UUM",
@@ -2380,6 +2410,16 @@
 "added": "",
 "slug": "ain-mh-lchpsh-bchotz",
 "page": false
+},
+{
+"id": "VbDRHJMI960",
+"artist": "ששון איפרם שאולוב",
+"song": "הכל עליי",
+"views": 327139,
+"date": "20261013",
+"added": "2026-11-22",
+"slug": "hakol-alay",
+"page": true
 },
 {
 "id": "dxZI76aE76g",
