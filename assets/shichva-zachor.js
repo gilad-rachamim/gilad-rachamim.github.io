@@ -303,7 +303,7 @@
     root.addEventListener('input', function (e) { if (e.target.closest('.sh-card') && e.target.id && e.target.id.indexOf('gm') === 0) paint(); });
     if (SH.gimBox) SH.gimBox($('#gmGimBox', root), { title: 'גימטריות מצחיקות לדף הגמרא', hint: 'ההצעה נכנסת לתוספות בלשון "בגימטריא", לפני המעבר לעמוד ב׳, עם החישוב המלא.', seed: function () { return $('#gmTopic', root).value.split(/\s+/).slice(-1)[0]; },
       insert: function (h, ln, sd) {
-        var t = $('#gmTos', root), a = t.value.split('\n'), i = a.indexOf('---'), add = 'בגימטריא: ' + ln.replace(' בגימטריא ', ' כמניין ') + '.';
+        var t = $('#gmTos', root), a = t.value.split('\n'), i = a.indexOf('---'), add = 'בגימטריא: ' + ln.replace(' בגימטריא ', ' כמניין ').replace(' – רמז לכך ש…', '') + '.';
         if (i < 0) a.push(add); else a.splice(i, 0, add);
         t.value = a.filter(function (x, k) { return x.trim() || k < a.length; }).join('\n').replace(/^\n+/, ''); t.dispatchEvent(new Event('input', { bubbles: true })); toast('נכנס לתוספות. אפשר לתקן');
       } });
