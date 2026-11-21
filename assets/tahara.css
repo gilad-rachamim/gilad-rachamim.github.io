@@ -62,6 +62,26 @@
 .th-legend .th-mk{display:inline-block;font-size:.8rem;padding:.1rem .45rem}
 .th-see{background:#e08a8a}.th-on.th-mk,.th-mk.th-on{background:var(--gold)}.th-mk.th-dbt{background:#e8b48f}
 .th-hef{background:#9fd3c4}.th-clean{background:#cfe8df}.th-tev{background:#7fc6ff}
+.th-sum{margin:.2rem 0 1rem;padding:.85rem .95rem;border:1px solid var(--gold);border-radius:14px;background:rgba(216,179,95,.08)}
+.th-sum-from{margin:.15rem 0 .6rem;color:var(--cream)}
+.th-sumlist{list-style:none;padding:0;margin:0;display:grid;gap:.55rem}
+.th-sumlist li{display:flex;gap:.6rem;align-items:flex-start}
+.th-sumlist b{color:var(--gold-hi)}
+.th-sumlist .th-when{display:block;margin-top:.15rem}
+.th-sumlist small{display:block;color:var(--muted);font-size:.88rem;margin-top:.15rem}
+.th-n{flex:none;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--gold);color:#16130f;font-weight:700;display:flex;align-items:center;justify-content:center}
+.th-sumnotes{margin-top:.6rem}
+.th-sumnotes summary{cursor:pointer;color:var(--gold-hi);min-height:44px;display:flex;align-items:center}
+.th-sumnotes p{font-size:.92rem}
+#th-quick .th-sum{margin-top:.4rem}
+.th-gap{display:inline-block;margin-inline-start:.35rem;font-size:.8rem;padding:.05rem .45rem;border-radius:99px;background:rgba(216,179,95,.15);color:var(--gold-hi)}
+.th-caltab td.th-shab{background:rgba(127,198,255,.07)}
+.th-caltab td.th-chag{background:rgba(216,179,95,.14)}
+.th-hol{display:block;color:var(--gold-hi);font-size:.62rem;line-height:1.2;margin-top:.1rem}
+.th-caltab td.th-shab .th-hol{color:#9fd0ff}
+.th-caltab td.th-chag .th-hol{color:var(--gold-hi);font-weight:700}
+.th-lg-shab,.th-lg-chag{display:inline-block;font-size:.8rem;padding:.1rem .45rem;border-radius:5px;border:1px solid var(--line)}
+.th-lg-shab{background:rgba(127,198,255,.15)}.th-lg-chag{background:rgba(216,179,95,.22)}
 .th-file{position:relative;overflow:hidden}
 .th-file input{position:absolute;inset:0;opacity:0;cursor:pointer}
 .th-danger{color:#f0a6a6;border-color:rgba(240,166,166,.5)}
