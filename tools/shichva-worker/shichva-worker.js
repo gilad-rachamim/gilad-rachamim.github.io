@@ -16,7 +16,7 @@ const AI_PER_GRADE = 200, AI_PER_DEMO = 80, AI_DAY_CAP = 1500, JOIN_FAILS = 30;
 const ROLES = ['rakaz', 'gizbar', 'chaver', 'melave'];
 const ROLE_HE = { rakaz: 'רכז', gizbar: 'גזבר', chaver: 'חבר', melave: 'מלווה מהצוות' };
 const STATES = ['draft', 'liked', 'head', 'melave', 'approved', 'replace'];
-const KINDS = ['text', 'meme', 'trailer', 'video', 'idea'];
+const KINDS = ['text', 'meme', 'trailer', 'video', 'idea', 'gemara', 'torah', 'shir'];
 const FOLDERS = ["ט'", "י'", 'י"א', 'י"ב', 'טיולים ושבתות', 'צוות', 'מצחיקים', 'לסרטון'];
 const DEMO_ID = 'demo', DEMO_JOIN = 'הדגמה';
 
@@ -88,6 +88,7 @@ async function route(req, env, origin) {
     case '/task/create': return taskCreate(b, env, me, g);
     case '/task/update': return taskUpdate(b, env, me, g);
     case '/task/delete': return taskDelete(b, env, me, g);
+    case '/task/zachor': return taskZachor(b, env, me, g);
     case '/album/delete': return albumDelete(b, env, me, g);
     case '/ai': return ai(b, env, me, g);
   }
@@ -400,6 +401,23 @@ async function taskUpdate(b, env, me, g) {
     b.committee_id !== undefined ? await cid(env, g, b.committee_id) : t.committee_id, t.id).run();
   return json({ ok: true });
 }
+/* ---------- משימות שבת זכור: נוספות פעם אחת, ליעד של השבת שלפני ההכתרה ---------- */
+const ZACHOR_TASKS = [
+  ['שבת זכור – מי מתפלל ומי קורא בתורה', 14], ['שבת זכור – סעודות ואוכל', 10], ['שבת זכור – תוכנית עונג שבת', 10],
+  ['שבת זכור – דברי תורה ורבני פורים', 12], ['שבת זכור – דף גמרא להדפסה', 7], ['שבת זכור – שירון ושירים', 7],
+  ['שבת זכור – קישוט האולם', 3], ['שבת זכור – מודעות וסרטון', 9], ['שבת זכור – אישור סופי של כל התכנים מול המלווה', 5]
+];
+async function taskZachor(b, env, me, g) {
+  if (me.role !== 'rakaz') bad('forbidden', 403);
+  const have = await env.DB.prepare("SELECT COUNT(*) n FROM tasks WHERE grade_id=? AND title LIKE 'שבת זכור –%'").bind(g.id).first();
+  if (have.n) return json({ ok: true, added: 0 });
+  let sat = date(b.shabbat) || '';
+  if (!sat) { sat = g.hachtara; for (let i = 0; i < 7; i++) { if (new Date(sat + 'T12:00:00Z').getUTCDay() === 6) break; sat = shift(sat, -1); } }
+  const now = Date.now();
+  await env.DB.batch(ZACHOR_TASKS.map(([t, d], i) => env.DB.prepare('INSERT INTO tasks (id,grade_id,title,due,done,owner,committee_id,sort,created) VALUES (?,?,?,?,0,?,?,?,?)')
+    .bind(rid(10), g.id, t, shift(sat, -d), '', '', 40 + i, now)));
+  return json({ ok: true, added: ZACHOR_TASKS.length, shabbat: sat });
+}
 async function taskDelete(b, env, me, g) {
   rakaz(me);
   await env.DB.prepare('DELETE FROM tasks WHERE id=? AND grade_id=?').bind(String(b.id), g.id).run();
@@ -510,6 +528,29 @@ const TASKS = {
 כללים: בלי לחץ ובלי להתחנן, מנומס, עד 90 מילים, בלי שם הישיבה ובלי פרטים אישיים על התלמידים, בלי הבטחות כספיות. סיים בהודיה. החזר גם נושא קצר למייל ושורת תודה שתופיע בחוברת ובמסך.`,
     shape: { subject: 'נושא', letter: 'המכתב', thanks: 'שורת תודה', light: 'green|yellow|red', why: 'סיבה' },
     out: d => ({ subject: clean(d.subject, 80), letter: clean(d.letter, 1500, true) || bad('ai_empty', 502), thanks: clean(d.thanks, 140), ...normLight(d) })
+  },
+  torah: {
+    in: b => `בנה דבר תורה היתולי לפורים תורה בשבת זכור, בנושא: ${clean(b.topic, 200)}.
+הרעיון של התלמידים (אם יש): ${clean(b.idea, 400) || 'אין'}
+מבנה אמיתי של דבר תורה: קושיה, תירוץ מופרך ומצחיק, גימטריה, "נפקא מינה" מעשית על חיי הישיבה, ופתיחה וסיום קצרים. הכול היתולי ומכבד, צחוק על תופעות.
+חשוב מאוד: לא להמציא ציטוטים מחז"ל או מראשונים ולא לכתוב "אמרו חכמים" על דבר שלא נאמר. לא לשנות פסוקים, ולא לכתוב שמות קדושים. אפשר לרמוז על פסוק או נושא רק במילים "אפשר לחפש", בלי לצטט. מראה מקום אמיתי יוסיפו התלמידים בעצמם מספר. בלי שמות של אנשים אמיתיים.`,
+    shape: { opening: 'פתיחה', question: 'קושיה', answer: 'תירוץ', gematria: 'גימטריה היתולית עם החישוב', nafka: 'נפקא מינה', closing: 'סיום עם שורת כבוד', search_hint: 'במה כדאי לחפש מקור אמיתי (בלי ציטוט)', light: 'green|yellow|red', why: 'סיבה' },
+    out: d => ({ opening: clean(d.opening, 300, true), question: clean(d.question, 500, true) || bad('ai_empty', 502), answer: clean(d.answer, 700, true), gematria: clean(d.gematria, 400, true), nafka: clean(d.nafka, 500, true), closing: clean(d.closing, 300, true), search_hint: clean(d.search_hint, 200), ...normLight(d) })
+  },
+  joke: {
+    in: b => `הצע 5 בדיחות או סיפורים קצרים בעברית לדף גמרא של שבת זכור בנושא: ${clean(b.topic, 200)}. כל אחת עד 25 מילים, על תופעות בחיי שכבת י"ב בישיבה, בלי שמות של אנשים.`,
+    shape: { jokes: [{ text: 'הבדיחה', light: 'green|yellow|red', why: 'סיבה' }] },
+    out: d => ({ jokes: (Array.isArray(d.jokes) ? d.jokes : []).slice(0, 5).map(j => ({ text: clean(j.text, 200, true), ...normLight(j) })).filter(j => j.text) })
+  },
+  gemara: {
+    in: b => `נסח את הבדיחה או הסיפור הבא כדף גמרא היתולי לפורים תורה, בלשון משנה וגמרא בארמית: ${clean(b.joke, 600, true)}
+נושא הסוגיה: ${clean(b.topic, 120) || 'לא צוין'}
+מבנה: כותרת מסכת היתולית; "מתניתין" קצרה בלשון משנה; "גמרא" בארמית עם "מאי טעמא", "תנו רבנן", "איבעיא להו" ומחלוקת, ואם צריך "תיקו"; 2-3 הערות רש"י קצרות (דיבור מתחיל + הסבר בעברית); 2 קושיות של תוספות (דיבור מתחיל + קושיה). הכול היתולי ומכבד.
+חשוב: בלי שמות קדושים, בלי שינוי פסוקים, בלי ציטוט מחז"ל אמיתי כאילו נאמר, בלי שמות של אנשים אמיתיים. הארמית פשוטה וקצרה.`,
+    shape: { title: 'כותרת מסכת', mishna: 'מתניתין', gemara: 'גמרא', rashi: [{ dh: 'דיבור מתחיל', text: 'הסבר' }], tosafot: [{ dh: 'דיבור מתחיל', text: 'קושיה' }], light: 'green|yellow|red', why: 'סיבה' },
+    out: d => ({ title: clean(d.title, 60), mishna: clean(d.mishna, 500, true), gemara: clean(d.gemara, 1500, true) || bad('ai_empty', 502),
+      rashi: (Array.isArray(d.rashi) ? d.rashi : []).slice(0, 4).map(x => ({ dh: clean(x.dh, 40), text: clean(x.text, 300, true) })).filter(x => x.text),
+      tosafot: (Array.isArray(d.tosafot) ? d.tosafot : []).slice(0, 3).map(x => ({ dh: clean(x.dh, 40), text: clean(x.text, 300, true) })).filter(x => x.text), ...normLight(d) })
   },
   edit: {
     in: b => {
