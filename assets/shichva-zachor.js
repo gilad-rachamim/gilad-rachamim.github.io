@@ -175,7 +175,33 @@
     if (!/^פרק/.test(pk)) { nm = pk; pk = 'פרק ' + ORD[1]; }
     return { nm: nm, pk: pk, mas: mas, daf: String(d.daf || 'ב').replace(/[.:\s]/g, '') || 'ב' };
   }
-  function amudHtml(side, d, gem, rashi, tos, first) {
+  // עין משפט נר מצוה: מראי מקומות בצורה המדויקת של הדף (מיי' פרק הלכה, סמג, טור ושו"ע סימן סעיף) – אבל כולם בדיחה
+  var EIN = [
+    'מיי\' פ"א מהל\' שינה בשיעור הלכה ג. סמג עשין נ"ה. טור ושו"ע או"ח סי\' ו סעיף א',
+    'מיי\' פ"ב מהל\' קפה ותה הלכה ז. סמג לאוין ק"ב. טוש"ע י"ד סי\' ט"ל סעיף ד בהג"ה',
+    'מיי\' פ"ג מהל\' פעמון הלכה א. טור או"ח סי\' ק"ס, ושו"ע שם סעיף ג',
+    'מיי\' פ"ד מהל\' מזנון הלכה ה. טור ושו"ע חו"מ סי\' שנ"ט סעיף א (ובמיוחד בשיעור שני)',
+    'מיי\' פ"ה מהל\' חברותא הלכה ט. סמג עשין ל"ב. טוש"ע חו"מ סי\' קל"ז סעיף ב',
+    'מיי\' פ"ו מהל\' מחברת הלכה ב. סמג עשין ע"א. טוש"ע או"ח סי\' תקפ"ג סעיף ו',
+    'מיי\' פ"ז מהל\' הפסקה הלכה י. טוש"ע או"ח סי\' רצ"ז סעיף ה, ובמ"ב ס"ק ח',
+    'מיי\' פ"ח מהל\' תחנונים לרב הלכה ד. סמג לאוין כ"ו. טור ושו"ע י"ד סי\' ר"מ סעיף ז',
+    'מיי\' פ"ט מהל\' כסאות וכסתות הלכה ג. טוש"ע חו"מ סי\' ק"ע סעיף ג',
+    'מיי\' פי"ב מהל\' טוש ולוח הלכה ו. סמג עשין ק"י. טור ושו"ע או"ח סי\' ת"ר סעיף ב',
+    'מיי\' פי"א מהל\' פתקים הלכה ח. טוש"ע אה"ע סי\' כ"ה סעיף א',
+    'מיי\' פ"י מהל\' שיעור ערב הלכה א. סמג לאוין ס"ח. טור ושו"ע או"ח סי\' ק"ח סעיף ט'
+  ];
+  var LET = 'אבגדהוזחטיכלמנסעפצקרשת';
+  function hn(n) { var t = ['', 'י', 'כ', 'ל', 'מ', 'נ'], u = ['', 'א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט']; if (n === 15) return 'טו'; if (n === 16) return 'טז'; return t[Math.floor(n / 10)] + u[n % 10]; }
+  function einLists(d) {
+    var own = lines(d.ein || ''), all = own;
+    if (!own.length) {
+      var h = 0, sd = String(d.topic || d.masechet || 'x');
+      for (var i = 0; i < sd.length; i++) h = (h * 31 + sd.charCodeAt(i)) % 997;
+      all = []; for (var k = 0; k < 11; k++) all.push(EIN[(h + k) % EIN.length]);
+    }
+    return splitAmud(all, function (x) { return x === '---'; });
+  }
+  function amudHtml(side, d, gem, rashi, tos, first, einItems, off) {
     var h = headParts(d), mis = first && d.mishna ? lines(d.mishna) : [];
     var gemHtml = '';
     if (mis.length) {
@@ -190,7 +216,7 @@
     var items = String(d.margin || '').split(/[;\n]+/).map(function (x) { return x.trim(); }).filter(Boolean);
     var heb = 'אבגדהוזחטיכלמנ';
     var mesoret = '<aside class="gm-mar gm-inner">' + items.map(function (x, i) { return '<p><b>' + heb.charAt(i % heb.length) + '</b> ' + esc(x) + '</p>'; }).join('') + '</aside>';
-    var ein = '<aside class="gm-mar gm-outer">' + (d.topic ? '<p><b>א</b> ' + esc(d.topic) + '</p>' : '') + '<p class="gm-purim">פורים תורה</p></aside>';
+    var ein = '<aside class="gm-mar gm-outer">' + einItems.map(function (x, i) { return '<p><b class="gm-n">' + hn(off + i + 1) + '</b> <b>' + LET.charAt((off + i) % LET.length) + '</b> ' + esc(x) + '</p>'; }).join('') + '<p class="gm-purim">פורים תורה</p></aside>';
     var tIn = '<span class="gm-mt">מסורת<br>הש״ס</span>', tOut = '<span class="gm-mt">עין משפט<br>נר מצוה</span>';
     var run = '<span class="gm-run">' + (h.nm ? '<span>' + esc(h.nm) + '</span>' : '') + '<span>' + esc(h.pk) + '</span><span>' + esc(h.mas) + '</span></span>';
     var num = '<span class="gm-num">' + esc(h.daf) + (side === 'a' ? '.' : ':') + '</span>';
@@ -203,8 +229,8 @@
   function gemaraHtml(d) {
     var g = splitAmud(lines(d.gemara), function (x) { return x === '---'; });
     var r = splitAmud(d.rashi || [], function (x) { return x.sep; }), t = splitAmud(d.tosafot || [], function (x) { return x.sep; });
-    var two = g[1].length || r[1].length || t[1].length;
-    return '<div class="gm-spread">' + amudHtml('a', d, g[0], r[0], t[0], true) + (two ? amudHtml('b', d, g[1], r[1], t[1], false) : '') + '</div>';
+    var two = g[1].length || r[1].length || t[1].length, e = einLists(d);
+    return '<div class="gm-spread gm-t' + (/^[123]$/.test(d.theme) ? d.theme : '1') + '">' + amudHtml('a', d, g[0], r[0], t[0], true, e[0], 0) + (two ? amudHtml('b', d, g[1], r[1], t[1], false, e[1], e[0].length) : '') + '</div>';
   }
   // חישוב הצורה: כמה שורות פרשנים מעל הגמרא, כמה הגמרא יורדת, ואיפה היא מתרחבת
   function layoutDaf(root, noFit) {
@@ -256,16 +282,17 @@
       '<label class="field">מתניתין<textarea id="gmMish" rows="2" maxlength="800"></textarea></label><label class="field">גמרא (כל פסקה בשורה נפרדת, שתי המילים הראשונות יודגשו; שורה עם --- בלבד מעבירה לעמוד ב׳)<textarea id="gmGem" rows="8" maxlength="3000"></textarea></label>' +
       '<label class="field">רש"י (שורה לכל הערה: דיבור מתחיל, נקודתיים, הסבר; --- מעביר לעמוד ב׳)<textarea id="gmRashi" rows="6" maxlength="3000"></textarea></label>' +
       '<label class="field">תוספות (שורה לכל קושיה: דיבור מתחיל, נקודתיים, קושיה; --- מעביר לעמוד ב׳)<textarea id="gmTos" rows="5" maxlength="2500"></textarea></label>' +
-      '<label class="field">הערות שוליים היתוליות (לא מראי מקומות אמיתיים)<textarea id="gmMar" rows="2" maxlength="400" placeholder="ראו עוד: שיעור בוקר ד. ע&quot;ב (כמעט)"></textarea></label></section>' +
-      '<section class="sh-card"><h2>הדף</h2><div id="gmView" class="sh-paper"></div><div class="sh-row"><button type="button" class="btn btn-sm btn-line" id="gmPrint">הדפסה או PDF (A4)</button></div></section>' + saveBox(existing, 'gemara');
+      '<label class="field">עין משפט נר מצוה – מראי מקומות מצחיקים (שורה לכל מקור; ריק = הגבאי ממלא לבד; --- מעביר לעמוד ב׳)<textarea id="gmEin" rows="3" maxlength="1500" placeholder="מיי\' פ&quot;א מהל\' שינה בשיעור הלכה ג. סמג עשין נ&quot;ה. טור ושו&quot;ע או&quot;ח סי\' ו סעיף א"></textarea></label>' +
+      '<label class="field">מסורת הש"ס – הערות שוליים היתוליות (לא מראי מקומות אמיתיים)<textarea id="gmMar" rows="2" maxlength="400" placeholder="ראו עוד: שיעור בוקר ד. ע&quot;ב (כמעט)"></textarea></label></section>' +
+      '<section class="sh-card"><h2>הדף</h2><div class="sh-themes" id="gmThemes" role="group" aria-label="עיצוב הדף"><button type="button" class="btn btn-sm btn-line" data-th="1">1 · קלף קלאסי</button><button type="button" class="btn btn-sm btn-line" data-th="2">2 · צבעוני מלא</button><button type="button" class="btn btn-sm btn-line" data-th="3">3 · שחור-לבן חד</button></div><p class="sh-hint">מדפיסים בלי צבע? בוחרים 3: הוא בנוי כך שכל ההדגשות בולטות גם בשחור-לבן. מדפיסים בצבע? 2 מראה הכי טוב כל צבע.</p><div id="gmView" class="sh-paper"></div><div class="sh-row"><button type="button" class="btn btn-sm btn-line" id="gmPrint">הדפסה או PDF (A4)</button></div></section>' + saveBox(existing, 'gemara');
     function toLines(a) { return a.map(function (x) { return x.sep ? '---' : (x.dh ? x.dh + ': ' : '') + x.text; }).join('\n'); }
     function fromLines(t) { return lines(t).map(function (l) { if (l === '---') return { sep: true }; var i = l.indexOf(':'); return i > 0 && i < 40 ? { dh: l.slice(0, i).trim(), text: l.slice(i + 1).trim() } : { dh: '', text: l }; }); }
     $('#gmTopic', root).value = d.topic || ''; $('#gmMas', root).value = d.masechet || ''; $('#gmPer', root).value = d.perek || ''; $('#gmDaf', root).value = d.daf || '';
-    $('#gmMish', root).value = d.mishna || ''; $('#gmGem', root).value = d.gemara || ''; $('#gmRashi', root).value = toLines(d.rashi); $('#gmTos', root).value = toLines(d.tosafot); $('#gmMar', root).value = d.margin || ''; $('#gmJoke', root).value = d.joke || '';
+    $('#gmMish', root).value = d.mishna || ''; $('#gmGem', root).value = d.gemara || ''; $('#gmRashi', root).value = toLines(d.rashi); $('#gmTos', root).value = toLines(d.tosafot); $('#gmMar', root).value = d.margin || ''; $('#gmEin', root).value = d.ein || ''; $('#gmJoke', root).value = d.joke || '';
     function gather() {
       d.topic = $('#gmTopic', root).value; d.masechet = $('#gmMas', root).value; d.perek = $('#gmPer', root).value; d.daf = $('#gmDaf', root).value;
       d.mishna = $('#gmMish', root).value; d.gemara = $('#gmGem', root).value; d.rashi = fromLines($('#gmRashi', root).value); d.tosafot = fromLines($('#gmTos', root).value);
-      d.margin = $('#gmMar', root).value; d.joke = $('#gmJoke', root).value;
+      d.margin = $('#gmMar', root).value; d.ein = $('#gmEin', root).value; d.joke = $('#gmJoke', root).value;
     }
     function paint() { gather(); $('#gmView', root).innerHTML = gemaraHtml(d); layoutDaf($('#gmView', root)); $('#gmLight', root).innerHTML = light ? SH.lightHtml(light.light, light.why) : ''; }
     root.addEventListener('input', function (e) { if (e.target.closest('.sh-card') && e.target.id && e.target.id.indexOf('gm') === 0) paint(); });
@@ -291,9 +318,12 @@
     $('#gmSample', root).onclick = function () {
       $('#gmTopic', root).value = SAMPLE.topic; $('#gmMas', root).value = SAMPLE.masechet; $('#gmPer', root).value = SAMPLE.perek; $('#gmDaf', root).value = SAMPLE.daf;
       $('#gmJoke', root).value = SAMPLE.joke; $('#gmMish', root).value = SAMPLE.mishna; $('#gmGem', root).value = SAMPLE.gemara;
-      $('#gmRashi', root).value = toLines(SAMPLE.rashi); $('#gmTos', root).value = toLines(SAMPLE.tosafot); $('#gmMar', root).value = SAMPLE.margin;
+      $('#gmRashi', root).value = toLines(SAMPLE.rashi); $('#gmTos', root).value = toLines(SAMPLE.tosafot); $('#gmMar', root).value = SAMPLE.margin; $('#gmEin', root).value = '';
       paint(); toast('נטען דף לדוגמה מלא. אפשר לתקן הכול'); $('#gmView', root).scrollIntoView({ behavior: 'smooth' });
     };
+    function themeMark() { root.querySelectorAll('[data-th]').forEach(function (b) { var on = b.getAttribute('data-th') === (d.theme || '1'); b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.classList.toggle('btn-gold', on); b.classList.toggle('btn-line', !on); }); }
+    root.querySelectorAll('[data-th]').forEach(function (b) { b.onclick = function () { d.theme = b.getAttribute('data-th'); themeMark(); paint(); }; });
+    themeMark();
     $('#gmPrint', root).onclick = function () { gather(); printNode(gemaraHtml(d), 'sh-print-gemara', function (n) { layoutDaf(n, true); }); };
     wireSave(root, existing, 'gemara', function () { gather(); return { light: light, body: [d.mishna, d.gemara].filter(Boolean).join('\n'), data: d }; });
     paint();
