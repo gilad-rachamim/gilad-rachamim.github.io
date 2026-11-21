@@ -103,3 +103,42 @@
 .sh-sub button[aria-selected=true]{background:var(--gold,#d8b35f);color:#16130f;border-color:transparent}
 @media print{.sh-top,.sh-tabs,.sh-sub,.sh-row,.sh-acts{display:none!important}}
 .sh-card ol{padding-inline-start:1.6rem}
+
+/* שבת זכור: גופן רש"י ודף גמרא */
+@font-face{font-family:"Noto Rashi Hebrew";font-weight:400;font-display:swap;src:url("fonts/NotoRashiHebrew-400.ttf") format("truetype")}
+@font-face{font-family:"Noto Rashi Hebrew";font-weight:700;font-display:swap;src:url("fonts/NotoRashiHebrew-700.ttf") format("truetype")}
+.sh-paper{background:#f6efdc;color:#1d1608;border-radius:10px;padding:.8rem;overflow-x:auto}
+.sh-torah{max-width:34rem;margin:0 auto;line-height:1.7}
+.sh-torah h3{text-align:center;margin:.2rem 0 .6rem}
+.sh-badge,.gm-badge{display:block;width:max-content;margin:0 auto .4rem;padding:.15rem .9rem;border:2px solid #7a2e1a;color:#7a2e1a;border-radius:99px;font-weight:800;letter-spacing:.04em}
+.sh-src{font-size:.88rem;padding-inline-start:1.2rem}
+.gm-page{min-width:34rem;font-family:"Frank Ruhl Libre","David Libre","Times New Roman",serif}
+.gm-head{display:flex;justify-content:space-between;border-bottom:2px solid #1d1608;padding-bottom:.2rem;font-weight:800;font-size:1.05rem}
+.gm-body{display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:.7rem;margin-top:.5rem;align-items:start}
+.gm-main{font-size:1.12rem;line-height:1.55;border-inline:1px solid rgba(29,22,8,.3);padding-inline:.6rem}
+.gm-main h4,.gm-rashi h4,.gm-tos h4{margin:.3rem 0;font-size:.78rem;letter-spacing:.06em;color:#7a2e1a}
+.gm-main p,.gm-rashi p,.gm-tos p{margin:.15rem 0}
+.gm-rashi,.gm-tos{font-family:"Noto Rashi Hebrew","Frank Ruhl Libre",serif;font-size:.86rem;line-height:1.5}
+.gm-empty{opacity:.4}
+.gm-margin{margin-top:.5rem;border-top:1px dashed rgba(29,22,8,.4);padding-top:.25rem;font-size:.78rem;opacity:.8}
+.gm-note{margin:.6rem 0 0;font-size:.72rem;text-align:center;opacity:.7}
+.sb-book{font-family:"Frank Ruhl Libre",serif;color:#1d1608}
+.sb-book h2{text-align:center;border-bottom:3px double #7a2e1a;padding-bottom:.3rem}
+.sb-song{break-inside:avoid;margin:1rem 0}
+.sb-tune{font-size:.8rem;opacity:.7;margin:0}
+.sb-song p{margin:.1rem 0;font-size:1.1rem}
+.sh-links{padding-inline-start:1.2rem;line-height:1.9}
+#shPrintRoot{display:none}
+@media print{
+  @page{size:A4;margin:12mm}
+  body.sh-printing>*:not(#shPrintRoot){display:none!important}
+  #shPrintRoot{display:block!important;background:#fff;color:#000}
+  #shPrintRoot .gm-page{min-width:0}
+  #shPrintRoot .gm-body{font-size:.95em}
+}
+@media (max-width:620px){
+  .gm-page{min-width:0}
+  .gm-body{grid-template-columns:1fr}
+  .gm-main{order:-1;border-inline:0;padding-inline:0}
+}
+@media print{.gm-page{min-width:0}.gm-body{grid-template-columns:1fr 1.5fr 1fr!important}.gm-main{order:0!important;border-inline:1px solid rgba(29,22,8,.3)!important;padding-inline:.6rem!important}}

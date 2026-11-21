@@ -70,7 +70,7 @@
   function joinLink(c) { return SITE + '/kelim/shichva/#j=' + encodeURIComponent(S.grade.join_code || '') + (c ? '&v=' + c.id : ''); }
   var ROLE = { rakaz: 'רכז', gizbar: 'גזבר', chaver: 'חבר', melave: 'מלווה מהצוות' };
   var STATE = { draft: 'טיוטה בוועדה', liked: 'אהבנו', head: 'אצל האחראי הראשי', melave: 'אצל המלווה', approved: 'אושר', replace: 'להחליף' };
-  var KIND = { text: 'טקסט', meme: 'מם', trailer: 'טריילר', video: 'סרטון', idea: 'רעיון' };
+  var KIND = { text: 'טקסט', meme: 'מם', trailer: 'טריילר', video: 'סרטון', idea: 'רעיון', torah: 'דבר תורה', gemara: 'דף גמרא', shir: 'שיר' };
   var LIGHT = { green: 'ירוק', yellow: 'צהוב', red: 'אדום' };
   SH.LIGHT = LIGHT;
   SH.lightHtml = function (l, why) {
@@ -110,7 +110,7 @@
   SH.refresh = refresh;
   function tabsFor() {
     if (melave()) return [['ishurim', 'מוצרים מוכנים'], ['bait', 'ההכתרה']];
-    var t = [['bait', 'בית'], ['vaadot', 'ועדות'], ['yetzira', 'יצירה'], ['mesimot', 'משימות'], ['kiosk', 'קיוסק וכסף'], ['gabai', 'הגבאי'], ['album', 'אלבום']];
+    var t = [['bait', 'בית'], ['vaadot', 'ועדות'], ['yetzira', 'יצירה'], ['mesimot', 'משימות'], ['zachor', 'שבת זכור'], ['kiosk', 'קיוסק וכסף'], ['gabai', 'הגבאי'], ['album', 'אלבום']];
     if (rakaz()) t.splice(2, 0, ['ishurim', 'אישורים']);
     t.push(['chaverim', rakaz() ? 'חברים והגדרות' : 'חברים']);
     return t;
@@ -212,7 +212,7 @@
     else if (act === 'comment') ask('הערה על "' + p.title + '"', { label: 'ההערה', required: true, long: true }).then(function (n) { if (n) go('/product/comment', { id: id, note: n }, 'ההערה נשמרה'); });
     else if (act === 'del') ask('למחוק את "' + p.title + '"?', { input: false, ok: 'מחיקה', text: 'אי אפשר לשחזר.' }).then(function (y) { if (y) go('/product/delete', { id: id }, 'נמחק'); });
     else if (act === 'edit') {
-      if (SH.creators[p.kind]) { tab = 'yetzira:' + p.kind; draw(); SH.creators[p.kind]($('#yz'), p); window.scrollTo(0, 0); }
+      if (SH.creators[p.kind]) { tab = (['torah', 'gemara', 'shir'].indexOf(p.kind) >= 0 ? 'zachor:' : 'yetzira:') + p.kind; draw(); SH.creators[p.kind]($('#yz'), p); window.scrollTo(0, 0); }
       else editText(p);
     }
   });

@@ -146,6 +146,16 @@ ok(drs.products.length === 5 && drs.committees.length === 3 && !drs.grade.admin_
   ok(sh.ok, 'משמרת נתפסה');
 }
 
+{
+  const z0 = await call('/task/zachor', a.token, {});
+  ok(z0.s === 403, 'שבת זכור: חבר רגיל נחסם');
+  const z1 = await call('/task/zachor', R, {});
+  ok(z1.s === 200 && z1.added === 9 && /^\d{4}-\d\d-\d\d$/.test(z1.shabbat) && new Date(z1.shabbat + 'T12:00:00Z').getUTCDay() === 6, 'שבת זכור: 9 משימות ליעד של שבת (' + z1.shabbat + ')');
+  const z2 = await call('/task/zachor', R, {});
+  ok(z2.added === 0, 'שבת זכור: לא מוסיף פעמיים');
+  const stz = await call('/state', R);
+  ok(stz.tasks.filter(t => t.title.startsWith('שבת זכור –')).length === 9, 'שבת זכור: המשימות בלוח');
+}
 if (WITH_AI) {
   const L = await call('/ai', a.token, { task: 'light', text: 'כשהמבחן במתמטיקה נדחה בפעם השלישית' });
   ok(['green', 'yellow', 'red'].includes(L.light), 'גבאי – רמזור: ' + L.light + ' ' + L.why);
@@ -159,6 +169,12 @@ if (WITH_AI) {
   ok(AD.headline && AD.weekly, 'גבאי – מודעה: ' + AD.headline);
   const SL = await call('/ai', a.token, { task: 'sponsor_letter', business: 'פיצה הכיכר', package: 'לוגו בחוברת ותודה בערב', sender: 'דני' });
   ok(SL.letter && SL.subject, 'גבאי – מכתב ספונסר: ' + SL.subject);
+  const TO = await call('/ai', a.token, { task: 'torah', topic: 'הקימה לשחרית' });
+  ok(TO.question && TO.nafka, 'גבאי – פורים תורה: ' + TO.question.slice(0, 40));
+  const JK = await call('/ai', a.token, { task: 'joke', topic: 'חדר האוכל' });
+  ok(JK.jokes && JK.jokes.length >= 3, 'גבאי – בדיחות: ' + JK.jokes.length);
+  const GM = await call('/ai', a.token, { task: 'gemara', joke: 'המבחן נדחה בפעם השלישית ואיש לא הופתע', topic: 'מבחנים' });
+  ok(GM.gemara && GM.rashi.length >= 1 && GM.tosafot.length >= 1, 'גבאי – דף גמרא: ' + GM.title);
 }
 console.log(fails ? `\n${fails} FAIL` : '\nALL OK');
 process.exit(fails ? 1 : 0);
