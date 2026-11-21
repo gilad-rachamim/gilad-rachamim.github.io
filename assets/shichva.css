@@ -102,3 +102,4 @@
 .sh-sub button{flex:none;font:inherit;padding:.4rem .8rem;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--body);cursor:pointer}
 .sh-sub button[aria-selected=true]{background:var(--gold,#d8b35f);color:#16130f;border-color:transparent}
 @media print{.sh-top,.sh-tabs,.sh-sub,.sh-row,.sh-acts{display:none!important}}
+.sh-card ol{padding-inline-start:1.6rem}
