@@ -20,8 +20,7 @@ new_sqlite_classes = ["Groups"]
 binding = "HUB"
 service = "gilad-hub"
 
-[triggers]
-crons = ["30 3 * * *"]
+# אין [triggers]: בחשבון החינמי כבר תפוסים 5 התזמונים. הניקוי היומי והסיכום השבועי רצים בביקור הראשון של כל יום.
 
 [vars]
 EXTRA_ORIGINS = ""

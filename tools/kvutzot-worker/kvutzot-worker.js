@@ -11,9 +11,14 @@
 //   POST /remove {id,key}           -> {ok}                    מנהל הקבוצה מוריד אותה
 //   POST /want   {interest,region,age,tag} -> {n}              "אין קבוצה כזאת – אני רוצה"; ב-5 מגיעה התראה לגילעד
 //   POST /report {id,why}           -> {ok}                    דיווח; 2 דיווחים מרשתות שונות מסתירים את הקבוצה עד בדיקה
+//   POST /broken {id}               -> {ok}                    "הקישור לא עובד"; 2 מרשתות שונות מסתירים עד שהמנהל מחליף קישור
+//   POST /relink {id,key,link}      -> {ok, st}                מנהל הקבוצה מחליף קישור (קישור שאופס); קבוצה שהוסתרה בגלל קישור שבור חוזרת
+//   POST /stats  {id,key}           -> {name, st, ver, week, prev, total, weeks:[{w,n}]}   כמה ביקשו קישור, לפי שבוע (8 שבועות)
+// מסלול שותפים: ארגון שגילעד בדק מקבל תג "קבוצה מאומתת" (ver = שם הארגון, verUrl = האתר שלו) ובונוס קטן בדירוג.
 // ניהול (כותרת X-Admin-Key):
-//   GET  /admin/list                -> הכול, כולל ממתינות, מוסתרות ודיווחים
+//   GET  /admin/list                -> הכול, כולל ממתינות, מוסתרות ודיווחים, ובקשות קישור השבוע ובשבוע שעבר
 //   POST /admin/set {id, st}        st: live | pending | hidden | rejected
+//   POST /admin/verify {id, org, url}  org ריק = הסרת האימות
 //   GET  /admin/wants               -> ביקושים לפי צירוף
 const ORIGINS = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const SITE = 'https://hakelim.com';
@@ -24,11 +29,12 @@ export const META = {
     'גינה וטבע', 'בעלי חיים', 'קהילה ושכונה', 'פנאי והומור', 'לימודים ואקדמיה', 'שפות'],
   regions: ['כל הארץ', 'ירושלים והסביבה', 'גוש דן והמרכז', 'השרון', 'השפלה', 'חיפה והקריות', 'הצפון', 'הדרום והנגב', 'יהודה ושומרון'],
   ages: ['18–30', '30–45', '45–60', '60+'],
+  kinds: ['שקטה – רק הודעות חשובות', 'שיחה רגועה', 'שיחה ערה'],
   tags: ['לוחמים ופצועי צה"ל', 'אנשים עם מוגבלות', 'הורים לילדים עם צרכים מיוחדים', 'בני משפחה מטפלים', 'נשים בלבד', 'גברים בלבד',
     'ציבור דתי', 'ציבור חרדי', 'ציבור כללי', 'עולים חדשים', 'דוברי אנגלית'],
 };
-const LIM = { LINK_IP: 25, ADD_IP: 4, ADD_ALL: 60, WANT_IP: 10, REPORT_IP: 10 };   // ליום
-const WANT_ALERT = 5, REPORTS_HIDE = 2;
+const LIM = { LINK_IP: 25, ADD_IP: 4, ADD_ALL: 60, WANT_IP: 10, REPORT_IP: 10, RELINK_ID: 5 };   // ליום
+const WANT_ALERT = 5, REPORTS_HIDE = 2, BROKEN_HIDE = 2;
 const STATUS = ['pending', 'live', 'hidden', 'rejected'];
 const LINK_RE = /^https:\/\/chat\.whatsapp\.com\/(invite\/)?[A-Za-z0-9]{10,40}$/;
 
@@ -39,7 +45,7 @@ export default {
     let res;
     try {
       const url = new URL(req.url);
-      if (url.pathname === '/' || url.pathname === '/ping') res = json({ ok: true, name: 'kelim-kvutzot', v: 1 });
+      if (url.pathname === '/' || url.pathname === '/ping') res = json({ ok: true, name: 'kelim-kvutzot', v: 2 });
       else if (url.pathname === '/meta') res = json(META, 200, 'public, max-age=3600');
       else {
         const admin = url.pathname.startsWith('/admin/');
@@ -72,14 +78,19 @@ export class Groups {
     const url = new URL(req.url), p = url.pathname, iph = req.headers.get('X-Iph') || 'x';
     const b = req.method === 'POST' ? await readJson(req) : null;
     if (req.method === 'POST' && !b) return json({ error: 'בקשה לא תקינה' }, 400);
+    if (p !== '/cron' && (await this.s.get('cron:day')) !== day()) { await this.s.put('cron:day', day()); this.ctx.waitUntil(this.cron()); }   // בלי תזמון: הניקוי היומי רץ בביקור הראשון של היום (בחשבון החינמי נגמרו התזמונים)
     if (p === '/groups' && req.method === 'GET') return this.publicList();
     if (p === '/link' && b) return this.link(b, iph);
     if (p === '/add' && b) return this.add(b, iph);
     if (p === '/remove' && b) return this.remove(b);
     if (p === '/want' && b) return this.want(b, iph);
     if (p === '/report' && b) return this.report(b, iph);
-    if (p === '/admin/list') return json({ items: await this.all(true) });
+    if (p === '/broken' && b) return this.broken(b, iph);
+    if (p === '/relink' && b) return this.relink(b);
+    if (p === '/stats' && b) return this.stats(b);
+    if (p === '/admin/list') return json({ items: await this.adminList() });
     if (p === '/admin/set' && b) return this.set(b);
+    if (p === '/admin/verify' && b) return this.verify(b);
     if (p === '/admin/wants') return json({ items: await this.wants() });
     if (p === '/cron' && b) return json(await this.cron());
     return json({ error: 'not found' }, 404);
@@ -92,8 +103,42 @@ export class Groups {
 
   async publicList() {
     const items = (await this.all()).filter(g => g.st === 'live')
-      .map(g => ({ id: g.id, name: g.name, desc: g.desc, interests: g.interests, region: g.region, ages: g.ages, tags: g.tags }));
+      .map(g => ({ id: g.id, name: g.name, desc: g.desc, interests: g.interests, region: g.region, ages: g.ages, tags: g.tags,
+        kind: g.kind || '', since: day(g.t), ver: g.ver || '', verUrl: g.verUrl || '' }));
     return json({ items });
+  }
+
+  async adminList() {
+    const items = await this.all(true), w = week(), pw = week(Date.now() - 7 * 864e5);
+    for (const g of items) { const c = (await this.s.get('c:' + g.id)) || {}; g.wk = c[w] || 0; g.pwk = c[pw] || 0; }
+    return items;
+  }
+
+  async count(id) {                 // בקשת קישור נספרת לשבוע שלה; נשמרים 12 שבועות
+    const k = 'c:' + id, c = (await this.s.get(k)) || {}, w = week();
+    c[w] = (c[w] || 0) + 1;
+    const keep = Object.keys(c).sort().slice(-12), out = {};
+    for (const x of keep) out[x] = c[x];
+    await this.s.put(k, out);
+  }
+
+  async stats(b) {
+    const g = await this.s.get('g:' + clean(b.id, 20));
+    if (!g || !b.key || g.key !== await sha(String(b.key))) return json({ error: 'הקוד לא מתאים לקבוצה.' }, 403);
+    const c = (await this.s.get('c:' + g.id)) || {}, weeks = [];
+    for (let i = 7; i >= 0; i--) { const w = week(Date.now() - i * 7 * 864e5); weeks.push({ w, n: c[w] || 0 }); }
+    return json({ name: g.name, st: g.st, ver: g.ver || '', week: weeks[7].n, prev: weeks[6].n,
+      total: weeks.reduce((a, x) => a + x.n, 0), weeks });
+  }
+
+  async verify(b) {
+    const g = await this.s.get('g:' + clean(b.id, 20));
+    if (!g) return json({ error: 'not found' }, 404);
+    const org = clean(b.org, 60), url = String(b.url || '').trim();
+    if (url && !/^https:\/\/[^\s<>"']{4,200}$/.test(url)) return json({ error: 'הכתובת צריכה להתחיל ב-https://' }, 400);
+    g.ver = org; g.verUrl = org ? url : '';
+    await this.s.put('g:' + g.id, g);
+    return json({ ok: true, id: g.id, ver: g.ver, verUrl: g.verUrl });
   }
 
   async bump(key, max) {            // מונה יומי; true = עבר את התקרה
@@ -106,6 +151,10 @@ export class Groups {
     const g = await this.s.get('g:' + clean(b.id, 20));
     if (!g || g.st !== 'live') return json({ error: 'הקבוצה לא נמצאה או שהוסרה.' }, 404);
     if (await this.bump('l:' + iph, LIM.LINK_IP)) return json({ error: 'ביקשתם היום הרבה קישורים. אפשר להמשיך מחר.' }, 429);
+    if (!(await this.s.get('rl:' + day() + ':lc:' + g.id + ':' + iph))) {   // אותה רשת נספרת פעם ביום לכל קבוצה
+      await this.s.put('rl:' + day() + ':lc:' + g.id + ':' + iph, 1);
+      await this.count(g.id);
+    }
     return json({ link: g.link });
   }
 
@@ -120,12 +169,13 @@ export class Groups {
     if (!interests.length) return json({ error: 'בחרו לפחות תחום עניין אחד.' }, 400);
     const region = META.regions.includes(b.region) ? b.region : 'כל הארץ';
     const ages = pick(b.ages, META.ages, 4), tags = pick(b.tags, META.tags, 4);
+    const kind = META.kinds.includes(b.kind) ? b.kind : '';
     const dup = (await this.all()).find(g => g.link === link && g.st !== 'rejected');
     if (dup) return json({ error: 'הקבוצה הזאת כבר רשומה אצלנו.' }, 409);
     if (await this.bump('a:' + iph, LIM.ADD_IP)) return json({ error: 'קיבלנו מכם כבר כמה קבוצות היום. אפשר להמשיך מחר.' }, 429);
     if (await this.bump('a:all', LIM.ADD_ALL)) return json({ error: 'הגיעו היום הרבה קבוצות. נסו שוב מחר.' }, 429);
     const id = newId(8), key = newId(16);
-    const g = { id, t: Date.now(), name, desc, interests, region, ages, tags, link, st: 'pending', rep: 0, repBy: [], key: await sha(key) };
+    const g = { id, t: Date.now(), name, desc, interests, region, ages, tags, link, kind, st: 'pending', rep: 0, repBy: [], brk: 0, brkBy: [], key: await sha(key) };
     await this.s.put('g:' + id, g);
     this.ctx.waitUntil(this.alert('🆕 קבוצה חדשה ממתינה לאישור: ' + name + '\n' + desc + '\nתחומים: ' + interests.join(', ') + ' · ' + region));
     return json({ id, key });
@@ -134,7 +184,7 @@ export class Groups {
   async remove(b) {
     const g = await this.s.get('g:' + clean(b.id, 20));
     if (!g || !b.key || g.key !== await sha(String(b.key))) return json({ error: 'הקוד לא מתאים לקבוצה.' }, 403);
-    await this.s.delete('g:' + g.id);
+    await this.s.delete(['g:' + g.id, 'c:' + g.id]);
     return json({ ok: true });
   }
 
@@ -168,11 +218,41 @@ export class Groups {
     g.repBy.push(iph); g.rep++;
     (g.whys = g.whys || []).push(clean(b.why, 140));
     if (g.rep >= REPORTS_HIDE && g.st === 'live') {
-      g.st = 'hidden';
+      g.st = 'hidden'; g.hid = 'report';
       this.ctx.waitUntil(this.alert('⚠️ קבוצה הוסתרה אחרי ' + g.rep + ' דיווחים: ' + g.name + '\nסיבות: ' + g.whys.filter(Boolean).join(' / ')));
     }
     await this.s.put('g:' + g.id, g);
     return json({ ok: true });
+  }
+
+  async broken(b, iph) {
+    const g = await this.s.get('g:' + clean(b.id, 20));
+    if (!g) return json({ error: 'הקבוצה לא נמצאה.' }, 404);
+    if (await this.bump('r:' + iph, LIM.REPORT_IP)) return json({ ok: true });
+    g.brkBy = g.brkBy || [];
+    if (g.brkBy.includes(iph)) return json({ ok: true });
+    g.brkBy.push(iph); g.brk = (g.brk || 0) + 1;
+    if (g.brk >= BROKEN_HIDE && g.st === 'live') {
+      g.st = 'hidden'; g.hid = 'broken';
+      this.ctx.waitUntil(this.alert('🔗 הקישור של "' + g.name + '" לא עובד (' + g.brk + ' דיווחים). הקבוצה הוסתרה עד שהמנהל יחליף קישור בדף.'));
+    }
+    await this.s.put('g:' + g.id, g);
+    return json({ ok: true });
+  }
+
+  async relink(b) {
+    const g = await this.s.get('g:' + clean(b.id, 20));
+    if (!g || !b.key || g.key !== await sha(String(b.key))) return json({ error: 'הקוד לא מתאים לקבוצה.' }, 403);
+    const link = String(b.link || '').trim();
+    if (!LINK_RE.test(link)) return json({ error: 'הקישור צריך להיות קישור הזמנה של ווטסאפ (https://chat.whatsapp.com/...).' }, 400);
+    if (await this.bump('k:' + g.id, LIM.RELINK_ID)) return json({ error: 'החלפתם היום כמה פעמים. אפשר שוב מחר.' }, 429);
+    const dup = (await this.all()).find(x => x.link === link && x.id !== g.id && x.st !== 'rejected');
+    if (dup) return json({ error: 'הקישור הזה כבר רשום לקבוצה אחרת.' }, 409);
+    g.link = link; g.brk = 0; g.brkBy = [];
+    if (g.st === 'hidden' && g.hid === 'broken') { g.st = 'live'; g.hid = ''; }
+    await this.s.put('g:' + g.id, g);
+    this.ctx.waitUntil(this.alert('🔁 מנהל "' + g.name + '" החליף קישור. מצב: ' + g.st));
+    return json({ ok: true, st: g.st });
   }
 
   async set(b) {
@@ -180,7 +260,7 @@ export class Groups {
     if (!g) return json({ error: 'not found' }, 404);
     if (!STATUS.includes(b.st)) return json({ error: 'bad status' }, 400);
     g.st = b.st;
-    if (b.st === 'live') { g.rep = 0; g.repBy = []; }
+    if (b.st === 'live') { g.rep = 0; g.repBy = []; g.brk = 0; g.brkBy = []; g.hid = ''; }
     await this.s.put('g:' + g.id, g);
     return json({ ok: true, id: g.id, st: g.st });
   }
@@ -199,7 +279,24 @@ export class Groups {
     const today = day(), old = await this.s.list({ prefix: 'rl:', limit: 1000 });
     const del = [...old.keys()].filter(k => !k.startsWith('rl:' + today + ':'));
     for (let i = 0; i < del.length; i += 120) await this.s.delete(del.slice(i, i + 120));
-    return { cleaned: del.length };
+    const weekly = await this.weekly();   // סיכום השבוע שעבר, פעם אחת בשבוע (שמור ב-sent:weekly)
+    return { cleaned: del.length, weekly };
+  }
+
+  async weekly() {
+    const pw = week(Date.now() - 7 * 864e5);
+    if ((await this.s.get('sent:weekly')) === pw) return { skipped: true };
+    const live = (await this.all()).filter(g => g.st === 'live'), rows = [];
+    if (!live.length) return { empty: true };   // אין עדיין קבוצות פעילות – לא שולחים סיכום ריק
+    for (const g of live) { const c = (await this.s.get('c:' + g.id)) || {}; rows.push({ name: g.name, n: c[pw] || 0, ver: g.ver }); }
+    rows.sort((a, b) => b.n - a.n);
+    const total = rows.reduce((a, r) => a + r.n, 0), wants = (await this.wants()).filter(w => !w.alerted).length;
+    const text = '📊 מוצאים קבוצה – השבוע שעבר: ' + total + ' בקשות קישור · ' + live.length + ' קבוצות פעילות · ' +
+      live.filter(g => g.ver).length + ' מאומתות' + (rows.length ? '\nהכי מבוקשות: ' + rows.slice(0, 3).map(r => r.name + ' (' + r.n + ')').join(', ') : '') +
+      (wants ? '\nביקושים פתוחים בלי קבוצה: ' + wants : '');
+    await this.s.put('sent:weekly', pw);
+    this.ctx.waitUntil(this.alert(text));
+    return { total, groups: live.length };
   }
 }
 
@@ -213,7 +310,11 @@ function newId(n) {
   const ABC = '23456789abcdefghijkmnpqrstuvwxyz';
   return [...crypto.getRandomValues(new Uint8Array(n))].map(x => ABC[x % ABC.length]).join('');
 }
-function day() { return new Date().toISOString().slice(0, 10); }
+function day(t) { return (t ? new Date(t) : new Date()).toISOString().slice(0, 10); }
+export function week(t) {          // השבוע מתחיל ביום ראשון; המפתח = תאריך יום ראשון
+  const d = t ? new Date(t) : new Date();
+  return day(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - d.getUTCDay()));
+}
 function corsHeaders(origin, env) {
   const extra = (env.EXTRA_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
   const ok = ORIGINS.includes(origin) || extra.includes(origin) || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
