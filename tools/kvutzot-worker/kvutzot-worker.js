@@ -78,6 +78,7 @@ export class Groups {
     const url = new URL(req.url), p = url.pathname, iph = req.headers.get('X-Iph') || 'x';
     const b = req.method === 'POST' ? await readJson(req) : null;
     if (req.method === 'POST' && !b) return json({ error: 'בקשה לא תקינה' }, 400);
+    if (p !== '/cron' && (await this.s.get('cron:day')) !== day()) { await this.s.put('cron:day', day()); this.ctx.waitUntil(this.cron()); }   // בלי תזמון: הניקוי היומי רץ בביקור הראשון של היום (בחשבון החינמי נגמרו התזמונים)
     if (p === '/groups' && req.method === 'GET') return this.publicList();
     if (p === '/link' && b) return this.link(b, iph);
     if (p === '/add' && b) return this.add(b, iph);
@@ -278,7 +279,7 @@ export class Groups {
     const today = day(), old = await this.s.list({ prefix: 'rl:', limit: 1000 });
     const del = [...old.keys()].filter(k => !k.startsWith('rl:' + today + ':'));
     for (let i = 0; i < del.length; i += 120) await this.s.delete(del.slice(i, i + 120));
-    const weekly = new Date().getUTCDay() === 0 ? await this.weekly() : null;   // ביום ראשון: סיכום השבוע לגילעד
+    const weekly = await this.weekly();   // סיכום השבוע שעבר, פעם אחת בשבוע (שמור ב-sent:weekly)
     return { cleaned: del.length, weekly };
   }
 
@@ -286,6 +287,7 @@ export class Groups {
     const pw = week(Date.now() - 7 * 864e5);
     if ((await this.s.get('sent:weekly')) === pw) return { skipped: true };
     const live = (await this.all()).filter(g => g.st === 'live'), rows = [];
+    if (!live.length) return { empty: true };   // אין עדיין קבוצות פעילות – לא שולחים סיכום ריק
     for (const g of live) { const c = (await this.s.get('c:' + g.id)) || {}; rows.push({ name: g.name, n: c[pw] || 0, ver: g.ver }); }
     rows.sort((a, b) => b.n - a.n);
     const total = rows.reduce((a, r) => a + r.n, 0), wants = (await this.wants()).filter(w => !w.alerted).length;

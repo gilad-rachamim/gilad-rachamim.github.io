@@ -32,6 +32,7 @@ ok((await call('/add', Object.assign({}, G, { hp: 'x' }))).id === '0', 'honeypot
 const a = await call('/add', Object.assign({}, G, { desc: G.desc + ' טלפון 050-1234567 https://x.com' }));
 ok(a._s === 200 && a.id && a.key, 'group added', a);
 ok(alerts.length === 1 && alerts[0].includes('ממתינה'), 'alert on new group');
+ok((await ctx.storage.get('cron:day')) === new Date().toISOString().slice(0, 10), 'daily cleanup runs on first visit (no cron trigger)');
 ok((await call('/add', G))._s === 409, 'duplicate link rejected');
 ok((await call('/groups')).items.length === 0, 'pending not public');
 ok((await call('/link', { id: a.id }))._s === 404, 'no link while pending');
