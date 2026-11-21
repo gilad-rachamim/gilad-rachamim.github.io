@@ -472,6 +472,7 @@ async function fileOk(env, g, id) {
 
 /* ---------- הגבאי: בינה מלאכותית, טקסט בלבד ---------- */
 const GABAI = `אתה "הגבאי" – דמות מייעצת חמה, שנונה וצנועה של פורטל שכבה. שכבת י"ב בישיבה תיכונית מכינה את ערב ההכתרה בפורים (סרטונים, ממים, מערכונים, טריילר, שירים).
+כתיבה: עברית בלבד (בלי מילים בערבית או באנגלית), טקסט רגיל בלי סימני markdown כמו כוכביות או #.
 כללי כבוד שאסור לשבור:
 1. צוחקים על תופעות ולא על אנשים: על הלו"ז, המבחנים, האוכל בחדר האוכל, הקימה לשחרית, הטיולים, המחשבים – לא על אדם מסוים.
 2. אף פעם לא על מראה, משקל, גובה, משפחה, הורים, מוגבלות, מחלה, כסף, מוצא, עדה, מבטא, או על אמונה ומצוות.
@@ -649,7 +650,18 @@ function cfText(r) {
 export function parseJson(t) {
   const s = String(t || ''); const a = s.indexOf('{'), z = s.lastIndexOf('}');
   if (a < 0 || z <= a) return null;
-  try { return JSON.parse(s.slice(a, z + 1)); } catch (e) { return null; }
+  try { return tidyDeep(JSON.parse(s.slice(a, z + 1))); } catch (e) { return null; }
+}
+// ניקוי פלט הבינה: בלי סימני markdown, ובלי מילים בערבית שנפלטות לפעמים באמצע עברית
+export function tidy(x) {
+  return String(x).replace(/\*\*([^*]+)\*\*/g, '$1').replace(/^[ 	]*[*\-][ 	]+/gm, '• ').replace(/(^|\s)#{1,4}\s+/g, '$1')
+    .replace(/كل/g, 'כל').replace(/[؀-ۿ]+/g, '').replace(/[ 	]{2,}/g, ' ');
+}
+function tidyDeep(d) {
+  if (typeof d === 'string') return tidy(d);
+  if (Array.isArray(d)) return d.map(tidyDeep);
+  if (d && typeof d === 'object') { for (const k in d) d[k] = tidyDeep(d[k]); }
+  return d;
 }
 
 /* ---------- שכבת ההדגמה: בלי תמונות אמיתיות, נבנית מחדש כל לילה ---------- */
