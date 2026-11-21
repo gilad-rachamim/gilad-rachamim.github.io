@@ -19,9 +19,9 @@ binding = "DB"
 database_name = "shichva"
 database_id = "36ea7b74-fdf6-4984-856b-690065c6ef13"
 
-# [[r2_buckets]]
-# binding = "FILES"
-# bucket_name = "shichva-files"
+[[r2_buckets]]
+binding = "FILES"
+bucket_name = "shichva-files"
 
 # כל לילה (04:00 שעון ישראל): שכבת ההדגמה נבנית מחדש
 [triggers]
