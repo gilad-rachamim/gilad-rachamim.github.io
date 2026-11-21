@@ -373,7 +373,58 @@
     return L.join('\n');
   }
 
+  /* ---------- סיכום שלוש העונות העיקריות (לפי סדר העדיפות) ----------
+     מהראייה האחרונה: עונה בינונית (יום ל', אותה עונה) → וסת החודש (אותו תאריך עברי בחודש הבא, אותה עונה)
+     → וסת ההפלגה (המרווח בין שתי הראיות האחרונות, אותה עונה). לא מחליף את compute – רק תצוגה מהירה.
+     month: אורך החודש של יום הראייה – חסר (29) ← הבינונית והחודש באותו יום; מלא (30) ← החודש ביום ל"א.
+     notes: הכרתי ופלתי (העונה השנייה של יום ל') ואור זרוע (העונה שלפני הבינונית) – להערה בלבד. */
+  function summary(sightings, preset) {
+    preset = preset || PRESETS.sephardi_ovadia;
+    var s = (sightings || []).filter(function (q) { return !q.missed; })
+      .slice().sort(function (a, b) { return idxOf(a.abs, a.onah) - idxOf(b.abs, b.onah); });
+    if (!s.length) return null;
+    var last = s[s.length - 1], hd = new H.HDate(last.abs);
+    var monthLen = hd.daysInMonth();
+    var b = last.abs + 29, ch = nextMonthSameDay(last.abs, preset);
+    var out = {
+      last: describe(last.abs, last.onah),
+      month: { len: monthLen, full: monthLen === 30 },
+      beinonit: describe(b, last.onah),
+      chodesh: { list: ch.list.map(function (a) { return describe(a, last.onah); }), edge: ch.edge },
+      sameDay: ch.list.length === 1 && ch.list[0] === b,
+      gapToChodesh: ch.list.length === 1 ? ch.list[0] - last.abs + 1 : null,
+      haflaga: null,
+      notes: {
+        hakarti: describe(b, last.onah === 'day' ? 'night' : 'day'),
+        orZarua: (function () { var p = fromIdx(idxOf(b, last.onah) - 1); return describe(p.abs, p.onah); }())
+      }
+    };
+    if (s.length >= 2) {
+      var prev = s[s.length - 2], len = haflagaLen(prev, last, preset), t = haflagaTarget(last, len, preset);
+      out.haflaga = describe(t.abs, t.onah);
+      out.haflaga.len = len; out.haflaga.from = describe(prev.abs, prev.onah);
+    }
+    return out;
+  }
+
+  /* ---------- יום בלוח: שבת ומועדים (ארץ ישראל) ---------- */
+  function dayInfo(abs) {
+    var hd = new H.HDate(abs), names = [], chag = false, kinds = [];
+    (H.HebrewCalendar.getHolidaysOnDate(hd, true) || []).forEach(function (ev) {
+      var f = ev.getFlags();
+      if (f & H.flags.SHABBAT_MEVARCHIM || f & H.flags.DAF_YOMI || f & H.flags.PARSHA_HASHAVUA) return;
+      if (f & H.flags.CHAG) { chag = true; kinds.push('chag'); }
+      else if (f & H.flags.ROSH_CHODESH) kinds.push('rc');
+      else if (f & (H.flags.MAJOR_FAST | H.flags.MINOR_FAST)) kinds.push('fast');
+      else kinds.push('moed');
+      var n = ev.render('he-x-NoNikud');
+      if (names.indexOf(n) < 0) names.push(n);
+    });
+    return { shabbat: hd.getDay() === 6, chag: chag, names: names, kinds: kinds, day: hd.getDate() };
+  }
+
   return {
+    summary: summary, dayInfo: dayInfo,
     PRESETS: PRESETS, customPreset: customPreset,
     idxOf: idxOf, fromIdx: fromIdx, ymd: ymd, absFromYmd: absFromYmd, onahFromClock: onahFromClock, describe: describe, DOW: DOW,
     nextMonthSameDay: nextMonthSameDay, haflagaLen: haflagaLen, haflagaTarget: haflagaTarget, detectFixed: detectFixed,
