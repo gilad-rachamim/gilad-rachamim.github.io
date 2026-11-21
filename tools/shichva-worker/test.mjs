@@ -97,6 +97,55 @@ const dr = await call('/join', null, { code: 'הדגמה', name: 'מבקר', rol
 const drs = await call('/state', dr.token);
 ok(drs.products.length === 5 && drs.committees.length === 3 && !drs.grade.admin_code, 'הדגמה כרכז: 5 מוצרים, 3 ועדות, בלי קודים אמיתיים');
 
+// ---- קיוסק ----
+{
+  const K = (path, tok, body) => call(path, tok, body, body === undefined ? 'GET' : 'POST');
+  ok((await K('/kiosk/state', mel.token)).s === 403, 'קיוסק: המלווה חסום');
+  const it = await K('/kiosk/item', R, { name: 'במבה', price: 300, min_stock: 3 });
+  ok(it.id, 'קיוסק: מוצר חדש');
+  ok((await K('/kiosk/item', a.token, { name: 'x', price: 1 })).s === 403, 'קיוסק: תלמיד רגיל לא מוסיף מוצר');
+  ok((await K('/kiosk/sale', a.token, { item_id: it.id, qty: 1 })).s === 409, 'קיוסק: אי אפשר למכור בלי מלאי');
+  const ex = await K('/kiosk/expense', R, { amount: 6000, item_id: it.id, qty: 20, method: 'cash' });
+  ok(ex.id, 'קיוסק: קנייה נרשמה');
+  ok((await K('/kiosk/expense', a.token, { amount: 100 })).s === 403, 'קיוסק: תלמיד רגיל לא רושם הוצאה');
+  ok((await K('/kiosk/expense', R, { amount: -5 })).s === 400, 'קיוסק: סכום שלילי נדחה');
+  const sale = await K('/kiosk/sale', a.token, { item_id: it.id, qty: 4, method: 'cash' });
+  ok(sale.amount === 1200, 'קיוסק: מכירה 4×3 ש"ח = 1200 אגורות');
+  let ks = await K('/kiosk/state', R);
+  ok(ks.items[0].stock === 16 && ks.items[0].cost === 300, 'קיוסק: מלאי 16 ועלות 3 ש"ח ליחידה');
+  ok(ks.cash === 1200 - 6000 && ks.total.profit === -4800, 'קיוסק: קופה ורווח נכונים');
+  await K('/kiosk/sale', a.token, { item_id: it.id, qty: 13 });
+  ks = await K('/kiosk/state', R);
+  ok(ks.low.length === 1, 'קיוסק: התראת "נגמר" כשהמלאי מתחת לרף');
+  ok((await K('/kiosk/shop', a.token, { action: 'low' })).added === 1, 'קיוסק: הרשימה התמלאה ממה שנגמר');
+  ok((await K('/kiosk/void', R, { id: sale.id })).s === 400, 'קיוסק: ביטול דורש סיבה');
+  ok((await K('/kiosk/void', R, { id: sale.id, reason: 'נרשם בטעות' })).ok, 'קיוסק: ביטול עם סיבה');
+  ok((await K('/kiosk/void', R, { id: sale.id, reason: 'שוב' })).s === 409, 'קיוסק: אי אפשר לבטל פעמיים');
+  ks = await K('/kiosk/state', R);
+  ok(ks.items[0].stock === 7 && ks.tx.some(t => t.voided && t.void_reason), 'קיוסק: ביטול החזיר מלאי והשאיר עקבות');
+  const cnt = await K('/kiosk/count', R, { counted: 100 });
+  ok(cnt.diff === 100 - cnt.expected, 'קיוסק: ספירת קופה מחשבת פער');
+  ok((await K('/kiosk/receipt/save', R, { tx: ex.id, mime: 'image/jpeg', data: 'A'.repeat(400) })).ok, 'קיוסק: קבלה נשמרה');
+  const rr = await fetch(BASE + '/kiosk/receipt?tx=' + ex.id, { headers: { ...O, authorization: 'Bearer ' + R } });
+  ok(rr.status === 200 && rr.headers.get('content-type') === 'image/jpeg', 'קיוסק: קבלה מוגשת לגזבר/רכז');
+  const rr2 = await fetch(BASE + '/kiosk/receipt?tx=' + ex.id, { headers: { ...O, authorization: 'Bearer ' + a.token } });
+  ok(rr2.status === 403, 'קיוסק: תלמיד רגיל לא רואה קבלות');
+  const co = await K('/kiosk/coll', R, { title: 'דמי ערב', per_head: 5000, link: 'https://example.com/pay' });
+  ok(co.id, 'גבייה: נפתחה');
+  ok((await K('/kiosk/coll', R, { title: 'x', per_head: 1, link: 'javascript:alert(1)' })).s === 400, 'גבייה: רק קישור https');
+  st = await call('/state', R);
+  await K('/kiosk/paid', R, { coll_id: co.id, member_id: st.members[1].id, paid: true });
+  ks = await K('/kiosk/state', R);
+  ok(ks.coll[0].paid.length === 1, 'גבייה: סימון "שילם"');
+  const sp = await K('/kiosk/sponsor', a.token, { business: 'פיצה הכיכר', package: 'לוגו בחוברת' });
+  ok(sp.id, 'ספונסר נוסף');
+  await K('/kiosk/sponsor', a.token, { id: sp.id, business: 'פיצה הכיכר', status: 'sent' });
+  ks = await K('/kiosk/state', R);
+  ok(ks.sponsors[0].status === 'sent', 'ספונסר: עדכון סטטוס');
+  const sh = await K('/kiosk/shift', a.token, { action: 'take', day: '2027-01-10', slot: ks.slots[0] });
+  ok(sh.ok, 'משמרת נתפסה');
+}
+
 if (WITH_AI) {
   const L = await call('/ai', a.token, { task: 'light', text: 'כשהמבחן במתמטיקה נדחה בפעם השלישית' });
   ok(['green', 'yellow', 'red'].includes(L.light), 'גבאי – רמזור: ' + L.light + ' ' + L.why);
@@ -106,6 +155,10 @@ if (WITH_AI) {
   ok(P.lines && P.lines.length >= 2, 'גבאי – פרודיה: ' + JSON.stringify(P.lines && P.lines[0]));
   const E = await call('/ai', a.token, { task: 'edit', template: 'טריילר', words: 'טריילר מצחיק לערב ההכתרה', seconds: 30, photos: [{ note: 'כיתה ט' }, { note: 'טיול' }, { note: 'שבת' }] });
   ok(E.scenes && E.scenes.length >= 2, 'גבאי – תסריט עריכה: ' + (E.scenes && E.scenes.length) + ' סצנות');
+  const AD = await call('/ai', a.token, { task: 'ad', about: 'הקיוסק של י"ב, במבה ושתייה קרה', offer: '1+1 בהפסקה השנייה', tone: 'funny' });
+  ok(AD.headline && AD.weekly, 'גבאי – מודעה: ' + AD.headline);
+  const SL = await call('/ai', a.token, { task: 'sponsor_letter', business: 'פיצה הכיכר', package: 'לוגו בחוברת ותודה בערב', sender: 'דני' });
+  ok(SL.letter && SL.subject, 'גבאי – מכתב ספונסר: ' + SL.subject);
 }
 console.log(fails ? `\n${fails} FAIL` : '\nALL OK');
 process.exit(fails ? 1 : 0);

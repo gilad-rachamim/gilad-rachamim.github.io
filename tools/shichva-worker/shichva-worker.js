@@ -7,6 +7,8 @@
 // לכל טקסט רמזור כבוד (ירוק/צהוב/אדום + סיבה). לא נקרא על שם אף רב ולא מחקה איש צוות.
 // בינה: Gemini כשיש סוד GEMINI_KEYS (מפתח נפרד לשרת הזה), אחרת Workers AI (חינם, בלי מפתח).
 
+import { handle as kioskHandle, demoRows as kioskDemo } from './kiosk.js';
+
 const ORIGINS = ['https://hakelim.com', 'https://www.hakelim.com', 'https://gilad-rachamim.github.io'];
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 const CF_MODEL = '@cf/openai/gpt-oss-120b';
@@ -61,6 +63,7 @@ async function route(req, env, origin) {
   if (!g) bad('no grade', 401);
   if (p === '/state' && m === 'GET') return state(env, me, g);
   if (p === '/album/file' && m === 'GET') return albumFile(url, env, me, g);
+  if (p.startsWith('/kiosk/')) return kioskHandle(p, m, req, env, me, g, { bad, json, clean, rid, today, date });
   if (m !== 'POST') bad('not found', 404);
   if (p === '/album/upload') return albumUpload(req, env, me, g);
   const b = await body(req);
@@ -488,6 +491,26 @@ const TASKS = {
     shape: { new: 'שורה חדשה', syl: 0, light: 'green|yellow|red', why: 'סיבה' },
     out: d => ({ new: clean(d.new, 160) || bad('ai_empty', 502), syl: +d.syl || 0, ...normLight(d) })
   },
+  ad: {
+    in: b => `כתוב מודעה לשיווק בבית הספר (טקסט בלבד, בלי שמות של אנשים אמיתיים).
+על מה: ${clean(b.about, 200)}
+הצעה או מבצע: ${clean(b.offer, 200) || 'ללא'}
+זמן ומקום: ${clean(b.when, 120) || 'לא צוין'}
+סגנון: ${['funny', 'warm', 'short'].includes(b.tone) ? { funny: 'מצחיק וקליל', warm: 'חם ומזמין', short: 'קצר וקולע' }[b.tone] : 'מצחיק וקליל'}
+החזר: כותרת קצרה (עד 6 מילים), עד 3 שורות גוף קצרות, קריאה לפעולה, והודעת ווטסאפ שבועית מוכנה לשליחה לקבוצת בית הספר (עד 60 מילים, עם אימוג'י מעטים, בלי קישורים).`,
+    shape: { headline: 'כותרת', lines: ['שורה'], cta: 'קריאה לפעולה', weekly: 'הודעת ווטסאפ', light: 'green|yellow|red', why: 'סיבה' },
+    out: d => ({ headline: clean(d.headline, 60) || bad('ai_empty', 502), lines: (Array.isArray(d.lines) ? d.lines : []).slice(0, 4).map(x => clean(x, 90)).filter(Boolean), cta: clean(d.cta, 60), weekly: clean(d.weekly, 600, true), ...normLight(d) })
+  },
+  sponsor_letter: {
+    in: b => `כתוב מכתב קצר ומכבד מתלמידי שכבת י"ב לבעל עסק בקהילה, בבקשה לתרום או לתת חסות לערב ההכתרה של השכבה.
+שם העסק: ${clean(b.business, 60)}
+מה השכבה מציעה בתמורה: ${clean(b.package, 120) || 'תודה בערב ולוגו בחוברת'}
+תאריך הערב: ${clean(b.when, 60) || 'פורים'}
+שם התלמיד השולח (שם פרטי בלבד): ${clean(b.sender, 30)}
+כללים: בלי לחץ ובלי להתחנן, מנומס, עד 90 מילים, בלי שם הישיבה ובלי פרטים אישיים על התלמידים, בלי הבטחות כספיות. סיים בהודיה. החזר גם נושא קצר למייל ושורת תודה שתופיע בחוברת ובמסך.`,
+    shape: { subject: 'נושא', letter: 'המכתב', thanks: 'שורת תודה', light: 'green|yellow|red', why: 'סיבה' },
+    out: d => ({ subject: clean(d.subject, 80), letter: clean(d.letter, 1500, true) || bad('ai_empty', 502), thanks: clean(d.thanks, 140), ...normLight(d) })
+  },
   edit: {
     in: b => {
       const ph = (Array.isArray(b.photos) ? b.photos : []).slice(0, 80).map((p, i) => `${i}: ${clean(p && p.note, 60) || 'תמונה'}`).join('\n');
@@ -590,10 +613,11 @@ export function parseJson(t) {
 
 /* ---------- שכבת ההדגמה: בלי תמונות אמיתיות, נבנית מחדש כל לילה ---------- */
 export async function seedDemo(env) {
-  const old = ['products', 'tasks', 'committees', 'members', 'photos'];
+  const old = ['products', 'tasks', 'committees', 'members', 'photos', 'k_items', 'k_tx', 'k_receipt', 'k_shop', 'k_shift', 'k_count', 'k_coll', 'k_sponsor'];
   const st = [
     env.DB.prepare('DELETE FROM votes WHERE product_id IN (SELECT id FROM products WHERE grade_id=?)').bind(DEMO_ID),
     env.DB.prepare('DELETE FROM history WHERE product_id IN (SELECT id FROM products WHERE grade_id=?)').bind(DEMO_ID),
+    env.DB.prepare('DELETE FROM k_paid WHERE coll_id IN (SELECT id FROM k_coll WHERE grade_id=?)').bind(DEMO_ID),
     env.DB.prepare('DELETE FROM cmembers WHERE committee_id IN (SELECT id FROM committees WHERE grade_id=?)').bind(DEMO_ID),
     ...old.map(t => env.DB.prepare(`DELETE FROM ${t} WHERE grade_id=?`).bind(DEMO_ID)),
     env.DB.prepare('DELETE FROM grades WHERE id=?').bind(DEMO_ID)
@@ -623,6 +647,7 @@ export async function seedDemo(env) {
     (H[stt] || []).forEach(([act, note], j) => st.push(env.DB.prepare('INSERT INTO history (product_id,member_id,who,action,note,ts) VALUES (?,?,?,?,?,?)').bind(id, 'd-rakaz', 'דוגמה', act, note, now - 8e5 + j * 1000)));
   });
   st.push(...seedTasks(env, DEMO_ID, hachtara, now));
+  st.push(...kioskDemo(env.DB, DEMO_ID, now));
   await env.DB.batch(st);
   // כמה משימות כבר בוצעו, שיהיה אחוז התקדמות
   await env.DB.prepare("UPDATE tasks SET done=1, owner='אריאל (דוגמה)' WHERE grade_id=? AND title IN ('שם מחזור וסלוגן','חלוקה לוועדות')").bind(DEMO_ID).run();
