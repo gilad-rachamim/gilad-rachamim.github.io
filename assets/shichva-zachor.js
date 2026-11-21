@@ -148,9 +148,10 @@
   };
 
   /* ================= דף גמרא ================= */
-  // מדגישים את תחילת כל פסקה (דיבור המתחיל) בשתי מילים ראשונות
+  // צורת הדף של דפוס וילנא: גמרא באמצע, רש"י בצד הפנימי ותוספות בחיצוני,
+  // הפרשנים מתחילים מעל הגמרא ועוטפים אותה, ומי שנגמר ראשון – הגמרא מתרחבת לתוך מקומו.
   function boldDh(paras) {
-    return paras.map(function (p) { var w = p.split(' '); return '<p><b>' + esc(w.slice(0, 2).join(' ')) + '</b> ' + esc(w.slice(2).join(' ')) + '</p>'; }).join('');
+    return paras.map(function (p) { var w = p.split(' '); return '<span class="gm-p"><b>' + esc(w.slice(0, 2).join(' ')) + '</b> ' + esc(w.slice(2).join(' ')) + '</span> '; }).join('');
   }
   // פיצול לעמוד א' ולעמוד ב': שורת "---" מסמנת מעבר עמוד, ובלעדיה חצי-חצי
   function splitAmud(arr, isSep) {
@@ -159,36 +160,86 @@
     if (i >= 0) return [clean(arr.slice(0, i)), clean(arr.slice(i + 1))];
     var all = clean(arr), h = Math.ceil(all.length / 2); return [all.slice(0, h), all.slice(h)];
   }
-  function cmt(a) { return a.filter(function (x) { return x.text; }).map(function (x) { return '<p><b>' + esc(x.dh) + '</b> ' + esc(x.text) + '</p>'; }).join(''); }
-  // רש"י תמיד בצד הפנימי (כלפי הכריכה), תוספות בחיצוני. עמוד א' מימין: פנימי = שמאל. עמוד ב' משמאל: פנימי = ימין.
+  // רש"י: דיבור המתחיל מודגש ואחריו נקודה, וכל הערה נגמרת בנקודתיים – ברצף אחד כמו בדף
+  function cmt(a, tos) {
+    return a.filter(function (x) { return x.text; }).map(function (x, i) {
+      var dh = esc(x.dh || ''), w = dh.split(' ');
+      if (i === 0 && dh) dh = '<span class="gm-big">' + w[0] + '</span>' + (w.length > 1 ? ' ' + w.slice(1).join(' ') : '');
+      return '<span class="gm-e"><b>' + dh + '.</b> ' + esc(x.text).replace(/[.:\s]+$/, '') + (tos ? '. ' : ': ') + '</span>';
+    }).join('');
+  }
+  var ORD = ['', 'ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שביעי', 'שמיני', 'תשיעי', 'עשירי'];
+  function headParts(d) {
+    var per = String(d.perek || 'פרק ראשון – הכתרה').split(/\s+[–-]\s+/), mas = String(d.masechet || 'מסכת הכתרה').replace(/^מסכת\s+/, '');
+    var pk = per[0], nm = per[1] || '';
+    if (!/^פרק/.test(pk)) { nm = pk; pk = 'פרק ' + ORD[1]; }
+    return { nm: nm, pk: pk, mas: mas, daf: String(d.daf || 'ב').replace(/[.:\s]/g, '') || 'ב' };
+  }
   function amudHtml(side, d, gem, rashi, tos, first) {
-    var R = '<aside class="gm-rashi">' + cmt(rashi) + '</aside>', T = '<aside class="gm-tos">' + cmt(tos) + '</aside>';
-    var M = '<section class="gm-main">' + (first && d.mishna ? '<div class="gm-frame">' + esc(lines(d.mishna)[0].split(' ')[0]) + '</div>' + boldDh(lines(d.mishna)) : '') + (gem.length ? boldDh(gem) : '') + '</section>';
-    var rr = '<div class="gm-rr"></div>', tt = '<div class="gm-tt"></div>';
-    var ord = side === 'a' ? T + M + R : R + M + T, rest = side === 'a' ? tt + rr : rr + tt;
-    return '<div class="gm-amud gm-' + side + '"><div class="gm-badge">פורים תורה</div>' +
-      '<header class="gm-head"><span>' + esc(d.masechet || 'מסכת הכתרה') + '</span><span>' + esc(d.perek || 'פרק י"ב') + '</span><span>דף ' + esc(String(d.daf || 'ב').replace(/[.:\s]/g, '')) + (side === 'a' ? '.' : ':') + '</span></header>' +
-      '<div class="gm-top">' + ord + '</div><div class="gm-rest">' + rest + '</div>' +
-      (side === 'b' && d.margin ? '<footer class="gm-margin">' + nl(d.margin) + '</footer>' : '') + '</div>';
+    var h = headParts(d), mis = first && d.mishna ? lines(d.mishna) : [];
+    var gemHtml = '';
+    if (mis.length) {
+      var w = mis[0].split(' ');
+      gemHtml += '<div class="gm-frame"><span>' + esc(w[0]) + '</span></div><span class="gm-p">' + esc(w.slice(1).join(' ')) + '</span> ' + (mis.length > 1 ? boldDh(mis.slice(1)) : '');
+    }
+    if (gem.length) gemHtml += (mis.length ? '<b class="gm-mark">גמ׳</b> ' : '') + boldDh(gem);
+    var half = function (cls, inner) { return '<div class="gm-half ' + cls + '"><i class="gm-strut"></i><i class="gm-hole"></i>' + inner + '</div>'; };
+    var R = half('gm-rashi', cmt(rashi, false)), T = half('gm-tos', cmt(tos, true));
+    // בעמוד א' הכריכה מימין: רש"י מימין ותוספות משמאל. בעמוד ב' להפך.
+    var halves = side === 'a' ? R + T : T + R;
+    var items = String(d.margin || '').split(/[;\n]+/).map(function (x) { return x.trim(); }).filter(Boolean);
+    var heb = 'אבגדהוזחטיכלמנ';
+    var mesoret = '<aside class="gm-mar gm-inner">' + items.map(function (x, i) { return '<p><b>' + heb.charAt(i % heb.length) + '</b> ' + esc(x) + '</p>'; }).join('') + '</aside>';
+    var ein = '<aside class="gm-mar gm-outer">' + (d.topic ? '<p><b>א</b> ' + esc(d.topic) + '</p>' : '') + '<p class="gm-purim">פורים תורה</p></aside>';
+    var tIn = '<span class="gm-mt">מסורת<br>הש״ס</span>', tOut = '<span class="gm-mt">עין משפט<br>נר מצוה</span>';
+    var run = '<span class="gm-run">' + (h.nm ? '<span>' + esc(h.nm) + '</span>' : '') + '<span>' + esc(h.pk) + '</span><span>' + esc(h.mas) + '</span></span>';
+    var num = '<span class="gm-num">' + esc(h.daf) + (side === 'a' ? '.' : ':') + '</span>';
+    var head = side === 'a' ? tIn + '<span class="gm-hc">' + run + num + '</span>' + tOut : tOut + '<span class="gm-hc">' + num + run + '</span>' + tIn;
+    var body = side === 'a' ? mesoret + '<div class="gm-core">' + halves + '<div class="gm-gem"><i class="gm-wr"></i><i class="gm-wl"></i>' + gemHtml + '</div></div>' + ein
+      : ein + '<div class="gm-core">' + halves + '<div class="gm-gem"><i class="gm-wr"></i><i class="gm-wl"></i>' + gemHtml + '</div></div>' + mesoret;
+    return '<div class="gm-amud gm-' + side + '"><header class="gm-head">' + head + '</header><div class="gm-body">' + body + '</div>' +
+      '<footer class="gm-foot"><b>גליון הש״ס</b> דף היתולי לפורים תורה – כל מה שכתוב כאן בצחוק. לא מקור ולא הלכה.</footer></div>';
   }
   function gemaraHtml(d) {
     var g = splitAmud(lines(d.gemara), function (x) { return x === '---'; });
     var r = splitAmud(d.rashi || [], function (x) { return x.sep; }), t = splitAmud(d.tosafot || [], function (x) { return x.sep; });
     var two = g[1].length || r[1].length || t[1].length;
-    return '<div class="gm-spread">' + amudHtml('a', d, g[0], r[0], t[0], true) + (two ? amudHtml('b', d, g[1], r[1], t[1], false) : '') + '</div>' +
-      '<p class="gm-note">דף היתולי לפורים תורה – כל מה שכתוב כאן בצחוק. לא מקור ולא הלכה.</p>';
+    return '<div class="gm-spread">' + amudHtml('a', d, g[0], r[0], t[0], true) + (two ? amudHtml('b', d, g[1], r[1], t[1], false) : '') + '</div>';
   }
-  // הערות שגולשות מעבר לגובה הגמרא ממשיכות מתחתיה, בשני טורים מלאים (כמו בדף הרגיל)
-  function layoutDaf(root) {
+  // חישוב הצורה: כמה שורות פרשנים מעל הגמרא, כמה הגמרא יורדת, ואיפה היא מתרחבת
+  function layoutDaf(root, noFit) {
     root.querySelectorAll('.gm-amud').forEach(function (pg) {
-      var main = pg.querySelector('.gm-main'), lim = main.offsetHeight;
-      [['.gm-rashi', '.gm-rr'], ['.gm-tos', '.gm-tt']].forEach(function (x) {
-        var side = pg.querySelector(x[0]), dest = pg.querySelector(x[1]);
-        if (!side || !dest || side.offsetTop !== main.offsetTop || !lim) return;
-        var ps = Array.prototype.slice.call(side.querySelectorAll('p')), base = side.getBoundingClientRect().top;
-        for (var i = ps.length - 1; i >= 0; i--) { var r = ps[i].getBoundingClientRect(); if (r.bottom - base > lim + 2) dest.insertBefore(ps[i], dest.firstChild); else break; }
+      pg.style.zoom = '';
+      var core = pg.querySelector('.gm-core'), gem = pg.querySelector('.gm-gem'), W = core.clientWidth;
+      var G = Math.round(W * 0.47), gap = 9, S = (W - G) / 2;
+      var halves = [].slice.call(core.querySelectorAll('.gm-half')); // [ימין, שמאל]
+      var lh = parseFloat(getComputedStyle(halves[0]).lineHeight) || 15;
+      var hasGem = !!gem.textContent.trim();
+      var TOP = hasGem ? Math.round(lh * (pg.classList.contains('gm-a') ? 4 : 3)) : 0;
+      var end = function (el) { var l = el.lastElementChild; return l && l.tagName !== 'I' ? l.offsetTop + l.offsetHeight : 0; };
+      var gEnd = function () { var r = 0; [].forEach.call(gem.children, function (c) { if (c.tagName !== 'I') r = Math.max(r, c.offsetTop + c.offsetHeight); }); return r; };
+      halves.forEach(function (hv) {
+        var st = hv.querySelector('.gm-strut'), ho = hv.querySelector('.gm-hole');
+        st.style.height = TOP + 'px'; ho.style.width = hasGem ? (G / 2 + gap) + 'px' : '0px'; ho.style.height = hasGem ? '99999px' : '0px';
       });
-      pg.querySelector('.gm-rest').hidden = !pg.querySelector('.gm-rr p, .gm-tt p');
+      gem.style.top = TOP + 'px';
+      var wr = gem.querySelector('.gm-wr'), wl = gem.querySelector('.gm-wl');
+      wr.style.width = wl.style.width = (S + gap) + 'px';
+      wr.style.height = wl.style.height = '99999px';
+      // גובה כל פרשן כשהוא צר לאורך כל הגמרא
+      var cR = end(halves[0]), cL = end(halves[1]);
+      var Hg = gEnd();
+      // פרשן שנגמר לפני הגמרא – הגמרא מתרחבת לתוך הצד שלו
+      if (hasGem && cR < TOP + Hg) wr.style.height = Math.max(0, cR - TOP + (cR ? gap : 0)) + 'px';
+      if (hasGem && cL < TOP + Hg) wl.style.height = Math.max(0, cL - TOP + (cL ? gap : 0)) + 'px';
+      Hg = gEnd();
+      if (parseFloat(wr.style.height) > Hg) wr.style.height = Hg + 'px';
+      if (parseFloat(wl.style.height) > Hg) wl.style.height = Hg + 'px';
+      // פרשן שארוך מהגמרא ממשיך מתחתיה ברוחב מלא של החצי שלו
+      halves.forEach(function (hv) { hv.querySelector('.gm-hole').style.height = hasGem ? (Hg + gap) + 'px' : '0px'; });
+      gem.style.height = Hg + 'px';
+      core.style.height = Math.ceil(Math.max(TOP + Hg, end(halves[0]), end(halves[1]))) + 4 + 'px';
+      if (!noFit) { var box = root.closest('main') || document.body, avail = box.clientWidth - 8; if (avail && avail < pg.offsetWidth) pg.style.zoom = (avail / pg.offsetWidth).toFixed(3); }
     });
   }
   SH.creators.gemara = function (root, existing) {
@@ -243,7 +294,7 @@
       $('#gmRashi', root).value = toLines(SAMPLE.rashi); $('#gmTos', root).value = toLines(SAMPLE.tosafot); $('#gmMar', root).value = SAMPLE.margin;
       paint(); toast('נטען דף לדוגמה מלא. אפשר לתקן הכול'); $('#gmView', root).scrollIntoView({ behavior: 'smooth' });
     };
-    $('#gmPrint', root).onclick = function () { gather(); printNode(gemaraHtml(d), 'sh-print-gemara', layoutDaf); };
+    $('#gmPrint', root).onclick = function () { gather(); printNode(gemaraHtml(d), 'sh-print-gemara', function (n) { layoutDaf(n, true); }); };
     wireSave(root, existing, 'gemara', function () { gather(); return { light: light, body: [d.mishna, d.gemara].filter(Boolean).join('\n'), data: d }; });
     paint();
   };
