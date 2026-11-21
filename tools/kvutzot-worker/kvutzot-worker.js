@@ -11,6 +11,8 @@
 //   POST /remove {id,key}           -> {ok}                    מנהל הקבוצה מוריד אותה
 //   POST /want   {interest,region,age,tag} -> {n}              "אין קבוצה כזאת – אני רוצה"; ב-5 מגיעה התראה לגילעד
 //   POST /report {id,why}           -> {ok}                    דיווח; 2 דיווחים מרשתות שונות מסתירים את הקבוצה עד בדיקה
+//   POST /broken {id}               -> {ok}                    "הקישור לא עובד"; 2 מרשתות שונות מסתירים עד שהמנהל מחליף קישור
+//   POST /relink {id,key,link}      -> {ok, st}                מנהל הקבוצה מחליף קישור (קישור שאופס); קבוצה שהוסתרה בגלל קישור שבור חוזרת
 // ניהול (כותרת X-Admin-Key):
 //   GET  /admin/list                -> הכול, כולל ממתינות, מוסתרות ודיווחים
 //   POST /admin/set {id, st}        st: live | pending | hidden | rejected
@@ -24,11 +26,12 @@ export const META = {
     'גינה וטבע', 'בעלי חיים', 'קהילה ושכונה', 'פנאי והומור', 'לימודים ואקדמיה', 'שפות'],
   regions: ['כל הארץ', 'ירושלים והסביבה', 'גוש דן והמרכז', 'השרון', 'השפלה', 'חיפה והקריות', 'הצפון', 'הדרום והנגב', 'יהודה ושומרון'],
   ages: ['18–30', '30–45', '45–60', '60+'],
+  kinds: ['שקטה – רק הודעות חשובות', 'שיחה רגועה', 'שיחה ערה'],
   tags: ['לוחמים ופצועי צה"ל', 'אנשים עם מוגבלות', 'הורים לילדים עם צרכים מיוחדים', 'בני משפחה מטפלים', 'נשים בלבד', 'גברים בלבד',
     'ציבור דתי', 'ציבור חרדי', 'ציבור כללי', 'עולים חדשים', 'דוברי אנגלית'],
 };
-const LIM = { LINK_IP: 25, ADD_IP: 4, ADD_ALL: 60, WANT_IP: 10, REPORT_IP: 10 };   // ליום
-const WANT_ALERT = 5, REPORTS_HIDE = 2;
+const LIM = { LINK_IP: 25, ADD_IP: 4, ADD_ALL: 60, WANT_IP: 10, REPORT_IP: 10, RELINK_ID: 5 };   // ליום
+const WANT_ALERT = 5, REPORTS_HIDE = 2, BROKEN_HIDE = 2;
 const STATUS = ['pending', 'live', 'hidden', 'rejected'];
 const LINK_RE = /^https:\/\/chat\.whatsapp\.com\/(invite\/)?[A-Za-z0-9]{10,40}$/;
 
@@ -39,7 +42,7 @@ export default {
     let res;
     try {
       const url = new URL(req.url);
-      if (url.pathname === '/' || url.pathname === '/ping') res = json({ ok: true, name: 'kelim-kvutzot', v: 1 });
+      if (url.pathname === '/' || url.pathname === '/ping') res = json({ ok: true, name: 'kelim-kvutzot', v: 2 });
       else if (url.pathname === '/meta') res = json(META, 200, 'public, max-age=3600');
       else {
         const admin = url.pathname.startsWith('/admin/');
@@ -78,6 +81,8 @@ export class Groups {
     if (p === '/remove' && b) return this.remove(b);
     if (p === '/want' && b) return this.want(b, iph);
     if (p === '/report' && b) return this.report(b, iph);
+    if (p === '/broken' && b) return this.broken(b, iph);
+    if (p === '/relink' && b) return this.relink(b);
     if (p === '/admin/list') return json({ items: await this.all(true) });
     if (p === '/admin/set' && b) return this.set(b);
     if (p === '/admin/wants') return json({ items: await this.wants() });
@@ -92,7 +97,8 @@ export class Groups {
 
   async publicList() {
     const items = (await this.all()).filter(g => g.st === 'live')
-      .map(g => ({ id: g.id, name: g.name, desc: g.desc, interests: g.interests, region: g.region, ages: g.ages, tags: g.tags }));
+      .map(g => ({ id: g.id, name: g.name, desc: g.desc, interests: g.interests, region: g.region, ages: g.ages, tags: g.tags,
+        kind: g.kind || '', since: day(g.t) }));
     return json({ items });
   }
 
@@ -120,12 +126,13 @@ export class Groups {
     if (!interests.length) return json({ error: 'בחרו לפחות תחום עניין אחד.' }, 400);
     const region = META.regions.includes(b.region) ? b.region : 'כל הארץ';
     const ages = pick(b.ages, META.ages, 4), tags = pick(b.tags, META.tags, 4);
+    const kind = META.kinds.includes(b.kind) ? b.kind : '';
     const dup = (await this.all()).find(g => g.link === link && g.st !== 'rejected');
     if (dup) return json({ error: 'הקבוצה הזאת כבר רשומה אצלנו.' }, 409);
     if (await this.bump('a:' + iph, LIM.ADD_IP)) return json({ error: 'קיבלנו מכם כבר כמה קבוצות היום. אפשר להמשיך מחר.' }, 429);
     if (await this.bump('a:all', LIM.ADD_ALL)) return json({ error: 'הגיעו היום הרבה קבוצות. נסו שוב מחר.' }, 429);
     const id = newId(8), key = newId(16);
-    const g = { id, t: Date.now(), name, desc, interests, region, ages, tags, link, st: 'pending', rep: 0, repBy: [], key: await sha(key) };
+    const g = { id, t: Date.now(), name, desc, interests, region, ages, tags, link, kind, st: 'pending', rep: 0, repBy: [], brk: 0, brkBy: [], key: await sha(key) };
     await this.s.put('g:' + id, g);
     this.ctx.waitUntil(this.alert('🆕 קבוצה חדשה ממתינה לאישור: ' + name + '\n' + desc + '\nתחומים: ' + interests.join(', ') + ' · ' + region));
     return json({ id, key });
@@ -168,11 +175,41 @@ export class Groups {
     g.repBy.push(iph); g.rep++;
     (g.whys = g.whys || []).push(clean(b.why, 140));
     if (g.rep >= REPORTS_HIDE && g.st === 'live') {
-      g.st = 'hidden';
+      g.st = 'hidden'; g.hid = 'report';
       this.ctx.waitUntil(this.alert('⚠️ קבוצה הוסתרה אחרי ' + g.rep + ' דיווחים: ' + g.name + '\nסיבות: ' + g.whys.filter(Boolean).join(' / ')));
     }
     await this.s.put('g:' + g.id, g);
     return json({ ok: true });
+  }
+
+  async broken(b, iph) {
+    const g = await this.s.get('g:' + clean(b.id, 20));
+    if (!g) return json({ error: 'הקבוצה לא נמצאה.' }, 404);
+    if (await this.bump('r:' + iph, LIM.REPORT_IP)) return json({ ok: true });
+    g.brkBy = g.brkBy || [];
+    if (g.brkBy.includes(iph)) return json({ ok: true });
+    g.brkBy.push(iph); g.brk = (g.brk || 0) + 1;
+    if (g.brk >= BROKEN_HIDE && g.st === 'live') {
+      g.st = 'hidden'; g.hid = 'broken';
+      this.ctx.waitUntil(this.alert('🔗 הקישור של "' + g.name + '" לא עובד (' + g.brk + ' דיווחים). הקבוצה הוסתרה עד שהמנהל יחליף קישור בדף.'));
+    }
+    await this.s.put('g:' + g.id, g);
+    return json({ ok: true });
+  }
+
+  async relink(b) {
+    const g = await this.s.get('g:' + clean(b.id, 20));
+    if (!g || !b.key || g.key !== await sha(String(b.key))) return json({ error: 'הקוד לא מתאים לקבוצה.' }, 403);
+    const link = String(b.link || '').trim();
+    if (!LINK_RE.test(link)) return json({ error: 'הקישור צריך להיות קישור הזמנה של ווטסאפ (https://chat.whatsapp.com/...).' }, 400);
+    if (await this.bump('k:' + g.id, LIM.RELINK_ID)) return json({ error: 'החלפתם היום כמה פעמים. אפשר שוב מחר.' }, 429);
+    const dup = (await this.all()).find(x => x.link === link && x.id !== g.id && x.st !== 'rejected');
+    if (dup) return json({ error: 'הקישור הזה כבר רשום לקבוצה אחרת.' }, 409);
+    g.link = link; g.brk = 0; g.brkBy = [];
+    if (g.st === 'hidden' && g.hid === 'broken') { g.st = 'live'; g.hid = ''; }
+    await this.s.put('g:' + g.id, g);
+    this.ctx.waitUntil(this.alert('🔁 מנהל "' + g.name + '" החליף קישור. מצב: ' + g.st));
+    return json({ ok: true, st: g.st });
   }
 
   async set(b) {
@@ -180,7 +217,7 @@ export class Groups {
     if (!g) return json({ error: 'not found' }, 404);
     if (!STATUS.includes(b.st)) return json({ error: 'bad status' }, 400);
     g.st = b.st;
-    if (b.st === 'live') { g.rep = 0; g.repBy = []; }
+    if (b.st === 'live') { g.rep = 0; g.repBy = []; g.brk = 0; g.brkBy = []; g.hid = ''; }
     await this.s.put('g:' + g.id, g);
     return json({ ok: true, id: g.id, st: g.st });
   }
@@ -213,7 +250,7 @@ function newId(n) {
   const ABC = '23456789abcdefghijkmnpqrstuvwxyz';
   return [...crypto.getRandomValues(new Uint8Array(n))].map(x => ABC[x % ABC.length]).join('');
 }
-function day() { return new Date().toISOString().slice(0, 10); }
+function day(t) { return (t ? new Date(t) : new Date()).toISOString().slice(0, 10); }
 function corsHeaders(origin, env) {
   const extra = (env.EXTRA_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
   const ok = ORIGINS.includes(origin) || extra.includes(origin) || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);

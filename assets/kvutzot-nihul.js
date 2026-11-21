@@ -18,7 +18,7 @@
       var items = x[0].items.sort(function (a, b) { return (a.st === 'pending' ? 0 : a.st === 'hidden' ? 1 : 2) - (b.st === 'pending' ? 0 : b.st === 'hidden' ? 1 : 2) || b.t - a.t; });
       var html = '<h2>קבוצות (' + items.length + ')</h2>' + (items.length ? '' : '<p>אין עדיין קבוצות.</p>');
       html += items.map(function (g) {
-        return '<article class="kv-card"><h3>' + esc(g.name) + ' <small>· ' + ST[g.st] + (g.rep ? ' · ' + g.rep + ' דיווחים' : '') + '</small></h3>' +
+        return '<article class="kv-card"><h3>' + esc(g.name) + ' <small>· ' + ST[g.st] + (g.rep ? ' · ' + g.rep + ' דיווחים' : '') + (g.brk ? ' · ' + g.brk + ' דיווחי קישור שבור' : '') + (g.hid === 'broken' ? ' · ירדה בגלל קישור שבור' : '') + (g.kind ? ' · ' + esc(g.kind) : '') + '</small></h3>' +
           '<p>' + esc(g.desc) + '</p><p class="kv-why">' + esc(g.interests.join(', ')) + ' · ' + esc(g.region) + (g.ages.length ? ' · ' + esc(g.ages.join(', ')) : '') + (g.tags.length ? ' · ' + esc(g.tags.join(', ')) : '') + '</p>' +
           (g.whys && g.whys.length ? '<p class="kv-why">דיווחים: ' + esc(g.whys.filter(Boolean).join(' / ')) + '</p>' : '') +
           '<p><a href="' + esc(g.link) + '" target="_blank" rel="noopener nofollow" dir="ltr">' + esc(g.link) + '</a></p>' +
