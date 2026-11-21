@@ -2,7 +2,7 @@
 // node test.mjs [base]   – בלי בינה (ai=0) כדי לא לבזבז מכסה; node test.mjs base ai  – גם הגבאי.
 const BASE = process.argv[2] || 'http://127.0.0.1:8791';
 const WITH_AI = process.argv[3] === 'ai';
-const O = { origin: 'http://localhost:5000', 'content-type': 'application/json' };
+const O = { origin: process.env.ORIG || 'http://localhost:5000', 'content-type': 'application/json' };
 let fails = 0;
 const ok = (c, m) => { console.log((c ? 'OK   ' : 'FAIL ') + m); if (!c) fails++; };
 async function call(path, tok, body, method) {
