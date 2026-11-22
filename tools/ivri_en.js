@@ -66,6 +66,7 @@ ${LANGNAV('en')}
   <div class="res iv-day no-print" id="li-day" aria-live="polite" hidden></div>
   <div class="share-row no-print">
     <button class="btn btn-gold btn-sm" type="button" data-iv-print="m">Print month</button>
+    <a class="btn btn-line btn-sm" href="/kodesh/luach-ivri/en/holidays/">Jewish holidays ${GY}</a>
     <button class="btn btn-line btn-sm" type="button" data-iv-print="y">Print the whole <bdi data-iv-yr>${GY}</bdi> year</button>
     <a class="btn btn-line btn-sm" href="#" data-share-tool="wa" data-text="Hebrew calendar in English: Jewish holidays, Rosh Chodesh and Torah portions. Free, no ads:" target="_blank" rel="noopener">${WA} Send to a friend</a>
   </div>
@@ -107,7 +108,7 @@ ${LANGNAV('en')}
   <h3>Any year, and a printable Hebrew calendar</h3>
   <p>The calendar works for any year from ${I.GY_MIN} to ${I.GY_MAX}. Type a year, such as ${NEXTG}, and browse the months. To find the Hebrew date of a birthday, wedding or yahrzeit, choose the month and tap the day – or use the <a href="/kodesh/taarich-ivri/en/">Hebrew date converter</a>, which also calculates the Bar Mitzvah date and the yahrzeit for the coming years. Remember: an event after sunset belongs to the next Hebrew date. "Print month" gives a clean page, black on white to save ink, and "Print the whole year" prints every month, two to a page.</p>
   <h3>More in English</h3>
-  <p>Prayers in Hebrew with English transliteration: <a href="/kodesh/shema-israel/en/">Shema Israel</a>, <a href="/kodesh/birkat-hamazon/en/">Birkat Hamazon (Grace after Meals)</a> and <a href="/kodesh/tefilat-haderech/en/">Tefilat HaDerech, the Traveler's Prayer</a>. For people going through an Orthodox conversion in Israel: <a href="/kodesh/giur/en/">conversion study guide</a>, <a href="/kodesh/giur/en/brachot/">blessings with transliteration</a> and <a href="/kodesh/giur/en/musagim/">a glossary of terms</a>.</p>
+  <p>Every Jewish holiday of ${GY} and ${NEXTG}, with the dates for the USA: <a href="/kodesh/luach-ivri/en/holidays/">Jewish holidays ${GY}</a>. Prayers in Hebrew with English transliteration: <a href="/kodesh/shema-israel/en/">Shema Israel</a>, <a href="/kodesh/birkat-hamazon/en/">Birkat Hamazon (Grace after Meals)</a> and <a href="/kodesh/tefilat-haderech/en/">Tefilat HaDerech, the Traveler's Prayer</a>. For people going through an Orthodox conversion in Israel: <a href="/kodesh/giur/en/">conversion study guide</a>, <a href="/kodesh/giur/en/brachot/">blessings with transliteration</a> and <a href="/kodesh/giur/en/musagim/">a glossary of terms</a>.</p>
   <h3>Why it is free</h3>
   <p>The calendar is part of hakelim.com, a free chesed project of simple tools: free, unlimited, no sign-up and no ads. The calculation runs on your own phone, by the custom of the Land of Israel, using an open-source library that powers many Jewish calendars around the world. Practical halachic questions go to a rabbi.</p>
 </section>

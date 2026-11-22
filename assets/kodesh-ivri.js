@@ -186,8 +186,10 @@
     }
 
     // ---------- חגי ישראל בשנה עברית ----------
+    var DIA = false;   // true = מועדי חוץ לארץ (שני ימים טובים), לדף החגים באנגלית
+    function setDia(v) { DIA = !!v; }
     function holidays(hy) {
-      var evs = H.HebrewCalendar.calendar({ year: hy, isHebrewYear: true, il: true, sedrot: false }), rows = [];
+      var evs = H.HebrewCalendar.calendar({ year: hy, isHebrewYear: true, il: !DIA, sedrot: false }), rows = [];
       function gd(e) { return clean(e.getDate().greg()); }
       function find(re, last) { var r = null; for (var i = 0; i < evs.length; i++) if (re.test(evs[i].getDesc())) { r = evs[i]; if (!last) break; } return r; }
       function erev(lbl) { return function (a) { var p = add(a, -1); return tr(lbl) + ' ' + wd(p) + ' ' + ltr(dm(p)); }; }
@@ -202,9 +204,16 @@
       row('ראש השנה', /^Rosh Hashana \d+$/, { to: /^Rosh Hashana II$/, sh: 1, note: erev('ערב החג:') });
       row('צום גדליה', /^Tzom Gedaliah/);
       row('יום הכיפורים', /^Yom Kippur$/, { sh: 1, note: erev('הצום נכנס בערב') });
-      row('סוכות', /^Sukkot I$/, { sh: 1, note: erev('ערב החג:') });
-      row('חול המועד סוכות', /^Sukkot II /, { to: /^Sukkot VII / });
-      row('שמחת תורה ושמיני עצרת', /^Shmini Atzeret$/, { sh: 1 });
+      if (DIA) {
+        row('סוכות', /^Sukkot I$/, { to: /^Sukkot II$/, sh: 1, note: erev('ערב החג:') });
+        row('חול המועד סוכות', /^Sukkot III /, { to: /^Sukkot VII / });
+        row('שמיני עצרת', /^Shmini Atzeret$/, { sh: 1 });
+        row('שמחת תורה', /^Simchat Torah$/, { sh: 1 });
+      } else {
+        row('סוכות', /^Sukkot I$/, { sh: 1, note: erev('ערב החג:') });
+        row('חול המועד סוכות', /^Sukkot II /, { to: /^Sukkot VII / });
+        row('שמחת תורה ושמיני עצרת', /^Shmini Atzeret$/, { sh: 1 });
+      }
       row('חנוכה', /^Chanukah: 2 Candles$/, { to: /^Chanukah: 8th Day$/, note: erev('נר ראשון: בערב') });
       row('צום עשרה בטבת', /^Asara B'Tevet/);
       row('ט״ו בשבט', /^Tu BiShvat$/);
@@ -212,15 +221,22 @@
       row('תענית אסתר', /^Ta'anit Esther/);
       row('פורים', /^Purim$/);
       row('שושן פורים (פורים בירושלים)', /^Shushan Purim$/);
-      row('פסח', /^Pesach I$/, { sh: 1, note: erev('ליל הסדר: בערב') });
-      row('חול המועד פסח', /^Pesach II /, { to: /^Pesach VI / });
-      row('שביעי של פסח', /^Pesach VII$/, { sh: 1 });
+      if (DIA) {
+        row('פסח', /^Pesach I$/, { to: /^Pesach II$/, sh: 1, note: erev('ליל הסדר: בערב') });
+        row('חול המועד פסח', /^Pesach III /, { to: /^Pesach VI / });
+        row('שביעי ואחרון של פסח', /^Pesach VII$/, { to: /^Pesach VIII$/, sh: 1 });
+      } else {
+        row('פסח', /^Pesach I$/, { sh: 1, note: erev('ליל הסדר: בערב') });
+        row('חול המועד פסח', /^Pesach II /, { to: /^Pesach VI / });
+        row('שביעי של פסח', /^Pesach VII$/, { sh: 1 });
+      }
       row('יום הזיכרון לשואה ולגבורה', /^Yom HaShoah$/, { day: 27 });
       row('יום הזיכרון לחללי מערכות ישראל', /^Yom HaZikaron$/, { day: 4 });
-      row('יום העצמאות', /^Yom HaAtzma'ut$/, { sh: 1, day: 5 });
+      row('יום העצמאות', /^Yom HaAtzma'ut$/, { sh: !DIA, day: 5 });
       row('ל״ג בעומר', /^Lag BaOmer$/);
       row('יום ירושלים', /^Yom Yerushalayim$/);
-      row('שבועות', /^Shavuot$/, { sh: 1, note: erev('ערב החג:') });
+      if (DIA) row('שבועות', /^Shavuot I$/, { to: /^Shavuot II$/, sh: 1, note: erev('ערב החג:') });
+      else row('שבועות', /^Shavuot$/, { sh: 1, note: erev('ערב החג:') });
       row('צום י״ז בתמוז', /^Tzom Tammuz/);
       row('תשעה באב', /^Tish'a B'Av/, { note: erev('הצום נכנס בערב') });
       row('ט״ו באב', /^Tu B'Av$/);
@@ -244,7 +260,7 @@
         holidays(hy).map(function (r) {
           var end = r.b || r.a, cls = '';
           if (today && key(end) < tk) cls = 'past'; else if (!nextDone) { cls = 'now'; nextDone = true; }
-          return '<tr' + (cls ? ' class="' + cls + '"' : '') + '><th scope="row">' + r.name + (r.sh ? ' <span class="iv-shb">' + tr('שבתון') + '</span>' : '') +
+          return '<tr' + (cls ? ' class="' + cls + '"' : '') + '><th scope="row">' + r.name + (r.sh ? ' <span class="iv-shb">' + tr(DIA ? 'יום טוב' : 'שבתון') + '</span>' : '') +
             '<small>' + hspan(r.a, r.b) + (r.note ? ' · ' + r.note : '') + '</small></th><td><b>' + span(r.a, r.b) + '</b><small>' +
             (r.b ? wd(r.a) + ' – ' + wd(r.b) : wd(r.a)) + '</small></td></tr>';
         }).join('') + '</tbody></table>';
@@ -263,7 +279,7 @@
       for (var i = 0; i < rows.length && out.length < n; i++) {
         var r = rows[i]; if (key(r.b || r.a) < k) continue;
         var dd = Math.round((r.a - clean(d)) / 864e5);
-        out.push('<li><b>' + r.name + '</b>' + (r.sh ? ' <span class="iv-shb">' + tr('שבתון') + '</span>' : '') + '<small>' +
+        out.push('<li><b>' + r.name + '</b>' + (r.sh ? ' <span class="iv-shb">' + tr(DIA ? 'יום טוב' : 'שבתון') + '</span>' : '') + '<small>' +
           (dd <= 0 ? tr('עכשיו') : L ? L.inDays(dd) : dd === 1 ? 'מחר' : 'בעוד ' + dd + ' ימים') + ' · ' + (r.b ? wd(r.a) + ' – ' + wd(r.b) : wd(r.a)) + ', ' + span(r.a, r.b) +
           (r.note ? ' · ' + r.note : '') + '</small></li>');
       }
@@ -416,7 +432,7 @@
     return {
       noon: noon, clean: clean, add: add, key: key, fromKey: fromKey, gem: gem, mon: mon, heb: heb, greg: greg, dm: dm, dmy: dmy, wd: wd, hgreg: hgreg,
       evMap: evMap, parsha: parsha, nextSat: nextSat, day: day, dayLines: dayLines, month: month, hmonths: hmonths, okMonth: okMonth,
-      gridHtml: gridHtml, listHtml: listHtml, dayHtml: dayHtml, holidays: holidays, holidaysHtml: holidaysHtml, nextHoliday: nextHoliday, nextHolidayText: nextHolidayText, upcomingHtml: upcomingHtml, span: span, yearInfo: yearInfo,
+      setDia: setDia, gridHtml: gridHtml, listHtml: listHtml, dayHtml: dayHtml, holidays: holidays, holidaysHtml: holidaysHtml, nextHoliday: nextHoliday, nextHolidayText: nextHolidayText, upcomingHtml: upcomingHtml, span: span, yearInfo: yearInfo,
       g2h: g2h, hcheck: hcheck, h2g: h2g, parseYear: parseYear, inRange: inRange, bday: bday, mitzva: mitzva, birthdays: birthdays,
       tzDate: tzDate, sunset: sunset, today: today, place: place, todayHtml: todayHtml, todayText: todayText, todayLine: todayLine, nextDaysHtml: nextDaysHtml,
       g2hHtml: g2hHtml, g2hText: g2hText, h2gHtml: h2gHtml, h2gText: h2gText, bmHtml: bmHtml, bmText: bmText, HD: HD, G: G, tr: tr, num: num, hebHe: hebHe, ltr: ltr, H: H, HY_MIN: HY_MIN, HY_MAX: HY_MAX, GY_MIN: GY_MIN, GY_MAX: GY_MAX, L: L || null
@@ -657,6 +673,7 @@
   // ---------------- דף החגים: "היום" והמועדים הקרובים מתעדכנים בכל כניסה ----------------
   function initHag() {
     var t = C.today(new Date(), C.place('yerushalaim'));
+    if ($('pr').getAttribute('data-dia')) C.setDia(true);
     $('pr-today').innerHTML = C.tr('<b>היום:</b> ') + C.todayLine(t);
     $('pr-up').innerHTML = C.upcomingHtml(C.hgreg(t.hd), 6);
   }
