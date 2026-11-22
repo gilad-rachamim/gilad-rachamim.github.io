@@ -2522,6 +2522,16 @@
 "page": false
 },
 {
+"id": "65TmGrXRSUQ",
+"artist": "אנה זק",
+"song": "וורקוהוליק",
+"views": 283100,
+"date": "20261018",
+"added": "2026-11-22",
+"slug": "workaholic",
+"page": true
+},
+{
 "id": "xV07bczRS-E",
 "artist": "טיפקס",
 "song": "עוד שבת",
@@ -2582,6 +2592,16 @@
 "page": false
 },
 {
+"id": "Zs62FAbUdeU",
+"artist": "ששון איפרם שאולוב",
+"song": "שתדעי",
+"views": 249564,
+"date": "20261013",
+"added": "2026-11-22",
+"slug": "shetedi",
+"page": true
+},
+{
 "id": "y5AOyYB-P0s",
 "artist": "אלון עדר ולהקה",
 "song": "בתנועה במבט",
@@ -2610,6 +2630,16 @@
 "added": "2026-11-19",
 "slug": "aohb-la-aohb",
 "page": false
+},
+{
+"id": "-YLBWekuVPg",
+"artist": "שילה בן סעדון",
+"song": "הייתי מוותר עליי",
+"views": 232003,
+"date": "20261020",
+"added": "2026-11-22",
+"slug": "hayiti-mevater-alay",
+"page": true
 },
 {
 "id": "4DuZQ22fSvw",
@@ -2829,6 +2859,16 @@
 "date": "20261101",
 "added": "",
 "slug": "higyena",
+"page": true
+},
+{
+"id": "GU9gOFnCHSk",
+"artist": "שיר זוארץ",
+"song": "רובה",
+"views": 117546,
+"date": "20261111",
+"added": "2026-11-22",
+"slug": "rove",
 "page": true
 },
 {

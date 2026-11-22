@@ -77,7 +77,11 @@
 /kelim/shir/karaoke/shirim/avraham-yitzhak-yaakov/
 /kelim/shir/karaoke/shirim/baniti-lecha-bayit/
 /kelim/shir/karaoke/shirim/hakol-alay/
+/kelim/shir/karaoke/shirim/workaholic/
+/kelim/shir/karaoke/shirim/shetedi/
+/kelim/shir/karaoke/shirim/hayiti-mevater-alay/
 /kelim/shir/karaoke/shirim/higyena/
+/kelim/shir/karaoke/shirim/rove/
 /kelim/shir/karaoke/zamar/ravid-plotnik/
 /kelim/shir/karaoke/zamar/omer-adam/
 /kelim/shir/karaoke/zamar/tuna/
