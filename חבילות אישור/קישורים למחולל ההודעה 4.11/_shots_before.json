@@ -1,0 +1,19 @@
+{
+ "title": "קישורים למחולל ההודעה 4.11 - לפני",
+ "prefix": "ק",
+ "serve_dir": "C:\\Users\\Admin\\AppData\\Local\\Temp\\claude\\C--Users-Admin-OneDrive---Michlelet-Orot-Israel-Documents-6-------------------------------------------2026\\f050bb8f-a226-4c80-8439-5984f756adb5\\scratchpad\\before",
+ "shots": [
+  {
+   "path": "/mohel/",
+   "selector": ".tools",
+   "no": 1,
+   "name": "לפני - כלים חינם בעמוד המוהל"
+  },
+  {
+   "path": "/mohel/",
+   "selector": ".site-foot",
+   "no": 3,
+   "name": "לפני - הפוטר, עמודת כלים חינם"
+  }
+ ]
+}

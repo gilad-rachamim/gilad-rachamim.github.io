@@ -56,9 +56,41 @@
     if (onah === 'day') return 'יום ' + C.DOW[d.dow] + ', ' + esc(d.hebrew) + ' (' + bd(d.greg) + ') – <b>ביום</b>, מהנץ עד השקיעה';
     return '<b>ליל</b> ' + esc(d.hebrew) + ' – מהשקיעה של יום ' + C.DOW[d.dowEve] + ' ' + bd(d.gregEve) + ' עד הנץ';
   }
-  function whenShort(abs, onah) {
-    var d = C.describe(abs, onah);
-    return onah === 'day' ? 'יום ' + C.DOW[d.dow] + ' ' + gd(d.greg) + ' (ביום)' : 'ליל ' + C.DOW[d.dow] + ' – מהשקיעה של ' + gd(d.gregEve);
+  function heb(abs) { return esc(C.describe(abs, 'day').hebrew); }
+  function dayLine(abs) { var d = C.describe(abs, 'day'); return 'יום ' + C.DOW[d.dow] + ', ' + esc(d.hebrew) + ' (' + bd(d.greg) + ')'; }
+  function monthOf(hebrew) { var a = hebrew.split(' '); return a.slice(1, -1).join(' '); }
+
+  /* ---------- סיכום: בינונית → חודש → הפלגה (לפי סדר העדיפות) ---------- */
+  function sumHtml(r, p, title) {
+    if (!r) return '';
+    var ch = r.chodesh, h = '<div class="th-sum"><p class="th-k">' + title + '</p><p class="th-sum-from">' + when(r.last.abs, r.last.onah) + '</p><ol class="th-sumlist">';
+    h += '<li><span class="th-n">1</span><div><b>עונה בינונית</b> – יום ל׳ מהראייה (יום הראייה הוא יום 1)<span class="th-when">' + when(r.beinonit.abs, r.beinonit.onah) + '</span></div></li>';
+    var mName = monthOf(r.last.hebrew), chTxt;
+    if (ch.edge) chTxt = 'הראייה ביום ל׳ והחודש הבא חסר – אין תאריך מקביל. מוצגים שני הימים כספק, ושואלים רב.';
+    else if (r.sameDay) chTxt = 'חודש ' + esc(mName) + ' חסר (29 יום), ולכן עונת החודש נופלת <b>יחד עם העונה הבינונית</b>.';
+    else chTxt = 'חודש ' + esc(mName) + ' מלא (30 יום), ולכן עונת החודש היא <b>יום אחרי</b> העונה הבינונית (יום ל״א מהראייה).';
+    h += '<li><span class="th-n">2</span><div><b>עונת החודש</b> – אותו תאריך עברי בחודש הבא, באותה עונה' +
+      ch.list.map(function (o) { return '<span class="th-when">' + when(o.abs, o.onah) + '</span>'; }).join('') + '<small>' + chTxt + '</small></div></li>';
+    if (r.haflaga) h += '<li><span class="th-n">3</span><div><b>עונת ההפלגה</b> – ' + r.haflaga.len + ' ימים, כמו מ' + heb(r.haflaga.from.abs) + ' עד ' + heb(r.last.abs) +
+      (p && p.haflagaFrom === 'end' ? ' (בשיטה הזאת – מסוף הראייה)' : ' (סופרים את שני ימי הראייה)') + '<span class="th-when">' + when(r.haflaga.abs, r.haflaga.onah) + '</span></div></li>';
+    else h += '<li><span class="th-n">3</span><div><b>עונת ההפלגה</b> – <span class="th-sm">צריך גם את הראייה הקודמת כדי לדעת את המרווח. מוסיפים אותה.</span></div></li>';
+    h += '</ol>';
+    var notes = [];
+    if (!p || p.beinonit !== '24h') notes.push('<b>הכרתי ופלתי</b> (תפארת ישראל) – בעונה בינונית חוששת לכל יום ל׳, כלומר גם ל' + when(r.notes.hakarti.abs, r.notes.hakarti.onah) +
+      '. הב"ח והסדרי טהרה חולקים: רק העונה שבה ראתה. המחשבון לא מוסיף אותה.');
+    if (!p || !p.orZarua) notes.push('<b>אור זרוע</b> – פרישה גם בעונה שלפני (סך הכול 24 שעות): ' + when(r.notes.orZarua.abs, r.notes.orZarua.onah) +
+      '. מרן בבית יוסף: "חומרא יתירה"; הש"ך חושש לה. בשיטה שבחרת המחשבון לא מוסיף אותה.');
+    else notes.push('<b>אור זרוע</b> – בשיטה שבחרת המחשבון מוסיף גם את העונה שלפני (ברשימה המלאה).');
+    h += '<details class="th-sumnotes"><summary>הערות: הכרתי ופלתי ואור זרוע</summary>' + notes.map(function (n) { return '<p>' + n + '</p>'; }).join('') + '</details>';
+    h += '<p class="th-note"><b>בדיקה בעונת הפרישה:</b> מספיק לבדוק פעם אחת במהלך העונה. יש נוהגים, לפי הרב מרדכי אליהו, לבדוק בתחילת העונה ובסופה. אם בדיעבד לא בדקה – אסורה לשמש עד שתבדוק. ואם רוצים לשמש אחרי העונה – פשוט בודקת לפני, ומותרת בשופי.</p>';
+    h += '<p class="th-note">אלה הפרישות המקובלות. יש שכתבו שלדעת מרן, באשה שאין לה וסת קבוע די בעונה בינונית בלבד – אבל רוב הפוסקים היום חוששים גם לעונת החודש ולהפלגה. בכל שאלה – שואלים רב.</p></div>';
+    return h;
+  }
+  function draftList(r) {
+    var di = C.idxOf(r.abs, r.onah);
+    var l = S.sightings.filter(function (q) { return !q.missed && C.idxOf(q.abs, q.onah) < di; });
+    l.push({ abs: r.abs, onah: r.onah });
+    return l;
   }
   function b64e(str) { return btoa(unescape(encodeURIComponent(str))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
   function b64d(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return decodeURIComponent(escape(atob(s))); }
@@ -177,7 +209,7 @@
       '<div class="field" id="th-near" hidden><span class="label" id="th-near-l"></span><div class="radios" id="th-near-r"></div></div>' +
       '<div class="field" id="th-endf" hidden><label for="th-end">מתי הסתיימה הראייה? <span class="opt">(לשיטת חב"ד ההפלגה נספרת מסוף הראייה)</span></label><input id="th-end" type="date"></div>' +
       '<details class="th-more"><summary>הראייה נמשכה אחרי הנץ?</summary><div class="field"><label for="th-netz">כמה דקות אחרי הנץ <span class="opt">(רק לראייה שהתחילה בלילה)</span></label><input id="th-netz" type="number" min="0" max="720" inputmode="numeric"></div></details>' +
-      '<p class="th-prev" id="th-prev" aria-live="polite"></p>' +
+      '<p class="th-prev" id="th-prev" aria-live="polite"></p><div id="th-quick" aria-live="polite"></div>' +
       '<div class="share-row"><button class="btn btn-gold" type="button" id="th-add">להוסיף ראייה</button></div></form>' +
       '<h3 class="th-h3">הראיות ששמורות</h3><ul class="th-list" id="th-list"></ul>' +
       '<details class="th-more" id="th-status"><summary>מצב מיוחד (הריון, הנקה ועוד)</summary><div class="radios th-checks">' +
@@ -198,6 +230,7 @@
       '<p class="th-note">הכול נשמר רק בטלפון הזה. שום נתון לא נשלח לשרת, ולא לסטטיסטיקה של האתר (שם נספרות רק כניסות לדף).</p>' +
       '<div class="share-row">' +
       '<button class="btn btn-line btn-sm" type="button" id="th-ics">ליומן (קובץ ‎.ics)</button>' +
+      (inApp() ? '<button class="btn btn-line btn-sm" type="button" id="th-remind-on">להפעיל תזכורות בטלפון</button><button class="btn btn-line btn-sm" type="button" id="th-remind-off">לכבות תזכורות</button>' : '') +
       '<button class="btn btn-line btn-sm" type="button" id="th-print">להדפיס</button>' +
       '<button class="btn btn-line btn-sm" type="button" id="th-share">קישור לבן הזוג</button>' +
       '<button class="btn btn-line btn-sm" type="button" id="th-lockb">קוד נעילה</button>' +
@@ -242,7 +275,7 @@
   }
 
   /* ---------- הזנת ראייה ---------- */
-  var nearPick = null;
+  var nearPick = null, touched = false;
   function draft() {
     var ds = $('th-date').value; if (!ds) return null;
     var a = ds.split('-').map(Number), t = $('th-time').value, r;
@@ -262,8 +295,9 @@
   }
   function onEntry(ev) {
     if (ev && (ev.target.id === 'th-date' || ev.target.id === 'th-time' || ev.target.id === 'th-city')) nearPick = null;
+    if (ev && ev.target && (ev.target.id === 'th-date' || ev.target.id === 'th-time' || ev.target.name === 'th-nt')) touched = true;
     var t = $('th-time').value; $('th-notime').hidden = !!t;
-    var r = draft(), near = $('th-near');
+    var r = draft(), near = $('th-near'), p;
     if (r && r.near && t) {
       near.hidden = false;
       var ss = r.near === 'sunset';
@@ -271,9 +305,11 @@
       var opts = ss ? [['before', 'לפני השקיעה'], ['after', 'אחרי צאת הכוכבים'], ['between', 'ביניהם / לא בטוחה']] : [['before', 'לפני הנץ'], ['after', 'אחרי הנץ'], ['between', 'לא בטוחה']];
       $('th-near-r').innerHTML = opts.map(function (o) { return '<label><input type="radio" name="th-np" value="' + o[0] + '"' + (nearPick === o[0] ? ' checked' : '') + '> ' + o[1] + '</label>'; }).join('');
     } else near.hidden = true;
-    var p = preset(); $('th-endf').hidden = !(p && p.haflagaFrom === 'end');
+    p = preset(); $('th-endf').hidden = !(p && p.haflagaFrom === 'end');
     $('th-prev').innerHTML = !r ? '' : (r.near && t && !nearPick) ? 'בוחרים למעלה מתי בדיוק.' :
       'נרשם כ: ' + when(r.abs, r.onah) + (r.doubt ? ' <span class="th-tag">ספק – שואלים רב</span>' : '');
+    var qk = $('th-quick'), ok = touched && r && !(r.near && t && !nearPick) && !r.doubt && p;
+    qk.innerHTML = ok ? sumHtml(C.summary(draftList(r), p), p, 'מה יוצא מהראייה הזאת – עוד לפני ששומרים') : '';
   }
   function addSighting() {
     var r = draft(), msg = $('th-prev');
@@ -287,16 +323,19 @@
     if (S.sightings.some(function (x) { return x.abs === q.abs && x.onah === q.onah && !x.missed; })) { msg.textContent = 'הראייה הזאת כבר רשומה.'; return; }
     S.sightings.push(q); S.sightings.sort(function (a, b) { return C.idxOf(a.abs, a.onah) - C.idxOf(b.abs, b.onah); });
     S.cycle = { start: q.abs, hefsek: null };
-    $('th-time').value = ''; $('th-end').value = ''; $('th-netz').value = ''; nearPick = null;
+    $('th-time').value = ''; $('th-end').value = ''; $('th-netz').value = ''; nearPick = null; touched = false;
     persist(); renderAll(); msg.innerHTML = 'נוסף. התוצאות למטה עודכנו.';
   }
   function renderList() {
     var ul = $('th-list'); if (!ul) return;
     if (!S.sightings.length) { ul.innerHTML = '<li class="th-empty">עוד אין ראיות. מוסיפים את הראייה האחרונה, ואם אפשר גם את שתיים-שלוש שלפניה.</li>'; return; }
+    var prevSeen = null, pr = preset();
     ul.innerHTML = S.sightings.map(function (q, i) {
+      var gap = '';
+      if (!q.missed) { if (prevSeen) gap = ' <span class="th-gap">הפלגה: ' + C.haflagaLen(prevSeen, q, pr) + ' ימים</span>'; prevSeen = q; }
       return '<li' + (q.missed ? ' class="th-missed"' : '') + '><span>' + (q.missed ? 'עברה בלי ראייה: ' : '') + when(q.abs, q.onah) +
         (q.doubt ? ' <span class="th-tag">ספק בשעה</span>' : '') + (q.endAbs != null ? ' · הסתיימה ' + bd(C.describe(q.endAbs, 'day').greg) : '') +
-        (q.afterNetzMin ? ' · נמשכה ' + q.afterNetzMin + ' דק׳ אחרי הנץ' : '') + '</span>' +
+        (q.afterNetzMin ? ' · נמשכה ' + q.afterNetzMin + ' דק׳ אחרי הנץ' : '') + gap + '</span>' +
         (VIEW ? '' : '<button type="button" class="th-x" data-del="' + i + '" aria-label="למחוק את הרשומה">✕</button>') + '</li>';
     }).reverse().join('');
   }
@@ -310,12 +349,9 @@
     return RES;
   }
   function checkNote(o, p) {
-    if (o.type === 'beinonit' || o.alsoBeinonit || o.rule === 'kavua') {
-      if (p.id === 'sephardi_ovadia' || p.id === 'morocco' || p.base === 'sephardi_ovadia' || p.base === 'morocco')
-        return 'בודקים בעונה הזאת. האם אסורה עד שתבדוק – בשיטה הזאת לא אומת, שואלים רב.';
-      return 'בודקים בעונה הזאת, ואסורה עד שתבדוק (שו"ע יו"ד קפט:ד; רמ"א קפד:ט).';
-    }
-    return 'בודקים בעונה הזאת.';
+    var t = 'חובה לבדוק בעונה הזאת. אם לא בדקה – אסורה לשמש עד שתבדוק; אם רוצים לשמש אחריה – בודקת לפני, ומותרת בשופי.';
+    if (o.type === 'beinonit' || o.alsoBeinonit || o.rule === 'kavua') return t + ' (שו"ע יו"ד קפט:ד; רמ"א קפד:ט)';
+    return t;
   }
   function renderRes() {
     var box = $('th-res-in'); if (!box) return;
@@ -324,6 +360,8 @@
     var h = '', today = absToday();
     if (r.needRav.length) h += '<div class="th-rav"><b>שואלים רב:</b><ul>' + r.needRav.map(function (k) { return '<li>' + esc(C.RAV[k] || EXTRA_RAV[k] || k) + '</li>'; }).join('') + '</ul></div>';
     if (r.fixed) h += '<p class="th-fixed">זוהה <b>' + esc(C.LABEL[r.fixed.kind === 'chodesh' ? 'chodesh_kavua' : 'haflaga_kavua']) + '</b>. וסת קבוע נעקר רק אחרי שלוש פעמים שעברו בלי ראייה.</p>';
+    if (!r.fixed && !S.status.pregnant) h += sumHtml(C.summary(S.sightings, p), p, 'העיקר – מהראייה האחרונה');
+    if (r.onot.length) h += '<h3 class="th-h3">כל העונות לפי הסדר</h3>';
     if (!r.onot.length) h += '<p class="th-empty">' + (S.status.pregnant ? 'בהריון שהוכר הכלי לא מחשב עונות – שואלים רב.' : 'אין עונות לחשב כרגע.') + '</p>';
     else {
       h += '<ol class="th-onot">';
@@ -363,7 +401,7 @@
       '<ol class="th-steps">' +
       '<li><b>הפסק טהרה:</b> יום ' + C.DOW[m.hefsek.dow] + ', ' + esc(m.hefsek.hebrew) + ' (' + bd(m.hefsek.greg) + '), לפני השקיעה (' + hm(zH.sunset()) + ') ולכתחילה לפני ערבית של הקהל.' +
       (m.hefsekLate ? ' <span class="th-tag">לפי היום שהזנת</span>' : ' <span class="th-sm">(היום ה-' + m.minDays + ' כולל יום הראייה)</span>') + '</li>' +
-      '<li><b>שבעה נקיים:</b> מיום ' + C.DOW[m.cleanFirst.dow] + ' ' + bd(m.cleanFirst.greg) + ' עד יום ' + C.DOW[m.cleanLast.dow] + ' ' + bd(m.cleanLast.greg) + '. לכתחילה בודקים פעמיים ביום, בבוקר וסמוך לשקיעה.</li>' +
+      '<li><b>שבעה נקיים:</b> מ' + dayLine(m.cleanFirst.abs) + ' עד ' + dayLine(m.cleanLast.abs) + '. לכתחילה בודקים פעמיים ביום, בבוקר וסמוך לשקיעה.</li>' +
       '<li><b>טבילה:</b> בלילה שאחרי היום השביעי, אחרי צאת הכוכבים. לא טובלים ביום השביעי.</li></ol>';
     if (m.postponedFrom) h += '<p class="th-alert">הלילה המקורי היה ליל ' + esc(m.postponedFrom.hebrew) + '.</p>';
     m.alerts.forEach(function (a) { if (ALERT[a]) h += '<p class="th-alert">' + esc(ALERT[a]) + '</p>'; });
@@ -397,14 +435,18 @@
       '<table class="th-caltab"><caption class="sr-only">לוח טהרה ל' + GM[calM] + ' ' + calY + '</caption><thead><tr>' + ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'שבת'].map(function (d) { return '<th scope="col">' + d + '</th>'; }).join('') + '</tr></thead><tbody><tr>';
     for (var i = 0; i < first.getDay(); i++) h += '<td></td>';
     for (var d = 1; d <= days; d++) {
-      var g = new Date(calY, calM, d, 12), y = C.ymd(g), hd = new H.HDate(g), mk = M[y] || [];
-      h += '<td class="' + (y === td ? 'th-today' : '') + '"><span class="th-dn">' + d + '</span><span class="th-hd">' + esc(H.gematriya(hd.getDate())) + '</span>' +
+      var g = new Date(calY, calM, d, 12), y = C.ymd(g), hd = new H.HDate(g), mk = M[y] || [], di = C.dayInfo(hd.abs());
+      var cls = [y === td ? 'th-today' : '', di.shabbat ? 'th-shab' : '', di.chag ? 'th-chag' : ''].filter(Boolean).join(' ');
+      var hdTxt = hd.getDate() === 1 || d === 1 ? H.gematriya(hd.getDate()) + ' ' + monthOf(hd.renderGematriya(true)) : H.gematriya(hd.getDate());
+      var hol = (di.shabbat && !di.chag ? ['שבת'] : []).concat(di.names);
+      h += '<td class="' + cls + '"><span class="th-dn">' + d + '</span><span class="th-hd">' + esc(hdTxt) + '</span>' +
+        (hol.length ? '<span class="th-hol">' + esc(hol.join(' · ')) + '</span>' : '') +
         mk.map(function (x) { return '<span class="th-mk th-' + x[0].split(' ').join(' th-') + '">' + esc(x[1]) + '</span>'; }).join('') + '</td>';
       if (g.getDay() === 6 && d < days) h += '</tr><tr>';
     }
     var end = new Date(calY, calM, days).getDay(); for (var j = end; j < 6; j++) h += '<td></td>';
-    h += '</tr></tbody></table><p class="th-legend"><span class="th-mk th-see">ראייה</span><span class="th-mk th-on">עונת פרישה</span><span class="th-mk th-on th-dbt">ספק</span><span class="th-mk th-hef">הפסק</span><span class="th-mk th-clean">נקי</span><span class="th-mk th-tev">טבילה</span></p>' +
-      '<p class="th-note">עונת לילה מסומנת ביום שבערב שלו היא מתחילה ("מהערב").</p>';
+    h += '</tr></tbody></table><p class="th-legend"><span class="th-mk th-see">ראייה</span><span class="th-mk th-on">עונת פרישה</span><span class="th-mk th-on th-dbt">ספק</span><span class="th-mk th-hef">הפסק</span><span class="th-mk th-clean">נקי</span><span class="th-mk th-tev">טבילה</span><span class="th-lg-shab">שבת</span><span class="th-lg-chag">יום טוב</span></p>' +
+      '<p class="th-note">עונת לילה מסומנת ביום שבערב שלו היא מתחילה ("מהערב"). ליד כל יום לועזי – התאריך העברי; המועדים לפי ארץ ישראל.</p>';
     box.innerHTML = h;
   }
 
@@ -416,11 +458,27 @@
       L.push('BEGIN:VEVENT', 'UID:' + d + '-' + Math.random().toString(36).slice(2) + '@hakelim.com', 'DTSTAMP:' + now, 'DTSTART;VALUE=DATE:' + d, 'DTEND;VALUE=DATE:' + nx, 'SUMMARY:' + title, 'DESCRIPTION:' + desc, 'END:VEVENT');
     }
     var n = 0, today = absToday();
-    if (RES) C.merge(RES.onot).forEach(function (o) { if (o.abs < today) return; var d = C.describe(o.abs, o.onah); ev(o.onah === 'night' ? d.ymdEve : d.ymd, o.onah === 'night' ? 'עונה – מהערב' : 'עונה – ביום', (C.LABEL[o.type] || '') + (o.doubt ? ' (ספק)' : '')); n++; });
-    if (TEV && TEV.tevila.abs >= today) { ev(TEV.hefsek.ymd, 'הפסק', 'לפני השקיעה'); ev(TEV.tevila.ymdEve, 'ליל ט׳', 'אחרי צאת הכוכבים'); n += 2; }
+    if (RES) C.merge(RES.onot).forEach(function (o) { if (o.abs < today) return; var d = C.describe(o.abs, o.onah); ev(o.onah === 'night' ? d.ymdEve : d.ymd, o.onah === 'night' ? 'עונה – מהערב' : 'עונה – ביום', (C.LABEL[o.type] || '') + (o.doubt ? ' (ספק)' : '') + ' – ' + d.hebrew); n++; });
+    if (TEV && TEV.tevila.abs >= today) { ev(TEV.hefsek.ymd, 'הפסק', 'לפני השקיעה – ' + TEV.hefsek.hebrew); ev(TEV.tevila.ymdEve, 'ליל ט׳', 'אחרי צאת הכוכבים – ליל ' + TEV.tevila.hebrew); n += 2; }
     L.push('END:VCALENDAR');
     if (!n) { msg('אין תאריכים קרובים לייצא.'); return; }
     download('tahara.ics', L.join('\r\n'), 'text/calendar;charset=utf-8'); msg('נוצר קובץ יומן עם ' + n + ' תאריכים. הכותרות ביומן דיסקרטיות.');
+  }
+  // תזכורות מקומיות – רק באפליקציית Google Play. הדף שולח לאפליקציה רק רשימת זמנים (מילישניות)
+  // דרך קישור פנימי; האפליקציה שומרת ומתזמנת בטלפון, בלי שרת. נוסח ההתראה דיסקרטי.
+  function inApp() { return document.documentElement.classList.contains('in-app'); }
+  function remind(on) {
+    var times = [];
+    function at(ymd, h) { var a = ymd.split('-').map(Number); return new Date(a[0], a[1] - 1, a[2], h, 0).getTime(); }
+    var today = absToday();
+    if (on) {
+      if (RES) C.merge(RES.onot).forEach(function (o) { if (o.abs < today) return; var d = C.describe(o.abs, o.onah); times.push(o.onah === 'night' ? at(d.ymdEve, 19) : at(d.ymd, 7)); });
+      if (TEV && TEV.tevila.abs >= today) { times.push(at(TEV.hefsek.ymd, 14)); times.push(at(TEV.tevila.ymdEve, 18)); }
+      times = times.filter(function (t) { return t > Date.now(); });
+      if (!times.length) { msg('אין תאריכים קרובים לתזכורת.'); return; }
+    }
+    msg(on ? 'מפעיל תזכורות…' : 'מכבה תזכורות…');
+    location.href = 'hakelim-tahara://remind?t=' + times.join(',');
   }
   function shareUrl() { return location.origin + '/kodesh/tahara/luach-tahara/#s=' + b64e(JSON.stringify({ preset: S.preset, custom: S.custom, city: S.city, sightings: S.sightings, status: S.status, cycle: S.cycle })); }
   function msg(t) { var m = $('th-msg'); if (m) m.textContent = t; }
@@ -463,6 +521,8 @@
       if (t.dataset.miss) { var p = t.dataset.miss.split(':'); S.sightings.push({ abs: +p[0], onah: p[1], missed: true }); persist(); renderAll(); return; }
       if (id === 'th-prevm' || id === 'th-nextm') { calM += id === 'th-prevm' ? -1 : 1; if (calM < 0) { calM = 11; calY--; } if (calM > 11) { calM = 0; calY++; } renderCal(); return; }
       if (id === 'th-ics') return ics();
+      if (id === 'th-remind-on') return remind(true);
+      if (id === 'th-remind-off') return remind(false);
       if (id === 'th-print') return window.print();
       if (id === 'th-share') {
         var b = $('th-share-box'); b.hidden = !b.hidden; if (b.hidden) return;
@@ -487,7 +547,7 @@
       if (id === 'th-leave') { VIEW = false; history.replaceState(null, '', location.pathname); start(ROOT); return; }
     });
   }
-  function onEntryIf(e) { if ($('th-date') && e && e.target && /^th-(date|time|city|end|netz)$/.test(e.target.id)) onEntry(e); }
+  function onEntryIf(e) { if ($('th-date') && e && e.target && (/^th-(date|time|city|end|netz)$/.test(e.target.id) || e.target.name === 'th-nt')) onEntry(e); }
 
   function renderAll() {
     syncMethod();

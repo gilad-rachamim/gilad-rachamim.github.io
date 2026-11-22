@@ -1,0 +1,21 @@
+{
+ "title": "יומן בריתות - מסכים",
+ "prefix": "ב",
+ "serve_dir": "C:\\Users\\Admin\\sites\\gilad-rachamim.github.io\\.claude\\worktrees\\mystifying-almeida-43e020",
+ "shots": [
+  {
+   "no": 4,
+   "name": "הכלי באתר - היומן",
+   "path": "/kodesh/britot/",
+   "selector": ".tool",
+   "js": "(async()=>{const D={\"kodesh-britot\": [{\"id\": \"demo1\", \"date\": \"2026-11-08\", \"time\": \"\", \"parents\": \"נתנאל והילה\", \"baby\": \"תום\", \"place\": \"ישפרו סנטר מודיעין, מסעדת לוניצ'ה\", \"phone\": \"050-0000000\", \"sandak\": \"\", \"birth\": \"\", \"notes\": \"\", \"saw\": false, \"bandage\": false, \"bechor\": false}, {\"id\": \"demo2\", \"date\": \"2026-11-05\", \"time\": \"10:30\", \"parents\": \"משה ורחל (דוגמה)\", \"baby\": \"\", \"place\": \"בית הכנסת, ירושלים\", \"phone\": \"\", \"sandak\": \"סבא אברהם\", \"birth\": \"2026-10-29\", \"notes\": \"\", \"saw\": true, \"bandage\": true, \"bechor\": true}], \"kelim-install-closed\": \"1\"};for(const k in D)localStorage.setItem(k,typeof D[k]==='string'?D[k]:JSON.stringify(D[k]));await new Promise(r=>{const s=document.createElement('script');s.src='/assets/britot.js?demo';s.onload=r;document.body.appendChild(s)});document.querySelectorAll('.bt-list').forEach(()=>{});})()"
+  },
+  {
+   "no": 5,
+   "name": "הכלי באתר - ברית חדשה",
+   "path": "/kodesh/britot/",
+   "selector": "#bt-formbox",
+   "js": "(async()=>{const D={\"kodesh-britot\": [{\"id\": \"demo1\", \"date\": \"2026-11-08\", \"time\": \"\", \"parents\": \"נתנאל והילה\", \"baby\": \"תום\", \"place\": \"ישפרו סנטר מודיעין, מסעדת לוניצ'ה\", \"phone\": \"050-0000000\", \"sandak\": \"\", \"birth\": \"\", \"notes\": \"\", \"saw\": false, \"bandage\": false, \"bechor\": false}, {\"id\": \"demo2\", \"date\": \"2026-11-05\", \"time\": \"10:30\", \"parents\": \"משה ורחל (דוגמה)\", \"baby\": \"\", \"place\": \"בית הכנסת, ירושלים\", \"phone\": \"\", \"sandak\": \"סבא אברהם\", \"birth\": \"2026-10-29\", \"notes\": \"\", \"saw\": true, \"bandage\": true, \"bechor\": true}], \"kelim-install-closed\": \"1\"};for(const k in D)localStorage.setItem(k,typeof D[k]==='string'?D[k]:JSON.stringify(D[k]));await new Promise(r=>{const s=document.createElement('script');s.src='/assets/britot.js?demo';s.onload=r;document.body.appendChild(s)});document.querySelectorAll('.bt-list').forEach(()=>{});document.getElementById('bt-new').click();})()"
+  }
+ ]
+}

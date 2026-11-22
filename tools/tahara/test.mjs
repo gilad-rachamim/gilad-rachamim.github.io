@@ -188,3 +188,59 @@ test('דוגמאות: תאריך אסור לא מופיע', () => {
     assert.ok(!r.onot.some(o => o.ymd === f.greg && o.onah === f.onah), ex.id);
   }
 });
+
+// ---------- סיכום שלוש העונות (בינונית → חודש → הפלגה) ולוח שבתות ומועדים ----------
+const HD = (d, m, y) => new globalThis.hebcal.HDate(d, m, y).abs();
+const M = globalThis.hebcal.months;
+const heb = o => o.hebrew;
+
+test('סיכום: ד׳ ניסן ביום – ניסן מלא, בינונית ג׳ אייר והחודש ד׳ אייר', () => {
+  const r = T.summary([{ abs: HD(4, M.NISAN, 5787), onah: 'day' }], T.PRESETS.sephardi_ovadia);
+  assert.equal(r.month.len, 30); assert.equal(r.sameDay, false);
+  assert.equal(heb(r.beinonit), 'ג׳ אייר תשפ״ז'); assert.equal(heb(r.chodesh.list[0]), 'ד׳ אייר תשפ״ז');
+  assert.equal(r.beinonit.abs, HD(3, M.IYYAR, 5787)); assert.equal(r.beinonit.onah, 'day');
+  assert.equal(r.chodesh.list[0].abs, HD(4, M.IYYAR, 5787)); assert.equal(r.gapToChodesh, 31);
+  assert.equal(r.haflaga, null);
+  assert.equal(r.notes.hakarti.abs, HD(3, M.IYYAR, 5787)); assert.equal(r.notes.hakarti.onah, 'night');
+  assert.equal(r.notes.orZarua.abs, HD(3, M.IYYAR, 5787)); assert.equal(r.notes.orZarua.onah, 'night');
+});
+test('סיכום: ד׳ ניסן ביום ואחר כך ו׳ אייר בלילה – הפלגה 33, אייר חסר', () => {
+  const S = [{ abs: HD(4, M.NISAN, 5787), onah: 'day' }, { abs: HD(6, M.IYYAR, 5787), onah: 'night' }];
+  const r = T.summary(S, T.PRESETS.sephardi_ovadia);
+  assert.equal(r.month.len, 29); assert.equal(r.sameDay, true);
+  assert.equal(r.beinonit.abs, HD(6, M.SIVAN, 5787)); assert.equal(r.beinonit.onah, 'night');
+  assert.equal(r.chodesh.list[0].abs, HD(6, M.SIVAN, 5787)); assert.equal(r.chodesh.list[0].onah, 'night');
+  assert.equal(r.haflaga.len, 33); assert.equal(r.haflaga.abs, HD(9, M.SIVAN, 5787)); assert.equal(r.haflaga.onah, 'night');
+  // עונת לילה מתחילה בערב היום הלועזי הקודם
+  assert.equal(r.haflaga.ymdEve, T.describe(HD(8, M.SIVAN, 5787), 'day').ymd);
+  // אותן תוצאות כמו בחישוב המלא
+  const c = T.compute(S, T.PRESETS.sephardi_ovadia, {});
+  assert.ok(c.onot.some(o => o.type === 'beinonit' && o.abs === r.beinonit.abs && o.onah === 'night'));
+  assert.ok(c.onot.some(o => o.type === 'chodesh' && o.abs === r.chodesh.list[0].abs));
+  assert.ok(c.onot.some(o => o.type === 'haflaga' && o.abs === r.haflaga.abs && o.interval === 33));
+});
+test('סיכום: שנה מעוברת – ראייה בט״ו שבט, החודש בט״ו אדר א׳', () => {
+  assert.ok(globalThis.hebcal.HDate.isLeapYear(5787));
+  const r = T.summary([{ abs: HD(15, M.SHVAT, 5787), onah: 'day' }], T.PRESETS.sephardi_ovadia);
+  assert.equal(r.chodesh.list[0].abs, HD(15, M.ADAR_I, 5787));
+  const r2 = T.summary([{ abs: HD(15, M.ADAR_I, 5787), onah: 'day' }], T.PRESETS.sephardi_ovadia);
+  assert.equal(r2.chodesh.list[0].abs, HD(15, M.ADAR_II, 5787));
+});
+test('סיכום: יום ל׳ והחודש הבא חסר – שני תאריכי ספק', () => {
+  const r = T.summary([{ abs: HD(30, M.NISAN, 5787), onah: 'day' }], T.PRESETS.sephardi_ovadia);
+  assert.equal(r.chodesh.edge, 'chodesh30_ask'); assert.equal(r.chodesh.list.length, 2);
+});
+test('סיכום: ראייה שסומנה "עברה בלי ראייה" לא נספרת', () => {
+  const r = T.summary([{ abs: HD(4, M.NISAN, 5787), onah: 'day' }, { abs: HD(3, M.IYYAR, 5787), onah: 'day', missed: true }]);
+  assert.equal(r.last.abs, HD(4, M.NISAN, 5787)); assert.equal(r.haflaga, null);
+});
+test('לוח: שבת, יום טוב וחול המועד', () => {
+  const p1 = T.dayInfo(HD(15, M.NISAN, 5787));
+  assert.equal(p1.chag, true); assert.ok(p1.names.some(n => /פסח/.test(n)));
+  const ch = T.dayInfo(HD(17, M.NISAN, 5787));
+  assert.equal(ch.chag, false); assert.ok(ch.names.length > 0);
+  const sat = T.dayInfo(T.absFromYmd('2026-11-21'));
+  assert.equal(sat.shabbat, true);
+  const yk = T.dayInfo(HD(10, M.TISHREI, 5787));
+  assert.equal(yk.chag, true);
+});

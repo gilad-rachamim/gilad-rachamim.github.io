@@ -1,0 +1,13 @@
+{
+ "title": "קישור לטופס הכיבודים - לפני",
+ "prefix": "כ",
+ "serve_dir": "C:\\Users\\Admin\\AppData\\Local\\Temp\\claude\\3860b02734184967\\51e3a518-3741-4d7c-9f5f-3c990a2d5b9f\\scratchpad\\before-dapim",
+ "shots": [
+  {
+   "path": "/mohel/dapim/",
+   "selector": ".daf:has(a[href*=kibudim])",
+   "no": 1,
+   "name": "לפני - כרטיס הכיבודים בדפי הברית"
+  }
+ ]
+}

@@ -1,0 +1,37 @@
+{
+ "title": "פלייליסטים לברית - לפני",
+ "prefix": "פ",
+ "serve_dir": "C:\\Users\\Admin\\AppData\\Local\\Temp\\claude\\cbc8e0d8aa79ea4a\\c49a4222-8da2-4491-a5a5-b762ec25a8a7\\scratchpad\\before",
+ "shots": [
+  {
+   "path": "/mohel/",
+   "selector": "#shira",
+   "no": 3,
+   "name": "לפני - דף ראשי - אזור השירים"
+  },
+  {
+   "path": "/mohel/hachana/",
+   "selector": ".tip",
+   "no": 5,
+   "name": "לפני - הכנה לברית - הפניה"
+  },
+  {
+   "path": "/mohel/hachana/tekes/",
+   "selector": ".tip",
+   "no": 7,
+   "name": "לפני - הכנות לטקס - הפניה"
+  },
+  {
+   "path": "/mohel/madrich/",
+   "selector": "p.note:has(a[href='/mohel/#shira'])",
+   "no": 9,
+   "name": "לפני - מדריך - הפניה"
+  },
+  {
+   "path": "/mohel/",
+   "selector": ".site-foot",
+   "no": 11,
+   "name": "לפני - תחתית האתר"
+  }
+ ]
+}
