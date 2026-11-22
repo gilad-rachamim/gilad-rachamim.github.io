@@ -59,3 +59,15 @@
 html[dir=ltr] .bk-paper [lang=he]{direction:rtl;text-align:right}
 html[dir=ltr] .bk-paper [lang=he] [dir=ltr]{direction:ltr;text-align:left}
 html[dir=ltr] .bk-foot,html[dir=ltr] .kr-nus-now{text-align:left}
+/* line-by-line transliteration and translation (birkat hamazon in English and Russian) */
+.bk-sec p.kr-tr-x,.bk-sec p.kr-tr-e,.bk-sec p.kr-tr-i,.bk-sec p.kr-tr-s{font-family:var(--sans,system-ui,sans-serif);direction:ltr;text-align:left;unicode-bidi:isolate}
+.bk-sec p.kr-tr-x{font-size:max(.98rem,calc(var(--fs,1.3rem) * .74));line-height:1.7;color:#1f4f69;border-left:4px solid #2f6b8a;padding-left:.65rem;margin:.15rem 0 .35rem}
+.bk-sec p.kr-tr-e{font-size:max(.92rem,calc(var(--fs,1.3rem) * .68));line-height:1.6;color:#4a4a4a;border-left:4px solid #d9c48a;padding-left:.65rem;margin:.15rem 0 .95rem}
+.bk-sec p.kr-tr-x:last-child,.bk-sec p.kr-tr-x + p[data-s],.bk-sec p.kr-tr-x + p.ins{margin-top:.95rem}
+.bk-sec p.kr-tr-i{font-size:.86rem;line-height:1.5;font-style:italic;color:#6a6252;margin:.05rem 0 .45rem}
+.bk-sec p.kr-tr-s{font-size:.84rem;line-height:1.5;color:#5c6670;margin:.2rem 0 .8rem}
+.bk-sec p.kr-tr-x i{font-style:normal;color:#6b5a32;font-size:.9em}
+.bk-paper.dark .bk-sec p.kr-tr-x{color:#9fcbe3;border-left-color:#5b9fc2}
+.bk-paper.dark .bk-sec p.kr-tr-e{color:#cfc8b8;border-left-color:#8a7a45}
+.bk-paper.dark .bk-sec p.kr-tr-i,.bk-paper.dark .bk-sec p.kr-tr-s{color:#a99d80}
+.bk-paper.dark .bk-sec p.kr-tr-x i{color:#d9c48a}
