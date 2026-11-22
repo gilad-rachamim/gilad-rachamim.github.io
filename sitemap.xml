@@ -202,8 +202,9 @@
   <url><loc>https://hakelim.com/kelim/machshev/chadashot/archion/2026-11-18/</loc><lastmod>2026-11-19</lastmod><priority>0.5</priority></url>
   <url><loc>https://hakelim.com/kelim/machshev/chadashot/archion/2026-11-19/</loc><lastmod>2026-11-20</lastmod><priority>0.5</priority></url>
   <url><loc>https://hakelim.com/kelim/machshev/chadashot/archion/2026-11-20/</loc><lastmod>2026-11-21</lastmod><priority>0.5</priority></url>
-  <url><loc>https://hakelim.com/kelim/machshev/chadashot/archion/2026-11-21/</loc><lastmod>2026-11-21</lastmod><priority>0.5</priority></url>
-  <url><loc>https://hakelim.com/kelim/machshev/chadashot/archion/</loc><lastmod>2026-11-21</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kelim/machshev/chadashot/archion/2026-11-21/</loc><lastmod>2026-11-22</lastmod><priority>0.5</priority></url>
+  <url><loc>https://hakelim.com/kelim/machshev/chadashot/archion/2026-11-22/</loc><lastmod>2026-11-22</lastmod><priority>0.5</priority></url>
+  <url><loc>https://hakelim.com/kelim/machshev/chadashot/archion/</loc><lastmod>2026-11-22</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/machshev/chadashot/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/machshev/chadashot/moda/</loc><lastmod>2026-11-22</lastmod><priority>0.5</priority></url>
   <url><loc>https://hakelim.com/kelim/machshev/chadashot/telefon-kasher/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
@@ -508,6 +509,7 @@
   <url><loc>https://hakelim.com/kodesh/chanuka/chesed/</loc><lastmod>2026-11-22</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/chanuka/chidon/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/chanuka/chufsha/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kodesh/chanuka/en/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/chanuka/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/chanuka/kniyot/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/chanuka/matkonim/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
@@ -521,7 +523,8 @@
   <url><loc>https://hakelim.com/kodesh/chayal/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/dapei-tefila/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/dvar-torah/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
-  <url><loc>https://hakelim.com/kodesh/gimatria/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kodesh/gimatria/en/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/gimatria/</loc><lastmod>2026-11-22</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/giur/ahavat-hager/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/giur/brachot/</loc><lastmod>2026-11-22</lastmod><priority>0.85</priority></url>
   <url><loc>https://hakelim.com/kodesh/giur/brit-mila-lager/</loc><lastmod>2026-11-22</lastmod><priority>0.85</priority></url>
@@ -560,6 +563,7 @@
   <url><loc>https://hakelim.com/kodesh/luach-shana/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/masach/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/mekorot/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kodesh/mikledet/en/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/mincha/ashkenaz/</loc><lastmod>2026-11-22</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/mincha/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/mincha/sfarad/</loc><lastmod>2026-11-22</lastmod><priority>0.7</priority></url>
@@ -579,6 +583,7 @@
   <url><loc>https://hakelim.com/kodesh/olpan/prompter/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/olpan/reka/</loc><lastmod>2026-11-22</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/omer-avot/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kodesh/parasha/en/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/post/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/psak/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/qr/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
