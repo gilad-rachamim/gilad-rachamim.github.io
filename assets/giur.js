@@ -7,10 +7,16 @@
   G.used = function (name, extra) { if (window.toolUsed) window.toolUsed(name, extra); };
   G.wa = function (text) { G.used('giur_share'); window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener'); };
   G.$ = function (id) { return document.getElementById(id); };
+  /* שפה (22.11.2026): עברית כברירת מחדל, אנגלית/רוסית לפי <html lang> */
+  G.lang = (document.documentElement.getAttribute('lang') || 'he').slice(0, 2);
+  G.t = function (d) { return d[G.lang] || d.he; };
+  G.lk = function (k) { return G.lang === 'he' ? k : k + '-' + G.lang; };
+  G.url = function (h) { return 'https://hakelim.com' + location.pathname.replace(/index\.html$/, '') + (h || ''); };
+  G.of = function () { return G.t({ he: ' מתוך ', en: ' of ', ru: ' из ' }); };
   G.bar = function (fill, cnt, done, total) {
     var p = total ? Math.round(done * 100 / total) : 0;
     if (fill) fill.style.width = p + '%';
-    if (cnt) cnt.textContent = done + ' מתוך ' + total + ' (' + p + '%)';
+    if (cnt) cnt.textContent = done + G.of() + total + ' (' + p + '%)';
   };
   /* רשימת סימון שנשמרת: כל input[type=checkbox][data-k] בתוך container */
   G.checklist = function (box, key, onChange) {

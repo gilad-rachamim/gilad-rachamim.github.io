@@ -284,6 +284,35 @@ def shipurim_list():
 # דף שלא רוצים בו את הבלוק: "no_rel": true ב-meta. תמונות השיתוף נוצרות ב-tools/og_images.py אל assets/og/.
 SEO_SKIP = {"pratiut", "privacy", "shipurim", "hitkadmut", "negishut"}
 SEO_AUTHOR = {"@type": "Person", "name": "גילעד רחמים אביעד", "url": BASE + "/kelim/#mi"}
+# דפים בשפה אחרת (22.11.2026, גיור באנגלית וברוסית): "lang": "en"/"ru" ב-meta -> <html lang dir=ltr>, התוכן בשפה,
+# המסגרת של האתר (תפריט, משוב, תחתית) נשארת בעברית ומסומנת lang=he dir=rtl. "alt": {"he": ..., "en": ..., "ru": ...} -> hreflang.
+LANG_UI = {
+    "en": {"locale": "en_US", "skip": "Skip to content", "crumbs": "Breadcrumb", "browser": "Any phone or computer browser, no install.",
+           "rel": "More free tools that may help", "all": "All tools in",
+           "chips": ["Free", "No limits", "No ads"], "sub": "Many tools like this online are limited and full of ads. Not here: no sign-up and no ads, out of a wish to do kindness (chesed)."},
+    "ru": {"locale": "ru_RU", "skip": "Перейти к содержанию", "crumbs": "Навигационная цепочка", "browser": "Любой браузер в телефоне или компьютере, без установки.",
+           "rel": "Ещё бесплатные инструменты", "all": "Все инструменты раздела",
+           "chips": ["Бесплатно", "Без ограничений", "Без рекламы"], "sub": "Многие такие инструменты в сети ограничены и полны рекламы. Здесь нет: без регистрации и без рекламы, как доброе дело (хесед)."},
+}
+def lang_page(html, meta, url):
+    """עוטף דף בשפה אחרת: html ltr, המסגרת העברית מסומנת rtl, hreflang."""
+    lang = meta.get("lang")
+    ui = LANG_UI[lang]
+    html = html.replace('<html lang="he" dir="rtl">', f'<html lang="{lang}" dir="ltr">', 1)
+    html = html.replace('<meta property="og:locale" content="he_IL">', f'<meta property="og:locale" content="{ui["locale"]}">', 1)
+    he = ' lang="he" dir="rtl"'
+    for a in ('<header class="topbar"', '<div id="hk-search"', '<section class="fb no-print"', '<footer class="site-foot ft"', '<div class="install-bar"'):
+        html = html.replace(a, a + he, 1)
+    html = html.replace('<a class="skip" href="#main">דילוג לתוכן</a>', f'<a class="skip" href="#main">{ui["skip"]}</a>', 1)
+    html = html.replace('<nav class="crumbs" aria-label="פירורי לחם">', f'<nav class="crumbs" aria-label="{ui["crumbs"]}">', 1)
+    return html
+
+def hreflang(meta):
+    alt = meta.get("alt")
+    if not alt:
+        return ""
+    out = "".join(f'<link rel="alternate" hreflang="{l}" href="{BASE}{u}">' for l, u in alt.items())
+    return out + (f'<link rel="alternate" hreflang="x-default" href="{BASE}{alt["he"]}">' if "he" in alt else "")
 def in_sitemap(meta):
     """דף עם noindex - גם בדגל וגם כשהוכנס ידנית ב-head - לא נכנס למפת האתר.
     גוגל מתריע כשדף במפה חסום ב-noindex (סרץ' קונסול, 16.11.2026)."""
@@ -306,7 +335,10 @@ def seo_parent(p):
     return p.rstrip("/").rsplit("/", 1)[0] + "/"
 
 def seo_children(p):
-    return [c for c in INDEX if c != p and seo_parent(c) == p and c.rstrip("/").rsplit("/", 1)[1] not in SEO_SKIP]
+    # דפים בשפה אחרת (אנגלית/רוסית, "lang" ב-meta) לא נספרים כילדים של מרכז בשפה אחרת
+    lang = INDEX.get(p, {}).get("lang", "he")
+    return [c for c in INDEX if c != p and seo_parent(c) == p and c.rstrip("/").rsplit("/", 1)[1] not in SEO_SKIP
+            and INDEX[c].get("lang", "he") == lang]
 
 def seo_is_hub(p):
     if INDEX.get(p, {}).get("no_hub"):  # כלי שיש מתחתיו דפי נחיתה (תמלול): נשאר כלי, לא דף מרכז
@@ -321,7 +353,7 @@ def seo_ld(p, url):
     desc = meta["description"].replace('"', "״")
     if seo_is_hub(p):
         d = {"@context": "https://schema.org", "@type": "CollectionPage", "name": meta["_name"], "description": desc,
-             "url": url, "inLanguage": "he", "isAccessibleForFree": True, "author": SEO_AUTHOR,
+             "url": url, "inLanguage": meta.get("lang", "he"), "isAccessibleForFree": True, "author": SEO_AUTHOR,
              "mainEntity": {"@type": "ItemList", "itemListElement": [
                  {"@type": "ListItem", "position": i, "name": INDEX[c]["_name"], "url": BASE + c}
                  for i, c in enumerate(seo_children(p), start=1)]}}
@@ -330,8 +362,8 @@ def seo_ld(p, url):
                else "EducationalApplication" if meta["site"] == "limudim" or "/tichnut/" in p
                else "UtilitiesApplication")
         d = {"@context": "https://schema.org", "@type": "WebApplication", "name": meta["_name"], "description": desc,
-             "url": url, "inLanguage": "he", "applicationCategory": cat, "operatingSystem": "Any",
-             "browserRequirements": "דפדפן רגיל בטלפון או במחשב, בלי התקנה.",
+             "url": url, "inLanguage": meta.get("lang", "he"), "applicationCategory": cat, "operatingSystem": "Any",
+             "browserRequirements": LANG_UI.get(meta.get("lang"), {}).get("browser", "דפדפן רגיל בטלפון או במחשב, בלי התקנה."),
              "isAccessibleForFree": True, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "ILS"},
              "author": SEO_AUTHOR, "publisher": SEO_AUTHOR,
              "isPartOf": {"@type": "WebSite", "name": site["name"], "url": BASE + site["home"]}}
@@ -351,8 +383,12 @@ def seo_related(p):
         d = INDEX[c]["description"]
         d = d if len(d) <= 95 else d[:95].rsplit(" ", 1)[0].rstrip(" ,.:;–-(") + "…"
         return f'<a href="{c}"><b>{html_lib.escape(INDEX[c]["_name"], quote=False)}</b><span>{html_lib.escape(d, quote=False)}</span></a>'
-    more = f'<p class="rel-all"><a class="gold" href="{par}">לכל הכלים של ״{html_lib.escape(INDEX[par]["_name"], quote=False)}״ ←</a></p>' if par in INDEX else ""
-    return ('\n<section class="k-sec rel no-print" aria-labelledby="rel-h">\n  <h2 id="rel-h">עוד כלים בחינם שאולי יעזרו</h2>\n  <div class="dom">'
+    ui = LANG_UI.get(meta.get("lang"))
+    if ui:
+        more = f'<p class="rel-all"><a class="gold" href="{par}">{ui["all"]} “{html_lib.escape(INDEX[par]["_name"], quote=False)}” →</a></p>' if par in INDEX else ""
+    else:
+        more = f'<p class="rel-all"><a class="gold" href="{par}">לכל הכלים של ״{html_lib.escape(INDEX[par]["_name"], quote=False)}״ ←</a></p>' if par in INDEX else ""
+    return ('\n<section class="k-sec rel no-print" aria-labelledby="rel-h">\n  <h2 id="rel-h">' + (ui["rel"] if ui else "עוד כלים בחינם שאולי יעזרו") + '</h2>\n  <div class="dom">'
             + "".join(card(c) for c in pick) + f"</div>\n  {more}\n</section>\n")
 
 # ---------- מפת האתר לאנשים (/mapa/): כל הדפים שבמפת האתר, לפי אתר ותחום. נוצרת בכל build, אז לא מתיישנת ----------
@@ -468,6 +504,10 @@ def chesed_band(p, meta):
         chips, sub = ["בחינם", "ללא הגבלה", "בלי פרסומות"], CHESED_SUB
     if not meta.get("_login"):  # שער המקום הראשון (17.11.2026): בכל דף כתוב במפורש "בלי הרשמה"; לא בדף עם כניסת גוגל
         sub = sub.replace("בלי פרסומות, מתוך", "בלי הרשמה ובלי פרסומות, מתוך") if "בלי פרסומות, מתוך" in sub else sub.replace("כאן לא, מתוך", "כאן לא, וגם בלי הרשמה – מתוך")
+    ui = LANG_UI.get(meta.get("lang"))
+    if ui:
+        return ('<div class="chesed no-print" role="note"><p class="chesed-t">' + "".join(f"<b>✓ {c}</b>" for c in ui["chips"])
+                + f'</p><p class="chesed-s">{ui["sub"]}</p></div>')
     box = CHESED_CODE if any(p.startswith(l) for l in CHESED_PARTNER) and not p.startswith("/kelim/shir/karaoke/") else ""  # בקריוקי השותפות בתוך הבוט
     return ('<div class="chesed no-print" role="note"><p class="chesed-t">' + "".join(f"<b>✓ {c}</b>" for c in chips)
             + f'</p><p class="chesed-s">{sub}</p>{box}</div>')
@@ -561,6 +601,8 @@ for path in sorted(SRC.rglob("*.html")):
     url = BASE + url_path
     site = SITES.get(meta.get("site", ""))
     root = (site["name"], site["home"]) if site else ("עמוד המוהל", "/mohel/")
+    if meta.get("crumb_root"):  # דף בשפה אחרת: שם השורש בפירורי הלחם בשפת הדף
+        root = (meta["crumb_root"], root[1])
     html = LAYOUT_KELIM if site else LAYOUT
     content += seo_related(url_path)
     dv_blk, dv_ld = demo_block(meta, url) if site else ("", "")
@@ -570,7 +612,7 @@ for path in sorted(SRC.rglob("*.html")):
     # תיאור השיתוף (og:description) פותח ב"בחינם, בלי הגבלה ובלי הרשמה" - גילעד 11.11.2026.
     # כלי עם מכסה (CHESED_PARTNER) לא מקבל "בלי הגבלה"; כלי עם כניסת גוגל לא מקבל "בלי הרשמה". נפש נשאר בטון הרך שלו.
     og_desc = meta["description"]
-    if site and meta.get("site") != "nefesh" and not meta.get("noindex"):
+    if site and meta.get("site") != "nefesh" and not meta.get("noindex") and not meta.get("lang"):
         limited = any(url_path.startswith(l) for l in CHESED_PARTNER)
         login = "gsi/client" in raw or "accounts.google.com" in raw
         free = [w for w, ok in (("בלי הגבלה", not limited), ("בלי הרשמה", not login)) if ok]
@@ -586,7 +628,7 @@ for path in sorted(SRC.rglob("*.html")):
         "og_title": meta.get("og_title", meta["title"]),
         "og_image": meta.get("og_image", og_default),
         "robots": '<meta name="robots" content="noindex">' if meta.get("noindex") else "",
-        "head": meta.get("head_pre", "") + ("" if meta.get("no_ga") else GA) + KISHUR + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url) + dv_ld,
+        "head": meta.get("head_pre", "") + ("" if meta.get("no_ga") else GA) + KISHUR + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url) + dv_ld + hreflang(meta),
         "body_class": meta.get("body_class", ""),
         "sprite": SPRITE,
         "wa": WA,
@@ -633,6 +675,8 @@ for path in sorted(SRC.rglob("*.html")):
         if man.get("display") == "browser":  # באייפון: האייקון נפתח בספארי עצמו – עם אותו אחסון (והצימוד) של הדף
             html = html.replace('<meta name="apple-mobile-web-app-capable" content="yes">', '<meta name="apple-mobile-web-app-capable" content="no">')
             html = html.replace('<meta name="mobile-web-app-capable" content="yes">', '<meta name="mobile-web-app-capable" content="no">')
+    if meta.get("lang"):
+        html = lang_page(html, meta, url)
     html = version_assets(html)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
@@ -644,7 +688,7 @@ for path in sorted(SRC.rglob("*.html")):
         _sw = (ROOT / meta["sw_src"]).read_text(encoding="utf-8")
         _sw = _sw.replace("__CACHE__", url_path.strip("/").replace("/", "-") + "-" + datetime.datetime.now().strftime("%Y%m%d%H%M"))
         (out.parent / "sw.js").write_text(_sw, encoding="utf-8")
-    if site and not meta.get("noindex") and not meta.get("no_precache") and not re.search(r"/(pratiut|negishut|tosaf)/$", url_path):
+    if site and not meta.get("noindex") and not meta.get("no_precache") and not meta.get("lang") and not re.search(r"/(pratiut|negishut|tosaf)/$", url_path):
         # רשימת הכלים לתוסף הכרום (kelim/tools.json): כלי חדש באתר מופיע בתוסף בלי לשלוח גרסה לחנות
         cr = meta.get("crumbs") or []
         name = cr[-1][0] if cr else re.split(r"\s[–—|-]\s|:\s", meta["title"])[0].strip()
