@@ -31,7 +31,7 @@ jobs:
       - run: python build.py
       - name: commit only the two pages
         run: |
-          FILES="src/pages/kodesh/luach-ivri/index.html src/pages/kodesh/taarich-ivri/index.html kodesh/luach-ivri/index.html kodesh/taarich-ivri/index.html src/pages/kodesh/luach-ivri/ru/index.html kodesh/luach-ivri/ru/index.html src/pages/kodesh/luach-ivri/ru/prazdniki/index.html kodesh/luach-ivri/ru/prazdniki/index.html"
+          FILES="src/pages/kodesh/luach-ivri/index.html src/pages/kodesh/taarich-ivri/index.html kodesh/luach-ivri/index.html kodesh/taarich-ivri/index.html src/pages/kodesh/luach-ivri/ru/index.html kodesh/luach-ivri/ru/index.html src/pages/kodesh/luach-ivri/ru/prazdniki/index.html kodesh/luach-ivri/ru/prazdniki/index.html src/pages/kodesh/luach-ivri/en/index.html kodesh/luach-ivri/en/index.html src/pages/kodesh/taarich-ivri/ru/index.html kodesh/taarich-ivri/ru/index.html src/pages/kodesh/taarich-ivri/en/index.html kodesh/taarich-ivri/en/index.html"
           git add $FILES
           git checkout -- .
           git clean -fdq
