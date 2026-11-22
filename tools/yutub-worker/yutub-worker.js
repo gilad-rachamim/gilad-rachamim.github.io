@@ -143,6 +143,12 @@ export class Yutub {
       this.sql.exec("UPDATE jobs SET status='queued', msg='ממתין בתור', pct=0 WHERE status='running' AND started < ? AND tries < 2", now - 50 * 60000);
       this.sql.exec("UPDATE jobs SET status='failed', msg='העיבוד נתקע. אפשר לנסות שוב.', updated=? WHERE status='running' AND started < ? AND tries >= 2", now, now - 50 * 60000);
       if (isShabbat(now) && (p === "/r/peek" || p === "/r/next")) return json(req, { ok: true, queued: 0, job: null, shabbat: true });
+      if (p === "/r/redo") {                                   // תמלול מחדש של שיעור שמור (למשל אחרי שיפור בעריכה)
+        const id = url.searchParams.get("id") || "";
+        this.sql.exec("UPDATE jobs SET status='queued', msg='ממתין בתור', pct=0, tries=0, updated=? WHERE id=? AND status IN ('done','failed')", now, id);
+        await this.wake();
+        return json(req, { ok: true });
+      }
       if (p === "/r/peek") return json(req, { ok: true, queued: this.one("SELECT COUNT(*) c FROM jobs WHERE status='queued'").c });
       let b = {}; try { b = await req.json(); } catch (e) { /* גוף ריק */ }
       if (p === "/r/next") {

@@ -52,4 +52,5 @@ jobs:
           RUNPOD_KEY: ${{ secrets.RUNPOD_KEY }}
           RUNPOD_ENDPOINT: ${{ secrets.RUNPOD_ENDPOINT }}
           YUTUB_PROXY: ${{ secrets.YUTUB_PROXY }}
+          YUTUB_GEMINI: ${{ secrets.YUTUB_GEMINI }}
         run: python tools/yutub-worker/runner.py loop
