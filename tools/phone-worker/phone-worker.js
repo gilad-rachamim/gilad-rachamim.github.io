@@ -5,6 +5,8 @@
 // מעקב כניסות: Durable Object אחד שסופר שיחות ושימוש בכל כלי ביום. לא נשמר שום מספר טלפון.
 import { HDate, HebrewCalendar, Zmanim, GeoLocation, Locale, flags, DailyLearning } from '@hebcal/core';
 import '@hebcal/learning'; // רושם את הדף היומי, משניות יומיות ונ"ך יומי
+import * as HC from '@hebcal/core';
+import taharaFactory from '../../assets/tahara-core.js'; // אותה ליבה בדיוק של /kodesh/tahara/ – לא משנים ולא מעתיקים
 
 const TZ = 'Asia/Jerusalem';
 const VERSION = 2;
@@ -26,7 +28,7 @@ const CITIES = [
 ];
 const CITY_MENU = CITIES.slice(1).map((c, i) => `ל${c[0]} הקישו ${i + 1}`).join(' ');
 
-const MENU = 'לזמני היום הקישו 1. לתאריך העברי ולחגים הקרובים הקישו 2. למחשבון ברית בר מצווה ויארצייט הקישו 3. לזמני שבת הקישו 4. להשארת הודעה ובקשת עזרה הקישו 5. לדף היומי ולמשניות יומיות הקישו 6. לזמני חנוכה הקישו 7. לחדשות בשלוש דקות הקישו 8. לסיום הקישו 0';
+const MENU = 'לזמני היום הקישו 1. לתאריך העברי ולחגים הקרובים הקישו 2. למחשבון ברית בר מצווה ויארצייט הקישו 3. לזמני שבת הקישו 4. להשארת הודעה ובקשת עזרה הקישו 5. לדף היומי ולמשניות יומיות הקישו 6. לזמני חנוכה הקישו 7. לחדשות בשלוש דקות הקישו 8. למחשבון וסתות הקישו 9. לסיום הקישו 0';
 const WELCOME = 'שלום וברוכים הבאים לקו הכלים של גילעד רחמים. כל הכלים בחינם ובלי אינטרנט. אפשר להקיש בכל רגע בלי לחכות לסוף ההודעה';
 const SHARE = 'מכירים מישהו שזה יעזור לו? ספרו לו על הקו';
 const LINE_NUMBER = '0772253345';
@@ -282,10 +284,85 @@ export function newsChunks(parts) {
   return out;
 }
 
+
+// ---------- מחשבון וסתות (שלוחה 9) ----------
+// החישוב כולו בליבה של דף טהרה (assets/tahara-core.js, כללים ב-docs/tahara-rules.md). כאן רק שאלות ומשפטים.
+// שום תאריך או מספר טלפון לא נשמר – רק מונה אחד "נכנסו למחשבון".
+const TAHARA = taharaFactory(HC);
+const VESTOT_PRESETS = { 1: 'sephardi_ovadia', 2: 'ashkenaz', 3: 'chabad', 4: 'ben_ish_chai' };
+const VESTOT_METHOD_Q = 'לפי איזה מנהג לחשב. ספרדים ומרוקו הקישו 1. אשכנזים הקישו 2. חב"ד הקישו 3. בן איש חי והרב מרדכי אליהו הקישו 4';
+const VESTOT_DISCLAIMER = 'המחשבון עוזר לזכור ואינו פוסק הלכה. לכל שאלה הלכתית פונים לרב';
+
+// יום וחודש בלבד (4 ספרות): השנה נבחרת כך שהתאריך הוא האחרון שלא אחרי מחר (או לפני התאריך שנתן, בראייה הקודמת)
+function parseDayMonth(s, before) {
+  if (!/^\d{4}$/.test(s || '')) return null;
+  const d = +s.slice(0, 2), m = +s.slice(2, 4);
+  const limit = before ? addDays(before, -1) : addDays(israelToday(), 1);
+  for (let y = limit.getFullYear(); y > limit.getFullYear() - 9; y--) {
+    const dt = new Date(y, m - 1, d, 12);
+    if (dt.getMonth() === m - 1 && dt.getDate() === d && dt <= limit) return dt;
+  }
+  return null;
+}
+// עונה: 1 ביום (מהנץ עד השקיעה), 2 בלילה אחרי השקיעה, 3 בלילה לפני הנץ. החישוב כמו onahFromClock בליבה
+function vestotSighting(date, a) {
+  let abs = TAHARA.absFromYmd(TAHARA.ymd(date));
+  if (a === '2') abs += 1;
+  return { abs, onah: a === '1' ? 'day' : 'night' };
+}
+function sayOnah(d) {
+  if (d.onah === 'day') return [`ביום ${DAYS[d.greg.getDay()]}`, hDate(d.greg), gDate(d.greg)];
+  return [`בליל יום ${DAYS[d.greg.getDay()]}. הלילה מתחיל בערב של יום ${DAYS[d.gregEve.getDay()]}`, gDate(d.gregEve), 'והוא ליל', hDate(d.greg)];
+}
+function sayDay(d) { return [`יום ${DAYS[d.greg.getDay()]}`, hDate(d.greg), gDate(d.greg)]; }
+
+const VESTOT_ALERTS = {
+  hefsek_yom_tov: 'יום ההפסק הוא יום טוב. שואלים רב',
+  hefsek_shabbat: 'יום ההפסק הוא שבת. כדאי לשאול את הרב מראש מה מכינים לפני שבת',
+  leil_shabbat: 'ליל הטבילה הוא ליל שבת. יש בזה הלכות מיוחדות. בודקים עם הרב ועם המקווה',
+  motzei_shabbat: 'ליל הטבילה הוא מוצאי שבת. בודקים עם הרב',
+  yom_tov: 'ליל הטבילה הוא ליל יום טוב. שואלים רב',
+  postponed_yom_kippur: 'הלילה המקורי הוא ליל יום הכיפורים ואסור לטבול בו. הטבילה נדחית ללילה שאחריו',
+  postponed_tisha_bav: 'הלילה המקורי הוא ליל תשעה באב ואין טובלים בו. הטבילה נדחית ללילה שאחריו'
+};
+
+function toolVestot(date, a, presetKey, prevDate) {
+  const preset = TAHARA.PRESETS[VESTOT_PRESETS[presetKey]];
+  const last = vestotSighting(date, a);
+  const S = [last];
+  if (prevDate) {
+    // הראייה הקודמת – רק היום נחוץ להפלגה (אורך המרווח בימים; העונה של ההפלגה היא של הראייה האחרונה)
+    S.unshift({ abs: TAHARA.absFromYmd(TAHARA.ymd(prevDate)), onah: last.onah });
+  }
+  const r = TAHARA.summary(S, preset);
+  if (!r) return ['לא הצלחתי לחשב'];
+  const out = ['הראייה האחרונה היא', ...sayOnah(r.last), 'ממנה יוצאות עונות הפרישה'];
+  out.push('עונה בינונית. יום שלושים מהראייה. יום הראייה הוא יום אחד', ...sayOnah(r.beinonit));
+  if (r.chodesh.edge) {
+    out.push('וסת החודש. הראייה הייתה ביום שלושים והחודש הבא חסר ואין תאריך מקביל. שני הימים הבאים הם ספק ושואלים רב', ...r.chodesh.list.flatMap(sayOnah));
+  } else if (r.sameDay) {
+    out.push('וסת החודש. אותו תאריך עברי בחודש הבא. החודש חסר ולכן עונת החודש חלה יחד עם העונה הבינונית', ...sayOnah(r.chodesh.list[0]));
+  } else {
+    out.push('וסת החודש. אותו תאריך עברי בחודש הבא. החודש מלא ולכן עונת החודש חלה יום אחרי העונה הבינונית', ...sayOnah(r.chodesh.list[0]));
+  }
+  if (r.haflaga) out.push(`וסת ההפלגה. ${r.haflaga.len} ימים`, ...sayOnah(r.haflaga));
+  else out.push('וסת ההפלגה. כדי לחשב אותה צריך גם את תאריך הראייה הקודמת. אפשר להתקשר שוב ולהקיש אותה');
+  out.push('בעונת הפרישה בודקים פעם אחת במהלך העונה. אם בדיעבד לא בדקה אסורה עד שתבדוק');
+  // הפסק טהרה, שבעה נקיים וטבילה
+  const m = TAHARA.mikveh(last.abs, preset);
+  out.push(`הפסק טהרה. המוקדם ביותר הוא ביום ה${m.minDays === 4 ? 'רביעי' : 'חמישי'} מיום הראייה, כולל יום הראייה. זה בתנאי שהדימום כבר פסק`, ...sayDay(m.hefsek));
+  out.push('שבעה נקיים מתחילים למחרת ההפסק', ...sayDay(m.cleanFirst), 'ועד', ...sayDay(m.cleanLast));
+  out.push('ליל הטבילה', ...sayOnah(m.tevila));
+  m.alerts.forEach(k => { if (VESTOT_ALERTS[k]) out.push(VESTOT_ALERTS[k]); });
+  if (preset.unverified && preset.unverified.length) out.push('בחלק מהפרטים במנהג שבחרתם לא נמצא מקור מאומת. בכל מקרה של ספק שואלים רב');
+  out.push(VESTOT_DISCLAIMER);
+  return out;
+}
+
 // ---------- המכונה: מה לשאול עכשיו ----------
 function menuRead(round, intro) {
   if (round >= MAX_ROUNDS) return sayAndHangup([...(intro || []), 'תודה שהתקשרתם. להתראות']);
-  return readDigits([...(intro || []), MENU], `m${round}`, { allowed: '0.1.2.3.4.5.6.7.8', emptyOk: true });
+  return readDigits([...(intro || []), MENU], `m${round}`, { allowed: '0.1.2.3.4.5.6.7.8.9', emptyOk: true });
 }
 
 // sponsor: משפט הקדשה/חסות אופציונלי (משתנה SPONSOR ב-Cloudflare), מוקרא אחרי הברכה
@@ -332,6 +409,21 @@ function decide(v, sponsor = '', news = null) {
     const a = v[`a${r}`];
     if (a !== '1' && a !== '2') return { text: readDigits(['אם זה היה אחרי השקיעה הקישו 1. לפני השקיעה הקישו 2'], `a${r}`, { allowed: '1.2' }) };
     return { text: after(toolCalc(k, date, a === '1')), event: 'calc' };
+  }
+  if (tool === '9') {
+    const pk = v[`p${r}`];
+    if (!VESTOT_PRESETS[pk]) return { text: readDigits([VESTOT_METHOD_Q], `p${r}`, { allowed: '1.2.3.4' }) };
+    const dv = v[`d${r}`];
+    if (dv === undefined) return { text: readDigits(['הקישו את תאריך הראייה האחרונה. יום ושני ספרות חודש, ואחריהם ספרה אחת. 1 אם הייתה ביום, מהנץ עד השקיעה. 2 אם הייתה בלילה אחרי השקיעה. 3 אם הייתה בלילה לפני הנץ. למשל ראייה ב9 בנובמבר ביום, 0 9 1 1 1. אם הייתה קרוב לשקיעה או לנץ שואלים רב'], `d${r}`, { max: 5, min: 5 }) };
+    const date = parseDayMonth(dv.slice(0, 4)), a = dv.slice(4);
+    if (!date || !['1', '2', '3'].includes(a)) return { text: menuRead(next, ['התאריך שהוקש לא תקין. נסו שוב']) };
+    if (v[`q${r}`] === undefined) return { text: readDigits(['אם יש את הראייה שלפניה, הקישו את היום והחודש שלה בארבע ספרות. אם אין, הקישו 0'], `q${r}`, { max: 4, min: 1 }) };
+    let prev = null;
+    if (v[`q${r}`] !== '0') {
+      prev = parseDayMonth(v[`q${r}`], date);
+      if (!prev) return { text: menuRead(next, ['התאריך של הראייה הקודמת לא תקין. נסו שוב']) };
+    }
+    return { text: after(toolVestot(date, a, pk, prev)), event: 'vestot' };
   }
   if (tool === '5') {
     if (v[`r${r}`] === undefined) {
