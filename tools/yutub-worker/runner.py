@@ -9,7 +9,8 @@
   python runner.py loop                       כל המשימות שבתור (GitHub Actions)
   python runner.py local URL --out DIR [--by "שם הרב / המוסד"] [--times]     בדיקה מהמחשב, בלי Worker
 
-סביבה: YUTUB_WORKER, YUTUB_RUNNER_KEY (רק ל-loop), RUNPOD_KEY, RUNPOD_ENDPOINT, YUTUB_PROXY (לא חובה), CHROME (לא חובה).
+סביבה: YUTUB_WORKER, YUTUB_RUNNER_KEY (רק ל-loop), RUNPOD_KEY, RUNPOD_ENDPOINT, YUTUB_PROXY (לא חובה), CHROME (לא חובה),
+YUTUB_GEMINI (לא חובה: מפתח Gemini לשלב העריכה - פיסוק, כותרות, תקציר ומקורות. בלעדיו הקובץ יוצא בלי עריכה).
 הלוג ב-GitHub פתוח לכולם: לא מדפיסים קישור, כותרת או טקסט של אף אחד - רק מזהה משימה ושלב.
 """
 import argparse
@@ -31,6 +32,7 @@ from concurrent.futures import ThreadPoolExecutor
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import clean_transcript  # noqa: E402
+import polish  # noqa: E402
 
 MODEL = "ivrit-ai/whisper-large-v3-turbo-ct2"
 PIECE = 6 * 60
@@ -39,6 +41,8 @@ MAX_SEC = 4 * 3600 + 600
 SITE = "https://hakelim.com/kelim/tamlul/yutub/"
 CREDIT = "תומלל בכלי \"תמלול מיוטיוב\" של מיזם הכלים של גילעד רחמים – מיזם חסד, בלי כוונת רווח."
 NOTE = "תמלול אוטומטי: ייתכנו טעויות, במיוחד בפסוקים, בארמית ובשמות. כדאי לעבור על הטקסט לפני שמפיצים אותו."
+NOTE_EDITED = ("התמלול, העריכה, התקציר ורשימת המקורות נעשו אוטומטית: ייתכנו טעויות, במיוחד בפסוקים, בארמית ובשמות. "
+               "הנוסח הקובע הוא השיעור המוקלט.")
 FONT = os.path.normpath(os.path.join(HERE, "..", "..", "assets", "fonts", "FrankRuhlLibre-wght.woff"))
 NOWIN = 0x08000000 if os.name == "nt" else 0
 
@@ -384,8 +388,16 @@ def credit_for(meta):
     return CREDIT, SITE
 
 
-def doc_html(meta, paras, by, times, url):
+def doc_html(meta, paras, by, times, url, summary=None, edited=False):
     e = html.escape
+    box = ""
+    if summary:
+        box = "<div class='sum'><h3>תקציר השיעור</h3><p>" + e(summary["summary"]) + "</p>"
+        if summary.get("points"):
+            box += "<ul>" + "".join("<li>" + e(x) + "</li>" for x in summary["points"]) + "</ul>"
+        if summary.get("sources"):
+            box += "<h3>מקורות שהוזכרו בשיעור</h3><ul>" + "".join("<li>" + e(x) + "</li>" for x in summary["sources"]) + "</ul>"
+        box += "</div>"
     credit, site = credit_for(meta)
     font = ""
     if os.path.isfile(FONT):
@@ -415,14 +427,21 @@ p{{margin:0 0 9pt;text-align:justify;orphans:2;widows:2}}
 .end a{{color:#1c2f4a}}
 .end .cr{{font-size:11pt;color:#1c2f4a;font-weight:700;margin-top:6pt}}
 .ltr{{direction:ltr;unicode-bidi:isolate}}
+.sum{{background:#faf6ea;border:.8pt solid #d9cfae;border-radius:6pt;padding:10pt 14pt 6pt;margin:0 0 16pt;font-size:12pt;line-height:1.6}}
+.sum h3{{font-size:13pt;color:#1c2f4a;margin:0 0 4pt}}
+.sum ul+h3{{margin-top:8pt}}
+.sum p{{margin:0 0 6pt;text-align:right}}
+.sum ul{{margin:0 0 4pt;padding-inline-start:16pt}}
+.sum li{{margin:0 0 3pt}}
 </style></head><body>
 {f'<p class="by">{e(by)}</p>' if by else ''}
 <h1>{e(meta['title'])}</h1>
 {f'<p class="sub">{e(sub)}</p>' if sub else ''}
 <hr class="rule">
+{box}
 {''.join(body)}
 <div class="end">
-<p>{e(NOTE)}</p>
+<p>{e(NOTE_EDITED if edited else NOTE)}</p>
 <p>לצפייה בשיעור המקורי: <a class="ltr" href="{e(url)}">{e(url)}</a></p>
 <p class="cr">{e(credit)} <a class="ltr" href="{site}">{site.split('//')[1].rstrip('/')}</a></p>
 </div></body></html>"""
@@ -458,7 +477,7 @@ def build_pdf(html_text, tmp):
 HEB = re.compile(r"[\u0590-\u05FF]")
 
 
-def build_docx(meta, paras, by, times, url, tmp):
+def build_docx(meta, paras, by, times, url, tmp, summary=None, edited=False):
     from docx import Document
     from docx.enum.text import WD_ALIGN_PARAGRAPH
     from docx.oxml.ns import qn
@@ -505,11 +524,21 @@ def build_docx(meta, paras, by, times, url, tmp):
     sub = " · ".join(x for x in [meta.get("channel"), meta.get("series"), meta.get("date"), ("אורך השיעור " + hms(meta["dur"])) if meta.get("dur") else ""] if x)
     if sub:
         para(sub, 10.5, False, (0x66, 0x66, 0x66), C, after=16)
+    if summary:
+        para("תקציר השיעור", 14, True, (0x1C, 0x2F, 0x4A), None, after=3, line=1.2)
+        para(summary["summary"], 12, False, None, None, after=5, line=1.4)
+        for x in summary.get("points") or []:
+            para("• " + x, 12, False, None, None, after=2, line=1.4)
+        if summary.get("sources"):
+            para("מקורות שהוזכרו בשיעור", 14, True, (0x1C, 0x2F, 0x4A), None, after=3, before=8, line=1.2)
+            for x in summary["sources"]:
+                para("• " + x, 12, False, None, None, after=2, line=1.4)
+        para(" ", 6, after=8)
     for p in paras:
         if p.get("head"):
             para(p["head"], 15, True, (0x1C, 0x2F, 0x4A), None, after=4, before=12, line=1.2)
         para((f"[{hms(p['t'])}] " if times else "") + p["text"], 13, False, None, WD_ALIGN_PARAGRAPH.JUSTIFY, after=8)
-    para(NOTE, 10, False, (0x55, 0x55, 0x55), None, after=3, before=18, line=1.3)
+    para(NOTE_EDITED if edited else NOTE, 10, False, (0x55, 0x55, 0x55), None, after=3, before=18, line=1.3)
     para("לצפייה בשיעור המקורי: " + url, 10, False, (0x55, 0x55, 0x55), None, after=3, line=1.3)
     credit, site = credit_for(meta)
     para(credit + " " + site, 11, True, (0x1C, 0x2F, 0x4A), None, after=0, before=4, line=1.3)
@@ -549,9 +578,21 @@ def process(url, by="", times=False, progress=lambda m, pct: None):
             raise Fail("לא נמצא דיבור בסרטון הזה.")
         progress("מסדר את השיעור לקובץ", 88)
         paras = paragraphs(segs, meta["chapters"])
+        try:
+            paras, summary, n_edit = polish.polish(paras, meta["title"], progress)
+        except Exception as ex:                                  # עריכה שנכשלה לא מפילה את התמלול
+            say("polish failed: " + type(ex).__name__)
+            summary, n_edit = None, 0
+        edited = n_edit > 0
+        progress("מסדר את השיעור לקובץ", 95)
         text = "\n\n".join((("## " + p["head"] + "\n\n") if p.get("head") else "") + p["text"] for p in paras)
-        pdf = build_pdf(doc_html(meta, paras, by, times, watch), tmp)
-        docx = build_docx(meta, paras, by, times, watch, tmp)
+        if summary:
+            top = "## תקציר השיעור\n\n" + summary["summary"] + "".join("\n• " + x for x in summary.get("points") or [])
+            if summary.get("sources"):
+                top += "\n\n## מקורות שהוזכרו בשיעור\n" + "".join("\n• " + x for x in summary["sources"])
+            text = top + "\n\n" + text
+        pdf = build_pdf(doc_html(meta, paras, by, times, watch, summary, edited), tmp)
+        docx = build_docx(meta, paras, by, times, watch, tmp, summary, edited)
         return {"title": meta["title"], "channel": meta["channel"], "date": meta["date"], "dur": round(meta["dur"]),
                 "vid": meta["id"], "words": len(text.split()), "text": text, "pdf": pdf, "docx": docx}
     finally:
