@@ -258,6 +258,17 @@
       var n = nextHoliday(d); if (!n) return '';
       return (L ? L.inDays(n.days) : n.days === 1 ? 'מחר' : 'בעוד ' + n.days + ' ימים') + ': ' + n.name + ' (' + wd(n.a) + ', ' + ltr(dmy(n.a)) + ')';
     }
+    function upcomingHtml(d, n) {   // n המועדים הקרובים עם ספירת ימים (דף החגים)
+      var hy = new HD(d).getFullYear(), rows = holidays(hy).concat(holidays(hy + 1)), k = key(d), out = [];
+      for (var i = 0; i < rows.length && out.length < n; i++) {
+        var r = rows[i]; if (key(r.b || r.a) < k) continue;
+        var dd = Math.round((r.a - clean(d)) / 864e5);
+        out.push('<li><b>' + r.name + '</b>' + (r.sh ? ' <span class="iv-shb">' + tr('שבתון') + '</span>' : '') + '<small>' +
+          (dd <= 0 ? tr('עכשיו') : L ? L.inDays(dd) : dd === 1 ? 'מחר' : 'בעוד ' + dd + ' ימים') + ' · ' + (r.b ? wd(r.a) + ' – ' + wd(r.b) : wd(r.a)) + ', ' + span(r.a, r.b) +
+          (r.note ? ' · ' + r.note : '') + '</small></li>');
+      }
+      return '<ul class="iv-up">' + out.join('') + '</ul>';
+    }
     function yearInfo(hy) {
       var a = new HD(1, 7, hy).abs(), b = new HD(1, 7, hy + 1).abs(), g0 = hgreg(new HD(1, 7, hy)), g1 = hgreg(new HD(29, 6, hy));
       return { leap: HD.isLeapYear(hy), days: b - a, months: HD.monthsInYear(hy), start: g0, end: g1, name: num(hy) };
@@ -405,7 +416,7 @@
     return {
       noon: noon, clean: clean, add: add, key: key, fromKey: fromKey, gem: gem, mon: mon, heb: heb, greg: greg, dm: dm, dmy: dmy, wd: wd, hgreg: hgreg,
       evMap: evMap, parsha: parsha, nextSat: nextSat, day: day, dayLines: dayLines, month: month, hmonths: hmonths, okMonth: okMonth,
-      gridHtml: gridHtml, listHtml: listHtml, dayHtml: dayHtml, holidays: holidays, holidaysHtml: holidaysHtml, nextHoliday: nextHoliday, nextHolidayText: nextHolidayText, yearInfo: yearInfo,
+      gridHtml: gridHtml, listHtml: listHtml, dayHtml: dayHtml, holidays: holidays, holidaysHtml: holidaysHtml, nextHoliday: nextHoliday, nextHolidayText: nextHolidayText, upcomingHtml: upcomingHtml, span: span, yearInfo: yearInfo,
       g2h: g2h, hcheck: hcheck, h2g: h2g, parseYear: parseYear, inRange: inRange, bday: bday, mitzva: mitzva, birthdays: birthdays,
       tzDate: tzDate, sunset: sunset, today: today, place: place, todayHtml: todayHtml, todayText: todayText, todayLine: todayLine, nextDaysHtml: nextDaysHtml,
       g2hHtml: g2hHtml, g2hText: g2hText, h2gHtml: h2gHtml, h2gText: h2gText, bmHtml: bmHtml, bmText: bmText, HD: HD, G: G, tr: tr, num: num, L: L || null
@@ -618,10 +629,17 @@
     drawB(false);
   }
 
+  // ---------------- דף החגים: "היום" והמועדים הקרובים מתעדכנים בכל כניסה ----------------
+  function initHag() {
+    var t = C.today(new Date(), C.place('yerushalaim'));
+    $('pr-today').innerHTML = C.tr('<b>היום:</b> ') + C.todayLine(t);
+    $('pr-up').innerHTML = C.upcomingHtml(C.hgreg(t.hd), 6);
+  }
+
   function start() {
     C = core(window.hebcal, window.KODESH_IVRI_L || null);
-    try { if ($('li')) initLuach(); if ($('ti')) initTaarich(); } catch (e) { if (window.console) console.error(e); }
+    try { if ($('li')) initLuach(); if ($('ti')) initTaarich(); if ($('pr')) initHag(); } catch (e) { if (window.console) console.error(e); }
   }
-  if (!$('li') && !$('ti')) return;
+  if (!$('li') && !$('ti') && !$('pr')) return;
   if (window.hebcal) start(); else { var sc = document.querySelector('script[data-hebcal]'); if (sc) sc.addEventListener('load', start); }
 })(this);
