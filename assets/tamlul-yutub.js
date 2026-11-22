@@ -59,13 +59,21 @@
     $('yt-r-meta').textContent = meta;
     $('yt-pdf').href = API + j.pdf; $('yt-docx').href = API + j.docx; $('yt-txt').href = API + j.txt;
     $('yt-view').href = API + j.pdf + '?view=1';
+    show($('yt-sumrow'), !!j.sum);
+    if (j.sum && $('yt-sum')) { $('yt-sum').href = API + j.sum + '?view=1'; $('yt-sumpdf').href = API + j.sum; $('yt-sumdocx').href = API + j.sumdocx; }
     var share = $('yt-share');
     if (share) share.href = 'https://wa.me/?text=' + encodeURIComponent((j.title || 'שיעור') + ' – השיעור כתוב, להורדה כ-PDF או כוורד:\n' + location.href.split('#')[0] + '#t=' + j.id);
     show(res, true);
     var pre = $('yt-text');
     pre.textContent = 'טוען את הטקסט…';
     fetch(API + j.txt).then(function (r) { return r.text(); }).then(function (t) {
-      pre.textContent = t.replace(/^## /gm, '');
+      pre.textContent = '';
+      t.split('\n').forEach(function (line) {            // כותרות מודגשות, השאר טקסט רגיל
+        var m = /^(#{1,2}) (.*)$/.exec(line), el;
+        if (m) { el = document.createElement('strong'); el.className = m[1].length === 1 ? 'yt-t1' : 'yt-t2'; el.textContent = m[2]; }
+        else el = document.createTextNode(line);
+        pre.appendChild(el); pre.appendChild(document.createTextNode('\n'));
+      });
       pre.setAttribute('data-full', '1');
     }).catch(function () { pre.textContent = 'הטקסט המלא נמצא בקבצים להורדה.'; });
     try { res.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { /* דפדפן ישן */ }

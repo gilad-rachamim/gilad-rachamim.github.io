@@ -46,6 +46,19 @@ SUM_PROMPT = """לפניך שיעור תורה כתוב. כתוב תקציר נ�
 השיעור:
 %s"""
 
+DIGEST_PROMPT = """לפניך שיעור תורה כתוב. כתוב סיכום שיעור מסודר שלו, למי שרוצה ללמוד את השיעור בכמה דקות.
+- אורך כולל: %d עד %d מילים.
+- 4 עד 8 פרקים לפי סדר השיעור. לכל פרק head (כותרת של 2 עד 6 מילים) ו-text (פסקה אחת או שתיים, בלשון ברורה וזורמת).
+- בכל פרק: השאלה או הנושא, המקורות שהובאו עליו, המהלך של המרצה והמסקנה. משל או סיפור שנאמר - במשפט או שניים.
+- רק מה שנאמר בשיעור. לא מוסיפים רעיון, מקור, מראה מקום או פסוק שלא נאמרו, ולא מחווים דעה.
+- כותבים בגוף שלישי ענייני ("המרצה מסביר", או פשוט את התוכן עצמו), בלי ניקוד, בלי פתיחות כמו "בשיעור זה".
+שם השיעור: %s
+
+השיעור:
+%s"""
+
+DIGEST_SCHEMA = {"type": "OBJECT", "properties": {"parts": {"type": "ARRAY", "items": {"type": "OBJECT", "properties": {
+    "head": {"type": "STRING"}, "text": {"type": "STRING"}}, "required": ["head", "text"]}}}, "required": ["parts"]}
 EDIT_SCHEMA = {"type": "OBJECT", "properties": {"paras": {"type": "ARRAY", "items": {"type": "OBJECT", "properties": {
     "i": {"type": "INTEGER"}, "head": {"type": "STRING"}, "text": {"type": "STRING"}, "drop": {"type": "BOOLEAN"}}, "required": ["i", "text"]}}}, "required": ["paras"]}
 SUM_SCHEMA = {"type": "OBJECT", "properties": {"summary": {"type": "STRING"}, "points": {"type": "ARRAY", "items": {"type": "STRING"}}, "sources": {"type": "ARRAY", "items": {"type": "STRING"}}},
@@ -165,5 +178,14 @@ def polish(paras, title, progress=lambda m, pct: None):
             pts = [clean(x) for x in (j.get("points") or []) if clean(x)][:7]
             src = [clean(x)[:200] for x in (j.get("sources") or []) if clean(x)][:25]
             summary = {"summary": clean(j["summary"])[:900], "points": [x[:260] for x in pts], "sources": src}
-    print("polish: %d/%d paras edited, summary %s" % (len(edited), len(paras), "yes" if summary else "no"), flush=True)
+    if summary:
+        total = len(full.split())
+        lo, hi = max(250, min(700, total // 10)), max(450, min(1100, total // 6))
+        j = ask(DIGEST_PROMPT % (lo, hi, title, full[:120000]), DIGEST_SCHEMA, max_out=8000)
+        parts = [{"head": clean(x.get("head"))[:60], "text": clean(x.get("text"))} for x in ((j or {}).get("parts") or []) if clean(x.get("text"))]
+        words = sum(len(x["text"].split()) for x in parts)
+        if len(parts) >= 2 and lo * 0.5 <= words <= max(hi * 1.6, total * 0.4) and total >= 600:
+            summary["digest"] = parts
+    print("polish: %d/%d paras edited, summary %s, digest %s" % (len(edited), len(paras), "yes" if summary else "no",
+                                                              "yes" if summary and summary.get("digest") else "no"), flush=True)
     return out, summary, len(edited)

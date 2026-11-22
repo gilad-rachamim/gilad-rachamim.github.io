@@ -58,7 +58,10 @@
 .yt-dl{display:grid;gap:.6rem;grid-template-columns:1fr 1fr}
 .yt-dl .btn{font-size:1.05rem}
 .yt-dl .wide{grid-column:1/-1}
-#yt-text{white-space:pre-wrap;background:#fff;color:#1b1b1b;border-radius:10px;padding:1rem;max-height:340px;overflow:auto;font-size:1.05rem;line-height:1.8;margin:.9rem 0 .6rem;font-family:inherit}
+.yt-h3{font-size:1.1rem;margin:1rem 0 .5rem}
+#yt-text .yt-t2{display:block;font-size:1.12rem;color:#1c2f4a}
+#yt-text .yt-t1{display:block;font-size:1.3rem;color:#1c2f4a;border-bottom:2px solid #c9a227;padding-bottom:.2rem}
+#yt-text{white-space:pre-wrap;background:#fff;color:#1b1b1b;border-radius:10px;padding:1rem;max-height:520px;overflow:auto;font-size:1.05rem;line-height:1.8;margin:.9rem 0 .6rem;font-family:inherit}
 .tlp-steps{list-style:none;padding:0;counter-reset:s;display:grid;gap:.7rem}
 .tlp-steps li{counter-increment:s;display:flex;gap:.8rem;align-items:flex-start;color:var(--body);font-size:1.05rem}
 .tlp-steps li::before{content:counter(s);flex:0 0 2rem;height:2rem;border-radius:50%;background:var(--gold);color:var(--ink);font-weight:700;display:flex;align-items:center;justify-content:center}
@@ -131,6 +134,15 @@
     <div id="yt-result" hidden>
       <h2 id="yt-r-title"></h2>
       <p id="yt-r-meta"></p>
+      <div id="yt-sumrow" hidden>
+        <h3 class="yt-h3">סיכום השיעור: קצר ומסודר</h3>
+        <div class="yt-dl">
+          <a class="btn btn-gold" id="yt-sum" href="#" target="_blank" rel="noopener" data-mv="yutub_sum_view">לפתוח את הסיכום</a>
+          <a class="btn btn-line" id="yt-sumpdf" href="#" data-mv="yutub_sum_pdf">סיכום ב-PDF</a>
+          <a class="btn btn-line" id="yt-sumdocx" href="#" data-mv="yutub_sum_docx">סיכום ב-Word</a>
+        </div>
+        <h3 class="yt-h3">השיעור המלא, מילה במילה</h3>
+      </div>
       <div class="yt-dl">
         <a class="btn btn-gold" id="yt-pdf" href="#" data-mv="yutub_pdf">להוריד PDF</a>
         <a class="btn btn-gold" id="yt-docx" href="#" data-mv="yutub_docx">להוריד Word</a>
@@ -278,7 +290,7 @@
   <button class="x" type="button" data-install-close aria-label="סגירה">×</button>
 </div>
 <script src="/assets/kelim.js?v=d9a3fa1f" defer></script>
-<script src="/assets/tamlul-yutub.js?v=78c6629e" defer></script>
+<script src="/assets/tamlul-yutub.js?v=db68f43e" defer></script>
 <script src="/assets/search.js?v=23b2af53" defer></script>
 </body>
 </html>
