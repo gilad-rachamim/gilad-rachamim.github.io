@@ -388,7 +388,25 @@ def credit_for(meta):
     return CREDIT, SITE
 
 
-def doc_html(meta, paras, by, times, url, summary=None, edited=False):
+# עיצוב להדפסה בשחור-לבן: בלי צבע ובלי רקעים אפורים, כותרות כבדות ופסים שחורים, כדי שייצא חד בכל מדפסת
+BW_CSS = """
+body{color:#000;font-size:13.5pt}
+.by{color:#000;letter-spacing:.06em}
+h1{color:#000;font-size:25pt;font-weight:900;border-top:3pt solid #000;border-bottom:3pt solid #000;padding:9pt 0 10pt;margin:0 0 8pt}
+.sub{color:#000;font-weight:700}
+.rule{display:none}
+body{counter-reset:sec}
+h2{color:#000;font-size:16.5pt;font-weight:900;border-bottom:1.6pt solid #000;padding:0 0 4pt;margin:20pt 0 7pt;counter-increment:sec}
+h2::before{content:counter(sec);display:inline-block;min-width:19pt;height:19pt;line-height:19pt;text-align:center;border:1.6pt solid #000;
+  font-family:Arial,sans-serif;font-size:11.5pt;font-weight:700;margin-inline-end:8pt;vertical-align:1pt}
+.sum{background:#fff;border:1.6pt solid #000;border-radius:0;border-inline-start-width:7pt}
+.sum h3{color:#000;font-weight:900}
+.end{border-top:1.6pt solid #000;color:#000}
+.end a,.end .cr{color:#000}
+"""
+
+
+def doc_html(meta, paras, by, times, url, summary=None, edited=False, bw=False):
     e = html.escape
     box = ""
     if summary:
@@ -433,6 +451,7 @@ p{{margin:0 0 9pt;text-align:justify;orphans:2;widows:2}}
 .sum p{{margin:0 0 6pt;text-align:right}}
 .sum ul{{margin:0 0 4pt;padding-inline-start:16pt}}
 .sum li{{margin:0 0 3pt}}
+{BW_CSS if bw else ''}
 </style></head><body>
 {f'<p class="by">{e(by)}</p>' if by else ''}
 <h1>{e(meta['title'])}</h1>
@@ -605,9 +624,11 @@ def process(url, by="", times=False, progress=lambda m, pct: None):
                 box = {"summary": summary["summary"], "points": [], "sources": summary.get("sources") or []}
                 out["sum"] = build_pdf(doc_html(m2, d, by, False, watch, box, True), tmp)
                 out["sumdocx"] = build_docx(m2, d, by, False, watch, tmp, box, True)
+                out["sumbw"] = build_pdf(doc_html(m2, d, by, False, watch, box, True, bw=True), tmp)
             except Exception as ex:
                 say("digest file failed: " + type(ex).__name__)
-                out.pop("sum", None)
+                for k in ("sum", "sumdocx", "sumbw"):
+                    out.pop(k, None)
         return out
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
@@ -650,7 +671,7 @@ def loop(max_minutes=45):
                 pass
         try:
             res = process(job["url"], job.get("by") or "", bool(job.get("times")), progress)
-            for k in ("pdf", "docx", "sum", "sumdocx"):
+            for k in ("pdf", "docx", "sum", "sumdocx", "sumbw"):
                 if res.get(k):
                     res[k] = base64.b64encode(res[k]).decode()
             res["id"] = jid
@@ -684,9 +705,9 @@ def main():
     for ext in ("pdf", "docx"):
         with open(os.path.join(a.out, f"{name}.{ext}"), "wb") as f:
             f.write(res[ext])
-    for k, ext in (("sum", "pdf"), ("sumdocx", "docx")):
+    for k, ext in (("sum", "pdf"), ("sumdocx", "docx"), ("sumbw", "pdf")):
         if res.get(k):
-            with open(os.path.join(a.out, f"סיכום - {name}.{ext}"), "wb") as f:
+            with open(os.path.join(a.out, ("סיכום להדפסה - " if k == "sumbw" else "סיכום - ") + f"{name}.{ext}"), "wb") as f:
                 f.write(res[k])
     with open(os.path.join(a.out, f"{name}.txt"), "w", encoding="utf-8") as f:
         f.write(res["text"])
