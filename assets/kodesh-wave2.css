@@ -1,0 +1,42 @@
+/* דפי גל ב' של האפליקציות: מחשבון אזכרה (/kodesh/yahrzeit/), פרשת השבוע (/kodesh/parasha/), גבאי בית כנסת (/kelim/kehila/gabai/). */
+.yz-three{display:grid;grid-template-columns:1fr 1.6fr 1.2fr;gap:.5rem}
+@media (max-width:420px){.yz-three{grid-template-columns:1fr 1fr}.yz-three input{grid-column:1/-1}}
+.yz-more{margin:.4rem 1.1rem 0 0;padding:0;color:var(--parchment)}
+.yz-more li{margin:.2rem 0}
+.kh-item details{margin-top:.4rem}
+.kh-item summary{cursor:pointer;color:var(--gold)}
+.ms-rem{display:flex;flex-wrap:wrap;gap:.8rem 1rem;justify-content:center;align-items:center;margin:.9rem 0;padding:.7rem;border:1px dashed var(--line,#3a4660);border-radius:12px;color:var(--parchment)}
+.ms-rem[hidden]{display:none}
+.ms-rem input[type=time]{font:inherit;padding:.3rem .5rem;border-radius:8px}
+/* פרשת השבוע */
+.pr-now{border:1px solid var(--gold-soft);background:rgba(227,183,101,.07);border-radius:16px;padding:1rem 1.1rem;margin:0 0 1rem;color:var(--parchment)}
+.pr-now h2{font-family:var(--serif);color:var(--cream);font-size:1.5rem;margin:0 0 .2rem}
+.pr-now .pr-when{color:var(--muted);font-size:.95rem;margin:0 0 .6rem}
+.pr-now h3{color:var(--gold);font-size:1rem;margin:.8rem 0 .2rem}
+.pr-now p{margin:.2rem 0}
+.pr-pasuk{font-family:var(--serif);font-size:1.15rem;line-height:1.9;color:var(--cream)}
+.pr-pasuk small{color:var(--muted);font-family:inherit;font-size:.85rem}
+.pr-nav{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin:.8rem 0}
+.pr-book{font-family:var(--serif);color:var(--cream);font-size:1.25rem;margin:1.4rem 0 .5rem}
+.pr-list details{border:1px solid var(--line);border-radius:12px;padding:.6rem .9rem;margin-bottom:.5rem;background:rgba(255,255,255,.03);color:var(--parchment)}
+.pr-list details.pr-cur{border-color:var(--gold)}
+.pr-list summary{cursor:pointer;color:var(--cream);font-weight:700}
+.pr-list summary span{color:var(--muted);font-weight:400;font-size:.9rem}
+.pr-list h4{color:var(--gold);font-size:.95rem;margin:.7rem 0 .15rem}
+.pr-list p{margin:.2rem 0}
+.pr-next{list-style:none;margin:.4rem 0 0;padding:0;color:var(--parchment)}
+.pr-next li{display:flex;justify-content:space-between;gap:.6rem;border-bottom:1px solid var(--line);padding:.35rem 0}
+.pr-next li span{color:var(--muted)}
+/* גבאי */
+.gb-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin:.6rem 0}
+.gb-grid a{display:block;border:1px solid var(--line);border-radius:14px;padding:.8rem .9rem;background:rgba(255,255,255,.03);color:var(--cream);text-decoration:none;font-weight:700}
+.gb-grid a span{display:block;color:var(--muted);font-weight:400;font-size:.88rem;margin-top:.15rem}
+.gb-grid a:hover{border-color:var(--gold)}
+.gb-check{list-style:none;margin:.4rem 0;padding:0}
+.gb-check li{display:flex;gap:.5rem;align-items:center;border-bottom:1px solid var(--line);padding:.45rem 0;color:var(--parchment)}
+.gb-check li.done span{text-decoration:line-through;opacity:.6}
+.gb-check li span{flex:1}
+.gb-check input[type=checkbox]{width:1.2rem;height:1.2rem}
+.gb-check button{background:none;border:0;color:var(--muted);cursor:pointer;font-size:1.1rem}
+.gb-add{display:flex;gap:.5rem;margin-top:.5rem}
+.gb-add input{flex:1}
