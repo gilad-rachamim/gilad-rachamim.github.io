@@ -20,4 +20,5 @@
     G.set('brit', {}); all().forEach(function (c) { c.checked = false; }); refresh(all());
   });
   var wa = G.$('bm-wa'); if (wa) wa.addEventListener('click', function () { G.used('giur_brit_wa'); });
+  var ml = G.$('bm-mail'); if (ml) ml.addEventListener('click', function () { G.used('giur_brit_mail'); });
 })();
