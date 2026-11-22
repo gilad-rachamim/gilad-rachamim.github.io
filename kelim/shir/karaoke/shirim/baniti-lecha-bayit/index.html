@@ -24,6 +24,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="/kelim/manifest.webmanifest">
 <link rel="stylesheet" href="/assets/site.css?v=b4546dc2">
+<link rel="stylesheet" href="/assets/search.css?v=13cbea6f">
 <link rel="stylesheet" href="/assets/kelim.css?v=f8bd50a8">
 <!-- באפליקציית Google Play (TWA): בלי תרומות, בלי קישורי תמיכה ובלי "שותפות במיזם" בתשלום (Play Billing). טקסט שמזכיר שותפות: class="no-app" -->
 <script>(function(){var k="kelim-in-app";try{if((document.referrer||"").indexOf("android-app://com.hakelim.kelim")===0)sessionStorage.setItem(k,"1");if(sessionStorage.getItem(k)==="1")document.documentElement.classList.add("in-app");}catch(e){if((document.referrer||"").indexOf("android-app://com.hakelim.kelim")===0)document.documentElement.classList.add("in-app");}})();</script>
@@ -91,6 +92,7 @@
     <nav class="topnav" aria-label="ניווט ראשי"><a href="/kelim/#tchumim" aria-current="page">התחומים</a><a href="/kelim/tamlul/">תמלול</a><a href="/kodesh/">כלי קודש</a><a href="/kelim/bakasha/">רוצים כלי?</a><a href="/kelim/#litmoch">לתמוך</a><a href="/kelim/#mi">מי אני</a></nav>
   </div>
 </header>
+<div id="hk-search" class="no-print"></div>
 <nav class="crumbs" aria-label="פירורי לחם"><a href="/kelim/">הכלים של גילעד רחמים</a><span><a href="/kelim/shir/">השיר שלי</a></span><span><a href="/kelim/shir/karaoke/">קריוקי</a></span><span><a href="/kelim/shir/karaoke/shirim/">שירי קריוקי</a></span><span>בניתי לך בית</span></nav>
 <main id="main">
 <div class="chesed no-print" role="note"><p class="chesed-t"><b>✓ בחינם</b><b>✓ ללא הגבלה</b><b>✓ בלי פרסומות</b></p><p class="chesed-s">לכולם מכסה בחינם<span class="no-app">, ולשותפים במיזם ללא הגבלה</span>. בלי הרשמה ובלי פרסומות, מתוך רצון לעשות חסד.</p></div>
@@ -225,5 +227,6 @@
 <script>
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('[data-ko-copy]');if(!a)return;var t=a.getAttribute('data-ko-copy');try{navigator.clipboard.writeText(t)}catch(_){}var h=document.querySelector('[data-ko-hint]');if(h)h.textContent='שם השיר הועתק: '+t+'. בבוט מדביקים ושולחים.';});
 </script>
+<script src="/assets/search.js?v=37a03376" defer></script>
 </body>
 </html>

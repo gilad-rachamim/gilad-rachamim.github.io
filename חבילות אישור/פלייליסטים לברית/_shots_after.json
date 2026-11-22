@@ -1,0 +1,50 @@
+{
+ "title": "פלייליסטים לברית - אחרי",
+ "prefix": "פ",
+ "serve_dir": "C:\\Users\\Admin\\sites\\gilad-rachamim.github.io-shirim",
+ "shots": [
+  {
+   "path": "/mohel/shirim/",
+   "full_page": true,
+   "no": 1,
+   "name": "אחרי - הדף החדש"
+  },
+  {
+   "path": "/mohel/shirim/",
+   "selector": "#dati",
+   "js": "document.querySelector('button[data-sp]').click(); new Promise(r=>setTimeout(r,6000))",
+   "no": 2,
+   "name": "אחרי - כרטיס עם נגן פתוח"
+  },
+  {
+   "path": "/mohel/",
+   "selector": "#shira",
+   "no": 4,
+   "name": "אחרי - דף ראשי - אזור השירים"
+  },
+  {
+   "path": "/mohel/hachana/",
+   "selector": ".tip",
+   "no": 6,
+   "name": "אחרי - הכנה לברית - הפניה"
+  },
+  {
+   "path": "/mohel/hachana/tekes/",
+   "selector": ".tip",
+   "no": 8,
+   "name": "אחרי - הכנות לטקס - הפניה"
+  },
+  {
+   "path": "/mohel/madrich/",
+   "selector": "p.note:has(a[href='/mohel/#shira'])",
+   "no": 10,
+   "name": "אחרי - מדריך - הפניה"
+  },
+  {
+   "path": "/mohel/",
+   "selector": ".site-foot",
+   "no": 12,
+   "name": "אחרי - תחתית האתר"
+  }
+ ]
+}

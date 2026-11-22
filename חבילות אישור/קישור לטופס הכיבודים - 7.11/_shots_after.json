@@ -1,0 +1,13 @@
+{
+ "title": "קישור לטופס הכיבודים - אחרי",
+ "prefix": "כ",
+ "serve_dir": "C:\\Users\\Admin\\sites\\gilad-rachamim.github.io\\.claude\\worktrees\\dreamy-lamport-3a1303",
+ "shots": [
+  {
+   "path": "/mohel/dapim/",
+   "selector": ".daf:has(a[href*=kibudim])",
+   "no": 2,
+   "name": "אחרי - כרטיס הכיבודים בדפי הברית"
+  }
+ ]
+}

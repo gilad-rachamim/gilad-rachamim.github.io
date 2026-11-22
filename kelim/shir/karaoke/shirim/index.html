@@ -24,6 +24,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="/kelim/manifest.webmanifest">
 <link rel="stylesheet" href="/assets/site.css?v=b4546dc2">
+<link rel="stylesheet" href="/assets/search.css?v=13cbea6f">
 <link rel="stylesheet" href="/assets/kelim.css?v=f8bd50a8">
 <!-- באפליקציית Google Play (TWA): בלי תרומות, בלי קישורי תמיכה ובלי "שותפות במיזם" בתשלום (Play Billing). טקסט שמזכיר שותפות: class="no-app" -->
 <script>(function(){var k="kelim-in-app";try{if((document.referrer||"").indexOf("android-app://com.hakelim.kelim")===0)sessionStorage.setItem(k,"1");if(sessionStorage.getItem(k)==="1")document.documentElement.classList.add("in-app");}catch(e){if((document.referrer||"").indexOf("android-app://com.hakelim.kelim")===0)document.documentElement.classList.add("in-app");}})();</script>
@@ -91,6 +92,7 @@
     <nav class="topnav" aria-label="ניווט ראשי"><a href="/kelim/#tchumim" aria-current="page">התחומים</a><a href="/kelim/tamlul/">תמלול</a><a href="/kodesh/">כלי קודש</a><a href="/kelim/bakasha/">רוצים כלי?</a><a href="/kelim/#litmoch">לתמוך</a><a href="/kelim/#mi">מי אני</a></nav>
   </div>
 </header>
+<div id="hk-search" class="no-print"></div>
 <nav class="crumbs" aria-label="פירורי לחם"><a href="/kelim/">הכלים של גילעד רחמים</a><span><a href="/kelim/shir/">השיר שלי</a></span><span><a href="/kelim/shir/karaoke/">קריוקי</a></span><span>שירי קריוקי</span></nav>
 <main id="main">
 <div class="chesed no-print" role="note"><p class="chesed-t"><b>✓ בחינם</b><b>✓ ללא הגבלה</b><b>✓ בלי פרסומות</b></p><p class="chesed-s">לכולם מכסה בחינם<span class="no-app">, ולשותפים במיזם ללא הגבלה</span>. בלי הרשמה ובלי פרסומות, מתוך רצון לעשות חסד.</p></div>
@@ -566,5 +568,6 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
 li.forEach(function(x){var a=document.createElement('a');a.className='ko-get';a.href='https://t.me/GiladKaraokeBot?start=site_shirim';a.target='_blank';a.rel='noopener';a.setAttribute('data-ko-copy',x.getAttribute('data-q'));a.setAttribute('data-mv','karaoke_lib_get');a.textContent='לקבל בבוט';x.appendChild(a);});
 if(f)f.addEventListener('input',function(){var v=f.value.trim(),n=0;li.forEach(function(x){var ok=!v||x.getAttribute('data-q').indexOf(v)>-1;x.hidden=!ok;if(ok)n++;});c.textContent=v?(n?'נמצאו '+n+' שירים':'השיר עוד לא במאגר. אפשר לבקש אותו מהבוט, והוא יכין אותו.'):'';});})();
 </script>
+<script src="/assets/search.js?v=37a03376" defer></script>
 </body>
 </html>

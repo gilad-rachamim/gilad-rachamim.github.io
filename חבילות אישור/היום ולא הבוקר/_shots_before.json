@@ -1,0 +1,13 @@
+{
+ "title": "היום ולא הבוקר - לפני",
+ "prefix": "ב",
+ "serve_dir": "C:\\Users\\Admin\\AppData\\Local\\Temp\\claude\\cc1f521a9b5b720c\\5a90361f-bc51-436d-ae1c-90d07597bbc2\\scratchpad\\before",
+ "shots": [
+  {
+   "path": "/mohel/",
+   "selector": "section.verse",
+   "no": 1,
+   "name": "לפני - פסקת הפתיחה"
+  }
+ ]
+}
