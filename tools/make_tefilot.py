@@ -117,6 +117,10 @@ def install(share_text, extra):
 
 
 KROVIM = ('<h3>כלים קרובים</h3>\n  <p><a class="gold" href="/kodesh/shacharit/">תפילת שחרית</a>, '
+          '<a class="gold" href="/kodesh/mincha/">תפילת מנחה</a>, '
+          '<a class="gold" href="/kodesh/arvit/">תפילת ערבית</a>, '
+          '<a class="gold" href="/kodesh/musaf-rosh-chodesh/">מוסף ראש חודש</a>, '
+          '<a class="gold" href="/kodesh/musaf-chol-hamoed/">מוסף חול המועד</a>, '
           '<a class="gold" href="/kodesh/nishmat-kol-chai/">נשמת כל חי</a>, '
           '<a class="gold" href="/kodesh/birkat-hamazon/">ברכת המזון</a>, '
           '<a class="gold" href="/kodesh/tefilat-haderech/">תפילת הדרך</a>, '
