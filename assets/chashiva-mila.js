@@ -68,10 +68,55 @@
     ['סנפיר', 'יש לו לדג ולכריש'], ['שחפים', 'ציפורי ים לבנות'], ['צדפים', 'אוספים אותם בחוף'], ['אלמוג', 'גדל בשונית בים'],
     ['מערות', 'חללים בתוך הסלע'], ['יערות', 'הרבה עצים יחד']
   ].filter(function (w) { return w[0].length === 5; });
+  // 22.11.2026: עוד 47 מילים, בסוף הרשימה כדי שהמילה היומית של הימים הקודמים לא תשתנה.
+  var MORE2 = [
+    ['בננות', 'פרי צהוב שמקלפים'],
+    ['אגסים', 'פרי עסיסי בצורת טיפה'],
+    ['בצלים', 'מביאים דמעות כשחותכים'],
+    ['גזרים', 'ירק כתום שארנבות אוהבות'],
+    ['נקניק', 'אוכלים אותו בלחמניה'],
+    ['אפונה', 'גרגרים ירוקים בתרמיל'],
+    ['מסטיק', 'לועסים ולא בולעים'],
+    ['מתנות', 'נותנים אותן ביום הולדת'],
+    ['פעמון', 'מצלצל בבית ספר'],
+    ['ספינה', 'שטה בים'],
+    ['רכבות', 'נוסעות על פסים'],
+    ['תחנות', 'מחכים בהן לאוטובוס'],
+    ['עיתון', 'קוראים בו חדשות'],
+    ['מילון', 'מחפשים בו משמעות של מילה'],
+    ['מברגה', 'מסובבת ברגים'],
+    ['עפרון', 'כותבים בו ואפשר למחוק'],
+    ['חידון', 'שאלות ותשובות לתחרות'],
+    ['קוביה', 'מגלגלים אותה בשש בש'],
+    ['מדחום', 'מודדים בו חום'],
+    ['חמסין', 'יום חם ויבש'],
+    ['ברקים', 'אור בשמיים לפני הרעם'],
+    ['רעמים', 'קול חזק בשמיים'],
+    ['גשמים', 'יורדים מהעננים'],
+    ['עננים', 'לבנים באמצע השמיים'],
+    ['דיונה', 'גבעה של חול'],
+    ['נחלים', 'מים שזורמים בין ההרים'],
+    ['אגמים', 'מים גדולים ביבשה'],
+    ['עמקים', 'שטח נמוך בין הרים'],
+    ['סלעים', 'אבנים גדולות'],
+    ['אשדוד', 'עיר נמל בדרום'],
+    ['נתניה', 'עיר על החוף'],
+    ['חולון', 'עיר ליד תל אביב'],
+    ['טבריה', 'עיר על שפת הכנרת'],
+    ['ויקרא', 'הספר השלישי בתורה'],
+    ['במדבר', 'הספר הרביעי בתורה'],
+    ['דברים', 'הספר החמישי בתורה'],
+    ['אברהם', 'אבי האומה'],
+    ['אהרון', 'אחי משה, הכהן הראשון'],
+    ['שמואל', 'נביא ושופט'],
+    ['אליהו', 'הנביא שעולה בסערה'],
+    ['שמשון', 'גיבור חזק מאוד'],
+    ['מרדכי', 'דוד של אסתר']
+  ];
   var FIN = { 'ך': 'כ', 'ם': 'מ', 'ן': 'נ', 'ף': 'פ', 'ץ': 'צ' }, TOFIN = { 'כ': 'ך', 'מ': 'ם', 'נ': 'ן', 'פ': 'ף', 'צ': 'ץ' };
   function norm(s) { return s.replace(/[ךםןףץ]/g, function (c) { return FIN[c]; }); }
   function show(ch, pos) { return pos === 4 && TOFIN[ch] ? TOFIN[ch] : ch; }
-  var ORDER = CH.shuffle(WORDS, CH.rng('mila-order-v1')).concat(CH.shuffle(MORE, CH.rng('mila-order-v2')));
+  var ORDER = CH.shuffle(WORDS, CH.rng('mila-order-v1')).concat(CH.shuffle(MORE, CH.rng('mila-order-v2'))).concat(CH.shuffle(MORE2, CH.rng('mila-order-v3')));
   function todayIdx() { var i = (CH.dayNum() - 1) % ORDER.length; return i < 0 ? i + ORDER.length : i; }
 
   // ---------- מצב ----------
@@ -190,4 +235,21 @@
   if (V && V.i === todayIdx()) { tab('daily'); CH.vsStart(TOOL, 'המילה הזאת'); }
   else if (V) { document.querySelectorAll('#ml-tabs button').forEach(function (b) { b.setAttribute('aria-selected', 'false'); }); start('vs', V.i); CH.vsStart(TOOL, 'המילה הזאת'); }
   else tab('daily');
+
+  // התראה יומית "המילה של היום מחכה" - רק באפליקציית אנדרואיד (window.HakelimApp)
+  (function () {
+    var box = $('ml-rem'), A = window.HakelimApp; if (!box || !A || !A.setReminder) return;
+    var on = $('ml-rem-on'), tm = $('ml-rem-time'), K = 'kelim_mila_rem', s = { on: false, h: 20, m: 0 };
+    try { s = JSON.parse(localStorage.getItem(K)) || s; } catch (e) {}
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+    box.hidden = false; on.checked = !!s.on; tm.value = pad(s.h) + ':' + pad(s.m);
+    function apply() {
+      var p = (tm.value || '20:00').split(':'); s = { on: on.checked, h: +p[0] || 0, m: +p[1] || 0 };
+      try { localStorage.setItem(K, JSON.stringify(s)); } catch (e) {}
+      try { A.setReminder(s.on, s.h, s.m); } catch (e) {}
+      CH.used(TOOL, s.on ? 'reminder_on' : 'reminder_off', {});
+    }
+    on.addEventListener('change', apply); tm.addEventListener('change', apply);
+    try { A.setReminder(s.on, s.h, s.m); } catch (e) {}
+  })();
 })();
