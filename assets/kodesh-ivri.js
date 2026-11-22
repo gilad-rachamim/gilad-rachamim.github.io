@@ -37,8 +37,10 @@
     'Tu BiShvat': ['ט״ו בשבט', 'ט״ו בשבט, ראש השנה לאילנות'], 'Shushan Purim': ['שושן פורים', 'שושן פורים (פורים בירושלים)']
   };
 
-  function core(H) {
-    var HD = H.HDate, F = H.flags;
+  function core(H, L) {   // L = מפת שפה (assets/kodesh-ivri-ru.js); בלי L הכול בעברית
+    var HD = H.HDate, F = H.flags, G = L ? L.GM : GM;
+    function tr(t) { return L && L.T[t] != null ? L.T[t] : t; }
+    function num(n) { return L ? String(n) : gem(n); }
     function noon(y, m, d) { var x = new Date(2000, 0, 1, 12); x.setFullYear(y, m, d); return x; }
     function clean(d) { return noon(d.getFullYear(), d.getMonth(), d.getDate()); }
     function add(d, n) { var x = clean(d); x.setDate(x.getDate() + n); return x; }
@@ -51,12 +53,14 @@
       return d.getMonth() === +p[2] - 1 && d.getDate() === +p[3] ? d : null;
     }
     function gem(n) { return H.gematriya(n); }
-    function mon(m, y) { return m === 12 ? (HD.isLeapYear(y) ? 'אדר א׳' : 'אדר') : HMN[m]; }
-    function heb(hd, noYear) { return gem(hd.getDate()) + ' ב' + mon(hd.getMonth(), hd.getFullYear()) + (noYear ? '' : ' ' + gem(hd.getFullYear())); }
-    function greg(d) { return d.getDate() + ' ב' + GM[d.getMonth()] + ' ' + d.getFullYear(); }
+    function monHe(m, y) { return m === 12 ? (HD.isLeapYear(y) ? 'אדר א׳' : 'אדר') : HMN[m]; }
+    function mon(m, y) { return L ? L.mon(m, HD.isLeapYear(y)) : monHe(m, y); }
+    function hebHe(hd, noYear) { return gem(hd.getDate()) + ' ב' + monHe(hd.getMonth(), hd.getFullYear()) + (noYear ? '' : ' ' + gem(hd.getFullYear())); }
+    function heb(hd, noYear) { return L ? L.heb(hd.getDate(), hd.getMonth(), HD.isLeapYear(hd.getFullYear()), hd.getFullYear(), noYear) : hebHe(hd, noYear); }
+    function greg(d) { return L ? L.greg(d) : d.getDate() + ' ב' + GM[d.getMonth()] + ' ' + d.getFullYear(); }
     function dm(d) { return d.getDate() + '.' + (d.getMonth() + 1); }
     function dmy(d) { return dm(d) + '.' + d.getFullYear(); }
-    function wd(d) { return d.getDay() === 6 ? 'שבת' : 'יום ' + WD[d.getDay()]; }
+    function wd(d) { return L ? L.WD[d.getDay()] : d.getDay() === 6 ? 'שבת' : 'יום ' + WD[d.getDay()]; }
     function ltr(s) { return '<bdi dir="ltr">' + s + '</bdi>'; }
     function hgreg(hd) { var g = hd.greg(); return noon(g.getFullYear(), g.getMonth(), g.getDate()); }
     function fixHe(s) { return s.replace(/חשון/g, 'חשוון').replace(/סיון/g, 'סיוון').replace(/־/g, ' ').replace(/הזכרון/g, 'הזיכרון'); }
@@ -65,6 +69,7 @@
     function label(e) {
       var f = e.getFlags(), raw = e.getDesc(), ds = raw.replace(/ \(observed\)$/, ''), moved = ds !== raw, m, nm, kind;
       if ((f & F.PARSHA_HASHAVUA) || SKIP.test(ds)) return null;
+      if (L) return L.label(ds, moved, (f & F.CHAG) ? 'chag' : (f & (F.MAJOR_FAST | F.MINOR_FAST)) ? 'fast' : (f & F.MODERN_HOLIDAY) ? 'modern' : (f & F.SPECIAL_SHABBAT) ? 'special' : (f & F.EREV) ? 'erev' : 'holiday');
       if ((m = /^Chanukah: (\d) Candles?$/.exec(ds))) {
         var n = +m[1];
         return n === 1 ? { kind: 'holiday', short: 'ערב חנוכה', txt: 'ערב חנוכה: בערב מדליקים נר ראשון' }
@@ -100,7 +105,7 @@
       try {
         var hd = new HD(sat), sd = H.getSedra(hd.getFullYear(), true).lookup(hd);
         if (sd.chag) return '';
-        return sd.parsha.map(function (p) { var s = fixHe(H.Locale.gettext(p, 'he-x-NoNikud')); return PFIX[s] || s; }).join('-');
+        return sd.parsha.map(function (p) { if (L) return L.PARSHA[p] || p; var s = fixHe(H.Locale.gettext(p, 'he-x-NoNikud')); return PFIX[s] || s; }).join('-');
       } catch (x) { return ''; }
     }
     function nextSat(d) { return add(d, (6 - d.getDay() + 7) % 7); }
@@ -110,7 +115,7 @@
     }
     function dayLines(x) {   // שורות טקסט ליום: "שבת פרשת תולדות", "ראש חודש כסלו"...
       var a = x.ev.map(function (e) { return e.txt; });
-      if (x.d.getDay() === 6 && x.parsha) a.unshift('שבת פרשת ' + x.parsha);
+      if (x.d.getDay() === 6 && x.parsha) a.unshift(tr('שבת פרשת ') + x.parsha);
       return a;
     }
 
@@ -122,18 +127,18 @@
         n = HD.daysInMonth(m, y); first = hgreg(new HD(1, m, y));
         for (i = 0; i < n; i++) days.push(add(first, i));
         a = days[0]; b = days[n - 1];
-        title = mon(m, y) + ' ' + gem(y);
-        sub = a.getFullYear() !== b.getFullYear() ? GM[a.getMonth()] + ' ' + a.getFullYear() + ' – ' + GM[b.getMonth()] + ' ' + b.getFullYear()
-          : (a.getMonth() === b.getMonth() ? GM[a.getMonth()] : GM[a.getMonth()] + '–' + GM[b.getMonth()]) + ' ' + a.getFullYear();
+        title = mon(m, y) + ' ' + num(y);
+        sub = a.getFullYear() !== b.getFullYear() ? G[a.getMonth()] + ' ' + a.getFullYear() + ' – ' + G[b.getMonth()] + ' ' + b.getFullYear()
+          : (a.getMonth() === b.getMonth() ? G[a.getMonth()] : G[a.getMonth()] + '–' + G[b.getMonth()]) + ' ' + a.getFullYear();
         var first0 = new HD(1, m, y).abs(), p = new HD(first0 - 1), nx = new HD(first0 + n);
         prev = { y: p.getFullYear(), m: p.getMonth() }; next = { y: nx.getFullYear(), m: nx.getMonth() };
       } else {
         n = new Date(noon(y, m + 1, 1).getTime() - 864e5).getDate();
         for (i = 1; i <= n; i++) days.push(noon(y, m, i));
         ha = new HD(days[0]); hb = new HD(days[n - 1]);
-        title = GM[m] + ' ' + y;
-        sub = ha.getFullYear() !== hb.getFullYear() ? mon(ha.getMonth(), ha.getFullYear()) + ' ' + gem(ha.getFullYear()) + ' – ' + mon(hb.getMonth(), hb.getFullYear()) + ' ' + gem(hb.getFullYear())
-          : (ha.getMonth() === hb.getMonth() ? mon(ha.getMonth(), ha.getFullYear()) : mon(ha.getMonth(), ha.getFullYear()) + '–' + mon(hb.getMonth(), hb.getFullYear())) + ' ' + gem(ha.getFullYear());
+        title = G[m] + ' ' + y;
+        sub = ha.getFullYear() !== hb.getFullYear() ? mon(ha.getMonth(), ha.getFullYear()) + ' ' + num(ha.getFullYear()) + ' – ' + mon(hb.getMonth(), hb.getFullYear()) + ' ' + num(hb.getFullYear())
+          : (ha.getMonth() === hb.getMonth() ? mon(ha.getMonth(), ha.getFullYear()) : mon(ha.getMonth(), ha.getFullYear()) + '–' + mon(hb.getMonth(), hb.getFullYear())) + ' ' + num(ha.getFullYear());
         prev = { y: m === 0 ? y - 1 : y, m: (m + 11) % 12 }; next = { y: m === 11 ? y + 1 : y, m: (m + 1) % 12 };
       }
       return { mode: mode, y: y, m: m, days: days, title: title, sub: sub, prev: prev, next: next };
@@ -144,7 +149,7 @@
     function gridHtml(mo, todayKey, map) {
       map = map || evMap(mo.days[0], mo.days[mo.days.length - 1]);
       var h = '<table class="iv-cal"><caption class="vh">' + mo.title + ', ' + mo.sub + '</caption><thead><tr>' +
-        COL.map(function (c, i) { return '<th scope="col"' + (i === 6 ? ' class="sh"' : '') + '><span class="vh">' + (i === 6 ? 'שבת' : 'יום ' + WD[i]) + '</span><span aria-hidden="true">' + c + '</span></th>'; }).join('') + '</tr></thead><tbody><tr>';
+        (L ? L.COL : COL).map(function (c, i) { return '<th scope="col"' + (i === 6 ? ' class="sh"' : '') + '><span class="vh">' + (L ? L.WD[i] : i === 6 ? 'שבת' : 'יום ' + WD[i]) + '</span><span aria-hidden="true">' + c + '</span></th>'; }).join('') + '</tr></thead><tbody><tr>';
       var lead = mo.days[0].getDay(), i, col = 0;
       for (i = 0; i < lead; i++, col++) h += '<td class="e"></td>';
       mo.days.forEach(function (d, ix) {
@@ -153,8 +158,8 @@
         if (d.getDay() === 6) cls.push('sh');
         if (x.ev.some(function (e) { return e.kind === 'chag'; })) cls.push('chag');
         if (k === todayKey) cls.push('today');
-        if (mo.mode === 'h') { big = gem(hd.getDate()); small = ltr(dm(d)); }
-        else { big = d.getDate(); small = gem(hd.getDate()) + (hd.getDate() === 1 || ix === 0 ? ' ' + mon(hd.getMonth(), hd.getFullYear()) : ''); }
+        if (mo.mode === 'h') { big = num(hd.getDate()); small = ltr(dm(d)); }
+        else { big = d.getDate(); small = num(hd.getDate()) + (hd.getDate() === 1 || ix === 0 ? ' ' + mon(hd.getMonth(), hd.getFullYear()) : ''); }
         h += '<td' + (cls.length ? ' class="' + cls.join(' ') + '"' : '') + '><button type="button" class="iv-d" data-d="' + k + '"' + (k === todayKey ? ' aria-current="date"' : '') +
           ' aria-label="' + wd(d) + ', ' + greg(d) + ', ' + heb(hd) + (lines.length ? ': ' + lines.join(', ') : '') + '"><span class="n">' + big + '</span><span class="h">' + small + '</span>' +
           (x.parsha ? '<span class="ev k-parsha">' + x.parsha + '</span>' : '') +
@@ -170,14 +175,14 @@
         var x = day(d, map), lines = dayLines(x);
         return lines.length ? '<li><span class="w">' + wd(d) + ' ' + ltr(dm(d)) + ' · ' + heb(x.hd, true) + '</span><span class="t">' + lines.join(' · ') + '</span></li>' : '';
       }).join('');
-      return li ? '<ul class="iv-list">' + li + '</ul>' : '<p class="iv-sub">אין בחודש הזה חגים או מועדים מיוחדים.</p>';
+      return li ? '<ul class="iv-list">' + li + '</ul>' : '<p class="iv-sub">' + tr('אין בחודש הזה חגים או מועדים מיוחדים.') + '</p>';
     }
     function dayHtml(d) {
       var x = day(d), lines = dayLines(x), p = d.getDay() === 6 ? '' : parsha(nextSat(d));
-      return '<h3>' + wd(d) + ', ' + greg(d) + '</h3><p class="iv-big">' + heb(x.hd) + '</p>' +
+      return '<h3>' + (L ? L.cap(wd(d)) : wd(d)) + ', ' + greg(d) + '</h3><p class="iv-big">' + heb(x.hd) + '</p>' + (L ? '<p class="iv-sub" lang="he" dir="rtl">' + hebHe(x.hd) + '</p>' : '') +
         (lines.length ? '<ul>' + lines.map(function (l) { return '<li>' + l + '</li>'; }).join('') + '</ul>' : '') +
-        (p ? '<p class="iv-sub">פרשת השבוע: ' + p + '</p>' : '') +
-        '<p class="iv-sub">התאריך העברי מתחיל כבר בערב שלפני, עם השקיעה.</p>';
+        (p ? '<p class="iv-sub">' + tr('פרשת השבוע: ') + p + '</p>' : '') +
+        '<p class="iv-sub">' + tr('התאריך העברי מתחיל כבר בערב שלפני, עם השקיעה.') + '</p>';
     }
 
     // ---------- חגי ישראל בשנה עברית ----------
@@ -185,14 +190,14 @@
       var evs = H.HebrewCalendar.calendar({ year: hy, isHebrewYear: true, il: true, sedrot: false }), rows = [];
       function gd(e) { return clean(e.getDate().greg()); }
       function find(re, last) { var r = null; for (var i = 0; i < evs.length; i++) if (re.test(evs[i].getDesc())) { r = evs[i]; if (!last) break; } return r; }
-      function erev(lbl) { return function (a) { var p = add(a, -1); return lbl + ' ' + wd(p) + ' ' + ltr(dm(p)); }; }
+      function erev(lbl) { return function (a) { var p = add(a, -1); return tr(lbl) + ' ' + wd(p) + ' ' + ltr(dm(p)); }; }
       function row(name, re, o) {
         o = o || {};
         var e = find(re), l = o.to ? find(o.to, true) : null; if (!e) return;
         var a = gd(e), note = o.note ? o.note(a) : '';
-        if (/observed/.test(e.getDesc())) note = 'נדחה ביום';
-        if (o.day && new HD(a).getDate() !== o.day) note = 'השנה המועד הוזז ביום, בגלל השבת';
-        rows.push({ name: name, a: a, b: l ? gd(l) : null, sh: !!o.sh, note: note });
+        if (/observed/.test(e.getDesc())) note = tr('נדחה ביום');
+        if (o.day && new HD(a).getDate() !== o.day) note = tr('השנה המועד הוזז ביום, בגלל השבת');
+        rows.push({ name: tr(name), a: a, b: l ? gd(l) : null, sh: !!o.sh, note: note });
       }
       row('ראש השנה', /^Rosh Hashana \d+$/, { to: /^Rosh Hashana II$/, sh: 1, note: erev('ערב החג:') });
       row('צום גדליה', /^Tzom Gedaliah/);
@@ -230,16 +235,16 @@
     function hspan(a, b) {
       var ha = new HD(a), hb = b ? new HD(b) : null;
       if (!hb || key(a) === key(b)) return heb(ha, true);
-      if (ha.getMonth() === hb.getMonth()) return gem(ha.getDate()) + '–' + gem(hb.getDate()) + ' ב' + mon(ha.getMonth(), ha.getFullYear());
+      if (ha.getMonth() === hb.getMonth()) return L ? L.hspan(ha.getDate(), hb.getDate(), ha.getMonth(), HD.isLeapYear(ha.getFullYear())) : gem(ha.getDate()) + '–' + gem(hb.getDate()) + ' ב' + mon(ha.getMonth(), ha.getFullYear());
       return heb(ha, true) + ' – ' + heb(hb, true);
     }
     function holidaysHtml(hy, today) {
       var tk = today ? key(today) : '', nextDone = !today;
-      return '<table class="iv-tbl"><thead><tr><th scope="col">חג או מועד</th><th scope="col">תאריך לועזי</th></tr></thead><tbody>' +
+      return '<table class="iv-tbl"><thead><tr><th scope="col">' + tr('חג או מועד') + '</th><th scope="col">' + tr('תאריך לועזי') + '</th></tr></thead><tbody>' +
         holidays(hy).map(function (r) {
           var end = r.b || r.a, cls = '';
           if (today && key(end) < tk) cls = 'past'; else if (!nextDone) { cls = 'now'; nextDone = true; }
-          return '<tr' + (cls ? ' class="' + cls + '"' : '') + '><th scope="row">' + r.name + (r.sh ? ' <span class="iv-shb">שבתון</span>' : '') +
+          return '<tr' + (cls ? ' class="' + cls + '"' : '') + '><th scope="row">' + r.name + (r.sh ? ' <span class="iv-shb">' + tr('שבתון') + '</span>' : '') +
             '<small>' + hspan(r.a, r.b) + (r.note ? ' · ' + r.note : '') + '</small></th><td><b>' + span(r.a, r.b) + '</b><small>' +
             (r.b ? wd(r.a) + ' – ' + wd(r.b) : wd(r.a)) + '</small></td></tr>';
         }).join('') + '</tbody></table>';
@@ -251,11 +256,11 @@
     }
     function nextHolidayText(d) {
       var n = nextHoliday(d); if (!n) return '';
-      return (n.days === 1 ? 'מחר' : 'בעוד ' + n.days + ' ימים') + ': ' + n.name + ' (' + wd(n.a) + ', ' + ltr(dmy(n.a)) + ')';
+      return (L ? L.inDays(n.days) : n.days === 1 ? 'מחר' : 'בעוד ' + n.days + ' ימים') + ': ' + n.name + ' (' + wd(n.a) + ', ' + ltr(dmy(n.a)) + ')';
     }
     function yearInfo(hy) {
       var a = new HD(1, 7, hy).abs(), b = new HD(1, 7, hy + 1).abs(), g0 = hgreg(new HD(1, 7, hy)), g1 = hgreg(new HD(29, 6, hy));
-      return { leap: HD.isLeapYear(hy), days: b - a, months: HD.monthsInYear(hy), start: g0, end: g1, name: gem(hy) };
+      return { leap: HD.isLeapYear(hy), days: b - a, months: HD.monthsInYear(hy), start: g0, end: g1, name: num(hy) };
     }
 
     // ---------- המרות ----------
@@ -342,7 +347,7 @@
         (lines.length ? '\n' + lines.join(' · ') : '') + (p && hdate.getDay() !== 6 ? '\nפרשת השבוע: ' + p : '') + '\n\nתאריך עברי והמרת תאריכים: ' + url;
     }
     function todayLine(t) {   // שורה אחת, לראש דף הלוח
-      return wd(t.civ) + ', ' + greg(t.civ) + ' · ' + heb(t.hdDay) + (t.after ? ' (אחרי השקיעה: כבר ' + heb(t.hd, true) + ')' : '');
+      return wd(t.civ) + ', ' + greg(t.civ) + ' · ' + heb(t.hdDay) + (t.after ? tr(' (אחרי השקיעה: כבר ') + heb(t.hd, true) + ')' : '');
     }
     function nextDaysHtml(civ, n, stat) {
       var map = evMap(civ, add(civ, n)), h = '<table class="iv-tbl"><thead><tr><th scope="col">יום</th><th scope="col">תאריך עברי</th></tr></thead><tbody>';
@@ -403,7 +408,7 @@
       gridHtml: gridHtml, listHtml: listHtml, dayHtml: dayHtml, holidays: holidays, holidaysHtml: holidaysHtml, nextHoliday: nextHoliday, nextHolidayText: nextHolidayText, yearInfo: yearInfo,
       g2h: g2h, hcheck: hcheck, h2g: h2g, parseYear: parseYear, inRange: inRange, bday: bday, mitzva: mitzva, birthdays: birthdays,
       tzDate: tzDate, sunset: sunset, today: today, place: place, todayHtml: todayHtml, todayText: todayText, todayLine: todayLine, nextDaysHtml: nextDaysHtml,
-      g2hHtml: g2hHtml, g2hText: g2hText, h2gHtml: h2gHtml, h2gText: h2gText, bmHtml: bmHtml, bmText: bmText, HD: HD
+      g2hHtml: g2hHtml, g2hText: g2hText, h2gHtml: h2gHtml, h2gText: h2gText, bmHtml: bmHtml, bmText: bmText, HD: HD, G: G, tr: tr, num: num, L: L || null
     };
   }
 
@@ -449,7 +454,7 @@
     function fillMonths() {
       var s = $('li-month');
       s.innerHTML = mode === 'h' ? C.hmonths(y).map(function (k) { return '<option value="' + k + '">' + C.mon(k, y) + '</option>'; }).join('')
-        : GM.map(function (n, i) { return '<option value="' + i + '">' + n + '</option>'; }).join('');
+        : C.G.map(function (n, i) { return '<option value="' + i + '">' + n + '</option>'; }).join('');
       s.value = String(m);
     }
     function render() {
@@ -458,23 +463,23 @@
       $('li-title').textContent = mo.title; $('li-sub').textContent = mo.sub;
       $('li-grid').innerHTML = C.gridHtml(mo, C.key(t.civ), map);
       $('li-list').innerHTML = C.listHtml(mo, map);
-      $('li-list-h').textContent = 'חגים ומועדים: ' + mo.title;
+      $('li-list-h').textContent = C.tr('חגים ומועדים: ') + mo.title;
       fillMonths();
       $('li-year').value = y; $('li-year').min = mode === 'h' ? HY_MIN : GY_MIN; $('li-year').max = mode === 'h' ? HY_MAX : GY_MAX;
-      $('li-year-l').textContent = mode === 'h' ? 'שנה עברית (' + C.gem(y) + ')' : 'שנה';
+      $('li-year-l').textContent = C.L ? C.L.yearLabel(mode) : mode === 'h' ? 'שנה עברית (' + C.gem(y) + ')' : 'שנה';
       $('li-prev').disabled = !C.okMonth(mode, mo.prev.y); $('li-next').disabled = !C.okMonth(mode, mo.next.y);
       [].forEach.call(document.querySelectorAll('input[name="li-mode"]'), function (r) { r.checked = r.value === mode; });
-      [].forEach.call(document.querySelectorAll('[data-iv-yr]'), function (el) { el.textContent = mode === 'h' ? C.gem(y) : y; });
+      [].forEach.call(document.querySelectorAll('[data-iv-yr]'), function (el) { el.textContent = mode === 'h' ? C.num(y) : y; });
       if (shownDay) { var b = $('li-grid').querySelector('[data-d="' + shownDay + '"]'); if (b) b.parentNode.classList.add('sel'); else { shownDay = ''; $('li-day').hidden = true; } }
     }
     function head() {
       t = C.today(new Date(), pl());
-      $('li-today').innerHTML = '<b>היום:</b> ' + C.todayLine(t);
+      $('li-today').innerHTML = C.tr('<b>היום:</b> ') + C.todayLine(t);
       var nh = C.nextHolidayText(C.hgreg(t.hd)); $('li-nexthag').textContent = nh.replace(/<[^>]+>/g, '');
       var hy = t.hd.getFullYear(), i0 = C.yearInfo(hy), i1 = C.yearInfo(hy + 1);
       function yrs(i) { return i.start.getFullYear() + '–' + i.end.getFullYear(); }
-      $('li-hag0-h').textContent = 'חגי ישראל ' + i0.name + ': חגים ' + yrs(i0) + ' וימי שבתון';
-      $('li-hag1-h').textContent = 'חגי ישראל ' + i1.name + ': חגים ' + yrs(i1);
+      $('li-hag0-h').textContent = C.L ? C.L.hagH(i0.name, yrs(i0), 1) : 'חגי ישראל ' + i0.name + ': חגים ' + yrs(i0) + ' וימי שבתון';
+      $('li-hag1-h').textContent = C.L ? C.L.hagH(i1.name, yrs(i1), 0) : 'חגי ישראל ' + i1.name + ': חגים ' + yrs(i1);
       $('li-hag0').innerHTML = C.holidaysHtml(hy, t.civ); $('li-hag1').innerHTML = C.holidaysHtml(hy + 1, null);
     }
     function go(ny, nm, how) { if (!C.okMonth(mode, ny)) return; y = ny; m = nm; shownDay = ''; $('li-day').hidden = true; render(); setHash(); used('luach_ivri', how); }
@@ -486,7 +491,7 @@
     $('li-month').addEventListener('change', function () { go(y, +this.value, 'month'); });
     $('li-year').addEventListener('change', function () {
       var v = Math.round(+this.value);
-      if (!C.okMonth(mode, v)) { this.value = y; $('li-msg').textContent = mode === 'h' ? 'שנה עברית בין ' + HY_MIN + ' ל-' + HY_MAX + '.' : 'שנה בין ' + GY_MIN + ' ל-' + GY_MAX + '.'; return; }
+      if (!C.okMonth(mode, v)) { this.value = y; $('li-msg').textContent = C.L ? C.L.yearMsg(mode, mode === 'h' ? HY_MIN : GY_MIN, mode === 'h' ? HY_MAX : GY_MAX) : mode === 'h' ? 'שנה עברית בין ' + HY_MIN + ' ל-' + HY_MAX + '.' : 'שנה בין ' + GY_MIN + ' ל-' + GY_MAX + '.'; return; }
       $('li-msg').textContent = ''; go(v, m, 'year');
     });
     [].forEach.call(document.querySelectorAll('input[name="li-mode"]'), function (r) {
@@ -506,11 +511,11 @@
       $('li-day').innerHTML = C.dayHtml(d); $('li-day').hidden = false; used('luach_ivri', 'day');
     });
     function printYear() {
-      var list = mode === 'h' ? C.hmonths(y).map(function (k) { return C.month('h', y, k); }) : GM.map(function (n, i) { return C.month('g', y, i); });
+      var list = mode === 'h' ? C.hmonths(y).map(function (k) { return C.month('h', y, k); }) : C.G.map(function (n, i) { return C.month('g', y, i); });
       var info = mode === 'h' ? C.yearInfo(y) : null;
-      $('li-printbox').innerHTML = '<h2 class="iv-ph">לוח שנה עברי לועזי ' + (mode === 'h' ? C.gem(y) + ' (<bdi dir="ltr">' + info.start.getFullYear() + '–' + info.end.getFullYear() + '</bdi>)' : y) + '</h2>' +
+      $('li-printbox').innerHTML = '<h2 class="iv-ph">' + (C.L ? C.L.printTitle : 'לוח שנה עברי לועזי ') + (mode === 'h' ? C.num(y) + ' (<bdi dir="ltr">' + info.start.getFullYear() + '–' + info.end.getFullYear() + '</bdi>)' : y) + '</h2>' +
         list.map(function (mo) { return '<section class="iv-pm"><h3>' + mo.title + ' <small>' + mo.sub + '</small></h3>' + C.gridHtml(mo, '') + '</section>'; }).join('') +
-        '<p class="iv-pf">hakelim.com/kodesh/luach-ivri · לפי מנהג ארץ ישראל</p>';
+        '<p class="iv-pf">' + (C.L ? C.L.printFoot : 'hakelim.com/kodesh/luach-ivri · לפי מנהג ארץ ישראל') + '</p>';
       document.documentElement.classList.add('iv-py');
       window.print();
     }
@@ -614,7 +619,7 @@
   }
 
   function start() {
-    C = core(window.hebcal);
+    C = core(window.hebcal, window.KODESH_IVRI_L || null);
     try { if ($('li')) initLuach(); if ($('ti')) initTaarich(); } catch (e) { if (window.console) console.error(e); }
   }
   if (!$('li') && !$('ti')) return;
