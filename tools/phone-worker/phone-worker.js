@@ -289,8 +289,6 @@ export function newsChunks(parts) {
 // החישוב כולו בליבה של דף טהרה (assets/tahara-core.js, כללים ב-docs/tahara-rules.md). כאן רק שאלות ומשפטים.
 // שום תאריך או מספר טלפון לא נשמר – רק מונה אחד "נכנסו למחשבון".
 const TAHARA = taharaFactory(HC);
-const VESTOT_PRESETS = { 1: 'sephardi_ovadia', 2: 'ashkenaz', 3: 'chabad', 4: 'ben_ish_chai' };
-const VESTOT_METHOD_Q = 'לפי איזה מנהג לחשב. ספרדים ומרוקו הקישו 1. אשכנזים הקישו 2. חב"ד הקישו 3. בן איש חי והרב מרדכי אליהו הקישו 4';
 const VESTOT_DISCLAIMER = 'המחשבון עוזר לזכור ואינו פוסק הלכה. לכל שאלה הלכתית פונים לרב';
 
 // יום וחודש בלבד (4 ספרות): השנה נבחרת כך שהתאריך הוא האחרון שלא אחרי מחר (או לפני התאריך שנתן, בראייה הקודמת)
@@ -304,10 +302,10 @@ function parseDayMonth(s, before) {
   }
   return null;
 }
-// עונה: 1 ביום (מהנץ עד השקיעה), 2 בלילה אחרי השקיעה, 3 בלילה לפני הנץ. החישוב כמו onahFromClock בליבה
+// עונה: 1 ביום, 2 בלילה (תאריך הערב)
 function vestotSighting(date, a) {
   let abs = TAHARA.absFromYmd(TAHARA.ymd(date));
-  if (a === '2') abs += 1;
+  if (a === '2') abs += 1; // לילה: התאריך שהוקש הוא של הערב, והלילה שייך ליום העברי הבא
   return { abs, onah: a === '1' ? 'day' : 'night' };
 }
 function sayOnah(d) {
@@ -326,35 +324,36 @@ const VESTOT_ALERTS = {
   postponed_tisha_bav: 'הלילה המקורי הוא ליל תשעה באב ואין טובלים בו. הטבילה נדחית ללילה שאחריו'
 };
 
-function toolVestot(date, a, presetKey, prevDate) {
-  const preset = TAHARA.PRESETS[VESTOT_PRESETS[presetKey]];
+function toolVestot(date, a, prevDate) {
+  // התאריכים זהים בכל המנהגים (חישוב לפי ספרדים); הבדלי מנהגים נאמרים רק בסוף, ורק מה שמשתנה
+  const preset = TAHARA.PRESETS.sephardi_ovadia;
   const last = vestotSighting(date, a);
   const S = [last];
-  if (prevDate) {
-    // הראייה הקודמת – רק היום נחוץ להפלגה (אורך המרווח בימים; העונה של ההפלגה היא של הראייה האחרונה)
-    S.unshift({ abs: TAHARA.absFromYmd(TAHARA.ymd(prevDate)), onah: last.onah });
-  }
+  if (prevDate) S.unshift({ abs: TAHARA.absFromYmd(TAHARA.ymd(prevDate)), onah: last.onah });
   const r = TAHARA.summary(S, preset);
   if (!r) return ['לא הצלחתי לחשב'];
-  const out = ['הראייה האחרונה היא', ...sayOnah(r.last), 'ממנה יוצאות עונות הפרישה'];
-  out.push('עונה בינונית. יום שלושים מהראייה. יום הראייה הוא יום אחד', ...sayOnah(r.beinonit));
+  const out = ['הראייה האחרונה היא', ...sayOnah(r.last)];
+  out.push('עונה בינונית. יום שלושים מהראייה', ...sayOnah(r.beinonit));
   if (r.chodesh.edge) {
     out.push('וסת החודש. הראייה הייתה ביום שלושים והחודש הבא חסר ואין תאריך מקביל. שני הימים הבאים הם ספק ושואלים רב', ...r.chodesh.list.flatMap(sayOnah));
   } else if (r.sameDay) {
-    out.push('וסת החודש. אותו תאריך עברי בחודש הבא. החודש חסר ולכן עונת החודש חלה יחד עם העונה הבינונית', ...sayOnah(r.chodesh.list[0]));
+    out.push('וסת החודש. החודש חסר ולכן היא חלה יחד עם העונה הבינונית', ...sayOnah(r.chodesh.list[0]));
   } else {
-    out.push('וסת החודש. אותו תאריך עברי בחודש הבא. החודש מלא ולכן עונת החודש חלה יום אחרי העונה הבינונית', ...sayOnah(r.chodesh.list[0]));
+    out.push('וסת החודש. החודש מלא ולכן היא חלה יום אחרי העונה הבינונית', ...sayOnah(r.chodesh.list[0]));
   }
   if (r.haflaga) out.push(`וסת ההפלגה. ${r.haflaga.len} ימים`, ...sayOnah(r.haflaga));
-  else out.push('וסת ההפלגה. כדי לחשב אותה צריך גם את תאריך הראייה הקודמת. אפשר להתקשר שוב ולהקיש אותה');
-  out.push('בעונת הפרישה בודקים פעם אחת במהלך העונה. אם בדיעבד לא בדקה אסורה עד שתבדוק');
-  // הפסק טהרה, שבעה נקיים וטבילה
+  else out.push('וסת ההפלגה. כדי לחשב אותה צריך גם את תאריך הראייה הקודמת');
+  out.push('בעונות האלה בודקים פעם אחת במהלך העונה');
   const m = TAHARA.mikveh(last.abs, preset);
-  out.push(`הפסק טהרה. המוקדם ביותר הוא ביום ה${m.minDays === 4 ? 'רביעי' : 'חמישי'} מיום הראייה, כולל יום הראייה. זה בתנאי שהדימום כבר פסק`, ...sayDay(m.hefsek));
-  out.push('שבעה נקיים מתחילים למחרת ההפסק', ...sayDay(m.cleanFirst), 'ועד', ...sayDay(m.cleanLast));
-  out.push('ליל הטבילה', ...sayOnah(m.tevila));
+  out.push('הפסק טהרה המוקדם ביותר, אם הדימום כבר פסק', ...sayDay(m.hefsek),
+    'שבעה נקיים מתחילים למחרת ההפסק', ...sayDay(m.cleanFirst), 'ועד', ...sayDay(m.cleanLast),
+    'ליל הטבילה', ...sayOnah(m.tevila));
   m.alerts.forEach(k => { if (VESTOT_ALERTS[k]) out.push(VESTOT_ALERTS[k]); });
-  if (preset.unverified && preset.unverified.length) out.push('בחלק מהפרטים במנהג שבחרתם לא נמצא מקור מאומת. בכל מקרה של ספק שואלים רב');
+  // דעות אחרות – רק מה שמשתנה: אשכנזים, חב"ד ובן איש חי ממתינים יום נוסף לפני ההפסק
+  const alt = TAHARA.mikveh(last.abs, TAHARA.PRESETS.ashkenaz);
+  if (alt.hefsek.abs !== m.hefsek.abs) {
+    out.push('לדעות אחרות. אשכנזים וחב"ד ובן איש חי ממתינים יום נוסף. אצלם ההפסק המוקדם', ...sayDay(alt.hefsek), 'וליל הטבילה', ...sayOnah(alt.tevila));
+  }
   out.push(VESTOT_DISCLAIMER);
   return out;
 }
@@ -411,19 +410,17 @@ function decide(v, sponsor = '', news = null) {
     return { text: after(toolCalc(k, date, a === '1')), event: 'calc' };
   }
   if (tool === '9') {
-    const pk = v[`p${r}`];
-    if (!VESTOT_PRESETS[pk]) return { text: readDigits([VESTOT_METHOD_Q], `p${r}`, { allowed: '1.2.3.4' }) };
     const dv = v[`d${r}`];
-    if (dv === undefined) return { text: readDigits(['הקישו את תאריך הראייה האחרונה. יום ושני ספרות חודש, ואחריהם ספרה אחת. 1 אם הייתה ביום, מהנץ עד השקיעה. 2 אם הייתה בלילה אחרי השקיעה. 3 אם הייתה בלילה לפני הנץ. למשל ראייה ב9 בנובמבר ביום, 0 9 1 1 1. אם הייתה קרוב לשקיעה או לנץ שואלים רב'], `d${r}`, { max: 5, min: 5 }) };
+    if (dv === undefined) return { text: readDigits(['הקישו את תאריך הראייה האחרונה. יום ושני ספרות חודש, ואחריהם ספרה אחת. 1 אם הייתה ביום. 2 אם הייתה בלילה, ואז הקישו את התאריך של הערב שבו הלילה התחיל. למשל ראייה ב9 בנובמבר ביום, 0 9 1 1 1. אם הייתה קרוב לשקיעה או לנץ שואלים רב'], `d${r}`, { max: 5, min: 5 }) };
     const date = parseDayMonth(dv.slice(0, 4)), a = dv.slice(4);
-    if (!date || !['1', '2', '3'].includes(a)) return { text: menuRead(next, ['התאריך שהוקש לא תקין. נסו שוב']) };
+    if (!date || !['1', '2'].includes(a)) return { text: menuRead(next, ['התאריך שהוקש לא תקין. נסו שוב']) };
     if (v[`q${r}`] === undefined) return { text: readDigits(['אם יש את הראייה שלפניה, הקישו את היום והחודש שלה בארבע ספרות. אם אין, הקישו 0'], `q${r}`, { max: 4, min: 1 }) };
     let prev = null;
     if (v[`q${r}`] !== '0') {
       prev = parseDayMonth(v[`q${r}`], date);
       if (!prev) return { text: menuRead(next, ['התאריך של הראייה הקודמת לא תקין. נסו שוב']) };
     }
-    return { text: after(toolVestot(date, a, pk, prev)), event: 'vestot' };
+    return { text: after(toolVestot(date, a, prev)), event: 'vestot' };
   }
   if (tool === '5') {
     if (v[`r${r}`] === undefined) {
