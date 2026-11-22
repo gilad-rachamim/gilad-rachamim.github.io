@@ -41,7 +41,7 @@ MAX_SEC = 4 * 3600 + 600
 SITE = "https://hakelim.com/kelim/tamlul/yutub/"
 CREDIT = "תומלל בכלי \"תמלול מיוטיוב\" של מיזם הכלים של גילעד רחמים – מיזם חסד, בלי כוונת רווח."
 NOTE = "תמלול אוטומטי: ייתכנו טעויות, במיוחד בפסוקים, בארמית ובשמות. כדאי לעבור על הטקסט לפני שמפיצים אותו."
-NOTE_EDITED = ("התמלול, העריכה, התקציר ורשימת המקורות נעשו אוטומטית: ייתכנו טעויות, במיוחד בפסוקים, בארמית ובשמות. "
+NOTE_EDITED = ("התמלול, העריכה, הסיכום ורשימת המקורות נעשו אוטומטית: ייתכנו טעויות, במיוחד בפסוקים, בארמית ובשמות. "
                "הנוסח הקובע הוא השיעור המוקלט.")
 FONT = os.path.normpath(os.path.join(HERE, "..", "..", "assets", "fonts", "FrankRuhlLibre-wght.woff"))
 NOWIN = 0x08000000 if os.name == "nt" else 0
@@ -590,11 +590,25 @@ def process(url, by="", times=False, progress=lambda m, pct: None):
             top = "## תקציר השיעור\n\n" + summary["summary"] + "".join("\n• " + x for x in summary.get("points") or [])
             if summary.get("sources"):
                 top += "\n\n## מקורות שהוזכרו בשיעור\n" + "".join("\n• " + x for x in summary["sources"])
+            if summary.get("digest"):
+                top += "\n\n# סיכום השיעור\n\n" + "\n\n".join("## " + x["head"] + "\n\n" + x["text"] for x in summary["digest"])
+                top += "\n\n# השיעור המלא"
             text = top + "\n\n" + text
         pdf = build_pdf(doc_html(meta, paras, by, times, watch, summary, edited), tmp)
         docx = build_docx(meta, paras, by, times, watch, tmp, summary, edited)
-        return {"title": meta["title"], "channel": meta["channel"], "date": meta["date"], "dur": round(meta["dur"]),
-                "vid": meta["id"], "words": len(text.split()), "text": text, "pdf": pdf, "docx": docx}
+        out = {"title": meta["title"], "channel": meta["channel"], "date": meta["date"], "dur": round(meta["dur"]),
+               "vid": meta["id"], "words": len(text.split()), "text": text, "pdf": pdf, "docx": docx}
+        if summary and summary.get("digest"):                    # קובץ נוסף: סיכום שיעור קצר ומסודר
+            try:
+                m2 = dict(meta, title="סיכום השיעור: " + meta["title"])
+                d = [{"head": x["head"], "text": x["text"], "t": 0} for x in summary["digest"]]
+                box = {"summary": summary["summary"], "points": [], "sources": summary.get("sources") or []}
+                out["sum"] = build_pdf(doc_html(m2, d, by, False, watch, box, True), tmp)
+                out["sumdocx"] = build_docx(m2, d, by, False, watch, tmp, box, True)
+            except Exception as ex:
+                say("digest file failed: " + type(ex).__name__)
+                out.pop("sum", None)
+        return out
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
@@ -636,8 +650,9 @@ def loop(max_minutes=45):
                 pass
         try:
             res = process(job["url"], job.get("by") or "", bool(job.get("times")), progress)
-            res["pdf"] = base64.b64encode(res["pdf"]).decode()
-            res["docx"] = base64.b64encode(res["docx"]).decode()
+            for k in ("pdf", "docx", "sum", "sumdocx"):
+                if res.get(k):
+                    res[k] = base64.b64encode(res[k]).decode()
             res["id"] = jid
             hub("POST", "/r/done", res, timeout=180)
             say(f"job {jid} done {res['dur']}s {res['words']}w")
@@ -669,6 +684,10 @@ def main():
     for ext in ("pdf", "docx"):
         with open(os.path.join(a.out, f"{name}.{ext}"), "wb") as f:
             f.write(res[ext])
+    for k, ext in (("sum", "pdf"), ("sumdocx", "docx")):
+        if res.get(k):
+            with open(os.path.join(a.out, f"סיכום - {name}.{ext}"), "wb") as f:
+                f.write(res[k])
     with open(os.path.join(a.out, f"{name}.txt"), "w", encoding="utf-8") as f:
         f.write(res["text"])
     say(f"DONE {res['dur']}s {res['words']} words -> {a.out}")

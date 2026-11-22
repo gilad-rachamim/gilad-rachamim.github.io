@@ -71,6 +71,8 @@ export class Yutub {
     if (j.status === "queued") o.pos = this.one("SELECT COUNT(*) c FROM jobs WHERE status='queued' AND created < ?", j.created).c + 1;
     if (j.status === "done") Object.assign(o, { title: j.title, channel: j.channel, date: j.date, dur: j.dur, words: j.words, source: j.url,
       pdf: `/file/${j.id}/pdf`, docx: `/file/${j.id}/docx`, txt: `/file/${j.id}/txt` });
+    if (j.status === "done" && this.one("SELECT n FROM files WHERE id = ? AND kind = 'sum' LIMIT 1", j.id))
+      Object.assign(o, { sum: `/file/${j.id}/sum`, sumdocx: `/file/${j.id}/sumdocx` });
     return o;
   }
 
@@ -122,7 +124,7 @@ export class Yutub {
       return j ? json(req, this.view(j)) : json(req, { ok: false, msg: "לא נמצא." }, 404);
     }
 
-    m = p.match(/^\/file\/([a-f0-9]{16})\/(pdf|docx|txt)$/);
+    m = p.match(/^\/file\/([a-f0-9]{16})\/(pdf|docx|txt|sum|sumdocx)$/);
     if (m && req.method === "GET") {
       const j = this.one("SELECT * FROM jobs WHERE id = ? AND status = 'done'", m[1]);
       const rows = j ? this.sql.exec("SELECT data FROM files WHERE id = ? AND kind = ? ORDER BY n", m[1], m[2]).toArray() : [];
@@ -130,9 +132,10 @@ export class Yutub {
       const parts = rows.map(r => new Uint8Array(r.data));
       const body = new Uint8Array(parts.reduce((s, x) => s + x.length, 0));
       let off = 0; for (const x of parts) { body.set(x, off); off += x.length; }
-      const type = { pdf: "application/pdf", docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", txt: "text/plain; charset=utf-8" }[m[2]];
-      const name = (j.title || "shiur").replace(/[\\/:*?"<>|\r\n]+/g, " ").trim().slice(0, 90) + "." + m[2];
-      const disp = (m[2] === "pdf" && url.searchParams.get("view") ? "inline" : "attachment") + `; filename="shiur.${m[2]}"; filename*=UTF-8''${encodeURIComponent(name)}`;
+      const ext = { sum: "pdf", sumdocx: "docx" }[m[2]] || m[2];
+      const type = { pdf: "application/pdf", docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", txt: "text/plain; charset=utf-8" }[ext];
+      const name = (ext === m[2] ? "" : "סיכום - ") + (j.title || "shiur").replace(/[\\/:*?"<>|\r\n]+/g, " ").trim().slice(0, 90) + "." + ext;
+      const disp = (ext === "pdf" && url.searchParams.get("view") ? "inline" : "attachment") + `; filename="shiur.${ext}"; filename*=UTF-8''${encodeURIComponent(name)}`;
       return new Response(body, { headers: { "Content-Type": type, "Content-Disposition": disp, "Cache-Control": "public, max-age=3600", ...cors(req) } });
     }
 
@@ -171,6 +174,7 @@ export class Yutub {
         this.sql.exec("DELETE FROM files WHERE id = ?", id);
         const put = (kind, bytes) => { for (let i = 0, n = 0; i < bytes.length; i += CHUNK, n++) this.sql.exec("INSERT INTO files (id,kind,n,data) VALUES (?,?,?,?)", id, kind, n, bytes.slice(i, i + CHUNK).buffer); };
         put("pdf", b64ToBytes(b.pdf)); put("docx", b64ToBytes(b.docx)); put("txt", new TextEncoder().encode(String(b.text || "")));
+        if (b.sum && b.sumdocx) { put("sum", b64ToBytes(b.sum)); put("sumdocx", b64ToBytes(b.sumdocx)); }
         this.sql.exec("UPDATE jobs SET status='done', msg='מוכן', pct=100, title=?, channel=?, date=?, dur=?, words=?, updated=? WHERE id=?",
           String(b.title || "").slice(0, 200), String(b.channel || "").slice(0, 120), String(b.date || "").slice(0, 12), b.dur | 0, b.words | 0, now, id);
         // ניקוי: תמלולי יוטיוב נשמרים 90 יום; שיעורי הכולל נשארים
