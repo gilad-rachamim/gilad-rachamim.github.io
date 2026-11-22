@@ -73,6 +73,7 @@ def tool_block(mode, label, placeholder, extra_opts, button, note):
           <a class="btn btn-gold" id="yt-sum" href="#" target="_blank" rel="noopener" data-mv="yutub_sum_view">לפתוח את הסיכום</a>
           <a class="btn btn-line" id="yt-sumpdf" href="#" data-mv="yutub_sum_pdf">סיכום ב-PDF</a>
           <a class="btn btn-line" id="yt-sumdocx" href="#" data-mv="yutub_sum_docx">סיכום ב-Word</a>
+          <a class="btn btn-line" id="yt-sumbw" href="#" target="_blank" rel="noopener" data-mv="yutub_sum_bw" hidden>להדפסה בשחור-לבן</a>
         </div>
         <h3 class="yt-h3">השיעור המלא, מילה במילה</h3>
       </div>

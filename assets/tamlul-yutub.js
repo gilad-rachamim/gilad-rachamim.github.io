@@ -60,7 +60,8 @@
     $('yt-pdf').href = API + j.pdf; $('yt-docx').href = API + j.docx; $('yt-txt').href = API + j.txt;
     $('yt-view').href = API + j.pdf + '?view=1';
     show($('yt-sumrow'), !!j.sum);
-    if (j.sum && $('yt-sum')) { $('yt-sum').href = API + j.sum + '?view=1'; $('yt-sumpdf').href = API + j.sum; $('yt-sumdocx').href = API + j.sumdocx; }
+    if (j.sum && $('yt-sum')) { $('yt-sum').href = API + j.sum + '?view=1'; $('yt-sumpdf').href = API + j.sum; $('yt-sumdocx').href = API + j.sumdocx;
+      if ($('yt-sumbw')) { $('yt-sumbw').hidden = !j.sumbw; if (j.sumbw) $('yt-sumbw').href = API + j.sumbw + '?view=1'; } }
     var share = $('yt-share');
     if (share) share.href = 'https://wa.me/?text=' + encodeURIComponent((j.title || 'שיעור') + ' – השיעור כתוב, להורדה כ-PDF או כוורד:\n' + location.href.split('#')[0] + '#t=' + j.id);
     show(res, true);
