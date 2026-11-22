@@ -29,7 +29,7 @@
 .gr-card .wh{color:var(--muted);font-size:.95rem;margin-top:.3rem}
 .gr-card h3{margin:0 0 .4rem;color:var(--cream)}
 .gr-quiz .q{font-size:1.2rem;color:var(--cream);line-height:1.6;font-weight:700;margin:.6rem 0}
-.gr-opt{display:block;width:100%;text-align:right;font:inherit;border:1px solid var(--line);background:var(--ink-2);color:var(--cream);border-radius:12px;padding:.7rem 1rem;margin:.4rem 0;min-height:48px;cursor:pointer}
+.gr-opt{display:block;width:100%;text-align:start;font:inherit;border:1px solid var(--line);background:var(--ink-2);color:var(--cream);border-radius:12px;padding:.7rem 1rem;margin:.4rem 0;min-height:48px;cursor:pointer}
 .gr-opt.ok{border-color:#58c08a;background:rgba(88,192,138,.14)}
 .gr-opt.no{border-color:#e0a24f;background:rgba(224,162,79,.12)}
 .gr-exp{margin:.6rem 0;padding:.7rem 1rem;border-radius:12px;background:rgba(127,167,224,.1);color:var(--parchment);line-height:1.7}
@@ -48,3 +48,10 @@
 .gr-term dt{font-weight:700;color:var(--gold-hi,var(--gold))}.gr-term dd{margin:.2rem 0 0;color:var(--body);line-height:1.7}
 a.gr-btn{display:inline-flex;align-items:center;text-decoration:none}
 a.gr-btn.gold{background:var(--gold);color:#1a1405;border-color:var(--gold);font-weight:700}
+/* מעבר שפה (22.11.2026) */
+.gr-lang{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:.4rem 0 1rem}
+.gr-lang a{border:1px solid var(--line);border-radius:99px;padding:.35rem .9rem;min-height:40px;display:inline-flex;align-items:center;color:var(--gold-hi);text-decoration:none}
+.gr-lang a[aria-current=page]{background:var(--gold);color:#1a1405;border-color:var(--gold);font-weight:700}
+.gr-lang a:hover,.gr-lang a:focus-visible{background:rgba(212,176,98,.14)}
+.gr-rev{font-size:.92rem;color:var(--muted);text-align:center;margin:.3rem 0 1rem}
+.ts-tr{font-style:italic;color:var(--muted)}

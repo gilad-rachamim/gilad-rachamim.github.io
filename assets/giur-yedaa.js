@@ -3,7 +3,8 @@
   'use strict';
   var G = window.GIUR, qEl = G.$('yq-q'); if (!qEl) return;
   /* [תחום, שאלה, [תשובה נכונה, שגויה, שגויה, שגויה], הסבר] */
-  var Q = [
+  /* EN/RU: giur-yedaa-en.js / giur-yedaa-ru.js מגדירים window.GIUR_Q לפני הקובץ הזה */
+  var Q = window.GIUR_Q || [
     ['תנ"ך', 'כמה ספרים יש בחמשת חומשי התורה?', ['חמישה', 'שלושה', 'שבעה', 'עשרה'], 'חמשת חומשי התורה הם: בראשית, שמות, ויקרא, במדבר ודברים.'],
     ['תנ"ך', 'מהו הספר הראשון בתורה?', ['בראשית', 'שמות', 'ויקרא', 'דברים'], 'התורה נפתחת בספר בראשית.'],
     ['תנ"ך', 'מהו הספר האחרון בחמשת חומשי התורה?', ['דברים', 'במדבר', 'שמות', 'בראשית'], 'חמשת החומשים נחתמים בספר דברים.'],
@@ -76,9 +77,16 @@
   ];
   var cats = [];
   Q.forEach(function (x) { if (cats.indexOf(x[0]) < 0) cats.push(x[0]); });
-  var st = G.get('yedaa', { ok: 0, tried: 0, seen: {} }), cat = '', cur = null, locked = false;
+  var T = G.t({ he: { c: function (t, o) { return 'תרגלתם ' + t + ' שאלות, ו-' + o + ' מהן נכון בפעם הראשונה. בכל קצב זה בסדר.'; }, ok: 'נכון, כל הכבוד! ', no: 'כמעט, וזה לגמרי בסדר. ', all: 'הכול',
+      w: function (t, o) { return 'שלום, אני מתרגל ידע ביהדות. תרגלתי ' + t + ' שאלות, ו-' + o + ' מהן נכון בפעם הראשונה. '; } },
+    en: { c: function (t, o) { return 'You practiced ' + t + ' questions, ' + o + ' of them right the first time. Any pace is fine.'; }, ok: 'Correct, well done! ', no: 'Almost, and that is completely fine. ', all: 'All',
+      w: function (t, o) { return 'Hello, I am practicing Jewish knowledge. I practiced ' + t + ' questions, ' + o + ' of them right the first time. '; } },
+    ru: { c: function (t, o) { return 'Вы ответили на ' + t + ' вопросов, из них ' + o + ' верно с первого раза. Любой темп – это нормально.'; }, ok: 'Верно, молодец! ', no: 'Почти, и это совершенно нормально. ', all: 'Все',
+      w: function (t, o) { return 'Здравствуйте, я тренирую знания по иудаизму. Я ответил на ' + t + ' вопросов, из них ' + o + ' верно с первого раза. '; } } });
+  var KEY = G.lk('yedaa');
+  var st = G.get(KEY, { ok: 0, tried: 0, seen: {} }), cat = '', cur = null, locked = false;
   function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
-  function count() { G.$('yq-c').textContent = 'תרגלתם ' + st.tried + ' שאלות, ו-' + st.ok + ' מהן נכון בפעם הראשונה. בכל קצב זה בסדר.'; }
+  function count() { G.$('yq-c').textContent = T.c(st.tried, st.ok); }
   function next() {
     locked = false; G.$('yq-e').hidden = true; G.$('yq-n').hidden = true;
     var pool = Q.filter(function (x) { return (!cat || x[0] === cat) && !st.seen[x[1]]; });
@@ -95,14 +103,14 @@
   function pick(btn, i) {
     if (locked) return; locked = true;
     var good = i === 0; st.tried++; st.seen[cur[1]] = 1; if (good) st.ok++;
-    G.set('yedaa', st); G.used('giur_yedaa', { ok: good ? 1 : 0, cat: cur[0] });
+    G.set(KEY, st); G.used('giur_yedaa', { ok: good ? 1 : 0, cat: cur[0] });
     [].forEach.call(G.$('yq-o').children, function (b) { if (b.getAttribute('data-i') === '0') b.classList.add('ok'); else if (b === btn) b.classList.add('no'); });
     var e = G.$('yq-e'); e.hidden = false;
-    e.textContent = (good ? 'נכון, כל הכבוד! ' : 'כמעט, וזה לגמרי בסדר. ') + cur[3];
+    e.textContent = (good ? T.ok : T.no) + cur[3];
     G.$('yq-n').hidden = false; G.$('yq-n').focus(); count();
   }
   var tabs = G.$('yq-tabs');
-  ['הכול'].concat(cats).forEach(function (c, i) {
+  [T.all].concat(cats).forEach(function (c, i) {
     var b = document.createElement('button'); b.type = 'button'; b.textContent = c; b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
     b.addEventListener('click', function () {
       cat = i === 0 ? '' : c;
@@ -113,7 +121,7 @@
   });
   G.$('yq-n').addEventListener('click', next);
   G.$('yq-w').addEventListener('click', function () {
-    G.wa('שלום, אני מתרגל ידע ביהדות. תרגלתי ' + st.tried + ' שאלות, ו-' + st.ok + ' מהן נכון בפעם הראשונה. https://hakelim.com/kodesh/giur/yedaa/');
+    G.wa(T.w(st.tried, st.ok) + G.url());
   });
   G.$('yq-total').textContent = Q.length;
   next();
