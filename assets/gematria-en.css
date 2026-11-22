@@ -1,0 +1,17 @@
+/* דף הגימטריה באנגלית: מקלדת עברית על המסך, שורת אותיות אנגליות, טבלאות */
+.gx-he{font-family:inherit;font-weight:700;direction:rtl;unicode-bidi:isolate}
+.gx-kbh{margin:.7rem 0 .35rem;font-size:.92rem;color:var(--muted,#555)}
+.gx-kb{display:grid;grid-template-columns:repeat(auto-fill,minmax(2.6rem,1fr));gap:.3rem;margin-bottom:.6rem}
+.gx-kb button{min-height:2.75rem;font-size:1.25rem;font-weight:700;border:1px solid var(--line,#d6d0c4);border-radius:.55rem;background:var(--card,#fff);color:inherit;cursor:pointer;touch-action:manipulation}
+.gx-kb button:active{transform:scale(.95)}
+.gx-kb .gx-fin{background:var(--soft,#f6f1e6)}
+.gx-kb .gx-sp{grid-column:span 3;font-size:.95rem;font-weight:600}
+.gx-kb .gx-bk{grid-column:span 2;font-size:1.1rem}
+.gx-enl{margin:.2rem 0 .6rem;padding:.55rem .7rem;border-radius:.55rem;background:var(--soft,#f6f1e6);font-size:.93rem}
+.gx-tbl th[scope=row] .gx-he,.gx-tbl th[scope=row]{font-size:1.15rem}
+.gx-try{border:0;background:none;padding:.15rem .3rem;font:inherit;color:var(--link,#1a5fb4);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.gx-tbl td small{opacity:.75}
+@media (max-width:520px){.gx-tbl{font-size:.88rem}.gx-tbl th,.gx-tbl td{padding:.35rem .3rem}}
+.gx-scr{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.gx-tbl{width:100%}
+@media (max-width:520px){.gx-tbl{font-size:.82rem}.gx-tbl th,.gx-tbl td{padding:.3rem .2rem}.gx-try{padding:.1rem}}
