@@ -55,9 +55,23 @@
         }).catch(function () { m.textContent = 'השליחה לא הצליחה כרגע. נסו שוב בעוד רגע.'; b.disabled = false; });
     };
   }
+  // 22.11.2026 (גילעד): בלחיצה על השורה, לפני שמקלידים, מראים כלים מובילים ונושאים - למי שלא יודע מה להקליד
+  var TOP = [['/kodesh/zmanim/', 'זמני היום לפי המיקום'], ['/kodesh/shabat/', 'כניסת שבת וצאת שבת'], ['/kodesh/birkat-hamazon/', 'ברכת המזון'],
+    ['/kodesh/tefillin/', 'הנחת תפילין'], ['/kodesh/tehillim/', 'סיום תהילים בקישור'], ['/kelim/tamlul/', 'תמלול הקלטות בעברית'],
+    ['/kelim/android/', 'מקליט שיחות לאנדרואיד'], ['/kesef/bruto-neto/', 'ברוטו נטו'], ['/limudim/poter/', 'הפותר: שאלות בגרות'], ['/kodesh/gimatria/', 'מחשבון גימטריה']];
+  var TOPICS = [['/kodesh/', 'קודש ותפילה'], ['/kesef/', 'כסף'], ['/limudim/', 'לימודים'], ['/bait/', 'בית ומשפחה'], ['/esek/', 'עסק קטן'],
+    ['/kelim/machshev/', 'מחשב וטלפון'], ['/kelim/tochen/', 'יצירת תוכן'], ['/kelim/shir/', 'שירים וקריוקי'], ['/kelim/briut/', 'בריאות'],
+    ['/kelim/eruim/', 'אירועים ושמחות'], ['/kelim/tiyulim/', 'טיולים'], ['/nefesh/', 'נפש'], ['/kelim/apps/', 'אפליקציות לאנדרואיד'], ['/kelim/', 'כל הכלים']];
+  function home() {
+    out.innerHTML = '<div class="hk-home"><p class="hk-h">כלים מובילים</p><ul class="hk-top">' +
+      TOP.map(function (x) { return '<li><a href="' + x[0] + '" data-p="' + x[0] + '">' + esc(x[1]) + '</a></li>'; }).join('') +
+      '</ul><p class="hk-h">נושאים</p><ul class="hk-topics">' +
+      TOPICS.map(function (x) { return '<li><a href="' + x[0] + '" data-p="' + x[0] + '">' + esc(x[1]) + '</a></li>'; }).join('') + '</ul></div>';
+    out.onclick = function (e) { var a = e.target.closest && e.target.closest('a[data-p]'); if (a) track('hakelim_search', { how: 'home_pick', to: a.getAttribute('data-p') }); };
+  }
   function run(text) {
     var n = norm(text);
-    if (n.length < 2) { out.innerHTML = ''; return; }
+    if (n.length < 2) { home(); return; }
     var words = n.split(' ').filter(function (w) { return w.length > 1; });
     load().then(function (list) {
       var res = list.map(function (it) { return [score(it, words), it]; }).filter(function (x) { return x[0] > 0; })
@@ -70,5 +84,8 @@
   }
   var t; q.addEventListener('input', function () { clearTimeout(t); t = setTimeout(function () { run(q.value); }, 180); });
   q.addEventListener('focus', load, { once: true });
+  function showHome() { if (norm(q.value).length < 2 && !out.querySelector('.hk-home')) home(); }
+  q.addEventListener('focus', showHome);
+  q.addEventListener('click', showHome);
   form.addEventListener('submit', function (e) { e.preventDefault(); track('hakelim_search', { how: 'submit' }); run(q.value); });
 })();

@@ -17,4 +17,10 @@
 #hk-search .hk-s{position:relative}
 #hk-search .hk-msg{font-size:.9rem;margin:0}
 #hk-search .hk-ok{margin:0;font-weight:700}
+#hk-search .hk-home{padding:.6rem .7rem .8rem;background:rgba(255,255,255,.97);color:#1b1b1b;border-radius:.6rem;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#hk-search .hk-h{margin:.2rem 0 .4rem;font-weight:700;font-size:.9rem;color:#6b5314}
+#hk-search .hk-top,#hk-search .hk-topics{list-style:none;margin:0 0 .6rem;padding:0;display:flex;flex-wrap:wrap;gap:.4rem}
+#hk-search .hk-home a{display:block;padding:.3rem .7rem;min-height:40px;box-sizing:border-box;line-height:1.9;font-size:.92rem;border-radius:2rem;text-decoration:none;color:#1b1b1b;border:1px solid #d8b35f;background:#fbf6e6}
+#hk-search .hk-topics a{background:#fff;border-color:rgba(128,128,128,.45)}
+#hk-search .hk-home a:hover,#hk-search .hk-home a:focus{background:#f0ead7}
 @media print{#hk-search{display:none}}
