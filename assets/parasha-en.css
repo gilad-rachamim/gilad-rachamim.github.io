@@ -1,0 +1,40 @@
+/* פרשת השבוע באנגלית (/kodesh/parasha/en/) */
+.pa-loc{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+.pa-loc button{min-height:44px;padding:6px 14px;border-radius:999px;border:1px solid var(--line,#d9d2c3);background:transparent;color:inherit;font:inherit;cursor:pointer}
+.pa-loc button[aria-pressed="true"]{border-color:var(--gold,#b8892b);background:rgba(184,137,43,.16);font-weight:700}
+.pa-hero{border:1px solid var(--gold,#b8892b);border-radius:14px;padding:14px;background:rgba(184,137,43,.07);margin:6px 0 10px}
+.pa-hero p{margin:0 0 6px}
+.pa-when{font-weight:700;opacity:.85;font-size:.95rem}
+.pa-name{font-size:1.9rem;line-height:1.2}
+.pa-name b{color:var(--gold-hi,var(--gold,#b8892b))}
+.pa-name span{font-size:1.5rem;white-space:nowrap}
+.pa-book{opacity:.85}
+.pa-read{display:flex;flex-wrap:wrap;gap:6px 14px}
+.pa-read a{font-weight:700}
+.pa-diff{margin-top:8px!important;font-size:.93rem;padding-top:8px;border-top:1px dashed var(--line,#d9d2c3)}
+.pa-where{font-size:.9rem;opacity:.8;margin:0 0 10px}
+.pa-wrap{overflow-x:auto}
+.pa-tbl td,.pa-tbl th{white-space:normal}
+.pa-tbl tr.now th,.pa-tbl tr.now td{background:rgba(184,137,43,.12)}
+.pa-tbl span[lang="he"]{white-space:nowrap;opacity:.85}
+.pa-same{opacity:.55}
+.pa-cap{caption-side:top;text-align:start;font-weight:700;padding:0 0 6px}
+.pa-ysel{display:flex;flex-direction:column;gap:4px;max-width:260px;margin:0 0 10px;font-size:.9rem}
+.pa-ysel select,.pb-form input[type=date]{min-height:44px;font-size:1rem;padding:6px 8px;border-radius:10px;border:1px solid var(--line,#d9d2c3);background:transparent;color:inherit}
+.pa-ysel select option{color:#111;background:#fff}
+.pb-form{display:flex;flex-direction:column;gap:12px;max-width:520px;margin:8px 0}
+.pb-form>label{display:flex;flex-direction:column;gap:4px;font-size:.95rem}
+.pb-kind{border:1px solid var(--line,#d9d2c3);border-radius:10px;padding:8px 12px;margin:0;display:flex;flex-direction:column;gap:6px}
+.pb-kind legend{padding:0 4px;font-size:.9rem}
+.pb-kind label,.pb-chk{display:flex;align-items:center;gap:8px;min-height:36px}
+.pb-kind input,.pb-chk input{width:20px;height:20px;flex:none}
+.pb-out p{margin:0 0 8px}
+.pb-card{border:1px solid var(--gold,#b8892b);border-radius:12px;padding:10px 12px;margin:8px 0;background:rgba(184,137,43,.06)}
+.pb-warn{border-inline-start:4px solid var(--gold,#b8892b);padding:4px 10px}
+.pb-note{font-size:.9rem;opacity:.8}
+@media (max-width:420px){.pa-name{font-size:1.5rem}.pa-name span{font-size:1.25rem}.pa-tbl{font-size:.86rem}.pa-tbl th,.pa-tbl td{padding:.45rem .2rem}}
+@media print{
+  .no-print,.k-nav,header.site-header,footer,.seo-txt,.seo-faq,#my-portion{display:none!important}
+  .pa-hero{border:1px solid #999;background:none}
+  .pa-tbl th,.pa-tbl td{color:#000!important}
+}
