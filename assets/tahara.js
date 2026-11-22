@@ -82,7 +82,7 @@
       '. מרן בבית יוסף: "חומרא יתירה"; הש"ך חושש לה. בשיטה שבחרת המחשבון לא מוסיף אותה.');
     else notes.push('<b>אור זרוע</b> – בשיטה שבחרת המחשבון מוסיף גם את העונה שלפני (ברשימה המלאה).');
     h += '<details class="th-sumnotes"><summary>הערות: הכרתי ופלתי ואור זרוע</summary>' + notes.map(function (n) { return '<p>' + n + '</p>'; }).join('') + '</details>';
-    h += '<p class="th-note"><b>בדיקה בעונת הפרישה:</b> חובה לבדוק במהלך העונה. אם בדיעבד לא בדקה – אסורה לשמש עד שתבדוק. ואם רוצים לשמש אחרי העונה – פשוט בודקת לפני, ומותרת בשופי.</p>';
+    h += '<p class="th-note"><b>בדיקה בעונת הפרישה:</b> מספיק לבדוק פעם אחת במהלך העונה. יש נוהגים, לפי הרב מרדכי אליהו, לבדוק בתחילת העונה ובסופה. אם בדיעבד לא בדקה – אסורה לשמש עד שתבדוק. ואם רוצים לשמש אחרי העונה – פשוט בודקת לפני, ומותרת בשופי.</p>';
     h += '<p class="th-note">אלה הפרישות המקובלות. יש שכתבו שלדעת מרן, באשה שאין לה וסת קבוע די בעונה בינונית בלבד – אבל רוב הפוסקים היום חוששים גם לעונת החודש ולהפלגה. בכל שאלה – שואלים רב.</p></div>';
     return h;
   }
@@ -230,6 +230,7 @@
       '<p class="th-note">הכול נשמר רק בטלפון הזה. שום נתון לא נשלח לשרת, ולא לסטטיסטיקה של האתר (שם נספרות רק כניסות לדף).</p>' +
       '<div class="share-row">' +
       '<button class="btn btn-line btn-sm" type="button" id="th-ics">ליומן (קובץ ‎.ics)</button>' +
+      (inApp() ? '<button class="btn btn-line btn-sm" type="button" id="th-remind-on">להפעיל תזכורות בטלפון</button><button class="btn btn-line btn-sm" type="button" id="th-remind-off">לכבות תזכורות</button>' : '') +
       '<button class="btn btn-line btn-sm" type="button" id="th-print">להדפיס</button>' +
       '<button class="btn btn-line btn-sm" type="button" id="th-share">קישור לבן הזוג</button>' +
       '<button class="btn btn-line btn-sm" type="button" id="th-lockb">קוד נעילה</button>' +
@@ -463,6 +464,22 @@
     if (!n) { msg('אין תאריכים קרובים לייצא.'); return; }
     download('tahara.ics', L.join('\r\n'), 'text/calendar;charset=utf-8'); msg('נוצר קובץ יומן עם ' + n + ' תאריכים. הכותרות ביומן דיסקרטיות.');
   }
+  // תזכורות מקומיות – רק באפליקציית Google Play. הדף שולח לאפליקציה רק רשימת זמנים (מילישניות)
+  // דרך קישור פנימי; האפליקציה שומרת ומתזמנת בטלפון, בלי שרת. נוסח ההתראה דיסקרטי.
+  function inApp() { return document.documentElement.classList.contains('in-app'); }
+  function remind(on) {
+    var times = [];
+    function at(ymd, h) { var a = ymd.split('-').map(Number); return new Date(a[0], a[1] - 1, a[2], h, 0).getTime(); }
+    var today = absToday();
+    if (on) {
+      if (RES) C.merge(RES.onot).forEach(function (o) { if (o.abs < today) return; var d = C.describe(o.abs, o.onah); times.push(o.onah === 'night' ? at(d.ymdEve, 19) : at(d.ymd, 7)); });
+      if (TEV && TEV.tevila.abs >= today) { times.push(at(TEV.hefsek.ymd, 14)); times.push(at(TEV.tevila.ymdEve, 18)); }
+      times = times.filter(function (t) { return t > Date.now(); });
+      if (!times.length) { msg('אין תאריכים קרובים לתזכורת.'); return; }
+    }
+    msg(on ? 'מפעיל תזכורות…' : 'מכבה תזכורות…');
+    location.href = 'hakelim-tahara://remind?t=' + times.join(',');
+  }
   function shareUrl() { return location.origin + '/kodesh/tahara/luach-tahara/#s=' + b64e(JSON.stringify({ preset: S.preset, custom: S.custom, city: S.city, sightings: S.sightings, status: S.status, cycle: S.cycle })); }
   function msg(t) { var m = $('th-msg'); if (m) m.textContent = t; }
   function wire() {
@@ -504,6 +521,8 @@
       if (t.dataset.miss) { var p = t.dataset.miss.split(':'); S.sightings.push({ abs: +p[0], onah: p[1], missed: true }); persist(); renderAll(); return; }
       if (id === 'th-prevm' || id === 'th-nextm') { calM += id === 'th-prevm' ? -1 : 1; if (calM < 0) { calM = 11; calY--; } if (calM > 11) { calM = 0; calY++; } renderCal(); return; }
       if (id === 'th-ics') return ics();
+      if (id === 'th-remind-on') return remind(true);
+      if (id === 'th-remind-off') return remind(false);
       if (id === 'th-print') return window.print();
       if (id === 'th-share') {
         var b = $('th-share-box'); b.hidden = !b.hidden; if (b.hidden) return;
