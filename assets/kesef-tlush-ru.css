@@ -1,0 +1,18 @@
+/* /kesef/tlush/ru/ – калькулятор тлуша и словарь строк */
+.tr-jump{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0 1rem}
+.tr-jump a{padding:.35rem .75rem;border:1px solid var(--line,#d6dbe1);border-radius:999px;text-decoration:none;font-size:.92rem}
+.tr-h{margin:0 0 .8rem;font-size:1.25rem}
+#tr-out{margin-top:1rem}
+.tr-warn{background:#fff4e5;color:#7a4100;border:1px solid #f0c27a;border-radius:10px;padding:.6rem .8rem}
+.tr-ok{background:#e9f7ef;color:#155d33;border:1px solid #9fd8b4;border-radius:10px;padding:.6rem .8rem}
+#tr-dict{display:grid;gap:.6rem;margin-top:.6rem}
+.tr-term{border:1px solid var(--line,#d6dbe1);border-radius:12px;padding:.7rem .9rem;background:var(--card,#fff)}
+.tr-term p{margin:0}
+.tr-term .tr-he{font-size:1.15rem;font-weight:700;text-align:right}
+.tr-term .tr-tl{font-style:italic;opacity:.8;font-size:.92rem;margin:.15rem 0 .3rem}
+.tr-cnt{font-size:.92rem;opacity:.8;margin:.3rem 0 0}
+.share-row{margin-top:1rem}
+@media (prefers-color-scheme:dark){
+  .tr-warn{background:#3a2a10;color:#ffd79a;border-color:#7a5a20}
+  .tr-ok{background:#123222;color:#a6e9c0;border-color:#2c6b47}
+}
