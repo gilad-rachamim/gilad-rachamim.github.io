@@ -105,6 +105,16 @@ GA = "" if not GA_ID else f"""<script async src="https://www.googletagmanager.co
 <script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','{GA_ID}');</script>
 <script src="/assets/track.js" defer></script>
 """
+# פיקסל של Meta (22.11.2026, בקשת גילעד): מודד כניסות מהפרסום הממומן לדפי אתר הכלים ולדפי הקורס.
+# רק בדפים עם "site" (אתר הכלים), לא בדפים עם no_ga / no_pixel, ולא בדפי /nefesh/ (מידע רגיש – מדיניות Meta).
+# שולח PageView, ו-InitiateCheckout בלחיצה על קישור קנייה ב-Payhip. בלי התאמה מתקדמת ובלי שום פרט אישי.
+META_PIXEL_ID = "4627297074222937"
+PIXEL = "" if not META_PIXEL_ID else f"""<script>!function(f,b,e,v,n,t,s){{if(f.fbq)return;n=f.fbq=function(){{n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)}};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','{META_PIXEL_ID}');fbq('track','PageView');document.addEventListener('click',function(e){{var a=e.target.closest&&e.target.closest('a[href*="payhip.com"]');if(a&&window.fbq)fbq('track','InitiateCheckout');}});</script>
+"""
+def pixel_for(meta, url_path):
+    if not meta.get("site") or meta.get("no_ga") or meta.get("no_pixel") or url_path.startswith("/nefesh/"):
+        return ""
+    return PIXEL
 # קישור קצר בכל שיתוף מהאתר (assets/kishur.js): ווטסאפ, SMS, שיתוף בטלפון, העתקה
 KISHUR = '<script src="/assets/kishur.js" defer></script>\n'
 WA_TEXT = "שלום גילעד, אשמח לשמוע פרטים על ברית מילה"
@@ -628,7 +638,7 @@ for path in sorted(SRC.rglob("*.html")):
         "og_title": meta.get("og_title", meta["title"]),
         "og_image": meta.get("og_image", og_default),
         "robots": '<meta name="robots" content="noindex">' if meta.get("noindex") else "",
-        "head": meta.get("head_pre", "") + ("" if meta.get("no_ga") else GA) + KISHUR + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url) + dv_ld + hreflang(meta),
+        "head": meta.get("head_pre", "") + ("" if meta.get("no_ga") else GA) + pixel_for(meta, url_path) + KISHUR + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url) + dv_ld + hreflang(meta),
         "body_class": meta.get("body_class", ""),
         "sprite": SPRITE,
         "wa": WA,
