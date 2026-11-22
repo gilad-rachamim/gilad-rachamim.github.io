@@ -16,3 +16,4 @@
   .tr-warn{background:#3a2a10;color:#ffd79a;border-color:#7a5a20}
   .tr-ok{background:#123222;color:#a6e9c0;border-color:#2c6b47}
 }
+.ns-chips [data-mode][aria-pressed="true"]{outline:2px solid currentColor;font-weight:700}
