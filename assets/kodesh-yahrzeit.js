@@ -167,7 +167,7 @@
     }
     function pushToApp() {
       if (!A || !A.setEvents) return;
-      try { A.setEvents(JSON.stringify(events())); A.setReminder(!!st.rem.on, st.rem.h, st.rem.m); } catch (e) {}
+      try { A.setEvents(JSON.stringify(events())); A.setReminder(!!st.rem.on && st.items.length > 0, st.rem.h, st.rem.m); } catch (e) {}
     }
     if (remBox && A && A.setEvents) {
       remBox.hidden = false;
