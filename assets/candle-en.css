@@ -1,0 +1,23 @@
+/* זמני הדלקת נרות לשנה (/kodesh/shabat/en/candle-lighting/) – בנוסף ל-shabbat-en.css */
+.cl-next{border:1px solid var(--gold,#b8892b);border-radius:14px;padding:14px;background:rgba(184,137,43,.07);margin:6px 0 12px}
+.cl-where{margin:0 0 6px;font-weight:700;color:var(--gold-hi,var(--gold,#b8892b))}
+.cl-big{margin:0;display:flex;flex-direction:column;gap:2px}
+.cl-big b{font-size:2.3rem;line-height:1.15;color:var(--gold-hi,var(--gold,#b8892b))}
+.cl-big span{font-size:.95rem;opacity:.85}
+.cl-bl{margin:8px 0 0;font-size:.95rem}
+.cl-count{margin:6px 0;font-weight:700;font-size:.95rem}
+.cl-note{display:block;font-size:.8rem;opacity:.75;font-weight:400}
+.cl-tbl tr.cl-yt th,.cl-tbl tr.cl-yk th{color:var(--gold-hi,var(--gold,#b8892b))}
+.cl-tbl tr.cl-hanukkah th,.cl-tbl tr.cl-hanukkah td{opacity:.88}
+.cl-tbl td:nth-child(2){white-space:nowrap}
+.kd-b{margin:.9rem 0;padding:.8rem 1rem;border-radius:14px;border:1px solid var(--line,rgba(212,176,98,.3));scroll-margin-top:80px}
+.kd-b:target{border-color:var(--gold,#b8892b);background:rgba(184,137,43,.1)}
+.kd-who{margin:0 0 .3rem;font-weight:700;color:var(--gold,#b8892b);font-size:.95rem}
+.kd-he{font-family:"Frank Ruhl Libre","Noto Serif Hebrew",serif;font-size:1.6rem;line-height:1.7;margin:.2rem 0;text-align:right}
+.kd-tr{font-size:1.12rem;margin:.3rem 0;font-style:italic}
+.kd-en{margin:.3rem 0;opacity:.9}
+.kd-k{font-style:normal;font-weight:700;font-size:.8rem;opacity:.7;margin-right:.3rem}
+.kd-note{font-size:.88rem;opacity:.8;margin:.3rem 0}
+.kd-src{font-size:.85rem;opacity:.75}
+@media (max-width:420px){.cl-big b{font-size:1.9rem}.cl-tbl{font-size:.88rem}.cl-tbl th,.cl-tbl td{padding:.45rem .2rem}.kd-he{font-size:1.4rem}}
+@media print{.cl-next{border:1px solid #999;background:none}.cl-tbl td a{color:#000;text-decoration:none}.kd-b{border:0;padding:.2rem 0}}
