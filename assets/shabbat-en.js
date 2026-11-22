@@ -109,6 +109,7 @@
   }
 
   if (typeof module !== 'undefined' && module.exports) { module.exports = { CITIES: CITIES, core: core }; return; }
+  root.US_CITIES = CITIES; // לשימוש של דף זמני היום (assets/zmanim-en.js)
 
   // ---- בדפדפן ----
   var $ = function (id) { return document.getElementById(id); };
