@@ -240,4 +240,6 @@ ${faqHtml(qa)}
 })();
 // ======================= הלוח ברוסית =======================
 require('./ivri_ru.js')({ I, H, L: require(path.join(ROOT, 'assets/kodesh-ivri-ru.js')), T, CIV, HY, ROOT, path, write, faqLd, faqHtml, strip, WA, ALT, LANGNAV });
-console.log('נכתבו 3 דפים · היום', C.dmy(CIV), C.heb(T.hdDay));
+// ======================= דף החגים ברוסית =======================
+require('./ivri_ru_hag.js')({ I, H, L: require(path.join(ROOT, 'assets/kodesh-ivri-ru.js')), T, CIV, HY, ROOT, path, write, faqLd, faqHtml, WA });
+console.log('נכתבו 4 דפים · היום', C.dmy(CIV), C.heb(T.hdDay));
