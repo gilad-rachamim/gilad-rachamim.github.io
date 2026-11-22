@@ -62,7 +62,7 @@
     'התאריך העברי מתחיל כבר בערב שלפני, עם השקיעה.': 'The Hebrew date begins the evening before, at sunset.',
     'ערב החג:': 'Holiday begins in the evening:', 'הצום נכנס בערב': 'Fast begins in the evening:', 'נר ראשון: בערב': 'First candle in the evening:', 'ליל הסדר: בערב': 'Seder night:',
     'נדחה ביום': 'moved by a day', 'השנה המועד הוזז ביום, בגלל השבת': 'this year the date moved by a day because of Shabbat',
-    'חג או מועד': 'Holiday', 'תאריך לועזי': 'Date', 'שבתון': 'day off',
+    'חג או מועד': 'Holiday', 'תאריך לועזי': 'Date', 'שבתון': 'day off', 'יום טוב': 'Yom Tov',
     ' (אחרי השקיעה: כבר ': ' (after sunset it is already ',
     'חגים ומועדים: ': 'Holidays and special days: ', '<b>היום:</b> ': '<b>Today:</b> ',
     'עכשיו': 'Now',
@@ -73,6 +73,7 @@
     'פסח': 'Passover (Pesach)', 'חול המועד פסח': 'Chol HaMoed Pesach', 'שביעי של פסח': 'Seventh day of Passover',
     'יום הזיכרון לשואה ולגבורה': 'Yom HaShoah (Holocaust Remembrance Day)', 'יום הזיכרון לחללי מערכות ישראל': 'Yom HaZikaron (Israel Memorial Day)',
     'יום העצמאות': 'Israel Independence Day', 'ל״ג בעומר': 'Lag BaOmer', 'יום ירושלים': 'Jerusalem Day', 'שבועות': 'Shavuot',
+    'שמיני עצרת': 'Shemini Atzeret', 'שמחת תורה': 'Simchat Torah', 'שביעי ואחרון של פסח': 'Last days of Passover',
     'צום י״ז בתמוז': 'Fast of the 17th of Tammuz', 'תשעה באב': "Tisha B'Av (fast of the 9th of Av)", 'ט״ו באב': "Tu B'Av"
   };
   function mon(m, leap) { return m === 12 && leap ? 'Adar I' : HMN[m]; }
