@@ -3,7 +3,17 @@
    מספר המשימה נשמר בכתובת (#t=...) כדי שאפשר יהיה לסגור את הדף ולחזור, או לשלוח את הקישור הלאה. */
 (function () {
   'use strict';
-  var API = 'https://kelim-yutub.gilad4049.workers.dev';
+  // שתי כתובות לאותו שרת: סינון אינטרנט שחוסם אחת מהן לא עוצר את הכלי (23.11.2026)
+  var APIS = ['https://yt.hakelim.com', 'https://kelim-yutub.gilad4049.workers.dev'];
+  var API = APIS[0];
+  function call(path, opts, n) {
+    n = n || 0;
+    return fetch(API + path, opts).then(function (r) { return r.json(); }).catch(function (e) {
+      if (n >= APIS.length * 2 - 1) throw e;
+      API = APIS[(APIS.indexOf(API) + 1) % APIS.length];
+      return new Promise(function (ok) { setTimeout(ok, n < APIS.length - 1 ? 0 : 1500); }).then(function () { return call(path, opts, n + 1); });
+    });
+  }
   var root = document.getElementById('yt-tool');
   if (!root) return;
   var NA = root.getAttribute('data-mode') === 'na';
@@ -63,7 +73,7 @@
 
   function poll(id) {
     clearTimeout(timer);
-    fetch(API + '/status/' + id).then(function (r) { return r.json(); }).then(function (j) {
+    call('/status/' + id).then(function (j) {
       if (!j.ok) { fail(j.msg || 'התמלול הזה כבר לא נמצא. אפשר להדביק את הקישור שוב.'); return; }
       if (j.status === 'done') {
         if (lastStatus && lastStatus !== 'done' && window.toolUsed) window.toolUsed(null, { kind: j.kind, dur_min: Math.round((j.dur || 0) / 60) });
@@ -83,16 +93,15 @@
     }
     go.disabled = true; started = Date.now(); lastStatus = 'new';
     setProgress({ status: 'queued', pos: 1 });
-    fetch(API + '/submit', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    call('/submit', { method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url: url, by: by ? by.value : '', times: !!(times && times.checked) }) })
-      .then(function (r) { return r.json(); })
       .then(function (j) {
         if (!j.ok) { fail(j.msg || 'משהו השתבש. אפשר לנסות שוב.'); return; }
         ev('yutub_submit', { kind: j.kind, cached: j.status === 'done' ? 1 : 0 });
         try { history.replaceState(null, '', location.pathname + location.search + '#t=' + j.id); } catch (e) { location.hash = 't=' + j.id; }
         poll(j.id);
       })
-      .catch(function () { fail('אין חיבור לשרת כרגע. אפשר לנסות שוב בעוד רגע.'); });
+      .catch(function () { fail('אין חיבור לשרת התמלול כרגע. אפשר לנסות שוב בעוד רגע. אם זה חוזר, ייתכן שסינון האינטרנט אצלכם חוסם אותו.'); });
   }
 
   form.addEventListener('submit', function (e) { e.preventDefault(); submit(normalize(inp.value)); });
