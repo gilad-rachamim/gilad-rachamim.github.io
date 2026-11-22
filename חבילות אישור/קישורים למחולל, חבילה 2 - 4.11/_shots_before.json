@@ -1,0 +1,40 @@
+{
+ "title": "קישורים למחולל, חבילה 2 - 4.11 - לפני",
+ "prefix": "ש",
+ "serve_dir": "C:\\Users\\Admin\\AppData\\Local\\Temp\\claude\\C--Users-Admin-OneDrive---Michlelet-Orot-Israel-Documents-6-------------------------------------------2026\\f050bb8f-a226-4c80-8439-5984f756adb5\\scratchpad\\before",
+ "shots": [
+  {
+   "path": "/mohel/moed/",
+   "selector": "#moed-out",
+   "js": "document.getElementById('m-date').value='2026-11-02';document.getElementById('moed-form').requestSubmit();",
+   "no": 1,
+   "name": "לפני - תוצאת המחשבון"
+  },
+  {
+   "path": "/mohel/hachana/tekes/",
+   "selector": "main .wrap > section",
+   "css": ".honors{display:none}",
+   "no": 3,
+   "name": "לפני - פרק הכנות לטקס, אחרי הכיבודים"
+  },
+  {
+   "path": "/mohel/hachana/shalom-zachar/",
+   "selector": "main .wrap > section",
+   "css": "main .wrap > section > *:not(.list):not(.note):not(.tip):not(h2){display:none}",
+   "no": 5,
+   "name": "לפני - שלום זכר, אחרי ציר הזמן"
+  },
+  {
+   "path": "/mohel/todah/",
+   "selector": "section.next:has(#next-h)",
+   "no": 7,
+   "name": "לפני - עמוד התודה, הכלים"
+  },
+  {
+   "path": "/mohel/checklist/",
+   "selector": ".ck-group:has(input[value=catering])",
+   "no": 9,
+   "name": "לפני - רשימת ההכנה, קבוצת לטקס"
+  }
+ ]
+}

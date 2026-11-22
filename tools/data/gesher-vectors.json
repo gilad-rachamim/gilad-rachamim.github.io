@@ -1,0 +1,61 @@
+{
+  "note": "וקטורי בדיקה ל\"גשר\". נבדק ב-node (tools/check_gesher.js) וב-Java (kelim-android/gesher-test). לא לשנות ידנית.",
+  "pcD": "afaeca4fa02b29cf1812ed0cb8718ba04454b9035d97e92f8bee28556aaa31b0",
+  "pcPub": "04b2bb9c628fae76e340db1a1c53b42ffb7c4642e1147bfa084ced64091aff8120c0fe203f033923783f35baaee40b6c44bc406293cf9145cc1fa32a0769c626e1",
+  "phoneD": "e1db02b5fd0bb5bb842e6a110a6cdb8bdc7d049efb3ffc9900987e32ba4922ff",
+  "phonePub": "04e79706a271497ea0096ef4c4b5758f3d6bc937fce8294b2c097840a5e7628d7101ae84ca32744c5572b19d0b46af91952b0a37609b5355a733e52d7587b04d0b",
+  "room": "e7ca322af8260cd266022c7da67646c3",
+  "secret": "1d95bc2668dff819d8d58842a461dc40",
+  "messages": [
+    {
+      "dir": 2,
+      "ctr": "1763400000000000",
+      "obj": {
+        "type": "otp",
+        "id": "a1",
+        "code": "482913",
+        "src": "sms",
+        "app": "Messages",
+        "from": "Bank Leumi",
+        "at": 1763400000000
+      }
+    },
+    {
+      "dir": 1,
+      "ctr": "1763400000000001",
+      "obj": {
+        "type": "ack",
+        "id": "a1"
+      }
+    },
+    {
+      "dir": 2,
+      "ctr": "1763400000000002",
+      "obj": {
+        "type": "otp",
+        "id": "a2",
+        "code": "7319",
+        "src": "whatsapp",
+        "app": "WhatsApp",
+        "from": "קופת חולים",
+        "at": 1763400001000
+      }
+    }
+  ],
+  "expect": {
+    "pairToken": "LRSypnje6TQzlZArnGtllp7rkURv2rc0wNAvEcKik8M",
+    "pairTokenHash": "319a10a5f6ded1404e7175131f61874ad5550202d68cefcb4d78a67aa3a8c00d",
+    "helloMac": "63d4d8ffa9e069ae3e36f5a17ef4308f3aa2da93d499dde4fa4929b1b7cd7690",
+    "z": "bb06899e5bec26c1385b97c12d8cd34eb9f5090f98d9b1157119d9e8d639986f",
+    "okm": "1caaa29615133b9a8ae76bd14adb23fb5a9d9b7f2379b4a15c5bb15a486630ab614354a5d6b35b4dfebcb919a6947a1a79293b74b7fb2cb88bb212d0f9bd4d0f972703c754ffae44357b1b8ba6e4ed1dc935c5d5ff56e15d0da9abadf3cfc1244e1afb7dd6cf71cbeab8c9343182889dbdc14ea4bb35840e2fdd8d9573609baa",
+    "tokPc": "lycDx1T_rkQ1exuLpuTtHck1xdX_VuFdDamrrfPPwSQ",
+    "tokPhone": "Thr7fdbPccvquMk0MYKInb3BTqS7NYQOL92NlXNgm6o",
+    "hPc": "ec16fd0f3745267a18d3d24817af486ec013132d9fcbc18fa433f5502858c181",
+    "hPhone": "3d775c93bfe9398ea6d01a9760e0f7aa42e3e61edf0aa468fcb96cbe0d7324d1",
+    "frames": [
+      "0102000643cd8e98d00054d6c5b37b7f0a643fa88555b2b41c29a5578486484b6160c8d52d175b4756ad74ba33ad38228b9b11ff398a8bb5f475e24554e962a1c861332b43dd2bba91a4d802e79dfd6de08d85ec373c97f2f56dbb4a7423cb77511d9dfae218734f38a614eda6255e5deb56743cecbe8a3dc8e44b7b727aea49792b0fac0890",
+      "0101000643cd8e98d001c8cf8c25177d8de414621586c2cfe8d3441090d4fdfc96b509bb62f1861f084b0425bb66f62fa5c6",
+      "0102000643cd8e98d0029413c3db7eb33e2a81ace7d886dffc876fbfceddac503983a3635ac32ed400c2ebead6e7b5c6ba35f34e2b3ec4baba9f9295e1f0c02f4cbd237aff66c3ce651fe5b3c9c163a6a34a0e22d9f822d7fde39327b2031c0ec2f1e56000f65af9a03c685fe1c06531843bc77f07ca79187fdfcf6b0347273d61fb0a2933cf65b92bc0a98cd188ba91637c"
+    ]
+  }
+}

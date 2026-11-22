@@ -1,0 +1,13 @@
+{
+ "title": "המלצות 4.11 - אחרי",
+ "prefix": "ז",
+ "serve_dir": "C:\\Users\\Admin\\sites\\gilad-rachamim.github.io",
+ "shots": [
+  {
+   "path": "/mohel/",
+   "selector": "#todot",
+   "no": 1,
+   "name": "אחרי - מה כתבו לי אחרי הברית"
+  }
+ ]
+}

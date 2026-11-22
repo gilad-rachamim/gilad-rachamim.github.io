@@ -489,6 +489,7 @@ def demo_block(meta, url):
     dur = spec.get("duration") or sum(s.get("dur", 0) for s in spec.get("scenes", [])) or 45
     wide = spec.get("wide")  # סרטון הדרכה לרוחב (16:9), למשל צילומי מסך של מחשב
     name = spec.get("name", "ככה זה עובד")
+    yt = spec.get("youtube", "")  # קישור לסרטון ביוטיוב (Shorts) – כפתור צפייה + sameAs ב-VideoObject
     v, poster = f"/assets/demo/{tool}.mp4", f"/assets/demo/{tool}.jpg"
     post, status = f"/assets/demo/{tool}-post.png", f"/assets/demo/{tool}-status.png"
     has_fl = (DEMO_DIR / f"{tool}-post.png").exists()
@@ -515,14 +516,17 @@ def demo_block(meta, url):
         f'<video class="dv-video{' dv-wide' if wide else ''}" controls playsinline preload="none" poster="{poster}" width="{1280 if wide else 720}" height="{720 if wide else 1280}" aria-label="{html_lib.escape(spec.get("description", name))}" data-dv-play="{tool}">'
         f'<source src="{v}" type="video/mp4"></video>'
         f'<div class="dv-acts"><button type="button" class="btn btn-gold" data-dv-share="{v}" data-dv-kind="video">💌 לשלוח את הסרטון לחבר</button>'
-        f'<a class="btn btn-line" href="{v}" download data-dv-dl="video">⬇️ להורדת הסרטון</a></div>{fl}{help_row}'
+        f'<a class="btn btn-line" href="{v}" download data-dv-dl="video">⬇️ להורדת הסרטון</a>'
+        + (f'<a class="btn btn-line" href="{html_lib.escape(yt)}" target="_blank" rel="noopener" data-dv-dl="youtube">▶️ לצפייה ביוטיוב</a>' if yt else '')
+        + f'</div>{fl}{help_row}'
         f'<script>window.DV_SHARE={json.dumps({"tool": tool, "text": share_txt, "url": url}, ensure_ascii=False)}</script>'
         '<script src="/assets/demo-share.js" defer></script></section>')
     ld = json.dumps({"@context": "https://schema.org", "@type": "VideoObject", "name": name,
                      "description": spec.get("description", meta["description"]),
                      "thumbnailUrl": [BASE + poster], "contentUrl": BASE + v,
                      "uploadDate": spec.get("upload", "2026-11-14T12:00:00+02:00"), "duration": f"PT{round(dur)}S",
-                     "inLanguage": "he", "publisher": {"@type": "Person", "name": "גילעד רחמים", "url": BASE + "/kelim/"}}, ensure_ascii=False)
+                     "inLanguage": "he", "publisher": {"@type": "Person", "name": "גילעד רחמים", "url": BASE + "/kelim/"},
+                     **({"sameAs": yt} if yt else {})}, ensure_ascii=False)
     return blk, f'<script type="application/ld+json">{ld}</script>'
 
 def insert_demo(content, blk):
@@ -582,7 +586,7 @@ for path in sorted(SRC.rglob("*.html")):
         "og_title": meta.get("og_title", meta["title"]),
         "og_image": meta.get("og_image", og_default),
         "robots": '<meta name="robots" content="noindex">' if meta.get("noindex") else "",
-        "head": meta.get("head_pre", "") + GA + KISHUR + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url) + dv_ld,
+        "head": meta.get("head_pre", "") + ("" if meta.get("no_ga") else GA) + KISHUR + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url) + dv_ld,
         "body_class": meta.get("body_class", ""),
         "sprite": SPRITE,
         "wa": WA,
@@ -724,3 +728,26 @@ sm.append("</urlset>")
 (ROOT / "sitemap.xml").write_text("\n".join(sm) + "\n", encoding="utf-8")
 (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /mohel/todah/\nSitemap: {BASE}/sitemap.xml\n", encoding="utf-8", newline="\n")
 print("sitemap:", len(pages), "pages")
+# ---------- אינדקס חיפוש לכל האתר (assets/search-index.json) – נוצר בכל build, נטען בחיפוש שבראש כל דף ----------
+def write_search_index():
+    out = []
+    for _p in sorted(SRC.rglob("*.html")):
+        _raw = _p.read_text(encoding="utf-8")
+        _m = re.match(r"\s*<!--meta\s*(\{.*?\})\s*-->", _raw, re.S)
+        if not _m:
+            continue
+        _meta = json.loads(_m.group(1))
+        if not in_sitemap(_meta) or _meta.get("no_mapa"):
+            continue
+        rel = _p.relative_to(SRC).as_posix()
+        u = "/" + (rel[:-len("index.html")] if rel.endswith("index.html") else rel)
+        if u in ("/mapa/", "/") or u.startswith("/mohel/todah"):
+            continue
+        _h1 = re.search(r"<h1[^>]*>(.*?)</h1>", _raw, re.S)
+        h1 = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", _h1.group(1))).strip() if _h1 else ""
+        name = h1 or re.split(r"\s[–—|]\s|:\s", _meta["title"])[0].strip()
+        out.append({"u": u, "n": name, "d": (_meta.get("description") or "")[:200], "t": re.split(r"\s\|\s", _meta["title"])[0].strip()})
+    (ROOT / "assets" / "search-index.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
+    print("search-index:", len(out), "pages")
+write_search_index()
+

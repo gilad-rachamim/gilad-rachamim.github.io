@@ -1,0 +1,28 @@
+# פורטל שכבה – ההכנה להכתרה (kelim/shichva). Cloudflare Worker + D1 (+ R2 לאלבום אחרי שיופעל בחשבון).
+# פריסה:  cd tools/shichva-worker && npx wrangler deploy
+# סכמה:   npx wrangler d1 execute shichva --remote --file schema.sql
+# בדיקה:  node test.mjs  (מול wrangler dev --local)
+# בינה:   Workers AI כברירת מחדל. מפתח Gemini נפרד (סקיל gemini-key-for-worker): npx wrangler secret put GEMINI_KEYS
+# אלבום:  R2 לא פעיל בחשבון (21.11.2026, קוד 10042). אחרי שגילעד מפעיל R2 בלוח של Cloudflare:
+#         npx wrangler r2 bucket create shichva-files  ואז להסיר את ה-# משלוש השורות של [[r2_buckets]] ולפרוס.
+name = "kelim-shichva"
+main = "shichva-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[ai]
+binding = "AI"
+remote = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "shichva"
+database_id = "36ea7b74-fdf6-4984-856b-690065c6ef13"
+
+[[r2_buckets]]
+binding = "FILES"
+bucket_name = "shichva-files"
+
+# כל לילה (04:00 שעון ישראל): שכבת ההדגמה נבנית מחדש
+[triggers]
+crons = ["0 2 * * *"]

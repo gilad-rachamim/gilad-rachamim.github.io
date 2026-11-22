@@ -1,0 +1,1101 @@
+[
+  {
+    "id": "ex01-beinonit-day30",
+    "source": "חכמת אדם כלל קיב סעיף ה (ט' ניסן → ח' אייר, ניסן מלא); שו\"ע יו\"ד קפט:א",
+    "method": "sephardi_ovadia",
+    "kind": "from_source",
+    "sightings": [
+      {
+        "hebrew_date": "ט' ניסן תשפ\"ו",
+        "greg": "2026-03-27",
+        "onah": "day"
+      }
+    ],
+    "expected": [
+      {
+        "type": "beinonit",
+        "hebrew_date": "ח' אייר תשפ\"ו",
+        "greg": "2026-04-25",
+        "onah": "day"
+      }
+    ],
+    "note": "הדוגמה של חכמת אדם עצמה על תאריכי תשפ\"ו: יום הראייה הוא יום 1, ולכן יום ל' = ראייה + 29 ימים. ניסן תשפ\"ו מלא (30), ולכן ח' אייר בדיוק כמו בספר."
+  },
+  {
+    "id": "ex02-beinonit-day31-ashkenaz",
+    "source": "חכמת אדם כלל קיב סעיף ה (\"וצריכה לחוש לשניהם... וכן נכון להחמיר\"); ש\"ך קפט ס\"ק ל; אסיף 16 הערה 16",
+    "method": "ashkenaz",
+    "kind": "from_source",
+    "sightings": [
+      {
+        "hebrew_date": "ט' ניסן תשפ\"ו",
+        "greg": "2026-03-27",
+        "onah": "day"
+      }
+    ],
+    "expected": [
+      {
+        "type": "beinonit",
+        "hebrew_date": "ח' אייר תשפ\"ו",
+        "greg": "2026-04-25",
+        "onah": "day"
+      },
+      {
+        "type": "beinonit_31_shach",
+        "hebrew_date": "ט' אייר תשפ\"ו",
+        "greg": "2026-04-26",
+        "onah": "day"
+      },
+      {
+        "type": "chodesh",
+        "hebrew_date": "ט' אייר תשפ\"ו",
+        "greg": "2026-04-26",
+        "onah": "day"
+      }
+    ],
+    "note": "לפי חכמת אדם חוששים גם ליום ל\"א (שיטת הש\"ך). בחודש מלא יום ל\"א הוא גם עונת החודש (ט' אייר)."
+  },
+  {
+    "id": "ex03-chodesh-rosh-chodesh",
+    "source": "חכמת אדם כלל קיב סעיף ו (ראתה א' ניסן → א' אייר = יום ב' דר\"ח; ולהחוששים לעו\"ב גם א' דר\"ח)",
+    "method": "sephardi_ovadia",
+    "kind": "from_source",
+    "sightings": [
+      {
+        "hebrew_date": "א' ניסן תשפ\"ו",
+        "greg": "2026-03-19",
+        "onah": "day"
+      }
+    ],
+    "expected": [
+      {
+        "type": "beinonit",
+        "hebrew_date": "ל' ניסן תשפ\"ו",
+        "greg": "2026-04-17",
+        "onah": "day",
+        "note": "ל' ניסן = א' דר\"ח אייר"
+      },
+      {
+        "type": "chodesh",
+        "hebrew_date": "א' אייר תשפ\"ו",
+        "greg": "2026-04-18",
+        "onah": "day",
+        "note": "א' אייר = ב' דר\"ח"
+      }
+    ],
+    "note": "הדוגמה מהספר על תשפ\"ו: עונה בינונית נופלת ביום א' של ראש חודש ועונת החודש ביום ב'."
+  },
+  {
+    "id": "ex04-haflaga-rema",
+    "source": "רמ\"א יו\"ד קפט:יג (\"ראתה בא' בניסן וכ' בו... חוששת לט' באייר\"); חכמת אדם קיב:ז",
+    "method": "sephardi_ovadia",
+    "kind": "from_source",
+    "sightings": [
+      {
+        "hebrew_date": "א' ניסן תשפ\"ו",
+        "greg": "2026-03-19",
+        "onah": "day"
+      },
+      {
+        "hebrew_date": "כ' ניסן תשפ\"ו",
+        "greg": "2026-04-07",
+        "onah": "day"
+      }
+    ],
+    "expected": [
+      {
+        "type": "haflaga",
+        "hebrew_date": "ט' אייר תשפ\"ו",
+        "greg": "2026-04-26",
+        "onah": "day",
+        "interval_days": 20
+      },
+      {
+        "type": "beinonit",
+        "hebrew_date": "י\"ט אייר תשפ\"ו",
+        "greg": "2026-05-06",
+        "onah": "day"
+      },
+      {
+        "type": "chodesh",
+        "hebrew_date": "כ' אייר תשפ\"ו",
+        "greg": "2026-05-07",
+        "onah": "day"
+      },
+      {
+        "type": "chodesh",
+        "hebrew_date": "א' אייר תשפ\"ו",
+        "greg": "2026-04-18",
+        "onah": "day",
+        "note": "עונת החודש של א' ניסן – לא נעקרה, כי א' אייר עוד לא עבר"
+      }
+    ],
+    "note": "הפלגה של 20 יום (כולל שני הקצוות): ראייה אחרונה + 19 ימים = ט' אייר, כלשון הרמ\"א. ההוראה בתחילת ראייתה חוששת לחודש ולהפלגה (רמ\"א קפט:יג)."
+  },
+  {
+    "id": "ex05-haflagot-not-uprooted",
+    "source": "חכמת אדם כלל קיב סעיף כ (א' ניסן, כ' ניסן, א' אייר → י\"ב אייר לרוב האחרונים, ולרמ\"א גם ט' אייר); רמ\"א וט\"ז קפט ס\"ק יח; שו\"ע הרב קפט ס\"ק מד; ש\"ך קפט ס\"ק לא",
+    "method": "ashkenaz",
+    "kind": "from_source",
+    "sightings": [
+      {
+        "hebrew_date": "א' ניסן תשפ\"ו",
+        "greg": "2026-03-19",
+        "onah": "day"
+      },
+      {
+        "hebrew_date": "כ' ניסן תשפ\"ו",
+        "greg": "2026-04-07",
+        "onah": "day"
+      },
+      {
+        "hebrew_date": "א' אייר תשפ\"ו",
+        "greg": "2026-04-18",
+        "onah": "day"
+      }
+    ],
+    "expected": [
+      {
+        "type": "haflaga",
+        "hebrew_date": "י\"ב אייר תשפ\"ו",
+        "greg": "2026-04-29",
+        "onah": "day",
+        "interval_days": 12
+      },
+      {
+        "type": "haflaga_not_uprooted",
+        "hebrew_date": "ט' אייר תשפ\"ו",
+        "greg": "2026-04-26",
+        "onah": "day",
+        "interval_days": 20,
+        "note": "לרמ\"א, לט\"ז ולשו\"ע הרב; לש\"ך וסיעתו – נעקרה"
+      },
+      {
+        "type": "chodesh",
+        "hebrew_date": "כ' אייר תשפ\"ו",
+        "greg": "2026-05-07",
+        "onah": "day",
+        "note": "כ' אייר מכוח ראיית כ' ניסן (חכמת אדם שם)"
+      },
+      {
+        "type": "chodesh",
+        "hebrew_date": "א' סיוון תשפ\"ו",
+        "greg": "2026-05-17",
+        "onah": "day"
+      },
+      {
+        "type": "beinonit",
+        "hebrew_date": "א' סיוון תשפ\"ו",
+        "greg": "2026-05-17",
+        "onah": "day"
+      }
+    ],
+    "note": "ראתה בא' אייר, לפני שהגיע ט' אייר (הפלגת 20). המחלוקת: האם ההפלגה הקודמת נעקרה. בכלי זה מתג."
+  },
+  {
+    "id": "ex06-haflaga-kavua-4",
+    "source": "חכמת אדם כלל קיב סעיפים ז, יט (א' ניסן, כ' בו, ט' אייר, כ\"ח בו → קבעה הפלגת 20 → ח\"י סיון); שו\"ע קפט:ב",
+    "method": "sephardi_ovadia",
+    "kind": "from_source",
+    "sightings": [
+      {
+        "hebrew_date": "א' ניסן תשפ\"ו",
+        "greg": "2026-03-19",
+        "onah": "day"
+      },
+      {
+        "hebrew_date": "כ' ניסן תשפ\"ו",
+        "greg": "2026-04-07",
+        "onah": "day"
+      },
+      {
+        "hebrew_date": "ט' אייר תשפ\"ו",
+        "greg": "2026-04-26",
+        "onah": "day"
+      },
+      {
+        "hebrew_date": "כ\"ח אייר תשפ\"ו",
+        "greg": "2026-05-15",
+        "onah": "day"
+      }
+    ],
+    "expected": [
+      {
+        "type": "haflaga_kavua",
+        "hebrew_date": "י\"ח סיוון תשפ\"ו",
+        "greg": "2026-06-03",
+        "onah": "day",
+        "interval_days": 20
+      }
+    ],
+    "note": "ארבע ראיות עם שלוש הפלגות שוות של 20 = וסת קבוע. מכאן חוששת רק לו (ראב\"ד בב\"י; רמ\"א קפט:יג). אייר תשפ\"ו חסר (29), ולכן ח\"י סיון בדיוק כמו בספר."
+  },
+  {
+    "id": "ex07-chabad-haflaga-from-end",
+    "source": "שו\"ע הרב יו\"ד קפד ס\"ק כב (על פי מהרי\"ל קעג, הגהות ש\"ד ו, תה\"ד רמז): ראתה 3 ימים, שוב ביום 20 מסוף הראשונה (יום 23 מתחילתה), 2 ימים → חוששת ליום 20 מסוף השנייה = יום 22 מתחילתה",
+    "method": "chabad",
+    "kind": "from_source",
+    "sightings": [
+      {
+        "hebrew_date": "א' טבת תשפ\"ו",
+        "greg": "2025-12-21",
+        "onah": "day",
+        "flow_end": "2025-12-23",
+        "flow_days": 3
+      },
+      {
+        "hebrew_date": "כ\"ג טבת תשפ\"ו",
+        "greg": "2026-01-12",
+        "onah": "day",
+        "flow_end": "2026-01-13",
+        "flow_days": 2
+      }
+    ],
+    "expected": [
+      {
+        "type": "haflaga_chabad",
+        "hebrew_date": "ט\"ו שבט תשפ\"ו",
+        "greg": "2026-02-02",
+        "onah": "day",
+        "count_from": "end_of_flow",
+        "interval_days": 20
+      }
+    ],
+    "note": "הנוסחה: תחילת הבאה = סוף הראייה האחרונה + (תחילת האחרונה − סוף הקודמת). 20 ימים מסוף השנייה, שהם 22 מתחילתה, כלשון שו\"ע הרב. התאריך (א' טבת תשפ\"ו) נבחר כדוגמה. mikvah.org (חב\"ד) סופר בעונות מליל ההפסק – לא אומת מול מקור כתוב."
+  },
+  {
+    "id": "ex08-night-sighting-or-zarua",
+    "source": "שו\"ע קפד:ב (וסתה בלילה – כל הלילה); ש\"ך קפד ס\"ק ז (אור זרוע); שו\"ע קפט:א; חכמת אדם קיב:ה (גם ל\"א)",
+    "method": "ashkenaz",
+    "kind": "derived",
+    "sightings": [
+      {
+        "hebrew_date": "ט\"ו כסלו תשפ\"ז",
+        "greg": "2026-11-25",
+        "onah": "night",
+        "civil_evening": "2026-11-24"
+      }
+    ],
+    "expected": [
+      {
+        "type": "beinonit",
+        "hebrew_date": "י\"ד טבת תשפ\"ז",
+        "greg": "2026-12-24",
+        "onah": "night",
+        "civil_evening": "2026-12-23"
+      },
+      {
+        "type": "or_zarua",
+        "hebrew_date": "י\"ג טבת תשפ\"ז",
+        "greg": "2026-12-23",
+        "onah": "day",
+        "for_type": "beinonit"
+      },
+      {
+        "type": "beinonit_31_shach",
+        "hebrew_date": "ט\"ו טבת תשפ\"ז",
+        "greg": "2026-12-25",
+        "onah": "night",
+        "civil_evening": "2026-12-24"
+      },
+      {
+        "type": "chodesh",
+        "hebrew_date": "ט\"ו טבת תשפ\"ז",
+        "greg": "2026-12-25",
+        "onah": "night",
+        "civil_evening": "2026-12-24"
+      },
+      {
+        "type": "or_zarua",
+        "hebrew_date": "י\"ד טבת תשפ\"ז",
+        "greg": "2026-12-24",
+        "onah": "day",
+        "for_type": "chodesh"
+      }
+    ],
+    "note": "ראייה בליל ט\"ו כסלו תשפ\"ז (בערב 2026-11-24). כל העונות בלילה; אור זרוע הוא עונת היום שלפני. כסלו תשפ\"ז מלא, ולכן יום ל' הוא י\"ד טבת, ויום ל\"א = ט\"ו טבת = עונת החודש."
+  },
+  {
+    "id": "ex09-day-sighting-or-zarua",
+    "source": "ש\"ך קפד ס\"ק ז; ב\"ח ס\"ק ג (ראוי לחוש); ב\"י וט\"ז ס\"ק ב (לא חוששים)",
+    "method": "ashkenaz",
+    "kind": "derived",
+    "sightings": [
+      {
+        "hebrew_date": "ג' כסלו תשפ\"ז",
+        "greg": "2026-11-13",
+        "onah": "day"
+      }
+    ],
+    "expected": [
+      {
+        "type": "beinonit",
+        "hebrew_date": "ב' טבת תשפ\"ז",
+        "greg": "2026-12-12",
+        "onah": "day"
+      },
+      {
+        "type": "or_zarua",
+        "hebrew_date": "ב' טבת תשפ\"ז",
+        "greg": "2026-12-12",
+        "onah": "night",
+        "civil_evening": "2026-12-11",
+        "for_type": "beinonit"
+      },
+      {
+        "type": "beinonit_31_shach",
+        "hebrew_date": "ג' טבת תשפ\"ז",
+        "greg": "2026-12-13",
+        "onah": "day"
+      },
+      {
+        "type": "chodesh",
+        "hebrew_date": "ג' טבת תשפ\"ז",
+        "greg": "2026-12-13",
+        "onah": "day"
+      },
+      {
+        "type": "or_zarua",
+        "hebrew_date": "ג' טבת תשפ\"ז",
+        "greg": "2026-12-13",
+        "onah": "night",
+        "civil_evening": "2026-12-12",
+        "for_type": "chodesh"
+      }
+    ],
+    "note": "בראייה ביום, עונת אור זרוע היא הלילה שלפני באותו תאריך עברי. כאן יום ל\"א = עונת החודש (כסלו מלא)."
+  },
+  {
+    "id": "ex10-sephardi-no-or-zarua",
+    "source": "ב\"י קפד (\"אין טעם ושורש... חומרא יתירה\" בשם האגור); טהרת הבית ח\"ב פרק א (דרך המכלול – משני)",
+    "method": "sephardi_ovadia",
+    "kind": "derived",
+    "sightings": [
+      {
+        "hebrew_date": "ג' כסלו תשפ\"ז",
+        "greg": "2026-11-13",
+        "onah": "day"
+      }
+    ],
+    "expected": [
+      {
+        "type": "beinonit",
+        "hebrew_date": "ב' טבת תשפ\"ז",
+        "greg": "2026-12-12",
+        "onah": "day"
+      },
+      {
+        "type": "chodesh",
+        "hebrew_date": "ג' טבת תשפ\"ז",
+        "greg": "2026-12-13",
+        "onah": "day"
+      }
+    ],
+    "note": "כמו ex09, בלי אור זרוע ובלי יום ל\"א. ג' כסלו + 29 = ב' טבת."
+  },
+  {
+    "id": "ex11-chabad-beinonit-24h",
+    "source": "שו\"ע הרב קפט ס\"ק א (\"מתחלת הלילה... עד סוף היום אפילו ראתה עכשיו בלילה\"); mikvah.org (חב\"ד) – 24 שעות",
+    "method": "chabad",
+    "kind": "from_source",
+    "sightings": [
+      {
+        "hebrew_date": "ט\"ו כסלו תשפ\"ז",
+        "greg": "2026-11-25",
+        "onah": "night",
+        "civil_evening": "2026-11-24"
+      }
+    ],
+    "expected": [
+      {
+        "type": "beinonit",
+        "hebrew_date": "י\"ד טבת תשפ\"ז",
+        "greg": "2026-12-24",
+        "onah": "night",
+        "civil_evening": "2026-12-23"
+      },
+      {
+        "type": "beinonit",
+        "hebrew_date": "י\"ד טבת תשפ\"ז",
+        "greg": "2026-12-24",
+        "onah": "day"
+      },
+      {
+        "type": "chodesh",
+        "hebrew_date": "ט\"ו טבת תשפ\"ז",
+        "greg": "2026-12-25",
+        "onah": "night",
+        "civil_evening": "2026-12-24"
+      }
+    ],
+    "note": "בחב\"ד עונה בינונית היא כל יום ל' – לילה ויום, אף שהראייה בלילה. שו\"ע הרב: יום ל' ולא ל\"א (\"דלא כש\"ך\")."
+  },
+  {
+    "id": "ex12-day30-next-month-29",
+    "source": "לא נמצא מקור כתוב לעונת החודש במקרה זה – שואלים רב",
+    "method": "sephardi_ovadia",
+    "kind": "ask_rabbi",
+    "sightings": [
+      {
+        "hebrew_date": "ל' ניסן תשפ\"ו",
+        "greg": "2026-04-17",
+        "onah": "day"
+      }
+    ],
+    "expected": [
+      {
+        "type": "beinonit",
+        "hebrew_date": "כ\"ט אייר תשפ\"ו",
+        "greg": "2026-05-16",
+        "onah": "day"
+      },
+      {
+        "type": "chodesh",
+        "hebrew_date": null,
+        "greg": "ASK_RABBI",
+        "onah": "day",
+        "note": "אין ל' באייר תשפ\"ו; לא אומת אם חוששת לכ\"ט אייר, לא' סיון או לאף אחד"
+      }
+    ],
+    "note": "ל' ניסן תשפ\"ו = א' דר\"ח אייר. עונה בינונית: כ\"ט אייר. לעונת החודש אין תאריך מקביל – הכלי מציג \"שואלים רב\" ולא ממציא. ברירת מחדל לחומרה: לסמן את כ\"ט אייר ואת א' סיון כספק."
+  },
+  {
+    "id": "ex13-day30-kislev-to-tevet",
+    "source": "כמו ex12 – לא נמצא מקור כתוב",
+    "method": "ashkenaz",
+    "kind": "ask_rabbi",
+    "sightings": [
+      {
+        "hebrew_date": "ל' כסלו תשפ\"ז",
+        "greg": "2026-12-10",
+        "onah": "night",
+        "civil_evening": "2026-12-09"
+      }
+    ],
+    "expected": [
+      {
+        "type": "beinonit",
+        "hebrew_date": "כ\"ט טבת תשפ\"ז",
+        "greg": "2027-01-08",
+        "onah": "night",
+        "civil_evening": "2027-01-07"
+      },
+      {
+        "type": "beinonit_31_shach",
+        "hebrew_date": "א' שבט תשפ\"ז",
+        "greg": "2027-01-09",
+        "onah": "night",
+        "civil_evening": "2027-01-08"
+      },
+      {
+        "type": "chodesh",
+        "hebrew_date": null,
+        "greg": "ASK_RABBI",
+        "onah": "night",
+        "note": "טבת תשפ\"ז חסר (29)"
+      }
+    ],
+    "note": "ל' כסלו תשפ\"ז (ר\"ח טבת, חנוכה). ראייה בלילה."
+  },
+  {
+    "id": "ex14-adar1-to-adar2",
+    "source": "חכמת אדם קיב:ו (\"לעולם אזלינן אחר ימי החודש\"); שו\"ע קפט:א",
+    "method": "sephardi_ovadia",
+    "kind": "derived",
+    "sightings": [
+      {
+        "hebrew_date": "ט\"ו אדר א תשפ\"ז",
+        "greg": "2027-02-22",
+        "onah": "day"
+      }
+    ],
+    "expected": [
+      {
+        "type": "beinonit",
+        "hebrew_date": "י\"ד אדר ב תשפ\"ז",
+        "greg": "2027-03-23",
+        "onah": "day"
+      },
+      {
+        "type": "chodesh",
+        "hebrew_date": "ט\"ו אדר ב תשפ\"ז",
+        "greg": "2027-03-24",
+        "onah": "day"
+      }
+    ],
+    "note": "שנה מעוברת תשפ\"ז: החודש שאחרי אדר א הוא אדר ב. אדר א מלא, ולכן יום ל' הוא י\"ד אדר ב ועונת החודש ט\"ו אדר ב. שהחודש הבא הוא אדר ב – לא נמצא במפורש במקור (ברשימת הלא-אומת)."
+  },
+  {
+    "id": "ex15-adar1-30",
+    "source": "לא נמצא מקור כתוב – שואלים רב",
+    "method": "sephardi_ovadia",
+    "kind": "ask_rabbi",
+    "sightings": [
+      {
+        "hebrew_date": "ל' אדר א תשפ\"ז",
+        "greg": "2027-03-09",
+        "onah": "day"
+      }
+    ],
+    "expected": [
+      {
+        "type": "beinonit",
+        "hebrew_date": "כ\"ט אדר ב תשפ\"ז",
+        "greg": "2027-04-07",
+        "onah": "day"
+      },
+      {
+        "type": "chodesh",
+        "hebrew_date": null,
+        "greg": "ASK_RABBI",
+        "onah": "day",
+        "note": "אין ל' באדר ב"
+      }
+    ],
+    "note": "ל' אדר א תשפ\"ז (ר\"ח אדר ב). אדר ב חסר."
+  },
+  {
+    "id": "ex16-adar-plain-year",
+    "source": "שו\"ע קפט:א; חכמת אדם קיב:ו",
+    "method": "sephardi_ovadia",
+    "kind": "derived",
+    "sightings": [
+      {
+        "hebrew_date": "י' אדר תשפ\"ו",
+        "greg": "2026-02-27",
+        "onah": "day"
+      }
+    ],
+    "expected": [
+      {
+        "type": "beinonit",
+        "hebrew_date": "י' ניסן תשפ\"ו",
+        "greg": "2026-03-28",
+        "onah": "day"
+      },
+      {
+        "type": "chodesh",
+        "hebrew_date": "י' ניסן תשפ\"ו",
+        "greg": "2026-03-28",
+        "onah": "day"
+      }
+    ],
+    "note": "שנה פשוטה תשפ\"ו: אדר חסר (29), ולכן יום ל' ועונת החודש חלים שניהם בי' ניסן."
+  },
+  {
+    "id": "ex17-elul-to-tishrei",
+    "source": "שו\"ע קפט:א; חכמת אדם קיב:ה (\"א\"צ לחוש ח' אייר אלא ט' אייר\" – חוששת לשניהם); ש\"ך קפט ס\"ק ל",
+    "method": "ashkenaz",
+    "kind": "derived",
+    "sightings": [
+      {
+        "hebrew_date": "כ' אלול תשפ\"ו",
+        "greg": "2026-09-02",
+        "onah": "day"
+      }
+    ],
+    "expected": [
+      {
+        "type": "beinonit",
+        "hebrew_date": "כ' תשרי תשפ\"ז",
+        "greg": "2026-10-01",
+        "onah": "day"
+      },
+      {
+        "type": "chodesh",
+        "hebrew_date": "כ' תשרי תשפ\"ז",
+        "greg": "2026-10-01",
+        "onah": "day"
+      }
+    ],
+    "note": "מעבר שנה: אלול תשפ\"ו חסר, ולכן יום ל' = כ' תשרי תשפ\"ז = וסת החודש. באשכנז החומרה היא יום ל' וגם וסת החודש, ובחודש חסר זה אותו יום – אין יום נוסף (תוקן 20.11 אחרי בדיקה עצמאית).",
+    "forbidden": [
+      {
+        "greg": "2026-10-02",
+        "onah": "day",
+        "why": "אין יום ל\"א קבוע"
+      }
+    ]
+  },
+  {
+    "id": "ex18-long-haflaga",
+    "source": "רמ\"א קפט:יג (הפלגה כולל הקצוות); נודע ביהודה (פת\"ש קפט ס\"ק ט) – בימים ולא בעונות",
+    "method": "sephardi_ovadia",
+    "kind": "derived",
+    "sightings": [
+      {
+        "hebrew_date": "א' חשוון תשפ\"ז",
+        "greg": "2026-10-12",
+        "onah": "day"
+      },
+      {
+        "hebrew_date": "ג' כסלו תשפ\"ז",
+        "greg": "2026-11-13",
+        "onah": "day"
+      }
+    ],
+    "expected": [
+      {
+        "type": "haflaga",
+        "hebrew_date": "ה' טבת תשפ\"ז",
+        "greg": "2026-12-15",
+        "onah": "day",
+        "interval_days": 33
+      },
+      {
+        "type": "beinonit",
+        "hebrew_date": "ב' טבת תשפ\"ז",
+        "greg": "2026-12-12",
+        "onah": "day"
+      },
+      {
+        "type": "chodesh",
+        "hebrew_date": "ג' טבת תשפ\"ז",
+        "greg": "2026-12-13",
+        "onah": "day"
+      }
+    ],
+    "note": "חשוון תשפ\"ז מלא: מא' חשוון לג' כסלו – הפלגת 33 (כולל), הפרש 32. הבאה: ג' כסלו + 32 = ה' טבת. עונה בינונית ב' טבת, עונת החודש ג' טבת – שלוש עונות שונות."
+  },
+  {
+    "id": "ex19-haflaga-days-not-onot",
+    "source": "נודע ביהודה (פת\"ש קפט ס\"ק ט): ההפלגה נמנית בימים; העונה – כראייה האחרונה (שו\"ע קפד:ב)",
+    "method": "sephardi_ovadia",
+    "kind": "derived",
+    "sightings": [
+      {
+        "hebrew_date": "י' טבת תשפ\"ז",
+        "greg": "2026-12-20",
+        "onah": "day"
+      },
+      {
+        "hebrew_date": "ח' שבט תשפ\"ז",
+        "greg": "2027-01-16",
+        "onah": "night",
+        "civil_evening": "2027-01-15"
+      }
+    ],
+    "expected": [
+      {
+        "type": "haflaga",
+        "hebrew_date": "ה' אדר א תשפ\"ז",
+        "greg": "2027-02-12",
+        "onah": "night",
+        "civil_evening": "2027-02-11",
+        "interval_days": 28
+      },
+      {
+        "type": "beinonit",
+        "hebrew_date": "ז' אדר א תשפ\"ז",
+        "greg": "2027-02-14",
+        "onah": "night",
+        "civil_evening": "2027-02-13"
+      },
+      {
+        "type": "chodesh",
+        "hebrew_date": "ח' אדר א תשפ\"ז",
+        "greg": "2027-02-15",
+        "onah": "night",
+        "civil_evening": "2027-02-14"
+      }
+    ],
+    "note": "הראשונה ביום, השנייה בלילה: ההפרש נמנה בתאריכים עבריים. העונה הנחששת – לילה, כמו הראייה האחרונה."
+  },
+  {
+    "id": "ex20-chodesh-kavua-3",
+    "source": "שו\"ע קפט:ב; חכמת אדם קיב:ו (\"כיצד קובעתו\"); רמ\"א קפט:יג – אחרי שנקבע חוששת רק לו",
+    "method": "sephardi_ovadia",
+    "kind": "derived",
+    "sightings": [
+      {
+        "hebrew_date": "ה' טבת תשפ\"ז",
+        "greg": "2026-12-15",
+        "onah": "day"
+      },
+      {
+        "hebrew_date": "ה' שבט תשפ\"ז",
+        "greg": "2027-01-13",
+        "onah": "day"
+      },
+      {
+        "hebrew_date": "ה' אדר א תשפ\"ז",
+        "greg": "2027-02-12",
+        "onah": "day"
+      }
+    ],
+    "expected": [
+      {
+        "type": "chodesh_kavua",
+        "hebrew_date": "ה' אדר ב תשפ\"ז",
+        "greg": "2027-03-14",
+        "onah": "day"
+      }
+    ],
+    "note": "שלוש ראיות בה' לחודש באותה עונה = וסת החודש קבוע. מעתה רק ה' בחודש; קבוע – אם עבר בלי בדיקה אסורה עד שתבדוק (שו\"ע קפט:ד)."
+  },
+  {
+    "id": "ex21-uproot-non-kavua",
+    "source": "שו\"ע קפט:ב; חכמת אדם קיב:ב, יג (\"לא ראתה ר\"ח אייר אינה חוששת לר\"ח סיון\")",
+    "method": "sephardi_ovadia",
+    "kind": "from_source",
+    "sightings": [
+      {
+        "hebrew_date": "א' ניסן תשפ\"ו",
+        "greg": "2026-03-19",
+        "onah": "day"
+      },
+      {
+        "missed": true,
+        "hebrew_date": "א' אייר תשפ\"ו",
+        "greg": "2026-04-18",
+        "onah": "day",
+        "note": "עברה העונה בלי ראייה"
+      }
+    ],
+    "expected": [],
+    "note": "וסת שאינו קבוע נעקר בפעם אחת: אחרי שעבר א' אייר בלי ראייה, לא חוששים לא' סיון."
+  },
+  {
+    "id": "ex22-uproot-kavua-needs-3",
+    "source": "שו\"ע קפט:יד, טז; חכמת אדם קיב:ב (\"עד שתעקרנו ג\"פ\")",
+    "method": "sephardi_ovadia",
+    "kind": "from_source",
+    "sightings": [
+      {
+        "hebrew_date": "ה' טבת תשפ\"ז",
+        "greg": "2026-12-15",
+        "onah": "day"
+      },
+      {
+        "hebrew_date": "ה' שבט תשפ\"ז",
+        "greg": "2027-01-13",
+        "onah": "day"
+      },
+      {
+        "hebrew_date": "ה' אדר א תשפ\"ז",
+        "greg": "2027-02-12",
+        "onah": "day"
+      },
+      {
+        "missed": true,
+        "hebrew_date": "ה' אדר ב תשפ\"ז",
+        "greg": "2027-03-14",
+        "onah": "day"
+      }
+    ],
+    "expected": [
+      {
+        "type": "chodesh_kavua",
+        "hebrew_date": "ה' ניסן תשפ\"ז",
+        "greg": "2027-04-12",
+        "onah": "day",
+        "note": "עדיין חוששת – נעקר רק אחרי 3 פעמים"
+      }
+    ],
+    "note": "וסת קבוע לא נעקר בפעם אחת."
+  },
+  {
+    "id": "ex23-netz-doubt",
+    "source": "שו\"ע קפד:ד (\"אינה אסורה אלא ביום\")",
+    "method": "sephardi_ovadia",
+    "kind": "from_source",
+    "sightings": [
+      {
+        "hebrew_date": "י\"ב סיוון תשפ\"ז",
+        "greg": "2027-06-17",
+        "onah": "day",
+        "note": "ראתה בהנץ ולא ידוע אם לפני או אחרי"
+      }
+    ],
+    "expected": [
+      {
+        "type": "beinonit",
+        "hebrew_date": "י\"א תמוז תשפ\"ז",
+        "greg": "2027-07-16",
+        "onah": "day"
+      },
+      {
+        "type": "chodesh",
+        "hebrew_date": "י\"ב תמוז תשפ\"ז",
+        "greg": "2027-07-17",
+        "onah": "day"
+      }
+    ],
+    "note": "לפי מרן: ספק לפני או אחרי הנץ – רק עונת היום."
+  },
+  {
+    "id": "ex24-flow-across-netz",
+    "source": "שו\"ע קפד:ה (\"אסורה בלילה וביום כשיעור הנמשך בו\"); ט\"ז ס\"ק ח; ש\"ך ס\"ק טו",
+    "method": "sephardi_ovadia",
+    "kind": "from_source",
+    "sightings": [
+      {
+        "hebrew_date": "י\"ב סיוון תשפ\"ז",
+        "greg": "2027-06-17",
+        "onah": "night",
+        "civil_evening": "2027-06-16",
+        "note": "התחילה לפני הנץ ונמשכה שעה אחרי הנץ",
+        "duration_after_netz_minutes": 60
+      }
+    ],
+    "expected": [
+      {
+        "type": "chodesh",
+        "hebrew_date": "י\"ב תמוז תשפ\"ז",
+        "greg": "2027-07-17",
+        "onah": "night",
+        "civil_evening": "2027-07-16"
+      },
+      {
+        "type": "chodesh_partial_day",
+        "hebrew_date": "י\"ב תמוז תשפ\"ז",
+        "greg": "2027-07-17",
+        "onah": "day",
+        "until": "netz+60min"
+      }
+    ],
+    "note": "הלילה כולו אסור, וביום רק כשיעור הזמן שנמשכה הראייה אחרי הנץ. (הדין נאמר בוסת קבוע; הכלי מפעיל אותו גם על עונת החודש – לאישור רב.)"
+  },
+  {
+    "id": "ex25-mikveh-sephardi-4",
+    "source": "שו\"ע קצו:יא (מרן); ב\"י (\"לא נהגו... אלא להמתין ארבעה ימים\"); טהרת הבית ח\"ב סי' יג סע' יב (דרך הידברות – משני); שו\"ע קצו:א, ג",
+    "method": "sephardi_ovadia",
+    "kind": "derived",
+    "sightings": [
+      {
+        "hebrew_date": "י\"ג כסלו תשפ\"ז",
+        "greg": "2026-11-23",
+        "onah": "day",
+        "note": "ראייה = יום 1"
+      }
+    ],
+    "expected": [
+      {
+        "type": "hefsek_tahara",
+        "hebrew_date": "ט\"ז כסלו תשפ\"ז",
+        "greg": "2026-11-26",
+        "onah": "day",
+        "before": "shkia",
+        "dow": "יום חמישי"
+      },
+      {
+        "type": "clean_day_1",
+        "hebrew_date": "י\"ז כסלו תשפ\"ז",
+        "greg": "2026-11-27",
+        "onah": "day"
+      },
+      {
+        "type": "clean_day_7",
+        "hebrew_date": "כ\"ג כסלו תשפ\"ז",
+        "greg": "2026-12-03",
+        "onah": "day"
+      },
+      {
+        "type": "tevila_night",
+        "hebrew_date": "כ\"ד כסלו תשפ\"ז",
+        "greg": "2026-12-04",
+        "onah": "night",
+        "civil_evening": "2026-12-03",
+        "after": "tzeit",
+        "dow_evening": "יום חמישי"
+      }
+    ],
+    "note": "ספרדים: הפסק ביום הרביעי (יום הראייה = 1), ספירה מהיום שלמחרת (קצו:ג), טבילה בליל השמיני אחרי צאת הכוכבים."
+  },
+  {
+    "id": "ex26-mikveh-ashkenaz-5",
+    "source": "רמ\"א קצו:יא (\"וכן נוהגין\"); חכמת אדם כלל קיז:ב",
+    "method": "ashkenaz",
+    "kind": "derived",
+    "sightings": [
+      {
+        "hebrew_date": "י\"ג כסלו תשפ\"ז",
+        "greg": "2026-11-23",
+        "onah": "day",
+        "note": "ראייה = יום 1"
+      }
+    ],
+    "expected": [
+      {
+        "type": "hefsek_tahara",
+        "hebrew_date": "י\"ז כסלו תשפ\"ז",
+        "greg": "2026-11-27",
+        "onah": "day",
+        "before": "shkia",
+        "dow": "יום שישי"
+      },
+      {
+        "type": "clean_day_1",
+        "hebrew_date": "י\"ח כסלו תשפ\"ז",
+        "greg": "2026-11-28",
+        "onah": "day"
+      },
+      {
+        "type": "clean_day_7",
+        "hebrew_date": "כ\"ד כסלו תשפ\"ז",
+        "greg": "2026-12-04",
+        "onah": "day"
+      },
+      {
+        "type": "tevila_night",
+        "hebrew_date": "כ\"ה כסלו תשפ\"ז",
+        "greg": "2026-12-05",
+        "onah": "night",
+        "civil_evening": "2026-12-04",
+        "after": "tzeit",
+        "dow_evening": "יום שישי"
+      }
+    ],
+    "note": "אשכנז: 5 ימים כולל יום הראייה, אף בלא שימשה. ההפסק ביום החמישי."
+  },
+  {
+    "id": "ex27-tevila-friday-night",
+    "source": "רמ\"א קצז:ב (מותרת לטבול ליל שבת); הרב עזריאל #6596 (\"טובלת אחר צאת הכוכבים כמו בכל יום\"); #28515 (\"לעולם הטבילה היא בלילה לבד\")",
+    "method": "sephardi_ovadia",
+    "kind": "derived",
+    "sightings": [
+      {
+        "hebrew_date": "ה' טבת תשפ\"ז",
+        "greg": "2026-12-15",
+        "onah": "day",
+        "note": "ראייה = יום 1"
+      }
+    ],
+    "expected": [
+      {
+        "type": "hefsek_tahara",
+        "hebrew_date": "ח' טבת תשפ\"ז",
+        "greg": "2026-12-18",
+        "onah": "day",
+        "before": "shkia",
+        "dow": "יום שישי"
+      },
+      {
+        "type": "clean_day_1",
+        "hebrew_date": "ט' טבת תשפ\"ז",
+        "greg": "2026-12-19",
+        "onah": "day"
+      },
+      {
+        "type": "clean_day_7",
+        "hebrew_date": "ט\"ו טבת תשפ\"ז",
+        "greg": "2026-12-25",
+        "onah": "day"
+      },
+      {
+        "type": "tevila_night",
+        "hebrew_date": "ט\"ז טבת תשפ\"ז",
+        "greg": "2026-12-26",
+        "onah": "night",
+        "civil_evening": "2026-12-25",
+        "after": "tzeit",
+        "dow_evening": "יום שישי"
+      }
+    ],
+    "note": "ליל הטבילה חל בליל שבת – טובלת בזמנה, אחרי צאת הכוכבים. ההכנות ביום שישי – שואלים רב."
+  },
+  {
+    "id": "ex28-tevila-yom-kippur",
+    "source": "שו\"ע או\"ח תריג:יב (\"בזמן הזה אסור לאשה לטבול ביום הכפורים אפי' הגיע זמן טבילתה בו ביום\"); או\"ח תרטו:א",
+    "method": "ashkenaz",
+    "kind": "derived",
+    "sightings": [
+      {
+        "hebrew_date": "כ\"ז אלול תשפ\"ו",
+        "greg": "2026-09-09",
+        "onah": "day"
+      }
+    ],
+    "expected": [
+      {
+        "type": "hefsek_tahara",
+        "hebrew_date": "ב' תשרי תשפ\"ז",
+        "greg": "2026-09-13",
+        "onah": "day",
+        "note": "ב' דראש השנה – הפסק ביום טוב: לא אומת, שואלים רב"
+      },
+      {
+        "type": "clean_day_7",
+        "hebrew_date": "ט' תשרי תשפ\"ז",
+        "greg": "2026-09-20",
+        "onah": "day"
+      },
+      {
+        "type": "tevila_night",
+        "hebrew_date": null,
+        "greg": "POSTPONED",
+        "onah": "night",
+        "original": "2026-09-21",
+        "original_hebrew": "י' תשרי תשפ\"ז"
+      },
+      {
+        "type": "tevila_night",
+        "hebrew_date": "י\"א תשרי תשפ\"ז",
+        "greg": "2026-09-22",
+        "onah": "night",
+        "civil_evening": "2026-09-21",
+        "after": "tzeit"
+      }
+    ],
+    "note": "ליל הטבילה חל בליל יום הכיפורים (ערב 2026-09-20) – אינה טובלת; טובלת במוצאי יום הכיפורים."
+  },
+  {
+    "id": "ex29-tevila-tisha-beav",
+    "source": "שו\"ע או\"ח תקנד:ח (\"בזמן הזה אין טבילה בזמנה הילכך לא תטבול בו וכן נהגו\"); הרב עזריאל #26340 (ליל י' באב – \"מתנהלים כרגיל\")",
+    "method": "sephardi_ovadia",
+    "kind": "derived",
+    "sightings": [
+      {
+        "hebrew_date": "כ\"ז תמוז תשפ\"ז",
+        "greg": "2027-08-01",
+        "onah": "day"
+      }
+    ],
+    "expected": [
+      {
+        "type": "hefsek_tahara",
+        "hebrew_date": "א' אב תשפ\"ז",
+        "greg": "2027-08-04",
+        "onah": "day"
+      },
+      {
+        "type": "clean_day_7",
+        "hebrew_date": "ח' אב תשפ\"ז",
+        "greg": "2027-08-11",
+        "onah": "day"
+      },
+      {
+        "type": "tevila_night",
+        "hebrew_date": null,
+        "greg": "POSTPONED",
+        "onah": "night",
+        "original": "2027-08-12",
+        "original_hebrew": "ט' אב תשפ\"ז"
+      },
+      {
+        "type": "tevila_night",
+        "hebrew_date": "י' אב תשפ\"ז",
+        "greg": "2027-08-13",
+        "onah": "night",
+        "civil_evening": "2027-08-12",
+        "after": "tzeit"
+      }
+    ],
+    "note": "ליל הטבילה חל בליל ט' באב תשפ\"ז – נדחה לליל י' באב."
+  },
+  {
+    "id": "ex30-pregnancy-switch",
+    "source": "שו\"ע קפד:ז (מעוברת משהוכר עוברה; מניקה 24 חודש); שו\"ע קפט:לג-לד",
+    "method": "any",
+    "kind": "ask_rabbi",
+    "sightings": [
+      {
+        "hebrew_date": "כ' כסלו תשפ\"ז",
+        "greg": "2026-11-30",
+        "onah": "day"
+      }
+    ],
+    "expected": [],
+    "note": "מתג \"הריון שהוכר\": הכלי לא מחשב עונות ומציג \"שואלים רב\" לגבי החזרה לוסת אחרי הלידה וההנקה."
+  }
+]

@@ -1,0 +1,13 @@
+{
+ "title": "דפי הברית - שירון אשכנז - לפני",
+ "prefix": "ג",
+ "serve_dir": "C:\\Users\\Admin\\AppData\\Local\\Temp\\claude\\cbc8e0d8aa79ea4a\\9294f583-2711-4538-990f-1cfec20773ec\\scratchpad\\before2",
+ "shots": [
+  {
+   "path": "/mohel/dapim/",
+   "selector": "section[aria-labelledby=tekes-h]",
+   "no": 1,
+   "name": "לפני - בזמן הטקס"
+  }
+ ]
+}
