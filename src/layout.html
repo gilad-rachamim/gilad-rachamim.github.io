@@ -20,6 +20,7 @@
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/search.css">
 {{head}}
 </head>
 <body class="{{body_class}}">
@@ -39,6 +40,7 @@
     </nav>
   </div>
 </header>
+<div id="hk-search" class="no-print"></div>
 {{crumbs}}
 <main id="main">
 {{content}}
@@ -59,5 +61,6 @@
   <a class="btn btn-line" href="{{dock_href}}">{{dock_label}}</a>
 </nav>
 {{foot}}
+<script src="/assets/search.js" defer></script>
 </body>
 </html>

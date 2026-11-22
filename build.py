@@ -724,3 +724,26 @@ sm.append("</urlset>")
 (ROOT / "sitemap.xml").write_text("\n".join(sm) + "\n", encoding="utf-8")
 (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /mohel/todah/\nSitemap: {BASE}/sitemap.xml\n", encoding="utf-8", newline="\n")
 print("sitemap:", len(pages), "pages")
+# ---------- אינדקס חיפוש לכל האתר (assets/search-index.json) – נוצר בכל build, נטען בחיפוש שבראש כל דף ----------
+def write_search_index():
+    out = []
+    for _p in sorted(SRC.rglob("*.html")):
+        _raw = _p.read_text(encoding="utf-8")
+        _m = re.match(r"\s*<!--meta\s*(\{.*?\})\s*-->", _raw, re.S)
+        if not _m:
+            continue
+        _meta = json.loads(_m.group(1))
+        if not in_sitemap(_meta) or _meta.get("no_mapa"):
+            continue
+        rel = _p.relative_to(SRC).as_posix()
+        u = "/" + (rel[:-len("index.html")] if rel.endswith("index.html") else rel)
+        if u in ("/mapa/", "/") or u.startswith("/mohel/todah"):
+            continue
+        _h1 = re.search(r"<h1[^>]*>(.*?)</h1>", _raw, re.S)
+        h1 = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", _h1.group(1))).strip() if _h1 else ""
+        name = h1 or re.split(r"\s[–—|]\s|:\s", _meta["title"])[0].strip()
+        out.append({"u": u, "n": name, "d": (_meta.get("description") or "")[:200], "t": re.split(r"\s\|\s", _meta["title"])[0].strip()})
+    (ROOT / "assets" / "search-index.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
+    print("search-index:", len(out), "pages")
+write_search_index()
+

@@ -24,6 +24,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="{{site_home}}manifest.webmanifest">
 <link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/search.css">
 <link rel="stylesheet" href="/assets/kelim.css">
 <!-- באפליקציית Google Play (TWA): בלי תרומות, בלי קישורי תמיכה ובלי "שותפות במיזם" בתשלום (Play Billing). טקסט שמזכיר שותפות: class="no-app" -->
 <script>(function(){var k="kelim-in-app";try{if((document.referrer||"").indexOf("android-app://com.hakelim.kelim")===0)sessionStorage.setItem(k,"1");if(sessionStorage.getItem(k)==="1")document.documentElement.classList.add("in-app");}catch(e){if((document.referrer||"").indexOf("android-app://com.hakelim.kelim")===0)document.documentElement.classList.add("in-app");}})();</script>
@@ -40,6 +41,7 @@
     <nav class="topnav" aria-label="ניווט ראשי">{{nav}}</nav>
   </div>
 </header>
+<div id="hk-search" class="no-print"></div>
 {{crumbs}}
 <main id="main">
 {{chesed}}
@@ -103,5 +105,6 @@
 </div>
 <script src="/assets/kelim.js" defer></script>
 {{foot}}
+<script src="/assets/search.js" defer></script>
 </body>
 </html>

@@ -9,11 +9,12 @@
  *
  * התקנה (פעם אחת, כ-3 דקות): בוחרים למעלה את הפונקציה setup ולוחצים "הפעלה".
  * לשלוח סיכום עכשיו: runNow. להפסיק: uninstall (התוויות והמיילים נשארים).
+ * גרסה 6 · 22.11.2026 (חדש: "✓ הבנתי" ליד כל שורה – נוגעים, שולחים את המייל שנפתח, והשורה לא חוזרת יותר. אפשר גם להוסיף ידנית את התווית "סיכום/הבנתי")
  * גרסה 5 · 17.11.2026 (אזהרות של שירותים עולות ל"חשוב" גם מ-noreply, פרסומות לא נכנסות
  * ל"מחכים לתשובה", שיחה שענית בה אחרון לא מוצגת, אותו מייל פעמיים = שורה אחת,
  * מיילי בדיקה לעצמך לא נספרים, וסיכום חשבוניות לפי ספק עם הסכום)
  */
-var VER = 5;
+var VER = 6;
 var SITE = 'https://hakelim.com/kelim/machshev/sidur-mailim/';
 
 // ===== ההגדרות שלכם (נוצרו בדף הכלי; אפשר גם לשנות כאן ידנית) =====
@@ -97,6 +98,7 @@ function runDigest() {
   if (since < maxBack) since = maxBack;
   var after = Math.floor(since.getTime() / 1000);
 
+  processUnderstood_();
   var me = meAddresses_();
   var data = classify_(after, me, now);
   var to = (CONFIG.to || '').trim() || Session.getActiveUser().getEmail() || Session.getEffectiveUser().getEmail();
@@ -207,7 +209,7 @@ function ago_(d, now) {
 function classify_(after, me, now) {
   var out = { total: 0, promoSenders: {}, promoCount: 0 };
   Object.keys(CATS).forEach(function (k) { out[k] = []; });
-  var q = 'in:inbox after:' + after;
+  var q = 'in:inbox after:' + after + ' -label:' + labelQuery_(understoodName_());
   var threads = GmailApp.search(q, 0, MAX_THREADS);
   out.total = threads.length;
   var promoIds = idSet_(q + ' (category:promotions OR category:social)');
@@ -289,7 +291,7 @@ function classify_(after, me, now) {
     var seen = {};
     out.reply.forEach(function (x) { seen[x.id] = 1; });
     var oldQ = 'in:inbox label:' + labelQuery_(String(CONFIG.labelRoot || 'סיכום') + '/' + CATS.reply.name) +
-      ' before:' + after + ' newer_than:14d';
+      ' before:' + after + ' newer_than:14d -label:' + labelQuery_(understoodName_());
     var old = [], oldMsgs = [];
     try { old = GmailApp.search(oldQ, 0, 40); oldMsgs = GmailApp.getMessagesForThreads(old); } catch (e) {}
     old.forEach(function (t, ti) {
@@ -454,7 +456,8 @@ function renderHtml_(d, since, now) {
       h += '<div style="border-right:3px solid ' + bar + ';padding:6px 10px;margin:0 0 8px;background:#faf8f2;border-radius:6px">' +
         '<a href="' + link_(it.id) + '" style="color:#1a5fb4;font-weight:bold;text-decoration:none">' + esc_(it.subj) + '</a>' +
         '<div style="font-size:13px;color:#444">' + esc_(it.who) + ' · ' + esc_(ago_(it.date, now)) + (it.why ? ' · <span style="color:#8a6d00">' + esc_(it.why) + '</span>' : '') + '</div>' +
-        (it.snip ? '<div style="font-size:13px;color:#666">' + esc_(it.snip) + '</div>' : '') + '</div>';
+        (it.snip ? '<div style="font-size:13px;color:#666">' + esc_(it.snip) + '</div>' : '') +
+        (understoodLink_(it.id) ? '<div style="margin-top:4px"><a href="' + understoodLink_(it.id) + '" style="font-size:13px;color:#2e7d32;text-decoration:none;font-weight:bold">✓ הבנתי, אל תחזור על זה</a></div>' : '') + '</div>';
     });
     if (list.length > MAX_SHOW) h += '<p style="font-size:13px;color:#555">ועוד ' + (list.length - MAX_SHOW) + (CONFIG.labels ? ' – כולם בתווית "' + esc_(CONFIG.labelRoot + '/' + CATS[k].name) + '"' : '') + '.</p>';
   });
@@ -527,6 +530,43 @@ function addTasks_(d) {
   var cut = Date.now() - 30 * 864e5;
   Object.keys(done).forEach(function (k) { if (done[k] < cut) delete done[k]; });
   props.setProperty('taskIds', JSON.stringify(done));
+}
+
+/** שם התווית ל"הבנתי": שיחה עם התווית הזאת לא חוזרת בסיכום. אפשר להוסיף אותה גם ידנית, בג'ימייל בטלפון: ⋮ ← שינוי תוויות. */
+function understoodName_() { return String(CONFIG.labelRoot || 'סיכום') + '/הבנתי'; }
+
+/** כתובת המייל שלך (אליה נשלח מייל ה"הבנתי"). */
+function myAddr_() {
+  var a = '';
+  try { a = Session.getEffectiveUser().getEmail() || ''; } catch (e) {}
+  if (!a) { try { a = Session.getActiveUser().getEmail() || ''; } catch (e) {} }
+  return a;
+}
+
+/** קישור "✓ הבנתי": פותח מייל מוכן אליך. שולחים אותו, ובסיכום הבא (או בהרצת runNow) השורה נעלמת. */
+function understoodLink_(id) {
+  var a = myAddr_();
+  if (!a || !id) return '';
+  return 'mailto:' + encodeURIComponent(a) + '?subject=' + encodeURIComponent('הבנתי ' + id) +
+    '&body=' + encodeURIComponent('רק לשלוח. הסיכום יסמן את השיחה כ"הבנתי" ולא יחזור עליה.');
+}
+
+/** מעבד מיילי "הבנתי": מסמן את השיחה בתווית, ומעביר את מייל ההוראה לארכיון כנקרא. */
+function processUnderstood_() {
+  var cmds = [];
+  try { cmds = GmailApp.search('subject:הבנתי newer_than:30d from:me to:me', 0, 100); } catch (e) { return; }
+  if (!cmds.length) return;
+  var lb = label_(understoodName_()), done = [];
+  cmds.forEach(function (c) {
+    var m = /הבנתי\s+([0-9a-f]{10,20})/i.exec(c.getFirstMessageSubject() || '');
+    if (!m) return;
+    try {
+      var t = GmailApp.getThreadById(m[1]);
+      if (t) { lb.addToThread(t); var rl = GmailApp.getUserLabelByName(String(CONFIG.labelRoot || 'סיכום') + '/' + CATS.reply.name); if (rl) rl.removeFromThread(t); }
+    } catch (e) {}
+    done.push(c);
+  });
+  for (var i = 0; i < done.length; i += 100) { GmailApp.markThreadsRead(done.slice(i, i + 100)); GmailApp.moveThreadsToArchive(done.slice(i, i + 100)); }
 }
 
 /** תווית בחיפוש של ג'ימייל: רווחים ו-/ הופכים למקף. */
