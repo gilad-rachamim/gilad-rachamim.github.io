@@ -1,0 +1,15 @@
+{
+ "title": "פס שירים במחולל - לפני",
+ "prefix": "ש",
+ "serve_dir": "C:\\Users\\Admin\\AppData\\Local\\Temp\\claude\\3860b02734184967\\9edb16f7-c8ff-4ac5-997c-dad1a789f2f4\\scratchpad\\before",
+ "shots": [
+  {
+   "path": "/mohel/hazmana/",
+   "selector": "#hz-acts",
+   "css": "#hz-acts .hz-rsvp-panel{display:none!important}",
+   "js": "document.querySelector('#hz-reg').hidden=true;document.querySelector('#hz-acts').hidden=false;",
+   "no": 1,
+   "name": "לפני - סיום המחולל"
+  }
+ ]
+}

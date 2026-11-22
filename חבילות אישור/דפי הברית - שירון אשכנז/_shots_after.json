@@ -1,0 +1,13 @@
+{
+ "title": "דפי הברית - שירון אשכנז - אחרי",
+ "prefix": "ג",
+ "serve_dir": "C:\\Users\\Admin\\sites\\gilad-rachamim.github.io-dapim2",
+ "shots": [
+  {
+   "path": "/mohel/dapim/",
+   "selector": "section[aria-labelledby=tekes-h]",
+   "no": 2,
+   "name": "אחרי - בזמן הטקס"
+  }
+ ]
+}

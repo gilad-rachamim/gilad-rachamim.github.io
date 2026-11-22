@@ -1,0 +1,19 @@
+{
+ "title": "קישורים למחולל ההודעה 4.11 - אחרי",
+ "prefix": "ק",
+ "serve_dir": "C:\\Users\\Admin\\sites\\gilad-rachamim.github.io",
+ "shots": [
+  {
+   "path": "/mohel/",
+   "selector": ".tools",
+   "no": 2,
+   "name": "אחרי - כלים חינם בעמוד המוהל"
+  },
+  {
+   "path": "/mohel/",
+   "selector": ".site-foot",
+   "no": 4,
+   "name": "אחרי - הפוטר, עמודת כלים חינם"
+  }
+ ]
+}

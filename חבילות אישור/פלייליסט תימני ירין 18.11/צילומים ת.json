@@ -1,0 +1,20 @@
+{
+ "title": "פלייליסט תימני לפי ירין - הדף",
+ "prefix": "ת",
+ "serve_dir": "C:\\Users\\Admin\\sites\\gilad-rachamim.github.io",
+ "shots": [
+  {
+   "no": 6,
+   "name": "הכרטיס התימני - לפני",
+   "path": "/mohel/shirim/",
+   "selector": "#teimani"
+  },
+  {
+   "no": 7,
+   "name": "הכרטיס התימני - אחרי",
+   "path": "/mohel/shirim/",
+   "selector": "#teimani",
+   "js": "(()=>{const a=document.querySelector('#teimani');a.querySelector('p').textContent=\"פיוטי תימן מקוריים, נשיד והלל – ובראשם \\\"שמעתי מפאתי תימן\\\", שמביאים איתו את התינוק לברית.\";const b=a.querySelector('.pl-acts a');const y=b.cloneNode(true);y.textContent='האזנה ביוטיוב';y.href='https://www.youtube.com/';y.setAttribute('data-playlist','teimani-yt');b.after(y);})()"
+  }
+ ]
+}

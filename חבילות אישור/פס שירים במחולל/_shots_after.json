@@ -1,0 +1,23 @@
+{
+ "title": "פס שירים במחולל - אחרי",
+ "prefix": "ש",
+ "serve_dir": "C:\\Users\\Admin\\sites\\gilad-rachamim.github.io\\.claude\\worktrees\\dreamy-lamport-3a1303",
+ "shots": [
+  {
+   "path": "/mohel/hazmana/",
+   "selector": "#hz-acts",
+   "css": "#hz-acts .hz-rsvp-panel{display:none!important}",
+   "js": "document.querySelector('#hz-reg').hidden=true;document.querySelector('#hz-acts').hidden=false;",
+   "no": 2,
+   "name": "אחרי - סיום המחולל"
+  },
+  {
+   "path": "/mohel/hazmana/",
+   "selector": "#hz-acts",
+   "css": "#hz-acts .hz-rsvp-panel{display:none!important}",
+   "js": "document.querySelector('#hz-reg').hidden=true;document.querySelector('#hz-acts').hidden=false;var r=document.querySelector('input[name=st][value=sfaradi]');r.checked=true;r.dispatchEvent(new Event('change',{bubbles:true}));",
+   "no": 3,
+   "name": "אחרי - סיום המחולל בעיצוב ספרדי"
+  }
+ ]
+}

@@ -1,0 +1,19 @@
+{
+ "title": "דפי הברית - לפני",
+ "prefix": "ב",
+ "serve_dir": "C:\\Users\\Admin\\AppData\\Local\\Temp\\claude\\cbc8e0d8aa79ea4a\\9294f583-2711-4538-990f-1cfec20773ec\\scratchpad\\before",
+ "shots": [
+  {
+   "path": "/mohel/",
+   "selector": "nav.tools",
+   "no": 2,
+   "name": "לפני - עמוד הבית - כרטיס חדש"
+  },
+  {
+   "path": "/mohel/hachana/tekes/",
+   "selector": "main section",
+   "no": 4,
+   "name": "לפני - הכנות לטקס - קישור"
+  }
+ ]
+}

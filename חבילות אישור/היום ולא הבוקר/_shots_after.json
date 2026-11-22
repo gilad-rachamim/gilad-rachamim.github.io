@@ -1,0 +1,13 @@
+{
+ "title": "היום ולא הבוקר - אחרי",
+ "prefix": "ב",
+ "serve_dir": "C:\\Users\\Admin\\sites\\gilad-rachamim.github.io",
+ "shots": [
+  {
+   "path": "/mohel/",
+   "selector": "section.verse",
+   "no": 2,
+   "name": "אחרי - פסקת הפתיחה"
+  }
+ ]
+}
