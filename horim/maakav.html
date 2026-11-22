@@ -20,7 +20,7 @@ p.draft,div.draft.box{border:1px solid #ecd98a;border-radius:10px;text-align:rig
 .brand .lbl{color:var(--gold);font-size:16px;font-weight:700}
 .brand strong{font-size:1.45rem;color:var(--green);line-height:1.3}
 .brand .sub2{color:var(--muted);font-size:16px}
-.brand a{color:var(--green);font-weight:700;font-size:1.05rem}
+.brand a{color:var(--green);font-weight:700;font-size:1.05rem;display:inline-block;min-height:44px;padding:.55rem .8rem}
 .demo{background:var(--soft);border:1px dashed var(--gold);border-radius:10px;padding:.7rem .9rem;text-align:right;font-size:16px;margin:0 0 1rem}
 .kicker{margin:0;color:var(--gold);font-weight:700;font-size:16px}
 h1{margin:.2rem 0 .5rem;color:var(--green);font-size:1.75rem;line-height:1.3}
@@ -36,6 +36,8 @@ a{color:var(--green)}
 .btn.gold{background:var(--gold);border-color:var(--gold);color:#fff}
 .btn.block{display:flex;width:100%}
 .btn.small{min-height:2.6rem;font-size:1rem;padding:.4rem .8rem}
+.btn:has(>[data-b]){display:inline-block;text-align:center;align-content:center}
+.btn.block:has(>[data-b]){display:block}
 .btn:disabled,.btn.off,a.off{opacity:.5;cursor:not-allowed;pointer-events:none}
 .btn small{display:block;font-size:16px;font-weight:400}
 .nowa{color:#7a4a12;background:#fdf1dc;border:1px solid #efd9ad;border-radius:10px;padding:.5rem .8rem;font-size:16px;margin:.5rem 0 0}
@@ -260,7 +262,9 @@ var MB = (function () {
   function stamp(ms) { return dm(ms) === dm(Date.now()) ? hm(ms) : dm(ms) + ' ' + hm(ms); }
   function dur(ms) {
     var m = Math.max(0, Math.floor(ms / 60000)), h = Math.floor(m / 60);
-    return h ? h + ' שעות ו-' + (m % 60) + ' דקות' : m + ' דקות';
+    var mm = m % 60, ht = h === 1 ? 'שעה' : h === 2 ? 'שעתיים' : h + ' שעות';
+    if (!h) return m ? (m === 1 ? 'דקה אחת' : m + ' דקות') : 'פחות מדקה';
+    return mm ? ht + ' ו' + (mm === 1 ? 'דקה' : '-' + mm + ' דקות') : (h === 1 ? 'שעה אחת' : ht);
   }
   function last(k) { var t = 0; st.ev.forEach(function (e) { if (e.k === k && e.t > t) t = e.t; }); return t; }
   function nameOf(e) {
