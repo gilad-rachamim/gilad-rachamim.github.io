@@ -1,0 +1,25 @@
+{
+ "title": "דפי הברית - אחרי",
+ "prefix": "ב",
+ "serve_dir": "C:\\Users\\Admin\\sites\\gilad-rachamim.github.io-dapim",
+ "shots": [
+  {
+   "path": "/mohel/dapim/",
+   "full_page": true,
+   "no": 1,
+   "name": "אחרי - עמוד הדפים החדש"
+  },
+  {
+   "path": "/mohel/",
+   "selector": "nav.tools",
+   "no": 3,
+   "name": "אחרי - עמוד הבית - כרטיס חדש"
+  },
+  {
+   "path": "/mohel/hachana/tekes/",
+   "selector": "main section",
+   "no": 5,
+   "name": "אחרי - הכנות לטקס - קישור"
+  }
+ ]
+}

@@ -60,19 +60,20 @@ miss = [r for r in refs if not (EXT / r).exists()]
 
 # HTML: scripts/styles exist, no inline script, no inline handlers, no external scripts, a11y layer, lang/dir/title
 used = set(refs)
-for h in sorted(EXT.glob('*.html')):
+for h in sorted(list(EXT.glob('*.html')) + list(EXT.glob('*/*.html'))):   # כולל תת-תיקיות (gesher/)
     s = h.read_text(encoding='utf-8')
     for src in re.findall(r'<script[^>]*\ssrc="([^"]+)"', s):
         if re.match(r'https?:', src): FAIL(f'{h.name}: external script {src}')
-        elif not (EXT / src).exists(): FAIL(f'{h.name}: missing script {src}')
+        elif not (h.parent / src).exists(): FAIL(f'{h.name}: missing script {src}')
         used.add(src)
     for href in re.findall(r'<link[^>]*\shref="([^"]+)"', s):
         if not re.match(r'https?:', href):
-            if not (EXT / href).exists(): FAIL(f'{h.name}: missing file {href}')
+            if not (h.parent / href).exists(): FAIL(f'{h.name}: missing file {href}')
             used.add(href)
     for img in re.findall(r'<img[^>]*\ssrc="([^"]+)"', s): used.add(img)
     if re.search(r'<script(?![^>]*\ssrc=)[^>]*>\s*\S', s): FAIL(f'{h.name}: inline <script> (blocked by MV3 CSP)')
     if re.search(r'\son[a-z]+="', s): FAIL(f'{h.name}: inline event handler (blocked by MV3 CSP)')
+    if h.name == 'offscreen.html': used.add(h.name); continue   # דף רקע נסתר (העתקה ללוח) – אין בו ממשק
     if 'a11y.css' not in s or 'a11y.js' not in s: FAIL(f'{h.name}: missing a11y.css/a11y.js')
     if not re.search(r'<html[^>]*lang="he"', s) or 'dir="rtl"' not in s: WARN(f'{h.name}: no lang="he" dir="rtl"')
     if not re.search(r'<title>[^<]+</title>', s): FAIL(f'{h.name}: no <title>')
@@ -82,7 +83,7 @@ OK('HTML: CSP / external scripts / a11y layer checked')
 
 # JS: syntax, remote code, files referenced from code
 js_all = ''
-for j in sorted(EXT.glob('*.js')):
+for j in sorted(list(EXT.glob('*.js')) + list(EXT.glob('*/*.js'))):
     s = j.read_text(encoding='utf-8', errors='replace'); js_all += s + '\n'
     if j.name.endswith('.min.js'): continue
     r = subprocess.run(['node', '--check', str(j)], capture_output=True, text=True)
@@ -105,7 +106,7 @@ unused = sorted(p.name for p in EXT.iterdir() if p.is_file() and p.name not in u
 API = {'contextMenus': r'chrome\.contextMenus', 'notifications': r'chrome\.notifications', 'storage': r'chrome\.storage',
        'scripting': r'chrome\.scripting', 'alarms': r'chrome\.alarms', 'tts': r'chrome\.tts', 'tabGroups': r'chrome\.tabGroups',
        'system.memory': r'chrome\.system\.memory', 'favicon': r'_favicon', 'sidePanel': r'chrome\.sidePanel',
-       'browsingData': r'chrome\.browsingData', 'tabs': r"permissions: \['tabs'\]|chrome\.tabs", 'topSites': r'chrome\.topSites',
+       'browsingData': r'chrome\.browsingData', 'offscreen': r'chrome\.offscreen', 'clipboardWrite': r"execCommand\('copy'\)", 'tabs': r"permissions: \['tabs'\]|chrome\.tabs", 'topSites': r'chrome\.topSites',
        'sessions': r'chrome\.sessions', 'unlimitedStorage': r'.', 'activeTab': r'chrome\.scripting|captureVisibleTab'}
 for p in man.get('permissions', []) + man.get('optional_permissions', []):
     rx = API.get(p)
@@ -115,7 +116,7 @@ OK(f'{len(man.get("permissions", []))} permissions + {len(man.get("optional_perm
 
 # a11y regression: tiny fonts in the extension's own CSS
 tiny = []
-for f in list(EXT.glob('*.css')) + list(EXT.glob('*.html')):
+for f in list(EXT.glob('*.css')) + list(EXT.glob('*.html')) + list(EXT.glob('*/*.css')) + list(EXT.glob('*/*.html')):
     if f.name == 'translate.css': continue
     for m in re.finditer(r'font(?:-size)?\s*:\s*(?:[a-z0-9]+\s+)?(\d+(?:\.\d+)?)px', f.read_text(encoding='utf-8')):
         if float(m.group(1)) < 13: tiny.append(f'{f.name}:{m.group(1)}px')

@@ -1,0 +1,40 @@
+{
+ "title": "קישורים למחולל, חבילה 2 - 4.11 - אחרי",
+ "prefix": "ש",
+ "serve_dir": "C:\\Users\\Admin\\sites\\gilad-rachamim.github.io",
+ "shots": [
+  {
+   "path": "/mohel/moed/",
+   "selector": "#moed-out",
+   "js": "document.getElementById('m-date').value='2026-11-02';document.getElementById('moed-form').requestSubmit();",
+   "no": 2,
+   "name": "אחרי - תוצאת המחשבון"
+  },
+  {
+   "path": "/mohel/hachana/tekes/",
+   "selector": "main .wrap > section",
+   "css": ".honors{display:none}",
+   "no": 4,
+   "name": "אחרי - פרק הכנות לטקס, אחרי הכיבודים"
+  },
+  {
+   "path": "/mohel/hachana/shalom-zachar/",
+   "selector": "main .wrap > section",
+   "css": "main .wrap > section > *:not(.list):not(.note):not(.tip):not(h2){display:none}",
+   "no": 6,
+   "name": "אחרי - שלום זכר, אחרי ציר הזמן"
+  },
+  {
+   "path": "/mohel/todah/",
+   "selector": "section.next:has(#next-h)",
+   "no": 8,
+   "name": "אחרי - עמוד התודה, הכלים"
+  },
+  {
+   "path": "/mohel/checklist/",
+   "selector": ".ck-group:has(input[value=catering])",
+   "no": 10,
+   "name": "אחרי - רשימת ההכנה, קבוצת לטקס"
+  }
+ ]
+}

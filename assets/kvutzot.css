@@ -1,0 +1,61 @@
+/* קבוצות וואטסאפ שמתאימות לכם (/kelim/kehila/kvutzot-whatsapp/). הרעיון באדיבות אהרן גרינברג. */
+.kv-fs{border:0;padding:0;margin:0 0 .9rem}
+.kv-fs legend{color:var(--cream);font-weight:600;margin-bottom:.4rem}
+.kv-chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.kv-chip{position:relative;cursor:pointer}
+.kv-chip input{position:absolute;opacity:0;width:1px;height:1px}
+.kv-chip span{display:inline-block;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--parchment);border-radius:999px;padding:.38rem .8rem;font-size:.95rem;min-height:2.2rem;line-height:1.4}
+.kv-chip input:checked+span{background:rgba(227,183,101,.2);border-color:var(--gold);color:var(--cream)}
+.kv-chip input:checked+span::before{content:"✓ "}
+.kv-chip input:focus-visible+span{outline:2px solid var(--gold);outline-offset:2px}
+.kv-two{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+@media (max-width:420px){.kv-two{grid-template-columns:1fr}}
+.kv-hint{color:var(--muted);font-size:.9rem;margin:.35rem 0 0}
+.kv-more-q,.kv-rm-box{margin:.4rem 0 1rem;color:var(--parchment)}
+.kv-more-q summary,.kv-rm-box summary{cursor:pointer;color:var(--gold);padding:.3rem 0}
+.kv-more-q .kv-chips{margin-top:.5rem}
+.kv-res{margin-top:1.2rem}
+.kv-res:empty{display:none}
+.kv-demo{color:var(--muted);font-size:.92rem;text-align:center;margin-bottom:.6rem}
+.kv-count{color:var(--cream);font-weight:600;margin-bottom:.6rem}
+.kv-card{border:1px solid var(--line);border-radius:14px;padding:.9rem 1rem;margin-bottom:.7rem;background:rgba(255,255,255,.03);color:var(--parchment)}
+.kv-card h3{color:var(--cream);font-size:1.12rem;margin:0 0 .3rem}
+.kv-card h3 small{color:var(--muted);font-weight:400;font-size:.85rem}
+.kv-card p{margin:.3rem 0}
+.kv-why{color:var(--muted);font-size:.92rem}
+.kv-why b{color:var(--gold);font-weight:600}
+.kv-act{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-top:.6rem}
+.kv-rep,.kv-link{background:none;border:0;color:var(--muted);text-decoration:underline;font:inherit;font-size:.9rem;cursor:pointer;padding:.3rem}
+.kv-link{color:var(--gold)}
+.kv-msg{color:var(--gold);font-size:.92rem;min-height:1em}
+.kv-msg:empty{min-height:0;margin:0}
+.kv-empty{border:1px dashed var(--gold-soft);border-radius:14px;padding:1rem;text-align:center;color:var(--parchment)}
+.kv-empty .btn{margin-top:.6rem}
+.kv-err{color:#e8b48c;text-align:center}
+.kv-more{text-align:center;color:var(--muted);margin-top:.4rem}
+.kv-safe{border:1px solid var(--gold-soft);border-radius:16px;background:rgba(227,183,101,.07)}
+.kv-safe ul{margin:.4rem 0 0;padding-inline-start:1.2rem;color:var(--parchment)}
+.kv-safe li{margin-bottom:.45rem}
+.kv-check{display:flex;gap:.5rem;align-items:flex-start;color:var(--parchment);margin:.6rem 0;font-size:.95rem}
+.kv-check input{margin-top:.3rem;width:1.1rem;height:1.1rem;flex:none}
+.kv-credit{color:var(--muted);font-size:.9rem;margin-top:1rem}
+code.kv-code{direction:ltr;display:inline-block;background:var(--ink);padding:.2rem .5rem;border-radius:8px;user-select:all}
+/* שדרוגים 21.11: חדשה, סגנון, שליחה לחבר, הקראה, חיפוש שמור */
+.kv-new{display:inline-block;background:var(--gold);color:#fff;font-size:.72rem;font-weight:700;border-radius:999px;padding:.1rem .55rem;vertical-align:middle;margin-inline-start:.35rem}
+.kv-kind{color:var(--muted);font-size:.88rem;margin:.2rem 0}
+.kv-note{background:rgba(201,162,39,.12);border-radius:10px;padding:.5rem .7rem;font-size:.92rem;margin-bottom:.5rem}
+.kv-share{color:#128c7e;font-size:.9rem;text-decoration:underline;padding:.3rem}
+.kv-tts{text-align:center;margin:.2rem 0 .6rem}
+.kv-saved-msg{background:rgba(18,140,126,.1);border-radius:10px;padding:.6rem .8rem;text-align:center;margin-bottom:.6rem}
+.kv-ok{color:#128c7e;font-size:.9rem}
+/* מסלול שותפים 22.11: קבוצה מאומתת, ארגונים שותפים, סטטיסטיקה למנהל, תמיכה */
+.kv-ver{font-size:.9rem;color:var(--parchment);margin:.1rem 0 .3rem}
+.kv-ver-tag{display:inline-block;background:rgba(18,140,126,.18);color:#7fd8c9;border:1px solid rgba(18,140,126,.5);font-size:.78rem;font-weight:700;border-radius:999px;padding:.05rem .55rem}
+.kv-partners{list-style:none;margin:.5rem 0;padding:0;color:var(--parchment)}
+.kv-partners li{padding:.35rem 0;border-bottom:1px solid var(--line)}
+.kv-partners small{color:var(--muted)}
+.kv-bars{list-style:none;margin:.6rem 0;padding:0}
+.kv-bars li{display:grid;grid-template-columns:3.6rem 1fr 2rem;gap:.4rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.15rem 0}
+.kv-bars i{display:block;height:.7rem;min-width:2px;background:var(--gold);border-radius:4px}
+.kv-bars b{color:var(--cream);text-align:start}
+.kv-support{text-align:center;color:var(--muted);font-size:.92rem;margin-top:1rem}
