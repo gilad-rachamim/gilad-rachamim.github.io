@@ -1,0 +1,28 @@
+/* זמני שבת באנגלית (/kodesh/shabat/en/) */
+.sh-pick{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin:8px 0 12px}
+.sh-pick label{display:flex;flex-direction:column;gap:4px;font-size:.9rem;flex:1 1 200px}
+.sh-pick select{min-height:44px;font-size:1rem;padding:6px 8px;border-radius:10px;border:1px solid var(--line,#d9d2c3);background:transparent;color:var(--cream,inherit)}
+.sh-pick select option{color:#111;background:#fff}
+.sh-pick .btn{min-height:44px}
+#sh-gps-msg{flex-basis:100%;margin:0;font-size:.9rem;min-height:1em}
+.sh-hero{border:1px solid var(--gold,#b8892b);border-radius:14px;padding:14px;background:rgba(184,137,43,.07);margin:6px 0 12px}
+.sh-where{margin:0 0 10px;font-weight:700;color:var(--gold-hi,var(--gold,#b8892b))}
+.sh-two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sh-two>div{display:flex;flex-direction:column;gap:2px}
+.sh-two strong{font-size:.9rem;opacity:.85}
+.sh-two b{font-size:2.1rem;line-height:1.15;color:var(--gold-hi,var(--gold,#b8892b))}
+.sh-two span{font-size:.88rem;opacity:.8}
+.sh-two .sh-rt{margin-top:4px;opacity:.9}
+.sh-note{margin:10px 0 0;font-size:.92rem}
+.sh-count{margin:10px 0 0;font-weight:700}
+.sh-wrap{overflow-x:auto}
+.sh-tbl td{white-space:normal}
+.sh-tbl tr.now th,.sh-tbl tr.now td{background:rgba(184,137,43,.1)}
+.sh-tbl b{font-weight:700}
+.sh-cap{caption-side:top;text-align:start;font-weight:700;padding:0 0 6px}
+@media (max-width:420px){.sh-two b{font-size:1.7rem}.sh-tbl{font-size:.9rem}.sh-tbl th,.sh-tbl td{padding:.45rem .2rem}}
+@media print{
+  .no-print,.k-nav,header.site-header,footer,.seo-txt,.seo-faq,.sh-pick{display:none!important}
+  .sh-hero{border:1px solid #999;background:none}
+  .sh-tbl th,.sh-tbl td{color:#000!important}
+}
