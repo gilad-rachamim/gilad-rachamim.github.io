@@ -47,3 +47,15 @@
 .kr-meta{font-family:var(--sans,inherit);font-size:.95rem;color:#5e5644;text-align:center;line-height:1.6;margin:.1rem 0 .8rem!important}
 .bk-paper.dark .kr-meta{color:#a99d80}
 @media print{.kr-pn,.kr-today{display:none!important}}
+/* transliteration and translation blocks on the English and Russian pages */
+.kr-tr{font-family:var(--sans,system-ui,sans-serif);direction:ltr;text-align:left;margin:.6rem 0 1.1rem;border:1px solid #e3d3a6;border-inline-start:5px solid #2f6b8a;border-radius:10px;padding:.35rem .8rem .55rem;background:#f6fafc}
+.bk-paper .kr-tr p{font-size:1.02rem;line-height:1.65;margin:.3rem 0;text-align:left}
+.bk-paper .kr-tr p.kr-tr-t{font-weight:700;color:#1f4f69;font-size:.95rem;margin-top:.6rem;letter-spacing:.01em}
+.bk-paper .kr-tr p.kr-tr-x{font-size:1.1rem;line-height:1.8}
+.bk-paper .kr-tr p.kr-tr-s{font-size:.86rem;color:#5c6670;line-height:1.5}
+.bk-paper.dark .kr-tr{background:#17212d;border-color:#33404f;border-inline-start-color:#5b9fc2}
+.bk-paper.dark .kr-tr p.kr-tr-t{color:#9fcbe3}
+.bk-paper.dark .kr-tr p.kr-tr-s{color:#a3adb8}
+html[dir=ltr] .bk-paper [lang=he]{direction:rtl;text-align:right}
+html[dir=ltr] .bk-paper [lang=he] [dir=ltr]{direction:ltr;text-align:left}
+html[dir=ltr] .bk-foot,html[dir=ltr] .kr-nus-now{text-align:left}

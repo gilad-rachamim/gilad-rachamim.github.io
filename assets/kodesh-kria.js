@@ -4,6 +4,12 @@
 (function () {
   var paper = document.getElementById("kr-paper");
   if (!paper) return;
+  // דפים באנגלית וברוסית: מילות הכפתורים לפי שפת הדף. בעברית הכול נשאר כמו שהיה.
+  var LG = (document.documentElement.lang || "he").slice(0, 2);
+  var TX = {
+    en: { light: "Light background", dark: "Dark background", smaller: "Smaller text", bigger: "Larger text", a_minus: "A-", a_plus: "A+", wake_on: "✓ Screen stays on", wake_off: "Keep screen on", today: "Today:" },
+    ru: { light: "Светлый фон", dark: "Тёмный фон", smaller: "Мельче", bigger: "Крупнее", a_minus: "A-", a_plus: "A+", wake_on: "✓ Экран не гаснет", wake_off: "Не гасить экран", today: "Сегодня:" }
+  }[LG] || { light: "רקע בהיר", dark: "רקע כהה", smaller: "אות קטנה יותר", bigger: "אות גדולה יותר", a_minus: "א-", a_plus: "א+", wake_on: "✓ המסך דולק", wake_off: "המסך לא ייכבה", today: "היום:" };
   var TOOL = paper.getAttribute("data-tool") || "kria";
   var KEY = "kodesh-kria-" + (paper.getAttribute("data-key") || TOOL);
   var FSKEY = "kodesh-kria-fs";
@@ -31,7 +37,7 @@
     if (darkBtn) {
       darkBtn.setAttribute("aria-pressed", st.dark ? "true" : "false");
       darkBtn.textContent = st.dark ? "☀️" : "🌙";
-      darkBtn.setAttribute("aria-label", st.dark ? "רקע בהיר" : "רקע כהה");
+      darkBtn.setAttribute("aria-label", st.dark ? TX.light : TX.dark);
     }
     var lab = document.getElementById("kr-nlabel");
     if (lab) {
@@ -59,7 +65,7 @@
   if (bar) {
     var fl = document.createElement("div");
     fl.className = "bk-float"; fl.setAttribute("aria-hidden", "true");
-    fl.innerHTML = '<button type="button" class="bk-ic" data-fs="-1" tabindex="-1" aria-label="אות קטנה יותר">א-</button><button type="button" class="bk-ic" data-fs="1" tabindex="-1" aria-label="אות גדולה יותר">א+</button>';
+    fl.innerHTML = '<button type="button" class="bk-ic" data-fs="-1" tabindex="-1" aria-label="' + TX.smaller + '">' + TX.a_minus + '</button><button type="button" class="bk-ic" data-fs="1" tabindex="-1" aria-label="' + TX.bigger + '">' + TX.a_plus + '</button>';
     var nav = bar.querySelector(".bk-nav");
     if (nav) {
       var nav2 = nav.cloneNode(true);
@@ -99,7 +105,7 @@
   if (wakeBtn && "wakeLock" in navigator) {
     wakeBtn.hidden = false;
     var lock = null, wantLock = false;
-    var setUi = function () { wakeBtn.setAttribute("aria-pressed", lock ? "true" : "false"); wakeBtn.textContent = lock ? "✓ המסך דולק" : "המסך לא ייכבה"; };
+    var setUi = function () { wakeBtn.setAttribute("aria-pressed", lock ? "true" : "false"); wakeBtn.textContent = lock ? TX.wake_on : TX.wake_off; };
     var req = function () {
       navigator.wakeLock.request("screen").then(function (l) {
         lock = l; setUi();
@@ -124,6 +130,6 @@
     var out = [];
     if (y) out.push('<a href="' + y.getAttribute("data-href") + '">' + y.getAttribute("data-label") + "</a>");
     if (w) out.push('<a href="' + w.getAttribute("data-href") + '">' + w.getAttribute("data-label") + "</a>");
-    if (out.length) { today.innerHTML = "<b>היום:</b> " + out.join(" · "); today.hidden = false; }
+    if (out.length) { today.innerHTML = "<b>" + TX.today + "</b> " + out.join(" · "); today.hidden = false; }
   }
 })();
