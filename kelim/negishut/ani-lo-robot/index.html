@@ -120,7 +120,7 @@
     <input id="nr-ans" type="text" inputmode="numeric" autocomplete="off" maxlength="4" dir="ltr">
     <button type="button" class="btn btn-line" id="nr-verify">בדיקה</button>
     <p id="nr-pr-msg" class="nr-msg" role="status" aria-live="polite"></p>
-    <details class="nr-det"><summary>אין לי קול, או שאני רוצה לראות את הספרות</summary><p>הספרות הנוכחיות: <span id="nr-show" dir="ltr"></span></p></details>
+    <details class="nr-det" data-noread><summary>אין לי קול, או שאני רוצה לראות את הספרות</summary><p>הספרות הנוכחיות: <span id="nr-show" dir="ltr"></span></p></details>
   </section>
 
   <section class="nr-card" aria-labelledby="nr-lt-h">
@@ -264,7 +264,7 @@
   <button class="x" type="button" data-install-close aria-label="סגירה">×</button>
 </div>
 <script src="/assets/kelim.js?v=53f855ae" defer></script>
-<script src="/assets/negishut-robot.js?v=7b786d0d" defer></script>
+<script src="/assets/negishut-robot-core.js?v=84a54d70" defer></script><script src="/assets/negishut-robot.js?v=77a3c33d" defer></script>
 <script src="/assets/hakraa-daf.js?v=5b6fd0b2" defer></script>
 <script src="/assets/search.js?v=23b2af53" defer></script>
 </body>

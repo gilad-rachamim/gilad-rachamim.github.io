@@ -7,6 +7,7 @@ import { HDate, HebrewCalendar, Zmanim, GeoLocation, Locale, flags, DailyLearnin
 import '@hebcal/learning'; // רושם את הדף היומי, משניות יומיות ונ"ך יומי
 import * as HC from '@hebcal/core';
 import taharaFactory from '../../assets/tahara-core.js'; // אותה ליבה בדיוק של /kodesh/tahara/ – לא משנים ולא מעתיקים
+import robotCore from '../../assets/negishut-robot-core.js'; // אותם צעדים בדיוק כמו בדף /kelim/negishut/ani-lo-robot/ – לא מעתיקים
 
 const TZ = 'Asia/Jerusalem';
 const VERSION = 2;
@@ -28,7 +29,7 @@ const CITIES = [
 ];
 const CITY_MENU = CITIES.slice(1).map((c, i) => `ל${c[0]} הקישו ${i + 1}`).join(' ');
 
-const MENU = 'לזמני היום הקישו 1. לתאריך העברי ולחגים הקרובים הקישו 2. למחשבון ברית בר מצווה ויארצייט הקישו 3. לזמני שבת הקישו 4. להשארת הודעה ובקשת עזרה הקישו 5. לדף היומי ולמשניות יומיות הקישו 6. לזמני חנוכה הקישו 7. לחדשות בשלוש דקות הקישו 8. למחשבון וסתות הקישו 9. לסיום הקישו 0';
+const MENU = 'לזמני היום הקישו 1. לתאריך העברי ולחגים הקרובים הקישו 2. למחשבון ברית בר מצווה ויארצייט הקישו 3. לזמני שבת הקישו 4. להשארת הודעה, או עזרה באימות אני לא רובוט לעיוורים, הקישו 5. לדף היומי ולמשניות יומיות הקישו 6. לזמני חנוכה הקישו 7. לחדשות בשלוש דקות הקישו 8. למחשבון וסתות הקישו 9. לסיום הקישו 0';
 const WELCOME = 'שלום וברוכים הבאים לקו הכלים של גילעד רחמים. כל הכלים בחינם ובלי אינטרנט. אפשר להקיש בכל רגע בלי לחכות לסוף ההודעה';
 const SHARE = 'מכירים מישהו שזה יעזור לו? ספרו לו על הקו';
 const LINE_NUMBER = '0772253345';
@@ -360,6 +361,32 @@ function toolVestot(date, a, prevDate) {
   return out;
 }
 
+// ---------- עזרה באימות "אני לא רובוט" (שלוחה 5, אפשרות 1) ----------
+// הצעדים נלקחים מאותה ליבה של הדף, ורק מחליפים מילים באנגלית בתעתיק, כי הקול של ימות לא קורא אותן טוב.
+const SPEAK = [
+  [/ל-Apple Account/g, 'לחשבון אפל'], [/Apple Account/g, 'חשבון אפל'], [/Sign-In & Security/g, 'סיין אין אנד סקיוריטי'], [/Automatic Verification/g, 'אוטומטיק ורי פיקיישן'],
+  [/Verification expired/g, 'ורי פיקיישן אקספייר'], [/You are verified/g, 'יו אר ורי פייד'], [/Accessibility Challenge/g, 'אקססיביליטי צאלנג'],
+  [/NVDA/g, 'אן וי די איי'], [/JAWS/g, 'גוז'], [/VoiceOver/g, 'וויס אובר'], [/TalkBack/g, 'טוק בק'], [/hCaptcha/g, 'אייץ קאפצה'],
+  [/Cloudflare/g, 'קלאודפלייר'], [/Turnstile/g, 'טרנסטייל'], [/JavaScript/g, 'ג׳אווה סקריפט'], [/VPN/g, 'וי פי אן'], [/WCAG 2\.2/g, 'וו קאג שתיים נקודה שתיים'],
+  [/reCAPTCHA/gi, 'ריקאפצה'], [/Verify/g, 'ורי פיי'], [/Play/g, 'פליי'], [/Enter/g, 'אנטר'], [/Tab/g, 'טאב'], [/VO\+/g, 'וי או פלוס '],
+  [/\bR\b/g, 'אר'], [/\bAA\b/g, 'איי איי'], [/audio/g, 'אודיו'], [/get an audio challenge/g, 'גט אן אודיו צאלנג'], [/hcaptcha\.com\/accessibility/g, 'אתר אייץ קאפצה בדף הנגישות'],
+  [/support@hcaptcha\.com/g, 'כתובת התמיכה שלהם, שמופיעה בדף באתר'], [/\(|\)/g, ' '], [/\+/g, ' ']
+];
+function speakable(t) {
+  let x = String(t);
+  for (const [re, to] of SPEAK) x = x.replace(re, to);
+  return x.replace(/[A-Za-z]+/g, ' ');
+}
+const ROBOT_DEV_MENU = 'באיזה מכשיר אתם. מחשב ווינדוס עם קורא מסך הקישו 1. מחשב מק הקישו 2. אייפון או אייפד הקישו 3. טלפון אנדרואיד הקישו 4';
+const ROBOT_SIT_MENU = 'מה קורה על המסך. תיבת סימון אני לא רובוט הקישו 1. אתגר תמונות הקישו 2. הודעה על תנועה חריגה הקישו 3. אימות אייץ קאפצה הקישו 4. מאמת שאתה אנושי של קלאודפלייר הקישו 5. גרירת חלק או אין כפתור שמע הקישו 6';
+function toolRobot(dev, sit) {
+  const s = robotCore.steps(robotCore.DEV_KEYS[dev - 1], robotCore.SIT_KEYS[sit - 1]);
+  const out = [speakable(s.title), ...s.items.map((x, i) => `צעד ${words(i + 1).replace('אחת', 'ראשון').replace('שתיים', 'שני')}. ${speakable(x)}`)];
+  if (s.extra) out.push('טיפ שחוסך אימותים באפל', speakable(s.extra));
+  out.push('כל הנתונים נבדקו מול דפי העזרה הרשמיים. הפרטים המלאים, אזור תרגול ומכתב מוכן לרכז הנגישות, בדף אני לא רובוט באתר הכלים של גילעד רחמים');
+  return out;
+}
+
 // ---------- המכונה: מה לשאול עכשיו ----------
 function menuRead(round, intro) {
   if (round >= MAX_ROUNDS) return sayAndHangup([...(intro || []), 'תודה שהתקשרתם. להתראות']);
@@ -425,6 +452,14 @@ function decide(v, sponsor = '', news = null) {
     return { text: after(toolVestot(date, a, prev)), event: 'vestot' };
   }
   if (tool === '5') {
+    const h = v[`h${r}`];
+    if (h !== '1' && h !== '2') return { text: readDigits(['לעזרה באימות אני לא רובוט, לעיוורים, הקישו 1. להשארת הודעה הקישו 2'], `h${r}`, { allowed: '1.2' }) };
+    if (h === '1') {
+      const dv = +v[`e${r}`], st = +v[`s${r}`];
+      if (!(dv >= 1 && dv <= 4)) return { text: readDigits([ROBOT_DEV_MENU], `e${r}`, { allowed: '1.2.3.4' }) };
+      if (!(st >= 1 && st <= 6)) return { text: readDigits([ROBOT_SIT_MENU], `s${r}`, { allowed: '1.2.3.4.5.6' }) };
+      return { text: after(toolRobot(dv, st)), event: 'robot' };
+    }
     if (v[`r${r}`] === undefined) {
       return { text: readRecord(['אחרי הצפצוף אמרו את השם ומספר הטלפון ובמה אפשר לעזור. למשל פקס דחוף. בסיום הקישו סולמית'], `r${r}`, `${Date.now()}`) };
     }
