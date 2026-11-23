@@ -225,7 +225,7 @@ write("kelim/tamlul/yutub", {
 NA_BODY = f"""
 <header class="k-hero tlp-hero">
   <h1>תמלול שיעורי כולל נחלת אבות</h1>
-  <p class="sub">מדביקים קישור לדף של שיעור מהאתר של כולל נחלת אבות, ומקבלים את השיעור כתוב ומסודר: קובץ PDF, קובץ Word וטקסט להעתקה.</p>
+  <p class="sub">מדביקים קישור לדף של שיעור מהאתר של <a href="https://nahalat-avot.com/" target="_blank" rel="noopener">כולל נחלת אבות</a>, ומקבלים את השיעור כתוב ומסודר: קובץ PDF, קובץ Word וטקסט להעתקה.</p>
 </header>
 {tool_block("na", "הקישור לדף השיעור באתר נחלת אבות", "https://nahalat-avot.com/lesson/...", "",
             "לתמלל את השיעור",
