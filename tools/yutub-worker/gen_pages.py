@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """gen_pages.py - כותב את שני דפי המקור של הכלי (כדי שה-FAQ בדף וה-JSON-LD יהיו תמיד אותו טקסט):
   src/pages/kelim/tamlul/yutub/index.html          "תמלול מיוטיוב" - לכולם
-  src/pages/kelim/tamlul/nahalat-avot/index.html   דף ייעודי לכולל נחלת אבות (noindex עד שמאשרים לפרסם)
+  src/pages/kelim/tamlul/nahalat-avot/index.html   דף ייעודי לכולל נחלת אבות (פתוח לגוגל מ-23.11.2026, באישור גילעד)
 הרצה: python tools/yutub-worker/gen_pages.py   ואז python build.py
 """
 import json
@@ -234,12 +234,12 @@ NA_BODY = f"""
 """
 
 write("kelim/tamlul/nahalat-avot", {
-    "noindex": True, "site": "kelim", "nav": "tamlul", "tool": "tamlul_nahalat_avot",
+    "site": "kelim", "nav": "tamlul", "tool": "tamlul_nahalat_avot",
     "title": "תמלול שיעורי כולל נחלת אבות ל-PDF ולוורד | הכלים של גילעד רחמים",
     "description": "תמלול שיעורים מהאתר של כולל נחלת אבות: מדביקים קישור לדף השיעור ומקבלים אותו כתוב, כקובץ PDF מסודר, כקובץ Word וכטקסט.",
     "og_title": "תמלול שיעורי כולל נחלת אבות",
-    "priority": "0.3",
+    "priority": "0.6",
     "crumbs": [["תמלול", "/kelim/tamlul/"], ["כולל נחלת אבות", None]],
-    "head": "<meta name=\"robots\" content=\"noindex\">" + STYLE,
+    "head": STYLE,
     "foot": "<script src=\"/assets/tamlul-yutub.js\" defer></script>",
 }, NA_BODY)
