@@ -231,7 +231,7 @@
       if (!c) return;
       var res = search(text, LANG), note = '';
       if (!res.length && LANG !== 'he') { res = search(text, 'he'); note = res.length ? '<p class="hk-note">' + UI.none + '</p>' : ''; }
-      if (!res.length) { track('hakelim_search', { how: 'no_result' }); suggest(text.trim()); setOpen(true); return; }
+      if (!res.length) { track('hakelim_search', { how: 'no_result' }); try { document.dispatchEvent(new Event('hk-noresult')); } catch (e) {} suggest(text.trim()); setOpen(true); return; }
       lastText = text; lastRes = res; render(res, text);
       if (note) out.insertAdjacentHTML('afterbegin', note);
       setOpen(true);
