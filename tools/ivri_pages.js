@@ -248,5 +248,7 @@ require('./ivri_ru_hag.js')({ I, H, L: require(path.join(ROOT, 'assets/kodesh-iv
 require('./ivri_en.js')({ I, H, L: require(path.join(ROOT, 'assets/kodesh-ivri-en.js')), T, CIV, HY, ROOT, path, write, faqLd, faqHtml, strip, WA, ALT, LANGNAV });
 // ======================= דף החגים באנגלית (חוץ לארץ) =======================
 require('./ivri_en_hag.js')({ I, H, L: require(path.join(ROOT, 'assets/kodesh-ivri-en.js')), T, CIV, HY, ROOT, path, write, faqLd, faqHtml, WA, LANGNAV, ALT3: { he: '/kodesh/luach-ivri/', ru: '/kodesh/luach-ivri/ru/prazdniki/', en: '/kodesh/luach-ivri/en/holidays/' } });
+// ======================= דף נפרד לכל חג באנגלית =======================
+require('./ivri_en_chag_each.js')({ I, H, L: require(path.join(ROOT, 'assets/kodesh-ivri-en.js')), CIV, HY, ROOT, path, write, faqLd, faqHtml, WA });
 for (const lg of ['ru', 'en']) require('./ivri_taarich_l.js')({ I, H, L: require(path.join(ROOT, 'assets/kodesh-ivri-' + lg + '.js')), T, CIV, HY, ROOT, path, write, faqLd, faqHtml, WA, ALT2, LANGNAV }, lg);
-console.log('נכתבו 8 דפים · היום', C.dmy(CIV), C.heb(T.hdDay));
+console.log('נכתבו 16 דפים · היום', C.dmy(CIV), C.heb(T.hdDay));

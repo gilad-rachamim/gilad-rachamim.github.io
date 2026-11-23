@@ -562,11 +562,19 @@
   <url><loc>https://hakelim.com/kodesh/kibudim-yechida/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/kiddush/en/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/luach/</loc><lastmod>2026-11-15</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kodesh/luach-ivri/en/holidays/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kodesh/luach-ivri/en/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kodesh/luach-ivri/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kodesh/luach-ivri/ru/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kodesh/luach-ivri/ru/prazdniki/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/luach-ivri/en/holidays/hanukkah/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kodesh/luach-ivri/en/holidays/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/luach-ivri/en/holidays/passover/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kodesh/luach-ivri/en/holidays/purim/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kodesh/luach-ivri/en/holidays/rosh-hashanah/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kodesh/luach-ivri/en/holidays/shavuot/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kodesh/luach-ivri/en/holidays/sukkot/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kodesh/luach-ivri/en/holidays/tu-bishvat/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kodesh/luach-ivri/en/holidays/yom-kippur/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kodesh/luach-ivri/en/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/luach-ivri/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/luach-ivri/ru/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/luach-ivri/ru/prazdniki/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/luach-shana/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/masach/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/mekorot/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
@@ -648,8 +656,8 @@
   <url><loc>https://hakelim.com/kodesh/sipurim/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/taarich-ivri/en/hebrew-birthday/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/taarich-ivri/en/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kodesh/taarich-ivri/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kodesh/taarich-ivri/ru/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/taarich-ivri/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/taarich-ivri/ru/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/taarichim/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/tahara/hefsek-tahara/</loc><lastmod>2026-11-20</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/tahara/</loc><lastmod>2026-11-20</lastmod><priority>0.8</priority></url>
