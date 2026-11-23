@@ -227,6 +227,7 @@
   <url><loc>https://hakelim.com/kelim/machshev/kasher/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/machshev/kav/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/machshev/kitzur-kishurim/bechinam/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kelim/machshev/kitzur-kishurim/bitly/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/machshev/kitzur-kishurim/</loc><lastmod>2026-11-23</lastmod><priority>0.9</priority></url>
   <url><loc>https://hakelim.com/kelim/machshev/kitzur-kishurim/link/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/machshev/kitzur-kishurim/url/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
@@ -613,7 +614,8 @@
   <url><loc>https://hakelim.com/kodesh/luach-shana/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/masach/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/mekorot/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
-  <url><loc>https://hakelim.com/kodesh/mezuzah/en/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/mezuzah/en/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/mezuzah/ru/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/mikledet/en/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/mincha/ashkenaz/</loc><lastmod>2026-11-22</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/mincha/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
@@ -685,6 +687,12 @@
   <url><loc>https://hakelim.com/kodesh/shema-israel/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/shema-israel/ru/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/shiur/</loc><lastmod>2026-11-12</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kodesh/shlichei-tzibur/mi-sheberach/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/shlichei-tzibur/pticha-heichal-shabbat/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/shlichei-tzibur/shabbat-mevarchim/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/shlichei-tzibur/shabbat-shacharit/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/shlichei-tzibur/shani-vachamishi/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/shlichei-tzibur/simchat-shabbat-chatan/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/shut/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/simcha/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/sipur/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
