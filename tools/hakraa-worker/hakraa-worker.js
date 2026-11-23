@@ -7,7 +7,10 @@
 
 const ALLOWED = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
-const TTS_PER = 400, TTS_CAP = 5000;   // קטעי קול: לכתובת ביום / לכל האתר ביום
+// תקציב של גילעד: 200 ₪ לחודש (23.11.2026), כלומר כ-6.6 ₪ ביום. קטע מלא (1200 תווים) עולה כ-0.09 ₪ עד סוף 2026
+// וכ-0.17 ₪ מ-1.1.2027 (המחיר של גוגל מוכפל). לכן התקרה היומית יורדת לבד בתחילת 2027.
+const TTS_PER = 30;                                              // קטעי קול לכתובת ביום
+const ttsCap = () => (Date.now() < Date.UTC(2027, 0, 1) ? 70 : 38); // קטעי קול לכל האתר ביום
 const SK_PER = 30, SK_CAP = 1500;      // סקירות
 const MAX_TTS = 1600, MAX_SKIRA = 120000;
 const TTS = ['gemini-3.8-flash-lite-tts', 'gemini-3.8-flash-tts', 'gemini-3.1-flash-tts-preview', 'gemini-2.5-flash-preview-tts'];
@@ -51,7 +54,7 @@ async function ttsRoute(request, env, h) {
   if (text.length > MAX_TTS) return json({ error: 'too_long' }, 413, h);
   const keys = geminiKeys(env);
   if (!keys.length) return json({ error: 'no_key' }, 200, h);
-  const quota = await take(env, request, 'tts', TTS_PER, TTS_CAP);
+  const quota = await take(env, request, 'tts', TTS_PER, ttsCap());
   if (!quota.ok) return json({ error: 'quota' }, 200, h);
   const body = JSON.stringify({
     contents: [{ parts: [{ text: text }] }],
