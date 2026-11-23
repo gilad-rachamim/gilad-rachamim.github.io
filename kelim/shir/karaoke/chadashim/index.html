@@ -24,7 +24,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="/kelim/manifest.webmanifest">
 <link rel="stylesheet" href="/assets/site.css?v=cb1a2bbb">
-<link rel="stylesheet" href="/assets/search.css?v=3d361e1c">
+<link rel="stylesheet" href="/assets/search.css?v=ddbbf324">
 <link rel="stylesheet" href="/assets/kelim.css?v=f8bd50a8">
 <!-- באפליקציית Google Play (TWA): בלי תרומות, בלי קישורי תמיכה ובלי "שותפות במיזם" בתשלום (Play Billing). טקסט שמזכיר שותפות: class="no-app" -->
 <script>(function(){var k="kelim-in-app";try{if((document.referrer||"").indexOf("android-app://com.hakelim.kelim")===0)sessionStorage.setItem(k,"1");if(sessionStorage.getItem(k)==="1")document.documentElement.classList.add("in-app");}catch(e){if((document.referrer||"").indexOf("android-app://com.hakelim.kelim")===0)document.documentElement.classList.add("in-app");}})();</script>
@@ -89,8 +89,9 @@
 <a class="skip" href="#main">דילוג לתוכן</a>
 <header class="topbar">
   <div class="in">
-    <a class="brand" href="/kelim/"><img src="/assets/icon-kelim-192.png" alt="" width="192" height="192"><b>מיזם הכלים של גילעד רחמים</b></a>
+    <a class="brand" href="/kelim/" aria-label="לדף הראשי של מיזם הכלים"><img src="/assets/icon-kelim-192.png" alt="" width="192" height="192"><b>מיזם הכלים של גילעד רחמים</b></a>
     <nav class="topnav" aria-label="ניווט ראשי"><a href="/kelim/#tchumim" aria-current="page">התחומים</a><a href="/kelim/tamlul/">תמלול</a><a href="/kodesh/">כלי קודש</a><a href="/kelim/bakasha/">רוצים כלי?</a><a href="/kelim/#litmoch">לתמוך</a><a href="/kelim/#mi">מי אני</a></nav>
+    <a class="hk-sbtn no-print" href="#hk-search" role="button" aria-label="חיפוש כלי" aria-controls="hk-q">🔍</a>
   </div>
 </header>
 <div id="hk-search" class="no-print"></div>
@@ -234,6 +235,6 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
 [].forEach.call(document.querySelectorAll('.ko-list li[data-q]'),function(x){var a=document.createElement('a');a.className='ko-get';a.href='https://t.me/GiladKaraokeBot?start=site_chadashim';a.target='_blank';a.rel='noopener';a.setAttribute('data-ko-copy',x.getAttribute('data-q'));a.setAttribute('data-mv','karaoke_new_get');a.textContent='לקבל בבוט';x.appendChild(a);});
 </script>
 <script src="/assets/hakraa-daf.js?v=5b6fd0b2" defer></script>
-<script src="/assets/search.js?v=663b0629" defer></script>
+<script src="/assets/search.js?v=2d0b04a5" defer></script>
 </body>
 </html>

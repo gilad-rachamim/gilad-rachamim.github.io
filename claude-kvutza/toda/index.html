@@ -24,7 +24,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="/kelim/manifest.webmanifest">
 <link rel="stylesheet" href="/assets/site.css?v=cb1a2bbb">
-<link rel="stylesheet" href="/assets/search.css?v=3d361e1c">
+<link rel="stylesheet" href="/assets/search.css?v=ddbbf324">
 <link rel="stylesheet" href="/assets/kelim.css?v=f8bd50a8">
 <!-- באפליקציית Google Play (TWA): בלי תרומות, בלי קישורי תמיכה ובלי "שותפות במיזם" בתשלום (Play Billing). טקסט שמזכיר שותפות: class="no-app" -->
 <script>(function(){var k="kelim-in-app";try{if((document.referrer||"").indexOf("android-app://com.hakelim.kelim")===0)sessionStorage.setItem(k,"1");if(sessionStorage.getItem(k)==="1")document.documentElement.classList.add("in-app");}catch(e){if((document.referrer||"").indexOf("android-app://com.hakelim.kelim")===0)document.documentElement.classList.add("in-app");}})();</script>
@@ -67,8 +67,9 @@
 <a class="skip" href="#main">דילוג לתוכן</a>
 <header class="topbar">
   <div class="in">
-    <a class="brand" href="/kelim/"><img src="/assets/icon-kelim-192.png" alt="" width="192" height="192"><b>מיזם הכלים של גילעד רחמים</b></a>
+    <a class="brand" href="/kelim/" aria-label="לדף הראשי של מיזם הכלים"><img src="/assets/icon-kelim-192.png" alt="" width="192" height="192"><b>מיזם הכלים של גילעד רחמים</b></a>
     <nav class="topnav" aria-label="ניווט ראשי"><a href="/kelim/#tchumim" aria-current="page">התחומים</a><a href="/kelim/tamlul/">תמלול</a><a href="/kodesh/">כלי קודש</a><a href="/kelim/bakasha/">רוצים כלי?</a><a href="/kelim/#litmoch">לתמוך</a><a href="/kelim/#mi">מי אני</a></nav>
+    <a class="hk-sbtn no-print" href="#hk-search" role="button" aria-label="חיפוש כלי" aria-controls="hk-q">🔍</a>
   </div>
 </header>
 <div id="hk-search" class="no-print"></div>
@@ -152,6 +153,6 @@
 <script src="/assets/kelim.js?v=53f855ae" defer></script>
 <script>(function(){var q=new URLSearchParams(location.search);if(q.get('s')!=='kvutza')return;var k='kvutza_purchase_sent',now=Date.now(),last=0;try{last=+localStorage.getItem(k)||0}catch(e){}if(now-last<864e5)return;try{localStorage.setItem(k,String(now))}catch(e){}if(window.fbq)fbq('track','Purchase',{value:19,currency:'ILS',content_name:'claude_kvutza',content_type:'product'});if(window.gtag)gtag('event','purchase',{value:19,currency:'ILS',transaction_id:'kvutza_'+now,items:[{item_id:'kNyeO',item_name:'claude_kvutza',price:19,quantity:1}]})})();</script>
 <script src="/assets/hakraa-daf.js?v=5b6fd0b2" defer></script>
-<script src="/assets/search.js?v=663b0629" defer></script>
+<script src="/assets/search.js?v=2d0b04a5" defer></script>
 </body>
 </html>

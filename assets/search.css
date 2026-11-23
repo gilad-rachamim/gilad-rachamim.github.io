@@ -24,3 +24,14 @@
 #hk-search .hk-topics a{background:#fff;border-color:rgba(128,128,128,.45)}
 #hk-search .hk-home a:hover,#hk-search .hk-home a:focus{background:#f0ead7}
 @media print{#hk-search{display:none}}
+
+/* כפתור 🔍 בסרגל הנדבק, קישור לבית התת-אתר ליד הלוגו */
+#hk-search{scroll-margin-top:4.5rem}
+.topbar .hk-sbtn{flex:none;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;box-sizing:border-box;margin-inline-start:.15rem;border-radius:50%;border:1px solid rgba(201,165,92,.5);color:var(--gold,#d8b35f);text-decoration:none;font-size:1.1rem;line-height:1}
+.topbar .hk-sbtn:hover,.topbar .hk-sbtn:focus-visible{background:rgba(201,165,92,.18)}
+.topbar .brand-sub{flex:none;display:inline-flex;align-items:center;min-height:32px;padding:0 .7rem;border-radius:999px;border:1px solid rgba(201,165,92,.4);font-size:.82rem;color:var(--gold,#d8b35f);text-decoration:none;white-space:nowrap}
+.topbar .brand-sub:hover,.topbar .brand-sub:focus-visible{background:rgba(201,165,92,.18)}
+#hk-search .hk-note{margin:.2rem .2rem .4rem;color:#eee;font-size:.9rem}
+@media (max-width:640px){.topbar .in{gap:.5rem;padding-inline:.8rem}.topbar .brand b{font-size:.95rem}}
+@media (max-width:520px){body:not(.site-kelim) .topbar .brand b{display:none}}
+@media print{.hk-sbtn{display:none}}
