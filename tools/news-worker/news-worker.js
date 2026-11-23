@@ -442,6 +442,8 @@ export function editionText(ed, links = {}, src = 'fb') {
   if (links.wa && src !== 'wa') out.push('', '📲 בערוץ הווטסאפ, 3 פעמים ביום:', links.wa);
   if (links.tg && src !== 'tg') out.push('', '✈️ בערוץ הטלגרם:', links.tg);
   out.push('בטלפון כשר: 077-2253345 שלוחה 8');
+  // 23.11.2026: בוט הכלים בטלגרם, עם מקור לפי הערוץ
+  out.push('', '🤖 כל הכלים של המיזם בבוט בטלגרם:', 'https://t.me/HakelimBot?start=' + (src === 'tg' ? 'tg' : src === 'wa' ? 'wa' : 'fb'));
   // 19.11.2026: שורת תמיכה קבועה – מיזם חסד, בלי כוונת רווח; הדף מציג ביט/פייבוקס ו-PayPal
   out.push('', '💛 מיזם חסד: בחינם, בלי פרסומות ובלי כוונת רווח. רוצים לעזור שזה יימשך?', SUPPORT_URL + '?utm_source=' + src + '#litmoch');
   return out.join('\n');
