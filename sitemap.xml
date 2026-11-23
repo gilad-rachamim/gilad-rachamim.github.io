@@ -260,7 +260,7 @@
   <url><loc>https://hakelim.com/kelim/miluim/tziyud/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/miluim/yamim/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/negishut/</loc><lastmod>2026-11-12</lastmod><priority>0.3</priority></url>
-  <url><loc>https://hakelim.com/kelim/pratiut/</loc><lastmod>2026-11-22</lastmod><priority>0.3</priority></url>
+  <url><loc>https://hakelim.com/kelim/pratiut/</loc><lastmod>2026-11-23</lastmod><priority>0.3</priority></url>
   <url><loc>https://hakelim.com/kelim/shemot/banim/</loc><lastmod>2026-11-17</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/shemot/banot/</loc><lastmod>2026-11-17</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/shemot/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
@@ -433,7 +433,13 @@
   <url><loc>https://hakelim.com/kelim/tochen/chatimat-mail/telefon/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/tochen/chaye/</loc><lastmod>2026-11-22</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/tochen/gdalim/</loc><lastmod>2026-11-22</lastmod><priority>0.7</priority></url>
-  <url><loc>https://hakelim.com/kelim/tochen/</loc><lastmod>2026-11-17</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/hakraa/</loc><lastmod>2026-11-23</lastmod><priority>0.9</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/hakraa/kraynut/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/hakraa/makri-tekstim/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/hakraa/pdf/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/hakraa/sfarim-muklatim/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/hakraa/tekst-ledibur/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kelim/tochen/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/tochen/kishur-wa/</loc><lastmod>2026-11-17</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/tochen/ktav-yad/digitalit/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/tochen/ktav-yad/</loc><lastmod>2026-11-15</lastmod><priority>0.8</priority></url>
