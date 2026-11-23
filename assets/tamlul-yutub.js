@@ -24,7 +24,9 @@
 
   function ev(name, extra) { try { if (window.kelimEv) window.kelimEv(name, extra || {}); } catch (e) { /* בלי מדידה */ } }
   function show(el, on) { if (el) el.hidden = !on; }
-  function fail(text) { err.textContent = text; show(err, true); show(box, false); go.disabled = false; }
+  // בזמן עבודה הטופס והכפתור נעלמים, כדי שיהיה ברור שלא צריך ללחוץ על שום דבר (23.11.2026)
+  function showForm(on) { form.style.display = on ? '' : 'none'; }
+  function fail(text) { err.textContent = text; show(err, true); show(box, false); go.disabled = false; showForm(true); }
   function fmtDur(s) { s = s | 0; var h = Math.floor(s / 3600), m = Math.round((s % 3600) / 60); return h ? h + ' שעות ו-' + m + ' דקות' : m + ' דקות'; }
 
   function normalize(v) {
@@ -39,21 +41,24 @@
   }
 
   function setProgress(j) {
-    show(box, true); show(err, false);
-    var text = j.msg || '';
+    show(box, true); show(err, false); showForm(false);
+    var text = j.msg || 'מעבד את השיעור', note = 'לא צריך ללחוץ על שום דבר. אפשר להשאיר את הדף פתוח או לסגור ולחזור אחר כך, התוצאה תחכה כאן.';
     if (j.status === 'queued') {
-      text = j.pos > 1 ? 'ממתין בתור, מקום ' + j.pos : 'השרת מתעורר, התמלול מתחיל בעוד רגע';
-      if (j.shabbat) text = 'בשבת הכלי נח. הקישור נשמר בתור, והתמלול יהיה מוכן במוצאי שבת';
-      else if (Date.now() - started > 4 * 60000) text += '. זה לוקח קצת יותר מהרגיל; אפשר להשאיר את הדף פתוח או לחזור אליו אחר כך';
+      text = j.pos > 1 ? 'הבקשה התקבלה. ממתין בתור, מקום ' + j.pos : 'הבקשה התקבלה. השרת מתעורר והתמלול מתחיל לבד';
+      note = 'לא צריך ללחוץ על שום דבר. ההתעוררות לוקחת בדרך כלל דקה או שתיים, לפעמים עד רבע שעה, ואחריה עוד כמה דקות של תמלול. אפשר לסגור את הדף ולחזור אחר כך.';
+      if (j.shabbat) { text = 'בשבת הכלי נח. הקישור נשמר בתור, והתמלול יהיה מוכן במוצאי שבת'; note = ''; }
     }
     msg.textContent = text;
+    var nt = $('yt-note');
+    if (!nt) { nt = document.createElement('p'); nt.id = 'yt-note'; nt.style.cssText = 'margin:.5rem 0 0;text-align:center'; box.appendChild(nt); }
+    nt.textContent = note;
     var pct = j.status === 'queued' ? 3 : Math.max(5, j.pct || 5);
     bar.style.width = pct + '%';
     bar.parentNode.setAttribute('aria-valuenow', String(pct));
   }
 
   function render(j) {
-    show(box, false); show(err, false); go.disabled = false;
+    show(box, false); show(err, false); go.disabled = false; showForm(true);
     $('yt-r-title').textContent = j.title || 'השיעור';
     var meta = [j.channel, j.date, j.dur ? fmtDur(j.dur) : '', j.words ? Number(j.words).toLocaleString('he-IL') + ' מילים' : ''].filter(Boolean).join(' · ');
     $('yt-r-meta').textContent = meta;
