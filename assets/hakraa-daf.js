@@ -408,6 +408,10 @@
     return 0;
   }
 
+  d.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && panel && !panel.hidden && !panel.contains(e.target)) { close(); }
+  });
+
   top.addEventListener('click', function (e) {
     var sel = selText();
     if (!sel && lastSel && emptied && Date.now() - emptied < 1500) sel = lastSel;
