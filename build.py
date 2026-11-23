@@ -884,6 +884,27 @@ def rel_check():
             print("  ", p)
         raise SystemExit("related v2: נכשל – לא שישה כרטיסים שונים תקינים")
 
+
+def write_discover():
+    sea = json.loads((ROOT / "src" / "discover" / "seasons.json").read_text(encoding="utf-8"))["seasons"]
+    by = {x["u"]: x for x in catalog()[1]}
+    for s in sea:
+        tl = []
+        for u in s["tools"]:
+            if u not in by:
+                raise SystemExit("seasons.json: " + u + " לא קיים בקטלוג")
+            tl.append({"u": u, "n": by[u]["n"].split(":")[0].split(",")[0].strip()[:40], "d": by[u]["d"][:90]})
+        s["tools"] = tl
+    js = (ROOT / "src" / "discover" / "discover.js").read_text(encoding="utf-8").replace("/*SEASONS*/[]", json.dumps(sea, ensure_ascii=False, separators=(",", ":")))
+    (ROOT / "assets" / "discover.js").write_text(js, encoding="utf-8")
+    if len(js.encode("utf-8")) > 6144:
+        raise SystemExit("discover.js גדול מ-6KB: %d" % len(js.encode("utf-8")))
+write_discover()
+def chadash_html():
+    out = catalog()[1]
+    fresh = sorted((x for x in out if x["ty"] == "tool" and x["l"] == "he" and not x["sf"] and x["nw"]), key=lambda x: (x["nw"], x["u"]), reverse=True)[:6]
+    cards = "".join('<a href="%s"><span class="badge">חדש</span><b>%s</b><span>%s</span></a>' % (x["u"], html_lib.escape(x["n"].split(":")[0].split(",")[0].strip(), quote=False), html_lib.escape(x["d"][:100], quote=False)) for x in fresh)
+    return '<p class="lead2">הכלים החדשים ביותר באתר:</p><div class="dom">' + cards + '</div>'
 pages = []
 TOOLS_JSON = []
 site_pages = {k: [] for k in SITES}
@@ -942,6 +963,7 @@ for path in sorted(SRC.rglob("*.html")):
         "cta": "" if (meta.get("no_cta") or site) else CTA.format(wa=WA, mail=CONTACT_MAIL),
         "dock_href": meta.get("dock_href", "/mohel/madrich/"),
         "dock_label": meta.get("dock_label", "מדריך חינם"),
+        "chadash": chadash_html() if "{{chadash}}" in raw else "",
         "foot": meta.get("foot", "") + ('<script src="/assets/lead.js" defer></script>' if "data-lead" in content else "") + ('<script src="/assets/moed.js" defer></script>' if "moed-form" in content else "") + ('<script src="/assets/yt.js" defer></script>' if 'class="yt"' in content else ""),
     }
     if site:
@@ -1032,7 +1054,7 @@ for key, site in SITES.items():
         # "פתח באמצעות" במחשב (אחרי התקנת האתר כאפליקציה): קובץ PDF נפתח בכלי המילוי והחתימה
         man["file_handlers"] = [{"action": "/kelim/machshev/chatima/", "accept": {"application/pdf": [".pdf"]}}]
     (d / "manifest.webmanifest").write_text(json.dumps(man, ensure_ascii=False, indent=1), encoding="utf-8")
-    pre = site_pages[key] + ["/assets/site.css", "/assets/kelim.css", "/assets/kelim.js", "/assets/hakraa-daf.js","/assets/track.js",
+    pre = site_pages[key] + ["/assets/site.css", "/assets/kelim.css", "/assets/kelim.js", "/assets/hakraa-daf.js","/assets/track.js", "/assets/discover.js",
                              "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff",
                              f"/assets/icon-{site['icon']}-192.png"] + site.get("css", []) + site.get("js", [])
     pre = [vurl(p) if re.search(r"^/assets/.*\.(js|css)$", p) else p for p in pre]
