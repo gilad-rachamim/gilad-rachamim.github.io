@@ -537,7 +537,13 @@ export default {
     return json({ name: 'החדשות ב-3 דקות', page: 'https://hakelim.com/kelim/machshev/chadashot/' });
   },
   async scheduled(event, env, ctx) {
-    const kind = event.cron === '45 15,16,17,18,19 * * *' ? 'shabbat' : event.cron === '0 6,7 * * 5' ? 'weekly' : '';
+    // טריגר אחד בלבד (מסלול חינמי: 5 טריגרים לחשבון): "0,45 4-20 * * *", והשרת מחליט מה לעשות לפי השעה
+    const t = new Date(event.scheduledTime || Date.now()), h = t.getUTCHours(), m = t.getUTCMinutes(), dow = t.getUTCDay();
+    let kind = null;
+    if (m === 45 && h >= 15 && h <= 19) kind = 'shabbat';
+    else if (m === 0 && dow === 5 && (h === 6 || h === 7)) kind = 'weekly';
+    else if (m === 0 && [4, 5, 10, 11, 17, 18, 19, 20].includes(h)) kind = '';
+    if (kind === null) return;
     ctx.waitUntil(runEdition(env, { kind }).then(r => console.log(JSON.stringify(r))).catch(e => console.log('run error', String(e))));
   }
 };
