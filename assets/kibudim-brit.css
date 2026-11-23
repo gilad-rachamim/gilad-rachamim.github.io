@@ -1,0 +1,135 @@
+/* כיבודים בברית מילה – /kodesh/kibudim-brit/ */
+.bt-from{display:inline-block;margin-top:.8rem;padding:.4rem .9rem;border:1px solid var(--gold-soft);border-radius:2rem;color:var(--gold-hi);font-size:.92rem}
+.bt-tool{max-width:44rem}
+.bt-mode{display:flex;gap:.4rem;margin:0 auto 1rem;padding:.3rem;border:1px solid var(--line);border-radius:2rem;max-width:22rem}
+.bt-mode button{flex:1;padding:.55rem .8rem;border:0;border-radius:2rem;background:none;color:var(--body);font:inherit;font-weight:600;cursor:pointer}
+.bt-mode button[aria-selected=true]{background:var(--gold);color:var(--ink)}
+.bt-jump{display:flex;flex-wrap:wrap;justify-content:center;gap:.3rem .9rem;margin:0 0 1.4rem;font-size:.92rem}
+.bt-jump a{color:var(--gold-hi);text-decoration:none;border-bottom:1px dashed var(--gold-soft)}
+.bt-sec{margin:0 0 2.2rem;padding:1.2rem 1rem 1rem;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.015);scroll-margin-top:4.5rem}
+.bt-sec h2{display:flex;align-items:center;gap:.6rem;margin:0 0 .9rem;font-family:var(--serif);color:var(--cream);font-size:1.35rem}
+.bt-num{display:inline-grid;place-items:center;width:1.8rem;height:1.8rem;border-radius:50%;background:var(--gold);color:var(--ink);font-size:1rem;font-weight:700;flex:none}
+.bt-row{display:grid;grid-template-columns:1fr 1fr;gap:0 .8rem}
+@media (max-width:520px){.bt-row{grid-template-columns:1fr}}
+.bt-hint{color:var(--muted);font-size:.9rem;margin:.3rem 0 .8rem}
+.bt-kibs{border:0;padding:0;margin:.4rem 0 1rem;min-width:0}
+.bt-kibs legend{font-weight:600;color:var(--cream);margin-bottom:.5rem;padding:0}
+#bt-kib-list{list-style:none;margin:0;padding:0;display:grid;gap:.45rem}
+.bt-k{display:grid;grid-template-columns:auto 1fr 1fr auto;align-items:center;gap:.5rem;padding:.45rem .6rem;border:1px solid var(--line);border-radius:10px}
+.bt-k.off{opacity:.5}
+.bt-k input[type=checkbox]{width:1.2rem;height:1.2rem;accent-color:var(--gold);margin:0}
+.bt-k label{font-weight:600;color:var(--cream);cursor:pointer;line-height:1.25}
+.bt-k label small{display:block;font-weight:400;color:var(--muted);font-size:.8rem}
+.bt-k .bt-kn{width:100%;min-width:0;padding:.45rem .6rem;font:inherit;font-size:.95rem;border-radius:8px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--cream)}
+.bt-k .bt-kfix{color:var(--muted);font-size:.9rem}
+.bt-k .bt-del{border:0;background:none;color:var(--muted);font-size:1.2rem;cursor:pointer;padding:0 .3rem;line-height:1}
+.bt-k .bt-mv{display:flex;flex-direction:column}
+.bt-k .bt-mv button{border:0;background:none;color:var(--gold-soft);cursor:pointer;font-size:.75rem;line-height:1;padding:.1rem .3rem}
+@media (max-width:520px){.bt-k{grid-template-columns:auto 1fr auto}.bt-k .bt-kn,.bt-k .bt-kfix{grid-column:2/4}}
+.bt-add{display:flex;gap:.5rem;margin:.7rem 0 .2rem}
+.bt-add input{flex:1;min-width:0;padding:.5rem .7rem;font:inherit;border-radius:8px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--cream)}
+
+/* תצוגה מקדימה של הכרטיס – גודל קבוע (A5 ב-96dpi) ומוקטן לפי הרוחב */
+.bt-preview-wrap{margin:1.2rem auto .6rem;max-width:559px}
+.bt-preview{position:relative;width:100%;overflow:hidden}
+.bt-preview .bt-card{position:absolute;top:0;right:0;transform-origin:top right;box-shadow:0 6px 30px rgba(0,0,0,.45)}
+.bt-card{--p:#fbf7ee;--k:#1f2a44;--g:#b08d3c;--g2:#d9c08a;--m:#5b6478;
+  width:559px;height:794px;box-sizing:border-box;padding:46px 50px 34px;position:relative;background:var(--p);color:var(--k);
+  font-family:"Frank Ruhl Libre",var(--serif),serif;display:flex;flex-direction:column;overflow:hidden;text-align:right}
+.bt-card.t-tchelet{--p:#f5f9fd;--k:#1b3354;--g:#3f72a8;--g2:#a9c4e2;--m:#566a82}
+.bt-card.t-lavan{--p:#fff;--k:#1d1d1d;--g:#6b6b6b;--g2:#c4c4c4;--m:#5a5a5a}
+.bt-frame{position:absolute;inset:14px;border:2px solid var(--g);pointer-events:none}
+.bt-frame:after{content:"";position:absolute;inset:5px;border:1px solid var(--g2)}
+.bt-frame i{position:absolute;font-style:normal;color:var(--g);background:var(--p);font-size:15px;line-height:1;padding:0 3px}
+.bt-frame .c1{top:-9px;right:-9px}.bt-frame .c2{top:-9px;left:-9px}.bt-frame .c3{bottom:-9px;right:-9px}.bt-frame .c4{bottom:-9px;left:-9px}
+.bt-bsd{position:absolute;top:26px;right:30px;font-size:12px;color:var(--m)}
+.bt-ch{text-align:center}
+.bt-ct{font-size:29px;font-weight:700;color:var(--k);line-height:1.15}
+.bt-cs{font-size:13.5px;color:var(--m);margin-top:5px;line-height:1.4}
+.bt-cs b{color:var(--k);font-weight:700}
+.bt-orn{text-align:center;color:var(--g);font-size:15px;margin:9px 0 7px;letter-spacing:14px}
+.bt-orn:before,.bt-orn:after{content:"";display:inline-block;width:70px;height:1px;background:var(--g2);vertical-align:middle;margin:0 10px}
+.bt-cl{list-style:none;margin:0;padding:0;flex:1;display:flex;flex-direction:column;justify-content:space-evenly}
+.bt-cl li{display:grid;grid-template-columns:28px 1fr 150px;align-items:center;gap:10px;padding:3px 0;border-bottom:1px dotted var(--g2)}
+.bt-cl li:last-child{border-bottom:0}
+.bt-cl .n{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--g);color:var(--g);display:grid;place-items:center;font-size:13px;font-weight:700;font-family:Assistant,sans-serif}
+.bt-cl .t{font-size:16.5px;font-weight:700;line-height:1.2}
+.bt-cl .t small{display:block;font-size:11.5px;font-weight:400;color:var(--m);margin-top:1px}
+.bt-cl .tag{display:inline-block;font-size:10px;font-weight:400;color:var(--g);border:1px solid var(--g2);border-radius:8px;padding:0 5px;margin-inline-start:5px;vertical-align:2px}
+.bt-cl .h{font-size:11px;color:var(--m);line-height:1.2}
+.bt-cl .h b{display:block;font-size:14.5px;color:var(--k);font-weight:700;min-height:18px;border-bottom:1px solid var(--g2);padding-bottom:1px}
+.bt-cl .h b.fix{border-bottom:0;font-weight:400;font-size:13px}
+.bt-card.s-small .bt-cl .t{font-size:14.5px}.bt-card.s-small .bt-cl .t small{font-size:10.5px}.bt-card.s-small .bt-cl li{padding:1px 0}
+.bt-card.s-big .bt-cl .t{font-size:19px}.bt-card.s-big .bt-cl .t small{font-size:12.5px}.bt-card.s-big .bt-cl .h b{font-size:16px}
+.bt-cn{margin:8px 0 0;padding:7px 12px;border:1px solid var(--g2);border-radius:6px;font-size:12px;color:var(--m);text-align:center;line-height:1.45}
+.bt-cn:empty{display:none}
+.bt-cf{margin-top:9px;text-align:center;font-size:14px;color:var(--k);font-weight:700}
+.bt-cf .ph{direction:ltr;unicode-bidi:isolate;font-family:Assistant,sans-serif}
+.bt-cf .sep{color:var(--g);margin:0 8px;font-weight:400}
+.bt-cf .cr{display:block;font-size:9.5px;color:var(--m);font-weight:400;margin-top:3px;font-family:Assistant,sans-serif}
+
+.bt-msg{min-height:1.3em;color:var(--gold-hi);font-size:.92rem;text-align:center;margin:.4rem 0 0}
+
+/* רשימת ציוד */
+.bt-grp{margin:0 0 1rem}
+.bt-grp h3{font-size:1.02rem;color:var(--gold-hi);margin:.2rem 0 .45rem}
+.bt-grp ul{list-style:none;margin:0;padding:0;display:grid;gap:.3rem}
+.bt-grp li{display:flex;align-items:flex-start;gap:.55rem;padding:.35rem .5rem;border-radius:8px}
+.bt-grp li:hover{background:rgba(255,255,255,.03)}
+.bt-grp input{width:1.15rem;height:1.15rem;margin:.18rem 0 0;accent-color:var(--gold);flex:none}
+.bt-grp label{cursor:pointer;color:var(--body);line-height:1.4}
+.bt-grp label small{color:var(--muted)}
+.bt-grp input:checked+label{text-decoration:line-through;color:var(--muted)}
+.bt-grp .bt-del{border:0;background:none;color:var(--muted);cursor:pointer;margin-inline-start:auto}
+#bt-count{color:var(--gold-hi)}
+
+/* לוח זמנים */
+.bt-row-time input[type=time]{direction:ltr;text-align:right}
+.bt-times{list-style:none;margin:.4rem 0;padding:0;border-inline-start:2px solid var(--gold-soft)}
+.bt-times li{display:flex;gap:.9rem;padding:.4rem .9rem;position:relative}
+.bt-times li:before{content:"";position:absolute;inset-inline-start:-6px;top:.85rem;width:10px;height:10px;border-radius:50%;background:var(--gold-soft)}
+.bt-times li.main:before{background:var(--gold);box-shadow:0 0 0 4px rgba(201,165,92,.2)}
+.bt-times time{font-weight:700;color:var(--gold-hi);min-width:3.2rem;direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
+.bt-times li.main span{color:var(--cream);font-weight:700}
+
+/* נוסחים */
+.bt-text{margin:.9rem 0;padding:1rem 1.1rem;border-radius:12px;background:rgba(201,165,92,.06);border:1px solid var(--line)}
+.bt-text h3{margin:0 0 .2rem;color:var(--cream);font-family:var(--serif)}
+.bt-say{margin:0 0 .5rem;color:var(--muted);font-size:.88rem}
+.bt-heb{margin:0;font-family:var(--serif);font-size:1.18rem;line-height:1.9;color:var(--cream)}
+.bt-heb mark{background:none;color:var(--gold-hi);font-weight:700;border-bottom:1px dashed var(--gold-soft)}
+
+/* קישורים */
+.bt-links{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+@media (max-width:520px){.bt-links{grid-template-columns:1fr}}
+.bt-links a{display:block;padding:.8rem .9rem;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:var(--body)}
+.bt-links a:hover{border-color:var(--gold-soft)}
+.bt-links b{display:block;color:var(--gold-hi);margin-bottom:.2rem}
+.bt-links span{font-size:.88rem;color:var(--muted);line-height:1.4}
+/* מחולל: עיצובים ואפשרויות */
+.bt-card.t-bordo{--p:#fcf6f4;--k:#3a1018;--g:#7d2333;--g2:#d8a8b0;--m:#6e4a50}
+.bt-card.t-zayit{--p:#f7f8f1;--k:#283015;--g:#5e6b2e;--g2:#bcc59a;--m:#5c6249}
+.bt-card.t-vered{--p:#fdf6f7;--k:#4a2532;--g:#b0607a;--g2:#e7bccb;--m:#7a5a64}
+.bt-card.t-layla{--p:#15213a;--k:#f3ead2;--g:#d4b268;--g2:#7d6a3e;--m:#b9b3a2}
+.bt-card.t-shachor{--p:#141414;--k:#f2ecdc;--g:#c9a55c;--g2:#6d5a33;--m:#b0aa9b}
+.bt-card.f-assistant,.bt-card.f-assistant .bt-ct{font-family:Assistant,sans-serif}
+.bt-card.f-mix .bt-cl,.bt-card.f-mix .bt-cs,.bt-card.f-mix .bt-cf{font-family:Assistant,sans-serif}
+.bt-card.fr-single .bt-frame:after{display:none}
+.bt-card.fr-round .bt-frame{border-radius:22px}.bt-card.fr-round .bt-frame:after{border-radius:17px}.bt-card.fr-round .bt-frame i{display:none}
+.bt-card.fr-none .bt-frame{display:none}
+.bt-card.n-heb .bt-cl .n{font-family:"Frank Ruhl Libre",serif;font-size:14px}
+.bt-card.n-none .bt-cl li{grid-template-columns:1fr 150px}.bt-card.n-none .bt-cl .n{display:none}
+.bt-card.no-d .bt-cl .t small{display:none}
+.bt-orn.empty{letter-spacing:0;font-size:0;margin:12px 0 10px}.bt-orn.empty:before,.bt-orn.empty:after{width:120px}
+.bt-design{border:1px solid var(--line);border-radius:12px;padding:.8rem 1rem;margin:1rem 0}
+.bt-design legend{color:var(--gold-hi);font-weight:700;padding:0 .4rem}
+.bt-swatches{display:flex;flex-wrap:wrap;gap:.5rem;margin:.3rem 0 .9rem}
+.bt-swatches button{display:flex;flex-direction:column;align-items:center;gap:.2rem;background:none;border:2px solid transparent;border-radius:10px;padding:.3rem;cursor:pointer;color:var(--body);font:inherit;font-size:.78rem;min-width:64px}
+.bt-swatches button[aria-checked=true]{border-color:var(--gold)}
+.bt-swatches i{display:block;width:40px;height:52px;border:2px solid;border-radius:4px;position:relative}
+.bt-swatches i b{position:absolute;inset:auto 7px 9px 7px;height:3px;border-radius:2px}
+.bt-row3{display:grid;grid-template-columns:repeat(3,1fr);gap:0 .8rem}
+@media (max-width:620px){.bt-row3{grid-template-columns:1fr 1fr}}
+.bt-checks{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;margin:.4rem 0}
+.bt-checks label{display:flex;align-items:center;gap:.35rem;cursor:pointer}
+.bt-k .bt-ed{font-size:.95rem!important;color:var(--gold)!important}
