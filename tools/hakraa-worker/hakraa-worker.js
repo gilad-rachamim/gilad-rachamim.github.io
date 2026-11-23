@@ -1,9 +1,12 @@
 // "הקראה בקול אנושי" – שרת הקול של /kelim/tochen/hakraa/ (Cloudflare Worker).
 //   POST /tts   {text, voice:'m'|'f'}  -> התשובה של Gemini כמו שהיא (JSON עם הקול ב-base64); הדפדפן מפענח וממיר ל-MP3
+//               {src:'daf', pub:1}    -> הקראת דף באתר (כפתור "הקראה" בכל דף, assets/hakraa-daf.js): מכסה קטנה משלה בתוך התקרה,
+//                                        וטקסט ציבורי של האתר (pub) נשמר במטמון, כך שדף שכבר הוקרא לא עולה שוב כסף
 //   POST /skira {text}                 -> {t}   סקירה קצרה בעברית מדוברת, להקראה
 //   GET  /ping
 // למה מעבירים את התשובה כמו שהיא: קטע קול הוא כמה מגה; פענוח בשרת היה שורף זמן מעבד. כך השרת רק שומר על המפתח ועל המכסה.
-// פרטיות: לא שומרים טקסטים ולא קול. נשמר רק מונה יומי (כתובת מגובבת, מתאפס כל יום).
+// פרטיות: לא שומרים טקסטים ולא קול של גולשים. נשמר רק מונה יומי (כתובת מגובבת, מתאפס כל יום).
+//         במטמון נשמר רק קול של טקסט שכתוב בדפי האתר עצמם (הדפדפן בודק מול הדף המקורי לפני שהוא מסמן pub).
 
 const ALLOWED = ['https://gilad-rachamim.github.io', 'https://hakelim.com', 'https://www.hakelim.com'];
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
@@ -11,6 +14,10 @@ const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 // וכ-0.17 ₪ מ-1.1.2027 (המחיר של גוגל מוכפל). לכן התקרה היומית יורדת לבד בתחילת 2027.
 const TTS_PER = 30;                                              // קטעי קול לכתובת ביום
 const ttsCap = () => (Date.now() < Date.UTC(2027, 0, 1) ? 70 : 38); // קטעי קול לכל האתר ביום
+// הקראת דפים: חלק קטן מתוך התקרה (לא בנוסף לה), כדי שהכלי עצמו תמיד יישאר עם רוב המכסה. קטע מהמטמון לא נספר.
+const DAF_PER = 10;                                              // קטעי דף חדשים לכתובת ביום
+const dafCap = () => Math.round(ttsCap() * 0.36);                // 25 ביום ב-2026, 14 מ-2027
+const CACHE_DAYS = 30;
 const SK_PER = 30, SK_CAP = 1500;      // סקירות
 const MAX_TTS = 1600, MAX_SKIRA = 120000;
 const TTS = ['gemini-3.8-flash-lite-tts', 'gemini-3.8-flash-tts', 'gemini-3.1-flash-tts-preview', 'gemini-2.5-flash-preview-tts'];
@@ -21,7 +28,7 @@ const VOICES = { m: 'Charon', f: 'Kore' };
 function cors(origin) {
   const ok = ALLOWED.includes(origin) || LOCAL.test(origin || '');
   return ok ? { 'access-control-allow-origin': origin, 'access-control-allow-methods': 'POST, OPTIONS',
-    'access-control-allow-headers': 'content-type', 'access-control-expose-headers': 'x-left, x-model', vary: 'origin' } : null;
+    'access-control-allow-headers': 'content-type', 'access-control-expose-headers': 'x-left, x-model, x-cache', vary: 'origin' } : null;
 }
 const json = (o, status, h) => new Response(JSON.stringify(o), { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...(h || {}) } });
 function geminiKeys(env) { return String(env.GEMINI_KEYS || env.GEMINI_KEY || '').split(/[,\s]+/).filter(Boolean); }
@@ -31,6 +38,10 @@ const spent = new Map();   // "מפתח|דגם" שנגמרה לו המכסה ה�
 async function sha(s) {
   const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
   return [...new Uint8Array(d)].slice(0, 8).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+async function shaFull(s) {
+  const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return [...new Uint8Array(d)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 async function take(env, request, kind, per, cap) {
   try {
@@ -47,13 +58,23 @@ function clean(t) {
     .replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
 }
 
-async function ttsRoute(request, env, h) {
+async function ttsRoute(request, env, h, ctx) {
   let b; try { b = await request.json(); } catch (_) { return json({ error: 'bad_json' }, 400, h); }
   const text = clean(b.text), voice = VOICES[b.voice] || VOICES.m;
   if (!text) return json({ error: 'empty' }, 400, h);
   if (text.length > MAX_TTS) return json({ error: 'too_long' }, 413, h);
   const keys = geminiKeys(env);
   if (!keys.length) return json({ error: 'no_key' }, 200, h);
+  const daf = b.src === 'daf';
+  let ckey = null;
+  if (daf && b.pub) {
+    try {
+      ckey = new Request(new URL('/c/' + await shaFull(voice + '|' + text), request.url).toString());
+      const hit = await caches.default.match(ckey);
+      if (hit) return new Response(hit.body, { status: 200, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-cache': 'hit', ...h } });
+    } catch (_) { ckey = null; }
+  }
+  if (daf) { const q = await take(env, request, 'daf', DAF_PER, dafCap()); if (!q.ok) return json({ error: 'quota' }, 200, h); }
   const quota = await take(env, request, 'tts', TTS_PER, ttsCap());
   if (!quota.ok) return json({ error: 'quota' }, 200, h);
   const body = JSON.stringify({
@@ -70,6 +91,11 @@ async function ttsRoute(request, env, h) {
         method: 'POST', signal: AbortSignal.timeout(90000), headers: { 'content-type': 'application/json', 'x-goog-api-key': key }, body
       });
     } catch (e) { last = model + ' ' + String(e && e.message || e).slice(0, 60); continue; }
+    if (r.ok && ckey && ctx) {
+      const [a, c] = r.body.tee();
+      ctx.waitUntil(caches.default.put(ckey, new Response(c, { status: 200, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'public, max-age=' + CACHE_DAYS * 86400 } })).catch(() => {}));
+      return new Response(a, { status: 200, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-left': String(quota.left), 'x-model': model, 'x-cache': 'miss', ...h } });
+    }
     if (r.ok) return new Response(r.body, { status: 200, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-left': String(quota.left), 'x-model': model, ...h } });
     last = model + ' ' + r.status;
     if (r.status === 429) { const t = await r.text(); if (/PerDay|per day|limit: 0/i.test(t)) spent.set(tag, pday()); }
@@ -111,14 +137,14 @@ async function skiraRoute(request, env, h) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const h = cors(request.headers.get('origin'));
     if (request.method === 'OPTIONS') return h ? new Response('', { headers: h }) : new Response('', { status: 403 });
     if (url.pathname === '/ping') return json({ ok: true, gemini: geminiKeys(env).length }, 200, h || {});
     if (request.method === 'POST' && (url.pathname === '/tts' || url.pathname === '/skira')) {
       if (!h) return json({ error: 'origin' }, 403);
-      return url.pathname === '/tts' ? ttsRoute(request, env, h) : skiraRoute(request, env, h);
+      return url.pathname === '/tts' ? ttsRoute(request, env, h, ctx) : skiraRoute(request, env, h);
     }
     return json({ error: 'not_found' }, 404, h || {});
   }
