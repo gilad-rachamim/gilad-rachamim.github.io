@@ -34,7 +34,7 @@ jobs:
       - name: commit only the archive
         id: commit
         run: |
-          git add tools/data/chadashot-archive src/pages/kelim/machshev/chadashot/archion kelim/machshev/chadashot/archion sitemap.xml mapa/index.html kelim/machshev/chadashot/index.html
+          git add kelim/machshev/chadashot/feed.xml news-sitemap.xml tools/data/chadashot-archive src/pages/kelim/machshev/chadashot/archion kelim/machshev/chadashot/archion sitemap.xml mapa/index.html kelim/machshev/chadashot/index.html
           git checkout -- .
           git clean -fdq
           git diff --cached --quiet && { echo "אין שינוי"; exit 0; }
