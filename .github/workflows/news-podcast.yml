@@ -1,0 +1,45 @@
+# פודקאסט "החדשות ב-3 דקות": פרק אחד ביום (מהדורת הבוקר) בקול עברי חינמי של edge-tts.
+# קובץ ה-mp3 עולה ל-Release בשם podcast (מחוץ לריפו), והפיד kelim/machshev/chadashot/podcast.xml נשמר בריפו.
+# רץ ב-05:20 UTC (07:20 בחורף) – אחרי מהדורת הבוקר.
+name: news-podcast
+on:
+  schedule:
+    - cron: "20 5 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: news-podcast
+  cancel-in-progress: false
+jobs:
+  podcast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install edge-tts
+      - name: build the episode
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/news_podcast.py
+      - name: commit the feed
+        id: commit
+        run: |
+          git add kelim/machshev/chadashot/podcast.xml tools/data/chadashot-podcast.json
+          git diff --cached --quiet && { echo "אין שינוי"; exit 0; }
+          git config user.name "news-podcast-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "פודקאסט החדשות: $(TZ=Asia/Jerusalem date +%F)"
+          for i in 1 2 3 4 5; do
+            git pull --rebase -X theirs origin main && git push && { echo "pushed=1" >> "$GITHUB_OUTPUT"; exit 0; }
+            sleep 20
+          done
+          exit 1
+      - name: mirror to hakelim.com
+        if: steps.commit.outputs.pushed == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run mirror-hakelim.yml --ref main
