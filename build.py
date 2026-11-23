@@ -311,7 +311,7 @@ GIUR_WA_TEXT = {
 }
 # מסגרת האתר (תפריט, משוב, תחתית, הודעת התקנה) בשפת הדף, 23.11.2026 – בקשת גילעד: גר שלא קורא עברית לא פוגש עברית בדף
 LANG_FRAME = {
-    "en": {"brand": "Jewish Tools", "navlabel": "Main navigation", "roadmap": "Conversion roadmap", "brit": "Adult brit milah", "write": "Write to Gilad",
+    "en": {"brand_label": "Home page of the tools project", "search_label": "Search tools", "brand": "Jewish Tools", "navlabel": "Main navigation", "roadmap": "Conversion roadmap", "brit": "Adult brit milah", "write": "Write to Gilad",
            "cta_h": "Need adult brit milah or hatafat dam brit?",
            "cta_p": "Write to me, Gilad, on WhatsApp. I will listen, explain and connect you with a professional, experienced mohel in a proper clinic. No commitment.",
            "cta_wa": "Write to Gilad on WhatsApp", "cta_more": "More about brit milah in conversion",
@@ -321,7 +321,7 @@ LANG_FRAME = {
            "promise": ["Everything is free and ad-free", "No sign-up", "Your data stays on your phone", "Works on phone and computer"],
            "end": "Made by Gilad Rachamim Aviad, a disabled IDF veteran with severe combat PTSD. A chesed project: no profit intended.",
            "up": "Back to top", "install_t": "Install on your home screen like an app.", "install_b": "Install", "install_x": "Close", "install_l": "Install as an app"},
-    "ru": {"brand": "Еврейские инструменты", "navlabel": "Главная навигация", "roadmap": "Путь к гиюру", "brit": "Брит-мила для взрослых", "write": "Написать Гиладу",
+    "ru": {"brand_label": "Главная страница проекта", "search_label": "Поиск инструментов", "brand": "Еврейские инструменты", "navlabel": "Главная навигация", "roadmap": "Путь к гиюру", "brit": "Брит-мила для взрослых", "write": "Написать Гиладу",
            "cta_h": "Нужна брит-мила для взрослых или атафат дам брит?",
            "cta_p": "Напишите мне, Гиладу, в WhatsApp. Я выслушаю, объясню и свяжу вас с профессиональным опытным моэлем в хорошо организованной клинике. Без обязательств.",
            "cta_wa": "Написать Гиладу в WhatsApp", "cta_more": "Подробнее о брит-миле при гиюре",
@@ -369,8 +369,9 @@ def lang_page(html, meta, url):
            f'<a href="{wa}" rel="noopener">{f["write"]}</a>{langs}</nav>')
     html = re.sub(r'<nav class="topnav" aria-label="[^"]*">.*?</nav>', lambda m: nav, html, count=1, flags=re.S)
     html = re.sub(r'(<a class="brand"[^>]*>.*?<b>)[^<]*(</b>)', lambda m: m.group(1) + f["brand"] + m.group(2), html, count=1, flags=re.S)
-    html = html.replace('<div id="hk-search" class="no-print"></div>', "", 1)
-    html = html.replace('<script src="/assets/search.js" defer></script>', "", 1)
+    html = re.sub(r'<a class="brand-sub"[^>]*>[^<]*</a>', "", html, count=1)
+    html = html.replace('aria-label="לדף הראשי של מיזם הכלים"', 'aria-label="' + f["brand_label"] + '"', 1)
+    html = html.replace('aria-label="חיפוש כלי"', 'aria-label="' + f["search_label"] + '"', 1)
     full = url
     share = "https://wa.me/?text=" + quote(f["share_text"] + " " + full)
     fb = "https://wa.me/972584049049?text=" + quote(f["fb_text"])
@@ -731,6 +732,8 @@ for path in sorted(SRC.rglob("*.html")):
             rep[k] = rep[k].replace('"', "״")
         rep.update({
             "site": key, "site_name": site["name"], "site_brand": site.get("brand", site["name"]), "site_short": site["short"], "site_home": site["home"],
+            "brand_name": site.get("brand", site["name"]) if key == "kelim" else "מיזם הכלים",
+            "brand_sub": "" if key == "kelim" else '<a class="brand-sub" href="' + site["home"] + '">' + site["short"] + "</a>",
             "theme": site["theme"], "site_desc": site["desc"],
             "nav": "".join(f'<a href="{h}"' + (' aria-current="page"' if meta.get("nav") == k else "") + f'>{l}</a>' for k, h, l in site["nav"]),
             "tool": meta.get("tool", ""),

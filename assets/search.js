@@ -6,14 +6,23 @@
   if (!box) return;
   var API = 'https://kelim-bakasha.gilad4049.workers.dev';
   var idx = null, loading = null;
+  // שפת הדף: דפי אנגלית/רוסית מקבלים ממשק וחיפוש בשפה שלהם (ואם אין תוצאה - תוצאות בעברית עם כותרת)
+  var LANG = (document.documentElement.lang || 'he').slice(0, 2);
+  if (LANG !== 'en' && LANG !== 'ru') LANG = 'he';
+  var UI = {
+    he: { label: 'חיפוש כלי או דף באתר', ph: 'חפשו כלי: מה אתם רוצים לעשות?', go: 'חיפוש', hint: 'כלים בעברית', none: 'לא מצאנו כלי כזה אצלנו.', hebrew: '', all: '' },
+    en: { label: 'Search tools on this site', ph: 'Search a tool: what do you need to do?', go: 'Search', hint: 'Tools in English', none: 'No tool in English matches. These Hebrew pages may help:', hebrew: ' (Hebrew)', all: 'No tool found.' },
+    ru: { label: 'Поиск инструментов на сайте', ph: 'Найдите инструмент: что вам нужно сделать?', go: 'Найти', hint: 'Инструменты на русском', none: 'На русском ничего не найдено. Возможно, подойдут страницы на иврите:', hebrew: ' (иврит)', all: 'Ничего не найдено.' }
+  }[LANG];
+  function pageLang(u) { var m = /\/(en|ru)(\/|$)/.exec(u); return m ? m[1] : 'he'; }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-  function norm(s) { return String(s || '').toLowerCase().replace(/[֑-ׇ]/g, '').replace(/[׳'"”“״]/g, '').replace(/[^א-תa-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim(); }
+  function norm(s) { return String(s || '').toLowerCase().replace(/[֑-ׇ]/g, '').replace(/[׳'"”“״]/g, '').replace(/[^א-תa-z0-9а-яё ]+/g, ' ').replace(/\s+/g, ' ').trim(); }
   // מורידים קידומת דקדוקית (ה/ב/ל/ו/כ/מ/ש) כדי ש"לתרגם" ימצא "תרגום"
   function stem(w) { return w.length > 3 && /^[הבלוכמש]/.test(w) ? w.slice(1) : w; }
   function track(name, extra) { try { if (window.toolUsed) window.toolUsed(name, extra || {}); } catch (e) {} }
-  box.innerHTML = '<form class="hk-s" role="search" autocomplete="off"><label class="hk-s-l" for="hk-q">חיפוש כלי או דף באתר</label>' +
-    '<div class="hk-s-row"><input id="hk-q" type="search" inputmode="search" enterkeyhint="search" placeholder="חפשו כלי: מה אתם רוצים לעשות?" maxlength="80">' +
-    '<button type="submit">חיפוש</button></div><div class="hk-s-out" aria-live="polite"></div></form>';
+  box.innerHTML = '<form class="hk-s" role="search" autocomplete="off"><label class="hk-s-l" for="hk-q">' + UI.label + '</label>' +
+    '<div class="hk-s-row"><input id="hk-q" type="search" inputmode="search" enterkeyhint="search" placeholder="' + UI.ph + '" maxlength="80">' +
+    '<button type="submit">' + UI.go + '</button></div><div class="hk-s-out" aria-live="polite"></div></form>';
   var form = box.firstChild, q = form.querySelector('input'), out = form.querySelector('.hk-s-out');
   function load() {
     if (idx) return Promise.resolve(idx);
@@ -37,6 +46,7 @@
     return s + hit * 2;
   }
   function suggest(text) {
+    if (LANG !== 'he') { out.innerHTML = '<div class="hk-none"><p>' + UI.all + '</p></div>'; return; }
     out.innerHTML = '<div class="hk-none"><p>לא מצאנו כלי כזה אצלנו. אפשר להציע אותו, וגילעד יראה את ההצעה.</p>' +
       '<div class="hk-sg"><textarea rows="2" maxlength="160" aria-label="מה הכלי שחסר">' + esc(text) + '</textarea>' +
       '<input type="email" placeholder="מייל, אם רוצים הודעה כשהכלי מוכן (לא חובה)" maxlength="120" dir="ltr">' +
@@ -64,6 +74,15 @@
     ['/kelim/machshev/', 'מחשב וטלפון'], ['/kelim/tochen/', 'יצירת תוכן'], ['/kelim/shir/', 'שירים וקריוקי'], ['/kelim/briut/', 'בריאות'],
     ['/kelim/eruim/', 'אירועים ושמחות'], ['/kelim/tiyulim/', 'טיולים'], ['/nefesh/', 'נפש'], ['/kelim/apps/', 'אפליקציות לאנדרואיד'], ['/kelim/', 'כל הכלים']];
   function home() {
+    if (LANG !== 'he') {
+      load().then(function (list) {
+        var mine = list.filter(function (it) { return pageLang(it.u) === LANG; }).slice(0, 14);
+        out.innerHTML = '<div class="hk-home"><p class="hk-h">' + UI.hint + '</p><ul class="hk-top">' +
+          mine.map(function (it) { return '<li><a href="' + esc(it.u) + '" data-p="' + esc(it.u) + '">' + esc(it.n) + '</a></li>'; }).join('') + '</ul></div>';
+        out.onclick = function (e) { var a = e.target.closest && e.target.closest('a[data-p]'); if (a) track('hakelim_search', { how: 'home_pick', to: a.getAttribute('data-p') }); };
+      });
+      return;
+    }
     out.innerHTML = '<div class="hk-home"><p class="hk-h">כלים מובילים</p><ul class="hk-top">' +
       TOP.map(function (x) { return '<li><a href="' + x[0] + '" data-p="' + x[0] + '">' + esc(x[1]) + '</a></li>'; }).join('') +
       '</ul><p class="hk-h">נושאים</p><ul class="hk-topics">' +
@@ -75,12 +94,14 @@
     if (n.length < 2) { home(); return; }
     var words = n.split(' ').filter(function (w) { return w.length > 1; });
     load().then(function (list) {
-      var res = list.map(function (it) { return [score(it, words), it]; }).filter(function (x) { return x[0] > 0; })
-        .sort(function (a, b) { return b[0] - a[0]; }).slice(0, 8);
+      function rank(l) { return list.filter(function (it) { return pageLang(it.u) === l; }).map(function (it) { return [score(it, words), it]; }).filter(function (x) { return x[0] > 0; })
+        .sort(function (a, b) { return b[0] - a[0]; }).slice(0, 8); }
+      var res = rank(LANG), note = '';
+      if (!res.length && LANG !== 'he') { res = rank('he'); note = res.length ? '<p class="hk-note">' + UI.none + '</p>' : ''; }
       if (!res.length) { track('hakelim_search', { how: 'no_result' }); suggest(text.trim()); return; }
-      out.innerHTML = '<ul class="hk-res">' + res.map(function (x) { return '<li><a href="' + esc(x[1].u) + '"><b>' + esc(x[1].n) + '</b>' + (x[1].d ? '<span>' + esc(x[1].d) + '</span>' : '') + '</a></li>'; }).join('') +
-        '</ul><p class="hk-miss">לא זה? <a href="#" data-sg>הציעו כלי חדש</a></p>';
-      out.querySelector('[data-sg]').onclick = function (e) { e.preventDefault(); suggest(text.trim()); };
+      out.innerHTML = note + '<ul class="hk-res">' + res.map(function (x) { return '<li><a href="' + esc(x[1].u) + '"><b>' + esc(x[1].n) + '</b>' + (x[1].d ? '<span>' + esc(x[1].d) + '</span>' : '') + '</a></li>'; }).join('') +
+        '</ul>' + (LANG === 'he' ? '<p class="hk-miss">לא זה? <a href="#" data-sg>הציעו כלי חדש</a></p>' : '');
+      var sg = out.querySelector('[data-sg]'); if (sg) sg.onclick = function (e) { e.preventDefault(); suggest(text.trim()); };
     });
   }
   var t; q.addEventListener('input', function () { clearTimeout(t); t = setTimeout(function () { run(q.value); }, 180); });
@@ -88,5 +109,20 @@
   function showHome() { if (norm(q.value).length < 2 && !out.querySelector('.hk-home')) home(); }
   q.addEventListener('focus', showHome);
   q.addEventListener('click', showHome);
+  // כפתור 🔍 בסרגל הנדבק וקיצור "/": קופצים לשורת החיפוש ושמים בה פוקוס (שורת החיפוש עצמה לא נדבקת, כדי לא לכסות כלים)
+  function goSearch(e) {
+    if (e) e.preventDefault();
+    box.scrollIntoView({ block: 'start', behavior: window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    q.focus({ preventScroll: true });
+    showHome();
+    track('hakelim_search', { how: 'btn_open' });
+  }
+  var sb = document.querySelector('.hk-sbtn'); if (sb) sb.addEventListener('click', goSearch);
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return;
+    var t = e.target, tag = t && t.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+    goSearch(e);
+  });
   form.addEventListener('submit', function (e) { e.preventDefault(); track('hakelim_search', { how: 'submit' }); run(q.value); });
 })();
