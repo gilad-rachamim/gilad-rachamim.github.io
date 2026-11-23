@@ -118,3 +118,11 @@ body[data-tool="rega"] .rel{display:none}
 .newsbar .nb-bell{flex:0 0 auto;justify-content:center;min-width:2.75rem}
 @media (max-width:560px){.newsbar .nb-bell-t{display:none}.newsbar .nb-go{display:none}}
 .newsbar a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* "עוד כלים שיעזרו לכם" v2: שישה כרטיסים */
+.rel-v2 .dom{display:grid;grid-template-columns:repeat(auto-fill,minmax(14rem,1fr));gap:.7rem}
+.rel-v2 .rc{display:flex;flex-direction:column;gap:.2rem;padding:.75rem .9rem;border:1px solid rgba(201,165,92,.35);border-radius:.7rem;background:rgba(255,255,255,.04)}
+.rel-v2 .rc a{font-weight:700;color:var(--gold,#d8b35f);text-decoration:none;min-height:24px}
+.rel-v2 .rc a:hover,.rel-v2 .rc a:focus-visible{text-decoration:underline}
+.rel-v2 .rc span{font-size:.88rem;opacity:.85}
+.rel-v2 .rc .badge{display:inline-block;margin-inline-start:.4rem;font-size:.72rem;font-weight:700;padding:.05rem .45rem;border-radius:1rem;background:#1b1b1b;color:#f3d98c}
