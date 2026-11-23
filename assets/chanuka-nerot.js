@@ -98,7 +98,7 @@
     $('cn-where').textContent = data.where;
     $('cn-rows').innerHTML = L.map(function (o) {
       var w = when(o);
-      return '<tr' + (cur && cur.n === o.n ? ' class="now"' : '') + '><td><b>נר ' + NUM[o.n] + '</b><small>' + (o.n === 1 ? 'נר אחד' : o.n + ' נרות') + ' ושמש</small><a class="cn-sp" href="/kodesh/chanuka/sipurim/?n=' + o.n + '">📖 סיפור ללילה</a></td>' +
+      return '<tr id="nerot-' + o.n + '"' + (cur && cur.n === o.n ? ' class="now"' : '') + '><td><b>נר ' + NUM[o.n] + '</b><small>' + (o.n === 1 ? 'נר אחד' : o.n + ' נרות') + ' ושמש</small><a class="cn-sp" href="/kodesh/chanuka/sipurim/?n=' + o.n + '">📖 סיפור ללילה</a></td>' +
         '<td>יום ' + DAYS[o.d.getDay()] + ' ' + dm(o.d) + '<small>ליל ' + o.heb + '</small></td><td class="t">' + w.big + '</td></tr>';
     }).join('');
     lastText = 'חנוכה – זמני הדלקה (' + data.where + ')\n\n' + L.map(function (o) {
