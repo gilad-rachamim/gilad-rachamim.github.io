@@ -1,8 +1,8 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'bait-202611231545';
-var PRECACHE = ["/bait/", "/bait/kniyot/", "/bait/matana/", "/bait/mazgan/", "/bait/mevi/", "/bait/mismachim/", "/bait/shabat/", "/bait/shigra/", "/bait/toranut/", "/assets/site.css?v=b4546dc2", "/assets/kelim.css?v=f8bd50a8", "/assets/kelim.js?v=53f855ae", "/assets/track.js?v=ca51c9e7", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-bait-192.png", "/assets/bait.css?v=ed3b6a1f", "/assets/bait.js?v=e4a0d2b0"];
+var CACHE = 'bait-202611231553';
+var PRECACHE = ["/bait/", "/bait/kniyot/", "/bait/matana/", "/bait/mazgan/", "/bait/mevi/", "/bait/mismachim/", "/bait/shabat/", "/bait/shigra/", "/bait/toranut/", "/assets/site.css?v=cb1a2bbb", "/assets/kelim.css?v=f8bd50a8", "/assets/kelim.js?v=53f855ae", "/assets/hakraa-daf.js?v=debc1f3f", "/assets/track.js?v=ca51c9e7", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-bait-192.png", "/assets/bait.css?v=ed3b6a1f", "/assets/bait.js?v=e4a0d2b0"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
 });
