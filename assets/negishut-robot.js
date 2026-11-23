@@ -6,96 +6,17 @@
   if (!out) return;
 
   /* ---------- א. אשף ---------- */
-  var DEV = {
-    win: 'מחשב Windows', mac: 'מחשב Mac', ios: 'אייפון או אייפד', and: 'טלפון אנדרואיד'
-  };
-  var SR = {
-    win: 'בקורא המסך (NVDA או JAWS)',
-    mac: 'ב-VoiceOver',
-    ios: 'ב-VoiceOver',
-    and: 'ב-TalkBack'
-  };
-  var MOVE = {
-    win: 'מגיעים אליה עם מקש Tab ומסמנים ברווח',
-    mac: 'מגיעים אליה עם Tab (או עם VO+חץ ימינה) ומסמנים עם VO+רווח',
-    ios: 'מחליקים ימינה עד שהיא מוקראת ומקישים פעמיים',
-    and: 'מחליקים ימינה עד שהיא מוקראת ומקישים פעמיים'
-  };
-  var TAP = {
-    win: 'לוחצים Enter או רווח',
-    mac: 'לוחצים VO+רווח',
-    ios: 'מקישים פעמיים',
-    and: 'מקישים פעמיים'
-  };
-
-  var APPLE = {
-    ios: 'באייפון או באייפד: הגדרות, השם שלכם בראש הרשימה, כניסה ואבטחה (Sign-In & Security), אימות אוטומטי (Automatic Verification). הוא פעיל כברירת מחדל. כשהוא כבוי במכשיר אחד, הוא כבוי גם בשאר המכשירים.',
-    mac: 'במק: תפריט Apple, הגדרות מערכת, השם שלכם, כניסה ואבטחה, אימות אוטומטי (Automatic Verification). הוא פעיל כברירת מחדל. כשהוא כבוי במכשיר אחד, הוא כבוי גם בשאר המכשירים.'
-  };
-
+  var Core = window.NegishutRobotCore;
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+  var lastText = '';
   function steps(dev, sit) {
-    var t = '', list = [];
-    if (sit === 'box') {
-      t = 'תיבת הסימון "אני לא רובוט"';
-      list = [
-        'מוצאים את התיבה ' + SR[dev] + ': ' + MOVE[dev] + '.',
-        'מסמנים אותה: ' + TAP[dev] + '. אם שמעתם "You are verified" או שהתיבה מסומנת, סיימתם.',
-        'אם נפתח אתגר: ראו את הצעדים שמופיעים תחת "אתגר תמונות". בחרו שוב בשאלה השנייה.',
-        'אם קורא המסך לא נכנס לשדות, הפעילו בו מצב טפסים בכוח (בגוגל מציינים שזה עוזר).',
-        'אחרי שהאימות פג ("Verification expired") מסמנים את התיבה מחדש. כדאי להשלים אימות אחרון לפני לחיצה על שליחה.'
-      ];
-    } else if (sit === 'img') {
-      t = 'אתגר תמונות: עוברים לאתגר הקולי';
-      list = [
-        'באתגר מחפשים כפתור עם סמל אוזניות, והקורא מכריז עליו כ"audio" או "get an audio challenge". ' + (dev === 'win' || dev === 'mac' ? 'אפשר לעבור בין הכפתורים עם Tab.' : 'מחליקים ימינה עד שהוא מוקרא.') + ' בוחרים בו.',
-        'לוחצים על Play, ומקשיבים לספרות.',
-        'מקלידים את הספרות בשדה הטקסט שאחרי הכפתור. אם הפוקוס לא שם, ' + (dev === 'win' || dev === 'mac' ? 'לוחצים Tab.' : 'מחליקים עד השדה.'),
-        'בתוך השדה לוחצים R כדי לשמוע שוב מההתחלה (עובד במקלדת). יש גם כפתור לאתגר קולי אחר.',
-        'לוחצים Enter או "Verify". תשובה שגויה מביאה אתגר חדש, ותשובה נכונה מסמנת את התיבה.',
-        'אם הקול לא מתנגן, אפשר להוריד את הקובץ דרך הקישור שבאתגר.',
-        'אין כפתור שמע בכלל? אל תתעקשו. עברו לשלוש הדרכים האחרונות: עזרה של אדם, מוקד טלפוני של הגוף, או המכתב המוכן שבהמשך הדף.'
-      ];
-    } else if (sit === 'blk') {
-      t = 'הודעת "תנועה חריגה" או "שאילתות אוטומטיות"';
-      list = [
-        'זו לא אשמתכם. גוגל אומרת שההודעה מופיעה כשהרשת נראית כמי ששולחת תנועה אוטומטית, גם כשאתם אדם אמיתי.',
-        'אם יש VPN או שירות פרוקסי פעיל, מנתקים אותו ומנסים שוב.',
-        'ברשת משותפת (בית ספר, עסק, מכללה) ההודעה שכיחה. נסו רשת אחרת, למשל נתונים סלולריים.',
-        'מוודאים שהדפדפן מעודכן ושה-JavaScript פעיל.',
-        'ההודעה בדרך כלל מציגה אימות, ופתרון שלו מסיר אותה. אם הוא מופיע, ראו "אתגר תמונות".',
-        'אם זה חוזר שוב ושוב: ייתכן שזה הספק או תוכנה זדונית. בקשו מאיש טכני לבדוק, או פנו לספק האינטרנט.'
-      ];
-    } else if (sit === 'hc') {
-      t = 'hCaptcha: יש אפשרות נגישות רשמית';
-      list = [
-        'במקום אתגר התמונות, באתרים שהפעילו זאת יש בתפריט של הווידג\'ט אפשרות "Accessibility Challenge" שמבוססת על טקסט.',
-        'אפשרות שנייה: נרשמים לנגישות אצל hCaptcha בדף הנגישות הרשמי שלהם (hcaptcha.com/accessibility). מקבלים עוגייה מוצפנת שמאפשרת לעבור כמה פעמים ביום בלי אתגר חזותי, והיא מתחדשת מדי פעם בכניסה.',
-        'ההרשמה היא בדף של hCaptcha עצמם ולא אצלנו, ואפשר לפנות גם בכתובת support@hcaptcha.com.'
-      ];
-    } else if (sit === 'cf') {
-      t = 'Cloudflare: "מאמת שאתה אנושי"';
-      list = [
-        'בדרך כלל אין מה לפתור. לפי Cloudflare, הווידג\'ט (Turnstile) יכול להיות תיבת סימון, לא אינטראקטיבי בכלל, או בלתי נראה.',
-        'אם מופיעה תיבת סימון, ' + MOVE[dev] + '.',
-        'Cloudflare מצהירה שהווידג\'ט עומד ב-WCAG 2.2 ברמה AA.',
-        'אם אתם נתקעים באתר מסוים, השתמשו במכתב המוכן ופנו לרכז הנגישות שלו.'
-      ];
-    } else {
-      t = 'גרירת חלק, סיבוב תמונה, או אתגר בלי שמע';
-      list = [
-        'אין לנו דרך עצמאית לפתור אתגר כזה, ואנחנו לא ממליצים על תוספים או שירותים שפותרים אימות במקומכם.',
-        'מבקשים מאדם קרוב לעזור ברגע האימות בלבד.',
-        'מתקשרים למוקד של הגוף (בנק, קופת חולים, משרד) ומבקשים לבצע את הפעולה בטלפון.',
-        'שולחים לרכז הנגישות של האתר את המכתב המוכן שבהמשך הדף. אתר שפונה לציבור בישראל צריך להיות נגיש, ולפי כל-זכות מי שנודע לו על הפרה צריך לתקן תוך 60 יום.'
-      ];
-    }
-    var extra = '';
-    if (APPLE[dev]) {
-      extra = '<h3>טיפ שחוסך אימותים באפל</h3><p>' + APPLE[dev] + ' אם עדיין מופיעים אימותים, וודאו שאתם מחוברים ל-Apple Account ושהמכשיר מעודכן. ייתכן שהאתר לא תומך בתכונה.</p>';
-    }
-    var h = '<h3>' + t + '</h3><p>מכשיר: ' + DEV[dev] + '.</p><ol>';
-    for (var i = 0; i < list.length; i++) h += '<li>' + list[i] + '</li>';
-    h += '</ol>' + extra;
+    var s = Core.steps(dev, sit);
+    var h = '<h3>' + esc(s.title) + '</h3><p>מכשיר: ' + esc(s.device) + '.</p><ol>';
+    for (var i = 0; i < s.items.length; i++) h += '<li>' + esc(s.items[i]) + '</li>';
+    h += '</ol>';
+    if (s.extra) h += '<h3>טיפ שחוסך אימותים באפל</h3><p>' + esc(s.extra) + '</p>';
+    h += '<p><button type="button" class="btn btn-line" id="nr-say">הקראת הצעדים בקול</button> <button type="button" class="btn btn-line" id="nr-stop" hidden>עצירת ההקראה</button></p>';
+    lastText = s.title + '. ' + s.items.map(function (x, i) { return 'צעד ' + (i + 1) + '. ' + x; }).join(' ') + (s.extra ? ' ' + s.extra : '');
     return h;
   }
 
@@ -104,7 +25,24 @@
     var s = document.querySelector('input[name=nr-sit]:checked');
     if (!d || !s) return;
     out.innerHTML = steps(d.value, s.value);
+    bindSay();
     if (move) out.focus();
+  }
+  /* הקראת הצעדים בקול המכשיר (עברית), עם כפתור עצירה. לקורא מסך יש את הרשימה כטקסט, וזה לשאר האנשים. */
+  function bindSay() {
+    var go = $('nr-say'), stop = $('nr-stop');
+    if (!go) return;
+    if (!('speechSynthesis' in window)) { go.hidden = true; return; }
+    function end() { stop.hidden = true; go.hidden = false; }
+    go.addEventListener('click', function () {
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(lastText);
+      u.lang = 'he-IL';
+      u.onend = u.onerror = end;
+      window.speechSynthesis.speak(u);
+      go.hidden = true; stop.hidden = false; stop.focus();
+    });
+    stop.addEventListener('click', function () { window.speechSynthesis.cancel(); end(); go.focus(); });
   }
   var radios = document.querySelectorAll('input[name=nr-dev],input[name=nr-sit]');
   for (var r = 0; r < radios.length; r++) {
