@@ -121,7 +121,8 @@ function toolZmanim(city) {
     `חצות היום ${sayTime(z.chatzot())}`,
     `מנחה גדולה ${sayTime(z.minchaGedola())}`,
     `שקיעת החמה ${sayTime(z.sunset())}`,
-    `צאת הכוכבים ${sayTime(z.tzeit(8.5))}`
+    `צאת הכוכבים ${sayTime(z.tzeit(8.5))}`,
+    `צאת הכוכבים לרבנו תם, שבעים ושתיים דקות אחרי השקיעה ${sayTime(new Date(z.sunset().getTime() + 72 * 60000))}`
   ];
 }
 
@@ -202,7 +203,8 @@ function toolShabbat(city) {
     `הדלקת נרות ביום שישי ${sayTime(candle)}`, `${city[3]} דקות לפני השקיעה`,
     `שקיעת החמה ביום שישי ${sayTime(sunsetFri)}`,
     `שקיעת החמה בשבת ${sayTime(zSat.sunset())}`,
-    `צאת השבת ${sayTime(havdala)}`
+    `צאת השבת ${sayTime(havdala)}`,
+    `צאת השבת לרבנו תם ${sayTime(new Date(zSat.sunset().getTime() + 72 * 60000))}`
   ];
 }
 
