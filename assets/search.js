@@ -41,7 +41,8 @@
       '<div class="hk-sg"><textarea rows="2" maxlength="160" aria-label="מה הכלי שחסר">' + esc(text) + '</textarea>' +
       '<input type="email" placeholder="מייל, אם רוצים הודעה כשהכלי מוכן (לא חובה)" maxlength="120" dir="ltr">' +
       '<input class="hk-hp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">' +
-      '<button type="button">שלחו את ההצעה</button><p class="hk-msg" role="status"></p></div></div>';
+      '<button type="button">שלחו את ההצעה</button><p class="hk-msg" role="status"></p></div>' +
+      '<p class="hk-bot">🤖 אפשר גם לכתוב לבוט הכלים בטלגרם, במילים שלכם: <a href="https://t.me/HakelimBot?start=search" target="_blank" rel="noopener">לפתוח את הבוט</a></p></div>';
     var d = out.querySelector('.hk-sg'), ta = d.querySelector('textarea'), em = d.querySelector('input[type=email]'), hp = d.querySelector('.hk-hp'), b = d.querySelector('button'), m = d.querySelector('.hk-msg');
     b.onclick = function () {
       var what = ta.value.trim();
