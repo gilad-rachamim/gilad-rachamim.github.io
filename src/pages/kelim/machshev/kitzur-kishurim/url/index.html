@@ -1,0 +1,122 @@
+<!--meta {
+ "site": "kelim",
+ "nav": "tchumim",
+ "tool": "machshev_kitzur_url",
+ "title": "קיצור כתובת אינטרנט (URL) בחינם – כתובת קצרה בשנייה | הכלים של גילעד רחמים",
+ "description": "קיצור כתובת בחינם: הופכים כתובת אינטרנט (URL) ארוכה לכתובת קצרה עם שם משלכם, QR וספירת לחיצות. בלי הרשמה, בלי פרסומות והכתובת לא פגה.",
+ "og_title": "קיצור כתובת אינטרנט (URL) בחינם",
+ "priority": "0.7",
+ "crumbs": [
+  [
+   "מחשב וטלפון",
+   "/kelim/machshev/"
+  ],
+  [
+   "קיצור קישורים",
+   "/kelim/machshev/kitzur-kishurim/"
+  ],
+  [
+   "קיצור כתובת",
+   null
+  ]
+ ],
+ "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/machshev-kitzur.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"מה ההבדל בין כתובת, קישור ו-URL?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"בפועל זה אותו דבר. URL היא הכתובת של דף באינטרנט, וקישור הוא כתובת שאפשר ללחוץ עליה.\"}}, {\"@type\": \"Question\", \"name\": \"איך מקצרים כתובת אינטרנט?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מדביקים אותה בשדה שבראש הדף ולוחצים \\\"לקצר\\\". מקבלים כתובת קצרה להעתקה ולשיתוף.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לראות לאן כתובת קצרה מובילה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. מוסיפים + בסוף הכתובת הקצרה ורואים דף תצוגה מקדימה עם הכתובת המלאה.\"}}, {\"@type\": \"Question\", \"name\": \"יש הגבלה על אורך הכתובת?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן, עד 2,000 תווים. כתובת ארוכה יותר אינה מתקבלת.\"}}, {\"@type\": \"Question\", \"name\": \"אילו כתובות לא מתקבלות?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כתובות IP, שרת מקומי, קישורים שכבר קוצרו, קבצי הרצה ואתרים מסומנים כזדוניים.\"}}, {\"@type\": \"Question\", \"name\": \"האם הכתובת הקצרה פגה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. היא עובדת עד שמוחקים אותה.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר לקצר כמה כתובות בבת אחת?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן, עד 20, בלשונית \\\"כמה קישורים\\\".\"}}, {\"@type\": \"Question\", \"name\": \"צריך להירשם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. הכלי בחינם, בלי הרשמה ובלי פרסומות.\"}}]}</script>",
+ "foot": "<script src=\"/assets/vendor/qrcodejs/qrcode-1.0.0.min.js\" integrity=\"sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==\" crossorigin=\"anonymous\" referrerpolicy=\"no-referrer\" defer></script><script src=\"/assets/machshev-kitzur.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>קיצור כתובת אינטרנט (URL) בחינם, בלי הרשמה</h1>
+  <p class="sub">מדביקים כתובת ארוכה ומקבלים כתובת קצרה שאפשר לשלוח, להדפיס ולבדוק לאן היא מובילה לפני הלחיצה.</p>
+</header>
+<div class="tool" id="kz-app" data-mode="one">
+  <p class="kz-safe">🔗 בחינם, בלי הרשמה, בלי פרסומות ובלי הגבלה. הקישור הקצר לא פג, ואפשר לראות כמה לחצו עליו.</p>
+  <div class="tabs" id="kz-tabs" role="tablist">
+    <button type="button" role="tab" data-mode="one" aria-selected="true">קישור אחד</button>
+    <button type="button" role="tab" data-mode="many" aria-selected="false">כמה קישורים</button>
+    <button type="button" role="tab" data-mode="wa" aria-selected="false">וואטסאפ</button>
+  </div>
+  <p id="kz-live" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)"></p>
+
+  <div class="kz-pane" data-pane="one">
+    <form id="kz-form" novalidate>
+      <label for="kz-url">הדביקו כאן את הקישור הארוך</label>
+      <div class="kz-row"><input id="kz-url" type="url" dir="ltr" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://..."><button type="button" class="btn btn-line btn-sm" id="kz-paste">הדבקה</button></div>
+      <label for="kz-alias">שם משלכם לקישור (לא חובה)</label>
+      <div class="kz-row"><span>s.hakelim.com/</span><input id="kz-alias" type="text" dir="ltr" maxlength="30" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="למשל: menu"></div>
+      <p class="kz-hint" id="kz-alias-msg" aria-live="polite"></p>
+      <button type="submit" class="btn btn-gold kz-go" id="kz-go">לקצר את הקישור</button>
+    </form>
+  </div>
+
+  <div class="kz-pane" data-pane="many" hidden>
+    <form id="kz-many-form" novalidate>
+      <label for="kz-many-in">קישור אחד בכל שורה (עד 20)</label>
+      <textarea id="kz-many-in" dir="ltr" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://...&#10;https://..."></textarea>
+      <button type="submit" class="btn btn-gold kz-go" id="kz-many-go">לקצר את כולם</button>
+    </form>
+  </div>
+
+  <div class="kz-pane" data-pane="wa" hidden>
+    <form id="kz-wa-form" novalidate>
+      <label for="kz-wa-phone">מספר טלפון בוואטסאפ</label>
+      <input id="kz-wa-phone" type="tel" dir="ltr" inputmode="tel" autocomplete="off" placeholder="050-1234567">
+      <label for="kz-wa-msg">הודעה מוכנה (לא חובה)</label>
+      <textarea id="kz-wa-msg" autocomplete="off" placeholder="שלום, אשמח לפרטים על..."></textarea>
+      <label for="kz-wa-alias">שם משלכם לקישור (לא חובה)</label>
+      <input id="kz-wa-alias" type="text" dir="ltr" maxlength="30" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="למשל: whatsapp-ron">
+      <button type="submit" class="btn btn-gold kz-go" id="kz-wa-go">ליצור קישור קצר לוואטסאפ</button>
+    </form>
+  </div>
+
+  <p class="kz-err" id="kz-err" role="alert" hidden></p>
+  <div id="kz-out"></div>
+
+  <section id="kz-mine" hidden>
+    <h2 class="kz-h2">הקישורים שלי</h2>
+    <p class="kz-hint">הרשימה נשמרת בדפדפן הזה בלבד. לניהול ממכשיר אחר השתמשו ב"קישור ניהול" שבכל כרטיס.</p>
+    <div id="kz-list"></div>
+  </section>
+
+  <details class="kz-rep">
+    <summary>דיווח על קישור קצר מסוכן או מטעה</summary>
+    <form id="kz-rep-form" novalidate>
+      <label for="kz-rep-code">הקישור הקצר שרוצים לדווח עליו</label>
+      <input id="kz-rep-code" type="text" dir="ltr" autocomplete="off" placeholder="s.hakelim.com/...">
+      <button type="submit" class="btn btn-line btn-sm" style="margin-top:.6rem">שליחת דיווח</button>
+      <p class="kz-hint" id="kz-rep-msg" aria-live="polite"></p>
+    </form>
+  </details>
+  <p class="note"><a href="/esek/qr/">צריכים קוד QR עם צבעים ולוגו? ←</a></p>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">מה זה קיצור כתובת, ואיך עושים אותו</h2>
+  <p>כתובת אינטרנט, או URL, היא מה שמופיע בשורת הכתובת של הדפדפן. כתובות של מאמרים, מוצרים ופוסטים הופכות לעיתים לשורות ארוכות עם סימנים וקודים. קיצור כתובת יוצר כתובת קצרה שמפנה לאותו דף, ולכן קל לשלוח אותה, להקריא אותה וגם להדפיס אותה. מדביקים את הכתובת הארוכה בשדה שבראש הדף, לוחצים לקצר, ומקבלים כתובת מהצורה s.hakelim.com/קוד. בחינם, בלי הרשמה ובלי פרסומות.</p>
+  <h3>מה יש בתוך כתובת אינטרנט</h3>
+  <p>כתובת בנויה מכמה חלקים: הפרוטוקול, כמו https; שם האתר, כמו hakelim.com; הנתיב אל הדף; ולפעמים אחרי סימן שאלה פרמטרים כמו מקור ההגעה. כתובות מקמפיינים נוטות להיות ארוכות בגלל הפרמטרים. הכתובת הקצרה שומרת את כולם, והדפדפן מקבל את הכתובת המלאה כשלוחצים.</p>
+  <h3>מתי כדאי לקצר כתובת</h3>
+  <p>כשהכתובת תופיע בהדפסה, כמו כרטיס ביקור, שלט או פלייר. כשהיא תיאמר בקול, בשיעור או בהרצאה. כשיש מגבלת תווים. ובכל פעם שרוצים למדוד כמה לחצו. לא כדאי לקצר כתובת שכבר קצרה, וכתובת שמובילה למקום רגיש.</p>
+  <h3>איך בודקים לאן כתובת קצרה מובילה</h3>
+  <p>הבעיה של כתובות קצרות היא שלא רואים את היעד. אצלנו מוסיפים + בסוף הכתובת הקצרה, למשל s.hakelim.com/שם+, ורואים דף תצוגה מקדימה עם הכתובת המלאה, בלי להיכנס אליה. כדאי להשתמש בזה גם עבור קישורים שמקבלים בהודעות ממי שלא מכירים.</p>
+  <h3>אילו כתובות אי אפשר לקצר</h3>
+  <p>כתובות IP, שרתים מקומיים, כתובות עם שם משתמש וסיסמה בתוכן, קישורים שכבר קוצרו בשירות אחר וקבצי הרצה אינם מתקבלים. אתרים שמסומנים כזדוניים בשירות סינון, לא יתקצרו. הכתובת עצמה חייבת להתחיל ב-http או ב-https ולהיות באורך של עד 2,000 תווים.</p>
+  <h3>קיצור כתובות בכמה אתרים בבת אחת</h3>
+  <p>בלשונית "כמה קישורים" אפשר להדביק עד 20 כתובות, אחת בכל שורה. מקבלים טבלה עם הכתובת המקורית והקצרה, ואפשר להעתיק את כולן יחד. זה מתאים למי שמכין רשימת מקורות, דוח או ניוזלטר.</p>
+  <h3>עריכת הכתובת אחרי הקיצור</h3>
+  <p>הכתובת הקצרה לא קשורה לצמיתות ליעד. אם העברתם את הדף לכתובת אחרת, "עריכת יעד" מעדכנת את היעד והכתובת הקצרה, שכבר הודפסה או נשלחה, ממשיכה לעבוד. צריך רק את "קישור הניהול" שנשמר ברשימה שלכם.</p>
+  <h3>מה נשמר כשמקצרים כתובת</h3>
+  <p>נשמרים הכתובת, הקוד וספירת לחיצות לפי יום. כתובת ה-IP לא נשמרת כמו שהיא, רק בצורה מוצפנת לצורך הגבלת קצב. ככה זה נראה בפירוט ב<a href="/kelim/pratiut/">דף הפרטיות</a>.</p>
+  <p>הכלי המלא נמצא ב<a href="/kelim/machshev/kitzur-kishurim/">קיצור קישורים</a>. לשימוש ברשתות חברתיות יש <a href="/kelim/machshev/kitzur-kishurim/link/">קיצור לינק</a>, ולוואטסאפ יש <a href="/kelim/machshev/kitzur-kishurim/whatsapp/">קיצור קישור לוואטסאפ</a>. לקוד QR לכתובת: <a href="/esek/qr/">יצירת QR</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>מה ההבדל בין כתובת, קישור ו-URL?</summary><p>בפועל זה אותו דבר. URL היא הכתובת של דף באינטרנט, וקישור הוא כתובת שאפשר ללחוץ עליה.</p></details>
+  <details><summary>איך מקצרים כתובת אינטרנט?</summary><p>מדביקים אותה בשדה שבראש הדף ולוחצים "לקצר". מקבלים כתובת קצרה להעתקה ולשיתוף.</p></details>
+  <details><summary>אפשר לראות לאן כתובת קצרה מובילה?</summary><p>כן. מוסיפים + בסוף הכתובת הקצרה ורואים דף תצוגה מקדימה עם הכתובת המלאה.</p></details>
+  <details><summary>יש הגבלה על אורך הכתובת?</summary><p>כן, עד 2,000 תווים. כתובת ארוכה יותר אינה מתקבלת.</p></details>
+  <details><summary>אילו כתובות לא מתקבלות?</summary><p>כתובות IP, שרת מקומי, קישורים שכבר קוצרו, קבצי הרצה ואתרים מסומנים כזדוניים.</p></details>
+  <details><summary>האם הכתובת הקצרה פגה?</summary><p>לא. היא עובדת עד שמוחקים אותה.</p></details>
+  <details><summary>אפשר לקצר כמה כתובות בבת אחת?</summary><p>כן, עד 20, בלשונית "כמה קישורים".</p></details>
+  <details><summary>צריך להירשם?</summary><p>לא. הכלי בחינם, בלי הרשמה ובלי פרסומות.</p></details>
+</section>
+<!--/seo-txt-->

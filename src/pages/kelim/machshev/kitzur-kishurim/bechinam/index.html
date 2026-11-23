@@ -1,0 +1,120 @@
+<!--meta {
+ "site": "kelim",
+ "nav": "tchumim",
+ "tool": "machshev_kitzur_free",
+ "title": "קיצור קישור בחינם – בלי הרשמה, בלי פרסומות ובלי הגבלה | הכלים של גילעד רחמים",
+ "description": "קיצור קישור בחינם באמת: אין הרשמה, אין פרסומות, אין מסלול בתשלום והקישור הקצר לא פג. כולל שם משלכם, QR וספירת לחיצות. מיזם חסד של אתר הכלים.",
+ "og_title": "קיצור קישור בחינם – באמת בחינם",
+ "priority": "0.7",
+ "crumbs": [
+  [
+   "מחשב וטלפון",
+   "/kelim/machshev/"
+  ],
+  [
+   "קיצור קישורים",
+   "/kelim/machshev/kitzur-kishurim/"
+  ],
+  [
+   "קיצור קישור בחינם",
+   null
+  ]
+ ],
+ "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/machshev-kitzur.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"האם קיצור הקישור באמת בחינם?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן. אין תשלום, אין הרשמה ואין פרסומות, וכל התכונות פתוחות.\"}}, {\"@type\": \"Question\", \"name\": \"מה ההגבלה היחידה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"עד 20 קישורים חדשים בשעה ו-100 ביום מכל חיבור, כדי למנוע ניצול לרעה.\"}}, {\"@type\": \"Question\", \"name\": \"הקישור הקצר יפוג?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. הוא עובד עד שמוחקים אותו.\"}}, {\"@type\": \"Question\", \"name\": \"למה אין צורך בחשבון?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"הדפדפן שומר את רשימת הקישורים, ו\\\"קישור ניהול\\\" פרטי מאפשר לערוך גם ממכשיר אחר.\"}}, {\"@type\": \"Question\", \"name\": \"יש פרסומות לפני הקישור?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"לא. הקישור מפנה ישר ליעד.\"}}, {\"@type\": \"Question\", \"name\": \"מי מממן את זה?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"זה מיזם חסד של אתר הכלים של גילעד רחמים, ללא פרסומות.\"}}, {\"@type\": \"Question\", \"name\": \"אפשר להשתמש בזה לעסק?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"כן, בחינם. הכתובת הקצרה היא s.hakelim.com/שם, ולא דומיין פרטי.\"}}, {\"@type\": \"Question\", \"name\": \"איך אני מוודא שקישור קצר בטוח?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"מוסיפים + בסוף הקישור הקצר ורואים את היעד המלא בדף תצוגה מקדימה.\"}}]}</script>",
+ "foot": "<script src=\"/assets/vendor/qrcodejs/qrcode-1.0.0.min.js\" integrity=\"sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==\" crossorigin=\"anonymous\" referrerpolicy=\"no-referrer\" defer></script><script src=\"/assets/machshev-kitzur.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>קיצור קישור בחינם – בלי הרשמה, בלי פרסומות ובלי הגבלה</h1>
+  <p class="sub">מקצר קישורים שהוא באמת בחינם: בלי חשבון, בלי מסלול בתשלום ובלי קישורים שנעלמים אחרי חודש.</p>
+</header>
+<div class="tool" id="kz-app" data-mode="one">
+  <p class="kz-safe">🔗 בחינם, בלי הרשמה, בלי פרסומות ובלי הגבלה. הקישור הקצר לא פג, ואפשר לראות כמה לחצו עליו.</p>
+  <div class="tabs" id="kz-tabs" role="tablist">
+    <button type="button" role="tab" data-mode="one" aria-selected="true">קישור אחד</button>
+    <button type="button" role="tab" data-mode="many" aria-selected="false">כמה קישורים</button>
+    <button type="button" role="tab" data-mode="wa" aria-selected="false">וואטסאפ</button>
+  </div>
+  <p id="kz-live" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)"></p>
+
+  <div class="kz-pane" data-pane="one">
+    <form id="kz-form" novalidate>
+      <label for="kz-url">הדביקו כאן את הקישור הארוך</label>
+      <div class="kz-row"><input id="kz-url" type="url" dir="ltr" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://..."><button type="button" class="btn btn-line btn-sm" id="kz-paste">הדבקה</button></div>
+      <label for="kz-alias">שם משלכם לקישור (לא חובה)</label>
+      <div class="kz-row"><span>s.hakelim.com/</span><input id="kz-alias" type="text" dir="ltr" maxlength="30" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="למשל: menu"></div>
+      <p class="kz-hint" id="kz-alias-msg" aria-live="polite"></p>
+      <button type="submit" class="btn btn-gold kz-go" id="kz-go">לקצר את הקישור</button>
+    </form>
+  </div>
+
+  <div class="kz-pane" data-pane="many" hidden>
+    <form id="kz-many-form" novalidate>
+      <label for="kz-many-in">קישור אחד בכל שורה (עד 20)</label>
+      <textarea id="kz-many-in" dir="ltr" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://...&#10;https://..."></textarea>
+      <button type="submit" class="btn btn-gold kz-go" id="kz-many-go">לקצר את כולם</button>
+    </form>
+  </div>
+
+  <div class="kz-pane" data-pane="wa" hidden>
+    <form id="kz-wa-form" novalidate>
+      <label for="kz-wa-phone">מספר טלפון בוואטסאפ</label>
+      <input id="kz-wa-phone" type="tel" dir="ltr" inputmode="tel" autocomplete="off" placeholder="050-1234567">
+      <label for="kz-wa-msg">הודעה מוכנה (לא חובה)</label>
+      <textarea id="kz-wa-msg" autocomplete="off" placeholder="שלום, אשמח לפרטים על..."></textarea>
+      <label for="kz-wa-alias">שם משלכם לקישור (לא חובה)</label>
+      <input id="kz-wa-alias" type="text" dir="ltr" maxlength="30" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="למשל: whatsapp-ron">
+      <button type="submit" class="btn btn-gold kz-go" id="kz-wa-go">ליצור קישור קצר לוואטסאפ</button>
+    </form>
+  </div>
+
+  <p class="kz-err" id="kz-err" role="alert" hidden></p>
+  <div id="kz-out"></div>
+
+  <section id="kz-mine" hidden>
+    <h2 class="kz-h2">הקישורים שלי</h2>
+    <p class="kz-hint">הרשימה נשמרת בדפדפן הזה בלבד. לניהול ממכשיר אחר השתמשו ב"קישור ניהול" שבכל כרטיס.</p>
+    <div id="kz-list"></div>
+  </section>
+
+  <details class="kz-rep">
+    <summary>דיווח על קישור קצר מסוכן או מטעה</summary>
+    <form id="kz-rep-form" novalidate>
+      <label for="kz-rep-code">הקישור הקצר שרוצים לדווח עליו</label>
+      <input id="kz-rep-code" type="text" dir="ltr" autocomplete="off" placeholder="s.hakelim.com/...">
+      <button type="submit" class="btn btn-line btn-sm" style="margin-top:.6rem">שליחת דיווח</button>
+      <p class="kz-hint" id="kz-rep-msg" aria-live="polite"></p>
+    </form>
+  </details>
+  <p class="note"><a href="/esek/qr/">צריכים קוד QR עם צבעים ולוגו? ←</a></p>
+</div>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">קיצור קישור בחינם: מה זה אומר כאן</h2>
+  <p>הרבה שירותים מציעים קיצור קישור בחינם, ואז מתברר שבחינם זה לכמה קישורים בלבד, או עם פרסומות, או עד שהחשבון נחסם. בדף הזה בחינם פירושו שכל מה שאפשר לעשות כאן הוא בלי תשלום, ובלי להזין מייל. זה חלק ממיזם חסד: כלים חינמיים לכולם, שנבנו כדי לעזור, לא כדי למכור.</p>
+  <h3>מה כלול בחינם</h3>
+  <p>קישור קצר עם קוד אוטומטי או עם שם משלכם, גם בעברית. קוד QR להורדה. ספירת לחיצות לפי יום, עם גרף של 30 יום. עריכת היעד ומחיקה. תצוגה מקדימה בכל קישור על ידי הוספת פלוס. קיצור של עד 20 קישורים בבת אחת. ומצב מיוחד לקישורי וואטסאפ. אין תכונה שנעולה מאחורי מסלול בתשלום.</p>
+  <h3>האם יש מגבלות בכל זאת</h3>
+  <p>יש גבולות אחד, כדי להגן על כולם: עד 20 קישורים חדשים בשעה ו-100 ביום מכל חיבור. מי ששולח יותר רואה הודעה ומנסה שוב מאוחר יותר. הקישורים עצמם לא פגים, ואין מגבלה על כמות הלחיצות עליהם.</p>
+  <h3>למה בלי הרשמה</h3>
+  <p>חשבון הוא מידע על אנשים שאין לנו סיבה לשמור. במקום חשבון, הדפדפן שלכם שומר רשימה של הקישורים שיצרתם, ויש לכם "קישור ניהול" פרטי לכל קישור, שאפשר לשמור ולפתוח בכל מכשיר. מי שיש לו את הקישור הזה יכול לערוך ולמחוק, ומי שאין לו לא יכול.</p>
+  <h3>למה בלי פרסומות</h3>
+  <p>כשלוחצים על הקישור הקצר, מגיעים ישר ליעד: אין דף ביניים, אין שניות המתנה ואין באנר. שירותים שמרוויחים מפרסומות מכניסים אותן לפני היעד, ואז כל מי שלוחץ על הקישור שלכם מקבל פרסומת. אצלנו זה לא קורה.</p>
+  <h3>בטיחות ושקיפות</h3>
+  <p>קישור קצר יכול להסתיר יעד, ולכן יש בדיקות: אתרים זדוניים נחסמים, קישור נבדק מחדש אחת ליום, קישור שמדווחים עליו כמה פעמים מושבת, ולכל קישור קצר אפשר להוסיף + ולראות לאן הוא מוביל לפני שנכנסים.</p>
+  <h3>למי זה מתאים</h3>
+  <p>לעסקים קטנים שמדפיסים כרטיסים, למורים ולמדריכים ששולחים קישורים בקבוצות, לעמותות, ולכל מי שרוצה לשלוח קישור נקי. מי שצריך שם מותג או דומיין משלו ידע שהכתובת כאן היא s.hakelim.com ולא דומיין פרטי.</p>
+  <p>לכלי המלא עברו ל<a href="/kelim/machshev/kitzur-kishurim/">קיצור קישורים</a>. גם: <a href="/kelim/machshev/kitzur-kishurim/link/">קיצור לינק</a>, <a href="/kelim/machshev/kitzur-kishurim/whatsapp/">קישור לוואטסאפ</a> ו<a href="/kelim/machshev/kitzur-kishurim/url/">קיצור כתובת</a>. על מה שנשמר, ב<a href="/kelim/pratiut/">דף הפרטיות</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>האם קיצור הקישור באמת בחינם?</summary><p>כן. אין תשלום, אין הרשמה ואין פרסומות, וכל התכונות פתוחות.</p></details>
+  <details><summary>מה ההגבלה היחידה?</summary><p>עד 20 קישורים חדשים בשעה ו-100 ביום מכל חיבור, כדי למנוע ניצול לרעה.</p></details>
+  <details><summary>הקישור הקצר יפוג?</summary><p>לא. הוא עובד עד שמוחקים אותו.</p></details>
+  <details><summary>למה אין צורך בחשבון?</summary><p>הדפדפן שומר את רשימת הקישורים, ו"קישור ניהול" פרטי מאפשר לערוך גם ממכשיר אחר.</p></details>
+  <details><summary>יש פרסומות לפני הקישור?</summary><p>לא. הקישור מפנה ישר ליעד.</p></details>
+  <details><summary>מי מממן את זה?</summary><p>זה מיזם חסד של אתר הכלים של גילעד רחמים, ללא פרסומות.</p></details>
+  <details><summary>אפשר להשתמש בזה לעסק?</summary><p>כן, בחינם. הכתובת הקצרה היא s.hakelim.com/שם, ולא דומיין פרטי.</p></details>
+  <details><summary>איך אני מוודא שקישור קצר בטוח?</summary><p>מוסיפים + בסוף הקישור הקצר ורואים את היעד המלא בדף תצוגה מקדימה.</p></details>
+</section>
+<!--/seo-txt-->
