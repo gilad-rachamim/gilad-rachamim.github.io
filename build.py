@@ -105,6 +105,16 @@ GA = "" if not GA_ID else f"""<script async src="https://www.googletagmanager.co
 <script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','{GA_ID}');</script>
 <script src="/assets/track.js" defer></script>
 """
+# פיקסל של Meta (22.11.2026, בקשת גילעד): מודד כניסות מהפרסום הממומן לדפי אתר הכלים ולדפי הקורס.
+# רק בדפים עם "site" (אתר הכלים), לא בדפים עם no_ga / no_pixel, ולא בדפי /nefesh/ (מידע רגיש – מדיניות Meta).
+# שולח PageView, ו-InitiateCheckout בלחיצה על קישור קנייה ב-Payhip. בלי התאמה מתקדמת ובלי שום פרט אישי.
+META_PIXEL_ID = "4627297074222937"
+PIXEL = "" if not META_PIXEL_ID else f"""<script>!function(f,b,e,v,n,t,s){{if(f.fbq)return;n=f.fbq=function(){{n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)}};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','{META_PIXEL_ID}');fbq('track','PageView');document.addEventListener('click',function(e){{var a=e.target.closest&&e.target.closest('a[href*="payhip.com"]');if(a&&window.fbq)fbq('track','InitiateCheckout');}});</script>
+"""
+def pixel_for(meta, url_path):
+    if not meta.get("site") or meta.get("no_ga") or meta.get("no_pixel") or url_path.startswith("/nefesh/"):
+        return ""
+    return PIXEL
 # קישור קצר בכל שיתוף מהאתר (assets/kishur.js): ווטסאפ, SMS, שיתוף בטלפון, העתקה
 KISHUR = '<script src="/assets/kishur.js" defer></script>\n'
 WA_TEXT = "שלום גילעד, אשמח לשמוע פרטים על ברית מילה"
@@ -284,6 +294,110 @@ def shipurim_list():
 # דף שלא רוצים בו את הבלוק: "no_rel": true ב-meta. תמונות השיתוף נוצרות ב-tools/og_images.py אל assets/og/.
 SEO_SKIP = {"pratiut", "privacy", "shipurim", "hitkadmut", "negishut"}
 SEO_AUTHOR = {"@type": "Person", "name": "גילעד רחמים אביעד", "url": BASE + "/kelim/#mi"}
+# דפים בשפה אחרת (22.11.2026, גיור באנגלית וברוסית): "lang": "en"/"ru" ב-meta -> <html lang dir=ltr>, התוכן בשפה,
+# המסגרת של האתר (תפריט, משוב, תחתית) נשארת בעברית ומסומנת lang=he dir=rtl. "alt": {"he": ..., "en": ..., "ru": ...} -> hreflang.
+LANG_UI = {
+    "en": {"locale": "en_US", "skip": "Skip to content", "crumbs": "Breadcrumb", "browser": "Any phone or computer browser, no install.",
+           "rel": "More free tools that may help", "all": "All tools in",
+           "chips": ["Free", "No limits", "No ads"], "sub": "Many tools like this online are limited and full of ads. Not here: no sign-up and no ads, out of a wish to do kindness (chesed)."},
+    "ru": {"locale": "ru_RU", "skip": "Перейти к содержанию", "crumbs": "Навигационная цепочка", "browser": "Любой браузер в телефоне или компьютере, без установки.",
+           "rel": "Ещё бесплатные инструменты", "all": "Все инструменты раздела",
+           "chips": ["Бесплатно", "Без ограничений", "Без рекламы"], "sub": "Многие такие инструменты в сети ограничены и полны рекламы. Здесь нет: без регистрации и без рекламы, как доброе дело (хесед)."},
+}
+GIUR_WA_TEXT = {
+    "he": "שלום גילעד, אשמח לשאול על ברית מילה בגיור",
+    "en": "Hello Gilad, I would like to ask about brit milah in conversion",
+    "ru": "Здравствуйте, Гилад, хочу спросить об обрезании при гиюре",
+}
+# מסגרת האתר (תפריט, משוב, תחתית, הודעת התקנה) בשפת הדף, 23.11.2026 – בקשת גילעד: גר שלא קורא עברית לא פוגש עברית בדף
+LANG_FRAME = {
+    "en": {"brand": "Jewish Tools", "navlabel": "Main navigation", "roadmap": "Conversion roadmap", "brit": "Adult brit milah", "write": "Write to Gilad",
+           "cta_h": "Need adult brit milah or hatafat dam brit?",
+           "cta_p": "Write to me, Gilad, on WhatsApp. I will listen, explain and connect you with a professional, experienced mohel in a proper clinic. No commitment.",
+           "cta_wa": "Write to Gilad on WhatsApp", "cta_more": "More about brit milah in conversion",
+           "share_h": "Know someone who is converting? Send them this page.", "share_btn": "Share on WhatsApp", "share_text": "A free, step-by-step guide for converts (Hebrew, English, Russian):",
+           "feedback": "Something missing or unclear? Tell me on WhatsApp", "fb_text": "Hello Gilad, a suggestion about the conversion pages:",
+           "contact": "Contact", "links": "Links", "wa_label": "(WhatsApp)", "heb": "The mohel site (Hebrew)", "tools": "All free tools (Hebrew)", "privacy": "Privacy (Hebrew)",
+           "promise": ["Everything is free and ad-free", "No sign-up", "Your data stays on your phone", "Works on phone and computer"],
+           "end": "Made by Gilad Rachamim Aviad, a disabled IDF veteran with severe combat PTSD. A chesed project: no profit intended.",
+           "up": "Back to top", "install_t": "Install on your home screen like an app.", "install_b": "Install", "install_x": "Close", "install_l": "Install as an app"},
+    "ru": {"brand": "Еврейские инструменты", "navlabel": "Главная навигация", "roadmap": "Путь к гиюру", "brit": "Брит-мила для взрослых", "write": "Написать Гиладу",
+           "cta_h": "Нужна брит-мила для взрослых или атафат дам брит?",
+           "cta_p": "Напишите мне, Гиладу, в WhatsApp. Я выслушаю, объясню и свяжу вас с профессиональным опытным моэлем в хорошо организованной клинике. Без обязательств.",
+           "cta_wa": "Написать Гиладу в WhatsApp", "cta_more": "Подробнее о брит-миле при гиюре",
+           "share_h": "Знаете кого-то, кто проходит гиюр? Отправьте ему эту страницу.", "share_btn": "Отправить в WhatsApp", "share_text": "Бесплатный пошаговый путеводитель для проходящих гиюр (иврит, английский, русский):",
+           "feedback": "Чего-то не хватает или непонятно? Напишите мне в WhatsApp", "fb_text": "Здравствуйте, Гилад, предложение по страницам о гиюре:",
+           "contact": "Контакты", "links": "Ссылки", "wa_label": "(WhatsApp)", "heb": "Сайт моэля (иврит)", "tools": "Все бесплатные инструменты (иврит)", "privacy": "Конфиденциальность (иврит)",
+           "promise": ["Всё бесплатно и без рекламы", "Без регистрации", "Данные остаются только в вашем телефоне", "Работает в телефоне и на компьютере"],
+           "end": "Автор: Гилад Рахамим Авиад, инвалид ЦАХАЛа с тяжёлым боевым ПТСР. Проект добра (хесед), без цели получить прибыль.",
+           "up": "Наверх", "install_t": "Установите на главный экран, как приложение.", "install_b": "Установить", "install_x": "Закрыть", "install_l": "Установка как приложения"},
+}
+def giur_cta(lang, url):
+    """בלוק פנייה לגילעד לברית מילה למבוגרים בסוף כל דף גיור (עברית/אנגלית/רוסית), חוץ מדף הברית עצמו."""
+    from urllib.parse import quote
+    if "/brit-mila-lager/" in url:
+        return ""
+    base = {"he": "/kodesh/giur/", "en": "/kodesh/giur/en/", "ru": "/kodesh/giur/ru/"}[lang]
+    wa = "https://wa.me/972584049049?text=" + quote(GIUR_WA_TEXT[lang])
+    if lang == "he":
+        h, pp, b1, b2 = ("צריכים ברית מילה למבוגרים או הטפת דם ברית?",
+                         "כתבו לי, גילעד, בווטסאפ ואדאג לכם באהבה: אקשיב, אסביר ואחבר אתכם למוהל מקצועי ומנוסה בקליניקה מסודרת. בלי התחייבות.",
+                         "לכתוב לגילעד בווטסאפ", "עוד על ברית מילה בגיור")
+    else:
+        f = LANG_FRAME[lang]
+        h, pp, b1, b2 = f["cta_h"], f["cta_p"], f["cta_wa"], f["cta_more"]
+    return (f'<section class="k-sec giur-cta no-print" aria-labelledby="gcta-h"><h2 id="gcta-h">{h}</h2><p>{pp}</p>'
+            f'<div class="gr-acts"><a class="gr-btn gold" href="{wa}" rel="noopener" data-gcta="wa">{b1}</a>'
+            f'<a class="gr-btn" href="{base}brit-mila-lager/">{b2}</a></div></section>\n')
+
+def lang_page(html, meta, url):
+    """עוטף דף בשפה אחרת: html ltr, וכל המסגרת (תפריט, משוב, תחתית, התקנה) מתורגמת לשפת הדף."""
+    from urllib.parse import quote
+    lang = meta.get("lang")
+    ui = LANG_UI[lang]
+    f = LANG_FRAME[lang]
+    alt = meta.get("alt", {})
+    html = html.replace('<html lang="he" dir="rtl">', f'<html lang="{lang}" dir="ltr">', 1)
+    html = html.replace('<meta property="og:locale" content="he_IL">', f'<meta property="og:locale" content="{ui["locale"]}">', 1)
+    html = html.replace('<a class="skip" href="#main">דילוג לתוכן</a>', f'<a class="skip" href="#main">{ui["skip"]}</a>', 1)
+    html = html.replace('<nav class="crumbs" aria-label="פירורי לחם">', f'<nav class="crumbs" aria-label="{ui["crumbs"]}">', 1)
+    wa = "https://wa.me/972584049049?text=" + quote(GIUR_WA_TEXT[lang])
+    base = f"/kodesh/giur/{lang}/"
+    langs = "".join(f'<a href="{alt[l]}" hreflang="{l}" lang="{l}"' + (' aria-current="true"' if l == lang else "") + f'>{n}</a>'
+                    for l, n in (("he", "עברית"), ("en", "English"), ("ru", "Русский")) if l in alt)
+    nav = (f'<nav class="topnav" aria-label="{f["navlabel"]}"><a href="{base}">{f["roadmap"]}</a><a href="{base}brit-mila-lager/">{f["brit"]}</a>'
+           f'<a href="{wa}" rel="noopener">{f["write"]}</a>{langs}</nav>')
+    html = re.sub(r'<nav class="topnav" aria-label="[^"]*">.*?</nav>', lambda m: nav, html, count=1, flags=re.S)
+    html = re.sub(r'(<a class="brand"[^>]*>.*?<b>)[^<]*(</b>)', lambda m: m.group(1) + f["brand"] + m.group(2), html, count=1, flags=re.S)
+    html = html.replace('<div id="hk-search" class="no-print"></div>', "", 1)
+    html = html.replace('<script src="/assets/search.js" defer></script>', "", 1)
+    full = url
+    share = "https://wa.me/?text=" + quote(f["share_text"] + " " + full)
+    fb = "https://wa.me/972584049049?text=" + quote(f["fb_text"])
+    fbsec = (f'<section class="fb no-print" id="fb"><div class="in"><p class="fb-q">{f["share_h"]}</p>'
+             f'<p><a class="btn btn-gold btn-sm" href="{share}" target="_blank" rel="noopener">💬 {f["share_btn"]}</a></p>'
+             f'<p class="fb-note"><a class="gold" href="{fb}" target="_blank" rel="noopener">{f["feedback"]}</a></p></div></section>')
+    cta = giur_cta(lang, url)
+    html = re.sub(r'<section class="fb no-print".*?</section>', lambda m: cta + fbsec, html, count=1, flags=re.S)
+    he_a = lambda href, t: f'<a href="{href}">{t}</a>'
+    foot = ('<footer class="site-foot ft"><div class="cols">'
+            f'<div><b>{f["contact"]}</b><a href="{wa}"><span dir="ltr" style="white-space:nowrap">058-404-9049</span> {f["wa_label"]}</a><a href="mailto:gilad4049@gmail.com">gilad4049@gmail.com</a></div>'
+            f'<div><b>{f["links"]}</b>{he_a("/mohel/", f["heb"])}{he_a("/kelim/", f["tools"])}{he_a("/mohel/privacy/", f["privacy"])}</div></div>'
+            '<ul class="ft-promise">' + "".join(f"<li>✓ {t}</li>" for t in f["promise"]) + '</ul>'
+            f'<div class="end"><span>{f["end"]}</span><span><a class="ft-up" href="#" data-ft="up">{f["up"]} ↑</a></span></div></footer>')
+    html = re.sub(r'<footer class="site-foot ft".*?</footer>', lambda m: foot, html, count=1, flags=re.S)
+    inst = (f'<div class="install-bar" id="install-bar" role="region" aria-label="{f["install_l"]}" hidden><span data-install-text>📲 {f["install_t"]}</span>'
+            f'<button class="btn btn-gold btn-sm" type="button" data-install>{f["install_b"]}</button>'
+            f'<button class="x" type="button" data-install-close aria-label="{f["install_x"]}">×</button></div>')
+    html = re.sub(r'<div class="install-bar".*?</div>', lambda m: inst, html, count=1, flags=re.S)
+    return html
+
+def hreflang(meta):
+    alt = meta.get("alt")
+    if not alt:
+        return ""
+    out = "".join(f'<link rel="alternate" hreflang="{l}" href="{BASE}{u}">' for l, u in alt.items())
+    return out + (f'<link rel="alternate" hreflang="x-default" href="{BASE}{alt["he"]}">' if "he" in alt else "")
 def in_sitemap(meta):
     """דף עם noindex - גם בדגל וגם כשהוכנס ידנית ב-head - לא נכנס למפת האתר.
     גוגל מתריע כשדף במפה חסום ב-noindex (סרץ' קונסול, 16.11.2026)."""
@@ -306,7 +420,10 @@ def seo_parent(p):
     return p.rstrip("/").rsplit("/", 1)[0] + "/"
 
 def seo_children(p):
-    return [c for c in INDEX if c != p and seo_parent(c) == p and c.rstrip("/").rsplit("/", 1)[1] not in SEO_SKIP]
+    # דפים בשפה אחרת (אנגלית/רוסית, "lang" ב-meta) לא נספרים כילדים של מרכז בשפה אחרת
+    lang = INDEX.get(p, {}).get("lang", "he")
+    return [c for c in INDEX if c != p and seo_parent(c) == p and c.rstrip("/").rsplit("/", 1)[1] not in SEO_SKIP
+            and INDEX[c].get("lang", "he") == lang]
 
 def seo_is_hub(p):
     if INDEX.get(p, {}).get("no_hub"):  # כלי שיש מתחתיו דפי נחיתה (תמלול): נשאר כלי, לא דף מרכז
@@ -321,7 +438,7 @@ def seo_ld(p, url):
     desc = meta["description"].replace('"', "״")
     if seo_is_hub(p):
         d = {"@context": "https://schema.org", "@type": "CollectionPage", "name": meta["_name"], "description": desc,
-             "url": url, "inLanguage": "he", "isAccessibleForFree": True, "author": SEO_AUTHOR,
+             "url": url, "inLanguage": meta.get("lang", "he"), "isAccessibleForFree": True, "author": SEO_AUTHOR,
              "mainEntity": {"@type": "ItemList", "itemListElement": [
                  {"@type": "ListItem", "position": i, "name": INDEX[c]["_name"], "url": BASE + c}
                  for i, c in enumerate(seo_children(p), start=1)]}}
@@ -330,8 +447,8 @@ def seo_ld(p, url):
                else "EducationalApplication" if meta["site"] == "limudim" or "/tichnut/" in p
                else "UtilitiesApplication")
         d = {"@context": "https://schema.org", "@type": "WebApplication", "name": meta["_name"], "description": desc,
-             "url": url, "inLanguage": "he", "applicationCategory": cat, "operatingSystem": "Any",
-             "browserRequirements": "דפדפן רגיל בטלפון או במחשב, בלי התקנה.",
+             "url": url, "inLanguage": meta.get("lang", "he"), "applicationCategory": cat, "operatingSystem": "Any",
+             "browserRequirements": LANG_UI.get(meta.get("lang"), {}).get("browser", "דפדפן רגיל בטלפון או במחשב, בלי התקנה."),
              "isAccessibleForFree": True, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "ILS"},
              "author": SEO_AUTHOR, "publisher": SEO_AUTHOR,
              "isPartOf": {"@type": "WebSite", "name": site["name"], "url": BASE + site["home"]}}
@@ -351,8 +468,12 @@ def seo_related(p):
         d = INDEX[c]["description"]
         d = d if len(d) <= 95 else d[:95].rsplit(" ", 1)[0].rstrip(" ,.:;–-(") + "…"
         return f'<a href="{c}"><b>{html_lib.escape(INDEX[c]["_name"], quote=False)}</b><span>{html_lib.escape(d, quote=False)}</span></a>'
-    more = f'<p class="rel-all"><a class="gold" href="{par}">לכל הכלים של ״{html_lib.escape(INDEX[par]["_name"], quote=False)}״ ←</a></p>' if par in INDEX else ""
-    return ('\n<section class="k-sec rel no-print" aria-labelledby="rel-h">\n  <h2 id="rel-h">עוד כלים בחינם שאולי יעזרו</h2>\n  <div class="dom">'
+    ui = LANG_UI.get(meta.get("lang"))
+    if ui:
+        more = f'<p class="rel-all"><a class="gold" href="{par}">{ui["all"]} “{html_lib.escape(INDEX[par]["_name"], quote=False)}” →</a></p>' if par in INDEX else ""
+    else:
+        more = f'<p class="rel-all"><a class="gold" href="{par}">לכל הכלים של ״{html_lib.escape(INDEX[par]["_name"], quote=False)}״ ←</a></p>' if par in INDEX else ""
+    return ('\n<section class="k-sec rel no-print" aria-labelledby="rel-h">\n  <h2 id="rel-h">' + (ui["rel"] if ui else "עוד כלים בחינם שאולי יעזרו") + '</h2>\n  <div class="dom">'
             + "".join(card(c) for c in pick) + f"</div>\n  {more}\n</section>\n")
 
 # ---------- מפת האתר לאנשים (/mapa/): כל הדפים שבמפת האתר, לפי אתר ותחום. נוצרת בכל build, אז לא מתיישנת ----------
@@ -468,6 +589,10 @@ def chesed_band(p, meta):
         chips, sub = ["בחינם", "ללא הגבלה", "בלי פרסומות"], CHESED_SUB
     if not meta.get("_login"):  # שער המקום הראשון (17.11.2026): בכל דף כתוב במפורש "בלי הרשמה"; לא בדף עם כניסת גוגל
         sub = sub.replace("בלי פרסומות, מתוך", "בלי הרשמה ובלי פרסומות, מתוך") if "בלי פרסומות, מתוך" in sub else sub.replace("כאן לא, מתוך", "כאן לא, וגם בלי הרשמה – מתוך")
+    ui = LANG_UI.get(meta.get("lang"))
+    if ui:
+        return ('<div class="chesed no-print" role="note"><p class="chesed-t">' + "".join(f"<b>✓ {c}</b>" for c in ui["chips"])
+                + f'</p><p class="chesed-s">{ui["sub"]}</p></div>')
     box = CHESED_CODE if any(p.startswith(l) for l in CHESED_PARTNER) and not p.startswith("/kelim/shir/karaoke/") else ""  # בקריוקי השותפות בתוך הבוט
     return ('<div class="chesed no-print" role="note"><p class="chesed-t">' + "".join(f"<b>✓ {c}</b>" for c in chips)
             + f'</p><p class="chesed-s">{sub}</p>{box}</div>')
@@ -561,6 +686,8 @@ for path in sorted(SRC.rglob("*.html")):
     url = BASE + url_path
     site = SITES.get(meta.get("site", ""))
     root = (site["name"], site["home"]) if site else ("עמוד המוהל", "/mohel/")
+    if meta.get("crumb_root"):  # דף בשפה אחרת: שם השורש בפירורי הלחם בשפת הדף
+        root = (meta["crumb_root"], root[1])
     html = LAYOUT_KELIM if site else LAYOUT
     content += seo_related(url_path)
     dv_blk, dv_ld = demo_block(meta, url) if site else ("", "")
@@ -570,7 +697,7 @@ for path in sorted(SRC.rglob("*.html")):
     # תיאור השיתוף (og:description) פותח ב"בחינם, בלי הגבלה ובלי הרשמה" - גילעד 11.11.2026.
     # כלי עם מכסה (CHESED_PARTNER) לא מקבל "בלי הגבלה"; כלי עם כניסת גוגל לא מקבל "בלי הרשמה". נפש נשאר בטון הרך שלו.
     og_desc = meta["description"]
-    if site and meta.get("site") != "nefesh" and not meta.get("noindex"):
+    if site and meta.get("site") != "nefesh" and not meta.get("noindex") and not meta.get("lang"):
         limited = any(url_path.startswith(l) for l in CHESED_PARTNER)
         login = "gsi/client" in raw or "accounts.google.com" in raw
         free = [w for w, ok in (("בלי הגבלה", not limited), ("בלי הרשמה", not login)) if ok]
@@ -586,7 +713,7 @@ for path in sorted(SRC.rglob("*.html")):
         "og_title": meta.get("og_title", meta["title"]),
         "og_image": meta.get("og_image", og_default),
         "robots": '<meta name="robots" content="noindex">' if meta.get("noindex") else "",
-        "head": meta.get("head_pre", "") + ("" if meta.get("no_ga") else GA) + KISHUR + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url) + dv_ld,
+        "head": meta.get("head_pre", "") + ("" if meta.get("no_ga") else GA) + pixel_for(meta, url_path) + KISHUR + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url) + dv_ld + hreflang(meta),
         "body_class": meta.get("body_class", ""),
         "sprite": SPRITE,
         "wa": WA,
@@ -633,6 +760,10 @@ for path in sorted(SRC.rglob("*.html")):
         if man.get("display") == "browser":  # באייפון: האייקון נפתח בספארי עצמו – עם אותו אחסון (והצימוד) של הדף
             html = html.replace('<meta name="apple-mobile-web-app-capable" content="yes">', '<meta name="apple-mobile-web-app-capable" content="no">')
             html = html.replace('<meta name="mobile-web-app-capable" content="yes">', '<meta name="mobile-web-app-capable" content="no">')
+    if meta.get("lang"):
+        html = lang_page(html, meta, url)
+    elif url_path.startswith("/kodesh/giur/") and '<section class="fb no-print"' in html:
+        html = html.replace('<section class="fb no-print"', giur_cta("he", url_path) + '<section class="fb no-print"', 1)
     html = version_assets(html)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
@@ -644,7 +775,7 @@ for path in sorted(SRC.rglob("*.html")):
         _sw = (ROOT / meta["sw_src"]).read_text(encoding="utf-8")
         _sw = _sw.replace("__CACHE__", url_path.strip("/").replace("/", "-") + "-" + datetime.datetime.now().strftime("%Y%m%d%H%M"))
         (out.parent / "sw.js").write_text(_sw, encoding="utf-8")
-    if site and not meta.get("noindex") and not meta.get("no_precache") and not re.search(r"/(pratiut|negishut|tosaf)/$", url_path):
+    if site and not meta.get("noindex") and not meta.get("no_precache") and not meta.get("lang") and not re.search(r"/(pratiut|negishut|tosaf)/$", url_path):
         # רשימת הכלים לתוסף הכרום (kelim/tools.json): כלי חדש באתר מופיע בתוסף בלי לשלוח גרסה לחנות
         cr = meta.get("crumbs") or []
         name = cr[-1][0] if cr else re.split(r"\s[–—|-]\s|:\s", meta["title"])[0].strip()

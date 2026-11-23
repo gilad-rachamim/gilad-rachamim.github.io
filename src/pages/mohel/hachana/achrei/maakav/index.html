@@ -1,0 +1,86 @@
+<!--meta {
+  "title": "מעקב אחרי ברית מילה – שתן, האכלה ושמן בשעות הראשונות | גילעד רחמים המוהל",
+  "description": "מעקב אחרי ברית מילה בטלפון: מסמנים שתן, האכלה, שמן ונובימול, רואים כמה זמן עבר, ומקבלים תזכורת עדינה אם כדאי לבדוק טיטול. הכול נשמר רק אצלכם. מוהל מוסמך.",
+  "og_title": "מעקב אחרי ברית מילה – שעות ראשונות רגועות",
+  "og_image": "og-mohel.jpg",
+  "nav": "hachana",
+  "priority": "0.7",
+  "crumbs": [["הכנה לברית", "/mohel/hachana/"], ["טיפול אחרי הברית", "/mohel/hachana/achrei/"], ["מעקב אחרי הברית", null]],
+  "dock_href": "#mk-app",
+  "dock_label": "למעקב",
+  "head": "<style>.mk{display:grid;gap:1rem}.mk[hidden],.mk [hidden]{display:none!important}.mk .card-box{padding:1.05rem 1.1rem;border:1px solid rgba(201,165,92,.3);border-radius:16px;background:rgba(201,165,92,.03)}.mk-clock{font-family:var(--serif);font-size:1.5rem;color:var(--gold);text-align:center}.mk-sub{color:var(--body);text-align:center;margin-top:.2rem}.mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}.mk-grid .btn{min-height:3.4rem;font-size:1.05rem}.mk-grid .btn small{display:block;font-size:.82rem;opacity:.85;font-weight:400}.mk-alert{padding:.8rem 1rem;border-radius:12px;border:1px solid rgba(240,185,160,.5);background:rgba(240,150,90,.1);color:var(--cream)}.mk-alert.strong{border-color:#e8a066;background:rgba(240,150,90,.2)}.mk-alert .btn{margin-top:.6rem}.mk-info{padding:.8rem 1rem;border-radius:12px;background:rgba(201,165,92,.08);color:var(--cream)}.mk-log{list-style:none;display:grid;gap:.35rem;margin:.5rem 0 0;padding:0}.mk-log li{display:flex;justify-content:space-between;gap:.6rem;color:var(--parchment);padding:.3rem .2rem;border-bottom:1px solid var(--line)}.mk-log button{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font:inherit}.mk-start input{width:100%;box-sizing:border-box;font:inherit;font-size:1.05rem;color:var(--cream);background:rgba(244,237,226,.06);border:1px solid var(--line);border-radius:12px;padding:.7rem .85rem;color-scheme:dark}.mk-tools{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center}@media(max-width:380px){.mk-grid{grid-template-columns:1fr}}</style>",
+  "foot": "<script src=\"/assets/maakav.js\" defer></script>"
+} -->
+<header class="hero">
+  <span class="bsd">בס"ד</span>
+  <p class="slogan">כלי להורים</p>
+  <h1>מעקב אחרי ברית מילה</h1>
+  <!--לאישור--><p class="sub">מסמנים בלחיצה מתי התינוק נתן שתן, אכל וקיבל שמן, ורואים כמה זמן עבר. כך אפשר להישאר רגועים, גם כשהעייפות מתחילה להשפיע.</p>
+  <div class="rule" aria-hidden="true"></div>
+</header>
+<div class="wrap">
+  <div class="mk" id="mk-app">
+    <div class="card-box mk-start" id="mk-start">
+      <label for="mk-when" style="font-weight:600;color:var(--cream)">מתי הייתה הברית?</label>
+      <input id="mk-when" type="datetime-local">
+      <div style="margin-top:.8rem"><button class="btn btn-gold btn-block" type="button" id="mk-go">מתחילים מעקב</button></div>
+    </div>
+
+    <div class="mk" id="mk-main" hidden>
+      <div class="card-box">
+        <div class="mk-clock" id="mk-clock"></div>
+        <div class="mk-sub" id="mk-since"></div>
+      </div>
+      <div id="mk-alerts" class="mk"></div>
+      <div class="mk-grid">
+        <button class="btn btn-gold" type="button" data-k="urine">נתן שתן</button>
+        <button class="btn btn-gold" type="button" data-k="fed">אכל</button>
+        <button class="btn btn-line" type="button" data-k="oil">טפטפתי שמן</button>
+        <button class="btn btn-line" type="button" data-k="novimol">נתתי נובימול</button>
+        <button class="btn btn-line" type="button" data-k="bath" id="mk-bath" style="grid-column:1/-1">שטפתי מסביב<small>בלי להרטיב את התחבושת</small></button>
+      </div>
+      <div class="card-box">
+        <strong style="color:var(--gold)">מה סימנתי</strong>
+        <ul class="mk-log" id="mk-log"></ul>
+      </div>
+      <div class="mk-tools">
+        <button class="btn btn-gold" type="button" id="mk-send" data-maasi-send="maakav"><svg class="ic"><use href="#wa"/></svg> לשלוח לגילעד את סיכום המעקב (ווטסאפ)</button>
+        <button class="btn btn-line" type="button" id="mk-edit">שינוי שעת הברית</button>
+        <button class="btn btn-line" type="button" id="mk-reset">איפוס</button>
+      </div>
+      <!--לאישור--><p class="note" style="text-align:center">הסימונים נשמרים רק בטלפון הזה, בלי הרשמה ובלי התראות.</p>
+    </div>
+  </div>
+
+  <section>
+    <h2>מה רגיל ומה לא</h2>
+    <ul class="list">
+      <li><!--לאישור--><div><span>מעט כתמי דם בטיטול – רגיל.</span></div></li>
+      <li><!--לאישור--><div><span>התינוק נרדם הרבה אחרי הברית – רגיל, ואז מעירים אותו לאכול כל שלוש או ארבע שעות.</span></div></li>
+      <li><!--לאישור--><div><span>לפחות פעם אחת שתן בתוך שש עד שמונה שעות. אם לא – מתקשרים אליי (ווטסאפ).</span></div></li>
+      <li><!--לאישור--><div><span>דימום שלא נעצר או תחבושת שנפלה – כותבים לי מיד.</span></div></li>
+    </ul>
+    <!--לאישור--><p class="note">את כל ההנחיות, יום אחרי יום, תמצאו ב<a class="gold" href="/mohel/hachana/achrei/">דף הטיפול אחרי הברית</a>. הכלי הזה עוזר לזכור, ולא מחליף את הרופא: בכל חשש בריאותי, חום או דימום שלא נעצר, פנו לרופא או למיון. אם הברית נערכה אצל מוהל אחר, ההנחיות שלו קודמות.</p>
+    <blockquote class="quote">"כשהאמא רגועה – גם התינוק רגוע"</blockquote>
+  </section>
+
+  <section>
+    <h2>שאלות נפוצות</h2>
+    <h3>כמה זמן אחרי הברית התינוק צריך להטיל שתן?</h3>
+    <!--לאישור--><p>בדרך כלל לפחות פעם אחת בתוך שש עד שמונה שעות. אם עבר יותר מזה ואין שתן בטיטול, כתבו לי או התקשרו אליי.</p>
+    <h3 style="margin-top:1.2rem">כל כמה זמן מאכילים תינוק אחרי ברית מילה?</h3>
+    <!--לאישור--><p>כרגיל. תינוק מנומנם אחרי הברית עלול לדלג על ארוחה, ולכן מעירים אותו בעדינות לאכול כל שלוש או ארבע שעות.</p>
+    <h3 style="margin-top:1.2rem">אפשר לרחוץ את התינוק ביום הברית?</h3>
+    <!--לאישור--><p>אפשר לשטוף אותו כשמונה שעות אחרי הברית, רק מסביב ובלי להרטיב את התחבושת. מקלחת מלאה ראשונה היא רק אחרי הורדת התחבושת למחרת.</p>
+  </section>
+
+  <section>
+    <h2>המשך קריאה</h2>
+    <div class="cards c3">
+      <a class="card" href="/mohel/hachana/achrei/"><svg class="ic"><use href="#heart"/></svg><strong>טיפול אחרי הברית</strong><span>ההנחיות יום אחרי יום</span></a>
+      <a class="card" href="/mohel/hachana/keev/"><svg class="ic"><use href="#heart"/></svg><strong>כאב והרגעה בברית</strong><span>מה באמת מרגיע את התינוק</span></a>
+      <a class="card" href="/mohel/checklist/"><svg class="ic"><use href="#list"/></svg><strong>רשימת ההכנה בטלפון</strong><span>כל הפריטים, לסמן ולשמור</span></a>
+    </div>
+  </section>
+</div>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","headline":"מעקב אחרי ברית מילה – שתן, האכלה ושמן בשעות הראשונות","inLanguage":"he","author":{"@type":"Person","name":"גילעד רחמים אביעד"},"mainEntityOfPage":"https://hakelim.com/mohel/hachana/achrei/maakav/"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"כמה זמן אחרי הברית התינוק צריך להטיל שתן?","acceptedAnswer":{"@type":"Answer","text":"בדרך כלל לפחות פעם אחת בתוך שש עד שמונה שעות. אם עבר יותר מזה ואין שתן בטיטול, כתבו לי או התקשרו אליי."}},{"@type":"Question","name":"כל כמה זמן מאכילים תינוק אחרי ברית מילה?","acceptedAnswer":{"@type":"Answer","text":"כרגיל. תינוק מנומנם אחרי הברית עלול לדלג על ארוחה, ולכן מעירים אותו בעדינות לאכול כל שלוש או ארבע שעות."}},{"@type":"Question","name":"אפשר לרחוץ את התינוק ביום הברית?","acceptedAnswer":{"@type":"Answer","text":"אפשר לשטוף אותו כשמונה שעות אחרי הברית, רק מסביב ובלי להרטיב את התחבושת. מקלחת מלאה ראשונה היא רק אחרי הורדת התחבושת למחרת."}}]}]}</script>

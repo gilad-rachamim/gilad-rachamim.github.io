@@ -4,8 +4,13 @@
 name: news-reel
 on:
   schedule:
+    - cron: "25 11 * * *"
     - cron: "25 18 * * *"
   workflow_dispatch:
+    inputs:
+      edition:
+        description: "שם המהדורה (צהריים / ערב / בוקר)"
+        default: "ערב"
 concurrency: { group: news-reel, cancel-in-progress: false }
 jobs:
   reel:
@@ -24,7 +29,11 @@ jobs:
         id: r
         run: |
           set +e
-          python tools/news-reel/reel.py reel.mp4 ערב --fresh
+          ED="${{ github.event.inputs.edition }}"
+          if [ -z "$ED" ]; then
+            if [ "${{ github.event.schedule }}" = "25 11 * * *" ]; then ED="צהריים"; else ED="ערב"; fi
+          fi
+          python tools/news-reel/reel.py reel.mp4 "$ED" --fresh
           echo "code=$?" >> "$GITHUB_OUTPUT"
       - name: post
         if: steps.r.outputs.code == '0'

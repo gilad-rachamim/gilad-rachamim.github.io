@@ -17,6 +17,12 @@
     if (!b || b.getAttribute('data-ready') !== '1') return;
     ev('kibudim_send', { page: location.pathname, honors: Number(b.getAttribute('data-count')), nusach: b.getAttribute('data-nusach') });
   }, true);
+  // כלי ההורים (מעקב אחרי הברית, פרטים למוהל): נספר רק כשיש מה לשלוח, בלי שום תוכן.
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-maasi-send]');
+    if (!b || b.getAttribute('data-ready') !== '1') return;
+    ev('maasi_send', { page: location.pathname, tool: b.getAttribute('data-maasi-send'), items: Number(b.getAttribute('data-count')) });
+  }, true);
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[href]');
     if (!a) return;

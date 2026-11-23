@@ -474,6 +474,22 @@
   });
 
   // ---------- כלים לדף הזה: צילום, הקראה, כיוון, מצב כהה ----------
+  // מקש הקיצור של התרגום: מציגים את המקש שבאמת קבוע בכרום (מי שעדכן גרסה לא תמיד מקבל את ברירת המחדל)
+  (function () {
+    var p = document.getElementById('tr-key'), set = document.getElementById('tr-set'), btn = document.getElementById('tr-btn');
+    if (!p || !set) return;
+    set.addEventListener('click', function () { try { chrome.tabs.create({ url: 'chrome://extensions/shortcuts' }); } catch (e) {} });
+    try {
+      chrome.commands.getAll(function (all) {
+        var c = (all || []).filter(function (x) { return x.name === 'translate-page'; })[0], k = c && c.shortcut;
+        var t = document.createTextNode(k ? 'מקש קיצור: ' + k + ' (לחיצה נוספת מחזירה). ' : 'עוד לא נקבע מקש קיצור לתרגום. ');
+        p.firstChild.nodeValue = '';
+        p.insertBefore(t, set);
+        set.textContent = k ? 'לשנות מקש' : 'לקבוע מקש קיצור';
+        if (btn && k) btn.title = k;
+      });
+    } catch (e) {}
+  })();
   [].forEach.call(document.querySelectorAll('#acts [data-act]'), function (b) {
     b.addEventListener('click', function () {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {

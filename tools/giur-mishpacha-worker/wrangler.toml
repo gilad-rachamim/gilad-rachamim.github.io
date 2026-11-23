@@ -1,0 +1,20 @@
+# משפחה מלווה לגיור – רישום משפחות מתנדבות לפי עיר (/kodesh/giur/mishpacha-melava/). Cloudflare Worker + Durable Object (חינמי).
+# פריסה (רק אחרי "כן" של גילעד): cd tools/giur-mishpacha-worker && npx wrangler deploy
+# מפתח הרשימה של גילעד:            npx wrangler secret put ADMIN_KEY   (עותק ב-~/.claude/secrets/giur-mishpacha-admin.txt)
+# בדיקה מקומית:                     npx wrangler dev --local --port 8796   (ADMIN_KEY מ-.dev.vars)
+# הרשימה עצמה לא מועברת לאף גוף בלי "כן" מפורש של גילעד.
+name = "giur-mishpacha"
+main = "giur-mishpacha.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[[durable_objects.bindings]]
+name = "FAM"
+class_name = "Families"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Families"]
+
+[vars]
+EXTRA_ORIGINS = ""

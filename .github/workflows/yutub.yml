@@ -1,0 +1,64 @@
+name: yutub
+# הרץ של "תמלול מיוטיוב" ושל שיעורי כולל נחלת אבות: מושך משימות מה-Worker kelim-yutub, מתמלל ומחזיר PDF + Word.
+# רץ בענן של GitHub כדי שהכלי יעבוד גם כשהמחשב של גילעד כבוי. הלוג פתוח לכולם - runner.py לא מדפיס קישורים או טקסט.
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+  repository_dispatch:
+    types: [yutub]
+
+concurrency:
+  group: yutub
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      YUTUB_WORKER: https://kelim-yutub.gilad4049.workers.dev
+      YUTUB_RUNNER_KEY: ${{ secrets.YUTUB_RUNNER_KEY }}
+    steps:
+      - name: peek
+        id: peek
+        run: |
+          # התזמון של GitHub רץ בפועל רק פעם בשעה בערך, ולכן הרץ נשאר ער ומקשיב לתור כל 15 שניות
+          # עד 55 דקות. כך שיעור חדש מתחיל תוך שניות ולא מחכה לריצה הבאה (23.11.2026).
+          n=0; end=$(( $(date +%s) + 55*60 ))
+          while :; do
+            n=$(curl -fsS -m 30 -H "X-Runner-Key: $YUTUB_RUNNER_KEY" "$YUTUB_WORKER/r/peek" | python3 -c "import json,sys; print(json.load(sys.stdin).get('queued',0))" || echo 0)
+            [ "$n" != "0" ] && break
+            [ "$(date +%s)" -ge "$end" ] && break
+            sleep 15
+          done
+          echo "queued=$n" >> "$GITHUB_OUTPUT"
+          echo "queued: $n"
+      - uses: actions/checkout@v4
+        if: steps.peek.outputs.queued != '0'
+        with:
+          sparse-checkout: |
+            tools/yutub-worker
+            assets/fonts
+      - uses: actions/setup-python@v5
+        if: steps.peek.outputs.queued != '0'
+        with:
+          python-version: "3.12"
+      - uses: denoland/setup-deno@v2
+        if: steps.peek.outputs.queued != '0'
+      - name: tools
+        if: steps.peek.outputs.queued != '0'
+        run: |
+          pip install -q -U "yt-dlp[default]" python-docx
+          which ffmpeg || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
+      - name: run
+        if: steps.peek.outputs.queued != '0'
+        env:
+          RUNPOD_KEY: ${{ secrets.RUNPOD_KEY }}
+          RUNPOD_ENDPOINT: ${{ secrets.RUNPOD_ENDPOINT }}
+          YUTUB_PROXY: ${{ secrets.YUTUB_PROXY }}
+          YUTUB_GEMINI: ${{ secrets.YUTUB_GEMINI }}
+        run: python tools/yutub-worker/runner.py loop

@@ -74,7 +74,8 @@
         navigator.share({ title: document.title, text: text, url: url }).catch(function () {});
       } else if (how === 'copy') {
         e.preventDefault();
-        copyText(text + '\n' + url, s, 'הקישור הועתק ✓ אפשר להדביק בכל הודעה');
+        var lgc = (document.documentElement.lang || 'he').slice(0, 2);
+        copyText(text + '\n' + url, s, lgc === 'en' ? 'Link copied ✓ paste it in any message' : lgc === 'ru' ? 'Ссылка скопирована ✓ вставьте в любое сообщение' : 'הקישור הועתק ✓ אפשר להדביק בכל הודעה');
       } else if (how === 'sms' && s.tagName === 'A') {
         // אנדרואיד ואייפון מבינים את שתי הצורות; ?&body= עובד בשניהם
         s.href = 'sms:?&body=' + encodeURIComponent(text + '\n' + url);
@@ -137,7 +138,9 @@
       var t = a.getAttribute('data-text');
       var wrap = document.createElement('span');
       wrap.className = 'share-alts';
-      wrap.innerHTML = '<a class="btn btn-line btn-sm" href="sms:" data-share-tool="sms">📱 ב-SMS</a><button class="btn btn-line btn-sm" type="button" data-share-tool="copy">🔗 להעתיק קישור</button>';
+      var lg = (document.documentElement.lang || 'he').slice(0, 2);
+      var lb = lg === 'en' ? ['SMS', 'Copy link'] : lg === 'ru' ? ['SMS', 'Копировать ссылку'] : ['ב-SMS', 'להעתיק קישור'];
+      wrap.innerHTML = '<a class="btn btn-line btn-sm" href="sms:" data-share-tool="sms">📱 ' + lb[0] + '</a><button class="btn btn-line btn-sm" type="button" data-share-tool="copy">🔗 ' + lb[1] + '</button>';
       if (t) wrap.querySelectorAll('[data-share-tool]').forEach(function (b) { b.setAttribute('data-text', t); });
       a.insertAdjacentElement('afterend', wrap);
     });

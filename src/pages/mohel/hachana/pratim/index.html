@@ -1,0 +1,146 @@
+<!--meta {
+  "title": "מכתב שחרור יילוד – מה כתוב בו ומה המוהל צריך לדעת לפני הברית | גילעד רחמים המוהל",
+  "description": "מכתב שחרור יילוד: איפה מוצאים אפגר, משקל ובילירובין, ואילו פרטים כדאי לשלוח למוהל לפני הברית. שאלון של דקה שהופך להודעת ווטסאפ מסודרת, ומחשבון לאחוז ירידת המשקל. מוהל מוסמך.",
+  "og_title": "הפרטים שהמוהל צריך לפני הברית – שאלון של דקה",
+  "og_image": "og-mohel.jpg",
+  "nav": "hachana",
+  "priority": "0.7",
+  "crumbs": [["הכנה לברית", "/mohel/hachana/"], ["הפרטים למוהל", null]],
+  "dock_href": "#pt-form",
+  "dock_label": "לשאלון",
+  "head": "<style>.pt{display:grid;gap:1rem}.pt fieldset{min-width:0;margin:0;padding:1.05rem 1.1rem 1.15rem;border:1px solid rgba(201,165,92,.3);border-radius:16px;background:rgba(201,165,92,.03)}.pt legend{padding:0 .4rem;font-family:var(--serif);font-size:1.2rem;color:var(--gold)}.pt .stack{display:grid;gap:.9rem}.pt .two{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}.pt .field{min-width:0}.pt .field input[type=text],.pt .field input[type=number],.pt .field input[type=date],.pt .field input[type=time],.pt .field select,.pt .field textarea{width:100%;box-sizing:border-box;font:inherit;font-size:1.05rem;color:var(--cream);background:rgba(244,237,226,.06);border:1px solid var(--line);border-radius:12px;padding:.7rem .85rem}.pt .field textarea{min-height:4.5rem;resize:vertical}.pt .choices{display:flex;flex-wrap:wrap;gap:.5rem}.pt .choices label{display:flex;align-items:center;gap:.45rem;padding:.55rem .85rem;border:1px solid var(--line);border-radius:999px;cursor:pointer;color:var(--parchment);font-weight:400}.pt .choices label:has(input:checked){border-color:var(--gold);background:rgba(201,165,92,.14)}.pt .choices input{accent-color:var(--gold);width:1.1rem;height:1.1rem}.pt-calc{padding:.9rem 1rem;border-radius:12px;background:rgba(201,165,92,.08);color:var(--cream);min-height:1.5rem}.pt-calc:empty{display:none}.pt-hint{color:var(--body);font-size:1rem;text-align:center;margin-top:.6rem}.pt-err{color:#f0b9a0;text-align:center;margin-top:.6rem}@media(max-width:420px){.pt .two{grid-template-columns:1fr}}</style>",
+  "foot": "<script src=\"/assets/pratim.js\" defer></script>"
+} -->
+<header class="hero">
+  <span class="bsd">בס"ד</span>
+  <p class="slogan">לפני הברית</p>
+  <h1>הפרטים שהמוהל צריך לדעת לפני הברית</h1>
+  <!--לאישור--><p class="sub">מלאו את מה שאתם יודעים, ובלחיצה אחת תיפתח אצלכם הודעת ווטסאפ מסודרת אליי. אין שדה חובה, ומה שלא יודעים פשוט משאירים ריק.</p>
+  <div class="rule" aria-hidden="true"></div>
+</header>
+<div class="wrap">
+  <form class="pt" id="pt-form" autocomplete="off">
+    <fieldset>
+      <legend>הלידה</legend>
+      <div class="stack">
+        <div class="two">
+          <div class="field"><label for="pt-date">תאריך הלידה</label><input id="pt-date" type="date" data-d="תאריך לידה"></div>
+          <div class="field"><label for="pt-time">שעת הלידה</label><input id="pt-time" type="time" data-d="שעת לידה"></div>
+        </div>
+        <div class="field">
+          <span class="label">הלידה הייתה סמוך לשקיעה?</span>
+          <div class="choices">
+            <label><input type="radio" name="pt-sun" value="כן" data-d="סמוך לשקיעה">כן</label>
+            <label><input type="radio" name="pt-sun" value="לא" data-d="סמוך לשקיעה">לא</label>
+            <label><input type="radio" name="pt-sun" value="לא בטוחים" data-d="סמוך לשקיעה">לא בטוחים</label>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label">סוג הלידה</span>
+          <div class="choices">
+            <label><input type="radio" name="pt-type" value="רגילה" data-d="סוג לידה">רגילה</label>
+            <label><input type="radio" name="pt-type" value="ניתוח קיסרי" data-d="סוג לידה">קיסרי</label>
+            <label><input type="radio" name="pt-type" value="ואקום או מלקחיים" data-d="סוג לידה">ואקום או מלקחיים</label>
+          </div>
+        </div>
+        <div class="field"><label for="pt-week">שבוע הלידה <span class="opt">(למשל 39)</span></label><input id="pt-week" type="number" inputmode="numeric" min="22" max="44" data-d="שבוע לידה"></div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>משקל ואכילה</legend>
+      <div class="stack">
+        <div class="two">
+          <div class="field"><label for="pt-bw">משקל לידה <span class="opt">(בגרמים)</span></label><input id="pt-bw" type="number" inputmode="numeric" min="500" max="6000" data-d="משקל לידה"></div>
+          <div class="field"><label for="pt-lw">משקל אחרון <span class="opt">(בגרמים)</span></label><input id="pt-lw" type="number" inputmode="numeric" min="500" max="6000" data-d="משקל אחרון"></div>
+        </div>
+        <div class="pt-calc" id="pt-calc" aria-live="polite"></div>
+        <div class="field">
+          <span class="label">איך הוא אוכל?</span>
+          <div class="choices">
+            <label><input type="radio" name="pt-eat" value="יונק" data-d="אכילה">יונק</label>
+            <label><input type="radio" name="pt-eat" value="תמ״ל" data-d="אכילה">תמ״ל</label>
+            <label><input type="radio" name="pt-eat" value="משולב" data-d="אכילה">משולב</label>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>צהבת ודברים מיוחדים</legend>
+      <div class="stack">
+        <div class="field">
+          <span class="label">צהבת</span>
+          <div class="choices">
+            <label><input type="radio" name="pt-jau" value="עוד לא נבדק" data-d="צהבת">עוד לא נבדק</label>
+            <label><input type="radio" name="pt-jau" value="תקין" data-d="צהבת">תקין</label>
+            <label><input type="radio" name="pt-jau" value="במעקב" data-d="צהבת">במעקב</label>
+          </div>
+        </div>
+        <div class="field"><label for="pt-note">משהו מיוחד שהרופאים אמרו <span class="opt">(לא חובה)</span></label><textarea id="pt-note" data-d="הערות"></textarea></div>
+        <div class="two">
+          <div class="field"><label for="pt-city">עיר</label><input id="pt-city" type="text" data-d="עיר"></div>
+          <div class="field"><label for="pt-name">שם ההורה</label><input id="pt-name" type="text" data-d="שם"></div>
+        </div>
+      </div>
+    </fieldset>
+
+    <div>
+      <button class="btn btn-gold btn-block" type="button" id="pt-send" data-maasi-send="pratim"><svg class="ic"><use href="#wa"/></svg> לשלוח לגילעד (ווטסאפ)</button>
+      <p class="pt-err" id="pt-err" role="alert"></p>
+      <!--לאישור--><p class="pt-hint">ייפתח ווטסאפ עם ההודעה המסודרת, ונשאר רק ללחוץ שם על שליחה. שום פרט לא נשמר באתר.</p>
+      <!--לאישור--><p class="pt-hint" id="pt-moed" hidden>רוצים לדעת מתי היום השמיני? <a class="gold" href="/mohel/moed/">מחשבון מועד הברית</a>.</p>
+    </div>
+  </form>
+
+  <section>
+    <h2>למה אני שואל כל דבר</h2>
+    <ul class="boxes">
+      <li><!--לאישור--><div><strong>יום ושעת הלידה.</strong> מהם אני יודע מתי היום השמיני, ובמיוחד כשהלידה הייתה סמוך לשקיעה. השעה במכתב לא תמיד מדויקת לדקה, ולכן אשאל אתכם מה אתם זוכרים.</div></li>
+      <li><!--לאישור--><div><strong>סוג הלידה.</strong> לידה רגילה, ניתוח קיסרי או מכשירים משפיעים על ההכנות ועל התזמון, ולכן כדאי שאדע.</div></li>
+      <li><!--לאישור--><div><strong>שבוע הלידה.</strong> תינוק שנולד לפני הזמן מקבל תשומת לב נוספת, והרופא והמוהל מתאמים ביניהם.</div></li>
+      <li><!--לאישור--><div><strong>משקל ואכילה.</strong> זה מראה לי איך התינוק מתחזק, ואם הוא אוכל מעט וישן הרבה מאוד – אני רוצה לדעת על זה.</div></li>
+      <li><!--לאישור--><div><strong>צהבת.</strong> זה אחד הדברים הראשונים שאני מתעניין בהם. את ההחלטה על מועד הברית אני מקבל יחד עם הרופא, ולא ההורים ולא אני לבד.</div></li>
+    </ul>
+
+    <h2>מחשבון משקל</h2>
+    <!--לאישור--><p>בשדות של המשקל, למעלה, מחושב אחוז הירידה מאז הלידה. ירידה של עד כ-7% בימים הראשונים רגילה בדרך כלל, והמשקל חוזר לעלות. טיפת חלב והרופא עוקבים אחריו, ואם משהו מדאיג אתכם – כתבו לי.</p>
+
+    <h2>מכתב השחרור מבית החולים: מה כתוב בו ואיפה למצוא כל פרט</h2>
+    <!--לאישור--><p>כשאתם חוזרים הביתה מקבלים מכתב שחרור. מה שאני מחפש בו, וכדאי שתדעו איפה למצוא:</p>
+    <ul class="list">
+      <li><!--לאישור--><div><span><strong>שבוע הלידה.</strong> בדרך כלל בראש המכתב, ליד פרטי הלידה.</span></div></li>
+      <li><!--לאישור--><div><span><strong>ציון אפגר.</strong> שני מספרים בין 0 ל-10, שנמדדים פעמיים בדקות הראשונות. הם מתארים איך התינוק הגיב בלידה.</span></div></li>
+      <li><!--לאישור--><div><span><strong>משקל לידה ומשקל שחרור.</strong> מהם מחשבים את אחוז הירידה. ירידה בימים הראשונים רגילה, והמשקל מתייצב סביב היום הרביעי וחוזר למשקל הלידה בערך אחרי עשרה ימים.</span></div></li>
+      <li><!--לאישור--><div><span><strong>בילירובין, או צהבת.</strong> מופיעה תוצאת בדיקה והמלצה לבדיקה חוזרת בקופה. את התוצאה אל תפרשו לבד – שלחו לי אותה ונקבל החלטה יחד עם הרופא.</span></div></li>
+      <li><!--לאישור--><div><span><strong>שעת הלידה והערות מיוחדות.</strong> כל דבר שהרופאים כתבו במיוחד, גם אם נראה לכם קטן.</span></div></li>
+    </ul>
+    <!--לאישור--><p class="note">הכי פשוט: צלמו את המכתב ושלחו לי בווטסאפ. אני יודע לקרוא אותו.</p>
+
+    <h2>הבדיקה שלי לפני הברית</h2>
+    <!--לאישור--><p>לפני הברית אני בודק את התינוק: מסתכל על העיניים ועל צבע העור כדי לראות אם יש צהבת, על החיוניות (בכי חזק ותנועה), ועל האיבר, ושואל על אכילה ועל שינה. אם הוא אוכל מעט וישן הרבה מאוד, ספרו לי.</p>
+    <!--לאישור--><p>כשקובעים בדיקה כזו, הכי טוב שתהיה בערך יומיים לפני הברית. כך, אם יש צהבת, אפשר לבדוק שוב ולראות לאן היא הולכת. לפי הצורך גם ביקור בבית.</p>
+    <div class="tip"><b>טיפ של מוהל</b><!--לאישור--><p>לא בטוחים מה לכתוב או מה חשוב? שלחו לי מה שיש, ואשלים ביחד איתכם. <a class="gold" href="https://wa.me/972584049049?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%92%D7%99%D7%9C%D7%A2%D7%93%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A2%D7%96%D7%A8%D7%94%20%D7%91%D7%9E%D7%9B%D7%AA%D7%91%20%D7%94%D7%A9%D7%97%D7%A8%D7%95%D7%A8">צריכים עזרה עם מכתב השחרור? כתבו לי בוואטסאפ</a>.</p></div>
+    <!--לאישור--><p class="note">הדף הזה הוא מהניסיון שלי כמוהל, ומיועד למשפחות שאני מלווה. הוא לא תחליף לרופא הילדים: בכל חשש בריאותי, חום או דימום שלא נעצר, פנו לרופא או למיון. אם הברית נערכת אצל מוהל אחר, ההנחיות שלו קודמות.</p>
+  </section>
+
+  <section>
+    <h2>שאלות נפוצות</h2>
+    <h3>מה כתוב במכתב שחרור של יילוד?</h3>
+    <!--לאישור--><p>שבוע הלידה, ציון אפגר, משקל לידה ומשקל שחרור, תוצאת בילירובין (צהבת) והמלצה למעקב, שעת הלידה והערות מיוחדות של הרופאים.</p>
+    <h3 style="margin-top:1.2rem">אילו פרטים כדאי לשלוח למוהל לפני הברית?</h3>
+    <!--לאישור--><p>יום ושעת הלידה (ובמיוחד אם הייתה סמוך לשקיעה), סוג הלידה, שבוע הלידה, משקל, איך התינוק אוכל, מצב הצהבת וכל דבר מיוחד שהרופאים אמרו.</p>
+    <h3 style="margin-top:1.2rem">כמה משקל תינוק יורד בימים הראשונים?</h3>
+    <!--לאישור--><p>ירידה של עד כ-7% בימים הראשונים רגילה בדרך כלל, והמשקל חוזר לעלות. טיפת חלב והרופא עוקבים אחריו.</p>
+  </section>
+
+  <section>
+    <h2>המשך קריאה</h2>
+    <div class="cards c3">
+      <a class="card" href="/mohel/hachana/moed/"><svg class="ic"><use href="#eight"/></svg><strong>מועד הברית ובדיקת צהבת</strong><span>היום השמיני, שקיעה, ומה קובע</span></a>
+      <a class="card" href="/mohel/checklist/"><svg class="ic"><use href="#list"/></svg><strong>רשימת ההכנה בטלפון</strong><span>כל הפריטים, לסמן ולשמור</span></a>
+      <a class="card" href="/mohel/hachana/keev/"><svg class="ic"><use href="#heart"/></svg><strong>כאב והרגעה בברית</strong><span>מה באמת מרגיע את התינוק</span></a>
+    </div>
+  </section>
+</div>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","headline":"הפרטים שהמוהל צריך לדעת לפני הברית: מכתב שחרור יילוד","inLanguage":"he","author":{"@type":"Person","name":"גילעד רחמים אביעד"},"mainEntityOfPage":"https://hakelim.com/mohel/hachana/pratim/"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"מה כתוב במכתב שחרור של יילוד?","acceptedAnswer":{"@type":"Answer","text":"שבוע הלידה, ציון אפגר, משקל לידה ומשקל שחרור, תוצאת בילירובין (צהבת) והמלצה למעקב, שעת הלידה והערות מיוחדות של הרופאים."}},{"@type":"Question","name":"אילו פרטים כדאי לשלוח למוהל לפני הברית?","acceptedAnswer":{"@type":"Answer","text":"יום ושעת הלידה (ובמיוחד אם הייתה סמוך לשקיעה), סוג הלידה, שבוע הלידה, משקל, איך התינוק אוכל, מצב הצהבת וכל דבר מיוחד שהרופאים אמרו."}},{"@type":"Question","name":"כמה משקל תינוק יורד בימים הראשונים?","acceptedAnswer":{"@type":"Answer","text":"ירידה של עד כ-7% בימים הראשונים רגילה בדרך כלל, והמשקל חוזר לעלות. טיפת חלב והרופא עוקבים אחריו."}}]}]}</script>

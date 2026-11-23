@@ -23,8 +23,8 @@ function faqLd(qa) {
   return '<script type="application/ld+json">' + JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage',
     mainEntity: qa.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a.replace(/<[^>]+>/g, '') } })) }) + '</script>';
 }
-function faqHtml(qa) {
-  return '<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">\n  <h2 id="seo-faq-h">שאלות ותשובות</h2>\n' +
+function faqHtml(qa, title) {
+  return '<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">\n  <h2 id="seo-faq-h">' + (title || 'שאלות ותשובות') + '</h2>\n' +
     qa.map(([q, a]) => `  <details><summary>${q}</summary><p>${a}</p></details>`).join('\n') + '\n</section>';
 }
 function write(dir, meta, body) {
@@ -33,6 +33,11 @@ function write(dir, meta, body) {
 }
 const HEAD = '<link rel="stylesheet" href="/assets/seo-txt.css"><link rel="stylesheet" href="/assets/kodesh-ivri.css">';
 const FOOT = '<script src="/assets/vendor/hebcal-bundle/hebcal-core-6.14.7.min.js" data-hebcal defer></script><script src="/assets/kodesh-ivri.js" defer></script>';
+// שפות הלוח: עברית ורוסית. הקישור בין השפות נכתב כאן, כדי שהרענון השבועי ישמור עליו.
+const ALT = { he: '/kodesh/luach-ivri/', ru: '/kodesh/luach-ivri/ru/', en: '/kodesh/luach-ivri/en/' };
+const ALT2 = { he: '/kodesh/taarich-ivri/', ru: '/kodesh/taarich-ivri/ru/', en: '/kodesh/taarich-ivri/en/' };   // ממיר התאריכים
+const LANGNAV = (cur, alt) => '<nav class="gr-lang no-print" aria-label="Language / שפה / Язык">' + [['he', 'עברית'], ['ru', 'Русский'], ['en', 'English']].map(([l, n]) =>
+  `<a href="${(alt || ALT)[l]}" lang="${l}" hreflang="${l}"${l === cur ? ' aria-current="page"' : ''}>${n}</a>`).join('') + '</nav>';
 const WA = '<svg class="ic"><use href="#wa"/></svg>';
 const strip = s => s.replace(/<[^>]+>/g, '');
 
@@ -50,18 +55,19 @@ const strip = s => s.replace(/<[^>]+>/g, '');
     ['הלוח עובד גם בטלפון?', 'כן. הלוח נפתח בדפדפן של הטלפון ושל המחשב, ולא צריך להתקין שום דבר.'],
   ];
   const meta = {
-    site: 'kodesh', tool: 'luach_ivri', no_hub: true,
+    site: 'kodesh', alt: ALT, tool: 'luach_ivri', no_hub: true,
     title: 'לוח שנה עברי לועזי ' + Y0.name + ' ו-' + NEXTG + ': חגים, ראשי חודשים ופרשות | כלי קודש',
     description: 'לוח שנה עברי לועזי: התאריך העברי היום, כל יום בעברי ובלועזי, חגי ישראל, צומות, ראשי חודשים ופרשת השבוע. לוח ' + GY + ' ו-' + NEXTG + ', חגים ' + yrs(Y0) + ', לוח שנה להדפסה. בחינם, בלי פרסומות.',
     og_title: 'לוח שנה עברי לועזי – חגים, ראשי חודשים ופרשות',
     priority: '0.8',
     crumbs: [['לוח שנה עברי לועזי', null]],
-    head: HEAD + faqLd(qa), foot: FOOT
+    head: HEAD + '<link rel="stylesheet" href="/assets/lang-switch.css">' + faqLd(qa), foot: FOOT
   };
   const body = `<header class="k-hero no-print">
   <h1>לוח שנה עברי לועזי</h1>
   <p class="sub">כל יום בעברי ובלועזי, עם חגים, צומות, ראשי חודשים ופרשת השבוע. עוברים בין חודשים, קופצים לשנה, ומדפיסים.</p>
 </header>
+${LANGNAV('he')}
 <p class="iv-today no-print"><span id="li-today"><b>היום:</b> ${C.todayLine(T)}</span><span class="iv-nh" id="li-nexthag">${strip(C.nextHolidayText(CIV))}</span></p>
 <div class="tool iv-print" id="li">
   <div class="iv-bar">
@@ -142,13 +148,13 @@ ${faqHtml(qa)}
     ['מה התאריך העברי של יום ההולדת שלי השנה?', 'מכניסים את תאריך הלידה בחלק של בר המצווה, ומתחת מופיעים ימי ההולדת העבריים בשנים הקרובות, כל אחד עם התאריך הלועזי שלו. כך יודעים מתי לחגוג לפי הלוח העברי.']
   ];
   const meta = {
-    site: 'kodesh', tool: 'taarich_ivri', no_hub: true,
+    site: 'kodesh', alt: ALT2, tool: 'taarich_ivri', no_hub: true,
     title: 'תאריך עברי היום והמרת תאריך לועזי לעברי, מחשבון בר מצווה | כלי קודש',
     description: 'תאריך עברי היום, לפי השקיעה בעיר שלכם. המרת תאריך לועזי לעברי ומעברי ללועזי, כולל אדר א׳ ואדר ב׳ והיום בשבוע. מחשבון בר מצווה ובת מצווה ויום הולדת עברי. בחינם, בלי פרסומות.',
     og_title: 'תאריך עברי היום והמרת תאריכים',
     priority: '0.8',
     crumbs: [['תאריך עברי והמרת תאריכים', null]],
-    head: HEAD + faqLd(qa), foot: FOOT
+    head: HEAD + '<link rel="stylesheet" href="/assets/lang-switch.css">' + faqLd(qa), foot: FOOT
   };
   const cityOpts = I.CITIES.map(c => `<option value="${c[0]}"${c[0] === 'yerushalaim' ? ' selected' : ''}>${c[1]}</option>`).join('') + '<option value="gps">לפי המיקום שלי</option>';
   const dayOpts = Array.from({ length: 30 }, (_, i) => `<option value="${i + 1}"${i + 1 === hd.getDate() ? ' selected' : ''}>${C.gem(i + 1)}</option>`).join('');
@@ -157,6 +163,7 @@ ${faqHtml(qa)}
   <h1>תאריך עברי היום והמרת תאריכים</h1>
   <p class="sub">מה התאריך העברי היום, המרה מלועזי לעברי ומעברי ללועזי, ומחשבון בר מצווה ובת מצווה.</p>
 </header>
+${LANGNAV('he', ALT2)}
 <div class="tool" id="ti">
   <nav class="iv-tabs" aria-label="בדף הזה"><a href="#ti-g2h-h">לועזי ← עברי</a><a href="#ti-h2g-h">עברי ← לועזי</a><a href="#ti-bm-h">בר מצווה</a><a href="${I.LUACH}">לוח שנה</a></nav>
   <div class="res iv-hero" id="ti-today" aria-live="polite">${C.todayHtml(T, true)}</div>
@@ -233,4 +240,16 @@ ${faqHtml(qa)}
 `;
   write(path.join(ROOT, 'src/pages/kodesh/taarich-ivri'), meta, body);
 })();
-console.log('נכתבו 2 דפים · היום', C.dmy(CIV), C.heb(T.hdDay));
+// ======================= הלוח ברוסית =======================
+require('./ivri_ru.js')({ I, H, L: require(path.join(ROOT, 'assets/kodesh-ivri-ru.js')), T, CIV, HY, ROOT, path, write, faqLd, faqHtml, strip, WA, ALT, LANGNAV });
+// ======================= דף החגים ברוסית =======================
+require('./ivri_ru_hag.js')({ I, H, L: require(path.join(ROOT, 'assets/kodesh-ivri-ru.js')), T, CIV, HY, ROOT, path, write, faqLd, faqHtml, WA });
+// ======================= הלוח באנגלית, וממיר התאריכים ברוסית ובאנגלית =======================
+require('./ivri_en.js')({ I, H, L: require(path.join(ROOT, 'assets/kodesh-ivri-en.js')), T, CIV, HY, ROOT, path, write, faqLd, faqHtml, strip, WA, ALT, LANGNAV });
+// ======================= דף החגים באנגלית (חוץ לארץ) =======================
+require('./ivri_en_hag.js')({ I, H, L: require(path.join(ROOT, 'assets/kodesh-ivri-en.js')), T, CIV, HY, ROOT, path, write, faqLd, faqHtml, WA, LANGNAV, ALT3: { he: '/kodesh/luach-ivri/', ru: '/kodesh/luach-ivri/ru/prazdniki/', en: '/kodesh/luach-ivri/en/holidays/' } });
+// ======================= דף נפרד לכל חג באנגלית =======================
+require('./ivri_en_chag_each.js')({ I, H, L: require(path.join(ROOT, 'assets/kodesh-ivri-en.js')), CIV, HY, ROOT, path, write, faqLd, faqHtml, WA });
+require('./ivri_ru_chag_each.js')({ I, H, L: require(path.join(ROOT, 'assets/kodesh-ivri-ru.js')), CIV, HY, ROOT, path, write, faqLd, faqHtml, WA });
+for (const lg of ['ru', 'en']) require('./ivri_taarich_l.js')({ I, H, L: require(path.join(ROOT, 'assets/kodesh-ivri-' + lg + '.js')), T, CIV, HY, ROOT, path, write, faqLd, faqHtml, WA, ALT2, LANGNAV }, lg);
+console.log('נכתבו 24 דפים · היום', C.dmy(CIV), C.heb(T.hdDay));
