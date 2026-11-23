@@ -5,7 +5,7 @@
   'use strict';
   var box = document.getElementById('hk-search');
   if (!box) return;
-  var API = 'https://kelim-bakasha.gilad4049.workers.dev';
+  var API = 'https://kelim-bakasha.gilad4049.workers.dev', ASK = 'https://kelim-ask.gilad4049.workers.dev/ask';
   var LANG = (document.documentElement.lang || 'he').slice(0, 2);
   if (LANG !== 'en' && LANG !== 'ru') LANG = 'he';
   var UI = {
@@ -153,15 +153,41 @@
       topicTools(g, 8).map(function (it, n) { return itemHtml(it, n); }).join('') + '</div><button type="button" class="hk-back">← חזרה לנושאים</button></div>';
     say(t.n); track('hakelim_search', { how: 'topic', to: g });
   }
+  // "תארו במילים שלכם": נשלח לשרת רק בלחיצה מפורשת. נכשל? נשארים עם החיפוש המקומי, בלי הודעת שגיאה.
+  function askHtml() {
+    return '<div class="hk-ask"><button type="button" class="hk-askb">לא מצאתם? תארו במילים שלכם ואמצא לכם כלי</button>' +
+      '<p class="hk-askn">השאלה נשלחת לשרת כדי למצוא כלי, בלי פרטים מזהים. <a href="/kelim/pratiut/">פרטיות</a></p><div class="hk-askr" role="status"></div></div>';
+  }
+  function wireAsk(text) {
+    var box = out.querySelector('.hk-ask'); if (!box || LANG !== 'he') return;
+    var b = box.querySelector('.hk-askb'), r = box.querySelector('.hk-askr');
+    b.onclick = function () {
+      b.disabled = true; r.textContent = 'מחפשים…';
+      var done = false, t = setTimeout(function () { if (!done) { done = true; r.textContent = ''; b.disabled = false; } }, 9000);
+      fetch(ASK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ q: text.slice(0, 200) }) })
+        .then(function (x) { return x.json(); }).then(function (j) {
+          if (done) return; done = true; clearTimeout(t);
+          var list = (j && j.items || []).filter(function (x) { return x && /^\/[^\/]/.test(x.u); }).slice(0, 5);
+          track('hakelim_search', { how: 'ask' });
+          if (!list.length) { r.textContent = 'לא מצאתי התאמה טובה. אפשר להציע כלי חדש.'; b.disabled = false; return; }
+          r.innerHTML = '<ul class="hk-asl">' + list.map(function (x) {
+            return '<li><a href="' + esc(x.u) + '" data-ask="1"><b>' + esc(x.n) + '</b>' + (x.why ? '<span>' + esc(x.why) + '</span>' : '') + '</a></li>';
+          }).join('') + '</ul>';
+          r.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { try { if (window.gtag) window.gtag('event', 'discover_click', { src: 'ask', to: a.getAttribute('href') }); } catch (e) {} }); });
+          b.style.display = 'none';
+        }).catch(function () { if (done) return; done = true; clearTimeout(t); r.textContent = ''; b.disabled = false; });
+    };
+  }
   function suggest(text) {
     shown = [];
     if (LANG !== 'he') { out.innerHTML = '<div class="hk-none"><p>' + UI.all + '</p></div>'; return; }
-    out.innerHTML = '<div class="hk-none"><p>לא מצאנו כלי כזה אצלנו. אפשר להציע אותו, וגילעד יראה את ההצעה.</p>' +
+    out.innerHTML = '<div class="hk-none"><p>לא מצאנו כלי כזה אצלנו.</p>' + askHtml() + '<p>אפשר גם להציע אותו, וגילעד יראה את ההצעה.</p>' +
       '<div class="hk-sg"><textarea rows="2" maxlength="160" aria-label="מה הכלי שחסר">' + esc(text) + '</textarea>' +
       '<input type="email" placeholder="מייל, אם רוצים הודעה כשהכלי מוכן (לא חובה)" maxlength="120" dir="ltr">' +
       '<input class="hk-hp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">' +
       '<button type="button">שלחו את ההצעה</button><p class="hk-msg" role="status"></p></div>' +
       '<p class="hk-bot">🤖 אפשר גם לכתוב לבוט הכלים בטלגרם, במילים שלכם: <a href="https://t.me/HakelimBot?start=search" target="_blank" rel="noopener">לפתוח את הבוט</a></p></div>';
+    wireAsk(text);
     var d = out.querySelector('.hk-sg'), ta = d.querySelector('textarea'), em = d.querySelector('input[type=email]'), hp = d.querySelector('.hk-hp'), b = d.querySelector('button'), m = d.querySelector('.hk-msg');
     b.onclick = function () {
       var what = ta.value.trim();
@@ -192,7 +218,8 @@
         take.map(function (it) { return itemHtml(it, n++); }).join('') +
         (!onlyG && list.length > take.length ? '<button type="button" class="hk-more" data-g="' + esc(g) + '">כל התוצאות בנושא (' + list.length + ')</button>' : '') + '</div>';
     });
-    out.innerHTML = '<div class="hk-res" role="listbox" aria-label="תוצאות חיפוש">' + html + '</div>' + (LANG === 'he' ? '<p class="hk-miss">לא זה? <a href="#" data-sg>הציעו כלי חדש</a></p>' : '');
+    out.innerHTML = '<div class="hk-res" role="listbox" aria-label="תוצאות חיפוש">' + html + '</div>' + (LANG === 'he' ? '<p class="hk-miss">לא זה? <a href="#" data-sg>הציעו כלי חדש</a></p>' : '') + ((LANG === 'he' && !onlyG && (tokens(text).length >= 4 || !res.length || res[0][0] < 12)) ? askHtml() : '');
+    wireAsk(text);
     var sg = out.querySelector('[data-sg]'); if (sg) sg.onclick = function (e) { e.preventDefault(); suggest(text.trim()); };
     say(UI.n(shown.length));
   }
