@@ -34,7 +34,8 @@ const ROWS = [
   ['עלות השחר', z => z.alotHaShachar()], ['זמן ציצית ותפילין (משיכיר)', z => z.misheyakir()], ['הנץ החמה', z => z.sunrise(), 1],
   ['סוף זמן קריאת שמע', z => z.sofZmanShma(), 0, z => z.sofZmanShmaMGA()], ['סוף זמן תפילה', z => z.sofZmanTfilla(), 0, z => z.sofZmanTfillaMGA()],
   ['חצות היום', z => z.chatzot()], ['מנחה גדולה', z => z.minchaGedola()], ['מנחה קטנה', z => z.minchaKetana()],
-  ['פלג המנחה', z => z.plagHaMincha()], ['שקיעה', z => z.sunset(), 1], ['צאת הכוכבים', z => z.tzeit(8.5)]
+  ['פלג המנחה', z => z.plagHaMincha()], ['שקיעה', z => z.sunset(), 1], ['צאת הכוכבים', z => z.tzeit(8.5)],
+  ['צאת הכוכבים לרבנו תם (72 דקות)', z => new Date(z.sunset().getTime() + 72 * 60000)]
 ];
 const DAYS = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
 function table(c) {
