@@ -1,0 +1,48 @@
+/* הקראת טקסט בעברית בקול אנושי – /kelim/tochen/hakraa/ */
+.hk{max-width:46rem}
+.hk [hidden]{display:none!important}
+.hk-free{color:var(--gold);font-weight:600;margin-top:.7rem}
+.hk-step{border:1px solid var(--line);border-radius:14px;padding:1rem;margin:0 0 1rem;min-width:0}
+.hk-step>h2,.hk-step>legend{font-family:var(--serif);color:var(--cream);font-size:1.25rem;margin:0 0 .6rem;padding:0 .3rem}
+.hk-src{width:100%;min-height:9rem;font:inherit;font-size:1.1rem;line-height:1.7;padding:.8rem;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--cream);resize:vertical}
+.hk-row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin:.6rem 0}
+.hk-count,.hk-fname{color:var(--muted);font-size:.95rem}
+.hk-opts{display:flex;flex-wrap:wrap;gap:.6rem}
+.hk-opt{display:flex;align-items:center;gap:.5rem;border:1px solid var(--line);border-radius:999px;padding:.6rem 1.1rem;font-size:1.1rem;color:var(--cream);cursor:pointer;min-height:48px}
+.hk-opt input{width:1.3rem;height:1.3rem;accent-color:var(--gold)}
+.hk-opt:has(input:checked){border-color:var(--gold);background:rgba(231,200,115,.12)}
+.hk-opt:has(input:focus-visible){outline:3px solid var(--gold);outline-offset:2px}
+.hk-go-row{display:flex;flex-wrap:wrap;gap:.7rem;align-items:center;margin:1rem 0 .4rem}
+.hk-go{font-size:1.25rem;padding:.9rem 1.6rem;min-height:56px}
+.hk-status{display:block;color:var(--cream);font-size:1.1rem;line-height:1.6;margin:.6rem 0;min-height:1.6em}
+.hk-status.bad{color:#ffb4a8}
+.hk-prog{width:100%;height:14px;accent-color:var(--gold)}
+.hk-prog-t{color:var(--muted);font-size:.95rem}
+.hk-player{border:2px solid var(--gold);border-radius:16px;padding:1rem;margin:1rem 0}
+.hk-player h2{font-family:var(--serif);color:var(--gold);font-size:1.3rem;margin:0 0 .2rem}
+.hk-title{color:var(--cream);margin:0 0 .6rem;overflow-wrap:anywhere}
+.hk-ctl{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.hk-ctl .btn{min-height:52px;font-size:1.1rem}
+.hk-play{min-width:8rem;font-size:1.3rem!important}
+.hk-rate-l{display:flex;align-items:center;gap:.5rem;color:var(--cream);font-size:1.1rem}
+.hk-rate{font:inherit;font-size:1.1rem;padding:.6rem .8rem;border-radius:10px;border:1px solid var(--line);background:#18212e;color:var(--cream);min-height:48px}
+.hk-where{color:var(--muted);margin:.7rem 0 0}
+.hk-chapters,.hk-mine{list-style:none;padding:0;margin:.4rem 0 0;display:grid;gap:.4rem}
+.hk-ch,.hk-mine-open{width:100%;text-align:start;font:inherit;font-size:1.05rem;padding:.7rem .9rem;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--cream);cursor:pointer;min-height:48px;overflow-wrap:anywhere}
+.hk-ch[aria-current="true"]{border-color:var(--gold);background:rgba(231,200,115,.12)}
+.hk-ch:disabled{opacity:.55;cursor:default}
+.hk-mine li{display:flex;gap:.5rem;align-items:stretch}
+.hk-mine-del{font:inherit;padding:.5rem .9rem;border-radius:10px;border:1px solid var(--line);background:transparent;color:#ffb4a8;cursor:pointer;min-height:48px}
+.hk-text{white-space:pre-wrap;line-height:1.9;font-size:1.15rem;color:var(--body);border:1px solid var(--line);border-radius:10px;padding:.9rem;margin-top:.6rem;max-height:24rem;overflow:auto}
+.hk-embed-code{width:100%;font-family:monospace;font-size:.9rem;direction:ltr;text-align:left;padding:.6rem;border-radius:10px;border:1px solid var(--line);background:#18212e;color:var(--cream)}
+.hk button:focus-visible,.hk select:focus-visible,.hk textarea:focus-visible,.hk summary:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.hk details{margin:1rem 0}
+.hk details>summary{cursor:pointer;color:var(--cream);font-size:1.05rem;padding:.4rem 0}
+/* מצב הטמעה באתר אחר: רק הכלי, בלי הסרגל, הפירורים והטקסט שמתחת */
+.hk-embed .topbar,.hk-embed .site-foot,.hk-embed .dock,.hk-embed .skip,.hk-embed .crumbs,.hk-embed .seo-txt,.hk-embed .seo-faq,.hk-embed .hk-embed-box,.hk-embed .k-related,.hk-embed #hk-search,.hk-embed .fb,.hk-embed .k-hero .sub{display:none!important}
+.hk-embed .k-hero{padding:1rem 1rem .4rem}
+.hk-embed .k-hero h1{font-size:1.6rem}
+.hk-by{display:none}
+.hk-embed .hk-by{display:block;text-align:center;color:var(--muted);font-size:.95rem;margin:1rem 0}
+@media (max-width:520px){.hk-ctl .btn{flex:1 1 45%}.hk-play{flex-basis:100%!important}}
+@media print{.hk{display:none}}
