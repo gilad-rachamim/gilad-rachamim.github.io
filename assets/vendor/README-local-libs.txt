@@ -13,3 +13,5 @@ so a tool that needs a CDN would silently break. Files are unmodified; SHA-512 m
 - onnxruntime-web/ort.wasm.min.mjs        same onnxruntime-web 1.31.1 (MIT), ES-module build, used by assets/studio-bg-worker.js (background removal in /kelim/tochen/studio/, 10.11.2026)
 - isnet/isnet-general-use-q8.onnx          ISNet general-use (DIS, https://github.com/xuebinqin/DIS) Apache-2.0; from the rembg release, dynamically quantized to uint8 with onnxruntime.quantization (178MB -> 46MB). Not cached by sw.js; studio-bg-worker.js keeps it in Cache Storage.
 - acorn/acorn.js                         acorn 8.14.0 MIT https://github.com/acornjs/acorn (JavaScript parser, for /kelim/tichnut/tzaad/ step-by-step runner, 10.11.2026)
+- docx-preview/docx-preview-0.4.1.min.js  docx-preview 0.4.1 Apache-2.0 https://github.com/VolodymyrBaydalka/docxjs (renders .docx in the browser, for /kelim/machshev/word-pdf/, 24.11.2026)
+- jszip/jszip-3.10.1.min.js               JSZip 3.10.1, used under the MIT option of its MIT-or-GPLv3 dual license https://github.com/Stuk/jszip (required by docx-preview, 24.11.2026)
