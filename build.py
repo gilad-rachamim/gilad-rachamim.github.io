@@ -810,7 +810,7 @@ for key, site in SITES.items():
         # "פתח באמצעות" במחשב (אחרי התקנת האתר כאפליקציה): קובץ PDF נפתח בכלי המילוי והחתימה
         man["file_handlers"] = [{"action": "/kelim/machshev/chatima/", "accept": {"application/pdf": [".pdf"]}}]
     (d / "manifest.webmanifest").write_text(json.dumps(man, ensure_ascii=False, indent=1), encoding="utf-8")
-    pre = site_pages[key] + ["/assets/site.css", "/assets/kelim.css", "/assets/kelim.js", "/assets/track.js",
+    pre = site_pages[key] + ["/assets/site.css", "/assets/kelim.css", "/assets/kelim.js", "/assets/hakraa-daf.js","/assets/track.js",
                              "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff",
                              f"/assets/icon-{site['icon']}-192.png"] + site.get("css", []) + site.get("js", [])
     pre = [vurl(p) if re.search(r"^/assets/.*\.(js|css)$", p) else p for p in pre]
