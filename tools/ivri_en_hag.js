@@ -58,7 +58,8 @@ module.exports = function (x) {
     ['תשעה באב', "Tisha B'Av and the other fast days", "Tisha B'Av, the 9th of Av, is a day of mourning for the destruction of the First and Second Temples. The fast begins before sunset the evening before and ends at nightfall. There are four more fast days, from dawn to nightfall: the Fast of Gedaliah, the 10th of Tevet, the Fast of Esther and the 17th of Tammuz. When a fast falls on Shabbat it is moved, and the tables show the moved date."],
     ['יום העצמאות', 'Israel\'s national days', 'In spring Israel marks Yom HaShoah, Holocaust Remembrance Day (27 Nisan), Yom HaZikaron, the memorial day for Israel\'s fallen soldiers (4 Iyar), Yom HaAtzmaut, Israel Independence Day (5 Iyar), and Yom Yerushalayim, Jerusalem Day (28 Iyar). These dates are sometimes moved by a day or two so they do not touch Shabbat; the tables show the day they are actually marked.']
   ];
-  const infoHtml = INFO.map(([he, h, p]) => { const r = nextOf(he); return `  <h3>${h}</h3>\n  <p>${p}${r ? ' Next date: <b>' + when(r) + '</b>.' : ''}</p>`; }).join('\n');
+  const PG = { 'ראש השנה': 'rosh-hashanah', 'יום הכיפורים': 'yom-kippur', 'סוכות': 'sukkot', 'חנוכה': 'hanukkah', 'ט״ו בשבט': 'tu-bishvat', 'פורים': 'purim', 'פסח': 'passover', 'שבועות': 'shavuot' };
+  const infoHtml = INFO.map(([he, h, p]) => { const r = nextOf(he), g = PG[he]; return `  <h3>${h}</h3>\n  <p>${p}${r ? ' Next date: <b>' + when(r) + '</b>.' : ''}${g ? ' <a href="' + HERE + g + '/">' + S(N(he)) + ' dates for the next five years</a>.' : ''}</p>`; }).join('\n');
 
   const qa = [
     ['What are the Jewish holidays in ' + GY + '?', (left.length ? 'Still ahead in ' + GY + ': ' + left.map(r => S(r.name) + ' – ' + when(r)).join('; ') + '.' : 'All the holidays of ' + GY + ' have passed.') + ' The full list is in the table "Jewish holidays ' + GY + '" on this page.'],
