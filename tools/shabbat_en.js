@@ -45,19 +45,20 @@ const faqHtml = '<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">\n  
   qa.map(([q, a]) => `  <details><summary>${q}</summary><p>${a}</p></details>`).join('\n') + '\n</section>';
 
 const meta = {
-  site: 'kodesh', nav: 'rabanim', lang: 'en', crumb_root: 'Jewish tools', tool: 'shabbat_en', no_hub: true,
+  site: 'kodesh', nav: 'rabanim', lang: 'en', alt: { he: '/kodesh/shabat/', en: '/kodesh/shabat/en/', ru: '/kodesh/shabat/ru/' }, crumb_root: 'Jewish tools', tool: 'shabbat_en', no_hub: true,
   title: 'Shabbat Times: Candle Lighting Times for Your City',
   description: 'Shabbat times for this week in ' + S.CITIES.length + ' US cities or your location: candle lighting times, Havdalah when Shabbat ends, Rabbeinu Tam, Yom Tov candles and a 12-week table. Free, no ads.',
   og_title: 'Shabbat Times – candle lighting and Havdalah for your city',
   priority: '0.8',
   crumbs: [['Shabbat times', null]],
-  head: '<link rel="stylesheet" href="/assets/seo-txt.css"><link rel="stylesheet" href="/assets/kodesh-ivri.css"><link rel="stylesheet" href="/assets/shabbat-en.css">' + faqLd,
+  head: '<link rel="stylesheet" href="/assets/seo-txt.css"><link rel="stylesheet" href="/assets/kodesh-ivri.css"><link rel="stylesheet" href="/assets/shabbat-en.css"><link rel="stylesheet" href="/assets/lang-switch.css">' + faqLd,
   foot: '<script src="' + HEB + '" data-hebcal defer></script><script src="/assets/shabbat-en.js" defer></script>'
 };
 const body = `<header class="k-hero no-print">
   <h1>Shabbat Times: Candle Lighting Times and Havdalah</h1>
   <p class="sub">Shabbat candle lighting times for this Friday in your city, when Shabbat ends on Saturday night, Rabbeinu Tam, and the coming holidays. Pick your city or use your location.</p>
 </header>
+<nav class="gr-lang no-print" aria-label="Language / Язык"><a href="/kodesh/shabat/" lang="he" hreflang="he">עברית</a><a href="/kodesh/shabat/en/" lang="en" hreflang="en" aria-current="page">English</a><a href="/kodesh/shabat/ru/" lang="ru" hreflang="ru">Русский</a></nav>
 <div class="tool" id="sh">
   <h2>Shabbat times this week</h2>
   <div class="sh-pick no-print">
