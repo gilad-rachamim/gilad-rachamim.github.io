@@ -1,0 +1,85 @@
+<!--meta {
+ "site": "kodesh",
+ "nav": "rabanim",
+ "tool": "chanuka_pazel",
+ "title": "פאזל חנוכה אונליין – 5 ציורים, 3 רמות, בחינם",
+ "description": "פאזל חנוכה אונליין לילדים: מרכיבים חנוכייה, סביבון או סופגנייה בלחיצה או בגרירה. שלוש רמות, בחינם, בלי הרשמה וגם בלי אינטרנט.",
+ "og_title": "פאזל חנוכה אונליין",
+ "priority": "0.8",
+ "crumbs": [
+  [
+   "חנוכה למשפחה",
+   "/kodesh/chanuka/"
+  ],
+  [
+   "משחקים לחנוכה",
+   "/kodesh/chanuka/mischakim/"
+  ],
+  [
+   "פאזל חנוכה",
+   null
+  ]
+ ],
+ "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/chanuka-games.css\"><script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"FAQPage\",\"mainEntity\":[{\"@type\":\"Question\",\"name\":\"איך עובד פאזל החלפות?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"נוגעים בחלק אחד ואחר כך בחלק שני, והם מתחלפים. אפשר גם לגרור חלק אחד על חלק אחר.\"}},{\"@type\":\"Question\",\"name\":\"כמה חלקים יש בפאזל?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"שישה בקל, שנים עשר בבינוני ועשרים בקשה.\"}},{\"@type\":\"Question\",\"name\":\"אפשר לראות את התמונה השלמה?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"כן. לוחצים ומחזיקים על \\\"להציץ בתמונה\\\" והציור השלם מוצג לרגע.\"}},{\"@type\":\"Question\",\"name\":\"הפאזל עובד בטלפון בלי אינטרנט?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"כן. אחרי שהדף נפתח פעם אחת הוא עובד גם בלי קליטה.\"}},{\"@type\":\"Question\",\"name\":\"אילו ציורים יש בפאזל?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"חנוכייה, סביבון, סופגנייה, פך שמן וחנוכייה בחלון. כולם נוצרו במיוחד לדף הזה.\"}},{\"@type\":\"Question\",\"name\":\"צריך להירשם או לשלם?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"לא. הכול חינם, בלי הרשמה ובלי פרסומות.\"}},{\"@type\":\"Question\",\"name\":\"איפה עוד משחקים לחנוכה?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"בדף משחקים לחנוכה, עם משחק זיכרון, הדלקת חנוכייה, סביבון וחידון.\"}}]}</script>",
+ "foot": "<script src=\"/assets/chanuka-pazel.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <span class="bsd">בס"ד</span>
+  <h1>פאזל חנוכה אונליין: מרכיבים את הציור</h1>
+  <p class="sub">התמונה מעורבבת, ואתם מחזירים כל חלק למקומו. חמישה ציורים ושלוש רמות, בלחיצה או בגרירה.</p>
+</header>
+
+<section class="k-sec" aria-label="הפאזל">
+  <div class="pz-wrap">
+    <div class="cg-bar" id="pz-lvls" role="group" aria-label="רמה">
+      <button type="button" class="btn btn-line" data-l="1" aria-pressed="true">קל, 6 חלקים</button>
+      <button type="button" class="btn btn-line" data-l="2" aria-pressed="false">בינוני, 12 חלקים</button>
+      <button type="button" class="btn btn-line" data-l="3" aria-pressed="false">קשה, 20 חלקים</button>
+    </div>
+    <div class="cg-bar" id="pz-pics" role="group" aria-label="בחירת ציור"></div>
+    <p class="cg-st"><span id="pz-mv">0</span> מהלכים <span id="pz-best"></span></p>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="pz-defs"></defs></svg>
+    <div id="pz-board" role="group" aria-label="חלקי הפאזל"></div>
+    <div class="actions" style="justify-content:center;margin-top:.7rem">
+      <button type="button" class="btn btn-line" id="pz-peek">להציץ בתמונה</button>
+      <button type="button" class="btn btn-gold" id="pz-new">ערבוב מחדש</button>
+    </div>
+    <div id="pz-ref" hidden></div>
+    <div class="cg-win" id="pz-win" hidden>
+      <p id="pz-wm"></p>
+      <div class="actions" style="justify-content:center"><button type="button" class="btn btn-gold" id="pz-next">לציור הבא</button><a class="btn btn-line" href="#" id="pz-wa">שלחו בווטסאפ</a></div>
+    </div>
+  </div>
+</section>
+<section class="k-sec" aria-label="עוד לחנוכה">
+  <h2>עוד לחנוכה</h2>
+  <div class="actions"><a class="btn btn-line" href="/kodesh/chanuka/mischakim/zikaron/">משחק זיכרון חנוכה</a><a class="btn btn-line" href="/kodesh/chanuka/mischakim/hadlaka/">הדלק את החנוכייה</a><a class="btn btn-line" href="/kodesh/chanuka/tzviya/">דפי צביעה לחנוכה</a><a class="btn btn-line" href="/kodesh/chanuka/yetzira/">יצירה לחנוכה</a><a class="btn btn-line" href="/kodesh/chanuka/mischakim/">משחקים לחנוכה</a></div>
+</section>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">פאזל חנוכה לילדים, בחינם ובלי הרשמה</h2>
+  <h3>איך מרכיבים פאזל בלי חלקים אמיתיים</h3>
+  <p>התמונה חתוכה לריבועים ומעורבבת. נוגעים בחלק אחד ואחר כך בחלק שני כדי להחליף ביניהם, או גוררים חלק אחד על השני. כשכל חלק במקומו, הציור שלם. חלק שנמצא במקום הנכון מקבל מסגרת ירוקה קטנה, כדי שיהיה קל לראות התקדמות.</p>
+  <h3>חמישה ציורים צבעוניים</h3>
+  <p>אפשר להרכיב חנוכייה, סביבון, סופגנייה, פך שמן וחנוכייה בחלון בליל חורף. הציורים נוצרו בקוד בשביל הדף הזה, ולא הועתקו מהרשת. כפתור "להציץ בתמונה" מראה את הציור השלם לרגע, אם צריך עזרה.</p>
+  <h3>שלוש רמות קושי</h3>
+  <p>ברמה הקלה יש שישה חלקים והיא מתאימה לילדים קטנים. ברמה הבינונית שנים עשר חלקים, וברמה הקשה עשרים. כל רמה וכל ציור שומרים שיא משלהם, כדי שיהיה למי להתחרות, אפילו בעצמכם מאתמול.</p>
+  <h3>מתאים לאצבעות קטנות</h3>
+  <p>אין גרירה מדויקת שצריך לכוון. אפשר פשוט לגעת בשני חלקים ברצף. המשחק עובד במגע ובעכבר, בלי גלילה בצדדים גם בטלפון צר, ואפשר לשחק בו גם בלי אינטרנט אחרי הטעינה הראשונה.</p>
+  <h3>פאזל וצביעה יחד</h3>
+  <p>ילדים שאוהבים להרכיב אוהבים גם לצבוע. אחרי הפאזל אפשר לעבור ל<a class="gold" href="/kodesh/chanuka/tzviya/">דפי צביעה לחנוכה</a> או לבנות חנוכייה אמיתית מנייר ב<a class="gold" href="/kodesh/chanuka/yetzira/">יצירה לחנוכה</a>. <a class="gold" href="/kodesh/chanuka/mischakim/zikaron/">משחק זיכרון חנוכה</a> ו<a class="gold" href="/kodesh/chanuka/mischakim/hadlaka/">הדלק את החנוכייה</a> ממשיכים את הערב.</p>
+  <h3>בחינם, בלי פרסומות</h3>
+  <p>אין כאן הרשמה, מנוי או פרסומות. הדף נבנה כמיזם חסד לקראת החג, ואפשר לשלוח אותו בווטסאפ לגן, לכיתה או לכל המשפחה.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך עובד פאזל החלפות?</summary><p>נוגעים בחלק אחד ואחר כך בחלק שני, והם מתחלפים. אפשר גם לגרור חלק אחד על חלק אחר.</p></details>
+  <details><summary>כמה חלקים יש בפאזל?</summary><p>שישה בקל, שנים עשר בבינוני ועשרים בקשה.</p></details>
+  <details><summary>אפשר לראות את התמונה השלמה?</summary><p>כן. לוחצים ומחזיקים על "להציץ בתמונה" והציור השלם מוצג לרגע.</p></details>
+  <details><summary>הפאזל עובד בטלפון בלי אינטרנט?</summary><p>כן. אחרי שהדף נפתח פעם אחת הוא עובד גם בלי קליטה.</p></details>
+  <details><summary>אילו ציורים יש בפאזל?</summary><p>חנוכייה, סביבון, סופגנייה, פך שמן וחנוכייה בחלון. כולם נוצרו במיוחד לדף הזה.</p></details>
+  <details><summary>צריך להירשם או לשלם?</summary><p>לא. הכול חינם, בלי הרשמה ובלי פרסומות.</p></details>
+  <details><summary>איפה עוד משחקים לחנוכה?</summary><p>בדף משחקים לחנוכה, עם משחק זיכרון, הדלקת חנוכייה, סביבון וחידון.</p></details>
+</section>
+<!--/seo-txt-->
