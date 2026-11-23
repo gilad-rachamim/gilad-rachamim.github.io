@@ -409,8 +409,9 @@ export default {
       if (!c.ok) return json({ ok: false, error: c.description });
       const cur = c.result.description || '';
       if (cur.includes('HakelimBot')) return json({ ok: true, already: true, description: cur });
-      const line = '🤖 כל הכלים בבוט: https://t.me/HakelimBot?start=tg';
-      const next = (cur ? cur.trim() + '\n' : '') + line;
+      const line = '🤖 בוט הכלים: t.me/HakelimBot?start=tg';
+      const base = cur.replace(/\s*בחינם,\s*/g, ' ').trim(); // "חינם" אסור בתיאורים חדשים (כלל של גילעד)
+      const next = (base ? base + '\n' : '') + line;
       if (next.length > 255) return json({ ok: false, error: 'ארוך מדי', len: next.length, description: cur });
       const r = await tgApi(env, 'setChatDescription', { chat_id: cfg.tgid, description: next });
       return json({ ok: !!r.ok, error: r.ok ? null : r.description, description: next });
