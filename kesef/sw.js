@@ -1,7 +1,7 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'kesef-202611240147';
+var CACHE = 'kesef-202611240157';
 var PRECACHE = ["/kesef/achuzim/hanacha/", "/kesef/achuzim/", "/kesef/ashrai/", "/kesef/bruto-neto/", "/kesef/bruto-neto/ru/", "/kesef/delek/", "/kesef/gil/", "/kesef/halvaa/", "/kesef/hechzer/", "/kesef/", "/kesef/kranot/", "/kesef/maam/", "/kesef/mechir/", "/kesef/minuyim/", "/kesef/mismachim/", "/kesef/mivtza/", "/kesef/ribit-dribit/", "/kesef/shana/", "/kesef/shaot-avoda/", "/kesef/taktziv/", "/kesef/tlush/", "/kesef/tlush/ru/", "/kesef/yeladim/", "/assets/site.css?v=cb1a2bbb", "/assets/kelim.css?v=75acaf54", "/assets/kelim.js?v=53f855ae", "/assets/hakraa-daf.js?v=5b6fd0b2", "/assets/track.js?v=ca51c9e7", "/assets/discover.js?v=5d955931", "/assets/discover2.js?v=d44a882a", "/assets/helper.js?v=77cfb5c2", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-kesef-192.png", "/assets/kesef.css?v=b790a201", "/assets/kesef.js?v=27f16432"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
