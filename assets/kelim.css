@@ -126,3 +126,14 @@ body[data-tool="rega"] .rel{display:none}
 .rel-v2 .rc a:hover,.rel-v2 .rc a:focus-visible{text-decoration:underline}
 .rel-v2 .rc span{font-size:.88rem;opacity:.85}
 .rel-v2 .rc .badge{display:inline-block;margin-inline-start:.4rem;font-size:.72rem;font-weight:700;padding:.05rem .45rem;border-radius:1rem;background:#1b1b1b;color:#f3d98c}
+
+/* פס עונה (חנוכה): בית, דפי תחום; assets/discover.js */
+.hk-season{max-width:62rem;margin:1rem auto;padding:.7rem 1rem;border:1px solid rgba(201,165,92,.5);border-radius:.8rem;background:rgba(201,165,92,.08)}
+.hk-season p{margin:.15rem 0}
+.hk-se-h span:last-child{opacity:.85}
+.hk-se-l{display:flex;flex-wrap:wrap;gap:.45rem}
+.hk-season a{display:inline-flex;align-items:center;min-height:44px;padding:0 .8rem;border-radius:2rem;border:1px solid rgba(201,165,92,.5);color:var(--gold,#d8b35f);text-decoration:none;font-weight:600;font-size:.92rem}
+.hk-season a:hover,.hk-season a:focus-visible{background:rgba(201,165,92,.18)}
+.hk-thin{padding:.3rem .8rem;margin:.5rem auto}
+.hk-thin p{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
+@media print{.hk-season{display:none}}
