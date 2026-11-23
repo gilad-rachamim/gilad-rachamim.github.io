@@ -392,6 +392,15 @@ export default {
       const n = cfg.tgid ? await tgApi(env, 'getChatMemberCount', { chat_id: cfg.tgid }) : null;
       return json({ ok: !!me.ok, bot: me.result?.username || me.description, tgid: cfg.tgid || null, chat: chat ? (chat.result?.title || chat.description) : null, members: n?.result ?? null, link: cfg.links?.tg || null });
     }
+    if (url.pathname === '/tg-pin-kelim' && request.method === 'POST') { // 23.11.2026: הודעה נעוצה אחת על בוט הכלים (טקסט קבוע)
+      if (!admin) return json({ ok: false }, 403);
+      const cfg = await call(env, '/config');
+      if (!env.TG_TOKEN || !cfg.tgid) return json({ ok: false, error: 'אין ערוץ' });
+      const m = await tgApi(env, 'sendMessage', { chat_id: cfg.tgid, text: TG_PIN_KELIM, link_preview_options: { is_disabled: true } });
+      if (!m.ok) return json({ ok: false, error: m.description });
+      const p = await tgApi(env, 'pinChatMessage', { chat_id: cfg.tgid, message_id: m.result.message_id, disable_notification: true });
+      return json({ ok: true, id: m.result.message_id, pinned: !!p.ok, pinError: p.ok ? null : p.description });
+    }
     if (url.pathname === '/wa-check') {
       if (!admin) return json({ ok: false }, 403);
       if (!env.WHAPI_TOKEN) return json({ ok: false, error: 'אין WHAPI_TOKEN' });
@@ -433,6 +442,14 @@ async function postWhatsapp(env, ed, waid) {
   return r.ok ? { id: j.message?.id || true } : { error: (j.error && (j.error.message || j.error)) || String(r.status) };
 }
 const SUPPORT_URL = 'https://hakelim.com/kelim/';
+export const TG_PIN_KELIM = `🤖 בוט הכלים של המיזם – עכשיו בטלגרם
+
+כותבים מה צריכים, במילים שלכם, ומקבלים את הכלי המתאים מאתר הכלים: מחשבונים, קבצים, קודש, בריאות, עבודה ועוד.
+גימטריה, מע"מ ותאריך עברי – עונה ישר בצ'אט.
+
+👈 https://t.me/HakelimBot?start=tg
+
+💛 מיזם חסד, בלי כוונת רווח. בלי הרשמה ובלי פרסומות.`;
 export function editionText(ed, links = {}, src = 'fb') {
   const out = [`📰 החדשות ב-3 דקות – ${ed.name}, יום ${ed.date.day} ${ed.date.he}`, ''];
   const names = { haredi: 'ציבור חרדי', economy: 'כלכלה וכיס' };
