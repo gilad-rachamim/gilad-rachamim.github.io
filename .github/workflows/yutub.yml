@@ -18,7 +18,7 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 75
+    timeout-minutes: 120
     env:
       YUTUB_WORKER: https://kelim-yutub.gilad4049.workers.dev
       YUTUB_RUNNER_KEY: ${{ secrets.YUTUB_RUNNER_KEY }}
@@ -26,7 +26,15 @@ jobs:
       - name: peek
         id: peek
         run: |
-          n=$(curl -fsS -m 30 -H "X-Runner-Key: $YUTUB_RUNNER_KEY" "$YUTUB_WORKER/r/peek" | python3 -c "import json,sys; print(json.load(sys.stdin).get('queued',0))" || echo 0)
+          # התזמון של GitHub רץ בפועל רק פעם בשעה בערך, ולכן הרץ נשאר ער ומקשיב לתור כל 15 שניות
+          # עד 55 דקות. כך שיעור חדש מתחיל תוך שניות ולא מחכה לריצה הבאה (23.11.2026).
+          n=0; end=$(( $(date +%s) + 55*60 ))
+          while :; do
+            n=$(curl -fsS -m 30 -H "X-Runner-Key: $YUTUB_RUNNER_KEY" "$YUTUB_WORKER/r/peek" | python3 -c "import json,sys; print(json.load(sys.stdin).get('queued',0))" || echo 0)
+            [ "$n" != "0" ] && break
+            [ "$(date +%s)" -ge "$end" ] && break
+            sleep 15
+          done
           echo "queued=$n" >> "$GITHUB_OUTPUT"
           echo "queued: $n"
       - uses: actions/checkout@v4
