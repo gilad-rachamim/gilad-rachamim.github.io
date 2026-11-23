@@ -70,19 +70,20 @@ const faqHtml = '<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">\n  
   qa.map(([q, a]) => `  <details><summary>${q}</summary><p>${a}</p></details>`).join('\n') + '\n</section>';
 
 const meta = {
-  site: 'kodesh', nav: 'rabanim', lang: 'en', crumb_root: 'Jewish tools', tool: 'alefbet_en', no_hub: true,
+  site: 'kodesh', nav: 'rabanim', lang: 'en', alt: { en: '/kodesh/alefbet/en/', ru: '/kodesh/alefbet/ru/' }, crumb_root: 'Jewish tools', tool: 'alefbet_en', no_hub: true,
   title: 'Hebrew Alphabet: All 22 Letters, Sounds, Vowels and Numbers',
   description: 'The Hebrew alphabet chart: all 22 Hebrew letters and 5 final letters with names, sounds, transliteration and numbers, the vowels (nikud), a quiz and a printable chart. Free.',
   og_title: 'Hebrew Alphabet – tap a letter, hear it, learn it',
   priority: '0.8',
   crumbs: [['Hebrew alphabet', null]],
-  head: '<link rel="stylesheet" href="/assets/seo-txt.css"><link rel="stylesheet" href="/assets/kodesh-ivri.css"><link rel="stylesheet" href="/assets/alefbet-en.css">' + faqLd,
+  head: '<link rel="stylesheet" href="/assets/seo-txt.css"><link rel="stylesheet" href="/assets/kodesh-ivri.css"><link rel="stylesheet" href="/assets/alefbet-en.css"><link rel="stylesheet" href="/assets/lang-switch.css">' + faqLd,
   foot: '<script>window.AB_L=' + JSON.stringify(L) + ';</script><script src="/assets/alefbet-en.js" defer></script>'
 };
 const body = `<header class="k-hero no-print">
   <h1>Hebrew Alphabet: All 22 Hebrew Letters with Sounds and Numbers</h1>
   <p class="sub">Tap any letter to see its name, its sound, an example word and its number, and to hear it said in Hebrew. Below the chart: the final letters, the vowels, a quiz to practise, and numbers written in Hebrew letters.</p>
 </header>
+<nav class="gr-lang no-print" aria-label="Language"><a href="/kodesh/alefbet/en/" lang="en" hreflang="en" aria-current="page">English</a><a href="/kodesh/alefbet/ru/" lang="ru" hreflang="ru">Русский</a></nav>
 <div class="tool" id="ab">
   <h2>The Hebrew alphabet chart</h2>
   <p class="lead2">Hebrew is read from right to left, so the chart starts at the top right with Alef. The small number on each letter is its value.</p>
