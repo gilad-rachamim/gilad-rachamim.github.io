@@ -459,6 +459,9 @@ def seo_related(p):
     meta = INDEX.get(p)
     if not meta or meta.get("no_rel") or seo_is_hub(p) or p.rstrip("/").rsplit("/", 1)[1] in SEO_SKIP:
         return ""
+    v2 = seo_related_v2(p, meta)
+    if v2 is not None:
+        return v2
     par = seo_parent(p)
     sibs = sorted(set(seo_children(par)) | {p})
     if len(sibs) < 2:
@@ -664,6 +667,222 @@ def insert_demo(content, blk):
         return content.replace("<!--seo-txt-->", blk + "<!--seo-txt-->", 1)
     i = content.find("</header>")
     return content[: i + 9] + blk + content[i + 9:] if i >= 0 else blk + content
+
+# ---------- הקטלוג המאוחד (assets/catalog.json): מזין חיפוש, "עוד כלים", דף הבית והעונות ----------
+def _git_added():
+    import subprocess
+    try:
+        out = subprocess.run(["git", "-c", "core.quotepath=off", "log", "--diff-filter=A", "--format=@%cs", "--name-only", "--", "src/pages"],
+                             cwd=ROOT, capture_output=True, text=True, encoding="utf-8", check=True).stdout
+    except Exception:
+        return {}
+    added, cur = {}, datetime.date.today().isoformat()
+    for line in out.splitlines():
+        if line.startswith("@"):
+            cur = line[1:]
+        elif line.strip():
+            added[line.strip()] = cur  # ההופעה הראשונה = ההוספה הישנה ביותר (הלוג הולך מהחדש לישן)
+    return added
+def build_catalog():
+    disc = ROOT / "src" / "discover"
+    tp = json.loads((disc / "topics.json").read_text(encoding="utf-8"))
+    kw = json.loads((disc / "kw.json").read_text(encoding="utf-8"))
+    pop = {}
+    if (ROOT / "src" / "pop.json").exists():
+        pop = json.loads((ROOT / "src" / "pop.json").read_text(encoding="utf-8"))
+    added = _git_added()
+    rows, fam = [], {}
+    for _p in sorted(SRC.rglob("*.html")):
+        _raw = _p.read_text(encoding="utf-8")
+        _m = re.match(r"\s*<!--meta\s*(\{.*?\})\s*-->", _raw, re.S)
+        if not _m:
+            continue
+        _meta = json.loads(_m.group(1))
+        if not in_sitemap(_meta) or _meta.get("no_mapa"):
+            continue
+        rel = _p.relative_to(SRC).as_posix()
+        u = "/" + (rel[:-len("index.html")] if rel.endswith("index.html") else rel)
+        if u in ("/mapa/", "/") or u.startswith("/mohel/"):
+            continue
+        if any(u.startswith(i) for i in tp["info"]):
+            continue
+        _h1 = re.search(r"<h1[^>]*>(.*?)</h1>", _raw, re.S)
+        h1 = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", _h1.group(1))).strip() if _h1 else ""
+        name = h1 or re.split(r"\s[–—|]\s|:\s", _meta["title"])[0].strip()
+        crumbs = _meta.get("crumbs") or []
+        short = _meta.get("short") or (crumbs[-1][0] if crumbs else name)
+        if len(short) > 22:
+            short = short[:21].rstrip() + "…"
+        rows.append({"u": u, "meta": _meta, "n": name, "s": short, "t": re.split(r"\s\|\s", _meta["title"])[0].strip(),
+                     "d": (_meta.get("description") or "")[:120], "src": "src/pages/" + rel})
+        fam.setdefault(_meta.get("tool"), []).append(u)
+    heads = {k: min(v, key=lambda x: (x.count("/"), x)) for k, v in fam.items() if len(v) >= 3}
+    byu = {r["u"]: r for r in rows}
+    _today = datetime.date.today().isoformat()
+    cutoff = (datetime.date.today() - datetime.timedelta(days=21)).isoformat()
+    out, errs, notopic = [], [], []
+    for r in rows:
+        u, meta = r["u"], r["meta"]
+        lang = meta.get("lang") or "he"
+        parent = u.rstrip("/").rsplit("/", 1)[0] + "/"
+        kind = meta.get("kind")
+        if not kind:
+            if lang != "he" or (INDEX.get(parent, {}).get("no_hub") and parent in byu):
+                kind = "landing"
+            elif meta.get("tool") in heads and heads[meta["tool"]] != u:
+                kind = "landing"
+            elif seo_is_hub(u):
+                kind = "hub"
+            else:
+                kind = "tool"
+        # נושא: ההתחלה הארוכה ביותר שמתאימה; דף שפה יורש מהדף העברי (אחרי /en/ או /ru/)
+        base = re.sub(r"/(en|ru)(/|$)", "/", u) if lang != "he" else u
+        g = next((t["id"] for t in tp["topics"] if base in t.get("exact", []) or any(base.startswith(p) for p in t["prefix"])), None)
+        if not g:
+            notopic.append(u)
+            continue
+        # מילות הקשר: רשומה ישירה, אחרת ירושה מראש המשפחה או מההורה הקרוב
+        k = kw.get(u)
+        if k is None:
+            cand = [heads.get(meta.get("tool"))] if meta.get("tool") in heads else []
+            q = base
+            while q.count("/") > 1:
+                q = q.rstrip("/").rsplit("/", 1)[0] + "/"
+                cand.append(q)
+            k = next((kw[c] for c in cand if c and c in kw), None)
+            if k is None and kind in ("tool", "hub"):
+                errs.append(u)
+            k = k or ""
+        soft = bool(re.search(r"^/nefesh/|azkara|avel|shiva|levaya|kadish|rega|tmicha", u))
+        added_d = added.get(r["src"], _today)
+        e = next(t["e"] for t in tp["topics"] if t["id"] == g)
+        out.append({"u": u, "n": r["n"], "d": r["d"], "t": r["t"], "s": r["s"], "g": g, "e": e, "k": "" if kind == "landing" else k, "ty": kind,
+                    "nw": added_d, "p": pop.get(u, 0), "l": lang, "sf": 1 if soft else 0})
+    # "חדש": רק 12 הכלים העבריים החדשים ביותר מ-21 הימים האחרונים (האתר צעיר – אחרת הכול "חדש"); לא בדפים רגישים
+    fresh = sorted((x for x in out if x["ty"] == "tool" and x["l"] == "he" and not x["sf"] and x["nw"] >= cutoff), key=lambda x: (x["nw"], x["u"]), reverse=True)[:12]
+    keep = {x["u"] for x in fresh}
+    for x in out:
+        if x["u"] not in keep:
+            x["nw"] = ""
+    if notopic:
+        print("catalog: דפים בלי נושא (תקנו את src/discover/topics.json):")
+        for u in notopic:
+            print("  ", u)
+    if errs:
+        print("catalog: כלים בלי מילות הקשר (הוסיפו ל-src/discover/kw.json):")
+        for u in errs:
+            print("  ", u)
+    if notopic or errs:
+        raise SystemExit("catalog: נכשל – חסר נושא או מילות הקשר")
+    return tp, out
+
+_CAT = {}
+def catalog():
+    if not _CAT:
+        _CAT["tp"], _CAT["out"] = build_catalog()
+    return _CAT["tp"], _CAT["out"]
+def write_catalog():
+    tp, out = catalog()
+    (ROOT / "assets" / "catalog.json").write_text(json.dumps({"v": today, "topics": [{"id": t["id"], "n": t["n"], "e": t["e"]} for t in tp["topics"] if t.get("show", True)], "items": out},
+                                                             ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
+    print("catalog:", len(out), "pages;", sum(1 for x in out if x["ty"] == "tool"), "tools")
+
+# ---------- "עוד כלים שיעזרו לכם" v2: שישה כרטיסים קבועים לכל עמוד כלי (2 אחים, 2 מתחום אחר, 1 הכי שימושי בנושא, 1 חדש) ----------
+_STOPW = set("מתי איך אני לי של את על עם זה יש אין לא או גם כל מה אם אפשר רוצה צריך".split())
+def _ktoks(k):
+    return {w for w in re.sub(r"[^א-תa-z0-9 ]+", " ", k.lower()).split() if len(w) > 2 and w not in _STOPW}
+def _h(a, b):
+    return int(hashlib.md5((a + "|" + b).encode("utf-8")).hexdigest()[:8], 16)
+REL_LOG = []   # (עמוד, [כרטיסים]) לבדיקה בסוף הבנייה
+_RP = {}
+def _rel_prep():
+    if not _RP:
+        tp, out = catalog()
+        pool = [x for x in out if x["ty"] == "tool" and x["l"] == "he"]
+        _RP["pool"] = pool
+        _RP["by"] = {x["u"]: x for x in pool}
+        _RP["kt"] = {x["u"]: _ktoks(x["k"]) for x in pool}
+    return _RP
+def seo_related_picks(p, meta):
+    R = _rel_prep()
+    it = R["by"].get(p)
+    if not it:
+        return None
+    pool, kt = R["pool"], R["kt"]
+    soft = bool(it["sf"])
+    ok = lambda x: x["u"] != p and (soft or not x["sf"])
+    used, picks = {p}, []
+    def take(x, slot):
+        used.add(x["u"]); picks.append((x, slot))
+    par = seo_parent(p)
+    # 1) שני אחים מאותה תיקייה (הבאים אחרי הדף, בסדר קבוע)
+    sibs = sorted((x for x in pool if seo_parent(x["u"]) == par and ok(x)), key=lambda x: x["u"])
+    after = [x for x in sibs if x["u"] > p] + [x for x in sibs if x["u"] < p]
+    for x in after[:2]:
+        take(x, "sib")
+    # 2) שניים מתחום אחר: meta "rel" אם יש, אחרת דמיון מילות הקשר (שובר שוויון קבוע לפי גיבוב)
+    cross = [R["by"][u] for u in (meta.get("rel") or []) if u in R["by"] and ok(R["by"][u]) and R["by"][u]["u"] not in used]
+    for x in cross[:2]:
+        take(x, "rel")
+    if sum(1 for _, sl in picks if sl == "rel") < 2:
+        mine = kt[p]
+        cand = [x for x in pool if ok(x) and x["u"] not in used and x["g"] != it["g"] and (not soft or True)]
+        def sim(x):
+            o = kt[x["u"]]
+            return len(mine & o) / ((len(mine) * len(o)) ** .5) if mine and o else 0
+        cand.sort(key=lambda x: (-sim(x), -x["p"], _h(p, x["u"])))
+        for x in cand:
+            if sum(1 for _, sl in picks if sl == "rel") >= 2:
+                break
+            take(x, "rel")
+    # 3) הכי שימושי בנושא: פופולריות, אחר כך דף רדוד (כלי ראשי), אחר כך עושר מילות ההקשר
+    top = sorted((x for x in pool if ok(x) and x["u"] not in used and x["g"] == it["g"]),
+                 key=lambda x: (-x["p"], x["u"].count("/"), -len(kt[x["u"]]), x["u"]))
+    if top:
+        take(top[0], "top")
+    # 4) חדש (לא ברגישים): אחד מ-12 החדשים, נבחר לפי גיבוב כדי שלא יהיה אותו כלי בכל עמוד; בלי חדש – עוד מהנושא
+    if not soft:
+        fresh = sorted((x for x in pool if x["nw"] and ok(x) and x["u"] not in used), key=lambda x: x["u"])
+        if fresh:
+            take(fresh[_h(p, "new") % len(fresh)], "new")
+    # השלמה עד שש: מהנושא, ואז מכל האתר, בסדר קבוע
+    for grp in ([x for x in pool if ok(x) and x["g"] == it["g"]], [x for x in pool if ok(x)]):
+        for x in sorted(grp, key=lambda x: _h(p, x["u"])):
+            if len(picks) >= 6:
+                break
+            if x["u"] not in used:
+                take(x, "fill")
+    order = {"sib": 0, "rel": 1, "top": 2, "new": 3, "fill": 4}
+    picks.sort(key=lambda t: order[t[1]])
+    return picks[:6]
+def seo_related_v2(p, meta):
+    picks = seo_related_picks(p, meta)
+    if picks is None:
+        return None
+    par = seo_parent(p)
+    hub = par if par in INDEX and seo_is_hub(par) else None
+    if not hub:
+        hub = "/kelim/"
+    REL_LOG.append((p, [x["u"] for x, _ in picks]))
+    def card(x, slot):
+        d = x["d"]
+        d = d if len(d) <= 95 else d[:95].rsplit(" ", 1)[0].rstrip(" ,.:;–-(") + "…"
+        new = '<span class="badge">חדש</span>' if slot == "new" and x["nw"] and not x["sf"] else ""
+        return (f'<div class="rc" data-slot="{slot}">' + f'<a href="{x["u"]}">{html_lib.escape(x["n"], quote=False)}</a>' + new
+                + f'<span>{html_lib.escape(d, quote=False)}</span></div>')
+    cards = "".join(card(x, sl) for x, sl in picks)
+    return ('\n<section class="k-sec rel rel-v2 no-print" aria-labelledby="rel-h" data-rel="6">\n  <h2 id="rel-h">עוד כלים שיעזרו לכם</h2>\n  <div class="dom">'
+            + cards + '</div>\n  <p class="rel-all"><a class="gold" href="' + hub + '">לכל הכלים בנושא ←</a></p>\n</section>\n')
+def rel_check():
+    bad = []
+    for p, us in REL_LOG:
+        if len(us) != 6 or len(set(us)) != 6 or p in us or any(u not in INDEX for u in us):
+            bad.append(p)
+    print("related v2:", len(REL_LOG), "pages; violations:", len(bad))
+    if bad:
+        for p in bad[:20]:
+            print("  ", p)
+        raise SystemExit("related v2: נכשל – לא שישה כרטיסים שונים תקינים")
 
 pages = []
 TOOLS_JSON = []
@@ -884,114 +1103,7 @@ def write_search_index():
     (ROOT / "assets" / "search-index.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
     print("search-index:", len(out), "pages")
 write_search_index()
-# ---------- הקטלוג המאוחד (assets/catalog.json): מזין חיפוש, "עוד כלים", דף הבית והעונות ----------
-def _git_added():
-    import subprocess
-    try:
-        out = subprocess.run(["git", "-c", "core.quotepath=off", "log", "--diff-filter=A", "--format=@%cs", "--name-only", "--", "src/pages"],
-                             cwd=ROOT, capture_output=True, text=True, encoding="utf-8", check=True).stdout
-    except Exception:
-        return {}
-    added, cur = {}, today
-    for line in out.splitlines():
-        if line.startswith("@"):
-            cur = line[1:]
-        elif line.strip():
-            added[line.strip()] = cur  # ההופעה הראשונה = ההוספה הישנה ביותר (הלוג הולך מהחדש לישן)
-    return added
-def write_catalog():
-    disc = ROOT / "src" / "discover"
-    tp = json.loads((disc / "topics.json").read_text(encoding="utf-8"))
-    kw = json.loads((disc / "kw.json").read_text(encoding="utf-8"))
-    pop = {}
-    if (ROOT / "src" / "pop.json").exists():
-        pop = json.loads((ROOT / "src" / "pop.json").read_text(encoding="utf-8"))
-    added = _git_added()
-    rows, fam = [], {}
-    for _p in sorted(SRC.rglob("*.html")):
-        _raw = _p.read_text(encoding="utf-8")
-        _m = re.match(r"\s*<!--meta\s*(\{.*?\})\s*-->", _raw, re.S)
-        if not _m:
-            continue
-        _meta = json.loads(_m.group(1))
-        if not in_sitemap(_meta) or _meta.get("no_mapa"):
-            continue
-        rel = _p.relative_to(SRC).as_posix()
-        u = "/" + (rel[:-len("index.html")] if rel.endswith("index.html") else rel)
-        if u in ("/mapa/", "/") or u.startswith("/mohel/"):
-            continue
-        if any(u.startswith(i) for i in tp["info"]):
-            continue
-        _h1 = re.search(r"<h1[^>]*>(.*?)</h1>", _raw, re.S)
-        h1 = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", _h1.group(1))).strip() if _h1 else ""
-        name = h1 or re.split(r"\s[–—|]\s|:\s", _meta["title"])[0].strip()
-        crumbs = _meta.get("crumbs") or []
-        short = _meta.get("short") or (crumbs[-1][0] if crumbs else name)
-        if len(short) > 22:
-            short = short[:21].rstrip() + "…"
-        rows.append({"u": u, "meta": _meta, "n": name, "s": short, "t": re.split(r"\s\|\s", _meta["title"])[0].strip(),
-                     "d": (_meta.get("description") or "")[:120], "src": "src/pages/" + rel})
-        fam.setdefault(_meta.get("tool"), []).append(u)
-    heads = {k: min(v, key=lambda x: (x.count("/"), x)) for k, v in fam.items() if len(v) >= 3}
-    byu = {r["u"]: r for r in rows}
-    cutoff = (datetime.date.today() - datetime.timedelta(days=21)).isoformat()
-    out, errs, notopic = [], [], []
-    for r in rows:
-        u, meta = r["u"], r["meta"]
-        lang = meta.get("lang") or "he"
-        parent = u.rstrip("/").rsplit("/", 1)[0] + "/"
-        kind = meta.get("kind")
-        if not kind:
-            if lang != "he" or (INDEX.get(parent, {}).get("no_hub") and parent in byu):
-                kind = "landing"
-            elif meta.get("tool") in heads and heads[meta["tool"]] != u:
-                kind = "landing"
-            elif seo_is_hub(u):
-                kind = "hub"
-            else:
-                kind = "tool"
-        # נושא: ההתחלה הארוכה ביותר שמתאימה; דף שפה יורש מהדף העברי (אחרי /en/ או /ru/)
-        base = re.sub(r"/(en|ru)(/|$)", "/", u) if lang != "he" else u
-        g = next((t["id"] for t in tp["topics"] if base in t.get("exact", []) or any(base.startswith(p) for p in t["prefix"])), None)
-        if not g:
-            notopic.append(u)
-            continue
-        # מילות הקשר: רשומה ישירה, אחרת ירושה מראש המשפחה או מההורה הקרוב
-        k = kw.get(u)
-        if k is None:
-            cand = [heads.get(meta.get("tool"))] if meta.get("tool") in heads else []
-            q = base
-            while q.count("/") > 1:
-                q = q.rstrip("/").rsplit("/", 1)[0] + "/"
-                cand.append(q)
-            k = next((kw[c] for c in cand if c and c in kw), None)
-            if k is None and kind in ("tool", "hub"):
-                errs.append(u)
-            k = k or ""
-        soft = bool(re.search(r"^/nefesh/|azkara|avel|shiva|levaya|kadish|rega|tmicha", u))
-        added_d = added.get(r["src"], today)
-        e = next(t["e"] for t in tp["topics"] if t["id"] == g)
-        out.append({"u": u, "n": r["n"], "d": r["d"], "t": r["t"], "s": r["s"], "g": g, "e": e, "k": "" if kind == "landing" else k, "ty": kind,
-                    "nw": added_d, "p": pop.get(u, 0), "l": lang, "sf": 1 if soft else 0})
-    # "חדש": רק 12 הכלים העבריים החדשים ביותר מ-21 הימים האחרונים (האתר צעיר – אחרת הכול "חדש"); לא בדפים רגישים
-    fresh = sorted((x for x in out if x["ty"] == "tool" and x["l"] == "he" and not x["sf"] and x["nw"] >= cutoff), key=lambda x: (x["nw"], x["u"]), reverse=True)[:12]
-    keep = {x["u"] for x in fresh}
-    for x in out:
-        if x["u"] not in keep:
-            x["nw"] = ""
-    if notopic:
-        print("catalog: דפים בלי נושא (תקנו את src/discover/topics.json):")
-        for u in notopic:
-            print("  ", u)
-    if errs:
-        print("catalog: כלים בלי מילות הקשר (הוסיפו ל-src/discover/kw.json):")
-        for u in errs:
-            print("  ", u)
-    if notopic or errs:
-        raise SystemExit("catalog: נכשל – חסר נושא או מילות הקשר")
-    (ROOT / "assets" / "catalog.json").write_text(json.dumps({"v": today, "topics": [{"id": t["id"], "n": t["n"], "e": t["e"]} for t in tp["topics"] if t.get("show", True)], "items": out},
-                                                             ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
-    print("catalog:", len(out), "pages;", sum(1 for x in out if x["ty"] == "tool"), "tools")
 write_catalog()
+rel_check()
 
 
