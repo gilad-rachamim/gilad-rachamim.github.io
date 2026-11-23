@@ -918,6 +918,8 @@ def write_discover2():
     dump = lambda o: json.dumps(o, ensure_ascii=False, separators=(",", ":"))
     js = (ROOT / "src" / "discover" / "discover2.js").read_text(encoding="utf-8").replace("/*JOURNEYS*/[]", dump(J)).replace("/*NEWTOOLS*/[]", dump(new)).replace("/*SENSITIVE*/[]", dump(sf))
     (ROOT / "assets" / "discover2.js").write_text(js, encoding="utf-8")
+    hp = (ROOT / "src" / "discover" / "helper.js").read_text(encoding="utf-8").replace("/*NEWTOOLS*/[]", dump(new)).replace("/*SENSITIVE*/[]", dump(sf))
+    (ROOT / "assets" / "helper.js").write_text(hp, encoding="utf-8")
     if len(js.encode("utf-8")) > 14336:
         raise SystemExit("discover2.js גדול מ-14KB")
 write_discover2()
@@ -1075,7 +1077,7 @@ for key, site in SITES.items():
         # "פתח באמצעות" במחשב (אחרי התקנת האתר כאפליקציה): קובץ PDF נפתח בכלי המילוי והחתימה
         man["file_handlers"] = [{"action": "/kelim/machshev/chatima/", "accept": {"application/pdf": [".pdf"]}}]
     (d / "manifest.webmanifest").write_text(json.dumps(man, ensure_ascii=False, indent=1), encoding="utf-8")
-    pre = site_pages[key] + ["/assets/site.css", "/assets/kelim.css", "/assets/kelim.js", "/assets/hakraa-daf.js","/assets/track.js", "/assets/discover.js", "/assets/discover2.js",
+    pre = site_pages[key] + ["/assets/site.css", "/assets/kelim.css", "/assets/kelim.js", "/assets/hakraa-daf.js","/assets/track.js", "/assets/discover.js", "/assets/discover2.js", "/assets/helper.js",
                              "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff",
                              f"/assets/icon-{site['icon']}-192.png"] + site.get("css", []) + site.get("js", [])
     pre = [vurl(p) if re.search(r"^/assets/.*\.(js|css)$", p) else p for p in pre]
