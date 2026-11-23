@@ -401,6 +401,20 @@ export default {
       const p = await tgApi(env, 'pinChatMessage', { chat_id: cfg.tgid, message_id: m.result.message_id, disable_notification: true });
       return json({ ok: true, id: m.result.message_id, pinned: !!p.ok, pinError: p.ok ? null : p.description });
     }
+    if (url.pathname === '/tg-desc-kelim' && request.method === 'POST') { // 23.11.2026: שורת בוט הכלים בתיאור הערוץ (פעם אחת, לא מכפיל)
+      if (!admin) return json({ ok: false }, 403);
+      const cfg = await call(env, '/config');
+      if (!env.TG_TOKEN || !cfg.tgid) return json({ ok: false, error: 'אין ערוץ' });
+      const c = await tgApi(env, 'getChat', { chat_id: cfg.tgid });
+      if (!c.ok) return json({ ok: false, error: c.description });
+      const cur = c.result.description || '';
+      if (cur.includes('HakelimBot')) return json({ ok: true, already: true, description: cur });
+      const line = '🤖 כל הכלים בבוט: https://t.me/HakelimBot?start=tg';
+      const next = (cur ? cur.trim() + '\n' : '') + line;
+      if (next.length > 255) return json({ ok: false, error: 'ארוך מדי', len: next.length, description: cur });
+      const r = await tgApi(env, 'setChatDescription', { chat_id: cfg.tgid, description: next });
+      return json({ ok: !!r.ok, error: r.ok ? null : r.description, description: next });
+    }
     if (url.pathname === '/wa-check') {
       if (!admin) return json({ ok: false }, 403);
       if (!env.WHAPI_TOKEN) return json({ ok: false, error: 'אין WHAPI_TOKEN' });
