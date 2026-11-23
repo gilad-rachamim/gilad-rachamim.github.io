@@ -112,6 +112,9 @@ META_PIXEL_ID = "4627297074222937"
 PIXEL = "" if not META_PIXEL_ID else f"""<script>!function(f,b,e,v,n,t,s){{if(f.fbq)return;n=f.fbq=function(){{n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)}};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','{META_PIXEL_ID}');fbq('track','PageView');document.addEventListener('click',function(e){{var a=e.target.closest&&e.target.closest('a[href*="payhip.com"]');if(a&&window.fbq)fbq('track','InitiateCheckout');}});</script>
 """
 def pixel_for(meta, url_path):
+    # 24.11.2026: דפי המוהל (/mohel/) – מודדים את מודעות מטא למדריך; Lead בדף התודה
+    if url_path.startswith("/mohel/") and not (meta.get("no_ga") or meta.get("no_pixel")):
+        return PIXEL.replace("</script>", ("if(location.pathname.indexOf('/mohel/todah')===0)fbq('track','Lead');" if url_path.startswith("/mohel/todah") else "") + "</script>")
     if not meta.get("site") or meta.get("no_ga") or meta.get("no_pixel") or url_path.startswith("/nefesh/"):
         return ""
     return PIXEL
