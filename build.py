@@ -900,6 +900,27 @@ def write_discover():
     if len(js.encode("utf-8")) > 6144:
         raise SystemExit("discover.js גדול מ-6KB: %d" % len(js.encode("utf-8")))
 write_discover()
+def write_discover2():
+    jr = json.loads((ROOT / "src" / "discover" / "journeys.json").read_text(encoding="utf-8"))["journeys"]
+    cat = catalog()[1]
+    by = {x["u"]: x for x in cat}
+    sh = lambda x: x["n"].split(":")[0].split(",")[0].split(" – ")[0].strip()[:40]
+    J = []
+    for j in jr:
+        st = []
+        for u in j["steps"]:
+            if u not in by or by[u]["sf"]:
+                raise SystemExit("journeys.json: " + u + " לא קיים בקטלוג או רגיש")
+            st.append([u, sh(by[u])])
+        J.append({"id": j["id"], "s": st})
+    new = [[x["u"], sh(x)] for x in sorted((x for x in cat if x["ty"] == "tool" and x["l"] == "he" and not x["sf"] and x["nw"]), key=lambda x: (x["nw"], x["u"]), reverse=True)[:12]]
+    sf = sorted(x["u"] for x in cat if x["sf"])
+    dump = lambda o: json.dumps(o, ensure_ascii=False, separators=(",", ":"))
+    js = (ROOT / "src" / "discover" / "discover2.js").read_text(encoding="utf-8").replace("/*JOURNEYS*/[]", dump(J)).replace("/*NEWTOOLS*/[]", dump(new)).replace("/*SENSITIVE*/[]", dump(sf))
+    (ROOT / "assets" / "discover2.js").write_text(js, encoding="utf-8")
+    if len(js.encode("utf-8")) > 14336:
+        raise SystemExit("discover2.js גדול מ-14KB")
+write_discover2()
 def chadash_html():
     out = catalog()[1]
     fresh = sorted((x for x in out if x["ty"] == "tool" and x["l"] == "he" and not x["sf"] and x["nw"]), key=lambda x: (x["nw"], x["u"]), reverse=True)[:6]
@@ -1054,7 +1075,7 @@ for key, site in SITES.items():
         # "פתח באמצעות" במחשב (אחרי התקנת האתר כאפליקציה): קובץ PDF נפתח בכלי המילוי והחתימה
         man["file_handlers"] = [{"action": "/kelim/machshev/chatima/", "accept": {"application/pdf": [".pdf"]}}]
     (d / "manifest.webmanifest").write_text(json.dumps(man, ensure_ascii=False, indent=1), encoding="utf-8")
-    pre = site_pages[key] + ["/assets/site.css", "/assets/kelim.css", "/assets/kelim.js", "/assets/hakraa-daf.js","/assets/track.js", "/assets/discover.js",
+    pre = site_pages[key] + ["/assets/site.css", "/assets/kelim.css", "/assets/kelim.js", "/assets/hakraa-daf.js","/assets/track.js", "/assets/discover.js", "/assets/discover2.js",
                              "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff",
                              f"/assets/icon-{site['icon']}-192.png"] + site.get("css", []) + site.get("js", [])
     pre = [vurl(p) if re.search(r"^/assets/.*\.(js|css)$", p) else p for p in pre]

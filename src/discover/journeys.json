@@ -1,0 +1,12 @@
+{"journeys":[
+{"id":"newborn","t":"ברית לבן שנולד","steps":["/kodesh/tofes-brit/","/kodesh/kibudim-brit/","/kodesh/simcha/","/kodesh/brachon/"]},
+{"id":"vaada","t":"ועדה רפואית","steps":["/kelim/shikum/vaada/","/kelim/shikum/tik/","/kelim/machshev/ichud-pdf/","/kelim/machshev/pdf/","/kelim/machshev/chatima/","/kelim/machshev/fax/"]},
+{"id":"shabat","t":"שבת","steps":["/bait/shabat/","/kodesh/shabat/","/bait/kniyot/"]},
+{"id":"miluim","t":"מילואים","steps":["/kelim/miluim/tziyud/","/kelim/miluim/bait/","/kelim/miluim/yamim/"]},
+{"id":"avoda","t":"חיפוש עבודה","steps":["/kelim/avoda/korot/","/kelim/avoda/misrot/","/kelim/avoda/reayon/"]},
+{"id":"kita","t":"מורה וכיתה","steps":["/limudim/kita/","/limudim/matematika/","/limudim/kartisiot/"]},
+{"id":"esek","t":"עסק קטן","steps":["/esek/ptiha/","/esek/qr/","/esek/tafrit/","/esek/tfutsa/","/esek/mivtza/"]},
+{"id":"simcha","t":"אירוע משפחתי","steps":["/kodesh/simcha/","/bait/mevi/","/bait/matana/"]},
+{"id":"chanuka","t":"חנוכה","steps":["/kodesh/chanuka/nerot/","/kodesh/chanuka/bracha/","/kodesh/chanuka/kniyot/","/kodesh/chanuka/matkonim/","/kodesh/chanuka/shirim/","/kodesh/chanuka/sevivon/"]},
+{"id":"briut","t":"בריאות","steps":["/kelim/briut/rofe/","/kelim/briut/trufot/","/kelim/briut/tizkorot/","/kelim/briut/madadim/"]}
+]}
