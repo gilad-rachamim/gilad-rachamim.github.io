@@ -1,0 +1,24 @@
+# kelim-kishur – מקצר הקישורים של מיזם הכלים. Cloudflare Worker + D1, כתובת קצרה s.hakelim.com.
+# פריסה (רק אחרי "כן" של גילעד):
+#   cd tools/kishur-worker
+#   npx wrangler@4 d1 create kelim-kishur        -> להכניס את ה-id למטה
+#   npx wrangler@4 d1 execute kelim-kishur --remote --file schema.sql
+#   npx wrangler@4 secret put IP_SALT ; npx wrangler@4 secret put ADMIN_KEY   (ערכים אקראיים, דרך stdin)
+#   npx wrangler@4 deploy
+# בדיקה מקומית: npx wrangler@4 dev --local   (ואז python test_local.py)
+name = "kelim-kishur"
+main = "kishur-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[vars]
+SHORT_BASE = "https://s.hakelim.com"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "kelim-kishur"
+database_id = "00000000-0000-0000-0000-000000000000"
+
+# ניקוי חלונות הגבלת קצב ישנים, פעם ביום (04:30 שעון ישראל בערך)
+[triggers]
+crons = ["30 2 * * *"]
