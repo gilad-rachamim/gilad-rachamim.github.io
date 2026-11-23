@@ -1,0 +1,89 @@
+<!--meta {
+ "site": "kodesh",
+ "nav": "rabanim",
+ "tool": "chanuka_zikaron",
+ "title": "משחק זיכרון חנוכה – זוגות, 3 רמות, לילדים",
+ "description": "משחק זיכרון חנוכה אונליין: מוצאים זוגות של חנוכייה, סביבון וסופגנייה. שלוש רמות, שחקן אחד או שניים בתור, בחינם וגם בלי אינטרנט.",
+ "og_title": "משחק זיכרון חנוכה",
+ "priority": "0.8",
+ "crumbs": [
+  [
+   "חנוכה למשפחה",
+   "/kodesh/chanuka/"
+  ],
+  [
+   "משחקים לחנוכה",
+   "/kodesh/chanuka/mischakim/"
+  ],
+  [
+   "משחק זיכרון",
+   null
+  ]
+ ],
+ "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/chanuka-games.css\"><script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"FAQPage\",\"mainEntity\":[{\"@type\":\"Question\",\"name\":\"איך משחקים בזיכרון של חנוכה?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"הופכים שני קלפים בכל תור. אם הציורים זהים הם נשארים פתוחים, ואם לא הם נסגרים. מנצחים כשמוצאים את כל הזוגות.\"}},{\"@type\":\"Question\",\"name\":\"לאילו גילים המשחק מתאים?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"הרמה הקלה, עם שישה זוגות, מתאימה מגיל שלוש-ארבע בערך עם עזרה. הרמה הקשה, עם עשרה זוגות, מאתגרת גם מבוגרים.\"}},{\"@type\":\"Question\",\"name\":\"אפשר לשחק בשניים?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"כן. בוחרים \\\"שני שחקנים בתור\\\", והמשחק מראה של מי התור וסופר כמה זוגות מצא כל אחד.\"}},{\"@type\":\"Question\",\"name\":\"המשחק עובד בלי אינטרנט?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"כן. אחרי שהדף נפתח פעם אחת הוא עובד גם בלי קליטה, כי הכול רץ בדפדפן.\"}},{\"@type\":\"Question\",\"name\":\"האם המשחק שומר את התוצאה שלי?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"כן, בדפדפן שלכם בלבד. המשחק זוכר את התוצאה הטובה ביותר לכל רמה, ואף מידע לא נשלח לשרת.\"}},{\"@type\":\"Question\",\"name\":\"צריך להירשם או לשלם?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"לא. המשחק חינמי, בלי הרשמה ובלי פרסומות, כמיזם חסד לחג.\"}},{\"@type\":\"Question\",\"name\":\"איזה משחקים נוספים יש לחנוכה באתר?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"יש פאזל חנוכה, משחק הדלקת החנוכייה, סביבון דיגיטלי, חידון חנוכה ותשבץ. כולם בדף משחקים לחנוכה.\"}}]}</script>",
+ "foot": "<script src=\"/assets/chanuka-zikaron.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <span class="bsd">בס"ד</span>
+  <h1>משחק זיכרון חנוכה: מוצאים את הזוגות</h1>
+  <p class="sub">הופכים שני קלפים, זוכרים איפה כל ציור, ומוצאים את כל הזוגות. שלוש רמות, לשחקן אחד או לשניים.</p>
+</header>
+
+<section class="k-sec" aria-label="משחק הזיכרון">
+  <div class="zk-wrap">
+    <div class="cg-bar" id="zk-lvls" role="group" aria-label="רמה">
+      <button type="button" class="btn btn-line" data-l="1" aria-pressed="true">קל, 6 זוגות</button>
+      <button type="button" class="btn btn-line" data-l="2" aria-pressed="false">בינוני, 8 זוגות</button>
+      <button type="button" class="btn btn-line" data-l="3" aria-pressed="false">קשה, 10 זוגות</button>
+    </div>
+    <div class="cg-bar" role="group" aria-label="מספר שחקנים">
+      <button type="button" class="btn btn-line" id="zk-p1" aria-pressed="true">שחקן אחד</button>
+      <button type="button" class="btn btn-line" id="zk-p2" aria-pressed="false">שני שחקנים בתור</button>
+      <button type="button" class="btn btn-gold" id="zk-new">משחק חדש</button>
+    </div>
+    <p class="cg-st" id="zk-st" aria-live="polite"></p>
+    <div id="zk-board" role="group" aria-label="הקלפים"></div>
+    <div class="cg-win" id="zk-win" hidden>
+      <p id="zk-wm"></p>
+      <div class="actions" style="justify-content:center"><button type="button" class="btn btn-gold" id="zk-again">עוד משחק</button><a class="btn btn-line" href="#" id="zk-wa">שלחו בווטסאפ</a></div>
+    </div>
+  </div>
+</section>
+<section class="k-sec" aria-label="עוד לחנוכה">
+  <h2>עוד לחנוכה</h2>
+  <div class="actions"><a class="btn btn-line" href="/kodesh/chanuka/mischakim/pazel/">פאזל חנוכה</a><a class="btn btn-line" href="/kodesh/chanuka/mischakim/hadlaka/">הדלק את החנוכייה</a><a class="btn btn-line" href="/kodesh/chanuka/sevivon/">סביבון דיגיטלי</a><a class="btn btn-line" href="/kodesh/chanuka/chidon/">חידון חנוכה</a><a class="btn btn-line" href="/kodesh/chanuka/mischakim/">משחקים לחנוכה</a></div>
+</section>
+
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">משחק זיכרון חנוכה אונליין, בחינם ובלי הרשמה</h2>
+  <h3>איך משחקים בזיכרון של חנוכה</h3>
+  <p>הופכים שני קלפים בכל תור. אם הציורים זהים, הזוג נשאר פתוח. אם לא, הקלפים נסגרים וצריך לזכור איפה כל ציור היה. המשחק נגמר כשכל הזוגות נמצאו. בציורים יש חנוכייה, סביבון, סופגנייה, פך שמן, נר, מגן דוד, דמי חנוכה, לביבה, מגן המכבים ומנורת שמן.</p>
+  <h3>שלוש רמות לכל גיל</h3>
+  <p>ברמה הקלה יש שישה זוגות בשלושה טורים, והיא מתאימה כבר לילדי גן. ברמה הבינונית שמונה זוגות, וברמה הקשה עשרה זוגות על מסך אחד. המשחק זוכר את התוצאה הטובה ביותר שלכם בכל רמה, כך שיש מה לשפר מערב לערב.</p>
+  <h3>משחק לשניים, בתור</h3>
+  <p>לוחצים על "שני שחקנים בתור", והמשחק מראה של מי התור. מי שמצא זוג ממשיך, ומי שפספס מעביר את התור. בסוף מוצג מי מצא יותר זוגות. אפשר לשחק ילד מול הורה, או שני אחים על טלפון אחד באותו שולחן.</p>
+  <h3>מה זה עושה לילד</h3>
+  <p>משחקי זיכרון מחזקים קשב, ריכוז והיכולת להחזיק כמה פרטים בראש. זה לא תחליף לשום דבר, אבל זו דרך נעימה להעביר רבע שעה בערב חנוכה, אחרי ההדלקה, בלי מסכים מרובים ובלי מרוץ.</p>
+  <h3>עובד בטלפון, בטאבלט ובמחשב</h3>
+  <p>הקלפים גדולים מספיק לאצבע של ילד, ואין גלילה בצדדים גם במסך צר של 375 פיקסלים. המשחק עובד במגע ובעכבר. אחרי שהדף נפתח פעם אחת הוא עובד גם בלי אינטרנט, כך שאפשר לשחק בנסיעה או בבית סבא.</p>
+  <h3>בלי תמונות מהרשת</h3>
+  <p>כל הציורים במשחק נוצרו בקוד במיוחד לדף הזה. אין תמונות שהועתקו מאתרים אחרים, אין פרסומות, אין הרשמה ואין מידע שנאסף על הילדים.</p>
+  <h3>איך להפוך את זה לערב משפחתי</h3>
+  <p>אפשר לשחק "מי מוצא ראשון" על מסך משותף, ואפשר לתת לכל ילד סופגנייה או סוכרייה על כל זוג שמצא. בגן או בכיתה מקרינים את המשחק על המסך וכל קבוצה שולחת נציג בתורו. <a class="gold" href="/kodesh/chanuka/chidon/">חידון חנוכה</a> ו<a class="gold" href="/kodesh/chanuka/sevivon/">סביבון דיגיטלי</a> משלימים ערב משחקים שלם.</p>
+  <h3>עוד משחקים לחנוכה</h3>
+  <p>בדף <a class="gold" href="/kodesh/chanuka/mischakim/">משחקים לחנוכה</a> מחכים גם <a class="gold" href="/kodesh/chanuka/mischakim/pazel/">פאזל חנוכה</a> עם ציורים צבעוניים, ו<a class="gold" href="/kodesh/chanuka/mischakim/hadlaka/">הדלק את החנוכייה</a> שבו לומדים באיזה סדר מדליקים את הנרות. לפני החג כדאי לעבור על <a class="gold" href="/kodesh/chanuka/nerot/">סדר הדלקת נרות חנוכה</a>, ואחריו לצבוע ב<a class="gold" href="/kodesh/chanuka/tzviya/">דפי צביעה לחנוכה</a>.</p>
+  <h3>לשמור בטלפון</h3>
+  <p>כדי למצוא את המשחק מהר בכל ערב, אפשר להוסיף את הדף למסך הבית של הטלפון דרך תפריט הדפדפן. המשחק חינמי לגמרי, ומי שאוהב אותו מוזמן לשלוח אותו לגן, לכיתה ולקבוצת המשפחה, וכך עוד ילדים ישמחו בחג.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך משחקים בזיכרון של חנוכה?</summary><p>הופכים שני קלפים בכל תור. אם הציורים זהים הם נשארים פתוחים, ואם לא הם נסגרים. מנצחים כשמוצאים את כל הזוגות.</p></details>
+  <details><summary>לאילו גילים המשחק מתאים?</summary><p>הרמה הקלה, עם שישה זוגות, מתאימה מגיל שלוש-ארבע בערך עם עזרה. הרמה הקשה, עם עשרה זוגות, מאתגרת גם מבוגרים.</p></details>
+  <details><summary>אפשר לשחק בשניים?</summary><p>כן. בוחרים "שני שחקנים בתור", והמשחק מראה של מי התור וסופר כמה זוגות מצא כל אחד.</p></details>
+  <details><summary>המשחק עובד בלי אינטרנט?</summary><p>כן. אחרי שהדף נפתח פעם אחת הוא עובד גם בלי קליטה, כי הכול רץ בדפדפן.</p></details>
+  <details><summary>האם המשחק שומר את התוצאה שלי?</summary><p>כן, בדפדפן שלכם בלבד. המשחק זוכר את התוצאה הטובה ביותר לכל רמה, ואף מידע לא נשלח לשרת.</p></details>
+  <details><summary>צריך להירשם או לשלם?</summary><p>לא. המשחק חינמי, בלי הרשמה ובלי פרסומות, כמיזם חסד לחג.</p></details>
+  <details><summary>איזה משחקים נוספים יש לחנוכה באתר?</summary><p>יש פאזל חנוכה, משחק הדלקת החנוכייה, סביבון דיגיטלי, חידון חנוכה ותשבץ. כולם בדף משחקים לחנוכה.</p></details>
+</section>
+<!--/seo-txt-->
