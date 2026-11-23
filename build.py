@@ -304,17 +304,92 @@ LANG_UI = {
            "rel": "Ещё бесплатные инструменты", "all": "Все инструменты раздела",
            "chips": ["Бесплатно", "Без ограничений", "Без рекламы"], "sub": "Многие такие инструменты в сети ограничены и полны рекламы. Здесь нет: без регистрации и без рекламы, как доброе дело (хесед)."},
 }
+GIUR_WA_TEXT = {
+    "he": "שלום גילעד, אשמח לשאול על ברית מילה בגיור",
+    "en": "Hello Gilad, I would like to ask about brit milah in conversion",
+    "ru": "Здравствуйте, Гилад, хочу спросить об обрезании при гиюре",
+}
+# מסגרת האתר (תפריט, משוב, תחתית, הודעת התקנה) בשפת הדף, 23.11.2026 – בקשת גילעד: גר שלא קורא עברית לא פוגש עברית בדף
+LANG_FRAME = {
+    "en": {"brand": "Jewish Tools", "navlabel": "Main navigation", "roadmap": "Conversion roadmap", "brit": "Adult brit milah", "write": "Write to Gilad",
+           "cta_h": "Need adult brit milah or hatafat dam brit?",
+           "cta_p": "Write to me, Gilad, on WhatsApp. I will listen, explain and connect you with a professional, experienced mohel in a proper clinic. No commitment.",
+           "cta_wa": "Write to Gilad on WhatsApp", "cta_more": "More about brit milah in conversion",
+           "share_h": "Know someone who is converting? Send them this page.", "share_btn": "Share on WhatsApp", "share_text": "A free, step-by-step guide for converts (Hebrew, English, Russian):",
+           "feedback": "Something missing or unclear? Tell me on WhatsApp", "fb_text": "Hello Gilad, a suggestion about the conversion pages:",
+           "contact": "Contact", "links": "Links", "wa_label": "(WhatsApp)", "heb": "The mohel site (Hebrew)", "tools": "All free tools (Hebrew)", "privacy": "Privacy (Hebrew)",
+           "promise": ["Everything is free and ad-free", "No sign-up", "Your data stays on your phone", "Works on phone and computer"],
+           "end": "Made by Gilad Rachamim Aviad, a disabled IDF veteran with severe combat PTSD. A chesed project: no profit intended.",
+           "up": "Back to top", "install_t": "Install on your home screen like an app.", "install_b": "Install", "install_x": "Close", "install_l": "Install as an app"},
+    "ru": {"brand": "Еврейские инструменты", "navlabel": "Главная навигация", "roadmap": "Путь к гиюру", "brit": "Брит-мила для взрослых", "write": "Написать Гиладу",
+           "cta_h": "Нужна брит-мила для взрослых или атафат дам брит?",
+           "cta_p": "Напишите мне, Гиладу, в WhatsApp. Я выслушаю, объясню и свяжу вас с профессиональным опытным моэлем в хорошо организованной клинике. Без обязательств.",
+           "cta_wa": "Написать Гиладу в WhatsApp", "cta_more": "Подробнее о брит-миле при гиюре",
+           "share_h": "Знаете кого-то, кто проходит гиюр? Отправьте ему эту страницу.", "share_btn": "Отправить в WhatsApp", "share_text": "Бесплатный пошаговый путеводитель для проходящих гиюр (иврит, английский, русский):",
+           "feedback": "Чего-то не хватает или непонятно? Напишите мне в WhatsApp", "fb_text": "Здравствуйте, Гилад, предложение по страницам о гиюре:",
+           "contact": "Контакты", "links": "Ссылки", "wa_label": "(WhatsApp)", "heb": "Сайт моэля (иврит)", "tools": "Все бесплатные инструменты (иврит)", "privacy": "Конфиденциальность (иврит)",
+           "promise": ["Всё бесплатно и без рекламы", "Без регистрации", "Данные остаются только в вашем телефоне", "Работает в телефоне и на компьютере"],
+           "end": "Автор: Гилад Рахамим Авиад, инвалид ЦАХАЛа с тяжёлым боевым ПТСР. Проект добра (хесед), без цели получить прибыль.",
+           "up": "Наверх", "install_t": "Установите на главный экран, как приложение.", "install_b": "Установить", "install_x": "Закрыть", "install_l": "Установка как приложения"},
+}
+def giur_cta(lang, url):
+    """בלוק פנייה לגילעד לברית מילה למבוגרים בסוף כל דף גיור (עברית/אנגלית/רוסית), חוץ מדף הברית עצמו."""
+    from urllib.parse import quote
+    if "/brit-mila-lager/" in url:
+        return ""
+    base = {"he": "/kodesh/giur/", "en": "/kodesh/giur/en/", "ru": "/kodesh/giur/ru/"}[lang]
+    wa = "https://wa.me/972584049049?text=" + quote(GIUR_WA_TEXT[lang])
+    if lang == "he":
+        h, pp, b1, b2 = ("צריכים ברית מילה למבוגרים או הטפת דם ברית?",
+                         "כתבו לי, גילעד, בווטסאפ ואדאג לכם באהבה: אקשיב, אסביר ואחבר אתכם למוהל מקצועי ומנוסה בקליניקה מסודרת. בלי התחייבות.",
+                         "לכתוב לגילעד בווטסאפ", "עוד על ברית מילה בגיור")
+    else:
+        f = LANG_FRAME[lang]
+        h, pp, b1, b2 = f["cta_h"], f["cta_p"], f["cta_wa"], f["cta_more"]
+    return (f'<section class="k-sec giur-cta no-print" aria-labelledby="gcta-h"><h2 id="gcta-h">{h}</h2><p>{pp}</p>'
+            f'<div class="gr-acts"><a class="gr-btn gold" href="{wa}" rel="noopener" data-gcta="wa">{b1}</a>'
+            f'<a class="gr-btn" href="{base}brit-mila-lager/">{b2}</a></div></section>\n')
+
 def lang_page(html, meta, url):
-    """עוטף דף בשפה אחרת: html ltr, המסגרת העברית מסומנת rtl, hreflang."""
+    """עוטף דף בשפה אחרת: html ltr, וכל המסגרת (תפריט, משוב, תחתית, התקנה) מתורגמת לשפת הדף."""
+    from urllib.parse import quote
     lang = meta.get("lang")
     ui = LANG_UI[lang]
+    f = LANG_FRAME[lang]
+    alt = meta.get("alt", {})
     html = html.replace('<html lang="he" dir="rtl">', f'<html lang="{lang}" dir="ltr">', 1)
     html = html.replace('<meta property="og:locale" content="he_IL">', f'<meta property="og:locale" content="{ui["locale"]}">', 1)
-    he = ' lang="he" dir="rtl"'
-    for a in ('<header class="topbar"', '<div id="hk-search"', '<section class="fb no-print"', '<footer class="site-foot ft"', '<div class="install-bar"'):
-        html = html.replace(a, a + he, 1)
     html = html.replace('<a class="skip" href="#main">דילוג לתוכן</a>', f'<a class="skip" href="#main">{ui["skip"]}</a>', 1)
     html = html.replace('<nav class="crumbs" aria-label="פירורי לחם">', f'<nav class="crumbs" aria-label="{ui["crumbs"]}">', 1)
+    wa = "https://wa.me/972584049049?text=" + quote(GIUR_WA_TEXT[lang])
+    base = f"/kodesh/giur/{lang}/"
+    langs = "".join(f'<a href="{alt[l]}" hreflang="{l}" lang="{l}"' + (' aria-current="true"' if l == lang else "") + f'>{n}</a>'
+                    for l, n in (("he", "עברית"), ("en", "English"), ("ru", "Русский")) if l in alt)
+    nav = (f'<nav class="topnav" aria-label="{f["navlabel"]}"><a href="{base}">{f["roadmap"]}</a><a href="{base}brit-mila-lager/">{f["brit"]}</a>'
+           f'<a href="{wa}" rel="noopener">{f["write"]}</a>{langs}</nav>')
+    html = re.sub(r'<nav class="topnav" aria-label="[^"]*">.*?</nav>', lambda m: nav, html, count=1, flags=re.S)
+    html = re.sub(r'(<a class="brand"[^>]*>.*?<b>)[^<]*(</b>)', lambda m: m.group(1) + f["brand"] + m.group(2), html, count=1, flags=re.S)
+    html = html.replace('<div id="hk-search" class="no-print"></div>', "", 1)
+    html = html.replace('<script src="/assets/search.js" defer></script>', "", 1)
+    full = url
+    share = "https://wa.me/?text=" + quote(f["share_text"] + " " + full)
+    fb = "https://wa.me/972584049049?text=" + quote(f["fb_text"])
+    fbsec = (f'<section class="fb no-print" id="fb"><div class="in"><p class="fb-q">{f["share_h"]}</p>'
+             f'<p><a class="btn btn-gold btn-sm" href="{share}" target="_blank" rel="noopener">💬 {f["share_btn"]}</a></p>'
+             f'<p class="fb-note"><a class="gold" href="{fb}" target="_blank" rel="noopener">{f["feedback"]}</a></p></div></section>')
+    cta = giur_cta(lang, url)
+    html = re.sub(r'<section class="fb no-print".*?</section>', lambda m: cta + fbsec, html, count=1, flags=re.S)
+    he_a = lambda href, t: f'<a href="{href}">{t}</a>'
+    foot = ('<footer class="site-foot ft"><div class="cols">'
+            f'<div><b>{f["contact"]}</b><a href="{wa}"><span dir="ltr" style="white-space:nowrap">058-404-9049</span> {f["wa_label"]}</a><a href="mailto:gilad4049@gmail.com">gilad4049@gmail.com</a></div>'
+            f'<div><b>{f["links"]}</b>{he_a("/mohel/", f["heb"])}{he_a("/kelim/", f["tools"])}{he_a("/mohel/privacy/", f["privacy"])}</div></div>'
+            '<ul class="ft-promise">' + "".join(f"<li>✓ {t}</li>" for t in f["promise"]) + '</ul>'
+            f'<div class="end"><span>{f["end"]}</span><span><a class="ft-up" href="#" data-ft="up">{f["up"]} ↑</a></span></div></footer>')
+    html = re.sub(r'<footer class="site-foot ft".*?</footer>', lambda m: foot, html, count=1, flags=re.S)
+    inst = (f'<div class="install-bar" id="install-bar" role="region" aria-label="{f["install_l"]}" hidden><span data-install-text>📲 {f["install_t"]}</span>'
+            f'<button class="btn btn-gold btn-sm" type="button" data-install>{f["install_b"]}</button>'
+            f'<button class="x" type="button" data-install-close aria-label="{f["install_x"]}">×</button></div>')
+    html = re.sub(r'<div class="install-bar".*?</div>', lambda m: inst, html, count=1, flags=re.S)
     return html
 
 def hreflang(meta):
@@ -687,6 +762,8 @@ for path in sorted(SRC.rglob("*.html")):
             html = html.replace('<meta name="mobile-web-app-capable" content="yes">', '<meta name="mobile-web-app-capable" content="no">')
     if meta.get("lang"):
         html = lang_page(html, meta, url)
+    elif url_path.startswith("/kodesh/giur/") and '<section class="fb no-print"' in html:
+        html = html.replace('<section class="fb no-print"', giur_cta("he", url_path) + '<section class="fb no-print"', 1)
     html = version_assets(html)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
