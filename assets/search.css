@@ -23,6 +23,22 @@
 #hk-search .hk-home a{display:block;padding:.3rem .7rem;min-height:40px;box-sizing:border-box;line-height:1.9;font-size:.92rem;border-radius:2rem;text-decoration:none;color:#1b1b1b;border:1px solid #d8b35f;background:#fbf6e6}
 #hk-search .hk-topics a{background:#fff;border-color:rgba(128,128,128,.45)}
 #hk-search .hk-home a:hover,#hk-search .hk-home a:focus{background:#f0ead7}
+
+/* גרסה 2: תוצאות מקובצות לפי נושא, מצב מקלדת, תג "חדש" */
+#hk-search .hk-sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+#hk-search .hk-grp{margin:0 0 .5rem}
+#hk-search .hk-grp:last-child{margin-bottom:0}
+#hk-search .hk-gh{margin:.2rem .4rem .1rem;font-weight:700;font-size:.85rem;color:#6b5314}
+#hk-search .hk-res a.hk-opt,#hk-search .hk-home .hk-res a.hk-opt{display:block;min-height:44px;box-sizing:border-box;padding:.55rem .7rem;border:0;border-radius:.4rem;background:transparent;line-height:1.35;font-size:1rem}
+#hk-search .hk-opt b{font-weight:700}
+#hk-search .hk-new{font-style:normal;font-size:.75rem;font-weight:700;margin-inline-start:.45rem;padding:.05rem .45rem;border-radius:1rem;background:#1b1b1b;color:#f3d98c;vertical-align:.1em}
+#hk-search .hk-more,#hk-search .hk-back{display:block;width:100%;text-align:start;margin:.15rem 0 0;padding:.4rem .7rem;min-height:44px;border:0;border-radius:.4rem;background:transparent;color:#6b5314;font-weight:600;text-decoration:underline}
+#hk-search .hk-tp{padding:.3rem .8rem;min-height:44px;border-radius:2rem;border:1px solid rgba(100,100,100,.55);background:#fff;color:#1b1b1b;font-weight:600;font-size:.92rem}
+#hk-search .hk-tp:hover,#hk-search .hk-tp:focus-visible,#hk-search .hk-more:hover,#hk-search .hk-back:hover{background:#f0ead7}
+#hk-search .hk-opt.hk-act,#hk-search .hk-home a.hk-act,#hk-search .hk-more.hk-act,#hk-search .hk-tp.hk-act,#hk-search .hk-back.hk-act{background:#f0ead7;outline:2px solid #6b5314;outline-offset:-2px}
+#hk-search input:focus-visible,#hk-search button:focus-visible,#hk-search .hk-home a:focus-visible,#hk-search .hk-res a:focus-visible{outline:3px solid #6b5314;outline-offset:2px}
+#hk-search .hk-now a{border-color:#6b5314;background:#fff4d1}
+@media (prefers-reduced-motion:reduce){#hk-search *{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 @media print{#hk-search{display:none}}
 
 /* כפתור 🔍 בסרגל הנדבק, קישור לבית התת-אתר ליד הלוגו */
