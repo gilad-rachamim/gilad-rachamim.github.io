@@ -381,7 +381,7 @@ def lang_page(html, meta, url):
     html = re.sub(r'<section class="fb no-print".*?</section>', lambda m: cta + fbsec, html, count=1, flags=re.S)
     he_a = lambda href, t: f'<a href="{href}">{t}</a>'
     foot = ('<footer class="site-foot ft"><div class="cols">'
-            f'<div><b>{f["contact"]}</b><a href="{wa}"><span dir="ltr" style="white-space:nowrap">058-404-9049</span> {f["wa_label"]}</a><a href="mailto:gilad4049@gmail.com">gilad4049@gmail.com</a></div>'
+            f'<div><b>{f["contact"]}</b><a href="{wa}"><span dir="ltr" style="white-space:nowrap">058-404-9049</span> {f["wa_label"]}</a><a href="mailto:{CONTACT_MAIL}">{CONTACT_MAIL}</a></div>'
             f'<div><b>{f["links"]}</b>{he_a("/mohel/", f["heb"])}{he_a("/kelim/", f["tools"])}{he_a("/mohel/privacy/", f["privacy"])}</div></div>'
             '<ul class="ft-promise">' + "".join(f"<li>✓ {t}</li>" for t in f["promise"]) + '</ul>'
             f'<div class="end"><span>{f["end"]}</span><span><a class="ft-up" href="#" data-ft="up">{f["up"]} ↑</a></span></div></footer>')
