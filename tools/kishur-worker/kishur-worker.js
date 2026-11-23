@@ -172,6 +172,7 @@ async function rlGet(env, k, win) {
 }
 async function rlAdd(env, k, win, n) {
   await env.DB.prepare('INSERT INTO rl(k,win,n) VALUES(?,?,?) ON CONFLICT(k,win) DO UPDATE SET n=n+?').bind(k, win, n, n).run();
+  if (Math.random() < 0.01) { const y = ilDay(new Date(Date.now() - 86400000)).replace(/-/g, ''); await env.DB.prepare('DELETE FROM rl WHERE substr(win,3,8) < ?').bind(y).run(); }
 }
 // מחזיר '' אם מותר, אחרת הודעה
 async function createGate(env, ih, count) {
