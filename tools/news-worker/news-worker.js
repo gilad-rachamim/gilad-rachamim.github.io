@@ -552,7 +552,7 @@ export default {
 // ---------- פייסבוק: פוסט לדף "החדשות ב-3 דקות" (Graph API, מפתח קבוע של הדף) ----------
 const PAGE_URL = 'https://hakelim.com/kelim/machshev/chadashot/';
 // מאיפה הגיעו (נספר ב-/stats): דף, טלפון, התראה, פייסבוק, ווטסאפ, מודעה (QR), שיתוף, דף הבית
-export const FROM = ['web', 'phone', 'push', 'fb', 'wa', 'wag', 'qr', 'share', 'home', 'tg'];
+export const FROM = ['web', 'phone', 'push', 'fb', 'wa', 'wag', 'qr', 'share', 'home', 'tg', 'embed', 'bot'];
 // ערוץ הווטסאפ: דרך Whapi.Cloud (מסלול חינמי), שמחובר למספר של גילעד כ"מכשיר מקושר". אין API רשמי לערוצים.
 // WHAPI_TOKEN = סוד בשרת (tools/news-worker/wa-setup.ps1), מזהה הערוץ ב-/config?waid=
 async function postWhatsapp(env, ed, waid, links = {}, src = 'wa') {
