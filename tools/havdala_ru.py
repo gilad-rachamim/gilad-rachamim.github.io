@@ -131,12 +131,12 @@ ld = {"@context": "https://schema.org", "@type": "FAQPage",
 en = EN_KIDDUSH.read_text(encoding="utf-8")
 CSS = en.split('"head": "', 1)[1].split('<script type=', 1)[0]
 CSS = json.loads('"' + CSS + '"')
-CSS = CSS.replace('<link rel="stylesheet" href="/assets/lang-switch.css">', "")
 
 meta = {
     "site": "kodesh",
     "nav": "rabanim",
     "lang": "ru",
+    "alt": {"en": "/kodesh/havdala/en/", "ru": "/kodesh/havdala/ru/"},
     "crumb_root": "Еврейские инструменты",
     "tool": "havdala_ru",
     "no_hub": True,
@@ -156,6 +156,7 @@ body = f'''<header class="k-hero">
   <h1>Авдала – текст на иврите и транслитерация русскими буквами</h1>
   <p class="lead">Авдала на исходе субботы строка за строкой: текст на иврите с огласовками, те же слова русскими буквами, чтобы произнести их вслух над бокалом, и короткое пояснение смысла. Стихи о спасении и все четыре благословения – вино, благовония, свеча и благословение отделения.</p>
 </header>
+<nav class="gr-lang" aria-label="Language / Язык"><a href="/kodesh/havdala/en/" lang="en" hreflang="en">English</a><a href="/kodesh/havdala/ru/" lang="ru" hreflang="ru" aria-current="page">Русский</a></nav>
 
 <section class="k-sec kd-box no-print" aria-labelledby="kd-view-h">
   <h2 id="kd-view-h">Что показывать</h2>
