@@ -4,7 +4,7 @@
   var API = 'https://kelim-news.gilad4049.workers.dev';
   var TOOL = 'chadashot';
   var KEY = 'kelim_chadashot_topics';
-  var NAMES = { main: 'העיקר', haredi: 'ציבור חרדי', economy: 'כלכלה וכיס' };
+  var NAMES = { main: 'העיקר', haredi: 'ציבור חרדי', economy: 'כלכלה וכיס', good: '☀️ חדשות טובות מהשבוע' };
   var $ = function (id) { return document.getElementById(id); };
   var ed = null;
   var PAGE = 'https://hakelim.com/kelim/machshev/chadashot/';
@@ -14,7 +14,7 @@
     var s = '';
     try { s = (new URLSearchParams(location.search).get('utm_source') || '').toLowerCase(); } catch (e) {}
     if (s === 'facebook') s = 'fb';
-    return ['fb', 'wa', 'qr', 'share', 'home', 'tg'].indexOf(s) > -1 ? s : 'web';
+    return ['fb', 'wa', 'wag', 'qr', 'share', 'home', 'tg'].indexOf(s) > -1 ? s : 'web';
   })();
   function friendText() {
     return 'מצאתי משהו טוב: סיכום חדשות רגוע 3 פעמים ביום. 5 נקודות קצרות, בלי לרפרש כל רבע שעה. קו כשר, בחינם ובלי פרסומות.\n' +
@@ -25,7 +25,7 @@
   function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
   function save(o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  function shown() { var t = load(); return ['main'].concat(['haredi', 'economy'].filter(function (k) { return t[k] !== false; })); }
+  function shown() { var t = load(); return ['main'].concat(['haredi', 'economy'].filter(function (k) { return t[k] !== false; })).concat(['good']); }
 
   function nextRun() {
     var h = new Date().getHours();
@@ -53,6 +53,8 @@
     });
     $('nw-body').innerHTML = html || '<p class="nw-wait">אין נקודות בסיכום הזה.</p>';
     $('nw-wa').href = 'https://wa.me/?text=' + encodeURIComponent(asText());
+    var wag = ed.links && ed.links.wag;
+    if (wag && /^https:\/\/chat\.whatsapp\.com\/[A-Za-z0-9]+$/.test(wag)) { $('nw-wag-a').href = wag; $('nw-wag').hidden = false; }
     var wa = ed.links && ed.links.wa;
     if (wa && /^https:\/\/(www\.)?whatsapp\.com\/channel\//.test(wa)) { $('nw-chan-a').href = wa; $('nw-chan').hidden = false; }
     var tg = ed.links && ed.links.tg;
@@ -146,6 +148,7 @@
     $('nw-wa').addEventListener('click', function () { used('wa'); });
     $('nw-friend').href = 'https://wa.me/?text=' + encodeURIComponent(friendText());
     $('nw-friend').addEventListener('click', function () { used('friend'); });
+    $('nw-wag-a').addEventListener('click', function () { used('group'); });
     $('nw-chan-a').addEventListener('click', function () { used('channel'); });
     $('nw-tg-a').addEventListener('click', function () { used('telegram'); });
     $('nw-fb').addEventListener('click', function () { used('facebook'); });

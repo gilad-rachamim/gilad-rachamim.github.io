@@ -1,6 +1,6 @@
 // בדיקה במחשב: node test.mjs  (מקורות RSS אמיתיים, שבת/חג, סינון כשר, בדיקת מספרים, ריצה במצב כותרות)
 import assert from 'node:assert';
-import worker, { SOURCES, parseRss, kosher, numbersOk, holyNow, runEdition, gershayim, tidy, FOREIGN, fixOk } from './news-worker.js';
+import worker, { SOURCES, parseRss, kosher, numbersOk, holyNow, holyEndedAt, shabbatDue, editionText, runEdition, gershayim, tidy, FOREIGN, fixOk } from './news-worker.js';
 
 // שבת/חג (זמן UTC; ישראל +2 בחורף)
 assert.equal(holyNow(new Date('2026-11-13T10:00:00Z')), false, 'שישי בבוקר – לא שבת');
@@ -11,6 +11,27 @@ assert.equal(holyNow(new Date('2026-11-10T05:00:00Z')), false, 'יום שליש�
 assert.equal(holyNow(new Date('2027-04-22T06:00:00Z')), true, 'פסח 2027 – יום טוב ראשון');
 assert.equal(holyNow(new Date('2027-07-17T17:10:00Z')), true, 'שבת בקיץ 20:10 – עדיין שבת');
 console.log('✓ שבת וחג');
+
+// מהדורת מוצאי שבת: חלון 35-100 דקות אחרי ההבדלה, ובכל שעון (חורף וקיץ) יש cron של דקה 45 בתוכו
+assert.ok(holyEndedAt(new Date('2026-11-14T18:00:00Z')), 'מוצ"ש – יש הבדלה');
+assert.equal(holyEndedAt(new Date('2026-11-13T10:00:00Z')), null, 'שישי – אין');
+assert.equal(shabbatDue(new Date('2026-11-14T15:45:00Z')), false, 'חורף 17:45 – מוקדם מדי (הבדלה ~17:30)');
+assert.equal(shabbatDue(new Date('2026-11-14T16:45:00Z')), true, 'חורף 18:45 – בחלון');
+assert.equal(shabbatDue(new Date('2026-11-14T18:45:00Z')), false, 'חורף 20:45 – מאוחר מדי');
+assert.equal(shabbatDue(new Date('2027-07-17T18:45:00Z')), true, 'קיץ 21:45 – בחלון');
+assert.equal(shabbatDue(new Date('2027-07-17T17:45:00Z')), false, 'קיץ 20:45 – מוקדם מדי');
+for (const [d, label] of [['2026-11-14', 'חורף'], ['2027-07-17', 'קיץ'], ['2027-01-09', 'חורף2']]) {
+  const hits = [15, 16, 17, 18, 19].filter(h => shabbatDue(new Date(`${d}T${h}:45:00Z`)));
+  assert.equal(hits.length, 1, 'בדיוק ריצה אחת במוצ"ש ' + label + ': ' + hits);
+}
+// זנב העברה וקבוצה
+const ed0 = { name: 'בוקר', date: { day: 'שני', he: 'כ״ד' }, sections: { main: [{ text: 'נקודה אחת', sources: [] }], good: [{ text: 'חדשה טובה', sources: [] }] } };
+const t1 = editionText(ed0, { wag: 'https://chat.whatsapp.com/ABCDEFGHIJ' }, 'wa');
+assert.ok(t1.includes('https://chat.whatsapp.com/ABCDEFGHIJ') && t1.includes('אפשר להעביר לו'), 'זנב ההעברה וקישור הקבוצה');
+assert.ok(t1.includes('חדשות טובות מהשבוע') && t1.includes('חדשה טובה'), 'קטע חדשות טובות');
+assert.ok(!editionText(ed0, { wag: 'https://chat.whatsapp.com/ABCDEFGHIJ' }, 'wag').includes('chat.whatsapp.com'), 'בקבוצה עצמה אין קישור הצטרפות');
+assert.ok(editionText(ed0, {}, 'tg').includes('אפשר להעביר לו'), 'זנב גם בלי קבוצה');
+console.log('✓ מוצאי שבת וזנב העברה');
 
 assert.equal(kosher('הממשלה אישרה את התקציב'), true);
 assert.equal(kosher('חשד לתקיפה מינית בעיר'), false);
