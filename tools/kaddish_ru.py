@@ -217,6 +217,7 @@ body = f'''<header class="k-hero">
     <li><a href="/kodesh/taarich-ivri/ru/">Перевод даты в еврейский календарь</a> – сегодняшняя еврейская дата, дни рождения и йорцайты.</li>
     <li><a href="/kodesh/luach-ivri/ru/">Еврейский календарь</a> и <a href="/kodesh/luach-ivri/ru/prazdniki/">даты еврейских праздников</a>.</li>
     <li><a href="/kodesh/shema-israel/ru/">Шма Исраэль</a>, <a href="/kodesh/birkat-hamazon/ru/">Биркат а-мазон</a> и <a href="/kodesh/tefilat-haderech/ru/">молитва путника</a> – с транслитерацией.</li>
+    <li><a href="/kodesh/kiddush/ru/">Кидуш на шабат</a> – вечером в пятницу и днём в субботу, с транслитерацией.</li>
     <li><a href="/kodesh/kaddish/en/">Mourner's Kaddish</a> – тот же кадиш с транслитерацией по-английски.</li>
   </ul>
 
