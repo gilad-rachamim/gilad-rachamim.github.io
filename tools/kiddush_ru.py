@@ -214,6 +214,7 @@ body = f'''<header class="k-hero">
   <h2>Другие бесплатные еврейские инструменты на русском</h2>
   <ul>
     <li><a href="/kodesh/birkat-hamazon/ru/">Биркат а-мазон</a> – благословение после трапезы с транслитерацией.</li>
+    <li><a href="/kodesh/havdala/ru/">Авдала</a> – проводы субботы на её исходе, с транслитерацией.</li>
     <li><a href="/kodesh/giur/ru/shabat-rishona/">Мой первый шабат</a> – список того, что подготовить к первой субботе дома.</li>
     <li><a href="/kodesh/giur/ru/brachot/">Благословения на еду</a> – короткие благословения с транслитерацией.</li>
     <li><a href="/kodesh/luach-ivri/ru/">Еврейский календарь</a> и <a href="/kodesh/taarich-ivri/ru/">перевод даты в еврейский календарь</a>.</li>
