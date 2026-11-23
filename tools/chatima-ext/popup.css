@@ -74,3 +74,7 @@ h2 .small { font-weight: 400; display: inline; }
 
 #wa-sidur, #gm-map { background: var(--gold); color: #141210; border: 0; font-weight: 700; width: 100%; }
 h2.grp { margin-top: 8px; }
+.grid .tr-top { background: var(--gold); color: #141210; font-size: 16px; padding: 12px; }
+.grid .tr-key { margin: 0 0 4px; }
+.lnk { background: none; border: 0; padding: 0; color: var(--gold); text-decoration: underline; cursor: pointer; font: inherit; }
+.lnk:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
