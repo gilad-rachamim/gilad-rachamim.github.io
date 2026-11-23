@@ -11,6 +11,9 @@
   var st = { place: '31.778,35.235', name: 'ירושלים', done: {}, ptur: {}, minhag: '', morningOn: true, morning: '07:30', noonOn: false, noon: '13:00', before: 30, lock: false, checked: '' };
   try { var sv = JSON.parse(localStorage.getItem(KEY) || 'null'); if (sv) Object.keys(sv).forEach(function (k) { st[k] = sv[k]; }); } catch (e) {}
   if (!st.ptur || typeof st.ptur !== 'object') st.ptur = {};
+  // דף עיר (/kodesh/tefillin/<עיר>/): נפתח עם העיר של הדף, בלי לדרוס את מה ששמור בטלפון עד שמשנים
+  var dp = root.getAttribute('data-place');
+  if (dp) { st.place = dp; st.name = root.getAttribute('data-name') || st.name; if (!CITIES.some(function (c) { return c[0] === dp; })) CITIES.push([dp, st.name]); }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
   function used(how) { try { if (window.toolUsed) window.toolUsed('tefillin', { how: how }); } catch (e) {} }
 
