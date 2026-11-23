@@ -1,0 +1,10 @@
+# "חפשו לי לפי הכוונה" (/ask) לחיפוש באתר הכלים ולעוזר: Cloudflare Worker חינמי על Workers AI, בלי מפתח.
+# פריסה: cd tools/ask-worker && npx wrangler deploy        בדיקה: node test.mjs (בלי רשת)
+# סוד אופציונלי: GEMINI_KEYS (סקיל gemini-key-for-worker, פרויקט ask-1) – אם קיים משתמשים בו קודם, אחרת Llama.
+name = "kelim-ask"
+main = "ask-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[ai]
+binding = "AI"
