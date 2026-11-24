@@ -152,6 +152,7 @@ function link(path, label, code) {
   var url = /^https?:/.test(path) ? path : CFG.SITE + path + (path.indexOf('?') > -1 ? '&' : '?') + 'utm_source=email&utm_medium=nurture&utm_campaign=' + code;
   return '<a href="' + url + '" style="color:#1a5fb4;font-weight:bold">' + label + '</a>';
 }
+function gl(path, label) { return link(CFG.SITE + path + '?utm_source=madrich&utm_medium=email&utm_campaign=madrich-links', label); }
 var SIG = 'גילעד רחמים אביעד · מוהל מוסמך · ירושלים, מגיע לכל הארץ<br><a href="https://wa.me/972584049049">058-404-9049 (ווטסאפ)</a> · gilad4049@gmail.com · hakelim.com/mohel';
 
 function mailBody(code, variant) {
@@ -211,10 +212,15 @@ function toText(html) {
 // ---------- E0: מייל המדריך להורה (לכולם – מענה לבקשה) ----------
 function sendGuideEmail(name, email, token, consent) {
   var first = firstName(name);
-  var inner = 'שלום ' + first + ', מזל טוב מראש!<br><br>אני גילעד. הנה המדריך המושלם להכנה לקראת הולדת הבן – 16 עמודים שעושים סדר:<br>' + link(CFG.PDF_URL, 'להורדת המדריך (PDF)') + '<br><br>' +
+  var inner = 'שלום ' + first + ', מזל טוב מראש!<br><br>אני גילעד. הנה המדריך המושלם להכנה לקראת הולדת הבן – 17 עמודים שעושים סדר:<br>' + link(CFG.PDF_URL, 'להורדת המדריך (PDF)') + '<br><br>' +
     'מה יש בפנים: רשימת קניות לפי סדר זמנים, מתי תהיה הברית ומה חשוב בבדיקת הצהבת, תכנון האירוע והכיבודים, מה להביא לברית, איך מכינים את התינוק, הטיפול אחרי, פדיון הבן – ואיך בוחרים מוהל.<br><br>' +
     'כדאי לשמור את הקובץ בטלפון. יש בו גם כפתור "שליחת פרטי הלידה למוהל" – כשהבן ייוולד, זה חוסך לכם לזכור מה לכתוב.<br><br>' +
     'ויש עוד שלושה כלים חינם באתר: ' + link('/mohel/moed/', 'מחשבון מועד הברית', 'E0') + ' (מתי בדיוק הברית, בלועזי ובעברי), ' + link('/mohel/checklist/', 'רשימת ההכנה', 'E0') + ' שנשמרת בטלפון, ו' + link('/mohel/hazmana/', 'הזמנה מעוצבת לברית', 'E0') + ' – ממלאים מתי ואיפה, ושולחים לכל המשפחה בווטסאפ, עם כפתור ניווט ואישורי הגעה.<br><br>' +
+    '<b>עוד מתנות בחינם, כשמתקרב הרגע:</b> הכל חלק ממיזם חסד – בלי הרשמה, בלי פרסומות ובלי כוונת רווח.<br>' +
+    '• ' + gl('/kelim/eruim/ishurim/', 'מעקב אישורי הגעה') + ' – תדעו מי מגיע, בלי לרדוף אחרי אנשים<br>' +
+    '• ' + gl('/kelim/shemot/banim/', 'שמות לבנים') + ' – משמעות, מקור והתאמה<br>' +
+    '• ' + gl('/mohel/hazmana/', 'הזמנה מעוצבת לברית') + ' ו' + gl('/mohel/moed/', 'מחשבון מועד הברית') + '<br><br>' +
+    'ושמרו אותי באנשי הקשר – כשהבן ייוולד, רק שולחים "נולד!" ' + gl('/mohel/kartis/gilad-rachamim-mohel.vcf', 'שמירת איש קשר') + ' · ' + link('https://www.facebook.com/profile.php?id=61596103988267', 'פייסבוק') + '<br><br>' +
     'שאלה? כל שאלה – כתבו לי ב' + link('https://wa.me/' + CFG.WA_INTL + '?text=' + encodeURIComponent('שלום גילעד, קיבלתי את המדריך. יש לי שאלה: '), 'ווטסאפ') + ' או פשוט ענו למייל הזה. אני כאן.<br><br>' +
     (consent === 'כן' ? 'סימנתם שתרצו טיפים – אשלח לכם כמה מיילים קצרים לאורך ההריון, כל אחד בזמן שהוא רלוונטי. אפשר להפסיק בכל רגע.<br><br>' : '') +
     'בברכת מזל טוב,<br>גילעד';

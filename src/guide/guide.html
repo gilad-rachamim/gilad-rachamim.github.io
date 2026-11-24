@@ -113,6 +113,17 @@ table.calc td b{color:var(--teal)}
 .photo-r{border-radius:3mm;background-size:cover;background-position:center}
 .quote{font-family:'Frank Ruhl Libre',serif;font-size:13pt;text-align:center;color:var(--teal);line-height:1.45}
 .center{text-align:center}
+.gift-line{margin-top:2mm;background:var(--mint);border-radius:2.5mm;padding:1.1mm 3mm;font-size:8.4pt;line-height:1.4;border-right:1mm solid var(--gold)}
+.gift-line a{white-space:nowrap}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:2.6mm}
+.mini .card{padding:2.6mm 3mm;display:flex;gap:2.5mm;align-items:center}
+.mini .card h3{font-size:10.6pt;margin-bottom:.6mm}
+.mini .card p{font-size:8.3pt;line-height:1.4;color:var(--muted)}
+.mini .card img{width:13mm;height:13mm;flex:none}
+.steps{margin-top:3mm}
+.steps .stp{display:flex;gap:2.4mm;align-items:flex-start;margin-bottom:1.1mm;font-size:8.6pt;line-height:1.4}
+.page.t .stack>*+*{margin-top:2mm}.page.t .card{padding:2.6mm 3.6mm}.page.t .tl .st{margin-bottom:1.2mm}.page.t p{line-height:1.45}.page.t .note{padding:2.2mm 3.4mm}.page.t .chap{margin-bottom:3.4mm;padding-bottom:2mm}.page.t ul li{margin-bottom:1mm}
+.steps .stp .n{flex:none;width:6mm;height:6mm;border-radius:50%;background:var(--gold);color:#fff;font-weight:800;text-align:center;line-height:6mm;font-size:9pt}
 </style>
 </head>
 <body>
@@ -159,7 +170,7 @@ table.calc td b{color:var(--teal)}
 </section>
 
 <!-- ============ 3. ציר זמן ============ -->
-<section class="page">
+<section class="page t">
   <div class="chap"><div class="num">1</div><div><h2>ציר הזמן</h2><div class="sub">כל ההכנות במבט אחד</div></div></div>
   <div class="tl">
     <div class="st"><div class="when">שבוע 36 ואילך</div><div class="what">קניות והכנות בבית</div><div class="det">רשימת הקניות (עמ' 4–5), סלקל מותקן ברכב, תיק לבית החולים. כדאי ליצור קשר עם המוהל כבר עכשיו.</div></div>
@@ -171,6 +182,8 @@ table.calc td b{color:var(--teal)}
     <div class="st"><div class="when">למחרת הברית</div><div class="what">ביקור בית</div><div class="det">המוהל מגיע אליכם הביתה ומוריד את התחבושת בזהירות הנדרשת – כדי לחסוך מהתינוק כמה שיותר צער – וממשיך ללוות עד ההחלמה המלאה.</div></div>
     <div class="st g"><div class="when">היום ה־31</div><div class="what">פדיון הבן <span class="small muted">(לבן בכור)</span></div><div class="det">אם אתם חייבים בפדיון – פרטים בעמ' 13.</div></div>
   </div>
+  <div class="gift-line">🎁 <b>בחינם באתר:</b> חישוב מועד הברית לפי שעת הלידה והשקיעה – <a href="https://hakelim.com/mohel/moed/?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">מחשבון מועד הברית ←</a></div>
+  <div class="gift-line"> <b>בחינם באתר:</b> עוד לפני הלידה: מעקב היריון שבוע-שבוע – <a href="https://hakelim.com/kelim/herayon/?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">מעקב היריון ←</a></div>
   <div class="foot"><span><b>גילעד רחמים אביעד</b> · המוהל · 058-404-9049 (ווטסאפ)</span><span>© כל הזכויות שמורות · 3</span></div>
 </section>
 
@@ -204,6 +217,7 @@ table.calc td b{color:var(--teal)}
       </ul>
     </div>
   </div>
+  <div class="gift-line">🎁 <b>בחינם באתר:</b> הרשימה הזאת לסימון בטלפון – <a href="https://hakelim.com/mohel/checklist/?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">רשימת קניות לסימון ←</a></div>
   <div class="foot"><span><b>גילעד רחמים אביעד</b> · המוהל · 058-404-9049 (ווטסאפ)</span><span>© כל הזכויות שמורות · 4</span></div>
 </section>
 
@@ -266,7 +280,7 @@ table.calc td b{color:var(--teal)}
 </section>
 
 <!-- ============ 7. מועד הברית ============ -->
-<section class="page">
+<section class="page t">
   <div class="chap"><div class="num">4</div><div><h2>מתי תהיה הברית?</h2><div class="sub">היום השמיני – וכל מה שמשפיע עליו</div></div></div>
   <p>על פי ההלכה עורכים ברית מילה <b>ביום השמיני</b> להולדת הבן – וזה גם המועד המומלץ ביותר מבחינה בריאותית. נולד <b>לפני השקיעה</b> – יום הלידה הוא היום הראשון. נולד <b>אחרי השקיעה</b> – היום הראשון הוא היום שלמחרת.</p>
   <table class="calc" style="margin:3.5mm 0">
@@ -283,6 +297,7 @@ table.calc td b{color:var(--teal)}
   </div>
   <div class="note gold small">כמובן, המוהל ילווה אתכם בקביעת המועד ויוודא שבנכם כשיר לברית בזמנה. ייתכנו מקרים שגם תינוק בריא לא יימול בזמנו – ולכן חשוב לדבר עם המוהל מראש. <b>ברית שנדחתה</b> אינה נערכת בשבת או ביום טוב.</div>
   <a class="cta" href="https://boti.bot/SHt8IC1Uq8I">לבירור מועד הברית מול מוהל מוסמך – לחצו כאן</a>
+  <div class="gift-line">🎁 <b>בחינם באתר:</b> חישוב אוטומטי של מועד הברית, כולל שקיעה – <a href="https://hakelim.com/mohel/moed/?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">מחשבון מועד הברית ←</a></div>
   <div class="foot"><span><b>גילעד רחמים אביעד</b> · המוהל · 058-404-9049 (ווטסאפ)</span><span>© כל הזכויות שמורות · 7</span></div>
 </section>
 
@@ -314,11 +329,13 @@ table.calc td b{color:var(--teal)}
     </ul>
   </div>
   <div class="note peach" style="margin-top:3.5mm"><b>הערה חשובה:</b> הקפידו שאף אחד מהקרובים שאולי מצפה לכיבוד לא ייפגע. בררו מראש במשפחה למי נהוג לתת את הסנדקאות בבן הראשון, וכן הלאה – וכך כולם יהיו מאושרים 🙂</div>
+  <div class="gift-line">🎁 <b>בחינם באתר:</b> הזמנה מעוצבת לברית, מעקב אישורי הגעה וטופס כיבודים לשליחה בווטסאפ: <a href="https://hakelim.com/mohel/hazmana/?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">הזמנה לברית ←</a></div>
+  <div class="gift-line" style="margin-top:1.4mm"><a href="https://hakelim.com/kelim/eruim/ishurim/?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">מעקב אישורי הגעה ←</a> &nbsp;·&nbsp; <a href="https://hakelim.com/kodesh/kibudim-brit/?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">סדר כיבודים ←</a></div>
   <div class="foot"><span><b>גילעד רחמים אביעד</b> · המוהל · 058-404-9049 (ווטסאפ)</span><span>© כל הזכויות שמורות · 8</span></div>
 </section>
 
 <!-- ============ 9. מה להביא לברית ============ -->
-<section class="page">
+<section class="page t">
   <div class="chap"><div class="num">6</div><div><h2>מה להביא לברית</h2><div class="sub">רשימה לסימון ביום האירוע</div></div></div>
   <div class="photo-r" style="height:19mm;background-image:url(pillow.png);background-position:center 70%;margin-bottom:3.5mm"></div>
   <div>
@@ -340,11 +357,13 @@ table.calc td b{color:var(--teal)}
     <p class="small">בערב שלפני הברית נוהגים לערוך אירוע של ממש: מתכנסים המשפחה והחברים ללימוד תורה, קריאת הזוהר, שירה, פיוטים וכיבוד – ומתפללים לשלום התינוק ("ליל שימורים"; במנהג מרוקו – "תחדיד"). <b>אשמח להגיע לברית יצחק ולשאת דרשה</b> – תאמו איתי מראש.</p>
   </div>
   <div class="note gold center" style="margin-top:3mm;font-weight:800;font-size:10pt">והכי חשוב: לבוא במצב רוח טוב ולהשאיר את כל העייפות מאחור! 😊</div>
+  <div class="gift-line">🎁 <b>בחינם באתר:</b> דפי תפילה ושירונים להדפסה – <a href="https://hakelim.com/mohel/dapim/?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">דפי הברית ←</a></div>
+  <div class="gift-line"> <b>בחינם באתר:</b> מה להביא – ברשימה לסימון בטלפון – <a href="https://hakelim.com/mohel/checklist/?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">רשימת ההכנה ←</a></div>
   <div class="foot"><span><b>גילעד רחמים אביעד</b> · המוהל · 058-404-9049 (ווטסאפ)</span><span>© כל הזכויות שמורות · 9</span></div>
 </section>
 
 <!-- ============ 10. הכנת הנסיך ============ -->
-<section class="page">
+<section class="page t">
   <div class="dots corner"></div>
   <div class="chap"><div class="num">7</div><div><h2>הכנת הנסיך הקטן</h2><div class="sub">ליום הברית</div></div></div>
   <div class="photo-r" style="height:46mm;background-image:url(sleep.jpg);margin-bottom:4mm"></div>
@@ -356,6 +375,7 @@ table.calc td b{color:var(--teal)}
         <li>חיתולי בד</li><li>טיטולים</li><li>מגבונים</li><li>בגד להחלפה</li><li>תמ"ל + בקבוק (פורמולה – אם אינו יונק או מקבל גם בקבוק)</li><li>מוצץ</li><li>משחת החתלה</li><li>שמיכה דקה</li>
       </ul></div>
   </div>
+  <div class="gift-line">🎁 <b>בחינם באתר:</b> הנחיות ההכנה ליום הברית במקום אחד – <a href="https://hakelim.com/mohel/hachana/?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">הכנה לברית ←</a></div>
   <div class="foot"><span><b>גילעד רחמים אביעד</b> · המוהל · 058-404-9049 (ווטסאפ)</span><span>© כל הזכויות שמורות · 10</span></div>
 </section>
 
@@ -436,7 +456,7 @@ table.calc td b{color:var(--teal)}
 </section>
 
 <!-- ============ 13. בחירת מוהל ============ -->
-<section class="page">
+<section class="page t">
   <div class="chap"><div class="num">10</div><div><h2>איך בוחרים מוהל</h2><div class="sub">ארבע הנקודות שחשוב לדעת</div></div></div>
   <div class="stack">
     <div class="card"><h3><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="#2f7d78" stroke-width="1.6"><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/></svg>בריאות התינוק</h3><p>חשוב לבחור מוהל בקיא במלאכתו, שלמד את לימודי המילה בצורה מסודרת ויודע לתת הנחיות מדויקות לטיפול אחרי הברית – לתינוק רגוע ונינוח.</p></div>
@@ -448,6 +468,7 @@ table.calc td b{color:var(--teal)}
       </div></div>
     <div class="card"><h3><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="#2f7d78" stroke-width="1.6"><path d="M4 21v-2a5 5 0 0 1 5-5h6a5 5 0 0 1 5 5v2"/><circle cx="12" cy="7" r="4"/></svg>הנחת שלכם, ההורים</h3><p>מוהל שילווה אתכם לאורך כל הדרך – מהולדת הבן ועד ההחלמה המהירה והשלמה – כדי שתעברו את הימים האלה בנחת ובשמחה.</p></div>
   </div>
+  <div class="gift-line"> <b>בחינם באתר:</b> שירים לברית לפי המנהג שלכם – <a href="https://hakelim.com/mohel/shirim/?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">פלייליסטים לברית ←</a></div>
   <div class="foot"><span><b>גילעד רחמים אביעד</b> · המוהל · 058-404-9049 (ווטסאפ)</span><span>© כל הזכויות שמורות · 14</span></div>
 </section>
 
@@ -472,8 +493,26 @@ table.calc td b{color:var(--teal)}
 </section>
 
 <!-- ============ 16. יצירת קשר ============ -->
+<!-- ============ 16א. עוד מתנות בחינם ============ -->
 <section class="page">
-  <div class="photo-r" style="height:48mm;background-image:url(finger.jpg);margin-bottom:3mm"></div>
+  <div class="dots corner"></div>
+  <div class="chap"><div class="num">✦</div><div><h2>עוד מתנות בחינם להורים</h2><div class="sub">כלים שבניתי בשבילכם – לחיצה או סריקה</div></div></div>
+  <p class="small" style="margin-bottom:3.2mm">לא רק מדריך: בניתי לכם באתר כלים שיחסכו לכם זמן וראש. כולם בחינם, בלי הרשמה ובלי פרסומות – וכולם בטלפון.</p>
+  <div class="mini">
+<div class="card"><div style="flex:1"><h3><a href="https://hakelim.com/mohel/hazmana/?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">הזמנה מעוצבת לברית</a></h3><p>מוכנה לשליחה בווטסאפ, בחינם</p></div><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBAQAAAADP2+T9AAACh0lEQVR4nJVWsW4TQRB96z20TsGdI6qIS3xSvoDujCydqVKmoaAlfEByoXGD7YUmDb7wA+E73J2liLNEwRdYrLOWUkF8RkhncfagKwMWGqZY6UbzNO9m375dQbgfuvZHAtiSmQmxjkWgW/v9jqOFs60Gf2UkFbKBaxeZ1MYjw0NBd2Yb4FXWPu36JLbXbM18SNtX4+lu4vyj5l441XLaNfnxuNeS1QevVz+VDRV4ms5DI4iJWos6sLpOuvMrIBcBCwUiMmcR5SklhSSiAQtlB6BNVPbJiKw5ABNFw8i4kUHk90IglMxeQxhBNklLQVYzGTrrG9V83/pcjg/7nevvk5A3DZukcqFMXMDLJKVNHkMDZamwQ2WHERBZFqom87yt6/6P0d45yrOJz1OUTzs/HxXOt4ZcHN8ewHnDO1+7o/lSTXUxTS727Khk6vBlv7mZBEk9oJbyjpinEp7e77dMT9nXRemC1wt2oBAXAKQm4yru5EVBw8guVLUFecpUFOWEfuEj9Huh7zJ1WJu74xKTW0ptDZlOmDP09dHhACapO64KTsCc4dwbGTra08U0v/Ap5mpjqfafh4fxkfn6dN1QTIazu9g2VuPh2LxV2SBkouTBFzFQ0Q0crIL4guc2zl6eK0AMwusHn164K56zwSCCl5Ve5nvpf/lGcwHagDQZhDxF1bCMpkM1F5kD+CJhMrR5UbqqrOQEw2Xo+MAsfqZ+jYFIbnaYPj8Toim6/uXKLMfBJXO/YKkwZ0puIruI5EYxPQq6g49F+U6vDybT2hP+XSnPIe767ZNVO06Y2qiWhy37uGYCIEmI9XKo/osopcq3I9Nj+0ZlOCG8wngZLULenVLdxPeCxfA31zsvYc2shGMAAAAASUVORK5CYII=" alt="קוד QR: הזמנה מעוצבת לברית"></div>
+<div class="card"><div style="flex:1"><h3><a href="https://hakelim.com/kelim/eruim/ishurim/?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">מעקב אישורי הגעה</a></h3><p>תדעו מי מגיע בלי לרדוף אחרי אנשים</p></div><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBAQAAAADP2+T9AAACaUlEQVR4nJ1WsYrbQBB96zXsNbbcGtaRIV+QbgUHcucy3xDyAZHcx5aSJk1kf0HyHdfJcCB39wtydsFlpLtGAskTXObOB5Ns+Zhh572ZN7uC8PdJB88A4ApyFOLoiZkX9JM9UjG8FoMXiKRGR6GLc5kAHpW8LKQL9zXvyBMrNSdxPeYaotetTO/KUXD/esxLRCYPw53xK6Nfj3l2LDXl2tizseeQtmQT1l29uJETYAfsWleLOa9Cn0g/FXjK549Kb6jjZbldOwduPy3KNdxj65hqfFjisyihZivMd7jlqVGKRse5joxfKZ9yphp65J28jX0D9+PdMVG8uwaI2m7czkVRRsoODHOipCT39O2+XgSD/SwDTw3YuqHMUF1AFHqseLzQxYS4kDXRtumgfGbW2HQRJBFVqvNI8jR0H7f4WfTiZrhrh48H5sz7Ses+BbLOtSD/d8DTELYmRJcJtOew9AomL7p4xHRRSJWRKdspKxUkaojDMc2BPZPXKWnvd4cO5haHab9herlESFTItLGZ8akgXoV+mh7FoqMloI4D8LyMTpDcNjpSsgr9tGCqcar2mhZONNP0rv8ecDfbaOkiZWeBnC1PldJMNdaXOfSrUFah5fYLHZQeh7IyMlGSzcvFd7Zqp4ma1s20j7nT6y1nKyUnkLPATh64OwrQm9xS459DQHG7TFQMDFKvXx3k2TD3RgmUEbTItShsxt0blhqqiTJjMyPPircBYBNDVVh6F1eyeQ0B9NlexjdtdLCj99zXAXBfwr6uZVr32T+8lV1cdGNjqZFbrr96cePQvv2l5rQsacGrUPzX3+YPe79CAYTXPKoAAAAASUVORK5CYII=" alt="קוד QR: מעקב אישורי הגעה"></div>
+<div class="card"><div style="flex:1"><h3><a href="https://hakelim.com/kelim/shemot/banim/?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">שמות לבנים</a></h3><p>מצאו שם: משמעות, מקור והתאמה</p></div><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBAQAAAADP2+T9AAACdElEQVR4nI2WsW7bMBCGf0oG6MlOxwBUJCBbN280YEDe/Di1miVLJQtZvNTOE3juIzRTZSAos+UJglKhiqJDgShZZFTWFd6aNgjuxsMRd/zuPx4F4bnl3j8O4AVPKcQ+mwbJNFr3q1z0XorBfx6fGv+suB7m23tgSJZ1Cm6hrWgUJNWNW8EtWLkAIJWmG5VBf/JKzEueY99M5rJ6NeYv85AV/tH2x0fh3o+sIOapveiDzgFdbYBaRDwaRGSThjr4K01ExKNR5SIczsqc7vI1csGrEFYYR4VCHHbAQPtM8u8S5DNDV/bC2LlseTTURgbrekL9iJJILCsmjYVWgE0aDGRYF2xt3LpOxyc34WJXDs+5NJLC1cbvNOXGJlzyahBHNMXTGnR+enTD7nLRDuI2IwjTJg0vF6imkBqqSaXwFzGvX7DQrja0Nq4m6jQzV5tKO4/pwDy2qeSRh53DDhCumxayTZqQ2a+NRGK25SzK6t56xtOG559dqcdRvNo5MaWHLVOH+30mg2H1tIwGMnhjeLl6obezKilPfpb1UmMnmV1eGwVtIcMO4UIyybsHIDHUHcTP1mFP1bI9QfQNvV9fTn/3G16F7QBhXSDVVpiQuPNVJeYumzoP0YdxKWY8zXt+Nq4GUqU3zostwOtXDxfG93a9tIAo9qJgzrKjRgHtXKvEAJqpQwV5nVB0CT8Y+x2uefcqhVCbG6S4u49xeavYFbouxtDQIvY75nz1kH/+dPTWqV3w/euxp/lbz3fLQMxsupskhvlGuYV2K62G1AKH7cxULzVtRi4v6CF2K8kkvxf9isbBSotwOXkc8X4Oh038zFh/mz8+CT8n9z0thgAAAABJRU5ErkJggg==" alt="קוד QR: שמות לבנים"></div>
+<div class="card"><div style="flex:1"><h3><a href="https://hakelim.com/mohel/moed/?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">מחשבון מועד הברית</a></h3><p>מתי הברית? לפי שעת הלידה והשקיעה</p></div><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBAQAAAADP2+T9AAACjklEQVR4nI1WTWrbQBT+RmOYdCO5y1A5EuQE3kklIK3q7nqGJgeonZVXltRVVlF6gKQH6Am6aLHBdAKF+gIxHSOBVyWeZKMBOVPcXdoU3lsMzON9vL/vvRlm8VgK5y8F8IRmxdgqn/W6BnoPBes8ZYN/NNw2vh6rtwNc9UPPKhoKRQom1+VZ524xt+xpm6c0tTuLu8bkUfh/m8fS2R16cPMpDTbdYHeh+cqmvBv5x9EyaMAsEbVle3BNfYV1ls41C0koWGsVotaTwbmorLU5Ka/6xcvvdla/S2/8eMvEDTHCXKAcHD5vYhYHOWgROsHpTN1/Bq7rYVSzhlj57XnSY9/2N6a6Out5r3wio5xZ6/YVEA6FOo5qmq+aSTFZHP3qtp3ky+UPmi8ooJ3AnyTtUCgXFanyUEPRurt+VVYGD4KIsrrBqGlHU56LQEtOQjmr80XVhTgQ+7mZeWPafHUCFvv1V/N+jNEbrhdU9m6SOWb1hVl3AQjyVJqglDzHMhtsz6mMgruodbqvyyTv+wUxL7Ru5HtWuQkvZJtJWuWd+k5A7/knZ4BZOyDyEOzz2uqwjOGK3gNo+xDtUHDd8NL6iBQiYoT8wCzza5PF60LCk7TKo0Wy2xuALabIJG1vODVmYBITwBUKEbFfXMvD3IT3drUaBV48p6F89M02ncOEH85WVUll1KW37i6OSi+4HfgukVFQo6ndCExgtVQQAXEqrVWs8T0b6Cl/SGj96qxCKDvgGYMHfnFN7Fdlm9aNAiuRSf4giP1CkdajEnqsbLp1iDx0AASnUB+LxDGVbmic//NWXvXDn89MYXsnr+eX5Ly8prKS2ykvqJtty/bWm0WcxbgTy9uUFuHuJX4kpL/Nb/NALmUAOxZhAAAAAElFTkSuQmCC" alt="קוד QR: מחשבון מועד הברית"></div>
+<div class="card"><div style="flex:1"><h3><a href="https://hakelim.com/kodesh/kibudim-brit/?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">סדר כיבודים</a></h3><p>סנדק, קוואטר וברכות, ושולחים לי בווטסאפ</p></div><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBAQAAAADP2+T9AAACfUlEQVR4nI1WwWrbQBB9qw2sL7Gco2EdCfIFuUnFIPfk72h/ILbvjaT00kts/0D6Hz5VgYByC/QekFmBKb1I9qESSJri3tK6MHMc5jHz9s0bSRDeRmz9lQBOZLZCbG0xsv128IhYnJ2qwT8ZSZWeBfk8kRFgU8ZDIZ7kn5OGbLFQLonTNacy+pO/izfZuZ/9v+ZtnAGQi0f/8EMV7/5keL3CZOtsTDjJoXJBTFQrevIIAdY1SuHyUA6RPqTjQ+LuFUJqeKh8XbtAfjPJboF9nTN5fZi2YU+v1WgBd40xk9fFBiLZFrUT1fr2+YmH0ud2Ds+5RP5VbSPF7IWPtQlFdkizGYzl8TZKEL3Pvr9cPXx7zQHx6+cDB4VGVM7SozKFSHU/MBELlYlUz1NZEq2qRqQOC2XJ+3lOPvrABxt98PRCY1Nmp4A6+kukvAktGfr6xpdlogU5oc/bXlAXYKZ0SKYLDKWS12sb1WZ5/VRO9L527zze9oKKwCkCKlQ2r5w4YfLKUT9efHHX3ph6bRsyeWUIqFMmrszSM5QSr5cTx/ld7d5MsVetBZ6X0QiSBfRMySJwYq5eu+JxOFCZqIbxpr1n6mXhfLorE2X7cjTdFUozX2PmZX1FXSCLwKyIOaHGizu7PtvXWD+7+5o5Yb6+lhGGkRqW1bDg3l6nXL0ulBxAjnxz+TJm82rCxFDldAGguCqv0p3lIbbbxbPsPKYrs2M7aJFokZql4jkFhioqiZaeWXqyY04IE3lUBI1NhghQzGuD41GMr+a90bxnCo95sQFsB96TKGVctkumXkdeTR9O5xmqzIrrr1b0diZ5tZRLU9CE9/LHL/GbYP3b/AbRQDgpDIpnTwAAAABJRU5ErkJggg==" alt="קוד QR: סדר כיבודים"></div>
+<div class="card"><div style="flex:1"><h3><a href="https://hakelim.com/mohel/shirim/?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">פלייליסטים לברית</a></h3><p>לפי המנהג: ספרדי, אשכנזי, תימני</p></div><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBAQAAAADP2+T9AAACXElEQVR4nJ1WwWrbQBB9qzVsTl56LChI4C/wTYGAdPN/tD9g5ZSTLeXkSyX3A5J+h29rMCi3foFh3TXkWCknGSRNsW9Nc5h0EUIM+3ianTfzVhD+Xrn3JgC8EzkI0V+e62w7ysXovT34JyKpxVyFC+XuIqvJ8lDIk+OPze77Bo8zkHh/z9s1urxj1M+HO3X55nEBMk3CPL1dnEIuCo5a11AwgOrIleQyFlcvrvB4s1tHxyegESGPi4jcoCQZKiJHRCwuuAydMF1K0BVl4KE8X9NoEb/oJPidiiziVRl2HhEZaEM5uSxm/qEVlR3DkQmySDYVE0WN6eZnRugqICOZqJyCsrK66sYAIl694KilLJIDZE7dnJmXh0aLZtWJyqdkEqyYOvQx9Wl2nU37Mt/+mnLV+/TziKlMZ6DlRGtmvTrRBo2RRWSFcQW3XlSSFZVsKKhjGhRT8/iyxeLkP233n1Yib26ZikrJkfHnMRYRoHhV9qS+ufHUS7khD64+dcwznKsdou7hGboKRcWcAFS2klqrW5tWAbUBV1GVrw2gggE+Oy/gBLp3BfZ38S5teXmBatWNlcwg6/gD/VWACgXRWkHy3Js8d6jjQx25bzPZX/Xifsecoo0Jhljmhuq4O48ppubV8eHZp2S0xpESphMBp56afWP25QqvTG3gPHsL1QEYKzeAqfmDEJ+dGS2U/dqEa+WzPcXqtgNk3kp+f+WJXCaTWu2XV3vvA67XO4P19HYMP93wnOgSKZOdXtlXhOU9t7+Wxh8jpEQN8UuhmK5nzwbRBucz4fuX+K+7zR9PPUQvWlos7gAAAABJRU5ErkJggg==" alt="קוד QR: פלייליסטים לברית"></div>
+<div class="card"><div style="flex:1"><h3><a href="https://hakelim.com/kelim/herayon/?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">מעקב היריון</a></h3><p>שבוע אחרי שבוע, בעברית, בחינם</p></div><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBAQAAAADP2+T9AAACdElEQVR4nJ1WsW7bMBA9iiqYSUpGo0wkoF+QjS4MyFt+oWvbD4jVooCXWmK7eLLcH8h3NBsDGFW2foFROjSQrZWTRQIkXRF0ShME13IiHu7wyLv3jmQI95f2/gIAHkE2jHUpi/XwMBv7mvmPxcADhGPN92EVQMm1DdHSskCPNz3A23J0OpXIHo95FPliRmcX64PCfyLmIfJ6utlk/sfhUzH3l8Pa9YCFwUq5Al1O4urYHizVFqfbM4Adi2lciOj6hO8MFjVHRBIXuBwQS5uhZWWUAzELF4mrQEIiZwpAcSLXAizDqDAtQ6eJJ/S7KxEtLlbPvSgbr35eKmLlCwMgbFpDWHI0EbHylXC444ehy6YdO1kRtbFspN6Tt+eDd9BOQBKzJqIrav90LCq4jgzRKRKO/Rux1vW6mA+umpZYjT6JsLzbzYDngtYvr9N6kw3tTLj3dRsAjcuL2Im8reNPTbwUWwCqeqs/ohIWhNsZoqLatITMSFBypmRA1KF3vWhwXzg0zoNSF8QaYi4irHkPfJHwXUnk2obnazYeHNTr3VxiStOGL2/Ei/wrT0/sj5fdviCe0E4UVkoGgHni8oTmL48fffdBXFfgQxOnc1q//IHb+R90nKvVs2+voCHOQxuizEwbljI0AAl5bqioAuwBNVpQRC/DbbFeiC0rfQAZfKdO7BxkINo7OYElTzZEtJnhfSKDxPVUf20Yi9hULht7cxEvFdXLWNuJ4H3iqoT3gvimgB7DmbKfdXd0ufaO/+HVY/PuVzZ604zSgqaNO4RXx3EAqyVAMaTfqw2NQ8OrxC0ErctgAWxqbFbbsGxB0TTP/utv8xsu3zjtjAT1oAAAAABJRU5ErkJggg==" alt="קוד QR: מעקב היריון"></div>
+<div class="card gold" style="display:flex;gap:2.5mm;align-items:center"><div style="flex:1"><h3>כל הכלים</h3><p>עוד כלים חינמיים לכל משפחה</p></div><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBAQAAAADP2+T9AAACcUlEQVR4nJ2WwWrbQBCG/9UaNr1YvpoI1pAnyE0Cg9xT3yMv0NjtwZdGUnOupDxA02foLb0pYJBvfQLDphL4kEOk5FCJSp7iYxMHhs7xZ5ZZffPvjATh34isZwJwQLkTokzbftT2CyASg0M5eKFIanC23i7W5VcxscnwTiGa9aGL90s8EUgczjmkaNuepkoGR6vXc14qpWhW86zfudPXc55FQQ0RYehLyiihImTV6sVRmXhF2JpkWdZiwqtF+8gkNSZoCiLi1SprIUK1CXEibC/wmP1Cqrq0xWc4opYL1XEZtjhT008znMOkLY/hACIH2tU1DNYeFJd87HZQcufTzi8Skiwag3F0c0K3M/m7PG6d2mPW6oYAXE0ZxXAEs8ugKDdDFDUVdePMM94NrfKi9T/sgXgxMGTSsPqRv3mYIYV5XJc0c5jfZTc6amQFXbkOXKZ75S+1qX72ujHXCkMw3WuCprNzvduTLJKM514USS5jwM4d0eidzzzVwTXzrAsaXYEqMF+KDJX/ZTagd6tveXmVM8nfxe1mBBphQssJl4alQ1U+EUQ2XrSmnpfMfp27TpAXlaKaZKWYPuygikppIpmQjjKue2OXolxTg3NX7hSP4eCuTgZ/3m5GNzp+80qOdUg5NZcRHtvVZTMOWyYNM1QdfFm5TtDIqGF2GWftNsnGUb61fm6CI14tSyfUP3jb0a0DyJ2aMr0hhFygj13QcsKeh5La+1R1H4+k/eP++DtvV6IIXSMys5+fCmC+FAuArPaTTVetriOmewE4KfB4aq6yTbBcsXdlB8CmIiHnAvxduY2IHry+wnbk8yab+K9/m782bkP9tjmrIAAAAABJRU5ErkJggg==" alt="קוד QR: כל הכלים" style="width:13mm;height:13mm"></div>  </div>
+  <div class="note gold center" style="margin-top:3.6mm"><b>מיזם חסד, בלי כוונת רווח</b> – כל הכלים בחינם, בלי הרשמה ובלי פרסומות.<br><a href="https://hakelim.com/kelim/?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">hakelim.com/kelim ←</a></div>
+  <div class="foot"><span><b>גילעד רחמים אביעד</b> · המוהל · 058-404-9049 (ווטסאפ)</span><span>© כל הזכויות שמורות · 16</span></div>
+</section>
+
+<section class="page">
+  <div class="photo-r" style="height:22mm;background-image:url(finger.jpg);margin-bottom:2mm"></div>
   <div class="center">
     <div class="kicker">ברית מכל הלב והנשמה</div>
     <h2 style="font-size:24pt;margin:1.5mm 0">גילעד רחמים אביעד</h2>
@@ -501,9 +540,14 @@ table.calc td b{color:var(--teal)}
         <div class="small" style="font-weight:700;color:var(--teal);margin-top:1mm">סרקו לוואטסאפ</div>
       </div>
     </div>
+    <div class="steps">
+      <div class="stp"><span class="n">1</span><div><b>שמרו אותי באנשי הקשר עכשיו</b> – כשהבן ייוולד, רק שולחים "נולד!" בווטסאפ. <a href="https://hakelim.com/mohel/kartis/gilad-rachamim-mohel.vcf?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">שמירת איש קשר ←</a></div></div>
+      <div class="stp"><span class="n">2</span><div><b>עקבו אחריי</b> – <a href="https://www.facebook.com/profile.php?id=61596103988267">פייסבוק</a> · <a href="https://youtu.be/SbV4Aq3561Y">יוטיוב</a> · <a href="https://hakelim.com/kelim/?utm_source=madrich&utm_medium=pdf&utm_campaign=madrich-links">אתר הכלים</a></div></div>
+      <div class="stp"><span class="n">3</span><div><b>מכירים זוג בהיריון?</b> שלחו להם את המדריך: <a href="https://wa.me/?text=%D7%9E%D7%A6%D7%90%D7%AA%D7%99%20%D7%9E%D7%93%D7%A8%D7%99%D7%9A%20%D7%9E%D7%A2%D7%95%D7%9C%D7%94%20%D7%9C%D7%94%D7%95%D7%A8%D7%99%D7%9D%20%D7%9C%D7%A7%D7%A8%D7%90%D7%AA%20%D7%94%D7%9C%D7%99%D7%93%D7%94%20%D7%95%D7%94%D7%91%D7%A8%D7%99%D7%AA%2C%20%D7%91%D7%97%D7%99%D7%A0%D7%9D%3A%20https%3A//hakelim.com/go/madrich/%3Futm_source%3Dmadrich%26utm_medium%3Dpdf-share%26utm_campaign%3Dmadrich-links">שיתוף בווטסאפ ←</a></div></div>
+    </div>
     <p class="center small muted" style="margin-top:2mm">ללא התחייבות · בברכת מזל טוב!</p>
   </div></div>
-  <div class="foot"><span><b>גילעד רחמים אביעד</b> · המוהל · 058-404-9049 (ווטסאפ)</span><span>© כל הזכויות שמורות · 16</span></div>
+  <div class="foot"><span><b>גילעד רחמים אביעד</b> · המוהל · 058-404-9049 (ווטסאפ)</span><span>© כל הזכויות שמורות · 17</span></div>
 </section>
 
 </body>
