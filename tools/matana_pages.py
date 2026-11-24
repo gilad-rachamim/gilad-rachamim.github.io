@@ -44,10 +44,12 @@ def pack(p):
 
 
 def landing(p):
+    """סבב 2 (24.11.2026): בטלפון הטופס במסך הראשון – תג, כותרת, שורת משנה, 3 נקודות, טופס; הוויזואל והשאר אחריו."""
     s = p["slug"]
     hmap = esc(json.dumps(p["h"], ensure_ascii=False))
     pk = pack(p)
-    pts = "".join(f"<li>{esc(x)}</li>" for x in (p["points"][2:] if pk else p["points"]))
+    top = "".join(f"<li>{esc(x)}</li>" for x in p["points"][:3])
+    rest = "".join(f"<li>{esc(x)}</li>" for x in p["points"][3:])
     vid = ""
     if p.get("video"):
         pre = p["video"][0]
@@ -57,32 +59,38 @@ def landing(p):
     return meta(p["title"], p["desc"]) + f"""<span class="mt-pill">🎁 מתנה חינם · מיזם חסד</span>
 <h1 data-h="{hmap}">{esc(p['h1'])}</h1>
 <p class="mt-sub">{esc(p['sub'])}</p>
-<div class="gift" aria-hidden="true">
-<span class="mt-badge">{esc(p['badge'])}</span>
-<div class="book"><b>{esc(p['book'][0])}</b><small>{esc(p['book'][1])}</small></div>
-<div class="phone"><i>לוגו</i><s></s><s></s><em>{esc(p['phone'])}</em></div>
-</div>
-{pk}<ul class="mt-points">{pts}</ul>
+<ul class="mt-points mt-top">{top}</ul>
 <form class="mt-form" id="form" action="{ENDPOINT}" method="POST" data-next="/matana/{s}/toda/" novalidate>
 <input type="hidden" name="מקור" value="מתנה: {s}">
 <input type="hidden" name="_page" value="">
 <input type="hidden" name="utm_source" value=""><input type="hidden" name="utm_medium" value=""><input type="hidden" name="utm_campaign" value=""><input type="hidden" name="utm_content" value="">
 <div class="mt-hp" aria-hidden="true"><label>אל תמלאו שדה זה <input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></div>
 <input type="email" name="email" autocomplete="email" placeholder="מייל (לכאן נשלח את המתנות)" aria-label="מייל" dir="ltr" style="text-align:right" required>
-<input type="text" name="שם" autocomplete="given-name" placeholder="שם פרטי (לא חובה, כדי שאפנה אליכם בשם)" aria-label="שם פרטי, לא חובה">
-<input type="tel" name="טלפון" autocomplete="tel" inputmode="tel" placeholder="טלפון (לא חובה)" aria-label="טלפון, לא חובה">
-<label class="chk"><input type="checkbox" name="מאשר/ת קבלת עדכונים" value="כן"><span>{esc(C['consent'])}</span></label>
+<input type="text" name="שם" autocomplete="given-name" placeholder="שם פרטי (לא חובה)" aria-label="שם פרטי, לא חובה">
+<details class="mt-tel"><summary>להוסיף טלפון לווטסאפ (לא חובה)</summary><input type="tel" name="טלפון" autocomplete="tel" inputmode="tel" placeholder="טלפון (לא חובה)" aria-label="טלפון, לא חובה"></details>
 <p class="mt-err" role="alert"></p>
 <button class="mt-btn mt-gold" type="submit">{esc(p['btn_mail'])}</button>
+<p class="mt-micro">מגיע למייל תוך דקות. בלי תשלום ובלי כרטיס אשראי.</p>
+<label class="chk"><input type="checkbox" name="מאשר/ת קבלת עדכונים" value="כן"><span>{esc(C['consent'])}</span></label>
 </form>
 <p class="mt-or">או</p>
 <a class="mt-btn mt-green" data-wa="main" href="{wa(p['wa_text'])}" rel="noopener">{esc(p['wa_label'])}</a>
 <p class="mt-wa-note">הבונוס האישי הזה מגיע רק למי שכותב לי בווטסאפ.</p>
-{trust(False)}
-{vid}<p class="mt-trust">{esc(C['chesed'])}</p>
+<div class="gift" aria-hidden="true">
+<span class="mt-badge">{esc(p['badge'])}</span>
+<div class="book"><b>{esc(p['book'][0])}</b><small>{esc(p['book'][1])}</small></div>
+<div class="phone"><i>לוגו</i><s></s><s></s><em>{esc(p['phone'])}</em></div>
+</div>
+{pk}{f'<ul class="mt-points">{rest}</ul>' if rest else ''}
+<p class="mt-proof">{esc(PROOF)}</p>
+{vid}{trust(mode="free")}
+<p class="mt-trust">{esc(C['chesed'])}</p>
 <p class="mt-priv">הפרטים נשמרים אצלי בלבד ולא מועברים לאף אחד. המתנה נשלחת גם בלי לסמן את התיבה. <a href="/kelim/pratiut/">פרטיות</a>.{note}</p>
 <div class="mt-dock"><a class="mt-btn mt-gold" href="#form">למייל</a><a class="mt-btn mt-green" data-wa="dock" href="{wa(p['wa_text'])}" rel="noopener">{esc(p['dock_wa'])}</a></div>
 """
+
+
+PROOF = "מתוך מיזם הכלים: מאות כלים חינמיים בעברית, פתוחים לכולם."
 
 
 PAYHIP = "https://payhip.com/b/"
@@ -103,7 +111,8 @@ BIZ_LADDER = [
 ]
 LADDERS = {
     "claude": [("הקורס המלא: לעבוד עם Claude", 147, "mXida", ["כל השיעורים והתרגילים", "מחיר מייסדים ל-30 הראשונים, אחר כך 247 ₪", "14 יום להחזר כספי"], True)],
-    "mohel-kurs": [("הקורס המלא למוהלים", 597, "DI9mU", ["קורס מלא למוהלים בהדרכת גילעד", "ליווי מעשי: תרגול על בובה", "הפרטים המלאים בדף הקורס"], True)],
+    # עובדות מדף הקורס בפייהיפ (נבדק 24.11.2026). הקורס של הרב דוד צדוק – לא "בהדרכת גילעד".
+    "mohel-kurs": [("קורס מוהלים אונליין עם הרב דוד צדוק", 597, "DI9mU", ["8 שיעורים מוקלטים, 57 פרקים, כ-7 שעות לימוד", "אודיו לכל פרק, דפי שיעור ודפי סיכום", "שאלות לרב דוד צדוק בווטסאפ", "קורס עיוני – לא מחליף הכשרה מעשית והסמכה"], True)],
 }
 for _k in ("roe", "orchei-din", "esek", "kelim"):
     LADDERS[_k] = BIZ_LADDER
@@ -111,8 +120,12 @@ GROUP_LINE = ("קבוצת הליווי והערכה", 18, "kNyeO")
 BIZ = ("roe", "orchei-din", "esek", "kelim")
 
 
-def trust(refund=True):
-    """רצועת אמון: רק טענות אמיתיות (24.11, תוספת י')."""
+def trust(refund=True, mode="sale"):
+    """רצועת אמון: רק טענות אמיתיות. mode="free" לדף מתנה חינמי (24.11.2026) – בלי תגי תשלום וקבלה."""
+    if mode == "free":
+        fr = [("🤝", "מיזם חסד, ללא כוונת רווח"), ("🎁", "בחינם, בלי כרטיס אשראי"), ("✉️", "מסירים מהרשימה בלחיצה"), ("💬", "מענה אישי מגילעד בווטסאפ")]
+        li = "".join(f'<li><span aria-hidden="true">{i}</span> {esc(t)}</li>' for i, t in fr)
+        return f'<ul class="mt-badges" aria-label="למה אפשר לסמוך">{li}</ul>'
     items = [("🤝", "מיזם חסד, ללא כוונת רווח"), ("🔒", "תשלום מאובטח (PayPal / כרטיס אשראי דרך Payhip)"), ("🧾", "קבלה על כל רכישה"), ("💬", "מענה אישי מגילעד בווטסאפ")]
     if refund:
         items.append(("↩️", "14 יום להחזר כספי"))
@@ -187,7 +200,7 @@ def shidrug(p):
     g = ""
     if s in BIZ:
         g = f'<p class="mt-small">רק רוצים ליווי והערכה? <a data-co="{GROUP_LINE[1]}" data-name="{GROUP_LINE[0]}" href="{PAYHIP}{GROUP_LINE[2]}" rel="noopener">{GROUP_LINE[0]} ב-{GROUP_LINE[1]} ₪, מחיר השקה</a></p>'
-    t = {"claude": "השלב הבא: הקורס המלא", "mohel-kurs": "השלב הבא: הקורס המלא למוהלים"}.get(s, "רוצים את זה בלוגו שלכם?")
+    t = {"claude": "השלב הבא: הקורס המלא", "mohel-kurs": "השלב הבא: קורס מוהלים אונליין עם הרב דוד צדוק"}.get(s, "רוצים את זה בלוגו שלכם?")
     return meta("השלב הבא", "השלב הבא אחרי הרכישה.") + f"""<span class="mt-pill">השלב הבא</span>
 <h1 class="mt-center">{esc(t)}</h1>
 <p class="mt-center">זה השלב הבא, למי שרוצה להמשיך. תשלום חד-פעמי, בלי מנוי, כולל קבלה.</p>
@@ -206,7 +219,8 @@ def shidrug(p):
 def toda_shidrug(p):
     s = p["slug"]
     extra = "אם רכשתם את השלב שכולל קבוצה, אשלח לכם את הקישור אליה בהודעה אישית." if s in BIZ else "אחזור אליכם בהודעה אישית עם כל מה שצריך להתחיל."
-    return meta("תודה על ההזמנה", "ההזמנה התקבלה.") + f"""<p class="mt-ok" aria-hidden="true">✅</p>
+    buy = f'<span id="mt-buy" data-value="597" data-name="{esc(LADDERS[s][0][0])}" hidden></span>\n' if s == "mohel-kurs" else '<span id="mt-buy" hidden></span>\n'
+    return meta("תודה על ההזמנה", "ההזמנה התקבלה.") + buy + f"""<p class="mt-ok" aria-hidden="true">✅</p>
 <h1 class="mt-center">תודה, ההזמנה התקבלה</h1>
 <p class="mt-center">הקבלה והקבצים נשלחו למייל. {extra}</p>
 <a class="mt-btn mt-green" data-wa="toda-shidrug" href="{wa('שלום גילעד, רכשתי ואני רוצה להתחיל')}" rel="noopener">לכתוב לי בווטסאפ</a>
@@ -236,7 +250,7 @@ def next_link(s):
     if s not in LADDERS:
         return ""
     h, d = {"claude": ("רוצים ללכת עד הסוף?", "הקורס המלא: לבנות כלים משלכם עם Claude, צעד אחר צעד."),
-            "mohel-kurs": ("רוצים ללמוד את המקצוע באמת?", "הקורס המלא למוהלים, עם ליווי מעשי ותרגול על בובה.")}.get(
+            "mohel-kurs": ("רוצים ללמוד את הלכות המילה לעומק?", "קורס מוהלים אונליין עם הרב דוד צדוק: שיעורים מוקלטים, דפי סיכום ושאלות לרב. קורס עיוני – לא מחליף הכשרה מעשית והסמכה.")}.get(
         s, ("רוצים את הכלים בלוגו ובצבעים שלכם?", "כלי ממותג, ערכת כלים לאתר או עסק דיגיטלי שלם. כל האפשרויות והמחירים בדף אחד."))
     return f"""<section class="mt-up mt-next" aria-labelledby="next-h">
 <h2 id="next-h">{esc(h)}</h2>
@@ -249,11 +263,13 @@ def toda_kniya(p):
     """דף שפייהיפ מעביר אליו מיד אחרי תשלום על המוצר הזול (גילעד 24.11: "חייב קריאה לפעולה מהירה להמשיך לדף הבא בלי שום מחשבה")."""
     s = p["slug"]
     n, pr, code, lines, rec = LADDERS[s][0]  # השורות והמחיר מאותה מדרגה, כדי שלא יהיה פער
-    h = {"claude": "השלב הבא: לבנות כלים משלכם עם Claude", "mohel-kurs": "השלב הבא: ללמוד את המקצוע באמת"}.get(s, "השלב הבא: הכלים בלוגו ובצבעים שלכם")
-    li = "".join(f"<li>{esc(x)}</li>" for x in lines[:3])
+    h = {"claude": "השלב הבא: לבנות כלים משלכם עם Claude", "mohel-kurs": "השלב הבא: קורס מוהלים אונליין עם הרב דוד צדוק"}.get(s, "השלב הבא: הכלים בלוגו ובצבעים שלכם")
+    li = "".join(f"<li>{esc(x)}</li>" for x in (lines if s == "mohel-kurs" else lines[:3]))
     p0 = LADDERS[s][0][1]
+    cn, cp = CHEAP[s][0], CHEAP[s][1]
     price = f'{launch(p0) if s in BIZ else ""}{"החל מ-" if len(LADDERS[s]) > 1 else ""}{p0} ₪'
-    return meta("התשלום עבר, הקבצים במייל", "התשלום התקבל והקבצים נשלחו למייל.") + f"""<p class="mt-paid" role="status"><span aria-hidden="true">✅</span> התשלום עבר. הקבצים כבר במייל שלכם</p>
+    return meta("התשלום עבר, הקבצים במייל", "התשלום התקבל והקבצים נשלחו למייל.") + f"""<span id="mt-buy" data-value="{cp}" data-name="{esc(cn)}" hidden></span>
+<p class="mt-paid" role="status"><span aria-hidden="true">✅</span> התשלום עבר. הקבצים כבר במייל שלכם</p>
 <section class="mt-go" aria-labelledby="go-h">
 <span class="mt-pill">רגע לפני שממשיכים</span>
 <h1 id="go-h">{esc(h)}</h1>
@@ -273,8 +289,7 @@ def thanks(p):
 <h1 class="mt-center">המתנות בדרך למייל שלכם</h1>
 <p class="mt-center">זה יגיע תוך דקות. אם לא רואים, כדאי להסתכל גם בספאם ובלשונית "קידומי מכירות".</p>
 <a class="mt-btn mt-green" data-wa="thanks" href="{wa(p['wa_thanks'])}" rel="noopener">בונוס בווטסאפ: {esc(p['wa_bonus'])}</a>
-{cheap(p)}
-{next_link(s)}
+{(next_link(s) + chr(10) + cheap(p)) if s == "mohel-kurs" else (cheap(p) + chr(10) + next_link(s))}
 <p class="mt-trust">{esc(C['chesed'])}</p>
 <p class="mt-priv"><a href="/kelim/pratiut/">פרטיות</a></p>
 """

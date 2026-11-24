@@ -4,7 +4,7 @@
   var slug = location.pathname.split('/')[2] || '';
   var path = location.pathname.replace(/\/+$/, '').split('/');
   var leaf = path[path.length - 1];
-  var stage = leaf === 'toda' ? 'toda' : leaf === 'shidrug' ? 'shidrug' : (leaf === 'toda-shidrug' || leaf === 'toda-kurs') ? 'toda-shidrug' : leaf === 'asara' ? 'asara' : 'landing';
+  var stage = leaf === 'toda' ? 'toda' : leaf === 'shidrug' ? 'shidrug' : (leaf === 'toda-shidrug' || leaf === 'toda-kurs') ? 'toda-shidrug' : leaf === 'toda-kniya' ? 'toda-kniya' : leaf === 'asara' ? 'asara' : 'landing';
   function fb(type, data) { try { if (window.fbq) fbq('track', type, data || {}); } catch (e) {} }
   function ga(name, data) { try { if (window.gtag) gtag('event', name, data || {}); } catch (e) {} }
   function ev(name, ch) {
@@ -18,6 +18,24 @@
   // הרשמה הושלמה: דף תודה אחרי רכישה, פעם אחת בלבד לכל דפדפן
   if (stage === 'toda-shidrug') {
     try { if (!sessionStorage.getItem('mt_cr_' + slug)) { sessionStorage.setItem('mt_cr_' + slug, '1'); fb('CompleteRegistration', { content_name: 'matana_' + slug }); ga('sign_up', { page: slug }); } } catch (e) {}
+  }
+  // רכישה אמיתית (24.11.2026): רק בדפים שפייהיפ מעביר אליהם אחרי תשלום, ורק אם הגיעו מלחיצת קנייה ב-24 השעות האחרונות
+  // או מ-payhip. כניסה ישירה לקישור לא נספרת. פעם אחת לכל דף בדפדפן (12 שעות).
+  if (stage === 'toda-kniya' || stage === 'toda-shidrug') {
+    try {
+      var co = null, now = Date.now(), pk = 'mt_pu_' + slug + '_' + leaf;
+      try { co = JSON.parse(localStorage.getItem('mt_co') || 'null'); } catch (e) {}
+      if (co && !(now - (co.ts || 0) < 864e5)) co = null;
+      var fromPay = /payhip/i.test(document.referrer || '');
+      var last = +localStorage.getItem(pk) || 0;
+      if ((co || fromPay) && now - last > 432e5) {
+        var mb = $('#mt-buy'), dv = mb ? parseFloat(mb.getAttribute('data-value')) || 0 : 0;
+        var val = co && co.price ? +co.price : dv, nm = (co && co.name) || (mb && mb.getAttribute('data-name')) || ('matana_' + slug);
+        localStorage.setItem(pk, String(now));
+        localStorage.removeItem('mt_co');
+        fb('Purchase', { value: val, currency: 'ILS', content_name: nm });
+      }
+    } catch (e) {}
   }
   var h1 = $('h1[data-h]');
   if (h1) { try { var m = JSON.parse(h1.getAttribute('data-h')), c = q.get('utm_content'); if (c && m[c]) h1.textContent = m[c]; } catch (e) {} }
@@ -44,6 +62,7 @@
     if (c) {
       var val = parseFloat(c.getAttribute('data-co')) || 0, nm = c.getAttribute('data-name') || '';
       fb('InitiateCheckout', { value: val, currency: 'ILS', content_name: nm });
+      try { localStorage.setItem('mt_co', JSON.stringify({ price: val, name: nm, ts: Date.now() })); } catch (e) {}
       ga('begin_checkout', { currency: 'ILS', value: val, items: [{ item_name: nm, price: val }], page: slug });
     }
   });
