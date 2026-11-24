@@ -520,8 +520,10 @@ function wrapGift(inner, unsub, slug) {
     (unsub ? '<div style="margin-top:10px;font-size:12px;color:#999">קיבלתם את המייל כי ביקשתם מתנה באתר וסימנתם שתרצו טיפים וכלים. לא רוצים יותר? <a href="' + unsub + '" style="color:#999">להסרה בלחיצה אחת</a>.</div>' : '') +
     '</div>';
 }
-function giftSend(email, subject, html) {
-  MailApp.sendEmail({ to: email, subject: subject, htmlBody: html, body: toText(html), name: CFG.OWNER_NAME, replyTo: CFG.OWNER_EMAIL });
+function giftSend(email, subject, html, slug) {
+  // משפך קלוד נשלח מתיבת הכלים, בשם "גילעד רחמים – לומדים קלוד"
+  var nm = slug === 'claude' ? 'גילעד רחמים – לומדים קלוד' : CFG.OWNER_NAME;
+  MailApp.sendEmail({ to: email, subject: subject, htmlBody: html, body: toText(html), name: nm, replyTo: CFG.OWNER_EMAIL });
 }
 
 // 12 הפרומפטים (מתנת Claude) – מועתקים מדף קבוצת Claude באתר
@@ -557,7 +559,7 @@ function sendGiftEmail(name, email, token, consent, slug) {
   inner += 'שאלה, או משהו שחסר לכם? פשוט ענו למייל הזה, או ' + link('https://wa.me/' + CFG.WA_INTL + '?text=' + encodeURIComponent('שלום גילעד, קיבלתי את המתנה. '), 'כתבו לי בווטסאפ') + '.<br><br>' +
     (consent === 'כן' ? 'סימנתם שתרצו טיפים: אשלח לכם בשבועיים הקרובים חמישה מיילים קצרים, טיפ אחד וכלי חינמי בכל פעם, ואפשר להפסיק בכל רגע.<br><br>' : '') +
     'בברכה,<br>גילעד';
-  giftSend(email, h[0], wrapGift(inner, consent === 'כן' ? unsubLink(token) : '', slug));
+  giftSend(email, h[0], wrapGift(inner, consent === 'כן' ? unsubLink(token) : '', slug), slug);
 }
 
 // ---------- סדרת המיילים לדפי המתנה ----------
@@ -642,7 +644,7 @@ function giftSeries_(dryRun) {
     var m = giftMail(slug, nxt[0]), html = wrapGift(m[1].replace(/שלום \{שם\}/g, gHello(r[C['שם']])), unsubLink(r[C['טוקן']]), slug);
     if (dryRun) { sent.push((i + 1) + ':' + slug + ':' + nxt[0]); continue; }
     try {
-      giftSend(r[C['מייל']], m[0], html);
+      giftSend(r[C['מייל']], m[0], html, slug);
       sent.push((i + 1) + ':' + slug + ':' + nxt[0]);
       sh.getRange(i + 1, C['שלב בסדרה'] + 1).setValue(nxt[0]);
       var after = GIFT_STEPS[idx + 2];
