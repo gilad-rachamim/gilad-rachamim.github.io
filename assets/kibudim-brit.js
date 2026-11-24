@@ -72,7 +72,7 @@ function shareData(from){
 /* קישור לכרטיס בשפה של ההורים – לחלון "לשלוח בשפה שלהם" (mohel-hodaot.js) */
 window.hoSuffix=function(lg){var s=SITE;SITE='https://hakelim.com/kodesh/kibudim-brit/'+(lg==='ru'||lg==='en'?lg+'/':'');try{return shareData('mohel');}finally{SITE=s;}};
 function hoFill(){var t=$('ho-src');if(!t||t.value||S.mode!=='mohel')return;
- t.value='שלום וברוכים הבאים!\nהכנתי לכם כרטיס כיבודים לברית. פותחים את הקישור, כותבים מי מכובד בכל כיבוד, ושולחים לי בחזרה.'+(S.mname?'\n'+S.mname:'');}
+ t.value='שלום וברוכים הבאים!\nהכנתי לכם רשימה של הכיבודים בברית המילה של הבן שלכם. פותחים את הקישור, כותבים את השם של מי שמקבל כל כיבוד, ושולחים לי בחזרה.'+(S.mname?'\n'+S.mname:'');}
 function readHash(){
  var m=location.hash.match(/[#&]d=([\w-]+)/); if(!m)return;
  try{
