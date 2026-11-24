@@ -8,6 +8,8 @@ const CATALOG = 'https://hakelim.com/assets/catalog.json';
 const MODELS = ['@cf/meta/llama-3.3-70b-instruct-fp8-fast', '@cf/meta/llama-4-scout-17b-16e-instruct'];
 const GEMINI = ['gemini-3.5-flash-lite', 'gemini-3.5-flash'];   // רק אם יוגדר מפתח; הדגמים הקודמים (2.5) כבר לא קיימים
 const wait = (p, ms) => Promise.race([p, new Promise((_, no) => setTimeout(() => no(new Error('timeout')), ms))]);
+// מפסק: מודל Gemini שנתקע או החזיר עומס יוצא ל-5 דקות (לכל מופע של השרת בנפרד)
+const tripped = new Map(), TRIP = 300000;
 const DAILY = 40;   // שאלות ליום לכל רשת (טביעה יומית)
 
 const json = (o, s = 200, h = {}) => new Response(JSON.stringify(o), { status: s, headers: { 'content-type': 'application/json; charset=utf-8', ...h } });
@@ -55,23 +57,8 @@ async function llm(env, q, cand) {
     + 'לכל כלי כתוב בעברית משפט קצר אחד "why" (עד 12 מילים) שמסביר למה זה מתאים לבקשה, בלי המילה "חינם". החזר JSON בלבד: [{"u":"<נתיב מהרשימה>","why":"..."}]. אסור להמציא נתיבים.';
   const user = 'בקשה: ' + q + '\n\nרשימת הכלים:\n' + list;
   const keys = String(env.GEMINI_KEYS || '').split(/[\s,]+/).filter(Boolean);
-  if (keys.length) {
-    for (const m of GEMINI) {
-      try {
-        const gen = { responseMimeType: 'application/json', temperature: 0.2 };
-        if (!/flash-lite/.test(m)) gen.thinkingConfig = { thinkingBudget: 0 };   // הדגמים הקלים דוחים את ההגדרה (400)
-        const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent', {
-          method: 'POST', signal: AbortSignal.timeout(6000),
-          headers: { 'content-type': 'application/json', 'x-goog-api-key': keys[Math.floor(Math.random() * keys.length)] },
-          body: JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents: [{ role: 'user', parts: [{ text: user }] }], generationConfig: gen }) });
-        if (!r.ok) continue;
-        const j = await r.json();
-        const t = j.candidates && j.candidates[0] && j.candidates[0].content.parts.map(p => p.text).join('');
-        if (t) return { t, via: 'gemini' };
-      } catch (e) { /* ננסה הבא */ }
-    }
-  }
-  if (env.AI) {
+  const llama = async () => {
+    if (!env.AI) throw new Error('no ai');
     for (const m of MODELS) {
       try {
         const r = await wait(env.AI.run(m, { messages: [{ role: 'system', content: system }, { role: 'user', content: user }], max_tokens: 500, temperature: 0.2 }), 12000);
@@ -79,8 +66,38 @@ async function llm(env, q, cand) {
         if (t) return { t, via: 'llama' };
       } catch (e) { /* ננסה את הבא */ }
     }
-  }
-  throw new Error('no model');
+    throw new Error('no model');
+  };
+  const live = keys.length ? GEMINI.filter(m => !(tripped.get(m) > Date.now())) : [];
+  if (!live.length) return llama();
+  const gemini = async () => {
+    for (const m of live) {
+      try {
+        const gen = { responseMimeType: 'application/json', temperature: 0.2 };
+        if (!/flash-lite/.test(m)) gen.thinkingConfig = { thinkingBudget: 0 };   // הדגמים הקלים דוחים את ההגדרה (400)
+        const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent', {
+          method: 'POST', signal: AbortSignal.timeout(4000),
+          headers: { 'content-type': 'application/json', 'x-goog-api-key': keys[Math.floor(Math.random() * keys.length)] },
+          body: JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents: [{ role: 'user', parts: [{ text: user }] }], generationConfig: gen }) });
+        if (!r.ok) { if (r.status >= 500 || r.status === 429) tripped.set(m, Date.now() + TRIP); continue; }
+        const j = await r.json();
+        const t = j.candidates && j.candidates[0] && j.candidates[0].content.parts.map(p => p.text).join('');
+        if (t) return { t, via: 'gemini' };
+      } catch (e) { tripped.set(m, Date.now() + TRIP); }
+    }
+    throw new Error('gemini down');
+  };
+  // מירוץ: Gemini מתחיל; לא ענה תוך 1.5 שנ' (או נכשל) – Llama מתחיל במקביל, והראשון שעונה מנצח
+  const main = gemini();
+  let done = false;
+  main.then(() => { done = true; }, () => {});
+  const later = new Promise((res, rej) => {
+    const go = () => { if (done) return rej(new Error('skip')); llama().then(res, rej); };
+    const tm = setTimeout(go, 1500);
+    main.then(() => clearTimeout(tm), () => { clearTimeout(tm); go(); });
+  });
+  try { return await Promise.any([main, later]); }
+  catch (e) { throw new Error('no model'); }
 }
 async function sha(t) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
 async function limited(req) {
