@@ -182,8 +182,8 @@ async function transcribe(env, parts, opts) {
 }
 
 // פתרון: Gemini הראשי; אם עמוס – gpt-oss (ותמונה מועתקת קודם לטקסט); ואם גם הוא לא – flash-lite
-// מירוץ: אם הדגם הראשי לא ענה תוך 20 שניות, הגיבוי מתחיל במקביל והראשון שעונה מנצח (גוגל נתקע לפעמים דקות)
-const HEDGE_MS = 20000;
+// מירוץ: אם הדגם הראשי לא ענה תוך 12 שניות, הגיבוי מתחיל במקביל והראשון שעונה מנצח (גוגל נתקע לפעמים דקות)
+const HEDGE_MS = 12000;
 async function solver(env, system, parts, schema, opts) {
   const first = gemini(env, system, parts, schema, opts);
   let t;
@@ -214,9 +214,20 @@ async function solverBackup(env, system, parts, schema, opts, e) {
   }
 }
 // בודק שני: עדיף משפחת דגמים אחרת (gpt-oss), ואם אין – Gemini
+// מירוץ: gpt-oss מתחיל; לא ענה תוך 8 שניות (או נפל) – Gemini בודק במקביל, והראשון שעונה מנצח
+const CHECK_HEDGE_MS = 8000;
 async function checker(env, system, parts, schema, opts) {
-  try { return { data: await workersAI(env, system, asText(parts), schema), model: AI_MODEL }; }
-  catch (e) { return await gemini(env, system, parts, schema, opts); }
+  const ai = workersAI(env, system, asText(parts), schema).then(data => ({ data, model: AI_MODEL }));
+  let t;
+  const late = new Promise(r => { t = setTimeout(() => r('late'), (opts && opts.checkHedge) || CHECK_HEDGE_MS); });
+  const hedge = (async () => {
+    const w = await Promise.race([ai.then(() => 'ok', () => 'fail'), late]);
+    clearTimeout(t);
+    if (w === 'ok') return ai;
+    return gemini(env, system, parts, schema, opts);
+  })();
+  try { return await Promise.any([ai, hedge]); }
+  catch (e) { throw (e.errors && e.errors[e.errors.length - 1]) || e; }
 }
 
 function questionParts(body) {

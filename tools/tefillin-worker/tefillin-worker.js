@@ -202,7 +202,7 @@ async function geminiModel(env, model, parts, system, schema, ms) {
   }
   throw last || new Error(model + ' skipped');
 }
-// מירוץ: הדגם הראשי מתחיל; לא ענה תוך 4 שניות (או נפל) – הדגמים הבאים מתחילים במקביל, והראשון שעונה מנצח
+// מירוץ: הדגם הראשי מתחיל; לא ענה תוך 2 שניות (או נפל) – הדגמים הבאים מתחילים במקביל, והראשון שעונה מנצח
 async function gemini(env, parts, system, schema = SCHEMA) {
   if (!geminiKeys(env).length) throw new Error('no key');
   const live = VISION.filter(m => !((tripped.get(m) || 0) > Date.now()));
@@ -212,7 +212,7 @@ async function gemini(env, parts, system, schema = SCHEMA) {
   first.then(() => { done = true; }, e => { console.log('gemini', live[0], String(e && e.message || e).slice(0, 80)); });
   const rest = (async () => {
     let t;
-    await Promise.race([new Promise(r => { t = setTimeout(r, 4000); }), first.catch(() => {})]);
+    await Promise.race([new Promise(r => { t = setTimeout(r, 2000); }), first.catch(() => {})]);
     clearTimeout(t);
     for (const m of live.slice(1)) {
       if (done) break;
@@ -222,6 +222,18 @@ async function gemini(env, parts, system, schema = SCHEMA) {
   })();
   try { return await Promise.any([first, rest]); }
   catch (e) { throw (e.errors && e.errors[0]) || e; }
+}
+
+// מירוץ מול הגיבוי: Gemini מתחיל; לא ענה תוך wait (או נפל) – Llama מתחיל במקביל, והראשון שעונה מנצח
+async function hedge(main, backup, wait) {
+  let done = false;
+  main.then(() => { done = true; }, () => {});
+  const later = new Promise((res, rej) => {
+    const go = () => { if (done) return rej(new Error('skip')); backup().then(res, rej); };
+    const tm = setTimeout(go, wait);
+    main.then(() => clearTimeout(tm), () => { clearTimeout(tm); go(); });
+  });
+  return Promise.any([main, later]);
 }
 
 const SHAPE1 = '{"person":true,"shel_rosh":true,"shel_yad":true,"gesture":true,"wrapped_hand":true,"screen":false,"live":true,"reason_he":"..."}';
@@ -268,11 +280,10 @@ async function check(request, env) {
   const G = GESTURES.find(x => x.g === ch.g) || GESTURES[0];
   const system = rules(G.en);
   let o, engine;
-  try { ({ o, engine } = await gemini(env, [{ inlineData: { mimeType: img.mime, data: img.data } }, { text: 'Check this selfie.' }], system)); }
-  catch (e) {
-    try { o = await llama(env, img, system); engine = 'llama'; }
-    catch (e2) { return json({ pass: false, error: 'busy', reason: 'השרת עמוס. נסו שוב בעוד דקה.', left: ch.left }); }
-  }
+  try {
+    ({ o, engine } = await hedge(gemini(env, [{ inlineData: { mimeType: img.mime, data: img.data } }, { text: 'Check this selfie.' }], system),
+      async () => ({ o: await llama(env, img, system), engine: 'llama' }), 5000));
+  } catch (e) { return json({ pass: false, error: 'busy', reason: 'השרת עמוס. נסו שוב בעוד דקה.', left: ch.left }); }
   // TEST_PASS קיים רק ב-.dev.vars לבדיקה מקומית (wrangler dev). אף פעם לא כסוד בשרת.
   const pass = verdict(o) || (env.TEST_PASS === '1' && ['localhost', '127.0.0.1'].includes(new URL(request.url).hostname));
   if (pass) await call(env, 'done', { who, day: ilDate() });
@@ -373,14 +384,11 @@ async function checkVideo(request, env) {
     const parts = [];
     fr.forEach((x, i) => parts.push({ text: `Frame ${i + 1} (t=${((Number(x.t) - t0) / 1000).toFixed(1)}s):` }, { inlineData: { mimeType: x.mime, data: x.data } }));
     parts.push({ text: `Check these ${n} frames.` });
-    ({ o, engine } = await gemini(env, parts, system, VSCHEMA));
-  } catch (e) {
-    try {
-      const one = '{"person":true,"shel_rosh":true,"shel_yad":true,"gesture_a":false,"gesture_b":true,"screen":false}';
-      const shape = '{"frames":[' + Array(n).fill(one).join(',') + '],"same_person":true,"motion":true,"wrapped_hand":true,"screen":false,"live":true,"reason_he":"..."}';
-      o = await llama(env, null, system, shape, fr, `Check these ${n} frames, in order.`); engine = 'llama';
-    } catch (e2) { return json({ pass: false, error: 'busy', reason: 'השרת עמוס. נסו שוב בעוד דקה.', left: ch.left }); }
-  }
+    const one = '{"person":true,"shel_rosh":true,"shel_yad":true,"gesture_a":false,"gesture_b":true,"screen":false}';
+    const shape = '{"frames":[' + Array(n).fill(one).join(',') + '],"same_person":true,"motion":true,"wrapped_hand":true,"screen":false,"live":true,"reason_he":"..."}';
+    ({ o, engine } = await hedge(gemini(env, parts, system, VSCHEMA),
+      async () => ({ o: await llama(env, null, system, shape, fr, `Check these ${n} frames, in order.`), engine: 'llama' }), 6000));
+  } catch (e) { return json({ pass: false, error: 'busy', reason: 'השרת עמוס. נסו שוב בעוד דקה.', left: ch.left }); }
   const miss = vwhy(o, n);
   // TEST_PASS קיים רק ב-.dev.vars לבדיקה מקומית (wrangler dev). אף פעם לא כסוד בשרת.
   const pass = !miss || (env.TEST_PASS === '1' && ['localhost', '127.0.0.1'].includes(new URL(request.url).hostname));
