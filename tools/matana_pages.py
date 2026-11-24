@@ -188,7 +188,7 @@ def shidrug(p):
     if s in BIZ:
         g = f'<p class="mt-small">רק רוצים ליווי והערכה? <a data-co="{GROUP_LINE[1]}" data-name="{GROUP_LINE[0]}" href="{PAYHIP}{GROUP_LINE[2]}" rel="noopener">{GROUP_LINE[0]} ב-{GROUP_LINE[1]} ₪, מחיר השקה</a></p>'
     t = {"claude": "השלב הבא: הקורס המלא", "mohel-kurs": "השלב הבא: הקורס המלא למוהלים"}.get(s, "רוצים את זה בלוגו שלכם?")
-    return meta("השלב הבא", "השלב הבא אחרי הרכישה.") + f"""<span class="mt-pill">תודה שרכשתם</span>
+    return meta("השלב הבא", "השלב הבא אחרי הרכישה.") + f"""<span class="mt-pill">השלב הבא</span>
 <h1 class="mt-center">{esc(t)}</h1>
 <p class="mt-center">זה השלב הבא, למי שרוצה להמשיך. תשלום חד-פעמי, בלי מנוי, כולל קבלה.</p>
 {rows}
@@ -231,6 +231,20 @@ def upsell(p):
 </section>"""
 
 
+def next_link(s):
+    """קישור מדף התודה לדף השדרוג (גילעד 24.11: "את הדף תודה אין בו שום קישור לדף מכירה אחרי!!")."""
+    if s not in LADDERS:
+        return ""
+    h, d = {"claude": ("רוצים ללכת עד הסוף?", "הקורס המלא: לבנות כלים משלכם עם Claude, צעד אחר צעד."),
+            "mohel-kurs": ("רוצים ללמוד את המקצוע באמת?", "הקורס המלא למוהלים, עם ליווי מעשי ותרגול על בובה.")}.get(
+        s, ("רוצים את הכלים בלוגו ובצבעים שלכם?", "כלי ממותג, ערכת כלים לאתר או עסק דיגיטלי שלם. כל האפשרויות והמחירים בדף אחד."))
+    return f"""<section class="mt-up mt-next" aria-labelledby="next-h">
+<h2 id="next-h">{esc(h)}</h2>
+<p>{esc(d)}</p>
+<a class="mt-btn mt-gold" data-next="shidrug" href="/matana/{s}/shidrug/">לכל האפשרויות והמחירים</a>
+</section>"""
+
+
 def thanks(p):
     s = p["slug"]
     return meta("תודה! המתנות בדרך אליכם", "המתנות נשלחו למייל שלכם.") + f"""<p class="mt-ok" aria-hidden="true">🎁</p>
@@ -238,6 +252,7 @@ def thanks(p):
 <p class="mt-center">זה יגיע תוך דקות. אם לא רואים, כדאי להסתכל גם בספאם ובלשונית "קידומי מכירות".</p>
 <a class="mt-btn mt-green" data-wa="thanks" href="{wa(p['wa_thanks'])}" rel="noopener">בונוס בווטסאפ: {esc(p['wa_bonus'])}</a>
 {cheap(p)}
+{next_link(s)}
 <p class="mt-trust">{esc(C['chesed'])}</p>
 <p class="mt-priv"><a href="/kelim/pratiut/">פרטיות</a></p>
 """
