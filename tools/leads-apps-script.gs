@@ -32,7 +32,7 @@ var CFG = {
 
 // עמודות גיליון "לידים" (הסדר קובע!)
 var COLS = ['תאריך', 'שם', 'טלפון', 'מייל', 'מועד לידה', 'עיר', 'מקור', 'הסכמה לדיוור',
-            'סטטוס', 'שלב בסדרה', 'מייל הבא', 'ווטסאפ אחרון', 'טוקן', 'הערות', 'עמוד', 'utm', 'נשלח לאחרונה'];
+            'סטטוס', 'שלב בסדרה', 'מייל הבא', 'ווטסאפ אחרון', 'טוקן', 'הערות', 'עמוד', 'utm', 'נשלח לאחרונה', 'שלב'];
 var C = {}; COLS.forEach(function (n, i) { C[n] = i; });
 
 // ---------- קליטת טופס ----------
@@ -69,6 +69,7 @@ function doPost(e) {
     row[C['ווטסאפ אחרון']] = ''; row[C['שלב בסדרה']] = ''; row[C['נשלח לאחרונה']] = '';
     row[C['טוקן']] = token; row[C['הערות']] = dup ? 'כבר נרשם/ה בעבר (שורה ' + dup + ')' : '';
     row[C['עמוד']] = clean(p['_page']); row[C['utm']] = utm;
+    if (gift) { row[C['שלב']] = 'ליד'; ensureStageCol_(sh); }   // עמודת השלב: ליד / קנה קטן / קנה גדול
     sh.appendRow(row.map(sheetSafe));
     sh.getRange(sh.getLastRow(), C['טלפון'] + 1).setNumberFormat('@').setValue(phone); // לשמור את ה-0 המוביל
 
@@ -460,12 +461,51 @@ function backfillLeadContacts() {
 // ---------- דפי מתנה קצרים /matana/ (24.11.2026) ----------
 // מקור הטופס: "מתנה: <שם הדף>". המתנה יוצאת מיד גם בלי הסכמה; סדרת חמשת המיילים (ימים 2,4,7,10,14) רק למי שסימן הסכמה.
 // הנתונים (רשימת המתנות לכל דף) נוצרים מ-tools/data/matana-pages.json על ידי tools/matana_gs_patch.py.
-var MATANA = {"roe": {"gifts": [["מדריך: אילו מסמכים להביא לרואה חשבון", "/kelim/mismachim-leroe-cheshbon/", "גם כקובץ PDF להדפסה: /assets/mismachim-leroe-cheshbon.pdf"], ["מחשבון החזר מס", "/kesef/hechzer/", "בדיקה בשניות כמה אפשר לקבל בחזרה"], ["מחשבון מקדמות מס הכנסה", "/kelim/cheshbon/mikdamot/", "כמה לשלם בכל חודש"], ["מחשבון ברוטו-נטו", "/kesef/bruto-neto/", "מהמשכורת ברוטו לנטו"]]}, "orchei-din": {"gifts": [["מדריך: מה מגיע לעובד שפוטר", "/kelim/mah-magia-leoved-sheputar/", "גם כקובץ PDF להדפסה: /assets/mah-magia-leoved-sheputar.pdf"], ["זכויות בפיטורין ובהתפטרות", "/kesef/zchuyot-pitorin/", "מה מגיע ומתי"], ["פיצויי פיטורין", "/kesef/pitzuyim-pitorin/", "חישוב לפי ותק ושכר"], ["פיצויים לעובד שעתי", "/kesef/pitzuyim-shaati/", "כשהשכר לפי שעה"], ["הודעה מוקדמת", "/kesef/hodaa-mukdemet/", "כמה ימים מגיעים"], ["פדיון חופשה", "/kesef/pidyon-chufsha/", "כמה שווים ימי החופשה שנשארו"], ["דמי הבראה", "/kesef/dmey-havraa/", "הסכום לפי ותק"], ["שעות נוספות", "/kesef/shaot-nosafot/", "125% ו-150% בחישוב אחד"]]}, "esek": {"gifts": [["תפריט דיגיטלי עם QR", "/esek/tafrit/", "מקלידים מנות, בוחרים צבע ומדפיסים שלט"], ["יוצר קוד QR", "/esek/qr/", "קוד QR לכל קישור, להורדה"], ["תמחור מנה", "/esek/tmchur-mana/", "עלות, מחיר מומלץ ורווח חודשי"], ["מודעת מבצע לסטטוס", "/esek/mivtza/", "מודעה מוכנה לשיתוף"], ["הזמנות בווטסאפ עם QR", "/esek/hazmana-vatsap/", "לקוחות מזמינים אליכם ישר"]]}, "kelim": {"gifts": [["תמלול הקלטות", "/kelim/tamlul/", "הקלטה לטקסט בעברית"], ["תרגום", "/kelim/tochen/tirgum/", "תרגום טקסט ומסמכים"], ["הקראת טקסט בקול אנושי", "/kelim/tochen/hakraa/", "טקסט לקובץ שמע"], ["הנפשת תמונות", "/kelim/tochen/chaye/", "תמונה ישנה שמתחילה לזוז"], ["ניסוח מיילים", "/kelim/tochen/mail/", "נוסחים מוכנים לכל מצב"], ["חתימה על מסמכי PDF", "/kelim/machshev/chatima/", "בלי להדפיס ולסרוק"], ["פקס בחינם", "/kelim/machshev/fax/", "חלופה לפקס"], ["סידור תיקיות", "/kelim/machshev/sader/", "סדר בקבצים במחשב"], ["הבנת תלוש שכר", "/kesef/tlush/", "מה כתוב בכל שורה"], ["תזכורות", "/kelim/briut/tizkorot/", "תזכורות לתרופות ולמשימות"]]}, "claude": {"gifts": []}};
+var MATANA = {"roe": {"gifts": [["מדריך: אילו מסמכים להביא לרואה חשבון", "/kelim/mismachim-leroe-cheshbon/", "גם כקובץ PDF להדפסה: /assets/mismachim-leroe-cheshbon.pdf"], ["מחשבון החזר מס", "/kesef/hechzer/", "בדיקה בשניות כמה אפשר לקבל בחזרה"], ["מחשבון מקדמות מס הכנסה", "/kelim/cheshbon/mikdamot/", "כמה לשלם בכל חודש"], ["מחשבון ברוטו-נטו", "/kesef/bruto-neto/", "מהמשכורת ברוטו לנטו"]]}, "orchei-din": {"gifts": [["מדריך: מה מגיע לעובד שפוטר", "/kelim/mah-magia-leoved-sheputar/", "גם כקובץ PDF להדפסה: /assets/mah-magia-leoved-sheputar.pdf"], ["זכויות בפיטורין ובהתפטרות", "/kesef/zchuyot-pitorin/", "מה מגיע ומתי"], ["פיצויי פיטורין", "/kesef/pitzuyim-pitorin/", "חישוב לפי ותק ושכר"], ["פיצויים לעובד שעתי", "/kesef/pitzuyim-shaati/", "כשהשכר לפי שעה"], ["הודעה מוקדמת", "/kesef/hodaa-mukdemet/", "כמה ימים מגיעים"], ["פדיון חופשה", "/kesef/pidyon-chufsha/", "כמה שווים ימי החופשה שנשארו"], ["דמי הבראה", "/kesef/dmey-havraa/", "הסכום לפי ותק"], ["שעות נוספות", "/kesef/shaot-nosafot/", "125% ו-150% בחישוב אחד"]]}, "esek": {"gifts": [["תפריט דיגיטלי עם QR", "/esek/tafrit/", "מקלידים מנות, בוחרים צבע ומדפיסים שלט"], ["יוצר קוד QR", "/esek/qr/", "קוד QR לכל קישור, להורדה"], ["תמחור מנה", "/esek/tmchur-mana/", "עלות, מחיר מומלץ ורווח חודשי"], ["מודעת מבצע לסטטוס", "/esek/mivtza/", "מודעה מוכנה לשיתוף"], ["הזמנות בווטסאפ עם QR", "/esek/hazmana-vatsap/", "לקוחות מזמינים אליכם ישר"]]}, "kelim": {"gifts": [["תמלול הקלטות", "/kelim/tamlul/", "הקלטה לטקסט בעברית"], ["תרגום", "/kelim/tochen/tirgum/", "תרגום טקסט ומסמכים"], ["הקראת טקסט בקול אנושי", "/kelim/tochen/hakraa/", "טקסט לקובץ שמע"], ["הנפשת תמונות", "/kelim/tochen/chaye/", "תמונה ישנה שמתחילה לזוז"], ["ניסוח מיילים", "/kelim/tochen/mail/", "נוסחים מוכנים לכל מצב"], ["חתימה על מסמכי PDF", "/kelim/machshev/chatima/", "בלי להדפיס ולסרוק"], ["פקס בחינם", "/kelim/machshev/fax/", "חלופה לפקס"], ["סידור תיקיות", "/kelim/machshev/sader/", "סדר בקבצים במחשב"], ["הבנת תלוש שכר", "/kesef/tlush/", "מה כתוב בכל שורה"], ["תזכורות", "/kelim/briut/tizkorot/", "תזכורות לתרופות ולמשימות"]]}, "claude": {"gifts": []}, "mohel-kurs": {"gifts": [["איך נהיים מוהל: מפת הדרך", "/assets/mohel-mapat-derech.pdf", "6 שלבים בקובץ אחד, להורדה"]]}};
 var GIFT_STEPS = [['G1', 2], ['G2', 4], ['G3', 7], ['G4', 10], ['G5', 14]];
 var CHESED = 'מיזם חסד, בחינם, בלי פרסומות ובלי כוונת רווח';
 var PAY = { branded: 'https://payhip.com/b/M5xC6', kit: 'https://payhip.com/b/8utXB', digital: 'https://payhip.com/b/bPiCF', group: 'https://payhip.com/b/kNyeO' };
 // מוצר זול לכל דף (39 ₪) – מתמלא בשלב ב' כשהמוצר חי ב-Payhip: { name: '', price: '39 ₪', url: '', what: ['..'] }
-var CHEAP = {};
+var CHEAP = {
+  'roe': { name: 'ערכת דפי לקוח לרואה חשבון', price: '39 ₪', url: 'https://payhip.com/b/jaDfg', what: ['דפי לקוח מוכנים להדפסה ולשליחה', 'רשימת מסמכים, תזכורות והסברים', 'קבצי PDF ו-Word שאפשר לערוך'] },
+  'orchei-din': { name: 'ערכת דפי לקוח לדיני עבודה', price: '39 ₪', url: 'https://payhip.com/b/2sQ9Y', what: ['דפי לקוח מוכנים למשרד', 'זכויות בפיטורין, טפסי איסוף מסמכים והסברים ללקוח', 'קבצי PDF ו-Word'] },
+  'esek': { name: 'ערכת השקה לעסק', price: '39 ₪', url: 'https://payhip.com/b/uYQyE', what: ['30 פוסטים מוכנים בחמש קבוצות', 'מבצעים, הזמנות והכרות', 'לעריכה ולהדפסה'] },
+  'kelim': { name: 'ערכת השקה לעסק', price: '39 ₪', url: 'https://payhip.com/b/uYQyE', what: ['30 פוסטים מוכנים בחמש קבוצות', 'מבצעים, הזמנות והכרות', 'לעריכה ולהדפסה'] },
+  'mohel-kurs': { name: 'תיק המוהל', price: '97 ₪', url: 'https://payhip.com/b/08VGv', what: ['ערכה מסודרת למוהל בתחילת הדרך'] }
+};
+// ערך כל מוצר (₪) לפי מזהה Payhip – קובע אם הקונה "קנה קטן" או "קנה גדול"
+var PRODUCT_VALUE = { 'jaDfg': 39, '2sQ9Y': 39, 'uYQyE': 39, 'kNyeO': 18, '08VGv': 97, 'M5xC6': 290, '8utXB': 590, 'bPiCF': 990, 'mXida': 147, 'DI9mU': 597 };
+function ensureStageCol_(sh) {
+  if (sh.getRange(1, C['שלב'] + 1).getValue() !== 'שלב') sh.getRange(1, C['שלב'] + 1).setValue('שלב');
+}
+// מסמנים קונה: סטטוס "קנה" (מפסיק את סדרת הלידים), שלב "קנה קטן" או "קנה גדול". product = מזהה Payhip או מחיר
+function markBuyer(email, product) {
+  var sh = sheet(SpreadsheetApp.getActive(), CFG.SHEET_LEADS, COLS);
+  ensureStageCol_(sh);
+  var val = PRODUCT_VALUE[product] || Number(product) || 0, stage = val >= 147 ? 'קנה גדול' : 'קנה קטן';
+  var data = sh.getDataRange().getValues(), n = 0;
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][C['מייל']]).toLowerCase() !== String(email).toLowerCase()) continue;
+    sh.getRange(i + 1, C['סטטוס'] + 1).setValue('קנה');
+    sh.getRange(i + 1, C['שלב'] + 1).setValue(stage);
+    sh.getRange(i + 1, C['מייל הבא'] + 1).setValue('');
+    n++;
+  }
+  log('markBuyer ' + email + ' ' + product + ' -> ' + stage + ' (' + n + ' שורות)');
+  return n;
+}
+// דוח לרב צדוק: כמה לידים הגיעו לדף קורס המוהלים לפי מקור (utm), ושולח לגילעד. לא נשלח לאף אחד אחר
+function tzadokReport() {
+  var sh = sheet(SpreadsheetApp.getActive(), CFG.SHEET_LEADS, COLS), data = sh.getDataRange().getValues(), by = {}, tot = 0;
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][C['מקור']]) !== 'מתנה: mohel-kurs') continue;
+    var u = String(data[i][C['utm']] || '').match(/utm_campaign=([^&]*)/); var k = u ? u[1] : 'ישיר';
+    by[k] = (by[k] || 0) + 1; tot++;
+  }
+  var lines = Object.keys(by).map(function (k) { return k + ': ' + by[k]; });
+  MailApp.sendEmail(CFG.OWNER_EMAIL, 'דוח קורס המוהלים: ' + tot + ' לידים', lines.join(String.fromCharCode(10)) || 'עדיין אין לידים');
+  return tot;
+}
 // מנהלים שעברו למעקב: סטטוס "קנה" = סדרת הקונים (בלי הצעות)
 function isGift_(src) { return /^מתנה:/.test(String(src || '')); }
 function giftSlug_(src) { return String(src || '').replace(/^מתנה:\s*/, '').trim(); }
@@ -497,6 +537,7 @@ var GIFT_HEAD = {
   'roe': ['המתנות לרואי חשבון, כמו שביקשתם', 'המתנות לרואי חשבון, מוכנות. הכל בחינם ואפשר להעביר ללקוחות כמו שהוא:'],
   'orchei-din': ['המתנות לעורכי דין, כמו שביקשתם', 'המתנות לעורכי דין, מוכנות. מידע כללי ולא ייעוץ משפטי, והכלים בחינם:'],
   'esek': ['המתנות לבעלי עסקים, כמו שביקשתם', 'המתנות לעסק שלכם, מוכנות. הכל בחינם, בלי הרשמה:'],
+  'mohel-kurs': ['מפת הדרך למוהל, כמו שביקשתם', 'מפת הדרך "איך נהיים מוהל", מוכנה. אפשר להוריד ולשמור:'],
   'claude': ['12 הפרומפטים ל-Claude, כמו שביקשתם', 'הנה 12 הפרומפטים. מעתיקים, מחליפים את מה שבסוגריים מרובעים, ומדביקים:'],
   'kelim': ['10 הכלים החינמיים, כמו שביקשתם', 'הנה עשרת הכלים הכי שימושיים באתר, מסודרים לפי תחום. הכל בחינם ובלי הרשמה:']
 };
@@ -534,6 +575,10 @@ var GIFT_VALUE = {
     G1: ['שלט QR אחד על הדלפק, והלקוח כבר בווטסאפ שלכם', 'הלקוח כבר מחזיק טלפון ביד. QR על הדלפק, על הכרטיס ועל החשבונית שפותח צ׳אט ישר אליכם הופך מבט מזדמן לפנייה, בלי להקליד מספר.', '/esek/qr/', 'יוצר קוד QR לעסק'],
     G4: ['מבצע בדף אחד שמשתפים בווטסאפ', 'מבצע שנשלח כדף יפה עם כפתור, ולא כהודעת טקסט ארוכה, נקרא ומשותף הרבה יותר. אפשר להכין אחד תוך כמה דקות.', '/esek/mivtza/', 'יוצר דף מבצע']
   },
+  'mohel-kurs': {
+    G1: ['הצעד הראשון: לשמוע מוהל שכבר בדרך', 'לפני כל לימוד, שווה לשוחח עם מוהל אחד שעבר את הדרך ולשאול אותו איך נראה יום עבודה אמיתי. כל הכלים שבניתי למוהלים פתוחים לכם בחינם, ואפשר להתחיל להכיר אותם מהיום.', '/kodesh/mohalim/', 'הכלים בחינם למוהלים'],
+    G4: ['הורים בוחרים מוהל שהם סומכים עליו', 'הורים לא מתחרים על מחיר אלא על אמון. שיחה חמה לפני הברית וטלפון אחריה בונים אותו. הכרטיס הדיגיטלי למוהלים חוסך את כל החיפוש.', '/kodesh/kartis-mohel/', 'הכרטיס הדיגיטלי למוהלים']
+  },
   'claude': {
     G1: ['הפרומפט האחד שמשנה את התוצאה: "שאל אותי קודם"', 'ההבדל הכי גדול בין תוצאה בינונית לתוצאה טובה הוא לא הפרומפט המושלם, אלא שהוא שואל אתכם קודם. תנסו: "אני רוצה לבנות [מה]. לפני שאתה כותב קוד, שאל אותי עד 5 שאלות שיעזרו לך להבין מה אני צריך." שלוש דקות של שאלות חוסכות שעה של תיקונים.', '/claude-kvutza/', 'כל הפרומפטים והקבוצה'],
     G4: ['תבקשו ממנו לבדוק את עצמו', 'Claude יכול לטעות בביטחון מלא. אחרי כל תשובה חשובה כתבו: "תבדוק את עצמך: איפה אתה לא בטוח בתשובה שנתת, ומה כדאי לי לאמת בנפרד?" זה לוקח עשר שניות והופך אותו לשותף זהיר יותר.', '/claude-kvutza/', 'עוד פרומפטים לעבודה חכמה']
@@ -550,6 +595,12 @@ function giftMail(slug, step) {
   var BR = '<br><br>', L = function (u, t) { return link(u, t, step); };
   if (step === 'G1' || step === 'G4') {
     return [v[step][0], 'שלום {שם},' + BR + v[step][1] + BR + L(v[step][2], v[step][3]) + BR + 'בברכה,<br>גילעד'];
+  }
+  if (slug === 'mohel-kurs') {
+    var kb = function (u, l) { return gBtn(pUrl(u, slug, step), l); };
+    if (step === 'G2') return ['תיק המוהל – 97 ₪', 'שלום {שם},' + BR + 'אם אתם בתחילת הדרך, הכנתי ערכה מסודרת: <b>תיק המוהל</b>. 97 ₪, תשלום חד-פעמי.' + BR + kb('https://payhip.com/b/08VGv', 'לפרטים על תיק המוהל'), ];
+    if (step === 'G3') return ['הקורס המלא למוהלים, עם ליווי מעשי', 'שלום {שם},' + BR + 'מי שרוצה ללכת את כל הדרך, יש קורס מלא, כולל ליווי מעשי: תרגול על בובה, עד שהידיים בטוחות. 597 ₪, תשלום חד-פעמי.' + BR + kb('https://payhip.com/b/DI9mU', 'לפרטים על הקורס') + BR + wa('שלום גילעד, אני רוצה לשמוע על הקורס', 'שאלה? ווטסאפ'), ];
+    return ['המייל האחרון בסדרה', 'שלום {שם},' + BR + 'זה המייל האחרון בסדרה. אם אתם שוקלים ללמוד להיות מוהל, אשמח לשיחת היכרות קצרה, בלי התחייבות.' + BR + wa('שלום גילעד, אני שוקל להיות מוהל', 'לכתוב לגילעד בווטסאפ') + BR + 'בברכה,<br>גילעד'];
   }
   if (slug === 'claude') {
     var grp = gBtn(pUrl(PAY.group, slug, step), 'אני רוצה להצטרף לקבוצה');

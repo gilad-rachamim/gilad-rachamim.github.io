@@ -115,7 +115,8 @@ PIXEL = "" if not META_PIXEL_ID else f"""<script>!function(f,b,e,v,n,t,s){{if(f.
 def pixel_for(meta, url_path):
     # 24.11.2026: דפי מתנה קצרים (/matana/) – Lead נשלח מ-assets/matana.js בשליחת הטופס ובלחיצה על ווטסאפ
     if url_path.startswith("/matana/"):
-        return PIXEL
+        # InitiateCheckout עם ערך ושם מוצר נשלח מ-assets/matana.js, ולכן מסירים את המאזין הכללי כדי שלא יישלח פעמיים
+        return PIXEL.replace("document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href*=\"payhip.com\"]');if(a&&window.fbq)fbq('track','InitiateCheckout');});", "")
     # 24.11.2026: דפי המוהל (/mohel/) – מודדים את מודעות מטא למדריך; Lead בדף התודה
     if url_path.startswith("/mohel/") and not (meta.get("no_ga") or meta.get("no_pixel")):
         return PIXEL.replace("</script>", ("if(location.pathname.indexOf('/mohel/todah')===0)fbq('track','Lead');fbq('track','Purchase',{value:1,currency:'ILS'});" if url_path.startswith("/mohel/todah") else "") + "</script>")
