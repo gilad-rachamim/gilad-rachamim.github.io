@@ -17,7 +17,9 @@ const MAX_Q = 5000, MAX_IMG = 4_000_000;
 // 24.11: 3.1-flash-lite ו-3.5-flash עמוסים אצל גוגל (503 / תקועים 20+ שנ׳); 3.5-flash-lite עונה תוך 0.5–1.7 שנ׳ (בלי thinkingBudget – איתו 400)
 const LITE = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite'];
 const NO_THINK_CFG = /3\.5-flash-lite/;
-const VISION = ['gemini-3.5-flash', 'gemini-3.1-flash-lite'];
+// תמונה וקול: 3.5-flash ראשון (מדויק), ואחריו הקלים שעונים מהר; 3.1-flash-lite העמוס יצא
+const VISION = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-lite-latest'];
+const NO_THINK_CFG2 = /flash-lite/;
 const AI_TEXT = ['@cf/meta/llama-4-scout-17b-16e-instruct', '@cf/mistralai/mistral-small-3.1-24b-instruct', '@cf/meta/llama-3.3-70b-instruct-fp8-fast'];
 const AI_VISION = '@cf/meta/llama-4-scout-17b-16e-instruct';
 const AI_WHISPER = '@cf/openai/whisper-large-v3-turbo';
@@ -46,7 +48,7 @@ const isTripped = tag => (tripped.get(tag) || 0) > Date.now();
 
 async function geminiOnce(model, key, system, parts, schema, timeout) {
   const gen = { temperature: 0.1, maxOutputTokens: 8192 };
-  if (!NO_THINK_CFG.test(model)) gen.thinkingConfig = { thinkingBudget: 0 };
+  if (!NO_THINK_CFG.test(model) && !NO_THINK_CFG2.test(model)) gen.thinkingConfig = { thinkingBudget: 0 };
   if (schema) { gen.responseMimeType = 'application/json'; gen.responseSchema = schema; }
   const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
     method: 'POST', signal: AbortSignal.timeout(timeout || 30000),
@@ -85,6 +87,19 @@ async function gemini(env, models, system, parts, schema, timeout, opt) {
     }
   }
   throw last || new Error('gemini spent');
+}
+
+// מירוץ מול גיבוי: Gemini מתחיל; לא ענה תוך wait (או נכשל) – הגיבוי מתחיל במקביל, והראשון שמצליח מנצח
+async function hedge(main, backup, wait) {
+  let done = false, why;
+  main.then(() => { done = true; }, e => { why = String(e && e.message || e).slice(0, 100); });
+  const later = new Promise((res, rej) => {
+    const go = () => { if (done) return rej(new Error('skip')); backup().then(o => { if (o) o.why = why || 'gemini slow'; res(o); }, rej); };
+    const tm = setTimeout(go, wait);
+    main.then(() => clearTimeout(tm), () => { clearTimeout(tm); go(); });
+  });
+  try { return await Promise.any([main, later]); }
+  catch (e) { const errs = (e && e.errors) || [e]; throw errs[errs.length - 1]; }
 }
 
 export function textRules(from, to) {
@@ -177,22 +192,22 @@ async function imageRoute(request, env, h) {
   const quota = await take(env, request, 'i', I_PER, I_CAP);
   if (!quota.ok) return json({ error: 'quota' }, 200, h);
   let out;
-  try {
-    out = (await gemini(env, VISION, imgRules(to), [{ inlineData: { mimeType: img.mime, data: img.data } }, { text: 'Read and translate the text in this image.' }], IMG_SCHEMA, 45000)).data;
-    out.engine = 'gemini';
-  } catch (e) {
-    var why = String(e && e.message || e).slice(0, 100);
-    try {
-      const r = await env.AI.run(AI_VISION, { messages: [
-        { role: 'system', content: imgRules(to) + ' Answer with JSON only: {"found":true,"src":"...","from":"en","t":"..."}' },
-        { role: 'user', content: [{ type: 'text', text: 'Read and translate the text in this image.' }, { type: 'image_url', image_url: { url: `data:${img.mime};base64,${img.data}` } }] }
-      ], max_tokens: 2048 });
-      let txt = r && (r.response || '');
-      if (typeof txt === 'object') out = txt;
-      else { txt = String(txt).replace(/^```(?:json)?\s*|\s*```$/g, ''); out = JSON.parse(txt.slice(txt.indexOf('{'), txt.lastIndexOf('}') + 1)); }
-      out.engine = 'llama'; out.why = why;
-    } catch (e2) { return json({ error: 'busy' }, 200, h); }
-  }
+  const parts = [{ inlineData: { mimeType: img.mime, data: img.data } }, { text: 'Read and translate the text in this image.' }];
+  const main = gemini(env, VISION, imgRules(to), parts, IMG_SCHEMA, 9000, { fast: true, deadline: Date.now() + 20000 })
+    .then(r => Object.assign(r.data, { engine: 'gemini' }));
+  const backup = async () => {
+    const r = await env.AI.run(AI_VISION, { messages: [
+      { role: 'system', content: imgRules(to) + ' Answer with JSON only: {"found":true,"src":"...","from":"en","t":"..."}' },
+      { role: 'user', content: [{ type: 'text', text: 'Read and translate the text in this image.' }, { type: 'image_url', image_url: { url: `data:${img.mime};base64,${img.data}` } }] }
+    ], max_tokens: 2048 });
+    let txt = r && (r.response || ''), o;
+    if (typeof txt === 'object') o = txt;
+    else { txt = String(txt).replace(/^```(?:json)?\s*|\s*```$/g, ''); o = JSON.parse(txt.slice(txt.indexOf('{'), txt.lastIndexOf('}') + 1)); }
+    o.engine = 'llama';
+    return o;
+  };
+  try { out = await hedge(main, backup, 4000); }
+  catch (e) { return json({ error: 'busy' }, 200, h); }
   out.from = String(out.from || '').slice(0, 2).toLowerCase();
   if (to === 'he') out.t = stripNiqqud(out.t || '');
   return json({ found: !!out.found && !!String(out.src || '').trim(), src: out.src || '', from: NAMES[out.from] ? out.from : '', t: out.t || '', engine: out.engine, why: out.why, left: quota.left }, 200, h);
@@ -212,21 +227,21 @@ async function voiceRoute(request, env, ctx, h) {
   if (!NAMES[to] || !/^(audio|video)\//.test(mime) || !data) return json({ error: 'bad' }, 400, h);
   const quota = await take(env, request, 'v', V_PER, V_CAP);
   if (!quota.ok) return json({ error: 'quota' }, 200, h);
-  let out, why;
-  try {
-    out = (await gemini(env, VISION, voiceRules(to), [{ inlineData: { mimeType: mime.replace(/;.*$/, ''), data } }, { text: 'Transcribe and translate this recording.' }], IMG_SCHEMA, 60000)).data;
-    out.engine = 'gemini';
-  } catch (e) {
-    why = String(e && e.message || e).slice(0, 100);
-    try {
-      const w = await env.AI.run(AI_WHISPER, { audio: data });
-      const src = String((w && w.text) || '').trim();
-      const from = String((w && w.transcription_info && w.transcription_info.language) || '').slice(0, 2);
-      if (!src) out = { found: false, src: '', from: '', t: '' };
-      else out = { found: true, src, from, t: from === to ? src : await aiText(env, src, NAMES[from] ? from : 'en', to) };
-      out.engine = 'whisper'; out.why = why;
-    } catch (e2) { return json({ error: 'busy', detail: String(e2 && e2.message || e2).slice(0, 100) }, 200, h); }
-  }
+  let out;
+  const parts = [{ inlineData: { mimeType: mime.replace(/;.*$/, ''), data } }, { text: 'Transcribe and translate this recording.' }];
+  const main = gemini(env, VISION, voiceRules(to), parts, IMG_SCHEMA, 12000, { fast: true, deadline: Date.now() + 25000 })
+    .then(r => Object.assign(r.data, { engine: 'gemini' }));
+  const backup = async () => {
+    const w = await env.AI.run(AI_WHISPER, { audio: data });
+    const src = String((w && w.text) || '').trim();
+    const from = String((w && w.transcription_info && w.transcription_info.language) || '').slice(0, 2);
+    const o = !src ? { found: false, src: '', from: '', t: '' }
+      : { found: true, src, from, t: from === to ? src : await aiText(env, src, NAMES[from] ? from : 'en', to) };
+    o.engine = 'whisper';
+    return o;
+  };
+  try { out = await hedge(main, backup, 5000); }
+  catch (e) { return json({ error: 'busy', detail: String(e && e.message || e).slice(0, 100) }, 200, h); }
   out.from = String(out.from || '').slice(0, 2).toLowerCase();
   if (to === 'he') out.t = stripNiqqud(out.t || '');
   return json({ found: !!out.found && !!String(out.src || '').trim(), src: out.src || '', from: NAMES[out.from] ? out.from : '', t: out.t || '', engine: out.engine, why: out.why, left: quota.left }, 200, h);
