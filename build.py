@@ -112,14 +112,17 @@ GA = "" if not GA_ID else f"""<script async src="https://www.googletagmanager.co
 META_PIXEL_ID = "4627297074222937"
 PIXEL = "" if not META_PIXEL_ID else f"""<script>!function(f,b,e,v,n,t,s){{if(f.fbq)return;n=f.fbq=function(){{n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)}};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','{META_PIXEL_ID}');fbq('track','PageView');document.addEventListener('click',function(e){{var a=e.target.closest&&e.target.closest('a[href*="payhip.com"]');if(a&&window.fbq)fbq('track','InitiateCheckout');}});</script>
 """
+MT_TEST = "<script>try{var mtq=new URLSearchParams(location.search).get('mt_test');if(mtq==='1')localStorage.setItem('mt_notrack','1');if(mtq==='0')localStorage.removeItem('mt_notrack');if(localStorage.getItem('mt_notrack')==='1'){window._mtq=[];window.fbq=window._fbq=function(){window._mtq.push([].slice.call(arguments))};}}catch(e){}</script>"
 def pixel_for(meta, url_path):
     # 24.11.2026: דפי מתנה קצרים (/matana/) – Lead נשלח מ-assets/matana.js בשליחת הטופס ובלחיצה על ווטסאפ
     if url_path.startswith("/matana/"):
         # InitiateCheckout עם ערך ושם מוצר נשלח מ-assets/matana.js, ולכן מסירים את המאזין הכללי כדי שלא יישלח פעמיים
-        return PIXEL.replace("document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href*=\"payhip.com\"]');if(a&&window.fbq)fbq('track','InitiateCheckout');});", "")
+        # 24.11.2026: מתג בדיקות ?mt_test=1 (נשמר בדפדפן; ?mt_test=0 מבטל) – fbq מוחלף ברשימה מקומית window._mtq,
+        # וקוד הפיקסל עוצר ב-if(f.fbq)return, כך ששום דבר (גם לא PageView) לא נשלח למטא מהבדיקות שלנו
+        return MT_TEST + PIXEL.replace("document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href*=\"payhip.com\"]');if(a&&window.fbq)fbq('track','InitiateCheckout');});", "")
     # 24.11.2026: דפי המוהל (/mohel/) – מודדים את מודעות מטא למדריך; Lead בדף התודה
     if url_path.startswith("/mohel/") and not (meta.get("no_ga") or meta.get("no_pixel")):
-        return PIXEL.replace("</script>", ("if(location.pathname.indexOf('/mohel/todah')===0)fbq('track','Lead');fbq('track','Purchase',{value:1,currency:'ILS'});" if url_path.startswith("/mohel/todah") else "") + "</script>")
+        return PIXEL.replace("</script>", ("if(location.pathname.indexOf('/mohel/todah')===0)fbq('track','Lead');" if url_path.startswith("/mohel/todah") else "") + "</script>")
     if not meta.get("site") or meta.get("no_ga") or meta.get("no_pixel") or url_path.startswith("/nefesh/"):
         return ""
     return PIXEL

@@ -13,7 +13,8 @@ import urllib.error
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 
-MODELS = ["gemini-3.5-flash", "gemini-3.1-flash-lite"]
+# 24.11.2026: 3.1-flash-lite עמוס (503) רוב הזמן; הקלים החדשים עונים אבל דוחים thinkingConfig (400)
+MODELS = ["gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-flash-lite-latest", "gemini-3.1-flash-lite"]
 CHUNK_WORDS = 900
 API = "https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent"
 
@@ -77,15 +78,19 @@ def ask(prompt, schema, max_out=16000, tries=4):
     ks = keys()
     if not ks:
         return None
-    body = json.dumps({"contents": [{"parts": [{"text": prompt}]}], "generationConfig": {
-        "temperature": 0.1, "maxOutputTokens": max_out, "thinkingConfig": {"thinkingBudget": 0},
-        "responseMimeType": "application/json", "responseSchema": schema}}).encode("utf-8")
+    def make(think):
+        gen = {"temperature": 0.1, "maxOutputTokens": max_out, "responseMimeType": "application/json", "responseSchema": schema}
+        if think:
+            gen["thinkingConfig"] = {"thinkingBudget": 0}
+        return json.dumps({"contents": [{"parts": [{"text": prompt}]}], "generationConfig": gen}).encode("utf-8")
+    body, body_lite = make(True), make(False)
     n = 0
     for attempt in range(tries):
         for model in MODELS:
             key = ks[n % len(ks)]
             n += 1
-            req = urllib.request.Request(API % model, data=body, headers={"Content-Type": "application/json", "x-goog-api-key": key})
+            lite = "flash-lite" in model and "3.1" not in model
+            req = urllib.request.Request(API % model, data=body_lite if lite else body, headers={"Content-Type": "application/json", "x-goog-api-key": key})
             try:
                 with urllib.request.urlopen(req, timeout=180) as r:
                     j = json.loads(r.read().decode("utf-8"))

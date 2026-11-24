@@ -4,8 +4,10 @@
 // נפל המודל -> מוחזרות התאמות מילים פשוטות, בלי שגיאה למשתמש. כל נתיב מאומת מול הקטלוג.
 const ORIGINS = ['https://hakelim.com', 'https://www.hakelim.com', 'https://gilad-rachamim.github.io'];
 const CATALOG = 'https://hakelim.com/assets/catalog.json';
-const MODEL = '@cf/meta/llama-4-scout-17b-16e-instruct';
-const GEMINI = ['gemini-2.5-flash-lite', 'gemini-2.5-flash'];
+// המהיר ראשון: llama-3.3-fast כותב 5 תשובות ב-5 שנ' מול 9 שנ' של llama-4-scout (נמדד 24.11.2026)
+const MODELS = ['@cf/meta/llama-3.3-70b-instruct-fp8-fast', '@cf/meta/llama-4-scout-17b-16e-instruct'];
+const GEMINI = ['gemini-3.5-flash-lite', 'gemini-3.5-flash'];   // רק אם יוגדר מפתח; הדגמים הקודמים (2.5) כבר לא קיימים
+const wait = (p, ms) => Promise.race([p, new Promise((_, no) => setTimeout(() => no(new Error('timeout')), ms))]);
 const DAILY = 40;   // שאלות ליום לכל רשת (טביעה יומית)
 
 const json = (o, s = 200, h = {}) => new Response(JSON.stringify(o), { status: s, headers: { 'content-type': 'application/json; charset=utf-8', ...h } });
@@ -56,10 +58,12 @@ async function llm(env, q, cand) {
   if (keys.length) {
     for (const m of GEMINI) {
       try {
-        const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + keys[Math.floor(Math.random() * keys.length)], {
-          method: 'POST', headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents: [{ role: 'user', parts: [{ text: user }] }],
-            generationConfig: { responseMimeType: 'application/json', temperature: 0.2, thinkingConfig: { thinkingBudget: 0 } } }) });
+        const gen = { responseMimeType: 'application/json', temperature: 0.2 };
+        if (!/flash-lite/.test(m)) gen.thinkingConfig = { thinkingBudget: 0 };   // הדגמים הקלים דוחים את ההגדרה (400)
+        const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent', {
+          method: 'POST', signal: AbortSignal.timeout(6000),
+          headers: { 'content-type': 'application/json', 'x-goog-api-key': keys[Math.floor(Math.random() * keys.length)] },
+          body: JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents: [{ role: 'user', parts: [{ text: user }] }], generationConfig: gen }) });
         if (!r.ok) continue;
         const j = await r.json();
         const t = j.candidates && j.candidates[0] && j.candidates[0].content.parts.map(p => p.text).join('');
@@ -68,9 +72,13 @@ async function llm(env, q, cand) {
     }
   }
   if (env.AI) {
-    const r = await env.AI.run(MODEL, { messages: [{ role: 'system', content: system }, { role: 'user', content: user }], max_tokens: 700, temperature: 0.2 });
-    const t = typeof r.response === 'string' ? r.response : JSON.stringify(r.response || '');
-    return { t, via: 'llama' };
+    for (const m of MODELS) {
+      try {
+        const r = await wait(env.AI.run(m, { messages: [{ role: 'system', content: system }, { role: 'user', content: user }], max_tokens: 500, temperature: 0.2 }), 12000);
+        const t = typeof r.response === 'string' ? r.response : JSON.stringify(r.response || '');
+        if (t) return { t, via: 'llama' };
+      } catch (e) { /* ננסה את הבא */ }
+    }
   }
   throw new Error('no model');
 }
@@ -85,7 +93,7 @@ async function limited(req) {
 }
 export async function ask(env, q, items) {
   const byU = new Map(items.map(x => [x.u, x]));
-  let cand = lexical(items, q, 40);
+  let cand = lexical(items, q, 30);
   const extra = items.filter(x => x.nw && !cand.includes(x)).slice(0, 6);
   cand = cand.concat(extra);
   if (cand.length < 25) cand = cand.concat(items.filter(x => !cand.includes(x)).slice(0, 25 - cand.length));
