@@ -137,3 +137,8 @@ body[data-tool="rega"] .rel{display:none}
 .hk-thin{padding:.3rem .8rem;margin:.5rem auto}
 .hk-thin p{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
 @media print{.hk-season{display:none}}
+
+/* פס שקט לקורס אחרי כל כלי (24.11.2026) */
+.kurs-band{max-width:46rem;margin:1.6rem auto 0;padding:.7rem 1.1rem;text-align:center;border-top:1px solid var(--line)}
+.kurs-band p{margin:0;font-size:.95rem;color:var(--parchment,inherit);line-height:1.7}
+.kurs-band a{color:var(--gold);font-weight:700}
