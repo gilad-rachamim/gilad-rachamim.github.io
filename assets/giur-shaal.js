@@ -6,6 +6,13 @@
   if (!form) return;
   var API = 'https://giur-shaal.gilad4049.workers.dev';
   try { var o = localStorage.getItem('gs-api'); if (o && /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(o)) API = o; } catch (e) {}
+  /* עד שהשרת עונה, הקטע כולו מוסתר, כדי שלא יוצג טופס שלא יכול לשלוח */
+  var sec = document.getElementById('shaal'), links = [].slice.call(document.querySelectorAll('a[href="#shaal"]'));
+  function off() { if (sec) sec.hidden = true; links.forEach(function (a) { a.hidden = true; }); }
+  off();
+  fetch(API + '/ping').then(function (r) { return r.json(); }).then(function (j) {
+    if (j && j.name === 'giur-shaal') { if (sec) sec.hidden = false; links.forEach(function (a) { a.hidden = false; }); }
+  }).catch(function () {});
   var done = document.querySelector('[data-ask-done]'), res = form.querySelector('[data-ask-res]'), btn = form.querySelector('.mm-send');
   var q = form.elements.q, left = form.querySelector('[data-ask-left]'), t0 = Date.now(), busy = false, started = false;
   function used(how) { if (window.toolUsed) window.toolUsed('giur_shut_ask', { how: how }); }
