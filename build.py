@@ -340,10 +340,19 @@ LANG_FRAME = {
            "end": "Автор: Гилад Рахамим Авиад, инвалид ЦАХАЛа с тяжёлым боевым ПТСР. Проект добра (хесед), без цели получить прибыль.",
            "up": "Наверх", "install_t": "Установите на главный экран, как приложение.", "install_b": "Установить", "install_x": "Закрыть", "install_l": "Установка как приложения"},
 }
+# מסגרת דפי הכלים למוהלים בשפה אחרת (24.11.2026, גל 1): אותה מסגרת כמו בגיור, בלי פנייה לברית מבוגרים
+MOHEL_FRAME = {
+    "en": {"tools": "Tools for mohels", "wa_text": "Hello Gilad, I saw the tools for mohels. I wanted to write to you: ",
+           "share_h": "Know a mohel who could use this? Send them this page.", "share_text": "Free tools for mohels and for families before a brit milah:",
+           "feedback": "Something to fix or add? Tell me on WhatsApp", "fb_text": "Hello Gilad, a correction or suggestion about the tools for mohels: "},
+    "ru": {"tools": "Инструменты для моэлей", "wa_text": "Здравствуйте, Гилад, я видел(а) страницу инструментов для моэлей. Хотел(а) написать вам: ",
+           "share_h": "Знаете моэля, которому это пригодится? Отправьте ему эту страницу.", "share_text": "Бесплатные инструменты для моэлей и для семей перед брит-милой:",
+           "feedback": "Что-то исправить или добавить? Напишите мне в WhatsApp", "fb_text": "Здравствуйте, Гилад, исправление или предложение по инструментам для моэлей: "},
+}
 def giur_cta(lang, url):
     """בלוק פנייה לגילעד לברית מילה למבוגרים בסוף כל דף גיור (עברית/אנגלית/רוסית), חוץ מדף הברית עצמו."""
     from urllib.parse import quote
-    if "/brit-mila-lager/" in url:
+    if "/brit-mila-lager/" in url or "/kodesh/giur/" not in url:
         return ""
     base = {"he": "/kodesh/giur/", "en": "/kodesh/giur/en/", "ru": "/kodesh/giur/ru/"}[lang]
     wa = "https://wa.me/972584049049?text=" + quote(GIUR_WA_TEXT[lang])
@@ -370,22 +379,38 @@ def lang_page(html, meta, url):
     html = html.replace('<a class="skip" href="#main">דילוג לתוכן</a>', f'<a class="skip" href="#main">{ui["skip"]}</a>', 1)
     html = html.replace('<nav class="crumbs" aria-label="פירורי לחם">', f'<nav class="crumbs" aria-label="{ui["crumbs"]}">', 1)
     wa = "https://wa.me/972584049049?text=" + quote(GIUR_WA_TEXT[lang])
-    base = f"/kodesh/giur/{lang}/"
+    giur = "/kodesh/giur/" in url
+    base = f"/kodesh/giur/{lang}/" if giur else f"/kodesh/mohalim/{lang}/"
+    if not giur:
+        wa = "https://wa.me/972584049049?text=" + quote(MOHEL_FRAME[lang]["wa_text"])
     langs = "".join(f'<a href="{alt[l]}" hreflang="{l}" lang="{l}"' + (' aria-current="true"' if l == lang else "") + f'>{n}</a>'
                     for l, n in (("he", "עברית"), ("en", "English"), ("ru", "Русский")) if l in alt)
-    nav = (f'<nav class="topnav" aria-label="{f["navlabel"]}"><a href="{base}">{f["roadmap"]}</a><a href="{base}brit-mila-lager/">{f["brit"]}</a>'
-           f'<a href="{wa}" rel="noopener">{f["write"]}</a>{langs}</nav>')
+    if giur:
+        nav = (f'<nav class="topnav" aria-label="{f["navlabel"]}"><a href="{base}">{f["roadmap"]}</a><a href="{base}brit-mila-lager/">{f["brit"]}</a>'
+               f'<a href="{wa}" rel="noopener">{f["write"]}</a>{langs}</nav>')
+    else:
+        mf = MOHEL_FRAME[lang]
+        nav = (f'<nav class="topnav" aria-label="{f["navlabel"]}"><a href="{base}">{mf["tools"]}</a>'
+               f'<a href="{wa}" rel="noopener">{f["write"]}</a>{langs}</nav>')
     html = re.sub(r'<nav class="topnav" aria-label="[^"]*">.*?</nav>', lambda m: nav, html, count=1, flags=re.S)
     html = re.sub(r'(<a class="brand"[^>]*>.*?<b>)[^<]*(</b>)', lambda m: m.group(1) + f["brand"] + m.group(2), html, count=1, flags=re.S)
     html = re.sub(r'<a class="brand-sub"[^>]*>[^<]*</a>', "", html, count=1)
     html = html.replace('aria-label="לדף הראשי של מיזם הכלים"', 'aria-label="' + f["brand_label"] + '"', 1)
     html = html.replace('aria-label="חיפוש כלי"', 'aria-label="' + f["search_label"] + '"', 1)
     full = url
-    share = "https://wa.me/?text=" + quote(f["share_text"] + " " + full)
-    fb = "https://wa.me/972584049049?text=" + quote(f["fb_text"])
-    fbsec = (f'<section class="fb no-print" id="fb"><div class="in"><p class="fb-q">{f["share_h"]}</p>'
-             f'<p><a class="btn btn-gold btn-sm" href="{share}" target="_blank" rel="noopener">💬 {f["share_btn"]}</a></p>'
-             f'<p class="fb-note"><a class="gold" href="{fb}" target="_blank" rel="noopener">{f["feedback"]}</a></p></div></section>')
+    if giur:
+        share = "https://wa.me/?text=" + quote(f["share_text"] + " " + full)
+        fb = "https://wa.me/972584049049?text=" + quote(f["fb_text"])
+        fbsec = (f'<section class="fb no-print" id="fb"><div class="in"><p class="fb-q">{f["share_h"]}</p>'
+                 f'<p><a class="btn btn-gold btn-sm" href="{share}" target="_blank" rel="noopener">💬 {f["share_btn"]}</a></p>'
+                 f'<p class="fb-note"><a class="gold" href="{fb}" target="_blank" rel="noopener">{f["feedback"]}</a></p></div></section>')
+    else:
+        mf = MOHEL_FRAME[lang]
+        share = "https://wa.me/?text=" + quote(mf["share_text"] + " " + full)
+        fb = "https://wa.me/972584049049?text=" + quote(mf["fb_text"])
+        fbsec = (f'<section class="fb no-print" id="fb"><div class="in"><p class="fb-q">{mf["share_h"]}</p>'
+                 f'<p><a class="btn btn-gold btn-sm" href="{share}" target="_blank" rel="noopener">💬 {f["share_btn"]}</a></p>'
+                 f'<p class="fb-note"><a class="gold" href="{fb}" target="_blank" rel="noopener">{mf["feedback"]}</a></p></div></section>')
     cta = giur_cta(lang, url)
     html = re.sub(r'<section class="fb no-print".*?</section>', lambda m: cta + fbsec, html, count=1, flags=re.S)
     he_a = lambda href, t: f'<a href="{href}">{t}</a>'

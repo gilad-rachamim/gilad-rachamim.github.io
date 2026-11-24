@@ -1,0 +1,112 @@
+<!--meta {
+ "site": "kodesh",
+ "nav": "mohalim",
+ "lang": "en",
+ "alt": {
+  "he": "/kodesh/britot-meyuchadot/",
+  "en": "/kodesh/britot-meyuchadot/en/",
+  "ru": "/kodesh/britot-meyuchadot/ru/"
+ },
+ "crumb_root": "Jewish tools",
+ "tool": "britot_meyuchadot_en",
+ "title": "Brit Milah on Shabbat or a Festival: Special Brit Calendar",
+ "description": "Brit milah on Shabbat, a festival, Yom Kippur, Tisha B'Av or a fast: a special brit calendar for mohels, with the laws in brief and sources. Free.",
+ "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/lang-switch.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"Is a brit that falls on Shabbat postponed?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"A brit at its proper time overrides Shabbat, but there are cases where it is postponed, such as a birth by caesarean section or at twilight. The calendar shows each case with its source, and in a doubt you ask the rabbi.\"}}, {\"@type\": \"Question\", \"name\": \"What decides whether the baby was born by day or by night?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Sunset and nightfall. Choose the time of birth and the city, and the calculator checks.\"}}, {\"@type\": \"Question\", \"name\": \"Is there a difference in the diaspora?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Yes, because of the second festival day. Choose \\\"Diaspora\\\".\"}}, {\"@type\": \"Question\", \"name\": \"Is this a halachic ruling?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"No. It is a summary for study, and in every case you ask the rabbi.\"}}, {\"@type\": \"Question\", \"name\": \"What happens when the eighth day falls on Shabbat?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"A brit at its proper time, on the eighth day, is performed on Shabbat too. A postponed brit, and a brit after a caesarean section, do not override Shabbat. The calendar marks each case with the laws in brief, and in a practical case you ask the rabbi.\"}}, {\"@type\": \"Question\", \"name\": \"Is this page free?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Yes. Everything here is free, with no sign-up and no ads.\"}}]}</script>",
+ "foot": "<script src=\"/assets/vendor/hebcal-bundle/hebcal-core-6.14.7.min.js\" data-hebcal defer></script><script src=\"/assets/britot-meyuchadot.js\" defer></script>",
+ "og_title": "Brit Milah on Shabbat or a Festival – Special Brit Calendar",
+ "priority": "0.6",
+ "crumbs": [
+  [
+   "Tools for mohels",
+   "/kodesh/mohalim/en/"
+  ],
+  [
+   "Special brit calendar",
+   null
+  ]
+ ]
+} -->
+<header class="k-hero no-print">
+  <h1>Brit Milah on Shabbat or a Festival: Special Brit Calendar</h1>
+  <p class="sub">For every date of birth: when the eighth day falls on Shabbat, a festival, Yom Kippur, Tisha B'Av, Chanukah, Purim or a fast. Next to each case, the laws in brief, with sources.</p>
+</header>
+<nav class="gr-lang" aria-label="Language / שפה / Язык"><a href="/kodesh/britot-meyuchadot/" lang="he" hreflang="he">עברית</a><a href="/kodesh/britot-meyuchadot/en/" lang="en" hreflang="en" aria-current="page">English</a><a href="/kodesh/britot-meyuchadot/ru/" lang="ru" hreflang="ru">Русский</a></nav>
+<div class="tool no-print">
+  <section class="bm-box" aria-labelledby="bm-calc-h">
+    <h2 id="bm-calc-h">Calculator: born on…</h2>
+    <form class="k-form" id="bm-calc" novalidate onsubmit="return false">
+      <div class="bm-row">
+        <div class="field"><label for="bm-birth">Date of birth</label><input id="bm-birth" type="date"></div>
+        <div class="field"><label for="bm-when">When in the day?</label><select id="bm-when">
+          <option value="day">By day, before sunset</option>
+          <option value="night">At night, after nightfall</option>
+          <option value="bh">At twilight, or not sure</option>
+          <option value="time">I know the time</option></select></div>
+      </div>
+      <div class="field" id="bm-time-f" hidden><label for="bm-time">Time of birth (the city is chosen below, in the calendar)</label><input id="bm-time" type="time"></div>
+      <div class="field"><label style="display:flex;gap:.5rem;align-items:center"><input type="checkbox" id="bm-cs"> Born by caesarean section</label></div>
+    </form>
+    <div id="bm-res" aria-live="polite" hidden></div>
+  </section>
+
+  <form class="k-form" id="bm-form" novalidate onsubmit="return false">
+    <div class="bm-row">
+      <div class="field"><label for="bm-year">Year</label><select id="bm-year"></select></div>
+      <div class="field"><label for="bm-il">Where?</label><select id="bm-il"><option value="1">Land of Israel</option><option value="0">Diaspora (second festival day)</option></select></div>
+    </div>
+    <div class="field"><label for="bm-city">Sunset by city</label><select id="bm-city"></select></div>
+    <div class="field"><span class="label">What to show in the calendar?</span><div class="bm-checks">
+      <label><input type="checkbox" data-f="shabbat"> Shabbatot</label>
+      <label><input type="checkbox" data-f="yt"> Festivals</label>
+      <label><input type="checkbox" data-f="yk"> Yom Kippur</label>
+      <label><input type="checkbox" data-f="tb"> Tisha B'Av</label>
+      <label><input type="checkbox" data-f="chanuka"> Chanukah</label>
+      <label><input type="checkbox" data-f="purim"> Purim</label>
+      <label><input type="checkbox" data-f="fast"> Fasts</label>
+    </div></div>
+  </form>
+  <p id="bm-count"></p>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="bm-print">Print / save as PDF</button>
+  </div>
+</div>
+<div class="bm-sheet" id="bm-out"><p>Loading the calendar…</p></div>
+<div class="tool no-print">
+  <p class="disclaimer">The calendar is calculated automatically from the Hebrew calendar. The laws here are a summary for study and preparation, not a halachic ruling. In every case, ask the rabbi.</p>
+</div>
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">When is the brit? A special brit milah calendar for the mohel</h2>
+  <p>For every date of birth in the year: when the eighth day falls on Shabbat, a festival, Yom Kippur, Tisha B'Av, Chanukah, Purim or a fast. Next to each case there is a summary of the law, with sources.</p>
+  <h3>Calculator: born on…</h3>
+  <p>Enter the date of birth and choose when the baby was born: by day, at night or at twilight, whether by caesarean section, and whether you are in the Land of Israel or in the diaspora. Sunset is calculated by city. You can choose what to show in the calendar, and print it or save it as a PDF.</p>
+  <p>The laws here are a summary for study and preparation, not a halachic ruling. In every case, ask the rabbi. More for mohels: <a class="gold" href="/kodesh/britot/en/">the brit log</a> and <a class="gold" href="/kodesh/mohalim/en/">all the tools for mohels</a>.</p>
+  <h3>Who it helps</h3>
+  <p>Mohels who want to know in advance which brits in the year need special preparation; rabbis who are asked when the brit is when the birth was close to sunset; and parents who want to understand why the brit is postponed or held earlier. In every practical case, ask the rabbi and the mohel.</p>
+  <h3>A birth close to sunset</h3>
+  <p>The Hebrew day begins at sunset, so a baby born after sunset counts as born on the next day. Between sunset and nightfall there is a doubt, and the calendar marks it. If you know the time of birth, choose "I know the time", and sunset is calculated for the city you chose.</p>
+  <h3>A calendar for a whole year</h3>
+  <p>Choose what to show: Shabbatot, festivals, Yom Kippur, Tisha B'Av, Chanukah, Purim and fasts, and then print it or save it as a PDF. The calendar is built from the Hebrew calendar of the year, and in the diaspora it includes the second festival day.</p>
+  <h3>Free, for the benefit of the public</h3>
+  <p>There is no payment, subscription or ads here, and no need to sign up. The page was built so that anyone can use it easily, from a phone or a computer. If it helped you, share it with your community or family.</p>
+  <h3>Ask a rabbi</h3>
+  <p>In any doubt, ask a rabbi.</p>
+  <h3>Brit milah on Shabbat: the main rule</h3>
+  <p>A brit on time, on the eighth day after a natural birth, is done even on Shabbat. A brit that was postponed, for example because the baby was unwell, no longer overrides Shabbat and moves to a weekday. A brit after a caesarean birth is also not done on Shabbat. And if the baby was born at twilight on Friday evening, there is a doubt whether he was born on Friday or on Shabbat, so the brit is usually on Sunday. The calculator marks each of these cases.</p>
+  <h3>Preparing for a Shabbat brit</h3>
+  <p>Everything that can be done before Shabbat is done before it: the tools are prepared and brought to the place of the brit in advance. The mohel and the family plan how to walk there, since there is no driving on Shabbat. Ask a rabbi about the details ahead of time.</p>
+  <h3>Yom Kippur and fast days</h3>
+  <p>A brit on time is held on Yom Kippur, on Tisha B'Av and on other fasts. These days have their own customs, for example about the cup of wine and the festive meal, so ask a rabbi about the order of the ceremony in advance.</p>
+  <h3>When the brit is postponed</h3>
+  <p>The brit is postponed when the baby is not well, for example with strong jaundice. The mohel and the doctor decide, and a rabbi in case of doubt. Once the baby is well a new date is set, and that brit is not done on Shabbat or a festival.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">Questions and answers</h2>
+  <details><summary>Is a brit that falls on Shabbat postponed?</summary><p>A brit at its proper time overrides Shabbat, but there are cases where it is postponed, such as a birth by caesarean section or at twilight. The calendar shows each case with its source, and in a doubt you ask the rabbi.</p></details>
+  <details><summary>What decides whether the baby was born by day or by night?</summary><p>Sunset and nightfall. Choose the time of birth and the city, and the calculator checks.</p></details>
+  <details><summary>Is there a difference in the diaspora?</summary><p>Yes, because of the second festival day. Choose "Diaspora".</p></details>
+  <details><summary>Is this a halachic ruling?</summary><p>No. It is a summary for study, and in every case you ask the rabbi.</p></details>
+  <details><summary>What happens when the eighth day falls on Shabbat?</summary><p>A brit at its proper time, on the eighth day, is performed on Shabbat too. A postponed brit, and a brit after a caesarean section, do not override Shabbat. The calendar marks each case with the laws in brief, and in a practical case you ask the rabbi.</p></details>
+  <details><summary>Is this page free?</summary><p>Yes. Everything here is free, with no sign-up and no ads.</p></details>
+</section>
+<!--/seo-txt-->

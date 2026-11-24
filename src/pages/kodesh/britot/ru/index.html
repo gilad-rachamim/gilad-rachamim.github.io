@@ -1,0 +1,147 @@
+<!--meta {
+ "site": "kodesh",
+ "nav": "mohalim",
+ "lang": "ru",
+ "alt": {
+  "he": "/kodesh/britot/",
+  "en": "/kodesh/britot/en/",
+  "ru": "/kodesh/britot/ru/"
+ },
+ "crumb_root": "Еврейские инструменты",
+ "tool": "britot_ru",
+ "title": "Журнал брит-мил для моэля: учёт с телефона, бесплатно",
+ "description": "Журнал брит-мил для моэлей: за минуту записывайте родителей, дату (еврейскую и обычную), время, место и сандака. Отмечайте, что уже сделано. Бесплатно.",
+ "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/lang-switch.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"Как моэлю вести учёт брит-мил?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Записывайте каждую брит-милу в журнал, отмечайте, что сделано, и по списку видите, что осталось.\"}}, {\"@type\": \"Question\", \"name\": \"Данные кому-нибудь отправляются?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Нет. Журнал хранится только на телефоне. Время от времени делайте копию в файл, чтобы ничего не потерять.\"}}, {\"@type\": \"Question\", \"name\": \"Можно выгрузить в Excel?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Да, а также в Word или PDF.\"}}, {\"@type\": \"Question\", \"name\": \"Есть напоминание о пидьон а-бен?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Да. Поставьте отметку «первенец у матери», и журнал посчитает 31-й день после рождения.\"}}, {\"@type\": \"Question\", \"name\": \"Журнал сам напоминает о пидьон а-бен?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Да. Для первенца у матери включите эту опцию, и журнал покажет день пидьон а-бен – 31-й день после рождения.\"}}, {\"@type\": \"Question\", \"name\": \"Эта страница бесплатная?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Да. Здесь всё бесплатно, без регистрации и без рекламы.\"}}, {\"@type\": \"Question\", \"name\": \"Это работает и на телефоне?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Да. Страница открывается в браузере телефона и компьютера, ничего устанавливать не нужно.\"}}]}</script>",
+ "foot": "<script src=\"/assets/britot.js\" defer></script><script>document.addEventListener('click',function(e){var b=e.target.closest('[data-copy-tpl]');if(!b)return;var t=document.getElementById('bt-tpl').innerText;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent=\"Скопировано ✓ теперь вставьте в WhatsApp\";}).catch(function(){b.textContent=\"Выделите текст и скопируйте\";});if(window.kelimEv)window.kelimEv('britot_export',{tool:'britot_ru',how:'wa_template'});});</script>",
+ "og_title": "Журнал брит-мил для моэля – учёт на телефоне",
+ "priority": "0.6",
+ "crumbs": [
+  [
+   "Инструменты для моэлей",
+   "/kodesh/mohalim/ru/"
+  ],
+  [
+   "Мой журнал бритов",
+   null
+  ]
+ ]
+} -->
+<header class="k-hero">
+  <h1>Журнал брит-мил для моэля – на телефоне</h1>
+  <p class="sub">Записывайте каждую брит-милу за минуту прямо с телефона и получайте порядок: что ещё нужно сделать, напоминания и файл для Excel и Word. Всё хранится только на вашем телефоне.</p>
+</header>
+<nav class="gr-lang" aria-label="Language / שפה / Язык"><a href="/kodesh/britot/" lang="he" hreflang="he">עברית</a><a href="/kodesh/britot/en/" lang="en" hreflang="en">English</a><a href="/kodesh/britot/ru/" lang="ru" hreflang="ru" aria-current="page">Русский</a></nav>
+<div class="tool">
+  <div class="bt-top">
+    <button class="btn btn-gold" type="button" id="bt-new">+ Новая брит-мила</button>
+  </div>
+  <div class="bt-stats" id="bt-stats" hidden></div>
+
+  <section class="bt-todo" id="bt-todo" hidden aria-labelledby="bt-todo-h">
+    <h2 id="bt-todo-h">Что осталось сделать</h2>
+    <ul id="bt-todo-list"></ul>
+  </section>
+
+  <section id="bt-formbox" hidden aria-labelledby="bt-form-h">
+    <form class="k-form" id="bt-form" novalidate autocomplete="off">
+      <h2 id="bt-form-h" style="font-family:var(--serif);color:var(--cream);font-size:1.35rem">Новая брит-мила</h2>
+      <input type="hidden" name="id_">
+      <div class="field"><label for="bt-parents">Имена родителей</label><input id="bt-parents" name="parents" type="text" maxlength="80" placeholder="Например: Моше и Рахель Коэн"></div>
+      <div class="bt-row">
+        <div class="field"><label for="bt-date">Дата брит-милы</label><input id="bt-date" name="date" type="date" required><span class="bt-heb" id="bt-heb"></span></div>
+        <div class="field"><label for="bt-time">Время брит-милы</label><input id="bt-time" name="time" type="time"></div>
+      </div>
+      <div class="field"><label for="bt-place">Место брит-милы</label><input id="bt-place" name="place" type="text" maxlength="100" placeholder="Синагога, зал, город"></div>
+      <div class="bt-checks">
+        <label class="check"><input type="checkbox" name="saw"> <span>Видел малыша</span></label>
+        <label class="check"><input type="checkbox" name="bandage"> <span>Снял повязку на следующий день</span></label>
+      </div>
+      <div class="bt-row">
+        <div class="field"><label for="bt-baby">Имя малыша <span class="opt">(необязательно)</span></label><input id="bt-baby" name="baby" type="text" maxlength="40"></div>
+        <div class="field"><label for="bt-phone">Телефон родителей <span class="opt">(необязательно)</span></label><input id="bt-phone" name="phone" type="tel" inputmode="tel" maxlength="20" dir="ltr" placeholder="050-0000000"></div>
+      </div>
+      <div class="bt-row">
+        <div class="field"><label for="bt-sandak">Сандак <span class="opt">(необязательно)</span></label><input id="bt-sandak" name="sandak" type="text" maxlength="60"></div>
+        <div class="field"><label for="bt-birth">Дата рождения <span class="opt">(необязательно)</span></label><input id="bt-birth" name="birth" type="date"></div>
+      </div>
+      <label class="check"><input type="checkbox" name="bechor"> <span>Первенец у матери: напомнить о дне пидьон а-бен <span class="opt">(31-й день после рождения; без даты рождения – за семь дней до брит-милы)</span></span></label>
+      <div class="field"><label for="bt-notes">Примечания <span class="opt">(необязательно)</span></label><textarea id="bt-notes" name="notes" rows="3" maxlength="500" placeholder="Желтуха, вес, мои рекомендации, что проверить при визите"></textarea></div>
+      <div class="share-row" style="justify-content:flex-start;margin:0">
+        <button class="btn btn-gold" type="submit">Сохранить</button>
+        <button class="btn btn-line" type="button" id="bt-cancel">Отмена</button>
+      </div>
+    </form>
+  </section>
+
+  <p class="bt-empty" id="bt-empty">В журнале пока нет записей. Нажмите «Новая брит-мила» и начните.</p>
+  <input class="bt-q" id="bt-q" type="search" placeholder="Поиск по имени, месту, сандаку…" aria-label="Поиск по журналу">
+  <div class="bt-list" id="bt-list"></div>
+
+  <div id="bt-tools" hidden>
+    <div class="share-row">
+      <button class="btn btn-line btn-sm" type="button" id="bt-csv">Скачать для Excel</button>
+      <button class="btn btn-line btn-sm" type="button" id="bt-doc">Скачать для Word</button>
+      <button class="btn btn-line btn-sm" type="button" id="bt-print">Печать / PDF</button>
+    </div>
+  </div>
+  <div class="share-row">
+    <button class="btn btn-line btn-sm" type="button" id="bt-backup">Копия в файл</button>
+    <label class="btn btn-line btn-sm" style="cursor:pointer">Восстановить из копии<input type="file" id="bt-restore" accept=".json,application/json" hidden></label>
+  </div>
+  <p class="disclaimer" id="bt-bnote" hidden>С последней резервной копии прошёл месяц. Нажмите «Копия в файл» и сохраните файл на диске или отправьте его себе.</p>
+  <p class="disclaimer">Журнал хранится только на этом телефоне. Ни одна запись не отправляется на сайт или мне. Чтобы ничего не потерять, время от времени делайте копию в файл.</p>
+
+  <section class="bt-more" aria-labelledby="bt-more-h">
+    <h2 id="bt-more-h" style="font-family:var(--serif);color:var(--cream);font-size:1.4rem;text-align:center;margin-top:1.4rem">Без сайта: файл Word или шаблон для WhatsApp</h2>
+    <div class="tip"><b>Файл Word для заполнения</b><p>Аккуратная таблица со всеми данными: заполняйте на компьютере или от руки после печати.</p>
+      <div class="share-row" style="justify-content:flex-start"><a class="btn btn-gold btn-sm" href="/kodesh/britot/yoman-britot-ru.docx" download data-share="britot_docx">Скачать файл Word</a></div></div>
+    <div class="tip"><b>Шаблон для WhatsApp</b><p>Сохраните его в чате с самим собой. На каждую брит-милу копируйте шаблон, заполняйте и отправляйте себе. Когда увидели малыша или сняли повязку, отвечайте на сообщение ✅. Поиск в WhatsApp найдёт любую брит-милу по имени.</p>
+      <div class="bt-wa" id="bt-tpl" dir="auto">*🍼 Брит-мила – журнал*
+━━━━━━━━━━
+👨‍👩‍👦 *Имена родителей:*
+📅 *Дата брит-милы:*
+🕰️ *Время:*
+📍 *Место:*
+👶 *Имя малыша:*
+📞 *Телефон:*
+🤝 *Сандак:*
+━━━━━━━━━━
+👀 *Видел малыша:* ⬜
+🩹 *Снял повязку на следующий день:* ⬜
+📝 *Примечания:*
+━━━━━━━━━━
+_Журнал брит-мил Гилада Рахамима, сертифицированного моэля · +972-58-404-9049_</div>
+      <div class="share-row" style="justify-content:flex-start"><button class="btn btn-gold btn-sm" type="button" data-copy-tpl>Скопировать шаблон</button></div></div>
+  </section>
+  <p class="disclaimer">Часть <a class="gold" href="/kodesh/mohalim/ru/">инструментов для моэлей</a>. Создано по просьбе моэля из форума моэлей. Хотите, чтобы я что-то добавил? <a class="gold" href="https://wa.me/972584049049?text=Здравствуйте, Гилад, я видел журнал брит-мил. ">Напишите мне</a>.</p>
+</div>
+<div id="bt-printarea" dir="ltr"></div>
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">Журнал брит-мил для моэля – на телефоне</h2>
+  <p>Записывайте каждую брит-милу за минуту: имена родителей, дату и время, место, сандака, имя малыша и телефон. Отмечайте, что вы увидели малыша и сняли повязку на следующий день, и в любой момент видите, что ещё осталось сделать.</p>
+  <h3>Пидьон а-бен и файлы</h3>
+  <p>Для первенца у матери журнал напоминает о дне пидьон а-бен. Скачивайте данные в Excel или Word, печатайте и делайте резервные копии в файл. Если вы предпочитаете работать без сайта – на странице есть файл Word для заполнения и шаблон для WhatsApp.</p>
+  <p>Журнал хранится только на телефоне, ни одна запись никуда не отправляется. Создан по просьбе моэля из форума моэлей. Ещё для моэлей: <a class="gold" href="/kodesh/tofes-brit/ru/">анкета брит-милы</a> и <a class="gold" href="/kodesh/britot-meyuchadot/ru/">календарь особых брит-мил</a>.</p>
+  <h3>Учёт каждой брит-милы</h3>
+  <p>У каждой брит-милы две отметки: «Видел малыша» и «Снял повязку на следующий день». Так в любой момент видно, что ещё открыто. Можно также записать сандака, имя малыша, телефон родителей и примечания.</p>
+  <h3>Когда делают пидьон а-бен</h3>
+  <p>Для первенца у матери поставьте отметку – журнал напомнит о дне пидьон а-бен, это 31-й день после рождения. Если вы не указали дату рождения, день считается за семь дней до брит-милы.</p>
+  <h3>Копия и перенос</h3>
+  <p>Журнал хранится только на телефоне. Скачивайте его в Excel или Word, печатайте или сохраняйте в PDF и держите файл резервной копии. При смене телефона загрузите копию – и всё вернётся.</p>
+  <h3>Сколько это стоит?</h3>
+  <p>Ничего. Инструмент создан как доброе дело, без рекламы и без сбора данных. Пользуйтесь сколько угодно и отправляйте его габаю, раввину или друзьям.</p>
+  <h3>К концу года</h3>
+  <p>Вы видите, сколько брит-мил было в каждом месяце.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">Вопросы и ответы</h2>
+  <details><summary>Как моэлю вести учёт брит-мил?</summary><p>Записывайте каждую брит-милу в журнал, отмечайте, что сделано, и по списку видите, что осталось.</p></details>
+  <details><summary>Данные кому-нибудь отправляются?</summary><p>Нет. Журнал хранится только на телефоне. Время от времени делайте копию в файл, чтобы ничего не потерять.</p></details>
+  <details><summary>Можно выгрузить в Excel?</summary><p>Да, а также в Word или PDF.</p></details>
+  <details><summary>Есть напоминание о пидьон а-бен?</summary><p>Да. Поставьте отметку «первенец у матери», и журнал посчитает 31-й день после рождения.</p></details>
+  <details><summary>Журнал сам напоминает о пидьон а-бен?</summary><p>Да. Для первенца у матери включите эту опцию, и журнал покажет день пидьон а-бен – 31-й день после рождения.</p></details>
+  <details><summary>Эта страница бесплатная?</summary><p>Да. Здесь всё бесплатно, без регистрации и без рекламы.</p></details>
+  <details><summary>Это работает и на телефоне?</summary><p>Да. Страница открывается в браузере телефона и компьютера, ничего устанавливать не нужно.</p></details>
+</section>
+<!--/seo-txt-->
