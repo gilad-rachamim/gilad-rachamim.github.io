@@ -604,6 +604,29 @@ def chesed_band(p, meta):
     return ('<div class="chesed no-print" role="note"><p class="chesed-t">' + "".join(f"<b>✓ {c}</b>" for c in chips)
             + f'</p><p class="chesed-s">{sub}</p>{box}</div>')
 
+# הפניה שקטה לקורס אחרי כל כלי (24.11.2026, גילעד: "הכלי האולטימטיבי שיבנה עבורכם את כל הכלים... חלק מהמיזם").
+# שורה אחת, בלי חלון קופץ ובלי חסימה; no-app = לא מופיעה באפליקציות Play. אין בדפי noindex, מצוקה, תפילה, גיור, אבל וזכרון.
+# מתג ביטול לדף: "no_kurs": true. הסיבות לכל החרגה: דף שנקרא בזמן טקס/אבל/מצוקה, או דף שהוא עצמו מכירה/מרכז.
+KURS_SKIP_PREFIX = ("/nefesh/", "/mohel/", "/kodesh/giur/", "/kodesh/azkara/", "/kodesh/kaddish/", "/kodesh/yahrzeit/", "/kodesh/tziyud/",
+                    "/kodesh/boker/", "/kodesh/mincha/", "/kodesh/arvit/", "/kodesh/musaf-chol-hamoed/", "/kodesh/musaf-rosh-chodesh/",
+                    "/kodesh/havdala/", "/kodesh/kiddush/", "/kodesh/birkat-hamazon/", "/kodesh/brachot/", "/kodesh/brachon/",
+                    "/kodesh/nishmat-kol-chai/", "/kodesh/modeh-ani/", "/kodesh/hodaot/", "/kodesh/misheberach/", "/kodesh/tehillim/",
+                    "/kodesh/dapei-tefila/", "/kodesh/tefilat-haderech/", "/kodesh/shut/", "/kodesh/tefillin/", "/kodesh/tahara/",
+                    "/kelim/claude/kurs/", "/kelim/claude/shutafim/", "/claude-kvutza/", "/kelim/shutafim/", "/kelim/pratiut/", "/kelim/negishut/",
+                    "/kelim/bakasha/", "/kelim/katalog/", "/kelim/shipurim/")
+KURS_SKIP_EXACT = {"/kelim/"}  # דף הבית והקטלוג מקבלים מקטע משלהם, לא פס
+KURS_BAND = ('<aside class="kurs-band no-print no-app" aria-label="ללמוד לבנות כלים"><p>את הכלי הזה בניתי עם Claude, בלי להיות מתכנת. '
+             'רוצים לבנות כלי כזה בעצמכם? <a href="/kelim/claude/kurs/?utm_source=tool" data-kurs="band">להכיר את הקורס ←</a></p></aside>')
+
+
+def kurs_band(p, meta):
+    if meta.get("noindex") or meta.get("no_kurs") or meta.get("no_chesed") or meta.get("lang") or p in KURS_SKIP_EXACT:
+        return ""
+    if p.startswith(KURS_SKIP_PREFIX) or p.rstrip("/").rsplit("/", 1)[-1] in CHESED_SKIP:
+        return ""
+    return KURS_BAND
+
+
 # סרטון הדמיה + פרוספקט לשיתוף (14.11.2026, גילעד: "סרטוני הדמיה באתר לכל כלי... ודף פרוספקט מעוצב לכל כלי שאפשר לשתף").
 # נוצרים ב-tools/demo_video/render.py לתוך assets/demo/<tool>.*; כשהקבצים קיימים הבלוק נכנס לבד אחרי ה-header של דף הכלי,
 # או במקום <!--demo--> אם הדף שם אותו במקום אחר. המפרט (שם, תיאור, משך) נקרא מ-tools/demo_video/specs/<tool>.json.
@@ -1032,6 +1055,7 @@ for path in sorted(SRC.rglob("*.html")):
             "tool": meta.get("tool", ""),
             "shipurim": shipurim_line(meta.get("tool", "")),
             "chesed": news_bar(url_path) + chesed_band(url_path, dict(meta, _login="gsi/client" in raw or "accounts.google.com" in raw)),
+            "kurs": kurs_band(url_path, meta),
             "fb_note": fb_note(meta.get("tool", "")),
             "lead_endpoint": LEAD_ENDPOINT,
             "site_css": "".join(f'<link rel="stylesheet" href="{c}">' for c in site.get("css", [])),
