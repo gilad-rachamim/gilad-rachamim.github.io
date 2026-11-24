@@ -230,7 +230,10 @@
       if (parts[i].length > 5000) throw new Error('too_long_part');
       if (!parts[i].trim()) { outp.push(parts[i]); continue; }
       var lead = parts[i].match(/^\s*/)[0], trail = parts[i].match(/\s*$/)[0];
-      var d = await post('/t', { q: parts[i].trim(), from: a, to: b });
+      // השרת עונה תוך 1–4 שנ' (מירוץ Gemini/Llama); חיבור שנתקע – ניסיון חוזר אחד, ואז MyMemory
+      var d, body = { q: parts[i].trim(), from: a, to: b };
+      try { d = await post('/t', body, 15000); }
+      catch (e1) { setStatus('מנסה שוב…'); d = await post('/t', body, 15000); }
       if (!d || d.error || typeof d.t !== 'string') { if (d && (d.error === 'quota' || d.error === 'busy')) serverDown = Date.now(); throw new Error(d && d.error || 'server'); }
       outp.push(lead + d.t + trail);
     }
