@@ -1,0 +1,16 @@
+# kelim-kabalot-auto – קבלה אוטומטית ב"אלופים בחשבוניות" אחרי כל מכירה ב-Payhip.
+# כתובת ה-webhook שמדביקים ב-Payhip (Settings -> Developer): כתובת השרת + /payhip
+# סודות – רק גילעד מזין, כל אחד בפקודה משלו:
+#   npx wrangler@4 secret put ALUFFIM_API_KEY       (המפתח מאלופים: הגדרות -> למפתחים -> חיבור מערכות)
+#   npx wrangler@4 secret put ALUFFIM_BUSINESS_ID   (מזהה העסק מאותו מסך)
+#   npx wrangler@4 secret put PAYHIP_API_KEY        (Payhip -> Settings -> Developer -> API Key)
+#   npx wrangler@4 secret put ADMIN_KEY             (ערך אקראי, לצפייה במצב: GET /matzav עם הכותרת x-admin-key)
+# בדיקה מקומית: python test_local.py
+name = "kelim-kabalot-auto"
+main = "kabalot-auto-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[[kv_namespaces]]
+binding = "KABALOT"
+id = "75124813bbb74757b9916b1ef0ead785"
