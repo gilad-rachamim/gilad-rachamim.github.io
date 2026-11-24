@@ -784,6 +784,27 @@ def catalog():
     if not _CAT:
         _CAT["tp"], _CAT["out"] = build_catalog()
     return _CAT["tp"], _CAT["out"]
+def katalog_fill(html):
+    cat = catalog()[1]
+    tools = [x for x in cat if x["ty"] == "tool" and x["l"] == "he" and not x["sf"] and x["u"] != "/kelim/katalog/"]
+    sh = lambda x: x["n"].split(":")[0].split(",")[0].split(" – ")[0].strip()[:60]
+    esc = lambda t: t.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    top = sorted(tools, key=lambda x: (-x["p"], x["u"]))[:12]
+    html = html.replace("<!--KATALOG-N-->", str(len(tools)))
+    html = html.replace("<!--KATALOG-TOP-->", "".join('<li><a href="%s">%s</a></li>' % (x["u"], esc(sh(x))) for x in top))
+    tp = catalog_topics()
+    parts = []
+    for t in tp:
+        ts = sorted((x for x in tools if x["g"] == t["id"]), key=lambda x: (-x["p"], x["n"]))
+        if not ts:
+            continue
+        hubs = sorted((x for x in cat if x["ty"] == "hub" and x["g"] == t["id"] and x["l"] == "he" and not x["sf"]), key=lambda x: (x["u"].count("/"), x["u"]))
+        hub = '<p class="kt-hub"><a href="%s">לעמוד הנושא: %s</a></p>' % (hubs[0]["u"], esc(t["n"])) if hubs else ""
+        parts.append('<details class="kt-d"><summary>%s %s <small>(%d כלים)</small></summary>%s<ul class="kt-list">%s</ul></details>' % (
+            t["e"], esc(t["n"]), len(ts), hub, "".join('<li><a href="%s">%s</a></li>' % (x["u"], esc(sh(x))) for x in ts)))
+    return html.replace("<!--KATALOG-TOPICS-->", "".join(parts))
+def catalog_topics():
+    return [t for t in json.loads((ROOT / "src" / "discover" / "topics.json").read_text(encoding="utf-8"))["topics"] if t.get("show", True)]
 def write_catalog():
     tp, out = catalog()
     (ROOT / "assets" / "catalog.json").write_text(json.dumps({"v": today, "topics": [{"id": t["id"], "n": t["n"], "e": t["e"]} for t in tp["topics"] if t.get("show", True)], "items": out},
@@ -1034,6 +1055,8 @@ for path in sorted(SRC.rglob("*.html")):
         html = lang_page(html, meta, url)
     elif url_path.startswith("/kodesh/giur/") and '<section class="fb no-print"' in html:
         html = html.replace('<section class="fb no-print"', giur_cta("he", url_path) + '<section class="fb no-print"', 1)
+    if "<!--KATALOG-" in html:
+        html = katalog_fill(html)
     html = version_assets(html)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
