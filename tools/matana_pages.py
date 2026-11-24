@@ -51,7 +51,8 @@ def landing(p):
     vid = ""
     if p.get("video"):
         pre = p["video"][0]
-        vid = f'<div class="mt-vid" data-src="/assets/promo/{pre}.mp4" data-poster="/assets/promo/{pre}.jpg"></div>\n'
+        vid = (f'<div class="mt-vid" data-src="/assets/promo/{pre}.mp4" data-poster="/assets/promo/{pre}.jpg"></div>\n'
+               f'<a class="mt-btn mt-gold mt-vid-cta" href="#form" data-cta="video">{esc(p["btn_mail"])}</a>\n')
     note = f" {esc(p['note'])}" if p.get("note") else ""
     return meta(p["title"], p["desc"]) + f"""<span class="mt-pill">🎁 מתנה חינם · מיזם חסד</span>
 <h1 data-h="{hmap}">{esc(p['h1'])}</h1>

@@ -35,7 +35,10 @@
       "wa_label": "בווטסאפ: מקבלים הכול, ובנוסף במתנה: מחשבון בלוגו ובצבעי המשרד שלכם",
       "wa_text": "שלום גילעד, אשמח לקבל את המתנה: מחשבון מס בלוגו ובצבעי המשרד שלי",
       "dock_wa": "ווטסאפ: הצצה בלוגו שלי",
-      "video": null,
+      "video": [
+        "matana-roe",
+        "matana-roe"
+      ],
       "note": "המחשבונים להערכה בלבד ואינם ייעוץ מס.",
       "gifts": [
         [
@@ -94,8 +97,8 @@
       "wa_text": "שלום גילעד, אשמח לקבל את המתנה: מחשבון זכויות עובד בלוגו המשרד שלי",
       "dock_wa": "ווטסאפ: מחשבון בלוגו שלי",
       "video": [
-        "kesef-zchuyot-pitorin",
-        "kesef-zchuyot-pitorin"
+        "matana-orchei-din",
+        "matana-orchei-din"
       ],
       "note": "המחשבונים להערכה בלבד ואינם ייעוץ משפטי.",
       "gifts": [
@@ -176,8 +179,8 @@
       "wa_text": "שלום גילעד, אשמח לקבל את המתנה: כלי עם המיתוג של העסק שלי",
       "dock_wa": "ווטסאפ: כלי עם המיתוג שלי",
       "video": [
-        "esek-tafrit",
-        "esek-tafrit"
+        "matana-esek",
+        "matana-esek"
       ],
       "note": "",
       "gifts": [
@@ -254,8 +257,8 @@
       "wa_text": "שלום גילעד, אשמח לקבל את המתנה: תשובה אישית על שאלה אחת על Claude. השאלה שלי: ",
       "dock_wa": "ווטסאפ: שאלה אחת על Claude",
       "video": [
-        "promo_kurs",
-        "promo_kurs"
+        "matana-claude",
+        "matana-claude"
       ],
       "note": "",
       "gifts": [],
@@ -297,8 +300,8 @@
       "wa_text": "שלום גילעד, אשמח לקבל את המתנה: כלי אחד לבחירתי במיתוג אישי",
       "dock_wa": "ווטסאפ: כלי במיתוג אישי",
       "video": [
-        "promo_atar",
-        "promo_atar"
+        "matana-kelim",
+        "matana-kelim"
       ],
       "note": "",
       "gifts": [
@@ -393,7 +396,10 @@
       "wa_label": "בונוס בווטסאפ: שיחת היכרות קצרה עם גילעד",
       "wa_text": "שלום גילעד, אני שוקל להיות מוהל ואשמח לשמוע ממך",
       "dock_wa": "שאלה? ווטסאפ",
-      "video": null,
+      "video": [
+        "matana-mohel-kurs",
+        "matana-mohel-kurs"
+      ],
       "note": "",
       "gifts": [],
       "wa_bonus": "שיחת היכרות קצרה",
