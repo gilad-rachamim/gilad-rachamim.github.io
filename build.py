@@ -16,6 +16,7 @@ LAYOUT = (ROOT / "src" / "layout.html").read_text(encoding="utf-8")
 # תת-אתרים של "הכלים של גילעד רחמים" (meta "site"): תבנית משותפת, ניווט, צבעים ופוטר משלהם.
 # דף בלי "site" = אתר המוהל, בדיוק כמו קודם.
 LAYOUT_KELIM = (ROOT / "src" / "layout-kelim.html").read_text(encoding="utf-8")
+LAYOUT_MATANA = (ROOT / "src" / "layout-matana.html").read_text(encoding="utf-8")
 SITES = {
     "kelim": {
         "name": "הכלים של גילעד רחמים", "brand": "מיזם הכלים של גילעד רחמים", "short": "הכלים", "home": "/kelim/", "theme": "#0f1d1c",
@@ -112,6 +113,9 @@ META_PIXEL_ID = "4627297074222937"
 PIXEL = "" if not META_PIXEL_ID else f"""<script>!function(f,b,e,v,n,t,s){{if(f.fbq)return;n=f.fbq=function(){{n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)}};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','{META_PIXEL_ID}');fbq('track','PageView');document.addEventListener('click',function(e){{var a=e.target.closest&&e.target.closest('a[href*="payhip.com"]');if(a&&window.fbq)fbq('track','InitiateCheckout');}});</script>
 """
 def pixel_for(meta, url_path):
+    # 24.11.2026: דפי מתנה קצרים (/matana/) – Lead נשלח מ-assets/matana.js בשליחת הטופס ובלחיצה על ווטסאפ
+    if url_path.startswith("/matana/"):
+        return PIXEL
     # 24.11.2026: דפי המוהל (/mohel/) – מודדים את מודעות מטא למדריך; Lead בדף התודה
     if url_path.startswith("/mohel/") and not (meta.get("no_ga") or meta.get("no_pixel")):
         return PIXEL.replace("</script>", ("if(location.pathname.indexOf('/mohel/todah')===0)fbq('track','Lead');fbq('track','Purchase',{value:1,currency:'ILS'});" if url_path.startswith("/mohel/todah") else "") + "</script>")
@@ -1004,8 +1008,8 @@ for path in sorted(SRC.rglob("*.html")):
     root = (site["name"], site["home"]) if site else ("עמוד המוהל", "/mohel/")
     if meta.get("crumb_root"):  # דף בשפה אחרת: שם השורש בפירורי הלחם בשפת הדף
         root = (meta["crumb_root"], root[1])
-    html = LAYOUT_KELIM if site else LAYOUT
-    content += seo_related(url_path)
+    html = LAYOUT_MATANA if meta.get("bare") else (LAYOUT_KELIM if site else LAYOUT)
+    content += "" if meta.get("bare") else seo_related(url_path)
     dv_blk, dv_ld = demo_block(meta, url) if site else ("", "")
     content = insert_demo(content, dv_blk)
     og_own = "og/" + url_path.strip("/").replace("/", "-") + ".jpg"
@@ -1029,7 +1033,7 @@ for path in sorted(SRC.rglob("*.html")):
         "og_title": meta.get("og_title", meta["title"]),
         "og_image": meta.get("og_image", og_default),
         "robots": '<meta name="robots" content="noindex">' if meta.get("noindex") else "",
-        "head": meta.get("head_pre", "") + ("" if meta.get("no_ga") else GA) + pixel_for(meta, url_path) + KISHUR + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url) + dv_ld + hreflang(meta),
+        "head": meta.get("head_pre", "") + ("" if meta.get("no_ga") else GA) + pixel_for(meta, url_path) + ("" if meta.get("bare") else KISHUR) + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url) + dv_ld + hreflang(meta),
         "body_class": meta.get("body_class", ""),
         "sprite": SPRITE,
         "wa": WA,
