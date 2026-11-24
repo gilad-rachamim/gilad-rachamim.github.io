@@ -6,8 +6,9 @@
   function build(b) {
     if (b.getAttribute('data-ready')) return;
     b.setAttribute('data-ready', '1');
-    var n = b.getAttribute('data-promo'), wide = window.matchMedia('(min-width:720px)').matches;
-    var base = '/assets/promo/esek-' + n + (wide ? '-wide' : '');
+    var n = b.getAttribute('data-promo'), fmt = b.getAttribute('data-fmt'), pre = b.getAttribute('data-pre') || 'esek';
+    var wide = fmt === 'wide' ? true : fmt === 'tall' ? false : window.matchMedia('(min-width:720px)').matches;
+    var base = '/assets/promo/' + pre + '-' + n + (wide ? '-wide' : '');
     var v = document.createElement('video');
     v.controls = true; v.preload = 'none'; v.playsInline = true; v.poster = base + '.jpg';
     v.setAttribute('playsinline', ''); v.setAttribute('aria-label', b.getAttribute('data-label') || 'סרטון הדגמה');
@@ -15,8 +16,8 @@
     var sent = false;
     v.addEventListener('play', function () {
       if (sent) return; sent = true;
-      try { if (window.toolUsed) window.toolUsed('esek_promo_' + n, { action: 'video_play' }); } catch (e) {}
-      try { if (window.kelimEv) window.kelimEv('video_play', { video: 'esek_' + n }); } catch (e) {}
+      try { if (window.toolUsed) window.toolUsed(pre + '_promo_' + n.replace(/-/g, '_'), { action: 'video_play' }); } catch (e) {}
+      try { if (window.kelimEv) window.kelimEv('video_play', { video: pre + '_' + n }); } catch (e) {}
     });
     b.innerHTML = ''; b.appendChild(v);
   }
