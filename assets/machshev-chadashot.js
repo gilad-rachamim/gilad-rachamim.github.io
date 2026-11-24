@@ -152,6 +152,46 @@
     $('nw-chan-a').addEventListener('click', function () { used('channel'); });
     $('nw-tg-a').addEventListener('click', function () { used('telegram'); });
     $('nw-fb').addEventListener('click', function () { used('facebook'); });
+    // 24.11.2026: שמע וסרטון של המהדורה + מהירות + שיתוף רחב
+    (function () {
+      var au = $('nw-audio'); if (!au) return;
+      var FILES = 'https://kelim-news.gilad4049.workers.dev/media/latest.';
+      function ga(n, p) { try { if (window.gtag) window.gtag('event', n, p || {}); } catch (e) {} }
+      var sp = parseFloat(localStorage.getItem('nw-speed') || '1') || 1;
+      function setSpeed(v) {
+        sp = v; au.playbackRate = v; try { localStorage.setItem('nw-speed', String(v)); } catch (e) {}
+        document.querySelectorAll('.nw-speeds [data-speed]').forEach(function (b) { b.classList.toggle('on', parseFloat(b.dataset.speed) === v); });
+      }
+      setSpeed(sp);
+      au.addEventListener('play', function () { au.playbackRate = sp; ga('news_audio_play'); used('audio'); });
+      document.querySelectorAll('.nw-speeds [data-speed]').forEach(function (b) {
+        b.addEventListener('click', function () { setSpeed(parseFloat(b.dataset.speed)); ga('news_speed', { speed: b.dataset.speed }); });
+      });
+      $('nw-dl').addEventListener('click', function () { ga('news_download', { kind: 'mp3' }); });
+      var vd = $('nw-video'), vt = $('nw-vtoggle');
+      vt.addEventListener('click', function () {
+        if (vd.hidden) { if (!vd.src) vd.src = FILES + 'mp4'; vd.hidden = false; vt.textContent = 'להסתיר את הסרטון'; vd.play().catch(function () {}); }
+        else { vd.pause(); vd.hidden = true; vt.textContent = '🎬 צפייה בסרטון'; }
+      });
+      vd.addEventListener('play', function () { ga('news_video_play'); used('video'); });
+      // שיתוף: קישור לדף + שורה קצרה; מהטלפון – חלון השיתוף המובנה (ווטסאפ, טלגרם, מייל וכל אפליקציה אחרת)
+      var LINK = PAGE + '?utm_source=share', MSG = 'החדשות ב-3 דקות: סיכום רגוע, גם לשמיעה וגם בסרטון קצר. בחינם.', ENC = encodeURIComponent;
+      $('nw-s-wa').href = 'https://wa.me/?text=' + ENC(MSG + '\n' + LINK);
+      $('nw-s-tg').href = 'https://t.me/share/url?url=' + ENC(LINK) + '&text=' + ENC(MSG);
+      $('nw-s-fb').href = 'https://www.facebook.com/sharer/sharer.php?u=' + ENC(LINK);
+      $('nw-s-mail').href = 'mailto:?subject=' + ENC('החדשות ב-3 דקות') + '&body=' + ENC(MSG + '\n' + LINK);
+      $('nw-s-sms').href = 'sms:?&body=' + ENC(MSG + ' ' + LINK);
+      ['wa', 'tg', 'fb', 'mail', 'sms'].forEach(function (k) { $('nw-s-' + k).addEventListener('click', function () { ga('news_share', { via: k }); used('share_' + k); }); });
+      $('nw-s-copy').addEventListener('click', function () {
+        var b = this; (navigator.clipboard ? navigator.clipboard.writeText(LINK) : Promise.reject()).then(function () {
+          b.textContent = 'הועתק ✓'; setTimeout(function () { b.textContent = 'להעתיק קישור'; }, 2000);
+        }).catch(function () { window.prompt('העתיקו מכאן:', LINK); });
+        ga('news_share', { via: 'copy' }); used('share_copy');
+      });
+      var ns = $('nw-nativeshare');
+      if (navigator.share) ns.addEventListener('click', function () { navigator.share({ title: 'החדשות ב-3 דקות', text: MSG, url: LINK }).catch(function () {}); ga('news_share', { via: 'native' }); used('share_native'); });
+      else ns.hidden = true;
+    })();
 
     fetch(API + '/latest?from=' + FROM, { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
       if (!j || j.empty) {

@@ -574,6 +574,34 @@ export default {
       await call(env, '/post-log', { at: new Date().toISOString(), name: 'רילס', fb: res.id ? 'עלה' : 'שגיאה: ' + res.error, wa: '-', tg: tgr ? (tgr.error ? 'שגיאה: ' + tgr.error : 'עלה') : '-' }).catch(() => {});
       return json({ ok: !!res.id, ...res, tg: tgr });
     }
+    // 24.11.2026: קובץ שמע/סרטון של המהדורה (news-media.yml) -> ערוץ הטלגרם; kind=audio|video, title, text (כיתוב), לא בשבת ובחג
+    if (url.pathname === '/media' && request.method === 'POST') {
+      if (!admin) return json({ ok: false }, 403);
+      if (holyNow()) return json({ ok: false, error: 'שבת/חג' });
+      const cfg = await call(env, '/config');
+      if (!env.TG_TOKEN || !cfg.tgid) return json({ ok: false, error: 'אין ערוץ טלגרם' });
+      const kind = url.searchParams.get('kind') === 'audio' ? 'audio' : 'video';
+      const file = await request.arrayBuffer();
+      if (file.byteLength < 5000 || file.byteLength > 48e6) return json({ ok: false, error: 'גודל קובץ' }, 400);
+      const title = String(url.searchParams.get('title') || 'החדשות ב-3 דקות').slice(0, 120), text = String(url.searchParams.get('text') || '').slice(0, 1000);
+      const tgr = await postTelegramMedia(env, cfg.tgid, kind, file, title, text).catch(e => ({ error: String(e).slice(0, 200) }));
+      await call(env, '/post-log', { at: new Date().toISOString(), name: kind === 'audio' ? 'שמע' : 'סרטון מהדורה', fb: '-', wa: '-', tg: tgr.error ? 'שגיאה: ' + tgr.error : 'עלה' }).catch(() => {});
+      return json({ ok: !tgr.error, ...tgr });
+    }
+    // הודעת טקסט לערוץ הווטסאפ עם קישורי האזנה/צפייה (אחרי שהקבצים מוכנים; בשבת וחג מסרב)
+    if (url.pathname === '/media-note' && request.method === 'POST') {
+      if (!admin) return json({ ok: false }, 403);
+      if (holyNow()) return json({ ok: false, error: 'שבת/חג' });
+      const cfg = await call(env, '/config');
+      if (!env.WHAPI_TOKEN || !cfg.waid) return json({ ok: false, error: 'אין ערוץ ווטסאפ' });
+      const text = String((await request.json().catch(() => ({}))).text || '').trim().slice(0, 1500);
+      if (!text) return json({ ok: false, error: 'אין טקסט' }, 400);
+      return json({ ok: true, ...(await postWhatsappText(env, cfg.waid, text)) });
+    }
+    // קישורים קבועים לקובץ האחרון: /media/latest.mp3 ו-/media/latest.mp4 (מפנים ל-Release)
+    if (/^\/media\/latest\.(mp3|mp4)$/.test(url.pathname)) {
+      return Response.redirect('https://github.com/gilad-rachamim/gilad-rachamim.github.io/releases/download/media/latest.' + url.pathname.slice(-3), 302);
+    }
     if (url.pathname === '/tg-post' && request.method === 'POST') { // פרסום ידני של הודעה אחת לערוץ הטלגרם שהוגדר (רק עם מפתח ניהול)
       if (!admin) return json({ ok: false }, 403);
       if (!env.TG_TOKEN) return json({ ok: false, error: 'אין TG_TOKEN' });
@@ -716,6 +744,18 @@ async function postTelegramVideo(env, chat, video, caption) {
   f.append('supports_streaming', 'true');
   f.append('video', new Blob([video], { type: 'video/mp4' }), 'chadashot.mp4');
   const r = await fetch(`https://api.telegram.org/bot${env.TG_TOKEN}/sendVideo`, { method: 'POST', body: f });
+  const j = await r.json().catch(() => ({}));
+  return j.ok ? { id: j.result.message_id } : { error: j.description || String(r.status) };
+}
+async function postTelegramMedia(env, chat, kind, file, title, caption) {
+  if (kind === 'video') return postTelegramVideo(env, chat, file, caption);
+  const f = new FormData();
+  f.append('chat_id', chat);
+  f.append('caption', caption.slice(0, 1000));
+  f.append('title', title);
+  f.append('performer', 'החדשות ב-3 דקות');
+  f.append('audio', new Blob([file], { type: 'audio/mpeg' }), 'chadashot.mp3');
+  const r = await fetch(`https://api.telegram.org/bot${env.TG_TOKEN}/sendAudio`, { method: 'POST', body: f });
   const j = await r.json().catch(() => ({}));
   return j.ok ? { id: j.result.message_id } : { error: j.description || String(r.status) };
 }
