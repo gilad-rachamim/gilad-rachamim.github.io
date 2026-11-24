@@ -1,0 +1,30 @@
+{
+  "id": "promo_kurs",
+  "promo": true,
+  "name": "מה בניתי עם Claude – קורס Claude בעברית",
+  "description": "445 כלים בעברית, בלי להיות מתכנת. עכשיו אני מלמד איך: קורס Claude בעברית, 8 שיעורים כתובים.",
+  "mood": "bright",
+  "poster_t": 2.4,
+  "scenes": [
+    {"type": "title", "dur": 4.5, "icon": "🛠", "kicker": "גילעד רחמים · hakelim.com", "title": "מה בניתי\n*עם Claude*", "sub": "בלי רקע בתכנות, מהבית"},
+    {"type": "montage", "dur": 14, "title": "כלים *שעובדים עכשיו*", "items": [
+      ["shots/promo/home.jpg", "🧰 *אתר הכלים*", "כל הכלים במקום אחד"],
+      ["shots/promo/tamlul.jpg", "🎙 *תמלול* מהטלפון", "הודעה קולית לטקסט"],
+      ["shots/promo/karaoke.jpg", "🎤 *קריוקי* לכל שיר", "המוזיקה בלי הזמר"],
+      ["shots/promo/pdf.jpg", "📄 *הקטנת PDF*", "בתוך הטלפון"],
+      ["shots/promo/chashiva.jpg", "🧩 *משחקי חשיבה*", "לבד או עם חברים"]
+    ]},
+    {"type": "montage", "dur": 5, "title": "*הקטלוג* המלא", "items": [
+      ["shots/promo/katalog.jpg", "📚 *445 כלים*", "מסודרים לפי נושאים"]
+    ]},
+    {"type": "cards", "dur": 6, "title": "*במספרים*", "gap": 0.6, "items": [
+      ["🧰", "445 כלים", "בקטלוג האתר, נובמבר 2026"],
+      ["🗂", "בכל תחום בחיים", "מקודש ועד עסק קטן"],
+      ["🆓", "הכול בחינם", "בלי הרשמה ובלי פרסומות"]
+    ]},
+    {"type": "title", "dur": 4.5, "icon": "💡", "title": "הכול עם Claude,\n*בלי להיות מתכנת*", "sub": "מבקשים בעברית, בודקים, ומעלים"},
+    {"type": "title", "dur": 4.5, "icon": "🎓", "title": "עכשיו *אני מלמד איך*", "sub": "קורס Claude בעברית: 8 שיעורים כתובים", "chips": ["תשלום חד-פעמי", "החזר מלא תוך 14 יום"]},
+    {"type": "cta", "dur": 5, "icon": "🎓", "title": "הכלי שבונה *את כל הכלים*", "sub": "כל הפרטים בדף הקורס", "button": "hakelim.com/kelim/claude/kurs", "gold": true, "url": "קורס Claude בעברית", "small": "הקורס עצמאי ואינו מטעם Anthropic"}
+  ],
+  "wide": {"icon": "🎓", "title": "מה בניתי\n*עם Claude*", "sub": "445 כלים בעברית, בלי להיות מתכנת. עכשיו אני מלמד איך.", "url": "https://hakelim.com/kelim/claude/kurs/?utm_source=promo&utm_medium=video", "url_text": "hakelim.com/kelim/claude/kurs", "foot": "קורס Claude בעברית · 8 שיעורים כתובים"}
+}
