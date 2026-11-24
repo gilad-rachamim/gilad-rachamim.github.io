@@ -2,9 +2,22 @@
 (function () {
   var q = new URLSearchParams(location.search), $ = function (s, r) { return (r || document).querySelector(s); };
   var slug = location.pathname.split('/')[2] || '';
+  var path = location.pathname.replace(/\/+$/, '').split('/');
+  var leaf = path[path.length - 1];
+  var stage = leaf === 'toda' ? 'toda' : leaf === 'shidrug' ? 'shidrug' : (leaf === 'toda-shidrug' || leaf === 'toda-kurs') ? 'toda-shidrug' : leaf === 'asara' ? 'asara' : 'landing';
+  function fb(type, data) { try { if (window.fbq) fbq('track', type, data || {}); } catch (e) {} }
+  function ga(name, data) { try { if (window.gtag) gtag('event', name, data || {}); } catch (e) {} }
   function ev(name, ch) {
-    try { if (window.fbq) fbq('track', 'Lead', { content_name: 'matana_' + slug + '_' + ch }); } catch (e) {}
-    try { if (window.gtag) gtag('event', name, { page: slug, channel: ch, utm_content: q.get('utm_content') || '' }); } catch (e) {}
+    var d = { page: slug, channel: ch, utm_content: q.get('utm_content') || '' };
+    if (name === 'contact') fb('Contact', { content_name: 'matana_' + slug + '_' + ch });
+    else fb('Lead', { content_name: 'matana_' + slug + '_' + ch });
+    ga(name === 'contact' ? 'generate_lead' : name, d);
+  }
+  // צפייה בתוכן: דף המתנה ודף המדרגות
+  if (stage === 'landing' || stage === 'shidrug') fb('ViewContent', { content_name: 'matana_' + slug + '_' + stage });
+  // הרשמה הושלמה: דף תודה אחרי רכישה, פעם אחת בלבד לכל דפדפן
+  if (stage === 'toda-shidrug') {
+    try { if (!sessionStorage.getItem('mt_cr_' + slug)) { sessionStorage.setItem('mt_cr_' + slug, '1'); fb('CompleteRegistration', { content_name: 'matana_' + slug }); ga('sign_up', { page: slug }); } } catch (e) {}
   }
   var h1 = $('h1[data-h]');
   if (h1) { try { var m = JSON.parse(h1.getAttribute('data-h')), c = q.get('utm_content'); if (c && m[c]) h1.textContent = m[c]; } catch (e) {} }
@@ -26,7 +39,13 @@
   }
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[data-wa]');
-    if (a) ev('generate_lead', 'wa_' + a.getAttribute('data-wa'));
+    if (a) ev('contact', 'wa_' + a.getAttribute('data-wa'));
+    var c = e.target.closest && e.target.closest('a[data-co]');
+    if (c) {
+      var val = parseFloat(c.getAttribute('data-co')) || 0, nm = c.getAttribute('data-name') || '';
+      fb('InitiateCheckout', { value: val, currency: 'ILS', content_name: nm });
+      ga('begin_checkout', { currency: 'ILS', value: val, items: [{ item_name: nm, price: val }], page: slug });
+    }
   });
   var v = $('.mt-vid[data-src]');
   if (v) {

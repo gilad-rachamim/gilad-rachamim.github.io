@@ -51,3 +51,14 @@ body.mt{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 system-ui,-
 .mt-list a{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 14px;color:var(--ink);text-decoration:none;font-weight:700}
 .mt-list a small{display:block;font-weight:400;color:var(--mut);font-size:.84rem}
 .mt h2.mt-h{font-size:1.05rem;color:var(--gold);margin:1rem 0 .2rem}
+
+/* מדרגות שידרוג (shidrug) */
+.mt-tier{position:relative;margin-top:1rem;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.mt-tier.rec{border:2px solid var(--gold)}
+.mt-tier h2{font-size:1.2rem;margin:.2rem 0}
+.mt-tier ul{margin:.3rem 0 .8rem;padding-inline-start:1.2rem}
+.mt-tier li{margin:.2rem 0}
+.mt-big{font-size:1.7rem;font-weight:800;margin:.1rem 0}
+.mt-rec{position:absolute;top:-11px;inset-inline-start:14px;background:var(--gold);color:#14213d;font-size:.78rem;font-weight:800;padding:2px 10px;border-radius:99px}
+.mt-ghost{background:transparent;border:1px solid var(--gold);color:var(--gold)}
+.mt-small{font-size:.9rem;color:var(--mut);text-align:center;margin-top:1rem}

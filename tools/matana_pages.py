@@ -61,6 +61,78 @@ def landing(p):
 """
 
 
+PAYHIP = "https://payhip.com/b/"
+# מוצר זול בדף התודה: (שם, מחיר, קישור, תיאור קצר, כפתור)
+CHEAP = {
+    "roe": ("ערכת דפי לקוח לרואה חשבון", 39, "jaDfg", "דפי לקוח מוכנים להדפסה ולשליחה: רשימת מסמכים, תזכורות והסברים, כקבצי PDF ו-Word שאפשר לערוך.", "אני רוצה את הערכה"),
+    "orchei-din": ("ערכת דפי לקוח לדיני עבודה", 39, "2sQ9Y", "דפי לקוח מוכנים למשרד: זכויות בפיטורין, טפסי איסוף מסמכים והסברים ללקוח, כקבצי PDF ו-Word.", "אני רוצה את הערכה"),
+    "esek": ("ערכת השקה לעסק", 39, "uYQyE", "30 פוסטים מוכנים בחמש קבוצות, כולל מבצעים והזמנות, לעריכה ולהדפסה.", "אני רוצה את הערכה"),
+    "kelim": ("ערכת השקה לעסק", 39, "uYQyE", "30 פוסטים מוכנים בחמש קבוצות, כולל מבצעים והזמנות, לעריכה ולהדפסה.", "אני רוצה את הערכה"),
+    "claude": ("קבוצת עבודה עם Claude", 18, "kNyeO", "קבוצת ווטסאפ פרטית עם גילעד כמנטור, ערכה של 30 פרומפטים ב-PDF, וטיפ יומי.", "אני רוצה להצטרף"),
+    "mohel-kurs": ("תיק המוהל", 97, "08VGv", "ערכה מסודרת למוהל בתחילת הדרך, מאת גילעד. הפרטים המלאים בדף המוצר.", "אני רוצה את התיק"),
+}
+# מדרגות השידרוג: (שם, מחיר, קישור, שורות, מומלץ)
+BIZ_LADDER = [
+    ("כלי ממותג", 290, "M5xC6", ["מחשבון אחד בלוגו, בצבעים ובקישור שלכם", "כפתור ווטסאפ וקוד QR", "סבב תיקונים אחד, מוכן תוך 48 שעות", "בונוס: הצטרפות לקבוצת הליווי והערכה"], False),
+    ("ערכת כלים לאתר", 590, "8utXB", ["עד שלושה מחשבונים ממותגים", "קוד הטמעה לאתר שלכם ודף אחד", "דוח חודשי קצר", "שני סבבי תיקונים", "בונוס: קבוצת הליווי והערכה"], True),
+    ("עסק דיגיטלי", 990, "bPiCF", ["הערכה המלאה", "כרטיס ביקור דיגיטלי", "דף עסק קטן", "בונוס: קבוצת הליווי והערכה"], False),
+]
+LADDERS = {
+    "claude": [("הקורס המלא: לעבוד עם Claude", 147, "mXida", ["כל השיעורים והתרגילים", "מחיר מייסדים ל-30 הראשונים, אחר כך 247 ₪", "14 יום להחזר כספי"], True)],
+    "mohel-kurs": [("הקורס המלא למוהלים", 597, "DI9mU", ["קורס מלא למוהלים בהדרכת גילעד", "ליווי מעשי: תרגול על בובה", "הפרטים המלאים בדף הקורס"], True)],
+}
+for _k in ("roe", "orchei-din", "esek", "kelim"):
+    LADDERS[_k] = BIZ_LADDER
+GROUP_LINE = ("קבוצת הליווי והערכה", 18, "kNyeO")
+BIZ = ("roe", "orchei-din", "esek", "kelim")
+
+
+def co(name, price, code, label, cls="mt-gold"):
+    return f'<a class="mt-btn {cls}" data-co="{price}" data-name="{esc(name)}" href="{PAYHIP}{code}" rel="noopener">{esc(label)}</a>'
+
+
+def cheap(p):
+    n, pr, code, d, b = CHEAP[p["slug"]]
+    return f"""<section class="mt-up" aria-labelledby="up-h">
+<h2 id="up-h">{esc(n)}</h2>
+<p>{esc(d)}</p>
+<p class="mt-price">{pr} ₪, תשלום חד-פעמי, בלי מנוי. 14 יום להחזר כספי.</p>
+{co(n, pr, code, b)}
+</section>"""
+
+
+def shidrug(p):
+    s = p["slug"]
+    rows = ""
+    for n, pr, code, lines, rec in LADDERS[s]:
+        li = "".join(f"<li>{esc(x)}</li>" for x in lines)
+        tag = '<span class="mt-rec">הכי נבחר</span>' if rec and len(LADDERS[s]) > 1 else ""
+        rows += f'<section class="mt-tier{" rec" if rec else ""}">{tag}<h2>{esc(n)}</h2><p class="mt-big">{pr} ₪</p><ul>{li}</ul>{co(n, pr, code, "אני רוצה: " + n if len(LADDERS[s]) > 1 else "אני רוצה להצטרף", "mt-gold" if rec else "mt-ghost")}</section>'
+    g = ""
+    if s in BIZ:
+        g = f'<p class="mt-small">רק רוצים ליווי והערכה? <a data-co="{GROUP_LINE[1]}" data-name="{GROUP_LINE[0]}" href="{PAYHIP}{GROUP_LINE[2]}" rel="noopener">{GROUP_LINE[0]} ב-{GROUP_LINE[1]} ₪</a></p>'
+    t = {"claude": "השלב הבא: הקורס המלא", "mohel-kurs": "השלב הבא: הקורס המלא למוהלים"}.get(s, "רוצים את זה בלוגו שלכם?")
+    return meta("השלב הבא", "השלב הבא אחרי הרכישה.") + f"""<span class="mt-pill">תודה שרכשתם</span>
+<h1 class="mt-center">{esc(t)}</h1>
+<p class="mt-center">זה השלב הבא, למי שרוצה להמשיך. תשלום חד-פעמי, בלי מנוי, כולל קבלה.</p>
+{rows}
+<a class="mt-btn mt-green" data-wa="shidrug" href="{wa('שלום גילעד, יש לי שאלה לפני שאני מחליט/ה')}" rel="noopener">שאלה? כתבו לי בווטסאפ</a>
+{g}
+<p class="mt-trust">{esc(C['chesed'])}</p>
+"""
+
+
+def toda_shidrug(p):
+    s = p["slug"]
+    extra = "אם רכשתם את השלב שכולל קבוצה, אשלח לכם את הקישור אליה בהודעה אישית." if s in BIZ else "אחזור אליכם בהודעה אישית עם כל מה שצריך להתחיל."
+    return meta("תודה על ההזמנה", "ההזמנה התקבלה.") + f"""<p class="mt-ok" aria-hidden="true">✅</p>
+<h1 class="mt-center">תודה, ההזמנה התקבלה</h1>
+<p class="mt-center">הקבלה והקבצים נשלחו למייל. {extra}</p>
+<a class="mt-btn mt-green" data-wa="toda-shidrug" href="{wa('שלום גילעד, רכשתי ואני רוצה להתחיל')}" rel="noopener">לכתוב לי בווטסאפ</a>
+<p class="mt-trust">{esc(C['chesed'])}</p>
+"""
+
+
 def upsell(p):
     if p["upsell"] == "claude":
         return f"""<section class="mt-up" aria-labelledby="up-h">
@@ -84,7 +156,7 @@ def thanks(p):
 <h1 class="mt-center">המתנות בדרך למייל שלכם</h1>
 <p class="mt-center">זה יגיע תוך דקות. אם לא רואים, כדאי להסתכל גם בספאם ובלשונית "קידומי מכירות".</p>
 <a class="mt-btn mt-green" data-wa="thanks" href="{wa(p['wa_thanks'])}" rel="noopener">בונוס בווטסאפ: {esc(p['wa_bonus'])}</a>
-{upsell(p)}
+{cheap(p)}
 <p class="mt-trust">{esc(C['chesed'])}</p>
 <p class="mt-priv"><a href="/kelim/pratiut/">פרטיות</a></p>
 """
@@ -106,6 +178,17 @@ def asara(p):
 """
 
 
+TZ_CODES = ["tz-s1", "tz-s2", "tz-v1", "tz-v2", "tz-m1", "tz-m2", "tz-m3"]
+
+
+def go(code):
+    """קישור מעקב קצר /go/tz-*/: מעביר לדף קורס המוהלים עם utm, כדי למדוד מה הביא כל פרסום (דוח: tzadokReport)."""
+    t = f"/matana/mohel-kurs/?utm_source=tzadok&utm_medium=share&utm_campaign={code}"
+    m = {"title": "מעבר לדף", "description": "מעבר לדף קורס המוהלים.", "noindex": True, "bare": True, "no_cta": True,
+         "head": f'<meta http-equiv="refresh" content="0; url={t}"><script>location.replace("{t}")</script>'}
+    return "<!--meta " + json.dumps(m, ensure_ascii=False) + " -->" + chr(10) + f'<p class="mt-center"><a href="{t}">להמשך לחצו כאן</a></p>' + chr(10)
+
+
 def write(rel, text):
     f = ROOT / "src" / "pages" / "matana" / rel / "index.html"
     f.parent.mkdir(parents=True, exist_ok=True)
@@ -116,6 +199,14 @@ if __name__ == "__main__":
     for p in DATA["pages"]:
         write(p["slug"], landing(p))
         write(p["slug"] + "/toda", thanks(p))
+        if p["slug"] in LADDERS:
+            write(p["slug"] + "/shidrug", shidrug(p))
+            write(p["slug"] + "/toda-shidrug" if p["slug"] != "mohel-kurs" else "mohel-kurs/toda-kurs", toda_shidrug(p))
+        if p["slug"] == "mohel-kurs":
+            for c in TZ_CODES:
+                f = ROOT / "src" / "pages" / "go" / c / "index.html"
+                f.parent.mkdir(parents=True, exist_ok=True)
+                f.write_text(go(c), encoding="utf-8")
         if p["slug"] == "kelim":
             write("kelim/asara", asara(p))
     print("נכתבו", len(DATA["pages"]) * 2 + 1, "דפים")
