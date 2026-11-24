@@ -45,8 +45,8 @@ def landing(p):
 <input type="hidden" name="_page" value="">
 <input type="hidden" name="utm_source" value=""><input type="hidden" name="utm_medium" value=""><input type="hidden" name="utm_campaign" value=""><input type="hidden" name="utm_content" value="">
 <div class="mt-hp" aria-hidden="true"><label>אל תמלאו שדה זה <input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></div>
-<input type="text" name="שם" autocomplete="given-name" placeholder="שם פרטי" aria-label="שם פרטי" required>
 <input type="email" name="email" autocomplete="email" placeholder="מייל (לכאן נשלח את המתנות)" aria-label="מייל" dir="ltr" style="text-align:right" required>
+<input type="text" name="שם" autocomplete="given-name" placeholder="שם פרטי (לא חובה, כדי שאפנה אליכם בשם)" aria-label="שם פרטי, לא חובה">
 <input type="tel" name="טלפון" autocomplete="tel" inputmode="tel" placeholder="טלפון (לא חובה)" aria-label="טלפון, לא חובה">
 <label class="chk"><input type="checkbox" name="מאשר/ת קבלת עדכונים" value="כן"><span>{esc(C['consent'])}</span></label>
 <p class="mt-err" role="alert"></p>
@@ -54,6 +54,7 @@ def landing(p):
 </form>
 <p class="mt-or">או</p>
 <a class="mt-btn mt-green" data-wa="main" href="{wa(p['wa_text'])}" rel="noopener">{esc(p['wa_label'])}</a>
+<p class="mt-wa-note">הבונוס האישי הזה מגיע רק למי שכותב לי בווטסאפ.</p>
 {vid}<p class="mt-trust">{esc(C['chesed'])}</p>
 <p class="mt-priv">הפרטים נשמרים אצלי בלבד ולא מועברים לאף אחד. המתנה נשלחת גם בלי לסמן את התיבה. <a href="/kelim/pratiut/">פרטיות</a>.{note}</p>
 <div class="mt-dock"><a class="mt-btn mt-gold" href="#form">למייל</a><a class="mt-btn mt-green" data-wa="dock" href="{wa(p['wa_text'])}" rel="noopener">{esc(p['dock_wa'])}</a></div>

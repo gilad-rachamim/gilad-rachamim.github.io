@@ -16,7 +16,7 @@
       e.preventDefault();
       if (f.elements._honey && f.elements._honey.value) return;
       var em = f.elements.email.value.trim(), nm = f.elements['שם'].value.trim(), er = $('.mt-err', f);
-      if (!nm || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { er.textContent = 'נא למלא שם ומייל תקין'; return; }
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { er.textContent = 'נא למלא מייל תקין'; return; }
       er.textContent = '';
       var b = $('button[type=submit]', f); b.disabled = true; b.textContent = 'שולח…';
       ev('generate_lead', 'form');
