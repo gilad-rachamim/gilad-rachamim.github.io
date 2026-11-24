@@ -196,7 +196,7 @@
 
 <a class="wa-sticky" href="https://wa.me/972584049049?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%92%D7%99%D7%9C%D7%A2%D7%93%2C%20%D7%90%D7%A0%D7%99%20%D7%A2%D7%95%D7%A8%D7%9A%20%D7%93%D7%99%D7%9F%20%D7%95%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A7%D7%91%D7%9C%20%D7%90%D7%AA%20%D7%94%D7%9E%D7%AA%D7%A0%D7%95%D7%AA" target="_blank" rel="noopener" data-wa="sticky" aria-label="קבלת המתנות בוואטסאפ">קבלו מתנות בוואטסאפ</a>
 <style>.wa-sticky{position:fixed;inset-inline:1rem;bottom:1rem;z-index:50;text-align:center;background:#25d366;color:#06240f;font-weight:800;padding:.85rem 1rem;border-radius:999px;text-decoration:none;box-shadow:0 6px 20px rgba(0,0,0,.35)}@media(min-width:720px){.wa-sticky{inset-inline:auto 1.5rem;width:auto;padding:.85rem 1.6rem}}</style>
-<script>document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('[data-wa]');if(a&&window.gtag)gtag('event','wa_click',{place:a.getAttribute('data-wa')});});</script>
+<script>document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('[data-wa]');if(!a)return;if(window.gtag)gtag('event','wa_click',{place:a.getAttribute('data-wa')});if(window.fbq)fbq('track','Lead',{content_name:'wa_'+a.getAttribute('data-wa')});});</script>
 
 <section class="k-sec rel rel-v2 no-print" aria-labelledby="rel-h" data-rel="6">
   <h2 id="rel-h">עוד כלים שיעזרו לכם</h2>
