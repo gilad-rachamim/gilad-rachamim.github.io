@@ -574,6 +574,14 @@ export default {
       await call(env, '/post-log', { at: new Date().toISOString(), name: 'רילס', fb: res.id ? 'עלה' : 'שגיאה: ' + res.error, wa: '-', tg: tgr ? (tgr.error ? 'שגיאה: ' + tgr.error : 'עלה') : '-' }).catch(() => {});
       return json({ ok: !!res.id, ...res, tg: tgr });
     }
+    if (url.pathname === '/tg-post' && request.method === 'POST') { // פרסום ידני של הודעה אחת לערוץ הטלגרם שהוגדר (רק עם מפתח ניהול)
+      if (!admin) return json({ ok: false }, 403);
+      if (!env.TG_TOKEN) return json({ ok: false, error: 'אין TG_TOKEN' });
+      const b = await request.json().catch(() => ({})); const text = String(b.text || '').trim();
+      if (text.length < 5 || text.length > 3900) return json({ ok: false, error: 'טקסט לא תקין' }, 400);
+      const cfg = await call(env, '/config'); if (!cfg.tgid) return json({ ok: false, error: 'אין ערוץ מוגדר' });
+      return json({ ok: true, ...(await postTelegram(env, cfg.tgid, text)) });
+    }
     if (url.pathname === '/tg-check') { // הבוט חי? הערוץ נמצא? כמה מצטרפים (למדידה השבועית)
       if (!admin) return json({ ok: false }, 403);
       if (!env.TG_TOKEN) return json({ ok: false, error: 'אין TG_TOKEN' });
