@@ -84,12 +84,12 @@
 <div class="tool no-print">
   <form class="k-form" data-key="kodesh-kibudim-yechida-ru" novalidate>
     <div class="dp-row">
-      <div class="field"><label for="ky-type">Тип события</label><select id="ky-type" name="type"><option value="siyum">Сиюм масехет (завершение трактата)</option><option value="azkara">Азкара (поминальная церемония)</option><option value="sefer">Внесение свитка Торы</option><option value="mezuza">Освящение синагоги и установка мезуз</option><option value="other">Другое событие</option></select></div>
+      <div class="field"><label for="ky-type">Тип мероприятия</label><select id="ky-type" name="type"><option value="siyum">Сиюм масехет (завершение трактата)</option><option value="azkara">Азкара (поминальная церемония)</option><option value="sefer">Внесение свитка Торы</option><option value="mezuza">Освящение синагоги и установка мезуз</option><option value="other">Другое событие</option></select></div>
       <div class="field"><label for="ky-title">Заголовок</label><input id="ky-title" name="title" data-out="title" type="text" maxlength="70"></div>
     </div>
     <div class="field"><label for="ky-when">Когда и где</label><input id="ky-when" name="when" data-out="when" type="text" maxlength="90" placeholder="Вторник, 12 кислева, 19:30 · синагога батальона"></div>
     <div class="field"><label for="ky-for">В честь / в память о <span class="opt">(необязательно)</span></label><input id="ky-for" name="for" data-out="for" type="text" maxlength="90" placeholder="В память о старшем сержанте ..., да отомстит Всевышний за его кровь"></div>
-    <div class="field"><label for="ky-order">Порядок события, по строке на каждую часть</label><textarea id="ky-order" name="order" data-out="order" data-lines="list" rows="6"></textarea></div>
+    <div class="field"><label for="ky-order">Порядок мероприятия, по строке на каждую часть</label><textarea id="ky-order" name="order" data-out="order" data-lines="list" rows="6"></textarea></div>
     <div class="field"><label for="ky-kib">Почести, по строке на каждую <span class="opt">(почесть – имя)</span></label><textarea id="ky-kib" name="kib" data-out="kib" data-lines="pairs" rows="6"></textarea>
       <button class="btn btn-line btn-sm" type="button" id="kb-reset" style="margin-top:.5rem">Вернуть пример для этого события</button></div>
     <div class="dp-row">
@@ -105,7 +105,7 @@
 </div>
 <div id="dp-sheet" class="dp-sheet" dir="ltr">
   <div class="dp-head"><span class="bsd" lang="he" dir="rtl">בס"ד</span><h2 data-in="title"></h2><p class="dp-sub" data-in="when"></p><p class="dp-kicker" data-opt><span data-in="for"></span></p></div>
-  <div class="dp-sec"><h3>Порядок события</h3><div data-in="order"></div></div>
+  <div class="dp-sec"><h3>Порядок мероприятия</h3><div data-in="order"></div></div>
   <div class="dp-sec"><h3>Почести</h3><div data-in="kib"></div></div>
   <p class="dp-sig" data-in="sig"></p>
 </div>
@@ -115,7 +115,7 @@
 </div>
 <!--seo-txt-->
 <section class="k-sec seo-txt" aria-labelledby="seo-h">
-  <h2 id="seo-h">Порядок события и почести для раввина части</h2>
+  <h2 id="seo-h">Порядок мероприятия и почести для раввина части</h2>
   <p>Выберите тип события: сиюм масехет, азкара, внесение свитка Торы или освящение синагоги с установкой мезуз. Вы получите примерный порядок и список почестей, впишете имена и измените всё, что нужно.</p>
   <h3>Лист для ведущего</h3>
   <p>Распечатайте аккуратный лист для того, кто ведёт событие, или отправьте его в группу в WhatsApp. Есть четыре оформления, включая белое, которое экономит чернила.</p>
