@@ -13,9 +13,18 @@
       "חבילה: " + plans[plan] + "\nכלים: " + (tools.join(", ") || "עוד לא בחרתי") +
       "\nשם המשרד: " + (name || "—") + "\nוואטסאפ לפניות: " + (tel || "—") +
       "\nאתר: " + $("[data-o-site]").value + "\nצבע: " + $("[data-o-color]").value +
-      "\n(אשלח לוגו בהמשך השיחה)";
+      "\n(אשלח לוגו בהמשך השיחה)" + (src ? "\n[" + src + "]" : "");
     go.href = "https://wa.me/972584049049?text=" + encodeURIComponent(msg);
-    sum.textContent = tools.length > max ? "בחבילה הזו נכללים עד " + (max === 1 ? "כלי אחד" : "שלושה כלים") + ". אפשר להמשיך, ונתאם בשיחה." : "נבחרו " + tools.length + " כלים, " + plans[plan] + ".";
+    sum.textContent = tools.length > max ? "בחבילה הזו נכללים עד " + (max === 1 ? "כלי אחד" : "שלושה כלים") + ". אפשר להמשיך, ונתאם בשיחה." : (tools.length === 0 ? "עוד לא נבחרו כלים, " : tools.length === 1 ? "נבחר כלי אחד, " : "נבחרו " + tools.length + " כלים, ") + plans[plan] + ".";
   }
+  var src = ""; try { src = new URLSearchParams(location.search).get("utm_source") || ""; } catch (e) {}
+  go.addEventListener("click", function () {
+    try {
+      if (window.gtag) window.gtag("event", "brand_order_click", {
+        plan: $("[data-o-plan]").value, tools: f.querySelectorAll("input[name=tool]:checked").length,
+        site: $("[data-o-site]").value, source: src || "direct"
+      });
+    } catch (e) {}
+  });
   f.addEventListener("input", upd); f.addEventListener("change", upd); upd();
 })();
