@@ -1,7 +1,7 @@
 """מחולל דפי המתנה הקצרים /matana/<שם>/ ודפי התודה /matana/<שם>/toda/ (24.11.2026).
 קורא את tools/data/matana-pages.json וכותב ל-src/pages/matana/. אחר כך מריצים python build.py.
 דפים: noindex, בלי תפריט (meta bare), בלי מחירים בדף עצמו - מחירים רק בדף התודה, במיילים ובווטסאפ."""
-import json, html, pathlib
+import json, html, pathlib, re
 from urllib.parse import quote
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -22,10 +22,32 @@ def meta(title, desc):
     return "<!--meta " + json.dumps(m, ensure_ascii=False) + " -->\n"
 
 
+# חבילת מתנות בדף הלידים: רק מה שבאמת נשלח במייל (אותם gifts), עד 6 כרטיסים; קלוד: ארבע קבוצות הפרומפטים
+PACK_N = 6
+CLAUDE_PACK = [("להתחיל נכון", "איך מתחילים פרויקט עם Claude בלי לטעות"), ("כשמשהו נשבר", "הדבקת שגיאה ותיקון בשפה פשוטה"), ("לשפר ולבדוק", "בדיקה שהכלי לא נופל במקרים מוזרים"), ("לעבוד חכם", "הוראות שחוסכות סבבים מיותרים")]
+
+
+def pack(p):
+    if p["slug"] == "claude":
+        items = CLAUDE_PACK
+        total = 12
+    elif p.get("gifts"):
+        items = [(g[0], re.sub(r"\s*גם כקובץ PDF להדפסה:.*", "", g[2]).strip() or "בחינם") for g in p["gifts"]]
+        total = len(items)
+        items = items[:PACK_N]
+    else:
+        return ""
+    more = f'<li class="more">ועוד {total - len(items)} במייל</li>' if total > len(items) and p["slug"] != "claude" else ""
+    head = "12 פרומפטים מוכנים, בארבע קבוצות" if p["slug"] == "claude" else f"{total} מתנות במייל אחד"
+    cards = "".join(f"<li><b>{esc(n)}</b><small>{esc(d)}</small></li>" for n, d in items)
+    return f'<h2 class="mt-packh">🎁 {esc(head)}</h2><ul class="mt-pack">{cards}{more}</ul>\n'
+
+
 def landing(p):
     s = p["slug"]
     hmap = esc(json.dumps(p["h"], ensure_ascii=False))
-    pts = "".join(f"<li>{esc(x)}</li>" for x in p["points"])
+    pk = pack(p)
+    pts = "".join(f"<li>{esc(x)}</li>" for x in (p["points"][2:] if pk else p["points"]))
     vid = ""
     if p.get("video"):
         pre = p["video"][0]
@@ -39,7 +61,7 @@ def landing(p):
 <div class="book"><b>{esc(p['book'][0])}</b><small>{esc(p['book'][1])}</small></div>
 <div class="phone"><i>לוגו</i><s></s><s></s><em>{esc(p['phone'])}</em></div>
 </div>
-<ul class="mt-points">{pts}</ul>
+{pk}<ul class="mt-points">{pts}</ul>
 <form class="mt-form" id="form" action="{ENDPOINT}" method="POST" data-next="/matana/{s}/toda/" novalidate>
 <input type="hidden" name="מקור" value="מתנה: {s}">
 <input type="hidden" name="_page" value="">
