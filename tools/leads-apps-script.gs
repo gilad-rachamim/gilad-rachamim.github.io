@@ -78,6 +78,9 @@ function doPost(e) {
     if (email && mailOk && gift) {
       try { sendGiftEmail(name, email, token, consent, giftSlug_(clean(p['מקור']))); } catch (eG) { log('מייל מתנה נכשל: ' + eG + ' | ' + email); }
     }
+    if (email && mailOk && /^כלים: יוטיוב בלי פרסומות/.test(clean(p['מקור']))) {   // הוראות הדף /kelim/yutub-bli-pirsomot/ (24.11.2026)
+      try { sendYoutubeEmail(name, email); } catch (eY) { log('מייל יוטיוב נכשל: ' + eY + ' | ' + email); }
+    }
     if (email && mailOk && !kelim && !gift) {
       var src = clean(p['מקור']);
       if (src === 'מחולל הודעה לברית') sendHazmanaEmail(name, email);
@@ -507,6 +510,25 @@ function tzadokReport() {
   var lines = Object.keys(by).map(function (k) { return k + ': ' + by[k]; });
   MailApp.sendEmail(CFG.OWNER_EMAIL, 'דוח קורס המוהלים: ' + tot + ' לידים', lines.join(String.fromCharCode(10)) || 'עדיין אין לידים');
   return tot;
+}
+// ---------- הוראות "יוטיוב בלי פרסומות" (דף כלים, 24.11.2026): מייל אחד, בלי סדרה ובלי מדריך ברית ----------
+function ytLink_(path, label) {
+  var url = /^https?:/.test(path) ? path : CFG.SITE + path + '?utm_source=youtube-guide&utm_medium=email&utm_campaign=youtube-bli-pirsomot';
+  return '<a href="' + url + '" style="color:#1a5fb4;font-weight:bold">' + label + '</a>';
+}
+function sendYoutubeEmail(name, email) {
+  var first = firstName(name);
+  var inner = 'שלום ' + first + ',<br><br>הנה ההוראות לשמוע שירים ביוטיוב בלי פרסומות, גם ברקע ועם מסך כבוי, בדפדפן Brave (חינמי וחוקי):<br><br>' +
+    '<b>באנדרואיד:</b><br>1. מורידים את Brave מגוגל פליי.<br>2. הגדרות ← מדיה ← מפעילים "ניגון וידאו ברקע".<br>3. פותחים את ' + ytLink_('https://music.youtube.com/', 'יוטיוב מיוזיק') + ' ב-Brave, מנגנים שיר, ויוצאים למסך הבית או נועלים את המסך.<br>4. רוצים סמל כמו אפליקציה? שלוש הנקודות ← הוספה למסך הבית.<br><br>' +
+    '<b>באייפון:</b> מורידים את Brave מהאפ סטור, פותחים music.youtube.com, ואם הניגון נעצר ביציאה למסך הבית, מחדשים אותו ממרכז הבקרה.<br><br>' +
+    '<b>במחשב:</b> מורידים את Brave מ-brave.com, והחוסם כבר מובנה.<br><br>' +
+    'כל ההוראות, עם כפתור פתיחה ישר ב-Brave: ' + ytLink_('/kelim/yutub-bli-pirsomot/', 'לדף ההוראות') + '<br><br>' +
+    'בשביל ההגינות: זה לא "פרימיום בחינם". אין הורדת שירים לשמיעה בלי אינטרנט, ומנוי הפרימיום של יוטיוב תומך ישירות ביוצרים. הדף שלנו לא קשור ליוטיוב, לגוגל או ל-Brave.<br><br>' +
+    'עוד כלים חינמיים שיעזרו לכם: ' + ytLink_('/kelim/tamlul/', 'תמלול בעברית') + ' · ' + ytLink_('/kelim/android/', 'כלים לאנדרואיד') + ' · ' + ytLink_('/kelim/iphone/', 'כלים לאייפון') + '<br><br>' +
+    'שיהיה לכם בהצלחה,<br>גילעד';
+  var html = '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:16px;line-height:1.65;color:#222;max-width:560px">' + inner +
+    '<div style="margin-top:16px;padding-top:10px;border-top:1px solid #eee;font-size:13px;color:#666">גילעד רחמים אביעד · הכלים של גילעד רחמים · ' + CHESED + '<br>hakelim.com/kelim</div></div>';
+  MailApp.sendEmail({ to: email, subject: 'ההוראות: יוטיוב בלי פרסומות, גם ברקע ועם מסך כבוי', htmlBody: html, body: toText(html), name: CFG.OWNER_NAME, replyTo: CFG.OWNER_EMAIL });
 }
 // מנהלים שעברו למעקב: סטטוס "קנה" = סדרת הקונים (בלי הצעות)
 function isGift_(src) { return /^מתנה:/.test(String(src || '')); }
