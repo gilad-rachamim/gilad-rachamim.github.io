@@ -1,6 +1,8 @@
 // דפי הנוסחים והברכות: כפתור העתקה וכפתור ווטסאפ ליד כל נוסח.
 // הטקסט נלקח מה-<pre> שבאותו בלוק. בלי JavaScript – מסמנים ומעתיקים ביד.
 (function () {
+  var L = (document.documentElement.getAttribute('lang') || 'he').slice(0, 2);
+  var T = function (d) { return d[L] || d.he; };
   function ev(name, params) { if (window.gtag) window.gtag('event', name, params || {}); }
   function text(btn) {
     var box = btn.closest('.nusach');
@@ -26,7 +28,7 @@
     }
     e.preventDefault();
     ev('nusach_copy', { id: id, page: location.pathname });
-    var done = function () { flash(btn, 'הועתק ✓'); };
+    var done = function () { flash(btn, T({ he: 'הועתק ✓', ru: 'Скопировано ✓', en: 'Copied ✓' })); };
     var fallback = function () {
       var ta = document.createElement('textarea');
       ta.value = t; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.top = '-999px';

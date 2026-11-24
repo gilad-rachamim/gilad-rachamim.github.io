@@ -1,0 +1,216 @@
+<!--meta {
+ "lang": "en",
+ "alt": {
+  "he": "/mohel/hazmana/",
+  "en": "/mohel/en/hazmana/",
+  "ru": "/mohel/ru/hazmana/"
+ },
+ "crumb_root": "Brit milah",
+ "tool": "mohel_hazmana_en",
+ "title": "Bris Invitation Maker – Free, Ready in a Minute",
+ "description": "Free bris invitation maker, no sign-up: 5 designs, Hebrew and civil dates, a WhatsApp image and a guest link with directions, calendar and RSVP.",
+ "head": "<link rel=\"stylesheet\" href=\"/assets/hazmana.css\"><link rel=\"stylesheet\" href=\"/assets/lang-switch.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"Is it really free?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Yes. No payment, no premium version and no limits. No sign-up and no account: you leave your name and phone once, and that's it. There is a small line with the site link at the bottom of the image – that's all.\"}}, {\"@type\": \"Question\", \"name\": \"What do I do with the invitation?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Send the image on WhatsApp to family and friends, or copy the text. The guest link gives them Waze directions, add-to-calendar and RSVP.\"}}, {\"@type\": \"Question\", \"name\": \"Can I change the invitation after I've finished?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Yes. The details are saved on your phone. Come back to the page, change what you need and download again.\"}}, {\"@type\": \"Question\", \"name\": \"We don't have an exact date yet. What now?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Work it out in the brit date calculator . If there is doubt (jaundice, a birth close to sunset), send a birth announcement first, and the bris invitation once you have a mohel and a venue.\"}}, {\"@type\": \"Question\", \"name\": \"Does it work for Zeved Habat and pidyon haben?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Yes. At the top of the page choose \\\"Zeved Habat\\\" or \\\"Pidyon haben\\\" and the wording, verses and fields change. A designed invitation for every baby celebration . For Shalom Zachar there is ready wording and a line in the bris invitation itself.\"}}, {\"@type\": \"Question\", \"name\": \"Why does it say \\\"announce\\\" and not \\\"invite\\\"?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"There is a common custom, cited by the Rema (Yoreh De'ah 265), not to invite people to the brit meal directly, so that someone who can't come isn't seen as turning down a seudat mitzvah. That's why the text says \\\"we would be glad to share our joy with you\\\". More about invitation wording .\"}}, {\"@type\": \"Question\", \"name\": \"Which language will the invitation be in?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"On this page – English. The verse at the top, if you choose one, stays in Hebrew as in the original. If you need a Hebrew text, make the invitation on the Hebrew page (Hebrew) .\"}}, {\"@type\": \"Question\", \"name\": \"Can I talk to the mohel before the birth?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Yes. A get-to-know call with Gilad Rachamim is free, even during pregnancy. The parents' guide helps you get ready ahead of time.\"}}]}</script>",
+ "foot": "<script src=\"/assets/hazmana.js\" defer></script>",
+ "og_title": "Free Bris Invitation Maker – Ready in a Minute",
+ "priority": "0.8",
+ "crumbs": [
+  [
+   "Bris invitation",
+   null
+  ]
+ ],
+ "og_image": "og-hazmana.jpg",
+ "dock_href": "#hz-form",
+ "dock_label": "Make the invitation"
+} -->
+<header class="hero">
+  <svg class="ic" style="width:3.6rem;height:3.6rem;color:var(--gold);margin:0 auto 1rem;stroke-width:1.2"><use href="#baby"/></svg>
+  <h1>Free Bris Invitation Maker – Ready in a Minute</h1>
+  <p class="sub">Fill in when and where, pick a design and send it to the whole family on WhatsApp. Free, no sign-up: leave your details once and get the parents' guide as a gift.</p>
+  <p class="sub">Also a gift: a guest link with RSVP, and a dashboard that shows who is coming, how many guests in total and who hasn't answered yet.</p>
+</header>
+<nav class="gr-lang" aria-label="Language / שפה / Язык"><a href="/mohel/hazmana/" lang="he" hreflang="he">עברית</a><a href="/mohel/en/hazmana/" lang="en" hreflang="en" aria-current="page">English</a><a href="/mohel/ru/hazmana/" lang="ru" hreflang="ru">Русский</a></nav>
+
+<div class="hz">
+  <form id="hz-form" class="panel lead-form" novalidate>
+    <fieldset class="hz-step">
+      <legend>Which celebration?</legend>
+      <div class="radios hz-kinds" role="radiogroup" aria-label="Type of celebration">
+        <label><input type="radio" name="k" value="brit" checked> Brit milah</label>
+        <label><input type="radio" name="k" value="zeved"> Zeved Habat</label>
+        <label><input type="radio" name="k" value="pidyon"> Pidyon haben</label>
+      </div>
+    </fieldset>
+
+    <fieldset class="hz-step">
+      <legend>When and where</legend>
+      <div class="two">
+        <div class="field"><label for="hz-dt">Date of the brit</label><input id="hz-dt" name="dt" type="date" required></div>
+        <div class="field"><label for="hz-tm">Time of the brit</label><input id="hz-tm" name="tm" type="time" required></div>
+      </div>
+      <div class="field">
+        <span class="label" id="hz-sh-label">Prayer before the brit <span class="opt">(optional)</span></span>
+        <div class="two">
+          <select name="shp" aria-label="Which prayer"><option value="shacharit">Shacharit</option><option value="mincha">Mincha</option><option value="arvit" id="hz-sh-arvit" hidden>Maariv</option></select>
+          <input id="hz-sh" name="sh" type="time" aria-label="Prayer time">
+        </div>
+      </div>
+      <div class="field"><label for="hz-pl">Venue</label><input id="hz-pl" name="pl" type="text" required placeholder="Ohel Yitzchak Synagogue / event hall"></div>
+      <div class="field"><label for="hz-ad">Address <span class="opt">(for the directions button)</span></label><input id="hz-ad" name="ad" type="text" placeholder="5 HaRav Kook St., Jerusalem"></div>
+      <div class="field" id="hz-kh-wrap" hidden><label for="hz-kh">Kohen <span class="opt">(optional)</span></label><input id="hz-kh" name="kh" type="text" placeholder="Yosef Cohen"></div>
+      <div class="field">
+        <span class="label">How to write the date?</span>
+        <div class="radios">
+          <label><input type="radio" name="fm" value="both" checked> Hebrew and civil</label>
+          <label><input type="radio" name="fm" value="heb"> Hebrew</label>
+          <label><input type="radio" name="fm" value="greg"> Civil</label>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="hz-step">
+      <legend>Who is announcing <span class="opt" style="font-size:1rem">(optional)</span></legend>
+      <div class="two">
+        <div class="field"><label for="hz-par">Parents' names</label><input id="hz-par" name="par" type="text" placeholder="Shira and Yossi"></div>
+        <div class="field"><label for="hz-fam">Family name</label><input id="hz-fam" name="fam" type="text" placeholder="Cohen"></div>
+      </div>
+      <div class="field"><label for="hz-gp">Grandparents</label><input id="hz-gp" name="gp" type="text" placeholder="The Cohen and Levi families"></div>
+    </fieldset>
+
+    <fieldset class="hz-step">
+      <legend>Extras</legend>
+      <div class="field">
+        <label for="hz-vs">Verse at the top (in Hebrew)</label>
+        <select id="hz-vs" name="vs">
+          <option value="0">No verse</option>
+          <option value="1">U'vayom hashmini yimol besar orlato (Leviticus 12:3)</option>
+          <option value="2">Ashrei tivchar u'tekarev yishkon chatzerecha (Psalms 65:5)</option>
+          <option value="3">Keshem shenichnas labrit, ken yikanes l'Torah ul'chuppah ul'maasim tovim</option>
+          <option value="4">Hamalach hagoel oti mikol ra (Genesis 48:16)</option>
+        </select>
+      </div>
+      <label class="check"><input type="checkbox" name="se"> <span id="hz-se-label">Seudat mitzvah after the brit</span></label>
+      <div class="hz-more" id="hz-se-more" hidden>
+        <div class="field"><label for="hz-sep">Where is the meal? <span class="opt">(blank = same place)</span></label><input id="hz-sep" name="sep" type="text" placeholder="The Garden Hall"></div>
+      </div>
+      <label class="check" id="hz-sz-wrap"><input type="checkbox" name="sz"> <span>Shalom Zachar on Friday night before the brit</span></label>
+      <div class="hz-more" id="hz-sz-more" hidden>
+        <div class="two">
+          <div class="field"><label for="hz-szt">Time</label><input id="hz-szt" name="szt" type="time"></div>
+          <div class="field"><label for="hz-szp">Where</label><input id="hz-szp" name="szp" type="text" placeholder="At our home"></div>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="hz-step">
+      <legend>Design</legend>
+      <div class="hz-styles" role="radiogroup" aria-label="Design style">
+        <label class="hz-mini"><input type="radio" name="st" value="zahav" checked><canvas width="216" height="270" data-st="zahav" aria-hidden="true"></canvas>Classic gold</label>
+        <label class="hz-mini"><input type="radio" name="st" value="modern"><canvas width="216" height="270" data-st="modern" aria-hidden="true"></canvas>Modern</label>
+        <label class="hz-mini"><input type="radio" name="st" value="yerushalmi"><canvas width="216" height="270" data-st="yerushalmi" aria-hidden="true"></canvas>Jerusalem</label>
+        <label class="hz-mini"><input type="radio" name="st" value="prachim"><canvas width="216" height="270" data-st="prachim" aria-hidden="true"></canvas>Soft flowers</label>
+        <label class="hz-mini"><input type="radio" name="st" value="sfaradi"><canvas width="216" height="270" data-st="sfaradi" aria-hidden="true"></canvas>Sephardic</label>
+      </div>
+    </fieldset>
+  </form>
+
+  <div class="hz-preview"><canvas id="hz-canvas" width="1080" height="1350" role="img" aria-label="Bris invitation preview"></canvas></div>
+
+  <div class="hz-actions">
+    <form id="hz-reg" class="panel lead-form" action="https://script.google.com/macros/s/AKfycbxgWe4xxaclqfzmOD_E0hOg2XDr2genZZyvAcf0hpHw_AHkgvQAqDop-XjdURdARYNx-Q/exec" method="POST">
+      <h2>Your invitation is ready</h2>
+      <p class="note">Leave your name and phone and get the invitation: an image, WhatsApp text and a guest link. As a gift you also get the parents' guide to the brit (in Hebrew).</p>
+      <input type="hidden" name="מקור" value="מחולל הודעה לברית" lang="he">
+      <div class="hp" aria-hidden="true"><label>Do not fill in this field <input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></div>
+      <div class="field"><label for="r-name">Name</label><input id="r-name" name="שם" type="text" autocomplete="name" required placeholder="What's your name?"></div>
+      <div class="field"><label for="r-phone">Phone</label><input id="r-phone" name="טלפון" type="tel" inputmode="tel" autocomplete="tel" required placeholder="050-0000000" pattern="[0-9\-\+\s]{9,15}" dir="ltr" style="text-align:right"></div>
+      <div class="field"><label for="r-email">Email <span class="opt" id="r-email-opt">(optional, the guide is sent here)</span></label><input id="r-email" name="email" type="email" autocomplete="email" placeholder="name@gmail.com" dir="ltr" style="text-align:right"></div>
+      <button class="btn btn-gold btn-block" type="submit">Get the invitation (free)</button>
+      <p class="privacy">The brit details stay on your phone. Your name and phone are kept by me only and are never passed on. They are used only to send you the invitation, and you can ask at any time to see, correct or delete them. <a href="/mohel/hazmana/privacy/">Privacy (Hebrew)</a></p>
+    </form>
+
+    <div id="hz-acts" class="panel" hidden>
+      <h2>Mazal tov! Here is your invitation</h2>
+      <p id="hz-thanks" class="note" tabindex="-1" hidden>Thank you! The parents' guide is waiting for you below.</p>
+      <div class="hz-btns" style="margin-top:1rem">
+        <button class="btn btn-gold wide" type="button" id="a-share"><svg class="ic"><use href="#wa"/></svg> Send the image on WhatsApp</button>
+        <button class="btn btn-line" type="button" id="a-down"><svg class="ic"><use href="#down"/></svg> Download the image</button>
+        <button class="btn btn-line wide" type="button" id="a-pdf"><svg class="ic"><use href="#down"/></svg> Download a PDF with clickable links</button>
+        <a class="btn btn-line" id="a-wa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> WhatsApp text</a>
+        <button class="btn btn-line" type="button" id="a-text"><svg class="ic"><use href="#list"/></svg> Copy the text</button>
+        <button class="btn btn-line" type="button" id="a-link"><svg class="ic"><use href="#share"/></svg> Guest link</button>
+        <a class="btn btn-line" id="a-gcal" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#cal"/></svg> Add to Google Calendar</a>
+        <a class="btn btn-line" id="a-ics" href="#" download="brit.ics"><svg class="ic"><use href="#cal"/></svg> Add to phone calendar</a>
+        <a class="btn btn-line wide" id="a-view" href="#" target="_blank" rel="noopener">How will guests see the link?</a>
+      </div>
+      <p class="note" style="margin-top:.8rem">The guest link opens the invitation, a Waze directions button and add-to-calendar.</p>
+      <div id="hz-rsvp-panel" class="hz-rsvp-panel" hidden>
+        <h3>RSVP and guest count – a gift</h3>
+        <p class="note">Whoever opens the link marks "Coming? How many?". The dashboard shows who confirmed, how many are coming in total and who hasn't answered, and lets you send a reminder with one tap.</p>
+        <p class="hz-short"><span id="a-short" dir="ltr"></span> <button class="btn btn-line" type="button" id="a-short-copy">Copy</button></p>
+        <a class="btn btn-gold btn-block" id="a-dash" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#list"/></svg> My guest dashboard</a>
+        <p class="note small">The dashboard is private: only someone with this link sees the list. Save it. The data deletes itself 30 days after the brit.</p>
+      </div>
+      <div class="hz-rsvp-panel">
+        <h3>A notice for the synagogue</h3>
+        <p class="note" id="hz-poster-note">An A4 page in the same design, with a QR code: whoever scans it gets directions and marks "coming". Hang it on the notice board, in the synagogue or at work.</p>
+        <div class="hz-poster"><canvas id="hz-poster" width="1080" height="1527" role="img" aria-label="Synagogue notice preview"></canvas></div>
+        <button class="btn btn-gold btn-block" type="button" id="a-poster"><svg class="ic"><use href="#down"/></svg> Download the notice (PDF)</button>
+      </div>
+      <div class="hz-gift">
+        <a class="btn btn-line btn-block" id="a-guide" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#book"/></svg> Parents' guide to the brit (PDF, in Hebrew)</a>
+        <a class="btn btn-line btn-block" id="a-gilad" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> Book the brit with Gilad</a>
+      </div>
+      <div class="hz-songs" id="hz-songs">
+        <p id="hz-songs-all"><strong>And now – music for the brit.</strong> Song playlists for your custom: religious, traditional, piyyutim, Ashkenazi Chassidic and Yemenite.</p>
+        <p id="hz-songs-sf" hidden><strong>And now – music for the brit.</strong> Picked the Sephardic design? I put together a playlist of brit piyyutim in the Sephardic and Mizrahi tradition.</p>
+        <div class="hz-songs-links">
+          <a id="a-songs-pl" href="https://open.spotify.com/playlist/2SRcfo5XkN8F0PIdperLDu" target="_blank" rel="noopener" data-playlist="piyutim" data-style="פיוטים, ספרדי ועדות המזרח" hidden>Piyyutim on Spotify</a>
+          <a id="a-songs" href="/mohel/en/shirim/" target="_blank" rel="noopener">Songs for the brit</a>
+        </div>
+      </div>
+    </div>
+  </div>
+<section aria-labelledby="free-h">
+  <h2 id="free-h">Why is it free?</h2>
+  <p class="lead">Because I'm a mohel, not an invitation company. I'm Gilad Rachamim, a certified mohel, and the bris invitation is my gift to parents in the busiest week of their lives. If you'd like, we can also talk about the brit itself. If not – just enjoy the invitation.</p>
+  <ul class="list">
+    <li><div><strong>5 designs:</strong><span> classic gold, clean modern, Jerusalem, soft flowers and Sephardic.</span></div></li>
+    <li><div><strong>Hebrew and civil dates</strong><span> are calculated automatically. Choose Hebrew, civil or both.</span></div></li>
+    <li><div><strong>Made for WhatsApp:</strong><span> an image, ready text to copy and a guest link with Waze, add-to-calendar and RSVP.</span></div></li>
+    <li><div><strong>"We announce", not "we invite":</strong><span> the wording follows the custom of not inviting people to the brit meal directly. <a class="gold" href="/mohel/en/hazmana/nusach/">Why – plus 12 more ready texts</a>.</span></div></li>
+    <li><div><strong>Need a wedding or bar mitzvah invitation?</strong><span> <a class="gold" href="/kelim/eruim/hazmana/?utm_source=mohel_hazmana">An invitation maker for any event, also free (Hebrew)</a>.</span></div></li>
+    <li><div><strong>For guests:</strong><span> <a class="gold" href="/mohel/en/hazmana/brachot/">24 bris wishes</a>, ready to copy.</span></div></li>
+  </ul>
+</section>
+<section aria-labelledby="how-h">
+  <h2 id="how-h">How to make a bris invitation in a minute</h2>
+  <p>The maker runs right in your phone or computer browser. Nothing to install, and the celebration details never leave your device: they are saved on your phone, so when you come back to the page everything is still there.</p>
+  <h3>1. Pick the celebration</h3>
+  <p>Brit milah, Zeved Habat or pidyon haben (redemption of the firstborn). The wording, verses and fields change by themselves: the pidyon gets a "Kohen" field, the brit gets a Shalom Zachar line, and Zeved Habat gets a kiddush and meal after the prayer.</p>
+  <h3>2. Fill in when and where</h3>
+  <p>Date, time, venue and address. If there is a prayer before the brit, enter it separately: guests who want to pray with you come earlier, and the rest come straight to the brit. The address powers the Waze directions button.</p>
+  <h3>3. Choose a design and send</h3>
+  <p>Five designs, and the preview updates instantly. Then: an image for WhatsApp, text to copy, a PDF with clickable buttons and an A4 notice with a QR code for the synagogue.</p>
+</section>
+<section aria-labelledby="must-h">
+  <h2 id="must-h">What every bris invitation must include</h2>
+  <p>Nice words are lovely, but guests need three things first. The maker won't let you forget any of them: the day and date, both Hebrew and civil, so nobody mixes up the day; the time, plus the prayer time if the brit follows a prayer, because these are two different times and guests need both; and the venue with a full address – street, number and city – so the guest link opens the right directions.</p>
+</section>
+<section aria-labelledby="when-h">
+  <h2 id="when-h">When to send the invitation</h2>
+  <p>Usually a day or two after the birth, once you have a mohel and a venue. Don't wait until the last day: people need time to clear their schedule and plan the trip. If the date is uncertain – for example jaundice, or a birth close to sunset – send a birth announcement first and the invitation once things are clear. The <a class="gold" href="/mohel/en/moed/">brit date calculator</a> helps you find the day. A brit on its eighth day takes place even on Shabbat.</p>
+  <p>Shalom Zachar is held on the first Friday night after the birth, at home or in the synagogue. Tick it in the maker and the line appears both on the image and in the WhatsApp text. For the day itself, use the <a class="gold" href="/mohel/en/checklist/">brit preparation checklist</a>.</p>
+</section>
+<section aria-labelledby="faq-h">
+  <h2 id="faq-h">Bris invitation questions</h2>
+  <details><summary>Is it really free?</summary><p>Yes. No payment, no premium version and no limits. No sign-up and no account: you leave your name and phone once, and that's it. There is a small line with the site link at the bottom of the image – that's all.</p></details>
+  <details><summary>What do I do with the invitation?</summary><p>Send the image on WhatsApp to family and friends, or copy the text. The guest link gives them Waze directions, add-to-calendar and RSVP.</p></details>
+  <details><summary>Can I change the invitation after I've finished?</summary><p>Yes. The details are saved on your phone. Come back to the page, change what you need and download again.</p></details>
+  <details><summary>We don't have an exact date yet. What now?</summary><p>Work it out in the <a class="gold" href="/mohel/en/moed/">brit date calculator</a>. If there is doubt (jaundice, a birth close to sunset), send a birth announcement first, and the bris invitation once you have a mohel and a venue.</p></details>
+  <details><summary>Does it work for Zeved Habat and pidyon haben?</summary><p>Yes. At the top of the page choose "Zeved Habat" or "Pidyon haben" and the wording, verses and fields change. <a class="gold" href="/mohel/en/hazmana/kol-simcha/">A designed invitation for every baby celebration</a>. For Shalom Zachar there is <a class="gold" href="/mohel/en/hazmana/nusach/#n-shalom">ready wording</a> and a line in the bris invitation itself.</p></details>
+  <details><summary>Why does it say "announce" and not "invite"?</summary><p>There is a common custom, cited by the Rema (Yoreh De'ah 265), not to invite people to the brit meal directly, so that someone who can't come isn't seen as turning down a seudat mitzvah. That's why the text says "we would be glad to share our joy with you". <a class="gold" href="/mohel/en/hazmana/nusach/">More about invitation wording</a>.</p></details>
+  <details><summary>Which language will the invitation be in?</summary><p>On this page – English. The verse at the top, if you choose one, stays in Hebrew as in the original. If you need a Hebrew text, make the invitation on the <a href="/mohel/hazmana/">Hebrew page (Hebrew)</a>.</p></details>
+  <details><summary>Can I talk to the mohel before the birth?</summary><p>Yes. A get-to-know call with Gilad Rachamim is free, even during pregnancy. The <a class="gold" href="/mohel/en/madrich/">parents' guide</a> helps you get ready ahead of time.</p></details>
+</section>
+</div>
