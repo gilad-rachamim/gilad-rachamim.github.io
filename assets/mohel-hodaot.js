@@ -37,7 +37,7 @@
     var o = document.createElement('option'); o.value = k; o.textContent = LANGS[k].n; lang.appendChild(o);
   });
   try { var saved = localStorage.getItem('ho-lang'); if (saved && LANGS[saved]) lang.value = saved; } catch (_) {}
-  var ev = function (n, p) { try { if (window.kelimEv) window.kelimEv(n, Object.assign({ tool: 'mohel_hodaot' }, p || {})); } catch (_) {} };
+  var ev = function (n, p) { try { if (window.kelimEv) window.kelimEv(n, Object.assign({ tool: src.getAttribute('data-tool') || 'mohel_hodaot' }, p || {})); } catch (_) {} };
 
   document.querySelectorAll('[data-tpl]').forEach(function (b) {
     b.addEventListener('click', function () { src.value = TPL[b.getAttribute('data-tpl')] || ''; src.focus(); ev('hodaot_tpl', { t: b.getAttribute('data-tpl') }); });
@@ -68,7 +68,9 @@
   }
   function message() {
     var L = LANGS[lang.value];
-    return out.value.trim() + '\n\n(' + L.note + ' / ' + HE_NOTE + ')';
+    // סיומת שלא מתרגמים (למשל קישור לכרטיס) – הדף שמארח את הכלי מגדיר אותה
+    var sfx = typeof window.hoSuffix === 'function' ? window.hoSuffix(lang.value) : '';
+    return out.value.trim() + (sfx ? '\n' + sfx : '') + '\n\n(' + L.note + ' / ' + HE_NOTE + ')';
   }
   function gate() {
     var can = ok.checked && out.value.trim();

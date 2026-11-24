@@ -69,6 +69,10 @@ function shareData(from){
  if(from)o.fr=from;
  return SITE+'#d='+b64e(o);
 }
+/* קישור לכרטיס בשפה של ההורים – לחלון "לשלוח בשפה שלהם" (mohel-hodaot.js) */
+window.hoSuffix=function(lg){var s=SITE;SITE='https://hakelim.com/kodesh/kibudim-brit/'+(lg==='ru'||lg==='en'?lg+'/':'');try{return shareData('mohel');}finally{SITE=s;}};
+function hoFill(){var t=$('ho-src');if(!t||t.value||S.mode!=='mohel')return;
+ t.value='שלום וברוכים הבאים!\nהכנתי לכם כרטיס כיבודים לברית. פותחים את הקישור, כותבים מי מכובד בכל כיבוד, ושולחים לי בחזרה.'+(S.mname?'\n'+S.mname:'');}
 function readHash(){
  var m=location.hash.match(/[#&]d=([\w-]+)/); if(!m)return;
  try{
@@ -278,6 +282,7 @@ function renderMode(){
  document.querySelectorAll('.bt-mode button').forEach(function(b){b.setAttribute('aria-selected',b.dataset.mode===S.mode?'true':'false');});
  document.querySelectorAll('.bt-mohel-only').forEach(function(e){e.hidden=S.mode!=='mohel';});
  document.querySelectorAll('.bt-parent-only').forEach(function(e){e.hidden=S.mode!=='parent';});
+ hoFill();
  var fr=$('bt-from');
  if(S.from==='mohel'&&S.mname){fr.hidden=false;fr.textContent=X('f1','הכרטיס התקבל מהמוהל ')+S.mname+X('f2',' – כתבו את שמות המכובדים ושלחו לו בחזרה');}
  else if(S.from==='parent'){fr.hidden=false;fr.textContent=X('fp','ההורים שלחו לכם את הכיבודים – הכרטיס מוכן להדפסה');}
