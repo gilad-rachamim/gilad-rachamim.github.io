@@ -52,8 +52,21 @@
     var load = function () {
       if (v.querySelector('video')) return;
       v.innerHTML = '<video controls playsinline preload="none" poster="' + v.getAttribute('data-poster') + '"><source src="' + v.getAttribute('data-src') + '" type="video/mp4"></video>';
-      v.querySelector('video').addEventListener('play', function () { try { gtag('event', 'video_play', { page: slug }); } catch (e) {} }, { once: true });
+      var vd = v.querySelector('video'), sent = {};
+      vd.addEventListener('play', function () { ga('video_play', { page: slug }); try { if (window.fbq) fbq('trackCustom', 'VideoPlay', { content_name: 'matana_' + slug }); } catch (e) {} }, { once: true });
+      // התקדמות צפייה: חצי ועד הסוף, פעם אחת כל אחד
+      vd.addEventListener('timeupdate', function () {
+        if (!vd.duration) return;
+        [50, 95].forEach(function (p) {
+          if (sent[p] || vd.currentTime / vd.duration * 100 < p) return;
+          sent[p] = 1; var pc = p === 95 ? 100 : p;
+          ga('video_progress', { page: slug, percent: pc });
+          try { if (window.fbq) fbq('trackCustom', 'VideoProgress', { content_name: 'matana_' + slug, percent: pc }); } catch (e) {}
+        });
+      });
     };
+    var vc = $('.mt-vid-cta');
+    if (vc) vc.addEventListener('click', function () { ga('video_cta_click', { page: slug }); setTimeout(function () { var i = form && form.elements.email; if (i) i.focus({ preventScroll: true }); }, 400); });
     if ('IntersectionObserver' in window) { var io = new IntersectionObserver(function (en) { if (en[0].isIntersecting) { load(); io.disconnect(); } }, { rootMargin: '200px' }); io.observe(v); } else load();
   }
   var dock = $('.mt-dock'), form = $('#form');

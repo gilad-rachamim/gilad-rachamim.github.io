@@ -1,7 +1,7 @@
 """מחולל דפי המתנה הקצרים /matana/<שם>/ ודפי התודה /matana/<שם>/toda/ (24.11.2026).
 קורא את tools/data/matana-pages.json וכותב ל-src/pages/matana/. אחר כך מריצים python build.py.
 דפים: noindex, בלי תפריט (meta bare), בלי מחירים בדף עצמו - מחירים רק בדף התודה, במיילים ובווטסאפ."""
-import json, html, pathlib
+import json, html, pathlib, re
 from urllib.parse import quote
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -22,14 +22,37 @@ def meta(title, desc):
     return "<!--meta " + json.dumps(m, ensure_ascii=False) + " -->\n"
 
 
+# חבילת מתנות בדף הלידים: רק מה שבאמת נשלח במייל (אותם gifts), עד 6 כרטיסים; קלוד: ארבע קבוצות הפרומפטים
+PACK_N = 6
+CLAUDE_PACK = [("להתחיל נכון", "איך מתחילים פרויקט עם Claude בלי לטעות"), ("כשמשהו נשבר", "הדבקת שגיאה ותיקון בשפה פשוטה"), ("לשפר ולבדוק", "בדיקה שהכלי לא נופל במקרים מוזרים"), ("לעבוד חכם", "הוראות שחוסכות סבבים מיותרים")]
+
+
+def pack(p):
+    if p["slug"] == "claude":
+        items = CLAUDE_PACK
+        total = 12
+    elif p.get("gifts"):
+        items = [(g[0], re.sub(r"\s*גם כקובץ PDF להדפסה:.*", "", g[2]).strip() or "בחינם") for g in p["gifts"]]
+        total = len(items)
+        items = items[:PACK_N]
+    else:
+        return ""
+    more = f'<li class="more">ועוד {total - len(items)} במייל</li>' if total > len(items) and p["slug"] != "claude" else ""
+    head = "12 פרומפטים מוכנים, בארבע קבוצות" if p["slug"] == "claude" else f"{total} מתנות במייל אחד"
+    cards = "".join(f"<li><b>{esc(n)}</b><small>{esc(d)}</small></li>" for n, d in items)
+    return f'<h2 class="mt-packh">🎁 {esc(head)}</h2><ul class="mt-pack">{cards}{more}</ul>\n'
+
+
 def landing(p):
     s = p["slug"]
     hmap = esc(json.dumps(p["h"], ensure_ascii=False))
-    pts = "".join(f"<li>{esc(x)}</li>" for x in p["points"])
+    pk = pack(p)
+    pts = "".join(f"<li>{esc(x)}</li>" for x in (p["points"][2:] if pk else p["points"]))
     vid = ""
     if p.get("video"):
         pre = p["video"][0]
-        vid = f'<div class="mt-vid" data-src="/assets/promo/{pre}.mp4" data-poster="/assets/promo/{pre}.jpg"></div>\n'
+        vid = (f'<div class="mt-vid" data-src="/assets/promo/{pre}.mp4" data-poster="/assets/promo/{pre}.jpg"></div>\n'
+               f'<a class="mt-btn mt-gold mt-vid-cta" href="#form" data-cta="video">{esc(p["btn_mail"])}</a>\n')
     note = f" {esc(p['note'])}" if p.get("note") else ""
     return meta(p["title"], p["desc"]) + f"""<span class="mt-pill">🎁 מתנה חינם · מיזם חסד</span>
 <h1 data-h="{hmap}">{esc(p['h1'])}</h1>
@@ -39,7 +62,7 @@ def landing(p):
 <div class="book"><b>{esc(p['book'][0])}</b><small>{esc(p['book'][1])}</small></div>
 <div class="phone"><i>לוגו</i><s></s><s></s><em>{esc(p['phone'])}</em></div>
 </div>
-<ul class="mt-points">{pts}</ul>
+{pk}<ul class="mt-points">{pts}</ul>
 <form class="mt-form" id="form" action="{ENDPOINT}" method="POST" data-next="/matana/{s}/toda/" novalidate>
 <input type="hidden" name="מקור" value="מתנה: {s}">
 <input type="hidden" name="_page" value="">
@@ -100,6 +123,16 @@ def trust(refund=True):
 REFUND = "14 יום לנסות בשקט. לא מתאים? מחזיר לך את הכסף, בלי שאלות. לא הספקת לבדוק? כתוב לי בווטסאפ ואאריך לך את תקופת הניסיון, באהבה."
 WHY = "זה מיזם חסד. אז למה בכלל תשלום? כי למדתי שמה שמקבלים בחינם נשאר בצד. תשלום סמלי גורם לך לפתוח, לנסות ולהשתמש באמת, וזו כל המטרה שלי."
 INCOME = "ההכנסות מחזיקות את המיזם ומאפשרות לי להמשיך לבנות כלים בחינם לכולם"
+# מחיר השקה: המחיר שאחרי ההשקה מחוק לידו (גילעד 24.11: "מחיר השקה" + הנחה שיווקית). חובה להעלות אליו בסוף ההשקה, אחרת זו הטעיה.
+AFTER = {18: 29, 39: 59, 290: 450, 590: 890, 990: 1490}
+def launch(pr):
+    a = AFTER.get(pr)
+    if not a:
+        return '<span class="mt-launch">מחיר השקה</span> '
+    return f'<span class="mt-launch">מחיר השקה · חוסכים {round((a - pr) * 100 / a)}%</span> <span class="mt-after">אחרי ההשקה: <s>{a:,} ₪</s></span> '
+HARD = 'זה מיזם חסד, והמטרה שלי שהכלים יגיעו לכמה שיותר אנשים. אם התשלום קשה לכם כרגע, כתבו לי בווטסאפ ואשלח לכם קופון הנחה אישי. בלי בושה ובלי הסברים.'
+def hard_box(slug):
+    return f'<aside class="mt-hard"><p>{esc(HARD)}</p><a class="mt-btn mt-green" data-wa="kashe" href="{wa("שלום גילעד, התשלום קשה לי כרגע. אפשר קופון הנחה?")}" rel="noopener">לבקש קופון הנחה בווטסאפ</a></aside>'
 SMALL = {18: "פחות מקפה ומאפה", 39: "פחות ממנת המבורגר עם צ'יפס ושתייה", 97: "כמו ארוחת בוקר זוגית"}
 
 
@@ -135,7 +168,7 @@ def cheap(p):
     return f"""<section class="mt-up" aria-labelledby="up-h">
 <h2 id="up-h">{esc(n)}</h2>
 <p>{esc(d)}</p>
-<p class="mt-price">{pr} ₪, {esc(SMALL[pr])}. תשלום חד-פעמי, בלי מנוי, מגיע למייל תוך דקה.{ref}</p>
+<p class="mt-price">{"" if s == "mohel-kurs" else launch(pr)}{pr} ₪, {esc(SMALL[pr])}. תשלום חד-פעמי, בלי מנוי, מגיע למייל תוך דקה.{ref}</p>
 {co(n, pr, code, b)}
 {trust(s != "mohel-kurs")}
 {refund_box(s)}
@@ -150,16 +183,17 @@ def shidrug(p):
     for n, pr, code, lines, rec in LADDERS[s]:
         li = "".join(f"<li>{esc(x)}</li>" for x in lines)
         tag = '<span class="mt-rec">הכי נבחר</span>' if rec and len(LADDERS[s]) > 1 else ""
-        rows += f'<section class="mt-tier{" rec" if rec else ""}">{tag}<h2>{esc(n)}</h2><p class="mt-big">{pr} ₪</p><ul>{li}</ul>{co(n, pr, code, "אני רוצה: " + n if len(LADDERS[s]) > 1 else "אני רוצה להצטרף", "mt-gold" if rec else "mt-ghost")}</section>'
+        rows += f'<section class="mt-tier{" rec" if rec else ""}">{tag}<h2>{esc(n)}</h2><p class="mt-big">{launch(pr) if s in BIZ else ""}{pr} ₪</p><ul>{li}</ul>{co(n, pr, code, "אני רוצה: " + n if len(LADDERS[s]) > 1 else "אני רוצה להצטרף", "mt-gold" if rec else "mt-ghost")}</section>'
     g = ""
     if s in BIZ:
-        g = f'<p class="mt-small">רק רוצים ליווי והערכה? <a data-co="{GROUP_LINE[1]}" data-name="{GROUP_LINE[0]}" href="{PAYHIP}{GROUP_LINE[2]}" rel="noopener">{GROUP_LINE[0]} ב-{GROUP_LINE[1]} ₪</a></p>'
+        g = f'<p class="mt-small">רק רוצים ליווי והערכה? <a data-co="{GROUP_LINE[1]}" data-name="{GROUP_LINE[0]}" href="{PAYHIP}{GROUP_LINE[2]}" rel="noopener">{GROUP_LINE[0]} ב-{GROUP_LINE[1]} ₪, מחיר השקה</a></p>'
     t = {"claude": "השלב הבא: הקורס המלא", "mohel-kurs": "השלב הבא: הקורס המלא למוהלים"}.get(s, "רוצים את זה בלוגו שלכם?")
     return meta("השלב הבא", "השלב הבא אחרי הרכישה.") + f"""<span class="mt-pill">תודה שרכשתם</span>
 <h1 class="mt-center">{esc(t)}</h1>
 <p class="mt-center">זה השלב הבא, למי שרוצה להמשיך. תשלום חד-פעמי, בלי מנוי, כולל קבלה.</p>
 {rows}
 {save_note(s)}
+{hard_box(s)}
 {trust(s != "mohel-kurs")}
 {refund_box(s)}
 {why_box(s)}
@@ -185,14 +219,14 @@ def upsell(p):
         return f"""<section class="mt-up" aria-labelledby="up-h">
 <h2 id="up-h">רוצים ללמוד לעבוד עם Claude יחד איתי?</h2>
 <ul><li>קבוצת ווטסאפ פרטית עם גילעד כמנטור</li><li>ערכה של 30 פרומפטים ב-PDF</li><li>טיפ יומי ו"כלי היום"</li></ul>
-<p class="mt-price">18 ₪, תשלום חד-פעמי, בלי חיוב אוטומטי. 14 יום להחזר כספי.</p>
+<p class="mt-price">{launch(18)}18 ₪, תשלום חד-פעמי, בלי חיוב אוטומטי. 14 יום להחזר כספי.</p>
 <a class="mt-btn mt-gold" href="https://payhip.com/b/kNyeO" rel="noopener">אני רוצה להצטרף לקבוצה</a>
 </section>"""
     who = p["upsell_for"]
     return f"""<section class="mt-up" aria-labelledby="up-h">
 <h2 id="up-h">רוצים את זה בלוגו ובצבעי {esc(who)} שלכם?</h2>
 <ul><li>כלי אחד בלוגו, בצבעים ובקישור משלכם, עם קוד QR</li><li>כפתור "שלחו לי את התוצאה בוואטסאפ" שמביא פניות ישר אליכם</li><li>מוכן תוך 48 שעות, עם סבב תיקונים אחד</li></ul>
-<p class="mt-price">290 ₪, תשלום חד-פעמי, בלי מנוי. כולל קבלה.</p>
+<p class="mt-price">{launch(290)}290 ₪, תשלום חד-פעמי, בלי מנוי. כולל קבלה.</p>
 <a class="mt-btn mt-gold" href="{C['branded_url']}" rel="noopener">אני רוצה כלי ממותג</a>
 </section>"""
 
