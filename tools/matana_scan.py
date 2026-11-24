@@ -96,6 +96,47 @@ def scan(txt):
     return leads
 
 
+def replies(txt, phones, names):
+    """הודעות חדשות מלידים שכבר בגיליון (לפי טלפון 05x... או שם), שאינן נוסח מתנה: הם ענו לנו."""
+    out = []
+    pages = mr.load()
+    for digits, title, msgs in records(txt):
+        ph = local_phone(digits)
+        nm = title.split(':')[0].strip()
+        if ph not in phones and nm not in names:
+            continue
+        for ms, text in msgs:
+            if mr.match(mr.split_code(text)[0], pages):
+                continue
+            out.append({'phone': ph, 'name': nm, 'time': hebrew_date(ms), 'text': text[:400]})
+    return out
+
+
+INBOX_STATE = os.path.join(os.path.expanduser('~'), '.claude', 'data', 'wa-inbox-seen.json')
+
+
+def inbox(txt, mark):
+    """כל הודעה חדשה בצ'אט פרטי שעדיין מחכה (התראה פעילה), פעם אחת בלבד: להתראה לגילעד עם סיכום."""
+    try:
+        seen = set(json.load(open(INBOX_STATE, encoding='utf-8')))
+    except Exception:
+        seen = set()
+    pages = mr.load()
+    out = []
+    for digits, title, msgs in records(txt):
+        for ms, text in msgs:
+            k = f'{digits}|{ms}|{text[:40]}'
+            if k in seen:
+                continue
+            seen.add(k)
+            out.append({'chat': title, 'phone': local_phone(digits), 'time': hebrew_date(ms), 'text': text[:500],
+                        'matana_lead': bool(mr.match(mr.split_code(text)[0], pages))})
+    if mark and out:
+        os.makedirs(os.path.dirname(INBOX_STATE), exist_ok=True)
+        json.dump(sorted(seen)[-3000:], open(INBOX_STATE, 'w', encoding='utf-8'))
+    return out
+
+
 def main():
     args = sys.argv[1:]
     txt = open(args[args.index('--file') + 1], encoding='utf-8').read() if '--file' in args else dump_from_phone()
@@ -112,7 +153,12 @@ def main():
     if '--peek' not in args and new:
         os.makedirs(os.path.dirname(STATE), exist_ok=True)
         json.dump(sorted(seen | {n['key'] for n in new}), open(STATE, 'w', encoding='utf-8'))
-    print(json.dumps({'columns': SHEET_COLS, 'new': new, 'skipped_seen': dup}, ensure_ascii=False, indent=1))
+    rep = []
+    if '--phones' in args:  # --phones 0545441487,0522454397 [--names מיטל,רביד]
+        ph = set(x for x in args[args.index('--phones') + 1].split(',') if x)
+        nm = set(x for x in args[args.index('--names') + 1].split(',') if x) if '--names' in args else set()
+        rep = replies(txt, ph, nm)
+    print(json.dumps({'columns': SHEET_COLS, 'new': new, 'replies': rep, 'inbox': inbox(txt, '--peek' not in args) if '--inbox' in args else [], 'skipped_seen': dup}, ensure_ascii=False, indent=1))
 
 
 if __name__ == '__main__':
