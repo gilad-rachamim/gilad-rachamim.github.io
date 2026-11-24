@@ -55,6 +55,7 @@ def landing(p):
 <p class="mt-or">או</p>
 <a class="mt-btn mt-green" data-wa="main" href="{wa(p['wa_text'])}" rel="noopener">{esc(p['wa_label'])}</a>
 <p class="mt-wa-note">הבונוס האישי הזה מגיע רק למי שכותב לי בווטסאפ.</p>
+{trust(False)}
 {vid}<p class="mt-trust">{esc(C['chesed'])}</p>
 <p class="mt-priv">הפרטים נשמרים אצלי בלבד ולא מועברים לאף אחד. המתנה נשלחת גם בלי לסמן את התיבה. <a href="/kelim/pratiut/">פרטיות</a>.{note}</p>
 <div class="mt-dock"><a class="mt-btn mt-gold" href="#form">למייל</a><a class="mt-btn mt-green" data-wa="dock" href="{wa(p['wa_text'])}" rel="noopener">{esc(p['dock_wa'])}</a></div>
@@ -87,17 +88,49 @@ GROUP_LINE = ("קבוצת הליווי והערכה", 18, "kNyeO")
 BIZ = ("roe", "orchei-din", "esek", "kelim")
 
 
+def trust(refund=True):
+    """רצועת אמון: רק טענות אמיתיות (24.11, תוספת י')."""
+    items = [("🤝", "מיזם חסד, ללא כוונת רווח"), ("🔒", "תשלום מאובטח (PayPal / כרטיס אשראי דרך Payhip)"), ("🧾", "קבלה על כל רכישה"), ("💬", "מענה אישי מגילעד בווטסאפ")]
+    if refund:
+        items.append(("↩️", "14 יום להחזר כספי"))
+    li = "".join(f'<li><span aria-hidden="true">{i}</span> {esc(t)}</li>' for i, t in items)
+    return f'<ul class="mt-badges" aria-label="למה אפשר לסמוך">{li}</ul>'
+
+
+REFUND = "14 יום לנסות בשקט. לא מתאים? מחזיר לך את הכסף, בלי שאלות. לא הספקת לבדוק? כתוב לי בווטסאפ ואאריך לך את תקופת הניסיון, באהבה."
+WHY = "זה מיזם חסד. אז למה בכלל תשלום? כי למדתי שמה שמקבלים בחינם נשאר בצד. תשלום סמלי גורם לך לפתוח, לנסות ולהשתמש באמת, וזו כל המטרה שלי."
+INCOME = "ההכנסות מחזיקות את המיזם ומאפשרות לי להמשיך לבנות כלים בחינם לכולם"
+SMALL = {18: "פחות מקפה ומאפה", 39: "פחות ממנת המבורגר עם צ'יפס ושתייה", 97: "כמו ארוחת בוקר זוגית"}
+
+
+def refund_box(slug):
+    if slug == "mohel-kurs":
+        return ""
+    return f'<aside class="mt-refund"><strong>אחריות 14 יום</strong><p>{esc(REFUND)}</p></aside>'
+
+
+def why_box(slug):
+    inc = "" if slug == "mohel-kurs" else f" {INCOME}."
+    return f'<aside class="mt-why"><p>{esc(WHY)}{esc(inc)}</p><p class="mt-sign">גילעד</p></aside>'
+
+
 def co(name, price, code, label, cls="mt-gold"):
     return f'<a class="mt-btn {cls}" data-co="{price}" data-name="{esc(name)}" href="{PAYHIP}{code}" rel="noopener">{esc(label)}</a>'
 
 
 def cheap(p):
     n, pr, code, d, b = CHEAP[p["slug"]]
+    s = p["slug"]
+    ref = "" if s == "mohel-kurs" else " 14 יום להחזר כספי."
     return f"""<section class="mt-up" aria-labelledby="up-h">
 <h2 id="up-h">{esc(n)}</h2>
 <p>{esc(d)}</p>
-<p class="mt-price">{pr} ₪, תשלום חד-פעמי, בלי מנוי. 14 יום להחזר כספי.</p>
+<p class="mt-price">{pr} ₪, {esc(SMALL[pr])}. תשלום חד-פעמי, בלי מנוי, מגיע למייל תוך דקה.{ref}</p>
 {co(n, pr, code, b)}
+{trust(s != "mohel-kurs")}
+{refund_box(s)}
+{why_box(s)}
+<a class="mt-btn mt-green" data-wa="presale" href="{wa('שלום גילעד, יש לי שאלה לפני שאני קונה/ה')}" rel="noopener">שאלה לפני שקונים?</a>
 </section>"""
 
 
@@ -116,7 +149,10 @@ def shidrug(p):
 <h1 class="mt-center">{esc(t)}</h1>
 <p class="mt-center">זה השלב הבא, למי שרוצה להמשיך. תשלום חד-פעמי, בלי מנוי, כולל קבלה.</p>
 {rows}
-<a class="mt-btn mt-green" data-wa="shidrug" href="{wa('שלום גילעד, יש לי שאלה לפני שאני מחליט/ה')}" rel="noopener">שאלה? כתבו לי בווטסאפ</a>
+{trust(s != "mohel-kurs")}
+{refund_box(s)}
+{why_box(s)}
+<a class="mt-btn mt-green" data-wa="shidrug" href="{wa('שלום גילעד, יש לי שאלה לפני שאני קונה/ה')}" rel="noopener">שאלה לפני שקונים?</a>
 {g}
 <p class="mt-trust">{esc(C['chesed'])}</p>
 """
