@@ -45,3 +45,9 @@ body.hk-free .hk-credit{font-size:.95rem}
 .bp-cta{display:inline-block;margin:.4rem 0;padding:.85rem 1.4rem;border-radius:999px;background:var(--gold);color:#16130f;font-weight:800;text-decoration:none}
 .bp-em textarea{width:100%;min-height:7rem;font:.9rem/1.5 monospace;direction:ltr;text-align:left;padding:.7rem;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--cream)}
 .bp-ok{color:var(--gold);min-height:1.4em}
+.bp-order{max-width:36rem;margin:1rem 0}
+.bp-fs{border:1px solid var(--line);border-radius:12px;padding:.7rem .9rem;display:grid;gap:.4rem}
+.bp-fs legend{font-weight:700;padding:0 .3rem}
+.bp-ck{display:flex!important;gap:.5rem;align-items:center;font-weight:400!important}
+.bp-sum{color:var(--gold);min-height:1.4em;font-weight:700}
+.bp-order select{width:100%;font:inherit;padding:.6rem .75rem;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.22);color:var(--cream)}
