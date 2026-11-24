@@ -383,9 +383,80 @@ export async function runEdition(env, { force = false, now = new Date(), push = 
   if (push && env.WHAPI_TOKEN && cfg.waid) ed.wa = await postWhatsapp(env, ed, cfg.waid, { wag: links.wag }).catch(e => ({ error: String(e).slice(0, 200) }));
   if (push && env.WHAPI_TOKEN && cfg.wagid) ed.wag = await postWhatsapp(env, ed, cfg.wagid, {}, 'wag').catch(e => ({ error: String(e).slice(0, 200) }));
   if (push && env.TG_TOKEN && cfg.tgid) ed.tg = await postTelegram(env, cfg.tgid, editionText(ed, links, 'tg')).catch(e => ({ error: String(e).slice(0, 200) }));
+  if (ed.mode === 'summary') ed.en = await runEnglish(env, ed, { push }).catch(e => ({ error: String(e.message || e).slice(0, 200) }));
   const st = (r, tok, id) => r ? (r.error ? 'שגיאה: ' + r.error : 'עלה') : (tok ? (id ? 'לא נשלח' : 'אין מזהה ערוץ') : 'לא מוגדר');
-  if (push) await call(env, '/post-log', { at: new Date().toISOString(), name: ed.name, fb: st(ed.fb, env.FB_PAGE_TOKEN, env.FB_PAGE_ID), wa: st(ed.wa, env.WHAPI_TOKEN, cfg.waid), wag: st(ed.wag, env.WHAPI_TOKEN, cfg.wagid), tg: st(ed.tg, env.TG_TOKEN, cfg.tgid) }).catch(() => {});
-  return { ok: true, fb: ed.fb, wa: ed.wa, wag: ed.wag, tg: ed.tg, name: ed.name, mode: ed.mode, main: ed.sections.main.length, dropped: ed.dropped.length, failed, error: ed.error };
+  if (push) await call(env, '/post-log', { at: new Date().toISOString(), name: ed.name, fb: st(ed.fb, env.FB_PAGE_TOKEN, env.FB_PAGE_ID), wa: st(ed.wa, env.WHAPI_TOKEN, cfg.waid), wag: st(ed.wag, env.WHAPI_TOKEN, cfg.wagid), tg: st(ed.tg, env.TG_TOKEN, cfg.tgid), en: ed.en ? (ed.en.error ? 'שגיאה: ' + ed.en.error : ed.en.skipped ? 'לא תורגם' : 'עלה' + (ed.en.tg ? ' tg' : '') + (ed.en.wa ? ' wa' : '')) : '' }).catch(() => {});
+  return { ok: true, fb: ed.fb, wa: ed.wa, wag: ed.wag, tg: ed.tg, en: ed.en, name: ed.name, mode: ed.mode, main: ed.sections.main.length, dropped: ed.dropped.length, failed, error: ed.error };
+}
+
+// ---------- מהדורה באנגלית: "Israel News in 3 Minutes" (24.11.2026) ----------
+// אותן נקודות בדיוק שכבר עברו בדיקה בעברית, מתורגמות ב-Gemini (בלי כתיבה מחדש ובלי מקורות חדשים).
+const EN_SRC = { 'ynet': 'Ynet', 'וואלה': 'Walla', 'מעריב': 'Maariv', 'ערוץ 7': 'Arutz Sheva (Channel 7)', 'ערוץ 14': 'Channel 14', 'סרוגים': 'Srugim', 'כיפה': 'Kipa', 'כיכר השבת': 'Kikar HaShabbat', 'בחדרי חרדים': 'BeChadrei Charedim', 'JDN': 'JDN', 'גלובס': 'Globes' };
+const EN_NAMES = { 'בוקר': 'Morning edition', 'צהריים': 'Midday edition', 'ערב': 'Evening edition', 'מה היה בשבת ובחג': 'What happened over Shabbat and the holiday', 'מה קרה בשבת': 'What happened on Shabbat', 'מה קרה בחג': 'What happened on the holiday', 'השבוע ב-3 דקות': 'This week in 3 minutes' };
+const EN_SECTIONS = { main: 'Top stories', haredi: 'Haredi (ultra-Orthodox) community', economy: 'Economy and cost of living', good: '☀️ Good news of the week' };
+const EN_PAGE_URL = 'https://hakelim.com/kelim/machshev/chadashot/en/';
+const EN_RULES = `You translate calm Hebrew news summary points into English for new immigrants (olim) and Jews abroad.
+You get numbered points that were already written and fact-checked in Hebrew. Translate each one faithfully.
+Rules:
+1. Translate only what is written. Add nothing: no name, number, place, date, detail or opinion that is not in the Hebrew point. Drop nothing important.
+2. Plain, calm, international English. One or two short sentences per point. No exclamation marks, no dramatic words, no idioms that need culture to understand.
+3. Use the usual English forms for Israeli names and bodies: Knesset, IDF, Shin Bet, Netanyahu, Bank of Israel, Haredi. Transliterate other names simply. On first mention a term that an immigrant may not know, add a short gloss in brackets.
+4. Numbers: copy digits exactly as in the Hebrew point (same digits, same order). Do not turn written-out Hebrew numbers into digits.
+5. If a point begins "According to a report on <site>", keep that attribution.
+6. Output English letters only: no Hebrew letters, no other alphabets.
+Return every point: {n, text} with the same n.`;
+const EN_SCHEMA = { type: 'OBJECT', properties: { items: { type: 'ARRAY', items: { type: 'OBJECT', properties: { n: { type: 'INTEGER' }, text: { type: 'STRING' } }, required: ['n', 'text'] } } }, required: ['items'] };
+export const HEB = /[א-ת]/;
+export function enDate(now = new Date()) {
+  return new Intl.DateTimeFormat('en-US', { timeZone: TZ, weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).format(now);
+}
+// תרגום מהדורה: מחזיר { name, date, sections } או null אם עברו פחות מ-2 נקודות ראשיות
+export async function translateEdition(env, ed) {
+  if (!env.GEMINI_KEY || ed.mode !== 'summary') return null;
+  const flat = [];
+  for (const k of ['main', 'haredi', 'economy', 'good']) for (const pt of (ed.sections?.[k] || [])) flat.push({ n: flat.length + 1, k, pt });
+  if (!flat.length) return null;
+  const r = await gemini(env, EN_RULES, flat.map(x => `#${x.n} ${x.pt.text}`).join('\n'), EN_SCHEMA);
+  const by = Object.fromEntries((r.data.items || []).map(i => [i.n, String(i.text || '').trim()]));
+  const sections = { main: [], haredi: [], economy: [], good: [] }, dropped = [];
+  for (const x of flat) {
+    const t = by[x.n] || '';
+    let why = '';
+    if (t.length < 20 || t.length > 420) why = 'length';
+    else if (HEB.test(t) || FOREIGN.test(t)) why = 'foreign letters';
+    else if (!numbersOk(t, x.pt.text)) why = 'number not in source';
+    if (why) { dropped.push({ n: x.n, why }); continue; }
+    sections[x.k].push({ text: t.replace(/\s+/g, ' '), sources: (x.pt.sources || []).map(s => ({ name: EN_SRC[s.name] || s.name, link: s.link })) });
+  }
+  if (sections.main.length < 2 && ed.kind !== 'weekly') return null;
+  return { name: EN_NAMES[ed.name] || ed.name, date: enDate(new Date(ed.at)), model: r.model, sections, dropped };
+}
+export function editionTextEn(en, links = {}, src = 'entg') {
+  const out = [`🇮🇱 Israel News in 3 Minutes – ${en.name}, ${en.date}`, ''];
+  en.sections.main.forEach((p, i) => out.push(`${i + 1}. ${p.text}`));
+  for (const k of ['haredi', 'economy', 'good']) if (en.sections[k]?.length) { out.push('', `▪️ ${EN_SECTIONS[k]}`); en.sections[k].forEach(p => out.push(`• ${p.text}`)); }
+  out.push('', 'Every point links to its source (Hebrew-language news sites). Read it on the page:', EN_PAGE_URL + '?utm_source=' + src);
+  if (links.enwa && src !== 'enwa') out.push('', '📲 WhatsApp channel, 3 times a day:', links.enwa);
+  if (links.entg && src !== 'entg') out.push('', '✈️ Telegram channel:', links.entg);
+  out.push('', '💛 A kindness project: free, no ads, no sign-up, no profit motive.');
+  out.push('', 'Know someone who would appreciate calm news? Feel free to forward this message 🙏');
+  return out.join('\n');
+}
+async function postWhatsappText(env, to, text) {
+  const r = await fetch('https://gate.whapi.cloud/messages/text', { method: 'POST', headers: { authorization: 'Bearer ' + env.WHAPI_TOKEN, 'content-type': 'application/json' }, body: JSON.stringify({ to, body: text }) });
+  const j = await r.json().catch(() => ({}));
+  return r.ok ? { id: j.message?.id || true } : { error: (j.error && (j.error.message || j.error)) || String(r.status) };
+}
+// תרגום + שמירה על המהדורה + שליחה לערוצים האנגליים (אם הוגדרו)
+export async function runEnglish(env, ed, { push = true } = {}) {
+  const out = {};
+  const en = await translateEdition(env, ed);
+  if (!en) return { skipped: 'no translation' };
+  await call(env, '/attach-en', { at: ed.at, en });
+  const cfg = await call(env, '/config'); const links = cfg.links || {};
+  if (push && env.TG_TOKEN && cfg.entgid) out.tg = await postTelegram(env, cfg.entgid, editionTextEn(en, links, 'entg')).catch(e => ({ error: String(e).slice(0, 200) }));
+  if (push && env.WHAPI_TOKEN && cfg.enwaid) out.wa = await postWhatsappText(env, cfg.enwaid, editionTextEn(en, links, 'enwa')).catch(e => ({ error: String(e).slice(0, 200) }));
+  return { ok: true, main: en.sections.main.length, dropped: en.dropped.length, ...out };
 }
 
 // ---------- השרת ----------
@@ -403,13 +474,17 @@ export default {
       const kq = url.searchParams.get('kind');
       const ed = ['shabbat', 'weekly'].includes(kq) ? await call(env, '/kind-latest', { k: kq }) : await call(env, '/latest');
       const from = url.searchParams.get('from');
-      if (from !== 'none') ctx.waitUntil(call(env, '/hit', { e: FROM.includes(from) ? from : 'web' }).catch(() => {})); // none = המשך הקראה בטלפון, כבר נספר
+      if (from !== 'none') ctx.waitUntil(call(env, '/hit', { e: FROM.includes(from) ? from : url.searchParams.get('lang') === 'en' ? 'en' : 'web' }).catch(() => {})); // none = המשך הקראה בטלפון, כבר נספר
       if (!ed?.at) return json({ empty: true });
-      const { dropped, error, fixed, checkError, ...pub } = ed;
+      const { dropped, error, fixed, checkError, en, ...pub } = ed;
       const links = (await call(env, '/config')).links || {};
+      if (url.searchParams.get('lang') === 'en') { // המהדורה האנגלית של אותה מהדורה
+        if (!en?.sections) return json({ empty: true }, 200, { 'cache-control': 'public, max-age=60' });
+        return json({ at: ed.at, time: ed.time, kind: ed.kind, name: en.name, date: en.date, sections: en.sections, links: { wa: links.enwa, tg: links.entg } }, 200, { 'cache-control': 'public, max-age=120' });
+      }
       return json({ ...(admin ? ed : pub), links }, 200, { 'cache-control': 'public, max-age=120' });
     }
-    if (url.pathname === '/history') return json(await call(env, '/history'), 200, { 'cache-control': 'public, max-age=300' });
+    if (url.pathname === '/history') return json(((await call(env, '/history')) || []).map(({ en, ...e }) => e), 200, { 'cache-control': 'public, max-age=300' });
     if (url.pathname === '/report' && request.method === 'POST') {
       let b = {}; try { b = await request.json(); } catch (e) {}
       const text = String(b.text || '').slice(0, 300), note = String(b.note || '').slice(0, 500);
@@ -429,6 +504,24 @@ export default {
       const tg = url.searchParams.get('tg'), tgid = url.searchParams.get('tgid');
       // קבוצת הווטסאפ השקטה: wagid = לאן שולחים (...@g.us), wag = קישור ההצטרפות שמוצג לציבור
       const wag = url.searchParams.get('wag'), wagid = url.searchParams.get('wagid');
+      // מהדורה באנגלית: entg/enwa = קישורים ציבוריים, entgid/enwaid = לאן שולחים
+      const entg = url.searchParams.get('entg'), entgid = url.searchParams.get('entgid'), enwa = url.searchParams.get('enwa'), enwaid = url.searchParams.get('enwaid');
+      if (entg !== null) {
+        if (entg && !/^https:\/\/t\.me\/[A-Za-z0-9_]{5,32}$/.test(entg)) return json({ ok: false, error: 'bad telegram link' }, 400);
+        return json(await call(env, '/config-set', { entg }));
+      }
+      if (entgid !== null) {
+        if (entgid && !/^(@[A-Za-z0-9_]{5,32}|-100\d{6,16})$/.test(entgid)) return json({ ok: false, error: 'bad telegram id' }, 400);
+        return json(await call(env, '/config-set', { entgid }));
+      }
+      if (enwa !== null) {
+        if (enwa && !/^https:\/\/(www\.)?whatsapp\.com\/channel\/[A-Za-z0-9]+$/.test(enwa)) return json({ ok: false, error: 'bad channel link' }, 400);
+        return json(await call(env, '/config-set', { enwa }));
+      }
+      if (enwaid !== null) {
+        if (enwaid && !/^\d{10,25}@newsletter$/.test(enwaid)) return json({ ok: false, error: 'bad channel id' }, 400);
+        return json(await call(env, '/config-set', { enwaid }));
+      }
       if (wag !== null) {
         if (wag && !/^https:\/\/chat\.whatsapp\.com\/[A-Za-z0-9]{10,40}$/.test(wag)) return json({ ok: false, error: 'קישור קבוצה לא תקין' }, 400);
         return json(await call(env, '/config-set', { wag }));
@@ -452,6 +545,13 @@ export default {
       if (wa === null) return json(await call(env, '/config'));
       if (wa && !/^https:\/\/(www\.)?whatsapp\.com\/channel\/[A-Za-z0-9]+$/.test(wa)) return json({ ok: false, error: 'קישור ערוץ לא תקין' }, 400);
       return json(await call(env, '/config-set', { wa }));
+    }
+    // תרגום המהדורה האחרונה לאנגלית (גיבוי/בדיקה). push=1 שולח גם לערוצים האנגליים
+    if (url.pathname === '/en-run') {
+      if (!admin) return json({ ok: false }, 403);
+      const ed = await call(env, '/latest');
+      if (!ed?.at) return json({ ok: false, error: 'no edition' });
+      return json(await runEnglish(env, ed, { push: url.searchParams.get('push') === '1' }));
     }
     if (url.pathname === '/run') {
       if (!admin) return json({ ok: false }, 403);
@@ -552,7 +652,7 @@ export default {
 // ---------- פייסבוק: פוסט לדף "החדשות ב-3 דקות" (Graph API, מפתח קבוע של הדף) ----------
 const PAGE_URL = 'https://hakelim.com/kelim/machshev/chadashot/';
 // מאיפה הגיעו (נספר ב-/stats): דף, טלפון, התראה, פייסבוק, ווטסאפ, מודעה (QR), שיתוף, דף הבית
-export const FROM = ['web', 'phone', 'push', 'fb', 'wa', 'wag', 'qr', 'share', 'home', 'tg', 'embed', 'bot'];
+export const FROM = ['web', 'phone', 'push', 'fb', 'wa', 'wag', 'qr', 'share', 'home', 'tg', 'embed', 'bot', 'en', 'entg', 'enwa'];
 // ערוץ הווטסאפ: דרך Whapi.Cloud (מסלול חינמי), שמחובר למספר של גילעד כ"מכשיר מקושר". אין API רשמי לערוצים.
 // WHAPI_TOKEN = סוד בשרת (tools/news-worker/wa-setup.ps1), מזהה הערוץ ב-/config?waid=
 async function postWhatsapp(env, ed, waid, links = {}, src = 'wa') {
@@ -673,6 +773,15 @@ export class Store {
     const path = new URL(request.url).pathname;
     const body = request.method === 'POST' ? await request.json() : null;
     if (path === '/latest') return Response.json((await this.s.get('latest')) || {});
+    if (path === '/attach-en') { // מצמיד תרגום אנגלי למהדורה (לפי זמן היצירה)
+      const lt = await this.s.get('latest');
+      if (lt?.at === body.at) { lt.en = body.en; await this.s.put('latest', lt); }
+      const h = (await this.s.get('history')) || [];
+      const he = h.find(x => x.at === body.at); if (he) { he.en = body.en; await this.s.put('history', h); }
+      const kl = lt?.kind ? await this.s.get('kind:' + lt.kind) : null;
+      if (kl?.at === body.at) { kl.en = body.en; await this.s.put('kind:' + lt.kind, kl); }
+      return Response.json({ ok: !!(lt?.at === body.at) });
+    }
     if (path === '/kind-latest') return Response.json((await this.s.get('kind:' + body.k)) || {});
     if (path === '/history') return Response.json((await this.s.get('history')) || []);
     if (path === '/save') {
@@ -694,6 +803,8 @@ export class Store {
       if ('waid' in body) { if (body.waid) c.waid = body.waid; else delete c.waid; } // מזהה הערוץ לפרסום (לא מוצג לציבור)
       if ('wag' in body) { if (body.wag) c.links.wag = body.wag; else delete c.links.wag; }
       if ('wagid' in body) { if (body.wagid) c.wagid = body.wagid; else delete c.wagid; }
+      for (const k of ['entg', 'enwa']) if (k in body) { if (body[k]) c.links[k] = body[k]; else delete c.links[k]; }
+      for (const k of ['entgid', 'enwaid']) if (k in body) { if (body[k]) c[k] = body[k]; else delete c[k]; }
       if ('tg' in body) { if (body.tg) c.links.tg = body.tg; else delete c.links.tg; }
       if ('tgid' in body) { if (body.tgid) c.tgid = body.tgid; else delete c.tgid; }
       await this.s.put('config', c);
