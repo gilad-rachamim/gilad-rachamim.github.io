@@ -17,6 +17,7 @@ details.sh-q .sh-row{display:flex;flex-wrap:wrap;gap:.5rem;margin:.4rem 0 .8rem}
 .sh-none{border:1px dashed var(--line);border-radius:14px;padding:1rem;color:var(--cream);margin:1rem 0}
 .sh-toc{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0}
 .sh-toc a{border:1px solid var(--line);border-radius:99px;padding:.35rem .85rem;color:var(--gold-hi);text-decoration:none;min-height:36px;display:inline-flex;align-items:center}
+.sh-ask{margin-top:2rem;position:relative}.sh-ask .mm-hp{left:0;top:0}.sh-hint{color:var(--muted);font-size:.95rem;margin:-.3rem 0 .2rem}.sh-ask textarea{min-height:7rem}
 @media print{
   .sh-tools,.gr-acts,.sh-row,.sh-toc{display:none!important}
   details.sh-q{break-inside:avoid;border-color:#999;background:#fff}
