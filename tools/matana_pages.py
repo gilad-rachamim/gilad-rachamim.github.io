@@ -122,6 +122,16 @@ def trust(refund=True):
 REFUND = "14 יום לנסות בשקט. לא מתאים? מחזיר לך את הכסף, בלי שאלות. לא הספקת לבדוק? כתוב לי בווטסאפ ואאריך לך את תקופת הניסיון, באהבה."
 WHY = "זה מיזם חסד. אז למה בכלל תשלום? כי למדתי שמה שמקבלים בחינם נשאר בצד. תשלום סמלי גורם לך לפתוח, לנסות ולהשתמש באמת, וזו כל המטרה שלי."
 INCOME = "ההכנסות מחזיקות את המיזם ומאפשרות לי להמשיך לבנות כלים בחינם לכולם"
+# מחיר השקה: המחיר שאחרי ההשקה מחוק לידו (גילעד 24.11: "מחיר השקה" + הנחה שיווקית). חובה להעלות אליו בסוף ההשקה, אחרת זו הטעיה.
+AFTER = {18: 29, 39: 59, 290: 450, 590: 890, 990: 1490}
+def launch(pr):
+    a = AFTER.get(pr)
+    if not a:
+        return '<span class="mt-launch">מחיר השקה</span> '
+    return f'<span class="mt-launch">מחיר השקה · חוסכים {round((a - pr) * 100 / a)}%</span> <span class="mt-after">אחרי ההשקה: <s>{a:,} ₪</s></span> '
+HARD = 'זה מיזם חסד. אם התשלום קשה לכם כרגע, כתבו לי בווטסאפ ואכין לכם קופון הנחה אישי. בלי בושה ובלי הסברים.'
+def hard_box(slug):
+    return f'<aside class="mt-hard"><p>{esc(HARD)}</p><a class="mt-btn mt-green" data-wa="kashe" href="{wa("שלום גילעד, התשלום קשה לי כרגע. אפשר קופון הנחה?")}" rel="noopener">לבקש קופון הנחה בווטסאפ</a></aside>'
 SMALL = {18: "פחות מקפה ומאפה", 39: "פחות ממנת המבורגר עם צ'יפס ושתייה", 97: "כמו ארוחת בוקר זוגית"}
 
 
@@ -157,7 +167,7 @@ def cheap(p):
     return f"""<section class="mt-up" aria-labelledby="up-h">
 <h2 id="up-h">{esc(n)}</h2>
 <p>{esc(d)}</p>
-<p class="mt-price">{pr} ₪, {esc(SMALL[pr])}. תשלום חד-פעמי, בלי מנוי, מגיע למייל תוך דקה.{ref}</p>
+<p class="mt-price">{"" if s == "mohel-kurs" else launch(pr)}{pr} ₪, {esc(SMALL[pr])}. תשלום חד-פעמי, בלי מנוי, מגיע למייל תוך דקה.{ref}</p>
 {co(n, pr, code, b)}
 {trust(s != "mohel-kurs")}
 {refund_box(s)}
@@ -172,16 +182,17 @@ def shidrug(p):
     for n, pr, code, lines, rec in LADDERS[s]:
         li = "".join(f"<li>{esc(x)}</li>" for x in lines)
         tag = '<span class="mt-rec">הכי נבחר</span>' if rec and len(LADDERS[s]) > 1 else ""
-        rows += f'<section class="mt-tier{" rec" if rec else ""}">{tag}<h2>{esc(n)}</h2><p class="mt-big">{pr} ₪</p><ul>{li}</ul>{co(n, pr, code, "אני רוצה: " + n if len(LADDERS[s]) > 1 else "אני רוצה להצטרף", "mt-gold" if rec else "mt-ghost")}</section>'
+        rows += f'<section class="mt-tier{" rec" if rec else ""}">{tag}<h2>{esc(n)}</h2><p class="mt-big">{launch(pr) if s in BIZ else ""}{pr} ₪</p><ul>{li}</ul>{co(n, pr, code, "אני רוצה: " + n if len(LADDERS[s]) > 1 else "אני רוצה להצטרף", "mt-gold" if rec else "mt-ghost")}</section>'
     g = ""
     if s in BIZ:
-        g = f'<p class="mt-small">רק רוצים ליווי והערכה? <a data-co="{GROUP_LINE[1]}" data-name="{GROUP_LINE[0]}" href="{PAYHIP}{GROUP_LINE[2]}" rel="noopener">{GROUP_LINE[0]} ב-{GROUP_LINE[1]} ₪</a></p>'
+        g = f'<p class="mt-small">רק רוצים ליווי והערכה? <a data-co="{GROUP_LINE[1]}" data-name="{GROUP_LINE[0]}" href="{PAYHIP}{GROUP_LINE[2]}" rel="noopener">{GROUP_LINE[0]} ב-{GROUP_LINE[1]} ₪, מחיר השקה</a></p>'
     t = {"claude": "השלב הבא: הקורס המלא", "mohel-kurs": "השלב הבא: הקורס המלא למוהלים"}.get(s, "רוצים את זה בלוגו שלכם?")
     return meta("השלב הבא", "השלב הבא אחרי הרכישה.") + f"""<span class="mt-pill">תודה שרכשתם</span>
 <h1 class="mt-center">{esc(t)}</h1>
 <p class="mt-center">זה השלב הבא, למי שרוצה להמשיך. תשלום חד-פעמי, בלי מנוי, כולל קבלה.</p>
 {rows}
 {save_note(s)}
+{hard_box(s)}
 {trust(s != "mohel-kurs")}
 {refund_box(s)}
 {why_box(s)}
@@ -207,14 +218,14 @@ def upsell(p):
         return f"""<section class="mt-up" aria-labelledby="up-h">
 <h2 id="up-h">רוצים ללמוד לעבוד עם Claude יחד איתי?</h2>
 <ul><li>קבוצת ווטסאפ פרטית עם גילעד כמנטור</li><li>ערכה של 30 פרומפטים ב-PDF</li><li>טיפ יומי ו"כלי היום"</li></ul>
-<p class="mt-price">18 ₪, תשלום חד-פעמי, בלי חיוב אוטומטי. 14 יום להחזר כספי.</p>
+<p class="mt-price">{launch(18)}18 ₪, תשלום חד-פעמי, בלי חיוב אוטומטי. 14 יום להחזר כספי.</p>
 <a class="mt-btn mt-gold" href="https://payhip.com/b/kNyeO" rel="noopener">אני רוצה להצטרף לקבוצה</a>
 </section>"""
     who = p["upsell_for"]
     return f"""<section class="mt-up" aria-labelledby="up-h">
 <h2 id="up-h">רוצים את זה בלוגו ובצבעי {esc(who)} שלכם?</h2>
 <ul><li>כלי אחד בלוגו, בצבעים ובקישור משלכם, עם קוד QR</li><li>כפתור "שלחו לי את התוצאה בוואטסאפ" שמביא פניות ישר אליכם</li><li>מוכן תוך 48 שעות, עם סבב תיקונים אחד</li></ul>
-<p class="mt-price">290 ₪, תשלום חד-פעמי, בלי מנוי. כולל קבלה.</p>
+<p class="mt-price">{launch(290)}290 ₪, תשלום חד-פעמי, בלי מנוי. כולל קבלה.</p>
 <a class="mt-btn mt-gold" href="{C['branded_url']}" rel="noopener">אני רוצה כלי ממותג</a>
 </section>"""
 
