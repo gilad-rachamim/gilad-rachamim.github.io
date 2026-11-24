@@ -9,7 +9,7 @@
     var tools = [].map.call(f.querySelectorAll("input[name=tool]:checked"), function (i) { return i.value; });
     var plan = $("[data-o-plan]").value, max = plan === "290" ? 1 : 3;
     var name = $("[data-o-name]").value.trim(), tel = $("[data-o-phone]").value.trim();
-    var msg = "היי גילעד, הגעתי מהדף של מחשבון לרואי חשבון ואשמח להצצה בצבעים שלי.\n" +
+    var msg = "היי גילעד, הגעתי מהדף של " + (f.getAttribute("data-o-from") || "מחשבון לרואי חשבון") + " ואשמח להצצה בצבעים שלי.\n" +
       "חבילה: " + plans[plan] + "\nכלים: " + (tools.join(", ") || "עוד לא בחרתי") +
       "\nשם המשרד: " + (name || "—") + "\nוואטסאפ לפניות: " + (tel || "—") +
       "\nאתר: " + $("[data-o-site]").value + "\nצבע: " + $("[data-o-color]").value +
