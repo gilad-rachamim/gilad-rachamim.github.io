@@ -75,7 +75,9 @@ async function gemini(env, models, system, parts, schema, timeout, opt) {
       catch (e) {
         last = e;
         if (e.status === 429) { spent.set(tag, pday()); break; }
-        if (e.name === 'TimeoutError' || e.status === 503) tripped.set(tag, Date.now() + TRIP_MS);
+        // עומס (503) – 5 דק'; השהיה אחת – רק דקה, כדי לא לוותר על Gemini בגלל בקשה איטית אחת
+        if (e.status === 503) tripped.set(tag, Date.now() + TRIP_MS);
+        else if (e.name === 'TimeoutError') tripped.set(tag, Date.now() + 60e3);
         if (e.status && ![500, 502, 503, 504].includes(e.status)) break;
         if (e.name === 'TimeoutError' || fast) break;
         await sleep(1200);
