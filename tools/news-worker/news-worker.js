@@ -619,7 +619,7 @@ export default {
       if (!admin) return json({ ok: false }, 403);
       if (!env.WHAPI_TOKEN) return json({ ok: false, error: 'אין WHAPI_TOKEN' });
       const path = url.searchParams.get('p') || '';
-      if (!/^\/(groups|health|limits|chats)(\/[A-Za-z0-9@._-]+)*$/.test(path)) return json({ ok: false, error: 'נתיב לא מורשה' }, 400);
+      if (!/^\/(groups|health|limits|chats|newsletters)(\/[A-Za-z0-9@._-]+)*$/.test(path)) return json({ ok: false, error: 'נתיב לא מורשה' }, 400);
       const method = ['GET', 'POST', 'PUT', 'PATCH'].includes(request.method) ? request.method : 'GET';
       const r = await fetch('https://gate.whapi.cloud' + path, { method, headers: { authorization: 'Bearer ' + env.WHAPI_TOKEN, 'content-type': 'application/json' }, body: method === 'GET' ? undefined : await request.text() });
       return json({ http: r.status, body: await r.json().catch(() => null) });
