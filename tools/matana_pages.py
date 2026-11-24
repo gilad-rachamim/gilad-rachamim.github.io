@@ -245,6 +245,28 @@ def next_link(s):
 </section>"""
 
 
+def toda_kniya(p):
+    """דף שפייהיפ מעביר אליו מיד אחרי תשלום על המוצר הזול (גילעד 24.11: "חייב קריאה לפעולה מהירה להמשיך לדף הבא בלי שום מחשבה")."""
+    s = p["slug"]
+    n, pr, code, lines, rec = LADDERS[s][0]  # השורות והמחיר מאותה מדרגה, כדי שלא יהיה פער
+    h = {"claude": "השלב הבא: לבנות כלים משלכם עם Claude", "mohel-kurs": "השלב הבא: ללמוד את המקצוע באמת"}.get(s, "השלב הבא: הכלים בלוגו ובצבעים שלכם")
+    li = "".join(f"<li>{esc(x)}</li>" for x in lines[:3])
+    p0 = LADDERS[s][0][1]
+    price = f'{launch(p0) if s in BIZ else ""}{"החל מ-" if len(LADDERS[s]) > 1 else ""}{p0} ₪'
+    return meta("התשלום עבר, הקבצים במייל", "התשלום התקבל והקבצים נשלחו למייל.") + f"""<p class="mt-paid" role="status"><span aria-hidden="true">✅</span> התשלום עבר. הקבצים כבר במייל שלכם</p>
+<section class="mt-go" aria-labelledby="go-h">
+<span class="mt-pill">רגע לפני שממשיכים</span>
+<h1 id="go-h">{esc(h)}</h1>
+<ul class="mt-points">{li}</ul>
+<p class="mt-big mt-center">{price}</p>
+<a class="mt-btn mt-gold mt-pulse" data-next="kniya" href="/matana/{s}/shidrug/">כן, להמשיך לשלב הבא <span aria-hidden="true">←</span></a>
+<p class="mt-small">תשלום חד-פעמי, בלי מנוי, כולל קבלה.</p>
+</section>
+<p class="mt-small">הקבצים מחכים לכם במייל, בהודעה מ-Payhip עם כפתורי ההורדה. לא הגיע? כדאי לבדוק בספאם, או <a data-wa="kniya" href="{wa('שלום גילעד, קניתי ולא קיבלתי את הקבצים במייל')}" rel="noopener">לכתוב לי בווטסאפ</a>.</p>
+<p class="mt-trust">{esc(C['chesed'])}</p>
+"""
+
+
 def thanks(p):
     s = p["slug"]
     return meta("תודה! המתנות בדרך אליכם", "המתנות נשלחו למייל שלכם.") + f"""<p class="mt-ok" aria-hidden="true">🎁</p>
@@ -297,6 +319,7 @@ if __name__ == "__main__":
         write(p["slug"] + "/toda", thanks(p))
         if p["slug"] in LADDERS:
             write(p["slug"] + "/shidrug", shidrug(p))
+            write(p["slug"] + "/toda-kniya", toda_kniya(p))
             write(p["slug"] + "/toda-shidrug" if p["slug"] != "mohel-kurs" else "mohel-kurs/toda-kurs", toda_shidrug(p))
         if p["slug"] == "mohel-kurs":
             for c in TZ_CODES:
