@@ -1,6 +1,6 @@
 /* הפניות לקורס + קישור שותף (24.11.2026).
    1) כל a[data-kurs] שולח אירוע GA4 kurs_click עם placement.
-   2) ?s=<קוד> נשמר 30 יום ב-localStorage ושולח shutaf_visit; כפתורי קנייה a[data-kurs-buy="kurs|kvutza"]
+   2) ?s=<קוד> נשמר 30 יום ב-localStorage ושולח shutaf_visit; כפתורי קנייה a[data-kurs-buy="kurs|kvutza|bdika|skilim|shivuk|kartis"]
       מוחלפים לקישור של אותו שותף מתוך /assets/shutafim-kurs.json. קוד לא מוכר = הקישור הרגיל.
    3) קישורים לדף הקורס נושאים את קוד השותף הלאה. */
 (function () {
