@@ -21,7 +21,7 @@ const CACHE_DAYS = 30;
 const SK_PER = 30, SK_CAP = 1500;      // סקירות
 const MAX_TTS = 1600, MAX_SKIRA = 120000;
 const TTS = ['gemini-3.8-flash-lite-tts', 'gemini-3.8-flash-tts', 'gemini-3.1-flash-tts-preview', 'gemini-2.5-flash-preview-tts'];
-const TEXT = ['gemini-3.1-flash-lite', 'gemini-3.5-flash'];
+const TEXT = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite'];   // 3.1 עמוס (503) – ירד לסוף (24.11.2026)
 const VOICES = { m: 'Charon', f: 'Kore' };
 // בלי הוראת סגנון: המנוע מקריא גם אותה בקול (נבדק 23.11.2026), לכן נשלח רק הטקסט עצמו.
 
@@ -121,10 +121,12 @@ async function skiraRoute(request, env, h) {
   let last = '';
   for (const model of TEXT) for (const key of keys) {
     try {
+      const gen = { temperature: 0.3, maxOutputTokens: 2048 };
+      if (!/3\.5-flash-lite/.test(model)) gen.thinkingConfig = { thinkingBudget: 0 };   // 3.5-flash-lite דוחה את ההגדרה (400)
       const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-        method: 'POST', signal: AbortSignal.timeout(60000), headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
+        method: 'POST', signal: AbortSignal.timeout(40000), headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
         body: JSON.stringify({ systemInstruction: { parts: [{ text: skiraRules() }] }, contents: [{ role: 'user', parts: [{ text }] }],
-          generationConfig: { temperature: 0.3, maxOutputTokens: 2048, thinkingConfig: { thinkingBudget: 0 } } })
+          generationConfig: gen })
       });
       if (!r.ok) { last = model + ' ' + r.status; await r.body?.cancel(); continue; }
       const j = await r.json();

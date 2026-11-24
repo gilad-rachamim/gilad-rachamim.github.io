@@ -113,30 +113,37 @@ export function cleanDoc(d, size, imageIds) {
 }
 
 // ---------- דגמים ----------
+const tripped = new Map();                 // מפסק: דגם -> עד מתי לדלג עליו (בזיכרון של המופע)
+const NO_THINK_CFG = /flash-lite/;
 function geminiKeys(env) { return String(env.GEMINI_KEYS || env.GEMINI_KEY || '').split(/[,\s]+/).filter(Boolean); }
 async function gemini(env, text, imgs, many) {
   const keys = geminiKeys(env);
   if (!keys.length) throw new Error('no key');
-  let last;
+  let last = new Error('gemini busy');
+  const end = Date.now() + (many ? 110000 : 60000);                 // תקציב זמן כולל לג'מיני
   for (const model of GEMINI_MODELS) {
+    if ((tripped.get(model) || 0) > Date.now()) continue;          // המפסק פתוח: הדגם הזה נפל לפני רגע, מדלגים
+    const left = end - Date.now();
+    if (left < 8000) break;                                         // נגמר תקציב הזמן – עוברים לגיבוי
     const key = keys[Math.floor(Math.random() * keys.length)];
-    for (let i = 0; i < 2; i++) {
-      try {
-        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-          method: 'POST', signal: AbortSignal.timeout(many ? 95000 : 60000),
-          headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
-          body: JSON.stringify({ systemInstruction: { parts: [{ text: RULES }] }, contents: [{ role: 'user', parts: imageParts(text, imgs) }],
-            generationConfig: { temperature: many ? 0.9 : 0.7, maxOutputTokens: many ? 32000 : 12000, responseMimeType: 'application/json' } })
-        });
-        if (!r.ok) { const e = new Error(model + ' ' + r.status); e.status = r.status; throw e; }
-        const j = await r.json();
-        const t = j.candidates?.[0]?.content?.parts?.filter(p => !p.thought).map(p => p.text || '').join('') || '';
-        return { data: parseJsonText(t), model };
-      } catch (e) {
-        last = e;
-        if (e.status === 429 || (e.status && e.status < 500)) break;
-        await sleep(1500);
-      }
+    const gen = { temperature: many ? 0.9 : 0.7, maxOutputTokens: many ? 32000 : 12000, responseMimeType: 'application/json' };
+    // בלי "חשיבה": היא הוסיפה 10–30 שניות לכל עיצוב. הדגמים הקלים דוחים את ההגדרה (400), אז רק לשאר
+    if (!NO_THINK_CFG.test(model)) gen.thinkingConfig = { thinkingBudget: 0 };
+    try {
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        method: 'POST', signal: AbortSignal.timeout(Math.min(left, many ? 90000 : 30000)),
+        headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
+        body: JSON.stringify({ systemInstruction: { parts: [{ text: RULES }] }, contents: [{ role: 'user', parts: imageParts(text, imgs) }], generationConfig: gen })
+      });
+      if (!r.ok) { const e = new Error(model + ' ' + r.status); e.status = r.status; throw e; }
+      const j = await r.json();
+      const t = j.candidates?.[0]?.content?.parts?.filter(p => !p.thought).map(p => p.text || '').join('') || '';
+      return { data: parseJsonText(t), model };
+    } catch (e) {
+      last = e;
+      // עמוס (503/500), מכסה (429) או נתקע – לא מנסים אותו שוב כמה דקות, והבקשה הבאה לא מחכה לו
+      if (e.status >= 500 || e.status === 429) tripped.set(model, Date.now() + 5 * 60000);
+      else if (e.name === 'TimeoutError' || e.name === 'AbortError') tripped.set(model, Date.now() + 5 * 60000);
     }
   }
   throw last;

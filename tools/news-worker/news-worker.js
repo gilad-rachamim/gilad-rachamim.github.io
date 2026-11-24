@@ -154,7 +154,8 @@ const CHECK_SCHEMA = {
 };
 
 async function gemini(env, system, user, schema) {
-  const models = (env.GEMINI_MODELS || 'gemini-3.8-flash,gemini-3.7-flash,gemini-3.5-flash,gemini-flash-lite-latest,gemini-3.5-flash-lite').split(',').map(s => s.trim());
+  // הסדר: קודם מה שעונה היום. 3.8 החזיר 400 "מיקום לא נתמך" והפיל מהדורות לכותרות בלבד (21.11, 24.11.2026)
+  const models = (env.GEMINI_MODELS || 'gemini-3.5-flash,gemini-flash-lite-latest,gemini-3.5-flash-lite,gemini-3.7-flash,gemini-3.8-flash').split(',').map(s => s.trim());
   let last;
   for (let round = 0; round < 2; round++) {
   if (round) await new Promise(r => setTimeout(r, 20000)); // כולם עמוסים (503) – מחכים רגע ומנסים סבב אחד נוסף
@@ -173,12 +174,14 @@ async function gemini(env, system, user, schema) {
     });
     } catch (e) { last = `${model} timeout`; continue; } // דגם עמוס – עוברים לבא
     if (r.ok) {
-      const j = await r.json();
-      const txt = j.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '';
-      return { data: JSON.parse(txt), model };
+      try {
+        const j = await r.json();
+        const txt = j.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '';
+        return { data: JSON.parse(txt), model };
+      } catch (e) { last = `${model} bad json`; continue; } // תשובה חתוכה – עוברים לבא
     }
+    // כל שגיאה (גם 400 של דגם אחד) – עוברים לדגם הבא; נכשלים רק כשכולם נפלו
     last = `${model} ${r.status} ${(await r.text()).slice(0, 200)}`;
-    if (![404, 429, 500, 503].includes(r.status)) throw new Error(last); // שגיאה אמיתית – לא מנסים שוב
   }
   }
   throw new Error(last);

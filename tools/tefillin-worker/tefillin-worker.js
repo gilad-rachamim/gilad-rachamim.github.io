@@ -23,7 +23,7 @@ const MAX_IMG = 3_000_000;
 const MAX_FRAME = 900_000, MIN_FRAMES = 3, MAX_FRAMES = 5;
 const MIN_SPAN = 1500, MAX_SPAN = 8000;    // מילישניות בין הפריים הראשון לאחרון
 const MIN_MOTION = 1.0;                    // הפרש בהירות ממוצע בין פריימים (0–255), נמדד באפליקציה
-const VISION = ['gemini-3.5-flash', 'gemini-3.1-flash-lite'];
+const VISION = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite'];   // 3.1 עמוס (503) – נוסף לפניו 3.5-flash-lite (24.11.2026)
 const AI_VISION = '@cf/meta/llama-4-scout-17b-16e-instruct';
 
 export const GESTURES = [
@@ -169,29 +169,59 @@ export function why(o) {
   return '';
 }
 
-async function gemini(env, parts, system, schema = SCHEMA) {
-  const keys = geminiKeys(env);
-  if (!keys.length) throw new Error('no key');
+const tripped = new Map();   // מפסק: דגם -> עד מתי לדלג עליו (בזיכרון של המופע)
+// דגם אחד על כל המפתחות. דגם עמוס (5xx) או תקוע נכנס למפסק, כדי שהבקשות הבאות לא יחכו לו
+async function geminiModel(env, model, parts, system, schema, ms) {
   let last;
-  for (const model of VISION) for (const key of keys) {
+  for (const key of geminiKeys(env)) {
     const tag = key.slice(-6) + '|' + model;
     if (spent.get(tag) === pday()) continue;
+    if ((tripped.get(model) || 0) > Date.now()) break;
     try {
+      const gen = { temperature: 0, maxOutputTokens: 1024, responseMimeType: 'application/json', responseSchema: schema };
+      if (!/3\.5-flash-lite/.test(model)) gen.thinkingConfig = { thinkingBudget: 0 };   // 3.5-flash-lite דוחה את ההגדרה (400)
       const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-        method: 'POST', signal: AbortSignal.timeout(40000),
+        method: 'POST', signal: AbortSignal.timeout(ms),
         headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
         body: JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents: [{ role: 'user', parts }],
-          generationConfig: { temperature: 0, maxOutputTokens: 1024, thinkingConfig: { thinkingBudget: 0 },
-            responseMimeType: 'application/json', responseSchema: schema } })
+          generationConfig: gen })
       });
-      if (!r.ok) { last = new Error(model + ' ' + r.status); if (r.status === 429) spent.set(tag, pday()); continue; }
+      if (!r.ok) {
+        last = new Error(model + ' ' + r.status);
+        if (r.status === 429) spent.set(tag, pday()); else if (r.status >= 500) tripped.set(model, Date.now() + 5 * 60000);
+        continue;
+      }
       const j = await r.json();
       const txt = j.candidates?.[0]?.content?.parts?.filter(p => !p.thought).map(p => p.text || '').join('') || '';
       if (txt) return { o: JSON.parse(txt), engine: model };
       last = new Error(model + ' empty');
-    } catch (e) { last = e; }
+    } catch (e) {
+      last = e;
+      if (e.name === 'TimeoutError' || e.name === 'AbortError') tripped.set(model, Date.now() + 5 * 60000);   // נתקע
+    }
   }
-  throw last || new Error('gemini spent');
+  throw last || new Error(model + ' skipped');
+}
+// מירוץ: הדגם הראשי מתחיל; לא ענה תוך 4 שניות (או נפל) – הדגמים הבאים מתחילים במקביל, והראשון שעונה מנצח
+async function gemini(env, parts, system, schema = SCHEMA) {
+  if (!geminiKeys(env).length) throw new Error('no key');
+  const live = VISION.filter(m => !((tripped.get(m) || 0) > Date.now()));
+  if (!live.length) throw new Error('gemini busy');
+  let done = false;
+  const first = geminiModel(env, live[0], parts, system, schema, 8000);
+  first.then(() => { done = true; }, e => { console.log('gemini', live[0], String(e && e.message || e).slice(0, 80)); });
+  const rest = (async () => {
+    let t;
+    await Promise.race([new Promise(r => { t = setTimeout(r, 4000); }), first.catch(() => {})]);
+    clearTimeout(t);
+    for (const m of live.slice(1)) {
+      if (done) break;
+      try { return await geminiModel(env, m, parts, system, schema, 6000); } catch (e) { console.log('gemini', m, String(e && e.message || e).slice(0, 80)); }
+    }
+    throw new Error('gemini spent');
+  })();
+  try { return await Promise.any([first, rest]); }
+  catch (e) { throw (e.errors && e.errors[0]) || e; }
 }
 
 const SHAPE1 = '{"person":true,"shel_rosh":true,"shel_yad":true,"gesture":true,"wrapped_hand":true,"screen":false,"live":true,"reason_he":"..."}';
