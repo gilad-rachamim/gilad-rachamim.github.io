@@ -103,14 +103,24 @@ INCOME = "ההכנסות מחזיקות את המיזם ומאפשרות לי ל
 SMALL = {18: "פחות מקפה ומאפה", 39: "פחות ממנת המבורגר עם צ'יפס ושתייה", 97: "כמו ארוחת בוקר זוגית"}
 
 
+def save_note(slug):
+    if slug not in SAVE:
+        return ""
+    return f'<p class="mt-small">דוגמה לחישוב, לא הבטחה: {esc(SAVE[slug])}</p>'
+
+
 def refund_box(slug):
     if slug == "mohel-kurs":
         return ""
     return f'<aside class="mt-refund"><strong>אחריות 14 יום</strong><p>{esc(REFUND)}</p></aside>'
 
 
+WIN = "ככה כולם מרוויחים: אתה מקבל כלי שחוסך לך זמן וכסף, והמיזם ממשיך לתת כלים בחינם לעוד אנשים."
+SAVE = {'roe': 'משרד ששולח ל-40 לקוחות בחודש רשימת מסמכים ידנית של 10 דקות לכל אחד יכול לחסוך כשש שעות בחודש.', 'orchei-din': 'משרד שעונה ל-30 פניות בחודש על שאלות חישוב של 5 דקות כל אחת יכול לחסוך כשעתיים וחצי בחודש.', 'esek': 'עסק שמקבל 20 שאלות מחיר בחודש וחוסך 5 דקות בכל אחת יכול לחסוך כשעה וחצי בחודש.', 'kelim': 'עסק שכותב 20 מיילים בחודש וחוסך 5 דקות בכל אחד יכול לחסוך כשעה וחצי בחודש.'}
+
+
 def why_box(slug):
-    inc = "" if slug == "mohel-kurs" else f" {INCOME}."
+    inc = "" if slug == "mohel-kurs" else f" {INCOME}. {WIN}"
     return f'<aside class="mt-why"><p>{esc(WHY)}{esc(inc)}</p><p class="mt-sign">גילעד</p></aside>'
 
 
@@ -149,6 +159,7 @@ def shidrug(p):
 <h1 class="mt-center">{esc(t)}</h1>
 <p class="mt-center">זה השלב הבא, למי שרוצה להמשיך. תשלום חד-פעמי, בלי מנוי, כולל קבלה.</p>
 {rows}
+{save_note(s)}
 {trust(s != "mohel-kurs")}
 {refund_box(s)}
 {why_box(s)}
