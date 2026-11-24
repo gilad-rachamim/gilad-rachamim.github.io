@@ -1,0 +1,12 @@
+/* כלי הודעות להורים בשפה שלהם – משותף לדף ההודעות ולכלי הכיבודים */
+.ho-tpls{display:flex;flex-wrap:wrap;gap:.45rem;margin:.3rem 0 .8rem}
+.ho-ta{width:100%;min-height:9rem;font:inherit;font-size:1.05rem;line-height:1.6;padding:.8rem;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--cream)}
+.ho-row{display:flex;flex-wrap:wrap;gap:.7rem;align-items:end;margin-top:.8rem}
+.ho-row .field{margin:0}
+#ho-res{margin-top:1.2rem}
+.ho-back{border:1px dashed var(--gold-soft);border-radius:12px;padding:.8rem 1rem;white-space:pre-wrap;line-height:1.6;color:var(--body)}
+.ho-note{border:1px solid var(--gold-soft);border-radius:12px;padding:.7rem 1rem;background:rgba(216,179,95,.08);margin:.8rem 0}
+.ho-off{opacity:.45;pointer-events:auto;cursor:not-allowed}
+#ho-status{min-height:1.4em;margin:.6rem 0 0}
+.bt-lashon{margin-top:1.4rem;border-top:1px solid var(--line);padding-top:1rem}
+.bt-lashon h3{margin:0 0 .4rem}
