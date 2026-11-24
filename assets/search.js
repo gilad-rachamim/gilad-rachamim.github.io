@@ -181,7 +181,7 @@
   function suggest(text) {
     shown = [];
     if (LANG !== 'he') { out.innerHTML = '<div class="hk-none"><p>' + UI.all + '</p></div>'; return; }
-    out.innerHTML = '<div class="hk-none"><p>לא מצאנו כלי כזה אצלנו.</p>' + askHtml() + '<p>אפשר גם להציע אותו, וגילעד יראה את ההצעה.</p>' +
+    out.innerHTML = '<div class="hk-none"><p>לא מצאנו כלי כזה אצלנו.</p>' + askHtml() + '<p class="no-app">רוצים לא לחכות? <a href="/kelim/claude/kurs/?utm_source=search" data-kurs="search_none">ככה בונים לבד</a>.</p>' + '<p>אפשר גם להציע אותו, וגילעד יראה את ההצעה.</p>' +
       '<div class="hk-sg"><textarea rows="2" maxlength="160" aria-label="מה הכלי שחסר">' + esc(text) + '</textarea>' +
       '<input type="email" placeholder="מייל, אם רוצים הודעה כשהכלי מוכן (לא חובה)" maxlength="120" dir="ltr">' +
       '<input class="hk-hp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">' +
