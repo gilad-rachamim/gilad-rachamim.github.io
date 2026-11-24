@@ -3,7 +3,7 @@
   'use strict';
   var box = document.getElementById('sh-box');
   if (!box) return;
-  var G = window.GIUR || { used: function () {}, wa: function (t) { window.open('https://wa.me/?text=' + encodeURIComponent(t), '_blank', 'noopener'); } };
+  var G = window.GIUR || { lang: 'he', t: function (d) { return d.he; }, used: function () {}, wa: function (t) { window.open('https://wa.me/?text=' + encodeURIComponent(t), '_blank', 'noopener'); } };
   var items = [].slice.call(box.querySelectorAll('details.sh-q'));
   var cats = [].slice.call(box.querySelectorAll('section.sh-cat'));
   var input = document.getElementById('sh-search');
@@ -13,7 +13,7 @@
   var stage = 'all', term = '', timer = null, sentSearch = false;
 
   function norm(s) {
-    return String(s || '').replace(/[֑-ׇ]/g, '').replace(/[׳‘’']/g, '').replace(/[״“”"]/g, '').replace(/[-־–—]/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+    return String(s || '').replace(/[֑-ׇ]/g, '').replace(/[׳‘’']/g, '').replace(/[״“”"]/g, '').replace(/ё/g, 'е').replace(/[-־–—]/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
   }
   items.forEach(function (d) { d._t = norm(d.textContent); });
 
@@ -28,7 +28,7 @@
       if (words.length && ok && shown <= 8) d.setAttribute('data-auto', '1');
     });
     cats.forEach(function (s) { s.hidden = !s.querySelector('details.sh-q:not([hidden])'); });
-    if (count) count.textContent = (words.length || stage !== 'all') ? 'מוצגות ' + shown + ' מתוך ' + items.length + ' שאלות' : items.length + ' שאלות ותשובות';
+    if (count) count.textContent = (words.length || stage !== 'all') ? G.t({ he: 'מוצגות ' + shown + ' מתוך ' + items.length + ' שאלות', en: 'Showing ' + shown + ' of ' + items.length + ' questions', ru: 'Показано ' + shown + ' из ' + items.length + ' вопросов' }) : G.t({ he: items.length + ' שאלות ותשובות', en: items.length + ' questions and answers', ru: items.length + ' вопросов и ответов' });
     if (none) none.hidden = shown !== 0;
   }
 
@@ -51,8 +51,7 @@
   });
   document.addEventListener('click', function (e) {
     var ps = e.target.closest && e.target.closest('[data-pshare]');
-    if (ps) { G.used('giur_shut_pshare'); G.wa(document.title.split(' | ')[0] + '
-https://hakelim.com' + location.pathname); }
+    if (ps) { G.used('giur_shut_pshare'); G.wa(document.title.split(' | ')[0] + '\n' + 'https://hakelim.com' + location.pathname); }
   });
   box.addEventListener('click', function (e) {
     var s = e.target.closest && e.target.closest('[data-share]');
@@ -60,7 +59,7 @@ https://hakelim.com' + location.pathname); }
       var d = s.closest('details');
       G.used('giur_shut_share');
       var q = d.querySelector('summary').textContent.trim();
-      G.wa('שאלה ותשובה לגרים: ' + q + '\n' + 'https://hakelim.com' + location.pathname + '#' + d.id);
+      G.wa(G.t({ he: 'שאלה ותשובה לגרים: ', en: 'Question and answer for converts: ', ru: 'Вопрос и ответ о гиюре: ' }) + q + '\n' + 'https://hakelim.com' + location.pathname + '#' + d.id);
     }
   });
   box.addEventListener('toggle', function (e) {
