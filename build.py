@@ -784,6 +784,7 @@ def catalog():
     if not _CAT:
         _CAT["tp"], _CAT["out"] = build_catalog()
     return _CAT["tp"], _CAT["out"]
+TOPIC_PAGES = {"/kelim/atzmaim/"}  # דפי נושא ייעודיים שמקושרים מהקטלוג מעבר לעמוד הראשי של הנושא
 def katalog_fill(html):
     cat = catalog()[1]
     tools = [x for x in cat if x["ty"] == "tool" and x["l"] == "he" and not x["sf"] and x["u"] != "/kelim/katalog/"]
@@ -800,6 +801,10 @@ def katalog_fill(html):
             continue
         hubs = sorted((x for x in cat if x["ty"] == "hub" and x["g"] == t["id"] and x["l"] == "he" and not x["sf"]), key=lambda x: (x["u"].count("/"), x["u"]))
         hub = '<p class="kt-hub"><a href="%s">לעמוד הנושא: %s</a></p>' % (hubs[0]["u"], esc(t["n"])) if hubs else ""
+        # עמודי נושא מיוחדים נוספים באותו נושא (למשל כלים לעצמאים), לא רק העמוד הראשי
+        extra = [h for h in hubs[1:] if h["u"] in TOPIC_PAGES]
+        if extra:
+            hub += '<p class="kt-hub">עמודי נושא נוספים: %s</p>' % " · ".join('<a href="%s">%s</a>' % (h["u"], esc(h["n"])) for h in extra)
         parts.append('<details class="kt-d"><summary>%s %s <small>(%d כלים)</small></summary>%s<ul class="kt-list">%s</ul></details>' % (
             t["e"], esc(t["n"]), len(ts), hub, "".join('<li><a href="%s">%s</a></li>' % (x["u"], esc(sh(x))) for x in ts)))
     return html.replace("<!--KATALOG-TOPICS-->", "".join(parts))
