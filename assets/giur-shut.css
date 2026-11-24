@@ -1,0 +1,25 @@
+/* שו"ת לגרים – /kodesh/giur/shut/ */
+.sh-credit{border:2px solid var(--gold);border-radius:14px;background:rgba(212,176,98,.08);padding:1rem 1.1rem;margin:1rem 0;line-height:1.8;color:var(--cream)}
+.sh-credit b{color:var(--gold-hi)}
+.sh-tools{position:sticky;top:0;z-index:5;background:var(--ink);padding:.6rem 0 .4rem;margin:.6rem 0;border-bottom:1px solid var(--line)}
+.sh-tools input[type=search]{width:100%;box-sizing:border-box;font:inherit;font-size:1.1rem;min-height:48px;border-radius:99px;border:2px solid var(--gold);background:var(--ink-2);color:var(--cream);padding:.5rem 1.1rem}
+.sh-tools input[type=search]::placeholder{color:var(--muted)}
+.sh-meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.4rem;margin-top:.3rem;color:var(--muted);font-size:.95rem}
+.sh-cat h2{margin-top:1.8rem}
+.sh-cat .sh-cdesc{color:var(--muted);margin:.2rem 0 .6rem}
+details.sh-q{border:1px solid var(--line);border-radius:14px;background:var(--ink-2);margin:.55rem 0;padding:0 1rem;scroll-margin-top:7rem}
+details.sh-q[open]{border-color:var(--gold)}
+details.sh-q>summary{cursor:pointer;min-height:48px;display:flex;align-items:center;padding:.6rem 0;color:var(--cream);font-weight:700;line-height:1.5;list-style-position:inside}
+details.sh-q .sh-a{color:var(--body);line-height:1.85;margin:.2rem 0 .6rem}
+details.sh-q .sh-src{font-size:.92rem;color:var(--muted);margin:.4rem 0}
+details.sh-q .sh-src a{color:var(--gold-hi)}
+details.sh-q .sh-row{display:flex;flex-wrap:wrap;gap:.5rem;margin:.4rem 0 .8rem}
+.sh-none{border:1px dashed var(--line);border-radius:14px;padding:1rem;color:var(--cream);margin:1rem 0}
+.sh-toc{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0}
+.sh-toc a{border:1px solid var(--line);border-radius:99px;padding:.35rem .85rem;color:var(--gold-hi);text-decoration:none;min-height:36px;display:inline-flex;align-items:center}
+@media print{
+  .sh-tools,.gr-acts,.sh-row,.sh-toc{display:none!important}
+  details.sh-q{break-inside:avoid;border-color:#999;background:#fff}
+  details.sh-q>summary{color:#000}
+  details.sh-q .sh-a,details.sh-q .sh-src{color:#000}
+}

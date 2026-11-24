@@ -1,0 +1,19 @@
+/* יום הגיור – ציר תחנות לפי סדר ההלכות בספר */
+.yh-line{list-style:none;margin:1rem 0;padding:0 1.6rem 0 0;position:relative;border-right:3px solid var(--gold)}
+.yh-node{position:relative;margin:0 0 1.4rem;padding:0}
+.yh-node::before{content:"";position:absolute;right:-2.05rem;top:.55rem;width:.9rem;height:.9rem;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px var(--ink)}
+.yh-badge{display:inline-block;background:rgba(212,176,98,.14);border:1px solid var(--gold);color:var(--gold-hi);border-radius:99px;padding:.2rem .85rem;font-weight:700;margin-bottom:.5rem}
+.yh-card{border:1px solid var(--line);border-radius:14px;background:var(--ink-2);padding:.2rem 1rem .4rem;margin:.55rem 0}
+.yh-card h3{color:var(--cream);font-size:1.1rem;line-height:1.5;margin:.7rem 0 .3rem}
+.yh-a{color:var(--body);line-height:1.85;margin:.2rem 0 .6rem}
+.yh-how{line-height:1.85}
+.yh-card .sh-src{font-size:.92rem;color:var(--muted);margin:.4rem 0}
+.yh-card .sh-src a{color:var(--gold-hi)}
+.yh-card .sh-row{display:flex;flex-wrap:wrap;gap:.5rem;margin:.4rem 0 .8rem}
+@media(max-width:480px){.yh-line{padding-right:1.3rem}.yh-node::before{right:-1.75rem}}
+@media print{
+  .gr-acts,.sh-row{display:none!important}
+  .yh-card{break-inside:avoid;border-color:#999;background:#fff}
+  .yh-card h3,.yh-a,.yh-card .sh-src{color:#000}
+  .yh-badge{color:#000;border-color:#666}
+}

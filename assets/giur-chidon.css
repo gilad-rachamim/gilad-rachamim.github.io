@@ -1,0 +1,22 @@
+/* חידון חזרה לגרים – /kodesh/giur/shut/chidon/ */
+.ch-app{border:1px solid var(--line);border-radius:16px;background:var(--ink-2);padding:1rem 1.1rem;margin:1.2rem 0}
+.ch-lead{color:var(--cream);font-weight:700;margin:.8rem 0 .3rem}
+.ch-start{min-height:52px;font-size:1.15rem;padding:.6rem 1.6rem}
+.ch-top{display:flex;justify-content:space-between;gap:.6rem;color:var(--muted);font-size:.95rem}
+.ch-bar{height:8px;border-radius:99px;background:var(--line);margin:.4rem 0 .8rem;overflow:hidden}
+#ch-fill{height:100%;width:0;background:var(--gold);transition:width .25s}
+.ch-stage{color:var(--muted);margin:.2rem 0}
+.ch-q{color:var(--cream);font-size:1.3rem;line-height:1.6;margin:.4rem 0 1rem;outline-offset:4px}
+.ch-ans{border:2px solid var(--gold);border-radius:14px;background:rgba(212,176,98,.08);padding:.4rem 1rem 1rem;margin:.4rem 0 1rem;outline-offset:3px}
+.ch-ask{color:var(--cream);font-weight:700;margin:.8rem 0 .4rem}
+.ch-row{display:flex;flex-wrap:wrap;gap:.6rem;margin:.6rem 0}
+.ch-row .gr-btn,.ch-app .gr-btn{min-height:48px}
+.ch-yes{border-color:#5fb878}
+.ch-no{border-color:#e07a7a}
+.ch-link{background:none;border:0;color:var(--gold-hi);text-decoration:underline;cursor:pointer;font:inherit;min-height:44px;padding:.3rem .2rem}
+.ch-big{font-size:1.6rem;color:var(--gold-hi);font-weight:700;margin:.4rem 0}
+.ch-list{padding:0 1.2rem;line-height:1.9}
+.ch-list a{color:var(--gold-hi)}
+.ch-src2{font-size:.92rem;color:var(--muted)}
+.ch-app button:focus-visible,.ch-app a:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
+@media (max-width:600px){.ch-q{font-size:1.15rem}.ch-row .gr-btn{flex:1 1 100%}}
