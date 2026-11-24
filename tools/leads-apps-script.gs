@@ -56,22 +56,27 @@ function doPost(e) {
     if (/^כלים:/.test(clean(p['מקור'])) && p['הסכמה למשפחת הכלים']) consent = 'כן – משפחת הכלים';
     var dup = findLead(sh, phone, email);
     var token = Utilities.getUuid().replace(/-/g, '').slice(0, 20);
-    var utm = ['utm_source', 'utm_medium', 'utm_campaign', 'ref'].map(function (k) { return p[k] ? k + '=' + p[k] : ''; }).filter(String).join('&');
+    var utm = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'ref'].map(function (k) { return p[k] ? k + '=' + p[k] : ''; }).filter(String).join('&');
     var row = [];
     row[C['תאריך']] = new Date();
     row[C['שם']] = name; row[C['טלפון']] = phone; row[C['מייל']] = email;
     row[C['מועד לידה']] = clean(p['מועד הלידה']); row[C['עיר']] = clean(p['עיר']);
     row[C['מקור']] = shipur ? String(p['מקור']).trim().slice(0, 600) : (clean(p['מקור']) || 'האתר'); row[C['הסכמה לדיוור']] = consent;
     var kelim = /^כלים:/.test(clean(p['מקור']));               // טופסי "הכלים של גילעד רחמים": בלי מדריך, בלי סדרה ובלי ווטסאפ של ברית
-    row[C['סטטוס']] = kelim ? 'כלים' : dup ? 'חוזר' : 'חדש';
+    var gift = isGift_(clean(p['מקור']));                       // דפי מתנה /matana/: מתנה מיד + סדרה משלהם
+    row[C['סטטוס']] = kelim ? 'כלים' : gift ? 'מתנה' : dup ? 'חוזר' : 'חדש';
     row[C['ווטסאפ אחרון']] = ''; row[C['שלב בסדרה']] = ''; row[C['נשלח לאחרונה']] = '';
     row[C['טוקן']] = token; row[C['הערות']] = dup ? 'כבר נרשם/ה בעבר (שורה ' + dup + ')' : '';
     row[C['עמוד']] = clean(p['_page']); row[C['utm']] = utm;
     sh.appendRow(row.map(sheetSafe));
     sh.getRange(sh.getLastRow(), C['טלפון'] + 1).setNumberFormat('@').setValue(phone); // לשמור את ה-0 המוביל
 
-    if (consent === 'כן') { var nx = dueStep(row, new Date()).next; sh.getRange(sh.getLastRow(), C['מייל הבא'] + 1).setValue(nx ? nx[1] : ''); }
-    if (email && mailOk && !kelim) {
+    if (consent === 'כן' && gift) { sh.getRange(sh.getLastRow(), C['מייל הבא'] + 1).setValue(addDays(new Date(), 2)); }
+    else if (consent === 'כן') { var nx = dueStep(row, new Date()).next; sh.getRange(sh.getLastRow(), C['מייל הבא'] + 1).setValue(nx ? nx[1] : ''); }
+    if (email && mailOk && gift) {
+      try { sendGiftEmail(name, email, token, consent, giftSlug_(clean(p['מקור']))); } catch (eG) { log('מייל מתנה נכשל: ' + eG + ' | ' + email); }
+    }
+    if (email && mailOk && !kelim && !gift) {
       var src = clean(p['מקור']);
       if (src === 'מחולל הודעה לברית') sendHazmanaEmail(name, email);
       else if (src === 'מחולל הודעה לזבד הבת') sendZevedEmail(name, email);
@@ -79,7 +84,7 @@ function doPost(e) {
       else sendGuideEmail(name, email, token, consent);
     }
     notifyOwner(row, dup);
-    if (!kelim && isGuideLead_(clean(p['מקור']))) {        // ליד של המדריך → אנשי הקשר של גילעד (לא מפיל את הטופס אם נכשל)
+    if (!kelim && !gift && isGuideLead_(clean(p['מקור']))) {        // ליד של המדריך → אנשי הקשר של גילעד (לא מפיל את הטופס אם נכשל)
       try { saveLeadContact_({ name: name, phone: phone, email: email, due: row[C['מועד לידה']], city: row[C['עיר']], date: row[C['תאריך']] }, contactKeys_()); }
       catch (eC) { log('שמירת איש קשר נכשלה: ' + eC + ' | ' + name); }
     }
@@ -316,6 +321,7 @@ function dailyNurture(dryRun) {
   var data = sh.getDataRange().getValues(), today = new Date(), sent = [], closed = { 'מוהל אחר': 1, 'לא רלוונטי': 1 };
   for (var i = 1; i < data.length && sent.length < 40; i++) {
     var r = data[i];
+    if (isGift_(r[C['מקור']])) continue;                  // לדפי המתנה יש סדרה משלהם (giftNurture)
     if (r[C['הסכמה לדיוור']] !== 'כן' || !r[C['מייל']] || closed[r[C['סטטוס']]] || r[C['שלב בסדרה']] === 'done') continue;
     var lastSent = r[C['נשלח לאחרונה']];
     var ds = dueStep(r, today);
@@ -334,6 +340,7 @@ function dailyNurture(dryRun) {
     } catch (err) { log('nurture row ' + (i + 1) + ': ' + err); }
   }
   if (sent.length) log((dryRun ? 'dry ' : '') + 'dailyNurture: ' + sent.join(', '));
+  try { sent = sent.concat(giftNurture(dryRun)); } catch (eN) { log('giftNurture: ' + eN); }
   return sent;
 }
 
@@ -350,7 +357,7 @@ function waMessage(code, r) {
     (REVIEW_URL() ? ' ואם בא לכם לכתוב משפט ב-Google, זה עוזר להורים אחרים למצוא מוהל שמלווה: ' + REVIEW_URL() + '.' : '') + ' תודה שזכיתי 🙏';
 }
 function waDue(r, today) {
-  if (/^כלים:/.test(String(r[C['מקור']] || ''))) return '';
+  if (/^(כלים:|מתנה:)/.test(String(r[C['מקור']] || ''))) return '';
   var st = r[C['סטטוס']], done = String(r[C['ווטסאפ אחרון']] || ''), m = String(r[C['מועד לידה']] || '').match(/^(\d{4})-(\d{2})$/);
   if ((st === 'חדש' || st === 'חוזר') && done === '') return 'WA-1';
   if (!m) return st === 'נערכה' && done !== 'WA-4' ? 'WA-4' : '';
@@ -400,7 +407,7 @@ function testSendAllToOwner() {
 // דורש את השירות המתקדם People API בפרויקט (Services → People API, מזהה People).
 // מועד הלידה, העיר ותאריך ההרשמה נכתבים בהערות של איש הקשר. מספר או מייל שכבר שמורים אצלו – לא נשמרים שוב.
 var LEAD_TAG = ' ליד מדריך';
-function isGuideLead_(src) { return !/^(כלים:|מחולל הודעה)/.test(String(src || '')); }
+function isGuideLead_(src) { return !/^(כלים:|מתנה:|מחולל הודעה)/.test(String(src || '')); }
 function contactKeys_() {
   var keys = {}, pt;
   do {
@@ -449,12 +456,173 @@ function backfillLeadContacts() {
   return msg;
 }
 
+// ---------- דפי מתנה קצרים /matana/ (24.11.2026) ----------
+// מקור הטופס: "מתנה: <שם הדף>". המתנה יוצאת מיד גם בלי הסכמה; סדרת חמשת המיילים (ימים 2,4,7,10,14) רק למי שסימן הסכמה.
+// הנתונים (רשימת המתנות לכל דף) נוצרים מ-tools/data/matana-pages.json על ידי tools/matana_gs_patch.py.
+var MATANA = {"roe": {"gifts": [["מדריך: אילו מסמכים להביא לרואה חשבון", "/kelim/mismachim-leroe-cheshbon/", "גם כקובץ PDF להדפסה: /assets/mismachim-leroe-cheshbon.pdf"], ["מחשבון החזר מס", "/kesef/hechzer/", "בדיקה בשניות כמה אפשר לקבל בחזרה"], ["מחשבון מקדמות מס הכנסה", "/kelim/cheshbon/mikdamot/", "כמה לשלם בכל חודש"], ["מחשבון ברוטו-נטו", "/kesef/bruto-neto/", "מהמשכורת ברוטו לנטו"]]}, "orchei-din": {"gifts": [["מדריך: מה מגיע לעובד שפוטר", "/kelim/mah-magia-leoved-sheputar/", "גם כקובץ PDF להדפסה: /assets/mah-magia-leoved-sheputar.pdf"], ["זכויות בפיטורין ובהתפטרות", "/kesef/zchuyot-pitorin/", "מה מגיע ומתי"], ["פיצויי פיטורין", "/kesef/pitzuyim-pitorin/", "חישוב לפי ותק ושכר"], ["פיצויים לעובד שעתי", "/kesef/pitzuyim-shaati/", "כשהשכר לפי שעה"], ["הודעה מוקדמת", "/kesef/hodaa-mukdemet/", "כמה ימים מגיעים"], ["פדיון חופשה", "/kesef/pidyon-chufsha/", "כמה שווים ימי החופשה שנשארו"], ["דמי הבראה", "/kesef/dmey-havraa/", "הסכום לפי ותק"], ["שעות נוספות", "/kesef/shaot-nosafot/", "125% ו-150% בחישוב אחד"]]}, "esek": {"gifts": [["תפריט דיגיטלי עם QR", "/esek/tafrit/", "מקלידים מנות, בוחרים צבע ומדפיסים שלט"], ["יוצר קוד QR", "/esek/qr/", "קוד QR לכל קישור, להורדה"], ["תמחור מנה", "/esek/tmchur-mana/", "עלות, מחיר מומלץ ורווח חודשי"], ["מודעת מבצע לסטטוס", "/esek/mivtza/", "מודעה מוכנה לשיתוף"], ["הזמנות בווטסאפ עם QR", "/esek/hazmana-vatsap/", "לקוחות מזמינים אליכם ישר"]]}, "kelim": {"gifts": [["תמלול הקלטות", "/kelim/tamlul/", "הקלטה לטקסט בעברית"], ["תרגום", "/kelim/tochen/tirgum/", "תרגום טקסט ומסמכים"], ["הקראת טקסט בקול אנושי", "/kelim/tochen/hakraa/", "טקסט לקובץ שמע"], ["הנפשת תמונות", "/kelim/tochen/chaye/", "תמונה ישנה שמתחילה לזוז"], ["ניסוח מיילים", "/kelim/tochen/mail/", "נוסחים מוכנים לכל מצב"], ["חתימה על מסמכי PDF", "/kelim/machshev/chatima/", "בלי להדפיס ולסרוק"], ["פקס בחינם", "/kelim/machshev/fax/", "חלופה לפקס"], ["סידור תיקיות", "/kelim/machshev/sader/", "סדר בקבצים במחשב"], ["הבנת תלוש שכר", "/kesef/tlush/", "מה כתוב בכל שורה"], ["תזכורות", "/kelim/briut/tizkorot/", "תזכורות לתרופות ולמשימות"]]}, "claude": {"gifts": []}};
+var GIFT_STEPS = [['G1', 2], ['G2', 4], ['G3', 7], ['G4', 10], ['G5', 14]];
+var CHESED = 'מיזם חסד, בחינם, בלי פרסומות ובלי כוונת רווח';
+var PAY = { branded: 'https://payhip.com/b/M5xC6', kit: 'https://payhip.com/b/8utXB', digital: 'https://payhip.com/b/bPiCF', group: 'https://payhip.com/b/kNyeO' };
+// מוצר זול לכל דף (39 ₪) – מתמלא בשלב ב' כשהמוצר חי ב-Payhip: { name: '', price: '39 ₪', url: '', what: ['..'] }
+var CHEAP = {};
+// מנהלים שעברו למעקב: סטטוס "קנה" = סדרת הקונים (בלי הצעות)
+function isGift_(src) { return /^מתנה:/.test(String(src || '')); }
+function giftSlug_(src) { return String(src || '').replace(/^מתנה:\s*/, '').trim(); }
+function pUrl(url, slug, code) { return url + (url.indexOf('?') > -1 ? '&' : '?') + 'utm_source=email&utm_medium=nurture&utm_campaign=matana-' + slug + '-' + code; }
+function gBtn(url, label, green) {
+  return '<a href="' + url + '" style="display:inline-block;background:' + (green ? '#1faa59' : '#e8b94a') + ';color:' + (green ? '#fff' : '#2a1f05') + ';font-weight:bold;text-decoration:none;padding:12px 20px;border-radius:10px;margin:6px 0">' + label + '</a>';
+}
+function gWa(slug, text, label) { return gBtn('https://wa.me/' + CFG.WA_INTL + '?text=' + encodeURIComponent(text), label || 'שאלה? כתבו לי בווטסאפ', true); }
+function wrapGift(inner, unsub, slug) {
+  return '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:16px;line-height:1.65;color:#222;max-width:560px">' + inner +
+    '<div style="margin-top:16px;padding-top:10px;border-top:1px solid #eee;font-size:13px;color:#666">גילעד רחמים אביעד · הכלים של גילעד רחמים · ' + CHESED + '<br><a href="https://wa.me/' + CFG.WA_INTL + '">058-404-9049 (ווטסאפ)</a> · hakelim.com</div>' +
+    (unsub ? '<div style="margin-top:10px;font-size:12px;color:#999">קיבלתם את המייל כי ביקשתם מתנה באתר וסימנתם שתרצו טיפים וכלים. לא רוצים יותר? <a href="' + unsub + '" style="color:#999">להסרה בלחיצה אחת</a>.</div>' : '') +
+    '</div>';
+}
+function giftSend(email, subject, html) {
+  MailApp.sendEmail({ to: email, subject: subject, htmlBody: html, body: toText(html), name: CFG.OWNER_NAME, replyTo: CFG.OWNER_EMAIL });
+}
+
+// 12 הפרומפטים (מתנת Claude) – מועתקים מדף קבוצת Claude באתר
+var CLAUDE_PROMPTS = [
+  ['להתחיל נכון', ['אני רוצה לבנות [מה]. לפני שאתה כותב קוד, שאל אותי עד 5 שאלות שיעזרו לך להבין מה אני צריך.', 'תכתוב תוכנית בנקודות לבניית [כלי], בלי קוד. מה הצעדים לפי הסדר ומה הכי מסוכן שיישבר?', 'תציע לי את הגרסה הכי קטנה של [כלי] שאפשר לבנות בשעה: קלט אחד, פלט אחד.', 'תבנה לי דף HTML אחד בעברית מימין לשמאל שעושה [פעולה]. קובץ יחיד, בלי התקנות.']],
+  ['כשמשהו נשבר', ['קיבלתי את השגיאה הזו: [הדבק כמו שהיא]. הסבר מה קרה בשפה פשוטה, ותתקן.', 'זה עבד אתמול ועכשיו לא. מה שינינו מאז? תציע 3 סיבות אפשריות לפי סדר סבירות.', 'הדף נראה רע בטלפון. תתאים אותו למסך צר בלי לשבור את המחשב.']],
+  ['לשפר ולבדוק', ['מה יקרה אם המשתמש יכניס טקסט ריק, מספר שלילי או תו מוזר? תטפל בזה.', 'תבדוק אם יש כאן מידע פרטי (סיסמה, מפתח, טלפון) שלא כדאי שיעלה לאינטרנט.']],
+  ['לעבוד חכם', ['לפני שתשנה משהו, תסביר מה אתה מתכוון לשנות ולמה, ותחכה לאישור שלי.', 'תסכם לי בחמש שורות מה עשינו עד עכשיו ומה נשאר, כדי שאמשיך מחר.', 'תבדוק את עצמך: איפה אתה לא בטוח בתשובה שנתת, ומה כדאי לי לאמת בנפרד?']]
+];
+
+// ---------- מייל המתנה (יוצא מיד) ----------
+var GIFT_HEAD = {
+  'roe': ['המתנות לרואי חשבון, כמו שביקשתם', 'המתנות לרואי חשבון, מוכנות. הכל בחינם ואפשר להעביר ללקוחות כמו שהוא:'],
+  'orchei-din': ['המתנות לעורכי דין, כמו שביקשתם', 'המתנות לעורכי דין, מוכנות. מידע כללי ולא ייעוץ משפטי, והכלים בחינם:'],
+  'esek': ['המתנות לבעלי עסקים, כמו שביקשתם', 'המתנות לעסק שלכם, מוכנות. הכל בחינם, בלי הרשמה:'],
+  'claude': ['12 הפרומפטים ל-Claude, כמו שביקשתם', 'הנה 12 הפרומפטים. מעתיקים, מחליפים את מה שבסוגריים מרובעים, ומדביקים:'],
+  'kelim': ['10 הכלים החינמיים, כמו שביקשתם', 'הנה עשרת הכלים הכי שימושיים באתר, מסודרים לפי תחום. הכל בחינם ובלי הרשמה:']
+};
+function sendGiftEmail(name, email, token, consent, slug) {
+  var m = MATANA[slug], h = GIFT_HEAD[slug];
+  if (!m || !h) { log('מתנה: דף לא מוכר ' + slug); return; }
+  var inner = 'שלום ' + firstName(name) + ',<br><br>תודה שביקשתם. ' + h[1] + '<br><br>';
+  if (slug === 'claude') {
+    CLAUDE_PROMPTS.forEach(function (g) {
+      inner += '<b>' + g[0] + '</b><br>' + g[1].map(function (t) { return '<div style="background:#f6f2e7;border-radius:8px;padding:8px 12px;margin:6px 0;font-size:15px">' + esc(t) + '</div>'; }).join('') + '<br>';
+    });
+    inner += 'ועוד: ' + link('/claude-kvutza/', 'הדף עם כל הפרומפטים', 'G0') + '<br><br>';
+  } else {
+    inner += m.gifts.map(function (g) { return '• ' + link(g[1], g[0], 'G0') + (g[2] ? ' – ' + g[2].replace(/גם כקובץ PDF להדפסה: (\/\S+)/, function (x, u) { return 'וגם ' + link(u, 'כקובץ PDF להדפסה', 'G0'); }) : ''); }).join('<br>') + '<br><br>';
+    if (slug === 'kelim') inner += link('/matana/kelim/asara/', 'כל עשרת הכלים בדף אחד, לשמירה', 'G0') + '<br><br>';
+  }
+  inner += 'שאלה, או משהו שחסר לכם? פשוט ענו למייל הזה, או ' + link('https://wa.me/' + CFG.WA_INTL + '?text=' + encodeURIComponent('שלום גילעד, קיבלתי את המתנה. '), 'כתבו לי בווטסאפ') + '.<br><br>' +
+    (consent === 'כן' ? 'סימנתם שתרצו טיפים: אשלח לכם בשבועיים הקרובים חמישה מיילים קצרים, טיפ אחד וכלי חינמי בכל פעם, ואפשר להפסיק בכל רגע.<br><br>' : '') +
+    'בברכה,<br>גילעד';
+  giftSend(email, h[0], wrapGift(inner, consent === 'כן' ? unsubLink(token) : '', slug));
+}
+
+// ---------- סדרת המיילים לדפי המתנה ----------
+// טיפ + כלי חינמי: שלבים G1 (יום 2) ו-G4 (יום 10) לכל דף
+var GIFT_VALUE = {
+  'roe': {
+    G1: ['טיפ לסוף החודש: רשימת מסמכים אחת ללקוחות', 'רוב האיחורים אצל רואי חשבון הם לא חוסר רצון של הלקוח, אלא שהוא לא יודע בדיוק מה לשלוח. רשימה קצרה וקבועה, ששולחים בתחילת כל חודש (חשבוניות הכנסה והוצאה, דפי בנק, אישורי ניכוי במקור), חוסכת את רוב ההתכתבות.', '/kelim/mismachim-leroe-cheshbon/', 'המסמכים שכל לקוח צריך להביא (להדפסה ולשליחה)'],
+    G4: ['הכלי שהלקוחות שלכם ישמחו לקבל: מקדמות', 'לקוח שרואה בעצמו כמה מקדמות הוא משלם ולמה, שואל פחות בטלפון. אפשר לשלוח לו את הקישור לפני השיחה, והוא מגיע עם המספרים.', '/kelim/cheshbon/mikdamot/', 'מחשבון המקדמות']
+  },
+  'orchei-din': {
+    G1: ['מידע כללי: מה עובד צריך לדעת לפני ששואל מה מגיע לו', 'מידע כללי, לא ייעוץ משפטי. כמעט כל שאלה על זכויות בסיום עבודה מתחילה בשלוש עובדות: תאריך תחילת העבודה, תאריך הסיום, והשכר האחרון. כשהלקוח מביא אותן כבר בפנייה הראשונה, שיחת הייעוץ הראשונה נעשית מדויקת הרבה יותר.', '/kelim/mah-magia-leoved-sheputar/', 'מה מגיע לעובד שהתפטר או פוטר (דף להדפסה)'],
+    G4: ['שני חישובים שלקוחות שואלים כל הזמן', 'מידע כללי, לא ייעוץ משפטי. הודעה מוקדמת ושעות נוספות הן שתי השאלות הנפוצות ביותר. כלי חישוב שהלקוח יכול להפעיל בעצמו לפני הפגישה חוסך זמן לשניכם.', '/kesef/hodaa-mukdemet/', 'מחשבון הודעה מוקדמת']
+  },
+  'esek': {
+    G1: ['שלט QR אחד על הדלפק, והלקוח כבר בווטסאפ שלכם', 'הלקוח כבר מחזיק טלפון ביד. QR על הדלפק, על הכרטיס ועל החשבונית שפותח צ׳אט ישר אליכם הופך מבט מזדמן לפנייה, בלי להקליד מספר.', '/esek/qr/', 'יוצר קוד QR לעסק'],
+    G4: ['מבצע בדף אחד שמשתפים בווטסאפ', 'מבצע שנשלח כדף יפה עם כפתור, ולא כהודעת טקסט ארוכה, נקרא ומשותף הרבה יותר. אפשר להכין אחד תוך כמה דקות.', '/esek/mivtza/', 'יוצר דף מבצע']
+  },
+  'claude': {
+    G1: ['הפרומפט האחד שמשנה את התוצאה: "שאל אותי קודם"', 'ההבדל הכי גדול בין תוצאה בינונית לתוצאה טובה הוא לא הפרומפט המושלם, אלא שהוא שואל אתכם קודם. תנסו: "אני רוצה לבנות [מה]. לפני שאתה כותב קוד, שאל אותי עד 5 שאלות שיעזרו לך להבין מה אני צריך." שלוש דקות של שאלות חוסכות שעה של תיקונים.', '/claude-kvutza/', 'כל הפרומפטים והקבוצה'],
+    G4: ['תבקשו ממנו לבדוק את עצמו', 'Claude יכול לטעות בביטחון מלא. אחרי כל תשובה חשובה כתבו: "תבדוק את עצמך: איפה אתה לא בטוח בתשובה שנתת, ומה כדאי לי לאמת בנפרד?" זה לוקח עשר שניות והופך אותו לשותף זהיר יותר.', '/claude-kvutza/', 'עוד פרומפטים לעבודה חכמה']
+  },
+  'kelim': {
+    G1: ['הכלי שחוסך הכי הרבה זמן: תמלול', 'הקלטה של שיחה, שיעור או הודעה קולית הופכת לטקסט בכמה דקות. אחר כך אפשר לחפש בה מילה, להעתיק ציטוט או לשלוח סיכום. בחינם ובלי הרשמה.', '/kelim/tamlul/', 'תמלול הקלטה לטקסט'],
+    G4: ['מייל שנשמע כמו שרצית לכתוב', 'לפעמים הכי קשה זה הנוסח. הכלי הזה מקבל כמה מילים ומחזיר מייל מסודר, בטון שתבחרו.', '/kelim/tochen/mail/', 'ניסוח מייל']
+  }
+};
+function giftWho_(slug) { return slug === 'roe' || slug === 'orchei-din' ? 'המשרד' : 'העסק'; }
+// מחזיר [נושא, גוף] לשלב מסוים של הסדרה
+function giftMail(slug, step) {
+  var v = GIFT_VALUE[slug], cheap = CHEAP[slug], who = giftWho_(slug), wa = function (t, l) { return gWa(slug, t, l); };
+  var BR = '<br><br>', L = function (u, t) { return link(u, t, step); };
+  if (step === 'G1' || step === 'G4') {
+    return [v[step][0], 'שלום {שם},' + BR + v[step][1] + BR + L(v[step][2], v[step][3]) + BR + 'בברכה,<br>גילעד'];
+  }
+  if (slug === 'claude') {
+    var grp = gBtn(pUrl(PAY.group, slug, step), 'אני רוצה להצטרף לקבוצה');
+    var what = '<ul><li>קבוצת ווטסאפ פרטית, עם גילעד כמנטור</li><li>ערכה של 30 פרומפטים ב-PDF</li><li>טיפ יומי ו"כלי היום"</li></ul>18 ₪, תשלום חד-פעמי, בלי חיוב אוטומטי, ו-14 יום להחזר כספי.';
+    if (step === 'G2') return ['מקום לשאלות: קבוצת Claude עם מנטור', 'שלום {שם},' + BR + 'אחרי שניסיתם את הפרומפטים, בדרך כלל עולות שאלות: למה זה לא עבד, איך מתקדמים, מה עוד אפשר לבנות. בשביל זה יש קבוצה:' + what + BR + grp + BR + 'בברכה,<br>גילעד'];
+    if (step === 'G3') return ['מה עושים בקבוצה בפועל', 'שלום {שם},' + BR + 'בקבוצה אני מעלה כל יום טיפ קצר וכלי אחד שאפשר להפעיל באותו יום, ואפשר לשאול אותי ישירות כשנתקעים. אין הרצאות ארוכות: רק דברים שעובדים.' + BR + what + BR + grp + BR + 'בברכה,<br>גילעד'];
+    return ['המייל האחרון בסדרה: הקבוצה', 'שלום {שם},' + BR + 'זה המייל האחרון בסדרה. אם עדיין רוצים ללמוד לעבוד עם Claude יחד איתי, הקבוצה פתוחה:' + what + BR + grp + BR + 'ובכל מקרה, הפרומפטים שקיבלתם נשארים שלכם. בהצלחה!<br>גילעד'];
+  }
+  var b290 = gBtn(pUrl(PAY.branded, slug, step), 'לפרטים על כלי ממותג, 290 ₪');
+  if (step === 'G2') {
+    if (cheap && cheap.url) return [cheap.name + ' – ' + cheap.price, 'שלום {שם},' + BR + 'הכנתי משהו שחוסך זמן ל' + who + ': <b>' + cheap.name + '</b>.<ul>' + cheap.what.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>' + cheap.price + ', תשלום חד-פעמי, 14 יום להחזר כספי.' + BR + gBtn(pUrl(cheap.url, slug, step), 'לפרטים והורדה, ' + cheap.price) + BR + 'בברכה,<br>גילעד'];
+    return ['איזה כלי חסר לכם?', 'שלום {שם},' + BR + 'אני בונה כלים חינמיים לפי מה שאנשים צריכים בפועל. איזה כלי היה חוסך לכם הכי הרבה זמן ב' + who + '? ענו למייל הזה בשורה אחת, ואם אפשר, אבנה אותו.' + BR + wa('שלום גילעד, הכלי שחסר לי הוא: ', 'לכתוב לי בווטסאפ') + BR + 'בברכה,<br>גילעד'];
+  }
+  if (step === 'G3') return ['הכלי שלכם, בלוגו ובצבעים של ' + who, 'שלום {שם},' + BR + 'אם אתם משתמשים בכלי חינמי ורוצים שיהיה בלוגו ובצבעים של ' + who + ':<ul><li>כלי אחד, בלוגו, בצבעים ובקישור משלכם, עם קוד QR</li><li>כפתור "שלחו לי את התוצאה בוואטסאפ" שמביא פניות ישר אליכם</li><li>מוכן תוך 48 שעות, עם סבב תיקונים אחד</li></ul>290 ₪, תשלום חד-פעמי, בלי מנוי, כולל קבלה.' + BR + b290 + BR + 'בברכה,<br>גילעד'];
+  return ['המייל האחרון: חבילות לעסק', 'שלום {שם},' + BR + 'זה המייל האחרון בסדרה. אם רוצים יותר מכלי אחד:<ul><li><b>590 ₪</b> – עד שלושה מחשבונים בלוגו שלכם, קוד הטמעה, דף מרכז, דוח חודשי ושני סבבי תיקונים. ' + link(pUrl(PAY.kit, slug, step), 'לפרטים', step) + '</li><li><b>990 ₪</b> – החבילה המלאה ועוד כרטיס ביקור דיגיטלי ודף עסק קטן. ' + link(pUrl(PAY.digital, slug, step), 'לפרטים', step) + '</li></ul>תשלום חד-פעמי, בלי מנוי. שאלות? ענו למייל הזה.' + BR + 'בהצלחה,<br>גילעד'];
+}
+// כל השלבים בסדרה אחת (לבדיקה ולשליחת דוגמה)
+function giftSeries_(dryRun) {
+  if (!dryRun && isShabbatOrHoliday(new Date())) return [];
+  var sh = sheet(SpreadsheetApp.getActive(), CFG.SHEET_LEADS, COLS);
+  var data = sh.getDataRange().getValues(), today = new Date(), sent = [], seen = {};
+  for (var i = 1; i < data.length && sent.length < 25; i++) {
+    var r = data[i];
+    if (!isGift_(r[C['מקור']]) || r[C['הסכמה לדיוור']] !== 'כן' || !r[C['מייל']] || r[C['סטטוס']] !== 'מתנה') continue;
+    var last = String(r[C['שלב בסדרה']] || ''), idx = -1;
+    GIFT_STEPS.forEach(function (s, k) { if (s[0] === last) idx = k; });
+    var nxt = GIFT_STEPS[idx + 1];
+    if (!nxt) continue;                                    // G5 נשלח – הסדרה הסתיימה
+    var em = String(r[C['מייל']]).toLowerCase();
+    if (seen[em]) continue;                                // אותו מייל בכמה שורות – פעם אחת בריצה
+    var signup = r[C['תאריך']] instanceof Date ? r[C['תאריך']] : today, due = addDays(signup, nxt[1]);
+    if (due > today) { if (!dryRun) sh.getRange(i + 1, C['מייל הבא'] + 1).setValue(due); continue; }
+    var lastSent = r[C['נשלח לאחרונה']];
+    if (lastSent instanceof Date && addDays(lastSent, 2) > today) continue;   // מרווח של יומיים לפחות
+    var slug = giftSlug_(r[C['מקור']]);
+    if (!MATANA[slug]) continue;
+    if (!dryRun && MailApp.getRemainingDailyQuota() < 15) break;              // משאירים מקום למיילים החדשים
+    seen[em] = 1;
+    var m = giftMail(slug, nxt[0]), html = wrapGift(m[1].replace(/\{שם\}/g, firstName(r[C['שם']])), unsubLink(r[C['טוקן']]), slug);
+    if (dryRun) { sent.push((i + 1) + ':' + slug + ':' + nxt[0]); continue; }
+    try {
+      giftSend(r[C['מייל']], m[0], html);
+      sent.push((i + 1) + ':' + slug + ':' + nxt[0]);
+      sh.getRange(i + 1, C['שלב בסדרה'] + 1).setValue(nxt[0]);
+      var after = GIFT_STEPS[idx + 2];
+      sh.getRange(i + 1, C['מייל הבא'] + 1).setValue(after ? addDays(signup, after[1]) : '');
+      sh.getRange(i + 1, C['נשלח לאחרונה'] + 1).setValue(today);
+    } catch (err) { log('מתנות, שורה ' + (i + 1) + ': ' + err); }
+  }
+  if (sent.length) log((dryRun ? 'dry ' : '') + 'giftNurture: ' + sent.join(', '));
+  return sent;
+}
+function giftNurture(dryRun) { return giftSeries_(dryRun); }
+// בדיקה מהעורך: שולח לגילעד את מייל המתנה וכל מיילי הסדרה של כל דף (כ-30 מיילים, פעם אחת)
+function testSendGifts() {
+  Object.keys(MATANA).forEach(function (slug) {
+    sendGiftEmail('גילעד', CFG.OWNER_EMAIL, 'test', 'כן', slug);
+    GIFT_STEPS.forEach(function (s) {
+      var m = giftMail(slug, s[0]);
+      giftSend(CFG.OWNER_EMAIL, '[דוגמה ' + slug + ' ' + s[0] + '] ' + m[0], wrapGift(m[1].replace(/\{שם\}/g, 'גילעד'), unsubLink('test'), slug));
+    });
+  });
+}
+// בדיקה מהעורך: מדמה שליחת טופס מדף מתנה
+function testPostGift() {
+  return doPost({ parameter: { 'שם': 'בדיקה – Claude', 'email': CFG.OWNER_EMAIL, 'מקור': 'מתנה: roe', 'utm_source': 'test', 'utm_content': 'x', 'מאשר/ת קבלת עדכונים': 'כן' } }).getContent();
+}
+
 // ---------- הודעה לגילעד ----------
 function notifyOwner(row, dup) {
   var name = row[C['שם']], phone = row[C['טלפון']], email = row[C['מייל']], due = row[C['מועד לידה']], city = row[C['עיר']], source = row[C['מקור']];
-  var line = (/^כלים: שיפור/.test(String(source)) ? '💡 הצעה לשיפור כלי: ' : /^כלים: משפחת הכלים/.test(String(source)) ? 'הצטרפות למשפחת הכלים: ' : dup ? 'ליד חוזר: ' : 'ליד חדש: ') + name + (city ? ' · ' + city : '') + (due ? ' · ' + dueLabel(due) : '');
+  var line = (/^מתנה:/.test(String(source)) ? '🎁 ליד ממתנה: ' : /^כלים: שיפור/.test(String(source)) ? '💡 הצעה לשיפור כלי: ' : /^כלים: משפחת הכלים/.test(String(source)) ? 'הצטרפות למשפחת הכלים: ' : dup ? 'ליד חוזר: ' : 'ליד חדש: ') + name + (city ? ' · ' + city : '') + (due ? ' · ' + dueLabel(due) : '');
   var body = line + '\nטלפון: ' + phone + '\nמייל: ' + email + '\nמקור: ' + source +
-    (phone ? '\n\nווטסאפ מוכן:\n' + waLink(phone, /^כלים:/.test(String(source)) ? 'שלום ' + String(name).split(' ')[0] + ', כאן גילעד מהכלים של גילעד רחמים. תודה שכתבת לי! ' : waMessage('WA-1', row)) : '') +
+    (phone ? '\n\nווטסאפ מוכן:\n' + waLink(phone, /^(כלים:|מתנה:)/.test(String(source)) ? 'שלום ' + String(name).split(' ')[0] + ', כאן גילעד מהכלים של גילעד רחמים. תודה שכתבת לי! ' : waMessage('WA-1', row)) : '') +
     '\n\nהגיליון: ' + SpreadsheetApp.getActive().getUrl();
   MailApp.sendEmail({ to: CFG.OWNER_EMAIL, subject: line, body: body, name: 'האתר – לידים' });
   push(line, 'טלפון ' + phone + (email ? ' · ' + email : ''));
