@@ -30,5 +30,21 @@ britot-meyuchadot, hachlama, kartis-mohel.
 - עברית בתוך `<option>` או placeholder לא ניתנת לסימון `lang="he"` – תעתיק.
 - החלפות אוטומטיות: להגן על h1/title/description, ולבדוק משפטים שנשברו (סבב 2 מצא 6).
 
-## גל 2 – לא התחיל
-דפי ההורים של המוהל (רשימת הכנה, הכנה ליום הברית, נוסחי הזמנה וברכות, מדריך להורים).
+## גל 2 – דפי ההורים של אתר הברית (24.11.2026)
+23 דפים × ru/en תחת `/mohel/ru/` ו-`/mohel/en/`: checklist, dapim, moed, madrich, shirim, brit-mila, מרכז `hachana` + 12 דפי משנה
+(achrei, brit-yitzchak, keev, kniyot, moed, mohel, pidyon, pratim, sandak, shalom-zachar, tekes, yom), `hazmana` + brachot, nusach, kol-simcha.
+- מסגרת האתר (`MOHEL_SITE_FRAME` ב-build.py) ברוסית ובאנגלית; קישור לדף שעוד לא תורגם מקבל "(иврит)"/"(Hebrew)".
+- JS עם מפות שפה: checklist, hazmana, moed, nusach, pratim, spotify. העברית יוצאת זהה.
+- הגהה: `docs/lang-review-wave2.md` (רוסית שני סבבים, אנגלית סקירה קצרה).
+- בדפי גל 1 (hachlama, kibudim-brit, tofes-brit, mohalim) הסימון "(иврит)/(Hebrew)" הוחלף בקישורים לתרגומים.
+
+### נשאר בעברית אחרי גל 2
+- דף הבית `/mohel/`, `/mohel/kibudim/` ושאר דפי `/mohel/` שלא ברשימה.
+- דפי ההזמנה לאורחים ולניהול (`/v/`, `/m/`), טופס הלידים (lead.js), דף התודה, ה-PDF ומיילי הטיפים של המדריך.
+- הזמנה ברוסית/אנגלית: השפה נשמרת ב-`d.lg`, אבל ה-Worker של אישורי ההגעה (`tools/rsvp-worker`) לא שומר `lg` – צריך להוסיף ל-PUB ולפרוס (מחכה ל"כן" של גילעד).
+
+### לקחים
+- ספירת FAQ לפי ה-LD העברי: `<details>` במקום שאינו שאלה בעברית לא נספר – להוסיף שאלות בסוף.
+- השער סופר מילים בדף הבנוי, נמוך בכ-50–100 מהטיוטה – לכוון ל-1,000.
+
+## גל 3 – לא התחיל
