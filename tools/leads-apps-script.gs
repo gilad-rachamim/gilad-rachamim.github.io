@@ -692,7 +692,7 @@ function buyerMail(slug, step) {
   var I = BUYER_INFO[slug], BR = '<br><br>', SIGN = BR + 'אני כאן לכל שאלה בווטסאפ או במייל.<br>גילעד', mk = slug === 'mohel-kurs';
   var tl = function (u, t) { return gBtn(pUrl('https://hakelim.com' + u, slug, step), t); };
   var wa = function (t) { return gWa(slug, t, 'שאלה? כתבו לי בווטסאפ'); };
-  var why = '<div style="margin:14px 0;padding:10px 14px;border:1px dashed #e8b94a;border-radius:10px;font-size:14px">' + BUYER_WHY + (mk ? '' : ' ' + BUYER_INCOME + '.') + '</div>';
+  var why = '<div style="margin:14px 0;padding:10px 14px;border:1px dashed #e8b94a;border-radius:10px;font-size:14px">' + BUYER_WHY + (mk ? '' : ' ' + BUYER_INCOME + '. ככה כולם מרוויחים: אתה מקבל כלי שחוסך לך זמן וכסף, והמיזם ממשיך לתת כלים בחינם לעוד אנשים.') + '</div>';
   var refund = mk ? '' : '<div style="margin:10px 0;font-size:14px"><b>אחריות 14 יום.</b> ' + BUYER_REFUND + '</div>';
   var ps = function (u) { return mk ? '' : BR + 'נ.ב. ' + BUYER_REFUND + ' <a href="' + pUrl('https://hakelim.com' + u, slug, step) + '">לפרטים ולרכישה</a>'; };
   if (step === 'B1') return ['תודה על הרכישה, וככה מתחילים', 'שלום {שם},' + BR + 'תודה על הרכישה. הקבצים והקבלה נמצאים בדף ההורדה של Payhip ובמייל שקיבלתם ממנו. הצעד הראשון: ' + I.act + '.' + SIGN];
