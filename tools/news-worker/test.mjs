@@ -1,6 +1,6 @@
 // בדיקה במחשב: node test.mjs  (מקורות RSS אמיתיים, שבת/חג, סינון כשר, בדיקת מספרים, ריצה במצב כותרות)
 import assert from 'node:assert';
-import worker, { SOURCES, parseRss, kosher, numbersOk, holyNow, holyEndedAt, shabbatDue, editionText, runEdition, gershayim, tidy, FOREIGN, fixOk } from './news-worker.js';
+import worker, { SOURCES, parseRss, kosher, numbersOk, holyNow, holyEndedAt, shabbatDue, editionText, runEdition, gershayim, tidy, FOREIGN, fixOk, translateEdition, editionTextEn, enDate, HEB } from './news-worker.js';
 
 // שבת/חג (זמן UTC; ישראל +2 בחורף)
 assert.equal(holyNow(new Date('2026-11-13T10:00:00Z')), false, 'שישי בבוקר – לא שבת');
@@ -83,4 +83,29 @@ assert.ok(mem.latest.sections.main.length >= 1);
 console.log(mem.latest.name, mem.latest.date, mem.latest.sections.main.map(x => x.text.slice(0, 50)));
 const res = await worker.fetch(new Request('https://x/latest'), env, { waitUntil() {} });
 assert.equal(res.headers.get('access-control-allow-origin'), '*');
+
+// ---- מהדורה באנגלית ----
+{
+  const ed = { at: '2026-11-24T05:00:00Z', mode: 'summary', kind: '', name: 'בוקר', sections: {
+    main: [{ text: 'הכנסת אישרה 3 חוקים', sources: [{ name: 'וואלה', link: 'https://x.test/1' }] }, { text: 'בנק ישראל השאיר את הריבית ללא שינוי', sources: [{ name: 'גלובס', link: 'https://x.test/2' }] }, { text: 'נקודה שלישית עם 5 פרטים', sources: [] }],
+    haredi: [], economy: [], good: [] } };
+  const answer = [
+    'The Knesset approved 3 laws this week in the plenum.',
+    'The Bank of Israel left the interest rate unchanged this month.',
+    'שלום this has Hebrew letters inside and must be dropped.'];
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async () => new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: JSON.stringify({ items: answer.map((text, i) => ({ n: i + 1, text })) }) }] } }] }), { status: 200 });
+  const en = await translateEdition({ GEMINI_KEY: 'k' }, ed);
+  globalThis.fetch = realFetch;
+  assert.equal(en.sections.main.length, 2, 'נקודה עם עברית נפסלת');
+  assert.equal(en.dropped[0].why, 'foreign letters');
+  assert.equal(en.sections.main[0].sources[0].name, 'Walla');
+  assert.equal(en.name, 'Morning edition');
+  assert.ok(!HEB.test(JSON.stringify(en.sections)), 'אין עברית באנגלית');
+  assert.match(enDate(new Date('2026-11-24T05:00:00Z')), /Tuesday, November 24, 2026/);
+  const t = editionTextEn(en, { enwa: 'https://whatsapp.com/channel/abc', entg: 'https://t.me/israelnews3min' }, 'entg');
+  assert.ok(t.includes('1. The Knesset') && t.includes('utm_source=entg') && t.includes('whatsapp.com/channel/abc') && !t.includes('t.me/israelnews3min'));
+  assert.equal(await translateEdition({}, ed), null, 'בלי מפתח – אין תרגום');
+}
+
 console.log('✓ הכול עבר');
