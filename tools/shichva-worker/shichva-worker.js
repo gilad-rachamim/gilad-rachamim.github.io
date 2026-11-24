@@ -619,9 +619,11 @@ async function geminiOne(model, key, text, ms) {
       headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
       body: JSON.stringify({ systemInstruction: { parts: [{ text: GABAI }] }, contents: [{ role: 'user', parts: [{ text }] }], generationConfig: gen })
     });
-  } catch (e) { tripped.set(model, Date.now() + 5 * 60000); throw e; }               // נתקע – 5 דקות בלי הדגם הזה
+  } catch (e) { tripped.set(model, Date.now() + 60000); throw e; }                   // נתקע – דקה בלי הדגם הזה (גוגל נתקע לבקשה בודדת, לא לאורך זמן)
   if (!r.ok) {
-    if (r.status >= 500 || r.status === 429) tripped.set(model, Date.now() + 5 * 60000);
+    // מכסה (429) – 5 דקות בלי הדגם; עומס (5xx) – חצי דקה בלבד, כי העומס אצל גוגל רגעי
+    if (r.status === 429) tripped.set(model, Date.now() + 5 * 60000);
+    else if (r.status >= 500) tripped.set(model, Date.now() + 30000);
     throw new Error(model + ' ' + r.status);
   }
   const j = await r.json();
@@ -629,50 +631,53 @@ async function geminiOne(model, key, text, ms) {
   if (!d) throw new Error(model + ' bad json');
   return d;
 }
+// מירוץ מדורג: כל שלב מתחיל בזמן שלו (at), או מיד כשכל הקודמים נפלו; הראשון שמצליח מנצח
+export function stagger(steps) {
+  return new Promise((res, rej) => {
+    let done = false, live = 0, next = 0, last;
+    const timers = [];
+    const start = i => {
+      if (done || i !== next) return;
+      next = i + 1; live++;
+      Promise.resolve().then(() => steps[i].run()).then(v => { if (!done) { done = true; timers.forEach(clearTimeout); res(v); } }, e => {
+        last = e; live--;
+        if (done) return;
+        if (next < steps.length) start(next); else if (!live) { timers.forEach(clearTimeout); rej(last); }
+      });
+    };
+    steps.forEach((st, i) => { if (i) timers.push(setTimeout(() => { for (let k = next; k <= i; k++) start(k); }, st.at)); });
+    start(0);
+  });
+}
 async function askModel(env, user, shape) {
+  let skipped = [], gem = null;
   const want = `\nהחזר JSON בלבד במבנה הזה (הערכים הם דוגמה):\n${JSON.stringify(shape)}`;
   if (env.GEMINI_KEYS) {
     const keys = String(env.GEMINI_KEYS).split(/[\s,]+/).filter(Boolean);
     // הסדר: מה שעונה היום מהר. 3.8 ו-3.7 עמוסים או חסומים, ולכן יצאו מהרשימה (24.11.2026)
-    const models = (env.GEMINI_MODELS || 'gemini-3.5-flash,gemini-3.5-flash-lite,gemini-flash-lite-latest').split(',').map(s => s.trim())
-      .filter(m => !((tripped.get(m) || 0) > Date.now()));                         // המפסק פתוח: מדלגים
+    const all = (env.GEMINI_MODELS || 'gemini-3.5-flash,gemini-3.5-flash-lite,gemini-flash-lite-latest').split(',').map(s => s.trim());
+    const models = all.filter(m => !((tripped.get(m) || 0) > Date.now()));         // המפסק פתוח: מדלגים
+    skipped = all.filter(m => !models.includes(m));
+    gem = m => geminiOne(m, keys[Math.floor(Math.random() * keys.length)], user + want, 8000);
     let ki = Math.floor(Math.random() * keys.length);
     const key = () => keys[ki++ % keys.length];
     if (models.length) {
-      // מירוץ: הדגם הראשי מתחיל; לא ענה תוך 3 שניות (או נפל) – הדגמים הקלים מתחילים במקביל, והראשון שעונה מנצח
-      let done = false;
-      const first = geminiOne(models[0], key(), user + want, 12000);
-      first.then(() => { done = true; }, () => {});
-      const rest = (async () => {
-        await Promise.race([new Promise(r => setTimeout(r, 3000)), first.catch(() => {})]);
-        for (const m of models.slice(1)) {
-          if (done) break;
-          try { return await geminiOne(m, key(), user + want, 8000); } catch (e) { /* הבא */ }
-        }
-        throw new Error('all');
-      })();
-      const gem = Promise.any([first, rest]);
-      gem.then(() => { done = true; }, () => {});
-      if (!env.AI) { try { return await gem; } catch (e) { /* fallthrough */ } }
-      else {
-        // hedge: after 6s with no Gemini answer the Workers AI backup starts too; first good answer wins
-        let t;
-        const cf = (async () => {
-          await Promise.race([new Promise(r => { t = setTimeout(r, 6000); }), gem.catch(() => {})]);
-          clearTimeout(t);
-          if (done) return gem;
-          const d = parseJson(cfText(await env.AI.run(CF_MODEL, { instructions: GABAI, input: user + want, reasoning: { effort: 'low' } })));
-          if (!d) throw new Error('ai_bad');
-          return d;
-        })();
-        try { return await Promise.any([gem, cf]); } catch (e) { /* all failed: one more backup try below */ }
-      }
+      // מירוץ מדורג: הדגם הראשי מתחיל; כל 1.5 שניות בלי תשובה מצטרף דגם קל, ואחרי 6 שניות גם הגיבוי של Workers AI. הראשון שעונה מנצח
+      const steps = models.map((m, i) => ({ at: i * 1500, run: () => geminiOne(m, key(), user + want, i ? 8000 : 12000) }));
+      if (env.AI) steps.push({ at: Math.max(6000, models.length * 1500), run: async () => {
+        const d = parseJson(cfText(await env.AI.run(CF_MODEL, { instructions: GABAI, input: user + want, reasoning: { effort: 'low' } })));
+        if (!d) throw new Error('ai_bad');
+        return d;
+      } });
+      try { return await stagger(steps); } catch (e) { /* הכול נפל: ניסיון גיבוי אחד נוסף למטה */ }
     }
   }
-  if (!env.AI) bad('ai_off', 503);
+  // לפני שמוותרים: דגמי Gemini שהמפסק דילג עליהם מקבלים ניסיון נוסף (אולי העומס כבר עבר)
+  const again = async () => { if (!skipped.length) return null; try { return await stagger(skipped.map((m, i) => ({ at: i * 1500, run: () => gem(m) }))); } catch (e) { return null; } };
+  if (!env.AI) { const d = await again(); if (d) return d; bad('ai_off', 503); }
   let r;
   try { r = await env.AI.run(CF_MODEL, { instructions: GABAI, input: user + want, reasoning: { effort: 'low' } }); }
-  catch (e) { bad('ai_busy', 503); }
+  catch (e) { const d = await again(); if (d) return d; bad('ai_busy', 503); }
   const d = parseJson(cfText(r));
   if (!d) bad('ai_bad', 502);
   return d;
