@@ -73,3 +73,40 @@ main section.ck-g{margin-top:1.4rem;padding:1.1rem 0 0}
 #tf-sign .qrbig{margin:5mm 0}
 #tf-sign .qrbig img,#tf-sign .qrbig canvas{width:62mm;height:62mm}
 #tf-sign .small{font-size:9pt;color:#777;font-family:var(--sans)}
+/* תפריט בצבעי העסק (tafrit): כרטיס בהיר, כותרת בצבע העסק, מחירים וכותרות בגוון מוכהה לקריאה */
+.tf-sw{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin-top:.3rem}
+.tf-sw button{border:1px solid var(--line);background:transparent;color:var(--parchment);border-radius:999px;padding:.3rem .8rem .3rem .5rem;font:inherit;font-size:.92rem;cursor:pointer;display:inline-flex;gap:.4rem;align-items:center}
+.tf-sw button[style]::before{content:"";width:1rem;height:1rem;border-radius:50%;background:var(--sw);border:1px solid rgba(255,255,255,.5)}
+.tf-sw button[aria-pressed=true]{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold-soft)}
+.tf-pick{display:inline-flex;gap:.4rem;align-items:center;color:var(--parchment);font-size:.92rem}
+.tf-pick input{width:2.2rem;height:2rem;padding:0;border:0;background:none;cursor:pointer}
+.tf.tf-c{background:#fffdf8;border-color:var(--tfb);color:#222}
+.tf.tf-c .tf-head{background:var(--tfb);margin:-1.4rem -1.1rem 0;padding:1.4rem 1.1rem 1.1rem;border-radius:19px 19px 0 0}
+.tf.tf-c .tf-head h2,.tf.tf-c .tf-head .s{color:var(--tfon)}
+.tf.tf-c .tf-cat h3{color:var(--tfc);border-bottom-color:var(--tfb)}
+.tf.tf-c .tf-it b{color:#1b1b1b}
+.tf.tf-c .tf-it .p{color:var(--tfc)}
+.tf.tf-c .tf-it{border-bottom-color:rgba(0,0,0,.12)}
+.tf.tf-c .tf-it small,.tf.tf-c .tf-info,.tf.tf-c .tf-credit{color:#4a4a4a}
+.tf.tf-c .tf-cats a{border-color:var(--tfc);color:var(--tfc);background:#fff}
+.tf.tf-c .tf-btns .btn-gold{background:var(--tfb);border-color:var(--tfb);color:var(--tfon)}
+.tf.tf-c .tf-btns .btn-line{border-color:var(--tfc);color:var(--tfc);background:#fff}
+.tf.tf-c .tf-credit a{color:var(--tfc)}
+#tf-sign .half[style] h2{color:var(--sg)}
+/* מחשבון תמחור מנה */
+.tm-row{display:grid;grid-template-columns:2.2fr 1fr 1fr 1fr auto;gap:.35rem;margin-bottom:.4rem}
+.tm-row input{min-width:0;padding:.55rem .5rem}
+.tm-x{background:transparent;border:1px solid var(--line);color:var(--parchment);border-radius:8px;width:2rem;cursor:pointer;font-size:1.1rem}
+.tm-big{font-size:1.15rem;margin:.6rem 0}.tm-big b{color:var(--gold-hi);font-size:1.8rem}.tm-big span{color:var(--muted);font-size:.9rem;display:block}
+.tm-t{width:100%;border-collapse:collapse;margin:.6rem 0;font-size:.98rem}.tm-t td{padding:.3rem .2rem;border-bottom:1px dashed var(--line)}.tm-t td:last-child{text-align:left;white-space:nowrap}
+.tm-t .tot td{font-weight:700;color:var(--cream)}.tm-t caption{text-align:right;color:var(--muted);font-size:.9rem;padding-top:.5rem}
+.tm-cur{background:rgba(227,170,79,.1);border-radius:10px;padding:.6rem .8rem}
+@media(max-width:520px){.tm-row{grid-template-columns:1fr 1fr 1fr auto}.tm-row input[data-k=n]{grid-column:1/-1}}
+/* שלט וואטסאפ להדפסה (hazmana-vatsap) */
+#hz-sign{display:none}
+@media print{body.print-hz>*:not(#hz-sign){display:none!important}body.print-hz #hz-sign{display:block!important}}
+#hz-sign .half{height:148mm;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#111;font-family:var(--serif);padding:6mm;margin-bottom:0}
+#hz-sign h2{font-size:28pt;margin:0 0 4mm;padding:2mm 8mm;border-radius:3mm}
+#hz-sign p{font-size:15pt;margin:1.5mm 0;color:#222}
+#hz-sign .qrbig{margin:4mm 0}#hz-sign .qrbig img,#hz-sign .qrbig canvas{width:62mm;height:62mm}
+#hz-sign .small{font-size:9pt;color:#777;font-family:var(--sans)}

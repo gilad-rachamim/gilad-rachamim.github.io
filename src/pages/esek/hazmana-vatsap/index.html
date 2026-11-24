@@ -1,0 +1,97 @@
+<!--meta {
+ "site": "esek",
+ "nav": "hazmana",
+ "tool": "esek_hazmana",
+ "title": "קישור לוואטסאפ עם הודעה מוכנה ו-QR לעסק, בחינם | כלים לעסק קטן",
+ "description": "יוצרים קישור לוואטסאפ עם הודעה מוכנה ו-QR להדפסה: הלקוח סורק או לוחץ ופותח צ'אט עם העסק והמשפט שבחרתם. להזמנות, לתורים ולפניות. בחינם ובלי הרשמה.",
+ "head": "<script src=\"/assets/vendor/qrcodejs/qrcode-1.0.0.min.js\" integrity=\"sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==\" crossorigin=\"anonymous\" referrerpolicy=\"no-referrer\" defer></script><link rel=\"stylesheet\" href=\"/assets/seo-txt.css\">",
+ "og_title": "קישור לוואטסאפ עם הודעה מוכנה ו-QR לעסק – בחינם",
+ "priority": "0.8",
+ "crumbs": [
+  [
+   "קישור הזמנה בוואטסאפ",
+   null
+  ]
+ ],
+ "foot": "<script src=\"/assets/esek-hazmana.js\" defer></script>"
+} -->
+<div id="hz-build">
+<header class="k-hero">
+  <h1>קישור לוואטסאפ עם הודעה מוכנה</h1>
+  <p class="sub">הלקוח לוחץ או סורק QR, ופותח צ'אט עם העסק שלכם, עם משפט שכבר כתוב: "שלום, אשמח להזמין". בחינם, בלי הרשמה.</p>
+</header>
+<div class="tool">
+  <form class="k-form lead-form" id="hz-form" novalidate>
+    <div class="field"><label for="hz-name">שם העסק <span class="opt">(לשלט להדפסה)</span></label><input id="hz-name" type="text" maxlength="60" placeholder="פיצה של משה"></div>
+    <div class="field"><label for="hz-phone">מספר הווטסאפ של העסק</label><input id="hz-phone" type="tel" inputmode="tel" maxlength="20" required placeholder="050-1234567"></div>
+    <div class="field"><label for="hz-msg">ההודעה שתופיע אצל הלקוח</label><textarea id="hz-msg" maxlength="300" placeholder="שלום, אשמח להזמין:"></textarea>
+      <div class="tf-sw" id="hz-ideas" role="group" aria-label="הודעות מוכנות">
+        <button type="button" data-m="שלום, אשמח להזמין:">הזמנה</button>
+        <button type="button" data-m="שלום, אשמח לקבוע תור ל...">קביעת תור</button>
+        <button type="button" data-m="שלום, אשמח לקבל הצעת מחיר ל...">הצעת מחיר</button>
+        <button type="button" data-m="שלום, הגעתי מהמודעה ואשמח לפרטים">מהמודעה</button>
+      </div>
+    </div>
+    <div class="field"><span class="lbl" id="hz-cl">צבע השלט <span class="opt">(לא חובה)</span></span>
+      <div class="tf-sw" id="hz-colors" role="group" aria-labelledby="hz-cl">
+        <button type="button" data-c="#1f7d4f" style="--sw:#1f7d4f" aria-pressed="true">ירוק</button>
+        <button type="button" data-c="#c4361f" style="--sw:#c4361f">אדום</button>
+        <button type="button" data-c="#e08a00" style="--sw:#e08a00">כתום</button>
+        <button type="button" data-c="#1d4e89" style="--sw:#1d4e89">כחול</button>
+        <button type="button" data-c="#6a3d9a" style="--sw:#6a3d9a">סגול</button>
+        <label class="tf-pick">צבע משלכם <input type="color" id="hz-pick" value="#1f7d4f"></label>
+      </div>
+    </div>
+    <button class="btn btn-gold btn-block" type="submit">ליצור קישור ו-QR</button>
+    <p class="privacy">שום דבר לא נשמר אצלנו: הקישור נוצר בטלפון שלכם.</p>
+  </form>
+  <div class="res" id="hz-ready" data-brand-result aria-live="polite" hidden>
+    <h3>הקישור מוכן!</h3>
+    <div class="field"><input id="hz-link" type="text" readonly aria-label="הקישור לוואטסאפ" dir="ltr"></div>
+    <div class="share-row">
+      <button class="btn btn-gold btn-sm" type="button" id="hz-copy">להעתיק את הקישור</button>
+      <a class="btn btn-line btn-sm" id="hz-test" href="#" target="_blank" rel="noopener">לבדוק שזה עובד</a>
+      <button class="btn btn-line btn-sm" type="button" id="hz-print">🖨️ להדפיס שלט עם QR</button>
+    </div>
+    <div style="text-align:center"><div class="tf-qr" id="hz-qr"></div></div>
+    <p class="note">את הקישור שמים בביו של אינסטגרם, בדף העסק בגוגל, בחתימת מייל ובפרסום. את ה-QR מדפיסים לשולחן, לחלון או לכרטיס ביקור.</p>
+  </div>
+  <p class="disclaimer">חלק מ<a class="gold" href="/esek/">כלים לעסק קטן</a>. עוד שימוש בקישור: <a class="gold" href="/esek/tafrit/">תפריט דיגיטלי עם QR</a> והזמנות מהתפריט.</p>
+</div>
+</div>
+<div id="hz-sign" aria-hidden="true"></div>
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">קישור לוואטסאפ עם הודעה מוכנה, ו-QR לעסק</h2>
+  <p>רוב הלקוחות לא רוצים להתקשר. הם מעדיפים לכתוב. קישור לוואטסאפ עם הודעה מוכנה חוסך להם את ההתלבטות: לוחצים, והצ'אט נפתח אצל העסק עם משפט כמו "שלום, אשמח להזמין". אצלכם מגיעה פנייה ברורה, עם הקשר, במקום "היי" בלי המשך.</p>
+  <h3>איך יוצרים את הקישור</h3>
+  <p>כותבים את מספר הווטסאפ של העסק, כמו שרגילים לכתוב אותו, והכלי מוסיף לבד את קידומת ישראל. כותבים הודעה, או בוחרים אחת מהמוכנות: הזמנה, קביעת תור, הצעת מחיר או "הגעתי מהמודעה". הקישור נראה כמו wa.me עם המספר, והטקסט מקודד בתוכו. אפשר לבדוק אותו בלחיצה לפני שמפרסמים.</p>
+  <h3>איפה שמים את הקישור וה-QR</h3>
+  <p>בביו של אינסטגרם ובטיקטוק, בדף העסק בגוגל, בחתימת המייל, במודעה בפייסבוק ובסטטוס. את ה-QR מדפיסים לשלט שעומד על השולחן, בחלון הראווה, בקבלה או על כרטיס הביקור. מי שסורק פותח צ'אט עם העסק, בלי לשמור מספר ובלי לחפש.</p>
+  <h3>הודעה שעובדת</h3>
+  <p>הודעה קצרה וברורה, שמסבירה מה הלקוח רוצה. "שלום, אשמח להזמין:" מתאימה לפיצרייה, "אשמח לקבוע תור" למספרה ולקליניקה, ו"הגעתי מהמודעה" עוזרת לדעת איזה פרסום עובד. כשיש לכם כמה מקומות פרסום, אפשר ליצור קישור שונה לכל אחד ולהבין מאיפה הפניות מגיעות.</p>
+  <h3>כלים נוספים לעסק</h3>
+  <p>אחרי הקישור כדאי לבנות <a class="gold" href="/esek/tafrit/">תפריט דיגיטלי</a> שמזמינים ממנו בוואטסאפ, <a class="gold" href="/esek/mivtza/">מודעת מבצע</a> לסטטוס, <a class="gold" href="/esek/qr/">קוד QR מעוצב</a> לכל קישור, ו<a class="gold" href="/esek/tmchur-mana/">מחשבון תמחור מנה</a>. הכול בחינם: <a class="gold" href="/esek/">כל הכלים לעסק קטן</a>.</p>
+  <h3>נוסח הודעה שמביא פניות טובות</h3>
+  <p>הודעה טובה אומרת מה הלקוח רוצה ומשאירה לו להשלים פרט אחד. "שלום, אשמח להזמין:" פותחת שיחה שבה הלקוח ממשיך לכתוב את ההזמנה. "שלום, אשמח לקבוע תור ל..." נותנת לו למלא את השירות. כדאי להימנע מהודעה ארוכה, כי הלקוח רואה אותה לפני ששלח, ואם היא נראית מסובכת הוא עלול לוותר. משפט אחד עד שניים מספיקים.</p>
+  <h3>איך יודעים מאיפה הגיעה הפנייה</h3>
+  <p>הדרך הפשוטה היא ליצור קישור נפרד לכל מקום פרסום ולהוסיף מילה בהודעה, למשל "מהשלט", "מאינסטגרם" או "מהמודעה". כשהפנייה מגיעה, רואים מיד איזה ערוץ עובד, ואפשר להשקיע יותר במה שמביא לקוחות.</p>
+  <h3>שלט להדפסה בצבע העסק</h3>
+  <p>אחרי יצירת הקישור אפשר להדפיס שלט עם שם העסק, QR גדול ומשפט הנחיה, בצבע שבחרתם. השלט מתאים לדלפק, לשולחן ולחלון, ומתחלק לשני עותקים בדף אחד.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך יוצרים קישור לוואטסאפ עם הודעה מוכנה?</summary><p>כותבים מספר והודעה, ומקבלים קישור שפותח צ'אט עם העסק והמשפט כבר כתוב.</p></details>
+  <details><summary>איך עושים קוד QR לוואטסאפ?</summary><p>אחרי יצירת הקישור מופיע QR. מדפיסים אותו, והלקוח סורק במצלמה של הטלפון.</p></details>
+  <details><summary>באיזה פורמט כותבים את המספר?</summary><p>כרגיל, למשל 050-1234567. הכלי מוסיף את קידומת ישראל לבד.</p></details>
+  <details><summary>הלקוח צריך לשמור את המספר?</summary><p>לא. הצ'אט נפתח ישירות, גם אם המספר לא שמור אצלו.</p></details>
+  <details><summary>זה עובד עם וואטסאפ עסקי?</summary><p>כן, הקישור פותח צ'אט גם בווטסאפ רגיל וגם בווטסאפ עסקי.</p></details>
+  <details><summary>זה בחינם?</summary><p>כן. בלי הרשמה, בלי פרסומות, ושום דבר לא נשמר אצלנו.</p></details>
+  <details><summary>זה עובד גם בטלפון?</summary><p>כן. הדף נפתח בדפדפן של הטלפון ושל המחשב, ולא צריך להתקין שום דבר.</p></details>
+  <details><summary>אפשר ליצור כמה קישורים לאותו מספר?</summary><p>כן, בלי הגבלה. כדאי קישור נפרד לכל ערוץ פרסום כדי לדעת מה עובד.</p></details>
+  <details><summary>מה קורה אם ההודעה ארוכה מדי?</summary><p>ההודעה מוגבלת ל-300 תווים, כדי שה-QR יישאר קל לסריקה.</p></details>
+  <details><summary>אפשר להדפיס שלט עם ה-QR?</summary><p>כן. אחרי יצירת הקישור יש כפתור הדפסה שמכין שלט בצבע העסק.</p></details>
+  <details><summary>הלקוח צריך אפליקציית וואטסאפ?</summary><p>כן. הקישור פותח את וואטסאפ בטלפון, או את וואטסאפ ווב במחשב.</p></details>
+</section>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "איך יוצרים קישור לוואטסאפ עם הודעה מוכנה?", "acceptedAnswer": {"@type": "Answer", "text": "כותבים מספר והודעה, ומקבלים קישור שפותח צ'אט עם העסק והמשפט כבר כתוב."}}, {"@type": "Question", "name": "איך עושים קוד QR לוואטסאפ?", "acceptedAnswer": {"@type": "Answer", "text": "אחרי יצירת הקישור מופיע QR. מדפיסים אותו, והלקוח סורק במצלמה של הטלפון."}}, {"@type": "Question", "name": "באיזה פורמט כותבים את המספר?", "acceptedAnswer": {"@type": "Answer", "text": "כרגיל, למשל 050-1234567. הכלי מוסיף את קידומת ישראל לבד."}}, {"@type": "Question", "name": "הלקוח צריך לשמור את המספר?", "acceptedAnswer": {"@type": "Answer", "text": "לא. הצ'אט נפתח ישירות, גם אם המספר לא שמור אצלו."}}, {"@type": "Question", "name": "זה עובד עם וואטסאפ עסקי?", "acceptedAnswer": {"@type": "Answer", "text": "כן, הקישור פותח צ'אט גם בווטסאפ רגיל וגם בווטסאפ עסקי."}}, {"@type": "Question", "name": "זה בחינם?", "acceptedAnswer": {"@type": "Answer", "text": "כן. בלי הרשמה, בלי פרסומות, ושום דבר לא נשמר אצלנו."}}, {"@type": "Question", "name": "זה עובד גם בטלפון?", "acceptedAnswer": {"@type": "Answer", "text": "כן. הדף נפתח בדפדפן של הטלפון ושל המחשב, ולא צריך להתקין שום דבר."}}, {"@type": "Question", "name": "אפשר ליצור כמה קישורים לאותו מספר?", "acceptedAnswer": {"@type": "Answer", "text": "כן, בלי הגבלה. כדאי קישור נפרד לכל ערוץ פרסום כדי לדעת מה עובד."}}, {"@type": "Question", "name": "מה קורה אם ההודעה ארוכה מדי?", "acceptedAnswer": {"@type": "Answer", "text": "ההודעה מוגבלת ל-300 תווים, כדי שה-QR יישאר קל לסריקה."}}, {"@type": "Question", "name": "אפשר להדפיס שלט עם ה-QR?", "acceptedAnswer": {"@type": "Answer", "text": "כן. אחרי יצירת הקישור יש כפתור הדפסה שמכין שלט בצבע העסק."}}, {"@type": "Question", "name": "הלקוח צריך אפליקציית וואטסאפ?", "acceptedAnswer": {"@type": "Answer", "text": "כן. הקישור פותח את וואטסאפ בטלפון, או את וואטסאפ ווב במחשב."}}]}</script>
+<!--/seo-txt-->

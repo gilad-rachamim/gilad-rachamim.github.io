@@ -217,7 +217,7 @@ def write_hub(out, slug, cfg, made, mode, logo_url, v):
     (out / "index.html").write_text(h, encoding="utf-8")
 
 
-LABELS = {"kesef/pitzuyim-pitorin": "מחשבון פיצויי פיטורין", "kesef/hechzer": "בדיקת החזר מס", "kelim/cheshbon/mikdamot": "מחשבון מקדמות מס הכנסה"}
+LABELS = {"esek/tafrit": "תפריט דיגיטלי עם QR", "esek/tmchur-mana": "מחשבון תמחור מנה", "esek/hazmana-vatsap": "קישור הזמנה בוואטסאפ", "kesef/pitzuyim-pitorin": "מחשבון פיצויי פיטורין", "kesef/hechzer": "בדיקת החזר מס", "kelim/cheshbon/mikdamot": "מחשבון מקדמות מס הכנסה"}
 
 
 def write_embed(src, slug, cfg, made):

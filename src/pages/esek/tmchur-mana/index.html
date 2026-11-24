@@ -1,0 +1,89 @@
+<!--meta {
+ "site": "esek",
+ "nav": "tmchur",
+ "tool": "esek_tmchur",
+ "title": "מחשבון תמחור מנה: עלות, מחיר מכירה ורווח, בחינם | כלים לעסק קטן",
+ "description": "מחשבון תמחור מנה לעסק אוכל: מכניסים רכיבים ומחירים, ומקבלים עלות מנה, אחוז עלות חומרי גלם, מחיר מכירה מומלץ כולל מע\"מ והרווח למנה. בחינם ובלי הרשמה.",
+ "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\">",
+ "og_title": "מחשבון תמחור מנה – כמה עולה מנה ובכמה למכור, בחינם",
+ "priority": "0.8",
+ "crumbs": [
+  [
+   "תמחור מנה",
+   null
+  ]
+ ],
+ "foot": "<script src=\"/assets/esek-tmchur.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>מחשבון תמחור מנה</h1>
+  <p class="sub">כותבים מה נכנס במנה ומה שילמתם, ורואים כמה המנה עולה לכם, באיזה מחיר למכור אותה וכמה נשאר בכיס. בחינם, בטלפון, בלי הרשמה.</p>
+</header>
+<div class="tool">
+  <form class="k-form lead-form" id="tm-form" novalidate>
+    <div class="field"><label for="tm-dish">שם המנה</label><input id="tm-dish" type="text" maxlength="60" placeholder="למשל: המבורגר 200 גרם"></div>
+    <div class="field"><span class="lbl">הרכיבים במנה</span>
+      <div id="tm-rows" class="tm-rows"></div>
+      <button class="btn btn-line btn-sm" type="button" id="tm-add">+ עוד רכיב</button>
+      <button class="btn btn-line btn-sm" type="button" id="tm-sample">למלא דוגמה של המבורגר</button>
+      <p class="es-hint">בכל שורה: מה קניתם, כמה שילמתם, כמה יש באריזה וכמה נכנס במנה, באותה יחידה. למשל קילו עגבניות ב-8 ₪ ו-150 גרם במנה: מחיר <code>8</code>, באריזה <code>1000</code>, במנה <code>150</code>. אם מחיר הרכיב למנה ידוע, כותבים רק מחיר ומשאירים את השאר ריק.</p>
+    </div>
+    <div class="es-row">
+      <div class="field"><label for="tm-pack">אריזה למנה (₪)</label><input id="tm-pack" type="text" inputmode="decimal" maxlength="8" placeholder="0.80"></div>
+      <div class="field"><label for="tm-waste">פחת וקלקול (%)</label><input id="tm-waste" type="text" inputmode="decimal" maxlength="5" value="5"></div>
+    </div>
+    <div class="es-row">
+      <div class="field"><label for="tm-target">אחוז עלות חומרי גלם רצוי</label><input id="tm-target" type="text" inputmode="decimal" maxlength="5" value="30"></div>
+      <div class="field"><label for="tm-vat">מע"מ (%)</label><input id="tm-vat" type="text" inputmode="decimal" maxlength="5" value="18"></div>
+    </div>
+    <div class="es-row">
+      <div class="field"><label for="tm-price">המחיר בתפריט היום, כולל מע"מ <span class="opt">(לא חובה)</span></label><input id="tm-price" type="text" inputmode="decimal" maxlength="8" placeholder="58"></div>
+      <div class="field"><label for="tm-qty">כמה מנות נמכרות בחודש <span class="opt">(לא חובה)</span></label><input id="tm-qty" type="text" inputmode="numeric" maxlength="6" placeholder="400"></div>
+    </div>
+    <button class="btn btn-gold btn-block" type="submit">לחשב את המנה</button>
+    <p class="privacy">הנתונים נשארים בטלפון שלכם ולא נשלחים לשום מקום.</p>
+  </form>
+  <div class="res" id="tm-res" data-brand-result aria-live="polite" hidden></div>
+  <div class="share-row" id="tm-share" hidden>
+    <button class="btn btn-gold btn-sm" type="button" id="tm-copy">להעתיק את הסיכום</button>
+    <a class="btn btn-line btn-sm" id="tm-wa" href="#" target="_blank" rel="noopener">לשלוח בוואטסאפ</a>
+  </div>
+  <p class="disclaimer">החישוב הוא הערכה כללית ואינו ייעוץ מקצועי. אחוזי העלות משתנים בין סוגי עסקים, וגם שכר, שכירות וחשמל לא נכללים בעלות חומרי הגלם. שיעור המע"מ בברירת המחדל הוא 18%, וכדאי לוודא שהוא מעודכן.</p>
+  <p class="disclaimer">חלק מ<a class="gold" href="/esek/">כלים לעסק קטן</a>. חסר משהו? <a class="gold" href="/kelim/bakasha/">ספרו לי</a>.</p>
+</div>
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">תמחור מנה: למה זה הדבר הראשון שבודקים</h2>
+  <p>רוב העסקים הקטנים באוכל קובעים מחיר לפי מה שהמתחרה ברחוב לידם גובה. הבעיה שלמתחרה יש ספקים אחרים, מחירי שכירות אחרים וכמות אחרת של פחת. תמחור מנה אומר לכם כמה המנה שלכם עולה באמת, ומשם מגיע המחיר שבו נשאר רווח. המחשבון עושה את החישוב בדקה, בלי אקסל.</p>
+  <h3>איך מתמחרים מנה, שלב אחרי שלב</h3>
+  <p>רושמים כל רכיב שנכנס במנה, כולל השמן, הרוטב, הלחמנייה והסלט בצד. לכל רכיב מחשבים כמה עולה הכמות שבמנה: מחיר האריזה לחלק לכמות באריזה, כפול הכמות במנה. מוסיפים את האריזה למשלוח או לטייק אווי, ואחוז פחת קטן לדברים שמתקלקלים או נשארים על הצלחת. הסכום הוא עלות המנה.</p>
+  <p>אחר כך מחלקים את העלות באחוז עלות חומרי הגלם שרוצים. אם המנה עולה 14 ₪ ורוצים 30 אחוז, המחיר לפני מע"מ הוא 14 חלקי 0.30, כלומר כ-46.7 ₪. מוסיפים מע"מ ומקבלים את המחיר שכותבים בתפריט.</p>
+  <h3>מה אחוז עלות חומרי גלם נכון</h3>
+  <p>בעסקי אוכל נהוג לכוון לאזור 30 אחוז ממחיר המכירה לפני מע"מ, ולבדוק כל מנה בנפרד. פיצה, פסטה ומנות בצק יוצאות לרוב נמוך יותר, ומנות בשר ודגים גבוה יותר. מנה עם אחוז גבוה אינה בהכרח רעה: אם היא מושכת לקוחות ומוכרת איתה שתייה וקינוח, היא יכולה להיות הכלי השיווקי של התפריט. לכן המחשבון מראה גם את הרווח למנה ואת הרווח החודשי.</p>
+  <h3>מחיר בלי מע"מ ועם מע"מ</h3>
+  <p>עלות חומרי הגלם והרווח מחושבים בלי מע"מ, כי המע"מ עובר למדינה. המחיר בתפריט הוא המחיר עם מע"מ. אם הלקוח משלם 58 ₪, ההכנסה שלכם מהמנה היא 49.2 ₪ בלבד. המחשבון מבדיל בין השניים כדי שלא תטעו.</p>
+  <h3>מה עושים אחרי החישוב</h3>
+  <p>מעדכנים את המחיר ב<a class="gold" href="/esek/tafrit/">תפריט הדיגיטלי</a> ומדפיסים QR חדש לשולחן, ומפרסמים מבצע עם <a class="gold" href="/esek/mivtza/">מודעת מבצע לסטטוס</a> רק על מנות שהרווח בהן מאפשר הנחה. לפתיחת עסק חדש יש <a class="gold" href="/esek/ptiha/">צ'ק-ליסט לפתיחת עסק</a>, ולשליחת הודעות ללקוחות יש <a class="gold" href="/esek/tfutsa/">רשימת תפוצה בוואטסאפ</a>. כל הכלים בחינם: <a class="gold" href="/esek/">כל הכלים לעסק קטן</a>.</p>
+  <h3>טעויות נפוצות בתמחור</h3>
+  <p>הטעות הראשונה היא לשכוח רכיבים קטנים: שמן, תבלינים, מפית, קופסה ושקית. כל אחד עולה אגורות, אבל ביחד הם יכולים להיות כמה שקלים למנה. הטעות השנייה היא לחשב לפי מחיר מבצע של ספק שלא יחזור. מחשבים לפי המחיר הרגיל, ומתייחסים למבצע כבונוס. הטעות השלישית היא להתעלם מפחת, כי ירקות מתקלקלים וחלק מהאוכל חוזר בצלחת.</p>
+  <h3>איך משתמשים בתוצאה</h3>
+  <p>המחיר המומלץ הוא נקודת התחלה ולא פסק דין. משווים אותו למה שהלקוחות מוכנים לשלם באזור, ואם הוא גבוה מדי בודקים אם אפשר להקטין כמות, להחליף רכיב או להוסיף תוספת שמצדיקה מחיר. מנה שמוכרת טוב ועלותה גבוהה עדיין שווה, אם היא מביאה לקוחות שקונים גם שתייה וקינוח.</p>
+  <h3>כל כמה זמן לחשב מחדש</h3>
+  <p>מחירי חומרי גלם משתנים, ולכן כדאי לחזור על החישוב בכל פעם שספק מעלה מחיר, ולפחות פעם ברבעון. הכלי שומר את הנתונים בטלפון, כך שאפשר לעדכן רק את מה שהשתנה.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>איך מתמחרים מנה במסעדה?</summary><p>מחשבים את עלות כל הרכיבים במנה, מוסיפים אריזה ופחת, ומחלקים באחוז עלות חומרי הגלם הרצוי, בדרך כלל 28 עד 35 אחוז.</p></details>
+  <details><summary>מה אחוז עלות חומרי גלם טוב?</summary><p>סביב 30 אחוז ממחיר המכירה ללא מע"מ. תלוי בסוג המנה ובעסק.</p></details>
+  <details><summary>האם לחשב עם מע"מ?</summary><p>את העלות מחשבים בלי מע"מ, ואת המחיר בתפריט כולל מע"מ. המחשבון מציג את שניהם.</p></details>
+  <details><summary>מה זה פחת?</summary><p>חומר גלם שהתקלקל, נשפך או נשאר בצלחת. ברירת המחדל היא 5 אחוז, ואפשר לשנות.</p></details>
+  <details><summary>איך מחשבים רכיב שקונים בקילו ומשתמשים בגרמים?</summary><p>מכניסים את המחיר של הקילו, 1000 בכמות באריזה, ואת הגרמים שבמנה. הכמויות באותה יחידה.</p></details>
+  <details><summary>זה בחינם?</summary><p>כן. בלי הרשמה ובלי פרסומות, והנתונים נשארים בטלפון.</p></details>
+  <details><summary>זה עובד גם בטלפון?</summary><p>כן. הדף נפתח בדפדפן של הטלפון ושל המחשב, ולא צריך להתקין שום דבר.</p></details>
+  <details><summary>איך מחשבים אחוז עלות חומרי גלם?</summary><p>מחלקים את עלות המנה במחיר המכירה לפני מע"מ ומכפילים במאה.</p></details>
+  <details><summary>האם אריזה למשלוח נכללת בעלות?</summary><p>כן, אם המנה נמכרת גם במשלוח. מוסיפים אותה בשדה האריזה.</p></details>
+  <details><summary>כל כמה זמן כדאי לחשב מחדש?</summary><p>כשספק מעלה מחיר, ולפחות פעם ברבעון.</p></details>
+  <details><summary>הנתונים שלי נשמרים בשרת?</summary><p>לא. הם נשמרים רק בטלפון שלכם.</p></details>
+</section>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "איך מתמחרים מנה במסעדה?", "acceptedAnswer": {"@type": "Answer", "text": "מחשבים את עלות כל הרכיבים במנה, מוסיפים אריזה ופחת, ומחלקים באחוז עלות חומרי הגלם הרצוי, בדרך כלל 28 עד 35 אחוז."}}, {"@type": "Question", "name": "מה אחוז עלות חומרי גלם טוב?", "acceptedAnswer": {"@type": "Answer", "text": "סביב 30 אחוז ממחיר המכירה ללא מע\"מ. תלוי בסוג המנה ובעסק."}}, {"@type": "Question", "name": "האם לחשב עם מע\"מ?", "acceptedAnswer": {"@type": "Answer", "text": "את העלות מחשבים בלי מע\"מ, ואת המחיר בתפריט כולל מע\"מ. המחשבון מציג את שניהם."}}, {"@type": "Question", "name": "מה זה פחת?", "acceptedAnswer": {"@type": "Answer", "text": "חומר גלם שהתקלקל, נשפך או נשאר בצלחת. ברירת המחדל היא 5 אחוז, ואפשר לשנות."}}, {"@type": "Question", "name": "איך מחשבים רכיב שקונים בקילו ומשתמשים בגרמים?", "acceptedAnswer": {"@type": "Answer", "text": "מכניסים את המחיר של הקילו, 1000 בכמות באריזה, ואת הגרמים שבמנה. הכמויות באותה יחידה."}}, {"@type": "Question", "name": "זה בחינם?", "acceptedAnswer": {"@type": "Answer", "text": "כן. בלי הרשמה ובלי פרסומות, והנתונים נשארים בטלפון."}}, {"@type": "Question", "name": "זה עובד גם בטלפון?", "acceptedAnswer": {"@type": "Answer", "text": "כן. הדף נפתח בדפדפן של הטלפון ושל המחשב, ולא צריך להתקין שום דבר."}}, {"@type": "Question", "name": "איך מחשבים אחוז עלות חומרי גלם?", "acceptedAnswer": {"@type": "Answer", "text": "מחלקים את עלות המנה במחיר המכירה לפני מע\"מ ומכפילים במאה."}}, {"@type": "Question", "name": "האם אריזה למשלוח נכללת בעלות?", "acceptedAnswer": {"@type": "Answer", "text": "כן, אם המנה נמכרת גם במשלוח. מוסיפים אותה בשדה האריזה."}}, {"@type": "Question", "name": "כל כמה זמן כדאי לחשב מחדש?", "acceptedAnswer": {"@type": "Answer", "text": "כשספק מעלה מחיר, ולפחות פעם ברבעון."}}, {"@type": "Question", "name": "הנתונים שלי נשמרים בשרת?", "acceptedAnswer": {"@type": "Answer", "text": "לא. הם נשמרים רק בטלפון שלכם."}}]}</script>
+<!--/seo-txt-->
