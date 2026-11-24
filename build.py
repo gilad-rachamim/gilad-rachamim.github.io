@@ -784,7 +784,7 @@ def catalog():
     if not _CAT:
         _CAT["tp"], _CAT["out"] = build_catalog()
     return _CAT["tp"], _CAT["out"]
-TOPIC_PAGES = {"/kelim/atzmaim/"}  # דפי נושא ייעודיים שמקושרים מהקטלוג מעבר לעמוד הראשי של הנושא
+TOPIC_PAGES = {"/kelim/atzmaim/", "/kelim/machshev/kelei-pdf/"}  # דפי נושא ייעודיים שמקושרים מהקטלוג מעבר לעמוד הראשי של הנושא
 def katalog_fill(html):
     cat = catalog()[1]
     tools = [x for x in cat if x["ty"] == "tool" and x["l"] == "he" and not x["sf"] and x["u"] != "/kelim/katalog/"]

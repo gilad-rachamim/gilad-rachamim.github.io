@@ -176,7 +176,9 @@
   if (typeof document === 'undefined') return;
   var $ = function (i) { return document.getElementById(i); };
   if (!$('pz')) return;
-  var KEY = 'kelim_pitzuyim';
+  var PZE = document.getElementById('pz');
+  var KEY = (PZE && PZE.getAttribute('data-key')) || 'kelim_pitzuyim';
+  var DT = (PZE && PZE.getAttribute('data-type')) || 'monthly';
   var ids = ['pz-reason', 'pz-start', 'pz-end', 'pz-type', 'pz-salary', 'pz-rate', 'pz-hours', 'pz-scope', 'pz-sa', 'pz-sl', 'pz-s14', 'pz-s14d', 'pz-ng'];
 
   var mbox = $('pz-months');
@@ -239,6 +241,7 @@
     } catch (e) {}
   }
   try {
+    $('pz-type').value = DT;
     var sv = JSON.parse(localStorage.getItem(KEY) || 'null');
     if (sv) {
       ids.forEach(function (id) { if (sv[id] !== undefined) { if ($(id).type === 'checkbox') $(id).checked = !!sv[id]; else $(id).value = sv[id]; } });
@@ -249,7 +252,7 @@
   $('pz').addEventListener('change', run);
   $('pz-clear').addEventListener('click', function () {
     [].forEach.call($('pz').querySelectorAll('input'), function (x) { if (x.type === 'checkbox') x.checked = false; else x.value = ''; });
-    $('pz-type').value = 'monthly'; $('pz-reason').value = 'fired'; $('pz-s14').value = 'none';
+    $('pz-type').value = DT; $('pz-reason').value = 'fired'; $('pz-s14').value = 'none';
     run();
   });
   run();
