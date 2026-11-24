@@ -349,6 +349,77 @@ MOHEL_FRAME = {
            "share_h": "Знаете моэля, которому это пригодится? Отправьте ему эту страницу.", "share_text": "Бесплатные инструменты для моэлей и для семей перед брит-милой:",
            "feedback": "Что-то исправить или добавить? Напишите мне в WhatsApp", "fb_text": "Здравствуйте, Гилад, исправление или предложение по инструментам для моэлей: "},
 }
+# אתר הברית להורים (src/layout.html, דף בלי "site") בשפה אחרת – גל 2, 24.11.2026.
+# קישור לדף שעוד אין לו גרסה בשפה מוביל לעברית ומסומן "(иврит)" / "(Hebrew)". אין פנייה "תזמינו אותי" (המוהל ששלח את הדף הוא המוהל שלהם).
+MOHEL_SITE_FRAME = {
+    "en": {"site": "Gilad Rachamim, mohel", "brand": "Gilad Rachamim · mohel", "nav": "Main navigation", "dock": "Quick actions", "heb": "Hebrew",
+           "wa_text": "Hello Gilad, I am reading the brit milah pages for parents. I wanted to ask: ",
+           "top": [("hachana", "Brit preparation"), ("moed", "Date calculator"), ("madrich", "Parents' guide"), ("hazmana", "Invitation")],
+           "cols": [("Brit milah", [("brit-mila", "Brit milah step by step"), ("hachana", "Preparing for the brit"), ("hachana/yom", "The day of the brit"), ("hachana/achrei", "Care after the brit"), ("hachana/keev", "Pain and soothing")]),
+                    ("Preparation", [("hachana/kniyot", "Shopping list"), ("hachana/moed", "Brit date and jaundice"), ("hachana/tekes", "Preparing the ceremony"), ("hachana/sandak", "Sandak and honors"), ("hachana/mohel", "How to choose a mohel"), ("hachana/pidyon", "Pidyon haben")]),
+                    ("Free tools", [("moed", "Brit date calculator"), ("checklist", "Preparation checklist"), ("madrich", "Guide for parents"), ("hazmana", "Brit invitation"), ("hazmana/brachot", "Blessings for a brit"), ("shirim", "Songs for a brit"), ("dapim", "Printable brit pages")])],
+           "contact": "Contact", "wa_label": "(WhatsApp)", "mohalim": "Tools for mohels", "privacy": "Privacy (Hebrew)", "a11y": "Accessibility (Hebrew)",
+           "end": "Gilad Rachamim Aviad, certified mohel · Jerusalem", "end2": "A brit with all the heart and soul",
+           "copy": "© 2026 Gilad Rachamim Aviad · All rights reserved. Do not copy, reproduce or publish content, design or code from the site without written permission.",
+           "share_h": "Know a family preparing for a brit? Send them this page.", "share_p": "Everything here is free, with no sign-up and no ads.",
+           "share_btn": "Send on WhatsApp", "share_text": "Free brit milah guide for parents:", "fb": "A correction or suggestion? Write to Gilad",
+           "fb_text": "Hello Gilad, a correction or suggestion about the brit pages for parents: ", "dock_def": "Parents' guide", "wa": "WhatsApp"},
+    "ru": {"site": "Гилад Рахамим, моэль", "brand": "Гилад Рахамим · моэль", "nav": "Главная навигация", "dock": "Быстрые действия", "heb": "иврит",
+           "wa_text": "Здравствуйте, Гилад, я читаю страницы о брит-миле для родителей. Хотел(а) спросить: ",
+           "top": [("hachana", "Подготовка к брит-миле"), ("moed", "Калькулятор даты"), ("madrich", "Гид для родителей"), ("hazmana", "Приглашение")],
+           "cols": [("Брит-мила", [("brit-mila", "Брит-мила шаг за шагом"), ("hachana", "Подготовка к брит-миле"), ("hachana/yom", "День брит-милы"), ("hachana/achrei", "Уход после брит-милы"), ("hachana/keev", "Боль и как успокоить")]),
+                    ("Подготовка", [("hachana/kniyot", "Список покупок"), ("hachana/moed", "Дата брит-милы и желтуха"), ("hachana/tekes", "Подготовка церемонии"), ("hachana/sandak", "Сандак и почётные роли"), ("hachana/mohel", "Как выбрать моэля"), ("hachana/pidyon", "Пидьон а-бен")]),
+                    ("Бесплатные инструменты", [("moed", "Калькулятор даты брит-милы"), ("checklist", "Список подготовки"), ("madrich", "Гид для родителей"), ("hazmana", "Приглашение на брит-милу"), ("hazmana/brachot", "Поздравления на брит-милу"), ("shirim", "Песни для брит-милы"), ("dapim", "Страницы для печати")])],
+           "contact": "Контакты", "wa_label": "(WhatsApp)", "mohalim": "Инструменты для моэлей", "privacy": "Конфиденциальность (иврит)", "a11y": "Доступность (иврит)",
+           "end": "Гилад Рахамим Авиад, сертифицированный моэль · Иерусалим", "end2": "Брит-мила от всего сердца и всей души",
+           "copy": "© 2026 Гилад Рахамим Авиад · Все права защищены. Не копируйте, не воспроизводите и не публикуйте материалы, дизайн или код сайта без письменного разрешения.",
+           "share_h": "Знаете семью, которая готовится к брит-миле? Отправьте им эту страницу.", "share_p": "Здесь всё бесплатно, без регистрации и без рекламы.",
+           "share_btn": "Отправить в WhatsApp", "share_text": "Бесплатный гид по брит-миле для родителей:", "fb": "Исправление или предложение? Напишите Гиладу",
+           "fb_text": "Здравствуйте, Гилад, исправление или предложение по страницам о брит-миле для родителей: ", "dock_def": "Гид для родителей", "wa": "WhatsApp"},
+}
+def mohel_lang_href(lang, slug):
+    """כתובת דף באתר הברית בשפת הדף אם קיים, אחרת הדף העברי + סימון."""
+    s = slug.strip("/")
+    if (SRC / "mohel" / lang / s / "index.html").is_file():
+        return f"/mohel/{lang}/{s}/", ""
+    return f"/mohel/{s}/", f' ({MOHEL_SITE_FRAME[lang]["heb"]})'
+
+def mohel_site_lang(html, meta, lang, url):
+    """המסגרת של src/layout.html (אתר הברית) בשפת הדף: מותג, תפריט, שיתוף במקום פנייה, תחתית ותפריט תחתון."""
+    from urllib.parse import quote
+    f = MOHEL_SITE_FRAME[lang]
+    alt = meta.get("alt", {})
+    wa = "https://wa.me/972584049049?text=" + quote(f["wa_text"])
+    def a(slug, label, cur=""):
+        h, mark = mohel_lang_href(lang, slug)
+        return f'<a href="{h}"{cur}>{label}{mark}</a>'
+    html = html.replace('<meta property="og:site_name" content="גילעד רחמים המוהל">', f'<meta property="og:site_name" content="{f["site"]}">', 1)
+    html = re.sub(r'(<a class="brand"[^>]*>.*?<b>)[^<]*(</b>)', lambda m: m.group(1) + f["brand"] + m.group(2), html, count=1, flags=re.S)
+    langs = "".join(f'<a href="{alt[l]}" hreflang="{l}" lang="{l}"' + (' aria-current="true"' if l == lang else "") + f'>{n}</a>'
+                    for l, n in (("he", "עברית"), ("en", "English"), ("ru", "Русский")) if l in alt)
+    top = "".join(a(s, t, ' aria-current="page"' if meta.get("nav") == s else "") for s, t in f["top"])
+    nav = f'<nav class="topnav" aria-label="{f["nav"]}">{top}<a class="wa" href="{wa}" rel="noopener">{f["wa"]}</a>{langs}</nav>'
+    html = re.sub(r'<nav class="topnav" aria-label="[^"]*">.*?</nav>', lambda m: nav, html, count=1, flags=re.S)
+    share = "https://wa.me/?text=" + quote(f["share_text"] + " " + url)
+    fb = "https://wa.me/972584049049?text=" + quote(f["fb_text"])
+    sec = (f'<section id="contact" class="contact no-print" aria-labelledby="contact-h"><div class="wrap"><h2 id="contact-h">{f["share_h"]}</h2><p>{f["share_p"]}</p>'
+           f'<div class="actions"><a class="btn btn-gold" href="{share}" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> {f["share_btn"]}</a>'
+           f'<a class="btn btn-line" href="{fb}" target="_blank" rel="noopener">{f["fb"]}</a></div></div></section>')
+    html = re.sub(r'<section id="contact" class="contact".*?</section>', lambda m: sec, html, count=1, flags=re.S)
+    cols = "".join(f'<div><b>{h}</b>' + "".join(a(s, t) for s, t in items) + '</div>' for h, items in f["cols"])
+    foot = ('<footer class="site-foot"><div class="cols">' + cols +
+            f'<div><b>{f["contact"]}</b><a href="{wa}"><span dir="ltr" style="white-space:nowrap">058-404-9049</span> {f["wa_label"]}</a>'
+            f'<a href="mailto:{CONTACT_MAIL}">{CONTACT_MAIL}</a><a href="/kodesh/mohalim/{lang}/">{f["mohalim"]}</a>'
+            f'<a href="/mohel/privacy/">{f["privacy"]}</a><a href="/mohel/negishut/">{f["a11y"]}</a></div></div>'
+            f'<div class="end"><span><span lang="he" dir="rtl">בס"ד</span> · {f["end"]}</span><span>{f["end2"]}</span></div>'
+            f'<p class="copy">{f["copy"]}</p></footer>')
+    html = re.sub(r'<footer class="site-foot">.*?</footer>', lambda m: foot, html, count=1, flags=re.S)
+    dh = meta.get("dock_href") or mohel_lang_href(lang, "madrich")[0]
+    dock = (f'<nav class="dock" aria-label="{f["dock"]}"><a class="btn btn-gold" href="{wa}">{f["wa"]}</a>'
+            f'<a class="btn btn-line" href="{dh}">{meta.get("dock_label") or f["dock_def"]}</a></nav>')
+    html = re.sub(r'<nav class="dock" aria-label="[^"]*">.*?</nav>', lambda m: dock, html, count=1, flags=re.S)
+    return html
+
 def giur_cta(lang, url):
     """בלוק פנייה לגילעד לברית מילה למבוגרים בסוף כל דף גיור (עברית/אנגלית/רוסית), חוץ מדף הברית עצמו."""
     from urllib.parse import quote
@@ -378,7 +449,9 @@ def lang_page(html, meta, url):
     html = html.replace('<meta property="og:locale" content="he_IL">', f'<meta property="og:locale" content="{ui["locale"]}">', 1)
     html = html.replace('<a class="skip" href="#main">דילוג לתוכן</a>', f'<a class="skip" href="#main">{ui["skip"]}</a>', 1)
     html = html.replace('<nav class="crumbs" aria-label="פירורי לחם">', f'<nav class="crumbs" aria-label="{ui["crumbs"]}">', 1)
-    wa = "https://wa.me/972584049049?text=" + quote(GIUR_WA_TEXT[lang])
+    if not meta.get("site"):  # אתר הברית להורים (src/layout.html)
+        return mohel_site_lang(html, meta, lang, url)
+    wa ="https://wa.me/972584049049?text=" + quote(GIUR_WA_TEXT[lang])
     giur = "/kodesh/giur/" in url
     base = f"/kodesh/giur/{lang}/" if giur else f"/kodesh/mohalim/{lang}/"
     if not giur:
