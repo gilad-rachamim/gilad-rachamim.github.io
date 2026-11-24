@@ -49,13 +49,18 @@
       if (first && stage !== 'all') first.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   });
+  document.addEventListener('click', function (e) {
+    var ps = e.target.closest && e.target.closest('[data-pshare]');
+    if (ps) { G.used('giur_shut_pshare'); G.wa(document.title.split(' | ')[0] + '
+https://hakelim.com' + location.pathname); }
+  });
   box.addEventListener('click', function (e) {
     var s = e.target.closest && e.target.closest('[data-share]');
     if (s) {
       var d = s.closest('details');
       G.used('giur_shut_share');
       var q = d.querySelector('summary').textContent.trim();
-      G.wa('שאלה ותשובה לגרים: ' + q + '\n' + 'https://hakelim.com/kodesh/giur/shut/#' + d.id);
+      G.wa('שאלה ותשובה לגרים: ' + q + '\n' + 'https://hakelim.com' + location.pathname + '#' + d.id);
     }
   });
   box.addEventListener('toggle', function (e) {
