@@ -1,0 +1,20 @@
+{
+ "name": "לוי ושות', משרד עורכי דין (משרד לדוגמה)",
+ "logo": "logo.png",
+ "phone": "050-000-0000",
+ "whatsapp": "972584049049",
+ "cta": "רוצים לבדוק את הזכויות שלכם עם עורך דין? שלחו לנו את התוצאה ונחזור אליכם.",
+ "msg": "שלום, חישבתי במחשבון באתר ורציתי לבדוק את הזכויות שלי עם עורך דין. (זו הדגמה של כלי ממותג)",
+ "tools": [
+  "kesef/pitzuyim-pitorin",
+  "kesef/hodaa-mukdemet",
+  "kesef/zchuyot-pitorin",
+  "kesef/shaot-nosafot"
+ ],
+ "plan": "590",
+ "credit": "small",
+ "demo": true,
+ "paid_until": "2027-11-24",
+ "color": "#1a2b4d",
+ "color2": "#d8ab3f"
+}
