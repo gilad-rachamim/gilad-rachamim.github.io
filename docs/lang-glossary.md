@@ -65,7 +65,6 @@
 | כרטיס ביקור דיגיטלי | цифровая визитка | digital business card | – |
 | הודעות החלמה | сообщения о заживлении | healing messages | – |
 | לוח בריתות מיוחדות | календарь особых бритов | calendar of special brit dates | – |
-| טהרה משפחתית (לא בגל 1) | – | – | – |
 | ווטסאפ | WhatsApp | WhatsApp | – |
 | בלי אתר | без сайта | no website needed | – |
 | בקשה לרב / שאלה לרב | вопрос раввину | ask your rabbi | existing |
