@@ -343,6 +343,7 @@ function dailyNurture(dryRun) {
   }
   if (sent.length) log((dryRun ? 'dry ' : '') + 'dailyNurture: ' + sent.join(', '));
   try { sent = sent.concat(giftNurture(dryRun)); } catch (eN) { log('giftNurture: ' + eN); }
+  try { sent = sent.concat(buyerNurture(dryRun)); } catch (eB) { log('buyerNurture: ' + eB); }
   return sent;
 }
 
@@ -462,7 +463,7 @@ function backfillLeadContacts() {
 // מקור הטופס: "מתנה: <שם הדף>". המתנה יוצאת מיד גם בלי הסכמה; סדרת חמשת המיילים (ימים 2,4,7,10,14) רק למי שסימן הסכמה.
 // הנתונים (רשימת המתנות לכל דף) נוצרים מ-tools/data/matana-pages.json על ידי tools/matana_gs_patch.py.
 var MATANA = {"roe": {"gifts": [["מדריך: אילו מסמכים להביא לרואה חשבון", "/kelim/mismachim-leroe-cheshbon/", "גם כקובץ PDF להדפסה: /assets/mismachim-leroe-cheshbon.pdf"], ["מחשבון החזר מס", "/kesef/hechzer/", "בדיקה בשניות כמה אפשר לקבל בחזרה"], ["מחשבון מקדמות מס הכנסה", "/kelim/cheshbon/mikdamot/", "כמה לשלם בכל חודש"], ["מחשבון ברוטו-נטו", "/kesef/bruto-neto/", "מהמשכורת ברוטו לנטו"]]}, "orchei-din": {"gifts": [["מדריך: מה מגיע לעובד שפוטר", "/kelim/mah-magia-leoved-sheputar/", "גם כקובץ PDF להדפסה: /assets/mah-magia-leoved-sheputar.pdf"], ["זכויות בפיטורין ובהתפטרות", "/kesef/zchuyot-pitorin/", "מה מגיע ומתי"], ["פיצויי פיטורין", "/kesef/pitzuyim-pitorin/", "חישוב לפי ותק ושכר"], ["פיצויים לעובד שעתי", "/kesef/pitzuyim-shaati/", "כשהשכר לפי שעה"], ["הודעה מוקדמת", "/kesef/hodaa-mukdemet/", "כמה ימים מגיעים"], ["פדיון חופשה", "/kesef/pidyon-chufsha/", "כמה שווים ימי החופשה שנשארו"], ["דמי הבראה", "/kesef/dmey-havraa/", "הסכום לפי ותק"], ["שעות נוספות", "/kesef/shaot-nosafot/", "125% ו-150% בחישוב אחד"]]}, "esek": {"gifts": [["תפריט דיגיטלי עם QR", "/esek/tafrit/", "מקלידים מנות, בוחרים צבע ומדפיסים שלט"], ["יוצר קוד QR", "/esek/qr/", "קוד QR לכל קישור, להורדה"], ["תמחור מנה", "/esek/tmchur-mana/", "עלות, מחיר מומלץ ורווח חודשי"], ["מודעת מבצע לסטטוס", "/esek/mivtza/", "מודעה מוכנה לשיתוף"], ["הזמנות בווטסאפ עם QR", "/esek/hazmana-vatsap/", "לקוחות מזמינים אליכם ישר"]]}, "kelim": {"gifts": [["תמלול הקלטות", "/kelim/tamlul/", "הקלטה לטקסט בעברית"], ["תרגום", "/kelim/tochen/tirgum/", "תרגום טקסט ומסמכים"], ["הקראת טקסט בקול אנושי", "/kelim/tochen/hakraa/", "טקסט לקובץ שמע"], ["הנפשת תמונות", "/kelim/tochen/chaye/", "תמונה ישנה שמתחילה לזוז"], ["ניסוח מיילים", "/kelim/tochen/mail/", "נוסחים מוכנים לכל מצב"], ["חתימה על מסמכי PDF", "/kelim/machshev/chatima/", "בלי להדפיס ולסרוק"], ["פקס בחינם", "/kelim/machshev/fax/", "חלופה לפקס"], ["סידור תיקיות", "/kelim/machshev/sader/", "סדר בקבצים במחשב"], ["הבנת תלוש שכר", "/kesef/tlush/", "מה כתוב בכל שורה"], ["תזכורות", "/kelim/briut/tizkorot/", "תזכורות לתרופות ולמשימות"]]}, "claude": {"gifts": []}, "mohel-kurs": {"gifts": [["איך נהיים מוהל: מפת הדרך", "/assets/mohel-mapat-derech.pdf", "6 שלבים בקובץ אחד, להורדה"]]}};
-var GIFT_STEPS = [['G1', 2], ['G2', 4], ['G3', 7], ['G4', 10], ['G5', 14]];
+var GIFT_STEPS = [['G1', 1], ['G2', 4], ['G3', 7], ['G4', 10], ['G5', 14]];
 var CHESED = 'מיזם חסד, בחינם, בלי פרסומות ובלי כוונת רווח';
 var PAY = { branded: 'https://payhip.com/b/M5xC6', kit: 'https://payhip.com/b/8utXB', digital: 'https://payhip.com/b/bPiCF', group: 'https://payhip.com/b/kNyeO' };
 // מוצר זול לכל דף (39 ₪) – מתמלא בשלב ב' כשהמוצר חי ב-Payhip: { name: '', price: '39 ₪', url: '', what: ['..'] }
@@ -488,7 +489,8 @@ function markBuyer(email, product) {
     if (String(data[i][C['מייל']]).toLowerCase() !== String(email).toLowerCase()) continue;
     sh.getRange(i + 1, C['סטטוס'] + 1).setValue('קנה');
     sh.getRange(i + 1, C['שלב'] + 1).setValue(stage);
-    sh.getRange(i + 1, C['מייל הבא'] + 1).setValue('');
+    sh.getRange(i + 1, C['מייל הבא'] + 1).setValue(new Date());
+    sh.getRange(i + 1, C['שלב בסדרה'] + 1).setValue('');
     n++;
   }
   log('markBuyer ' + email + ' ' + product + ' -> ' + stage + ' (' + n + ' שורות)');
@@ -596,7 +598,7 @@ function giftMail(slug, step) {
   var v = GIFT_VALUE[slug], cheap = CHEAP[slug], who = giftWho_(slug), wa = function (t, l) { return gWa(slug, t, l); };
   var BR = '<br><br>', L = function (u, t) { return link(u, t, step); };
   if (step === 'G1' || step === 'G4') {
-    return [v[step][0], 'שלום {שם},' + BR + v[step][1] + BR + L(v[step][2], v[step][3]) + BR + 'בברכה,<br>גילעד'];
+    return [v[step][0], 'שלום {שם},' + BR + v[step][1] + BR + L(v[step][2], v[step][3]) + BR + 'אני כאן לכל שאלה בווטסאפ או במייל.<br>גילעד'];
   }
   if (slug === 'mohel-kurs') {
     var kb = function (u, l) { return gBtn(pUrl(u, slug, step), l); };
@@ -669,6 +671,86 @@ function testSendGifts() {
 // בדיקה מהעורך: מדמה שליחת טופס מדף מתנה
 function testPostGift() {
   return doPost({ parameter: { 'שם': 'בדיקה – Claude', 'email': CFG.OWNER_EMAIL, 'מקור': 'מתנה: roe', 'utm_source': 'test', 'utm_content': 'x', 'מאשר/ת קבלת עדכונים': 'כן' } }).getContent();
+}
+
+// ---------- סדרות הקונים (לא פעילות: BUYER_SERIES_ON = false עד שגילעד מאשר הפעלה) ----------
+var BUYER_SERIES_ON = false;
+var BUYER_STEPS = { 'קנה קטן': [['B1', 0], ['B2', 2], ['B3', 5], ['B4', 8]], 'קנה גדול': [['K1', 0], ['K2', 2], ['K3', 7], ['K4', 14]] };
+var BUYER_REFUND = '14 יום לנסות בשקט. לא מתאים? מחזיר לך את הכסף, בלי שאלות. לא הספקת לבדוק? כתוב לי בווטסאפ ואאריך לך את תקופת הניסיון, באהבה.';
+var BUYER_WHY = 'זה מיזם חסד. אז למה בכלל תשלום? כי למדתי שמה שמקבלים בחינם נשאר בצד. תשלום סמלי גורם לך לפתוח, לנסות ולהשתמש באמת, וזו כל המטרה שלי.';
+var BUYER_INCOME = 'ההכנסות מחזיקות את המיזם ומאפשרות לי להמשיך לבנות כלים בחינם לכולם';
+// לכל משפך: הצעד הראשון, כלי להדרכה, מה הלקוח מקבל כשהוא משדרג, ודוגמת חישוב (דוגמה בלבד, לא הבטחה)
+var BUYER_INFO = {
+  'roe': { act: 'מדפיסים את דף רשימת המסמכים ושולחים אותו ללקוח הבא', tool: ['/kelim/mismachim-leroe-cheshbon/', 'מדריך המסמכים ללקוח'], up: ['כלי חישוב ממותג אחד של המשרד, עם כפתור ווטסאפ וקוד QR', '/matana/roe/shidrug/'], save: 'משרד ששולח ל-40 לקוחות בחודש רשימת מסמכים ידנית של 10 דקות לכל אחד, יכול לחסוך כשש שעות בחודש' },
+  'orchei-din': { act: 'פותחים את טופס איסוף המסמכים ושולחים אותו ללקוח החדש', tool: ['/kesef/pitzuyim-pitorin/', 'מחשבון פיצויי פיטורין'], up: ['מחשבון זכויות ממותג של המשרד, עם כפתור ווטסאפ וקוד QR', '/matana/orchei-din/shidrug/'], save: 'משרד שעונה ל-30 פניות בחודש על שאלות חישוב של 5 דקות כל אחת, יכול לחסוך כשעתיים וחצי בחודש' },
+  'esek': { act: 'בוחרים פוסט אחד מהערכה ומפרסמים אותו היום', tool: ['/esek/mivtza/', 'מודעת מבצע לסטטוס'], up: ['כלי אחד בלוגו ובצבעי העסק שלכם, עם כפתור ווטסאפ וקוד QR', '/matana/esek/shidrug/'], save: 'עסק שמקבל 20 שאלות מחיר בחודש וחוסך 5 דקות בכל אחת, יכול לחסוך כשעה וחצי בחודש' },
+  'kelim': { act: 'בוחרים פוסט אחד מהערכה ומפרסמים אותו היום', tool: ['/kelim/tochen/mail/', 'ניסוח מיילים'], up: ['כלי אחד בלוגו ובצבעי העסק שלכם, עם כפתור ווטסאפ וקוד QR', '/matana/kelim/shidrug/'], save: 'עסק שכותב 20 מיילים בחודש וחוסך 5 דקות בכל אחד, יכול לחסוך כשעה וחצי בחודש' },
+  'claude': { act: 'פותחים את קבוצת הווטסאפ ושואלים בה את השאלה הראשונה שלכם', tool: ['/kelim/tochen/', 'כלי הכתיבה והתרגום'], up: ['הקורס המלא: לעבוד עם Claude, מחיר מייסדים 147 ₪ ל-30 הראשונים', '/matana/claude/shidrug/'], save: '' },
+  'mohel-kurs': { act: 'קוראים את המפה ובוחרים את השלב הראשון שלכם', tool: ['/kodesh/mohalim/', 'הכלים למוהלים'], up: ['הקורס המלא למוהלים, עם ליווי מעשי', '/matana/mohel-kurs/shidrug/'], save: '' }
+};
+function buyerMail(slug, step) {
+  var I = BUYER_INFO[slug], BR = '<br><br>', SIGN = BR + 'אני כאן לכל שאלה בווטסאפ או במייל.<br>גילעד', mk = slug === 'mohel-kurs';
+  var tl = function (u, t) { return gBtn(pUrl('https://hakelim.com' + u, slug, step), t); };
+  var wa = function (t) { return gWa(slug, t, 'שאלה? כתבו לי בווטסאפ'); };
+  var why = '<div style="margin:14px 0;padding:10px 14px;border:1px dashed #e8b94a;border-radius:10px;font-size:14px">' + BUYER_WHY + (mk ? '' : ' ' + BUYER_INCOME + '.') + '</div>';
+  var refund = mk ? '' : '<div style="margin:10px 0;font-size:14px"><b>אחריות 14 יום.</b> ' + BUYER_REFUND + '</div>';
+  var ps = function (u) { return mk ? '' : BR + 'נ.ב. ' + BUYER_REFUND + ' <a href="' + pUrl('https://hakelim.com' + u, slug, step) + '">לפרטים ולרכישה</a>'; };
+  if (step === 'B1') return ['תודה על הרכישה, וככה מתחילים', 'שלום {שם},' + BR + 'תודה על הרכישה. הקבצים והקבלה נמצאים בדף ההורדה של Payhip ובמייל שקיבלתם ממנו. הצעד הראשון: ' + I.act + '.' + SIGN];
+  if (step === 'B2') return ['דקה אחת וזה נראה כמו שלכם', 'שלום {שם},' + BR + 'הקבצים ניתנים לעריכה. מחליפים את שם המקום ואת הלוגו בשלכם, שומרים, ומשתמשים. אם משהו לא עובד, ענו למייל הזה ואתקן.' + SIGN];
+  if (step === 'B3') return ['כלי חינמי אחד שמשלים את מה שקניתם', 'שלום {שם},' + BR + 'הכלי הבא הוא בחינם ומשלים את מה שקניתם:' + BR + tl(I.tool[0], I.tool[1]) + BR + 'ואם חסר לכם כלי אחר, כתבו לי איזה, ואשתדל לבנות.' + SIGN];
+  if (step === 'B4') {
+    var sv = I.save ? BR + 'דוגמה לחישוב, לא הבטחה: ' + I.save + '.' : '';
+    return ['השלב הבא, אם זה מתאים לכם', 'שלום {שם},' + BR + 'אם מה שקניתם עבד לכם והייתם רוצים לקחת אותו צעד קדימה: ' + I.up[0] + '.' + sv + BR + tl(I.up[1], 'לפרטים') + why + refund + ps(I.up[1]) + SIGN];
+  }
+  if (step === 'K1') return ['ההזמנה התקבלה, מה אני צריך ממכם', 'שלום {שם},' + BR + 'תודה! כדי להתחיל אני צריך: לוגו (קובץ תמונה), צבעים אם יש, והכתובת שתרצו לקישור. אפשר לשלוח בווטסאפ או להשיב למייל הזה. את הקישור לקבוצת הליווי אשלח בהודעה אישית.' + BR + wa('שלום גילעד, רכשתי ואני רוצה להתחיל') + SIGN];
+  if (step === 'K2') return ['הגיע אליי הלוגו?', 'שלום {שם},' + BR + 'בדיקה קצרה: הצלחתם לשלוח את הלוגו והצבעים? אם משהו תקוע, כתבו לי ונסגור את זה היום.' + BR + wa('שלום גילעד, בקשר להזמנה שלי') + SIGN];
+  if (step === 'K3') return ['הכלי שלכם מוכן', 'שלום {שם},' + BR + 'הכלי מוכן. הקישור, קוד ה-QR והסבר קצר איך משתפים אותו נמצאים בהודעה האישית שלי. כדאי לשלוח אותו השבוע ללקוח אחד ולראות מה קורה.' + SIGN];
+  return ['שאלה קטנה אחרונה', 'שלום {שם},' + BR + 'אם אתם מרוצים, אשמח להמלצה של משפט או שניים שאפשר לפרסם בשמכם. ואם לא הכול עבד כמו שרציתם, ספרו לי, זה עוזר לי יותר.' + BR + wa('שלום גילעד, בקשר למה שקניתי') + SIGN];
+}
+// הזמנה להיות שותף: לא נשלחת אוטומטית, והאחוז ריק בכוונה (גילעד קובע ומפעיל)
+var PARTNER_PCT = '';
+function partnerInviteMail(slug) {
+  if (!PARTNER_PCT) return null;
+  var BR = '<br><br>';
+  return ['רוצים להרוויח מלהמליץ?', 'שלום {שם},' + BR + 'אם זה עזר לכם, אתם מוזמנים להיות שותפים: מקבלים קישור אישי, ועל כל רכישה דרכו ' + PARTNER_PCT + ' מהסכום. ענו למייל הזה ואשלח את הפרטים והקישור.' + BR + 'אני כאן לכל שאלה בווטסאפ או במייל.<br>גילעד'];
+}
+function buyerNurture(dryRun) {
+  if (!BUYER_SERIES_ON && !dryRun) return [];
+  if (!dryRun && isShabbatOrHoliday(new Date())) return [];
+  var sh = sheet(SpreadsheetApp.getActive(), CFG.SHEET_LEADS, COLS), data = sh.getDataRange().getValues(), today = new Date(), sent = [], seen = {};
+  for (var i = 1; i < data.length && sent.length < 25; i++) {
+    var r = data[i], stage = r[C['שלב']], steps = BUYER_STEPS[stage];
+    if (r[C['סטטוס']] !== 'קנה' || !steps || r[C['הסכמה לדיוור']] !== 'כן' || !r[C['מייל']]) continue;
+    var em = String(r[C['מייל']]).toLowerCase(); if (seen[em]) continue;
+    var slug = giftSlug_(r[C['מקור']]); if (!BUYER_INFO[slug]) continue;
+    var due = r[C['מייל הבא']]; if (!(due instanceof Date) || due > today) continue;
+    var last = String(r[C['שלב בסדרה']] || ''), idx = -1;
+    steps.forEach(function (s, k) { if (s[0] === last) idx = k; });
+    var nxt = steps[idx + 1]; if (!nxt) continue;
+    if (!dryRun && MailApp.getRemainingDailyQuota() < 15) break;
+    seen[em] = 1;
+    var m = buyerMail(slug, nxt[0]), html = wrapGift(m[1].replace(/שלום \{שם\}/g, gHello(r[C['שם']])), unsubLink(r[C['טוקן']]), slug);
+    if (dryRun) { sent.push((i + 1) + ':' + slug + ':' + nxt[0]); continue; }
+    try {
+      giftSend(r[C['מייל']], m[0], html, slug);
+      sent.push((i + 1) + ':' + slug + ':' + nxt[0]);
+      sh.getRange(i + 1, C['שלב בסדרה'] + 1).setValue(nxt[0]);
+      var after = steps[idx + 2];
+      sh.getRange(i + 1, C['מייל הבא'] + 1).setValue(after ? addDays(today, after[1] - nxt[1]) : '');
+      sh.getRange(i + 1, C['נשלח לאחרונה'] + 1).setValue(today);
+    } catch (err) { log('קונים, שורה ' + (i + 1) + ': ' + err); }
+  }
+  if (sent.length) log((dryRun ? 'dry ' : '') + 'buyerNurture: ' + sent.join(', '));
+  return sent;
+}
+// בדיקה מהעורך: שולח לגילעד את כל מיילי הקונים של כל המשפכים
+function testSendBuyers() {
+  Object.keys(BUYER_INFO).forEach(function (slug) {
+    ['B1', 'B2', 'B3', 'B4', 'K1', 'K2', 'K3', 'K4'].forEach(function (s) {
+      var m = buyerMail(slug, s);
+      giftSend(CFG.OWNER_EMAIL, '[דוגמה קונה ' + slug + ' ' + s + '] ' + m[0], wrapGift(m[1].replace(/\{שם\}/g, 'גילעד'), '', slug), slug);
+    });
+  });
 }
 
 // ---------- הודעה לגילעד ----------
