@@ -233,7 +233,7 @@
   var HAL_L = {
     ru: {
       shabbat: { t: 'Брит-мила в субботу', p: [
-        'Брит-мила на восьмой день отодвигает субботу: мила, прия и мецица, затем накладывают повязку.',
+        'Брит-мила на восьмой день проводится и в субботу: мила, прия и мецица, затем накладывают повязку.',
         'Всё, что можно подготовить в пятницу, готовят в пятницу: инструмент, повязки и порошок. Их приносят на место брит-милы до начала субботы (там, где нет эрува).',
         'Брит-мила, которая была отложена (не на восьмой день), в субботу не совершается.',
         'Если младенец родился в сумерки или путём кесарева сечения – в субботу ему милу не делают (см. ниже).',
@@ -241,7 +241,7 @@
         'Время брит-милы: до заката, с запасом времени.'],
         s: 'Шулхан арух, Йоре деа 266:2–3, 7–10; Орах хаим 331:1, 4–6' },
       yt: { t: 'Брит-мила в праздник', p: [
-        'Брит-мила на восьмой день отодвигает и праздник, как и субботу.',
+        'Брит-мила на восьмой день проводится и в праздник, как и в субботу.',
         'Инструменты для милы, которые можно подготовить с вечера перед праздником, праздник не отодвигают.',
         'В случае сомнения (родился в сумерки) милу в праздник не делают, даже во второй день праздника в диаспоре.'],
         s: 'Шулхан арух, Йоре деа 266:2, 6, 8' },
@@ -295,7 +295,7 @@
         'A brit on the eighth day overrides Shabbat: the milah, the peri\'ah and the metzitzah, and a dressing is applied.',
         'Whatever can be prepared on Friday is prepared on Friday: the knife, the dressings and the powder, brought to the place of the brit before Shabbat (where there is no eruv).',
         'A brit that was postponed (not on the eighth day) is not performed on Shabbat.',
-        'A baby born at twilight or by caesarean section is not circumcised on Shabbat (see below).',
+        'A baby born at twilight or by cesarean section is not circumcised on Shabbat (see below).',
         'A mohel who has never performed a brit should not perform his first one on Shabbat.',
         'Time of the brit: before sunset, with a safety margin.'],
         s: 'Shulchan Aruch, Yoreh De\'ah 266:2–3, 7–10; Orach Chayim 331:1, 4–6' },
@@ -312,7 +312,7 @@
       tb: { t: 'Brit on Tisha B\'Av', p: [
         'The milah is performed after the Kinot are finished (some wait until after midday). The blessing is said without spices.',
         'The cup: if the mother is present and hears the blessing, she drinks from it. If not, it is given to children.',
-        'The ones in the covenant (the father, the mohel and the sandek) put on Shabbat clothes after the Kinot, but not fully white ones.',
+        'The ones in the covenant (the father, the mohel and the sandak) put on Shabbat clothes after the Kinot, but not fully white ones.',
         'There is no meal on the fast day. Some hold the brit relatively close to sunset, and the festive meal in the evening, after the fast.'],
         s: 'Shulchan Aruch, Orach Chayim 559:7–8; Yoreh De\'ah 265:4' },
       tbNidche: { t: 'Tisha B\'Av postponed to Sunday', p: [
@@ -342,7 +342,7 @@
         'If this falls on Shabbat or a festival (including the second festival day in the diaspora), the milah is not performed, because Shabbat is not overridden because of a doubt. So sometimes the baby is circumcised on the tenth or eleventh day.',
         'There is a dispute about the length of twilight. Ask the rabbi.'],
         s: 'Shulchan Aruch, Yoreh De\'ah 262:4; 266:8–9' },
-      cs: { t: 'Born by caesarean section', p: [
+      cs: { t: 'Born by cesarean section', p: [
         'The baby is circumcised on the eighth day, but not on Shabbat, a festival or Yom Kippur. If the eighth day falls on one of them, it is done on the first following day that is not a Shabbat or a festival.'],
         s: 'Shulchan Aruch, Yoreh De\'ah 262:3; 266:10; Orach Chayim 331:5' },
       sick: { t: 'A baby who is not healthy', p: [
@@ -368,7 +368,7 @@
     ru: {
       cities: ['Иерусалим', 'Тель-Авив', 'Хайфа', 'Беэр-Шева', 'Цфат', 'Тверия', 'Эйлат', 'Хеврон', 'Модиин', 'Петах-Тиква', 'Ашдод', 'Нетания', 'Гуш-Эцион', 'Самария', 'Приграничье Газы', 'Кирьят-Шмона', 'Ашкелон', 'Кфар-Саба', 'Бат-Ям'],
       loc: 'ru-RU', sep: ', ', year: function (y) { return String(y); },
-      title: function (y) { return 'Календарь особых брит-мил – год ' + y; },
+      title: function (y) { return 'Календарь особых бритов – год ' + y; },
       sub: function (il, city) { return 'Когда восьмой день приходится на субботу, праздник, Йом-Кипур, Девятое ава, Хануку, Пурим или пост · ' + (il ? 'Земля Израиля' : 'диаспора (включая второй день праздника)') + ' · закат: ' + city; },
       th: ['Родился', 'Восьмой день', 'Что особенного'],
       alt: function (gs, day, heb, gs2) { return 'Кесарево сечение или рождение в сумерки вечером ' + gs + ': брит-мила – ' + day + ', ' + heb + ' (' + gs2 + ')'; },
@@ -381,7 +381,7 @@
       needTime: 'Укажите время рождения или выберите «до заката» / «после выхода звёзд».',
       whenNote: function (city, ss, tz, t, w) { return 'Здесь (' + city + ') в этот день: закат ' + ss + ', выход звёзд ' + tz + '. Рождение в ' + t + ' – ' + (w === 'day' ? 'до заката.' : w === 'night' ? 'после выхода звёзд, то есть уже следующий еврейский день.' : 'между закатом и выходом звёзд: сомнение.'); },
       special: 'Особая брит-мила', usual: 'Обычная брит-мила', born2: 'Родился: ', doubt: function (a, b) { return 'сомнение: ' + a + ' или ' + b; }, brit: 'Брит-мила: ', dayN: function (n) { return ' · <b>' + n + '-й день</b>'; },
-      why: function (day, heb, names, doubt) { return 'Восьмой день (' + day + ', ' + heb + ', ' + names + ') ' + (doubt ? 'сомнителен, а сомнение не отодвигает субботу и праздник.' : 'не подходит, потому что брит-мила при кесаревом сечении не отодвигает субботу, праздник и Йом-Кипур.'); },
+      why: function (day, heb, names, doubt) { return 'Восьмой день (' + day + ', ' + heb + ', ' + names + ') ' + (doubt ? 'сомнителен, а при сомнении её не проводят ни в субботу, ни в праздник.' : 'не подходит, потому что брит-мила при кесаревом сечении не проводится ни в субботу, ни в праздник, ни в Йом-Кипур.'); },
       sunDay: function (city, t) { return 'Закат (' + city + ') в день брит-милы: ' + t + '. Сделайте милу до этого, с запасом времени.'; },
       plain: 'Восьмой день не приходится на субботу, праздник, пост, Хануку или Пурим.',
       sickAsk: 'Если младенец нездоров – решают врач и моэль. В любом сомнении спрашивайте раввина.',
@@ -403,7 +403,7 @@
       needTime: 'Enter the time of birth, or choose "before sunset" / "after nightfall".',
       whenNote: function (city, ss, tz, t, w) { return 'In ' + city + ' on that day: sunset ' + ss + ', nightfall ' + tz + '. A birth at ' + t + ' is ' + (w === 'day' ? 'before sunset.' : w === 'night' ? 'after nightfall, which means the next Hebrew day already.' : 'between sunset and nightfall: a doubt.'); },
       special: 'A special brit', usual: 'An ordinary brit', born2: 'Born: ', doubt: function (a, b) { return 'doubtful: ' + a + ' or ' + b; }, brit: 'The brit: ', dayN: function (n) { return ' · <b>day ' + n + '</b>'; },
-      why: function (day, heb, names, doubt) { return 'The eighth day (' + day + ', ' + heb + ', ' + names + ') ' + (doubt ? 'is doubtful, and a doubt does not override Shabbat or a festival.' : 'is not suitable, because a brit after a caesarean section does not override Shabbat, a festival or Yom Kippur.'); },
+      why: function (day, heb, names, doubt) { return 'The eighth day (' + day + ', ' + heb + ', ' + names + ') ' + (doubt ? 'is doubtful, and a doubt does not override Shabbat or a festival.' : 'is not suitable, because a brit after a cesarean section does not override Shabbat, a festival or Yom Kippur.'); },
       sunDay: function (city, t) { return 'Sunset in ' + city + ' on the day of the brit: ' + t + '. Perform the brit before then, with a safety margin.'; },
       plain: 'The eighth day does not fall on Shabbat, a festival, a fast, Chanukah or Purim.',
       sickAsk: 'A baby who is not healthy: according to the doctor and the mohel. In any doubt, ask the rabbi.',

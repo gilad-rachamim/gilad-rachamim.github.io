@@ -25,14 +25,14 @@
       final: 'Окончательная дата – по указанию моэля, когда малыш здоров и полностью готов.',
       done: 'Проверено', jwhen: ' · проверено ', atT: ' в ',
       title: 'Данные брит-милы', parents: 'Родители', phone: 'Телефон', birth: 'Роды', hosp: 'Роддом', weight: 'Вес', jaund: 'Желтуха', cs: 'Кесарево сечение',
-      britcalc: 'Брит-мила по расчёту', btime: 'Время брит-милы', place: 'Место брит-милы', nusach: 'Обряд', sandak: 'Сандак', notes: 'Примечания',
+      britcalc: 'Брит-мила по расчёту', btime: 'Время брит-милы', place: 'Место брит-милы', nusach: 'Обычай (нусах)', sandak: 'Сандак', notes: 'Примечания',
       nearbuild: function (t) { return '⚠️ Роды близко к закату (' + t + '), нужно проверить дату'; },
       atTime: ' · в ', gram: ' г', kg: ' кг',
-      addlog: '➕ Добавить в журнал бритов:', sentfrom: '_Отправлено из анкеты брит-милы · hakelim.com/kodesh/tofes-brit/ru/_',
+      addlog: '➕ Добавить в журнал бритов:', sentfrom: '_Отправлено из анкеты для брит-милы · hakelim.com/kodesh/tofes-brit/ru/_',
       pbirthtime: 'время родов ', pweight: 'вес ', pjaund: 'желтуха ', pcs: 'кесарево сечение', pnear: 'роды близко к закату', pnusach: 'обряд ',
       aBirth: 'Пожалуйста, укажите дату родов.', aParents: 'Пожалуйста, укажите имена родителей.', aClear: 'Очистить всё, что вы заполнили?',
       mkmsg: 'Мазаль тов! 🎉\nЧтобы я мог всё подготовить к брит-миле, пожалуйста, заполните данные по ссылке. Это пара минут, и данные придут мне прямо в WhatsApp:\n',
-      copied: 'Скопировано ✓', selLink: 'Выделите ссылку и скопируйте', copiedTpl: 'Скопировано ✓ теперь вставьте в WhatsApp', selTxt: 'Выделите текст и скопируйте'
+      copied: 'Скопировано ✓', selLink: 'Выделите ссылку и скопируйте', copiedTpl: 'Скопировано ✓ Теперь вставьте в WhatsApp', selTxt: 'Выделите текст и скопируйте'
     },
     en: {
       days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
@@ -52,7 +52,7 @@
       final: 'The final date is by the mohel\'s instructions, when the baby is healthy and fully ready.',
       done: 'Tested', jwhen: ' · tested ', atT: ' at ',
       title: 'Brit details', parents: 'Parents', phone: 'Phone', birth: 'Birth', hosp: 'Hospital', weight: 'Weight', jaund: 'Jaundice', cs: 'Born by cesarean',
-      britcalc: 'Brit by calculation', btime: 'Time of the brit', place: 'Place of the brit', nusach: 'Rite', sandak: 'Sandek', notes: 'Notes',
+      britcalc: 'Brit by calculation', btime: 'Time of the brit', place: 'Place of the brit', nusach: 'Custom (nusach)', sandak: 'Sandak', notes: 'Notes',
       nearbuild: function (t) { return '⚠️ Birth close to sunset (' + t + '), the date needs checking'; },
       atTime: ' · at ', gram: ' g', kg: ' kg',
       addlog: '➕ Add to the brit log:', sentfrom: '_Sent from the brit details form · hakelim.com/kodesh/tofes-brit/en/_',
