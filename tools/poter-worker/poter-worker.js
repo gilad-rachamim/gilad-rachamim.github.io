@@ -103,6 +103,9 @@ export function geminiKeys(env) {
 }
 // מפתח+דגם שהמכסה שלהם נגמרה היום – מדלגים עליהם (זיכרון של המופע, מתאפס לבד ביום הבא)
 const spent = new Map();
+// מפסק: דגם שנתקע או עמוס – מדלגים עליו כמה דקות, כדי שהתלמיד הבא לא יחכה לו (זיכרון של המופע)
+const tripped = new Map();
+const isTripped = m => (tripped.get(m) || 0) > Date.now();
 const today = () => new Date(Date.now() - 8 * 3600e3).toISOString().slice(0, 10); // Gemini מתאפס בחצות של קליפורניה
 const isQuota = e => e && e.status === 429 && /quota|exceed|limit/i.test(e.message);
 
@@ -112,7 +115,7 @@ async function geminiOnce(env, model, system, parts, schema, opts, key) {
   if (schema) { gen.responseMimeType = 'application/json'; gen.responseSchema = schema; }
   const r = await fetcher(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
     method: 'POST',
-    signal: AbortSignal.timeout((opts && opts.timeout) || 150000),
+    signal: AbortSignal.timeout((opts && opts.timeout) || 90000),
     headers: { 'content-type': 'application/json', 'x-goog-api-key': key || geminiKeys(env)[0] },
     body: JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents: [{ role: 'user', parts }], generationConfig: gen })
   });
@@ -127,19 +130,23 @@ export async function gemini(env, system, parts, schema, opts, model) {
   model = model || (env.GEMINI_MODEL || PRIMARY);
   const keys = geminiKeys(env);
   if (!keys.length) throw new Error('no key');
+  if (isTripped(model)) throw Object.assign(new Error(model + ' 503 busy (breaker)'), { status: 503 });
   const start = Math.floor(Math.random() * keys.length);
   let last;
   for (let k = 0; k < keys.length; k++) {
     const key = keys[(start + k) % keys.length], tag = key.slice(-6) + '|' + model;
     if (spent.get(tag) === today()) { last = last || Object.assign(new Error(model + ' 429 quota (cached)'), { status: 429 }); continue; }
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 2; i++) {
       try { return { data: await geminiOnce(env, model, system, parts, schema, opts, key), model }; }
       catch (e) {
         last = e;
         if (isQuota(e)) { spent.set(tag, today()); break; }
         if (e.status && ![429, 500, 502, 503, 504].includes(e.status)) break;
-        if (e.name === 'TimeoutError' || e.name === 'AbortError') break;
-        await sleep(i === 0 ? 2500 : 7000);
+        // נתקע: התקלה אצל גוגל בדגם עצמו, לא במפתח – לא מנסים מפתח נוסף, והדגם יוצא ל-5 דקות
+        if (e.name === 'TimeoutError' || e.name === 'AbortError') { tripped.set(model, Date.now() + 5 * 60000); throw e; }
+        // עמוס (5xx) פעמיים ברצף – יוצא ל-3 דקות ועוברים מיד לגיבוי
+        if (e.status >= 500 && i === 1) { tripped.set(model, Date.now() + 3 * 60000); throw e; }
+        await sleep(1500);
       }
     }
   }
@@ -175,9 +182,23 @@ async function transcribe(env, parts, opts) {
 }
 
 // פתרון: Gemini הראשי; אם עמוס – gpt-oss (ותמונה מועתקת קודם לטקסט); ואם גם הוא לא – flash-lite
+// מירוץ: אם הדגם הראשי לא ענה תוך 20 שניות, הגיבוי מתחיל במקביל והראשון שעונה מנצח (גוגל נתקע לפעמים דקות)
+const HEDGE_MS = 20000;
 async function solver(env, system, parts, schema, opts) {
-  try { return await gemini(env, system, parts, schema, opts); }
-  catch (e) {
+  const first = gemini(env, system, parts, schema, opts);
+  let t;
+  const late = new Promise(r => { t = setTimeout(() => r('late'), (opts && opts.hedge) || HEDGE_MS); });
+  const hedge = (async () => {
+    const w = await Promise.race([first.then(() => 'ok', () => 'fail'), late]);
+    clearTimeout(t);
+    if (w === 'ok') return first;
+    return solverBackup(env, system, parts, schema, opts, w === 'fail' ? await first.catch(e => e) : new Error('gemini slow'));
+  })();
+  try { return await Promise.any([first, hedge]); }
+  catch (e) { throw (e.errors && e.errors[0]) || e; }
+}
+async function solverBackup(env, system, parts, schema, opts, e) {
+  {
     let tparts = parts;
     if (parts.some(p => p.inlineData)) tparts = parts.filter(p => !p.inlineData).concat([{ text: 'השאלה (הועתקה מתמונה):\n' + await transcribe(env, parts, opts) }]);
     try { return { data: await workersAI(env, system, asText(tparts), schema), model: AI_MODEL }; }

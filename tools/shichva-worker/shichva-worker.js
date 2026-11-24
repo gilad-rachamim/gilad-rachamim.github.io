@@ -607,29 +607,66 @@ function normLight(d) {
   return { light: ['green', 'yellow', 'red'].includes(l) ? l : 'yellow', why: clean(d && d.why, 200) || (l === 'green' ? 'צחוק על תופעה, מכבד.' : 'כדאי לעבור שוב לפני שמציגים.') };
 }
 
+const tripped = new Map();   // מפסק: דגם -> עד מתי לדלג עליו (בזיכרון של המופע)
+// קריאה אחת לדגם אחד: מחזירה את התשובה או זורקת; דגם עמוס או תקוע נכנס למפסק
+async function geminiOne(model, key, text, ms) {
+  const gen = { temperature: 0.8, responseMimeType: 'application/json' };
+  if (!/flash-lite/.test(model)) gen.thinkingConfig = { thinkingBudget: 0 };   // הדגמים הקלים דוחים את ההגדרה (400)
+  let r;
+  try {
+    r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      method: 'POST', signal: AbortSignal.timeout(ms),
+      headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
+      body: JSON.stringify({ systemInstruction: { parts: [{ text: GABAI }] }, contents: [{ role: 'user', parts: [{ text }] }], generationConfig: gen })
+    });
+  } catch (e) { tripped.set(model, Date.now() + 5 * 60000); throw e; }               // נתקע – 5 דקות בלי הדגם הזה
+  if (!r.ok) {
+    if (r.status >= 500 || r.status === 429) tripped.set(model, Date.now() + 5 * 60000);
+    throw new Error(model + ' ' + r.status);
+  }
+  const j = await r.json();
+  const d = parseJson(j.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '');
+  if (!d) throw new Error(model + ' bad json');
+  return d;
+}
 async function askModel(env, user, shape) {
   const want = `\nהחזר JSON בלבד במבנה הזה (הערכים הם דוגמה):\n${JSON.stringify(shape)}`;
   if (env.GEMINI_KEYS) {
     const keys = String(env.GEMINI_KEYS).split(/[\s,]+/).filter(Boolean);
-    const models = (env.GEMINI_MODELS || 'gemini-3.8-flash,gemini-3.5-flash,gemini-3.7-flash').split(',').map(s => s.trim());
-    for (const key of keys) for (const model of models) {
-      let r;
-      try {
-        r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-          method: 'POST', signal: AbortSignal.timeout(30000),
-          headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: GABAI }] },
-            contents: [{ role: 'user', parts: [{ text: user + want }] }],
-            generationConfig: { temperature: 0.8, responseMimeType: 'application/json', thinkingConfig: { thinkingBudget: 0 } }
-          })
-        });
-      } catch (e) { continue; }
-      if (r.ok) {
-        const j = await r.json();
-        const d = parseJson(j.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '');
-        if (d) return d;
-      } else if (![404, 429, 500, 503].includes(r.status)) break;
+    // הסדר: מה שעונה היום מהר. 3.8 ו-3.7 עמוסים או חסומים, ולכן יצאו מהרשימה (24.11.2026)
+    const models = (env.GEMINI_MODELS || 'gemini-3.5-flash,gemini-3.5-flash-lite,gemini-flash-lite-latest').split(',').map(s => s.trim())
+      .filter(m => !((tripped.get(m) || 0) > Date.now()));                         // המפסק פתוח: מדלגים
+    let ki = Math.floor(Math.random() * keys.length);
+    const key = () => keys[ki++ % keys.length];
+    if (models.length) {
+      // מירוץ: הדגם הראשי מתחיל; לא ענה תוך 3 שניות (או נפל) – הדגמים הקלים מתחילים במקביל, והראשון שעונה מנצח
+      let done = false;
+      const first = geminiOne(models[0], key(), user + want, 12000);
+      first.then(() => { done = true; }, () => {});
+      const rest = (async () => {
+        await Promise.race([new Promise(r => setTimeout(r, 3000)), first.catch(() => {})]);
+        for (const m of models.slice(1)) {
+          if (done) break;
+          try { return await geminiOne(m, key(), user + want, 8000); } catch (e) { /* הבא */ }
+        }
+        throw new Error('all');
+      })();
+      const gem = Promise.any([first, rest]);
+      gem.then(() => { done = true; }, () => {});
+      if (!env.AI) { try { return await gem; } catch (e) { /* fallthrough */ } }
+      else {
+        // hedge: after 6s with no Gemini answer the Workers AI backup starts too; first good answer wins
+        let t;
+        const cf = (async () => {
+          await Promise.race([new Promise(r => { t = setTimeout(r, 6000); }), gem.catch(() => {})]);
+          clearTimeout(t);
+          if (done) return gem;
+          const d = parseJson(cfText(await env.AI.run(CF_MODEL, { instructions: GABAI, input: user + want, reasoning: { effort: 'low' } })));
+          if (!d) throw new Error('ai_bad');
+          return d;
+        })();
+        try { return await Promise.any([gem, cf]); } catch (e) { /* all failed: one more backup try below */ }
+      }
     }
   }
   if (!env.AI) bad('ai_off', 503);
