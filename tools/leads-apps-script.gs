@@ -45,6 +45,7 @@ function doPost(e) {
     // הצעה לשיפור כלי ("כלים: שיפור ·"): מותר גם בלי שם ובלי פרטי קשר
     var shipur = /^כלים: שיפור/.test(clean(p['מקור']));
     if (shipur && !name) name = 'אנונימי';
+    if (!name && isGift_(clean(p['מקור']))) name = 'ללא שם';   // דפי מתנה: רק המייל חובה
     if (!name || !(phone || email || shipur)) return txt('missing');
     if (shipur && !(phone || email)) { if (tooMany('anon-shipur', 20)) return txt('ok'); }  // עד 20 הצעות אנונימיות ב-6 שעות
     else if (tooMany(email || phone)) return txt('ok');   // אותו אדם שולח שוב ושוב – לא כותבים ולא שולחים
@@ -502,7 +503,7 @@ var GIFT_HEAD = {
 function sendGiftEmail(name, email, token, consent, slug) {
   var m = MATANA[slug], h = GIFT_HEAD[slug];
   if (!m || !h) { log('מתנה: דף לא מוכר ' + slug); return; }
-  var inner = 'שלום ' + firstName(name) + ',<br><br>תודה שביקשתם. ' + h[1] + '<br><br>';
+  var inner = gHello(name) + ',<br><br>תודה שביקשתם. ' + h[1] + '<br><br>';
   if (slug === 'claude') {
     CLAUDE_PROMPTS.forEach(function (g) {
       inner += '<b>' + g[0] + '</b><br>' + g[1].map(function (t) { return '<div style="background:#f6f2e7;border-radius:8px;padding:8px 12px;margin:6px 0;font-size:15px">' + esc(t) + '</div>'; }).join('') + '<br>';
@@ -587,7 +588,7 @@ function giftSeries_(dryRun) {
     if (!MATANA[slug]) continue;
     if (!dryRun && MailApp.getRemainingDailyQuota() < 15) break;              // משאירים מקום למיילים החדשים
     seen[em] = 1;
-    var m = giftMail(slug, nxt[0]), html = wrapGift(m[1].replace(/\{שם\}/g, firstName(r[C['שם']])), unsubLink(r[C['טוקן']]), slug);
+    var m = giftMail(slug, nxt[0]), html = wrapGift(m[1].replace(/שלום \{שם\}/g, gHello(r[C['שם']])), unsubLink(r[C['טוקן']]), slug);
     if (dryRun) { sent.push((i + 1) + ':' + slug + ':' + nxt[0]); continue; }
     try {
       giftSend(r[C['מייל']], m[0], html);
@@ -668,6 +669,8 @@ function sheetSafe(v) { return typeof v === 'string' && /^[=+\-@]/.test(v) ? "'"
 // שם שנכנס ל-HTML של מייל: בלי תגיות וקישורים שמישהו הקליד בטופס
 function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 function firstName(name) { return esc(String(name).split(' ')[0]); }
+// ברכה: בלי שם (דפי מתנה) – "שלום" בלבד
+function gHello(name) { return !name || name === 'ללא שם' ? 'שלום' : 'שלום ' + firstName(name); }
 // הגבלת קצב: עד 2 שליחות לאותו מייל/טלפון ב-6 שעות (המקסימום של CacheService)
 function tooMany(who, max) {
   var key = 'rl:' + String(who).toLowerCase().slice(0, 100), cache = CacheService.getScriptCache();
