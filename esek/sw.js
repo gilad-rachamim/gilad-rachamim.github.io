@@ -1,7 +1,7 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'esek-202611240542';
+var CACHE = 'esek-202611240555';
 var PRECACHE = ["/esek/hazmana-vatsap/", "/esek/", "/esek/misadot/", "/esek/mivtza/", "/esek/ptiha/", "/esek/qr/", "/esek/seo/", "/esek/tafrit/", "/esek/tfutsa/", "/esek/tmchur-mana/", "/assets/site.css?v=cb1a2bbb", "/assets/kelim.css?v=12d2d2b8", "/assets/kelim.js?v=5c474669", "/assets/hakraa-daf.js?v=5b6fd0b2", "/assets/track.js?v=ca51c9e7", "/assets/discover.js?v=5d955931", "/assets/discover2.js?v=4d12b0c9", "/assets/helper.js?v=0c83cb0e", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-esek-192.png", "/assets/esek.css?v=063395ce"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
