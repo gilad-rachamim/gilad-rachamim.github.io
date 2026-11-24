@@ -1,0 +1,80 @@
+# החדשות ב-3 דקות: קובץ שמע (MP3) וסרטון (MP4) לכל מהדורה (גילעד אישר 24.11.2026).
+# רץ 12 דקות אחרי כל מהדורה (07/13/20 שעון ישראל, קיץ וחורף), מפיק mp3+mp4 בקול החינמי,
+# מעלה ל-Release בשם media (שומר 30 יום), ושולח לשרת: טלגרם (שמע ואחריו סרטון) והודעת קישורים לווטסאפ.
+# בשבת ובחג השרת מסרב. אם אין מהדורה טרייה (עד 3 שעות) או שהיא כבר הועלתה – מדלג.
+name: news-media
+on:
+  schedule:
+    - cron: "12 4,5,10,11,17,18 * * *"
+  workflow_dispatch:
+    inputs:
+      edition:
+        description: "שם המהדורה (בוקר / צהריים / ערב) – ריק = האחרונה"
+        default: ""
+      send:
+        description: "לשלוח לערוצים (yes/no)"
+        default: "yes"
+permissions:
+  contents: write
+concurrency: { group: news-media, cancel-in-progress: false }
+jobs:
+  media:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with: { sparse-checkout: tools }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: install
+        run: |
+          pip install -q edge-tts playwright
+          python -m playwright install --with-deps chromium > /dev/null
+          sudo apt-get install -y -qq ffmpeg fonts-noto-core > /dev/null
+      - name: render
+        id: r
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          set +e
+          ED="${{ github.event.inputs.edition }}"
+          if [ -n "$ED" ]; then ARGS="--edition $ED"; else ARGS="--fresh"; fi
+          python tools/news_media.py full out $ARGS --release media
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+      - name: release
+        if: steps.r.outputs.code == '0'
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          ID=$(cat out/id.txt)
+          gh release view media >/dev/null 2>&1 || gh release create media --title "קבצי שמע וסרטון של החדשות ב-3 דקות" \
+            --notes "נוצר אוטומטית. הקבצים האחרונים: latest.mp3 ו-latest.mp4. נשמרים 30 יום."
+          cp out/edition.mp3 "out/$ID.mp3"; cp out/edition.mp4 "out/$ID.mp4"
+          cp out/edition.mp3 out/latest.mp3; cp out/edition.mp4 out/latest.mp4
+          gh release upload media "out/$ID.mp3" "out/$ID.mp4" out/latest.mp3 out/latest.mp4 --clobber
+          # מחיקת קבצים ישנים (מעל 30 יום), לא נוגעים ב-latest
+          CUT=$(date -u -d '30 days ago' +%Y-%m-%d)
+          for n in $(gh release view media --json assets -q '.assets[].name'); do
+            case "$n" in latest.*) continue;; esac
+            D=${n:0:10}; [[ "$D" < "$CUT" ]] && gh release delete-asset media "$n" -y
+          done
+          echo "id=$ID" >> "$GITHUB_ENV"
+      - name: send
+        if: steps.r.outputs.code == '0' && github.event.inputs.send != 'no'
+        env: { KEY: "${{ secrets.KELIM_NEWS_KEY }}" }
+        run: |
+          B=https://kelim-news.gilad4049.workers.dev
+          TITLE=$(python -c "import urllib.parse,sys;print(urllib.parse.quote(open('out/edition.txt',encoding='utf-8').read().split(chr(10))[0]))")
+          SHARE="https://hakelim.com/kelim/machshev/chadashot/"
+          CAP=$(python - <<'PY'
+          import urllib.parse
+          t=open('out/edition.txt',encoding='utf-8').read().split('\n')[0]
+          print(urllib.parse.quote(t+"\n\n📤 לשיתוף – מעבירים את ההודעה הזאת הלאה, או את הקישור: https://hakelim.com/kelim/machshev/chadashot/?utm_source=tg-media\n💛 מיזם חסד, בחינם"))
+          PY
+          )
+          A=$(curl -sS -m 300 -X POST --data-binary @out/edition.mp3 -H "content-type: audio/mpeg" "$B/media?key=$KEY&kind=audio&title=$TITLE&text=$CAP"); echo "$A"
+          V=$(curl -sS -m 300 -X POST --data-binary @out/edition.mp4 -H "content-type: video/mp4" "$B/media?key=$KEY&kind=video&title=$TITLE&text=$CAP"); echo "$V"
+          if echo "$A$V" | grep -q 'שבת'; then exit 0; fi
+          N="🎧 להאזנה (קובץ קל): $B/media/latest.mp3
+          🎬 לצפייה: $B/media/latest.mp4
+          📤 לשיתוף – מעבירים הלאה את ההודעה הזאת. כל הנקודות: https://hakelim.com/kelim/machshev/chadashot/?utm_source=wa-media"
+          curl -sS -m 60 -X POST -H "content-type: application/json" --data "$(python -c "import json,sys;print(json.dumps({'text':sys.argv[1]},ensure_ascii=False))" "$N")" "$B/media-note?key=$KEY"
+          echo "$A" | grep -q '"ok":true'

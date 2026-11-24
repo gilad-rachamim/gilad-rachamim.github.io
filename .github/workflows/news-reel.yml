@@ -17,12 +17,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with: { sparse-checkout: tools/news-reel }
+        with: { sparse-checkout: tools }
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - name: install
         run: |
-          pip install -q playwright
+          pip install -q edge-tts playwright
           python -m playwright install --with-deps chromium > /dev/null
           sudo apt-get install -y -qq ffmpeg fonts-noto-core > /dev/null
       - name: render
