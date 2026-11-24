@@ -171,8 +171,13 @@ async function status(env) {
   });
 }
 
+// סודות שנשמרו דרך PowerShell עלולים להתחיל בתו נסתר (BOM) או להסתיים בירידת שורה: מנקים לפני כל שימוש.
+const clean = (v) => (v == null ? v : String(v).replace(/^﻿/, '').trim());
+
 export default {
-  async fetch(req, env) {
+  async fetch(req, rawEnv) {
+    const env = { ...rawEnv };
+    for (const k of ['ALUFFIM_API_KEY', 'ALUFFIM_BUSINESS_ID', 'PAYHIP_API_KEY', 'ADMIN_KEY']) env[k] = clean(rawEnv[k]);
     const url = new URL(req.url);
     if (req.method === 'GET' && url.pathname === '/') return json({ ok: true, name: 'kelim-kabalot-auto' });
     if (req.method === 'GET' && url.pathname === '/matzav') {
