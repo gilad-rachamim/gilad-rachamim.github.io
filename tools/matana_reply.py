@@ -34,6 +34,18 @@ def norm(s):
     return re.sub(r'\s+', ' ', s).strip()
 
 
+CODE_RE = re.compile(r'\(\s*קוד\s*:\s*([A-Za-z0-9_-]+)\s*\)')
+
+
+def split_code(text):
+    """מוציא את "(קוד: קמפיין-מודעה)" מסוף ההודעה. מחזיר (טקסט בלי הקוד, קוד או '')."""
+    t = norm(text)
+    m = CODE_RE.search(t)
+    if not m:
+        return t, ''
+    return norm(t[:m.start()] + ' ' + t[m.end():]), m.group(1)
+
+
 def load():
     with open(DATA, encoding='utf-8') as f:
         return json.load(f)['pages']
@@ -106,10 +118,12 @@ def match(text, pages):
     return best
 
 
-def show(p, stage, extra, name):
+def show(p, stage, extra, name, code=''):
     reply, nxt, ladder = reply_for(p, stage, extra, name)
     print(f"דף: /matana/{p['slug']}/  ({p.get('label')})")
     print(f"קמפיין: {CAMPAIGN.get(p['slug'], 'לא ידוע')}  |  שלב: {'לחץ מדף התודה (כבר קיבל מייל)' if stage == 'thanks' else 'לחיצה ראשונה בדף'}")
+    if code:
+        print(f'קוד מודעה: {code}')
     if extra:
         print(f'מה שהוסיף להודעה: {extra}')
     print('--- תשובה מוצעת ---')
@@ -138,12 +152,28 @@ def main():
     if not args:
         print(__doc__ or 'שימוש: matana_reply.py "<ההודעה>"')
         sys.exit(2)
-    m = match(' '.join(args), pages)
+    as_json = '--json' in args
+    if as_json:
+        args.remove('--json')
+    clean, code = split_code(' '.join(args))
+    m = match(clean, pages)
+    if as_json:
+        # לסורק האוטומטי (tools/matana_scan.py): שורה אחת בפורמט הגיליון
+        if not m:
+            print(json.dumps({'matched': False}, ensure_ascii=False))
+            sys.exit(1)
+        _, p, stage, extra = m
+        reply, nxt, ladder = reply_for(p, stage, extra, name)
+        print(json.dumps({'matched': True, 'slug': p['slug'], 'page': f"/matana/{p['slug']}/", 'label': p.get('label'),
+                          'campaign': CAMPAIGN.get(p['slug'], ''), 'code': code, 'stage': stage, 'extra': extra,
+                          'want': what_they_want(p), 'reply': reply, 'next': nxt,
+                          'ladder': ' | '.join(f'{a} {b} {c}' for a, b, c in ladder)}, ensure_ascii=False))
+        return
     if not m:
         print('לא זוהה: ההודעה לא מתחילה באף נוסח מוכן מדפי /matana/. כנראה לא הגיע מהממומן או שנערך – לבדוק ידנית.')
         sys.exit(1)
     _, p, stage, extra = m
-    show(p, stage, extra, name)
+    show(p, stage, extra, name, code)
 
 
 if __name__ == '__main__':
