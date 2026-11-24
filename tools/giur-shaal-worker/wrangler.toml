@@ -1,0 +1,20 @@
+# שאלה שלא מצאתי בשו"ת לגרים (/kodesh/giur/shut/#shaal). Cloudflare Worker + Durable Object אחד (SQLite, חינמי).
+# הפריסה רק אחרי "כן" של גילעד: cd tools/giur-shaal-worker && npx wrangler deploy
+# מפתח הקריאה של גילעד:         npx wrangler secret put ADMIN_KEY   (עותק ב-~/.claude/secrets/giur-shaal-admin.txt)
+# בדיקה מקומית:                  npx wrangler dev --local --port 8797   (ADMIN_KEY מ-.dev.vars)
+# השרת רק אוסף. הוא לא שולח מייל או הודעה לאף אחד, ולא מעביר את השאלות הלאה.
+name = "giur-shaal"
+main = "giur-shaal.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[[durable_objects.bindings]]
+name = "ASK"
+class_name = "Questions"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Questions"]
+
+[vars]
+EXTRA_ORIGINS = ""

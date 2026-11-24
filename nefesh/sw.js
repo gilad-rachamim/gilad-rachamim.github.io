@@ -1,8 +1,8 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'nefesh-202611242331';
-var PRECACHE = ["/nefesh/hayom/", "/nefesh/", "/nefesh/koach/", "/nefesh/michtav/", "/nefesh/mishpacha/", "/nefesh/rega/", "/nefesh/tmicha/", "/nefesh/yoman/", "/assets/site.css?v=cb1a2bbb", "/assets/kelim.css?v=12d2d2b8", "/assets/kelim.js?v=5c474669", "/assets/hakraa-daf.js?v=5b6fd0b2", "/assets/track.js?v=ca51c9e7", "/assets/discover.js?v=5d955931", "/assets/discover2.js?v=94f636be", "/assets/helper.js?v=3463f775", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-nefesh-192.png", "/assets/nefesh.css?v=21cf25b4", "/assets/nefesh.js?v=bb3ac2d0"];
+var CACHE = 'nefesh-202611242337';
+var PRECACHE = ["/nefesh/hayom/", "/nefesh/", "/nefesh/koach/", "/nefesh/michtav/", "/nefesh/mishpacha/", "/nefesh/rega/", "/nefesh/tmicha/", "/nefesh/yoman/", "/assets/site.css?v=cb1a2bbb", "/assets/kelim.css?v=12d2d2b8", "/assets/kelim.js?v=5c474669", "/assets/hakraa-daf.js?v=5b6fd0b2", "/assets/track.js?v=ca51c9e7", "/assets/discover.js?v=5d955931", "/assets/discover2.js?v=f6782d1a", "/assets/helper.js?v=a244edaf", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-nefesh-192.png", "/assets/nefesh.css?v=21cf25b4", "/assets/nefesh.js?v=bb3ac2d0"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
 });

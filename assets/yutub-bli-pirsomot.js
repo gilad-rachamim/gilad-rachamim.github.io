@@ -42,6 +42,8 @@
       .then(function () {
         ev('yt_mail_sent', {});
         f.outerHTML = '<div class="done" role="status">תודה, ' + name.replace(/[&<>"']/g, '') + '. ההוראות בדרך למייל. אם לא הגיעו תוך כמה דקות, בדקו בספאם.</div>';
+        try { sessionStorage.setItem('yt_lead', '1'); } catch (e) {}
+        setTimeout(function () { location.href = '/kelim/yutub-bli-pirsomot/toda/'; }, 900);
       });
   });
 })();
