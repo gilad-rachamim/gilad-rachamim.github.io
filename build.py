@@ -817,7 +817,8 @@ def madrich_block(meta, url):
     e = html_lib.escape
     vid, title, name, dur = m["youtube"], m["title"], m["name"], m["duration"]
     watch = f"https://www.youtube.com/watch?v={vid}"
-    share = f"{url}?utm_source=share&utm_medium=madrich#madrich"
+    slug = tool.replace("_", "-")  # קישור קצר מ-tools/go_short.py; בלי דף קצר - הקישור המלא
+    share = f"{BASE}/go/v/{slug}/" if (ROOT / "go" / "v" / slug / "index.html").exists() else f"{url}?utm_source=share&utm_medium=madrich#madrich"
     wa = "https://wa.me/?text=" + urllib.parse.quote(f"מדריך וידאו קצר: {name} 👇\n{share}")
     chips = "".join(f'<li><a href="{watch}&amp;t={s}s" target="_blank" rel="noopener" data-mdr-sec="{s}"><b>{mdr_time(s)}</b> {e(n)}</a></li>' for s, n in m["chapters"])
     steps = "".join(f'<li><b>{e(t)}</b><span>{e(x)}</span></li>' for t, x in m["steps"])

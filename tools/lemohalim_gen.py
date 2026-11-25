@@ -77,7 +77,7 @@ CREDIT = "הכלי של גילעד רחמים, מוהל, קולגה שלי וח�
 
 
 def tool_url(path, key):
-    return f"{BASE}{path}?utm_source=mohel_share&utm_medium=whatsapp&utm_campaign={key}"
+    return f"{BASE}/go/m/{key}/"  # דפי הקישור: tools/go_short.py
 
 
 def send_href(text):
