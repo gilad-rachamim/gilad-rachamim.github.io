@@ -159,7 +159,8 @@ function doGet(e) {
 // ---------- נוסחים (אושרו ע"י גילעד 2.11.2026) ----------
 // כל מייל: HTML קצר, בלי תמונות. {שם} מוחלף בשם הפרטי. קישורים עם utm_source=email.
 function link(path, label, code) {
-  var url = /^https?:/.test(path) ? path : CFG.SITE + path + (path.indexOf('?') > -1 ? '&' : '?') + 'utm_source=email&utm_medium=nurture&utm_campaign=' + code;
+  var h = path.split('#'); // התגיות לפני ה-# (אחרת הן נבלעות בעוגן)
+  var url = /^https?:/.test(path) ? path : CFG.SITE + h[0] + (h[0].indexOf('?') > -1 ? '&' : '?') + 'utm_source=email&utm_medium=nurture&utm_campaign=' + code + (h[1] ? '#' + h[1] : '');
   return '<a href="' + url + '" style="color:#1a5fb4;font-weight:bold">' + label + '</a>';
 }
 function gl(path, label) { return link(CFG.SITE + path + '?utm_source=madrich&utm_medium=email&utm_campaign=madrich-links', label); }
@@ -210,12 +211,27 @@ var SUBJECTS = {
 function REVIEW_URL() { return PropertiesService.getScriptProperties().getProperty('REVIEW_URL') || ''; }
 
 function wrapHtml(inner, unsubUrl) {
-  return '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:16px;line-height:1.65;color:#222;max-width:560px">' + inner +
+  return '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:16px;line-height:1.65;color:#222;max-width:560px">' + shorten(inner) +
     '<div style="margin-top:16px;padding-top:10px;border-top:1px solid #eee;font-size:13px;color:#666">' + SIG + '</div>' +
     (unsubUrl ? '<div style="margin-top:10px;font-size:12px;color:#999">קיבלתם את המייל כי ביקשתם את המדריך באתר וסימנתם שתרצו טיפים. לא רוצים יותר? <a href="' + unsubUrl + '" style="color:#999">להסרה בלחיצה אחת</a> – ואני עדיין כאן לכל שאלה.</div>' : '') +
     '</div>';
 }
+// קישורים קצרים: כל קישור מוכר (באתר או ב-Payhip) -> hakelim.com/go/e/<שם>/?c=<קוד>. הטבלה נכתבת ע"י tools/go_short.py
+var GOE = {"/mohel/":"mohel","/mohel/#shira":"shira","/mohel/madrich/":"madrich","/mohel/madrich/hamadrich-lekrat-huledet-haben.pdf":"pdf","/mohel/kartis/gilad-rachamim-mohel.vcf":"kartis","/mohel/moed/":"moed","/mohel/checklist/":"checklist","/mohel/hazmana/":"hazmana","/mohel/hazmana/?k=zeved":"zeved","/mohel/hazmana/?k=pidyon":"hazmana-pidyon","/mohel/shirim/":"shirim","/mohel/hachana/yom/":"yom","/mohel/hachana/achrei/":"achrei","/mohel/hachana/pidyon/":"pidyon","/kelim/":"kelim","/kelim/eruim/ishurim/":"ishurim","/kelim/shemot/banim/":"shemot","/kelim/yutub-bli-pirsomot/":"yutub","/kelim/chalufot-chinam/":"chalufot","/kelim/tamlul/":"tamlul","/claude-kvutza/":"kvutza","/kelim/claude/kurs/":"kurs-claude","/kelim/claude/shutafim/":"shutafim","/matana/kelim/asara/":"asara","/kelim/mismachim-leroe-cheshbon/":"mismachim","/assets/mismachim-leroe-cheshbon.pdf":"mismachim-pdf","/kelim/mah-magia-leoved-sheputar/":"sheputar","/assets/mah-magia-leoved-sheputar.pdf":"sheputar-pdf","/assets/mohel-mapat-derech.pdf":"mapa","/kesef/hechzer/":"hechzer","/kelim/cheshbon/mikdamot/":"mikdamot","/kesef/bruto-neto/":"neto","/kesef/zchuyot-pitorin/":"zchuyot","/kesef/pitzuyim-pitorin/":"pitzuyim","/kesef/pitzuyim-shaati/":"shaati","/kesef/hodaa-mukdemet/":"hodaa","/kesef/pidyon-chufsha/":"chufsha","/kesef/dmey-havraa/":"havraa","/kesef/shaot-nosafot/":"shaot","/kesef/tlush/":"tlush","/esek/tafrit/":"tafrit","/esek/qr/":"qr","/esek/tmchur-mana/":"tmchur","/esek/mivtza/":"mivtza","/esek/hazmana-vatsap/":"vatsap","/kelim/tochen/":"tochen","/kelim/tochen/tirgum/":"tirgum","/kelim/tochen/hakraa/":"hakraa","/kelim/tochen/chaye/":"chaye","/kelim/tochen/mail/":"nisuach","/kelim/machshev/chatima/":"chatima","/kelim/machshev/fax/":"fax","/kelim/machshev/sader/":"sader","/kelim/briut/tizkorot/":"tizkorot","/kodesh/mohalim/":"mohalim","/kodesh/kartis-mohel/":"kartis-mohel","/matana/roe/shidrug/":"shidrug-roe","/matana/orchei-din/shidrug/":"shidrug-din","/matana/esek/shidrug/":"shidrug-esek","/matana/kelim/shidrug/":"shidrug-kelim","/matana/claude/shidrug/":"shidrug-claude","/matana/mohel-kurs/shidrug/":"shidrug-mohel","https://payhip.com/b/M5xC6":"p-m5xc6","https://payhip.com/b/8utXB":"p-8utxb","https://payhip.com/b/bPiCF":"p-bpicf","https://payhip.com/b/kNyeO":"p-knyeo","https://payhip.com/b/jaDfg":"p-jadfg","https://payhip.com/b/2sQ9Y":"p-2sq9y","https://payhip.com/b/uYQyE":"p-uyqye","https://payhip.com/b/08VGv":"p-08vgv","https://payhip.com/b/DI9mU":"p-di9mu"};
+function shortUrl(url) {
+  var u = url.replace(/&amp;/g, '&'), hash = '', i = u.indexOf('#');
+  if (i > -1) { hash = u.slice(i); u = u.slice(0, i); }
+  var q = u.split('?'), keep = [], utm = {};
+  (q[1] ? q[1].split('&') : []).forEach(function (p) { var m = p.match(/^utm_(\w+)=(.*)$/); if (m) utm[m[1]] = m[2]; else keep.push(p); });
+  var key = q[0].replace(CFG.SITE, '') + (keep.length ? '?' + keep.join('&') : '') + hash;
+  if (!GOE.hasOwnProperty(key)) return url; // יעד שלא בטבלה נשאר כמו שהוא
+  var c = utm.source === 'madrich' ? 'm' : utm.source === 'youtube-guide' ? 'y' : utm.campaign ? utm.campaign + (utm.content ? '.' + utm.content : '') : '';
+  return CFG.SITE + '/go/e/' + GOE[key] + '/' + (c ? '?c=' + c : '');
+}
+function shorten(html) { return html.replace(/href="(https:\/\/(?:hakelim|payhip)\.com[^"]*)"/g, function (m, u) { return 'href="' + shortUrl(u) + '"'; }); }
 function toText(html) {
+  // בטקסט הפשוט הקישור גלוי: ווטסאפ בלי ההודעה המוכנה הארוכה (בכפתור היא נשארת)
+  html = html.replace(/(href="https:\/\/wa\.me\/\d+)\?text=[^"]*"/g, '$1"');
   return html.replace(/<br\s*\/?>/g, '\n').replace(/<a [^>]*href="([^"]+)"[^>]*>([^<]+)<\/a>/g, '$2: $1').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ');
 }
 
@@ -248,7 +264,7 @@ function sendHazmanaEmail(name, email) {
     '• <b>יום הברית</b> – מה קורה ביום עצמו ואיך מכינים את התינוק: ' + link('/mohel/hachana/yom/', 'יום הברית', 'H0') + '<br>' +
     '• <b>שירים לברית</b> – חמישה פלייליסטים לפי המנהג: ' + link('/mohel/shirim/', 'לבחירת הפלייליסט', 'H0') + '<br>' +
     '• <b>אחרי הברית</b> – הטיפול בימים הראשונים, צעד אחר צעד: ' + link('/mohel/hachana/achrei/', 'הטיפול אחרי הברית', 'H0') + '<br>' +
-    '• <b>המדריך המלא להורים</b> – 16 עמודים, כולל כיבודים ופדיון הבן: ' + link(CFG.PDF_URL, 'להורדה (PDF)') + '<br><br>' +
+    '• <b>המדריך המלא להורים</b> – 17 עמודים, כולל כיבודים ופדיון הבן: ' + link(CFG.PDF_URL, 'להורדה (PDF)') + '<br><br>' +
     'ואם עוד לא סגרתם מוהל, או שיש לכם שאלה – אני כאן ב' + link('https://wa.me/' + CFG.WA_INTL + '?text=' + encodeURIComponent('שלום גילעד, הכנתי באתר הזמנה לברית. '), 'ווטסאפ') + ', או פשוט ענו למייל הזה.<br><br>' +
     'שתזכו לגדל אותו לתורה, לחופה ולמעשים טובים,<br>גילעד';
   var html = wrapHtml(inner, '');
@@ -527,7 +543,7 @@ function sendYoutubeEmail(name, email) {
     'עוד בחינם: ' + ytLink_('/kelim/chalufot-chinam/', 'חלופות חינמיות למנויים בתשלום') + ' · ' + ytLink_('/kelim/tamlul/', 'תמלול בעברית') + ' · ' + ytLink_('/kelim/', 'כל הכלים') + '<br><br>' +
     '<b>נ.ב.</b> את הדף הזה ואת כל האתר בניתי עם Claude, בלי להיות מתכנת במקצועי. מי שרוצה ללמוד איך: ' + ytLink_('/claude-kvutza/', 'קבוצת ליווי ב-18 ₪') + ' או ' + ytLink_('/kelim/claude/kurs/', 'הקורס המלא') + '. ומי שרוצה להפיץ ולקבל חצי מכל מכירה: ' + ytLink_('/kelim/claude/shutafim/', 'תוכנית השותפים') + '.<br><br>' +
     'שיהיה לכם בהצלחה,<br>גילעד';
-  var html = '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:16px;line-height:1.65;color:#222;max-width:560px">' + inner +
+  var html = '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:16px;line-height:1.65;color:#222;max-width:560px">' + shorten(inner) +
     '<div style="margin-top:16px;padding-top:10px;border-top:1px solid #eee;font-size:13px;color:#666">גילעד רחמים אביעד · הכלים של גילעד רחמים · ' + CHESED + '<br>hakelim.com/kelim</div></div>';
   MailApp.sendEmail({ to: email, subject: 'ההוראות: יוטיוב בלי פרסומות, גם ברקע ועם מסך כבוי', htmlBody: html, body: toText(html), name: CFG.OWNER_NAME, replyTo: CFG.OWNER_EMAIL });
 }
@@ -540,7 +556,7 @@ function gBtn(url, label, green) {
 }
 function gWa(slug, text, label) { return gBtn('https://wa.me/' + CFG.WA_INTL + '?text=' + encodeURIComponent(text), label || 'שאלה? כתבו לי בווטסאפ', true); }
 function wrapGift(inner, unsub, slug, pre) {
-  return (pre ? '<div style="display:none;max-height:0;overflow:hidden;opacity:0">' + pre + '</div>' : '') + '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:16px;line-height:1.65;color:#222;max-width:560px">' + inner +
+  return (pre ? '<div style="display:none;max-height:0;overflow:hidden;opacity:0">' + pre + '</div>' : '') + '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:16px;line-height:1.65;color:#222;max-width:560px">' + shorten(inner) +
     '<div style="margin-top:16px;padding-top:10px;border-top:1px solid #eee;font-size:13px;color:#666">גילעד רחמים אביעד · הכלים של גילעד רחמים · ' + CHESED + '<br><a href="https://wa.me/' + CFG.WA_INTL + '">058-404-9049 (ווטסאפ)</a> · hakelim.com</div>' +
     (unsub ? '<div style="margin-top:10px;font-size:12px;color:#999">קיבלתם את המייל כי ביקשתם מתנה באתר וסימנתם שתרצו טיפים וכלים. לא רוצים יותר? <a href="' + unsub + '" style="color:#999">להסרה בלחיצה אחת</a>.</div>' : '') +
     '</div>';
