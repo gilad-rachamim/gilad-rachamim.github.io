@@ -43,6 +43,8 @@
   }
   var h1 = $('h1[data-h]');
   if (h1) { try { var m = JSON.parse(h1.getAttribute('data-h')), c = q.get('utm_content'); if (c && m[c]) h1.textContent = m[c]; } catch (e) {} }
+  var sb = $('.mt-sub[data-h]');
+  if (sb) { try { var ms = JSON.parse(sb.getAttribute('data-h')), cs = q.get('utm_content'); if (cs && ms[cs]) sb.textContent = ms[cs]; } catch (e) {} }
   // קוד מקור בנוסח הווטסאפ (25.11.2026): "(קוד: קמפיין-מודעה)" בשורה אחרונה משלו, אחרי שורות המילוי, מה-utm, כדי שנדע מאיזו מודעה הגיע הליד. נקרא ב-tools/matana_reply.py
   (function () {
     var cl = function (v) { return (v || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 16); };
