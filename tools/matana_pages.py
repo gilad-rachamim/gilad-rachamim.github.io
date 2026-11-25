@@ -17,6 +17,13 @@ def wa(text):
     return WA + quote(text)
 
 
+def wa_gift(p, key):
+    # 25.11.2026: נוסח מתנה = שורת הבקשה + שורות למילוי (wa_form), כדי שהליד ישלח את כל הפרטים כבר בהודעה הראשונה.
+    # assets/matana.js מוסיף אחר כך "(קוד: ...)" בשורה אחרונה משלו.
+    form = p.get('wa_form') or []
+    return wa('\n'.join([p[key].rstrip()] + form) if form else p[key])
+
+
 def meta(title, desc):
     m = {"title": title, "description": desc, "noindex": True, "bare": True, "no_cta": True, "foot": FOOT}
     return "<!--meta " + json.dumps(m, ensure_ascii=False) + " -->\n"
@@ -74,7 +81,7 @@ def landing(p):
 <label class="chk"><input type="checkbox" name="מאשר/ת קבלת עדכונים" value="כן"><span>{esc(C['consent'])}</span></label>
 </form>
 <p class="mt-or">או</p>
-<a class="mt-btn mt-green" data-wa="main" href="{wa(p['wa_text'])}" rel="noopener">{esc(p['wa_label'])}</a>
+<a class="mt-btn mt-green" data-wa="main" href="{wa_gift(p, 'wa_text')}" rel="noopener">{esc(p['wa_label'])}</a>
 <p class="mt-wa-note">הבונוס האישי הזה מגיע רק למי שכותב לי בווטסאפ.</p>
 <div class="gift" aria-hidden="true">
 <span class="mt-badge">{esc(p['badge'])}</span>
@@ -86,7 +93,7 @@ def landing(p):
 {vid}{trust(mode="free")}
 <p class="mt-trust">{esc(C['chesed'])}</p>
 <p class="mt-priv">הפרטים נשמרים אצלי בלבד ולא מועברים לאף אחד. המתנה נשלחת גם בלי לסמן את התיבה. <a href="/kelim/pratiut/">פרטיות</a>.{note}</p>
-<div class="mt-dock"><a class="mt-btn mt-gold" href="#form">למייל</a><a class="mt-btn mt-green" data-wa="dock" href="{wa(p['wa_text'])}" rel="noopener">{esc(p['dock_wa'])}</a></div>
+<div class="mt-dock"><a class="mt-btn mt-gold" href="#form">למייל</a><a class="mt-btn mt-green" data-wa="dock" href="{wa_gift(p, 'wa_text')}" rel="noopener">{esc(p['dock_wa'])}</a></div>
 """
 
 
@@ -288,7 +295,7 @@ def thanks(p):
     return meta("תודה! המתנות בדרך אליכם", "המתנות נשלחו למייל שלכם.") + f"""<p class="mt-ok" aria-hidden="true">🎁</p>
 <h1 class="mt-center">המתנות בדרך למייל שלכם</h1>
 <p class="mt-center">זה יגיע תוך דקות. אם לא רואים, כדאי להסתכל גם בספאם ובלשונית "קידומי מכירות".</p>
-<a class="mt-btn mt-green" data-wa="thanks" href="{wa(p['wa_thanks'])}" rel="noopener">בונוס בווטסאפ: {esc(p['wa_bonus'])}</a>
+<a class="mt-btn mt-green" data-wa="thanks" href="{wa_gift(p, 'wa_thanks')}" rel="noopener">בונוס בווטסאפ: {esc(p['wa_bonus'])}</a>
 {(next_link(s) + chr(10) + cheap(p)) if s == "mohel-kurs" else (cheap(p) + chr(10) + next_link(s))}
 <p class="mt-trust">{esc(C['chesed'])}</p>
 <p class="mt-priv"><a href="/kelim/pratiut/">פרטיות</a></p>
@@ -306,7 +313,7 @@ def asara(p):
     return meta("10 הכלים הכי שימושיים באתר הכלים", "רשימת 10 כלים נבחרים, מסודרים לפי תחום.") + f"""<span class="mt-pill">🎁 המתנה שלכם</span>
 <h1>10 הכלים הכי שימושיים באתר</h1>
 <p class="mt-sub">כל הכלים בחינם, בעברית, בלי הרשמה. שמרו את הדף.</p>
-{out}<a class="mt-btn mt-green" data-wa="asara" href="{wa(p['wa_thanks'])}" rel="noopener">כלי אחד במיתוג אישי – בווטסאפ</a>
+{out}<a class="mt-btn mt-green" data-wa="asara" href="{wa_gift(p, 'wa_thanks')}" rel="noopener">כלי אחד במיתוג אישי – בווטסאפ</a>
 <p class="mt-trust">{esc(C['chesed'])}</p>
 """
 
