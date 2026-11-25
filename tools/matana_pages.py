@@ -92,11 +92,12 @@ def landing(p):
 <p class="mt-proof">{esc(PROOF)}</p>
 {vid}{trust(mode="free")}
 <p class="mt-trust">{esc(C['chesed'])}</p>
-<p class="mt-priv">הפרטים נשמרים אצלי בלבד ולא מועברים לאף אחד. המתנה נשלחת גם בלי לסמן את התיבה. <a href="/kelim/pratiut/">פרטיות</a>.{note}</p>
+<p class="mt-priv">הפרטים נשמרים אצלי בלבד ולא מועברים לאף אחד. המתנה נשלחת גם בלי לסמן את התיבה. <a href="/kelim/pratiut/">פרטיות</a>.{note}</p>{CLAUDE_TM if p['slug'] == 'claude' else ''}
 <div class="mt-dock"><a class="mt-btn mt-gold" href="#form">למייל</a><a class="mt-btn mt-green" data-wa="dock" href="{wa_gift(p, 'wa_text')}" rel="noopener">{esc(p['dock_wa'])}</a></div>
 """
 
 
+CLAUDE_TM = '\n<p class="mt-priv">האתר אינו קשור ל-Anthropic. Claude ו-Claude Code הם סימנים של Anthropic.</p>'
 PROOF = "מתוך מיזם הכלים: מאות כלים חינמיים בעברית, פתוחים לכולם."
 
 
