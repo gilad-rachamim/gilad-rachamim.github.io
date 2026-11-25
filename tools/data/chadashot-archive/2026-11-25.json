@@ -1,0 +1,365 @@
+{
+ "day": "2026-11-25",
+ "editions": [
+  {
+   "name": "בוקר",
+   "time": "07:00",
+   "at": "2026-11-25T05:00:51.150Z",
+   "mode": "summary",
+   "date": {
+    "he": "ט״ו כסלו תשפ״ז",
+    "day": "רביעי"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "נשיא ארצות הברית דונלד טראמפ הצהיר כי המימון למערכה באיראן מובטח עד סוף ינואר, והבהיר כי הפלת המשטר בטהרן אינה חלק מיעדיו.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1807769/"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/hyu0e1nymg"
+       },
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001564847"
+       }
+      ]
+     },
+     {
+      "text": "לפי דיווח ב״ניו יורק טיימס״, האקרים חדרו למערכות של ה-CIA וסוכנויות מודיעין אמריקניות נוספות באמצעות כלי בינה מלאכותית, וישנו חשד למעורבות סינית.",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1142428"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/r1qihhxkql"
+       },
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1807693/"
+       }
+      ]
+     },
+     {
+      "text": "בית משפט השלום קבע כי החדרים הפרטיים במתחם קבר רבי שמעון בר יוחאי במירון יועברו לידי הציבור בתוך 45 ימים.",
+      "sources": [
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383962972"
+       }
+      ]
+     },
+     {
+      "text": "ראש ממשלת הונגריה פטר מדיאר ביקר באוקראינה ונועד עם נשיאה, בביקור ראשון של ראש ממשלה הונגרי במדינה מאז שנת 2015.",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1142432"
+       }
+      ]
+     },
+     {
+      "text": "לפי דיווח בכלי תקשורת אוסטרלי, מלך בריטניה צ׳ארלס שוקל להעביר את כס המלוכה לבנו הנסיך ויליאם במהלך החודשים הקרובים בשל מצבו הבריאותי.",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1142433"
+       },
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/world-news/king-charles-health-abdication-reports"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "הוועדה המסדרת בכנסת אישרה פטור מחובת הנחה לשתי הצעות חוק מטעם ש״ס ויהדות התורה, המבקשות להקפיא את מעצר תלמידי הישיבות.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2771391/"
+       }
+      ]
+     },
+     {
+      "text": "במעמד ״קרן עולם התורה״ בלוס אנג׳לס בהשתתפות גדולי ישראל, נאספו מיליוני דולרים למען החזקת היכלי התורה והכוללים בארץ הקודש.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745545"
+       }
+      ]
+     },
+     {
+      "text": "מפגינים חרדים התאספו מול ביתו של קצין המשטרה הצבאית הראשי במחאה על מעצר תלמידי ישיבות, וחסמו לתנועה את כביש 4 בצומת בית עזרא.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/haredim-news/military-police-chief-home-protests"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745537"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "ברשתות השיווק מדווחים על מחסור במוצרי קוטג׳ על המדפים ברחבי הארץ, בעוד בחברת תנובה דוחים את הטענות ומסרו כי הגדילו את הייצור.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001564799"
+       }
+      ]
+     },
+     {
+      "text": "מערכת אלקטרונית לאכיפת צפירות ברכב שלא לצורך תחל לפעול בתל אביב, ותטיל על נהגים קנסות של 250 עד 1,000 שקלים.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001564737"
+       }
+      ]
+     }
+    ],
+    "good": []
+   }
+  },
+  {
+   "name": "צהריים",
+   "time": "13:00",
+   "at": "2026-11-25T11:00:51.152Z",
+   "mode": "summary",
+   "date": {
+    "he": "ט״ו כסלו תשפ״ז",
+    "day": "רביעי"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "שופטי משפט נתניהו המליצו ליועצת המשפטית לממשלה לשקול לוותר על תיק 4000 ולהגיע להסדר בתיק 1000, בשל סיכויים נמוכים להרשעה. היועצת המשפטית מסרה שתבחן את הדברים.",
+      "sources": [
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/law/article-1392141"
+       },
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1808379/"
+       },
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1142497"
+       }
+      ]
+     },
+     {
+      "text": "ראש מטה אגף כוח האדם בצה״ל הזהיר בוועדת החוץ והביטחון מפני שחיקת משרתי המילואים וקושי בשימור שדרת הפיקוד הלוחמת.",
+      "sources": [
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/military/article-1392124"
+       },
+       {
+        "name": "סרוגים",
+        "link": "https://www.srugim.co.il/101017084-רמט-אכא-מזהיר-יש-קושי-גדול-לשמר-את"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/syxz7qnk7g"
+       }
+      ]
+     },
+     {
+      "text": "הוועדה המיוחדת בכנסת אישרה לקריאה ראשונה הצעה לביטול רפורמת התקשורת של השר שלמה קרעי.",
+      "sources": [
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/politics/article-1392118"
+       },
+       {
+        "name": "סרוגים",
+        "link": "https://www.srugim.co.il/101017087-בתום-דיון-סוער-ההצעה-לביטול-חוק-השידורים"
+       },
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/political-news/knesset-communications-reform-committee-storm"
+       }
+      ]
+     },
+     {
+      "text": "יממה לאחר שתושב חיפה נפצע בינוני מתקיפת חזיר בר, תועד חזיר נוסף בפארק הלאומי ברמת גן.",
+      "sources": [
+       {
+        "name": "כיפה",
+        "link": "https://www.kipa.co.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA/1237348-0/"
+       },
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/health/article-1392103"
+       },
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383963037"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "אברך תושב גני תקווה נעצר בידי שוטרים בכביש והועבר לידי המשטרה הצבאית בטענה שהוא מוגדר עריק.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2771569/"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745570"
+       }
+      ]
+     },
+     {
+      "text": "צייר יהודי יליד רוסיה וניצול שואה כבן 90 עבר ברית מילה בישראל ונקרא שמו נפתלי.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745574"
+       }
+      ]
+     },
+     {
+      "text": "לפי דיווח בכיכר השבת, נתונים שהוצגו בתקשורת מצביעים על כך שתלמידות במגזר החרדי מובילות במבחני הבנת הנקרא בהשוואה למערכת החינוך הכללית.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/haredim-news/haredi-education-reading-comprehension-pisa"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "חברת התעופה בלו בירד הודיעה על הרחבת היצע המושבים בחודש דצמבר, עם טיסות במחירים המתחילים ב-90 אירו לכיוון.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001564905"
+       }
+      ]
+     }
+    ],
+    "good": []
+   }
+  },
+  {
+   "name": "ערב",
+   "time": "20:00",
+   "at": "2026-11-25T18:00:50.763Z",
+   "mode": "titles",
+   "date": {
+    "he": "ט״ו כסלו תשפ״ז",
+    "day": "רביעי"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "מכה לישראלים: מס הרכישה ביוון יוקפץ פי חמישה, מהמועד הזה",
+      "sources": [
+       {
+        "name": "כיפה",
+        "link": "https://www.kipa.co.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA/%D7%97%D7%93%D7%A9%D7%95%D7%AA-%D7%A0%D7%93%D7%9C%D7%9F/1237411-0/"
+       }
+      ]
+     },
+     {
+      "text": "נתניהו ציטט את טומי לפיד, יאיר ענה: \"הוא היה נותן לו באבי-אביו על החוצפה\"",
+      "sources": [
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/hyaz1on17l"
+       }
+      ]
+     },
+     {
+      "text": "ההישג של ליברמן: אלו התיקים שסגר עם איזנקוט",
+      "sources": [
+       {
+        "name": "סרוגים",
+        "link": "https://www.srugim.co.il/101017147-ההישג-של-ליברמן-אלו-התיקים-שסגר-עם"
+       }
+      ]
+     },
+     {
+      "text": "כך פתחה איילה חסון את השידור הראשון בערוץ 14",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1809559/"
+       }
+      ]
+     },
+     {
+      "text": "בדרך למלחמת סחר? | תוכנית המכסים החדשה של טראמפ",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1142580"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "הרבנים ומשגיחי הכשרות של המשטרה התכנסו ליום עיון וחיזוק • גלריה",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/gallery/2771967/"
+       }
+      ]
+     },
+     {
+      "text": "אם הכלה מעדה בדרך לחופה ושברה את הרגל; זה הפיצוי שתקבל",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/israel-news/bride-breaks-leg-before-wedding-compensation"
+       }
+      ]
+     },
+     {
+      "text": "המסמכים הסודיים נחשפו: המכה שספג הצבא הרוסי באפריקה",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745621"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "צה״ל מבטל את רידוד הכוחות ביישובים בעוטף עזה",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001564847"
+       }
+      ]
+     }
+    ],
+    "good": []
+   }
+  }
+ ]
+}
