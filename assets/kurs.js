@@ -32,4 +32,11 @@
     var a = e.target.closest && e.target.closest("[data-kurs]");
     if (a && window.gtag) gtag("event", "kurs_click", { placement: a.getAttribute("data-kurs"), shutaf: cur || "" });
   });
+  document.addEventListener("toggle", function (e) {
+    var d = e.target;
+    if (d && d.open && d.hasAttribute && d.hasAttribute("data-bonus-faq") && window.gtag) {
+      var sm = d.querySelector("summary");
+      gtag("event", "bonus_faq_open", { question: sm ? sm.textContent.slice(0, 80) : "" });
+    }
+  }, true);
 })();
