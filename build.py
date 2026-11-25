@@ -853,6 +853,20 @@ def insert_madrich(content, blk):
     i = content.find("</header>")
     return content[: i + 9] + blk + content[i + 9:] if i >= 0 else blk + content
 
+# דף "כל המדריכים": <!--madrich-hub--> מוחלף ברשת כרטיסים מתוך tools/madrichim.json (רק רשומות עם מזהה יוטיוב), ועוד ItemList
+def madrich_hub(content):
+    if "<!--madrich-hub-->" not in content:
+        return content, ""
+    e = html_lib.escape
+    items = [(k, m) for k, m in MADRICHIM.items() if m.get("youtube")]
+    cards = "".join(
+        f'<li><a class="mdr-card" href="{m["page"]}#madrich"><span class="mdr-card-img"><img src="/{m["thumb"]}.webp" alt="" width="1280" height="720" loading="{"eager" if i < 2 else "lazy"}" decoding="async">'
+        f'<span class="mdr-dur">{mdr_time(m["duration"])}</span></span><b>{e(m["title"])}</b><span class="mdr-card-more">לצפייה ולכלי ←</span></a></li>'
+        for i, (k, m) in enumerate(items))
+    ld = json.dumps({"@context": "https://schema.org", "@type": "ItemList", "name": "מדריכי וידאו",
+                     "itemListElement": [{"@type": "ListItem", "position": i + 1, "name": m["title"], "url": BASE + m["page"]} for i, (k, m) in enumerate(items)]}, ensure_ascii=False)
+    return content.replace("<!--madrich-hub-->", f'<ul class="mdr-hub">{cards}</ul>', 1), f'<script type="application/ld+json">{ld}</script>'
+
 # ---------- הקטלוג המאוחד (assets/catalog.json): מזין חיפוש, "עוד כלים", דף הבית והעונות ----------
 def _git_added():
     import subprocess
@@ -1169,6 +1183,7 @@ for path in sorted(SRC.rglob("*.html")):
     content = insert_demo(content, dv_blk)
     mdr_blk, mdr_ld, mdr_head = madrich_block(meta, url) if site else ("", "", "")
     content = insert_madrich(content, mdr_blk)
+    content, mdr_list = madrich_hub(content)
     og_own = "og/" + url_path.strip("/").replace("/", "-") + ".jpg"
     og_default = og_own + "?v=4" if (site and (ROOT / "assets" / og_own).exists()) else (site["og"] if site else "og-mohel.jpg")
     # תיאור השיתוף (og:description) פותח ב"בחינם, בלי הגבלה ובלי הרשמה" - גילעד 11.11.2026.
@@ -1190,7 +1205,7 @@ for path in sorted(SRC.rglob("*.html")):
         "og_title": meta.get("og_title", meta["title"]),
         "og_image": meta.get("og_image", og_default),
         "robots": '<meta name="robots" content="noindex">' if meta.get("noindex") else "",
-        "head": meta.get("head_pre", "") + ("" if meta.get("no_ga") else GA) + pixel_for(meta, url_path) + ("" if meta.get("bare") else KISHUR) + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url) + dv_ld + mdr_head + mdr_ld + hreflang(meta),
+        "head": meta.get("head_pre", "") + ("" if meta.get("no_ga") else GA) + pixel_for(meta, url_path) + ("" if meta.get("bare") else KISHUR) + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url) + dv_ld + mdr_head + mdr_ld + mdr_list + hreflang(meta),
         "body_class": meta.get("body_class", ""),
         "sprite": SPRITE,
         "wa": WA,

@@ -32,3 +32,13 @@
 @media(max-width:859px){.mdr .mdr-chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:.35rem;scrollbar-width:thin}.mdr-chips li{flex:none}}
 @media(max-width:480px){.mdr-acts .btn{width:100%;justify-content:center;text-align:center}}
 @media(prefers-reduced-motion:reduce){.mdr-btn{transition:none}}
+/* דף כל המדריכים */
+.mdr-hub{list-style:none;margin:1.2rem auto;padding:0 .75rem;max-width:64rem;display:grid;gap:1rem;grid-template-columns:repeat(auto-fill,minmax(17rem,1fr))}
+.mdr-hub li{margin:0;display:grid}
+.mdr-card{display:flex;flex-direction:column;gap:.5rem;padding:.6rem .6rem .8rem;border:1px solid var(--line);border-radius:1rem;background:var(--ink-2);color:var(--body);text-decoration:none;text-align:start}
+.mdr-card:hover,.mdr-card:focus-visible{border-color:var(--gold)}
+.mdr-card-img{position:relative;display:block;aspect-ratio:16/9;border-radius:.7rem;overflow:hidden;background:var(--ink)}
+.mdr-card-img img{width:100%;height:100%;object-fit:cover;display:block}
+.mdr-card-img .mdr-dur{position:absolute;bottom:.4rem;inset-inline-end:.4rem;background:var(--ink)}
+.mdr-card b{color:var(--cream);line-height:1.45}
+.mdr-card-more{margin-top:auto;color:var(--gold-hi);font-size:.92rem;font-weight:700}
