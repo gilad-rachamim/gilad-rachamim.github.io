@@ -14,7 +14,7 @@ body.hk-brand .k-hero h1{color:var(--hk-c)}
 body.hk-brand input,body.hk-brand select,body.hk-brand textarea{background:#fff;color:#1b1f27;border:1px solid rgba(20,30,50,.28)}
 body.hk-gift{--gold:#d8b35f}
 .hk-top{display:flex;align-items:center;gap:.8rem;padding:.7rem 1rem;border-bottom:3px solid var(--hk-c,#d8b35f);background:var(--ink,#fff);flex-wrap:wrap}
-.hk-top img{height:46px;width:auto;max-width:150px;object-fit:contain;display:block}
+.hk-top img{height:72px;width:auto;max-width:210px;object-fit:contain;display:block;background:#fff;border-radius:10px}
 .hk-top b{font-size:1.2rem;color:var(--cream,#12151b)}
 .hk-top a.hk-tel{margin-inline-start:auto;font-weight:700;direction:ltr;text-decoration:none;color:var(--hk-c,#d8b35f)}
 .hk-lead{max-width:44rem;margin:1.6rem auto;padding:1.1rem 1.2rem;border:2px solid var(--hk-c);border-radius:16px;background:var(--ink-2,#f4f6f9);text-align:center}
@@ -51,3 +51,6 @@ body.hk-free .hk-credit{font-size:.95rem}
 .bp-ck{display:flex!important;gap:.5rem;align-items:center;font-weight:400!important}
 .bp-sum{color:var(--gold);min-height:1.4em;font-weight:700}
 .bp-order select{width:100%;font:inherit;padding:.6rem .75rem;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.22);color:var(--cream)}
+
+/* סרטון ההדגמה של האתר (מוזרק ב-kelim.js) לא מופיע בדף של לקוח */
+body[data-brand] .dv-sec{display:none!important}
