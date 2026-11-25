@@ -22,8 +22,8 @@ BASE = "https://hakelim.com"
 SITE = " | הכלים של גילעד רחמים"
 BOT = "https://t.me/GiladKaraokeBot?start="
 U_K, U_LIB, U_NEW, U_Z = "/kelim/shir/karaoke/", "/kelim/shir/karaoke/shirim/", "/kelim/shir/karaoke/chadashim/", "/kelim/shir/karaoke/zamar/"
-# סרטון ההסבר ביוטיוב (הועלה 25.11.2026) - מוטמע בדף הקריוקי הראשי ובדף השירים החדשים
-YT_ID = "Sw1I44R3Enk"
+# סרטון ההסבר ביוטיוב (ריק = בלי נגן) - מוטמע בדף הקריוקי הראשי ובדף השירים החדשים
+YT_ID = ""  # הסרטון Sw1I44R3Enk נמחק 26.11; להכניס מזהה חדש כשיעלה
 YT_NAME = "קריוקי שירים חדשים בחינם: בוט טלגרם, תוך דקות"
 YT_DESC = "סרטון קצר שמראה איך הבוט החינמי בטלגרם הופך כל שיר לקריוקי: מוזיקה בלי הקול של הזמר, ומילים על המסך שנצבעות בזמן. שולחים שם של שיר ומקבלים סרטון בכמה דקות."
 YT_LD = json.dumps({"@context": "https://schema.org", "@type": "VideoObject", "name": YT_NAME, "description": YT_DESC,
@@ -35,7 +35,8 @@ VIDEO_SEC = (f'<section class="k-sec ko-sec" id="video" aria-labelledby="ko-yt">
              f'<div style="position:relative;max-width:44rem;margin:0 auto;aspect-ratio:16/9;border-radius:1rem;overflow:hidden;background:#0e1621">'
              f'<iframe src="https://www.youtube-nocookie.com/embed/{YT_ID}" title="סרטון הסבר: קריוקי שירים חדשים בחינם בבוט טלגרם" loading="lazy" '
              f'style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe></div>\n'
-             f'<script type="application/ld+json">{YT_LD}</script>\n</section>')
+             f'<script type="application/ld+json">{YT_LD}</script>\n</section>') if YT_ID else ""
+VIDEO_LINK = '<p class="ko-cap"><a href="/kelim/shir/karaoke/#video">▶️ איך זה עובד – סרטון קצר</a></p>' if YT_ID else ""
 # בדיקת "יש לשיר קריוקי במקום אחר?": {"checked": "YYYY-MM-DD", "none": [...], "yt_none": [...], "has": [...]} לפי מזהה יוטיוב
 CHK_PATH = DATA.with_name("karaoke-library.checks.json")
 CHK = json.loads(CHK_PATH.read_text(encoding="utf-8")) if CHK_PATH.exists() else {}
@@ -355,7 +356,7 @@ def song_page(s, songs, artists):
 <p class="sub">סרטון קריוקי מוכן של "{eS}": המוזיקה בלי הזמר, והמילים נצבעות על המסך בזמן השירה. בחינם, בלי הרשמה ובלי פרסומות.</p>
 <div class="actions">{btn("site_shir", Q, "🎤 לקבל את הקריוקי בטלגרם", "karaoke_song")}</div>
 <p class="ko-cap" data-ko-hint>בלחיצה שם השיר מועתק לבד. בבוט מדביקים ושולחים, והסרטון מגיע.</p>
-<p class="ko-cap"><a href="/kelim/shir/karaoke/#video">▶️ איך זה עובד – סרטון קצר</a></p>
+{VIDEO_LINK}
 </header>
 {sec("ko-how", f"איך מקבלים את הקריוקי של {eS}", f'''<ol class="ko-steps">
 <li>לוחצים על הכפתור "לקבל את הקריוקי בטלגרם". שם השיר מועתק לבד, והבוט נפתח.</li>
