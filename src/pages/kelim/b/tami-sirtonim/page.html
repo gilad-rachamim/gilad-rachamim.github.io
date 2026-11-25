@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>הסטודיו של תמי: סרטונים קצרים לילדים בדקה</title>
+<meta name="description" content="כותבים כמה משפטים, בוחרים דמות ורקע, מקליטים קול ומורידים סרטון קצר ומונפש לילדים. מתנה אישית לתמי.">
+<meta name="robots" content="noindex,follow">
+<link rel="canonical" href="https://hakelim.com/kelim/b/tami-sirtonim/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="🎬 הסטודיו של תמי: סרטונים לילדים">
+<meta property="og:description" content="כותבים, מקליטים, ומורידים סרטון מונפש. מתנה אישית לתמי, hakelim.com">
+<meta property="og:url" content="https://hakelim.com/kelim/b/tami-sirtonim/">
+<meta property="og:image" content="https://hakelim.com/kelim/b/tami-sirtonim/card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="theme-color" content="#6a1fd0">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4QR4583VST"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-4QR4583VST');</script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Rubik,Arial,sans-serif;font-weight:500;background:linear-gradient(160deg,#6a1fd0,#e0218a 55%,#c2410c);background-attachment:fixed;color:#1d1233;line-height:1.5}
+main{max-width:620px;margin:0 auto;padding:14px}
+header{text-align:center;color:#fff;padding:10px 0 14px}
+h1{font-size:2rem;font-weight:900;line-height:1.15;text-shadow:0 3px 0 rgba(0,0,0,.25)}
+header p{font-size:1.05rem;margin-top:6px}
+.card{background:#fff;border-radius:22px;padding:16px;margin-bottom:14px;box-shadow:0 10px 30px rgba(0,0,0,.22)}
+h2{font-size:1.25rem;font-weight:900;margin-bottom:10px}
+canvas{display:block;width:min(100%,330px);aspect-ratio:9/16;margin:0 auto;border-radius:22px;background:#222}
+button,.btn{font:inherit;font-weight:800;border:0;border-radius:14px;padding:12px 14px;cursor:pointer;background:#efe7ff;color:#3b0f86;min-height:46px}
+button:focus-visible,textarea:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #111;outline-offset:2px}
+button:disabled{opacity:.5;cursor:default}
+.big{width:100%;font-size:1.25rem;background:#0b7a3b;color:#fff;margin-top:10px}
+.main{background:#5b17c4;color:#fff}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row>*{flex:1 1 130px}
+textarea,select{font:inherit;width:100%;border:2px solid #d5c6f5;border-radius:12px;padding:10px;background:#fff;color:#1d1233}
+textarea{resize:vertical}
+label{display:block;font-weight:800;margin:10px 0 4px}
+.scene{border:3px solid #efe7ff;border-radius:18px;padding:12px;margin-bottom:12px}
+.scene h3{display:flex;justify-content:space-between;align-items:center;font-size:1.05rem;font-weight:900}
+.pick{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 8px}
+.pick button{flex:0 0 auto;font-size:1.6rem;padding:6px 10px;border:3px solid transparent}
+.pick button[aria-pressed=true]{border-color:#5b17c4;background:#fff3b0}
+.th{font-size:1rem!important;color:#fff;text-shadow:0 1px 3px #000}
+.th[aria-pressed=true]{border-color:#111!important;background-color:inherit}
+.rec.on{background:#b00020;color:#fff}
+.note{font-size:.92rem;color:#4b3f66;margin-top:8px}
+#status{text-align:center;font-weight:800;margin-top:8px;min-height:1.5em}
+input[type=file]{position:absolute;opacity:0;width:1px;height:1px}
+.file:focus-within{outline:3px solid #111}
+.file{display:flex;align-items:center;justify-content:center;text-align:center}
+summary{font-weight:800;cursor:pointer;padding:6px 0}
+footer{color:#fff;text-align:center;padding:8px 0 30px;font-size:.95rem}
+footer a{color:#fff;font-weight:800}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>🎬 הסטודיו של תמי</h1>
+<p>כותבים כמה משפטים, מקליטים בקול שלך, ומורידים סרטון מונפש לילדים</p>
+</header>
+
+<section class="card" aria-label="תצוגה מקדימה">
+<canvas id="cv" width="720" height="1280" role="img" aria-label="תצוגה מקדימה של הסרטון"></canvas>
+<div class="row" style="margin-top:12px">
+<button id="play" class="main">▶ לצפות</button>
+<button id="stop">⏹ לעצור</button>
+</div>
+<button id="make" class="big">⬇ ליצור סרטון להורדה</button>
+<div id="status" role="status" aria-live="polite"></div>
+<div class="row" id="out" hidden>
+<a id="dl" class="btn main file">שמירה בטלפון</a>
+<button id="share">שיתוף</button>
+</div>
+</section>
+
+<section class="card">
+<h2>1. בוחרים נושא או כותבים לבד</h2>
+<div class="row" id="templates"></div>
+<details>
+<summary>✨ אין רעיון? ש-Claude יכתוב תסריט</summary>
+<label for="topic">על מה הסרטון?</label>
+<textarea id="topic" rows="1" placeholder="למשל: למה צריך לצחצח שיניים"></textarea>
+<button id="prompt" style="width:100%;margin-top:8px">📋 להעתיק בקשה מוכנה ל-Claude</button>
+<label for="paste">מדביקים כאן את התשובה (כל שורה היא סצנה)</label>
+<textarea id="paste" rows="5"></textarea>
+<button id="usepaste" class="main" style="width:100%;margin-top:8px">להפוך לסצנות</button>
+</details>
+</section>
+
+<section class="card">
+<h2>2. הסצנות</h2>
+<div id="scenes"></div>
+<button id="add" style="width:100%">➕ להוסיף סצנה</button>
+</section>
+
+<section class="card">
+<h2>3. נגיעות אחרונות</h2>
+<label for="credit">שם שיופיע בסוף הסרטון</label>
+<textarea id="credit" rows="1"></textarea>
+<label><input type="checkbox" id="music" checked> מנגינה עליזה ברקע (מקורית, בלי זכויות יוצרים)</label>
+<p class="note">הכול נשאר בטלפון שלך. הטקסטים נשמרים לפעם הבאה; הקלטות ותמונות לא נשמרות אחרי סגירת הדף. בזמן יצירת הסרטון משאירים את הדף פתוח.</p>
+</section>
+
+<footer>
+נבנה באהבה ב<a href="https://hakelim.com/kelim/">מיזם הכלים של גילעד רחמים</a><br>
+רוצה עוד דמויות, לוגו משלך או דף להזמנות? <a href="https://wa.me/972584049049?text=%D7%94%D7%99%D7%99%20%D7%92%D7%99%D7%9C%D7%A2%D7%93%2C%20%D7%9B%D7%90%D7%9F%20%D7%AA%D7%9E%D7%99.%20%D7%A8%D7%95%D7%A6%D7%94%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%9C%20%D7%94%D7%A9%D7%93%D7%A8%D7%95%D7%92%D7%99%D7%9D" onclick="gtag('event','link_click',{link_id:'tami_upsell'})">כתבי לגילעד</a>
+</footer>
+</main>
+
+<script>
+(function(){
+'use strict';
+var KEY='tami-studio-v1', W=720, H=1280;
+var CHARS=['🦁','🐰','🐻','🦊','🐸','🐝','🦋','🐢','🐘','🦄','🐙','🦖','👧','👦','🧚','🤖','🚀','🌳','🌈','⭐','🍎','🪥','🧼','📚','⚽','🎂'];
+var THEMES={
+ sky:{n:'שמיים',c:['#39b6ff','#b8f1ff'],g:'#4cbb3a',p:['☁️','🌼']},
+ space:{n:'חלל',c:['#12064a','#5b21b6'],g:'#6d5a8f',p:['⭐','🪐']},
+ sea:{n:'ים',c:['#00a6c8','#023e8a'],g:'#e9c46a',p:['🐠','🫧']},
+ forest:{n:'יער',c:['#9be15d','#087f5b'],g:'#5b3a1e',p:['🍃','🌲']},
+ candy:{n:'ממתקים',c:['#ff5fa2','#ffc371'],g:'#7b2cbf',p:['🍭','🎈']},
+ night:{n:'לילה',c:['#0b1d51','#274690'],g:'#14361f',p:['✨','🌙']}
+};
+var TEMPLATES={
+ '🪥 צחצוח שיניים':[['ידעתם? בפה שלנו גרים יצורים קטנטנים!','🦁','candy'],['כשאוכלים ממתקים הם עושים מסיבה','🍎','candy'],['מצחצחים בעיגולים קטנים, שתי דקות','🪥','sky'],['בבוקר ובלילה, והחיוך נוצץ!','⭐','night']],
+ '🐝 איך נוצר דבש':[['שלום! אני דבורה קטנה וחרוצה','🐝','sky'],['אני עפה מפרח לפרח ואוספת צוף','🦋','forest'],['בכוורת כולנו עובדות יחד','🐝','candy'],['וככה נוצר דבש מתוק. יאמי!','🐻','sky']],
+ '🚀 מסע לחלל':[['שלוש, שתיים, אחת, ממריאים!','🚀','space'],['הירח מאיר בלילה באור של השמש','🤖','space'],['על כדור הארץ יש ים, יער ושמיים','🐙','sea'],['איזה כוכב תרצו לבקר?','⭐','night']],
+ '🤝 מילים טובות':[['יש מילים שעושות חם בלב','🐰','candy'],['תודה, בבקשה, וסליחה','🦊','forest'],['כשאומרים אותן כולם מחייכים','👧','sky'],['למי תגידו היום מילה טובה?','🌈','sky']]
+};
+var cv=document.getElementById('cv'),x=cv.getContext('2d');
+var $=function(id){return document.getElementById(id)};
+var scenes=[],imgs=[],ac=null,playing=null,recorder=null,lastFile=null;
+
+function mk(t,c,th){return{text:t||'',ch:c||'🦁',theme:th||'sky',img:null,audio:null,buf:null}}
+function fromTemplate(n){return TEMPLATES[n].map(function(a){return mk(a[0],a[1],a[2])})}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({s:scenes.map(function(s){return[s.text,s.ch,s.theme]}),c:$('credit').value,m:$('music').checked}))}catch(e){}}
+function load(){
+ try{var d=JSON.parse(localStorage.getItem(KEY));if(d&&d.s&&d.s.length){scenes=d.s.map(function(a){return mk(a[0],a[1],a[2])});$('credit').value=d.c||'';$('music').checked=d.m!==false;return}}catch(e){}
+ scenes=fromTemplate('🪥 צחצוח שיניים');$('credit').value='הסיפורים של תמי';
+}
+function words(t){return t.trim().split(/\s+/).filter(Boolean)}
+function dur(s){return s.buf?s.buf.duration+0.7:Math.max(2.8,words(s.text).length*0.45+1.2)}
+var OUTRO=2.4;
+function total(){return scenes.reduce(function(a,s){return a+dur(s)},0)+OUTRO}
+
+function bg(th,t){
+ var T=THEMES[th]||THEMES.sky,g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,T.c[0]);g.addColorStop(1,T.c[1]);x.fillStyle=g;x.fillRect(0,0,W,H);
+ x.save();x.translate(W/2,640);x.rotate(t*0.15);x.fillStyle='rgba(255,255,255,.09)';
+ for(var i=0;i<12;i++){x.rotate(Math.PI/6);x.beginPath();x.moveTo(0,0);x.lineTo(1100,-110);x.lineTo(1100,110);x.fill()}x.restore();
+ x.textAlign='center';x.textBaseline='middle';x.font='64px sans-serif';x.fillStyle='#fff';
+ for(var j=0;j<9;j++){var px=((j*167+t*(18+j*4))%(W+140))-70,py=90+(j*211)%900+Math.sin(t*1.6+j)*22;x.fillText(T.p[j%2],px,py)}
+ x.fillStyle=T.g;x.beginPath();x.ellipse(W/2,H+130,W*0.95,400,0,0,Math.PI*2);x.fill();
+}
+function back(p){p=Math.min(1,Math.max(0,p));var c=1.9;return 1+(c+1)*Math.pow(p-1,3)+c*Math.pow(p-1,2)}
+function hero(s,t){
+ var k=back(t/0.55),y=480-Math.abs(Math.sin(t*3.2))*55;
+ x.fillStyle='rgba(0,0,0,.18)';x.beginPath();x.ellipse(W/2,760,150*k,28*k,0,0,7);x.fill();
+ x.save();x.translate(W/2,y);x.rotate(Math.sin(t*2.4)*0.08);x.scale(k,k);
+ if(s.img){var r=245,i=s.img,m=Math.min(i.width,i.height);x.beginPath();x.arc(0,0,r,0,7);x.fillStyle='#fff';x.fill();x.beginPath();x.arc(0,0,r-14,0,7);x.clip();x.drawImage(i,(i.width-m)/2,(i.height-m)/2,m,m,-r,-r,2*r,2*r)}
+ else{x.textAlign='center';x.textBaseline='middle';x.font='340px sans-serif';x.fillStyle='#000';x.fillText(s.ch,0,18)}
+ x.restore();
+}
+function lines(t,max){var w=words(t),out=[],l='';w.forEach(function(v){var n=l?l+' '+v:v;if(x.measureText(n).width>max&&l){out.push(l);l=v}else l=n});if(l)out.push(l);return out}
+function big(txt,cy,size,t,color){
+ var f;do{f='900 '+size+'px Rubik, Arial';x.font=f;var ls=lines(txt,610);var wide=ls.some(function(l){return x.measureText(l).width>640});size-=6}while((ls.length>3||wide)&&size>34);
+ var lh=(size+6)*1.2,k=back(t/0.3);
+ x.save();x.translate(W/2,cy);x.scale(k,k);x.direction='rtl';x.textAlign='center';x.textBaseline='middle';x.lineJoin='round';x.lineWidth=18;x.strokeStyle='#1d0b45';x.fillStyle=color;
+ ls.forEach(function(l,i){var y=(i-(ls.length-1)/2)*lh;x.strokeText(l,0,y);x.fillText(l,0,y)});x.restore();
+}
+function chunks(t){var w=words(t),o=[],i=0;while(i<w.length){var n=w.length-i===4?2:3;o.push(w.slice(i,i+n));i+=n}return o}
+function draw(t){
+ var acc=0;
+ for(var i=0;i<scenes.length;i++){
+  var s=scenes[i],d=dur(s);
+  if(t<acc+d){
+   var l=t-acc;bg(s.theme,t);hero(s,l);
+   var ch=chunks(s.text),n=words(s.text).length,span=d-0.5,c=0,start=0;
+   for(var j=0;j<ch.length;j++){var len=span*ch[j].length/(n||1);c=j;if(l<start+len||j===ch.length-1)break;start+=len}
+   if(ch.length)big(ch[c].join(' '),960,104,l-start,'#fff200');
+   for(var q=0;q<scenes.length;q++){x.fillStyle=q<=i?'#fff':'rgba(255,255,255,.4)';var bw=(W-80)/scenes.length;x.beginPath();x.rect(W-40-(q+1)*bw+4,34,bw-8,12);x.fill()}
+   return;
+  }
+  acc+=d;
+ }
+ var o=t-acc;bg('candy',t);hero({ch:'👏',img:null},o);big('כל הכבוד!',900,110,o,'#fff200');if($('credit').value.trim())big($('credit').value.trim(),1090,64,o-0.2,'#fff');
+}
+
+function audio(){if(!ac)ac=new(window.AudioContext||window.webkitAudioContext)();if(ac.state!=='running')ac.resume();return ac}
+function note(dest,f,at,len,vol,type){var o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,at);g.gain.linearRampToValueAtTime(vol,at+0.02);g.gain.exponentialRampToValueAtTime(0.001,at+len);o.connect(g);g.connect(dest);o.start(at);o.stop(at+len+0.05)}
+function stop(){
+ if(!playing)return;var p=playing;playing=null;cancelAnimationFrame(p.raf);p.bus.disconnect();
+ if(p.rec&&p.rec.state!=='inactive'){p.cancel=true;p.rec.stop()}
+ $('make').disabled=false;$('play').disabled=false;
+}
+function start(rec,done){
+ var a=audio(),bus=a.createGain(),t0=a.currentTime+0.15,T=total(),acc=0;bus.connect(a.destination);
+ var voiced=scenes.some(function(s){return s.buf});
+ scenes.forEach(function(s){if(s.buf){var n=a.createBufferSource();n.buffer=s.buf;n.connect(bus);n.start(t0+acc+0.25)}else note(bus,880,t0+acc,0.25,0.12,'sine');acc+=dur(s)});
+ if($('music').checked){var mel=[523,659,784,659,587,698,880,698,523,659,784,1047,988,784,659,587],v=voiced?0.025:0.07;for(var k=0;k*0.3<T-0.4;k++){note(bus,mel[k%16],t0+k*0.3,0.28,v,'triangle');if(k%4===0)note(bus,mel[k%16]/4,t0+k*0.3,0.9,v*1.2,'sine')}}
+ var p=playing={bus:bus,rec:null,cancel:false};
+ if(rec){var sd=a.createMediaStreamDestination();bus.connect(sd);var st=cv.captureStream(30);sd.stream.getAudioTracks().forEach(function(tr){st.addTrack(tr)});draw(0);rec(st,p)}
+ (function frame(){
+  if(playing!==p)return;var t=a.currentTime-t0;
+  draw(Math.max(0,Math.min(t,T-0.001)));
+  if(rec)$('status').textContent='יוצרים את הסרטון… '+Math.round(Math.min(1,Math.max(0,t)/T)*100)+'%';
+  if(t<T)p.raf=requestAnimationFrame(frame);
+  else{playing=null;$('make').disabled=false;$('play').disabled=false;if(p.rec)p.rec.stop();else bus.disconnect();if(done)done()}
+ })();
+}
+$('play').onclick=function(){stop();$('status').textContent='';cv.scrollIntoView({block:'center',behavior:'smooth'});start(null,function(){draw(1.2)});gtag('event','tami_play')};
+$('stop').onclick=function(){stop();$('status').textContent='';draw(1.2)};
+$('make').onclick=function(){
+ if(!window.MediaRecorder||!cv.captureStream){$('status').textContent='הדפדפן הזה לא תומך. כדאי לפתוח בכרום או בספארי.';return}
+ stop();$('out').hidden=true;$('make').disabled=true;$('play').disabled=true;cv.scrollIntoView({block:'center'});
+ start(function(stream,p){
+  var type=['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm'].filter(function(m){return MediaRecorder.isTypeSupported(m)})[0];
+  var r=new MediaRecorder(stream,{mimeType:type,videoBitsPerSecond:5000000}),parts=[];
+  r.ondataavailable=function(e){if(e.data.size)parts.push(e.data)};
+  r.onstop=function(){
+   p.bus.disconnect();stream.getTracks().forEach(function(t){t.stop()});
+   if(p.cancel)return;
+   var ext=type.indexOf('mp4')>-1?'mp4':'webm',blob=new Blob(parts,{type:'video/'+ext});
+   lastFile=new File([blob],'sirton-tami.'+ext,{type:blob.type});
+   var u=URL.createObjectURL(blob);$('dl').href=u;$('dl').download=lastFile.name;$('out').hidden=false;
+   $('share').hidden=!(navigator.canShare&&navigator.canShare({files:[lastFile]}));
+   $('status').textContent='🎉 הסרטון מוכן!';gtag('event','tami_video_made');
+  };
+  p.rec=r;r.start(500);
+ });
+};
+$('share').onclick=function(){if(lastFile)navigator.share({files:[lastFile]}).catch(function(){})};
+document.addEventListener('visibilitychange',function(){if(document.hidden&&playing){var was=playing.rec;stop();if(was)$('status').textContent='היצירה נעצרה כי הדף ירד מהמסך. לוחצים שוב.'}});
+
+function el(tag,props){var e=document.createElement(tag);for(var k in props)e[k]=props[k];return e}
+function changed(i){stop();$('out').hidden=true;save();var a=0;for(var k=0;k<i;k++)a+=dur(scenes[k]);draw(a+Math.min(1.2,dur(scenes[i]||scenes[0])-0.1))}
+function picker(list,cur,label,set,theme){
+ var d=el('div',{className:'pick'});d.setAttribute('role','group');d.setAttribute('aria-label',label);
+ list.forEach(function(v){var b=el('button',{type:'button',textContent:theme?THEMES[v].n:v});if(theme){b.className='th';b.style.background='linear-gradient('+THEMES[v].c[0]+','+THEMES[v].c[1]+')'}
+  b.setAttribute('aria-pressed',v===cur);b.onclick=function(){d.querySelectorAll('button').forEach(function(o){o.setAttribute('aria-pressed','false')});b.setAttribute('aria-pressed','true');set(v)};d.appendChild(b)});
+ return d;
+}
+function record(s,b,i){
+ if(recorder){recorder.stop();return}
+ if(!navigator.mediaDevices||!window.MediaRecorder){$('status').textContent='אין אפשרות להקליט בדפדפן הזה';return}
+ stop();audio();
+ navigator.mediaDevices.getUserMedia({audio:true}).then(function(st){
+  var r=new MediaRecorder(st),parts=[];recorder=r;b.textContent='⏹ לסיים הקלטה';b.classList.add('on');
+  r.ondataavailable=function(e){parts.push(e.data)};
+  r.onstop=function(){recorder=null;st.getTracks().forEach(function(t){t.stop()});
+   new Blob(parts,{type:r.mimeType}).arrayBuffer().then(function(ab){return ac.decodeAudioData(ab)}).then(function(buf){s.buf=buf;render();changed(i)}).catch(function(){render();alert('ההקלטה לא נקלטה, נסי שוב')})};
+  r.start();setTimeout(function(){if(r.state==='recording')r.stop()},30000);
+ }).catch(function(){alert('צריך לאשר גישה למיקרופון כדי להקליט')});
+}
+function render(){
+ var box=$('scenes');box.innerHTML='';
+ scenes.forEach(function(s,i){
+  var d=el('div',{className:'scene'}),h=el('h3',{});h.appendChild(el('span',{textContent:'סצנה '+(i+1)}));
+  if(scenes.length>1){var del=el('button',{type:'button',textContent:'מחיקה'});del.onclick=function(){scenes.splice(i,1);render();changed(0)};h.appendChild(del)}
+  d.appendChild(h);
+  var ta=el('textarea',{rows:2,value:s.text,maxLength:160,placeholder:'משפט קצר לילדים'});ta.setAttribute('aria-label','הטקסט של סצנה '+(i+1));ta.oninput=function(){s.text=ta.value;changed(i)};d.appendChild(ta);
+  d.appendChild(picker(CHARS,s.ch,'דמות',function(v){s.ch=v;s.img=null;changed(i)}));
+  d.appendChild(picker(Object.keys(THEMES),s.theme,'רקע',function(v){s.theme=v;changed(i)},true));
+  var row=el('div',{className:'row'});
+  var rb=el('button',{type:'button',className:'rec',textContent:s.buf?'🎙 להקליט מחדש ✔':'🎙 להקליט בקול שלי'});rb.onclick=function(){record(s,rb,i)};row.appendChild(rb);
+  var lab=el('label',{className:'btn file',textContent:s.img?'🖼 להחליף תמונה ✔':'🖼 ציור או תמונה שלי'});lab.style.margin='0';var fi=el('input',{type:'file',accept:'image/*'});
+  fi.onchange=function(){var f=fi.files[0];if(!f)return;var im=new Image();im.onload=function(){s.img=im;render();changed(i)};im.src=URL.createObjectURL(f)};lab.appendChild(fi);row.appendChild(lab);
+  d.appendChild(row);box.appendChild(d);
+ });
+ $('add').disabled=scenes.length>=10;
+}
+$('add').onclick=function(){var l=scenes[scenes.length-1];scenes.push(mk('',l.ch,l.theme));render();save()};
+Object.keys(TEMPLATES).forEach(function(n){var b=el('button',{type:'button',textContent:n});b.onclick=function(){if(!confirm('להחליף את הסצנות בנושא "'+n+'"?'))return;scenes=fromTemplate(n);render();changed(0)};$('templates').appendChild(b)});
+$('prompt').onclick=function(){
+ var t=$('topic').value.trim()||'נושא שמעניין ילדים';
+ var p='כתוב תסריט לסרטון קצר לילדים בגילי 4–8 על: '+t+'.\n6 שורות בלבד, כל שורה משפט אחד של עד 9 מילים, בעברית פשוטה ושמחה. שורה ראשונה שאלה מסקרנת, שורה אחרונה שאלה לילדים. בלי מספרים, בלי כותרות ובלי הסברים.';
+ navigator.clipboard.writeText(p).then(function(){$('prompt').textContent='✔ הועתק. מדביקים ב-Claude'},function(){window.prompt('להעתיק:',p)});
+};
+$('usepaste').onclick=function(){
+ var l=$('paste').value.split('\n').map(function(v){return v.replace(/^[\s\d.\-*•)]+/,'').replace(/\*\*/g,'').trim()}).filter(Boolean).slice(0,10);
+ if(!l.length)return;var th=Object.keys(THEMES);scenes=l.map(function(v,i){return mk(v.slice(0,160),CHARS[(i*3)%12],th[i%th.length])});render();changed(0);cv.scrollIntoView({block:'center',behavior:'smooth'});
+};
+$('credit').oninput=save;$('music').onchange=save;
+load();render();draw(1.2);
+if(document.fonts)document.fonts.load('900 60px Rubik','אבג').then(function(){if(!playing)draw(1.2)});
+window.__studio={total:total};
+})();
+</script>
+</body>
+</html>
