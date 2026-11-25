@@ -1,0 +1,26 @@
+/* Mikvah calendar and niddah calculator in English (/kodesh/tahara/en/) */
+.tm-card{border:1px solid var(--line,#d9d2c3);border-radius:16px;padding:14px;margin:0 0 16px;background:rgba(255,255,255,.02)}
+.tm-card h2{margin:0 0 6px}
+.tm-lead{margin:0 0 10px;font-size:.95rem;opacity:.9}
+.tm-form{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));margin:8px 0}
+.tm-form label{display:flex;flex-direction:column;gap:4px;font-size:.92rem}
+.tm-form select,.tm-form input{min-height:46px;font:inherit;font-size:1rem;padding:6px 10px;border-radius:10px;border:1px solid var(--line,#d9d2c3);background:rgba(0,0,0,.2);color:var(--cream,inherit);color-scheme:dark}
+.tm-form select option{color:#111;background:#fff}
+.tm-form .opt{opacity:.7;font-size:.85rem}
+.tm-res{margin:12px 0 0;display:grid;gap:8px}
+.tm-res>div{border:1px solid var(--line,#d9d2c3);border-radius:12px;padding:10px 12px}
+.tm-res dt{font-size:.88rem;opacity:.85}
+.tm-res dd{margin:2px 0 0;display:flex;flex-direction:column;gap:2px}
+.tm-res dd b{font-size:1.15rem;color:var(--gold-hi,var(--gold,#b8892b))}
+.tm-res dd span{font-size:.88rem;opacity:.8}
+.tm-res .tm-key{border-color:var(--gold,#b8892b);background:rgba(184,137,43,.08)}
+.tm-days{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:8px}
+.tm-days li{border:1px solid var(--line,#d9d2c3);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.tm-days b{color:var(--gold-hi,var(--gold,#b8892b))}
+.tm-days small{opacity:.8}
+.tm-from{margin:10px 0 0}
+.tm-warn{margin:10px 0 0;padding:10px 12px 10px 28px;border:1px dashed var(--gold,#b8892b);border-radius:12px;font-size:.92rem}
+.tm-note,.tm-hint{font-size:.9rem;opacity:.85;margin:10px 0 0}
+.tm-src{width:100%;border-collapse:collapse;font-size:.92rem}
+.tm-src th,.tm-src td{text-align:start;padding:.45rem .4rem;border-bottom:1px solid var(--line,#d9d2c3);vertical-align:top}
+@media print{.no-print{display:none!important}}

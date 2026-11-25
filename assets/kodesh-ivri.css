@@ -105,3 +105,8 @@
   #li-printbox .iv-d .h,#li-printbox .iv-d .ev{font-size:.6rem}
   .iv-pf{text-align:center;font-size:8pt;color:#555}
 }
+/* דף החגים: רשימת המועדים הקרובים */
+.iv-up{list-style:none;margin:0;padding:0}
+.iv-up li{padding:.6rem 0;border-bottom:1px solid var(--line);color:var(--cream)}
+.iv-up li:last-child{border-bottom:0}
+.iv-up small{display:block;color:var(--muted);font-size:.9rem}

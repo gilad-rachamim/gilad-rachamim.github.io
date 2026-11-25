@@ -5,7 +5,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var form = $('tf-form'), view = $('tf-view'), builder = $('tf-build');
   if (!form) return;
-  var KEY = 'esek-tafrit', F = { name: 'n', sub: 's', items: 'i', phone: 'p', addr: 'a', hours: 'h', note: 't' };
+  var KEY = 'esek-tafrit', F = { name: 'n', sub: 's', items: 'i', phone: 'p', addr: 'a', hours: 'h', note: 't', color: 'c' };
   var SAMPLE = 'פיצות:\nפיצה משפחתית - 55 | רוטב עגבניות ומוצרלה\nפיצה אישית - 32\nפיצה ללא גלוטן - 45\nתוספות (למשפחתית):\nזיתים - 6\nפטריות - 6\nבצל - 5\nטונה - 9\nמנות נוספות:\nלחם שום - 18\nסלט יווני - 34 | עגבנייה, מלפפון, זיתים ובולגרית\nצ\'יפס - 16\nשתייה:\nפחית - 8\nבקבוק 1.5 ליטר - 14\nמבצעים:\nמשפחתית + תוספת + בקבוק - 69';
 
   // ---------- קידוד: JSON → UTF-8 → deflate → base64url ----------
@@ -24,6 +24,11 @@
   }
   function esc(s) { return String(s || '').replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function intl(p) { p = String(p || '').replace(/[^\d+]/g, ''); if (p.indexOf('+') === 0) return p.slice(1); if (p.indexOf('0') === 0) return '972' + p.slice(1); return p; }
+  // צבעי העסק: צבע הכותרת כמו שנבחר, וצבע הטקסט והמחירים מוכהה עד ניגודיות קריאה על רקע בהיר
+  function lum(hex) { var n = parseInt(hex.slice(1), 16), c = [n >> 16 & 255, n >> 8 & 255, n & 255].map(function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; }
+  function hex6(r, g, b) { return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1); }
+  function okc(c) { return /^#[0-9a-f]{6}$/i.test(c || '') ? c.toLowerCase() : ''; }
+  function darker(hex) { var n = parseInt(hex.slice(1), 16), r = n >> 16 & 255, g = n >> 8 & 255, b = n & 255; for (var i = 0; i < 30 && 1.05 / (lum(hex6(r, g, b)) + 0.05) < 4.5; i++) { r = Math.floor(r * 0.92); g = Math.floor(g * 0.92); b = Math.floor(b * 0.92); } return hex6(r, g, b); }
   function used(action, extra) { if (window.toolUsed) window.toolUsed('esek_tafrit', Object.assign({ action: action }, extra || {})); }
 
   // ---------- פענוח שורות התפריט ----------
@@ -59,7 +64,7 @@
   }
 
   function render(o) {
-    var cats = parse(o.i), h = '<div class="tf"><div class="tf-head"><h2>' + esc(o.n) + '</h2>' + (o.s ? '<p class="s">' + esc(o.s) + '</p>' : '') + '</div>';
+    var cats = parse(o.i), col = okc(o.c), h = '<div class="tf' + (col ? ' tf-c' : '') + '"' + (col ? ' style="--tfb:' + col + ';--tfc:' + darker(col) + ';--tfon:' + (lum(col) > 0.42 ? '#111' : '#fff') + '"' : '') + '><div class="tf-head"><h2>' + esc(o.n) + '</h2>' + (o.s ? '<p class="s">' + esc(o.s) + '</p>' : '') + '</div>';
     if (o.p || o.a) {
       h += '<div class="tf-btns">';
       if (o.p) h += '<a class="btn btn-gold" href="https://wa.me/' + intl(o.p) + '?text=' + encodeURIComponent('שלום, אשמח להזמין:\n') + '" data-tf-act="wa">💬 להזמין בווטסאפ</a><a class="btn btn-line" href="tel:+' + intl(o.p) + '" data-tf-act="call">📞 להתקשר</a>';
@@ -87,7 +92,8 @@
   }
 
   function sign(o, url) {
-    var one = '<div class="half"><p class="small">סורקים במצלמה של הטלפון</p><h2>' + esc(o.n) + '</h2>' + (o.s ? '<p>' + esc(o.s) + '</p>' : '') +
+    var sc = okc(o.c), st = sc ? ' style="border:3mm solid ' + sc + ';--sg:' + darker(sc) + '"' : '';
+    var one = '<div class="half"' + st + '><p class="small">סורקים במצלמה של הטלפון</p><h2>' + esc(o.n) + '</h2>' + (o.s ? '<p>' + esc(o.s) + '</p>' : '') +
       '<p><b>התפריט שלנו בטלפון</b></p><div class="qrbig"></div>' + (o.p ? '<p>להזמנות: <span dir="ltr">' + esc(o.p) + '</span></p>' : '') +
       '<p class="small">נבנה בחינם בכלים לעסק קטן · hakelim.com/esek</p></div>';
     var s = $('tf-sign'); if (s.parentNode !== document.body) document.body.appendChild(s); s.innerHTML = one + one;
@@ -129,10 +135,20 @@
   }
 
   // ---------- מצב בנייה ----------
-  try { var st = JSON.parse(localStorage.getItem(KEY) || '{}'); Object.keys(F).forEach(function (k) { if (st[k]) form.querySelector('[name=' + k + ']').value = st[k]; }); } catch (e) {}
+  // כניסה מדף הקמפיין או מהודעה בוואטסאפ: ?n=שם העסק&c=צבע (בלי #) ממלאים את הטופס מראש
+  (function () {
+    var q = new URLSearchParams(location.search), n = q.get('n'), c = q.get('c');
+    if (n && !$('tf-name').value) $('tf-name').value = n.slice(0, 60);
+    if (c && /^[0-9a-f]{6}$/i.test(c)) { $('tf-color').value = '#' + c.toLowerCase(); $('tf-colorpick').value = '#' + c.toLowerCase(); }
+  })();
+  var sw = $('tf-swatches');
+  function setColor(v) { $('tf-color').value = v; if (v) $('tf-colorpick').value = v; [].forEach.call(sw.children, function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-c') === v)); }); form.dispatchEvent(new Event('input', { bubbles: true })); }
+  sw.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) { setColor(b.getAttribute('data-c')); used('color_swatch'); } });
+  $('tf-colorpick').addEventListener('input', function () { setColor(this.value); });
+  try { var st = JSON.parse(localStorage.getItem(KEY) || '{}'); Object.keys(F).forEach(function (k) { if (st[k] && !(k === 'name' && new URLSearchParams(location.search).get('n')) && !(k === 'color' && new URLSearchParams(location.search).get('c'))) form.querySelector('[name=' + k + ']').value = st[k]; }); } catch (e) {}
   function save() { var s = {}; Object.keys(F).forEach(function (k) { s[k] = form.querySelector('[name=' + k + ']').value; }); try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
   var t = null;
-  function preview() { var o = read(); if (o.n || o.i) render({ n: o.n || 'שם העסק', s: o.s, i: o.i, p: o.p, a: o.a, h: o.h, t: o.t }); }
+  function preview() { var o = read(); if (o.n || o.i) render({ n: o.n || "שם העסק", s: o.s, i: o.i, p: o.p, a: o.a, h: o.h, t: o.t, c: o.c }); }
   form.addEventListener('input', function () { save(); clearTimeout(t); t = setTimeout(preview, 250); if (!$('tf-ready').hidden) $('tf-ready').hidden = true; });
   $('tf-sample').addEventListener('click', function () {
     var el = $('tf-items');

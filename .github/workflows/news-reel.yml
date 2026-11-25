@@ -4,27 +4,36 @@
 name: news-reel
 on:
   schedule:
+    - cron: "25 11 * * *"
     - cron: "25 18 * * *"
   workflow_dispatch:
+    inputs:
+      edition:
+        description: "שם המהדורה (צהריים / ערב / בוקר)"
+        default: "ערב"
 concurrency: { group: news-reel, cancel-in-progress: false }
 jobs:
   reel:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with: { sparse-checkout: tools/news-reel }
+        with: { sparse-checkout: tools }
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - name: install
         run: |
-          pip install -q playwright
+          pip install -q edge-tts playwright
           python -m playwright install --with-deps chromium > /dev/null
           sudo apt-get install -y -qq ffmpeg fonts-noto-core > /dev/null
       - name: render
         id: r
         run: |
           set +e
-          python tools/news-reel/reel.py reel.mp4 ערב --fresh
+          ED="${{ github.event.inputs.edition }}"
+          if [ -z "$ED" ]; then
+            if [ "${{ github.event.schedule }}" = "25 11 * * *" ]; then ED="צהריים"; else ED="ערב"; fi
+          fi
+          python tools/news-reel/reel.py reel.mp4 "$ED" --fresh
           echo "code=$?" >> "$GITHUB_OUTPUT"
       - name: post
         if: steps.r.outputs.code == '0'

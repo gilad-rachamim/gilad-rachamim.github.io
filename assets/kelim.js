@@ -5,7 +5,24 @@
   function ev(name, params) { if (window.gtag) window.gtag('event', name, Object.assign({ site: site, page: location.pathname }, params || {})); }
   window.kelimEv = ev;
   // כל כלי קורא לזה כשהשימוש הצליח (חישוב, תמלול...). אירוע אחד: tool_use{site,tool}
-  window.toolUsed = function (tool, extra) { ev('tool_use', Object.assign({ tool: tool || body.getAttribute('data-tool') || '' }, extra || {})); };
+  window.toolUsed = function (tool, extra) {
+    ev('tool_use', Object.assign({ tool: tool || body.getAttribute('data-tool') || '' }, extra || {}));
+    // קמפיין העסקים (24.11.2026): שימוש מוצלח בכלי של /esek/ = ליד במטא; רק פעולות שמסיימות משהו, לא רעש
+    try {
+      var a = extra && extra.action, t = tool || '';
+      if (window.fbq && site === 'esek' && /^esek_/.test(t)) {
+        window.fbq('trackCustom', 'EsekToolUse', { tool: t, action: a || '' });
+        if (/^(create|calc|print_sign|print|wa)$/.test(a || '')) window.fbq('track', 'Lead', { content_name: t });
+      }
+    } catch (e) {}
+  };
+  // לחיצה על ההצעה הממותגת: כוונת קנייה (מטא InitiateCheckout + אירוע GA4)
+  document.addEventListener('click', function (e) {
+    var l = e.target.closest && e.target.closest('a[href*="/kelim/bniyat-machshevon"],a[href*="/kelim/hatmaat-machshevon"]');
+    if (!l) return;
+    ev('brand_offer_click', { href: l.getAttribute('href'), from: location.pathname });
+    try { if (window.fbq) window.fbq('track', 'InitiateCheckout', { content_name: 'brand-offer', currency: 'ILS' }); } catch (x) {}
+  }, true);
 
   // ---------- אפליקציה לטלפון ----------
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
@@ -74,7 +91,8 @@
         navigator.share({ title: document.title, text: text, url: url }).catch(function () {});
       } else if (how === 'copy') {
         e.preventDefault();
-        copyText(text + '\n' + url, s, 'הקישור הועתק ✓ אפשר להדביק בכל הודעה');
+        var lgc = (document.documentElement.lang || 'he').slice(0, 2);
+        copyText(text + '\n' + url, s, lgc === 'en' ? 'Link copied ✓ paste it in any message' : lgc === 'ru' ? 'Ссылка скопирована ✓ вставьте в любое сообщение' : 'הקישור הועתק ✓ אפשר להדביק בכל הודעה');
       } else if (how === 'sms' && s.tagName === 'A') {
         // אנדרואיד ואייפון מבינים את שתי הצורות; ?&body= עובד בשניהם
         s.href = 'sms:?&body=' + encodeURIComponent(text + '\n' + url);
@@ -137,7 +155,9 @@
       var t = a.getAttribute('data-text');
       var wrap = document.createElement('span');
       wrap.className = 'share-alts';
-      wrap.innerHTML = '<a class="btn btn-line btn-sm" href="sms:" data-share-tool="sms">📱 ב-SMS</a><button class="btn btn-line btn-sm" type="button" data-share-tool="copy">🔗 להעתיק קישור</button>';
+      var lg = (document.documentElement.lang || 'he').slice(0, 2);
+      var lb = lg === 'en' ? ['SMS', 'Copy link'] : lg === 'ru' ? ['SMS', 'Копировать ссылку'] : ['ב-SMS', 'להעתיק קישור'];
+      wrap.innerHTML = '<a class="btn btn-line btn-sm" href="sms:" data-share-tool="sms">📱 ' + lb[0] + '</a><button class="btn btn-line btn-sm" type="button" data-share-tool="copy">🔗 ' + lb[1] + '</button>';
       if (t) wrap.querySelectorAll('[data-share-tool]').forEach(function (b) { b.setAttribute('data-text', t); });
       a.insertAdjacentElement('afterend', wrap);
     });

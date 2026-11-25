@@ -22,6 +22,8 @@ PAGES = {
     "taktziv": "/kesef/taktziv/",
     "tizkorot": "/kelim/briut/tizkorot/",
     "tosaf": "/kelim/machshev/chatima/tosaf/",
+    "katalog": "/kelim/katalog/",
+    "chashiva": "/kelim/chashiva/",
 }
 
 HIDE = """

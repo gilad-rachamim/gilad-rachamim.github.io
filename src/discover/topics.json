@@ -1,0 +1,239 @@
+{
+ "topics": [
+  {
+   "id": "root",
+   "n": "כל הכלים",
+   "e": "🧰",
+   "prefix": [],
+   "exact": [
+    "/kelim/",
+    "/kodesh/"
+   ],
+   "show": false
+  },
+  {
+   "id": "tfila",
+   "n": "תפילה וברכות",
+   "e": "🙏",
+   "prefix": [
+    "/kodesh/arvit/",
+    "/kodesh/mincha/",
+    "/kodesh/shacharit/",
+    "/kodesh/musaf-",
+    "/kodesh/birkat-hamazon/",
+    "/kodesh/tefilat-haderech/",
+    "/kodesh/boker/",
+    "/kodesh/modeh-ani/",
+    "/kodesh/nishmat-kol-chai/",
+    "/kodesh/shema-",
+    "/kodesh/tefillin/",
+    "/kodesh/misheberach/",
+    "/kodesh/tehillim/",
+    "/kodesh/shlichei-tzibur/",
+    "/kodesh/brachot/",
+    "/kodesh/dapei-tefila/",
+    "/kodesh/kivun-yerushalayim/",
+    "/kodesh/tahara/",
+    "/kodesh/mezuzah/"
+   ]
+  },
+  {
+   "id": "zmanim",
+   "n": "שבת, חגים וזמנים",
+   "e": "🕯️",
+   "prefix": [
+    "/kodesh/shabat/",
+    "/kodesh/chanuka/",
+    "/kodesh/zmanim/",
+    "/kodesh/taarich",
+    "/kodesh/luach",
+    "/kodesh/omer-avot/",
+    "/kodesh/parasha/",
+    "/kodesh/gimatria/",
+    "/kodesh/chag-basis/",
+    "/bait/shabat/",
+    "/kodesh/havdala/",
+    "/kodesh/kiddush/",
+    "/kodesh/omer/"
+   ]
+  },
+  {
+   "id": "brit",
+   "n": "ברית, לידה ותינוק",
+   "e": "👶",
+   "prefix": [
+    "/kodesh/mohalim/",
+    "/kodesh/britot",
+    "/kodesh/kibudim-brit/",
+    "/kodesh/tofes-brit/",
+    "/kodesh/hachlama/",
+    "/kodesh/brachon/",
+    "/kelim/herayon/",
+    "/kelim/shemot/",
+    "/kodesh/kartis-mohel/"
+   ]
+  },
+  {
+   "id": "eruim",
+   "n": "אירועים, הזמנות ושמחות",
+   "e": "🎉",
+   "prefix": [
+    "/kelim/eruim/",
+    "/kodesh/simcha/",
+    "/kodesh/teuda/",
+    "/kodesh/album/",
+    "/bait/matana/",
+    "/bait/mevi/",
+    "/kodesh/kibudim-yechida/",
+    "/kodesh/dapei-tefila/"
+   ]
+  },
+  {
+   "id": "nefesh",
+   "n": "נפש, אבל ותמיכה",
+   "e": "💙",
+   "prefix": [
+    "/nefesh/",
+    "/kodesh/azkara/",
+    "/kodesh/yahrzeit/",
+    "/limudim/ilui/",
+    "/kodesh/kaddish/"
+   ]
+  },
+  {
+   "id": "kesef",
+   "n": "כסף, שכר ועסקים",
+   "e": "💰",
+   "prefix": [
+    "/kesef/",
+    "/kelim/cheshbon/",
+    "/esek/",
+    "/kelim/asakim/",
+    "/kelim/avoda/",
+    "/kelim/atzmaim/",
+    "/kelim/bniyat-machshevon/",
+    "/kelim/hatmaat-machshevon/",
+    "/kelim/machshevon-leroe-cheshbon/",
+    "/kelim/machshevon-leorech-din/", "/kelim/mah-magia-leoved-sheputar/",
+    "/kelim/mismachim-leroe-cheshbon/"
+   ]
+  },
+  {
+   "id": "limud",
+   "n": "לימוד, בתי ספר ותרגול",
+   "e": "📚",
+   "prefix": [
+    "/limudim/",
+    "/kodesh/shiur/",
+    "/kodesh/mekorot/",
+    "/kodesh/psak/",
+    "/kodesh/shut/",
+    "/kodesh/alon/",
+    "/kodesh/alefbet/"
+   ]
+  },
+  {
+   "id": "tochen",
+   "n": "תוכן, עיצוב ווידאו",
+   "e": "🎬",
+   "prefix": [
+    "/kelim/tochen/",
+    "/kelim/shir/",
+    "/kodesh/post/",
+    "/kodesh/video",
+    "/kodesh/shavua/",
+    "/kodesh/dvar-torah/",
+    "/kodesh/sipur",
+    "/kelim/hadpasa/"
+   ]
+  },
+  {
+   "id": "machshev",
+   "n": "מחשב, טלפון ותמלול",
+   "e": "💻",
+   "prefix": [
+    "/kelim/machshev/",
+    "/kelim/iphone/",
+    "/kelim/android/",
+    "/kelim/tamlul/",
+    "/kelim/yutub-bli-pirsomot/",
+    "/kelim/chalufot-chinam/",
+    "/kelim/botim/",
+    "/kelim/tichnut/",
+    "/kelim/bonei-atarim/",
+    "/kelim/claude/",
+    "/claude-kvutza/",
+    "/kelim/apps/",
+    "/kelim/bakasha/",
+    "/kelim/shipurim/",
+    "/kelim/shutafim/",
+    "/kelim/shichva/",
+    "/kodesh/mikledet/"
+   ]
+  },
+  {
+   "id": "mishchak",
+   "n": "משחקי חשיבה וחידות",
+   "e": "🧩",
+   "prefix": [
+    "/kelim/chashiva/"
+   ]
+  },
+  {
+   "id": "bait",
+   "n": "בית, משפחה וטיולים",
+   "e": "🏠",
+   "prefix": [
+    "/bait/",
+    "/kelim/tiyulim/",
+    "/kelim/briut/",
+    "/kelim/kesharim/"
+   ]
+  },
+  {
+   "id": "kehila",
+   "n": "בית כנסת וקהילה",
+   "e": "🕍",
+   "prefix": [
+    "/kodesh/atar/",
+    "/kodesh/beit-knesset/",
+    "/kodesh/masach/",
+    "/kodesh/kartis/",
+    "/kodesh/qr/",
+    "/kelim/kehila/",
+    "/kodesh/olpan/",
+    "/kodesh/luach"
+   ]
+  },
+  {
+   "id": "tzava",
+   "n": "צבא, מילואים וזכויות",
+   "e": "🎖️",
+   "prefix": [
+    "/kelim/miluim/",
+    "/kelim/shikum/",
+    "/kodesh/chayal/",
+    "/kodesh/hodaot/",
+    "/kodesh/tziyud/"
+   ]
+  },
+  {
+   "id": "giur",
+   "n": "גיור",
+   "e": "✡️",
+   "prefix": [
+    "/kodesh/giur/"
+   ]
+  }
+ ],
+ "info": [
+  "/kelim/katalog/", "/kelim/pratiut/",
+  "/kelim/negishut/",
+  "/kelim/shichva/",
+  "/kelim/shutafim/",
+  "/kelim/shipurim/",
+  "/kelim/bakasha/",
+  "/mohel/"
+ ],
+ "_הערה": "הנושא הראשון שהתחילית שלו מתאימה זוכה. ty=info: דפי מערכת (פרטיות, נגישות) – לא כלים ולא בקטלוג. build.py נכשל על דף בלי נושא."
+}

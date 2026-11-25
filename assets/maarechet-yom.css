@@ -1,0 +1,17 @@
+/* מערכת שעות: מצב "היום", כמה ילדים והתראת בוקר */
+.ms-profiles button.ms-add{border-style:dashed}
+.ms-views{margin:.4rem 0 .8rem}
+.ms-daynav{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin:.4rem 0 .8rem}
+.ms-dayname{text-align:center;flex:1}
+.ms-dayname b{display:block;font-size:1.35rem;color:var(--gold-hi,#e8c36a)}
+.ms-dayname span{font-size:.9rem;opacity:.8}
+.ms-list{list-style:none;margin:0 0 .8rem;padding:0;display:grid;gap:.5rem}
+.ms-list li{display:flex;align-items:center;gap:.8rem;padding:.8rem 1rem;border:1px solid var(--line,#3a4660);border-radius:14px;background:rgba(255,255,255,.04);font-size:1.15rem}
+.ms-list .ms-ln{display:inline-flex;align-items:center;justify-content:center;min-width:2rem;height:2rem;border-radius:50%;background:var(--gold,#d9a441);color:#0E1628;font-weight:800;font-size:.95rem}
+.ms-list b{flex:1;font-weight:700}
+.ms-list em{font-style:normal;opacity:.75;font-size:.95rem}
+.ms-empty{text-align:center;padding:1.2rem .5rem;opacity:.9}
+.ms-rem{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;align-items:center;margin:.8rem 0;padding:.7rem;border:1px dashed var(--line,#3a4660);border-radius:12px}
+.ms-rem[hidden]{display:none}
+.ms-rem input[type=time]{font:inherit;padding:.3rem .5rem;border-radius:8px}
+@media print{.ms-profiles,.ms-views,#ms-pane-today{display:none!important}#ms-pane-week{display:block!important}}

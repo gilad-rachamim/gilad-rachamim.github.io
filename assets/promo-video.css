@@ -1,0 +1,5 @@
+.k-promo{max-width:340px;margin:1rem auto;border-radius:14px;overflow:hidden;background:#0f1d1c;aspect-ratio:9/16;direction:ltr}
+.k-promo video{display:block;width:100%;height:100%;object-fit:contain;background:#0f1d1c}
+@media(min-width:720px){.k-promo{max-width:640px;aspect-ratio:16/9}}
+.k-promo[data-fmt=tall]{max-width:340px;aspect-ratio:9/16}
+.k-promo[data-fmt=wide]{max-width:640px;aspect-ratio:16/9}

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>מעקב אחרי ברית מילה</title>
+<style>
+:root{--bg:#fbf8f2;--green:#1f6b5c;--gold:#b8892b;--ink:#23302c;--line:#e4dcc8;--soft:#f4efe2;--muted:#56635f}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 "Frank Ruhl Libre","David","Segoe UI",Arial,sans-serif;overflow-wrap:break-word}
+[hidden]{display:none!important}
+.draft{background:#fff3cd;color:#5c4700;text-align:center;font-size:16px;padding:.35rem .8rem;border-bottom:1px solid #ecd98a}
+p.draft,div.draft.box{border:1px solid #ecd98a;border-radius:10px;text-align:right;padding:.7rem .9rem}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px 2rem}
+.top{max-width:720px;margin:0 auto;padding:1rem 16px .4rem;text-align:center}
+.bsd{display:block;text-align:left;color:var(--muted);font-size:16px}
+.brand{background:#fff;border:1px solid var(--line);border-radius:10px;padding:.8rem 1rem;margin:.4rem 0 1rem;display:grid;gap:.15rem;justify-items:center}
+.brand .lbl{color:var(--gold);font-size:16px;font-weight:700}
+.brand strong{font-size:1.45rem;color:var(--green);line-height:1.3}
+.brand .sub2{color:var(--muted);font-size:16px}
+.brand a{color:var(--green);font-weight:700;font-size:1.05rem;display:inline-block;min-height:44px;padding:.55rem .8rem}
+.demo{background:var(--soft);border:1px dashed var(--gold);border-radius:10px;padding:.7rem .9rem;text-align:right;font-size:16px;margin:0 0 1rem}
+.kicker{margin:0;color:var(--gold);font-weight:700;font-size:16px}
+h1{margin:.2rem 0 .5rem;color:var(--green);font-size:1.75rem;line-height:1.3}
+.top .sub{margin:0 auto .6rem;max-width:36rem}
+h2{color:var(--green);font-size:1.3rem;line-height:1.35;margin:1.8rem 0 .7rem;padding-right:.65rem;border-right:4px solid var(--gold)}
+h3{color:var(--green);font-size:1.1rem;margin:1rem 0 .3rem}
+p{margin:.5rem 0}
+a{color:var(--green)}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:1rem 1.05rem}
+.stack{display:grid;gap:1rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;min-height:3.1rem;padding:.6rem 1.1rem;border-radius:10px;border:2px solid var(--green);background:var(--green);color:#fff;font:inherit;font-weight:700;font-size:1.05rem;text-decoration:none;cursor:pointer;text-align:center;line-height:1.3}
+.btn.line{background:#fff;color:var(--green)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#fff}
+.btn.block{display:flex;width:100%}
+.btn.small{min-height:2.6rem;font-size:1rem;padding:.4rem .8rem}
+.btn:has(>[data-b]){display:inline-block;text-align:center;align-content:center}
+.btn.block:has(>[data-b]){display:block}
+.btn:disabled,.btn.off,a.off{opacity:.5;cursor:not-allowed;pointer-events:none}
+.btn small{display:block;font-size:16px;font-weight:400}
+.nowa{color:#7a4a12;background:#fdf1dc;border:1px solid #efd9ad;border-radius:10px;padding:.5rem .8rem;font-size:16px;margin:.5rem 0 0}
+ul.boxes,ul.list{list-style:none;margin:.6rem 0;padding:0;display:grid;gap:.55rem}
+ul.boxes li{background:#fff;border:1px solid var(--line);border-radius:10px;padding:.7rem .9rem}
+ul.list li{position:relative;padding-right:1.2rem}
+ul.list li::before{content:"";position:absolute;right:.15rem;top:.7rem;width:.45rem;height:.45rem;border-radius:50%;background:var(--gold)}
+.tip{background:var(--soft);border:1px solid var(--line);border-right:4px solid var(--gold);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.tip b{color:var(--green)}
+.quote{margin:1.3rem 0;padding:.6rem 1rem;text-align:center;color:var(--green);font-size:1.2rem;font-style:italic;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.note{color:var(--muted);font-size:16px}
+mark.chk{background:#ffe9a8;color:#5c4700;font-size:16px;padding:0 .25rem;border-radius:4px;white-space:nowrap}
+label,.label{display:block;font-weight:700;margin-bottom:.3rem}
+.opt{font-weight:400;color:var(--muted)}
+input[type=text],input[type=tel],input[type=url],input[type=number],input[type=date],input[type=time],input[type=datetime-local],select,textarea{width:100%;font:inherit;font-size:17px;color:var(--ink);background:#fff;border:1px solid #cfc5ab;border-radius:10px;padding:.6rem .75rem;min-height:3rem}
+textarea{min-height:5rem;resize:vertical;line-height:1.5}
+input:focus,textarea:focus,select:focus,.btn:focus-visible,a:focus-visible{outline:3px solid rgba(184,137,43,.55);outline-offset:1px}
+fieldset{min-width:0;margin:0;padding:1rem 1.05rem 1.1rem;border:1px solid var(--line);border-radius:10px;background:#fff}
+legend{padding:0 .4rem;font-size:1.2rem;font-weight:700;color:var(--green)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.field{min-width:0}
+.choices{display:flex;flex-wrap:wrap;gap:.5rem}
+.choices label{display:flex;align-items:center;gap:.45rem;margin:0;padding:.5rem .85rem;border:1px solid #cfc5ab;border-radius:999px;background:#fff;cursor:pointer;font-weight:400;min-height:2.8rem}
+.choices label:has(input:checked){border-color:var(--green);background:#e6f1ee}
+.choices input{accent-color:var(--green);width:1.15rem;height:1.15rem}
+.foot{max-width:720px;margin:0 auto;padding:1rem 16px 2rem;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:16px}
+.foot .disc{color:var(--ink);font-weight:700}
+@media(max-width:420px){.two{grid-template-columns:1fr}h1{font-size:1.5rem}}
+@page{size:A4;margin:14mm}
+@media print{.draft,.noprint,.nowa,.demo{display:none!important}body{background:#fff}.btn{display:none!important}}
+
+.mk-clock{font-size:1.5rem;color:var(--green);text-align:center;font-weight:700}.mk-sub{text-align:center;color:var(--muted)}.mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}.mk-grid .btn{min-height:3.7rem;font-size:1.1rem}.mk-alert{padding:.8rem 1rem;border-radius:10px;border:1px solid #efd9ad;background:#fdf1dc}.mk-alert.strong{border:2px solid #c9792b;background:#fbe3c6;font-weight:700}.mk-alert .btn{margin-top:.6rem}.mk-info{padding:.8rem 1rem;border-radius:10px;background:var(--soft);border:1px solid var(--line)}.mk-log{list-style:none;display:grid;gap:.3rem;margin:.5rem 0 0;padding:0}.mk-log li{display:flex;justify-content:space-between;align-items:center;gap:.6rem;padding:.35rem .1rem;border-bottom:1px solid var(--line)}.mk-log button{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font:inherit;min-height:2.2rem}.mk-tools{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center}@media(max-width:330px){.mk-grid{grid-template-columns:1fr}}
+</style>
+<style>.draft,mark.chk,.tag.chk,#btnDemo,[data-act="demo"],[data-act="demoDel"]{display:none!important}</style><meta name="robots" content="noindex">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4QR4583VST"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4QR4583VST',{page_location:location.origin+location.pathname});</script>
+</head>
+<body>
+<header class="top">
+  <span class="bsd">בס"ד</span>
+  <div class="brand"><span class="lbl" id="b-lbl">המוהל שלכם</span><strong id="b-name">המוהל שלכם</strong><span class="sub2" id="b-sub"></span><a id="b-wa"></a></div>
+  <p class="demo" id="b-demo"></p>
+  <p class="kicker">כלי להורים</p>
+  <h1>מעקב אחרי ברית מילה</h1>
+  <p class="sub">מסמנים בלחיצה מה קרה ומתי, ורואים כמה זמן עבר. כך אפשר להישאר רגועים, גם כשהעייפות מתחילה להשפיע.</p>
+</header>
+<div class="wrap">
+  <div class="stack" id="mk-app">
+    <div class="card" id="mk-start">
+      <label for="mk-when">מתי הייתה הברית?</label>
+      <input id="mk-when" type="datetime-local">
+      <div style="margin-top:.8rem"><button class="btn block" type="button" id="mk-go">מתחילים מעקב</button></div>
+    </div>
+
+    <div class="stack" id="mk-main" hidden>
+      <div class="card">
+        <div class="mk-clock" id="mk-clock"></div>
+        <div class="mk-sub" id="mk-since"></div>
+      </div>
+      <div id="mk-alerts" class="stack" aria-live="polite"></div>
+      <div class="mk-grid" id="mk-grid"></div>
+      <div class="card" id="mk-note-row" hidden>
+        <label for="mk-note">מה לרשום?</label>
+        <input id="mk-note" type="text" maxlength="120">
+        <div class="mk-tools" style="margin-top:.7rem">
+          <button class="btn small" type="button" id="mk-note-save">שמירת ההערה</button>
+          <button class="btn small line" type="button" id="mk-note-cancel">ביטול</button>
+        </div>
+      </div>
+      <div class="card">
+        <strong style="color:var(--green)">מה סימנתי</strong>
+        <ul class="mk-log" id="mk-log"></ul>
+      </div>
+      <div class="mk-tools">
+        <button class="btn" type="button" id="mk-send" data-wabtn>לשלוח <span data-b="to"></span> את סיכום המעקב (ווטסאפ)</button>
+        <button class="btn line" type="button" id="mk-edit">שינוי שעת הברית</button>
+        <button class="btn line" type="button" id="mk-reset">איפוס</button>
+      </div>
+      <p class="nowa">כפתורי הווטסאפ כבויים, כי הדף נפתח בלי מספר הטלפון של המוהל. פתחו את הקישור שהמוהל שלכם שלח לכם.</p>
+      <p class="note" style="text-align:center">הסימונים נשמרים רק בטלפון הזה, בלי הרשמה ובלי התראות.</p>
+    </div>
+  </div>
+
+  <section>
+    <h2>חשוב לדעת</h2>
+    <ul class="boxes">
+      <li>הכלי עוזר לזכור מה היה ומתי. הוא לא מחליט במקומכם ולא מחליף את המוהל.</li>
+      <li>את זמני התזכורות קבע <span data-b="who"></span>, לפי השיטה שלו.</li>
+      <li>אין כאן התראות. התזכורת מופיעה כשפותחים את הדף, ולכן כדאי להציץ בו מדי פעם.</li>
+      <li>לא בטוחים במשהו? כותבים <span data-b="to"></span> (ווטסאפ). אין שאלה מיותרת.</li>
+    </ul>
+    <p><a class="btn line block" data-wa="יש לי שאלה אחרי הברית">שאלה אחרי הברית? לכתוב <span data-b="to"></span> (ווטסאפ)</a></p>
+    <blockquote class="quote">"כשהאמא רגועה, גם התינוק רגוע"</blockquote>
+  </section>
+</div>
+<footer class="foot">
+  <p class="disc">הדף אינו תחליף לרופא הילדים. ההנחיות של המוהל שלכם קודמות לכל מה שכתוב כאן.</p>
+</footer>
+<script>
+// מיתוג: פרטי המוהל נקראים מה-hash של הכתובת (לא נשלח לשרת), ואם אין - מהמכשיר (mohelProfile).
+var MB = (function () {
+  function b64d(s) {
+    try {
+      s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '=';
+      var bin = atob(s), a = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i);
+      return new TextDecoder().decode(a);
+    } catch (e) { return ''; }
+  }
+  function parse() {
+    var o = {};
+    String(location.hash || '').replace(/^#/, '').split('&').forEach(function (kv) {
+      var i = kv.indexOf('='); if (i < 1) return;
+      var k = kv.slice(0, i), v = kv.slice(i + 1);
+      if ((k === 'x' || k === 'g') && v.charAt(0) === '~') { o[k] = b64d(v.slice(1)); return; }
+      try { o[k] = decodeURIComponent(v); } catch (e) { o[k] = v; }
+    });
+    return o;
+  }
+  function ls(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
+  function cut(s, n) { return String(s == null ? '' : s).replace(/\s+/g, ' ').trim().slice(0, n); }
+  function norm(p) {
+    p = String(p == null ? '' : p).replace(/\D/g, '');
+    if (p.indexOf('00') === 0) p = p.slice(2);
+    if (p.charAt(0) === '0') p = '972' + p.slice(1);
+    else if (p.length === 9 && p.charAt(0) === '5') p = '972' + p;
+    return p.length >= 10 && p.length <= 15 ? p : '';
+  }
+  function local(n) {
+    if (n.indexOf('972') !== 0) return '+' + n;
+    var l = '0' + n.slice(3);
+    return l.length === 10 ? l.slice(0, 3) + '-' + l.slice(3) : l;
+  }
+  var h = parse(), fromHash = !!(h.n || h.p), prof = ls('mohelProfile') || {}, kit = ls('mohelKit');
+  var src = fromHash ? h : { n: prof.name, p: prof.phone, t: prof.title, c: prof.city };
+  var name = cut(src.n, 60), title = cut(src.t, 40), city = cut(src.c, 40), num = norm(src.p);
+  function wa(text) { return num ? 'https://wa.me/' + num + (text ? '?text=' + encodeURIComponent(text) : '') : ''; }
+  var M = {
+    h: h, kit: kit, fromHash: fromHash, cfg: fromHash ? h : (kit || {}),
+    name: name, title: title, city: city, num: num, wa: wa, norm: norm, local: local,
+    hello: 'שלום' + (name ? ' ' + name : ''),
+    who: name || 'המוהל שלכם',
+    to: name ? 'ל' + name : 'למוהל שלכם',
+    full: name ? 'המוהל שלכם, ' + name : 'המוהל שלכם'
+  };
+  M.open = function (text) {
+    var u = wa(text); if (!u) return false;
+    var w = window.open(u, '_blank');
+    if (w) w.opener = null; else location.href = u;
+    return true;
+  };
+  function each(sel, fn) { Array.prototype.forEach.call(document.querySelectorAll(sel), fn); }
+  each('[data-b]', function (el) { el.textContent = M[el.getAttribute('data-b')] || ''; });
+  each('a[data-wa]', function (a) {
+    var u = wa(M.hello + ', ' + a.getAttribute('data-wa'));
+    if (u) { a.href = u; a.target = '_blank'; a.rel = 'noopener'; }
+    else { a.removeAttribute('href'); a.setAttribute('aria-disabled', 'true'); a.classList.add('off'); }
+  });
+  each('button[data-wabtn]', function (b) {
+    if (num) b.setAttribute('data-wa-base', 'https://wa.me/' + num); else b.disabled = true;
+  });
+  each('.nowa', function (el) { el.hidden = !!num; });
+  var el = document.getElementById('b-name');
+  if (el) {
+    el.textContent = M.who;
+    document.getElementById('b-lbl').hidden = !name;
+    var sub = document.getElementById('b-sub');
+    sub.textContent = [title, city].filter(Boolean).join(' · '); sub.hidden = !sub.textContent;
+    var a = document.getElementById('b-wa');
+    if (num) { a.href = wa(''); a.target = '_blank'; a.rel = 'noopener'; a.textContent = local(num) + ' (ווטסאפ)'; } else a.hidden = true;
+    var demo = document.getElementById('b-demo');
+    if (name && num) demo.hidden = true;
+    else demo.textContent = !name && !num
+      ? 'מצב הדגמה: הדף נפתח בלי פרטי מוהל. כשהמוהל שלכם ישלח לכם את הקישור שלו, יופיעו כאן השם והטלפון שלו, וכפתורי הווטסאפ יפעלו.'
+      : 'חסר ' + (name ? 'מספר טלפון' : 'שם המוהל') + ' בקישור. בקשו מהמוהל שלכם לשלוח את הקישור שוב.';
+    if (name) document.title = document.title + ' | ' + name;
+  }
+  return M;
+})();
+
+</script>
+<script>
+// מעקב אחרי הברית: הכול נשמר בטלפון של ההורה (localStorage), בלי שרת ובלי התראות.
+// כפתורי הסימון וספי הזמן מגיעים מהמוהל (b, u1, u2, fh בקישור).
+(function () {
+  var KEY = 'maakav-horim';
+  var H = 3600000;
+  var BASE = {
+    u: { name: 'שתן', btn: 'נתן שתן' },
+    f: { name: 'האכלה', btn: 'אכל' },
+    d: { name: 'החלפת טיטול', btn: 'החלפתי טיטול' },
+    n: { name: 'הערה', btn: 'הערה' }
+  };
+  var cfg = MB.cfg || {};
+  function numIn(v, def, min, max) { var n = parseFloat(v); return isFinite(n) && n >= min && n <= max ? n : def; }
+  var U1 = numIn(cfg.u1, 6, 0.5, 48), U2 = numIn(cfg.u2, 8, 0.5, 72), FH = numIn(cfg.fh, 4, 0, 24);
+  if (U2 <= U1) { U1 = 6; U2 = 8; }
+
+  var BTNS = [], custom = 0, seenK = {};
+  String(cfg.b == null || cfg.b === '' ? 'u,f,d,n' : cfg.b).split(',').forEach(function (id) {
+    id = id.trim(); var k, o;
+    if (BASE[id]) { k = id; o = BASE[id]; }
+    else if (id.charAt(0) === '*' && custom < 3) {
+      var nm = id.slice(1).replace(/\s+/g, ' ').trim().slice(0, 24);
+      if (!nm) return; custom++; k = '*' + nm; o = { name: nm, btn: nm };
+    } else return;
+    if (seenK[k]) return; seenK[k] = 1;
+    BTNS.push({ k: k, name: o.name, btn: o.btn });
+  });
+  if (!BTNS.length) ['u', 'f', 'd', 'n'].forEach(function (k) { BTNS.push({ k: k, name: BASE[k].name, btn: BASE[k].btn }); });
+  var HAS = {}; BTNS.forEach(function (b) { HAS[b.k] = b; });
+
+  var st = { t0: 0, ev: [] };
+  try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.t0 && Array.isArray(s.ev)) st = s; } catch (e) {}
+
+  function $(id) { return document.getElementById(id); }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function toLocalInput(ms) { var d = new Date(ms); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+  function hm(ms) { var d = new Date(ms); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+  function dm(ms) { var d = new Date(ms); return d.getDate() + '.' + (d.getMonth() + 1); }
+  function stamp(ms) { return dm(ms) === dm(Date.now()) ? hm(ms) : dm(ms) + ' ' + hm(ms); }
+  function dur(ms) {
+    var m = Math.max(0, Math.floor(ms / 60000)), h = Math.floor(m / 60);
+    var mm = m % 60, ht = h === 1 ? 'שעה' : h === 2 ? 'שעתיים' : h + ' שעות';
+    if (!h) return m ? (m === 1 ? 'דקה אחת' : m + ' דקות') : 'פחות מדקה';
+    return mm ? ht + ' ו' + (mm === 1 ? 'דקה' : '-' + mm + ' דקות') : (h === 1 ? 'שעה אחת' : ht);
+  }
+  function last(k) { var t = 0; st.ev.forEach(function (e) { if (e.k === k && e.t > t) t = e.t; }); return t; }
+  function nameOf(e) {
+    var n = HAS[e.k] ? HAS[e.k].name : (BASE[e.k] ? BASE[e.k].name : String(e.k).replace(/^\*/, ''));
+    return e.x ? n + ': ' + e.x : n;
+  }
+
+  // מצב שעון השתן: 0 שקט, 1 "כדאי לבדוק טיטול", 2 "לכתוב למוהל"
+  function urineLevel(since) { return since >= U2 * H ? 2 : since >= U1 * H ? 1 : 0; }
+
+  function render() {
+    var has = !!st.t0;
+    $('mk-start').hidden = has;
+    $('mk-main').hidden = !has;
+    if (!has) return;
+    var now = Date.now(), el = now - st.t0;
+    $('mk-clock').textContent = el < 0 ? 'הברית עוד לא התחילה' : 'עברו ' + dur(el);
+    $('mk-since').textContent = 'הברית: ' + stamp(st.t0);
+
+    var box = $('mk-alerts'); box.innerHTML = '';
+    function add(cls, text, extra) {
+      var d = document.createElement('div'); d.className = cls;
+      var p = document.createElement('div'); p.textContent = text; d.appendChild(p);
+      if (extra) d.appendChild(extra);
+      box.appendChild(d);
+    }
+    if (el >= 0 && el < 48 * H) {
+      if (HAS.u) {
+        var lu = last('u'), sinceU = now - (lu || st.t0), lvl = urineLevel(sinceU);
+        box.setAttribute('data-urine', String(lvl));
+        if (lvl === 2) {
+          var b = document.createElement('button'); b.type = 'button'; b.className = 'btn block';
+          b.textContent = 'לכתוב ' + MB.to + ' (ווטסאפ)';
+          if (MB.num) {
+            b.setAttribute('data-wa-base', 'https://wa.me/' + MB.num);
+            b.addEventListener('click', function () {
+              MB.open(MB.hello + ', הברית הייתה ב-' + stamp(st.t0) + (lu ? ', השתן האחרון היה ב-' + stamp(lu) : ', ועוד לא ראינו שתן') + '. עברו ' + dur(Date.now() - (lu || st.t0)) + ' בלי שתן. מה לעשות?');
+            });
+          } else b.disabled = true;
+          add('mk-alert strong', 'עברו ' + dur(sinceU) + ' בלי שתן. כתבו ' + MB.to + ' עכשיו.', b);
+        } else if (lvl === 1) {
+          add('mk-alert', 'עברו ' + dur(sinceU) + ' בלי שתן. כדאי לבדוק טיטול.');
+        }
+      }
+      if (HAS.f && FH > 0) {
+        var lf = last('f'), sinceF = now - (lf || st.t0);
+        if (sinceF >= FH * H) add('mk-info', 'עברו ' + dur(sinceF) + ' מההאכלה האחרונה. אם הוא ישן, אפשר להעיר בעדינות לאכול.');
+      }
+    }
+    if (HAS.u && new Date(st.t0).getDay() === 5 && el < 48 * H) add('mk-info', 'הברית ביום שישי: לפני כניסת שבת כדאי לוודא שהיה שתן.');
+
+    var log = $('mk-log'); log.innerHTML = '';
+    if (!st.ev.length) { var li0 = document.createElement('li'); li0.textContent = 'עוד לא סומן כלום.'; log.appendChild(li0); }
+    st.ev.slice().sort(function (a, b) { return b.t - a.t; }).forEach(function (e) {
+      var li = document.createElement('li');
+      var sp = document.createElement('span'); sp.textContent = stamp(e.t) + ' · ' + nameOf(e);
+      var rm = document.createElement('button'); rm.type = 'button'; rm.textContent = 'ביטול';
+      rm.addEventListener('click', function () { st.ev = st.ev.filter(function (x) { return x !== e; }); save(); render(); });
+      li.appendChild(sp); li.appendChild(rm); log.appendChild(li);
+    });
+  }
+
+  // כפתורי הסימון לפי בחירת המוהל
+  var grid = $('mk-grid');
+  BTNS.forEach(function (bt, i) {
+    var b = document.createElement('button'); b.type = 'button';
+    b.className = 'btn' + (bt.k === 'u' || bt.k === 'f' ? '' : ' line');
+    b.setAttribute('data-k', bt.k); b.textContent = bt.btn;
+    if (BTNS.length % 2 === 1 && i === BTNS.length - 1) b.style.gridColumn = '1/-1';
+    b.addEventListener('click', function () {
+      if (bt.k === 'n') { $('mk-note-row').hidden = false; $('mk-note').value = ''; $('mk-note').focus(); return; }
+      st.ev.push({ k: bt.k, t: Date.now() }); save(); render();
+    });
+    grid.appendChild(b);
+  });
+  $('mk-note-save').addEventListener('click', function () {
+    var v = $('mk-note').value.replace(/\s+/g, ' ').trim().slice(0, 120);
+    if (v) { st.ev.push({ k: 'n', t: Date.now(), x: v }); save(); }
+    $('mk-note-row').hidden = true; render();
+  });
+  $('mk-note-cancel').addEventListener('click', function () { $('mk-note-row').hidden = true; });
+
+  var inp = $('mk-when');
+  inp.value = toLocalInput(Date.now());
+  $('mk-go').addEventListener('click', function () {
+    var t = new Date(inp.value).getTime();
+    st.t0 = isFinite(t) ? t : Date.now(); save(); render();
+  });
+  $('mk-edit').addEventListener('click', function () { inp.value = toLocalInput(st.t0); st.t0 = 0; $('mk-start').hidden = false; $('mk-main').hidden = true; });
+  $('mk-reset').addEventListener('click', function () {
+    if (!window.confirm('למחוק את כל הסימונים ולהתחיל מחדש?')) return;
+    st = { t0: 0, ev: [] }; save(); inp.value = toLocalInput(Date.now()); render();
+  });
+
+  function summary() {
+    var lines = [MB.hello + ' 🙂 סיכום המעקב אחרי הברית.', 'הברית הייתה ב-' + stamp(st.t0) + '.'];
+    BTNS.forEach(function (bt) {
+      var ev = st.ev.filter(function (e) { return e.k === bt.k; }).sort(function (a, b) { return a.t - b.t; });
+      if (!ev.length) return;
+      if (bt.k === 'n') ev.forEach(function (e) { lines.push('הערה (' + stamp(e.t) + '): ' + (e.x || '')); });
+      else lines.push(bt.name + ' (' + ev.length + '): ' + ev.map(function (e) { return stamp(e.t); }).join(', '));
+    });
+    return lines.join('\n');
+  }
+  $('mk-send').addEventListener('click', function () { MB.open(summary()); });
+
+  window.__maakav = { u1: U1, u2: U2, fh: FH, btns: BTNS.map(function (b) { return b.k; }), urineLevel: urineLevel, summary: summary };
+  render();
+  setInterval(render, 30000);
+})();
+
+</script>
+</body>
+</html>

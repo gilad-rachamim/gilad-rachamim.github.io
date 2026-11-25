@@ -4,6 +4,15 @@
 // הפרטים לא יוצאים מהטלפון, חוץ מטופס ההרשמה (שם/טלפון/מייל) שנשלח לצינור הלידים.
 (function () {
   'use strict';
+  // שפה: עברית (ברירת מחדל) / רוסית / אנגלית לפי <html lang>. בעברית הכול יוצא בדיוק כמו קודם.
+  var L = (document.documentElement.getAttribute('lang') || 'he').slice(0, 2);
+  if (!/^(he|ru|en)$/.test(L)) L = 'he';
+  var T = function (o) { return o[L] || o.he; };
+  // שפת הנוסח של ההזמנה: d.lg (נשמר בקישור), אחרת ?l= בדף האורחים/הניהול (הקישור הקצר), אחרת שפת הדף
+  var QL = ''; try { QL = new URLSearchParams(location.search).get('l') || ''; } catch (e) {}
+  var DL = (/^(ru|en)$/.test(QL) && /\/hazmana\/(v|m)\//.test(location.pathname)) ? QL : L;
+  function lgOf(d) { var l = d && d.lg; return /^(he|ru|en)$/.test(l || '') ? l : DL; }
+  var HZ_PATH = { he: '/mohel/hazmana/', ru: '/mohel/ru/hazmana/', en: '/mohel/en/hazmana/' };
   var W = 1080, H = 1350;
   var SERIF = '"Frank Ruhl Libre", "David Libre", serif', SANS = '"Assistant", system-ui, sans-serif';
   var DAYS = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
@@ -42,8 +51,33 @@
     return m ? new Date(+m[1], +m[2] - 1, +m[3], 12) : null;
   }
   function greg(d) { return d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear(); }
-  // fm: heb / greg / both
-  function dateText(d, fm) {
+  // תאריך עברי ולועזי ברוסית/אנגלית (בעברית – hebrew/greg כמו קודם)
+  var HM_X = {
+    ru: { tishri: 'тишрея', tishrei: 'тишрея', heshvan: 'хешвана', cheshvan: 'хешвана', kislev: 'кислева', tevet: 'тевета', shevat: 'швата', 'adar i': 'адара I', 'adar ii': 'адара II', adar: 'адара', nisan: 'нисана', iyar: 'ияра', sivan: 'сивана', tamuz: 'тамуза', av: 'ава', elul: 'элуля' },
+    en: { tishri: 'Tishrei', tishrei: 'Tishrei', heshvan: 'Cheshvan', cheshvan: 'Cheshvan', kislev: 'Kislev', tevet: 'Tevet', shevat: 'Shevat', 'adar i': 'Adar I', 'adar ii': 'Adar II', adar: 'Adar', nisan: 'Nisan', iyar: 'Iyar', sivan: 'Sivan', tamuz: 'Tammuz', av: 'Av', elul: 'Elul' }
+  };
+  var GM_X = {
+    ru: ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'],
+    en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  };
+  function hebrewL(d, l) {
+    if (!HM_X[l]) return hebrew(d);
+    var o = {};
+    enFmt.formatToParts(d).forEach(function (p) { o[p.type] = p.value; });
+    return parseInt(o.day, 10) + ' ' + (HM_X[l][(o.month || '').toLowerCase()] || o.month) + ' ' + o.year;
+  }
+  function gregL(d, l) {
+    if (l === 'ru') return d.getDate() + ' ' + GM_X.ru[d.getMonth()] + ' ' + d.getFullYear();
+    if (l === 'en') return GM_X.en[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+    return greg(d);
+  }
+  // fm: heb / greg / both. l: שפת הנוסח (ריק = עברית)
+  function dateText(d, fm, l) {
+    if (l && l !== 'he') {
+      if (fm === 'greg') return gregL(d, l);
+      if (fm === 'heb') return hebrewL(d, l);
+      return hebrewL(d, l) + ' (' + gregL(d, l) + ')';
+    }
     if (fm === 'greg') return greg(d);
     if (fm === 'heb') return hebrew(d);
     return hebrew(d) + ' (' + greg(d) + ')';
@@ -78,17 +112,112 @@
       srcs: ['', 'שמות יג, ב', 'שמות יג, יג']
     }
   };
-  function kindOf(d) { return KINDS[d && d.k] || KINDS.brit; }
+  // נוסח ההזמנה ברוסית/אנגלית (לא ליטורגיה; הפסוקים עצמם נשארים בעברית). slug/lead/born/verses/baby – מהעברית.
+  var KINDS_X = {
+    ru: {
+      brit: {
+        full: 'брит-мила', title: 'Брит-мила', the: 'брит-мила', name: 'брит-мила',
+        open: ['С благодарностью Всевышнему', 'мы рады сообщить о рождении нашего сына', 'и будем рады разделить с вами радость его вступления в союз Авраама, отца нашего'],
+        wa: ['С благодарностью Всевышнему мы рады сообщить о рождении нашего сына 🎉', 'Брит-мила состоится с помощью Всевышнего '],
+        seudah: 'После брит-милы – праздничная трапеза (сеуда мицва)', bless: 'Пусть растёт для Торы, хупы и добрых дел',
+        srcs: ['', 'Ваикра 12:3', 'Теилим 65:5', 'Из благословения на брит-миле', 'Берешит 48:16'],
+        vlab: ['', 'У-ва-йом а-шмини имоль бсар орлато (Ваикра 12:3)', 'Ашрей тивхар у-текарев ишкон хацерейха (Теилим 65:5)', 'Ке-шем ше-нихнас ла-брит, кен иканес ле-Тора у-ле-хупа у-ле-маасим товим', 'А-малах а-гоэль оти ми-коль ра (Берешит 48:16)']
+      },
+      zeved: {
+        full: 'зевед а-бат', title: 'Зевед а-бат', sub: 'и наречение имени', the: 'зевед а-бат', name: 'зевед а-бат',
+        open: ['С радостью и благодарностью Всевышнему', 'мы рады сообщить о рождении нашей дочери', 'и будем рады разделить с вами праздник'],
+        wa: ['С радостью и благодарностью Всевышнему мы рады сообщить о рождении нашей дочери 🎀', 'Будем рады разделить с вами зевед а-бат и наречение имени, с помощью Всевышнего '],
+        seudah: 'Кидуш и трапеза после молитвы', bless: 'Пусть растёт для Торы, хупы и добрых дел',
+        srcs: ['', 'Берешит 30:20', 'Рут 3:10', 'Теилим 45:14'],
+        vlab: ['', 'Зевадани Элоким оти зевед тов (Берешит 30:20)', 'Бруха ат ла-Шем бити (Рут 3:10)', 'Коль кевуда бат мелех пнима (Теилим 45:14)']
+      },
+      pidyon: {
+        full: 'пидьон а-бен', title: 'Пидьон а-бен', sub: 'выкуп первенца', the: 'пидьон а-бен', name: 'пидьон а-бен',
+        open: ['С радостью и благодарностью Всевышнему', 'за рождение нашего сына-первенца', 'будем рады разделить с вами заповедь'],
+        wa: ['С радостью и благодарностью Всевышнему за рождение нашего сына-первенца 🎉', 'Будем рады разделить с вами заповедь пидьон а-бен, которая состоится с помощью Всевышнего '],
+        seudah: 'После пидьона – праздничная трапеза (сеуда мицва)', bless: 'Пусть растёт для Торы, хупы и добрых дел',
+        srcs: ['', 'Шмот 13:2', 'Шмот 13:13'],
+        vlab: ['', 'Кадеш ли холь бехор (Шмот 13:2)', 'Ве-холь бехор адам бе-ванеха тифде (Шмот 13:13)']
+      }
+    },
+    en: {
+      brit: {
+        full: 'brit milah', title: 'Brit Milah', the: 'the brit', name: 'brit milah',
+        open: ['With praise and thanks to G-d', 'we are happy to announce the birth of our son', 'and would be glad to share with you the joy of his entry into the covenant of Abraham our father'],
+        wa: ['With praise and thanks to G-d, we are happy to announce the birth of our son 🎉', 'The brit milah will take place, G-d willing, '],
+        seudah: 'A seudat mitzvah (festive meal) will follow the brit', bless: 'May he grow to Torah, to the chuppah and to good deeds',
+        srcs: ['', 'Leviticus 12:3', 'Psalms 65:5', 'From the brit milah blessing', 'Genesis 48:16'],
+        vlab: ['', 'U-va-yom ha-shmini yimol besar orlato (Leviticus 12:3)', 'Ashrei tivchar u-tekarev yishkon chatzerecha (Psalms 65:5)', 'Ke-shem she-nichnas la-brit, ken yikanes le-Torah u-le-chuppah u-le-maasim tovim', 'Ha-malach ha-goel oti mi-kol ra (Genesis 48:16)']
+      },
+      zeved: {
+        full: 'Zeved Habat', title: 'Zeved Habat', sub: 'and baby naming', the: 'the Zeved Habat', name: 'Zeved Habat',
+        open: ['With joy and thanks to G-d', 'we are happy to announce the birth of our daughter', 'and would be glad to share with you the celebration of'],
+        wa: ['With joy and thanks to G-d, we are happy to announce the birth of our daughter 🎀', 'We would be glad to share with you the Zeved Habat and baby naming, G-d willing, '],
+        seudah: 'Kiddush and a meal after the prayers', bless: 'May she grow to Torah, to the chuppah and to good deeds',
+        srcs: ['', 'Genesis 30:20', 'Ruth 3:10', 'Psalms 45:14'],
+        vlab: ['', 'Zevadani Elokim oti zeved tov (Genesis 30:20)', 'Brucha at la-Shem biti (Ruth 3:10)', 'Kol kevudah bat melech penimah (Psalms 45:14)']
+      },
+      pidyon: {
+        full: 'Pidyon Haben', title: 'Pidyon Haben', sub: 'Redemption of the Firstborn', the: 'the pidyon', name: 'Pidyon Haben',
+        open: ['With joy and thanks to G-d', 'for the birth of our firstborn son', 'we would be glad to share with you the mitzvah of'],
+        wa: ['With joy and thanks to G-d for the birth of our firstborn son 🎉', 'We would be glad to share with you the mitzvah of Pidyon Haben, which will take place, G-d willing, '],
+        seudah: 'A seudat mitzvah (festive meal) will follow the pidyon', bless: 'May he grow to Torah, to the chuppah and to good deeds',
+        srcs: ['', 'Exodus 13:2', 'Exodus 13:13'],
+        vlab: ['', 'Kadesh li chol bechor (Exodus 13:2)', 'Ve-chol bechor adam be-vanecha tifdeh (Exodus 13:13)']
+      }
+    }
+  };
+  var KX_CACHE = {};
+  function kindOf(d) {
+    var base = KINDS[d && d.k] || KINDS.brit, l = lgOf(d);
+    var x = KINDS_X[l] && KINDS_X[l][base.slug];
+    if (!x) return base;
+    var key = l + base.slug;
+    if (!KX_CACHE[key]) {
+      var o = {}, p;
+      for (p in base) o[p] = base[p];
+      if (!x.sub) delete o.sub;
+      for (p in x) o[p] = x[p];
+      o.lg = l;
+      KX_CACHE[key] = o;
+    }
+    return KX_CACHE[key];
+  }
+  // מחרוזות של נוסח ההזמנה עצמה לפי שפת הנוסח (ולא לפי שפת הדף)
+  function TL(d, o) { return o[lgOf(d)] || o.he; }
+  var DAYS_X = {
+    ru: ['в воскресенье', 'в понедельник', 'во вторник', 'в среду', 'в четверг', 'в пятницу', 'в шабат'],
+    en: ['on Sunday', 'on Monday', 'on Tuesday', 'on Wednesday', 'on Thursday', 'on Friday', 'on Shabbat']
+  };
+  var PRAYER_X = { ru: { shacharit: 'шахарит', mincha: 'минха', arvit: 'арвит' }, en: { shacharit: 'Shacharit', mincha: 'Mincha', arvit: 'Maariv' } };
 
   // ---------- הנוסח ----------
   function whenText(d) {
-    var dt = parseDate(d.dt);
+    var dt = parseDate(d.dt), l = lgOf(d);
+    if (DAYS_X[l]) {
+      if (!dt) return TL(d, { ru: 'дата ___', en: 'date ___' });
+      return DAYS_X[l][dt.getDay()] + ', ' + dateText(dt, d.fm, l);
+    }
     if (!dt) return 'ביום ___';
     return (dt.getDay() === 6 ? 'בשבת קודש, ' : 'ביום ' + DAYS[dt.getDay()] + ', ') + dateText(dt, d.fm);
   }
-  function prayerName(d) { return d.shp === 'mincha' ? 'מנחה' : d.shp === 'arvit' ? 'ערבית' : 'שחרית'; }
+  function prayerName(d) {
+    var l = lgOf(d), k = d.shp === 'mincha' ? 'mincha' : d.shp === 'arvit' ? 'arvit' : 'shacharit';
+    if (PRAYER_X[l]) return PRAYER_X[l][k];
+    return d.shp === 'mincha' ? 'מנחה' : d.shp === 'arvit' ? 'ערבית' : 'שחרית';
+  }
   function timeText(d) {
-    var t = d.tm ? 'בשעה ' + hm(d.tm) : 'בשעה ___', K = kindOf(d);
+    var K = kindOf(d), l = lgOf(d);
+    if (l === 'ru' || l === 'en') {
+      var at = l === 'ru' ? 'в ' : 'at ';
+      var tt = at + (d.tm ? hm(d.tm) : '___');
+      if (!d.sh) return tt;
+      var pr = (l === 'ru' ? 'молитва ' : '') + prayerName(d) + (l === 'en' ? ' prayers' : '') +
+        (d.k === 'zeved' ? (l === 'ru' ? ' и наречение имени' : ' and naming') : '') + ' ' + hm(d.sh);
+      var what = d.k === 'zeved' ? (l === 'ru' ? 'кидуш' : 'Kiddush') : (l === 'ru' ? K.the : K.title);
+      return pr + ' · ' + what + ' ' + hm(d.tm || '___');
+    }
+    var t = d.tm ? 'בשעה ' + hm(d.tm) : 'בשעה ___';
     if (!d.sh) return t;
     var pray = 'תפילת ' + prayerName(d) + (d.k === 'zeved' ? ' וקריאת השם' : '') + ' ' + hm(d.sh);
     return pray + ' · ' + (d.k === 'zeved' ? 'הקידוש' : K.the) + ' ' + hm(d.tm || '___');
@@ -99,36 +228,53 @@
     if (!dt) return '';
     var fri = new Date(dt); fri.setDate(dt.getDate() - (((dt.getDay() - 5) + 7) % 7 || 7));
     var sat = new Date(fri); sat.setDate(fri.getDate() + 1);
-    var when = d.fm === 'greg' ? 'ביום שישי בערב, ' + greg(fri) : d.fm === 'heb' ? 'בליל שבת קודש, ' + hebrew(sat) : 'בליל שבת קודש, ' + hebrew(sat) + ' (' + greg(fri) + ')';
+    var l = lgOf(d);
+    if (l === 'ru' || l === 'en') {
+      var fr = l === 'ru' ? 'Шалом захар в пятницу вечером, ' : 'Shalom Zachar on Friday night, ';
+      var wx = d.fm === 'greg' ? gregL(fri, l) : d.fm === 'heb' ? TL(d, { ru: 'ночь на ', en: 'eve of ' }) + hebrewL(sat, l) : gregL(fri, l) + ' (' + TL(d, { ru: 'ночь на ', en: 'eve of ' }) + hebrewL(sat, l) + ')';
+      return fr + wx + szMore(d);
+    }
+    var when =d.fm === 'greg' ? 'ביום שישי בערב, ' + greg(fri) : d.fm === 'heb' ? 'בליל שבת קודש, ' + hebrew(sat) : 'בליל שבת קודש, ' + hebrew(sat) + ' (' + greg(fri) + ')';
     return 'שלום זכר ' + when + szMore(d);
   }
-  function szMore(d) { return (d.szt ? ', בשעה ' + hm(d.szt) : '') + (d.szp ? ', ב' + stripB(d.szp) : ''); }
+  function szMore(d) {
+    var l = lgOf(d);
+    if (l === 'ru') return (d.szt ? ', в ' + hm(d.szt) : '') + (d.szp ? ', ' + d.szp.trim() : '');
+    if (l === 'en') return (d.szt ? ', at ' + hm(d.szt) : '') + (d.szp ? ', ' + d.szp.trim() : '');
+    return (d.szt ? ', בשעה ' + hm(d.szt) : '') + (d.szp ? ', ב' + stripB(d.szp) : '');
+  }
   function stripB(s) { return s.replace(/^ב(?=בית|אולם|בית\s)/, ''); }
   function signText(d) {
     var par = (d.par || '').trim(), fam = (d.fam || '').trim();
     if (par && fam) return par + ' ' + fam;
-    if (fam) return 'משפחת ' + fam;
+    if (fam) return TL(d, { he: 'משפחת ' + fam, ru: 'Семья ' + fam, en: 'The ' + fam + ' family' });
     return par;
   }
-  function seudahText(d) { return kindOf(d).seudah + (d.sep ? ' ב' + stripB(d.sep) : ''); }
-  function kohenText(d) { return d.k === 'pidyon' && d.kh ? 'הכהן: ' + d.kh.trim() : ''; }
+  function seudahText(d) {
+    if (lgOf(d) !== 'he') return kindOf(d).seudah + (d.sep ? ', ' + d.sep.trim() : '');
+    return kindOf(d).seudah + (d.sep ? ' ב' + stripB(d.sep) : '');
+  }
+  function kohenText(d) { return d.k === 'pidyon' && d.kh ? TL(d, { he: 'הכהן: ', ru: 'Коэн: ', en: 'Kohen: ' }) + d.kh.trim() : ''; }
+  // ברוסית/אנגלית: אות גדולה בתחילת שורה בתמונה (בעברית – בלי שינוי)
+  function capX(d, s) { return lgOf(d) === 'he' ? s : s.charAt(0).toUpperCase() + s.slice(1); }
+  function placeText(d) { return d.pl ? (lgOf(d) === 'he' ? stripB(d.pl) : d.pl.trim()) : TL(d, { he: 'המקום ___', ru: 'Место ___', en: 'Venue ___' }); }
 
   // רשימת השורות לציור. size ביחידות של הקנבס המלא (1080).
   function blocks(d, th) {
     var b = [], K = kindOf(d);
     var T = th.titleFont, B = th.bodyFont;
     var v = +d.vs || 0, verse = K.verses[v];
-    if (verse) { b.push({ t: verse, size: 36, w: 400, f: SERIF, c: th.accent, gap: 0 }); b.push({ t: K.srcs[v], size: 24, w: 400, f: SANS, c: th.muted, gap: 6 }); }
+    if (verse) { b.push({ t: verse, size: 36, w: 400, f: SERIF, c: th.accent, gap: 0, rtl: true }); b.push({ t: K.srcs[v], size: 24, w: 400, f: SANS, c: th.muted, gap: 6 }); }
     b.push({ t: K.open[0], size: 40, w: 500, f: B, c: th.text, gap: verse ? 40 : 0 });
     b.push({ t: K.open[1], size: 40, w: 400, f: B, c: th.text, gap: 10 });
     b.push({ t: K.open[2], size: 40, w: 400, f: B, c: th.text, gap: 6 });
     b.push({ t: K.title, size: 120, w: 700, f: T, c: th.title, gap: 36, lh: 1.15 });
     if (K.sub) b.push({ t: K.sub, size: 52, w: 600, f: T, c: th.title, gap: 0, lh: 1.2 });
     b.push({ sep: true, gap: 10 });
-    b.push({ t: d.k === 'brit' ? 'תתקיים בעזרת ה׳' : 'שתתקיים בעזרת ה׳', size: 38, w: 400, f: B, c: th.text, gap: 18 });
-    b.push({ t: whenText(d), size: 50, w: 600, f: B, c: th.strong, gap: 8 });
-    b.push({ t: timeText(d), size: 46, w: 600, f: B, c: th.strong, gap: 6 });
-    b.push({ t: d.pl ? stripB(d.pl) : 'המקום ___', size: 46, w: 500, f: B, c: th.text, gap: 30 });
+    b.push({ t: TL(d, { he: d.k === 'brit' ? 'תתקיים בעזרת ה׳' : 'שתתקיים בעזרת ה׳', ru: 'состоится с помощью Всевышнего', en: 'will take place, G-d willing,' }), size: 38, w: 400, f: B, c: th.text, gap: 18 });
+    b.push({ t: capX(d, whenText(d)), size: 50, w: 600, f: B, c: th.strong, gap: 8 });
+    b.push({ t: capX(d, timeText(d)), size: 46, w: 600, f: B, c: th.strong, gap: 6 });
+    b.push({ t: placeText(d), size: 46, w: 500, f: B, c: th.text, gap: 30 });
     if (d.ad) b.push({ t: d.ad, size: 34, w: 400, f: SANS, c: th.muted, gap: 4 });
     if (kohenText(d)) b.push({ t: kohenText(d), size: 34, w: 400, f: B, c: th.text, gap: 24 });
     if (d.se) b.push({ t: seudahText(d), size: 34, w: 400, f: B, c: th.text, gap: 28 });
@@ -274,6 +420,7 @@
     var px = canvas.width / W;
     var ctx = canvas.getContext('2d');
     ctx.setTransform(px, 0, 0, px, 0, 0);
+    var dir = lgOf(d) === 'he' ? 'rtl' : 'ltr';
     ctx.direction = 'rtl';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'alphabetic';
@@ -281,7 +428,7 @@
     var box = th.box, maxW = W - box[1] - box[3], top = box[0], availH = H - box[0] - box[2];
     var bsd = th.bsd || [W - 100, 118, 'right'];
     ctx.textAlign = bsd[2]; ctx.fillStyle = th.muted; ctx.font = '400 30px ' + SERIF; ctx.fillText('בס״ד', bsd[0], bsd[1]);
-    ctx.textAlign = 'center';
+    ctx.textAlign = 'center'; ctx.direction = dir;
     var bl = blocks(d, th), k = 1, laid, total;
     for (var tries = 0; tries < 14; tries++) { // מקטינים עד שהכול נכנס
       total = 0; laid = [];
@@ -299,15 +446,17 @@
     }
     // שורת קרדיט עדינה בתחתית: כל העברה של התמונה מביאה עוד הורים
     ctx.font = '400 22px ' + SANS; ctx.fillStyle = th.muted; ctx.globalAlpha = 0.75;
-    ctx.fillText('הודעה כזאת בחינם: hakelim.com/mohel/hazmana', W / 2, th.creditY || H - 92);
+    ctx.fillText(TL(d, { he: 'הודעה כזאת בחינם: hakelim.com/mohel/hazmana', ru: 'Такое приглашение бесплатно: hakelim.com/mohel/ru/hazmana', en: 'Free invitation like this: hakelim.com/mohel/en/hazmana' }), W / 2, th.creditY || H - 92);
     ctx.globalAlpha = 1;
     var y0 = top + (availH - total) / 2;
     laid.forEach(function (l) {
       if (l.sep) { th.sep(ctx, y0 + l.y); return; }
       ctx.font = l.b.w + ' ' + l.size + 'px ' + l.b.f;
       ctx.fillStyle = l.b.c;
+      ctx.direction = l.b.rtl ? 'rtl' : dir; // פסוק תמיד מימין לשמאל
       l.lines.forEach(function (line, j) { ctx.fillText(line, W / 2, y0 + l.y + l.lh * j + l.size * 0.95); });
     });
+    ctx.direction = 'rtl';
   }
   var fontsReady = (document.fonts && document.fonts.load) ? Promise.all([
     document.fonts.load('700 40px "Frank Ruhl Libre"'), document.fonts.load('400 40px "Frank Ruhl Libre"'),
@@ -325,19 +474,22 @@
     for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
     return JSON.parse(new TextDecoder().decode(bytes));
   }
-  var PUB = ['k', 'dt', 'tm', 'sh', 'shp', 'pl', 'ad', 'fm', 'par', 'fam', 'gp', 'vs', 'se', 'sep', 'sz', 'szt', 'szp', 'st', 'kh'];
+  // lg: שפת הנוסח (רק ru/en; בעברית לא נשמר, כך שהקישורים העבריים נשארים זהים)
+  var PUB = ['k', 'dt', 'tm', 'sh', 'shp', 'pl', 'ad', 'fm', 'par', 'fam', 'gp', 'vs', 'se', 'sep', 'sz', 'szt', 'szp', 'st', 'kh', 'lg'];
   function pubOf(d) { var o = {}; PUB.forEach(function (k) { if (d[k] && !(k === 'k' && d[k] === 'brit')) o[k] = d[k]; }); return o; }
   // האירוע שנוצר ב-Worker (מזהה קצר + טוקן ניהול), נשמר בטלפון של ההורים
   var evt = null;
   try { evt = JSON.parse(localStorage.getItem(EV_STORE) || 'null'); } catch (e) {}
-  function shortUrl(id, gid) { return location.origin + '/mohel/hazmana/v/?e=' + id + (gid ? '&g=' + gid : ''); }
-  function adminUrl(e) { return location.origin + '/mohel/hazmana/m/?e=' + e.id + '&t=' + e.tok; }
+  // ?l= בקישור הקצר: ה-Worker שומר רק את מפתחות PUB שלו, אז השפה עוברת גם בכתובת (בעברית – בלי תוספת)
+  function lq() { return DL === 'he' ? '' : '&l=' + DL; }
+  function shortUrl(id, gid) { return location.origin + '/mohel/hazmana/v/?e=' + id + (gid ? '&g=' + gid : '') + lq(); }
+  function adminUrl(e) { return location.origin + '/mohel/hazmana/m/?e=' + e.id + '&t=' + e.tok + lq(); }
   function hashUrl(d) { return location.origin + '/mohel/hazmana/v/#d=' + enc(pubOf(d)); }
   // קישור לאורחים: קצר כשיש אירוע ברשת ופרטיו מעודכנים, אחרת הקישור הארוך (עובד גם בלי רשת)
   function guestUrl(d) {
     return (evt && evt.sig === JSON.stringify(pubOf(d))) ? shortUrl(evt.id) : hashUrl(d);
   }
-  function placeQuery(d) { return [stripB(d.pl || ''), d.ad || ''].filter(String).join(', '); }
+  function placeQuery(d) { return [lgOf(d) === 'he' ? stripB(d.pl || '') : (d.pl || '').trim(), d.ad || ''].filter(String).join(', '); }
   function wazeUrl(d) { return 'https://waze.com/ul?q=' + encodeURIComponent(placeQuery(d)) + '&navigate=yes'; }
   function mapsUrl(d) { return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(placeQuery(d)); }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
@@ -353,7 +505,7 @@
   function utcStamp(x) { return x.getUTCFullYear() + pad(x.getUTCMonth() + 1) + pad(x.getUTCDate()) + 'T' + pad(x.getUTCHours()) + pad(x.getUTCMinutes()) + '00Z'; }
   function calTitle(d) { var s = signText(d); return kindOf(d).name + (s ? ' – ' + s : ''); }
   function calTimes(d) { var a = israelToUtc(d.dt, d.sh || d.tm); return [a, new Date(a.getTime() + (d.sh ? 3 : 2) * 3600e3)]; }
-  function calDetails(d) { return timeText(d) + '\n' + guestUrl(d) + '\n\nהודעה כזאת לשמחה שלכם, בחינם: ' + location.origin + '/mohel/hazmana/?utm_source=calendar&utm_medium=hazmana'; }
+  function calDetails(d) { var l = lgOf(d); return timeText(d) + '\n' + guestUrl(d) + '\n\n' + TL(d, { he: 'הודעה כזאת לשמחה שלכם, בחינם: ', ru: 'Такое приглашение для вашего праздника, бесплатно: ', en: 'A free invitation like this for your celebration: ' }) + location.origin + HZ_PATH[l] + '?utm_source=calendar&utm_medium=hazmana'; }
   function gcalUrl(d) {
     var t = calTimes(d);
     return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(calTitle(d)) +
@@ -379,8 +531,8 @@
     if (d.se) L.push(seudahText(d) + '.');
     if (d.sz && d.k === 'brit' && dt) L.push(szText(d) + '.');
     L.push('');
-    L.push('ניווט: ' + wazeUrl(d));
-    L.push('ההודעה המלאה והוספה ליומן: ' + guestUrl(d));
+    L.push(TL(d, { he: 'ניווט: ', ru: 'Маршрут: ', en: 'Directions: ' }) + wazeUrl(d));
+    L.push(TL(d, { he: 'ההודעה המלאה והוספה ליומן: ', ru: 'Полное приглашение и добавление в календарь: ', en: 'Full invitation and add to calendar: ' }) + guestUrl(d));
     var s = signText(d); if (s) { L.push(''); L.push(s); }
     return L.join('\n');
   }
@@ -409,15 +561,16 @@
     var bsd = th.bsd || [W - 100, 118, 'right'];
     ctx.textAlign = bsd[2]; ctx.fillStyle = th.muted; ctx.font = '400 30px ' + SERIF; ctx.fillText('בס״ד', bsd[0], bsd[1]);
     ctx.textAlign = 'center';
+    if (lgOf(d) !== 'he') ctx.direction = 'ltr';
     var B = th.bodyFont, T = th.titleFont, b = [], K = kindOf(d);
     b.push({ t: K.name, size: 170, w: 700, f: T, c: th.title, gap: 0, lh: 1.1 });
     if (K.sub) b.push({ t: K.sub, size: 64, w: 600, f: T, c: th.title, gap: 0, lh: 1.2 });
     b.push({ sep: true, gap: 16 });
     b.push({ t: K.open[0] + ', ' + K.open[1], size: 36, w: 400, f: B, c: th.text, gap: 24 });
     b.push({ t: K.open[2] + (d.k === 'brit' ? '' : ' ' + K.full), size: 36, w: 400, f: B, c: th.text, gap: 6 });
-    b.push({ t: whenText(d), size: 62, w: 700, f: B, c: th.strong, gap: 44 });
-    b.push({ t: timeText(d), size: 54, w: 600, f: B, c: th.strong, gap: 10 });
-    b.push({ t: d.pl ? stripB(d.pl) : 'המקום ___', size: 54, w: 500, f: B, c: th.text, gap: 30 });
+    b.push({ t: capX(d, whenText(d)), size: 62, w: 700, f: B, c: th.strong, gap: 44 });
+    b.push({ t: capX(d, timeText(d)), size: 54, w: 600, f: B, c: th.strong, gap: 10 });
+    b.push({ t: placeText(d), size: 54, w: 500, f: B, c: th.text, gap: 30 });
     if (d.ad) b.push({ t: d.ad, size: 38, w: 400, f: SANS, c: th.muted, gap: 6 });
     if (kohenText(d)) b.push({ t: kohenText(d), size: 36, w: 400, f: B, c: th.text, gap: 24 });
     if (d.se) b.push({ t: seudahText(d), size: 36, w: 400, f: B, c: th.text, gap: 28 });
@@ -451,21 +604,21 @@
     ctx.fillStyle = '#fff'; rr(ctx, qx - 16, qy - 16, qs + 32, qs + 32, 18); ctx.fill();
     var qc = qrCanvas(url, qs);
     if (qc) ctx.drawImage(qc, qx, qy, qs, qs);
-    ctx.font = '600 34px ' + SANS; ctx.fillStyle = th.strong; ctx.fillText('סורקים: ניווט ואישור הגעה', W / 2, qy + qs + 66);
+    ctx.font = '600 34px ' + SANS; ctx.fillStyle = th.strong; ctx.fillText(TL(d, { he: 'סורקים: ניווט ואישור הגעה', ru: 'Сканируйте: маршрут и подтверждение прихода', en: 'Scan for directions and RSVP' }), W / 2, qy + qs + 66);
     ctx.font = '400 22px ' + SANS; ctx.fillStyle = th.muted; ctx.globalAlpha = 0.75;
-    ctx.fillText('מודעה כזאת בחינם: hakelim.com/mohel/hazmana', W / 2, PH - (th.creditY ? H - th.creditY : 92)); // אותו מרחק מהמסגרת כמו בתמונה
+    ctx.fillText(TL(d, { he: 'מודעה כזאת בחינם: hakelim.com/mohel/hazmana', ru: 'Такое объявление бесплатно: hakelim.com/mohel/ru/hazmana', en: 'Free notice like this: hakelim.com/mohel/en/hazmana' }), W / 2, PH - (th.creditY ? H - th.creditY : 92)); // אותו מרחק מהמסגרת כמו בתמונה
     ctx.globalAlpha = 1;
     return { x: qx - 16, y: qy - 16, w: qs + 32, h: qs + 32 };
   }
 
   // ---------- PDF (jsPDF מ-cdnjs; הטקסט העברי נשאר תמונה, הקישורים הם annotations) ----------
-  var CREDIT_URL = 'https://hakelim.com/mohel/hazmana/?utm_source=pdf&utm_medium=hazmana';
+  var CREDIT_URL = 'https://hakelim.com' + HZ_PATH[L] + '?utm_source=pdf&utm_medium=hazmana';
   function jsPdf() { return window.jspdf && window.jspdf.jsPDF ? new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true }) : null; }
   // שורת כפתורים מצוירת (עברית על קנבס), עם המלבן של כל כפתור כדי לשים עליו קישור
   function linkStrip(th, bgColor, items) {
     var c = document.createElement('canvas'); c.width = W; c.height = 130;
     var ctx = c.getContext('2d'); ctx.fillStyle = bgColor; ctx.fillRect(0, 0, W, 130);
-    ctx.direction = 'rtl'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '600 30px ' + SANS;
+    ctx.direction = L === 'he' ? 'rtl' : 'ltr'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '600 30px ' + SANS;
     var gap = 24, pad = 44, widths = items.map(function (it) { return ctx.measureText(it.label).width + pad * 2; });
     var total = widths.reduce(function (a, b) { return a + b; }, 0) + gap * (items.length - 1), x = W / 2 + total / 2, rects = [];
     items.forEach(function (it, i) {
@@ -485,7 +638,7 @@
     doc.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', mx, my, iw, ih);
     doc.link(mx, my + (th.creditY || H - 92) * s - 7, iw, 9, { url: CREDIT_URL }); // שורת הקרדיט בתמונה
     var strip = linkStrip(th, pixelAt(canvas, Math.round(canvas.width / 2), canvas.height - 10 * px), [
-      { label: 'ניווט ב-Waze', url: wazeUrl(d) }, { label: 'ליומן גוגל', url: gcalUrl(d) }, { label: 'הקישור לאורחים', url: guestUrl(d) }]);
+      { label: T({ he: 'ניווט ב-Waze', ru: 'Маршрут в Waze', en: 'Waze directions' }), url: wazeUrl(d) }, { label: T({ he: 'ליומן גוגל', ru: 'В Google Календарь', en: 'Google Calendar' }), url: gcalUrl(d) }, { label: T({ he: 'הקישור לאורחים', ru: 'Ссылка для гостей', en: 'Guest link' }), url: guestUrl(d) }]);
     var sy = my + ih + 4, sh = 130 * s;
     doc.addImage(strip.canvas.toDataURL('image/jpeg', 0.92), 'JPEG', mx, sy, iw, sh);
     strip.rects.forEach(function (r) { doc.link(mx + r.x * s, sy + r.y * s, r.w * s, r.h * s, { url: r.url }); });
@@ -504,7 +657,7 @@
   // ---------- עזרים לממשק ----------
   function $(s, r) { return (r || document).querySelector(s); }
   function copy(text, btn) {
-    var done = function () { var o = btn.innerHTML; btn.textContent = 'הועתק ✓'; setTimeout(function () { btn.innerHTML = o; }, 1800); };
+    var done = function () { var o = btn.innerHTML; btn.textContent = T({ he: 'הועתק ✓', ru: 'Скопировано ✓', en: 'Copied ✓' }); setTimeout(function () { btn.innerHTML = o; }, 1800); };
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
     function fallback() { var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) {} ta.remove(); done(); }
   }
@@ -534,7 +687,7 @@
   }
   function showGuest(gd, srv) {
     if (!gd || !gd.dt) { $('#hz-missing').hidden = false; return; }
-    var gc = $('#hz-guest-canvas'), K = kindOf(gd);
+    var gc = $('#hz-guest-canvas'), K = KINDS[gd.k] || KINDS.brit; // ממשק דף האורחים בעברית; ההזמנה עצמה בשפת הנוסח
     var bd = parseDate(gd.dt), today = new Date(); today.setHours(0, 0, 0, 0);
     var after = bd && bd < today;
     // טקסטים לפי סוג השמחה (ברירת המחדל ב-HTML היא ברית)
@@ -657,6 +810,7 @@
     });
     var st = document.querySelector('input[name="st"]:checked');
     d.st = st ? st.value : 'zahav';
+    if (L !== 'he') d.lg = L; // בעברית לא נשמר – הקישורים והנתונים העבריים לא משתנים
     return d;
   }
   function restore() {
@@ -684,7 +838,7 @@
     $('#hz-songs-all').hidden = sf;
     $('#hz-songs-sf').hidden = !sf;
     $('#a-songs-pl').hidden = !sf;
-    $('#a-songs').textContent = sf ? 'לכל הסגנונות' : 'לשירים לברית';
+    $('#a-songs').textContent = sf ? T({ he: 'לכל הסגנונות', ru: 'Все стили', en: 'All styles' }) : T({ he: 'לשירים לברית', ru: 'Песни для брит-милы', en: 'Songs for the brit' });
   }
   // ---------- איזו שמחה: כל מה שבדף תלוי בסוג ----------
   // טקסטים לכל סוג: [תאריך, שעה, תפילה לפני, כותרת H1, הערה בטופס ההרשמה, "תודה" אחרי ההרשמה, כפתור ווטסאפ לגילעד, שם הסעודה]
@@ -702,9 +856,40 @@
       'תודה! המדריך להורים מחכה לכם למטה.', 'שאלה על הפדיון? גילעד בווטסאפ', 'סעודת מצווה אחרי הפדיון',
       'ממלאים מתי ואיפה, בוחרים עיצוב, ושולחים לכל המשפחה בווטסאפ. בלי תשלום. משאירים פרטים פעם אחת, ומקבלים במתנה גם את המדריך להורים, עם הפרק על פדיון הבן.']
   };
+  var UI_X = {
+    ru: {
+      brit: ['Дата брит-милы', 'Время брит-милы', 'Молитва перед брит-милой', 'Приглашение на брит милу – бесплатно и за минуту',
+        'Оставьте имя и телефон – и получите приглашение: картинку, текст для WhatsApp и ссылку для гостей. В подарок – руководство для родителей перед брит-милой (на иврите).',
+        'Спасибо! Руководство для родителей ждёт вас ниже.', 'Договориться о брит-миле с Гиладом', 'Сеуда мицва после брит-милы',
+        'Укажите, когда и где, выберите оформление и отправьте всей семье в WhatsApp. Бесплатно и без регистрации: данные оставляете один раз и получаете в подарок руководство для родителей.'],
+      zeved: ['Дата зевед а-бат', 'Время кидуша или трапезы', 'Молитва и наречение имени перед этим', 'Приглашение на зевед а-бат – бесплатно и за минуту',
+        'Оставьте имя и телефон – и получите приглашение: картинку, текст для WhatsApp и ссылку для гостей с маршрутом, календарём и подтверждениями.',
+        'Спасибо! Ваше приглашение готово.', 'Познакомиться с Гиладом, моэлем в Иерусалиме', 'Кидуш и трапеза после молитвы',
+        'Укажите, когда и где, выберите оформление и отправьте всей семье в WhatsApp. Бесплатно: данные оставляете один раз и получаете приглашение, ссылку для гостей и подтверждения прихода.'],
+      pidyon: ['Дата пидьона', 'Время пидьона', 'Молитва перед пидьоном', 'Приглашение на пидьон а-бен – бесплатно и за минуту',
+        'Оставьте имя и телефон – и получите приглашение: картинку, текст для WhatsApp и ссылку для гостей. В подарок – руководство для родителей с главой о пидьон а-бен (на иврите).',
+        'Спасибо! Руководство для родителей ждёт вас ниже.', 'Вопрос о пидьоне? Гилад в WhatsApp', 'Сеуда мицва после пидьона',
+        'Укажите, когда и где, выберите оформление и отправьте всей семье в WhatsApp. Бесплатно: данные оставляете один раз и получаете в подарок руководство для родителей с главой о пидьон а-бен.']
+    },
+    en: {
+      brit: ['Date of the brit', 'Time of the brit', 'Prayers before the brit', 'Free Bris Invitation Maker – Ready in a Minute',
+        'Leave your name and phone and get the invitation: an image, WhatsApp text and a guest link. As a gift you also get the parents\' guide to the brit (in Hebrew).',
+        'Thank you! The parents\' guide is waiting for you below.', 'Book the brit with Gilad', 'Seudat mitzvah after the brit',
+        'Fill in when and where, pick a design and send it to the whole family on WhatsApp. Free, no sign-up: leave your details once and get the parents\' guide as a gift.'],
+      zeved: ['Date of the Zeved Habat', 'Time of the Kiddush or meal', 'Prayers and naming before', 'Zeved Habat Invitation – Free, Ready in a Minute',
+        'Leave your name and phone and get the invitation: an image, WhatsApp text and a guest link with directions, calendar and RSVPs.',
+        'Thank you! Your invitation is ready.', 'Meet Gilad, a mohel in Jerusalem', 'Kiddush and a meal after the prayers',
+        'Fill in when and where, pick a design and send it to the whole family on WhatsApp. Free: leave your details once and get the invitation, a guest link and RSVPs.'],
+      pidyon: ['Date of the pidyon', 'Time of the pidyon', 'Prayers before the pidyon', 'Pidyon Haben Invitation – Free, Ready in a Minute',
+        'Leave your name and phone and get the invitation: an image, WhatsApp text and a guest link. As a gift you also get the parents\' guide with its chapter on pidyon haben (in Hebrew).',
+        'Thank you! The parents\' guide is waiting for you below.', 'Question about the pidyon? Gilad on WhatsApp', 'Seudat mitzvah after the pidyon',
+        'Fill in when and where, pick a design and send it to the whole family on WhatsApp. Free: leave your details once and get the parents\' guide with its chapter on pidyon haben.']
+    }
+  };
+  if (UI_X[L]) UI = UI_X[L];
   var lastKind = null, wantDefaults = false;
   function applyKind() {
-    var k = data.k || 'brit', K = KINDS[k], u = UI[k];
+    var k = data.k || 'brit', K = KINDS[k], u = UI[k], KX = KINDS_X[L] && KINDS_X[L][k];
     if (k === lastKind) return;
     var switched = lastKind !== null, defaults = switched || wantDefaults; lastKind = k; wantDefaults = false;
     $('label[for=hz-dt]').textContent = u[0];
@@ -718,20 +903,24 @@
     // הפסוקים של הסוג הזה
     var vs = form.elements.vs, cur = vs.value;
     vs.innerHTML = '';
-    K.verses.forEach(function (v, i) { var o = document.createElement('option'); o.value = i; o.textContent = i ? v.replace(/[֑-ׇ]/g, '') : 'בלי פסוק'; vs.appendChild(o); });
+    K.verses.forEach(function (v, i) { var o = document.createElement('option'); o.value = i; o.textContent = i ? (KX ? KX.vlab[i] : v.replace(/[֑-ׇ]/g, '')) : T({ he: 'בלי פסוק', ru: 'Без стиха', en: 'No verse' }); vs.appendChild(o); });
     vs.value = defaults ? (k === 'zeved' ? '1' : '0') : (cur < K.verses.length ? cur : '0');
     if (defaults && k !== 'brit' && !form.elements.se.checked) form.elements.se.checked = true; // בנוסח המאושר יש סעודה
     var h1 = $('.hero h1'); if (h1) h1.textContent = u[3];
     var sub = $('.hero .sub'); if (sub) sub.textContent = u[8];
     $('#hz-reg .note').textContent = u[4];
     $('#hz-reg [name="מקור"]').value = K.lead;
-    $('#r-email-opt').textContent = k === 'zeved' ? '(לא חובה)' : '(לא חובה, לשם יישלח המדריך)';
+    $('#r-email-opt').textContent = k === 'zeved' ? T({ he: '(לא חובה)', ru: '(необязательно)', en: '(optional)' }) : T({ he: '(לא חובה, לשם יישלח המדריך)', ru: '(необязательно, сюда придёт руководство)', en: '(optional, the guide is sent here)' });
     $('#hz-thanks').textContent = u[5];
     $('#a-guide').hidden = k === 'zeved';
     $('#a-gilad').lastChild.textContent = ' ' + u[6];
-    $('#hz-poster-note').textContent = k === 'brit' ? 'דף A4 באותו עיצוב, עם קוד QR: מי שסורק מנווט ומסמן "מגיעים". תולים בלוח המודעות, בבית הכנסת או בעבודה.' : 'דף A4 באותו עיצוב, עם קוד QR: מי שסורק מנווט ומסמן "מגיעים". תולים בבית הכנסת, בעבודה או בבניין.';
-    $('#hz-rsvp-panel .small').textContent = 'הלוח פרטי: רק מי שיש לו את הקישור שלו רואה את הרשימה. שמרו אותו. הנתונים נמחקים מעצמם 30 יום אחרי ' + (k === 'brit' ? 'הברית' : 'השמחה') + '.';
-    document.title = u[3] + ' | גילעד רחמים המוהל';
+    $('#hz-poster-note').textContent = k === 'brit' ? T({ he: 'דף A4 באותו עיצוב, עם קוד QR: מי שסורק מנווט ומסמן "מגיעים". תולים בלוח המודעות, בבית הכנסת או בעבודה.', ru: 'Лист A4 в том же оформлении, с QR-кодом: кто сканирует, получает маршрут и отмечает «приду». Повесьте на доске объявлений, в синагоге или на работе.', en: 'An A4 sheet in the same design, with a QR code: whoever scans it gets directions and can tap "coming". Hang it on the notice board, in the synagogue or at work.' })
+      : T({ he: 'דף A4 באותו עיצוב, עם קוד QR: מי שסורק מנווט ומסמן "מגיעים". תולים בבית הכנסת, בעבודה או בבניין.', ru: 'Лист A4 в том же оформлении, с QR-кодом: кто сканирует, получает маршрут и отмечает «приду». Повесьте в синагоге, на работе или в подъезде.', en: 'An A4 sheet in the same design, with a QR code: whoever scans it gets directions and can tap "coming". Hang it in the synagogue, at work or in your building.' });
+    $('#hz-rsvp-panel .small').textContent = T({
+      he: 'הלוח פרטי: רק מי שיש לו את הקישור שלו רואה את הרשימה. שמרו אותו. הנתונים נמחקים מעצמם 30 יום אחרי ' + (k === 'brit' ? 'הברית' : 'השמחה') + '.',
+      ru: 'Панель личная: список видит только тот, у кого есть эта ссылка. Сохраните её. Данные удаляются сами через 30 дней после ' + (k === 'brit' ? 'брит-милы' : 'праздника') + '.',
+      en: 'The dashboard is private: only someone with its link can see the list. Keep it safe. The data deletes itself 30 days after the ' + (k === 'brit' ? 'brit' : 'celebration') + '.' });
+    document.title = u[3] + T({ he: ' | גילעד רחמים המוהל', ru: ' | Гилад Рахамим · моэль', en: ' | Gilad Rachamim · mohel' });
     if (switched) ev('hazmana_kind', { kind: k });
   }
   var timer = null, cached = null;
@@ -790,8 +979,8 @@
     if (!reg.reportValidity()) return;
     if ($('.hp input', reg).value) return; // בוט
     var btn = $('button[type=submit]', reg);
-    btn.disabled = true; btn.textContent = 'רגע…';
-    var fd = new FormData(reg), K = kindOf(data);
+    btn.disabled = true; btn.textContent = T({ he: 'רגע…', ru: 'Секунду…', en: 'One moment…' });
+    var fd = new FormData(reg), K = KINDS[data.k] || KINDS.brit; // הליד לגילעד – תמיד בעברית; _page מראה את השפה
     var dt = parseDate(data.dt);
     fd.set('מקור', K.lead);
     fd.set('מועד הלידה', K.born + ' – ' + K.name + ' ' + (dt ? greg(dt) + ' ' + hm(data.tm) : ''));
@@ -807,6 +996,7 @@
   });
 
   // ---------- פעולות ----------
+  function PDF_ERR() { return T({ he: 'ה-PDF לא נטען. בדקו את החיבור לאינטרנט ונסו שוב.', ru: 'PDF не загрузился. Проверьте подключение к интернету и попробуйте ещё раз.', en: 'The PDF did not load. Check your internet connection and try again.' }); }
   function blob() { return cached ? Promise.resolve(cached) : new Promise(function (res) { big.toBlob(res, 'image/png'); }); }
   function download(b) { var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = fileName(data); document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 2000); }
   function act(id, fn) { $(id).addEventListener('click', function (e) { if (!detailsOk()) { e.preventDefault(); return; } fn(e); }); }
@@ -829,12 +1019,12 @@
   act('#a-pdf', function () {
     ev('hazmana_pdf', { style: data.st, kind: data.k });
     var doc = messagePdf(big, data);
-    if (doc) doc.save(kindOf(data).slug + '-' + (data.dt || 'hazmana') + '.pdf'); else alert('ה-PDF לא נטען. בדקו את החיבור לאינטרנט ונסו שוב.');
+    if (doc) doc.save(kindOf(data).slug + '-' + (data.dt || 'hazmana') + '.pdf'); else alert(PDF_ERR());
   });
   act('#a-poster', function () {
     ev('hazmana_print', { style: data.st, kind: data.k });
     var doc = posterPdf(data, guestUrl(data));
-    if (doc) doc.save('modaa-' + kindOf(data).slug + '-' + (data.dt || 'hazmana') + '.pdf'); else alert('ה-PDF לא נטען. בדקו את החיבור לאינטרנט ונסו שוב.');
+    if (doc) doc.save('modaa-' + kindOf(data).slug + '-' + (data.dt || 'hazmana') + '.pdf'); else alert(PDF_ERR());
   });
   act('#a-text', function (e) { ev('hazmana_copy_text'); copy(waText(data), e.currentTarget); });
   act('#a-wa', function (e) { ev('hazmana_wa_text'); e.currentTarget.href = 'https://wa.me/?text=' + encodeURIComponent(waText(data)); });
@@ -846,6 +1036,15 @@
     var dt = parseDate(data.dt), K = kindOf(data);
     ev('hazmana_gilad', { kind: K.slug });
     if (data.k === 'zeved') { e.currentTarget.href = '/mohel/?utm_source=hazmana_zeved&utm_medium=hazmana'; return; }
+    if (L !== 'he') {
+      var wm = L === 'ru'
+        ? (data.k === 'pidyon' ? 'Здравствуйте, Гилад! Я сделал(а) на сайте приглашение на пидьон а-бен. У меня вопрос: '
+          : 'Здравствуйте, Гилад! Я сделал(а) на сайте приглашение на брит-милу' + (dt ? ': ' + whenText(data) + ', ' + timeText(data) : '') + (data.pl ? ', ' + data.pl.trim() : '') + '. Хотел(а) бы договориться с вами о брит-миле.')
+        : (data.k === 'pidyon' ? 'Hello Gilad, I made a pidyon haben invitation on the site. I have a question: '
+          : 'Hello Gilad, I made a bris invitation on the site' + (dt ? ': ' + whenText(data) + ', ' + timeText(data) : '') + (data.pl ? ', ' + data.pl.trim() : '') + '. I would like to arrange the brit with you.');
+      e.currentTarget.href = 'https://wa.me/' + GILAD_WA + '?text=' + encodeURIComponent(wm);
+      return;
+    }
     var msg = data.k === 'pidyon' ? 'שלום גילעד, הכנתי באתר הודעה לפדיון הבן. יש לי שאלה: '
       : 'שלום גילעד, הכנתי באתר הזמנה לברית' + (dt ? ' ב' + whenText(data).replace(/^ב/, '') + ' ' + timeText(data) : '') + (data.pl ? ', ב' + stripB(data.pl) : '') + '. אשמח לתאם איתך את הברית.';
     e.currentTarget.href = 'https://wa.me/' + GILAD_WA + '?text=' + encodeURIComponent(msg);

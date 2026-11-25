@@ -1,0 +1,18 @@
+# "הקראה בקול אנושי" – שרת הקול (Cloudflare Worker).
+# פריסה:      cd tools/hakraa-worker && npx wrangler deploy   (אותו חשבון כמו kelim-tirgum)
+# מפתח Gemini: סוד GEMINI_KEYS (פרויקט hakraa-1 ב-AI Studio; הסקיל gemini-key-for-worker).
+#              בלי מפתח השרת עונה no_key, והדף עובר לבד לקול של המכשיר.
+#              בחינם: 10 קטעים ביום לכל דגם קול. הפעלת חיוב על הפרויקט מסירה את המגבלה, בלי שינוי בקוד.
+# הדף: https://hakelim.com/kelim/tochen/hakraa/
+name = "kelim-hakraa"
+main = "hakraa-worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[[durable_objects.bindings]]
+name = "QUOTA"
+class_name = "Quota"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Quota"]

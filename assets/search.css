@@ -17,4 +17,49 @@
 #hk-search .hk-s{position:relative}
 #hk-search .hk-msg{font-size:.9rem;margin:0}
 #hk-search .hk-ok{margin:0;font-weight:700}
+#hk-search .hk-home{padding:.6rem .7rem .8rem;background:rgba(255,255,255,.97);color:#1b1b1b;border-radius:.6rem;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#hk-search .hk-h{margin:.2rem 0 .4rem;font-weight:700;font-size:.9rem;color:#6b5314}
+#hk-search .hk-top,#hk-search .hk-topics{list-style:none;margin:0 0 .6rem;padding:0;display:flex;flex-wrap:wrap;gap:.4rem}
+#hk-search .hk-home a{display:block;padding:.3rem .7rem;min-height:40px;box-sizing:border-box;line-height:1.9;font-size:.92rem;border-radius:2rem;text-decoration:none;color:#1b1b1b;border:1px solid #d8b35f;background:#fbf6e6}
+#hk-search .hk-topics a{background:#fff;border-color:rgba(128,128,128,.45)}
+#hk-search .hk-home a:hover,#hk-search .hk-home a:focus{background:#f0ead7}
+
+/* גרסה 2: תוצאות מקובצות לפי נושא, מצב מקלדת, תג "חדש" */
+#hk-search .hk-sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+#hk-search .hk-grp{margin:0 0 .5rem}
+#hk-search .hk-grp:last-child{margin-bottom:0}
+#hk-search .hk-gh{margin:.2rem .4rem .1rem;font-weight:700;font-size:.85rem;color:#6b5314}
+#hk-search .hk-res a.hk-opt,#hk-search .hk-home .hk-res a.hk-opt{display:block;min-height:44px;box-sizing:border-box;padding:.55rem .7rem;border:0;border-radius:.4rem;background:transparent;line-height:1.35;font-size:1rem}
+#hk-search .hk-opt b{font-weight:700}
+#hk-search .hk-new{font-style:normal;font-size:.75rem;font-weight:700;margin-inline-start:.45rem;padding:.05rem .45rem;border-radius:1rem;background:#1b1b1b;color:#f3d98c;vertical-align:.1em}
+#hk-search .hk-more,#hk-search .hk-back{display:block;width:100%;text-align:start;margin:.15rem 0 0;padding:.4rem .7rem;min-height:44px;border:0;border-radius:.4rem;background:transparent;color:#6b5314;font-weight:600;text-decoration:underline}
+#hk-search .hk-tp{padding:.3rem .8rem;min-height:44px;border-radius:2rem;border:1px solid rgba(100,100,100,.55);background:#fff;color:#1b1b1b;font-weight:600;font-size:.92rem}
+#hk-search .hk-tp:hover,#hk-search .hk-tp:focus-visible,#hk-search .hk-more:hover,#hk-search .hk-back:hover{background:#f0ead7}
+#hk-search .hk-opt.hk-act,#hk-search .hk-home a.hk-act,#hk-search .hk-more.hk-act,#hk-search .hk-tp.hk-act,#hk-search .hk-back.hk-act{background:#f0ead7;outline:2px solid #6b5314;outline-offset:-2px}
+#hk-search input:focus-visible,#hk-search button:focus-visible,#hk-search .hk-home a:focus-visible,#hk-search .hk-res a:focus-visible{outline:3px solid #6b5314;outline-offset:2px}
+#hk-search .hk-now a{border-color:#6b5314;background:#fff4d1}
+@media (prefers-reduced-motion:reduce){#hk-search *{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 @media print{#hk-search{display:none}}
+
+/* כפתור 🔍 בסרגל הנדבק, קישור לבית התת-אתר ליד הלוגו */
+#hk-search{scroll-margin-top:4.5rem}
+.topbar .hk-sbtn{flex:none;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;box-sizing:border-box;margin-inline-start:.15rem;border-radius:50%;border:1px solid rgba(201,165,92,.5);color:var(--gold,#d8b35f);text-decoration:none;font-size:1.1rem;line-height:1}
+.topbar .hk-sbtn:hover,.topbar .hk-sbtn:focus-visible{background:rgba(201,165,92,.18)}
+.topbar .brand-sub{flex:none;display:inline-flex;align-items:center;min-height:32px;padding:0 .7rem;border-radius:999px;border:1px solid rgba(201,165,92,.4);font-size:.82rem;color:var(--gold,#d8b35f);text-decoration:none;white-space:nowrap}
+.topbar .brand-sub:hover,.topbar .brand-sub:focus-visible{background:rgba(201,165,92,.18)}
+#hk-search .hk-note{margin:.2rem .2rem .4rem;color:#eee;font-size:.9rem}
+@media (max-width:640px){.topbar .in{gap:.5rem;padding-inline:.8rem}.topbar .brand b{font-size:.95rem}}
+@media (max-width:520px){body:not(.site-kelim) .topbar .brand b{display:none}}
+@media print{.hk-sbtn{display:none}}
+
+/* "תארו במילים שלכם" (/ask) */
+#hk-search .hk-ask{margin:.5rem 0 0;padding:.6rem .7rem;background:rgba(255,255,255,.97);color:#1b1b1b;border-radius:.6rem}
+#hk-search .hk-none .hk-ask{padding:0;margin:.3rem 0 .6rem}
+#hk-search .hk-askb{width:100%;text-align:center}
+#hk-search .hk-askn{margin:.3rem 0 0;font-size:.82rem;color:#555}
+#hk-search .hk-askn a{color:#6b5314}
+#hk-search .hk-askr{margin-top:.3rem;font-size:.9rem}
+#hk-search .hk-asl{list-style:none;margin:0;padding:0}
+#hk-search .hk-asl a{display:block;min-height:44px;box-sizing:border-box;padding:.5rem .6rem;border-radius:.4rem;color:#1b1b1b;text-decoration:none}
+#hk-search .hk-asl a:hover,#hk-search .hk-asl a:focus-visible{background:#f0ead7}
+#hk-search .hk-asl span{display:block;font-size:.85rem;color:#555}

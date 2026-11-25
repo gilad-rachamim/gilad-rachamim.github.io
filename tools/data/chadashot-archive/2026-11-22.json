@@ -1,0 +1,416 @@
+{
+ "day": "2026-11-22",
+ "editions": [
+  {
+   "name": "בוקר",
+   "time": "07:00",
+   "at": "2026-11-22T05:00:25.321Z",
+   "mode": "summary",
+   "date": {
+    "he": "י״ב כסלו תשפ״ז",
+    "day": "ראשון"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "70% מפצועי הלחימה בשלוש השנים האחרונות חזרו לשירות בצה״ל, מתוך כ-31 אלף פצועים המוכרים באגף השיקום.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/security-news/tovzts"
+       },
+       {
+        "name": "סרוגים",
+        "link": "https://www.srugim.co.il/101016746-נפצעו-וחזרו-להגן-על-המדינה-הנתון-המדהים"
+       },
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/military/article-1390859"
+       }
+      ]
+     },
+     {
+      "text": "באיראן טענו כי תקפו יחידות ובסיסים של צבא ארה״ב בבחריין, אך בארצות הברית ובבחריין דיווחו שלא נגרם נזק לכוחות.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001564323"
+       },
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1141923"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/bysitu1yqg"
+       }
+      ]
+     },
+     {
+      "text": "לאחר ימים חמים מהרגיל, תחול ירידה בטמפרטורות וייתכן גשם מקומי קל בעיקר בצפון הארץ.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/israel-news/thop0g-84"
+       },
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1800579/"
+       },
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383962440"
+       }
+      ]
+     },
+     {
+      "text": "נפתלי בנט וגדי איזנקוט נפגשו יחד עם צוותי המשא ומתן שלהם כדי לדון באפשרויות להקמת ממשלה.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2769305/"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745206"
+       }
+      ]
+     },
+     {
+      "text": "שירות בתי הסוהר והשב״כ דחו את בקשתו של יגאל עמיר לצאת לחופשה בת 48 שעות מהכלא, משיקולים ביטחוניים.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/israel-news/yigal-amir-furlough-request-rejected-security-conc"
+       },
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/law/article-1390835"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745204"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "נשיא איראן פזשכיאן תועד בלשכתו לבוש במעיל עבה וללא תאורה מלאה, כחלק מקמפיין ממשלתי לחיסכון בחשמל ובאנרגיה.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/world-news/iran-president-works-cold-office-energy-crisis"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745193"
+       }
+      ]
+     },
+     {
+      "text": "רבה של ארגנטינה פנה לנשיא ולבכירי השלטון בבקשה לדחות את מועד הבחירות במדינה, מכיוון שהוא חל ביום שמחת תורה.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745201"
+       }
+      ]
+     },
+     {
+      "text": "ציבור המונים מציין את יום ההילולא של הרה״ק רבי אברהם דוב מאווריטש זצ״ל, בעל ה״בת עין״.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/beit_hamidrash/2769353/"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "מדד תשומות הבנייה רשם עלייה של כ-11.8% מתחילת המלחמה, לצד דיווחים על התייקרויות נוספות בשל קשיי אספקה ומחסור בעובדים.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001563772"
+       }
+      ]
+     },
+     {
+      "text": "לפי דיווח בערוץ 14, שיעור האינפלציה בישראל ירד לשפל של שנים, על רקע הציפייה להחלטת הריבית של בנק ישראל.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001564324"
+       },
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1800486/"
+       }
+      ]
+     }
+    ],
+    "good": []
+   }
+  },
+  {
+   "name": "צהריים",
+   "time": "13:00",
+   "at": "2026-11-22T11:00:25.304Z",
+   "mode": "summary",
+   "date": {
+    "he": "י״ב כסלו תשפ״ז",
+    "day": "ראשון"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "באיראן נערכים לנסות לפרוץ את המצור הימי האמריקני במפרץ הפרסי, בעוד שבבחריין דיווחו על שני נפגעים מתקיפה איראנית.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001564323"
+       },
+       {
+        "name": "כיפה",
+        "link": "https://www.kipa.co.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA/%D7%9E%D7%91%D7%96%D7%A7%D7%99%D7%9D/1236969-0/"
+       },
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1141973"
+       }
+      ]
+     },
+     {
+      "text": "המקטע הראשון של כביש עוקף פונדוק בשומרון צפוי להיפתח לתנועה בשבוע הבא, לאחר שמונה שנות עבודה והשקעה של רבע מיליארד שקלים.",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1141968"
+       },
+       {
+        "name": "סרוגים",
+        "link": "https://www.srugim.co.il/101016768-אחרי-8-שנים-הכביש-החדש-בשומרון-עומד"
+       }
+      ]
+     },
+     {
+      "text": "משרד התפוצות חשף סרטון שהופץ ברשתות החברתיות ופוברק באמצעות בינה מלאכותית, אשר יחס פגיעה ברכוש בשומרון.",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1141971"
+       },
+       {
+        "name": "כיפה",
+        "link": "https://www.kipa.co.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA/1236962-0/"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745239"
+       }
+      ]
+     },
+     {
+      "text": "המשטרה קנסה נהג באלף שקלים ושישה חיובי נקודות, לאחר שתועד כשהוא מסדר תפילין תוך כדי נהיגה במקום להביט בכביש.",
+      "sources": [
+       {
+        "name": "כיפה",
+        "link": "https://www.kipa.co.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA/1236973-0/"
+       },
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383962490"
+       },
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2769550/"
+       }
+      ]
+     },
+     {
+      "text": "משרד הבריאות הודיע על החזרה יזומה של המוצר אגוז מוסקט טחון מתוצרת זעפראן, לאחר שנמצאו בו רמות גבוהות של רעלנים.",
+      "sources": [
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383962471"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "הלך לעולמו הגאון החסיד רבי מנחם מנדל לידר זצ״ל, מחשובי זקני חסידי סלונים בבני ברק, והוא בן 75.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/j_world/2769545/"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745249"
+       }
+      ]
+     },
+     {
+      "text": "רבה הראשי החרדי של ארגנטינה פנה לנשיא המדינה בבקשה לדחות את מועד הבחירות המתוכנן ל-2027, מכיוון שהוא חל בחג שמחת תורה.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/world-news/argentina-rabbi-requests-election-delay-simchat-to"
+       }
+      ]
+     },
+     {
+      "text": "בעקבות תלונות תושבים בצפון ירושלים על עשן וריחות שריפה, פנה המשנה לראש העיר אלחנן גרוסבוים לשרים בדרישה לטפל במפגע.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/haredim-news/north-jerusalem-smoke-pollution"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "בית משפט השלום בירושלים הוציא צו לפתיחת הליכי חדלות פירעון נגד יזם נדל״ן, בעקבות טענות משקיעים לחוב של כ-49.5 מיליון שקלים.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/law-and-courts/debt-49-5-million-avrechim-doctors-harmed-by-jerusalem-developer"
+       }
+      ]
+     }
+    ],
+    "good": []
+   }
+  },
+  {
+   "name": "ערב",
+   "time": "20:00",
+   "at": "2026-11-22T18:00:25.536Z",
+   "mode": "summary",
+   "date": {
+    "he": "י״ב כסלו תשפ״ז",
+    "day": "ראשון"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "הרמטכ״ל, רב-אלוף אייל זמיר, קרא להגדלת סדרי הכוחות בצה״ל בעקבות התרחבות האתגרים המבצעיים והעומס המתמשך על כוחות הלחימה.",
+      "sources": [
+       {
+        "name": "כיפה",
+        "link": "https://www.kipa.co.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA/1237025-0/"
+       },
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2769728/"
+       },
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/military/article-1391151"
+       }
+      ]
+     },
+     {
+      "text": "נשיא ארצות הברית, דונלד טראמפ, הודיע כי הוא נוטה לחדש את התקיפות נגד איראן לאחר תחילת השנה החדשה, אם לא יושג הסכם בין המדינות.",
+      "sources": [
+       {
+        "name": "כיפה",
+        "link": "https://www.kipa.co.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA/1237028-0/"
+       },
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2769755/"
+       },
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1802379/"
+       }
+      ]
+     },
+     {
+      "text": "פגישת המשא ומתן בין הליכוד לסיעת ״ישר״ נמשכה כארבע שעות והסתיימה ללא פריצת דרך, כאשר הצדדים סיכמו להמשיך בדיונים בהמשך השבוע.",
+      "sources": [
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/politics/article-1391162"
+       },
+       {
+        "name": "סרוגים",
+        "link": "https://www.srugim.co.il/101016819-נתניהו-ואיזנקוט-בהודעה-רשמית-משותפת"
+       },
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1142016"
+       }
+      ]
+     },
+     {
+      "text": "מועצת התכנון העליונה תקדם אישור של 1,515 יחידות דיור חדשות ביהודה ושומרון, לצד הקמת מתקן דיור מוגן באזור.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1802300/"
+       }
+      ]
+     },
+     {
+      "text": "אוטובוס עלה באש בכביש 1 סמוך למחלף חמד וגרם לעומסי תנועה כבדים לכיוון ירושלים. צוותי כיבוי השתלטו על הלהבות, ולא דווח על נפגעים.",
+      "sources": [
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/israel/article-1391135"
+       },
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383962561"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/B1Gxiuxkmg"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "לפי דיווח ב״כיכר השבת״, נרשמה התקדמות במגעים בין גדי איזנקוט לנציגי יהדות התורה בסוגיית חוק הגיוס, אך גורמים במפלגה ציינו כי טרם הושגו הסכמות סופיות.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/haredim/eisenkot-yahadut-hatorah-negotiations-progress"
+       }
+      ]
+     },
+     {
+      "text": "אלפי משתתפים נטלו חלק בהילולת בעל ה״בת עין״ שנערכה בבית המדרש הגדול של חסידות באיאן בירושלים, בראשות המשפיע רבי אלימלך בידרמן.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/hasidism/towseh"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745289"
+       }
+      ]
+     },
+     {
+      "text": "לפי דיווח ב-JDN, מנכ״ל משרד התחבורה כינס דיון היערכות עם ראשי חברות התשתית, במטרה לחזק את הגנת מערכות התחבורה מפני איומי סייבר.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2769751/"
+       }
+      ]
+     }
+    ],
+    "economy": [],
+    "good": []
+   }
+  }
+ ]
+}

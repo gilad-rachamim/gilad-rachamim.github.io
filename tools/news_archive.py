@@ -21,8 +21,11 @@ API = "https://kelim-news.gilad4049.workers.dev/history"
 BASE_URL = "/kelim/machshev/chadashot/archion/"
 NEWS_URL = "/kelim/machshev/chadashot/"
 BRAND = " | הכלים של גילעד רחמים"
-SECS = [("main", "העיקר"), ("haredi", "ציבור חרדי"), ("economy", "כלכלה וכיס")]
+SECS = [("main", "העיקר"), ("haredi", "ציבור חרדי"), ("economy", "כלכלה וכיס"), ("good", "חדשות טובות מהשבוע")]
 ED_LABEL = {"בוקר": "מהדורת הבוקר", "צהריים": "מהדורת הצהריים", "ערב": "מהדורת הערב"}
+SITE = "https://hakelim.com"
+FEED = ROOT / "kelim" / "machshev" / "chadashot" / "feed.xml"
+NEWS_MAP = ROOT / "news-sitemap.xml"
 MONTHS = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"]
 esc = lambda s: html.escape(str(s or ""), quote=False)
 attr = lambda s: html.escape(str(s or ""), quote=True)
@@ -192,6 +195,60 @@ def crumbs(last):
     return c + ([["ארכיון", BASE_URL], [last, None]] if last else [["ארכיון הסיכומים", None]])
 
 
+def news_ld(d):
+    """סכמת NewsArticle לדף יום (לחיפוש חדשות ולתוצאות עשירות)"""
+    first, last = d["editions"][0]["at"], d["editions"][-1]["at"]
+    nd = nice_date(d["day"])
+    dn = day_name(d)
+    return ('<script type="application/ld+json">' + json.dumps({
+        "@context": "https://schema.org", "@type": "NewsArticle",
+        "mainEntityOfPage": {"@type": "WebPage", "@id": f"{SITE}{BASE_URL}{d['day']}/"},
+        "headline": f"סיכום חדשות יומי: {dn + ', ' if dn else ''}{nd}",
+        "description": f"{points(d)} נקודות קצרות ורגועות מ-{len(d['editions'])} מהדורות של {nd}, עם קישור למקור.",
+        "datePublished": first, "dateModified": last, "inLanguage": "he",
+        "image": [f"{SITE}/og/kelim-machshev-chadashot.jpg"],
+        "author": {"@type": "Organization", "name": "החדשות ב-3 דקות", "url": SITE + NEWS_URL},
+        "publisher": {"@type": "Organization", "name": "הכלים של גילעד רחמים", "url": SITE + "/kelim/"},
+    }, ensure_ascii=False) + "</script>")
+
+
+def rfc822(at):
+    t = datetime.datetime.fromisoformat(at.replace("Z", "+00:00")).astimezone(datetime.timezone.utc)
+    return t.strftime("%a, %d %b %Y %H:%M:%S +0000")
+
+
+def write_feed(days):
+    """RSS: כל מהדורה היא פריט (30 האחרונות); בנוסף מפת אתר חדשותית ל-48 השעות האחרונות"""
+    eds = sorted(((e["at"], d, e) for d in days for e in d["editions"]), key=lambda x: x[0], reverse=True)
+    items = []
+    for at, d, e in eds[:30]:
+        link = f"{SITE}{BASE_URL}{d['day']}/"
+        body = "".join(f"<p><b>{esc(name)}</b></p><ol>" + "".join(f"<li>{esc(p['text'])}</li>" for p in e["sections"].get(k, [])) + "</ol>"
+                       for k, name in SECS if e["sections"].get(k))
+        dn = day_name(d)
+        title = f"{ED_LABEL.get(e['name'], e['name'])} – {dn + ', ' if dn else ''}{nice_date(d['day'])}"
+        items.append(f"<item><title>{esc(title)}</title><link>{link}#{e['time'].replace(':', '')}</link>"
+                     f'<guid isPermaLink="false">kelim-news-{d["day"]}-{e["time"]}</guid><pubDate>{rfc822(at)}</pubDate>'
+                     f"<description><![CDATA[{body}]]></description></item>")
+    nl = chr(10)
+    xml = ('<?xml version="1.0" encoding="UTF-8"?>' + nl + '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>'
+           "<title>החדשות ב-3 דקות</title>"
+           f'<link>{SITE}{NEWS_URL}</link><atom:link href="{SITE}{NEWS_URL}feed.xml" rel="self" type="application/rss+xml"/>'
+           "<description>סיכום חדשות רגוע 3 פעמים ביום, בנקודות קצרות עם קישור למקור. מיזם חסד, בלי כוונת רווח.</description>"
+           f"<language>he</language><lastBuildDate>{rfc822(eds[0][0])}</lastBuildDate>" + "".join(items) + "</channel></rss>" + nl)
+    FEED.write_text(xml, encoding="utf-8", newline="\n")
+    cut = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=48)
+    recent = [x for x in eds if datetime.datetime.fromisoformat(x[0].replace("Z", "+00:00")) > cut]
+    urls = "".join(f"<url><loc>{SITE}{BASE_URL}{d['day']}/</loc><news:news><news:publication><news:name>החדשות ב-3 דקות</news:name>"
+                   f"<news:language>he</news:language></news:publication><news:publication_date>{at}</news:publication_date>"
+                   f"<news:title>{esc(ED_LABEL.get(e['name'], e['name']))} – {nice_date(d['day'])}</news:title></news:news></url>"
+                   for at, d, e in recent)
+    NEWS_MAP.write_text('<?xml version="1.0" encoding="UTF-8"?>' + nl + '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
+                        'xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">' + urls + "</urlset>" + nl, encoding="utf-8", newline="\n")
+    print(f"feed: {len(items)} items, news-sitemap: {len(recent)} urls")
+
+
+
 def day_page(d, prev, nxt):
     day, nd = d["day"], nice_date(d["day"])
     dn, hd = day_name(d), heb_date(d)
@@ -204,7 +261,7 @@ def day_page(d, prev, nxt):
     meta = {"site": "kelim", "nav": "tchumim", "tool": "machshev_chadashot", "title": title + BRAND, "description": desc,
             "og_title": f"מה קרה ב-{nd}? סיכום החדשות של היום ב-3 דקות", "og_image": "og/kelim-machshev-chadashot.jpg?v=4",
             "priority": "0.5", "no_precache": True, "no_rel": True, "no_mapa": True, "crumbs": crumbs(nd),
-            "head": STYLE + faq_ld()}
+            "head": STYLE + faq_ld() + news_ld(d)}
     nav = []
     if prev:
         nav.append(f'<a href="{BASE_URL}{prev}/">→ {nice_date(prev)}</a>')
@@ -261,6 +318,7 @@ def write_pages():
         if not p.exists() or p.read_text(encoding="utf-8") != new:
             p.write_text(new, encoding="utf-8", newline="\n")
     (OUT / "index.html").write_text(hub_page(days), encoding="utf-8", newline="\n")
+    write_feed(days)
     print(f"pages: {len(days)} days + hub")
 
 

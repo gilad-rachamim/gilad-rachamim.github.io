@@ -12,7 +12,7 @@ const DAY_CAP = 600; // לכל האתר ביום
 const MAX_PROMPT = 1500;
 const MAX_DOC = 24000;
 const AI_MODEL = '@cf/openai/gpt-oss-120b';
-const GEMINI_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite'];
+const GEMINI_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-lite-latest'];   // 3.1-flash-lite עמוס (503) רוב הזמן – יצא
 
 const FONTS = ['Assistant', 'Heebo', 'Rubik', 'Varela Round', 'Secular One', 'Suez One', 'Frank Ruhl Libre',
   'David Libre', 'Bellefair', 'Noto Rashi Hebrew', 'Amatic SC', 'Karantina'];
@@ -113,33 +113,50 @@ export function cleanDoc(d, size, imageIds) {
 }
 
 // ---------- דגמים ----------
+const tripped = new Map();                 // מפסק: דגם -> עד מתי לדלג עליו (בזיכרון של המופע)
+const NO_THINK_CFG = /flash-lite/;
 function geminiKeys(env) { return String(env.GEMINI_KEYS || env.GEMINI_KEY || '').split(/[,\s]+/).filter(Boolean); }
-async function gemini(env, text, imgs, many) {
+// קריאה אחת לדגם אחד; עמוס (5xx), מכסה (429) או נתקע – הדגם יוצא מהמשחק לזמן קצר
+async function geminiOne(env, model, text, imgs, many) {
   const keys = geminiKeys(env);
-  if (!keys.length) throw new Error('no key');
-  let last;
-  for (const model of GEMINI_MODELS) {
-    const key = keys[Math.floor(Math.random() * keys.length)];
-    for (let i = 0; i < 2; i++) {
-      try {
-        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-          method: 'POST', signal: AbortSignal.timeout(many ? 95000 : 60000),
-          headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
-          body: JSON.stringify({ systemInstruction: { parts: [{ text: RULES }] }, contents: [{ role: 'user', parts: imageParts(text, imgs) }],
-            generationConfig: { temperature: many ? 0.9 : 0.7, maxOutputTokens: many ? 32000 : 12000, responseMimeType: 'application/json' } })
-        });
-        if (!r.ok) { const e = new Error(model + ' ' + r.status); e.status = r.status; throw e; }
-        const j = await r.json();
-        const t = j.candidates?.[0]?.content?.parts?.filter(p => !p.thought).map(p => p.text || '').join('') || '';
-        return { data: parseJsonText(t), model };
-      } catch (e) {
-        last = e;
-        if (e.status === 429 || (e.status && e.status < 500)) break;
-        await sleep(1500);
-      }
-    }
+  const key = keys[Math.floor(Math.random() * keys.length)];
+  const gen = { temperature: many ? 0.9 : 0.7, maxOutputTokens: many ? 32000 : 12000, responseMimeType: 'application/json' };
+  // בלי "חשיבה": היא הוסיפה 10–30 שניות לכל עיצוב. הדגמים הקלים דוחים את ההגדרה (400), אז רק לשאר
+  if (!NO_THINK_CFG.test(model)) gen.thinkingConfig = { thinkingBudget: 0 };
+  try {
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      method: 'POST', signal: AbortSignal.timeout(many ? 90000 : 30000),
+      headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
+      body: JSON.stringify({ systemInstruction: { parts: [{ text: RULES }] }, contents: [{ role: 'user', parts: imageParts(text, imgs) }], generationConfig: gen })
+    });
+    if (!r.ok) { const e = new Error(model + ' ' + r.status); e.status = r.status; throw e; }
+    const j = await r.json();
+    const t = j.candidates?.[0]?.content?.parts?.filter(p => !p.thought).map(p => p.text || '').join('') || '';
+    return { data: parseJsonText(t), model };
+  } catch (e) {
+    if (e.status === 429) tripped.set(model, Date.now() + 5 * 60000);   // מכסה – 5 דקות; עומס (5xx) – חצי דקה, הוא רגעי
+    else if (e.status >= 500) tripped.set(model, Date.now() + 30000);
+    else if (e.name === 'TimeoutError' || e.name === 'AbortError') tripped.set(model, Date.now() + 60000);
+    throw e;
   }
-  throw last;
+}
+// מירוץ מדורג: כל שלב מתחיל בזמן שלו (at), או מיד כשקודם נפל; הראשון שמצליח מנצח
+export function stagger(steps) {
+  return new Promise((res, rej) => {
+    let done = false, live = 0, next = 0, last;
+    const timers = [];
+    const start = i => {
+      if (done || i !== next) return;
+      next = i + 1; live++;
+      Promise.resolve().then(() => steps[i].run()).then(v => { if (!done) { done = true; timers.forEach(clearTimeout); res(v); } }, e => {
+        last = e; live--;
+        if (done) return;
+        if (next < steps.length) start(next); else if (!live) { timers.forEach(clearTimeout); rej(last); }
+      });
+    };
+    steps.forEach((st, i) => { if (i) timers.push(setTimeout(() => { for (let k = next; k <= i; k++) start(k); }, st.at)); });
+    start(0);
+  });
 }
 // הטקסט + התמונות הקטנות (inlineData) – Gemini רואה אותן ויודע לאיזה מזהה כל אחת שייכת
 export function imageParts(text, imgs) {
@@ -219,14 +236,22 @@ export default {
     let out, err;
     const ids = imgs.map(i => i.id);
     let options = [];
-    for (const f of [gemini, workersAI, workersAI]) {
-      try {
-        out = await f(env, text, imgs, many);
-        const raw = out && out.data ? (Array.isArray(out.data.options) ? out.data.options : (out.data.doc ? [out.data] : [])) : [];
-        options = raw.slice(0, 3).map(o => o && o.doc ? { doc: cleanDoc(o.doc, size, ids), note: String(o.note || '').slice(0, 300) } : null).filter(o => o && o.doc.els.length);
-        if (options.length) break;
-        out = null;
-      } catch (e) { err = e; out = null; }
+    // תשובה נחשבת רק אם יצא ממנה עיצוב עם רכיבים; אחרת השלב נכשל והבא בתור ממשיך
+    const pick = o => {
+      const raw = o && o.data ? (Array.isArray(o.data.options) ? o.data.options : (o.data.doc ? [o.data] : [])) : [];
+      const opts = raw.slice(0, 3).map(x => x && x.doc ? { doc: cleanDoc(x.doc, size, ids), note: String(x.note || '').slice(0, 300) } : null).filter(x => x && x.doc.els.length);
+      if (!opts.length) throw new Error('empty design');
+      return { out: o, options: opts };
+    };
+    // מירוץ: Gemini הראשי מתחיל; לא ענה – מצטרף דגם קל, ואחריו הגיבוי של Workers AI. הראשון שמחזיר עיצוב תקין מנצח
+    const gap = many ? 12000 : 5000;
+    const live = geminiKeys(env).length ? GEMINI_MODELS.filter(m => !((tripped.get(m) || 0) > Date.now())) : [];
+    const steps = live.map((m, i) => ({ at: i * gap, run: async () => pick(await geminiOne(env, m, text, imgs, many)) }));
+    steps.push({ at: live.length * gap + (many ? 6000 : 2000), run: async () => pick(await workersAI(env, text)) });
+    try { ({ out, options } = await stagger(steps)); }
+    catch (e) {
+      err = e;
+      try { ({ out, options } = pick(await workersAI(env, text))); } catch (e2) { err = e2; out = null; }
     }
     if (!out || !options.length) return json({ error: 'העוזר עמוס כרגע. נסו שוב בעוד דקה.', detail: String(err && err.message || '').slice(0, 120) }, 503, h);
     return json({ doc: options[0].doc, note: options[0].note, options, left: q.left, model: out.model }, 200, h);

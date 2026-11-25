@@ -4,7 +4,7 @@
   var API = 'https://kelim-news.gilad4049.workers.dev';
   var TOOL = 'chadashot';
   var KEY = 'kelim_chadashot_topics';
-  var NAMES = { main: 'העיקר', haredi: 'ציבור חרדי', economy: 'כלכלה וכיס' };
+  var NAMES = { main: 'העיקר', haredi: 'ציבור חרדי', economy: 'כלכלה וכיס', good: '☀️ חדשות טובות מהשבוע' };
   var $ = function (id) { return document.getElementById(id); };
   var ed = null;
   var PAGE = 'https://hakelim.com/kelim/machshev/chadashot/';
@@ -14,7 +14,7 @@
     var s = '';
     try { s = (new URLSearchParams(location.search).get('utm_source') || '').toLowerCase(); } catch (e) {}
     if (s === 'facebook') s = 'fb';
-    return ['fb', 'wa', 'qr', 'share', 'home', 'tg'].indexOf(s) > -1 ? s : 'web';
+    return ['fb', 'wa', 'wag', 'qr', 'share', 'home', 'tg'].indexOf(s) > -1 ? s : 'web';
   })();
   function friendText() {
     return 'מצאתי משהו טוב: סיכום חדשות רגוע 3 פעמים ביום. 5 נקודות קצרות, בלי לרפרש כל רבע שעה. קו כשר, בחינם ובלי פרסומות.\n' +
@@ -25,7 +25,7 @@
   function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
   function save(o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  function shown() { var t = load(); return ['main'].concat(['haredi', 'economy'].filter(function (k) { return t[k] !== false; })); }
+  function shown() { var t = load(); return ['main'].concat(['haredi', 'economy'].filter(function (k) { return t[k] !== false; })).concat(['good']); }
 
   function nextRun() {
     var h = new Date().getHours();
@@ -53,6 +53,8 @@
     });
     $('nw-body').innerHTML = html || '<p class="nw-wait">אין נקודות בסיכום הזה.</p>';
     $('nw-wa').href = 'https://wa.me/?text=' + encodeURIComponent(asText());
+    var wag = ed.links && ed.links.wag;
+    if (wag && /^https:\/\/chat\.whatsapp\.com\/[A-Za-z0-9]+$/.test(wag)) { $('nw-wag-a').href = wag; $('nw-wag').hidden = false; }
     var wa = ed.links && ed.links.wa;
     if (wa && /^https:\/\/(www\.)?whatsapp\.com\/channel\//.test(wa)) { $('nw-chan-a').href = wa; $('nw-chan').hidden = false; }
     var tg = ed.links && ed.links.tg;
@@ -146,9 +148,50 @@
     $('nw-wa').addEventListener('click', function () { used('wa'); });
     $('nw-friend').href = 'https://wa.me/?text=' + encodeURIComponent(friendText());
     $('nw-friend').addEventListener('click', function () { used('friend'); });
+    $('nw-wag-a').addEventListener('click', function () { used('group'); });
     $('nw-chan-a').addEventListener('click', function () { used('channel'); });
     $('nw-tg-a').addEventListener('click', function () { used('telegram'); });
     $('nw-fb').addEventListener('click', function () { used('facebook'); });
+    // 24.11.2026: שמע וסרטון של המהדורה + מהירות + שיתוף רחב
+    (function () {
+      var au = $('nw-audio'); if (!au) return;
+      var FILES = 'https://kelim-news.gilad4049.workers.dev/media/latest.';
+      function ga(n, p) { try { if (window.gtag) window.gtag('event', n, p || {}); } catch (e) {} }
+      var sp = parseFloat(localStorage.getItem('nw-speed') || '1') || 1;
+      function setSpeed(v) {
+        sp = v; au.playbackRate = v; try { localStorage.setItem('nw-speed', String(v)); } catch (e) {}
+        document.querySelectorAll('.nw-speeds [data-speed]').forEach(function (b) { b.classList.toggle('on', parseFloat(b.dataset.speed) === v); });
+      }
+      setSpeed(sp);
+      au.addEventListener('play', function () { au.playbackRate = sp; ga('news_audio_play'); used('audio'); });
+      document.querySelectorAll('.nw-speeds [data-speed]').forEach(function (b) {
+        b.addEventListener('click', function () { setSpeed(parseFloat(b.dataset.speed)); ga('news_speed', { speed: b.dataset.speed }); });
+      });
+      $('nw-dl').addEventListener('click', function () { ga('news_download', { kind: 'mp3' }); });
+      var vd = $('nw-video'), vt = $('nw-vtoggle');
+      vt.addEventListener('click', function () {
+        if (vd.hidden) { if (!vd.src) vd.src = FILES + 'mp4'; vd.hidden = false; vt.textContent = 'להסתיר את הסרטון'; vd.play().catch(function () {}); }
+        else { vd.pause(); vd.hidden = true; vt.textContent = '🎬 צפייה בסרטון'; }
+      });
+      vd.addEventListener('play', function () { ga('news_video_play'); used('video'); });
+      // שיתוף: קישור לדף + שורה קצרה; מהטלפון – חלון השיתוף המובנה (ווטסאפ, טלגרם, מייל וכל אפליקציה אחרת)
+      var LINK = PAGE + '?utm_source=share', MSG = 'החדשות ב-3 דקות: סיכום רגוע, גם לשמיעה וגם בסרטון קצר. בחינם.', ENC = encodeURIComponent;
+      $('nw-s-wa').href = 'https://wa.me/?text=' + ENC(MSG + '\n' + LINK);
+      $('nw-s-tg').href = 'https://t.me/share/url?url=' + ENC(LINK) + '&text=' + ENC(MSG);
+      $('nw-s-fb').href = 'https://www.facebook.com/sharer/sharer.php?u=' + ENC(LINK);
+      $('nw-s-mail').href = 'mailto:?subject=' + ENC('החדשות ב-3 דקות') + '&body=' + ENC(MSG + '\n' + LINK);
+      $('nw-s-sms').href = 'sms:?&body=' + ENC(MSG + ' ' + LINK);
+      ['wa', 'tg', 'fb', 'mail', 'sms'].forEach(function (k) { $('nw-s-' + k).addEventListener('click', function () { ga('news_share', { via: k }); used('share_' + k); }); });
+      $('nw-s-copy').addEventListener('click', function () {
+        var b = this; (navigator.clipboard ? navigator.clipboard.writeText(LINK) : Promise.reject()).then(function () {
+          b.textContent = 'הועתק ✓'; setTimeout(function () { b.textContent = 'להעתיק קישור'; }, 2000);
+        }).catch(function () { window.prompt('העתיקו מכאן:', LINK); });
+        ga('news_share', { via: 'copy' }); used('share_copy');
+      });
+      var ns = $('nw-nativeshare');
+      if (navigator.share) ns.addEventListener('click', function () { navigator.share({ title: 'החדשות ב-3 דקות', text: MSG, url: LINK }).catch(function () {}); ga('news_share', { via: 'native' }); used('share_native'); });
+      else ns.hidden = true;
+    })();
 
     fetch(API + '/latest?from=' + FROM, { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
       if (!j || j.empty) {

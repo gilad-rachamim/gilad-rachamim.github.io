@@ -21,7 +21,8 @@
     ['מנחה קטנה', function (z) { return z.minchaKetana(); }],
     ['פלג המנחה', function (z) { return z.plagHaMincha(); }],
     ['שקיעה', function (z) { return z.sunset(); }, 1],
-    ['צאת הכוכבים', function (z) { return z.tzeit(8.5); }]
+    ['צאת הכוכבים', function (z) { return z.tzeit(8.5); }],
+    ['צאת הכוכבים לרבנו תם (72 דקות)', function (z) { return new Date(z.sunset().getTime() + 72 * 60000); }]
   ];
   var st = { place: CITIES[0][0], name: 'ירושלים', candle: 'auto', elev: '' };
   try { var sv = JSON.parse(localStorage.getItem(KEY) || 'null'); if (sv) Object.keys(sv).forEach(function (k) { st[k] = sv[k]; }); } catch (e) {}

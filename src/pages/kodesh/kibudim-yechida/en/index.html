@@ -1,0 +1,97 @@
+<!--meta {
+ "site": "kodesh",
+ "nav": "rabanim",
+ "lang": "en",
+ "alt": {
+  "he": "/kodesh/kibudim-yechida/",
+  "en": "/kodesh/kibudim-yechida/en/",
+  "ru": "/kodesh/kibudim-yechida/ru/"
+ },
+ "crumb_root": "Jewish tools",
+ "tool": "kibudim_yechida_en",
+ "title": "Military Unit Ceremony Order and Honors: Siyum, Azkara, Torah",
+ "description": "Military unit ceremony order and honors for the IDF: the rabbi picks the event (siyum, memorial, Torah scroll dedication), adds names and prints a sheet.",
+ "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><link rel=\"stylesheet\" href=\"/assets/daf-print.css\"><link rel=\"stylesheet\" href=\"/assets/lang-switch.css\"><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"What is the order of a siyum?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Choose \\\"Siyum\\\" and you get a sample order. Change it to match your unit's custom.\"}}, {\"@type\": \"Question\", \"name\": \"Can I edit the honors?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Yes. One line for each honor, with a name.\"}}, {\"@type\": \"Question\", \"name\": \"Can I use it for another event?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Yes, there is an \\\"Other event\\\" option with a nearly empty order.\"}}, {\"@type\": \"Question\", \"name\": \"Is what I type saved?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Yes, on your phone.\"}}, {\"@type\": \"Question\", \"name\": \"Can I send the list of honors on WhatsApp?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Yes. \\\"Copy as text\\\" copies the order and the honors, ready to paste into a group.\"}}, {\"@type\": \"Question\", \"name\": \"Is this page free?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Yes. Everything here is free, with no sign-up and no ads.\"}}]}</script>",
+ "foot": "<script src=\"/assets/kibudim-yechida.js\" defer></script><script src=\"/assets/daf-print.js\" defer></script>",
+ "og_title": "Unit ceremony order and honors – print or send on WhatsApp",
+ "priority": "0.7",
+ "crumbs": [
+  [
+   "Honors for a unit ceremony",
+   null
+  ]
+ ]
+} -->
+<header class="k-hero no-print">
+  <h1>Military Unit Ceremony Order and Honors: Siyum, Azkara, Torah</h1>
+  <p class="sub">Choose the type of event and get a sample order and a list of honors. Add names, change what you need, and print a neat sheet for the person leading the event, or send it to the group.</p>
+</header>
+<nav class="gr-lang" aria-label="Language / שפה / Язык"><a href="/kodesh/kibudim-yechida/" lang="he" hreflang="he">עברית</a><a href="/kodesh/kibudim-yechida/en/" lang="en" hreflang="en" aria-current="page">English</a><a href="/kodesh/kibudim-yechida/ru/" lang="ru" hreflang="ru">Русский</a></nav>
+<div class="tool no-print">
+  <form class="k-form" data-key="kodesh-kibudim-yechida-en" novalidate>
+    <div class="dp-row">
+      <div class="field"><label for="ky-type">Type of event</label><select id="ky-type" name="type"><option value="siyum">Siyum (completing a Talmud tractate)</option><option value="azkara">Azkara (memorial service)</option><option value="sefer">Torah scroll dedication</option><option value="mezuza">Synagogue dedication and mezuzot</option><option value="other">Other event</option></select></div>
+      <div class="field"><label for="ky-title">Title</label><input id="ky-title" name="title" data-out="title" type="text" maxlength="70"></div>
+    </div>
+    <div class="field"><label for="ky-when">When and where</label><input id="ky-when" name="when" data-out="when" type="text" maxlength="90" placeholder="Tuesday, 12 Kislev, 19:30 · the battalion synagogue"></div>
+    <div class="field"><label for="ky-for">In honor of / in memory of <span class="opt">(optional)</span></label><input id="ky-for" name="for" data-out="for" type="text" maxlength="90" placeholder="In memory of Staff Sergeant ..., may God avenge his blood"></div>
+    <div class="field"><label for="ky-order">Order of the event, one line for each part</label><textarea id="ky-order" name="order" data-out="order" data-lines="list" rows="6"></textarea></div>
+    <div class="field"><label for="ky-kib">The honors, one line for each <span class="opt">(honor – name)</span></label><textarea id="ky-kib" name="kib" data-out="kib" data-lines="pairs" rows="6"></textarea>
+      <button class="btn btn-line btn-sm" type="button" id="kb-reset" style="margin-top:.5rem">Restore the sample for this event</button></div>
+    <div class="dp-row">
+      <div class="field"><label for="ky-sig">Signature</label><input id="ky-sig" name="sig" data-out="sig" type="text" maxlength="50" placeholder="Battalion rabbi"></div>
+      <div class="field"><label for="ky-theme">Design</label><select id="ky-theme" name="theme"><option value="klaf">Parchment and gold</option><option value="kachol">Blue</option><option value="zayit">Olive green</option><option value="lavan">White (saves ink)</option></select></div>
+    </div>
+  </form>
+  <div class="share-row">
+    <button class="btn btn-gold btn-sm" type="button" id="dp-print">Print / save as PDF</button>
+    <button class="btn btn-line btn-sm" type="button" id="dp-wa"><svg class="ic"><use href="#wa"/></svg> Send on WhatsApp</button>
+    <button class="btn btn-line btn-sm" type="button" id="dp-copy">Copy as text</button>
+  </div>
+</div>
+<div id="dp-sheet" class="dp-sheet" dir="ltr">
+  <div class="dp-head"><span class="bsd" lang="he" dir="rtl">בס"ד</span><h2 data-in="title"></h2><p class="dp-sub" data-in="when"></p><p class="dp-kicker" data-opt><span data-in="for"></span></p></div>
+  <div class="dp-sec"><h3>Order of the event</h3><div data-in="order"></div></div>
+  <div class="dp-sec"><h3>The honors</h3><div data-in="kib"></div></div>
+  <p class="dp-sig" data-in="sig"></p>
+</div>
+<div class="tool no-print">
+  <p class="disclaimer">The order and the honors are a suggestion. Every unit has its own custom. Everything is saved only on your phone.</p>
+  <p class="disclaimer">Part of the <a class="gold" href="/kodesh/">Jewish tools</a> (Hebrew). Texts for a siyum and a memorial are in the <a class="gold" href="/kodesh/dapei-tefila/">prayer sheets for an event</a> (Hebrew).</p>
+</div>
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">Event order and honors for the unit rabbi</h2>
+  <p>Choose the type of event: a siyum, a memorial, a Torah scroll dedication, or a synagogue dedication with mezuzot. You get a sample order and a list of honors, add names, and change whatever you need.</p>
+  <h3>A sheet for the person leading the event</h3>
+  <p>Print a neat sheet for whoever leads the event, or send it to a WhatsApp group. There are four designs, including a white one that saves ink.</p>
+  <p>The order and the honors are a suggestion, and every unit has its own custom. Texts for a siyum and a memorial are in the <a class="gold" href="/kodesh/dapei-tefila/">prayer sheets for an event</a> (Hebrew).</p>
+  <h3>How to build the order</h3>
+  <p>Choose an event type and you get a sample order, one line for each part. Change, delete or add lines. In the list of honors, write an honor and a name on each line, for example "Hadran – Yossi". "Restore the sample" brings back the original order if you get mixed up.</p>
+  <h3>Before the event</h3>
+  <p>Print one sheet for the person leading, and send the text to the group so that everyone who was given an honor knows ahead of time. Make sure each person knows what to say and when, and prepare a copy of the texts, such as the Hadran or the Kaddish.</p>
+  <h3>Order for a memorial in the unit</h3>
+  <p>For a memorial, write the name of the fallen soldier in the "In memory of" field and it appears in the title. The sample order includes the usual parts, and every unit has its own custom.</p>
+  <h3>Free, for the benefit of many</h3>
+  <p>There is no payment, no subscription and no ads, and no need to sign up. The page was built so anyone can use it easily, from a phone or a computer. If it helped you, share it with your community or your family.</p>
+  <h3>A ready order saves embarrassment</h3>
+  <p>At a unit event – a siyum, a Torah scroll dedication or a memorial – everyone wants to honor the right people, and there is no time to hesitate on stage. A neat sheet with names, roles and times gives the leader confidence and keeps anyone important from being forgotten. And certificates of appreciation for those who contributed: <a class="gold" href="/kodesh/teuda/">a certificate to print</a> (Hebrew).</p>
+  <h3>A siyum masechet in the unit</h3>
+  <p>A siyum celebrates finishing the study of a tractate. Usually one of those who studied reads the closing lines, then the Hadran is said, followed by Kaddish, and then a festive meal. Many units add a word from the rabbi and from the commander, and thanks to everyone who studied. The order on this page has all of these parts, and you can move or delete any of them to match the custom of your unit.</p>
+  <h3>Bringing in a Torah scroll</h3>
+  <p>A Torah scroll dedication is one of the happiest events in a unit. Usually the last letters of the scroll are written first, which is a great honor. Then the scroll is carried under a chuppah with singing and dancing to the synagogue and placed in the Holy Ark (aron kodesh). Here you can list who writes the letters, who carries the scroll on each part of the way and who holds the chuppah poles, so everyone knows when their turn comes.</p>
+  <h3>A memorial for the fallen</h3>
+  <p>At a memorial, chapters of Tehillim, El Malei Rachamim and Kaddish are usually said, and people speak about the fallen soldier. Agree in advance with the family who will speak. The name goes in the "In memory of" field and appears in the heading of the sheet. Prayer texts are not given on this page; take them from a siddur.</p>
+  <h3>Who receives the honors</h3>
+  <p>Honors usually go to the commander, the unit rabbi, those who studied or donated the scroll, and at a memorial to the family and friends of the fallen. The list on this page is only a suggestion, and you decide whom to honor.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">Questions and answers</h2>
+  <details><summary>What is the order of a siyum?</summary><p>Choose "Siyum" and you get a sample order. Change it to match your unit's custom.</p></details>
+  <details><summary>Can I edit the honors?</summary><p>Yes. One line for each honor, with a name.</p></details>
+  <details><summary>Can I use it for another event?</summary><p>Yes, there is an "Other event" option with a nearly empty order.</p></details>
+  <details><summary>Is what I type saved?</summary><p>Yes, on your phone.</p></details>
+  <details><summary>Can I send the list of honors on WhatsApp?</summary><p>Yes. "Copy as text" copies the order and the honors, ready to paste into a group.</p></details>
+  <details><summary>Is this page free?</summary><p>Yes. Everything here is free, with no sign-up and no ads.</p></details>
+</section>
+<!--/seo-txt-->

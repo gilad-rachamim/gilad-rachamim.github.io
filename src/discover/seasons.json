@@ -1,0 +1,23 @@
+{
+  "seasons": [
+    {
+      "id": "chanuka",
+      "name": "חנוכה",
+      "emoji": "🕎",
+      "hub": "/kodesh/chanuka/",
+      "start": ["Kislev", 15],
+      "end": ["Tevet", 2],
+      "line": "נרות, סביבון, שירים ומשחקים במקום אחד",
+      "tools": [
+        "/kodesh/chanuka/nerot/",
+        "/kodesh/chanuka/sevivon/",
+        "/kodesh/chanuka/shirim/",
+        "/kodesh/chanuka/chidon/",
+        "/kodesh/chanuka/matkonim/",
+        "/kodesh/chanuka/yetzira/",
+        "/kodesh/chanuka/tzviya/",
+        "/kodesh/chanuka/bracha/"
+      ]
+    }
+  ]
+}

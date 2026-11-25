@@ -1,0 +1,16 @@
+/* יוטיוב בלי פרסומות בחינם (24.11.2026) */
+.yt-note{font-size:.9rem;opacity:.8;margin-top:.4rem}
+.yt-steps{padding-inline-start:1.3rem;line-height:1.9;margin:.6rem 0}
+.yt-steps li{margin-bottom:.6rem}
+.yt-steps .btn{display:inline-block;margin-top:.3rem}
+#yt-dev{display:flex;flex-wrap:wrap;gap:.5rem;margin:.6rem 0 1rem}
+#yt-dev .chip{cursor:pointer;padding:.55rem 1.1rem;border-radius:2rem;border:1px solid currentColor;background:transparent;color:inherit;font:inherit;min-height:44px}
+#yt-dev .chip.on{background:#d4a64a;color:#111;border-color:#d4a64a;font-weight:700}
+.yt-dev[hidden]{display:none}
+.yt-table-wrap{overflow-x:auto}
+.yt-table{width:100%;border-collapse:collapse;margin:.6rem 0}
+.yt-table th,.yt-table td{border:1px solid rgba(128,128,128,.4);padding:.55rem .7rem;text-align:start}
+.yt-table th{background:rgba(212,166,74,.18)}
+.yt-form .field{margin-bottom:.8rem}
+.yt-form input{width:100%;min-height:44px;font:inherit;padding:.4rem .6rem;box-sizing:border-box}
+.yt-form .done{padding:1rem;border-radius:.8rem;background:rgba(80,160,100,.18)}

@@ -1,0 +1,9 @@
+/* זמני היום באנגלית (/kodesh/zmanim/en/). משתמש גם במחלקות של assets/shabbat-en.css */
+.zm-day{display:flex;gap:8px;align-items:end;flex-wrap:wrap;flex:1 1 100%}
+.zm-day label{flex:1 1 160px}
+.zm-day input{min-height:44px;font-size:1rem;padding:6px 8px;border-radius:10px;border:1px solid var(--line,#d9d2c3);background:transparent;color:var(--cream,inherit);width:100%;box-sizing:border-box}
+.zm-tbl th span{display:block;font-weight:400;font-size:.8rem;opacity:.75}
+.zm-tbl td{text-align:end;white-space:nowrap}
+.zm-tbl tr.zm-past th,.zm-tbl tr.zm-past td{opacity:.55}
+.zm-week td,.zm-week th{white-space:nowrap;font-size:.88rem}
+@media print{.zm-day{display:none!important}.zm-tbl tr.zm-past th,.zm-tbl tr.zm-past td{opacity:1}}

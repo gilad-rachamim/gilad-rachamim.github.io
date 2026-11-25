@@ -1,0 +1,5 @@
+/* Language switch (עברית / English / Русский) for translated tool pages. Same rules as .gr-lang in giur.css. */
+.gr-lang{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:.4rem 0 1rem}
+.gr-lang a{border:1px solid var(--line);border-radius:99px;padding:.35rem .9rem;min-height:40px;display:inline-flex;align-items:center;color:var(--gold-hi);text-decoration:none}
+.gr-lang a[aria-current=page]{background:var(--gold);color:#1a1405;border-color:var(--gold);font-weight:700}
+.gr-lang a:hover,.gr-lang a:focus-visible{background:rgba(212,176,98,.14)}

@@ -1,0 +1,53 @@
+/* שכבת מיתוג לכלי ממותג לעסק (hakelim.com/kelim/b/<שם-העסק>/<כלי>/).
+   נטענת רק בדפים ש-tools/make_brand.py יוצר. הצבע של העסק מגיע מ-brand.js ב---hk-c ו---hk-c2. */
+html.hk-embed .hk-top,html.hk-embed .hk-credit-top{display:none!important}
+html.hk-embed body.hk-brand{background:transparent!important;min-height:0}
+html.hk-embed #main{padding-top:.4rem}
+body.hk-brand{
+  --hk-c:#1d4e89;--hk-c2:#f2b705;--hk-on:#fff;
+  --ink:#ffffff;--ink-2:#f4f6f9;--gold:var(--hk-c);--gold-hi:var(--hk-c);--gold-soft:var(--hk-c);
+  --parchment:#1b1f27;--cream:#12151b;--body:#2c323d;--muted:#5c6572;--line:rgba(20,30,50,.14);
+  background:#fff!important;color:#1b1f27}
+body.hk-brand .btn-gold,body.hk-brand .big-btn{background:var(--hk-c)!important;color:var(--hk-on)!important;border-color:var(--hk-c)!important}
+body.hk-brand a{color:var(--hk-c)}
+body.hk-brand .k-hero h1{color:var(--hk-c)}
+body.hk-brand input,body.hk-brand select,body.hk-brand textarea{background:#fff;color:#1b1f27;border:1px solid rgba(20,30,50,.28)}
+body.hk-gift{--gold:#d8b35f}
+.hk-top{display:flex;align-items:center;gap:.8rem;padding:.7rem 1rem;border-bottom:3px solid var(--hk-c,#d8b35f);background:var(--ink,#fff);flex-wrap:wrap}
+.hk-top img{height:46px;width:auto;max-width:150px;object-fit:contain;display:block}
+.hk-top b{font-size:1.2rem;color:var(--cream,#12151b)}
+.hk-top a.hk-tel{margin-inline-start:auto;font-weight:700;direction:ltr;text-decoration:none;color:var(--hk-c,#d8b35f)}
+.hk-lead{max-width:44rem;margin:1.6rem auto;padding:1.1rem 1.2rem;border:2px solid var(--hk-c);border-radius:16px;background:var(--ink-2,#f4f6f9);text-align:center}
+.hk-lead p{margin:0 0 .8rem;font-size:1.1rem;color:var(--cream,#12151b)}
+.hk-lead .hk-wa{display:inline-block;padding:.85rem 1.4rem;border-radius:999px;background:var(--hk-c);color:var(--hk-on);font-weight:800;font-size:1.1rem;text-decoration:none;border:0;cursor:pointer;font-family:inherit}
+.hk-lead .hk-wa:focus-visible{outline:3px solid var(--hk-c2);outline-offset:3px}
+.hk-lead small{display:block;margin-top:.7rem;color:var(--muted,#5c6572);font-size:.9rem}
+.hk-note{max-width:44rem;margin:.8rem auto 0;padding:.5rem .9rem;border-radius:10px;background:#fff7d6;color:#5a4600;font-size:.95rem;text-align:center}
+.hk-credit{max-width:44rem;margin:1.2rem auto 1.6rem;padding:0 1rem;text-align:center;font-size:.85rem;color:var(--muted,#9db0a8)}
+.hk-credit a{color:inherit;text-decoration:underline}
+body.hk-free .hk-credit{font-size:.95rem}
+.hk-disc{max-width:44rem;margin:.8rem auto;padding:0 1rem;font-size:.85rem;color:var(--muted,#9db0a8);text-align:center}
+.hk-hub{display:grid;gap:.8rem;max-width:44rem;margin:1rem auto;padding:0 1rem}
+.hk-hub a{display:block;padding:1rem 1.2rem;border:2px solid var(--hk-c);border-radius:14px;font-weight:800;font-size:1.15rem;text-decoration:none}
+@media print{.hk-lead{display:none}}
+/* דפי מכירה: מחולל הצצה, טבלת מחירים, מחולל קוד הטמעה */
+.bp-box{display:grid;gap:1rem;grid-template-columns:minmax(0,1fr);margin:1rem 0}
+@media(min-width:820px){.bp-box{grid-template-columns:minmax(240px,300px) minmax(0,1fr)}}
+.bp-form{display:grid;gap:.7rem;align-content:start}
+.bp-form label{display:block;font-weight:700;margin-bottom:.2rem}
+.bp-form input[type=text],.bp-form input[type=tel],.bp-form select{width:100%;font:inherit;padding:.6rem .75rem;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.22);color:var(--cream)}
+.bp-form input[type=color]{width:100%;height:2.6rem;border:1px solid var(--line);border-radius:10px;background:transparent;padding:.15rem}
+.bp-frame{border:2px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+.bp-frame iframe{width:100%;height:640px;border:0;display:block;background:#fff}
+.bp-tbl{width:100%;border-collapse:collapse;margin:.8rem 0}
+.bp-tbl th,.bp-tbl td{padding:.65rem .7rem;border-bottom:1px solid var(--line);text-align:start;vertical-align:top}
+.bp-tbl td:nth-child(2){font-weight:800;white-space:nowrap}
+.bp-cta{display:inline-block;margin:.4rem 0;padding:.85rem 1.4rem;border-radius:999px;background:var(--gold);color:#16130f;font-weight:800;text-decoration:none}
+.bp-em textarea{width:100%;min-height:7rem;font:.9rem/1.5 monospace;direction:ltr;text-align:left;padding:.7rem;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--cream)}
+.bp-ok{color:var(--gold);min-height:1.4em}
+.bp-order{max-width:36rem;margin:1rem 0}
+.bp-fs{border:1px solid var(--line);border-radius:12px;padding:.7rem .9rem;display:grid;gap:.4rem}
+.bp-fs legend{font-weight:700;padding:0 .3rem}
+.bp-ck{display:flex!important;gap:.5rem;align-items:center;font-weight:400!important}
+.bp-sum{color:var(--gold);min-height:1.4em;font-weight:700}
+.bp-order select{width:100%;font:inherit;padding:.6rem .75rem;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.22);color:var(--cream)}

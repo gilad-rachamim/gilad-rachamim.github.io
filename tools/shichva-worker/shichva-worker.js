@@ -607,35 +607,77 @@ function normLight(d) {
   return { light: ['green', 'yellow', 'red'].includes(l) ? l : 'yellow', why: clean(d && d.why, 200) || (l === 'green' ? 'צחוק על תופעה, מכבד.' : 'כדאי לעבור שוב לפני שמציגים.') };
 }
 
+const tripped = new Map();   // מפסק: דגם -> עד מתי לדלג עליו (בזיכרון של המופע)
+// קריאה אחת לדגם אחד: מחזירה את התשובה או זורקת; דגם עמוס או תקוע נכנס למפסק
+async function geminiOne(model, key, text, ms) {
+  const gen = { temperature: 0.8, responseMimeType: 'application/json' };
+  if (!/flash-lite/.test(model)) gen.thinkingConfig = { thinkingBudget: 0 };   // הדגמים הקלים דוחים את ההגדרה (400)
+  let r;
+  try {
+    r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      method: 'POST', signal: AbortSignal.timeout(ms),
+      headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
+      body: JSON.stringify({ systemInstruction: { parts: [{ text: GABAI }] }, contents: [{ role: 'user', parts: [{ text }] }], generationConfig: gen })
+    });
+  } catch (e) { tripped.set(model, Date.now() + 60000); throw e; }                   // נתקע – דקה בלי הדגם הזה (גוגל נתקע לבקשה בודדת, לא לאורך זמן)
+  if (!r.ok) {
+    // מכסה (429) – 5 דקות בלי הדגם; עומס (5xx) – חצי דקה בלבד, כי העומס אצל גוגל רגעי
+    if (r.status === 429) tripped.set(model, Date.now() + 5 * 60000);
+    else if (r.status >= 500) tripped.set(model, Date.now() + 30000);
+    throw new Error(model + ' ' + r.status);
+  }
+  const j = await r.json();
+  const d = parseJson(j.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '');
+  if (!d) throw new Error(model + ' bad json');
+  return d;
+}
+// מירוץ מדורג: כל שלב מתחיל בזמן שלו (at), או מיד כשכל הקודמים נפלו; הראשון שמצליח מנצח
+export function stagger(steps) {
+  return new Promise((res, rej) => {
+    let done = false, live = 0, next = 0, last;
+    const timers = [];
+    const start = i => {
+      if (done || i !== next) return;
+      next = i + 1; live++;
+      Promise.resolve().then(() => steps[i].run()).then(v => { if (!done) { done = true; timers.forEach(clearTimeout); res(v); } }, e => {
+        last = e; live--;
+        if (done) return;
+        if (next < steps.length) start(next); else if (!live) { timers.forEach(clearTimeout); rej(last); }
+      });
+    };
+    steps.forEach((st, i) => { if (i) timers.push(setTimeout(() => { for (let k = next; k <= i; k++) start(k); }, st.at)); });
+    start(0);
+  });
+}
 async function askModel(env, user, shape) {
+  let skipped = [], gem = null;
   const want = `\nהחזר JSON בלבד במבנה הזה (הערכים הם דוגמה):\n${JSON.stringify(shape)}`;
   if (env.GEMINI_KEYS) {
     const keys = String(env.GEMINI_KEYS).split(/[\s,]+/).filter(Boolean);
-    const models = (env.GEMINI_MODELS || 'gemini-3.8-flash,gemini-3.5-flash,gemini-3.7-flash').split(',').map(s => s.trim());
-    for (const key of keys) for (const model of models) {
-      let r;
-      try {
-        r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-          method: 'POST', signal: AbortSignal.timeout(30000),
-          headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: GABAI }] },
-            contents: [{ role: 'user', parts: [{ text: user + want }] }],
-            generationConfig: { temperature: 0.8, responseMimeType: 'application/json', thinkingConfig: { thinkingBudget: 0 } }
-          })
-        });
-      } catch (e) { continue; }
-      if (r.ok) {
-        const j = await r.json();
-        const d = parseJson(j.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '');
-        if (d) return d;
-      } else if (![404, 429, 500, 503].includes(r.status)) break;
+    // הסדר: מה שעונה היום מהר. 3.8 ו-3.7 עמוסים או חסומים, ולכן יצאו מהרשימה (24.11.2026)
+    const all = (env.GEMINI_MODELS || 'gemini-3.5-flash,gemini-3.5-flash-lite,gemini-flash-lite-latest').split(',').map(s => s.trim());
+    const models = all.filter(m => !((tripped.get(m) || 0) > Date.now()));         // המפסק פתוח: מדלגים
+    skipped = all.filter(m => !models.includes(m));
+    gem = m => geminiOne(m, keys[Math.floor(Math.random() * keys.length)], user + want, 8000);
+    let ki = Math.floor(Math.random() * keys.length);
+    const key = () => keys[ki++ % keys.length];
+    if (models.length) {
+      // מירוץ מדורג: הדגם הראשי מתחיל; כל 1.5 שניות בלי תשובה מצטרף דגם קל, ואחרי 6 שניות גם הגיבוי של Workers AI. הראשון שעונה מנצח
+      const steps = models.map((m, i) => ({ at: i * 1500, run: () => geminiOne(m, key(), user + want, i ? 8000 : 12000) }));
+      if (env.AI) steps.push({ at: Math.max(6000, models.length * 1500), run: async () => {
+        const d = parseJson(cfText(await env.AI.run(CF_MODEL, { instructions: GABAI, input: user + want, reasoning: { effort: 'low' } })));
+        if (!d) throw new Error('ai_bad');
+        return d;
+      } });
+      try { return await stagger(steps); } catch (e) { /* הכול נפל: ניסיון גיבוי אחד נוסף למטה */ }
     }
   }
-  if (!env.AI) bad('ai_off', 503);
+  // לפני שמוותרים: דגמי Gemini שהמפסק דילג עליהם מקבלים ניסיון נוסף (אולי העומס כבר עבר)
+  const again = async () => { if (!skipped.length) return null; try { return await stagger(skipped.map((m, i) => ({ at: i * 1500, run: () => gem(m) }))); } catch (e) { return null; } };
+  if (!env.AI) { const d = await again(); if (d) return d; bad('ai_off', 503); }
   let r;
   try { r = await env.AI.run(CF_MODEL, { instructions: GABAI, input: user + want, reasoning: { effort: 'low' } }); }
-  catch (e) { bad('ai_busy', 503); }
+  catch (e) { const d = await again(); if (d) return d; bad('ai_busy', 503); }
   const d = parseJson(cfText(r));
   if (!d) bad('ai_bad', 502);
   return d;

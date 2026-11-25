@@ -216,3 +216,24 @@ html{scroll-padding-top:5rem;scroll-padding-bottom:6.5rem}
 .topnav a,.crumbs a,.site-foot .cols a{min-height:24px}
 /* קלט קובץ מוסתר: כשהוא בפוקוס, המסגרת מופיעה על הכפתור/התווית שרואים */
 label:has(+ input[type=file]:focus-visible),input[type=file]:focus-visible + label,label:has(input[type=file]:focus-visible){outline:3px solid var(--gold)!important;outline-offset:2px}
+/* ---------- hakraa-daf: page reading button + player (assets/hakraa-daf.js) ---------- */
+.hkd-top{flex:none;display:inline-flex;align-items:center;gap:.35rem;margin-inline-start:.6rem;padding:.3rem .75rem;min-height:36px;border:1px solid var(--gold,#c9a55c);border-radius:999px;background:transparent;color:var(--gold-hi,#e6c98a);font:inherit;font-size:.9rem;font-weight:700;line-height:1.2;cursor:pointer;white-space:nowrap}
+.hkd-top:hover,.hkd-open .hkd-top{background:var(--gold,#c9a55c);color:#16130f}
+html.hk-embed .hkd-top,html.hk-embed .hkd{display:none}
+.hkd{position:fixed;inset-inline:0;bottom:0;z-index:70;background:#1f1a14;color:#fbf5e7;border-top:2px solid var(--gold,#c9a55c);padding:.5rem .75rem calc(.55rem + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 22px rgba(0,0,0,.35);font-size:.95rem}
+.hkd[hidden]{display:none}
+.hkd-st{margin:0 auto .4rem;max-width:60rem;text-align:center;color:#fbf5e7;font-size:.9rem;line-height:1.4;min-height:1.3em}
+.hkd-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.4rem;max-width:60rem;margin:0 auto}
+.hkd-b{min-height:40px;min-width:40px;padding:.35rem .8rem;border:1px solid #c9a55c;border-radius:10px;background:transparent;color:#fbf5e7;font:inherit;font-weight:700;cursor:pointer;line-height:1.2}
+.hkd-b[hidden]{display:none}
+.hkd-b:hover{background:rgba(201,165,92,.2)}
+.hkd-play{background:#c9a55c;color:#16130f;min-width:6.2rem}
+.hkd-play:hover{background:#e6c98a}
+.hkd-rate{display:inline-flex;align-items:center;gap:.35rem;color:#fbf5e7;font-weight:700}
+.hkd-rate select{min-height:40px;padding:.2rem .4rem;border:1px solid #c9a55c;border-radius:10px;background:#16130f;color:#fbf5e7;font:inherit}
+.hkd-now{outline:2px solid #c9a55c;outline-offset:4px;border-radius:4px;scroll-margin-top:90px;scroll-margin-bottom:150px}
+html.hkd-open body{padding-bottom:7.5rem}
+html.hkd-open{scroll-padding-bottom:8.5rem}
+@media (max-width:560px){.hkd-top{margin-inline-start:.4rem;padding:.3rem .55rem;font-size:.85rem}.hkd-rate span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}.hkd-b{padding:.35rem .6rem}}
+@media (max-width:360px){.hkd-top-t{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}}
+@media print{.hkd,.hkd-top{display:none!important}.hkd-now{outline:0}}

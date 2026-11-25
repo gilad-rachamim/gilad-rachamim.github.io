@@ -54,7 +54,7 @@
   if ((b = document.getElementById('dp-wa'))) b.addEventListener('click', function () { window.open('https://wa.me/?text=' + encodeURIComponent(asText()), '_blank', 'noopener'); });
   if ((b = document.getElementById('dp-copy'))) b.addEventListener('click', function () {
     var t = asText(), me = this;
-    (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () { var o = me.textContent; me.textContent = 'הועתק ✓'; setTimeout(function () { me.textContent = o; }, 1800); }, function () {});
+    (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () { var o = me.textContent; me.textContent = ({ ru: 'Скопировано ✓', en: 'Copied ✓' }[(document.documentElement.getAttribute('lang') || 'he').slice(0, 2)] || 'הועתק ✓'); setTimeout(function () { me.textContent = o; }, 1800); }, function () {});
   });
   draw();
 })();

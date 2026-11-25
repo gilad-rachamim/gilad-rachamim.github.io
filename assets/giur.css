@@ -1,0 +1,83 @@
+/* תחום גיור – כלי קודש. סגנון משותף לכל דפי /kodesh/giur/ */
+.gr [hidden]{display:none!important}
+.gr-note{background:rgba(212,176,98,.08);border:1px solid var(--line);border-radius:12px;padding:.8rem 1rem;margin:1rem 0;color:var(--parchment);font-size:.98rem;line-height:1.7}
+.gr-note b{color:var(--gold-hi)}
+.gr-bar{height:12px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin:.5rem 0}
+.gr-bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold-hi));transition:width .4s}
+.gr-cnt{color:var(--muted);font-size:.95rem}
+.gr-step{border:1px solid var(--line);border-radius:14px;background:var(--ink-2);padding:.9rem 1rem;margin:.8rem 0}
+.gr-step.done{border-color:var(--accent);background:rgba(127,167,224,.07)}
+.gr-step h3{margin:.1rem 0 .4rem;color:var(--cream);font-size:1.15rem}
+.gr-step p,.gr-step li{color:var(--body);line-height:1.75}
+.gr-chk{display:flex;gap:.6rem;align-items:flex-start;cursor:pointer;min-height:44px;color:var(--cream);font-weight:700}
+.gr-chk input{width:24px;height:24px;margin-top:.2rem;accent-color:var(--gold);flex:none}
+.gr-links{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem}
+.gr-links a{border:1px solid var(--line);border-radius:99px;padding:.35rem .85rem;color:var(--gold-hi);text-decoration:none;min-height:36px;display:inline-flex;align-items:center}
+.gr-links a:hover,.gr-links a:focus-visible{background:rgba(212,176,98,.14)}
+.gr-src{font-size:.88rem;color:var(--muted)}
+.gr-tabs{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0}
+.gr-tabs button,.gr-btn{font:inherit;border:1px solid var(--line);background:var(--ink-2);color:var(--cream);border-radius:99px;padding:.5rem 1rem;min-height:44px;cursor:pointer}
+.gr-tabs button[aria-pressed=true]{background:var(--gold);color:#1a1405;border-color:var(--gold);font-weight:700}
+.gr-btn.gold{background:var(--gold);color:#1a1405;font-weight:700;border-color:var(--gold)}
+.gr-acts{display:flex;flex-wrap:wrap;gap:.5rem;margin:.8rem 0}
+.gr-week{border:2px solid var(--gold);border-radius:14px;padding:.9rem 1rem;background:rgba(212,176,98,.08);margin:1rem 0}
+.gr-week h3{margin:0 0 .3rem;color:var(--gold-hi)}
+.gr-card{border:1px solid var(--line);border-radius:14px;background:var(--ink-2);padding:1rem;margin:.8rem 0}
+.gr-card .he{font-family:var(--serif);font-size:1.45rem;line-height:2;color:var(--cream)}
+.gr-card .tr{direction:ltr;text-align:left;color:var(--gold-hi);font-size:1.02rem;line-height:1.6;margin:.3rem 0;font-style:italic}
+.gr-card .mn{color:var(--body);line-height:1.7}
+.gr-card .wh{color:var(--muted);font-size:.95rem;margin-top:.3rem}
+.gr-card h3{margin:0 0 .4rem;color:var(--cream)}
+.gr-quiz .q{font-size:1.2rem;color:var(--cream);line-height:1.6;font-weight:700;margin:.6rem 0}
+.gr-opt{display:block;width:100%;text-align:start;font:inherit;border:1px solid var(--line);background:var(--ink-2);color:var(--cream);border-radius:12px;padding:.7rem 1rem;margin:.4rem 0;min-height:48px;cursor:pointer}
+.gr-opt.ok{border-color:#58c08a;background:rgba(88,192,138,.14)}
+.gr-opt.no{border-color:#e0a24f;background:rgba(224,162,79,.12)}
+.gr-exp{margin:.6rem 0;padding:.7rem 1rem;border-radius:12px;background:rgba(127,167,224,.1);color:var(--parchment);line-height:1.7}
+.gr-search{width:100%;box-sizing:border-box;font:inherit;padding:.7rem 1rem;border-radius:12px;border:1px solid var(--line);background:var(--ink-2);color:var(--cream);min-height:48px}
+.gr dl{margin:.4rem 0}.gr dt{color:var(--gold-hi);font-weight:700;margin-top:.8rem}.gr dd{margin:.2rem 0;color:var(--body);line-height:1.75}
+.gr-area{margin:1.2rem 0}.gr-area>h3{color:var(--cream);font-size:1.2rem;margin:0 0 .3rem}
+.gr-area ul{list-style:none;padding:0;margin:.3rem 0}
+.gr-area li{padding:.15rem 0}
+.gr-area label{display:flex;gap:.6rem;align-items:flex-start;min-height:44px;color:var(--body);line-height:1.7;cursor:pointer}
+.gr-area label input{width:22px;height:22px;margin-top:.25rem;accent-color:var(--gold);flex:none}
+.gr-area label input:checked+span{color:var(--muted);text-decoration:line-through}
+.gr-ts{font-family:var(--serif)}
+@media print{.no-print,.gr-tabs,.gr-acts{display:none!important}.gr-step,.gr-card,.gr-note{border-color:#999;background:#fff;color:#000}.gr *{color:#000!important}}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.gr-term{border-bottom:1px solid var(--line);padding:.6rem 0}.gr-term[hidden]{display:none}
+.gr-term dt{font-weight:700;color:var(--gold-hi,var(--gold))}.gr-term dd{margin:.2rem 0 0;color:var(--body);line-height:1.7}
+a.gr-btn{display:inline-flex;align-items:center;text-decoration:none}
+a.gr-btn.gold{background:var(--gold);color:#1a1405;border-color:var(--gold);font-weight:700}
+/* מעבר שפה (22.11.2026) */
+.gr-lang{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:.4rem 0 1rem}
+.gr-lang a{border:1px solid var(--line);border-radius:99px;padding:.35rem .9rem;min-height:40px;display:inline-flex;align-items:center;color:var(--gold-hi);text-decoration:none}
+.gr-lang a[aria-current=page]{background:var(--gold);color:#1a1405;border-color:var(--gold);font-weight:700}
+.gr-lang a:hover,.gr-lang a:focus-visible{background:rgba(212,176,98,.14)}
+.gr-lang::before{content:"הדף הזה בשלוש שפות:";flex:0 0 100%;text-align:center;color:var(--cream);font-weight:700;font-size:.98rem}
+html[lang=en] .gr-lang::before{content:"This page in three languages:"}
+html[lang=ru] .gr-lang::before{content:"Эта страница на трёх языках:"}
+.gr-rev{font-size:.92rem;color:var(--muted);text-align:center;margin:.3rem 0 1rem}
+.ts-tr{font-style:italic;color:var(--muted)}
+
+/* משפחה מלווה – /kodesh/giur/mishpacha-melava/ */
+.mm-form{display:grid;gap:.8rem}
+.mm-form label{display:grid;gap:.3rem;color:var(--cream);font-weight:700}
+.mm-form label.gr-chk{display:flex;font-weight:600}
+.mm-form input[type=tel],.mm-form input[type=text],.mm-form input[type=email],.mm-form select,.mm-form textarea,.mm-row select,.mm-row input,.mm-q{width:100%;font:inherit;font-size:1.05rem;color:var(--cream);background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;padding:.7rem .85rem}
+.mm-form textarea{resize:vertical}
+.mm-offer{border:1px solid var(--line);border-radius:12px;padding:.6rem .9rem;margin:0;display:grid;gap:.1rem}
+.mm-offer legend{color:var(--gold-hi);font-weight:700;padding:0 .3rem}
+.mm-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.mm-done{padding:1.1rem;border-radius:14px;background:rgba(95,191,166,.12);border:1px solid rgba(95,191,166,.4);color:var(--cream);line-height:1.6;outline:0}
+.mm-done .num{display:block;font-family:var(--serif);font-size:2rem;color:var(--gold-hi);margin:.2rem 0}
+.mm-total{font-size:1.15rem;color:var(--cream)}.mm-total b{font-family:var(--serif);font-size:2rem;color:var(--gold-hi)}
+.mm-cities{list-style:none;padding:0;margin:.4rem 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.4rem}
+.mm-cities li{display:flex;justify-content:space-between;gap:.5rem;border:1px solid var(--line);border-radius:10px;padding:.45rem .7rem;background:var(--ink-2);color:var(--body)}
+.mm-cities b{color:var(--gold-hi)}
+.mm-city{margin:.8rem 0}.mm-city>summary{cursor:pointer;font-size:1.2rem;color:var(--cream);font-weight:700;min-height:44px;display:flex;align-items:center;gap:.5rem}.mm-city>summary b{color:var(--gold-hi)}
+.mm-fam p{margin:.25rem 0;color:var(--body)}.mm-fam a{color:var(--gold-hi)}
+.mm-row{display:grid;grid-template-columns:150px 1fr auto;gap:.4rem;margin-top:.5rem}
+.mm-row select option{color:#16130f}
+@media(max-width:560px){.mm-row{grid-template-columns:1fr}}
+.mm-form select option{color:#16130f}
+.mm-form .res{color:#f0b8a8;margin:0}.mm-form .res:empty{display:none}

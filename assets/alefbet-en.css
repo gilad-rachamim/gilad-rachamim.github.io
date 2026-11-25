@@ -1,0 +1,32 @@
+/* דף האלף-בית באנגלית (/kodesh/alefbet/en/) */
+.ab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;margin:12px 0}
+.ab-c{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px 8px;border:1px solid var(--line,#d9d2c3);border-radius:12px;background:rgba(255,255,255,.04);color:var(--cream,inherit);font:inherit;cursor:pointer;position:relative;min-height:44px;text-align:center}
+.ab-fin .ab-c{cursor:default}
+.ab-c:hover,.ab-c:focus-visible{border-color:var(--gold,#b8892b);outline:none;box-shadow:0 0 0 2px rgba(184,137,43,.3)}
+.ab-c[aria-pressed="true"]{border-color:var(--gold,#b8892b);background:rgba(184,137,43,.1)}
+.ab-g{color:var(--gold-hi,var(--gold,#b8892b));font-size:2.3rem;line-height:1.1;font-family:"Frank Ruhl Libre","David Libre",serif;font-weight:700}
+.ab-n{font-size:.85rem;font-weight:700;direction:ltr}
+.ab-t{font-size:.75rem;opacity:.75;direction:ltr}
+.ab-v{position:absolute;top:4px;left:6px;font-size:.7rem;opacity:.6}
+.ab-det{direction:ltr;text-align:left;margin:10px 0;padding:14px;border-radius:12px;border:1px solid var(--gold,#b8892b);background:rgba(184,137,43,.06)}
+.ab-det .ab-dg{font-size:3.2rem;font-family:"Frank Ruhl Libre","David Libre",serif;float:right;margin:0 0 0 12px;line-height:1}
+.ab-det h3{margin:0 0 6px}
+.ab-det p{margin:4px 0}
+.ab-tbl .ab-tg,.ab-tw{font-family:"Frank Ruhl Libre","David Libre",serif;font-size:1.35rem}
+.ab-tf{font-family:"Frank Ruhl Libre","David Libre",serif;font-size:1.1rem;opacity:.7}
+.ab-quiz{margin:12px 0;padding:14px;border-radius:12px;border:1px solid var(--line,#d9d2c3);text-align:center}
+.ab-qg{font-size:4.5rem;font-family:"Frank Ruhl Libre","David Libre",serif;line-height:1.1;margin:6px 0}
+.ab-qa{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:420px;margin:0 auto}
+.ab-qa button{min-height:44px}
+.ab-qa button.ok{background:#2e7d32;color:#fff;border-color:#2e7d32}
+.ab-qa button.no{background:#c62828;color:#fff;border-color:#c62828}
+.ab-qr{min-height:1.4em;font-weight:700}
+.ab-num{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.ab-num input{width:9rem;font-size:1.1rem;padding:8px;min-height:44px}
+.ab-nout{flex-basis:100%;font-size:1.1rem}
+.ab-nout .ab-tg{font-size:2rem;font-family:"Frank Ruhl Libre","David Libre",serif}
+@media print{
+  .no-print,.k-nav,header.site-header,footer,.seo-txt,.seo-faq,#vowels,#letters-table,.ab-det{display:none!important}
+  .ab-grid{grid-template-columns:repeat(6,1fr)}
+  .ab-c{border:1px solid #999;break-inside:avoid}
+}

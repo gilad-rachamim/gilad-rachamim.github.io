@@ -1,0 +1,111 @@
+<!--meta {
+ "site": "kelim",
+ "nav": "tchumim",
+ "tool": "claude_kod",
+ "title": "קלוד קוד למתחילים – מדריך התקנה צעד אחר צעד בעברית | הכלים של גילעד רחמים",
+ "description": "קלוד קוד למתחילים בעברית: התקנה ב-Windows, Mac ו-Linux, פקודות, CLAUDE.md ומשימה ראשונה, עם רשימת וי שנשמרת. בחינם, בלי הרשמה.",
+ "og_title": "קלוד קוד למתחילים: מדריך צעד אחר צעד בעברית",
+ "priority": "0.8",
+ "crumbs": [
+  [
+   "קלוד קוד בעברית",
+   "/kelim/claude/"
+  ],
+  [
+   "קלוד קוד למתחילים",
+   null
+  ]
+ ],
+ "head": "<link rel=\"stylesheet\" href=\"/assets/seo-txt.css\"><style>.ms-os{min-height:44px;padding:.4rem .9rem;border:1px solid var(--line);border-radius:999px;background:none;color:var(--parchment);font:inherit;cursor:pointer}.ms-os.on{border-color:var(--gold);background:rgba(216,179,95,.12);color:var(--cream)}.ms-oss{display:flex;flex-wrap:wrap;gap:.45rem;margin:.5rem 0}.ms-barw{height:10px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin:.4rem 0 1rem}#ms-bar{height:100%;width:0;background:var(--gold);transition:width .25s}.ms-step{padding:.9rem 1rem;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.03);margin-bottom:.7rem}.ms-step.ok{border-color:var(--gold-soft);background:rgba(216,179,95,.06)}.ms-step label{display:flex;gap:.6rem;align-items:flex-start;color:var(--cream);font-weight:700;font-size:1.05rem;cursor:pointer}.ms-step input{width:1.3rem;height:1.3rem;margin-top:.2rem;flex:none}.ms-step p{color:var(--parchment);line-height:1.7;margin:.4rem 0 0}.ms-cmd{direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:.92rem;padding:.7rem .85rem;border:1px solid var(--gold-soft);border-radius:12px;background:rgba(0,0,0,.35);color:#e9f5e1;white-space:pre-wrap;word-break:break-word;margin:.5rem 0;unicode-bidi:plaintext}.sk-grid{display:grid;gap:.8rem}@media(min-width:760px){.sk-grid{grid-template-columns:1fr 1fr}}.sk-card{padding:1rem;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.03)}.sk-card h3{color:var(--cream);margin-bottom:.3rem}.sk-card p{color:var(--parchment);line-height:1.65;margin:.3rem 0}.sk-btns{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0}.sk-pre{direction:rtl;white-space:pre-wrap;word-break:break-word;max-height:20rem;overflow:auto;padding:.7rem;border-radius:10px;background:rgba(0,0,0,.35);color:#e9f5e1;font-size:.85rem;line-height:1.6;margin-top:.5rem}.mc-tabs{display:flex;gap:.45rem;margin-bottom:1rem}.mc-tab{min-height:44px;padding:.4rem 1rem;border:1px solid var(--line);border-radius:999px;background:none;color:var(--parchment);font:inherit;cursor:pointer}.mc-tab.on{border-color:var(--gold);background:rgba(216,179,95,.12);color:var(--cream)}.mc-grid{display:grid;gap:1rem}@media(min-width:860px){.mc-grid{grid-template-columns:1fr 1fr}}.mc-grid textarea,.mc-grid input{width:100%;box-sizing:border-box}#mc-out{direction:rtl;white-space:pre-wrap;word-break:break-word;padding:.85rem;border:1px solid var(--gold-soft);border-radius:12px;background:rgba(0,0,0,.35);color:#e9f5e1;font-family:ui-monospace,Consolas,monospace;font-size:.88rem;line-height:1.65;min-height:14rem}</style><script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"FAQPage\",\"mainEntity\":[{\"@type\":\"Question\",\"name\":\"כמה עולה קלוד קוד?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"הכלי הזה בחינם. קלוד קוד עצמו דורש מנוי בתשלום או חיבור API, והמחירים משתנים, ולכן בודקים באתר של Anthropic.\"}},{\"@type\":\"Question\",\"name\":\"אפשר להשתמש בקלוד קוד בחשבון החינמי?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"לא. החשבון החינמי של claude.ai לא כולל קלוד קוד. צריך תוכנית שכוללת אותו, או חשבון Console.\"}},{\"@type\":\"Question\",\"name\":\"צריך לדעת לתכנת?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"לא כדי להתחיל. מתארים בעברית מה רוצים, וקלוד מציע ומבצע. עם הזמן כדאי ללמוד לקרוא קוד כדי לבדוק את התוצאה.\"}},{\"@type\":\"Question\",\"name\":\"איך מתקינים ב-Windows?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"פותחים PowerShell ומריצים את הפקודה שבשלב 3 במסלול. כדאי להתקין קודם Git for Windows.\"}},{\"@type\":\"Question\",\"name\":\"מה זה מסוף?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"חלון שבו מקלידים פקודות. ב-Windows זה PowerShell, ב-Mac זה Terminal.\"}},{\"@type\":\"Question\",\"name\":\"מה עושה הפקודה /init?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"סורקת את הפרויקט וכותבת קובץ CLAUDE.md עם תקציר והכללים. אפשר לערוך אותו.\"}},{\"@type\":\"Question\",\"name\":\"קלוד קוד ישנה לי קבצים בלי לשאול?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"כברירת מחדל הוא שואל אישור לפני כתיבה והרצת פקודות. אפשר לשנות הרשאות, אבל כדאי להתחיל בברירת המחדל.\"}},{\"@type\":\"Question\",\"name\":\"אפשר להשתמש בו בטלפון?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"אפשר להמשיך שיחות דרך האתר והאפליקציה, בהתאם לתוכנית. ההתקנה עצמה היא במחשב.\"}},{\"@type\":\"Question\",\"name\":\"ההתקדמות שלי נשמרת?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"כן, בדפדפן שלכם בלבד, בלי הרשמה. בדפדפן אחר או במצב פרטי היא לא תופיע.\"}},{\"@type\":\"Question\",\"name\":\"המדריך הזה רשמי של Anthropic?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"לא. זה אתר עצמאי, בחינם, שנבנה כמיזם חסד. את התיעוד המלא של Anthropic כדאי לקרוא ישירות.\"}}]}</script>",
+ "foot": "<script src=\"/assets/claude-core.js\" defer></script><script src=\"/assets/claude-maslul.js\" defer></script>"
+} -->
+<header class="k-hero">
+  <h1>קלוד קוד למתחילים: מדריך התקנה צעד אחר צעד</h1>
+  <p class="sub">עשרה שלבים מהמסוף הראשון ועד המשימה הראשונה. מעתיקים את הפקודה למערכת שלכם, מסמנים וי, וההתקדמות נשמרת. בחינם, בלי הרשמה ובלי פרסומות.</p>
+</header>
+<div class="tool">
+  <p><b id="ms-prog">0 מתוך 10 שלבים</b> · ההתקדמות נשמרת בדפדפן שלכם בלבד</p>
+  <div class="ms-barw"><div id="ms-bar"></div></div>
+    <div class="ms-step"><label for="s1"><input type="checkbox" id="s1"> <span>מכינים חשבון מתאים</span></label><p>Claude Code לא כלול בחשבון החינמי של claude.ai. צריך מנוי בתשלום (Pro, Max, Team או Enterprise), חשבון Console, או חיבור לספק ענן נתמך. בודקים באתר של Anthropic מה כולל התוכנית שלכם. הכלי הזה עצמו בחינם, אבל קלוד קוד עצמו דורש גישה.</p></div>
+    <div class="ms-step"><label for="s2"><input type="checkbox" id="s2"> <span>פותחים מסוף</span></label><p>ב-Windows: מקלידים PowerShell בתפריט התחל ופותחים. ב-Mac: Cmd+רווח ואז Terminal. ב-Linux: Ctrl+Alt+T. המסוף הוא חלון שבו מקלידים פקודות במקום ללחוץ על כפתורים.</p></div>
+    <div class="ms-step"><label for="s3"><input type="checkbox" id="s3"> <span>מתקינים את קלוד קוד</span></label><p>בוחרים מערכת הפעלה למעלה, מעתיקים את הפקודה ומדביקים במסוף. ההתקנה לוקחת פחות מדקה. ב-Windows צריך גם Git for Windows מותקן.</p><div class="ms-oss" role="group" aria-label="מערכת הפעלה"><button class="ms-os" type="button" data-os="win">Windows</button><button class="ms-os" type="button" data-os="mac">Mac</button><button class="ms-os" type="button" data-os="linux">Linux / WSL</button></div><p>מערכת: <b id="ms-osname"></b></p><pre class="ms-cmd" id="ms-cmd"></pre><button class="btn btn-gold btn-sm" type="button" data-copy="install">להעתיק את הפקודה</button><p id="ms-winnote" hidden>ב-Windows אפשר גם דרך WSL, ואז משתמשים בפקודת ה-Linux.</p></div>
+    <div class="ms-step"><label for="s4"><input type="checkbox" id="s4"> <span>בודקים שההתקנה הצליחה</span></label><p>מקלידים claude --version ורואים מספר גרסה. אם מקבלים "לא מזוהה", סוגרים את המסוף, פותחים חדש ומנסים שוב. claude doctor בודק בעיות נפוצות.</p><pre class="ms-cmd">claude --version</pre><button class="btn btn-line btn-sm" type="button" data-copy="claude --version">להעתיק</button></div>
+    <div class="ms-step"><label for="s5"><input type="checkbox" id="s5"> <span>נכנסים לתיקיית פרויקט ומתחברים</span></label><p>עם cd נכנסים לתיקייה שאתם רוצים לעבוד בה, מקלידים claude, ובפעם הראשונה נפתח דפדפן להתחברות לחשבון. מאשרים וחוזרים למסוף.</p><pre class="ms-cmd">cd my-project
+claude</pre><button class="btn btn-line btn-sm" type="button" data-copy="claude">להעתיק</button></div>
+    <div class="ms-step"><label for="s6"><input type="checkbox" id="s6"> <span>מריצים /init</span></label><p>הפקודה /init גורמת לקלוד לסרוק את התיקייה ולכתוב קובץ CLAUDE.md: תקציר של הפרויקט והכללים לעבודה בו. אפשר לערוך אותו אחר כך, או ליצור אחד מאפס ב<a class="gold" href="/kelim/claude/mecholel/">מחולל CLAUDE.md</a>.</p><pre class="ms-cmd">/init</pre><button class="btn btn-line btn-sm" type="button" data-copy="/init">להעתיק</button></div>
+    <div class="ms-step"><label for="s7"><input type="checkbox" id="s7"> <span>נותנים משימה ראשונה</span></label><p>מתחילים קטן וברור: "תסביר לי מה עושה הפרויקט הזה", או "תוסיף כפתור הדפסה לדף הראשי". קלוד מציג מה הוא מתכוון לשנות, ומבקש אישור לפני שהוא כותב לקבצים.</p></div>
+    <div class="ms-step"><label for="s8"><input type="checkbox" id="s8"> <span>מנסים מצב תכנון</span></label><p>לוחצים Shift+Tab עד שמופיע מצב תכנון. קלוד יכתוב תוכנית בלי לשנות קבצים, ואתם מאשרים או מתקנים לפני שהוא מתחיל. מצוין למשימות גדולות.</p></div>
+    <div class="ms-step"><label for="s9"><input type="checkbox" id="s9"> <span>מחברים את הטלפון</span></label><p>אפשר להשתמש בקלוד קוד גם דרך האתר של Claude ובאפליקציה בטלפון, ולהמשיך שיחה מהמחשב. בודקים באפליקציה אם האפשרות זמינה בתוכנית שלכם.</p></div>
+    <div class="ms-step"><label for="s10"><input type="checkbox" id="s10"> <span>מוסיפים סקיל ראשון</span></label><p>מורידים סקיל מה<a class="gold" href="/kelim/claude/skilim/">ספריית הסקילים</a>, שמים בתיקייה ~/.claude/skills ובודקים שקלוד מזהה אותו. כך מלמדים אותו לעשות דברים בדיוק כמו שאתם רוצים.</p></div>
+  <div class="tn-btns"><button class="btn btn-line btn-sm" type="button" id="ms-reset">להתחיל מחדש</button> <a class="btn btn-line btn-sm" href="#" id="ms-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#wa"/></svg> לשלוח לחבר</a></div>
+  <p class="disclaimer">אתר עצמאי, לא אתר רשמי של Anthropic. Claude הוא שם מוצר של Anthropic. פקודות ההתקנה נלקחות מהתיעוד של Anthropic ויכולות להשתנות; אם פקודה לא עובדת, בדקו שם.</p>
+</div>
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">קלוד קוד למתחילים בעברית: ההסבר המלא</h2>
+  <h3>מה זה קלוד קוד, בשתי שורות</h3>
+  <p>קלוד קוד הוא עוזר תכנות של Anthropic שרץ במסוף, בתוך תיקיית הפרויקט שלכם. הוא קורא קבצים, מריץ פקודות וכותב קוד לפי מה שביקשתם בעברית, ושואל אישור לפני כל שינוי. למדריך הזה אין צורך בידע קודם בתכנות: רק מחשב, חשבון מתאים ומשימה קטנה.</p>
+  <h3>מה צריך לפני שמתחילים</h3>
+  <p>שלושה דברים. מחשב עם Windows, Mac או Linux. חשבון של Claude בתוכנית שכוללת קלוד קוד, כי החשבון החינמי של claude.ai לא כולל אותו. ותיקייה עם פרויקט, או תיקייה ריקה לניסיון. ב-Windows מומלץ להתקין גם Git for Windows לפני ההתקנה. <a class="gold" href="/kelim/tichnut/git/">פקודות Git בעברית</a> יעזרו לכם כשתגיעו לשמירת שינויים.</p>
+  <h3>איך מתקינים בכל מערכת הפעלה</h3>
+  <p>בשלב 3 במסלול למעלה בוחרים את המערכת שלכם ומקבלים פקודה אחת להעתקה. ב-Windows היא רצה ב-PowerShell, וב-Mac וב-Linux היא רצה במסוף. אין צורך להתקין Node.js: המתקין הנוכחי עובד בלעדיו. מי שמעדיף npm יכול להשתמש בהתקנה דרך npm מהתיעוד של Anthropic.</p>
+  <h3>ההפעלה הראשונה</h3>
+  <p>נכנסים לתיקיית הפרויקט עם cd, מקלידים claude, ובפעם הראשונה נפתח דפדפן להתחברות. אחרי האישור חוזרים למסוף ורואים תיבת כתיבה. מכאן מדברים עם קלוד כמו עם עובד חדש: כותבים מה רוצים, והוא מציע צעדים.</p>
+  <h3>הפקודות שכדאי להכיר</h3>
+  <ul>
+  <li><code>/help</code> מציג את כל הפקודות.</li>
+  <li><code>/init</code> יוצר קובץ CLAUDE.md לפרויקט.</li>
+  <li><code>/clear</code> מנקה את השיחה ומתחיל נושא חדש, וחוסך מגבלת שימוש.</li>
+  <li><code>/model</code> מחליף מודל.</li>
+  <li><code>claude -c</code> ממשיך את השיחה האחרונה.</li>
+  <li><code>claude doctor</code> בודק את ההתקנה.</li>
+  </ul>
+  <h3>המשימה הראשונה: איך מנסחים</h3>
+  <p>בקשה טובה אומרת מה רוצים, איפה, ומה נחשב סיום. במקום "תשפר את האתר", כתבו: "בקובץ index.html תוסיף כפתור שמדפיס את הדף, ותבדוק שהוא נראה טוב בטלפון". ככל שהבקשה מדויקת יותר, יש פחות סיבובי תיקון. אם אתם לא בטוחים, בקשו מקלוד קודם לשאול אתכם שאלות.</p>
+  <h3>אישורים והרשאות: מה קלוד לא עושה לבד</h3>
+  <p>כברירת מחדל קלוד שואל לפני שהוא כותב לקובץ או מריץ פקודה. אפשר לאשר פעם אחת, או לאשר סוג פעולה לכל השיחה. אל תאשרו מחיקות או פקודות שאינכם מבינים. אפשר להגדיר כללים בקובץ ההגדרות, ובינתיים קראו כל הצעה לפני שמאשרים.</p>
+  <h3>מצב תכנון: לחשוב לפני שכותבים</h3>
+  <p>ב-Shift+Tab עוברים בין מצבים. במצב תכנון קלוד קורא ומתכנן בלי לשנות כלום, ומציג תוכנית. זה הכי שימושי למשימה של יותר מכמה שורות: מתקנים את התוכנית בעברית, ורק אז מאשרים ביצוע.</p>
+  <h3>CLAUDE.md: הזיכרון של הפרויקט</h3>
+  <p>קלוד קוד קורא את הקובץ CLAUDE.md בתחילת כל שיחה בתיקייה. כותבים בו פקודות בנייה ובדיקה, כללי עבודה ומה אסור. אפשר ליצור אותו עם /init או ב<a class="gold" href="/kelim/claude/mecholel/">מחולל CLAUDE.md וסקיל</a>, שבונה אותו מתשובות לכמה שאלות ומאפשר להוריד.</p>
+  <h3>סקילים: לימוד חד-פעמי שחוזר</h3>
+  <p>סקיל הוא קובץ SKILL.md בתיקייה, שמלמד את קלוד משימה חוזרת: סיכום פגישה, בדיקת קוד, כתיבת הודעה. הוא נטען רק כשהוא רלוונטי, ולכן לא תופס מקום. <a class="gold" href="/kelim/claude/skilim/">12 סקילים בעברית</a> מוכנים להורדה, ואפשר לערוך כל אחד.</p>
+  <h3>להמשיך מהטלפון</h3>
+  <p>אפשר לפתוח שיחה של Claude Code גם מהאתר ומהאפליקציה, ולהמשיך אותה במחשב. כך אפשר לתת משימה בדרך ולמצוא אותה גמורה בבית. זמינות התכונה תלויה בתוכנית ובגרסה, ולכן בודקים באפליקציה.</p>
+  <h3>עשר טעויות שמתחילים עושים</h3>
+  <ul>
+  <li>מבקשים הכול בבת אחת במקום צעד אחד.</li>
+  <li>לא מציינים באיזה קובץ לעבוד.</li>
+  <li>מאשרים פקודות בלי לקרוא.</li>
+  <li>עובדים בלי גיבוי או Git.</li>
+  <li>משאירים שיחה ארוכה אחת לכל המשימות; עדיף /clear בין נושאים.</li>
+  <li>לא כותבים CLAUDE.md, ולכן חוזרים על אותם הסברים.</li>
+  <li>מבקשים "תתקן" בלי להדביק את השגיאה; <a class="gold" href="/kelim/tichnut/shgiot/">מסביר השגיאות</a> עוזר להבין אותה.</li>
+  <li>שומרים סיסמאות וקבצי env בתיקיית הפרויקט בלי להגן עליהם.</li>
+  <li>מצפים שהתוצאה תהיה מושלמת בניסיון ראשון.</li>
+  <li>שוכחים לבדוק את התוצאה בעצמם.</li>
+  </ul>
+  <h3>מה הלאה</h3>
+  <p>אחרי שסיימתם את עשרת השלבים, עברו על <a class="gold" href="/kelim/claude/">עמוד קלוד קוד בעברית</a>, והתחילו לבנות לעצמכם סקילים. מי שרוצה להמשיך לכלי פיתוח אחרים ימצא אותם ב<a class="gold" href="/kelim/tichnut/">כלים למתכנתים</a>.</p>
+  <p class="note">אתר עצמאי, לא אתר רשמי של Anthropic. Claude הוא שם מוצר של Anthropic.</p>
+</section>
+<section class="k-sec" aria-labelledby="kv-h">
+  <h2 id="kv-h">רוצים לבנות כלים כאלה בעצמכם?</h2>
+  <p>הכלים והסקילים כאן חינם, ויישארו חינם. למי שרוצה ליווי פתחתי קבוצת ווטסאפ סגורה: שואלים אותי בכתב ואני עונה, למתחילים ולמתקדמים, ומקבלים ערכת 30 בקשות מוכנות. 18 ₪ חד-פעמי, החזר מלא תוך 14 יום. עצמאי, לא מטעם Anthropic.</p>
+  <p><a class="btn btn-gold" href="/claude-kvutza/">לפרטים על הקבוצה</a></p>
+  <p class="no-app">רוצים ללמוד לבנות כלים כאלה בעצמכם? <a class="gold" href="/kelim/claude/kurs/" data-kurs="claude_domain">הקורס המלא: הכלי שבונה את כל הכלים</a>.</p>
+</section>
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">שאלות ותשובות</h2>
+  <details><summary>כמה עולה קלוד קוד?</summary><p>הכלי הזה בחינם. קלוד קוד עצמו דורש מנוי בתשלום או חיבור API, והמחירים משתנים, ולכן בודקים באתר של Anthropic.</p></details>
+  <details><summary>אפשר להשתמש בקלוד קוד בחשבון החינמי?</summary><p>לא. החשבון החינמי של claude.ai לא כולל קלוד קוד. צריך תוכנית שכוללת אותו, או חשבון Console.</p></details>
+  <details><summary>צריך לדעת לתכנת?</summary><p>לא כדי להתחיל. מתארים בעברית מה רוצים, וקלוד מציע ומבצע. עם הזמן כדאי ללמוד לקרוא קוד כדי לבדוק את התוצאה.</p></details>
+  <details><summary>איך מתקינים ב-Windows?</summary><p>פותחים PowerShell ומריצים את הפקודה שבשלב 3 במסלול. כדאי להתקין קודם Git for Windows.</p></details>
+  <details><summary>מה זה מסוף?</summary><p>חלון שבו מקלידים פקודות. ב-Windows זה PowerShell, ב-Mac זה Terminal.</p></details>
+  <details><summary>מה עושה הפקודה /init?</summary><p>סורקת את הפרויקט וכותבת קובץ CLAUDE.md עם תקציר והכללים. אפשר לערוך אותו.</p></details>
+  <details><summary>קלוד קוד ישנה לי קבצים בלי לשאול?</summary><p>כברירת מחדל הוא שואל אישור לפני כתיבה והרצת פקודות. אפשר לשנות הרשאות, אבל כדאי להתחיל בברירת המחדל.</p></details>
+  <details><summary>אפשר להשתמש בו בטלפון?</summary><p>אפשר להמשיך שיחות דרך האתר והאפליקציה, בהתאם לתוכנית. ההתקנה עצמה היא במחשב.</p></details>
+  <details><summary>ההתקדמות שלי נשמרת?</summary><p>כן, בדפדפן שלכם בלבד, בלי הרשמה. בדפדפן אחר או במצב פרטי היא לא תופיע.</p></details>
+  <details><summary>המדריך הזה רשמי של Anthropic?</summary><p>לא. זה אתר עצמאי, בחינם, שנבנה כמיזם חסד. את התיעוד המלא של Anthropic כדאי לקרוא ישירות.</p></details>
+</section>
+<!--/seo-txt-->

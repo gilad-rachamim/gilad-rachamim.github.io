@@ -1,0 +1,425 @@
+{
+ "day": "2026-11-23",
+ "editions": [
+  {
+   "name": "בוקר",
+   "time": "07:00",
+   "at": "2026-11-23T05:00:25.412Z",
+   "mode": "summary",
+   "date": {
+    "he": "י״ג כסלו תשפ״ז",
+    "day": "שני"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "בימים הקרובים מזג האוויר יישאר מעונן חלקית ללא שינוי ניכר בטמפרטורות, וברביעי בבוקר ייתכן גשם קל בצפון הארץ ובחוף.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/israel-news/thop0g-85"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/r111paqbyxl"
+       },
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1802832/"
+       }
+      ]
+     },
+     {
+      "text": "פיקוד העורף יקיים היום בשעה 12:05 בדיקת צופרים באזור מחנה ג'וליס. במקרה של התרעת אמת תופעל התרעה ביישומון.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1802834/"
+       },
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1142066"
+       }
+      ]
+     },
+     {
+      "text": "באיראן החלו לבצע הפסקות חשמל יזומות ברחבי המדינה, בעקבות מחסור בדלק ונזקים לתשתיות האנרגיה.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/world-news/iran-president-cold-office-power-cuts-energy-crisi"
+       },
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1142064"
+       }
+      ]
+     },
+     {
+      "text": "חברת התעופה דלתא איירליינס תיקנה תקלה טכנית במערכת חישוב המשקל, שגרמה לעיכובים ולביטולים של למעלה מאלף טיסות בארצות הברית.",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1142062"
+       }
+      ]
+     },
+     {
+      "text": "האו״ם קרא לחקור תקיפות נגד שתי ספינות בים התיכון מול חופי לוב.",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1142070"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/r1gt911bkql"
+       },
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/world/article-1391220"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "בסיעת 'יהדות התורה' דורשים לקדם חקיקה שתפסיק את מעצר תלמידי הישיבות במסגרת המגעים הקואליציוניים.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/haredim/yahadut-hatorah-arrest-law-condition-government"
+       }
+      ]
+     },
+     {
+      "text": "הציבור נקרא להתפלל לרפואת גאב״ד אשדוד וראש ישיבת 'נתיב הדעת', הגאון רבי ישראל בונים בן חיה רויזא שרייבר, המתחיל בטיפול רפואי מורכב.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745328"
+       }
+      ]
+     },
+     {
+      "text": "בכינוס רבני אירופה הובעה תמיכה ברפורמת השחיטה בחו״ל אותה מוביל הרב הראשי לישראל.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745330"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "למרות ירידת האינפלציה בישראל לרמה של 1.1%, היחלשות השקל מול הדולר צפויה להוביל את בנק ישראל להותיר את הריבית ללא שינוי.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001564439"
+       }
+      ]
+     }
+    ],
+    "good": []
+   }
+  },
+  {
+   "name": "צהריים",
+   "time": "13:00",
+   "at": "2026-11-23T11:00:25.525Z",
+   "mode": "summary",
+   "date": {
+    "he": "י״ג כסלו תשפ״ז",
+    "day": "שני"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "תושב חולון בן 69 נעצר בחשד שיצר קשר עם גורם איראני וחילק עלונים תמורת תשלום כספי. בית המשפט שחרר אותו בתנאים מגבילים.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/police/holon-resident-arrested-iran-connection-leaflets"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/bki4k9by7l"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745365"
+       }
+      ]
+     },
+     {
+      "text": "גבר כבן 30 נספה בשריפה שפרצה בדירה בקומה השלישית בבניין מגורים בחולון. צוותי מד״א קבעו את מותו בזירה.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/israel-news/holon-fatal-fire-man-found-dead"
+       },
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/municipal/2770477/"
+       },
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/israel/article-1391398"
+       }
+      ]
+     },
+     {
+      "text": "שר הביטחון ישראל כ״ץ הודיע כי צה״ל גיבש תוכנית להעברת האחריות לאכיפה פלילית נגד אזרחים ביהודה ושומרון לידי משטרת ישראל.",
+      "sources": [
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383962705"
+       },
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2770471/"
+       },
+       {
+        "name": "כיפה",
+        "link": "https://www.kipa.co.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA/1237089-0/"
+       }
+      ]
+     },
+     {
+      "text": "נשיא המדינה יצחק הרצוג גינה בחריפות את האלימות מצד יהודים קיצונים כלפי חפים מפשע ביהודה ושומרון, וקרא לשמור על דיאלוג עם השכנים.",
+      "sources": [
+       {
+        "name": "כיפה",
+        "link": "https://www.kipa.co.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA/%D7%9E%D7%93%D7%99%D7%A0%D7%99/1237093-0/"
+       },
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2770442/"
+       },
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1142124"
+       }
+      ]
+     },
+     {
+      "text": "עורך הדין גיא אבני הורשע במסגרת הסדר טיעון בגניבת כ־7 מיליון שקל ממשקיעים ובסיוע להונאה. הפרקליטות תבקש להטיל עליו ארבע שנות מאסר.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001564476"
+       },
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/law/article-1391350"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "ועדת הכספים אישרה את מינויו של גל שם טוב למנכ״ל הכנסת, בהמלצת יו״ר הכנסת מתן כהנא.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/political-news/knesset-director-general-appointment"
+       },
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2770443/"
+       },
+       {
+        "name": "כיפה",
+        "link": "https://www.kipa.co.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA/%D7%94%D7%9E%D7%92%D7%96%D7%A8/1237082-0/"
+       }
+      ]
+     },
+     {
+      "text": "מוקד מד״א־הצלה אלעד חנך שני אמבולנסים חדשים ומאובזרים שיוקצו לרווחת תושבי העיר ולפעילות החירום של המתנדבים בשבתות ובחגים.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/health-news/two-new-ambulances-inaugurated-elad-mda-station"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "המסחר בבורסה בתל אביב מתנהל במגמה מעורבת, בעוד שהדולר נחלש מול השקל.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001564435"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/bkxymdwjxg"
+       }
+      ]
+     }
+    ],
+    "good": []
+   }
+  },
+  {
+   "name": "ערב",
+   "time": "20:00",
+   "at": "2026-11-23T18:00:25.188Z",
+   "mode": "summary",
+   "date": {
+    "he": "י״ג כסלו תשפ״ז",
+    "day": "שני"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "שרת התחבורה אישרה את חידוש הטיסות של חברת פליי דובאי לישראל בתחילת חודש דצמבר, בכפוף לאישור גורמי הביטחון.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/economy/2770615/"
+       },
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001564576"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745398"
+       }
+      ]
+     },
+     {
+      "text": "רב-סמל בכיר ברק אסולין, לוחם משמר הגבול בן 46 מגדרה, נהרג בתאונת אופנוע בצומת גינתון בכביש 40 בעת שהיה בדרכו לביתו.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2770612/"
+       },
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/israel-news/border-police-fighter-killed-motorcycle-accident-r"
+       },
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383962773"
+       }
+      ]
+     },
+     {
+      "text": "נגיד בנק ישראל, פרופ' אמיר ירון, הותיר את הריבית ברמה של 3.25% והזהיר כי המדינה תהיה חייבת להעלות מיסים כדי להתמודד עם האתגרים הכלכליים.",
+      "sources": [
+       {
+        "name": "כיפה",
+        "link": "https://www.kipa.co.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA/1237161-0/"
+       },
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001564540"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745408"
+       }
+      ]
+     },
+     {
+      "text": "משרד הבריאות פרסם קריאה שלא לצרוך את המוצר שיפודי פרגית קפואים במרינדת ברביקיו של חברת מרינדו, בשל רכיב דגים שלא צוין על גבי התווית.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1804754/"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/hjkfuygyqe"
+       },
+       {
+        "name": "כיפה",
+        "link": "https://www.kipa.co.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA/1237153-0/"
+       }
+      ]
+     },
+     {
+      "text": "דירקטוריון אנבידיה הודיע על השבת ג'נסן הואנג לתפקיד מנכ״ל החברה, מהלך שהוביל לעליות חדות בשוקי ההון ולזינוק במניות הטכנולוגיה.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1804791/"
+       },
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001564447"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "טרגדיה בחסידות סלונים: בתו המיוחדת של הגאון החסיד רבי מנחם מנדל לידר זצ״ל נפטרה בדירתה שעות ספורות לאחר פטירתו של אביה.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/haredim-news/father-daughter-tragedy-slonim-hasidic"
+       },
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1142205"
+       }
+      ]
+     },
+     {
+      "text": "הייעוץ המשפטי לממשלה הבהיר כי לא ניתן יהיה לחוקק את החוק לעצירת מעצר תלמידי הישיבות בטרם השבעת הממשלה.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/haredim/legal-advisor-blocks-arrest-law-before-government"
+       }
+      ]
+     },
+     {
+      "text": "יהדות התורה בדרך למשא ומתן רשמי להקמת ממשלה, לאחר שקיבלה אור ירוק מהרב לנדו ולקראת אישורו של הרב הירש.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745406"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "בנק ישראל הותיר את הריבית ללא שינוי על 3.25%, והנגיד הבהיר כי המצב ידרוש העלאות מיסים בעתיד.",
+      "sources": [
+       {
+        "name": "כיפה",
+        "link": "https://www.kipa.co.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA/1237161-0/"
+       },
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001564540"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745408"
+       }
+      ]
+     },
+     {
+      "text": "ועדת הכספים אישרה תקציב של 46 מיליון שקל לטובת תשתיות והשלמת מימון ההילולה במירון.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/economy-israel/46-million-shekels-approved-for-mount-meron-hilula"
+       }
+      ]
+     }
+    ],
+    "good": []
+   }
+  }
+ ]
+}

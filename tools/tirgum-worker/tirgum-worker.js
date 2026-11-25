@@ -14,8 +14,12 @@ const I_PER = 15, I_CAP = 400;       // תמונות
 const V_PER = 15, V_CAP = 400;       // הודעות קוליות
 const MAX_AUDIO = 7_000_000;         // base64
 const MAX_Q = 5000, MAX_IMG = 4_000_000;
-const LITE = ['gemini-3.1-flash-lite', 'gemini-3.5-flash'];   // 3.5-flash-lite מחזיר 400 עם thinkingBudget:0
-const VISION = ['gemini-3.5-flash', 'gemini-3.1-flash-lite'];
+// 24.11: 3.1-flash-lite ו-3.5-flash עמוסים אצל גוגל (503 / תקועים 20+ שנ׳); 3.5-flash-lite עונה תוך 0.5–1.7 שנ׳ (בלי thinkingBudget – איתו 400)
+const LITE = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite'];
+const NO_THINK_CFG = /3\.5-flash-lite/;
+// תמונה וקול: 3.5-flash ראשון (מדויק), ואחריו הקלים שעונים מהר; 3.1-flash-lite העמוס יצא
+const VISION = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-lite-latest'];
+const NO_THINK_CFG2 = /flash-lite/;
 const AI_TEXT = ['@cf/meta/llama-4-scout-17b-16e-instruct', '@cf/mistralai/mistral-small-3.1-24b-instruct', '@cf/meta/llama-3.3-70b-instruct-fp8-fast'];
 const AI_VISION = '@cf/meta/llama-4-scout-17b-16e-instruct';
 const AI_WHISPER = '@cf/openai/whisper-large-v3-turbo';
@@ -37,9 +41,14 @@ export function geminiKeys(env) { return String(env.GEMINI_KEYS || env.GEMINI_KE
 const spent = new Map();
 const pday = () => new Date(Date.now() - 8 * 3600e3).toISOString().slice(0, 10); // Gemini מתאפס בחצות של קליפורניה
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+// מפסק: דגם שנתקע או עמוס – מדלגים עליו 5 דקות, כדי שאף תרגום לא יחכה לו שוב
+const tripped = new Map();
+const TRIP_MS = 5 * 60e3;
+const isTripped = tag => (tripped.get(tag) || 0) > Date.now();
 
 async function geminiOnce(model, key, system, parts, schema, timeout) {
-  const gen = { temperature: 0.1, maxOutputTokens: 8192, thinkingConfig: { thinkingBudget: 0 } };
+  const gen = { temperature: 0.1, maxOutputTokens: 8192 };
+  if (!NO_THINK_CFG.test(model) && !NO_THINK_CFG2.test(model)) gen.thinkingConfig = { thinkingBudget: 0 };
   if (schema) { gen.responseMimeType = 'application/json'; gen.responseSchema = schema; }
   const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
     method: 'POST', signal: AbortSignal.timeout(timeout || 30000),
@@ -53,25 +62,44 @@ async function geminiOnce(model, key, system, parts, schema, timeout) {
   return schema ? JSON.parse(txt) : txt;
 }
 // דגמים × מפתחות: מכסה (429) – הלאה ונזכרים עד מחר; עמוס (503) – ניסיון נוסף אחד
-async function gemini(env, models, system, parts, schema, timeout) {
-  const keys = geminiKeys(env);
+// opt.fast: בלי ניסיון חוזר, ודגם שנכשל בפסק זמן או ב-503 נכנס למפסק; opt.deadline: לא מתחילים ניסיון אחרי הזמן הזה
+async function gemini(env, models, system, parts, schema, timeout, opt) {
+  const keys = geminiKeys(env), fast = !!(opt && opt.fast), deadline = (opt && opt.deadline) || Infinity;
   if (!keys.length) throw new Error('no key');
   let last;
   for (const model of models) for (let k = 0; k < keys.length; k++) {
     const key = keys[k], tag = key.slice(-6) + '|' + model;
-    if (spent.get(tag) === pday()) continue;
-    for (let i = 0; i < 2; i++) {
-      try { return { data: await geminiOnce(model, key, system, parts, schema, timeout), model }; }
+    if (spent.get(tag) === pday() || isTripped(tag)) continue;
+    for (let i = 0; i < (fast ? 1 : 2); i++) {
+      const left = deadline - Date.now();
+      if (left < 800) throw last || new Error('gemini budget');
+      try { return { data: await geminiOnce(model, key, system, parts, schema, Math.min(timeout, left)), model }; }
       catch (e) {
         last = e;
         if (e.status === 429) { spent.set(tag, pday()); break; }
+        // עומס (503) – 5 דק'; השהיה אחת – רק דקה, כדי לא לוותר על Gemini בגלל בקשה איטית אחת
+        if (e.status === 503) tripped.set(tag, Date.now() + TRIP_MS);
+        else if (e.name === 'TimeoutError') tripped.set(tag, Date.now() + 60e3);
         if (e.status && ![500, 502, 503, 504].includes(e.status)) break;
-        if (e.name === 'TimeoutError') break;
+        if (e.name === 'TimeoutError' || fast) break;
         await sleep(1200);
       }
     }
   }
   throw last || new Error('gemini spent');
+}
+
+// מירוץ מול גיבוי: Gemini מתחיל; לא ענה תוך wait (או נכשל) – הגיבוי מתחיל במקביל, והראשון שמצליח מנצח
+async function hedge(main, backup, wait) {
+  let done = false, why;
+  main.then(() => { done = true; }, e => { why = String(e && e.message || e).slice(0, 100); });
+  const later = new Promise((res, rej) => {
+    const go = () => { if (done) return rej(new Error('skip')); backup().then(o => { if (o) o.why = why || 'gemini slow'; res(o); }, rej); };
+    const tm = setTimeout(go, wait);
+    main.then(() => clearTimeout(tm), () => { clearTimeout(tm); go(); });
+  });
+  try { return await Promise.any([main, later]); }
+  catch (e) { const errs = (e && e.errors) || [e]; throw errs[errs.length - 1]; }
 }
 
 export function textRules(from, to) {
@@ -119,16 +147,31 @@ async function translateRoute(request, env, ctx, h) {
   if (hit) return json(Object.assign(await hit.json(), { cached: true }), 200, h);
   const quota = await take(env, request, 't', T_PER, T_CAP);
   if (!quota.ok) return json({ error: 'quota' }, 200, h);
-  let t = '', engine = '';
-  try { const r = await gemini(env, LITE, textRules(from, to), [{ text: q }], null, 25000); t = r.data.trim(); engine = 'gemini'; }
-  catch (e) {
-    try { t = await aiText(env, q, from, to); engine = 'ai'; }
-    catch (e2) { return json({ error: 'busy', detail: String(e2 && e2.message || e2).slice(0, 120) }, 200, h); }
+  // מירוץ: Gemini מתחיל; אם לא ענה תוך 1.2 שנ׳ (או נכשל) – Llama מתחיל במקביל, והראשון שמצליח מנצח
+  let t = '', engine = '', why;
+  const t0 = Date.now();
+  const gem = gemini(env, LITE, textRules(from, to), [{ text: q }], null, 6000, { fast: true, deadline: t0 + 8000 })
+    .then(r => ({ t: String(r.data).trim(), engine: 'gemini' }));
+  gem.catch(e => { why = String(e && e.message || e).slice(0, 100); });
+  let done = false;
+  const aiLater = new Promise((res, rej) => {
+    const go = () => { if (done) return rej(new Error('skip')); aiText(env, q, from, to).then(x => res({ t: x, engine: 'ai' }), rej); };
+    const tm = setTimeout(go, 1200);
+    gem.then(() => clearTimeout(tm), () => { clearTimeout(tm); go(); });
+  });
+  try {
+    const first = await Promise.any([gem, aiLater]);
+    done = true; t = first.t; engine = first.engine;
+  } catch (e) {
+    const errs = (e && e.errors) || [e];
+    return json({ error: 'busy', detail: String(errs[errs.length - 1] && errs[errs.length - 1].message || errs[errs.length - 1]).slice(0, 120), why }, 200, h);
   }
   if (to === 'he') t = stripNiqqud(t);
   const res = { t, engine };
+  const meta = { ms: Date.now() - t0 };
+  if (engine !== 'gemini' && why) meta.why = why;
   ctx.waitUntil(caches.default.put(ck, new Response(JSON.stringify(res), { headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=2592000' } })));
-  return json(res, 200, h);
+  return json(Object.assign({}, res, meta), 200, h);
 }
 
 const IMG_SCHEMA = { type: 'OBJECT', properties: {
@@ -149,22 +192,22 @@ async function imageRoute(request, env, h) {
   const quota = await take(env, request, 'i', I_PER, I_CAP);
   if (!quota.ok) return json({ error: 'quota' }, 200, h);
   let out;
-  try {
-    out = (await gemini(env, VISION, imgRules(to), [{ inlineData: { mimeType: img.mime, data: img.data } }, { text: 'Read and translate the text in this image.' }], IMG_SCHEMA, 45000)).data;
-    out.engine = 'gemini';
-  } catch (e) {
-    var why = String(e && e.message || e).slice(0, 100);
-    try {
-      const r = await env.AI.run(AI_VISION, { messages: [
-        { role: 'system', content: imgRules(to) + ' Answer with JSON only: {"found":true,"src":"...","from":"en","t":"..."}' },
-        { role: 'user', content: [{ type: 'text', text: 'Read and translate the text in this image.' }, { type: 'image_url', image_url: { url: `data:${img.mime};base64,${img.data}` } }] }
-      ], max_tokens: 2048 });
-      let txt = r && (r.response || '');
-      if (typeof txt === 'object') out = txt;
-      else { txt = String(txt).replace(/^```(?:json)?\s*|\s*```$/g, ''); out = JSON.parse(txt.slice(txt.indexOf('{'), txt.lastIndexOf('}') + 1)); }
-      out.engine = 'llama'; out.why = why;
-    } catch (e2) { return json({ error: 'busy' }, 200, h); }
-  }
+  const parts = [{ inlineData: { mimeType: img.mime, data: img.data } }, { text: 'Read and translate the text in this image.' }];
+  const main = gemini(env, VISION, imgRules(to), parts, IMG_SCHEMA, 9000, { fast: true, deadline: Date.now() + 20000 })
+    .then(r => Object.assign(r.data, { engine: 'gemini' }));
+  const backup = async () => {
+    const r = await env.AI.run(AI_VISION, { messages: [
+      { role: 'system', content: imgRules(to) + ' Answer with JSON only: {"found":true,"src":"...","from":"en","t":"..."}' },
+      { role: 'user', content: [{ type: 'text', text: 'Read and translate the text in this image.' }, { type: 'image_url', image_url: { url: `data:${img.mime};base64,${img.data}` } }] }
+    ], max_tokens: 2048 });
+    let txt = r && (r.response || ''), o;
+    if (typeof txt === 'object') o = txt;
+    else { txt = String(txt).replace(/^```(?:json)?\s*|\s*```$/g, ''); o = JSON.parse(txt.slice(txt.indexOf('{'), txt.lastIndexOf('}') + 1)); }
+    o.engine = 'llama';
+    return o;
+  };
+  try { out = await hedge(main, backup, 4000); }
+  catch (e) { return json({ error: 'busy' }, 200, h); }
   out.from = String(out.from || '').slice(0, 2).toLowerCase();
   if (to === 'he') out.t = stripNiqqud(out.t || '');
   return json({ found: !!out.found && !!String(out.src || '').trim(), src: out.src || '', from: NAMES[out.from] ? out.from : '', t: out.t || '', engine: out.engine, why: out.why, left: quota.left }, 200, h);
@@ -184,21 +227,21 @@ async function voiceRoute(request, env, ctx, h) {
   if (!NAMES[to] || !/^(audio|video)\//.test(mime) || !data) return json({ error: 'bad' }, 400, h);
   const quota = await take(env, request, 'v', V_PER, V_CAP);
   if (!quota.ok) return json({ error: 'quota' }, 200, h);
-  let out, why;
-  try {
-    out = (await gemini(env, VISION, voiceRules(to), [{ inlineData: { mimeType: mime.replace(/;.*$/, ''), data } }, { text: 'Transcribe and translate this recording.' }], IMG_SCHEMA, 60000)).data;
-    out.engine = 'gemini';
-  } catch (e) {
-    why = String(e && e.message || e).slice(0, 100);
-    try {
-      const w = await env.AI.run(AI_WHISPER, { audio: data });
-      const src = String((w && w.text) || '').trim();
-      const from = String((w && w.transcription_info && w.transcription_info.language) || '').slice(0, 2);
-      if (!src) out = { found: false, src: '', from: '', t: '' };
-      else out = { found: true, src, from, t: from === to ? src : await aiText(env, src, NAMES[from] ? from : 'en', to) };
-      out.engine = 'whisper'; out.why = why;
-    } catch (e2) { return json({ error: 'busy', detail: String(e2 && e2.message || e2).slice(0, 100) }, 200, h); }
-  }
+  let out;
+  const parts = [{ inlineData: { mimeType: mime.replace(/;.*$/, ''), data } }, { text: 'Transcribe and translate this recording.' }];
+  const main = gemini(env, VISION, voiceRules(to), parts, IMG_SCHEMA, 12000, { fast: true, deadline: Date.now() + 25000 })
+    .then(r => Object.assign(r.data, { engine: 'gemini' }));
+  const backup = async () => {
+    const w = await env.AI.run(AI_WHISPER, { audio: data });
+    const src = String((w && w.text) || '').trim();
+    const from = String((w && w.transcription_info && w.transcription_info.language) || '').slice(0, 2);
+    const o = !src ? { found: false, src: '', from: '', t: '' }
+      : { found: true, src, from, t: from === to ? src : await aiText(env, src, NAMES[from] ? from : 'en', to) };
+    o.engine = 'whisper';
+    return o;
+  };
+  try { out = await hedge(main, backup, 5000); }
+  catch (e) { return json({ error: 'busy', detail: String(e && e.message || e).slice(0, 100) }, 200, h); }
   out.from = String(out.from || '').slice(0, 2).toLowerCase();
   if (to === 'he') out.t = stripNiqqud(out.t || '');
   return json({ found: !!out.found && !!String(out.src || '').trim(), src: out.src || '', from: NAMES[out.from] ? out.from : '', t: out.t || '', engine: out.engine, why: out.why, left: quota.left }, 200, h);

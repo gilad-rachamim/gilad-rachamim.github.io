@@ -97,7 +97,7 @@
     });
     if (ids.text && $(ids.text)) $(ids.text).addEventListener('click', function () {
       var b = this;
-      (navigator.clipboard ? navigator.clipboard.writeText(o.text(api)) : Promise.reject()).then(function () { b.textContent = 'הטקסט הועתק ✓'; used('copy_text'); });
+      (navigator.clipboard ? navigator.clipboard.writeText(o.text(api)) : Promise.reject()).then(function () { b.textContent = o.copied || 'הטקסט הועתק ✓'; used('copy_text'); });
     });
     // הדפסה: התמונה (בגודל A5) נכנסת ל-#kc-print, וה-CSS של הדף מדפיס רק אותה
     if (ids.print && $(ids.print)) $(ids.print).addEventListener('click', function () {
