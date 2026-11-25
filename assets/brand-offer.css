@@ -1,0 +1,84 @@
+/* דף הצעת שדרוג ממותג ללקוח (tools/make_offer.py). קצר, שלוש דרגות, המחשה חזותית בלוגו ובצבעי העסק. */
+*{box-sizing:border-box}
+body.bo{margin:0;font-family:Heebo,system-ui,Arial,sans-serif;background:#0e0c14;color:#f6f2ea;line-height:1.5;-webkit-font-smoothing:antialiased;
+ background-image:radial-gradient(900px 480px at 90% -120px,color-mix(in srgb,var(--c) 38%,transparent),transparent 70%),radial-gradient(700px 420px at -10% 28%,color-mix(in srgb,var(--c2) 16%,transparent),transparent 70%);background-repeat:no-repeat}
+.bo a{color:inherit}
+.bo-wrap{max-width:560px;margin:0 auto;padding:0 16px}
+.bo-hero{text-align:center;padding:26px 0 8px}
+.bo-logo{display:inline-block;background:#fff;border-radius:18px;padding:8px 14px;box-shadow:0 14px 40px rgba(0,0,0,.45)}
+.bo-logo img{display:block;max-height:92px;max-width:230px;width:auto;height:auto}
+.bo-kick{display:inline-block;margin:18px 0 6px;padding:5px 14px;border-radius:999px;background:color-mix(in srgb,var(--c2) 18%,transparent);border:1px solid color-mix(in srgb,var(--c2) 55%,transparent);color:var(--c2);font-weight:800;font-size:14px}
+.bo-hero h1{margin:4px 0 8px;font-size:31px;line-height:1.15;font-weight:900;letter-spacing:-.3px}
+.bo-hero h1 b{color:var(--c2)}
+.bo-hero p{margin:0 auto;max-width:440px;color:#cfc8d6;font-size:16.5px}
+.bo-have{margin:18px 0 6px;padding:13px 15px;border-radius:16px;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.4);font-size:15.5px}
+.bo-have b{color:#5fe39a}
+.bo-t{position:relative;margin:20px 0;padding:18px 16px 16px;border-radius:22px;background:#191622;border:1px solid #2c2738;box-shadow:0 12px 34px rgba(0,0,0,.35)}
+.bo-t.best{border:2px solid var(--c2);background:linear-gradient(180deg,color-mix(in srgb,var(--c2) 9%,#191622),#191622 55%);box-shadow:0 16px 46px color-mix(in srgb,var(--c2) 22%,transparent)}
+.bo-rib{position:absolute;top:-13px;right:18px;background:var(--c2);color:#17130a;font-weight:900;font-size:13.5px;padding:4px 13px;border-radius:999px}
+.bo-top{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.bo-top h2{margin:0;font-size:23px;font-weight:900;line-height:1.2}
+.bo-top h2 small{display:block;font-size:13.5px;font-weight:700;color:var(--c2);letter-spacing:.2px;margin-bottom:2px}
+.bo-pr{white-space:nowrap;font-weight:900;font-size:31px;line-height:1}
+.bo-pr i{font-style:normal;font-size:16px;font-weight:700;margin-right:2px}
+.bo-pr span{display:block;font-size:12px;font-weight:600;color:#a8a0b4;margin-top:4px;text-align:left}
+.bo-line{margin:8px 0 12px;color:#d8d1df;font-size:15.5px}
+.bo-t ul{list-style:none;margin:12px 0 14px;padding:0}
+.bo-t li{position:relative;padding:4px 26px 4px 0;font-size:15.5px}
+.bo-t li:before{content:"✓";position:absolute;right:0;top:4px;width:19px;height:19px;border-radius:50%;background:var(--c2);color:#17130a;font-size:12px;font-weight:900;display:grid;place-items:center}
+.bo-go{display:block;text-align:center;text-decoration:none;font-weight:900;font-size:17px;padding:13px 12px;border-radius:14px;background:#25d366;color:#06200f!important;box-shadow:0 8px 22px rgba(37,211,102,.28)}
+.bo-pay{display:block;text-align:center;margin-top:9px;font-size:13.5px;color:#a8a0b4!important}
+/* המחשות */
+.bo-mock{border-radius:16px;background:#100e17;border:1px dashed #37314a;padding:14px;margin:4px 0 2px}
+.bo-cap{display:block;text-align:center;font-size:12.5px;color:#8f879c;margin-top:8px}
+.bo-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bo-pick div{background:#fff;color:#1a1420;border-radius:12px;padding:10px 6px;text-align:center;font-weight:800;font-size:13px;line-height:1.25;border-top:5px solid var(--c)}
+.bo-pick em{display:block;font-style:normal;font-size:25px;line-height:1.2}
+.bo-pick img{display:block;width:46px;height:46px;margin:0 auto 3px;image-rendering:pixelated}
+.bo-sign{display:flex;align-items:center;gap:12px;background:#fff;color:#1a1420;border-radius:14px;padding:12px;border-bottom:6px solid var(--c)}
+.bo-sign img.q{width:92px;height:92px;image-rendering:pixelated;flex:none}
+.bo-sign img.l{max-height:40px;max-width:130px;display:block;margin-bottom:5px}
+.bo-sign b{display:block;font-size:19px;font-weight:900;line-height:1.15}
+.bo-sign span{font-size:13px;color:#5a5263}
+.bo-ph{width:214px;margin:0 auto;background:#fff;color:#1a1420;border-radius:26px;border:6px solid #2a2536;padding:14px 12px 12px;text-align:center;box-shadow:0 14px 34px rgba(0,0,0,.5)}
+.bo-ph img{max-height:50px;max-width:150px;margin:0 auto 4px;display:block}
+.bo-ph small{display:block;color:#6b6475;font-size:11.5px;margin-bottom:8px}
+.bo-ph span{display:block;margin:6px 0;padding:8px;border-radius:10px;background:var(--c);color:#fff;font-weight:800;font-size:13px}
+.bo-ph span.o{background:#f2eef6;color:#1a1420}
+.bo-ph span.g{background:#25d366;color:#06200f}
+.bo-rep{display:flex;gap:8px;margin-top:10px}
+.bo-rep div{flex:1;background:#1f1b2b;border-radius:12px;padding:9px 6px;text-align:center;font-size:12px;color:#a8a0b4}
+.bo-rep b{display:block;font-size:19px;color:var(--c2);font-weight:900}
+.bo-ch{margin:24px 0 14px;padding:18px 16px;border-radius:20px;background:linear-gradient(135deg,#1c2a24,#191622);border:1px solid #2f5544}
+.bo-ch h3{margin:0 0 6px;font-size:19px;font-weight:900}
+.bo-ch p{margin:0;color:#d5e3da;font-size:15.5px}
+.bo-fine{color:#a8a0b4;font-size:13.5px;margin:14px 0}
+.bo-fine b{color:#f6f2ea}
+.bo-end{text-align:center;padding:6px 0 34px}
+.bo-end .bo-go{font-size:18px;padding:15px}
+.bo-end p{color:#8f879c;font-size:13px;margin:14px 0 0}
+/* כרטיס תמונה (card.html, מצולם לתצוגה המקדימה של הקישור ולתמונה לוואטסאפ) */
+body.bo-card{width:1200px;height:630px;overflow:hidden;display:flex;flex-direction:column;justify-content:center;padding:0 54px}
+.bc-h{display:flex;align-items:center;gap:26px;margin-bottom:26px}
+.bc-h .bo-logo img{max-height:118px;max-width:300px}
+.bc-h h1{margin:0;font-size:50px;font-weight:900;line-height:1.1}
+.bc-h h1 b{color:var(--c2)}
+.bc-h p{margin:6px 0 0;font-size:25px;color:#cfc8d6}
+.bc-r{display:grid;grid-template-columns:1fr 1.12fr 1fr;gap:20px;align-items:stretch}
+.bc-r div{position:relative;background:#191622;border:1px solid #2c2738;border-radius:24px;padding:22px 20px}
+.bc-r div.best{border:3px solid var(--c2);background:color-mix(in srgb,var(--c2) 9%,#191622)}
+.bc-r small{display:block;color:var(--c2);font-weight:800;font-size:20px}
+.bc-r b{display:block;font-size:31px;font-weight:900;line-height:1.2;margin:2px 0 8px}
+.bc-r span{display:block;color:#d8d1df;font-size:21px;line-height:1.35;min-height:86px}
+.bc-r strong{display:block;font-size:46px;font-weight:900;margin-top:8px}
+.bc-r strong i{font-style:normal;font-size:24px}
+.bc-f{margin-top:22px;font-size:22px;color:#a8a0b4;text-align:center}
+body.bo-card.tall{width:1080px;height:1350px;padding:0 60px}
+.tall .bc-h{flex-direction:column;text-align:center;gap:18px;margin-bottom:34px}
+.tall .bc-h h1{font-size:62px}.tall .bc-h p{font-size:30px}
+.tall .bc-r{grid-template-columns:1fr;gap:22px}
+.tall .bc-r div{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:20px;padding:26px 30px}
+.tall .bc-r small{grid-column:1;font-size:24px}.tall .bc-r b{grid-column:1;font-size:40px}
+.tall .bc-r span{grid-column:1;min-height:0;font-size:26px}
+.tall .bc-r strong{grid-column:2;grid-row:1/4;font-size:68px;margin:0}
+.tall .bc-f{font-size:27px;margin-top:30px}
