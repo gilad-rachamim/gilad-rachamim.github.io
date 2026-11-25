@@ -82,6 +82,9 @@
 /kelim/shir/karaoke/shirim/hayiti-mevater-alay/
 /kelim/shir/karaoke/shirim/higyena/
 /kelim/shir/karaoke/shirim/rove/
+/kelim/shir/karaoke/shirim/hashgacha-elyona/
+/kelim/shir/karaoke/shirim/minhag-kavua/
+/kelim/shir/karaoke/shirim/stromae/
 /kelim/shir/karaoke/zamar/ravid-plotnik/
 /kelim/shir/karaoke/zamar/omer-adam/
 /kelim/shir/karaoke/zamar/tuna/

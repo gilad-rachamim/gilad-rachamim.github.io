@@ -1,5 +1,5 @@
 {
-"updated": "2026-11-22",
+"updated": "2026-11-25",
 "songs": [
 {
 "id": "qEEzKfGa1oY",
@@ -2872,6 +2872,16 @@
 "page": true
 },
 {
+"id": "LsR-XSb4qic",
+"artist": "שילה בן סעדון",
+"song": "השגחה עליונה",
+"views": 116065,
+"date": "20261020",
+"added": "2026-11-25",
+"slug": "hashgacha-elyona",
+"page": true
+},
+{
 "id": "ta61I0Ufw08",
 "artist": "מוקי",
 "song": "מה שעובר עליי",
@@ -2880,6 +2890,16 @@
 "added": "",
 "slug": "mh-shaobr-alii",
 "page": false
+},
+{
+"id": "bfjr9nDJ_hM",
+"artist": "קובי אפללו",
+"song": "מנהג קבוע",
+"views": 109159,
+"date": "20261005",
+"added": "2026-11-25",
+"slug": "minhag-kavua",
+"page": true
 },
 {
 "id": "m4QkFwPgFf8",
@@ -2960,6 +2980,16 @@
 "added": "",
 "slug": "kom-bn-adm",
 "page": false
+},
+{
+"id": "gsVfohMiNVU",
+"artist": "כרקוקלי",
+"song": "סטרומאה",
+"views": 87764,
+"date": "20261109",
+"added": "2026-11-25",
+"slug": "stromae",
+"page": true
 },
 {
 "id": "bJ7jX4VWpAY",
