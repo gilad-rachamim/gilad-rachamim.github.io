@@ -37,5 +37,10 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           git commit -q -m "mirror of gilad-rachamim.github.io@$SRC"
-          git push -f git@github.com:gilad-rachamim/hakelim.git site
+          # ניסיון חוזר: ה-cron של מאגר hakelim עלול לעדכן את אותו ענף באותו רגע
+          for i in 1 2 3 4; do
+            git push -f git@github.com:gilad-rachamim/hakelim.git site && break
+            [ "$i" = 4 ] && exit 1
+            sleep $((i*5))
+          done
           rm -f ~/.ssh/hakelim
