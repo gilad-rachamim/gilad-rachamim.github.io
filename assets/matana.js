@@ -7,11 +7,15 @@
   var stage = leaf === 'toda' ? 'toda' : leaf === 'shidrug' ? 'shidrug' : (leaf === 'toda-shidrug' || leaf === 'toda-kurs') ? 'toda-shidrug' : leaf === 'toda-kniya' ? 'toda-kniya' : leaf === 'asara' ? 'asara' : 'landing';
   function fb(type, data) { try { if (window.fbq) fbq('track', type, data || {}); } catch (e) {} }
   function ga(name, data) { try { if (window.gtag) gtag('event', name, data || {}); } catch (e) {} }
+  // 25.11.2026: תג Google Ads (חשבון 329-093-3309) – המרה 'ליד - מתנת קלוד' בשליחת הטופס בדף /matana/claude/
+  var AW = 'AW-649545728';
+  try { if (window.gtag) gtag('config', AW); } catch (e) {}
   function ev(name, ch) {
     var d = { page: slug, channel: ch, utm_content: q.get('utm_content') || '' };
     if (name === 'contact') fb('Contact', { content_name: 'matana_' + slug + '_' + ch });
     else fb('Lead', { content_name: 'matana_' + slug + '_' + ch });
     ga(name === 'contact' ? 'generate_lead' : name, d);
+    if (name === 'generate_lead' && ch === 'form' && slug === 'claude') { try { if (window.gtag) gtag('event', 'conversion', { send_to: AW + '/Iog2COfHl78dEICQ3bUC' }); } catch (e) {} }
   }
   // צפייה בתוכן: דף המתנה ודף המדרגות
   if (stage === 'landing' || stage === 'shidrug') fb('ViewContent', { content_name: 'matana_' + slug + '_' + stage });
