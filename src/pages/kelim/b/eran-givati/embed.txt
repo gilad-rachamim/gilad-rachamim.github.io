@@ -1,0 +1,6 @@
+קוד הטמעה לאתר של ערן גבעתי, רואה חשבון (מדביקים במקום שרוצים שהכלי יופיע; וורדפרס: בלוק HTML מותאם, וויקס: הטמעת קוד):
+
+--- בדיקת החזר מס ---
+<iframe src="https://hakelim.com/kelim/b/eran-givati/hechzer/?embed=1" data-hk-embed title="בדיקת החזר מס" loading="lazy" style="width:100%;max-width:720px;height:640px;border:0;display:block;margin:0 auto"></iframe>
+
+<script src="https://hakelim.com/assets/hk-embed.js" defer></script>   <!-- פעם אחת בדף: מתאים את הגובה לבד -->

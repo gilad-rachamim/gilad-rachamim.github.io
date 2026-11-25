@@ -50,6 +50,9 @@
     else if (mode === "free") body.classList.add("hk-free");
 
     var main = document.getElementById("main");
+    // סרטון ההדגמה של האתר מוזרק אחרי הטעינה: מסירים אותו מדף של לקוח
+    function dropVid() { var v = main && main.querySelectorAll(".dv-sec"); for (var i = 0; v && i < v.length; i++) v[i].parentNode.removeChild(v[i]); }
+    dropVid(); try { new MutationObserver(dropVid).observe(main, { childList: true }); } catch (e) { }
     var top = null;
     if (mode !== "free") {
       top = el("div", "hk-top");
