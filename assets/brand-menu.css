@@ -76,3 +76,26 @@ body.bm{margin:0;font-family:"Heebo","Assistant","Rubik",system-ui,-apple-system
 .bm-note{font-size:13px;color:#6a5648;margin-top:10px;text-align:center}
 @media(min-width:620px){.bm-ov{align-items:center}.bm-sh{border-radius:22px}}
 @media print{.bm-bar,.bm-nav,.bm-add,.bm-acts{display:none}body.bm{background:#fff;color:#000}}
+.bm-pr.q{font-size:14px;font-weight:700;opacity:.9}
+/* ערכה בהירה (theme: "light" ב-menu.json): קונדיטוריות, יופי, מתנות */
+body.bm.bm-light{background:#fff4f8;color:#3b1a2a;background-image:radial-gradient(900px 420px at 85% -80px,color-mix(in srgb,var(--c) 22%,transparent),transparent 70%),radial-gradient(700px 380px at 0% 30%,color-mix(in srgb,var(--c2) 22%,transparent),transparent 70%)}
+.bm-light .bm-logo{background:transparent;padding:0;border-radius:50%;box-shadow:0 14px 34px color-mix(in srgb,var(--c) 30%,transparent)}
+.bm-light .bm-logo img{max-height:250px;border-radius:50%}
+.bm-light .bm-tag{background:var(--c);color:#fff;transform:none;font-size:17px;font-weight:800;box-shadow:none;border-radius:999px}
+.bm-light .bm-badges span{color:var(--c);border-color:color-mix(in srgb,var(--c) 45%,transparent);background:#fff}
+.bm-light .bm-btn.tel{background:#fff;color:#3b1a2a;border:1.5px solid #ecc9d6}
+.bm-light .bm-btn.nav{background:#fff;color:#3b1a2a;border-color:#ecc9d6}
+.bm-light .bm-info,.bm-light .bm-sec .hint,.bm-light .bm-foot{color:#6b4a58}
+.bm-light .bm-nav{background:rgba(255,244,248,.95);border-bottom-color:#f1d3de}
+.bm-light .bm-nav a{background:#fff;color:#3b1a2a;border:1px solid #f1d3de}
+.bm-light .bm-sec h2{background:linear-gradient(100deg,var(--c),color-mix(in srgb,var(--c) 70%,#ff8fb5));color:#fff;box-shadow:0 6px 16px color-mix(in srgb,var(--c) 25%,transparent)}
+.bm-light .bm-card{background:#fff;border-color:#f1d3de;box-shadow:0 6px 22px rgba(120,40,70,.08)}
+.bm-light .bm-it{border-bottom-color:#f1d3de}
+.bm-light .bm-it small{color:#6b4a58}
+.bm-light .bm-pr,.bm-light .bm-tp,.bm-light .bm-foot a,.bm-light .bm-szs button b{color:var(--c)}
+.bm-light .bm-szs button{background:#fff8fb;color:#3b1a2a;border-color:#ecc9d6}
+.bm-light .bm-szs button span{color:#6b4a58}
+.bm-light .bm-tops span{background:#fdebf1}
+.bm-light .bm-bar{background:linear-gradient(180deg,transparent,rgba(255,244,248,.97) 30%)}
+.bm-light .bm-bar button{box-shadow:0 10px 26px rgba(120,40,70,.25)}
+.bm-light .bm-bar button[disabled]{background:#f3dbe4;color:#7a5564}

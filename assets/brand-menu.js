@@ -35,9 +35,9 @@
         });
         row.appendChild(g);
       } else {
-        row.appendChild(el("span", "bm-pr", nis(it.p)));
+        row.appendChild(el("span", "bm-pr" + (it.p == null ? " q" : ""), it.p == null ? "מחיר בתיאום" : nis(it.p)));
         var a = el("button", "bm-add", "+"); a.type = "button"; a.setAttribute("aria-label", "להוסיף " + it.n + " להזמנה");
-        a.addEventListener("click", function () { add({ n: it.n, s: "", tops: [], price: it.p }); toast(a); });
+        a.addEventListener("click", function () { add({ n: it.n, s: "", tops: [], price: it.p || 0, np: it.p == null }); toast(a); });
         row.appendChild(a);
       }
       card.appendChild(row);
@@ -47,7 +47,7 @@
   });
   if (M.toppings && M.toppings.length) {
     var ts = el("section", "bm-sec"); ts.id = "tops";
-    ts.appendChild(el("h2", "", "➕ תוספות לפיצה"));
+    ts.appendChild(el("h2", "", "➕ " + (M.toppings_title || "תוספות")));
     ts.appendChild(el("p", "hint", "בוחרים פיצה וגודל, ומוסיפים את התוספות בלחיצה."));
     var tc = el("div", "bm-card");
     M.toppings.forEach(function (g) {
@@ -103,20 +103,22 @@
     save(); bar(); ga("menu_add", { item: o.n });
   }
   function sum() { return cart.reduce(function (s, c) { return s + c.price * c.q; }, 0); }
+  function anyQ() { return cart.some(function (c) { return c.np; }); }
+  function sumTxt() { var s = sum(), q = anyQ(); return s ? nis(s) + (q ? " + תיאום" : "") : (q ? "מחיר בתיאום" : nis(0)); }
   function count() { return cart.reduce(function (s, c) { return s + c.q; }, 0); }
   var barBtn = $("#bm-bar button");
   function bar() {
     var n = count();
     barBtn.disabled = !n;
     barBtn.textContent = "";
-    barBtn.appendChild(el("span", "", n ? "ההזמנה שלי (" + n + ")" : "בחרו מנות מהתפריט"));
-    barBtn.appendChild(el("span", "", n ? nis(sum()) + " ←" : ""));
+    barBtn.appendChild(el("span", "", n ? "ההזמנה שלי (" + n + ")" : "בחרו מהתפריט"));
+    barBtn.appendChild(el("span", "", n ? sumTxt() + " ←" : ""));
   }
   function toast(b) { b.textContent = "✓"; setTimeout(function () { b.textContent = "+"; }, 700); }
   function showCartHint() { barBtn.animate && barBtn.animate([{ transform: "scale(1)" }, { transform: "scale(1.04)" }, { transform: "scale(1)" }], { duration: 350 }); }
   barBtn.addEventListener("click", showCart);
 
-  var form = { name: "", how: "איסוף עצמי", addr: "", note: "" };
+  var form = { name: "", how: "איסוף עצמי", addr: "", note: "", date: "" };
   function showCart() {
     head("ההזמנה שלי", "בודקים, ממלאים שם, ושולחים בוואטסאפ אל " + M.name + ".");
     cart.forEach(function (c) {
@@ -130,16 +132,17 @@
       m.addEventListener("click", function () { c.q--; if (c.q < 1) cart.splice(cart.indexOf(c), 1); save(); bar(); cart.length ? showCart() : close(); });
       p.addEventListener("click", function () { c.q++; save(); bar(); showCart(); });
       q.appendChild(m); q.appendChild(el("b", "", String(c.q))); q.appendChild(p); ln.appendChild(q);
-      ln.appendChild(el("b", "", nis(c.price * c.q)));
+      ln.appendChild(el("b", "", c.np ? "בתיאום" : nis(c.price * c.q)));
       sh.appendChild(ln);
     });
-    var tot = el("div", "bm-tot"); tot.appendChild(el("span", "", "סך הכול")); tot.appendChild(el("span", "", nis(sum()))); sh.appendChild(tot);
+    var tot = el("div", "bm-tot"); tot.appendChild(el("span", "", "סך הכול")); tot.appendChild(el("span", "", sumTxt())); sh.appendChild(tot);
     function field(label, k, ph, area) {
       var lb = el("label", "bm-f", label), i = el(area ? "textarea" : "input"); if (!area) i.type = "text"; else i.rows = 2;
       i.value = form[k]; i.placeholder = ph || ""; i.addEventListener("input", function () { form[k] = i.value; });
       lb.appendChild(i); sh.appendChild(lb); return lb;
     }
     field("שם", "name", "על שם מי ההזמנה");
+    if (M.ask_date) field("לאיזה תאריך?", "date", "למשל: יום שישי 4.12");
     sh.appendChild(el("h4", "", "איך מקבלים?"));
     var w = el("div", "bm-ch"), addrF;
     ["איסוף עצמי", "משלוח"].forEach(function (h) {
@@ -149,7 +152,7 @@
     });
     sh.appendChild(w);
     addrF = field("כתובת למשלוח", "addr", "רחוב, מספר, קומה"); addrF.style.display = form.how === "משלוח" ? "" : "none";
-    field("הערות", "note", "בלי בצל, חצי-חצי, שעת איסוף...", true);
+    field("הערות", "note", M.note_ph || "בקשות מיוחדות, שעת איסוף...", true);
     var go = el("button", "bm-go wa", "לשלוח את ההזמנה בוואטסאפ"); go.type = "button";
     go.addEventListener("click", function () { ga("menu_order_wa", { value: sum(), items: count() }); window.open(waLink(), "_blank", "noopener"); });
     sh.appendChild(go);
@@ -159,11 +162,13 @@
   function waLink() {
     var L = ["שלום " + M.name + ", אשמח להזמין:"];
     cart.forEach(function (c) {
-      L.push("• " + c.q + " × " + c.n + (c.s ? " (" + c.s + ")" : "") + (c.tops.length ? " + " + c.tops.join(", ") : "") + " – " + nis(c.price * c.q));
+      L.push("• " + c.q + " × " + c.n + (c.s ? " (" + c.s + ")" : "") + (c.tops.length ? " + " + c.tops.join(", ") : "") + (c.np ? "" : " – " + nis(c.price * c.q)));
     });
-    L.push("סך הכול: " + nis(sum()));
+    if (sum()) L.push("סך הכול: " + nis(sum()) + (anyQ() ? " + פריטים בתיאום מחיר" : ""));
+    else if (anyQ()) L.push("אשמח להצעת מחיר.");
     L.push("");
     if (form.name.trim()) L.push("שם: " + form.name.trim());
+    if (form.date.trim()) L.push("תאריך: " + form.date.trim());
     L.push(form.how + (form.how === "משלוח" && form.addr.trim() ? ": " + form.addr.trim() : ""));
     if (form.note.trim()) L.push("הערות: " + form.note.trim());
     return "https://wa.me/" + M.whatsapp + "?text=" + encodeURIComponent(L.join("\n"));

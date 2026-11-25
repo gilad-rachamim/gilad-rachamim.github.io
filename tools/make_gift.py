@@ -215,7 +215,7 @@ def build_menu(slug):
         mp.write_text(json.dumps(cfg, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     for sec in cfg["sections"]:
         for it in sec["items"]:
-            if not it.get("n") or it.get("p") in (None, "", []):
+            if not it.get("n") or (it.get("p") in (None, "", []) and not cfg.get("quote")):
                 raise SystemExit("מנה בלי שם או מחיר ב-" + sec["title"])
     out = OUT_B / slug
     out.mkdir(parents=True, exist_ok=True)
@@ -229,7 +229,8 @@ def build_menu(slug):
     e = lambda s: html.escape(s or "", quote=True)
     name, tag = cfg["name"], cfg.get("tagline", "")
     pub = {"slug": slug, "name": name, "whatsapp": cfg["whatsapp"], "sizes": cfg.get("sizes", []),
-           "sections": cfg["sections"], "toppings": cfg.get("toppings", [])}
+           "sections": cfg["sections"], "toppings": cfg.get("toppings", []),
+           "ask_date": bool(cfg.get("ask_date")), "note_ph": cfg.get("note_ph", ""), "toppings_title": cfg.get("toppings_title", "")}
     acts = '<a class="bm-btn wa" data-bm="wa_click" href="https://wa.me/%s" target="_blank" rel="noopener">💬 וואטסאפ</a>' % e(cfg["whatsapp"])
     if cfg.get("phone"):
         acts += '<a class="bm-btn tel" data-bm="tel_click" href="tel:%s">📞 %s</a>' % (re.sub(r"[^\d+]", "", cfg["phone"]), e(cfg["phone"]))
@@ -237,14 +238,14 @@ def build_menu(slug):
         acts += ('<a class="bm-btn nav" data-bm="nav_click" href="https://www.google.com/maps/search/?api=1&query=%s" target="_blank" rel="noopener">📍 ניווט</a>'
                  % e(cfg["address"]).replace(" ", "+"))
     info = " · ".join(x for x in (cfg.get("address"), cfg.get("hours")) if x)
-    desc = "התפריט של %s: מחירים מעודכנים והזמנה בוואטסאפ בלחיצה." % name
+    desc = cfg.get("desc") or "התפריט של %s: מחירים מעודכנים והזמנה בוואטסאפ בלחיצה." % name
     h = f"""<!doctype html>
 <html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>{e(name)} – תפריט והזמנה בוואטסאפ</title><meta name="description" content="{e(desc)}">
+<title>{e(name)} – {e(cfg.get('title', 'תפריט והזמנה בוואטסאפ'))}</title><meta name="description" content="{e(desc)}">
 <meta name="robots" content="noindex,follow"><link rel="canonical" href="{SITE}/esek/tafrit/">
 <meta property="og:title" content="{e(name)} – תפריט והזמנות"><meta property="og:description" content="{e(tag or desc)}">
 {'<meta property="og:image" content="%s%s">' % (SITE, logo_url) if logo_url else ''}
-<meta name="theme-color" content="#0d0705"><link rel="icon" href="{logo_url or '/assets/icon-esek-192.png'}">
+<meta name="theme-color" content="{'#fff4f8' if cfg.get('theme') == 'light' else '#0d0705'}"><link rel="icon" href="{logo_url or '/assets/icon-esek-192.png'}">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/brand-menu.css?v={v}">
@@ -252,7 +253,7 @@ def build_menu(slug):
 <script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','G-4QR4583VST',{{brand:'{slug}'}});gtag('set',{{brand:'{slug}'}});</script>
 <script type="application/json" id="hk-menu">{json.dumps(pub, ensure_ascii=False).replace("</", "<\\/")}</script>
 </head>
-<body class="bm hk-brand-menu" data-brand="{slug}" data-tool="brand_menu" style="--c:{e(cfg.get('color') or '#e3151a')};--c2:{e(cfg.get('color2') or '#ffd400')}">
+<body class="bm hk-brand-menu{' bm-light' if cfg.get('theme') == 'light' else ''}" data-brand="{slug}" data-tool="brand_menu" style="--c:{e(cfg.get('color') or '#e3151a')};--c2:{e(cfg.get('color2') or '#ffd400')}">
 <header class="bm-hero bm-wrap">
 {'<div class="bm-logo"><img src="%s" alt="%s" width="440" height="190"></div><h1 class="sr">%s</h1>' % (logo_url, e(name), e(name)) if logo_url else '<h1>%s</h1>' % e(name)}
 {'<div><span class="bm-tag">%s</span></div>' % e(tag) if tag else ''}
@@ -265,7 +266,7 @@ def build_menu(slug):
 <footer class="bm-foot"><p>{e(cfg.get('foot', 'המחירים בשקלים וכוללים מע"מ. ייתכנו שינויים; המחיר הקובע הוא בעסק.'))}</p>
 <p>נבנה באהבה במיזם הכלים · <a href="{SITE}/esek/tafrit/?utm_source=brand&utm_medium=credit&utm_campaign={slug}" target="_blank" rel="noopener" data-bm="credit_click">רוצים תפריט כזה לעסק שלכם? hakelim.com</a></p></footer>
 </main>
-<div class="bm-bar" id="bm-bar"><button type="button" disabled>בחרו מנות מהתפריט</button></div>
+<div class="bm-bar" id="bm-bar"><button type="button" disabled>בחרו מהתפריט</button></div>
 <div class="bm-ov" id="bm-ov" role="dialog" aria-modal="true" aria-label="הזמנה"><div class="bm-sh" id="bm-sh"></div></div>
 <script src="/assets/brand-menu.js?v={v}" defer></script>
 </body></html>
