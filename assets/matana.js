@@ -39,14 +39,14 @@
   }
   var h1 = $('h1[data-h]');
   if (h1) { try { var m = JSON.parse(h1.getAttribute('data-h')), c = q.get('utm_content'); if (c && m[c]) h1.textContent = m[c]; } catch (e) {} }
-  // קוד מקור בנוסח הווטסאפ (25.11.2026): "(קוד: קמפיין-מודעה)" מה-utm, כדי שנדע מאיזו מודעה הגיע הליד. נקרא ב-tools/matana_reply.py
+  // קוד מקור בנוסח הווטסאפ (25.11.2026): "(קוד: קמפיין-מודעה)" בשורה אחרונה משלו, אחרי שורות המילוי, מה-utm, כדי שנדע מאיזו מודעה הגיע הליד. נקרא ב-tools/matana_reply.py
   (function () {
     var cl = function (v) { return (v || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 16); };
     var code = [cl(q.get('utm_campaign')), cl(q.get('utm_content'))].filter(Boolean).join('-');
     if (!code) return;
     var as = document.querySelectorAll('a[data-wa]');
     for (var i = 0; i < as.length; i++) {
-      try { var u = new URL(as[i].href); var t = u.searchParams.get('text'); if (t && t.indexOf('(קוד:') < 0) { u.searchParams.set('text', t + ' (קוד: ' + code + ')'); as[i].href = u.toString(); } } catch (e) {}
+      try { var u = new URL(as[i].href); var t = u.searchParams.get('text'); if (t && t.indexOf('(קוד:') < 0) { u.searchParams.set('text', t.replace(/\s+$/, '') + '\n(קוד: ' + code + ')'); as[i].href = u.toString(); } } catch (e) {}
     }
   })();
   var f = $('form.mt-form');

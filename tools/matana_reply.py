@@ -66,9 +66,41 @@ def obj(w):
     return 'את ' + w
 
 
+LOGO_DEFAULT = norm('אצרף בהודעה הבאה / אין לי (אשמח שתכין)')
+
+
+def fields(p, extra):
+    """25.11.2026: שורות המילוי (wa_form) -> {תווית: ערך}. ערך ריק = הליד לא מילא."""
+    labels = [l.split(':', 1)[0].strip() for l in p.get('wa_form') or []]
+    pos = [(extra.find(l + ':'), l) for l in labels]
+    pos = sorted((i, l) for i, l in pos if i >= 0)
+    out = {}
+    for k, (i, l) in enumerate(pos):
+        end = pos[k + 1][0] if k + 1 < len(pos) else len(extra)
+        out[l] = extra[i + len(l) + 1:end].strip()
+    return out
+
+
 def reply_for(p, stage, extra, name):
     hi = f'היי {name}, איזה כיף שכתבת 😊' if name else 'היי, איזה כיף שכתבת 😊'
     kind = p.get('upsell')
+    f = fields(p, extra) if extra else {}
+    if kind == 'branded' and any(v and v != LOGO_DEFAULT for v in f.values()):
+        # הליד מילא את התבנית: מאשרים ומתחילים לבנות, ושואלים רק מה שחסר
+        logo = f.get('לוגו', '')
+        no_logo = 'אין לי' in logo and 'אצרף' not in logo
+        missing = [l for l, v in f.items() if not v and '(אם יש)' not in l and l != 'לוגו']
+        lines = [hi, 'קיבלתי את כל הפרטים, תודה!', f'אני מכין לך {obj(what_they_want(p))}.']
+        if no_logo:
+            lines.append('ראיתי שאין לוגו, אז אכין לך גם לוגו בשמחה.')
+        if missing:
+            lines.append('רק חסר לי: ' + ', '.join(missing) + '.')
+        lines.append('ואני שולח לך הצצה עוד היום.')
+        nxt = ('לבנות הצצה ממותגת לפי /kelim/dugma-mishrad-levi/ ' + ('+ לוגו פשוט שאני מעצב, ' if no_logo else '(לחכות ללוגו אם יגיע), ')
+               + 'צילום מסך לגילעד לאישור, ואז לשלוח. הפרטים: ' + '; '.join(f'{l}: {v or "—"}' for l, v in f.items()))
+        return '\n'.join(lines), nxt, LADDER_BIZ
+    if kind == 'claude' and 'השאלה שלי' in f:
+        extra = f['השאלה שלי']
     if kind == 'branded':
         who = p.get('upsell_for') or 'העסק'
         lines = [hi, f'אני מכין לך {obj(what_they_want(p))}.', 'רק תשלח/י לי בבקשה:',
