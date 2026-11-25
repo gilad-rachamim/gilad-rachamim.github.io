@@ -8,6 +8,7 @@
 הרצה:  python3 build.py
 """
 import json, os, re, pathlib, datetime, hashlib
+import urllib.parse
 import html as html_lib
 
 ROOT = pathlib.Path(__file__).resolve().parent
@@ -800,6 +801,58 @@ def insert_demo(content, blk):
     i = content.find("</header>")
     return content[: i + 9] + blk + content[i + 9:] if i >= 0 else blk + content
 
+# מדריכי וידאו (25.11.2026): אזור מדריך מעוצב בכל דף כלי שיש לו סרטון ביוטיוב. הנתונים ב-tools/madrichim.json (מפתח = tool),
+# הבלוק נכנס אחרי ה-header הראשון (או במקום <!--madrich-->), והנגן נטען רק בלחיצה (assets/madrich.js).
+MADRICHIM_FILE = ROOT / "tools" / "madrichim.json"
+MADRICHIM = json.loads(MADRICHIM_FILE.read_text(encoding="utf-8")) if MADRICHIM_FILE.exists() else {}
+
+def mdr_time(sec):
+    return f"{sec // 60}:{sec % 60:02d}"
+
+def madrich_block(meta, url):
+    tool = meta.get("tool", "")
+    m = MADRICHIM.get(tool)
+    if not m or meta.get("lang") or BASE + m["page"] != url:  # רק בדף הראשי של הכלי, לא בדפים אחרים עם אותו tool
+        return "", "", ""
+    e = html_lib.escape
+    vid, title, name, dur = m["youtube"], m["title"], m["name"], m["duration"]
+    watch = f"https://www.youtube.com/watch?v={vid}"
+    share = f"{url}?utm_source=share&utm_medium=madrich#madrich"
+    wa = "https://wa.me/?text=" + urllib.parse.quote(f"מדריך וידאו קצר: {name} 👇\n{share}")
+    chips = "".join(f'<li><a href="{watch}&amp;t={s}s" target="_blank" rel="noopener" data-mdr-sec="{s}"><b>{mdr_time(s)}</b> {e(n)}</a></li>' for s, n in m["chapters"])
+    steps = "".join(f'<li><b>{e(t)}</b><span>{e(x)}</span></li>' for t, x in m["steps"])
+    blk = (
+        f'<section class="mdr no-print" id="madrich" aria-labelledby="mdr-h" data-mdr-tool="{tool}" data-mdr-id="{vid}" data-mdr-name="{e(title)}">'
+        f'<div class="mdr-top"><h2 id="mdr-h">🎬 מדריך וידאו: {e(name)}</h2><span class="mdr-dur">{mdr_time(dur)} דקות</span></div>'
+        '<p class="mdr-trust">בחינם · בלי הרשמה · בלי פרסומות</p>'
+        '<div class="mdr-grid"><div class="mdr-media"><div class="mdr-frame">'
+        f'<a class="mdr-play" href="{watch}" target="_blank" rel="noopener" data-mdr-play aria-label="הפעלת מדריך הווידאו: {e(title)}">'
+        f'<img src="/{m["thumb"]}.webp" alt="" width="1280" height="720" decoding="async"><span class="mdr-btn" aria-hidden="true"></span></a></div>'
+        f'<ul class="mdr-chips" aria-label="פרקים בסרטון">{chips}</ul></div>'
+        f'<div class="mdr-steps"><h3>הצעדים בקצרה</h3><ol>{steps}</ol></div></div>'
+        f'<div class="mdr-acts"><a class="btn btn-gold" href="{m["cta"]["anchor"]}" data-mdr-cta>{e(m["cta"]["text"])}</a>'
+        f'<a class="btn btn-line" href="{e(wa)}" target="_blank" rel="noopener" data-mdr-share="{e(share)}">💌 לשלוח את המדריך לחבר</a></div>'
+        '<p class="mdr-sig">הכנתי את המדריך בשבילכם. גילעד רחמים'
+        + (' · <a href="/kelim/madrichim/">לכל המדריכים</a>' if (SRC / "kelim" / "madrichim" / "index.html").exists() else '')
+        + '</p></section>')
+    head = '<link rel="stylesheet" href="/assets/madrich.css"><script src="/assets/madrich.js" defer></script>'
+    ends = [c[0] for c in m["chapters"][1:]] + [dur]
+    ld = json.dumps({"@context": "https://schema.org", "@type": "VideoObject", "name": title, "description": m["description"],
+                     "thumbnailUrl": [f'{BASE}/{m["thumb"]}.jpg'], "uploadDate": m["upload"] + "T12:00:00+02:00", "duration": f"PT{dur}S",
+                     "embedUrl": f"https://www.youtube-nocookie.com/embed/{vid}", "contentUrl": watch, "inLanguage": "he",
+                     "publisher": {"@type": "Person", "name": "גילעד רחמים", "url": BASE + "/kelim/"},
+                     "hasPart": [{"@type": "Clip", "name": n, "startOffset": s, "endOffset": end, "url": f"{watch}&t={s}s"}
+                                 for (s, n), end in zip(m["chapters"], ends)]}, ensure_ascii=False)
+    return blk, f'<script type="application/ld+json">{ld}</script>', head
+
+def insert_madrich(content, blk):
+    if not blk:
+        return content.replace("<!--madrich-->", "")
+    if "<!--madrich-->" in content:
+        return content.replace("<!--madrich-->", blk, 1)
+    i = content.find("</header>")
+    return content[: i + 9] + blk + content[i + 9:] if i >= 0 else blk + content
+
 # ---------- הקטלוג המאוחד (assets/catalog.json): מזין חיפוש, "עוד כלים", דף הבית והעונות ----------
 def _git_added():
     import subprocess
@@ -1114,6 +1167,8 @@ for path in sorted(SRC.rglob("*.html")):
     content += "" if meta.get("bare") else seo_related(url_path)
     dv_blk, dv_ld = demo_block(meta, url) if site else ("", "")
     content = insert_demo(content, dv_blk)
+    mdr_blk, mdr_ld, mdr_head = madrich_block(meta, url) if site else ("", "", "")
+    content = insert_madrich(content, mdr_blk)
     og_own = "og/" + url_path.strip("/").replace("/", "-") + ".jpg"
     og_default = og_own + "?v=4" if (site and (ROOT / "assets" / og_own).exists()) else (site["og"] if site else "og-mohel.jpg")
     # תיאור השיתוף (og:description) פותח ב"בחינם, בלי הגבלה ובלי הרשמה" - גילעד 11.11.2026.
@@ -1135,7 +1190,7 @@ for path in sorted(SRC.rglob("*.html")):
         "og_title": meta.get("og_title", meta["title"]),
         "og_image": meta.get("og_image", og_default),
         "robots": '<meta name="robots" content="noindex">' if meta.get("noindex") else "",
-        "head": meta.get("head_pre", "") + ("" if meta.get("no_ga") else GA) + pixel_for(meta, url_path) + ("" if meta.get("bare") else KISHUR) + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url) + dv_ld + hreflang(meta),
+        "head": meta.get("head_pre", "") + ("" if meta.get("no_ga") else GA) + pixel_for(meta, url_path) + ("" if meta.get("bare") else KISHUR) + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url) + dv_ld + mdr_head + mdr_ld + hreflang(meta),
         "body_class": meta.get("body_class", ""),
         "sprite": SPRITE,
         "wa": WA,
