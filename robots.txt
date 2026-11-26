@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 Disallow: /mohel/todah/
+Disallow: /kelim/apps/*.apk
 Sitemap: https://hakelim.com/sitemap.xml
