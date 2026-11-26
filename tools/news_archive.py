@@ -249,7 +249,7 @@ def write_feed(days):
 
 
 
-def day_page(d, prev, nxt):
+def day_page(d, prev, nxt, recent=()):
     day, nd = d["day"], nice_date(d["day"])
     dn, hd = day_name(d), heb_date(d)
     eds = " · ".join(ED_LABEL.get(e["name"], e["name"]).replace("מהדורת ה", "") for e in d["editions"])
@@ -269,10 +269,12 @@ def day_page(d, prev, nxt):
     if nxt:
         nav.append(f'<a href="{BASE_URL}{nxt}/">{nice_date(nxt)} ←</a>')
     nav.append(f'<a href="{NEWS_URL}?utm_source=archive">המהדורה האחרונה</a>')
+    more = "".join(f'<a href="{BASE_URL}{k}/">{nice_date(k)}</a>' for k in recent if k not in (day, prev, nxt))
+    more = f'<nav class="ar-nav no-print" aria-label="עוד ימים">{more}</nav>\n' if more else ""
     body = (f'<header class="k-hero">\n  <h1>סיכום חדשות יומי: {esc(dn + ", " if dn else "")}{nd}</h1>\n'
             f'  <p class="sub">{esc(hd)}{" · " if hd else ""}{len(d["editions"])} מהדורות, {points(d)} נקודות קצרות ורגועות. כל מה שחשוב ביום אחד, בשלוש דקות קריאה.</p>\n</header>\n'
             f'<div class="tool">\n<nav class="ar-nav no-print" aria-label="ימים">{"".join(nav)}</nav>\n'
-            + "".join(edition_html(e) for e in d["editions"]) + "\n" + cta() + "\n</div>\n")
+            + "".join(edition_html(e) for e in d["editions"]) + "\n" + cta() + "\n" + more + "</div>\n")
     return meta_block(meta) + body + seo_text("day") + "\n"
 
 
@@ -314,7 +316,8 @@ def write_pages():
     for i, d in enumerate(days):
         p = OUT / d["day"] / "index.html"
         p.parent.mkdir(exist_ok=True)
-        new = day_page(d, keys[i - 1] if i else None, keys[i + 1] if i + 1 < len(keys) else None)
+        new = day_page(d, keys[i - 1] if i else None, keys[i + 1] if i + 1 < len(keys) else None,
+                       [keys[0]] + keys[1:][-7:])
         if not p.exists() or p.read_text(encoding="utf-8") != new:
             p.write_text(new, encoding="utf-8", newline="\n")
     (OUT / "index.html").write_text(hub_page(days), encoding="utf-8", newline="\n")

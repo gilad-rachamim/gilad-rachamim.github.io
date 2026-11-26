@@ -1,6 +1,7 @@
 // יוצר את דפי "זמן הנחת תפילין <עיר>": src/pages/kodesh/tefillin/<עיר>/index.html, לכל עיר ב-CITIES של assets/kodesh-shabat.js.
-// הכלי עצמו (כרטיס ההנחה, המשיכיר, השקיעה, התזכורת והמשחק) מועתק מהדף הראשי src/pages/kodesh/tefillin/index.html,
-// והמנוע assets/kodesh-tefillin.js נפתח עם העיר של הדף (data-place / data-name על #tf).
+// דף עיר מכיל רק את מה ששייך לעיר: כרטיס כלי מקוצר, זמני היום, טבלה לשנה שלמה ושאלות על העיר.
+// הסדר המלא, האפליקציה, מסך התפילין וכללי הנקודות נמצאים רק בדף הראשי (דפים כמעט זהים לא נכנסים לגוגל).
+// המנוע assets/kodesh-tefillin.js נפתח עם העיר של הדף (data-place / data-name על #tf).
 // הטבלה שבתוך הדף (לגוגל ולמי שאין לו JavaScript) מחושבת כאן ליום ההרצה; בדפדפן המנוע מחשב מחדש בכל כניסה.
 // העובדות המקומיות (המקום והגובה): tools/shabat_local.js.
 // הרצה (פעם בכמה חודשים):  node tools/tefillin_city_pages.js   ואז  python build.py
@@ -20,9 +21,37 @@ const MAIN = fs.readFileSync(path.join(OUT, 'index.html'), 'utf8').split(String.
 const MAIN_META = JSON.parse(MAIN.match(/<!--meta\s*(\{[\s\S]*?\})\s*-->/)[1]);
 const HEAD = MAIN_META.head.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g, '');
 const FOOT = MAIN_META.foot;
-const TS = MAIN.indexOf('<div class="tool tf-card" id="tf">'), TE = MAIN.indexOf('<!--seo-txt-->');
-if (TS < 0 || TE < 0) throw new Error('כרטיס הכלי בדף הראשי השתנה – לעדכן את tefillin_city_pages.js');
-const TOOL = MAIN.slice(TS, TE).trimEnd();
+const TABLE_CSS = '<style>.tf-tbl-wrap{overflow-x:auto}.tf-tbl{width:100%;border-collapse:collapse;font-size:.88rem;text-align:center}.tf-tbl th,.tf-tbl td{padding:.35rem .2rem;border-bottom:1px solid rgba(212,176,98,.25)}.tf-tbl th{color:var(--gold)}.tf-tbl caption{caption-side:bottom;padding-top:.5rem;font-size:.85rem}</style>';
+function tool(c) {
+  return `<div class="tool tf-card" id="tf" data-place="${c[3]},${c[4]}" data-name="${c[1]}">
+  <div class="tf-status" id="tf-status" aria-live="polite"><b>בודק את השקיעה ${c[2]}…</b></div>
+  <div class="tf-times" id="tf-times"></div>
+  <button type="button" class="tf-done" id="tf-done">הנחתי תפילין ✓</button>
+  <button type="button" class="tf-ptur" id="tf-ptur">היום הייתי פטור</button>
+  <p class="tf-toast" id="tf-toast" aria-live="polite" hidden></p>
+  <div class="tf-week" id="tf-week" aria-label="השבוע האחרון. לחיצה על יום שעבר: הנחתי / הייתי פטור"></div>
+  <p class="tf-streak" id="tf-streak"></p>
+  <div class="tf-game" id="tf-game">
+    <div class="tf-lvl"><span class="tf-pts" id="tf-pts">0</span><span>נקודות</span><b id="tf-lvl">צעד ראשון</b></div>
+    <div class="tf-bar" aria-hidden="true"><i id="tf-bar"></i></div>
+    <p class="tf-next" id="tf-next"></p>
+    <p class="tf-cheer" id="tf-cheer"></p>
+  </div>
+  <div class="tf-place">
+    <label for="tf-city">המקום:</label>
+    <select id="tf-city"></select>
+    <button type="button" class="btn btn-sm btn-line" id="tf-gps">📍 המיקום שלי</button>
+  </div>
+  <p class="tf-msg" id="tf-gps-msg"></p>
+  <div class="tf-row"><label for="tf-before">תזכורת לפני השקיעה ${c[2]}</label>
+    <select id="tf-before"><option value="15">15 דקות</option><option value="30">30 דקות</option><option value="45">45 דקות</option><option value="60">שעה</option><option value="90">שעה וחצי</option></select></div>
+  <div class="tf-btns">
+    <button type="button" class="btn btn-gold" id="tf-ics">📅 יומן לחצי שנה לפי ${c[1]}</button>
+    <button type="button" class="btn btn-line" id="tf-notif">🔔 להפעיל התראות בטלפון</button>
+  </div>
+  <p class="tf-msg" id="tf-ics-msg"></p>
+</div>`;
+}
 
 // ---- חישובים (אותו חישוב כמו במנוע: משיכיר של hebcal, ו-66 דקות זמניות לפני הנץ לדעת פוסקים מסוימים בדורנו)
 const fmt = new Intl.DateTimeFormat('he-IL', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Jerusalem' });
@@ -62,93 +91,108 @@ function write(dir, meta, body) {
 }
 function dist(a, b) { const r = Math.PI / 180, x = (b[4] - a[4]) * r * Math.cos((a[3] + b[3]) / 2 * r), y = (b[3] - a[3]) * r; return Math.sqrt(x * x + y * y) * 6371; }
 
+const mins = n => n === 1 ? 'דקה' : n === 2 ? 'שתי דקות' : n + ' דקות';
+const hours = ms => { const m = Math.round(ms / 60000), h = Math.floor(m / 60), r = m % 60; return h + ' שעות' + (r ? ' ו-' + mins(r) : ''); };
+const MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
+// שנה קדימה: ה-1 וה-15 בכל חודש
+function table(c) {
+  const rows = [];
+  for (let m = 0; m < 12; m++) for (const dd of [1, 15]) {
+    const d = new Date(NOW.getFullYear(), NOW.getMonth() + 1 + m, dd, 12), x = day(c, d);
+    rows.push(`<tr><th scope="row">${dd} ב${MONTHS[d.getMonth()]}</th><td>${t(x.msh66)}</td><td>${t(x.msh)}</td><td>${t(x.sr)}</td><td>${t(x.ss)}</td><td>${t(x.tz)}</td></tr>`);
+  }
+  const a = new Date(NOW.getFullYear(), NOW.getMonth() + 1, 1), b = new Date(NOW.getFullYear(), NOW.getMonth() + 12, 15);
+  return `<div class="tf-tbl-wrap" tabindex="0" role="region" aria-label="טבלת זמני תפילין ${c[1]}"><table class="tf-tbl">
+  <caption>זמני תפילין ${c[2]}, מ${MONTHS[a.getMonth()]} ${a.getFullYear()} עד ${MONTHS[b.getMonth()]} ${b.getFullYear()}, בשעון ישראל (כולל שעון קיץ).</caption>
+  <thead><tr><th scope="col">תאריך</th><th scope="col">מוקדם*</th><th scope="col">משיכיר</th><th scope="col">נץ</th><th scope="col">שקיעה</th><th scope="col">כוכבים</th></tr></thead>
+  <tbody>
+${rows.join('\n')}
+  </tbody></table></div>`;
+}
+// היום הקצר והארוך: כמה זמן יש בין המשיכיר לשקיעה
+function span(c) {
+  let lo = null, hi = null, rl = null, rh = null;
+  for (let i = 0; i < 365; i++) {
+    const d = new Date(NOW); d.setDate(d.getDate() + i);
+    const x = day(c, d), len = x.ss - x.msh;
+    if (!lo || len < lo.len) lo = { len, x };
+    if (!hi || len > hi.len) hi = { len, x };
+    const m = x.sr.getHours() * 60 + x.sr.getMinutes();
+    if (!rl || m < rl.m) rl = { m, x };
+    if (!rh || m > rh.m) rh = { m, x };
+  }
+  return { lo, hi, rl, rh };
+}
+
 const JER = CITIES[0];
-CITIES.forEach(function (c, ci) {
+CITIES.forEach(function (c) {
   const loc = c[2], L = LOCAL[c[0]];
   if (!L) throw new Error('חסרות עובדות מקומיות לעיר ' + c[0] + ' ב-tools/shabat_local.js');
-  const code = (ci * 37 + 11) % 243, v = k => Math.floor(code / Math.pow(3, k)) % 3;
-  const X = day(c, NOW), Y = year(c), date = hdm(NOW), dn = DAYS[NOW.getDay()];
-  const msh = t(X.msh), m66 = t(X.msh66), rise = t(X.sr), set = t(X.ss), tz = t(X.tz);
-  const diff = gap(X.msh, X.msh66);  // כמה דקות לפני המשיכיר הרגיל
-  const jx = c[0] === JER[0] ? null : day(JER, NOW);
-  const cmpTxt = jx ? `ב${JER[1]} המשיכיר באותו יום ב-<bdi>${t(jx.msh)}</bdi> והשקיעה ב-<bdi>${t(jx.ss)}</bdi>, כלומר ${loc} המשיכיר ${Math.abs(gap(X.msh, jx.msh)) < 1 ? 'באותה שעה' : (Math.abs(gap(X.msh, jx.msh)) + ' דקות ' + (X.msh < jx.msh ? 'מוקדם' : 'מאוחר') + ' יותר')} והשקיעה ${Math.abs(gap(X.ss, jx.ss)) < 1 ? 'באותה שעה' : (Math.abs(gap(X.ss, jx.ss)) + ' דקות ' + (X.ss < jx.ss ? 'מוקדם' : 'מאוחר') + ' יותר')}` : `ירושלים היא העיר שאליה מתייחסים בלוחות הארץ, ושאר הערים זזות ממנה בדקות בודדות לפי קו האורך`;
-  const near = CITIES.filter(o => o[0] !== c[0]).map(o => [o, dist(c, o)]).sort((a, b) => a[1] - b[1]).slice(0, 3);
-  const nearHtml = near.map(x => `<a href="${HOME}${x[0][0]}/">זמן הנחת תפילין ${x[0][1]}</a> (כ-${Math.round(x[1])} ק״מ, משיכיר <bdi>${t(day(x[0], NOW).msh)}</bdi>)`).join(', ');
-
-  const intro = [
-    `זמן הנחת תפילין ${c[1]} משתנה כל יום. ביום ${dn}, ${date}: אפשר להניח תפילין מהמשיכיר, בשעה <bdi>${msh}</bdi>, ועד השקיעה, בשעה <bdi>${set}</bdi>. מי שנוהג לפי הדעה המוקדמת (פירוט בהמשך) יכול להתחיל כבר ב-<bdi>${m66}</bdi>. הכלי שלמעלה כבר פתוח על ${c[1]}, ומחשב את הזמנים של היום ושל כל יום.`,
-    `מאיזו שעה מניחים תפילין ${loc}, ועד מתי? ב-${date} המשיכיר ${loc} הוא <bdi>${msh}</bdi>, הנץ החמה <bdi>${rise}</bdi> והשקיעה <bdi>${set}</bdi>. כלומר אפשר להניח מ-<bdi>${msh}</bdi> ועד <bdi>${set}</bdi>. הכלי למעלה פתוח על ${c[1]} ומראה גם כמה זמן נשאר עד השקיעה.`,
-    `בדף הזה זמן הנחת תפילין ${c[1]} להיום: משיכיר <bdi>${msh}</bdi>, הנץ <bdi>${rise}</bdi>, שקיעה <bdi>${set}</bdi> (יום ${dn}, ${date}). התאריך מתעדכן בכל כניסה, והכלי למעלה, שכבר מכוון ל${c[1]}, גם סופר לאחור עד השקיעה ומזכיר להניח לפני שמפספסים.`
-  ][v(0)];
-  const mshP = [
-    `משיכיר הוא הזמן שבו אפשר להכיר אדם מוכר ממרחק קצר, ובו מתחיל הזמן להניח תפילין וללבוש ציצית. החישוב ${loc} מבוסס על מיקום השמש מתחת לאופק, ולכן הוא משתנה כל יום. ב-${date} הוא <bdi>${msh}</bdi>. במשך השנה הקרובה המשיכיר ${loc} נע בין <bdi>${t(Y.mshE.msh)}</bdi> (${hdm(Y.mshE.d)}) לבין <bdi>${t(Y.mshL.msh)}</bdi> (${hdm(Y.mshL.d)}).`,
-    `אי אפשר להניח תפילין לפני המשיכיר, והוא זז במשך השנה: ${loc} הוא מגיע הכי מוקדם ב-${hdm(Y.mshE.d)}, בשעה <bdi>${t(Y.mshE.msh)}</bdi>, והכי מאוחר ב-${hdm(Y.mshL.d)}, בשעה <bdi>${t(Y.mshL.msh)}</bdi>. ב-${date} זה <bdi>${msh}</bdi>. הדף מחשב את זה לבד לכל יום, כך שלא צריך לחפש בלוח.`,
-    `המשיכיר ${loc} ב-${date} הוא <bdi>${msh}</bdi>. הוא נע בין <bdi>${t(Y.mshE.msh)}</bdi> בקיץ (${hdm(Y.mshE.d)}) ל-<bdi>${t(Y.mshL.msh)}</bdi> בחורף (${hdm(Y.mshL.d)}), ולכן מי שמניח כל בוקר באותה שעה צריך לשנות אותה במהלך השנה.`
-  ][v(1)];
-  const opP = [
-    `יש פוסקים בדורנו שמחשבים את תחילת הזמן מוקדם יותר: 66 דקות זמניות לפני הנץ החמה, כלומר עלות השחר (72 דקות) ועוד 6 דקות. ${loc} ב-${date} זה <bdi>${m66}</bdi>, כ-${Math.abs(diff)} דקות לפני המשיכיר הרגיל. זו דעה של פוסקים מסוימים בדורנו, ולא כל הנוהגים סומכים עליה. מי שרוצה לנהוג כך, או שיש לו שאלה, שישאל את הרב שלו.`,
-    `הכלי מראה בנפרד גם "משיכיר לדעת פוסקים מסוימים בדורנו": 66 דקות זמניות לפני הנץ (עלות 72 דקות ועוד 6). ${loc} ב-${date} זה <bdi>${m66}</bdi>. דקה זמנית היא חלק מ-720 של היום מהנץ עד השקיעה, ולכן ב${c[1]} היא היום <bdi>${X.mz.toFixed(2)}</bdi> דקות רגילות. ההכרעה למי שמחזיק בדעה הזאת היא של הרב שלו.`,
-    `לצד המשיכיר הרגיל, הדף מציג זמן מוקדם יותר לדעת פוסקים מסוימים בדורנו: 66 דקות זמניות לפני הנץ. ${loc} ב-${date}: <bdi>${m66}</bdi>. במשך השנה הוא נע בין <bdi>${t(Y.m66E.msh66)}</bdi> ל-<bdi>${t(Y.m66L.msh66)}</bdi>. זו דעה שלא כולם נוהגים לפיה, ולכן ההחלטה אצל הרב של כל אחד.`
-  ][v(2)];
-  const endP = [
-    `מניחים תפילין עד השקיעה. ${loc} ב-${date} השקיעה בשעה <bdi>${set}</bdi>, וצאת הכוכבים <bdi>${tz}</bdi>. במשך השנה השקיעה נעה בין <bdi>${t(Y.setE.ss)}</bdi> (${hdm(Y.setE.d)}) ל-<bdi>${t(Y.setL.ss)}</bdi> (${hdm(Y.setL.d)}). מי שהגיע אחרי השקיעה ולא הניח, שישאל רב. תזכורת לפני השקיעה אפשר להגדיר בכלי למעלה, והיא מחושבת לפי ${c[1]}.`,
-    `הזמן נגמר בשקיעה, ולכן בחורף, כשהשקיעה מוקדמת, כדאי להזכיר לעצמך מראש. ${loc} ב-${date} השקיעה <bdi>${set}</bdi>. השנה היא נעה בין <bdi>${t(Y.setE.ss)}</bdi> ל-<bdi>${t(Y.setL.ss)}</bdi>. הכלי למעלה סופר את הזמן שנשאר, ושולח תזכורת לפני השקיעה של ${c[1]}.`,
-    `עד מתי מניחים תפילין ${loc}? עד השקיעה, שב-${date} היא בשעה <bdi>${set}</bdi>. אחריה, ועד צאת הכוכבים (<bdi>${tz}</bdi>), אפשר להניח רק בדיעבד ובלי ברכה, ועדיף לשאול רב. הכלי למעלה מציג את הזמן שנשאר היום.`
-  ][v(3)];
-  const calcP = [
-    'החישוב אסטרונומי, בטלפון: לפי קו הרוחב, קו האורך והתאריך מחשבים את מקום השמש, בגובה פני הים. המשיכיר והשקיעה זהים לאלה שבדף זמני היום באתר. לזמנים להלכה במקום מסוים שואלים את הרב.',
-    'הכול מחושב בדפדפן לפי מיקום העיר והתאריך, בלי שרת ובלי שהמיקום יישלח לשום מקום. בין לוחות שונים יש לפעמים הבדל של דקה או שתיים, ולכן מי שנוהג בהידור מקדים מעט. לשאלה להלכה, שואלים את הרב.',
-    'אותה נוסחה אסטרונומית שבה משתמשים רוב הלוחות בארץ, בגובה פני הים. מי שגר במקום גבוה רואה את השמש עוד כמה דקות, ולכן בשקיעה יש לו מעט יותר זמן. כל אחד נוהג לפי מנהגו ורבו.'
-  ][v(4)];
+  const X = day(c, NOW), Y = year(c), S2 = span(c), date = hdm(NOW);
+  const msh = t(X.msh), m66 = t(X.msh66), rise = t(X.sr), set = t(X.ss);
+  const near = CITIES.filter(o => o[0] !== c[0]).map(o => [o, dist(c, o)]).sort((a, b) => a[1] - b[1]).slice(0, 4);
+  const nearHtml = near.map(x => { const n = day(x[0], NOW); return `<li><a href="${HOME}${x[0][0]}/">זמן תפילין ${x[0][1]}</a>: כ-${Math.max(1, Math.round(x[1]))} ק״מ מ${c[1]}, משיכיר <bdi>${t(n.msh)}</bdi> ושקיעה <bdi>${t(n.ss)}</bdi></li>`; }).join('\n    ');
+  const ref = c[0] === JER[0] ? CITIES[1] : JER;
+  // ההפרש מעיר הייחוס, בקיץ ובחורף
+  const cmp = d => {
+    const a = day(c, d), b = day(ref, d);
+    const w = (x, y) => Math.abs(gap(x, y)) < 1 ? 'כמעט באותה דקה כמו ' + ref[2] : mins(Math.abs(gap(x, y))) + (x < y ? ' לפני ' : ' אחרי ') + ref[1];
+    return `המשיכיר ${c[2]} חל ${w(a.msh, b.msh)}, והשקיעה ${c[2]} ${w(a.ss, b.ss)}`;
+  };
+  const Y0 = NOW.getFullYear() + 1, june = cmp(new Date(Y0, 5, 21, 12)), dec = cmp(new Date(NOW.getFullYear(), 11, 21, 12));
+  const geo = L.geo.replace(/\s*[^.]*צאת השבת[^.]*\./g, '').trim();
+  const L1 = `${hours(S2.lo.len)} (${hdm(S2.lo.x.d)}, מ-${t(S2.lo.x.msh)} עד ${t(S2.lo.x.ss)})`;
+  const L2 = `${hours(S2.hi.len)} (${hdm(S2.hi.x.d)}, מ-${t(S2.hi.x.msh)} עד ${t(S2.hi.x.ss)})`;
 
   const qa = [
-    [`מאיזו שעה מניחים תפילין ${loc}?`, `ב-${date} אפשר להניח תפילין ${loc} מהמשיכיר, בשעה ${msh}. לדעת פוסקים מסוימים בדורנו, שמחשבים 66 דקות זמניות לפני הנץ, מ-${m66}. הדף מחשב את זה לכל יום.`],
-    [`עד מתי מניחים תפילין ${loc} היום?`, `עד השקיעה. ב-${date} השקיעה ${loc} ב-${set}. הכלי למעלה מראה כמה זמן נשאר.`],
-    [`מה זמן הנחת תפילין ${loc} בבוקר?`, `בבוקר מתחילים מהמשיכיר: ב-${date} ${msh}, כשעה וקצת לפני הנץ החמה שבשעה ${rise}.`],
-    [`מה זה משיכיר?`, `הזמן שבו אפשר להכיר אדם מוכר ממרחק קצר, ובו מתחיל זמן התפילין והציצית. ${loc} ב-${date}: ${msh}.`],
-    [`למה יש שני זמנים למשיכיר בדף?`, `הראשון הוא המשיכיר הרגיל, והשני הוא זמן מוקדם יותר לדעת פוסקים מסוימים בדורנו (66 דקות זמניות לפני הנץ). מי שרוצה לנהוג לפי הדעה השנייה, שישאל את הרב שלו.`],
-    [`אפשר לקבל תזכורת להנחת תפילין ${loc}?`, `כן. בכלי למעלה מגדירים תזכורת לפני השקיעה של ${c[1]}, או קובץ יומן לחצי שנה. הכול בחינם, בלי הרשמה ובלי פרסומות.`]
+    [`מאיזו שעה מניחים תפילין ${loc} היום?`, `ב-${date} אפשר ${loc} מהמשיכיר ב-${msh}, ולדעת פוסקים מסוימים בדורנו מ-${m66}. ליום אחר ${loc} יש לוח בדף.`],
+    [`עד מתי מניחים תפילין ${loc}?`, `עד השקיעה ${loc}: ב-${date} בשעה ${set}, ובמשך השנה בין ${t(Y.setE.ss)} ל-${t(Y.setL.ss)}.`],
+    [`מתי המשיכיר ${loc} הכי מוקדם ומתי הכי מאוחר?`, `הכי מוקדם ${loc} ב-${hdm(Y.mshE.d)}, בשעה ${t(Y.mshE.msh)}. הכי מאוחר ב-${hdm(Y.mshL.d)}, בשעה ${t(Y.mshL.msh)}.`],
+    [`כמה זמן יש ${loc} להניח תפילין ביום חורף קצר?`, `בין המשיכיר לשקיעה ${loc} יש ביום הקצר בשנה ${L1}, וביום הארוך ${L2}.`],
+    [`במה זמני התפילין ${loc} שונים מ${ref[1]}?`, `בסוף יוני ${june}. בסוף דצמבר ${dec}.`],
+    [`איך מקבלים תזכורת תפילין לפי ${c[1]}?`, `לוחצים בכלי על "יומן לחצי שנה לפי ${c[1]}" ופותחים את הקובץ בטלפון. כל תזכורת מחושבת לפי השקיעה ${loc} באותו יום, בחינם ובלי הרשמה.`]
   ];
   const meta = {
     site: 'kodesh', nav: 'rabanim', tool: 'tefillin_ir',
     title: `זמן הנחת תפילין ${c[1]} – משיכיר ושקיעה היום | כלי קודש`,
-    description: `זמן הנחת תפילין ${c[1]} להיום: מאיזו שעה (משיכיר) ועד מתי (שקיעה), עם ספירה לאחור, תזכורת לפני השקיעה וסדר הנחת תפילין מלא. בחינם, בלי הרשמה.`,
+    description: `זמן הנחת תפילין ${c[1]}: משיכיר ושקיעה להיום, טבלה לשנה שלמה, ספירה לאחור ותזכורת ביומן לפי השקיעה ${loc}. בחינם, בלי הרשמה.`,
     og_title: `זמן הנחת תפילין ${c[1]}`,
     priority: '0.6',
     crumbs: [['סדר הנחת תפילין', HOME], [c[1], null]],
-    head: HEAD + faqLd(qa), foot: FOOT
+    head: HEAD + TABLE_CSS + faqLd(qa), foot: FOOT
   };
-  const tool = TOOL.replace('<div class="tool tf-card" id="tf">', `<div class="tool tf-card" id="tf" data-place="${c[3]},${c[4]}" data-name="${c[1]}">`);
   const body = `<header class="k-hero">
   <h1>זמן הנחת תפילין ${c[1]}: מאיזו שעה ועד מתי</h1>
-  <p class="sub">משיכיר ושקיעה ${loc} להיום, כמה זמן נשאר להניח, תזכורת שלא מפספסת יום, והסדר המלא של ההנחה.</p>
+  <p class="sub">משיכיר ושקיעה ${loc} להיום, כמה זמן נשאר, תזכורת ולוח לשנה שלמה. בחינם, בלי הרשמה ובלי פרסומות.</p>
 </header>
-${tool}
+${tool(c)}
+<!--seo-txt-->
+<section class="k-sec seo-txt" aria-labelledby="seo-h">
+  <h2 id="seo-h">זמן תפילין ${c[1]} להיום, ${date}</h2>
+  <p>${loc} מניחים היום מ-<bdi>${msh}</bdi> (משיכיר) עד <bdi>${set}</bdi> (שקיעה), והנץ ${loc} ב-<bdi>${rise}</bdi>. לדעת פוסקים מסוימים בדורנו (66 דקות זמניות לפני הנץ) הזמן ${loc} מתחיל ב-<bdi>${m66}</bdi>, ומי שרוצה לסמוך על כך ישאל את הרב שלו.</p>
+  <h3>לוח זמני תפילין ${c[1]} לשנה</h3>
+  ${table(c)}
+  <p class="note">* מוקדם: לדעת פוסקים מסוימים בדורנו. הלוח של ${c[1]} מחושב בגובה פני הים.</p>
+  <h3>איך משתנה הזמן ${loc} במשך השנה</h3>
+  <p>המשיכיר ${loc} נע בין <bdi>${t(Y.mshE.msh)}</bdi> (${hdm(Y.mshE.d)}) לבין <bdi>${t(Y.mshL.msh)}</bdi> (${hdm(Y.mshL.d)}). השקיעה המוקדמת ביותר ${loc} היא ב-<bdi>${t(Y.setE.ss)}</bdi> (${hdm(Y.setE.d)}), והמאוחרת ביותר ב-<bdi>${t(Y.setL.ss)}</bdi> (${hdm(Y.setL.d)}). ביום הקצר יש ${loc} ${L1}, וביום הארוך ${L2}.</p>
+  <p>גם הנץ ${loc} משתנה: המוקדם ביותר ב-<bdi>${t(S2.rl.x.sr)}</bdi> (${hdm(S2.rl.x.d)}) והמאוחר ביותר ב-<bdi>${t(S2.rh.x.sr)}</bdi> (${hdm(S2.rh.x.d)}). מי שמתפלל ותיקין ${loc} מניח תפילין לפני הנץ, מהמשיכיר ואילך, ומוצא את שתי השעות של כל תקופה בלוח של ${c[1]}.</p>
+  <p>צאת הכוכבים ${loc} היום, ${date}, הוא ב-<bdi>${t(X.tz)}</bdi>. הזמנים ${loc} מתעדכנים בכלי שבראש הדף בכל יום מחדש, ואפשר לבחור בו מקום אחר או את המיקום שלכם.</p>
+  <h3>${c[1]}: המקום והשקיעה</h3>
+  <p>${geo}</p>
+  <h3>${c[1]} מול ${ref[1]}</h3>
+  <p>בקיץ, ב-21.6.${Y0}, ${june}. בחורף, ב-21.12.${NOW.getFullYear()}, ${dec}.</p>
+  <h3>ערים קרובות ל${c[1]}</h3>
+  <ul>
+    ${nearHtml}
+  </ul>
+  <p><a href="${HOME}">סדר הנחת תפילין המלא</a> · <a href="${ZM}${c[0]}/">זמני היום ${loc}</a> · <a href="${SHABAT}${c[0]}/">כניסת שבת ${loc}</a></p>
+</section>
+${faqHtml(qa)}
+<!--/seo-txt-->
 <section class="k-sec" aria-labelledby="tf-other-h">
   <h2 id="tf-other-h">זמן הנחת תפילין בערים נוספות</h2>
   ${chips(c[0])}
 </section>
-<!--seo-txt-->
-<section class="k-sec seo-txt" aria-labelledby="seo-h">
-  <h2 id="seo-h">${['זמן הנחת תפילין ' + c[1] + ' היום', 'מתי מניחים תפילין ' + loc, 'זמן תפילין ' + c[1] + ': משיכיר ושקיעה'][v(0)]}</h2>
-  <p>${intro}</p>
-  <h3>${['משיכיר ' + loc + ': מתי מתחיל הזמן', 'מאיזו שעה אפשר להניח ' + loc, 'המשיכיר ' + loc + ' במשך השנה'][v(1)]}</h3>
-  <p>${mshP}</p>
-  <h3>${['משיכיר לדעת פוסקים מסוימים בדורנו', 'הדעה המוקדמת: 66 דקות זמניות לפני הנץ', 'זמן מוקדם יותר לדעת פוסקים בדורנו'][v(2)]}</h3>
-  <p>${opP}</p>
-  <h3>${['עד מתי מניחים תפילין ' + loc, 'שקיעה ' + loc + ' ועד מתי להניח', 'הזמן האחרון להנחת תפילין ' + loc][v(3)]}</h3>
-  <p>${endP}</p>
-  <h3>${c[1]}: המקום</h3>
-  <p>${L.geo.replace(/s*[^.]*צאת השבת[^.]*./g,"").trim()}</p>
-  <h3>${c[1]} מול ירושלים והערים הקרובות</h3>
-  <p>${cmpTxt}. הערים הקרובות: ${nearHtml}.</p>
-  <h3>${['איך מחושבים הזמנים', 'מאיפה הזמנים', 'דיוק הזמנים'][v(4)]}</h3>
-  <p>${calcP} ${[`עוד: <a href="${HOME}">סדר הנחת תפילין המלא, עם הברכות והפרשיות</a>, <a href="${ZM}${c[0]}/">כל זמני היום ${loc}</a>, ו<a href="${SHABAT}${c[0]}/">כניסת שבת ${loc}</a>. הכול בחינם, בלי הרשמה ובלי פרסומות.`,
-    `לסדר ההנחה עצמו: <a href="${HOME}">ברכות התפילין, ארבע הפרשיות וקריאת שמע</a>. לזמנים נוספים: <a href="${ZM}${c[0]}/">זמני היום ${loc}</a>. ולשבת: <a href="${SHABAT}${c[0]}/">מתי נכנסת השבת ${loc}</a>. בחינם ובלי הרשמה.`,
-    `קשור: <a href="${HOME}">סדר הנחת תפילין שלב אחרי שלב</a>, <a href="${ZM}${c[0]}/">זמני היום ${loc}</a>, <a href="${SHABAT}${c[0]}/">זמני שבת ${loc}</a>. אין פרסומות ואין צורך להירשם.`][v(2)]}</p>
-</section>
-${faqHtml(qa)}
-<!--/seo-txt-->
 `;
   write(path.join(OUT, c[0]), meta, body);
 });
