@@ -696,8 +696,15 @@ NEWSBAR_HTML = ('<aside class="newsbar no-print" data-newsbar aria-label="החד
                 f'<a class="nb-bell" href="{NEWSBAR_URL}#nw-push" data-nb="bell" aria-label="לקבל התראה כשהסיכום יוצא">🔔<span class="nb-bell-t"> לקבל התראה</span></a></aside>')
 
 
+# דפים שבהם הפס העונתי (discover.js) מוטמע מיד אחרי פס החדשות, כדי שלא ידחוף את הכותרת אחרי הטעינה (CLS)
+HUB_INLINE = {"/kodesh/"}
+
+
 def news_bar(url_path):
-    return NEWSBAR_HTML if url_path in NEWSBAR_PAGES else ""
+    bar = NEWSBAR_HTML if url_path in NEWSBAR_PAGES else ""
+    if url_path in HUB_INLINE:
+        bar += "<script>" + (ROOT / "assets" / "discover.js").read_text(encoding="utf-8") + "</script>"
+    return bar
 
 
 CHESED_CODE = ('<details class="chesed-p"><summary>🤝 יש לי קוד שותף</summary><label>קוד השותף שקיבלתי '
@@ -1291,6 +1298,8 @@ for path in sorted(SRC.rglob("*.html")):
             site_pages[key].append(url_path)
     for k, v in rep.items():
         html = html.replace("{{" + k + "}}", v)
+    if url_path in HUB_INLINE:  # הסקריפט כבר מוטמע בראש התוכן: לא טוענים אותו פעם שנייה
+        html = html.replace('<script src="/assets/discover.js" defer></script>', "")
     for key in ["yerushalaim", "sipur", "hachana", "moed", "madrich", "kartis"]:
         html = html.replace("{{cur:" + key + "}}", ' aria-current="page"' if meta.get("nav") == key else "")
     if meta.get("manifest") or meta.get("manifest_of"):  # דף שמותקן כאפליקציה משלו (הגשר, הטרמפים): manifest נפרד ליד הדף
