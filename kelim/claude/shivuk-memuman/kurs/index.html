@@ -401,7 +401,7 @@
 <script>document.querySelectorAll('.km .ask').forEach(function(a){var b=document.createElement('button');b.type='button';b.className='btn btn-line';b.textContent='להעתיק את הבקשה';b.addEventListener('click',function(){var t=a.querySelector('.t').innerText;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent='הועתק ✓';if(window.gtag)gtag('event','memuman_copy_prompt',{prompt:a.id||''});setTimeout(function(){b.textContent='להעתיק את הבקשה'},2200)}).catch(function(){b.textContent='סמנו והעתיקו ידנית'})});a.appendChild(b)});</script>
 <script src="/assets/hakraa-daf.js?v=5b6fd0b2" defer></script>
 <script src="/assets/search.js?v=2cfdc150" defer></script>
-<script src="/assets/discover.js?v=5d955931" defer></script>
+<script src="/assets/discover.js?v=2f413188" defer></script>
 <script src="/assets/discover2.js?v=c51f41ae" defer></script>
 <script src="/assets/helper.js?v=1d550d2e" defer></script>
 </body>

@@ -34,6 +34,17 @@
   function links(n, src) {
     return S.tools.slice(0, n).map(function (t) { return '<a href="' + t.u + '" data-dc="' + src + '">' + esc(t.n) + '</a>'; }).join('');
   }
+  function hub() {
+    var path = location.pathname, bar = document.querySelector('.newsbar') || document.querySelector('main');
+    if ((path !== '/kodesh/' && path !== '/kodesh/index.html') || !bar || document.querySelector('.hk-thin')) return;
+    var d = document.createElement('div');
+    d.className = 'hk-season hk-thin no-print';
+    d.innerHTML = '<p class="hk-se-h"><span aria-hidden="true">' + S.emoji + '</span> <b>' + esc(S.name) + '</b> ' + links(3, 'hub') +
+      '<a class="hk-se-all" href="' + S.hub + '" data-dc="hub">עוד ←</a></p>';
+    if (bar.className.indexOf('newsbar') > -1) bar.parentNode.insertBefore(d, bar.nextSibling); else bar.insertBefore(d, bar.firstChild);
+  }
+  // בדף שבו הסקריפט מוטמע מיד אחרי פס החדשות (/kodesh/): הפס העונתי נכנס לפני הציור הראשון, בלי קפיצה
+  if (document.querySelector('.newsbar')) hub();
   function ready() {
     var path = location.pathname, home = document.getElementById('hk-season');
     if (home) {
@@ -41,16 +52,7 @@
       home.innerHTML = '<p class="hk-se-h"><span aria-hidden="true">' + S.emoji + '</span> <b>' + esc(S.name) + '</b> <span>' + esc(S.line) + '</span></p><p class="hk-se-l">' +
         links(6, 'home') + '<a class="hk-se-all" href="' + S.hub + '" data-dc="home">לכל כלי ' + esc(S.name) + ' ←</a></p>';
       home.hidden = false;
-    } else if (path === '/kodesh/' || path === '/kodesh/index.html') {
-      var bar = document.querySelector('.newsbar') || document.querySelector('main');
-      if (bar) {
-        var d = document.createElement('div');
-        d.className = 'hk-season hk-thin no-print';
-        d.innerHTML = '<p class="hk-se-h"><span aria-hidden="true">' + S.emoji + '</span> <b>' + esc(S.name) + '</b> ' + links(3, 'hub') +
-          '<a class="hk-se-all" href="' + S.hub + '" data-dc="hub">עוד ←</a></p>';
-        if (bar.className.indexOf('newsbar') > -1) bar.parentNode.insertBefore(d, bar.nextSibling); else bar.insertBefore(d, bar.firstChild);
-      }
-    }
+    } else hub();
     var card = document.querySelector('.rel-v2 .rc[data-slot="new"]');
     if (card && path.indexOf(S.hub) !== 0) {
       var t = S.tools[0], cur = card.querySelector('a');
