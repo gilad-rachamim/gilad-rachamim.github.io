@@ -113,11 +113,20 @@ body[data-tool="rega"] .rel{display:none}
 .newsbar .nb-txt b{color:var(--gold)}
 .newsbar .nb-ed{color:var(--muted)}
 .newsbar .nb-sub{display:block;color:var(--muted);font-size:.86rem}
+.newsbar .nb-ed::before{content:"– "}
 .newsbar .nb-go{color:var(--gold);margin-inline-start:auto}
 .newsbar .nb-bell{border:1px solid var(--gold-soft);border-radius:99px;padding:.3rem .8rem;color:var(--gold);font-size:.88rem;min-height:2.75rem;display:inline-flex;align-items:center;white-space:nowrap}
 .newsbar .nb-bell{flex:0 0 auto;justify-content:center;min-width:2.75rem}
-@media (max-width:560px){.newsbar .nb-bell-t{display:none}.newsbar .nb-go{display:none}}
+/* גובה קבוע בטלפון (26.11.2026, CLS): שלוש שורות שלא נשברות, כך שמילוי שם המהדורה והחלפת הגופן לא מזיזים את הדף */
+@media (max-width:560px){.newsbar .nb-bell-t,.newsbar .nb-go{display:none}.newsbar .nb-txt{flex:1 1 0}.newsbar .nb-txt>*{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.newsbar .nb-ed::before{content:none}}
+@media (max-width:359px){.newsbar .nb-ic{display:none}}
 .newsbar a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* גופנים בלי קפיצות (26.11.2026, CLS): לטקסט של הדף – font-display:optional יחד עם preload בתבנית, כך שהגופן לא מוחלף אחרי שהדף כבר צויר.
+   שמות נפרדים בכוונה: "Assistant" ו-"Frank Ruhl Libre" נשארים swap בשביל הכלים שמציירים תמונות על canvas. */
+@font-face{font-family:"Assistant UI";src:url("fonts/Assistant-wght.woff") format("woff");font-weight:200 800;font-display:optional}
+@font-face{font-family:"Frank Ruhl UI";src:url("fonts/FrankRuhlLibre-wght.woff") format("woff");font-weight:300 900;font-display:optional}
+body[data-site]{--sans:"Assistant UI",system-ui,sans-serif;--serif:"Frank Ruhl UI","David Libre",serif}
 
 /* "עוד כלים שיעזרו לכם" v2: שישה כרטיסים */
 .rel-v2 .dom{display:grid;grid-template-columns:repeat(auto-fill,minmax(14rem,1fr));gap:.7rem}
