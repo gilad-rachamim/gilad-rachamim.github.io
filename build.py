@@ -675,7 +675,7 @@ NEWSBAR_PAGES = {"/kelim/", "/kodesh/", "/kelim/tamlul/", "/kodesh/mohalim/", "/
 NEWSBAR_URL = "/kelim/machshev/chadashot/?utm_source=home"
 NEWSBAR_HTML = ('<aside class="newsbar no-print" data-newsbar aria-label="החדשות ב-3 דקות">'
                 f'<a class="nb-main" href="{NEWSBAR_URL}" data-nb="open"><span class="nb-ic" aria-hidden="true">📰</span>'
-                '<span class="nb-txt"><b>החדשות ב-3 דקות</b> <span class="nb-ed" data-nb-ed>– המהדורה האחרונה</span>'
+                '<span class="nb-txt"><b>החדשות ב-3 דקות</b> <span class="nb-ed" data-nb-ed>המהדורה האחרונה</span>'
                 '<span class="nb-sub">5 נקודות רגועות, 3 פעמים ביום</span></span><span class="nb-go" aria-hidden="true">←</span></a>'
                 f'<a class="nb-bell" href="{NEWSBAR_URL}#nw-push" data-nb="bell" aria-label="לקבל התראה כשהסיכום יוצא">🔔<span class="nb-bell-t"> לקבל התראה</span></a></aside>')
 

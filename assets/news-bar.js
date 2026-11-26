@@ -8,7 +8,7 @@
   var KEY = 'kelim_newsbar', API = 'https://kelim-news.gilad4049.workers.dev/history';
   function fill(e) {
     if (!e || !e.name) return;
-    bar.querySelector('[data-nb-ed]').textContent = '– סיכום ' + e.name + ', ' + (e.time || '');
+    bar.querySelector('[data-nb-ed]').textContent = 'סיכום ' + e.name + ', ' + (e.time || '');
   }
   var c = null;
   try { c = JSON.parse(sessionStorage.getItem(KEY)); } catch (x) {}
