@@ -91,6 +91,9 @@ def strip_page(h, brand, tool_path, tool_slug):
     h = re.sub(r"<nav class=\"crumbs\".*?</nav>", "", h, flags=re.S)
     h = re.sub(r"<div class=\"chesed[^\"]*\"[^>]*>.*?</div>", "", h, flags=re.S)
     h = re.sub(r"<section class=\"k-sec dv-sec.*?</section>", "", h, flags=re.S)  # סרטון הדגמה של האתר
+    h = re.sub(r"<div class=\"k-promo\"[^>]*></div>", "", h)  # סרטון קצר בראש הכלי
+    h = re.sub(r"<link rel=\"stylesheet\" href=\"/assets/promo-video\.css[^\"]*\">", "", h)
+    h = re.sub(r"<script src=\"/assets/promo-video\.js[^\"]*\" defer></script>", "", h)
     # מהסוף של הכלי עד סוף main: וידאו, טקסט SEO, שאלות ותשובות, כלים קשורים
     end = h.find("</main>")
     cuts = [i for i in (h.find("<style>.dv-sec"), h.find('<section class="k-sec seo-txt"')) if 0 < i < end]
