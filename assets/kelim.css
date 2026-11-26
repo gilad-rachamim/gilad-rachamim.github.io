@@ -157,3 +157,20 @@ body[data-site]{--sans:"Assistant UI",system-ui,sans-serif;--serif:"Frank Ruhl U
 
 /* מסך צר מאוד (26.11.2026): בלי גלישה אופקית בתפריט העליון */
 @media (max-width:380px){body.site-kelim .topbar .in{gap:.4rem;padding-inline:.7rem}body.site-kelim .brand{gap:.4rem}body.site-kelim .brand b{font-size:.9rem}}
+
+/* תפריט עליון במסך צר (26.11.2026): שורה משלו עם מטרות לחיצה של 44px. היא נגללת עם הדף,
+   והשורה של השם והחיפוש נשארת דביקה באותו גובה כמו קודם (כדי לא להסתיר אלמנטים דביקים אחרים). */
+@media (max-width:760px){
+  body .topbar{top:-45px}
+  body .topbar .in{flex-wrap:wrap;row-gap:.55rem;padding-top:0}
+  body .topbar .topnav{order:-1;flex:0 0 100%;min-width:0;height:44px;margin:0;gap:0;border-bottom:1px solid var(--line);box-sizing:content-box;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain}
+  body .topbar .topnav a{flex:1 0 auto;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-width:44px;min-height:44px;padding:0 .4rem;font-size:.86rem;border-radius:10px;white-space:nowrap}
+  body .topbar .topnav a:focus-visible{outline-offset:-3px!important;box-shadow:none}
+  body .topbar .topnav .brand-sub{flex:0 0 auto;height:auto;padding:0 .7rem}
+  body .topbar .brand{flex:1 1 0;min-width:0}
+  body .topbar .brand b{min-width:0;white-space:normal;line-height:1.15;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+  body .topbar .hkd-top{min-height:44px;min-width:44px;justify-content:center}
+}
+@media (max-width:340px){body .topbar .topnav a{font-size:.8rem;padding:0 .25rem}}
+/* שם המיזם תמיד בשתי שורות במסך צר, כדי שהחלפת הגופן לא תזיז אותו */
+@media (max-width:480px){body .topbar .brand b{max-width:9em}}

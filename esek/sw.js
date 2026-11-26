@@ -1,8 +1,8 @@
 // service worker של תת-אתר בהכלים של גילעד רחמים (נוצר ע"י build.py, לא לערוך את העותק בתיקיית האתר).
 // דפים: קודם רשת, ואם אין אינטרנט – מהשמור. קבצים קבועים (css/js/גופנים): קודם שמור.
 // בקשות לשרתים אחרים (התמלול, גוגל) לא נוגעים בהן.
-var CACHE = 'esek-202611262059';
-var PRECACHE = ["/esek/hazmana-vatsap/", "/esek/", "/esek/misadot/", "/esek/mivtza/", "/esek/ptiha/", "/esek/qr/", "/esek/seo/", "/esek/tafrit/", "/esek/tfutsa/", "/esek/tmchur-mana/", "/assets/site.css?v=ca47a812", "/assets/kelim.css?v=d49652da", "/assets/kelim.js?v=f769fb8d", "/assets/hakraa-daf.js?v=5b6fd0b2", "/assets/track.js?v=ca51c9e7", "/assets/discover.js?v=5d955931", "/assets/discover2.js?v=c51f41ae", "/assets/helper.js?v=1d550d2e", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-esek-192.png", "/assets/esek.css?v=063395ce"];
+var CACHE = 'esek-202611262157';
+var PRECACHE = ["/esek/hazmana-vatsap/", "/esek/", "/esek/misadot/", "/esek/mivtza/", "/esek/ptiha/", "/esek/qr/", "/esek/seo/", "/esek/tafrit/", "/esek/tfutsa/", "/esek/tmchur-mana/", "/assets/site.css?v=ca47a812", "/assets/kelim.css?v=3bcbad15", "/assets/kelim.js?v=f769fb8d", "/assets/hakraa-daf.js?v=5b6fd0b2", "/assets/track.js?v=ca51c9e7", "/assets/discover.js?v=5d955931", "/assets/discover2.js?v=c51f41ae", "/assets/helper.js?v=1d550d2e", "/assets/fonts/FrankRuhlLibre-wght.woff", "/assets/fonts/Assistant-wght.woff", "/assets/icon-esek-192.png", "/assets/esek.css?v=063395ce"];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).catch(function () {}).then(function () { return self.skipWaiting(); }));
 });
