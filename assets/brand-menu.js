@@ -37,7 +37,7 @@
       } else {
         row.appendChild(el("span", "bm-pr" + (it.p == null ? " q" : ""), it.p == null ? "מחיר בתיאום" : nis(it.p)));
         var a = el("button", "bm-add", "+"); a.type = "button"; a.setAttribute("aria-label", "להוסיף " + it.n + " להזמנה");
-        a.addEventListener("click", function () { add({ n: it.n, s: "", tops: [], price: it.p || 0, np: it.p == null }); toast(a); });
+        a.addEventListener("click", function () { if (sec.extras) return extras(sec, it); add({ n: it.n, s: "", tops: [], price: it.p || 0, np: it.p == null }); toast(a); });
         row.appendChild(a);
       }
       card.appendChild(row);
@@ -95,6 +95,33 @@
     upd(); sh.appendChild(go); open();
   }
 
+  // תוספות למנה במחיר אחד (section.extras): קבוצה עם one=true היא בחירה אחת מתוך כמה
+  function extras(sec, it) {
+    var chosen = [];
+    head(it.n + " · " + nis(it.p), "בוחרים וממשיכים.");
+    var go = el("button", "bm-go"); go.type = "button";
+    function total() { return it.p + chosen.reduce(function (s, c) { return s + c.p; }, 0); }
+    function upd() { go.textContent = "להוסיף להזמנה · " + nis(total()); }
+    sec.extras.forEach(function (g, gi) {
+      sh.appendChild(el("h4", "", g.title));
+      var w = el("div", "bm-ch");
+      g.items.forEach(function (x, xi) {
+        var lb = el("label"), cb = el("input"); cb.type = g.one ? "radio" : "checkbox"; cb.name = "x" + gi;
+        var c = { n: x.n, p: x.p, g: gi };
+        if (g.one && !xi) { cb.checked = true; chosen.push(c); }
+        cb.addEventListener("change", function () {
+          chosen = chosen.filter(function (o) { return g.one ? o.g !== gi : !(o.g === gi && o.n === x.n); });
+          if (cb.checked) chosen.push(c);
+          upd();
+        });
+        lb.appendChild(cb); lb.appendChild(el("span", "", x.n + (x.p ? " +" + nis(x.p) : ""))); w.appendChild(lb);
+      });
+      sh.appendChild(w);
+    });
+    go.addEventListener("click", function () { add({ n: it.n, s: "", tops: chosen.map(function (c) { return c.n; }), price: total(), x: true }); close(); });
+    upd(); sh.appendChild(go); open();
+  }
+
   // ---------- עגלה ----------
   function key(o) { return o.n + "|" + o.s + "|" + o.tops.join(","); }
   function add(o) {
@@ -124,7 +151,7 @@
     cart.forEach(function (c) {
       var ln = el("div", "bm-ln"), t = el("div", "t");
       t.appendChild(el("b", "", c.n + (c.s ? " · " + c.s : "")));
-      if (c.tops.length) t.appendChild(el("small", "", "תוספות: " + c.tops.join(", ")));
+      if (c.tops.length) t.appendChild(el("small", "", (c.x ? "" : "תוספות: ") + c.tops.join(", ")));
       ln.appendChild(t);
       var q = el("div", "bm-q");
       var m = el("button", "", "−"); m.type = "button"; m.setAttribute("aria-label", "להפחית " + c.n);
