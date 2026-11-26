@@ -269,6 +269,7 @@
     var els = main.querySelectorAll('pre,div,section,table,figure,ul,ol,p');
     for (var i = 0; i < els.length; i++) {
       var el = els[i]; if (el.hasAttribute('tabindex')) continue;
+      if (el.checkVisibility && !el.checkVisibility({ contentVisibilityAuto: true })) continue; // מקטע שעוד לא צויר (content-visibility): לא מכריחים חישוב פריסה, נסרק כשיופיע
       var cs = getComputedStyle(el), sc = /(auto|scroll)/, pre = el.tagName === 'PRE' && (sc.test(cs.overflowX) || sc.test(cs.overflowY));
       if (!pre && !(sc.test(cs.overflowX) && el.scrollWidth > el.clientWidth + 1) && !(sc.test(cs.overflowY) && el.scrollHeight > el.clientHeight + 1)) continue;
       if (el.querySelector(FOC)) continue;
@@ -278,6 +279,7 @@
   }
   var t; function later() { clearTimeout(t); t = setTimeout(scan, 400); }
   window.addEventListener('load', later); window.addEventListener('resize', later);
+  document.addEventListener('contentvisibilityautostatechange', later, true);
   if (window.MutationObserver) new MutationObserver(later).observe(main, { childList: true, subtree: true });
 })();
 
