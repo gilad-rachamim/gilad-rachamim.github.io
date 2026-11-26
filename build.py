@@ -794,7 +794,7 @@ def demo_block(meta, url):
                    '<a href="/kelim/#truma">רעיון, תוכן או עזרה בהפצה</a>, או <a href="/kelim/#litmoch">שותפות במיזם</a>.') + '</p>')
     # "replace_demo" ב-madrichim.json: מדריך היוטיוב מחליף את סרטון ההדגמה הישן בדף הכלי; הפרוספקט לשיתוף נשאר
     mdr = MADRICHIM.get(tool) or {}
-    old = not (mdr.get("replace_demo") and not meta.get("lang") and BASE + mdr.get("page", "") == url)
+    old = not (mdr.get("replace_demo") and mdr.get("youtube") and not meta.get("lang") and BASE + mdr.get("page", "") == url)
     video = (
         f'<video class="dv-video{' dv-wide' if wide else ''}" controls playsinline preload="none" poster="{poster}" width="{1280 if wide else 720}" height="{720 if wide else 1280}" aria-label="{html_lib.escape(spec.get("description", name))}" data-dv-play="{tool}">'
         f'<source src="{v}" type="video/mp4"></video>'
@@ -842,7 +842,7 @@ def mdr_time(sec):
 def madrich_block(meta, url):
     tool = meta.get("tool", "")
     m = MADRICHIM.get(tool)
-    if not m or meta.get("lang") or BASE + m["page"] != url:  # רק בדף הראשי של הכלי, לא בדפים אחרים עם אותו tool
+    if not m or not m.get("youtube") or meta.get("lang") or BASE + m["page"] != url:  # רק בדף הראשי של הכלי, לא בדפים אחרים עם אותו tool
         return "", "", ""
     e = html_lib.escape
     vid, title, name, dur = m["youtube"], m["title"], m["name"], m["duration"]
