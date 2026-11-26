@@ -111,6 +111,18 @@ def strip_page(h, brand, tool_path, tool_slug):
     h = re.sub(r"<link rel=\"(manifest|apple-touch-icon|icon)\"[^>]*>", "", h)
     h = re.sub(r"<meta name=\"robots\"[^>]*>", "", h)
     h = re.sub(r"<link rel=\"stylesheet\" href=\"/assets/search\.css[^\"]*\">", "", h)
+    h = re.sub(r"<aside class=\"newsbar.*?</aside>", "", h, flags=re.S)  # פס החדשות של האתר
+    h = re.sub(r"<script src=\"/assets/(news-bar|kurs)\.js[^\"]*\" defer></script>\s*", "", h)
+    if tool_path.strip("/") == "kelim/tamlul":  # בלי הבוט, הקישורים והסיפור של האתר אצל לקוחות העסק
+        h = h.replace('<div id="tl-text"', '<div id="tl-text" data-brand-result')  # בוואטסאפ נשלח התמלול עצמו
+        h = re.sub(r"<div class=\"panel tl-bot\".*?</a>\s*</div>", "", h, flags=re.S)
+        h = re.sub(r"<section class=\"k-sec\"[^>]*aria-labelledby=\"tl-lefi\">.*?</section>", "", h, flags=re.S)
+        h = re.sub(r"<li><strong>למה זה חינם</strong>.*?</li>", "", h, flags=re.S)
+        h = re.sub(r"<div class=\"share-row\">.*?</div>", "", h, flags=re.S)
+        h = re.sub(r"<div data-install-wrap.*?</p>\s*</div>", "", h, flags=re.S)
+        h = re.sub(r"(<p class=\"note\">התמלול בחינם ובלי הגבלה\. לחצו להמשיך ותמללו כמה שצריך\.)[^<]*(</p>)", r"\g<1>\g<2>", h)
+        h = re.sub(r"(data-unlimited>[^<]*</a>).*?(</div>)", r"\g<1>\g<2>", h, flags=re.S)
+        h = re.sub(r"(id=\"tl-(?:alon|shavua)\")", r"\g<1> hidden", h)
     return h
 
 
@@ -220,7 +232,7 @@ def write_hub(out, slug, cfg, made, mode, logo_url, v):
     (out / "index.html").write_text(h, encoding="utf-8")
 
 
-LABELS = {"kesef/pidyon-chufsha": "מחשבון פדיון חופשה", "kesef/dmey-havraa": "מחשבון דמי הבראה", "kesef/shaot-nosafot": "מחשבון שעות נוספות", "kesef/zchuyot-pitorin": "מחשבון זכויות בפיטורין", "kesef/hodaa-mukdemet": "מחשבון הודעה מוקדמת", "kesef/pitzuyim-shaati": "מחשבון פיצויי פיטורין לעובד שעתי", "esek/tafrit": "תפריט דיגיטלי עם QR", "esek/tmchur-mana": "מחשבון תמחור מנה", "esek/hazmana-vatsap": "קישור הזמנה בוואטסאפ", "kesef/pitzuyim-pitorin": "מחשבון פיצויי פיטורין", "kesef/hechzer": "בדיקת החזר מס", "kelim/cheshbon/mikdamot": "מחשבון מקדמות מס הכנסה"}
+LABELS = {"kelim/tamlul": "תמלול הקלטות", "kesef/pidyon-chufsha": "מחשבון פדיון חופשה", "kesef/dmey-havraa": "מחשבון דמי הבראה", "kesef/shaot-nosafot": "מחשבון שעות נוספות", "kesef/zchuyot-pitorin": "מחשבון זכויות בפיטורין", "kesef/hodaa-mukdemet": "מחשבון הודעה מוקדמת", "kesef/pitzuyim-shaati": "מחשבון פיצויי פיטורין לעובד שעתי", "esek/tafrit": "תפריט דיגיטלי עם QR", "esek/tmchur-mana": "מחשבון תמחור מנה", "esek/hazmana-vatsap": "קישור הזמנה בוואטסאפ", "kesef/pitzuyim-pitorin": "מחשבון פיצויי פיטורין", "kesef/hechzer": "בדיקת החזר מס", "kelim/cheshbon/mikdamot": "מחשבון מקדמות מס הכנסה"}
 
 
 def write_embed(src, slug, cfg, made):
