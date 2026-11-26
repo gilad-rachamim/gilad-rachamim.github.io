@@ -154,6 +154,8 @@ body[data-site]{--sans:"Assistant UI",system-ui,sans-serif;--serif:"Frank Ruhl U
 
 /* ביצועים בנייד (26.11.2026): מקטעים שמתחת לקפל לא מחושבים עד שמתקרבים אליהם בגלילה */
 @media screen{main>.seo-txt,main>.seo-faq,body>.site-foot{content-visibility:auto;contain-intrinsic-size:auto 60rem}}
+/* עמוד הכלים (27.11.2026): טקסט ההסבר גבוה מההערכה, והקישורים שבו "כיסו" את כותרות השאלות בבדיקת הנגישות */
+@media screen{body[data-tool="kelim_home"]>main>.seo-txt{content-visibility:visible}}
 
 /* מסך צר מאוד (26.11.2026): בלי גלישה אופקית בתפריט העליון */
 @media (max-width:380px){body.site-kelim .topbar .in{gap:.4rem;padding-inline:.7rem}body.site-kelim .brand{gap:.4rem}body.site-kelim .brand b{font-size:.9rem}}
