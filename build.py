@@ -641,7 +641,9 @@ def mapa_html():
     if rest:
         out.append('<section class="mp-site" aria-labelledby="m-od"><h2 id="m-od">עוד דפים</h2><ul class="mp-list">'
                    + "".join(f'<li><a href="{u}">{html_lib.escape(n, quote=False)}</a></li>' for u, n in rest) + "</ul></section>")
-    return f'<p class="mp-count">{len(items)} דפים באתר, כולם בחינם.</p>\n' + "\n".join(out)
+    fresh = ('<section class="mp-site" aria-labelledby="m-new"><h2 id="m-new">חדש באתר</h2><ul class="mp-list">'
+             + "".join(f'<li><a href="{u}">{html_lib.escape(names.get(u, n), quote=False)}</a></li>' for u, n, _ in latest_pages()) + "</ul></section>")
+    return f'<p class="mp-count">{len(items)} דפים באתר, כולם בחינם.</p>\n' + fresh + "\n" + "\n".join(out)
 
 # ---------- "בחינם, ללא הגבלה ובלי פרסומות": פס קטן בראש כל דף בתתי-האתרים ----------
 # גילעד (11.11.2026): "אצלי זה גם בחינם גם ללא הגבלה וגם בלי פרסומות!! רק מרצון של חסד!!"
@@ -1154,11 +1156,35 @@ def write_discover2():
     if len(js.encode("utf-8")) > 14336:
         raise SystemExit("discover2.js גדול מ-14KB")
 write_discover2()
+def latest_pages(n=10):
+    """n הדפים העבריים האחרונים שנוספו לאתר (לפי git), עד 2 מאותה תיקייה, בלי ארכיון החדשות היומי ובלי דפים רגישים."""
+    added, today, rows = _git_added(), datetime.date.today().isoformat(), []
+    for _p in sorted(SRC.rglob("*.html")):
+        _raw = _p.read_text(encoding="utf-8")
+        _m = re.match(r"\s*<!--meta\s*(\{.*?\})\s*-->", _raw, re.S)
+        if not _m:
+            continue
+        meta = json.loads(_m.group(1))
+        rel = _p.relative_to(SRC).as_posix()
+        u = "/" + (rel[:-len("index.html")] if rel.endswith("index.html") else rel)
+        if (not in_sitemap(meta) or meta.get("no_mapa") or meta.get("lang") or u.startswith("/mohel/") or "/chadashot/archion/" in u
+                or re.search(r"^/nefesh/|azkara|avel|shiva|levaya|kadish|rega|tmicha", u)):
+            continue
+        rows.append((added.get("src/pages/" + rel, today), u, meta))
+    out, per = [], {}
+    for _d, u, meta in sorted(rows, key=lambda r: (r[0], r[1]), reverse=True):
+        parent = u.rstrip("/").rsplit("/", 1)[0]
+        if per.get(parent, 0) < 2:
+            per[parent] = per.get(parent, 0) + 1
+            out.append((u, re.split(r"\s\|\s", meta["title"])[0].split(":")[0].split(" – ")[0].strip(), meta.get("description") or ""))
+        if len(out) == n:
+            break
+    return out
+
 def chadash_html():
-    out = catalog()[1]
-    fresh = sorted((x for x in out if x["ty"] == "tool" and x["l"] == "he" and not x["sf"] and x["nw"]), key=lambda x: (x["nw"], x["u"]), reverse=True)[:6]
-    cards = "".join('<a href="%s"><span class="badge">חדש</span><b>%s</b><span>%s</span></a>' % (x["u"], html_lib.escape(x["n"].split(":")[0].split(",")[0].strip(), quote=False), html_lib.escape(x["d"][:100], quote=False)) for x in fresh)
-    return '<p class="lead2">הכלים החדשים ביותר באתר:</p><div class="dom">' + cards + '</div>'
+    cards = "".join('<a href="%s"><span class="badge">חדש</span><b>%s</b><span>%s</span></a>' % (u, html_lib.escape(name, quote=False), html_lib.escape(d[:100], quote=False)) for u, name, d in latest_pages())
+    return '<p class="lead2">10 הדפים שנוספו לאחרונה:</p><div class="dom">' + cards + '</div>'
+
 pages = []
 TOOLS_JSON = []
 site_pages = {k: [] for k in SITES}
@@ -1361,7 +1387,7 @@ for url, pr, path in pages:
     sm.append(f"  <url><loc>{url}</loc><lastmod>{lastmod(path)}</lastmod><priority>{pr}</priority></url>")
 sm.append("</urlset>")
 (ROOT / "sitemap.xml").write_text("\n".join(sm) + "\n", encoding="utf-8")
-(ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /mohel/todah/\nSitemap: {BASE}/sitemap.xml\n", encoding="utf-8", newline="\n")
+(ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /mohel/todah/\nDisallow: /kelim/apps/*.apk\nSitemap: {BASE}/sitemap.xml\n", encoding="utf-8", newline="\n")
 print("sitemap:", len(pages), "pages")
 # ---------- אינדקס חיפוש לכל האתר (assets/search-index.json) – נוצר בכל build, נטען בחיפוש שבראש כל דף ----------
 def write_search_index():

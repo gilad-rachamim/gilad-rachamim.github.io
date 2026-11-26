@@ -305,11 +305,13 @@
   if (!/^(ash|sf|em)$/.test(st.minhag)) st.minhag = nst.n === 'em' ? 'em' : 'ash';
   function napply() { nst.n = st.minhag === 'ash' ? 'ash' : 'em'; paper.setAttribute('data-nusach', nst.n); paper.setAttribute('data-minhag', st.minhag); paper.style.setProperty('--fs', nst.fs + 'rem'); seg.forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-set-m') === st.minhag ? 'true' : 'false'); }); [].slice.call(document.querySelectorAll('[data-sid]')).forEach(function (a) { a.hidden = a.getAttribute('data-sid') !== nst.n && a.getAttribute('data-sid') !== 'all'; }); }
   function nsave() { try { var bk = JSON.parse(localStorage.getItem('kodesh-boker') || '{}') || {}; bk.n = nst.n; bk.fs = nst.fs; localStorage.setItem('kodesh-boker', JSON.stringify(bk)); } catch (e) {} }
-  seg.forEach(function (b) { b.addEventListener('click', function () { st.minhag = b.getAttribute('data-set-m'); napply(); nsave(); save(); used('minhag-' + st.minhag); }); });
-  $('bk-plus').addEventListener('click', function () { nst.fs = Math.min(2.4, +(nst.fs + 0.15).toFixed(2)); napply(); nsave(); });
-  $('bk-minus').addEventListener('click', function () { nst.fs = Math.max(1, +(nst.fs - 0.15).toFixed(2)); napply(); nsave(); });
-  $('bk-dark').addEventListener('click', function () { var on = !paper.classList.contains('dark'); paper.classList.toggle('dark', on); this.setAttribute('aria-pressed', on ? 'true' : 'false'); });
-  napply();
+  if (paper) { // בדפי העיר אין את הסדר עצמו
+    seg.forEach(function (b) { b.addEventListener('click', function () { st.minhag = b.getAttribute('data-set-m'); napply(); nsave(); save(); used('minhag-' + st.minhag); }); });
+    $('bk-plus').addEventListener('click', function () { nst.fs = Math.min(2.4, +(nst.fs + 0.15).toFixed(2)); napply(); nsave(); });
+    $('bk-minus').addEventListener('click', function () { nst.fs = Math.max(1, +(nst.fs - 0.15).toFixed(2)); napply(); nsave(); });
+    $('bk-dark').addEventListener('click', function () { var on = !paper.classList.contains('dark'); paper.classList.toggle('dark', on); this.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+    napply();
+  }
   var wakeBtn = $('bk-wake');
   if ('wakeLock' in navigator && wakeBtn) {
     var wl = null, want = false; wakeBtn.hidden = false;
