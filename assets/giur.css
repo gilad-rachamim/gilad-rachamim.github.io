@@ -67,7 +67,7 @@ html[lang=ru] .gr-lang::before{content:"Эта страница на трёх я
 .mm-form textarea{resize:vertical}
 .mm-offer{border:1px solid var(--line);border-radius:12px;padding:.6rem .9rem;margin:0;display:grid;gap:.1rem}
 .mm-offer legend{color:var(--gold-hi);font-weight:700;padding:0 .3rem}
-.mm-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.mm-hp{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}
 .mm-done{padding:1.1rem;border-radius:14px;background:rgba(95,191,166,.12);border:1px solid rgba(95,191,166,.4);color:var(--cream);line-height:1.6;outline:0}
 .mm-done .num{display:block;font-family:var(--serif);font-size:2rem;color:var(--gold-hi);margin:.2rem 0}
 .mm-total{font-size:1.15rem;color:var(--cream)}.mm-total b{font-family:var(--serif);font-size:2rem;color:var(--gold-hi)}

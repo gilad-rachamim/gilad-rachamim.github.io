@@ -119,7 +119,7 @@ body.focus-mode .topbar,body.focus-mode .site-foot,body.focus-mode .crumbs,body.
 .ded-by{color:var(--muted);margin-top:.6rem}
 .seg2{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
 .seg2 label{cursor:pointer}
-.seg2 input{position:absolute;opacity:0}
+.seg2 input{position:absolute;opacity:0;width:1px;height:1px}
 .seg2 span{display:grid;gap:.15rem;height:100%;padding:.7rem .75rem;border:1px solid var(--line);border-radius:14px;color:var(--body)}
 .seg2 span b{color:var(--cream);font-size:1rem;line-height:1.3}
 .seg2 span small{color:var(--muted);font-size:.85rem}

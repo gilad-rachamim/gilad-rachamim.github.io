@@ -16,7 +16,7 @@
   <url><loc>https://hakelim.com/esek/mivtza/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/esek/ptiha/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/esek/qr/</loc><lastmod>2026-11-14</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/esek/seo/</loc><lastmod>2026-11-14</lastmod><priority>0.9</priority></url>
+  <url><loc>https://hakelim.com/esek/seo/</loc><lastmod>2026-11-26</lastmod><priority>0.9</priority></url>
   <url><loc>https://hakelim.com/esek/tafrit/</loc><lastmod>2026-11-24</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/esek/tfutsa/</loc><lastmod>2026-11-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/esek/tmchur-mana/</loc><lastmod>2026-11-24</lastmod><priority>0.8</priority></url>
@@ -293,7 +293,7 @@
   <url><loc>https://hakelim.com/kelim/miluim/</loc><lastmod>2026-11-26</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/miluim/ru/</loc><lastmod>2026-11-26</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/miluim/tziyud/</loc><lastmod>2026-11-24</lastmod><priority>0.7</priority></url>
-  <url><loc>https://hakelim.com/kelim/miluim/yamim/</loc><lastmod>2026-11-24</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kelim/miluim/yamim/</loc><lastmod>2026-11-26</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/mismachim-leroe-cheshbon/</loc><lastmod>2026-11-24</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/negishut/ani-lo-robot/</loc><lastmod>2026-11-23</lastmod><priority>0.9</priority></url>
   <url><loc>https://hakelim.com/kelim/negishut/ani-lo-robot/nvda/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
@@ -437,7 +437,7 @@
   <url><loc>https://hakelim.com/kelim/shir/ulpan/</loc><lastmod>2026-11-15</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kelim/shutafim/</loc><lastmod>2026-11-25</lastmod><priority>0.5</priority></url>
   <url><loc>https://hakelim.com/kelim/tamlul/</loc><lastmod>2026-11-26</lastmod><priority>0.9</priority></url>
-  <url><loc>https://hakelim.com/kelim/tamlul/nahalat-avot/</loc><lastmod>2026-11-23</lastmod><priority>0.6</priority></url>
+  <url><loc>https://hakelim.com/kelim/tamlul/nahalat-avot/</loc><lastmod>2026-11-26</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kelim/tamlul/shiur/</loc><lastmod>2026-11-14</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/tamlul/sicha/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/tamlul/sirton/</loc><lastmod>2026-11-22</lastmod><priority>0.7</priority></url>
@@ -457,7 +457,7 @@
   <url><loc>https://hakelim.com/kelim/tichnut/mehirut/</loc><lastmod>2026-11-22</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/tichnut/miunim/</loc><lastmod>2026-11-22</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/tichnut/occupancy/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
-  <url><loc>https://hakelim.com/kelim/tichnut/pkudot/</loc><lastmod>2026-11-22</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kelim/tichnut/pkudot/</loc><lastmod>2026-11-26</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/tichnut/reayon-tech/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/tichnut/regex/</loc><lastmod>2026-11-22</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kelim/tichnut/shgiot/</loc><lastmod>2026-11-22</lastmod><priority>0.7</priority></url>
@@ -581,8 +581,8 @@
   <url><loc>https://hakelim.com/kodesh/chanuka/chesed/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/chanuka/chidon/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/chanuka/chufsha/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
-  <url><loc>https://hakelim.com/kodesh/chanuka/en/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kodesh/chanuka/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/chanuka/en/</loc><lastmod>2026-11-26</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/chanuka/</loc><lastmod>2026-11-26</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/chanuka/kniyot/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/chanuka/matkonim/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/chanuka/megila/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
@@ -592,20 +592,20 @@
   <url><loc>https://hakelim.com/kodesh/chanuka/mischakim/pazel/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/chanuka/mischakim/zikaron/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/chanuka/nerot/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kodesh/chanuka/ru/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/chanuka/ru/</loc><lastmod>2026-11-26</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/chanuka/sevivon/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/chanuka/shirim/</loc><lastmod>2026-11-23</lastmod><priority>0.9</priority></url>
   <url><loc>https://hakelim.com/kodesh/chanuka/shiron/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/chanuka/sipurim/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
-  <url><loc>https://hakelim.com/kodesh/chanuka/tashbetz/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kodesh/chanuka/tashbetz/</loc><lastmod>2026-11-26</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/chanuka/tshii/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/chanuka/tzviya/</loc><lastmod>2026-11-23</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/chanuka/yetzira/</loc><lastmod>2026-11-23</lastmod><priority>0.9</priority></url>
   <url><loc>https://hakelim.com/kodesh/chayal/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/dapei-tefila/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/dvar-torah/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
-  <url><loc>https://hakelim.com/kodesh/gimatria/en/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kodesh/gimatria/</loc><lastmod>2026-11-22</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kodesh/gimatria/en/</loc><lastmod>2026-11-26</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/gimatria/</loc><lastmod>2026-11-26</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/giur/ahavat-hager/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/giur/brachot/</loc><lastmod>2026-11-24</lastmod><priority>0.85</priority></url>
   <url><loc>https://hakelim.com/kodesh/giur/brit-mila-lager/</loc><lastmod>2026-11-24</lastmod><priority>0.85</priority></url>
@@ -714,8 +714,8 @@
   <url><loc>https://hakelim.com/kodesh/olpan/reka/</loc><lastmod>2026-11-22</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/omer/en/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/omer-avot/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
-  <url><loc>https://hakelim.com/kodesh/parasha/en/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kodesh/parasha/</loc><lastmod>2026-11-22</lastmod><priority>0.9</priority></url>
+  <url><loc>https://hakelim.com/kodesh/parasha/en/</loc><lastmod>2026-11-26</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/parasha/</loc><lastmod>2026-11-26</lastmod><priority>0.9</priority></url>
   <url><loc>https://hakelim.com/kodesh/post/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/psak/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/qr/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
@@ -996,9 +996,9 @@
   <url><loc>https://hakelim.com/kodesh/video/</loc><lastmod>2026-11-22</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/video-parasha/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/video-shiur/</loc><lastmod>2026-11-18</lastmod><priority>0.7</priority></url>
-  <url><loc>https://hakelim.com/kodesh/yahrzeit/en/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kodesh/yahrzeit/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hakelim.com/kodesh/yahrzeit/ru/</loc><lastmod>2026-11-23</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/yahrzeit/en/</loc><lastmod>2026-11-26</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/yahrzeit/</loc><lastmod>2026-11-26</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/yahrzeit/ru/</loc><lastmod>2026-11-26</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/zmanim/afula/</loc><lastmod>2026-11-23</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kodesh/zmanim/akko/</loc><lastmod>2026-11-23</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kodesh/zmanim/ashdod/</loc><lastmod>2026-11-23</lastmod><priority>0.6</priority></url>
@@ -1009,13 +1009,13 @@
   <url><loc>https://hakelim.com/kodesh/zmanim/bnei-brak/</loc><lastmod>2026-11-23</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kodesh/zmanim/dimona/</loc><lastmod>2026-11-23</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kodesh/zmanim/eilat/</loc><lastmod>2026-11-23</lastmod><priority>0.6</priority></url>
-  <url><loc>https://hakelim.com/kodesh/zmanim/en/</loc><lastmod>2026-11-22</lastmod><priority>0.8</priority></url>
+  <url><loc>https://hakelim.com/kodesh/zmanim/en/</loc><lastmod>2026-11-26</lastmod><priority>0.8</priority></url>
   <url><loc>https://hakelim.com/kodesh/zmanim/hadera/</loc><lastmod>2026-11-23</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kodesh/zmanim/haifa/</loc><lastmod>2026-11-23</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kodesh/zmanim/herzliya/</loc><lastmod>2026-11-23</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kodesh/zmanim/hevron/</loc><lastmod>2026-11-23</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kodesh/zmanim/holon/</loc><lastmod>2026-11-23</lastmod><priority>0.6</priority></url>
-  <url><loc>https://hakelim.com/kodesh/zmanim/</loc><lastmod>2026-11-15</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hakelim.com/kodesh/zmanim/</loc><lastmod>2026-11-26</lastmod><priority>0.7</priority></url>
   <url><loc>https://hakelim.com/kodesh/zmanim/karmiel/</loc><lastmod>2026-11-23</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kodesh/zmanim/kfar-saba/</loc><lastmod>2026-11-23</lastmod><priority>0.6</priority></url>
   <url><loc>https://hakelim.com/kodesh/zmanim/kiryat-gat/</loc><lastmod>2026-11-23</lastmod><priority>0.6</priority></url>

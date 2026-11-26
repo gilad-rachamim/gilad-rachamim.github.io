@@ -61,6 +61,7 @@
 .iv-tbl tr.now th,.iv-tbl tr.now td{background:rgba(212,176,98,.1)}
 .iv-tbl tr.past th,.iv-tbl tr.past td,.iv-tbl tr.past td b{color:var(--muted)}
 .iv-tbl tr.past .iv-shb{background:transparent;color:var(--muted);border:1px solid var(--muted)}
+@media (max-width:600px){.iv-tbl{font-size:.9rem}.iv-tbl th,.iv-tbl td{padding:.45rem .15rem;overflow-wrap:anywhere}.iv-tbl td{white-space:normal}.ab-tbl .ab-tg,.ab-tbl .ab-tw{font-size:1.15rem}}
 .iv-shb{display:inline-block;font-size:.72rem;font-weight:700;color:var(--ink);background:var(--gold);border-radius:99px;padding:0 .45rem;vertical-align:.1rem}
 .iv-row{display:grid;grid-template-columns:1fr 1.4fr 1.3fr;gap:.5rem}
 .iv-yeq{color:var(--gold);font-size:.92rem;margin:0}

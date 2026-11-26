@@ -143,15 +143,39 @@ FAQ = [
 ]
 
 
-def faq_ld():
+def day_faq(d):
+    """שאלות שהתשובה שלהן משתנה מיום ליום – בלי טקסט קבוע שחוזר בכל דפי הארכיון (אינדוקס, 26.11.2026)"""
+    nd = nice_date(d["day"])
+    mains = [p["text"] for e in d["editions"] for p in e["sections"].get("main", [])]
+    haredi = [p["text"] for e in d["editions"] for p in e["sections"].get("haredi", [])]
+    money = [p["text"] for e in d["editions"] for p in e["sections"].get("economy", [])]
+    q = [(f"מה קרה ב-{nd}?", " ".join(mains[:2])),
+         (f"מה היה בציבור החרדי ב-{nd}?", haredi[0] if haredi else ""),
+         (f"מה השתנה בכלכלה ובכיס ב-{nd}?", money[0] if money else ""),
+         (f"כמה מהדורות יצאו ב-{nd}?", f"{len(d['editions'])}: " + ", ".join(
+             f"{ED_LABEL.get(e['name'], e['name'])} ב-{e['time']}" for e in d["editions"]) + f". בסך הכול {points(d)} נקודות.")]
+    return [(a, b) for a, b in q if b]
+
+
+def day_text(d):
+    nd = nice_date(d["day"])
+    faq = "".join(f"<details><summary>{esc(q)}</summary><p>{esc(a)}</p></details>" for q, a in day_faq(d))
+    return f'''<!--seo-txt-->
+<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">
+  <h2 id="seo-faq-h">בקצרה: {nd}</h2>
+  {faq}
+  <p>איך נבחרות הנקודות ומאיפה הן – <a class="gold" href="{BASE_URL}">בדף הארכיון</a>.</p>
+</section>
+<!--/seo-txt-->'''
+
+
+def faq_ld(items=FAQ):
     return ('<script type="application/ld+json">' + json.dumps({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
-        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in FAQ]}, ensure_ascii=False) + "</script>")
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in items]}, ensure_ascii=False) + "</script>")
 
 
-def seo_text(kind):
-    first = ("<p>בדף הזה מופיעות כל המהדורות של יום אחד. כל נקודה כתובה במשפט אחד או שניים, במילים פשוטות, ומתחתיה קישור לכתבה המלאה. "
-             "מי שרוצה לדעת מה קרה ביום מסוים – נכנס, קורא בשלוש דקות, ויודע.</p>") if kind == "day" else (
-             "<p>בראש הדף מופיע סיכום החדשות של היום – כל המהדורות שיצאו עד עכשיו. מתחתיו הארכיון: כל הימים לפי תאריך, "
+def seo_text():
+    first = ("<p>בראש הדף מופיע סיכום החדשות של היום – כל המהדורות שיצאו עד עכשיו. מתחתיו הארכיון: כל הימים לפי תאריך, "
              "כדי שאפשר יהיה לחזור ליום מסוים ולראות מה קרה בו. כל יום הוא דף קבוע, שאפשר לשמור ולשלוח.</p>")
     faq = "".join(f"<details><summary>{esc(q)}</summary><p>{esc(a)}</p></details>" for q, a in FAQ)
     return f'''<!--seo-txt-->
@@ -261,7 +285,7 @@ def day_page(d, prev, nxt, recent=()):
     meta = {"site": "kelim", "nav": "tchumim", "tool": "machshev_chadashot", "title": title + BRAND, "description": desc,
             "og_title": f"מה קרה ב-{nd}? סיכום החדשות של היום ב-3 דקות", "og_image": "og/kelim-machshev-chadashot.jpg?v=4",
             "priority": "0.5", "no_precache": True, "no_rel": True, "no_mapa": True, "crumbs": crumbs(nd),
-            "head": STYLE + faq_ld() + news_ld(d)}
+            "head": STYLE + faq_ld(day_faq(d)) + news_ld(d)}
     nav = []
     if prev:
         nav.append(f'<a href="{BASE_URL}{prev}/">→ {nice_date(prev)}</a>')
@@ -275,7 +299,7 @@ def day_page(d, prev, nxt, recent=()):
             f'  <p class="sub">{esc(hd)}{" · " if hd else ""}{len(d["editions"])} מהדורות, {points(d)} נקודות קצרות ורגועות. כל מה שחשוב ביום אחד, בשלוש דקות קריאה.</p>\n</header>\n'
             f'<div class="tool">\n<nav class="ar-nav no-print" aria-label="ימים">{"".join(nav)}</nav>\n'
             + "".join(edition_html(e) for e in d["editions"]) + "\n" + cta() + "\n" + more + "</div>\n")
-    return meta_block(meta) + body + seo_text("day") + "\n"
+    return meta_block(meta) + body + day_text(d) + "\n"
 
 
 def hub_page(days):
@@ -304,7 +328,7 @@ def hub_page(days):
                      f' <small>{esc(hd2)} · {len(d["editions"])} מהדורות</small><span>{esc(first)}</span></li>')
         body += "</ul>"
     body += "\n</div>\n"
-    return meta_block(meta) + body + seo_text("hub") + "\n"
+    return meta_block(meta) + body + seo_text() + "\n"
 
 
 def write_pages():

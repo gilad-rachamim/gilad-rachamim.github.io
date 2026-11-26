@@ -182,8 +182,8 @@
   function keysOf(p) { var a = []; for (var i = 0; i < p.w.length; i++) a.push((p.h ? p.r : p.r + i) + ',' + (p.h ? p.c + i : p.c)); return a; }
   function shown(k) { var v = vals[k] || ''; return v && cells[k].end && TOFIN[v] ? TOFIN[v] : v; }
   function draw() {
-    var g = $('ts-grid'), W = Math.min((g.parentNode.clientWidth || window.innerWidth - 32), 520); if (W < 240) W = 340;
-    var size = Math.max(28, Math.min(48, Math.floor((W - (P.cols - 1) * 2) / P.cols)));
+    var g = $('ts-grid'), ps = getComputedStyle(g.parentNode), W = Math.min((g.parentNode.clientWidth - (parseFloat(ps.paddingLeft) || 0) - (parseFloat(ps.paddingRight) || 0)) || window.innerWidth - 32, 520); if (W < 240) W = 340;
+    var size = Math.max(22, Math.min(48, Math.floor((W - (P.cols - 1) * 2) / P.cols)));
     g.style.gridTemplateColumns = 'repeat(' + P.cols + ',' + size + 'px)';
     g.style.gridAutoRows = size + 'px'; g.style.fontSize = Math.round(size * 0.55) + 'px';
     var curKeys = cur ? keysOf(cur.p) : [], okKeys = {};

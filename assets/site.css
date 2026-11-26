@@ -60,6 +60,7 @@ p + p{margin-top:.9rem}
 .topnav a[aria-current=page]{color:var(--gold);border-color:rgba(201,165,92,.35)}
 .topnav .wa{color:var(--ink);background:var(--gold);font-weight:600}
 @media (max-width:640px){.topnav .wa{display:none}.brand b{font-size:1rem}}
+@media (max-width:640px){.topbar .brand{flex:0 1 auto;min-width:0}.brand img{flex:none}.brand b{min-width:0;overflow:hidden;text-overflow:ellipsis}}
 
 /* ===== hero משותף ===== */
 .hero{position:relative;padding:3rem 1.25rem 2.25rem;text-align:center;max-width:38rem;margin:0 auto;overflow:hidden}
@@ -236,4 +237,5 @@ html.hkd-open body{padding-bottom:7.5rem}
 html.hkd-open{scroll-padding-bottom:8.5rem}
 @media (max-width:560px){.hkd-top{margin-inline-start:.4rem;padding:.3rem .55rem;font-size:.85rem}.hkd-rate span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}.hkd-b{padding:.35rem .6rem}}
 @media (max-width:360px){.hkd-top-t{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}}
+@media (max-width:480px){html:not([lang|=he]) .hkd-top-t{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}}
 @media print{.hkd,.hkd-top{display:none!important}.hkd-now{outline:0}}
