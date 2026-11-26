@@ -84,7 +84,7 @@
 .sd-pad.pencil button{color:var(--gold-hi);font-size:1.05rem}
 
 /* ===== תשחצים ===== */
-.ts-grid{display:grid;margin:.5rem auto;gap:2px;width:max-content;max-width:100%;direction:rtl;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.ts-grid{display:grid;margin:.5rem auto;gap:2px;width:max-content;max-width:100%;overflow-x:auto;direction:rtl;touch-action:manipulation;user-select:none;-webkit-user-select:none}
 .ts-grid .e{background:transparent}
 .ts-grid button{all:unset;box-sizing:border-box;background:#fbfaf2;border:1px solid #9aa49f;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#14211f;position:relative;cursor:pointer;font-family:var(--serif)}
 .ts-grid button sup{position:absolute;top:1px;right:3px;font-size:.5em;color:#56645f;font-family:system-ui,sans-serif;font-weight:600}

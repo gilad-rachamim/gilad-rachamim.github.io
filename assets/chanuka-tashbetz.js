@@ -75,7 +75,7 @@
     var cells = {};
     cw.placed.forEach(function (p) { for (var i = 0; i < p.w.length; i++) cells[(p.h ? p.r : p.r + i) + ',' + (p.h ? p.c + i : p.c)] = p.w[i]; });
     cw.cells = cells;
-    var g = $('tb-grid'); g.style.gridTemplateColumns = 'repeat(' + cw.cols + ',1fr)'; g.className = 'tb-grid cw';
+    var g = $('tb-grid'); g.style.gridTemplateColumns = 'repeat(' + cw.cols + ',minmax(0,1fr))'; g.className = 'tb-grid cw';
     var html = '';
     for (var r = 0; r < cw.rows; r++) for (var c = 0; c < cw.cols; c++) {
       var k = r + ',' + c;
@@ -140,7 +140,7 @@
   }
   function drawSearch() {
     tz = buildSearch($('tb-level').value); pick = null;
-    var g = $('tb-grid'); g.style.gridTemplateColumns = 'repeat(' + tz.N + ',1fr)'; g.className = 'tb-grid ws';
+    var g = $('tb-grid'); g.style.gridTemplateColumns = 'repeat(' + tz.N + ',minmax(0,1fr))'; g.className = 'tb-grid ws';
     var html = '';
     for (var r = 0; r < tz.N; r++) for (var c = 0; c < tz.N; c++) html += '<button type="button" data-r="' + r + '" data-c="' + c + '">' + tz.g[r][c] + '</button>';
     g.innerHTML = html;

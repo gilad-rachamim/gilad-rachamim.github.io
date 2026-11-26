@@ -20,7 +20,7 @@
 .ch .sum div b{color:var(--cream);direction:ltr;unicode-bidi:isolate}
 .ch .sum .tot{font-size:1.2rem;border-bottom:0}
 .ch .sum .tot b{color:var(--gold);font-size:1.35rem}
-.ch .tbl-wrap{overflow-x:auto;margin-top:.8rem;border:1px solid var(--line);border-radius:12px}
+.ch .tbl-wrap{position:relative;overflow-x:auto;margin-top:.8rem;border:1px solid var(--line);border-radius:12px}
 .ch table{width:100%;border-collapse:collapse;font-size:.95rem;color:var(--body)}
 .ch th,.ch td{padding:.5rem .6rem;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
 .ch th{color:var(--cream);background:rgba(255,255,255,.04);font-weight:700;white-space:nowrap}
