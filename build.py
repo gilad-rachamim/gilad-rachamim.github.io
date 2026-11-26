@@ -126,7 +126,23 @@ def pixel_for(meta, url_path):
         return PIXEL.replace("</script>", ("if(location.pathname.indexOf('/mohel/todah')===0)fbq('track','Lead');" if url_path.startswith("/mohel/todah") else "") + "</script>")
     if not meta.get("site") or meta.get("no_ga") or meta.get("no_pixel") or url_path.startswith("/nefesh/"):
         return ""
-    return PIXEL
+    # טעינה דחויה (ראו LATER): התור של fbq נוצר מיד, והקובץ של Meta נטען אחר כך
+    now = "t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)"
+    assert now in PIXEL
+    return PIXEL.replace(now, "f.hkLater(v)")
+# טעינה דחויה של סקריפטי המעקב בדפי אתר הכלים (26.11.2026, ביצועים בנייד): gtag ו-fbq נשארים כתורים מקומיים מהרגע הראשון,
+# כך שכל אירוע נשמר, והקבצים החיצוניים נטענים בנגיעה/גלילה/הקשה הראשונה, ביציאה לרקע, או 3 שניות אחרי load.
+# טעינה מיידית: דפי תודה (אירועי רכישה), כניסה מפרסום או מקישור מסומן (gclid/fbclid/utm_). /mohel/ ו-/matana/ לא נדחים.
+LATER = r"""<script>(function(w,d){var q=[],on=0,E=['pointerdown','keydown','touchstart','scroll','wheel'];function add(s){var e=d.createElement('script');e.async=true;e.src=s;d.head.appendChild(e)}function go(){if(on)return;on=1;q.splice(0).forEach(add)}w.hkLater=function(s){if(on)add(s);else q.push(s)};if(/\/todah?(\/|$)/.test(location.pathname)||/[?&](gclid|gbraid|wbraid|fbclid|utm_[a-z]+)=/.test(location.search)){on=1;return}E.forEach(function(n){w.addEventListener(n,go,{once:true,passive:true,capture:true})});d.addEventListener('visibilitychange',function(){if(d.visibilityState==='hidden')go()});function arm(){setTimeout(go,3000)}if(d.readyState==='complete')arm();else w.addEventListener('load',arm)})(window,document);</script>
+"""
+def deferred(meta, url_path):
+    return bool(meta.get("site")) and not url_path.startswith(("/mohel/", "/matana/"))
+def ga_for(meta, url_path):
+    if not GA or not deferred(meta, url_path):
+        return GA
+    tag = f'<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>' + chr(10)
+    assert tag in GA
+    return LATER + GA.replace(tag, "").replace("</script>", f"hkLater('https://www.googletagmanager.com/gtag/js?id={GA_ID}');</script>", 1)
 # קישור קצר בכל שיתוף מהאתר (assets/kishur.js): ווטסאפ, SMS, שיתוף בטלפון, העתקה
 KISHUR = '<script src="/assets/kishur.js" defer></script>\n'
 WA_TEXT = "שלום גילעד, אשמח לשמוע פרטים על ברית מילה"
@@ -1237,7 +1253,7 @@ for path in sorted(SRC.rglob("*.html")):
         "og_title": meta.get("og_title", meta["title"]),
         "og_image": meta.get("og_image", og_default),
         "robots": '<meta name="robots" content="noindex">' if meta.get("noindex") else "",
-        "head": meta.get("head_pre", "") + ("" if meta.get("no_ga") else GA) + pixel_for(meta, url_path) + ("" if meta.get("bare") else KISHUR) + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url) + dv_ld + mdr_head + mdr_ld + mdr_list + hreflang(meta),
+        "head": meta.get("head_pre", "") + ("" if meta.get("no_ga") else ga_for(meta, url_path)) + pixel_for(meta, url_path) + ("" if meta.get("bare") else KISHUR) + meta.get("head", "") + crumbs_ld(meta.get("crumbs"), url, root) + seo_ld(url_path, url) + dv_ld + mdr_head + mdr_ld + mdr_list + hreflang(meta),
         "body_class": meta.get("body_class", ""),
         "sprite": SPRITE,
         "wa": WA,
