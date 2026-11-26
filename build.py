@@ -767,6 +767,16 @@ def demo_block(meta, url):
     help_row = ('<p class="dv-help">💛 <b>באהבה ממיזם הכלים של גילעד רחמים</b> · מיזם חינמי להנגשה. לא הכול זה כסף: '
                 + ('מכירים מישהו שזה יעזור לו? שלחו לו את הדף.' if soft else
                    '<a href="/kelim/#truma">רעיון, תוכן או עזרה בהפצה</a>, או <a href="/kelim/#litmoch">שותפות במיזם</a>.') + '</p>')
+    # "replace_demo" ב-madrichim.json: מדריך היוטיוב מחליף את סרטון ההדגמה הישן בדף הכלי; הפרוספקט לשיתוף נשאר
+    mdr = MADRICHIM.get(tool) or {}
+    old = not (mdr.get("replace_demo") and not meta.get("lang") and BASE + mdr.get("page", "") == url)
+    video = (
+        f'<video class="dv-video{' dv-wide' if wide else ''}" controls playsinline preload="none" poster="{poster}" width="{1280 if wide else 720}" height="{720 if wide else 1280}" aria-label="{html_lib.escape(spec.get("description", name))}" data-dv-play="{tool}">'
+        f'<source src="{v}" type="video/mp4"></video>'
+        f'<div class="dv-acts"><button type="button" class="btn btn-gold" data-dv-share="{v}" data-dv-kind="video">💌 לשלוח את הסרטון לחבר</button>'
+        f'<a class="btn btn-line" href="{v}" download data-dv-dl="video">⬇️ להורדת הסרטון</a>'
+        + (f'<a class="btn btn-line" href="{html_lib.escape(yt)}" target="_blank" rel="noopener" data-dv-dl="youtube">▶️ לצפייה ביוטיוב</a>' if yt else '')
+        + '</div>')
     blk = (
         '<style>.dv-sec .dv-video{display:block;width:100%;max-width:20rem;aspect-ratio:9/16;height:auto;margin:.6rem auto 0;border-radius:1.2rem;background:#0e1628;box-shadow:0 8px 30px rgba(0,0,0,.35)}'
         '.dv-sec .dv-video.dv-wide{max-width:100%;aspect-ratio:16/9;border-radius:.8rem}'
@@ -774,13 +784,8 @@ def demo_block(meta, url):
         '.dv-fl{margin-top:1rem}.dv-fl summary{cursor:pointer;color:var(--gold);font-weight:700;text-align:center}'
         '.dv-fl img{display:block;width:100%;max-width:24rem;height:auto;margin:.8rem auto 0;border-radius:1rem}'
         '.dv-help{text-align:center;font-size:.95rem;margin-top:1rem;color:var(--muted,inherit)}</style>'
-        f'<section class="k-sec dv-sec no-print" aria-labelledby="dv-h"><h2 id="dv-h">🎬 {html_lib.escape(name)}</h2>'
-        f'<video class="dv-video{' dv-wide' if wide else ''}" controls playsinline preload="none" poster="{poster}" width="{1280 if wide else 720}" height="{720 if wide else 1280}" aria-label="{html_lib.escape(spec.get("description", name))}" data-dv-play="{tool}">'
-        f'<source src="{v}" type="video/mp4"></video>'
-        f'<div class="dv-acts"><button type="button" class="btn btn-gold" data-dv-share="{v}" data-dv-kind="video">💌 לשלוח את הסרטון לחבר</button>'
-        f'<a class="btn btn-line" href="{v}" download data-dv-dl="video">⬇️ להורדת הסרטון</a>'
-        + (f'<a class="btn btn-line" href="{html_lib.escape(yt)}" target="_blank" rel="noopener" data-dv-dl="youtube">▶️ לצפייה ביוטיוב</a>' if yt else '')
-        + f'</div>{fl}{help_row}'
+        f'<section class="k-sec dv-sec no-print" aria-labelledby="dv-h"><h2 id="dv-h">{"🎬 " + html_lib.escape(name) if old else "💌 לשתף את הכלי"}</h2>'
+        f'{video if old else ""}{fl}{help_row}'
         f'<script>window.DV_SHARE={json.dumps({"tool": tool, "text": share_txt, "url": url}, ensure_ascii=False)}</script>'
         '<script src="/assets/demo-share.js" defer></script></section>')
     ld = json.dumps({"@context": "https://schema.org", "@type": "VideoObject", "name": name,
@@ -789,7 +794,7 @@ def demo_block(meta, url):
                      "uploadDate": spec.get("upload", "2026-11-14T12:00:00+02:00"), "duration": f"PT{round(dur)}S",
                      "inLanguage": "he", "publisher": {"@type": "Person", "name": "גילעד רחמים", "url": BASE + "/kelim/"},
                      **({"sameAs": yt} if yt else {})}, ensure_ascii=False)
-    return blk, f'<script type="application/ld+json">{ld}</script>'
+    return blk, f'<script type="application/ld+json">{ld}</script>' if old else ""
 
 def insert_demo(content, blk):
     if not blk:
@@ -828,7 +833,7 @@ def madrich_block(meta, url):
         '<p class="mdr-trust">בחינם · בלי הרשמה · בלי פרסומות</p>'
         '<div class="mdr-grid"><div class="mdr-media"><div class="mdr-frame">'
         f'<a class="mdr-play" href="{watch}" target="_blank" rel="noopener" data-mdr-play aria-label="הפעלת מדריך הווידאו: {e(title)}">'
-        f'<img src="/{m["thumb"]}.webp" alt="" width="1280" height="720" decoding="async"><span class="mdr-btn" aria-hidden="true"></span></a></div>'
+        f'<img src="/{m["thumb"]}.webp" alt="" width="1280" height="720" {"loading=\"lazy\" " if m.get("lazy") else ""}decoding="async"><span class="mdr-btn" aria-hidden="true"></span></a></div>'
         f'<ul class="mdr-chips" aria-label="פרקים בסרטון">{chips}</ul></div>'
         f'<div class="mdr-steps"><h3>הצעדים בקצרה</h3><ol>{steps}</ol></div></div>'
         f'<div class="mdr-acts"><a class="btn btn-gold" href="{m["cta"]["anchor"]}" data-mdr-cta>{e(m["cta"]["text"])}</a>'
