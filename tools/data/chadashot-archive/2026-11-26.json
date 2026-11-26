@@ -1,0 +1,335 @@
+{
+ "day": "2026-11-26",
+ "editions": [
+  {
+   "name": "בוקר",
+   "time": "07:00",
+   "at": "2026-11-26T05:00:50.794Z",
+   "mode": "titles",
+   "date": {
+    "he": "ט״ז כסלו תשפ״ז",
+    "day": "חמישי"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "רצף החיסולים נמשך: צה״ל תקף הלילה בכיר נוסף בחמאס",
+      "sources": [
+       {
+        "name": "סרוגים",
+        "link": "https://www.srugim.co.il/101017162-רצף-החיסולים-נמשך-צהל-תקף-הלילה-בכיר"
+       }
+      ]
+     },
+     {
+      "text": "סוף שבוע חמים מהרגיל – ואז הגשם חוזר | תחזית מזג האוויר",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1809981/"
+       }
+      ]
+     },
+     {
+      "text": "סעודיה: יורטו שני טילים בליסטיים ושני כטב״מים ששיגרו החות'ים",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1142621"
+       }
+      ]
+     },
+     {
+      "text": "אנג'לינה ג'ולי ובראד פיט הגיעו לפשרה בתביעת היקב בצרפת: \"לטובת המשפחה\"",
+      "sources": [
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/b1n1dxbjqx"
+       }
+      ]
+     },
+     {
+      "text": "לא מכה קלה בכנף, אלא מכה חזקה בשאסי: הדילמה הבלתי אפשרית של היועמ״שית | בן כספית",
+      "sources": [
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/opinions/article-1392335"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "הציבו קו אדום במשא ומתן: בכירים ב'יהדות התורה' הטילו וטו ובלמו את מינוי ח״כ גלעד קריב לשר החינוך",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/haredim-news/utj-officials-veto-kariv-education-minister"
+       }
+      ]
+     },
+     {
+      "text": "החוק לביטול רפורמת התקשורת של קרעי עבר בקריאה ראשונה",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2772084/"
+       }
+      ]
+     },
+     {
+      "text": "בנו של הרבי מויז'ניץ קבע מזוזה בבית השם בקרית מעונות ויז'ניץ",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745640"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "עשרות מיליוני ילדים יקבלו מניות SpaceX בחינם. וזו לא בהכרח בשורה טובה",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001565063"
+       }
+      ]
+     }
+    ],
+    "good": []
+   }
+  },
+  {
+   "name": "צהריים",
+   "time": "13:00",
+   "at": "2026-11-26T11:00:50.749Z",
+   "mode": "titles",
+   "date": {
+    "he": "ט״ז כסלו תשפ״ז",
+    "day": "חמישי"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "חיים לוינסון מכה על חטא: \"זה דורש חשבון נפש, צדקו לאורך כל הדרך\"",
+      "sources": [
+       {
+        "name": "כיפה",
+        "link": "https://www.kipa.co.il/%D7%91%D7%A8%D7%A0%D7%96%D7%94/1237471-0/"
+       }
+      ]
+     },
+     {
+      "text": "רוסיה: נעצר סגן מפקד חיל האוויר והחלל בחשד לקבלת שוחד",
+      "sources": [
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/sjjflqbkqg"
+       }
+      ]
+     },
+     {
+      "text": "בלאק פריידיי במלונות: עד 50% הנחה על חופשות בארץ ובחו״ל",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1810687/"
+       }
+      ]
+     },
+     {
+      "text": "לא הפרופיל שהכירו: התופעה החדשה שמטרידה את מערכת הביטחון",
+      "sources": [
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/military/article-1392482"
+       }
+      ]
+     },
+     {
+      "text": "משה קלוגהפט תוקף: \"זה פשוט מחריד ומחליא אותי\"",
+      "sources": [
+       {
+        "name": "סרוגים",
+        "link": "https://www.srugim.co.il/101017206-משה-קלוגהפט-תוקף-זה-פשוט-מחריד-ומחליא"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "האיש שאינו זוכר: היועמ״ש לשעבר מנדלבליט בהופעה מביכה נוספת",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2772234/"
+       }
+      ]
+     },
+     {
+      "text": "בד״ץ העדה החרדית בקול קורא דרמטי למען מיזם \"כלא 1000\"",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/haredim-news/edah-haredit-calls-support-prison-1000-project"
+       }
+      ]
+     },
+     {
+      "text": "מתחת לירקות: צבא לבנון סיכל הברחת אמצעי לחימה מאיראן לחיזבאללה",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745674"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "האם תחום הפארמה הוא מקלט עבור משקיעים כשהשווקים סוערים?",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001565047"
+       }
+      ]
+     }
+    ],
+    "good": []
+   }
+  },
+  {
+   "name": "ערב",
+   "time": "20:00",
+   "at": "2026-11-26T18:00:50.753Z",
+   "mode": "summary",
+   "date": {
+    "he": "ט״ז כסלו תשפ״ז",
+    "day": "חמישי"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "לאחר שנטען כי מתווה הגיוס לא הוצג לו, נפתלי בנט דחה את פגישת המשא ומתן עם גדי איזנקוט ליום ראשון.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2772560/"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/byjkqj8yxg"
+       },
+       {
+        "name": "סרוגים",
+        "link": "https://www.srugim.co.il/101017246-חותר-לממשלת-נתניהו-קשיים-במומ-של-של-גוש"
+       }
+      ]
+     },
+     {
+      "text": "אלוף פיקוד המרכז, אבי בלוט, תקף בחריפות את המתפרעים ביהודה ושומרון ואמר כי הם מתחפשים לחלוצים וגורמים נזק נוראי למדינה.",
+      "sources": [
+       {
+        "name": "כיפה",
+        "link": "https://www.kipa.co.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA/1237523-0/"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/ry8enyijql"
+       },
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/israel-news/idf-central-command-condemns-west-bank-violence"
+       }
+      ]
+     },
+     {
+      "text": "צה״ל ושב״כ חשפו כי חמאס הפך את בית החולים מעמדאני בצפון רצועת עזה למתקן חקירות ועינויים.",
+      "sources": [
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001565062"
+       },
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/military/article-1392626"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/sjbb1as1xx"
+       }
+      ]
+     },
+     {
+      "text": "מנהיג חמאס חליל אל-חיה איים כי הארגון לא יבליג על רצף החיסולים ברצועה ומקיים דיונים עם פלגים פלסטינים על דרכי תגובה.",
+      "sources": [
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383963316"
+       },
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2772553/"
+       },
+       {
+        "name": "כיפה",
+        "link": "https://www.kipa.co.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA/1237517-0/"
+       }
+      ]
+     },
+     {
+      "text": "השירות המטאורולוגי מעדכן כי החל מיום ראשון והשני יחזרו הגשמים בעוצמה רבה, וקיים צפי להצפות בעררי החוף ולשטפונות.",
+      "sources": [
+       {
+        "name": "כיפה",
+        "link": "https://www.kipa.co.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA/1237518-0/"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/hjohzjikqg"
+       },
+       {
+        "name": "סרוגים",
+        "link": "https://www.srugim.co.il/101017244-החורף-חוזר-בענק-רוחות-גשם-ושטפונות-תחזית"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "במעמד בראשות האדמו״ר מנדבורנה, חגגו בחורי הקיבוץ את חנוכת הישיבה החדשה בשילוב סיום מסכתות.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/hasidism/yeshiva-students-celebrate-chanukah-habayit-nedvor"
+       }
+      ]
+     },
+     {
+      "text": "האדמו״ר מויז'ניץ הודיע על מינוי בנו, הרה״צ רבי יעקב מרדכי הגר, לאב״ד קהילות החסידות בצפון אמריקה.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/flashes/2771375/"
+       }
+      ]
+     },
+     {
+      "text": "הציבור נקרא להתפלל לרפואתו השלמה של האדמו״ר רבי ברוך אבוחצירא הסובל מחולשה.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/j_world/2772525/"
+       }
+      ]
+     }
+    ],
+    "economy": [],
+    "good": []
+   }
+  }
+ ]
+}
