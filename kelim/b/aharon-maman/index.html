@@ -21,8 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-4QR4583VST"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4QR4583VST',{brand:'aharon-maman'});gtag('set',{brand:'aharon-maman'});</script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4QR4583VST',{brand:'aharon-maman'});gtag('set',{brand:'aharon-maman'});(function(){var d=0;function go(){if(d)return;d=1;var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=G-4QR4583VST';document.head.appendChild(s)}['pointerdown','keydown','scroll','pagehide'].forEach(function(n){addEventListener(n,go,{once:true,passive:true})});addEventListener('load',function(){setTimeout(go,2500)})})();</script>
 <style>
 :root{--bg:#0e1010;--panel:#191b1a;--gold:#e3b971;--cream:#f7f0e6;--muted:#c4bfb7;--line:#ffffff26}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -98,7 +97,7 @@ footer a{display:inline-block;padding:10px 0}
 <body class="hk-brand" data-brand="aharon-maman" data-tool="brand_menu">
 <header class="wrap top">
   <div class="logo"><img src="/kelim/b/aharon-maman/logo.svg" alt="הסמל של אהרון ממן" width="54" height="54"><div><b>אהרון ממן</b><small>קייטרינג ואירועים | אשקלון והדרום</small></div></div>
-  <a class="call" href="tel:0529669047" data-ev="tel_click" aria-label="להתקשר לאהרון 052-966-9047">📞 התקשרו</a>
+  <a class="call" href="tel:0529669047" data-ev="tel_click">📞 התקשרו</a>
 </header>
 <main>
 <div class="hero">
@@ -196,7 +195,7 @@ SECTIONS.forEach(function(sec,si){
  sec[1].forEach(function(d){
   var id=d[0];names[id]=d[1];order.push(id);
   var b=el("button","dish");b.type="button";
-  var im=el("img");im.src="/kelim/b/aharon-maman/img/"+id+".webp";im.alt="";im.width=360;im.height=270;if(si>0)im.loading="lazy";
+  var im=el("img");im.src="/kelim/b/aharon-maman/img/"+id+".webp";im.alt="";im.width=360;im.height=270;im.loading="lazy";im.decoding="async";
   var m=el("em","","+");m.setAttribute("aria-hidden","true");
   b.appendChild(im);b.appendChild(el("span","",d[1]));b.appendChild(m);
   b.addEventListener("click",function(){toggle(id)});
