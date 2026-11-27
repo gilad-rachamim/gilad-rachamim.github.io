@@ -1,8 +1,16 @@
 /* דף פרשה (/kodesh/parasha/<slug>/): שליחת דבר תורה או רשימת הנושאים בווטסאפ, ופתיחת נושא לפי העוגן. */
 (function () {
   'use strict';
+  // מסתיר שבתות שעברו; בעמוד המרכז מוצגות שמונה הקרובות
+  var today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jerusalem' });
+  [['.pr-reads li', 99], ['.pr-tbl tbody tr', 8]].forEach(function (c) {
+    var all = [].slice.call(document.querySelectorAll(c[0]));
+    var next = all.filter(function (el) { return el.getAttribute('data-date') >= today; });
+    if (!next.length) return;
+    all.forEach(function (el) { el.hidden = next.indexOf(el) < 0 || next.indexOf(el) >= c[1]; });
+  });
   var root = document.getElementById('parasha');
-  if (!root) return;
+  if (!root || !root.getAttribute('data-name')) return;
   var name = root.getAttribute('data-name'), url = 'https://hakelim.com' + location.pathname;
   function send(text, how) {
     window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener');
