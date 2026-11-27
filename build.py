@@ -268,6 +268,19 @@ def vurl(p):
         _VER[p] = hashlib.md5(f.read_bytes()).hexdigest()[:8] if f.is_file() else ""
     return p + ("?v=" + _VER[p] if _VER[p] else "")
 
+def lazy_posters(html):
+    """poster של <video> הופך ל-data-poster (לא בתוך <script>), ונוסף הסקריפט שטוען אותו בגלילה."""
+    parts = re.split(r"(<script\b.*?</script>)", html, flags=re.S)
+    found = 0
+    for i in range(0, len(parts), 2):
+        parts[i], n = re.subn(r"(<video\b[^>]*?\s)poster=", r"\1data-poster=", parts[i])
+        found += n
+    if not found:
+        return html
+    tag = version_assets('<script src="/assets/lazy-poster.js" defer></script>')
+    return "".join(parts).replace("</body>", tag + "</body>", 1)
+
+
 def version_assets(html):
     return re.sub(r'((?:src|href)=")(/assets/[^"?#]+\.(?:js|css))"', lambda m: m.group(1) + vurl(m.group(2)) + '"', html)
 
@@ -698,8 +711,11 @@ NEWSBAR_HTML = ('<aside class="newsbar no-print" data-newsbar aria-label="החד
 
 # דפים שבהם הפס העונתי (discover.js) מוטמע מיד אחרי פס החדשות, כדי שלא ידחוף את הכותרת אחרי הטעינה (CLS)
 HUB_INLINE = {"/kodesh/"}
-# תמונות הפתיחה של הסרטונים נטענות רק כשמתקרבים אליהן (assets/promo.js) – בדף חייב להיות הסקריפט
-LAZY_POSTERS = {"/kelim/"}
+# תמונות הפתיחה של סרטונים נטענות בכל האתר רק כשמתקרבים אליהן (lazy_posters, assets/lazy-poster.js).
+# חריגים: בדפים האלה הסרטון כבר במסך הראשון בטלפון (412px), ודחייה תאט את מה שרואים. דף כזה חדש – להוסיף לכאן.
+EAGER_POSTERS = {"/kelim/chashiva/kita/horim/", "/kelim/chashiva/kita/more/", "/kelim/claude/kurs/",
+                 "/kelim/hitkadmut/", "/kelim/shipurim/", "/kodesh/mohalim/bli-atar/",
+                 "/limudim/kita/horim/", "/limudim/kita/makren/", "/limudim/kita/talmidim/"}
 
 
 def news_bar(url_path):
@@ -1324,8 +1340,8 @@ for path in sorted(SRC.rglob("*.html")):
     if "<!--KATALOG-" in html:
         html = katalog_fill(html)
     html = version_assets(html)
-    if url_path in LAZY_POSTERS:
-        html = re.sub(r"(<video\b[^>]*?\s)poster=", r"\1data-poster=", html)
+    if url_path not in EAGER_POSTERS:
+        html = lazy_posters(html)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
     if meta.get("manifest"):
