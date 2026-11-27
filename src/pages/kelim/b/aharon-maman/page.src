@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>אהרון ממן – מרכיבים תפריט לאירוע ושולחים בוואטסאפ</title>
+<meta name="description" content="אהרון ממן, קייטרינג ואירועים באשקלון והדרום: בוחרים מנות מהתמונות ושולחים בקשה להצעת מחיר בוואטסאפ.">
+<meta name="robots" content="noindex,follow">
+<link rel="canonical" href="https://hakelim.com/esek/tafrit/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="he_IL">
+<meta property="og:url" content="https://hakelim.com/kelim/b/aharon-maman/">
+<meta property="og:title" content="אהרון ממן – מרכיבים תפריט לאירוע">
+<meta property="og:description" content="בוחרים מנות בתמונות ושולחים לאהרון בוואטסאפ. אשקלון, הדרום וכל הארץ.">
+<meta property="og:image" content="https://hakelim.com/kelim/b/aharon-maman/card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="theme-color" content="#0e1010">
+<link rel="icon" href="/kelim/b/aharon-maman/logo.svg" type="image/svg+xml">
+<link rel="preload" as="image" href="/kelim/b/aharon-maman/img/hero.webp" fetchpriority="high">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4QR4583VST"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-4QR4583VST',{brand:'aharon-maman'});gtag('set',{brand:'aharon-maman'});</script>
+<style>
+:root{--bg:#0e1010;--panel:#191b1a;--gold:#e3b971;--cream:#f7f0e6;--muted:#c4bfb7;--line:#ffffff26}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:12px}
+body{background:var(--bg);color:var(--cream);font-family:Assistant,Arial,sans-serif;font-size:17px;line-height:1.5;padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+img{display:block;max-width:100%}
+a{color:var(--gold)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:14px;padding-bottom:14px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo img{width:54px;height:54px;border:1px solid var(--gold);border-radius:14px}
+.logo b{display:block;font-size:25px;font-weight:800;line-height:1.1}
+.logo small{display:block;color:var(--gold);font-size:13px;font-weight:600}
+.call{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border:1.5px solid var(--gold);border-radius:99px;text-decoration:none;font-weight:700;white-space:nowrap}
+.hero{position:relative;min-height:330px;display:flex;align-items:flex-end;overflow:hidden}
+.hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--bg) 4%,#0e1010cc 42%,#0e101022 80%)}
+.hero div{position:relative;z-index:1;width:100%;padding-bottom:18px}
+h1{font-size:clamp(32px,9vw,52px);line-height:1.08;font-weight:800;text-wrap:balance}
+h1 span{color:var(--gold)}
+.hero p{font-size:19px;margin-top:8px;max-width:34em}
+.facts{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:6px 0 4px}
+.facts li{background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:5px 12px;font-size:15px;font-weight:600}
+section{padding-top:30px}
+h2{display:flex;align-items:center;gap:10px;font-size:25px;font-weight:800;margin-bottom:4px}
+h2 i{flex:none;width:34px;height:34px;border-radius:50%;background:var(--gold);color:#111;display:grid;place-items:center;font-style:normal;font-size:18px}
+.hint{color:var(--muted);margin-bottom:14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{min-height:44px;padding:0 16px;background:var(--panel);border:1.5px solid var(--line);border-radius:99px;cursor:pointer;font-weight:600}
+.chips button[aria-pressed=true]{background:var(--gold);border-color:var(--gold);color:#111;font-weight:800}
+.sample{margin-top:14px;border:1.5px dashed var(--gold);border-radius:16px;padding:14px}
+.sample b{display:block;font-size:18px}
+.sample p{color:var(--muted);margin:4px 0 12px}
+.sample button{min-height:46px;width:100%;border:0;border-radius:12px;background:var(--gold);color:#111;font-weight:800;cursor:pointer}
+h3{font-size:20px;color:var(--gold);margin:22px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media(min-width:620px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.dish{position:relative;display:flex;flex-direction:column;background:var(--panel);border:2px solid transparent;border-radius:16px;overflow:hidden;cursor:pointer;text-align:right;padding:0}
+.dish img{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;background:#222}
+.dish span{padding:9px 10px 11px;font-weight:700;line-height:1.3}
+.dish em{position:absolute;top:8px;left:8px;width:38px;height:38px;border-radius:50%;background:#000000b3;border:1.5px solid #fff;display:grid;place-items:center;font-style:normal;font-size:24px;font-weight:800;color:#fff;line-height:1}
+.dish[aria-pressed=true]{border-color:var(--gold);background:#2a2418}
+.dish[aria-pressed=true] em{background:var(--gold);border-color:var(--gold);color:#111}
+.chef{display:flex;gap:14px;align-items:center;background:var(--panel);border-radius:18px;padding:14px;margin-top:30px}
+.chef img{width:96px;height:96px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);flex:none}
+.chef b{display:block;font-size:19px}
+.chef p{color:var(--muted)}
+form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{display:flex;flex-direction:column;gap:4px;font-weight:700;min-width:0}
+label.full{grid-column:1/-1}
+input,textarea{width:100%;min-height:48px;background:var(--panel);border:1.5px solid #ffffff4d;border-radius:12px;padding:10px 12px;color-scheme:dark}
+textarea{resize:vertical}
+.sum{background:var(--panel);border-radius:16px;padding:14px;margin:16px 0}
+.sum b{display:block;margin-bottom:6px}
+.sum ul{list-style:none;display:flex;flex-wrap:wrap;gap:8px}
+.sum li button{min-height:40px;background:transparent;border:1.5px solid var(--gold);border-radius:99px;padding:0 12px;cursor:pointer}
+.sum p{color:var(--muted)}
+.wa{display:flex;align-items:center;justify-content:center;min-height:58px;border-radius:14px;background:#25d366;color:#06230f;font-size:20px;font-weight:800;text-decoration:none;text-align:center;padding:8px 14px}
+.alt{display:flex;gap:10px;margin-top:10px}
+.alt>*{flex:1;display:flex;align-items:center;justify-content:center;min-height:48px;border:1.5px solid var(--line);border-radius:12px;background:transparent;text-decoration:none;font-weight:700;color:var(--cream);cursor:pointer}
+.note{color:var(--muted);font-size:15px;text-align:center;margin-top:10px}
+footer{border-top:1px solid var(--line);margin-top:36px;padding-top:18px;text-align:center;color:var(--muted);font-size:15px}
+footer p{margin-bottom:8px}
+footer a{display:inline-block;padding:10px 0}
+.bar{position:fixed;inset-inline:0;bottom:0;z-index:5;background:#0e1010f2;border-top:1px solid var(--gold);padding:10px 16px calc(10px + env(safe-area-inset-bottom));transition:transform .25s}
+.bar.off{transform:translateY(105%);visibility:hidden}
+.bar a{display:flex;justify-content:space-between;align-items:center;gap:10px;max-width:728px;margin:0 auto;min-height:56px;border-radius:14px;background:var(--gold);color:#111;font-size:18px;font-weight:800;text-decoration:none;padding:0 18px}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.bar{transition:none}}
+</style>
+</head>
+<body class="hk-brand" data-brand="aharon-maman" data-tool="brand_menu">
+<header class="wrap top">
+  <div class="logo"><img src="/kelim/b/aharon-maman/logo.svg" alt="הסמל של אהרון ממן" width="54" height="54"><div><b>אהרון ממן</b><small>קייטרינג ואירועים | אשקלון והדרום</small></div></div>
+  <a class="call" href="tel:0529669047" data-ev="tel_click" aria-label="להתקשר לאהרון 052-966-9047">📞 התקשרו</a>
+</header>
+<main>
+<div class="hero">
+  <img src="/kelim/b/aharon-maman/img/hero.webp" alt="עמדת בשרים לאירוע של אהרון ממן" width="900" height="600" fetchpriority="high">
+  <div class="wrap">
+    <h1>אוכל של בית. <span>מרכיבים תפריט לאירוע.</span></h1>
+    <p>בוחרים מנות לפי התמונות ושולחים לאהרון בוואטסאפ. הוא חוזר עם תפריט והצעת מחיר.</p>
+  </div>
+</div>
+<div class="wrap">
+<ul class="facts">
+  <li>מבשל בעצמו, בלי מתווכים</li>
+  <li>תפריט מותאם, בלי חבילות קבועות</li>
+  <li>אשקלון, כל הדרום וכל הארץ</li>
+</ul>
+
+<section aria-labelledby="h-ev">
+  <h2 id="h-ev"><i aria-hidden="true">1</i>איזה אירוע?</h2>
+  <p class="hint">לחלק מהאירועים יש תפריט לדוגמה, שאפשר להוסיף בלחיצה.</p>
+  <div class="chips" id="events"></div>
+  <div class="sample" id="sample" hidden aria-live="polite">
+    <b id="s-title"></b><p id="s-text"></p>
+    <button type="button" id="s-add">להוסיף את מנות הדוגמה</button>
+  </div>
+</section>
+
+<section aria-labelledby="h-menu">
+  <h2 id="h-menu"><i aria-hidden="true">2</i>מה יהיה על השולחן?</h2>
+  <p class="hint">לוחצים על מנה כדי לבחור. אפשר לשלב כמה סגנונות, וזמינות המנות בתיאום.</p>
+  <div id="menu"></div>
+  <div class="chef">
+    <img src="/kelim/b/aharon-maman/img/chef-aharon.webp" alt="אהרון ממן בבגדי שף" width="96" height="96" loading="lazy">
+    <div><b>נעים להכיר, אהרון</b><p>מי שעונה לכם הוא מי שעומד מול הסירים.</p></div>
+  </div>
+</section>
+
+<section aria-labelledby="h-form" id="order">
+  <h2 id="h-form"><i aria-hidden="true">3</i>פרטים ושליחה</h2>
+  <p class="hint">תאריך, מקום ומספר אורחים עוזרים לקבל הצעה מהר. אפשר להשאיר ריק.</p>
+  <form id="f" onsubmit="return false">
+    <label class="full">שם<input id="name" autocomplete="name" placeholder="על שם מי הבקשה"></label>
+    <label>מבוגרים<input id="adults" type="number" inputmode="numeric" min="0" placeholder="למשל 60"></label>
+    <label>ילדים<input id="kids" type="number" inputmode="numeric" min="0" placeholder="למשל 15"></label>
+    <label>תאריך<input id="date" type="date"></label>
+    <label>עיר<input id="city" autocomplete="address-level2" placeholder="למשל אשדוד"></label>
+    <label class="full">עוד משהו?<textarea id="note" rows="2" placeholder="שעה, מקום, העדפות, רגישויות"></textarea></label>
+  </form>
+  <div class="sum"><b id="sum-title">המנות שבחרתם</b><ul id="picked"></ul><p id="none">עוד לא נבחרו מנות. אפשר גם לשלוח כך, ואהרון יציע.</p></div>
+  <a class="wa" id="wa" href="https://wa.me/972529669047" target="_blank" rel="noopener" data-ev="menu_order_wa">💬 לשלוח לאהרון בוואטסאפ</a>
+  <div class="alt">
+    <a href="tel:0529669047" data-ev="tel_click">📞 052-966-9047</a>
+    <button type="button" id="share">🔗 לשתף את התפריט</button>
+  </div>
+  <p class="note">נפתחת הודעת וואטסאפ מוכנה, ושולחים אותה בעצמכם. שום מידע לא נשמר באתר.</p>
+</section>
+
+<footer>
+  <p>אהרון ממן · קייטרינג ואירועים · <a href="https://aharonmaman.com/?utm_source=hakelim&amp;utm_medium=gift&amp;utm_campaign=aharon-maman" target="_blank" rel="noopener" data-ev="site_click">לאתר של אהרון</a></p>
+  <p>התמונות והמנות מתוך האתר של אהרון. התפריט והמחיר נקבעים מולו.</p>
+  <p>נבנה באהבה במיזם הכלים · <a href="https://hakelim.com/esek/tafrit/?utm_source=brand&amp;utm_medium=credit&amp;utm_campaign=aharon-maman" target="_blank" rel="noopener" data-ev="credit_click">רוצים תפריט כזה לעסק שלכם? hakelim.com</a></p>
+</footer>
+</div>
+</main>
+<div class="bar off" id="bar"><a href="#order"><span id="bar-n" aria-live="polite"></span><span>להצעת מחיר ←</span></a></div>
+<script>
+(function(){
+"use strict";
+var SECTIONS=[
+ ["קובה בעבודת יד",[["kubbeh-red","קובה סלק"],["kubbeh-hamusta","קובה חמוסטה"],["kubbeh-pumpkin","קובה דלעת"],["kubbeh-okra","קובה במיה"],["kubbeh-yellow-plate","קובה ברוטב צהוב"],["kubbeh-fried","קובה מטוגנת במילוי בשר"]]],
+ ["ממולאים ותבשילים",[["stuffed-grape-leaves","עלי גפן ממולאים"],["fish-marinade","תבשילים ברוטב אדום"],["meat-chickpeas","בשר עם חומוס"],["homemade-sides","תוספות ביתיות"]]],
+ ["בשרים",[["grill-buffet","עמדת בשרים"],["meat-pita","מנגל ופיתות בשר"]]],
+ ["סלטים",[["salad-buffet","מזנון סלטים"]]],
+ ["מאפים",[["homemade-pastries","מאפים וארוחת בוקר"],["sesame-pastries","מאפי שמרים ושומשום"],["meat-dough","מאפי בשר"],["cookie-selection","מבחר עוגיות"]]],
+ ["פירות, קינוחים ומגשי אירוח",[["fruit-wide","מגשי פירות עשירים"],["fruit-event","שולחן פירות באירוע"],["dessert-table","שולחן קינוחים ופירות"],["serving-boat","מגש אירוח עשיר"]]]
+];
+var EVENTS=["ברית","בר/בת מצווה","חינה","שבע ברכות","שבעה / אזכרה","קידוש","אירוע פרטי","אירוע חברה","אירוע יחידה","שבת / חג","מגשי אירוח","אחר"];
+var SAMPLES={
+ "ברית":["כיבוד בוקר לברית",["sesame-pastries","salad-buffet","fruit-wide","kubbeh-hamusta","cookie-selection"]],
+ "חינה":["שולחן חינה",["dessert-table","fruit-event","stuffed-grape-leaves","fish-marinade","grill-buffet","homemade-sides"]],
+ "שבעה / אזכרה":["סעודת אזכרה",["kubbeh-red","stuffed-grape-leaves","salad-buffet","homemade-pastries","fruit-wide"]],
+ "קידוש":["קידוש מורחב",["cookie-selection","salad-buffet","fruit-event","kubbeh-red"]],
+ "אירוע יחידה":["ארוחת יחידה",["meat-pita","meat-chickpeas","salad-buffet","homemade-sides","fruit-wide"]],
+ "שבת / חג":["ארוחת חג משפחתית",["kubbeh-red","kubbeh-yellow-plate","stuffed-grape-leaves","fish-marinade","homemade-sides","homemade-pastries"]]
+};
+var KEY="hk-aharon-maman", FIELDS=["name","adults","kids","date","city","note"];
+var $=function(i){return document.getElementById(i)};
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function ga(n,p){try{if(window.gtag)gtag("event",n,Object.assign({brand:"aharon-maman"},p||{}))}catch(e){}}
+var S={ev:"",picked:[]};
+try{var old=JSON.parse(sessionStorage.getItem(KEY)||"null");if(old)S=old}catch(e){}
+var names={}, cards={}, order=[];
+SECTIONS.forEach(function(sec,si){
+ $("menu").appendChild(el("h3","",sec[0]));
+ var g=el("div","grid");
+ sec[1].forEach(function(d){
+  var id=d[0];names[id]=d[1];order.push(id);
+  var b=el("button","dish");b.type="button";
+  var im=el("img");im.src="/kelim/b/aharon-maman/img/"+id+".webp";im.alt="";im.width=360;im.height=270;if(si>0)im.loading="lazy";
+  var m=el("em","","+");m.setAttribute("aria-hidden","true");
+  b.appendChild(im);b.appendChild(el("span","",d[1]));b.appendChild(m);
+  b.addEventListener("click",function(){toggle(id)});
+  cards[id]=b;g.appendChild(b);
+ });
+ $("menu").appendChild(g);
+});
+function toggle(id){
+ var i=S.picked.indexOf(id);
+ if(i<0){S.picked.push(id);ga("menu_add",{item:names[id]})}else S.picked.splice(i,1);
+ render();
+}
+EVENTS.forEach(function(n){
+ var b=el("button","",n);b.type="button";
+ b.addEventListener("click",function(){S.ev=S.ev===n?"":n;ga("menu_event",{item:n});render()});
+ $("events").appendChild(b);
+});
+$("s-add").addEventListener("click",function(){
+ var s=SAMPLES[S.ev];if(!s)return;
+ s[1].forEach(function(id){if(S.picked.indexOf(id)<0)S.picked.push(id)});
+ ga("menu_sample",{item:S.ev});render();
+});
+function dateTxt(v){var p=v.split("-");return p.length===3?p[2]+"."+p[1]+"."+p[0]:v}
+function message(){
+ var v=function(i){return $(i).value.trim()};
+ var L=["שלום אהרון, אשמח להצעת מחיר 🙂",""];
+ if(S.ev)L.push("סוג אירוע: "+S.ev);
+ if(v("adults"))L.push("מבוגרים: "+v("adults"));
+ if(v("kids"))L.push("ילדים: "+v("kids"));
+ if(v("date"))L.push("תאריך: "+dateTxt(v("date")));
+ if(v("city"))L.push("עיר: "+v("city"));
+ if(S.picked.length){L.push("","המנות שבחרתי:");order.forEach(function(id){if(S.picked.indexOf(id)>=0)L.push("• "+names[id])})}
+ if(v("note"))L.push("","הערות: "+v("note"));
+ if(v("name"))L.push("","שם: "+v("name"));
+ return L.join("\n").replace(/\n{3,}/g,"\n\n");
+}
+function link(){$("wa").href="https://wa.me/972529669047?text="+encodeURIComponent(message())}
+function save(){FIELDS.forEach(function(i){S[i]=$(i).value});try{sessionStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function render(){
+ [].forEach.call($("events").children,function(b){b.setAttribute("aria-pressed",String(b.textContent===S.ev))});
+ var s=SAMPLES[S.ev];$("sample").hidden=!s;
+ if(s){
+  $("s-title").textContent="תפריט לדוגמה: "+s[0];
+  $("s-text").textContent=s[1].map(function(i){return names[i]}).join(" · ")+". דוגמה בלבד, כל תפריט נבנה לפי האירוע.";
+  var all=s[1].every(function(i){return S.picked.indexOf(i)>=0});
+  $("s-add").textContent=all?"✓ מנות הדוגמה נבחרו":"להוסיף את מנות הדוגמה";
+ }
+ order.forEach(function(id){var on=S.picked.indexOf(id)>=0;cards[id].setAttribute("aria-pressed",String(on));cards[id].querySelector("em").textContent=on?"✓":"+"});
+ var ul=$("picked");ul.textContent="";
+ order.forEach(function(id){
+  if(S.picked.indexOf(id)<0)return;
+  var li=el("li"),b=el("button","",names[id]+" ✕");b.type="button";b.setAttribute("aria-label","להסיר את "+names[id]);
+  b.addEventListener("click",function(){toggle(id)});li.appendChild(b);ul.appendChild(li);
+ });
+ var n=S.picked.length;
+ $("none").hidden=!!n;
+ $("sum-title").textContent=n?"המנות שבחרתם ("+n+")":"המנות שבחרתם";
+ $("bar-n").textContent=n===1?"נבחרה מנה אחת":"נבחרו "+n+" מנות";
+ bar();save();link();
+}
+var atOrder=false;
+function bar(){$("bar").classList.toggle("off",!S.picked.length||atOrder)}
+if("IntersectionObserver" in window)new IntersectionObserver(function(en){atOrder=en[0].isIntersecting;bar()},{rootMargin:"0px 0px -25% 0px"}).observe($("order"));
+FIELDS.forEach(function(i){if(S[i])$(i).value=S[i];$(i).addEventListener("input",function(){save();link()})});
+$("share").addEventListener("click",function(){
+ var u="https://hakelim.com/kelim/b/aharon-maman/";ga("menu_share");
+ if(navigator.share){navigator.share({title:"התפריט של אהרון ממן",url:u}).catch(function(){})}
+ else if(navigator.clipboard){var b=this;navigator.clipboard.writeText(u).then(function(){b.textContent="✓ הקישור הועתק"})}
+ else window.prompt("הקישור לתפריט:",u);
+});
+document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("[data-ev]");if(a)ga(a.getAttribute("data-ev"),{items:S.picked.length})});
+render();
+})();
+</script>
+</body>
+</html>
