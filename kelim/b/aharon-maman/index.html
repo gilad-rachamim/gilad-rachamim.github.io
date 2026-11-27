@@ -60,6 +60,7 @@ h2 i{flex:none;width:34px;height:34px;border-radius:50%;background:var(--gold);c
 .sample button{min-height:46px;width:100%;border:0;border-radius:12px;background:var(--gold);color:#111;font-weight:800;cursor:pointer}
 h3{font-size:20px;color:var(--gold);margin:22px 0 10px}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#menu .grid:nth-of-type(n+2),#order,footer{content-visibility:auto;contain-intrinsic-size:auto 640px}
 @media(min-width:620px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .dish{position:relative;display:flex;flex-direction:column;background:var(--panel);border:2px solid transparent;border-radius:16px;overflow:hidden;cursor:pointer;text-align:right;padding:0}
 .dish img{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;background:#222}
