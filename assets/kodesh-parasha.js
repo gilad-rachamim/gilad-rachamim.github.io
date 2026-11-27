@@ -52,6 +52,20 @@
     if (window.toolUsed) window.toolUsed('parasha', { how: 'share_dt' });
   });
 
+  // דבר התורה המלא נמצא בדף הפרשה, ונטען כשפותחים נושא
+  var pages = {};
+  document.addEventListener('toggle', function (e) {
+    var d = e.target, box = d.open && d.classList && d.classList.contains('pr-t') && d.querySelector('.pr-dt[data-src]');
+    if (!box) return;
+    var src = box.getAttribute('data-src'), id = d.getAttribute('data-id') || d.id;
+    box.removeAttribute('data-src');
+    pages[src] = pages[src] || fetch(src).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); });
+    pages[src].then(function (h) {
+      var f = new DOMParser().parseFromString(h, 'text/html').getElementById(id);
+      if (f) box.innerHTML = f.querySelector('.pr-dt').innerHTML;
+    }).catch(function () { delete pages[src]; box.setAttribute('data-src', src); });
+  }, true);
+
   function shareText(w) {
     var i = w.idx[0], t = 'שבת פרשת ' + w.name + topicList(w) + '\n\n' + text(i, 'pr-short') + '\n\nרעיון לשולחן שבת: ' + text(i, 'pr-idea') +
       '\n\nשאלה לילדים: ' + text(i, 'pr-q') + '\n\nכל הפרשה בקצרה: https://hakelim.com/kodesh/parasha/?utm_source=share#p-' + (i + 1);
