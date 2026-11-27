@@ -1,6 +1,15 @@
 // סרטוני התדמית של מיזם הכלים (15.11.2026): מעקב צפייה ושיתוף.
 // אירועי Analytics: promo_play / promo_share / promo_download, עם video = מזהה הסרטון ו-page = איפה בדף.
 (function () {
+  // תמונת הפתיחה (data-poster, ראו LAZY_POSTERS ב-build.py) נטענת רק כשהסרטון מתקרב למסך (27.11.2026)
+  var lazy = document.querySelectorAll('video[data-poster]');
+  var show = function (v) { v.poster = v.getAttribute('data-poster'); };
+  if (window.IntersectionObserver) {
+    var io = new IntersectionObserver(function (list) {
+      list.forEach(function (x) { if (x.isIntersecting) { show(x.target); io.unobserve(x.target); } });
+    }, { rootMargin: '600px' });
+    lazy.forEach(function (v) { io.observe(v); });
+  } else lazy.forEach(show);
   var ev = function (n, el, p) {
     try { window.gtag && gtag('event', n, Object.assign({ video: el.getAttribute('data-promo'), page: location.pathname }, p || {})); } catch (e) {}
   };
