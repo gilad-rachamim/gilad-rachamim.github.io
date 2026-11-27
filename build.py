@@ -1235,6 +1235,8 @@ for path in sorted(SRC.rglob("*.html")):
     if meta.get("crumb_root"):  # דף בשפה אחרת: שם השורש בפירורי הלחם בשפת הדף
         root = (meta["crumb_root"], root[1])
     html = LAYOUT_MATANA if meta.get("bare") else (LAYOUT_KELIM if site else LAYOUT)
+    # סקריפט קטן שמשנה את ראש הדף נכתב בתוך הדף, כדי שלא יגיע באיחור וידחוף את התוכן
+    content = re.sub(r"<!--inline-js:([\w.-]+)-->", lambda m: "<script>" + (ROOT / "assets" / m[1]).read_text(encoding="utf-8") + "</script>", content)
     content += "" if meta.get("bare") else seo_related(url_path)
     dv_blk, dv_ld = demo_block(meta, url) if site else ("", "")
     content = insert_demo(content, dv_blk)
