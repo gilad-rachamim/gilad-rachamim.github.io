@@ -13,7 +13,7 @@ canonical לכלי המקורי), kelim/b/<slug>/index.html (דף מרכז), emb
 בלי לוגו או בלי צבע ב-brand.json: הצבעים מחולצים מהלוגו לבד וחוזרים ל-brand.json.
 slug בשם free = הטמעה חינם של הכלים הרגילים עם שורת קרדיט (בלי לוגו, בלי וואטסאפ).
 """
-import argparse, colorsys, datetime, html, json, pathlib, re, shutil, sys
+import argparse, colorsys, datetime, html, json, pathlib, re, shutil, sys, urllib.parse
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SRC_B = ROOT / "src" / "pages" / "kelim" / "b"
@@ -145,6 +145,56 @@ def inject(h, brand, tool_slug):
     return h
 
 
+# ---------- ערכת "פרו": כותרת גדולה, פרטי קשר ופס וואטסאפ קבוע (brand.json: "pro") ----------
+def pro_layer(h, cfg, slug, tool, logo_url, v):
+    pro = cfg["pro"]
+
+    def e(s):
+        return html.escape(s or "", quote=True)
+
+    wa = "https://wa.me/%s" % re.sub(r"\D", "", cfg.get("whatsapp", ""))
+    tel = re.sub(r"[^\d+]", "", cfg.get("phone", ""))
+    hero = ('<header class="k-hero pro-hero"><div class="pro-brand"><img src="%s" alt="הלוגו של %s" width="76" height="76">'
+            '<div><b>%s</b><span>%s</span></div></div><h1>%s <em>%s</em></h1><p>%s</p><ul class="pro-chips">%s</ul></header>') % (
+        e(logo_url), e(cfg["name"]), e(cfg["name"]), e(pro.get("kick")), e(pro["title"]), e(pro.get("title_em")), e(pro.get("sub")),
+        "".join("<li>%s</li>" % e(c) for c in pro.get("chips", [])))
+    h, n = re.subn(r'<header class="k-hero">.*?</header>', lambda m: hero, h, count=1, flags=re.S)
+    if not n:
+        raise SystemExit("ערכת פרו: לא נמצאה כותרת הכלי")
+    links = '<a class="pro-wa" href="%s" target="_blank" rel="noopener">💬 וואטסאפ</a><a href="tel:%s">📞 %s</a>' % (wa, tel, e(cfg.get("phone")))
+    if pro.get("address"):
+        links += '<a href="https://www.google.com/maps/search/?api=1&amp;query=%s" target="_blank" rel="noopener">📍 ניווט למשרד</a>' % (
+            urllib.parse.quote(pro["address"]))
+    if pro.get("site"):
+        links += '<a href="%s" target="_blank" rel="noopener">🌐 לאתר המשרד</a>' % e(pro["site"])
+    contact = '<section class="pro-contact" aria-labelledby="pro-c"><h2 id="pro-c">%s</h2><p>%s</p><div>%s</div></section>' % (
+        e(pro.get("contact_title", "מדברים איתנו")), e(pro.get("address")), links)
+    bar = ('<nav class="pro-bar" aria-label="יצירת קשר"><a class="pro-wa" href="%s" target="_blank" rel="noopener" data-idle="%s">%s</a>'
+           '<a class="pro-tel" href="tel:%s" aria-label="להתקשר">📞</a></nav>') % (wa, e(pro.get("bar")), e(pro.get("bar")), tel)
+    if "</main>" not in h or '<script src="/assets/brand.js' not in h:
+        raise SystemExit("ערכת פרו: מבנה הדף לא צפוי")
+    h = h.replace("</main>", "</main>" + contact, 1)
+    h = h.replace('<script src="/assets/brand.js',
+                  bar + '\n<script src="/assets/brand-pro.js?v=%s" defer></script>\n<script src="/assets/brand.js' % v, 1)
+    meta = {"og:title": pro.get("og_title"), "og:description": pro.get("og_description"),
+            "description": pro.get("og_description"), "og:site_name": cfg["name"],
+            "og:url": "%s/kelim/b/%s/%s/" % (SITE, slug, tool)}
+    og = SRC_B / slug / "og.jpg"
+    if og.exists():
+        shutil.copyfile(og, OUT_B / slug / "og.jpg")
+        meta["og:image"] = "%s/kelim/b/%s/og.jpg?v=%s" % (SITE, slug, v)
+    for k, val in meta.items():
+        if val:
+            h = re.sub(r'(<meta (?:property|name)="%s" content=")[^"]*(")' % re.escape(k),
+                       lambda m: m.group(1) + e(val) + m.group(2), h)
+    h = h.replace("</head>", '<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;800;900&display=swap" rel="stylesheet">'
+                  '<link rel="stylesheet" href="/assets/brand-pro.css?v=%s">\n</head>' % v, 1)
+    h, n = re.subn(r'(<body\b[^>]*?class=")', lambda m: m.group(1) + "hk-pro ", h, count=1)
+    if not n:
+        raise SystemExit("ערכת פרו: ל-body אין class")
+    return h
+
+
 def asset_v():
     return datetime.date.today().strftime("%Y%m%d")
 
@@ -201,6 +251,8 @@ def build_brand(slug):
         brand = {"slug": slug, "mode": mode, "name": cfg.get("name", ""), "_v": v, "_pub": pub}
         h = strip_page(h, brand, t, s)
         h = inject(h, brand, s)
+        if cfg.get("pro"):
+            h = pro_layer(h, cfg, slug, s, logo_url, v)
         d = out / s
         d.mkdir(parents=True, exist_ok=True)
         (d / "index.html").write_text(h, encoding="utf-8")

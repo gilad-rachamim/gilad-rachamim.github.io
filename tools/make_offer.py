@@ -73,6 +73,20 @@ OFFERS = {
 e = lambda s: html.escape(s or "", quote=True)
 log = lambda *a: print(*a)
 
+MSG_OFFICE = """בשמחה! הכנתי לכם דף קצר עם שלוש האפשרויות, כולל איך כל אחת תיראה בלוגו של {name}:
+{link}
+
+בקצרה:
+• 290 ₪ – מחשבון נוסף בלוגו שלכם, שהתוצאה שלו נשלחת לוואטסאפ של המשרד
+• 590 ₪ – שלושה מחשבונים, הטמעה באתר המשרד ודוח חודשי. הכי משתלם
+• 990 ₪ – כל זה, ועוד כרטיס ביקור דיגיטלי ודף משרד שמחבר הכול
+
+תשלום חד-פעמי, החזר מלא תוך 14 יום. והמחשבון שכבר קיבלתם נשאר שלכם בחינם בכל מקרה.
+קחו את הזמן, ואם יש שאלה אני כאן.
+
+מיזם חסד, בלי כוונת רווח.
+גילעד"""
+
 
 def load(slug, kind):
     d = SRC_B / slug
@@ -127,7 +141,9 @@ document.addEventListener('click',function(ev){var a=ev.target.closest('[data-bo
 
 def build(slug, kind=None, card=True):
     cfg, kind = load(slug, kind)
-    K = OFFERS[kind]
+    K = dict(OFFERS[kind])
+    if cfg.get("offer_pick"):  # דוגמאות הכלים לפי תחום העסק
+        K["pick"] = [tuple(x) for x in cfg["offer_pick"]]
     name = cfg["name"]
     out = OUT_B / slug / "shidrug"
     out.mkdir(parents=True, exist_ok=True)
@@ -179,7 +195,7 @@ def build(slug, kind=None, card=True):
                 cls, style, '<div class="bo-logo"><img src="%s" alt=""></div>' % logo.as_uri() if logo.exists() else "",
                 "שלוש דרכים לשדרג את <b>%s</b>" % e(name), "בלוגו ובצבעים שלכם. בוחרים בנחת.", cells))
             shot(ch, out / fn, size)
-    msg = MSG.format(name=name, link=link)
+    msg = (MSG_OFFICE if kind == "office" else MSG).format(name=name, link=link)
     mp = SRC_B / slug / "offer-message.txt"
     if not mp.exists():
         mp.write_text(msg + "\n", encoding="utf-8")
