@@ -49,7 +49,6 @@ function doPost(e) {
     if (!name || !(phone || email || shipur)) return txt('missing');
     if (shipur && !(phone || email)) { if (tooMany('anon-shipur', 20)) return txt('ok'); }  // עד 20 הצעות אנונימיות ב-6 שעות
     else if (tooMany(email || phone)) return txt('ok');   // אותו אדם שולח שוב ושוב – לא כותבים ולא שולחים
-    var mailOk = underDailyCap();                          // מעל התקרה היומית: השורה נשמרת, בלי מייל להורה
     var ss = SpreadsheetApp.getActive();
     var sh = sheet(ss, CFG.SHEET_LEADS, COLS);
     var consent = p['מאשר/ת קבלת עדכונים'] ? 'כן' : 'לא';
@@ -75,29 +74,25 @@ function doPost(e) {
 
     if (consent === 'כן' && gift) { sh.getRange(sh.getLastRow(), C['מייל הבא'] + 1).setValue(addDays(new Date(), 2)); }
     else if (consent === 'כן') { var nx = dueStep(row, new Date()).next; sh.getRange(sh.getLastRow(), C['מייל הבא'] + 1).setValue(nx ? nx[1] : ''); }
-    if (email && mailOk && gift) {
-      try { sendGiftEmail(name, email, token, consent, giftSlug_(clean(p['מקור']))); } catch (eG) { log('מייל מתנה נכשל: ' + eG + ' | ' + email); }
+    // מייל לנרשם: מעל התקרה או כשנגמרה המכסה – השורה מסומנת "ממתין למייל" והריצה היומית משלימה (27.11.2026)
+    var src = clean(p['מקור']);
+    if (email && needsMail_(src)) {
+      var late = '';
+      if (underDailyCap() && MailApp.getRemainingDailyQuota() > 2) {
+        try { sendLeadMail_(name, email, token, consent, src); }
+        catch (eM) { late = MailApp.getRemainingDailyQuota() < 1 ? PENDING : 'מייל נכשל'; log('מייל לנרשם נכשל: ' + eM + ' | ' + email); }
+      } else late = PENDING;
+      if (late) sh.getRange(sh.getLastRow(), C['הערות'] + 1).setValue(addNote_(row[C['הערות']], late));
     }
-    if (email && mailOk && /^כלים: יוטיוב בלי פרסומות/.test(clean(p['מקור']))) {   // הוראות הדף /kelim/yutub-bli-pirsomot/ (24.11.2026)
-      try { sendYoutubeEmail(name, email); } catch (eY) { log('מייל יוטיוב נכשל: ' + eY + ' | ' + email); }
-    }
-    if (email && mailOk && !kelim && !gift) {
-      var src = clean(p['מקור']);
-      if (src === 'מחולל הודעה לברית') sendHazmanaEmail(name, email);
-      else if (src === 'מחולל הודעה לזבד הבת') sendZevedEmail(name, email);
-      else if (src === 'מחולל הודעה לפדיון הבן') sendPidyonEmail(name, email);
-      else sendGuideEmail(name, email, token, consent);
-    }
-    notifyOwner(row, dup);
+    try { notifyOwner(row, dup); } catch (eO) { log('התראה לגילעד נכשלה: ' + eO); }
     if (!kelim && !gift && isGuideLead_(clean(p['מקור']))) {        // ליד של המדריך → אנשי הקשר של גילעד (לא מפיל את הטופס אם נכשל)
       try { saveLeadContact_({ name: name, phone: phone, email: email, due: row[C['מועד לידה']], city: row[C['עיר']], date: row[C['תאריך']] }, contactKeys_()); }
       catch (eC) { log('שמירת איש קשר נכשלה: ' + eC + ' | ' + name); }
     }
-    if (!mailOk) log('התקרה היומית (' + DAILY_CAP + ') עברה – לא נשלח מייל להורה: ' + email);
     return txt('ok');
   } catch (err) {
     log('doPost error: ' + err + ' | ' + JSON.stringify(p));
-    try { MailApp.sendEmail(CFG.OWNER_EMAIL, 'שגיאה בצינור הלידים', String(err) + '\n\n' + JSON.stringify(p)); } catch (e2) {}
+    try { if (!tooMany('err-mail', 3)) MailApp.sendEmail(CFG.OWNER_EMAIL, 'שגיאה בצינור הלידים', String(err) + '\n\n' + JSON.stringify(p)); } catch (e2) {}
     return txt('error');
   }
 }
@@ -337,12 +332,21 @@ function dueStep(r, today) {
 
 // ---------- סדרת מיילים (טריגר יומי 10:00) ----------
 function dailyNurture(dryRun) {
+  dryRun = dryRun === true;                               // טריגר זמן מעביר אובייקט אירוע
   if (!dryRun && isShabbatOrHoliday(new Date())) return;
   var sh = sheet(SpreadsheetApp.getActive(), CFG.SHEET_LEADS, COLS);
-  var data = sh.getDataRange().getValues(), today = new Date(), sent = [], closed = { 'מוהל אחר': 1, 'לא רלוונטי': 1 };
+  var closed = { 'מוהל אחר': 1, 'לא רלוונטי': 1 }, sent = [], first_ = [];
+  if (!dryRun) {
+    SERIES_LEFT = SERIES_BUDGET;
+    try { queueMissed_(); } catch (eQ) { log('queueMissed: ' + eQ); }
+    try { first_ = catchUp_(); } catch (eU) { log('catchUp: ' + eU); }
+  }
+  try { first_ = first_.concat(buyerNurture(dryRun)); } catch (eB) { log('buyerNurture: ' + eB); }
+  var data = sh.getDataRange().getValues(), today = new Date();
   for (var i = 1; i < data.length && sent.length < 40; i++) {
     var r = data[i];
     if (isGift_(r[C['מקור']])) continue;                  // לדפי המתנה יש סדרה משלהם (giftNurture)
+    if (String(r[C['הערות']] || '').indexOf(PENDING) > -1) continue;
     if (r[C['הסכמה לדיוור']] !== 'כן' || !r[C['מייל']] || closed[r[C['סטטוס']]] || r[C['שלב בסדרה']] === 'done') continue;
     var lastSent = r[C['נשלח לאחרונה']];
     var ds = dueStep(r, today);
@@ -352,6 +356,7 @@ function dailyNurture(dryRun) {
     var first = firstName(r[C['שם']]);
     var html = wrapHtml(mailBody(ds.step[0], ds.step[2]).replace(/\{שם\}/g, first), unsubLink(r[C['טוקן']]));
     if (dryRun) { sent.push((i + 1) + ':' + ds.step[0]); continue; }
+    if (!takeSeries_()) break;
     try {
       MailApp.sendEmail({ to: r[C['מייל']], subject: SUBJECTS[ds.step[0]], htmlBody: html, body: toText(html), name: CFG.OWNER_NAME, replyTo: CFG.OWNER_EMAIL });
       sent.push((i + 1) + ':' + ds.step[0]);
@@ -362,8 +367,8 @@ function dailyNurture(dryRun) {
   }
   if (sent.length) log((dryRun ? 'dry ' : '') + 'dailyNurture: ' + sent.join(', '));
   try { sent = sent.concat(giftNurture(dryRun)); } catch (eN) { log('giftNurture: ' + eN); }
-  try { sent = sent.concat(buyerNurture(dryRun)); } catch (eB) { log('buyerNurture: ' + eB); }
-  return sent;
+  if (!dryRun) { try { ownerDigest_(); } catch (eD) { log('ownerDigest: ' + eD); } }
+  return first_.concat(sent);
 }
 
 // ---------- רשימת ווטסאפ יומית לגילעד (09:00) ----------
@@ -391,6 +396,7 @@ function waDue(r, today) {
   return '';
 }
 function dailyWhatsappList(dryRun) {
+  dryRun = dryRun === true;                               // טריגר זמן מעביר אובייקט אירוע
   if (!dryRun && isShabbatOrHoliday(new Date())) return;
   var sh = sheet(SpreadsheetApp.getActive(), CFG.SHEET_LEADS, COLS);
   var data = sh.getDataRange().getValues(), today = new Date(), lines = [];
@@ -693,6 +699,7 @@ function giftMail(slug, step) {
 }
 // כל השלבים בסדרה אחת (לבדיקה ולשליחת דוגמה)
 function giftSeries_(dryRun) {
+  dryRun = dryRun === true;                               // טריגר זמן מעביר אובייקט אירוע
   if (!dryRun && isShabbatOrHoliday(new Date())) return [];
   var sh = sheet(SpreadsheetApp.getActive(), CFG.SHEET_LEADS, COLS);
   var data = sh.getDataRange().getValues(), today = new Date(), sent = [], seen = {};
@@ -711,7 +718,8 @@ function giftSeries_(dryRun) {
     if (lastSent instanceof Date && today - lastSent < 20 * 3600e3) continue;   // לא יותר ממייל אחד ביום
     var slug = giftSlug_(r[C['מקור']]);
     if (!MATANA[slug]) continue;
-    if (!dryRun && MailApp.getRemainingDailyQuota() < 15) break;              // משאירים מקום למיילים החדשים
+    if (String(r[C['הערות']] || '').indexOf(PENDING) > -1) continue;           // קודם מייל המתנה
+    if (!dryRun && !takeSeries_()) break;
     seen[em] = 1;
     var m = giftMail(slug, nxt[0]), html = wrapGift(m[1].replace(/שלום \{שם\}/g, gHello(r[C['שם']])), unsubLink(r[C['טוקן']]), slug, m[2]);
     if (dryRun) { sent.push((i + 1) + ':' + slug + ':' + nxt[0]); continue; }
@@ -785,6 +793,7 @@ function partnerInviteMail(slug) {
   return ['רוצים להרוויח מלהמליץ?', 'שלום {שם},' + BR + 'אם זה עזר לכם, אתם מוזמנים להיות שותפים: מקבלים קישור אישי, ועל כל רכישה דרכו ' + PARTNER_PCT + ' מהסכום. ענו למייל הזה ואשלח את הפרטים והקישור.' + BR + 'אני כאן לכל שאלה בווטסאפ או במייל.<br>גילעד'];
 }
 function buyerNurture(dryRun) {
+  dryRun = dryRun === true;                               // טריגר זמן מעביר אובייקט אירוע
   if (!BUYER_SERIES_ON && !dryRun) return [];
   if (!dryRun && isShabbatOrHoliday(new Date())) return [];
   var sh = sheet(SpreadsheetApp.getActive(), CFG.SHEET_LEADS, COLS), data = sh.getDataRange().getValues(), today = new Date(), sent = [], seen = {};
@@ -797,7 +806,7 @@ function buyerNurture(dryRun) {
     var last = String(r[C['שלב בסדרה']] || ''), idx = -1;
     steps.forEach(function (s, k) { if (s[0] === last) idx = k; });
     var nxt = steps[idx + 1]; if (!nxt) continue;
-    if (!dryRun && MailApp.getRemainingDailyQuota() < 15) break;
+    if (!dryRun && !takeSeries_()) break;
     seen[em] = 1;
     var m = buyerMail(slug, nxt[0]), html = wrapGift(m[1].replace(/שלום \{שם\}/g, gHello(r[C['שם']])), unsubLink(r[C['טוקן']]), slug);
     if (dryRun) { sent.push((i + 1) + ':' + slug + ':' + nxt[0]); continue; }
@@ -830,7 +839,7 @@ function notifyOwner(row, dup) {
   var body = line + '\nטלפון: ' + phone + '\nמייל: ' + email + '\nמקור: ' + source +
     (phone ? '\n\nווטסאפ מוכן:\n' + waLink(phone, /^(כלים:|מתנה:)/.test(String(source)) ? 'שלום ' + String(name).split(' ')[0] + ', כאן גילעד מהכלים של גילעד רחמים. תודה שכתבת לי! ' : waMessage('WA-1', row)) : '') +
     '\n\nהגיליון: ' + SpreadsheetApp.getActive().getUrl();
-  MailApp.sendEmail({ to: CFG.OWNER_EMAIL, subject: line, body: body, name: 'האתר – לידים' });
+  if (phone && !/^(כלים:|מתנה:)/.test(String(source))) MailApp.sendEmail({ to: CFG.OWNER_EMAIL, subject: line, body: body, name: 'האתר – לידים' });
   push(line, 'טלפון ' + phone + (email ? ' · ' + email : ''));
 }
 
@@ -884,7 +893,83 @@ function tooMany(who, max) {
   return n >= (max || 2);
 }
 // תקרה יומית למיילים להורים, כדי שהצפה של הטופס לא תגמור את מכסת ה-100 של Gmail
-var DAILY_CAP = 40;
+var DAILY_CAP = 70;       // מיילים מיידיים לנרשמים ביום
+var SERIES_BUDGET = 25;   // השלמות + סדרות בריצה היומית
+var SERIES_LEFT = 0;
+var PENDING = 'ממתין למייל';
+function takeSeries_() {
+  if (SERIES_LEFT <= 0 || MailApp.getRemainingDailyQuota() <= 5) return false;
+  SERIES_LEFT--; return true;
+}
+function addNote_(old, note) { return old ? old + ' · ' + note : note; }
+function needsMail_(src) { return !/^כלים:/.test(src) || /^כלים: יוטיוב בלי פרסומות/.test(src); }
+function sendLeadMail_(name, email, token, consent, src) {
+  if (isGift_(src)) sendGiftEmail(name, email, token, consent, giftSlug_(src));
+  else if (/^כלים: יוטיוב בלי פרסומות/.test(src)) sendYoutubeEmail(name, email);
+  else if (src === 'מחולל הודעה לברית') sendHazmanaEmail(name, email);
+  else if (src === 'מחולל הודעה לזבד הבת') sendZevedEmail(name, email);
+  else if (src === 'מחולל הודעה לפדיון הבן') sendPidyonEmail(name, email);
+  else sendGuideEmail(name, email, token, consent);
+}
+// חד-פעמי (27.11.2026): מסמן "ממתין למייל" את מי שלפי היומן לא קיבל מייל
+function queueMissed_() {
+  var props = PropertiesService.getScriptProperties();
+  if (props.getProperty('backfill-2711')) return 0;
+  var ss = SpreadsheetApp.getActive(), missed = {}, n = 0;
+  sheet(ss, CFG.SHEET_LOG, ['תאריך', 'הודעה']).getDataRange().getValues().forEach(function (l) {
+    var msg = String(l[1] || ''), m = msg.match(/לא נשלח מייל להורה: (\S+)/) || msg.match(/^מייל (?:מתנה|יוטיוב) נכשל: .*email\. \| (\S+)/);
+    if (m) missed[m[1].toLowerCase()] = 1;                // שגיאת doPost לבדה = ההתראה נכשלה, המייל לנרשם יצא (נבדק בדואר היוצא)
+  });
+  var sh = sheet(ss, CFG.SHEET_LEADS, COLS), data = sh.getDataRange().getValues();
+  for (var i = 1; i < data.length; i++) {
+    var r = data[i], em = String(r[C['מייל']] || '').toLowerCase();
+    if (!missed[em] || r[C['הסכמה לדיוור']] === 'הוסר' || !needsMail_(String(r[C['מקור']]))) continue;
+    delete missed[em];                                     // שורה אחת לכל כתובת
+    sh.getRange(i + 1, C['הערות'] + 1).setValue(addNote_(r[C['הערות']], PENDING));
+    n++;
+  }
+  props.setProperty('backfill-2711', String(n));
+  log('queueMissed: ' + n + ' ממתינים למייל');
+  return n;
+}
+function catchUp_() {
+  var sh = sheet(SpreadsheetApp.getActive(), CFG.SHEET_LEADS, COLS), data = sh.getDataRange().getValues(), today = new Date(), sent = [];
+  for (var i = 1; i < data.length; i++) {
+    var r = data[i], note = String(r[C['הערות']] || '');
+    if (note.indexOf(PENDING) < 0 || !r[C['מייל']] || r[C['הסכמה לדיוור']] === 'הוסר') continue;
+    if (!takeSeries_()) break;
+    var done = 'מייל נשלח באיחור ' + Utilities.formatDate(today, CFG.TZ, 'd.M');
+    try {
+      sendLeadMail_(r[C['שם']], r[C['מייל']], r[C['טוקן']], r[C['הסכמה לדיוור']], String(r[C['מקור']]));
+      sh.getRange(i + 1, C['נשלח לאחרונה'] + 1).setValue(today);
+      sent.push((i + 1) + ':late');
+    } catch (err) {
+      log('השלמה, שורה ' + (i + 1) + ': ' + err);
+      if (MailApp.getRemainingDailyQuota() < 1) break;
+      done = 'מייל נכשל';
+    }
+    sh.getRange(i + 1, C['הערות'] + 1).setValue(note.replace(PENDING, done));
+  }
+  if (sent.length) log('catchUp: ' + sent.join(', '));
+  return sent;
+}
+// מייל אחד ביום לגילעד במקום מייל על כל ליד ממתנה
+function ownerDigest_() {
+  var props = PropertiesService.getScriptProperties(), now = new Date();
+  var since = Number(props.getProperty('digest-last')) || now.getTime() - 3 * 864e5;   // ריצה ראשונה: כולל שבת
+  var data = sheet(SpreadsheetApp.getActive(), CFG.SHEET_LEADS, COLS).getDataRange().getValues(), by = {}, total = 0, wait = 0;
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][C['הערות']] || '').indexOf(PENDING) > -1) wait++;
+    var d = data[i][C['תאריך']];
+    if (!(d instanceof Date) || d.getTime() <= since) continue;
+    var k = String(data[i][C['מקור']]).slice(0, 40); by[k] = (by[k] || 0) + 1; total++;
+  }
+  if (!total && !wait) return;
+  var body = 'לידים חדשים מאז הסיכום הקודם: ' + total + '\n' + Object.keys(by).map(function (k) { return '• ' + k + ': ' + by[k]; }).join('\n') +
+    '\n\nעדיין ממתינים למייל: ' + wait + '\n\nהגיליון: ' + SpreadsheetApp.getActive().getUrl();
+  MailApp.sendEmail({ to: CFG.OWNER_EMAIL, subject: 'סיכום לידים: ' + total + ' חדשים, ' + wait + ' ממתינים', body: body, name: 'האתר – לידים' });
+  props.setProperty('digest-last', String(now.getTime()));
+}
 function underDailyCap() {
   var lock = LockService.getScriptLock(), props = PropertiesService.getScriptProperties();
   try { lock.waitLock(5000); } catch (e) { return true; }
