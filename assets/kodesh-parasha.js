@@ -92,7 +92,13 @@
   function openHash() {
     var m = /^#([pt])-(\d+)(-\d+)?$/.exec(location.hash); if (!m) return;
     var d = $('p-' + m[2]), t = m[1] === 't' ? $(location.hash.slice(1)) : null; if (!d) return;
-    d.open = true; if (t) t.open = true; (t || d).scrollIntoView({ block: 'start', behavior: 'instant' });
+    d.open = true; if (t) t.open = true;
+    var el = t || d, moved = false;
+    function go() { if (!moved) el.scrollIntoView({ block: 'start', behavior: 'instant' }); }
+    // הדפדפן גולל לעוגן בעצמו תוך כדי שינוי גובה הדף, ולכן חוזרים ליעד אחרי הטעינה (אלא אם הקורא כבר גלל)
+    ['touchstart', 'wheel', 'keydown'].forEach(function (ev) { window.addEventListener(ev, function () { moved = true; }, { once: true, passive: true }); });
+    function later() { setTimeout(go, 150); setTimeout(go, 900); }
+    go(); if (document.readyState === 'complete') later(); else window.addEventListener('load', later, { once: true });
   }
 
   // תזכורת באפליקציה
