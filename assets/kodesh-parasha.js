@@ -27,8 +27,33 @@
   var cur = list[0], reading = null;
   for (var j = 0; j < list.length; j++) if (!list[j].chag) { reading = list[j]; break; }
 
+  // כותרות הנושאים של הפרשות שקוראים בשבת (ריק כשעוד אין לפרשה נושאים)
+  function topics(w) {
+    var out = [];
+    w.idx.forEach(function (i) {
+      [].forEach.call(document.querySelectorAll('#p-' + (i + 1) + ' .pr-t h4'), function (h) { out.push(h.textContent.trim()); });
+    });
+    return out;
+  }
+  function topicList(w) { var a = topics(w); return a.length ? '\n\nנושאי הפרשה:\n• ' + a.join('\n• ') : ''; }
+
+  // שיתוף דבר תורה אחד
+  function shareTopic(d) {
+    var id = d.getAttribute('data-id'), s = d.querySelector('summary'), name = $('p-' + id.split('-')[1]).getAttribute('data-name');
+    var t = 'פרשת ' + name + ': ' + s.querySelector('h4').textContent.trim() + ' (' + s.querySelector('small').textContent.trim() + ')';
+    [].forEach.call(d.querySelectorAll('.pr-dt > p, .pr-dt > blockquote'), function (el) { t += '\n\n' + el.textContent.trim(); });
+    return t + '\n\nעוד דברי תורה לפרשה: https://hakelim.com/kodesh/parasha/?utm_source=share_dt#' + id;
+  }
+  // מזהה שנשמר גם בהעתק שבראש הדף (בלי id כפול)
+  [].forEach.call(document.querySelectorAll('.pr-t'), function (d) { d.setAttribute('data-id', d.id); });
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('.pr-tw'); if (!b) return;
+    window.open('https://wa.me/?text=' + encodeURIComponent(shareTopic(b.closest('.pr-t'))), '_blank', 'noopener');
+    if (window.toolUsed) window.toolUsed('parasha', { how: 'share_dt' });
+  });
+
   function shareText(w) {
-    var i = w.idx[0], t = 'שבת פרשת ' + w.name + '\n\n' + text(i, 'pr-short') + '\n\nרעיון לשולחן שבת: ' + text(i, 'pr-idea') +
+    var i = w.idx[0], t = 'שבת פרשת ' + w.name + topicList(w) + '\n\n' + text(i, 'pr-short') + '\n\nרעיון לשולחן שבת: ' + text(i, 'pr-idea') +
       '\n\nשאלה לילדים: ' + text(i, 'pr-q') + '\n\nכל הפרשה בקצרה: https://hakelim.com/kodesh/parasha/?utm_source=share#p-' + (i + 1);
     return t;
   }
@@ -42,6 +67,8 @@
     w.idx.forEach(function (i) {
       if (w.idx.length > 1) html += '<h3>' + esc(nameOf(i)) + '</h3>';
       html += '<h3>בקצרה</h3><p>' + part(i, 'pr-short') + '</p>';
+      var tp = document.querySelector('#p-' + (i + 1) + ' .pr-topics');
+      if (tp) html += '<div class="pr-topics">' + tp.innerHTML.replace(/ id="t-[0-9-]+"/g, '') + '</div>';
       html += '<h3>הפסוק</h3><p class="pr-pasuk">' + part(i, 'pr-pasuk') + '</p>';
       html += '<h3>רעיון לשולחן שבת</h3><p>' + part(i, 'pr-idea') + '</p>';
       html += '<h3>שאלה לילדים</h3><p>' + part(i, 'pr-q') + '</p><details><summary>התשובה</summary><p>' + part(i, 'pr-a') + '</p></details>';
@@ -63,8 +90,9 @@
 
   // פתיחת הפרשה לפי העוגן בכתובת
   function openHash() {
-    var m = /^#p-(\d+)$/.exec(location.hash); if (!m) return;
-    var d = $('p-' + m[1]); if (d) { d.open = true; d.scrollIntoView({ block: 'start' }); }
+    var m = /^#([pt])-(\d+)(-\d+)?$/.exec(location.hash); if (!m) return;
+    var d = $('p-' + m[2]), t = m[1] === 't' ? $(location.hash.slice(1)) : null; if (!d) return;
+    d.open = true; if (t) t.open = true; (t || d).scrollIntoView({ block: 'start' });
   }
 
   // תזכורת באפליקציה
@@ -73,7 +101,7 @@
     list.forEach(function (w) {
       if (w.chag) return;
       var d = new Date(w.greg.getTime()); d.setDate(d.getDate() - (6 - st.day));
-      var idea = text(w.idx[0], 'pr-idea');
+      var a = topics(w), idea = a.length ? 'נושאי הפרשה: ' + a.join(' · ') : text(w.idx[0], 'pr-idea');
       out.push({ date: iso(d), title: 'שבת פרשת ' + w.name, text: idea.length > 110 ? idea.slice(0, 107) + '…' : idea });
     });
     return out;
