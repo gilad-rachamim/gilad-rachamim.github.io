@@ -1,0 +1,47 @@
+/* ערכת "פרו" לדף מתנה ממותג (brand.json: "pro"). צבעים: --hk-c (ראשי), --hk-c2 (הדגשה), --pro-ink (רקע כהה). */
+body.hk-pro{--pro-ink:#0b1526;--body:#334155;--muted:#5b687c;--line:#dbe3ee;background:#f3f6fa!important;font-family:Heebo,system-ui,sans-serif;padding-bottom:calc(5.6rem + env(safe-area-inset-bottom));margin:0}
+body.hk-pro .hk-top{display:none!important}
+body.hk-pro .pro-hero{background:radial-gradient(120% 90% at 85% 0,color-mix(in srgb,var(--hk-c) 70%,transparent),transparent 60%),var(--pro-ink);color:#fff;text-align:center;padding:1.5rem 1.1rem 4.4rem;max-width:none;margin:0}
+body.hk-pro .pro-brand{display:flex;align-items:center;justify-content:center;gap:.8rem;text-align:right}
+body.hk-pro .pro-brand img{width:76px;height:76px;border-radius:18px;box-shadow:0 0 0 2px rgba(255,255,255,.2),0 12px 30px rgba(0,0,0,.45)}
+body.hk-pro .pro-brand b{display:block;font-size:1.55rem;font-weight:900;line-height:1.15;color:#fff}
+body.hk-pro .pro-brand span{display:block;color:#b9c8dc;font-size:.95rem}
+body.hk-pro .pro-hero h1{font-family:Heebo,system-ui,sans-serif;color:#fff;font-weight:900;font-size:clamp(2.1rem,9.4vw,3.3rem);line-height:1.12;margin:1.5rem auto .7rem;max-width:18ch}
+body.hk-pro .pro-hero h1 em{font-style:normal;color:#fbbf24}
+body.hk-pro .pro-hero p{color:#d6e0ee;font-size:1.12rem;margin:0 auto;max-width:34rem}
+body.hk-pro .pro-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:.45rem;margin:1.1rem 0 0;padding:0;list-style:none}
+body.hk-pro .pro-chips li{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);border-radius:999px;padding:.32rem .8rem;font-size:.88rem;font-weight:600;color:#fff;margin:0}
+body.hk-pro .tool{position:relative;max-width:40rem;margin:-3rem auto 0;padding:1.3rem 1.15rem;background:#fff;border-radius:22px;box-shadow:0 18px 50px rgba(11,21,38,.16);width:calc(100% - 1.4rem);box-sizing:border-box}
+body.hk-pro .tool label{font-weight:700;color:#1e293b}
+body.hk-pro .tool input,body.hk-pro .tool select{border:1.5px solid #cbd5e1;border-radius:12px;min-height:3rem;margin-top:.3rem;background:#f8fafc;font-size:1.05rem}
+body.hk-pro .tool input:focus,body.hk-pro .tool select:focus{outline:3px solid color-mix(in srgb,var(--hk-c) 35%,transparent);border-color:var(--hk-c);background:#fff}
+body.hk-pro .gr-links,body.hk-pro .tool .disclaimer{display:none}
+body.hk-pro #zk-res{border:0;border-radius:18px;background:var(--pro-ink);color:#e5edf7;padding:1.2rem 1rem;text-align:center;margin:1.1rem 0;scroll-margin-top:.8rem}
+body.hk-pro #zk-res p{color:#d6e0ee}
+body.hk-pro #zk-res .pz-big{color:#fbbf24;font-size:clamp(2.8rem,14vw,4.4rem);font-weight:900;line-height:1.1}
+body.hk-pro #zk-res table{width:100%;border-collapse:collapse;text-align:right;margin-top:.6rem;background:transparent}
+body.hk-pro #zk-res tr{background:transparent}
+body.hk-pro #zk-res td,body.hk-pro #zk-res th{padding:.62rem .2rem;border:0;border-top:1px solid rgba(255,255,255,.16);color:#fff;background:transparent}
+body.hk-pro #zk-res td:last-child{text-align:left;font-weight:800;white-space:nowrap;padding-inline-start:.6rem}
+body.hk-pro #zk-res .pz-steps{background:rgba(255,255,255,.07);border-radius:12px;padding:.6rem .8rem;font-size:.9rem;color:#d6e0ee;text-align:right;margin-top:.8rem}
+body.hk-pro #zk-res .pz-steps summary{cursor:pointer;font-weight:700;color:#fff;min-height:1.8rem}
+body.hk-pro #zk-res .pz-steps li{color:#d6e0ee}
+body.hk-pro #zk-res .pz-hint{color:#a9bad1;font-size:.85rem}
+body.hk-pro #zk-res a{color:#7dd3fc}
+body.hk-pro .pro-demo{display:block;width:100%;margin:0 0 .9rem;padding:.7rem;border:1.5px dashed var(--hk-c);border-radius:12px;background:#e6f3f7;color:#155e75;font:800 1rem Heebo,system-ui,sans-serif;cursor:pointer}
+body.hk-pro .hk-lead{width:calc(100% - 1.4rem);max-width:40rem;margin-inline:auto;box-sizing:border-box;background:var(--pro-ink);border:0;border-top:5px solid var(--hk-c2);border-radius:20px;padding:1.5rem 1.1rem;text-align:center}
+body.hk-pro .hk-lead p{color:#fff;font-weight:800;font-size:1.3rem;line-height:1.35}
+body.hk-pro .hk-lead small{color:#a9bad1}
+body.hk-pro .hk-lead a.hk-wa,body.hk-pro .pro-bar a.pro-wa,body.hk-pro .pro-contact a.pro-wa{background:#25d366;color:#06250f;box-shadow:0 8px 24px rgba(37,211,102,.35)}
+body.hk-pro .pro-contact{max-width:40rem;width:calc(100% - 1.4rem);margin:1rem auto;background:#fff;border-radius:20px;padding:1.3rem 1.1rem;box-sizing:border-box;text-align:center;box-shadow:0 8px 26px rgba(11,21,38,.08)}
+body.hk-pro .pro-contact h2{font-family:Heebo,system-ui,sans-serif;color:#0f172a;margin:0 0 .3rem;font-size:1.4rem;border:0}
+body.hk-pro .pro-contact p{margin:.2rem 0 1rem;color:#475569}
+body.hk-pro .pro-contact div{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+body.hk-pro .pro-contact a{display:block;padding:.85rem .5rem;border-radius:14px;font-weight:800;text-decoration:none;border:2px solid var(--hk-c);color:#155e75}
+body.hk-pro .pro-contact a.pro-wa{border-color:#25d366;color:#06250f}
+body.hk-pro .pro-bar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;gap:.55rem;padding:.65rem .7rem calc(.65rem + env(safe-area-inset-bottom));background:rgba(11,21,38,.96);justify-content:center}
+body.hk-pro .pro-bar a{display:flex;align-items:center;justify-content:center;min-height:3.2rem;border-radius:14px;font-weight:900;text-decoration:none;font-size:1.08rem;text-align:center}
+body.hk-pro .pro-bar a.pro-wa{flex:1;max-width:30rem;padding:0 .6rem}
+body.hk-pro .pro-bar a.pro-tel{width:3.6rem;flex:none;background:#fff;color:#0b1526;font-size:1.4rem}
+html.hk-embed body.hk-pro .pro-bar,html.hk-embed body.hk-pro .pro-contact{display:none}
+@media print{body.hk-pro .pro-bar{display:none}}

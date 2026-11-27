@@ -31,7 +31,7 @@
     var h1 = document.querySelector("main h1");
     var lines = [(B.msg || "שלום, השתמשתי בכלי באתר שלכם ורציתי להמשיך."), ""];
     if (h1) lines.push(h1.textContent.trim());
-    var r = resultText(); if (r) { lines.push(""); lines.push(r); }
+    var r = window.hkResult ? window.hkResult() : resultText(); if (r) { lines.push(""); lines.push(r); }
     var num = String(B.whatsapp || "").replace(/\D/g, "");
     return "https://wa.me/" + num + "?text=" + encodeURIComponent(lines.join("\n"));
   }

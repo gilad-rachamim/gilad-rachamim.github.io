@@ -129,20 +129,103 @@ def quote_html(p, verses, ref, frag):
     return '<blockquote class="pr-v"><p>%s <small>(%s)</small></p></blockquote>' % (html.escape(words), he_ref(p['book'], ref))
 
 
-def block(p, verses):
+def topic_html(p, verses, k, t, tag, opened=False):
     e = lambda s: html.escape(s, quote=False)
+    body = ['<p>%s</p>' % e(t['dt'][0])]
+    body += [quote_html(p, verses, r, f) for r, f in t['quotes']]
+    body += ['<p>%s</p>' % e(x) for x in t['dt'][1:]]
+    body.append('<p class="pr-les"><b>למעשה:</b> %s</p>' % e(t['lesson']))
+    body.append('<button type="button" class="btn btn-line pr-tw">לשלוח את דבר התורה בווטסאפ</button>')
+    return topic_shell(p, k, t, tag, ''.join(body), ' open' if opened else '')
+
+
+def topic_shell(p, k, t, tag, body, attrs='', box=''):
+    e = lambda s: html.escape(s, quote=False)
+    return ('<details class="pr-t" id="t-%d-%d"%s><summary><%s>%s</%s> <small>%s</small><em>%s</em></summary>'
+            '<div class="pr-dt"%s>%s</div></details>') % (
+        p['n'], k, attrs, tag, e(t['title']), tag, he_ref(p['book'], *t['range']), e(t['idea']), box, body)
+
+
+def url_of(p):
+    return '/kodesh/parasha/%s/' % p['slug']
+
+
+def block(p):
+    """בדף השבועי: כותרות ומסרים; דבר התורה המלא נטען מדף הפרשה כשפותחים נושא."""
     out = ['<!--dt:%d--><div class="pr-topics"><h3>נושאי פרשת %s: דבר תורה לכל נושא</h3>' % (p['n'], p['name']),
-           '<p class="pr-hint">לחצו על נושא כדי לפתוח דבר תורה קצר.</p>']
+           '<p class="pr-hint">לחצו על נושא כדי לפתוח דבר תורה קצר, או היכנסו ל<a href="%s">דף פרשת %s עם כל דברי התורה</a>.</p>'
+           % (url_of(p), p['name'])]
     for k, t in enumerate(p['topics'], 1):
-        out.append('<details class="pr-t" id="t-%d-%d"><summary><h4>%s</h4> <small>%s</small><em>%s</em></summary><div class="pr-dt">'
-                   % (p['n'], k, e(t['title']), he_ref(p['book'], *t['range']), e(t['idea'])))
-        out.append('<p>%s</p>' % e(t['dt'][0]))
-        out += [quote_html(p, verses, r, f) for r, f in t['quotes']]
-        out += ['<p>%s</p>' % e(x) for x in t['dt'][1:]]
-        out.append('<p class="pr-les"><b>למעשה:</b> %s</p>' % e(t['lesson']))
-        out.append('<button type="button" class="btn btn-line pr-tw">לשלוח את דבר התורה בווטסאפ</button></div></details>')
+        link = '<p><a href="%s#t-%d-%d">לדבר התורה המלא על “%s”</a></p>' % (
+            url_of(p), p['n'], k, html.escape(t['title'], quote=False))
+        out.append(topic_shell(p, k, t, 'h4', link, box=' data-src="%s"' % url_of(p)))
     out.append('</div><!--/dt-->')
     return ''.join(out)
+
+
+def page_html(p, verses, hub, by_n):
+    e = lambda s: html.escape(s, quote=False)
+    name, n = p['name'], p['n']
+    names = dict((int(a), b) for a, b in re.findall(r'<details id="p-(\d+)" data-name="([^"]+)">', hub))
+    m = re.search(r'<details id="p-%d" data-name="[^"]+"><summary>[^<]*<span>([^<]+)</span></summary>.*?'
+                  r'<p class="pr-short">.*?</p>(.*?)</details>' % n, hub, re.S)
+    if not m:
+        sys.exit('לא נמצאה בדף פרשה %d %s' % (n, name))
+    rng, extra = m.group(1), m.group(2).strip().replace('<h3>', '<h2>').replace('</h3>', '</h2>')
+    titles = [t['title'] for t in p['topics']]
+    faq = [list(x) for x in p['faq']] + [[
+        'אילו נושאים יש לדבר תורה לפרשת %s?' % name,
+        'בדף %d נושאים לפי סדר הפרקים: %s. לוחצים על נושא ונפתח דבר תורה קצר עם הפסוקים בניקוד.'
+        % (len(titles), ', '.join(titles))]]
+    ld = {'@context': 'https://schema.org', '@type': 'FAQPage', 'mainEntity': [
+        {'@type': 'Question', 'name': q, 'acceptedAnswer': {'@type': 'Answer', 'text': a}} for q, a in faq]}
+    meta = {
+        'site': 'kodesh', 'nav': 'taarichim', 'tool': 'parasha',
+        'title': 'פרשת %s – דבר תורה קצר ונושאי הפרשה' % name,
+        'description': 'פרשת %s: %d דברי תורה קצרים לפי נושאים, ובהם “%s” ו“%s”. תקציר, פסוקים מנוקדים ושאלה לילדים. בחינם, בלי הרשמה.'
+                       % (name, len(titles), titles[0], titles[len(titles) // 2]),
+        'og_title': 'פרשת %s – %d דברי תורה קצרים לשולחן שבת' % (name, len(titles)),
+        'priority': '0.7',
+        'crumbs': [['פרשת השבוע', '/kodesh/parasha/'], ['פרשת %s' % name, None]],
+        'head': '<link rel="stylesheet" href="/assets/seo-txt.css"><link rel="stylesheet" href="/assets/kehila.css">'
+                '<link rel="stylesheet" href="/assets/kodesh-wave2.css"><script type="application/ld+json">%s</script>'
+                % json.dumps(ld, ensure_ascii=False, separators=(',', ':')),
+        'foot': '<script src="/assets/kodesh-parasha-page.js" defer></script>',
+    }
+
+    def near(i, word):
+        if i not in names:
+            return ''
+        q = by_n.get(i)
+        href = url_of(q) if q else '/kodesh/parasha/#p-%d' % i
+        return '<a class="btn btn-line" href="%s">%s: פרשת %s</a>' % (href, word, names[i])
+
+    out = ['<!--meta %s -->' % json.dumps(meta, ensure_ascii=False, indent=1),
+           '<header class="k-hero">', '  <h1>פרשת %s: דבר תורה קצר לכל נושא בפרשה</h1>' % name,
+           '  <p class="sub">%d דברי תורה לפרשת %s (%s) לפי סדר הפרקים, תקציר הפרשה ושאלה לילדים. בחינם, בלי הרשמה ובלי פרסומות.</p>'
+           % (len(titles), name, rng), '</header>',
+           '<div class="tool pr-page" id="parasha" data-name="%s">' % name,
+           '<div class="pr-topics"><h2>נושאי פרשת %s</h2>' % name,
+           '<p class="pr-hint">הנושא הראשון כבר פתוח. לחצו על כל נושא אחר כדי לקרוא את דבר התורה שלו.</p>']
+    out += [topic_html(p, verses, k, t, 'h3', opened=(k == 1)) for k, t in enumerate(p['topics'], 1)]
+    out += ['<div class="pr-nav"><button type="button" class="btn btn-gold" id="pr-all-share">לשלוח את נושאי הפרשה למשפחה בווטסאפ</button></div>',
+            '</div></div>',
+            '<section class="k-sec seo-txt" aria-labelledby="pr-short-h">',
+            '  <h2 id="pr-short-h">פרשת %s בקצרה</h2>' % name,
+            '  <p>%s</p>' % e(p['summary']), extra,
+            '  <h2>איך אומרים דבר תורה על פרשת %s</h2>' % name,
+            '  <p>בוחרים מתוך הרשימה נושא שמתאים ליושבים סביב השולחן, למשל “%s” או “%s”. קוראים את הפסוקים, מספרים את הרעיון במילים שלכם ומסיימים בשורת המעשה. לדבר תורה ארוך יותר לשמחה או לאירוע אפשר להיעזר ב<a href="/kodesh/dvar-torah/">מחולל דבר התורה</a>.</p>'
+            % (e(titles[0]), e(titles[-1])),
+            '  <div class="pr-nav">%s<a class="btn btn-line" href="/kodesh/parasha/">פרשת השבוע הזה</a>%s</div>'
+            % (near(n - 1, 'הקודמת'), near(n + 1, 'הבאה')),
+            '  <p>עוד לשבת: <a href="/kodesh/zmanim/">זמני כניסת ויציאת השבת</a> · <a href="/kodesh/birkat-hamazon/">ברכת המזון</a> · <a href="/kodesh/luach-ivri/">הלוח העברי</a>.</p>',
+            '  <p class="disclaimer">דברי התורה נכתבו לדף הזה על פי פשט הכתובים, ובמקום שנזכר רש״י הוא נמסר בקצרה ובלשוננו. נוסח הפסוקים מאתר ספריא. מיזם חסד, בלי כוונת רווח.</p>',
+            '</section>',
+            '<section class="k-sec seo-faq" aria-labelledby="seo-faq-h">',
+            '  <h2 id="seo-faq-h">שאלות ותשובות על פרשת %s</h2>' % name]
+    out += ['  <details><summary>%s</summary><p>%s</p></details>' % (e(q), e(a)) for q, a in faq]
+    out.append('</section>')
+    return '\n'.join(out) + '\n'
 
 
 def main():
@@ -169,12 +252,19 @@ def main():
     page = re.sub(r'<!--dt:\d+-->.*?<!--/dt-->', '', page)
     for p in parshiot:
         pat = re.compile(r'(<details id="p-%d" data-name="%s">.*?<p class="pr-short">.*?</p>)' % (p['n'], re.escape(p['name'])), re.S)
-        page, hits = pat.subn(lambda m: m.group(1) + block(p, verses), page, count=1)
+        page, hits = pat.subn(lambda m: m.group(1) + block(p), page, count=1)
         if hits != 1:
             sys.exit('לא נמצאה בדף פרשה %d %s' % (p['n'], p['name']))
     with open(PAGE, 'w', encoding='utf-8', newline='') as f:
         f.write(page)
-    print('שובץ לדף')
+    by_n = {p['n']: p for p in parshiot}
+    clean = re.sub(r'<!--dt:\d+-->.*?<!--/dt-->', '', page, flags=re.S)
+    for p in parshiot:
+        d = os.path.join(os.path.dirname(PAGE), p['slug'])
+        os.makedirs(d, exist_ok=True)
+        with open(os.path.join(d, 'index.html'), 'w', encoding='utf-8', newline='\n') as f:
+            f.write(page_html(p, verses, clean, by_n))
+    print('שובץ לדף, ונכתבו %d דפי פרשה' % len(parshiot))
 
 
 if __name__ == '__main__':
