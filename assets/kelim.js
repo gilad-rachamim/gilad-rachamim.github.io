@@ -330,7 +330,7 @@
       '.dv-fl{margin-top:1rem}.dv-fl summary{cursor:pointer;color:var(--gold);font-weight:700;text-align:center}' +
       '.dv-fl img{display:block;width:100%;max-width:24rem;height:auto;margin:.8rem auto 0;border-radius:1rem}.dv-help{text-align:center;font-size:.95rem;margin-top:1rem;color:var(--muted,inherit)}</style>' +
       '<h2 id="dv-h">🎬 ' + esc(d.name) + '</h2>' +
-      '<video class="dv-video" controls playsinline preload="none" poster="' + b + '.jpg?h=' + d.h + '" width="540" height="960" aria-label="' + esc(d.desc || d.name) + '" data-dv-play="' + tool + '"><source src="' + v + '" type="video/mp4"></video>' +
+      '<video class="dv-video" controls playsinline preload="none" data-dv-poster="' + b + '.jpg?h=' + d.h + '" width="540" height="960" aria-label="' + esc(d.desc || d.name) + '" data-dv-play="' + tool + '"><source src="' + v + '" type="video/mp4"></video>' +
       '<div class="dv-acts"><button type="button" class="btn btn-gold" data-dv-share="' + v + '" data-dv-kind="video">💌 לשלוח את הסרטון לחבר</button>' +
       '<a class="btn btn-line" href="' + v + '" download data-dv-dl="video">⬇️ להורדת הסרטון</a></div>' + fl + help;
     // כלי רגיל: הסרטון אחרי הכלי (לפני ההסברים), כדי לא לדחוף את הכלי למטה. דף נחיתה בלי .tool: אחרי הכותרת.
@@ -339,6 +339,12 @@
     var at = h && h.closest('header') || h;
     if (seo) seo.parentNode.insertBefore(sec, seo);
     else if (at && at.parentNode) at.parentNode.insertBefore(sec, at.nextSibling); else return;
+    var vid = sec.querySelector('video'), show = function () { vid.poster = vid.getAttribute('data-dv-poster'); };
+    var watch = function () {
+      if (window.IntersectionObserver) new IntersectionObserver(function (es, io) { if (es[0].isIntersecting) { show(); io.disconnect(); } }, { rootMargin: '600px' }).observe(vid);
+      else show();
+    }, later = function () { setTimeout(watch, 300); }; // אחרי שתוכן הדף נבנה; אחרת הסרטון עוד נראה למעלה
+    if (document.readyState === 'complete') later(); else window.addEventListener('load', later);
     window.DV_SHARE = { tool: tool, text: document.title.split(' | ')[0], url: location.origin + location.pathname };
     var ld = document.createElement('script'); ld.type = 'application/ld+json';
     ld.textContent = JSON.stringify({ '@context': 'https://schema.org', '@type': 'VideoObject', name: d.name, description: d.desc || d.name,
