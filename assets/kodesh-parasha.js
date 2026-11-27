@@ -92,7 +92,7 @@
   function openHash() {
     var m = /^#([pt])-(\d+)(-\d+)?$/.exec(location.hash); if (!m) return;
     var d = $('p-' + m[2]), t = m[1] === 't' ? $(location.hash.slice(1)) : null; if (!d) return;
-    d.open = true; if (t) t.open = true; (t || d).scrollIntoView({ block: 'start' });
+    d.open = true; if (t) t.open = true; (t || d).scrollIntoView({ block: 'start', behavior: 'instant' });
   }
 
   // תזכורת באפליקציה
