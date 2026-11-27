@@ -698,6 +698,8 @@ NEWSBAR_HTML = ('<aside class="newsbar no-print" data-newsbar aria-label="החד
 
 # דפים שבהם הפס העונתי (discover.js) מוטמע מיד אחרי פס החדשות, כדי שלא ידחוף את הכותרת אחרי הטעינה (CLS)
 HUB_INLINE = {"/kodesh/"}
+# תמונות הפתיחה של הסרטונים נטענות רק כשמתקרבים אליהן (assets/promo.js) – בדף חייב להיות הסקריפט
+LAZY_POSTERS = {"/kelim/"}
 
 
 def news_bar(url_path):
@@ -1322,6 +1324,8 @@ for path in sorted(SRC.rglob("*.html")):
     if "<!--KATALOG-" in html:
         html = katalog_fill(html)
     html = version_assets(html)
+    if url_path in LAZY_POSTERS:
+        html = re.sub(r"(<video\b[^>]*?\s)poster=", r"\1data-poster=", html)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
     if meta.get("manifest"):
