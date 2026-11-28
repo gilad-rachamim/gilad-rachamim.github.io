@@ -24,6 +24,11 @@
 .pr-list summary span{color:var(--muted);font-weight:400;font-size:.9rem}
 .pr-list h3{color:var(--gold);font-size:.95rem;margin:.7rem 0 .15rem}
 .pr-topics h3{margin-bottom:.1rem}
+/* שורת הקדשת השבוע בראש דפי הפרשה: גובה קבוע, כדי שהדף לא יקפוץ כשהנוסח מתחלף */
+.pr-hk{display:flex;flex-wrap:wrap;align-items:center;gap:.25em .5em;min-height:3.2em;margin:0 0 1rem;padding:.6em .9em;border:1px solid rgba(212,175,55,.55);border-radius:12px;background:rgba(212,175,55,.1);font-size:.98rem;line-height:1.45}
+.pr-hk b{font-weight:800}
+.pr-hk a{margin-inline-start:auto;font-weight:700;white-space:nowrap;text-decoration:underline;min-height:44px;display:inline-flex;align-items:center}
+@media print{.pr-hk{display:none}}
 .pr-hint{color:var(--muted);font-size:.9rem}
 .pr-list details.pr-t,.pr-now details.pr-t,.pr-page details.pr-t{border:1px solid var(--line);border-radius:10px;padding:0;margin:.45rem 0;background:rgba(255,255,255,.04)}
 .pr-t>summary{cursor:pointer;display:block;position:relative;padding:.65rem .9rem .65rem 2.2rem;min-height:44px}

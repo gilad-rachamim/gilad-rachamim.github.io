@@ -216,6 +216,7 @@ def page_html(p, verses, hub, by_n, m_data):
            '  <p class="sub">%d דברי תורה לפרשת %s (%s) לפי סדר הפרקים, תקציר, הפטרה, עליות ושאלות לילדים. בחינם, בלי הרשמה ובלי פרסומות.</p>'
            % (len(titles), name, rng), '</header>',
            '<div class="tool pr-page" id="parasha" data-name="%s">' % name,
+           '<p class="pr-hk" id="pr-hk"><span aria-hidden="true">🕯️</span> <span id="pr-hk-t">רוצים שהלימוד של השבוע יהיה לזכות מישהו יקר?</span> <a href="/kodesh/parasha/hakdasha/" id="pr-hk-a" data-mv="hakdasha_line">להקדיש שבוע</a></p>',  # שורת הקדשת השבוע; הנוסח מתחלף ב-kodesh-parasha-page.js
            '<div class="pr-topics"><h2>נושאי פרשת %s</h2>' % name,
            '<p class="pr-hint">הנושא הראשון כבר פתוח. לחצו על כל נושא אחר כדי לקרוא את דבר התורה שלו.</p>']
     out += [topic_html(p, verses, k, t, 'h3', opened=(k == 1)) for k, t in enumerate(p['topics'], 1)]

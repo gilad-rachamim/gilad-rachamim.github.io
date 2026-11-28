@@ -193,6 +193,9 @@
       else if (kind === 'tool') {
         fd.append('עיר', 'בקשת כלי · ' + (g('domain') || 'כללי') + ' · ' + (g('for') || ''));
         fd.append('מקור', 'כלים: בקשת כלי (' + (g('use') || '') + ') · ' + g('what') + (g('contact') ? ' · מייל: ' + g('contact') : ''));
+      } else if (kind === 'hakdasha') {
+        fd.append('עיר', 'הקדשת שבוע · ' + g('week'));
+        fd.append('מקור', 'כלים: הקדשת שבוע · ' + g('hkind') + ' ' + g('who') + ' · ' + g('week') + (g('note') ? ' · ' + g('note') : ''));
       } else {
         fd.append('עיר', 'תרומה ושותפות · ' + checks);
         fd.append('מקור', 'כלים: רוצים לתרום · ' + checks + ' · ' + g('note') + (g('contact') ? ' · מייל: ' + g('contact') : ''));
@@ -201,8 +204,10 @@
       var btn = form.querySelector('button[type=submit]');
       btn.disabled = true; btn.textContent = 'שולח…';
       if (kind === 'shipur') ev('tool_suggest', { tool: toolId });
+      else if (kind === 'hakdasha') ev('hakdasha_submit', { week: g('week') });
       else ev(kind === 'tool' ? 'request_tool' : 'donate_click', kind === 'tool' ? { domain: g('domain'), use: g('use') } : { how: 'form', what: checks });
       var finish = function () {
+        if (kind === 'hakdasha') { form.hidden = true; var pay = document.getElementById('hk-pay'); if (pay) { pay.hidden = false; pay.scrollIntoView({ block: 'start', behavior: 'smooth' }); pay.focus(); } return; }
         form.innerHTML = '<div class="done" role="status">' + (kind === 'shipur' ? 'תודה רבה! 🙏 קיבלתי את ההצעה. אני קורא כל אחת, ואעדכן אותך כשהכלי ישתפר.' : kind === 'tool'
           ? 'תודה רבה! קיבלתי את הרעיון, והוא נשמר. את כל הבקשות ומה נבנה רואים בדף בקשת הכלי.'
           : 'תודה מכל הלב! קיבלתי, ואחזור אליכם בווטסאפ.') + '</div>';
