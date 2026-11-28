@@ -1,0 +1,424 @@
+{
+ "day": "2026-11-27",
+ "editions": [
+  {
+   "name": "בוקר",
+   "time": "07:00",
+   "at": "2026-11-27T05:00:50.798Z",
+   "mode": "summary",
+   "date": {
+    "he": "י״ז כסלו תשפ״ז",
+    "day": "שישי"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "מזג האוויר בסוף השבוע צפוי להיות חם מהרגיל לעונה, ובתחילת השבוע הבא צפויה להתחיל מערכת גשמים.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1812070/"
+       },
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/weather/article-1392689"
+       },
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383963352"
+       }
+      ]
+     },
+     {
+      "text": "כוחות הביטחון עצרו באזור השרון חשוד שהתבטא כי בכוונתו לבצע פיגוע.",
+      "sources": [
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383963349"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/r1bwexij7g"
+       },
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/military/article-1392704"
+       }
+      ]
+     },
+     {
+      "text": "גורמים מדיניים מעריכים כי בימים הקרובים תירשם התקדמות ביישום תוכנית טראמפ לרצועת עזה.",
+      "sources": [
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1142800"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/hyelrh8ymg"
+       }
+      ]
+     },
+     {
+      "text": "צה״ל תקף שורת מטרות ואמצעי לחימה של כוח רדואן בדרום לבנון.",
+      "sources": [
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/military/article-1392688"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745740"
+       }
+      ]
+     },
+     {
+      "text": "המערכת הפוליטית מתקרבת לשבוע הכרעה במגעים להרכבת הממשלה, כאשר מפלגות שונות ממשיכות בדיונים.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1812078/"
+       },
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/political-news/mansour-abbas-raam-coalition-demands-ministerial-c"
+       },
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/politics/article-1392712"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "מאות מפגינים חסמו את הכניסה לנתב״ג במחאה על מעצר תלמידי ישיבות.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/israel-news/hundreds-protest-ben-gurion-airport-yeshiva-arrest"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745735"
+       }
+      ]
+     },
+     {
+      "text": "רבה הראשי של רוסיה הרב בערל לאזאר קרא להגביר את ההסברה כדי למנוע שריפת גופות של יהודים ולדאוג לקבורה כהלכה.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745726"
+       }
+      ]
+     },
+     {
+      "text": "בד״ץ העדה החרדית פרסם קול קורא לתמיכה במיזם למען אסירי עולם התורה.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745737"
+       }
+      ]
+     }
+    ],
+    "economy": [],
+    "good": []
+   }
+  },
+  {
+   "name": "השבוע ב-3 דקות",
+   "time": "09:00",
+   "at": "2026-11-27T07:00:50.694Z",
+   "mode": "summary",
+   "date": {
+    "he": "י״ז כסלו תשפ״ז",
+    "day": "שישי"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "המגעים הפוליטיים להרכבת הממשלה נמשכים, לצד ניסיונות לחוקק פטור ממעצר לתלמידי ישיבות ומחאות שנערכו בנושא.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1812078/"
+       },
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/political-news/mansour-abbas-raam-coalition-demands-ministerial-c"
+       },
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/politics/article-1392712"
+       }
+      ]
+     },
+     {
+      "text": "בנק ישראל הותיר את הריבית ללא שינוי ברמה של 3.25%, והנגיד הבהיר כי יידרשו העלאות מיסים בעתיד.",
+      "sources": [
+       {
+        "name": "כיפה",
+        "link": "https://www.kipa.co.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA/1237161-0/"
+       },
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001564540"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745408"
+       }
+      ]
+     },
+     {
+      "text": "שופטי משפט נתניהו המליצו ליועצת המשפטית לממשלה לשקול לוותר על תיק 4000 ולהגיע להסדר בתיק 1000.",
+      "sources": [
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/law/article-1392141"
+       },
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1808379/"
+       },
+       {
+        "name": "ערוץ 7",
+        "link": "https://www.inn.co.il/flashes/1142497"
+       }
+      ]
+     },
+     {
+      "text": "לאחר סוף שבוע חם מהרגיל לעונה, החל מיום ראשון צפויה מערכת גשמים חזקה עם חשש להצפות ולשטפונות.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1812070/"
+       },
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/weather/article-1392689"
+       },
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383963352"
+       }
+      ]
+     },
+     {
+      "text": "צה״ל השמיד תשתית תת-קרקעית של חמאס בעזה ותקף מטרות בדרום לבנון, ברקע מתיחות ביטחונית במפרץ הפרסי.",
+      "sources": [
+       {
+        "name": "מעריב",
+        "link": "https://www.maariv.co.il/news/military/article-1392688"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745740"
+       },
+       {
+        "name": "גלובס",
+        "link": "https://www.globes.co.il/news/article.aspx?did=1001564323"
+       }
+      ]
+     },
+     {
+      "text": "בית המשפט קבע כי החדרים הפרטיים במתחם קבר רשב״י במירון יועברו לידי הציבור, ואושר תקציב לתשתיות ולמהלך ההילולה.",
+      "sources": [
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383962972"
+       },
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/economy-israel/46-million-shekels-approved-for-mount-meron-hilula"
+       }
+      ]
+     },
+     {
+      "text": "ישראל שדרגה את מערכת ההגנה האווירית קלע דוד כדי להגדיל את הטווח שלה ולהתמודד עם איומים בליסטיים.",
+      "sources": [
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/383962304"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745143"
+       }
+      ]
+     }
+    ],
+    "haredi": [],
+    "economy": [],
+    "good": [
+     {
+      "text": "ניצול שואה כבן 90 עבר ברית מילה בישראל ונקרא שמו נפתלי.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745574"
+       }
+      ]
+     },
+     {
+      "text": "בכינוס ״קרן עולם התורה״ בלוס אנג׳לס נאספו מיליוני דולרים למען החזקת היכלי התורה בארץ הקודש.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745545"
+       }
+      ]
+     },
+     {
+      "text": "מוקד מד״א־הצלה אלעד חנך שני אמבולנסים חדשים ומאובזרים לרווחת תושבי העיר ולפעילות החירום.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/health-news/two-new-ambulances-inaugurated-elad-mda-station"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "name": "צהריים",
+   "time": "13:00",
+   "at": "2026-11-27T11:00:50.748Z",
+   "mode": "summary",
+   "date": {
+    "he": "י״ז כסלו תשפ״ז",
+    "day": "שישי"
+   },
+   "sections": {
+    "main": [
+     {
+      "text": "חברות תעופה זרות, בהן אייר קנדה, אייר אינדיה ודלתא, צפויות להחזיר ולהרחיב את פריסת הטיסות שלהן לנתב״ג במהלך חודש דצמבר.",
+      "sources": [
+       {
+        "name": "כיפה",
+        "link": "https://www.kipa.co.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA/1237548-0/"
+       }
+      ]
+     },
+     {
+      "text": "כוחות צה״ל עצרו חוליית מחבלים בבנימין שתכננה לבצע פיגוע, ובמקביל חוסלו ברצועת עזה ארבעה מחבלים, בהם אחד שהשתתף בטקס שחרור חטופים.",
+      "sources": [
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/bkhby681xg"
+       },
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1812327/"
+       },
+       {
+        "name": "סרוגים",
+        "link": "https://www.srugim.co.il/101017268-סוכל-ניסיון-פיגוע-בבנימין-צהל-עצר-שלושה"
+       }
+      ]
+     },
+     {
+      "text": "לאחר סוף שבוע חם מהרגיל, מזג האוויר ישתנה בתחילת השבוע: ביום ראשון ייתכן גשם מקומי בצפון ובחוף, וביום שני יצטרפו אליו סופות רעמים.",
+      "sources": [
+       {
+        "name": "כיפה",
+        "link": "https://www.kipa.co.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA/%D7%AA%D7%97%D7%96%D7%99%D7%AA-%D7%9E%D7%96%D7%92-%D7%94%D7%90%D7%95%D7%95%D7%99%D7%A8/1237564-0/"
+       }
+      ]
+     },
+     {
+      "text": "צה״ל קרא לתושבי דרום לבנון לנקוט משנה זהירות, לאחר שנחשף כי ארגון חיזבאללה משתמש בסירות דייג אזרחיות לצורך איסוף מודיעין.",
+      "sources": [
+       {
+        "name": "סרוגים",
+        "link": "https://www.srugim.co.il/101017274-דוברת-צהל-בערבית-באזהרה-לתושבי-דרום"
+       },
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745789"
+       }
+      ]
+     },
+     {
+      "text": "השר חיים כץ משך את מכתב התפטרותו מתפקיד שר הבינוי והשיכון, בעקבות בקשתו של ראש הממשלה בנימין נתניהו.",
+      "sources": [
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1812343/"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/s1kljpljme"
+       },
+       {
+        "name": "סרוגים",
+        "link": "https://www.srugim.co.il/101017270-תוך-יומיים-השר-חיים-כץ-משך-את-התפטרותו"
+       }
+      ]
+     }
+    ],
+    "haredi": [
+     {
+      "text": "בעקבות פנייה לפני עתירה לבג״ץ, משרד העבודה הבהיר כי הוא מכיר במחויבותו ויכבד את הודעות הזכאות שכבר אושרו למלגות.",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/news/2773469/"
+       }
+      ]
+     },
+     {
+      "text": "בשמחת חתונת נכדו הורה האדמו״ר מסאטמר לבטל את אמירת הגראמען לפני ה'מצווה טאנץ', כדי לחסוך בזמן הציבור ולהוזיל עלויות.",
+      "sources": [
+       {
+        "name": "בחדרי חרדים",
+        "link": "https://www.bhol.co.il/news/1745783"
+       }
+      ]
+     },
+     {
+      "text": "בקריית מעונות ויז'ניץ בבני ברק נערך מעמד קביעת מזוזה בפתח הראשי של בית המדרש המרכזי \"אוהב ישראל\".",
+      "sources": [
+       {
+        "name": "JDN",
+        "link": "https://www.jdn.co.il/gallery/2773540/"
+       }
+      ]
+     }
+    ],
+    "economy": [
+     {
+      "text": "לפי נתוני הלמ״ס לרבעון השלישי, שכר הדירה הממוצע בישראל עלה ב-3.6% בשנה האחרונה והגיע ל-5,132 שקלים בחודש.",
+      "sources": [
+       {
+        "name": "כיכר השבת",
+        "link": "https://www.kikar.co.il/real-estate/rental-prices-israel-increase"
+       }
+      ]
+     },
+     {
+      "text": "מנתוני חברת שבא עולה כי חלה עלייה של 5.2% בהוצאות הישראלים בכרטיסי חיוב בשעות הבוקר של יום המבצעים בלאק פריידיי.",
+      "sources": [
+       {
+        "name": "וואלה",
+        "link": "https://www.walla.co.il/news/israel/3877822"
+       },
+       {
+        "name": "ynet",
+        "link": "https://www.ynet.co.il/news/article/rj1ip6ljmg"
+       },
+       {
+        "name": "ערוץ 14",
+        "link": "https://www.c14.co.il/article/1812333/"
+       }
+      ]
+     }
+    ],
+    "good": []
+   }
+  }
+ ]
+}
