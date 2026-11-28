@@ -9,6 +9,29 @@
     if (!next.length) return;
     all.forEach(function (el) { el.hidden = next.indexOf(el) < 0 || next.indexOf(el) >= c[1]; });
   });
+  // הקדשת השבוע: [מיום, עד שבת, נוסח]. שבוע חדש = שורה חדשה כאן. הטבלה משמשת גם את דף "להקדיש שבוע".
+  var HK = window.prHK = [
+    ['2026-11-28', '2026-12-05', 'לעילוי נשמת אליהו חיים בן ארץ']
+  ];
+  var hkT = document.getElementById('pr-hk-t'), hkA = document.getElementById('pr-hk-a');
+  if (hkT) HK.forEach(function (w) {
+    if (today < w[0] || today > w[1]) return;
+    hkT.textContent = 'דברי התורה השבוע מוקדשים ';
+    var b = document.createElement('b'); b.textContent = w[2]; hkT.appendChild(b);
+    if (hkA) hkA.textContent = 'להקדיש את השבוע הבא';
+  });
+  // דף "להקדיש שבוע": מוריד שבתות שעברו או תפוסות, ומציג את שורת ההקדשה תוך כדי כתיבה
+  var wk = document.getElementById('hk-week');
+  if (wk) {
+    [].slice.call(wk.options).forEach(function (o) {
+      var d = o.getAttribute('data-date');
+      if (d < today || HK.some(function (w) { return d >= w[0] && d <= w[1]; })) wk.removeChild(o);
+    });
+    var who = document.getElementById('hk-who'), kind = document.getElementById('hk-kind'), prev = document.getElementById('hk-prev');
+    var first = prev.textContent;
+    var draw = function () { var n = who.value.trim(); prev.textContent = n ? kind.value + ' ' + n : first; };
+    who.addEventListener('input', draw); kind.addEventListener('change', draw);
+  }
   var root = document.getElementById('parasha');
   if (!root || !root.getAttribute('data-name')) return;
   var name = root.getAttribute('data-name'), url = 'https://hakelim.com' + location.pathname;
